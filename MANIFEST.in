@@ -1,0 +1,3 @@
+include README.md MANIFEST.in
+include versioneer.py
+include posydon/_version.py

@@ -1,0 +1,1074 @@
+##############################################################################
+#  IMPORT ALL NECESSARY PYTHON PACKAGES
+##############################################################################
+import argparse
+import os
+import shutil
+import pandas
+import subprocess
+import glob
+
+from posydon.utils import configfile
+from posydon.utils import gridutils as utils
+from posydon.grids.psygrid import PSyGrid
+from posydon.active_learning.psy_cris.utils import parse_inifile
+
+###############################################################################
+# DEFINE COMMANDLINE ARGUMENTS
+###############################################################################
+def parse_commandline():
+    """Parse the arguments given on the command-line.
+    """
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--inifile",
+                        help="Name of ini file of params",
+                        required=True)
+    parser.add_argument("--grid-type",
+                        help="Either you are supplying a grid "
+                        "of points to run MESA on (fixed) or you are supplying a pre computed MESA "
+                        "grid and want to sample new points to run MESA on (dynamic).",
+                        required=True)
+    parser.add_argument("--run-directory",
+                        help="Path where executable will be made and MESA "
+                             "simulation output will be placed", default=os.getcwd())
+    parser.add_argument("--submission-type",
+                        help="Options include creating a shell script or a slurm script",
+                        default='shell')
+    parser.add_argument("-n", "--nproc",
+                        help="number of processors", type=int, default=1)
+    parser.add_argument("--verbose", action="store_true", default=False,
+                        help="Run in Verbose Mode")
+
+    args = parser.parse_args()
+
+    if args.grid_type not in ['fixed', 'dynamic']:
+        raise parser.error("--grid-type must be either fixed or dynamic")
+
+    if args.submission_type not in ['slurm', 'shell']:
+        raise parser.error('--submission-type must be either slurm of shell')
+
+    return args
+
+def find_inlist_from_scenario(source, gitcommit, system_type):
+    """Dynamically find the inlists the user wants to from the supplied info
+
+    Parameters
+    ----------
+
+        source:
+
+        gitcommit:
+
+        system_type:
+    """
+    # note the directory we are in now
+    where_am_i_now = os.getcwd()
+    print("We are going to dynamically fetch the posydon inlists based on your scenario")
+    if source == 'posydon':
+        print("You have selected posydon as your source")
+        print("checking if we have already cloned POSYDON-MESA-INLISTS for you")
+        if not os.path.isdir('{0}/.posydon_mesa_inlists'.format(os.environ['HOME'])):
+            print("We are clonining the repo for you")
+            # Determine location of executables
+            proc = subprocess.Popen(['git', 'clone', 'https://github.com/POSYDON-code/POSYDON-MESA-INLISTS.git', '{0}/.posydon_mesa_inlists'.format(os.environ['HOME'])],
+                                         stdin = subprocess.PIPE,
+                                         stdout = subprocess.PIPE,
+                                         stderr = subprocess.PIPE
+                                     )
+            (clone, err) = proc.communicate()
+        else:
+            print("git repository is already there, using that")
+
+
+        inlists_dir = '{0}/.posydon_mesa_inlists'.format(os.environ['HOME'])
+        branch = gitcommit.split('-')[0]
+        githash = gitcommit.split('-')[1]
+
+    elif source == 'user':
+        print("You have selected user as your source "
+              "checking if we have already cloned USER-MESA-INLISTS for you "
+              "Validating the name of the git hash you want to use..."
+              "must be of format 'branch-githash'")
+
+        if len(gitcommit.split('-')) != 2:
+            raise ValueError("You have supplied an invalid user gitcommit format, must be of format 'branch-githash'")
+
+        branch = gitcommit.split('-')[0]
+        githash = gitcommit.split('-')[1]
+
+        if not os.path.isdir('{0}/.user_mesa_inlists'.format(os.environ['HOME'])):
+            print("We are clonining the repo for you")
+            # Determine location of executables
+            proc = subprocess.Popen(['git', 'clone', 'https://github.com/POSYDON-code/USER-MESA-INLISTS.git', '{0}/.user_mesa_inlists'.format(os.environ['HOME'])],
+                                         stdin = subprocess.PIPE,
+                                         stdout = subprocess.PIPE,
+                                         stderr = subprocess.PIPE
+                                     )
+            (clone, err) = proc.communicate()
+        else:
+            print("git repository is already there, using that")
+
+        inlists_dir = '{0}/.user_mesa_inlists'.format(os.environ['HOME'])
+        branch = gitcommit.split('-')[0]
+        githash = gitcommit.split('-')[1]
+
+    else:
+        raise ValueError("supplied source is not valid/understood. Valid sources are user and posydon")
+
+    os.chdir(inlists_dir)
+    print("checking out branch: {0}".format(branch))
+
+    proc = subprocess.Popen(['git', 'checkout', '{0}'.format(branch)],
+                                 stdin = subprocess.PIPE,
+                                 stdout = subprocess.PIPE,
+                                 stderr = subprocess.PIPE
+                             )
+
+    print("For posterity we are pulling (specifically needed if you already have the repo clone)")
+    proc = subprocess.call(['git', 'pull'],
+                                 stdin = subprocess.PIPE,
+                                 stdout = subprocess.PIPE,
+                                 stderr = subprocess.PIPE
+                             )
+
+
+    print("checking out commit/tag: {0}".format(githash))
+
+    proc = subprocess.Popen(['git', 'checkout', '{0}'.format(githash)],
+                                 stdin = subprocess.PIPE,
+                                 stdout = subprocess.PIPE,
+                                 stderr = subprocess.PIPE
+                             )
+
+    # if this is looking at posydon defaults, all posydon defaults build from default common inlists
+    if source == 'posydon':
+        inlists_location_common = '{0}/{1}/{2}/'.format(inlists_dir, 'r11701', "default_common_inlists")
+        print("Based on system_type {0} "
+              "We are populating the posydon inlists in the following directory: "
+              "{1}".format(system_type, inlists_location_common))
+
+        inlist1 = os.path.join(inlists_location_common, 'binary', 'inlist1')
+        inlist2 = os.path.join(inlists_location_common, 'binary', 'inlist2')
+        if os.path.isfile(inlist1):
+            with open(inlist1) as f:
+                # check if we also need to find the location of the zams.data file
+                for line in f.readlines():
+                    if 'zams_filename' in line:
+                        print("ZAMS_FILENAME detected, setting mesa_inlists['zams_filename']")
+                        zams_filename = line.split("'")[1].split("/")[1]
+                        zams_file_path = os.path.join(inlists_dir, 'r11701', "ZAMS_models", zams_filename)
+                        if os.path.isfile(zams_file_path):
+                            print("Verified locations of ZAMS data file, {0}".format(zams_file_path))
+                            mesa_inlists['zams_filename'] = "{0}".format(zams_file_path)
+            print("Running Single Grid: Setting mesa_star1_extras to {0}/binary/src/run_star_extras.f".format(inlists_location_common))
+
+        print("Updating inifile values")
+        # binary inlists
+        mesa_inlists['star1_controls_posydon_defaults'] = '{0}/binary/inlist1'.format(inlists_location_common)
+        mesa_inlists['star1_job_posydon_defaults'] = '{0}/binary/inlist1'.format(inlists_location_common)
+        mesa_inlists['star2_controls_posydon_defaults'] = '{0}/binary/inlist2'.format(inlists_location_common)
+        mesa_inlists['star2_job_posydon_defaults'] = '{0}/binary/inlist2'.format(inlists_location_common)
+        mesa_inlists['binary_controls_posydon_defaults'] = '{0}/binary/inlist_project'.format(inlists_location_common)
+        mesa_inlists['binary_job_posydon_defaults'] = '{0}/binary/inlist_project'.format(inlists_location_common)
+
+        # columns
+        mesa_inlists['star_history_columns'] = '{0}/history_columns.list'.format(inlists_location_common)
+        mesa_inlists['binary_history_columns'] = '{0}/binary_history_columns.list'.format(inlists_location_common)
+        mesa_inlists['profile_columns'] = '{0}/profile_columns.list'.format(inlists_location_common)
+
+        # executables
+        mesa_extras['posydon_binary_extras'] = '{0}/binary/src/run_binary_extras.f'.format(inlists_location_common)
+        mesa_extras['posydon_star_binary_extras'] = '{0}/binary/src/run_star_extras.f'.format(inlists_location_common)
+
+        mesa_extras["mesa_star1_extras"] = '{0}/binary/src/run_star_extras.f'.format(inlists_location_common)
+
+        # so this is sufficient for system type HMS-HMS but not for others, for others we stack the above inlists on further inlists
+        # we also need to see if we are looking at a folder for binaries or singles
+        if system_type != "HMS-HMS" and not mesa_inlists['single_star_grid']:
+            inlists_location = '{0}/{1}/{2}/'.format(inlists_dir, 'r11701', system_type)
+            print("Based on system_type {0} "
+                  "We are populating the user inlists in the following directory: "
+                  "{1}".format(system_type, inlists_location))
+
+            # determine where the binary inlist(s) are
+            if os.path.isfile(os.path.join(inlists_location, "binary", "inlist_project")):
+                mesa_inlists['binary_controls_user'] = '{0}'.format(os.path.join(inlists_location, "binary", "inlist_project"))
+                mesa_inlists['binary_job_user'] = '{0}'.format(os.path.join(inlists_location, "binary", "inlist_project"))
+
+            if os.path.isfile(os.path.join(inlists_location, "binary", "inlist1")):
+                mesa_inlists['star1_controls_user'] = '{0}'.format(os.path.join(inlists_location, "binary", "inlist1"))
+                mesa_inlists['star1_job_user'] = '{0}'.format(os.path.join(inlists_location, "binary", "inlist1"))
+
+            if os.path.isfile(os.path.join(inlists_location, "binary", "inlist2")):
+                mesa_inlists['star2_controls_user'] = '{0}'.format(os.path.join(inlists_location, "binary", "inlist2"))
+                mesa_inlists['star2_job_user'] = '{0}'.format(os.path.join(inlists_location, "binary", "inlist2"))
+
+            if os.path.isfile(os.path.join(inlists_location, "history_columns.list")):
+                mesa_inlists['star_history_columns'] = os.path.join(inlists_location, "history_columns.list")
+
+            if os.path.isfile(os.path.join(inlists_location, "binary_history_columns.list")):
+                mesa_inlists['binary_history_columns'] = os.path.join(inlists_location, "binary_history_columns.list")
+
+            if os.path.isfile(os.path.join(inlists_location, "profile_columns.list")):
+                mesa_inlists['profile_columns'] = os.path.join(inlists_location, "profile_columns.list")
+
+            if os.path.isfile(os.path.join(inlists_location, "src", "run_binary_extras.f")):
+                mesa_extras['user_binary_extras'] = '{0}'.format(os.path.join(inlists_location, "src", "run_binary_extras.f"))
+
+            if os.path.isfile(os.path.join(inlists_location, "src", "run_star_extras.f")):
+                mesa_extras['user_star_binary_extras'] = '{0}'.format(os.path.join(inlists_location, "src", "run_star_extras.f"))
+
+            # check for star formation parameters
+            if os.path.isdir(os.path.join(inlists_location, "star1_formation")):
+                # We are making star1 so we can unset the zams file we were going to use for star1
+                print("We are making star1 so we can unset the zams file we were going to use for star1")
+                mesa_inlists['zams_filename'] = None
+
+                # Figure out how many user star1 formation steps there are and layer the posydon default inlists on all of them
+                star1_formation_scenario = sorted(glob.glob(os.path.join(inlists_location, "star1_formation", "*step*")))
+                print("These are the user we are using to make star1: {0}".format(star1_formation_scenario))
+                print("We are going to add a layer of posydon default common inlists to these user steps: {0}".format('{0}/binary/inlist1'.format(inlists_location_common)))
+                mesa_inlists['star1_formation_controls_posydon_defaults'] = []
+                mesa_inlists['star1_formation_job_posydon_defaults'] = []
+                for i in range(len(star1_formation_scenario)):
+                    mesa_inlists['star1_formation_controls_posydon_defaults'].append('{0}/binary/inlist1'.format(inlists_location_common))
+                    mesa_inlists['star1_formation_job_posydon_defaults'].append('{0}/binary/inlist1'.format(inlists_location_common))
+
+                mesa_inlists['star1_formation_controls_user'] = star1_formation_scenario
+                mesa_inlists['star1_formation_job_user'] = star1_formation_scenario
+
+            if os.path.isdir(os.path.join(inlists_location, "star2_formation")):
+                # We are making star2 so we can unset the zams file we were going to use for star2
+                print("We are making star2 so we can unset the zams file we were going to use for star2")
+                mesa_inlists['zams_filename'] = None
+
+                # Figure out how many user star2 formation steps there are and layer the posydon default inlists on all of them
+                star2_formation_scenario = sorted(glob.glob(os.path.join(inlists_location, "star2_formation", "*step*")))
+                print("These are the user we are using to make star2: {0}".format(star2_formation_scenario))
+                print("We are going to add a layer of posydon default common inlists to these user steps: {0}".format('{0}/binary/inlist1'.format(inlists_location_common)))
+                mesa_inlists['star2_formation_controls_posydon_defaults'] = []
+                mesa_inlists['star2_formation_job_posydon_defaults'] = []
+                for i in range(len(star2_formation_scenario)):
+                    mesa_inlists['star2_formation_controls_posydon_defaults'].append('{0}/binary/inlist1'.format(inlists_location_common))
+                    mesa_inlists['star2_formation_job_posydon_defaults'].append('{0}/binary/inlist1'.format(inlists_location_common))
+
+                mesa_inlists['star2_formation_controls_user'] = star2_formation_scenario
+                mesa_inlists['star2_formation_job_user'] = star2_formation_scenario
+
+        if system_type == "HMS-HMS" and mesa_inlists['single_star_grid']:
+            print("You want a single star HMS grid, this means that we need to make a user inlist on the fly with a single line "
+                  "x_logical_ctrl(1)=.true.")
+            # write star1 formation step to file
+            special_single_star_user_inlist = os.path.join(os.getcwd(), "special_single_star_user_inlist")
+            with open(special_single_star_user_inlist, 'wb') as f:
+                f.write(b'&controls\n\n')
+                f.write('\t{0} = {1}\n'.format("x_logical_ctrl(1)", ".true.").encode('utf-8'))
+
+                f.write(b'\n\n')
+
+                f.write(b"""
+        / ! end of star1_controls namelist
+
+        """)
+            mesa_inlists['star1_controls_user'] = special_single_star_user_inlist
+        elif system_type == "CO-He_star" and mesa_inlists['single_star_grid']:
+            inlists_location = '{0}/{1}/{2}/'.format(inlists_dir, 'r11701', system_type)
+            print("Based on system_type {0} "
+                  "We are populating the user inlists in the following directory: "
+                  "{1}".format(system_type, inlists_location))
+
+            # We are making star2 so we can unset the zams file we were going to use for star2
+            print("We are making star2 so we can unset the zams file we were going to use for star2")
+            mesa_inlists['zams_filename'] = None
+
+            # Find the user single star controls
+            single_star_scenario = sorted(glob.glob(os.path.join(inlists_location, "star1_formation", "*step*")))
+            print("These are the user inlists used in the single star grid: {0}".format(single_star_scenario))
+            mesa_inlists['star1_controls_user'] = single_star_scenario
+            mesa_inlists['star1_job_user'] = single_star_scenario
+            print("You want a single star He grid, "
+                  "this means that we need to make the inlist that will be used to evolve the system "
+                  "and make sure we layer on the line "
+                  "x_logical_ctrl(1)=.true.")
+            # write star1 formation step to file
+            special_single_star_user_inlist = os.path.join(os.getcwd(), "special_single_star_user_inlist")
+            with open(special_single_star_user_inlist, 'wb') as f:
+                f.write(b'&controls\n\n')
+                f.write('\t{0} = {1}\n'.format("x_logical_ctrl(1)", ".true.").encode('utf-8'))
+
+                f.write(b'\n\n')
+                f.write(b"""
+        / ! end of star1_controls namelist
+
+        """)
+                f.write(b'&star_job\n\n')
+                f.write(b"""
+        / / ! end of star_job namelist
+
+        """)
+            mesa_inlists['star1_controls_user'].append(special_single_star_user_inlist)
+
+    # change back to where I was
+    os.chdir(where_am_i_now)
+
+    return
+
+def construct_static_inlist(mesa_inlists, grid_parameters, working_directory=os.getcwd()):
+    """Based on all the inlists that were passed construc the MESA project dir
+
+    Parameters
+        mesa_inlists:
+            All of the values from the mesa_inlists section of the inifile (`dict`)
+
+        grid_parameters:
+            A list of the parameters from the csv file so we can determine all of
+            the inlist parameters for binary, star1 and star2 that will be changing
+            with this grid
+
+    Returns:
+        inlists
+    """
+    if 'zams_filename' not in mesa_inlists.keys():
+        mesa_inlists['zams_filename'] = None
+
+    if 'single_star_grid' not in mesa_inlists.keys():
+        mesa_inlists['single_star_grid'] = False
+
+    ########################################
+    ### CONSTRUCT BINARY INLIST PARAMS   ###
+    ########################################
+
+    # inlist project controls binary_job and binary_controls
+    inlist_binary_project = os.path.join(working_directory, 'binary', 'inlist_project')
+    # inlist1 (controls star_job1 and star_controls1
+    inlist_star1_binary = os.path.join(working_directory, 'binary', 'inlist1')
+    # inlist1 (controls star_job2 and star_controls2
+    inlist_star2_binary = os.path.join(working_directory, 'binary', 'inlist2')
+
+    # Initialize some stuff
+    final_binary_controls = {}
+    final_binary_job = {}
+    final_star1_binary_job = {}
+    final_star2_binary_job = {}
+    final_star1_binary_controls = {}
+    final_star2_binary_controls = {}
+
+    if not mesa_inlists['single_star_grid']:
+        for k, v in mesa_inlists.items():
+            if v is not None:
+                if 'binary_controls' in k:
+                    section = '&binary_controls'
+                    controls_dict = utils.clean_inlist_file(v, section=section)
+                    for k1,v1 in controls_dict[section].items():
+                        # remove any hidden inlists extras since that is not how we want to do things
+                        if ('read_extra' in k1) or ('inlist' in k1): continue
+                        final_binary_controls[k1] = v1
+
+                elif 'binary_job' in k:
+                    section = '&binary_job'
+                    job_dict = utils.clean_inlist_file(v, section=section)
+                    for k1,v1 in job_dict[section].items():
+                        # remove any hidden inlists extras since that is not how we want to do things
+                        if ('read_extra' in k1) or ('inlist' in k1): continue
+                        final_binary_job[k1] = v1
+
+                elif 'star1_job' in k:
+                    section = '&star_job'
+                    star_job1_dict = utils.clean_inlist_file(v, section=section)
+                    for k1,v1 in star_job1_dict[section].items():
+                        # remove any hidden inlists extras since that is not how we want to do things
+                        if ('read_extra' in k1) or ('inlist' in k1): continue
+                        final_star1_binary_job[k1] = v1
+
+                elif 'star2_job' in k:
+                    section = '&star_job'
+                    star_job2_dict = utils.clean_inlist_file(v, section=section)
+                    for k1,v1 in star_job2_dict[section].items():
+                        # remove any hidden inlists extras since that is not how we want to do things
+                        if ('read_extra' in k1) or ('inlist' in k1): continue
+                        final_star2_binary_job[k1] = v1
+
+                elif 'star1_controls' in k:
+                    section = '&controls'
+                    star_control1_dict = utils.clean_inlist_file(v, section=section)
+                    for k1,v1 in star_control1_dict[section].items():
+                        # remove any hidden inlists extras since that is not how we want to do things
+                        if ('read_extra' in k1) or ('inlist' in k1): continue
+                        if 'num_x_ctrls' in k1:
+                            # This is a special default that the default value in the .defaults
+                            # file in MESA does not work because it is a placeholder
+                            final_star1_binary_controls[k1.replace('num_x_ctrls','1')] = v1
+                        else:
+                            final_star1_binary_controls[k1] = v1
+
+                elif 'star2_controls' in k:
+                    section = '&controls'
+                    star_control2_dict = utils.clean_inlist_file(v, section=section)
+                    for k1,v1 in star_control2_dict[section].items():
+                        # remove any hidden inlists extras since that is not how we want to do things
+                        if ('read_extra' in k1) or ('inlist' in k1): continue
+                        if 'num_x_ctrls' in k1:
+                            # This is a special default that the default value in the .defaults
+                            # file in MESA does not work because it is a placeholder
+                            final_star2_binary_controls[k1.replace('num_x_ctrls','1')] = v1
+                        else:
+                            final_star2_binary_controls[k1] = v1
+
+        # detemine which is any of the parameters are binary_controls or binary_job params
+        grid_params_binary_controls = [param for param in grid_parameters if param in final_binary_controls.keys()]
+        print("Grid parameters that effect binary_controls: {0}".format(','.join(grid_params_binary_controls)))
+        grid_params_binary_job = [param for param in grid_parameters if param in final_binary_job.keys()]
+        print("Grid parameters that effect binary_job: {0}".format(','.join(grid_params_binary_job)))
+
+        grid_params_star1_binary_controls = [param for param in grid_parameters if param in final_star1_binary_controls.keys()]
+        print("Grid parameters that effect star1_binary_controls: {0}".format(','.join(grid_params_star1_binary_controls)))
+        grid_params_star1_binary_job = [param for param in grid_parameters if param in final_star1_binary_job.keys()]
+        print("Grid parameters that effect star1_binary_job: {0}".format(','.join(grid_params_star1_binary_job)))
+
+        grid_params_star2_binary_controls = [param for param in grid_parameters if param in final_star2_binary_controls.keys()]
+        print("Grid parameters that effect star2_binary_controls: {0}".format(','.join(grid_params_star2_binary_controls)))
+        grid_params_star2_binary_job = [param for param in grid_parameters if param in final_star2_binary_job.keys()]
+        print("Grid parameters that effect star2_binary_job: {0}".format(','.join(grid_params_star2_binary_job)))
+
+        # depending on if there are any grid parameters that effect star1 or star2 we need to actually
+        # do a read star extras step
+        if grid_params_star1_binary_controls:
+            final_star1_binary_controls['read_extra_controls_inlist1'] = '.true.'
+            final_star1_binary_controls['extra_controls_inlist1_name'] = "'inlist_grid_star1_binary_controls'"
+
+        if grid_params_star2_binary_controls:
+            final_star2_binary_controls['read_extra_controls_inlist1'] = '.true.'
+            final_star2_binary_controls['extra_controls_inlist1_name'] = "'inlist_grid_star2_binary_controls'"
+
+        if grid_params_star1_binary_job:
+              final_star1_binary_job['read_extra_star_job_inlist1'] = '.true.'
+              final_star1_binary_job['extra_star_job_inlist1_name'] = "'inlist_grid_star1_binary_job'"
+
+        if grid_params_star2_binary_job:
+              final_star2_binary_job['read_extra_star_job_inlist1'] = '.true.'
+              final_star2_binary_job['extra_star_job_inlist1_name'] = "'inlist_grid_star2_binary_job'"
+
+        # We want to point the binary_job section to the star1 and star2 inlist we just made
+        final_binary_job['inlist_names(1)'] = "'{0}'".format(inlist_star1_binary)
+        final_binary_job['inlist_names(2)'] = "'{0}'".format(inlist_star2_binary)
+
+    ########################
+    ### STAR 1 FORMATION ###
+    ########################
+    # Check the number of inlists provided to the star1 formation sections
+    # of the inifile
+    star1_formation = {}
+
+    # if we have provided a pre-computed zams model, it does not matter if we wanted to form star1 and star2 for
+    # the binary step, we have supceded this with the zams_filename
+    if (mesa_inlists['zams_filename'] is not None) and (not mesa_inlists['single_star_grid']):
+        star1_formation_dictionary = {}
+    elif mesa_inlists['single_star_grid']:
+        star1_formation_dictionary = dict(filter(lambda elem: (('star1_job' in elem[0]) or ('star1_controls' in elem[0])) and elem[1] is not None, mesa_inlists.items()))
+    else:
+        # create dictionary of only these sections
+        star1_formation_dictionary = dict(filter(lambda elem: 'star1_formation' in elem[0] and elem[1] is not None, mesa_inlists.items()))
+
+    # See if the user even supplied inlists for doing star1_formation
+    if star1_formation_dictionary:
+        # initialize the string argument for star1 formation that will be passed to posydon-run-grid
+        inlist_star1_formation = ''
+        # check the number of inlists in each star1 formation parameter. We will take calculate the max number and treat that as
+        # the number of star1 formation steps desired before making the final star1 model that will be fed into the binary exectuable
+        number_of_star1_formation_steps = 1
+        for k, v in star1_formation_dictionary.items():
+            if type(v) == list:
+                number_of_star1_formation_steps = max(number_of_star1_formation_steps, len(v))
+
+        for step in range(number_of_star1_formation_steps):
+            star1_formation['step{0}'.format(step)] = {}
+            star1_formation['step{0}'.format(step)]['inlist_file'] = os.path.join(working_directory, 'star1', 'inlist_step{0}'.format(step))
+            for k, v in star1_formation_dictionary.items():
+                star1_formation['step{0}'.format(step)][k] = v[step] if type(v) == list else v
+
+        # Now we loop over each star1 formation step and construct the final star1 formation inlist for each step
+        for step, step_inlists in enumerate(star1_formation.values()):
+            # there is a new one of these final star1 formation inlists per step
+            final_star1_formation_controls = {}
+            final_star1_formation_job = {}
+            for k, v in step_inlists.items():
+                if ('star1_formation_controls' in k) or ('star1_controls' in k):
+                    section = '&controls'
+                    controls_dict = utils.clean_inlist_file(v, section=section)
+                    for k1,v1 in controls_dict[section].items():
+                        # remove any hidden inlists extras since that is not how we want to do things
+                        if ('read_extra' in k1) or ('inlist' in k1): continue
+                        if 'num_x_ctrls' in k1:
+                            # This is a special default that the default value in the .defaults
+                            # file in MESA does not work because it is a placeholder
+                            final_star1_formation_controls[k1.replace('num_x_ctrls','1')] = v1
+                        else:
+                            final_star1_formation_controls[k1] = v1
+
+                if ('star1_formation_job' in k) or ('star1_job' in k):
+                    section = '&star_job'
+                    controls_dict = utils.clean_inlist_file(v, section=section)
+                    for k1,v1 in controls_dict[section].items():
+                        # remove any hidden inlists extras since that is not how we want to do things
+                        if ('read_extra' in k1) or ('inlist' in k1): continue
+                        final_star1_formation_job[k1] = v1
+
+            # The user supplied a way to form star1 and we need to update dictionary of parameters and their values correctly
+            # We want to make sure that the binary inlists load up the properly saved models from star1 formation
+            final_star1_binary_job['create_pre_main_sequence_model'] = ".false."
+            final_star1_binary_job['load_saved_model'] = ".true."
+            final_star1_binary_job['saved_model_name'] = "'initial_star1_step{0}.mod'".format(step)
+            # if this is step0 then we simply overwrite the save_model_when_terminate and
+            # save_model_filename parts of the inlists. However, for all steps higher than
+            # step 0 we need to have that step load in the model from the step
+            # below the current step
+            if step == 0:
+                final_star1_formation_job['save_model_when_terminate'] = '.true.'
+                final_star1_formation_job['save_model_filename'] = "'initial_star1_step{0}.mod'".format(step)
+            else:
+                final_star1_formation_job['create_pre_main_sequence_model'] = ".false."
+                final_star1_formation_job['load_saved_model'] = ".true."
+                final_star1_formation_job['saved_model_name'] = "'initial_star1_step{0}.mod'".format(step-1)
+                final_star1_formation_job['save_model_when_terminate'] = '.true.'
+                final_star1_formation_job['save_model_filename'] = "'initial_star1_step{0}.mod'".format(step)
+
+            if (mesa_inlists['zams_filename'] is not None) and (mesa_inlists['single_star_grid']):
+                final_star1_formation_controls['zams_filename'] = "'{0}'".format(mesa_inlists['zams_filename'])
+            elif (mesa_inlists['zams_filename'] is None) and (mesa_inlists['single_star_grid']) and ('zams_filename' in final_star1_formation_controls.keys()):
+                final_star1_formation_controls.pop("zams_filename", None)
+
+            # write star1 formation step to file
+            with open(step_inlists['inlist_file'], 'wb') as f:
+                f.write(b'&controls\n\n')
+                for k,v in final_star1_formation_controls.items():
+                    f.write('\t{0} = {1}\n'.format(k,v).encode('utf-8'))
+
+                f.write(b'\n\n')
+
+                f.write(b"""
+        / ! end of star1_controls namelist
+
+        """)
+
+                f.write(b'&star_job\n\n')
+                for k,v in final_star1_formation_job.items():
+                    f.write('\t{0} = {1}\n'.format(k,v).encode('utf-8'))
+
+                f.write(b"""
+        / ! end of star1_job namelist
+
+        """)
+            # Construct star1 formation argument string to be passed to posydon-run-grid
+            inlist_star1_formation += ' {0}'.format(step_inlists['inlist_file'])
+    else:
+        inlist_star1_formation = None
+
+    ########################
+    ### STAR 2 FORMATION ###
+    ########################
+    # Check the number of inlists provided to the star2 formation sections
+    # of the inifile
+    star2_formation = {}
+
+    # if we have provided a pre-computed zams model, it does not matter if we wanted to form star1 and star2 for
+    # the binary step, we have supceded this with the zams_filename
+    if mesa_inlists['zams_filename'] is not None:
+        star2_formation_dictionary = {}
+    else:
+        # create dictionary of only these sections
+        star2_formation_dictionary = dict(filter(lambda elem: 'star2_formation' in elem[0] and elem[1] is not None, mesa_inlists.items()))
+
+    # See if the user even supplied inlists for doing star2_formation
+    if star2_formation_dictionary:
+        # initialize the string argument for star2 formation that will be passed to posydon-run-grid
+        inlist_star2_formation = ''
+        # check the number of inlists in each star2 formation parameter. We will take calculate the max number and treat that as
+        # the number of star2 formation steps desired before making the final star2 model that will be fed into the binary exectuable
+        number_of_star2_formation_steps = 1
+        for k, v in star2_formation_dictionary.items():
+            if type(v) == list:
+                number_of_star2_formation_steps = max(number_of_star2_formation_steps, len(v))
+
+        for step in range(number_of_star2_formation_steps):
+            star2_formation['step{0}'.format(step)] = {}
+            star2_formation['step{0}'.format(step)]['inlist_file'] = os.path.join(working_directory, 'star2', 'inlist_step{0}'.format(step))
+            for k, v in star2_formation_dictionary.items():
+                star2_formation['step{0}'.format(step)][k] = v[step] if type(v) == list else v
+
+        # Now we loop over each star2 formation step and construct the final star2 formation inlist for each step
+        for step, step_inlists in enumerate(star2_formation.values()):
+            final_star2_formation_controls = {}
+            final_star2_formation_job = {}
+            for k, v in step_inlists.items():
+                if 'star2_formation_controls' in k:
+                    section = '&controls'
+                    controls_dict = utils.clean_inlist_file(v, section=section)
+                    for k1,v1 in controls_dict[section].items():
+                        # remove any hidden inlists extras since that is not how we want to do things
+                        if ('read_extra' in k1) or ('inlist' in k1): continue
+                        if 'num_x_ctrls' in k1:
+                            # This is a special default that the default value in the .defaults
+                            # file in MESA does not work because it is a placeholder
+                            final_star2_formation_controls[k1.replace('num_x_ctrls','1')] = v1
+                        else:
+                            final_star2_formation_controls[k1] = v1
+
+                if 'star2_formation_job' in k:
+                    section = '&star_job'
+                    controls_dict = utils.clean_inlist_file(v, section=section)
+                    for k1,v1 in controls_dict[section].items():
+                        # remove any hidden inlists extras since that is not how we want to do things
+                        if ('read_extra' in k1) or ('inlist' in k1): continue
+                        final_star2_formation_job[k1] = v1
+
+            # then the user supplied a star2 formation and we need to update dictionary of parameters and their values correctly
+            # We want to make sure that the binary inlists load up the properly saved models from star2 formation
+            final_star2_binary_job['create_pre_main_sequence_model'] = ".false."
+            final_star2_binary_job['load_saved_model'] = ".true."
+            final_star2_binary_job['saved_model_name'] = "'initial_star2_step{0}.mod'".format(step)
+            # if this is step0 then we simply overwrite the save_model_when_terminate and
+            # save_model_filename parts of the inlists. However, for all steps higher than
+            # step 0 we need to have that step load in the model from the step
+            # below the current step
+            if step == 0:
+                final_star2_formation_job['save_model_when_terminate'] = '.true.'
+                final_star2_formation_job['save_model_filename'] = "'initial_star2_step{0}.mod'".format(step)
+            else:
+                final_star2_formation_job['create_pre_main_sequence_model'] = ".false."
+                final_star2_formation_job['load_saved_model'] = ".true."
+                final_star2_formation_job['saved_model_name'] = "'initial_star2_step{0}.mod'".format(step-1)
+                final_star2_formation_job['save_model_when_terminate'] = '.true.'
+                final_star2_formation_job['save_model_filename'] = "'initial_star2_step{0}.mod'".format(step)
+
+            with open(step_inlists['inlist_file'], 'wb') as f:
+                f.write(b'&controls\n\n')
+                for k,v in final_star2_formation_controls.items():
+                    f.write('\t{0} = {1}\n'.format(k,v).encode('utf-8'))
+
+                f.write(b'\n\n')
+
+                f.write(b"""
+        / ! end of star2_controls namelist
+
+        """)
+
+                f.write(b'&star_job\n\n')
+                for k,v in final_star2_formation_job.items():
+                    f.write('\t{0} = {1}\n'.format(k,v).encode('utf-8'))
+
+                f.write(b"""
+        / ! end of star2_job namelist
+
+        """)
+            # Construct star2 formation argument string to be passed to posydon-run-grid
+            inlist_star2_formation += ' {0}'.format(step_inlists['inlist_file'])
+    else:
+        inlist_star2_formation = None
+
+    ##########################################
+    ###### MESA BINARY OUTPUT CONTROLS #######
+    ##########################################
+    if mesa_inlists['final_profile_star1']:
+        final_star1_binary_job['write_profile_when_terminate'] = ".true."
+        final_star1_binary_job['filename_for_profile_when_terminate'] = "'final_profile_star1.data'"
+    else:
+        final_star1_binary_job['write_profile_when_terminate'] = ".false."
+
+    if mesa_inlists['final_profile_star2']:
+        final_star2_binary_job['write_profile_when_terminate'] = ".true."
+        final_star2_binary_job['filename_for_profile_when_terminate'] = "'final_profile_star2.data'"
+    else:
+        final_star2_binary_job['write_profile_when_terminate'] = ".false."
+
+    if mesa_inlists['final_model_star1']:
+        final_star1_binary_job['save_model_when_terminate'] = ".true."
+        final_star1_binary_job['save_model_filename'] = "'final_star1.mod'"
+    else:
+        final_star1_binary_job['save_model_when_terminate'] = ".false."
+
+    if mesa_inlists['final_model_star2']:
+        final_star2_binary_job['save_model_when_terminate'] = ".true."
+        final_star2_binary_job['save_model_filename'] = "'final_star2.mod'"
+    else:
+        final_star2_binary_job['save_model_when_terminate'] = ".false."
+
+    if mesa_inlists['history_star1']:
+        final_star1_binary_controls['do_history_file'] = ".true."
+    else:
+        final_star1_binary_controls['do_history_file'] = ".false."
+
+    if mesa_inlists['history_star2']:
+        final_star2_binary_controls['do_history_file'] = ".true."
+    else:
+        final_star2_binary_controls['do_history_file'] = ".false."
+
+    final_binary_controls['history_interval'] = mesa_inlists['history_interval']
+    final_star1_binary_controls['history_interval'] = mesa_inlists['history_interval']
+    final_star2_binary_controls['history_interval'] = mesa_inlists['history_interval']
+
+    if not mesa_inlists['binary_history']:
+        final_binary_controls['history_interval'] = "-1"
+
+    # update the controls for star1 star2 for the binary with the precomputed zams model
+    if mesa_inlists['zams_filename'] is not None:
+        final_star1_binary_controls['zams_filename'] = "'{0}'".format(mesa_inlists['zams_filename'])
+        final_star2_binary_controls['zams_filename'] = "'{0}'".format(mesa_inlists['zams_filename'])
+
+    ##########################################
+    ###### WRITE MESA BINARY INLISTS   #######
+    ##########################################
+    # now that we have all the parameters and their correct values
+    # we now write our own inlist_project, inlist1 and inlist2 for the binary
+    with open(inlist_binary_project, 'wb') as f:
+        f.write(b'&binary_controls\n\n')
+        for k,v in final_binary_controls.items():
+            f.write('\t{0} = {1}\n'.format(k,v).encode('utf-8'))
+
+        f.write(b'\n/ ! end of binary_controls namelist')
+
+        f.write(b'\n\n')
+
+        f.write(b'&binary_job\n\n')
+        for k,v in final_binary_job.items():
+            f.write('\t{0} = {1}\n'.format(k,v).encode('utf-8'))
+
+        f.write(b"""
+/ ! end of binary_job namelist
+                """)
+
+    with open(inlist_star1_binary, 'wb') as f:
+        f.write(b'&controls\n\n')
+        for k,v in final_star1_binary_controls.items():
+            f.write('\t{0} = {1}\n'.format(k,v).encode('utf-8'))
+
+        f.write(b'\n\n')
+
+        f.write(b"""
+/ ! end of star1_controls namelist
+
+""")
+
+        f.write(b'&star_job\n\n')
+        for k,v in final_star1_binary_job.items():
+            f.write('\t{0} = {1}\n'.format(k,v).encode('utf-8'))
+
+        f.write(b"""
+/ ! end of star1_job namelist
+
+""")
+
+    with open(inlist_star2_binary, 'wb') as f:
+        f.write(b'&controls\n\n')
+        for k,v in final_star2_binary_controls.items():
+            f.write('\t{0} = {1}\n'.format(k,v).encode('utf-8'))
+
+        f.write(b'\n\n')
+
+        f.write(b"""
+/ ! end of star2_controls namelist
+
+""")
+
+        f.write(b'&star_job\n\n')
+        for k,v in final_star2_binary_job.items():
+            f.write('\t{0} = {1}\n'.format(k,v).encode('utf-8'))
+
+        f.write(b"""
+/ ! end of star2_job namelist
+
+""")
+
+    return inlist_star1_formation, inlist_star2_formation, inlist_binary_project, inlist_star1_binary, inlist_star2_binary
+
+def make_executables(mesa_extras, working_directory=os.getcwd()):
+    """Pass mesa extra function and compile binary executable on the fly
+    """
+
+    # First, make individual star executables
+    star1_src_folder = os.path.join(working_directory, 'star1', 'src')
+    if os.path.exists(star1_src_folder):  shutil.rmtree(star1_src_folder)
+    os.makedirs(star1_src_folder)
+
+    star1_make_folder = os.path.join(working_directory, 'star1', 'make')
+    if os.path.exists(star1_make_folder):  shutil.rmtree(star1_make_folder)
+    os.makedirs(star1_make_folder)
+
+    star2_src_folder = os.path.join(working_directory, 'star2', 'src')
+    if os.path.exists(star2_src_folder):  shutil.rmtree(star2_src_folder)
+    os.makedirs(star2_src_folder)
+
+    star2_make_folder = os.path.join(working_directory, 'star2', 'make')
+    if os.path.exists(star2_make_folder):  shutil.rmtree(star2_make_folder)
+    os.makedirs(star2_make_folder)
+
+    # Now make the binary folder
+    binary_src_folder = os.path.join(working_directory, 'binary', 'src')
+    if os.path.exists(binary_src_folder):  shutil.rmtree(binary_src_folder)
+    os.makedirs(binary_src_folder)
+
+    binary_make_folder = os.path.join(working_directory, 'binary', 'make')
+    if os.path.exists(binary_make_folder):  shutil.rmtree(binary_make_folder)
+    os.makedirs(binary_make_folder)
+
+    with open('mk', "w") as f:
+        # first we need to cd into the make folder
+        for k, v in mesa_extras.items():
+            if v is not None:
+                if ('binary_extras' in k) or ('binary_run' in k):
+                    shutil.copy(v, binary_src_folder)
+                elif ('star_run' in k):
+                    shutil.copy(v, star1_src_folder)
+                    shutil.copy(v, star2_src_folder)
+                elif ('star1_extras' in k):
+                    shutil.copy(v, star1_src_folder)
+                elif ('star2_extras' in k):
+                    shutil.copy(v, star2_src_folder)
+                elif 'makefile_binary' in k:
+                    shutil.copy(v, os.path.join(binary_make_folder, k))
+                    f.write('cd {0}\n'.format(binary_make_folder))
+                    f.write('make -f {0}\n'.format(k))
+                elif 'makefile_star' in k:
+                    shutil.copy(v, os.path.join(star1_make_folder, k))
+                    f.write('cd {0}\n'.format(star1_make_folder))
+                    f.write('make -f {0}\n'.format(k))
+                    shutil.copy(v, os.path.join(star2_make_folder, k))
+                    f.write('cd {0}\n'.format(star2_make_folder))
+                    f.write('make -f {0}\n'.format(k))
+                elif 'mesa_dir' == k:
+                    continue
+                else:
+                    shutil.copy(v, working_directory)
+
+    os.system("chmod 755 mk")
+    os.system('./mk')
+    return os.path.join(working_directory,'binary','binary'), \
+            os.path.join(working_directory,'star1','star'), \
+            os.path.join(working_directory,'star2','star'), \
+
+def construct_command_line(number_of_mpi_processes, path_to_grid,
+                           binary_exe, star1_exe, star2_exe,
+                           inlist_binary_project, inlist_star1_binary, inlist_star2_binary,
+                           inlist_star1_formation, inlist_star2_formation,
+                           star_history_columns, binary_history_columns, profile_columns,
+                           run_directory, grid_type, path_to_run_grid_exec,
+                           psycris_inifile=None):
+    """Based on the inifile construct the command line call to posydon-run-grid
+    """
+    if grid_type == "fixed":
+        command_line = 'python {15} --mesa-grid {1} --mesa-binary-executable {2} '
+    elif grid_type == "dynamic":
+        command_line = 'mpirun --bind-to none -np {0} python -m mpi4py {15} --mesa-grid {1} --mesa-binary-executable {2} '
+    else:
+        raise ValueError("grid_type can either be fixed or dynamic not anything else")
+    command_line += '--mesa-star1-executable {3} --mesa-star2-executable {4} --mesa-binary-inlist-project {5} '
+    command_line += '--mesa-binary-inlist1 {6} --mesa-binary-inlist2 {7} --mesa-star1-inlist-project {8} '
+    command_line += '--mesa-star2-inlist-project {9} --mesa-star-history-columns {10} '
+    command_line += '--mesa-binary-history-columns {11} --mesa-profile-columns {12} '
+    command_line += '--output-directory {13} --grid-type {14} '
+    command_line += '--psycris-inifile {16}'
+    command_line = command_line.format(number_of_mpi_processes,
+                                       path_to_grid,
+                                       binary_exe,
+                                       star1_exe,
+                                       star2_exe,
+                                       inlist_binary_project,
+                                       inlist_star1_binary,
+                                       inlist_star2_binary,
+                                       inlist_star1_formation,
+                                       inlist_star2_formation,
+                                       star_history_columns,
+                                       binary_history_columns,
+                                       profile_columns,
+                                       run_directory,
+                                       grid_type,
+                                       path_to_run_grid_exec,
+                                       psycris_inifile)
+    return command_line
+
+###############################################################################
+# BEGIN MAIN FUNCTION
+###############################################################################
+if __name__ == '__main__':
+
+    # READ COMMANDLINE ARGUMENTS
+    ###########################################################################
+    args = parse_commandline()
+
+    try:
+        os.environ['MESA_DIR']
+    except:
+        raise ValueError("MESA_DIR must be defined in your environment "
+                          "before you can run a grid os MESA runs")
+
+    # Determine location of executables
+    proc = subprocess.Popen(['which', 'posydon-run-grid'],
+                                 stdin = subprocess.PIPE,
+                                 stdout = subprocess.PIPE,
+                                 stderr = subprocess.PIPE
+                             )
+    (path_to_run_grid_exec, err) = proc.communicate()
+    if not path_to_run_grid_exec:
+        raise ValueError('Cannot locate posydon-run-grid executable in your path')
+    else:
+        path_to_run_grid_exec = path_to_run_grid_exec.decode('utf-8').strip('\n')
+
+    run_parameters, slurm, mesa_inlists, mesa_extras = configfile.parse_inifile(args.inifile)
+
+    if 'scenario' not in mesa_inlists.keys():
+        mesa_inlists['scenario'] = None
+
+    if ((not os.path.isfile(run_parameters['grid'])) and (not os.path.isdir(run_parameters['grid']))):
+        raise ValueError("Supplied grid does not exist, please check your path and try again")
+
+    if ('psycris_inifile' not in run_parameters.keys()) and (args.grid_type == 'dynamic'):
+        raise ValueError("Please add psycris inifile to the [run_parameters] section of the inifile.")
+
+    if mesa_inlists['scenario'] is not None:
+        find_inlist_from_scenario(source=mesa_inlists['scenario'][0],
+                                  gitcommit=mesa_inlists['scenario'][1],
+                                  system_type=mesa_inlists['scenario'][2])
+    # read grid
+    if '.csv' in run_parameters['grid']:
+        grid_df = pandas.read_csv(run_parameters['grid'])
+        fixgrid_file_name = run_parameters['grid']
+    elif '.h5' in run_parameters['grid']:
+        psy_grid = PSyGrid()
+        psy_grid.load(run_parameters['grid'])
+        grid_df = psy_grid.get_pandas_initial_final()
+        psy_grid.close()
+        fixgrid_file_name = run_parameters['grid']
+    elif os.path.isdir(run_parameters['grid']):
+        mygrid = PSyGrid().create(run_parameters['grid'], "./fixed_grid_results.h5", slim=True)
+        psy_grid = PSyGrid()
+        psy_grid.load("./fixed_grid_results.h5")
+        grid_df = psy_grid.get_pandas_initial_final()
+        psy_grid.close()
+        fixgrid_file_name = os.path.join(os.getcwd(), "fixed_grid_results.h5")
+    else:
+        raise ValueError('Grid format not recognized, please feed in an acceptable format: csv')
+
+    # validate mesa_extras dictionary
+    # check if user has supplied multiple run_star run_binary extras files and enforce mesa, then posydon, then user order
+    extras_files_types = sorted(set([k.split('_')[0] for k in mesa_extras.keys() if ('binary_extras' in k)]))
+    print("WE ARE USING THE EXTRA FILE FROM TYPE {0}".format(extras_files_types[-1]))
+    for k in mesa_extras.keys():
+        if ('binary_extras' in k) and (extras_files_types[-1] not in k):
+            print("Section mesa_extras value {0} is being set to None".format(k))
+            mesa_extras[k] = None
+
+    binary_exe, star1_exe, star2_exe = make_executables(mesa_extras=mesa_extras,
+                                                        working_directory=args.run_directory)
+
+    if args.grid_type == "dynamic":
+        dynamic_grid_params = parse_inifile(run_parameters["psycris_inifile"])
+        mesa_params_to_run_grid_over = dynamic_grid_params["posydon_dynamic_sampling_kwargs"]["mesa_column_names"]
+        inlist_star1_formation, inlist_star2_formation, inlist_binary_project, inlist_star1_binary, \
+            inlist_star2_binary = construct_static_inlist(mesa_inlists,
+                                                          grid_parameters=mesa_params_to_run_grid_over,
+                                                          working_directory=args.run_directory)
+    else:
+        inlist_star1_formation, inlist_star2_formation, inlist_binary_project, inlist_star1_binary, \
+            inlist_star2_binary = construct_static_inlist(mesa_inlists,
+                                                          grid_parameters=grid_df.columns,
+                                                          working_directory=args.run_directory)
+
+    # now we can write the mpi command line
+    if slurm['job_array']:
+        command_line = construct_command_line(1,
+                                              run_parameters['grid'],
+                                              binary_exe,
+                                              star1_exe,
+                                              star2_exe,
+                                              inlist_binary_project,
+                                              inlist_star1_binary,
+                                              inlist_star2_binary,
+                                              inlist_star1_formation,
+                                              inlist_star2_formation,
+                                              mesa_inlists['star_history_columns'],
+                                              mesa_inlists['binary_history_columns'],
+                                              mesa_inlists['profile_columns'],
+                                              args.run_directory,
+                                              'fixed',
+                                              path_to_run_grid_exec)
+        command_line += ' --grid-point-index $SLURM_ARRAY_TASK_ID'
+    else:
+        command_line = construct_command_line(slurm['number_of_mpi_tasks']*slurm['number_of_nodes'],
+                                              fixgrid_file_name,
+                                              binary_exe,
+                                              star1_exe,
+                                              star2_exe,
+                                              inlist_binary_project,
+                                              inlist_star1_binary,
+                                              inlist_star2_binary,
+                                              inlist_star1_formation,
+                                              inlist_star2_formation,
+                                              mesa_inlists['star_history_columns'],
+                                              mesa_inlists['binary_history_columns'],
+                                              mesa_inlists['profile_columns'],
+                                              args.run_directory,
+                                              args.grid_type,
+                                              path_to_run_grid_exec,
+                                              psycris_inifile = run_parameters["psycris_inifile"])
+
+    # now we need to know how this person plans to run the above created
+    # command. As a shell script? As a SLURM submission? In some other way?
+    if args.submission_type == 'shell':
+        with open('grid_command.sh', 'w') as f:
+            f.write('#!/bin/bash\n\n')
+            f.write('export OMP_NUM_THREADS={0}\n\n'.format(slurm['number_of_cpus_per_task']))
+
+            f.write('export MESASDK_ROOT={0}\n'.format(os.environ['MESASDK_ROOT']))
+            f.write('source $MESASDK_ROOT/bin/mesasdk_init.sh\n')
+            f.write('export MESA_DIR={0}\n\n\n'.format(os.environ['MESA_DIR']))
+            f.write(command_line)
+
+    elif args.submission_type == 'slurm':
+        # if slurm will we submit as job array or MPI
+        if slurm['job_array']:
+            if '.csv' in run_parameters['grid']:
+                grid = pandas.read_csv(run_parameters['grid'])
+            else:
+                raise ValueError('Grid format not recognized, please feed in an acceptable format: csv')
+            with open('slurm_job_array_grid_submit.sh', 'w') as f:
+                f.write('#!/bin/bash\n')
+
+                f.write('#SBATCH --account={0}\n'.format(slurm['account']))
+                f.write('#SBATCH --partition={0}\n'.format(slurm['partition']))
+                f.write('#SBATCH -N 1\n')
+                f.write('#SBATCH --array=0-{0}\n'.format(len(grid)-1))
+                f.write('#SBATCH --cpus-per-task {0}\n'.format(slurm['number_of_cpus_per_task']))
+                f.write('#SBATCH --ntasks-per-node 1\n')
+                f.write('#SBATCH --time={0}\n'.format(slurm['walltime']))
+                f.write('#SBATCH --job-name=\"mesa_grid_\${SLURM_ARRAY_TASK_ID}\"\n')
+                f.write('#SBATCH --output=mesa_grid.%A_%a.out\n')
+                f.write('#SBATCH --mail-type=ALL\n')
+                f.write('#SBATCH --mail-user={0}\n'.format(slurm['email']))
+                f.write('#SBATCH --mem-per-cpu=4G\n\n')
+
+                f.write('export OMP_NUM_THREADS={0}\n\n'.format(slurm['number_of_cpus_per_task']))
+
+                f.write('export MESASDK_ROOT={0}\n'.format(os.environ['MESASDK_ROOT']))
+                f.write('source $MESASDK_ROOT/bin/mesasdk_init.sh\n')
+                f.write('export MESA_DIR={0}\n\n\n'.format(os.environ['MESA_DIR']))
+                f.write(command_line)
+        else:
+            with open('slurm_mpi_grid_submit.sh', 'w') as f:
+                f.write('#!/bin/bash\n')
+
+                f.write('#SBATCH --account={0}\n'.format(slurm['account']))
+                f.write('#SBATCH --partition={0}\n'.format(slurm['partition']))
+                f.write('#SBATCH -N {0}\n'.format(slurm['number_of_nodes']))
+                f.write('#SBATCH --cpus-per-task {0}\n'.format(slurm['number_of_cpus_per_task']))
+                f.write('#SBATCH --ntasks-per-node {0}\n'.format(slurm['number_of_mpi_tasks']))
+                f.write('#SBATCH --time={0}\n'.format(slurm['walltime']))
+                f.write('#SBATCH --output=\"mesa_grid.out\"\n')
+                f.write('#SBATCH --mail-type=ALL\n')
+                f.write('#SBATCH --mail-user={0}\n'.format(slurm['email']))
+                f.write('#SBATCH --mem-per-cpu=4G\n\n')
+
+                f.write('export OMP_NUM_THREADS={0}\n\n'.format(slurm['number_of_cpus_per_task']))
+
+                f.write('export MESASDK_ROOT={0}\n'.format(os.environ['MESASDK_ROOT']))
+                f.write('source $MESASDK_ROOT/bin/mesasdk_init.sh\n')
+                f.write('export MESA_DIR={0}\n\n\n'.format(os.environ['MESA_DIR']))
+                f.write(command_line)

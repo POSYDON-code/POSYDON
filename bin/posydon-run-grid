@@ -1,0 +1,831 @@
+##############################################################################
+#  IMPORT ALL NECESSARY PYTHON PACKAGES
+##############################################################################
+import warnings
+import argparse
+import os
+import shutil
+import sys
+import random
+import string
+import itertools
+import stat
+
+import numpy as np
+import pandas
+
+from posydon.utils import gridutils as utils
+from posydon.grids.psygrid import PSyGrid
+from posydon.active_learning.psy_cris.utils import parse_inifile
+from collections import ChainMap
+try:
+    from mpi4py import MPI
+    MPI_IMPORTED = True
+except ImportError:
+    MPI_IMPORTED = False
+
+###############################################################################
+# DEFINE COMMANDLINE ARGUMENTS
+###############################################################################
+def parse_commandline():
+    """Parse the arguments given on the command-line.
+    """
+    parser = argparse.ArgumentParser(description=__doc__)
+    grid_arguments = parser.add_argument_group('Arguments related to the running of the grid, including '
+                                               'specifying the grid values and type of grid to be run, '
+                                               'where the MESA simulation will be run, '
+                                               'and where the output of the simulation should go')
+    grid_arguments.add_argument("--mesa-grid",
+                        help="Grid of mesa points with values already known,"
+                        "or new grid values to run MESA on",
+                        required=True)
+    grid_arguments.add_argument("--grid-type",
+                        help="Either you are supplying a grid "
+                        "of points to run MESA on (fixed) or you are supplying a pre computed MESA "
+                        "grid and want to sampling new points to run MESA on (dynamic).",
+                        required=True)
+    grid_arguments.add_argument("--output-directory",
+                        help="This is where the result of the MESA simulatio  will go",
+                        required=True)
+    grid_arguments.add_argument("--temporary-directory",
+                        help="This is where your MESA simulations will run", default=os.getcwd())
+
+    fixed_grid_arguments = parser.add_argument_group('Arguments specific to running a fixed grid')
+    fixed_grid_arguments.add_argument("--grid-point-index",
+                                      help="Override grid point slection by "
+                                      "explictly saying which grid point you want."
+                                      "This must be run with mpirun -np 1!!",
+                                      type=int)
+
+    dynamic_grid_arguments = parser.add_argument_group('Arguments specific to running a dynamic grid')
+    dynamic_grid_arguments.add_argument("--psycris-inifile",
+                                        help="Path to the psycris inifile. ")
+    dynamic_grid_arguments.add_argument("--Niter",
+                                        help="Number of iterations of binaries "
+                                        "to try, will check ever Nstep for convergence",
+                                        type=int, default=200)
+
+    mesa_executables = parser.add_argument_group('absolute path to MESA executables to be used in grid')
+    mesa_executables.add_argument("--mesa-binary-executable",
+                        help="MESA binary executable to be used for this grid",
+                        required=True)
+    mesa_executables.add_argument("--mesa-star1-executable",
+                        help="optionally use star executable to form star1",
+                       )
+    mesa_executables.add_argument("--mesa-star2-executable",
+                        help="optionally use star executable to form star2",
+                       )
+
+    inlists_for_running_binary = parser.add_argument_group('absolute paths to static inlists related to the call of the binary executable')
+    inlists_for_running_binary.add_argument("--mesa-binary-inlist-project",
+                        help="This is the shared inlist_project that will be used by "
+                        "every MESA run for this grid. inlist_project has both binary_job and binary_controls in it",
+                        required=True)
+    inlists_for_running_binary.add_argument("--mesa-binary-inlist1",
+                        help="This is the shared inlist1 that will be used by "
+                        "every MESA run for this grid. inlist1 has both star_job and controls in it that determine "
+                        "the properties of the first object",
+                        required=True)
+    inlists_for_running_binary.add_argument("--mesa-binary-inlist2",
+                        help="This is the shared inlist2 that will be used by "
+                        "every MESA run for this grid. inlist2 has both star_job and controls in it that determine "
+                        "the properties of the second object",
+                        required=True)
+
+    inlists_for_running_star1 = parser.add_argument_group('absolute paths to static inlists related to the formation of star1')
+    inlists_for_running_star1.add_argument("--mesa-star1-inlist-project",
+                        help="optionally use specific inlist(s) to form star1",
+                       nargs='+')
+    inlists_for_running_star2 = parser.add_argument_group('absolute paths to static inlists related to the formation of star2')
+
+    inlists_for_running_star2.add_argument("--mesa-star2-inlist-project",
+                        help="optionally use specific inlist(s) to form star2",
+                       nargs='+')
+
+    mesa_columns = parser.add_argument_group('absolute paths to list of columns desired from each MESA simulation on this grid')
+    mesa_columns.add_argument("--mesa-star-history-columns",
+                        help="This is the path to the star_history_columns.list file you want to use for this grid",
+                        required=True)
+    mesa_columns.add_argument("--mesa-binary-history-columns",
+                        help="This is the path to the binary_history_columns.list file you want to use for this grid",
+                        required=True)
+    mesa_columns.add_argument("--mesa-profile-columns",
+                        help="This is the path to the profile_columns.list file you want to use for this grid",
+                        required=True)
+
+    parser.add_argument("--verbose", action="store_true", default=False,
+                        help="Run in Verbose Mode")
+
+    args = parser.parse_args()
+
+    if args.grid_type not in ['fixed', 'dynamic']:
+        raise parser.error("--run-type must be either grid or sample")
+
+    # if we are running a dynamic grid then these arguments are required otherwise
+    # they are not
+    if args.grid_type == 'dynamic':
+        if (args.psycris_inifile is None):
+            raise parser.error("You must supply a psycris inifile when running a dynamic grid")
+
+
+    return args
+
+def id_generator(size=10,
+                 chars=(string.ascii_uppercase +
+                        string.digits +
+                        string.ascii_lowercase)):
+    """Obtain omicron triggers run gravityspy on
+
+    Parameters:
+
+        x (str): the item you would like a random id to be generated for
+    Returns:
+    """
+    return ''.join(random.SystemRandom().choice(chars) for _ in range(size))
+
+def extract_mesa_results(final_dir):
+    """Based on the structure of the results folder extract the final state of the simulation
+    """
+    try:
+        PSyGrid().create(final_dir, "./tmp.hdf5", fmt="posydon_single", overwrite=True)
+        psg = PSyGrid()
+        psg.load("tmp.hdf5")
+        df = psg.get_pandas_initial_final()
+    except Exception:
+        df = pandas.DataFrame()
+
+    return df
+
+def create_working_directory(grid_param_dict, args):
+    """Function to build the directory name and make inlists for a given grid point
+
+    Params:
+        grid_param_dict:
+            Dictionary with keys being the parameter names of the grid
+            and values the actual values for those parameters for this grid point
+        args:
+            The arguments passed to posydon-run-grid
+    """
+    ############# set directories
+    variable_names_to_log = ['initial_z', 'initial_period_in_days']
+    # first name directories which we do not need to log
+    directory_name_from_dict_no_log =  '_'.join(['{0}_{1:.4f}'.format(k, v) for k, v in grid_param_dict.items() if k not in variable_names_to_log])
+    directory_name_from_dict_log = '_'.join(['{0}_{1:.4e}'.format(k, v) for k, v in grid_param_dict.items() if k in variable_names_to_log])
+
+    # combine and add on what grid number we are running if exists
+    directory_name_from_dict = '{0}_{1}'.format(directory_name_from_dict_no_log, directory_name_from_dict_log)
+    if args.grid_point_index is not None:
+        directory_name_from_dict = '{0}_{1}_{2}'.format(directory_name_from_dict, 'grid_index', args.grid_point_index)
+
+    if args.grid_type == 'dynamic':
+        directory_name_from_dict = '{0}_{1}'.format(directory_name_from_dict, id_generator())
+
+    temp_dir = args.temporary_directory #all sims will be created inside this directory (e.g. /scratch/pablo_nu/sim1/)
+
+    work_dir = os.path.join(temp_dir, directory_name_from_dict)
+
+    final_dir = os.path.join(args.output_directory, directory_name_from_dict)
+
+    ############# check for existance of precomputed model
+    if os.path.isdir(work_dir):
+        print ("folder "+ work_dir +" exists, removing and rerunning")
+        sys.stdout.flush()
+        shutil.rmtree(work_dir)
+
+    ############# create work directory and change into it
+    os.makedirs(work_dir)
+    shutil.copy(args.mesa_star_history_columns, work_dir)
+    shutil.copy(args.mesa_binary_history_columns, work_dir)
+    shutil.copy(args.mesa_profile_columns, work_dir)
+
+    return work_dir, final_dir
+
+def create_binary_inlists(binary_controls, binary_job,
+                          star1_binary_controls, star1_binary_job,
+                          star2_binary_controls, star2_binary_job,
+                          work_dir, binary_inlist_project):
+    """Create the inlist and inlist grid points needed to run this part of grid
+    """
+
+    binary_controls_str = """
+&binary_controls
+
+      read_extra_binary_controls_inlist1 = .true.
+      extra_binary_controls_inlist1_name = '{0}'
+      read_extra_binary_controls_inlist2 = .true.
+      extra_binary_controls_inlist2_name = 'inlist_grid_points'
+
+/ ! end of controls namelist
+                        """.format(binary_inlist_project)
+
+    binary_job_str = """
+&binary_job
+
+      read_extra_binary_job_inlist1 = .true.
+      extra_binary_job_inlist1_name = '{0}'
+
+/ ! end of job namelist
+                        """.format(binary_inlist_project)
+
+    with open(os.path.join(work_dir, 'inlist'), 'w') as f:
+        f.write(binary_controls_str)
+        f.write('\n')
+        f.write(binary_job_str)
+
+    with open(os.path.join(work_dir, 'inlist_grid_points'), 'w') as inlist_grid_points:
+        if binary_controls:
+            # Write the binary controls for this grid point
+            inlist_grid_points.write("&binary_controls\n")
+            for k, v in binary_controls.items():
+                if (type(v) == float) and (not v.is_integer()):
+                    inlist_grid_points.write("\t{0} = {1}d0\n".format(k, v))
+                elif (type(v) == float) and (v.is_integer()):
+                    inlist_grid_points.write("\t{0} = {1}\n".format(k, int(v)))
+                else:
+                    inlist_grid_points.write("{0} = {1}\n".format(k, v))
+            inlist_grid_points.write("/ ! end of binary_controls namelist\n")
+
+        if binary_job:
+            # Write the binary job for this grid point
+            inlist_grid_points.write("&binary_job\n")
+            for k, v in binary_job.items():
+                if (type(v) == float) and (not v.is_integer()):
+                    inlist_grid_points.write("\t{0} = {1}d0\n".format(k, v))
+                elif (type(v) == float) and (v.is_integer()):
+                    inlist_grid_points.write("\t{0} = {1}\n".format(k, int(v)))
+                else:
+                    inlist_grid_points.write("{0} = {1}\n".format(k, v))
+            inlist_grid_points.write("/ ! end of binary_job namelist\n")
+
+    if star1_binary_controls:
+        with open(os.path.join(work_dir, 'inlist_grid_star1_binary_controls'), 'w') as inlist_grid_points:
+            # Write the star1 controls for this grid point
+            inlist_grid_points.write("&controls\n")
+            for k, v in star1_binary_controls.items():
+                if (type(v) == float) and (not v.is_integer()):
+                    inlist_grid_points.write("\t{0} = {1}d0\n".format(k, v))
+                elif (type(v) == float) and (v.is_integer()):
+                    inlist_grid_points.write("\t{0} = {1}\n".format(k, int(v)))
+                else:
+                    inlist_grid_points.write("{0} = {1}\n".format(k, v))
+            inlist_grid_points.write("/ ! end of controls namelist\n")
+
+    if star2_binary_controls:
+        with open(os.path.join(work_dir, 'inlist_grid_star2_binary_controls'), 'w') as inlist_grid_points:
+            # Write the star2 controls for this grid point
+            inlist_grid_points.write("&controls\n")
+            for k, v in star2_binary_controls.items():
+                if (type(v) == float) and (not v.is_integer()):
+                    inlist_grid_points.write("\t{0} = {1}d0\n".format(k, v))
+                elif (type(v) == float) and (v.is_integer()):
+                    inlist_grid_points.write("\t{0} = {1}\n".format(k, int(v)))
+                else:
+                    inlist_grid_points.write("{0} = {1}\n".format(k, v))
+            inlist_grid_points.write("/ ! end of controls namelist\n")
+
+    if star1_binary_job:
+        with open(os.path.join(work_dir, 'inlist_grid_star1_binary_job'), 'w') as inlist_grid_points:
+            # Write the star1 job for this grid point
+            inlist_grid_points.write("&star_job\n")
+            for k, v in star1_binary_job.items():
+                if (type(v) == float) and (not v.is_integer()):
+                    inlist_grid_points.write("\t{0} = {1}d0\n".format(k, v))
+                elif (type(v) == float) and (v.is_integer()):
+                    inlist_grid_points.write("\t{0} = {1}\n".format(k, int(v)))
+                else:
+                    inlist_grid_points.write("{0} = {1}\n".format(k, v))
+            inlist_grid_points.write("/ ! end of star_job namelist\n")
+
+    if star2_binary_job:
+        with open(os.path.join(work_dir, 'inlist_grid_star2_binary_job'), 'w') as inlist_grid_points:
+            # Write the star2 job for this grid point
+            inlist_grid_points.write("&star_job\n")
+            for k, v in star2_binary_job.items():
+                if (type(v) == float) and (not v.is_integer()):
+                    inlist_grid_points.write("\t{0} = {1}d0\n".format(k, v))
+                elif (type(v) == float) and (v.is_integer()):
+                    inlist_grid_points.write("\t{0} = {1}\n".format(k, int(v)))
+                else:
+                    inlist_grid_points.write("{0} = {1}\n".format(k, v))
+            inlist_grid_points.write("/ ! end of star_job namelist\n")
+
+    return
+
+def create_star_formation(mass, work_dir, star_inlist_project, initial_z=None):
+    """Create the inlist and inlist grid points needed to run this part of grid
+    """
+
+    binary_controls_str = """
+&controls
+
+      read_extra_controls_inlist1 = .true.
+      extra_controls_inlist1_name = '{0}'
+      read_extra_controls_inlist2 = .true.
+      extra_controls_inlist2_name = 'inlist_grid_points'
+
+/ ! end of controls namelist
+                        """.format(star_inlist_project)
+
+    binary_job_str = """
+&star_job
+
+      read_extra_star_job_inlist1 = .true.
+      extra_star_job_inlist1_name = '{0}'
+
+/ ! end of job namelist
+                        """.format(star_inlist_project)
+
+    with open(os.path.join(work_dir, 'inlist'), 'w') as f:
+        f.write(binary_controls_str)
+        f.write('\n')
+        f.write(binary_job_str)
+
+    with open(os.path.join(work_dir, 'inlist_grid_points'), 'w') as inlist_grid_points:
+        inlist_grid_points.write("&controls\n")
+        inlist_grid_points.write("initial_mass = {0}d0\n".format(mass))
+        if initial_z is not None:
+            inlist_grid_points.write("initial_z = {0}d0\n".format(initial_z))
+        inlist_grid_points.write("/ ! end of binary_controls namelist\n")
+        inlist_grid_points.close()
+
+    return
+
+def run_mesa(mesa_executable, work_dir, final_dir, **kwargs):
+    """Provides minor utility for actually spawning the mesa job for each grid
+
+        mesa_executable:
+            Path to the executable you are running
+        work_dir:
+            Working directory (i.e. where the mesa exectuable should run)
+        final_dir:
+            When completed where would you like the output to go
+    """
+    outfile_name = kwargs.pop('outfile_name', 'out.txt')
+    os.chdir(work_dir)
+    os.system("{0} &> {1}".format(mesa_executable, os.path.join(work_dir, outfile_name)))
+
+    if os.path.exists(os.path.join(work_dir, 'LOGS')):
+        os.chmod(os.path.join(work_dir, 'LOGS'), stat.S_IRWXU  | stat.S_IRGRP | stat.S_IXGRP | stat.S_IROTH | stat.S_IXOTH )
+        os.system("rm LOGS/profile*")
+    if os.path.exists(os.path.join(work_dir, 'LOGS1')):
+        os.chmod(os.path.join(work_dir, 'LOGS1'), stat.S_IRWXU  | stat.S_IRGRP | stat.S_IXGRP | stat.S_IROTH | stat.S_IXOTH )
+        os.system("rm LOGS1/profile*")
+    if os.path.exists(os.path.join(work_dir, 'LOGS2')):
+        os.chmod(os.path.join(work_dir, 'LOGS2'), stat.S_IRWXU  | stat.S_IRGRP | stat.S_IXGRP | stat.S_IROTH | stat.S_IXOTH )
+        os.system("rm LOGS2/profile*")
+    if os.path.exists(os.path.join(work_dir, '.mesa_temp_cache')): os.system("rm -rf .mesa_temp_cache")
+    os.system("rm -rf photos*")
+
+    if not work_dir == final_dir:
+        if os.path.isdir(final_dir):
+            print ("folder "+ final_dir +" exists, replacing with new data")
+            sys.stdout.flush()
+            shutil.rmtree(final_dir)
+
+        shutil.move(work_dir, final_dir)
+
+    os.chdir(final_dir)
+    print("Done")
+
+    return
+
+def get_next_grid_point(psycris_inifile_path, grid, n_new_points, **kwargs):
+    """Sample a new grid point
+
+    Parameters
+    ----------
+    psycris_inifile_path : str
+        Path to psycris inifile
+    grid : pandas DataFrame
+        DataFrame of initial and final values of training data
+    n_new_points : int
+        Number of new points requested from the algorithm
+
+    Returns
+    -------
+    query_points : array
+        Initial conditions of new MESA run to label.
+    pred_classess : array
+        Predicted class of query point.
+    """
+    from posydon.grids.psygrid import PSyGrid
+    from posydon.active_learning.psy_cris.utils import get_new_query_points, parse_inifile
+    from posydon.interpolation.data_scaling import DataScaler
+
+    normed_grid = grid.copy()
+    mesa_kwargs = parse_inifile(psycris_inifile_path)
+
+    input_cols = mesa_kwargs["TableData_kwargs"]["input_cols"]
+    output_cols = mesa_kwargs["TableData_kwargs"]["output_cols"]
+    in_scaling = mesa_kwargs["posydon_dynamic_sampling_kwargs"]["in_scaling"]
+    out_scaling = mesa_kwargs["posydon_dynamic_sampling_kwargs"]["out_scaling"]
+    # Check if sampling input and output columns match data from psygrid
+    if not all([name in grid.columns for name in input_cols]):
+        raise ValueError("Bad input columns given: {0},\nMust be in: {1}".format(input_cols, grid.columns) )
+    if not all([name in grid.columns for name in output_cols]):
+        raise ValueError("Bad output columns given: {0}\nMust be in: {1}".format(output_cols, grid.columns) )
+    # default scaling is from [-1,1]
+    # scale input data
+    input_scalers = []
+    for i, input_col_name in enumerate(input_cols):
+        ds = DataScaler()
+        col_data = ds.fit_and_transform( grid[input_col_name].values, method=in_scaling[i] )
+        normed_grid[input_col_name] = col_data
+        input_scalers.append(ds)
+    # scale output data
+    output_scalers = []
+    for i, output_col_name in enumerate(output_cols):
+        if output_col_name==mesa_kwargs["TableData_kwargs"]["class_col_name"]:
+            continue
+        ds = DataScaler()
+        col_data = ds.fit_and_transform( grid[output_col_name].values, method=out_scaling[i] )
+        normed_grid[output_col_name] = col_data
+        output_scalers.append(ds)
+
+    # protect overwriting nested dicts
+    holder = mesa_kwargs['TableData_kwargs'].copy()
+    holder["my_DataFrame"] = normed_grid
+    mesa_kwargs['TableData_kwargs'] = holder
+
+    normed_query_points, pred_classess = get_new_query_points(N_new_points=n_new_points, **mesa_kwargs)
+
+    # inv transform the query points from sapling space for MESA variables
+    query_points = np.empty(normed_query_points.shape, dtype=float)
+    for n in range( len(input_scalers) ):
+       query_points[:,n] = input_scalers[n].inv_transform(normed_query_points[:,n])
+
+    return query_points, pred_classess
+
+
+def convert_input_cols_to_mesa_cols(grid_df):
+    if 'initial_period_days' in grid_df.columns:
+        grid_df['initial_period_in_days'] = grid_df['initial_period_days']
+
+    if 'log_p' in grid_df.columns:
+        grid_df['initial_period_in_days'] = np.power(10, grid_df['log_p'])
+
+    if 'initial_star_1_mass' in grid_df.columns:
+        grid_df['m1'] = grid_df['initial_star_1_mass']
+
+    if 'initial_star_2_mass' in grid_df.columns:
+        grid_df['m2'] = grid_df['initial_star_2_mass']
+
+    if ('q' in grid_df.columns) and ('initial_star_1_mass' in grid_df.columns):
+        grid_df['m2'] = grid_df['q']*grid_df['initial_star_1_mass']
+
+    return grid_df
+
+def do_root_process_logic(comm, grid, args, grid_params_binary_controls, grid_params_binary_job,
+                          grid_params_star1_binary_controls, grid_params_star1_binary_job,
+                          grid_params_star2_binary_controls, grid_params_star2_binary_job):
+    """Execute the logic that the root process does for the dynamic grid
+    """
+    from posydon.active_learning.psy_cris.utils import parse_inifile
+    nstep = 0
+    print('Beginning dynamic grid...')
+    # As first step find the new grid points for all the child process to run on and send that data to them
+    proposed_points, predicted_classes_of_points = get_next_grid_point(args.psycris_inifile, grid=grid, n_new_points=size)
+    for child in range(1,size):
+        print('Sampling first grid point for process {0}'.format(child))
+        sys.stdout.flush()
+
+        # make a dataframe from the proposed points with the names of the columns
+        dynamic_grid_params = parse_inifile(args.psycris_inifile)
+        grid_df = pandas.DataFrame(np.atleast_2d(proposed_points[child-1,:]),columns=dynamic_grid_params["TableData_kwargs"]["input_cols"],)
+
+        grid_df = convert_input_cols_to_mesa_cols(grid_df)
+
+        # make a dict so we can send the information around
+        grid_dict = grid_df.to_dict('records')[0]
+
+        print('Sending process number {0} a new grid point...'.format(child))
+        sys.stdout.flush()
+        req = comm.isend(grid_dict, dest=child,)
+        req.wait()
+        print('Process number {0} received their new grid point...'.format(child))
+        sys.stdout.flush()
+
+    while nstep < args.Niter:
+        # Now we wait for one of the child processes to finish their grid point and send the result back to the root process so we can
+        # sample a new point using that extra info
+        state = MPI.Status()
+        mesa_result = comm.recv(source=MPI.ANY_SOURCE, tag=MPI.ANY_TAG, status=state)
+        child = state.Get_source()
+        # calculate some columns for convenience
+        if ('initial_star_2_mass' in mesa_result.columns) and ('initial_star_1_mass' in mesa_result.columns):
+            mesa_result['q'] = mesa_result['initial_star_2_mass']/mesa_result['initial_star_1_mass']
+
+        if 'initial_period_days' in mesa_result.columns:
+            mesa_result['log_p'] = np.log10(mesa_result['initial_period_days'])
+
+        try:
+            grid = grid.append(mesa_result[grid.columns], sort=False)
+        except:
+            raise ValueError("The version of POSYDON used to make the fixed grid psygrid object is likely different then the version psygrid object"
+                             " being used for this dynamic grid run")
+
+        print('Process number {0} finished their run'.format(child))
+        print('Saving grid data and sampling a new grid point...')
+        sys.stdout.flush()
+        with open(os.path.join(args.output_directory, 'grid_results.csv'), 'w') as f:
+            grid.to_csv(f, index=False,)
+
+        print('Sampling next grid point for process {0}'.format(child))
+        sys.stdout.flush()
+        proposed_points, predicted_classes_of_points = get_next_grid_point(args.psycris_inifile, grid=grid, n_new_points=1)
+
+        # make a dataframe from the proposed points with the names of the columns
+        dynamic_grid_params = parse_inifile(args.psycris_inifile)
+        grid_df = pandas.DataFrame(proposed_points, columns=dynamic_grid_params["TableData_kwargs"]["input_cols"],)
+
+        grid_df = convert_input_cols_to_mesa_cols(grid_df)
+
+        # make a dict so we can send the information around
+        grid_dict = grid_df.to_dict('records')[0]
+
+        print('Sending process number {0} a new grid point...'.format(child))
+        sys.stdout.flush()
+        req = comm.isend(grid_dict, dest=child,)
+        req.wait()
+        print('Process number {0} received their new grid point...'.format(child))
+        sys.stdout.flush()
+        nstep += 1
+
+
+def do_child_process_logic(comm, grid, args, star1_formation=False, star2_formation=False):
+    """Execute the logic that the child process does for the dynamic grid
+    """
+    req = comm.irecv(source=0,)
+    grid_dict = req.wait()
+
+    # per each type of grid value (i.e. binary control or job or star1 control or job etc)
+    # create a dictionary of the column name and value for this grid point
+    binary_controls = {k: grid_dict[k] for k in grid_params_binary_controls}
+    binary_job = {k: grid_dict[k] for k in grid_params_binary_job}
+
+    star1_binary_controls = {k: grid_dict[k] for k in grid_params_star1_binary_controls}
+    star1_binary_job = {k: grid_dict[k] for k in grid_params_star1_binary_job}
+
+    star2_binary_controls = {k: grid_dict[k] for k in grid_params_star2_binary_controls}
+    star2_binary_job = {k: grid_dict[k] for k in grid_params_star2_binary_job}
+
+    grid_param_dict = dict(ChainMap({}, binary_controls, binary_job, star1_binary_controls, star1_binary_job, star2_binary_controls,star2_binary_job))
+
+    grid_params_string = ', '.join(["{0} : {1:.4f}".format(k,v) for k, v in grid_param_dict.items()])
+
+    print("Process {0} is running with {1}".format(rank, grid_params_string))
+    sys.stdout.flush()
+
+    mesa_result = run_grid_point(grid, star1_formation, star2_formation,
+                                 grid_param_dict, binary_controls, binary_job,
+                                 star1_binary_controls, star1_binary_job,
+                                 star2_binary_controls, star2_binary_job, args)
+
+   # we now send the result data to the root node
+    comm.send(mesa_result, dest=0)
+
+    print("Job completed: From process {0}".format(rank))
+    sys.stdout.flush()
+
+
+def run_grid_point(grid, star1_formation, star2_formation,
+                   grid_param_dict, binary_controls, binary_job,
+                   star1_binary_controls, star1_binary_job,
+                   star2_binary_controls, star2_binary_job, args):
+    """Execute the logic to run this MESA grid point
+    """
+
+    # based on the values create directory
+    work_dir, final_dir = create_working_directory(grid_param_dict, args)
+
+    # are we first generating a model before running binary for the first star?
+    if star1_formation:
+        # if yes then create inlists specific to this grid points
+        # moreover we should loop over all the star1 formation steps
+        for index, inlist_step in enumerate(args.mesa_star1_inlist_project):
+            create_star_formation(grid_param_dict['m1'], work_dir, inlist_step)
+            run_mesa(args.mesa_star1_executable, work_dir, final_dir,
+                     outfile_name='out_star1_formation_step{0}.txt'.format(index))
+
+    # are we first generating a model before running binary for the second star?
+    if star2_formation:
+        # if yes then create inlists specific to this grid points
+        # moreover we should loop over all the star1 formation steps
+        for index, inlist_step in enumerate(args.mesa_star2_inlist_project):
+            create_star_formation(grid_param_dict['m2'], work_dir, inlist_step)
+            run_mesa(args.mesa_star2_executable, work_dir, final_dir,
+                     outfile_name='out_star2_formation_step{0}.txt'.format(index))
+
+    # now we can create the grid specific binary inlists and run the binary executable
+    create_binary_inlists(binary_controls, binary_job,
+                          star1_binary_controls, star1_binary_job,
+                          star2_binary_controls, star2_binary_job,
+                          work_dir, args.mesa_binary_inlist_project)
+
+    # run the binary exectuable
+    run_mesa(args.mesa_binary_executable, work_dir, final_dir)
+
+    # find out what happened
+    mesa_result = extract_mesa_results(final_dir)
+
+    return mesa_result
+
+###############################################################################
+# BEGIN MAIN FUNCTION
+###############################################################################
+if __name__ == '__main__':
+
+    # check MPI was imported
+    if not MPI_IMPORTED:
+        raise ImportError('MPI module mpi4py not installed! Plese check your POSYDON installation!')
+
+    # READ COMMANDLINE ARGUMENTS
+    ###########################################################################
+    args = parse_commandline()
+    # do to the fact that the arguments args.mesa_star2_inlist_project and args.mesa_star1_inlist_project
+    # are interpreted as lists when you supply None it stringifies it and makes it a list
+    if 'None' in args.mesa_star1_inlist_project:
+        args.mesa_star1_inlist_project = None
+    if 'None' in args.mesa_star2_inlist_project:
+        args.mesa_star2_inlist_project = None
+
+    if (args.mesa_star1_executable is not None) and (args.mesa_star1_inlist_project is not None):
+        # Then we must first make star1 model before running binary executable
+        star1_formation = True
+    else:
+        star1_formation = False
+
+    if (args.mesa_star2_executable is not None) and (args.mesa_star2_inlist_project is not None):
+        # Then we must first make star2 model before running binary executable
+        star2_formation = True
+    else:
+        star2_formation = False
+
+    # read in grid
+    if '.csv' in args.mesa_grid:
+        grid = pandas.read_csv(args.mesa_grid)
+    elif '.h5' in args.mesa_grid:
+        psy_grid = PSyGrid()
+        psy_grid.load(args.mesa_grid)
+        grid = psy_grid.get_pandas_initial_final()
+        psy_grid.close()
+    else:
+        raise ValueError('Grid format not recognized, please feed in an acceptable format: csv')
+
+    if args.grid_type == 'dynamic':
+        comm = MPI.COMM_WORLD
+        size = comm.Get_size()
+        rank = comm.Get_rank()
+        name = MPI.Get_processor_name()
+
+        if (args.grid_point_index is not None) and (size > 1):
+            raise ValueError("You can not have multiple MPI tasks and "
+                             "request to run a specific grid point."
+                             "Please make sure you cal with mpirun -np 1.")
+
+    # identify all columns in the CSV file which effect MESA controls, i.e. what all the parameter
+    # values that change simulation to simulation are
+    binary_inlist_params = utils.clean_inlist_file(args.mesa_binary_inlist_project)
+    star1_binary_params = utils.clean_inlist_file(args.mesa_binary_inlist1)
+    star2_binary_params = utils.clean_inlist_file(args.mesa_binary_inlist2)
+
+    final_binary_controls = binary_inlist_params['&binary_controls']
+    final_binary_job = binary_inlist_params['&binary_job']
+    final_star1_binary_controls = star1_binary_params['&controls']
+    final_star1_binary_job = star1_binary_params['&star_job']
+    final_star2_binary_controls = star2_binary_params['&controls']
+    final_star2_binary_job = star2_binary_params['&star_job']
+
+    # detemine which is any of the parameters are binary_controls or binary_job params
+    if args.grid_type == 'dynamic':
+        dynamic_grid_params = parse_inifile(args.psycris_inifile)
+        mesa_params_to_run_grid_over = dynamic_grid_params["posydon_dynamic_sampling_kwargs"]["mesa_column_names"]
+        grid_params_binary_controls = [param for param in mesa_params_to_run_grid_over if param in final_binary_controls.keys()]
+        grid_params_binary_job = [param for param in mesa_params_to_run_grid_over if param in final_binary_job.keys()]
+
+        grid_params_star1_binary_controls = [param for param in mesa_params_to_run_grid_over if param in final_star1_binary_controls.keys()]
+        grid_params_star1_binary_job = [param for param in mesa_params_to_run_grid_over if param in final_star1_binary_job.keys()]
+
+        grid_params_star2_binary_controls = [param for param in mesa_params_to_run_grid_over if param in final_star2_binary_controls.keys()]
+        grid_params_star2_binary_job = [param for param in mesa_params_to_run_grid_over if param in final_star2_binary_job.keys()]
+
+    else:
+        grid_params_binary_controls = [param for param in grid.columns if param in final_binary_controls.keys()]
+        grid_params_binary_job = [param for param in grid.columns if param in final_binary_job.keys()]
+
+        grid_params_star1_binary_controls = [param for param in grid.columns if param in final_star1_binary_controls.keys()]
+        grid_params_star1_binary_job = [param for param in grid.columns if param in final_star1_binary_job.keys()]
+
+        grid_params_star2_binary_controls = [param for param in grid.columns if param in final_star2_binary_controls.keys()]
+        grid_params_star2_binary_job = [param for param in grid.columns if param in final_star2_binary_job.keys()]
+
+    # check if we are running a single star grid!
+    if star1_formation and not list(set(grid_params_binary_controls).union(grid_params_binary_job)):
+        # we need to check for something other than m1, we want to be looking for initial_mass
+        # identify all columns in the CSV file which effect MESA controls, i.e. what all the parameter
+        # values that change simulation to simulation are
+        star1_formation_params = utils.clean_inlist_file(args.mesa_star1_inlist_project[0])
+
+        final_star1_formation_controls = star1_formation_params['&controls']
+        final_star1_formation_job = star1_formation_params['&star_job']
+
+        # detemine which is any of the parameters are formation_controls or formation_job params
+        grid_params_star1_formation_controls = [param for param in grid.columns if param in final_star1_formation_controls.keys()]
+        grid_params_star1_formation_job = [param for param in grid.columns if param in final_star1_formation_job.keys()]
+
+        star1_formation_controls = grid.iloc[args.grid_point_index][grid_params_star1_formation_controls].to_dict()
+        star1_formation_job = grid.iloc[args.grid_point_index][grid_params_star1_formation_job].to_dict()
+
+        grid_param_dict = dict(ChainMap({}, star1_formation_controls, star1_formation_job,))
+
+        print("You are running a single star grid, we are checking for what parameters you are varying in your grid")
+        print("Grid parameters that effect star1_formation_controls: {0}".format(','.join(grid_params_star1_formation_controls)))
+        print("Grid parameters that effect star1_formation_job: {0}".format(','.join(grid_params_star1_formation_job)))
+
+        # based on the values create directory
+        work_dir, final_dir = create_working_directory(grid_param_dict, args)
+
+        # run the single star grid
+        for index, inlist_step in enumerate(args.mesa_star1_inlist_project):
+            create_star_formation(grid_param_dict['initial_mass'], work_dir, inlist_step)
+            run_mesa(args.mesa_star1_executable, work_dir, final_dir,
+                     outfile_name='out_star1_formation_step{0}.txt'.format(index))
+
+        sys.exit(0)
+
+    # only print this information is this is the root process
+    if args.grid_type == 'dynamic':
+        if rank == 0:
+            print("Grid parameters that effect binary_controls: {0}".format(','.join(grid_params_binary_controls)))
+            print("Grid parameters that effect binary_job: {0}".format(','.join(grid_params_binary_job)))
+
+            print("Grid parameters that effect star1_binary_controls: {0}".format(','.join(grid_params_star1_binary_controls)))
+            print("Grid parameters that effect star1_binary_job: {0}".format(','.join(grid_params_star1_binary_job)))
+
+            print("Grid parameters that effect star2_binary_controls: {0}".format(','.join(grid_params_star2_binary_controls)))
+            print("Grid parameters that effect star2_binary_job: {0}".format(','.join(grid_params_star2_binary_job)))
+    else:
+        print("Grid parameters that effect binary_controls: {0}".format(','.join(grid_params_binary_controls)))
+        print("Grid parameters that effect binary_job: {0}".format(','.join(grid_params_binary_job)))
+
+        print("Grid parameters that effect star1_binary_controls: {0}".format(','.join(grid_params_star1_binary_controls)))
+        print("Grid parameters that effect star1_binary_job: {0}".format(','.join(grid_params_star1_binary_job)))
+
+        print("Grid parameters that effect star2_binary_controls: {0}".format(','.join(grid_params_star2_binary_controls)))
+        print("Grid parameters that effect star2_binary_job: {0}".format(','.join(grid_params_star2_binary_job)))
+
+    # calculate some columns for convenience
+    if ('m2' in grid.columns) and ('m1' in grid.columns):
+        grid['q'] = grid['m2']/grid['m1']
+
+    if 'initial_period_in_days' in grid.columns:
+        grid['log_p'] = np.log10(grid['initial_period_in_days'])
+
+    # calculate some columns for convenience
+    if ('initial_star_2_mass' in grid.columns) and ('initial_star_1_mass' in grid.columns):
+        grid['q'] = grid['initial_star_2_mass']/grid['initial_star_1_mass']
+
+    if 'initial_period_days' in grid.columns:
+        grid['log_p'] = np.log10(grid['initial_period_days'])
+
+    # if we are using a job array or just running a single point of grid
+    if args.grid_point_index is not None:
+        # per each type of grid value (i.e. binary control or job or star1 control or job etc)
+        # create a dictionary of the column name and value for this grid point
+        binary_controls = grid.iloc[args.grid_point_index][grid_params_binary_controls].to_dict()
+        binary_job = grid.iloc[args.grid_point_index][grid_params_binary_job].to_dict()
+
+        star1_binary_controls = grid.iloc[args.grid_point_index][grid_params_star1_binary_controls].to_dict()
+        star1_binary_job = grid.iloc[args.grid_point_index][grid_params_star1_binary_job].to_dict()
+
+        star2_binary_controls = grid.iloc[args.grid_point_index][grid_params_star2_binary_controls].to_dict()
+        star2_binary_job = grid.iloc[args.grid_point_index][grid_params_star2_binary_job].to_dict()
+
+        grid_param_dict = dict(ChainMap({}, binary_controls, binary_job, star1_binary_controls, star1_binary_job, star2_binary_controls,star2_binary_job))
+
+        mesa_result = run_grid_point(grid, star1_formation, star2_formation,
+                                     grid_param_dict, binary_controls, binary_job,
+                                     star1_binary_controls, star1_binary_job,
+                                     star2_binary_controls, star2_binary_job, args)
+
+        if not mesa_result.empty:
+            mesa_results_file = os.path.join(args.output_directory, 'grid_results.csv')
+            if not os.path.isfile(mesa_results_file):
+                with open(mesa_results_file, 'w') as f:
+                    mesa_result.to_csv(f, index=False)
+            else:
+                with open(mesa_results_file, 'a') as f:
+                    mesa_result.to_csv(f, index=False, header=False)
+    # If we are running a dynamic grid and/or using a single MPI task to manage all grid points
+    else:
+        if args.grid_type == 'fixed':
+            pass
+
+        elif args.grid_type == 'dynamic':
+            if rank == 0:
+                do_root_process_logic(comm, grid, args, grid_params_binary_controls, grid_params_binary_job,
+                                      grid_params_star1_binary_controls, grid_params_star1_binary_job,
+                                      grid_params_star2_binary_controls, grid_params_star2_binary_job)
+            else:
+                while True:
+                    do_child_process_logic(comm, grid, args, star1_formation=star1_formation, star2_formation=star2_formation)

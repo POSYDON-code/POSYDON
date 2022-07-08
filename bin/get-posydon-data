@@ -1,0 +1,4 @@
+from posydon.utils.data_download import data_download
+
+if __name__ == '__main__':
+    data_download(verbose=True)
