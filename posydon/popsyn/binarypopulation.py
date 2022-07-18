@@ -234,7 +234,7 @@ class BinaryPopulation:
                 if(breakdown_to_df):
                     self.manager.clear_dfs()
                 else:
-                    self.manager.remove(self.manager.binaries)
+                    self.manager.remove(self.manager.binaries.copy())
 
             # Check to see if used memory is greater than 99% of allowed memory
             # rss gives memory usage in bytes, so divide by 2^30 to get GBs
