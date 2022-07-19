@@ -448,10 +448,8 @@ class PopulationManager:
 
     def remove(self, binary):
         """Remove a binary instance."""
-        if isinstance(binary, (list, np.ndarray)):
-            
+        if isinstance(binary, (list, np.ndarray)):   
             for b in binary:
-                print(b in self.binaries)
                 self.binaries.remove(b)
                 self.indices.remove(b.index)
                 
