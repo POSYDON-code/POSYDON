@@ -196,6 +196,7 @@ class BinaryPopulation:
         filenames = []
 
         for j, index in enumerate(indices_for_iter):
+
             if kwargs.get('from_hdf', False):
                 binary = self.manager.from_hdf(index, restore=True).pop()
             else:
@@ -233,13 +234,13 @@ class BinaryPopulation:
                 if(breakdown_to_df):
                     self.manager.clear_dfs()
                 else:
-                    self.manager.remove(self.manager.binaries)
+                    self.manager.remove(self.manager.binaries.copy())
 
             # Check to see if used memory is greater than 99% of allowed memory
             # rss gives memory usage in bytes, so divide by 2^30 to get GBs
             elif (optimize_ram and ram_per_cpu is not None
                   and psutil.Process().memory_info().rss / (1024**3)
-                  >= 0.99 * ram_per_cpu):
+                  >= 0.9 * ram_per_cpu):
 
                 if(self.comm is None):
                     path = os.path.join(temp_directory, f"{j}_evolution.batch")
@@ -254,7 +255,8 @@ class BinaryPopulation:
                 if(breakdown_to_df):
                     self.manager.clear_dfs()
                 else:
-                    self.manager.remove(self.manager.binaries)
+                    self.manager.remove(self.manager.binaries.copy())
+
 
         # handling case if dump rate is not multiple of population size
         if ((len(self.manager.binaries) != 0
@@ -274,19 +276,19 @@ class BinaryPopulation:
             if(breakdown_to_df):
                 self.manager.clear_dfs()
             else:
-                self.manager.remove(self.manager.binaries)
+                self.manager.remove(self.manager.binaries.copy())
 
         if optimize_ram:
             # combining files
             if self.comm is None:
                 self.combine_saved_files(os.path.join(temp_directory,
                                                       "evolution.combined"),
-                                         filenames)
+                                         filenames, mode = "w")
             else:
                 self.combine_saved_files(
                     os.path.join(temp_directory,
                                  f"evolution.combined.{self.rank}"),
-                    filenames)
+                    filenames, mode = "w")
 
         else:
             if self.comm is None:
@@ -331,10 +333,8 @@ class BinaryPopulation:
                     self.kwargs["temp_directory"], f"evolution.combined.{i}")
                              for i in range(self.size)]
 
-                if os.path.isfile(absolute_filepath) and mode != "a":
-                    os.remove(absolute_filepath)
 
-                self.combine_saved_files(absolute_filepath, tmp_files)
+                self.combine_saved_files(absolute_filepath, tmp_files, mode = mode)
 
             else:
                 return
@@ -345,7 +345,7 @@ class BinaryPopulation:
         return os.path.join(temp_directory, f"evolution.combined.{self.rank}")
         # return os.path.join(dir_name, '.tmp{}_'.format(rank) + file_name)
 
-    def combine_saved_files(self, absolute_filepath, file_names):
+    def combine_saved_files(self, absolute_filepath, file_names, mode = "a"):
         """Combine various temporary files in a given folder."""
         dir_name = os.path.dirname(absolute_filepath)
 
@@ -361,7 +361,7 @@ class BinaryPopulation:
                                 ONELINE_MIN_ITEMSIZE.items()
                                 if key in oneline_cols}
 
-        with pd.HDFStore(absolute_filepath) as store:
+        with pd.HDFStore(absolute_filepath, mode = mode) as store:
             for f in file_names:
                 # strings itemsize set by first append max value,
                 # which may not be largest string
@@ -448,10 +448,11 @@ class PopulationManager:
 
     def remove(self, binary):
         """Remove a binary instance."""
-        if isinstance(binary, (list, np.ndarray)):
+        if isinstance(binary, (list, np.ndarray)):   
             for b in binary:
                 self.binaries.remove(b)
                 self.indices.remove(b.index)
+                
         elif isinstance(binary, BinaryStar):
             self.binaries.remove(binary)
             self.indices.remove(binary.index)
