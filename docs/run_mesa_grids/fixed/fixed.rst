@@ -55,7 +55,7 @@ always be specified, otherwise you will be evolving a binary with a default
 orbital period and masses.
 
 As for the .ini file, you can copy over the `example
-<https://github.com/POSYDON-code/POSYDON/blob/development/grid_params/grid_params.ini>`_
+<https://github.com/POSYDON-code/POSYDON-public/blob/development/grid_params/grid_params.ini>`_
 from the :ref:`inifile` page, which provides a more detailed description of all
 the entries. Make sure to carefully go through each of the separate entries and
 adjust them for your particular needs. Place that .ini file (which we have
