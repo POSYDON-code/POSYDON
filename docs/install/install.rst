@@ -71,7 +71,7 @@ Downloading POSYDON data
 ------------------------
 OPTION 1: Zenodo (latest official version)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-Export the path to where you want to clone the data, e.g. `/home/`, and 
+Export the path to where you want to clone the data, e.g. `/home/`, and
 download the data with the following commands
 
 .. code-block::
@@ -87,7 +87,7 @@ install and initialise git LFS, and download the data.
 
 .. code-block::
 
-    export PATH_TO_POSYDON_DATA=$PATH_TO_POSYDON/data/POSYDON_data
+    export PATH_TO_POSYDON_DATA=$PATH_TO_POSYDON/data/
     conda install git-lfs
     git lfs install
     git submodule init
