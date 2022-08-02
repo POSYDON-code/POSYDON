@@ -23,11 +23,11 @@ quantities that need to be adjusted for your specific case.
 
 Here is a link to the most recent stable release version of the default inifile
 for POSYDON:
-`Stable Version INIFILE <https://github.com/POSYDON-code/POSYDON/blob/development/grid_params/grid_params.ini>`_
+`Stable Version INIFILE <https://github.com/POSYDON-code/POSYDON-public/blob/development/grid_params/grid_params.ini>`_
 
 Here is a link to the unstable development version of the default inifile for
 POSYDON:
-`Development Version INIFILE <https://github.com/POSYDON-code/POSYDON/blob/master/grid_params/grid_params.ini>`_
+`Development Version INIFILE <https://github.com/POSYDON-code/POSYDON-public/blob/main/grid_params/grid_params.ini>`_
 
 [slurm]
 -------
@@ -104,7 +104,7 @@ This section designates all the basic MESA-specific parameters.
 
     ; zams_filename if a zams_filename is supplied this supercedes any star1 or star2 formation inlists
     ; and skips to running the binary with this pre-computed zams model.
-    zams_filename = ${posydon_github_root}/grid_params/POSYDON-MESA-INLISTS/r11701/ZAMS_models/zams_z0.0142m2_y0.2703.data
+    zams_filename = ${posydon_github_root}/grid_params/POSYDON-MESA-INLISTS-public/r11701/ZAMS_models/zams_z0.0142m2_y0.2703.data
 
     ; single_star_grid, this boolean, when True, will take the inlist1 from the binary mesa inlist section
     ; and run in a single star grid configuration
@@ -132,22 +132,22 @@ This section designates all the basic MESA-specific parameters.
 
     ; binary_control
     binary_controls_mesa_defaults = ${posydon_github_root}/grid_params/defaults/r11701/binary/binary_controls.defaults
-    ; binary_controls_posydon_defaults = ${posydon_github_root}/grid_params/POSYDON-MESA-INLISTS/r11701/default_common_inlists/binary/inlist_project
+    ; binary_controls_posydon_defaults = ${posydon_github_root}/grid_params/POSYDON-MESA-INLISTS-public/r11701/default_common_inlists/binary/inlist_project
     ; binary_controls_user = ${user_template_root}/binary/inlist_project
 
     ; binary_job
     binary_job_mesa_defaults = ${posydon_github_root}/grid_params/defaults/r11701/binary/binary_job.defaults
-    ; binary_job_posydon_defaults = ${posydon_github_root}/grid_params/POSYDON-MESA-INLISTS/r11701/default_common_inlists/binary/inlist_project
+    ; binary_job_posydon_defaults = ${posydon_github_root}/grid_params/POSYDON-MESA-INLISTS-public/r11701/default_common_inlists/binary/inlist_project
     ; binary_job_user = ${user_template_root}/binary/inlist_project
 
     ; star1_job
     star1_job_mesa_defaults = ${posydon_github_root}/grid_params/defaults/r11701/star/star_job.defaults
-    ; star1_job_posydon_defaults = ${posydon_github_root}/grid_params/POSYDON-MESA-INLISTS/r11701/default_common_inlists/binary/inlist1
+    ; star1_job_posydon_defaults = ${posydon_github_root}/grid_params/POSYDON-MESA-INLISTS-public/r11701/default_common_inlists/binary/inlist1
     ; star1_job_user =  ${user_template_root}/binary/inlist1
 
     ; star1_control
     star1_controls_mesa_defaults = ${posydon_github_root}/grid_params/defaults/r11701/star/controls.defaults
-    ; star1_controls_posydon_defaults = ${posydon_github_root}/grid_params/POSYDON-MESA-INLISTS/r11701/default_common_inlists/binary/inlist1
+    ; star1_controls_posydon_defaults = ${posydon_github_root}/grid_params/POSYDON-MESA-INLISTS-public/r11701/default_common_inlists/binary/inlist1
     ; star1_controls_user = ${user_template_root}/binary/inlist1
 
     ; star2_job
@@ -161,13 +161,13 @@ This section designates all the basic MESA-specific parameters.
     ; star2_controls_user = None
 
     ; star history columns
-    star_history_columns = ${posydon_github_root}/grid_params/POSYDON-MESA-INLISTS/r11701/default_common_inlists/history_columns.list
+    star_history_columns = ${posydon_github_root}/grid_params/POSYDON-MESA-INLISTS-public/r11701/default_common_inlists/history_columns.list
 
     ; binary history columns
-    binary_history_columns = ${posydon_github_root}/grid_params/POSYDON-MESA-INLISTS/r11701/default_common_inlists/binary_history_columns.list
+    binary_history_columns = ${posydon_github_root}/grid_params/POSYDON-MESA-INLISTS-public/r11701/default_common_inlists/binary_history_columns.list
 
     ; profile columns
-    profile_columns = ${posydon_github_root}/grid_params/POSYDON-MESA-INLISTS/r11701/default_common_inlists/profile_columns.list
+    profile_columns = ${posydon_github_root}/grid_params/POSYDON-MESA-INLISTS-public/r11701/default_common_inlists/profile_columns.list
 
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     ;;;;; MESA OUTPUT CONTROLS ;;;;;;;
@@ -217,18 +217,18 @@ This section designates all the parameters for MESA makefiles and fortran files.
 
     ; user specified binary extra
     mesa_binary_extras = ${MESA_DIR}/binary/work/src/run_binary_extras.f
-    ; user_binary_extras = ${mesa_inlists:posydon_github_root}/grid_params/POSYDON-MESA-INLISTS/r11701/default_common_inlists/binary/src/run_binary_extras.f
+    ; user_binary_extras = ${mesa_inlists:posydon_github_root}/grid_params/POSYDON-MESA-INLISTS-public/r11701/default_common_inlists/binary/src/run_binary_extras.f
 
     ; user specified star extra - these go into the binary/src/ directory
     mesa_star_binary_extras = ${MESA_DIR}/binary/work/src/run_star_extras.f
-    ; user_star_binary_extras =${mesa_inlists:posydon_github_root}/grid_params/POSYDON-MESA-INLISTS/r11701/default_common_inlists/binary/src/run_star_extras.f
+    ; user_star_binary_extras =${mesa_inlists:posydon_github_root}/grid_params/POSYDON-MESA-INLISTS-public/r11701/default_common_inlists/binary/src/run_star_extras.f
 
     ; user specified star extras - these are for single star formation (e.g., pre-MS evolution)
     mesa_star1_extras = ${MESA_DIR}/star/work/src/run_star_extras.f
-    ; user_star1_extras = ${mesa_inlists:posydon_github_root}/grid_params/POSYDON-MESA-INLISTS/r11701/default_common_inlists/binary/src/run_star_extras.f
+    ; user_star1_extras = ${mesa_inlists:posydon_github_root}/grid_params/POSYDON-MESA-INLISTS-public/r11701/default_common_inlists/binary/src/run_star_extras.f
 
     mesa_star2_extras = ${MESA_DIR}/star/work/src/run_star_extras.f
-    ; user_star2_extras = ${mesa_inlists:posydon_github_root}/grid_params/POSYDON-MESA-INLISTS/r11701/default_common_inlists/binary/src/run_star_extras.f
+    ; user_star2_extras = ${mesa_inlists:posydon_github_root}/grid_params/POSYDON-MESA-INLISTS-public/r11701/default_common_inlists/binary/src/run_star_extras.f
 
     ; binary_run.f
     binary_run = ${MESA_DIR}/binary/work/src/binary_run.f
