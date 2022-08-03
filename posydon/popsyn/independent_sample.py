@@ -62,7 +62,7 @@ def generate_independent_samples(orbital_scheme, **kwargs):
 
 def generate_orbital_periods(primary_masses,
                              number_of_binaries=1,
-                             orbital_period_min=10**0.15,
+                             orbital_period_min=0.35,
                              orbital_period_max=10**3.5,
                              orbital_period_scheme='Sana+12_period_extended',
                              **kwargs):
