@@ -160,7 +160,7 @@ class BinaryPopulation:
         """Evolve binaries in a population, catching warnings/exceptions."""
         if not self.population_properties.steps_loaded:
             self.population_properties.load_steps()
-
+        print(psutil.Process().memory_info().rss / (1024**3))
         indices = kwargs.get('indices', list(range(self.number_of_binaries)))
 
         indices_for_iter = (tqdm(indices) if kwargs.get('tqdm', False)
@@ -196,7 +196,7 @@ class BinaryPopulation:
         filenames = []
 
         for j, index in enumerate(indices_for_iter):
-
+            
             if kwargs.get('from_hdf', False):
                 binary = self.manager.from_hdf(index, restore=True).pop()
             else:
@@ -240,7 +240,7 @@ class BinaryPopulation:
             # rss gives memory usage in bytes, so divide by 2^30 to get GBs
             elif (optimize_ram and ram_per_cpu is not None
                   and psutil.Process().memory_info().rss / (1024**3)
-                  >= 0.9 * ram_per_cpu):
+                  >= 0.88 * ram_per_cpu):
 
                 if(self.comm is None):
                     path = os.path.join(temp_directory, f"{j}_evolution.batch")
@@ -266,6 +266,7 @@ class BinaryPopulation:
             if(self.comm is None):
                 path = os.path.join(temp_directory, "leftover_evolution.batch")
             else:
+                
                 path = os.path.join(temp_directory,
                                     f"leftover_evolution.batch.{self.rank}")
 
@@ -302,6 +303,7 @@ class BinaryPopulation:
                                  f"evolution.combined.{self.rank}"),
                     mode='w', **kwargs)
 
+
     def save(self, save_path, mode='a', **kwargs):
         """Save BinaryPopulation to hdf file."""
         optimize_ram = self.kwargs['optimize_ram']
@@ -332,7 +334,6 @@ class BinaryPopulation:
                 tmp_files = [os.path.join(
                     self.kwargs["temp_directory"], f"evolution.combined.{i}")
                              for i in range(self.size)]
-
 
                 self.combine_saved_files(absolute_filepath, tmp_files, mode = mode)
 
@@ -494,7 +495,8 @@ class PopulationManager:
                     holder.append(binary.to_df(**kwargs))
         elif len(self.history_dfs) > 0:
             holder.extend(self.history_dfs)
-
+        bdf = self.binaries[0].to_df(**kwargs)
+        print(self.binaries[0].event_history)# bdf.loc[bdf["event"] == "ZAMS"])
         if len(holder) > 0:
             return pd.concat(holder, axis=0, ignore_index=False)
 

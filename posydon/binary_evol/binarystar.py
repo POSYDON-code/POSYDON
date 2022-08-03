@@ -105,7 +105,7 @@ BINARYPROPERTIES = [
 ]
 
 
-MAXIMUM_STEP_TIME = 120
+MAXIMUM_STEP_TIME = 20
 
 
 def signal_handler(signum, frame):
