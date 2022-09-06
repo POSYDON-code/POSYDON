@@ -1190,7 +1190,10 @@ class StepSN(object):
 
         phi :
             Angle between z-axis and projection of kick onto x-z plane.
-        cos_theta :
+        theta :
+            Angle between pre- supernova star velocity relative to the
+            companion (i.e. along the positive y axis) and the kick velocity.
+        tilt :
             The cosine of the angle between pre- and post- supenova orbial
             planes. This is equal to the angle between the relative velocity of
             the helium star to the companion just before the explosion (see Vr)
