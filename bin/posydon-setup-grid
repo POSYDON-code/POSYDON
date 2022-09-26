@@ -70,7 +70,7 @@ def find_inlist_from_scenario(source, gitcommit, system_type):
         if not os.path.isdir('{0}/.posydon_mesa_inlists'.format(os.environ['HOME'])):
             print("We are clonining the repo for you")
             # Determine location of executables
-            proc = subprocess.Popen(['git', 'clone', 'https://github.com/POSYDON-code/POSYDON-MESA-INLISTS.git', '{0}/.posydon_mesa_inlists'.format(os.environ['HOME'])],
+            proc = subprocess.Popen(['git', 'clone', 'https://github.com/POSYDON-code/POSYDON-MESA-INLISTS-public.git', '{0}/.posydon_mesa_inlists'.format(os.environ['HOME'])],
                                          stdin = subprocess.PIPE,
                                          stdout = subprocess.PIPE,
                                          stderr = subprocess.PIPE
