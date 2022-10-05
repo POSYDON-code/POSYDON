@@ -11,12 +11,13 @@ jobs:
     steps:
 
     - name: Checkout
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
 
     - name: publish-to-conda
-      uses: amauryval/publish_conda_package_action@2.0.3
+      uses: ./
       with:
         CondaDir: 'conda'
         Platforms: 'noarch'
         CondaUsername: ${{ secrets.CONDA_USERNAME }}
         CondaPassword: ${{ secrets.CONDA_PASSWORD }}
+        CondaChannel: 'posydon'
