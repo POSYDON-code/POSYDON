@@ -18,3 +18,5 @@ jobs:
       with:
         CondaDir: 'conda'
         Platforms: 'noarch'
+        CondaUsername: ${{ secrets.CONDA_USERNAME }}
+        CondaPassword: ${{ secrets.CONDA_PASSWORD }}
