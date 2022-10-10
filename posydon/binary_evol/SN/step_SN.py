@@ -32,7 +32,7 @@ import warnings
 import numpy as np
 import scipy as sp
 
-from posydon.utils.data_download import PATH_TO_POSYDON_DATA
+from posydon.utils.data_download import PATH_TO_POSYDON_DATA, data_download
 import posydon.utils.constants as const
 from posydon.utils.common_functions import is_number
 from posydon.utils.common_functions import CO_radius
