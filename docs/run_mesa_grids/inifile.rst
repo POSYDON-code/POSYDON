@@ -27,7 +27,7 @@ for POSYDON:
 
 Here is a link to the unstable development version of the default inifile for
 POSYDON:
-`Development Version INIFILE <https://github.com/POSYDON-code/POSYDON/blob/master/grid_params/grid_params.ini>`_
+`Development Version INIFILE <https://github.com/POSYDON-code/POSYDON/blob/main/grid_params/grid_params.ini>`_
 
 [slurm]
 -------
