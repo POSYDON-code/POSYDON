@@ -4,6 +4,3 @@
 [submodule "posydon/tests/data/POSYDON-UNIT-TESTS"]
 	path = posydon/tests/data/POSYDON-UNIT-TESTS
 	url = https://github.com/POSYDON-code/POSYDON-UNIT-TESTS.git
-[submodule "grid_params/POSYDON-MESA-INLISTS"]
-	path = grid_params/POSYDON-MESA-INLISTS
-	url = https://github.com/POSYDON-code/POSYDON-MESA-INLISTS.git
