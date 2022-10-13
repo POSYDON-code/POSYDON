@@ -35,6 +35,8 @@ requirements:
     - astropy==4.0.0
     - progressbar2==4.0.0
     - mpi4py==3.0.3
+    - matplotlib-label-lines>=0.3.8
+    - PyQt5>=5.15.3
 
 test:
   imports:
