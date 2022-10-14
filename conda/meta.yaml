@@ -34,9 +34,9 @@ requirements:
     - pytables==3.6.1
     - astropy==4.0.0
     - progressbar2==4.0.0
-    - mpi4py==3.0.3
+    - mpi4py>=3.0.0
     - matplotlib-label-lines>=0.3.8
-    - PyQt5>=5.15.3
+    - pyqt>=5.15.3
 
 test:
   imports:
