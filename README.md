@@ -7,7 +7,7 @@ POSYDON is being developed by a collaborative team of astrophysicists and comput
 ## Python distribution and virtual environments
 We recommend to install the Python distribution Anaconda and to install POSYDON in a virtual environment. After creating the environment (you can choose any name, e.g., `posydon`, or `posydon_env`) like this
 ```
-conda create -n posydon python=3.7
+conda create --name posydon-test -c posydon -c conda-forge posydon
 ```
 you can source it with
 ```
