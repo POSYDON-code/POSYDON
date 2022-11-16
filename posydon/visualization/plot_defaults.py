@@ -163,13 +163,13 @@ DEFAULT_MARKERS_COLORS_LEGENDS = {
         'Reached maximum mass transfer rate: Exceeded photon trapping radius':
             ['D', 1, color_unstable, TF1_label_unstable],
         'logQ_limit':
-            ['x', 0, 'red', 'logQ_limit'],
+            ['x', 1, 'red', 'logQ_limit'],
         'min_timestep_limit':
-            ['x', 0, 'red', 'Not converged'],
+            ['x', 1, 'red', 'Not converged'],
         'reach cluster timelimit':
-            ['x', 0, 'red', 'Not converged'],
+            ['x', 1, 'red', 'Not converged'],
         'no termination code':
-            ['x', 0, 'red', 'no termination code'],
+            ['x', 1, 'red', 'no termination code'],
         'envelope_mass_limit':
             ['s', 2, None, TF1_label_stable],
         'gamma_center_limit':
@@ -179,26 +179,26 @@ DEFAULT_MARKERS_COLORS_LEGENDS = {
         'Initial RLOF':
             ['.', 1, 'black', TF1_label_initial],
         'Not converged':
-            ['x', 0, 'red', 'Not converged'],
+            ['x', 1, 'red', 'Not converged'],
         'ignored_no_BH':
             ['.', 1, color_unstable, TF1_label_initial],
         'ignored_no_RLO':
             ['.', 1, color_unstable, TF1_label_initial],
         'unknown':
-            ['+', 0, 'red', 'unknown'],
+            ['+', 1, 'red', 'unknown'],
 
     },
 
     'termination_flag_2': {
 
         'initial_RLOF':
-            ['+', 0, 'black', 'initial RLOF'],
+            ['+', 1, 'black', 'initial RLOF'],
         'forced_initial_RLO':
-            ['+', 0, 'black', 'initial RLOF'],
+            ['+', 1, 'black', 'initial RLOF'],
         'ignored_no_BH':
-            ['+', 0, 'black', 'initial RLOF'],
+            ['+', 1, 'black', 'initial RLOF'],
         'ignored_no_RLO':
-            ['+', 0, 'black', 'initial RLOF'],
+            ['+', 1, 'black', 'initial RLOF'],
         'no_RLOF':
             ['.', 1, 'black', 'no RLOF'],
         'contact_during_MS':
@@ -268,9 +268,9 @@ DEFAULT_MARKERS_COLORS_LEGENDS = {
             ['s', 2, 'tab:red', 'case BA/BB from star1'],
 
         '_from_star1':
-            ['x', 0, 'black', 'unknown'],
+            ['x', 1, 'black', 'unknown'],
         '_from_star2':
-            ['x', 0, 'black', 'unknown'],
+            ['x', 1, 'black', 'unknown'],
 
     },
 
@@ -300,7 +300,7 @@ DEFAULT_MARKERS_COLORS_LEGENDS = {
         'stripped_He_non_burning':
             ['o', 2, 'gray', 'stripped He-star non burning'],
         'undetermined_evolutionary_state':
-            ['x', 0, 'black', 'unknown'],
+            ['x', 1, 'black', 'unknown'],
         'BH':
             ['*', 1, 'black', 'BH'],
         'NS':
@@ -338,7 +338,7 @@ DEFAULT_MARKERS_COLORS_LEGENDS = {
         'stripped_He_non_burning':
             ['o', 2, 'gray', 'stripped He-star non burning'],
         'undetermined_evolutionary_state':
-            ['x', 0, 'black', 'unknown'],
+            ['x', 1, 'black', 'unknown'],
         'BH':
             ['*', 1, 'black', 'BH'],
         'NS':
@@ -397,9 +397,9 @@ DEFAULT_MARKERS_COLORS_LEGENDS = {
         'no_RLOF':
             ['s', 2, 'lightgrey', 'no RLOF'],
         'Not converged':
-            ['x', 0, 'red', 'Not converged'],
+            ['x', 1, 'red', 'Not converged'],
         'unknown':
-            ['+', 0, 'green', 'unknown'],
+            ['+', 1, 'green', 'unknown'],
         },
     'debug': {
         'terminate due to primary depleting carbon (inverse sn?)':
@@ -476,7 +476,7 @@ DEFAULT_MARKERS_COLORS_LEGENDS = {
         'ignored_no_RLO':
             ['.', 1, color_unstable, TF1_label_initial],
         'unknown':
-            ['+', 0, 'green', 'unknown'],
+            ['+', 1, 'green', 'unknown'],
     },
     'interpolation_class': {
         'initial_MT':
