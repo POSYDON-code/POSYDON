@@ -62,7 +62,7 @@ def generate_independent_samples(orbital_scheme, **kwargs):
 
 def generate_orbital_periods(primary_masses,
                              number_of_binaries=1,
-                             orbital_period_min=10**0.15,
+                             orbital_period_min=0.35,
                              orbital_period_max=10**3.5,
                              orbital_period_scheme='Sana+12_period_extended',
                              **kwargs):
@@ -240,7 +240,7 @@ def generate_eccentricities(number_of_binaries=1,
 
 
 def generate_primary_masses(number_of_binaries=1,
-                            primary_mass_min=1,
+                            primary_mass_min=7,
                             primary_mass_max=120,
                             primary_mass_scheme='Salpeter',
                             **kwargs):
@@ -306,7 +306,7 @@ def generate_primary_masses(number_of_binaries=1,
 
 def generate_secondary_masses(primary_masses,
                               number_of_binaries=1,
-                              secondary_mass_min=1,
+                              secondary_mass_min=0.35,
                               secondary_mass_max=120,
                               secondary_mass_scheme='flat_mass_ratio',
                               **kwargs):

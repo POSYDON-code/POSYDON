@@ -712,6 +712,9 @@ class MesaGridStep:
                 getattr(binary, "event_history").extend(binary_event)
                 getattr(binary, "mass_transfer_case_history").extend(MT_case)
 
+        if binary.state == 'initial_RLOF':
+            return
+
         if (star_2_CO or star_1_CO):
             # Updating Bondi-Hoyle accretion
             for k, star in enumerate(stars):
@@ -881,6 +884,7 @@ class MesaGridStep:
                                                    star_CO=star_2_CO)
         #S1_state_classified = self.classes['S1_state']
         #S2_state_classified = self.classes['S2_state']
+
         if interpolation_class != 'initial_MT':
             # DEBUG
             # if S1_state_inferred != S1_state_classified:
@@ -903,6 +907,9 @@ class MesaGridStep:
         setattr(self.binary, 'state', binary_state)
         setattr(self.binary, 'event', binary_event)
         setattr(self.binary, 'mass_transfer_case', MT_case)
+
+        if binary.state == 'initial_RLOF':
+            return
 
         if (star_2_CO or star_1_CO):
             # Updating Bondi-Hoyle accretion
