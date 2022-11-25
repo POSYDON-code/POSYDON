@@ -129,8 +129,6 @@ class SingleStar:
             self.natal_kick_array = [None] * 4
         if not hasattr(self, 'spin_orbit_tilt'):
             self.spin_orbit_tilt = None
-        if not hasattr(self, 'spin_vector'):
-            self.spin_vector = [None] * 3
         if not hasattr(self, 'f_fb'):
             self.f_fb = None
         if not hasattr(self, 'SN_type'):
