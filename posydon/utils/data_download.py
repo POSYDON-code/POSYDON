@@ -73,7 +73,7 @@ def data_download(file=file, MD5_check=True, verbose=False):
     with tarfile.open(file, "r:gz") as file_to_check:
 
         # read contents of the file
-        data = file_to_check.read()
+        data = file_to_check.extractall()
 
     # Compare original MD5 with freshly calculated
     if MD5_check:
