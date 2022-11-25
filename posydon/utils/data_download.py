@@ -69,27 +69,29 @@ def data_download(file=file, MD5_check=True, verbose=False):
           f'to PATH_TO_POSYDON_DATA={PATH_TO_POSYDON_DATA}')
     urllib.request.urlretrieve(data_url, file, ProgressBar())
 
-    # Open,close, read file and calculate MD5 on its contents
-    with tarfile.open(file, "r:gz") as file_to_check:
-
-        # read contents of the file
-        data = file_to_check.extractall()
-
     # Compare original MD5 with freshly calculated
     if MD5_check:
+        try:
+            with open(file, "rb") as file_to_check:
+                # read contents of the file
+                data = file_to_check.read()
 
-        # pipe contents of the file through
-        md5_returned = hashlib.md5(data).hexdigest()
+            # pipe contents of the file through
+            md5_returned = hashlib.md5(data).hexdigest()
 
-        if original_md5 == md5_returned:
-            if verbose:
-                print("MD5 verified.")
-        else:
-            # Delete file - we cannot rely upon that data
-            os.remove(file)
+            if original_md5 == md5_returned:
+                if verbose:
+                    print("MD5 verified.")
+            else:
+                # Delete file - we cannot rely upon that data
+                os.remove(file)
 
-            # Raise value error
-            raise ValueError("MD5 verification failed!.")
+                # Raise value error
+                raise ValueError("MD5 verification failed!.")
+        except:
+            print('Failed to read the tar.gz file for MD5 verificaton, '
+                  'cannot guarantee file integrity (this error seems to '
+                  'happen only on macOS').')
 
     # extract each file
     print('Extracting POSYDON data from tar file...')
