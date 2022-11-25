@@ -67,7 +67,7 @@ install_requires = [
     'astropy == 4.0.1',
     'pandas == 1.3.0',
     'scikit-learn == 0.21.3',
-    'matplotlib ==  3.2.2',
+    'matplotlib ==  3.5.0',
     'matplotlib-label-lines == 0.3.8',
     'PyQt5 == 5.15.3',
     'h5py == 3.7.0',
@@ -85,7 +85,6 @@ tests_require = [
 # For documenation
 extras_require = {
     "doc": [
-        "matplotlib",
         "ipython",
         "sphinx <= 4.2.0",
         "numpydoc",

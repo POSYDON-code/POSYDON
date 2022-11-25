@@ -241,7 +241,7 @@ def generate_eccentricities(number_of_binaries=1,
 
 def generate_primary_masses(number_of_binaries=1,
                             primary_mass_min=7,
-                            primary_mass_max=150,
+                            primary_mass_max=120,
                             primary_mass_scheme='Salpeter',
                             **kwargs):
     """Generate random primary masses.
@@ -307,7 +307,7 @@ def generate_primary_masses(number_of_binaries=1,
 def generate_secondary_masses(primary_masses,
                               number_of_binaries=1,
                               secondary_mass_min=0.35,
-                              secondary_mass_max=150,
+                              secondary_mass_max=120,
                               secondary_mass_scheme='flat_mass_ratio',
                               **kwargs):
     """Generate random secondary masses.
