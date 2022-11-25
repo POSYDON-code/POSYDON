@@ -91,7 +91,7 @@ def data_download(file=file, MD5_check=True, verbose=False):
         except:
             print('Failed to read the tar.gz file for MD5 verificaton, '
                   'cannot guarantee file integrity (this error seems to '
-                  'happen only on macOS').')
+                  'happen only on macOS).')
 
     # extract each file
     print('Extracting POSYDON data from tar file...')
