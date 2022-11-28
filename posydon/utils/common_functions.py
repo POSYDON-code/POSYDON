@@ -933,7 +933,7 @@ def inspiral_timescale_from_orbital_period(star1_mass, star2_mass,
     return T_merge
 
 
-def spin_stable_mass_transfer(star_mass_preMT, star_mass_postMT):
+def spin_stable_mass_transfer(spin_i, star_mass_preMT, star_mass_postMT):
     """Calculate the spin of an accreting BH under stable mass transfer.
 
     Based on Thorne 1974 eq. 2a.
@@ -941,12 +941,14 @@ def spin_stable_mass_transfer(star_mass_preMT, star_mass_postMT):
     """
     if star_mass_preMT is None or star_mass_postMT is None:
         return None
-
+    z1 = 1+(1-spin_i**2)**(1/3)*((1+spin_i)**(1/3)+(1-spin_i)**(1/3))
+    z2 = (3*spin_i**2+z1**2)**0.5
+    r_isco = 3 + z2 - ((3-z1)*(3+z1+2*z2))**0.5
     if (1 <= star_mass_postMT / star_mass_preMT
-            and star_mass_postMT / star_mass_preMT <= 6**0.5):
-        spin = (2. / 3)**(0.5) * (star_mass_preMT / star_mass_postMT) * (
-            4 - (18 * star_mass_preMT**2 / star_mass_postMT**2 - 2)**(0.5))
-    elif star_mass_postMT / star_mass_preMT > 6**(0.5):
+            and star_mass_postMT / star_mass_preMT <= r_isco**0.5):
+        spin = r_isco**(0.5) / 3 * (star_mass_preMT / star_mass_postMT) * (
+            4 - (3 * r_isco * star_mass_preMT**2 / star_mass_postMT**2 - 2)**(0.5))
+    elif star_mass_postMT / star_mass_preMT > r_isco**(0.5):
         spin = 1.
     else:
         spin = np.nan

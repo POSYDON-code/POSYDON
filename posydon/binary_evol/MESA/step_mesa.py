@@ -579,12 +579,25 @@ class MesaGridStep:
                             history_of_attribute = cb_bh[key_p][:-1]
                             getattr(star, key_h).extend(history_of_attribute)
                     elif key == 'spin':
-                        v_key = getattr(star, 'spin')
-                        setattr(star, key, v_key)
+                        key_p = 'star_%d_mass' % (k+1)
+                        mass_history = np.array(cb_bh[key_p])
+                        spin_prev_step = getattr(star, 'spin')
+                        spin = cf.spin_stable_mass_transfer(spin_prev_step, mass_history[0],
+                                                            mass_history[-1])
+
+                        setattr(star, key, spin)
                         if self.save_initial_conditions:
-                            getattr(star, key_h).append(v_key)
+                            history_of_attribute =[
+                                cf.spin_stable_mass_transfer(spin_prev_step ,mass_history[0],
+                                                             mass_history[i])
+                                for i in range(len(mass_history)-1)]
+                            getattr(star, key_h).append(history_of_attribute[0])
                         if track_interpolation:
-                            getattr(star, key_h).extend([v_key]*length_hist)
+                            history_of_attribute =[
+                                cf.spin_stable_mass_transfer(spin_prev_step, mass_history[0],
+                                                             mass_history[i])
+                                for i in range(len(mass_history)-1)]
+                            getattr(star, key_h).extend(history_of_attribute)
                     elif key == 'log_R':
                         key_p = 'star_%d_mass' % (k+1)
                         mass = cb_bh[key_p][-1]
@@ -711,9 +724,6 @@ class MesaGridStep:
                 getattr(binary, "state_history").extend(binary_state)
                 getattr(binary, "event_history").extend(binary_event)
                 getattr(binary, "mass_transfer_case_history").extend(MT_case)
-
-        if binary.state == 'initial_RLOF':
-            return
 
         if (star_2_CO or star_1_CO):
             # Updating Bondi-Hoyle accretion
@@ -884,7 +894,6 @@ class MesaGridStep:
                                                    star_CO=star_2_CO)
         #S1_state_classified = self.classes['S1_state']
         #S2_state_classified = self.classes['S2_state']
-
         if interpolation_class != 'initial_MT':
             # DEBUG
             # if S1_state_inferred != S1_state_classified:
@@ -907,9 +916,6 @@ class MesaGridStep:
         setattr(self.binary, 'state', binary_state)
         setattr(self.binary, 'event', binary_event)
         setattr(self.binary, 'mass_transfer_case', MT_case)
-
-        if binary.state == 'initial_RLOF':
-            return
 
         if (star_2_CO or star_1_CO):
             # Updating Bondi-Hoyle accretion
