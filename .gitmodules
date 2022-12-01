@@ -4,3 +4,6 @@
 [submodule "data/POSYDON_data"]
 	path = data/POSYDON_data
 	url = https://github.com/POSYDON-code/POSYDON_data.git
+[submodule "posydon/tests/data/POSYDON-UNIT-TESTS"]
+	path = posydon/tests/data/POSYDON-UNIT-TESTS
+	url = https://github.com/POSYDON-code/POSYDON-UNIT-TESTS.git
