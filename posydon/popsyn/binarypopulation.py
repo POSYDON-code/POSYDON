@@ -135,13 +135,15 @@ class BinaryPopulation:
         -------
         None
         """
-        tqdm_bool = kwargs.get('tqdm', False)
-        breakdown_to_df_bool = kwargs.get('breakdown_to_df', True)
-        from_hdf_bool = kwargs.get('from_hdf', False)
+        # combine kw defined at init and any passed here
+        kw = {**self.kwargs, **kwargs}
+        tqdm_bool = kw.get('tqdm', False)
+        breakdown_to_df_bool = kw.get('breakdown_to_df', True)
+        from_hdf_bool = kw.get('from_hdf', False)
 
         if self.comm is None:   # do regular evolution
-            indices = kwargs.get('indices',
-                                 list(range(self.number_of_binaries)))
+            indices = kw.get('indices',
+                             list(range(self.number_of_binaries)))
             params = {'indices':indices,
                       'tqdm':tqdm_bool,
                       'breakdown_to_df':breakdown_to_df_bool,
@@ -151,8 +153,8 @@ class BinaryPopulation:
             self._safe_evolve(**self.kwargs)
         else:
             # do MPI evolution
-            indices = kwargs.get('indices',
-                                 list(range(self.number_of_binaries)))
+            indices = kw.get('indices',
+                            list(range(self.number_of_binaries)))
             indices_split = np.array_split(indices, self.size)
             batch_indices = indices_split[self.rank]
             mpi_tqdm_bool = True if (tqdm_bool and self.rank == 0) else False
