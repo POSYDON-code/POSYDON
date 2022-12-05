@@ -468,7 +468,7 @@ def beaming(binary):
 
 
 def bondi_hoyle(binary, accretor, donor, idx=-1, wind_disk_criteria=True,
-                scheme='Hurley+2012'):
+                scheme='Hurley+2002'):
     """Calculate the Bondi-Hoyle accretion rate of a binary.
 
     Parameters
