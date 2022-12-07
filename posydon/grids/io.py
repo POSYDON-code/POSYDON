@@ -46,6 +46,7 @@ __authors__ = [
 
 import os
 import glob
+import gzip
 import warnings
 
 from posydon.utils.gridutils import read_MESA_data_file
@@ -352,14 +353,18 @@ def print_meta_contents(path, max_lines=None, max_chars_per_line=80):
     print("CONTENTS OF METADATA FILE: {}".format(path))
     print("-" * 80)
 
-    with open(path, "r") as f:
-        for i, line in enumerate(f):
-            if max_lines is not None and i >= max_lines:
-                break
-            line = line.rstrip("\n")
-            if max_chars_per_line != "warp":
-                line = line[:max_chars_per_line]
-            print(line)
+    if path.endswith(".gz"):
+        f = gzip.open(path, "rt")
+    else:
+        f = open(path, "r")
+    for i, line in enumerate(f):
+        if max_lines is not None and i >= max_lines:
+            break
+        line = line.rstrip("\n")
+        if max_chars_per_line != "warp":
+            line = line[:max_chars_per_line]
+        print(line)
+    f.close()
     print("-" * 80)
 
 
