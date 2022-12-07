@@ -57,7 +57,8 @@ POSYDON_FORMAT_OPTIONS = {
     "ignored folders": ["make", "star1", "star2", "binary", "data",
                         "new_data", "template", ".ipynb_checkpoints"],
     # which files contain useful metadata concerning the grid
-    "grid metadata": ["grid_test.csv", "grid_test.csv.gz"],
+    "grid metadata": ["grid_test.csv",
+                      "grid_test.csv.gz"],
     # which files contain useful metadata concerning individual grids
     "run metadata": ["inlist_grid_points", "summary.txt", "out.txt",
                      "inlist_grid_point.gz", "summary.txt.gz", "out.txt.gz"]
@@ -66,7 +67,8 @@ POSYDON_FORMAT_OPTIONS = {
 
 BINARY_OUTPUT_FILE = "out.txt"
 SINGLE_OUTPUT_FILE = "out_star1_formation_step0.txt"
-EEP_FILE_EXTENSIONS = [".data.eep", ".data.clean.eep"]
+EEP_FILE_EXTENSIONS = [".data.eep", ".data.clean.eep",
+                       ".data.eep.gz", ".data.clean.eep.gz"]
 
 
 class RunReader:
