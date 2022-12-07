@@ -10,6 +10,7 @@ __authors__ = [
 ]
 
 
+import gzip
 import numpy as np
 from scipy.interpolate import pchip
 
@@ -26,10 +27,15 @@ class EEP:
         """Load an MESA history file and construct the EEP instance."""
         self.filename = filename.strip()
         try:
-            with open(self.filename, 'r') as f:
-                self.header1 = f.readline()
-                self.header2 = f.readline()
-                self.header3 = f.readline()
+            if self.filename.endswith(".gz"):
+                f = gzip.open(self.filename, "rt")
+            else:
+                f = open(self.filename, "r")
+
+            self.header1 = f.readline()
+            self.header2 = f.readline()
+            self.header3 = f.readline()
+            f.close()
                 # this is compatible with `.gz` files
             tr = np.genfromtxt(self.filename, names=True, skip_header=5)
             names = tr.dtype.names
