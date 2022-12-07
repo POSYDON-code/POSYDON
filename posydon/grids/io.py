@@ -65,8 +65,11 @@ POSYDON_FORMAT_OPTIONS = {
 }
 
 
+# Note that the `.gz` versions of these filenames will also be searched
 BINARY_OUTPUT_FILE = "out.txt"
 SINGLE_OUTPUT_FILE = "out_star1_formation_step0.txt"
+
+# Possible extensions of EEP files (including zipped versions)
 EEP_FILE_EXTENSIONS = [".data.eep", ".data.clean.eep",
                        ".data.eep.gz", ".data.clean.eep.gz"]
 
@@ -135,20 +138,21 @@ class RunReader:
 
         files = os.listdir(self.path)
         for file in files:
+            fullpath = os.path.join(self.path, file)
             if file in ["binary_history.data", "binary_history.data.gz"]:
-                self.binary_history_path = os.path.join(self.path, file)
+                self.binary_history_path = fullpath
             elif file in ["final_star1.mod", "final_star1.mod.gz"]:
-                self.final_star1_path = os.path.join(self.path, file)
+                self.final_star1_path = fullpath
             elif file == ["final_star2.mod", "final_star2.mod.gz"]:
-                self.final_star1_path = os.path.join(self.path, file)
+                self.final_star1_path = fullpath
             elif file == ["out.txt", "out.txt.gz"] and self.binary:
-                self.out_txt_path = os.path.join(self.path, file)
+                self.out_txt_path = fullpath
             elif ((file in ["out_star1_formation_step0.txt",
                             "out_star1_formation_step0.txt.gz"])
                   and not self.binary):
-                self.out_txt_path = os.path.join(self.path, file)
+                self.out_txt_path = fullpath
             elif file in POSYDON_FORMAT_OPTIONS["run metadata"]:
-                self.metadata_files.append(os.path.join(self.path, file))
+                self.metadata_files.append(fullpath)
 
         if joined_exists(self.path, 'LOGS1'):
             if os.path.isdir(os.path.join(self.path, 'LOGS1')):

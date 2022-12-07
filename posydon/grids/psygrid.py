@@ -412,6 +412,7 @@ class PSyGrid:
         for extension in EEP_FILE_EXTENSIONS:
             searchfor = os.path.join(path, "*" + extension)
             for filename in glob.glob(searchfor):
+                # note that this is consistent with additional `.gz` extension
                 identifier = os.path.basename(filename.split(extension)[-2])
                 assert identifier not in self.eeps
                 self.eeps[identifier] = filename
