@@ -56,9 +56,10 @@ POSYDON_FORMAT_OPTIONS = {
     "ignored folders": ["make", "star1", "star2", "binary", "data",
                         "new_data", "template", ".ipynb_checkpoints"],
     # which files contain useful metadata concerning the grid
-    "grid metadata": ["grid_test.csv"],
+    "grid metadata": ["grid_test.csv", "grid_test.csv.gz"],
     # which files contain useful metadata concerning individual grids
-    "run metadata": ["inlist_grid_points", "summary.txt", "out.txt"]
+    "run metadata": ["inlist_grid_points", "summary.txt", "out.txt",
+                     "inlist_grid_point.gz", "summary.txt.gz", "out.txt.gz"]
 }
 
 
@@ -119,24 +120,29 @@ class RunReader:
         if self.verbose:
             print("Reading run in {}".format(self.path))
 
-        def joined_exists(folder, filename):
+        def joined_exists(folder, filename, allow_gzip=True):
             """Return the joined path of `folder` and `filename`, if exists."""
             fullpath = os.path.join(folder, filename)
+            fullpath_gz = fullpath + ".gz"
             if os.path.exists(fullpath):
                 return fullpath
+            if allow_gzip and os.path.exists(fullpath_gz):
+                return fullpath_gz
             return None
 
         files = os.listdir(self.path)
         for file in files:
-            if file == "binary_history.data":
+            if file in ["binary_history.data", "binary_history.data.gz"]:
                 self.binary_history_path = os.path.join(self.path, file)
-            elif file == "final_star1.mod":
+            elif file in ["final_star1.mod", "final_star1.mod.gz"]:
                 self.final_star1_path = os.path.join(self.path, file)
-            elif file == "final_star2.mod":
+            elif file == ["final_star2.mod", "final_star2.mod.gz"]:
                 self.final_star1_path = os.path.join(self.path, file)
-            elif file == "out.txt" and self.binary:
+            elif file == ["out.txt", "out.txt.gz"] and self.binary:
                 self.out_txt_path = os.path.join(self.path, file)
-            elif file == "out_star1_formation_step0.txt" and not self.binary:
+            elif ((file in ["out_star1_formation_step0.txt",
+                            "out_star1_formation_step0.txt.gz"])
+                  and not self.binary):
                 self.out_txt_path = os.path.join(self.path, file)
             elif file in POSYDON_FORMAT_OPTIONS["run metadata"]:
                 self.metadata_files.append(os.path.join(self.path, file))
@@ -144,20 +150,20 @@ class RunReader:
         if joined_exists(self.path, 'LOGS1'):
             if os.path.isdir(os.path.join(self.path, 'LOGS1')):
                 self.history1_path = joined_exists(
-                    self.path, 'LOGS1/history.data')
+                    self.path, 'LOGS1/history.data', allow_gzip=True)
                 self.final_profile1_path = joined_exists(
-                    self.path, 'LOGS1/final_profile.data')
+                    self.path, 'LOGS1/final_profile.data', allow_gzip=True)
                 self.initial_profile1_path = joined_exists(
-                    self.path, 'LOGS1/initial_profile.data')
+                    self.path, 'LOGS1/initial_profile.data', allow_gzip=True)
 
         if joined_exists(self.path, 'LOGS2'):
             if os.path.isdir(os.path.join(self.path, 'LOGS2')):
                 self.history2_path = joined_exists(
-                    self.path, 'LOGS2/history.data')
+                    self.path, 'LOGS2/history.data', allow_gzip=True)
                 self.final_profile2_path = joined_exists(
-                    self.path, 'LOGS2/final_profile.data')
+                    self.path, 'LOGS2/final_profile.data', allow_gzip=True)
                 self.initial_profile2_path = joined_exists(
-                    self.path, 'LOGS2/initial_profile.data')
+                    self.path, 'LOGS2/initial_profile.data', allow_gzip=True)
 
         if self.verbose:
             self.report()
@@ -239,7 +245,10 @@ class GridReader:
                 print("Searching for MESA runs in `{}`".format(folder_path))
 
             search_string = os.path.join(folder_path, "**/" + out_name)
-            out_files = glob.glob(search_string, recursive=True)
+            search_string_gz = search_string + ".gz"
+            out_files_txt = glob.glob(search_string, recursive=True)
+            out_files_gz = glob.glob(search_string_gz, recursive=True)
+            out_files = list(out_files_txt) + list(out_files_gz)
             for out_file in out_files:
                 fullpath = os.path.dirname(os.path.abspath(out_file))
                 params_part = initial_values_from_dirname(fullpath)
@@ -252,7 +261,10 @@ class GridReader:
             self.metadata_files = []
             for meta_path in POSYDON_FORMAT_OPTIONS["grid metadata"]:
                 search_string = os.path.join(folder_path, meta_path)
-                meta_files = glob.glob(search_string)
+                search_string_gz = search_string + ".gz"
+                meta_files_txt = glob.glob(search_string)
+                meta_files_gz = glob.glob(search_string_gz)
+                meta_files = list(meta_files_txt) + list(meta_files_gz)
                 self.metadata_files.extend(meta_files)
 
         if len(folders) == 0:
