@@ -30,6 +30,7 @@ class EEP:
                 self.header1 = f.readline()
                 self.header2 = f.readline()
                 self.header3 = f.readline()
+                # this is compatible with `.gz` files
             tr = np.genfromtxt(self.filename, names=True, skip_header=5)
             names = tr.dtype.names
         except IOError:

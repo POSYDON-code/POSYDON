@@ -818,6 +818,7 @@ class PSyGrid:
             # get some initial values from the `binary_history.data` header
             # if of course, no RLO fix is applied
             if binary_grid and not (start_at_RLO or ignore_data):
+                # this is compatible with `.gz` files
                 bh_header = np.genfromtxt(run.binary_history_path,
                                           skip_header=1,
                                           max_rows=1, names=True)
@@ -849,6 +850,7 @@ class PSyGrid:
                     initial_BH["binary_separation"] = init_separation
             elif not binary_grid and not (start_at_RLO or ignore_data):
                 # use header to get initial mass in single-star grids
+                # this is compatible with `.gz` files
                 h1_header = np.genfromtxt(run.history1_path,
                                           skip_header=1,
                                           max_rows=1, names=True)

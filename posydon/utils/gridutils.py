@@ -49,6 +49,8 @@ def join_lists(A, B):
 def read_MESA_data_file(path, columns):
     """Read specific columns from a MESA output file to an array.
 
+    Note that this function also works with `.gz` files.
+
     Parameters
     ----------
     path : str
@@ -318,6 +320,8 @@ def convert_output_to_table(
         "log_L_1", "log_T_1", "He_core_1(Msun)", "C_core_1(Msun)",
         "log_L_2", "log_T_2", "He_core_2(Msun)", "C_core_2(Msun)"]):
     """Convert output of a run, to a pandas dataframe.
+
+    Note that this function also works with `.gz` files.
 
     Parameters
     ----------
