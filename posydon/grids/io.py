@@ -375,22 +375,26 @@ def read_initial_values(mesa_dir):
         return None
 
     initial_values = {}
-    with open(path, "r") as f:
-        for line in f:
-            if "=" not in line or "d0" not in line:
-                continue
-            fields = line.strip().split("=")
-            if len(fields) != 2:
-                return None
-            varname = fields[0].strip()
-            value = float(fields[1].split("d0")[0].strip())
-            if varname == "m1":
-                varname = "star_1_mass"
-            elif varname == "m2":
-                varname = "star_2_mass"
-            elif varname == "initial_period_in_days":
-                varname = "period_days"
-            initial_values[varname] = value
+    if path.endswith(".gz"):
+        f = gzip.open(path, "rt")
+    else:
+        f = open(path, "r")
+    for line in f:
+        if "=" not in line or "d0" not in line:
+            continue
+        fields = line.strip().split("=")
+        if len(fields) != 2:
+            return None
+        varname = fields[0].strip()
+        value = float(fields[1].split("d0")[0].strip())
+        if varname == "m1":
+            varname = "star_1_mass"
+        elif varname == "m2":
+            varname = "star_2_mass"
+        elif varname == "initial_period_in_days":
+            varname = "period_days"
+        initial_values[varname] = value
+    f.close()
     return initial_values
 
 
