@@ -312,7 +312,7 @@ def create_binary_inlists(binary_controls, binary_job,
 
     return
 
-def create_star_formation(mass, work_dir, star_inlist_project, initial_z=None):
+def create_star_formation(mass, work_dir, star_inlist_project, new_Z=None):
     """Create the inlist and inlist grid points needed to run this part of grid
     """
 
@@ -332,6 +332,8 @@ def create_star_formation(mass, work_dir, star_inlist_project, initial_z=None):
 
       read_extra_star_job_inlist1 = .true.
       extra_star_job_inlist1_name = '{0}'
+      read_extra_star_job_inlist2 = .true.
+      extra_star_job_inlist2_name = 'inlist_grid_points'
 
 / ! end of job namelist
                         """.format(star_inlist_project)
@@ -344,9 +346,13 @@ def create_star_formation(mass, work_dir, star_inlist_project, initial_z=None):
     with open(os.path.join(work_dir, 'inlist_grid_points'), 'w') as inlist_grid_points:
         inlist_grid_points.write("&controls\n")
         inlist_grid_points.write("initial_mass = {0}d0\n".format(mass))
-        if initial_z is not None:
-            inlist_grid_points.write("initial_z = {0}d0\n".format(initial_z))
-        inlist_grid_points.write("/ ! end of binary_controls namelist\n")
+        if new_Z is not None:
+            inlist_grid_points.write("Zbase = {0}d0\n".format(new_Z))
+        inlist_grid_points.write("/ ! end of star_controls namelist\n")
+        inlist_grid_points.write("&star_job\n")
+        if new_Z is not None:
+            inlist_grid_points.write("new_Z = {0}d0\n".format(new_Z))
+        inlist_grid_points.write("/ ! end of star_job namelist\n")
         inlist_grid_points.close()
 
     return
@@ -604,7 +610,10 @@ def run_grid_point(grid, star1_formation, star2_formation,
         # if yes then create inlists specific to this grid points
         # moreover we should loop over all the star1 formation steps
         for index, inlist_step in enumerate(args.mesa_star1_inlist_project):
-            create_star_formation(grid_param_dict['m1'], work_dir, inlist_step)
+            if index == 0:
+                create_star_formation(grid_param_dict['m1'], work_dir, inlist_step)
+            elif index == 1:
+                create_star_formation(grid_param_dict['m1'], work_dir, inlist_step, grid_param_dict['new_Z'])
             run_mesa(args.mesa_star1_executable, work_dir, final_dir,
                      outfile_name='out_star1_formation_step{0}.txt'.format(index))
 
@@ -613,7 +622,10 @@ def run_grid_point(grid, star1_formation, star2_formation,
         # if yes then create inlists specific to this grid points
         # moreover we should loop over all the star1 formation steps
         for index, inlist_step in enumerate(args.mesa_star2_inlist_project):
-            create_star_formation(grid_param_dict['m2'], work_dir, inlist_step)
+            if index == 0:
+                create_star_formation(grid_param_dict['m2'], work_dir, inlist_step)
+            elif index == 1:
+                create_star_formation(grid_param_dict['m2'], work_dir, inlist_step, grid_param_dict['new_Z'])
             run_mesa(args.mesa_star2_executable, work_dir, final_dir,
                      outfile_name='out_star2_formation_step{0}.txt'.format(index))
 
@@ -748,7 +760,10 @@ if __name__ == '__main__':
 
         # run the single star grid
         for index, inlist_step in enumerate(args.mesa_star1_inlist_project):
-            create_star_formation(grid_param_dict['initial_mass'], work_dir, inlist_step)
+            if index == 0:
+                create_star_formation(grid_param_dict['initial_mass'], work_dir, inlist_step)
+            elif index == 1:
+                create_star_formation(grid_param_dict['initial_mass'], work_dir, inlist_step, grid_param_dict['new_Z'])
             run_mesa(args.mesa_star1_executable, work_dir, final_dir,
                      outfile_name='out_star1_formation_step{0}.txt'.format(index))
 
