@@ -239,7 +239,7 @@ def create_binary_inlists(binary_controls, binary_job,
             inlist_grid_points.write("&binary_controls\n")
             for k, v in binary_controls.items():
                 if (type(v) == float) and (not v.is_integer()):
-                    inlist_grid_points.write("\t{0} = {1}d0\n".format(k, v))
+                    inlist_grid_points.write("\t{0} = {1:.10f}d0\n".format(k, v))
                 elif (type(v) == float) and (v.is_integer()):
                     inlist_grid_points.write("\t{0} = {1}\n".format(k, int(v)))
                 else:
@@ -251,7 +251,7 @@ def create_binary_inlists(binary_controls, binary_job,
             inlist_grid_points.write("&binary_job\n")
             for k, v in binary_job.items():
                 if (type(v) == float) and (not v.is_integer()):
-                    inlist_grid_points.write("\t{0} = {1}d0\n".format(k, v))
+                    inlist_grid_points.write("\t{0} = {1:.10f}d0\n".format(k, v))
                 elif (type(v) == float) and (v.is_integer()):
                     inlist_grid_points.write("\t{0} = {1}\n".format(k, int(v)))
                 else:
@@ -264,7 +264,7 @@ def create_binary_inlists(binary_controls, binary_job,
             inlist_grid_points.write("&controls\n")
             for k, v in star1_binary_controls.items():
                 if (type(v) == float) and (not v.is_integer()):
-                    inlist_grid_points.write("\t{0} = {1}d0\n".format(k, v))
+                    inlist_grid_points.write("\t{0} = {1:.10f}d0\n".format(k, v))
                 elif (type(v) == float) and (v.is_integer()):
                     inlist_grid_points.write("\t{0} = {1}\n".format(k, int(v)))
                 else:
@@ -277,7 +277,7 @@ def create_binary_inlists(binary_controls, binary_job,
             inlist_grid_points.write("&controls\n")
             for k, v in star2_binary_controls.items():
                 if (type(v) == float) and (not v.is_integer()):
-                    inlist_grid_points.write("\t{0} = {1}d0\n".format(k, v))
+                    inlist_grid_points.write("\t{0} = {1:.10f}d0\n".format(k, v))
                 elif (type(v) == float) and (v.is_integer()):
                     inlist_grid_points.write("\t{0} = {1}\n".format(k, int(v)))
                 else:
@@ -290,7 +290,7 @@ def create_binary_inlists(binary_controls, binary_job,
             inlist_grid_points.write("&star_job\n")
             for k, v in star1_binary_job.items():
                 if (type(v) == float) and (not v.is_integer()):
-                    inlist_grid_points.write("\t{0} = {1}d0\n".format(k, v))
+                    inlist_grid_points.write("\t{0} = {1:.10f}d0\n".format(k, v))
                 elif (type(v) == float) and (v.is_integer()):
                     inlist_grid_points.write("\t{0} = {1}\n".format(k, int(v)))
                 else:
@@ -303,7 +303,7 @@ def create_binary_inlists(binary_controls, binary_job,
             inlist_grid_points.write("&star_job\n")
             for k, v in star2_binary_job.items():
                 if (type(v) == float) and (not v.is_integer()):
-                    inlist_grid_points.write("\t{0} = {1}d0\n".format(k, v))
+                    inlist_grid_points.write("\t{0} = {1:.10f}d0\n".format(k, v))
                 elif (type(v) == float) and (v.is_integer()):
                     inlist_grid_points.write("\t{0} = {1}\n".format(k, int(v)))
                 else:
@@ -345,13 +345,13 @@ def create_star_formation(mass, work_dir, star_inlist_project, new_Z=None):
 
     with open(os.path.join(work_dir, 'inlist_grid_points'), 'w') as inlist_grid_points:
         inlist_grid_points.write("&controls\n")
-        inlist_grid_points.write("initial_mass = {0}d0\n".format(mass))
+        inlist_grid_points.write("initial_mass = {0:.10f}d0\n".format(mass))
         if new_Z is not None:
-            inlist_grid_points.write("Zbase = {0}d0\n".format(new_Z))
+            inlist_grid_points.write("Zbase = {0:.10f}d0\n".format(new_Z))
         inlist_grid_points.write("/ ! end of star_controls namelist\n")
         inlist_grid_points.write("&star_job\n")
         if new_Z is not None:
-            inlist_grid_points.write("new_Z = {0}d0\n".format(new_Z))
+            inlist_grid_points.write("new_Z = {0:.10f}d0\n".format(new_Z))
         inlist_grid_points.write("/ ! end of star_job namelist\n")
         inlist_grid_points.close()
 
