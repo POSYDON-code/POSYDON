@@ -164,6 +164,8 @@ DEFAULT_MARKERS_COLORS_LEGENDS = {
             ['D', 1, color_unstable, TF1_label_unstable],
         'logQ_limit':
             ['x', 1, 'red', 'logQ_limit'],
+        'logQ_min_limit':
+            ['x', 1, 'red', 'logQ_limit'],
         'min_timestep_limit':
             ['x', 1, 'red', 'Not converged'],
         'reach cluster timelimit':
@@ -214,6 +216,8 @@ DEFAULT_MARKERS_COLORS_LEGENDS = {
             ['s', 2, 'lightgrey', 'case A/B/A from star1'],
         'caseA/B/C_from_star1':
             ['s', 2, 'yellow', 'case A/B/C from star1'],
+        'caseA/C_from_star1':
+            ['s', 2, 'yellow', 'case A/C from star1'],
         'caseA/B/BB_from_star1':
             ['s', 2, 'tab:red', 'case A/B/BB from star1'],
         'caseA/B/C/BB_from_star1':
@@ -299,6 +303,10 @@ DEFAULT_MARKERS_COLORS_LEGENDS = {
             ['o', 2, 'tab:brown', 'stripped He-star C depletion'],
         'stripped_He_non_burning':
             ['o', 2, 'gray', 'stripped He-star non burning'],
+        'stripped_He_Core_H_burning':
+            ['x', 1, 'black', 'unknown'],
+        'stripped_He_Shell_H_burning':
+            ['x', 1, 'black', 'unknown'],
         'undetermined_evolutionary_state':
             ['x', 1, 'black', 'unknown'],
         'BH':
@@ -337,6 +345,10 @@ DEFAULT_MARKERS_COLORS_LEGENDS = {
             ['o', 2, 'tab:brown', 'stripped He-star C depletion'],
         'stripped_He_non_burning':
             ['o', 2, 'gray', 'stripped He-star non burning'],
+        'stripped_He_Core_H_burning':
+            ['x', 1, 'black', 'unknown'],
+        'stripped_He_Shell_H_burning':
+            ['x', 1, 'black', 'unknown'],
         'undetermined_evolutionary_state':
             ['x', 1, 'black', 'unknown'],
         'BH':
@@ -413,15 +425,15 @@ DEFAULT_MARKERS_COLORS_LEGENDS = {
         'offcenter neon ignition for secondary':
             ['o', 2, None, TF1_label_stable],
         'overflow from L1 at ZAMS':
-            ['.', 1, None, TF1_label_initial],
+            ['.', 1.5, None, TF1_label_initial],
         'Terminate because of overflowing initial model':
-            ['.', 1, None, TF1_label_initial],
+            ['.', 1.5, None, TF1_label_initial],
         'overflow from L2 point for q>1 at ZAMS':
-            ['.', 1, None, TF1_label_initial],
+            ['.', 1.5, None, TF1_label_initial],
         'overflow from L2 surface for q<1 at ZAMS':
-            ['.', 1, None, TF1_label_initial],
+            ['.', 1.5, None, TF1_label_initial],
         'overflow from L2 surface for q>1 at ZAMS':
-            ['.', 1, None, TF1_label_initial],
+            ['.', 1.5, None, TF1_label_initial],
         'overflow from L2 surface for q<1':
             ['D', 1, None, TF1_label_unstable],
         r'overflow from L2 (D_L2) distance for q(=Macc/Mdon)>1, '
@@ -446,7 +458,7 @@ DEFAULT_MARKERS_COLORS_LEGENDS = {
         'Reached the critical mt rate':
             ['D', 1, None, TF1_label_unstable],
         'Reached TPAGB':
-            ['s', 3, None, TF1_label_initial],
+            ['s', 2, None, TF1_label_initial],
         'Both stars fill their Roche Lobe and at least one of them is off MS':
             ['D', 1, None, TF1_label_unstable],
         'Terminate due to L2 overflow during case A':
@@ -454,27 +466,29 @@ DEFAULT_MARKERS_COLORS_LEGENDS = {
         'Reached maximum mass transfer rate: Exceeded photon trapping radius':
             ['D', 1, None, TF1_label_unstable],
         'logQ_limit':
-            ['s', 3, None, 'logQ_limit'],
+            ['x', 1, None, 'logQ_limit'],
+        'logQ_min_limit':
+            ['x', 1, None, 'logQ_limit'],
         'min_timestep_limit':
-            ['s', 3, None, 'Not converged'],
+            ['x', 1, None, 'Not converged'],
         'reach cluster timelimit':
-            ['s', 3, None, 'Not converged'],
+            ['x', 1, None, 'Not converged'],
         'no termination code':
-            ['s', 3, None, 'no termination code'],
+            ['x', 1, None, 'no termination code'],
         'envelope_mass_limit':
-            ['s', 3, None, TF1_label_stable],
+            ['s', 2, None, TF1_label_stable],
         'gamma_center_limit':
-            ['s', 3, None, TF1_label_stable],
+            ['s', 2, None, TF1_label_stable],
         'max_age':
-            ['s', 3, None, TF1_label_stable],
+            ['s', 2, None, TF1_label_stable],
         'Initial RLOF':
-            ['.', 1, 'black', TF1_label_initial],
+            ['.', 1.5, 'black', TF1_label_initial],
         'Not converged':
-            ['s', 3, None, 'Not converged'],
+            ['x', 1, None, 'Not converged'],
         'ignored_no_BH':
-            ['.', 1, color_unstable, TF1_label_initial],
+            ['.', 1.5, color_unstable, TF1_label_initial],
         'ignored_no_RLO':
-            ['.', 1, color_unstable, TF1_label_initial],
+            ['.', 1.5, color_unstable, TF1_label_initial],
         'unknown':
             ['+', 1, 'green', 'unknown'],
     },
