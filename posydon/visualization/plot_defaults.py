@@ -467,6 +467,8 @@ DEFAULT_MARKERS_COLORS_LEGENDS = {
             ['D', 1, None, TF1_label_unstable],
         'Reached maximum mass transfer rate: Exceeded photon trapping radius':
             ['D', 1, None, TF1_label_unstable],
+        'Terminate because accretor (r-rl)/rl > accretor_overflow_terminate':
+            ['D', 1, None, TF1_label_unstable],
         'logQ_limit':
             ['x', 1, None, 'logQ_limit'],
         'logQ_min_limit':
