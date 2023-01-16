@@ -276,3 +276,40 @@ def initial_RLO_fix_applies(mass, period):
     # if period > 0.124:
     #     return mass > 1.2
     # return mass > 0.6
+    
+def get_detected_initial_RLO(grid):
+    """Generates a list of already detected initial RLO
+    
+    Parameters
+    ----------
+    grid : a PSyGrid
+        The grid to check.
+    
+    Retruns
+    -------
+    list
+        A list containing initial values (the two masses and the period) of
+        systems already detected to be initial_MT
+    """
+    #new list
+    detected = []
+    #go through grid
+    for sys in grid:
+        flag1 = sys.final_values['termination_flag_1']
+        #find systems with termination because of initial overflow
+        if flag1 == "Terminate because of overflowing initial model":
+            mass1 = sys.initial_values["star_1_mass"]
+            mass2 = sys.initial_values["star_2_mass"]
+            period = sys.initial_values["period_days"]
+            e = False
+            #check for already existing entries of same mass combination
+            for d in detected:
+                if d[0] == mass1 and d[1] == mass2:
+                    e = True
+                    #update period if new one is larger
+                    if d[2]<period:
+                        d[2]=period
+            #add masses and period of detected system to the list
+            if not e:
+                detected.append((mass1,mass2,period))
+    return detected
