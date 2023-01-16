@@ -276,7 +276,8 @@ def initial_RLO_fix_applies(mass, period):
     # if period > 0.124:
     #     return mass > 1.2
     # return mass > 0.6
-    
+
+
 def get_detected_initial_RLO(grid):
     """Generates a list of already detected initial RLO
     
@@ -294,13 +295,14 @@ def get_detected_initial_RLO(grid):
     #new list
     detected = []
     #go through grid
-    for sys in grid:
-        flag1 = sys.final_values['termination_flag_1']
+    N_runs = len(grid.initial_values)
+    for i in range(N_runs):
+        flag1 = grid.final_values[i]['termination_flag_1']
         #find systems with termination because of initial overflow
         if flag1 == "Terminate because of overflowing initial model":
-            mass1 = sys.initial_values["star_1_mass"]
-            mass2 = sys.initial_values["star_2_mass"]
-            period = sys.initial_values["period_days"]
+            mass1 = grid.initial_values[i]["star_1_mass"]
+            mass2 = grid.initial_values[i]["star_2_mass"]
+            period = grid.initial_values[i]["period_days"]
             e = False
             #check for already existing entries of same mass combination
             for d in detected:
@@ -311,5 +313,72 @@ def get_detected_initial_RLO(grid):
                         d[2]=period
             #add masses and period of detected system to the list
             if not e:
-                detected.append((mass1,mass2,period))
+                detected.append((mass1,mass2,period,grid.final_values[i]['termination_flag_3'],grid.final_values[i]['termination_flag_4']))
     return detected
+
+
+def initial_RLO_fix_to_apply(mass1, mass2, period, known_initial_RLO):
+    """Check if initial RLO fix is warranted given the initial mass and period.
+
+    Parameters
+    ----------
+    
+    mass1 : float
+        Mass of star 1.
+    mass2 : float
+        Mass of star 2.
+    period : float
+        Binary's period (in days).
+    known_initial_RLO : list
+        A list containing initial values (the two masses and the period) of
+        systems already detected to be initial_MT
+
+    Returns
+    -------
+    bool
+        True if initial RLO flag should be forced.
+
+    """
+    def get_RLO_period(mass1, mass2):
+        for sys in known_initial_RLO:
+            #search for a known system with same mass combination
+            #to get initial RLO period;
+            #allow for a mass uncertainty of 10^-5
+            if abs(mass1-sys[0])<1.0e-5 and abs(mass2-sys[1])<1.0e-5:
+                return sys[2]
+        #for random grids, we need to add here a different way, e.g. via
+        #interpolation in the known initial RLO systems, to get the maximum
+        #period for initial RLO
+        return 0.0
+    #check if the period is below the one for haveing initial RLO
+    return period<get_RLO_period(mass1, mass2)
+
+
+def get_initial_RLO_term_flag_34(mass1, mass2, known_initial_RLO):
+    """Get termination flags 3 and 4 from known initial RLO systems.
+
+    Parameters
+    ----------
+    
+    mass1 : float
+        Mass of star 1.
+    mass2 : float
+        Mass of star 2.
+    known_initial_RLO : list
+        A list containing initial values (the two masses and the period) of
+        systems already detected to be initial_MT
+
+    Returns
+    -------
+    list
+        List containing termination_flags 3 and 4
+
+    """
+    for sys in known_initial_RLO:
+        #search for a known system with same mass combination
+        #to get initial RLO period;
+        #allow for a mass uncertainty of 10^-5
+        if abs(mass1-sys[0])<1.0e-5 and abs(mass2-sys[1])<1.0e-5:
+            return [sys[3], sys[4]]
+    return []
+

@@ -196,7 +196,10 @@ from posydon.grids.termination_flags import (get_flags_from_MESA_run,
                                              check_state_from_history,
                                              get_flag_from_MESA_output,
                                              infer_interpolation_class,
-                                             initial_RLO_fix_applies)
+                                             initial_RLO_fix_applies,
+                                             get_detected_initial_RLO,
+                                             initial_RLO_fix_to_apply,
+                                             get_initial_RLO_term_flag_34)
 from posydon.utils.configfile import ConfigFile
 from posydon.utils.common_functions import (orbital_separation_from_period,
                                             initialize_empty_array,
@@ -348,6 +351,7 @@ GRIDPROPERTIES = {
     "eep": None,    # path to EEP files
     "initial_RLO_fix": False,
     "He_core_fix": True,
+    "initial_RLO_fix_g": False,
 }
 
 
@@ -535,6 +539,7 @@ class PSyGrid:
         initial_RLO_fix = self.config["initial_RLO_fix"]
         start_at_RLO = self.config["start_at_RLO"]
         eep = self.config["eep"]
+        initial_RLO_fix_g = self.config["initial_RLO_fix_g"]
 
         if eep is not None:
             if binary_grid:
@@ -1045,6 +1050,31 @@ class PSyGrid:
             self.MESA_dirs.append(run.path)
             run_included[i] = True
             run_index += 1
+
+        #general fix for termination_flag in case of initial RLO
+        if initial_RLO_fix_g:
+            #create list of already detected initial RLO
+            detected_initial_RLO = get_detected_initial_RLO(self)
+            colnames = ["termination_flag_1", "termination_flag_2",
+                        "interpolation_class"]
+            valtoset = ["forced_initial_RLO", "forced_initial_RLO",
+                        "initial_MT"]
+            for i in range(N_runs):
+                flag1 = self.final_values[i]['termination_flag_1']
+                if flag1 != "Terminate because of overflowing initial model":
+                    mass1 = self.initial_values[i]["star_1_mass"]
+                    mass2 = self.initial_values[i]["star_2_mass"]
+                    period = self.initial_values[i]["period_days"]
+                    if initial_RLO_fix_to_apply(mass1, mass2, period,
+                                                detected_initial_RLO):
+                        for colname, value in zip(colnames, valtoset):
+                            self.final_values[i][colname] = value
+                        tf_34 = get_initial_RLO_term_flag_34(mass1, mass2,
+                                                        detected_initial_RLO)
+                        if len(tf_34)==2:
+                            for colname, value in zip(["termination_flag_3",
+                                                "termination_flag_4"], tf_34):
+                                self.final_values[i][colname] = value
 
         self._say("Storing initial/final values and metadata to HDF5...")
         # exclude rows in initial/final_values corresponding to excluded runs
