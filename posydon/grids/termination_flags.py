@@ -310,10 +310,14 @@ def get_detected_initial_RLO(grid):
                     e = True
                     #update period if new one is larger
                     if d[2]<period:
-                        d[2]=period
+                        d=(mass1,mass2,period,
+                           grid.final_values[i]['termination_flag_3'],
+                           grid.final_values[i]['termination_flag_4'])
             #add masses and period of detected system to the list
             if not e:
-                detected.append((mass1,mass2,period,grid.final_values[i]['termination_flag_3'],grid.final_values[i]['termination_flag_4']))
+                detected.append((mass1,mass2,period,
+                                 grid.final_values[i]['termination_flag_3'],
+                                 grid.final_values[i]['termination_flag_4']))
     return detected
 
 
