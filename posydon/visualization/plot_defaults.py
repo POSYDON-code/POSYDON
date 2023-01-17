@@ -493,6 +493,8 @@ DEFAULT_MARKERS_COLORS_LEGENDS = {
             ['.', 1.5, color_unstable, TF1_label_initial],
         'ignored_no_RLO':
             ['.', 1.5, color_unstable, TF1_label_initial],
+        'forced_initial_RLO':
+            ['.', 1.5, color_unstable, TF1_label_initial],
         'unknown':
             ['+', 1, 'green', 'unknown'],
     },
