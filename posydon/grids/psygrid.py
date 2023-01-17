@@ -1916,10 +1916,10 @@ PROPERTIES_TO_BE_NONE = {
 }
 
 PROPERTIES_TO_BE_CONSISTENT = ["binary", "eep", "start_at_RLO",
-                               "initial_RLO_fix", "He_core_fix",
-                               "history_DS_error", "history_DS_exclude",
-                               "profile_DS_error", "profile_DS_exclude",
-                               "profile_DS_interval"]
+                               "initial_RLO_fix", "initial_RLO_fix_g",
+                               "He_core_fix", "history_DS_error",
+                               "history_DS_exclude", "profile_DS_error",
+                               "profile_DS_exclude", "profile_DS_interval"]
 
 ALL_PROPERTIES = (list(PROPERTIES_ALLOWED.keys()) + PROPERTIES_TO_BE_CONSISTENT
                   + list(PROPERTIES_TO_BE_NONE.keys()) + PROPERTIES_TO_BE_SET)
