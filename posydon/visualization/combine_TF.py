@@ -48,7 +48,8 @@ TF1_POOL_ERROR = ['logQ_limit',
                   'min_timestep_limit',
                   'cluster timelimit',
                   'reach cluster timelimit',
-                  'no termination code']
+                  'no termination code',
+                  'forced_initial_RLO']
 
 TF2_POOL_NO_RLO = [
     'no_RLOF',

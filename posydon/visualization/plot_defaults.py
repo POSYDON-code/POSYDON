@@ -184,6 +184,8 @@ DEFAULT_MARKERS_COLORS_LEGENDS = {
             ['.', 1, 'black', TF1_label_initial],
         'Not converged':
             ['x', 1, 'red', 'Not converged'],
+        'fe_core_infall_limit':
+            ['x', 1, 'red', 'Not converged'],
         'ignored_no_BH':
             ['.', 1, color_unstable, TF1_label_initial],
         'ignored_no_RLO':
@@ -497,6 +499,8 @@ DEFAULT_MARKERS_COLORS_LEGENDS = {
             ['.', 1.5, color_unstable, TF1_label_initial],
         'unknown':
             ['+', 1, 'green', 'unknown'],
+        'fe_core_infall_limit':
+            ['x', 1, 'red', 'Not converged'],
     },
     'interpolation_class': {
         'initial_MT':
