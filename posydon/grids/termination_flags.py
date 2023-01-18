@@ -308,7 +308,8 @@ def get_detected_initial_RLO(grid):
             e = False
             #check for already existing entries of same mass combination
             for d in detected:
-                if d["star_1_mass"] == mass1 and d["star_2_mass"] == mass2:
+                if (abs(d["star_1_mass"]-mass1)<1.0e-5 and
+                    abs(d["star_2_mass"]-mass2)<1.0e-5):
                     e = True
                     #update values if new one has a larger period
                     if d["period_days"]<period:
