@@ -175,6 +175,7 @@ __authors__ = [
     "Scott Coughlin <scottcoughlin2014@u.northwestern.edu>",
     "Devina Misra <devina.misra@unige.ch>",
     "Kyle Akira Rocha <kylerocha2024@u.northwestern.edu>",
+    "Matthias Kruckow <Matthias.Kruckow@unige.ch>",
 ]
 
 
@@ -198,8 +199,7 @@ from posydon.grids.termination_flags import (get_flags_from_MESA_run,
                                              infer_interpolation_class,
                                              initial_RLO_fix_applies,
                                              get_detected_initial_RLO,
-                                             initial_RLO_fix_to_apply,
-                                             get_initial_RLO_term_flag_34)
+                                             get_nearest_known_initial_RLO)
 from posydon.utils.configfile import ConfigFile
 from posydon.utils.common_functions import (orbital_separation_from_period,
                                             initialize_empty_array,
@@ -1060,21 +1060,22 @@ class PSyGrid:
             valtoset = ["forced_initial_RLO", "forced_initial_RLO",
                         "initial_MT"]
             for i in range(N_runs):
-                flag1 = self.final_values[i]['termination_flag_1']
+                flag1 = self.final_values[i]["termination_flag_1"]
                 if flag1 != "Terminate because of overflowing initial model":
                     mass1 = self.initial_values[i]["star_1_mass"]
                     mass2 = self.initial_values[i]["star_2_mass"]
                     period = self.initial_values[i]["period_days"]
-                    if initial_RLO_fix_to_apply(mass1, mass2, period,
-                                                detected_initial_RLO):
+                    nearest = get_nearest_known_initial_RLO(mass1, mass2,
+                                                        detected_initial_RLO)
+                    if period<nearest["period_days"]:
+                        #set values
                         for colname, value in zip(colnames, valtoset):
                             self.final_values[i][colname] = value
-                        tf_34 = get_initial_RLO_term_flag_34(mass1, mass2,
-                                                        detected_initial_RLO)
-                        if len(tf_34)==2:
-                            for colname, value in zip(["termination_flag_3",
-                                                "termination_flag_4"], tf_34):
-                                self.final_values[i][colname] = value
+                        #copy values from nearest known system
+                        for colname in ["termination_flag_3",
+                                        "termination_flag_4"]:
+                            if colname in nearest:
+                                self.final_values[i][colname]=nearest[colname]
 
         self._say("Storing initial/final values and metadata to HDF5...")
         # exclude rows in initial/final_values corresponding to excluded runs
