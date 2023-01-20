@@ -204,7 +204,7 @@ for s1 in STAR_STATES_CO:
 
 
 # catch states to be ended
-for b in ['merged', 'disrupted', 'initial_RLOF',
+for b in ['initial_RLOF',
           'detached (Integration failure)',
           'detached (GridMatchingFailed)', 'RLO2 (OutsideGrid)']:
     for s1 in STAR_STATES_ALL:
@@ -212,6 +212,14 @@ for b in ['merged', 'disrupted', 'initial_RLOF',
             for e in BINARY_EVENTS_ALL:
                 POSYDON_FLOW_CHART[(s1, s2, b, e)] = 'step_end'
                 POSYDON_FLOW_CHART[(s1, s2, b, e)] = 'step_end'
+
+for b in ['merged', 'disrupted']:
+    for s1 in STAR_STATES_ALL:
+        for s2 in STAR_STATES_ALL:
+            for e in BINARY_EVENTS_ALL:
+                POSYDON_FLOW_CHART[(s1, s2, b, e)] = 'step_isolated'
+                POSYDON_FLOW_CHART[(s1, s2, b, e)] = 'step_isolated'
+
 
 # catch initial_RLO states
 for s1 in STAR_STATES_ALL:

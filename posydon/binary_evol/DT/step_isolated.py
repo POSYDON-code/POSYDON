@@ -66,12 +66,12 @@ STAR_STATES_H_RICH = [
 ]
 
 
-class detached_step:
-    """Evolve a detached binary.
+class isolated_step():
+    """Evolve an isolated star (a single star, a merger product, a runaway star, etc.)
 
-    The binary will be evolved until Roche-lobe overflow, core-collapse or
-    maximum simulation time, using the standard equations that govern the
-    orbital evolution.
+    The star will be matched in the beginning of the step and will be evolved
+    until core-collapse or maximum simulation time,
+    based on a grid of single star HDF5 grid.
 
     Parameters
     ----------
@@ -94,17 +94,6 @@ class detached_step:
         of various quantities between the previous step and the track).
     verbose : Boolean
         True if we want to print stuff.
-    do_wind_loss: Boolean
-        If True, take into account change of separation due to mass loss from
-        the star.
-    do_tides: Booleans
-        If True, take into account change of separation, eccentricity and star
-        spin due to tidal forces.
-    do_gravitational_radiation: Boolean
-        If True, take into account change of separation and eccentricity due to
-        gravitational wave radiation.
-    do_magnetic_braking: Boolean
-        If True, take into account change of star spin due to magnetic braking.
     do_stellar_evolution_and_spin_from_winds: Boolean
         If True, take into account change of star spin due to change of its
         moment of inertia during its evolution and due to spin angular momentum
@@ -129,17 +118,6 @@ class detached_step:
     tagged with "Root solver failed". In the "minimize" matching_method, we
     minimize the sum of squares of differences of various quantities between
     the previous step and the h5 track.
-
-    Warns
-    -----
-    UserWarning
-        If the call cannot determine the primary or secondary in the binary.
-
-    Raises
-    ------
-    Exception
-        If the ode-solver fails to solve the differential equation
-        that governs the orbital evolution.
     """
 
     def __init__(
@@ -152,39 +130,32 @@ class detached_step:
             initial_mass=None,
             rootm=None,
             verbose=False,
-            do_wind_loss=True,
-            do_tides=True,
-            do_gravitational_radiation=True,
-            do_magnetic_braking=True,
+            do_wind_loss=False,
+            do_tides=False,
+            do_gravitational_radiation=False,
+            do_magnetic_braking=False,
             do_stellar_evolution_and_spin_from_winds=True,
-            RLO_orbit_at_orbit_with_same_am=False
+            metallicity = 0.0142
     ):
         """Initialize the step. See class documentation for details."""
         self.dt = dt
         self.n_o_steps_history = n_o_steps_history
         self.matching_method = matching_method
-        self.do_wind_loss = do_wind_loss
-        self.do_tides = do_tides
-        self.do_gravitational_radiation = do_gravitational_radiation
-        self.do_magnetic_braking = do_magnetic_braking
         self.do_stellar_evolution_and_spin_from_winds = (
             do_stellar_evolution_and_spin_from_winds
         )
-        self.RLO_orbit_at_orbit_with_same_am = RLO_orbit_at_orbit_with_same_am
         self.grid = grid
         self.initial_mass = initial_mass
         self.rootm = rootm
         self.verbose = verbose
+        self.metallicity = metallicity
         if verbose:
             print(
                 dt,
                 n_o_steps_history,
                 matching_method,
-                do_wind_loss,
-                do_tides,
-                do_gravitational_radiation,
-                do_magnetic_braking,
-                do_stellar_evolution_and_spin_from_winds)
+                do_stellar_evolution_and_spin_from_winds,
+                metallicity)
         self.translate = {
             "time": "time",
             "orbital_period": "porb",
@@ -363,9 +334,11 @@ class detached_step:
             'neutral_fraction_He',
             'avg_charge_He'
         )
-
-        grid_name1 = os.path.join('single_HMS', 'grid_0.0142.h5')
-        grid_name2 = os.path.join('single_HeMS', 'grid_0.0142.h5')
+        if self.metallicity == 0.0142:
+            grid_name1 = os.path.join('single_HMS', 'grid_0.0142.h5')
+            grid_name2 = os.path.join('single_HeMS', 'grid_0.0142.h5')
+        else:
+            print("different metallicity than solar in the isolated evolution")
         self.grid1 = GRIDInterpolator(os.path.join(path, grid_name1))
         self.grid2 = GRIDInterpolator(os.path.join(path, grid_name2))
 
@@ -853,107 +826,87 @@ class detached_step:
 
     def __repr__(self):
         """Return the type of evolution type."""
-        return "Detached Step."
+        return "Isolated Step."
+
+
+    def merged_star_properties():
+        """
+        Make assumptions about the core/total mass of the star of a merged product.
+
+        Similar to the table of merging in BSE
+        """
+
+    def initialize_isolated_step():
+        """
+        put period at extreme, and initiate detached step with one star (and one non-evolving compact object), with no orbital changes apart from spin change due to winds and deformation
+        """
 
     def __call__(self, binary):
         """Evolve the binary until RLO or compact object formation."""
         get_mist0 = self.get_mist0
         KEYS = self.KEYS
         KEYS_POSITIVE = self.KEYS_POSITIVE
-
-        if binary.star_1 is None: #
-            self.isolated_evolution = 2 #isolated evolution of star_2
-        if binary.star_2 is None:
-            self.isolated_evolution = 1
-        else:
-            self.isolated_evolution = 0 #no isolated evolution, detached step of an actual binary
-
-
-        if self.isolated_evolution == 0: #no isolated evolution, detached step of an actual binary
-            # the primary in a real binary is potential compact object, or the more evolved star
-            # in a isolated evolution is the non-existend, far away, star
-            if (binary.star_1.state in ("BH", "NS", "WD")
-                    and binary.star_2.state in STAR_STATES_H_RICH):
-                primary = binary.star_1
-                secondary = binary.star_2
-                secondary.htrack = True
-                primary.htrack = secondary.htrack
-                primary.co = True
-            elif (binary.star_1.state in ("BH", "NS", "WD")
-                    and binary.star_2.state in LIST_ACCEPTABLE_STATES_FOR_HeStar):
-                primary = binary.star_1
-                secondary = binary.star_2
-                secondary.htrack = False
-                primary.htrack = secondary.htrack
-                primary.co = True
-            elif (binary.star_2.state in ("BH", "NS", "WD")
-                    and binary.star_1.state in STAR_STATES_H_RICH):
-                primary = binary.star_2
-                secondary = binary.star_1
-                secondary.htrack = True
-                primary.htrack = secondary.htrack
-                primary.co = True
-            elif (binary.star_2.state in ("BH", "NS", "WD")
-                    and binary.star_1.state in LIST_ACCEPTABLE_STATES_FOR_HeStar):
-                primary = binary.star_2
-                secondary = binary.star_1
-                secondary.htrack = False
-                primary.htrack = secondary.htrack
-                primary.co = True
-            elif (binary.star_1.state in STAR_STATES_H_RICH
-                    and binary.star_2.state in STAR_STATES_H_RICH):
-                primary = binary.star_1
-                secondary = binary.star_2
-                secondary.htrack = True
-                primary.htrack = True
-                primary.co = False
-            elif (binary.star_1.state in LIST_ACCEPTABLE_STATES_FOR_HeStar
-                    and binary.star_2.state in STAR_STATES_H_RICH):
-                primary = binary.star_1
-                secondary = binary.star_2
-                secondary.htrack = True
-                primary.htrack = False
-                primary.co = False
-            elif (binary.star_2.state in LIST_ACCEPTABLE_STATES_FOR_HeStar
-                    and binary.star_1.state in STAR_STATES_H_RICH):
-                primary = binary.star_2
-                secondary = binary.star_1
-                secondary.htrack = True
-                primary.htrack = False
-                primary.co = False
-            elif (binary.star_1.state in LIST_ACCEPTABLE_STATES_FOR_HeStar
-                    and binary.star_2.state in LIST_ACCEPTABLE_STATES_FOR_HeStar):
-                primary = binary.star_1
-                secondary = binary.star_2
-                secondary.htrack = False
-                primary.htrack = False
-                primary.co = False
-            else:
-                raise Exception("States not recognized!")
-
-        elif self.isolated_evolution == 1:
-            primary.co = True # we force primary.co=True for all isolated evolution, where the secondary is the one evolving one
-            primary.htrack = False
-            secondary = binary.star_1
-            if (binary.star_1.state in STAR_STATES_H_RICH):
-                secondary.htrack = True
-            elif (binary.star_1.state in LIST_ACCEPTABLE_STATES_FOR_HeStar):
-                secondary.htrack = False
-            else:
-                raise Exception("State not recognized!")
-
-        elif self.isolated_evolution == 2:
+        # the primary is the more evolved star
+        if (binary.star_1.state in ("BH", "NS", "WD")
+                and binary.state in ("disrupted")
+                and binary.star_2.state in STAR_STATES_H_RICH):
+            is_star = binary.star_2
+            is_star.htrack = True
+            primary.htrack = secondary.htrack
             primary.co = True
-            primary.htrack = False
+        elif (binary.star_1.state in ("BH", "NS", "WD")
+                and binary.star_2.state in LIST_ACCEPTABLE_STATES_FOR_HeStar):
+            primary = binary.star_1
             secondary = binary.star_2
-            if (binary.star_2.state in STAR_STATES_H_RICH):
-                secondary.htrack = True
-            elif (binary.star_2.state in LIST_ACCEPTABLE_STATES_FOR_HeStar):
-                secondary.htrack = False
-            else:
-                raise Exception("State not recognized!")
+            secondary.htrack = False
+            primary.htrack = secondary.htrack
+            primary.co = True
+        elif (binary.star_2.state in ("BH", "NS", "WD")
+                and binary.star_1.state in STAR_STATES_H_RICH):
+            primary = binary.star_2
+            secondary = binary.star_1
+            secondary.htrack = True
+            primary.htrack = secondary.htrack
+            primary.co = True
+        elif (binary.star_2.state in ("BH", "NS", "WD")
+                and binary.star_1.state in LIST_ACCEPTABLE_STATES_FOR_HeStar):
+            primary = binary.star_2
+            secondary = binary.star_1
+            secondary.htrack = False
+            primary.htrack = secondary.htrack
+            primary.co = True
+        elif (binary.star_1.state in STAR_STATES_H_RICH
+                and binary.star_2.state in STAR_STATES_H_RICH):
+            primary = binary.star_1
+            secondary = binary.star_2
+            secondary.htrack = True
+            primary.htrack = True
+            primary.co = False
+        elif (binary.star_1.state in LIST_ACCEPTABLE_STATES_FOR_HeStar
+                and binary.star_2.state in STAR_STATES_H_RICH):
+            primary = binary.star_1
+            secondary = binary.star_2
+            secondary.htrack = True
+            primary.htrack = False
+            primary.co = False
+        elif (binary.star_2.state in LIST_ACCEPTABLE_STATES_FOR_HeStar
+                and binary.star_1.state in STAR_STATES_H_RICH):
+            primary = binary.star_2
+            secondary = binary.star_1
+            secondary.htrack = True
+            primary.htrack = False
+            primary.co = False
+        elif (binary.star_1.state in LIST_ACCEPTABLE_STATES_FOR_HeStar
+                and binary.star_2.state in LIST_ACCEPTABLE_STATES_FOR_HeStar):
+            primary = binary.star_1
+            secondary = binary.star_2
+            secondary.htrack = False
+            primary.htrack = False
+            primary.co = False
+        else:
+            raise Exception("States not recognized!")
 
-        if (self.isolated_evolution  == 0) and (not primary.co):
+        if not primary.co:
             m1, t1 = get_mist0(primary, primary.htrack)
         m2, t2 = get_mist0(secondary, secondary.htrack)
 
@@ -961,8 +914,8 @@ class detached_step:
             """Get and interpolate the properties of stars.
 
             The data of a compact object can be stored as a copy of its
-            companion for convenience except its mass, radius, mdot, and Idot
-            are set to be zero.
+            companion for convenience except its mass, radius, mdot, Idot,
+            and radius, mdot, Idot are set to be zero.
 
             Parameters
             ----------
@@ -1048,8 +1001,7 @@ class detached_step:
         # get the matched data of two stars, respectively
         interp1d_sec = get_star_data(
             binary, secondary, primary, secondary.htrack, False)
-        if (primary.co) or (isolated_evolution != 0):
-            # copy the secondary star except mass which is of the primary, and radius, mdot, Idot = 0
+        if primary.co:
             interp1d_pri = get_star_data(
                 binary, secondary, primary, secondary.htrack, True)
         elif not primary.co:
