@@ -650,7 +650,7 @@ class PSyGrid:
                 ignore_reason = "ignored_no_BH"
                 warnings.warn("Ignored MESA run because of missing binary "
                               "history in: {}\n".format(run.path))
-                if not initial_RLO_fix:
+                if not (initial_RLO_fix or initial_RLO_fix_g):
                     continue
 
             if ignore_data:
@@ -746,7 +746,7 @@ class PSyGrid:
                     ignore_reason = "ignored_scrubbed"
                     warnings.warn("Ignored MESA run because of scrubbed binary"
                                   " history in: {}\n".format(run.path))
-                    if not initial_RLO_fix:
+                    if not (initial_RLO_fix or initial_RLO_fix_g):
                         continue
                 if not binary_grid and len(history1) == 0:
                     ignore_data = True
@@ -762,7 +762,7 @@ class PSyGrid:
                         ignore_reason = "ignored_no_RLO"
                         warnings.warn("Ignored MESA run because of no RLO"
                                       " in: {}\n".format(run.path))
-                        if not initial_RLO_fix:
+                        if not (initial_RLO_fix or initial_RLO_fix_g):
                             continue
                         binary_history, history1, history2 = None, None, None
                     else:
@@ -1010,7 +1010,7 @@ class PSyGrid:
                 elif ignore_data:
                     # if fix does not apply and failed run, do not include it
                     continue
-            elif ignore_data:
+            elif ignore_data and not initial_RLO_fix_g:
                 # if not fix requested and failed run, do not include it
                 continue
 
