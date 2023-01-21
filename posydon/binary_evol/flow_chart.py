@@ -92,7 +92,9 @@ BINARY_EVENTS_ALL = [
     'CO_contact',
     'redirect',
     'MaxTime_exceeded',
-    'maxtime'
+    'maxtime',
+    'oMerging1',
+    'oMerging2'
 ]
 
 

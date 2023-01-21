@@ -144,7 +144,8 @@ class detached_step:
 
     def __init__(
             self,
-            grid=None,
+            grid_name_Hrich=None,
+            grid_name_strippedHe=None,
             path=PATH_TO_POSYDON_DATA,
             dt=None,
             n_o_steps_history=None,
@@ -171,7 +172,6 @@ class detached_step:
             do_stellar_evolution_and_spin_from_winds
         )
         self.RLO_orbit_at_orbit_with_same_am = RLO_orbit_at_orbit_with_same_am
-        self.grid = grid
         self.initial_mass = initial_mass
         self.rootm = rootm
         self.verbose = verbose
@@ -364,10 +364,12 @@ class detached_step:
             'avg_charge_He'
         )
 
-        grid_name1 = os.path.join('single_HMS', 'grid_0.0142.h5')
-        grid_name2 = os.path.join('single_HeMS', 'grid_0.0142.h5')
-        self.grid1 = GRIDInterpolator(os.path.join(path, grid_name1))
-        self.grid2 = GRIDInterpolator(os.path.join(path, grid_name2))
+        if grid_name_Hrich == None:
+            grid_name_Hrich = os.path.join('single_HMS', 'grid_0.0142.h5')
+        self.grid_Hrich = GRIDInterpolator(os.path.join(path, grid_name_Hrich))
+        if grid_name_strippedHe == None:
+                grid_name_strippedHe = os.path.join('single_HeMS', 'grid_0.0142.h5')
+        self.grid_strippedHe = GRIDInterpolator(os.path.join(path, grid_name_strippedHe))
 
     def get_track_val(self, key, htrack, m0, t):
         """Return a single value from the interpolated time-series.
@@ -390,9 +392,9 @@ class detached_step:
         """
         # htrack as a boolean determines whether H or He grid is used
         if htrack:
-            self.grid = self.grid1
+            self.grid = self.grid_Hrich
         else:
-            self.grid = self.grid2
+            self.grid = self.grid_strippedHe
         try:
             x = self.grid.get("age", m0)
             y = self.grid.get(key, m0)
@@ -426,9 +428,9 @@ class detached_step:
 
         """
         if htrack:
-            self.grid = self.grid1
+            self.grid = self.grid_Hrich
         else:
-            self.grid = self.grid2
+            self.grid = self.grid_strippedHe
         self.initial_mass = self.grid.grid_mass
 
         all_attribute = []
@@ -486,9 +488,9 @@ class detached_step:
 
         """
         if htrack:
-            self.grid = self.grid1
+            self.grid = self.grid_Hrich
         else:
-            self.grid = self.grid2
+            self.grid = self.grid_strippedHe
         self.initial_mass = self.grid.grid_mass
         n = 0
         for mass in self.grid.grid_mass:
@@ -538,13 +540,13 @@ class detached_step:
 
         """
         if htrack:
-            self.grid = self.grid1
+            self.grid = self.grid_Hrich
         else:
-            self.grid = self.grid2
-        m_min_H = np.min(self.grid1.grid_mass)
-        m_max_H = np.max(self.grid1.grid_mass)
-        m_min_He = np.min(self.grid2.grid_mass)
-        m_max_He = np.max(self.grid2.grid_mass)
+            self.grid = self.grid_strippedHe
+        m_min_H = np.min(self.grid_Hrich.grid_mass)
+        m_max_H = np.max(self.grid_Hrich.grid_mass)
+        m_min_He = np.min(self.grid_strippedHe.grid_mass)
+        m_max_He = np.max(self.grid_strippedHe.grid_mass)
         get_root0 = self.get_root0
         get_track_val = self.get_track_val
         matching_method = self.matching_method
@@ -953,9 +955,13 @@ class detached_step:
             else:
                 raise Exception("State not recognized!")
 
-        if (self.isolated_evolution  == 0) and (not primary.co):
-            m1, t1 = get_mist0(primary, primary.htrack)
-        m2, t2 = get_mist0(secondary, secondary.htrack)
+        if (self.isolated_evolution  == 0):
+            if (not primary.co):
+                m1, t1 = get_mist0(primary, primary.htrack)
+            m2, t2 = get_mist0(secondary, secondary.htrack)
+        elif (self.isolated_evolution  == 1) or (self.isolated_evolution  == 2):
+            #TODO: We do not have the logR for the matching
+            m2, t2 = get_mist0(secondary, secondary.htrack, XXXX without logR in all cases!!)
 
         def get_star_data(binary, star1, star2, htrack, co):
             """Get and interpolate the properties of stars.
@@ -979,9 +985,9 @@ class detached_step:
 
             """
             if htrack:
-                self.grid = self.grid1
+                self.grid = self.grid_Hrich
             elif not htrack:
-                self.grid = self.grid2
+                self.grid = self.grid_strippedHe
 
             get_track = self.grid.get
             with np.errstate(all="ignore"):
@@ -1698,9 +1704,9 @@ class detached_step:
 
             def get_star_final_values(star, htrack, m0):
                 if htrack:
-                    self.grid = self.grid1
+                    self.grid = self.grid_Hrich
                 elif not htrack:
-                    self.grid = self.grid2
+                    self.grid = self.grid_strippedHe
 
                 get_final_values = self.grid.get_final_values
                 get_final_state = self.grid.get_final_state
@@ -1710,9 +1716,9 @@ class detached_step:
 
             def get_star_profile(star, htrack, m0):
                 if htrack:
-                    self.grid = self.grid1
+                    self.grid = self.grid_Hrich
                 elif not htrack:
-                    self.grid = self.grid2
+                    self.grid = self.grid_strippedHe
 
                 get_profile = self.grid.get_profile
 

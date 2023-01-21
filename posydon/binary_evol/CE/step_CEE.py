@@ -214,26 +214,11 @@ class StepCEE(object):
                                 'stripped_He_Core_He_burning']:
             # system merges
             binary.state = 'merged'
-            binary.event = None
+            if binary.event in ["oCE1", "oDoubleCE1"]:
+                binary.event = "oMerging1"
+            if binary.event in ["oCE2", "oDoubleCE2"]:
+                binary.event = "oMerging2"
 
-            for key in BINARYPROPERTIES:
-                # the binary attributes that are changed in the CE step
-                if key not in ["state", "event", 'V_sys', 'mass_transfer_case',
-                               'nearest_neighbour_distance']:
-                    setattr(binary, key, np.nan)    # the rest become np.nan
-                if key == 'mass_transfer_case':
-                    setattr(binary, key, 'None')
-            stars = [donor_star, comp_star]
-            # for now we just add all initial mass to the (merger) star_1
-            masses = [donor_star.mass + comp_star.mass, np.nan]
-            star_states = [donor_star.state, comp_star.state]
-            for star, star_state, mass in zip(stars, star_states, masses):
-                star.mass = mass
-                star.state = star_state
-                for key in STARPROPERTIES:
-                    # the binary attributes that are changed in the CE step
-                    if key not in ["mass", "state"]:
-                        setattr(star, key, np.nan)
             return
 
         if self.common_envelope_option_for_HG_star == "pessimistic":
@@ -241,27 +226,11 @@ class StepCEE(object):
             if donor_star.state in ['H-rich_Shell_H_burning']:
                 # system merges
                 binary.state = 'merged'
-                binary.event = None
+                if binary.event in ["oCE1", "oDoubleCE1"]:
+                    binary.event = "oMerging1"
+                if binary.event in ["oCE2", "oDoubleCE2"]:
+                    binary.event = "oMerging2"
 
-                for key in BINARYPROPERTIES:
-                    # the binary attributes that are changed in the CE step
-                    if key not in ["state", "event", 'V_sys',
-                                   'mass_transfer_case',
-                                   'nearest_neighbour_distance']:
-                        setattr(binary, key, np.nan)   # the rest become np.nan
-                    if key == 'mass_transfer_case':
-                        setattr(binary, key, 'None')
-                stars = [donor_star, comp_star]
-                # for now we just add all initial mass to the (merger) star_1
-                masses = [donor_star.mass + comp_star.mass, np.nan]
-                star_states = [donor_star.state, comp_star.state]
-                for star, star_state, mass in zip(stars, star_states, masses):
-                    star.mass = mass
-                    star.state = star_state
-                    for key in STARPROPERTIES:
-                        # the binary attributes that are changed in the CE step
-                        if key not in ["mass", "state"]:
-                            setattr(star, key, np.nan)
                 return
 
         # Calculate binary's evolution
@@ -834,27 +803,10 @@ class StepCEE(object):
         else:
             # system merges
             binary.state = 'merged'
-            binary.event = None
-
-            for key in BINARYPROPERTIES:
-                # the binary attributes that are changed in the CE step
-                if key not in ["state", "event", 'V_sys', 'mass_transfer_case',
-                               'nearest_neighbour_distance']:
-                    setattr(binary, key, np.nan)    # the rest become np.nan
-                if key == 'mass_transfer_case':
-                    setattr(binary, key, 'None')
-            # binary.event = 'END'
-            stars = [donor, comp_star]
-            # for now we just add all initial mass to the (merger) star_1
-            masses = [m1_i+m2_i, np.nan]
-            star_states = [donor.state, comp_star.state]
-            for star, star_state, mass in zip(stars, star_states, masses):
-                star.mass = mass
-                star.state = star_state
-                for key in STARPROPERTIES:
-                    # the binary attributes that are changed in the CE step
-                    if key not in ["mass", "state"]:
-                        setattr(star, key, np.nan)
+            if binary.event in ["oCE1", "oDoubleCE1"]:
+                binary.event = "oMerging1"
+            if binary.event in ["oCE2", "oDoubleCE2"]:
+                binary.event = "oMerging2"
 
             if verbose:
                 print("system merges due to one of the two star's core filling"

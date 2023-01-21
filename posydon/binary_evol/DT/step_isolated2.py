@@ -79,27 +79,18 @@ STAR_STATES_HE_RICH = STAR_STATES_NOT_CO.copy()
                                          'H-rich_Central_C_depletion']]
 
 LIST_ACCEPTABLE_STATES_FOR_HMS = ["H-rich_Core_H_burning"]
+LIST_ACCEPTABLE_STATES_FOR_HeMS = ["stripped_He_Core_He_burning"]
 
-STAR_STATE_POST_MS = [
-    "H-rich_Core_H_burning",
-    "H-rich_Shell_H_burning",
-    "H-rich_Core_He_burning",
-    "H-rich_Central_He_depleted",
-    "H-rich_Central_C_depletion",
-    "H-rich_non_burning"
-]
+LIST_ACCEPTABLE_STATES_FOR_POSTMS = STAR_STATES_H_RICH.copy()
+[LIST_ACCEPTABLE_STATES_FOR_POSTMS.remove(x) for x in LIST_ACCEPTABLE_STATES_FOR_HMS]
 
-STAR_STATE_POST_HeMS = [
-    'stripped_He_Core_He_burning',
-    'stripped_He_Central_He_depleted',
-    'stripped_He_Central_C_depletion',
-    'stripped_He_non_burning'
-]
+LIST_ACCEPTABLE_STATES_FOR_POSTHeMS = STAR_STATES_HE_RICH.copy()
+[LIST_ACCEPTABLE_STATES_FOR_POSTHeMS.remove(x) for x in LIST_ACCEPTABLE_STATES_FOR_HeMS]
 
-
-
-
-
+#TODO: Ability to change the psygrid of the sinlge star tracks for different evolution (mass acretors for disrupted, merger tracks for merged?)
+# For his check grid_name_Hrich, grid_name_strippedHe in detached step
+# But still how I point to different grids for disrupted and merged, if I initialize isolated_step once...?!!
+# POSSIBLE ANSWER: MERGEING step should be a different prior step before isoltaed, where the pointing to th grid also chages
 
 class isolated_step(detached_step):
     """Evolve an isolated star (a single star, a merger product, a runaway star, etc.)
@@ -111,25 +102,46 @@ class isolated_step(detached_step):
     """
 
     def __init__(self,
+        grid_name_Hrich=None,
+        grid_name_stripedHe=None,
+        path=PATH_TO_POSYDON_DATA,
+        dt=None,
+        n_o_steps_history=None,
         do_wind_loss=False,
         do_tides=False,
         do_gravitational_radiation=False,
         do_magnetic_braking=False,
         *args, **kwargs):
 
-        super().__init__(do_wind_loss=do_wind_loss,
+        super().__init__(
+        grid_name_Hrich=grid_name_Hrich,
+        grid_name_stripedHe=grid_name_stripedHe,
+        path=path,
+        dt=dt,
+        n_o_steps_history=n_o_steps_history,
+        do_wind_loss=do_wind_loss,
         do_tides=do_tides,
         do_gravitational_radiation=do_gravitational_radiation,
         do_magnetic_braking=do_magnetic_braking,
         *args,
         **kwargs)
 
-    def merged_star_properties(star1,star2):
+    def merged_star_properties(star_base,comp, position_of_star_base):
         """
         Make assumptions about the core/total mass of the star of a merged product.
 
         Similar to the table of merging in BSE
+
+        star_base: Single Star
+            is our base star that engulfs its companions. The merged star will have this star as a base
+        comp: Single Star
+            is the star that is engulfed
+        position_of_star_base: int
+            position in the binary of the star_base (1 if binary.star_1 etc)
         """
+
+
+        '''
         MERGED_STAR= {}
             'mass': 10.0,
             'log_R': np.log10(1000.0),
@@ -143,32 +155,93 @@ class isolated_step(detached_step):
             "center_h1" : 1.0,
             "center_c12" : 0.01,
         }
+        '''
+        merged_star = star_base
 
-        merged_star = SingleStar()
+
+        '''
+        for key in BINARYPROPERTIES:
+            # the binary attributes that are changed in the CE step
+            if key not in ["state", "event", 'V_sys', 'mass_transfer_case',
+                           'nearest_neighbour_distance']:
+                setattr(binary, key, np.nan)    # the rest become np.nan
+            if key == 'mass_transfer_case':
+                setattr(binary, key, 'None')
+        stars = [donor_star, comp_star]
+        # for now we just add all initial mass to the (merger) star_1
+        masses = [donor_star.mass + comp_star.mass, np.nan]
+        star_states = [donor_star.state, comp_star.state]
+        for star, star_state, mass in zip(stars, star_states, masses):
+            star.mass = mass
+            star.state = star_state
+            for key in STARPROPERTIES:
+                # the binary attributes that are changed in the CE step
+                if key not in ["mass", "state"]:
+                    setattr(star, key, np.nan)
+        '''
+
 
 
         for s1 in LIST_ACCEPTABLE_STATES_FOR_HMS:
             for s2 in LIST_ACCEPTABLE_STATES_FOR_HMS:
-                merged_star.mass = star1.mass + star2.mass
-                center_he4_merged = (star1.mass * star1.center_he4 + star2.mass * star2.center_he4) / (star1.mass + star2.mass) #mass weighted
+                merged_star.mass = star_base.mass + comp.mass
+                center_h1_merged = (star_base.mass * star_base.center_h1 + comp.mass * comp.center_h1) / (star_base.mass + comp.mass) #mass weighted
+                merged_star.center_h1 = center_h1_merged
+                center_he4_merged = (star_base.mass * star_base.center_he4 + comp.mass * comp.center_he4) / (star_base.mass + comp.mass) #mass weighted
                 merged_star.center_he4 = center_he4_merged
-                merged_star.metallicity = star1.metallicity
+                center_c12_merged = (star_base.mass * star_base.center_c12 + comp.mass * comp.center_c12) / (star_base.mass + comp.mass) #mass weighted
+                merged_star.center_c12 = center_c12_merged
+
+                #TODO: should I check if the abundaces above end up in ~1 (?)
+
+                #TODO: WE DO NOT HAVE LOGR FOR THE MATCHING
+
+        for s1 in STAR_STATE_POST_MS:
+            for s2 in LIST_ACCEPTABLE_STATES_FOR_HMS:
+
+                merged_star.mass = star_base.mass + comp.mass
+                # center as base. Surface unknown
 
 
-                            STAR_STATES_CO
 
-                            STAR_STATES_H_RICH
+    STAR_STATES_CO
+    STAR_STATES_NOT_CO
 
-                            STAR_STATES_HE_RICH
-                            -----------
-                            LIST_ACCEPTABLE_STATES_FOR_HMS
+    STAR_STATES_H_RICH
+    [STAR_STATES_HE_RICH
 
-                            STAR_STATE_POST_MS
+    LIST_ACCEPTABLE_STATES_FOR_HMS
+    LIST_ACCEPTABLE_STATES_FOR_HeMS
 
-                            STAR_STATE_POST_HeMS
+    LIST_ACCEPTABLE_STATES_FOR_POSTMS
+    [LIST_ACCEPTABLE_STATES_FOR_POSTMS
 
-        binary.star_1 = merged_star
-        binary.star_2 = None
+    LIST_ACCEPTABLE_STATES_FOR_POSTHeMS
+    [LIST_ACCEPTABLE_STATES_FOR_POSTHeMS
+
+
+
+        if position_of_star_base == 1:
+            binary.star_1 = merged_star
+            binary.star_2 = None
+        elif position_of_star_base == 2:
+            binary.star_1 = None
+            binary.star_2 = merged_star
+        else:
+            raise ValueError("position_of_star_base != 1 or 2")
+
+
+        for key in BINARYPROPERTIES:
+            # the binary attributes that are changed in the CE step
+            if key not in ["separation", "orbital_period",
+                           "eccentricity", "state", "event"]:
+                # the binary attributes that keep the same value from the
+                # previous step
+                if key not in ["time", "V_sys", "mass_transfer_case",
+                               "nearest_neighbour_distance"]:
+                    setattr(binary, key, np.nan)  # the rest become np.nan
+
+
         return
 
     def initialize_isolated_binary_orbit():
@@ -191,7 +264,10 @@ class isolated_step(detached_step):
             elif binary.star_2 in STAR_STATES_CO:
                 binary.star_2 = None
         elif binary.state == "merged":
-
-            merged_star_properties(binary.star_1,binary.star_2)
-
+            if binary.event == 'oMerging1':
+                merged_star_properties(binary.star_1,binary.star_2,1)
+            elif binary.event == 'oMerging2':
+                merged_star_properties(binary.star_2,binary.star_1,2)
+            else:
+                raise ValueError("binary.state='merged' but binary.event != 'oMerging1/2'"")
     super().__call__(binary)
