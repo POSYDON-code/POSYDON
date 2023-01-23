@@ -1010,7 +1010,7 @@ class PSyGrid:
                 elif ignore_data:
                     # if fix does not apply and failed run, do not include it
                     continue
-            elif ignore_data and not initial_RLO_fix_g:
+            elif ignore_data:
                 # if not fix requested and failed run, do not include it
                 continue
 
@@ -1081,7 +1081,14 @@ class PSyGrid:
                         for colname, value in grid_point.items():
                             if colname in self.initial_values.dtype.names:
                                 self.initial_values[i][colname] = value
+                        if not slim:
+                            hdf5.create_group("/grid/run{}/".format(run_index))
+                        # consider the run (and the input directory) included
+                        self.MESA_dirs.append(grid.runs[i].path)
+                        run_included[i] = True
+                        run_index += 1
 
+                                
         self._say("Storing initial/final values and metadata to HDF5...")
         # exclude rows in initial/final_values corresponding to excluded runs
         self.initial_values = self.initial_values[run_included]
