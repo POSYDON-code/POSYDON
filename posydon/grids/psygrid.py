@@ -1076,6 +1076,11 @@ class PSyGrid:
                                         "termination_flag_4"]:
                             if colname in nearest:
                                 self.final_values[i][colname]=nearest[colname]
+                    	#reset the initial values to the grid point data
+                    	grid_point = read_initial_values(grid.runs[i].path)
+                    	for colname, value in grid_point.items():
+                    	    if colname in self.initial_values.dtype.names:
+                            	self.initial_values[i][colname] = value
 
         self._say("Storing initial/final values and metadata to HDF5...")
         # exclude rows in initial/final_values corresponding to excluded runs
