@@ -197,7 +197,6 @@ from posydon.grids.termination_flags import (get_flags_from_MESA_run,
                                              check_state_from_history,
                                              get_flag_from_MESA_output,
                                              infer_interpolation_class,
-                                             initial_RLO_fix_applies,
                                              get_detected_initial_RLO,
                                              get_nearest_known_initial_RLO)
 from posydon.utils.configfile import ConfigFile
@@ -351,7 +350,6 @@ GRIDPROPERTIES = {
     "eep": None,    # path to EEP files
     "initial_RLO_fix": False,
     "He_core_fix": True,
-    "initial_RLO_fix_g": False,
 }
 
 
@@ -539,7 +537,6 @@ class PSyGrid:
         initial_RLO_fix = self.config["initial_RLO_fix"]
         start_at_RLO = self.config["start_at_RLO"]
         eep = self.config["eep"]
-        initial_RLO_fix_g = self.config["initial_RLO_fix_g"]
 
         if eep is not None:
             if binary_grid:
@@ -650,7 +647,7 @@ class PSyGrid:
                 ignore_reason = "ignored_no_BH"
                 warnings.warn("Ignored MESA run because of missing binary "
                               "history in: {}\n".format(run.path))
-                if not (initial_RLO_fix or initial_RLO_fix_g):
+                if not initial_RLO_fix:
                     continue
 
             if ignore_data:
@@ -746,7 +743,7 @@ class PSyGrid:
                     ignore_reason = "ignored_scrubbed"
                     warnings.warn("Ignored MESA run because of scrubbed binary"
                                   " history in: {}\n".format(run.path))
-                    if not (initial_RLO_fix or initial_RLO_fix_g):
+                    if not initial_RLO_fix:
                         continue
                 if not binary_grid and len(history1) == 0:
                     ignore_data = True
@@ -762,7 +759,7 @@ class PSyGrid:
                         ignore_reason = "ignored_no_RLO"
                         warnings.warn("Ignored MESA run because of no RLO"
                                       " in: {}\n".format(run.path))
-                        if not (initial_RLO_fix or initial_RLO_fix_g):
+                        if not initial_RLO_fix:
                             continue
                         binary_history, history1, history2 = None, None, None
                     else:
@@ -971,46 +968,7 @@ class PSyGrid:
                     self.final_values[i]["interpolation_class"] = \
                         infer_interpolation_class(*termination_flags[:2])
 
-            if initial_RLO_fix:
-                star_1_mass = self.initial_values[i]["star_1_mass"]
-                period_days = self.initial_values[i]["period_days"]
-                colnames = ["termination_flag_1", "termination_flag_2",
-                            "interpolation_class"]
-                valtoset = ["forced_initial_RLO", "forced_initial_RLO",
-                            "initial_MT"]
-                if initial_RLO_fix_applies(star_1_mass, period_days):
-                    # if initial MT is forced but not detected immediately,
-                    # remove the data
-                    if (self.final_values[i]["termination_flag_1"]
-                            != "initial_MT"):
-                        # remove all initial values, except for metallicities
-                        for colname in self.initial_values[i].dtype.names:
-                            if colname not in ["X", "Y", "Z"]:
-                                self.initial_values[i][colname] = np.nan
-                        # remove all final values, except for termination flags
-                        for colname in self.final_values[i].dtype.names:
-                            if not (colname.startswith("termination_flag")
-                                    or colname == "interpolation_class"):
-                                self.final_values[i][colname] = np.nan
-                        # do not include the histories and profiles...
-                        ignore_data = True
-                    # set the termination flags
-                    for colname, value in zip(colnames, valtoset):
-                        self.final_values[i][colname] = value
-                    # update the initial values from the grid point data
-                    grid_point = read_initial_values(run.path)
-                    for colname, value in grid_point.items():
-                        if colname in self.initial_values.dtype.names:
-                            self.initial_values[i][colname] = value
-
-                    # now that we have the masses (even if missing data)...
-                    self.final_values[i]["termination_flag_4"] = (
-                        infer_star_state(self.final_values[i]["star_2_mass"],
-                                         star_CO=True))
-                elif ignore_data:
-                    # if fix does not apply and failed run, do not include it
-                    continue
-            elif ignore_data:
+            if ignore_data:
                 # if not fix requested and failed run, do not include it
                 continue
 
@@ -1052,7 +1010,7 @@ class PSyGrid:
             run_index += 1
 
         #general fix for termination_flag in case of initial RLO
-        if initial_RLO_fix_g:
+        if initial_RLO_fix:
             #create list of already detected initial RLO
             detected_initial_RLO = get_detected_initial_RLO(self)
             colnames = ["termination_flag_1", "termination_flag_2",
@@ -1932,7 +1890,7 @@ PROPERTIES_TO_BE_NONE = {
 }
 
 PROPERTIES_TO_BE_CONSISTENT = ["binary", "eep", "start_at_RLO",
-                               "initial_RLO_fix", "initial_RLO_fix_g",
+                               "initial_RLO_fix",
                                "He_core_fix", "history_DS_error",
                                "history_DS_exclude", "profile_DS_error",
                                "profile_DS_exclude", "profile_DS_interval"]
