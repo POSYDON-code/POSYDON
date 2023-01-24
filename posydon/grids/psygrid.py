@@ -1377,6 +1377,13 @@ class PSyGrid:
             if 'period_days' in self.initial_values.dtype.names:
                 initial_values['initial_period_in_days'] = initial_values[
                     'period_days']
+            MESA_dir_name = self.MESA_dirs[0].decode("utf-8")
+            if  'initial_z' in MESA_dir_name:
+                initial_values['initial_z'] = initial_values['Z']
+            if  'Zbase' in MESA_dir_name:
+                initial_values['Zbase'] = initial_values['Z']
+            if  'new_Z' in MESA_dir_name:
+                initial_values['new_Z'] = initial_values['Z']
             for key in self.initial_values.dtype.names:
                 if key not in ['m1', 'm2', 'initial_period_in_days',
                                'Zbase', 'new_Z', 'initial_z']:
@@ -1388,12 +1395,14 @@ class PSyGrid:
                     initial_values[key] = [new_mesa_flag[key]]*n_runs_to_rerun
 
             # create the CSV file
+            NDIG = 10 # rounding matches initial point rounding
             with open(path_to_file+'grid.csv', 'w', newline='') as file:
                 writer = csv.writer(file)
                 writer.writerow(initial_values.keys())
                 for i in range(n_runs_to_rerun):
                     writer.writerow(
-                        [initial_values[key][i] for key in initial_values])
+                        [round(initial_values[key][i], NDIG) for key in
+                         initial_values])
         elif termination_flags is not None and runs_to_rerun is None:
             if isinstance(termination_flags, str):
                 rerun_flags = [termination_flags]
@@ -1427,6 +1436,13 @@ class PSyGrid:
             if 'period_days' in self.initial_values.dtype.names:
                 initial_values['initial_period_in_days'] = initial_values[
                     'period_days']
+            MESA_dir_name = self.MESA_dirs[0].decode("utf-8")
+            if  'initial_z' in MESA_dir_name:
+                initial_values['initial_z'] = initial_values['Z']
+            if  'Zbase' in MESA_dir_name:
+                initial_values['Zbase'] = initial_values['Z']
+            if  'new_Z' in MESA_dir_name:
+                initial_values['new_Z'] = initial_values['Z']
             for key in self.initial_values.dtype.names:
                 if key not in ['m1', 'm2', 'initial_period_in_days', 'Zbase',
                                'new_Z', 'initial_z']:
@@ -1438,12 +1454,14 @@ class PSyGrid:
                     initial_values[key] = [new_mesa_flag[key]]*n_runs_to_rerun
 
             # create the CSV file
+            NDIG = 10 # rounding matches initial point rounding
             with open(path_to_file+'grid.csv', 'w', newline='') as file:
                 writer = csv.writer(file)
                 writer.writerow(initial_values.keys())
                 for i in range(n_runs_to_rerun):
                     writer.writerow(
-                        [initial_values[key][i] for key in initial_values])
+                        [round(initial_values[key][i], NDIG) for key in
+                         initial_values])
         else:
             raise ValueError("Choose either the runs manually, or "
                              "indicate the termination flag(s).")
