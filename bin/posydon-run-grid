@@ -172,6 +172,9 @@ def create_working_directory(grid_param_dict, args):
     # first name directories which we do not need to log
     directory_name_from_dict_no_log =  '_'.join(['{0}_{1:.4f}'.format(k, v) for k, v in grid_param_dict.items() if k not in variable_names_to_log])
     directory_name_from_dict_log = '_'.join(['{0}_{1:.4e}'.format(k, v) for k, v in grid_param_dict.items() if k in variable_names_to_log])
+    # drop parenthesis
+    directory_name_from_dict_no_log = directory_name_from_dict_no_log.replace('(','')
+    directory_name_from_dict_no_log = directory_name_from_dict_no_log.replace(')','')
 
     # combine and add on what grid number we are running if exists
     directory_name_from_dict = '{0}_{1}'.format(directory_name_from_dict_no_log, directory_name_from_dict_log)
@@ -242,6 +245,11 @@ def create_binary_inlists(binary_controls, binary_job,
                     inlist_grid_points.write("\t{0} = {1:.10f}d0\n".format(k, v))
                 elif (type(v) == float) and (v.is_integer()):
                     inlist_grid_points.write("\t{0} = {1}\n".format(k, int(v)))
+                elif type(v) == bool:
+                    if v:
+                        inlist_grid_points.write("\t{0} = .true.\n".format(k))
+                    else:
+                        inlist_grid_points.write("\t{0} = .fale.\n".format(k))
                 else:
                     inlist_grid_points.write("{0} = {1}\n".format(k, v))
             inlist_grid_points.write("/ ! end of binary_controls namelist\n")
@@ -254,6 +262,11 @@ def create_binary_inlists(binary_controls, binary_job,
                     inlist_grid_points.write("\t{0} = {1:.10f}d0\n".format(k, v))
                 elif (type(v) == float) and (v.is_integer()):
                     inlist_grid_points.write("\t{0} = {1}\n".format(k, int(v)))
+                elif type(v) == bool:
+                    if v:
+                        inlist_grid_points.write("\t{0} = .true.\n".format(k))
+                    else:
+                        inlist_grid_points.write("\t{0} = .fale.\n".format(k))
                 else:
                     inlist_grid_points.write("{0} = {1}\n".format(k, v))
             inlist_grid_points.write("/ ! end of binary_job namelist\n")
@@ -267,6 +280,11 @@ def create_binary_inlists(binary_controls, binary_job,
                     inlist_grid_points.write("\t{0} = {1:.10f}d0\n".format(k, v))
                 elif (type(v) == float) and (v.is_integer()):
                     inlist_grid_points.write("\t{0} = {1}\n".format(k, int(v)))
+                elif type(v) == bool:
+                    if v:
+                        inlist_grid_points.write("\t{0} = .true.\n".format(k))
+                    else:
+                        inlist_grid_points.write("\t{0} = .fale.\n".format(k))
                 else:
                     inlist_grid_points.write("{0} = {1}\n".format(k, v))
             inlist_grid_points.write("/ ! end of controls namelist\n")
@@ -280,6 +298,11 @@ def create_binary_inlists(binary_controls, binary_job,
                     inlist_grid_points.write("\t{0} = {1:.10f}d0\n".format(k, v))
                 elif (type(v) == float) and (v.is_integer()):
                     inlist_grid_points.write("\t{0} = {1}\n".format(k, int(v)))
+                elif type(v) == bool:
+                    if v:
+                        inlist_grid_points.write("\t{0} = .true.\n".format(k))
+                    else:
+                        inlist_grid_points.write("\t{0} = .fale.\n".format(k))
                 else:
                     inlist_grid_points.write("{0} = {1}\n".format(k, v))
             inlist_grid_points.write("/ ! end of controls namelist\n")
@@ -293,6 +316,11 @@ def create_binary_inlists(binary_controls, binary_job,
                     inlist_grid_points.write("\t{0} = {1:.10f}d0\n".format(k, v))
                 elif (type(v) == float) and (v.is_integer()):
                     inlist_grid_points.write("\t{0} = {1}\n".format(k, int(v)))
+                elif type(v) == bool:
+                    if v:
+                        inlist_grid_points.write("\t{0} = .true.\n".format(k))
+                    else:
+                        inlist_grid_points.write("\t{0} = .fale.\n".format(k))
                 else:
                     inlist_grid_points.write("{0} = {1}\n".format(k, v))
             inlist_grid_points.write("/ ! end of star_job namelist\n")
@@ -306,6 +334,11 @@ def create_binary_inlists(binary_controls, binary_job,
                     inlist_grid_points.write("\t{0} = {1:.10f}d0\n".format(k, v))
                 elif (type(v) == float) and (v.is_integer()):
                     inlist_grid_points.write("\t{0} = {1}\n".format(k, int(v)))
+                elif type(v) == bool:
+                    if v:
+                        inlist_grid_points.write("\t{0} = .true.\n".format(k))
+                    else:
+                        inlist_grid_points.write("\t{0} = .fale.\n".format(k))
                 else:
                     inlist_grid_points.write("{0} = {1}\n".format(k, v))
             inlist_grid_points.write("/ ! end of star_job namelist\n")
