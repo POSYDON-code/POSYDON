@@ -1081,12 +1081,15 @@ class PSyGrid:
                         for colname, value in grid_point.items():
                             if colname in self.initial_values.dtype.names:
                                 self.initial_values[i][colname] = value
-                        if not slim:
-                            hdf5.create_group("/grid/run{}/".format(run_index))
-                        # consider the run (and the input directory) included
-                        self.MESA_dirs.append(grid.runs[i].path)
-                        run_included[i] = True
-                        run_index += 1
+                        #add initial RLO system if not added before
+                        if not run_included[i]:
+                            if not slim:
+                                hdf5.create_group(
+                                    "/grid/run{}/".format(run_index))
+                            #include the run (and the input directory)
+                            self.MESA_dirs.append(grid.runs[i].path)
+                            run_included[i] = True
+                            run_index += 1
 
                                 
         self._say("Storing initial/final values and metadata to HDF5...")
