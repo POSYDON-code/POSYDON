@@ -209,7 +209,7 @@ class isolated_step(isolated_step):
                         if (substring in key) :
                             setattr(binary, key, np.nan)
                         if key in [ "c12_c12", "center_gamma",
-                                   "avg_c_in_c_core", "total_moment_of_inertia", "spin"]:
+                                   "avg_c_in_c_core", "total_moment_of_inertia", "spin", "envelope_binding_energy"]:
                             setattr(binary, key, np.nan)
 
 
@@ -217,7 +217,17 @@ class isolated_step(isolated_step):
             for s2 in LIST_ACCEPTABLE_STATES_FOR_HMS:
 
                 merged_star.mass = star_base.mass + comp.mass
-                # center as base. Surface unknown
+                merged_star.state = check_state_of_star(merged_star, star_CO=False)  # TODO for sure this needs testing!
+
+                for key in STARPROPERTIES:
+                    # these stellar attributes become np.nan
+                    for substring in ["log_", "lg_", "surface","surf_", "conv_", "lambda", "profile"]:
+                        if (substring in key) :
+                            setattr(binary, key, np.nan)
+                        if key in [ "c12_c12", "center_gamma",
+                                   "avg_c_in_c_core", "total_moment_of_inertia", "spin"]:
+                            setattr(binary, key, np.nan)
+
 
 
 
@@ -261,25 +271,8 @@ class isolated_step(isolated_step):
 
         return
 
-    def initialize_isolated_binary_orbit():
-        """
-        and isolated star is treated as a extremely far away binary for the purpose of keeping the same code structure
-        put period at extreme, and initiate detached step with one star (and one non-evolving compact object),
-         with no orbital changes apart from spin change due to winds and deformation
-        """
-        binary = self.binary
-        binary.orbital_period = 10.**99
-        binary.eccentricity = 0
-        binary.separation = orbital_separation_from_period()
+    def __call__(self,binary):
 
-        if binary.state == "single_star":
-            binary.star_2 = None
-        elif binary.state == "disrupted":
-            #find which star is a CO, the other will be evolved in isolation
-            if binary.star_1 in STAR_STATES_CO:
-                binary.star_1 = None
-            elif binary.star_2 in STAR_STATES_CO:
-                binary.star_2 = None
         if binary.state == "merged":
             if binary.event == 'oMerging1':
                 merged_star_properties(binary.star_1,binary.star_2,1)
@@ -288,5 +281,8 @@ class isolated_step(isolated_step):
             else:
                 raise ValueError("binary.state='merged' but binary.event != 'oMerging1/2'")
         else:
-            raise ValueError("step_merging initated but binary.state != 'oMerging1/2'")
-    super().__call__(binary)
+            raise ValueError("step_merging initated but binary.state != 'merged'")
+
+        binary.event == None 
+
+        super().__call__(binary)

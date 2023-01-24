@@ -128,6 +128,33 @@ class isolated_step(detached_step):
 
 
 
+     def __call__(self, binary):
+
+         initialize_isolated_binary_orbit()
+
+         if binary.star_1 == None or binary.star_2 == None: # already one star became None in step_merging
+             continue
+         elif binary.state == "initially_single_star":
+             binary.star_2 = None
+         elif binary.state == "disrupted":
+             #find which star is a CO, the other will be evolved in isolation
+             if binary.star_1 in STAR_STATES_CO:
+                 binary.star_1 = None
+             elif binary.star_2 in STAR_STATES_CO:
+                 binary.star_2 = None
+        '''
+        elif binary.state == "merged":
+            if binary.event == 'oMerging1':
+                merged_star_properties(binary.star_1,binary.star_2,1)
+            elif binary.event == 'oMerging2':
+                merged_star_properties(binary.star_2,binary.star_1,2)
+            else:
+                raise ValueError("binary.state='merged' but binary.event != 'oMerging1/2'")
+        '''
+
+         super().__call__(binary)
+
+
     def initialize_isolated_binary_orbit():
         """
         and isolated star is treated as a extremely far away binary for the purpose of keeping the same code structure
@@ -137,26 +164,4 @@ class isolated_step(detached_step):
         binary = self.binary
         binary.orbital_period = 10.**99
         binary.eccentricity = 0
-        binary.separation = orbital_separation_from_period()
-
-        if binary.star_1 == None or binary.star_2 == None: # already one star became None in step_merging
-            continue
-        elif binary.state == "single_star":
-            binary.star_2 = None
-        elif binary.state == "disrupted":
-            #find which star is a CO, the other will be evolved in isolation
-            if binary.star_1 in STAR_STATES_CO:
-                binary.star_1 = None
-            elif binary.star_2 in STAR_STATES_CO:
-                binary.star_2 = None
-
-        '''
-        elif binary.state == "merged":
-            if binary.event == 'oMerging1':
-                merged_star_properties(binary.star_1,binary.star_2,1)
-            elif binary.event == 'oMerging2':
-                merged_star_properties(binary.star_2,binary.star_1,2)
-            else:
-                raise ValueError("binary.state='merged' but binary.event != 'oMerging1/2'"")
-        '''
-    super().__call__(binary)
+        binary.separation = orbital_separation_from_period(binary.orbital_period, 1.,1.)
