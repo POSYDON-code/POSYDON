@@ -232,53 +232,6 @@ def infer_interpolation_class(tf1, tf2):
     return "unknown"
 
 
-def initial_RLO_fix_applies(mass, period):
-    """Check if initial RLO fix is warranted given the initial mass and period.
-
-    Parameters
-    ----------
-    mass : float
-        Mass of star 1.
-    period : float
-        Binary's period (in days).
-
-    Returns
-    -------
-    bool
-        True if initial RLO flag should be forced.
-
-    """
-    if mass < 0.6:
-        return period < 0.14
-    if mass < 1.0:
-        return period < 0.20
-    if mass < 1.3:
-        return period < 0.29
-    if mass < 3.5:
-        return period < 0.41
-    if mass < 8:
-        return period < 0.59
-    if mass < 15:
-        return period < 0.85
-    return period < 1.2
-
-    # if period > 1.0:
-    #     return False
-    # if period > 0.7:
-    #     return mass > 84.0
-    # if period > 0.51:
-    #     return mass > 23.0
-    # if period > 0.36:
-    #     return mass > 7.7
-    # if period > 0.25:
-    #     return mass > 5.0
-    # if period > 0.18:
-    #     return mass > 1.6
-    # if period > 0.124:
-    #     return mass > 1.2
-    # return mass > 0.6
-
-
 def get_detected_initial_RLO(grid):
     """Generates a list of already detected initial RLO
     
