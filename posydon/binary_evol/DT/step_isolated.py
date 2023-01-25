@@ -1,15 +1,10 @@
-"""Detached evolution step."""
+"""Isolated evolution step."""
 
 
 __authors__ = [
-    "Devina Misra <devina.misra@unige.ch>",
-    "Zepei Xing <Zepei.Xing@unige.ch>",
     "Emmanouil Zapartas <ezapartas@gmail.com>",
-    "Nam Tran <tranhn03@gmail.com>",
     "Simone Bavera <Simone.Bavera@unige.ch>",
-    "Konstantinos Kovlakas <Konstantinos.Kovlakas@unige.ch>",
-    "Kyle Akira Rocha <kylerocha2024@u.northwestern.edu>",
-    "Jeffrey Andrews <jeffrey.andrews@northwestern.edu>",
+    "Konstantinos Kovlakas <Konstantinos.Kovlakas@unige.ch>"
 ]
 
 
@@ -37,55 +32,6 @@ from posydon.binary_evol.flow_chart import (STAR_STATES_CC)
 import posydon.utils.constants as const
 from posydon.binary_evol.step_detached import detached_step
 
-
-STAR_STATES_CO = ['BH', 'NS', 'WD']
-
-STAR_STATES_ALL = [
-    'WD',
-    'NS',
-    'BH',
-    'H-rich_Core_H_burning',
-    'H-rich_Core_He_burning',
-    'H-rich_Shell_H_burning',
-    'H-rich_Central_He_depleted',
-    'H-rich_Shell_He_burning',
-    'H-rich_Core_C_burning',
-    'H-rich_Central_C_depletion',
-    'H-rich_non_burning',
-    'stripped_He_Core_He_burning',
-    'stripped_He_Central_He_depleted',
-    'stripped_He_Central_C_depletion',
-    'stripped_He_non_burning'
-]
-
-STAR_STATES_CO = ['BH', 'NS', 'WD']
-
-STAR_STATES_NOT_CO = STAR_STATES_ALL.copy()
-[STAR_STATES_NOT_CO.remove(x) for x in STAR_STATES_CO]
-
-STAR_STATES_H_RICH = STAR_STATES_NOT_CO.copy()
-[STAR_STATES_H_RICH.remove(x) for x in ['stripped_He_Core_He_burning',
-                                        'stripped_He_Central_He_depleted',
-                                        'stripped_He_Central_C_depletion',
-                                        'stripped_He_non_burning']]
-
-STAR_STATES_HE_RICH = STAR_STATES_NOT_CO.copy()
-[STAR_STATES_HE_RICH.remove(x) for x in ['H-rich_Core_H_burning',
-                                         'H-rich_Core_He_burning',
-                                         'H-rich_Shell_H_burning',
-                                         'H-rich_Central_He_depleted',
-                                         'H-rich_Shell_He_burning',
-                                         'H-rich_Core_C_burning',
-                                         'H-rich_Central_C_depletion']]
-
-LIST_ACCEPTABLE_STATES_FOR_HMS = ["H-rich_Core_H_burning"]
-LIST_ACCEPTABLE_STATES_FOR_HeMS = ["stripped_He_Core_He_burning"]
-
-LIST_ACCEPTABLE_STATES_FOR_POSTMS = STAR_STATES_H_RICH.copy()
-[LIST_ACCEPTABLE_STATES_FOR_POSTMS.remove(x) for x in LIST_ACCEPTABLE_STATES_FOR_HMS]
-
-LIST_ACCEPTABLE_STATES_FOR_POSTHeMS = STAR_STATES_HE_RICH.copy()
-[LIST_ACCEPTABLE_STATES_FOR_POSTHeMS.remove(x) for x in LIST_ACCEPTABLE_STATES_FOR_HeMS]
 
 #TODO: Ability to change the psygrid of the sinlge star tracks for different evolution (mass acretors for disrupted, merger tracks for merged?)
 # For his check grid_name_Hrich, grid_name_strippedHe in detached step
