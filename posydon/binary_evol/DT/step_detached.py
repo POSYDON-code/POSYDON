@@ -563,7 +563,7 @@ class detached_step:
         sc_center_c12 = tran[9]
         initials = None
         # tolerance 1e-8
-        tolerance_mist_integration = 1e-2
+        tolerance_matching_integration = 1e-2
         if self.verbose:
             print(matching_method)
         if matching_method == "root":
@@ -641,7 +641,7 @@ class detached_step:
                     )
                     # stars after mass transfer could swell up so that log_R
                     # is not appropriate for matching
-                    if np.abs(sol.fun) > tolerance_mist_integration:
+                    if np.abs(sol.fun) > tolerance_matching_integration:
                         MESA_label = ["mass", "center_h1", "he_core_mass"]
                         posydon_attribute = [star.mass, star.center_h1,
                                              star.he_core_mass]
@@ -741,7 +741,7 @@ class detached_step:
                             - sc_log_R_He.transform(posydon_attribute[2]))**2,
                     x0, method="TNC", bounds=bnds,
                 )
-                if (np.abs(sol.fun) > tolerance_mist_integration
+                if (np.abs(sol.fun) > tolerance_matching_integration
                         or not sol.success):
                     sol = minimize(
                         lambda x: (
@@ -761,7 +761,7 @@ class detached_step:
                         x0, method="Powell",
                     )
 
-                    if (np.abs(sol.fun) > tolerance_mist_integration
+                    if (np.abs(sol.fun) > tolerance_matching_integration
                             or not sol.success):
                         star.htrack = True
                         x0 = get_root0(
@@ -795,11 +795,11 @@ class detached_step:
             if initials is None:
                 if self.verbose:
                     print("sol.fun = ", np.abs(sol.fun))
-                if np.abs(sol.fun) < tolerance_mist_integration:
+                if np.abs(sol.fun) < tolerance_matching_integration:
                     if self.verbose:
                         print("minimization in matching considered acceptable,"
                               " with", np.abs(sol.fun), "<",
-                              tolerance_mist_integration, "tolerance")
+                              tolerance_matching_integration, "tolerance")
                     initials = sol.x
                     star.fun = sol.fun
                     star.stiching_rel_mass_difference = (
@@ -820,7 +820,7 @@ class detached_step:
                 else:
                     if self.verbose:
                         print("minimization in matching not successful, with",
-                              np.abs(sol.fun), ">", tolerance_mist_integration,
+                              np.abs(sol.fun), ">", tolerance_matching_integration,
                               "tolerance")
                     initials = (np.nan, np.nan)
                     star.fun = np.nan

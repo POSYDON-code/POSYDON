@@ -127,7 +127,7 @@ class isolated_step(isolated_step):
         *args,
         **kwargs)
 
-    def merged_star_properties(star_base,comp, position_of_star_base):
+    def merged_star_properties(star_base,comp):
         """
         Make assumptions about the core/total mass of the star of a merged product.
 
@@ -137,8 +137,6 @@ class isolated_step(isolated_step):
             is our base star that engulfs its companions. The merged star will have this star as a base
         comp: Single Star
             is the star that is engulfed
-        position_of_star_base: int
-            position in the binary of the star_base (1 if binary.star_1 etc)
         """
 
 
@@ -184,10 +182,10 @@ class isolated_step(isolated_step):
 
 
         s1 = star_base.state
-        s1 = comp.state
+        s2 = comp.state
 
-        for s1 in LIST_ACCEPTABLE_STATES_FOR_HMS:
-            for s2 in LIST_ACCEPTABLE_STATES_FOR_HMS:
+        if (s1 in LIST_ACCEPTABLE_STATES_FOR_HMS)
+            and (s2 in LIST_ACCEPTABLE_STATES_FOR_HMS):
                 #these stellar attributes change value
                 merged_star.mass = star_base.mass + comp.mass
                 center_h1_merged = (star_base.mass * star_base.center_h1 + comp.mass * comp.center_h1) / (star_base.mass + comp.mass) #mass weighted
@@ -213,10 +211,30 @@ class isolated_step(isolated_step):
                             setattr(binary, key, np.nan)
 
 
-        for s1 in STAR_STATE_POST_MS:
+        for s1 in LIST_ACCEPTABLE_STATES_FOR_POSTMS:
             for s2 in LIST_ACCEPTABLE_STATES_FOR_HMS:
 
                 merged_star.mass = star_base.mass + comp.mass
+                merged_star.state = check_state_of_star(merged_star, star_CO=False)  # TODO for sure this needs testing!
+
+                for key in STARPROPERTIES:
+                    # these stellar attributes become np.nan
+                    for substring in ["log_", "lg_", "surface","surf_", "conv_", "lambda", "profile"]:
+                        if (substring in key) :
+                            setattr(binary, key, np.nan)
+                        if key in [ "c12_c12", "center_gamma",
+                                   "avg_c_in_c_core", "total_moment_of_inertia", "spin"]:
+                            setattr(binary, key, np.nan)
+
+
+        for s1 in LIST_ACCEPTABLE_STATES_FOR_POSTMS:
+            for s2 in LIST_ACCEPTABLE_STATES_FOR_POSTMS:
+
+                merged_star.mass = star_base.mass + comp.mass
+
+                # merge cores masses, envelopes, etc.
+                # weighted central abundances if merging cores. Else only from star_base
+
                 merged_star.state = check_state_of_star(merged_star, star_CO=False)  # TODO for sure this needs testing!
 
                 for key in STARPROPERTIES:
@@ -247,7 +265,7 @@ class isolated_step(isolated_step):
     [LIST_ACCEPTABLE_STATES_FOR_POSTHeMS
 
 
-
+        '''
         if position_of_star_base == 1:
             binary.star_1 = merged_star
             binary.star_2 = None
@@ -256,7 +274,7 @@ class isolated_step(isolated_step):
             binary.star_2 = merged_star
         else:
             raise ValueError("position_of_star_base != 1 or 2")
-
+        '''
 
         for key in STARPROPERTIES:
             # the binary attributes that are changed in the CE step
@@ -269,20 +287,20 @@ class isolated_step(isolated_step):
                     setattr(binary, key, np.nan)  # the rest become np.nan
 
 
-        return
+        return merged_star, None
 
     def __call__(self,binary):
 
         if binary.state == "merged":
             if binary.event == 'oMerging1':
-                merged_star_properties(binary.star_1,binary.star_2,1)
+                binary.star_1,binary.star_2 = merged_star_properties(binary.star_1,binary.star_2)
             elif binary.event == 'oMerging2':
-                merged_star_properties(binary.star_2,binary.star_1,2)
+                binary.star_2,binary.star_1 = merged_star_properties(binary.star_2,binary.star_1)
             else:
                 raise ValueError("binary.state='merged' but binary.event != 'oMerging1/2'")
         else:
             raise ValueError("step_merging initated but binary.state != 'merged'")
 
-        binary.event == None 
+        binary.event == None
 
         super().__call__(binary)
