@@ -122,10 +122,9 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
     parser.add_argument("-f", "--function", type = str, help = "the name of the function to be called")
-    parser.add_argument("-td", "--test_dir", type = str, help = "the path to where the testing directory should be set up") 
+    parser.add_argument("-td", "--test_dir", type = str, help = "the path to where the testing directory should be set up, either set_up_test or compress_dir")
     parser.add_argument("-dsr", "--dsr", type = str, help = "down sampling rate when creating testing directory", default = 0.01)
     parser.add_argument("-md", "--mesa_dir", type = str, help = "the path to the directory containing MESA generated data")
-    parser.add_argument("-od", "--output_dir", type = str, help = "the path to the output directory for compressing MESA files")
 
     functions = {
         "set_up_test": set_up_test,
