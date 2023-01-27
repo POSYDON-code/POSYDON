@@ -1,0 +1,141 @@
+from hurry.filesize import size
+from tqdm import tqdm
+import gzip
+import random
+import shutil
+import time
+import argparse
+import sys
+import os
+
+
+def set_up_test(args):
+    """ sets up a testing directory in requested directory
+
+    Parameters:
+    ----------
+    test_dir : string
+        the directory where the test directory is to be set up
+    dsr : float
+        down sampling rate when creating testing directory
+
+    """
+
+    if not os.path.isdir(args.test_dir):
+        sys.exit(f"directory {args.test_dir} does not exist")
+
+    for f in os.listdir(args.mesa_dir):
+
+        if os.path.isdir(os.path.join(args.mesa_dir, f)):
+            is_mesa_run = False
+            sub_dir = os.listdir(os.path.join(args.mesa_dir, f))
+            track_dirs = []
+
+            for _f in sub_dir:
+
+                if "_grid_index_" in _f:
+                    is_mesa_run = True
+
+                # if os.path.isdir(os.path.join(args.mesa_dir, f, _f)) and _f != "star1" and _f != "star2" and _f != "binary":
+                track_dirs.append(os.path.join(args.mesa_dir, f, _f))
+
+            if is_mesa_run == True: # checking if directory is a mesa run
+                os.mkdir(os.path.join(args.test_dir, f))
+                # choosing which tracks to copy over
+                inds = random.sample(list(range(len(track_dirs))), int(len(track_dirs) * args.dsr))
+
+                for ind in inds:
+                    if os.path.isdir(track_dirs[ind]):
+                        shutil.copytree(track_dirs[ind], os.path.join(args.test_dir, f, track_dirs[ind].split("/")[-1]))
+                    else:
+                        shutil.copy(track_dirs[ind], os.path.join(args.test_dir, f, track_dirs[ind].split("/")[-1]))
+
+    print(f"Created Test Directory at {args.test_dir}")
+
+
+def compress_dir(args):
+    """ compresses directory containing tracks evolved with MESA
+    
+    Parameters:
+    -----------
+    mesa_dir : string
+        the directory where the MESA tracks are stored
+
+    """
+
+    def get_size(start_path = "."):
+        total_size = 0
+        for dirpath, dirnames, filenames in os.walk(start_path):
+            for f in filenames:
+                fp = os.path.join(dirpath, f)
+                # skip if it is symbolic link
+                if not os.path.islink(fp):
+                    total_size += os.path.getsize(fp)
+
+        return total_size
+
+    if not os.path.isdir(args.mesa_dir):
+        sys.exit("the MESA directory does not exist")
+
+    og_size = size(get_size(args.mesa_dir))
+
+    for f in tqdm(os.listdir(args.mesa_dir)):
+
+        if os.path.isdir(os.path.join(args.mesa_dir, f)):
+            
+            is_mesa_run = False
+            sub_dir = os.listdir(os.path.join(args.mesa_dir, f))
+            track_dirs = []
+
+            for _f in sub_dir:
+
+                if "_grid_index_" in _f: # checking if directory is mesa run
+                    is_mesa_run = True
+
+                if os.path.isdir(os.path.join(args.mesa_dir, f, _f)) and _f != "star1" and _f != "star2" and _f != "binary":
+                    track_dirs.append(os.path.join(args.mesa_dir, f, _f))
+
+            if is_mesa_run == True:
+
+                for track_obj in track_dirs: # iterating over directory containing MESA runs
+
+                    for root, _dir, files in os.walk(track_obj):
+                        # traversing over directory tree of copied mesa tracks and compressing .data, .mod, .txt files
+                        for file in files:
+                            ext = file.split(".")[-1]
+                            
+                            if ext == "data" or ext == "mod" or ext == "txt":
+                                os.system(f"gzip -1 {os.path.join(root, file)}")
+
+
+
+    
+    print(
+        f"""
+compressed MESA tracks
+Original Size {og_size} | Compressed Size {size(get_size(args.mesa_dir))}
+        """
+    )
+
+if __name__ == "__main__":
+
+    parser = argparse.ArgumentParser()
+
+    parser.add_argument("-f", "--function", type = str, help = "the name of the function to be called")
+    parser.add_argument("-td", "--test_dir", type = str, help = "the path to where the testing directory should be set up") 
+    parser.add_argument("-dsr", "--dsr", type = str, help = "down sampling rate when creating testing directory", default = 0.01)
+    parser.add_argument("-md", "--mesa_dir", type = str, help = "the path to the directory containing MESA generated data")
+    parser.add_argument("-od", "--output_dir", type = str, help = "the path to the output directory for compressing MESA files")
+
+    functions = {
+        "set_up_test": set_up_test,
+        "compress_dir": compress_dir
+    }
+
+    args = parser.parse_args()
+
+    if args.function == None:
+        sys.exit("a function must be specified to use this script")
+
+    functions[args.function](args)
+
