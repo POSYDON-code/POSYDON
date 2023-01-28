@@ -1150,7 +1150,7 @@ class StepSN(object):
         elif self.mechanism == self.Patton20_engines:
             if star.SN_type == "ECSN":
                 if self.ECSN == 'Podsiadlowksi+04':
-                    m_proto = m_core
+                    m_proto = 1.38
                 else:
                     m_proto = m_core
                 f_fb = 0.0
