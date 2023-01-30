@@ -53,11 +53,13 @@ export PATH_TO_POSYDON_DATA=/home/
 get-posydon-data
 ```
 
+A new folder named `POSYDON_data` will be created in the indicated location. Make sure you use a path where you have writing permissions (in some Linux distributions you may use `/home/[username]/`).
+
 #### [OPTION 2] git LFS submodule (latest development version)
 Inside the cloned POSYDON repository run the following commands to
 install and initialise git LFS, and download the data.
 ```
-export PATH_TO_POSYDON_DATA=$PATH_TO_POSYDON/data/POSYDON_data
+export PATH_TO_POSYDON_DATA=$PATH_TO_POSYDON/data/
 conda install git-lfs
 git lfs install
 git submodule init

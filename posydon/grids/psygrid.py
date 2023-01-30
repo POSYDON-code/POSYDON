@@ -846,6 +846,14 @@ class PSyGrid:
                     init_separation = orbital_separation_from_period(
                         init_period, init_mass_1, init_mass_2)
                     initial_BH["binary_separation"] = init_separation
+            elif not binary_grid and not (start_at_RLO or ignore_data):
+                # use header to get initial mass in single-star grids
+                h1_header = np.genfromtxt(run.history1_path,
+                                          skip_header=1,
+                                          max_rows=1, names=True)
+                if "S1_star_mass" in dtype_initial_values.names:
+                    init_mass_1 = h1_header["initial_m"]
+                    initial_H1["star_mass"] = init_mass_1
 
             # get some initial values from the `LOGS1/history.data` header
             addX = "X" in dtype_initial_values.names

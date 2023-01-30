@@ -222,7 +222,6 @@ This script list all customisable option of a POSYDON population synthesis run.
                                    'SN_type',
                                    #'f_fb',
                                    #'spin_orbit_tilt',
-                                   #'spin_vector'
                                   ]),
 
       # LIST STAR PROPERTIES TO SAVE
@@ -287,7 +286,6 @@ This script list all customisable option of a POSYDON population synthesis run.
                                    'SN_type',
                                    #'f_fb',
                                    #'spin_orbit_tilt',
-                                   #'spin_vector'
                                   ]),
   )
 

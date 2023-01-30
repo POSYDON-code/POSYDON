@@ -32,7 +32,7 @@ import warnings
 import numpy as np
 import scipy as sp
 
-from posydon.utils.data_download import PATH_TO_POSYDON_DATA
+from posydon.utils.data_download import PATH_TO_POSYDON_DATA, data_download
 import posydon.utils.constants as const
 from posydon.utils.common_functions import is_number
 from posydon.utils.common_functions import CO_radius
@@ -1190,8 +1190,11 @@ class StepSN(object):
 
         phi :
             Angle between z-axis and projection of kick onto x-z plane.
-        cos_theta :
-            The cosine of the angle between pre- and post- supenova orbial
+        theta :
+            Angle between pre- supernova star velocity relative to the
+            companion (i.e. along the positive y axis) and the kick velocity.
+        tilt :
+            The angle between pre- and post- supenova orbial
             planes. This is equal to the angle between the relative velocity of
             the helium star to the companion just before the explosion (see Vr)
             and the projection of the relative velocy just after the explosion
