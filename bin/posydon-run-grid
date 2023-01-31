@@ -175,6 +175,9 @@ def create_working_directory(grid_param_dict, args):
     # first name directories which we do not need to log
     directory_name_from_dict_no_log =  '_'.join(['{0}_{1:.4f}'.format(k, v) for k, v in grid_param_dict.items() if k not in variable_names_to_log])
     directory_name_from_dict_log = '_'.join(['{0}_{1:.4e}'.format(k, v) for k, v in grid_param_dict.items() if k in variable_names_to_log])
+    # drop parenthesis
+    directory_name_from_dict_no_log = directory_name_from_dict_no_log.replace('(','')
+    directory_name_from_dict_no_log = directory_name_from_dict_no_log.replace(')','')
 
     # combine and add on what grid number we are running if exists
     directory_name_from_dict = '{0}_{1}'.format(directory_name_from_dict_no_log, directory_name_from_dict_log)
@@ -242,9 +245,14 @@ def create_binary_inlists(binary_controls, binary_job,
             inlist_grid_points.write("&binary_controls\n")
             for k, v in binary_controls.items():
                 if (type(v) == float) and (not v.is_integer()):
-                    inlist_grid_points.write("\t{0} = {1}d0\n".format(k, v))
+                    inlist_grid_points.write("\t{0} = {1:.10f}d0\n".format(k, v))
                 elif (type(v) == float) and (v.is_integer()):
                     inlist_grid_points.write("\t{0} = {1}\n".format(k, int(v)))
+                elif type(v) == bool:
+                    if v:
+                        inlist_grid_points.write("\t{0} = .true.\n".format(k))
+                    else:
+                        inlist_grid_points.write("\t{0} = .fale.\n".format(k))
                 else:
                     inlist_grid_points.write("{0} = {1}\n".format(k, v))
             inlist_grid_points.write("/ ! end of binary_controls namelist\n")
@@ -254,9 +262,14 @@ def create_binary_inlists(binary_controls, binary_job,
             inlist_grid_points.write("&binary_job\n")
             for k, v in binary_job.items():
                 if (type(v) == float) and (not v.is_integer()):
-                    inlist_grid_points.write("\t{0} = {1}d0\n".format(k, v))
+                    inlist_grid_points.write("\t{0} = {1:.10f}d0\n".format(k, v))
                 elif (type(v) == float) and (v.is_integer()):
                     inlist_grid_points.write("\t{0} = {1}\n".format(k, int(v)))
+                elif type(v) == bool:
+                    if v:
+                        inlist_grid_points.write("\t{0} = .true.\n".format(k))
+                    else:
+                        inlist_grid_points.write("\t{0} = .fale.\n".format(k))
                 else:
                     inlist_grid_points.write("{0} = {1}\n".format(k, v))
             inlist_grid_points.write("/ ! end of binary_job namelist\n")
@@ -267,9 +280,14 @@ def create_binary_inlists(binary_controls, binary_job,
             inlist_grid_points.write("&controls\n")
             for k, v in star1_binary_controls.items():
                 if (type(v) == float) and (not v.is_integer()):
-                    inlist_grid_points.write("\t{0} = {1}d0\n".format(k, v))
+                    inlist_grid_points.write("\t{0} = {1:.10f}d0\n".format(k, v))
                 elif (type(v) == float) and (v.is_integer()):
                     inlist_grid_points.write("\t{0} = {1}\n".format(k, int(v)))
+                elif type(v) == bool:
+                    if v:
+                        inlist_grid_points.write("\t{0} = .true.\n".format(k))
+                    else:
+                        inlist_grid_points.write("\t{0} = .fale.\n".format(k))
                 else:
                     inlist_grid_points.write("{0} = {1}\n".format(k, v))
             inlist_grid_points.write("/ ! end of controls namelist\n")
@@ -280,9 +298,14 @@ def create_binary_inlists(binary_controls, binary_job,
             inlist_grid_points.write("&controls\n")
             for k, v in star2_binary_controls.items():
                 if (type(v) == float) and (not v.is_integer()):
-                    inlist_grid_points.write("\t{0} = {1}d0\n".format(k, v))
+                    inlist_grid_points.write("\t{0} = {1:.10f}d0\n".format(k, v))
                 elif (type(v) == float) and (v.is_integer()):
                     inlist_grid_points.write("\t{0} = {1}\n".format(k, int(v)))
+                elif type(v) == bool:
+                    if v:
+                        inlist_grid_points.write("\t{0} = .true.\n".format(k))
+                    else:
+                        inlist_grid_points.write("\t{0} = .fale.\n".format(k))
                 else:
                     inlist_grid_points.write("{0} = {1}\n".format(k, v))
             inlist_grid_points.write("/ ! end of controls namelist\n")
@@ -293,9 +316,14 @@ def create_binary_inlists(binary_controls, binary_job,
             inlist_grid_points.write("&star_job\n")
             for k, v in star1_binary_job.items():
                 if (type(v) == float) and (not v.is_integer()):
-                    inlist_grid_points.write("\t{0} = {1}d0\n".format(k, v))
+                    inlist_grid_points.write("\t{0} = {1:.10f}d0\n".format(k, v))
                 elif (type(v) == float) and (v.is_integer()):
                     inlist_grid_points.write("\t{0} = {1}\n".format(k, int(v)))
+                elif type(v) == bool:
+                    if v:
+                        inlist_grid_points.write("\t{0} = .true.\n".format(k))
+                    else:
+                        inlist_grid_points.write("\t{0} = .fale.\n".format(k))
                 else:
                     inlist_grid_points.write("{0} = {1}\n".format(k, v))
             inlist_grid_points.write("/ ! end of star_job namelist\n")
@@ -306,16 +334,21 @@ def create_binary_inlists(binary_controls, binary_job,
             inlist_grid_points.write("&star_job\n")
             for k, v in star2_binary_job.items():
                 if (type(v) == float) and (not v.is_integer()):
-                    inlist_grid_points.write("\t{0} = {1}d0\n".format(k, v))
+                    inlist_grid_points.write("\t{0} = {1:.10f}d0\n".format(k, v))
                 elif (type(v) == float) and (v.is_integer()):
                     inlist_grid_points.write("\t{0} = {1}\n".format(k, int(v)))
+                elif type(v) == bool:
+                    if v:
+                        inlist_grid_points.write("\t{0} = .true.\n".format(k))
+                    else:
+                        inlist_grid_points.write("\t{0} = .fale.\n".format(k))
                 else:
                     inlist_grid_points.write("{0} = {1}\n".format(k, v))
             inlist_grid_points.write("/ ! end of star_job namelist\n")
 
     return
 
-def create_star_formation(mass, work_dir, star_inlist_project, initial_z=None):
+def create_star_formation(mass, work_dir, star_inlist_project, initial_z=None, new_Z=False):
     """Create the inlist and inlist grid points needed to run this part of grid
     """
 
@@ -335,6 +368,8 @@ def create_star_formation(mass, work_dir, star_inlist_project, initial_z=None):
 
       read_extra_star_job_inlist1 = .true.
       extra_star_job_inlist1_name = '{0}'
+      read_extra_star_job_inlist2 = .true.
+      extra_star_job_inlist2_name = 'inlist_grid_points'
 
 / ! end of job namelist
                         """.format(star_inlist_project)
@@ -346,10 +381,15 @@ def create_star_formation(mass, work_dir, star_inlist_project, initial_z=None):
 
     with open(os.path.join(work_dir, 'inlist_grid_points'), 'w') as inlist_grid_points:
         inlist_grid_points.write("&controls\n")
-        inlist_grid_points.write("initial_mass = {0}d0\n".format(mass))
+        inlist_grid_points.write("initial_mass = {0:.10f}d0\n".format(mass))
         if initial_z is not None:
-            inlist_grid_points.write("initial_z = {0}d0\n".format(initial_z))
-        inlist_grid_points.write("/ ! end of binary_controls namelist\n")
+            inlist_grid_points.write("initial_z = {0:.10f}d0\n".format(initial_z))
+            inlist_grid_points.write("Zbase = {0:.10f}d0\n".format(initial_z))
+        inlist_grid_points.write("/ ! end of star_controls namelist\n")
+        inlist_grid_points.write("&star_job\n")
+        if new_Z:
+            inlist_grid_points.write("new_Z = {0:.10f}d0\n".format(initial_z))
+        inlist_grid_points.write("/ ! end of star_job namelist\n")
         inlist_grid_points.close()
 
     return
@@ -611,7 +651,12 @@ def run_grid_point(grid, star1_formation, star2_formation,
         # if yes then create inlists specific to this grid points
         # moreover we should loop over all the star1 formation steps
         for index, inlist_step in enumerate(args.mesa_star1_inlist_project):
-            create_star_formation(grid_param_dict['m1'], work_dir, inlist_step)
+            # this is only called to create single HeMS stars, only second step1
+            # requires metallicity
+            if index == 0:
+                create_star_formation(grid_param_dict['m1'], work_dir, inlist_step)
+            elif index == 1:
+                create_star_formation(grid_param_dict['m1'], work_dir, inlist_step, grid_param_dict['initial_z'], True)
             run_mesa(args.mesa_star1_executable, work_dir, final_dir,
                      outfile_name='out_star1_formation_step{0}.txt'.format(index))
 
@@ -620,7 +665,12 @@ def run_grid_point(grid, star1_formation, star2_formation,
         # if yes then create inlists specific to this grid points
         # moreover we should loop over all the star1 formation steps
         for index, inlist_step in enumerate(args.mesa_star2_inlist_project):
-            create_star_formation(grid_param_dict['m2'], work_dir, inlist_step)
+            # this is only called to create single HeMS stars, only second step1
+            # requires metallicity
+            if index == 0:
+                create_star_formation(grid_param_dict['m2'], work_dir, inlist_step)
+            elif index == 1:
+                create_star_formation(grid_param_dict['m2'], work_dir, inlist_step, grid_param_dict['initial_z'], True)
             run_mesa(args.mesa_star2_executable, work_dir, final_dir,
                      outfile_name='out_star2_formation_step{0}.txt'.format(index))
 
@@ -755,8 +805,17 @@ if __name__ == '__main__':
         work_dir, final_dir = create_working_directory(grid_param_dict, args)
 
         # run the single star grid
+        last_step = len(args.mesa_star1_inlist_project) - 1
         for index, inlist_step in enumerate(args.mesa_star1_inlist_project):
-            create_star_formation(grid_param_dict['initial_mass'], work_dir, inlist_step)
+            # single_HMS star has only step0, metallicity is required but not new_Z
+            # single_HeMS star has step0, step1, step2, last two steps require metallicity
+            # but only step1 requires new_Z
+            if index == last_step:
+                create_star_formation(grid_param_dict['initial_mass'], work_dir, inlist_step, grid_param_dict['initial_z'], False)
+            elif index == 1:
+                create_star_formation(grid_param_dict['initial_mass'], work_dir, inlist_step, grid_param_dict['initial_z'], True)
+            else :
+                create_star_formation(grid_param_dict['initial_mass'], work_dir, inlist_step)
             run_mesa(args.mesa_star1_executable, work_dir, final_dir,
                      outfile_name='out_star1_formation_step{0}.txt'.format(index),
                      keep_profiles=args.keep_profiles)
