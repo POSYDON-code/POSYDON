@@ -632,7 +632,7 @@ def run_grid_point(grid, star1_formation, star2_formation,
 
     # run the binary exectuable
     run_mesa(args.mesa_binary_executable, work_dir, final_dir,
-             keep_profiles=arg.keep_profiles)
+             keep_profiles=args.keep_profiles)
 
     # find out what happened
     mesa_result = extract_mesa_results(final_dir)
