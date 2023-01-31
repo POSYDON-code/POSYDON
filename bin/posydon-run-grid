@@ -117,9 +117,8 @@ def parse_commandline():
     parser.add_argument("--verbose", action="store_true", default=False,
                         help="Run in Verbose Mode")
 
-    parser.add_argument("--keep_profiles", action="store_false", default=False,
+    parser.add_argument("--keep_profiles", action="store_true", default=False,
                         help="Do not delete profiles at run completion")
-
 
     args = parser.parse_args()
 
@@ -365,6 +364,7 @@ def run_mesa(mesa_executable, work_dir, final_dir, **kwargs):
         final_dir:
             When completed where would you like the output to go
     """
+
     outfile_name = kwargs.pop('outfile_name', 'out.txt')
     keep_profiles = kwargs.pop('keep_profiles', False)
 
