@@ -78,6 +78,6 @@ authors:
   orcid: "http://orcid.org/0000-0002-0147-0835" 
 title: "POSYDON: A General-Purpose Population Synthesis Code with Detailed Binary-Evolution Simulations"
 version: 1.0.0
-doi: ascl:2210.019
+doi: 10.48550/arXiv.2202.05892
 date-released: 2022-10
 url: "https://github.com/POSYDON-code/POSYDON"
