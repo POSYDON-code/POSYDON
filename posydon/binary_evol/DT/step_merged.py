@@ -55,83 +55,20 @@ LIST_ACCEPTABLE_STATES_FOR_POSTHeMS = STAR_STATES_HE_RICH.copy()
 
 
 
-class isolated_step(detached_step):
-    """Evolve an isolated star (a single star, a merger product, a runaway star, etc.)
-
-    The star will be matched in the beginning of the step and will be evolved
-    until core-collapse or maximum simulation time,
-    based on a grid of single star HDF5 grid.
-
-    """
-
-    def __init__(self,
-        grid_name_Hrich=None,
-        grid_name_stripedHe=None,
-        path=PATH_TO_POSYDON_DATA,
-        #dt=None,
-        #n_o_steps_history=None,
-        do_wind_loss=False,
-        do_tides=False,
-        do_gravitational_radiation=False,
-        do_magnetic_braking=False,
-        *args, **kwargs):
-
-        super().__init__(
-        grid_name_Hrich=grid_name_Hrich,
-        grid_name_stripedHe=grid_name_stripedHe,
-        path=path,
-        #dt=dt,
-        #n_o_steps_history=n_o_steps_history,
-        do_wind_loss=do_wind_loss,
-        do_tides=do_tides,
-        do_gravitational_radiation=do_gravitational_radiation,
-        do_magnetic_braking=do_magnetic_braking,
-        *args,
-        **kwargs)
-
-
-
-
-
-
-#TODO: Ability to change the psygrid of the sinlge star tracks for different evolution (mass acretors for disrupted, merger tracks for merged?)
-# For his check grid_name_Hrich, grid_name_strippedHe in detached step
-# But still how I point to different grids for disrupted and merged, if I initialize isolated_step once...?!!
-# POSSIBLE ANSWER: MERGEING step should be a different prior step before isolataed, where the pointing to th grid also chages
-
-
-
 class merged_step(isolated_step):
-    """Evolve an isolated star (a single star, a merger product, a runaway star, etc.)
-
-    The star will be matched in the beginning of the step and will be evolved
-    until core-collapse or maximum simulation time,
-    based on a grid of single star HDF5 grid.
-
-    """
+        """
+        Prepare a merging star to do an an isolated_step)
+        """
 
     def __init__(self,
         grid_name_Hrich=None,
         grid_name_stripedHe=None,
         path=PATH_TO_POSYDON_DATA,
-        dt=None,
-        n_o_steps_history=None,
-        do_wind_loss=False,
-        do_tides=False,
-        do_gravitational_radiation=False,
-        do_magnetic_braking=False,
         *args, **kwargs):
 
         super().__init__(
         grid_name_Hrich=grid_name_Hrich,
         grid_name_stripedHe=grid_name_stripedHe,
-        path=path,
-        dt=dt,
-        n_o_steps_history=n_o_steps_history,
-        do_wind_loss=do_wind_loss,
-        do_tides=do_tides,
-        do_gravitational_radiation=do_gravitational_radiation,
-        do_magnetic_braking=do_magnetic_braking,
         *args,
         **kwargs)
 
@@ -472,20 +409,8 @@ class merged_step(isolated_step):
             else:
                 print("Combination of merging star states not expected: ", s1, s2)
 
-        ##########
-
-        for key in STARPROPERTIES:
-            # the binary attributes that are changed in the CE step
-            if key not in ["separation", "orbital_period",
-                           "eccentricity", "state", "event"]:
-                # the binary attributes that keep the same value from the
-                # previous step
-                if key not in ["time", "V_sys", "mass_transfer_case",
-                               "nearest_neighbour_distance"]:
-                    setattr(binary, key, np.nan)  # the rest become np.nan
-
-
         return merged_star, None
+
 
     def __call__(self,binary):
 
