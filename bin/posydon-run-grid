@@ -117,6 +117,12 @@ def parse_commandline():
     parser.add_argument("--verbose", action="store_true", default=False,
                         help="Run in Verbose Mode")
 
+    parser.add_argument("--keep_profiles", action="store_true", default=False,
+                        help="Do not delete profiles at run completion")
+
+    parser.add_argument("--keep_photos", action="store_true", default=False,
+                        help="Do not delete photos at run completion")
+
     args = parser.parse_args()
 
     if args.grid_type not in ['fixed', 'dynamic']:
@@ -401,21 +407,28 @@ def run_mesa(mesa_executable, work_dir, final_dir, **kwargs):
         final_dir:
             When completed where would you like the output to go
     """
+
     outfile_name = kwargs.pop('outfile_name', 'out.txt')
+    keep_profiles = kwargs.pop('keep_profiles', False)
+    keep_photos = kwargs.pop('keep_photos', False)
+
     os.chdir(work_dir)
     os.system("{0} &> {1}".format(mesa_executable, os.path.join(work_dir, outfile_name)))
 
-    if os.path.exists(os.path.join(work_dir, 'LOGS')):
-        os.chmod(os.path.join(work_dir, 'LOGS'), stat.S_IRWXU  | stat.S_IRGRP | stat.S_IXGRP | stat.S_IROTH | stat.S_IXOTH )
-        os.system("rm LOGS/profile*")
-    if os.path.exists(os.path.join(work_dir, 'LOGS1')):
-        os.chmod(os.path.join(work_dir, 'LOGS1'), stat.S_IRWXU  | stat.S_IRGRP | stat.S_IXGRP | stat.S_IROTH | stat.S_IXOTH )
-        os.system("rm LOGS1/profile*")
-    if os.path.exists(os.path.join(work_dir, 'LOGS2')):
-        os.chmod(os.path.join(work_dir, 'LOGS2'), stat.S_IRWXU  | stat.S_IRGRP | stat.S_IXGRP | stat.S_IROTH | stat.S_IXOTH )
-        os.system("rm LOGS2/profile*")
+    if not keep_profiles:
+        if os.path.exists(os.path.join(work_dir, 'LOGS')):
+            os.chmod(os.path.join(work_dir, 'LOGS'), stat.S_IRWXU  | stat.S_IRGRP | stat.S_IXGRP | stat.S_IROTH | stat.S_IXOTH )
+            os.system("rm LOGS/profile*")
+        if os.path.exists(os.path.join(work_dir, 'LOGS1')):
+            os.chmod(os.path.join(work_dir, 'LOGS1'), stat.S_IRWXU  | stat.S_IRGRP | stat.S_IXGRP | stat.S_IROTH | stat.S_IXOTH )
+            os.system("rm LOGS1/profile*")
+        if os.path.exists(os.path.join(work_dir, 'LOGS2')):
+            os.chmod(os.path.join(work_dir, 'LOGS2'), stat.S_IRWXU  | stat.S_IRGRP | stat.S_IXGRP | stat.S_IROTH | stat.S_IXOTH )
+            os.system("rm LOGS2/profile*")
     if os.path.exists(os.path.join(work_dir, '.mesa_temp_cache')): os.system("rm -rf .mesa_temp_cache")
-    os.system("rm -rf photos*")
+
+    if not keep_photos:
+        os.system("rm -rf photos*")
 
     if not work_dir == final_dir:
         if os.path.isdir(final_dir):
@@ -674,7 +687,9 @@ def run_grid_point(grid, star1_formation, star2_formation,
                           work_dir, args.mesa_binary_inlist_project)
 
     # run the binary exectuable
-    run_mesa(args.mesa_binary_executable, work_dir, final_dir)
+    run_mesa(args.mesa_binary_executable, work_dir, final_dir,
+             keep_profiles=args.keep_profiles,
+             keep_photos=args.keep_photos)
 
     # find out what happened
     mesa_result = extract_mesa_results(final_dir)
@@ -809,7 +824,9 @@ if __name__ == '__main__':
             else :
                 create_star_formation(grid_param_dict['initial_mass'], work_dir, inlist_step)
             run_mesa(args.mesa_star1_executable, work_dir, final_dir,
-                     outfile_name='out_star1_formation_step{0}.txt'.format(index))
+                     outfile_name='out_star1_formation_step{0}.txt'.format(index),
+                     keep_profiles=args.keep_profiles,
+                     keep_photos=args.keep_photos)
 
         sys.exit(0)
 
