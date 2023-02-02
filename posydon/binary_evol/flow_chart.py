@@ -216,12 +216,19 @@ for b in ['initial_RLOF',
                 POSYDON_FLOW_CHART[(s1, s2, b, e)] = 'step_end'
                 POSYDON_FLOW_CHART[(s1, s2, b, e)] = 'step_end'
 
-for b in ['initially_single_star', 'disrupted']:
+for b in ['initially_single_star']:
     for s1 in STAR_STATES_ALL:
         for s2 in STAR_STATES_ALL:
             for e in BINARY_EVENTS_ALL:
                 POSYDON_FLOW_CHART[(s1, s2, b, e)] = 'step_isolated'
                 POSYDON_FLOW_CHART[(s1, s2, b, e)] = 'step_isolated'
+
+for b in ['disrupted']:
+    for s1 in STAR_STATES_ALL:
+        for s2 in STAR_STATES_ALL:
+            for e in BINARY_EVENTS_ALL:
+                POSYDON_FLOW_CHART[(s1, s2, b, e)] = 'step_disrupted'
+                POSYDON_FLOW_CHART[(s1, s2, b, e)] = 'step_disrupted'
 
 for b in ['merged']:
     for s1 in STAR_STATES_ALL:
@@ -229,13 +236,6 @@ for b in ['merged']:
             for e in ['oMerging1', 'oMerging2']:
                 POSYDON_FLOW_CHART[(s1, s2, b, e)] = 'step_merged'
                 POSYDON_FLOW_CHART[(s1, s2, b, e)] = 'step_merged'
-            '''
-            This is not needed as step_merged already continues with the isolated evolution in itself, after the merging process
-            for e in ['None']:
-                POSYDON_FLOW_CHART[(s1, s2, b, e)] = 'step_isolated'
-                POSYDON_FLOW_CHART[(s1, s2, b, e)] = 'step_isolated'
-            '''
-
 
 # catch initial_RLO states
 for s1 in STAR_STATES_ALL:

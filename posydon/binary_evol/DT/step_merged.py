@@ -64,6 +64,8 @@ class merged_step(isolated_step):
         grid_name_Hrich=None,
         grid_name_stripedHe=None,
         path=PATH_TO_POSYDON_DATA,
+        merger_critical_rot = 0.4,
+        rel_mass_lost_HMS_HMS = 0.1,
         *args, **kwargs):
 
         super().__init__(
@@ -100,18 +102,15 @@ class merged_step(isolated_step):
         if ( s1 is in LIST_ACCEPTABLE_STATES_FOR_HMS
             and s2 is in LIST_ACCEPTABLE_STATES_FOR_HMS):
                 #these stellar attributes change value
-                merged_star.mass = star_base.mass + comp.mass
+                merged_star.mass = (star_base.mass + comp.mass) * (1.-rel_mass_lost_HMS_HMS)
+
                 merged_star.center_h1 = mass_weighted_avg()
                 merged_star.center_he4 = mass_weighted_avg(abundance_name = "center_he4")
                 merged_star.center_c12 = mass_weighted_avg(abundance_name = "center_c12")
                 merged_star.center_n14 = mass_weighted_avg(abundance_name = "center_n14")
                 merged_star.center_o16 = mass_weighted_avg(abundance_name = "center_o16")
 
-                #TODO log_total_angular_momentum after the merger
-
                 #TODO: should I check if the abundaces above end up in ~1 (?)
-
-                #TODO: WE DO NOT HAVE LOGR FOR THE MATCHING
 
                 for key in STARPROPERTIES:
                     # these stellar attributes become np.nan
@@ -408,6 +407,9 @@ class merged_step(isolated_step):
 
             else:
                 print("Combination of merging star states not expected: ", s1, s2)
+
+        # ad hoc spin of merged star to be used in the detached step
+        merged_star.surf_avg_omega_div_omega_crit = merger_critical_rot
 
         return merged_star, None
 

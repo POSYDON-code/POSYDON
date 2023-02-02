@@ -33,11 +33,6 @@ import posydon.utils.constants as const
 from posydon.binary_evol.step_detached import detached_step
 
 
-#TODO: Ability to change the psygrid of the sinlge star tracks for different evolution (mass acretors for disrupted, merger tracks for merged?)
-# For his check grid_name_Hrich, grid_name_strippedHe in detached step
-# But still how I point to different grids for disrupted and merged, if I initialize isolated_step once...?!!
-# POSSIBLE ANSWER: MERGEING step should be a different prior step before isolataed, where the pointing to th grid also chages
-
 class isolated_step(detached_step):
     """Evolve an isolated star (a single star, a merger product, a runaway star, etc.)
 
@@ -82,21 +77,6 @@ class isolated_step(detached_step):
              continue
          elif binary.state == "initially_single_star":
              binary.star_2 = None
-         elif binary.state == "disrupted":
-             #find which star is a CO, the other will be evolved in isolation
-             if binary.star_1 in STAR_STATES_CO:
-                 binary.star_1 = None
-             elif binary.star_2 in STAR_STATES_CO:
-                 binary.star_2 = None
-        '''
-        elif binary.state == "merged":
-            if binary.event == 'oMerging1':
-                merged_star_properties(binary.star_1,binary.star_2,1)
-            elif binary.event == 'oMerging2':
-                merged_star_properties(binary.star_2,binary.star_1,2)
-            else:
-                raise ValueError("binary.state='merged' but binary.event != 'oMerging1/2'")
-        '''
 
          super().__call__(binary)
 
