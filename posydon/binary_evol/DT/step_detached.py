@@ -864,16 +864,16 @@ class detached_step:
         KEYS_POSITIVE = self.KEYS_POSITIVE
 
         if binary.star_1 is None: #
-            self.isolated_evolution = 2 #isolated evolution of star_2
+            self.non_existent_companion = 1
         if binary.star_2 is None:
-            self.isolated_evolution = 1
+            self.non_existent_companion = 2
         else:
-            self.isolated_evolution = 0 #no isolated evolution, detached step of an actual binary
+            self.non_existent_companion = 0 # detached step of an actual binary
 
 
-        if self.isolated_evolution == 0: #no isolated evolution, detached step of an actual binary
+        if self.non_existent_companion == 0: #no isolated evolution, detached step of an actual binary
             # the primary in a real binary is potential compact object, or the more evolved star
-            # in a isolated evolution is the non-existend, far away, star
+
             if (binary.star_1.state in ("BH", "NS", "WD")
                     and binary.star_2.state in STAR_STATES_H_RICH):
                 primary = binary.star_1
@@ -933,19 +933,9 @@ class detached_step:
             else:
                 raise Exception("States not recognized!")
 
-        elif self.isolated_evolution == 1:
+        # non-existent, far away, star
+        elif self.non_existent_companion == 1:
             primary.co = True # we force primary.co=True for all isolated evolution, where the secondary is the one evolving one
-            primary.htrack = False
-            secondary = binary.star_1
-            if (binary.star_1.state in STAR_STATES_H_RICH):
-                secondary.htrack = True
-            elif (binary.star_1.state in LIST_ACCEPTABLE_STATES_FOR_HeStar):
-                secondary.htrack = False
-            else:
-                raise Exception("State not recognized!")
-
-        elif self.isolated_evolution == 2:
-            primary.co = True
             primary.htrack = False
             secondary = binary.star_2
             if (binary.star_2.state in STAR_STATES_H_RICH):
@@ -955,11 +945,22 @@ class detached_step:
             else:
                 raise Exception("State not recognized!")
 
-        if (self.isolated_evolution  == 0):
+        elif self.non_existent_companion == 2:
+            primary.co = True
+            primary.htrack = False
+            secondary = binary.star_1
+            if (binary.star_1.state in STAR_STATES_H_RICH):
+                secondary.htrack = True
+            elif (binary.star_1.state in LIST_ACCEPTABLE_STATES_FOR_HeStar):
+                secondary.htrack = False
+            else:
+                raise Exception("State not recognized!")
+
+        if (self.non_existent_companion  == 0): # actual binary
             if (not primary.co):
                 m1, t1 = get_mist0(primary, primary.htrack)
             m2, t2 = get_mist0(secondary, secondary.htrack)
-        elif (self.isolated_evolution  == 1) or (self.isolated_evolution  == 2):
+        elif (self.non_existent_companion  == 1) or (self.non_existent_companion  == 2):
             #TODO: We do not have the logR for the matching
             m2, t2 = get_mist0(secondary, secondary.htrack, XXXX without logR in all cases!!)
 
@@ -1054,13 +1055,14 @@ class detached_step:
         # get the matched data of two stars, respectively
         interp1d_sec = get_star_data(
             binary, secondary, primary, secondary.htrack, False)
-        if (primary.co) or (isolated_evolution != 0):
+        if (primary.co) or (non_existent_companion != 0):
             # copy the secondary star except mass which is of the primary, and radius, mdot, Idot = 0
             interp1d_pri = get_star_data(
                 binary, secondary, primary, secondary.htrack, True)
         elif not primary.co:
             interp1d_pri = get_star_data(
                 binary, primary, secondary, primary.htrack, False)
+                
         if interp1d_sec is None or interp1d_pri is None:
             # binary.event = "END"
             binary.state += " (GridMatchingFailed)"

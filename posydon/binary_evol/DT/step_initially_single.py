@@ -53,7 +53,7 @@ LIST_ACCEPTABLE_STATES_FOR_POSTMS = STAR_STATES_H_RICH.copy()
 LIST_ACCEPTABLE_STATES_FOR_POSTHeMS = STAR_STATES_HE_RICH.copy()
 [LIST_ACCEPTABLE_STATES_FOR_POSTHeMS.remove(x) for x in LIST_ACCEPTABLE_STATES_FOR_HeMS]
 
-class disrupted_step(isolated_step):
+class initially_single_step(isolated_step):
     """
     Prepare a runaway star to do an an isolated_step)
     """
@@ -73,14 +73,13 @@ class disrupted_step(isolated_step):
 
     def __call__(self,binary):
 
-        '''
-        if binary.state == "disrupted":
-            #find which star is a CO, the other will be evolved in isolation
-            if binary.star_1 in STAR_STATES_CO:   ## TODO KEEP IT AS CORE-COLLAPSE
-                binary.star_1 = None
-            elif binary.star_2 in STAR_STATES_CO:
-                binary.star_2 = None
-        '''
+        if binary.state == "initially_single_star":
+            binary.star_2 = None
+        else:
+            raise ValueError("sent to initially_single_step without the binary.state being initially_single_star")
+
         binary.event == None
 
         super().__call__(binary)
+
+        

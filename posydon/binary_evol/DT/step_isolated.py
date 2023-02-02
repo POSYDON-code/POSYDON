@@ -73,12 +73,15 @@ class isolated_step(detached_step):
 
          initialize_isolated_binary_orbit()
 
-         if binary.star_1 == None or binary.star_2 == None: # already one star became None in step_merging
+         if binary.star_1 == None or binary.star_2 == None: # already one star became None in step_merged or step_initially_single
              continue
-         elif binary.state == "initially_single_star":
-             binary.star_2 = None
-
+         elif binary.state == "disrupted":
+             continue
+         else:
+             raise ValueError("In isolated step one of the two stars should be None or the the binary.state=='disrupted' ")
          super().__call__(binary)
+
+         # TODO maybe stuff after the call of the detached step
 
 
     def initialize_isolated_binary_orbit():
@@ -89,5 +92,5 @@ class isolated_step(detached_step):
         """
         binary = self.binary
         binary.orbital_period = 10.**99
-        binary.eccentricity = 0
+        binary.eccentricity = 0.0
         binary.separation = orbital_separation_from_period(binary.orbital_period, 1.,1.)
