@@ -135,9 +135,9 @@ if __name__ == "__main__":
         "compress_dir": compress_dir
     }
 
-    args = parser.parse_args()
+    arguments = parser.parse_args()
 
-    if args.function is None:
+    if arguments.function is None:
         sys.exit("A function must be specified to use this script.")
 
-    functions[args.function](args)
+    functions[arguments.function](arguments)
