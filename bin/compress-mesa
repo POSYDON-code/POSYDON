@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 from hurry.filesize import size
 from tqdm import tqdm
 import gzip
@@ -55,7 +56,7 @@ def set_up_test(args):
 
 def compress_dir(args):
     """ compresses directory containing tracks evolved with MESA
-    
+
     Parameters:
     -----------
     mesa_dir : string
@@ -82,7 +83,7 @@ def compress_dir(args):
     for f in tqdm(os.listdir(args.mesa_dir)):
 
         if os.path.isdir(os.path.join(args.mesa_dir, f)):
-            
+
             is_mesa_run = False
             sub_dir = os.listdir(os.path.join(args.mesa_dir, f))
             track_dirs = []
@@ -103,13 +104,13 @@ def compress_dir(args):
                         # traversing over directory tree of copied mesa tracks and compressing .data, .mod, .txt files
                         for file in files:
                             ext = file.split(".")[-1]
-                            
+
                             if ext == "data" or ext == "mod" or ext == "txt":
                                 os.system(f"gzip -1 {os.path.join(root, file)}")
 
 
 
-    
+
     print(
         f"""
 compressed MESA tracks
@@ -137,4 +138,3 @@ if __name__ == "__main__":
         sys.exit("a function must be specified to use this script")
 
     functions[args.function](args)
-
