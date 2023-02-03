@@ -39,7 +39,7 @@ def set_up_test(args):
                 # if os.path.isdir(os.path.join(args.mesa_dir, f, _f)) and _f != "star1" and _f != "star2" and _f != "binary":
                 track_dirs.append(os.path.join(args.mesa_dir, f, _f))
 
-            if is_mesa_run == True: # checking if directory is a mesa run
+            if is_mesa_run:     # checking if directory is a mesa run
                 os.mkdir(os.path.join(args.test_dir, f))
                 # choosing which tracks to copy over
                 inds = random.sample(list(range(len(track_dirs))),
@@ -98,7 +98,7 @@ def compress_dir(args):
                 if os.path.isdir(os.path.join(args.mesa_dir, f, _f)) and _f != "star1" and _f != "star2" and _f != "binary":
                     track_dirs.append(os.path.join(args.mesa_dir, f, _f))
 
-            if is_mesa_run == True:
+            if is_mesa_run:
                 # iterating over directory containing MESA runs
                 for track_obj in track_dirs:
                     for root, _dir, files in os.walk(track_obj):
@@ -133,7 +133,7 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    if args.function == None:
+    if args.function is None:
         sys.exit("A function must be specified to use this script.")
 
     functions[args.function](args)
