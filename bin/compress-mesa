@@ -93,7 +93,8 @@ def compress_dir(args):
                 if "_grid_index_" in _f:    # checking if directory is mesa run
                     is_mesa_run = True
 
-                if os.path.isdir(os.path.join(args.mesa_dir, f, _f)) and _f != "star1" and _f != "star2" and _f != "binary":
+                if (os.path.isdir(os.path.join(args.mesa_dir, f, _f)) and
+                        _f not in ["star1", "star2", "binary"]):
                     track_dirs.append(os.path.join(args.mesa_dir, f, _f))
 
             if is_mesa_run:
@@ -104,8 +105,9 @@ def compress_dir(args):
                         # and compressing .data, .mod, .txt files
                         for file in files:
                             ext = file.split(".")[-1]
-                            if ext == "data" or ext == "mod" or ext == "txt":
-                                os.system(f"gzip -1 {os.path.join(root, file)}")
+                            if ext not in ["data", "mod", "txt"]:
+                                continue
+                            os.system(f"gzip -1 {os.path.join(root, file)}")
 
     print(f"""
 compressed MESA tracks
