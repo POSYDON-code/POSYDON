@@ -175,6 +175,7 @@ __authors__ = [
     "Scott Coughlin <scottcoughlin2014@u.northwestern.edu>",
     "Devina Misra <devina.misra@unige.ch>",
     "Kyle Akira Rocha <kylerocha2024@u.northwestern.edu>",
+    "Matthias Kruckow <Matthias.Kruckow@unige.ch>",
 ]
 
 
@@ -196,7 +197,8 @@ from posydon.grids.termination_flags import (get_flags_from_MESA_run,
                                              check_state_from_history,
                                              get_flag_from_MESA_output,
                                              infer_interpolation_class,
-                                             initial_RLO_fix_applies)
+                                             get_detected_initial_RLO,
+                                             get_nearest_known_initial_RLO)
 from posydon.utils.configfile import ConfigFile
 from posydon.utils.common_functions import (orbital_separation_from_period,
                                             initialize_empty_array,
@@ -966,46 +968,7 @@ class PSyGrid:
                     self.final_values[i]["interpolation_class"] = \
                         infer_interpolation_class(*termination_flags[:2])
 
-            if initial_RLO_fix:
-                star_1_mass = self.initial_values[i]["star_1_mass"]
-                period_days = self.initial_values[i]["period_days"]
-                colnames = ["termination_flag_1", "termination_flag_2",
-                            "interpolation_class"]
-                valtoset = ["forced_initial_RLO", "forced_initial_RLO",
-                            "initial_MT"]
-                if initial_RLO_fix_applies(star_1_mass, period_days):
-                    # if initial MT is forced but not detected immediately,
-                    # remove the data
-                    if (self.final_values[i]["termination_flag_1"]
-                            != "initial_MT"):
-                        # remove all initial values, except for metallicities
-                        for colname in self.initial_values[i].dtype.names:
-                            if colname not in ["X", "Y", "Z"]:
-                                self.initial_values[i][colname] = np.nan
-                        # remove all final values, except for termination flags
-                        for colname in self.final_values[i].dtype.names:
-                            if not (colname.startswith("termination_flag")
-                                    or colname == "interpolation_class"):
-                                self.final_values[i][colname] = np.nan
-                        # do not include the histories and profiles...
-                        ignore_data = True
-                    # set the termination flags
-                    for colname, value in zip(colnames, valtoset):
-                        self.final_values[i][colname] = value
-                    # update the initial values from the grid point data
-                    grid_point = read_initial_values(run.path)
-                    for colname, value in grid_point.items():
-                        if colname in self.initial_values.dtype.names:
-                            self.initial_values[i][colname] = value
-
-                    # now that we have the masses (even if missing data)...
-                    self.final_values[i]["termination_flag_4"] = (
-                        infer_star_state(self.final_values[i]["star_2_mass"],
-                                         star_CO=True))
-                elif ignore_data:
-                    # if fix does not apply and failed run, do not include it
-                    continue
-            elif ignore_data:
+            if ignore_data:
                 # if not fix requested and failed run, do not include it
                 continue
 
@@ -1046,6 +1009,47 @@ class PSyGrid:
             run_included[i] = True
             run_index += 1
 
+        #general fix for termination_flag in case of initial RLO
+        if initial_RLO_fix:
+            #create list of already detected initial RLO
+            detected_initial_RLO = get_detected_initial_RLO(self)
+            colnames = ["termination_flag_1", "termination_flag_2",
+                        "interpolation_class"]
+            valtoset = ["forced_initial_RLO", "forced_initial_RLO",
+                        "initial_MT"]
+            for i in range(N_runs):
+                flag1 = self.final_values[i]["termination_flag_1"]
+                if flag1 != "Terminate because of overflowing initial model":
+                    mass1 = self.initial_values[i]["star_1_mass"]
+                    mass2 = self.initial_values[i]["star_2_mass"]
+                    period = self.initial_values[i]["period_days"]
+                    nearest = get_nearest_known_initial_RLO(mass1, mass2,
+                                                        detected_initial_RLO)
+                    if period<nearest["period_days"]:
+                        #set values
+                        for colname, value in zip(colnames, valtoset):
+                            self.final_values[i][colname] = value
+                        #copy values from nearest known system
+                        for colname in ["termination_flag_3",
+                                        "termination_flag_4"]:
+                            if colname in nearest:
+                                self.final_values[i][colname]=nearest[colname]
+                        #reset the initial values to the grid point data
+                        grid_point = read_initial_values(grid.runs[i].path)
+                        for colname, value in grid_point.items():
+                            if colname in self.initial_values.dtype.names:
+                                self.initial_values[i][colname] = value
+                        #add initial RLO system if not added before
+                        if not run_included[i]:
+                            if not slim:
+                                hdf5.create_group(
+                                    "/grid/run{}/".format(run_index))
+                            #include the run (and the input directory)
+                            self.MESA_dirs.append(grid.runs[i].path)
+                            run_included[i] = True
+                            run_index += 1
+
+                                
         self._say("Storing initial/final values and metadata to HDF5...")
         # exclude rows in initial/final_values corresponding to excluded runs
         self.initial_values = self.initial_values[run_included]
@@ -1908,10 +1912,10 @@ PROPERTIES_TO_BE_NONE = {
 }
 
 PROPERTIES_TO_BE_CONSISTENT = ["binary", "eep", "start_at_RLO",
-                               "initial_RLO_fix", "He_core_fix",
-                               "history_DS_error", "history_DS_exclude",
-                               "profile_DS_error", "profile_DS_exclude",
-                               "profile_DS_interval"]
+                               "initial_RLO_fix",
+                               "He_core_fix", "history_DS_error",
+                               "history_DS_exclude", "profile_DS_error",
+                               "profile_DS_exclude", "profile_DS_interval"]
 
 ALL_PROPERTIES = (list(PROPERTIES_ALLOWED.keys()) + PROPERTIES_TO_BE_CONSISTENT
                   + list(PROPERTIES_TO_BE_NONE.keys()) + PROPERTIES_TO_BE_SET)
