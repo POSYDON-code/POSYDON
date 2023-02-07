@@ -1030,11 +1030,23 @@ class PSyGrid:
             for i in range(N_runs):
                 flag1 = self.final_values[i]["termination_flag_1"]
                 if flag1 != "Terminate because of overflowing initial model":
-                    #use grid point data to detect initial RLO
+                    #use grid point data (if existing) to detect initial RLO
                     grid_point = read_initial_values(grid.runs[i].path)
-                    mass1 = grid_point["star_1_mass"]
-                    mass2 = grid_point["star_2_mass"]
-                    period = grid_point["period_days"]
+                    if "star_1_mass" in grid_point:
+                        mass1 = grid_point["star_1_mass"]
+                    else:
+                        mass1 = self.initial_values[i]["star_1_mass"]
+                        warnings.warn("No star_1_mass in "+grid.runs[i].path)
+                    if "star_2_mass" in grid_point:
+                        mass2 = grid_point["star_2_mass"]
+                    else:
+                        mass2 = self.initial_values[i]["star_2_mass"]
+                        warnings.warn("No star_2_mass in "+grid.runs[i].path)
+                    if "period_days" in grid_point:
+                        period = grid_point["period_days"]
+                    else:
+                        period = self.initial_values[i]["period_days"]
+                        warnings.warn("No period_days in "+grid.runs[i].path)
                     nearest = get_nearest_known_initial_RLO(mass1, mass2,
                                                         detected_initial_RLO)
                     if period<nearest["period_days"]:
