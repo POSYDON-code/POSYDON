@@ -1019,8 +1019,8 @@ class PSyGrid:
                           "run_index={} != ".format(run_index) +
                           "length(MESA_dirs)={}".format(lenMESA_dirs))
 
-        #general fix for termination_flag in case of initial RLO
-        if initial_RLO_fix:
+        #general fix for termination_flag in case of initial RLO in binaries
+        if binary_grid and initial_RLO_fix:
             #create list of already detected initial RLO
             detected_initial_RLO = get_detected_initial_RLO(self)
             colnames = ["termination_flag_1", "termination_flag_2",
