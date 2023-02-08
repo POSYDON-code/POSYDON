@@ -162,14 +162,18 @@ DEFAULT_MARKERS_COLORS_LEGENDS = {
             ['D', 1, color_unstable, TF1_label_unstable],
         'Reached maximum mass transfer rate: Exceeded photon trapping radius':
             ['D', 1, color_unstable, TF1_label_unstable],
+        'Terminate because accretor (r-rl)/rl > accretor_overflow_terminate':
+            ['D', 1, color_unstable, TF1_label_unstable],
         'logQ_limit':
-            ['x', 0, 'red', 'logQ_limit'],
+            ['x', 1, 'red', 'logQ_limit'],
+        'logQ_min_limit':
+            ['x', 1, 'red', 'logQ_limit'],
         'min_timestep_limit':
-            ['x', 0, 'red', 'Not converged'],
+            ['x', 1, 'red', 'Not converged'],
         'reach cluster timelimit':
-            ['x', 0, 'red', 'Not converged'],
+            ['x', 1, 'red', 'Not converged'],
         'no termination code':
-            ['x', 0, 'red', 'no termination code'],
+            ['x', 1, 'red', 'no termination code'],
         'envelope_mass_limit':
             ['s', 2, None, TF1_label_stable],
         'gamma_center_limit':
@@ -179,26 +183,28 @@ DEFAULT_MARKERS_COLORS_LEGENDS = {
         'Initial RLOF':
             ['.', 1, 'black', TF1_label_initial],
         'Not converged':
-            ['x', 0, 'red', 'Not converged'],
+            ['x', 1, 'red', 'Not converged'],
+        'fe_core_infall_limit':
+            ['x', 1, 'tab:purple', 'fe_core_infall_limit'],
         'ignored_no_BH':
             ['.', 1, color_unstable, TF1_label_initial],
         'ignored_no_RLO':
             ['.', 1, color_unstable, TF1_label_initial],
         'unknown':
-            ['+', 0, 'red', 'unknown'],
+            ['+', 1, 'red', 'unknown'],
 
     },
 
     'termination_flag_2': {
 
         'initial_RLOF':
-            ['+', 0, 'black', 'initial RLOF'],
+            ['+', 1, 'black', 'initial RLOF'],
         'forced_initial_RLO':
-            ['+', 0, 'black', 'initial RLOF'],
+            ['+', 1, 'black', 'initial RLOF'],
         'ignored_no_BH':
-            ['+', 0, 'black', 'initial RLOF'],
+            ['+', 1, 'black', 'initial RLOF'],
         'ignored_no_RLO':
-            ['+', 0, 'black', 'initial RLOF'],
+            ['+', 1, 'black', 'initial RLOF'],
         'no_RLOF':
             ['.', 1, 'black', 'no RLOF'],
         'contact_during_MS':
@@ -214,6 +220,8 @@ DEFAULT_MARKERS_COLORS_LEGENDS = {
             ['s', 2, 'lightgrey', 'case A/B/A from star1'],
         'caseA/B/C_from_star1':
             ['s', 2, 'yellow', 'case A/B/C from star1'],
+        'caseA/C_from_star1':
+            ['s', 2, 'yellow', 'case A/C from star1'],
         'caseA/B/BB_from_star1':
             ['s', 2, 'tab:red', 'case A/B/BB from star1'],
         'caseA/B/C/BB_from_star1':
@@ -268,9 +276,9 @@ DEFAULT_MARKERS_COLORS_LEGENDS = {
             ['s', 2, 'tab:red', 'case BA/BB from star1'],
 
         '_from_star1':
-            ['x', 0, 'black', 'unknown'],
+            ['x', 1, 'black', 'unknown'],
         '_from_star2':
-            ['x', 0, 'black', 'unknown'],
+            ['x', 1, 'black', 'unknown'],
 
     },
 
@@ -299,8 +307,12 @@ DEFAULT_MARKERS_COLORS_LEGENDS = {
             ['o', 2, 'tab:brown', 'stripped He-star C depletion'],
         'stripped_He_non_burning':
             ['o', 2, 'gray', 'stripped He-star non burning'],
+        'stripped_He_Core_H_burning':
+            ['x', 1, 'black', 'unknown'],
+        'stripped_He_Shell_H_burning':
+            ['x', 1, 'black', 'unknown'],
         'undetermined_evolutionary_state':
-            ['x', 0, 'black', 'unknown'],
+            ['x', 1, 'black', 'unknown'],
         'BH':
             ['*', 1, 'black', 'BH'],
         'NS':
@@ -337,8 +349,12 @@ DEFAULT_MARKERS_COLORS_LEGENDS = {
             ['o', 2, 'tab:brown', 'stripped He-star C depletion'],
         'stripped_He_non_burning':
             ['o', 2, 'gray', 'stripped He-star non burning'],
+        'stripped_He_Core_H_burning':
+            ['x', 1, 'black', 'unknown'],
+        'stripped_He_Shell_H_burning':
+            ['x', 1, 'black', 'unknown'],
         'undetermined_evolutionary_state':
-            ['x', 0, 'black', 'unknown'],
+            ['x', 1, 'black', 'unknown'],
         'BH':
             ['*', 1, 'black', 'BH'],
         'NS':
@@ -397,9 +413,9 @@ DEFAULT_MARKERS_COLORS_LEGENDS = {
         'no_RLOF':
             ['s', 2, 'lightgrey', 'no RLOF'],
         'Not converged':
-            ['x', 0, 'red', 'Not converged'],
+            ['x', 1, 'red', 'Not converged'],
         'unknown':
-            ['+', 0, 'green', 'unknown'],
+            ['+', 1, 'green', 'unknown'],
         },
     'debug': {
         'terminate due to primary depleting carbon (inverse sn?)':
@@ -413,15 +429,15 @@ DEFAULT_MARKERS_COLORS_LEGENDS = {
         'offcenter neon ignition for secondary':
             ['o', 2, None, TF1_label_stable],
         'overflow from L1 at ZAMS':
-            ['.', 1, None, TF1_label_initial],
+            ['.', 1.5, None, TF1_label_initial],
         'Terminate because of overflowing initial model':
-            ['.', 1, None, TF1_label_initial],
+            ['.', 1.5, None, TF1_label_initial],
         'overflow from L2 point for q>1 at ZAMS':
-            ['.', 1, None, TF1_label_initial],
+            ['.', 1.5, None, TF1_label_initial],
         'overflow from L2 surface for q<1 at ZAMS':
-            ['.', 1, None, TF1_label_initial],
+            ['.', 1.5, None, TF1_label_initial],
         'overflow from L2 surface for q>1 at ZAMS':
-            ['.', 1, None, TF1_label_initial],
+            ['.', 1.5, None, TF1_label_initial],
         'overflow from L2 surface for q<1':
             ['D', 1, None, TF1_label_unstable],
         r'overflow from L2 (D_L2) distance for q(=Macc/Mdon)>1, '
@@ -446,37 +462,45 @@ DEFAULT_MARKERS_COLORS_LEGENDS = {
         'Reached the critical mt rate':
             ['D', 1, None, TF1_label_unstable],
         'Reached TPAGB':
-            ['s', 3, None, TF1_label_initial],
+            ['s', 2, None, TF1_label_initial],
         'Both stars fill their Roche Lobe and at least one of them is off MS':
             ['D', 1, None, TF1_label_unstable],
         'Terminate due to L2 overflow during case A':
             ['D', 1, None, TF1_label_unstable],
         'Reached maximum mass transfer rate: Exceeded photon trapping radius':
             ['D', 1, None, TF1_label_unstable],
+        'Terminate because accretor (r-rl)/rl > accretor_overflow_terminate':
+            ['D', 1, None, TF1_label_unstable],
         'logQ_limit':
-            ['s', 3, None, 'logQ_limit'],
+            ['x', 1, None, 'logQ_limit'],
+        'logQ_min_limit':
+            ['x', 1, None, 'logQ_limit'],
         'min_timestep_limit':
-            ['s', 3, None, 'Not converged'],
+            ['x', 1, None, 'Not converged'],
         'reach cluster timelimit':
-            ['s', 3, None, 'Not converged'],
+            ['x', 1, None, 'Not converged'],
         'no termination code':
-            ['s', 3, None, 'no termination code'],
+            ['x', 1, None, 'no termination code'],
         'envelope_mass_limit':
-            ['s', 3, None, TF1_label_stable],
+            ['s', 2, None, TF1_label_stable],
         'gamma_center_limit':
-            ['s', 3, None, TF1_label_stable],
+            ['s', 2, None, TF1_label_stable],
         'max_age':
-            ['s', 3, None, TF1_label_stable],
+            ['s', 2, None, TF1_label_stable],
         'Initial RLOF':
-            ['.', 1, 'black', TF1_label_initial],
+            ['.', 1.5, 'black', TF1_label_initial],
         'Not converged':
-            ['s', 3, None, 'Not converged'],
+            ['x', 1, None, 'Not converged'],
         'ignored_no_BH':
-            ['.', 1, color_unstable, TF1_label_initial],
+            ['.', 1.5, color_unstable, TF1_label_initial],
         'ignored_no_RLO':
-            ['.', 1, color_unstable, TF1_label_initial],
+            ['.', 1.5, color_unstable, TF1_label_initial],
+        'forced_initial_RLO':
+            ['.', 1.5, 'black', TF1_label_initial],
         'unknown':
-            ['+', 0, 'green', 'unknown'],
+            ['+', 1, 'green', 'unknown'],
+        'fe_core_infall_limit':
+            ['x', 1, None, 'fe_core_infall_limit'],
     },
     'interpolation_class': {
         'initial_MT':

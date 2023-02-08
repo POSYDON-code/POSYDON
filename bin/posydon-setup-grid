@@ -852,7 +852,8 @@ def construct_command_line(number_of_mpi_processes, path_to_grid,
                            inlist_star1_formation, inlist_star2_formation,
                            star_history_columns, binary_history_columns, profile_columns,
                            run_directory, grid_type, path_to_run_grid_exec,
-                           psycris_inifile=None):
+                           psycris_inifile=None, keep_profiles=False,
+                           keep_photos=False):
     """Based on the inifile construct the command line call to posydon-run-grid
     """
     if grid_type == "fixed":
@@ -867,6 +868,10 @@ def construct_command_line(number_of_mpi_processes, path_to_grid,
     command_line += '--mesa-binary-history-columns {11} --mesa-profile-columns {12} '
     command_line += '--output-directory {13} --grid-type {14} '
     command_line += '--psycris-inifile {16}'
+    if keep_profiles:
+        command_line += ' --keep_profiles'
+    if keep_photos:
+        command_line += ' --keep_photos'
     command_line = command_line.format(number_of_mpi_processes,
                                        path_to_grid,
                                        binary_exe,
@@ -917,6 +922,12 @@ if __name__ == '__main__':
 
     if 'scenario' not in mesa_inlists.keys():
         mesa_inlists['scenario'] = None
+
+    if 'keep_profiles' not in run_parameters.keys():
+        run_parameters['keep_profiles'] = False
+
+    if 'keep_photos' not in run_parameters.keys():
+        run_parameters['keep_photos'] = False
 
     if ((not os.path.isfile(run_parameters['grid'])) and (not os.path.isdir(run_parameters['grid']))):
         raise ValueError("Supplied grid does not exist, please check your path and try again")
@@ -990,7 +1001,9 @@ if __name__ == '__main__':
                                               mesa_inlists['profile_columns'],
                                               args.run_directory,
                                               'fixed',
-                                              path_to_run_grid_exec)
+                                              path_to_run_grid_exec,
+                                              keep_profiles=run_parameters['keep_profiles'],
+                                              keep_photos=run_parameters['keep_photos'])
         command_line += ' --grid-point-index $SLURM_ARRAY_TASK_ID'
     else:
         command_line = construct_command_line(slurm['number_of_mpi_tasks']*slurm['number_of_nodes'],
@@ -1009,7 +1022,9 @@ if __name__ == '__main__':
                                               args.run_directory,
                                               args.grid_type,
                                               path_to_run_grid_exec,
-                                              psycris_inifile = run_parameters["psycris_inifile"])
+                                              psycris_inifile = run_parameters["psycris_inifile"],
+                                              keep_profiles=run_parameters['keep_profiles'],
+                                              keep_photos=run_parameters['keep_photos'])
 
     # now we need to know how this person plans to run the above created
     # command. As a shell script? As a SLURM submission? In some other way?
