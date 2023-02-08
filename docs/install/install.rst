@@ -35,7 +35,7 @@ Now, you can source the environment with
 
 .. code-block::
 
-conda activate posydon
+    conda activate posydon
 
 
 =========================================
