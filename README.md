@@ -28,6 +28,7 @@ conda activate posydon
 Clone the repository in a local directory, e.g. '/home/POSYDON/', with
 ```
 git clone https://github.com/POSYDON-code/POSYDON.git
+git checkout origin/main
 ```
 The directory will contain the following structure:
 ```
