@@ -623,9 +623,6 @@ class PSyGrid:
 
         self._say('Loading MESA data...')
 
-        # this boolean array will store whether the i-th run is to be included
-        # (i.e. it has a binary_history file)
-#        run_included = np.zeros(N_runs, dtype=bool)
         #this int array will store the run_index of the i-th run and will be
         # -1 if the run is not included.
         run_included_at = np.full(N_runs, -1, dtype=int)
@@ -1010,7 +1007,6 @@ class PSyGrid:
             # consider the run (and the input directory) included
             self.MESA_dirs.append(run.path)
             run_included_at[i] = run_index
-#            run_included[i] = True
             run_index += 1
             #check that new MESA path is added at run_index
             lenMESA_dirs = len(self.MESA_dirs)
@@ -1059,12 +1055,10 @@ class PSyGrid:
                             if colname in nearest:
                                 self.final_values[i][colname]=nearest[colname]
                         #reset the initial values to the grid point data
-#                        grid_point = read_initial_values(grid.runs[i].path)
                         for colname, value in grid_point.items():
                             if colname in self.initial_values.dtype.names:
                                 self.initial_values[i][colname] = value
                         #add initial RLO system if not added before
-#                        if not run_included[i]:
                         if run_included_at[i]==-1:
                             if not slim:
                                 hdf5.create_group(
@@ -1072,7 +1066,6 @@ class PSyGrid:
                             #include the run (and the input directory)
                             self.MESA_dirs.append(grid.runs[i].path)
                             run_included_at[i] = run_index
-#                            run_included[i] = True
                             run_index += 1
                             #check that new MESA path is added at run_index
                             lenMESA_dirs = len(self.MESA_dirs)
@@ -1083,9 +1076,6 @@ class PSyGrid:
 
                                 
         self._say("Storing initial/final values and metadata to HDF5...")
-        # exclude rows in initial/final_values corresponding to excluded runs
-#        self.initial_values = self.initial_values[run_included]
-#        self.final_values = self.final_values[run_included]
         #create new array of initial and finial values with included runs
         # only and sort it by run_index
         new_initial_values = initialize_empty_array(
