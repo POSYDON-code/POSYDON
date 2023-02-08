@@ -4,6 +4,40 @@
 Installation
 ############
 
+=======================================
+Installing POSYDON v1.0.0 from Anaconda
+=======================================
+
+We recommend to install the Python distribution Anaconda and to install POSYDON 
+in a virtual environment. Specifically, we recommend using the installation we 
+have provided which can be accessed through conda-forge. On Linux, the new 
+conda environment can be created (we have named our environment posydon-example, 
+but you can choose any name), the conda-forge channel added, and the required 
+library installation can all be completed in one line:
+
+.. code-block::
+
+    conda create --name posydon-example -c posydon -c conda-forge posydon
+
+On Mac (or if you have problems with the above command on Linux), these steps 
+likely need to be separately run:
+
+.. code-block::
+
+    conda create -n posydon-conda python=3.7
+    conda activate posydon-conda
+    conda config --add channels conda-forge
+    conda config --add channels posydon
+    conda config --set channel_priority false
+    conda install posydon
+
+Now, you can source the environment with
+
+.. code-block::
+
+conda activate posydon
+
+
 =========================================
 Installing the latest release from GitHub
 =========================================
