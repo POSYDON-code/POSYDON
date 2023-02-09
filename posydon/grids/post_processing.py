@@ -11,6 +11,7 @@ from posydon.utils.common_functions import (
 import numpy as np
 from tqdm import tqdm
 import copy
+import warnings
 
 
 __authors__ = [
@@ -253,20 +254,20 @@ def post_process_grid(grid, index=None, star_2_CO=True, MODEL=MODEL,
                     else:
                         EXTRA_COLUMNS['S1_'+m[0]+m[1]].append([None]*5)
                         EXTRA_COLUMNS['S2_'+m[0]+m[1]].append([None]*5)
-                        raise Warning(f'{grid.MESA_dirs[i]} ended with '
+                        raise warnings.warn(f'{grid.MESA_dirs[i]} ended with '
                                      'TF1=gamma_center_limit however '
                                      'the star has center_gamma < 10. '
                                      'This star cannot go through step_SN '
                                      'appending NONE copmact object '
-                                     'properties!')
+                                     'properties!', Warning)
                 else:
                     EXTRA_COLUMNS['S1_'+m[0]+m[1]].append([None]*5)
                     EXTRA_COLUMNS['S2_'+m[0]+m[1]].append([None]*5)
-                    raise Warning(f'{grid.MESA_dirs[i]} ended with '
+                    raise warnings.warn(f'{grid.MESA_dirs[i]} ended with '
                                  f'TF={TF1} and IC={interpolation_class}.'
                                  'This star cannot go through step_SN '
                                  'appending NONE copmact object '
-                                 'properties!')
+                                 'properties!', Warning)
 
                 if verbose:
                     print("{:<30} {:<33} {:12} {:10} {:15} {:10}".format(
@@ -308,9 +309,9 @@ def post_process_grid(grid, index=None, star_2_CO=True, MODEL=MODEL,
             else:    # inital_RLOF, unstable_MT not_convergedd
                 if (TF1 == 'Primary has depleted central carbon' or
                     TF1 == 'Secondary has depleted central carbon'):
-                    raise Warning(f'{grid.MESA_dirs[i]} ended with '
+                    raise warnings.warn(f'{grid.MESA_dirs[i]} ended with '
                                  f'TF={TF1} but was not collapsed! '
-                                 'This should never happen!')
+                                 'This should never happen!', Warning)
                 for m in CORE_COLLAPSES:
                     EXTRA_COLUMNS['S1_'+m[0]+m[1]].append([None]*5)
                     EXTRA_COLUMNS['S2_'+m[0]+m[1]].append([None]*5)
