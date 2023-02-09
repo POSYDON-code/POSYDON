@@ -253,7 +253,7 @@ def post_process_grid(grid, index=None, star_2_CO=True, MODEL=MODEL,
                     else:
                         EXTRA_COLUMNS['S1_'+m[0]+m[1]].append([None]*5)
                         EXTRA_COLUMNS['S2_'+m[0]+m[1]].append([None]*5)
-                        raise Waring(f'{grid.MESA_dirs[i]} ended with '
+                        raise Warning(f'{grid.MESA_dirs[i]} ended with '
                                      'TF1=gamma_center_limit however '
                                      'the star has center_gamma < 10. '
                                      'This star cannot go through step_SN '
@@ -262,7 +262,7 @@ def post_process_grid(grid, index=None, star_2_CO=True, MODEL=MODEL,
                 else:
                     EXTRA_COLUMNS['S1_'+m[0]+m[1]].append([None]*5)
                     EXTRA_COLUMNS['S2_'+m[0]+m[1]].append([None]*5)
-                    raise Waring(f'{grid.MESA_dirs[i]} ended with '
+                    raise Warning(f'{grid.MESA_dirs[i]} ended with '
                                  f'TF={TF1} and IC={interpolation_class}.'
                                  'This star cannot go through step_SN '
                                  'appending NONE copmact object '
@@ -308,7 +308,7 @@ def post_process_grid(grid, index=None, star_2_CO=True, MODEL=MODEL,
             else:    # inital_RLOF, unstable_MT not_convergedd
                 if (TF1 == 'Primary has depleted central carbon' or
                     TF1 == 'Secondary has depleted central carbon'):
-                    raise Waring(f'{grid.MESA_dirs[i]} ended with '
+                    raise Warning(f'{grid.MESA_dirs[i]} ended with '
                                  f'TF={TF1} but was not collapsed! '
                                  'This should never happen!')
                 for m in CORE_COLLAPSES:
