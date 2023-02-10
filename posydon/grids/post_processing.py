@@ -259,7 +259,7 @@ def post_process_grid(grid, index=None, star_2_CO=True, MODEL=MODEL,
                                      'TF1=gamma_center_limit however '
                                      'the star has center_gamma < 10. '
                                      'This star cannot go through step_SN '
-                                     'appending NONE copmact object '
+                                     'appending NONE compact object '
                                      'properties!')
                         continue
                 else:
@@ -269,7 +269,7 @@ def post_process_grid(grid, index=None, star_2_CO=True, MODEL=MODEL,
                     warnings.warn(f'{grid.MESA_dirs[i]} ended with '
                                  f'TF={TF1} and IC={interpolation_class}. '
                                  'This star cannot go through step_SN '
-                                 'appending NONE copmact object '
+                                 'appending NONE compact object '
                                  'properties!')
                     continue
 
