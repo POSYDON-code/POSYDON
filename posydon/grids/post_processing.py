@@ -184,10 +184,25 @@ def post_process_grid(grid, index=None, star_2_CO=True, MODEL=MODEL,
             if not stars_CO[j] and IC in ['no_MT', 'stable_MT', 'unstable_MT']:
                 EXTRA_COLUMNS['S%s_state' % (j+1)].append(check_state_of_star(
                     star, star_CO=False))
-                calculate_Patton20_values_at_He_depl(star)
+                with warnings.catch_warnings(record=True) as w:
+                    calculate_Patton20_values_at_He_depl(star)
+                    if len(w) > 0:
+                        print(w[0].message)
+                        print(f'The warning was raised by {grid.MESA_dirs[i]} '
+                               f'in calculate_Patton20_values_at_He_depl(star_{j+1}).')
                 EXTRA_COLUMNS['S%s_avg_c_in_c_core_at_He_depletion' % (j+1)].append(star.avg_c_in_c_core_at_He_depletion)
                 EXTRA_COLUMNS['S%s_co_core_mass_at_He_depletion' % (j+1)].append(star.co_core_mass_at_He_depletion)
-                CEE_parameters_from_core_abundance_thresholds(star)
+                with warnings.catch_warnings(record=True) as w:
+                    try:
+                        CEE_parameters_from_core_abundance_thresholds(star)
+                    except Exception as ex:
+                        print(ex)
+                        print(f'The exception was raised by {grid.MESA_dirs[i]} '
+                               f'in CEE_parameters_from_core_abundance_thresholds(star_{j+1}).')
+                    if len(w) > 0:
+                        print(w[0].message)
+                        print(f'The warning was raised by {grid.MESA_dirs[i]} '
+                               f'in CEE_parameters_from_core_abundance_thresholds(star_{j+1}).')
                 EXTRA_COLUMNS['S%s_m_core_CE_1cent' % (j+1)].append(star.m_core_CE_1cent)
                 EXTRA_COLUMNS['S%s_m_core_CE_10cent' % (j+1)].append(star.m_core_CE_10cent)
                 EXTRA_COLUMNS['S%s_m_core_CE_30cent' % (j+1)].append(star.m_core_CE_30cent)
