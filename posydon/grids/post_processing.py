@@ -270,7 +270,7 @@ def post_process_grid(grid, index=None, star_2_CO=True, MODEL=MODEL,
                         for m in CORE_COLLAPSES:
                             EXTRA_COLUMNS['S2_'+m[0]+m[1]].append([None]*5)
                     elif (binary.star_2.center_gamma is not None and
-                          binary.star_2.center_gamma >= 10.:
+                          binary.star_2.center_gamma >= 10.):
                         star = binary.star_2
                         s = 'S2_'
                         for m in CORE_COLLAPSES:
