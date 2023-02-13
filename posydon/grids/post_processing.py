@@ -234,6 +234,7 @@ def post_process_grid(grid, index=None, star_2_CO=True, MODEL=MODEL,
                     try:
                         EXTRA_COLUMNS['S%s_state' % (j+1)].append(check_state_of_star(star, star_CO=True))
                     except TypeError as ex:
+                        EXTRA_COLUMNS['S%s_state' % (j+1)].append(None)
                         print(ex)
                         print(f'The error was raised by {grid.MESA_dirs[i]} '
                                f'in check_state_of_star(star_{j+1}) with IC={IC}.')
