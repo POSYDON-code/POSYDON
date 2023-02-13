@@ -223,7 +223,7 @@ def post_process_grid(grid, index=None, star_2_CO=True, MODEL=MODEL,
                     c_o = 0.
                     print(ex)
                     print(f'The error was raised by {grid.MESA_dirs[i]} '
-                           f'in while accessing aboundances in star_{j+1}.')
+                           f'while accessing aboundances in star_{j+1}.')
                 EXTRA_COLUMNS['S%s_surface_other' % (j+1)].append(s_o)
                 EXTRA_COLUMNS['S%s_center_other' % (j+1)].append(c_o)
             else:
