@@ -215,8 +215,15 @@ def post_process_grid(grid, index=None, star_2_CO=True, MODEL=MODEL,
                 EXTRA_COLUMNS['S%s_lambda_CE_10cent' % (j+1)].append(star.lambda_CE_10cent)
                 EXTRA_COLUMNS['S%s_lambda_CE_30cent' % (j+1)].append(star.lambda_CE_30cent)
                 EXTRA_COLUMNS['S%s_lambda_CE_pure_He_star_10cent' % (j+1)].append(star.lambda_CE_pure_He_star_10cent)
-                s_o = 1. - star.surface_h1 - star.surface_he4 - star.surface_c12 - star.surface_n14 - star.surface_o16
-                c_o = 1. - star.center_h1 - star.center_he4 - star.center_c12 - star.center_n14 - star.center_o16
+                try:
+                    s_o = 1. - star.surface_h1 - star.surface_he4 - star.surface_c12 - star.surface_n14 - star.surface_o16
+                    c_o = 1. - star.center_h1 - star.center_he4 - star.center_c12 - star.center_n14 - star.center_o16
+                except TypeError as ex:
+                    s_o = 0.
+                    c_o = 0.
+                    print(ex)
+                    print(f'The error was raised by {grid.MESA_dirs[i]} '
+                           f'in while accessing aboundances in star_{j+1}.')
                 EXTRA_COLUMNS['S%s_surface_other' % (j+1)].append(s_o)
                 EXTRA_COLUMNS['S%s_center_other' % (j+1)].append(c_o)
             else:
