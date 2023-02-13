@@ -956,6 +956,7 @@ class detached_step:
             else:
                 raise Exception("State not recognized!")
 
+        # mathcing process
         if (self.non_existent_companion  == 0): # actual binary
             if (not primary.co):
                 m1, t1 = get_mist0(primary, primary.htrack)
@@ -1062,7 +1063,7 @@ class detached_step:
         elif not primary.co:
             interp1d_pri = get_star_data(
                 binary, primary, secondary, primary.htrack, False)
-                
+
         if interp1d_sec is None or interp1d_pri is None:
             # binary.event = "END"
             binary.state += " (GridMatchingFailed)"
