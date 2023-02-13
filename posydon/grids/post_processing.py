@@ -231,7 +231,12 @@ def post_process_grid(grid, index=None, star_2_CO=True, MODEL=MODEL,
                     EXTRA_COLUMNS['S%s_state' % (j+1)].append(None)
                 else:
                     # CO states are classified and used in mesa step
-                    EXTRA_COLUMNS['S%s_state' % (j+1)].append(check_state_of_star(star, star_CO=True))
+                    try:
+                        EXTRA_COLUMNS['S%s_state' % (j+1)].append(check_state_of_star(star, star_CO=True))
+                    except TypeError as ex:
+                        print(ex)
+                        print(f'The error was raised by {grid.MESA_dirs[i]} '
+                               f'in check_state_of_star(star_{j+1}) with IC={IC}.')
                 EXTRA_COLUMNS['S%s_avg_c_in_c_core_at_He_depletion' % (j+1)].append(None)
                 EXTRA_COLUMNS['S%s_co_core_mass_at_He_depletion' % (j+1)].append(None)
                 EXTRA_COLUMNS['S%s_m_core_CE_1cent' % (j+1)].append(None)
