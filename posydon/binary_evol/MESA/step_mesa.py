@@ -1234,7 +1234,9 @@ class MS_MS_step(MesaGridStep):
         if grid_name is None:
             metallicity = convert_metallicity_to_string(metallicity)
             grid_name = 'HMS-HMS/' + metallicity + '_Zsun.h5'
-        super().__init__(grid_name=grid_name, *args, **kwargs)
+        super().__init__(metallicity=metallicity,
+                         grid_name=grid_name,
+                         *args, **kwargs)
         # special stuff for my step goes here
         # If nothing to do, no init necessary
 
@@ -1289,7 +1291,9 @@ class CO_HMS_RLO_step(MesaGridStep):
         if grid_name is None:
             metallicity = convert_metallicity_to_string(metallicity)
             grid_name = 'CO-HMS_RLO/' + metallicity + '_Zsun.h5'
-        super().__init__(grid_name=grid_name, *args, **kwargs)
+        super().__init__(metallicity=metallicity,
+                         grid_name=grid_name,
+                         *args, **kwargs)
         # special stuff for my step goes here
         # If nothing to do, no init necessary
 
@@ -1359,7 +1363,9 @@ class CO_HeMS_step(MesaGridStep):
         if grid_name is None:
             metallicity = convert_metallicity_to_string(metallicity)
             grid_name = 'CO-HeMS/' + metallicity + '_Zsun.h5'
-        super().__init__(grid_name=grid_name, *args, **kwargs)
+        super().__init__(metallicity=metallicity,
+                         grid_name=grid_name,
+                         *args, **kwargs)
         # special stuff for my step goes here
         # If nothing to do, no init necessary
 
