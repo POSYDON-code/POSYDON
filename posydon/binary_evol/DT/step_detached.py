@@ -188,6 +188,11 @@ class detached_step:
         self.initial_mass = initial_mass
         self.rootm = rootm
         self.verbose = verbose
+        self.list_for_matching_HMS = list_for_matching_HMS
+        self.list_for_matching_postMS = list_for_matching_postMS
+        self.list_for_matching_HeStar = list_for_matching_HeStar
+
+
         if verbose:
             print(
                 dt,
@@ -622,10 +627,10 @@ class detached_step:
         elif matching_method == "minimize":
             if star.state in LIST_ACCEPTABLE_STATES_FOR_HMS:
                 # Initialezed ZAMS systems have no information of radius
-                if (star.log_R is None) or np.isnan(star.log_R):
+                if (star.log_R is None) or np.isnan(star.log_R): #TODO: This is no a good check for ZAMS!!
                     initials = (star.mass, 0)
                 else:
-                    list_for_matching = list_for_matching_HMS
+                    list_for_matching = self.list_for_matching_HMS
 
                     MESA_labels = list_for_matching[0]
                     posydon_attributes =  posydon_attribute(MESA_labels)
@@ -684,7 +689,7 @@ class detached_step:
 
 
             elif star.state in LIST_ACCEPTABLE_STATES_FOR_postMS:
-                list_for_matching = list_for_matching_postMS
+                list_for_matching = self.list_for_matching_postMS
 
                 MESA_labels = list_for_matching[0]
                 posydon_attributes =  posydon_attribute(MESA_labels)
@@ -716,7 +721,7 @@ class detached_step:
                     bounds=bnds
                 )
             elif star.state in LIST_ACCEPTABLE_STATES_FOR_HeStar:
-                list_for_matching = list_for_matching_HeStar
+                list_for_matching = self.list_for_matching_HeStar
 
                 MESA_labels = list_for_matching[0]
                 posydon_attributes =  posydon_attribute(MESA_labels)
@@ -963,13 +968,13 @@ class detached_step:
             else:
                 raise Exception("State not recognized!")
 
-        if (self.non_existent_companion  == 0): # actual binary
-            if (not primary.co):
-                m1, t1 = match_to_single_star(primary, primary.htrack)
-            m2, t2 = match_to_single_star(secondary, secondary.htrack)
-        elif (self.non_existent_companion  == 1) or (self.non_existent_companion  == 2):
-            #TODO: We do not have the logR for the matching
-            m2, t2 = match_to_single_star(secondary, secondary.htrack,)
+        #if (self.non_existent_companion  == 0): # actual binary
+        if (not primary.co):
+            m1, t1 = match_to_single_star(primary, primary.htrack)
+        m2, t2 = match_to_single_star(secondary, secondary.htrack)
+        #elif (self.non_existent_companion  == 1) or (self.non_existent_companion  == 2):
+        #    #TODO: We do not have the logR for the matching
+        #    m2, t2 = match_to_single_star(secondary, secondary.htrack,)
 
         def get_star_data(binary, star1, star2, htrack, co):
             """Get and interpolate the properties of stars.
