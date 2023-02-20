@@ -66,11 +66,26 @@ class merged_step(isolated_step):
         path=PATH_TO_POSYDON_DATA,
         merger_critical_rot = 0.4,
         rel_mass_lost_HMS_HMS = 0.1,
+        list_for_matching_HMS = [["mass", "center_h1","he_core_mass"],
+                             [20.0, 1.0, 10.0],
+                              [[m_min_H, m_max_H], [0, None]],
+                              ["log_min_max" , "min_max",  "min_max"] ],
+        list_for_matching_postMS = [["mass", "center_he4", "he_core_mass"],
+                             [20.0, 1.0, 10.0],
+                              [[m_min_H, m_max_H], [0, None]],
+                              ["log_min_max" , "min_max",  "min_max"] ],
+        list_for_matching_HeStar = [["he_core_mass", "center_he4",
+                             [10.0, 1.0],
+                              [[m_min_He, m_max_He], [0, None]],
+                              ["min_max" , "min_max"]  ]
         *args, **kwargs):
 
         super().__init__(
         grid_name_Hrich=grid_name_Hrich,
         grid_name_stripedHe=grid_name_stripedHe,
+        list_for_matching_HMS = list_for_matching_HMS,
+        list_for_matching_postMS = list_for_matching_postMS,
+        list_for_matching_HeStar = list_for_matching_HeStar
         *args,
         **kwargs)
 

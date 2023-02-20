@@ -969,7 +969,7 @@ class detached_step:
             m2, t2 = match_to_single_star(secondary, secondary.htrack)
         elif (self.non_existent_companion  == 1) or (self.non_existent_companion  == 2):
             #TODO: We do not have the logR for the matching
-            m2, t2 = match_to_single_star(secondary, secondary.htrack, XXXX without logR in all cases!!)
+            m2, t2 = match_to_single_star(secondary, secondary.htrack,)
 
         def get_star_data(binary, star1, star2, htrack, co):
             """Get and interpolate the properties of stars.
