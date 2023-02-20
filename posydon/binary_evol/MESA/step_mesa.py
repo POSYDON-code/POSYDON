@@ -24,10 +24,10 @@ from posydon.binary_evol.singlestar import STARPROPERTIES
 from posydon.utils import common_functions as cf
 from posydon.binary_evol.binarystar import BinaryStar
 from posydon.interpolation.IF_interpolation import IFInterpolator
-from posydon.utils.common_functions import flip_stars
-from posydon.utils.common_functions import CO_radius, infer_star_state
+from posydon.utils.common_functions import (flip_stars,
+                                            convert_metallicity_to_string,
+                                            CO_radius, infer_star_state)
 from posydon.utils.data_download import data_download, PATH_TO_POSYDON_DATA
-
 
 
 # left POSYDON, right MESA
@@ -121,6 +121,7 @@ class MesaGridStep:
 
     def __init__(
             self,
+            metallicity,
             grid_name,
             path=PATH_TO_POSYDON_DATA,
             interpolation_path=None,
@@ -1227,11 +1228,12 @@ class MesaGridStep:
 class MS_MS_step(MesaGridStep):
     """Class for performing the MESA step for a MS-MS binary."""
 
-    def __init__(self, grid_name=None, *args, **kwargs):
+    def __init__(self, metallicity=1., grid_name=None, *args, **kwargs):
         """Initialize a MS_MS_step instance."""
         self.interp_in_q = True
         if grid_name is None:
-            grid_name = 'HMS-HMS/grid_0.0142_%d.h5'
+            metallicity = convert_metallicity_to_string(metallicity)
+            grid_name = 'HMS-HMS/' + metallicity + '_Zsun.h5'
         super().__init__(grid_name=grid_name, *args, **kwargs)
         # special stuff for my step goes here
         # If nothing to do, no init necessary
@@ -1281,11 +1283,12 @@ class MS_MS_step(MesaGridStep):
 class CO_HMS_RLO_step(MesaGridStep):
     """Class for performing the MESA step for a CO-HMS binary."""
 
-    def __init__(self, grid_name=None, *args, **kwargs):
+    def __init__(self, metallicity=1., grid_name=None, *args, **kwargs):
         """Initialize a CO_HMS_RLO_step instance."""
         self.interp_in_q = False
         if grid_name is None:
-            grid_name = 'CO-HMS_RLO/grid_0.0142.h5'
+            metallicity = convert_metallicity_to_string(metallicity)
+            grid_name = 'CO-HMS_RLO/' + metallicity + '_Zsun.h5'
         super().__init__(grid_name=grid_name, *args, **kwargs)
         # special stuff for my step goes here
         # If nothing to do, no init necessary
@@ -1350,11 +1353,12 @@ class CO_HMS_RLO_step(MesaGridStep):
 class CO_HeMS_step(MesaGridStep):
     """Class for performing the MESA step for a CO-HeMS binary."""
 
-    def __init__(self, grid_name=None, *args, **kwargs):
+    def __init__(self, metallicity=1., grid_name=None, *args, **kwargs):
         """Initialize a CO_HeMS_step instance."""
         self.interp_in_q = False
         if grid_name is None:
-            grid_name = 'CO-HeMS/grid_0.0142_%d.h5'
+            metallicity = convert_metallicity_to_string(metallicity)
+            grid_name = 'CO-HeMS/' + metallicity + '_Zsun.h5'
         super().__init__(grid_name=grid_name, *args, **kwargs)
         # special stuff for my step goes here
         # If nothing to do, no init necessary
