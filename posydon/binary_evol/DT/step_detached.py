@@ -158,7 +158,20 @@ class detached_step:
             do_gravitational_radiation=True,
             do_magnetic_braking=True,
             do_stellar_evolution_and_spin_from_winds=True,
-            RLO_orbit_at_orbit_with_same_am=False
+            RLO_orbit_at_orbit_with_same_am=False,
+            list_for_matching_HMS = [["mass", "center_h1", "log_R", "he_core_mass"],
+                                 [20.0, 1.0, 2.0, 10.0],
+                                  [[m_min_H, m_max_H], [0, None]],
+                                  ],
+            list_for_matching_postMS = [["mass", "center_he4", "log_R", "he_core_mass"],
+                                 [20.0, 1.0, 2.0, 10.0],
+                                  [[m_min_H, m_max_H], [0, None]],
+                                  ],
+            list_for_matching_HeStar = [["he_core_mass", "center_he4","log_R",
+                                 [10.0, 1.0, 2.0],
+                                  [[m_min_He, m_max_He], [0, None]],
+                                  ]
+
     ):
         """Initialize the step. See class documentation for details."""
         self.dt = dt
@@ -610,6 +623,14 @@ class detached_step:
                     posydon_attribute = [star.mass, star.center_h1,
                                          star.log_R, star.he_core_mass]
                     rs = [20.0, 1.0, 2.0, 10.0]
+
+
+                    posydon_attribute(list_for_matching):
+                        list_of_attributes = []
+                        for attr in list_for_matching:
+                            list_of_attributes.append(getattr(star, attr))
+                        return list_of_attributes
+
                     if self.verbose:
                         print("Matching attributes and their normalizations :",
                               MESA_label, rs)
@@ -617,8 +638,8 @@ class detached_step:
                         if i not in self.root_keys:
                             raise Exception("Expected matching parameter not "
                                             "added in the MIST model options.")
-                    x0 = get_root0(MESA_label, posydon_attribute,
-                                   htrack, rs=rs)
+                    x0 = get_root0(list_for_matching[0], posydon_attribute,
+                                   htrack, rs=ist_for_matching[1])
                     bnds = ([m_min_H, m_max_H], [0, None])
                     sol = minimize(
                         lambda x: (
