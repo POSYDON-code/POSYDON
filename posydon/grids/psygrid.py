@@ -350,6 +350,7 @@ GRIDPROPERTIES = {
     "eep": None,    # path to EEP files
     "initial_RLO_fix": False,
     "He_core_fix": True,
+    "accept_missing_profile": True,
 }
 
 
@@ -1074,7 +1075,7 @@ class PSyGrid:
                                   "run_index={} != ".format(run_index) +
                                   "length(MESA_dirs)={}".format(lenMESA_dirs))
 
-                                
+
         self._say("Storing initial/final values and metadata to HDF5...")
         #create new array of initial and finial values with included runs
         # only and sort it by run_index
