@@ -775,11 +775,16 @@ class PSyGrid:
                 final_profile2 = read_MESA_data_file(
                     run.final_profile2_path, P2_columns)
                 if not binary_grid and final_profile1 is None:
-                    warnings.warn("Ignored MESA run because of missing "
-                                  "profile in: {}\n".format(run.path))
-                    ignore_data = True
-                    ignore_reason = "ignore_no_FP"
-                    continue
+                    if self.config["accept_missing_profile"]:
+                        warnings.warn("Including MESA run despite the missing "
+                                      "profile in {}\n".format(run.path))
+                        ignore_data = False
+                    else:
+                        warnings.warn("Ignored MESA run because of missing "
+                                      "profile in: {}\n".format(run.path))
+                        ignore_data = True
+                        ignore_reason = "ignore_no_FP"
+                        continue
 
             if binary_history is not None:
                 if binary_history.shape == ():  # if history is only one line
