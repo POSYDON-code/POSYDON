@@ -529,6 +529,12 @@ class detached_step:
         m0 = self.grid.grid_mass[idx[0]]
         return m0, t
 
+    def posydon_attribute(list_for_matching):
+        list_of_attributes = []
+        for attr in list_for_matching:
+            list_of_attributes.append(getattr(star, attr))
+        return list_of_attributes
+
     def match_to_single_star(self, star, htrack):
         """Determine the associated initial mass and time in the grid that
         matches the properties of the binary.
@@ -625,12 +631,6 @@ class detached_step:
                     rs = [20.0, 1.0, 2.0, 10.0]
 
 
-                    posydon_attribute(list_for_matching):
-                        list_of_attributes = []
-                        for attr in list_for_matching:
-                            list_of_attributes.append(getattr(star, attr))
-                        return list_of_attributes
-
                     if self.verbose:
                         print("Matching attributes and their normalizations :",
                               MESA_label, rs)
@@ -638,7 +638,7 @@ class detached_step:
                         if i not in self.root_keys:
                             raise Exception("Expected matching parameter not "
                                             "added in the MIST model options.")
-                    x0 = get_root0(list_for_matching[0], posydon_attribute,
+                    x0 = get_root0(list_for_matching[0], posydon_attribute[list_for_matching],
                                    htrack, rs=ist_for_matching[1])
                     bnds = ([m_min_H, m_max_H], [0, None])
                     sol = minimize(
