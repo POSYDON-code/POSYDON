@@ -406,6 +406,16 @@ class StepSN(object):
         star.lg_mdot = None
         star.lg_system_mdot = None
 
+    def _draw_NS_spin(self, star):
+        """Draw the initial NS spin from a uniform random distribution"""
+        ## units are in seconds
+        star.spin_NS =  np.random.uniform(2*np.pi/.01, 2*np.pi/.1)
+
+    def _draw_NS_Bfield(self, star):
+        """Draw the initial NS B-field from a uniform random distribution"""
+        ## units are in Gauss
+        star.B_field_NS = np.random.uniform(1e10, 1e13)
+
     def __call__(self, binary):
         """Perform the supernova step on a binary object.
 
@@ -625,11 +635,12 @@ class StepSN(object):
                         star.state = "BH"
                     else:
                         star.mass = m_grav
-                        star.spin = 0.
                         star.m_disk_accreted = 0.
                         star.m_disk_radiated = 0.
                         star.max_he_mass_ejected = np.nan
                         star.state = 'NS'
+                        self._draw_NS_spin(star)
+                        self._draw_NS_Bfield(star)
 
                 elif self.use_core_masses:
                     # If the profile is not available the star spin
