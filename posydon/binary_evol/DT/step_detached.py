@@ -162,15 +162,15 @@ class detached_step:
             list_for_matching_HMS = [["mass", "center_h1", "log_R", "he_core_mass"],
                                  [20.0, 1.0, 2.0, 10.0],
                                   [[m_min_H, m_max_H], [0, None]],
-                                  ],
+                                  ["log_min_max" , "min_max", "min_max", "min_max"] ],
             list_for_matching_postMS = [["mass", "center_he4", "log_R", "he_core_mass"],
                                  [20.0, 1.0, 2.0, 10.0],
                                   [[m_min_H, m_max_H], [0, None]],
-                                  ],
+                                  ["log_min_max" , "min_max", "min_max", "min_max"] ],
             list_for_matching_HeStar = [["he_core_mass", "center_he4","log_R",
                                  [10.0, 1.0, 2.0],
                                   [[m_min_He, m_max_He], [0, None]],
-                                  ]
+                                  ["min_max" , "min_max", "min_max"]  ]
 
     ):
         """Initialize the step. See class documentation for details."""
@@ -625,48 +625,42 @@ class detached_step:
                 if (star.log_R is None) or np.isnan(star.log_R):
                     initials = (star.mass, 0)
                 else:
-                    MESA_label = ["mass", "center_h1", "log_R", "he_core_mass"]
-                    posydon_attribute = [star.mass, star.center_h1,
-                                         star.log_R, star.he_core_mass]
-                    rs = [20.0, 1.0, 2.0, 10.0]
+                    list_for_matching = list_for_matching_HMS
 
+                    MESA_labels = list_for_matching[0]
+                    posydon_attributes =  posydon_attribute(MESA_labels)
+                    rs = list_for_matching[1]
+                    bnds = list_for_matching[2]
+                    colscalers = list_for_matching[3]
 
                     if self.verbose:
                         print("Matching attributes and their normalizations :",
-                              MESA_label, rs)
-                    for i in MESA_label:
+                              MESA_labels, rs)
+                    for i in MESA_labels:
                         if i not in self.root_keys:
                             raise Exception("Expected matching parameter not "
-                                            "added in the MIST model options.")
-                    x0 = get_root0(list_for_matching[0], posydon_attribute[list_for_matching],
-                                   htrack, rs=ist_for_matching[1])
-                    bnds = ([m_min_H, m_max_H], [0, None])
-                    sol = minimize(
-                        lambda x: (
-                            sc_mass_H.transform(
-                                get_track_val(MESA_label[0], htrack, *x))
-                            - sc_mass_H.transform(posydon_attribute[0])) ** 2
-                        + (sc_center_h1.transform(
-                            get_track_val(MESA_label[1], htrack, *x))
-                            - sc_center_h1.transform(posydon_attribute[1]))**2
-                        + (sc_log_R_H.transform(
-                            get_track_val(MESA_label[2], htrack, *x))
-                            - sc_log_R_H.transform(posydon_attribute[2])) ** 2
-                        + (sc_he_core_mass_H.transform(
-                            get_track_val(MESA_label[3], htrack, *x))
-                            - sc_he_core_mass_H.transform(
-                               posydon_attribute[3])) ** 2,
+                                            "added in the single star grid options.")
+                    def square_difference(x):
+                        result = 0.0
+                        for MESA_label, posydon_attribute, colscaler in zip(MESA_labels, posydon_attributes, colscalers):
+                            single_track_value = scale(MESA_label, htrack, colscaler).transform(get_track_val(MESA_label, htrack, *x))
+                            posydon_value  = scale(MESA_label, htrack, colscaler).transform(posydon_attribute)
+                            result += (single_track_value - posydon_value) ** 2
+                        return result
+
+                    x0 = get_root0(list_for_matching, posydon_attributes,
+                                   htrack, rs=rs)
+
+                    sol = minimize(square_difference,
                         x0,
                         method="TNC",
                         bounds=bnds
                     )
+                    '''
                     # stars after mass transfer could swell up so that log_R
                     # is not appropriate for matching
                     if np.abs(sol.fun) > tolerance_matching_integration:
-                        MESA_label = ["mass", "center_h1", "he_core_mass"]
-                        posydon_attribute = [star.mass, star.center_h1,
-                                             star.he_core_mass]
-                        rs = [20.0, 1.0, 10.0]
+                        list_for_matching = [["mass", "center_h1", "he_core_mass"],[20.0, 1.0, 10.0]]
                         x0 = get_root0(
                             MESA_label, posydon_attribute, htrack, rs=rs)
                         bnds = ([m_min_H, m_max_H], [0, None])
@@ -686,82 +680,74 @@ class detached_step:
                                    posydon_attribute[2])) ** 2,
                             x0, method="TNC", bounds=bnds
                         )
-            elif star.state in LIST_ACCEPTABLE_STATES_FOR_postMS:
-                MESA_label = ["he_core_mass", "mass", "center_he4", "log_R"]
-                posydon_attribute = [star.he_core_mass, star.mass,
-                                     star.center_he4, star.log_R]
-                rs = [10.0, 20.0, 1.0, 2.0]
-                if self.verbose:
-                    print("Matching attributes and their normalizations : ",
-                          MESA_label, rs)
-                for i in MESA_label:
-                    if i not in self.root_keys:
-                        raise Exception("Expected matching parameter not added"
-                                        " in the MIST model options.")
-                x0 = get_root0(MESA_label, posydon_attribute, htrack, rs=rs)
-                bnds = ([m_min_H, m_max_H], [0, None])
-                sol = minimize(
-                    lambda x: (
-                        (sc_he_core_mass_H.transform(
-                          get_track_val(MESA_label[0], htrack, *x))
-                         - sc_he_core_mass_H.transform(posydon_attribute[0]))
-                        / sc_he_core_mass_H.transform(posydon_attribute[0]))
-                    ** 2 + ((sc_mass_H.transform(
-                        get_track_val(MESA_label[1], htrack, *x))
-                             - sc_mass_H.transform(posydon_attribute[1]))
-                            / sc_mass_H.transform(posydon_attribute[1])) ** 2
-                    + (sc_center_he4_H.transform(
-                        get_track_val(MESA_label[2], htrack, *x))
-                       - sc_center_he4_H.transform(posydon_attribute[2])) ** 2
-                    + (sc_log_R_H.transform(
-                        get_track_val(MESA_label[3], htrack, *x))
-                        - sc_log_R_H.transform(posydon_attribute[3])) ** 2,
+                    '''
 
-                    x0, method="TNC", bounds=bnds,
-                    )
-            elif star.state in LIST_ACCEPTABLE_STATES_FOR_HeStar:
-                MESA_label = [
-                    "he_core_mass",
-                    # "surface_he4",
-                    "center_he4",
-                    # "mass",
-                    # "center_c12",
-                    "log_R"
-                ]
-                posydon_attribute = [
-                    star.he_core_mass,
-                    # star.surface_he4,
-                    star.center_he4,
-                    # star.mass,
-                    # star.center_c12,
-                    star.log_R
-                ]
-                # rs = [10, 2.0, 2.0, 20, 2.0]
-                rs = [10.0, 1.0, 2.0]
+
+            elif star.state in LIST_ACCEPTABLE_STATES_FOR_postMS:
+                list_for_matching = list_for_matching_postMS
+
+                MESA_labels = list_for_matching[0]
+                posydon_attributes =  posydon_attribute(MESA_labels)
+                rs = list_for_matching[1]
+                bnds = list_for_matching[2]
+                colscalers = list_for_matching[3]
+
                 if self.verbose:
-                    print("Matching attributes and their normalizations : ",
-                          MESA_label, rs)
-                for i in MESA_label:
+                    print("Matching attributes and their normalizations :",
+                          MESA_labels, rs)
+                for i in MESA_labels:
                     if i not in self.root_keys:
-                        raise Exception("Expected matching parameter not added"
-                                        " in the MIST model options.")
-                x0 = get_root0(MESA_label, posydon_attribute, False, rs=rs)
-                bnds = ([m_min_He, m_max_He], [0, None])
-                # match he4 abundance using definite value
-                sol = minimize(
-                    lambda x: (
-                        (sc_he_core_mass_He.transform(
-                         get_track_val(MESA_label[0], htrack, *x))
-                         - sc_he_core_mass_He.transform(posydon_attribute[0]))
-                        / sc_he_core_mass_He.transform(posydon_attribute[0]))
-                    ** 2 + (sc_center_he4_He.transform(
-                        get_track_val(MESA_label[1], htrack, *x))
-                            - sc_center_he4_He.transform(posydon_attribute[1]))
-                    ** 2 + (sc_log_R_He.transform(
-                        get_track_val(MESA_label[2], htrack, *x))
-                            - sc_log_R_He.transform(posydon_attribute[2]))**2,
-                    x0, method="TNC", bounds=bnds,
+                        raise Exception("Expected matching parameter not "
+                                        "added in the single star grid options.")
+                def square_difference(x):
+                    result = 0.0
+                    for MESA_label, posydon_attribute, colscaler in zip(MESA_labels, posydon_attributes, colscalers):
+                        single_track_value = scale(MESA_label, htrack, colscaler).transform(get_track_val(MESA_label, htrack, *x))
+                        posydon_value  = scale(MESA_label, htrack, colscaler).transform(posydon_attribute)
+                        result += (single_track_value - posydon_value) ** 2
+                    return result
+
+                x0 = get_root0(list_for_matching, posydon_attributes,
+                               htrack, rs=rs)
+
+                sol = minimize(square_difference,
+                    x0,
+                    method="TNC",
+                    bounds=bnds
                 )
+            elif star.state in LIST_ACCEPTABLE_STATES_FOR_HeStar:
+                list_for_matching = list_for_matching_HeStar
+
+                MESA_labels = list_for_matching[0]
+                posydon_attributes =  posydon_attribute(MESA_labels)
+                rs = list_for_matching[1]
+                bnds = list_for_matching[2]
+                colscalers = list_for_matching[3]
+
+                if self.verbose:
+                    print("Matching attributes and their normalizations :",
+                          MESA_labels, rs)
+                for i in MESA_labels:
+                    if i not in self.root_keys:
+                        raise Exception("Expected matching parameter not "
+                                        "added in the single star grid options.")
+                def square_difference(x):
+                    result = 0.0
+                    for MESA_label, posydon_attribute, colscaler in zip(MESA_labels, posydon_attributes, colscalers):
+                        single_track_value = scale(MESA_label, htrack, colscaler).transform(get_track_val(MESA_label, htrack, *x))
+                        posydon_value  = scale(MESA_label, htrack, colscaler).transform(posydon_attribute)
+                        result += (single_track_value - posydon_value) ** 2
+                    return result
+
+                x0 = get_root0(list_for_matching, posydon_attributes,
+                               htrack, rs=rs)
+
+                sol = minimize(square_difference,
+                    x0,
+                    method="TNC",
+                    bounds=bnds
+                )
+                '''
                 if (np.abs(sol.fun) > tolerance_matching_integration
                         or not sol.success):
                     sol = minimize(
@@ -812,7 +798,7 @@ class detached_step:
                                 / self.get_track_val(
                                     "mass", star.htrack, *sol.x) >= 0.05):
                             initials = (np.nan, np.nan)
-
+                    '''
             if initials is None:
                 if self.verbose:
                     print("sol.fun = ", np.abs(sol.fun))
@@ -977,7 +963,6 @@ class detached_step:
             else:
                 raise Exception("State not recognized!")
 
-        # mathcing process
         if (self.non_existent_companion  == 0): # actual binary
             if (not primary.co):
                 m1, t1 = match_to_single_star(primary, primary.htrack)
