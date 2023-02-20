@@ -606,6 +606,7 @@ class detached_step:
                 if (star.log_R is None) or np.isnan(star.log_R):
                     initials = (star.mass, 0)
                 else:
+                    list_for_matching = [["mass", "center_h1", "log_R", "he_core_mass"],[20.0, 1.0, 2.0, 10.0]]
                     MESA_label = ["mass", "center_h1", "log_R", "he_core_mass"]
                     posydon_attribute = [star.mass, star.center_h1,
                                          star.log_R, star.he_core_mass]
@@ -619,33 +620,18 @@ class detached_step:
                                             "added in the MIST model options.")
                     x0 = get_root0(MESA_label, posydon_attribute,
                                    htrack, rs=rs)
+                    
                     bnds = ([m_min_H, m_max_H], [0, None])
-                    sol = minimize(
-                        lambda x: (
-                            sc_mass_H.transform(
-                                get_track_val(MESA_label[0], htrack, *x))
-                            - sc_mass_H.transform(posydon_attribute[0])) ** 2
-                        + (sc_center_h1.transform(
-                            get_track_val(MESA_label[1], htrack, *x))
-                            - sc_center_h1.transform(posydon_attribute[1]))**2
-                        + (sc_log_R_H.transform(
-                            get_track_val(MESA_label[2], htrack, *x))
-                            - sc_log_R_H.transform(posydon_attribute[2])) ** 2
-                        + (sc_he_core_mass_H.transform(
-                            get_track_val(MESA_label[3], htrack, *x))
-                            - sc_he_core_mass_H.transform(
-                               posydon_attribute[3])) ** 2,
+                    sol = minimize(square_difference(x,star,list_for_matching=list_for_matching_HMS),
                         x0,
                         method="TNC",
                         bounds=bnds
                     )
+                
                     # stars after mass transfer could swell up so that log_R
                     # is not appropriate for matching
                     if np.abs(sol.fun) > tolerance_matching_integration:
-                        MESA_label = ["mass", "center_h1", "he_core_mass"]
-                        posydon_attribute = [star.mass, star.center_h1,
-                                             star.he_core_mass]
-                        rs = [20.0, 1.0, 10.0]
+                        list_for_matching = [["mass", "center_h1", "he_core_mass"],[20.0, 1.0, 10.0]]
                         x0 = get_root0(
                             MESA_label, posydon_attribute, htrack, rs=rs)
                         bnds = ([m_min_H, m_max_H], [0, None])
@@ -665,6 +651,8 @@ class detached_step:
                                    posydon_attribute[2])) ** 2,
                             x0, method="TNC", bounds=bnds
                         )
+                    
+            
             elif star.state in LIST_ACCEPTABLE_STATES_FOR_postMS:
                 MESA_label = ["he_core_mass", "mass", "center_he4", "log_R"]
                 posydon_attribute = [star.he_core_mass, star.mass,
@@ -852,7 +840,14 @@ class detached_step:
                 star.center_c12
             )
         return initials
-
+    
+    def square_difference(x,star,list_for_matching):
+        sum = 0 
+        for i in range(len(list_for_matching[0])):
+            sum += (sc_mass_H.transform(get_track_val(list_for_matching[0][i], htrack, *x)) - sc_mass_H.transform(getattr(star,list_for_matching[0][i])))** 2
+        return sum               
+        
+    
     def __repr__(self):
         """Return the type of evolution type."""
         return "Detached Step."
@@ -956,7 +951,6 @@ class detached_step:
             else:
                 raise Exception("State not recognized!")
 
-        # mathcing process
         if (self.non_existent_companion  == 0): # actual binary
             if (not primary.co):
                 m1, t1 = match_to_single_star(primary, primary.htrack)
@@ -1063,7 +1057,7 @@ class detached_step:
         elif not primary.co:
             interp1d_pri = get_star_data(
                 binary, primary, secondary, primary.htrack, False)
-
+                
         if interp1d_sec is None or interp1d_pri is None:
             # binary.event = "END"
             binary.state += " (GridMatchingFailed)"
