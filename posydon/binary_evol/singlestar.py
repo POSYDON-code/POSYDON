@@ -72,8 +72,10 @@ STARPROPERTIES = [
     'total_moment_of_inertia',      # total moment of inertia (gr*cm^2)
     'log_total_angular_momentum',   # log10 of total ang. momentum (gr*cm^2/s)
     'spin',                         # the dimesionless spin of the star, if it
-                                    # is a compact object, which is equal to
+                                    # is not a NS, which is equal to
                                     # c*J/(GM^2).
+    'spin_NS',                      # spin of the object, if it is a NS
+    'B_field_NS',                   # magnetic field of the object, if it is a NS
     'conv_env_top_mass',
     'conv_env_bot_mass',
     'conv_env_top_radius',
