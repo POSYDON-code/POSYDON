@@ -516,7 +516,7 @@ class detached_step:
         m0 = self.grid.grid_mass[idx[0]]
         return m0, t
 
-    def get_mist0(self, star, htrack):
+    def match_to_single_star(self, star, htrack):
         """Determine the associated initial mass and time in the grid that
         matches the properties of the binary.
 
@@ -859,7 +859,7 @@ class detached_step:
 
     def __call__(self, binary):
         """Evolve the binary until RLO or compact object formation."""
-        get_mist0 = self.get_mist0
+        match_to_single_star = self.match_to_single_star
         KEYS = self.KEYS
         KEYS_POSITIVE = self.KEYS_POSITIVE
 
@@ -958,11 +958,11 @@ class detached_step:
 
         if (self.non_existent_companion  == 0): # actual binary
             if (not primary.co):
-                m1, t1 = get_mist0(primary, primary.htrack)
-            m2, t2 = get_mist0(secondary, secondary.htrack)
+                m1, t1 = match_to_single_star(primary, primary.htrack)
+            m2, t2 = match_to_single_star(secondary, secondary.htrack)
         elif (self.non_existent_companion  == 1) or (self.non_existent_companion  == 2):
             #TODO: We do not have the logR for the matching
-            m2, t2 = get_mist0(secondary, secondary.htrack, XXXX without logR in all cases!!)
+            m2, t2 = match_to_single_star(secondary, secondary.htrack, XXXX without logR in all cases!!)
 
         def get_star_data(binary, star1, star2, htrack, co):
             """Get and interpolate the properties of stars.
@@ -993,7 +993,7 @@ class detached_step:
             get_track = self.grid.get
             with np.errstate(all="ignore"):
                 # get the initial m0, t0 track
-                m0, t0 = get_mist0(star1, htrack)
+                m0, t0 = match_to_single_star(star1, htrack)
             if np.any(np.isnan([m0, t0])):
                 #    binary.event = "END"
                 #    binary.state += " (GridMatchingFailed)"
