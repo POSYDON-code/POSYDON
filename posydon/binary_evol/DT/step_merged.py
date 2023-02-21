@@ -30,8 +30,8 @@ from posydon.utils.common_functions import (
 )
 from posydon.binary_evol.flow_chart import (STAR_STATES_CC)
 import posydon.utils.constants as const
-from posydon.binary_evol.step_detached import detached_step
-from posydon.binary_evol.step_isolated import isolated_step
+from posydon.binary_evol.DT.step_detached import detached_step
+from posydon.binary_evol.DT.step_isolated import isolated_step
 
 import warnings
 
@@ -56,29 +56,32 @@ LIST_ACCEPTABLE_STATES_FOR_POSTHeMS = STAR_STATES_HE_RICH.copy()
 
 
 class merged_step(isolated_step):
-        """
-        Prepare a merging star to do an an isolated_step)
-        """
+    """
+    Prepare a merging star to do an an isolated_step)
+    """
 
-    def __init__(self,
+    def __init__(
+        self,
         grid_name_Hrich=None,
         grid_name_stripedHe=None,
         path=PATH_TO_POSYDON_DATA,
         merger_critical_rot = 0.4,
         rel_mass_lost_HMS_HMS = 0.1,
-        list_for_matching_HMS = [["mass", "center_h1","he_core_mass"],
-                             [20.0, 1.0, 10.0],
-                              [[m_min_H, m_max_H], [0, None]],
-                              ["log_min_max" , "min_max",  "min_max"] ],
+        list_for_matching_HMS = [["mass", "center_h1", "log_R", "he_core_mass"],
+                              [20.0, 1.0, 2.0, 10.0],
+                                 # [[m_min_H, m_max_H], [0, None]],
+                              ["log_min_max" , "min_max", "min_max", "min_max"] ],
         list_for_matching_postMS = [["mass", "center_he4", "he_core_mass"],
-                             [20.0, 1.0, 10.0],
-                              [[m_min_H, m_max_H], [0, None]],
-                              ["log_min_max" , "min_max",  "min_max"] ],
-        list_for_matching_HeStar = [["he_core_mass", "center_he4",
-                             [10.0, 1.0],
-                              [[m_min_He, m_max_He], [0, None]],
-                              ["min_max" , "min_max"]  ]
-        *args, **kwargs):
+                                 [20.0, 1.0, 10.0],
+                                 #[[m_min_H, m_max_H], [0, None]],
+                                 ["log_min_max" , "min_max",  "min_max"] ],
+        list_for_matching_HeStar = [["he_core_mass", "center_he4"],
+                                 [10.0, 1.0],
+                                 #[[m_min_He, m_max_He], [0, None]],
+                                 ["min_max" , "min_max"]  ],
+        *args,
+        **kwargs
+    ):
 
         super().__init__(
         grid_name_Hrich=grid_name_Hrich,
@@ -88,9 +91,9 @@ class merged_step(isolated_step):
         list_for_matching_HeStar = list_for_matching_HeStar
         *args,
         **kwargs)
-
+    '''
     def merged_star_properties(star_base,comp):
-        """
+    """
         Make assumptions about the core/total mass of the star of a merged product.
 
         Similar to the table of merging in BSE
@@ -99,7 +102,7 @@ class merged_step(isolated_step):
             is our base star that engulfs its companions. The merged star will have this star as a base
         comp: Single Star
             is the star that is engulfed
-        """
+    """
         #by default the stellar attributes that keep the same value from the
         merged_star = star_base
 
@@ -428,7 +431,7 @@ class merged_step(isolated_step):
 
         return merged_star, None
 
-
+'''
     def __call__(self,binary):
 
         if binary.state == "merged":

@@ -160,19 +160,20 @@ class detached_step:
             do_stellar_evolution_and_spin_from_winds=True,
             RLO_orbit_at_orbit_with_same_am=False,
             list_for_matching_HMS = [["mass", "center_h1", "log_R", "he_core_mass"],
-                                 [20.0, 1.0, 2.0, 10.0],
-                                  [[m_min_H, m_max_H], [0, None]],
+                                  [20.0, 1.0, 2.0, 10.0],
+                                 # [[m_min_H, m_max_H], [0, None]],
                                   ["log_min_max" , "min_max", "min_max", "min_max"] ],
             list_for_matching_postMS = [["mass", "center_he4", "log_R", "he_core_mass"],
                                  [20.0, 1.0, 2.0, 10.0],
-                                  [[m_min_H, m_max_H], [0, None]],
+                                 # [[m_min_H', 'm_max_H], [0, None]],
                                   ["log_min_max" , "min_max", "min_max", "min_max"] ],
-            list_for_matching_HeStar = [["he_core_mass", "center_he4","log_R",
+            list_for_matching_HeStar = [["he_core_mass", "center_he4","log_R"],
                                  [10.0, 1.0, 2.0],
-                                  [[m_min_He, m_max_He], [0, None]],
+                                 # [[m_min_He, m_max_He], [0, None]],
                                   ["min_max" , "min_max", "min_max"]  ]
 
     ):
+
         """Initialize the step. See class documentation for details."""
         self.dt = dt
         self.n_o_steps_history = n_o_steps_history
@@ -635,9 +636,8 @@ class detached_step:
                     MESA_labels = list_for_matching[0]
                     posydon_attributes =  posydon_attribute(MESA_labels)
                     rs = list_for_matching[1]
-                    bnds = list_for_matching[2]
-                    colscalers = list_for_matching[3]
-
+                    colscalers = list_for_matching[2]
+                    bnds = [[m_min_H, m_max_H], [0, None]]
                     if self.verbose:
                         print("Matching attributes and their normalizations :",
                               MESA_labels, rs)
@@ -694,8 +694,8 @@ class detached_step:
                 MESA_labels = list_for_matching[0]
                 posydon_attributes =  posydon_attribute(MESA_labels)
                 rs = list_for_matching[1]
-                bnds = list_for_matching[2]
-                colscalers = list_for_matching[3]
+                colscalers = list_for_matching[2]
+                bnds = [[m_min_H, m_max_H], [0, None]]
 
                 if self.verbose:
                     print("Matching attributes and their normalizations :",
@@ -726,9 +726,9 @@ class detached_step:
                 MESA_labels = list_for_matching[0]
                 posydon_attributes =  posydon_attribute(MESA_labels)
                 rs = list_for_matching[1]
-                bnds = list_for_matching[2]
-                colscalers = list_for_matching[3]
-
+                colscalers = list_for_matching[2]
+                bnds = [[m_min_He, m_max_He], [0, None]]
+                
                 if self.verbose:
                     print("Matching attributes and their normalizations :",
                           MESA_labels, rs)

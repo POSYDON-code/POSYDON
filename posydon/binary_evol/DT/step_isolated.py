@@ -30,7 +30,7 @@ from posydon.utils.common_functions import (
 )
 from posydon.binary_evol.flow_chart import (STAR_STATES_CC)
 import posydon.utils.constants as const
-from posydon.binary_evol.step_detached import detached_step
+from posydon.binary_evol.DT.step_detached import detached_step
 
 
 class isolated_step(detached_step):
@@ -69,17 +69,17 @@ class isolated_step(detached_step):
 
 
 
-     def __call__(self, binary):
+    def __call__(self, binary):
 
-         initialize_isolated_binary_orbit()
+        initialize_isolated_binary_orbit()
 
-         if binary.star_1 == None or binary.star_2 == None: # already one star became None in step_merged or step_initially_single
-             continue
-         elif binary.state == "disrupted":
-             continue
-         else:
-             raise ValueError("In isolated step one of the two stars should be None or the the binary.state=='disrupted' ")
-         super().__call__(binary)
+        if binary.star_1 == None or binary.star_2 == None: # already one star became None in step_merged or step_initially_single
+            pass
+        elif binary.state == "disrupted":
+            pass
+        else:
+            raise ValueError("In isolated step one of the two stars should be None or the the binary.state=='disrupted' ")
+        super().__call__(binary)
 
          # TODO maybe stuff after the call of the detached step
 

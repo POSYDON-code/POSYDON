@@ -30,8 +30,8 @@ from posydon.utils.common_functions import (
 )
 from posydon.binary_evol.flow_chart import (STAR_STATES_CC)
 import posydon.utils.constants as const
-from posydon.binary_evol.step_detached import detached_step
-from posydon.binary_evol.step_isolated import isolated_step
+from posydon.binary_evol.DT.step_detached import detached_step
+from posydon.binary_evol.DT.step_isolated import isolated_step
 
 import warnings
 
