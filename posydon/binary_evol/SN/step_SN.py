@@ -1178,31 +1178,31 @@ class StepSN(object):
         """Do the orbital kick.
 
         This function computes the supernova step of the binary object. It
-        checks which binary_state riched the core collapse flag, either CC1 or
-        CC2, and run the step accordingly updating the binary object.
+        checks which binary_state reached the core collapse flag, either CC1 or
+        CC2, and runs the step accordingly updating the binary object.
 
         Geometry:
-        The collapsing helium star, here M_he_star, lies on the origin of the
-        coordinate system moving in direction of positive y axis. The
-        companion, here M_companion, lies on the negative X axis and Z-axis
-        completes right-handed coordinate system. See Fig 1 in Kalogera 1996
-        for a coordinate system drawing.
+        We work in a right-handed coordinate system. The collapsing helium star, 
+        here M_he_star, lies on the origin. The companion, here M_companion, 
+        lies on the negative X axis at rest. The relative velocity of the M_he_star
+        with respect to M_companion lies in the X-Y plane, with vY>0.
+        The orbital angular momentum vector is in Z direction, which completes the
+        right-handed coordinate system.
 
-        phi :
-            Angle between z-axis and projection of kick onto x-z plane.
+        psi:
+            The angle in the orbital plane between the X axis and the pre-core
+            collapse relative velocity. (psi = pi/2 points in Y direction)
+        
         theta :
-            Angle between pre- supernova star velocity relative to the
-            companion (i.e. along the positive y axis) and the kick velocity.
+            The polar angle between the kick velocity and the pre-core collapse
+            relative velocity of the M_he_star with respect to M_companion.
+        
+        phi :
+            The corresponding azimuthal angle such that phi=0 is on the Z axis.
+
         tilt :
-            The angle between pre- and post- supenova orbial
-            planes. This is equal to the angle between the relative velocity of
-            the helium star to the companion just before the explosion (see Vr)
-            and the projection of the relative velocy just after the explosion
-            onto the y-z plane.
-        mean_anomaly:
-            is the mean anomaly, i.e the fraction of an elliptical orbit's
-            period that has elapsed since the orbiting body passed periapsis,
-            expressed as an angle.
+            The angle between pre- and post- supernova orbital angular momentum vectors.
+            
 
         Parameters
         ----------
@@ -1434,43 +1434,48 @@ class StepSN(object):
         Apre = Apre * const.Rsun
         Vkick = Vkick * const.km2cm
         rpre = rpre * const.Rsun
+        Mtot_pre = M_he_star + M_companion
+        Mtot_post = M_compact_object + M_companion
 
         # get useful quantity
         sin_theta = np.sqrt(1 - (cos_theta ** 2))
-
-        # get kicks componets in the coordinate system
-        Vkx = Vkick * sin_theta * np.sin(phi)
-        Vky = Vkick * cos_theta
-        Vkz = Vkick * sin_theta * np.cos(phi)
 
         # Eq 1, in Kalogera, V. 1996, ApJ, 471, 352
         # extended to Eq 17 in Wong, T.-W., Valsecchi, F., Fragos, T., & Kalogera, V. 2012, ApJ, 747, 111
         # Vr is velocity of preSN He core relative to M_companion, directed
         # along the positive y axis
-        Vr = np.sqrt(G * (M_he_star + M_companion) * (2.0 / rpre - 1.0 / Apre))
-        Mtot = M_compact_object + M_companion
+        Vr = np.sqrt(G * (Mtot_pre) * (2.0 / rpre - 1.0 / Apre))
 
         # Eq 3, in Kalogera, V. 1996, ApJ, 471, 352
         # extended to Eq 13, in Wong, T.-W., Valsecchi, F., Fragos, T., & Kalogera, V. 2012, ApJ, 747, 111
         # get the orbital separation post SN
         Apost = ((2.0 / rpre)
-                 - (((Vkick ** 2) + (Vr ** 2) + (2 * Vky * Vr)) / (G * Mtot))
+                 - (((Vkick ** 2) + (Vr ** 2) + (2 * (Vkick * cos_theta) * Vr)) / (G * Mtot_post))
                  ) ** -1
 
         # Eq 18, Wong, T.-W., Valsecchi, F., Fragos, T., & Kalogera, V. 2012, ApJ, 747, 111
         # psi: is the polar angle of the position vector of the CO with respect
         # to its pre-SN orbital velocity in the companions frame.
         sin_psi = np.round(
-            np.sqrt(G * (M_he_star + M_companion) * (1 - epre ** 2) * Apre)
+            np.sqrt(G * (Mtot_pre) * (1 - epre ** 2) * Apre)
             / (rpre * Vr), 5)
         cos_psi = np.sqrt(1 - sin_psi ** 2)
+
+                # get kicks componets in the coordinate system
+        Vkx = Vkick * (sin_theta * np.sin(phi) * sin_psi + cos_theta * cos_psi)
+        Vky = Vkick * (-sin_theta * np.sin(phi) * cos_psi + cos_theta * sin_psi)
+        Vkz = Vkick * sin_theta * np.cos(phi)
+
 
         # Eq 4, in Kalogera, V. 1996, ApJ, 471, 352
         # extended to Eq 14 in Wong, T.-W., Valsecchi, F., Fragos, T., & Kalogera, V. 2012, ApJ, 747, 111
         # get the eccentricity post SN
-        x = ((Vkz ** 2 + (sin_psi * (Vr + Vky) - cos_psi * Vkx) ** 2)
+
+
+        #FIXME 
+        x = ((Vkz ** 2 + (Vky + Vkr * sin_psi)** 2)
              * rpre ** 2
-             / (G * Mtot * Apost))
+             / (G * Mtot_post * Apost))
 
         # catch negative values, i.e. disrupted binaries
         if 1.-x < 0.:
@@ -1478,25 +1483,33 @@ class StepSN(object):
         else:
             epost = np.sqrt(1 - x)
 
-        # Eq 34, in Kalogera, V. 1996, ApJ, 471, 352
-        # V_sys: is the resulting center of mass velocity of the system
-        # IN THE TRANSLATED COMOVING FRAME, imparted by the SN
-        VSx = M_compact_object * Vkx / Mtot
-        VSy = (
-            M_compact_object * Vky
-            - (
-                (M_he_star - M_compact_object)
-                * M_companion
-                * Vr
-                / (M_he_star + M_companion)
-            )
-        ) / Mtot
-        VSz = M_compact_object * Vkz / Mtot
+        # Vsys = V_COM_postSN - V_COM_preSN REWORD
+        
+        VC0x = M_he_star * Vr * cos_psi / Mtot_pre
+        VC0y = M_he_star * Vr * sin_psi / Mtot_pre
+        VC0z = 0
+
+        VC1x = M_compact_object * (Vkx + Vr * cos_psi) / Mtot_post
+        VC1y = M_compact_object * (Vky + Vr * sin_psi) / Mtot_post
+        VC1z = M_compact_object * Vkz / Mtot_post
+
+
+        VSx = VC1x - VC0x
+        VSy = VC1y - VC0y
+        VSz = VC1z - VC0z
+
+
         # V_sys = np.sqrt(VSx ** 2 + VSy ** 2 + VSz ** 2)
 
-        # Eq 5, in Kalogera, V. 1996, ApJ, 471, 352:
-        # calculate the tilt of the orbital plane after the SN
-        tilt = np.arccos((Vky + Vr) / ((Vky + Vr) ** 2 + Vkz ** 2) ** (1. / 2))
+        # Calculate the angle between the pre and post-SN orbital angular momentum vectors
+        # Lpre || Z axis
+        # Lpost || X axis cross the post SN velocity of the compact object
+        # cos(tilt) = Lpre dot Lpost / ||Lpre||||Lpost||
+
+        tilt = np.arccos((Vky + Vr * sin_psi) / np.sqrt( Vkz ** 2 + (Vky + Vr * sin_psi) ** 2 ))
+
+
+        #tilt = np.arccos((Vky + Vr) / ((Vky + Vr) ** 2 + Vkz ** 2) ** (1. / 2))
 
         def SNCheck(
             M_he_star,
