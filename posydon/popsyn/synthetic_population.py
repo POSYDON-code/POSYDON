@@ -13,6 +13,7 @@ __authors__ = [
 
 from posydon.popsyn.io import parse_inifile, binarypop_kwargs_from_ini
 from posydon.popsyn.binarypopulation import BinaryPopulation
+from posydon.utils.common_functions import convert_metallicity_to_string
 
 
 class SyntheticPopulation:
@@ -54,4 +55,4 @@ class SyntheticPopulation:
     @staticmethod
     def create_met_prefix(met):
         """Append a prefix to the name of directories for batch saving."""
-        return f'{met:.2e}_Zsun_'
+        return convert_metallicity_to_string(met) + '_Zsun_'
