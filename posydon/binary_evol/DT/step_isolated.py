@@ -44,7 +44,7 @@ class isolated_step(detached_step):
 
     def __init__(self,
         grid_name_Hrich=None,
-        grid_name_stripedHe=None,
+        grid_name_strippedHe=None,
         path=PATH_TO_POSYDON_DATA,
         #dt=None,
         #n_o_steps_history=None,
@@ -56,7 +56,7 @@ class isolated_step(detached_step):
 
         super().__init__(
         grid_name_Hrich=grid_name_Hrich,
-        grid_name_stripedHe=grid_name_stripedHe,
+        grid_name_strippedHe=grid_name_strippedHe,
         path=path,
         #dt=dt,
         #n_o_steps_history=n_o_steps_history,

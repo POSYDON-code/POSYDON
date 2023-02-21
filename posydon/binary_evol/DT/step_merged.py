@@ -63,7 +63,7 @@ class merged_step(isolated_step):
     def __init__(
         self,
         grid_name_Hrich=None,
-        grid_name_stripedHe=None,
+        grid_name_strippedHe=None,
         path=PATH_TO_POSYDON_DATA,
         merger_critical_rot = 0.4,
         rel_mass_lost_HMS_HMS = 0.1,
@@ -85,10 +85,10 @@ class merged_step(isolated_step):
 
         super().__init__(
         grid_name_Hrich=grid_name_Hrich,
-        grid_name_stripedHe=grid_name_stripedHe,
+        grid_name_strippedHe=grid_name_strippedHe,
         list_for_matching_HMS = list_for_matching_HMS,
         list_for_matching_postMS = list_for_matching_postMS,
-        list_for_matching_HeStar = list_for_matching_HeStar
+        list_for_matching_HeStar = list_for_matching_HeStar,
         *args,
         **kwargs)
     '''
