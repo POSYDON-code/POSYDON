@@ -1,4 +1,17 @@
-"""Create, evolve and save a binary star population."""
+"""Create, evolve and save a binary star population.
+
+Large populations are RAM limited when holding an arbitrary
+number of BinaryStar instances. Therefore, by default the BinaryPopulation
+will generate binaries, evolve, and try to save them to disk one at a time.
+
+Create a BinaryPopulation instance from an inifile:
+I. CREATING A POPULATION
+------------------------
+a) One-liner for creating a BinaryPopulation from an inifile:
+
+> BinaryPopulation.from_ini('<PATH_TO_POSYDON>' \
+            '/posydon/popsyn/population_params_default.ini')
+"""
 
 
 __authors__ = [
@@ -6,6 +19,7 @@ __authors__ = [
     "Jeffrey Andrews <jeffrey.andrews@northwestern.edu>",
     "Konstantinos Kovlakas <Konstantinos.Kovlakas@unige.ch>",
     "Devina Misra <devina.misra@unige.ch>",
+    "Simone Bavera <Simone.Bavera@unige.ch>",
 ]
 
 
@@ -824,8 +838,8 @@ class BinaryGenerator:
         m1 = output['S1_mass'].item()
         m2 = output['S2_mass'].item()
         Z_div_Zsun = kwargs.get('metallicity', 1.)
-        zams_table = {1.: 2.703e-01, 
-                      0.1: 2.511e-01, 
+        zams_table = {1.: 2.703e-01,
+                      0.1: 2.511e-01,
                       0.01: 2.492e-01,
                       0.001: 2.49e-01,
                       0.0001: 2.49e-01}
