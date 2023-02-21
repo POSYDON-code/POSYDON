@@ -31,6 +31,7 @@ from posydon.utils.common_functions import (orbital_period_from_separation,
                                             orbital_separation_from_period)
 from posydon.popsyn.defaults import default_kwargs
 from posydon.popsyn.io import binarypop_kwargs_from_ini
+from posydon.utils.constants import Zsun
 
 
 # 'event' usually 10 but 'detached (Integration failure)' can occur
@@ -822,6 +823,15 @@ class BinaryGenerator:
         eccentricity = output['eccentricity'].item()
         m1 = output['S1_mass'].item()
         m2 = output['S2_mass'].item()
+        Z_div_Zsun = kwargs.get('metallicity', 1.)
+        zams_table = {1.: 2.703e-01, 
+                      0.1: 2.511e-01, 
+                      0.01: 2.492e-01,
+                      0.001: 2.49e-01,
+                      0.0001: 2.49e-01}
+        Y = zams_table[Z_div_Zsun]
+        Z = Z_div_Zsun*Zsun
+        X = 1. - Z - Y
 
         binary_params = dict(
             index=kwargs.get('index', default_index),
@@ -835,16 +845,16 @@ class BinaryGenerator:
         star1_params = dict(
             mass=m1,
             state="H-rich_Core_H_burning",
-            metallicity=0.0142,     # ONLY VALID FOR Zsun
-            center_h1=0.7155,       # ONLY VALID FOR Zsun
-            center_he4=0.2703,      # ONLY VALID FOR Zsun
+            metallicity=Z,
+            center_h1=X,
+            center_he4=Y,
         )
         star2_params = dict(
             mass=m2,
             state="H-rich_Core_H_burning",
-            metallicity=0.0142,     # ONLY VALID FOR Zsun
-            center_h1=0.7155,       # ONLY VALID FOR Zsun
-            center_he4=0.2703,      # ONLY VALID FOR Zsun
+            metallicity=Z,
+            center_h1=X,
+            center_he4=Y,
         )
 
         binary = BinaryStar(**binary_params,
