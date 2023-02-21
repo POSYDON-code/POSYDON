@@ -124,6 +124,7 @@ class BinaryPopulation:
         ----------
         indices : list, optional
             Custom binary indices to use. Default is range(number_of_binaries).
+            If running with MPI, indices are split between processes if given.
         breakdown_to_df : bool, True
             Breakdown a binary after evolution, converting to dataframe and
             removing the binary instance from memory.
@@ -134,27 +135,37 @@ class BinaryPopulation:
         -------
         None
         """
-        tqdm_bool = kwargs.get('tqdm', False)
-        breakdown_to_df_bool = kwargs.get('breakdown_to_df', True)
+        # combine kw defined at init and any passed here
+        kw = {**self.kwargs, **kwargs}
+        tqdm_bool = kw.get('tqdm', False)
+        breakdown_to_df_bool = kw.get('breakdown_to_df', True)
+        from_hdf_bool = kw.get('from_hdf', False)
 
         if self.comm is None:   # do regular evolution
-            indices = kwargs.get('indices',
-                                 list(range(self.number_of_binaries)))
-            self._safe_evolve(indices=indices,
-                              tqdm=tqdm_bool,
-                              breakdown_to_df=breakdown_to_df_bool,
-                              from_hdf=kwargs.get('from_hdf', False),
-                              **self.kwargs)
+            indices = kw.get('indices',
+                             list(range(self.number_of_binaries)))
+            params = {'indices':indices,
+                      'tqdm':tqdm_bool,
+                      'breakdown_to_df':breakdown_to_df_bool,
+                      'from_hdf':from_hdf_bool}
+            self.kwargs.update(params)
+
+            self._safe_evolve(**self.kwargs)
         else:
             # do MPI evolution
-            indices = np.array_split(list(range(self.number_of_binaries)),
-                                     self.size)
-            batch_indices = indices[self.rank]
+            indices = kw.get('indices',
+                            list(range(self.number_of_binaries)))
+            indices_split = np.array_split(indices, self.size)
+            batch_indices = indices_split[self.rank]
             mpi_tqdm_bool = True if (tqdm_bool and self.rank == 0) else False
-            self._safe_evolve(indices=batch_indices,
-                              tqdm=mpi_tqdm_bool,
-                              breakdown_to_df=breakdown_to_df_bool,
-                              **self.kwargs)
+
+            params = {'indices':batch_indices,
+                      'tqdm':mpi_tqdm_bool,
+                      'breakdown_to_df':breakdown_to_df_bool,
+                      'from_hdf':from_hdf_bool}
+            self.kwargs.update(params)
+
+            self._safe_evolve(**self.kwargs)
 
     def _safe_evolve(self, **kwargs):
         """Evolve binaries in a population, catching warnings/exceptions."""
@@ -448,11 +459,11 @@ class PopulationManager:
 
     def remove(self, binary):
         """Remove a binary instance."""
-        if isinstance(binary, (list, np.ndarray)):   
+        if isinstance(binary, (list, np.ndarray)):
             for b in binary:
                 self.binaries.remove(b)
                 self.indices.remove(b.index)
-                
+
         elif isinstance(binary, BinaryStar):
             self.binaries.remove(binary)
             self.indices.remove(binary.index)
