@@ -1442,24 +1442,29 @@ class StepSN(object):
 
         # Eq 1, in Kalogera, V. 1996, ApJ, 471, 352
         # extended to Eq 17 in Wong, T.-W., Valsecchi, F., Fragos, T., & Kalogera, V. 2012, ApJ, 747, 111
-        # Vr is velocity of preSN He core relative to M_companion, directed
-        # along the positive y axis
+        # Vr is velocity of preSN He core relative to M_companion, NOT necessarily
+        # in the direction of the Y axis if eccentric
+        # Eq from conservation of energy
         Vr = np.sqrt(G * (Mtot_pre) * (2.0 / rpre - 1.0 / Apre))
 
-        # Eq 3, in Kalogera, V. 1996, ApJ, 471, 352
-        # extended to Eq 13, in Wong, T.-W., Valsecchi, F., Fragos, T., & Kalogera, V. 2012, ApJ, 747, 111
-        # get the orbital separation post SN
-        Apost = ((2.0 / rpre)
-                 - (((Vkick ** 2) + (Vr ** 2) + (2 * (Vkick * cos_theta) * Vr)) / (G * Mtot_post))
-                 ) ** -1
-
         # Eq 18, Wong, T.-W., Valsecchi, F., Fragos, T., & Kalogera, V. 2012, ApJ, 747, 111
-        # psi: is the polar angle of the position vector of the CO with respect
-        # to its pre-SN orbital velocity in the companions frame.
+        # psi is the polar angle of the position vector of the CO with respect
+        # to its pre-SN orbital velocity in the companions frame. i.e. angle between Vr and X axis
+        # If epre = 0, sin_psi should be 1
+        # Eq from setting specific angular momentum r X Vr = sqrt(G*M*A*(1-e**2))
         sin_psi = np.round(
             np.sqrt(G * (Mtot_pre) * (1 - epre ** 2) * Apre)
             / (rpre * Vr), 5)
         cos_psi = np.sqrt(1 - sin_psi ** 2)
+
+        # Eq 3, in Kalogera, V. 1996, ApJ, 471, 352
+        # extended to Eq 13, in Wong, T.-W., Valsecchi, F., Fragos, T., & Kalogera, V. 2012, ApJ, 747, 111
+        # get the orbital separation post SN
+        # Eq from conservation of energy
+        Apost = ((2.0 / rpre)
+                 - (((Vkick ** 2) + (Vr ** 2) + (2 * (Vkick * cos_theta) * Vr)) / (G * Mtot_post))
+                 ) ** -1
+
 
                 # get kicks componets in the coordinate system
         Vkx = Vkick * (sin_theta * np.sin(phi) * sin_psi + cos_theta * cos_psi)
@@ -1470,10 +1475,10 @@ class StepSN(object):
         # Eq 4, in Kalogera, V. 1996, ApJ, 471, 352
         # extended to Eq 14 in Wong, T.-W., Valsecchi, F., Fragos, T., & Kalogera, V. 2012, ApJ, 747, 111
         # get the eccentricity post SN
+        # Eq from setting specific angular momentum r X Vr = sqrt(G*M*A*(1-e**2))
 
 
-        #FIXME 
-        x = ((Vkz ** 2 + (Vky + Vkr * sin_psi)** 2)
+        x = ((Vkz ** 2 + (Vky + Vr * sin_psi)** 2)
              * rpre ** 2
              / (G * Mtot_post * Apost))
 
@@ -1483,7 +1488,9 @@ class StepSN(object):
         else:
             epost = np.sqrt(1 - x)
 
-        # Vsys = V_COM_postSN - V_COM_preSN REWORD
+        # Compute COM velocity, VS, post SN
+        # VS_pre in COM frame is 0. So VS_post in COM frame is 
+        # VS_post - VS_pre in our working frame
         
         VC0x = M_he_star * Vr * cos_psi / Mtot_pre
         VC0y = M_he_star * Vr * sin_psi / Mtot_pre
@@ -1505,11 +1512,9 @@ class StepSN(object):
         # Lpre || Z axis
         # Lpost || X axis cross the post SN velocity of the compact object
         # cos(tilt) = Lpre dot Lpost / ||Lpre||||Lpost||
+        # For epre=0 (sin_psi=1), reduces to Eq 4, in Kalogera, V. 1996, ApJ, 471, 352
 
         tilt = np.arccos((Vky + Vr * sin_psi) / np.sqrt( Vkz ** 2 + (Vky + Vr * sin_psi) ** 2 ))
-
-
-        #tilt = np.arccos((Vky + Vr) / ((Vky + Vr) ** 2 + Vkz ** 2) ** (1. / 2))
 
         def SNCheck(
             M_he_star,
