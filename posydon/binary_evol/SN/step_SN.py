@@ -1456,6 +1456,8 @@ class StepSN(object):
             np.sqrt(G * (Mtot_pre) * (1 - epre ** 2) * Apre)
             / (rpre * Vr), 5)
         cos_psi = np.sqrt(1 - sin_psi ** 2)
+        # Allow for -cos_psi (Vr in the -X, +Y quadrant)
+        if E_ma > np.pi: cos_psi *= -1
 
         # Eq 3, in Kalogera, V. 1996, ApJ, 471, 352
         # extended to Eq 13, in Wong, T.-W., Valsecchi, F., Fragos, T., & Kalogera, V. 2012, ApJ, 747, 111
