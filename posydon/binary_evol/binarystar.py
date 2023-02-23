@@ -215,8 +215,8 @@ class BinaryStar:
                 return
 
             next_step = getattr(self.properties, next_step_name, None)
-            print ("inside try: ", next_step_name)
-            
+            print ("next step: ", next_step)
+
             if next_step is None:
                 raise ValueError(
                     "Next step name '{}' does not correspond to a function in "
@@ -224,6 +224,8 @@ class BinaryStar:
 
             self.properties.pre_step(self, next_step_name)
             next_step(self)
+            print ("inside try: ", next_step_name)
+
             
         finally:
             self.append_state()
