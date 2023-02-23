@@ -94,7 +94,7 @@ POSYDON_TO_MESA = {
         'total_moment_of_inertia': 'total_moment_of_inertia',
         'log_total_angular_momentum': 'log_total_angular_momentum',
         'spin': 'spin_parameter',
-        'spin_NS': 'spin_NS',
+        'spin_NS': 'spin_NS',       ## new pulsar params
         'B_field_NS': 'B_field_NS',
         'conv_env_top_mass': 'conv_env_top_mass',
         'conv_env_bot_mass': 'conv_env_bot_mass',
@@ -582,6 +582,21 @@ class MesaGridStep:
                             getattr(star, key_h).extend(history_of_attribute)
                     elif key == 'spin':
                         v_key = getattr(star, 'spin')
+                        setattr(star, key, v_key)
+                        if self.save_initial_conditions:
+                            getattr(star, key_h).append(v_key)
+                        if track_interpolation:
+                            getattr(star, key_h).extend([v_key]*length_hist)
+                    ## update new pulsar params
+                    elif key == 'spin_NS':
+                        v_key = getattr(star, 'spin_NS')
+                        setattr(star, key, v_key)
+                        if self.save_initial_conditions:
+                            getattr(star, key_h).append(v_key)
+                        if track_interpolation:
+                            getattr(star, key_h).extend([v_key]*length_hist)
+                    elif key == 'B_field_NS':
+                        v_key = getattr(star, 'B_field_NS')
                         setattr(star, key, v_key)
                         if self.save_initial_conditions:
                             getattr(star, key_h).append(v_key)
