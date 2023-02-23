@@ -56,8 +56,8 @@ STAR_ATTRIBUTES_FROM_STAR_HISTORY = {
     'lg_wind_mdot': None,               # from binary history
     'spin': 'spin_parameter',
     'profile': None,
-    'spin_NS': None,
-    'B_field_NS': None
+    #'spin_NS': None,
+    #'B_field_NS': None
 }
 
 
@@ -207,7 +207,6 @@ class BinaryStar:
             total_state = (self.star_1.state, self.star_2.state, self.state,
                            self.event)
             next_step_name = self.properties.flow.get(total_state)
-            print (next_step_name)
 
             if next_step_name is None:
                 warnings.warn("Undefined next step given stars/binary states "

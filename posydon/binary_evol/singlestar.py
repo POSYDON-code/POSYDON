@@ -121,8 +121,8 @@ class SingleStar:
         for item in STARPROPERTIES:
             setattr(self, item, kwargs.pop(item, None))
             setattr(self, item + '_history', [getattr(self, item)])
-            if item == "spin_NS":
-                print (getattr(self, item))
+            #if item == "spin_NS":
+            #    print (getattr(self, item))
         for item, val in kwargs.items():
             setattr(self, item, val)
 
