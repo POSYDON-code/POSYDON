@@ -74,8 +74,6 @@ STARPROPERTIES = [
     'spin',                         # the dimesionless spin of the star, if it
                                     # is not a NS, which is equal to
                                     # c*J/(GM^2).
-    'spin_NS',          # NS spin in seconds
-    'B_field_NS',       # NS B-field in Gauss
     'conv_env_top_mass',
     'conv_env_bot_mass',
     'conv_env_top_radius',
@@ -94,6 +92,8 @@ STARPROPERTIES = [
     'profile',  # the profile of the star, including extended information of
                 # its internal structure, for a specific timestep, usually for
                 # the end of the previous step including MESA psygrid.
+    'spin_NS',          # NS spin in seconds
+    'B_field_NS',       # NS B-field in Gauss
 ]
 
 # attributes read from single-star grid runs
@@ -119,9 +119,10 @@ class SingleStar:
         """
         # Set the initial star properties
         for item in STARPROPERTIES:
-            #print (item)
             setattr(self, item, kwargs.pop(item, None))
             setattr(self, item + '_history', [getattr(self, item)])
+            if item == "spin_NS":
+                print (getattr(self, item))
         for item, val in kwargs.items():
             setattr(self, item, val)
 
