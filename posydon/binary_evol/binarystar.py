@@ -207,6 +207,7 @@ class BinaryStar:
             total_state = (self.star_1.state, self.star_2.state, self.state,
                            self.event)
             next_step_name = self.properties.flow.get(total_state)
+            print ("inside try: ", next_step_name)
 
             if next_step_name is None:
                 warnings.warn("Undefined next step given stars/binary states "
@@ -224,6 +225,7 @@ class BinaryStar:
             next_step(self)
         finally:
             self.append_state()
+            print ("inside finally: ", next_step_name)
             self.properties.post_step(self, next_step_name)
 
     def append_state(self):
