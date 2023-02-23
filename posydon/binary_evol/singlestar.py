@@ -75,7 +75,7 @@ STARPROPERTIES = [
                                     # is not a NS, which is equal to
                                     # c*J/(GM^2).
     'spin_NS',          # NS spin in seconds
-    'B_field_NS',       # B-field in Gauss
+    'B_field_NS',       # NS B-field in Gauss
     'conv_env_top_mass',
     'conv_env_bot_mass',
     'conv_env_top_radius',
@@ -136,10 +136,6 @@ class SingleStar:
             self.f_fb = None
         if not hasattr(self, 'SN_type'):
             self.SN_type = None
-        #if not hasattr(self, 'spin_NS'):
-        #    self.spin_NS = None
-        #if not hasattr(self, 'B_field_NS'):
-        #    self.B_field_NS = None
 
         # these quantities are updated in mesa_step.py
         if not hasattr(self, 'avg_c_in_c_core_at_He_depletion'):

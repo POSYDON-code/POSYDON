@@ -94,15 +94,13 @@ POSYDON_TO_MESA = {
         'total_moment_of_inertia': 'total_moment_of_inertia',
         'log_total_angular_momentum': 'log_total_angular_momentum',
         'spin': 'spin_parameter',
-        'spin_NS': 'spin_NS',       ## new pulsar params
-        'B_field_NS': 'B_field_NS',
         'conv_env_top_mass': 'conv_env_top_mass',
         'conv_env_bot_mass': 'conv_env_bot_mass',
         'conv_env_top_radius': 'conv_env_top_radius',
         'conv_env_bot_radius': 'conv_env_bot_radius',
         'conv_env_turnover_time_g': 'conv_env_turnover_time_g',
         'conv_env_turnover_time_l_b': 'conv_env_turnover_time_l_b',
-        'conv_env_turnover_time_l_t': 'conv_env_turnover_time_l_t',
+        'conv_env_turnover_time_l_t': 'conv_envf_turnover_time_l_t',
         'envelope_binding_energy': 'envelope_binding_energy',
         'mass_conv_reg_fortides': 'mass_conv_reg_fortides',
         'thickness_conv_reg_fortides': 'thickness_conv_reg_fortides',
@@ -113,7 +111,9 @@ POSYDON_TO_MESA = {
         'co_core_mass': 'co_core_mass',
         'co_core_radius': 'co_core_radius',
         'lambda_CE_pure_He_star_10cent': 'lambda_CE_pure_He_star_10cent',
-        'profile': True
+        'profile': True,
+        'spin_NS': None,       ## new pulsar params (not in HMS-HMS grid)
+        'B_field_NS': None
     }
 }
 
@@ -807,10 +807,6 @@ class MesaGridStep:
                                                % (i+1, prescrition)]
                         spin = cb.final_values['S%d_%s_spin'
                                                % (i+1, prescrition)]
-                        #spin_NS = cb.final_values['S%d_%s_spin_NS'
-                        #                       % (i+1, prescrition)]
-                        #B_field_NS = cb.final_values['S%d_%s_B_field_NS'
-                        #                       % (i+1, prescrition)]
                         key = prescrition.replace('+', '')
                         key = key.replace('-', '_')
                         key = key.replace('&', '_')
@@ -820,7 +816,7 @@ class MesaGridStep:
                             setattr(star, key, None)
                         else:
                             setattr(star, key,
-                                    [state, SN_type, f_fb, mass, spin]) #spin_NS, B_field_NS])
+                                    [state, SN_type, f_fb, mass, spin])
 
     def initial_final_interpolation(self, star_1_CO=False, star_2_CO=False):
         """Update the binary through initial-final interpolation."""
@@ -877,6 +873,12 @@ class MesaGridStep:
                         setattr(star, key, fv[key_p])
                     elif key == 'spin':
                         current = getattr(star, 'spin')
+                        setattr(star, key, current)
+                    elif key == 'spin_NS':
+                        current = getattr(star, 'spin_NS')
+                        setattr(star, key, current)
+                    elif key == 'B_field_NS':
+                        current = getattr(star, 'B_field_NS')
                         setattr(star, key, current)
                     elif key == 'log_R':
                         mass = fv['star_%d_mass' % (k+1)]
@@ -995,10 +997,8 @@ class MesaGridStep:
                             f_fb = fv['S%d_%s_f_fb' % (i+1, prescrition)]
                             mass = fv['S%d_%s_mass' % (i+1, prescrition)]
                             spin = fv['S%d_%s_spin' % (i+1, prescrition)]
-                            #spin_NS = fv['S%d_%s_spin_NS' % (i+1, prescrition)]
-                            #B_field_NS = fv['S%d_%s_B_field_NS' % (i+1, prescrition)]
                             setattr(star, key,
-                                    [state, SN_type, f_fb, mass, spin]) #spin_NS, B_field_NS])
+                                    [state, SN_type, f_fb, mass, spin])
 
     # STOPPING METHODS
 
