@@ -40,7 +40,9 @@ from posydon.utils.common_functions import (
     orbital_period_from_separation,
     inspiral_timescale_from_separation,
     separation_evol_wind_loss,
-    calculate_Patton20_values_at_He_depl
+    calculate_Patton20_values_at_He_depl,
+    draw_NS_spin,
+    draw_NS_Bfield
 )
 
 from posydon.binary_evol.binarystar import BINARYPROPERTIES
@@ -406,15 +408,15 @@ class StepSN(object):
         star.lg_mdot = None
         star.lg_system_mdot = None
 
-    def _draw_NS_spin(self, star):
-        """Draw the initial NS spin from a uniform random distribution"""
+    #def _draw_NS_spin(self, star):
+    #    """Draw the initial NS spin from a uniform random distribution"""
         ## units are in seconds
-        star.spin_NS =  np.random.uniform(2*np.pi/.01, 2*np.pi/.1)
+    #    star.spin_NS =  np.random.uniform(2*np.pi/.01, 2*np.pi/.1)
 
-    def _draw_NS_Bfield(self, star):
-        """Draw the initial NS B-field from a uniform random distribution"""
+    #def _draw_NS_Bfield(self, star):
+    #    """Draw the initial NS B-field from a uniform random distribution"""
         ## units are in Gauss
-        star.B_field_NS = np.random.uniform(1e10, 1e13)
+    #    star.B_field_NS = np.random.uniform(1e10, 1e13)
 
     def __call__(self, binary):
         """Perform the supernova step on a binary object.
@@ -547,9 +549,9 @@ class StepSN(object):
                     raise ValueError('max_neutrino_mass_loss option not '
                                      'supported by use_intrp_values=True!')
 
-                CC_properites = getattr(star, key)
+                CC_properties = getattr(star, key)
                 star.state, star.SN_type, star.f_fb, star.mass, star.spin = (
-                    CC_properites)
+                    CC_properties)
 
                 for key in STARPROPERTIES:
                     if key not in ["state", "mass", "spin"]:
@@ -639,8 +641,9 @@ class StepSN(object):
                         star.m_disk_radiated = 0.
                         star.max_he_mass_ejected = np.nan
                         star.state = 'NS'
-                        self._draw_NS_spin(star)
-                        self._draw_NS_Bfield(star)
+                        star.spin = 0.0
+                        star.spin_NS = draw_NS_spin()
+                        star.B_field_NS = draw_NS_Bfield()
 
                 elif self.use_core_masses:
                     # If the profile is not available the star spin
@@ -666,11 +669,13 @@ class StepSN(object):
                         star.max_he_mass_ejected = np.nan
                         star.state = "BH"
                     else:
-                        star.spin = 0.0
                         star.m_disk_accreted = 0.0
                         star.m_disk_radiated = 0.0
                         star.max_he_mass_ejected = np.nan
                         star.state = "NS"
+                        star.spin = 0.0
+                        star.spin_NS = draw_NS_spin()
+                        star.B_field_NS = draw_NS_Bfield()
                 else:
                     for key in STARPROPERTIES:
                         setattr(star, key, None)
@@ -754,6 +759,8 @@ class StepSN(object):
                         star.m_disk_radiated = 0.0
                         star.max_he_mass_ejected = np.nan
                         star.spin = 0.0
+                        star.spin_NS = draw_NS_spin()
+                        star.B_field_NS = draw_NS_Bfield()
                     else:
                         for key in STARPROPERTIES:
                             setattr(star, key, None)
@@ -782,12 +789,13 @@ class StepSN(object):
                         star.max_he_mass_ejected = np.nan
                         star.state = "BH"
                     else:
-                        star.spin = 0.0
                         star.m_disk_accreted = 0.0
                         star.m_disk_radiated = 0.0
                         star.max_he_mass_ejected = np.nan
                         star.state = "NS"
-
+                        star.spin = 0.0
+                        star.spin_NS = draw_NS_spin()
+                        star.B_field_NS = draw_NS_Bfield()
                 else:
                     for key in STARPROPERTIES:
                         setattr(star, key, None)
@@ -944,7 +952,7 @@ class StepSN(object):
                             'Invalid co/He core masses! Setting m_WD=m_star!')
                     else:
                         raise ValueError('Invalid co/He core masses!')
-                f_fb = 1.0  # no SN the no kick is assumed
+                f_fb = 1.0  # no SN the no xkick is assumed
                 state = "WD"
 
                 return m_rembar, f_fb, state, SN_type

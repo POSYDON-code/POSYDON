@@ -119,6 +119,7 @@ class SingleStar:
         """
         # Set the initial star properties
         for item in STARPROPERTIES:
+            #print (item)
             setattr(self, item, kwargs.pop(item, None))
             setattr(self, item + '_history', [getattr(self, item)])
         for item, val in kwargs.items():

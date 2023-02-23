@@ -94,6 +94,8 @@ POSYDON_TO_MESA = {
         'total_moment_of_inertia': 'total_moment_of_inertia',
         'log_total_angular_momentum': 'log_total_angular_momentum',
         'spin': 'spin_parameter',
+        'spin_NS': 'spin_NS',
+        'B_field_NS': 'B_field_NS',
         'conv_env_top_mass': 'conv_env_top_mass',
         'conv_env_bot_mass': 'conv_env_bot_mass',
         'conv_env_top_radius': 'conv_env_top_radius',
@@ -790,6 +792,10 @@ class MesaGridStep:
                                                % (i+1, prescrition)]
                         spin = cb.final_values['S%d_%s_spin'
                                                % (i+1, prescrition)]
+                        #spin_NS = cb.final_values['S%d_%s_spin_NS'
+                        #                       % (i+1, prescrition)]
+                        #B_field_NS = cb.final_values['S%d_%s_B_field_NS'
+                        #                       % (i+1, prescrition)]
                         key = prescrition.replace('+', '')
                         key = key.replace('-', '_')
                         key = key.replace('&', '_')
@@ -799,7 +805,7 @@ class MesaGridStep:
                             setattr(star, key, None)
                         else:
                             setattr(star, key,
-                                    [state, SN_type, f_fb, mass, spin])
+                                    [state, SN_type, f_fb, mass, spin]) #spin_NS, B_field_NS])
 
     def initial_final_interpolation(self, star_1_CO=False, star_2_CO=False):
         """Update the binary through initial-final interpolation."""
@@ -974,8 +980,10 @@ class MesaGridStep:
                             f_fb = fv['S%d_%s_f_fb' % (i+1, prescrition)]
                             mass = fv['S%d_%s_mass' % (i+1, prescrition)]
                             spin = fv['S%d_%s_spin' % (i+1, prescrition)]
+                            #spin_NS = fv['S%d_%s_spin_NS' % (i+1, prescrition)]
+                            #B_field_NS = fv['S%d_%s_B_field_NS' % (i+1, prescrition)]
                             setattr(star, key,
-                                    [state, SN_type, f_fb, mass, spin])
+                                    [state, SN_type, f_fb, mass, spin]) #spin_NS, B_field_NS])
 
     # STOPPING METHODS
 
