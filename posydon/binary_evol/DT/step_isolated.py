@@ -92,5 +92,6 @@ class isolated_step(detached_step):
         """
         binary = self.binary
         binary.orbital_period = 10.**99
+        print("Isolated initialize")
         binary.eccentricity = 0.0
         binary.separation = orbital_separation_from_period(binary.orbital_period, 1.,1.)
