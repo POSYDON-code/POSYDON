@@ -401,7 +401,7 @@ class StepSN(object):
 
     def __repr__(self):
         """Get the string representation of the class and any parameters."""
-        return "SN step (kick distribution: {})".format(self.kick_distribution)
+        return "SN step (kick : {})".format(self.kick)
 
     def _reset_other_star_properties(self, star):
         """Reset the properties of the star that is not being collapsed."""
@@ -589,6 +589,8 @@ class StepSN(object):
                     star.m_disk_accreted = np.nan
                     star.m_disk_radiated = np.nan
                     star.max_he_mass_ejected = np.nan
+                    star.spin_NS = draw_NS_spin()
+                    star.B_field_NS = draw_NS_Bfield()
                     for key in STARPROPERTIES:
                         if key not in ["state", "mass", "spin",
                                        "m_disk_accreted ", "m_disk_radiated",
@@ -704,6 +706,8 @@ class StepSN(object):
                     star.m_disk_accreted = np.nan
                     star.m_disk_radiated = np.nan
                     star.max_he_mass_ejected = np.nan
+                    star.spin_NS = draw_NS_spin()
+                    star.B_field_NS = draw_NS_Bfield()
                     for key in STARPROPERTIES:
                         if key not in ["state", "mass", "spin",
                                        "m_disk_accreted ", "m_disk_radiated",
