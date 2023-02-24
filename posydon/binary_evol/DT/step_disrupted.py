@@ -80,7 +80,6 @@ class disrupted_step(isolated_step):
             elif binary.star_2 in STAR_STATES_CO:
                 binary.star_2 = None
         '''
-        binary.event == None
         print('Detached binary event none')
+
         super().__call__(binary)
-    

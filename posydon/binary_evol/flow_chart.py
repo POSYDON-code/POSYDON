@@ -223,10 +223,13 @@ for b in ['initially_single_star']:
                 POSYDON_FLOW_CHART[(s1, s2, b, e)] = 'step_initially_single'
                 POSYDON_FLOW_CHART[(s1, s2, b, e)] = 'step_initially_single'
 
+
+BINARY_EVENTS_AFTER_DETACHED = BINARY_EVENTS_ALL.copy()
+BINARY_EVENTS_AFTER_DETACHED.remove(  "CC1", "CC2",  'MaxTime_exceeded','maxtime',)
 for b in ['disrupted']:
     for s1 in STAR_STATES_ALL:
         for s2 in STAR_STATES_ALL:
-            for e in BINARY_EVENTS_ALL:
+            for e in BINARY_EVENTS_AFTER_DETACHED:
                 POSYDON_FLOW_CHART[(s1, s2, b, e)] = 'step_disrupted'
                 POSYDON_FLOW_CHART[(s1, s2, b, e)] = 'step_disrupted'
 
