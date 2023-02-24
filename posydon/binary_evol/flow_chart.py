@@ -225,7 +225,8 @@ for b in ['initially_single_star']:
 
 
 BINARY_EVENTS_AFTER_DETACHED = BINARY_EVENTS_ALL.copy()
-BINARY_EVENTS_AFTER_DETACHED.remove(  "CC1", "CC2",  'MaxTime_exceeded','maxtime',)
+[BINARY_EVENTS_AFTER_DETACHED.remove(x) for x in ["CC1", "CC2",  'MaxTime_exceeded','maxtime']]
+
 for b in ['disrupted']:
     for s1 in STAR_STATES_ALL:
         for s2 in STAR_STATES_ALL:
