@@ -557,6 +557,21 @@ class MesaGridStep:
                             history_of_attribute = cb_bh[key_p][:-1]
                             getattr(star, key_h).extend(
                                 history_of_attribute)
+                    ## update new pulsar params
+                    elif key == 'spin_NS':
+                        v_key = getattr(star, 'spin_NS')
+                        setattr(star, key, v_key)
+                        if self.save_initial_conditions:
+                            getattr(star, key_h).append(v_key)
+                        if track_interpolation:
+                            getattr(star, key_h).extend([v_key]*length_hist)
+                    elif key == 'B_field_NS':
+                        v_key = getattr(star, 'B_field_NS')
+                        setattr(star, key, v_key)
+                        if self.save_initial_conditions:
+                            getattr(star, key_h).append(v_key)
+                        if track_interpolation:
+                            getattr(star, key_h).extend([v_key]*length_hist)
                     elif key == 'state':
                         continue
                     else:
@@ -860,6 +875,12 @@ class MesaGridStep:
                     elif key in ['lg_mdot', 'lg_system_mdot', 'lg_wind_mdot']:
                         key_p = POSYDON_TO_MESA['star'][key]+'_%d' % (k+1)
                         setattr(star, key, fv[key_p])
+                    elif key == 'spin_NS':
+                        current = getattr(star, 'spin_NS')
+                        setattr(star, key, current)
+                    elif key == 'B_field_NS':
+                        current = getattr(star, 'B_field_NS')
+                        setattr(star, key, current)
                     elif key == 'state':
                         continue
                     else:
