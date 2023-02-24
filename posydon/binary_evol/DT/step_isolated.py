@@ -46,6 +46,7 @@ class isolated_step(detached_step):
         grid_name_Hrich=None,
         grid_name_strippedHe=None,
         path=PATH_TO_POSYDON_DATA,
+        print('Init step isolated')
         #dt=None,
         #n_o_steps_history=None,
         do_wind_loss=False,

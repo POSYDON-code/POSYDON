@@ -70,7 +70,6 @@ class disrupted_step(isolated_step):
         *args,
         **kwargs)
 
-    print('Init disrupted')
     def __call__(self,binary):
 
         '''
