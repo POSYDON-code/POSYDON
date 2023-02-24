@@ -1,4 +1,4 @@
-"""Supernova step.
+f"""Supernova step.
 
 This step models the end of life of stars by being applied to a binary
 object and verifying its state. It performs the collapse prescription
@@ -408,16 +408,6 @@ class StepSN(object):
         star.lg_mdot = None
         star.lg_system_mdot = None
 
-    #def _draw_NS_spin(self, star):
-    #    """Draw the initial NS spin from a uniform random distribution"""
-        ## units are in seconds
-    #    star.spin_NS =  np.random.uniform(2*np.pi/.01, 2*np.pi/.1)
-
-    #def _draw_NS_Bfield(self, star):
-    #    """Draw the initial NS B-field from a uniform random distribution"""
-        ## units are in Gauss
-    #    star.B_field_NS = np.random.uniform(1e10, 1e13)
-
     def __call__(self, binary):
         """Perform the supernova step on a binary object.
 
@@ -554,7 +544,7 @@ class StepSN(object):
                     CC_properties)
 
                 for key in STARPROPERTIES:
-                    if key not in ["state", "mass", "spin"]:
+                    if key not in ["state", "mass", "spin", "spin_NS", "B_field_NS"]:
                         setattr(star, key, None)
                 return
 
