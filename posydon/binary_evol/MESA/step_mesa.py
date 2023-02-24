@@ -100,7 +100,7 @@ POSYDON_TO_MESA = {
         'conv_env_bot_radius': 'conv_env_bot_radius',
         'conv_env_turnover_time_g': 'conv_env_turnover_time_g',
         'conv_env_turnover_time_l_b': 'conv_env_turnover_time_l_b',
-        'conv_env_turnover_time_l_t': 'conv_envf_turnover_time_l_t',
+        'conv_env_turnover_time_l_t': 'conv_env_turnover_time_l_t',
         'envelope_binding_energy': 'envelope_binding_energy',
         'mass_conv_reg_fortides': 'mass_conv_reg_fortides',
         'thickness_conv_reg_fortides': 'thickness_conv_reg_fortides',
