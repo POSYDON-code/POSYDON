@@ -73,7 +73,7 @@ def slurm_job(CREATE_GRID_SLICES=False,
             N = df.shape[0]-1
             f.write(f"#SBATCH --array=0-{N}\n")
             f.write(f"#SBATCH --output={PATH}/logs/plot_grid_%a.out\n")
-            f.write(f"\nsrun python {PATH_TO_POSYDON}/bin/run-pipeline")
+            f.write(f"\nsrun python {PATH_TO_POSYDON}/bin/run-pipeline  $SLURM_ARRAY_TASK_ID")
 
         if TRAIN_INTERPOLATORS:
             f.write(f"export PATH_TO_POSYDON={PATH_TO_POSYDON}\n")
