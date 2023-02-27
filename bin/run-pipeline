@@ -352,7 +352,8 @@ if __name__ == '__main__':
         i = int(sys.argv[1])
         plot_grid(i, verbose=VERBOSE)
 
-    CHECK_FAILURE_RATE = True:
+    # JOB ARRAY
+    CHECK_FAILURE_RATE = True
     if CHECK_FAILURE_RATE:
         i = int(sys.argv[1])
         check_failure_rate(i, verbose=VERBOSE)
