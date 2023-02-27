@@ -74,10 +74,9 @@ if __name__ == '__main__':
         ###### EXAMPLE ######
         GRID_TYPES = ['HMS-HMS']
         METALLICITIES = ['1e-01_Zsun']
-        # GRID_SLICES = ['grid_low_res_0','grid_low_res_1','grid_low_res_2',
-        #                 'grid_low_res_3','grid_low_res_4','grid_low_res_5',
-        #                 'grid_rerun_opacitymax']
-        GRID_SLICES = ['grid_test']
+        GRID_SLICES = ['grid_low_res_0','grid_low_res_1','grid_low_res_2',
+                        'grid_low_res_3','grid_low_res_4','grid_low_res_5',
+                        'grid_rerun_opacitymax']
         COMPRESSIONS = ['LITE','ORIGINAL']
         #####################
         create_csv_step_1(GRID_TYPES,METALLICITIES,GRID_SLICES,COMPRESSIONS)
