@@ -65,14 +65,21 @@ STEP 2:
 
 import os
 import sys
+import pickle
 import numpy as np
 import pandas as pd
+from shutil import copyfile
 from collections import Counter
 from posydon.grids.psygrid import (PSyGrid,
                                    join_grids,
                                    DEFAULT_HISTORY_DS_EXCLUDE,
                                    DEFAULT_PROFILE_DS_EXCLUDE,
                                    EXTRA_COLS_DS_EXCLUDE)
+from posydon.grids.post_processing import (post_process_grid,
+                                           add_post_processed_quantities)
+from posydon.interpolation.IF_interpolation import IFInterpolator
+
+
 
 def create_grid_slice(i, step_1="step_1.csv", verbose=False):
 
@@ -321,6 +328,151 @@ def check_failure_rate(i, step_3="step_3.csv", verbose=False):
         n += count[key]
     print('Failure rate', round(count['not_converged']/n*100,2),'%')
 
+
+def post_processing(i, step_4="step_4.csv", verbose=False):
+
+    df = pd.read_csv(os.path.join(PATH, step_4))
+    grid_path = df.loc[i,'path_to_grid']
+    processed_grid_path = df.loc[i,'path_to_processed_grid']
+    grid = PSyGrid(verbose=False)
+    grid.load(grid_path)
+
+    if verbose:
+        print('Compute process quantities ...')
+    if "CO" in grid_path:
+        star_2_CO = True
+    else:
+        star_2_CO = False
+    grid_ORIGINAL = PSyGrid(grid_path.replace('LITE','ORIGINAL'))
+    MESA_dirs_EXTRA_COLUMNS, EXTRA_COLUMNS = post_process_grid(grid_ORIGINAL,
+                                                               index=None,
+                                                               star_2_CO=star_2_CO,
+                                                               verbose=verbose)
+
+
+    # post processed quantities are appended to the grid object, hence
+    # we create a copy of it and append back to it
+    if os.path.exists(processed_grid_path):
+        if verbose:
+            print('Post processed grid file alredy exist, removing it...')
+        os.remove(processed_grid_path)
+    copyfile(grid_path, processed_grid_path)
+
+    if verbose:
+        print('Add process quantities to grid...')
+    grid_LITE = PSyGrid(processed_grid_path)
+    add_post_processed_quantities(grid_LITE, MESA_dirs_EXTRA_COLUMNS,
+                                  EXTRA_COLUMNS, verbose=verbose)
+    grid_LITE.close()
+
+
+def train_interpolators(i, step_5="step_5.csv", verbose=False):)
+
+    df = pd.read_csv(os.path.join(PATH, step_5))
+    grid_path = df.loc[i,'path_to_grid']
+    interpolator_path = df.loc[i,'path_to_interpolator']
+    grid = PSyGrid(verbose=False)
+    grid.load(grid_path)
+
+    grid = PSyGrid(grid_train)
+
+    second = ['S1_direct_f_fb', 'S1_direct_mass', 'S1_direct_spin']
+    third = ['S1_Fryer+12-rapid_f_fb', 'S1_Fryer+12-rapid_mass', 'S1_Fryer+12-rapid_spin']
+    fourth = ['S1_Fryer+12-delayed_f_fb', 'S1_Fryer+12-delayed_mass', 'S1_Fryer+12-delayed_spin']
+    fifth = ['S1_Sukhbold+16-engineN20_f_fb', 'S1_Sukhbold+16-engineN20_mass', 'S1_Sukhbold+16-engineN20_spin']
+    sixth = ['S1_Patton&Sukhbold20-engineN20_f_fb', 'S1_Patton&Sukhbold20-engineN20_mass', 'S1_Patton&Sukhbold20-engineN20_spin']
+
+
+    first = [key for key in grid.final_values.dtype.names
+    if key != "model_number"
+    and (type(grid.final_values[key][0]) != np.str_)
+    and any(~np.isnan(grid.final_values[key]))]
+
+    for sec in second:
+        first.remove(sec)
+
+    for thrd in third:
+        first.remove(thrd)
+
+    for frth in fourth:
+        first.remove(frth)
+
+    for ffth in fifth:
+        first.remove(ffth)
+
+    for sxth in sixth:
+        first.remove(sxth)
+
+    # TODO: train CC2 quantities coming from reverse MT systems
+    interp = IFInterpolator(grid=grid, interpolators = [
+        {
+            "interp_method": [method, method, method],
+            "interp_classes": ["no_MT", "stable_MT", "unstable_MT"],
+            "out_keys": first,
+            "class_method": "kNN",
+            "c_keys": ["interpolation_class", 'S1_state', 'S2_state',
+                       # Collapse quantities
+                       'S1_direct_SN_type', 'S1_Fryer+12-rapid_SN_type',
+                       'S1_Fryer+12-delayed_SN_type', 'S1_Sukhbold+16-engineN20_SN_type',
+                       'S1_Patton&Sukhbold20-engineN20_SN_type',
+                       # v1 POSYDON does not have S2 reaching CC before S1
+                       # all these classifier map to None
+                       'S2_direct_state', 'S2_Fryer+12-rapid_state',
+                       'S2_Fryer+12-delayed_state', 'S2_Sukhbold+16-engineN20_state',
+                       'S2_Patton&Sukhbold20-engineN20_state',
+                       'S2_direct_SN_type', 'S2_Fryer+12-rapid_SN_type',
+                       'S2_Fryer+12-delayed_SN_type', 'S2_Sukhbold+16-engineN20_SN_type',
+                       'S2_Patton&Sukhbold20-engineN20_SN_type'
+                      ],
+            "c_key": "interpolation_class"
+        },
+        {
+            "interp_method": [method, method, method],
+            "interp_classes": ["BH", "WD", "NS"],
+            "out_keys": second,
+            "class_method": "kNN",
+            "c_keys": ['S1_direct_state'],
+            "c_key": 'S1_direct_state'
+        },
+        {
+            "interp_method": [method, method, method],
+            "interp_classes": ["BH", "WD", "NS"],
+            "out_keys": third,
+            "class_method": "kNN",
+            "c_keys": ['S1_Fryer+12-rapid_state'],
+            "c_key": 'S1_Fryer+12-rapid_state'
+        },
+        {
+            "interp_method": [method, method, method],
+            "interp_classes": ["BH", "WD", "NS"],
+            "out_keys": fourth,
+            "class_method": "kNN",
+            "c_keys": ['S1_Fryer+12-delayed_state'],
+            "c_key": 'S1_Fryer+12-delayed_state'
+        },
+        {
+            "interp_method": [method, method, method],
+            "interp_classes": ["BH", "WD", "NS"],
+            "out_keys": fifth,
+            "class_method": "kNN",
+            "c_keys": ['S1_Sukhbold+16-engineN20_state'],
+            "c_key": 'S1_Sukhbold+16-engineN20_state'
+        },
+        {
+            "interp_method": [method, method, method],
+            "interp_classes": ["BH", "WD", "NS"],
+            "out_keys": sixth,
+            "class_method": "kNN",
+            "c_keys": ['S1_Patton&Sukhbold20-engineN20_state'],
+            "c_key": 'S1_Patton&Sukhbold20-engineN20_state'
+        }
+    ])
+
+     # training and saving
+    interp.train()
+    interp.save(interpolator_path)
+
+
 def export_dataset():
     # this fucntion should copy all the files to a directory
     # for POSYDON pop synth
@@ -347,16 +499,28 @@ if __name__ == '__main__':
         combine_grid_slices(verbose=VERBOSE)
 
     # JOB ARRAY
-    PLOT_GRIDS = True
+    PLOT_GRIDS = False
     if PLOT_GRIDS:
         i = int(sys.argv[1])
         plot_grid(i, verbose=VERBOSE)
 
     # JOB ARRAY
-    CHECK_FAILURE_RATE = True
+    CHECK_FAILURE_RATE = False
     if CHECK_FAILURE_RATE:
         i = int(sys.argv[1])
         check_failure_rate(i, verbose=VERBOSE)
+
+    # JOB ARRAY
+    POST_PROCESSING = True
+    if POST_PROCESSING:
+        i = int(sys.argv[1])
+        post_processing(i, verbose=VERBOSE)
+
+    # JOB ARRAY
+    TRAIN_INTERPOLATORS = True
+    if TRAIN_INTERPOLATORS:
+        i = int(sys.argv[1])
+        train_interpolators(i, verbose=VERBOSE)
 
     # SINGLE JOB
     # train_interpolators()
