@@ -19,7 +19,7 @@ STEP 3: plot grid slices
 ---> loop all plot types
 ---> chek failure rate
 
-STEP 4: rerun grid with fix A
+STEP OPTIONAL: rerun grid with fix A
 grid_low_res_combined.rerun(index=logic) --> grid_rerun_1/grid.csv
                                         --> grid_random_1_rerun_1/grid.csv
 ---- MEN/WOMEN POWER will run reruns ----
@@ -32,35 +32,12 @@ call STEP 2: [['grid_low_res_combined','grid_rerun_1'],
 call STEP 3: rerun grid with fix B
 ........ --> grid_rerun_2/grid.csv, call STEP 1, 2.. 3
 
-STEP 5:
+STEP 4:
 do post processing on the ORIGINAL grids and append back on
 LITE/ORIGINAL for both grid_low_res_combined_rerun_N and grid_random_1_rerun_N
 
-STEP 6:
+STEP 5:
 train interpolators
-
-
-I NEED TO REGENERATE THE GRIDS AFTER A PR
-
-STEP 1:
-'HMS-HMS', '1e-01_Zsun', LITE/ORIGINAL
-['grid_low_res_0','grid_low_res_1','grid_low_res_2',
-'grid_low_res_3','grid_low_res_4','grid_low_res_5',
-'grid_random_1','grid_low_res_rerun_1', 'grid_low_res_rerun_2',
-'grid_low_res_rerun_3']
-STEP 2:
-[
-['grid_low_res_0','grid_low_res_1','grid_low_res_2',
-'grid_low_res_3','grid_low_res_4','grid_low_res_5'], --> grid_low_combined.h5
-['grid_low_combined','grid_low_res_rerun_1'], ---> grid_low_res_combined_rerun_1.h5
-['grid_low_res_combined_rerun_1','grid_rerun_2'], ---> grid_low_res_combined_rerun_2.h5
-['grid_low_res_combined_rerun_2','grid_rerun_3'], ---> grid_low_res_combined_rerun_3.h5
-['grid_low_random_1','grid_random_1_rerun_1'], ---> grid_low_res_combined_rerun_1.h5
-['grid_low_random_1_rerun_1','grid_random_1_rerun_2'], ---> grid_low_res_combined_rerun_2.h5
-['grid_low_random_1_rerun_2','grid_random_1_rerun_3'], ---> grid_low_res_combined_rerun_3.h5
-]
-
-
 '''
 
 import os
@@ -410,18 +387,26 @@ def train_interpolators(i, step_5="step_5.csv", verbose=False):)
             "interp_classes": ["no_MT", "stable_MT", "unstable_MT"],
             "out_keys": first,
             "class_method": "kNN",
-            "c_keys": ["interpolation_class", 'S1_state', 'S2_state',
+            "c_keys": ['interpolation_class',
+                       'S1_state',
+                       'S2_state',
                        # Collapse quantities
-                       'S1_direct_SN_type', 'S1_Fryer+12-rapid_SN_type',
-                       'S1_Fryer+12-delayed_SN_type', 'S1_Sukhbold+16-engineN20_SN_type',
+                       'S1_direct_SN_type',
+                       'S1_Fryer+12-rapid_SN_type',
+                       'S1_Fryer+12-delayed_SN_type',
+                       'S1_Sukhbold+16-engineN20_SN_type',
                        'S1_Patton&Sukhbold20-engineN20_SN_type',
                        # v1 POSYDON does not have S2 reaching CC before S1
                        # all these classifier map to None
-                       'S2_direct_state', 'S2_Fryer+12-rapid_state',
-                       'S2_Fryer+12-delayed_state', 'S2_Sukhbold+16-engineN20_state',
+                       'S2_direct_state',
+                       'S2_Fryer+12-rapid_state',
+                       'S2_Fryer+12-delayed_state',
+                       'S2_Sukhbold+16-engineN20_state',
                        'S2_Patton&Sukhbold20-engineN20_state',
-                       'S2_direct_SN_type', 'S2_Fryer+12-rapid_SN_type',
-                       'S2_Fryer+12-delayed_SN_type', 'S2_Sukhbold+16-engineN20_SN_type',
+                       'S2_direct_SN_type',
+                       'S2_Fryer+12-rapid_SN_type',
+                       'S2_Fryer+12-delayed_SN_type',
+                       'S2_Sukhbold+16-engineN20_SN_type',
                        'S2_Patton&Sukhbold20-engineN20_SN_type'
                       ],
             "c_key": "interpolation_class"
