@@ -101,6 +101,11 @@ PATH_TO_GRIDS/
 
 def create_grid_slice(grid_path, compression):
     grid_name = grid_path.split('/')[-1]
+    grid_output = os.path.join('/',os.path.join(*grid_path.split('/')[:-1]),
+                                            compression,grid_name+'.h5')
+    if VERBOSE:
+        print('processing ', grid_path)
+        print('saving file ',  grid_output)
 
     if compression == 'ORIGINAL':
         history_DS_error = None
@@ -119,11 +124,16 @@ def create_grid_slice(grid_path, compression):
 
     grid = PSyGrid(verbose=True)
     grid.create(grid_path,
-                os.path.join(os.path.join(*grid_path.split('/')[:-1]),compression,grid_name+'.h5'),
-                overwrite=True, history_DS_error=history_DS_error, profile_DS_error=profile_DS_error,
-                history_DS_exclude=history_DS_exclude, profile_DS_exclude=profile_DS_exclude,
+                grid_output,
+                overwrite=True,
+                history_DS_error=history_DS_error,
+                profile_DS_error=profile_DS_error,
+                history_DS_exclude=history_DS_exclude,
+                profile_DS_exclude=profile_DS_exclude,
                 profile_DS_interval=profile_DS_interval,
-                compression="gzip9", start_at_RLO=False, initial_RLO_fix=True)
+                compression="gzip9",
+                start_at_RLO=False,
+                initial_RLO_fix=True)
     grid.close()
 
 if __name__ == '__main__':
