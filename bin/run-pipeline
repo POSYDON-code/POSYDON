@@ -119,7 +119,7 @@ def create_grid_slice(grid_path, compression):
 
     grid = PSyGrid(verbose=True)
     grid.create(grid_path,
-                os.path.join(os.path.join(*path.split('/')[:-1]),compression,grid_name+'.h5'),
+                os.path.join(os.path.join(*grid_path.split('/')[:-1]),compression,grid_name+'.h5'),
                 overwrite=True, history_DS_error=history_DS_error, profile_DS_error=profile_DS_error,
                 history_DS_exclude=history_DS_exclude, profile_DS_exclude=profile_DS_exclude,
                 profile_DS_interval=profile_DS_interval,
