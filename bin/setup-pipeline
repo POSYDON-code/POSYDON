@@ -170,7 +170,7 @@ def create_csv_step_4(GRID_TYPES, METALLICITIES, GRID_SLICES, COMPRESSIONS,
                                   compression, grid_slice+'.h5'))
                     processed_grids.append(os.path.join(PATH_TO_GRIDS,
                                   grid_type, version, metallicity,
-                                  compression, grid_slice+'_processed.h5')))
+                                  compression, grid_slice+'_processed.h5'))
     grids = np.array(grids)
     df = pd.DataFrame()
     df['path_to_grid'] = grids
@@ -193,7 +193,7 @@ def create_csv_step_5(GRID_TYPES, METALLICITIES, GRID_SLICES,
                         interpolators.append(os.path.join(PATH_TO_GRIDS,
                                       grid_type, version, metallicity,
                                       'interpolation_objects',
-                                      method+'.pkl')))
+                                      method+'.pkl'))
     grids = np.array(grids)
     df = pd.DataFrame()
     df['path_to_grid'] = grids
@@ -209,12 +209,12 @@ if __name__ == '__main__':
 
     # EXAMPLE SETUP (they currently run independently)
     # TODO: add a linked slurm job arrays which are waiting for each others
-    CREATE_GRID_SLICES = False
-    COMBINE_GRID_SLICES = False
-    PLOT_GRIDS = False
-    CHECK_FAILURE_RATE = False
+    CREATE_GRID_SLICES = True
+    COMBINE_GRID_SLICES = True
+    PLOT_GRIDS = True
+    CHECK_FAILURE_RATE = True
     POST_PROCESSING = True
-    TRAIN_INTERPOLATORS = False
+    TRAIN_INTERPOLATORS = True
 
     if CREATE_GRID_SLICES:
         ###### EXAMPLE ######
