@@ -68,7 +68,7 @@ def slurm_job(CREATE_GRID_SLICES=False,
             f.write(f"#SBATCH --output={PATH}/logs/combine_grid_slices.out\n")
             f.write(f"\nsrun python {PATH_TO_POSYDON}/bin/run-pipeline")
 
-        if PLOT_GRIDS:
+        if PLOT_GRIDS or CHECK_FAILURE_RATE:
             df = pd.read_csv(os.path.join(PATH,"step_3.csv"))
             N = df.shape[0]-1
             f.write(f"#SBATCH --array=0-{N}\n")
@@ -186,6 +186,7 @@ if __name__ == '__main__':
         slurm_job(COMBINE_GRID_SLICES=COMBINE_GRID_SLICES, verbose=VERBOSE)
 
     PLOT_GRIDS = True
+    CHECK_FAILURE_RATE = True
     if PLOT_GRIDS:
         ###### EXAMPLE ######
         GRID_TYPES = ['HMS-HMS']
