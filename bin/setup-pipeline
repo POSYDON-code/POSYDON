@@ -83,7 +83,7 @@ if __name__ == '__main__':
         create_csv_step_1(GRID_TYPES,METALLICITIES,GRID_SLICES,COMPRESSIONS)
 
         # create the slurm job
-        slurm_job(CREATE_GRID_SLICES=True, verbose=VERBOSE)
+        slurm_job(CREATE_GRID_SLICES=CREATE_GRID_SLICES, verbose=VERBOSE)
 
     CONCATENATE_GRID_SLICES = False
     if CONCATENATE_GRID_SLICES:
