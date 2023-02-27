@@ -73,40 +73,10 @@ from posydon.grids.psygrid import (PSyGrid,
                                    DEFAULT_PROFILE_DS_EXCLUDE,
                                    EXTRA_COLS_DS_EXCLUDE)
 
-'''
-Data tree structure
-
-PATH_TO_GRIDS/
-    /HMS-HMS/
-    /CO-HMS_RLO/
-    /CO-HeMS/
-    /single_HMS/
-    /single_HeMS/
-        /v1/
-        /v2/
-            /1e+00_Zsun/
-            /1e-01_Zsun/
-            /1e-02_Zsun/
-            ...
-                /grid_low_res_0/
-                /grid_low_res_1/
-                /grid_rerun_1/
-                ...
-                /LITE/
-                /ORIGINAL/
-                /logs/
-                /scripts/
-                /plots/
-                    /grid_low_res_combined/
-                        /TF1/
-                        /TF2/
-                        ...
-'''
-
 def create_grid_slice(i, step_1="step_1.csv", verbose=False):
 
     df = pd.read_csv(os.path.join(PATH, step_1))
-    grid_path = df.loc[i,'path_to_grid'],
+    grid_path = df.loc[i,'path_to_grid']
     compression = df.loc[i,'compression']
 
     grid_name = grid_path.split('/')[-1]
@@ -158,6 +128,190 @@ def combine_grid_slices(step_2="step_2.csv", verbose=False):
         join_grids(gird_names, grid_combined_key)
 
 
+def plot_grid(i, step_3="step_3.csv", verbose=False):
+
+    df = pd.read_csv(os.path.join(PATH, step_3))
+    grid_path = df.loc[i,'path_to_grid']
+    plot_dir = df.loc[i,'path_to_plot']
+    grid = PSyGrid(verbose=False)
+    grid.load(grid_path)
+
+    # TODO: mk plot directories
+    # dirname = 'plots/'+str(sys.argv[1])+'/'
+    # dirs=['plots/', dirname,
+    #       dirname+'TF12/',dirname+'TF1/',dirname+'TF2/',dirname+'TF3/',dirname+'TF4/',
+    #       dirname+'debug_mt/',dirname+'debug_rl_1/',dirname+'debug_rl_2/']
+    # for dir_ in dirs:
+    #     if not os.path.isdir(path.replace(version,'')+dir_):
+    #         os.mkdir(dir_)
+
+    if 'HMS-HMS' in grid_path:
+        # mass ratio slices
+        qs = np.linspace(0.05,1.,20)
+        qs[-1] = 0.99
+
+        for q in qs.tolist():
+            # TODO: skip plotting slice if there are no data
+            try:
+                PLOT_PROPERTIES = {
+                    'figsize' : (4,3.5),
+                    'path_to_file' : os.path.join(plot_dir,'TF12'),
+                    'show_fig' : False,
+                    'fname' : 'grid_q_%1.2f.png'%q,
+                    'title' : '$q=%1.2f$'%q,
+                    'log10_x' : True,
+                    'log10_y' : True,
+                    'legend2D' : {'bbox_to_anchor' : (1.03, 0.5)}
+                }
+
+                grid.plot2D('star_1_mass', 'period_days', None,
+                             termination_flag='combined_TF12',
+                             grid_3D=True, slice_3D_var_str='mass_ratio',
+                             slice_3D_var_range=(q-2.5e-2,q+2.5e-2),
+                             verbose=False, **PLOT_PROPERTIES)
+
+                PLOT_PROPERTIES = {
+                    'figsize' : (4,5),
+                    'path_to_file' : os.path.join(plot_dir,'TF1'),
+                    'show_fig' : False,
+                    'fname' : 'grid_q_%1.2f.png'%q,
+                    'title' : '$q=%1.2f$'%q,
+                    'log10_x' : True,
+                    'log10_y' : True,
+                    'zmin' : -8,
+                    'zmax' : -1,
+                    'legend2D' : {'bbox_to_anchor' : (1.03, 0.5)},
+                    'colorbar': {'pad': 0.12}
+                }
+
+                grid.plot2D('star_1_mass', 'period_days', 'lg_mtransfer_rate',
+                             termination_flag='termination_flag_1',
+                             grid_3D=True, slice_3D_var_str='mass_ratio',
+                             slice_3D_var_range=(q-2.5e-2,q+2.5e-2),
+                             verbose=False, **PLOT_PROPERTIES)
+
+                PLOT_PROPERTIES = {
+                    'figsize' : (4,3.5),
+                    'path_to_file' : os.path.join(plot_dir,'TF2'),
+                    'show_fig' : False,
+                    'fname' : 'grid_q_%1.2f.png'%q,
+                    'title' : '$q=%1.2f$'%q,
+                    'log10_x' : True,
+                    'log10_y' : True,
+                    'legend2D' : {'bbox_to_anchor' : (1.03, 0.5)}
+                }
+
+                grid.plot2D('star_1_mass', 'period_days', None,
+                             termination_flag='termination_flag_2',
+                             grid_3D=True, slice_3D_var_str='mass_ratio',
+                             slice_3D_var_range=(q-2.5e-2,q+2.5e-2),
+                             verbose=False, **PLOT_PROPERTIES)
+
+                PLOT_PROPERTIES = {
+                    'figsize' : (4,3.5),
+                    'path_to_file' : os.path.join(plot_dir,'TF3'),
+                    'show_fig' : False,
+                    'fname' : 'grid_q_%1.2f.png'%q,
+                    'title' : '$q=%1.2f$'%q,
+                    'log10_x' : True,
+                    'log10_y' : True,
+                    'legend2D' : {'bbox_to_anchor' : (1.03, 0.5)}
+                }
+
+                grid.plot2D('star_1_mass', 'period_days', None,
+                             termination_flag='termination_flag_3',
+                             grid_3D=True, slice_3D_var_str='mass_ratio',
+                             slice_3D_var_range=(q-2.5e-2,q+2.5e-2),
+                             verbose=False, **PLOT_PROPERTIES)
+
+                PLOT_PROPERTIES = {
+                    'figsize' : (4,3.5),
+                    'path_to_file' : os.path.join(plot_dir,'TF4'),
+                    'show_fig' : False,
+                    'fname' : 'grid_q_%1.2f.png'%q,
+                    'title' : '$q=%1.2f$'%q,
+                    'log10_x' : True,
+                    'log10_y' : True,
+                    'legend2D' : {'bbox_to_anchor' : (1.03, 0.5)}
+                }
+
+                grid.plot2D('star_1_mass', 'period_days', None,
+                             termination_flag='termination_flag_4',
+                             grid_3D=True, slice_3D_var_str='mass_ratio',
+                             slice_3D_var_range=(q-2.5e-2,q+2.5e-2),
+                             verbose=False, **PLOT_PROPERTIES)
+
+                PLOT_PROPERTIES = {
+                    'figsize' : (4,5),
+                    'path_to_file' : os.path.join(plot_dir,'debug_rl_1'),
+                    'show_fig' : False,
+                    'fname' : 'grid_q_%1.2f.png'%q,
+                    'title' : '$q=%1.2f$'%q,
+                    'log10_x' : True,
+                    'log10_y' : True,
+                    'zmin' : -0.5,
+                    'zmax' : 0.5,
+                    'legend2D' : {'bbox_to_anchor' : (1.03, 0.5)},
+                    'colorbar': {'pad': 0.12}
+                }
+
+                grid.plot2D('star_1_mass', 'period_days', 'rl_relative_overflow_1',
+                             termination_flag='debug',
+                             grid_3D=True, slice_3D_var_str='mass_ratio',
+                             slice_3D_var_range=(q-2.5e-2,q+2.5e-2),
+                             verbose=False, **PLOT_PROPERTIES)
+
+                PLOT_PROPERTIES = {
+                    'figsize' : (4,5),
+                    'path_to_file' : os.path.join(plot_dir,'debug_rl_2'),
+                    'show_fig' : False,
+                    'fname' : 'grid_q_%1.2f.png'%q,
+                    'title' : '$q=%1.2f$'%q,
+                    'log10_x' : True,
+                    'log10_y' : True,
+                    'zmin' : -0.5,
+                    'zmax' : 0.5,
+                    'legend2D' : {'bbox_to_anchor' : (1.03, 0.5)},
+                    'colorbar': {'pad': 0.12}
+                }
+
+                grid.plot2D('star_1_mass', 'period_days', 'rl_relative_overflow_2',
+                             termination_flag='debug',
+                             grid_3D=True, slice_3D_var_str='mass_ratio',
+                             slice_3D_var_range=(q-2.5e-2,q+2.5e-2),
+                             verbose=False, **PLOT_PROPERTIES)
+
+                PLOT_PROPERTIES = {
+                    'figsize' : (4,5),
+                    'path_to_file' : os.path.join(plot_dir,'debug_mt'),
+                    'show_fig' : False,
+                    'fname' : 'grid_q_%1.2f.png'%q,
+                    'title' : '$q=%1.2f$'%q,
+                    'log10_x' : True,
+                    'log10_y' : True,
+                    'zmin' : -8,
+                    'zmax' : -1,
+                    'legend2D' : {'bbox_to_anchor' : (1.03, 0.5)},
+                    'colorbar': {'pad': 0.12}
+                }
+
+                grid.plot2D('star_1_mass', 'period_days', 'lg_mtransfer_rate',
+                             termination_flag='debug',
+                             grid_3D=True, slice_3D_var_str='mass_ratio',
+                             slice_3D_var_range=(q-2.5e-2,q+2.5e-2),
+                             verbose=False, **PLOT_PROPERTIES)
+            except Exception as e:
+                print('FAILED TO PLOT q=%s!'%q)
+                print('')
+                print(e)
+                continue
+
+def export_dataset():
+    # this fucntion should copy all the files to a directory
+    # for POSYDON pop synth
+    pass
+
+
 if __name__ == '__main__':
 
     PATH_TO_GRIDS = '/projects/b1119/POSYDON_GRIDS/'
@@ -172,13 +326,16 @@ if __name__ == '__main__':
         create_grid_slice(i, verbose=VERBOSE)
 
     # SINGLE JOB
-    # TODO: make compression parallel with a JOB ARRAY
-    COMBINE_GRID_SLICES = True
+    # TODO: make LITE/ORIGINAL version parallel with a JOB ARRAY
+    COMBINE_GRID_SLICES = False
     if COMBINE_GRID_SLICES:
         combine_grid_slices(verbose=VERBOSE)
 
-    # SINGLE JOB
-    # plot_grid()
+    # JOB ARRAY
+    PLOT_GRIDS = True
+    if PLOT_GRIDS:
+        i = int(sys.argv[1])
+        plot_grid(i, verbose=VERBOSE)
 
     # SINGLE JOB
     # train_interpolators()
