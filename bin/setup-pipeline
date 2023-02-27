@@ -36,7 +36,8 @@ PATH_TO_GRIDS/
                         ...
 '''
 
-def slurm_job(CREATE_GRID_SLICES=False,
+def slurm_job(job_name,
+              CREATE_GRID_SLICES=False,
               COMBINE_GRID_SLICES=False,
               PLOT_GRIDS=False,
               CHECK_FAILURE_RATE=False,
@@ -44,7 +45,7 @@ def slurm_job(CREATE_GRID_SLICES=False,
               TRAIN_INTERPOLATORS=False,
               verbose=False,
               ):
-    with open('post_processing.slurm', 'w') as f:
+    with open(f'{job_name}.slurm', 'w') as f:
         f.write("#!/bin/bash\n")
         f.write("#SBATCH --account=b1119\n")
         f.write("#SBATCH --partition=posydon-priority\n")
@@ -227,7 +228,9 @@ if __name__ == '__main__':
         create_csv_step_1(GRID_TYPES, METALLICITIES, GRID_SLICES, COMPRESSIONS)
 
         # create the slurm job
-        slurm_job(CREATE_GRID_SLICES=CREATE_GRID_SLICES, verbose=VERBOSE)
+        slurm_job(job_name='step_1',
+                  CREATE_GRID_SLICES=CREATE_GRID_SLICES,
+                  verbose=VERBOSE)
 
     if COMBINE_GRID_SLICES:
         ###### EXAMPLE ######
@@ -244,7 +247,9 @@ if __name__ == '__main__':
                           GRIDS_COMBINED, COMPRESSIONS)
 
         # create the slurm job
-        slurm_job(COMBINE_GRID_SLICES=COMBINE_GRID_SLICES, verbose=VERBOSE)
+        slurm_job(job_name='step_2',
+                  COMBINE_GRID_SLICES=COMBINE_GRID_SLICES,
+                  verbose=VERBOSE)
 
     if PLOT_GRIDS:
         ###### EXAMPLE ######
@@ -257,20 +262,9 @@ if __name__ == '__main__':
         create_csv_step_3(GRID_TYPES, METALLICITIES, GRID_SLICES, COMPRESSIONS)
 
         # create the slurm job
-        slurm_job(PLOT_GRIDS=PLOT_GRIDS, verbose=VERBOSE)
-
-    if CHECK_FAILURE_RATE:
-        ###### EXAMPLE ######
-        GRID_TYPES = ['HMS-HMS']
-        METALLICITIES = ['1e-01_Zsun']
-        GRID_SLICES = ['grid_low_res_combined','grid_low_res_rerun_opacitymax',
-                       'grid_low_res_combined_rerun_1']
-        COMPRESSIONS = ['LITE']
-        #####################
-        create_csv_step_3(GRID_TYPES, METALLICITIES, GRID_SLICES, COMPRESSIONS)
-
-        # create the slurm job
-        slurm_job(CHECK_FAILURE_RATE=CHECK_FAILURE_RATE, verbose=VERBOSE)
+        slurm_job(job_name='step_3',
+                  PLOT_GRIDS=PLOT_GRIDS,
+                  verbose=VERBOSE)
 
     if POST_PROCESSING:
         ###### EXAMPLE ######
@@ -282,7 +276,9 @@ if __name__ == '__main__':
         create_csv_step_4(GRID_TYPES, METALLICITIES, GRID_SLICES, COMPRESSIONS)
 
         # create the slurm job
-        slurm_job(POST_PROCESSING=POST_PROCESSING, verbose=VERBOSE)
+        slurm_job(job_name='step_4',
+                  POST_PROCESSING=POST_PROCESSING,
+                  verbose=VERBOSE)
 
     if TRAIN_INTERPOLATORS:
         ###### EXAMPLE ######
@@ -296,7 +292,28 @@ if __name__ == '__main__':
                           INTERPOLATION_METHODS, COMPRESSIONS)
 
         # create the slurm job
-        slurm_job(POST_PROCESSING=POST_PROCESSING, verbose=VERBOSE)
+        slurm_job(job_name='step_5',
+                  TRAIN_INTERPOLATORS=TRAIN_INTERPOLATORS,
+                  verbose=VERBOSE)
+
+    if CHECK_FAILURE_RATE:
+        ###### EXAMPLE ######
+        GRID_TYPES = ['HMS-HMS']
+        METALLICITIES = ['1e-01_Zsun']
+        GRID_SLICES = ['grid_low_res_combined','grid_low_res_rerun_opacitymax',
+                       'grid_low_res_combined_rerun_1']
+        COMPRESSIONS = ['LITE']
+        #####################
+        create_csv_step_3(GRID_TYPES, METALLICITIES, GRID_SLICES, COMPRESSIONS)
+
+        # create the slurm job
+        slurm_job(job_name='step_optional_1',
+                  CHECK_FAILURE_RATE=CHECK_FAILURE_RATE,
+                  verbose=VERBOSE)
+
+    # TODO: SETUP RERUNS
+
+    # TODO: export final datasets for v2
 
     # create logs dire where we store all slurm outputs
     logs_path = os.path.join(PATH,'logs')
