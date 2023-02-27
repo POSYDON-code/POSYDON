@@ -1,8 +1,7 @@
 '''
-
 MESA low_res_grids were run.
 
-STEP 1: grid slice creation (PARALLELISED)
+STEP 1: grid slice creation
 
 grid_type, metallicity, grid_slices, compression
 'HMS-HMS', '1e-01_Zsun', LITE/ORIGINAL
