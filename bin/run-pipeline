@@ -155,7 +155,7 @@ def plot_grid(i, step_3="step_3.csv", verbose=False):
             try:
                 PLOT_PROPERTIES = {
                     'figsize' : (4,3.5),
-                    'path_to_file' : os.path.join(plot_dir,'TF12'),
+                    'path_to_file' : os.path.join(plot_dir,'TF12/'),
                     'show_fig' : False,
                     'fname' : 'grid_q_%1.2f.png'%q,
                     'title' : '$q=%1.2f$'%q,
@@ -165,14 +165,14 @@ def plot_grid(i, step_3="step_3.csv", verbose=False):
                 }
 
                 grid.plot2D('star_1_mass', 'period_days', None,
-                             termination_flag='combined_TF12',
+                             termination_flag='combined_TF12/',
                              grid_3D=True, slice_3D_var_str='mass_ratio',
                              slice_3D_var_range=(q-2.5e-2,q+2.5e-2),
                              verbose=False, **PLOT_PROPERTIES)
 
                 PLOT_PROPERTIES = {
                     'figsize' : (4,5),
-                    'path_to_file' : os.path.join(plot_dir,'TF1'),
+                    'path_to_file' : os.path.join(plot_dir,'TF1/'),
                     'show_fig' : False,
                     'fname' : 'grid_q_%1.2f.png'%q,
                     'title' : '$q=%1.2f$'%q,
@@ -192,7 +192,7 @@ def plot_grid(i, step_3="step_3.csv", verbose=False):
 
                 PLOT_PROPERTIES = {
                     'figsize' : (4,3.5),
-                    'path_to_file' : os.path.join(plot_dir,'TF2'),
+                    'path_to_file' : os.path.join(plot_dir,'TF2/'),
                     'show_fig' : False,
                     'fname' : 'grid_q_%1.2f.png'%q,
                     'title' : '$q=%1.2f$'%q,
@@ -209,7 +209,7 @@ def plot_grid(i, step_3="step_3.csv", verbose=False):
 
                 PLOT_PROPERTIES = {
                     'figsize' : (4,3.5),
-                    'path_to_file' : os.path.join(plot_dir,'TF3'),
+                    'path_to_file' : os.path.join(plot_dir,'TF3/'),
                     'show_fig' : False,
                     'fname' : 'grid_q_%1.2f.png'%q,
                     'title' : '$q=%1.2f$'%q,
@@ -226,7 +226,7 @@ def plot_grid(i, step_3="step_3.csv", verbose=False):
 
                 PLOT_PROPERTIES = {
                     'figsize' : (4,3.5),
-                    'path_to_file' : os.path.join(plot_dir,'TF4'),
+                    'path_to_file' : os.path.join(plot_dir,'TF4/'),
                     'show_fig' : False,
                     'fname' : 'grid_q_%1.2f.png'%q,
                     'title' : '$q=%1.2f$'%q,
@@ -243,7 +243,7 @@ def plot_grid(i, step_3="step_3.csv", verbose=False):
 
                 PLOT_PROPERTIES = {
                     'figsize' : (4,5),
-                    'path_to_file' : os.path.join(plot_dir,'debug_rl_1'),
+                    'path_to_file' : os.path.join(plot_dir,'debug_rl_1/'),
                     'show_fig' : False,
                     'fname' : 'grid_q_%1.2f.png'%q,
                     'title' : '$q=%1.2f$'%q,
@@ -263,7 +263,7 @@ def plot_grid(i, step_3="step_3.csv", verbose=False):
 
                 PLOT_PROPERTIES = {
                     'figsize' : (4,5),
-                    'path_to_file' : os.path.join(plot_dir,'debug_rl_2'),
+                    'path_to_file' : os.path.join(plot_dir,'debug_rl_2/'),
                     'show_fig' : False,
                     'fname' : 'grid_q_%1.2f.png'%q,
                     'title' : '$q=%1.2f$'%q,
@@ -283,7 +283,7 @@ def plot_grid(i, step_3="step_3.csv", verbose=False):
 
                 PLOT_PROPERTIES = {
                     'figsize' : (4,5),
-                    'path_to_file' : os.path.join(plot_dir,'debug_mt'),
+                    'path_to_file' : os.path.join(plot_dir,'debug_mt/'),
                     'show_fig' : False,
                     'fname' : 'grid_q_%1.2f.png'%q,
                     'title' : '$q=%1.2f$'%q,
