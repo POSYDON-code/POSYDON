@@ -67,7 +67,11 @@ import os
 import sys
 import numpy as np
 import pandas as pd
-from posydon.grids.psygrid import PSyGrid, DEFAULT_HISTORY_DS_EXCLUDE, DEFAULT_PROFILE_DS_EXCLUDE, EXTRA_COLS_DS_EXCLUDE
+from posydon.grids.psygrid import (PSyGrid,
+                                   join_grids,
+                                   DEFAULT_HISTORY_DS_EXCLUDE,
+                                   DEFAULT_PROFILE_DS_EXCLUDE,
+                                   EXTRA_COLS_DS_EXCLUDE)
 
 '''
 Data tree structure
@@ -99,11 +103,16 @@ PATH_TO_GRIDS/
                         ...
 '''
 
-def create_grid_slice(grid_path, compression):
+def create_grid_slice(i, step_1="step_1.csv", verbose=False):
+
+    df = pd.read_csv(os.path.join(PATH, step_1))
+    grid_path = df.loc[i,'path_to_grid'],
+    compression = df.loc[i,'compression']
+
     grid_name = grid_path.split('/')[-1]
     grid_output = os.path.join('/',os.path.join(*grid_path.split('/')[:-1]),
                                             compression,grid_name+'.h5')
-    if VERBOSE:
+    if verbose:
         print('processing ', grid_path)
         print('saving file ',  grid_output)
 
@@ -136,6 +145,20 @@ def create_grid_slice(grid_path, compression):
                 initial_RLO_fix=True)
     grid.close()
 
+
+def combine_grid_slices(step_2="step_2.csv", verbose=False):
+
+    df = pd.read_csv(os.path.join(PATH, step_2))
+    grid_paths_batches = df['path_to_grid_files']
+    grid_combined = df['grid_combined']
+    breakpoint()
+    for i, grid_paths in enumerate(grid_paths_batches):
+        if verbose:
+            print('Combinining: ', grid_paths)
+            print('into:', grid_combined[i])
+        join_grids(grid_paths,grid_combined[i])
+
+
 if __name__ == '__main__':
 
     PATH_TO_GRIDS = '/projects/b1119/POSYDON_GRIDS/'
@@ -143,17 +166,17 @@ if __name__ == '__main__':
     VERBOSE = True
 
     # JOB ARRAY
-    CREATE_GRID_SLICES = True
+    CREATE_GRID_SLICES = False
     if CREATE_GRID_SLICES:
-        df = pd.read_csv(os.path.join(PATH,"step_1.csv"))
         # chose grid slice given the slurm jobarray index
         i = int(sys.argv[1])
-        if VERBOSE:
-            print('Creating grid file', df.loc[i].values)
-        create_grid_slice(df.loc[i,'path_to_grid'],df.loc[i,'compression'])
+        create_grid_slice(i, verbose=VERBOSE)
 
     # SINGLE JOB
-    # concantenate_grid_slices()
+    # TODO: make compression parallel with a JOB ARRAY
+    COMBINE_GRID_SLICES = True
+    if COMBINE_GRID_SLICES:
+        combine_grid_slices(verbose=VERBOSE)
 
     # SINGLE JOB
     # plot_grid()

@@ -5,7 +5,7 @@ import numpy as np
 from posydon.utils.common_functions import PATH_TO_POSYDON
 
 def slurm_job(CREATE_GRID_SLICES=False,
-              CONCATENATE_GRID_SLICES=False,
+              COMBINE_GRID_SLICES=False,
               PLOT_GRIDS=False,
               TRAIN_INTERPOLATORS=False,
               verbose=False,
@@ -32,9 +32,8 @@ def slurm_job(CREATE_GRID_SLICES=False,
             f.write(f"#SBATCH --output={PATH}/logs/grid_slice_%a.out\n")
             f.write(f"\nsrun python {PATH_TO_POSYDON}/bin/run-pipeline $SLURM_ARRAY_TASK_ID")
 
-        if CONCATENATE_GRID_SLICES:
-            f.write(f"\nsrun python {PATH_TO_POSYDON}/bin/run-pipeline" +
-                    concatenate_grid_slices + "$SLURM_ARRAY_TASK_ID")
+        if COMBINE_GRID_SLICES:
+            f.write(f"\nsrun python {PATH_TO_POSYDON}/bin/run-pipeline")
 
         if PLOT_GRIDS:
             f.write(f"\nsrun python {PATH_TO_POSYDON}/bin/run-pipeline" + plot_grid)
@@ -61,6 +60,36 @@ def create_csv_step_1(GRID_TYPES, METALLICITIES, GRID_SLICES, COMPRESSIONS,
     df['compression'] = grids[:,1]
     df.to_csv(os.path.join(PATH,'step_1.csv'),index=False)
 
+def create_csv_step_2(GRID_TYPES, METALLICITIES, GRID_SLICES,
+                      GRIDS_COMBINED, COMPRESSIONS, version='v2'):
+
+    if len(GRID_SLICES) != len(GRIDS_COMBINED):
+        raise ValueError('len(GRID_SLICES) =! len(GRIDS_COMBINED)!')
+
+    grids = []
+    grids_combined = []
+    for grid_type in GRID_TYPES:
+        for metallicity in METALLICITIES:
+            for i, grid_slice_batch in enumerate(GRID_SLICES):
+                for k, compression in enumerate(COMPRESSIONS):
+                    combine_grid_slices = []
+                    for grid_slice in grid_slice_batch:
+                            path_to_grid = os.path.join(PATH_TO_GRIDS,
+                                          grid_type, version, metallicity,
+                                          compression, grid_slice+'.h5')
+                            combine_grid_slices.append(path_to_grid)
+                    path_to_grid_combined = os.path.join(PATH_TO_GRIDS,
+                                                         grid_type, version,
+                                                         metallicity,
+                                                         compression,
+                                                         GRIDS_COMBINED[i]+'.h5')
+                    grids.append(combine_grid_slices)
+                    grids_combined.append(path_to_grid_combined)
+    grids = np.array(grids, dtype=object)
+    df = pd.DataFrame()
+    df['grid_combined'] = grids_combined
+    df['path_to_grid_files'] = pd.Series(grids)
+    df.to_csv(os.path.join(PATH,'step_2.csv'),index=False)
 
 if __name__ == '__main__':
 
@@ -69,7 +98,7 @@ if __name__ == '__main__':
     EMAIL = 'simone.bavera@unige.ch'
     VERBOSE = True
 
-    CREATE_GRID_SLICES = True
+    CREATE_GRID_SLICES = False
     if CREATE_GRID_SLICES:
         ###### EXAMPLE ######
         GRID_TYPES = ['HMS-HMS']
@@ -79,21 +108,28 @@ if __name__ == '__main__':
                         'grid_rerun_opacitymax']
         COMPRESSIONS = ['LITE','ORIGINAL']
         #####################
-        create_csv_step_1(GRID_TYPES,METALLICITIES,GRID_SLICES,COMPRESSIONS)
+        create_csv_step_1(GRID_TYPES, METALLICITIES, GRID_SLICES, COMPRESSIONS)
 
         # create the slurm job
         slurm_job(CREATE_GRID_SLICES=CREATE_GRID_SLICES, verbose=VERBOSE)
 
-    CONCATENATE_GRID_SLICES = False
-    if CONCATENATE_GRID_SLICES:
+    COMBINE_GRID_SLICES = True
+    if COMBINE_GRID_SLICES:
         ###### EXAMPLE ######
         GRID_TYPES = ['HMS-HMS']
         METALLICITIES = ['1e-01_Zsun']
         GRID_SLICES = [['grid_low_res_0','grid_low_res_1','grid_low_res_2',
                         'grid_low_res_3','grid_low_res_4','grid_low_res_5'],
+                        ['grid_low_res_combined','grid_low_res_rerun_opacitymax'],
                         ]
+        GRIDS_COMBINED = ['grid_low_res_combined','grid_low_res_combined_rerun_1']
         COMPRESSIONS = ['LITE','ORIGINAL']
         #####################
+        create_csv_step_2(GRID_TYPES, METALLICITIES, GRID_SLICES,
+                          GRIDS_COMBINED, COMPRESSIONS)
+
+        # create the slurm job
+        slurm_job(COMBINE_GRID_SLICES=COMBINE_GRID_SLICES, verbose=VERBOSE)
 
     # create logs dire where we store all slurm outputs
     logs_path = os.path.join(PATH,'logs')
