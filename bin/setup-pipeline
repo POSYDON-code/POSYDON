@@ -1,0 +1,89 @@
+#!/usr/bin/env python
+import os
+import pandas as pd
+import numpy as np
+from posydon.utils.common_functions import PATH_TO_POSYDON
+
+def slurm_job(create_grid_slices=None,
+              concatenate_grid_slices=None,
+              plot_grid=None,
+              train_interpolators=None,
+              verbose=False,
+              ):
+    with open('post_processing.slurm', 'w') as f:
+        f.write("#!/bin/bash\n")
+        f.write("#SBATCH --account=b1119\n")
+        f.write("#SBATCH --partition=posydon-priority\n")
+        f.write("#SBATCH -N 1\n")
+        f.write("#SBATCH --cpus-per-task 1\n")
+        f.write("#SBATCH --ntasks-per-node 1\n")
+        f.write("#SBATCH --time=24:00:00\n")
+        f.write("#SBATCH --job-name=psygrid\n")
+        f.write("#SBATCH --mem-per-cpu=4G\n")
+
+        if EMAIL is not None:
+            f.write("#SBATCH --mail-type=ALL\n")
+            f.write(f"#SBATCH --mail-user={EMAIL}\n")
+
+        if CREATE_GRID_SLICES:
+            df = pd.read_csv(os.path.join(PATH,"step_1.csv"))
+            N = df.shape[0]-1
+            f.write(f"#SBATCH --array=0-{N}\n")
+            f.write(f"#SBATCH --output={PATH}/logs/grid_slice_%a.out\n")
+            f.write(f"\nsrun python {PATH_TO_POSYDON}/run-pipeline $SLURM_ARRAY_TASK_ID")
+
+        if concatenate_grid_slices:
+            f.write(f"\nsrun python {PATH_TO_POSYDON}/run-pipeline" +
+                    concatenate_grid_slices + "$SLURM_ARRAY_TASK_ID")
+
+        if plot_grid:
+            f.write(f"\nsrun python {PATH_TO_POSYDON}/run-pipeline" + plot_grid)
+
+        if train_interpolators:
+            f.write(f"export PATH_TO_POSYDON={PATH_TO_POSYDON}\n")
+            f.write(f"\nsrun python {PATH_TO_POSYDON}/run-pipeline" + train_interpolators)
+
+# create csv file with a list of all grid paths to process
+def create_csv_step_1(GRID_TYPES,METALLICITIES,GRID_SLICES,COMPRESSIONS):
+
+    grids = []
+    for grid_type in GRID_TYPES:
+        for metallicity in METALLICITIES:
+            for grid_slice in GRID_SLICES:
+                for compression in COMPRESSIONS:
+                    grids.append([os.path.join(PATH_TO_GRIDS,
+                                  grid_type, metallicity, grid_slice),
+                                  compression])
+    grids = np.array(grids)
+    df = pd.DataFrame()
+    df['path_to_grid'] = grids[:,0]
+    df['compression'] = grids[:,1]
+    df.to_csv(os.path.join(PATH,'step_1.csv'),index=False)
+
+
+if __name__ == '__main__':
+
+    PATH_TO_GRIDS = '/projects/b1119/POSYDON_GRIDS/'
+    PATH = '.'
+    EMAIL = 'simone.bavera@unige.ch'
+    VERBOSE = True
+
+    # JOB ARRAY
+    CREATE_GRID_SLICES = True
+    if CREATE_GRID_SLICES:
+        ###### EXAMPLE ######
+        GRID_TYPES = ['HMS-HMS']
+        METALLICITIES = ['1e-01_Zsun']
+        GRID_SLICES = ['grid_low_res_0','grid_low_res_1','grid_low_res_2',
+                        'grid_low_res_3','grid_low_res_4','grid_low_res_5']
+        COMPRESSIONS = ['LITE','ORIGINAL']
+        #####################
+        create_csv_step_1(GRID_TYPES,METALLICITIES,GRID_SLICES,COMPRESSIONS)
+
+        # create the slurm job
+        slurm_job(create_grid_slices=True, verbose=VERBOSE)
+
+    # create logs dire where we store all slurm outputs
+    logs_path = os.path.join(PATH,'logs')
+    if not os.path.isdir(logs_path):
+        os.makedirs(logs_path)

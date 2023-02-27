@@ -1,0 +1,156 @@
+'''
+
+MESA low_res_grids were run.
+
+STEP 1: grid slice creation (PARALLELISED)
+
+grid_type, metallicity, grid_slices, compression
+'HMS-HMS', '1e-01_Zsun', LITE/ORIGINAL
+['grid_low_res_0','grid_low_res_1','grid_low_res_2',
+'grid_low_res_3','grid_low_res_4','grid_low_res_5',
+'grid_random_1'] ---> output *.h5
+
+STEP 2: grid concatenation
+[['grid_low_res_0','grid_low_res_1','grid_low_res_2',
+'grid_low_res_3','grid_low_res_4','grid_low_res_5']] -->
+grid_low_res_combined
+
+STEP 3: plot grid slices
+---> loop all plot types
+---> chek failure rate
+
+STEP 4: rerun grid with fix A
+grid_low_res_combined.rerun(index=logic) --> grid_rerun_1/grid.csv
+                                        --> grid_random_1_rerun_1/grid.csv
+---- MEN/WOMEN POWER will run reruns ----
+
+call STEP 1: ['grid_rerun_1','grid_random_1_rerun_1',] --> *.h5
+call STEP 2: [['grid_low_res_combined','grid_rerun_1'],
+              ['grid_random_1','grid_random_rerun_1']]
+              ---> gird_low_res_combined_rerun_1.h5
+                   grid_random_1_rerun_1.h5
+call STEP 3: rerun grid with fix B
+........ --> grid_rerun_2/grid.csv, call STEP 1, 2.. 3
+
+STEP 5:
+do post processing on the ORIGINAL grids and append back on
+LITE/ORIGINAL for both grid_low_res_combined_rerun_N and grid_random_1_rerun_N
+
+STEP 6:
+train interpolators
+
+
+I NEED TO REGENERATE THE GRIDS AFTER A PR
+
+STEP 1:
+'HMS-HMS', '1e-01_Zsun', LITE/ORIGINAL
+['grid_low_res_0','grid_low_res_1','grid_low_res_2',
+'grid_low_res_3','grid_low_res_4','grid_low_res_5',
+'grid_random_1','grid_low_res_rerun_1', 'grid_low_res_rerun_2',
+'grid_low_res_rerun_3']
+STEP 2:
+[
+['grid_low_res_0','grid_low_res_1','grid_low_res_2',
+'grid_low_res_3','grid_low_res_4','grid_low_res_5'], --> grid_low_combined.h5
+['grid_low_combined','grid_low_res_rerun_1'], ---> grid_low_res_combined_rerun_1.h5
+['grid_low_res_combined_rerun_1','grid_rerun_2'], ---> grid_low_res_combined_rerun_2.h5
+['grid_low_res_combined_rerun_2','grid_rerun_3'], ---> grid_low_res_combined_rerun_3.h5
+['grid_low_random_1','grid_random_1_rerun_1'], ---> grid_low_res_combined_rerun_1.h5
+['grid_low_random_1_rerun_1','grid_random_1_rerun_2'], ---> grid_low_res_combined_rerun_2.h5
+['grid_low_random_1_rerun_2','grid_random_1_rerun_3'], ---> grid_low_res_combined_rerun_3.h5
+]
+
+
+'''
+
+import os
+import sys
+import numpy as np
+import pandas as pd
+from posydon.grids.psygrid import PSyGrid, DEFAULT_HISTORY_DS_EXCLUDE, DEFAULT_PROFILE_DS_EXCLUDE, EXTRA_COLS_DS_EXCLUDE
+
+'''
+Data tree structure
+
+PATH_TO_GRIDS/
+    /HMS-HMS/
+    /CO-HMS_RLO/
+    /CO-HeMS/
+    /single_HMS/
+    /single_HeMS/
+        /v1/
+        /v2/
+            /1e+00_Zsun/
+            /1e-01_Zsun/
+            /1e-02_Zsun/
+            ...
+                /grid_low_res_0/
+                /grid_low_res_1/
+                /grid_rerun_1/
+                ...
+                /LITE/
+                /ORIGINAL/
+                /logs/
+                /scripts/
+                /plots/
+                    /grid_low_res_combined/
+                        /TF1/
+                        /TF2/
+                        ...
+'''
+
+def create_grid_slice(grid_path, compression):
+    grid_name = grid_path.split('/')[-1]
+
+    if compression == 'ORIGINAL':
+        history_DS_error = None
+        profile_DS_error = None
+        profile_DS_interval = None
+        history_DS_exclude = DEFAULT_HISTORY_DS_EXCLUDE
+        profile_DS_exclude = DEFAULT_PROFILE_DS_EXCLUDE
+    elif compression == 'LITE':
+        history_DS_error = 0.1
+        profile_DS_error = 0.1
+        profile_DS_interval = -0.005
+        history_DS_exclude = EXTRA_COLS_DS_EXCLUDE
+        profile_DS_exclude = EXTRA_COLS_DS_EXCLUDE
+    else:
+        raise ValueError('compression = %s not supported!'%compression)
+
+    print('Creating psygrid for',grid_name, '...')
+    grid = PSyGrid(verbose=True)
+    grid.create(grid_path,
+                os.path.join(grid_path,compression,grid_name+'.h5'),
+                overwrite=True, history_DS_error=history_DS_error, profile_DS_error=profile_DS_error,
+                history_DS_exclude=history_DS_exclude, profile_DS_exclude=profile_DS_exclude,
+                profile_DS_interval=profile_DS_interval,
+                compression="gzip9", start_at_RLO=False, initial_RLO_fix=True)
+    print('DONE!')
+    grid.close()
+
+if __name__ == '__main__':
+
+    PATH_TO_GRIDS = '/projects/b1119/POSYDON_GRIDS/'
+    PATH = '.'
+    VERBOSE = True
+
+    # JOB ARRAY
+    CREATE_GRID_SLICES = True
+    if CREATE_GRID_SLICES:
+        df = pd.read_csv(os.path.join(PATH,"step_1.csv"))
+        # chose grid slice given the slurm jobarray index
+        i = int(sys.argv[1])
+        if VERBOSE:
+            print('Creating grid file', df.loc[i].values)
+        create_grid_slice(df.loc[i,'path_to_grid'],df.loc[i,'compression'])
+
+    # SINGLE JOB
+    # concantenate_grid_slices()
+
+    # SINGLE JOB
+    # plot_grid()
+
+    # SINGLE JOB
+    # train_interpolators()
+
+# python pipleline.py
