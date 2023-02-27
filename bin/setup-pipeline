@@ -4,10 +4,10 @@ import pandas as pd
 import numpy as np
 from posydon.utils.common_functions import PATH_TO_POSYDON
 
-def slurm_job(CREATE_GRID_SLICES=None,
-              CONCATENATE_GRID_SLICES=None,
-              PLOT_GRIDS=None,
-              TRAIN_INTERPOLATORS=None,
+def slurm_job(CREATE_GRID_SLICES=False,
+              CONCATENATE_GRID_SLICES=False,
+              PLOT_GRIDS=False,
+              TRAIN_INTERPOLATORS=False,
               verbose=False,
               ):
     with open('post_processing.slurm', 'w') as f:
@@ -83,7 +83,7 @@ if __name__ == '__main__':
         create_csv_step_1(GRID_TYPES,METALLICITIES,GRID_SLICES,COMPRESSIONS)
 
         # create the slurm job
-        slurm_job(create_grid_slices=True, verbose=VERBOSE)
+        slurm_job(CREATE_GRID_SLICES=True, verbose=VERBOSE)
 
     CONCATENATE_GRID_SLICES = False
     if CONCATENATE_GRID_SLICES:
