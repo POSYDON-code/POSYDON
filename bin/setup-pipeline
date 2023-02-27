@@ -69,7 +69,7 @@ if __name__ == '__main__':
     EMAIL = 'simone.bavera@unige.ch'
     VERBOSE = True
 
-    CREATE_GRID_SLICES = False
+    CREATE_GRID_SLICES = True
     if CREATE_GRID_SLICES:
         ###### EXAMPLE ######
         GRID_TYPES = ['HMS-HMS']
