@@ -30,18 +30,18 @@ def slurm_job(create_grid_slices=None,
             N = df.shape[0]-1
             f.write(f"#SBATCH --array=0-{N}\n")
             f.write(f"#SBATCH --output={PATH}/logs/grid_slice_%a.out\n")
-            f.write(f"\nsrun python {PATH_TO_POSYDON}/run-pipeline $SLURM_ARRAY_TASK_ID")
+            f.write(f"\nsrun python {PATH_TO_POSYDON}/bin/run-pipeline $SLURM_ARRAY_TASK_ID")
 
         if concatenate_grid_slices:
-            f.write(f"\nsrun python {PATH_TO_POSYDON}/run-pipeline" +
+            f.write(f"\nsrun python {PATH_TO_POSYDON}/bin/run-pipeline" +
                     concatenate_grid_slices + "$SLURM_ARRAY_TASK_ID")
 
         if plot_grid:
-            f.write(f"\nsrun python {PATH_TO_POSYDON}/run-pipeline" + plot_grid)
+            f.write(f"\nsrun python {PATH_TO_POSYDON}/bin/run-pipeline" + plot_grid)
 
         if train_interpolators:
             f.write(f"export PATH_TO_POSYDON={PATH_TO_POSYDON}\n")
-            f.write(f"\nsrun python {PATH_TO_POSYDON}/run-pipeline" + train_interpolators)
+            f.write(f"\nsrun python {PATH_TO_POSYDON}/bin/run-pipeline" + train_interpolators)
 
 # create csv file with a list of all grid paths to process
 def create_csv_step_1(GRID_TYPES,METALLICITIES,GRID_SLICES,COMPRESSIONS):
