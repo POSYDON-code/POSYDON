@@ -44,7 +44,8 @@ def slurm_job(create_grid_slices=None,
             f.write(f"\nsrun python {PATH_TO_POSYDON}/bin/run-pipeline" + train_interpolators)
 
 # create csv file with a list of all grid paths to process
-def create_csv_step_1(GRID_TYPES,METALLICITIES,GRID_SLICES,COMPRESSIONS):
+def create_csv_step_1(GRID_TYPES, METALLICITIES, GRID_SLICES, COMPRESSIONS,
+                      version='v2'):
 
     grids = []
     for grid_type in GRID_TYPES:
@@ -52,7 +53,7 @@ def create_csv_step_1(GRID_TYPES,METALLICITIES,GRID_SLICES,COMPRESSIONS):
             for grid_slice in GRID_SLICES:
                 for compression in COMPRESSIONS:
                     grids.append([os.path.join(PATH_TO_GRIDS,
-                                  grid_type, metallicity, grid_slice),
+                                  grid_type, version, metallicity, grid_slice),
                                   compression])
     grids = np.array(grids)
     df = pd.DataFrame()
