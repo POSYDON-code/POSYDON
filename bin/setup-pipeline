@@ -67,8 +67,7 @@ def create_csv_step_2(GRID_TYPES, METALLICITIES, GRID_SLICES,
     if len(GRID_SLICES) != len(GRIDS_COMBINED):
         raise ValueError('len(GRID_SLICES) =! len(GRIDS_COMBINED)!')
 
-    grids = []
-    grids_combined = []
+    df = pd.DataFrame()
     for grid_type in GRID_TYPES:
         for metallicity in METALLICITIES:
             for i, grid_slice_batch in enumerate(GRID_SLICES):
@@ -84,12 +83,9 @@ def create_csv_step_2(GRID_TYPES, METALLICITIES, GRID_SLICES,
                                                          metallicity,
                                                          compression,
                                                          GRIDS_COMBINED[i]+'.h5')
-                    grids.append(combine_grid_slices)
-                    grids_combined.append(path_to_grid_combined)
-    grids = np.array(grids, dtype=object)
-    df = pd.DataFrame()
-    df['grid_combined'] = grids_combined
-    df['path_to_grid_files'] = pd.Series(grids)
+                    df_tmp = pd.DataFrame()
+                    df_tmp[path_to_grid_combined] = combine_grid_slices
+                    df = pd.concat([df,df_tmp], axis=1)
     df.to_csv(os.path.join(PATH,'step_2.csv'),index=False)
 
 if __name__ == '__main__':

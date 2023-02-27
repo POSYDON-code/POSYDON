@@ -149,14 +149,13 @@ def create_grid_slice(i, step_1="step_1.csv", verbose=False):
 def combine_grid_slices(step_2="step_2.csv", verbose=False):
 
     df = pd.read_csv(os.path.join(PATH, step_2))
-    grid_paths_batches = df['path_to_grid_files']
-    grid_combined = df['grid_combined']
 
-    for i, grid_paths in enumerate(grid_paths_batches):
+    for grid_combined_key in df.keys():
+        gird_names = df[grid_combined_key].to_list()
         if verbose:
-            print('Combinining: ', grid_paths)
-            print('into:', grid_combined[i])
-        join_grids(grid_paths,grid_combined[i])
+            print('Combinining: ', gird_names)
+            print('into:', grid_combined_key)
+        join_grids(gird_names, grid_combined_key)
 
 
 if __name__ == '__main__':
