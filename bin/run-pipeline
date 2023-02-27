@@ -485,42 +485,40 @@ if __name__ == '__main__':
     PATH = '.'
     VERBOSE = True
 
-    # JOB ARRAY
+    # EXAMPLE SETUP
     CREATE_GRID_SLICES = False
+    COMBINE_GRID_SLICES = False
+    PLOT_GRIDS = False
+    CHECK_FAILURE_RATE = False
+    POST_PROCESSING = True
+    TRAIN_INTERPOLATORS = False
+
+    # chose grid slice given the slurm jobarray index
+    i = int(sys.argv[1])
+
     if CREATE_GRID_SLICES:
-        # chose grid slice given the slurm jobarray index
-        i = int(sys.argv[1])
         create_grid_slice(i, verbose=VERBOSE)
 
-    # SINGLE JOB
     # TODO: make LITE/ORIGINAL version parallel with a JOB ARRAY
-    COMBINE_GRID_SLICES = False
     if COMBINE_GRID_SLICES:
         combine_grid_slices(verbose=VERBOSE)
 
-    # JOB ARRAY
-    PLOT_GRIDS = False
     if PLOT_GRIDS:
-        i = int(sys.argv[1])
         plot_grid(i, verbose=VERBOSE)
 
     # JOB ARRAY
-    CHECK_FAILURE_RATE = False
     if CHECK_FAILURE_RATE:
-        i = int(sys.argv[1])
         check_failure_rate(i, verbose=VERBOSE)
 
     # JOB ARRAY
-    POST_PROCESSING = True
     if POST_PROCESSING:
-        i = int(sys.argv[1])
         post_processing(i, verbose=VERBOSE)
 
     # JOB ARRAY
-    TRAIN_INTERPOLATORS = True
     if TRAIN_INTERPOLATORS:
-        i = int(sys.argv[1])
         train_interpolators(i, verbose=VERBOSE)
+
+    # TODO: RERUNS
 
     # SINGLE JOB
     # train_interpolators()
