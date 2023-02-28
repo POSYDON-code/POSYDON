@@ -632,7 +632,6 @@ class detached_step:
                     initials = (star.mass, 0)
                 else:
                     list_for_matching = self.list_for_matching_HMS
-
                     MESA_labels = list_for_matching[0]
                     posydon_attributes =  posydon_attribute(MESA_labels)
                     rs = list_for_matching[1]

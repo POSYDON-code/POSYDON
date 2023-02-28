@@ -46,7 +46,6 @@ class isolated_step(detached_step):
         grid_name_Hrich=None,
         grid_name_strippedHe=None,
         path=PATH_TO_POSYDON_DATA,
-        print('Init step isolated')
         #dt=None,
         #n_o_steps_history=None,
         do_wind_loss=False,
@@ -54,7 +53,7 @@ class isolated_step(detached_step):
         do_gravitational_radiation=False,
         do_magnetic_braking=False,
         *args, **kwargs):
-
+        print('Init isolated')
         super().__init__(
         grid_name_Hrich=grid_name_Hrich,
         grid_name_strippedHe=grid_name_strippedHe,
@@ -71,27 +70,28 @@ class isolated_step(detached_step):
 
 
     def __call__(self, binary):
-
-        initialize_isolated_binary_orbit()
-
+        print('before initialize orbit')
+        initialize_isolated_binary_orbit(binary)
+        print('after initialize orbit')
         if binary.star_1 == None or binary.star_2 == None: # already one star became None in step_merged or step_initially_single
             pass
         elif binary.state == "disrupted":
             pass
         else:
             raise ValueError("In isolated step one of the two stars should be None or the the binary.state=='disrupted' ")
+        print('before iso super')
         super().__call__(binary)
+        
 
          # TODO maybe stuff after the call of the detached step
 
 
-    def initialize_isolated_binary_orbit():
+    def initialize_isolated_binary_orbit(binary):
         """
         and isolated star is treated as a extremely far away binary for the purpose of keeping the same code structure
         put period at extreme, and initiate detached step with one star (and one non-evolving compact object),
          with no orbital changes apart from spin change due to winds and deformation
         """
-        binary = self.binary
         binary.orbital_period = 10.**99
         print("Isolated initialize")
         binary.eccentricity = 0.0
