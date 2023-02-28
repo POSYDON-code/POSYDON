@@ -1,43 +1,53 @@
 '''
-MESA low_res_grids were run.
+MESA low_res_grids were run. This includes random grids and reruns.
 
-STEP 1: grid slice creation
+This is an EXAMPLE of the pipeline for a grid_type=HMS-HMS,
+metallicity=1e-01_Zsun, compression=LITE/ORIGINAL
 
-grid_type, metallicity, grid_slices, compression
-'HMS-HMS', '1e-01_Zsun', LITE/ORIGINAL
+STEP 1: grid slices creation
 ['grid_low_res_0','grid_low_res_1','grid_low_res_2',
 'grid_low_res_3','grid_low_res_4','grid_low_res_5',
-'grid_random_1'] ---> output *.h5
+'grid_random_1', 'grid_low_res_rerun_opacitymax'] --> output *.h5
 
-STEP 2: grid concatenation
+STEP 2: grid slices concatenation
 [['grid_low_res_0','grid_low_res_1','grid_low_res_2',
-'grid_low_res_3','grid_low_res_4','grid_low_res_5']] -->
-grid_low_res_combined
+'grid_low_res_3','grid_low_res_4','grid_low_res_5'],
+['grid_low_combined','grid_low_res_rerun_opacitymax']] -->
+grid_low_res_combined.h5, grid_low_res_combined_rerun_1.h5
 
 STEP 3: plot grid slices
----> loop all plot types
----> chek failure rate
+['grid_low_res_combined.h5', 'grid_low_res_rerun_opacitymax',
+'grid_low_res_combined_rerun_1.h5' ] --> loop over all plot types
 
-STEP OPTIONAL: rerun grid with fix A
+STEP 4:
+['grid_low_res_combined_rerun_1.h5','grid_random_1_rerun_1.h5',]
+--> do post processing on the ORIGINAL grid and append back on the LITE gird
+the post processed quantities
+
+STEP 5:
+['grid_low_res_combined_rerun_1.h5'] --> train the interpolators
+
+STEP OPTIONAL 1:
+['grid_low_res_combined.h5', 'grid_low_res_combined_rerun_1.h5' ]
+--> check failure rate
+
+STEP OPTIONAL 2: rerun grid with a fix A
 grid_low_res_combined.rerun(index=logic) --> grid_rerun_1/grid.csv
-                                        --> grid_random_1_rerun_1/grid.csv
----- MEN/WOMEN POWER will run reruns ----
-
+                                         --> grid_random_1_rerun_1/grid.csv
+---- run gird fix ----
 call STEP 1: ['grid_rerun_1','grid_random_1_rerun_1',] --> *.h5
 call STEP 2: [['grid_low_res_combined','grid_rerun_1'],
               ['grid_random_1','grid_random_rerun_1']]
               ---> gird_low_res_combined_rerun_1.h5
                    grid_random_1_rerun_1.h5
-call STEP 3: rerun grid with fix B
-........ --> grid_rerun_2/grid.csv, call STEP 1, 2.. 3
-
-STEP 4:
-do post processing on the ORIGINAL grids and append back on
-LITE/ORIGINAL for both grid_low_res_combined_rerun_N and grid_random_1_rerun_N
-
-STEP 5:
-train interpolators
+call STEP 3: ['gird_low_res_combined_rerun_1.h5']
+--> continue to STEP OPTIONAL 2 or STEP 4 and 5
+----------------------
 '''
+
+__authors__ = [
+    "Simone Bavera <Simone.Bavera@unige.ch>",
+]
 
 import os
 import sys
@@ -465,7 +475,6 @@ def export_dataset():
 
 if __name__ == '__main__':
 
-    PATH = '.'
     VERBOSE = True
 
     # chose grid slice given the slurm jobarray index
