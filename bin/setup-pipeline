@@ -89,7 +89,7 @@ def slurm_job(job_name,
             f.write(f"#SBATCH --output={PATH}/logs/post_processing_%a.out\n")
 
         if TRAIN_INTERPOLATORS:
-            f.write(f"#SBATCH --output={PATH}/logs/post_processing_%a.out\n")
+            f.write(f"#SBATCH --output={PATH}/logs/train_interpolators_%a.out\n")
             f.write(f"export PATH_TO_POSYDON={PATH_TO_POSYDON}\n")
 
         f.write(f"\nsrun python {PATH_TO_POSYDON}/bin/run-pipeline {path_to_csv_file} $SLURM_ARRAY_TASK_ID")
@@ -296,7 +296,7 @@ if __name__ == '__main__':
         ###### EXAMPLE ######
         GRID_TYPES = ['HMS-HMS']
         METALLICITIES = ['1e-01_Zsun']
-        GRID_SLICES = ['grid_low_res_combined_rerun_1']
+        GRID_SLICES = ['grid_low_res_combined_rerun_1_processed']
         INTERPOLATION_METHODS = ["linear","1NN"]
         COMPRESSIONS = ['LITE']
         #####################

@@ -392,10 +392,10 @@ def train_interpolators(i, path_to_csv_file, verbose=False):
              'S1_Patton&Sukhbold20-engineN20_spin']
 
 
-    first = [key for key in grid.final_values.dtype.names
-    if key != "model_number"
-    and (type(grid.final_values[key][0]) != np.str_)
-    and any(~np.isnan(grid.final_values[key]))]
+    first = [key for key in grid.final_values.dtype.names if (
+                                    key != "model_number" and
+                                    (type(grid.final_values[key][0]) != np.str_)
+                                    and any(~np.isnan(grid.final_values[key])))]
 
     for sec in second:
         first.remove(sec)
