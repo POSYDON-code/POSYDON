@@ -370,6 +370,7 @@ def train_interpolators(i, path_to_csv_file, verbose=False):
     df = pd.read_csv(path_to_csv_file)
     grid_path = df.loc[i,'path_to_grid']
     interpolator_path = df.loc[i,'path_to_interpolator']
+    method = interpolator_path.split('IF_')[-1].split('.pkl')[0]
 
     # check interpolation_objects directory exists
     interp_path = os.path.join('/', os.path.join(*interpolator_path.split('/')[:-1]))

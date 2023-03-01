@@ -199,7 +199,7 @@ def create_csv_step_5(GRID_TYPES, METALLICITIES, GRID_SLICES,
                         interpolators.append(os.path.join(PATH_TO_GRIDS,
                                       grid_type, version, metallicity,
                                       'interpolation_objects',
-                                      method+'.pkl'))
+                                      'IF_'+method+'.pkl'))
     grids = np.array(grids)
     df = pd.DataFrame()
     df['path_to_grid'] = grids
