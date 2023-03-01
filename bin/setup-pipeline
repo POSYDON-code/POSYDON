@@ -54,17 +54,17 @@ def slurm_job(job_name,
 
     with open(f'{job_name}.slurm', 'w') as f:
         f.write("#!/bin/bash\n")
-        f.write("#SBATCH --account=b1119\n")
-        f.write("#SBATCH --partition=posydon-priority\n")
+        f.write(f"#SBATCH --account={ACCOUNT}\n")
+        f.write(f"#SBATCH --partition={PARTITION}\n")
         f.write("#SBATCH -N 1\n")
         f.write("#SBATCH --cpus-per-task 1\n")
         f.write("#SBATCH --ntasks-per-node 1\n")
-        f.write("#SBATCH --time=24:00:00\n")
+        f.write(f"#SBATCH --time={WALLTIME}\n")
         f.write("#SBATCH --job-name=psygrid\n")
         f.write("#SBATCH --mem-per-cpu=4G\n")
 
         if EMAIL is not None:
-            f.write("#SBATCH --mail-type=ALL\n")
+            f.write(f"#SBATCH --mail-type={MAILTYPE}\n")
             f.write(f"#SBATCH --mail-user={EMAIL}\n")
 
         if (CREATE_GRID_SLICES or PLOT_GRIDS or CHECK_FAILURE_RATE or
@@ -210,17 +210,23 @@ if __name__ == '__main__':
 
     PATH_TO_GRIDS = '/projects/b1119/POSYDON_GRIDS/'
     PATH = '.' # working dir
+    ACCOUNT = 'b1119'
+    PARTITION = 'posydon-priority'
+    WALLTIME = '24:00:00'
+    MAILTYPE = 'FAIL'
     EMAIL = 'simone.bavera@unige.ch'
     VERBOSE = True
 
     # EXAMPLE SETUP (they currently run independently)
     # TODO: add a linked slurm job arrays which are waiting for each others
+    # STEPS 1 to 5
     CREATE_GRID_SLICES = True
     COMBINE_GRID_SLICES = True
     PLOT_GRIDS = True
-    CHECK_FAILURE_RATE = True
     POST_PROCESSING = True
     TRAIN_INTERPOLATORS = True
+    # OPTIONL STEPS
+    CHECK_FAILURE_RATE = True
 
     if CREATE_GRID_SLICES:
         ###### EXAMPLE ######
@@ -228,7 +234,7 @@ if __name__ == '__main__':
         METALLICITIES = ['1e-01_Zsun']
         GRID_SLICES = ['grid_low_res_0','grid_low_res_1','grid_low_res_2',
                         'grid_low_res_3','grid_low_res_4','grid_low_res_5',
-                        'grid_rerun_opacitymax']
+                        'grid_low_res_rerun_opacitymax']
         COMPRESSIONS = ['LITE','ORIGINAL']
         #####################
         create_csv_step_1(GRID_TYPES, METALLICITIES, GRID_SLICES, COMPRESSIONS)

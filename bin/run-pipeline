@@ -74,8 +74,14 @@ def create_grid_slice(i, path_to_csv_file, verbose=False):
     compression = df.loc[i,'compression']
 
     grid_name = grid_path.split('/')[-1]
-    grid_output = os.path.join('/',os.path.join(*grid_path.split('/')[:-1]),
-                                            compression,grid_name+'.h5')
+    otuput_path = os.path.join('/', os.path.join(*grid_path.split('/')[:-1]),
+                               compression)
+    grid_output = os.path.join(otuput_path, grid_name+'.h5')
+
+    # check that LITE/ or ORIGINAL/ directory exists
+    if not os.path.isdir(otuput_path):
+        os.makedirs(otuput_path)
+
     if verbose:
         print('processing ', grid_path)
         print('saving file ',  grid_output)
@@ -127,17 +133,23 @@ def plot_grid(i, path_to_csv_file, verbose=False):
     df = pd.read_csv(path_to_csv_file)
     grid_path = df.loc[i,'path_to_grid']
     plot_dir = df.loc[i,'path_to_plot']
+
+    # check that plots/ directories exist
+    plot_path = os.path.join('/', os.path.join(*plot_dir.split('/')[:-1]))
+    check_dirs = [plot_path, plot_dir]
+
+    sub_dirs = ['TF12/', 'TF1/', 'TF2/', 'TF3/', 'TF4/', 'debug_mt/',
+                'debug_rl_1/', 'debug_rl_2/']
+    for name in sub_dirs:
+        check_dirs.append(os.path.join(plot_dir,name))
+
+    for dir_ in  check_dirs:
+        if not os.path.isdir(dir_):
+            os.makedirs(dir_)
+
+    # load grid
     grid = PSyGrid(verbose=False)
     grid.load(grid_path)
-
-    # TODO: mk plot directories
-    # dirname = 'plots/'+str(sys.argv[1])+'/'
-    # dirs=['plots/', dirname,
-    #       dirname+'TF12/',dirname+'TF1/',dirname+'TF2/',dirname+'TF3/',dirname+'TF4/',
-    #       dirname+'debug_mt/',dirname+'debug_rl_1/',dirname+'debug_rl_2/']
-    # for dir_ in dirs:
-    #     if not os.path.isdir(path.replace(version,'')+dir_):
-    #         os.mkdir(dir_)
 
     if 'HMS-HMS' in grid_path:
         # mass ratio slices
@@ -249,7 +261,8 @@ def plot_grid(i, path_to_csv_file, verbose=False):
                     'colorbar': {'pad': 0.12}
                 }
 
-                grid.plot2D('star_1_mass', 'period_days', 'rl_relative_overflow_1',
+                grid.plot2D('star_1_mass', 'period_days',
+                            'rl_relative_overflow_1',
                              termination_flag='debug',
                              grid_3D=True, slice_3D_var_str='mass_ratio',
                              slice_3D_var_range=(q-2.5e-2,q+2.5e-2),
@@ -269,7 +282,8 @@ def plot_grid(i, path_to_csv_file, verbose=False):
                     'colorbar': {'pad': 0.12}
                 }
 
-                grid.plot2D('star_1_mass', 'period_days', 'rl_relative_overflow_2',
+                grid.plot2D('star_1_mass', 'period_days',
+                            'rl_relative_overflow_2',
                              termination_flag='debug',
                              grid_3D=True, slice_3D_var_str='mass_ratio',
                              slice_3D_var_range=(q-2.5e-2,q+2.5e-2),
@@ -333,22 +347,22 @@ def post_processing(i, path_to_csv_file, verbose=False):
     MESA_dirs_EXTRA_COLUMNS, EXTRA_COLUMNS = post_process_grid(grid_ORIGINAL,
                                                                index=None,
                                                                star_2_CO=star_2_CO,
-                                                               verbose=verbose)
+                                                               verbose=False)
 
 
     # post processed quantities are appended to the grid object, hence
     # we create a copy of it and append back to it
     if os.path.exists(processed_grid_path):
         if verbose:
-            print('Post processed grid file alredy exist, removing it...')
+            print('Post processed grid file alredy exist, removing it.')
         os.remove(processed_grid_path)
     copyfile(grid_path, processed_grid_path)
 
-    if verbose:
-        print('Add process quantities to grid...')
     grid_LITE = PSyGrid(processed_grid_path)
     add_post_processed_quantities(grid_LITE, MESA_dirs_EXTRA_COLUMNS,
                                   EXTRA_COLUMNS, verbose=verbose)
+    if verbose:
+        print('Added process quantities to grid:',processed_grid_path)
     grid_LITE.close()
 
 
@@ -363,10 +377,15 @@ def train_interpolators(i, path_to_csv_file, verbose=False):
     grid = PSyGrid(grid_train)
 
     second = ['S1_direct_f_fb', 'S1_direct_mass', 'S1_direct_spin']
-    third = ['S1_Fryer+12-rapid_f_fb', 'S1_Fryer+12-rapid_mass', 'S1_Fryer+12-rapid_spin']
-    fourth = ['S1_Fryer+12-delayed_f_fb', 'S1_Fryer+12-delayed_mass', 'S1_Fryer+12-delayed_spin']
-    fifth = ['S1_Sukhbold+16-engineN20_f_fb', 'S1_Sukhbold+16-engineN20_mass', 'S1_Sukhbold+16-engineN20_spin']
-    sixth = ['S1_Patton&Sukhbold20-engineN20_f_fb', 'S1_Patton&Sukhbold20-engineN20_mass', 'S1_Patton&Sukhbold20-engineN20_spin']
+    third = ['S1_Fryer+12-rapid_f_fb', 'S1_Fryer+12-rapid_mass',
+             'S1_Fryer+12-rapid_spin']
+    fourth = ['S1_Fryer+12-delayed_f_fb', 'S1_Fryer+12-delayed_mass',
+              'S1_Fryer+12-delayed_spin']
+    fifth = ['S1_Sukhbold+16-engineN20_f_fb', 'S1_Sukhbold+16-engineN20_mass',
+             'S1_Sukhbold+16-engineN20_spin']
+    sixth = ['S1_Patton&Sukhbold20-engineN20_f_fb',
+             'S1_Patton&Sukhbold20-engineN20_mass',
+             'S1_Patton&Sukhbold20-engineN20_spin']
 
 
     first = [key for key in grid.final_values.dtype.names
@@ -476,6 +495,13 @@ def export_dataset():
 if __name__ == '__main__':
 
     VERBOSE = True
+    PATH_TO_GRIDS = '/projects/b1119/POSYDON_GRIDS/'
+
+    # prevent to run the script locally else it will star creating
+    # directories where you do not want them before breaking
+    if not os.path.isdir(PATH_TO_GRIDS):
+        raise ValueError('Grids were not found! '
+                         f'Check your PATH_TO_GRIDS={PATH_TO_GRIDS}')
 
     # chose grid slice given the slurm jobarray index
     path_to_csv_file = str(sys.argv[1])
