@@ -70,9 +70,17 @@ class isolated_step(detached_step):
 
 
     def __call__(self, binary):
-        print('before initialize orbit')
-        initialize_isolated_binary_orbit(binary)
-        print('after initialize orbit')
+        """
+            and isolated star is treated as a extremely far away binary for the purpose of keeping the same code structure
+            put period at extreme, and initiate detached step with one star (and one non-evolving compact object),
+            with no orbital changes apart from spin change due to winds and deformation
+        """
+        print("before print")
+        self.print_test()
+        print("after print")
+        binary.orbital_period = 10.**99
+        binary.eccentricity = 0.0
+        binary.separation = orbital_separation_from_period(binary.orbital_period, 1.,1.)
         if binary.star_1 == None or binary.star_2 == None: # already one star became None in step_merged or step_initially_single
             pass
         elif binary.state == "disrupted":
@@ -85,14 +93,5 @@ class isolated_step(detached_step):
 
          # TODO maybe stuff after the call of the detached step
 
-
-    def initialize_isolated_binary_orbit(binary):
-        """
-        and isolated star is treated as a extremely far away binary for the purpose of keeping the same code structure
-        put period at extreme, and initiate detached step with one star (and one non-evolving compact object),
-         with no orbital changes apart from spin change due to winds and deformation
-        """
-        binary.orbital_period = 10.**99
-        print("Isolated initialize")
-        binary.eccentricity = 0.0
-        binary.separation = orbital_separation_from_period(binary.orbital_period, 1.,1.)
+    def print_test(self):
+        print("test")      
