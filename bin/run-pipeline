@@ -318,7 +318,6 @@ def check_failure_rate(i, path_to_csv_file, verbose=False):
 
     df = pd.read_csv(path_to_csv_file)
     grid_path = df.loc[i,'path_to_grid']
-    plot_dir = df.loc[i,'path_to_plot']
     grid = PSyGrid(verbose=False)
     grid.load(grid_path)
 
@@ -371,10 +370,15 @@ def train_interpolators(i, path_to_csv_file, verbose=False):
     df = pd.read_csv(path_to_csv_file)
     grid_path = df.loc[i,'path_to_grid']
     interpolator_path = df.loc[i,'path_to_interpolator']
+
+    # check interpolation_objects directory exists
+    interp_path = os.path.join('/', os.path.join(*interpolator_path.split('/')[:-1]))
+    if not os.path.isdir(interp_path):
+        os.makedirs(interp_path)
+
+    # load grid
     grid = PSyGrid(verbose=False)
     grid.load(grid_path)
-
-    grid = PSyGrid(grid_train)
 
     second = ['S1_direct_f_fb', 'S1_direct_mass', 'S1_direct_spin']
     third = ['S1_Fryer+12-rapid_f_fb', 'S1_Fryer+12-rapid_mass',
