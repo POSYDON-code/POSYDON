@@ -514,14 +514,12 @@ class detached_step:
         n = 0
         for mass in self.grid.grid_mass:
             n = max(n, len(self.grid.get("age", mass)))
-
         self.rootm = np.inf * np.ones((len(self.grid.grid_mass),
                                        n, len(self.root_keys)))
         for i, mass in enumerate(self.grid.grid_mass):
             for j, key in enumerate(self.root_keys):
                 track = self.grid.get(key, mass)
                 self.rootm[i, : len(track), j] = track
-
         if rs is None:
             rs = np.ones_like(keys)
         else:
@@ -534,12 +532,6 @@ class detached_step:
         t = self.rootm[idx][np.argmax("age" == self.root_keys)]
         m0 = self.grid.grid_mass[idx[0]]
         return m0, t
-
-    def posydon_attribute(list_for_matching):
-        list_of_attributes = []
-        for attr in list_for_matching:
-            list_of_attributes.append(getattr(star, attr))
-        return list_of_attributes
 
     def match_to_single_star(self, star, htrack):
         """Determine the associated initial mass and time in the grid that
@@ -575,17 +567,8 @@ class detached_step:
         get_root0 = self.get_root0
         get_track_val = self.get_track_val
         matching_method = self.matching_method
-        tran = self.transform()
-        sc_mass_H = tran[0]
-        sc_mass_He = tran[1]
-        sc_log_R_H = tran[2]
-        sc_log_R_He = tran[3]
-        sc_he_core_mass_H = tran[4]
-        sc_he_core_mass_He = tran[5]
-        sc_center_h1 = tran[6]
-        sc_center_he4_H = tran[7]
-        sc_center_he4_He = tran[8]
-        sc_center_c12 = tran[9]
+        scale = self.scale
+
         initials = None
         # tolerance 1e-8
         tolerance_matching_integration = 1e-2
@@ -626,6 +609,12 @@ class detached_step:
             else:
                 initials = sol.x
         elif matching_method == "minimize":
+            def posydon_attribute(list_for_matching, star):
+                list_of_attributes = []
+                for attr in list_for_matching:
+                    list_of_attributes.append(getattr(star, attr))
+                return list_of_attributes
+
             if star.state in LIST_ACCEPTABLE_STATES_FOR_HMS:
                 # Initialezed ZAMS systems have no information of radius
                 if (star.log_R is None) or np.isnan(star.log_R): #TODO: This is no a good check for ZAMS!!
@@ -633,7 +622,7 @@ class detached_step:
                 else:
                     list_for_matching = self.list_for_matching_HMS
                     MESA_labels = list_for_matching[0]
-                    posydon_attributes =  posydon_attribute(MESA_labels)
+                    posydon_attributes =  posydon_attribute(MESA_labels, star)
                     rs = list_for_matching[1]
                     colscalers = list_for_matching[2]
                     bnds = [[m_min_H, m_max_H], [0, None]]
@@ -644,17 +633,22 @@ class detached_step:
                         if i not in self.root_keys:
                             raise Exception("Expected matching parameter not "
                                             "added in the single star grid options.")
+
+                    scales = []
+                    for MESA_label, colscaler in zip(MESA_labels, colscalers):
+                        scale_of_attribute = scale(MESA_label, htrack, colscaler)
+                        scales.append(scale_of_attribute)
+
                     def square_difference(x):
                         result = 0.0
-                        for MESA_label, posydon_attribute, colscaler in zip(MESA_labels, posydon_attributes, colscalers):
-                            single_track_value = scale(MESA_label, htrack, colscaler).transform(get_track_val(MESA_label, htrack, *x))
-                            posydon_value  = scale(MESA_label, htrack, colscaler).transform(posydon_attribute)
+                        for MESA_label, posydon_attr, colscaler, scale_of_that_MESA_label  in zip(MESA_labels, posydon_attributes, colscalers, scales):
+                            single_track_value = scale_of_that_MESA_label.transform(get_track_val(MESA_label, htrack, *x))
+                            posydon_value  = scale_of_that_MESA_label.transform(posydon_attr)
                             result += (single_track_value - posydon_value) ** 2
                         return result
 
-                    x0 = get_root0(list_for_matching, posydon_attributes,
+                    x0 = get_root0(MESA_labels, posydon_attributes,
                                    htrack, rs=rs)
-
                     sol = minimize(square_difference,
                         x0,
                         method="TNC",
@@ -703,15 +697,20 @@ class detached_step:
                     if i not in self.root_keys:
                         raise Exception("Expected matching parameter not "
                                         "added in the single star grid options.")
+                scales = []
+                for MESA_label, colscaler in zip(MESA_labels, colscalers):
+                    scale_of_attribute = scale(MESA_label, htrack, colscaler)
+                    scales.append(scale_of_attribute)
+
                 def square_difference(x):
                     result = 0.0
-                    for MESA_label, posydon_attribute, colscaler in zip(MESA_labels, posydon_attributes, colscalers):
-                        single_track_value = scale(MESA_label, htrack, colscaler).transform(get_track_val(MESA_label, htrack, *x))
-                        posydon_value  = scale(MESA_label, htrack, colscaler).transform(posydon_attribute)
+                    for MESA_label, posydon_attr, colscaler, scale_of_that_MESA_label  in zip(MESA_labels, posydon_attributes, colscalers, scales):
+                        single_track_value = scale_of_that_MESA_label.transform(get_track_val(MESA_label, htrack, *x))
+                        posydon_value  = scale_of_that_MESA_label.transform(posydon_attr)
                         result += (single_track_value - posydon_value) ** 2
                     return result
 
-                x0 = get_root0(list_for_matching, posydon_attributes,
+                x0 = get_root0(MESA_labels, posydon_attributes,
                                htrack, rs=rs)
 
                 sol = minimize(square_difference,
@@ -727,7 +726,7 @@ class detached_step:
                 rs = list_for_matching[1]
                 colscalers = list_for_matching[2]
                 bnds = [[m_min_He, m_max_He], [0, None]]
-                
+
                 if self.verbose:
                     print("Matching attributes and their normalizations :",
                           MESA_labels, rs)
@@ -735,15 +734,20 @@ class detached_step:
                     if i not in self.root_keys:
                         raise Exception("Expected matching parameter not "
                                         "added in the single star grid options.")
+                scales = []
+                for MESA_label, colscaler in zip(MESA_labels, colscalers):
+                    scale_of_attribute = scale(MESA_label, htrack, colscaler)
+                    scales.append(scale_of_attribute)
+
                 def square_difference(x):
                     result = 0.0
-                    for MESA_label, posydon_attribute, colscaler in zip(MESA_labels, posydon_attributes, colscalers):
-                        single_track_value = scale(MESA_label, htrack, colscaler).transform(get_track_val(MESA_label, htrack, *x))
-                        posydon_value  = scale(MESA_label, htrack, colscaler).transform(posydon_attribute)
+                    for MESA_label, posydon_attr, colscaler, scale_of_that_MESA_label  in zip(MESA_labels, posydon_attributes, colscalers, scales):
+                        single_track_value = scale_of_that_MESA_label.transform(get_track_val(MESA_label, htrack, *x))
+                        posydon_value  = scale_of_that_MESA_label.transform(posydon_attr)
                         result += (single_track_value - posydon_value) ** 2
                     return result
 
-                x0 = get_root0(list_for_matching, posydon_attributes,
+                x0 = get_root0(MESA_labels, posydon_attributes,
                                htrack, rs=rs)
 
                 sol = minimize(square_difference,
@@ -812,6 +816,7 @@ class detached_step:
                               " with", np.abs(sol.fun), "<",
                               tolerance_matching_integration, "tolerance")
                     initials = sol.x
+                    '''
                     star.fun = sol.fun
                     star.stiching_rel_mass_difference = (
                         self.get_track_val("mass", htrack, *sol.x) - star.mass
@@ -828,16 +833,20 @@ class detached_step:
                             self.get_track_val("inertia", htrack, *sol.x)
                             - star.total_moment_of_inertia
                         ) / star.total_moment_of_inertia
+                    '''
                 else:
                     if self.verbose:
                         print("minimization in matching not successful, with",
                               np.abs(sol.fun), ">", tolerance_matching_integration,
                               "tolerance")
                     initials = (np.nan, np.nan)
+                    '''
                     star.fun = np.nan
                     star.stiching_rel_mass_difference = np.nan
                     star.stiching_rel_radius_difference = np.nan
                     star.stiching_rel_inertia_difference = np.nan
+                    '''
+
         if self.verbose:
             print(
                 "matching with track of intial mass m0, at time t0 ",
@@ -880,7 +889,6 @@ class detached_step:
             self.non_existent_companion = 2
         else:
             self.non_existent_companion = 0 # detached step of an actual binary
-
 
         if self.non_existent_companion == 0: #no isolated evolution, detached step of an actual binary
             # the primary in a real binary is potential compact object, or the more evolved star

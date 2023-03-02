@@ -63,6 +63,7 @@ class disrupted_step(isolated_step):
         grid_name_strippedHe=None,
         path=PATH_TO_POSYDON_DATA,
         *args, **kwargs):
+
         super().__init__(
         grid_name_Hrich=grid_name_Hrich,
         grid_name_strippedHe=grid_name_strippedHe,
@@ -79,5 +80,5 @@ class disrupted_step(isolated_step):
             elif binary.star_2 in STAR_STATES_CO:
                 binary.star_2 = None
         '''
-        print('disrupted super')
+
         super().__call__(binary)
