@@ -609,6 +609,7 @@ class detached_step:
             else:
                 initials = sol.x
         elif matching_method == "minimize":
+            
             def posydon_attribute(list_for_matching, star):
                 list_of_attributes = []
                 for attr in list_for_matching:
@@ -638,7 +639,7 @@ class detached_step:
                     for MESA_label, colscaler in zip(MESA_labels, colscalers):
                         scale_of_attribute = scale(MESA_label, htrack, colscaler)
                         scales.append(scale_of_attribute)
-
+                    
                     def square_difference(x):
                         result = 0.0
                         for MESA_label, posydon_attr, colscaler, scale_of_that_MESA_label  in zip(MESA_labels, posydon_attributes, colscalers, scales):
@@ -649,11 +650,13 @@ class detached_step:
 
                     x0 = get_root0(MESA_labels, posydon_attributes,
                                    htrack, rs=rs)
+    
                     sol = minimize(square_difference,
                         x0,
                         method="TNC",
                         bounds=bnds
                     )
+
                     '''
                     # stars after mass transfer could swell up so that log_R
                     # is not appropriate for matching
@@ -685,7 +688,7 @@ class detached_step:
                 list_for_matching = self.list_for_matching_postMS
 
                 MESA_labels = list_for_matching[0]
-                posydon_attributes =  posydon_attribute(MESA_labels)
+                posydon_attributes =  posydon_attribute(MESA_labels, star)
                 rs = list_for_matching[1]
                 colscalers = list_for_matching[2]
                 bnds = [[m_min_H, m_max_H], [0, None]]
@@ -701,7 +704,7 @@ class detached_step:
                 for MESA_label, colscaler in zip(MESA_labels, colscalers):
                     scale_of_attribute = scale(MESA_label, htrack, colscaler)
                     scales.append(scale_of_attribute)
-
+                print()
                 def square_difference(x):
                     result = 0.0
                     for MESA_label, posydon_attr, colscaler, scale_of_that_MESA_label  in zip(MESA_labels, posydon_attributes, colscalers, scales):
@@ -718,15 +721,14 @@ class detached_step:
                     method="TNC",
                     bounds=bnds
                 )
+                
             elif star.state in LIST_ACCEPTABLE_STATES_FOR_HeStar:
                 list_for_matching = self.list_for_matching_HeStar
-
                 MESA_labels = list_for_matching[0]
-                posydon_attributes =  posydon_attribute(MESA_labels)
+                posydon_attributes =  posydon_attribute(MESA_labels, star)
                 rs = list_for_matching[1]
                 colscalers = list_for_matching[2]
                 bnds = [[m_min_He, m_max_He], [0, None]]
-
                 if self.verbose:
                     print("Matching attributes and their normalizations :",
                           MESA_labels, rs)
@@ -738,7 +740,8 @@ class detached_step:
                 for MESA_label, colscaler in zip(MESA_labels, colscalers):
                     scale_of_attribute = scale(MESA_label, htrack, colscaler)
                     scales.append(scale_of_attribute)
-
+                
+                
                 def square_difference(x):
                     result = 0.0
                     for MESA_label, posydon_attr, colscaler, scale_of_that_MESA_label  in zip(MESA_labels, posydon_attributes, colscalers, scales):
@@ -755,6 +758,7 @@ class detached_step:
                     method="TNC",
                     bounds=bnds
                 )
+                print("After the sol is , ",sol)
                 '''
                 if (np.abs(sol.fun) > tolerance_matching_integration
                         or not sol.success):
