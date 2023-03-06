@@ -207,6 +207,7 @@ class BinaryPopulation:
                 try:
                     binary.evolve()
                 except Exception:
+                    print(traceback.print_exc())
                     binary.event = 'FAILED'
                     binary.traceback = traceback.format_exc()
                 if len(w) > 0:

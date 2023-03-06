@@ -758,7 +758,7 @@ class detached_step:
                     method="TNC",
                     bounds=bnds
                 )
-                print("After the sol is , ",sol)
+                
                 '''
                 if (np.abs(sol.fun) > tolerance_matching_integration
                         or not sol.success):
