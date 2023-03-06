@@ -609,7 +609,7 @@ class detached_step:
             else:
                 initials = sol.x
         elif matching_method == "minimize":
-            
+
             def posydon_attribute(list_for_matching, star):
                 list_of_attributes = []
                 for attr in list_for_matching:
@@ -639,7 +639,7 @@ class detached_step:
                     for MESA_label, colscaler in zip(MESA_labels, colscalers):
                         scale_of_attribute = scale(MESA_label, htrack, colscaler)
                         scales.append(scale_of_attribute)
-                    
+
                     def square_difference(x):
                         result = 0.0
                         for MESA_label, posydon_attr, colscaler, scale_of_that_MESA_label  in zip(MESA_labels, posydon_attributes, colscalers, scales):
@@ -650,7 +650,7 @@ class detached_step:
 
                     x0 = get_root0(MESA_labels, posydon_attributes,
                                    htrack, rs=rs)
-    
+
                     sol = minimize(square_difference,
                         x0,
                         method="TNC",
@@ -721,7 +721,7 @@ class detached_step:
                     method="TNC",
                     bounds=bnds
                 )
-                
+
             elif star.state in LIST_ACCEPTABLE_STATES_FOR_HeStar:
                 list_for_matching = self.list_for_matching_HeStar
                 MESA_labels = list_for_matching[0]
@@ -740,8 +740,8 @@ class detached_step:
                 for MESA_label, colscaler in zip(MESA_labels, colscalers):
                     scale_of_attribute = scale(MESA_label, htrack, colscaler)
                     scales.append(scale_of_attribute)
-                
-                
+
+
                 def square_difference(x):
                     result = 0.0
                     for MESA_label, posydon_attr, colscaler, scale_of_that_MESA_label  in zip(MESA_labels, posydon_attributes, colscalers, scales):
@@ -817,7 +817,7 @@ class detached_step:
                 if np.abs(sol.fun) < tolerance_matching_integration:
                     if self.verbose:
                         print("minimization in matching considered acceptable,"
-                              " with", np.abs(sol.fun), "<",
+                              " with", f'{np.abs(sol.fun):.8f}', "<",
                               tolerance_matching_integration, "tolerance")
                     initials = sol.x
                     '''
@@ -853,27 +853,27 @@ class detached_step:
 
         if self.verbose:
             print(
-                "matching with track of intial mass m0, at time t0 ",
-                initials[0],
-                initials[1],
-                "with m(t0), log10(R(t0), center_he(t0), surface_he4, "
-                "surface_h1, he_core_mass, center_c12) = ",
-                self.get_track_val("mass", htrack, *sol.x),
-                self.get_track_val("log_R", htrack, *sol.x),
-                self.get_track_val("center_he4", htrack, *sol.x),
-                self.get_track_val("surface_he4", htrack, *sol.x),
-                self.get_track_val("surface_h1", htrack, *sol.x),
-                self.get_track_val("he_core_mass", htrack, *sol.x),
-                self.get_track_val("center_c12", htrack, *sol.x),
-                "Mass / Radius of the secondary at the end of the previous "
-                "step was = ",
-                star.mass,
-                star.log_R,
-                star.center_he4,
-                star.surface_he4,
-                star.surface_h1,
-                star.he_core_mass,
-                star.center_c12
+                "matching ", star.state, " star with track of intial mass m0, at time t0:",
+                f'{initials[0]:.3f}  [Msun],',
+                f'{initials[1]/1e6:.3f} [Myrs]', "\n",
+                "with m(t0), log10(R(t0), center_he(t0), surface_he4(t0), "
+                "surface_h1(t0), he_core_mass(t0), center_c12(t0) = \n",
+                f'{self.get_track_val("mass", htrack, *sol.x):.3f}',
+                f'{self.get_track_val("log_R", htrack, *sol.x):.3f}',
+                f'{self.get_track_val("center_he4", htrack, *sol.x):.4f}',
+                f'{self.get_track_val("surface_he4", htrack, *sol.x):.4f}',
+                f'{self.get_track_val("surface_h1", htrack, *sol.x):.4f}',
+                f'{self.get_track_val("he_core_mass", htrack, *sol.x):.3f}',
+                f'{self.get_track_val("center_c12", htrack, *sol.x):.4f}', "\n",
+                "The same values of the secondary at the end of the previous "
+                "step was = \n",
+                f'{star.mass:.3f}',
+                f'{star.log_R:.3f}',
+                f'{star.center_he4:.4f}',
+                f'{star.surface_he4:.4f}',
+                f'{star.surface_h1:.4f}',
+                f'{star.he_core_mass:.3f}',
+                f'{star.center_c12:.4f}'
             )
         return initials
 
