@@ -624,9 +624,9 @@ class PSyGrid:
 
         self._say('Loading MESA data...')
 
-        # this boolean array will store whether the i-th run is to be included
-        # (i.e. it has a binary_history file)
-        run_included = np.zeros(N_runs, dtype=bool)
+        #this int array will store the run_index of the i-th run and will be
+        # -1 if the run is not included.
+        run_included_at = np.full(N_runs, -1, dtype=int)
         run_index = 0
         for i in tqdm.tqdm(range(N_runs)):
             # Select the ith run
@@ -1009,11 +1009,17 @@ class PSyGrid:
 
             # consider the run (and the input directory) included
             self.MESA_dirs.append(run.path)
-            run_included[i] = True
+            run_included_at[i] = run_index
             run_index += 1
+            #check that new MESA path is added at run_index
+            lenMESA_dirs = len(self.MESA_dirs)
+            if lenMESA_dirs!=run_index:
+                warnings.warn("Non synchronous indexing: " +
+                          "run_index={} != ".format(run_index) +
+                          "length(MESA_dirs)={}".format(lenMESA_dirs))
 
-        #general fix for termination_flag in case of initial RLO
-        if initial_RLO_fix:
+        #general fix for termination_flag in case of initial RLO in binaries
+        if binary_grid and initial_RLO_fix:
             #create list of already detected initial RLO
             detected_initial_RLO = get_detected_initial_RLO(self)
             colnames = ["termination_flag_1", "termination_flag_2",
@@ -1023,9 +1029,23 @@ class PSyGrid:
             for i in range(N_runs):
                 flag1 = self.final_values[i]["termination_flag_1"]
                 if flag1 != "Terminate because of overflowing initial model":
-                    mass1 = self.initial_values[i]["star_1_mass"]
-                    mass2 = self.initial_values[i]["star_2_mass"]
-                    period = self.initial_values[i]["period_days"]
+                    #use grid point data (if existing) to detect initial RLO
+                    grid_point = read_initial_values(grid.runs[i].path)
+                    if "star_1_mass" in grid_point:
+                        mass1 = grid_point["star_1_mass"]
+                    else:
+                        mass1 = self.initial_values[i]["star_1_mass"]
+                        warnings.warn("No star_1_mass in "+grid.runs[i].path)
+                    if "star_2_mass" in grid_point:
+                        mass2 = grid_point["star_2_mass"]
+                    else:
+                        mass2 = self.initial_values[i]["star_2_mass"]
+                        warnings.warn("No star_2_mass in "+grid.runs[i].path)
+                    if "period_days" in grid_point:
+                        period = grid_point["period_days"]
+                    else:
+                        period = self.initial_values[i]["period_days"]
+                        warnings.warn("No period_days in "+grid.runs[i].path)
                     nearest = get_nearest_known_initial_RLO(mass1, mass2,
                                                         detected_initial_RLO)
                     if period<nearest["period_days"]:
@@ -1038,25 +1058,50 @@ class PSyGrid:
                             if colname in nearest:
                                 self.final_values[i][colname]=nearest[colname]
                         #reset the initial values to the grid point data
-                        grid_point = read_initial_values(grid.runs[i].path)
                         for colname, value in grid_point.items():
                             if colname in self.initial_values.dtype.names:
                                 self.initial_values[i][colname] = value
                         #add initial RLO system if not added before
-                        if not run_included[i]:
+                        if run_included_at[i]==-1:
                             if not slim:
                                 hdf5.create_group(
                                     "/grid/run{}/".format(run_index))
                             #include the run (and the input directory)
                             self.MESA_dirs.append(grid.runs[i].path)
-                            run_included[i] = True
+                            run_included_at[i] = run_index
                             run_index += 1
+                            #check that new MESA path is added at run_index
+                            lenMESA_dirs = len(self.MESA_dirs)
+                            if lenMESA_dirs!=run_index:
+                                warnings.warn("Non synchronous indexing: " +
+                                  "run_index={} != ".format(run_index) +
+                                  "length(MESA_dirs)={}".format(lenMESA_dirs))
 
                                 
         self._say("Storing initial/final values and metadata to HDF5...")
-        # exclude rows in initial/final_values corresponding to excluded runs
-        self.initial_values = self.initial_values[run_included]
-        self.final_values = self.final_values[run_included]
+        #create new array of initial and finial values with included runs
+        # only and sort it by run_index
+        new_initial_values = initialize_empty_array(
+            np.empty(run_index, dtype=dtype_initial_values))
+        new_final_values = initialize_empty_array(
+            np.empty(run_index, dtype=dtype_final_values))
+        for i in range(N_runs):
+            #only use included runs with a valid index
+            if run_included_at[i]>=0:
+                #check for index range
+                if run_included_at[i]>=run_index:
+                    warnings.warn("run {} has a run_index out of ".format(i) +
+                        "range: {}>={}".format(run_included_at[i], run_index))
+                    continue
+                for colname in self.initial_values.dtype.names:
+                    value = self.initial_values[i][colname]
+                    new_initial_values[run_included_at[i]][colname] = value
+                for colname in self.final_values.dtype.names:
+                    value = self.final_values[i][colname]
+                    new_final_values[run_included_at[i]][colname] = value
+        #replace old initial/final value array
+        self.initial_values = np.copy(new_initial_values)
+        self.final_values = np.copy(new_final_values)
 
         # Store the full table of initial_values
         hdf5.create_dataset("/grid/initial_values", data=self.initial_values,

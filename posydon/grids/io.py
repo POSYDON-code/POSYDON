@@ -386,13 +386,16 @@ def read_initial_values(mesa_dir):
     else:
         f = open(path, "r")
     for line in f:
-        if "=" not in line or "d0" not in line:
+        if "=" not in line:
             continue
         fields = line.strip().split("=")
         if len(fields) != 2:
             return None
         varname = fields[0].strip()
-        value = float(fields[1].split("d0")[0].strip())
+        valueparts = fields[1].split("d")
+        value = float(valueparts[0].strip())
+        if len(valueparts)>1:
+            value = value*10**float(valueparts[1].strip())
         if varname == "m1":
             varname = "star_1_mass"
         elif varname == "m2":
