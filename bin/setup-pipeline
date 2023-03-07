@@ -96,7 +96,8 @@ def slurm_job(job_name,
 
 # create csv file with a list of all grid paths to process
 def create_csv(GRID_TYPES, METALLICITIES, GRID_SLICES, COMPRESSIONS,
-               step_name=None, version=VERSION, INTERPOLATION_METHODS=None):
+               step_name=None, version=VERSION, GRIDS_COMBINED=None,
+               INTERPOLATION_METHODS=None):
 
     # number of grid types
     if (len(GRID_TYPES) != len(METALLICITIES) or
@@ -110,6 +111,7 @@ def create_csv(GRID_TYPES, METALLICITIES, GRID_SLICES, COMPRESSIONS,
     plot_dirs = []
     processed_grids = []
     interpolators = []
+    df = pd.DataFrame()
     for l, grid_type in enumerate(GRID_TYPES):
 
         METALLICITIES_ = METALLICITIES[l]
@@ -117,12 +119,30 @@ def create_csv(GRID_TYPES, METALLICITIES, GRID_SLICES, COMPRESSIONS,
         COMPRESSIONS_ = COMPRESSIONS[l]
 
         for metallicity in METALLICITIES_:
-            for grid_slice in GRID_SLICES_:
+            for i, grid_slice in enumerate(GRID_SLICES_):
                 for compression in COMPRESSIONS_:
                     if step_name in ['step_1', 'check_failure_rate']:
                         grids.append(os.path.join(PATH_TO_GRIDS,
                                       grid_type, version, metallicity, grid_slice))
                         grids_compression.extend([compression])
+                    elif step_name == 'step_2':
+                        if len(GRID_SLICES_) != len(GRIDS_COMBINED[l]):
+                            raise ValueError('len(GRID_SLICES) != len(GRIDS_COMBINED)!')
+                        combine_grid_slices = []
+                        # grid_slice is a batch
+                        for grid_slice_ in grid_slice:
+                                path_to_grid = os.path.join(PATH_TO_GRIDS,
+                                              grid_type, version, metallicity,
+                                              compression, grid_slice_+'.h5')
+                                combine_grid_slices.append(path_to_grid)
+                        path_to_grid_combined = os.path.join(PATH_TO_GRIDS,
+                                                             grid_type, version,
+                                                             metallicity,
+                                                             compression,
+                                                             GRIDS_COMBINED[l][i]+'.h5')
+                        df_tmp = pd.DataFrame()
+                        df_tmp[path_to_grid_combined] = combine_grid_slices
+                        df = pd.concat([df,df_tmp], axis=1)
                     elif step_name == 'step_3':
                         grids.append(os.path.join(PATH_TO_GRIDS,
                                       grid_type, version, metallicity,
@@ -148,47 +168,19 @@ def create_csv(GRID_TYPES, METALLICITIES, GRID_SLICES, COMPRESSIONS,
                                           'IF_'+method+'.pkl'))
 
     # saving dataset to csv file
-    grids = np.array(grids)
-    df = pd.DataFrame()
-    df['path_to_grid'] = grids
-    if step_name in ['step_1', 'check_failure_rate']:
-        df['compression'] = grids_compression
-    elif step_name == 'step_3':
-        df['path_to_plot'] = plot_dirs
-    elif step_name == 'step_4':
-        df['path_to_processed_grid'] = processed_grids
-    elif step_name == 'step_5':
-        df['path_to_interpolator'] = interpolators
+    if step_name != 'step_2':
+        grids = np.array(grids)
+        df['path_to_grid'] = grids
+        if step_name in ['step_1', 'check_failure_rate']:
+            df['compression'] = grids_compression
+        elif step_name == 'step_3':
+            df['path_to_plot'] = plot_dirs
+        elif step_name == 'step_4':
+            df['path_to_processed_grid'] = processed_grids
+        elif step_name == 'step_5':
+            df['path_to_interpolator'] = interpolators
     output_fname = f'{step_name}.csv'
     df.to_csv(os.path.join(PATH, output_fname), index=False)
-
-def create_csv_step_2(GRID_TYPES, METALLICITIES, GRID_SLICES,
-                      GRIDS_COMBINED, COMPRESSIONS,
-                      output_file='step_2.csv', version=VERSION):
-
-    if len(GRID_SLICES) != len(GRIDS_COMBINED):
-        raise ValueError('len(GRID_SLICES) =! len(GRIDS_COMBINED)!')
-
-    df = pd.DataFrame()
-    for grid_type in GRID_TYPES:
-        for metallicity in METALLICITIES:
-            for i, grid_slice_batch in enumerate(GRID_SLICES):
-                for k, compression in enumerate(COMPRESSIONS):
-                    combine_grid_slices = []
-                    for grid_slice in grid_slice_batch:
-                            path_to_grid = os.path.join(PATH_TO_GRIDS,
-                                          grid_type, version, metallicity,
-                                          compression, grid_slice+'.h5')
-                            combine_grid_slices.append(path_to_grid)
-                    path_to_grid_combined = os.path.join(PATH_TO_GRIDS,
-                                                         grid_type, version,
-                                                         metallicity,
-                                                         compression,
-                                                         GRIDS_COMBINED[i]+'.h5')
-                    df_tmp = pd.DataFrame()
-                    df_tmp[path_to_grid_combined] = combine_grid_slices
-                    df = pd.concat([df,df_tmp], axis=1)
-    df.to_csv(os.path.join(PATH, output_file), index=False)
 
 if __name__ == '__main__':
 
@@ -232,16 +224,16 @@ if __name__ == '__main__':
     if COMBINE_GRID_SLICES:
         ###### EXAMPLE ######
         GRID_TYPES = ['HMS-HMS']
-        METALLICITIES = ['1e-01_Zsun']
-        GRID_SLICES = [['grid_low_res_0','grid_low_res_1','grid_low_res_2',
+        METALLICITIES = [['1e-01_Zsun']]
+        GRID_SLICES = [[['grid_low_res_0','grid_low_res_1','grid_low_res_2',
                         'grid_low_res_3','grid_low_res_4','grid_low_res_5'],
-                        ['grid_low_res_combined','grid_low_res_rerun_opacitymax'],
+                        ['grid_low_res_combined','grid_low_res_rerun_opacitymax']]
                         ]
-        GRIDS_COMBINED = ['grid_low_res_combined','grid_low_res_combined_rerun_1']
-        COMPRESSIONS = ['LITE','ORIGINAL']
+        GRIDS_COMBINED = [['grid_low_res_combined','grid_low_res_combined_rerun_1']]
+        COMPRESSIONS = [['LITE','ORIGINAL']]
         #####################
-        create_csv_step_2(GRID_TYPES, METALLICITIES, GRID_SLICES,
-                          GRIDS_COMBINED, COMPRESSIONS)
+        create_csv(GRID_TYPES, METALLICITIES, GRID_SLICES, COMPRESSIONS,
+                   step_name='step_2', GRIDS_COMBINED=GRIDS_COMBINED)
 
         # create the slurm job
         slurm_job(job_name='step_2',
