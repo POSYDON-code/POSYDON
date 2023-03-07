@@ -184,121 +184,115 @@ def create_csv(GRID_TYPES, METALLICITIES, GRID_SLICES, COMPRESSIONS,
 
 if __name__ == '__main__':
 
-    PATH_TO_GRIDS = '/projects/b1119/POSYDON_GRIDS/'
-    PATH = '.' # working dir
-    ACCOUNT = 'b1119'
-    PARTITION = 'posydon-priority'
-    WALLTIME = '24:00:00'
-    MAILTYPE = 'FAIL'
-    EMAIL = 'simone.bavera@unige.ch'
-    VERBOSE = True
+    EXAMPLE = 'quest'
 
-    # EXAMPLE SETUP (they currently run independently)
-    # TODO: add a linked slurm job arrays which are waiting for each others
-    # STEPS 1 to 5
-    CREATE_GRID_SLICES = True
-    COMBINE_GRID_SLICES = True
-    PLOT_GRIDS = True
-    POST_PROCESSING = True
-    TRAIN_INTERPOLATORS = True
-    # OPTIONL STEPS
-    CHECK_FAILURE_RATE = True
+    # run a test on quest, currently only HMS-HMS grids are available
+    if EXAMPLE == 'quest':
 
-    if CREATE_GRID_SLICES:
-        ###### EXAMPLE ######
-        GRID_TYPES = ['HMS-HMS']
-        METALLICITIES = [['1e-01_Zsun']]
-        GRID_SLICES = [['grid_low_res_0','grid_low_res_1','grid_low_res_2',
+        PATH_TO_GRIDS = '/projects/b1119/POSYDON_GRIDS/'
+        PATH = '.' # working dir
+        ACCOUNT = 'b1119'
+        PARTITION = 'posydon-priority'
+        WALLTIME = '24:00:00'
+        MAILTYPE = 'FAIL'
+        EMAIL = 'simone.bavera@unige.ch'
+        VERBOSE = True
+
+        # EXAMPLE SETUP (they currently run independently)
+        # TODO: add a linked slurm job arrays which are waiting for each others
+        # STEPS 1 to 5
+        CREATE_GRID_SLICES = True
+        COMBINE_GRID_SLICES = True
+        PLOT_GRIDS = True
+        POST_PROCESSING = True
+        TRAIN_INTERPOLATORS = True
+        # OPTIONL STEPS
+        CHECK_FAILURE_RATE = True
+
+        ###### EXAMPLE step 1 ######
+        GRID_TYPES_s1 = ['HMS-HMS']
+        METALLICITIES_s1 = [['1e-01_Zsun']]
+        GRID_SLICES_s1 = [['grid_low_res_0','grid_low_res_1','grid_low_res_2',
                         'grid_low_res_3','grid_low_res_4','grid_low_res_5',
                         'grid_low_res_rerun_opacitymax']]
-        COMPRESSIONS = [['LITE','ORIGINAL']]
-        #####################
-        create_csv(GRID_TYPES, METALLICITIES, GRID_SLICES, COMPRESSIONS,
-                   step_name='step_1')
+        COMPRESSIONS_s1 = [['LITE','ORIGINAL']]
 
-        # create the slurm job
+        ###### EXAMPLE step 2 ######
+        GRID_TYPES_s2 = ['HMS-HMS']
+        METALLICITIES_s2 = [['1e-01_Zsun']]
+        GRID_SLICES_s2 = [[['grid_low_res_0','grid_low_res_1','grid_low_res_2',
+                        'grid_low_res_3','grid_low_res_4','grid_low_res_5'],
+                        ['grid_low_res_combined','grid_low_res_rerun_opacitymax']]
+                        ]
+        GRIDS_COMBINED_s2 = [['grid_low_res_combined','grid_low_res_combined_rerun_1']]
+        COMPRESSIONS_s2 = [['LITE','ORIGINAL']]
+
+        ###### EXAMPLE step 3 ######
+        GRID_TYPES_s3 = ['HMS-HMS']
+        METALLICITIES_s3 = [['1e-01_Zsun']]
+        GRID_SLICES_s3 = [['grid_low_res_combined','grid_low_res_rerun_opacitymax',
+                       'grid_low_res_combined_rerun_1']]
+        COMPRESSIONS_s3 = [['LITE']]
+
+        ###### EXAMPLE step 4 ######
+        GRID_TYPES_s4 = ['HMS-HMS']
+        METALLICITIES_s4 = [['1e-01_Zsun']]
+        GRID_SLICES_s4 = [['grid_low_res_combined_rerun_1']]
+        COMPRESSIONS_s4 = [['LITE']]
+
+        ###### EXAMPLE step 5 ######
+        GRID_TYPES_s5 = ['HMS-HMS']
+        METALLICITIES_s5 = [['1e-01_Zsun']]
+        GRID_SLICES_s5 = [['grid_low_res_combined_rerun_1_processed']]
+        INTERPOLATION_METHODS_s5 = ["linear","1NN"]
+        COMPRESSIONS_s5 = [['LITE']]
+
+        ###### EXAMPLE step optional 1 (check failure rate)######
+        GRID_TYPES_o1 = ['HMS-HMS']
+        METALLICITIES_o1 = [['1e-01_Zsun']]
+        GRID_SLICES_o1 = [['grid_low_res_combined','grid_low_res_rerun_opacitymax',
+                       'grid_low_res_combined_rerun_1']]
+        COMPRESSIONS_o1 = [['LITE']]
+
+    if CREATE_GRID_SLICES:
+        create_csv(GRID_TYPES_s1, METALLICITIES_s1, GRID_SLICES_s1,
+                   COMPRESSIONS_s1, step_name='step_1')
         slurm_job(job_name='step_1',
                   CREATE_GRID_SLICES=CREATE_GRID_SLICES,
                   verbose=VERBOSE)
 
     if COMBINE_GRID_SLICES:
-        ###### EXAMPLE ######
-        GRID_TYPES = ['HMS-HMS']
-        METALLICITIES = [['1e-01_Zsun']]
-        GRID_SLICES = [[['grid_low_res_0','grid_low_res_1','grid_low_res_2',
-                        'grid_low_res_3','grid_low_res_4','grid_low_res_5'],
-                        ['grid_low_res_combined','grid_low_res_rerun_opacitymax']]
-                        ]
-        GRIDS_COMBINED = [['grid_low_res_combined','grid_low_res_combined_rerun_1']]
-        COMPRESSIONS = [['LITE','ORIGINAL']]
-        #####################
-        create_csv(GRID_TYPES, METALLICITIES, GRID_SLICES, COMPRESSIONS,
-                   step_name='step_2', GRIDS_COMBINED=GRIDS_COMBINED)
-
-        # create the slurm job
+        create_csv(GRID_TYPES_s2, METALLICITIES_s2, GRID_SLICES_s2, COMPRESSIONS_s2,
+                   step_name='step_2', GRIDS_COMBINED=GRIDS_COMBINED_s2)
         slurm_job(job_name='step_2',
                   COMBINE_GRID_SLICES=COMBINE_GRID_SLICES,
                   verbose=VERBOSE)
 
     if PLOT_GRIDS:
-        ###### EXAMPLE ######
-        GRID_TYPES = ['HMS-HMS']
-        METALLICITIES = [['1e-01_Zsun']]
-        GRID_SLICES = [['grid_low_res_combined','grid_low_res_rerun_opacitymax',
-                       'grid_low_res_combined_rerun_1']]
-        COMPRESSIONS = [['LITE']]
-        #####################
-        create_csv(GRID_TYPES, METALLICITIES, GRID_SLICES, COMPRESSIONS,
-                   step_name='step_3')
-
-        # create the slurm job
+        create_csv(GRID_TYPES_s3, METALLICITIES_s3, GRID_SLICES_s3,
+                   COMPRESSIONS_s3, step_name='step_3')
         slurm_job(job_name='step_3',
                   PLOT_GRIDS=PLOT_GRIDS,
                   verbose=VERBOSE)
 
     if POST_PROCESSING:
-        ###### EXAMPLE ######
-        GRID_TYPES = ['HMS-HMS']
-        METALLICITIES = [['1e-01_Zsun']]
-        GRID_SLICES = [['grid_low_res_combined_rerun_1']]
-        COMPRESSIONS = [['LITE']]
-        #####################
-        create_csv(GRID_TYPES, METALLICITIES, GRID_SLICES, COMPRESSIONS,
-                   step_name='step_4')
-
-        # create the slurm job
+        create_csv(GRID_TYPES_s4, METALLICITIES_s4, GRID_SLICES_s4,
+                   COMPRESSIONS_s4, step_name='step_4')
         slurm_job(job_name='step_4',
                   POST_PROCESSING=POST_PROCESSING,
                   verbose=VERBOSE)
 
     if TRAIN_INTERPOLATORS:
-        ###### EXAMPLE ######
-        GRID_TYPES = ['HMS-HMS']
-        METALLICITIES = [['1e-01_Zsun']]
-        GRID_SLICES = [['grid_low_res_combined_rerun_1_processed']]
-        INTERPOLATION_METHODS = ["linear","1NN"]
-        COMPRESSIONS = [['LITE']]
-        #####################
-        create_csv(GRID_TYPES, METALLICITIES, GRID_SLICES, COMPRESSIONS,
-                   step_name='step_5', INTERPOLATION_METHODS=INTERPOLATION_METHODS)
-
-        # create the slurm job
+        create_csv(GRID_TYPES_s5, METALLICITIES_s5, GRID_SLICES_s5,
+                   COMPRESSIONS_s5, step_name='step_5',
+                   INTERPOLATION_METHODS=INTERPOLATION_METHODS_s5)
         slurm_job(job_name='step_5',
                   TRAIN_INTERPOLATORS=TRAIN_INTERPOLATORS,
                   verbose=VERBOSE)
 
     if CHECK_FAILURE_RATE:
-        ###### EXAMPLE ######
-        GRID_TYPES = ['HMS-HMS']
-        METALLICITIES = [['1e-01_Zsun']]
-        GRID_SLICES = [['grid_low_res_combined','grid_low_res_rerun_opacitymax',
-                       'grid_low_res_combined_rerun_1']]
-        COMPRESSIONS = [['LITE']]
-        #####################
-        create_csv(GRID_TYPES, METALLICITIES, GRID_SLICES, COMPRESSIONS,
-                   step_name='check_failure_rate')
-
-        # create the slurm job
+        create_csv(GRID_TYPES_o1, METALLICITIES_o1, GRID_SLICES_o1,
+                   COMPRESSIONS_o1, step_name='check_failure_rate')
         slurm_job(job_name='check_failure_rate',
                   CHECK_FAILURE_RATE=CHECK_FAILURE_RATE,
                   verbose=VERBOSE)
