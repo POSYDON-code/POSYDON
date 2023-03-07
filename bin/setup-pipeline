@@ -9,7 +9,7 @@ import numpy as np
 from posydon.utils.common_functions import PATH_TO_POSYDON
 
 # this data processing pipeline was designed assuming POSYDON v2 data structure
-VERSION = 'v2'
+VERSION = '' # quest: 'v2' yggdrasil: ''
 '''
 Data tree structure
 
@@ -184,7 +184,7 @@ def create_csv(GRID_TYPES, METALLICITIES, GRID_SLICES, COMPRESSIONS,
 
 if __name__ == '__main__':
 
-    EXAMPLE = 'quest'
+    EXAMPLE = 'yggdrasil'
 
     # run a test on quest, currently only HMS-HMS grids are available
     if EXAMPLE == 'quest':
@@ -212,19 +212,24 @@ if __name__ == '__main__':
         ###### EXAMPLE step 1 ######
         GRID_TYPES_s1 = ['HMS-HMS']
         METALLICITIES_s1 = [['1e-01_Zsun']]
-        GRID_SLICES_s1 = [['grid_low_res_0','grid_low_res_1','grid_low_res_2',
-                        'grid_low_res_3','grid_low_res_4','grid_low_res_5',
-                        'grid_low_res_rerun_opacitymax']]
+        GRID_SLICES_s1 = [# HMS-HMS
+                          ['grid_low_res_0','grid_low_res_1','grid_low_res_2',
+                           'grid_low_res_3','grid_low_res_4','grid_low_res_5',
+                           'grid_low_res_rerun_opacitymax']
+                          ]
         COMPRESSIONS_s1 = [['LITE','ORIGINAL']]
 
         ###### EXAMPLE step 2 ######
         GRID_TYPES_s2 = ['HMS-HMS']
         METALLICITIES_s2 = [['1e-01_Zsun']]
-        GRID_SLICES_s2 = [[['grid_low_res_0','grid_low_res_1','grid_low_res_2',
-                        'grid_low_res_3','grid_low_res_4','grid_low_res_5'],
-                        ['grid_low_res_combined','grid_low_res_rerun_opacitymax']]
-                        ]
-        GRIDS_COMBINED_s2 = [['grid_low_res_combined','grid_low_res_combined_rerun_1']]
+        GRID_SLICES_s2 = [# HMS-HMS
+                          [['grid_low_res_0','grid_low_res_1','grid_low_res_2',
+                            'grid_low_res_3','grid_low_res_4','grid_low_res_5'],
+                           ['grid_low_res_combined','grid_low_res_rerun_opacitymax']]
+                          ]
+        GRIDS_COMBINED_s2 = [# HMS-HMS
+                             ['grid_low_res_combined','grid_low_res_combined_rerun_1']
+                             ]
         COMPRESSIONS_s2 = [['LITE','ORIGINAL']]
 
         ###### EXAMPLE step 3 ######
@@ -253,6 +258,81 @@ if __name__ == '__main__':
         GRID_SLICES_o1 = [['grid_low_res_combined','grid_low_res_rerun_opacitymax',
                        'grid_low_res_combined_rerun_1']]
         COMPRESSIONS_o1 = [['LITE']]
+
+    elif EXAMPLE == 'yggdrasil':
+
+        PATH_TO_GRIDS = '/srv/beegfs/scratch/shares/astro/posydon/POSYDON_GRIDS_v2/'
+        PATH = '.' # working dir
+        ACCOUNT = 'meynet'
+        PARTITION = 'shared-cpu'
+        WALLTIME = '08:00:00'
+        MAILTYPE = 'FAIL'
+        EMAIL = 'simone.bavera@unige.ch'
+        VERBOSE = True
+
+        # EXAMPLE SETUP (they currently run independently)
+        # TODO: add a linked slurm job arrays which are waiting for each others
+        # STEPS 1 to 5
+        CREATE_GRID_SLICES = True
+        COMBINE_GRID_SLICES = True
+        PLOT_GRIDS = True
+        POST_PROCESSING = True
+        TRAIN_INTERPOLATORS = True
+        # OPTIONL STEPS
+        CHECK_FAILURE_RATE = True
+
+        ###### EXAMPLE step 1 ######
+        GRID_TYPES_s1 = ['CO-HMS','CO-HeMS']
+        METALLICITIES_s1 = [['1e-01_Zsun'],['1e-01_Zsun']]
+        GRID_SLICES_s1 = [# CO-HMS
+                          ['grid_low_res_0','grid_low_res_1','grid_low_res_2',
+                           'grid_random_1'],
+                          # CO-HeMS
+                          ['grid_low_res_0','grid_low_res_1','grid_low_res_2',
+                           'grid_random_1']
+                          ]
+        COMPRESSIONS_s1 = [['LITE','ORIGINAL'],['LITE','ORIGINAL']]
+
+        ###### EXAMPLE step 2 ######
+        GRID_TYPES_s2 = ['CO-HMS','CO-HeMS']
+        METALLICITIES_s2 = [['1e-01_Zsun'],['1e-01_Zsun']]
+        GRID_SLICES_s2 = [# CO-HMS
+                          [['grid_low_res_0','grid_low_res_1','grid_low_res_2']],
+                          # CO-HeMS
+                          [['grid_low_res_0','grid_low_res_1','grid_low_res_2']],
+                          ]
+        GRIDS_COMBINED_s2 = [# CO-HMS
+                             [['grid_low_res_combined']],
+                             # CO-HeMS
+                             [['grid_low_res_combined']]
+                             ]
+        COMPRESSIONS_s2 = [['LITE','ORIGINAL'],['LITE','ORIGINAL']]
+
+        ###### EXAMPLE step 3 ######
+        GRID_TYPES_s3 = ['CO-HMS','CO-HeMS']
+        METALLICITIES_s3 = [['1e-01_Zsun'],['1e-01_Zsun']]
+        GRID_SLICES_s3 = [['grid_low_res_combined'],['grid_low_res_combined']]
+        COMPRESSIONS_s3 = [['LITE'],['LITE']]
+
+        ###### EXAMPLE step 4 ######
+        GRID_TYPES_s4 = ['CO-HMS','CO-HeMS']
+        METALLICITIES_s4 = [['1e-01_Zsun'],['1e-01_Zsun']]
+        GRID_SLICES_s4 = [['grid_low_res_combined'],
+                          ['grid_low_res_combined']]
+        COMPRESSIONS_s4 = [['LITE'],['LITE']]
+
+        ###### EXAMPLE step 5 ######
+        GRID_TYPES_s5 = ['CO-HMS','CO-HeMS']
+        METALLICITIES_s5 = [['1e-01_Zsun'],['1e-01_Zsun']]
+        GRID_SLICES_s5 = [['grid_low_res_combined'],['grid_low_res_combined']]
+        INTERPOLATION_METHODS_s5 = ["linear","1NN"]
+        COMPRESSIONS_s5 = [['LITE'],['LITE']]
+
+        ###### EXAMPLE step optional 1 (check failure rate)######
+        GRID_TYPES_o1 = ['CO-HMS','CO-HeMS']
+        METALLICITIES_o1 = [['1e-01_Zsun'],['1e-01_Zsun']]
+        GRID_SLICES_o1 = [['grid_low_res_combined'],['grid_low_res_combined']]
+        COMPRESSIONS_o1 = [['LITE'],['LITE']]
 
     if CREATE_GRID_SLICES:
         create_csv(GRID_TYPES_s1, METALLICITIES_s1, GRID_SLICES_s1,

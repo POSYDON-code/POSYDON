@@ -101,6 +101,11 @@ def create_grid_slice(i, path_to_csv_file, verbose=False):
     else:
         raise ValueError('compression = %s not supported!'%compression)
 
+    if 'CO-HMS_RLO' in grid_path:
+        start_at_RLO = True
+    else:
+        start_at_RLO = False
+
     grid = PSyGrid(verbose=True)
     grid.create(grid_path,
                 grid_output,
@@ -111,7 +116,7 @@ def create_grid_slice(i, path_to_csv_file, verbose=False):
                 profile_DS_exclude=profile_DS_exclude,
                 profile_DS_interval=profile_DS_interval,
                 compression="gzip9",
-                start_at_RLO=False,
+                start_at_RLO=start_at_RLO,
                 initial_RLO_fix=True)
     grid.close()
 
@@ -151,168 +156,196 @@ def plot_grid(i, path_to_csv_file, verbose=False):
     grid = PSyGrid(verbose=False)
     grid.load(grid_path)
 
-    if 'HMS-HMS' in grid_path:
+    if 'CO' in grid_path:
+        # compact object mass slices
+        def log_range(x_min,x_max,x_n):
+            return 10**np.linspace(np.log10(x_min),np.log10(x_max), x_n)
+        m_CO_min = 1.
+        m_CO_max = 51.32759630397827
+        m_CO_n = 23
+        m_COs = log_range(m_CO_min, m_CO_max, m_CO_n)
+        m_COs_edges = 10**(np.log10(np.array(m_COs)[:-1])+
+                             (np.log10(np.array(m_COs)[1:])-np.log10(np.array(m_COs)[:-1]))/2)
+        m2 = [0.]+m_COs_edges.tolist()+[55.]
+        vars = m2
+        fname = 'grid_m_CO_%1.2f.png'
+        title = '$m_\mathrm{CO}=%1.2f\,M_\odot$'
+        slice_3D_var_str='star_2_mass'
+    elif 'HMS-HMS' in grid_path:
         # mass ratio slices
         qs = np.linspace(0.05,1.,20)
         qs[-1] = 0.99
+        vars = qs
+        fname = 'grid_q_%1.2f.png'
+        title = '$q=%1.2f$'
+        slice_3D_var_str='mass_ratio'
+    else:
+        raise ValueError('Grid type not supported!')
 
-        for q in qs.tolist():
-            # TODO: skip plotting slice if there are no data
-            try:
-                PLOT_PROPERTIES = {
-                    'figsize' : (4,3.5),
-                    'path_to_file' : os.path.join(plot_dir,'TF12/'),
-                    'show_fig' : False,
-                    'fname' : 'grid_q_%1.2f.png'%q,
-                    'title' : '$q=%1.2f$'%q,
-                    'log10_x' : True,
-                    'log10_y' : True,
-                    'legend2D' : {'bbox_to_anchor' : (1.03, 0.5)}
-                }
 
-                grid.plot2D('star_1_mass', 'period_days', None,
-                             termination_flag='combined_TF12',
-                             grid_3D=True, slice_3D_var_str='mass_ratio',
-                             slice_3D_var_range=(q-2.5e-2,q+2.5e-2),
-                             verbose=False, **PLOT_PROPERTIES)
 
-                PLOT_PROPERTIES = {
-                    'figsize' : (4,5),
-                    'path_to_file' : os.path.join(plot_dir,'TF1/'),
-                    'show_fig' : False,
-                    'fname' : 'grid_q_%1.2f.png'%q,
-                    'title' : '$q=%1.2f$'%q,
-                    'log10_x' : True,
-                    'log10_y' : True,
-                    'zmin' : -8,
-                    'zmax' : -1,
-                    'legend2D' : {'bbox_to_anchor' : (1.03, 0.5)},
-                    'colorbar': {'pad': 0.12}
-                }
 
-                grid.plot2D('star_1_mass', 'period_days', 'lg_mtransfer_rate',
-                             termination_flag='termination_flag_1',
-                             grid_3D=True, slice_3D_var_str='mass_ratio',
-                             slice_3D_var_range=(q-2.5e-2,q+2.5e-2),
-                             verbose=False, **PLOT_PROPERTIES)
+    for i, var in enumerate(vars.tolist()):
+        if 'HMS-HMS' in grid_path:
+            slice_3D_var_range = (q-2.5e-2,q+2.5e-2)
+        elif 'CO' in grid_path:
+            slice_3D_var_range = (m2[i],m2[i+1])
+        # TODO: skip plotting slice if there are no data
+        try:
+            PLOT_PROPERTIES = {
+                'figsize' : (4,3.5),
+                'path_to_file' : os.path.join(plot_dir,'TF12/'),
+                'show_fig' : False,
+                'fname' : fname%var,
+                'title' : title%var,
+                'log10_x' : True,
+                'log10_y' : True,
+                'legend2D' : {'bbox_to_anchor' : (1.03, 0.5)}
+            }
 
-                PLOT_PROPERTIES = {
-                    'figsize' : (4,3.5),
-                    'path_to_file' : os.path.join(plot_dir,'TF2/'),
-                    'show_fig' : False,
-                    'fname' : 'grid_q_%1.2f.png'%q,
-                    'title' : '$q=%1.2f$'%q,
-                    'log10_x' : True,
-                    'log10_y' : True,
-                    'legend2D' : {'bbox_to_anchor' : (1.03, 0.5)}
-                }
+            grid.plot2D('star_1_mass', 'period_days', None,
+                         termination_flag='combined_TF12',
+                         grid_3D=True, slice_3D_var_str=slice_3D_var_str,
+                         slice_3D_var_range=slice_3D_var_range,
+                         verbose=False, **PLOT_PROPERTIES)
 
-                grid.plot2D('star_1_mass', 'period_days', None,
-                             termination_flag='termination_flag_2',
-                             grid_3D=True, slice_3D_var_str='mass_ratio',
-                             slice_3D_var_range=(q-2.5e-2,q+2.5e-2),
-                             verbose=False, **PLOT_PROPERTIES)
+            PLOT_PROPERTIES = {
+                'figsize' : (4,5),
+                'path_to_file' : os.path.join(plot_dir,'TF1/'),
+                'show_fig' : False,
+                'fname' : fname%var,
+                'title' : title%var,
+                'log10_x' : True,
+                'log10_y' : True,
+                'zmin' : -8,
+                'zmax' : -1,
+                'legend2D' : {'bbox_to_anchor' : (1.03, 0.5)},
+                'colorbar': {'pad': 0.12}
+            }
 
-                PLOT_PROPERTIES = {
-                    'figsize' : (4,3.5),
-                    'path_to_file' : os.path.join(plot_dir,'TF3/'),
-                    'show_fig' : False,
-                    'fname' : 'grid_q_%1.2f.png'%q,
-                    'title' : '$q=%1.2f$'%q,
-                    'log10_x' : True,
-                    'log10_y' : True,
-                    'legend2D' : {'bbox_to_anchor' : (1.03, 0.5)}
-                }
+            grid.plot2D('star_1_mass', 'period_days', 'lg_mtransfer_rate',
+                         termination_flag='termination_flag_1',
+                         grid_3D=True, slice_3D_var_str=slice_3D_var_str,
+                         slice_3D_var_range=slice_3D_var_range,
+                         verbose=False, **PLOT_PROPERTIES)
 
-                grid.plot2D('star_1_mass', 'period_days', None,
-                             termination_flag='termination_flag_3',
-                             grid_3D=True, slice_3D_var_str='mass_ratio',
-                             slice_3D_var_range=(q-2.5e-2,q+2.5e-2),
-                             verbose=False, **PLOT_PROPERTIES)
+            PLOT_PROPERTIES = {
+                'figsize' : (4,3.5),
+                'path_to_file' : os.path.join(plot_dir,'TF2/'),
+                'show_fig' : False,
+                'fname' : fname%var,
+                'title' : title%var,
+                'log10_x' : True,
+                'log10_y' : True,
+                'legend2D' : {'bbox_to_anchor' : (1.03, 0.5)}
+            }
 
-                PLOT_PROPERTIES = {
-                    'figsize' : (4,3.5),
-                    'path_to_file' : os.path.join(plot_dir,'TF4/'),
-                    'show_fig' : False,
-                    'fname' : 'grid_q_%1.2f.png'%q,
-                    'title' : '$q=%1.2f$'%q,
-                    'log10_x' : True,
-                    'log10_y' : True,
-                    'legend2D' : {'bbox_to_anchor' : (1.03, 0.5)}
-                }
+            grid.plot2D('star_1_mass', 'period_days', None,
+                         termination_flag='termination_flag_2',
+                         grid_3D=True, slice_3D_var_str=slice_3D_var_str,
+                         slice_3D_var_range=slice_3D_var_range,
+                         verbose=False, **PLOT_PROPERTIES)
 
-                grid.plot2D('star_1_mass', 'period_days', None,
-                             termination_flag='termination_flag_4',
-                             grid_3D=True, slice_3D_var_str='mass_ratio',
-                             slice_3D_var_range=(q-2.5e-2,q+2.5e-2),
-                             verbose=False, **PLOT_PROPERTIES)
+            PLOT_PROPERTIES = {
+                'figsize' : (4,3.5),
+                'path_to_file' : os.path.join(plot_dir,'TF3/'),
+                'show_fig' : False,
+                'fname' : fname%var,
+                'title' : title%var,
+                'log10_x' : True,
+                'log10_y' : True,
+                'legend2D' : {'bbox_to_anchor' : (1.03, 0.5)}
+            }
 
-                PLOT_PROPERTIES = {
-                    'figsize' : (4,5),
-                    'path_to_file' : os.path.join(plot_dir,'debug_rl_1/'),
-                    'show_fig' : False,
-                    'fname' : 'grid_q_%1.2f.png'%q,
-                    'title' : '$q=%1.2f$'%q,
-                    'log10_x' : True,
-                    'log10_y' : True,
-                    'zmin' : -0.5,
-                    'zmax' : 0.5,
-                    'legend2D' : {'bbox_to_anchor' : (1.03, 0.5)},
-                    'colorbar': {'pad': 0.12}
-                }
+            grid.plot2D('star_1_mass', 'period_days', None,
+                         termination_flag='termination_flag_3',
+                         grid_3D=True, slice_3D_var_str=slice_3D_var_str,
+                         slice_3D_var_range=slice_3D_var_range,
+                         verbose=False, **PLOT_PROPERTIES)
 
-                grid.plot2D('star_1_mass', 'period_days',
-                            'rl_relative_overflow_1',
-                             termination_flag='debug',
-                             grid_3D=True, slice_3D_var_str='mass_ratio',
-                             slice_3D_var_range=(q-2.5e-2,q+2.5e-2),
-                             verbose=False, **PLOT_PROPERTIES)
+            PLOT_PROPERTIES = {
+                'figsize' : (4,3.5),
+                'path_to_file' : os.path.join(plot_dir,'TF4/'),
+                'show_fig' : False,
+                'fname' : fname%var,
+                'title' : title%var,
+                'log10_x' : True,
+                'log10_y' : True,
+                'legend2D' : {'bbox_to_anchor' : (1.03, 0.5)}
+            }
 
-                PLOT_PROPERTIES = {
-                    'figsize' : (4,5),
-                    'path_to_file' : os.path.join(plot_dir,'debug_rl_2/'),
-                    'show_fig' : False,
-                    'fname' : 'grid_q_%1.2f.png'%q,
-                    'title' : '$q=%1.2f$'%q,
-                    'log10_x' : True,
-                    'log10_y' : True,
-                    'zmin' : -0.5,
-                    'zmax' : 0.5,
-                    'legend2D' : {'bbox_to_anchor' : (1.03, 0.5)},
-                    'colorbar': {'pad': 0.12}
-                }
+            grid.plot2D('star_1_mass', 'period_days', None,
+                         termination_flag='termination_flag_4',
+                         grid_3D=True, slice_3D_var_str=slice_3D_var_str,
+                         slice_3D_var_range=slice_3D_var_range,
+                         verbose=False, **PLOT_PROPERTIES)
 
-                grid.plot2D('star_1_mass', 'period_days',
-                            'rl_relative_overflow_2',
-                             termination_flag='debug',
-                             grid_3D=True, slice_3D_var_str='mass_ratio',
-                             slice_3D_var_range=(q-2.5e-2,q+2.5e-2),
-                             verbose=False, **PLOT_PROPERTIES)
+            PLOT_PROPERTIES = {
+                'figsize' : (4,5),
+                'path_to_file' : os.path.join(plot_dir,'debug_rl_1/'),
+                'show_fig' : False,
+                'fname' : fname%var,
+                'title' : title%var,
+                'log10_x' : True,
+                'log10_y' : True,
+                'zmin' : -0.5,
+                'zmax' : 0.5,
+                'legend2D' : {'bbox_to_anchor' : (1.03, 0.5)},
+                'colorbar': {'pad': 0.12}
+            }
 
-                PLOT_PROPERTIES = {
-                    'figsize' : (4,5),
-                    'path_to_file' : os.path.join(plot_dir,'debug_mt/'),
-                    'show_fig' : False,
-                    'fname' : 'grid_q_%1.2f.png'%q,
-                    'title' : '$q=%1.2f$'%q,
-                    'log10_x' : True,
-                    'log10_y' : True,
-                    'zmin' : -8,
-                    'zmax' : -1,
-                    'legend2D' : {'bbox_to_anchor' : (1.03, 0.5)},
-                    'colorbar': {'pad': 0.12}
-                }
+            grid.plot2D('star_1_mass', 'period_days',
+                        'rl_relative_overflow_1',
+                         termination_flag='debug',
+                         grid_3D=True, slice_3D_var_str=slice_3D_var_str,
+                         slice_3D_var_range=slice_3D_var_range,
+                         verbose=False, **PLOT_PROPERTIES)
 
-                grid.plot2D('star_1_mass', 'period_days', 'lg_mtransfer_rate',
-                             termination_flag='debug',
-                             grid_3D=True, slice_3D_var_str='mass_ratio',
-                             slice_3D_var_range=(q-2.5e-2,q+2.5e-2),
-                             verbose=False, **PLOT_PROPERTIES)
-            except Exception as e:
-                print('FAILED TO PLOT q=%s!'%q)
-                print('')
-                print(e)
-                continue
+            PLOT_PROPERTIES = {
+                'figsize' : (4,5),
+                'path_to_file' : os.path.join(plot_dir,'debug_rl_2/'),
+                'show_fig' : False,
+                'fname' : fname%var,
+                'title' : title%var,
+                'log10_x' : True,
+                'log10_y' : True,
+                'zmin' : -0.5,
+                'zmax' : 0.5,
+                'legend2D' : {'bbox_to_anchor' : (1.03, 0.5)},
+                'colorbar': {'pad': 0.12}
+            }
+
+            grid.plot2D('star_1_mass', 'period_days',
+                        'rl_relative_overflow_2',
+                         termination_flag='debug',
+                         grid_3D=True, slice_3D_var_str=slice_3D_var_str,
+                         slice_3D_var_range=slice_3D_var_range,
+                         verbose=False, **PLOT_PROPERTIES)
+
+            PLOT_PROPERTIES = {
+                'figsize' : (4,5),
+                'path_to_file' : os.path.join(plot_dir,'debug_mt/'),
+                'show_fig' : False,
+                'fname' : fname%var,
+                'title' : title%var,
+                'log10_x' : True,
+                'log10_y' : True,
+                'zmin' : -8,
+                'zmax' : -1,
+                'legend2D' : {'bbox_to_anchor' : (1.03, 0.5)},
+                'colorbar': {'pad': 0.12}
+            }
+
+            grid.plot2D('star_1_mass', 'period_days', 'lg_mtransfer_rate',
+                         termination_flag='debug',
+                         grid_3D=True, slice_3D_var_str=slice_3D_var_str,
+                         slice_3D_var_range=slice_3D_var_range,
+                         verbose=False, **PLOT_PROPERTIES)
+        except Exception as e:
+            print('FAILED TO PLOT '+title%var)
+            print('')
+            print(e)
+            continue
 
 def check_failure_rate(i, path_to_csv_file, verbose=False):
 
@@ -338,7 +371,7 @@ def post_processing(i, path_to_csv_file, verbose=False):
 
     if verbose:
         print('Compute process quantities ...')
-    if "CO" in grid_path:
+    if 'CO' in grid_path:
         star_2_CO = True
     else:
         star_2_CO = False
@@ -413,11 +446,18 @@ def train_interpolators(i, path_to_csv_file, verbose=False):
     for sxth in sixth:
         first.remove(sxth)
 
+    if 'CO-HMS_RLO' in grid_path:
+        interp_method = [method, method]
+        interp_classes = ["stable_MT", "unstable_MT"]
+    else:
+        interp_method = [method, method, method]
+        interp_classes = ["no_MT", "stable_MT", "unstable_MT"]
+
     # TODO: train CC2 quantities coming from reverse MT systems
     interp = IFInterpolator(grid=grid, interpolators = [
         {
-            "interp_method": [method, method, method],
-            "interp_classes": ["no_MT", "stable_MT", "unstable_MT"],
+            "interp_method": interp_method,
+            "interp_classes": interp_classes,
             "out_keys": first,
             "class_method": "kNN",
             "c_keys": ['interpolation_class',
