@@ -540,7 +540,11 @@ def export_dataset():
 if __name__ == '__main__':
 
     VERBOSE = True
-    PATH_TO_GRIDS = '/projects/b1119/POSYDON_GRIDS/'
+    EXAMPLE = 'yggdrasil'
+    if EXAMPLE == 'quest'
+        PATH_TO_GRIDS = '/projects/b1119/POSYDON_GRIDS/'
+    elif EXAMPLE == 'yggdrasil':
+        PATH_TO_GRIDS = '/srv/beegfs/scratch/shares/astro/posydon/POSYDON_GRIDS_v2/'
 
     # prevent to run the script locally else it will star creating
     # directories where you do not want them before breaking
