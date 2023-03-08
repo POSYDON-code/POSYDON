@@ -182,13 +182,12 @@ def plot_grid(i, path_to_csv_file, verbose=False):
     else:
         raise ValueError('Grid type not supported!')
 
-
-
-
     for i, var in enumerate(vars):
         if 'HMS-HMS' in grid_path:
             slice_3D_var_range = (q-2.5e-2,q+2.5e-2)
         elif 'CO' in grid_path:
+            if i == len(m2):
+                continue
             slice_3D_var_range = (m2[i],m2[i+1])
         # TODO: skip plotting slice if there are no data
         try:
