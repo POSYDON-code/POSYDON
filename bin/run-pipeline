@@ -572,7 +572,7 @@ if __name__ == '__main__':
     if 'step_5' in path_to_csv_file:
         train_interpolators(i, path_to_csv_file, verbose=VERBOSE)
 
-    if 'optional_1' in path_to_csv_file:
+    if 'check_failure_rate' in path_to_csv_file:
         check_failure_rate(i, path_to_csv_file, verbose=VERBOSE)
 
     # TODO: RERUNS
