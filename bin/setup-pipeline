@@ -121,7 +121,7 @@ def create_csv(GRID_TYPES, METALLICITIES, GRID_SLICES, COMPRESSIONS,
         for metallicity in METALLICITIES_:
             for i, grid_slice in enumerate(GRID_SLICES_):
                 for compression in COMPRESSIONS_:
-                    if step_name in ['step_1', 'check_failure_rate']:
+                    if step_name == 'step_1':
                         grids.append(os.path.join(PATH_TO_GRIDS,
                                       grid_type, version, metallicity, grid_slice))
                         grids_compression.extend([compression])
@@ -145,7 +145,7 @@ def create_csv(GRID_TYPES, METALLICITIES, GRID_SLICES, COMPRESSIONS,
                         df_tmp = pd.DataFrame()
                         df_tmp[path_to_grid_combined] = combine_grid_slices
                         df = pd.concat([df,df_tmp], axis=1)
-                    elif step_name == 'step_3':
+                    elif step_name in ['step_3', 'check_failure_rate']:
                         grids.append(os.path.join(PATH_TO_GRIDS,
                                       grid_type, version, metallicity,
                                       compression, grid_slice+'.h5'))

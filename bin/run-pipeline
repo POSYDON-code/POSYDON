@@ -168,7 +168,7 @@ def plot_grid(i, path_to_csv_file, verbose=False):
                              (np.log10(np.array(m_COs)[1:])-np.log10(np.array(m_COs)[:-1]))/2)
         m2 = [0.]+m_COs_edges.tolist()+[55.]
         vars = m2
-        fname = 'grid_m_CO_%1.2f.png'
+        fname = 'grid_m_%1.2f.png'
         title = '$m_\mathrm{CO}=%1.2f\,M_\odot$'
         slice_3D_var_str='star_2_mass'
     elif 'HMS-HMS' in grid_path:
