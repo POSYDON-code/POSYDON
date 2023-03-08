@@ -100,7 +100,7 @@ class SimulationProperties:
     def close(self):
         """Close hdf5 files before exiting."""
         from posydon.binary_evol.MESA.step_mesa import MesaGridStep
-        from posydon.binary_evol.DT.step_detached import detached_step
+        from posydon.binary_evol.DT.step_detached import detached_step 
         all_step_funcs = [getattr(self, key) for key, val in
                           self.__dict__.items() if 'step_' in key]
         for step_func in all_step_funcs:

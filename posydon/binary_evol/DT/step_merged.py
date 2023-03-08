@@ -432,6 +432,7 @@ class merged_step(isolated_step):
         return merged_star, None
 
 '''
+
     def __call__(self,binary):
 
         if binary.state == "merged":
