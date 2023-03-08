@@ -175,7 +175,7 @@ def plot_grid(i, path_to_csv_file, verbose=False):
         # mass ratio slices
         qs = np.linspace(0.05,1.,20)
         qs[-1] = 0.99
-        vars = qs
+        vars = qs.tolist()
         fname = 'grid_q_%1.2f.png'
         title = '$q=%1.2f$'
         slice_3D_var_str='mass_ratio'
@@ -185,7 +185,7 @@ def plot_grid(i, path_to_csv_file, verbose=False):
 
 
 
-    for i, var in enumerate(vars.tolist()):
+    for i, var in enumerate(vars):
         if 'HMS-HMS' in grid_path:
             slice_3D_var_range = (q-2.5e-2,q+2.5e-2)
         elif 'CO' in grid_path:

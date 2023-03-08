@@ -326,7 +326,8 @@ if __name__ == '__main__':
         ###### EXAMPLE step 5 ######
         GRID_TYPES_s5 = ['CO-HMS_RLO','CO-HeMS']
         METALLICITIES_s5 = [['1e-01_Zsun'],['1e-01_Zsun']]
-        GRID_SLICES_s5 = [['grid_low_res_combined'],['grid_low_res_combined']]
+        GRID_SLICES_s5 = [['grid_low_res_combined_processed'],
+                          ['grid_low_res_combined_processed']]
         INTERPOLATION_METHODS_s5 = ["linear","1NN"]
         COMPRESSIONS_s5 = [['LITE'],['LITE']]
 
