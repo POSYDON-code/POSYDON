@@ -100,9 +100,9 @@ def create_csv(GRID_TYPES, METALLICITIES, GRID_SLICES, COMPRESSIONS,
                INTERPOLATION_METHODS=None):
 
     # number of grid types
-    if (len(GRID_TYPES) != len(METALLICITIES) or
-        len(GRID_TYPES) != len(GRID_SLICES) or
-        len(GRID_TYPES) != len(COMPRESSIONS)):
+    N = len(GRID_TYPES)
+    if ( N != len(METALLICITIES) or N != len(GRID_SLICES) or
+         N != len(COMPRESSIONS)):
         raise ValueError('Missmatch between the len of GRID_TYPES, '
                          'METALLICITIES, GRID_SLICES, COMPRESSIONS.')
 
@@ -126,8 +126,10 @@ def create_csv(GRID_TYPES, METALLICITIES, GRID_SLICES, COMPRESSIONS,
                                       grid_type, version, metallicity, grid_slice))
                         grids_compression.extend([compression])
                     elif step_name == 'step_2':
-                        if len(GRID_SLICES_) != len(GRIDS_COMBINED[l]):
-                            raise ValueError('len(GRID_SLICES) != len(GRIDS_COMBINED)!')
+                        if N != len(GRIDS_COMBINED):
+                            raise ValueError('len(GRID_TYPES) != len(GRIDS_COMBINED)!')
+                        if len(GRID_SLICES[l]) != len(GRIDS_COMBINED[l]):
+                            raise ValueError('len(GRID_SLICES[l]) != len(GRIDS_COMBINED[l])!')
                         combine_grid_slices = []
                         # grid_slice is a batch
                         for grid_slice_ in grid_slice:
@@ -282,7 +284,7 @@ if __name__ == '__main__':
         CHECK_FAILURE_RATE = True
 
         ###### EXAMPLE step 1 ######
-        GRID_TYPES_s1 = ['CO-HMS','CO-HeMS']
+        GRID_TYPES_s1 = ['CO-HMS_RLO','CO-HeMS']
         METALLICITIES_s1 = [['1e-01_Zsun'],['1e-01_Zsun']]
         GRID_SLICES_s1 = [# CO-HMS
                           ['grid_low_res_0','grid_low_res_1','grid_low_res_2',
@@ -294,7 +296,7 @@ if __name__ == '__main__':
         COMPRESSIONS_s1 = [['LITE','ORIGINAL'],['LITE','ORIGINAL']]
 
         ###### EXAMPLE step 2 ######
-        GRID_TYPES_s2 = ['CO-HMS','CO-HeMS']
+        GRID_TYPES_s2 = ['CO-HMS_RLO','CO-HeMS']
         METALLICITIES_s2 = [['1e-01_Zsun'],['1e-01_Zsun']]
         GRID_SLICES_s2 = [# CO-HMS
                           [['grid_low_res_0','grid_low_res_1','grid_low_res_2']],
@@ -302,34 +304,34 @@ if __name__ == '__main__':
                           [['grid_low_res_0','grid_low_res_1','grid_low_res_2']],
                           ]
         GRIDS_COMBINED_s2 = [# CO-HMS
-                             [['grid_low_res_combined']],
+                             ['grid_low_res_combined'],
                              # CO-HeMS
-                             [['grid_low_res_combined']]
+                             ['grid_low_res_combined']
                              ]
         COMPRESSIONS_s2 = [['LITE','ORIGINAL'],['LITE','ORIGINAL']]
 
         ###### EXAMPLE step 3 ######
-        GRID_TYPES_s3 = ['CO-HMS','CO-HeMS']
+        GRID_TYPES_s3 = ['CO-HMS_RLO','CO-HeMS']
         METALLICITIES_s3 = [['1e-01_Zsun'],['1e-01_Zsun']]
         GRID_SLICES_s3 = [['grid_low_res_combined'],['grid_low_res_combined']]
         COMPRESSIONS_s3 = [['LITE'],['LITE']]
 
         ###### EXAMPLE step 4 ######
-        GRID_TYPES_s4 = ['CO-HMS','CO-HeMS']
+        GRID_TYPES_s4 = ['CO-HMS_RLO','CO-HeMS']
         METALLICITIES_s4 = [['1e-01_Zsun'],['1e-01_Zsun']]
         GRID_SLICES_s4 = [['grid_low_res_combined'],
                           ['grid_low_res_combined']]
         COMPRESSIONS_s4 = [['LITE'],['LITE']]
 
         ###### EXAMPLE step 5 ######
-        GRID_TYPES_s5 = ['CO-HMS','CO-HeMS']
+        GRID_TYPES_s5 = ['CO-HMS_RLO','CO-HeMS']
         METALLICITIES_s5 = [['1e-01_Zsun'],['1e-01_Zsun']]
         GRID_SLICES_s5 = [['grid_low_res_combined'],['grid_low_res_combined']]
         INTERPOLATION_METHODS_s5 = ["linear","1NN"]
         COMPRESSIONS_s5 = [['LITE'],['LITE']]
 
         ###### EXAMPLE step optional 1 (check failure rate)######
-        GRID_TYPES_o1 = ['CO-HMS','CO-HeMS']
+        GRID_TYPES_o1 = ['CO-HMS_RLO','CO-HeMS']
         METALLICITIES_o1 = [['1e-01_Zsun'],['1e-01_Zsun']]
         GRID_SLICES_o1 = [['grid_low_res_combined'],['grid_low_res_combined']]
         COMPRESSIONS_o1 = [['LITE'],['LITE']]
