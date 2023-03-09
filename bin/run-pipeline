@@ -557,7 +557,8 @@ if __name__ == '__main__':
 
     # chose grid slice given the slurm jobarray index
     path_to_csv_file = str(sys.argv[1])
-    i = int(sys.argv[2])
+    if len(sys.argv[2]) == 2:
+        i = int(sys.argv[2])
 
     if 'step_1' in path_to_csv_file:
         create_grid_slice(i, path_to_csv_file, verbose=VERBOSE)
