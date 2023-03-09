@@ -19,19 +19,21 @@ STEP 3: plot grid slices
 ['grid_low_res_combined.h5', 'grid_low_res_rerun_opacitymax',
 'grid_low_res_combined_rerun_1.h5' ] --> loop over all plot types
 
-STEP 4:
+STEP 4: check failure rate
+['grid_low_res_combined.h5', 'grid_low_res_combined_rerun_1.h5' ]
+--> check failure rate
+
+STEP 5: post processing
 ['grid_low_res_combined_rerun_1.h5','grid_random_1_rerun_1.h5',]
 --> do post processing on the ORIGINAL grid and append back on the LITE gird
 the post processed quantities
 
-STEP 5:
+STEP 6: train interpolators
 ['grid_low_res_combined_rerun_1.h5'] --> train the interpolators
 
-STEP OPTIONAL 1:
-['grid_low_res_combined.h5', 'grid_low_res_combined_rerun_1.h5' ]
---> check failure rate
+STEP 7: export POSYDON v2 dataset
 
-STEP OPTIONAL 2: rerun grid with a fix A
+STEP RERUN: rerun grid with a fix A
 grid_low_res_combined.rerun(index=logic) --> grid_rerun_1/grid.csv
                                          --> grid_random_1_rerun_1/grid.csv
 ---- run gird fix ----
@@ -41,7 +43,8 @@ call STEP 2: [['grid_low_res_combined','grid_rerun_1'],
               ---> gird_low_res_combined_rerun_1.h5
                    grid_random_1_rerun_1.h5
 call STEP 3: ['gird_low_res_combined_rerun_1.h5']
---> continue to STEP OPTIONAL 2 or STEP 4 and 5
+call STEP 4: ['gird_low_res_combined_rerun_1.h5']
+--> continue to STEP 5, 6, 7
 ----------------------
 '''
 
@@ -566,12 +569,15 @@ if __name__ == '__main__':
         plot_grid(i, path_to_csv_file, verbose=VERBOSE)
 
     if 'step_4' in path_to_csv_file:
-        post_processing(i, path_to_csv_file, verbose=VERBOSE)
+        check_failure_rate(i, path_to_csv_file, verbose=VERBOSE)
 
     if 'step_5' in path_to_csv_file:
+        post_processing(i, path_to_csv_file, verbose=VERBOSE)
+
+    if 'step_6' in path_to_csv_file:
         train_interpolators(i, path_to_csv_file, verbose=VERBOSE)
 
-    if 'check_failure_rate' in path_to_csv_file:
-        check_failure_rate(i, path_to_csv_file, verbose=VERBOSE)
+    if 'step_7' in path_to_csv_file:
+        export_dataset()
 
     # TODO: RERUNS

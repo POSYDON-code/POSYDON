@@ -145,21 +145,21 @@ def create_csv(GRID_TYPES, METALLICITIES, GRID_SLICES, COMPRESSIONS,
                         df_tmp = pd.DataFrame()
                         df_tmp[path_to_grid_combined] = combine_grid_slices
                         df = pd.concat([df,df_tmp], axis=1)
-                    elif step_name in ['step_3', 'check_failure_rate']:
+                    elif step_name in ['step_3', 'step_4']:
                         grids.append(os.path.join(PATH_TO_GRIDS,
                                       grid_type, version, metallicity,
                                       compression, grid_slice+'.h5'))
                         plot_dirs.append(os.path.join(PATH_TO_GRIDS,
                                     grid_type, version, metallicity,
                                     'plots', grid_slice))
-                    elif step_name == 'step_4':
+                    elif step_name == 'step_5':
                         grids.append(os.path.join(PATH_TO_GRIDS,
                                       grid_type, version, metallicity,
                                       compression, grid_slice+'.h5'))
                         processed_grids.append(os.path.join(PATH_TO_GRIDS,
                                       grid_type, version, metallicity,
                                       compression, grid_slice+'_processed.h5'))
-                    elif step_name == 'step_5':
+                    elif step_name == 'step_6':
                         for method in INTERPOLATION_METHODS:
                             grids.append(os.path.join(PATH_TO_GRIDS,
                                           grid_type, version, metallicity,
@@ -173,13 +173,13 @@ def create_csv(GRID_TYPES, METALLICITIES, GRID_SLICES, COMPRESSIONS,
     if step_name != 'step_2':
         grids = np.array(grids)
         df['path_to_grid'] = grids
-        if step_name in ['step_1', 'check_failure_rate']:
+        if step_name == 'step_1':
             df['compression'] = grids_compression
-        elif step_name == 'step_3':
+        elif step_name in ['step_3', 'step_4']:
             df['path_to_plot'] = plot_dirs
-        elif step_name == 'step_4':
-            df['path_to_processed_grid'] = processed_grids
         elif step_name == 'step_5':
+            df['path_to_processed_grid'] = processed_grids
+        elif step_name == 'step_6':
             df['path_to_interpolator'] = interpolators
     output_fname = f'{step_name}.csv'
     df.to_csv(os.path.join(PATH, output_fname), index=False)
@@ -202,14 +202,13 @@ if __name__ == '__main__':
 
         # EXAMPLE SETUP (they currently run independently)
         # TODO: add a linked slurm job arrays which are waiting for each others
-        # STEPS 1 to 5
+        # STEPS 1 to 6
         CREATE_GRID_SLICES = True
         COMBINE_GRID_SLICES = True
         PLOT_GRIDS = True
+        CHECK_FAILURE_RATE = True
         POST_PROCESSING = True
         TRAIN_INTERPOLATORS = True
-        # OPTIONL STEPS
-        CHECK_FAILURE_RATE = True
 
         ###### EXAMPLE step 1 ######
         GRID_TYPES_s1 = ['HMS-HMS']
@@ -244,22 +243,22 @@ if __name__ == '__main__':
         ###### EXAMPLE step 4 ######
         GRID_TYPES_s4 = ['HMS-HMS']
         METALLICITIES_s4 = [['1e-01_Zsun']]
-        GRID_SLICES_s4 = [['grid_low_res_combined_rerun_1']]
+        GRID_SLICES_s4 = [['grid_low_res_combined','grid_low_res_rerun_opacitymax',
+                       'grid_low_res_combined_rerun_1']]
         COMPRESSIONS_s4 = [['LITE']]
 
         ###### EXAMPLE step 5 ######
         GRID_TYPES_s5 = ['HMS-HMS']
         METALLICITIES_s5 = [['1e-01_Zsun']]
-        GRID_SLICES_s5 = [['grid_low_res_combined_rerun_1_processed']]
-        INTERPOLATION_METHODS_s5 = ["linear","1NN"]
+        GRID_SLICES_s5 = [['grid_low_res_combined_rerun_1']]
         COMPRESSIONS_s5 = [['LITE']]
 
-        ###### EXAMPLE step optional 1 (check failure rate)######
-        GRID_TYPES_o1 = ['HMS-HMS']
-        METALLICITIES_o1 = [['1e-01_Zsun']]
-        GRID_SLICES_o1 = [['grid_low_res_combined','grid_low_res_rerun_opacitymax',
-                       'grid_low_res_combined_rerun_1']]
-        COMPRESSIONS_o1 = [['LITE']]
+        ###### EXAMPLE step 6 ######
+        GRID_TYPES_s6 = ['HMS-HMS']
+        METALLICITIES_s6 = [['1e-01_Zsun']]
+        GRID_SLICES_s6 = [['grid_low_res_combined_rerun_1_processed']]
+        INTERPOLATION_METHODS_s6 = ["linear","1NN"]
+        COMPRESSIONS_s6 = [['LITE']]
 
     elif EXAMPLE == 'yggdrasil':
 
@@ -319,23 +318,23 @@ if __name__ == '__main__':
         ###### EXAMPLE step 4 ######
         GRID_TYPES_s4 = ['CO-HMS_RLO','CO-HeMS']
         METALLICITIES_s4 = [['1e-01_Zsun'],['1e-01_Zsun']]
-        GRID_SLICES_s4 = [['grid_low_res_combined'],
-                          ['grid_low_res_combined']]
+        GRID_SLICES_s4 = [['grid_low_res_combined'],['grid_low_res_combined']]
         COMPRESSIONS_s4 = [['LITE'],['LITE']]
 
         ###### EXAMPLE step 5 ######
         GRID_TYPES_s5 = ['CO-HMS_RLO','CO-HeMS']
         METALLICITIES_s5 = [['1e-01_Zsun'],['1e-01_Zsun']]
-        GRID_SLICES_s5 = [['grid_low_res_combined_processed'],
-                          ['grid_low_res_combined_processed']]
-        INTERPOLATION_METHODS_s5 = ["linear","1NN"]
+        GRID_SLICES_s5 = [['grid_low_res_combined'],
+                          ['grid_low_res_combined']]
         COMPRESSIONS_s5 = [['LITE'],['LITE']]
 
-        ###### EXAMPLE step optional 1 (check failure rate)######
-        GRID_TYPES_o1 = ['CO-HMS_RLO','CO-HeMS']
-        METALLICITIES_o1 = [['1e-01_Zsun'],['1e-01_Zsun']]
-        GRID_SLICES_o1 = [['grid_low_res_combined'],['grid_low_res_combined']]
-        COMPRESSIONS_o1 = [['LITE'],['LITE']]
+        ###### EXAMPLE step 6 ######
+        GRID_TYPES_s6 = ['CO-HMS_RLO','CO-HeMS']
+        METALLICITIES_s6 = [['1e-01_Zsun'],['1e-01_Zsun']]
+        GRID_SLICES_s6 = [['grid_low_res_combined_processed'],
+                          ['grid_low_res_combined_processed']]
+        INTERPOLATION_METHODS_s6 = ["linear","1NN"]
+        COMPRESSIONS_s6 = [['LITE'],['LITE']]
 
     if CREATE_GRID_SLICES:
         create_csv(GRID_TYPES_s1, METALLICITIES_s1, GRID_SLICES_s1,
@@ -358,31 +357,31 @@ if __name__ == '__main__':
                   PLOT_GRIDS=PLOT_GRIDS,
                   verbose=VERBOSE)
 
-    if POST_PROCESSING:
+    if CHECK_FAILURE_RATE:
         create_csv(GRID_TYPES_s4, METALLICITIES_s4, GRID_SLICES_s4,
                    COMPRESSIONS_s4, step_name='step_4')
         slurm_job(job_name='step_4',
+                  CHECK_FAILURE_RATE=CHECK_FAILURE_RATE,
+                  verbose=VERBOSE)
+
+    if POST_PROCESSING:
+        create_csv(GRID_TYPES_s5, METALLICITIES_s5, GRID_SLICES_s5,
+                   COMPRESSIONS_s5, step_name='step_5')
+        slurm_job(job_name='step_5',
                   POST_PROCESSING=POST_PROCESSING,
                   verbose=VERBOSE)
 
     if TRAIN_INTERPOLATORS:
-        create_csv(GRID_TYPES_s5, METALLICITIES_s5, GRID_SLICES_s5,
-                   COMPRESSIONS_s5, step_name='step_5',
+        create_csv(GRID_TYPES_s6, METALLICITIES_s6, GRID_SLICES_s6,
+                   COMPRESSIONS_s6, step_name='step_6',
                    INTERPOLATION_METHODS=INTERPOLATION_METHODS_s5)
-        slurm_job(job_name='step_5',
+        slurm_job(job_name='step_6',
                   TRAIN_INTERPOLATORS=TRAIN_INTERPOLATORS,
                   verbose=VERBOSE)
 
-    if CHECK_FAILURE_RATE:
-        create_csv(GRID_TYPES_o1, METALLICITIES_o1, GRID_SLICES_o1,
-                   COMPRESSIONS_o1, step_name='check_failure_rate')
-        slurm_job(job_name='check_failure_rate',
-                  CHECK_FAILURE_RATE=CHECK_FAILURE_RATE,
-                  verbose=VERBOSE)
+    # TODO: export final datasets for v2
 
     # TODO: SETUP RERUNS
-
-    # TODO: export final datasets for v2
 
     # create logs in working dir to store all slurm outputs
     logs_path = os.path.join(PATH,'logs')
