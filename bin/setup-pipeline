@@ -293,7 +293,7 @@ if __name__ == '__main__':
                            'grid_random_1'],
                           # CO-HeMS
                           ['grid_low_res_0','grid_low_res_1','grid_low_res_2',
-                           'grid_random_1']
+                           'grid_random_1'],
                           # HMS-HMS
                           ['grid_low_res_3','grid_low_res_4','grid_low_res_5',
                            'grid_random_1']
