@@ -87,10 +87,10 @@ def slurm_job(job_name,
 
         if POST_PROCESSING:
             f.write(f"#SBATCH --output={PATH}/logs/post_processing_%a.out\n")
+            f.write(f"export PATH_TO_POSYDON={PATH_TO_POSYDON}\n")
 
         if TRAIN_INTERPOLATORS:
             f.write(f"#SBATCH --output={PATH}/logs/train_interpolators_%a.out\n")
-            f.write(f"export PATH_TO_POSYDON={PATH_TO_POSYDON}\n")
 
         f.write(f"\nsrun python {PATH_TO_POSYDON}/bin/run-pipeline {path_to_csv_file} $SLURM_ARRAY_TASK_ID")
 
