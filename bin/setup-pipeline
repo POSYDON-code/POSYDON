@@ -87,7 +87,7 @@ def slurm_job(job_name,
             f.write(f"#SBATCH --output={PATH}/logs/plot_grid_%a.out\n")
 
         if CHECK_FAILURE_RATE:
-            f.write(f"#SBATCH --output={PATH}/logs/check_failure_rate_%a.out\n")
+            f.write(f"#SBATCH --output={PATH}/logs/check_failure_rate.out\n")
 
         if POST_PROCESSING:
             f.write(f"#SBATCH --output={PATH}/logs/post_processing_%a.out\n")
@@ -195,7 +195,7 @@ def create_csv(GRID_TYPES, METALLICITIES, GRID_SLICES, COMPRESSIONS,
                                           'IF_'+method[0]+'.pkl'))
                             export_path.append(os.path.join(PATH, 'POSYDON_data',
                                                             grid_type,
-                                                            'interpolation_objects',
+                                                            'interpolators',
                                                             method[1],
                                                             metallicity+'.pkl'))
 
