@@ -54,7 +54,9 @@ __authors__ = [
 
 import os
 import sys
+import time
 import pickle
+import random
 import numpy as np
 import pandas as pd
 from shutil import copyfile
@@ -552,6 +554,12 @@ if __name__ == '__main__':
     if not os.path.isdir(PATH_TO_GRIDS):
         raise ValueError('Grids were not found! '
                          f'Check your PATH_TO_GRIDS={PATH_TO_GRIDS}')
+
+    # offset the start of each job
+    # NOTE: this prevents job arrays starting at the same time to read
+    # the same files at the same time (e.g. when creatign LITE/ORIGINAL grids,
+    # or when creating a directory that does not exist yet)
+    time.sleep(random.uniform(0.,30.))
 
     # chose grid slice given the slurm jobarray index
     path_to_csv_file = str(sys.argv[1])

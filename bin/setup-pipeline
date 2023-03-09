@@ -393,5 +393,3 @@ if __name__ == '__main__':
     logs_path = os.path.join(PATH,'logs')
     if not os.path.isdir(logs_path):
         os.makedirs(logs_path)
-
-    # TODO: check that LITE/ ORIGINAL/ plots/ are present in all directories
