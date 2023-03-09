@@ -69,7 +69,6 @@ from posydon.grids.post_processing import (post_process_grid,
 from posydon.interpolation.IF_interpolation import IFInterpolator
 
 
-
 def create_grid_slice(i, path_to_csv_file, verbose=False):
 
     df = pd.read_csv(path_to_csv_file)
@@ -384,7 +383,6 @@ def post_processing(i, path_to_csv_file, verbose=False):
                                                                star_2_CO=star_2_CO,
                                                                verbose=False)
 
-
     # post processed quantities are appended to the grid object, hence
     # we create a copy of it and append back to it
     if os.path.exists(processed_grid_path):
@@ -557,7 +555,7 @@ if __name__ == '__main__':
 
     # chose grid slice given the slurm jobarray index
     path_to_csv_file = str(sys.argv[1])
-    if len(sys.argv[2]) == 2:
+    if len(sys.argv) == 3:
         i = int(sys.argv[2])
 
     if 'step_1' in path_to_csv_file:
