@@ -350,7 +350,7 @@ GRIDPROPERTIES = {
     "eep": None,    # path to EEP files
     "initial_RLO_fix": False,
     "He_core_fix": True,
-    "accept_missing_profile": True,
+    "accept_missing_profile": False,
 }
 
 
