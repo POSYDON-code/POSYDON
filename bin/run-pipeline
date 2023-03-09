@@ -360,6 +360,7 @@ def check_failure_rate(i, path_to_csv_file, verbose=False):
     n = 0.
     for key in count.keys():
         n += count[key]
+    print(grid_path)
     print('Failure rate', round(count['not_converged']/n*100,2),'%')
 
 
