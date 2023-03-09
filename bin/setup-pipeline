@@ -69,7 +69,7 @@ def slurm_job(job_name,
             f.write(f"#SBATCH --mail-user={EMAIL}\n")
 
         if (CREATE_GRID_SLICES or PLOT_GRIDS or CHECK_FAILURE_RATE or
-            POST_PROCESSING or TRAIN_INTERPOLATORS):
+            POST_PROCESSING or TRAIN_INTERPOLATORS or EXPORT_DATASET):
             df = pd.read_csv(path_to_csv_file)
             N = df.shape[0]-1
             f.write(f"#SBATCH --array=0-{N}\n")
