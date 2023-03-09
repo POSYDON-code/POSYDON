@@ -374,7 +374,7 @@ if __name__ == '__main__':
     if TRAIN_INTERPOLATORS:
         create_csv(GRID_TYPES_s6, METALLICITIES_s6, GRID_SLICES_s6,
                    COMPRESSIONS_s6, step_name='step_6',
-                   INTERPOLATION_METHODS=INTERPOLATION_METHODS_s5)
+                   INTERPOLATION_METHODS=INTERPOLATION_METHODS_s6)
         slurm_job(job_name='step_6',
                   TRAIN_INTERPOLATORS=TRAIN_INTERPOLATORS,
                   verbose=VERBOSE)
