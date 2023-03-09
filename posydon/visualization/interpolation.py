@@ -63,7 +63,7 @@ class EvaluateIFInterpolator:
 
             labels = cfv[key]
 
-            classes = np.unique(labels)
+            classes = self.__find_labels(key)
 
             matrix = {}
 
@@ -81,15 +81,40 @@ class EvaluateIFInterpolator:
             self.matrices[key] = matrix
                 
 
-    def __format(self, s):
+    def __format(self, s, title = False):
         """ Method that formats keys for plots 
+
         Parameters
         ----------
         s : str
             string to be formatted
 
         """
+
         return s.replace("_", " ").title()
+
+    def __find_labels(self, key):
+        """ Method that finds labels in classifier
+
+        Parameters
+        ----------
+        key : str
+            name of the classifier
+            
+        Returns
+        -------
+        list of class labels
+
+        """
+
+        labels = None
+
+        for interp in self.interpolator.interpolators:
+            
+            if key in interp.classifiers.keys():
+                labels = interp.classifiers[key].labels # finding labels and saving
+
+        return labels
 
 
     def violin_plots(self, err_type = "relative", keys = None, save_path = None):
@@ -112,10 +137,11 @@ class EvaluateIFInterpolator:
             keys = self.out_keys
 
         k_inds = [self.out_keys.index(key) for key in keys]
-
+        
         errs = self.errs[err_type].T[k_inds].T
 
         errs = errs[~np.isnan(errs).any(axis = 1)] # dropping nans
+        print(k_inds, np.nanmedian(errs, axis = 1))
 
         plt.rcParams.update({"font.size": 18, "font.family": "Times New Roman"})
 
@@ -123,11 +149,11 @@ class EvaluateIFInterpolator:
                                 figsize = (24, 10),
                                 tight_layout = True)
         
-        parts = axs.violinplot(np.log10(errs), showmedians = True, points = 1000)
+        parts = axs.violinplot(np.log10(errs + 1.0e-8), showmedians = True, points = 1000)
         axs.set_title(f"Distribution of {err_type.capitalize()} Errors")
         axs.set_xticks(np.arange(1, len(keys) + 1), 
             labels = [
-                f"{self.__format(ec)} ({med * 100:.2f})" for ec, med in zip(keys, np.nanmedian(errs, axis = 1))
+                f"{self.__format(ec)} ({(med * 100):.2f})" for ec, med in zip(keys, np.nanmedian(errs, axis = 1))
             ], rotation = 20)
 
         axs.set_ylabel("Errors in Log 10 Scale")
@@ -165,7 +191,9 @@ class EvaluateIFInterpolator:
         for k, value in self.matrices[key].items():
             arr_mat.append(list(value.values()))
 
-        fig, ax = plt.subplots(1, 1, figsize = (4, 8), constrained_layout = True)
+        figsize = params["figsize"] if "figsize" in params.keys() else (4, 8)
+
+        fig, ax = plt.subplots(1, 1, figsize = figsize, constrained_layout = True)
 
         im = ax.imshow(arr_mat)
 
@@ -185,7 +213,7 @@ class EvaluateIFInterpolator:
         for i in range(len(arr_mat)):
             for j in range(len(arr_mat[i])):
                 text = ax.text(j, i, f"{100 * arr_mat[i][j]:.2f}",
-                            ha = "center", va = "center", color = "w" if i != j else "black")
+                            ha = "center", va = "center", color = "w" if arr_mat[i][j] < 0.9 else "black")
 
         ax.set_xlabel("Predicted")
         ax.set_ylabel("Actual")
