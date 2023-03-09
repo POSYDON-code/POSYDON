@@ -286,16 +286,19 @@ if __name__ == '__main__':
         CHECK_FAILURE_RATE = True
 
         ###### EXAMPLE step 1 ######
-        GRID_TYPES_s1 = ['CO-HMS_RLO','CO-HeMS']
-        METALLICITIES_s1 = [['1e-01_Zsun'],['1e-01_Zsun']]
+        GRID_TYPES_s1 = ['CO-HMS_RLO','CO-HeMS','HMS-HMS']
+        METALLICITIES_s1 = [['1e-01_Zsun'],['1e-01_Zsun'],['1e-04_Zsun']]
         GRID_SLICES_s1 = [# CO-HMS
                           ['grid_low_res_0','grid_low_res_1','grid_low_res_2',
                            'grid_random_1'],
                           # CO-HeMS
                           ['grid_low_res_0','grid_low_res_1','grid_low_res_2',
                            'grid_random_1']
+                          # HMS-HMS
+                          ['grid_low_res_3','grid_low_res_4','grid_low_res_5',
+                           'grid_random_1']
                           ]
-        COMPRESSIONS_s1 = [['LITE','ORIGINAL'],['LITE','ORIGINAL']]
+        COMPRESSIONS_s1 = [['LITE','ORIGINAL'],['LITE','ORIGINAL'],['LITE','ORIGINAL']]
 
         ###### EXAMPLE step 2 ######
         GRID_TYPES_s2 = ['CO-HMS_RLO','CO-HeMS']
