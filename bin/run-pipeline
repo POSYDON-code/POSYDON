@@ -55,6 +55,7 @@ __authors__ = [
 import os
 import sys
 import time
+import shutil
 import pickle
 import random
 import numpy as np
@@ -534,11 +535,14 @@ def train_interpolators(i, path_to_csv_file, verbose=False):
     interp.save(interpolator_path)
 
 
-def export_dataset():
-    # this fucntion should copy all the files to a directory
-    # for POSYDON pop synth
-    pass
+def export_dataset(i, path_to_csv_file, verbose=False):
 
+    df = pd.read_csv(path_to_csv_file)
+    grid_path = df.loc[i,'path_to_grid']
+    export_path = df.loc[i,'export_path']
+    if verbose:
+        print(f'copying {grid_path} to {export_path}')
+    shutil.copyfile(grid_path, export_path)
 
 if __name__ == '__main__':
 
@@ -557,7 +561,7 @@ if __name__ == '__main__':
 
     # offset the start of each job
     # NOTE: this prevents job arrays starting at the same time to read
-    # the same files at the same time (e.g. when creatign LITE/ORIGINAL grids,
+    # the same files at the same time (e.g. when creatign LITE/ORIGINAL grid,
     # or when creating a directory that does not exist yet)
     time.sleep(random.uniform(0.,30.))
 
@@ -586,6 +590,6 @@ if __name__ == '__main__':
         train_interpolators(i, path_to_csv_file, verbose=VERBOSE)
 
     if 'step_7' in path_to_csv_file:
-        export_dataset()
+        export_dataset(i, path_to_csv_file, verbose=VERBOSE)
 
     # TODO: RERUNS

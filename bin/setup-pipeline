@@ -47,6 +47,7 @@ def slurm_job(job_name,
               CHECK_FAILURE_RATE=False,
               POST_PROCESSING=False,
               TRAIN_INTERPOLATORS=False,
+              EXPORT_DATASET=False,
               verbose=False,
               ):
 
@@ -95,6 +96,9 @@ def slurm_job(job_name,
         if TRAIN_INTERPOLATORS:
             f.write(f"#SBATCH --output={PATH}/logs/train_interpolators_%a.out\n")
 
+        if EXPORT_DATASET:
+            f.write(f"#SBATCH --output={PATH}/logs/export_dataset.out\n")
+
         f.write(f"\nsrun python {PATH_TO_POSYDON}/bin/run-pipeline {path_to_csv_file} {slurm_array}")
 
 # create csv file with a list of all grid paths to process
@@ -114,6 +118,7 @@ def create_csv(GRID_TYPES, METALLICITIES, GRID_SLICES, COMPRESSIONS,
     plot_dirs = []
     processed_grids = []
     interpolators = []
+    export_path = []
     df = pd.DataFrame()
     for l, grid_type in enumerate(GRID_TYPES):
 
@@ -148,13 +153,17 @@ def create_csv(GRID_TYPES, METALLICITIES, GRID_SLICES, COMPRESSIONS,
                         df_tmp = pd.DataFrame()
                         df_tmp[path_to_grid_combined] = combine_grid_slices
                         df = pd.concat([df,df_tmp], axis=1)
-                    elif step_name in ['step_3', 'step_4']:
+                    elif step_name == 'step_3':
                         grids.append(os.path.join(PATH_TO_GRIDS,
                                       grid_type, version, metallicity,
                                       compression, grid_slice+'.h5'))
                         plot_dirs.append(os.path.join(PATH_TO_GRIDS,
                                     grid_type, version, metallicity,
                                     'plots', grid_slice))
+                    elif step_name == 'step_4':
+                        grids.append(os.path.join(PATH_TO_GRIDS,
+                                      grid_type, version, metallicity,
+                                      compression, grid_slice+'.h5'))
                     elif step_name == 'step_5':
                         grids.append(os.path.join(PATH_TO_GRIDS,
                                       grid_type, version, metallicity,
@@ -171,6 +180,24 @@ def create_csv(GRID_TYPES, METALLICITIES, GRID_SLICES, COMPRESSIONS,
                                           grid_type, version, metallicity,
                                           'interpolation_objects',
                                           'IF_'+method+'.pkl'))
+                    elif step_name == 'step_7':
+                        grids.append(os.path.join(PATH_TO_GRIDS,
+                                      grid_type, version, metallicity,
+                                      compression, grid_slice+'.h5'))
+                        export_path.append(os.path.join(PATH, 'POSYDON_data',
+                                                        grid_type,
+                                                        metallicity+'.h5'))
+                        for method in [['linear','linear3c_kNN'],
+                                        ['1NN','1NN_1NN']]:
+                            grids.append(os.path.join(PATH_TO_GRIDS,
+                                          grid_type, version, metallicity,
+                                          'interpolation_objects',
+                                          'IF_'+method[0]+'.pkl'))
+                            export_path.append(os.path.join(PATH, 'POSYDON_data',
+                                                            grid_type,
+                                                            'interpolation_objects',
+                                                            method[1],
+                                                            metallicity+'.pkl'))
 
     # saving dataset to csv file
     if step_name != 'step_2':
@@ -178,12 +205,14 @@ def create_csv(GRID_TYPES, METALLICITIES, GRID_SLICES, COMPRESSIONS,
         df['path_to_grid'] = grids
         if step_name == 'step_1':
             df['compression'] = grids_compression
-        elif step_name in ['step_3', 'step_4']:
+        elif step_name == 'step_3':
             df['path_to_plot'] = plot_dirs
         elif step_name == 'step_5':
             df['path_to_processed_grid'] = processed_grids
         elif step_name == 'step_6':
             df['path_to_interpolator'] = interpolators
+        elif step_name == 'step_7':
+            df['export_path'] = export_path
     output_fname = f'{step_name}.csv'
     df.to_csv(os.path.join(PATH, output_fname), index=False)
 
@@ -212,6 +241,7 @@ if __name__ == '__main__':
         CHECK_FAILURE_RATE = True
         POST_PROCESSING = True
         TRAIN_INTERPOLATORS = True
+        EXPORT_DATASET = True
 
         ###### EXAMPLE step 1 ######
         GRID_TYPES_s1 = ['HMS-HMS']
@@ -263,6 +293,12 @@ if __name__ == '__main__':
         INTERPOLATION_METHODS_s6 = ["linear","1NN"]
         COMPRESSIONS_s6 = [['LITE']]
 
+        ###### EXAMPLE step 7 ######
+        GRID_TYPES_s7 = ['HMS-HMS']
+        METALLICITIES_s7 = [['1e-01_Zsun']]
+        GRID_SLICES_s7 = [['grid_low_res_combined_rerun_1_processed']]
+        COMPRESSIONS_s7 = [['LITE']]
+
     elif EXAMPLE == 'yggdrasil':
 
         PATH_TO_GRIDS = '/srv/beegfs/scratch/shares/astro/posydon/POSYDON_GRIDS_v2/'
@@ -276,14 +312,14 @@ if __name__ == '__main__':
 
         # EXAMPLE SETUP (they currently run independently)
         # TODO: add a linked slurm job arrays which are waiting for each others
-        # STEPS 1 to 5
+        # STEPS 1 to 7
         CREATE_GRID_SLICES = True
         COMBINE_GRID_SLICES = True
         PLOT_GRIDS = True
+        CHECK_FAILURE_RATE = True
         POST_PROCESSING = True
         TRAIN_INTERPOLATORS = True
-        # OPTIONL STEPS
-        CHECK_FAILURE_RATE = True
+        EXPORT_DATASET = True
 
         ###### EXAMPLE step 1 ######
         GRID_TYPES_s1 = ['CO-HMS_RLO','CO-HeMS','HMS-HMS']
@@ -342,6 +378,13 @@ if __name__ == '__main__':
         INTERPOLATION_METHODS_s6 = ["linear","1NN"]
         COMPRESSIONS_s6 = [['LITE'],['LITE']]
 
+        ###### EXAMPLE step 7 ######
+        GRID_TYPES_s7 = ['CO-HMS_RLO','CO-HeMS']
+        METALLICITIES_s7 = [['1e-01_Zsun'],['1e-01_Zsun']]
+        GRID_SLICES_s7 = [['grid_low_res_combined_processed'],
+                          ['grid_low_res_combined_processed']]
+        COMPRESSIONS_s7 = [['LITE'],['LITE']]
+
     if CREATE_GRID_SLICES:
         create_csv(GRID_TYPES_s1, METALLICITIES_s1, GRID_SLICES_s1,
                    COMPRESSIONS_s1, step_name='step_1')
@@ -385,7 +428,12 @@ if __name__ == '__main__':
                   TRAIN_INTERPOLATORS=TRAIN_INTERPOLATORS,
                   verbose=VERBOSE)
 
-    # TODO: export final datasets for v2
+    if EXPORT_DATASET:
+        create_csv(GRID_TYPES_s7, METALLICITIES_s7, GRID_SLICES_s7,
+                   COMPRESSIONS_s7, step_name='step_7')
+        slurm_job(job_name='step_7',
+                  EXPORT_DATASET=EXPORT_DATASET,
+                  verbose=VERBOSE)
 
     # TODO: SETUP RERUNS
 
@@ -393,3 +441,23 @@ if __name__ == '__main__':
     logs_path = os.path.join(PATH,'logs')
     if not os.path.isdir(logs_path):
         os.makedirs(logs_path)
+
+    # create data dir three to export the datasets
+    if EXPORT_DATASET:
+        data_path = os.path.join(PATH, 'POSYDON_data')
+        if not os.path.isdir(data_path):
+            os.makedirs(data_path)
+
+            dirs = []
+            grid_dirs = ['HMS-HMS', 'CO-HMS_RLO', 'CO-HeMS', 'single_HMS',
+                        'single_HeMS']
+            interp_dirs = ['interpolators', 'interpolators/1NN_1NN',
+                           'interpolators/linear3c_kNN']
+            for name1 in grid_dirs:
+                dirs.append(os.path.join(data_path,name1))
+                for name2 in interp_dirs:
+                    dirs.append(os.path.join(data_path,name1,name2))
+
+            for dir_ in  dirs:
+                if not os.path.isdir(dir_):
+                    os.makedirs(dir_)
