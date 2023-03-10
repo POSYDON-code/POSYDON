@@ -144,6 +144,9 @@ def plot_grid(i, path_to_csv_file, verbose=False):
     grid_path = df.loc[i,'path_to_grid']
     plot_dir = df.loc[i,'path_to_plot']
 
+    if verbose:
+        print(f'plotting {grid_path}')
+
     # check that plots/ directories exist
     plot_path = os.path.join('/', os.path.join(*plot_dir.split('/')[:-1]))
     check_dirs = [plot_path, plot_dir]
@@ -409,6 +412,9 @@ def train_interpolators(i, path_to_csv_file, verbose=False):
     interpolator_path = df.loc[i,'path_to_interpolator']
     method = interpolator_path.split('IF_')[-1].split('.pkl')[0]
 
+    if verbose:
+        print(f'train interpolators {grid_path} with method {method}')
+
     # check interpolation_objects directory exists
     interp_path = os.path.join('/', os.path.join(*interpolator_path.split('/')[:-1]))
     if not os.path.isdir(interp_path):
@@ -544,6 +550,44 @@ def export_dataset(i, path_to_csv_file, verbose=False):
         print(f'copying {grid_path} to {export_path}')
     shutil.copyfile(grid_path, export_path)
 
+
+def logic_rerun(type):
+
+    runs_to_rerun=None
+    termination_flags=None
+    new_mesa_flag = None
+
+    if type == 'opacity_max':
+        termination_flags=['reach cluster timelimit', 'min_timestep_limit']
+        new_mesa_flag={'opacity_max' : 0.5}
+    elif type == 'PISN':
+        runs_to_rerun = [0, 1] # implement logic
+    elif type == 'reverse_MT':
+        runs_to_rerun = [0, 1] # implement logic
+    elif type == 'envelope_mass_limit': # maybe 'fe_core_infall_limit' as well?
+        runs_to_rerun = [0, 1] # implement logic
+    else:
+        raise ValueError(f'Unsupported rerun type {type}!')
+
+    if runs_to_rerun is None and termination_flags is None:
+        raise ValueError('Undefined rerun!')
+
+    return runs_to_rerun, termination_flags, new_mesa_flag
+
+
+def rerun(i, path_to_csv_file, type, verbose=False):
+
+    df = pd.read_csv(path_to_csv_file)
+    grid_path = df.loc[i,'path_to_grid']
+    rerun_path = df.loc[i,'rerun_path']
+    grid = PSyGrid(verbose=False)
+    grid.load(grid_path)
+    if verbose:
+        print(f'rerun {grid_path} in {rerun_path}')
+    runs_to_rerun, termination_flags, new_mesa_flag = logic_rerun(type)
+    grid.rerun(path_to_file=rerun_path, runs_to_rerun=runs_to_rerun,
+               termination_flags=termination_flags, new_mesa_flag=new_mesa_flag)
+
 if __name__ == '__main__':
 
     VERBOSE = True
@@ -566,9 +610,13 @@ if __name__ == '__main__':
     time.sleep(random.uniform(0.,30.))
 
     # chose grid slice given the slurm jobarray index
+    # TODO: use args parser
     path_to_csv_file = str(sys.argv[1])
     if len(sys.argv) == 3:
         i = int(sys.argv[2])
+
+    if len(sys.argv) == 4:
+        rerun_type = str(sys.argv[3])
 
     if 'step_1' in path_to_csv_file:
         create_grid_slice(i, path_to_csv_file, verbose=VERBOSE)
@@ -591,5 +639,8 @@ if __name__ == '__main__':
 
     if 'step_7' in path_to_csv_file:
         export_dataset(i, path_to_csv_file, verbose=VERBOSE)
+
+    if 'rerun' in path_to_csv_file:
+        rerun(i, path_to_csv_file, rerun_type, verbose=VERBOSE)
 
     # TODO: RERUNS
