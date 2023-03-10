@@ -551,23 +551,23 @@ def export_dataset(i, path_to_csv_file, verbose=False):
     shutil.copyfile(grid_path, export_path)
 
 
-def logic_rerun(type):
+def logic_rerun(rerun_type):
 
     runs_to_rerun=None
     termination_flags=None
     new_mesa_flag = None
 
-    if type == 'opacity_max':
+    if rerun_type == 'opacity_max':
         termination_flags=['reach cluster timelimit', 'min_timestep_limit']
         new_mesa_flag={'opacity_max' : 0.5}
-    elif type == 'PISN':
+    elif rerun_type == 'PISN':
         runs_to_rerun = [0, 1] # implement logic
-    elif type == 'reverse_MT':
+    elif rerun_type == 'reverse_MT':
         runs_to_rerun = [0, 1] # implement logic
-    elif type == 'envelope_mass_limit': # maybe 'fe_core_infall_limit' as well?
+    elif rerun_type == 'envelope_mass_limit': # maybe 'fe_core_infall_limit' as well?
         runs_to_rerun = [0, 1] # implement logic
     else:
-        raise ValueError(f'Unsupported rerun type {type}!')
+        raise ValueError(f'Unsupported rerun type {rerun_type}!')
 
     if runs_to_rerun is None and termination_flags is None:
         raise ValueError('Undefined rerun!')
@@ -575,7 +575,7 @@ def logic_rerun(type):
     return runs_to_rerun, termination_flags, new_mesa_flag
 
 
-def rerun(i, path_to_csv_file, type, verbose=False):
+def rerun(i, path_to_csv_file, rerun_type, verbose=False):
 
     df = pd.read_csv(path_to_csv_file)
     grid_path = df.loc[i,'path_to_grid']
@@ -584,7 +584,7 @@ def rerun(i, path_to_csv_file, type, verbose=False):
     grid.load(grid_path)
     if verbose:
         print(f'rerun {grid_path} in {rerun_path}')
-    runs_to_rerun, termination_flags, new_mesa_flag = logic_rerun(type)
+    runs_to_rerun, termination_flags, new_mesa_flag = logic_rerun(rerun_type)
     grid.rerun(path_to_file=rerun_path, runs_to_rerun=runs_to_rerun,
                termination_flags=termination_flags, new_mesa_flag=new_mesa_flag)
 
