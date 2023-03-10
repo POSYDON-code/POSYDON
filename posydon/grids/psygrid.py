@@ -1074,7 +1074,7 @@ class PSyGrid:
                                   "run_index={} != ".format(run_index) +
                                   "length(MESA_dirs)={}".format(lenMESA_dirs))
 
-                                
+
         self._say("Storing initial/final values and metadata to HDF5...")
         #create new array of initial and finial values with included runs
         # only and sort it by run_index
@@ -1448,7 +1448,7 @@ class PSyGrid:
                     initial_values[key] = [new_mesa_flag[key]]*n_runs_to_rerun
 
             # create the CSV file
-            with open(path_to_file+'grid.csv', 'w', newline='') as file:
+            with open(os.path.join(path_to_file,'grid.csv'), 'w', newline='') as file:
                 writer = csv.writer(file)
                 writer.writerow(initial_values.keys())
                 for i in range(n_runs_to_rerun):
@@ -1509,7 +1509,7 @@ class PSyGrid:
                     initial_values[key] = [new_mesa_flag[key]]*n_runs_to_rerun
 
             # create the CSV file
-            with open(path_to_file+'grid.csv', 'w', newline='') as file:
+            with open(os.path.join(path_to_file,'grid.csv'), 'w', newline='') as file:
                 writer = csv.writer(file)
                 writer.writerow(initial_values.keys())
                 for i in range(n_runs_to_rerun):
