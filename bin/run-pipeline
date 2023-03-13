@@ -577,7 +577,7 @@ def copy_ini_file(grid, rerun_type, destination, cluster):
             ini_file_dest = os.path.join(destination, f'CO-HeMS_{cluster}.ini')
         else:
             raise ValueError(f'Unsupported grid type in {dirname}!')
-        shutil.copyfile(ini_file_path, destination)
+        shutil.copyfile(ini_file_path, ini_file_dest)
     else:
         raise ValueError(f'Unsupported cluster {cluster}!')
 
