@@ -553,7 +553,7 @@ def export_dataset(i, path_to_csv_file, verbose=False):
     shutil.copyfile(grid_path, export_path)
 
 
-def copy_ini_file(grid, rerun_type, destination, cluster='quest'):
+def copy_ini_file(grid, rerun_type, destination, cluster):
 
     # copy the default ini file to directory
     if cluster in ['quest','yggdrasil']:
@@ -640,7 +640,7 @@ def logic_rerun(grid, rerun_type):
     return runs_to_rerun, termination_flags, new_mesa_flag
 
 
-def rerun(i, path_to_csv_file, rerun_type, cluster='quest', verbose=False):
+def rerun(i, path_to_csv_file, rerun_type, verbose=False):
 
     # load grid
     df = pd.read_csv(path_to_csv_file)
@@ -657,6 +657,11 @@ def rerun(i, path_to_csv_file, rerun_type, cluster='quest', verbose=False):
                termination_flags=termination_flags, new_mesa_flag=new_mesa_flag)
 
     # copy ini file and set the new inlist commit
+    # TODO: make cluster a input
+    if 'b1119' in grid.MESA_dirs[0].decode('utf-8'):
+        cluster = 'quest'
+    else:
+        cluster = 'yggdrasil'
     copy_ini_file(grid, rerun_type, destination=rerun_path, cluster=cluster)
 
 if __name__ == '__main__':
