@@ -210,7 +210,8 @@ def create_csv(GRID_TYPES, METALLICITIES, GRID_SLICES, COMPRESSIONS,
                                       grid_type, version, metallicity,
                                       compression, grid_slice+'.h5'))
                         rerun_path.append(os.path.join(PATH_TO_GRIDS, grid_type,
-                                     version, metallicity, 'rerun_'+rerun_type))
+                                     version, metallicity,
+                                     'rerun_'+rerun_type+'_'+grid_slice))
 
     # saving dataset to csv file
     if step_name != 'step_2':
