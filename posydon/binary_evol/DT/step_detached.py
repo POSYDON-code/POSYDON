@@ -999,6 +999,9 @@ class detached_step:
                 age, kvalue["inertia"] / (const.msol * const.rsol**2))
             interp1d["Idot"] = interp1d["inertia"].derivative()
 
+            interp1d["conv_env_turnover_time_l_b"] = PchipInterpolator2(
+                age, kvalue['conv_env_turnover_time_l_b'] / const.secyer)
+
             interp1d["L"] = PchipInterpolator(age, 10 ** kvalue["log_L"])
             interp1d["R"] = PchipInterpolator(age, 10 ** kvalue["log_R"])
             interp1d["t_max"] = t_max
@@ -1288,6 +1291,8 @@ class detached_step:
                                 for key in KEYS[1:11]
                             ],
                             interp1d_sec["Idot"](t - t_offset_sec),
+                            interp1d_sec["conv_env_turnover_time_l_b"](t - t_offset_sec),
+                            interp1d_sec["surf_avg_omega_div_omega_crit"](t - t_offset_sec),
                             interp1d_pri["R"](t - t_offset_pri),
                             interp1d_pri["L"](t - t_offset_pri),
                             *[
@@ -1295,6 +1300,8 @@ class detached_step:
                                 for key in KEYS[1:11]
                             ],
                             interp1d_pri["Idot"](t - t_offset_pri),
+                            interp1d_pri["conv_env_turnover_time_l_b"](t - t_offset_pri),
+                            interp1d_pri["surf_avg_omega_div_omega_crit"](t - t_offset_pri),
                             self.do_wind_loss,
                             self.do_tides,
                             self.do_gravitational_radiation,
@@ -1860,8 +1867,15 @@ def diffeq(
         Radius of the star in Rsolar units.
     I : float
         Moment of inertia of the star in Msolar*Rsolar^2.
+    tau_conv: float
+        Convective turnover time of the star, calculated @ 
+        0.5*pressure_scale_height above the bottom of the outer convection 
+        zone in yr.
+    wdivwc: float
+        The ratio of angular rotation rate (omega) to critical angular 
+        rotation rate (omega_crit). This is dimensionless.
     L : float
-        Luminosity of the star  in solar units.
+        Luminosity of the star in solar units.
     #mass_conv_core : float
     #    Convective core mass of the secondary in Msolar units.
     conv_mx1_top_r : float
@@ -1923,6 +1937,10 @@ def diffeq(
     .. [2] Hut, P. 1981, A&A, 99, 126
     .. [3] Junker, W., & Schafer, G. 1992, MNRAS, 254, 146
     .. [4] Rappaport, S., Joss, P. C., & Verbunt, F. 1983, ApJ, 275, 713
+    .. [5] Matt et al. 2015, ApJ, 799, L23
+    .. [6] Garraffo et al. 2018, ApJ, 862, 90
+    .. [7] Van & Ivanova 2019, ApJ, 886, L31
+    .. [8] Gossage et al. 2021, ApJ, 912, 65
 
     """
     y[0] = np.max([y[0], 0])  # We limit separation to non-negative values
@@ -2267,10 +2285,6 @@ def diffeq(
         # domega_mb / dt = torque_mb / I is calculated below.
         # All results are in units of [yr^-2], i.e., the amount of change
         # in Omega over 1 year.
-
-        # convert convective turnover times from [s] to [yr] for calculations below
-        tau_conv_pri /= const.secyr
-        tau_conv_sec /= const.secyer
 
         if magnetic_braking_mode == "RVJ83":
             # Torque from Rappaport, Verbunt, and Joss 1983, ApJ, 275, 713
