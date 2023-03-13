@@ -552,6 +552,24 @@ def export_dataset(i, path_to_csv_file, verbose=False):
         print(f'copying {grid_path} to {export_path}')
     shutil.copyfile(grid_path, export_path)
 
+def zams_file_name(dirname):
+    if '2e+00_Zsun' in dirname:
+        zams_filename = 'TODO' # TODO: update when avaiable
+    elif '1e+00_Zsun'  in dirname:
+        zams_filename = 'zams_z1.42m2_y0.2703.data'
+    elif '4.5e-01_Zsun'  in dirname:
+        zams_filename = 'zams_z6.39m3_y0.2586.data'
+    elif '2e-01_Zsun' in dirname:
+        zams_filename = 'zams_z2.84m3_y0.2533.data'
+    elif '1e-01_Zsun' in dirname:
+        zams_filename = 'zams_z1.42m3_y0.2511.data'
+    elif '1e-02_Zsun' in dirname:
+        zams_filename = 'zams_z1.42m4_y0.2492.data'
+    elif '1e-03_Zsun' in dirname:
+        zams_filename = 'zams_z1.42m5_y0.2490.data'
+    elif '1e-04_Zsun' in dirname:
+        zams_filename = 'zams_z1.42m6_y0.2490.data'
+    return zams_filename
 
 def copy_ini_file(grid, rerun_type, destination, cluster):
 
@@ -596,10 +614,13 @@ def copy_ini_file(grid, rerun_type, destination, cluster):
 
     search_text1 = "main-18710e943edd926a5653c4cdb7d6e18e5bdb35a2"
     search_text2 = "main-a060b7bf1a4d94d693f77be9a1b0b3a522c1eadf"
+    search_text3 = 'zams_z1.42m3_y0.2511.data'
+    replace_zams_filename = zams_file_name(dirname)
     with open(ini_file_dest, 'r') as file:
         data = file.read()
         data = data.replace(search_text1, replace_text)
         data = data.replace(search_text2, replace_text)
+        data = data.replace(search_text3, replace_zams_filename)
     with open(ini_file_dest, 'w') as file:
         file.write(data)
 
