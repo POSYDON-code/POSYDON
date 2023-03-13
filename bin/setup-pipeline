@@ -50,6 +50,7 @@ def slurm_job(job_name,
               TRAIN_INTERPOLATORS=False,
               EXPORT_DATASET=False,
               RERUN=False,
+              CO_HMS_GRID_START_AT_RLO=True,
               rerun_type='',
               verbose=False,
               ):
@@ -105,7 +106,7 @@ def slurm_job(job_name,
         if RERUN:
             f.write(f"#SBATCH --output={PATH}/logs/rerun.out\n")
 
-        f.write(f"\nsrun python {PATH_TO_POSYDON}/bin/run-pipeline {path_to_csv_file} {slurm_array} {rerun_type}")
+        f.write(f"\nsrun python {PATH_TO_POSYDON}/bin/run-pipeline {path_to_csv_file} {slurm_array} {CO_HMS_GRID_START_AT_RLO} {rerun_type}")
 
 # create csv file with a list of all grid paths to process
 def create_csv(GRID_TYPES, METALLICITIES, GRID_SLICES, COMPRESSIONS,
@@ -265,6 +266,9 @@ if __name__ == '__main__':
         EXPORT_DATASET = True
         RERUN = True
 
+        # EXTRA PARAMETERS
+        CO_HMS_GRID_START_AT_RLO = False # set this to False for reruns
+
         ###### EXAMPLE step 1 ######
         GRID_TYPES_s1 = ['HMS-HMS']
         METALLICITIES_s1 = [['1e-01_Zsun']]
@@ -350,6 +354,9 @@ if __name__ == '__main__':
         EXPORT_DATASET = True
         RERUN = True
 
+        # EXTRA PARAMETERS
+        CO_HMS_GRID_START_AT_RLO = False # set this to False for reruns
+
         ###### EXAMPLE step 1 ######
         GRID_TYPES_s1 = ['CO-HMS_RLO','CO-HeMS','HMS-HMS']
         METALLICITIES_s1 = [['1e-01_Zsun'],['1e-01_Zsun'],['1e-04_Zsun']]
@@ -426,6 +433,7 @@ if __name__ == '__main__':
                    COMPRESSIONS_s1, step_name='step_1')
         slurm_job(job_name='step_1',
                   CREATE_GRID_SLICES=CREATE_GRID_SLICES,
+                  CO_HMS_GRID_START_AT_RLO=CO_HMS_GRID_START_AT_RLO,
                   verbose=VERBOSE)
 
     if COMBINE_GRID_SLICES:
