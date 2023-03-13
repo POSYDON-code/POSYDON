@@ -596,11 +596,11 @@ def copy_ini_file(grid, rerun_type, destination, cluster):
 
     search_text1 = "main-18710e943edd926a5653c4cdb7d6e18e5bdb35a2"
     search_text1 = "main-a060b7bf1a4d94d693f77be9a1b0b3a522c1eadf"
-    with open(destination, 'r') as file:
+    with open(ini_file_dest, 'r') as file:
         data = file.read()
         data = data.replace(search_text1, replace_text)
         data = data.replace(search_text2, replace_text)
-    with open(destination, 'w') as file:
+    with open(ini_file_dest, 'w') as file:
         file.write(data)
 
 def logic_rerun(grid, rerun_type):
