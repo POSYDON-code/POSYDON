@@ -71,6 +71,7 @@ from posydon.grids.psygrid import (PSyGrid,
 from posydon.grids.post_processing import (post_process_grid,
                                            add_post_processed_quantities)
 from posydon.interpolation.IF_interpolation import IFInterpolator
+from posydon.utils.common_functions import PATH_TO_POSYDON
 
 
 def create_grid_slice(i, path_to_csv_file, verbose=False):
@@ -552,7 +553,52 @@ def export_dataset(i, path_to_csv_file, verbose=False):
     shutil.copyfile(grid_path, export_path)
 
 
-def logic_rerun(rerun_type):
+def copy_ini_file(grid, rerun_type, destination, cluster='quest'):
+
+    # copy the default ini file to directory
+    if cluster in ['quest','yggdrasil']:
+        dirname = grid.MESA_dirs[0].decode('utf-8')
+        ini_dir_path = os.path.join(PATH_TO_POSYDON,
+                    'grid_params/POSYDON-MESA-INLISTS/r11701/running_scripts')
+        if "single_HMS" in dirname:
+            ini_file_path = os.path.join(ini_dir_path, f'single_HMS_{cluster}.ini')
+        elif "single_HeMS" in dirname:
+            ini_file_path = os.path.join(ini_dir_path, f'single_HeMS_{cluster}.ini')
+        elif "HMS-HMS" in dirname:
+            ini_file_path = os.path.join(ini_dir_path, f'HMS-HMS_{cluster}.ini')
+        elif "CO-HMS_RLO" in dirname:
+            ini_file_path = os.path.join(ini_dir_path, f'CO-HMS_RLO_{cluster}.ini')
+        elif "CO-HeMS" in dirname:
+            ini_file_path = os.path.join(ini_dir_path, f'CO-HeMS_{cluster}.ini')
+        else:
+            raise ValueError(f'Unsupported grid type in {dirname}!')
+        shutil.copyfile(ini_file_path, destination)
+    else:
+        raise ValueError(f'Unsupported cluster {cluster}!')
+
+    # substitue the inlist sceario with the one for the rerun
+    if rerun_type == 'opacity_max':
+        # this rerun uses the default inlist commit
+        return
+    elif rerun_type == 'PISN':
+        replace_text = "matthias_PISN-d68228338b91fd487ef5d55c9b6ebb8cc5f0e668"
+    elif rerun_type == 'reverse_MT':
+        return
+    elif rerun_type == 'envelope_mass_limit': # maybe 'fe_core_infall_limit' as well?
+        return
+    else:
+        raise ValueError(f'Unsupported rerun type {rerun_type}!')
+
+    search_text1 = "main-18710e943edd926a5653c4cdb7d6e18e5bdb35a2"
+    search_text1 = "main-a060b7bf1a4d94d693f77be9a1b0b3a522c1eadf"
+    with open(destination, 'r') as file:
+        data = file.read()
+        data = data.replace(search_text1, replace_text)
+        data = data.replace(search_text2, replace_text)
+    with open(destination, 'w') as file:
+        file.write(data)
+
+def logic_rerun(grid, rerun_type):
 
     runs_to_rerun=None
     termination_flags=None
@@ -562,7 +608,25 @@ def logic_rerun(rerun_type):
         termination_flags=['reach cluster timelimit', 'min_timestep_limit']
         new_mesa_flag={'opacity_max' : 0.5}
     elif rerun_type == 'PISN':
-        runs_to_rerun = [0, 1] # implement logic
+        N_runs = len(grid)
+        runs_to_rerun = []
+        for i in range(N_runs):
+            dirname = grid.MESA_dirs[i].decode('utf-8')
+            if not os.path.isdir(dirname):
+                # TODO: handle the case when grids were moved location
+                raise ValueError(f'Grid directory not found at {dirname}')
+            if "single_HMS" in dirname:
+                out_txt_path = os.path.join(dirname, "out_star1_formation_step0.txt")
+            elif "single_HeMS" in dirname:
+                out_txt_path = os.path.join(dirname, "out_star1_formation_step2.txt")
+            else:
+                out_txt_path = os.path.join(dirname, "out.txt")
+            if out_txt_path is not None and os.path.isfile(out_txt_path):
+                with open(out_txt_path, "r") as log_file:
+                    log_lines = log_file.readlines()
+                for line in log_lines:
+                    if "have reached gamma1 integral limit" in line:
+                        runs_to_rerun += [i]
     elif rerun_type == 'reverse_MT':
         runs_to_rerun = [0, 1] # implement logic
     elif rerun_type == 'envelope_mass_limit': # maybe 'fe_core_infall_limit' as well?
@@ -576,18 +640,24 @@ def logic_rerun(rerun_type):
     return runs_to_rerun, termination_flags, new_mesa_flag
 
 
-def rerun(i, path_to_csv_file, rerun_type, verbose=False):
+def rerun(i, path_to_csv_file, rerun_type, cluster='quest', verbose=False):
 
+    # load grid
     df = pd.read_csv(path_to_csv_file)
     grid_path = df.loc[i,'path_to_grid']
     rerun_path = df.loc[i,'rerun_path']
     grid = PSyGrid(verbose=False)
     grid.load(grid_path)
+
+    # export point to rerun
     if verbose:
         print(f'rerun {grid_path} in {rerun_path}')
-    runs_to_rerun, termination_flags, new_mesa_flag = logic_rerun(rerun_type)
+    runs_to_rerun, termination_flags, new_mesa_flag = logic_rerun(grid, rerun_type)
     grid.rerun(path_to_file=rerun_path, runs_to_rerun=runs_to_rerun,
                termination_flags=termination_flags, new_mesa_flag=new_mesa_flag)
+
+    # copy ini file and set the new inlist commit
+    copy_ini_file(grid, rerun_type, destination=rerun_path, cluster=cluster)
 
 if __name__ == '__main__':
 
@@ -643,5 +713,3 @@ if __name__ == '__main__':
 
     if 'rerun' in path_to_csv_file:
         rerun(i, path_to_csv_file, rerun_type, verbose=VERBOSE)
-
-    # TODO: RERUNS
