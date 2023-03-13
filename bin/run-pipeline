@@ -595,7 +595,7 @@ def copy_ini_file(grid, rerun_type, destination, cluster):
         raise ValueError(f'Unsupported rerun type {rerun_type}!')
 
     search_text1 = "main-18710e943edd926a5653c4cdb7d6e18e5bdb35a2"
-    search_text1 = "main-a060b7bf1a4d94d693f77be9a1b0b3a522c1eadf"
+    search_text2 = "main-a060b7bf1a4d94d693f77be9a1b0b3a522c1eadf"
     with open(ini_file_dest, 'r') as file:
         data = file.read()
         data = data.replace(search_text1, replace_text)
