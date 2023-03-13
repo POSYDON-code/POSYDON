@@ -642,7 +642,7 @@ def logic_rerun(grid, rerun_type):
     if runs_to_rerun is None and termination_flags is None:
         raise ValueError('Undefined rerun!')
 
-    return runs_to_rerun, termination_flags, new_mesa_flag
+    return np.array(runs_to_rerun), termination_flags, new_mesa_flag
 
 
 def rerun(i, path_to_csv_file, rerun_type, verbose=False):
