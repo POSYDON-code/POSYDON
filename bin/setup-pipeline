@@ -109,7 +109,7 @@ def slurm_job(job_name,
 
 # create csv file with a list of all grid paths to process
 def create_csv(GRID_TYPES, METALLICITIES, GRID_SLICES, COMPRESSIONS,
-               step_name=None, version=VERSION, GRIDS_COMBINED=None,
+               step_name=None, version=None, GRIDS_COMBINED=None,
                INTERPOLATION_METHODS=None, rerun_type=''):
 
     # number of grid types
