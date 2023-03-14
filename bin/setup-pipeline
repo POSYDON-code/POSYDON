@@ -411,7 +411,7 @@ if __name__ == '__main__':
         GRIDS_COMBINED_s2 = [# CO-HMS_RLO
                              ['grid_low_res_combined'],
                              # CO-HeMS
-                             ['grid_low_res_combined']
+                             ['grid_low_res_combined'],
                              # HMS-HMS
                              ['grid_low_res_combined']
                              ]
@@ -430,7 +430,7 @@ if __name__ == '__main__':
         GRID_SLICES_s3 = [# CO-HMS_RLO
                             ['grid_low_res_combined'],
                             # CO-HeMS
-                            ['grid_low_res_combined']
+                            ['grid_low_res_combined'],
                             # HMS-HMS
                             ['grid_low_res_combined']
                             ]
@@ -449,7 +449,7 @@ if __name__ == '__main__':
         GRID_SLICES_s4 = [# CO-HMS_RLO
                             ['grid_low_res_combined'],
                             # CO-HeMS
-                            ['grid_low_res_combined']
+                            ['grid_low_res_combined'],
                             # HMS-HMS
                             ['grid_low_res_combined']
                             ]
