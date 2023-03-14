@@ -49,7 +49,7 @@ def slurm_job(job_name,
               TRAIN_INTERPOLATORS=False,
               EXPORT_DATASET=False,
               RERUN=False,
-              CO_HMS_GRID_START_AT_RLO=True,
+              CO_HMS_GRID_START_AT_RLO=1,
               rerun_type='',
               verbose=False,
               ):
@@ -267,7 +267,7 @@ if __name__ == '__main__':
         RERUN = True
 
         # EXTRA PARAMETERS
-        CO_HMS_GRID_START_AT_RLO = False # set this to False for reruns
+        CO_HMS_GRID_START_AT_RLO = 0 # set this to False for reruns
 
         ###### EXAMPLE step 1 ######
         GRID_TYPES_s1 = ['HMS-HMS']
@@ -364,7 +364,7 @@ if __name__ == '__main__':
         RERUN = True
 
         # EXTRA PARAMETERS
-        CO_HMS_GRID_START_AT_RLO = False # set this to False for reruns
+        CO_HMS_GRID_START_AT_RLO = 0 # set this to False for reruns
 
         ###### EXAMPLE step 1 ######
         GRID_TYPES_s1 = ['CO-HMS_RLO','CO-HeMS','HMS-HMS']
