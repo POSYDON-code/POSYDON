@@ -694,7 +694,7 @@ def rerun(i, path_to_csv_file, rerun_type, verbose=False):
 if __name__ == '__main__':
 
     VERBOSE = True
-    EXAMPLE = 'yggdrasil'
+    EXAMPLE = 'quest'
     if EXAMPLE == 'quest':
         PATH_TO_GRIDS = '/projects/b1119/POSYDON_GRIDS/'
     elif EXAMPLE == 'yggdrasil':
