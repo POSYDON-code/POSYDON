@@ -71,7 +71,7 @@ def slurm_job(job_name,
             f.write(f"#SBATCH --mail-type={MAILTYPE}\n")
             f.write(f"#SBATCH --mail-user={EMAIL}\n")
 
-        slurm_array = ''
+        slurm_array = 0
         if (CREATE_GRID_SLICES or PLOT_GRIDS or CHECK_FAILURE_RATE or
             POST_PROCESSING or TRAIN_INTERPOLATORS or EXPORT_DATASET or
             RERUN):
