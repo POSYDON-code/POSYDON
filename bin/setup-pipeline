@@ -468,11 +468,11 @@ if __name__ == '__main__':
         GRID_SLICES_s5 = [# CO-HMS_RLO
                             ['grid_low_res_combined'],
                             # CO-HeMS
-                            ['grid_low_res_combined']
+                            ['grid_low_res_combined'],
                             # HMS-HMS
                             ['grid_low_res_combined']
                             ]
-        COMPRESSIONS_s5 = [['LITE'],['LITE'],['LITE']
+        COMPRESSIONS_s5 = [['LITE'],['LITE'],['LITE']]
 
         ###### EXAMPLE step 6 ######
         GRID_TYPES_s6 = ['CO-HMS_RLO','CO-HeMS','HMS-HMS']
