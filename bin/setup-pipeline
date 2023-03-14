@@ -10,7 +10,6 @@ import numpy as np
 from posydon.utils.common_functions import PATH_TO_POSYDON
 
 # this data processing pipeline was designed assuming POSYDON v2 data structure
-VERSION = '' # quest: 'v2' yggdrasil: ''
 '''
 Data tree structure
 
@@ -246,6 +245,7 @@ if __name__ == '__main__':
     if EXAMPLE == 'quest':
 
         PATH_TO_GRIDS = '/projects/b1119/POSYDON_GRIDS/'
+        VERSION = 'v2'
         PATH = '.' # working dir
         ACCOUNT = 'b1119'
         PARTITION = 'posydon-priority'
@@ -342,6 +342,7 @@ if __name__ == '__main__':
     elif EXAMPLE == 'yggdrasil':
 
         PATH_TO_GRIDS = '/srv/beegfs/scratch/shares/astro/posydon/POSYDON_GRIDS_v2/'
+        VERSION = ''
         PATH = '.' # working dir
         ACCOUNT = 'meynet'
         PARTITION = 'shared-cpu'
@@ -530,7 +531,7 @@ if __name__ == '__main__':
 
     if CREATE_GRID_SLICES:
         create_csv(GRID_TYPES_s1, METALLICITIES_s1, GRID_SLICES_s1,
-                   COMPRESSIONS_s1, step_name='step_1')
+                   COMPRESSIONS_s1, VERSION=VERSION, step_name='step_1')
         slurm_job(job_name='step_1',
                   CREATE_GRID_SLICES=CREATE_GRID_SLICES,
                   CO_HMS_GRID_START_AT_RLO=CO_HMS_GRID_START_AT_RLO,
@@ -538,35 +539,36 @@ if __name__ == '__main__':
 
     if COMBINE_GRID_SLICES:
         create_csv(GRID_TYPES_s2, METALLICITIES_s2, GRID_SLICES_s2, COMPRESSIONS_s2,
-                   step_name='step_2', GRIDS_COMBINED=GRIDS_COMBINED_s2)
+                   VERSION=VERSION, step_name='step_2',
+                   GRIDS_COMBINED=GRIDS_COMBINED_s2)
         slurm_job(job_name='step_2',
                   COMBINE_GRID_SLICES=COMBINE_GRID_SLICES,
                   verbose=VERBOSE)
 
     if PLOT_GRIDS:
         create_csv(GRID_TYPES_s3, METALLICITIES_s3, GRID_SLICES_s3,
-                   COMPRESSIONS_s3, step_name='step_3')
+                   COMPRESSIONS_s3, VERSION=VERSION, step_name='step_3')
         slurm_job(job_name='step_3',
                   PLOT_GRIDS=PLOT_GRIDS,
                   verbose=VERBOSE)
 
     if CHECK_FAILURE_RATE:
         create_csv(GRID_TYPES_s4, METALLICITIES_s4, GRID_SLICES_s4,
-                   COMPRESSIONS_s4, step_name='step_4')
+                   COMPRESSIONS_s4, VERSION=VERSION, step_name='step_4')
         slurm_job(job_name='step_4',
                   CHECK_FAILURE_RATE=CHECK_FAILURE_RATE,
                   verbose=VERBOSE)
 
     if POST_PROCESSING:
         create_csv(GRID_TYPES_s5, METALLICITIES_s5, GRID_SLICES_s5,
-                   COMPRESSIONS_s5, step_name='step_5')
+                   COMPRESSIONS_s5, VERSION=VERSION, step_name='step_5')
         slurm_job(job_name='step_5',
                   POST_PROCESSING=POST_PROCESSING,
                   verbose=VERBOSE)
 
     if TRAIN_INTERPOLATORS:
         create_csv(GRID_TYPES_s6, METALLICITIES_s6, GRID_SLICES_s6,
-                   COMPRESSIONS_s6, step_name='step_6',
+                   COMPRESSIONS_s6, VERSION=VERSION, step_name='step_6',
                    INTERPOLATION_METHODS=INTERPOLATION_METHODS_s6)
         slurm_job(job_name='step_6',
                   TRAIN_INTERPOLATORS=TRAIN_INTERPOLATORS,
@@ -574,14 +576,15 @@ if __name__ == '__main__':
 
     if EXPORT_DATASET:
         create_csv(GRID_TYPES_s7, METALLICITIES_s7, GRID_SLICES_s7,
-                   COMPRESSIONS_s7, step_name='step_7')
+                   COMPRESSIONS_s7, VERSION=VERSION, step_name='step_7')
         slurm_job(job_name='step_7',
                   EXPORT_DATASET=EXPORT_DATASET,
                   verbose=VERBOSE)
 
     if RERUN:
         create_csv(GRID_TYPES_r, METALLICITIES_r, GRID_SLICES_r,
-                   COMPRESSIONS_r, step_name='rerun', rerun_type=rerun_type)
+                   COMPRESSIONS_r, VERSION=VERSION, step_name='rerun',
+                   rerun_type=rerun_type)
         slurm_job(job_name='rerun',
                   RERUN=RERUN,
                   rerun_type=rerun_type,
