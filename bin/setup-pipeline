@@ -271,63 +271,71 @@ if __name__ == '__main__':
 
         ###### EXAMPLE step 1 ######
         GRID_TYPES_s1 = ['HMS-HMS']
-        METALLICITIES_s1 = [['1e-01_Zsun']]
+        METALLICITIES_s1 = [['1e+00_Zsun','1e-01_Zsun','1e-02_Zsun','1e-03_Zsun']]
         GRID_SLICES_s1 = [# HMS-HMS
                           ['grid_low_res_0','grid_low_res_1','grid_low_res_2',
                            'grid_low_res_3','grid_low_res_4','grid_low_res_5',
-                           'grid_low_res_rerun_opacitymax']
+                           #'grid_low_res_rerun_opacitymax'
+                           ]
                           ]
         COMPRESSIONS_s1 = [['LITE','ORIGINAL']]
 
         ###### EXAMPLE step 2 ######
         GRID_TYPES_s2 = ['HMS-HMS']
-        METALLICITIES_s2 = [['1e-01_Zsun']]
+        METALLICITIES_s2 = [['1e+00_Zsun','1e-01_Zsun','1e-02_Zsun','1e-03_Zsun']]
         GRID_SLICES_s2 = [# HMS-HMS
                           [['grid_low_res_0','grid_low_res_1','grid_low_res_2',
                             'grid_low_res_3','grid_low_res_4','grid_low_res_5'],
-                           ['grid_low_res_combined','grid_low_res_rerun_opacitymax']]
+                           #['grid_low_res_combined','grid_low_res_rerun_opacitymax']
+                           ]
                           ]
         GRIDS_COMBINED_s2 = [# HMS-HMS
-                             ['grid_low_res_combined','grid_low_res_combined_rerun_1']
+                             ['grid_low_res_combined',
+                              # 'grid_low_res_combined_rerun_1'
+                             ]
                              ]
         COMPRESSIONS_s2 = [['LITE','ORIGINAL']]
 
         ###### EXAMPLE step 3 ######
         GRID_TYPES_s3 = ['HMS-HMS']
-        METALLICITIES_s3 = [['1e-01_Zsun']]
-        GRID_SLICES_s3 = [['grid_low_res_combined','grid_low_res_rerun_opacitymax',
-                       'grid_low_res_combined_rerun_1']]
+        METALLICITIES_s3 = [['1e+00_Zsun','1e-01_Zsun','1e-02_Zsun','1e-03_Zsun']]
+        GRID_SLICES_s3 = [['grid_low_res_combined',
+                           # 'grid_low_res_rerun_opacitymax',
+                           # 'grid_low_res_combined_rerun_1'
+                            ]]
         COMPRESSIONS_s3 = [['LITE']]
 
         ###### EXAMPLE step 4 ######
         GRID_TYPES_s4 = ['HMS-HMS']
-        METALLICITIES_s4 = [['1e-01_Zsun']]
-        GRID_SLICES_s4 = [['grid_low_res_combined','grid_low_res_rerun_opacitymax',
-                       'grid_low_res_combined_rerun_1']]
+        METALLICITIES_s4 = [['1e+00_Zsun','1e-01_Zsun','1e-02_Zsun','1e-03_Zsun']]
+        GRID_SLICES_s4 = [['grid_low_res_combined',
+                           # 'grid_low_res_rerun_opacitymax',
+                           # 'grid_low_res_combined_rerun_1']
+                           ]
         COMPRESSIONS_s4 = [['LITE']]
 
         ###### EXAMPLE step 5 ######
         GRID_TYPES_s5 = ['HMS-HMS']
-        METALLICITIES_s5 = [['1e-01_Zsun']]
-        GRID_SLICES_s5 = [['grid_low_res_combined_rerun_1']]
+        METALLICITIES_s5 = [['1e+00_Zsun','1e-01_Zsun','1e-02_Zsun','1e-03_Zsun']]
+        GRID_SLICES_s5 = [['grid_low_res_combined']]
         COMPRESSIONS_s5 = [['LITE']]
 
         ###### EXAMPLE step 6 ######
         GRID_TYPES_s6 = ['HMS-HMS']
-        METALLICITIES_s6 = [['1e-01_Zsun']]
-        GRID_SLICES_s6 = [['grid_low_res_combined_rerun_1_processed']]
+        METALLICITIES_s6 = [['1e+00_Zsun','1e-01_Zsun','1e-02_Zsun','1e-03_Zsun']]
+        GRID_SLICES_s6 = [['grid_low_res_combined_processed']]
         INTERPOLATION_METHODS_s6 = ["linear","1NN"]
         COMPRESSIONS_s6 = [['LITE']]
 
         ###### EXAMPLE step 7 ######
         GRID_TYPES_s7 = ['HMS-HMS']
-        METALLICITIES_s7 = [['1e-01_Zsun']]
-        GRID_SLICES_s7 = [['grid_low_res_combined_rerun_1_processed']]
+        METALLICITIES_s7 = [['1e+00_Zsun','1e-01_Zsun','1e-02_Zsun','1e-03_Zsun']]
+        GRID_SLICES_s7 = [['grid_low_res_combined_processed']]
         COMPRESSIONS_s7 = [['LITE']]
 
         ###### EXAMPLE rerun ######
         GRID_TYPES_r = ['HMS-HMS']
-        METALLICITIES_r = [['1e+00_Zsun']]
+        METALLICITIES_r = [['1e+00_Zsun','1e-01_Zsun','1e-02_Zsun','1e-03_Zsun']]
         GRID_SLICES_r = [['grid_low_res_combined']]
         COMPRESSIONS_r = [['LITE']]
 
@@ -359,74 +367,166 @@ if __name__ == '__main__':
 
         ###### EXAMPLE step 1 ######
         GRID_TYPES_s1 = ['CO-HMS_RLO','CO-HeMS','HMS-HMS']
-        METALLICITIES_s1 = [['1e-01_Zsun'],['1e-01_Zsun'],['1e-04_Zsun']]
-        GRID_SLICES_s1 = [# CO-HMS
+        METALLICITIES_s1 = [# CO-HMS_RLO
+                            ['1e+00_Zsun','1e-01_Zsun','1e-02_Zsun',
+                             '1e-03_Zsun','1e-04_Zsun'],
+                            # CO-HeMS
+                            ['1e+00_Zsun','1e-01_Zsun','1e-02_Zsun',
+                             '1e-03_Zsun','1e-04_Zsun'],
+                            # HMS-HMS
+                            ['1e-04_Zsun']]
+        GRID_SLICES_s1 = [# CO-HMS_RLO
                           ['grid_low_res_0','grid_low_res_1','grid_low_res_2',
                            'grid_random_1'],
                           # CO-HeMS
                           ['grid_low_res_0','grid_low_res_1','grid_low_res_2',
                            'grid_random_1'],
                           # HMS-HMS
-                          ['grid_low_res_3','grid_low_res_4','grid_low_res_5',
+                          ['grid_low_res_0','grid_low_res_1','grid_low_res_2',
+                           'grid_low_res_3','grid_low_res_4','grid_low_res_5',
                            'grid_random_1']
                           ]
         COMPRESSIONS_s1 = [['LITE','ORIGINAL'],['LITE','ORIGINAL'],['LITE','ORIGINAL']]
 
         ###### EXAMPLE step 2 ######
-        GRID_TYPES_s2 = ['CO-HMS_RLO','CO-HeMS']
-        METALLICITIES_s2 = [['1e-01_Zsun'],['1e-01_Zsun']]
-        GRID_SLICES_s2 = [# CO-HMS
+        GRID_TYPES_s2 = ['CO-HMS_RLO','CO-HeMS', 'HMS-HMS']
+        METALLICITIES_s2 = [# CO-HMS_RLO
+                            ['1e+00_Zsun','1e-01_Zsun','1e-02_Zsun',
+                             '1e-03_Zsun','1e-04_Zsun'],
+                            # CO-HeMS
+                            ['1e+00_Zsun','1e-01_Zsun','1e-02_Zsun',
+                             '1e-03_Zsun','1e-04_Zsun'],
+                            # HMS-HMS
+                            ['1e-04_Zsun']]
+        GRID_SLICES_s2 = [# CO-HMS_RLO
                           [['grid_low_res_0','grid_low_res_1','grid_low_res_2']],
                           # CO-HeMS
                           [['grid_low_res_0','grid_low_res_1','grid_low_res_2']],
+                          # HMS-HMS
+                          [['grid_low_res_0','grid_low_res_1','grid_low_res_2',
+                           'grid_low_res_3','grid_low_res_4','grid_low_res_5']]
                           ]
-        GRIDS_COMBINED_s2 = [# CO-HMS
+        GRIDS_COMBINED_s2 = [# CO-HMS_RLO
                              ['grid_low_res_combined'],
                              # CO-HeMS
                              ['grid_low_res_combined']
+                             # HMS-HMS
+                             ['grid_low_res_combined']
                              ]
-        COMPRESSIONS_s2 = [['LITE','ORIGINAL'],['LITE','ORIGINAL']]
+        COMPRESSIONS_s2 = [['LITE','ORIGINAL'],['LITE','ORIGINAL'],['LITE','ORIGINAL']]
 
         ###### EXAMPLE step 3 ######
-        GRID_TYPES_s3 = ['CO-HMS_RLO','CO-HeMS']
-        METALLICITIES_s3 = [['1e-01_Zsun'],['1e-01_Zsun']]
-        GRID_SLICES_s3 = [['grid_low_res_combined'],['grid_low_res_combined']]
-        COMPRESSIONS_s3 = [['LITE'],['LITE']]
+        GRID_TYPES_s3 = ['CO-HMS_RLO','CO-HeMS','HMS-HMS']
+        METALLICITIES_s3 = [# CO-HMS_RLO
+                            ['1e+00_Zsun','1e-01_Zsun','1e-02_Zsun',
+                             '1e-03_Zsun','1e-04_Zsun'],
+                            # CO-HeMS
+                            ['1e+00_Zsun','1e-01_Zsun','1e-02_Zsun',
+                             '1e-03_Zsun','1e-04_Zsun'],
+                            # HMS-HMS
+                            ['1e-04_Zsun']]
+        GRID_SLICES_s3 = [# CO-HMS_RLO
+                            ['grid_low_res_combined'],
+                            # CO-HeMS
+                            ['grid_low_res_combined']
+                            # HMS-HMS
+                            ['grid_low_res_combined']
+                            ]
+        COMPRESSIONS_s3 = [['LITE'],['LITE'],['LITE']]
 
         ###### EXAMPLE step 4 ######
-        GRID_TYPES_s4 = ['CO-HMS_RLO','CO-HeMS']
-        METALLICITIES_s4 = [['1e-01_Zsun'],['1e-01_Zsun']]
-        GRID_SLICES_s4 = [['grid_low_res_combined'],['grid_low_res_combined']]
-        COMPRESSIONS_s4 = [['LITE'],['LITE']]
+        GRID_TYPES_s4 = ['CO-HMS_RLO','CO-HeMS', 'HMS-HMS']
+        METALLICITIES_s4 = [# CO-HMS_RLO
+                            ['1e+00_Zsun','1e-01_Zsun','1e-02_Zsun',
+                             '1e-03_Zsun','1e-04_Zsun'],
+                            # CO-HeMS
+                            ['1e+00_Zsun','1e-01_Zsun','1e-02_Zsun',
+                             '1e-03_Zsun','1e-04_Zsun'],
+                            # HMS-HMS
+                            ['1e-04_Zsun']]
+        GRID_SLICES_s4 = [# CO-HMS_RLO
+                            ['grid_low_res_combined'],
+                            # CO-HeMS
+                            ['grid_low_res_combined']
+                            # HMS-HMS
+                            ['grid_low_res_combined']
+                            ]
+        COMPRESSIONS_s4 = [['LITE'],['LITE'],['LITE']]
 
         ###### EXAMPLE step 5 ######
-        GRID_TYPES_s5 = ['CO-HMS_RLO','CO-HeMS']
-        METALLICITIES_s5 = [['1e-01_Zsun'],['1e-01_Zsun']]
-        GRID_SLICES_s5 = [['grid_low_res_combined'],
-                          ['grid_low_res_combined']]
-        COMPRESSIONS_s5 = [['LITE'],['LITE']]
+        GRID_TYPES_s5 = ['CO-HMS_RLO','CO-HeMS','HMS-HMS']
+        METALLICITIES_s5 = [# CO-HMS_RLO
+                            ['1e+00_Zsun','1e-01_Zsun','1e-02_Zsun',
+                             '1e-03_Zsun','1e-04_Zsun'],
+                            # CO-HeMS
+                            ['1e+00_Zsun','1e-01_Zsun','1e-02_Zsun',
+                             '1e-03_Zsun','1e-04_Zsun'],
+                            # HMS-HMS
+                            ['1e-04_Zsun']]
+        GRID_SLICES_s5 = [# CO-HMS_RLO
+                            ['grid_low_res_combined'],
+                            # CO-HeMS
+                            ['grid_low_res_combined']
+                            # HMS-HMS
+                            ['grid_low_res_combined']
+                            ]
+        COMPRESSIONS_s5 = [['LITE'],['LITE'],['LITE']
 
         ###### EXAMPLE step 6 ######
-        GRID_TYPES_s6 = ['CO-HMS_RLO','CO-HeMS']
-        METALLICITIES_s6 = [['1e-01_Zsun'],['1e-01_Zsun']]
-        GRID_SLICES_s6 = [['grid_low_res_combined_processed'],
+        GRID_TYPES_s6 = ['CO-HMS_RLO','CO-HeMS','HMS-HMS']
+        METALLICITIES_s6 = [# CO-HMS_RLO
+                            ['1e+00_Zsun','1e-01_Zsun','1e-02_Zsun',
+                             '1e-03_Zsun','1e-04_Zsun'],
+                            # CO-HeMS
+                            ['1e+00_Zsun','1e-01_Zsun','1e-02_Zsun',
+                             '1e-03_Zsun','1e-04_Zsun'],
+                            # HMS-HMS
+                            ['1e-04_Zsun']]
+        GRID_SLICES_s6 = [# CO-HMS_RLO
+                          ['grid_low_res_combined_processed'],
+                          # CO-HeMS
+                          ['grid_low_res_combined_processed'],
+                          # HMS-HMS
                           ['grid_low_res_combined_processed']]
         INTERPOLATION_METHODS_s6 = ["linear","1NN"]
-        COMPRESSIONS_s6 = [['LITE'],['LITE']]
+        COMPRESSIONS_s6 = [['LITE'],['LITE'],['LITE']]
 
         ###### EXAMPLE step 7 ######
-        GRID_TYPES_s7 = ['CO-HMS_RLO','CO-HeMS']
-        METALLICITIES_s7 = [['1e-01_Zsun'],['1e-01_Zsun']]
-        GRID_SLICES_s7 = [['grid_low_res_combined_processed'],
+        GRID_TYPES_s7 = ['CO-HMS_RLO','CO-HeMS','HMS-HMS']
+        METALLICITIES_s7 = [# CO-HMS_RLO
+                            ['1e+00_Zsun','1e-01_Zsun','1e-02_Zsun',
+                             '1e-03_Zsun','1e-04_Zsun'],
+                            # CO-HeMS
+                            ['1e+00_Zsun','1e-01_Zsun','1e-02_Zsun',
+                             '1e-03_Zsun','1e-04_Zsun'],
+                            # HMS-HMS
+                            ['1e-04_Zsun']]
+        GRID_SLICES_s7 = [# CO-HMS_RLO
+                          ['grid_low_res_combined_processed'],
+                          # CO-HeMS
+                          ['grid_low_res_combined_processed'],
+                          # HMS-HMS
                           ['grid_low_res_combined_processed']]
-        COMPRESSIONS_s7 = [['LITE'],['LITE']]
+        COMPRESSIONS_s7 = [['LITE'],['LITE'],['LITE']]
 
         ###### EXAMPLE rerun ######
-        GRID_TYPES_r = ['CO-HMS_RLO','CO-HeMS']
-        METALLICITIES_r = [['1e-01_Zsun'],['1e-01_Zsun']]
-        GRID_SLICES_r = [['grid_low_res_combined'],
-                          ['grid_low_res_combined']]
-        COMPRESSIONS_r = [['LITE'],['LITE']]
+        GRID_TYPES_r = ['CO-HMS_RLO','CO-HeMS','HMS-HMS']
+        METALLICITIES_r = [# CO-HMS_RLO
+                            ['1e+00_Zsun','1e-01_Zsun','1e-02_Zsun',
+                             '1e-03_Zsun','1e-04_Zsun'],
+                            # CO-HeMS
+                            ['1e+00_Zsun','1e-01_Zsun','1e-02_Zsun',
+                             '1e-03_Zsun','1e-04_Zsun'],
+                            # HMS-HMS
+                            ['1e-04_Zsun']]
+        GRID_SLICES_r = [# CO-HMS_RLO
+                          ['grid_low_res_combined'],
+                         # CO-HeMS
+                          ['grid_low_res_combined'],
+                         # HMS-HMS
+                          ['grid_low_res_combined'],
+                          ]
+        COMPRESSIONS_r = [['LITE'],['LITE'],['LITE']]
 
     if CREATE_GRID_SLICES:
         create_csv(GRID_TYPES_s1, METALLICITIES_s1, GRID_SLICES_s1,
