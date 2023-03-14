@@ -310,7 +310,8 @@ if __name__ == '__main__':
         METALLICITIES_s4 = [['1e+00_Zsun','1e-01_Zsun','1e-02_Zsun','1e-03_Zsun']]
         GRID_SLICES_s4 = [['grid_low_res_combined',
                            # 'grid_low_res_rerun_opacitymax',
-                           # 'grid_low_res_combined_rerun_1']
+                           # 'grid_low_res_combined_rerun_1'
+                           ]
                            ]
         COMPRESSIONS_s4 = [['LITE']]
 
