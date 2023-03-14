@@ -239,7 +239,7 @@ if __name__ == '__main__':
     if len(sys.argv) == 2:
         rerun_type = str(sys.argv[1])
 
-    EXAMPLE = 'yggdrasil'
+    EXAMPLE = 'quest'
 
     # run a test on quest, currently only HMS-HMS grids are available
     if EXAMPLE == 'quest':
