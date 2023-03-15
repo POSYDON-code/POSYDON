@@ -128,16 +128,15 @@ def create_grid_slice(i, path_to_csv_file, CO_HMS_GRID_START_AT_RLO, verbose=Fal
     grid.close()
 
 
-def combine_grid_slices(path_to_csv_file, verbose=False):
+def combine_grid_slices(i, path_to_csv_file, verbose=False):
 
     df = pd.read_csv(path_to_csv_file)
-
-    for grid_combined_key in df.keys():
-        gird_names = df[grid_combined_key].dropna().to_list()
-        if verbose:
-            print('Combinining: ', gird_names)
-            print('into:', grid_combined_key)
-        join_grids(gird_names, grid_combined_key)
+    grid_combined_key = df.keys()[i]
+    gird_names = df[grid_combined_key].dropna().to_list()
+    if verbose:
+        print('Combinining: ', gird_names)
+        print('into:', grid_combined_key)
+    join_grids(gird_names, grid_combined_key)
 
 
 def plot_grid(i, path_to_csv_file, verbose=False):
@@ -729,9 +728,8 @@ if __name__ == '__main__':
                           CO_HMS_GRID_START_AT_RLO=CO_HMS_GRID_START_AT_RLO,
                           verbose=VERBOSE)
 
-    # TODO: make LITE/ORIGINAL version parallel with a JOB ARRAY
     if 'step_2' in path_to_csv_file:
-        combine_grid_slices(path_to_csv_file, verbose=VERBOSE)
+        combine_grid_slices(i, path_to_csv_file, verbose=VERBOSE)
 
     if 'step_3' in path_to_csv_file:
         plot_grid(i, path_to_csv_file, verbose=VERBOSE)

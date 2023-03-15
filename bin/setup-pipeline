@@ -71,14 +71,18 @@ def slurm_job(job_name,
             f.write(f"#SBATCH --mail-type={MAILTYPE}\n")
             f.write(f"#SBATCH --mail-user={EMAIL}\n")
 
-        slurm_array = 0
         if (CREATE_GRID_SLICES or PLOT_GRIDS or CHECK_FAILURE_RATE or
             POST_PROCESSING or TRAIN_INTERPOLATORS or EXPORT_DATASET or
             RERUN):
             df = pd.read_csv(path_to_csv_file)
             N = df.shape[0]-1
-            f.write(f"#SBATCH --array=0-{N}\n")
-            slurm_array = '$SLURM_ARRAY_TASK_ID'
+        elif COMBINE_GRID_SLICES:
+            df = pd.read_csv(path_to_csv_file)
+            N = df.shape[1]-1
+        else:
+            raise ValueError('This should never happen!')
+        f.write(f"#SBATCH --array=0-{N}\n")
+        slurm_array = '$SLURM_ARRAY_TASK_ID'
 
         if CREATE_GRID_SLICES:
             f.write(f"#SBATCH --output={PATH}/logs/grid_slice_%a.out\n")
