@@ -133,7 +133,7 @@ def combine_grid_slices(path_to_csv_file, verbose=False):
     df = pd.read_csv(path_to_csv_file)
 
     for grid_combined_key in df.keys():
-        gird_names = df[grid_combined_key].to_list()
+        gird_names = df[grid_combined_key].dropna().to_list()
         if verbose:
             print('Combinining: ', gird_names)
             print('into:', grid_combined_key)
