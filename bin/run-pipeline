@@ -718,7 +718,7 @@ if __name__ == '__main__':
         i = int(sys.argv[2])
 
     if len(sys.argv) >= 4:
-        CO_HMS_GRID_START_AT_RLO = bool(sys.argv[3])
+        CO_HMS_GRID_START_AT_RLO = bool(int(sys.argv[3]))
 
     if len(sys.argv) == 5:
         rerun_type = str(sys.argv[4])
