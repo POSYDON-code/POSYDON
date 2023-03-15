@@ -376,7 +376,8 @@ if __name__ == '__main__':
                             ['1e+00_Zsun','1e-01_Zsun','1e-02_Zsun',
                              '1e-03_Zsun','1e-04_Zsun'],
                             # HMS-HMS
-                            ['1e-04_Zsun']]
+                            ['1e+00_Zsun','1e-01_Zsun','1e-02_Zsun',
+                             '1e-03_Zsun','1e-04_Zsun']]
         GRID_SLICES_s1 = [# CO-HMS_RLO
                           ['grid_low_res_0','grid_low_res_1','grid_low_res_2',
                            'grid_random_1'],
@@ -384,8 +385,9 @@ if __name__ == '__main__':
                           ['grid_low_res_0','grid_low_res_1','grid_low_res_2',
                            'grid_random_1'],
                           # HMS-HMS
-                          ['grid_low_res_0','grid_low_res_1','grid_low_res_2',
-                           'grid_low_res_3','grid_low_res_4','grid_low_res_5',
+                          [
+                           #'grid_low_res_0','grid_low_res_1','grid_low_res_2',
+                           #'grid_low_res_3','grid_low_res_4','grid_low_res_5',
                            'grid_random_1']
                           ]
         COMPRESSIONS_s1 = [['LITE','ORIGINAL'],['LITE','ORIGINAL'],['LITE','ORIGINAL']]
