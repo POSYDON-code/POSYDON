@@ -193,7 +193,7 @@ def plot_grid(i, path_to_csv_file, verbose=False):
 
     for i, var in enumerate(vars):
         if 'HMS-HMS' in grid_path:
-            slice_3D_var_range = (q-2.5e-2,q+2.5e-2)
+            slice_3D_var_range = (var-2.5e-2,var+2.5e-2)
         elif 'CO' in grid_path:
             if i == len(m2):
                 continue
