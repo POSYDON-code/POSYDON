@@ -233,6 +233,40 @@ def create_csv(GRID_TYPES, METALLICITIES, GRID_SLICES, COMPRESSIONS,
             df['export_path'] = export_path
         elif step_name == 'rerun':
             df['rerun_path'] = rerun_path
+        # drop lines when grid directories are not found
+        drop_rows = []
+        for row in range(df.shape[0]):
+            path = df.loc[row,'path_to_grid']
+            if not os.path.exists(path):
+                drop_rows.append(row)
+        df.drop(index=drop_rows)
+        if any(drop_rows):
+            print('')
+            print(f'----------- {step_name} -----------')
+            print('The following grids will not be processed '
+                  'because the files are missing! If this warning message is '
+                  'unexpected to you, please check the file paths!')
+            print(drop_rows)
+            print('')
+    else:
+        # step 2
+        # drop columns when psygrid files are not found
+        drop_columns = []
+        for column in df.keys():
+            for path in df[column].dropna().to_list():
+                if not os.path.exists(path):
+                    drop_columns.append(column)
+        df.drop(columns=drop_columns)
+        if any(drop_columns):
+            print('')
+            print(f'----------- {step_name} -----------')
+            print('The following grids will not be combined as one or more '
+                  'grid slices are missing! If this warning message is '
+                  'unexpected to you, please check that step 1 occoured '
+                  'succesffully!')
+            print(drop_columns)
+            print('')
+
     output_fname = f'{step_name}.csv'
     df.to_csv(os.path.join(PATH, output_fname), index=False)
 
@@ -389,9 +423,8 @@ if __name__ == '__main__':
                           ['grid_low_res_0','grid_low_res_1','grid_low_res_2',
                            'grid_random_1'],
                           # HMS-HMS
-                          [
-                           #'grid_low_res_0','grid_low_res_1','grid_low_res_2',
-                           #'grid_low_res_3','grid_low_res_4','grid_low_res_5',
+                          ['grid_low_res_0','grid_low_res_1','grid_low_res_2',
+                           'grid_low_res_3','grid_low_res_4','grid_low_res_5',
                            'grid_random_1']
                           ]
         COMPRESSIONS_s1 = [['LITE','ORIGINAL'],['LITE','ORIGINAL'],['LITE','ORIGINAL']]
