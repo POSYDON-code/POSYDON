@@ -241,7 +241,6 @@ def create_csv(GRID_TYPES, METALLICITIES, GRID_SLICES, COMPRESSIONS,
                 path = df.loc[row,'path_to_grid']
                 if not os.path.exists(path):
                     drop_rows.append(row)
-            df = df.drop(index=drop_rows)
             if any(drop_rows):
                 print('')
                 print(f'----------- {step_name} -----------')
@@ -251,6 +250,7 @@ def create_csv(GRID_TYPES, METALLICITIES, GRID_SLICES, COMPRESSIONS,
                 for i in drop_rows:
                     print(df.loc[i,'path_to_grid'])
                 print('')
+            df = df.drop(index=drop_rows)
     else:
         # step 2
         # drop columns when psygrid files are not found
@@ -260,7 +260,6 @@ def create_csv(GRID_TYPES, METALLICITIES, GRID_SLICES, COMPRESSIONS,
                 for path in df[column].dropna().to_list():
                     if not os.path.exists(path):
                         drop_columns.append(column)
-            df = df.drop(columns=drop_columns)
             if any(drop_columns):
                 print('')
                 print(f'----------- {step_name} -----------')
@@ -270,6 +269,7 @@ def create_csv(GRID_TYPES, METALLICITIES, GRID_SLICES, COMPRESSIONS,
                       'succesffully!')
                 print(drop_columns)
                 print('')
+            df = df.drop(columns=drop_columns)
 
     output_fname = f'{step_name}.csv'
     df.to_csv(os.path.join(PATH, output_fname), index=False)
