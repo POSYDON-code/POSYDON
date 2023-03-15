@@ -246,7 +246,8 @@ def create_csv(GRID_TYPES, METALLICITIES, GRID_SLICES, COMPRESSIONS,
             print('The following grids will not be processed '
                   'because the files are missing! If this warning message is '
                   'unexpected to you, please check the file paths!')
-            print(drop_rows)
+            for i in drop_rows:
+                print(df.loc[row,'path_to_grid'])
             print('')
     else:
         # step 2
