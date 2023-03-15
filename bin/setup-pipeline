@@ -114,7 +114,8 @@ def slurm_job(job_name,
 # create csv file with a list of all grid paths to process
 def create_csv(GRID_TYPES, METALLICITIES, GRID_SLICES, COMPRESSIONS,
                step_name=None, version=None, GRIDS_COMBINED=None,
-               INTERPOLATION_METHODS=None, rerun_type=''):
+               INTERPOLATION_METHODS=None, rerun_type='',
+               drop_missing_files=False):
 
     # number of grid types
     N = len(GRID_TYPES)
@@ -234,39 +235,41 @@ def create_csv(GRID_TYPES, METALLICITIES, GRID_SLICES, COMPRESSIONS,
         elif step_name == 'rerun':
             df['rerun_path'] = rerun_path
         # drop lines when grid directories are not found
-        drop_rows = []
-        for row in range(df.shape[0]):
-            path = df.loc[row,'path_to_grid']
-            if not os.path.exists(path):
-                drop_rows.append(row)
-        df.drop(index=drop_rows)
-        if any(drop_rows):
-            print('')
-            print(f'----------- {step_name} -----------')
-            print('The following grids will not be processed '
-                  'because the files are missing! If this warning message is '
-                  'unexpected to you, please check the file paths!')
-            for i in drop_rows:
-                print(df.loc[row,'path_to_grid'])
-            print('')
+        if drop_missing_files:
+            drop_rows = []
+            for row in range(df.shape[0]):
+                path = df.loc[row,'path_to_grid']
+                if not os.path.exists(path):
+                    drop_rows.append(row)
+            df.drop(index=drop_rows)
+            if any(drop_rows):
+                print('')
+                print(f'----------- {step_name} -----------')
+                print('The following grids will not be processed '
+                      'because the files are missing! If this warning message is '
+                      'unexpected to you, please check the file paths!')
+                for i in drop_rows:
+                    print(df.loc[i,'path_to_grid'])
+                print('')
     else:
         # step 2
         # drop columns when psygrid files are not found
-        drop_columns = []
-        for column in df.keys():
-            for path in df[column].dropna().to_list():
-                if not os.path.exists(path):
-                    drop_columns.append(column)
-        df.drop(columns=drop_columns)
-        if any(drop_columns):
-            print('')
-            print(f'----------- {step_name} -----------')
-            print('The following grids will not be combined as one or more '
-                  'grid slices are missing! If this warning message is '
-                  'unexpected to you, please check that step 1 occoured '
-                  'succesffully!')
-            print(drop_columns)
-            print('')
+        if drop_missing_files:
+            drop_columns = []
+            for column in df.keys():
+                for path in df[column].dropna().to_list():
+                    if not os.path.exists(path):
+                        drop_columns.append(column)
+            df.drop(columns=drop_columns)
+            if any(drop_columns):
+                print('')
+                print(f'----------- {step_name} -----------')
+                print('The following grids will not be combined as one or more '
+                      'grid slices are missing! If this warning message is '
+                      'unexpected to you, please check that step 1 occoured '
+                      'succesffully!')
+                print(drop_columns)
+                print('')
 
     output_fname = f'{step_name}.csv'
     df.to_csv(os.path.join(PATH, output_fname), index=False)
@@ -307,6 +310,7 @@ if __name__ == '__main__':
 
         # EXTRA PARAMETERS
         CO_HMS_GRID_START_AT_RLO = 0 # set this to False for reruns
+        DROP_MISSING_FILES = False # set this to False for step concatenation
 
         ###### EXAMPLE step 1 ######
         GRID_TYPES_s1 = ['HMS-HMS']
@@ -405,6 +409,7 @@ if __name__ == '__main__':
 
         # EXTRA PARAMETERS
         CO_HMS_GRID_START_AT_RLO = 0 # set this to False for reruns
+        DROP_MISSING_FILES = False # set this to False for step concatenation
 
         ###### EXAMPLE step 1 ######
         GRID_TYPES_s1 = ['CO-HMS_RLO','CO-HeMS','HMS-HMS']
@@ -572,7 +577,8 @@ if __name__ == '__main__':
 
     if CREATE_GRID_SLICES:
         create_csv(GRID_TYPES_s1, METALLICITIES_s1, GRID_SLICES_s1,
-                   COMPRESSIONS_s1, version=VERSION, step_name='step_1')
+                   COMPRESSIONS_s1, version=VERSION, step_name='step_1',
+                   drop_missing_files=True)
         slurm_job(job_name='step_1',
                   CREATE_GRID_SLICES=CREATE_GRID_SLICES,
                   CO_HMS_GRID_START_AT_RLO=CO_HMS_GRID_START_AT_RLO,
@@ -581,28 +587,32 @@ if __name__ == '__main__':
     if COMBINE_GRID_SLICES:
         create_csv(GRID_TYPES_s2, METALLICITIES_s2, GRID_SLICES_s2, COMPRESSIONS_s2,
                    version=VERSION, step_name='step_2',
-                   GRIDS_COMBINED=GRIDS_COMBINED_s2)
+                   GRIDS_COMBINED=GRIDS_COMBINED_s2,
+                   drop_missing_files=DROP_MISSING_FILES)
         slurm_job(job_name='step_2',
                   COMBINE_GRID_SLICES=COMBINE_GRID_SLICES,
                   verbose=VERBOSE)
 
     if PLOT_GRIDS:
         create_csv(GRID_TYPES_s3, METALLICITIES_s3, GRID_SLICES_s3,
-                   COMPRESSIONS_s3, version=VERSION, step_name='step_3')
+                   COMPRESSIONS_s3, version=VERSION, step_name='step_3',
+                   drop_missing_files=DROP_MISSING_FILES)
         slurm_job(job_name='step_3',
                   PLOT_GRIDS=PLOT_GRIDS,
                   verbose=VERBOSE)
 
     if CHECK_FAILURE_RATE:
         create_csv(GRID_TYPES_s4, METALLICITIES_s4, GRID_SLICES_s4,
-                   COMPRESSIONS_s4, version=VERSION, step_name='step_4')
+                   COMPRESSIONS_s4, version=VERSION, step_name='step_4',
+                   drop_missing_files=DROP_MISSING_FILES)
         slurm_job(job_name='step_4',
                   CHECK_FAILURE_RATE=CHECK_FAILURE_RATE,
                   verbose=VERBOSE)
 
     if POST_PROCESSING:
         create_csv(GRID_TYPES_s5, METALLICITIES_s5, GRID_SLICES_s5,
-                   COMPRESSIONS_s5, version=VERSION, step_name='step_5')
+                   COMPRESSIONS_s5, version=VERSION, step_name='step_5',
+                   drop_missing_files=DROP_MISSING_FILES)
         slurm_job(job_name='step_5',
                   POST_PROCESSING=POST_PROCESSING,
                   verbose=VERBOSE)
@@ -610,14 +620,16 @@ if __name__ == '__main__':
     if TRAIN_INTERPOLATORS:
         create_csv(GRID_TYPES_s6, METALLICITIES_s6, GRID_SLICES_s6,
                    COMPRESSIONS_s6, version=VERSION, step_name='step_6',
-                   INTERPOLATION_METHODS=INTERPOLATION_METHODS_s6)
+                   INTERPOLATION_METHODS=INTERPOLATION_METHODS_s6,
+                   drop_missing_files=DROP_MISSING_FILES)
         slurm_job(job_name='step_6',
                   TRAIN_INTERPOLATORS=TRAIN_INTERPOLATORS,
                   verbose=VERBOSE)
 
     if EXPORT_DATASET:
         create_csv(GRID_TYPES_s7, METALLICITIES_s7, GRID_SLICES_s7,
-                   COMPRESSIONS_s7, version=VERSION, step_name='step_7')
+                   COMPRESSIONS_s7, version=VERSION, step_name='step_7',
+                   drop_missing_files=DROP_MISSING_FILES)
         slurm_job(job_name='step_7',
                   EXPORT_DATASET=EXPORT_DATASET,
                   verbose=VERBOSE)
@@ -625,7 +637,8 @@ if __name__ == '__main__':
     if RERUN:
         create_csv(GRID_TYPES_r, METALLICITIES_r, GRID_SLICES_r,
                    COMPRESSIONS_r, version=VERSION, step_name='rerun',
-                   rerun_type=rerun_type)
+                   rerun_type=rerun_type,
+                   drop_missing_files=DROP_MISSING_FILES)
         slurm_job(job_name='rerun',
                   RERUN=RERUN,
                   rerun_type=rerun_type,
