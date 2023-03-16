@@ -255,7 +255,7 @@ def create_binary_inlists(binary_controls, binary_job,
                     if v:
                         inlist_grid_points.write("\t{0} = .true.\n".format(k))
                     else:
-                        inlist_grid_points.write("\t{0} = .fale.\n".format(k))
+                        inlist_grid_points.write("\t{0} = .false.\n".format(k))
                 else:
                     inlist_grid_points.write("{0} = {1}\n".format(k, v))
             inlist_grid_points.write("/ ! end of binary_controls namelist\n")
@@ -272,7 +272,7 @@ def create_binary_inlists(binary_controls, binary_job,
                     if v:
                         inlist_grid_points.write("\t{0} = .true.\n".format(k))
                     else:
-                        inlist_grid_points.write("\t{0} = .fale.\n".format(k))
+                        inlist_grid_points.write("\t{0} = .false.\n".format(k))
                 else:
                     inlist_grid_points.write("{0} = {1}\n".format(k, v))
             inlist_grid_points.write("/ ! end of binary_job namelist\n")
@@ -290,7 +290,7 @@ def create_binary_inlists(binary_controls, binary_job,
                     if v:
                         inlist_grid_points.write("\t{0} = .true.\n".format(k))
                     else:
-                        inlist_grid_points.write("\t{0} = .fale.\n".format(k))
+                        inlist_grid_points.write("\t{0} = .false.\n".format(k))
                 else:
                     inlist_grid_points.write("{0} = {1}\n".format(k, v))
             inlist_grid_points.write("/ ! end of controls namelist\n")
@@ -308,7 +308,7 @@ def create_binary_inlists(binary_controls, binary_job,
                     if v:
                         inlist_grid_points.write("\t{0} = .true.\n".format(k))
                     else:
-                        inlist_grid_points.write("\t{0} = .fale.\n".format(k))
+                        inlist_grid_points.write("\t{0} = .false.\n".format(k))
                 else:
                     inlist_grid_points.write("{0} = {1}\n".format(k, v))
             inlist_grid_points.write("/ ! end of controls namelist\n")
@@ -326,7 +326,7 @@ def create_binary_inlists(binary_controls, binary_job,
                     if v:
                         inlist_grid_points.write("\t{0} = .true.\n".format(k))
                     else:
-                        inlist_grid_points.write("\t{0} = .fale.\n".format(k))
+                        inlist_grid_points.write("\t{0} = .false.\n".format(k))
                 else:
                     inlist_grid_points.write("{0} = {1}\n".format(k, v))
             inlist_grid_points.write("/ ! end of star_job namelist\n")
@@ -344,7 +344,7 @@ def create_binary_inlists(binary_controls, binary_job,
                     if v:
                         inlist_grid_points.write("\t{0} = .true.\n".format(k))
                     else:
-                        inlist_grid_points.write("\t{0} = .fale.\n".format(k))
+                        inlist_grid_points.write("\t{0} = .false.\n".format(k))
                 else:
                     inlist_grid_points.write("{0} = {1}\n".format(k, v))
             inlist_grid_points.write("/ ! end of star_job namelist\n")
