@@ -389,8 +389,8 @@ if __name__ == '__main__':
         VERSION = ''
         PATH = '.' # working dir
         ACCOUNT = 'meynet'
-        PARTITION = 'shared-cpu'
-        WALLTIME = '08:00:00'
+        PARTITION = 'public-cpu'
+        WALLTIME = '24:00:00'
         MAILTYPE = 'FAIL'
         EMAIL = 'simone.bavera@unige.ch'
         VERBOSE = True
