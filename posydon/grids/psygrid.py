@@ -350,6 +350,7 @@ GRIDPROPERTIES = {
     "eep": None,    # path to EEP files
     "initial_RLO_fix": False,
     "He_core_fix": True,
+    "accept_missing_profile": False,
 }
 
 
@@ -774,11 +775,16 @@ class PSyGrid:
                 final_profile2 = read_MESA_data_file(
                     run.final_profile2_path, P2_columns)
                 if not binary_grid and final_profile1 is None:
-                    warnings.warn("Ignored MESA run because of missing "
-                                  "profile in: {}\n".format(run.path))
-                    ignore_data = True
-                    ignore_reason = "ignore_no_FP"
-                    continue
+                    if self.config["accept_missing_profile"]:
+                        warnings.warn("Including MESA run despite the missing "
+                                      "profile in {}\n".format(run.path))
+                        ignore_data = False
+                    else:
+                        warnings.warn("Ignored MESA run because of missing "
+                                      "profile in: {}\n".format(run.path))
+                        ignore_data = True
+                        ignore_reason = "ignore_no_FP"
+                        continue
 
             if binary_history is not None:
                 if binary_history.shape == ():  # if history is only one line
@@ -1074,7 +1080,7 @@ class PSyGrid:
                                   "run_index={} != ".format(run_index) +
                                   "length(MESA_dirs)={}".format(lenMESA_dirs))
 
-                                
+
         self._say("Storing initial/final values and metadata to HDF5...")
         #create new array of initial and finial values with included runs
         # only and sort it by run_index
