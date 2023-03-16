@@ -1,4 +1,17 @@
-"""Create, evolve and save a binary star population."""
+"""Create, evolve and save a binary star population.
+
+Large populations are RAM limited when holding an arbitrary
+number of BinaryStar instances. Therefore, by default the BinaryPopulation
+will generate binaries, evolve, and try to save them to disk one at a time.
+
+Create a BinaryPopulation instance from an inifile:
+I. CREATING A POPULATION
+------------------------
+a) One-liner for creating a BinaryPopulation from an inifile:
+
+> BinaryPopulation.from_ini('<PATH_TO_POSYDON>' \
+            '/posydon/popsyn/population_params_default.ini')
+"""
 
 
 __authors__ = [
@@ -6,6 +19,7 @@ __authors__ = [
     "Jeffrey Andrews <jeffrey.andrews@northwestern.edu>",
     "Konstantinos Kovlakas <Konstantinos.Kovlakas@unige.ch>",
     "Devina Misra <devina.misra@unige.ch>",
+    "Simone Bavera <Simone.Bavera@unige.ch>",
 ]
 
 
@@ -31,6 +45,7 @@ from posydon.utils.common_functions import (orbital_period_from_separation,
                                             orbital_separation_from_period)
 from posydon.popsyn.defaults import default_kwargs
 from posydon.popsyn.io import binarypop_kwargs_from_ini
+from posydon.utils.constants import Zsun
 
 
 # 'event' usually 10 but 'detached (Integration failure)' can occur
@@ -46,6 +61,11 @@ ONELINE_MIN_ITEMSIZE = {'state_i': 30, 'state_f': 30,
                         'mass_transfer_case_i': 7, 'mass_transfer_case_f': 7,
                         'S1_SN_type': 5, 'S2_SN_type': 5}
 
+# BinaryPopulation will enforce a constant metallicity accross all steps that
+# load stellar or binary models by checked this list of steps.
+STEP_NAMES_LOADING_GRIDS = [
+    'step_HMS_HMS', 'step_CO_HeMS', 'step_CO_HMS_RLO', 'step_detached'
+]
 
 class BinaryPopulation:
     """Handle a binary star population."""
@@ -170,6 +190,17 @@ class BinaryPopulation:
     def _safe_evolve(self, **kwargs):
         """Evolve binaries in a population, catching warnings/exceptions."""
         if not self.population_properties.steps_loaded:
+            # Enforce the same metallicity for all grid steps
+            for step_name, tup in self.population_properties.kwargs.items():
+
+                if step_name in STEP_NAMES_LOADING_GRIDS:
+                    step_function, step_kwargs = tup # unpack params
+                    step_kwargs['metallicity'] = self.kwargs.get('metallicity', 1)
+
+                    # update the step kwargs, override metallicity
+                    modified_tup = (step_function, step_kwargs)
+                    self.population_properties.kwargs[step_name] = modified_tup
+
             self.population_properties.load_steps()
 
         indices = kwargs.get('indices', list(range(self.number_of_binaries)))
@@ -806,6 +837,15 @@ class BinaryGenerator:
         eccentricity = output['eccentricity'].item()
         m1 = output['S1_mass'].item()
         m2 = output['S2_mass'].item()
+        Z_div_Zsun = kwargs.get('metallicity', 1.)
+        zams_table = {1.: 2.703e-01,
+                      0.1: 2.511e-01,
+                      0.01: 2.492e-01,
+                      0.001: 2.49e-01,
+                      0.0001: 2.49e-01}
+        Y = zams_table[Z_div_Zsun]
+        Z = Z_div_Zsun*Zsun
+        X = 1. - Z - Y
 
         binary_params = dict(
             index=kwargs.get('index', default_index),
@@ -819,16 +859,16 @@ class BinaryGenerator:
         star1_params = dict(
             mass=m1,
             state="H-rich_Core_H_burning",
-            metallicity=0.0142,     # ONLY VALID FOR Zsun
-            center_h1=0.7155,       # ONLY VALID FOR Zsun
-            center_he4=0.2703,      # ONLY VALID FOR Zsun
+            metallicity=Z,
+            center_h1=X,
+            center_he4=Y,
         )
         star2_params = dict(
             mass=m2,
             state="H-rich_Core_H_burning",
-            metallicity=0.0142,     # ONLY VALID FOR Zsun
-            center_h1=0.7155,       # ONLY VALID FOR Zsun
-            center_he4=0.2703,      # ONLY VALID FOR Zsun
+            metallicity=Z,
+            center_h1=X,
+            center_he4=Y,
         )
 
         binary = BinaryStar(**binary_params,
