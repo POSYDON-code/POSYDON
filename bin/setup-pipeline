@@ -565,13 +565,14 @@ if __name__ == '__main__':
                             ['1e+00_Zsun','1e-01_Zsun','1e-02_Zsun',
                              '1e-03_Zsun','1e-04_Zsun'],
                             # HMS-HMS
-                            ['1e-04_Zsun']]
+                            ['1e+00_Zsun','1e-01_Zsun','1e-02_Zsun',
+                             '1e-03_Zsun','1e-04_Zsun']]
         GRID_SLICES_r = [# CO-HMS_RLO
-                          ['grid_low_res_combined'],
+                          ['grid_low_res_combined','grid_random_1'],
                          # CO-HeMS
-                          ['grid_low_res_combined'],
+                          ['grid_low_res_combined','grid_random_1'],
                          # HMS-HMS
-                          ['grid_low_res_combined'],
+                          ['grid_low_res_combined','grid_random_1'],
                           ]
         COMPRESSIONS_r = [['LITE'],['LITE'],['LITE']]
 
@@ -638,7 +639,7 @@ if __name__ == '__main__':
         create_csv(GRID_TYPES_r, METALLICITIES_r, GRID_SLICES_r,
                    COMPRESSIONS_r, version=VERSION, step_name='rerun',
                    rerun_type=rerun_type,
-                   drop_missing_files=DROP_MISSING_FILES)
+                   drop_missing_files=True)
         slurm_job(job_name='rerun',
                   RERUN=RERUN,
                   rerun_type=rerun_type,
