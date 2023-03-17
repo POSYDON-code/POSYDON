@@ -620,7 +620,7 @@ def copy_ini_file(grid, rerun_type, destination, cluster):
         data = data.replace(search_text1, replace_text)
         data = data.replace(search_text2, replace_text)
         data = data.replace(search_text3, replace_zams_filename)
-        data = data.replace('grid_test.txt', 'grid.txt')
+        data = data.replace('grid_test.csv', 'grid.csv')
     with open(ini_file_dest, 'w') as file:
         file.write(data)
 
