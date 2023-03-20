@@ -1304,7 +1304,7 @@ class PSyGrid:
                     run.final_profile1.dtype.names)
             if run.final_profile2 is not None:
                 ret += "\nColumns in final_profile2: {}\n".format(
-                    run.final_profile1.dtype.names)
+                    run.final_profile2.dtype.names)
         ret += "\n"
 
         # Print out initial values array parameters
