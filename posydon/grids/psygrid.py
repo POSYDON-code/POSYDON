@@ -1088,6 +1088,7 @@ class PSyGrid:
             np.empty(run_index, dtype=dtype_initial_values))
         new_final_values = initialize_empty_array(
             np.empty(run_index, dtype=dtype_final_values))
+        N_nans = 0
         for i in range(N_runs):
             #only use included runs with a valid index
             if run_included_at[i]>=0:
@@ -1096,6 +1097,8 @@ class PSyGrid:
                     warnings.warn("run {} has a run_index out of ".format(i) +
                         "range: {}>={}".format(run_included_at[i], run_index))
                     continue
+                if np.isnan(self.initial_values[i]["Z"]):
+                    N_nans += 1
                 for colname in dtype_initial_values.names:
                     if colname in self.initial_values.dtype.names:
                         value = self.initial_values[i][colname]
@@ -1108,9 +1111,15 @@ class PSyGrid:
                         new_final_values[run_included_at[i]][colname] = value
                     else:
                         new_final_values[run_included_at[i]][colname] = np.nan
+        warnings.warn("N_nans(orig)={}".format(N_nans))
         #replace old initial/final value array
         self.initial_values = np.copy(new_initial_values)
         self.final_values = np.copy(new_final_values)
+        N_nans = 0
+        for i in range(run_index):
+            if np.isnan(self.initial_values[i]["Z"]):
+                N_nans += 1
+        warnings.warn("N_nans(copy)={}".format(N_nans))
 
         # Store the full table of initial_values
         hdf5.create_dataset("/grid/initial_values", data=self.initial_values,
