@@ -1096,12 +1096,18 @@ class PSyGrid:
                     warnings.warn("run {} has a run_index out of ".format(i) +
                         "range: {}>={}".format(run_included_at[i], run_index))
                     continue
-                for colname in self.initial_values.dtype.names:
-                    value = self.initial_values[i][colname]
-                    new_initial_values[run_included_at[i]][colname] = value
-                for colname in self.final_values.dtype.names:
-                    value = self.final_values[i][colname]
-                    new_final_values[run_included_at[i]][colname] = value
+                for colname in dtype_initial_values.names:
+                    if colname in self.initial_values.dtype.names:
+                        value = self.initial_values[i][colname]
+                        new_initial_values[run_included_at[i]][colname] = value
+                    else:
+                        new_initial_values[run_included_at[i]][colname] = np.nan
+                for colname in dtype_final_values.names:
+                    if colname in self.final_values.dtype.names:
+                        value = self.final_values[i][colname]
+                        new_final_values[run_included_at[i]][colname] = value
+                    else:
+                        new_final_values[run_included_at[i]][colname] = np.nan
         #replace old initial/final value array
         self.initial_values = np.copy(new_initial_values)
         self.final_values = np.copy(new_final_values)
