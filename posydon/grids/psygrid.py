@@ -930,18 +930,18 @@ class PSyGrid:
 
             if not ignore_data:
                 if addX:
-                    self.initial_values["X"] = where_to_add["X"]
+                    self.initial_values[i]["X"] = where_to_add["X"]
                 if addY:
-                    self.initial_values["Y"] = where_to_add["Y"]
+                    self.initial_values[i]["Y"] = where_to_add["Y"]
                 if addZ:
-                    self.initial_values["Z"] = where_to_add["Z"]
+                    self.initial_values[i]["Z"] = where_to_add["Z"]
                     
             if np.isnan(self.initial_values[i]["Z"]):
                 N_nans += 1
             elif self.initial_values[i]["Z"]>0:
                 N_Zs += 1
                 
-            if i%1000==0:
+            if i%1000==999:
                 warnings.warn("i={},".format(i)+
                               "where_to_add={}".format(where_to_add))
 
