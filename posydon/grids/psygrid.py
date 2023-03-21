@@ -633,6 +633,7 @@ class PSyGrid:
         run_included_at = np.full(N_runs, -1, dtype=int)
         run_index = 0
         N_nans = 0
+        N_Zs = 0
         for i in tqdm.tqdm(range(N_runs)):
             # Select the ith run
             run = grid.runs[i]
@@ -937,6 +938,12 @@ class PSyGrid:
                     
             if np.isnan(self.initial_values[i]["Z"]):
                 N_nans += 1
+            elif self.initial_values[i]["Z"]>0:
+                N_Zs += 1
+                
+            if i%1000==0:
+                warnings.warn("i={},".format(i)+
+                              "where_to_add={}".format(where_to_add))
 
             if binary_grid:
                 if ignore_data:
@@ -1030,6 +1037,7 @@ class PSyGrid:
                           "length(MESA_dirs)={}".format(lenMESA_dirs))
 
         warnings.warn("N_nans(orig0)={}".format(N_nans))
+        warnings.warn("N_Zs(orig0)={}".format(N_Zs))
         #general fix for termination_flag in case of initial RLO in binaries
         if binary_grid and initial_RLO_fix:
             #create list of already detected initial RLO
