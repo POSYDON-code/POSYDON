@@ -692,12 +692,14 @@ def rerun(i, path_to_csv_file, rerun_type, verbose=False):
 
 if __name__ == '__main__':
 
+    # chose grid slice given the slurm jobarray index
+    # TODO: use args parser
     VERBOSE = True
-    EXAMPLE = 'quest'
-    if EXAMPLE == 'quest':
-        PATH_TO_GRIDS = '/projects/b1119/POSYDON_GRIDS/'
-    elif EXAMPLE == 'yggdrasil':
-        PATH_TO_GRIDS = '/srv/beegfs/scratch/shares/astro/posydon/POSYDON_GRIDS_v2/'
+    PATH_TO_GRIDS = str(sys.argv[1])
+    path_to_csv_file = str(sys.argv[2])
+    i = int(sys.argv[3])
+    CO_HMS_GRID_START_AT_RLO = bool(int(sys.argv[4]))
+    rerun_type = str(sys.argv[5])
 
     # prevent to run the script locally else it will star creating
     # directories where you do not want them before breaking
@@ -710,18 +712,6 @@ if __name__ == '__main__':
     # the same files at the same time (e.g. when creatign LITE/ORIGINAL grid,
     # or when creating a directory that does not exist yet)
     time.sleep(random.uniform(0.,30.))
-
-    # chose grid slice given the slurm jobarray index
-    # TODO: use args parser
-    path_to_csv_file = str(sys.argv[1])
-    if len(sys.argv) >= 3:
-        i = int(sys.argv[2])
-
-    if len(sys.argv) >= 4:
-        CO_HMS_GRID_START_AT_RLO = bool(int(sys.argv[3]))
-
-    if len(sys.argv) == 5:
-        rerun_type = str(sys.argv[4])
 
     if 'step_1' in path_to_csv_file:
         create_grid_slice(i, path_to_csv_file,

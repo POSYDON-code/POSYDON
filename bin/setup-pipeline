@@ -41,6 +41,7 @@ PATH_TO_GRIDS/
 '''
 
 def slurm_job(job_name,
+              path_to_grids,
               CREATE_GRID_SLICES=False,
               COMBINE_GRID_SLICES=False,
               PLOT_GRIDS=False,
@@ -109,7 +110,7 @@ def slurm_job(job_name,
         if RERUN:
             f.write(f"#SBATCH --output={PATH}/logs/rerun.out\n")
 
-        f.write(f"\nsrun python {PATH_TO_POSYDON}/bin/run-pipeline {path_to_csv_file} {slurm_array} {CO_HMS_GRID_START_AT_RLO} {rerun_type}")
+        f.write(f"\nsrun python {PATH_TO_POSYDON}/bin/run-pipeline {path_to_grids} {path_to_csv_file} {slurm_array} {CO_HMS_GRID_START_AT_RLO} {rerun_type}")
 
 # create csv file with a list of all grid paths to process
 def create_csv(GRID_TYPES, METALLICITIES, GRID_SLICES, COMPRESSIONS,
@@ -278,10 +279,10 @@ if __name__ == '__main__':
 
     # TODO: use args parser
     # setup-pipeline takes an input only for the rerun method
-    if len(sys.argv) == 2:
-        rerun_type = str(sys.argv[1])
-
-    EXAMPLE = 'quest'
+    if len(sys.argv) >= 2:
+        EXAMPLE = str(sys.argv[1])
+    if len(sys.argv) == 3:
+        rerun_type = str(sys.argv[2])
 
     # run a test on quest, currently only HMS-HMS grids are available
     if EXAMPLE == 'quest':
@@ -580,7 +581,7 @@ if __name__ == '__main__':
         create_csv(GRID_TYPES_s1, METALLICITIES_s1, GRID_SLICES_s1,
                    COMPRESSIONS_s1, version=VERSION, step_name='step_1',
                    drop_missing_files=True)
-        slurm_job(job_name='step_1',
+        slurm_job(job_name='step_1', path_to_grids=PATH_TO_GRIDS,
                   CREATE_GRID_SLICES=CREATE_GRID_SLICES,
                   CO_HMS_GRID_START_AT_RLO=CO_HMS_GRID_START_AT_RLO,
                   verbose=VERBOSE)
@@ -590,7 +591,7 @@ if __name__ == '__main__':
                    version=VERSION, step_name='step_2',
                    GRIDS_COMBINED=GRIDS_COMBINED_s2,
                    drop_missing_files=DROP_MISSING_FILES)
-        slurm_job(job_name='step_2',
+        slurm_job(job_name='step_2', path_to_grids=PATH_TO_GRIDS,
                   COMBINE_GRID_SLICES=COMBINE_GRID_SLICES,
                   verbose=VERBOSE)
 
@@ -598,7 +599,7 @@ if __name__ == '__main__':
         create_csv(GRID_TYPES_s3, METALLICITIES_s3, GRID_SLICES_s3,
                    COMPRESSIONS_s3, version=VERSION, step_name='step_3',
                    drop_missing_files=DROP_MISSING_FILES)
-        slurm_job(job_name='step_3',
+        slurm_job(job_name='step_3', path_to_grids=PATH_TO_GRIDS,
                   PLOT_GRIDS=PLOT_GRIDS,
                   verbose=VERBOSE)
 
@@ -606,7 +607,7 @@ if __name__ == '__main__':
         create_csv(GRID_TYPES_s4, METALLICITIES_s4, GRID_SLICES_s4,
                    COMPRESSIONS_s4, version=VERSION, step_name='step_4',
                    drop_missing_files=DROP_MISSING_FILES)
-        slurm_job(job_name='step_4',
+        slurm_job(job_name='step_4', path_to_grids=PATH_TO_GRIDS,
                   CHECK_FAILURE_RATE=CHECK_FAILURE_RATE,
                   verbose=VERBOSE)
 
@@ -614,7 +615,7 @@ if __name__ == '__main__':
         create_csv(GRID_TYPES_s5, METALLICITIES_s5, GRID_SLICES_s5,
                    COMPRESSIONS_s5, version=VERSION, step_name='step_5',
                    drop_missing_files=DROP_MISSING_FILES)
-        slurm_job(job_name='step_5',
+        slurm_job(job_name='step_5', path_to_grids=PATH_TO_GRIDS,
                   POST_PROCESSING=POST_PROCESSING,
                   verbose=VERBOSE)
 
@@ -623,7 +624,7 @@ if __name__ == '__main__':
                    COMPRESSIONS_s6, version=VERSION, step_name='step_6',
                    INTERPOLATION_METHODS=INTERPOLATION_METHODS_s6,
                    drop_missing_files=DROP_MISSING_FILES)
-        slurm_job(job_name='step_6',
+        slurm_job(job_name='step_6', path_to_grids=PATH_TO_GRIDS,
                   TRAIN_INTERPOLATORS=TRAIN_INTERPOLATORS,
                   verbose=VERBOSE)
 
@@ -631,7 +632,7 @@ if __name__ == '__main__':
         create_csv(GRID_TYPES_s7, METALLICITIES_s7, GRID_SLICES_s7,
                    COMPRESSIONS_s7, version=VERSION, step_name='step_7',
                    drop_missing_files=DROP_MISSING_FILES)
-        slurm_job(job_name='step_7',
+        slurm_job(job_name='step_7', path_to_grids=PATH_TO_GRIDS,
                   EXPORT_DATASET=EXPORT_DATASET,
                   verbose=VERBOSE)
 
@@ -640,7 +641,7 @@ if __name__ == '__main__':
                    COMPRESSIONS_r, version=VERSION, step_name='rerun',
                    rerun_type=rerun_type,
                    drop_missing_files=True)
-        slurm_job(job_name='rerun',
+        slurm_job(job_name='rerun', path_to_grids=PATH_TO_GRIDS,
                   RERUN=RERUN,
                   rerun_type=rerun_type,
                   verbose=VERBOSE)
