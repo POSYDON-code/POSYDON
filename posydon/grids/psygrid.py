@@ -618,13 +618,9 @@ class PSyGrid:
         self.final_values = initialize_empty_array(
             np.empty(N_runs, dtype=dtype_final_values))
 
-        warnings.warn("dtype_initial_values0={}".format(dtype_initial_values))
-
         # in case lists were used, get a proper `dtype` object
         dtype_initial_values = self.initial_values.dtype
         dtype_final_values = self.final_values.dtype
-
-        warnings.warn("dtype_initial_values1={}".format(dtype_initial_values))
         
         self._say('Loading MESA data...')
 
@@ -632,8 +628,6 @@ class PSyGrid:
         # -1 if the run is not included.
         run_included_at = np.full(N_runs, -1, dtype=int)
         run_index = 0
-        N_nans = 0
-        N_Zs = 0
         for i in tqdm.tqdm(range(N_runs)):
             # Select the ith run
             run = grid.runs[i]
@@ -935,15 +929,6 @@ class PSyGrid:
                     self.initial_values[i]["Y"] = where_to_add["Y"]
                 if addZ:
                     self.initial_values[i]["Z"] = where_to_add["Z"]
-                    
-            if np.isnan(self.initial_values[i]["Z"]):
-                N_nans += 1
-            elif self.initial_values[i]["Z"]>0:
-                N_Zs += 1
-                
-            if i%1000==999:
-                warnings.warn("i={},".format(i)+
-                              "where_to_add={}".format(where_to_add))
 
             if binary_grid:
                 if ignore_data:
@@ -1036,8 +1021,6 @@ class PSyGrid:
                           "run_index={} != ".format(run_index) +
                           "length(MESA_dirs)={}".format(lenMESA_dirs))
 
-        warnings.warn("N_nans(orig0)={}".format(N_nans))
-        warnings.warn("N_Zs(orig0)={}".format(N_Zs))
         #general fix for termination_flag in case of initial RLO in binaries
         if binary_grid and initial_RLO_fix:
             #create list of already detected initial RLO
@@ -1046,10 +1029,7 @@ class PSyGrid:
                         "interpolation_class"]
             valtoset = ["forced_initial_RLO", "forced_initial_RLO",
                         "initial_MT"]
-            N_nans = 0
             for i in range(N_runs):
-                if np.isnan(self.initial_values[i]["Z"]):
-                    N_nans += 1
                 flag1 = self.final_values[i]["termination_flag_1"]
                 if flag1 != "Terminate because of overflowing initial model":
                     #use grid point data (if existing) to detect initial RLO
@@ -1101,7 +1081,6 @@ class PSyGrid:
                                   "length(MESA_dirs)={}".format(lenMESA_dirs))
 
 
-        warnings.warn("N_nans(orig1)={}".format(N_nans))
         self._say("Storing initial/final values and metadata to HDF5...")
         #create new array of initial and finial values with included runs
         # only and sort it by run_index
@@ -1109,7 +1088,6 @@ class PSyGrid:
             np.empty(run_index, dtype=dtype_initial_values))
         new_final_values = initialize_empty_array(
             np.empty(run_index, dtype=dtype_final_values))
-        N_nans = 0
         for i in range(N_runs):
             #only use included runs with a valid index
             if run_included_at[i]>=0:
@@ -1118,29 +1096,23 @@ class PSyGrid:
                     warnings.warn("run {} has a run_index out of ".format(i) +
                         "range: {}>={}".format(run_included_at[i], run_index))
                     continue
-                if np.isnan(self.initial_values[i]["Z"]):
-                    N_nans += 1
+                #copy initial values or fill with nan if not existing in original
                 for colname in dtype_initial_values.names:
                     if colname in self.initial_values.dtype.names:
                         value = self.initial_values[i][colname]
                         new_initial_values[run_included_at[i]][colname] = value
                     else:
                         new_initial_values[run_included_at[i]][colname] = np.nan
+                #copy final values or fill with nan if not existing in original
                 for colname in dtype_final_values.names:
                     if colname in self.final_values.dtype.names:
                         value = self.final_values[i][colname]
                         new_final_values[run_included_at[i]][colname] = value
                     else:
                         new_final_values[run_included_at[i]][colname] = np.nan
-        warnings.warn("N_nans(orig2)={}".format(N_nans))
         #replace old initial/final value array
         self.initial_values = np.copy(new_initial_values)
         self.final_values = np.copy(new_final_values)
-        N_nans = 0
-        for i in range(run_index):
-            if np.isnan(self.initial_values[i]["Z"]):
-                N_nans += 1
-        warnings.warn("N_nans(copy)={}".format(N_nans))
 
         # Store the full table of initial_values
         hdf5.create_dataset("/grid/initial_values", data=self.initial_values,
