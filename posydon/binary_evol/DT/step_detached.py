@@ -397,10 +397,10 @@ class detached_step:
                                             [m_min_H, m_max_H], [0, None]]
 
         if self.list_for_matching_HeStar == None:
-            self.list_for_matching_HeStar = [["he_core_mass", "center_he4","surface_he4", "log_R"],
-                                            [10.0, 1.0, 1.0, 2.0],
-                                            ["min_max" , "min_max", "min_max", "min_max"],
-                                            [m_min_He, m_max_He], [0, None], [0, None]]
+            self.list_for_matching_HeStar = [["he_core_mass", "center_he4", "log_R"],
+                                            [10.0, 1.0, 2.0],
+                                            ["min_max" , "min_max","min_max"],
+                                            [m_min_He, m_max_He], [0, None]]
 
         # lists of alternative matching
 
@@ -765,16 +765,16 @@ class detached_step:
             # 3rd Alternative matching with a H-rich grid for He-star
             if (np.abs(sol.fun) > tolerance_matching_integration
                     or not sol.success):
-                if self.verbose:
-                    print("Alternative matching in detached step, 3rd step because ",
-                            np.abs(sol.fun), ">", tolerance_matching_integration  ,
-                            " or sol.success = ", sol.success)
 
                 if star.state in LIST_ACCEPTABLE_STATES_FOR_HeStar:
+                    if self.verbose:
+                        print("Alternative matching in detached step, 3rd step because ",
+                                np.abs(sol.fun), ">", tolerance_matching_integration  ,
+                                " or sol.success = ", sol.success)
                     star.htrack = True
                     x0 = get_root0(
                         MESA_label, posydon_attribute, star.htrack, rs=rs)
-                    bnds = ([m_min_H, m_max_H], [0, None])
+                    #bnds = ([m_min_H, m_max_H], [0, None])
                     sol = minimize(square_difference,
                         x0, method="TNC", bounds=bnds,
                     )
