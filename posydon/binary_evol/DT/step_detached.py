@@ -705,8 +705,9 @@ class detached_step:
             if (np.abs(sol.fun) > tolerance_matching_integration
                     or not sol.success):
                 if self.verbose:
-                    print("Alternative matching in detached step, 1st step because ",
-                            np.abs(sol.fun), ">", tolerance_matching_integration )
+                    print("Alternative matching in detached step, 1st step because either",
+                            np.abs(sol.fun), ">", tolerance_matching_integration ,
+                            " or sol.success = ", sol.success)
                 sol = minimize(square_difference,
                     x0, method="Powell",
                 )
@@ -731,7 +732,8 @@ class detached_step:
 
                 if self.verbose:
                     print("Alternative matching in detached step, 2nd step because ",
-                            np.abs(sol.fun), ">", tolerance_matching_integration )
+                            np.abs(sol.fun), ">", tolerance_matching_integration  ,
+                            " or sol.success = ", sol.success)
                     print("Matching alternative attributes and their normalizations :",
                                   MESA_labels, rs)
 
@@ -765,7 +767,8 @@ class detached_step:
                     or not sol.success):
                 if self.verbose:
                     print("Alternative matching in detached step, 3rd step because ",
-                            np.abs(sol.fun), ">", tolerance_matching_integration )
+                            np.abs(sol.fun), ">", tolerance_matching_integration  ,
+                            " or sol.success = ", sol.success)
 
                 if star.state in LIST_ACCEPTABLE_STATES_FOR_HeStar:
                     star.htrack = True
@@ -951,13 +954,6 @@ class detached_step:
             else:
                 raise Exception("State not recognized!")
 
-        #if (self.non_existent_companion  == 0): # actual binary
-        if (not primary.co):
-            m1, t1 = match_to_single_star(primary, primary.htrack)
-        m2, t2 = match_to_single_star(secondary, secondary.htrack)
-        #elif (self.non_existent_companion  == 1) or (self.non_existent_companion  == 2):
-        #    #TODO: We do not have the logR for the matching
-        #    m2, t2 = match_to_single_star(secondary, secondary.htrack,)
 
         def get_star_data(binary, star1, star2, htrack, co):
             """Get and interpolate the properties of stars.
