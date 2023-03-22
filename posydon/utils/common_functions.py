@@ -2578,3 +2578,11 @@ class PchipInterpolator2:
         if self.positive:
             result = np.maximum(result, 0.0)
         return result
+
+def convert_metallicity_to_string(Z):
+    """Check if metallicity is supported by POSYDON v2."""
+    # check supported metallicity
+    valid_Z = [1e+00,1e-01,1e-02,1e-03,1e-04]
+    if not Z in valid_Z:
+        raise ValueError(f'Metallicity {Z} not supported! Available metallicities in POSYDON v2 are {valid_Z}.')
+    return f'{Z:1.0e}'

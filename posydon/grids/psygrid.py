@@ -350,6 +350,7 @@ GRIDPROPERTIES = {
     "eep": None,    # path to EEP files
     "initial_RLO_fix": False,
     "He_core_fix": True,
+    "accept_missing_profile": False,
 }
 
 
@@ -620,7 +621,7 @@ class PSyGrid:
         # in case lists were used, get a proper `dtype` object
         dtype_initial_values = self.initial_values.dtype
         dtype_final_values = self.final_values.dtype
-
+        
         self._say('Loading MESA data...')
 
         #this int array will store the run_index of the i-th run and will be
@@ -774,11 +775,16 @@ class PSyGrid:
                 final_profile2 = read_MESA_data_file(
                     run.final_profile2_path, P2_columns)
                 if not binary_grid and final_profile1 is None:
-                    warnings.warn("Ignored MESA run because of missing "
-                                  "profile in: {}\n".format(run.path))
-                    ignore_data = True
-                    ignore_reason = "ignore_no_FP"
-                    continue
+                    if self.config["accept_missing_profile"]:
+                        warnings.warn("Including MESA run despite the missing "
+                                      "profile in {}\n".format(run.path))
+                        ignore_data = False
+                    else:
+                        warnings.warn("Ignored MESA run because of missing "
+                                      "profile in: {}\n".format(run.path))
+                        ignore_data = True
+                        ignore_reason = "ignore_no_FP"
+                        continue
 
             if binary_history is not None:
                 if binary_history.shape == ():  # if history is only one line
@@ -918,11 +924,11 @@ class PSyGrid:
 
             if not ignore_data:
                 if addX:
-                    self.initial_values["X"] = where_to_add["X"]
+                    self.initial_values[i]["X"] = where_to_add["X"]
                 if addY:
-                    self.initial_values["Y"] = where_to_add["Y"]
+                    self.initial_values[i]["Y"] = where_to_add["Y"]
                 if addZ:
-                    self.initial_values["Z"] = where_to_add["Z"]
+                    self.initial_values[i]["Z"] = where_to_add["Z"]
 
             if binary_grid:
                 if ignore_data:
@@ -1090,12 +1096,20 @@ class PSyGrid:
                     warnings.warn("run {} has a run_index out of ".format(i) +
                         "range: {}>={}".format(run_included_at[i], run_index))
                     continue
-                for colname in self.initial_values.dtype.names:
-                    value = self.initial_values[i][colname]
-                    new_initial_values[run_included_at[i]][colname] = value
-                for colname in self.final_values.dtype.names:
-                    value = self.final_values[i][colname]
-                    new_final_values[run_included_at[i]][colname] = value
+                #copy initial values or fill with nan if not existing in original
+                for colname in dtype_initial_values.names:
+                    if colname in self.initial_values.dtype.names:
+                        value = self.initial_values[i][colname]
+                        new_initial_values[run_included_at[i]][colname] = value
+                    else:
+                        new_initial_values[run_included_at[i]][colname] = np.nan
+                #copy final values or fill with nan if not existing in original
+                for colname in dtype_final_values.names:
+                    if colname in self.final_values.dtype.names:
+                        value = self.final_values[i][colname]
+                        new_final_values[run_included_at[i]][colname] = value
+                    else:
+                        new_final_values[run_included_at[i]][colname] = np.nan
         #replace old initial/final value array
         self.initial_values = np.copy(new_initial_values)
         self.final_values = np.copy(new_final_values)
@@ -1298,7 +1312,7 @@ class PSyGrid:
                     run.final_profile1.dtype.names)
             if run.final_profile2 is not None:
                 ret += "\nColumns in final_profile2: {}\n".format(
-                    run.final_profile1.dtype.names)
+                    run.final_profile2.dtype.names)
         ret += "\n"
 
         # Print out initial values array parameters

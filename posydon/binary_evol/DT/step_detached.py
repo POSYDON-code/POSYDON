@@ -30,7 +30,8 @@ from posydon.utils.common_functions import (
     orbital_period_from_separation,
     roche_lobe_radius,
     check_state_of_star,
-    PchipInterpolator2
+    PchipInterpolator2,
+    convert_metallicity_to_string
 )
 from posydon.binary_evol.flow_chart import (STAR_STATES_CC)
 import posydon.utils.constants as const
@@ -144,6 +145,7 @@ class detached_step:
 
     def __init__(
             self,
+            metallicity=None,
             grid=None,
             path=PATH_TO_POSYDON_DATA,
             dt=None,
@@ -160,6 +162,7 @@ class detached_step:
             RLO_orbit_at_orbit_with_same_am=False
     ):
         """Initialize the step. See class documentation for details."""
+        self.metallicity = convert_metallicity_to_string(metallicity)
         self.dt = dt
         self.n_o_steps_history = n_o_steps_history
         self.matching_method = matching_method
@@ -364,8 +367,8 @@ class detached_step:
             'avg_charge_He'
         )
 
-        grid_name1 = os.path.join('single_HMS', 'grid_0.0142.h5')
-        grid_name2 = os.path.join('single_HeMS', 'grid_0.0142.h5')
+        grid_name1 = os.path.join('single_HMS', self.metallicity+'_Zsun.h5')
+        grid_name2 = os.path.join('single_HeMS', self.metallicity+'_Zsun.h5')
         self.grid1 = GRIDInterpolator(os.path.join(path, grid_name1))
         self.grid2 = GRIDInterpolator(os.path.join(path, grid_name2))
 

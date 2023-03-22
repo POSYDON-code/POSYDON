@@ -75,6 +75,7 @@ install_requires = [
     'tqdm == 4.48.2',
     'tables == 3.6.1',
     'progressbar2 == 4.0.0',
+    'hurry.filesize == 0.9',
 ]
 
 tests_require = [
