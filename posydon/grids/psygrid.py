@@ -1971,8 +1971,8 @@ PROPERTIES_TO_BE_NONE = {
 }
 
 PROPERTIES_TO_BE_CONSISTENT = ["binary", "eep", "start_at_RLO",
-                               "initial_RLO_fix",
-                               "He_core_fix", "history_DS_error",
+                               "initial_RLO_fix", "He_core_fix",
+                               "accept_missing_profile", "history_DS_error",
                                "history_DS_exclude", "profile_DS_error",
                                "profile_DS_exclude", "profile_DS_interval"]
 
