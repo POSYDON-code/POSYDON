@@ -621,7 +621,7 @@ class PSyGrid:
         # in case lists were used, get a proper `dtype` object
         dtype_initial_values = self.initial_values.dtype
         dtype_final_values = self.final_values.dtype
-
+        
         self._say('Loading MESA data...')
 
         #this int array will store the run_index of the i-th run and will be
@@ -924,11 +924,11 @@ class PSyGrid:
 
             if not ignore_data:
                 if addX:
-                    self.initial_values["X"] = where_to_add["X"]
+                    self.initial_values[i]["X"] = where_to_add["X"]
                 if addY:
-                    self.initial_values["Y"] = where_to_add["Y"]
+                    self.initial_values[i]["Y"] = where_to_add["Y"]
                 if addZ:
-                    self.initial_values["Z"] = where_to_add["Z"]
+                    self.initial_values[i]["Z"] = where_to_add["Z"]
 
             if binary_grid:
                 if ignore_data:
@@ -1096,12 +1096,20 @@ class PSyGrid:
                     warnings.warn("run {} has a run_index out of ".format(i) +
                         "range: {}>={}".format(run_included_at[i], run_index))
                     continue
-                for colname in self.initial_values.dtype.names:
-                    value = self.initial_values[i][colname]
-                    new_initial_values[run_included_at[i]][colname] = value
-                for colname in self.final_values.dtype.names:
-                    value = self.final_values[i][colname]
-                    new_final_values[run_included_at[i]][colname] = value
+                #copy initial values or fill with nan if not existing in original
+                for colname in dtype_initial_values.names:
+                    if colname in self.initial_values.dtype.names:
+                        value = self.initial_values[i][colname]
+                        new_initial_values[run_included_at[i]][colname] = value
+                    else:
+                        new_initial_values[run_included_at[i]][colname] = np.nan
+                #copy final values or fill with nan if not existing in original
+                for colname in dtype_final_values.names:
+                    if colname in self.final_values.dtype.names:
+                        value = self.final_values[i][colname]
+                        new_final_values[run_included_at[i]][colname] = value
+                    else:
+                        new_final_values[run_included_at[i]][colname] = np.nan
         #replace old initial/final value array
         self.initial_values = np.copy(new_initial_values)
         self.final_values = np.copy(new_final_values)
@@ -1304,7 +1312,7 @@ class PSyGrid:
                     run.final_profile1.dtype.names)
             if run.final_profile2 is not None:
                 ret += "\nColumns in final_profile2: {}\n".format(
-                    run.final_profile1.dtype.names)
+                    run.final_profile2.dtype.names)
         ret += "\n"
 
         # Print out initial values array parameters
@@ -1963,8 +1971,8 @@ PROPERTIES_TO_BE_NONE = {
 }
 
 PROPERTIES_TO_BE_CONSISTENT = ["binary", "eep", "start_at_RLO",
-                               "initial_RLO_fix",
-                               "He_core_fix", "history_DS_error",
+                               "initial_RLO_fix", "He_core_fix",
+                               "accept_missing_profile", "history_DS_error",
                                "history_DS_exclude", "profile_DS_error",
                                "profile_DS_exclude", "profile_DS_interval"]
 
