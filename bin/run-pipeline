@@ -699,7 +699,8 @@ if __name__ == '__main__':
     path_to_csv_file = str(sys.argv[2])
     i = int(sys.argv[3])
     CO_HMS_GRID_START_AT_RLO = bool(int(sys.argv[4]))
-    rerun_type = str(sys.argv[5])
+    if len(sys.argv) == 6:
+        rerun_type = str(sys.argv[5])
 
     # prevent to run the script locally else it will star creating
     # directories where you do not want them before breaking
