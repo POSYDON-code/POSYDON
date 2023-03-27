@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 __authors__ = [
     "Simone Bavera <Simone.Bavera@unige.ch>",
+    "Kyle Akira Rocha <kylerocha2024@u.northwestern.edu>",
 ]
 
 import os
