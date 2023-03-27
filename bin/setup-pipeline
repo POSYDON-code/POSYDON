@@ -5,8 +5,11 @@ __authors__ = [
 
 import os
 import sys
+import ast
 import pandas as pd
 import numpy as np
+from pprint import pprint, pformat
+from posydon.popsyn.io import parse_inifile
 from posydon.utils.common_functions import PATH_TO_POSYDON
 
 # this data processing pipeline was designed assuming POSYDON v2 data structure
@@ -40,8 +43,121 @@ PATH_TO_GRIDS/
                         ...
 '''
 
+ACTION_TO_STEP_NUM = {
+    'CREATE_GRID_SLICES'  : 'step_1',
+    'COMBINE_GRID_SLICES' : 'step_2',
+    'PLOT_GRIDS'          : 'step_3',
+    'CHECK_FAILURE_RATE'  : 'step_4',
+    'POST_PROCESSING'     : 'step_5',
+    'TRAIN_INTERPOLATORS' : 'step_6',
+    'EXPORT_DATASET'      : 'step_7',
+    'RERUN'               : 'rerun'
+}
+
+class PostProcessingPipeline:
+
+    def __init__(self, path_to_inifile=None):
+        self.PATH_TO_POSYDON = os.getenv('PATH_TO_POSYDON')
+        self.PATH_TO_INIFILE = path_to_inifile
+
+        if self.PATH_TO_INIFILE is not None:
+            self.pipeline_kwargs = self.parse_setup_params(self.PATH_TO_INIFILE)
+
+
+    @staticmethod
+    def parse_setup_params(path=None):
+        """
+        Parse inifile for running post-processing pipelines.
+        """
+
+        if path is None:
+            return
+        else:
+            parser = parse_inifile(path)
+
+        pipeline_kwargs = dict()
+        for section in parser.sections():
+            section_dict = dict()
+            for key, val in parser[section].items():
+                section_dict[key] = ast.literal_eval(val)
+
+            pipeline_kwargs[section] = section_dict
+        return pipeline_kwargs
+
+    def create_csv_and_slurm_job_files(self):
+        setup_kwargs = self.pipeline_kwargs['pipeline setup']
+        account_kwargs = self.pipeline_kwargs['account']
+
+        if setup_kwargs['VERBOSE']:
+            print( "\n\n{:+^45s} \n{}\n{:+^45s}\n{}".format(
+                    'ACCOUNT', pformat(account_kwargs, indent=2),
+                    'SETUP', pformat(setup_kwargs, indent=2) )
+                 )
+
+
+        for action, step_number in ACTION_TO_STEP_NUM.items():
+            do_step_bool = setup_kwargs[action]
+
+            if setup_kwargs['VERBOSE']:
+                print( "\n\n{:-^45s} {:^8s}:{:^6s}".format(
+                    action, step_number, str(do_step_bool)) )
+
+            if do_step_bool:
+                step_kwargs = self.pipeline_kwargs[step_number]
+
+                if setup_kwargs['VERBOSE']:
+                    print( pformat(step_kwargs, indent=2) )
+
+
+                create_csv(
+                    step_name=step_number,
+                    **{**step_kwargs, **setup_kwargs}
+                )
+                slurm_job(
+                    job_name=step_number,
+                    step_name=step_number,
+                    PATH_TO_POSYDON=self.PATH_TO_POSYDON,
+                    **{**step_kwargs, **setup_kwargs, **account_kwargs}
+                )
+
+    def create_logs_dir(self):
+        # create logs in working dir to store all slurm outputs
+        setup_kwargs = self.pipeline_kwargs['pipeline setup']
+        logs_path = os.path.join(setup_kwargs['PATH'],'logs')
+        if not os.path.isdir(logs_path):
+            os.makedirs(logs_path)
+
+    def create_export_dir(self):
+        # create data dir three to export the datasets
+        setup_kwargs = self.pipeline_kwargs['pipeline setup']
+        if setup_kwargs['EXPORT_DATASET']:
+            data_path = os.path.join(setup_kwargs['PATH'], 'POSYDON_data')
+            if not os.path.isdir(data_path):
+                os.makedirs(data_path)
+
+                dirs = []
+                grid_dirs = ['HMS-HMS', 'CO-HMS_RLO', 'CO-HeMS', 'single_HMS',
+                            'single_HeMS']
+                interp_dirs = ['interpolators', 'interpolators/1NN_1NN',
+                               'interpolators/linear3c_kNN']
+                for name1 in grid_dirs:
+                    dirs.append(os.path.join(data_path,name1))
+                    for name2 in interp_dirs:
+                        dirs.append(os.path.join(data_path,name1,name2))
+
+                for dir_ in  dirs:
+                    if not os.path.isdir(dir_):
+                        os.makedirs(dir_)
+
 def slurm_job(job_name,
-              path_to_grids,
+              PATH_TO_GRIDS=None,
+              PATH_TO_POSYDON=None,
+              PATH=None,
+              ACCOUNT=None,
+              PARTITION=None,
+              WALLTIME=None,
+              MAILTYPE=None,
+              EMAIL=None,
               CREATE_GRID_SLICES=False,
               COMBINE_GRID_SLICES=False,
               PLOT_GRIDS=False,
@@ -51,9 +167,9 @@ def slurm_job(job_name,
               EXPORT_DATASET=False,
               RERUN=False,
               CO_HMS_GRID_START_AT_RLO=1,
-              rerun_type='',
+              RERUN_TYPE='',
               verbose=False,
-              ):
+              **kwargs):
 
     path_to_csv_file = os.path.join(PATH,f"{job_name}.csv")
 
@@ -72,12 +188,11 @@ def slurm_job(job_name,
             f.write(f"#SBATCH --mail-type={MAILTYPE}\n")
             f.write(f"#SBATCH --mail-user={EMAIL}\n")
 
-        if (CREATE_GRID_SLICES or PLOT_GRIDS or CHECK_FAILURE_RATE or
-            POST_PROCESSING or TRAIN_INTERPOLATORS or EXPORT_DATASET or
-            RERUN):
+        if job_name in ['step_1', 'step_3', 'step_4','step_5', 'step_6',
+                        'step_7', 'rerun']:
             df = pd.read_csv(path_to_csv_file)
             N = df.shape[0]-1
-        elif COMBINE_GRID_SLICES:
+        elif job_name in ['step_2']:
             df = pd.read_csv(path_to_csv_file)
             N = df.shape[1]-1
         else:
@@ -85,38 +200,39 @@ def slurm_job(job_name,
         f.write(f"#SBATCH --array=0-{N}\n")
         slurm_array = '$SLURM_ARRAY_TASK_ID'
 
-        if CREATE_GRID_SLICES:
+        if job_name == 'step_1':
             f.write(f"#SBATCH --output={PATH}/logs/grid_slice_%a.out\n")
 
-        if COMBINE_GRID_SLICES:
+        if job_name == 'step_2':
             f.write(f"#SBATCH --output={PATH}/logs/combine_grid_slices.out\n")
 
-        if PLOT_GRIDS:
+        if job_name == 'step_3':
             f.write(f"#SBATCH --output={PATH}/logs/plot_grid.out\n")
 
-        if CHECK_FAILURE_RATE:
+        if job_name == 'step_4':
             f.write(f"#SBATCH --output={PATH}/logs/check_failure_rate.out\n")
 
-        if POST_PROCESSING:
+        if job_name == 'step_5':
             f.write(f"#SBATCH --output={PATH}/logs/post_processing_%a.out\n")
             f.write(f"export PATH_TO_POSYDON={PATH_TO_POSYDON}\n")
 
-        if TRAIN_INTERPOLATORS:
+        if job_name == 'step_7':
             f.write(f"#SBATCH --output={PATH}/logs/train_interpolators_%a.out\n")
 
-        if EXPORT_DATASET:
+        if job_name == 'step_7':
             f.write(f"#SBATCH --output={PATH}/logs/export_dataset.out\n")
 
-        if RERUN:
+        if job_name == 'rerun':
             f.write(f"#SBATCH --output={PATH}/logs/rerun.out\n")
 
-        f.write(f"\nsrun python {PATH_TO_POSYDON}/bin/run-pipeline {path_to_grids} {path_to_csv_file} {slurm_array} {CO_HMS_GRID_START_AT_RLO} {rerun_type}")
+        f.write(f"\nsrun python {PATH_TO_POSYDON}/bin/run-pipeline {PATH_TO_GRIDS} {path_to_csv_file} {slurm_array} {CO_HMS_GRID_START_AT_RLO} {RERUN_TYPE}")
 
 # create csv file with a list of all grid paths to process
 def create_csv(GRID_TYPES, METALLICITIES, GRID_SLICES, COMPRESSIONS,
-               step_name=None, version=None, GRIDS_COMBINED=None,
-               INTERPOLATION_METHODS=None, rerun_type='',
-               drop_missing_files=False):
+               step_name=None, VERSION=None, GRIDS_COMBINED=None,
+               INTERPOLATION_METHODS=None, RERUN_TYPE='',
+               DROP_MISSING_FILES=False, PATH_TO_GRIDS=None,
+               PATH=None, **kwargs):
 
     # number of grid types
     N = len(GRID_TYPES)
@@ -144,7 +260,7 @@ def create_csv(GRID_TYPES, METALLICITIES, GRID_SLICES, COMPRESSIONS,
                 for compression in COMPRESSIONS_:
                     if step_name == 'step_1':
                         grids.append(os.path.join(PATH_TO_GRIDS,
-                                      grid_type, version, metallicity, grid_slice))
+                                      grid_type, VERSION, metallicity, grid_slice))
                         grids_compression.extend([compression])
                     elif step_name == 'step_2':
                         if N != len(GRIDS_COMBINED):
@@ -155,11 +271,11 @@ def create_csv(GRID_TYPES, METALLICITIES, GRID_SLICES, COMPRESSIONS,
                         # grid_slice is a batch
                         for grid_slice_ in grid_slice:
                                 path_to_grid = os.path.join(PATH_TO_GRIDS,
-                                              grid_type, version, metallicity,
+                                              grid_type, VERSION, metallicity,
                                               compression, grid_slice_+'.h5')
                                 combine_grid_slices.append(path_to_grid)
                         path_to_grid_combined = os.path.join(PATH_TO_GRIDS,
-                                                             grid_type, version,
+                                                             grid_type, VERSION,
                                                              metallicity,
                                                              compression,
                                                              GRIDS_COMBINED[l][i]+'.h5')
@@ -168,34 +284,34 @@ def create_csv(GRID_TYPES, METALLICITIES, GRID_SLICES, COMPRESSIONS,
                         df = pd.concat([df,df_tmp], axis=1)
                     elif step_name == 'step_3':
                         grids.append(os.path.join(PATH_TO_GRIDS,
-                                      grid_type, version, metallicity,
+                                      grid_type, VERSION, metallicity,
                                       compression, grid_slice+'.h5'))
                         plot_dirs.append(os.path.join(PATH_TO_GRIDS,
-                                    grid_type, version, metallicity,
+                                    grid_type, VERSION, metallicity,
                                     'plots', grid_slice))
                     elif step_name == 'step_4':
                         grids.append(os.path.join(PATH_TO_GRIDS,
-                                      grid_type, version, metallicity,
+                                      grid_type, VERSION, metallicity,
                                       compression, grid_slice+'.h5'))
                     elif step_name == 'step_5':
                         grids.append(os.path.join(PATH_TO_GRIDS,
-                                      grid_type, version, metallicity,
+                                      grid_type, VERSION, metallicity,
                                       compression, grid_slice+'.h5'))
                         processed_grids.append(os.path.join(PATH_TO_GRIDS,
-                                      grid_type, version, metallicity,
+                                      grid_type, VERSION, metallicity,
                                       compression, grid_slice+'_processed.h5'))
                     elif step_name == 'step_6':
                         for method in INTERPOLATION_METHODS:
                             grids.append(os.path.join(PATH_TO_GRIDS,
-                                          grid_type, version, metallicity,
+                                          grid_type, VERSION, metallicity,
                                           compression, grid_slice+'.h5'))
                             interpolators.append(os.path.join(PATH_TO_GRIDS,
-                                          grid_type, version, metallicity,
+                                          grid_type, VERSION, metallicity,
                                           'interpolation_objects',
                                           'IF_'+method+'.pkl'))
                     elif step_name == 'step_7':
                         grids.append(os.path.join(PATH_TO_GRIDS,
-                                      grid_type, version, metallicity,
+                                      grid_type, VERSION, metallicity,
                                       compression, grid_slice+'.h5'))
                         export_path.append(os.path.join(PATH, 'POSYDON_data',
                                                         grid_type,
@@ -203,7 +319,7 @@ def create_csv(GRID_TYPES, METALLICITIES, GRID_SLICES, COMPRESSIONS,
                         for method in [['linear','linear3c_kNN'],
                                         ['1NN','1NN_1NN']]:
                             grids.append(os.path.join(PATH_TO_GRIDS,
-                                          grid_type, version, metallicity,
+                                          grid_type, VERSION, metallicity,
                                           'interpolation_objects',
                                           'IF_'+method[0]+'.pkl'))
                             export_path.append(os.path.join(PATH, 'POSYDON_data',
@@ -213,11 +329,11 @@ def create_csv(GRID_TYPES, METALLICITIES, GRID_SLICES, COMPRESSIONS,
                                                             metallicity+'.pkl'))
                     elif step_name == 'rerun':
                         grids.append(os.path.join(PATH_TO_GRIDS,
-                                      grid_type, version, metallicity,
+                                      grid_type, VERSION, metallicity,
                                       compression, grid_slice+'.h5'))
                         rerun_path.append(os.path.join(PATH_TO_GRIDS, grid_type,
-                                     version, metallicity,
-                                     'rerun_'+rerun_type+'_'+grid_slice))
+                                     VERSION, metallicity,
+                                     'rerun_'+RERUN_TYPE+'_'+grid_slice))
 
     # saving dataset to csv file
     if step_name != 'step_2':
@@ -236,7 +352,7 @@ def create_csv(GRID_TYPES, METALLICITIES, GRID_SLICES, COMPRESSIONS,
         elif step_name == 'rerun':
             df['rerun_path'] = rerun_path
         # drop lines when grid directories are not found
-        if drop_missing_files:
+        if DROP_MISSING_FILES:
             drop_rows = []
             for row in range(df.shape[0]):
                 path = df.loc[row,'path_to_grid']
@@ -255,7 +371,7 @@ def create_csv(GRID_TYPES, METALLICITIES, GRID_SLICES, COMPRESSIONS,
     else:
         # step 2
         # drop columns when psygrid files are not found
-        if drop_missing_files:
+        if DROP_MISSING_FILES:
             drop_columns = []
             for column in df.keys():
                 for path in df[column].dropna().to_list():
@@ -277,396 +393,16 @@ def create_csv(GRID_TYPES, METALLICITIES, GRID_SLICES, COMPRESSIONS,
 
 if __name__ == '__main__':
 
-    # TODO: use args parser
-    # setup-pipeline takes an input only for the rerun method
     if len(sys.argv) >= 2:
-        EXAMPLE = str(sys.argv[1])
-    if len(sys.argv) == 3:
-        rerun_type = str(sys.argv[2])
+        ini_file_path = str(sys.argv[1])
+        if '.' not in ini_file_path:
+            ini_file_path = './' + ini_file_path
 
-    # run a test on quest, currently only HMS-HMS grids are available
-    if EXAMPLE == 'quest':
+    pipeline = PostProcessingPipeline(ini_file_path)
+    pipeline.create_csv_and_slurm_job_files()
+    pipeline.create_logs_dir()
+    pipeline.create_export_dir()
 
-        PATH_TO_GRIDS = '/projects/b1119/POSYDON_GRIDS/'
-        VERSION = 'v2'
-        PATH = '.' # working dir
-        ACCOUNT = 'b1119'
-        PARTITION = 'posydon-priority'
-        WALLTIME = '24:00:00'
-        MAILTYPE = 'FAIL'
-        EMAIL = 'simone.bavera@unige.ch'
-        VERBOSE = True
-
-        # EXAMPLE SETUP (they currently run independently)
-        # TODO: add a linked slurm job arrays which are waiting for each others
-        # STEPS 1 to 6
-        CREATE_GRID_SLICES = True
-        COMBINE_GRID_SLICES = True
-        PLOT_GRIDS = True
-        CHECK_FAILURE_RATE = True
-        POST_PROCESSING = True
-        TRAIN_INTERPOLATORS = True
-        EXPORT_DATASET = True
-        RERUN = True
-
-        # EXTRA PARAMETERS
-        CO_HMS_GRID_START_AT_RLO = 0 # set this to False for reruns
-        DROP_MISSING_FILES = False # set this to False for step concatenation
-
-        ###### EXAMPLE step 1 ######
-        GRID_TYPES_s1 = ['HMS-HMS']
-        METALLICITIES_s1 = [['1e+00_Zsun','1e-01_Zsun','1e-02_Zsun','1e-03_Zsun']]
-        GRID_SLICES_s1 = [# HMS-HMS
-                          ['grid_low_res_0','grid_low_res_1','grid_low_res_2',
-                           'grid_low_res_3','grid_low_res_4','grid_low_res_5',
-                           #'grid_low_res_rerun_opacitymax'
-                           ]
-                          ]
-        COMPRESSIONS_s1 = [['LITE','ORIGINAL']]
-
-        ###### EXAMPLE step 2 ######
-        GRID_TYPES_s2 = ['HMS-HMS']
-        METALLICITIES_s2 = [['1e+00_Zsun','1e-01_Zsun','1e-02_Zsun','1e-03_Zsun']]
-        GRID_SLICES_s2 = [# HMS-HMS
-                          [['grid_low_res_0','grid_low_res_1','grid_low_res_2',
-                            'grid_low_res_3','grid_low_res_4','grid_low_res_5'],
-                           #['grid_low_res_combined','grid_low_res_rerun_opacitymax']
-                           ]
-                          ]
-        GRIDS_COMBINED_s2 = [# HMS-HMS
-                             ['grid_low_res_combined',
-                              # 'grid_low_res_combined_rerun_1'
-                             ]
-                             ]
-        COMPRESSIONS_s2 = [['LITE','ORIGINAL']]
-
-        ###### EXAMPLE step 3 ######
-        GRID_TYPES_s3 = ['HMS-HMS']
-        METALLICITIES_s3 = [['1e+00_Zsun','1e-01_Zsun','1e-02_Zsun','1e-03_Zsun']]
-        GRID_SLICES_s3 = [['grid_low_res_combined',
-                           # 'grid_low_res_rerun_opacitymax',
-                           # 'grid_low_res_combined_rerun_1'
-                            ]]
-        COMPRESSIONS_s3 = [['LITE']]
-
-        ###### EXAMPLE step 4 ######
-        GRID_TYPES_s4 = ['HMS-HMS']
-        METALLICITIES_s4 = [['1e+00_Zsun','1e-01_Zsun','1e-02_Zsun','1e-03_Zsun']]
-        GRID_SLICES_s4 = [['grid_low_res_combined',
-                           # 'grid_low_res_rerun_opacitymax',
-                           # 'grid_low_res_combined_rerun_1'
-                           ]
-                           ]
-        COMPRESSIONS_s4 = [['LITE']]
-
-        ###### EXAMPLE step 5 ######
-        GRID_TYPES_s5 = ['HMS-HMS']
-        METALLICITIES_s5 = [['1e+00_Zsun','1e-01_Zsun','1e-02_Zsun','1e-03_Zsun']]
-        GRID_SLICES_s5 = [['grid_low_res_combined']]
-        COMPRESSIONS_s5 = [['LITE']]
-
-        ###### EXAMPLE step 6 ######
-        GRID_TYPES_s6 = ['HMS-HMS']
-        METALLICITIES_s6 = [['1e+00_Zsun','1e-01_Zsun','1e-02_Zsun','1e-03_Zsun']]
-        GRID_SLICES_s6 = [['grid_low_res_combined_processed']]
-        INTERPOLATION_METHODS_s6 = ["linear","1NN"]
-        COMPRESSIONS_s6 = [['LITE']]
-
-        ###### EXAMPLE step 7 ######
-        GRID_TYPES_s7 = ['HMS-HMS']
-        METALLICITIES_s7 = [['1e+00_Zsun','1e-01_Zsun','1e-02_Zsun','1e-03_Zsun']]
-        GRID_SLICES_s7 = [['grid_low_res_combined_processed']]
-        COMPRESSIONS_s7 = [['LITE']]
-
-        ###### EXAMPLE rerun ######
-        GRID_TYPES_r = ['HMS-HMS']
-        METALLICITIES_r = [['1e+00_Zsun','1e-01_Zsun','1e-02_Zsun','1e-03_Zsun']]
-        GRID_SLICES_r = [['grid_low_res_combined']]
-        COMPRESSIONS_r = [['LITE']]
-
-    elif EXAMPLE == 'yggdrasil':
-
-        PATH_TO_GRIDS = '/srv/beegfs/scratch/shares/astro/posydon/POSYDON_GRIDS_v2/'
-        VERSION = ''
-        PATH = '.' # working dir
-        ACCOUNT = 'meynet'
-        PARTITION = 'public-cpu'
-        WALLTIME = '24:00:00'
-        MAILTYPE = 'FAIL'
-        EMAIL = 'simone.bavera@unige.ch'
-        VERBOSE = True
-
-        # EXAMPLE SETUP (they currently run independently)
-        # TODO: add a linked slurm job arrays which are waiting for each others
-        # STEPS 1 to 7
-        CREATE_GRID_SLICES = True
-        COMBINE_GRID_SLICES = True
-        PLOT_GRIDS = True
-        CHECK_FAILURE_RATE = True
-        POST_PROCESSING = True
-        TRAIN_INTERPOLATORS = True
-        EXPORT_DATASET = True
-        RERUN = True
-
-        # EXTRA PARAMETERS
-        CO_HMS_GRID_START_AT_RLO = 0 # set this to False for reruns
-        DROP_MISSING_FILES = False # set this to False for step concatenation
-
-        ###### EXAMPLE step 1 ######
-        GRID_TYPES_s1 = ['CO-HMS_RLO','CO-HeMS','HMS-HMS']
-        METALLICITIES_s1 = [# CO-HMS_RLO
-                            ['1e+00_Zsun','1e-01_Zsun','1e-02_Zsun',
-                             '1e-03_Zsun','1e-04_Zsun'],
-                            # CO-HeMS
-                            ['1e+00_Zsun','1e-01_Zsun','1e-02_Zsun',
-                             '1e-03_Zsun','1e-04_Zsun'],
-                            # HMS-HMS
-                            ['1e+00_Zsun','1e-01_Zsun','1e-02_Zsun',
-                             '1e-03_Zsun','1e-04_Zsun']]
-        GRID_SLICES_s1 = [# CO-HMS_RLO
-                          ['grid_low_res_0','grid_low_res_1','grid_low_res_2',
-                           'grid_random_1'],
-                          # CO-HeMS
-                          ['grid_low_res_0','grid_low_res_1','grid_low_res_2',
-                           'grid_random_1'],
-                          # HMS-HMS
-                          ['grid_low_res_0','grid_low_res_1','grid_low_res_2',
-                           'grid_low_res_3','grid_low_res_4','grid_low_res_5',
-                           'grid_random_1']
-                          ]
-        COMPRESSIONS_s1 = [['LITE','ORIGINAL'],['LITE','ORIGINAL'],['LITE','ORIGINAL']]
-
-        ###### EXAMPLE step 2 ######
-        GRID_TYPES_s2 = ['CO-HMS_RLO','CO-HeMS', 'HMS-HMS']
-        METALLICITIES_s2 = [# CO-HMS_RLO
-                            ['1e+00_Zsun','1e-01_Zsun','1e-02_Zsun',
-                             '1e-03_Zsun','1e-04_Zsun'],
-                            # CO-HeMS
-                            ['1e+00_Zsun','1e-01_Zsun','1e-02_Zsun',
-                             '1e-03_Zsun','1e-04_Zsun'],
-                            # HMS-HMS
-                            ['1e-04_Zsun']]
-        GRID_SLICES_s2 = [# CO-HMS_RLO
-                          [['grid_low_res_0','grid_low_res_1','grid_low_res_2']],
-                          # CO-HeMS
-                          [['grid_low_res_0','grid_low_res_1','grid_low_res_2']],
-                          # HMS-HMS
-                          [['grid_low_res_0','grid_low_res_1','grid_low_res_2',
-                           'grid_low_res_3','grid_low_res_4','grid_low_res_5']]
-                          ]
-        GRIDS_COMBINED_s2 = [# CO-HMS_RLO
-                             ['grid_low_res_combined'],
-                             # CO-HeMS
-                             ['grid_low_res_combined'],
-                             # HMS-HMS
-                             ['grid_low_res_combined']
-                             ]
-        COMPRESSIONS_s2 = [['LITE','ORIGINAL'],['LITE','ORIGINAL'],['LITE','ORIGINAL']]
-
-        ###### EXAMPLE step 3 ######
-        GRID_TYPES_s3 = ['CO-HMS_RLO','CO-HeMS','HMS-HMS']
-        METALLICITIES_s3 = [# CO-HMS_RLO
-                            ['1e+00_Zsun','1e-01_Zsun','1e-02_Zsun',
-                             '1e-03_Zsun','1e-04_Zsun'],
-                            # CO-HeMS
-                            ['1e+00_Zsun','1e-01_Zsun','1e-02_Zsun',
-                             '1e-03_Zsun','1e-04_Zsun'],
-                            # HMS-HMS
-                            ['1e-04_Zsun']]
-        GRID_SLICES_s3 = [# CO-HMS_RLO
-                            ['grid_low_res_combined','grid_random_1'],
-                            # CO-HeMS
-                            ['grid_low_res_combined','grid_random_1'],
-                            # HMS-HMS
-                            ['grid_low_res_combined','grid_random_1']
-                            ]
-        COMPRESSIONS_s3 = [['LITE'],['LITE'],['LITE']]
-
-        ###### EXAMPLE step 4 ######
-        GRID_TYPES_s4 = ['CO-HMS_RLO','CO-HeMS', 'HMS-HMS']
-        METALLICITIES_s4 = [# CO-HMS_RLO
-                            ['1e+00_Zsun','1e-01_Zsun','1e-02_Zsun',
-                             '1e-03_Zsun','1e-04_Zsun'],
-                            # CO-HeMS
-                            ['1e+00_Zsun','1e-01_Zsun','1e-02_Zsun',
-                             '1e-03_Zsun','1e-04_Zsun'],
-                            # HMS-HMS
-                            ['1e-04_Zsun']]
-        GRID_SLICES_s4 = [# CO-HMS_RLO
-                            ['grid_low_res_combined','grid_random_1'],
-                            # CO-HeMS
-                            ['grid_low_res_combined','grid_random_1'],
-                            # HMS-HMS
-                            ['grid_low_res_combined','grid_random_1']
-                            ]
-        COMPRESSIONS_s4 = [['LITE'],['LITE'],['LITE']]
-
-        ###### EXAMPLE step 5 ######
-        GRID_TYPES_s5 = ['CO-HMS_RLO','CO-HeMS','HMS-HMS']
-        METALLICITIES_s5 = [# CO-HMS_RLO
-                            ['1e+00_Zsun','1e-01_Zsun','1e-02_Zsun',
-                             '1e-03_Zsun','1e-04_Zsun'],
-                            # CO-HeMS
-                            ['1e+00_Zsun','1e-01_Zsun','1e-02_Zsun',
-                             '1e-03_Zsun','1e-04_Zsun'],
-                            # HMS-HMS
-                            ['1e-04_Zsun']]
-        GRID_SLICES_s5 = [# CO-HMS_RLO
-                            ['grid_low_res_combined'],
-                            # CO-HeMS
-                            ['grid_low_res_combined'],
-                            # HMS-HMS
-                            ['grid_low_res_combined']
-                            ]
-        COMPRESSIONS_s5 = [['LITE'],['LITE'],['LITE']]
-
-        ###### EXAMPLE step 6 ######
-        GRID_TYPES_s6 = ['CO-HMS_RLO','CO-HeMS','HMS-HMS']
-        METALLICITIES_s6 = [# CO-HMS_RLO
-                            ['1e+00_Zsun','1e-01_Zsun','1e-02_Zsun',
-                             '1e-03_Zsun','1e-04_Zsun'],
-                            # CO-HeMS
-                            ['1e+00_Zsun','1e-01_Zsun','1e-02_Zsun',
-                             '1e-03_Zsun','1e-04_Zsun'],
-                            # HMS-HMS
-                            ['1e-04_Zsun']]
-        GRID_SLICES_s6 = [# CO-HMS_RLO
-                          ['grid_low_res_combined_processed'],
-                          # CO-HeMS
-                          ['grid_low_res_combined_processed'],
-                          # HMS-HMS
-                          ['grid_low_res_combined_processed']]
-        INTERPOLATION_METHODS_s6 = ["linear","1NN"]
-        COMPRESSIONS_s6 = [['LITE'],['LITE'],['LITE']]
-
-        ###### EXAMPLE step 7 ######
-        GRID_TYPES_s7 = ['CO-HMS_RLO','CO-HeMS','HMS-HMS']
-        METALLICITIES_s7 = [# CO-HMS_RLO
-                            ['1e+00_Zsun','1e-01_Zsun','1e-02_Zsun',
-                             '1e-03_Zsun','1e-04_Zsun'],
-                            # CO-HeMS
-                            ['1e+00_Zsun','1e-01_Zsun','1e-02_Zsun',
-                             '1e-03_Zsun','1e-04_Zsun'],
-                            # HMS-HMS
-                            ['1e-04_Zsun']]
-        GRID_SLICES_s7 = [# CO-HMS_RLO
-                          ['grid_low_res_combined_processed'],
-                          # CO-HeMS
-                          ['grid_low_res_combined_processed'],
-                          # HMS-HMS
-                          ['grid_low_res_combined_processed']]
-        COMPRESSIONS_s7 = [['LITE'],['LITE'],['LITE']]
-
-        ###### EXAMPLE rerun ######
-        GRID_TYPES_r = ['CO-HMS_RLO','CO-HeMS','HMS-HMS']
-        METALLICITIES_r = [# CO-HMS_RLO
-                            ['1e+00_Zsun','1e-01_Zsun','1e-02_Zsun',
-                             '1e-03_Zsun','1e-04_Zsun'],
-                            # CO-HeMS
-                            ['1e+00_Zsun','1e-01_Zsun','1e-02_Zsun',
-                             '1e-03_Zsun','1e-04_Zsun'],
-                            # HMS-HMS
-                            ['1e+00_Zsun','1e-01_Zsun','1e-02_Zsun',
-                             '1e-03_Zsun','1e-04_Zsun']]
-        GRID_SLICES_r = [# CO-HMS_RLO
-                          ['grid_low_res_combined','grid_random_1'],
-                         # CO-HeMS
-                          ['grid_low_res_combined','grid_random_1'],
-                         # HMS-HMS
-                          ['grid_low_res_combined','grid_random_1'],
-                          ]
-        COMPRESSIONS_r = [['LITE'],['LITE'],['LITE']]
-
-    if CREATE_GRID_SLICES:
-        create_csv(GRID_TYPES_s1, METALLICITIES_s1, GRID_SLICES_s1,
-                   COMPRESSIONS_s1, version=VERSION, step_name='step_1',
-                   drop_missing_files=True)
-        slurm_job(job_name='step_1', path_to_grids=PATH_TO_GRIDS,
-                  CREATE_GRID_SLICES=CREATE_GRID_SLICES,
-                  CO_HMS_GRID_START_AT_RLO=CO_HMS_GRID_START_AT_RLO,
-                  verbose=VERBOSE)
-
-    if COMBINE_GRID_SLICES:
-        create_csv(GRID_TYPES_s2, METALLICITIES_s2, GRID_SLICES_s2, COMPRESSIONS_s2,
-                   version=VERSION, step_name='step_2',
-                   GRIDS_COMBINED=GRIDS_COMBINED_s2,
-                   drop_missing_files=DROP_MISSING_FILES)
-        slurm_job(job_name='step_2', path_to_grids=PATH_TO_GRIDS,
-                  COMBINE_GRID_SLICES=COMBINE_GRID_SLICES,
-                  verbose=VERBOSE)
-
-    if PLOT_GRIDS:
-        create_csv(GRID_TYPES_s3, METALLICITIES_s3, GRID_SLICES_s3,
-                   COMPRESSIONS_s3, version=VERSION, step_name='step_3',
-                   drop_missing_files=DROP_MISSING_FILES)
-        slurm_job(job_name='step_3', path_to_grids=PATH_TO_GRIDS,
-                  PLOT_GRIDS=PLOT_GRIDS,
-                  verbose=VERBOSE)
-
-    if CHECK_FAILURE_RATE:
-        create_csv(GRID_TYPES_s4, METALLICITIES_s4, GRID_SLICES_s4,
-                   COMPRESSIONS_s4, version=VERSION, step_name='step_4',
-                   drop_missing_files=DROP_MISSING_FILES)
-        slurm_job(job_name='step_4', path_to_grids=PATH_TO_GRIDS,
-                  CHECK_FAILURE_RATE=CHECK_FAILURE_RATE,
-                  verbose=VERBOSE)
-
-    if POST_PROCESSING:
-        create_csv(GRID_TYPES_s5, METALLICITIES_s5, GRID_SLICES_s5,
-                   COMPRESSIONS_s5, version=VERSION, step_name='step_5',
-                   drop_missing_files=DROP_MISSING_FILES)
-        slurm_job(job_name='step_5', path_to_grids=PATH_TO_GRIDS,
-                  POST_PROCESSING=POST_PROCESSING,
-                  verbose=VERBOSE)
-
-    if TRAIN_INTERPOLATORS:
-        create_csv(GRID_TYPES_s6, METALLICITIES_s6, GRID_SLICES_s6,
-                   COMPRESSIONS_s6, version=VERSION, step_name='step_6',
-                   INTERPOLATION_METHODS=INTERPOLATION_METHODS_s6,
-                   drop_missing_files=DROP_MISSING_FILES)
-        slurm_job(job_name='step_6', path_to_grids=PATH_TO_GRIDS,
-                  TRAIN_INTERPOLATORS=TRAIN_INTERPOLATORS,
-                  verbose=VERBOSE)
-
-    if EXPORT_DATASET:
-        create_csv(GRID_TYPES_s7, METALLICITIES_s7, GRID_SLICES_s7,
-                   COMPRESSIONS_s7, version=VERSION, step_name='step_7',
-                   drop_missing_files=DROP_MISSING_FILES)
-        slurm_job(job_name='step_7', path_to_grids=PATH_TO_GRIDS,
-                  EXPORT_DATASET=EXPORT_DATASET,
-                  verbose=VERBOSE)
-
-    if RERUN:
-        create_csv(GRID_TYPES_r, METALLICITIES_r, GRID_SLICES_r,
-                   COMPRESSIONS_r, version=VERSION, step_name='rerun',
-                   rerun_type=rerun_type,
-                   drop_missing_files=True)
-        slurm_job(job_name='rerun', path_to_grids=PATH_TO_GRIDS,
-                  RERUN=RERUN,
-                  rerun_type=rerun_type,
-                  verbose=VERBOSE)
-
-    # create logs in working dir to store all slurm outputs
-    logs_path = os.path.join(PATH,'logs')
-    if not os.path.isdir(logs_path):
-        os.makedirs(logs_path)
-
-    # create data dir three to export the datasets
-    if EXPORT_DATASET:
-        data_path = os.path.join(PATH, 'POSYDON_data')
-        if not os.path.isdir(data_path):
-            os.makedirs(data_path)
-
-            dirs = []
-            grid_dirs = ['HMS-HMS', 'CO-HMS_RLO', 'CO-HeMS', 'single_HMS',
-                        'single_HeMS']
-            interp_dirs = ['interpolators', 'interpolators/1NN_1NN',
-                           'interpolators/linear3c_kNN']
-            for name1 in grid_dirs:
-                dirs.append(os.path.join(data_path,name1))
-                for name2 in interp_dirs:
-                    dirs.append(os.path.join(data_path,name1,name2))
-
-            for dir_ in  dirs:
-                if not os.path.isdir(dir_):
-                    os.makedirs(dir_)
+    # TODO:
+    # - add a linked slurm job arrays which are waiting for each others
+    # - DROP_MISSING_FILES should be an imput of each step
