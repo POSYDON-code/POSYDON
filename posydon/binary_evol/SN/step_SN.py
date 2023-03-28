@@ -2292,3 +2292,7 @@ class Couch20_corecollapse(object):
             raise Exception("Need a NS or BH to apply `Sukhbold16_corecollapse`.")
 
         return float(m_rem), f_fb, state
+    
+
+
+    #learning to push through vsc
