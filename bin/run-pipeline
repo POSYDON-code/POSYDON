@@ -653,17 +653,18 @@ def logic_rerun(grid, rerun_type):
                 for line in log_lines:
                     if "have reached gamma1 integral limit" in line:
                         runs_to_rerun += [i]
+        runs_to_rerun = np.array(runs_to_rerun)
     elif rerun_type == 'reverse_MT':
-        runs_to_rerun = [0, 1] # implement logic
+        runs_to_rerun = np.array([0, 1]) # implement logic
     elif rerun_type == 'envelope_mass_limit': # maybe 'fe_core_infall_limit' as well?
-        runs_to_rerun = [0, 1] # implement logic
+        runs_to_rerun = np.array([0, 1]) # implement logic
     else:
         raise ValueError(f'Unsupported rerun type {rerun_type}!')
 
     if runs_to_rerun is None and termination_flags is None:
         raise ValueError('Undefined rerun!')
 
-    return np.array(runs_to_rerun), termination_flags, new_mesa_flag
+    return runs_to_rerun, termination_flags, new_mesa_flag
 
 
 def rerun(i, path_to_csv_file, rerun_type, verbose=False):
