@@ -2,6 +2,7 @@
 
 __authors__ = [
     "Maxime Rambosson <Maxime.Rambosson@etu.unige.ch>",
+    "Kouarfate Wène Olivier <Wene.Kouarfate@etu.unige.ch>"
 ]
 
 
