@@ -15,7 +15,10 @@ default_kwargs = {
 
     # Size of the population
     'number_of_binaries': 100,
-
+    #Eirini's changes 
+    #Binary fraction
+    'binary_fraction' : 1, 
+    
     # Star Formation History
     'star_formation': 'constant',
     # burst_time: 0,

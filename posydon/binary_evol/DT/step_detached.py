@@ -1050,14 +1050,14 @@ class detached_step:
         # get the matched data of two stars, respectively
         interp1d_sec = get_star_data(
             binary, secondary, primary, secondary.htrack, False)
-        if (primary.co) or (non_existent_companion != 0):
+        if (primary.co) or (self.non_existent_companion != 0):
             # copy the secondary star except mass which is of the primary, and radius, mdot, Idot = 0
             interp1d_pri = get_star_data(
                 binary, secondary, primary, secondary.htrack, True)
         elif not primary.co:
             interp1d_pri = get_star_data(
                 binary, primary, secondary, primary.htrack, False)
-
+        ##Eirini else
         if interp1d_sec is None or interp1d_pri is None:
             # binary.event = "END"
             binary.state += " (GridMatchingFailed)"
