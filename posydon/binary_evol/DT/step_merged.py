@@ -434,7 +434,8 @@ class merged_step(isolated_step):
 '''
 
     def __call__(self,binary):
-
+        # FOR THIS PR, merged step does nothing!
+        '''
         if binary.state == "merged":
             if binary.event == 'oMerging1':
                 binary.star_1,binary.star_2 = merged_star_properties(binary.star_1,binary.star_2)
@@ -448,3 +449,5 @@ class merged_step(isolated_step):
         binary.event == None
 
         super().__call__(binary)
+        '''
+        pass

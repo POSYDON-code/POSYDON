@@ -221,8 +221,8 @@ for b in ['initially_single_star']:
     for s1 in STAR_STATES_ALL:
         for s2 in STAR_STATES_ALL:
             for e in BINARY_EVENTS_ALL:
-                POSYDON_FLOW_CHART[(s1, s2, b, e)] = 'step_initially_single'
-                POSYDON_FLOW_CHART[(s1, s2, b, e)] = 'step_initially_single'
+                POSYDON_FLOW_CHART[(s1, s2, b, e)] = 'step_end'#'step_initially_single'
+                POSYDON_FLOW_CHART[(s1, s2, b, e)] = 'step_end'#'step_initially_single'
 
 BINARY_EVENTS_OF_SN_OR_AFTER_DETACHED = BINARY_EVENTS_ALL.copy()
 [BINARY_EVENTS_OF_SN_OR_AFTER_DETACHED.remove(x) for x in ['CC1','CC2','MaxTime_exceeded','maxtime']]
@@ -246,8 +246,8 @@ for b in ['merged']:
     for s1 in STAR_STATES_ALL:
         for s2 in STAR_STATES_ALL:
             for e in ['oMerging1', 'oMerging2']:
-                POSYDON_FLOW_CHART[(s1, s2, b, e)] = 'step_merged'
-                POSYDON_FLOW_CHART[(s1, s2, b, e)] = 'step_merged'
+                POSYDON_FLOW_CHART[(s1, s2, b, e)] = 'step_end' #'step_merged'
+                POSYDON_FLOW_CHART[(s1, s2, b, e)] = 'step_end' #'step_merged'
 
 # catch initial_RLO states
 for s1 in STAR_STATES_ALL:
