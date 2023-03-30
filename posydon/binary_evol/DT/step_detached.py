@@ -984,7 +984,11 @@ class detached_step:
             get_track = self.grid.get
             with np.errstate(all="ignore"):
                 # get the initial m0, t0 track
-                m0, t0 = match_to_single_star(star1, htrack)
+                if binary.event = 'ZAMS':
+                    # ZAMS stars in wide (non-mass exchaging binaries) that are directed to detached step at birth
+                    m0, t0 = star.mass, 0
+                else:
+                    m0, t0 = match_to_single_star(star1, htrack)
             if np.any(np.isnan([m0, t0])):
                 #    binary.event = "END"
                 #    binary.state += " (GridMatchingFailed)"
