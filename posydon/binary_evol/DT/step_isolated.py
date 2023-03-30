@@ -79,8 +79,9 @@ class isolated_step(detached_step):
         """
 
         self.initialize_isolated_binary_orbit(binary)
-
-        if binary.star_1 == None or binary.star_2 == None: # already one star became None in step_merged or step_initially_single
+        #Eirini's change
+        if binary.state == 'initially_single_star' or binary.star_1 == None or binary.star_2 == None:
+        #if binary.star_1 == None or binary.star_2 == None: # already one star became None in step_merged or step_initially_single
             pass
         elif binary.state == "disrupted":
             pass
