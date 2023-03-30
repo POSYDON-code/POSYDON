@@ -1,4 +1,17 @@
-"""Create, evolve and save a binary star population."""
+"""Create, evolve and save a binary star population.
+
+Large populations are RAM limited when holding an arbitrary
+number of BinaryStar instances. Therefore, by default the BinaryPopulation
+will generate binaries, evolve, and try to save them to disk one at a time.
+
+Create a BinaryPopulation instance from an inifile:
+I. CREATING A POPULATION
+------------------------
+a) One-liner for creating a BinaryPopulation from an inifile:
+
+> BinaryPopulation.from_ini('<PATH_TO_POSYDON>' \
+            '/posydon/popsyn/population_params_default.ini')
+"""
 
 
 __authors__ = [
@@ -6,6 +19,7 @@ __authors__ = [
     "Jeffrey Andrews <jeffrey.andrews@northwestern.edu>",
     "Konstantinos Kovlakas <Konstantinos.Kovlakas@unige.ch>",
     "Devina Misra <devina.misra@unige.ch>",
+    "Simone Bavera <Simone.Bavera@unige.ch>",
 ]
 
 
@@ -32,6 +46,7 @@ from posydon.utils.common_functions import (orbital_period_from_separation,
                                             orbital_separation_from_period)
 from posydon.popsyn.defaults import default_kwargs
 from posydon.popsyn.io import binarypop_kwargs_from_ini
+from posydon.utils.constants import Zsun
 
 
 # 'event' usually 10 but 'detached (Integration failure)' can occur
@@ -47,6 +62,11 @@ ONELINE_MIN_ITEMSIZE = {'state_i': 30, 'state_f': 30,
                         'mass_transfer_case_i': 7, 'mass_transfer_case_f': 7,
                         'S1_SN_type': 5, 'S2_SN_type': 5}
 
+# BinaryPopulation will enforce a constant metallicity accross all steps that
+# load stellar or binary models by checked this list of steps.
+STEP_NAMES_LOADING_GRIDS = [
+    'step_HMS_HMS', 'step_CO_HeMS', 'step_CO_HMS_RLO', 'step_detached'
+]
 
 class BinaryPopulation:
     """Handle a binary star population."""
@@ -127,6 +147,7 @@ class BinaryPopulation:
         ----------
         indices : list, optional
             Custom binary indices to use. Default is range(number_of_binaries).
+            If running with MPI, indices are split between processes if given.
         breakdown_to_df : bool, True
             Breakdown a binary after evolution, converting to dataframe and
             removing the binary instance from memory.
@@ -137,31 +158,52 @@ class BinaryPopulation:
         -------
         None
         """
-        tqdm_bool = kwargs.get('tqdm', False)
-        breakdown_to_df_bool = kwargs.get('breakdown_to_df', True)
+        # combine kw defined at init and any passed here
+        kw = {**self.kwargs, **kwargs}
+        tqdm_bool = kw.get('tqdm', False)
+        breakdown_to_df_bool = kw.get('breakdown_to_df', True)
+        from_hdf_bool = kw.get('from_hdf', False)
 
         if self.comm is None:   # do regular evolution
-            indices = kwargs.get('indices',
-                                 list(range(self.number_of_binaries)))
-            self._safe_evolve(indices=indices,
-                              tqdm=tqdm_bool,
-                              breakdown_to_df=breakdown_to_df_bool,
-                              from_hdf=kwargs.get('from_hdf', False),
-                              **self.kwargs)
+            indices = kw.get('indices',
+                             list(range(self.number_of_binaries)))
+            params = {'indices':indices,
+                      'tqdm':tqdm_bool,
+                      'breakdown_to_df':breakdown_to_df_bool,
+                      'from_hdf':from_hdf_bool}
+            self.kwargs.update(params)
+
+            self._safe_evolve(**self.kwargs)
         else:
             # do MPI evolution
-            indices = np.array_split(list(range(self.number_of_binaries)),
-                                     self.size)
-            batch_indices = indices[self.rank]
+            indices = kw.get('indices',
+                            list(range(self.number_of_binaries)))
+            indices_split = np.array_split(indices, self.size)
+            batch_indices = indices_split[self.rank]
             mpi_tqdm_bool = True if (tqdm_bool and self.rank == 0) else False
-            self._safe_evolve(indices=batch_indices,
-                              tqdm=mpi_tqdm_bool,
-                              breakdown_to_df=breakdown_to_df_bool,
-                              **self.kwargs)
+
+            params = {'indices':batch_indices,
+                      'tqdm':mpi_tqdm_bool,
+                      'breakdown_to_df':breakdown_to_df_bool,
+                      'from_hdf':from_hdf_bool}
+            self.kwargs.update(params)
+
+            self._safe_evolve(**self.kwargs)
 
     def _safe_evolve(self, **kwargs):
         """Evolve binaries in a population, catching warnings/exceptions."""
         if not self.population_properties.steps_loaded:
+            # Enforce the same metallicity for all grid steps
+            for step_name, tup in self.population_properties.kwargs.items():
+
+                if step_name in STEP_NAMES_LOADING_GRIDS:
+                    step_function, step_kwargs = tup # unpack params
+                    step_kwargs['metallicity'] = self.kwargs.get('metallicity', 1)
+
+                    # update the step kwargs, override metallicity
+                    modified_tup = (step_function, step_kwargs)
+                    self.population_properties.kwargs[step_name] = modified_tup
+
             self.population_properties.load_steps()
 
         indices = kwargs.get('indices', list(range(self.number_of_binaries)))
@@ -453,11 +495,11 @@ class PopulationManager:
 
     def remove(self, binary):
         """Remove a binary instance."""
-        if isinstance(binary, (list, np.ndarray)):   
+        if isinstance(binary, (list, np.ndarray)):
             for b in binary:
                 self.binaries.remove(b)
                 self.indices.remove(b.index)
-                
+
         elif isinstance(binary, BinaryStar):
             self.binaries.remove(binary)
             self.indices.remove(binary.index)
@@ -797,6 +839,7 @@ class BinaryGenerator:
         default_index = output['binary_index'].item()
         #Eirini's comments:
         # Randomly generated variables
+<<<<<<< HEAD
 
         if random.random()<self.binary_fraction:
             formation_time = output['time'].item()
@@ -870,6 +913,47 @@ class BinaryGenerator:
         
         
 
+=======
+        formation_time = output['time'].item()
+        separation = output['separation'].item()
+        orbital_period = output['orbital_period'].item()
+        eccentricity = output['eccentricity'].item()
+        m1 = output['S1_mass'].item()
+        m2 = output['S2_mass'].item()
+        Z_div_Zsun = kwargs.get('metallicity', 1.)
+        zams_table = {1.: 2.703e-01,
+                      0.1: 2.511e-01,
+                      0.01: 2.492e-01,
+                      0.001: 2.49e-01,
+                      0.0001: 2.49e-01}
+        Y = zams_table[Z_div_Zsun]
+        Z = Z_div_Zsun*Zsun
+        X = 1. - Z - Y
+
+        binary_params = dict(
+            index=kwargs.get('index', default_index),
+            time=formation_time,
+            state="detached",
+            event="ZAMS",
+            separation=separation,
+            orbital_period=orbital_period,
+            eccentricity=eccentricity,
+        )
+        star1_params = dict(
+            mass=m1,
+            state="H-rich_Core_H_burning",
+            metallicity=Z,
+            center_h1=X,
+            center_he4=Y,
+        )
+        star2_params = dict(
+            mass=m2,
+            state="H-rich_Core_H_burning",
+            metallicity=Z,
+            center_h1=X,
+            center_he4=Y,
+        )
+>>>>>>> development
 
         binary = BinaryStar(**binary_params,
                             star_1=SingleStar(**star1_params),

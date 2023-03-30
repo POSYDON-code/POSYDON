@@ -1,0 +1,409 @@
+#!/usr/bin/env python
+__authors__ = [
+    "Simone Bavera <Simone.Bavera@unige.ch>",
+    "Kyle Akira Rocha <kylerocha2024@u.northwestern.edu>",
+]
+
+import os
+import sys
+import ast
+import pandas as pd
+import numpy as np
+from pprint import pprint, pformat
+from posydon.popsyn.io import parse_inifile
+from posydon.utils.common_functions import PATH_TO_POSYDON
+
+# this data processing pipeline was designed assuming POSYDON v2 data structure
+'''
+Data tree structure
+
+PATH_TO_GRIDS/
+    /HMS-HMS/
+    /CO-HMS_RLO/
+    /CO-HeMS/
+    /single_HMS/
+    /single_HeMS/
+        /v1/
+        /v2/
+            /1e+00_Zsun/
+            /1e-01_Zsun/
+            /1e-02_Zsun/
+            ...
+                /grid_low_res_0/
+                /grid_low_res_1/
+                /grid_rerun_1/
+                ...
+                /LITE/
+                /ORIGINAL/
+                /logs/
+                /scripts/
+                /plots/
+                    /grid_low_res_combined/
+                        /TF1/
+                        /TF2/
+                        ...
+'''
+
+ACTION_TO_STEP_NUM = {
+    'CREATE_GRID_SLICES'  : 'step_1',
+    'COMBINE_GRID_SLICES' : 'step_2',
+    'PLOT_GRIDS'          : 'step_3',
+    'CHECK_FAILURE_RATE'  : 'step_4',
+    'POST_PROCESSING'     : 'step_5',
+    'TRAIN_INTERPOLATORS' : 'step_6',
+    'EXPORT_DATASET'      : 'step_7',
+    'RERUN'               : 'rerun'
+}
+
+class PostProcessingPipeline:
+
+    def __init__(self, path_to_inifile=None):
+        self.PATH_TO_POSYDON = os.getenv('PATH_TO_POSYDON')
+        self.PATH_TO_INIFILE = path_to_inifile
+
+        if self.PATH_TO_INIFILE is not None:
+            self.pipeline_kwargs = self.parse_setup_params(self.PATH_TO_INIFILE)
+
+
+    @staticmethod
+    def parse_setup_params(path=None):
+        """
+        Parse inifile for running post-processing pipelines.
+        """
+
+        if path is None:
+            return
+        else:
+            parser = parse_inifile(path)
+
+        pipeline_kwargs = dict()
+        for section in parser.sections():
+            section_dict = dict()
+            for key, val in parser[section].items():
+                section_dict[key] = ast.literal_eval(val)
+
+            pipeline_kwargs[section] = section_dict
+        return pipeline_kwargs
+
+    def create_csv_and_slurm_job_files(self):
+        setup_kwargs = self.pipeline_kwargs['pipeline setup']
+        account_kwargs = self.pipeline_kwargs['account']
+
+        if setup_kwargs['VERBOSE']:
+            print( "\n\n{:+^45s} \n{}\n{:+^45s}\n{}".format(
+                    'ACCOUNT', pformat(account_kwargs, indent=2),
+                    'SETUP', pformat(setup_kwargs, indent=2) )
+                 )
+
+
+        for action, step_number in ACTION_TO_STEP_NUM.items():
+            do_step_bool = setup_kwargs[action]
+
+            if setup_kwargs['VERBOSE']:
+                print( "\n\n{:-^45s} {:^8s}:{:^6s}".format(
+                    action, step_number, str(do_step_bool)) )
+
+            if do_step_bool:
+                step_kwargs = self.pipeline_kwargs[step_number]
+
+                if setup_kwargs['VERBOSE']:
+                    print( pformat(step_kwargs, indent=2) )
+
+
+                create_csv(
+                    step_name=step_number,
+                    **{**step_kwargs, **setup_kwargs}
+                )
+                slurm_job(
+                    job_name=step_number,
+                    step_name=step_number,
+                    PATH_TO_POSYDON=self.PATH_TO_POSYDON,
+                    **{**step_kwargs, **setup_kwargs, **account_kwargs}
+                )
+
+    def create_logs_dir(self):
+        # create logs in working dir to store all slurm outputs
+        setup_kwargs = self.pipeline_kwargs['pipeline setup']
+        logs_path = os.path.join(setup_kwargs['PATH'],'logs')
+        if not os.path.isdir(logs_path):
+            os.makedirs(logs_path)
+
+    def create_export_dir(self):
+        # create data dir three to export the datasets
+        setup_kwargs = self.pipeline_kwargs['pipeline setup']
+        if setup_kwargs['EXPORT_DATASET']:
+            data_path = os.path.join(setup_kwargs['PATH'], 'POSYDON_data')
+            if not os.path.isdir(data_path):
+                os.makedirs(data_path)
+
+                dirs = []
+                grid_dirs = ['HMS-HMS', 'CO-HMS_RLO', 'CO-HeMS', 'single_HMS',
+                            'single_HeMS']
+                interp_dirs = ['interpolators', 'interpolators/1NN_1NN',
+                               'interpolators/linear3c_kNN']
+                for name1 in grid_dirs:
+                    dirs.append(os.path.join(data_path,name1))
+                    for name2 in interp_dirs:
+                        dirs.append(os.path.join(data_path,name1,name2))
+
+                for dir_ in  dirs:
+                    if not os.path.isdir(dir_):
+                        os.makedirs(dir_)
+
+def slurm_job(job_name,
+              PATH_TO_GRIDS=None,
+              PATH_TO_POSYDON=None,
+              PATH=None,
+              ACCOUNT=None,
+              PARTITION=None,
+              WALLTIME=None,
+              MAILTYPE=None,
+              EMAIL=None,
+              CREATE_GRID_SLICES=False,
+              COMBINE_GRID_SLICES=False,
+              PLOT_GRIDS=False,
+              CHECK_FAILURE_RATE=False,
+              POST_PROCESSING=False,
+              TRAIN_INTERPOLATORS=False,
+              EXPORT_DATASET=False,
+              RERUN=False,
+              CO_HMS_GRID_START_AT_RLO=1,
+              RERUN_TYPE='',
+              verbose=False,
+              **kwargs):
+
+    path_to_csv_file = os.path.join(PATH,f"{job_name}.csv")
+
+    with open(f'{job_name}.slurm', 'w') as f:
+        f.write("#!/bin/bash\n")
+        f.write(f"#SBATCH --account={ACCOUNT}\n")
+        f.write(f"#SBATCH --partition={PARTITION}\n")
+        f.write("#SBATCH -N 1\n")
+        f.write("#SBATCH --cpus-per-task 1\n")
+        f.write("#SBATCH --ntasks-per-node 1\n")
+        f.write(f"#SBATCH --time={WALLTIME}\n")
+        f.write("#SBATCH --job-name=psygrid\n")
+        f.write("#SBATCH --mem-per-cpu=4G\n")
+
+        if EMAIL is not None:
+            f.write(f"#SBATCH --mail-type={MAILTYPE}\n")
+            f.write(f"#SBATCH --mail-user={EMAIL}\n")
+
+        if job_name in ['step_1', 'step_3', 'step_4','step_5', 'step_6',
+                        'step_7', 'rerun']:
+            df = pd.read_csv(path_to_csv_file)
+            N = df.shape[0]-1
+        elif job_name in ['step_2']:
+            df = pd.read_csv(path_to_csv_file)
+            N = df.shape[1]-1
+        else:
+            raise ValueError('This should never happen!')
+        f.write(f"#SBATCH --array=0-{N}\n")
+        slurm_array = '$SLURM_ARRAY_TASK_ID'
+
+        if job_name == 'step_1':
+            f.write(f"#SBATCH --output={PATH}/logs/grid_slice_%a.out\n")
+
+        if job_name == 'step_2':
+            f.write(f"#SBATCH --output={PATH}/logs/combine_grid_slices.out\n")
+
+        if job_name == 'step_3':
+            f.write(f"#SBATCH --output={PATH}/logs/plot_grid.out\n")
+
+        if job_name == 'step_4':
+            f.write(f"#SBATCH --output={PATH}/logs/check_failure_rate.out\n")
+
+        if job_name == 'step_5':
+            f.write(f"#SBATCH --output={PATH}/logs/post_processing_%a.out\n")
+            f.write(f"export PATH_TO_POSYDON={PATH_TO_POSYDON}\n")
+
+        if job_name == 'step_7':
+            f.write(f"#SBATCH --output={PATH}/logs/train_interpolators_%a.out\n")
+
+        if job_name == 'step_7':
+            f.write(f"#SBATCH --output={PATH}/logs/export_dataset.out\n")
+
+        if job_name == 'rerun':
+            f.write(f"#SBATCH --output={PATH}/logs/rerun.out\n")
+
+        f.write(f"\nsrun python {PATH_TO_POSYDON}/bin/run-pipeline {PATH_TO_GRIDS} {path_to_csv_file} {slurm_array} {CO_HMS_GRID_START_AT_RLO} {RERUN_TYPE}")
+
+# create csv file with a list of all grid paths to process
+def create_csv(GRID_TYPES, METALLICITIES, GRID_SLICES, COMPRESSIONS,
+               step_name=None, VERSION=None, GRIDS_COMBINED=None,
+               INTERPOLATION_METHODS=None, RERUN_TYPE='',
+               DROP_MISSING_FILES=False, PATH_TO_GRIDS=None,
+               PATH=None, **kwargs):
+
+    # number of grid types
+    N = len(GRID_TYPES)
+    if ( N != len(METALLICITIES) or N != len(GRID_SLICES) or
+         N != len(COMPRESSIONS)):
+        raise ValueError('Missmatch between the len of GRID_TYPES, '
+                         'METALLICITIES, GRID_SLICES, COMPRESSIONS.')
+
+    grids = []
+    grids_compression = []
+    plot_dirs = []
+    processed_grids = []
+    interpolators = []
+    export_path = []
+    rerun_path = []
+    df = pd.DataFrame()
+    for l, grid_type in enumerate(GRID_TYPES):
+
+        METALLICITIES_ = METALLICITIES[l]
+        GRID_SLICES_ = GRID_SLICES[l]
+        COMPRESSIONS_ = COMPRESSIONS[l]
+
+        for metallicity in METALLICITIES_:
+            for i, grid_slice in enumerate(GRID_SLICES_):
+                for compression in COMPRESSIONS_:
+                    if step_name == 'step_1':
+                        grids.append(os.path.join(PATH_TO_GRIDS,
+                                      grid_type, VERSION, metallicity, grid_slice))
+                        grids_compression.extend([compression])
+                    elif step_name == 'step_2':
+                        if N != len(GRIDS_COMBINED):
+                            raise ValueError('len(GRID_TYPES) != len(GRIDS_COMBINED)!')
+                        if len(GRID_SLICES[l]) != len(GRIDS_COMBINED[l]):
+                            raise ValueError('len(GRID_SLICES[l]) != len(GRIDS_COMBINED[l])!')
+                        combine_grid_slices = []
+                        # grid_slice is a batch
+                        for grid_slice_ in grid_slice:
+                                path_to_grid = os.path.join(PATH_TO_GRIDS,
+                                              grid_type, VERSION, metallicity,
+                                              compression, grid_slice_+'.h5')
+                                combine_grid_slices.append(path_to_grid)
+                        path_to_grid_combined = os.path.join(PATH_TO_GRIDS,
+                                                             grid_type, VERSION,
+                                                             metallicity,
+                                                             compression,
+                                                             GRIDS_COMBINED[l][i]+'.h5')
+                        df_tmp = pd.DataFrame()
+                        df_tmp[path_to_grid_combined] = combine_grid_slices
+                        df = pd.concat([df,df_tmp], axis=1)
+                    elif step_name == 'step_3':
+                        grids.append(os.path.join(PATH_TO_GRIDS,
+                                      grid_type, VERSION, metallicity,
+                                      compression, grid_slice+'.h5'))
+                        plot_dirs.append(os.path.join(PATH_TO_GRIDS,
+                                    grid_type, VERSION, metallicity,
+                                    'plots', grid_slice))
+                    elif step_name == 'step_4':
+                        grids.append(os.path.join(PATH_TO_GRIDS,
+                                      grid_type, VERSION, metallicity,
+                                      compression, grid_slice+'.h5'))
+                    elif step_name == 'step_5':
+                        grids.append(os.path.join(PATH_TO_GRIDS,
+                                      grid_type, VERSION, metallicity,
+                                      compression, grid_slice+'.h5'))
+                        processed_grids.append(os.path.join(PATH_TO_GRIDS,
+                                      grid_type, VERSION, metallicity,
+                                      compression, grid_slice+'_processed.h5'))
+                    elif step_name == 'step_6':
+                        for method in INTERPOLATION_METHODS:
+                            grids.append(os.path.join(PATH_TO_GRIDS,
+                                          grid_type, VERSION, metallicity,
+                                          compression, grid_slice+'.h5'))
+                            interpolators.append(os.path.join(PATH_TO_GRIDS,
+                                          grid_type, VERSION, metallicity,
+                                          'interpolation_objects',
+                                          'IF_'+method+'.pkl'))
+                    elif step_name == 'step_7':
+                        grids.append(os.path.join(PATH_TO_GRIDS,
+                                      grid_type, VERSION, metallicity,
+                                      compression, grid_slice+'.h5'))
+                        export_path.append(os.path.join(PATH, 'POSYDON_data',
+                                                        grid_type,
+                                                        metallicity+'.h5'))
+                        for method in [['linear','linear3c_kNN'],
+                                        ['1NN','1NN_1NN']]:
+                            grids.append(os.path.join(PATH_TO_GRIDS,
+                                          grid_type, VERSION, metallicity,
+                                          'interpolation_objects',
+                                          'IF_'+method[0]+'.pkl'))
+                            export_path.append(os.path.join(PATH, 'POSYDON_data',
+                                                            grid_type,
+                                                            'interpolators',
+                                                            method[1],
+                                                            metallicity+'.pkl'))
+                    elif step_name == 'rerun':
+                        grids.append(os.path.join(PATH_TO_GRIDS,
+                                      grid_type, VERSION, metallicity,
+                                      compression, grid_slice+'.h5'))
+                        rerun_path.append(os.path.join(PATH_TO_GRIDS, grid_type,
+                                     VERSION, metallicity,
+                                     'rerun_'+RERUN_TYPE+'_'+grid_slice))
+
+    # saving dataset to csv file
+    if step_name != 'step_2':
+        grids = np.array(grids)
+        df['path_to_grid'] = grids
+        if step_name == 'step_1':
+            df['compression'] = grids_compression
+        elif step_name == 'step_3':
+            df['path_to_plot'] = plot_dirs
+        elif step_name == 'step_5':
+            df['path_to_processed_grid'] = processed_grids
+        elif step_name == 'step_6':
+            df['path_to_interpolator'] = interpolators
+        elif step_name == 'step_7':
+            df['export_path'] = export_path
+        elif step_name == 'rerun':
+            df['rerun_path'] = rerun_path
+        # drop lines when grid directories are not found
+        if DROP_MISSING_FILES:
+            drop_rows = []
+            for row in range(df.shape[0]):
+                path = df.loc[row,'path_to_grid']
+                if not os.path.exists(path):
+                    drop_rows.append(row)
+            if any(drop_rows):
+                print('')
+                print(f'----------- {step_name} -----------')
+                print('The following grids will not be processed '
+                      'because the files are missing! If this warning message is '
+                      'unexpected to you, please check the file paths!')
+                for i in drop_rows:
+                    print(df.loc[i,'path_to_grid'])
+                print('')
+            df = df.drop(index=drop_rows)
+    else:
+        # step 2
+        # drop columns when psygrid files are not found
+        if DROP_MISSING_FILES:
+            drop_columns = []
+            for column in df.keys():
+                for path in df[column].dropna().to_list():
+                    if not os.path.exists(path):
+                        drop_columns.append(column)
+            if any(drop_columns):
+                print('')
+                print(f'----------- {step_name} -----------')
+                print('The following grids will not be combined as one or more '
+                      'grid slices are missing! If this warning message is '
+                      'unexpected to you, please check that step 1 occoured '
+                      'succesffully!')
+                print(drop_columns)
+                print('')
+            df = df.drop(columns=drop_columns)
+
+    output_fname = f'{step_name}.csv'
+    df.to_csv(os.path.join(PATH, output_fname), index=False)
+
+if __name__ == '__main__':
+
+    if len(sys.argv) >= 2:
+        ini_file_path = str(sys.argv[1])
+        if '.' not in ini_file_path:
+            ini_file_path = './' + ini_file_path
+
+    pipeline = PostProcessingPipeline(ini_file_path)
+    pipeline.create_csv_and_slurm_job_files()
+    pipeline.create_logs_dir()
+    pipeline.create_export_dir()
+
+    # TODO:
+    # - add a linked slurm job arrays which are waiting for each others
+    # - DROP_MISSING_FILES should be an imput of each step
