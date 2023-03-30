@@ -984,7 +984,7 @@ class detached_step:
             get_track = self.grid.get
             with np.errstate(all="ignore"):
                 # get the initial m0, t0 track
-                if binary.event = 'ZAMS':
+                if binary.event == 'ZAMS':
                     # ZAMS stars in wide (non-mass exchaging binaries) that are directed to detached step at birth
                     m0, t0 = star.mass, 0
                 else:
