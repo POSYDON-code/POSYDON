@@ -20,6 +20,7 @@ import atexit
 import os
 from tqdm import tqdm
 import psutil
+import random
 
 from posydon.binary_evol.binarystar import BinaryStar
 from posydon.binary_evol.singlestar import SingleStar
@@ -64,7 +65,9 @@ class BinaryPopulation:
         self.kwargs = default_kwargs.copy()
         for key, arg in kwargs.items():
             self.kwargs[key] = arg
-
+        # Have a binary fraction change the number_of binaries. 
+        #Eirini's change
+        self.binary_fraction = self.kwargs.get('binary_fraction')
         self.number_of_binaries = self.kwargs.get('number_of_binaries')
 
         self.population_properties = self.kwargs.get('population_properties',
@@ -198,6 +201,7 @@ class BinaryPopulation:
         for j, index in enumerate(indices_for_iter):
 
             if kwargs.get('from_hdf', False):
+                #generator 
                 binary = self.manager.from_hdf(index, restore=True).pop()
             else:
                 binary = self.manager.generate(index=index, **self.kwargs)
@@ -713,7 +717,7 @@ class BinaryGenerator:
         self.kwargs = kwargs.copy()
         self.sampler = sampler
         self.star_formation = kwargs.get('star_formation', 'burst')
-
+        self.binary_fraction =  kwargs.get('binary_fraction', 1)
     def reset_rng(self):
         """Reset the RNG with the stored entropy."""
         self._num_gen = 0
@@ -738,6 +742,7 @@ class BinaryGenerator:
 
     def draw_initial_samples(self, orbital_scheme='separation', **kwargs):
         """Generate all random varibles."""
+        binary_fraction = self.kwargs.get('binary_fraction', 1)
         if not ('RNG' in kwargs.keys()):
             kwargs['RNG'] = self.RNG
         # a, e, M_1, M_2, P
@@ -760,6 +765,7 @@ class BinaryGenerator:
 
         output_dict = {
             'binary_index': indices,
+            'binary_fraction':binary_fraction,
             'time': formation_times,
             'separation': separation,
             'eccentricity': eccentricity,
@@ -789,37 +795,81 @@ class BinaryGenerator:
         output = self.draw_initial_samples(**sampler_kwargs)
 
         default_index = output['binary_index'].item()
+        #Eirini's comments:
         # Randomly generated variables
-        formation_time = output['time'].item()
-        separation = output['separation'].item()
-        orbital_period = output['orbital_period'].item()
-        eccentricity = output['eccentricity'].item()
-        m1 = output['S1_mass'].item()
-        m2 = output['S2_mass'].item()
 
-        binary_params = dict(
-            index=kwargs.get('index', default_index),
-            time=formation_time,
-            state="detached",
-            event="ZAMS",
-            separation=separation,
-            orbital_period=orbital_period,
-            eccentricity=eccentricity,
-        )
-        star1_params = dict(
-            mass=m1,
-            state="H-rich_Core_H_burning",
-            metallicity=0.0142,     # ONLY VALID FOR Zsun
-            center_h1=0.7155,       # ONLY VALID FOR Zsun
-            center_he4=0.2703,      # ONLY VALID FOR Zsun
-        )
-        star2_params = dict(
-            mass=m2,
-            state="H-rich_Core_H_burning",
-            metallicity=0.0142,     # ONLY VALID FOR Zsun
-            center_h1=0.7155,       # ONLY VALID FOR Zsun
-            center_he4=0.2703,      # ONLY VALID FOR Zsun
-        )
+        if random.random()<self.binary_fraction:
+            formation_time = output['time'].item()
+            separation = output['separation'].item()
+            orbital_period = output['orbital_period'].item()
+            eccentricity = output['eccentricity'].item()
+            m1 = output['S1_mass'].item()
+            m2 = output['S2_mass'].item()
+            ### else set single star parameters. 
+            binary_params = dict(
+                index=kwargs.get('index', default_index),
+                time=formation_time,
+                state="detached",
+                event="ZAMS",
+                separation=separation,
+                orbital_period=orbital_period,
+                eccentricity=eccentricity,
+            )
+            star1_params = dict(
+                mass=m1,
+                state="H-rich_Core_H_burning",
+                metallicity=0.0142,     # ONLY VALID FOR Zsun
+                center_h1=0.7155,       # ONLY VALID FOR Zsun
+                center_he4=0.2703,      # ONLY VALID FOR Zsun
+            )
+            star2_params = dict(
+                mass=m2,
+                state="H-rich_Core_H_burning",
+                metallicity=0.0142,     # ONLY VALID FOR Zsun
+                center_h1=0.7155,       # ONLY VALID FOR Zsun
+                center_he4=0.2703,      # ONLY VALID FOR Zsun
+            )
+        
+        else:
+            formation_time = output['time'].item()
+            separation = output['separation'].item()
+            orbital_period = output['orbital_period'].item()
+            eccentricity = output['eccentricity'].item()
+            m1 = output['S1_mass'].item()
+            m2 = output['S2_mass'].item()
+            ### else set single star parameters. 
+            binary_params = dict(
+                index=kwargs.get('index', default_index),
+                time=formation_time,
+                state="initially_single_star",
+                event="ZAMS",
+                separation=separation,
+                orbital_period=orbital_period,
+                eccentricity=eccentricity,
+            )
+            star1_params = dict(
+                mass=m1,
+                state="H-rich_Core_H_burning",
+                metallicity=0.0142,     # ONLY VALID FOR Zsun
+                center_h1=0.7155,       # ONLY VALID FOR Zsun
+                center_he4=0.2703,      # ONLY VALID FOR Zsun
+            )
+            star2_params = dict(
+                mass=m2,
+                state="BH",
+                metallicity=0.0142,     # ONLY VALID FOR Zsun
+                center_h1=0.7155,       # ONLY VALID FOR Zsun
+                center_he4=0.2703,      # ONLY VALID FOR Zsun
+            )
+        
+            
+            
+            
+        #do all of the above but with state = "initial_single star"
+        #in this case the second star can be a compact object. 
+        
+        
+
 
         binary = BinaryStar(**binary_params,
                             star_1=SingleStar(**star1_params),
