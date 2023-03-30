@@ -648,11 +648,7 @@ class detached_step:
                 return list_of_attributes
 
             if star.state in LIST_ACCEPTABLE_STATES_FOR_HMS:
-                # Initialezed ZAMS systems have no information of radius
-                if (star.log_R is None) or np.isnan(star.log_R): #TODO: This is no a good check for ZAMS!!
-                    initials = (star.mass, 0)
-                else:
-                    list_for_matching = self.list_for_matching_HMS
+                list_for_matching = self.list_for_matching_HMS
             elif star.state in LIST_ACCEPTABLE_STATES_FOR_postMS:
                 list_for_matching = self.list_for_matching_postMS
 
