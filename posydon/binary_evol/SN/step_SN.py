@@ -1333,10 +1333,8 @@ class StepSN(object):
                     # if key is 'nearest_neighbour_distance':
                     #     setattr(binary, key, ['None', 'None', 'None'])
                 binary.separation = new_separation
-                print("MANOS binary.state 1", binary.state)
                 if binary.state is not "disrupted":
                     binary.state = "detached"
-                print("MANOS binary.state 2", binary.state)
                 binary.event = None
                 binary.time = binary.time_history[-1]
                 binary.eccentricity = binary.eccentricity_history[-1]
@@ -1414,7 +1412,6 @@ class StepSN(object):
 
 
         # update the orbit
-        print("MANOS binary.state 3", binary.state, binary.event)
         if binary.state == "disrupted":
             #the binary was already disrupted before the SN
 

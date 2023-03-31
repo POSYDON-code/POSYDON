@@ -54,7 +54,6 @@ class isolated_step(detached_step):
         do_magnetic_braking=False,
         *args, **kwargs):
         
-        print('Init isolated')
         super().__init__(
         grid_name_Hrich=grid_name_Hrich,
         grid_name_strippedHe=grid_name_strippedHe,
@@ -79,7 +78,7 @@ class isolated_step(detached_step):
         """
 
         self.initialize_isolated_binary_orbit(binary)
-        #Eirini's change
+        
         if binary.state == 'initially_single_star' or binary.star_1 == None or binary.star_2 == None:
         #if binary.star_1 == None or binary.star_2 == None: # already one star became None in step_merged or step_initially_single
             pass

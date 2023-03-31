@@ -839,7 +839,7 @@ class BinaryGenerator:
         default_index = output['binary_index'].item()
         #Eirini's comments:
         # Randomly generated variables
-<<<<<<< HEAD
+
 
         if random.random()<self.binary_fraction:
             formation_time = output['time'].item()
@@ -848,7 +848,16 @@ class BinaryGenerator:
             eccentricity = output['eccentricity'].item()
             m1 = output['S1_mass'].item()
             m2 = output['S2_mass'].item()
-            ### else set single star parameters. 
+            Z_div_Zsun = kwargs.get('metallicity', 1.)
+            zams_table = {1.: 2.703e-01,
+                          0.1: 2.511e-01,
+                          0.01: 2.492e-01,
+                          0.001: 2.49e-01,
+                          0.0001: 2.49e-01}
+            Y = zams_table[Z_div_Zsun]
+            Z = Z_div_Zsun*Zsun
+            X = 1. - Z - Y
+
             binary_params = dict(
                 index=kwargs.get('index', default_index),
                 time=formation_time,
@@ -861,18 +870,18 @@ class BinaryGenerator:
             star1_params = dict(
                 mass=m1,
                 state="H-rich_Core_H_burning",
-                metallicity=0.0142,     # ONLY VALID FOR Zsun
-                center_h1=0.7155,       # ONLY VALID FOR Zsun
-                center_he4=0.2703,      # ONLY VALID FOR Zsun
+                metallicity=Z,
+                center_h1=X,
+                center_he4=Y,
             )
             star2_params = dict(
                 mass=m2,
                 state="H-rich_Core_H_burning",
-                metallicity=0.0142,     # ONLY VALID FOR Zsun
-                center_h1=0.7155,       # ONLY VALID FOR Zsun
-                center_he4=0.2703,      # ONLY VALID FOR Zsun
+                metallicity=Z,
+                center_h1=X,
+                center_he4=Y,
             )
-        
+        #If binary_fraction not default a initially single star binary is created.
         else:
             formation_time = output['time'].item()
             separation = output['separation'].item()
@@ -880,7 +889,16 @@ class BinaryGenerator:
             eccentricity = output['eccentricity'].item()
             m1 = output['S1_mass'].item()
             m2 = output['S2_mass'].item()
-            ### else set single star parameters. 
+            Z_div_Zsun = kwargs.get('metallicity', 1.)
+            zams_table = {1.: 2.703e-01,
+                          0.1: 2.511e-01,
+                          0.01: 2.492e-01,
+                          0.001: 2.49e-01,
+                          0.0001: 2.49e-01}
+            Y = zams_table[Z_div_Zsun]
+            Z = Z_div_Zsun*Zsun
+            X = 1. - Z - Y
+
             binary_params = dict(
                 index=kwargs.get('index', default_index),
                 time=formation_time,
@@ -893,67 +911,20 @@ class BinaryGenerator:
             star1_params = dict(
                 mass=m1,
                 state="H-rich_Core_H_burning",
-                metallicity=0.0142,     # ONLY VALID FOR Zsun
-                center_h1=0.7155,       # ONLY VALID FOR Zsun
-                center_he4=0.2703,      # ONLY VALID FOR Zsun
+                metallicity=Z,
+                center_h1=X,
+                center_he4=Y,
             )
             star2_params = dict(
                 mass=m2,
                 state="BH",
-                metallicity=0.0142,     # ONLY VALID FOR Zsun
-                center_h1=0.7155,       # ONLY VALID FOR Zsun
-                center_he4=0.2703,      # ONLY VALID FOR Zsun
+                metallicity=Z,
+                center_h1=X,
+                center_he4=Y,
             )
-        
-            
-            
-            
         #do all of the above but with state = "initial_single star"
         #in this case the second star can be a compact object. 
         
-        
-
-=======
-        formation_time = output['time'].item()
-        separation = output['separation'].item()
-        orbital_period = output['orbital_period'].item()
-        eccentricity = output['eccentricity'].item()
-        m1 = output['S1_mass'].item()
-        m2 = output['S2_mass'].item()
-        Z_div_Zsun = kwargs.get('metallicity', 1.)
-        zams_table = {1.: 2.703e-01,
-                      0.1: 2.511e-01,
-                      0.01: 2.492e-01,
-                      0.001: 2.49e-01,
-                      0.0001: 2.49e-01}
-        Y = zams_table[Z_div_Zsun]
-        Z = Z_div_Zsun*Zsun
-        X = 1. - Z - Y
-
-        binary_params = dict(
-            index=kwargs.get('index', default_index),
-            time=formation_time,
-            state="detached",
-            event="ZAMS",
-            separation=separation,
-            orbital_period=orbital_period,
-            eccentricity=eccentricity,
-        )
-        star1_params = dict(
-            mass=m1,
-            state="H-rich_Core_H_burning",
-            metallicity=Z,
-            center_h1=X,
-            center_he4=Y,
-        )
-        star2_params = dict(
-            mass=m2,
-            state="H-rich_Core_H_burning",
-            metallicity=Z,
-            center_h1=X,
-            center_he4=Y,
-        )
->>>>>>> development
 
         binary = BinaryStar(**binary_params,
                             star_1=SingleStar(**star1_params),

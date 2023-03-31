@@ -145,13 +145,10 @@ class detached_step:
 
     def __init__(
             self,
-<<<<<<< HEAD
-            grid_name_Hrich=None,
-            grid_name_strippedHe=None,
-=======
+            grid_name1=None,
+            grid_name2=None,
             metallicity=None,
             grid=None,
->>>>>>> development
             path=PATH_TO_POSYDON_DATA,
             dt=None,
             n_o_steps_history=None,
@@ -382,19 +379,20 @@ class detached_step:
             'avg_charge_He'
         )
 
-<<<<<<< HEAD
-        if grid_name_Hrich == None:
-            grid_name_Hrich = os.path.join('single_HMS', 'grid_0.0142.h5')
-        self.grid_Hrich = GRIDInterpolator(os.path.join(path, grid_name_Hrich))
-        if grid_name_strippedHe == None:
-                grid_name_strippedHe = os.path.join('single_HeMS', 'grid_0.0142.h5')
-        self.grid_strippedHe = GRIDInterpolator(os.path.join(path, grid_name_strippedHe))
+
+        if grid_name1 == None:
+            grid_name1 = os.path.join('single_HMS', self.metallicity+'_Zsun.h5')           
+        self.grid1 = GRIDInterpolator(os.path.join(path, grid_name1))
+        
+        if grid_name2 == None:
+                grid_name2 = os.path.join('single_HeMS', self.metallicity+'_Zsun.h5')
+        self.grid2 = GRIDInterpolator(os.path.join(path, grid_name2))
 
         #Initialize the matching lists:
-        m_min_H = np.min(self.grid_Hrich.grid_mass)
-        m_max_H = np.max(self.grid_Hrich.grid_mass)
-        m_min_He = np.min(self.grid_strippedHe.grid_mass)
-        m_max_He = np.max(self.grid_strippedHe.grid_mass)
+        m_min_H = np.min(self.grid1.grid_mass)
+        m_max_H = np.max(self.grid1.grid_mass)
+        m_min_He = np.min(self.grid2.grid_mass)
+        m_max_He = np.max(self.grid2.grid_mass)
         if self.list_for_matching_HMS == None:
             self.list_for_matching_HMS = [["mass", "center_h1", "log_R", "he_core_mass"],
                                           [20.0, 1.0, 2.0, 10.0],
@@ -430,12 +428,7 @@ class detached_step:
                                         [10.0, 1.0, 2.0],
                                         ["min_max" , "min_max", "min_max"],
                                         [m_min_He, m_max_He], [0, None]]
-=======
-        grid_name1 = os.path.join('single_HMS', self.metallicity+'_Zsun.h5')
-        grid_name2 = os.path.join('single_HeMS', self.metallicity+'_Zsun.h5')
-        self.grid1 = GRIDInterpolator(os.path.join(path, grid_name1))
-        self.grid2 = GRIDInterpolator(os.path.join(path, grid_name2))
->>>>>>> development
+
 
     def get_track_val(self, key, htrack, m0, t):
         """Return a single value from the interpolated time-series.
@@ -458,9 +451,9 @@ class detached_step:
         """
         # htrack as a boolean determines whether H or He grid is used
         if htrack:
-            self.grid = self.grid_Hrich
+            self.grid = self.grid1
         else:
-            self.grid = self.grid_strippedHe
+            self.grid = self.grid2
         try:
             x = self.grid.get("age", m0)
             y = self.grid.get(key, m0)
@@ -494,9 +487,9 @@ class detached_step:
 
         """
         if htrack:
-            self.grid = self.grid_Hrich
+            self.grid = self.grid1
         else:
-            self.grid = self.grid_strippedHe
+            self.grid = self.grid2
         self.initial_mass = self.grid.grid_mass
 
         all_attribute = []
@@ -554,9 +547,9 @@ class detached_step:
 
         """
         if htrack:
-            self.grid = self.grid_Hrich
+            self.grid = self.grid1
         else:
-            self.grid = self.grid_strippedHe
+            self.grid = self.grid2
         self.initial_mass = self.grid.grid_mass
         n = 0
         for mass in self.grid.grid_mass:
@@ -605,9 +598,9 @@ class detached_step:
 
         """
         if htrack:
-            self.grid = self.grid_Hrich
+            self.grid = self.grid1
         else:
-            self.grid = self.grid_strippedHe
+            self.grid = self.grid2
 
 
         get_root0 = self.get_root0
@@ -990,9 +983,9 @@ class detached_step:
 
             """
             if htrack:
-                self.grid = self.grid_Hrich
+                self.grid = self.grid1
             elif not htrack:
-                self.grid = self.grid_strippedHe
+                self.grid = self.grid2
 
             get_track = self.grid.get
             with np.errstate(all="ignore"):
@@ -1727,9 +1720,9 @@ class detached_step:
 
             def get_star_final_values(star, htrack, m0):
                 if htrack:
-                    self.grid = self.grid_Hrich
+                    self.grid = self.grid1
                 elif not htrack:
-                    self.grid = self.grid_strippedHe
+                    self.grid = self.grid2
 
                 get_final_values = self.grid.get_final_values
                 get_final_state = self.grid.get_final_state
@@ -1739,9 +1732,9 @@ class detached_step:
 
             def get_star_profile(star, htrack, m0):
                 if htrack:
-                    self.grid = self.grid_Hrich
+                    self.grid = self.grid1
                 elif not htrack:
-                    self.grid = self.grid_strippedHe
+                    self.grid = self.grid2
 
                 get_profile = self.grid.get_profile
 
