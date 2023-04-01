@@ -145,8 +145,8 @@ class detached_step:
 
     def __init__(
             self,
-            grid_name1=None,
-            grid_name2=None,
+            grid_name_Hrich=None,
+            grid_name_strippedHe=None,
             metallicity=None,
             grid=None,
             path=PATH_TO_POSYDON_DATA,
@@ -380,19 +380,19 @@ class detached_step:
         )
 
 
-        if grid_name1 == None:
-            grid_name1 = os.path.join('single_HMS', self.metallicity+'_Zsun.h5')           
-        self.grid1 = GRIDInterpolator(os.path.join(path, grid_name1))
-        
-        if grid_name2 == None:
-                grid_name2 = os.path.join('single_HeMS', self.metallicity+'_Zsun.h5')
-        self.grid2 = GRIDInterpolator(os.path.join(path, grid_name2))
+        if grid_name_Hrich == None:
+            grid_name_Hrich = os.path.join('single_HMS', self.metallicity+'_Zsun.h5')
+        self.grid_Hrich = GRIDInterpolator(os.path.join(path, grid_name_Hrich))
+
+        if grid_name_strippedHe == None:
+                grid_name_strippedHe = os.path.join('single_HeMS', self.metallicity+'_Zsun.h5')
+        self.grid_strippedHe = GRIDInterpolator(os.path.join(path, grid_name_strippedHe))
 
         #Initialize the matching lists:
-        m_min_H = np.min(self.grid1.grid_mass)
-        m_max_H = np.max(self.grid1.grid_mass)
-        m_min_He = np.min(self.grid2.grid_mass)
-        m_max_He = np.max(self.grid2.grid_mass)
+        m_min_H = np.min(self.grid_Hrich.grid_mass)
+        m_max_H = np.max(self.grid_Hrich.grid_mass)
+        m_min_He = np.min(self.grid_strippedHe.grid_mass)
+        m_max_He = np.max(self.grid_strippedHe.grid_mass)
         if self.list_for_matching_HMS == None:
             self.list_for_matching_HMS = [["mass", "center_h1", "log_R", "he_core_mass"],
                                           [20.0, 1.0, 2.0, 10.0],
@@ -451,9 +451,9 @@ class detached_step:
         """
         # htrack as a boolean determines whether H or He grid is used
         if htrack:
-            self.grid = self.grid1
+            self.grid = self.grid_Hrich
         else:
-            self.grid = self.grid2
+            self.grid = self.grid_strippedHe
         try:
             x = self.grid.get("age", m0)
             y = self.grid.get(key, m0)
@@ -487,9 +487,9 @@ class detached_step:
 
         """
         if htrack:
-            self.grid = self.grid1
+            self.grid = self.grid_Hrich
         else:
-            self.grid = self.grid2
+            self.grid = self.grid_strippedHe
         self.initial_mass = self.grid.grid_mass
 
         all_attribute = []
@@ -547,9 +547,9 @@ class detached_step:
 
         """
         if htrack:
-            self.grid = self.grid1
+            self.grid = self.grid_Hrich
         else:
-            self.grid = self.grid2
+            self.grid = self.grid_strippedHe
         self.initial_mass = self.grid.grid_mass
         n = 0
         for mass in self.grid.grid_mass:
@@ -598,9 +598,9 @@ class detached_step:
 
         """
         if htrack:
-            self.grid = self.grid1
+            self.grid = self.grid_Hrich
         else:
-            self.grid = self.grid2
+            self.grid = self.grid_strippedHe
 
 
         get_root0 = self.get_root0
@@ -983,9 +983,9 @@ class detached_step:
 
             """
             if htrack:
-                self.grid = self.grid1
+                self.grid = self.grid_Hrich
             elif not htrack:
-                self.grid = self.grid2
+                self.grid = self.grid_strippedHe
 
             get_track = self.grid.get
             with np.errstate(all="ignore"):
@@ -1720,9 +1720,9 @@ class detached_step:
 
             def get_star_final_values(star, htrack, m0):
                 if htrack:
-                    self.grid = self.grid1
+                    self.grid = self.grid_Hrich
                 elif not htrack:
-                    self.grid = self.grid2
+                    self.grid = self.grid_strippedHe
 
                 get_final_values = self.grid.get_final_values
                 get_final_state = self.grid.get_final_state
@@ -1732,9 +1732,9 @@ class detached_step:
 
             def get_star_profile(star, htrack, m0):
                 if htrack:
-                    self.grid = self.grid1
+                    self.grid = self.grid_Hrich
                 elif not htrack:
-                    self.grid = self.grid2
+                    self.grid = self.grid_strippedHe
 
                 get_profile = self.grid.get_profile
 
@@ -1908,11 +1908,11 @@ def diffeq(
     I : float
         Moment of inertia of the star in Msolar*Rsolar^2.
     tau_conv: float
-        Convective turnover time of the star, calculated @ 
-        0.5*pressure_scale_height above the bottom of the outer convection 
+        Convective turnover time of the star, calculated @
+        0.5*pressure_scale_height above the bottom of the outer convection
         zone in yr.
     wdivwc: float
-        The ratio of angular rotation rate (omega) to critical angular 
+        The ratio of angular rotation rate (omega) to critical angular
         rotation rate (omega_crit). This is dimensionless.
     L : float
         Luminosity of the star in solar units.
@@ -2330,7 +2330,7 @@ def diffeq(
             # Torque from Rappaport, Verbunt, and Joss 1983, ApJ, 275, 713
             # The torque is eq.36 of Rapport+1983, with γ = 4
             # Torque units converted from cgs units to [Msol], [Rsol], [yr]
-            # as all stellar parameters are given in units of [Msol], [Rsol], [yr] 
+            # as all stellar parameters are given in units of [Msol], [Rsol], [yr]
             # and so that dOmega_mb/dt is in units of [yr^-2].
 
             dOmega_mb_sec = (
@@ -2352,7 +2352,7 @@ def diffeq(
             )
 
             # Converting units:
-            # The constant 3.8e-30 from Rappaport+1983 has units of [cm^-2 s] 
+            # The constant 3.8e-30 from Rappaport+1983 has units of [cm^-2 s]
             # which need to be converted...
             #
             # -3.8e-30 [cm^-2 s] * (const.rsol**2 / const.secyer) -> [Rsol^-2 yr]
@@ -2360,7 +2360,7 @@ def diffeq(
             # * R ** 4 [Rsol^4]
             # * Omega ** 3 [yr^-3]
             # / I [Msol Rsol^2 ]
-            # 
+            #
             # Thus, dOmega/dt comes out to [yr^-2]
 
         elif magnetic_braking_mode == "M15":
@@ -2386,7 +2386,7 @@ def diffeq(
             Rossby_number_sec = Prot_sec / tau_conv_sec
 
             gamma_pri = (1 + (wdivwc_pri / 0.072)**2)**0.5
-            T0_pri = K * R_pri**3.1 * M_pri**0.5 * gamma_pri**(-2 * 0.22) 
+            T0_pri = K * R_pri**3.1 * M_pri**0.5 * gamma_pri**(-2 * 0.22)
             gamma_sec = (1 + (wdivwc_sec / 0.072)**2)**0.5
             T0_sec = K * R_sec**3.1 * M_sec**0.5 * gamma_sec**(-2 * 0.22)
 
@@ -2415,7 +2415,7 @@ def diffeq(
                 )
 
         elif magnetic_braking_mode == "G18":
-            
+
             # Torque prescription from Garraffo et al. 2018, ApJ, 862, 90
             # a = 0.03
             # b = 0.5
@@ -2431,7 +2431,7 @@ def diffeq(
                     + 0.5 * Rossby_number_pri + 1.0
             n_sec = (0.03 / Rossby_number_sec) \
                     + 0.5 * Rossby_number_sec + 1.0
-            
+
             Qn_pri = 4.05 * np.exp(-1.4 * n_pri)
             Qn_sec = 4.05 * np.exp(-1.4 * n_sec)
 
@@ -2439,7 +2439,7 @@ def diffeq(
                     c * Omega_sec**3 * tau_conv_sec * Qn_sec / I_sec
                     * np.clip((1.5 - M_sec) / (1.5 - 1.3), 0, 1)
             )
-            
+
             dOmega_mb_pri = (
                     c * Omega_pri**3 * tau_conv_pri * Qn_pri / I_pri
                     * np.clip((1.5 - M_sec) / (1.5 - 1.3), 0, 1)
@@ -2464,19 +2464,19 @@ def diffeq(
             # below in units of [Rsol yr^-1]^2
             v_esc2_sec = (2 * const.standard_cgrav * M_sec / R_sec) * (const.msol * const.secyer**2 / const.rsol**3)
             v_esc2_pri = (2 * const.standard_cgrav * M_pri / R_pri) * (const.msol * const.secyer**2 / const.rsol**3)
-            v_mod2_sec = v_esc2_sec + (2 * Omega_sec**2 * R_sec**2) / K2 
+            v_mod2_sec = v_esc2_sec + (2 * Omega_sec**2 * R_sec**2) / K2
             v_mod2_pri = v_esc2_pri + (2 * Omega_pri**2 * R_pri**2) / K2
-                     
-            # Van & Ivanova 2019, MNRAS 483, 5595 replace the magnetic field with 
-            # Omega * tau_conv phenomenology. Thus, the ratios (rot_ratio_* and tau_ratio_*) 
+
+            # Van & Ivanova 2019, MNRAS 483, 5595 replace the magnetic field with
+            # Omega * tau_conv phenomenology. Thus, the ratios (rot_ratio_* and tau_ratio_*)
             # inherently have units of Gauss [cm^-0.5 g^0.5 s^-1] that needs to be converted to [Rsol], [Msol], [yr].
-            # VI2019 assume the solar magnetic field strength is on average 1 Gauss. 
+            # VI2019 assume the solar magnetic field strength is on average 1 Gauss.
             if (abs(Mdot_sec) > 0):
                 R_alfven_div_R3_sec = R_sec**4 * rot_ratio_sec**4 * tau_ratio_sec**4 \
                                   / (Mdot_sec**2 * v_mod2_sec) * (const.rsol**2 * const.secyer / const.msol**2)
             else:
                 R_alfven_div_R3_sec = 0.0
-            
+
             if (abs(Mdot_pri) > 0):
                 R_alfven_div_R3_pri = R_pri**4 * rot_ratio_pri**4 * tau_ratio_pri**4 \
                                   / (Mdot_pri**2 * v_mod2_pri) * (const.rsol**2 * const.secyer / const.msol**2)
@@ -2500,7 +2500,7 @@ def diffeq(
         else:
             print("WARNING: Magnetic braking is not being calculated in the detached step. ",
                   "The given magnetic_braking_mode string \"", magnetic_braking_mode,
-                  "\" does not match the available built-in cases. ", 
+                  "\" does not match the available built-in cases. ",
                   "To enable magnetic braking, please set magnetc_braking_mode to ",
                    "one of the following strings:")
             print("\"RVJ83\" for Rappaport, Verbunt, & Joss 1983")
