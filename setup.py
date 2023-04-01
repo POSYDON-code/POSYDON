@@ -2,6 +2,7 @@
 
 from __future__ import print_function
 import glob
+import sys
 import versioneer
 import os.path
 
