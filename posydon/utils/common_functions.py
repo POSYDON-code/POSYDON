@@ -2563,17 +2563,17 @@ def calculate_binding_energy(donor_mass, donor_radius, donor_dm,
         print("Ebind = Grav_energy + factor_internal_energy*U_i  :  ", Ebind_i)
     return Ebind_i
 
-def draw_NS_spin():
-    """Draw the initial NS spin from a uniform random distribution"""
+#def draw_NS_spin():
+#    """Draw the initial NS spin from a uniform random distribution"""
     ## units are in seconds                                                                                                                                                                                    
-    spin =  np.random.uniform(2*np.pi/.01, 2*np.pi/.1)
-    return spin
+#    spin =  np.random.uniform(2*np.pi/.01, 2*np.pi/.1)
+#    return spin
 
-def draw_NS_Bfield():
-    """Draw the initial NS B-field from a uniform random distribution"""
-    ## units are in Gauss                                                                                                                                                                                    
-    Bfield =  np.random.uniform(1e10, 1e13)
-    return Bfield
+#def draw_NS_Bfield():
+#    """Draw the initial NS B-field from a uniform random distribution"""
+#    ## units are in Gauss                                                                                                                                                                                    
+#    Bfield =  np.random.uniform(1e10, 1e13)
+#    return Bfield
 
 class PchipInterpolator2:
     """Interpolation class."""

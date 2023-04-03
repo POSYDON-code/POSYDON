@@ -89,11 +89,11 @@ STARPROPERTIES = [
     'lambda_CE_10cent',
     'lambda_CE_30cent',
     'lambda_CE_pure_He_star_10cent',
-    'profile',  # the profile of the star, including extended information of
+    'profile'  # the profile of the star, including extended information of
                 # its internal structure, for a specific timestep, usually for
                 # the end of the previous step including MESA psygrid.
-    'spin_NS',          # NS spin in seconds
-    'B_field_NS',       # NS B-field in Gauss
+    #'spin_NS',          # NS spin in seconds
+    #'B_field_NS',       # NS B-field in Gauss
 ]
 
 # attributes read from single-star grid runs

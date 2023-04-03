@@ -544,7 +544,7 @@ class StepSN(object):
                     CC_properties)
 
                 for key in STARPROPERTIES:
-                    if key not in ["state", "mass", "spin", "spin_NS", "B_field_NS"]:
+                    if key not in ["state", "mass", "spin"]: #"spin_NS", "B_field_NS"]:
                         setattr(star, key, None)
                 return
 
@@ -589,8 +589,8 @@ class StepSN(object):
                     star.m_disk_accreted = np.nan
                     star.m_disk_radiated = np.nan
                     star.max_he_mass_ejected = np.nan
-                    star.spin_NS = draw_NS_spin()
-                    star.B_field_NS = draw_NS_Bfield()
+                    #star.spin_NS = draw_NS_spin()
+                    #star.B_field_NS = draw_NS_Bfield()
                     for key in STARPROPERTIES:
                         if key not in ["state", "mass", "spin",
                                        "m_disk_accreted ", "m_disk_radiated",
@@ -634,8 +634,8 @@ class StepSN(object):
                         star.max_he_mass_ejected = np.nan
                         star.state = 'NS'
                         star.spin = 0.0
-                        star.spin_NS = draw_NS_spin()
-                        star.B_field_NS = draw_NS_Bfield()
+                        #star.spin_NS = draw_NS_spin()
+                        #star.B_field_NS = draw_NS_Bfield()
 
                 elif self.use_core_masses:
                     # If the profile is not available the star spin
@@ -666,8 +666,8 @@ class StepSN(object):
                         star.max_he_mass_ejected = np.nan
                         star.state = "NS"
                         star.spin = 0.0
-                        star.spin_NS = draw_NS_spin()
-                        star.B_field_NS = draw_NS_Bfield()
+                        #star.spin_NS = draw_NS_spin()
+                        #star.B_field_NS = draw_NS_Bfield()
                 else:
                     for key in STARPROPERTIES:
                         setattr(star, key, None)
@@ -706,8 +706,8 @@ class StepSN(object):
                     star.m_disk_accreted = np.nan
                     star.m_disk_radiated = np.nan
                     star.max_he_mass_ejected = np.nan
-                    star.spin_NS = draw_NS_spin()
-                    star.B_field_NS = draw_NS_Bfield()
+                    #star.spin_NS = draw_NS_spin()
+                    #star.B_field_NS = draw_NS_Bfield()
                     for key in STARPROPERTIES:
                         if key not in ["state", "mass", "spin",
                                        "m_disk_accreted ", "m_disk_radiated",
@@ -753,8 +753,8 @@ class StepSN(object):
                         star.m_disk_radiated = 0.0
                         star.max_he_mass_ejected = np.nan
                         star.spin = 0.0
-                        star.spin_NS = draw_NS_spin()
-                        star.B_field_NS = draw_NS_Bfield()
+                        #star.spin_NS = draw_NS_spin()
+                        #star.B_field_NS = draw_NS_Bfield()
                     else:
                         for key in STARPROPERTIES:
                             setattr(star, key, None)
@@ -788,8 +788,8 @@ class StepSN(object):
                         star.max_he_mass_ejected = np.nan
                         star.state = "NS"
                         star.spin = 0.0
-                        star.spin_NS = draw_NS_spin()
-                        star.B_field_NS = draw_NS_Bfield()
+                        #star.spin_NS = draw_NS_spin()
+                        #star.B_field_NS = draw_NS_Bfield()
                 else:
                     for key in STARPROPERTIES:
                         setattr(star, key, None)
