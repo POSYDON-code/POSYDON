@@ -55,7 +55,7 @@ STAR_ATTRIBUTES_FROM_STAR_HISTORY = {
     'lg_system_mdot': None,             # from binary history
     'lg_wind_mdot': None,               # from binary history
     'spin': 'spin_parameter',
-    'profile': None,
+    'profile': None
     #'spin_NS': None,
     #'B_field_NS': None
 }

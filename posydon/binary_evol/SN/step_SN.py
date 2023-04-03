@@ -40,9 +40,9 @@ from posydon.utils.common_functions import (
     orbital_period_from_separation,
     inspiral_timescale_from_separation,
     separation_evol_wind_loss,
-    calculate_Patton20_values_at_He_depl,
-    draw_NS_spin,
-    draw_NS_Bfield
+    calculate_Patton20_values_at_He_depl
+    #draw_NS_spin,
+    #draw_NS_Bfield
 )
 
 from posydon.binary_evol.binarystar import BINARYPROPERTIES
