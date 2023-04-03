@@ -1,28 +1,7 @@
 import numpy as np
-import posydon.utils.constants as c
-import matplotlib.pyplot as plt
-import sys
-import os
-
-#Connect to MSG path.
-
-
-
-MSG_DIR = os.environ['MSG_DIR']
-
-sys.path.insert(0, os.path.join(MSG_DIR, 'python'))
 import pymsg
+import posydon.utils.constants as c
 
-# Load the SpecGrid:
-
-GRID_DIR = os.path.join(MSG_DIR, 'data', 'grids')
-
-specgrid_file_name = os.path.join(GRID_DIR, 'sg-demo.h5')
-
-specgrid = pymsg.SpecGrid(specgrid_file_name)
-
-
-#Create binary spectra.
 
 def create_spectrum_binary(binary, **kwargs):
 
@@ -55,20 +34,6 @@ def create_spectrum_single(star, **kwargs):
 
     # Calculate temperature from luminosity and radius
     teff = (luminosity / (4*np.pi) / c.boltz_sigma / radius**2)**(1/4)
-
-    # Define your variables:
-    x = {'Teff': Teff,'log(g)': logg}
-    # Set up the wavelength abscissa
-
-    lam_min = 3000.
-    lam_max = 7000.
-
-    lam = np.linspace(lam_min, lam_max, 501)
-
-    lam_c = 0.5*(lam[1:] + lam[:-1])
-
-    #
-
 
     # Call MSG to obtain spectrum
 
