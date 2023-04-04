@@ -157,6 +157,8 @@ DEFAULT_MARKERS_COLORS_LEGENDS = {
             ['D', 1, color_unstable, TF1_label_unstable],
         'overflow from L2 (R_L2) surface for q(=Macc/Mdon)<1, donor is star 2':
             ['D', 1, color_unstable, TF1_label_unstable],
+        'overflow from L2 (R_L2) surface for q(=Macc/Mdon)>1, donor is star 2':
+            ['D', 1, color_unstable, TF1_label_unstable],
         'reached maximum mass transfer rate: 10.0d0':
             ['D', 1, color_unstable, TF1_label_unstable],
         'Reached maximum mass transfer rate: 1d-1':
@@ -470,6 +472,9 @@ DEFAULT_MARKERS_COLORS_LEGENDS = {
         'donor is star 1':
             ['D', 1, None, TF1_label_unstable],
         'overflow from L2 (R_L2) surface for q(=Macc/Mdon)<1, '
+        'donor is star 2':
+            ['D', 1, None, TF1_label_unstable],
+        'overflow from L2 (R_L2) surface for q(=Macc/Mdon)>1, '
         'donor is star 2':
             ['D', 1, None, TF1_label_unstable],
         'reached maximum mass transfer rate: 10.0d0':
