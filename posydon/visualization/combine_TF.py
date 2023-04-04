@@ -5,6 +5,7 @@ __authors__ = [
     "Simone Bavera <Simone.Bavera@unige.ch>",
     "Konstantinos Kovlakas <Konstantinos.Kovlakas@unige.ch>",
     "Emmanouil Zapartas <ezapartas@gmail.com>",
+    "Matthias Kruckow <Matthias.Kruckow@unige.ch>",
 ]
 
 
@@ -12,6 +13,10 @@ import numpy as np
 
 TF1_POOL_STABLE = ['Primary has depleted central carbon',
                    'Secondary has depleted central carbon',
+                   'Primary enters pair-instability regime',
+                   'Secondary enters pair-instability regime',
+                   'Primary enters pulsational pair-instability regime',
+                   'Secondary enters pulsational pair-instability regime',
                    'offcenter neon ignition for primary',
                    'offcenter neon ignition for secondary',
                    'envelope_mass_limit',
