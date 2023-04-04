@@ -31,6 +31,7 @@ TF1_POOL_UNSTABLE = [
     'overflow from L2 (R_L2) surface for q(=Macc/Mdon)>1, donor is star 1',
     'overflow from L2 (D_L2) distance for q(=Macc/Mdon)<1, donor is star 1',
     'overflow from L2 (R_L2) surface for q(=Macc/Mdon)<1, donor is star 2',
+    'overflow from L2 (R_L2) surface for q(=Macc/Mdon)>1, donor is star 2',
     'reached maximum mass transfer rate: 10.0d0',
     'Reached maximum mass transfer rate: 1d-1',
     'Reached the critical mt rate',
