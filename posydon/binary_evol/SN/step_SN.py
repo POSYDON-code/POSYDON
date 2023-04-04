@@ -913,7 +913,11 @@ class StepSN(object):
 
         elif self.ECSN == 'Podsiadlowksi+04':
             # Limits on He core mass progenitors of ECSN, default on cosmic
+<<<<<<< HEAD
             min_M_He_ECSN = 1.37  # Msun from Podsiadlowksi+2004
+=======
+            min_M_He_ECSN = 1.35  # Msun from Podsiadlowksi+2004
+>>>>>>> b44d54feede1feacba141006feee3d0fc6010ea3
             max_M_He_ECSN = 2.5  # Msun from Podsiadlowksi+2004
 
             if m_He_core < min_M_He_ECSN:
@@ -2292,3 +2296,5 @@ class Couch20_corecollapse(object):
             raise Exception("Need a NS or BH to apply `Sukhbold16_corecollapse`.")
 
         return float(m_rem), f_fb, state
+    
+
