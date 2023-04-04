@@ -913,11 +913,7 @@ class StepSN(object):
 
         elif self.ECSN == 'Podsiadlowksi+04':
             # Limits on He core mass progenitors of ECSN, default on cosmic
-<<<<<<< HEAD
-            min_M_He_ECSN = 1.37  # Msun from Podsiadlowksi+2004
-=======
-            min_M_He_ECSN = 1.35  # Msun from Podsiadlowksi+2004
->>>>>>> b44d54feede1feacba141006feee3d0fc6010ea3
+            min_M_He_ECSN = 1.4  # Msun from Podsiadlowksi+2004
             max_M_He_ECSN = 2.5  # Msun from Podsiadlowksi+2004
 
             if m_He_core < min_M_He_ECSN:
