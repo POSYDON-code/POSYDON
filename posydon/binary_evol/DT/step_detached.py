@@ -156,7 +156,7 @@ class detached_step:
             do_tides=True,
             do_gravitational_radiation=True,
             do_magnetic_braking=True,
-            magnetic_braking_mode=1,
+            magnetic_braking_mode="RVJ83",
             do_stellar_evolution_and_spin_from_winds=True,
             RLO_orbit_at_orbit_with_same_am=False
     ):
