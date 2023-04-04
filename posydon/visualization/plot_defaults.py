@@ -116,6 +116,14 @@ DEFAULT_MARKERS_COLORS_LEGENDS = {
             ['s', 2, None, TF1_label_stable],
         'Secondary has depleted central carbon':
             ['o', 2, None, TF1_label_stable],
+        'Primary enters pair-instability regime':
+            ['s', 2, None, TF1_label_stable],
+        'Secondary enters pair-instability regime':
+            ['o', 2, None, TF1_label_stable],
+        'Primary enters pulsational pair-instability regime':
+            ['s', 2, None, TF1_label_stable],
+        'Secondary enters pulsational pair-instability regime':
+            ['o', 2, None, TF1_label_stable],
         'offcenter neon ignition for primary':
             ['s', 2, None, TF1_label_stable],
         'offcenter neon ignition for secondary':
