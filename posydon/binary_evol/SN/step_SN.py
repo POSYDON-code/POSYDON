@@ -1683,6 +1683,16 @@ class StepSN(object):
                 norm = 1.4/star.mass
             else:
                 norm = 1.0
+
+        # Envelope mass/ejected mass based kick distribution
+        elif self.kick_normalisation == 'envelope_mass':
+            sigma = 200 * (star.mass - star.co_core_mass)
+            if star.state == 'BH':
+                norm = 1.4/star.mass
+            else:
+                norm = 1.0
+            
+
         elif self.kick_normalisation == 'NS_one_minus_fallback_BH_one':
             if star.state == 'BH':
                 norm = 1.
