@@ -663,7 +663,7 @@ def logic_rerun(grid, rerun_type):
               rl2 = grid[i].binary_history['rl_relative_overflow_2']
               w_wcrit = grid[i].history1['surf_avg_omega_div_omega_crit']
               reverse = np.logical_and(rl1<-0.05, rl2>-0.05)
-              transfer = np.logical_and(reverse, w_wcirt>0.9)
+              transfer = np.logical_and(reverse, w_wcrit>0.9)
               if np.max(transfer) == True:
                 runs_to_rerun += [i]
         runs_to_rerun = np.array(runs_to_rerun)
