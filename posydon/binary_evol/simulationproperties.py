@@ -307,3 +307,14 @@ class PrintStepInfoHooks(EvolveHooks):
         """Report at the end of the evolution of each binary."""
         print("End evol for binary {}".format(binary.index), end='\n'*2)
         return binary
+    
+
+class PulsarEvolveHooks(EvolveHooks):
+
+    def post_evolve(self, binary):
+        """
+        Using the binary history, recreate any pulsar evolution.
+
+        Get evolution states from binary.state_history to check for detached, RLO, etc.
+        """
+        return binary
