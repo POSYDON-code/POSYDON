@@ -106,6 +106,12 @@ class detached_step:
         gravitational wave radiation.
     do_magnetic_braking: Boolean
         If True, take into account change of star spin due to magnetic braking.
+    magnetic_braking_mode: String
+        A string corresponding to the desired magnetic braking prescription.
+            -- RVJ83: Rappaport, Verbunt, & Joss 1983
+            -- M15: Matt et al. 2015
+            -- G18: Garraffo et al. 2018
+            -- CARB: Van & Ivanova 2019
     do_stellar_evolution_and_spin_from_winds: Boolean
         If True, take into account change of star spin due to change of its
         moment of inertia during its evolution and due to spin angular momentum
@@ -159,7 +165,7 @@ class detached_step:
             do_tides=True,
             do_gravitational_radiation=True,
             do_magnetic_braking=True,
-            magnetic_braking_mode=1,
+            magnetic_braking_mode="RVJ83",
             do_stellar_evolution_and_spin_from_winds=True,
             RLO_orbit_at_orbit_with_same_am=False,
             list_for_matching_HMS = None,
@@ -1847,7 +1853,6 @@ def diffeq(
         Renv_middle_sec,
         Idot_sec,
         tau_conv_sec,
-        wdivwc_sec,
         R_pri,
         L_pri,
         M_pri,
@@ -1866,7 +1871,6 @@ def diffeq(
         Renv_middle_pri,
         Idot_pri,
         tau_conv_pri,
-        wdivwc_pri,
         do_wind_loss=True,
         do_tides=True,
         do_gravitational_radiation=True,
@@ -1910,9 +1914,6 @@ def diffeq(
         Convective turnover time of the star, calculated @
         0.5*pressure_scale_height above the bottom of the outer convection
         zone in yr.
-    wdivwc: float
-        The ratio of angular rotation rate (omega) to critical angular
-        rotation rate (omega_crit). This is dimensionless.
     L : float
         Luminosity of the star in solar units.
     #mass_conv_core : float
@@ -2384,6 +2385,16 @@ def diffeq(
             Prot_sec = 2 * np.pi / Omega_sec # [yr]
             Rossby_number_sec = Prot_sec / tau_conv_sec
 
+            # critical rotation rate in rad/yr
+            Omega_crit_pri = np.sqrt(const.standard_cgrav * M_pri * const.msol
+                            / ((R_pri * const.rsol) ** 3)) * const.secyer
+            Omega_crit_sec = np.sqrt(const.standard_cgrav * M_sec * const.msol
+                            / ((R_sec * const.rsol) ** 3)) * const.secyer
+
+            # omega/omega_c
+            wdivwc_pri = Omega_pri / Omega_crit_pri
+            wdivwc_sec = Omega_sec / Omega_crit_sec
+            
             gamma_pri = (1 + (wdivwc_pri / 0.072)**2)**0.5
             T0_pri = K * R_pri**3.1 * M_pri**0.5 * gamma_pri**(-2 * 0.22)
             gamma_sec = (1 + (wdivwc_sec / 0.072)**2)**0.5
