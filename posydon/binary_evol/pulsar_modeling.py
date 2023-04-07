@@ -59,16 +59,28 @@ class Pulsar:
          #   '''
          #   Calculate the moment of intertia for the neutron 
          #   '''
+        
+        #NS_RADIUS = 
 
         self.spin = draw_NS_spin()            ## NS spin angular frequency
         self.Bfield = draw_NS_Bfield()         ## NS magnetic field 
 
         self.mass = star.mass       ## initial mass of the NS
+        #self.radius = 
         self.moment_inertia = None  
 
     
     
-    def evolve(self, binary):
+    def detached_evolve(self, binary):
+        '''
+        Evolve a pulsar from start to finish.
+
+        Parameters
+        ----------
+        binary: BinaryStar object
+        '''
+    
+    def RLO_evolve(self, binary):
         '''
         Evolve a pulsar from start to finish.
 
@@ -77,8 +89,16 @@ class Pulsar:
         binary: BinaryStar object
         '''
 
-        
+    def CE_evolve(self, binary):
+        '''
+        Evolve a pulsar from start to finish.
 
+        Parameters
+        ----------
+        binary: BinaryStar object
+        ''' 
+
+        ## call RLO_evolve after CE parameters (Delta M) are set
 
 
 
