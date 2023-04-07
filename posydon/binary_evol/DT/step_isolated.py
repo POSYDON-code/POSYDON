@@ -53,7 +53,6 @@ class isolated_step(detached_step):
         do_gravitational_radiation=False,
         do_magnetic_braking=False,
         *args, **kwargs):
-        
         super().__init__(
         grid_name_Hrich=grid_name_Hrich,
         grid_name_strippedHe=grid_name_strippedHe,
