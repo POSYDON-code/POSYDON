@@ -1295,7 +1295,6 @@ class detached_step:
                             ],
                             interp1d_sec["Idot"](t - t_offset_sec),
                             interp1d_sec["conv_env_turnover_time_l_b"](t - t_offset_sec),
-                            interp1d_sec["surf_avg_omega_div_omega_crit"](t - t_offset_sec),
                             interp1d_pri["R"](t - t_offset_pri),
                             interp1d_pri["L"](t - t_offset_pri),
                             *[
@@ -1304,7 +1303,6 @@ class detached_step:
                             ],
                             interp1d_pri["Idot"](t - t_offset_pri),
                             interp1d_pri["conv_env_turnover_time_l_b"](t - t_offset_pri),
-                            interp1d_pri["surf_avg_omega_div_omega_crit"](t - t_offset_pri),
                             self.do_wind_loss,
                             self.do_tides,
                             self.do_gravitational_radiation,
@@ -1338,7 +1336,6 @@ class detached_step:
                             ],
                             interp1d_sec["Idot"](t - t_offset_sec),
                             interp1d_sec["conv_env_turnover_time_l_b"](t - t_offset_sec),
-                            interp1d_sec["surf_avg_omega_div_omega_crit"](t - t_offset_sec),
                             interp1d_pri["R"](t - t_offset_pri),
                             interp1d_pri["L"](t - t_offset_pri),
                             *[
@@ -1347,7 +1344,6 @@ class detached_step:
                             ],
                             interp1d_pri["Idot"](t - t_offset_pri),
                             interp1d_pri["conv_env_turnover_time_l_b"](t - t_offset_pri),
-                            interp1d_pri["surf_avg_omega_div_omega_crit"](t - t_offset_pri),
                             self.do_wind_loss,
                             self.do_tides,
                             self.do_gravitational_radiation,
