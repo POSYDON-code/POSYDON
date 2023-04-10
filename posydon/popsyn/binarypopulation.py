@@ -253,7 +253,7 @@ class BinaryPopulation:
                 try:
                     binary.evolve()
                 except Exception:
-                    print(traceback.print_exc())
+                    #print(traceback.print_exc())
                     binary.event = 'FAILED'
                     binary.traceback = traceback.format_exc()
                 if len(w) > 0:
@@ -840,8 +840,8 @@ class BinaryGenerator:
         #Eirini's comments:
         # Randomly generated variables
 
-
-        if random.random()<self.binary_fraction:
+            
+        if self.RNG.uniform() < self.binary_fraction:
             formation_time = output['time'].item()
             separation = output['separation'].item()
             orbital_period = output['orbital_period'].item()
