@@ -50,7 +50,7 @@ class Pulsar:
 
         self.mass = star.mass       ## initial mass of the NS
         self.radius = NS_RADIUS 
-        self.moment_inertia = None 
+        self.moment_inertia = self.calc_moment_of_inertia()
 
     def draw_NS_spin(self):
             '''
@@ -67,13 +67,14 @@ class Pulsar:
             '''
             return np.random.uniform(3.16e11, 6.31e13) ## units are in Gauss
     
-    def calc_moment_of_inertia(self, M, R):
+    def calc_moment_of_inertia(self):
             '''
             Calculate the moment of intertia for the neutron 
             '''
-            
+            M = self.mass
+            R = self.radius
 
-    
+            return 2/7 * (1 - 2.42e-6*M/R - 2.9e-12*M**2/R**2)**-1 * M*R**2
     
     def detached_evolve(self, binary):
         '''
@@ -83,8 +84,6 @@ class Pulsar:
         ----------
         binary: BinaryStar object
         '''
-
-
     
     def RLO_evolve(self, binary):
         '''
@@ -103,7 +102,6 @@ class Pulsar:
         ----------
         binary: BinaryStar object
         ''' 
-
         ## call RLO_evolve after CE parameters (Delta M) are set
 
 
