@@ -41,16 +41,15 @@ class Pulsar:
         ------------
         star: SingleStar object corresponding to the pulsar
         '''
-        
+        ## NEED TO FIGURE OUT UNITS
         NS_RADIUS = 2.123e-5       ## CONSTANT value in POSYDON
-        ## NEED TO FIGURE OUT UNITS FOR THIS
 
         self.spin = self.draw_NS_spin()          ## NS spin angular frequency
         self.Bfield = self.draw_NS_Bfield()      ## NS magnetic field 
 
-        self.mass = star.mass       ## initial mass of the NS
+        self.mass = star.mass               ## mass of the NS
         self.radius = NS_RADIUS 
-        self.moment_inertia = self.calc_moment_of_inertia()
+        self.moment_inertia = self.calc_moment_of_inertia()   ## moment of inertia, STAYS CONSTANT
 
     def draw_NS_spin(self):
             '''
@@ -76,7 +75,7 @@ class Pulsar:
 
             return 2/7 * (1 - 2.42e-6*M/R - 2.9e-12*M**2/R**2)**-1 * M*R**2
     
-    def detached_evolve(self, binary):
+    def detached_evolve(self, binary, star):
         '''
         Evolve a pulsar from start to finish.
 
@@ -84,6 +83,22 @@ class Pulsar:
         ----------
         binary: BinaryStar object
         '''
+        ## constants
+        alpha = 45       ## angle between the axis of rotation and magnetic axis [deg]
+        tau_d = 3        ## Bfield decay timescale [s]
+        mu_0 = 1         ## permeability of free space [unity in cgs]
+        c = 3e10         ## speed of light [cm/s]
+        B_min = 1e8      ## minimum Bfield strength at which Bfield decay ceases [G]
+
+        omega_i = self.spin
+        I = self.moment_inertia
+        R = self.radius
+
+        #detached_state_start = binary.time_history[np.where((binary.state_history == 'detached') & (star.state_history == 'NS'))]
+        #delta_t = 
+
+        #omega_f = 8*np.pi*R**6*np.sin(alpha)**2/(3*mu_0*c**3*I) * B_min**2*delta_t
+
     
     def RLO_evolve(self, binary):
         '''
