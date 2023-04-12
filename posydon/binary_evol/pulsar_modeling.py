@@ -75,7 +75,7 @@ class Pulsar:
 
             return 2/7 * (1 - 2.42e-6*M/R - 2.9e-12*M**2/R**2)**-1 * M*R**2
     
-    def detached_evolve(self, binary, star):
+    def detached_evolve(self, delta_t):
         '''
         Evolve a pulsar from start to finish.
 
@@ -97,10 +97,12 @@ class Pulsar:
         #detached_state_start = binary.time_history[np.where((binary.state_history == 'detached') & (star.state_history == 'NS'))]
         #delta_t = 
 
-        #omega_f = 8*np.pi*R**6*np.sin(alpha)**2/(3*mu_0*c**3*I) * B_min**2*delta_t
+        omega_f = np.sqrt(1/(8*np.pi*R**6*np.sin(alpha)**2/(3*mu_0*c**3*I) * B_min**2*delta_t))
+
+        self.spin = omega_f
 
     
-    def RLO_evolve(self, binary):
+    def RLO_evolve(self, delta_m):
         '''
         Evolve a pulsar from start to finish.
 
