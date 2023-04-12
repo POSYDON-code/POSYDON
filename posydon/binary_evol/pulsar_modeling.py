@@ -97,8 +97,7 @@ class Pulsar:
         #detached_state_start = binary.time_history[np.where((binary.state_history == 'detached') & (star.state_history == 'NS'))]
         #delta_t = 
 
-        omega_f = np.sqrt(1/(8*np.pi*R**6*np.sin(alpha)**2/(3*mu_0*c**3*I) * B_min**2*delta_t))
-
+        omega_f = np.sqrt(1/(8*np.pi*R**6*np.sin(alpha)**2/(3*mu_0*c**3*I) * B_min**2*delta_t + 1/omega_i**2)) 
         self.spin = omega_f
 
     
