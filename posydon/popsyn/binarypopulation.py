@@ -65,7 +65,7 @@ ONELINE_MIN_ITEMSIZE = {'state_i': 30, 'state_f': 30,
 # BinaryPopulation will enforce a constant metallicity accross all steps that
 # load stellar or binary models by checked this list of steps.
 STEP_NAMES_LOADING_GRIDS = [
-    'step_HMS_HMS', 'step_CO_HeMS', 'step_CO_HMS_RLO', 'step_detached'
+    'step_HMS_HMS', 'step_CO_HeMS', 'step_CO_HMS_RLO', 'step_detached','step_isolated','step_disrupted'
 ]
 
 class BinaryPopulation:

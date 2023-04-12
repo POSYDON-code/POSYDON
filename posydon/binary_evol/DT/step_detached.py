@@ -153,7 +153,7 @@ class detached_step:
             self,
             grid_name_Hrich=None,
             grid_name_strippedHe=None,
-            metallicity=1,
+            metallicity=None,
             path=PATH_TO_POSYDON_DATA,
             dt=None,
             n_o_steps_history=None,
