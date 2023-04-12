@@ -181,8 +181,8 @@ class detached_step:
         self.do_wind_loss = do_wind_loss
         self.do_tides = do_tides
         self.do_gravitational_radiation = do_gravitational_radiation
-        self.do_magnetic_braking = do_magnetic_braking,
-        self.magnetic_braking_mode = magnetic_braking_mode,
+        self.do_magnetic_braking = do_magnetic_braking
+        self.magnetic_braking_mode = magnetic_braking_mode
         self.do_stellar_evolution_and_spin_from_winds = (
             do_stellar_evolution_and_spin_from_winds
         )
