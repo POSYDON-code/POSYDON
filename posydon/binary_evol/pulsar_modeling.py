@@ -12,6 +12,24 @@ import numpy as np
 from posydon.binary_evol.binarystar import BINARYPROPERTIES
 from posydon.binary_evol.singlestar import STARPROPERTIES
 
+## Test push to remote branch
+
+"""
+References
+----------
+
+[1] Chattopadhyay, D., Stevenson, S., Hurley, J. R., Rossi,
+L. J., & Flynn, C. 2020, MNRAS, 494, 1587,
+doi: 10.1093/mnras/staa756
+
+[2] Ye, C. S., Kremer, K., Chatterjee, S., Rodriguez, C. L., &
+Rasio, F. A. 2019, ApJ, 877, 122,
+doi: 10.3847/1538-4357/ab1b21
+
+[3] Zhang, C. M., & Kojima, Y. 2006, MNRAS, 366, 137,
+doi: 10.1111/j.1365-2966.2005.09802.x
+
+"""
 
 class Pulsar:
 
