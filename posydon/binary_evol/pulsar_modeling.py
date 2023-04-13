@@ -11,8 +11,8 @@ __authors__ = [
 import numpy as np
 from posydon.binary_evol.binarystar import BINARYPROPERTIES
 from posydon.binary_evol.singlestar import STARPROPERTIES
+import posydon.utils.constants as constants
 
-## Test push to remote branch
 
 """
 References
@@ -28,6 +28,9 @@ doi: 10.3847/1538-4357/ab1b21
 
 [3] Zhang, C. M., & Kojima, Y. 2006, MNRAS, 366, 137,
 doi: 10.1111/j.1365-2966.2005.09802.x
+
+[4] Kiel, P. D., Hurley, J. R., Bailes, M., & Murray, J. R. 2008,
+MNRAS, 388, 393, doi: 10.1111/j.1365-2966.2008.13402.x
 
 """
 
@@ -57,19 +60,35 @@ class Pulsar:
             '''
             return np.random.uniform(3.16e11, 6.31e13) ## units are in Gauss 
 
-        #def calc_moment_of_inertia(M, R):
-         #   '''
-         #   Calculate the moment of intertia for the neutron 
-         #   '''
-        
-        #NS_RADIUS = 
+        def calculate_NS_radius():
+            '''
+            Using NS mass-radius relationship from Kiel et al. (2008)
+            The original equation takes uses solar units
+            Here, we have returned the radius in km
+            '''
+            return 2.126*10**-5*(star.mass**(-1/3))*constants.Rsun*10**-5
 
-        self.spin = draw_NS_spin()            ## NS spin angular frequency
-        self.Bfield = draw_NS_Bfield()         ## NS magnetic field 
+        def calculate_moment_of_inertia():
+           '''
+           Calculate moment of intertia for the neutron star
+           Using relation given in Kiel et al. (2008)
+           Here, we have returned the moment of inertia in CGS units
+           '''
 
-        self.mass = star.mass       ## initial mass of the NS
-        #self.radius = 
-        self.moment_inertia = None  
+           I_0 = star.mass*((self.radius*10**5/constants.Rsun)**2)
+           I_1 = 2.42*10**(-6)*star.mass/(self.radius*10**5/constants.Rsun)
+           I_2 = 2.9*10**(-12)*(star.mass/(self.radius*10**5/constants.Rsun))**2
+
+           I = (2/7)*I_0*(1-I_1-I_2)**(-1)
+
+           return I*constants.Msun*(constants.Rsun**2)
+
+
+        self.spin = draw_NS_spin()                                 ## NS spin angular frequency
+        self.Bfield = draw_NS_Bfield()                             ## NS magnetic field (G)
+        self.mass = star.mass                                      ## Initial mass of the NS (M_sun)
+        self.radius = calculate_NS_radius()                        ## Radius calculated using an M-R relation (km)
+        self.moment_of_inertia = calculate_moment_of_inertia()     ## Moment of inertia (g cm^2)
 
     
     
