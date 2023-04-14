@@ -9,10 +9,9 @@ __authors__ = [
 ]
 
 import numpy as np
-from posydon.binary_evol.binarystar import BINARYPROPERTIES
-from posydon.binary_evol.singlestar import STARPROPERTIES
+from posydon.utils import constants as const
+from posydon.utils.common_functions import CO_radius
 
-## Test push to remote branch
 
 """
 References
@@ -35,45 +34,48 @@ class Pulsar:
 
     def __init__(self, star):
         '''
-        Construct a PulsarBinary object, which is comprised of two Pulsar objects.
+        Construct a Pulsar object.
 
         Parameters
         ------------
         star: SingleStar object corresponding to the pulsar
         '''
-        ## NEED TO FIGURE OUT UNITS
-        NS_RADIUS = 2.123e-5       ## CONSTANT value in POSYDON
+        
+        NS_RADIUS = CO_radius(star.mass, "NS")*const.Rsun    ## POSYDON constant for NS radius [cm] 
 
-        self.spin = self.draw_NS_spin()          ## NS spin angular frequency
-        self.Bfield = self.draw_NS_Bfield()      ## NS magnetic field 
+        self.mass = star.mass*const.Msun                      ## mass of the NS [g]
+        self.radius = NS_RADIUS                               ## radius of the NS [cm]
+        self.moment_inertia = self.calc_moment_of_inertia()   ## moment of inertia of the NS
+        ## Note: Because the NS radius is constant, moment of inertia should also be constant throughout NS evolution
 
-        self.mass = star.mass               ## mass of the NS
-        self.radius = NS_RADIUS 
-        self.moment_inertia = self.calc_moment_of_inertia()   ## moment of inertia, STAYS CONSTANT
-
+        self.spin = self.draw_NS_spin()          ## NS spin angular frequency [1/s]
+        self.Bfield = self.draw_NS_Bfield()      ## NS magnetic field [G]
+ 
+        
     def draw_NS_spin(self):
             '''
-            Draw the initial NS spin angular frequency Omega from a uniform random distribution.
-            Range is 0.1 - 2.0 seconds for pulse period P.
+            Draw the initial NS spin angular frequency Omega [1/s] from a uniform random distribution.
+            Range is 0.1-2.0 sec for pulse period P.
             Omega = 2*pi/P
             '''
-            return np.random.uniform(2*np.pi/.1, 2*np.pi/2) ## units are in 1/s 
+            return np.random.uniform(2*np.pi/.1, 2*np.pi/2) 
 
     def draw_NS_Bfield(self):
             '''
-            Draw the initial NS B-field from a uniform random distribution.
+            Draw the initial NS B-field [G] from a uniform random distribution.
             Range is 10^11.5 - 10^13.8 Gauss.
             '''
-            return np.random.uniform(3.16e11, 6.31e13) ## units are in Gauss
+            return np.random.uniform(3.16e11, 6.31e13)
     
     def calc_moment_of_inertia(self):
             '''
-            Calculate the moment of intertia for the neutron 
+            Calculate the moment of intertia of the NS in g*cm^2
+            Eq. from Kiel et al. 2008 is in solar units
             '''
-            M = self.mass
-            R = self.radius
+            M = self.mass/const.Msun       ## mass in Msun 
+            R = self.radius/const.Rsun     ## radius in Rsun
 
-            return 2/7 * (1 - 2.42e-6*M/R - 2.9e-12*M**2/R**2)**-1 * M*R**2
+            return 2/7 * (1 - 2.42e-6*M/R - 2.9e-12*M**2/R**2)**-1 * M*R**2 * (const.Msun*const.Rsun**2)
     
     def detached_evolve(self, delta_t):
         '''
@@ -81,23 +83,19 @@ class Pulsar:
 
         Parameters
         ----------
-        binary: BinaryStar object
+        delta_t: the duration of the detached evolution phase [s]
         '''
         ## constants
-        alpha = 45       ## angle between the axis of rotation and magnetic axis [deg]
-        tau_d = 3        ## Bfield decay timescale [s]
-        mu_0 = 1         ## permeability of free space [unity in cgs]
-        c = 3e10         ## speed of light [cm/s]
-        B_min = 1e8      ## minimum Bfield strength at which Bfield decay ceases [G]
+        alpha = 45*const.a2rad          ## angle between the axis of rotation and magnetic axis [rad]
+        tau_d = 3*1e9*const.secyer      ## Bfield decay timescale = 3 Gyr [s]
+        mu_0 = 1                        ## permeability of free space [unity in cgs]
+        B_min = 1e8                     ## minimum Bfield strength at which Bfield decay ceases [G]
 
         omega_i = self.spin
         I = self.moment_inertia
         R = self.radius
 
-        #detached_state_start = binary.time_history[np.where((binary.state_history == 'detached') & (star.state_history == 'NS'))]
-        #delta_t = 
-
-        omega_f = np.sqrt(1/(8*np.pi*R**6*np.sin(alpha)**2/(3*mu_0*c**3*I) * B_min**2*delta_t + 1/omega_i**2)) 
+        omega_f = np.sqrt(1/(8*np.pi*R**6*np.sin(alpha)**2/(3*mu_0*const.clight**3*I) * B_min**2*delta_t + 1/omega_i**2)) 
         self.spin = omega_f
 
     
