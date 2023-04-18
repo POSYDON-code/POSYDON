@@ -599,14 +599,14 @@ def copy_ini_file(grid, rerun_type, destination, cluster):
         raise ValueError(f'Unsupported cluster {cluster}!')
 
     # substitue the inlist sceario with the one for the rerun
-    if rerun_type == 'opacity_max':
-        # this rerun uses the default inlist commit
-        return
-    elif rerun_type == 'PISN':
+    if rerun_type == 'PISN':
         replace_text = "matthias_PISN-d68228338b91fd487ef5d55c9b6ebb8cc5f0e668"
     elif rerun_type == 'reverse_MT':
         replace_text = "zepei_fix_implicit-afa1860ddf9894aa1d82742ee2a73e8e92acd4a9"
-    elif rerun_type == 'envelope_mass_limit': # maybe 'fe_core_infall_limit' as well?
+    elif rerun_type == 'opacity_max':
+        replace_text = "matthias_PISN-d68228338b91fd487ef5d55c9b6ebb8cc5f0e668"
+    elif rerun_type == 'other': # e.g. 'envelope_mass_limit', 'fe_core_infall_limit'
+        # this rerun uses the default inlist commit
         return
     else:
         raise ValueError(f'Unsupported rerun type {rerun_type}!')
