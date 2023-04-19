@@ -209,6 +209,7 @@ def slurm_job(job_name,
 
         if job_name == 'step_3':
             f.write(f"#SBATCH --output={PATH}/logs/plot_grid.out\n")
+            f.write("unset DISPLAY\n")
 
         if job_name == 'step_4':
             f.write(f"#SBATCH --output={PATH}/logs/check_failure_rate.out\n")
