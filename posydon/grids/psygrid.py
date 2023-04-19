@@ -879,6 +879,10 @@ class PSyGrid:
                 # if not star history file, NaN values
                 if read_from is None:
                     init_X, init_Y, init_Z = np.nan, np.nan, np.nan
+                    # try to get metallicity from directory name
+                    params_from_path = initial_values_from_dirname(run.path)
+                    if (len(params_from_path)==4) or (len(params_from_path)==2):
+                        init_Z = params_from_path[-1]
                 else:
                     star_header = np.genfromtxt(
                         read_from, skip_header=1, max_rows=1, names=True)
