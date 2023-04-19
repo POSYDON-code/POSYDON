@@ -186,18 +186,18 @@ class StepCEE(object):
     def __call__(self, binary):
         """Perform the CEE step for a BinaryStar object."""
         # Determine which star is the donor and which is the companion
-        if binary.event in ["oCE1", "oDoubleCE1"]:
+        if binary.event in ["CE1_start", "DCE1_start"]:
             donor_star = binary.star_1
             comp_star = binary.star_2
-        elif binary.event in ["oCE2", "oDoubleCE2"]:
+        elif binary.event in ["CE2_start", "DCE2_start"]:
             donor_star = binary.star_2
             comp_star = binary.star_1
         else:
             raise ValueError("CEE does not apply if `event` is not "
-                             "`oCE1`, 'oDoubleCE1' or `oCE2`, 'oDoubleCE1'")
+                             "'CE1_start', 'DCE1_start' or 'CE2_start', 'DCE2_start'")
 
         # Check for double CE
-        if binary.event in ["oDoubleCE1", "oDoubleCE2"]:
+        if binary.event in ["DCE1_start", "DCE2_start"]:
             double_CE = True
         else:
             double_CE = False
@@ -214,11 +214,15 @@ class StepCEE(object):
                                 'stripped_He_Core_He_burning']:
             # system merges
             binary.state = 'merged'
-            binary.event = None
+            if double_CE:
+                binary.event = 'DCE_merger'
+            else:
+                binary.event = 'CE_merger'
 
             for key in BINARYPROPERTIES:
                 # the binary attributes that are changed in the CE step
-                if key not in ["state", "event", 'V_sys', 'mass_transfer_case',
+                if key not in ["time", "state", "event", 'V_sys',
+                               'mass_transfer_case',
                                'nearest_neighbour_distance']:
                     setattr(binary, key, np.nan)    # the rest become np.nan
                 if key == 'mass_transfer_case':
@@ -241,11 +245,14 @@ class StepCEE(object):
             if donor_star.state in ['H-rich_Shell_H_burning']:
                 # system merges
                 binary.state = 'merged'
-                binary.event = None
+                if double_CE:
+                    binary.event = 'DCE_merger'
+                else:
+                    binary.event = 'CE_merger'
 
                 for key in BINARYPROPERTIES:
                     # the binary attributes that are changed in the CE step
-                    if key not in ["state", "event", 'V_sys',
+                    if key not in ["time", "state", "event", 'V_sys',
                                    'mass_transfer_case',
                                    'nearest_neighbour_distance']:
                         setattr(binary, key, np.nan)   # the rest become np.nan
@@ -699,7 +706,7 @@ class StepCEE(object):
                     print("during the assumed windloss phase after postCE")
                     print("with 'common_envelope_option_after_succ_CEE' :",
                           common_envelope_option_after_succ_CEE)
-                    print("the orbit cahnged from postCEE : ",
+                    print("the orbit changed from postCEE : ",
                           orbital_period_postCEE)
                     print("to : ", orbital_period_f)
             separation_f = cf.orbital_separation_from_period(orbital_period_f,
@@ -707,11 +714,11 @@ class StepCEE(object):
 
             if state1_i == 'stripped_He_Central_He_depleted':
                 if donor == binary.star_1:
-                    binary.event = 'CC1'
+                    binary.event = 'CC1_start'
                 elif donor == binary.star_2:
-                    binary.event = 'CC2'
+                    binary.event = 'CC2_start'
             else:
-                binary.event = None
+                binary.event = 'CE_end'
 
             # Adjust binary properties
             binary.separation = separation_f
@@ -834,11 +841,12 @@ class StepCEE(object):
         else:
             # system merges
             binary.state = 'merged'
-            binary.event = None
+            binary.event = 'CE_merger'
 
             for key in BINARYPROPERTIES:
                 # the binary attributes that are changed in the CE step
-                if key not in ["state", "event", 'V_sys', 'mass_transfer_case',
+                if key not in ["time", "state", "event", 'V_sys',
+                               'mass_transfer_case',
                                'nearest_neighbour_distance']:
                     setattr(binary, key, np.nan)    # the rest become np.nan
                 if key == 'mass_transfer_case':

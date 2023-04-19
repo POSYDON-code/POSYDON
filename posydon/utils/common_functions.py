@@ -1051,7 +1051,8 @@ def get_binary_state_and_event_and_mt_case(binary, interpolation_class=None,
 
     binary_event : str
         Options are 'oRLO1' or 'oRLO2' (onset of RLO, the start of RLO),
-        'oCE1', 'oCE2', 'oDoubleCE1', 'oDoubleCE2', 'CC1', 'CC2'.
+        'CE1_start', 'CE2_start', 'DCE1_start', 'DCE2_start', 'CC1_start',
+        'CC2_start'.
 
     mass transfer case : str
         'caseA', 'caseB', etc.
@@ -1060,8 +1061,8 @@ def get_binary_state_and_event_and_mt_case(binary, interpolation_class=None,
     --------
     If 'detached' then returns ['detached', None, None].
 
-    If 'contact' then returns ['contact', None] or ['oCE1', 'oDoubleCE1'] or
-    ['oDoubleCE2',  None].
+    If 'contact' then returns ['contact', None] or ['CE1_start', 'DCE1_start']
+    or ['DCE2_start',  None].
 
     If RLO then returns either ['RLO1',  None, 'caseXX'] or
     ['RLO2',  None, 'caseXX'] or maybe ['RLO2',  'oRLO2', 'caseXX'].
@@ -1074,7 +1075,7 @@ def get_binary_state_and_event_and_mt_case(binary, interpolation_class=None,
     if interpolation_class == 'not_converged':
         return [None, None, 'None']
     elif interpolation_class == 'initial_MT':
-        return ['initial_RLOF', None, 'None']
+        return ['initial_RLOF', 'ZAMS_RLOF', 'None']
 
     if i is None:
         lg_mtransfer = binary.lg_mtransfer_rate
@@ -1115,45 +1116,45 @@ def get_binary_state_and_event_and_mt_case(binary, interpolation_class=None,
     if rlof1 and rlof2:                             # contact condition
         result = ['contact', None, 'None']
         if interpolation_class == 'unstable_MT':
-            result = ['contact', 'oCE1', 'None']
+            result = ['contact', 'CE1_start', 'None']
     elif no_rlof:                                   # no MT in any star
         result = ['detached', None, 'None']
     elif rlof1 and not rlof2:                       # only in star 1
         result = ['RLO1', None, mt_flag_1_str]
         if interpolation_class == 'unstable_MT':
-            return ['RLO1', 'oCE1', mt_flag_1_str]
+            return ['RLO1', 'CE1_start', mt_flag_1_str]
         # if prev_state not in ALL_RLO_CASES:
         #    return ['RLO1', 'oRLO1', mt_flag_1_str]
     elif rlof2 and not rlof1:                       # only in star 2
         result = ['RLO2', None, mt_flag_2_str]
         if interpolation_class == 'unstable_MT':
-            return ['RLO2', 'oCE2', mt_flag_2_str]
+            return ['RLO2', 'CE2_start', mt_flag_2_str]
     else:                                           # undetermined in any star
         result = ["undefined", None, 'None']
 
-    if result[1] == "oCE1":
+    if result[1] == "CE1_start":
         # Check for double CE
         comp_star = binary.star_2
         if comp_star.state not in [
                 "H-rich_Core_H_burning",
                 "stripped_He_Core_He_burning", "WD", "NS", "BH"]:
-            result[1] = "oDoubleCE1"
-    elif result[1] == "oCE2":
+            result[1] = "DCE1_start"
+    elif result[1] == "CE2_start":
         # Check for double CE
         comp_star = binary.star_1
         if comp_star.state not in [
                 "H-rich_Core_H_burning",
                 "stripped_He_Core_He_burning", "WD", "NS", "BH"]:
-            result[1] = "oDoubleCE2"
+            result[1] = "DCE2_start"
 
     if ("Central_C_depletion" in state1
             or "Central_He_depleted" in state1
             or (gamma1 is not None and gamma1 >= 10.0)):    # WD formation
-        result[1] = "CC1"
+        result[1] = "CC1_start"
     elif ("Central_C_depletion" in state2
           or "Central_He_depleted" in state2
           or (gamma2 is not None and gamma2 >= 10.0)):      # WD formation
-        result[1] = "CC2"
+        result[1] = "CC2_start"
 
     return result
 
@@ -1313,14 +1314,14 @@ def flip_stars(binary):
         setattr(binary, 'event', 'oRLO2')
     elif event == 'oRLO2':
         setattr(binary, 'event', 'oRLO1')
-    if event == 'oCE1':
-        setattr(binary, 'event', 'oCE2')
-    elif event == 'oCE2':
-        setattr(binary, 'event', 'oCE1')
-    if event == 'CC1':
-        setattr(binary, 'event', 'CC2')
-    elif event == 'CC2':
-        setattr(binary, 'event', 'CC1')
+    if event == 'CE1_start':
+        setattr(binary, 'event', 'CE2_start')
+    elif event == 'CE2_start':
+        setattr(binary, 'event', 'CE1_start')
+    if event == 'CC1_start':
+        setattr(binary, 'event', 'CC2_start')
+    elif event == 'CC2_start':
+        setattr(binary, 'event', 'CC1_start')
 
     state_history = np.array(getattr(binary, 'state_history'))
     cond_RLO2 = state_history == 'RLO1'
@@ -1330,18 +1331,18 @@ def flip_stars(binary):
     setattr(binary, 'state_history', state_history.tolist())
 
     event_history = np.array(getattr(binary, 'event_history'))
-    cond_CC2 = event_history == 'CC1'
-    cond_CC1 = event_history == 'CC2'
-    event_history[cond_CC2] = 'CC2'
-    event_history[cond_CC1] = 'CC1'
+    cond_CC2 = event_history == 'CC1_start'
+    cond_CC1 = event_history == 'CC2_start'
+    event_history[cond_CC2] = 'CC2_start'
+    event_history[cond_CC1] = 'CC1_start'
     cond_oRLO2 = event_history == 'oRLO1'
     cond_oRLO1 = event_history == 'oRLO2'
     event_history[cond_oRLO2] = 'oRLO2'
     event_history[cond_oRLO1] = 'oRLO1'
-    cond_oCE2 = event_history == 'oCE1'
-    cond_oCE1 = event_history == 'oCE2'
-    event_history[cond_oCE2] = 'oCE2'
-    event_history[cond_oCE1] = 'oCE1'
+    cond_oCE2 = event_history == 'CE1_start'
+    cond_oCE1 = event_history == 'CE2_start'
+    event_history[cond_oCE2] = 'CE2_start'
+    event_history[cond_oCE1] = 'CE1_start'
     setattr(binary, 'event_history', event_history.tolist())
 
     for i in ['t_sync_rad_', 't_sync_conv_', 'rl_relative_overflow_']:

@@ -424,11 +424,11 @@ class StepSN(object):
         # Check if the binary event is calling correctly the SN_step,
         # this should occour only on the first or second core-collapse
         # CC1 and CC2 respectively.
-        if binary.event == "CC1":
+        if binary.event == "CC1_start":
             # collapse star
             self.collapse_star(star=binary.star_1)
             self._reset_other_star_properties(star=binary.star_2)
-        elif binary.event == "CC2":
+        elif binary.event == "CC2_start":
             # collapse star
             self.collapse_star(star=binary.star_2)
             self._reset_other_star_properties(star=binary.star_1)
@@ -454,9 +454,9 @@ class StepSN(object):
             )
         # Cover the case where CC of the companion is immediately followed
         elif state1 in STAR_STATES_CO and state2 in STAR_STATES_C_DEPLETION:
-            binary.event = "CC2"
+            binary.event = "CC2_start"
         elif state1 in STAR_STATES_C_DEPLETION and state2 in STAR_STATES_CO:
-            binary.event = "CC1"
+            binary.event = "CC1_start"
 
     def check(self):
         """Check the internal integrity and the values of the parameters."""
@@ -1218,10 +1218,10 @@ class StepSN(object):
 
         """
         # Check that the binary_state is calling correctly the SN_step
-        if binary.event != "CC1" and binary.event != "CC2":
+        if binary.event != "CC1_start" and binary.event != "CC2_start":
             raise ValueError("Something went wrong: invalid call of supernova step!")
 
-        if binary.event == "CC1":
+        if binary.event == "CC1_start":
             if binary.star_1.SN_type == "WD":
                 # compute the new separaiton prior to reseting the binary prop.
                 new_separation = separation_evol_wind_loss(
@@ -1237,7 +1237,7 @@ class StepSN(object):
                     #     setattr(binary, key, ['None', 'None', 'None'])
                 binary.separation = new_separation
                 binary.state = "detached"
-                binary.event = None
+                binary.event = 'WD1_formed'
                 binary.time = binary.time_history[-1]
                 binary.eccentricity = binary.eccentricity_history[-1]
                 # TODO: in feature we will make the orbital period a callable
@@ -1317,7 +1317,7 @@ class StepSN(object):
                 mean_anomaly = np.random.uniform(0, 2 * np.pi)
                 binary.star_1.natal_kick_array[3] = mean_anomaly
 
-        elif binary.event == "CC2":
+        elif binary.event == "CC2_start":
             if binary.star_2.SN_type == "WD":
                 # compute new properties before resting existing binary prop.
                 new_separation = separation_evol_wind_loss(
@@ -1333,7 +1333,7 @@ class StepSN(object):
                     #     setattr(binary, key, ['None', 'None', 'None'])
                 binary.separation = new_separation
                 binary.state = "detached"
-                binary.event = None
+                binary.event = 'WD2_formed'
                 binary.time = binary.time_history[-1]
                 binary.eccentricity = binary.eccentricity_history[-1]
                 # TODO: is the following to be noted?
@@ -1604,10 +1604,12 @@ class StepSN(object):
         # update the binary object
         if flag_binary:
             # update the tilt
-            if binary.event == "CC1":
+            if binary.event == "CC1_start":
                 binary.star_1.spin_orbit_tilt = tilt
-            elif binary.event == "CC2":
+                end_event = binary.star_1.state + '1_formed'
+            elif binary.event == "CC2_start":
                 binary.star_2.spin_orbit_tilt = tilt
+                end_event = binary.star_2.state + '2_formed'
             else:
                 raise ValueError("This should never happen!")
 
@@ -1618,7 +1620,7 @@ class StepSN(object):
                     setattr(binary, key, None)
 
             binary.state = "detached"
-            binary.event = None
+            binary.event = end_event
             binary.separation = Apost / const.Rsun
             binary.eccentricity = epost
             binary.V_sys = np.array([VSx / const.km2cm, VSy / const.km2cm, VSz
@@ -1631,10 +1633,12 @@ class StepSN(object):
             binary.mass_transfer_case = 'None'
         else:
             # update the tilt
-            if binary.event == "CC1":
+            if binary.event == "CC1_start":
                 binary.star_1.spin_orbit_tilt = np.nan
-            elif binary.event == "CC2":
+                end_event = 'CC1_disrupt'
+            elif binary.event == "CC2_start":
                 binary.star_2.spin_orbit_tilt = np.nan
+                end_event = 'CC2_disrupt'
             else:
                 raise ValueError("This should never happen!")
 
@@ -1642,7 +1646,7 @@ class StepSN(object):
                 if key is not 'nearest_neighbour_distance':
                     setattr(binary, key, None)
             binary.state = "disrupted"
-            binary.event = None
+            binary.event = end_event
             binary.separation = np.nan
             binary.eccentricity = np.nan
             binary.V_sys = np.array([0, 0, 0])

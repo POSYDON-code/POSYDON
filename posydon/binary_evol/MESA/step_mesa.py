@@ -1270,10 +1270,10 @@ class MS_MS_step(MesaGridStep):
             self.binary.event = 'redirect'
             return
         elif (state_1 == 'H-rich_Central_C_depletion'):     # redirect if CC1
-            self.binary.event = 'CC1'
+            self.binary.event = 'CC1_start'
             return
         elif (state_2 == 'H-rich_Central_C_depletion'):     # redirect if CC2
-            self.binary.event = 'CC2'
+            self.binary.event = 'CC2_start'
             return
         else:
             raise ValueError('The star_1.state = %s, star_2.state = %s, '
@@ -1327,7 +1327,7 @@ class CO_HMS_RLO_step(MesaGridStep):
             m2 = self.binary.star_2.mass
             # catch and redirect double core collapse, this happens if q=1:
             if self.binary.star_1.state == 'H-rich_Central_C_depletion':
-                self.binary.event = 'CC1'
+                self.binary.event = 'CC1_start'
                 return
             # super().__call__(binary)
         elif (state_1 in ["WD", "NS", "BH"] and (state_2 in FOR_RLO_STATES)
@@ -1337,7 +1337,7 @@ class CO_HMS_RLO_step(MesaGridStep):
             m2 = self.binary.star_1.mass
             # catch and redirect double core collapse, this happens if q=1:
             if self.binary.star_2.state == 'H-rich_Central_C_depletion':
-                self.binary.event = 'CC2'
+                self.binary.event = 'CC2_start'
                 return
             # super().__call__(binary)
         else:
@@ -1399,7 +1399,7 @@ class CO_HeMS_step(MesaGridStep):
             m2 = self.binary.star_1.mass
             # catch and redirect double core collapse, this happens if q=1:
             if self.binary.star_1.state == 'stripped_He_Central_C_depletion':
-                self.binary.event = 'CC1'
+                self.binary.event = 'CC1_start'
                 # REMOVED assume circularisation after first CC
                 # new_separation = self.binary.separation*(
                 #     1.-self.binary.eccentricity**2)
@@ -1415,7 +1415,7 @@ class CO_HeMS_step(MesaGridStep):
             m2 = self.binary.star_2.mass
             # catch and redirect double core collapse, this happens if q=1:
             if self.binary.star_2.state == 'stripped_He_Central_C_depletion':
-                self.binary.event = 'CC2'
+                self.binary.event = 'CC2_start'
                 return
         else:
             raise ValueError(
