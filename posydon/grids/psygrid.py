@@ -2053,6 +2053,27 @@ def join_grids(input_paths, output_path,
     say("    {} substituions detected.".format(n_substitutions))
     say("    {} runs to be joined.".format(len(initial_params)))
 
+    if (newconfig["initial_RLO_fix"]):
+        say("Determine initial RLO boundary from all grids")
+        detected_initial_RLO = []
+        colnames = ["termination_flag_1", "termination_flag_2", "interpolation_class"]
+        valtoset = ["forced_initial_RLO", "forced_initial_RLO", "initial_MT"]
+        for grid in grids:
+            new_detected_initial_RLO = get_detected_initial_RLO(grid)
+            for new_sys in new_detected_initial_RLO:
+                for sys in detected_initial_RLO:
+                    # check whether there are double entries
+                    if (abs(sys["star_1_mass"]-new_sys["star_1_mass"])<1.0e-5 and
+                        abs(sys["star_2_mass"]-new_sys["star_2_mass"])<1.0e-5):
+                        # if so, replace old entry if the new one has a larger period
+                        if sys["period_days"]<new_sys["period_days"]:
+                            sys = new_sys.copy()
+                    else:
+                        # otherwise add new entry
+                        detected_initial_RLO.append(new_sys)
+                if len(detected_initial_RLO)<1:
+                    detected_initial_RLO.append(new_sys)
+    
     say("Opening new file...")
     # open new HDF5 file and start copying runs
     driver_args = {} if "%d" not in output_path else {
@@ -2088,6 +2109,25 @@ def join_grids(input_paths, output_path,
             new_mesa_dirs.append(grid.MESA_dirs[run_index])
             new_initial_values.append(grid.initial_values[run_index])
             new_final_values.append(grid.final_values[run_index])
+            
+            if (newconfig["initial_RLO_fix"]):
+                flag1 = new_final_values[-1]["termination_flag_1"]
+                if (flag1 != "Terminate because of overflowing initial model" and 
+                    flag1 != "forced_initial_RLO"):
+                    mass1 = new_initial_values[-1]["star_1_mass"]
+                    mass2 = new_initial_values[-1]["star_2_mass"]
+                    period = new_initial_values[-1]["period_days"]
+                    nearest = get_nearest_known_initial_RLO(mass1, mass2,
+                                                        detected_initial_RLO)
+                    if period<nearest["period_days"]:
+                        #set values
+                        for colname, value in zip(colnames, valtoset):
+                            new_final_values[-1][colname] = value
+                        #copy values from nearest known system
+                        for colname in ["termination_flag_3",
+                                        "termination_flag_4"]:
+                            if colname in nearest:
+                                new_final_values[-1][colname]=nearest[colname]
 
             for subarray in ['binary_history', 'history1', 'history2',
                              'final_profile1', 'final_profile2']:
