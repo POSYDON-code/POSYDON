@@ -217,7 +217,7 @@ def slurm_job(job_name,
             f.write(f"#SBATCH --output={PATH}/logs/post_processing_%a.out\n")
             f.write(f"export PATH_TO_POSYDON={PATH_TO_POSYDON}\n")
 
-        if job_name == 'step_7':
+        if job_name == 'step_6':
             f.write(f"#SBATCH --output={PATH}/logs/train_interpolators_%a.out\n")
 
         if job_name == 'step_7':
