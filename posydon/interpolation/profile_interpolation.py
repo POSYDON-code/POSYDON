@@ -215,7 +215,35 @@ class ProfileInterpolator:
             myattrs = pickle.load(f)
             for key in myattrs:
                 setattr(self, key, myattrs[key])
+    
+    def mono_decrease(self,profiles):
+        """Enforce monotonicity in profiles such as density that must monotonically decrease
+        Args:
+            profiles (array-like) : N profiles to be post-processed for monotonicity
+        Returns:
+            profiles_mono (array-like) : post-processed profiles
+        """
+        
+        def mono_renorm(arr):
+            arr_copy = arr.copy()
+            # force rising points down
+            for i in range(1,len(arr_copy)):
+                if arr_copy[i]-arr_copy[i-1]>0:
+                    arr_copy[i]=arr_copy[i-1]
+            # cut off points below surface value
+            low = np.where(arr_copy<arr[-1])[0]
+            arr_copy[low] = arr[-1]
+            return arr_copy
+        
+        profiles_copy=profiles.copy()
+        
+        for i in range(len(profiles)):
+            if len(np.where(profiles[i][1:]-profiles[i][:-1]>0)[0]>0):
+                profiles_copy[i] = mono_renorm(profiles[i])
                 
+        return profiles_copy
+
+    
 class Density:
 
     def __init__(self,initial,profiles,valid_initial,valid_profiles,interpolator,n_comp=8):
