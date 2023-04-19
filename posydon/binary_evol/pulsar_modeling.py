@@ -145,18 +145,18 @@ class Pulsar:
         self.alive_state = self.is_alive()
 
 
-    def CE_evolve(self):
+    def CE_evolve(self, T):
         '''
         Evolve a pulsar during common envelope.
 
         Parameters
         ----------
+        T: the age of the NS when CE begins [s]
         ''' 
         delta_M = 0.1*const.Msun  ## assume amount of mass accreted during CE = 0.1 Msun
     
         ## params needed for RLO evolve, assume CE phase is instantaneous
-        delta_t = 0     
-        T = 0           
+        delta_t = 0               
 
         self.RLO_evolve(delta_t, T, delta_M)
 
