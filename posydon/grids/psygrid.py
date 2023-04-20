@@ -1989,7 +1989,7 @@ def join_grids(input_paths, output_path,
     """Join two or more PSyGrid HDF5 files into one."""
     def say(something):
         if verbose:
-            print(something, flush=True)
+            print(something)
 
     # open the grids, and figure out the configuration of the new joined grid
     grids = []
@@ -2060,7 +2060,6 @@ def join_grids(input_paths, output_path,
         valtoset = ["forced_initial_RLO", "forced_initial_RLO", "initial_MT"]
         for grid in grids:
             new_detected_initial_RLO = get_detected_initial_RLO(grid)
-            say(new_detected_initial_RLO)
             for new_sys in new_detected_initial_RLO:
                 e = False
                 for sys in detected_initial_RLO:
@@ -2074,7 +2073,6 @@ def join_grids(input_paths, output_path,
                 # add non existing new entry
                 if not e:
                     detected_initial_RLO.append(new_sys)
-            say(detected_initial_RLO)
     
     say("Opening new file...")
     # open new HDF5 file and start copying runs
