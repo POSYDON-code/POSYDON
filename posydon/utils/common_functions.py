@@ -1331,18 +1331,18 @@ def flip_stars(binary):
     setattr(binary, 'state_history', state_history.tolist())
 
     event_history = np.array(getattr(binary, 'event_history'))
-    cond_CC2 = event_history == 'CC1_start'
-    cond_CC1 = event_history == 'CC2_start'
-    event_history[cond_CC2] = 'CC2_start'
-    event_history[cond_CC1] = 'CC1_start'
+    cond_CC2_start = event_history == 'CC1_start'
+    cond_CC1_start = event_history == 'CC2_start'
+    event_history[cond_CC2_start] = 'CC2_start'
+    event_history[cond_CC1_start] = 'CC1_start'
     cond_oRLO2 = event_history == 'oRLO1'
     cond_oRLO1 = event_history == 'oRLO2'
     event_history[cond_oRLO2] = 'oRLO2'
     event_history[cond_oRLO1] = 'oRLO1'
-    cond_oCE2 = event_history == 'CE1_start'
-    cond_oCE1 = event_history == 'CE2_start'
-    event_history[cond_oCE2] = 'CE2_start'
-    event_history[cond_oCE1] = 'CE1_start'
+    cond_CE2_start = event_history == 'CE1_start'
+    cond_CE1_start= event_history == 'CE2_start'
+    event_history[cond_CE2_start] = 'CE2_start'
+    event_history[cond_CE1_start] = 'CE1_start'
     setattr(binary, 'event_history', event_history.tolist())
 
     for i in ['t_sync_rad_', 't_sync_conv_', 'rl_relative_overflow_']:
