@@ -9,9 +9,9 @@ __authors__ = [
 ]
 
 import numpy as np
-from posydon.binary_evol.binarystar import BINARYPROPERTIES
-from posydon.binary_evol.singlestar import STARPROPERTIES
-import posydon.utils.constants as constants
+
+from posydon.utils import constants as const
+from posydon.utils.common_functions import CO_radius
 
 
 """
@@ -38,90 +38,144 @@ class Pulsar:
 
     def __init__(self, star):
         '''
-        Construct a PulsarBinary object, which is comprised of two Pulsar objects.
+        Construct a Pulsar object.
 
         Parameters
         ------------
         star: SingleStar object corresponding to the pulsar
         '''
 
-        def draw_NS_spin():
-            '''
-            Draw the initial NS spin angular frequency Omega from a uniform random distribution.
-            Range is 0.1 - 2.0 seconds for pulse period P.
-            Omega = 2*pi/P
-            '''
-            return np.random.uniform(2*np.pi/.1, 2*np.pi/2) ## units are in 1/s
+        
+        NS_RADIUS = CO_radius(star.mass, "NS")*const.Rsun    ## POSYDON constant for NS radius [cm] 
 
-        def draw_NS_Bfield():
-            '''
-            Draw the initial NS B-field from a uniform random distribution.
-            Range is 10^11.5 - 10^13.8 Gauss.
-            '''
-            return np.random.uniform(3.16e11, 6.31e13) ## units are in Gauss 
+        self.mass = star.mass*const.Msun                      ## mass of the NS [g]
+        self.radius = NS_RADIUS                               ## radius of the NS [cm]
+        self.moment_inertia = self.calc_moment_of_inertia()   ## moment of inertia of the NS
+        ## Note: Because the NS radius is constant, moment of inertia should also be constant throughout NS evolution
 
-        def calculate_NS_radius():
-            '''
-            Using NS mass-radius relationship from Kiel et al. (2008)
-            The original equation takes uses solar units
-            Here, we have returned the radius in km
-            '''
-            return 2.126*10**-5*(star.mass**(-1/3))*constants.Rsun*10**-5
+        self.spin = self.draw_NS_spin()          ## NS spin angular frequency [1/s]
+        self.Bfield = self.draw_NS_Bfield()      ## NS magnetic field [G]
 
-        def calculate_moment_of_inertia():
-           '''
-           Calculate moment of intertia for the neutron star
-           Using relation given in Kiel et al. (2008)
-           Here, we have returned the moment of inertia in CGS units
-           '''
-
-           I_0 = star.mass*((self.radius*10**5/constants.Rsun)**2)
-           I_1 = 2.42*10**(-6)*star.mass/(self.radius*10**5/constants.Rsun)
-           I_2 = 2.9*10**(-12)*(star.mass/(self.radius*10**5/constants.Rsun))**2
-
-           I = (2/7)*I_0*(1-I_1-I_2)**(-1)
-
-           return I*constants.Msun*(constants.Rsun**2)
-
-
-        self.spin = draw_NS_spin()                                 ## NS spin angular frequency
-        self.Bfield = draw_NS_Bfield()                             ## NS magnetic field (G)
-        self.mass = star.mass                                      ## Initial mass of the NS (M_sun)
-        self.radius = calculate_NS_radius()                        ## Radius calculated using an M-R relation (km)
-        self.moment_of_inertia = calculate_moment_of_inertia()     ## Moment of inertia (g cm^2)
-
-    
-    
-    def detached_evolve(self, binary):
+        self.alive_state = self.is_alive()
+ 
+        
+    def draw_NS_spin(self):
         '''
-        Evolve a pulsar from start to finish.
+        Draw the initial NS spin angular frequency Omega [1/s] from a uniform random distribution.
+        Range is 0.1-2.0 sec for pulse period P.
+        Omega = 2*pi/P
+        '''
+        return np.random.uniform(2*np.pi/.1, 2*np.pi/2) 
+
+    def draw_NS_Bfield(self):
+        '''
+        Draw the initial NS B-field [G] from a uniform random distribution.
+        Range is 10^11.5 - 10^13.8 Gauss.
+        '''
+        return np.random.uniform(3.16e11, 6.31e13)
+    
+    def calc_moment_of_inertia(self):
+        '''
+        Calculate the moment of intertia of the NS in g*cm^2
+        Eq. from Kiel et al. 2008 is in solar units
+        '''
+        M = self.mass/const.Msun       ## mass of the NS [Msun] 
+        R = self.radius/const.Rsun     ## radius of the NS [Rsun]
+
+        return 2/7 * (1 - 2.42e-6*M/R - 2.9e-12*M**2/R**2)**-1 * M*R**2 * (const.Msun*const.Rsun**2)
+    
+    def detached_evolve(self, delta_t):
+        '''
+        Evolve a pulsar during detached evolution.
 
         Parameters
         ----------
-        binary: BinaryStar object
+        delta_t: the duration of the detached evolution phase [s]
         '''
+        alpha = 45*const.a2rad          ## angle between the axis of rotation and magnetic axis [rad]
+        mu_0 = 1                        ## permeability of free space [has value unity in cgs]
+        B_min = 1e8                     ## minimum Bfield strength at which Bfield decay ceases [G]
+        tau_d = 3*1e9*const.secyer      ## B-field decay timescale = 3 Gyr [s]
+
+        I = self.moment_inertia
+        R = self.radius
+        B_i = self.Bfield
+
+        ## evolve the NS B-field
+        B_f = (B_i - B_min) * np.exp(-delta_t/tau_d) + B_min
+        self.Bfield = B_f
+
+        ## evolve the NS spin
+        A = 8*np.pi*R**6*np.sin(alpha)**2/(3*mu_0*const.clight**3*I)
+        omega_f = np.sqrt(1/( A*(B_min**2*delta_t - tau_d*B_min*(B_f - B_i) - tau_d/2*(B_f**2 - B_i**2)) + 1/self.spin**2)) 
+        self.spin = omega_f
+
+        ## check if pulsar crossed the death line
+        self.alive_state = self.is_alive()
+
     
-    def RLO_evolve(self, binary):
+    def RLO_evolve(self, delta_t, T, delta_M):
         '''
-        Evolve a pulsar from start to finish.
+        Evolve a pulsar during Roche Lobe overflow (RLO).
 
         Parameters
         ----------
-        binary: BinaryStar object
+        delta_t: the duration of the RLO accretion phase [s]
+        T: the age of the NS when RLO begins [s]
+        delta_m: the total amount of mass accreted by the pulsar during RLO [g]
         '''
+        G = const.standard_cgrav     ## gravitational constant [cm^3 g^-1 s^-2]
+        tau_d = 3*1e9*const.secyer   ## B-field decay timescale = 3 Gyr [s]
 
-    def CE_evolve(self, binary):
+        M_i = self.mass              ## mass of the NS before accretion [g]
+        R = self.radius              ## radius of the NS [cm]
+
+        ## evolve the NS spin
+        J_i = M_i*R**2*self.spin     ## spin angular momentum (J) of the NS before accretion
+        
+        omega_k = np.sqrt(G*M_i/R**3)
+        delta_J = delta_M*R**2*omega_k    ## change in J due to accretion
+
+        J_f = J_i + delta_J
+        M_f = M_i + delta_M
+
+        omega_f = J_f/(M_f*R**2)
+        self.spin = omega_f
+
+        ## evolve the NS B-field
+        B_f = self.Bfield/(1 + delta_M/(1e-6*const.Msun)) * np.exp(-(T-delta_t)/tau_d)
+        self.Bfield = B_f
+
+        ## check if pulsar crossed the death line
+        self.alive_state = self.is_alive()
+
+
+    def CE_evolve(self, T):
         '''
-        Evolve a pulsar from start to finish.
+        Evolve a pulsar during common envelope.
 
         Parameters
         ----------
-        binary: BinaryStar object
+        T: the age of the NS when CE begins [s]
+        ''' 
+        delta_M = 0.1*const.Msun  ## assume amount of mass accreted during CE = 0.1 Msun
+    
+        ## params needed for RLO evolve, assume CE phase is instantaneous
+        delta_t = 0               
+
+        self.RLO_evolve(delta_t, T, delta_M)
+
+
+    def is_alive(self):
+        '''
+        Check if the pulsar has crossed the death line.
         ''' 
 
-        ## call RLO_evolve after CE parameters (Delta M) are set
+        P = 2*np.pi/self.spin     ## spin period of the pulsar [s]
+        death_line = 0.17e12
 
-
+        if (self.Bfield/P**2 < death_line): return False
+        else: return True
 
 
 
