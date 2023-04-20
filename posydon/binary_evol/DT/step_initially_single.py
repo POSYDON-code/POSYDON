@@ -53,7 +53,7 @@ LIST_ACCEPTABLE_STATES_FOR_POSTMS = STAR_STATES_H_RICH.copy()
 LIST_ACCEPTABLE_STATES_FOR_POSTHeMS = STAR_STATES_HE_RICH.copy()
 [LIST_ACCEPTABLE_STATES_FOR_POSTHeMS.remove(x) for x in LIST_ACCEPTABLE_STATES_FOR_HeMS]
 
-class initially_single_step(isolated_step):
+class InitiallySingleStep(isolated_step):
     """
     Prepare a runaway star to do an an isolated_step)
     """
@@ -75,7 +75,7 @@ class initially_single_step(isolated_step):
         if binary.state == "initially_single_star":
             binary.star_2 = None
         else:
-            raise ValueError("sent to initially_single_step without the binary.state being initially_single_star")
+            raise ValueError("sent to InitiallySingleStep without the binary.state being initially_single_star")
     
         binary.event == None
 

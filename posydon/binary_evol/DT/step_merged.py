@@ -55,7 +55,7 @@ LIST_ACCEPTABLE_STATES_FOR_POSTHeMS = STAR_STATES_HE_RICH.copy()
 
 
 
-class merged_step(isolated_step):
+class MergedStep(isolated_step):
     """
     Prepare a merging star to do an an isolated_step)
     """
