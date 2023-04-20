@@ -1075,7 +1075,7 @@ def get_binary_state_and_event_and_mt_case(binary, interpolation_class=None,
     if interpolation_class == 'not_converged':
         return [None, None, 'None']
     elif interpolation_class == 'initial_MT':
-        return ['initial_RLOF', 'ZAMS_RLOF', 'None']
+        return ['initial_RLOF', 'None', 'None']
 
     if i is None:
         lg_mtransfer = binary.lg_mtransfer_rate
