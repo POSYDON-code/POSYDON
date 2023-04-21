@@ -447,14 +447,14 @@ class X_H:
                 for i in range(len(indices)):
                     try:
                         diff = np.where(prof[i][1:]-prof[i][:-1]>0.002)[0]
-                        bounds.append(np.array([diff[0],diff[-1]+1])/200+1)
+                        bounds.append(np.array([diff[0]+1,diff[-1]+1])/200)
                         nonflat.append(i)
                     except:
                         bounds.append([np.nan,np.nan])
                 for i in range(len(valid_indices)):
                     try:
                         diff = np.where(valid_prof[i][1:]-valid_prof[i][:-1]>0.002)[0]
-                        valid_bounds.append(np.array([diff[0],diff[-1]+1])/200+1)
+                        valid_bounds.append(np.array([diff[0]+1,diff[-1]+1])/200)
                         valid_nonflat.append(i)
                     except:
                         valid_bounds.append([np.nan,np.nan])
@@ -462,8 +462,8 @@ class X_H:
             else: # the rest of the profile shapes have 1 boundary point
                 outs = 1
                 # calculate the point in each profile with the largest increase
-                bounds = np.argmax(prof[:,1:]-prof[:,:-1],axis=1)/200+1
-                valid_bounds = np.argmax(valid_prof[:,1:]-valid_prof[:,:-1],axis=1)/200+1
+                bounds = (np.argmax(prof[:,1:]-prof[:,:-1],axis=1)+1)/200
+                valid_bounds = (np.argmax(valid_prof[:,1:]-valid_prof[:,:-1],axis=1)+1)/200
             
             # instantiate and train model on bounds
             model = models.Sequential([
@@ -477,15 +477,15 @@ class X_H:
 
             regress = lambda x: model(x)
             model.compile(optimizers.Adam(clipnorm=1),loss=losses.MeanSquaredError())
-            callback = tf.keras.callbacks.EarlyStopping(monitor='loss', patience=30)
+            callback = tf.keras.callbacks.EarlyStopping(monitor='loss', patience=50)
                         
             if state == 'H-rich_Core_H_burning':
                 history = model.fit(inputs[nonflat],np.array(bounds)[nonflat],
-                                    epochs=200,verbose=0,callbacks=[callback],
+                                    epochs=500,verbose=0,callbacks=[callback],
                                     validation_data=(valid_inputs[valid_nonflat],np.array(valid_bounds)[valid_nonflat]))
             else:
                 history = model.fit(inputs,np.array(bounds),
-                                    epochs=200,verbose=0,callbacks=[callback],
+                                    epochs=500,verbose=0,callbacks=[callback],
                                     validation_data=(valid_inputs,np.array(valid_bounds)))
             
             b_models[state] = model
