@@ -9,10 +9,8 @@ __authors__ = [
 ]
 
 import numpy as np
-
 from posydon.utils import constants as const
 from posydon.utils.common_functions import CO_radius
-
 
 """
 References
