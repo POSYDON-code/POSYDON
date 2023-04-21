@@ -34,19 +34,19 @@ MNRAS, 388, 393, doi: 10.1111/j.1365-2966.2008.13402.x
 
 class Pulsar:
 
-    def __init__(self, star):
+    def __init__(self, initial_mass):
         '''
         Construct a Pulsar object.
 
         Parameters
         ------------
-        star: SingleStar object corresponding to the pulsar
+        initial_mass: mass of the NS at birth
         '''
 
         
-        NS_RADIUS = CO_radius(star.mass, "NS")*const.Rsun    ## POSYDON constant for NS radius [cm] 
+        NS_RADIUS = CO_radius(initial_mass, "NS")*const.Rsun    ## POSYDON constant for NS radius [cm] 
 
-        self.mass = star.mass*const.Msun                      ## mass of the NS [g]
+        self.mass = initial_mass*const.Msun                      ## mass of the NS [g]
         self.radius = NS_RADIUS                               ## radius of the NS [cm]
         self.moment_inertia = self.calc_moment_of_inertia()   ## moment of inertia of the NS
         ## Note: Because the NS radius is constant, moment of inertia should also be constant throughout NS evolution

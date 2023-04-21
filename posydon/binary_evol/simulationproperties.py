@@ -14,7 +14,9 @@ __authors__ = [
 
 
 import time
+import numpy as np
 from posydon.utils.constants import age_of_universe
+from posydon.binary_evol.pulsar_modeling import Pulsar
 
 
 class SimulationProperties:
@@ -317,4 +319,47 @@ class PulsarEvolveHooks(EvolveHooks):
 
         Get evolution states from binary.state_history to check for detached, RLO, etc.
         """
-        return binary
+
+        ## for each binary, check either of its components were a NS
+        state_history1 = np.array(binary.star_1.state_history)
+        state_history2 = np.array(binary.star_2.state_history)
+
+        time = binary.time_history
+        step_names = binary.step_names
+
+        for obj_num, state_history in enumerate([state_history1, state_history2]):
+
+            if "NS" in state_history:
+                if obj_num == 0: star = binary.star_1
+                else: star = binary.star_2
+
+                NS_indices = np.where(state_history == "NS")[0]
+                for i in NS_indices:
+
+                    if i == NS_indices[0]: 
+                        pulsar = Pulsar(star.mass_history[i])
+                        birth_time = time[i]
+                        continue
+                      
+                    step_name = step_names[i]
+                    delta_t = time[i] - time[i-1]
+                    T = time[i] - birth_time
+                    
+                    if step_name in ['step_detached', 'step_CO_HeMS', 'step_SN', 'step_dco']:
+                        pulsar.detached_evolve(delta_t)
+                        continue
+
+                    elif step_name == "step_CO_HMS_RLO":
+                        delta_M = star.mass_history[i] - star.mass_history[i-1]
+                        pulsar.RLO_evolve(delta_t, T, delta_M)
+                        continue
+
+                    elif step_name == "step_CE":
+                        pulsar.CE_evolve(T)
+                        continue
+
+                    else:
+                        if step_name == "step_end": continue
+                        print ("you forgot a step")
+            
+            else: continue
