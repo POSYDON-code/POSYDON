@@ -2062,14 +2062,14 @@ def join_grids(input_paths, output_path,
             new_detected_initial_RLO = get_detected_initial_RLO(grid)
             for new_sys in new_detected_initial_RLO:
                 e = False
-                for sys in detected_initial_RLO:
+                for i, sys in enumerate(detected_initial_RLO):
                     # check whether there are double entries
                     if (abs(sys["star_1_mass"]-new_sys["star_1_mass"])<1.0e-5 and
                         abs(sys["star_2_mass"]-new_sys["star_2_mass"])<1.0e-5):
                         e = True
                         # if so, replace old entry if the new one has a larger period
                         if sys["period_days"]<new_sys["period_days"]:
-                            sys = new_sys.copy()
+                            detected_initial_RLO[i] = new_sys.copy()
                 # add non existing new entry
                 if not e:
                     detected_initial_RLO.append(new_sys)
