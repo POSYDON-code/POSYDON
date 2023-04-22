@@ -19,6 +19,7 @@ tf.get_logger().setLevel('ERROR')
 from tensorflow.keras import layers, losses, models, optimizers
 from sklearn.decomposition import PCA
 from scipy.interpolate import interp1d
+import matplotlib.pyplot as plt
 
 
 class CompileData:
@@ -123,13 +124,9 @@ class CompileData:
             
 class ProfileInterpolator:
     
-    def __init__(self, 
-                 interpolator="/projects/b1119/POSYDON/data/POSYDON_data/CO-HeMS/interpolators/linear3c_kNN/grid_0.0142.pkl"):
+    def __init__(self):
         """Interfaces with other classes, trains models and predicts profiles.
-        Args:
-            interpolator (str) : path to '.pkl' file for IF interpolator.
         """
-        self.interpolator = interpolator
         
     def load_profiles(self,filename):
         """Load extracted profile data.
@@ -139,7 +136,7 @@ class ProfileInterpolator:
             self.profiles (array-like) : M profiles for each of N training binaries, shape (N,M,200).
             self.scalars (array-like) : DataFrame containing initial and final conditions for N training binaries.
             self.valid_profiles (array-like) : M profiles for each of N testing binaries, shape (N,M,200).
-            self.scalars (array-like) : DataFrame containing initial and final conditions for N testing binaries.
+            self.valid_scalars (array-like) : DataFrame containing initial and final conditions for N testing binaries.
         """
         with open(filename, 'rb') as f:
             myattrs = pd.read_pickle(f)
@@ -149,8 +146,10 @@ class ProfileInterpolator:
         self.valid_profiles = np.array(self.valid_profiles)
         return self.profiles,self.scalars,self.valid_profiles,self.valid_scalars
     
-    def train(self):
+    def train(self,interpolator):
         """Trains models for density and H mass fraction profile models. 
+        Args:
+            interpolator (str) : path to '.pkl' file for IF interpolator.
         """
         # processing
         linear_initial = np.transpose([
@@ -167,7 +166,7 @@ class ProfileInterpolator:
         h_ind = self.names.index("x_mass_fraction_H")
         self.h = X_H(initial, self.profiles[:,h_ind], self.scalars["s1_state"], 
                    valid_initial, self.valid_profiles[:,h_ind], self.valid_scalars["s1_state"],
-                   self.interpolator)
+                   interpolator)
 
         # instantiate and train density profile model
         dens_ind = self.names.index("logRho")
@@ -175,7 +174,7 @@ class ProfileInterpolator:
                        self.profiles[:,dens_ind],
                        valid_initial,
                        self.valid_profiles[:,dens_ind],
-                       self.interpolator)
+                       interpolator)
         self.dens.train()        
 
     def predict(self,inputs):
