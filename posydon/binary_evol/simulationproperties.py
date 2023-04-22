@@ -320,7 +320,7 @@ class PulsarEvolveHooks(EvolveHooks):
         Get evolution states from binary.state_history to check for detached, RLO, etc.
         """
 
-        ## for each binary, check either of its components were a NS
+        ## for each binary, check if either of its components were a NS
         state_history1 = np.array(binary.star_1.state_history)
         state_history2 = np.array(binary.star_2.state_history)
 

@@ -156,8 +156,15 @@ class Pulsar:
         ----------
         T: the age of the NS when CE begins [s]
         ''' 
+        
         delta_M = 0.1*const.Msun  ## assume amount of mass accreted during CE = 0.1 Msun
-    
+
+        ''' 
+        Draw the mass accreted during a common envelope from a uniform 
+        random distribution in the range [0.04, 0.1]Msun
+        '''
+        # delta_M = np.random.uniform(0.04,0.1)
+
         ## params needed for RLO evolve, assume CE phase is instantaneous
         delta_t = 0               
 
