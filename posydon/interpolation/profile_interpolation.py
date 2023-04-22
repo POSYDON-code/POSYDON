@@ -24,8 +24,7 @@ import matplotlib.pyplot as plt
 
 class CompileData:
 
-    def __init__(self, train_path="/projects/b1119/POSYDON_GRIDS/CO-HMS_RLO/v1/LITE/post_processed_grid_combined_with_rerun_2.h5",
-                 valid_path="/projects/b1119/POSYDON_GRIDS/CO-HMS_RLO/v1/LITE/post_processed_grid_random_combined_with_rerun_2.h5",
+    def __init__(self, train_path, valid_path,
                  profile_names=['radius','logRho', 'x_mass_fraction_H','y_mass_fraction_He',
                                  'z_mass_fraction_metals','omega','energy']):
         """Extracts profile data from '.h5' grid files and saves to file.
@@ -182,14 +181,14 @@ class ProfileInterpolator:
         Args:
             inputs (array-like) : log-space initial conditions of N binaries to predict, shape (N,3).
         Returns:
-            xcoords (array-like) : linear-scale mass enclosed profile coordinates.
+            mass_coords (array-like) : linear-scale mass enclosed profile coordinates.
             density_profiles (array_like) : log-scale density profile coordinates. 
             h_profiles (array_like) : H mass fraction profile coordinates
         """
-        xcoords, density_profiles = self.dens.predict(inputs)
-        xcoords, h_profiles = self.h.predict(inputs)
+        mass_coords, density_profiles = self.dens.predict(inputs)
+        mass_coords, h_profiles = self.h.predict(inputs)
         
-        return xcoords, density_profiles, h_profiles
+        return mass_coords, density_profiles, h_profiles
         
                     
     def save(self, filename):
@@ -328,7 +327,7 @@ class Density:
         Args: 
             inputs (array-like) : log-space initial conditions of N binaries to predict, shape (N,3).
         Returns:
-            xcoords (array-like) : linear-scale mass enclosed profile coordinates.
+            mass_coords (array-like) : linear-scale mass enclosed profile coordinates.
             density_profiles (array_like) : log-scale density profile coordinates.
         """
         # predict PCA weights
@@ -351,9 +350,9 @@ class Density:
         # IF interpolate final mass, construct mass enclosed profile coordinates
         m1_ind = self.model_IF.interpolators[0].out_keys.index("star_1_mass")
         pred_mass = self.model_IF.interpolators[0].test_interpolator(10**inputs)[:,m1_ind]
-        xcoords = np.linspace(0,1,200)*pred_mass[:,np.newaxis] 
+        mass_coords = np.linspace(0,1,200)*pred_mass[:,np.newaxis] 
         
-        return xcoords,density_profiles
+        return mass_coords,density_profiles
 
                 
 class X_H:
@@ -526,7 +525,7 @@ class X_H:
         Args:
             inputs (array-like) : log-space initial conditions of N binaries to predict, shape (N,3).
         Returns:
-            xcoords (array-like) : linear-scale mass enclosed profile coordinates.
+            mass_coords (array-like) : linear-scale mass enclosed profile coordinates.
             h_profiles (array_like) : H mass fraction profile coordinates.
         """
         # IF interpolate H mass fraction values at center, surface; star 1 state
@@ -544,7 +543,7 @@ class X_H:
         # IF interpolate final masses, generate mass enclosed profile coordinates
         m1_ind = self.model_IF.interpolators[0].out_keys.index("star_1_mass")
         pred_mass = self.model_IF.interpolators[0].test_interpolator(10**inputs)[:,m1_ind]
-        xcoords = np.linspace(0,1,200)*pred_mass[:,np.newaxis] 
+        mass_coords = np.linspace(0,1,200)*pred_mass[:,np.newaxis] 
             
-        return xcoords, h_profiles
+        return mass_coords, h_profiles
                 
