@@ -6,6 +6,7 @@ __authors__ = [
 ]
 
 import pickle
+import matplotlib.pyplot as plt
 
 # POSYDON
 from posydon.grids.psygrid import PSyGrid
@@ -19,7 +20,6 @@ tf.get_logger().setLevel('ERROR')
 from tensorflow.keras import layers, losses, models, optimizers
 from sklearn.decomposition import PCA
 from scipy.interpolate import interp1d
-import matplotlib.pyplot as plt
 
 
 class CompileData:
@@ -123,9 +123,14 @@ class CompileData:
             
 class ProfileInterpolator:
     
-    def __init__(self):
+    def __init__(self,load_interpolator=None):
         """Interfaces with other classes, trains models and predicts profiles.
+        Args:
+            load_interpolator (str) : optional path/name of interpolator file to be loaded
         """
+        
+        if load != None:
+            self.load(load_interpolator)
         
     def load_profiles(self,filename):
         """Load extracted profile data.
