@@ -150,10 +150,10 @@ class ProfileInterpolator:
         self.valid_profiles = np.array(self.valid_profiles)
         return self.profiles,self.scalars,self.valid_profiles,self.valid_scalars
     
-    def train(self,interpolator):
+    def train(self,IF_interpolator):
         """Trains models for density and H mass fraction profile models. 
         Args:
-            interpolator (str) : path to '.pkl' file for IF interpolator.
+            IF_interpolator (str) : path to '.pkl' file for IF interpolator.
         """
         # processing
         linear_initial = np.transpose([
@@ -170,7 +170,7 @@ class ProfileInterpolator:
         h_ind = self.names.index("x_mass_fraction_H")
         self.h = X_H(initial, self.profiles[:,h_ind], self.scalars["s1_state"], 
                    valid_initial, self.valid_profiles[:,h_ind], self.valid_scalars["s1_state"],
-                   interpolator)
+                   IF_interpolator)
 
         # instantiate and train density profile model
         dens_ind = self.names.index("logRho")
@@ -178,7 +178,7 @@ class ProfileInterpolator:
                        self.profiles[:,dens_ind],
                        valid_initial,
                        self.valid_profiles[:,dens_ind],
-                       interpolator)
+                       IF_interpolator)
         self.dens.train()        
 
     def predict(self,inputs):
@@ -249,14 +249,14 @@ class ProfileInterpolator:
     
 class Density:
 
-    def __init__(self,initial,profiles,valid_initial,valid_profiles,interpolator,n_comp=8):
+    def __init__(self,initial,profiles,valid_initial,valid_profiles,IF_interpolator,n_comp=8):
         """Creates and trains density profile model.
         Args:
             initial (array-like) : log-space initial conditions for training data. 
             profiles (array-like) : final density profiles for training data. 
             valid_initial (array-like) : log-space initial conditions for testing data. 
             valid_profiles (array-like) : final density profiles for testing data. 
-            interpolator (string) : path to .pkl file for IF interpolator for central density, final mass values.
+            IF_interpolator (string) : path to .pkl file for IF interpolator for central density, final mass values.
             n_comp (int) : number of PCA components. 
         """
         self.n_comp = n_comp
@@ -304,7 +304,7 @@ class Density:
             layers.Dense(1,activation=None)])
         
         self.model_IF = IFInterpolator()
-        self.model_IF.load(filename=interpolator)
+        self.model_IF.load(filename=IF_interpolator)
                 
     def train(self,loss=losses.MeanSquaredError()):
         """Trains NN models. 
@@ -362,7 +362,7 @@ class Density:
                 
 class X_H:
     
-    def __init__(self,initial,profiles,s1,valid_initial, valid_profiles,valid_s1,interpolator):
+    def __init__(self,initial,profiles,s1,valid_initial, valid_profiles,valid_s1,IF_interpolator):
         """Creates and trains H mass fraction profile model.
         Args:
             initial (array-like) : log-space initial conditions for training data.
@@ -371,7 +371,7 @@ class X_H:
             valid_initial (array-like) : log-space initial conditions for testing data.
             valid_profiles (array-like) : final H mass fraction profiles for testing data.
             valid_s1 (array-like) : final star 1 state for testing data.
-            interpolator (string) : path to .pkl file for IF interpolator for central density, final mass values.
+            IF_interpolator (string) : path to .pkl file for IF interpolator for central density, final mass values.
         """
         self.initial = initial
         self.profiles = profiles
@@ -382,7 +382,7 @@ class X_H:
 
         # load IF interpolator
         self.model_IF = IFInterpolator()
-        self.model_IF.load(filename=interpolator)
+        self.model_IF.load(filename=IF_interpolator)
         self.c_ind = self.model_IF.interpolators[0].out_keys.index("S1_center_h1")
         self.s_ind = self.model_IF.interpolators[0].out_keys.index("S1_surface_h1")
         self.interp = self.model_IF.interpolators[0]
