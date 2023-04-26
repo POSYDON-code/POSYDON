@@ -605,6 +605,8 @@ def copy_ini_file(grid, rerun_type, destination, cluster):
         replace_text = "zepei_fix_implicit-afa1860ddf9894aa1d82742ee2a73e8e92acd4a9"
     elif rerun_type == 'opacity_max':
         replace_text = "matthias_PISN-d68228338b91fd487ef5d55c9b6ebb8cc5f0e668"
+    elif rerun_type == 'opacity_max_hms-hms':
+        replace_text = "zepei_fix_implicit-afa1860ddf9894aa1d82742ee2a73e8e92acd4a9"
     elif rerun_type == 'other': # e.g. 'envelope_mass_limit', 'fe_core_infall_limit'
         # this rerun uses the default inlist commit
         return
@@ -630,7 +632,7 @@ def logic_rerun(grid, rerun_type):
     termination_flags=None
     new_mesa_flag = None
 
-    if rerun_type == 'opacity_max':
+    if rerun_type == 'opacity_max' or rerun_type == 'opacity_max_hms-hms':
         termination_flags=['reach cluster timelimit', 'min_timestep_limit']
         new_mesa_flag={'opacity_max' : 0.5}
     elif rerun_type == 'PISN':
