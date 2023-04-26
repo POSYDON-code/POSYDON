@@ -95,6 +95,8 @@ class Pulsar:
         B_min = 1e8                     ## minimum Bfield strength at which Bfield decay ceases [G]
         tau_d = 3*1e9*const.secyer      ## B-field decay timescale = 3 Gyr [s]
 
+        delta_t = delta_t*const.secyer
+
         I = self.moment_inertia
         R = self.radius
         B_i = self.Bfield
@@ -118,15 +120,19 @@ class Pulsar:
 
         Parameters
         ----------
-        delta_t: the duration of the RLO accretion phase [s]
-        T: the age of the NS when RLO begins [s]
-        delta_m: the total amount of mass accreted by the pulsar during RLO [g]
+        delta_t: the duration of the RLO accretion phase [yr]
+        T: the age of the NS when RLO begins [yr]
+        delta_m: the total amount of mass accreted by the pulsar during RLO [Msun]
         '''
         G = const.standard_cgrav     ## gravitational constant [cm^3 g^-1 s^-2]
         tau_d = 3*1e9*const.secyer   ## B-field decay timescale = 3 Gyr [s]
 
         M_i = self.mass              ## mass of the NS before accretion [g]
         R = self.radius              ## radius of the NS [cm]
+
+        delta_M = delta_M*const.Msun
+        delta_t = delta_t*const.secyer
+        T = T*const.secyer
 
         ## evolve the NS spin
         J_i = M_i*R**2*self.spin     ## spin angular momentum (J) of the NS before accretion
@@ -161,6 +167,8 @@ class Pulsar:
 
         # delta_M = np.random.uniform(0.04,0.1)
 
+        T = T*const.secyer
+    
         ## params needed for RLO evolve, assume CE phase is instantaneous
         delta_t = 0               
 
