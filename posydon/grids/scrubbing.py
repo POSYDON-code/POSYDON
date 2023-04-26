@@ -178,8 +178,8 @@ def keep_till_He_depletion(bh, h1, h2, Ystop=1.0e-5):
     if (bh is None) or (h1 is None) or (h2 is None):
         #at least one histroy is missing
         return bh, h1, h2
-    elif (!("age" in bh.dtype.names) or ("star_age" in h1.dtype.names) or
-          !("star_age" in h2.dtype.names)):
+    elif ((not ("age" in bh.dtype.names)) or (not ("star_age" in h1.dtype.names))
+          or (not ("star_age" in h2.dtype.names))):
         #at least one histroy doesn't contain an age column
         return bh, h1, h2
     
@@ -194,7 +194,7 @@ def keep_till_He_depletion(bh, h1, h2, Ystop=1.0e-5):
     else:
         depleted2 = False
 
-    if !depleted1 and !depleted2:
+    if (not depleted1) and (not depleted2):
         #none of the stars reached He depletion
         return bh, h1, h2
     
