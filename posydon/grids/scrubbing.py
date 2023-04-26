@@ -3,6 +3,7 @@
 
 __authors__ = [
     "Konstantinos Kovlakas <Konstantinos.Kovlakas@unige.ch>",
+    "Matthias Kruckow <Matthias.Kruckow@unige.ch>",
 ]
 
 
@@ -150,5 +151,77 @@ def keep_after_RLO(bh, h1, h2):
         new_h1["star_age"] -= age_to_remove
     if new_h2 is not None and "star_age" in new_h2.dtype.names:
         new_h2["star_age"] -= age_to_remove
+
+    return new_bh, new_h1, new_h2
+
+
+def keep_till_He_depletion(bh, h1, h2, Ystop=1.0e-5):
+    """Scrub histories to stop at He depletion.
+
+    Parameters
+    ----------
+    bh : array
+        The `binary_history` array.
+    h1 : array
+        The `history1` array.
+    h2 : array
+        The `history2` array.
+
+    Returns
+    -------
+    tuple or arrays, or None
+        The binary, history1 and history2 arrays after removing the final
+        steps after He depletion. If He depletion is not reached the
+        histories will be returned unchanged.
+
+    """
+    if (bh is None) or (h1 is None) or (h2 is None):
+        #at least one histroy is missing
+        return bh, h1, h2
+    elif (!("age" in bh.dtype.names) or ("star_age" in h1.dtype.names) or
+          !("star_age" in h2.dtype.names)):
+        #at least one histroy doesn't contain an age column
+        return bh, h1, h2
+    
+    h1_colnames = h1.dtype.names
+    if "center_he4" in h1_colnames:
+        depleted1 = (h1["center_he4"][-1]<Ystop)
+    else:
+        depleted1 = False
+    h2_colnames = h2.dtype.names
+    if "center_he4" in h2_colnames:
+        depleted2 = (h2["center_he4"][-1]<Ystop)
+    else:
+        depleted2 = False
+
+    if !depleted1 and !depleted2:
+        #none of the stars reached He depletion
+        return bh, h1, h2
+    
+    if depleted1:
+        where_conditions_met1 = np.where(h1["center_he4"]<Ystop)[0]
+        if len(where_conditions_met1) == 0:
+            warnings.warn("No He depletion found in h1, while expected.")
+            return bh, h1, h2
+        last_index = where_conditions_met[0]
+    if depleted2:
+        where_conditions_met2 = np.where(h2["center_he4"]<Ystop)[0]
+        if len(where_conditions_met2) == 0:
+            warnings.warn("No He depletion found in h2, while expected.")
+            return bh, h1, h2
+        if depleted1:
+            #both stars went beyond He depletion
+            last_index2 = where_conditions_met2[0]
+            age_He_depletion1 = h1["star_age"][last_index]
+            age_He_depletion2 = h2["star_age"][last_index2]
+            if age_He_depletion1>age_He_depletion2:
+                #take star which reached He depletion first
+                last_index = last_index2
+        else:
+            last_index = where_conditions_met2[0]
+    
+    new_bh = bh[:last_index]
+    new_h1 = h1[:last_index]
+    new_h2 = h2[:last_index]
 
     return new_bh, new_h1, new_h2
