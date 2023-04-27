@@ -129,7 +129,7 @@ class ProfileInterpolator:
             load_interpolator (str) : optional path/name of interpolator file to be loaded
         """
         
-        if load != None:
+        if load_interpolator != None:
             self.load(load_interpolator)
         
     def load_profiles(self,filename):
