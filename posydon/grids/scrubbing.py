@@ -166,10 +166,12 @@ def keep_till_He_depletion(bh, h1, h2, Ystop=1.0e-5):
         The `history1` array.
     h2 : array
         The `history2` array.
+    Ystop : float
+        The He abundance threshold for depletion
 
     Returns
     -------
-    tuple or arrays, or None
+    tuple
         The binary, history1 and history2 arrays after removing the final
         steps after He depletion. If He depletion is not reached the
         histories will be returned unchanged.
@@ -177,11 +179,10 @@ def keep_till_He_depletion(bh, h1, h2, Ystop=1.0e-5):
     """
     if (bh is None) or (h1 is None) or (h2 is None):
         #at least one histroy is missing
-        return bh, h1, h2
-    elif ((not ("age" in bh.dtype.names)) or (not ("star_age" in h1.dtype.names))
-          or (not ("star_age" in h2.dtype.names))):
+        return bh, h1, h2, ''
+    elif (not ("age" in bh.dtype.names)):
         #at least one histroy doesn't contain an age column
-        return bh, h1, h2
+        return bh, h1, h2, ''
     
     h1_colnames = h1.dtype.names
     if "center_he4" in h1_colnames:
@@ -196,32 +197,41 @@ def keep_till_He_depletion(bh, h1, h2, Ystop=1.0e-5):
 
     if (not depleted1) and (not depleted2):
         #none of the stars reached He depletion
-        return bh, h1, h2
+        return bh, h1, h2, ''
     
     if depleted1:
         where_conditions_met1 = np.where(h1["center_he4"]<Ystop)[0]
         if len(where_conditions_met1) == 0:
             warnings.warn("No He depletion found in h1, while expected.")
-            return bh, h1, h2
-        last_index = where_conditions_met[0]
+            return bh, h1, h2, ''
+        last_index = where_conditions_met1[0]
+        newTF1 = 'Primary has depleted central helium'
     if depleted2:
         where_conditions_met2 = np.where(h2["center_he4"]<Ystop)[0]
         if len(where_conditions_met2) == 0:
             warnings.warn("No He depletion found in h2, while expected.")
-            return bh, h1, h2
+            return bh, h1, h2, ''
         if depleted1:
             #both stars went beyond He depletion
             last_index2 = where_conditions_met2[0]
-            age_He_depletion1 = h1["star_age"][last_index]
-            age_He_depletion2 = h2["star_age"][last_index2]
+            if ("star_age" in h1.dtype.names):
+                age_He_depletion1 = h1["star_age"][last_index]
+            else:
+                age_He_depletion1 = bh["age"][last_index]
+            if ("star_age" in h1.dtype.names):
+                age_He_depletion2 = h2["star_age"][last_index2]
+            else:
+                age_He_depletion2 = bh["age"][last_index2]
             if age_He_depletion1>age_He_depletion2:
                 #take star which reached He depletion first
                 last_index = last_index2
+                newTF1 = 'Secondary has depleted central helium'
         else:
             last_index = where_conditions_met2[0]
+            newTF1 = 'Secondary has depleted central helium'
     
     new_bh = bh[:last_index]
     new_h1 = h1[:last_index]
     new_h2 = h2[:last_index]
 
-    return new_bh, new_h1, new_h2
+    return new_bh, new_h1, new_h2, newTF1

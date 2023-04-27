@@ -202,7 +202,8 @@ from posydon.grids.termination_flags import (get_flags_from_MESA_run,
 from posydon.utils.configfile import ConfigFile
 from posydon.utils.common_functions import (orbital_separation_from_period,
                                             initialize_empty_array,
-                                            infer_star_state)
+                                            infer_star_state,
+                                            THRESHOLD_CENTRAL_ABUNDANCE)
 from posydon.utils.gridutils import (read_MESA_data_file, read_EEP_data_file,
                                      add_field, join_lists, fix_He_core)
 from posydon.visualization.plot2D import plot2D
@@ -634,6 +635,7 @@ class PSyGrid:
             # Select the ith run
             run = grid.runs[i]
             ignore_data = False    # if failed run, do not save any data
+            newTF1 = ''
             self._say('Processing {}'.format(run.path))
 
             # Restrict number of runs if limit is set inside config
@@ -757,8 +759,8 @@ class PSyGrid:
                 # check whether stop at He depletion is requested
                 if stop_at_He_depletion:
                     kept = keep_till_He_depletion(binary_history, history1,
-                                                  history2, 0.01)
-                    binary_history, history1, history2 = kept
+                                         history2, THRESHOLD_CENTRAL_ABUNDANCE)
+                    binary_history, history1, history2, newTF1 = kept
                     
                 # check whether start at RLO is requested, and chop the history
                 if start_at_RLO:
@@ -945,7 +947,7 @@ class PSyGrid:
                     termination_flags = get_flags_from_MESA_run(
                         run.out_txt_path, binary_history=binary_history,
                         history1=history1, history2=history2,
-                        start_at_RLO=start_at_RLO)
+                        start_at_RLO=start_at_RLO, newTF1=newTF1)
             else:
                 if ignore_data:
                     termination_flags = [ignore_reason] * N_FLAGS_SINGLE

@@ -13,6 +13,8 @@ import numpy as np
 
 TF1_POOL_STABLE = ['Primary has depleted central carbon',
                    'Secondary has depleted central carbon',
+                   'Primary has depleted central helium',
+                   'Secondary has depleted central helium',
                    'Primary enters pair-instability regime',
                    'Secondary enters pair-instability regime',
                    'Primary enters pulsational pair-instability regime',
