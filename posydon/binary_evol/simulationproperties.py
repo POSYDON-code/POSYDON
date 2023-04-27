@@ -311,42 +311,28 @@ class PrintStepInfoHooks(EvolveHooks):
         return binary
     
 
-class PulsarEvolveHooks(EvolveHooks):
+class PulsarHooks(EvolveHooks):
 
-    def post_evolve(self, binary):
-        """
-        Using the binary history, recreate any pulsar evolution.
-        Must be used with the step_names hook
-        extra_columns=['pulsar_spin', 'pulsar_Bfield', 'pulsar_alive'] for S1, S2 kwargs 
-
-        Get evolution states from binary.state_history to check for detached, RLO, etc.
-        """
-
-        ## for each binary, check either of its components were a NS
-        state_history1 = np.array(binary.star_1.state_history)
-        state_history2 = np.array(binary.star_2.state_history)
-
-        time = binary.time_history
-        step_names = binary.step_names
-
-        for obj_num, state_history in enumerate([state_history1, state_history2]):
-            print ("Pulsar evolution for star_" + str(obj_num+1))
-
-            if obj_num == 0: star = binary.star_1
-            else: star = binary.star_2
-
-            star.pulsar_spin = []
-            star.pulsar_Bfield = []
-            star.pulsar_alive = []
+    def get_pulsar_history(self, binary, star):
+            """
+            Get the pulsar evolution history for a SingleStar object.
+            """
+            state_history = np.array(star.state_history)
+            time = binary.time_history
+            step_names = binary.step_names
+            
+            pulsar_spin = []
+            pulsar_Bfield = []
+            pulsar_alive = []
 
             if "NS" in state_history:
                    
                 NS_indices = np.where(state_history == "NS")[0]
                 NS_start = NS_indices[0]
 
-                star.pulsar_spin.extend(np.full(len(state_history[:NS_start]), np.nan))
-                star.pulsar_Bfield.extend(np.full(len(state_history[:NS_start]), np.nan))
-                star.pulsar_alive.extend(np.full(len(state_history[:NS_start]), np.nan))
+                pulsar_spin.extend(np.full(len(state_history[:NS_start]), np.nan))
+                pulsar_Bfield.extend(np.full(len(state_history[:NS_start]), np.nan))
+                pulsar_alive.extend(np.full(len(state_history[:NS_start]), False))
 
                 for i in NS_indices:
 
@@ -358,17 +344,12 @@ class PulsarEvolveHooks(EvolveHooks):
                         pulsar = Pulsar(star.mass_history[i])
                         birth_time = time[i]
                         T = time[i] - birth_time
-                        print (step_name, 2*np.pi/pulsar.spin, np.log10(pulsar.Bfield), "(pulsar birth)")
      
                     elif step_name in ['step_detached', 'step_SN', 'step_dco']:
                         pulsar.detached_evolve(delta_t)
-                        print (step_name, 2*np.pi/pulsar.spin, np.log10(pulsar.Bfield))
-                        print ("delta_t:", delta_t)
 
                     elif step_name == "step_CO_HMS_RLO":   
                         pulsar.RLO_evolve(delta_t, T, delta_M)
-                        print ("delta_t:", delta_t, "T:", T, "delta_M:", delta_M)
-                        print (step_name, 2*np.pi/pulsar.spin, np.log10(pulsar.Bfield))
 
                     elif step_name == 'step_CO_HeMS':
                         if delta_M > 0:
@@ -378,22 +359,28 @@ class PulsarEvolveHooks(EvolveHooks):
 
                     elif step_name == "step_CE":
                         pulsar.CE_evolve(T)
-                        print ("T:", T)
-                        print (step_name, 2*np.pi/pulsar.spin, np.log10(pulsar.Bfield))
 
-                    else:
-                        #if step_name == "step_end": continue
-                        print ("you forgot a step: ", step_name)
+                    pulsar_spin.append(pulsar.spin)
+                    pulsar_Bfield.append(pulsar.Bfield)
+                    pulsar_alive.append(pulsar.is_alive())
+                           
+            else:
+                pulsar_spin.extend(np.full(len(state_history), np.nan))
+                pulsar_Bfield.extend(np.full(len(state_history), np.nan))
+                pulsar_alive.extend(np.full(len(state_history), False))
 
-                    star.pulsar_spin.append(pulsar.spin)
-                    star.pulsar_Bfield.append(pulsar.Bfield)
-                    star.pulsar_alive.append(pulsar.is_alive())
-                
-                print (star.pulsar_spin, star.pulsar_Bfield, star.pulsar_alive)
+            return pulsar_spin, pulsar_Bfield, pulsar_alive
+
+    def post_evolve(self, binary):
+        """
+        Using the binary history, recreate any pulsar evolution.
+        Must be used with the step_names hook
+        extra_columns=['pulsar_spin', 'pulsar_Bfield', 'pulsar_alive'] for S1, S2 kwargs 
+
+        Get evolution states from binary.state_history to check for detached, RLO, etc.
+        """   
+        binary.star_1.pulsar_spin, binary.star_1.pulsar_Bfield, binary.star_1.pulsar_alive = self.get_pulsar_history(binary, binary.star_1)
+        binary.star_2.pulsar_spin, binary.star_2.pulsar_Bfield, binary.star_2.pulsar_alive = self.get_pulsar_history(binary, binary.star_2)
+        
+
             
-            else: 
-
-                star.pulsar_spin.extend(np.full(len(state_history), np.nan))
-                star.pulsar_Bfield.extend(np.full(len(state_history), np.nan))
-                star.pulsar_alive.extend(np.full(len(state_history), np.nan))
-                print (star.pulsar_spin, star.pulsar_Bfield, star.pulsar_alive)
