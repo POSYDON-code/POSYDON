@@ -757,7 +757,7 @@ class PSyGrid:
                 # check whether stop at He depletion is requested
                 if stop_at_He_depletion:
                     kept = keep_till_He_depletion(binary_history, history1,
-                                                  history2)
+                                                  history2, 0.01)
                     binary_history, history1, history2 = kept
                     
                 # check whether start at RLO is requested, and chop the history
