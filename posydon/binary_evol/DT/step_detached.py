@@ -967,7 +967,7 @@ class detached_step :
                 raise Exception("State not recognized!")
 
 
-        def get_star_data(binary, star1, star2, htrack, co):
+        def get_star_data(binary, star1, star2, htrack, co, copy_prev_m0=None, copy_prev_t0=None):
             """Get and interpolate the properties of stars.
 
             The data of a compact object can be stored as a copy of its
@@ -999,6 +999,8 @@ class detached_step :
                 if binary.event == 'ZAMS':
                     # ZAMS stars in wide (non-mass exchaging binaries) that are directed to detached step at birth
                     m0, t0 = star1.mass, 0
+                elif co:
+                    m0, t0 = copy_prev_m0, copy_prev_t0
                 else:
                     t_before_matching = time.time()
                     m0, t0 = self.match_to_single_star(star1, htrack)
@@ -1011,7 +1013,7 @@ class detached_step :
                 #    binary.state += " (GridMatchingFailed)"
                 #    if self.verbose:
                 #        print("Failed matching")
-                return None
+                return None, None, None
 
             max_time = binary.properties.max_simulation_time
             assert max_time > 0.0, "max_time is non-positive"
@@ -1065,18 +1067,18 @@ class detached_step :
                 interp1d["R"] = PchipInterpolator(age, kvalue["R"])
                 interp1d["mdot"] = PchipInterpolator(age, kvalue["mdot"])
                 interp1d["Idot"] = PchipInterpolator(age, kvalue["mdot"])
-            return interp1d
+            return interp1d, m0, t0
 
         # get the matched data of two stars, respectively
-        interp1d_sec = get_star_data(
-            binary, secondary, primary, secondary.htrack, False)
+        interp1d_sec, m0, t0 = get_star_data(
+            binary, secondary, primary, secondary.htrack, co=False)
         if (primary.co) or (self.non_existent_companion != 0):
             # copy the secondary star except mass which is of the primary, and radius, mdot, Idot = 0
             interp1d_pri = get_star_data(
-                binary, secondary, primary, secondary.htrack, True)
+                binary, secondary, primary, secondary.htrack, co=True,  copy_prev_m0=m0, copy_prev_t0 = t0)[0]
         elif not primary.co:
             interp1d_pri = get_star_data(
-                binary, primary, secondary, primary.htrack, False)
+                binary, primary, secondary, primary.htrack, False)[0]
         ##Eirini else
         if interp1d_sec is None or interp1d_pri is None:
             # binary.event = "END"
