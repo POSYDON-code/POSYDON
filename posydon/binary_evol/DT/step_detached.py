@@ -2390,7 +2390,7 @@ def diffeq(
             # omega/omega_c
             wdivwc_pri = Omega_pri / Omega_crit_pri
             wdivwc_sec = Omega_sec / Omega_crit_sec
-            
+
             gamma_pri = (1 + (wdivwc_pri / 0.072)**2)**0.5
             T0_pri = K * R_pri**3.1 * M_pri**0.5 * gamma_pri**(-2 * 0.22)
             gamma_sec = (1 + (wdivwc_sec / 0.072)**2)**0.5

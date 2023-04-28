@@ -33,7 +33,7 @@ import posydon.utils.constants as const
 from posydon.binary_evol.DT.step_detached import detached_step
 
 
-class isolated_step(detached_step):
+class IsolatedStep(detached_step):
     """Evolve an isolated star (a single star, a merger product, a runaway star, etc.)
 
     The star will be matched in the beginning of the step and will be evolved
@@ -77,7 +77,7 @@ class isolated_step(detached_step):
         """
 
         self.initialize_isolated_binary_orbit(binary)
-        
+
         if binary.state == 'initially_single_star' or binary.star_1 == None or binary.star_2 == None:
         #if binary.star_1 == None or binary.star_2 == None: # already one star became None in step_merged or step_initially_single
             pass
