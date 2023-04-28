@@ -186,12 +186,18 @@ def keep_till_He_depletion(bh, h1, h2, Ystop=1.0e-5):
     
     h1_colnames = h1.dtype.names
     if "center_he4" in h1_colnames:
-        depleted1 = (h1["center_he4"][-1]<Ystop)
+        if len(h1["center_he4"])>0:
+            depleted1 = (h1["center_he4"][-1]<Ystop)
+        else:
+            depleted1 = False
     else:
         depleted1 = False
     h2_colnames = h2.dtype.names
     if "center_he4" in h2_colnames:
-        depleted2 = (h2["center_he4"][-1]<Ystop)
+        if len(h2["center_he4"])>0:
+            depleted2 = (h2["center_he4"][-1]<Ystop)
+        else:
+            depleted2 = False
     else:
         depleted2 = False
 
