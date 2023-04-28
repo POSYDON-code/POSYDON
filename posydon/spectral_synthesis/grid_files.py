@@ -35,9 +35,12 @@ GRID_DIR = os.path.join(MSG_DIR, 'data', 'grids')
 #name is string: 
 #The available grids so far are: 
 # 'sg-CAP18-coarse.h5' , 'sg-BSTAR2006-medium.h5','sg-Gotberg18.h5','sg-OSTAR2002-medium.h5'
-
+s
 def specgrid(name):
     specgrid_file_normal = os.path.join(GRID_DIR, name)
     return specgrid = pymsg.SpecGrid(specgrid_file_normal)
 
+class spectral_grids():
+    def __init__(normal_grid_file="sg-CAP18-coarse.h5",secondary_grid_file="sg-BSTAR2006-medium.h5",stripped_grid_file = "sg-Gotberg18.h5",ostar_grid_file = "sg-OSTAR2002-medium.h5"):
+        pass 
 
