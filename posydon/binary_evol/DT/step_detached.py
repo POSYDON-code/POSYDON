@@ -15,6 +15,7 @@ __authors__ = [
 
 import os
 import numpy as np
+import time
 from scipy.integrate import solve_ivp
 from scipy.interpolate import PchipInterpolator
 from scipy.optimize import minimize
@@ -602,7 +603,6 @@ class detached_step :
             the properties of the secondary.
 
         """
-        t_before_matching = time.time()
         if htrack:
             self.grid = self.grid_Hrich
         else:
@@ -870,7 +870,6 @@ class detached_step :
 
     def __call__(self, binary):
         """Evolve the binary until RLO or compact object formation."""
-        match_to_single_star = self.match_to_single_star
         KEYS = self.KEYS
         KEYS_POSITIVE = self.KEYS_POSITIVE
 
@@ -999,9 +998,14 @@ class detached_step :
                 # get the initial m0, t0 track
                 if binary.event == 'ZAMS':
                     # ZAMS stars in wide (non-mass exchaging binaries) that are directed to detached step at birth
-                    m0, t0 = star.mass, 0
+                    m0, t0 = star1.mass, 0
                 else:
-                    m0, t0 = match_to_single_star(star1, htrack)
+                    t_before_matching = time.time()
+                    m0, t0 = self.match_to_single_star(star1, htrack)
+                    t_after_matching = time.time()
+                    if self.verbose:
+                        print(f"Matching duration: {t_after_matching-t_before_matching:.6g}")
+
             if np.any(np.isnan([m0, t0])):
                 #    binary.event = "END"
                 #    binary.state += " (GridMatchingFailed)"
@@ -1089,10 +1093,6 @@ class detached_step :
         t_offset_sec = binary.time - t0_sec
         t_offset_pri = binary.time - t0_pri
         max_time = interp1d_sec["max_time"]
-
-        t_after_matching = time.time()
-        if verbose:
-            print(f"Matching duration: {t_after_matching-t_before_matching:.6g}")
 
         @event(True, 1)
         def ev_rlo1(t, y):
@@ -1287,6 +1287,7 @@ class detached_step :
                 elif not primary.co:
                     omega_in_rad_per_year_pri = get_omega(primary)
 
+                t_before_ODEsolution = time.time()
                 try:
                     s = solve_ivp(
                         lambda t, y: diffeq(
@@ -1373,7 +1374,7 @@ class detached_step :
             t_after_ODEsolution = time.time()
 
             if self.verbose:
-                print(f"ODE solver duration: {t_after_ODEsolution-t_after_matching:.6g}")
+                print(f"ODE solver duration: {t_after_ODEsolution-t_before_ODEsolution:.6g}")
                 print("solution of ODE", s)
             if s.status == -1:
                 print("Integration failed", s.message)
