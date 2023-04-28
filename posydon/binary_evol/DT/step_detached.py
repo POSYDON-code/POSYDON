@@ -67,7 +67,7 @@ STAR_STATES_H_RICH = [
 ]
 
 
-class detached_step:
+class detached_step :
     """Evolve a detached binary.
 
     The binary will be evolved until Roche-lobe overflow, core-collapse or
@@ -602,6 +602,7 @@ class detached_step:
             the properties of the secondary.
 
         """
+        t_before_matching = time.time()
         if htrack:
             self.grid = self.grid_Hrich
         else:
@@ -873,6 +874,7 @@ class detached_step:
         KEYS = self.KEYS
         KEYS_POSITIVE = self.KEYS_POSITIVE
 
+
         if binary.star_1 is None: #
             self.non_existent_companion = 1
         if binary.star_2 is None:
@@ -1087,6 +1089,10 @@ class detached_step:
         t_offset_sec = binary.time - t0_sec
         t_offset_pri = binary.time - t0_pri
         max_time = interp1d_sec["max_time"]
+
+        t_after_matching = time.time()
+        if verbose:
+            print(f"Matching duration: {t_after_matching-t_before_matching:.6g}")
 
         @event(True, 1)
         def ev_rlo1(t, y):
@@ -1364,7 +1370,10 @@ class detached_step:
                         # vectorized=True
                     )
 
+            t_after_ODEsolution = time.time()
+
             if self.verbose:
+                print(f"ODE solver duration: {t_after_ODEsolution-t_after_matching:.6g}")
                 print("solution of ODE", s)
             if s.status == -1:
                 print("Integration failed", s.message)
@@ -1817,6 +1826,7 @@ class detached_step:
                 else:
                     binary.event = "maxtime"
                 # binary.event = "MaxTime_exceeded"
+
 
 
 def event(terminal, direction=0):
@@ -2390,7 +2400,7 @@ def diffeq(
             # omega/omega_c
             wdivwc_pri = Omega_pri / Omega_crit_pri
             wdivwc_sec = Omega_sec / Omega_crit_sec
-            
+
             gamma_pri = (1 + (wdivwc_pri / 0.072)**2)**0.5
             T0_pri = K * R_pri**3.1 * M_pri**0.5 * gamma_pri**(-2 * 0.22)
             gamma_sec = (1 + (wdivwc_sec / 0.072)**2)**0.5
