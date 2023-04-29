@@ -478,7 +478,6 @@ class X_H:
                     layers.Dense(10,input_dim=10,activation='tanh'),
                     layers.Dense(outs,input_dim=10,activation="sigmoid")])
 
-            regress = lambda x: model(x)
             model.compile(optimizers.Adam(clipnorm=1),loss=losses.MeanSquaredError())
             callback = tf.keras.callbacks.EarlyStopping(monitor='loss', patience=50)
                         
