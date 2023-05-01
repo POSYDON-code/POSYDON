@@ -682,11 +682,11 @@ class detached_step:
                         (sc_he_core_mass_H.transform(
                           get_track_val(MESA_label[0], htrack, *x))
                          - sc_he_core_mass_H.transform(posydon_attribute[0]))
-                        / sc_he_core_mass_H.transform(posydon_attribute[0]))
-                    ** 2 + ((sc_mass_H.transform(
+                        )
+                    ** 2 + (sc_mass_H.transform(
                         get_track_val(MESA_label[1], htrack, *x))
-                             - sc_mass_H.transform(posydon_attribute[1]))
-                            / sc_mass_H.transform(posydon_attribute[1])) ** 2
+                             - sc_mass_H.transform(posydon_attribute[1])
+                            ) ** 2
                     + (sc_center_he4_H.transform(
                         get_track_val(MESA_label[2], htrack, *x))
                        - sc_center_he4_H.transform(posydon_attribute[2])) ** 2
@@ -696,7 +696,7 @@ class detached_step:
 
                     x0, method="TNC", bounds=bnds,
                     )
-                # match a pro-MT postMS star to a He star
+
                 if (np.abs(sol.fun) > tolerance_mist_integration
                         or not sol.success):
                     star.htrack = False
@@ -717,17 +717,17 @@ class detached_step:
                     sol = minimize(
                         lambda x: (
                             (sc_he_core_mass_He.transform(
-                                get_track_val(MESA_label[0], htrack, *x))
+                                get_track_val(MESA_label[0], star.htrack, *x))
                              - sc_he_core_mass_He.transform(
                                  posydon_attribute[0]))
                             / sc_he_core_mass_He.transform(
                                  posydon_attribute[0])) ** 2
                         + (sc_center_he4_He.transform(
-                            get_track_val(MESA_label[1], htrack, *x))
+                            get_track_val(MESA_label[1], star.htrack, *x))
                            - sc_center_he4_He.transform(
                                  posydon_attribute[1]))
                         ** 2 + (sc_log_R_He.transform(
-                            get_track_val(MESA_label[2], htrack, *x))
+                            get_track_val(MESA_label[2], star.htrack, *x))
                             - sc_log_R_He.transform(
                                  posydon_attribute[2])) ** 2,
                         x0, method="TNC", bounds=bnds,
@@ -738,6 +738,36 @@ class detached_step:
                             / self.get_track_val(
                                 "mass", star.htrack, *sol.x) >= 0.01):
                         initials = (np.nan, np.nan)
+
+                    if (np.abs(sol.fun) > tolerance_mist_integration
+                            or not sol.success):
+                        star.htrack = True
+                        MESA_label = ["he_core_mass", "mass"]
+                        posydon_attribute = [star.he_core_mass,
+                                             star.mass]
+                        rs = [10.0, 20.0]
+                        if self.verbose:
+                            print("Matching attributes and their normalizations : ",
+                                  MESA_label, rs)
+                        for i in MESA_label:
+                            if i not in self.root_keys:
+                                raise Exception("Expected matching parameter not added"
+                                                " in the MIST model options.")
+                        x0 = get_root0(
+                            MESA_label, posydon_attribute, star.htrack, rs=rs)
+                        bnds = ([m_min_He, m_max_He], [0, None])
+                        sol = minimize(
+                            lambda x: (
+                                (sc_he_core_mass_H.transform(
+                                  get_track_val(MESA_label[0], star.htrack, *x))
+                                 - sc_he_core_mass_H.transform(posydon_attribute[0]))
+                                )
+                            ** 2 + (sc_mass_H.transform(
+                                get_track_val(MESA_label[1], star.htrack, *x))
+                                     - sc_mass_H.transform(posydon_attribute[1])
+                                    ) ** 2,
+                            x0, method="TNC", bounds=bnds,
+                            )
                 
             elif star.state in LIST_ACCEPTABLE_STATES_FOR_HeStar:
                 MESA_label = [
