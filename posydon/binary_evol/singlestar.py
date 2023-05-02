@@ -92,8 +92,6 @@ STARPROPERTIES = [
     'profile'  # the profile of the star, including extended information of
                 # its internal structure, for a specific timestep, usually for
                 # the end of the previous step including MESA psygrid.
-    #'spin_NS',          # NS spin in seconds
-    #'B_field_NS',       # NS B-field in Gauss
 ]
 
 # attributes read from single-star grid runs
