@@ -161,7 +161,7 @@ class detached_step :
             matching_method="minimize",
             initial_mass=None,
             rootm=None,
-            verbose=False,
+            verbose=1,
             do_wind_loss=True,
             do_tides=True,
             do_gravitational_radiation=True,
@@ -194,7 +194,7 @@ class detached_step :
         self.list_for_matching_HMS = list_for_matching_HMS
         self.list_for_matching_postMS = list_for_matching_postMS
         self.list_for_matching_HeStar = list_for_matching_HeStar
-
+        
         if verbose:
             print(
                 dt,
@@ -679,7 +679,7 @@ class detached_step :
             for i in range(3,len(list_for_matching)):
                 bnds.append(list_for_matching[i])
 
-            if self.verbose:
+            if self.verbose or self.verbose==1:
                 print("Matching attributes and their normalizations :",
                               MESA_labels, rs)
             for i in MESA_labels:
@@ -716,7 +716,7 @@ class detached_step :
             # 1st, different minimization method
             if (np.abs(sol.fun) > tolerance_matching_integration
                     or not sol.success):
-                if self.verbose:
+                if self.verbose or self.verbose == 1:
                     print("Alternative matching in detached step, 1st step because either",
                             np.abs(sol.fun), ">", tolerance_matching_integration ,
                             " or sol.success = ", sol.success)
@@ -742,7 +742,7 @@ class detached_step :
                 for i in range(3,len(list_for_matching)):
                     bnds.append(list_for_matching[i])
 
-                if self.verbose:
+                if self.verbose or self.verbose == 1:
                     print("Alternative matching in detached step, 2nd step because ",
                             np.abs(sol.fun), ">", tolerance_matching_integration  ,
                             " or sol.success = ", sol.success)
@@ -779,7 +779,7 @@ class detached_step :
                     or not sol.success):
 
                 if star.state in LIST_ACCEPTABLE_STATES_FOR_HeStar:
-                    if self.verbose:
+                    if self.verbose or self.verbose == 1:
                         print("Alternative matching in detached step, 3rd step because ",
                                 np.abs(sol.fun), ">", tolerance_matching_integration  ,
                                 " or sol.success = ", sol.success)
@@ -801,7 +801,7 @@ class detached_step :
                         / self.get_track_val(
                             "mass", star.htrack, *sol.x) >= 0.05):
                 '''
-                if self.verbose:
+                if self.verbose or self.verbose == 1:
                     print("minimization in matching not successful, with",
                           np.abs(sol.fun), ">", tolerance_matching_integration,
                           "tolerance")
@@ -813,7 +813,7 @@ class detached_step :
                 star.stiching_rel_inertia_difference = np.nan
                 '''
             elif np.abs(sol.fun) < tolerance_matching_integration_hard:
-                if self.verbose:
+                if self.verbose or self.verbose == 1:
                     print("minimization in matching considered acceptable,"
                           " with", f'{np.abs(sol.fun):.8f}', "<",
                           tolerance_matching_integration, "tolerance")
@@ -838,7 +838,7 @@ class detached_step :
                 '''
 
 
-        if self.verbose:
+        if self.verbose or self.verbose == 1:
             print(
                 "matching ", star.state, " star with track of intial mass m0, at time t0:",
                 f'{initials[0]:.3f}  [Msun],',
@@ -1005,7 +1005,7 @@ class detached_step :
                     t_before_matching = time.time()
                     m0, t0 = self.match_to_single_star(star1, htrack)
                     t_after_matching = time.time()
-                    if self.verbose:
+                    if self.verbose or self.verbose == 1:
                         print(f"Matching duration: {t_after_matching-t_before_matching:.6g}")
 
             if np.any(np.isnan([m0, t0])):
@@ -1083,7 +1083,7 @@ class detached_step :
         if interp1d_sec is None or interp1d_pri is None:
             # binary.event = "END"
             binary.state += " (GridMatchingFailed)"
-            if self.verbose:
+            if self.verbose or self.verbose == 1:
                 print("Failed matching")
             return
         t0_sec = interp1d_sec["t0"]
@@ -1230,7 +1230,7 @@ class detached_step :
                         10.0 ** star.log_total_angular_momentum
                         / star.total_moment_of_inertia * const.secyer
                 )  # the last factor transforms it from rad/s to rad/yr
-                if self.verbose:
+                if self.verbose and self.verbose != 1:
                     print("calculating initial omega from angular momentum and"
                           " moment of inertia", omega_in_rad_per_year)
             # except TypeError:
@@ -1242,7 +1242,7 @@ class detached_step :
                         and not np.isnan(star.surf_avg_omega)):
                     omega_in_rad_per_year = star.surf_avg_omega * const.secyer
                     # the last factor transforms it from rad/s to rad/yr.
-                    if self.verbose:
+                    if self.verbose and self.verbose != 1:
                         print("calculating initial omega from surf_avg_omega",
                               omega_in_rad_per_year)
                 elif (star.surf_avg_omega_div_omega_crit is not None
@@ -1255,16 +1255,16 @@ class detached_step :
                     # the last factor transforms it from rad/s to rad/yr
                     # EDIT: We assume POSYDON surf_avg_omega is provided in
                     # rad/yr already.
-                    if self.verbose:
+                    if self.verbose and self.verbose != 1:
                         print("calculating initial omega from "
                               "surf_avg_omega_div_omega_crit",
                               omega_in_rad_per_year)
                 else:
                     omega_in_rad_per_year = 0.0
-                    if self.verbose:
+                    if self.verbose and self.verbose != 1:
                         print("could calculate initial omega",
                               omega_in_rad_per_year)
-            if self.verbose:
+            if self.verbose and self.verbose != 1:
                 print("initial omega_in_rad_per_year", omega_in_rad_per_year)
             return omega_in_rad_per_year
 
@@ -1375,7 +1375,7 @@ class detached_step :
 
             t_after_ODEsolution = time.time()
 
-            if self.verbose:
+            if self.verbose and self.verbose!= 1:
                 print(f"ODE solver duration: {t_after_ODEsolution-t_before_ODEsolution:.6g}")
                 print("solution of ODE", s)
             if s.status == -1:
@@ -2000,7 +2000,7 @@ def diffeq(
         # we force a negligible eccentricity to become 0
         # for computational stability
         e = 0.0
-        if verbose:
+        if verbose and self.verbose != 1:
             print("negligible eccentricity became 0 for "
                   "computational stability")
     y[2] = np.max([y[2], 0])  # We limit omega spin to non-negative values
@@ -2029,7 +2029,7 @@ def diffeq(
         da_mt_pri = a * (
                 2 * k12 - 2 * k22 + k32
         )
-        if verbose:
+        if verbose and self.verbose != 1:
             print("da_mt = ", da_mt_sec, da_mt_pri)
 
         da = da + da_mt_sec + da_mt_pri
@@ -2064,7 +2064,7 @@ def diffeq(
             tau_conv_sec = 0.431 * ((M_env_sec * DR_env_sec * Renv_middle_sec
                                      / (3 * L_sec)) ** (1.0 / 3.0))
         else:
-            if verbose:
+            if verbose and self.verbose != 1:
                 print("something wrong with M_env/DR_env/Renv_middle",
                       M_env_sec, DR_env_sec, Renv_middle_sec)
             tau_conv_sec = 1.0e99
@@ -2076,7 +2076,7 @@ def diffeq(
             tau_conv_pri = 0.431 * ((M_env_pri * DR_env_pri * Renv_middle_pri
                                      / (3 * L_pri)) ** (1.0/3.0))
         else:
-            if verbose:
+            if verbose and self.verbose != 1:
                 print("something wrong with M_env/DR_env/Renv_middle",
                       M_env_pri, DR_env_pri, Renv_middle_pri)
             tau_conv_pri = 1.0e99
@@ -2102,7 +2102,7 @@ def diffeq(
                 print("kT_conv_sec is", kT_conv_sec, ", set to 0.")
                 print("kT_conv_pri is", kT_conv_pri, ", set to 0.")
         # this is the 1/timescale of all d/dt calculted below in yr^-1
-        if verbose:
+        if verbose and self.verbose != 1:
             print(
                 "Equilibrium tides in deep convective envelope",
                 M_env_sec,
@@ -2167,7 +2167,7 @@ def diffeq(
         if (R_conv_pri > R_pri or R_conv_pri <= 0.0
                 or conv_mx1_bot_r_pri / R_pri > 0.1):
             E22 = 1.592e-9 * M_pri ** (2.84)
-            if verbose:
+            if verbose and self.verbose != 1:
                 print(
                     "R_conv of the convective core is not behaving well or we "
                     "are not calculating the convective core, we switch to "
@@ -2211,7 +2211,7 @@ def diffeq(
             * E22
             * const.secyer)
         # this is the 1/timescale of all d/dt calculted below in yr^-1
-        if verbose:
+        if verbose and self.verbose != 1:
             print(
                 "Dynamical tides in radiative envelope",
                 conv_mx1_top_r_sec,
@@ -2226,7 +2226,7 @@ def diffeq(
             )
         kT_sec = max(kT_conv_sec, kT_rad_sec)
         kT_pri = max(kT_conv_pri, kT_rad_pri)
-        if verbose:
+        if verbose and self.verbose != 1:
             print("kT_conv/rad of tides is ", kT_conv_sec, kT_rad_sec,
                   kT_conv_pri, kT_rad_pri, "in 1/yr, and we picked the ",
                   kT_sec, kT_pri)
@@ -2527,7 +2527,7 @@ def diffeq(
             print("\"M15\" for Matt et al. 2015")
             print("\"CARB\" for Van & Ivanova 2019")
 
-        if verbose:
+        if verbose and self.verbose != 1:
             print("magnetic_braking_mode = ", magnetic_braking_mode)
             print("dOmega_mb = ", dOmega_mb_sec, dOmega_mb_pri)
             dOmega_sec = dOmega_sec + dOmega_mb_sec
