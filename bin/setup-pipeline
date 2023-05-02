@@ -175,10 +175,12 @@ def slurm_job(job_name,
     path_to_csv_file = os.path.join(PATH,f"{job_name}.csv")
 
     with open(f'{job_name}.slurm', 'w') as f:
-        if 'step' in job_name:
+        if ('step' in job_name) and (len(job_name.split("_")) > 1):
             STEPID = job_name.split("_")[1]
         elif job_name == 'rerun':
             STEPID = 'R'
+        else:
+            STEPID = ''
         f.write("#!/bin/bash\n")
         f.write(f"#SBATCH --account={ACCOUNT}\n")
         f.write(f"#SBATCH --partition={PARTITION}\n")
