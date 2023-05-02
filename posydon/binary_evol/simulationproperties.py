@@ -357,8 +357,8 @@ class PulsarHooks(EvolveHooks):
                         else:
                             pulsar.detached_evolve(delta_t) 
 
-                    elif step_name == "step_CE":
-                        pulsar.CE_evolve(T)
+                    #elif step_name == "step_CE":
+                    #    pulsar.CE_evolve(T)
 
                     pulsar_spin.append(pulsar.spin)
                     pulsar_Bfield.append(pulsar.Bfield)
@@ -369,7 +369,7 @@ class PulsarHooks(EvolveHooks):
                 pulsar_Bfield.extend(np.full(len(state_history), np.nan))
                 pulsar_alive.extend(np.full(len(state_history), False))
 
-            return pulsar_spin, pulsar_Bfield, pulsar_alive
+            return np.array(pulsar_spin, dtype=float), np.array(pulsar_Bfield, dtype=float), np.array(pulsar_alive, dtype=bool)
 
     def post_evolve(self, binary):
         """
@@ -381,6 +381,6 @@ class PulsarHooks(EvolveHooks):
         """   
         binary.star_1.pulsar_spin, binary.star_1.pulsar_Bfield, binary.star_1.pulsar_alive = self.get_pulsar_history(binary, binary.star_1)
         binary.star_2.pulsar_spin, binary.star_2.pulsar_Bfield, binary.star_2.pulsar_alive = self.get_pulsar_history(binary, binary.star_2)
-        
+        return binary
 
             
