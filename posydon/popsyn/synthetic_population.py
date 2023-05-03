@@ -22,7 +22,7 @@ from posydon.utils.common_functions import inspiral_timescale_from_orbital_perio
 
 class SyntheticPopulation:
 
-    def __init__(self, path=None, verbose=False):
+    def __init__(self, path_to_ini, path_to_data=None, verbose=False):
         """
         Parameters
         ----------
@@ -35,11 +35,12 @@ class SyntheticPopulation:
 
         self.verbose = verbose
         self.df = None
+        self.df_synthetic = None
 
-        if path is None:
-            return
-        elif '.ini' in path:
-            synthetic_pop_params = binarypop_kwargs_from_ini(path)
+        if '.ini' not in path_to_ini:
+            raise ValueError('You did not provide a valid path_to_ini!')
+        else:
+            synthetic_pop_params = binarypop_kwargs_from_ini(path_to_ini)
 
             self.metallicity = synthetic_pop_params['metallicity']
 
@@ -48,12 +49,18 @@ class SyntheticPopulation:
 
             self.binary_populations = []
             for met in self.metallicity:
-                ini_kw = binarypop_kwargs_from_ini(path)
-                ini_kw['metallicity'] = met
-                ini_kw['temp_directory'] = self.create_met_prefix(met) + ini_kw['temp_directory']
-                self.binary_populations.append(BinaryPopulation(**ini_kw))
-        elif (isinstance(path, list) and '.h5' in path[0]) or ('.h5' in path):
-            self.path_to_results = path
+                self.ini_kw = binarypop_kwargs_from_ini(path_to_ini)
+                self.ini_kw['metallicity'] = met
+                self.ini_kw['temp_directory'] = self.create_met_prefix(met) + self.ini_kw['temp_directory']
+                self.binary_populations.append(BinaryPopulation(**self.ini_kw))
+
+        if path_to_data is None:
+            return
+        elif (isinstance(path_to_data, list) and '.h5' in path_to_data[0]) or ('.h5' in path_to_data):
+            self.path_to_data = path_to_data
+
+    def get_ini_kw(self):
+        return self.ini_kw
 
     def evolve(self):
         """Evolve population(s) at given Z(s)."""
@@ -115,7 +122,6 @@ class SyntheticPopulation:
                Zsun = 0.0142):
 
         # TODO: we should also export the oneline dataframe
-
         df_sel = pd.DataFrame()
         count = 0
         tmp = 0
@@ -124,9 +130,11 @@ class SyntheticPopulation:
             print(f'to ({S1_state}, {S2_state}, {binary_state}, {binary_event})')
             if invert_S1S2:
                 print(f'and ({S2_state}, {S1_state}, {binary_state}, {binary_event})')
-        for k, file in enumerate(self.path_to_results):
+        for k, file in enumerate(self.path_to_data):
+            df_sel_met = pd.DataFrame()
             # read metallicity from path
             met = float(file.split('/')[-1].split('_Zsun')[0])*Zsun
+            simulated_mass_for_met = 0.
             for i, df in enumerate(pd.read_hdf(file,  key='history', chunksize=chunksize)):
 
                 logic = self.apply_logic(df, S1_state=S1_state,
@@ -143,12 +151,28 @@ class SyntheticPopulation:
                 # count systems
                 count += len(np.unique(sel))
 
+                # read the simulated ZAMS mass
+                sel_ZAMS = df['event'] == 'ZAMS'
+                mass = sum(df['S1_mass'][sel_ZAMS]+df['S2_mass'][sel_ZAMS])
+                simulated_mass_for_met += mass
+
                 # sort systems
                 if any(sel):
                     df_tmp = pd.DataFrame()
                     df_tmp = df.loc[sel]
+                    # store metallicity
                     df_tmp['metallicity'] = met
-                    df_sel = pd.concat([df_sel,df_tmp])
+                    # concatenate results
+                    df_sel_met = pd.concat([df_sel_met, df_tmp])
+                    del df_tmp
+
+            # store simulated and underlying stellar mass
+            df_sel_met['simulated_mass_for_met'] = simulated_mass_for_met
+            df_sel_met['underlying_mass_for_met'] = initial_total_underlying_mass(df=simulated_mass_for_met, **self.ini_kw)[0]
+
+            # concatenate results
+            df_sel = pd.concat([df_sel, df_sel_met])
+            del df_sel_met
 
             if self.verbose:
                 print(f'in {file} are {count-tmp}')
@@ -177,3 +201,25 @@ class SyntheticPopulation:
                 print('Population successfully loaded!')
         else:
             raise ValueError('You already have a population stored in memory!')
+
+    def get_dco_at_formation(self, S1_state, S2_state):
+
+        # to avoid the user making mistake automatically check the inverse of
+        # the stellar states, since the df is already parsed this will not
+        # take too much extra time
+        logic = self.apply_logic(self.df, S1_state=S1_state,
+                                          S2_state=S2_state,
+                                          binary_state='detached',
+                                          step_name = 'step_SN',
+                                          invert_S1S2=True)
+        self.df_synthetic = self.df.loc[logic].copy()
+
+        # compute the inspiral timescale from the integrated orbit
+        # this estimate is better than evaluating Peters approxiamtion
+        time_contact = self.df.loc[self.df['event'] == 'END',['time']]
+        self.df_synthetic['t_inspiral'] = (time_contact - self.df_synthetic[['time']])*1e-6 # Myr
+        self.df_synthetic['time'] *= 1e-6 # Myr
+
+        # for convinience reindex the DataFrame
+        n_rows = len(self.df_synthetic.index)
+        self.df_synthetic = self.df_synthetic.set_index(np.linspace(0,n_rows-1,n_rows,dtype=int))
