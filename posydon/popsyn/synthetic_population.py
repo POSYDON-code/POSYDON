@@ -34,7 +34,7 @@ class SyntheticPopulation:
         """
 
         self.verbose = verbose
-        self.df_synthetic = None
+        self.df = None
 
         if path is None:
             return
@@ -158,21 +158,21 @@ class SyntheticPopulation:
             print('Total binaries found are', count)
 
         # save parsed population as synthetic population
-        if self.df_synthetic is not None:
-            warnings.warn('Overwriting the df_synthetic population!')
-        self.df_synthetic = df_sel
+        if self.df is not None:
+            warnings.warn('Overwriting the df population!')
+        self.df = df_sel
 
-    def save_synthetic_pop(self, path='./parsed_population.h5'):
-        if self.df_synthetic is None:
+    def save_pop(self, path='./parsed_population.h5'):
+        if self.df is None:
             raise ValueError('Nothing to save! The population was not parsed.')
         else:
-            self.df_synthetic.to_hdf(path, key='history')
+            self.df.to_hdf(path, key='history')
             if self.verbose:
                 print('Population successfully saved!')
 
-    def load_synthetic_pop(self, path):
-        if self.df_synthetic is None:
-            self.df_synthetic = pd.read_hdf(path, key='history')
+    def load_pop(self, path):
+        if self.df is None:
+            self.df = pd.read_hdf(path, key='history')
             if self.verbose:
                 print('Population successfully loaded!')
         else:
