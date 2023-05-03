@@ -123,7 +123,7 @@ class SyntheticPopulation:
             print('Binary count with (S1_state, S2_state, binary_state, binary_event) equal')
             print(f'to ({S1_state}, {S2_state}, {binary_state}, {binary_event})')
             if invert_S1S2:
-                print(f'and ({S1_state}, {S2_state}, {binary_state}, {binary_event})')
+                print(f'and ({S2_state}, {S1_state}, {binary_state}, {binary_event})')
         for k, file in enumerate(self.path_to_results):
             # read metallicity from path
             met = float(file.split('/')[-1].split('_Zsun')[0])*Zsun
@@ -168,12 +168,12 @@ class SyntheticPopulation:
         else:
             self.df_synthetic.to_hdf(path, key='history')
             if self.verbose:
-                print('Population succesfully saved!')
+                print('Population successfully saved!')
 
     def load_synthetic_pop(self, path):
         if self.df_synthetic is None:
             self.df_synthetic = pd.read_hdf(path, key='history')
             if self.verbose:
-                print('Population succesfully loaded!')
+                print('Population successfully loaded!')
         else:
             raise ValueError('You already have a population stored in memory!')
