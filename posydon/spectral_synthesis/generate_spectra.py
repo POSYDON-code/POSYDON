@@ -38,25 +38,27 @@ specgrid = pymsg.SpecGrid(specgrid_file_name)
 #%matplotlib inline
 plt.rcParams.update({'font.size': 16})
 kpc = 3.08e19*unt.m
-
-
-
-
+##############################################################################################################################
+history1 = pd.read_hdf("/home/kasdaglie/blue/kasdaglie/populations_data/metallicity_1.h5", key='history')
+online1 = pd.read_hdf("/home/kasdaglie/blue/kasdaglie/populations_data/metallicity_1.h5", key='history')
+last_binary_line1 = history1[history1.event == 'END']
+first_binary_line1 = history1[history1.event == 'ZAMS']
 #########################################Creating the class population_spectra ###############################################
 
 
 class population_spectra():
     
-    def __init__(self,total_binaries,first_binary_line,last_binary_line,scaling_factor,data_file=None):
+    def __init__(self,total_binaries,first_binary_line,last_binary_line,metallicity,scaling_factor,data_file=None):
         ######Initializing the parameters ##################
         self.total_binaries = total_binaries
         self.data_file = data_file
         self.first_binary_line = first_binary_line
         self.last_binary_line = last_binary_line
         self.scaling_factor = scaling_factor 
+        self.metallicity = metallicity
         self.population = []
-        self.failed_stars = None #int, the stars that failed durin the spectra process 
-        self.missing_stars = None #The stars that are missing due to POSYDON, some detached cases for now. 
+        self.failed_stars = 0 #int, the stars that failed durin the spectra process 
+        self.missing_stars = 0 #The stars that are missing due to POSYDON, some detached cases for now. 
         #Creating lists/numpy arrays for investigation for the failled and succesful stars. 
         self.stars_fails = []
         self.stars_run   = []
@@ -65,13 +67,14 @@ class population_spectra():
         #Creating readable arrays for the stars objects. 
         mass,radius,L,state = array_data(self.total_binaries,self.last_binary_line,self.first_binary_line)
         for i in range(self.total_binaries):
-            star1 = newstar(i,0,mass[i,0],state[i,0],radius[i,0],L[i,0])
-            star2 = newstar(i,1,mass[i,1],state[i,1],radius[i,1],L[i,1])
+            star1 = star(i,0,mass[i,0],state[i,0],radius[i,0],L[i,0],self.metallicity)
+            star2 = star(i,1,mass[i,1],state[i,1],radius[i,1],L[i,1],self.metallicity)
             self.population.append((star1,star2))
         
         #Initializing the spectral_grids object and parameters used.
         #To do put an option for changing the wavelength 
         self.grids = spectral_grids()
+        self.grids.global_limits()
         self.F_empty = self.grids.F_empty
 
     
@@ -84,62 +87,12 @@ class population_spectra():
         new_create_spectrum_single = F_empty
         if "stripped" in star.state:
             return self.grids.stripped_grid_flux(star)
-        else:
-            star.set_metallicity(0)
-            Fe_H = star.Fe_H
-            Teff = star.get_Teff()
-            logg = copy.copy(star.get_logg())
-            if Teff is not None and logg is not None:
-                if Teff > 30000:
-                    Flux = self.grids.ostar_grid_flux(star,Z_Zo=1)
-                    return Flux
-                try:
-                    Flux = self.grids.main_grid_flux(Teff,Fe_H,logg,star)
-                    #stars_run_logg.append(star.get_logg())
-                    #stars_run_Teff.append(star.get_Teff())              
-                    return Flux
-                except Exception as e:
-                    try:
-                        if Teff>15000.0 and logg > 1.75:
-                            F = self.grids.secondary_grid_flux(Teff,logg,Z_Zo=1,star=star)
-                            #stars_run_logg.append(star.get_logg())
-                            #stars_run_Teff.append(star.get_Teff())
-                            return F
-                    finally:
-                        # if and else statements that fix the grid voids. 
-                        
-                        if Teff > 20000:
-                            logg = max(logg, 4.0)
-                        elif Teff > 12000:
-                            logg = max(logg, 3.0)
-                        elif Teff > 8000:
-                            logg = max(logg, 2.0)
-                        elif Teff > 6000:
-                            logg = max(logg, 1.0)
-                        try:
-                            F = self.grids.main_grid_flux(Teff,Fe_H,logg,star)
-                            #stars_run.append(star.get_logg(),star.get_Teff())
-                            #stars_run_logg.append(star.get_logg())
-                            #stars_run_Teff.append(star.get_Teff())
-                            return F*np.exp(logg/star.get_logg())
-                        except Exception as e: 
-                            """
-                            try:
-                                F = CAP18_grid(Teff,logg,star)
-                                #stars_run_logg.append(star.get_logg())
-                                #stars_run_Teff.append(star.get_Teff())              
-                                return F
-                            #print('second CAP failed')
-                            #print(e)
-                            except:
-                                #stars_fail_grids_logg.append(star.get_logg())
-                                #stars_fail_grids_Teff.append(star.get_Teff())
-                                #stars_grid_fail.append(star.get_logg(),star.get_Teff())
-                            """
-                            self.failed_stars +=1
-                            return F_empty*0  
-            elif Teff == None or logg == None:
-                """
+        Fe_H = star.Fe_H
+        Z_Zo = star.metallicity
+        Teff = star.get_Teff(self.grids.T_max,self.grids.T_min)
+        logg = copy.copy(star.get_logg(self.grids.logg_max,self.grids.logg_min))
+        if Teff == None or logg == None:
+            """
                 if create_logg(binary_number,1) > 5 or create_Teff(binary_number,1) > max_Teff or create_Teff(binary_number,1)<min_Teff:
                     self.failed_stars +=1
                     #stars_fail.append(create_logg(binary_number,1),create_Teff(binary_number,1))
@@ -151,9 +104,77 @@ class population_spectra():
                     #stars_fails_logg.append(create_logg(binary_number,2))
                     #stars_fails_Teff.append(create_Teff(binary_number,2))
                 else:
-                """
-                failstarnan +=1
+            """
+            self.failed_stars +=1 
+            return F_empty
+        
+        #For temperature higher than then lo_limits of Teff in main grids we calculate the spectra using the Ostar girds. 
+        if Teff >= 30000:
+            #Setting the acceptable boundaries for the ostar grid in the logg.
+            logg_min = self.grids.specgrid_ostar.axis_x_min['log(g)']
+            logg_max = self.grids.specgrid_ostar.axis_x_max['log(g)']
+            if logg > logg_min and logg<logg_max: 
+                    print(logg)
+                    Flux = self.grids.ostar_grid_flux(Teff,logg,star,Z_Zo)
+                    return Flux
+            else:
+                self.failed_stars +=1
                 return F_empty
+            
+        try:
+            Flux = self.grids.main_grid_flux(Teff,Fe_H,logg,star)
+            #stars_run_logg.append(star.get_logg())
+            #stars_run_Teff.append(star.get_Teff())              
+            return Flux
+        except Exception as e:
+            try:
+                # lo limits for the secondary grid: 
+                logg_min = self.grids.specgrid_secondary.axis_x_min['log(g)']
+                Teff_min = self.grids.specgrid_secondary.axis_x_min['Teff']
+                #Calculating all the exeption that the first grid gave with the secondary. 
+                if Teff>15000.0 and logg > logg_min:
+                    F = self.grids.secondary_grid_flux(Teff,logg,Z_Zo=1,star=star)
+                    #stars_run_logg.append(star.get_logg())
+                    #stars_run_Teff.append(star.get_Teff())
+                    return F
+            finally:
+                # if and else statements that fix the grid voids.  
+                if Teff > 20000:
+                    logg = max(logg, 4.0)
+                elif Teff > 12000:
+                    logg = max(logg, 3.0)
+                elif Teff > 8000:
+                    logg = max(logg, 2.0)
+                elif Teff > 6000:
+                    logg = max(logg, 1.0)
+                try:
+                    if Teff >  self.grids.specgrid_main.axis_x_max['Teff']:
+                        print(Teff)
+                        F = self.grids.secondary_grid_flux(Teff,Fe_H,logg,star)
+                    else: 
+                        F = self.grids.main_grid_flux(Teff,Fe_H,logg,star)
+                    #stars_run.append(star.get_logg(),star.get_Teff())
+                    #stars_run_logg.append(star.get_logg())
+                    #stars_run_Teff.append(star.get_Teff())
+                    return F*np.exp(logg/star.get_logg(self.grids.logg_max,self.grids.logg_min))
+                except Exception as e: 
+                    print(e,Teff,logg)
+                    """
+                            try:
+                                F = CAP18_grid(Teff,logg,star)
+                                #stars_run_logg.append(star.get_logg())
+                                #stars_run_Teff.append(star.get_Teff())              
+                                return F
+                            #print('second CAP failed')
+                            #print(e)
+                            except:
+                                #stars_fail_grids_logg.append(star.get_logg())
+                                #stars_fail_grids_Teff.append(star.get_Teff())
+                                #stars_grid_fail.append(star.get_logg(),star.get_Teff())
+                    """
+                    self.failed_stars +=1
+                    return F_empty*0  
+
 
 
 
@@ -182,7 +203,7 @@ class population_spectra():
         failed_binaries = 0
         for binary in self.population:
             create_spectrum_population += self.create_spectrum_binary(binary)
-            print(self.failed_stars)
+        print(self.failed_stars)
         return create_spectrum_population
        
     
@@ -217,9 +238,9 @@ def array_data(N,last_binary_line,first_binary_line):
 
 
 #This might be useless for the case of using a Binary Object. 
-class newstar():
+class star():
     
-    def __init__(self,binary_number,number,mass,state,R,L):
+    def __init__(self,binary_number,number,mass,state,R,L,metallicity):
         self.binary_number = binary_number
         self.number = number
         self.mass = mass*con.M_sun
@@ -228,7 +249,8 @@ class newstar():
         self.L = L*con.L_sun
         self.logg = None
         self.Teff = None
-        self.Fe_H = None 
+        self.metallicity = metallicity
+        self.Fe_H = np.log10(metallicity)
         
         
     def get_logg(self,max_logg,min_logg): 
@@ -271,6 +293,8 @@ class spectral_grids():
         self.specgrid_stripped = self.spec_grid(stripped_grid_file)
         self.T_max = 0  #Global_min 
         self.T_min = 0  #Global_max 
+        self.logg_max = 0 
+        self.logg_min = 0 
         self.lam_min = lam_min
         self.lam_max = lam_max
         self.lam = np.linspace(lam_min, lam_max, 2000)
@@ -288,17 +312,23 @@ class spectral_grids():
     def global_limits(self):
         T_max  = 0 
         T_min = 100000
-        specgrids = [self.specgrid_main,self.specgrid_secondary,self.specgrid_ostar,self.specgrid_stripped]
+        logg_max = 0 
+        logg_min = 20
+        spectral_grids = [self.specgrid_main,self.specgrid_secondary,self.specgrid_ostar,self.specgrid_stripped]
         for specgrid in spectral_grids:
-            for label in specgrid:
+            for label in specgrid.axis_labels:
                 if label== 'Teff':
                     T_max = max(T_max,specgrid.axis_x_max[label])
-                    T_min = min(T_min,specgrid.axis_x_max[label])
+                    T_min = min(T_min,specgrid.axis_x_min[label])
                 elif label == 'log(g)':
-                    logg_max = max(T_max,specgrid.axis_x_max[label])
-                    logg_min = min(T_min,specgrid.axis_x_max[label])
+                    logg_max = max(logg_max,specgrid.axis_x_max[label])
+                    logg_min = min(logg_min,specgrid.axis_x_min[label])
+                
         self.T_max = T_max
         self.T_min = T_min 
+        self.logg_max = logg_max
+        self.logg_min = logg_min
+        print(self.T_max,self.T_min,self.logg_max,self.logg_min)
     #Function that return the flux from every grid. 
     #x is hard-coded this needs to change. 
     def main_grid_flux(self,Teff,Fe_H,logg,star):
@@ -322,9 +352,7 @@ class spectral_grids():
         F_lam = np.asarray(F_not)
         return F_lam
     
-    def ostar_grid_flux(self,star,Z_Zo):
-        Teff = star.get_Teff()
-        logg = star.get_logg()
+    def ostar_grid_flux(self,Teff,logg,star,Z_Zo):
         x = {'Teff':Teff ,'log(g)': logg,'Z/Zo':Z_Zo}
         F_not = self.specgrid_ostar.flux(x, self.lam)
         F_lam = np.asarray(F_not)
@@ -333,3 +361,6 @@ class spectral_grids():
     #Maybe have a function that generally can calculate the flux. 
     def flux(self):
         pass 
+
+newpopulation = population_spectra(200,first_binary_line1,last_binary_line1,1,0)
+spectra1 = newpopulation.create_spectrum_population()
