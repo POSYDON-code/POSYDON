@@ -77,6 +77,12 @@ class SyntheticPopulation:
 
     def apply_logic(self, df, S1_state=None, S2_state=None, binary_state=None,
                     binary_event=None, step_name=None, invert_S1S2=False):
+        if not invert_S1S2 and S1_state != S2_state:
+            warnings.warn('Note that invert_S1S2=False, hence you are not parsing '
+                          f'the dataset for {S1_state}-{S2_state} binaries and '
+                          f'and not for for {S1_state}-{S2_state}. If this is '
+                          'done on purpose, ignore this message!')
+
         sel_all = df['S1_state'].astype(bool)
 
         if S1_state is not None:
@@ -223,3 +229,16 @@ class SyntheticPopulation:
         # for convinience reindex the DataFrame
         n_rows = len(self.df_synthetic.index)
         self.df_synthetic = self.df_synthetic.set_index(np.linspace(0,n_rows-1,n_rows,dtype=int))
+
+    def get_dco_merger_efficiency(self):
+        total = 0.
+        metallicities = np.unique(self.df_synthetic['metallicity'])
+        for met in sorted(metallicities)[::-1]:
+            sel = (self.df_synthetic['metallicity'] == met)
+            count = self.df_synthetic[sel].shape[0]
+            underlying_stellar_mass = self.df_synthetic.loc[sel,'underlying_mass_for_met'].values[0]
+            eff = count/underlying_stellar_mass
+            total += eff
+            print(f'DCO merger efficiency at Z={met:1.2E}: {eff:1.2E} Msun^-1')
+        print('')
+        print(f'Total DCO merger efficiency: {total:1.2E} Msun^-1')
