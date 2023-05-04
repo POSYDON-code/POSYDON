@@ -3,8 +3,6 @@
 e.g. with multiple metallicities
 """
 
-
-
 __authors__ = [
     "Kyle Akira Rocha <kylerocha2024@u.northwestern.edu>",
     "Simone Bavera <Simone.Bavera@unige.ch>",
@@ -37,6 +35,10 @@ class SyntheticPopulation:
         self.verbose = verbose
         self.df = None
         self.df_synthetic = None
+        self.df_intrinsic = None
+        self.df_detectable = None
+        self.met_merger_efficiency = None
+        self.merger_efficiency = None
         self.z_rate_density = None
         self.rate_density = None
 
@@ -144,6 +146,7 @@ class SyntheticPopulation:
             # read metallicity from path
             met = float(file.split('/')[-1].split('_Zsun')[0])*Zsun
             simulated_mass_for_met = 0.
+            # TODO: handle binaries at the edge case of the chuncks
             for i, df in enumerate(pd.read_hdf(file,  key='history', chunksize=chunksize)):
 
                 logic = self.apply_logic(df, S1_state=S1_state,
