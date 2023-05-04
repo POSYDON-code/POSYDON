@@ -175,6 +175,12 @@ def slurm_job(job_name,
     path_to_csv_file = os.path.join(PATH,f"{job_name}.csv")
 
     with open(f'{job_name}.slurm', 'w') as f:
+        if ('step' in job_name) and (len(job_name.split("_")) > 1):
+            STEPID = job_name.split("_")[1]
+        elif job_name == 'rerun':
+            STEPID = 'R'
+        else:
+            STEPID = ''
         f.write("#!/bin/bash\n")
         f.write(f"#SBATCH --account={ACCOUNT}\n")
         f.write(f"#SBATCH --partition={PARTITION}\n")
@@ -182,7 +188,7 @@ def slurm_job(job_name,
         f.write("#SBATCH --cpus-per-task 1\n")
         f.write("#SBATCH --ntasks-per-node 1\n")
         f.write(f"#SBATCH --time={WALLTIME}\n")
-        f.write("#SBATCH --job-name=psygrid\n")
+        f.write(f"#SBATCH --job-name=psygrid{STEPID}\n")
         f.write("#SBATCH --mem-per-cpu=4G\n")
 
         if EMAIL is not None:
@@ -209,6 +215,7 @@ def slurm_job(job_name,
 
         if job_name == 'step_3':
             f.write(f"#SBATCH --output={PATH}/logs/plot_grid.out\n")
+            f.write("unset DISPLAY\n")
 
         if job_name == 'step_4':
             f.write(f"#SBATCH --output={PATH}/logs/check_failure_rate.out\n")
@@ -217,7 +224,7 @@ def slurm_job(job_name,
             f.write(f"#SBATCH --output={PATH}/logs/post_processing_%a.out\n")
             f.write(f"export PATH_TO_POSYDON={PATH_TO_POSYDON}\n")
 
-        if job_name == 'step_7':
+        if job_name == 'step_6':
             f.write(f"#SBATCH --output={PATH}/logs/train_interpolators_%a.out\n")
 
         if job_name == 'step_7':
