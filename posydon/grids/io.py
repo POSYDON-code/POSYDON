@@ -143,9 +143,9 @@ class RunReader:
                 self.binary_history_path = fullpath
             elif file in ["final_star1.mod", "final_star1.mod.gz"]:
                 self.final_star1_path = fullpath
-            elif file == ["final_star2.mod", "final_star2.mod.gz"]:
+            elif file in ["final_star2.mod", "final_star2.mod.gz"]:
                 self.final_star1_path = fullpath
-            elif file == ["out.txt", "out.txt.gz"] and self.binary:
+            elif file in ["out.txt", "out.txt.gz"] and self.binary:
                 self.out_txt_path = fullpath
             elif ((file in ["out_star1_formation_step0.txt",
                             "out_star1_formation_step0.txt.gz"])
