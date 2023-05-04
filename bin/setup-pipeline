@@ -127,12 +127,12 @@ class PostProcessingPipeline:
                         # if there was no previous step the current step has no dependency
                         runfile.write(f"ID{step_number}=$(sbatch --parsable {step_number}.slurm)\n")
                     else:
-                        if setup_kwargs['COMBINE_GRID_SLICES'] and (step_number == 'step_4'):
-                            # steps which can run in paralell after step_2
+                        if setup_kwargs['COMBINE_GRID_SLICES'] and (step_number == 'step_4' or step_number == 'step_5'):
+                            # steps which can run in paralell after step_2 (steps 4 and 5 can run parallel with step_3)
                             runfile.write(f"ID{step_number}=$(sbatch --parsable --dependency=afterok:$"
                                           "{IDstep_2}"f" {step_number}.slurm) --kill-on-invalid-dep=yes\n")
-                        elif setup_kwargs['CREATE_GRID_SLICES'] and (step_number == 'step_4'):
-                            # steps which can run in paralell after step_1
+                        elif setup_kwargs['CREATE_GRID_SLICES'] and (step_number == 'step_4' or step_number == 'step_5'):
+                            # steps which can run in paralell after step_1 (in case there is no step_2)
                             runfile.write(f"ID{step_number}=$(sbatch --parsable --dependency=afterok:$"
                                           "{IDstep_1}"f" {step_number}.slurm) --kill-on-invalid-dep=yes\n")
                         else:
