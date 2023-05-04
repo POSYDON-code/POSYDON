@@ -608,12 +608,14 @@ class detached_step :
         else:
             self.grid = self.grid_strippedHe
 
-
+        
         get_root0 = self.get_root0
         get_track_val = self.get_track_val
         matching_method = self.matching_method
         scale = self.scale
-
+        
+        startime_match = time.time()
+        
 
         initials = None
         # tolerance 1e-8
@@ -685,13 +687,17 @@ class detached_step :
             for i in MESA_labels:
                 if i not in self.root_keys:
                     raise Exception("Expected matching parameter not "
-                                            "added in the single star grid options.")
-
+                                         "added in the single star grid options.")
+            scaletime = time.time()
+            #Comment: check the time here
             scales = []
+            
+            
             for MESA_label, colscaler in zip(MESA_labels, colscalers):
                 scale_of_attribute = scale(MESA_label, htrack, colscaler)
                 scales.append(scale_of_attribute)
-
+            print("Scale time", time.time() - scaletime )   
+            
             def square_difference(x):
                 result = 0.0
                 for MESA_label, posydon_attr, colscaler, scale_of_that_MESA_label  in zip(MESA_labels, posydon_attributes, colscalers, scales):
@@ -702,16 +708,19 @@ class detached_step :
                     else:
                         result += (single_track_value - posydon_value) ** 2
                 return result
-
+            print("Before get_root and minimize: ", time.time()-startime_match)
+            
+            starttime=time.time()
             x0 = get_root0(MESA_labels, posydon_attributes,
                                    htrack, rs=rs)
-
+            halftime=time.time()
             sol = minimize(square_difference,
                         x0,
                         method="TNC",
                         bounds=bnds
                     )
-
+            endtime = time.time()
+            print("First matching timing","get_root0:",halftime- starttime,"minimize:", endtime - halftime)
             # alternative matching
             # 1st, different minimization method
             if (np.abs(sol.fun) > tolerance_matching_integration
@@ -837,7 +846,7 @@ class detached_step :
                     ) / star.total_moment_of_inertia
                 '''
 
-
+        
         if self.verbose or self.verbose == 1:
             print(
                 "matching ", star.state, " star with track of intial mass m0, at time t0:",
@@ -862,6 +871,7 @@ class detached_step :
                 f'{star.he_core_mass:.3f}',
                 f'{star.center_c12:.4f}'
             )
+        print("Time after matching: ",time.time()-endtime)
         return initials
 
     def __repr__(self):
