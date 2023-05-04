@@ -18,6 +18,7 @@ from posydon.popsyn.binarypopulation import BinaryPopulation
 from posydon.utils.common_functions import convert_metallicity_to_string
 from posydon.popsyn.normalized_pop_mass import initial_total_underlying_mass
 from posydon.utils.common_functions import inspiral_timescale_from_orbital_period
+from posydon.popsyn.cosmology import DCOrates
 
 
 class SyntheticPopulation:
@@ -36,6 +37,8 @@ class SyntheticPopulation:
         self.verbose = verbose
         self.df = None
         self.df_synthetic = None
+        self.z_rate_density = None
+        self.rate_density = None
 
         if '.ini' not in path_to_ini:
             raise ValueError('You did not provide a valid path_to_ini!')
@@ -223,22 +226,145 @@ class SyntheticPopulation:
         # compute the inspiral timescale from the integrated orbit
         # this estimate is better than evaluating Peters approxiamtion
         time_contact = self.df.loc[self.df['event'] == 'END',['time']]
-        self.df_synthetic['t_inspiral'] = (time_contact - self.df_synthetic[['time']])*1e-6 # Myr
+        self.df_synthetic['t_delay'] = (time_contact - self.df_synthetic[['time']])*1e-6 # Myr
         self.df_synthetic['time'] *= 1e-6 # Myr
 
         # for convinience reindex the DataFrame
         n_rows = len(self.df_synthetic.index)
         self.df_synthetic = self.df_synthetic.set_index(np.linspace(0,n_rows-1,n_rows,dtype=int))
 
+    def save_synthetic_pop(self, path='./synthetic_population.h5'):
+        if self.df_synthetic is None:
+            raise ValueError('Nothing to save!')
+        else:
+            self.df_synthetic.to_hdf(path, key='history')
+            if self.verbose:
+                print('Synthetic population successfully saved!')
+
+    def load_synthetic_pop(self, path):
+        if self.df_synthetic is None:
+            self.df_synthetic = pd.read_hdf(path, key='history')
+            if self.verbose:
+                print('Synthetic population successfully loaded!')
+        else:
+            raise ValueError('You already have an synthetic population stored in memory!')
+
     def get_dco_merger_efficiency(self):
         total = 0.
         metallicities = np.unique(self.df_synthetic['metallicity'])
-        for met in sorted(metallicities)[::-1]:
+        efficiencies = []
+        self.met_merger_efficiency = sorted(metallicities)[::-1]
+        for met in self.met_merger_efficiency:
             sel = (self.df_synthetic['metallicity'] == met)
             count = self.df_synthetic[sel].shape[0]
             underlying_stellar_mass = self.df_synthetic.loc[sel,'underlying_mass_for_met'].values[0]
             eff = count/underlying_stellar_mass
             total += eff
+            efficiencies.append(eff)
             print(f'DCO merger efficiency at Z={met:1.2E}: {eff:1.2E} Msun^-1')
         print('')
         print(f'Total DCO merger efficiency: {total:1.2E} Msun^-1')
+        self.merger_efficiency = efficiencies
+
+
+    def compute_cosmological_weights(self, sensitivity, flag_pdet, working_dir, load_data):
+
+        # TODO: make the class inputs kwargs
+        self.cosmology = DCOrates(self.df_synthetic)
+
+        # compute DCO merger rate density
+        if not load_data:
+            self.cosmology.RunDCOsSimulation(sensitivity=sensitivity, flag_pdet=flag_pdet, path_to_dir=working_dir)
+        index, z_formation, z_merger, w_ijk = self.cosmology.loadDCOsSimulation(sensitivity, path_to_dir=working_dir)
+
+        return index, z_formation, z_merger, w_ijk
+
+    def resample_synthetic_population(self, index, z_formation, z_merger, w_ijk, export_cols=None):
+
+        # drop all zero weights to save memory
+        sel = w_ijk > 0.
+        index = index[sel]
+        z_formation = z_formation[sel]
+        z_merger = z_merger[sel]
+        w_ijk = w_ijk[sel]
+
+        # export results, we do a selections of columns else the dataframe
+        # risks to go out of memory
+        df = pd.DataFrame()
+        df['weight'] = w_ijk
+        df['z_formation'] = z_formation
+        df['z_merger'] = z_merger
+        save_cols = ['metallicity','time','t_delay','S1_state','S2_state',
+                     'S1_mass','S2_mass','S1_spin','S2_spin',
+                     'orbital_period','eccentricity', 'q', 'm_tot',
+                     'm_chirp', 'chi_eff']
+        if export_cols is not None:
+            for c in export_cols:
+                if c not in save_cols:
+                    save_cols.append(c)
+        for c in save_cols:
+            df[c] = self.cosmology.get_data(c, index)
+
+        return df
+
+    def get_dco_merger_rate_density(self, export_cols=None,  working_dir='./', load_data=False):
+        if self.df_synthetic is None:
+            raise ValueError('You first need to isolated the DCO synthetic population!')
+
+        # compute cosmological weights (detection rate weights with infinite sensitivity)
+        sensitivity='infinite'
+        flag_pdet = False
+        index, z_formation, z_merger, w_ijk = self.compute_cosmological_weights(sensitivity, flag_pdet, working_dir=working_dir, load_data=load_data)
+
+        # compute rate density weights
+        self.z_rate_density = self.cosmology.getRedshiftBinCenter()
+        self.rate_density = self.cosmology.RateDensity(w_ijk, z_merger, Type='DCOs', sensitivity=sensitivity)
+        print(f'DCO merger rate density in the local Universe ({self.z_rate_density[0]:1.2f}): {round(self.rate_density[0],2)} Gpc^-3 yr^-1')
+
+        # export the intrinsic DCO population
+        self.df_intrinsic = self.resample_synthetic_population(index, z_formation, z_merger, w_ijk, export_cols=export_cols)
+
+    def get_dco_detection_rate(self, sensitivity='design', export_cols=None,  working_dir='./', load_data=False):
+        if self.df_synthetic is None:
+            raise ValueError('You first need to isolated the DCO synthetic population!')
+
+        # compute detection rate weights
+        flag_pdet = True
+        index, z_formation, z_merger, w_ijk = self.compute_cosmological_weights(sensitivity, flag_pdet, working_dir=working_dir, load_data=load_data)
+        print(f'DCO detection rate at {sensitivity} sensitivity: {sum(w_ijk):1.2f} yr^-1')
+
+        # export the detectable DCO population
+        # TODO: store p_det
+        self.df_detectable = self.resample_synthetic_population(index, z_formation, z_merger, w_ijk, export_cols=export_cols)
+
+    def save_intrinsic_pop(self, path='./intrinsic_population.h5'):
+        if self.df_intrinsic is None:
+            raise ValueError('Nothing to save!')
+        else:
+            self.df_intrinsic.to_hdf(path, key='history')
+            if self.verbose:
+                print('Intrinsic population successfully saved!')
+
+    def load_intrinsic_pop(self, path):
+        if self.df_intrinsic is None:
+            self.df_intrinsic = pd.read_hdf(path, key='history')
+            if self.verbose:
+                print('Intrinsic population successfully loaded!')
+        else:
+            raise ValueError('You already have an intrinsic population stored in memory!')
+
+    def save_detectable_pop(self, path='./detectable_population.h5'):
+        if self.df_detectable is None:
+            raise ValueError('Nothing to save!')
+        else:
+            self.df_detectable.to_hdf(path, key='history')
+            if self.verbose:
+                print('Detectable population successfully saved!')
+
+    def load_detectable_pop(self, path):
+        if self.df_detectable is None:
+            self.df_detectable = pd.read_hdf(path, key='history')
+            if self.verbose:
+                print('Detectable population successfully loaded!')
+        else:
+            raise ValueError('You already have an detectable population stored in memory!')
