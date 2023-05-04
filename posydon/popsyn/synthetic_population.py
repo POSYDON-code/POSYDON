@@ -17,6 +17,7 @@ from posydon.utils.common_functions import convert_metallicity_to_string
 from posydon.popsyn.normalized_pop_mass import initial_total_underlying_mass
 from posydon.utils.common_functions import inspiral_timescale_from_orbital_period
 from posydon.popsyn.cosmology import DCOrates
+import posydon.visualization.plot_dco as plot_dco
 
 
 class SyntheticPopulation:
@@ -267,7 +268,8 @@ class SyntheticPopulation:
             print(f'DCO merger efficiency at Z={met:1.2E}: {eff:1.2E} Msun^-1')
         print('')
         print(f'Total DCO merger efficiency: {total:1.2E} Msun^-1')
-        self.merger_efficiency = efficiencies
+        self.met_merger_efficiency = np.array(self.met_merger_efficiency)
+        self.merger_efficiency = np.array(efficiencies)
 
 
     def compute_cosmological_weights(self, sensitivity, flag_pdet, working_dir, load_data):
@@ -371,3 +373,22 @@ class SyntheticPopulation:
                 print('Detectable population successfully loaded!')
         else:
             raise ValueError('You already have an detectable population stored in memory!')
+
+    def plot_merger_efficiency(self, **kwargs):
+        if self.met_merger_efficiency is None or self.merger_efficiency is None:
+            raise ValueError('First you need to compute the merger efficinty!')
+        plot_dco.plot_merger_efficiency(self.met_merger_efficiency, self.merger_efficiency, **kwargs)
+
+    def plot_merger_rate_density(self, **kwargs):
+        if self.z_rate_density is None or self.rate_density is None:
+            raise ValueError('First you need to compute the merger rate density!')
+        plot_dco.plot_merger_rate_density(self.z_rate_density, self.rate_density, **kwargs)
+
+    def plot_hist_dco_properties(self, var, intrinsic=False, detectable=False, **kwargs):
+        if self.z_rate_density is None or self.rate_density is None:
+            raise ValueError('First you need to compute the merger rate density!')
+        if intrinsic:
+            intrinsic = self.df_intrinsic
+        if detectable:
+            detectable = self.df_detectable
+        plot_dco.plot_hist_dco_properties(var, df_intrinsic=intrinsic, df_detectable=detectable, **kwargs)

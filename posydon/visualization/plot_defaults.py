@@ -769,4 +769,16 @@ DEFAULT_LABELS = {
     't_sync_conv_2':
         [r'$t^2_\mathrm{conv}\,[\mathrm{s}]$',
          r'$\log_{10}(t^2_\mathrm{conv}/\mathrm{s})$'],
+
+    # POSYDON population synthesis
+    'z_formation': r'$z_\mathrm{formation}$',
+    'z_merger': r'$z_\mathrm{merger}$',
+    'm_tot': r'$m_\mathrm{tot}\,[M_\odot]$',
+    'm_chirp': r'$m_\mathrm{chirp}\,[M_\odot]$',
+    'q': r'$q$',
+    'chi_eff': r'$\chi_\mathrm{eff}$',
+    'S1_mass': r'$m_\mathrm{CO}\,[M_\odot]$',
+    'S2_mass': r'$m_\mathrm{CO}\,[M_\odot]$',
+    'S1_spin': r'$\chi_\mathrm{CO}$',
+    'S2_spin': r'$\chi_\mathrm{CO}$',
 }
