@@ -350,6 +350,7 @@ GRIDPROPERTIES = {
     "eep": None,    # path to EEP files
     "initial_RLO_fix": False,
     "He_core_fix": True,
+    "accept_missing_profile": False,
 }
 
 
@@ -621,7 +622,7 @@ class PSyGrid:
         # in case lists were used, get a proper `dtype` object
         dtype_initial_values = self.initial_values.dtype
         dtype_final_values = self.final_values.dtype
-
+        
         self._say('Loading MESA data...')
 
         #this int array will store the run_index of the i-th run and will be
@@ -775,11 +776,16 @@ class PSyGrid:
                 final_profile2 = read_MESA_data_file(
                     run.final_profile2_path, P2_columns)
                 if not binary_grid and final_profile1 is None:
-                    warnings.warn("Ignored MESA run because of missing "
-                                  "profile in: {}\n".format(run.path))
-                    ignore_data = True
-                    ignore_reason = "ignore_no_FP"
-                    continue
+                    if self.config["accept_missing_profile"]:
+                        warnings.warn("Including MESA run despite the missing "
+                                      "profile in {}\n".format(run.path))
+                        ignore_data = False
+                    else:
+                        warnings.warn("Ignored MESA run because of missing "
+                                      "profile in: {}\n".format(run.path))
+                        ignore_data = True
+                        ignore_reason = "ignore_no_FP"
+                        continue
 
             if binary_history is not None:
                 if binary_history.shape == ():  # if history is only one line
@@ -876,6 +882,10 @@ class PSyGrid:
                 # if not star history file, NaN values
                 if read_from is None:
                     init_X, init_Y, init_Z = np.nan, np.nan, np.nan
+                    # try to get metallicity from directory name
+                    params_from_path = initial_values_from_dirname(run.path)
+                    if (len(params_from_path)==4) or (len(params_from_path)==2):
+                        init_Z = params_from_path[-1]
                 else:
                     star_header = np.genfromtxt(
                         read_from, skip_header=1, max_rows=1, names=True)
@@ -921,11 +931,11 @@ class PSyGrid:
 
             if not ignore_data:
                 if addX:
-                    self.initial_values["X"] = where_to_add["X"]
+                    self.initial_values[i]["X"] = where_to_add["X"]
                 if addY:
-                    self.initial_values["Y"] = where_to_add["Y"]
+                    self.initial_values[i]["Y"] = where_to_add["Y"]
                 if addZ:
-                    self.initial_values["Z"] = where_to_add["Z"]
+                    self.initial_values[i]["Z"] = where_to_add["Z"]
 
             if binary_grid:
                 if ignore_data:
@@ -1077,7 +1087,7 @@ class PSyGrid:
                                   "run_index={} != ".format(run_index) +
                                   "length(MESA_dirs)={}".format(lenMESA_dirs))
 
-                                
+
         self._say("Storing initial/final values and metadata to HDF5...")
         #create new array of initial and finial values with included runs
         # only and sort it by run_index
@@ -1093,12 +1103,20 @@ class PSyGrid:
                     warnings.warn("run {} has a run_index out of ".format(i) +
                         "range: {}>={}".format(run_included_at[i], run_index))
                     continue
-                for colname in self.initial_values.dtype.names:
-                    value = self.initial_values[i][colname]
-                    new_initial_values[run_included_at[i]][colname] = value
-                for colname in self.final_values.dtype.names:
-                    value = self.final_values[i][colname]
-                    new_final_values[run_included_at[i]][colname] = value
+                #copy initial values or fill with nan if not existing in original
+                for colname in dtype_initial_values.names:
+                    if colname in self.initial_values.dtype.names:
+                        value = self.initial_values[i][colname]
+                        new_initial_values[run_included_at[i]][colname] = value
+                    else:
+                        new_initial_values[run_included_at[i]][colname] = np.nan
+                #copy final values or fill with nan if not existing in original
+                for colname in dtype_final_values.names:
+                    if colname in self.final_values.dtype.names:
+                        value = self.final_values[i][colname]
+                        new_final_values[run_included_at[i]][colname] = value
+                    else:
+                        new_final_values[run_included_at[i]][colname] = np.nan
         #replace old initial/final value array
         self.initial_values = np.copy(new_initial_values)
         self.final_values = np.copy(new_final_values)
@@ -1301,7 +1319,7 @@ class PSyGrid:
                     run.final_profile1.dtype.names)
             if run.final_profile2 is not None:
                 ret += "\nColumns in final_profile2: {}\n".format(
-                    run.final_profile1.dtype.names)
+                    run.final_profile2.dtype.names)
         ret += "\n"
 
         # Print out initial values array parameters
@@ -1451,7 +1469,7 @@ class PSyGrid:
                     initial_values[key] = [new_mesa_flag[key]]*n_runs_to_rerun
 
             # create the CSV file
-            with open(path_to_file+'grid.csv', 'w', newline='') as file:
+            with open(os.path.join(path_to_file,'grid.csv'), 'w', newline='') as file:
                 writer = csv.writer(file)
                 writer.writerow(initial_values.keys())
                 for i in range(n_runs_to_rerun):
@@ -1512,7 +1530,7 @@ class PSyGrid:
                     initial_values[key] = [new_mesa_flag[key]]*n_runs_to_rerun
 
             # create the CSV file
-            with open(path_to_file+'grid.csv', 'w', newline='') as file:
+            with open(os.path.join(path_to_file,'grid.csv'), 'w', newline='') as file:
                 writer = csv.writer(file)
                 writer.writerow(initial_values.keys())
                 for i in range(n_runs_to_rerun):
@@ -1960,8 +1978,8 @@ PROPERTIES_TO_BE_NONE = {
 }
 
 PROPERTIES_TO_BE_CONSISTENT = ["binary", "eep", "start_at_RLO",
-                               "initial_RLO_fix",
-                               "He_core_fix", "history_DS_error",
+                               "initial_RLO_fix", "He_core_fix",
+                               "accept_missing_profile", "history_DS_error",
                                "history_DS_exclude", "profile_DS_error",
                                "profile_DS_exclude", "profile_DS_interval"]
 
@@ -2038,6 +2056,27 @@ def join_grids(input_paths, output_path,
     say("    {} substituions detected.".format(n_substitutions))
     say("    {} runs to be joined.".format(len(initial_params)))
 
+    if (newconfig["initial_RLO_fix"]):
+        say("Determine initial RLO boundary from all grids")
+        detected_initial_RLO = []
+        colnames = ["termination_flag_1", "termination_flag_2", "interpolation_class"]
+        valtoset = ["forced_initial_RLO", "forced_initial_RLO", "initial_MT"]
+        for grid in grids:
+            new_detected_initial_RLO = get_detected_initial_RLO(grid)
+            for new_sys in new_detected_initial_RLO:
+                exists_already = False
+                for i, sys in enumerate(detected_initial_RLO):
+                    # check whether there are double entries
+                    if (abs(sys["star_1_mass"]-new_sys["star_1_mass"])<1.0e-5 and
+                        abs(sys["star_2_mass"]-new_sys["star_2_mass"])<1.0e-5):
+                        exists_already = True
+                        # if so, replace old entry if the new one has a larger period
+                        if sys["period_days"]<new_sys["period_days"]:
+                            detected_initial_RLO[i] = new_sys.copy()
+                # add non existing new entry
+                if not exists_already:
+                    detected_initial_RLO.append(new_sys)
+    
     say("Opening new file...")
     # open new HDF5 file and start copying runs
     driver_args = {} if "%d" not in output_path else {
@@ -2073,6 +2112,25 @@ def join_grids(input_paths, output_path,
             new_mesa_dirs.append(grid.MESA_dirs[run_index])
             new_initial_values.append(grid.initial_values[run_index])
             new_final_values.append(grid.final_values[run_index])
+            
+            if (newconfig["initial_RLO_fix"]):
+                flag1 = new_final_values[-1]["termination_flag_1"]
+                if (flag1 != "Terminate because of overflowing initial model" and 
+                    flag1 != "forced_initial_RLO"):
+                    mass1 = new_initial_values[-1]["star_1_mass"]
+                    mass2 = new_initial_values[-1]["star_2_mass"]
+                    period = new_initial_values[-1]["period_days"]
+                    nearest = get_nearest_known_initial_RLO(mass1, mass2,
+                                                        detected_initial_RLO)
+                    if period<nearest["period_days"]:
+                        #set values
+                        for colname, value in zip(colnames, valtoset):
+                            new_final_values[-1][colname] = value
+                        #copy values from nearest known system
+                        for colname in ["termination_flag_3",
+                                        "termination_flag_4"]:
+                            if colname in nearest:
+                                new_final_values[-1][colname]=nearest[colname]
 
             for subarray in ['binary_history', 'history1', 'history2',
                              'final_profile1', 'final_profile2']:

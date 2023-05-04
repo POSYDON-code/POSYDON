@@ -1,0 +1,755 @@
+#!/usr/bin/env python
+'''
+MESA low_res_grids were run. This includes random grids and reruns.
+
+This is an EXAMPLE of the pipeline for a grid_type=HMS-HMS,
+metallicity=1e-01_Zsun, compression=LITE/ORIGINAL
+
+STEP 1: grid slices creation
+['grid_low_res_0','grid_low_res_1','grid_low_res_2',
+'grid_low_res_3','grid_low_res_4','grid_low_res_5',
+'grid_random_1', 'grid_low_res_rerun_opacitymax'] --> output *.h5
+
+STEP 2: grid slices concatenation
+[['grid_low_res_0','grid_low_res_1','grid_low_res_2',
+'grid_low_res_3','grid_low_res_4','grid_low_res_5'],
+['grid_low_combined','grid_low_res_rerun_opacitymax']] -->
+grid_low_res_combined.h5, grid_low_res_combined_rerun_1.h5
+
+STEP 3: plot grid slices
+['grid_low_res_combined.h5', 'grid_low_res_rerun_opacitymax',
+'grid_low_res_combined_rerun_1.h5' ] --> loop over all plot types
+
+STEP 4: check failure rate
+['grid_low_res_combined.h5', 'grid_low_res_combined_rerun_1.h5' ]
+--> check failure rate
+
+STEP 5: post processing
+['grid_low_res_combined_rerun_1.h5','grid_random_1_rerun_1.h5',]
+--> do post processing on the ORIGINAL grid and append back on the LITE gird
+the post processed quantities
+
+STEP 6: train interpolators
+['grid_low_res_combined_rerun_1.h5'] --> train the interpolators
+
+STEP 7: export POSYDON v2 dataset
+
+STEP RERUN: rerun grid with a fix A
+grid_low_res_combined.rerun(index=logic) --> grid_rerun_1/grid.csv
+                                         --> grid_random_1_rerun_1/grid.csv
+---- run gird fix ----
+call STEP 1: ['grid_rerun_1','grid_random_1_rerun_1',] --> *.h5
+call STEP 2: [['grid_low_res_combined','grid_rerun_1'],
+              ['grid_random_1','grid_random_rerun_1']]
+              ---> gird_low_res_combined_rerun_1.h5
+                   grid_random_1_rerun_1.h5
+call STEP 3: ['gird_low_res_combined_rerun_1.h5']
+call STEP 4: ['gird_low_res_combined_rerun_1.h5']
+--> continue to STEP 5, 6, 7
+----------------------
+'''
+
+__authors__ = [
+    "Simone Bavera <Simone.Bavera@unige.ch>",
+]
+
+import os
+import sys
+import time
+import shutil
+import pickle
+import random
+import numpy as np
+import pandas as pd
+from shutil import copyfile
+from collections import Counter
+from posydon.grids.psygrid import (PSyGrid,
+                                   join_grids,
+                                   DEFAULT_HISTORY_DS_EXCLUDE,
+                                   DEFAULT_PROFILE_DS_EXCLUDE,
+                                   EXTRA_COLS_DS_EXCLUDE)
+from posydon.grids.post_processing import (post_process_grid,
+                                           add_post_processed_quantities)
+from posydon.interpolation.IF_interpolation import IFInterpolator
+from posydon.utils.common_functions import PATH_TO_POSYDON
+
+
+def create_grid_slice(i, path_to_csv_file, CO_HMS_GRID_START_AT_RLO, verbose=False):
+
+    df = pd.read_csv(path_to_csv_file)
+    grid_path = df.loc[i,'path_to_grid']
+    compression = df.loc[i,'compression']
+
+    grid_name = grid_path.split('/')[-1]
+    otuput_path = os.path.join('/', os.path.join(*grid_path.split('/')[:-1]),
+                               compression)
+    grid_output = os.path.join(otuput_path, grid_name+'.h5')
+
+    # check that LITE/ or ORIGINAL/ directory exists
+    if not os.path.isdir(otuput_path):
+        os.makedirs(otuput_path)
+
+    if verbose:
+        print('processing ', grid_path)
+        print('saving file ',  grid_output)
+
+    if compression == 'ORIGINAL':
+        history_DS_error = None
+        profile_DS_error = None
+        profile_DS_interval = None
+        history_DS_exclude = DEFAULT_HISTORY_DS_EXCLUDE
+        profile_DS_exclude = DEFAULT_PROFILE_DS_EXCLUDE
+    elif compression == 'LITE':
+        history_DS_error = 0.1
+        profile_DS_error = 0.1
+        profile_DS_interval = -0.005
+        history_DS_exclude = EXTRA_COLS_DS_EXCLUDE
+        profile_DS_exclude = EXTRA_COLS_DS_EXCLUDE
+    else:
+        raise ValueError('compression = %s not supported!'%compression)
+
+    if 'CO-HMS_RLO' in grid_path and CO_HMS_GRID_START_AT_RLO:
+        start_at_RLO = True
+    else:
+        start_at_RLO = False
+
+    grid = PSyGrid(verbose=True)
+    grid.create(grid_path,
+                grid_output,
+                overwrite=True,
+                history_DS_error=history_DS_error,
+                profile_DS_error=profile_DS_error,
+                history_DS_exclude=history_DS_exclude,
+                profile_DS_exclude=profile_DS_exclude,
+                profile_DS_interval=profile_DS_interval,
+                compression="gzip9",
+                start_at_RLO=start_at_RLO,
+                initial_RLO_fix=True)
+    grid.close()
+
+
+def combine_grid_slices(i, path_to_csv_file, verbose=False):
+
+    df = pd.read_csv(path_to_csv_file)
+    grid_combined_key = df.keys()[i]
+    gird_names = df[grid_combined_key].dropna().to_list()
+    if verbose:
+        print('Combinining: ', gird_names)
+        print('into:', grid_combined_key)
+    join_grids(gird_names, grid_combined_key)
+
+
+def plot_grid(i, path_to_csv_file, verbose=False):
+
+    df = pd.read_csv(path_to_csv_file)
+    grid_path = df.loc[i,'path_to_grid']
+    plot_dir = df.loc[i,'path_to_plot']
+
+    if verbose:
+        print(f'plotting {grid_path}')
+
+    # check that plots/ directories exist
+    plot_path = os.path.join('/', os.path.join(*plot_dir.split('/')[:-1]))
+    check_dirs = [plot_path, plot_dir]
+
+    sub_dirs = ['TF12/', 'TF1/', 'TF2/', 'TF3/', 'TF4/', 'debug_mt/',
+                'debug_rl_1/', 'debug_rl_2/']
+    for name in sub_dirs:
+        check_dirs.append(os.path.join(plot_dir,name))
+
+    for dir_ in  check_dirs:
+        if not os.path.isdir(dir_):
+            os.makedirs(dir_)
+
+    # load grid
+    grid = PSyGrid(verbose=False)
+    grid.load(grid_path)
+
+    if 'CO' in grid_path:
+        # compact object mass slices
+        def log_range(x_min,x_max,x_n):
+            return 10**np.linspace(np.log10(x_min),np.log10(x_max), x_n)
+        m_CO_min = 1.
+        m_CO_max = 51.32759630397827
+        m_CO_n = 23
+        m_COs = log_range(m_CO_min, m_CO_max, m_CO_n)
+        m_COs_edges = 10**(np.log10(np.array(m_COs)[:-1])+
+                             (np.log10(np.array(m_COs)[1:])-np.log10(np.array(m_COs)[:-1]))/2)
+        m2 = [0.]+m_COs_edges.tolist()+[55.]
+        vars = m_COs
+        fname = 'grid_m_%1.2f.png'
+        title = '$m_\mathrm{CO}=%1.2f\,M_\odot$'
+        slice_3D_var_str='star_2_mass'
+    elif 'HMS-HMS' in grid_path:
+        # mass ratio slices
+        qs = np.linspace(0.05,1.,20)
+        qs[-1] = 0.99
+        vars = qs.tolist()
+        fname = 'grid_q_%1.2f.png'
+        title = '$q=%1.2f$'
+        slice_3D_var_str='mass_ratio'
+    else:
+        raise ValueError('Grid type not supported!')
+
+    for i, var in enumerate(vars):
+        if 'HMS-HMS' in grid_path:
+            slice_3D_var_range = (var-2.5e-2,var+2.5e-2)
+        elif 'CO' in grid_path:
+            if i == len(m2):
+                continue
+            slice_3D_var_range = (m2[i],m2[i+1])
+        # TODO: skip plotting slice if there are no data
+        try:
+            PLOT_PROPERTIES = {
+                'figsize' : (4,3.5),
+                'path_to_file' : os.path.join(plot_dir,'TF12/'),
+                'show_fig' : False,
+                'fname' : fname%var,
+                'title' : title%var,
+                'log10_x' : True,
+                'log10_y' : True,
+                'legend2D' : {'bbox_to_anchor' : (1.03, 0.5)}
+            }
+
+            grid.plot2D('star_1_mass', 'period_days', None,
+                         termination_flag='combined_TF12',
+                         grid_3D=True, slice_3D_var_str=slice_3D_var_str,
+                         slice_3D_var_range=slice_3D_var_range,
+                         verbose=False, **PLOT_PROPERTIES)
+
+            PLOT_PROPERTIES = {
+                'figsize' : (4,5),
+                'path_to_file' : os.path.join(plot_dir,'TF1/'),
+                'show_fig' : False,
+                'fname' : fname%var,
+                'title' : title%var,
+                'log10_x' : True,
+                'log10_y' : True,
+                'zmin' : -8,
+                'zmax' : -1,
+                'legend2D' : {'bbox_to_anchor' : (1.03, 0.5)},
+                'colorbar': {'pad': 0.12}
+            }
+
+            grid.plot2D('star_1_mass', 'period_days', 'lg_mtransfer_rate',
+                         termination_flag='termination_flag_1',
+                         grid_3D=True, slice_3D_var_str=slice_3D_var_str,
+                         slice_3D_var_range=slice_3D_var_range,
+                         verbose=False, **PLOT_PROPERTIES)
+
+            PLOT_PROPERTIES = {
+                'figsize' : (4,3.5),
+                'path_to_file' : os.path.join(plot_dir,'TF2/'),
+                'show_fig' : False,
+                'fname' : fname%var,
+                'title' : title%var,
+                'log10_x' : True,
+                'log10_y' : True,
+                'legend2D' : {'bbox_to_anchor' : (1.03, 0.5)}
+            }
+
+            grid.plot2D('star_1_mass', 'period_days', None,
+                         termination_flag='termination_flag_2',
+                         grid_3D=True, slice_3D_var_str=slice_3D_var_str,
+                         slice_3D_var_range=slice_3D_var_range,
+                         verbose=False, **PLOT_PROPERTIES)
+
+            PLOT_PROPERTIES = {
+                'figsize' : (4,3.5),
+                'path_to_file' : os.path.join(plot_dir,'TF3/'),
+                'show_fig' : False,
+                'fname' : fname%var,
+                'title' : title%var,
+                'log10_x' : True,
+                'log10_y' : True,
+                'legend2D' : {'bbox_to_anchor' : (1.03, 0.5)}
+            }
+
+            grid.plot2D('star_1_mass', 'period_days', None,
+                         termination_flag='termination_flag_3',
+                         grid_3D=True, slice_3D_var_str=slice_3D_var_str,
+                         slice_3D_var_range=slice_3D_var_range,
+                         verbose=False, **PLOT_PROPERTIES)
+
+            PLOT_PROPERTIES = {
+                'figsize' : (4,3.5),
+                'path_to_file' : os.path.join(plot_dir,'TF4/'),
+                'show_fig' : False,
+                'fname' : fname%var,
+                'title' : title%var,
+                'log10_x' : True,
+                'log10_y' : True,
+                'legend2D' : {'bbox_to_anchor' : (1.03, 0.5)}
+            }
+
+            grid.plot2D('star_1_mass', 'period_days', None,
+                         termination_flag='termination_flag_4',
+                         grid_3D=True, slice_3D_var_str=slice_3D_var_str,
+                         slice_3D_var_range=slice_3D_var_range,
+                         verbose=False, **PLOT_PROPERTIES)
+
+            PLOT_PROPERTIES = {
+                'figsize' : (4,5),
+                'path_to_file' : os.path.join(plot_dir,'debug_rl_1/'),
+                'show_fig' : False,
+                'fname' : fname%var,
+                'title' : title%var,
+                'log10_x' : True,
+                'log10_y' : True,
+                'zmin' : -0.5,
+                'zmax' : 0.5,
+                'legend2D' : {'bbox_to_anchor' : (1.03, 0.5)},
+                'colorbar': {'pad': 0.12}
+            }
+
+            grid.plot2D('star_1_mass', 'period_days',
+                        'rl_relative_overflow_1',
+                         termination_flag='debug',
+                         grid_3D=True, slice_3D_var_str=slice_3D_var_str,
+                         slice_3D_var_range=slice_3D_var_range,
+                         verbose=False, **PLOT_PROPERTIES)
+
+            PLOT_PROPERTIES = {
+                'figsize' : (4,5),
+                'path_to_file' : os.path.join(plot_dir,'debug_rl_2/'),
+                'show_fig' : False,
+                'fname' : fname%var,
+                'title' : title%var,
+                'log10_x' : True,
+                'log10_y' : True,
+                'zmin' : -0.5,
+                'zmax' : 0.5,
+                'legend2D' : {'bbox_to_anchor' : (1.03, 0.5)},
+                'colorbar': {'pad': 0.12}
+            }
+
+            grid.plot2D('star_1_mass', 'period_days',
+                        'rl_relative_overflow_2',
+                         termination_flag='debug',
+                         grid_3D=True, slice_3D_var_str=slice_3D_var_str,
+                         slice_3D_var_range=slice_3D_var_range,
+                         verbose=False, **PLOT_PROPERTIES)
+
+            PLOT_PROPERTIES = {
+                'figsize' : (4,5),
+                'path_to_file' : os.path.join(plot_dir,'debug_mt/'),
+                'show_fig' : False,
+                'fname' : fname%var,
+                'title' : title%var,
+                'log10_x' : True,
+                'log10_y' : True,
+                'zmin' : -8,
+                'zmax' : -1,
+                'legend2D' : {'bbox_to_anchor' : (1.03, 0.5)},
+                'colorbar': {'pad': 0.12}
+            }
+
+            grid.plot2D('star_1_mass', 'period_days', 'lg_mtransfer_rate',
+                         termination_flag='debug',
+                         grid_3D=True, slice_3D_var_str=slice_3D_var_str,
+                         slice_3D_var_range=slice_3D_var_range,
+                         verbose=False, **PLOT_PROPERTIES)
+        except Exception as e:
+            print('FAILED TO PLOT '+title%var)
+            print('')
+            print(e)
+            continue
+
+def check_failure_rate(i, path_to_csv_file, verbose=False):
+
+    df = pd.read_csv(path_to_csv_file)
+    grid_path = df.loc[i,'path_to_grid']
+    grid = PSyGrid(verbose=False)
+    grid.load(grid_path)
+
+    count = Counter(grid.final_values['interpolation_class'])
+    n = 0.
+    for key in count.keys():
+        n += count[key]
+    print(grid_path)
+    print('Failure rate', round(count['not_converged']/n*100,2),'%')
+
+
+def post_processing(i, path_to_csv_file, verbose=False):
+
+    df = pd.read_csv(path_to_csv_file)
+    grid_path = df.loc[i,'path_to_grid']
+    processed_grid_path = df.loc[i,'path_to_processed_grid']
+    grid = PSyGrid(verbose=False)
+    grid.load(grid_path)
+
+    if verbose:
+        print('Compute process quantities ...')
+    if 'CO' in grid_path:
+        star_2_CO = True
+    else:
+        star_2_CO = False
+    grid_ORIGINAL = PSyGrid(grid_path.replace('LITE','ORIGINAL'))
+    MESA_dirs_EXTRA_COLUMNS, EXTRA_COLUMNS = post_process_grid(grid_ORIGINAL,
+                                                               index=None,
+                                                               star_2_CO=star_2_CO,
+                                                               verbose=False)
+
+    # post processed quantities are appended to the grid object, hence
+    # we create a copy of it and append back to it
+    if os.path.exists(processed_grid_path):
+        if verbose:
+            print('Post processed grid file alredy exist, removing it.')
+        os.remove(processed_grid_path)
+    copyfile(grid_path, processed_grid_path)
+
+    grid_LITE = PSyGrid(processed_grid_path)
+    add_post_processed_quantities(grid_LITE, MESA_dirs_EXTRA_COLUMNS,
+                                  EXTRA_COLUMNS, verbose=verbose)
+    if verbose:
+        print('Added process quantities to grid:',processed_grid_path)
+    grid_LITE.close()
+
+
+def train_interpolators(i, path_to_csv_file, verbose=False):
+
+    df = pd.read_csv(path_to_csv_file)
+    grid_path = df.loc[i,'path_to_grid']
+    interpolator_path = df.loc[i,'path_to_interpolator']
+    method = interpolator_path.split('IF_')[-1].split('.pkl')[0]
+
+    if verbose:
+        print(f'train interpolators {grid_path} with method {method}')
+
+    # check interpolation_objects directory exists
+    interp_path = os.path.join('/', os.path.join(*interpolator_path.split('/')[:-1]))
+    if not os.path.isdir(interp_path):
+        os.makedirs(interp_path)
+
+    # load grid
+    grid = PSyGrid(verbose=False)
+    grid.load(grid_path)
+
+    second = ['S1_direct_f_fb', 'S1_direct_mass', 'S1_direct_spin']
+    third = ['S1_Fryer+12-rapid_f_fb', 'S1_Fryer+12-rapid_mass',
+             'S1_Fryer+12-rapid_spin']
+    fourth = ['S1_Fryer+12-delayed_f_fb', 'S1_Fryer+12-delayed_mass',
+              'S1_Fryer+12-delayed_spin']
+    fifth = ['S1_Sukhbold+16-engineN20_f_fb', 'S1_Sukhbold+16-engineN20_mass',
+             'S1_Sukhbold+16-engineN20_spin']
+    sixth = ['S1_Patton&Sukhbold20-engineN20_f_fb',
+             'S1_Patton&Sukhbold20-engineN20_mass',
+             'S1_Patton&Sukhbold20-engineN20_spin']
+
+
+    first = [key for key in grid.final_values.dtype.names if (
+                                    key != "model_number" and
+                                    (type(grid.final_values[key][0]) != np.str_)
+                                    and any(~np.isnan(grid.final_values[key])))]
+
+    for sec in second:
+        first.remove(sec)
+
+    for thrd in third:
+        first.remove(thrd)
+
+    for frth in fourth:
+        first.remove(frth)
+
+    for ffth in fifth:
+        first.remove(ffth)
+
+    for sxth in sixth:
+        first.remove(sxth)
+
+    if 'CO-HMS_RLO' in grid_path:
+        interp_method = [method, method]
+        interp_classes = ["stable_MT", "unstable_MT"]
+    else:
+        interp_method = [method, method, method]
+        interp_classes = ["no_MT", "stable_MT", "unstable_MT"]
+
+    # TODO: train CC2 quantities coming from reverse MT systems
+    interp = IFInterpolator(grid=grid, interpolators = [
+        {
+            "interp_method": interp_method,
+            "interp_classes": interp_classes,
+            "out_keys": first,
+            "class_method": "kNN",
+            "c_keys": ['interpolation_class',
+                       'S1_state',
+                       'S2_state',
+                       # Collapse quantities
+                       'S1_direct_SN_type',
+                       'S1_Fryer+12-rapid_SN_type',
+                       'S1_Fryer+12-delayed_SN_type',
+                       'S1_Sukhbold+16-engineN20_SN_type',
+                       'S1_Patton&Sukhbold20-engineN20_SN_type',
+                       # v1 POSYDON does not have S2 reaching CC before S1
+                       # all these classifier map to None
+                       'S2_direct_state',
+                       'S2_Fryer+12-rapid_state',
+                       'S2_Fryer+12-delayed_state',
+                       'S2_Sukhbold+16-engineN20_state',
+                       'S2_Patton&Sukhbold20-engineN20_state',
+                       'S2_direct_SN_type',
+                       'S2_Fryer+12-rapid_SN_type',
+                       'S2_Fryer+12-delayed_SN_type',
+                       'S2_Sukhbold+16-engineN20_SN_type',
+                       'S2_Patton&Sukhbold20-engineN20_SN_type'
+                      ],
+            "c_key": "interpolation_class"
+        },
+        {
+            "interp_method": [method, method, method],
+            "interp_classes": ["BH", "WD", "NS"],
+            "out_keys": second,
+            "class_method": "kNN",
+            "c_keys": ['S1_direct_state'],
+            "c_key": 'S1_direct_state'
+        },
+        {
+            "interp_method": [method, method, method],
+            "interp_classes": ["BH", "WD", "NS"],
+            "out_keys": third,
+            "class_method": "kNN",
+            "c_keys": ['S1_Fryer+12-rapid_state'],
+            "c_key": 'S1_Fryer+12-rapid_state'
+        },
+        {
+            "interp_method": [method, method, method],
+            "interp_classes": ["BH", "WD", "NS"],
+            "out_keys": fourth,
+            "class_method": "kNN",
+            "c_keys": ['S1_Fryer+12-delayed_state'],
+            "c_key": 'S1_Fryer+12-delayed_state'
+        },
+        {
+            "interp_method": [method, method, method],
+            "interp_classes": ["BH", "WD", "NS"],
+            "out_keys": fifth,
+            "class_method": "kNN",
+            "c_keys": ['S1_Sukhbold+16-engineN20_state'],
+            "c_key": 'S1_Sukhbold+16-engineN20_state'
+        },
+        {
+            "interp_method": [method, method, method],
+            "interp_classes": ["BH", "WD", "NS"],
+            "out_keys": sixth,
+            "class_method": "kNN",
+            "c_keys": ['S1_Patton&Sukhbold20-engineN20_state'],
+            "c_key": 'S1_Patton&Sukhbold20-engineN20_state'
+        }
+    ])
+
+     # training and saving
+    interp.train()
+    interp.save(interpolator_path)
+
+
+def export_dataset(i, path_to_csv_file, verbose=False):
+
+    df = pd.read_csv(path_to_csv_file)
+    grid_path = df.loc[i,'path_to_grid']
+    export_path = df.loc[i,'export_path']
+    if verbose:
+        print(f'copying {grid_path} to {export_path}')
+    shutil.copyfile(grid_path, export_path)
+
+def zams_file_name(dirname):
+    if '2e+00_Zsun' in dirname:
+        zams_filename = 'TODO' # TODO: update when avaiable
+    elif '1e+00_Zsun'  in dirname:
+        zams_filename = 'zams_z1.42m2_y0.2703.data'
+    elif '4.5e-01_Zsun'  in dirname:
+        zams_filename = 'zams_z6.39m3_y0.2586.data'
+    elif '2e-01_Zsun' in dirname:
+        zams_filename = 'zams_z2.84m3_y0.2533.data'
+    elif '1e-01_Zsun' in dirname:
+        zams_filename = 'zams_z1.42m3_y0.2511.data'
+    elif '1e-02_Zsun' in dirname:
+        zams_filename = 'zams_z1.42m4_y0.2492.data'
+    elif '1e-03_Zsun' in dirname:
+        zams_filename = 'zams_z1.42m5_y0.2490.data'
+    elif '1e-04_Zsun' in dirname:
+        zams_filename = 'zams_z1.42m6_y0.2490.data'
+    return zams_filename
+
+def copy_ini_file(grid, rerun_type, destination, cluster):
+
+    # copy the default ini file to directory
+    if cluster in ['quest','yggdrasil']:
+        dirname = grid.MESA_dirs[0].decode('utf-8')
+        ini_dir_path = os.path.join(PATH_TO_POSYDON,
+                    'grid_params/POSYDON-MESA-INLISTS/r11701/running_scripts')
+        if "single_HMS" in dirname:
+            ini_file_path = os.path.join(ini_dir_path, f'single_HMS_{cluster}.ini')
+            ini_file_dest = os.path.join(destination, f'single_HMS_{cluster}.ini')
+        elif "single_HeMS" in dirname:
+            ini_file_path = os.path.join(ini_dir_path, f'single_HeMS_{cluster}.ini')
+            ini_file_dest = os.path.join(destination, f'single_HeMS_{cluster}.ini')
+        elif "HMS-HMS" in dirname:
+            ini_file_path = os.path.join(ini_dir_path, f'HMS-HMS_{cluster}.ini')
+            ini_file_dest = os.path.join(destination, f'HMS-HMS_{cluster}.ini')
+        elif "CO-HMS_RLO" in dirname:
+            ini_file_path = os.path.join(ini_dir_path, f'CO-HMS_RLO_{cluster}.ini')
+            ini_file_dest = os.path.join(destination, f'CO-HMS_RLO_{cluster}.ini')
+        elif "CO-HeMS" in dirname:
+            ini_file_path = os.path.join(ini_dir_path, f'CO-HeMS_{cluster}.ini')
+            ini_file_dest = os.path.join(destination, f'CO-HeMS_{cluster}.ini')
+        else:
+            raise ValueError(f'Unsupported grid type in {dirname}!')
+        shutil.copyfile(ini_file_path, ini_file_dest)
+    else:
+        raise ValueError(f'Unsupported cluster {cluster}!')
+
+    # substitue the inlist sceario with the one for the rerun
+    if rerun_type == 'PISN':
+        replace_text = "matthias_PISN-d68228338b91fd487ef5d55c9b6ebb8cc5f0e668"
+    elif rerun_type == 'reverse_MT':
+        replace_text = "zepei_fix_implicit-afa1860ddf9894aa1d82742ee2a73e8e92acd4a9"
+    elif rerun_type == 'opacity_max':
+        replace_text = "matthias_PISN-d68228338b91fd487ef5d55c9b6ebb8cc5f0e668"
+    elif rerun_type == 'opacity_max_hms-hms':
+        replace_text = "zepei_fix_implicit-afa1860ddf9894aa1d82742ee2a73e8e92acd4a9"
+    elif rerun_type == 'other': # e.g. 'envelope_mass_limit', 'fe_core_infall_limit'
+        # this rerun uses the default inlist commit
+        return
+    else:
+        raise ValueError(f'Unsupported rerun type {rerun_type}!')
+
+    search_text1 = "main-18710e943edd926a5653c4cdb7d6e18e5bdb35a2"
+    search_text2 = "main-a060b7bf1a4d94d693f77be9a1b0b3a522c1eadf"
+    search_text3 = 'zams_z1.42m3_y0.2511.data'
+    replace_zams_filename = zams_file_name(dirname)
+    with open(ini_file_dest, 'r') as file:
+        data = file.read()
+        data = data.replace(search_text1, replace_text)
+        data = data.replace(search_text2, replace_text)
+        data = data.replace(search_text3, replace_zams_filename)
+        data = data.replace('grid_test.csv', 'grid.csv')
+    with open(ini_file_dest, 'w') as file:
+        file.write(data)
+
+def logic_rerun(grid, rerun_type):
+
+    runs_to_rerun=None
+    termination_flags=None
+    new_mesa_flag = None
+
+    if rerun_type == 'opacity_max' or rerun_type == 'opacity_max_hms-hms':
+        termination_flags=['reach cluster timelimit', 'min_timestep_limit']
+        new_mesa_flag={'opacity_max' : 0.5}
+    elif rerun_type == 'PISN':
+        N_runs = len(grid)
+        runs_to_rerun = []
+        for i in range(N_runs):
+            dirname = grid.MESA_dirs[i].decode('utf-8')
+            if not os.path.isdir(dirname):
+                # TODO: handle the case when grids were moved location
+                raise ValueError(f'Grid directory not found at {dirname}')
+            if "single_HMS" in dirname:
+                out_txt_path = os.path.join(dirname, "out_star1_formation_step0.txt")
+            elif "single_HeMS" in dirname:
+                out_txt_path = os.path.join(dirname, "out_star1_formation_step2.txt")
+            else:
+                out_txt_path = os.path.join(dirname, "out.txt")
+            if out_txt_path is not None and os.path.isfile(out_txt_path):
+                with open(out_txt_path, "r") as log_file:
+                    log_lines = log_file.readlines()
+                for line in log_lines:
+                    if "have reached gamma1 integral limit" in line:
+                        runs_to_rerun += [i]
+        runs_to_rerun = np.array(runs_to_rerun)
+    elif rerun_type == 'reverse_MT':
+        N_runs = len(grid)
+        runs_to_rerun = []
+        for i in range(N_runs):
+          if  grid[i].binary_history is not None and grid[i].history1 is not None:
+              rl1 = grid[i].binary_history['rl_relative_overflow_1']
+              rl2 = grid[i].binary_history['rl_relative_overflow_2']
+              w_wcrit = grid[i].history1['surf_avg_omega_div_omega_crit']
+              reverse = np.logical_and(rl1<-0.05, rl2>-0.05)
+              transfer = np.logical_and(reverse, w_wcrit>0.9)
+              if np.max(transfer) == True:
+                runs_to_rerun += [i]
+        runs_to_rerun = np.array(runs_to_rerun)
+    elif rerun_type == 'envelope_mass_limit': # maybe 'fe_core_infall_limit' as well?
+        runs_to_rerun = np.array([0, 1]) # implement logic
+    else:
+        raise ValueError(f'Unsupported rerun type {rerun_type}!')
+
+    if runs_to_rerun is None and termination_flags is None:
+        raise ValueError('Undefined rerun!')
+
+    return runs_to_rerun, termination_flags, new_mesa_flag
+
+
+def rerun(i, path_to_csv_file, rerun_type, verbose=False):
+
+    # load grid
+    df = pd.read_csv(path_to_csv_file)
+    grid_path = df.loc[i,'path_to_grid']
+    rerun_path = df.loc[i,'rerun_path']
+    grid = PSyGrid(verbose=False)
+    grid.load(grid_path)
+
+    # export point to rerun
+    if verbose:
+        print(f'rerun {grid_path} in {rerun_path}')
+    runs_to_rerun, termination_flags, new_mesa_flag = logic_rerun(grid, rerun_type)
+    grid.rerun(path_to_file=rerun_path, runs_to_rerun=runs_to_rerun,
+               termination_flags=termination_flags, new_mesa_flag=new_mesa_flag)
+
+    # copy ini file and set the new inlist commit
+    # TODO: make cluster a input
+    if 'b1119' in grid.MESA_dirs[0].decode('utf-8'):
+        cluster = 'quest'
+    else:
+        cluster = 'yggdrasil'
+    copy_ini_file(grid, rerun_type, destination=rerun_path, cluster=cluster)
+
+if __name__ == '__main__':
+
+    # chose grid slice given the slurm jobarray index
+    # TODO: use args parser
+    VERBOSE = True
+    PATH_TO_GRIDS = str(sys.argv[1])
+    path_to_csv_file = str(sys.argv[2])
+    i = int(sys.argv[3])
+    CO_HMS_GRID_START_AT_RLO = bool(int(sys.argv[4]))
+    if len(sys.argv) == 6:
+        rerun_type = str(sys.argv[5])
+
+    # prevent to run the script locally else it will star creating
+    # directories where you do not want them before breaking
+    if not os.path.isdir(PATH_TO_GRIDS):
+        raise ValueError('Grids were not found! '
+                         f'Check your PATH_TO_GRIDS={PATH_TO_GRIDS}')
+
+    # offset the start of each job
+    # NOTE: this prevents job arrays starting at the same time to read
+    # the same files at the same time (e.g. when creatign LITE/ORIGINAL grid,
+    # or when creating a directory that does not exist yet)
+    time.sleep(random.uniform(0.,30.))
+
+    if 'step_1' in path_to_csv_file:
+        create_grid_slice(i, path_to_csv_file,
+                          CO_HMS_GRID_START_AT_RLO=CO_HMS_GRID_START_AT_RLO,
+                          verbose=VERBOSE)
+
+    if 'step_2' in path_to_csv_file:
+        combine_grid_slices(i, path_to_csv_file, verbose=VERBOSE)
+
+    if 'step_3' in path_to_csv_file:
+        plot_grid(i, path_to_csv_file, verbose=VERBOSE)
+
+    if 'step_4' in path_to_csv_file:
+        check_failure_rate(i, path_to_csv_file, verbose=VERBOSE)
+
+    if 'step_5' in path_to_csv_file:
+        post_processing(i, path_to_csv_file, verbose=VERBOSE)
+
+    if 'step_6' in path_to_csv_file:
+        train_interpolators(i, path_to_csv_file, verbose=VERBOSE)
+
+    if 'step_7' in path_to_csv_file:
+        export_dataset(i, path_to_csv_file, verbose=VERBOSE)
+
+    if 'rerun' in path_to_csv_file:
+        rerun(i, path_to_csv_file, rerun_type, verbose=VERBOSE)

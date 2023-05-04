@@ -411,9 +411,9 @@ def initial_values_from_dirname(mesa_dir):
     """Use the name of the directory for inferring the main initial values."""
     dirname = str(os.path.basename(os.path.normpath(mesa_dir)))
     if "initial_mass" in dirname:                           # single-star grid
-        variable_names = ["initial_mass"]
+        variable_names = ["initial_mass", "initial_z"]
     else:                                                   # binary-star grid
-        variable_names = ["m1", "m2", "initial_period_in_days"]
+        variable_names = ["m1", "m2", "initial_period_in_days", "initial_z"]
         for variable_name in variable_names:
             assert variable_name in dirname
 
