@@ -96,30 +96,53 @@ class PostProcessingPipeline:
                  )
 
 
-        for action, step_number in ACTION_TO_STEP_NUM.items():
-            do_step_bool = setup_kwargs[action]
-
-            if setup_kwargs['VERBOSE']:
-                print( "\n\n{:-^45s} {:^8s}:{:^6s}".format(
-                    action, step_number, str(do_step_bool)) )
-
-            if do_step_bool:
-                step_kwargs = self.pipeline_kwargs[step_number]
+        with open('run_pipeline.sh', 'w') as runfile:
+            runfile.write("#!/bin/bash\n")
+            last_step = ''
+            for action, step_number in ACTION_TO_STEP_NUM.items():
+                do_step_bool = setup_kwargs[action]
 
                 if setup_kwargs['VERBOSE']:
-                    print( pformat(step_kwargs, indent=2) )
+                    print( "\n\n{:-^45s} {:^8s}:{:^6s}".format(
+                        action, step_number, str(do_step_bool)) )
+
+                if do_step_bool:
+                    step_kwargs = self.pipeline_kwargs[step_number]
+
+                    if setup_kwargs['VERBOSE']:
+                        print( pformat(step_kwargs, indent=2) )
 
 
-                create_csv(
-                    step_name=step_number,
-                    **{**step_kwargs, **setup_kwargs}
-                )
-                slurm_job(
-                    job_name=step_number,
-                    step_name=step_number,
-                    PATH_TO_POSYDON=self.PATH_TO_POSYDON,
-                    **{**step_kwargs, **setup_kwargs, **account_kwargs}
-                )
+                    create_csv(
+                        step_name=step_number,
+                        **{**step_kwargs, **setup_kwargs}
+                    )
+                    slurm_job(
+                        job_name=step_number,
+                        step_name=step_number,
+                        PATH_TO_POSYDON=self.PATH_TO_POSYDON,
+                        **{**step_kwargs, **setup_kwargs, **account_kwargs}
+                    )
+                    if last_step == '':
+                        # if there was no previous step the current step has no dependency
+                        runfile.write(f"ID{step_number}=$(sbatch --parsable {step_number}.slurm)\n")
+                    else:
+                        if setup_kwargs['COMBINE_GRID_SLICES'] and (step_number == 'step_4' or step_number == 'step_5'):
+                            # steps which can run in paralell after step_2 (steps 4 and 5 can run parallel with step_3)
+                            runfile.write(f"ID{step_number}=$(sbatch --parsable --dependency=afterok:$"
+                                          "{IDstep_2}"f" {step_number}.slurm) --kill-on-invalid-dep=yes\n")
+                        elif setup_kwargs['CREATE_GRID_SLICES'] and (step_number == 'step_4' or step_number == 'step_5'):
+                            # steps which can run in paralell after step_1 (in case there is no step_2)
+                            runfile.write(f"ID{step_number}=$(sbatch --parsable --dependency=afterok:$"
+                                          "{IDstep_1}"f" {step_number}.slurm) --kill-on-invalid-dep=yes\n")
+                        else:
+                            # steps waiting for the previous step
+                            runfile.write(f"ID{step_number}=$(sbatch --parsable --dependency=afterok:$"
+                                          "{"f"ID{last_step}""}"f" {step_number}.slurm) --kill-on-invalid-dep=yes\n")
+                    runfile.write(f"echo '{step_number}.slurm submitted as '$"
+                                  "{"f"ID{step_number}""}"f"\n")
+                    last_step = step_number
+        os.system("chmod 755 run_pipeline.sh")
 
     def create_logs_dir(self):
         # create logs in working dir to store all slurm outputs
