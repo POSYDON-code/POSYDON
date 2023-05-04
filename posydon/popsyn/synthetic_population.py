@@ -254,7 +254,6 @@ class SyntheticPopulation:
             raise ValueError('You already have an synthetic population stored in memory!')
 
     def get_dco_merger_efficiency(self):
-        total = 0.
         metallicities = np.unique(self.df_synthetic['metallicity'])
         efficiencies = []
         self.met_merger_efficiency = sorted(metallicities)[::-1]
@@ -263,11 +262,8 @@ class SyntheticPopulation:
             count = self.df_synthetic[sel].shape[0]
             underlying_stellar_mass = self.df_synthetic.loc[sel,'underlying_mass_for_met'].values[0]
             eff = count/underlying_stellar_mass
-            total += eff
             efficiencies.append(eff)
             print(f'DCO merger efficiency at Z={met:1.2E}: {eff:1.2E} Msun^-1')
-        print('')
-        print(f'Total DCO merger efficiency: {total:1.2E} Msun^-1')
         self.met_merger_efficiency = np.array(self.met_merger_efficiency)
         self.merger_efficiency = np.array(efficiencies)
 
