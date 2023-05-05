@@ -115,7 +115,7 @@ class Pulsar:
         self.alive_state = self.is_alive()
 
     
-    def RLO_evolve(self, delta_t, T, delta_M):
+    def RLO_evolve(self, delta_t, delta_M):
         '''
         Evolve a pulsar during Roche Lobe overflow (RLO).
 
@@ -133,31 +133,35 @@ class Pulsar:
 
         delta_M = delta_M*const.Msun
         delta_t = delta_t*const.secyer
-        T = T*const.secyer
+        #T = T*const.secyer
 
         ## evolve the NS spin
-        J_i = M_i*R**2*self.spin     ## spin angular momentum (J) of the NS before accretion
+        J_i = 2/5*M_i*R**2*self.spin     ## spin angular momentum (J) of the NS before accretion
         
         omega_k = np.sqrt(G*M_i/R**3)
-        delta_J = delta_M*R**2*omega_k    ## change in J due to accretion
+        delta_J = 2/5*delta_M*R**2*omega_k    ## change in J due to accretion
 
         J_f = J_i + delta_J
         M_f = M_i + delta_M
 
-        omega_f = J_f/(M_f*R**2)
+        omega_f = J_f/(2/5*M_f*R**2)
         self.spin = omega_f
 
         ## evolve the NS B-field
+<<<<<<< HEAD
         # B_f = self.Bfield/(1 + delta_M/(1e-6*const.Msun)) * np.exp(-(T-delta_t)/tau_d)
         B_f = self.Bfield/(1 + delta_M/(1e-6*const.Msun)) * np.exp(-(delta_t)/tau_d)
 
+=======
+        B_f = self.Bfield/(1 + delta_M/(1e-6*const.Msun)) * np.exp(-delta_t/tau_d)
+>>>>>>> 9f2ce620bbe555ff7c56b2901aadb80c2a9cd7c1
         self.Bfield = B_f
 
         ## check if pulsar crossed the death line
         self.alive_state = self.is_alive()
 
 
-    def CE_evolve(self, T):
+    def CE_evolve(self):
         '''
         Evolve a pulsar during common envelope.
 
@@ -167,15 +171,19 @@ class Pulsar:
         ''' 
         
         delta_M = 0.1*const.Msun  ## assume amount of mass accreted during CE = 0.1 Msun
+<<<<<<< HEAD
 
         # delta_M = np.random.uniform(0.04,0.1)
 
         T = T*const.secyer
+=======
+        #T = T*const.secyer
+>>>>>>> 9f2ce620bbe555ff7c56b2901aadb80c2a9cd7c1
     
         ## params needed for RLO evolve, assume CE phase is instantaneous
         delta_t = 0               
 
-        self.RLO_evolve(delta_t, T, delta_M)
+        self.RLO_evolve(delta_t, delta_M)
 
 
     def is_alive(self):
