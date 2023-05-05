@@ -4,8 +4,8 @@ e.g. with multiple metallicities
 """
 
 __authors__ = [
-    "Kyle Akira Rocha <kylerocha2024@u.northwestern.edu>",
     "Simone Bavera <Simone.Bavera@unige.ch>",
+    "Kyle Akira Rocha <kylerocha2024@u.northwestern.edu>",
 ]
 
 import warnings
@@ -16,7 +16,7 @@ from posydon.popsyn.binarypopulation import BinaryPopulation
 from posydon.utils.common_functions import convert_metallicity_to_string
 from posydon.popsyn.normalized_pop_mass import initial_total_underlying_mass
 from posydon.utils.common_functions import inspiral_timescale_from_orbital_period
-from posydon.popsyn.cosmology import DCOrates
+from posydon.popsyn.rate_calculation import Rates
 import posydon.visualization.plot_dco as plot_dco
 
 
@@ -268,15 +268,15 @@ class SyntheticPopulation:
         self.merger_efficiency = np.array(efficiencies)
 
 
-    def compute_cosmological_weights(self, sensitivity, flag_pdet, working_dir, load_data):
+    def compute_cosmological_weights(self, sensitivity, flag_pdet, working_dir, load_data, **kwargs):
 
         # TODO: make the class inputs kwargs
-        self.cosmology = DCOrates(self.df_synthetic)
+        self.rates = Rates(self.df_synthetic, **kwargs)
 
         # compute DCO merger rate density
         if not load_data:
-            self.cosmology.RunDCOsSimulation(sensitivity=sensitivity, flag_pdet=flag_pdet, path_to_dir=working_dir)
-        index, z_formation, z_merger, w_ijk = self.cosmology.loadDCOsSimulation(sensitivity, path_to_dir=working_dir)
+            self.rates.compute_merger_rate_weights(sensitivity=sensitivity, flag_pdet=flag_pdet, path_to_dir=working_dir)
+        index, z_formation, z_merger, w_ijk = self.rates.load_merger_rate_weights(sensitivity, path_to_dir=working_dir)
 
         return index, z_formation, z_merger, w_ijk
 
@@ -304,7 +304,7 @@ class SyntheticPopulation:
                 if c not in save_cols:
                     save_cols.append(c)
         for c in save_cols:
-            df[c] = self.cosmology.get_data(c, index)
+            df[c] = self.rates.get_data(c, index)
 
         return df
 
@@ -318,9 +318,9 @@ class SyntheticPopulation:
         index, z_formation, z_merger, w_ijk = self.compute_cosmological_weights(sensitivity, flag_pdet, working_dir=working_dir, load_data=load_data)
 
         # compute rate density weights
-        self.z_rate_density = self.cosmology.getRedshiftBinCenter()
-        self.rate_density = self.cosmology.RateDensity(w_ijk, z_merger, Type='DCOs', sensitivity=sensitivity)
-        print(f'DCO merger rate density in the local Universe ({self.z_rate_density[0]:1.2f}): {round(self.rate_density[0],2)} Gpc^-3 yr^-1')
+        self.z_rate_density = self.rates.get_centers_redshift_bins()
+        self.rate_density = self.rates.compute_merger_rate_density(w_ijk, z_merger, observable='DCOs', sensitivity=sensitivity)
+        print(f'DCO merger rate density in the local Universe (z={self.z_rate_density[0]:1.2f}): {round(self.rate_density[0],2)} Gpc^-3 yr^-1')
 
         # export the intrinsic DCO population
         self.df_intrinsic = self.resample_synthetic_population(index, z_formation, z_merger, w_ijk, export_cols=export_cols)
