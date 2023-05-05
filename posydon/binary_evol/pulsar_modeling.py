@@ -130,6 +130,7 @@ class Pulsar:
 
         M_i = self.mass              ## mass of the NS before accretion [g]
         R = self.radius              ## radius of the NS [cm]
+        I = self.moment_inertia      ## Moment of inertia [CGS]
 
         delta_M = delta_M*const.Msun
         delta_t = delta_t*const.secyer
@@ -147,14 +148,22 @@ class Pulsar:
         omega_f = J_f/(2/5*M_f*R**2)
         self.spin = omega_f
 
-        ## evolve the NS B-field
-<<<<<<< HEAD
-        # B_f = self.Bfield/(1 + delta_M/(1e-6*const.Msun)) * np.exp(-(T-delta_t)/tau_d)
-        B_f = self.Bfield/(1 + delta_M/(1e-6*const.Msun)) * np.exp(-(delta_t)/tau_d)
+        ## Alternate prescription for spin evolution 
+        # J_i = I*self.spin
 
-=======
+        # omega_k = np.sqrt(G*M_i/R**3)
+        # delta_I = 2/7 * (1 - 2.42e-6*delta_M/R - 2.9e-12*delta_M**2/R**2)**-1 * delta_M*R**2 * (const.Msun*const.Rsun**2)
+        # delta_J = delta_I*omega_k
+
+        # J_f = J_i + delta_J
+        # M_f = M_i + delta_M
+        # I_f = 2/7 * (1 - 2.42e-6*M_f/R - 2.9e-12*M_f**2/R**2)**-1 * M_f*R**2 * (const.Msun*const.Rsun**2)
+
+        # omega_f = J_f/I_f
+        # self.spin = omega_f
+
+        ## evolve the NS B-field
         B_f = self.Bfield/(1 + delta_M/(1e-6*const.Msun)) * np.exp(-delta_t/tau_d)
->>>>>>> 9f2ce620bbe555ff7c56b2901aadb80c2a9cd7c1
         self.Bfield = B_f
 
         ## check if pulsar crossed the death line
@@ -171,14 +180,7 @@ class Pulsar:
         ''' 
         
         delta_M = 0.1*const.Msun  ## assume amount of mass accreted during CE = 0.1 Msun
-<<<<<<< HEAD
-
-        # delta_M = np.random.uniform(0.04,0.1)
-
-        T = T*const.secyer
-=======
         #T = T*const.secyer
->>>>>>> 9f2ce620bbe555ff7c56b2901aadb80c2a9cd7c1
     
         ## params needed for RLO evolve, assume CE phase is instantaneous
         delta_t = 0               
