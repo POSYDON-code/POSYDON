@@ -714,9 +714,13 @@ class detached_step:
 
             def square_difference(x):
                 result = 0.0
-                for MESA_label, posydon_attr, colscaler, scale_of_that_MESA_label in zip(MESA_labels, posydon_attributes, colscalers, scales):
-                    single_track_value = scale_of_that_MESA_label.transform(get_track_val(MESA_label, htrack, *x))
-                    posydon_value = scale_of_that_MESA_label.transform(posydon_attr)
+                for (MESA_label, posydon_attr,
+                     colscaler, scale_of_that_MESA_label) in zip(
+                         MESA_labels, posydon_attributes, colscalers, scales):
+                    single_track_value = scale_of_that_MESA_label.transform(
+                        get_track_val(MESA_label, htrack, *x))
+                    posydon_value = scale_of_that_MESA_label.transform(
+                        posydon_attr)
                     if MESA_label == "center_he4":
                         result += ((single_track_value - posydon_value)
                                    / posydon_value) ** 2
@@ -745,12 +749,14 @@ class detached_step:
                 if star.state in LIST_ACCEPTABLE_STATES_FOR_HMS:
                     list_for_matching = self.list_for_matching_HMS_alternative
                 elif star.state in LIST_ACCEPTABLE_STATES_FOR_postMS:
-                    list_for_matching = self.list_for_matching_postMS_alternative
+                    list_for_matching = (
+                        self.list_for_matching_postMS_alternative)
                 elif star.state in LIST_ACCEPTABLE_STATES_FOR_HeStar:
-                    list_for_matching = self.list_for_matching_HeStar_alternative
+                    list_for_matching = (
+                        self.list_for_matching_HeStar_alternative)
 
                 MESA_labels = list_for_matching[0]
-                posydon_attributes =  posydon_attribute(MESA_labels, star)
+                posydon_attributes = posydon_attribute(MESA_labels, star)
                 rs = list_for_matching[1]
                 colscalers = list_for_matching[2]
                 bnds = []
@@ -772,11 +778,17 @@ class detached_step:
 
                 def square_difference(x):
                     result = 0.0
-                    for MESA_label, posydon_attr, colscaler, scale_of_that_MESA_label in zip(MESA_labels, posydon_attributes, colscalers, scales):
-                        single_track_value = scale_of_that_MESA_label.transform(get_track_val(MESA_label, htrack, *x))
-                        posydon_value = scale_of_that_MESA_label.transform(posydon_attr)
+                    for (MESA_label, posydon_attr, colscaler,
+                         scale_of_MESA_label) in zip(
+                             MESA_labels, posydon_attributes,
+                             colscalers, scales):
+                        single_track_value = scale_of_MESA_label.transform(
+                            get_track_val(MESA_label, htrack, *x))
+                        posydon_value = scale_of_MESA_label.transform(
+                            posydon_attr)
                         if MESA_label == "center_he4":
-                            result += ((single_track_value - posydon_value)/posydon_value) ** 2
+                            result += ((single_track_value - posydon_value)
+                                       / posydon_value) ** 2
                         else:
                             result += (single_track_value - posydon_value) ** 2
                     return result
@@ -885,7 +897,7 @@ class detached_step:
         KEYS = self.KEYS
         KEYS_POSITIVE = self.KEYS_POSITIVE
 
-        if binary.star_1 is None: #
+        if binary.star_1 is None:
             self.non_existent_companion = 1
         if binary.star_2 is None:
             self.non_existent_companion = 2
@@ -919,7 +931,8 @@ class detached_step:
                 primary.htrack = secondary.htrack
                 primary.co = True
             elif (binary.star_2.state in ("BH", "NS", "WD")
-                  and binary.star_1.state in LIST_ACCEPTABLE_STATES_FOR_HeStar):
+                  and binary.star_1.state
+                  in LIST_ACCEPTABLE_STATES_FOR_HeStar):
                 primary = binary.star_2
                 secondary = binary.star_1
                 secondary.htrack = False
@@ -947,7 +960,8 @@ class detached_step:
                 primary.htrack = False
                 primary.co = False
             elif (binary.star_1.state in LIST_ACCEPTABLE_STATES_FOR_HeStar
-                    and binary.star_2.state in LIST_ACCEPTABLE_STATES_FOR_HeStar):
+                    and binary.star_2.state
+                    in LIST_ACCEPTABLE_STATES_FOR_HeStar):
                 primary = binary.star_1
                 secondary = binary.star_2
                 secondary.htrack = False
@@ -981,7 +995,8 @@ class detached_step:
             else:
                 raise Exception("State not recognized!")
 
-        def get_star_data(binary, star1, star2, htrack, co, copy_prev_m0=None, copy_prev_t0=None):
+        def get_star_data(binary, star1, star2, htrack,
+                          co, copy_prev_m0=None, copy_prev_t0=None):
             """Get and interpolate the properties of stars.
 
             The data of a compact object can be stored as a copy of its
@@ -1021,7 +1036,8 @@ class detached_step:
                     m0, t0 = self.match_to_single_star(star1, htrack)
                     t_after_matching = time.time()
                     if self.verbose or self.verbose == 1:
-                        print(f"Matching duration: {t_after_matching-t_before_matching:.6g}")
+                        print("Matching duration: "
+                              f"{t_after_matching-t_before_matching:.6g}")
 
             if np.any(np.isnan([m0, t0])):
                 #    binary.event = "END"
@@ -1088,9 +1104,11 @@ class detached_step:
         interp1d_sec, m0, t0 = get_star_data(
             binary, secondary, primary, secondary.htrack, co=False)
         if (primary.co) or (self.non_existent_companion != 0):
-            # copy the secondary star except mass which is of the primary, and radius, mdot, Idot = 0
+            # copy the secondary star except mass which is of the primary,
+            # and radius, mdot, Idot = 0
             interp1d_pri = get_star_data(
-                binary, secondary, primary, secondary.htrack, co=True,   copy_prev_m0=m0, copy_prev_t0=t0)[0]
+                binary, secondary, primary, secondary.htrack, co=True,
+                copy_prev_m0=m0, copy_prev_t0=t0)[0]
         elif not primary.co:
             interp1d_pri = get_star_data(
                 binary, primary, secondary, primary.htrack, False)[0]
@@ -1319,7 +1337,8 @@ class detached_step:
                                 for key in KEYS[1:11]
                             ],
                             interp1d_sec["Idot"](t - t_offset_sec),
-                            interp1d_sec["conv_env_turnover_time_l_b"](t - t_offset_sec),
+                            interp1d_sec["conv_env_turnover_time_l_b"](
+                                t - t_offset_sec),
                             interp1d_pri["R"](t - t_offset_pri),
                             interp1d_pri["L"](t - t_offset_pri),
                             *[
@@ -1327,7 +1346,8 @@ class detached_step:
                                 for key in KEYS[1:11]
                             ],
                             interp1d_pri["Idot"](t - t_offset_pri),
-                            interp1d_pri["conv_env_turnover_time_l_b"](t - t_offset_pri),
+                            interp1d_pri["conv_env_turnover_time_l_b"](
+                                t - t_offset_pri),
                             self.do_wind_loss,
                             self.do_tides,
                             self.do_gravitational_radiation,
@@ -1360,7 +1380,8 @@ class detached_step:
                                 for key in KEYS[1:11]
                             ],
                             interp1d_sec["Idot"](t - t_offset_sec),
-                            interp1d_sec["conv_env_turnover_time_l_b"](t - t_offset_sec),
+                            interp1d_sec["conv_env_turnover_time_l_b"](
+                                t - t_offset_sec),
                             interp1d_pri["R"](t - t_offset_pri),
                             interp1d_pri["L"](t - t_offset_pri),
                             *[
@@ -1368,7 +1389,8 @@ class detached_step:
                                 for key in KEYS[1:11]
                             ],
                             interp1d_pri["Idot"](t - t_offset_pri),
-                            interp1d_pri["conv_env_turnover_time_l_b"](t - t_offset_pri),
+                            interp1d_pri["conv_env_turnover_time_l_b"](
+                                t - t_offset_pri),
                             self.do_wind_loss,
                             self.do_tides,
                             self.do_gravitational_radiation,
@@ -2381,7 +2403,7 @@ def diffeq(
             # The constant 3.8e-30 from Rappaport+1983 has units of [cm^-2 s]
             # which need to be converted...
             #
-            # -3.8e-30 [cm^-2 s] * (const.rsol**2 / const.secyer) -> [Rsol^-2 yr]
+            # -3.8e-30 [cm^-2 s] * (const.rsol**2/const.secyer) -> [Rsol^-2 yr]
             # * M [Msol]
             # * R ** 4 [Rsol^4]
             # * Omega ** 3 [yr^-3]
@@ -2462,7 +2484,8 @@ def diffeq(
             # Torque prescription from Garraffo et al. 2018, ApJ, 862, 90
             # a = 0.03
             # b = 0.5
-            c = 3e41 / (const.msol * const.rsol**2) # [g cm^2] -> [Msol Rsol^2]
+            # [g cm^2] -> [Msol Rsol^2]
+            c = 3e41 / (const.msol * const.rsol**2)
             # Above are as calibrated in Gossage et al. 2021, ApJ, 912, 65
 
             Prot_pri = 2 * np.pi / Omega_pri            # [yr]
@@ -2511,10 +2534,12 @@ def diffeq(
             v_mod2_sec = v_esc2_sec + (2 * Omega_sec**2 * R_sec**2) / K2
             v_mod2_pri = v_esc2_pri + (2 * Omega_pri**2 * R_pri**2) / K2
 
-            # Van & Ivanova 2019, MNRAS 483, 5595 replace the magnetic field with
-            # Omega * tau_conv phenomenology. Thus, the ratios (rot_ratio_* and tau_ratio_*)
-            # inherently have units of Gauss [cm^-0.5 g^0.5 s^-1] that needs to be converted to [Rsol], [Msol], [yr].
-            # VI2019 assume the solar magnetic field strength is on average 1 Gauss.
+            # Van & Ivanova 2019, MNRAS 483, 5595 replace the magnetic field
+            # with Omega * tau_conv phenomenology. Thus, the ratios
+            # (rot_ratio_* and tau_ratio_*) inherently have units of Gauss
+            # [cm^-0.5 g^0.5 s^-1] that needs to be converted to [Rsol],
+            # [Msol], [yr]. VI2019 assume the solar magnetic field strength is
+            # on average 1 Gauss.
             if (abs(Mdot_sec) > 0):
                 R_alfven_div_R3_sec = (
                     R_sec**4 * rot_ratio_sec**4 * tau_ratio_sec**4
@@ -2524,8 +2549,10 @@ def diffeq(
                 R_alfven_div_R3_sec = 0.0
 
             if (abs(Mdot_pri) > 0):
-                R_alfven_div_R3_pri = R_pri**4 * rot_ratio_pri**4 * tau_ratio_pri**4 \
-                                  / (Mdot_pri**2 * v_mod2_pri) * (const.rsol**2 * const.secyer / const.msol**2)
+                R_alfven_div_R3_pri = (
+                    R_pri**4 * rot_ratio_pri**4 * tau_ratio_pri**4
+                    / (Mdot_pri**2 * v_mod2_pri)
+                    * (const.rsol**2 * const.secyer / const.msol**2))
             else:
                 R_alfven_div_R3_pri = 0.0
 
