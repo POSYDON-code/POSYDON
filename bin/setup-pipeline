@@ -130,15 +130,15 @@ class PostProcessingPipeline:
                         if setup_kwargs['COMBINE_GRID_SLICES'] and (step_number == 'step_4' or step_number == 'step_5'):
                             # steps which can run in paralell after step_2 (steps 4 and 5 can run parallel with step_3)
                             runfile.write(f"ID{step_number}=$(sbatch --parsable --dependency=afterok:$"
-                                          "{IDstep_2}"f" {step_number}.slurm) --kill-on-invalid-dep=yes\n")
+                                          "{IDstep_2}"f" --kill-on-invalid-dep=yes {step_number}.slurm)\n")
                         elif setup_kwargs['CREATE_GRID_SLICES'] and (step_number == 'step_4' or step_number == 'step_5'):
                             # steps which can run in paralell after step_1 (in case there is no step_2)
                             runfile.write(f"ID{step_number}=$(sbatch --parsable --dependency=afterok:$"
-                                          "{IDstep_1}"f" {step_number}.slurm) --kill-on-invalid-dep=yes\n")
+                                          "{IDstep_1}"f" --kill-on-invalid-dep=yes {step_number}.slurm)\n")
                         else:
                             # steps waiting for the previous step
                             runfile.write(f"ID{step_number}=$(sbatch --parsable --dependency=afterok:$"
-                                          "{"f"ID{last_step}""}"f" {step_number}.slurm) --kill-on-invalid-dep=yes\n")
+                                          "{"f"ID{last_step}""}"f" --kill-on-invalid-dep=yes {step_number}.slurm)\n")
                     runfile.write(f"echo '{step_number}.slurm submitted as '$"
                                   "{"f"ID{step_number}""}"f"\n")
                     last_step = step_number
