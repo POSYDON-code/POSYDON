@@ -148,7 +148,9 @@ class Pulsar:
         self.spin = omega_f
 
         ## evolve the NS B-field
-        B_f = self.Bfield/(1 + delta_M/(1e-6*const.Msun)) * np.exp(-(T-delta_t)/tau_d)
+        # B_f = self.Bfield/(1 + delta_M/(1e-6*const.Msun)) * np.exp(-(T-delta_t)/tau_d)
+        B_f = self.Bfield/(1 + delta_M/(1e-6*const.Msun)) * np.exp(-(delta_t)/tau_d)
+
         self.Bfield = B_f
 
         ## check if pulsar crossed the death line
