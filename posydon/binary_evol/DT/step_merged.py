@@ -14,6 +14,7 @@ from scipy.integrate import solve_ivp
 from scipy.interpolate import PchipInterpolator
 from scipy.optimize import minimize
 from scipy.optimize import root
+import copy
 
 from posydon.utils.data_download import PATH_TO_POSYDON_DATA
 from posydon.binary_evol.binarystar import BINARYPROPERTIES
@@ -54,6 +55,13 @@ LIST_ACCEPTABLE_STATES_FOR_POSTHeMS = STAR_STATES_HE_RICH.copy()
 [LIST_ACCEPTABLE_STATES_FOR_POSTHeMS.remove(x) for x in LIST_ACCEPTABLE_STATES_FOR_HeMS]
 
 
+def convert_star_to_massless_remnant(star):
+    star.state="massless_remnant"
+    for key in STARPROPERTIES:
+        # these stellar attributes become np.nan
+        setattr(star, key, np.nan)
+    return star
+
 
 class MergedStep(IsolatedStep):
     """
@@ -83,6 +91,9 @@ class MergedStep(IsolatedStep):
         **kwargs
     ):
 
+        self.merger_critical_rot = merger_critical_rot
+        self.rel_mass_lost_HMS_HMS = rel_mass_lost_HMS_HMS
+
         super().__init__(
         grid_name_Hrich=grid_name_Hrich,
         grid_name_strippedHe=grid_name_strippedHe,
@@ -92,7 +103,29 @@ class MergedStep(IsolatedStep):
         *args,
         **kwargs)
 
-    def merged_star_properties(star_base,comp):
+
+    def __call__(self,binary):
+        merged_star_properties = self.merged_star_properties
+        print("call step_merged")
+        print("BEFORE", binary.star_1.state,binary.star_2.state,binary.state, binary.event)
+        print("BEFORE_A", binary.star_1.state,binary.star_2.state,binary.state, binary.event,self.rel_mass_lost_HMS_HMS)
+        if binary.state == "merged":
+            if binary.event == 'oMerging1':
+                binary.star_1,binary.star_2 = merged_star_properties(binary.star_1,binary.star_2)
+                print("test2", binary.star_1.state,binary.star_2.state)
+            elif binary.event == 'oMerging2':
+                binary.star_2,binary.star_1 = merged_star_properties(binary.star_2,binary.star_1)
+            else:
+                raise ValueError("binary.state='merged' but binary.event != 'oMerging1/2'")
+        else:
+            raise ValueError("step_merging initiated but binary.state != 'merged'")
+
+        binary.event == None
+        print("AFTER",binary.star_1,binary.star_2, binary.state, binary.event)
+
+        super().__call__(binary)
+
+    def merged_star_properties(self,star_base,comp):
         """
         Make assumptions about the core/total mass, and abundances of the star of a merged product.
 
@@ -104,58 +137,108 @@ class MergedStep(IsolatedStep):
             is the star that is engulfed
         """
         #by default the stellar attributes that keep the same value from the
+        print("test1")
+        #merged_star = copy.copy(star_base)
         merged_star = star_base
 
         s1 = star_base.state
         s2 = comp.state
 
+        print("1", star_base,comp)
 
-        def mass_weighted_avg(star1=star_base,star2=comp, abundance_name="center_h1", mass_weight_name="mass"):
+        def mass_weighted_avg(star1=star_base,star2=comp, abundance_name="center_h1", mass_weight1="mass", mass_weight2=None):
+            print("2.1")
             A1 = getattr(star1, abundance_name)
             A2 = getattr(star2, abundance_name)
-            M1 = getattr(star1, mass_weight_name)
-            M2 = getattr(star2, mass_weight_name)
+            print(A1, A2)
+            print(mass_weight1, mass_weight2)
+
+            if mass_weight1 is "H-rich_envelope_mass":
+                M1 = getattr(star1, "mass") - getattr(star1, "he_core_mass")
+            elif mass_weight1 is "He-rich_envelope_mass":
+                M1 = getattr(star1, "he_core_mass") - getattr(star1, "co_core_mass")
+            else:
+                M1 = getattr(star1, mass_weight1)
+            print(M1)
+
+            if mass_weight2 is None:
+                mass_weight2 = mass_weight1
+
+            if mass_weight2 is "H-rich_envelope_mass":
+                M2 = getattr(star2, "mass") - getattr(star2, "he_core_mass")
+            elif mass_weight2 is "He-rich_envelope_mass":
+                M2 = getattr(star2, "he_core_mass") - getattr(star2, "co_core_mass")
+            else:
+                M2 = getattr(star2, mass_weight2)
+            print(M1, M2)
+            print("2.2")
             return (A1*M1 + A2*M2 ) / (M1+M2)
 
         # MS + MS
         if ( s1 in LIST_ACCEPTABLE_STATES_FOR_HMS
             and s2 in LIST_ACCEPTABLE_STATES_FOR_HMS):
                 #these stellar attributes change value
-                merged_star.mass = (star_base.mass + comp.mass) * (1.-rel_mass_lost_HMS_HMS)
+                print("1.01", merged_star)
+                print("1.014", merged_star.mass,  "testing", star_base.mass, comp.mass)
+                print("1.014A", merged_star.mass,  "testing", star_base.mass, comp.mass, (1.-self.rel_mass_lost_HMS_HMS))
+                merged_star.mass = (star_base.mass + comp.mass) * (1.-self.rel_mass_lost_HMS_HMS)
+                print("1.014B", merged_star.mass,  "testing", star_base.mass, comp.mass)
+                setattr(merged_star, "mass", (star_base.mass + comp.mass) * (1.-self.rel_mass_lost_HMS_HMS) )
+                print("1.015", merged_star.mass, star_base.mass, comp.mass)
 
+                #for key in ["center_h1", "center_he4", "center_c12", "center_n14",]:
                 merged_star.center_h1 = mass_weighted_avg()
                 merged_star.center_he4 = mass_weighted_avg(abundance_name = "center_he4")
                 merged_star.center_c12 = mass_weighted_avg(abundance_name = "center_c12")
                 merged_star.center_n14 = mass_weighted_avg(abundance_name = "center_n14")
                 merged_star.center_o16 = mass_weighted_avg(abundance_name = "center_o16")
-
                 #TODO: should I check if the abundaces above end up in ~1 (?)
 
+                # weigheted mixing on the surface abundances
+                merged_star.surface_h1 = mass_weighted_avg(abundance_name = "surface_h1")
+                merged_star.surface_he4 = mass_weighted_avg(abundance_name = "surface_he4")
+                merged_star.surface_c12 = mass_weighted_avg(abundance_name = "surface_c12")
+                merged_star.surface_n14 = mass_weighted_avg(abundance_name = "surface_n14")
+                merged_star.surface_o16 = mass_weighted_avg(abundance_name = "surface_o16")
+
+                print("1.02", merged_star)
                 for key in STARPROPERTIES:
                     # these stellar attributes become np.nan
-                    for substring in ["log_", "lg_", "surface","surf_", "conv_", "lambda", "profile"]:
+                    for substring in ["log_", "lg_", "surf_", "conv_", "lambda", "profile"]:
                         if (substring in key) :
                             setattr(merged_star, key, np.nan)
                         if key in [ "c12_c12", "center_gamma",
                                    "avg_c_in_c_core", "total_moment_of_inertia", "spin", "envelope_binding_energy"]:
                             setattr(merged_star, key, np.nan)
+                print("1.03", merged_star)
+                massless_remnant = convert_star_to_massless_remnant(comp)
 
         #postMS + MS
         elif (s1 in LIST_ACCEPTABLE_STATES_FOR_POSTMS
             and s2 in LIST_ACCEPTABLE_STATES_FOR_HMS):
 
                 merged_star.mass = star_base.mass + comp.mass #TODO: in step_CEE we need to eject part of the (common) envelope
-
+                print("1.1", merged_star)
+                print("1.114", merged_star.mass,  "testing", star_base.mass, comp.mass)
+                # weigheted mixing on the surface abundances of the whole comp with the envelope of star_base
+                merged_star.surface_h1 = mass_weighted_avg(abundance_name = "surface_h1", mass_weight1="H-rich_envelope_mass", mass_weight2="mass")
+                merged_star.surface_he4 = mass_weighted_avg(abundance_name = "surface_he4", mass_weight1="H-rich_envelope_mass", mass_weight2="mass")
+                merged_star.surface_c12 = mass_weighted_avg(abundance_name = "surface_c12", mass_weight1="H-rich_envelope_mass", mass_weight2="mass")
+                merged_star.surface_n14 = mass_weighted_avg(abundance_name = "surface_n14", mass_weight1="H-rich_envelope_mass", mass_weight2="mass")
+                merged_star.surface_o16 = mass_weighted_avg(abundance_name = "surface_o16", mass_weight1="H-rich_envelope_mass", mass_weight2="mass")
+                print("1.2", merged_star)
                 for key in STARPROPERTIES:
                     # these stellar attributes become np.nan
-                    for substring in ["log_", "lg_", "surface","surf_", "conv_", "lambda", "profile"]:
+                    for substring in ["log_", "lg_", "surf_", "conv_", "lambda", "profile"]:
                         if (substring in key) :
                             setattr(merged_star, key, np.nan)
                         if key in [ "c12_c12", "center_gamma",
                                    "avg_c_in_c_core", "total_moment_of_inertia", "spin"]:
                             setattr(merged_star, key, np.nan)
-
+                print("1.3", merged_star)
                 merged_star.state = check_state_of_star(merged_star, star_CO=False)  # TODO for sure this needs testing!
+                massless_remnant = convert_star_to_massless_remnant(comp)
+                print("1.4", merged_star)
 
         # as above but opposite stars
         elif (s1 in LIST_ACCEPTABLE_STATES_FOR_HMS
@@ -164,9 +247,15 @@ class MergedStep(IsolatedStep):
                 merged_star = comp
                 merged_star.mass = star_base.mass + comp.mass
 
+                merged_star.surface_h1 = mass_weighted_avg(abundance_name = "surface_h1", mass_weight2="H-rich_envelope_mass", mass_weight1="mass")
+                merged_star.surface_he4 = mass_weighted_avg(abundance_name = "surface_he4", mass_weight2="H-rich_envelope_mass", mass_weight1="mass")
+                merged_star.surface_c12 = mass_weighted_avg(abundance_name = "surface_c12", mass_weight2="H-rich_envelope_mass", mass_weight1="mass")
+                merged_star.surface_n14 = mass_weighted_avg(abundance_name = "surface_n14", mass_weight2="H-rich_envelope_mass", mass_weight1="mass")
+                merged_star.surface_o16 = mass_weighted_avg(abundance_name = "surface_o16", mass_weight2="H-rich_envelope_mass", mass_weight1="mass")
+
                 for key in STARPROPERTIES:
                     # these stellar attributes become np.nan
-                    for substring in ["log_", "lg_", "surface","surf_", "conv_", "lambda", "profile"]:
+                    for substring in ["log_", "lg_", "surf_", "conv_", "lambda", "profile"]:
                         if (substring in key) :
                             setattr(merged_star, key, np.nan)
                         if key in [ "c12_c12", "center_gamma",
@@ -174,6 +263,7 @@ class MergedStep(IsolatedStep):
                             setattr(merged_star, key, np.nan)
 
                 merged_star.state = check_state_of_star(merged_star, star_CO=False)  # TODO for sure this needs testing!
+                massless_remnant = convert_star_to_massless_remnant(star_base)
 
         #postMS + postMS
         elif (s1 in LIST_ACCEPTABLE_STATES_FOR_POSTMS
@@ -186,11 +276,11 @@ class MergedStep(IsolatedStep):
 
                 # weighted central abundances if merging cores. Else only from star_base
                 if star_base.co_core_mass == 0 and comp.co_core_mass == 0: # two stars with Helium cores
-                    merged_star.center_h1 = mass_weighted_avg(mass_weight_name="he_core_mass")
-                    merged_star.center_he4 = mass_weighted_avg(abundance_name = "center_he4", mass_weight_name="he_core_mass")
-                    merged_star.center_c12 = mass_weighted_avg(abundance_name = "center_c12", mass_weight_name="he_core_mass")
-                    merged_star.center_n14 = mass_weighted_avg(abundance_name = "center_n14", mass_weight_name="he_core_mass")
-                    merged_star.center_o16 = mass_weighted_avg(abundance_name = "center_o16", mass_weight_name="he_core_mass")
+                    merged_star.center_h1 = mass_weighted_avg(mass_weight1="he_core_mass")
+                    merged_star.center_he4 = mass_weighted_avg(abundance_name = "center_he4", mass_weight1="he_core_mass")
+                    merged_star.center_c12 = mass_weighted_avg(abundance_name = "center_c12", mass_weight1="he_core_mass")
+                    merged_star.center_n14 = mass_weighted_avg(abundance_name = "center_n14", mass_weight1="he_core_mass")
+                    merged_star.center_o16 = mass_weighted_avg(abundance_name = "center_o16", mass_weight1="he_core_mass")
                 elif (star_base.co_core_mass > 0 and comp.co_core_mass == 0): # star_base with CO core and the comp has a He core
                     pass # the central abundances are kept as the ones of star_base
                 elif (comp.co_core_mass > 0 and star_base.co_core_mass == 0): # comp with CO core and the star_base has a He core
@@ -200,23 +290,32 @@ class MergedStep(IsolatedStep):
                     merged_star.center_n14 = comp.center_n14
                     merged_star.center_o16 = comp.center_o16
                 elif (star_base.co_core_mass > 0 and comp.co_core_mass > 0):
-                    merged_star.center_h1 = mass_weighted_avg(mass_weight_name="co_core_mass") #TODO : maybe he_core_mass makes more sense?
-                    merged_star.center_he4 = mass_weighted_avg(abundance_name = "center_he4", mass_weight_name="co_core_mass")
-                    merged_star.center_c12 = mass_weighted_avg(abundance_name = "center_c12", mass_weight_name="co_core_mass")
-                    merged_star.center_n14 = mass_weighted_avg(abundance_name = "center_n14", mass_weight_name="co_core_mass")
-                    merged_star.center_o16 = mass_weighted_avg(abundance_name = "center_o16", mass_weight_name="co_core_mass")
+                    merged_star.center_h1 = mass_weighted_avg(mass_weight1="co_core_mass") #TODO : maybe he_core_mass makes more sense?
+                    merged_star.center_he4 = mass_weighted_avg(abundance_name = "center_he4", mass_weight1="co_core_mass")
+                    merged_star.center_c12 = mass_weighted_avg(abundance_name = "center_c12", mass_weight1="co_core_mass")
+                    merged_star.center_n14 = mass_weighted_avg(abundance_name = "center_n14", mass_weight1="co_core_mass")
+                    merged_star.center_o16 = mass_weighted_avg(abundance_name = "center_o16", mass_weight1="co_core_mass")
                 else:
                     warnings.warn("weird compbination of CO core masses during merging")
 
+                # weigheted mixing on the surface abundances based on the envelopes of the two stars
+                merged_star.surface_h1 = mass_weighted_avg(abundance_name = "surface_h1", mass_weight1="H-rich_envelope_mass", mass_weight2="H-rich_envelope_mass")
+                merged_star.surface_he4 = mass_weighted_avg(abundance_name = "surface_he4", mass_weight1="H-rich_envelope_mass", mass_weight2="H-rich_envelope_mass")
+                merged_star.surface_c12 = mass_weighted_avg(abundance_name = "surface_c12", mass_weight1="H-rich_envelope_mass", mass_weight2="H-rich_envelope_mass")
+                merged_star.surface_n14 = mass_weighted_avg(abundance_name = "surface_n14", mass_weight1="H-rich_envelope_mass", mass_weight2="H-rich_envelope_mass")
+                merged_star.surface_o16 = mass_weighted_avg(abundance_name = "surface_o16", mass_weight1="H-rich_envelope_mass", mass_weight2="H-rich_envelope_mass")
+
+
                 for key in STARPROPERTIES:
                     # these stellar attributes become np.nan
-                    for substring in ["log_", "lg_", "surface","surf_", "conv_", "lambda", "profile"]:
+                    for substring in ["log_", "lg_", "surf_", "conv_", "lambda", "profile"]:
                         if (substring in key) :
                             setattr(merged_star, key, np.nan)
                         if key in [ "c12_c12", "center_gamma",
                                    "avg_c_in_c_core", "total_moment_of_inertia", "spin"]:
                             setattr(merged_star, key, np.nan)
                 merged_star.state = check_state_of_star(merged_star, star_CO=False)  # TODO for sure this needs testing!
+                massless_remnant = convert_star_to_massless_remnant(comp)
 
         #postMS + HeStar
         elif (s1 in LIST_ACCEPTABLE_STATES_FOR_POSTMS
@@ -229,11 +328,11 @@ class MergedStep(IsolatedStep):
 
                 # weighted central abundances if merging cores. Else only from star_base
                 if star_base.co_core_mass == 0 and comp.co_core_mass == 0: # two stars with only Helium cores, not CO cores
-                    merged_star.center_h1 = mass_weighted_avg(mass_weight_name="he_core_mass")
-                    merged_star.center_he4 = mass_weighted_avg(abundance_name = "center_he4", mass_weight_name="he_core_mass")
-                    merged_star.center_c12 = mass_weighted_avg(abundance_name = "center_c12", mass_weight_name="he_core_mass")
-                    merged_star.center_n14 = mass_weighted_avg(abundance_name = "center_n14", mass_weight_name="he_core_mass")
-                    merged_star.center_o16 = mass_weighted_avg(abundance_name = "center_o16", mass_weight_name="he_core_mass")
+                    merged_star.center_h1 = mass_weighted_avg(mass_weight1="he_core_mass")
+                    merged_star.center_he4 = mass_weighted_avg(abundance_name = "center_he4", mass_weight1="he_core_mass")
+                    merged_star.center_c12 = mass_weighted_avg(abundance_name = "center_c12", mass_weight1="he_core_mass")
+                    merged_star.center_n14 = mass_weighted_avg(abundance_name = "center_n14", mass_weight1="he_core_mass")
+                    merged_star.center_o16 = mass_weighted_avg(abundance_name = "center_o16", mass_weight1="he_core_mass")
                 elif (star_base.co_core_mass > 0 and comp.co_core_mass == 0): # star_base with CO core and the comp has just a He core (is a HeMS star)
                     pass # the central abundances are kept as the ones of star_base
                 else:
@@ -241,13 +340,14 @@ class MergedStep(IsolatedStep):
 
                 for key in STARPROPERTIES:
                     # these stellar attributes become np.nan
-                    for substring in ["log_", "lg_", "surface","surf_", "conv_", "lambda", "profile"]:
+                    for substring in ["log_", "lg_", "surf_", "conv_", "lambda", "profile"]:
                         if (substring in key) :
                             setattr(merged_star, key, np.nan)
                         if key in [ "c12_c12", "center_gamma",
                                    "avg_c_in_c_core", "total_moment_of_inertia", "spin"]:
                             setattr(merged_star, key, np.nan)
                 merged_star.state = check_state_of_star(merged_star, star_CO=False)  # TODO for sure this needs testing!
+                massless_remnant = convert_star_to_massless_remnant(comp)
 
         # as above but opposite stars
         elif (s1 in  LIST_ACCEPTABLE_STATES_FOR_HeMS
@@ -262,11 +362,11 @@ class MergedStep(IsolatedStep):
 
                 # weighted central abundances if merging cores. Else only from star_base
                 if star_base.co_core_mass == 0 and comp.co_core_mass == 0: # two stars with only Helium cores, not CO cores
-                    merged_star.center_h1 = mass_weighted_avg(mass_weight_name="he_core_mass")
-                    merged_star.center_he4 = mass_weighted_avg(abundance_name = "center_he4", mass_weight_name="he_core_mass")
-                    merged_star.center_c12 = mass_weighted_avg(abundance_name = "center_c12", mass_weight_name="he_core_mass")
-                    merged_star.center_n14 = mass_weighted_avg(abundance_name = "center_n14", mass_weight_name="he_core_mass")
-                    merged_star.center_o16 = mass_weighted_avg(abundance_name = "center_o16", mass_weight_name="he_core_mass")
+                    merged_star.center_h1 = mass_weighted_avg(mass_weight1="he_core_mass")
+                    merged_star.center_he4 = mass_weighted_avg(abundance_name = "center_he4", mass_weight1="he_core_mass")
+                    merged_star.center_c12 = mass_weighted_avg(abundance_name = "center_c12", mass_weight1="he_core_mass")
+                    merged_star.center_n14 = mass_weighted_avg(abundance_name = "center_n14", mass_weight1="he_core_mass")
+                    merged_star.center_o16 = mass_weighted_avg(abundance_name = "center_o16", mass_weight1="he_core_mass")
                 elif (star_base.co_core_mass == 0 and comp.co_core_mass > 0): # star_base is the HeMS Star and comp has a CO core
                     pass # the central abundances are kept as the ones of star_base
                 else:
@@ -274,13 +374,14 @@ class MergedStep(IsolatedStep):
 
                 for key in STARPROPERTIES:
                     # these stellar attributes become np.nan
-                    for substring in ["log_", "lg_", "surface","surf_", "conv_", "lambda", "profile"]:
+                    for substring in ["log_", "lg_", "surf_", "conv_", "lambda", "profile"]:
                         if (substring in key) :
                             setattr(merged_star, key, np.nan)
                         if key in [ "c12_c12", "center_gamma",
                                    "avg_c_in_c_core", "total_moment_of_inertia", "spin"]:
                             setattr(merged_star, key, np.nan)
                 merged_star.state = check_state_of_star(merged_star, star_CO=False)  # TODO for sure this needs testing!
+                massless_remnant = convert_star_to_massless_remnant(star_base)
 
         #postMS + HeStar that is not in HeMS
         elif (s1 in LIST_ACCEPTABLE_STATES_FOR_POSTMS
@@ -293,11 +394,11 @@ class MergedStep(IsolatedStep):
 
                 # weighted central abundances if merging cores. Else only from star_base
                 if star_base.co_core_mass == 0 and comp.co_core_mass == 0: # two stars with Helium cores
-                    merged_star.center_h1 = mass_weighted_avg(mass_weight_name="he_core_mass")
-                    merged_star.center_he4 = mass_weighted_avg(abundance_name = "center_he4", mass_weight_name="he_core_mass")
-                    merged_star.center_c12 = mass_weighted_avg(abundance_name = "center_c12", mass_weight_name="he_core_mass")
-                    merged_star.center_n14 = mass_weighted_avg(abundance_name = "center_n14", mass_weight_name="he_core_mass")
-                    merged_star.center_o16 = mass_weighted_avg(abundance_name = "center_o16", mass_weight_name="he_core_mass")
+                    merged_star.center_h1 = mass_weighted_avg(mass_weight1="he_core_mass")
+                    merged_star.center_he4 = mass_weighted_avg(abundance_name = "center_he4", mass_weight1="he_core_mass")
+                    merged_star.center_c12 = mass_weighted_avg(abundance_name = "center_c12", mass_weight1="he_core_mass")
+                    merged_star.center_n14 = mass_weighted_avg(abundance_name = "center_n14", mass_weight1="he_core_mass")
+                    merged_star.center_o16 = mass_weighted_avg(abundance_name = "center_o16", mass_weight1="he_core_mass")
                 elif (star_base.co_core_mass > 0 and comp.co_core_mass == 0): # star_base with CO core and the comp has a He core
                     pass # the central abundances are kept as the ones of star_base
                 elif (comp.co_core_mass > 0 and star_base.co_core_mass == 0): # comp with CO core and the star_base has a He core
@@ -307,23 +408,24 @@ class MergedStep(IsolatedStep):
                     merged_star.center_n14 = comp.center_n14
                     merged_star.center_o16 = comp.center_o16
                 elif (star_base.co_core_mass > 0 and comp.co_core_mass > 0):
-                    merged_star.center_h1 = mass_weighted_avg(mass_weight_name="co_core_mass")
-                    merged_star.center_he4 = mass_weighted_avg(abundance_name = "center_he4", mass_weight_name="co_core_mass")
-                    merged_star.center_c12 = mass_weighted_avg(abundance_name = "center_c12", mass_weight_name="co_core_mass")
-                    merged_star.center_n14 = mass_weighted_avg(abundance_name = "center_n14", mass_weight_name="co_core_mass")
-                    merged_star.center_o16 = mass_weighted_avg(abundance_name = "center_o16", mass_weight_name="co_core_mass")
+                    merged_star.center_h1 = mass_weighted_avg(mass_weight1="co_core_mass")
+                    merged_star.center_he4 = mass_weighted_avg(abundance_name = "center_he4", mass_weight1="co_core_mass")
+                    merged_star.center_c12 = mass_weighted_avg(abundance_name = "center_c12", mass_weight1="co_core_mass")
+                    merged_star.center_n14 = mass_weighted_avg(abundance_name = "center_n14", mass_weight1="co_core_mass")
+                    merged_star.center_o16 = mass_weighted_avg(abundance_name = "center_o16", mass_weight1="co_core_mass")
                 else:
                     warnings.warn("weird compbination of CO core masses during merging")
 
                 for key in STARPROPERTIES:
                     # these stellar attributes become np.nan
-                    for substring in ["log_", "lg_", "surface","surf_", "conv_", "lambda", "profile"]:
+                    for substring in ["log_", "lg_", "surf_", "conv_", "lambda", "profile"]:
                         if (substring in key) :
                             setattr(merged_star, key, np.nan)
                         if key in [ "c12_c12", "center_gamma",
                                    "avg_c_in_c_core", "total_moment_of_inertia", "spin"]:
                             setattr(merged_star, key, np.nan)
                 merged_star.state = check_state_of_star(merged_star, star_CO=False)  # TODO for sure this needs testing!
+                massless_remnant = convert_star_to_massless_remnant(comp)
 
         # as above but the opposite stars
         elif (s1 in LIST_ACCEPTABLE_STATES_FOR_POSTHeMS
@@ -337,11 +439,11 @@ class MergedStep(IsolatedStep):
 
                 # weighted central abundances if merging cores. Else only from star_base
                 if star_base.co_core_mass == 0 and comp.co_core_mass == 0: # two stars with Helium cores
-                    merged_star.center_h1 = mass_weighted_avg(mass_weight_name="he_core_mass")
-                    merged_star.center_he4 = mass_weighted_avg(abundance_name = "center_he4", mass_weight_name="he_core_mass")
-                    merged_star.center_c12 = mass_weighted_avg(abundance_name = "center_c12", mass_weight_name="he_core_mass")
-                    merged_star.center_n14 = mass_weighted_avg(abundance_name = "center_n14", mass_weight_name="he_core_mass")
-                    merged_star.center_o16 = mass_weighted_avg(abundance_name = "center_o16", mass_weight_name="he_core_mass")
+                    merged_star.center_h1 = mass_weighted_avg(mass_weight1="he_core_mass")
+                    merged_star.center_he4 = mass_weighted_avg(abundance_name = "center_he4", mass_weight1="he_core_mass")
+                    merged_star.center_c12 = mass_weighted_avg(abundance_name = "center_c12", mass_weight1="he_core_mass")
+                    merged_star.center_n14 = mass_weighted_avg(abundance_name = "center_n14", mass_weight1="he_core_mass")
+                    merged_star.center_o16 = mass_weighted_avg(abundance_name = "center_o16", mass_weight1="he_core_mass")
                 elif (star_base.co_core_mass > 0 and comp.co_core_mass == 0): # star_base with CO core and the comp has a He core
                     pass # the central abundances are kept as the ones of star_base
                 elif (comp.co_core_mass > 0 and star_base.co_core_mass == 0): # comp with CO core and the star_base has a He core
@@ -351,23 +453,24 @@ class MergedStep(IsolatedStep):
                     merged_star.center_n14 = comp.center_n14
                     merged_star.center_o16 = comp.center_o16
                 elif (star_base.co_core_mass > 0 and comp.co_core_mass > 0):
-                    merged_star.center_h1 = mass_weighted_avg(mass_weight_name="co_core_mass")
-                    merged_star.center_he4 = mass_weighted_avg(abundance_name = "center_he4", mass_weight_name="co_core_mass")
-                    merged_star.center_c12 = mass_weighted_avg(abundance_name = "center_c12", mass_weight_name="co_core_mass")
-                    merged_star.center_n14 = mass_weighted_avg(abundance_name = "center_n14", mass_weight_name="co_core_mass")
-                    merged_star.center_o16 = mass_weighted_avg(abundance_name = "center_o16", mass_weight_name="co_core_mass")
+                    merged_star.center_h1 = mass_weighted_avg(mass_weight1="co_core_mass")
+                    merged_star.center_he4 = mass_weighted_avg(abundance_name = "center_he4", mass_weight1="co_core_mass")
+                    merged_star.center_c12 = mass_weighted_avg(abundance_name = "center_c12", mass_weight1="co_core_mass")
+                    merged_star.center_n14 = mass_weighted_avg(abundance_name = "center_n14", mass_weight1="co_core_mass")
+                    merged_star.center_o16 = mass_weighted_avg(abundance_name = "center_o16", mass_weight1="co_core_mass")
                 else:
                     warnings.warn("weird compbination of CO core masses during merging")
 
                 for key in STARPROPERTIES:
                     # these stellar attributes become np.nan
-                    for substring in ["log_", "lg_", "surface","surf_", "conv_", "lambda", "profile"]:
+                    for substring in ["log_", "lg_", "surf_", "conv_", "lambda", "profile"]:
                         if (substring in key) :
                             setattr(merged_star, key, np.nan)
                         if key in [ "c12_c12", "center_gamma",
                                    "avg_c_in_c_core", "total_moment_of_inertia", "spin"]:
                             setattr(merged_star, key, np.nan)
                 merged_star.state = check_state_of_star(merged_star, star_CO=False)  # TODO for sure this needs testing!
+                massless_remnant = convert_star_to_massless_remnant(star_base)
 
         # HeStar + HeStar
         elif (s1 in STAR_STATES_HE_RICH
@@ -380,11 +483,11 @@ class MergedStep(IsolatedStep):
 
                 # weighted central abundances if merging cores. Else only from star_base
                 if star_base.co_core_mass == 0 and comp.co_core_mass == 0: # two stars with Helium cores
-                    merged_star.center_h1 = mass_weighted_avg(mass_weight_name="he_core_mass")
-                    merged_star.center_he4 = mass_weighted_avg(abundance_name = "center_he4", mass_weight_name="he_core_mass")
-                    merged_star.center_c12 = mass_weighted_avg(abundance_name = "center_c12", mass_weight_name="he_core_mass")
-                    merged_star.center_n14 = mass_weighted_avg(abundance_name = "center_n14", mass_weight_name="he_core_mass")
-                    merged_star.center_o16 = mass_weighted_avg(abundance_name = "center_o16", mass_weight_name="he_core_mass")
+                    merged_star.center_h1 = mass_weighted_avg(mass_weight1="he_core_mass")
+                    merged_star.center_he4 = mass_weighted_avg(abundance_name = "center_he4", mass_weight1="he_core_mass")
+                    merged_star.center_c12 = mass_weighted_avg(abundance_name = "center_c12", mass_weight1="he_core_mass")
+                    merged_star.center_n14 = mass_weighted_avg(abundance_name = "center_n14", mass_weight1="he_core_mass")
+                    merged_star.center_o16 = mass_weighted_avg(abundance_name = "center_o16", mass_weight1="he_core_mass")
                 elif (star_base.co_core_mass > 0 and comp.co_core_mass == 0): # star_base with CO core and the comp has a He core
                     pass # the central abundances are kept as the ones of star_base
                 elif (comp.co_core_mass > 0 and star_base.co_core_mass == 0): # comp with CO core and the star_base has a He core
@@ -394,23 +497,31 @@ class MergedStep(IsolatedStep):
                     merged_star.center_n14 = comp.center_n14
                     merged_star.center_o16 = comp.center_o16
                 elif (star_base.co_core_mass > 0 and comp.co_core_mass > 0):
-                    merged_star.center_h1 = mass_weighted_avg(mass_weight_name="co_core_mass")
-                    merged_star.center_he4 = mass_weighted_avg(abundance_name = "center_he4", mass_weight_name="co_core_mass")
-                    merged_star.center_c12 = mass_weighted_avg(abundance_name = "center_c12", mass_weight_name="co_core_mass")
-                    merged_star.center_n14 = mass_weighted_avg(abundance_name = "center_n14", mass_weight_name="co_core_mass")
-                    merged_star.center_o16 = mass_weighted_avg(abundance_name = "center_o16", mass_weight_name="co_core_mass")
+                    merged_star.center_h1 = mass_weighted_avg(mass_weight1="co_core_mass")
+                    merged_star.center_he4 = mass_weighted_avg(abundance_name = "center_he4", mass_weight1="co_core_mass")
+                    merged_star.center_c12 = mass_weighted_avg(abundance_name = "center_c12", mass_weight1="co_core_mass")
+                    merged_star.center_n14 = mass_weighted_avg(abundance_name = "center_n14", mass_weight1="co_core_mass")
+                    merged_star.center_o16 = mass_weighted_avg(abundance_name = "center_o16", mass_weight1="co_core_mass")
                 else:
                     warnings.warn("weird compbination of CO core masses during merging")
 
+                # weigheted mixing on the surface abundances based on the He-rich envelopes of the two stars
+                merged_star.surface_h1 = mass_weighted_avg(abundance_name = "surface_h1", mass_weight1="He-rich_envelope_mass", mass_weight2="He-rich_envelope_mass")
+                merged_star.surface_he4 = mass_weighted_avg(abundance_name = "surface_he4", mass_weight1="He-rich_envelope_mass", mass_weight2="He-rich_envelope_mass")
+                merged_star.surface_c12 = mass_weighted_avg(abundance_name = "surface_c12", mass_weight1="He-rich_envelope_mass", mass_weight2="He-rich_envelope_mass")
+                merged_star.surface_n14 = mass_weighted_avg(abundance_name = "surface_n14", mass_weight1="He-rich_envelope_mass", mass_weight2="He-rich_envelope_mass")
+                merged_star.surface_o16 = mass_weighted_avg(abundance_name = "surface_o16", mass_weight1="He-rich_envelope_mass", mass_weight2="He-rich_envelope_mass")
+
                 for key in STARPROPERTIES:
                     # these stellar attributes become np.nan
-                    for substring in ["log_", "lg_", "surface","surf_", "conv_", "lambda", "profile"]:
+                    for substring in ["log_", "lg_", "surf_", "conv_", "lambda", "profile"]:
                         if (substring in key) :
                             setattr(merged_star, key, np.nan)
                         if key in [ "c12_c12", "center_gamma",
                                    "avg_c_in_c_core", "total_moment_of_inertia", "spin"]:
                             setattr(merged_star, key, np.nan)
                 merged_star.state = check_state_of_star(merged_star, star_CO=False)  # TODO for sure this needs testing!
+                massless_remnant = convert_star_to_massless_remnant(comp)
 
         # Star + WD
         elif (s1 in STAR_STATES_NOT_CO
@@ -429,51 +540,36 @@ class MergedStep(IsolatedStep):
                     merged_star.center_n14 = comp.center_n14
                     merged_star.center_o16 = comp.center_o16
                 elif (star_base.co_core_mass > 0 and comp.co_core_mass > 0):
-                    merged_star.center_h1 = mass_weighted_avg(mass_weight_name="co_core_mass")
-                    merged_star.center_he4 = mass_weighted_avg(abundance_name = "center_he4", mass_weight_name="co_core_mass")
-                    merged_star.center_c12 = mass_weighted_avg(abundance_name = "center_c12", mass_weight_name="co_core_mass")
-                    merged_star.center_n14 = mass_weighted_avg(abundance_name = "center_n14", mass_weight_name="co_core_mass")
-                    merged_star.center_o16 = mass_weighted_avg(abundance_name = "center_o16", mass_weight_name="co_core_mass")
+                    merged_star.center_h1 = mass_weighted_avg(mass_weight1="co_core_mass")
+                    merged_star.center_he4 = mass_weighted_avg(abundance_name = "center_he4", mass_weight1="co_core_mass")
+                    merged_star.center_c12 = mass_weighted_avg(abundance_name = "center_c12", mass_weight1="co_core_mass")
+                    merged_star.center_n14 = mass_weighted_avg(abundance_name = "center_n14", mass_weight1="co_core_mass")
+                    merged_star.center_o16 = mass_weighted_avg(abundance_name = "center_o16", mass_weight1="co_core_mass")
                 else:
                     warnings.warn("weird compbination of CO core masses during merging")
 
                 for key in STARPROPERTIES:
                     # these stellar attributes become np.nan
-                    for substring in ["log_", "lg_", "surface","surf_", "conv_", "lambda", "profile"]:
+                    for substring in ["log_", "lg_", "surf_", "conv_", "lambda", "profile"]:
                         if (substring in key) :
                             setattr(merged_star, key, np.nan)
                         if key in [ "c12_c12", "center_gamma",
                                    "avg_c_in_c_core", "total_moment_of_inertia", "spin"]:
                             setattr(merged_star, key, np.nan)
                 merged_star.state = check_state_of_star(merged_star, star_CO=False)  # TODO for sure this needs testing!
+                massless_remnant = convert_star_to_massless_remnant(comp)
 
         # Star + NS/BH
         elif (s1 in STAR_STATES_NOT_CO
             and s2 in ["NS", "BH"]):
                 merged_star = comp
                 # TODO: potentially flag a Thorne-Zytkov object
+                massless_remnant = convert_star_to_massless_remnant(star_base)
         else:
             print("Combination of merging star states not expected: ", s1, s2)
 
         # ad hoc spin of merged star to be used in the detached step
-        merged_star.surf_avg_omega_div_omega_crit = merger_critical_rot
+        merged_star.surf_avg_omega_div_omega_crit = self.merger_critical_rot
 
-        return merged_star, None
-
-
-
-    def __call__(self,binary):
-
-        if binary.state == "merged":
-            if binary.event == 'oMerging1':
-                binary.star_1,binary.star_2 = merged_star_properties(binary.star_1,binary.star_2)
-            elif binary.event == 'oMerging2':
-                binary.star_2,binary.star_1 = merged_star_properties(binary.star_2,binary.star_1)
-            else:
-                raise ValueError("binary.state='merged' but binary.event != 'oMerging1/2'")
-        else:
-            raise ValueError("step_merging initiated but binary.state != 'merged'")
-
-        binary.event == None
-
-        super().__call__(binary)
+        print("3", merged_star,massless_remnant)
+        return merged_star, massless_remnant
