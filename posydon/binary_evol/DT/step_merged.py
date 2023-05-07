@@ -58,8 +58,8 @@ LIST_ACCEPTABLE_STATES_FOR_POSTHeMS = STAR_STATES_HE_RICH.copy()
 def convert_star_to_massless_remnant(star):
     star.state="massless_remnant"
     for key in STARPROPERTIES:
-        # these stellar attributes become np.nan
-        setattr(star, key, np.nan)
+        if key is not "state":
+            setattr(star, key, np.nan)
     return star
 
 
@@ -108,7 +108,6 @@ class MergedStep(IsolatedStep):
         merged_star_properties = self.merged_star_properties
         print("call step_merged")
         print("BEFORE", binary.star_1.state,binary.star_2.state,binary.state, binary.event)
-        print("BEFORE_A", binary.star_1.state,binary.star_2.state,binary.state, binary.event,self.rel_mass_lost_HMS_HMS)
         if binary.state == "merged":
             if binary.event == 'oMerging1':
                 binary.star_1,binary.star_2 = merged_star_properties(binary.star_1,binary.star_2)
@@ -120,7 +119,7 @@ class MergedStep(IsolatedStep):
         else:
             raise ValueError("step_merging initiated but binary.state != 'merged'")
 
-        binary.event == None
+        binary.event = None
         print("AFTER",binary.star_1,binary.star_2, binary.state, binary.event)
 
         super().__call__(binary)
@@ -137,7 +136,6 @@ class MergedStep(IsolatedStep):
             is the star that is engulfed
         """
         #by default the stellar attributes that keep the same value from the
-        print("test1")
         #merged_star = copy.copy(star_base)
         merged_star = star_base
 
@@ -147,11 +145,8 @@ class MergedStep(IsolatedStep):
         print("1", star_base,comp)
 
         def mass_weighted_avg(star1=star_base,star2=comp, abundance_name="center_h1", mass_weight1="mass", mass_weight2=None):
-            print("2.1")
             A1 = getattr(star1, abundance_name)
             A2 = getattr(star2, abundance_name)
-            print(A1, A2)
-            print(mass_weight1, mass_weight2)
 
             if mass_weight1 is "H-rich_envelope_mass":
                 M1 = getattr(star1, "mass") - getattr(star1, "he_core_mass")
@@ -159,7 +154,6 @@ class MergedStep(IsolatedStep):
                 M1 = getattr(star1, "he_core_mass") - getattr(star1, "co_core_mass")
             else:
                 M1 = getattr(star1, mass_weight1)
-            print(M1)
 
             if mass_weight2 is None:
                 mass_weight2 = mass_weight1
@@ -170,23 +164,16 @@ class MergedStep(IsolatedStep):
                 M2 = getattr(star2, "he_core_mass") - getattr(star2, "co_core_mass")
             else:
                 M2 = getattr(star2, mass_weight2)
-            print(M1, M2)
-            print("2.2")
+
             return (A1*M1 + A2*M2 ) / (M1+M2)
 
         # MS + MS
         if ( s1 in LIST_ACCEPTABLE_STATES_FOR_HMS
             and s2 in LIST_ACCEPTABLE_STATES_FOR_HMS):
                 #these stellar attributes change value
-                print("1.01", merged_star)
-                print("1.014", merged_star.mass,  "testing", star_base.mass, comp.mass)
-                print("1.014A", merged_star.mass,  "testing", star_base.mass, comp.mass, (1.-self.rel_mass_lost_HMS_HMS))
                 merged_star.mass = (star_base.mass + comp.mass) * (1.-self.rel_mass_lost_HMS_HMS)
-                print("1.014B", merged_star.mass,  "testing", star_base.mass, comp.mass)
-                setattr(merged_star, "mass", (star_base.mass + comp.mass) * (1.-self.rel_mass_lost_HMS_HMS) )
-                print("1.015", merged_star.mass, star_base.mass, comp.mass)
 
-                #for key in ["center_h1", "center_he4", "center_c12", "center_n14",]:
+                #TODO for key in ["center_h1", "center_he4", "center_c12", "center_n14","center_o16"]:
                 merged_star.center_h1 = mass_weighted_avg()
                 merged_star.center_he4 = mass_weighted_avg(abundance_name = "center_he4")
                 merged_star.center_c12 = mass_weighted_avg(abundance_name = "center_c12")
@@ -201,7 +188,6 @@ class MergedStep(IsolatedStep):
                 merged_star.surface_n14 = mass_weighted_avg(abundance_name = "surface_n14")
                 merged_star.surface_o16 = mass_weighted_avg(abundance_name = "surface_o16")
 
-                print("1.02", merged_star)
                 for key in STARPROPERTIES:
                     # these stellar attributes become np.nan
                     for substring in ["log_", "lg_", "surf_", "conv_", "lambda", "profile"]:
@@ -210,7 +196,6 @@ class MergedStep(IsolatedStep):
                         if key in [ "c12_c12", "center_gamma",
                                    "avg_c_in_c_core", "total_moment_of_inertia", "spin", "envelope_binding_energy"]:
                             setattr(merged_star, key, np.nan)
-                print("1.03", merged_star)
                 massless_remnant = convert_star_to_massless_remnant(comp)
 
         #postMS + MS
@@ -218,15 +203,14 @@ class MergedStep(IsolatedStep):
             and s2 in LIST_ACCEPTABLE_STATES_FOR_HMS):
 
                 merged_star.mass = star_base.mass + comp.mass #TODO: in step_CEE we need to eject part of the (common) envelope
-                print("1.1", merged_star)
-                print("1.114", merged_star.mass,  "testing", star_base.mass, comp.mass)
+
                 # weigheted mixing on the surface abundances of the whole comp with the envelope of star_base
                 merged_star.surface_h1 = mass_weighted_avg(abundance_name = "surface_h1", mass_weight1="H-rich_envelope_mass", mass_weight2="mass")
                 merged_star.surface_he4 = mass_weighted_avg(abundance_name = "surface_he4", mass_weight1="H-rich_envelope_mass", mass_weight2="mass")
                 merged_star.surface_c12 = mass_weighted_avg(abundance_name = "surface_c12", mass_weight1="H-rich_envelope_mass", mass_weight2="mass")
                 merged_star.surface_n14 = mass_weighted_avg(abundance_name = "surface_n14", mass_weight1="H-rich_envelope_mass", mass_weight2="mass")
                 merged_star.surface_o16 = mass_weighted_avg(abundance_name = "surface_o16", mass_weight1="H-rich_envelope_mass", mass_weight2="mass")
-                print("1.2", merged_star)
+
                 for key in STARPROPERTIES:
                     # these stellar attributes become np.nan
                     for substring in ["log_", "lg_", "surf_", "conv_", "lambda", "profile"]:
@@ -235,10 +219,9 @@ class MergedStep(IsolatedStep):
                         if key in [ "c12_c12", "center_gamma",
                                    "avg_c_in_c_core", "total_moment_of_inertia", "spin"]:
                             setattr(merged_star, key, np.nan)
-                print("1.3", merged_star)
+
                 merged_star.state = check_state_of_star(merged_star, star_CO=False)  # TODO for sure this needs testing!
                 massless_remnant = convert_star_to_massless_remnant(comp)
-                print("1.4", merged_star)
 
         # as above but opposite stars
         elif (s1 in LIST_ACCEPTABLE_STATES_FOR_HMS
