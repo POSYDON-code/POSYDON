@@ -11,6 +11,7 @@ __authors__ = [
 import warnings
 import numpy as np
 import pandas as pd
+from posydon.utils.constants import Zsun
 from posydon.popsyn.io import parse_inifile, binarypop_kwargs_from_ini
 from posydon.popsyn.binarypopulation import BinaryPopulation
 from posydon.utils.common_functions import convert_metallicity_to_string
@@ -35,6 +36,7 @@ class SyntheticPopulation:
 
         self.verbose = verbose
         self.df = None
+        self.df_oneline = None
         self.df_synthetic = None
         self.df_intrinsic = None
         self.df_detectable = None
@@ -83,6 +85,32 @@ class SyntheticPopulation:
 
     def apply_logic(self, df, S1_state=None, S2_state=None, binary_state=None,
                     binary_event=None, step_name=None, invert_S1S2=False):
+        """Select binaries in a dataframe given some properties.
+
+        Parameters
+        ----------
+        df : pd.DataFrame
+            POSYDON binary population synthesis dataframe.
+        S1_state : str
+            Star1 stellar state.
+        S2_state : str
+            Star2 stellar state.
+        binary_state : str
+            Binary state.
+        binary_event : str
+            Binary event.
+        step_name : str
+            Name of posydon step.
+        invert_S1S2 : bool
+            If `True` isolated also sort S1_state=S2_state and S2_state=S1_state
+            systems.
+
+        Returns
+        -------
+        pd.DataFrame of bools
+            List of binaries to select given the search parameters.
+
+        """
         if not invert_S1S2 and S1_state != S2_state:
             warnings.warn('Note that invert_S1S2=False, hence you are not parsing '
                           f'the dataset for {S1_state}-{S2_state} binaries and '
@@ -130,11 +158,31 @@ class SyntheticPopulation:
 
 
     def parse(self, S1_state=None, S2_state=None, binary_state=None,
-               binary_event=None, invert_S1S2=False, chunksize=500000,
-               Zsun = 0.0142):
+               binary_event=None, invert_S1S2=False, chunksize=500000):
+        """Sort binaries of interests given some properties.
 
-        # TODO: we should also export the oneline dataframe
+        Parameters
+        ----------
+        S1_state : str
+            Star1 stellar state.
+        S2_state : str
+            Star2 stellar state.
+        binary_state : str
+            Binary state.
+        binary_event : str
+            Binary event.
+        step_name : str
+            Name of posydon step.
+        invert_S1S2 : bool
+            If `True` isolated also sort S1_state=S2_state and S2_state=S1_state
+            systems.
+        chunksize : int
+            Read the POSYDON binary population in chuncks to prevent OFM error.
+
+        """
+
         df_sel = pd.DataFrame()
+        df_sel_oneline = pd.DataFrame()
         count = 0
         tmp = 0
         if self.verbose:
@@ -144,6 +192,7 @@ class SyntheticPopulation:
                 print(f'and ({S2_state}, {S1_state}, {binary_state}, {binary_event})')
         for k, file in enumerate(self.path_to_data):
             df_sel_met = pd.DataFrame()
+            sel_met = []
             # read metallicity from path
             met = float(file.split('/')[-1].split('_Zsun')[0])*Zsun
             simulated_mass_for_met = 0.
@@ -173,6 +222,7 @@ class SyntheticPopulation:
                 if any(sel):
                     df_tmp = pd.DataFrame()
                     df_tmp = df.loc[sel]
+                    sel_met.extend(sel)
                     # store metallicity
                     df_tmp['metallicity'] = met
                     # concatenate results
@@ -187,6 +237,13 @@ class SyntheticPopulation:
             df_sel = pd.concat([df_sel, df_sel_met])
             del df_sel_met
 
+            # load, parse and store oneline dataframe
+            # this dataframe is smaller, we can load it all at once
+            df_sel_met_oneline = pd.read_hdf(file,  key='oneline')
+            df_sel_met_oneline = df_sel_met_oneline.loc[sel_met]
+            df_sel_met_oneline['metallicity'] = met
+            df_sel_oneline = pd.concat([df_sel_oneline, df_sel_met_oneline])
+
             if self.verbose:
                 print(f'in {file} are {count-tmp}')
             tmp = count
@@ -198,24 +255,61 @@ class SyntheticPopulation:
         if self.df is not None:
             warnings.warn('Overwriting the df population!')
         self.df = df_sel
+        self.df_oneline = df_sel_oneline
 
     def save_pop(self, path='./parsed_population.h5'):
+        """Save parsed population.
+
+        Parameters
+        ----------
+        path : str
+            Path to file where you want to export the dataset.
+
+        """
         if self.df is None:
             raise ValueError('Nothing to save! The population was not parsed.')
+        elif self.df_oneline is None:
+            raise ValueError('Missing oneline dataframe!')
         else:
             self.df.to_hdf(path, key='history')
+            self.df_oneline.to_hdf(path, key='oneline')
             if self.verbose:
                 print('Population successfully saved!')
 
     def load_pop(self, path):
-        if self.df is None:
+        """Load parsed population.
+
+        Parameters
+        ----------
+        path : str
+            Path to dataset.
+
+        """
+        if self.df is None and self.df_oneline is None :
             self.df = pd.read_hdf(path, key='history')
+            self.df_oneline = pd.read_hdf(path, key='oneline')
             if self.verbose:
                 print('Population successfully loaded!')
         else:
             raise ValueError('You already have a population stored in memory!')
 
-    def get_dco_at_formation(self, S1_state, S2_state):
+    def get_dco_at_formation(self, S1_state, S2_state, oneline_cols=None):
+        """Sort synthetic population, i.e. DCO at formation.
+
+        Note: by default this function looks for the symmetric state
+        S1_state = S2_sate and S2_state = S1_sate.
+
+        Parameters
+        ----------
+        S1_state : str
+            Star1 stellar state.
+        S2_state : str
+            Star2 stellar state.
+        oneline_cols : list str
+            List of columns preset in the oneline dataframe you want to export
+            into the synthetic population.
+
+        """
 
         # to avoid the user making mistake automatically check the inverse of
         # the stellar states, since the df is already parsed this will not
@@ -233,11 +327,34 @@ class SyntheticPopulation:
         self.df_synthetic['t_delay'] = (time_contact - self.df_synthetic[['time']])*1e-6 # Myr
         self.df_synthetic['time'] *= 1e-6 # Myr
 
+        # add properties of the oneline dataframe
+        if self.df_oneline is not None:
+            # TODO: add kicks as well by default?
+            save_cols = ['S1_spin_orbit_tilt', 'S2_spin_orbit_tilt']
+            if oneline_cols is not None:
+                for c in oneline_cols:
+                    if c not in save_cols:
+                        save_cols.append(c)
+            for c in save_cols:
+                if c in self.df_oneline:
+                    self.df_synthetic[c] = self.df_oneline[c]
+                else:
+                    warnings.warn(f'The column {c} is not present in the '
+                                   'oneline dataframe.')
+
         # for convinience reindex the DataFrame
         n_rows = len(self.df_synthetic.index)
         self.df_synthetic = self.df_synthetic.set_index(np.linspace(0,n_rows-1,n_rows,dtype=int))
 
     def save_synthetic_pop(self, path='./synthetic_population.h5'):
+        """Save synthetc population.
+
+        Parameters
+        ----------
+        path : str
+            Path to dataset.
+
+        """
         if self.df_synthetic is None:
             raise ValueError('Nothing to save!')
         else:
@@ -246,6 +363,14 @@ class SyntheticPopulation:
                 print('Synthetic population successfully saved!')
 
     def load_synthetic_pop(self, path):
+        """Load synthetc population.
+
+        Parameters
+        ----------
+        path : str
+            Path to dataset.
+
+        """
         if self.df_synthetic is None:
             self.df_synthetic = pd.read_hdf(path, key='history')
             if self.verbose:
@@ -254,6 +379,7 @@ class SyntheticPopulation:
             raise ValueError('You already have an synthetic population stored in memory!')
 
     def get_dco_merger_efficiency(self):
+        """Compute the DCO merger efficinty per Msun for each metallicities."""
         metallicities = np.unique(self.df_synthetic['metallicity'])
         efficiencies = []
         self.met_merger_efficiency = sorted(metallicities)[::-1]
@@ -269,6 +395,33 @@ class SyntheticPopulation:
 
 
     def compute_cosmological_weights(self, sensitivity, flag_pdet, working_dir, load_data, **kwargs):
+        """Compute the DCO merger rate weights.
+
+        Parameters
+        ----------
+        sensitivity : str
+            TODO: update this once we implement POSYDON p_det calculation
+            Choose which GW detector sensitivity you want to use, available:
+            'design': LVK target design sensitivity, see fig. 1 of arXiv:1304.0670v3
+            'infinite': intrinsic merging DCO population, i.e. p_det = 1
+        flag_pdet : bool
+            `True` if you use sensitivity != 'infinite'.
+        working_dir : str
+            Working directory where the weights will be saved.
+        load_data : bool
+            `True` if you want to load the weights computed by this function
+            in your working directory.
+        **kwargs : dict
+            Kwargs containing the model parameters of your rate calculation.
+            See posydon/popsyn/rate_calculation.py
+
+        Returns
+        -------
+        array doubles
+            Return the cosmological weights, z_formation, z_merger and binary
+            index k associated to each weighted binary.
+
+        """
 
         # TODO: make the class inputs kwargs
         self.rates = Rates(self.df_synthetic, **kwargs)
@@ -281,6 +434,30 @@ class SyntheticPopulation:
         return index, z_formation, z_merger, w_ijk
 
     def resample_synthetic_population(self, index, z_formation, z_merger, w_ijk, export_cols=None):
+        """Resample synthetc population to obtain intrinsic/detectable population.
+
+        Parameters
+        ----------
+        index : array int
+            Index k of each binary corresponding to the synthetc dataframe
+            proeprties.
+        z_formation : array float
+            Redshift of formation of each binary.
+        z_merger : array float
+            Redshift of merger of each binary.
+        w_ijk : array float
+            Cosmological weights computed with Eq. B.8 of Bavera et at. (2020).
+        export_cols : list str
+            List of additional columns to save in the underlying/detectable
+            population.
+
+        Returns
+        -------
+        pd.DataFrame
+            Resampled synthetc population to intrinsic or detecatable
+            population.
+
+        """
 
         # drop all zero weights to save memory
         sel = w_ijk > 0.
@@ -309,6 +486,20 @@ class SyntheticPopulation:
         return df
 
     def get_dco_merger_rate_density(self, export_cols=None,  working_dir='./', load_data=False):
+        """Compute the merger rate density as a function of redshift.
+
+        Parameters
+        ----------
+        export_cols : list str
+            List of additional columns to save in the underlying/detectable
+            population.
+        working_dir : str
+            Working directory where the weights will be saved.
+        load_data : bool
+            `True` if you want to load the weights computed by this function
+            in your working directory.
+
+        """
         if self.df_synthetic is None:
             raise ValueError('You first need to isolated the DCO synthetic population!')
 
@@ -326,6 +517,25 @@ class SyntheticPopulation:
         self.df_intrinsic = self.resample_synthetic_population(index, z_formation, z_merger, w_ijk, export_cols=export_cols)
 
     def get_dco_detection_rate(self, sensitivity='design', export_cols=None,  working_dir='./', load_data=False):
+        """Compute the detection rate per yr.
+
+        Parameters
+        ----------
+        sensitivity : str
+            TODO: update this once we implement POSYDON p_det calculation
+            Choose which GW detector sensitivity you want to use, available:
+            'design': LVK target design sensitivity, see fig. 1 of arXiv:1304.0670v3
+            'infinite': intrinsic merging DCO population, i.e. p_det = 1
+        export_cols : list str
+            List of additional columns to save in the underlying/detectable
+            population.
+        working_dir : str
+            Working directory where the weights will be saved.
+        load_data : bool
+            `True` if you want to load the weights computed by this function
+            in your working directory.
+
+        """
         if self.df_synthetic is None:
             raise ValueError('You first need to isolated the DCO synthetic population!')
 
@@ -339,6 +549,14 @@ class SyntheticPopulation:
         self.df_detectable = self.resample_synthetic_population(index, z_formation, z_merger, w_ijk, export_cols=export_cols)
 
     def save_intrinsic_pop(self, path='./intrinsic_population.h5'):
+        """Save intrinsic population.
+
+        Parameters
+        ----------
+        path : str
+            Path to dataset.
+
+        """
         if self.df_intrinsic is None:
             raise ValueError('Nothing to save!')
         else:
@@ -347,6 +565,14 @@ class SyntheticPopulation:
                 print('Intrinsic population successfully saved!')
 
     def load_intrinsic_pop(self, path):
+        """Load intrinsic population.
+
+        Parameters
+        ----------
+        path : str
+            Path to dataset.
+
+        """
         if self.df_intrinsic is None:
             self.df_intrinsic = pd.read_hdf(path, key='history')
             if self.verbose:
@@ -355,6 +581,14 @@ class SyntheticPopulation:
             raise ValueError('You already have an intrinsic population stored in memory!')
 
     def save_detectable_pop(self, path='./detectable_population.h5'):
+        """Save detectable population.
+
+        Parameters
+        ----------
+        path : str
+            Path to dataset.
+
+        """
         if self.df_detectable is None:
             raise ValueError('Nothing to save!')
         else:
@@ -363,6 +597,14 @@ class SyntheticPopulation:
                 print('Detectable population successfully saved!')
 
     def load_detectable_pop(self, path):
+        """Load detectable population.
+
+        Parameters
+        ----------
+        path : str
+            Path to dataset.
+
+        """
         if self.df_detectable is None:
             self.df_detectable = pd.read_hdf(path, key='history')
             if self.verbose:
@@ -371,16 +613,32 @@ class SyntheticPopulation:
             raise ValueError('You already have an detectable population stored in memory!')
 
     def plot_merger_efficiency(self, **kwargs):
+        """Plot merger rate efficinty."""
         if self.met_merger_efficiency is None or self.merger_efficiency is None:
             raise ValueError('First you need to compute the merger efficinty!')
         plot_dco.plot_merger_efficiency(self.met_merger_efficiency, self.merger_efficiency, **kwargs)
 
     def plot_merger_rate_density(self, **kwargs):
+        """Plot merger rate density."""
         if self.z_rate_density is None or self.rate_density is None:
             raise ValueError('First you need to compute the merger rate density!')
         plot_dco.plot_merger_rate_density(self.z_rate_density, self.rate_density, **kwargs)
 
     def plot_hist_dco_properties(self, var, intrinsic=False, detectable=False, **kwargs):
+        """Plot histogram of intrinsic/detectable properites.
+
+        Parameters
+        ----------
+        var : str
+            Property to plot stored in intrinsic/detectable dataframe.
+        intrinsic : bool
+            `True` if you want to deplay the intrisc population.
+        detectable : bool
+            `True` if you want to deplay the detectable population.
+        **kwargs : dict
+            ploting arguments
+
+        """
         if self.z_rate_density is None or self.rate_density is None:
             raise ValueError('First you need to compute the merger rate density!')
         if intrinsic:
