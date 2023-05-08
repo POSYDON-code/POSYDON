@@ -1,3 +1,4 @@
+
 '''
 This class contains all functions and parameters for pulsar evolution, e.g. NS spin, B-field, etc.
 '''
@@ -11,7 +12,6 @@ __authors__ = [
 import numpy as np
 from posydon.utils import constants as const
 from posydon.utils.common_functions import CO_radius
-
 
 """
 References
@@ -28,6 +28,9 @@ doi: 10.3847/1538-4357/ab1b21
 [3] Zhang, C. M., & Kojima, Y. 2006, MNRAS, 366, 137,
 doi: 10.1111/j.1365-2966.2005.09802.x
 
+[4] Kiel, P. D., Hurley, J. R., Bailes, M., & Murray, J. R. 2008,
+MNRAS, 388, 393, doi: 10.1111/j.1365-2966.2008.13402.x
+
 """
 
 class Pulsar:
@@ -40,6 +43,7 @@ class Pulsar:
         ------------
         initial_mass: mass of the NS at birth
         '''
+
         
         NS_RADIUS = CO_radius(initial_mass, "NS")*const.Rsun    ## POSYDON constant for NS radius [cm] 
 
@@ -126,6 +130,7 @@ class Pulsar:
 
         M_i = self.mass              ## mass of the NS before accretion [g]
         R = self.radius              ## radius of the NS [cm]
+        I = self.moment_inertia      ## Moment of inertia [CGS]
 
         delta_M = delta_M*const.Msun
         delta_t = delta_t*const.secyer
@@ -142,6 +147,20 @@ class Pulsar:
 
         omega_f = J_f/(2/5*M_f*R**2)
         self.spin = omega_f
+
+        ## Alternate prescription for spin evolution 
+        # J_i = I*self.spin
+
+        # omega_k = np.sqrt(G*M_i/R**3)
+        # delta_I = 2/7 * (1 - 2.42e-6*delta_M/R - 2.9e-12*delta_M**2/R**2)**-1 * delta_M*R**2 * (const.Msun*const.Rsun**2)
+        # delta_J = delta_I*omega_k
+
+        # J_f = J_i + delta_J
+        # M_f = M_i + delta_M
+        # I_f = 2/7 * (1 - 2.42e-6*M_f/R - 2.9e-12*M_f**2/R**2)**-1 * M_f*R**2 * (const.Msun*const.Rsun**2)
+
+        # omega_f = J_f/I_f
+        # self.spin = omega_f
 
         ## evolve the NS B-field
         B_f = self.Bfield/(1 + delta_M/(1e-6*const.Msun)) * np.exp(-delta_t/tau_d)
@@ -199,6 +218,7 @@ class Pulsar:
         ----------
         T: the age of the NS when CE begins [s]
         ''' 
+        
         delta_M = 0.1*const.Msun  ## assume amount of mass accreted during CE = 0.1 Msun
         #T = T*const.secyer
     
