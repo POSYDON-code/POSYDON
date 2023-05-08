@@ -315,7 +315,12 @@ class PulsarHooks(EvolveHooks):
 
     def get_pulsar_history(self, binary, star):
             """
-            Get the pulsar evolution history for a SingleStar object.
+            Get the pulsar evolution history for one star in the binary.
+
+            Parameters
+            ----------
+            binary: BinaryStar object  
+            star: SingleStar object for which pulsar evolution is calculated
             """
             state_history = np.array(star.state_history)
             time = binary.time_history
@@ -325,21 +330,25 @@ class PulsarHooks(EvolveHooks):
             pulsar_Bfield = []
             pulsar_alive = []
 
-            if "NS" in state_history:
+            ## check if star is ever a NS
+            if "NS" in state_history:    
                    
                 NS_indices = np.where(state_history == "NS")[0]
                 NS_start = NS_indices[0]
 
+                ## fill history arrays with NaNs/False until NS is formed
                 pulsar_spin.extend(np.full(len(state_history[:NS_start]), np.nan))
                 pulsar_Bfield.extend(np.full(len(state_history[:NS_start]), np.nan))
                 pulsar_alive.extend(np.full(len(state_history[:NS_start]), False))
 
+                ## loop through states where star is a NS
                 for i in NS_indices:
 
                     step_name = step_names[i]
                     delta_t = time[i] - time[i-1]
                     delta_M = star.mass_history[i] - star.mass_history[i-1]
 
+                    ## initialize the pulsar at NS formation
                     if i == NS_indices[0]: 
                         pulsar = Pulsar(star.mass_history[i])
                         #birth_time = time[i]
@@ -347,14 +356,14 @@ class PulsarHooks(EvolveHooks):
                     elif step_name in ['step_detached', 'step_SN', 'step_dco']:
                         pulsar.detached_evolve(delta_t)
     
-                    elif step_name == "step_CO_HMS_RLO":   ## change logic for if delta_M > 0 for all steps
+                    elif step_name == "step_CO_HMS_RLO":   ## change logic for if delta_M > 0 for all steps?
                         #T = time[i] - birth_time
-                        pulsar.RLO_evolve(delta_t, delta_M)
+                        pulsar.RLO_evolve_COMPAS(delta_M)
 
                     elif step_name == 'step_CO_HeMS':
                         if delta_M > 0:
                             #T = time[i] - birth_time
-                            pulsar.RLO_evolve(delta_t, delta_M)
+                            pulsar.RLO_evolve_COMPAS(delta_M)
                         else:
                             pulsar.detached_evolve(delta_t) 
 
@@ -364,8 +373,9 @@ class PulsarHooks(EvolveHooks):
                     pulsar_spin.append(pulsar.spin)
                     pulsar_Bfield.append(pulsar.Bfield)
                     pulsar_alive.append(pulsar.is_alive())
-                           
-            else:
+
+            ## if star is never a NS, fill history arrays with NaN/False               
+            else:     
                 pulsar_spin.extend(np.full(len(state_history), np.nan))
                 pulsar_Bfield.extend(np.full(len(state_history), np.nan))
                 pulsar_alive.extend(np.full(len(state_history), False))
@@ -374,11 +384,9 @@ class PulsarHooks(EvolveHooks):
 
     def post_evolve(self, binary):
         """
-        Using the binary history, recreate any pulsar evolution.
-        Must be used with the step_names hook
+        Using the binary history, recreate the pulsar evolution history.
+        MUST be used with the step_names hook!
         extra_columns=['pulsar_spin', 'pulsar_Bfield', 'pulsar_alive'] for S1, S2 kwargs 
-
-        Get evolution states from binary.state_history to check for detached, RLO, etc.
         """   
         binary.star_1.pulsar_spin, binary.star_1.pulsar_Bfield, binary.star_1.pulsar_alive = self.get_pulsar_history(binary, binary.star_1)
         binary.star_2.pulsar_spin, binary.star_2.pulsar_Bfield, binary.star_2.pulsar_alive = self.get_pulsar_history(binary, binary.star_2)

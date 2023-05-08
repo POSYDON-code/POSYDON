@@ -149,6 +149,46 @@ class Pulsar:
 
         ## check if pulsar crossed the death line
         self.alive_state = self.is_alive()
+    
+    def RLO_evolve_COMPAS(self, delta_M):
+        '''
+        Evolve a pulsar during Roche Lobe overflow (RLO).
+        This uses the prescription for B-field decay applied in COMPAS from Oslowski et al. 2011.
+        Spin-down is the same for now.
+
+        Parameters
+        ----------
+        delta_t: the duration of the RLO accretion phase [yr]
+        delta_m: the total amount of mass accreted by the pulsar during RLO [Msun]
+        '''
+        G = const.standard_cgrav     ## gravitational constant [cm^3 g^-1 s^-2]
+        delta_Md = 0.025*const.Msun  ## magnetic field mass decay scale [g]
+        B_min = 1e8                  ## minimum Bfield strength at which Bfield decay ceases [G]
+
+        M_i = self.mass              ## mass of the NS before accretion [g]
+        R = self.radius              ## radius of the NS [cm]
+
+        delta_M = delta_M*const.Msun
+
+        ## evolve the NS spin
+        J_i = 2/5*M_i*R**2*self.spin     ## spin angular momentum (J) of the NS before accretion
+        
+        omega_k = np.sqrt(G*M_i/R**3)
+        delta_J = 2/5*delta_M*R**2*omega_k    ## change in J due to accretion
+
+        J_f = J_i + delta_J
+        M_f = M_i + delta_M
+
+        omega_f = J_f/(2/5*M_f*R**2)
+        self.spin = omega_f
+
+        ## evolve the NS B-field
+        B_i = self.Bfield
+        B_f = (B_i - B_min)*np.exp(-delta_M/delta_Md) + B_min 
+        self.Bfield = B_f
+
+        ## check if pulsar crossed the death line
+        self.alive_state = self.is_alive()
 
 
     def CE_evolve(self):

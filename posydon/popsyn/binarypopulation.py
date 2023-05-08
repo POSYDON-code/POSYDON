@@ -480,6 +480,9 @@ class PopulationManager:
         except Exception as err:
             print("Error during breakdown of {0}:\n{1}".
                   format(str(binary), err))
+            #binary.properties = None will hopefully prevent large pickle file
+            #pickle the binary --> pickle.dump(name=binaryindex)
+            #print initial binary m1, m2, p
 
     def to_df(self, selection_function=None, **kwargs):
         """Convert all binaries to dataframe."""
