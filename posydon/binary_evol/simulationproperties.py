@@ -351,19 +351,16 @@ class PulsarHooks(EvolveHooks):
                     ## initialize the pulsar at NS formation
                     if i == NS_indices[0]: 
                         pulsar = Pulsar(star.mass_history[i])
-                        #birth_time = time[i]
      
                     elif step_name in ['step_detached', 'step_SN', 'step_dco']:
                         pulsar.detached_evolve(delta_t)
     
                     elif step_name == "step_CO_HMS_RLO":   ## change logic for if delta_M > 0 for all steps?
-                        #T = time[i] - birth_time
-                        pulsar.RLO_evolve_COMPAS(delta_M)
+                        pulsar.RLO_evolve(delta_M)
 
                     elif step_name == 'step_CO_HeMS':
                         if delta_M > 0:
-                            #T = time[i] - birth_time
-                            pulsar.RLO_evolve_COMPAS(delta_M)
+                            pulsar.RLO_evolve(delta_M)
                         else:
                             pulsar.detached_evolve(delta_t) 
 

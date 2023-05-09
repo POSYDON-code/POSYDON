@@ -72,7 +72,7 @@ STARPROPERTIES = [
     'total_moment_of_inertia',      # total moment of inertia (gr*cm^2)
     'log_total_angular_momentum',   # log10 of total ang. momentum (gr*cm^2/s)
     'spin',                         # the dimesionless spin of the star, if it
-                                    # is not a NS, which is equal to
+                                    # is a compact object, which is equal to
                                     # c*J/(GM^2).
     'conv_env_top_mass',
     'conv_env_bot_mass',
@@ -119,13 +119,10 @@ class SingleStar:
         for item in STARPROPERTIES:
             setattr(self, item, kwargs.pop(item, None))
             setattr(self, item + '_history', [getattr(self, item)])
-            #if item == "spin_NS":
-            #    print (getattr(self, item))
         for item, val in kwargs.items():
             setattr(self, item, val)
 
         # store extra values in the star object without a history
-
         # these quantities are updated in step_SN.py
         if not hasattr(self, 'natal_kick_array'):
             self.natal_kick_array = [None] * 4

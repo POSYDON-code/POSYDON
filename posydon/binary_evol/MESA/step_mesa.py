@@ -112,8 +112,6 @@ POSYDON_TO_MESA = {
         'co_core_radius': 'co_core_radius',
         'lambda_CE_pure_He_star_10cent': 'lambda_CE_pure_He_star_10cent',
         'profile': True
-        #'spin_NS': None,       ## new pulsar params (not in HMS-HMS grid)
-        #'B_field_NS': None
     }
 }
 
@@ -557,21 +555,6 @@ class MesaGridStep:
                             history_of_attribute = cb_bh[key_p][:-1]
                             getattr(star, key_h).extend(
                                 history_of_attribute)
-                    ## update new pulsar params
-                    #elif key == 'spin_NS':
-                    #    v_key = getattr(star, 'spin_NS')
-                    #    setattr(star, key, v_key)
-                    #    if self.save_initial_conditions:
-                    #        getattr(star, key_h).append(v_key)
-                    #    if track_interpolation:
-                    #       getattr(star, key_h).extend([v_key]*length_hist)
-                    #elif key == 'B_field_NS':
-                    #    v_key = getattr(star, 'B_field_NS')
-                    #    setattr(star, key, v_key)
-                    #    if self.save_initial_conditions:
-                    #        getattr(star, key_h).append(v_key)
-                    #    if track_interpolation:
-                    #        getattr(star, key_h).extend([v_key]*length_hist)
                     elif key == 'state':
                         continue
                     else:
@@ -602,21 +585,6 @@ class MesaGridStep:
                             getattr(star, key_h).append(v_key)
                         if track_interpolation:
                             getattr(star, key_h).extend([v_key]*length_hist)
-                    ## update new pulsar params
-                    #elif key == 'spin_NS':
-                    #    v_key = getattr(star, 'spin_NS')
-                    #    setattr(star, key, v_key)
-                    #    if self.save_initial_conditions:
-                    #        getattr(star, key_h).append(v_key)
-                    #    if track_interpolation:
-                    #        getattr(star, key_h).extend([v_key]*length_hist)
-                    #elif key == 'B_field_NS':
-                    #    v_key = getattr(star, 'B_field_NS')
-                    #    setattr(star, key, v_key)
-                    #    if self.save_initial_conditions:
-                    #        getattr(star, key_h).append(v_key)
-                    #    if track_interpolation:
-                    #        getattr(star, key_h).extend([v_key]*length_hist)
                     elif key == 'log_R':
                         key_p = 'star_%d_mass' % (k+1)
                         mass = cb_bh[key_p][-1]
@@ -875,12 +843,6 @@ class MesaGridStep:
                     elif key in ['lg_mdot', 'lg_system_mdot', 'lg_wind_mdot']:
                         key_p = POSYDON_TO_MESA['star'][key]+'_%d' % (k+1)
                         setattr(star, key, fv[key_p])
-                    #elif key == 'spin_NS':
-                    #    current = getattr(star, 'spin_NS')
-                    #    setattr(star, key, current)
-                    #elif key == 'B_field_NS':
-                    #    current = getattr(star, 'B_field_NS')
-                    #    setattr(star, key, current)
                     elif key == 'state':
                         continue
                     else:
@@ -895,12 +857,6 @@ class MesaGridStep:
                     elif key == 'spin':
                         current = getattr(star, 'spin')
                         setattr(star, key, current)
-                    #elif key == 'spin_NS':
-                    #    current = getattr(star, 'spin_NS')
-                    #    setattr(star, key, current)
-                    #elif key == 'B_field_NS':
-                    #    current = getattr(star, 'B_field_NS')
-                    #    setattr(star, key, current)
                     elif key == 'log_R':
                         mass = fv['star_%d_mass' % (k+1)]
                         st = infer_star_state(star_mass=mass, star_CO=True)

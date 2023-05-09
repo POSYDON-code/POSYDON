@@ -115,7 +115,7 @@ class Pulsar:
         self.alive_state = self.is_alive()
 
     
-    def RLO_evolve(self, delta_t, delta_M):
+    def RLO_evolve_Ye2019(self, delta_t, delta_M):
         '''
         Evolve a pulsar during Roche Lobe overflow (RLO).
 
@@ -169,7 +169,7 @@ class Pulsar:
         ## check if pulsar crossed the death line
         self.alive_state = self.is_alive()
     
-    def RLO_evolve_COMPAS(self, delta_M):
+    def RLO_evolve(self, delta_M):
         '''
         Evolve a pulsar during Roche Lobe overflow (RLO).
         This uses the prescription for B-field decay applied in COMPAS from Oslowski et al. 2011.
