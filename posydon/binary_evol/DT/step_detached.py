@@ -216,6 +216,8 @@ DEFAULT_PROFILE_KEYS = (
     'avg_charge_He'
 )
 
+MATCHING_WITH_RELATIVE_DIFFERENCE = ["center_he4"]
+
 
 class detached_step:
     """Evolve a detached binary.
@@ -467,7 +469,7 @@ class detached_step:
             single_track_value = scale_of_mesa_label.transform(
                 self.get_track_val(mesa_label, htrack, *x))
             posydon_value = scale_of_mesa_label.transform(posy_attr)
-            if mesa_label == "center_he4":
+            if mesa_label in MATCHING_WITH_RELATIVE_DIFFERENCE:
                 result += ((single_track_value - posydon_value)
                            / posydon_value) ** 2
             else:
