@@ -550,23 +550,6 @@ class detached_step:
         # xtnew = sc.transform(x)
         return sc
 
-    def transform(self):
-        """Apply needed quantities to the normalization class."""
-        scale = self.scale
-        sc_mass_H = scale("mass", True, "log_min_max")
-        sc_mass_He = scale("mass", False, "log_min_max")
-        sc_log_R_H = scale("log_R", True, "min_max")
-        sc_log_R_He = scale("log_R", False, "min_max")
-        sc_he_core_mass_H = scale("he_core_mass", True, "min_max")
-        sc_he_core_mass_He = scale("he_core_mass", False, "min_max")
-        sc_center_h1 = scale("center_h1", True, "min_max")
-        sc_center_he4_H = scale("center_he4", True, "min_max")
-        sc_center_he4_He = scale("center_he4", False, "min_max")
-        sc_center_c12 = scale("center_c12", False, "min_max")
-        return (sc_mass_H, sc_mass_He, sc_log_R_H, sc_log_R_He,
-                sc_he_core_mass_H, sc_he_core_mass_He, sc_center_h1,
-                sc_center_he4_H, sc_center_he4_He, sc_center_c12)
-
     def get_root0(self, keys, x, htrack, rs=None):
         """Get the track in the grid with values closest to the requested ones.
 
