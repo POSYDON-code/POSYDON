@@ -538,17 +538,15 @@ class detached_step:
             self.grid = self.grid_strippedHe
         self.initial_mass = self.grid.grid_mass
 
-        all_attribute = []
+        all_attributes = []
         for mass in self.initial_mass:
             for i in self.grid.get(key, mass):
-                all_attribute.append(i)
-        all_value = np.array(all_attribute)
-        sc = DataScaler()
-        # TODO: this is never used!
-        xt = sc.fit_and_transform(
-            all_value, method=method, lower=0.0, upper=1.0)
-        # xtnew = sc.transform(x)
-        return sc
+                all_attributes.append(i)
+        all_attributes = np.array(all_attributes)
+
+        scaler = DataScaler()
+        scaler.fit(all_attributes, method=method, lower=0.0, upper=1.0)
+        return scaler
 
     def get_root0(self, keys, x, htrack, rs=None):
         """Get the track in the grid with values closest to the requested ones.
