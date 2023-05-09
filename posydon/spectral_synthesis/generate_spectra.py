@@ -22,7 +22,7 @@ import matplotlib.patches as mpatches
 import traceback
 import copy
 #Connect to MSG path.
-#os.environ['MSG_DIR'] = '/home/kasdaglie/blue/kasdaglie/msg-1.1.2'
+os.environ['MSG_DIR'] = '/home/kasdaglie/blue/kasdaglie/msg-1.1.2'
 MSG_DIR = os.environ['MSG_DIR']
 
 sys.path.insert(0, os.path.join(MSG_DIR, 'python'))
@@ -114,7 +114,6 @@ class population_spectra():
             logg_min = self.grids.specgrid_ostar.axis_x_min['log(g)']
             logg_max = self.grids.specgrid_ostar.axis_x_max['log(g)']
             if logg > logg_min and logg<logg_max: 
-                    print(logg)
                     Flux = self.grids.ostar_grid_flux(Teff,logg,star,Z_Zo)
                     return Flux
             else:
@@ -149,16 +148,16 @@ class population_spectra():
                     logg = max(logg, 1.0)
                 try:
                     if Teff >  self.grids.specgrid_main.axis_x_max['Teff']:
-                        print(Teff)
                         F = self.grids.secondary_grid_flux(Teff,Fe_H,logg,star)
                     else: 
                         F = self.grids.main_grid_flux(Teff,Fe_H,logg,star)
                     #stars_run.append(star.get_logg(),star.get_Teff())
                     #stars_run_logg.append(star.get_logg())
                     #stars_run_Teff.append(star.get_Teff())
-                    return F*np.exp(logg/star.get_logg(self.grids.logg_max,self.grids.logg_min))
+                    return F
+                #*np.exp(logg/star.get_logg(self.grids.logg_max,self.grids.logg_min))
                 except Exception as e: 
-                    print(e,Teff,logg)
+                    print(e)
                     """
                             try:
                                 F = CAP18_grid(Teff,logg,star)
@@ -328,7 +327,7 @@ class spectral_grids():
         self.T_min = T_min 
         self.logg_max = logg_max
         self.logg_min = logg_min
-        print(self.T_max,self.T_min,self.logg_max,self.logg_min)
+        #print(self.T_max,self.T_min,self.logg_max,self.logg_min)
     #Function that return the flux from every grid. 
     #x is hard-coded this needs to change. 
     def main_grid_flux(self,Teff,Fe_H,logg,star):
