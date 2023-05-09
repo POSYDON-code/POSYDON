@@ -459,6 +459,21 @@ class detached_step:
             [m_min_He, m_max_He], [0, None]
         ]
 
+    def square_difference(self, x, htrack,
+                          mesa_labels, posydon_attributes, colscalers, scales):
+        result = 0.0
+        for mesa_label, posy_attr, colscaler, scale_of_mesa_label in zip(
+                 mesa_labels, posydon_attributes, colscalers, scales):
+            single_track_value = scale_of_mesa_label.transform(
+                self.get_track_val(mesa_label, htrack, *x))
+            posydon_value = scale_of_mesa_label.transform(posy_attr)
+            if mesa_label == "center_he4":
+                result += ((single_track_value - posydon_value)
+                           / posydon_value) ** 2
+            else:
+                result += (single_track_value - posydon_value) ** 2
+        return result
+
     def get_track_val(self, key, htrack, m0, t):
         """Return a single value from the interpolated time-series.
 
@@ -712,25 +727,15 @@ class detached_step:
                 scale_of_attribute = scale(MESA_label, htrack, colscaler)
                 scales.append(scale_of_attribute)
 
-            def square_difference(x):
-                result = 0.0
-                for (MESA_label, posydon_attr,
-                     colscaler, scale_of_that_MESA_label) in zip(
-                         MESA_labels, posydon_attributes, colscalers, scales):
-                    single_track_value = scale_of_that_MESA_label.transform(
-                        get_track_val(MESA_label, htrack, *x))
-                    posydon_value = scale_of_that_MESA_label.transform(
-                        posydon_attr)
-                    if MESA_label == "center_he4":
-                        result += ((single_track_value - posydon_value)
-                                   / posydon_value) ** 2
-                    else:
-                        result += (single_track_value - posydon_value) ** 2
-                return result
-
             x0 = get_root0(MESA_labels, posydon_attributes, htrack, rs=rs)
 
-            sol = minimize(square_difference, x0, method="TNC", bounds=bnds)
+            def sq_diff_function(x):
+                return self.square_difference(
+                    x, htrack=htrack, mesa_labels=MESA_labels,
+                    posydon_attributes=posydon_attributes,
+                    colscalers=colscalers, scales=scales)
+
+            sol = minimize(sq_diff_function, x0, method="TNC", bounds=bnds)
 
             # alternative matching
             # 1st, different minimization method
@@ -741,7 +746,7 @@ class detached_step:
                           "because either", np.abs(sol.fun), ">",
                           tolerance_matching_integration,
                           "or sol.success = ", sol.success)
-                sol = minimize(square_difference, x0, method="Powell")
+                sol = minimize(sq_diff_function, x0, method="Powell")
 
             # 2nd, alternative matching parameters
             if (np.abs(sol.fun) > tolerance_matching_integration
@@ -776,27 +781,15 @@ class detached_step:
                     scale_of_attribute = scale(MESA_label, htrack, colscaler)
                     scales.append(scale_of_attribute)
 
-                def square_difference(x):
-                    result = 0.0
-                    for (MESA_label, posydon_attr, colscaler,
-                         scale_of_MESA_label) in zip(
-                             MESA_labels, posydon_attributes,
-                             colscalers, scales):
-                        single_track_value = scale_of_MESA_label.transform(
-                            get_track_val(MESA_label, htrack, *x))
-                        posydon_value = scale_of_MESA_label.transform(
-                            posydon_attr)
-                        if MESA_label == "center_he4":
-                            result += ((single_track_value - posydon_value)
-                                       / posydon_value) ** 2
-                        else:
-                            result += (single_track_value - posydon_value) ** 2
-                    return result
+                def sq_diff_function(x):
+                    return self.square_difference(
+                        x, htrack=htrack, mesa_labels=MESA_labels,
+                        posydon_attributes=posydon_attributes,
+                        colscalers=colscalers, scales=scales)
 
                 x0 = get_root0(MESA_labels, posydon_attributes, htrack, rs=rs)
 
-                sol = minimize(square_difference, x0,
-                               method="TNC", bounds=bnds)
+                sol = minimize(sq_diff_function, x0, method="TNC", bounds=bnds)
 
             # 3rd Alternative matching with a H-rich grid for He-star
             if (np.abs(sol.fun) > tolerance_matching_integration
@@ -812,8 +805,8 @@ class detached_step:
                     x0 = get_root0(
                         MESA_label, posydon_attribute, star.htrack, rs=rs)
                     # bnds = ([m_min_H, m_max_H], [0, None])
-                    sol = minimize(square_difference,
-                                   x0, method="TNC", bounds=bnds)
+                    sol = minimize(sq_diff_function, x0,
+                                   method="TNC", bounds=bnds)
 
             # if still not acceptable matching, we fail the system:
             if (np.abs(sol.fun) > tolerance_matching_integration_hard
