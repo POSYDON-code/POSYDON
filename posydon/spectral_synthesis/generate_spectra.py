@@ -56,7 +56,7 @@ class population_spectra():
         self.last_binary_line = last_binary_line
         self.scaling_factor = scaling_factor 
         self.metallicity = metallicity
-        self.population = []
+        self.population = [None]*total_binaries
         self.failed_stars = 0 #int, the stars that failed durin the spectra process 
         self.missing_stars = 0 #The stars that are missing due to POSYDON, some detached cases for now. 
         #Creating lists/numpy arrays for investigation for the failled and succesful stars. 
@@ -69,7 +69,8 @@ class population_spectra():
         for i in range(self.total_binaries):
             star1 = star(i,0,mass[i,0],state[i,0],radius[i,0],L[i,0],self.metallicity)
             star2 = star(i,1,mass[i,1],state[i,1],radius[i,1],L[i,1],self.metallicity)
-            self.population.append((star1,star2))
+            self.population[i] = [star1,star2]
+            #self.population.append((star1,star2))
         
         #Initializing the spectral_grids object and parameters used.
         #To do put an option for changing the wavelength 
@@ -169,19 +170,6 @@ class population_spectra():
                 #*np.exp(logg/star.get_logg(self.grids.logg_max,self.grids.logg_min))
                 except Exception as e: 
                     print(e)
-                    """
-                            try:
-                                F = CAP18_grid(Teff,logg,star)
-                                #stars_run_logg.append(star.get_logg())
-                                #stars_run_Teff.append(star.get_Teff())              
-                                return F
-                            #print('second CAP failed')
-                            #print(e)
-                            except:
-                                #stars_fail_grids_logg.append(star.get_logg())
-                                #stars_fail_grids_Teff.append(star.get_Teff())
-                                #stars_grid_fail.append(star.get_logg(),star.get_Teff())
-                    """
                     self.failed_stars +=1
                     return F_empty*0  
 
