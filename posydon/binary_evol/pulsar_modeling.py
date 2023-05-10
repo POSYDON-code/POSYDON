@@ -44,7 +44,6 @@ class Pulsar:
         initial_mass: mass of the NS at birth
         '''
 
-        
         NS_RADIUS = CO_radius(initial_mass, "NS")*const.Rsun    ## POSYDON constant for NS radius [cm] 
 
         self.mass = initial_mass*const.Msun                      ## mass of the NS [g]
@@ -68,10 +67,10 @@ class Pulsar:
 
     def draw_NS_Bfield(self):
         '''
-        Draw the initial NS B-field [G] from a uniform random distribution.
+        Draw the initial NS B-field [G] from a lognormal distribution.
         Range is 10^11.5 - 10^13.8 Gauss.
         '''
-        return np.random.uniform(3.16e11, 6.31e13)
+        return np.random.lognormal(3.16e11, 6.31e13)
     
     def calc_moment_of_inertia(self):
         '''
@@ -82,6 +81,23 @@ class Pulsar:
         R = self.radius/const.Rsun     ## radius of the NS [Rsun]
 
         return 2/7 * (1 - 2.42e-6*M/R - 2.9e-12*M**2/R**2)**-1 * M*R**2 * (const.Msun*const.Rsun**2)
+    
+    def calc_NS_edd_lim(self, surface_h1):
+        """
+        Get Eddington accretion rate for a NS.
+        Adapted from eddington_limit() in utils.common_functions
+
+        Parameters
+        ----------
+        NS_mass: mass of the NS [g]
+        surface_h1: surface Hydrogen fraction of the NS??? ask if this makes sense
+        acc_radius: radius of the NS [cm]
+
+        """
+        #surface_h1 = 0
+        eta = const.standard_cgrav * self.mass/(self.radius * const.clight**2)
+        Mdot_edd = (4 * np.pi * const.standard_cgrav * self.mass * (0.2 * (1 + surface_h1) * eta * const.clight))   
+        return Mdot_edd
     
     def detached_evolve(self, delta_t):
         '''
@@ -169,7 +185,7 @@ class Pulsar:
         ## check if pulsar crossed the death line
         self.alive_state = self.is_alive()
     
-    def RLO_evolve(self, delta_M):
+    def RLO_evolve(self, delta_M, Mdot):
         '''
         Evolve a pulsar during Roche Lobe overflow (RLO).
         This uses the prescription for B-field decay applied in COMPAS from Oslowski et al. 2011.
@@ -177,23 +193,27 @@ class Pulsar:
 
         Parameters
         ----------
-        delta_t: the duration of the RLO accretion phase [yr]
-        delta_m: the total amount of mass accreted by the pulsar during RLO [Msun]
+        delta_M: the total amount of mass accreted by the pulsar during RLO [Msun]
+        Mdot: the Eddington accretion rate of the NS
         '''
         G = const.standard_cgrav     ## gravitational constant [cm^3 g^-1 s^-2]
         delta_Md = 0.025*const.Msun  ## magnetic field mass decay scale [g]
         B_min = 1e8                  ## minimum Bfield strength at which Bfield decay ceases [G]
+        mu_0 = 1                        ## permeability of free space [has value unity in cgs]
 
         M_i = self.mass              ## mass of the NS before accretion [g]
-        R = self.radius              ## radius of the NS [cm]
+        R = self.radius              ## radius of the NS
+        B_i = self.Bfield            ## B-field of the NS before accretion [G]
+
+        R_alfven = (2*np.pi**2/(G*mu_0**2))**(1/7) * (R**6/Mdot*M_i**(1/2))**(2/7) * B_i**(4/7) ## Alfven radius
 
         delta_M = delta_M*const.Msun
 
         ## evolve the NS spin
         J_i = 2/5*M_i*R**2*self.spin     ## spin angular momentum (J) of the NS before accretion
         
-        omega_k = np.sqrt(G*M_i/R**3)
-        delta_J = 2/5*delta_M*R**2*omega_k    ## change in J due to accretion
+        omega_k = np.sqrt(G*M_i/R_alfven**3)
+        delta_J = 2/5*delta_M*R_alfven**2*omega_k    ## change in J due to accretion
 
         J_f = J_i + delta_J
         M_f = M_i + delta_M
@@ -202,7 +222,6 @@ class Pulsar:
         self.spin = omega_f
 
         ## evolve the NS B-field
-        B_i = self.Bfield
         B_f = (B_i - B_min)*np.exp(-delta_M/delta_Md) + B_min 
         self.Bfield = B_f
 
@@ -210,29 +229,22 @@ class Pulsar:
         self.alive_state = self.is_alive()
 
 
-    def CE_evolve(self):
+    def CE_evolve(self, Mdot):
         '''
         Evolve a pulsar during common envelope.
 
         Parameters
         ----------
-        T: the age of the NS when CE begins [s]
-        ''' 
-        
-        delta_M = 0.1*const.Msun  ## assume amount of mass accreted during CE = 0.1 Msun
-        #T = T*const.secyer
-    
-        ## params needed for RLO evolve, assume CE phase is instantaneous
-        delta_t = 0               
-
-        self.RLO_evolve(delta_t, delta_M)
+        Mdot: the accretion rate onto the NS
+        '''   
+        delta_M = np.random.uniform(0.04, 0.1)  ## assume amount of mass accreted during CE is 0.04-0.1 Msun            
+        self.RLO_evolve(delta_M, Mdot)
 
 
     def is_alive(self):
         '''
         Check if the pulsar has crossed the death line.
         ''' 
-
         P = 2*np.pi/self.spin     ## spin period of the pulsar [s]
         death_line = 0.17e12
 

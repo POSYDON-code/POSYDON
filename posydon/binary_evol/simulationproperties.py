@@ -15,7 +15,8 @@ __authors__ = [
 
 import time
 import numpy as np
-from posydon.utils.constants import age_of_universe
+from posydon.utils import constants as const
+from posydon.utils.common_functions import CO_radius
 from posydon.binary_evol.pulsar_modeling import Pulsar
 
 
@@ -61,7 +62,7 @@ class SimulationProperties:
 
         # Limits on simulation
         if not hasattr(self, 'max_simulation_time'):
-            self.max_simulation_time = age_of_universe
+            self.max_simulation_time = const.age_of_universe
         if not hasattr(self, 'end_events'):
             self.end_events = []
         if not hasattr(self, 'end_states'):
@@ -314,70 +315,76 @@ class PrintStepInfoHooks(EvolveHooks):
 class PulsarHooks(EvolveHooks):
 
     def get_pulsar_history(self, binary, star):
-            """
-            Get the pulsar evolution history for one star in the binary.
+        """
+        Get the pulsar evolution history for one star in the binary.
 
-            Parameters
-            ----------
-            binary: BinaryStar object  
-            star: SingleStar object for which pulsar evolution is calculated
-            """
-            state_history = np.array(star.state_history)
-            time = binary.time_history
-            step_names = binary.step_names
+        Parameters
+        ----------
+        binary: BinaryStar object  
+        star: SingleStar object for which pulsar evolution is calculated
+        """
+        state_history = np.array(star.state_history)
+        time = binary.time_history
+        step_names = binary.step_names
             
-            pulsar_spin = []
-            pulsar_Bfield = []
-            pulsar_alive = []
+        pulsar_spin = []
+        pulsar_Bfield = []
+        pulsar_alive = []
 
-            ## check if star is ever a NS
-            if "NS" in state_history:    
+        ## check if star is ever a NS
+        if "NS" in state_history:    
                    
-                NS_indices = np.where(state_history == "NS")[0]
-                NS_start = NS_indices[0]
+            NS_indices = np.where(state_history == "NS")[0]
+            NS_start = NS_indices[0]
 
-                ## fill history arrays with NaNs/False until NS is formed
-                pulsar_spin.extend(np.full(len(state_history[:NS_start]), np.nan))
-                pulsar_Bfield.extend(np.full(len(state_history[:NS_start]), np.nan))
-                pulsar_alive.extend(np.full(len(state_history[:NS_start]), False))
+            ## fill history arrays with NaNs/False until NS is formed
+            pulsar_spin.extend(np.full(len(state_history[:NS_start]), np.nan))
+            pulsar_Bfield.extend(np.full(len(state_history[:NS_start]), np.nan))
+            pulsar_alive.extend(np.full(len(state_history[:NS_start]), False))
 
-                ## loop through states where star is a NS
-                for i in NS_indices:
+            ## loop through states where star is a NS
+            for i in NS_indices:
 
-                    step_name = step_names[i]
-                    delta_t = time[i] - time[i-1]
-                    delta_M = star.mass_history[i] - star.mass_history[i-1]
+                step_name = step_names[i]
+                delta_t = time[i] - time[i-1]
+                delta_M = star.mass_history[i] - star.mass_history[i-1]
 
-                    ## initialize the pulsar at NS formation
-                    if i == NS_indices[0]: 
-                        pulsar = Pulsar(star.mass_history[i])
+                surface_h1 = star.surface_h1_history[i]
+                if surface_h1 is None: surface_h1 = 0.7155
+
+                ## initialize the pulsar at NS formation
+                if i == NS_indices[0]: 
+                    pulsar = Pulsar(star.mass_history[i])
      
-                    elif step_name in ['step_detached', 'step_SN', 'step_dco']:
-                        pulsar.detached_evolve(delta_t)
+                elif step_name in ['step_detached', 'step_SN', 'step_dco']:
+                    pulsar.detached_evolve(delta_t)
     
-                    elif step_name == "step_CO_HMS_RLO":   ## change logic for if delta_M > 0 for all steps?
-                        pulsar.RLO_evolve(delta_M)
+                elif step_name == "step_CO_HMS_RLO":   ## change logic for if delta_M > 0 for all steps?
+                        Mdot_edd = pulsar.calc_NS_edd_lim(surface_h1)
+                        pulsar.RLO_evolve(delta_M, Mdot_edd)
 
-                    elif step_name == 'step_CO_HeMS':
-                        if delta_M > 0:
-                            pulsar.RLO_evolve(delta_M)
-                        else:
-                            pulsar.detached_evolve(delta_t) 
+                elif step_name == 'step_CO_HeMS':
+                    if delta_M > 0:
+                        Mdot_edd = pulsar.calc_NS_edd_lim(surface_h1)
+                        pulsar.RLO_evolve(delta_M, Mdot_edd)
+                    else:
+                        pulsar.detached_evolve(delta_t) 
 
-                    #elif step_name == "step_CE":
-                    #    pulsar.CE_evolve()
+                elif step_name == "step_CE":
+                    Mdot_edd = pulsar.calc_NS_edd_lim(surface_h1)
+                    pulsar.CE_evolve(Mdot_edd)
 
-                    pulsar_spin.append(pulsar.spin)
-                    pulsar_Bfield.append(pulsar.Bfield)
-                    pulsar_alive.append(pulsar.is_alive())
+                pulsar_spin.append(pulsar.spin)
+                pulsar_Bfield.append(pulsar.Bfield)
+                pulsar_alive.append(pulsar.is_alive())
 
-            ## if star is never a NS, fill history arrays with NaN/False               
-            else:     
-                pulsar_spin.extend(np.full(len(state_history), np.nan))
-                pulsar_Bfield.extend(np.full(len(state_history), np.nan))
-                pulsar_alive.extend(np.full(len(state_history), False))
+        ## if star is never a NS, fill history arrays with NaN/False               
+        else:     
+            pulsar_spin.extend(np.full(len(state_history), np.nan))
+            pulsar_Bfield.extend(np.full(len(state_history), np.nan))
+            pulsar_alive.extend(np.full(len(state_history), False))
 
-            return np.array(pulsar_spin, dtype=float), np.array(pulsar_Bfield, dtype=float), np.array(pulsar_alive, dtype=bool)
+        return np.array(pulsar_spin, dtype=float), np.array(pulsar_Bfield, dtype=float), np.array(pulsar_alive, dtype=bool)
 
     def post_evolve(self, binary):
         """
