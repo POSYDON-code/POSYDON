@@ -979,7 +979,8 @@ class PSyGrid:
 
                 if binary_grid:
                     self.final_values[i]["interpolation_class"] = \
-                        infer_interpolation_class(*termination_flags[:2])
+                        infer_interpolation_class(*termination_flags[:2], 
+                             binary_history,history1,history2)
 
             if ignore_data:
                 # if not fix requested and failed run, do not include it
