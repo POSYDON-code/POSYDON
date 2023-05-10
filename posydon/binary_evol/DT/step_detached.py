@@ -216,6 +216,8 @@ DEFAULT_PROFILE_KEYS = (
     'avg_charge_He'
 )
 
+MATCHING_WITH_RELATIVE_DIFFERENCE = ["center_he4"]
+
 
 class detached_step:
     """Evolve a detached binary.
@@ -343,6 +345,10 @@ class detached_step:
         self.list_for_matching_postMS = list_for_matching_postMS
         self.list_for_matching_HeStar = list_for_matching_HeStar
 
+        # mapping a combination of (key, htrack, method) to a pre-trained
+        # DataScaler instance, created the first time it is requested
+        self.stored_scalers = {}
+
         if verbose:
             print(
                 dt,
@@ -459,6 +465,22 @@ class detached_step:
             [m_min_He, m_max_He], [0, None]
         ]
 
+    def square_difference(self, x, htrack,
+                          mesa_labels, posydon_attributes, colscalers, scales):
+        """Compute the square distance used for scaling."""
+        result = 0.0
+        for mesa_label, posy_attr, colscaler, scale_of_mesa_label in zip(
+                 mesa_labels, posydon_attributes, colscalers, scales):
+            single_track_value = scale_of_mesa_label.transform(
+                self.get_track_val(mesa_label, htrack, *x))
+            posydon_value = scale_of_mesa_label.transform(posy_attr)
+            if mesa_label in MATCHING_WITH_RELATIVE_DIFFERENCE:
+                result += ((single_track_value - posydon_value)
+                           / posydon_value) ** 2
+            else:
+                result += (single_track_value - posydon_value) ** 2
+        return result
+
     def get_track_val(self, key, htrack, m0, t):
         """Return a single value from the interpolated time-series.
 
@@ -480,12 +502,12 @@ class detached_step:
         """
         # htrack as a boolean determines whether H or He grid is used
         if htrack:
-            self.grid = self.grid_Hrich
+            grid = self.grid_Hrich
         else:
-            self.grid = self.grid_strippedHe
+            grid = self.grid_strippedHe
         try:
-            x = self.grid.get("age", m0)
-            y = self.grid.get(key, m0)
+            x = grid.get("age", m0)
+            y = grid.get(key, m0)
         except ValueError:
             return np.array(t) * np.nan
         try:
@@ -515,40 +537,29 @@ class detached_step:
             Data normalization class
 
         """
-        if htrack:
-            self.grid = self.grid_Hrich
-        else:
-            self.grid = self.grid_strippedHe
-        self.initial_mass = self.grid.grid_mass
+        # TODO: why this self.grid? Why not local variable. Should this affect
+        # the whole detached_step instance?
 
-        all_attribute = []
+        # collect all options for the scaler
+        scaler_options = (key, htrack, method)
+
+        # find if the scaler has already been fitted and return it if so...
+        scaler = self.stored_scalers.get(scaler_options, None)
+        if scaler is not None:
+            return scaler
+
+        # ... if not, fit a new scaler, and store it for later use
+        grid = self.grid_Hrich if htrack else self.grid_strippedHe
+        self.initial_mass = grid.grid_mass
+        all_attributes = []
         for mass in self.initial_mass:
-            for i in self.grid.get(key, mass):
-                all_attribute.append(i)
-        all_value = np.array(all_attribute)
-        sc = DataScaler()
-        # TODO: this is never used!
-        xt = sc.fit_and_transform(
-            all_value, method=method, lower=0.0, upper=1.0)
-        # xtnew = sc.transform(x)
-        return sc
-
-    def transform(self):
-        """Apply needed quantities to the normalization class."""
-        scale = self.scale
-        sc_mass_H = scale("mass", True, "log_min_max")
-        sc_mass_He = scale("mass", False, "log_min_max")
-        sc_log_R_H = scale("log_R", True, "min_max")
-        sc_log_R_He = scale("log_R", False, "min_max")
-        sc_he_core_mass_H = scale("he_core_mass", True, "min_max")
-        sc_he_core_mass_He = scale("he_core_mass", False, "min_max")
-        sc_center_h1 = scale("center_h1", True, "min_max")
-        sc_center_he4_H = scale("center_he4", True, "min_max")
-        sc_center_he4_He = scale("center_he4", False, "min_max")
-        sc_center_c12 = scale("center_c12", False, "min_max")
-        return (sc_mass_H, sc_mass_He, sc_log_R_H, sc_log_R_He,
-                sc_he_core_mass_H, sc_he_core_mass_He, sc_center_h1,
-                sc_center_he4_H, sc_center_he4_He, sc_center_c12)
+            for i in grid.get(key, mass):
+                all_attributes.append(i)
+        all_attributes = np.array(all_attributes)
+        scaler = DataScaler()
+        scaler.fit(all_attributes, method=method, lower=0.0, upper=1.0)
+        self.stored_scalers[scaler_options] = scaler
+        return scaler
 
     def get_root0(self, keys, x, htrack, rs=None):
         """Get the track in the grid with values closest to the requested ones.
@@ -575,19 +586,16 @@ class detached_step:
             If there is no match then NaNs will be returned instead.
 
         """
-        if htrack:
-            self.grid = self.grid_Hrich
-        else:
-            self.grid = self.grid_strippedHe
-        self.initial_mass = self.grid.grid_mass
+        grid = self.grid_Hrich if htrack else self.grid_strippedHe
+        self.initial_mass = grid.grid_mass
         n = 0
-        for mass in self.grid.grid_mass:
-            n = max(n, len(self.grid.get("age", mass)))
-        self.rootm = np.inf * np.ones((len(self.grid.grid_mass),
+        for mass in grid.grid_mass:
+            n = max(n, len(grid.get("age", mass)))
+        self.rootm = np.inf * np.ones((len(grid.grid_mass),
                                        n, len(self.root_keys)))
-        for i, mass in enumerate(self.grid.grid_mass):
+        for i, mass in enumerate(grid.grid_mass):
             for j, key in enumerate(self.root_keys):
-                track = self.grid.get(key, mass)
+                track = grid.get(key, mass)
                 self.rootm[i, : len(track), j] = track
         if rs is None:
             rs = np.ones_like(keys)
@@ -599,7 +607,7 @@ class detached_step:
         d = np.linalg.norm((X - x[None, None, :]) / rs[None, None, :], axis=-1)
         idx = np.unravel_index(d.argmin(), X.shape[:-1])
         t = self.rootm[idx][np.argmax("age" == self.root_keys)]
-        m0 = self.grid.grid_mass[idx[0]]
+        m0 = grid.grid_mass[idx[0]]
         return m0, t
 
     def match_to_single_star(self, star, htrack):
@@ -717,37 +725,17 @@ class detached_step:
             for MESA_label, colscaler in zip(MESA_labels, colscalers):
                 scale_of_attribute = scale(MESA_label, htrack, colscaler)
                 scales.append(scale_of_attribute)
-            print("Scale time", time.time() - scaletime )   
-            
-            def square_difference(x):
-                result = 0.0
-                for (MESA_label, posydon_attr,
-                     colscaler, scale_of_that_MESA_label) in zip(
-                         MESA_labels, posydon_attributes, colscalers, scales):
-                    single_track_value = scale_of_that_MESA_label.transform(
-                        get_track_val(MESA_label, htrack, *x))
-                    posydon_value = scale_of_that_MESA_label.transform(
-                        posydon_attr)
-                    if MESA_label == "center_he4":
-                        result += ((single_track_value - posydon_value)
-                                   / posydon_value) ** 2
-                    else:
-                        result += (single_track_value - posydon_value) ** 2
-                return result
 
-            print("Before get_root and minimize: ", time.time()-startime_match)
-            
-            starttime=time.time()
-            x0 = get_root0(MESA_labels, posydon_attributes,
-                                   htrack, rs=rs)
-            halftime=time.time()
-            sol = minimize(square_difference,
-                        x0,
-                        method="TNC",
-                        bounds=bnds
-                    )
-            endtime = time.time()
-            print("First matching timing","get_root0:",halftime- starttime,"minimize:", endtime - halftime)
+            x0 = get_root0(MESA_labels, posydon_attributes, htrack, rs=rs)
+
+            def sq_diff_function(x):
+                return self.square_difference(
+                    x, htrack=htrack, mesa_labels=MESA_labels,
+                    posydon_attributes=posydon_attributes,
+                    colscalers=colscalers, scales=scales)
+
+            sol = minimize(sq_diff_function, x0, method="TNC", bounds=bnds)
+
 
             # alternative matching
             # 1st, different minimization method
@@ -758,7 +746,7 @@ class detached_step:
                           "because either", np.abs(sol.fun), ">",
                           tolerance_matching_integration,
                           "or sol.success = ", sol.success)
-                sol = minimize(square_difference, x0, method="Powell")
+                sol = minimize(sq_diff_function, x0, method="Powell")
 
             # 2nd, alternative matching parameters
             if (np.abs(sol.fun) > tolerance_matching_integration
@@ -793,27 +781,15 @@ class detached_step:
                     scale_of_attribute = scale(MESA_label, htrack, colscaler)
                     scales.append(scale_of_attribute)
 
-                def square_difference(x):
-                    result = 0.0
-                    for (MESA_label, posydon_attr, colscaler,
-                         scale_of_MESA_label) in zip(
-                             MESA_labels, posydon_attributes,
-                             colscalers, scales):
-                        single_track_value = scale_of_MESA_label.transform(
-                            get_track_val(MESA_label, htrack, *x))
-                        posydon_value = scale_of_MESA_label.transform(
-                            posydon_attr)
-                        if MESA_label == "center_he4":
-                            result += ((single_track_value - posydon_value)
-                                       / posydon_value) ** 2
-                        else:
-                            result += (single_track_value - posydon_value) ** 2
-                    return result
+                def sq_diff_function(x):
+                    return self.square_difference(
+                        x, htrack=htrack, mesa_labels=MESA_labels,
+                        posydon_attributes=posydon_attributes,
+                        colscalers=colscalers, scales=scales)
 
                 x0 = get_root0(MESA_labels, posydon_attributes, htrack, rs=rs)
 
-                sol = minimize(square_difference, x0,
-                               method="TNC", bounds=bnds)
+                sol = minimize(sq_diff_function, x0, method="TNC", bounds=bnds)
 
             # 3rd Alternative matching with a H-rich grid for He-star
             if (np.abs(sol.fun) > tolerance_matching_integration
@@ -829,8 +805,8 @@ class detached_step:
                     x0 = get_root0(
                         MESA_label, posydon_attribute, star.htrack, rs=rs)
                     # bnds = ([m_min_H, m_max_H], [0, None])
-                    sol = minimize(square_difference,
-                                   x0, method="TNC", bounds=bnds)
+                    sol = minimize(sq_diff_function, x0,
+                                   method="TNC", bounds=bnds)
 
             # if still not acceptable matching, we fail the system:
             if (np.abs(sol.fun) > tolerance_matching_integration_hard
@@ -1794,26 +1770,16 @@ class detached_step:
                         primary, i=timestep, star_CO=False)
 
             def get_star_final_values(star, htrack, m0):
-                if htrack:
-                    self.grid = self.grid_Hrich
-                elif not htrack:
-                    self.grid = self.grid_strippedHe
-
-                get_final_values = self.grid.get_final_values
+                grid = self.grid_Hrich if htrack else self.grid_strippedHe
+                get_final_values = grid.get_final_values
                 # TODO: this variable is never used!
-                get_final_state = self.grid.get_final_state
-
+                get_final_state = grid.get_final_state
                 for key in self.final_keys:
                     setattr(star, key, get_final_values('S1_%s' % (key), m0))
 
             def get_star_profile(star, htrack, m0):
-                if htrack:
-                    self.grid = self.grid_Hrich
-                elif not htrack:
-                    self.grid = self.grid_strippedHe
-
-                get_profile = self.grid.get_profile
-
+                grid = self.grid_Hrich if htrack else self.grid_strippedHe
+                get_profile = grid.get_profile
                 profile_new = np.array(get_profile('mass', m0)[1])
                 for i in self.profile_keys:
                     profile_new[i] = get_profile(i, m0)[0]
