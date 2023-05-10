@@ -460,9 +460,9 @@ def train_interpolators(i, path_to_csv_file, verbose=False):
     if 'CO-HMS_RLO' in grid_path:
         interp_method = [method, method]
         interp_classes = ["stable_MT", "unstable_MT"]
-    else:
-        interp_method = [method, method, method]
-        interp_classes = ["no_MT", "stable_MT", "unstable_MT"]
+    elif 'HMS-HMS' in grid_path:
+        interp_method = [method, method, method, method, method]
+        interp_classes = ["no_MT", "stable_MT","stable_reverse_MT" "unstable_MT","DoubleCE"]
 
     # TODO: train CC2 quantities coming from reverse MT systems
     interp = IFInterpolator(grid=grid, interpolators = [
