@@ -199,9 +199,10 @@ class population_spectra():
 
     def create_spectrum_population(self):
         create_spectrum_population = self.F_empty*0
-        failed_binaries = 0
+        self.failed_stars = 0
         for binary in self.population:
             create_spectrum_population += self.create_spectrum_binary(binary)
+        print(len(self.population))
         print(self.failed_stars)
         return create_spectrum_population
        
@@ -361,5 +362,5 @@ class spectral_grids():
     def flux(self):
         pass 
 
-newpopulation = population_spectra(200,first_binary_line1,last_binary_line1,1,0)
-spectra1 = newpopulation.create_spectrum_population()
+#newpopulation = population_spectra(200,first_binary_line1,last_binary_line1,1,0)
+#spectra1 = newpopulation.create_spectrum_population()
