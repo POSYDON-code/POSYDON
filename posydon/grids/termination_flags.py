@@ -28,7 +28,8 @@ import numpy as np
 
 from posydon.utils.common_functions import (
     infer_star_state, cumulative_mass_transfer_flag, infer_mass_transfer_case,
-    RL_RELATIVE_OVERFLOW_THRESHOLD, LG_MTRANSFER_RATE_THRESHOLD)
+    RL_RELATIVE_OVERFLOW_THRESHOLD,THRESHOLD_CENTRAL_ABUNDANCE, 
+    LG_MTRANSFER_RATE_THRESHOLD)
 from posydon.visualization.combine_TF import (
     TF1_POOL_STABLE, TF1_POOL_UNSTABLE,
     TF1_POOL_INITIAL_RLO, TF1_POOL_ERROR, TF2_POOL_NO_RLO
@@ -239,9 +240,9 @@ def infer_interpolation_class(tf1, tf2, binary_history, history1,history2):
                                      rl_overflow2<RL_RELATIVE_OVERFLOW_THRESHOLD)
             reverse = np.logical_and(rl_overflow1<RL_RELATIVE_OVERFLOW_THRESHOLD,
                                      rl_overflow2>RL_RELATIVE_OVERFLOW_THRESHOLD)
-            reverse_postMS = np.logical_and(reverse, &
+            reverse_postMS = np.logical_and(reverse,
                                            center_h1<THRESHOLD_CENTRAL_ABUNDANCE)
-            if (np.max(forward) == True and np.max(reverse_postMT) == True):
+            if (np.max(forward) == True and np.max(reverse_postMS) == True):
                 return "stable_reverse_MT"
             else:
                 return "stable_MT"
