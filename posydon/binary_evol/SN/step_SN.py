@@ -839,7 +839,9 @@ class StepSN(object):
                     m_PISN = np.nan
 
                 else:
-                    m_PISN = None
+                    # above the PISN gap we assume direct collapse of the
+                    # He-core
+                    m_PISN = m_He_core
 
             elif is_number(self.PISN) and m_He_core > self.PISN:
                 m_PISN = self.PISN
@@ -1049,21 +1051,21 @@ class StepSN(object):
                 f_fb = 0.0
             elif m_core < 2.5:
                 m_fb = 0.2
-                f_fb = m_fb / (m_star - m_proto)
+                f_fb = m_fb / (m_He_core - m_proto)
             elif m_core >= 2.5 and m_core < 6.0:
                 m_fb = 0.286 * m_core - 0.514
-                f_fb = m_fb / (m_star - m_proto)
+                f_fb = m_fb / (m_He_core - m_proto)
             elif m_core >= 6.0 and m_core < 7.0:
                 f_fb = 1.0
-                m_fb = f_fb * (m_star - m_proto)
+                m_fb = f_fb * (m_He_core - m_proto)
             elif m_core >= 7.0 and m_core < 11.0:
-                a = 0.25 - 1.275 / (m_star - m_proto)
+                a = 0.25 - 1.275 / (m_He_core - m_proto)
                 b = -11.0 * a + 1.0
                 f_fb = a * m_core + b
-                m_fb = f_fb * (m_star - m_proto)
+                m_fb = f_fb * (m_He_core - m_proto)
             elif m_core >= 11.0:
                 f_fb = 1.0
-                m_fb = f_fb * (m_star - m_proto)
+                m_fb = f_fb * (m_He_core - m_proto)
             m_rembar = m_proto + m_fb
             state = None
 
@@ -1088,29 +1090,23 @@ class StepSN(object):
                 f_fb = 0.0
             elif m_core < 2.5:
                 m_fb = 0.2
-                f_fb = m_fb / (m_star - m_proto)
+                f_fb = m_fb / (m_He_core - m_proto)
             elif m_core >= 2.5 and m_core < 3.5:
                 m_fb = 0.5 * m_core - 1.05
-                f_fb = m_fb / (m_star - m_proto)
+                f_fb = m_fb / (m_He_core - m_proto)
             elif m_core >= 3.5 and m_core < 11.0:
-                a = 0.133 - 0.093 / (m_star - m_proto)
+                a = 0.133 - 0.093 / (m_He_core - m_proto)
                 b = -11.0 * a + 1.0
                 f_fb = a * m_core + b
-                m_fb = f_fb * (m_star - m_proto)
+                m_fb = f_fb * (m_He_core - m_proto)
             elif m_core > 11.0:
                 f_fb = 1.0
-                m_fb = f_fb * (m_star - m_proto)
+                m_fb = f_fb * (m_He_core - m_proto)
             m_rembar = m_proto + m_fb
             state = None
 
         # direct collapse and f_fb = 1. (no kicks)
         elif self.mechanism == self.direct_collapse:
-            m_rembar = m_star
-            f_fb = 1.0
-            state = None
-
-        # direct collapse and f_fb = 1. (no kicks)
-        elif self.mechanism == self.direct_collapse_hecore:
             m_rembar = m_He_core
             f_fb = 1.0
             state = None
