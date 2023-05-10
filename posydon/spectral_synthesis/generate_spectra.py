@@ -86,7 +86,14 @@ class population_spectra():
         F_empty = self.F_empty*0
         new_create_spectrum_single = F_empty
         if "stripped" in star.state:
+            M = star.mass/con.M_sun
+            M_min = self.grids.specgrid_stripped.axis_x_min['M_init']
+            M_max = self.grids.specgrid_stripped.axis_x_max['M_init']
+            if M < M_min or M > M_max:
+                self.failed_stars +=1
+                return F_empty
             return self.grids.stripped_grid_flux(star)
+        
         Fe_H = star.Fe_H
         Z_Zo = star.metallicity
         Teff = star.get_Teff(self.grids.T_max,self.grids.T_min)
@@ -114,8 +121,12 @@ class population_spectra():
             logg_min = self.grids.specgrid_ostar.axis_x_min['log(g)']
             logg_max = self.grids.specgrid_ostar.axis_x_max['log(g)']
             if logg > logg_min and logg<logg_max: 
-                    Flux = self.grids.ostar_grid_flux(Teff,logg,star,Z_Zo)
-                    return Flux
+                    try:
+                        Flux = self.grids.ostar_grid_flux(Teff,logg,star,Z_Zo)
+                        return Flux
+                    except:
+                        self.failed_stars +=1
+                        return F_empty
             else:
                 self.failed_stars +=1
                 return F_empty
@@ -281,7 +292,7 @@ class star():
 #Calculation of the spectra
 #Creating a class that will create the grid objects and potentially calculate the fluxes as well. 
 class spectral_grids():
-    def __init__(self,main_grid_file="sg-CAP18-coarse.h5",secondary_grid_file="sg-BSTAR2006-medium.h5",stripped_grid_file = "sg-Gotberg18.h5",ostar_grid_file = "sg-OSTAR2002-medium.h5",lam_min=2000,lam_max=7000):
+    def __init__(self,main_grid_file="sg-CAP18-coarse.h5",secondary_grid_file="sg-BSTAR2006-medium.h5",stripped_grid_file = "sg-Gotberg18.h5",ostar_grid_file = "sg-OSTAR2002-medium.h5",lam_min=3000,lam_max=7000):
         #Assigning the grid files and creating the spec_grid ojects. 
         self.main_grid_file = main_grid_file
         self.secondary_grid_file = secondary_grid_file 
