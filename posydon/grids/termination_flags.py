@@ -235,12 +235,12 @@ def infer_interpolation_class(tf1, tf2, binary_history, history1,history2):
             rl_overflow1 = binary_history['rl_relative_overflow_1']
             rl_overflow2 = binary_history['rl_relative_overflow_2']
             center_h1 = history1['center_h1']
-            forward = np.logical_and(rl_overflow1>RL_RELATIVE_OVERFLOW_THRESHOLD, &
+            forward = np.logical_and(rl_overflow1>RL_RELATIVE_OVERFLOW_THRESHOLD,
                                      rl_overflow2<RL_RELATIVE_OVERFLOW_THRESHOLD)
-            reverse = np.logical_and(rl_overflow1<RL_RELATIVE_OVERFLOW_THRESHOLD, &
+            reverse = np.logical_and(rl_overflow1<RL_RELATIVE_OVERFLOW_THRESHOLD,
                                      rl_overflow2>RL_RELATIVE_OVERFLOW_THRESHOLD)
             reverse_postMS = np.logical_and(reverse, &
-                                            center_h1<THRESHOLD_CENTRAL_ABUNDANCE)
+                                           center_h1<THRESHOLD_CENTRAL_ABUNDANCE)
             if (np.max(forward) == True and np.max(reverse_postMT) == True):
                 return "stable_reverse_MT"
             else:
@@ -250,16 +250,16 @@ def infer_interpolation_class(tf1, tf2, binary_history, history1,history2):
         if (binary_history is not None and history1 is not None):
             rl_overflow1 = binary_history['rl_relative_overflow_1'][-1]
             rl_overflow2 = binary_history['rl_relative_overflow_2'][-1]
-            forward = np.logical_and(rl_overflow1>RL_RELATIVE_OVERFLOW_THRESHOLD, &
+            forward = np.logical_and(rl_overflow1>RL_RELATIVE_OVERFLOW_THRESHOLD,
                                      rl_overflow2<RL_RELATIVE_OVERFLOW_THRESHOLD)
-            reverse = np.logical_and(rl_overflow1<RL_RELATIVE_OVERFLOW_THRESHOLD, &
+            reverse = np.logical_and(rl_overflow1<RL_RELATIVE_OVERFLOW_THRESHOLD,
                                      rl_overflow2>RL_RELATIVE_OVERFLOW_THRESHOLD)
-            contact = np.logical_and(rl_overflow1>RL_RELATIVE_OVERFLOW_THRESHOLD, &
+            contact = np.logical_and(rl_overflow1>RL_RELATIVE_OVERFLOW_THRESHOLD,
                                      rl_overflow2>RL_RELATIVE_OVERFLOW_THRESHOLD)
             final_state_1 = check_state_from_history(history1,
-                                                     binary_history["star_1_mass"])
+                                                   binary_history["star_1_mass"])
             final_state_2 = check_state_from_history(history2,
-                                                     binary_history["star_2_mass"])
+                                                   binary_history["star_2_mass"])
             if (forward or contact):
                 if final_state_2 not in [
                         "H-rich_Core_H_burning",
