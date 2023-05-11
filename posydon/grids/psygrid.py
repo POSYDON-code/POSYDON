@@ -1233,6 +1233,7 @@ class PSyGrid:
         configuration_string = hdf5.attrs["config"]
         config = ast.literal_eval(ast.literal_eval(configuration_string))
         self.config = ConfigFile()
+        self.config['accept_missing_profile'] = False
         self.config.update(config)
 
         # enumerate the runs included, and ensure that:
