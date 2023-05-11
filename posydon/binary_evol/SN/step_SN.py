@@ -545,7 +545,7 @@ class StepSN(object):
                     CC_properites)
                 if star.state not in self.use_interp_values_classes:
                     for key in STARPROPERTIES:
-                        if key in [“state”, “SN_type”, “f_fb”, “mass”, “spin”]:
+                        if key in ["state", "SN_type", "f_fb", "mass", "spin"]:
                             setattr(star, key, None)
                 else:
                     for key in STARPROPERTIES:
