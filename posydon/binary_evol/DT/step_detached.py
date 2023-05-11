@@ -813,8 +813,9 @@ class detached_step:
                         star.htrack = True
                     elif star.state in LIST_ACCEPTABLE_STATES_FOR_postMS:
                         star.htrack = False
+                    htrack  = star.htrack
                     x0 = get_root0(
-                        MESA_label, posydon_attribute, star.htrack, rs=rs)
+                        MESA_label, posydon_attribute, htrack, rs=rs)
                     # bnds = ([m_min_H, m_max_H], [0, None])
                     sol = minimize(square_difference,
                                    x0, method="TNC", bounds=bnds)
