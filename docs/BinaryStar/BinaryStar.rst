@@ -91,15 +91,15 @@ The simplest method is to provide the two star objects and `kwargs` of the initi
 
 .. code-block:: python
 
-  kwargs1 = {state='MS',
-             mass=20.0,
-             metallicity=0.014}
+  kwargs1 = {'state' : 'MS',
+             'mass' : 20.0,
+             'metallicity' : 0.014}
 
   star_1 = SingleStar(**kwargs1)
 
-  kwargs2 = {state='MS',
-             mass=10.0,
-             metallicity=0.014}
+  kwargs2 = {'state' : 'MS',
+             'mass' : 10.0,
+             'metallicity' : 0.014}
 
   star_2 = SingleStar(**kwargs2)
 

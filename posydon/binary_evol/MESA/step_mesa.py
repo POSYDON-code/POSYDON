@@ -580,12 +580,24 @@ class MesaGridStep:
                             history_of_attribute = cb_bh[key_p][:-1]
                             getattr(star, key_h).extend(history_of_attribute)
                     elif key == 'spin':
-                        v_key = getattr(star, 'spin')
-                        setattr(star, key, v_key)
+                        key_p = 'star_%d_mass' % (k+1)
+                        mass_history = np.array(cb_bh[key_p])
+                        spin_prev_step = getattr(star, 'spin')
+                        spin = cf.spin_stable_mass_transfer(spin_prev_step, mass_history[0],
+                                                            mass_history[-1])
+                        setattr(star, key, spin)
                         if self.save_initial_conditions:
-                            getattr(star, key_h).append(v_key)
+                            history_of_attribute =[
+                                cf.spin_stable_mass_transfer(spin_prev_step ,mass_history[0],
+                                                             mass_history[i])
+                                for i in range(len(mass_history)-1)]
+                            getattr(star, key_h).append(history_of_attribute[0])
                         if track_interpolation:
-                            getattr(star, key_h).extend([v_key]*length_hist)
+                            history_of_attribute =[
+                                cf.spin_stable_mass_transfer(spin_prev_step, mass_history[0],
+                                                             mass_history[i])
+                                for i in range(len(mass_history)-1)]
+                            getattr(star, key_h).extend(history_of_attribute)
                     elif key == 'log_R':
                         key_p = 'star_%d_mass' % (k+1)
                         mass = cb_bh[key_p][-1]
