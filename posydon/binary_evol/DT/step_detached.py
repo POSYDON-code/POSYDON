@@ -774,16 +774,21 @@ class detached_step :
                             bounds=bnds
                         )
 
-            # 3rd Alternative matching with a H-rich grid for He-star
+            # 3rd Alternative matching with a H-rich grid for He-star and vice verse (not for HMS stars)
             if (np.abs(sol.fun) > tolerance_matching_integration
                     or not sol.success):
-
-                if star.state in LIST_ACCEPTABLE_STATES_FOR_HeStar:
+                if (star.state in LIST_ACCEPTABLE_STATES_FOR_HeStar
+                    or star.state in LIST_ACCEPTABLE_STATES_FOR_postMS):
+                    
                     if self.verbose:
                         print("Alternative matching in detached step, 3rd step because ",
                                 np.abs(sol.fun), ">", tolerance_matching_integration  ,
                                 " or sol.success = ", sol.success)
-                    star.htrack = True
+
+                    if star.state in LIST_ACCEPTABLE_STATES_FOR_HeStar:
+                        star.htrack = True
+                    elif star.state in LIST_ACCEPTABLE_STATES_FOR_postMS:
+                        star.htrack = False
                     x0 = get_root0(
                         MESA_label, posydon_attribute, star.htrack, rs=rs)
                     #bnds = ([m_min_H, m_max_H], [0, None])
