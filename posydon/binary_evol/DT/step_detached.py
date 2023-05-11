@@ -799,7 +799,7 @@ class detached_step:
                         list_for_matching = self.list_for_matching_HeStar
                     elif star.state in LIST_ACCEPTABLE_STATES_FOR_postMS:
                         star.htrack = False
-                        ist_for_matching = self.list_for_matching_postMS
+                        list_for_matching = self.list_for_matching_postMS
 
                     htrack  = star.htrack
                     MESA_labels = list_for_matching[0]
@@ -808,20 +808,20 @@ class detached_step:
                     colscalers = list_for_matching[2]
                     bnds = []
                     for i in range(3, len(list_for_matching)):
-                    bnds.append(list_for_matching[i])
+                        bnds.append(list_for_matching[i])
 
                     if self.verbose or self.verbose == 1:
-                    print("Matching attributes and their normalizations :",
-                          MESA_labels, rs)
+                        print("Matching attributes and their normalizations :",
+                              MESA_labels, rs)
                     for i in MESA_labels:
-                    if i not in self.root_keys:
-                        raise Exception("Expected matching parameter not "
-                                        "added in the single star grid options.")
+                        if i not in self.root_keys:
+                            raise Exception("Expected matching parameter not "
+                                            "added in the single star grid options.")
 
                     scales = []
                     for MESA_label, colscaler in zip(MESA_labels, colscalers):
-                    scale_of_attribute = scale(MESA_label, htrack, colscaler)
-                    scales.append(scale_of_attribute)
+                        scale_of_attribute = scale(MESA_label, htrack, colscaler)
+                        scales.append(scale_of_attribute)
 
                     def sq_diff_function(x):
                         return self.square_difference(
