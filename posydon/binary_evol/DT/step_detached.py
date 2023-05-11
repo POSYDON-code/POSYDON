@@ -687,7 +687,6 @@ class detached_step:
                 list_for_matching = self.list_for_matching_HMS
             elif star.state in LIST_ACCEPTABLE_STATES_FOR_postMS:
                 list_for_matching = self.list_for_matching_postMS
-
             elif star.state in LIST_ACCEPTABLE_STATES_FOR_HeStar:
                 list_for_matching = self.list_for_matching_HeStar
 
