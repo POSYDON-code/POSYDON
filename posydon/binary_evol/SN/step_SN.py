@@ -78,6 +78,7 @@ MODEL = {
     "sigma_kick_ECSN": 20.0,
     "max_NS_mass": 2.5,
     "use_interp_values": True,
+    "use_interp_values_classes": ['BH'],
     "use_profiles": True,
     "use_core_masses": True,
     "approx_at_he_depletion": False,
@@ -242,6 +243,7 @@ class StepSN(object):
                  sigma_kick_ECSN=MODEL['sigma_kick_ECSN'],
                  max_NS_mass=MODEL['max_NS_mass'],
                  use_interp_values=MODEL['use_interp_values'],
+                 use_interp_values_classes=MODEL['use_interp_values_classes']
                  use_profiles=MODEL['use_profiles'],
                  use_core_masses=MODEL['use_core_masses'],
                  approx_at_he_depletion=MODEL['approx_at_he_depletion'],
@@ -269,6 +271,7 @@ class StepSN(object):
             self.sigma_kick_ECSN = sigma_kick_ECSN
             self.max_NS_mass = max_NS_mass
             self.use_interp_values = use_interp_values
+            self.use_interp_values_classes = use_interp_values_classes
             self.use_profiles = use_profiles
             self.use_core_masses = use_core_masses
             self.approx_at_he_depletion = approx_at_he_depletion
@@ -540,11 +543,15 @@ class StepSN(object):
                 CC_properites = getattr(star, key)
                 star.state, star.SN_type, star.f_fb, star.mass, star.spin = (
                     CC_properites)
-
-                for key in STARPROPERTIES:
-                    if key not in ["state", "mass", "spin"]:
-                        setattr(star, key, None)
-                return
+                if star.state not in self.use_interp_values_classes:
+                    for key in STARPROPERTIES:
+                        if key in [“state”, “SN_type”, “f_fb”, “mass”, “spin”]:
+                            setattr(star, key, None)
+                else:
+                    for key in STARPROPERTIES:
+                        if key not in ["state", "mass", "spin"]:
+                            setattr(star, key, None)
+                    return
 
             # Verifies the selection of core-collapse mechnism to perform
             # the collapse
