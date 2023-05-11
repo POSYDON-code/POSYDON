@@ -243,7 +243,7 @@ class StepSN(object):
                  sigma_kick_ECSN=MODEL['sigma_kick_ECSN'],
                  max_NS_mass=MODEL['max_NS_mass'],
                  use_interp_values=MODEL['use_interp_values'],
-                 use_interp_values_classes=MODEL['use_interp_values_classes']
+                 use_interp_values_classes=MODEL['use_interp_values_classes'],
                  use_profiles=MODEL['use_profiles'],
                  use_core_masses=MODEL['use_core_masses'],
                  approx_at_he_depletion=MODEL['approx_at_he_depletion'],
