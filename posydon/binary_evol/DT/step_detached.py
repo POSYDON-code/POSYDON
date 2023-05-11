@@ -795,13 +795,12 @@ class detached_step:
                                 " or sol.success = ", sol.success)
 
                     if star.state in LIST_ACCEPTABLE_STATES_FOR_HeStar:
-                        star.htrack = True
+                        htrack = True
                         list_for_matching = self.list_for_matching_HeStar
                     elif star.state in LIST_ACCEPTABLE_STATES_FOR_postMS:
-                        star.htrack = False
+                        htrack = False
                         list_for_matching = self.list_for_matching_postMS
 
-                    htrack  = star.htrack
                     MESA_labels = list_for_matching[0]
                     posydon_attributes = posydon_attribute(MESA_labels, star)
                     rs = list_for_matching[1]
@@ -906,7 +905,7 @@ class detached_step:
                 f'{star.he_core_mass:.3f}',
                 f'{star.center_c12:.4f}'
             )
-        return initials
+        return initials, htrack
 
     def __repr__(self):
         """Return the type of evolution type."""
@@ -1037,12 +1036,7 @@ class detached_step:
                 return the properties of star2
 
             """
-            if htrack:
-                self.grid = self.grid_Hrich
-            elif not htrack:
-                self.grid = self.grid_strippedHe
 
-            get_track = self.grid.get
             with np.errstate(all="ignore"):
                 # get the initial m0, t0 track
                 if binary.event == 'ZAMS':
@@ -1053,11 +1047,18 @@ class detached_step:
                     m0, t0 = copy_prev_m0, copy_prev_t0
                 else:
                     t_before_matching = time.time()
-                    m0, t0 = self.match_to_single_star(star1, htrack)
+                    m0, t0, htrack = self.match_to_single_star(star1, htrack)
                     t_after_matching = time.time()
                     if self.verbose or self.verbose == 1:
                         print("Matching duration: "
                               f"{t_after_matching-t_before_matching:.6g}")
+
+            if htrack:
+                self.grid = self.grid_Hrich
+            elif not htrack:
+                self.grid = self.grid_strippedHe
+
+            get_track = self.grid.get
 
             if np.any(np.isnan([m0, t0])):
                 #    binary.event = "END"
