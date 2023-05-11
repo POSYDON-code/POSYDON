@@ -720,11 +720,11 @@ class detached_step:
                         get_track_val(MESA_label, htrack, *x))
                     posydon_value = scale_of_that_MESA_label.transform(
                         posydon_attr)
-                    if MESA_label == "center_he4":
-                        result += ((single_track_value - posydon_value)
-                                   / posydon_value) ** 2
-                    else:
-                        result += (single_track_value - posydon_value) ** 2
+                    #if MESA_label == "center_he4":
+                    #    result += ((single_track_value - posydon_value)
+                    #               / posydon_value) ** 2
+                    #else:
+                    result += (single_track_value - posydon_value) ** 2
                 return result
 
             x0 = get_root0(MESA_labels, posydon_attributes, htrack, rs=rs)
