@@ -181,7 +181,7 @@ def post_process_grid(grid, index=None, star_2_CO=True, MODEL=MODEL,
 
         # He depeltion and CE quantities
         for j, star in enumerate(stars):
-            if not stars_CO[j] and IC in ['no_MT', 'stable_MT', 'unstable_MT']:
+            if not stars_CO[j] and IC in ['no_MT', 'stable_MT', 'unstable_MT','stable_reverse_MT', 'DoubleCE']:
                 EXTRA_COLUMNS['S%s_state' % (j+1)].append(check_state_of_star(
                     star, star_CO=False))
                 with warnings.catch_warnings(record=True) as w:
@@ -257,7 +257,7 @@ def post_process_grid(grid, index=None, star_2_CO=True, MODEL=MODEL,
 
         if not single_star:
             # core collpase quantities
-            if interpolation_class in ['no_MT', 'stable_MT']:
+            if interpolation_class in ['no_MT', 'stable_MT','stable_reverse_MT']:
                 if star_2_CO or TF1 == 'Primary has depleted central carbon':
                     star = binary.star_1
                     s = 'S1_'
