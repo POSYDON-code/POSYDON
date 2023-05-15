@@ -161,7 +161,7 @@ class detached_step :
             matching_method="minimize",
             initial_mass=None,
             rootm=None,
-            verbose=1,
+            verbose=False,
             do_wind_loss=True,
             do_tides=True,
             do_gravitational_radiation=True,
@@ -614,7 +614,6 @@ class detached_step :
         matching_method = self.matching_method
         scale = self.scale
         
-        startime_match = time.time()
         
 
         initials = None
@@ -688,7 +687,7 @@ class detached_step :
                 if i not in self.root_keys:
                     raise Exception("Expected matching parameter not "
                                          "added in the single star grid options.")
-            scaletime = time.time()
+            
             #Comment: check the time here
             scales = []
             
@@ -696,7 +695,7 @@ class detached_step :
             for MESA_label, colscaler in zip(MESA_labels, colscalers):
                 scale_of_attribute = scale(MESA_label, htrack, colscaler)
                 scales.append(scale_of_attribute)
-            print("Scale time", time.time() - scaletime )   
+            
             
             def square_difference(x):
                 result = 0.0
@@ -708,19 +707,16 @@ class detached_step :
                     else:
                         result += (single_track_value - posydon_value) ** 2
                 return result
-            print("Before get_root and minimize: ", time.time()-startime_match)
             
-            starttime=time.time()
+            
             x0 = get_root0(MESA_labels, posydon_attributes,
                                    htrack, rs=rs)
-            halftime=time.time()
+            
             sol = minimize(square_difference,
                         x0,
                         method="TNC",
                         bounds=bnds
                     )
-            endtime = time.time()
-            print("First matching timing","get_root0:",halftime- starttime,"minimize:", endtime - halftime)
             # alternative matching
             # 1st, different minimization method
             if (np.abs(sol.fun) > tolerance_matching_integration
@@ -871,7 +867,6 @@ class detached_step :
                 f'{star.he_core_mass:.3f}',
                 f'{star.center_c12:.4f}'
             )
-        print("Time after matching: ",time.time()-endtime)
         return initials
 
     def __repr__(self):
@@ -893,29 +888,29 @@ class detached_step :
 
         if self.non_existent_companion == 0: #no isolated evolution, detached step of an actual binary
             # the primary in a real binary is potential compact object, or the more evolved star
-
-            if (binary.star_1.state in ("BH", "NS", "WD")
+            #Eirini's comment make a list in STAR_STATES_CO
+            if (binary.star_1.state in ("BH", "NS", "WD","massless_remnant")
                     and binary.star_2.state in STAR_STATES_H_RICH):
                 primary = binary.star_1
                 secondary = binary.star_2
                 secondary.htrack = True
                 primary.htrack = secondary.htrack
                 primary.co = True
-            elif (binary.star_1.state in ("BH", "NS", "WD")
+            elif (binary.star_1.state in ("BH", "NS", "WD","massless_remnant")
                     and binary.star_2.state in LIST_ACCEPTABLE_STATES_FOR_HeStar):
                 primary = binary.star_1
                 secondary = binary.star_2
                 secondary.htrack = False
                 primary.htrack = secondary.htrack
                 primary.co = True
-            elif (binary.star_2.state in ("BH", "NS", "WD")
+            elif (binary.star_2.state in ("BH", "NS", "WD","massless_remnant")
                     and binary.star_1.state in STAR_STATES_H_RICH):
                 primary = binary.star_2
                 secondary = binary.star_1
                 secondary.htrack = True
                 primary.htrack = secondary.htrack
                 primary.co = True
-            elif (binary.star_2.state in ("BH", "NS", "WD")
+            elif (binary.star_2.state in ("BH", "NS", "WD","massless_remnant")
                     and binary.star_1.state in LIST_ACCEPTABLE_STATES_FOR_HeStar):
                 primary = binary.star_2
                 secondary = binary.star_1

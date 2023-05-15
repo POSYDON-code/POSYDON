@@ -253,7 +253,7 @@ class BinaryPopulation:
                 try:
                     binary.evolve()
                 except Exception:
-                    #print(traceback.print_exc())
+                    print(traceback.print_exc())
                     binary.event = 'FAILED'
                     binary.traceback = traceback.format_exc()
                 if len(w) > 0:
@@ -917,10 +917,10 @@ class BinaryGenerator:
             )
             star2_params = dict(
                 mass=m2,
-                state="BH",
+                state="massless_remnant",
                 metallicity=Z,
-                center_h1=X,
-                center_he4=Y,
+                center_h1=0,
+                center_he4=0,
             )
         #do all of the above but with state = "initial_single star"
         #in this case the second star can be a compact object. 

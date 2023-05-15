@@ -31,10 +31,11 @@ STAR_STATES_ALL = [
     'stripped_He_Core_He_burning',
     'stripped_He_Central_He_depleted',
     'stripped_He_Central_C_depletion',
-    'stripped_He_non_burning'
+    'stripped_He_non_burning',
+    'massless_remnant'
 ]
 
-STAR_STATES_CO = ['BH', 'NS', 'WD']
+STAR_STATES_CO = ['BH', 'NS', 'WD','massless_remnant']
 
 STAR_STATES_NOT_CO = STAR_STATES_ALL.copy()
 [STAR_STATES_NOT_CO.remove(x) for x in STAR_STATES_CO]
@@ -221,8 +222,8 @@ for b in ['initially_single_star']:
     for s1 in STAR_STATES_ALL:
         for s2 in STAR_STATES_ALL:
             for e in BINARY_EVENTS_ALL:
-                POSYDON_FLOW_CHART[(s1, s2, b, e)] = 'step_end'#'step_initially_single'
-                POSYDON_FLOW_CHART[(s1, s2, b, e)] = 'step_end'#'step_initially_single'
+                POSYDON_FLOW_CHART[(s1, s2, b, e)] = 'step_initially_single'
+                POSYDON_FLOW_CHART[(s1, s2, b, e)] = 'step_initially_single'
 
 BINARY_EVENTS_OF_SN_OR_AFTER_DETACHED = BINARY_EVENTS_ALL.copy()
 [BINARY_EVENTS_OF_SN_OR_AFTER_DETACHED.remove(x) for x in ['CC1','CC2','MaxTime_exceeded','maxtime']]
