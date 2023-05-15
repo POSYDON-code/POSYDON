@@ -716,7 +716,7 @@ class PSyGrid:
 
                 if history2 is not None:
                     history2_mod = read_MESA_data_file(
-                        run.history2_path, [colname]
+                        run.history2_path, [colname])
                     if history2_mod is not None:
                         history2_mod = np.int_(history2_mod[colname])
                         if len(history2_mod) == len(history2) + 1:
