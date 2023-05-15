@@ -67,6 +67,10 @@ STAR_STATES_H_RICH = [
     'H-rich_non_burning'
 ]
 
+STAR_STATES_CO = ['BH', 
+                  'NS', 
+                  'WD',
+                  'massless_remnant']
 
 DEFAULT_TRANSLATION = {
     "time": "time",
@@ -901,7 +905,7 @@ class detached_step:
         if self.non_existent_companion == 0: #no isolated evolution, detached step of an actual binary
             # the primary in a real binary is potential compact object, or the more evolved star
             #Eirini's comment make a list in STAR_STATES_CO
-            if (binary.star_1.state in ("BH", "NS", "WD","massless_remnant")
+            if (binary.star_1.state in STAR_STATES_CO
 
                     and binary.star_2.state in STAR_STATES_H_RICH):
                 primary = binary.star_1
@@ -910,7 +914,7 @@ class detached_step:
                 primary.htrack = secondary.htrack
                 primary.co = True
 
-            elif (binary.star_1.state in ("BH", "NS", "WD","massless_remnant")
+            elif (binary.star_1.state in STAR_STATES_CO 
                     and binary.star_2.state in LIST_ACCEPTABLE_STATES_FOR_HeStar):
 
                 primary = binary.star_1
@@ -918,7 +922,7 @@ class detached_step:
                 secondary.htrack = False
                 primary.htrack = secondary.htrack
                 primary.co = True
-            elif (binary.star_2.state in ("BH", "NS", "WD","massless_remnant")
+            elif (binary.star_2.state in STAR_STATES_CO
                     and binary.star_1.state in STAR_STATES_H_RICH):
                 primary = binary.star_2
                 secondary = binary.star_1
@@ -926,7 +930,7 @@ class detached_step:
                 primary.htrack = secondary.htrack
                 primary.co = True
 
-            elif (binary.star_2.state in ("BH", "NS", "WD","massless_remnant")
+            elif (binary.star_2.state in STAR_STATES_CO
                     and binary.star_1.state in LIST_ACCEPTABLE_STATES_FOR_HeStar):
 
                 primary = binary.star_2

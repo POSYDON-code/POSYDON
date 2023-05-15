@@ -53,7 +53,7 @@ LIST_ACCEPTABLE_STATES_FOR_POSTMS = STAR_STATES_H_RICH.copy()
 LIST_ACCEPTABLE_STATES_FOR_POSTHeMS = STAR_STATES_HE_RICH.copy()
 [LIST_ACCEPTABLE_STATES_FOR_POSTHeMS.remove(x) for x in LIST_ACCEPTABLE_STATES_FOR_HeMS]
 
-class InitiallySingleStep(IsolatedStep):
+class InitiallySingleStep(isolated_step):
     """
     Prepare a runaway star to do an an isolated_step)
     """

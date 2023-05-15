@@ -65,7 +65,7 @@ ONELINE_MIN_ITEMSIZE = {'state_i': 30, 'state_f': 30,
 # BinaryPopulation will enforce a constant metallicity accross all steps that
 # load stellar or binary models by checked this list of steps.
 STEP_NAMES_LOADING_GRIDS = [
-    'step_HMS_HMS', 'step_CO_HeMS', 'step_CO_HMS_RLO', 'step_detached','step_isolated','step_disrupted'
+    'step_HMS_HMS', 'step_CO_HeMS', 'step_CO_HMS_RLO', 'step_detached','step_isolated','step_disrupted','step_initially_single'
 ]
 
 class BinaryPopulation:
@@ -884,7 +884,7 @@ class BinaryGenerator:
         #If binary_fraction not default a initially single star binary is created.
         else:
             formation_time = output['time'].item()
-            separation = output['separation'].item()
+            separation = 10e9
             orbital_period = output['orbital_period'].item()
             eccentricity = output['eccentricity'].item()
             m1 = output['S1_mass'].item()
@@ -916,7 +916,7 @@ class BinaryGenerator:
                 center_he4=Y,
             )
             star2_params = dict(
-                mass=m2,
+                mass=0,
                 state="massless_remnant",
                 metallicity=Z,
                 center_h1=0,
