@@ -1116,19 +1116,19 @@ def get_binary_state_and_event_and_mt_case(binary, interpolation_class=None,
 
     if rlof1 and rlof2:                             # contact condition
         result = ['contact', None, 'None']
-        if interpolation_class == 'unstable_MT':
+        if interpolation_class == 'unstable_MT' or 'DoubleCE':
             result = ['contact', 'oCE1', 'None']
     elif no_rlof:                                   # no MT in any star
         result = ['detached', None, 'None']
     elif rlof1 and not rlof2:                       # only in star 1
         result = ['RLO1', None, mt_flag_1_str]
-        if interpolation_class == 'unstable_MT':
+        if interpolation_class == 'unstable_MT' or 'DoubleCE':
             return ['RLO1', 'oCE1', mt_flag_1_str]
         # if prev_state not in ALL_RLO_CASES:
         #    return ['RLO1', 'oRLO1', mt_flag_1_str]
     elif rlof2 and not rlof1:                       # only in star 2
         result = ['RLO2', None, mt_flag_2_str]
-        if interpolation_class == 'unstable_MT':
+        if interpolation_class == 'unstable_MT' or 'DoubleCE':
             return ['RLO2', 'oCE2', mt_flag_2_str]
     else:                                           # undetermined in any star
         result = ["undefined", None, 'None']
