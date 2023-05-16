@@ -656,9 +656,6 @@ class PSyGrid:
                 history1 = None
             elif self.eeps is None:
                 history1 = read_MESA_data_file(run.history1_path, H1_columns)
-                if history1 is None:
-                    ignore_data = True
-                    ignore_reason = "corrupted_history1"
             else:
                 try:
                     eep_path = self.eeps[os.path.basename(run.path)]
@@ -681,9 +678,6 @@ class PSyGrid:
                 history2 = None
             else:
                 history2 = read_MESA_data_file(run.history2_path, H2_columns)
-                if history2 is None:
-                    ignore_data = True
-                    ignore_reason = "corrupted_history2"
             if self.config["He_core_fix"]:
                 history2 = fix_He_core(history2)
 
