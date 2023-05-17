@@ -208,14 +208,22 @@ def keep_till_He_depletion(bh, h1, h2, Ystop=1.0e-5, XCstop=1.0):
         return bh, h1, h2, ''
     
     if depleted1:
-        where_conditions_met1 = np.where((h1["center_he4"]<Ystop) and (h1["center_c12"]<XCstop))[0]
+#        where_conditions_met1 = np.where((h1["center_he4"]<Ystop) and (h1["center_c12"]<XCstop))[0]
+        where_conditions_met1 = []
+        for i in range(len(h1["center_he4"])):
+            if (h1["center_he4"][i]<Ystop) and (h1["center_c12"][i]<XCstop):
+                where_conditions_met1 += [i]
         if len(where_conditions_met1) == 0:
             warnings.warn("No He depletion found in h1, while expected.")
             return bh, h1, h2, ''
         last_index = where_conditions_met1[0]
         newTF1 = 'Primary has depleted central helium'
     if depleted2:
-        where_conditions_met2 = np.where((h2["center_he4"]<Ystop) and (h2["center_c12"]<XCstop))[0]
+#        where_conditions_met2 = np.where((h2["center_he4"]<Ystop) and (h2["center_c12"]<XCstop))[0]
+        where_conditions_met2 = []
+        for i in range(len(h2["center_he4"])):
+            if (h2["center_he4"][i]<Ystop) and (h2["center_c12"][i]<XCstop):
+                where_conditions_met2 += [i]
         if len(where_conditions_met2) == 0:
             warnings.warn("No He depletion found in h2, while expected.")
             return bh, h1, h2, ''
