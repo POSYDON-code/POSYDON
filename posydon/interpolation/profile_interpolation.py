@@ -7,6 +7,7 @@ __authors__ = [
 
 import pickle
 import matplotlib.pyplot as plt
+import warnings
 
 # POSYDON
 from posydon.grids.psygrid import PSyGrid
@@ -25,27 +26,29 @@ from scipy.interpolate import interp1d
 class CompileData:
 
     def __init__(self, train_path, valid_path,
-                 profile_names=['radius','logRho', 'x_mass_fraction_H','y_mass_fraction_He',
-                                 'z_mass_fraction_metals','omega','energy']):
+                 profile_names=['radius','logRho', 'x_mass_fraction_H',
+                                'y_mass_fraction_He','z_mass_fraction_metals',
+                                'omega','energy']):
         """Extracts profile data from '.h5' grid files and saves to file.
         Args:
             train_path (str) : path/name of '.h5' file for training data.
-            valid_path (str) : path/name of '.h5' file for testing/validation data.
-            profile_names (array-like) : list of profile quantities to be extracted.
+            valid_path (str) : path/name of '.h5' file for testing data.
+            profile_names (array-like) : list of profile quantities to extract.
         """
         self.names = profile_names
+        
+        # extract testing data
+        print("extracting testing data")
+        valid = PSyGrid(valid_path)  # load PSyGrid
+        self.valid_scalars = pd.DataFrame()
+        self.valid_profiles = []
+        testing_failed = []
         
         try:
             print(valid.final_values["S1_state"][0])
         except:
             print("grid does not have S1_state information")
-        
-        # extract testing data
-        print("extracting testing data")
-        valid = PSyGrid(valid_path) # load PSyGrid
-        self.valid_scalars = pd.DataFrame()
-        self.valid_profiles = []
-        testing_failed = []
+
 
         for i in range(len(valid)):
             try:
@@ -55,10 +58,11 @@ class CompileData:
             except:
                 testing_failed.append(i)
                 pass
+        warnings.warn(f"{len(testing_failed)} binaries failed")
 
         # extract training data
         print("extracting training data")
-        train = PSyGrid(train_path) # load PSyGrid
+        train = PSyGrid(train_path)  # load PSyGrid
         self.scalars = pd.DataFrame()
         self.profiles = []
         training_failed = []
@@ -71,7 +75,8 @@ class CompileData:
             except:
                 training_failed.append(i)
                 pass
-
+        warnings.warn(f"{len(training_failed)} training binaries failed")
+        
 
     def scrape(self,grid,ind):
         """Extracts profile data from one MESA run.
@@ -79,7 +84,8 @@ class CompileData:
             grid (obj) : PSyGrid object.
             ind (int) : index of run to be scraped.
         Returns:
-            scalars (array-like) : dictionary containing initial m1, m2, p and final s1_state, final_mass.
+            scalars (array-like) : dictionary containing initial 
+                                   m1, m2, p and final s1_state, final_mass.
             profiles (array-like) : all N specified profiles, shape (N,200).
         """
         # open individual run as a DataFrame
@@ -88,26 +94,27 @@ class CompileData:
         df = df.reset_index(drop=True)
 
         # grab input values, final star 1 state, final star 1 mass
-        m1 = grid.initial_values["star_1_mass"][ind]
-        m2 = grid.initial_values["star_2_mass"][ind]
-        p = grid.initial_values["period_days"][ind]
-        state = grid.final_values["S1_state"][ind]  
         final_mass = grid.final_values["star_1_mass"][ind]
-        scalars = {"m1":m1,
-                   "m2":m2,
-                   "p":p,
-                   "s1_state":state,
+        scalars = {"m1":grid.initial_values["star_1_mass"][ind],
+                   "m2":grid.initial_values["star_2_mass"][ind],
+                   "p":grid.initial_values["period_days"][ind],
+                   "s1_state":grid.final_values["S1_state"][ind],
                    "final_mass":final_mass}
 
         # grab output vectors, interpolate to normalize
         profiles=np.zeros([len(self.names),200])
         for i,prof in enumerate(self.names):
-            f = interp1d(df['mass']/final_mass,df[prof],fill_value="extrapolate")
-            profile_new = f(np.linspace(0,1,200))
-            profiles[i] = profile_new
+            if prof in df.columns:
+            
+                f = interp1d(df['mass']/final_mass,df[prof],
+                             fill_value="extrapolate")
+                profile_new = f(np.linspace(0,1,200))
+                profiles[i] = profile_new
+            else:
+                warnings.warn(f"{prof} profile not saved in grid, will not be included in file")
 
         return scalars, profiles
-    
+
     def save(self, filename):
         """Save extracted profile data.
         Args:
@@ -119,7 +126,7 @@ class CompileData:
                    for key in SAVE_ATTRS if key not in DONT_SAVE}
         with open(filename, 'wb') as f:
             pickle.dump(myattrs, f)
-
+            
             
 class ProfileInterpolator:
     
@@ -128,8 +135,8 @@ class ProfileInterpolator:
         Args:
             load_interpolator (str) : optional path/name of interpolator file to be loaded
         """
-        
-        if load_interpolator != None:
+
+        if load_interpolator is not None:
             self.load(load_interpolator)
         
     def load_profiles(self,filename):
@@ -161,16 +168,17 @@ class ProfileInterpolator:
         initial = np.log10(np.array(linear_initial))
         finalmass = self.scalars["final_mass"].astype(np.float64)
 
-        valid_linear_initial = np.transpose([
-            self.valid_scalars["m1"],self.valid_scalars["m2"],self.valid_scalars["p"]])
+        valid_linear_initial = np.transpose([self.valid_scalars["m1"],
+                                             self.valid_scalars["m2"],
+                                             self.valid_scalars["p"]]) 
         valid_initial = np.log10(np.array(valid_linear_initial))
         valid_finalmass = self.valid_scalars["final_mass"].astype(np.float64)
         
         # instantiate and train H mass fraction profile model
         h_ind = self.names.index("x_mass_fraction_H")
         self.h = X_H(initial, self.profiles[:,h_ind], self.scalars["s1_state"], 
-                   valid_initial, self.valid_profiles[:,h_ind], self.valid_scalars["s1_state"],
-                   IF_interpolator)
+                     valid_initial, self.valid_profiles[:,h_ind], 
+                     self.valid_scalars["s1_state"], IF_interpolator)
 
         # instantiate and train density profile model
         dens_ind = self.names.index("logRho")
@@ -187,7 +195,7 @@ class ProfileInterpolator:
             inputs (array-like) : log-space initial conditions of N binaries to predict, shape (N,3).
         Returns:
             mass_coords (array-like) : linear-scale mass enclosed profile coordinates.
-            density_profiles (array_like) : log-scale density profile coordinates. 
+            density_profiles (array_like) : log-scale density profile coordinates.
             h_profiles (array_like) : H mass fraction profile coordinates
         """
         mass_coords, density_profiles = self.dens.predict(inputs)
@@ -245,43 +253,42 @@ class ProfileInterpolator:
                 profiles_copy[i] = mono_renorm(profiles[i])
                 
         return profiles_copy
-
+    
     
 class Density:
 
-    def __init__(self,initial,profiles,valid_initial,valid_profiles,IF_interpolator,n_comp=8):
+    def __init__(self,initial,profiles,valid_initial,
+                 valid_profiles,IF_interpolator,n_comp=8):
         """Creates and trains density profile model.
         Args:
-            initial (array-like) : log-space initial conditions for training data. 
+            initial (array-like) : log-space initial conditions for training data.
             profiles (array-like) : final density profiles for training data. 
-            valid_initial (array-like) : log-space initial conditions for testing data. 
-            valid_profiles (array-like) : final density profiles for testing data. 
-            IF_interpolator (string) : path to .pkl file for IF interpolator for central density, final mass values.
+            valid_initial (array-like) : log-space initial conditions for testing data.
+            valid_profiles (array-like) : final density profiles for testing data.
+            IF_interpolator (string) : path to .pkl file for IF interpolator for central density, final mass values
             n_comp (int) : number of PCA components. 
         """
         self.n_comp = n_comp
         
         # process training data 
-        self.initial = initial # initial conditions in log space
+        self.initial = initial  # initial conditions in log space
         self.rho_min = np.min(profiles,axis=1) 
         rho_max = np.max(profiles,axis=1)
         profiles_norm = (profiles-self.rho_min[:,np.newaxis])\
-                            /(rho_max-self.rho_min)[:,np.newaxis] # minmax normalized profiles
+                            /(rho_max-self.rho_min)[:,np.newaxis]  # minmax normalized profiles
         self.pca = PCA(n_components=self.n_comp).fit(profiles_norm)
         weights_unscaled = self.pca.transform(profiles_norm)
         self.scaling = np.std(weights_unscaled,axis=0)
-        self.weights = weights_unscaled/self.scaling # scaled PCA weights
-
+        self.weights = weights_unscaled/self.scaling  # scaled PCA weights
         
         # process testing data
         self.valid_initial = valid_initial
         self.valid_rho_min = np.min(valid_profiles,axis=1)
         valid_rho_max = np.max(valid_profiles,axis=1)
         valid_profiles_norm = (valid_profiles-self.valid_rho_min[:,np.newaxis])\
-                                    /(valid_rho_max-self.valid_rho_min)[:,np.newaxis]
+                            /(valid_rho_max-self.valid_rho_min)[:,np.newaxis]
         valid_weights_unscaled = self.pca.transform(valid_profiles_norm)
         self.valid_weights = valid_weights_unscaled/self.scaling
-
         
         # instantiate models
         self.model_prof = models.Sequential([
@@ -317,18 +324,20 @@ class Density:
         callback = tf.keras.callbacks.EarlyStopping(monitor="loss",patience=200)
         history = self.model_prof.fit(self.initial,self.weights,
                                       epochs=3000,callbacks=[callback],verbose=0,
-                                      validation_data=(self.valid_initial,self.valid_weights))
+                                      validation_data=(self.valid_initial,
+                                                       self.valid_weights))
         
         self.model_rho.compile(optimizers.Adam(clipnorm=1),loss=loss)
         callback = tf.keras.callbacks.EarlyStopping(monitor="loss",patience=40)
         history = self.model_rho.fit(self.initial,self.rho_min,
                                      epochs=500, callbacks=[callback], verbose=0,
-                                     validation_data=(self.valid_initial,self.valid_rho_min))
+                                     validation_data=(self.valid_initial,
+                                                      self.valid_rho_min))
                                      
         print("done training")
     
     def predict(self,inputs):
-        """Predicts profile for n sets of given inputs, in array of shape (n,3) .
+        """Predicts profile for n sets of given inputs, in array of shape (n,3).
         Args: 
             inputs (array-like) : log-space initial conditions of N binaries to predict, shape (N,3).
         Returns:
@@ -345,12 +354,12 @@ class Density:
         
         # IF interpolate center density
         center_ind = self.model_IF.interpolators[0].out_keys.index('S1_log_center_Rho')
-        max_rho = self.model_IF.interpolators[0].test_interpolator(10**inputs)[:,center_ind]                     
+        max_rho = self.model_IF.interpolators[0].test_interpolator(10**inputs)[:,center_ind]                    
              
         # reconstruct profile
         norm_prof = self.pca.inverse_transform(weights_pred*self.scaling)
         density_profiles = norm_prof*(max_rho[:,np.newaxis]-min_rho[:,np.newaxis]) \
-                               + min_rho[:,np.newaxis]
+                           + min_rho[:,np.newaxis]
         
         # IF interpolate final mass, construct mass enclosed profile coordinates
         m1_ind = self.model_IF.interpolators[0].out_keys.index("star_1_mass")
@@ -359,14 +368,15 @@ class Density:
         
         return mass_coords,density_profiles
 
-                
+    
 class X_H:
     
-    def __init__(self,initial,profiles,s1,valid_initial, valid_profiles,valid_s1,IF_interpolator):
+    def __init__(self,initial,profiles,s1,valid_initial, 
+                 valid_profiles,valid_s1,IF_interpolator):
         """Creates and trains H mass fraction profile model.
         Args:
             initial (array-like) : log-space initial conditions for training data.
-            profiles (array-like) : final H mass fraction profiles for training data.
+            profiles (array-like) : final H mass fraction profiles for training data. 
             s1 (array-like) : final star 1 state for training data.
             valid_initial (array-like) : log-space initial conditions for testing data.
             valid_profiles (array-like) : final H mass fraction profiles for testing data.
@@ -440,7 +450,7 @@ class X_H:
             valid_prof = self.valid_profiles[valid_indices]
             
             # calculate boundary points for training and testing data 
-            if "burning" in state: # these classes' profile shapes have 2 boundary points
+            if "burning" in state:  # these classes' profile shapes have 2 boundary points
                 outs = 2
                 bounds = []
                 nonflat = []
@@ -484,11 +494,13 @@ class X_H:
             if state == 'H-rich_Core_H_burning':
                 history = model.fit(inputs[nonflat],np.array(bounds)[nonflat],
                                     epochs=500,verbose=0,callbacks=[callback],
-                                    validation_data=(valid_inputs[valid_nonflat],np.array(valid_bounds)[valid_nonflat]))
+                                    validation_data=(valid_inputs[valid_nonflat],
+                                                     np.array(valid_bounds)[valid_nonflat]))
             else:
                 history = model.fit(inputs,np.array(bounds),
                                     epochs=500,verbose=0,callbacks=[callback],
-                                    validation_data=(valid_inputs,np.array(valid_bounds)))
+                                    validation_data=(valid_inputs,
+                                                     np.array(valid_bounds)))
             
             b_models[state] = model
             print("finished training",state)
@@ -509,14 +521,19 @@ class X_H:
             return np.ones(200)*surface
         
         # construct step-shaped profile
-        if s1 in ["H-rich_Central_He_depleted","H-rich_Central_C_depletion","NS","BH"]:
+        if s1 in ["H-rich_Central_He_depleted",
+                  "H-rich_Central_C_depletion",
+                  "NS",
+                  "BH"]:
             b = self.bounds_models[s1](tf.convert_to_tensor([initial])).numpy()[0]            
             new = np.ones(200)*center
             new[int(b*200):] = surface
             return new
         
         # construct shell-shaped profile
-        if s1 in ["H-rich_Shell_H_burning",'H-rich_Core_H_burning','H-rich_Core_He_burning']:
+        if s1 in ["H-rich_Shell_H_burning",
+                  "H-rich_Core_H_burning",
+                  "H-rich_Core_He_burning"]:
             b = self.bounds_models[s1](tf.convert_to_tensor([initial])).numpy()[0]                        
             new = np.ones(200)*center
             new[int(b[1]*200):] = surface
@@ -550,4 +567,3 @@ class X_H:
         mass_coords = np.linspace(0,1,200)*pred_mass[:,np.newaxis] 
             
         return mass_coords, h_profiles
-                
