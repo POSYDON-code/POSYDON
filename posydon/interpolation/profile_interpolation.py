@@ -6,7 +6,6 @@ __authors__ = [
 ]
 
 import pickle
-import matplotlib.pyplot as plt
 import warnings
 
 # POSYDON
@@ -39,7 +38,7 @@ class CompileData:
         
         # extract testing data
         print("extracting testing data")
-        valid = PSyGrid(valid_path)  # load PSyGrid
+        valid = PSyGrid(valid_path)  # load PSyGrid object for testing grid
         self.valid_scalars = pd.DataFrame()
         self.valid_profiles = []
         testing_failed = []
@@ -62,7 +61,7 @@ class CompileData:
 
         # extract training data
         print("extracting training data")
-        train = PSyGrid(train_path)  # load PSyGrid
+        train = PSyGrid(train_path)  # load PSyGrid object for training grid
         self.scalars = pd.DataFrame()
         self.profiles = []
         training_failed = []
@@ -85,7 +84,7 @@ class CompileData:
             ind (int) : index of run to be scraped.
         Returns:
             scalars (array-like) : dictionary containing initial 
-                                   m1, m2, p and final s1_state, final_mass.
+                                   m1, m2, p and final s1_state, final_m1.
             profiles (array-like) : all N specified profiles, shape (N,200).
         """
         # open individual run as a DataFrame
@@ -94,19 +93,19 @@ class CompileData:
         df = df.reset_index(drop=True)
 
         # grab input values, final star 1 state, final star 1 mass
-        final_mass = grid.final_values["star_1_mass"][ind]
+        final_m1 = grid.final_values["star_1_mass"][ind]
         scalars = {"m1":grid.initial_values["star_1_mass"][ind],
                    "m2":grid.initial_values["star_2_mass"][ind],
                    "p":grid.initial_values["period_days"][ind],
                    "s1_state":grid.final_values["S1_state"][ind],
-                   "final_mass":final_mass}
+                   "final_m1":final_m1}
 
         # grab output vectors, interpolate to normalize
         profiles=np.zeros([len(self.names),200])
         for i,prof in enumerate(self.names):
             if prof in df.columns:
             
-                f = interp1d(df['mass']/final_mass,df[prof],
+                f = interp1d(df['mass']/final_m1,df[prof],
                              fill_value="extrapolate")
                 profile_new = f(np.linspace(0,1,200))
                 profiles[i] = profile_new
@@ -155,7 +154,6 @@ class ProfileInterpolator:
                 setattr(self, key, myattrs[key])
         self.profiles = np.array(self.profiles)
         self.valid_profiles = np.array(self.valid_profiles)
-        return self.profiles,self.scalars,self.valid_profiles,self.valid_scalars
     
     def train(self,IF_interpolator):
         """Trains models for density and H mass fraction profile models. 
@@ -166,13 +164,13 @@ class ProfileInterpolator:
         linear_initial = np.transpose([
             self.scalars["m1"],self.scalars["m2"],self.scalars["p"]])
         initial = np.log10(np.array(linear_initial))
-        finalmass = self.scalars["final_mass"].astype(np.float64)
+        finalmass = self.scalars["final_m1"].astype(np.float64)
 
         valid_linear_initial = np.transpose([self.valid_scalars["m1"],
                                              self.valid_scalars["m2"],
                                              self.valid_scalars["p"]]) 
         valid_initial = np.log10(np.array(valid_linear_initial))
-        valid_finalmass = self.valid_scalars["final_mass"].astype(np.float64)
+        valid_finalmass = self.valid_scalars["final_m1"].astype(np.float64)
         
         # instantiate and train H mass fraction profile model
         h_ind = self.names.index("x_mass_fraction_H")
@@ -239,12 +237,10 @@ class ProfileInterpolator:
             arr_copy = arr.copy()
             # force rising points down
             for i in range(1,len(arr_copy)):
-                if arr_copy[i]-arr_copy[i-1]>0:
+                if arr_copy[i]>arr_copy[i-1]:
                     arr_copy[i]=arr_copy[i-1]
             # cut off points below surface value
-            low = np.where(arr_copy<arr[-1])[0]
-            arr_copy[low] = arr[-1]
-            return arr_copy
+            np.where(arr_copy<arr[-1], arr[-1], arr_copy)
         
         profiles_copy=profiles.copy()
         
@@ -310,7 +306,7 @@ class Density:
             layers.Dense(10,input_dim=10,activation='tanh'),
             layers.Dense(1,activation=None)])
         
-        self.model_IF = IFInterpolator()
+        self.model_IF = IFInterpolator()  # instantiate POSYDON initial-final interpolator object
         self.model_IF.load(filename=IF_interpolator)
                 
     def train(self,loss=losses.MeanSquaredError()):
@@ -391,7 +387,7 @@ class X_H:
         self.valid_s1 = valid_s1
 
         # load IF interpolator
-        self.model_IF = IFInterpolator()
+        self.model_IF = IFInterpolator()  # instantiate POSYDON initial-final interpolator object
         self.model_IF.load(filename=IF_interpolator)
         self.c_ind = self.model_IF.interpolators[0].out_keys.index("S1_center_h1")
         self.s_ind = self.model_IF.interpolators[0].out_keys.index("S1_surface_h1")
@@ -433,10 +429,10 @@ class X_H:
         """
         b_models = {}
         for state in ["H-rich_Shell_H_burning",
-                  'H-rich_Core_H_burning',
-                  'H-rich_Core_He_burning', 
+                  "H-rich_Core_H_burning",
+                  "H-rich_Core_He_burning", 
                   "H-rich_Central_He_depleted",
-                  'H-rich_Central_C_depletion',
+                  "H-rich_Central_C_depletion",
                   "NS","BH"]:
             
             # identify input/output training data for class
@@ -523,8 +519,7 @@ class X_H:
         # construct step-shaped profile
         if s1 in ["H-rich_Central_He_depleted",
                   "H-rich_Central_C_depletion",
-                  "NS",
-                  "BH"]:
+                  "NS","BH"]:
             b = self.bounds_models[s1](tf.convert_to_tensor([initial])).numpy()[0]            
             new = np.ones(200)*center
             new[int(b*200):] = surface
