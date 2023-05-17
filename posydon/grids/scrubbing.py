@@ -155,7 +155,7 @@ def keep_after_RLO(bh, h1, h2):
     return new_bh, new_h1, new_h2
 
 
-def keep_till_He_depletion(bh, h1, h2, Ystop=1.0e-5):
+def keep_till_He_depletion(bh, h1, h2, Ystop=1.0e-5, XCstop=1.0):
     """Scrub histories to stop at He depletion.
 
     Parameters
@@ -168,6 +168,8 @@ def keep_till_He_depletion(bh, h1, h2, Ystop=1.0e-5):
         The `history2` array.
     Ystop : float
         The He abundance threshold for depletion
+    XCstop : float
+        The C abundance threshold for depletion
 
     Returns
     -------
@@ -185,17 +187,17 @@ def keep_till_He_depletion(bh, h1, h2, Ystop=1.0e-5):
         return bh, h1, h2, ''
     
     h1_colnames = h1.dtype.names
-    if "center_he4" in h1_colnames:
-        if len(h1["center_he4"])>0:
-            depleted1 = (h1["center_he4"][-1]<Ystop)
+    if ("center_he4" in h1_colnames) and ("center_c12" in h1_colnames):
+        if (len(h1["center_he4"])>0) and (len(h1["center_c12"])>0):
+            depleted1 = ((h1["center_he4"][-1]<Ystop) and (h1["center_c12"][-1]<XCstop))
         else:
             depleted1 = False
     else:
         depleted1 = False
     h2_colnames = h2.dtype.names
-    if "center_he4" in h2_colnames:
-        if len(h2["center_he4"])>0:
-            depleted2 = (h2["center_he4"][-1]<Ystop)
+    if ("center_he4" in h1_colnames) and ("center_c12" in h1_colnames):
+        if (len(h2["center_he4"])>0) and (len(h2["center_c12"])>0):
+            depleted2 = ((h2["center_he4"][-1]<Ystop) and (h2["center_c12"][-1]<XCstop))
         else:
             depleted2 = False
     else:
@@ -206,14 +208,14 @@ def keep_till_He_depletion(bh, h1, h2, Ystop=1.0e-5):
         return bh, h1, h2, ''
     
     if depleted1:
-        where_conditions_met1 = np.where(h1["center_he4"]<Ystop)[0]
+        where_conditions_met1 = np.where((h1["center_he4"]<Ystop) and (h1["center_c12"]<XCstop))[0]
         if len(where_conditions_met1) == 0:
             warnings.warn("No He depletion found in h1, while expected.")
             return bh, h1, h2, ''
         last_index = where_conditions_met1[0]
         newTF1 = 'Primary has depleted central helium'
     if depleted2:
-        where_conditions_met2 = np.where(h2["center_he4"]<Ystop)[0]
+        where_conditions_met2 = np.where((h2["center_he4"]<Ystop) and (h2["center_c12"]<XCstop))[0]
         if len(where_conditions_met2) == 0:
             warnings.warn("No He depletion found in h2, while expected.")
             return bh, h1, h2, ''
