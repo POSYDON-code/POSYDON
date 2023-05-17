@@ -770,14 +770,22 @@ class PSyGrid:
                     )
 
                 # if scubbing wiped all the binary history, discard run
-                if binary_grid and len(binary_history) == 0:
+                if binary_history is not None:
+                    binary_history_len = len(binary_history)
+                else:
+                    binary_history_len = 0
+                if binary_grid and binary_history_len == 0:
                     ignore_data = True
                     ignore_reason = "ignored_scrubbed"
                     warnings.warn("Ignored MESA run because of scrubbed binary"
                                   " history in: {}\n".format(run.path))
                     if not initial_RLO_fix:
                         continue
-                if not binary_grid and len(history1) == 0:
+                if history1 is not None:
+                    history1_len = len(history1)
+                else:
+                    history1_len = 0
+                if not binary_grid and history1_len == 0:
                     ignore_data = True
                     warnings.warn("Ignored MESA run because of scrubbed"
                                   " history in: {}\n".format(run.path))
