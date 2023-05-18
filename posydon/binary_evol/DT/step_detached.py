@@ -312,7 +312,7 @@ class detached_step:
             matching_method="minimize",
             initial_mass=None,
             rootm=None,
-            verbose=1,
+            verbose=False,
             do_wind_loss=True,
             do_tides=True,
             do_gravitational_radiation=True,
@@ -905,7 +905,7 @@ class detached_step:
                 f'{star.he_core_mass:.3f}',
                 f'{star.center_c12:.4f}'
             )
-        return initials, htrack
+        return initials[0], initials[1], htrack
 
     def __repr__(self):
         """Return the type of evolution type."""
@@ -993,6 +993,7 @@ class detached_step:
         elif self.non_existent_companion == 1:
             # we force primary.co=True for all isolated evolution,
             # where the secondary is the one evolving one
+            primary = binary.star_1
             primary.co = True
             primary.htrack = False
             secondary = binary.star_2
@@ -1004,6 +1005,7 @@ class detached_step:
                 raise Exception("State not recognized!")
 
         elif self.non_existent_companion == 2:
+            primary = binary.star_2
             primary.co = True
             primary.htrack = False
             secondary = binary.star_1
