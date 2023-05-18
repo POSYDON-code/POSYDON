@@ -70,7 +70,7 @@ STAR_STATES_H_RICH = [
 STAR_STATES_CO = ['BH', 
                   'NS', 
                   'WD',
-                  'massless_remnant']
+                  ]
 
 DEFAULT_TRANSLATION = {
     "time": "time",
@@ -894,9 +894,9 @@ class detached_step:
         KEYS = self.KEYS
         KEYS_POSITIVE = self.KEYS_POSITIVE
 
-        if binary.star_1 is None:
+        if binary.star_1 is None or binary.star_1.state == "massless_remnant":
             self.non_existent_companion = 1
-        if binary.star_2 is None:
+        if binary.star_2 is None or binary.star_2.state == "massless_remnant":
             self.non_existent_companion = 2
         else:
             # detached step of an actual binary
@@ -974,6 +974,8 @@ class detached_step:
         elif self.non_existent_companion == 1:
             # we force primary.co=True for all isolated evolution,
             # where the secondary is the one evolving one
+            #Eirini's comment: Error the primary is not referenced before assigning the co. 
+            primary = binary.star_1
             primary.co = True
             primary.htrack = False
             secondary = binary.star_2
@@ -985,6 +987,7 @@ class detached_step:
                 raise Exception("State not recognized!")
 
         elif self.non_existent_companion == 2:
+            primary = binary.star_2
             primary.co = True
             primary.htrack = False
             secondary = binary.star_1
@@ -1759,6 +1762,7 @@ class detached_step:
                 secondary.state_history[timestep] = check_state_of_star(
                     secondary, i=timestep, star_CO=False)
 
+            #Eirini's comment check what the elif was here.   
             if primary.co:
                 mdot_acc = np.atleast_1d(bondi_hoyle(
                     binary, primary, secondary, slice(-len(t), None),
@@ -1766,8 +1770,8 @@ class detached_step:
                 primary.lg_mdot = np.log10(mdot_acc.item(-1))
                 primary.lg_mdot_history[len(primary.lg_mdot_history) - len(t)
                                         + 1:] = np.log10(mdot_acc[:-1])
-
-            elif not primary.co:
+                
+            else:
                 primary.state = check_state_of_star(primary, star_CO=False)
                 for timestep in range(-len(t[:-1]), 0):
 
