@@ -1054,7 +1054,7 @@ class detached_step:
                     if self.verbose or self.verbose == 1:
                         print("Matching duration: "
                               f"{t_after_matching-t_before_matching:.6g}")
-            print("1", m0, t0, htrack)
+                              
             if htrack:
                 self.grid = self.grid_Hrich
             elif not htrack:
@@ -1072,7 +1072,6 @@ class detached_step:
             max_time = binary.properties.max_simulation_time
             assert max_time > 0.0, "max_time is non-positive"
 
-            print("2", m0, t0, htrack)
             age = get_track("age", m0)
             t_max = age.max()  # max timelength of the track
             interp1d = dict()
