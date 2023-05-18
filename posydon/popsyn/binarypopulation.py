@@ -243,7 +243,7 @@ class BinaryPopulation:
         for j, index in enumerate(indices_for_iter):
 
             if kwargs.get('from_hdf', False):
-                #generator 
+                #generator
                 binary = self.manager.from_hdf(index, restore=True).pop()
             else:
                 binary = self.manager.generate(index=index, **self.kwargs)
@@ -840,7 +840,6 @@ class BinaryGenerator:
         #Eirini's comments:
         # Randomly generated variables
 
-            
         if self.RNG.uniform() < self.binary_fraction:
             formation_time = output['time'].item()
             separation = output['separation'].item()
@@ -884,7 +883,7 @@ class BinaryGenerator:
         #If binary_fraction not default a initially single star binary is created.
         else:
             formation_time = output['time'].item()
-            separation = 10e9
+            separation = 1e99
             orbital_period = output['orbital_period'].item()
             eccentricity = output['eccentricity'].item()
             m1 = output['S1_mass'].item()
@@ -924,7 +923,7 @@ class BinaryGenerator:
             )
         #do all of the above but with state = "initial_single star"
         #in this case the second star can be a compact object. 
-        
+
 
         binary = BinaryStar(**binary_params,
                             star_1=SingleStar(**star1_params),

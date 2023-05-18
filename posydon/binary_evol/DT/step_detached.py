@@ -223,6 +223,157 @@ DEFAULT_PROFILE_KEYS = (
 MATCHING_WITH_RELATIVE_DIFFERENCE = ["center_he4"]
 
 
+DEFAULT_TRANSLATION = {
+    "time": "time",
+    "orbital_period": "porb",
+    "eccentricity": "ecc",
+    "separation": "sep",
+    "state": None,
+    "event": None,
+    "rl_relative_overflow_1": "rl_relative_overflow_1",
+    "rl_relative_overflow_2": "rl_relative_overflow_2",
+    "lg_mtransfer_rate": "lg_mtransfer_rate",
+    "V_sys": None,
+    "mass": "mass",
+    "log_R": "log_R",
+    "R": "R",
+    "lg_mdot": "mdot",
+    "log_L": "log_L",
+    "lg_wind_mdot": "mdot",
+    "lg_system_mdot": "lg_mdot",
+    "he_core_mass": "he_core_mass",
+    "he_core_radius": "he_core_radius",
+    "c_core_mass": "c_core_mass",
+    "c_core_radius": "c_core_radius",
+    "o_core_mass": "o_core_mass",
+    "o_core_radius": "o_core_radius",
+    "center_h1": "center_h1",
+    "center_he4": "center_he4",
+    "center_c12": "center_c12",
+    "center_o16": "center_o16",
+    "center_n14": "center_n14",
+    "surface_h1": "surface_h1",
+    "surface_he4": "surface_he4",
+    "surface_c12": "surface_c12",
+    "surface_n14": "surface_n14",
+    "surface_o16": "surface_o16",
+    "center_gamma": "center_gamma",
+    "log_LH": "log_LH",
+    "log_LHe": "log_LHe",
+    "log_LZ": "log_LZ",
+    "log_Lnuc": "log_Lnuc",
+    "c12_c12": "c12_c12",
+    "avg_c_in_c_core": "avg_c_in_c_core",
+    "surf_avg_omega_div_omega_crit": "surf_avg_omega_div_omega_crit",
+    "surf_avg_omega": "omega",
+    "total_moment_of_inertia": "inertia",
+    "log_total_angular_momentum": "log_total_angular_momentum",
+    "profile": None,
+    "metallicity": None,
+    "spin": "spin_parameter",
+    "log_total_angular_momentum": "log_total_angular_momentum",
+    "conv_env_top_mass": "conv_env_top_mass",
+    "conv_env_bot_mass": "conv_env_bot_mass",
+    "conv_env_top_radius": "conv_env_top_radius",
+    "conv_env_bot_radius": "conv_env_bot_radius",
+    "conv_env_turnover_time_g": "conv_env_turnover_time_g",
+    "conv_env_turnover_time_l_b": "conv_env_turnover_time_l_b",
+    "conv_env_turnover_time_l_t": "conv_env_turnover_time_l_t",
+    "envelope_binding_energy": "envelope_binding_energy",
+    "mass_conv_reg_fortides": "mass_conv_reg_fortides",
+    "thickness_conv_reg_fortides": "thickness_conv_reg_fortides",
+    "radius_conv_reg_fortides": "radius_conv_reg_fortides",
+    "lambda_CE_1cent": "lambda_CE_1cent",
+    "lambda_CE_10cent": "lambda_CE_10cent",
+    "lambda_CE_30cent": "lambda_CE_30cent",
+    "co_core_mass": "co_core_mass",
+    "co_core_radius": "co_core_radius",
+    "lambda_CE_pure_He_star_10cent": "lambda_CE_pure_He_star_10cent",
+    "trap_radius": "trap_radius",
+    "acc_radius": "acc_radius",
+    "t_sync_rad_1": "t_sync_rad_1",
+    "t_sync_conv_1": "t_sync_conv_1",
+    "t_sync_rad_2": "t_sync_rad_2",
+    "t_sync_conv_2": "t_sync_conv_2",
+    "mass_transfer_case": None,
+    "nearest_neighbour_distance": None,
+}
+
+
+# TODO: are these supposed to be the same as the keys of the previous
+#       dictionary? If yes... then we should use them directrly instead of
+#       redefining the strings here.
+
+DEFAULT_TRANSLATED_KEYS = (
+    'age',
+    'mass',
+    'mdot',
+    'inertia',
+    'conv_mx1_top_r',
+    'conv_mx1_bot_r',
+    'surface_h1',
+    'center_h1',
+    'mass_conv_reg_fortides',
+    'thickness_conv_reg_fortides',
+    'radius_conv_reg_fortides',
+    'log_Teff',
+    'surface_he3',
+    'surface_he4',
+    'center_he4',
+    'avg_c_in_c_core',
+    'log_LH',
+    'log_LHe',
+    'log_LZ',
+    'log_Lnuc',
+    'c12_c12',
+    'center_c12',
+    'he_core_mass',
+    'log_L',
+    'log_R',
+    'c_core_mass',
+    'o_core_mass',
+    'co_core_mass',
+    'c_core_radius',
+    'o_core_radius',
+    'co_core_radius',
+    'spin_parameter',
+    'log_total_angular_momentum',
+    'center_n14',
+    'center_o16',
+    'surface_n14',
+    'surface_o16',
+    'conv_env_top_mass',
+    'conv_env_bot_mass',
+    'conv_env_top_radius',
+    'conv_env_bot_radius',
+    'conv_env_turnover_time_g',
+    'conv_env_turnover_time_l_b',
+    'conv_env_turnover_time_l_t',
+    'envelope_binding_energy',
+    'lambda_CE_1cent',
+    'lambda_CE_10cent',
+    'lambda_CE_30cent',
+    'lambda_CE_pure_He_star_10cent',
+    'center_gamma'
+)
+
+
+DEFAULT_PROFILE_KEYS = (
+    'radius',
+    'mass',
+    'logRho',
+    'energy',
+    'x_mass_fraction_H',
+    'y_mass_fraction_He',
+    'z_mass_fraction_metals',
+    'neutral_fraction_H',
+    'neutral_fraction_He',
+    'avg_charge_He'
+)
+
+MATCHING_WITH_RELATIVE_DIFFERENCE = ["center_he4"]
+
+
 class detached_step:
     """Evolve a detached binary.
 
@@ -642,7 +793,6 @@ class detached_step:
         else:
             self.grid = self.grid_strippedHe
 
-
         get_root0 = self.get_root0
         get_track_val = self.get_track_val
         matching_method = self.matching_method
@@ -718,15 +868,12 @@ class detached_step:
             for i in MESA_labels:
                 if i not in self.root_keys:
                     raise Exception("Expected matching parameter not "
-                                         "added in the single star grid options.")
+                                    "added in the single star grid options.")
 
             scales = []
-            
-            
             for MESA_label, colscaler in zip(MESA_labels, colscalers):
                 scale_of_attribute = scale(MESA_label, htrack, colscaler)
                 scales.append(scale_of_attribute)
-
 
             x0 = get_root0(MESA_labels, posydon_attributes, htrack, rs=rs)
 
@@ -738,7 +885,6 @@ class detached_step:
 
             sol = minimize(sq_diff_function, x0, method="TNC", bounds=bnds)
 
-            
             # alternative matching
             # 1st, different minimization method
             if (np.abs(sol.fun) > tolerance_matching_integration
@@ -793,19 +939,54 @@ class detached_step:
 
                 sol = minimize(sq_diff_function, x0, method="TNC", bounds=bnds)
 
-            # 3rd Alternative matching with a H-rich grid for He-star
+            # 3rd Alternative matching with a H-rich grid for He-star and vice verse (not for HMS stars)
             if (np.abs(sol.fun) > tolerance_matching_integration
                     or not sol.success):
+                if (star.state in LIST_ACCEPTABLE_STATES_FOR_HeStar
+                    or star.state in LIST_ACCEPTABLE_STATES_FOR_postMS):
 
-                if star.state in LIST_ACCEPTABLE_STATES_FOR_HeStar:
+                    if self.verbose:
+                        print("Alternative matching in detached step, 3rd step because ",
+                                np.abs(sol.fun), ">", tolerance_matching_integration  ,
+                                " or sol.success = ", sol.success)
+
+                    if star.state in LIST_ACCEPTABLE_STATES_FOR_HeStar:
+                        htrack = True
+                        list_for_matching = self.list_for_matching_HeStar
+                    elif star.state in LIST_ACCEPTABLE_STATES_FOR_postMS:
+                        htrack = False
+                        list_for_matching = self.list_for_matching_postMS
+
+                    MESA_labels = list_for_matching[0]
+                    posydon_attributes = posydon_attribute(MESA_labels, star)
+                    rs = list_for_matching[1]
+                    colscalers = list_for_matching[2]
+                    bnds = []
+                    for i in range(3, len(list_for_matching)):
+                        bnds.append(list_for_matching[i])
+
                     if self.verbose or self.verbose == 1:
-                        print("Alternative matching in detached step, 3rd step"
-                              " because", np.abs(sol.fun), ">",
-                              tolerance_matching_integration,
-                              "or sol.success = ", sol.success)
-                    star.htrack = True
+                        print("Matching attributes and their normalizations :",
+                              MESA_labels, rs)
+                    for i in MESA_labels:
+                        if i not in self.root_keys:
+                            raise Exception("Expected matching parameter not "
+                                            "added in the single star grid options.")
+
+                    scales = []
+                    for MESA_label, colscaler in zip(MESA_labels, colscalers):
+                        scale_of_attribute = scale(MESA_label, htrack, colscaler)
+                        scales.append(scale_of_attribute)
+
+                    def sq_diff_function(x):
+                        return self.square_difference(
+                            x, htrack=htrack, mesa_labels=MESA_labels,
+                            posydon_attributes=posydon_attributes,
+                            colscalers=colscalers, scales=scales)
+
                     x0 = get_root0(
-                        MESA_label, posydon_attribute, star.htrack, rs=rs)
+                        MESA_label, posydon_attribute, htrack, rs=rs)
+
                     # bnds = ([m_min_H, m_max_H], [0, None])
                     sol = minimize(sq_diff_function, x0,
                                    method="TNC", bounds=bnds)
@@ -857,7 +1038,6 @@ class detached_step:
                 '''
 
 
-
         if self.verbose or self.verbose == 1:
             print(
                 "matching ", star.state,
@@ -883,7 +1063,7 @@ class detached_step:
                 f'{star.he_core_mass:.3f}',
                 f'{star.center_c12:.4f}'
             )
-        return initials
+        return initials[0], initials[1], htrack
 
     def __repr__(self):
         """Return the type of evolution type."""
@@ -906,7 +1086,6 @@ class detached_step:
             # the primary in a real binary is potential compact object, or the more evolved star
             #Eirini's comment make a list in STAR_STATES_CO
             if (binary.star_1.state in STAR_STATES_CO
-
                     and binary.star_2.state in STAR_STATES_H_RICH):
                 primary = binary.star_1
                 secondary = binary.star_2
@@ -916,12 +1095,12 @@ class detached_step:
 
             elif (binary.star_1.state in STAR_STATES_CO 
                     and binary.star_2.state in LIST_ACCEPTABLE_STATES_FOR_HeStar):
-
                 primary = binary.star_1
                 secondary = binary.star_2
                 secondary.htrack = False
                 primary.htrack = secondary.htrack
                 primary.co = True
+
             elif (binary.star_2.state in STAR_STATES_CO
                     and binary.star_1.state in STAR_STATES_H_RICH):
                 primary = binary.star_2
@@ -932,7 +1111,6 @@ class detached_step:
 
             elif (binary.star_2.state in STAR_STATES_CO
                     and binary.star_1.state in LIST_ACCEPTABLE_STATES_FOR_HeStar):
-
                 primary = binary.star_2
                 secondary = binary.star_1
                 secondary.htrack = False
@@ -974,7 +1152,6 @@ class detached_step:
         elif self.non_existent_companion == 1:
             # we force primary.co=True for all isolated evolution,
             # where the secondary is the one evolving one
-            #Eirini's comment: Error the primary is not referenced before assigning the co. 
             primary = binary.star_1
             primary.co = True
             primary.htrack = False
@@ -1020,12 +1197,7 @@ class detached_step:
                 return the properties of star2
 
             """
-            if htrack:
-                self.grid = self.grid_Hrich
-            elif not htrack:
-                self.grid = self.grid_strippedHe
 
-            get_track = self.grid.get
             with np.errstate(all="ignore"):
                 # get the initial m0, t0 track
                 if binary.event == 'ZAMS':
@@ -1036,13 +1208,19 @@ class detached_step:
                     m0, t0 = copy_prev_m0, copy_prev_t0
                 else:
                     t_before_matching = time.time()
-                    m0, t0 = self.match_to_single_star(star1, htrack)
+                    m0, t0, htrack = self.match_to_single_star(star1, htrack)
                     t_after_matching = time.time()
                     if self.verbose or self.verbose == 1:
                         print("Matching duration: "
                               f"{t_after_matching-t_before_matching:.6g}")
-            #Eirini's change:
-            print(m0,t0)
+
+            if htrack:
+                self.grid = self.grid_Hrich
+            elif not htrack:
+                self.grid = self.grid_strippedHe
+
+            get_track = self.grid.get
+
             if np.any(np.isnan([m0, t0])):
                 #    binary.event = "END"
                 #    binary.state += " (GridMatchingFailed)"

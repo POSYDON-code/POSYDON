@@ -74,12 +74,7 @@ class InitiallySingleStep(isolated_step):
     def __call__(self,binary):
         if binary.state != "initially_single_star":
             raise ValueError("sent to InitiallySingleStep without the binary.state being initially_single_star")
-        """
-        if binary.state == "initially_single_star":
-            binary.star_2 = None
-        else:
-            raise ValueError("sent to InitiallySingleStep without the binary.state being initially_single_star")
-        """
+
         binary.event == None
 
         super().__call__(binary)
