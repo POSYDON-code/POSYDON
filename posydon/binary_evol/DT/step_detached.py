@@ -312,7 +312,7 @@ class detached_step:
             matching_method="minimize",
             initial_mass=None,
             rootm=None,
-            verbose=1,
+            verbose=False,
             do_wind_loss=True,
             do_tides=True,
             do_gravitational_radiation=True,
@@ -993,6 +993,7 @@ class detached_step:
         elif self.non_existent_companion == 1:
             # we force primary.co=True for all isolated evolution,
             # where the secondary is the one evolving one
+            primary = binary.star_1
             primary.co = True
             primary.htrack = False
             secondary = binary.star_2
@@ -1004,6 +1005,7 @@ class detached_step:
                 raise Exception("State not recognized!")
 
         elif self.non_existent_companion == 2:
+            primary = binary.star_2
             primary.co = True
             primary.htrack = False
             secondary = binary.star_1
@@ -1133,7 +1135,7 @@ class detached_step:
         elif not primary.co:
             interp1d_pri = get_star_data(
                 binary, primary, secondary, primary.htrack, False)[0]
-        # TODO: Eirini else
+
         if interp1d_sec is None or interp1d_pri is None:
             # binary.event = "END"
             binary.state += " (GridMatchingFailed)"
