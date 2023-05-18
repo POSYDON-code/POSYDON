@@ -85,7 +85,7 @@ class BinaryPopulation:
         self.kwargs = default_kwargs.copy()
         for key, arg in kwargs.items():
             self.kwargs[key] = arg
-        # Have a binary fraction change the number_of binaries. 
+        # Have a binary fraction change the number_of binaries.
         #Eirini's change
         self.binary_fraction = self.kwargs.get('binary_fraction')
         self.number_of_binaries = self.kwargs.get('number_of_binaries')
@@ -243,7 +243,7 @@ class BinaryPopulation:
         for j, index in enumerate(indices_for_iter):
 
             if kwargs.get('from_hdf', False):
-                #generator 
+                #generator
                 binary = self.manager.from_hdf(index, restore=True).pop()
             else:
                 binary = self.manager.generate(index=index, **self.kwargs)
@@ -840,7 +840,7 @@ class BinaryGenerator:
         #Eirini's comments:
         # Randomly generated variables
 
-            
+
         if self.RNG.uniform() < self.binary_fraction:
             formation_time = output['time'].item()
             separation = output['separation'].item()
@@ -923,8 +923,8 @@ class BinaryGenerator:
                 center_he4=Y,
             )
         #do all of the above but with state = "initial_single star"
-        #in this case the second star can be a compact object. 
-        
+        #in this case the second star can be a compact object.
+
 
         binary = BinaryStar(**binary_params,
                             star_1=SingleStar(**star1_params),
