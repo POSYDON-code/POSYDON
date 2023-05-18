@@ -905,7 +905,7 @@ class detached_step:
                 f'{star.he_core_mass:.3f}',
                 f'{star.center_c12:.4f}'
             )
-        return initials, htrack
+        return initials[0], initials[1], htrack
 
     def __repr__(self):
         """Return the type of evolution type."""
@@ -1054,7 +1054,7 @@ class detached_step:
                     if self.verbose or self.verbose == 1:
                         print("Matching duration: "
                               f"{t_after_matching-t_before_matching:.6g}")
-
+            print("1", m0, t0, htrack)
             if htrack:
                 self.grid = self.grid_Hrich
             elif not htrack:
@@ -1072,6 +1072,7 @@ class detached_step:
             max_time = binary.properties.max_simulation_time
             assert max_time > 0.0, "max_time is non-positive"
 
+            print("2", m0, t0, htrack)
             age = get_track("age", m0)
             t_max = age.max()  # max timelength of the track
             interp1d = dict()
@@ -1129,7 +1130,7 @@ class detached_step:
         if (primary.co) or (self.non_existent_companion != 0):
             # copy the secondary star except mass which is of the primary,
             # and radius, mdot, Idot = 0
-            interp1d_pri = get_star_data(
+            interp1d_pri  = get_star_data(
                 binary, secondary, primary, secondary.htrack, co=True,
                 copy_prev_m0=m0, copy_prev_t0=t0)[0]
         elif not primary.co:
