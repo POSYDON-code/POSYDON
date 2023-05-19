@@ -37,6 +37,8 @@ from posydon.utils.common_functions import (
 from posydon.binary_evol.flow_chart import (STAR_STATES_CC)
 import posydon.utils.constants as const
 
+from posydon.binary_evol.DT.tides import calculate_tides
+
 
 LIST_ACCEPTABLE_STATES_FOR_HMS = ["H-rich_Core_H_burning"]
 
@@ -2091,258 +2093,21 @@ def diffeq(
 
     #  Tidal forces
     if do_tides:
-        q1 = M_pri / M_sec
-        q2 = M_sec / M_pri
-        # P_orb in years. From 3rd Kepler's law, transforming separation from
-        # Rsolar to AU, to avoid using constants
-        # TODO: we aleady have this function!
-        P_orb = np.sqrt((a / const.aursun) ** 3 / (M_pri + M_sec))
-        n = 2.0 * const.pi / P_orb  # mean orbital ang. vel. in rad/year
-        f1 = (
-                1
-                + (31 / 2) * e ** 2
-                + (255 / 8) * e ** 4
-                + (185 / 16) * e ** 6
-                + (25 / 64) * e ** 8
-        )
-        f2 = 1 + (15 / 2) * e ** 2 + (45 / 8) * e ** 4 + (5 / 16) * e ** 6
-        f3 = 1 + (15 / 4) * e ** 2 + (15 / 8) * e ** 4 + (5 / 64) * e ** 6
-        f4 = 1 + (3 / 2) * e ** 2 + (1 / 8) * e ** 4
-        f5 = 1 + 3 * e ** 2 + (3 / 8) * e ** 4
+        x_orb = a, e
+        x_pri = M_pri, R_pri, M_env_pri, DR_env_pri, Renv_middle_pri, L_pri, \
+            Omega_pri, I_pri, conv_mx1_top_r_pri, conv_mx1_bot_r_pri, \
+            surface_h1_pri
+        x_sec = M_sec, R_sec, M_env_sec, DR_env_sec, Renv_middle_sec, L_sec, \
+            Omega_sec, I_sec, conv_mx1_top_r_sec, conv_mx1_bot_r_sec, \
+            surface_h1_sec
 
-        # equilibrium timecale
-        if ((M_env_sec != 0.0 and not np.isnan(M_env_sec))
-                and (DR_env_sec != 0.0 and not np.isnan(DR_env_sec)) and (
-                    Renv_middle_sec != 0.0 and not np.isnan(Renv_middle_sec))):
-            # eq. (31) of Hurley et al. 2002, generalized for convective layers
-            # not on surface too
-            tau_conv_sec = 0.431 * ((M_env_sec * DR_env_sec * Renv_middle_sec
-                                     / (3 * L_sec)) ** (1.0 / 3.0))
-        else:
-            if verbose and verbose != 1:
-                print("something wrong with M_env/DR_env/Renv_middle",
-                      M_env_sec, DR_env_sec, Renv_middle_sec)
-            tau_conv_sec = 1.0e99
-        if ((M_env_pri != 0.0 and not np.isnan(M_env_pri))
-                and (DR_env_pri != 0.0 and not np.isnan(DR_env_pri)) and (
-                    Renv_middle_pri != 0.0 and not np.isnan(Renv_middle_pri))):
-            # eq. (31) of Hurley et al. 2002, generalized for convective layers
-            # not on surface too
-            tau_conv_pri = 0.431 * ((M_env_pri * DR_env_pri * Renv_middle_pri
-                                     / (3 * L_pri)) ** (1.0/3.0))
-        else:
-            if verbose and verbose != 1:
-                print("something wrong with M_env/DR_env/Renv_middle",
-                      M_env_pri, DR_env_pri, Renv_middle_pri)
-            tau_conv_pri = 1.0e99
-        P_spin_sec = 2 * np.pi / Omega_sec
-        P_spin_pri = 2 * np.pi / Omega_pri
-        P_tid_sec = np.abs(1 / (1 / P_orb - 1 / P_spin_sec))
-        P_tid_pri = np.abs(1 / (1 / P_orb - 1 / P_spin_pri))
-        f_conv_sec = np.min([1, (P_tid_sec / (2 * tau_conv_sec)) ** 2])
-        f_conv_pri = np.min([1, (P_tid_pri / (2 * tau_conv_pri)) ** 2])
-        F_tid = 1.  # not 50 as before
-        kT_conv_sec = (
-                (2. / 21) * (f_conv_sec / tau_conv_sec) * (M_env_sec / M_sec)
-        )  # eq. (30) of Hurley et al. 2002
-        kT_conv_pri = (
-                (2. / 21) * (f_conv_pri / tau_conv_pri) * (M_env_pri / M_pri)
-        )
-        if kT_conv_sec is None or not np.isfinite(kT_conv_sec):
-            kT_conv_sec = 0.0
-        if kT_conv_pri is None or not np.isfinite(kT_conv_pri):
-            kT_conv_pri = 0.0
+        da_tides_sec, de_tides_sec, dOmega_tides_sec, da_tides_pri, \
+            de_tides_pri, dOmega_tides_pri = calculate_tides(x_orb,
+                                                             x_pri,
+                                                             x_sec,
+                                                             F_tide=1,
+                                                             verbose=verbose)
 
-            if verbose:
-                print("kT_conv_sec is", kT_conv_sec, ", set to 0.")
-                print("kT_conv_pri is", kT_conv_pri, ", set to 0.")
-        # this is the 1/timescale of all d/dt calculted below in yr^-1
-        if verbose and verbose != 1:
-            print(
-                "Equilibrium tides in deep convective envelope",
-                M_env_sec,
-                DR_env_sec,
-                Renv_middle_sec,
-                R_sec,
-                M_sec,
-                M_env_pri,
-                DR_env_pri,
-                Renv_middle_pri,
-                R_pri,
-                M_pri
-            )
-            print("convective tiimescales and efficiencies",
-                  tau_conv_sec, P_orb, P_spin_sec, P_tid_sec,
-                  f_conv_sec,
-                  F_tid,
-                  tau_conv_pri, P_orb, P_spin_pri, P_tid_pri,
-                  f_conv_pri,
-                  F_tid,
-                  )
-
-        # dynamical timecale
-        F_tid = 1
-        # E2 = 1.592e-9*M**(2.84) # eq. (43) of Hurley et al. 2002. Deprecated
-        R_conv_sec = conv_mx1_top_r_sec - conv_mx1_bot_r_sec
-        R_conv_pri = conv_mx1_top_r_pri - conv_mx1_bot_r_pri  # convective core
-        # R_conv = conv_mx1_top_r  # convective core
-        if (R_conv_sec > R_sec or R_conv_sec <= 0.0
-                or conv_mx1_bot_r_sec / R_sec > 0.1):
-            # R_conv = 0.5*R
-            # if verbose:
-            #     print(
-            #         "R_conv of the convective core is not behaving well or "
-            #         "we are not calculating the convective core, we make it "
-            #         "equal to half of Rstar",
-            #         R_conv,
-            #         R,
-            #         conv_mx1_top_r,
-            #         conv_mx1_bot_r,
-            #     )
-            # we switch to Zahn+1975 calculation of E2
-            E21 = 1.592e-9 * M_sec ** (2.84)
-        else:
-            if R_sec <= 0:
-                E21 = 0
-            elif surface_h1_sec > 0.4:
-                E21 = 10.0 ** (-0.42) * (R_conv_sec / R_sec) ** (
-                    7.5
-                )  # eq. (9) of Qin et al. 2018, 616, A28
-            elif surface_h1_sec <= 0.4:  # "HeStar":
-                E21 = 10.0 ** (-0.93) * (R_conv_sec / R_sec) ** (
-                    6.7
-                )  # eq. (9) of Qin et al. 2018, 616, A28
-            else:  # in principle we should not go here
-                E21 = 1.592e-9 * M_sec ** (
-                    2.84
-                )  # eq. (43) of Hurley et al. 2002 from Zahn+1975 Depreciated
-        # kT = 1.9782e4 * np.sqrt(M * R**2 / a**5) * (1 + q)**(5. / 6) * E2
-        # eq. (42) of Hurley et al. 2002. Depreciated
-
-        if (R_conv_pri > R_pri or R_conv_pri <= 0.0
-                or conv_mx1_bot_r_pri / R_pri > 0.1):
-            E22 = 1.592e-9 * M_pri ** (2.84)
-            if verbose and verbose != 1:
-                print(
-                    "R_conv of the convective core is not behaving well or we "
-                    "are not calculating the convective core, we switch to "
-                    "Zahn+1975 calculation of E2",
-                    R_conv_sec,
-                    R_sec,
-                    conv_mx1_top_r_sec,
-                    conv_mx1_bot_r_sec,
-                    E21,
-                    R_conv_pri,
-                    R_pri,
-                    conv_mx1_top_r_pri,
-                    conv_mx1_bot_r_pri,
-                    E22
-                )
-        else:
-            if R_pri <= 0:
-                E22 = 0
-            elif surface_h1_pri > 0.4:
-                E22 = 10.0 ** (-0.42) * (R_conv_pri / R_pri) ** (
-                    7.5
-                )  # eq. (9) of Qin et al. 2018, 616, A28
-            elif surface_h1_pri <= 0.4:  # "HeStar":
-                E22 = 10.0 ** (-0.93) * (R_conv_pri / R_pri) ** (
-                    6.7
-                )  # eq. (9) of Qin et al. 2018, 616, A28
-            else:  # in principle we should not go here
-                E22 = 1.592e-9 * M_pri ** (
-                    2.84
-                )
-        kT_rad_sec = (
-            np.sqrt(const.standard_cgrav * (M_sec * const.msol)
-                    * (R_sec * const.rsol)**2 / (a * const.rsol)**5)
-            * (1 + q1) ** (5.0 / 6)
-            * E21
-            * const.secyer)
-        kT_rad_pri = (
-            np.sqrt(const.standard_cgrav * (M_pri * const.msol)
-                    * (R_pri * const.rsol)**2 / (a * const.rsol)**5)
-            * (1 + q2) ** (5.0 / 6)
-            * E22
-            * const.secyer)
-        # this is the 1/timescale of all d/dt calculted below in yr^-1
-        if verbose and verbose != 1:
-            print(
-                "Dynamical tides in radiative envelope",
-                conv_mx1_top_r_sec,
-                conv_mx1_bot_r_sec,
-                R_conv_sec,
-                E21,
-                conv_mx1_top_r_pri,
-                conv_mx1_bot_r_pri,
-                R_conv_pri,
-                E22,
-                F_tid
-            )
-        kT_sec = max(kT_conv_sec, kT_rad_sec)
-        kT_pri = max(kT_conv_pri, kT_rad_pri)
-        if verbose and verbose != 1:
-            print("kT_conv/rad of tides is ", kT_conv_sec, kT_rad_sec,
-                  kT_conv_pri, kT_rad_pri, "in 1/yr, and we picked the ",
-                  kT_sec, kT_pri)
-
-        da_tides_sec = (
-                -6
-                * F_tid
-                * kT_sec
-                * q1
-                * (1 + q1)
-                * (R_sec / a) ** 8
-                * (a / (1 - e ** 2) ** (15 / 2))
-                * (f1 - (1 - e ** 2) ** (3 / 2) * f2 * Omega_sec / n)
-        )  # eq. (9) of Hut 1981, 99, 126
-
-        da_tides_pri = (
-                -6
-                * F_tid
-                * kT_pri
-                * q2
-                * (1 + q2)
-                * (R_pri / a) ** 8
-                * (a / (1 - e ** 2) ** (15 / 2))
-                * (f1 - (1 - e ** 2) ** (3 / 2) * f2 * Omega_pri / n)
-        )
-        de_tides_sec = (
-                -27
-                * F_tid
-                * kT_sec
-                * q1
-                * (1 + q1)
-                * (R_sec / a) ** 8
-                * (e / (1 - e ** 2) ** (13 / 2))
-                * (f3 - (11 / 18) * (1 - e ** 2) ** (3 / 2) * f4 * Omega_sec/n)
-        )  # eq. (10) of Hut 1981, 99, 126
-
-        de_tides_pri = (
-                -27
-                * F_tid
-                * kT_pri
-                * q2
-                * (1 + q2)
-                * (R_pri / a) ** 8
-                * (e / (1 - e ** 2) ** (13 / 2))
-                * (f3 - (11 / 18) * (1 - e ** 2) ** (3 / 2) * f4 * Omega_pri/n)
-        )
-
-        dOmega_tides_sec = (
-                (3 * F_tid * kT_sec * q1 ** 2 * M_sec * R_sec ** 2 / I_sec)
-                * (R_sec / a) ** 6
-                * n
-                / (1 - e ** 2) ** 6
-                * (f2 - (1 - e ** 2) ** (3 / 2) * f5 * Omega_sec / n)
-        )  # eq. (11) of Hut 1981, 99, 126
-        dOmega_tides_pri = (
-                (3 * F_tid * kT_pri * q2 ** 2 * M_pri * R_pri ** 2 / I_pri)
-                * (R_pri / a) ** 6
-                * n
-                / (1 - e ** 2) ** 6
-                * (f2 - (1 - e ** 2) ** (3 / 2) * f5 * Omega_pri / n)
-        )
         if verbose:
             print("da,de,dOmega_tides = ",
                   da_tides_sec, de_tides_sec, dOmega_tides_sec,
