@@ -37,6 +37,8 @@ from posydon.utils.common_functions import (
 from posydon.binary_evol.flow_chart import (STAR_STATES_CC)
 import posydon.utils.constants as const
 
+from posydon.binary_evol.DT.wind_loss import calculate_wind_loss
+
 
 LIST_ACCEPTABLE_STATES_FOR_HMS = ["H-rich_Core_H_burning"]
 
@@ -2069,21 +2071,10 @@ def diffeq(
     dOmega_pri = 0.0
     #  Mass Loss
     if do_wind_loss:
-        q1 = M_sec / M_pri
-        k11 = (1 / (1 + q1)) * (Mdot_sec / M_sec)
-        k21 = Mdot_sec / M_sec
-        k31 = Mdot_sec / (M_pri + M_sec)
-        # This is simplified to da_mt = -a * Mdot/(M+Macc), for only (negative)
-        # wind Mdot from star M.
-        da_mt_sec = a * (2 * k11 - 2 * k21 + k31)
 
-        q2 = M_pri / M_sec
-        k12 = (1 / (1 + q2)) * (Mdot_pri / M_pri)
-        k22 = Mdot_pri / M_pri
-        k32 = Mdot_pri / (M_pri + M_sec)
-        da_mt_pri = a * (
-                2 * k12 - 2 * k22 + k32
-        )
+        da_mt_sec = calculate_wind_loss(M_sec, M_pri, Mdot_sec, a)
+        da_mt_pri = calculate_wind_loss(M_pri, M_sec, Mdot_pri, a)
+
         if verbose and verbose != 1:
             print("da_mt = ", da_mt_sec, da_mt_pri)
 
