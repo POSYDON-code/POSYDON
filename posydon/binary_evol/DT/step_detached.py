@@ -1221,7 +1221,7 @@ class detached_step:
 
             get_track = self.grid.get
 
-            if np.any(np.isnan([m0, t0])):
+            if np.isnan(m0) or np.isnan(t0):
                 #    binary.event = "END"
                 #    binary.state += " (GridMatchingFailed)"
                 #    if self.verbose:
@@ -1285,6 +1285,7 @@ class detached_step:
         # get the matched data of two stars, respectively
         interp1d_sec, m0, t0 = get_star_data(
             binary, secondary, primary, secondary.htrack, co=False)
+
         if (primary.co) or (self.non_existent_companion != 0):
             # copy the secondary star except mass which is of the primary,
             # and radius, mdot, Idot = 0
@@ -1941,14 +1942,16 @@ class detached_step:
                     secondary, i=timestep, star_CO=False)
 
             #Eirini's comment check what the elif was here.   
-            if primary.co:
+            if primary.state == "massless_remnant":
+                pass
+            
+            elif primary.co:
                 mdot_acc = np.atleast_1d(bondi_hoyle(
                     binary, primary, secondary, slice(-len(t), None),
                     wind_disk_criteria=True, scheme='Kudritzki+2000'))
                 primary.lg_mdot = np.log10(mdot_acc.item(-1))
                 primary.lg_mdot_history[len(primary.lg_mdot_history) - len(t)
                                         + 1:] = np.log10(mdot_acc[:-1])
-                
             else:
                 primary.state = check_state_of_star(primary, star_CO=False)
                 for timestep in range(-len(t[:-1]), 0):

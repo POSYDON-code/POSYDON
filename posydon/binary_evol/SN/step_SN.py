@@ -443,7 +443,7 @@ class StepSN(object):
         # Checks if the binary is not disrupted to compute the
         # inspiral time due to gravitational wave emission
         state1, state2 = binary.star_1.state, binary.star_2.state
-        if binary.state == "disrupted":
+        if binary.state == "disrupted" or state1 == "massless_remnant" or state2 == "massless_remnant":
             binary.inspiral_time = np.nan
         elif state1 in STAR_STATES_CO and state2 in STAR_STATES_CO:
             binary.inspiral_time = inspiral_timescale_from_separation(
@@ -1427,7 +1427,21 @@ class StepSN(object):
             binary.time = binary.time_history[-1]
             binary.orbital_period = np.nan
             binary.mass_transfer_case = 'None'
-
+            
+        elif binary.star_1.state == "massless_remnant" or binary.star_2.state == "massless_remnant":
+            #For an initially single star. 
+            for key in BINARYPROPERTIES:
+                if key is not 'nearest_neighbour_distance':
+                    setattr(binary, key, None)
+            binary.state = "single_star"
+            binary.event = None
+            binary.separation = np.nan
+            binary.eccentricity = np.nan
+            binary.V_sys = np.array([0, 0, 0])
+            binary.time = binary.time_history[-1]
+            binary.orbital_period = np.nan
+            binary.mass_transfer_case = 'None'
+            
         else:
             # the binary is not disrupted at least before the SN
             # The binary exists : flag_binary is True at least before the SN
