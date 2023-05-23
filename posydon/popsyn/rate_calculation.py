@@ -4,6 +4,7 @@ __author__ = ['Simone Bavera <Simone.Bavera@unige.ch>']
 import os
 import warnings
 import numpy as np
+import pandas as pd
 from tqdm import tqdm
 import scipy as sp
 from scipy.interpolate import interp1d
@@ -11,13 +12,17 @@ from astropy import units as u
 from astropy import constants as const # TODO: replace this in favour of POSYDON constats module
 from astropy.cosmology import Planck15 as cosmology # TODO: update to Planck18 once we update astropy module
 from astropy.cosmology import z_at_value
-import posydon.popsyn.selection_effects as selection_effects # TODO: replace in favour of our module
+import posydon.popsyn.selection_effects as selection_effects
 from posydon.utils.constants import Zsun
 from posydon.popsyn.star_formation_history import (star_formation_rate,
                                                    mean_metallicity,
                                                    std_log_metallicity_dist,
                                                    get_illustrisTNG_data,
                                                    fractional_SFR_at_given_redshift)
+from posydon.utils.data_download import PATH_TO_POSYDON_DATA
+
+PATH_TO_PDET_GRID = os.path.join(PATH_TO_POSYDON_DATA, 'selection_effects/pdet_grid.hdf5')
+
 
 DEFAULT_MODEL = {
     'delta_t' : 100, # Myr
@@ -26,7 +31,7 @@ DEFAULT_MODEL = {
     'Z_max' : 1.,
     'select_one_met' : False,
     'dlogZ' : None, # e.g, [np.log10(0.0142/2),np.log10(0.0142*2)]
-    'Zsun' : Zsun,
+    'Zsun' : Zsun
 }
 
 class Rates(object):
@@ -426,9 +431,11 @@ class Rates(object):
         Parameters
         ----------
         sensitivity : string
-            TODO: update this once we implement POSYDON p_det calculation
             Choose which GW detector sensitivity you want to use, available:
-            'design': LVK target design sensitivity, see fig. 1 of arXiv:1304.0670v3
+            'O3actual_H1L1V1' : TODO add refs
+            'O4high_H1L1V1' : TODO add refs
+            'O4low_H1L1V1' : TODO add refs
+            'design_H1L1V1': LVK target design sensitivity, see fig. 1 of arXiv:1304.0670v3
             'infinite': intrinsic merging DCO population, i.e. p_det = 1
         flag_pdet : bool
             This is a control variable. In order to be sure you want to run
@@ -459,6 +466,11 @@ class Rates(object):
 
         # hashmap to store everythig
         data = {'index': {}, 'z_merger': {}, 'weights': {}}
+        
+        # load and store detector selection effects interpolator
+        if sensitivity != 'infinite':
+            self.sel_eff = selection_effects.KNNmodel(grid_path=PATH_TO_PDET_GRID,
+                                                      sensitivity_key=sensitivity)
 
         # loop over all redshift bins
         for i in tqdm(range(len(z_birth))):
@@ -480,18 +492,15 @@ class Rates(object):
                     continue
 
                 # get some quantities to compute detection probabilities
-                S1_mass = self.get_data('S1_mass', index[bool_merger])
-                S2_mass = self.get_data('S2_mass', index[bool_merger])
+                data_slice = pd.DataFrame()
+                data_slice['m1'] = self.get_data('S1_mass', index[bool_merger])
+                data_slice['q'] = self.get_data('q', index[bool_merger])
                 z_m = get_redshift_from_time(t_merger[bool_merger])
+                data_slice['z'] = z_m
+                data_slice['chieff'] = self.get_data('chi_eff', index[bool_merger])
 
-                # TODO: implement p_det POSYDON code
                 # compute detection probabilities
-                DL = [x.value for x in cosmology.luminosity_distance(z_m)]
-                snr_threshold = 8.
-                p_det = selection_effects.detection_probability(m1=S1_mass, m2=S2_mass,
-                                                                redshift=z_m, distance=DL,
-                                                                snr_threshold=snr_threshold,
-                                                                sensitivity=sensitivity)
+                p_det = self.sel_eff.predict_pdet(data_slice)
 
                 # sort out undetectable sources
                 bool_detect = p_det > 0.
@@ -576,9 +585,10 @@ class Rates(object):
         Parameters
         ----------
         sensitivity : string
-            TODO: update this once we implement POSYDON p_det calculation
-            Choose which GW detector sensitivity you want to use, available:
-            'design': LVK target design sensitivity, see fig. 1 of arXiv:1304.0670v3
+            'O3actual_H1L1V1' : TODO add refs
+            'O4high_H1L1V1' : TODO add refs
+            'O4low_H1L1V1' : TODO add refs
+            'design_H1L1V1': LVK target design sensitivity, see fig. 1 of arXiv:1304.0670v3
             'infinite': intrinsic merging DCO population, i.e. p_det = 1
         path_to_dir : string
             Path to the directory where you the cosmological weights are stored.

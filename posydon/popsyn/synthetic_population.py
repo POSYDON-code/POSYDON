@@ -400,9 +400,11 @@ class SyntheticPopulation:
         Parameters
         ----------
         sensitivity : str
-            TODO: update this once we implement POSYDON p_det calculation
             Choose which GW detector sensitivity you want to use, available:
-            'design': LVK target design sensitivity, see fig. 1 of arXiv:1304.0670v3
+            'O3actual_H1L1V1' : TODO add refs
+            'O4high_H1L1V1' : TODO add refs
+            'O4low_H1L1V1' : TODO add refs
+            'design_H1L1V1': LVK target design sensitivity, see fig. 1 of arXiv:1304.0670v3
             'infinite': intrinsic merging DCO population, i.e. p_det = 1
         flag_pdet : bool
             `True` if you use sensitivity != 'infinite'.
@@ -516,16 +518,16 @@ class SyntheticPopulation:
         # export the intrinsic DCO population
         self.df_intrinsic = self.resample_synthetic_population(index, z_formation, z_merger, w_ijk, export_cols=export_cols)
 
-    def get_dco_detection_rate(self, sensitivity='design', export_cols=None,  working_dir='./', load_data=False):
+    def get_dco_detection_rate(self, sensitivity='design_H1L1V1', export_cols=None,  working_dir='./', load_data=False):
         """Compute the detection rate per yr.
 
         Parameters
         ----------
         sensitivity : str
-            TODO: update this once we implement POSYDON p_det calculation
-            Choose which GW detector sensitivity you want to use, available:
-            'design': LVK target design sensitivity, see fig. 1 of arXiv:1304.0670v3
-            'infinite': intrinsic merging DCO population, i.e. p_det = 1
+            'O3actual_H1L1V1' : TODO add refs
+            'O4high_H1L1V1' : TODO add refs
+            'O4low_H1L1V1' : TODO add refs
+            'design_H1L1V1': LVK target design sensitivity, see fig. 1 of arXiv:1304.0670v3
         export_cols : list str
             List of additional columns to save in the underlying/detectable
             population.
