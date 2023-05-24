@@ -788,19 +788,6 @@ class detached_step:
                     or not sol.success):
                 if (star.state in LIST_ACCEPTABLE_STATES_FOR_HeStar
                     or star.state in LIST_ACCEPTABLE_STATES_FOR_postMS):
-<<<<<<< HEAD
-
-                    if self.verbose:
-                        print("Alternative matching in detached step, 3rd step because ",
-                                np.abs(sol.fun), ">", tolerance_matching_integration  ,
-                                " or sol.success = ", sol.success)
-
-                    if star.state in LIST_ACCEPTABLE_STATES_FOR_HeStar:
-                        star.htrack = True
-                    elif star.state in LIST_ACCEPTABLE_STATES_FOR_postMS:
-                        star.htrack = False
-                    htrack  = star.htrack
-=======
 
                     if self.verbose:
                         print("Alternative matching in detached step, 3rd step because ",
@@ -841,7 +828,6 @@ class detached_step:
                             posydon_attributes=posydon_attributes,
                             colscalers=colscalers, scales=scales)
 
->>>>>>> 871c40de45c6236e0952a71fbcc5bfb37f67b7df
                     x0 = get_root0(
                         MESA_label, posydon_attribute, htrack, rs=rs)
                     # bnds = ([m_min_H, m_max_H], [0, None])
@@ -1073,26 +1059,7 @@ class detached_step:
                 self.grid = self.grid_Hrich
             elif not htrack:
                 self.grid = self.grid_strippedHe
-
             get_track = self.grid.get
-<<<<<<< HEAD
-            with np.errstate(all="ignore"):
-                # get the initial m0, t0 track
-                if binary.event == 'ZAMS':
-                    # ZAMS stars in wide (non-mass exchaging binaries) that are
-                    # directed to detached step at birth
-                    m0, t0 = star1.mass, 0
-                elif co:
-                    m0, t0 = copy_prev_m0, copy_prev_t0
-                else:
-                    t_before_matching = time.time()
-                    m0, t0 = self.match_to_single_star(star1, htrack)
-                    t_after_matching = time.time()
-                    if self.verbose or self.verbose == 1:
-                        print("Matching duration: "
-                              f"{t_after_matching-t_before_matching:.6g}")
-=======
->>>>>>> 871c40de45c6236e0952a71fbcc5bfb37f67b7df
 
             if np.any(np.isnan([m0, t0])):
                 #    binary.event = "END"
