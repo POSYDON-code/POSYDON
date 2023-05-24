@@ -325,9 +325,10 @@ def post_process_grid(grid, index=None, star_2_CO=True, MODEL=MODEL,
                            EXTRA_COLUMNS[s+m[0]+m[1]].append(
                                ['BH_reverse', star_copy.SN_type,
                                 star_copy.f_fb, star_copy.mass, star_copy.spin])
-                        EXTRA_COLUMNS[s+m[0]+m[1]].append(
-                            [star_copy.state, star_copy.SN_type,
-                             star_copy.f_fb, star_copy.mass, star_copy.spin])
+                        else:
+                            EXTRA_COLUMNS[s+m[0]+m[1]].append(
+                                [star_copy.state, star_copy.SN_type,
+                                 star_copy.f_fb, star_copy.mass, star_copy.spin])
                         if verbose:
                             print(
                                 "{:<30} {:<33} {:10} {:6.2f} {:11.2f} {:14.2f}"
