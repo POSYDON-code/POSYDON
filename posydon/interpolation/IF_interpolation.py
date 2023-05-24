@@ -558,7 +558,24 @@ class BaseIFInterpolator:
 
         """
         XTn = self.X_scaler.normalize(self.XT[self.valid > 0, :])
-        YTn = self.Y_scaler.normalize(self.YT[self.valid > 0, :])
+        YT = self.YT[self.valid > 0, :]
+        YT_sort = np.insert(YT, 0, np.linspace(0,len(YT)-1,len(YT)), axis=1)
+        YT_list=[]
+        for classes in self.interp_classes:
+            YT_class = YT_sort[ic[self.valid > 0] == classes]
+            index = YT_class[:,0]
+            data = np.hsplit(YT_class,np.array([1]))[1]
+            self.Y_scaler = MatrixScaler(self.out_scaling,
+                                                     data)
+            YT_class_norm = self.Y_scaler.normalize(data)
+            YT_list.append(np.insert(YT_class_norm,0,index,axis=1))
+        for i in range(len(YT_list)):
+            if i ==0:
+                YT_sort_norm = YT_list[i]
+            else:
+                YT_sort_norm = np.concatenate((YT_sort_norm, YT_list[i]), axis=0)
+            YTn = YT_sort_norm[YT_sort_norm[:, 0].argsort()]
+        YTn = np.hsplit(YTn,np.array([1]))[1]
 
         if self.interp_method == "linear":
             self.interpolator = LinInterpolator()
