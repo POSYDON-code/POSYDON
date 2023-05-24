@@ -431,12 +431,14 @@ class Rates(object):
         Parameters
         ----------
         sensitivity : string
-            Choose which GW detector sensitivity you want to use, available:
-            'O3actual_H1L1V1' : TODO add refs
-            'O4high_H1L1V1' : TODO add refs
-            'O4low_H1L1V1' : TODO add refs
-            'design_H1L1V1': LVK target design sensitivity, see fig. 1 of arXiv:1304.0670v3
-            'infinite': intrinsic merging DCO population, i.e. p_det = 1
+            GW detector sensitivity and network configuration you want to use, see arXiv:1304.0670v3
+            detector sensitivities are taken from: https://dcc.ligo.org/LIGO-T2000012-v2/public
+            available sensitivity keys (for Hanford, Livingston, Virgo network):
+                'O3actual_H1L1V1' : aligo_O3actual_H1.txt, aligo_O3actual_L1.txt, avirgo_O3actual.txt
+                'O4low_H1L1V1' : aligo_O4low.txt, aligo_O4low.txt, avirgo_O4high_NEW.txt
+                'O4high_H1L1V1' : aligo_O4high.txt, aligo_O4high.txt, avirgo_O4high_NEW.txt
+                'design_H1L1V1' : AplusDesign.txt, AplusDesign.txt, avirgo_O5high_NEW.txt
+                'infinite': intrinsic merging DCO population, i.e. p_det = 1
         flag_pdet : bool
             This is a control variable. In order to be sure you want to run
             infinite sensitivity set `p_det=False`.
@@ -585,11 +587,14 @@ class Rates(object):
         Parameters
         ----------
         sensitivity : string
-            'O3actual_H1L1V1' : TODO add refs
-            'O4high_H1L1V1' : TODO add refs
-            'O4low_H1L1V1' : TODO add refs
-            'design_H1L1V1': LVK target design sensitivity, see fig. 1 of arXiv:1304.0670v3
-            'infinite': intrinsic merging DCO population, i.e. p_det = 1
+            GW detector sensitivity and network configuration you want to use, see arXiv:1304.0670v3
+            detector sensitivities are taken from: https://dcc.ligo.org/LIGO-T2000012-v2/public
+            available sensitivity keys (for Hanford, Livingston, Virgo network):
+                'O3actual_H1L1V1' : aligo_O3actual_H1.txt, aligo_O3actual_L1.txt, avirgo_O3actual.txt
+                'O4low_H1L1V1' : aligo_O4low.txt, aligo_O4low.txt, avirgo_O4high_NEW.txt
+                'O4high_H1L1V1' : aligo_O4high.txt, aligo_O4high.txt, avirgo_O4high_NEW.txt
+                'design_H1L1V1' : AplusDesign.txt, AplusDesign.txt, avirgo_O5high_NEW.txt
+                'infinite': intrinsic merging DCO population, i.e. p_det = 1
         path_to_dir : string
             Path to the directory where you the cosmological weights are stored.
 
