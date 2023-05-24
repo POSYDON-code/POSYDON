@@ -14,7 +14,6 @@ from scipy.integrate import solve_ivp
 from scipy.interpolate import PchipInterpolator
 from scipy.optimize import minimize
 from scipy.optimize import root
-import copy
 
 from posydon.utils.data_download import PATH_TO_POSYDON_DATA
 from posydon.binary_evol.binarystar import BINARYPROPERTIES

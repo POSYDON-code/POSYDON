@@ -788,6 +788,7 @@ class detached_step:
                     or not sol.success):
                 if (star.state in LIST_ACCEPTABLE_STATES_FOR_HeStar
                     or star.state in LIST_ACCEPTABLE_STATES_FOR_postMS):
+<<<<<<< HEAD
 
                     if self.verbose:
                         print("Alternative matching in detached step, 3rd step because ",
@@ -799,6 +800,48 @@ class detached_step:
                     elif star.state in LIST_ACCEPTABLE_STATES_FOR_postMS:
                         star.htrack = False
                     htrack  = star.htrack
+=======
+
+                    if self.verbose:
+                        print("Alternative matching in detached step, 3rd step because ",
+                                np.abs(sol.fun), ">", tolerance_matching_integration  ,
+                                " or sol.success = ", sol.success)
+
+                    if star.state in LIST_ACCEPTABLE_STATES_FOR_HeStar:
+                        htrack = True
+                        list_for_matching = self.list_for_matching_HeStar
+                    elif star.state in LIST_ACCEPTABLE_STATES_FOR_postMS:
+                        htrack = False
+                        list_for_matching = self.list_for_matching_postMS
+
+                    MESA_labels = list_for_matching[0]
+                    posydon_attributes = posydon_attribute(MESA_labels, star)
+                    rs = list_for_matching[1]
+                    colscalers = list_for_matching[2]
+                    bnds = []
+                    for i in range(3, len(list_for_matching)):
+                        bnds.append(list_for_matching[i])
+
+                    if self.verbose or self.verbose == 1:
+                        print("Matching attributes and their normalizations :",
+                              MESA_labels, rs)
+                    for i in MESA_labels:
+                        if i not in self.root_keys:
+                            raise Exception("Expected matching parameter not "
+                                            "added in the single star grid options.")
+
+                    scales = []
+                    for MESA_label, colscaler in zip(MESA_labels, colscalers):
+                        scale_of_attribute = scale(MESA_label, htrack, colscaler)
+                        scales.append(scale_of_attribute)
+
+                    def sq_diff_function(x):
+                        return self.square_difference(
+                            x, htrack=htrack, mesa_labels=MESA_labels,
+                            posydon_attributes=posydon_attributes,
+                            colscalers=colscalers, scales=scales)
+
+>>>>>>> 871c40de45c6236e0952a71fbcc5bfb37f67b7df
                     x0 = get_root0(
                         MESA_label, posydon_attribute, htrack, rs=rs)
                     # bnds = ([m_min_H, m_max_H], [0, None])
@@ -876,7 +919,7 @@ class detached_step:
                 f'{star.he_core_mass:.3f}',
                 f'{star.center_c12:.4f}'
             )
-        return initials
+        return initials[0], initials[1], htrack
 
     def __repr__(self):
         """Return the type of evolution type."""
@@ -964,6 +1007,7 @@ class detached_step:
         elif self.non_existent_companion == 1:
             # we force primary.co=True for all isolated evolution,
             # where the secondary is the one evolving one
+            primary = binary.star_1
             primary.co = True
             primary.htrack = False
             secondary = binary.star_2
@@ -975,6 +1019,7 @@ class detached_step:
                 raise Exception("State not recognized!")
 
         elif self.non_existent_companion == 2:
+            primary = binary.star_2
             primary.co = True
             primary.htrack = False
             secondary = binary.star_1
@@ -1007,12 +1052,30 @@ class detached_step:
                 return the properties of star2
 
             """
+
+            with np.errstate(all="ignore"):
+                # get the initial m0, t0 track
+                if binary.event == 'ZAMS':
+                    # ZAMS stars in wide (non-mass exchaging binaries) that are
+                    # directed to detached step at birth
+                    m0, t0 = star1.mass, 0
+                elif co:
+                    m0, t0 = copy_prev_m0, copy_prev_t0
+                else:
+                    t_before_matching = time.time()
+                    m0, t0, htrack = self.match_to_single_star(star1, htrack)
+                    t_after_matching = time.time()
+                    if self.verbose or self.verbose == 1:
+                        print("Matching duration: "
+                              f"{t_after_matching-t_before_matching:.6g}")
+
             if htrack:
                 self.grid = self.grid_Hrich
             elif not htrack:
                 self.grid = self.grid_strippedHe
 
             get_track = self.grid.get
+<<<<<<< HEAD
             with np.errstate(all="ignore"):
                 # get the initial m0, t0 track
                 if binary.event == 'ZAMS':
@@ -1028,6 +1091,8 @@ class detached_step:
                     if self.verbose or self.verbose == 1:
                         print("Matching duration: "
                               f"{t_after_matching-t_before_matching:.6g}")
+=======
+>>>>>>> 871c40de45c6236e0952a71fbcc5bfb37f67b7df
 
             if np.any(np.isnan([m0, t0])):
                 #    binary.event = "END"

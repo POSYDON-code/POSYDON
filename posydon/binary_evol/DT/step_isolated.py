@@ -75,7 +75,7 @@ class IsolatedStep(detached_step):
             with no orbital changes apart from spin change due to winds and deformation
 
         """
-        print("call step_isolated")
+
         self.initialize_isolated_binary_orbit(binary)
 
         if binary.state == 'initially_single_star' or binary.star_1 == None or binary.star_2 == None:

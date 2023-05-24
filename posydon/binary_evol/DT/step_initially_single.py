@@ -31,7 +31,11 @@ from posydon.utils.common_functions import (
 from posydon.binary_evol.flow_chart import (STAR_STATES_CC)
 import posydon.utils.constants as const
 from posydon.binary_evol.DT.step_detached import detached_step
+<<<<<<< HEAD
 from posydon.binary_evol.DT.step_isolated import IsolatedStep
+=======
+from posydon.binary_evol.DT.step_isolated import isolated_step
+>>>>>>> 871c40de45c6236e0952a71fbcc5bfb37f67b7df
 
 import warnings
 
@@ -53,9 +57,15 @@ LIST_ACCEPTABLE_STATES_FOR_POSTMS = STAR_STATES_H_RICH.copy()
 LIST_ACCEPTABLE_STATES_FOR_POSTHeMS = STAR_STATES_HE_RICH.copy()
 [LIST_ACCEPTABLE_STATES_FOR_POSTHeMS.remove(x) for x in LIST_ACCEPTABLE_STATES_FOR_HeMS]
 
+<<<<<<< HEAD
 class InitiallySingleStep(IsolatedStep):
     """
     Prepare a runaway star to do an an IsolatedStep)
+=======
+class InitiallySingleStep(isolated_step):
+    """
+    Prepare a runaway star to do an an isolated_step)
+>>>>>>> 871c40de45c6236e0952a71fbcc5bfb37f67b7df
     """
 
     def __init__(self,
