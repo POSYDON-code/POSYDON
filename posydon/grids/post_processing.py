@@ -320,6 +320,11 @@ def post_process_grid(grid, index=None, star_2_CO=True, MODEL=MODEL,
                     try:
                         star_copy = copy.copy(star)
                         SN.collapse_star(star_copy)
+                        if (star_copy.state =='BH' and
+                           interpolation_class == 'stable_reverse_MT'):
+                           EXTRA_COLUMNS[s+m[0]+m[1]].append(
+                               ['BH_reverse', star_copy.SN_type,
+                                star_copy.f_fb, star_copy.mass, star_copy.spin])
                         EXTRA_COLUMNS[s+m[0]+m[1]].append(
                             [star_copy.state, star_copy.SN_type,
                              star_copy.f_fb, star_copy.mass, star_copy.spin])
