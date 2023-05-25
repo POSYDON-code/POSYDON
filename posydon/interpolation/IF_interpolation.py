@@ -1323,7 +1323,10 @@ class MatrixScaler:
         assert X.shape[1] == self.N
         Xn = np.empty_like(X)
         for i in range(self.N):
-            Xn[:, i] = self.scalers[i].transform(X[:, i])
+            if np.max(X[:, i]) == np.min(X[:, i]):
+                Xn[:, i] = X[:, i]
+            else:
+                Xn[:, i] = self.scalers[i].transform(X[:, i])
 
         return Xn
 
@@ -1332,7 +1335,10 @@ class MatrixScaler:
         assert Xn.shape[1] == self.N
         X = np.empty_like(Xn)
         for i in range(self.N):
-            X[:, i] = self.scalers[i].inv_transform(Xn[:, i])
+            if np.max(Xn[:, i]) == np.min(Xn[:, i]):
+                X[:, i] = Xn[:, i]
+            else:
+                X[:, i] = self.scalers[i].inv_transform(Xn[:, i])
         return X
 
 
