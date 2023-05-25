@@ -1015,7 +1015,9 @@ class detached_step:
                 secondary.htrack = False
             else:
                 raise Exception("State not recognized!")
-
+        else:
+            raise Exception("Non existent companion has not a recognized value!")
+        
         def get_star_data(binary, star1, star2, htrack,
                           co, copy_prev_m0=None, copy_prev_t0=None):
             """Get and interpolate the properties of stars.
@@ -1062,7 +1064,7 @@ class detached_step:
 
             get_track = self.grid.get
 
-            if np.any(np.isnan([m0, t0])):
+            if np.isnan(m0) or np.isnan(t0):
                 #    binary.event = "END"
                 #    binary.state += " (GridMatchingFailed)"
                 #    if self.verbose:
@@ -1126,16 +1128,23 @@ class detached_step:
         # get the matched data of two stars, respectively
         interp1d_sec, m0, t0 = get_star_data(
             binary, secondary, primary, secondary.htrack, co=False)
-        if (primary.co) or (self.non_existent_companion != 0):
+        
+        primary_not_normal = (primary.co) or (self.non_existent_companion in [1,2])
+        primary_normal = (not primary.co) and self.non_existent_companion == 0 
+        
+        if primary_not_normal:
             # copy the secondary star except mass which is of the primary,
             # and radius, mdot, Idot = 0
             interp1d_pri = get_star_data(
                 binary, secondary, primary, secondary.htrack, co=True,
                 copy_prev_m0=m0, copy_prev_t0=t0)[0]
-        elif not primary.co:
+        elif primary_normal:
             interp1d_pri = get_star_data(
                 binary, primary, secondary, primary.htrack, False)[0]
-        # TODO: Eirini else
+        else:
+            raise Exception("During matching primary is either should be either normal or not normal. `non_existent_companion` should be zero.")
+        
+        
         if interp1d_sec is None or interp1d_pri is None:
             # binary.event = "END"
             binary.state += " (GridMatchingFailed)"
