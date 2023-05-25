@@ -149,7 +149,7 @@ def calculate_magnetic_braking_M15(p_pri, p_sec):
     # Torque prescription from Matt et al. 2015, ApJ, 799, L23
     # Constants:
     # [erg] or [g cm^2 s^-2] -> [Msol Rsol^2 yr^-2]
-    K = 1.4e30 * const.secyer**2 / (const.msol * const.rsol**2)
+    K = -1.4e30 * const.secyer**2 / (const.msol * const.rsol**2)
     # m = 0.22
     # p = 2.6
     # Above constants were calibrated as in
