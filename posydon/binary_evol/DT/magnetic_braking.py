@@ -248,7 +248,7 @@ def calculate_magnetic_braking_G18(p_pri, p_sec):
     b_const = 0.5
 
     # [g cm^2] -> [Msol Rsol^2]
-    c = 3e41 / (const.msol * const.rsol**2)
+    c = -3e41 / (const.msol * const.rsol**2)
     # Above are as calibrated in Gossage et al. 2021, ApJ, 912, 65
 
     Prot_pri = 2 * np.pi / Omega_pri            # [yr]
