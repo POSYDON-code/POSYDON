@@ -686,40 +686,70 @@ class PSyGrid:
                 # read the model numbers and ages from the histories
                 colname = "model_number"
                 if history1 is not None:
-                    history1_mod = np.int_(read_MESA_data_file(
-                        run.history1_path, [colname])[colname])
-                    if len(history1_mod) == len(history1) + 1:
-                        history1_mod = history1_mod[:-1]
+                    history1_mod = read_MESA_data_file(
+                        run.history1_path, [colname])
+                    if history1_mod is not None:
+                        history1_mod = np.int_(history1_mod[colname])
+                        if len(history1_mod) == len(history1) + 1:
+                            history1_mod = history1_mod[:-1]
+                    else:
+                        ignore_data = True
+                        ignore_reason = "corrupted_history1"
                     history1_age = read_MESA_data_file(
-                        run.history1_path, ["star_age"])["star_age"]
-                    if len(history1_age) == len(history1) + 1:
-                        history1_age = history1_age[:-1]
+                        run.history1_path, ["star_age"])
+                    if history1_age is not None:
+                        history1_age = history1_age["star_age"]
+                        if len(history1_age) == len(history1) + 1:
+                            history1_age = history1_age[:-1]
+                    else:
+                        ignore_data = True
+                        ignore_reason = "corrupted_history1"
                 else:
                     history1_mod = None
                     history1_age = None
 
                 if history2 is not None:
-                    history2_mod = np.int_(read_MESA_data_file(
-                        run.history2_path, [colname])[colname])
-                    if len(history2_mod) == len(history2) + 1:
-                        history2_mod = history2_mod[:-1]
+                    history2_mod = read_MESA_data_file(
+                        run.history2_path, [colname])
+                    if history2_mod is not None:
+                        history2_mod = np.int_(history2_mod[colname])
+                        if len(history2_mod) == len(history2) + 1:
+                            history2_mod = history2_mod[:-1]
+                    else:
+                        ignore_data = True
+                        ignore_reason = "corrupted_history2"
                     history2_age = read_MESA_data_file(
-                        run.history2_path, ["star_age"])["star_age"]
-                    if len(history2_age) == len(history2) + 1:
-                        history2_age = history2_age[:-1]
+                        run.history2_path, ["star_age"])
+                    if history2_age is not None:
+                        history2_age = history2_age["star_age"]
+                        if len(history2_age) == len(history2) + 1:
+                            history2_age = history2_age[:-1]
+                    else:
+                        ignore_data = True
+                        ignore_reason = "corrupted_history2"
                 else:
                     history2_mod = None
                     history2_age = None
 
                 if binary_history is not None:
-                    binary_history_mod = np.int_(read_MESA_data_file(
-                        run.binary_history_path, [colname])[colname])
-                    if len(binary_history_mod) == len(binary_history) + 1:
-                        binary_history_mod = binary_history_mod[:-1]
+                    binary_history_mod = read_MESA_data_file(
+                        run.binary_history_path, [colname])
+                    if binary_history_mod is not None:
+                        binary_history_mod = np.int_(binary_history_mod[colname])
+                        if len(binary_history_mod) == len(binary_history) + 1:
+                            binary_history_mod = binary_history_mod[:-1]
+                    else:
+                        ignore_data = True
+                        ignore_reason = "corrupted_binary_history"
                     binary_history_age = read_MESA_data_file(
-                        run.binary_history_path, ["age"])["age"]
-                    if len(binary_history_age) == len(binary_history) + 1:
-                        binary_history_age = binary_history_age[:-1]
+                        run.binary_history_path, ["age"])
+                    if binary_history_age is not None:
+                        binary_history_age = binary_history_age["age"]
+                        if len(binary_history_age) == len(binary_history) + 1:
+                            binary_history_age = binary_history_age[:-1]
+                    else:
+                        ignore_data = True
+                        ignore_reason = "corrupted_binary_history"
                 else:
                     binary_history_mod = None
                     binary_history_age = None
@@ -740,14 +770,22 @@ class PSyGrid:
                     )
 
                 # if scubbing wiped all the binary history, discard run
-                if binary_grid and len(binary_history) == 0:
+                if binary_history is not None:
+                    binary_history_len = len(binary_history)
+                else:
+                    binary_history_len = 0
+                if binary_grid and binary_history_len == 0:
                     ignore_data = True
                     ignore_reason = "ignored_scrubbed"
                     warnings.warn("Ignored MESA run because of scrubbed binary"
                                   " history in: {}\n".format(run.path))
                     if not initial_RLO_fix:
                         continue
-                if not binary_grid and len(history1) == 0:
+                if history1 is not None:
+                    history1_len = len(history1)
+                else:
+                    history1_len = 0
+                if not binary_grid and history1_len == 0:
                     ignore_data = True
                     warnings.warn("Ignored MESA run because of scrubbed"
                                   " history in: {}\n".format(run.path))

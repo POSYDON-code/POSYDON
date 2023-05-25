@@ -69,17 +69,25 @@ def read_MESA_data_file(path, columns):
     if path is None:
         return None
     elif os.path.exists(path):
-        return np.atleast_1d(np.genfromtxt(path, skip_header=5, names=True,
-                                           usecols=columns,
-                                           invalid_raise=False))
+        try:
+            return np.atleast_1d(np.genfromtxt(path, skip_header=5, names=True,
+                                               usecols=columns,
+                                               invalid_raise=False))
+        except:
+            warnings.warn("Problems with reading file "+path)
+            return None
     else:
         return None
 
 
 def read_EEP_data_file(path, columns):
     """Read an EEP file (can be `.gz`) - similar to `read_MESA_data_file()`."""
-    return np.atleast_1d(np.genfromtxt(path, skip_header=11, names=True,
-                                       usecols=columns, invalid_raise=False))
+    try:
+        return np.atleast_1d(np.genfromtxt(path, skip_header=11, names=True,
+                                           usecols=columns, invalid_raise=False))
+    except:
+        warnings.warn("Problems with reading file "+path)
+        return None
 
 
 def fix_He_core(history):
