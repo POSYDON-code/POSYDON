@@ -607,14 +607,20 @@ class BaseIFInterpolator:
         Xtn = self.X_scaler.normalize(Xt)
         Ypredn = self.interpolator.predict(Xtn)
         k = self.interp_classes.index(classes)
-        
-        Ypredn = np.array([
-            list(sanitize_interpolated_quantities(
-                dict(zip(self.out_keys, track)),
-                self.constraints, verbose=False).values())
-            for track in self.Y_scaler_norm[k].denormalize(Ypredn)
-        ])
-
+        if classes in self.interp_classes and self.interp_in_q:
+            Ypredn = np.array([
+                list(sanitize_interpolated_quantities(
+                    dict(zip(self.out_keys, track)),
+                    self.constraints, verbose=False).values())
+                for track in self.Y_scaler_norm[k].denormalize(Ypredn)
+            ])
+        else:
+            Ypredn = np.array([
+                list(sanitize_interpolated_quantities(
+                    dict(zip(self.out_keys, track)),
+                    self.constraints, verbose=False).values())
+                for track in self.Y_scaler.denormalize(Ypredn)
+            ])
         return Ypredn
 
     def train_classifiers(self, grid, method='kNN', **options):
