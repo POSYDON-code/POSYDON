@@ -561,13 +561,14 @@ class BaseIFInterpolator:
         YT = self.YT[self.valid > 0, :]
         YT_sort = np.insert(YT, 0, np.linspace(0,len(YT)-1,len(YT)), axis=1)
         YT_list=[]
-        for classes in self.interp_classes:
+        self.Y_scaler_norm = []
+        for i, classes in enumerate(self.interp_classes):
             YT_class = YT_sort[ic[self.valid > 0] == classes]
             index = YT_class[:,0]
             data = np.hsplit(YT_class,np.array([1]))[1]
-            self.Y_scaler = MatrixScaler(self.out_scaling,
-                                                     data)
-            YT_class_norm = self.Y_scaler.normalize(data)
+            self.Y_scaler_norm.append(MatrixScaler(self.out_scaling,
+                                                             data))
+            YT_class_norm = self.Y_scaler_norm[i].normalize(data)
             YT_list.append(np.insert(YT_class_norm,0,index,axis=1))
         for i in range(len(YT_list)):
             if i ==0:
@@ -576,7 +577,7 @@ class BaseIFInterpolator:
                 YT_sort_norm = np.concatenate((YT_sort_norm, YT_list[i]), axis=0)
             YTn = YT_sort_norm[YT_sort_norm[:, 0].argsort()]
         YTn = np.hsplit(YTn,np.array([1]))[1]
-
+        
         if self.interp_method == "linear":
             self.interpolator = LinInterpolator()
             self.interpolator.train(XTn, YTn)
@@ -589,7 +590,7 @@ class BaseIFInterpolator:
                 self.interp_classes, self.interp_method)
             self.interpolator.train(XTn, YTn, ic[self.valid > 0])
 
-    def test_interpolator(self, Xt):
+    def test_interpolator(self, Xt, classes):
         """Use the interpolator to approximate output vector.
 
         Parameters
@@ -605,12 +606,13 @@ class BaseIFInterpolator:
         """
         Xtn = self.X_scaler.normalize(Xt)
         Ypredn = self.interpolator.predict(Xtn)
-
+        k = self.interp_classes.index(classes)
+        
         Ypredn = np.array([
             list(sanitize_interpolated_quantities(
                 dict(zip(self.out_keys, track)),
                 self.constraints, verbose=False).values())
-            for track in self.Y_scaler.denormalize(Ypredn)
+            for track in self.Y_scaler_norm[k].denormalize(Ypredn)
         ])
 
         return Ypredn
@@ -739,7 +741,8 @@ class BaseIFInterpolator:
             raise Exception("Wrong dimensions. Xt should have as many "
                             "columns as it was trained with.")
         # if binary classified as 'initial_MT', set numerical quantities to nan
-        ynum, ycat = self.test_interpolator(Xt), self.test_classifiers(Xt)
+        ycat = self.test_classifiers(Xt)
+        ynum= self.test_interpolator(Xt,ycat[self.c_key])
         if self.class_method != '1NN':
             ynum[ycat[self.c_key] == 'initial_MT', :] = np.nan
         if self.interp_method == '1NN':
@@ -1323,7 +1326,7 @@ class MatrixScaler:
         assert X.shape[1] == self.N
         Xn = np.empty_like(X)
         for i in range(self.N):
-            if np.max(X[:, i]) == np.min(X[:, i]):
+            if (len(X[:, i])>1 and np.max(X[:, i]) == np.min(X[:, i])):
                 Xn[:, i] = X[:, i]
             else:
                 Xn[:, i] = self.scalers[i].transform(X[:, i])
@@ -1335,7 +1338,7 @@ class MatrixScaler:
         assert Xn.shape[1] == self.N
         X = np.empty_like(Xn)
         for i in range(self.N):
-            if np.max(Xn[:, i]) == np.min(Xn[:, i]):
+            if (len(Xn[:, i])>1 and np.max(Xn[:, i]) == np.min(Xn[:, i])):
                 X[:, i] = Xn[:, i]
             else:
                 X[:, i] = self.scalers[i].inv_transform(Xn[:, i])
