@@ -1227,12 +1227,13 @@ class StepSN(object):
                     new_separation, binary.star_1.mass, binary.star_2.mass
                 )
                 for key in BINARYPROPERTIES:
-                    if key not in ['V_sys', 'nearest_neighbour_distance']:
+                    if key not in ['V_sys', 'nearest_neighbour_distance', 'state']:
                         setattr(binary, key, None)
                     # if key is 'nearest_neighbour_distance':
                     #     setattr(binary, key, ['None', 'None', 'None'])
                 binary.separation = new_separation
-                binary.state = "detached"
+                if binary.state != "disrupted":
+                    binary.state = "detached"
                 binary.event = None
                 binary.time = binary.time_history[-1]
                 binary.eccentricity = binary.eccentricity_history[-1]
@@ -1323,12 +1324,13 @@ class StepSN(object):
                     new_separation, binary.star_1.mass, binary.star_2.mass
                 )
                 for key in BINARYPROPERTIES:
-                    if key not in ['V_sys', 'nearest_neighbour_distance']:
+                    if key not in ['V_sys', 'nearest_neighbour_distance', 'state']:
                         setattr(binary, key, None)
                     # if key is 'nearest_neighbour_distance':
                     #     setattr(binary, key, ['None', 'None', 'None'])
                 binary.separation = new_separation
-                binary.state = "detached"
+                if binary.state != "disrupted":
+                    binary.state = "detached"
                 binary.event = None
                 binary.time = binary.time_history[-1]
                 binary.eccentricity = binary.eccentricity_history[-1]
@@ -1404,238 +1406,14 @@ class StepSN(object):
                 mean_anomaly = np.random.uniform(0, 2 * np.pi)
                 binary.star_2.natal_kick_array[3] = mean_anomaly
 
-        # The binary exist: flag_binary is True if the binary is not disrupted
-        flag_binary = True
 
-        # eccentricity before the SN
-        epre = binary.eccentricity
-        # the orbital semimajor axis is the orbital separation
-        Apre = binary.separation
-        # Eq 16, Wong, T.-W., Valsecchi, F., Fragos, T., & Kalogera, V. 2012, ApJ, 747, 111
-        # for eccentric anomaly
-        E_ma = sp.optimize.brentq(
-            lambda x: mean_anomaly - x + epre * np.sin(x), 0, 2 * np.pi
-        )
-        # Eq 15, Wong, T.-W., Valsecchi, F., Fragos, T., & Kalogera, V. 2012, ApJ, 747, 111
-        # orbital separation at the time of the exlosion
-        rpre = Apre * (1.0 - epre * np.cos(E_ma))
+        # update the orbit
+        if binary.state == "disrupted":
+            #the binary was already disrupted before the SN
 
-        # load constants in CGS
-        G = const.standard_cgrav
-
-        # Convert inputs to CGS
-        M_he_star = M_he_star * const.Msun
-        M_companion = M_companion * const.Msun
-        M_compact_object = M_compact_object * const.Msun
-        Apre = Apre * const.Rsun
-        Vkick = Vkick * const.km2cm
-        rpre = rpre * const.Rsun
-
-        # get useful quantity
-        sin_theta = np.sqrt(1 - (cos_theta ** 2))
-
-        # get kicks componets in the coordinate system
-        Vkx = Vkick * sin_theta * np.sin(phi)
-        Vky = Vkick * cos_theta
-        Vkz = Vkick * sin_theta * np.cos(phi)
-
-        # Eq 1, in Kalogera, V. 1996, ApJ, 471, 352
-        # extended to Eq 17 in Wong, T.-W., Valsecchi, F., Fragos, T., & Kalogera, V. 2012, ApJ, 747, 111
-        # Vr is velocity of preSN He core relative to M_companion, directed
-        # along the positive y axis
-        Vr = np.sqrt(G * (M_he_star + M_companion) * (2.0 / rpre - 1.0 / Apre))
-        Mtot = M_compact_object + M_companion
-
-        # Eq 3, in Kalogera, V. 1996, ApJ, 471, 352
-        # extended to Eq 13, in Wong, T.-W., Valsecchi, F., Fragos, T., & Kalogera, V. 2012, ApJ, 747, 111
-        # get the orbital separation post SN
-        Apost = ((2.0 / rpre)
-                 - (((Vkick ** 2) + (Vr ** 2) + (2 * Vky * Vr)) / (G * Mtot))
-                 ) ** -1
-
-        # Eq 18, Wong, T.-W., Valsecchi, F., Fragos, T., & Kalogera, V. 2012, ApJ, 747, 111
-        # psi: is the polar angle of the position vector of the CO with respect
-        # to its pre-SN orbital velocity in the companions frame.
-        sin_psi = np.round(
-            np.sqrt(G * (M_he_star + M_companion) * (1 - epre ** 2) * Apre)
-            / (rpre * Vr), 5)
-        cos_psi = np.sqrt(1 - sin_psi ** 2)
-
-        # Eq 4, in Kalogera, V. 1996, ApJ, 471, 352
-        # extended to Eq 14 in Wong, T.-W., Valsecchi, F., Fragos, T., & Kalogera, V. 2012, ApJ, 747, 111
-        # get the eccentricity post SN
-        x = ((Vkz ** 2 + (sin_psi * (Vr + Vky) - cos_psi * Vkx) ** 2)
-             * rpre ** 2
-             / (G * Mtot * Apost))
-
-        # catch negative values, i.e. disrupted binaries
-        if 1.-x < 0.:
-            epost = np.nan
-        else:
-            epost = np.sqrt(1 - x)
-
-        # Eq 34, in Kalogera, V. 1996, ApJ, 471, 352
-        # V_sys: is the resulting center of mass velocity of the system
-        # IN THE TRANSLATED COMOVING FRAME, imparted by the SN
-        VSx = M_compact_object * Vkx / Mtot
-        VSy = (
-            M_compact_object * Vky
-            - (
-                (M_he_star - M_compact_object)
-                * M_companion
-                * Vr
-                / (M_he_star + M_companion)
-            )
-        ) / Mtot
-        VSz = M_compact_object * Vkz / Mtot
-        # V_sys = np.sqrt(VSx ** 2 + VSy ** 2 + VSz ** 2)
-
-        # Eq 5, in Kalogera, V. 1996, ApJ, 471, 352:
-        # calculate the tilt of the orbital plane after the SN
-        tilt = np.arccos((Vky + Vr) / ((Vky + Vr) ** 2 + Vkz ** 2) ** (1. / 2))
-
-        def SNCheck(
-            M_he_star,
-            M_companion,
-            M_compact_object,
-            rpre,
-            Apost,
-            epost,
-            Vr,
-            Vkick,
-            cos_theta,
-            verbose,
-        ):
-            """Check that the binary is not disrupted.
-
-            Parameters
-            ----------
-            M_he_star : double
-                Helium star mass before the SN in g.
-            M_companion : double
-                Companion star mass in g.
-            M_compact_object : double
-                Compact object mass left  by the SN in g.
-            rpre : double
-                Oribtal separation at the time of the exlosion in cm. If the
-                eccentricity pre SN is 0 this correpond to Apre.
-            Apost : double
-                Orbital separtion after the SN in cm.
-            epost : double
-                Eccentricity after the SN.
-            Vr : double
-                Velocity of pre-SN He core relative to M_companion, directed
-                along the positive y axis in cm/s.
-            Vkick : double
-                Kick velocity in cm/s.
-            cos_theta : double
-                The cosine of the angle between pre- & post-SN orbital planes.
-
-            Returns
-            -------
-            flag_binary : bool
-                flag_binary is True if the binary is not disrupted.
-
-            References
-            ----------
-            .. [1] Willems, B., Henninger, M., Levin, T., et al. 2005, ApJ, 625, 324
-
-            .. [2] Kalogera, V. & Lorimer, D.R. 2000, ApJ, 530, 890
-
-            """
-            # flag_binary is True if the binary is not disrupted
-            flag_binary = True
-            Mtot_pre = M_he_star + M_companion
-            Mtot_post = M_compact_object + M_companion
-
-            # Define machine precision (we can probaly lower this number)
-            err = const.SNcheck_ERR
-
-            # SNflag1: Eq. 21, Willems, B., Henninger, M., Levin, T., et al. 2005, ApJ, 625, 324 (with typo fixed)
-            # from Eq. 10, Flannery, B.P. & van den Heuvel, E.P.J. 1975, A&A, 39, 61
-            # Continuity demands post-SN orbit to pass through preSN positions.
-            # Updated to work for eccentric orbits,
-            # see Eq. 15 in Wong, T.-W., Valsecchi, F., Fragos, T., & Kalogera, V. 2012, ApJ, 747, 111
-            SNflag1 = (1 - epost - rpre / Apost <= err) and (
-                rpre / Apost - (1 + epost) <= err
-            )
-
-            # SNflag2: Equations 22-23, Willems, B., Henninger, M., Levin, T., et al. 2005, ApJ, 625, 324
-            # (see, e.g., Kalogera, V. & Lorimer, D.R. 2000, ApJ, 530, 890)
-            tmp1 = 2 - Mtot_pre / Mtot_post * (Vkick / Vr - 1) ** 2
-            tmp2 = 2 - Mtot_pre / Mtot_post * (Vkick / Vr + 1) ** 2
-            SNflag2 = ((rpre / Apost - tmp1 < err)
-                       and (err > tmp2 - rpre / Apost))
-
-            # SNflag3: check that epost does not exeed 1 or is nan
-            if epost >= 1.0 or np.isnan(epost):
-                SNflag3 = False
-            else:
-                SNflag3 = True
-
-            SNflags = [SNflag1, SNflag2, SNflag3]
-
-            if verbose:
-                print()
-                print("The orbital checks are:", SNflags)
-                print()
-                print("1. Post-SN orbit must pass through pre-SN positions.")
-                print("2. Lower and upper limits on amount of orbital "
-                      "contraction or expansion that can take place for a "
-                      "given amount of mass loss and a given magnitude of the "
-                      "kick velocity.")
-                print("3. Checks that e_post is not larger than 1 or nan.")
-
-            # check if the supernova is valid and doesn't disrupt the system
-            if not all(SNflags):
-                flag_binary = False
-
-            return flag_binary
-
-        # check if the binary is disrupted
-        flag_binary = SNCheck(M_he_star, M_companion, M_compact_object, rpre,
-                              Apost, epost, Vr, Vkick, cos_theta,
-                              verbose=self.verbose)
-
-        # update the binary object
-        if flag_binary:
-            # update the tilt
-            if binary.event == "CC1":
-                binary.star_1.spin_orbit_tilt = tilt
-            elif binary.event == "CC2":
-                binary.star_2.spin_orbit_tilt = tilt
-            else:
-                raise ValueError("This should never happen!")
-
-            # compute new orbital period before reseting the binary properties
-
+            # update the binary object which was disrupted already before the SN
             for key in BINARYPROPERTIES:
-                if key is not 'nearest_neighbour_distance':
-                    setattr(binary, key, None)
-
-            binary.state = "detached"
-            binary.event = None
-            binary.separation = Apost / const.Rsun
-            binary.eccentricity = epost
-            binary.V_sys = np.array([VSx / const.km2cm, VSy / const.km2cm, VSz
-                                     / const.km2cm])
-            binary.time = binary.time_history[-1]
-            # in future we will make the orbital period a callable property
-            new_orbital_period = orbital_period_from_separation(
-                binary.separation, binary.star_1.mass, binary.star_2.mass)
-            binary.orbital_period = new_orbital_period
-            binary.mass_transfer_case = 'None'
-        else:
-            # update the tilt
-            if binary.event == "CC1":
-                binary.star_1.spin_orbit_tilt = np.nan
-            elif binary.event == "CC2":
-                binary.star_2.spin_orbit_tilt = np.nan
-            else:
-                raise ValueError("This should never happen!")
-
-            for key in BINARYPROPERTIES:
-                if key is not 'nearest_neighbour_distance':
+                if key != 'nearest_neighbour_distance':
                     setattr(binary, key, None)
             binary.state = "disrupted"
             binary.event = None
@@ -1645,6 +1423,251 @@ class StepSN(object):
             binary.time = binary.time_history[-1]
             binary.orbital_period = np.nan
             binary.mass_transfer_case = 'None'
+
+        else:
+            # the binary is not disrupted at least before the SN
+            # The binary exists : flag_binary is True at least before the SN
+            flag_binary = True
+
+            # eccentricity before the SN
+            epre = binary.eccentricity
+            # the orbital semimajor axis is the orbital separation
+            Apre = binary.separation
+            # Eq 16, Wong, T.-W., Valsecchi, F., Fragos, T., & Kalogera, V. 2012, ApJ, 747, 111
+            # for eccentric anomaly
+            E_ma = sp.optimize.brentq(
+                lambda x: mean_anomaly - x + epre * np.sin(x), 0, 2 * np.pi
+            )
+            # Eq 15, Wong, T.-W., Valsecchi, F., Fragos, T., & Kalogera, V. 2012, ApJ, 747, 111
+            # orbital separation at the time of the exlosion
+            rpre = Apre * (1.0 - epre * np.cos(E_ma))
+
+            # load constants in CGS
+            G = const.standard_cgrav
+
+            # Convert inputs to CGS
+            M_he_star = M_he_star * const.Msun
+            M_companion = M_companion * const.Msun
+            M_compact_object = M_compact_object * const.Msun
+            Apre = Apre * const.Rsun
+            Vkick = Vkick * const.km2cm
+            rpre = rpre * const.Rsun
+
+            # get useful quantity
+            sin_theta = np.sqrt(1 - (cos_theta ** 2))
+
+            # get kicks componets in the coordinate system
+            Vkx = Vkick * sin_theta * np.sin(phi)
+            Vky = Vkick * cos_theta
+            Vkz = Vkick * sin_theta * np.cos(phi)
+
+            # Eq 1, in Kalogera, V. 1996, ApJ, 471, 352
+            # extended to Eq 17 in Wong, T.-W., Valsecchi, F., Fragos, T., & Kalogera, V. 2012, ApJ, 747, 111
+            # Vr is velocity of preSN He core relative to M_companion, directed
+            # along the positive y axis
+            Vr = np.sqrt(G * (M_he_star + M_companion) * (2.0 / rpre - 1.0 / Apre))
+            Mtot = M_compact_object + M_companion
+
+            # Eq 3, in Kalogera, V. 1996, ApJ, 471, 352
+            # extended to Eq 13, in Wong, T.-W., Valsecchi, F., Fragos, T., & Kalogera, V. 2012, ApJ, 747, 111
+            # get the orbital separation post SN
+            Apost = ((2.0 / rpre)
+                     - (((Vkick ** 2) + (Vr ** 2) + (2 * Vky * Vr)) / (G * Mtot))
+                     ) ** -1
+
+            # Eq 18, Wong, T.-W., Valsecchi, F., Fragos, T., & Kalogera, V. 2012, ApJ, 747, 111
+            # psi: is the polar angle of the position vector of the CO with respect
+            # to its pre-SN orbital velocity in the companions frame.
+            sin_psi = np.round(
+                np.sqrt(G * (M_he_star + M_companion) * (1 - epre ** 2) * Apre)
+                / (rpre * Vr), 5)
+            cos_psi = np.sqrt(1 - sin_psi ** 2)
+
+            # Eq 4, in Kalogera, V. 1996, ApJ, 471, 352
+            # extended to Eq 14 in Wong, T.-W., Valsecchi, F., Fragos, T., & Kalogera, V. 2012, ApJ, 747, 111
+            # get the eccentricity post SN
+            x = ((Vkz ** 2 + (sin_psi * (Vr + Vky) - cos_psi * Vkx) ** 2)
+                 * rpre ** 2
+                 / (G * Mtot * Apost))
+
+            # catch negative values, i.e. disrupted binaries
+            if 1.-x < 0.:
+                epost = np.nan
+            else:
+                epost = np.sqrt(1 - x)
+
+            # Eq 34, in Kalogera, V. 1996, ApJ, 471, 352
+            # V_sys: is the resulting center of mass velocity of the system
+            # IN THE TRANSLATED COMOVING FRAME, imparted by the SN
+            VSx = M_compact_object * Vkx / Mtot
+            VSy = (
+                M_compact_object * Vky
+                - (
+                    (M_he_star - M_compact_object)
+                    * M_companion
+                    * Vr
+                    / (M_he_star + M_companion)
+                )
+            ) / Mtot
+            VSz = M_compact_object * Vkz / Mtot
+            # V_sys = np.sqrt(VSx ** 2 + VSy ** 2 + VSz ** 2)
+
+            # Eq 5, in Kalogera, V. 1996, ApJ, 471, 352:
+            # calculate the tilt of the orbital plane after the SN
+            tilt = np.arccos((Vky + Vr) / ((Vky + Vr) ** 2 + Vkz ** 2) ** (1. / 2))
+
+
+            def SNCheck(
+                M_he_star,
+                M_companion,
+                M_compact_object,
+                rpre,
+                Apost,
+                epost,
+                Vr,
+                Vkick,
+                cos_theta,
+                verbose,
+            ):
+                """Check that the binary is not disrupted.
+
+                Parameters
+                ----------
+                M_he_star : double
+                    Helium star mass before the SN in g.
+                M_companion : double
+                    Companion star mass in g.
+                M_compact_object : double
+                    Compact object mass left  by the SN in g.
+                rpre : double
+                    Oribtal separation at the time of the exlosion in cm. If the
+                    eccentricity pre SN is 0 this correpond to Apre.
+                Apost : double
+                    Orbital separtion after the SN in cm.
+                epost : double
+                    Eccentricity after the SN.
+                Vr : double
+                    Velocity of pre-SN He core relative to M_companion, directed
+                    along the positive y axis in cm/s.
+                Vkick : double
+                    Kick velocity in cm/s.
+                cos_theta : double
+                    The cosine of the angle between pre- & post-SN orbital planes.
+
+                Returns
+                -------
+                flag_binary : bool
+                    flag_binary is True if the binary is not disrupted.
+
+                References
+                ----------
+                .. [1] Willems, B., Henninger, M., Levin, T., et al. 2005, ApJ, 625, 324
+
+                .. [2] Kalogera, V. & Lorimer, D.R. 2000, ApJ, 530, 890
+
+                """
+                # flag_binary is True if the binary is not disrupted
+                flag_binary = True
+                Mtot_pre = M_he_star + M_companion
+                Mtot_post = M_compact_object + M_companion
+
+                # Define machine precision (we can probaly lower this number)
+                err = const.SNcheck_ERR
+
+                # SNflag1: Eq. 21, Willems, B., Henninger, M., Levin, T., et al. 2005, ApJ, 625, 324 (with typo fixed)
+                # from Eq. 10, Flannery, B.P. & van den Heuvel, E.P.J. 1975, A&A, 39, 61
+                # Continuity demands post-SN orbit to pass through preSN positions.
+                # Updated to work for eccentric orbits,
+                # see Eq. 15 in Wong, T.-W., Valsecchi, F., Fragos, T., & Kalogera, V. 2012, ApJ, 747, 111
+                SNflag1 = (1 - epost - rpre / Apost <= err) and (
+                    rpre / Apost - (1 + epost) <= err
+                )
+
+                # SNflag2: Equations 22-23, Willems, B., Henninger, M., Levin, T., et al. 2005, ApJ, 625, 324
+                # (see, e.g., Kalogera, V. & Lorimer, D.R. 2000, ApJ, 530, 890)
+                tmp1 = 2 - Mtot_pre / Mtot_post * (Vkick / Vr - 1) ** 2
+                tmp2 = 2 - Mtot_pre / Mtot_post * (Vkick / Vr + 1) ** 2
+                SNflag2 = ((rpre / Apost - tmp1 < err)
+                           and (err > tmp2 - rpre / Apost))
+
+                # SNflag3: check that epost does not exeed 1 or is nan
+                if epost >= 1.0 or np.isnan(epost):
+                    SNflag3 = False
+                else:
+                    SNflag3 = True
+
+                SNflags = [SNflag1, SNflag2, SNflag3]
+
+                if verbose:
+                    print()
+                    print("The orbital checks are:", SNflags)
+                    print()
+                    print("1. Post-SN orbit must pass through pre-SN positions.")
+                    print("2. Lower and upper limits on amount of orbital "
+                          "contraction or expansion that can take place for a "
+                          "given amount of mass loss and a given magnitude of the "
+                          "kick velocity.")
+                    print("3. Checks that e_post is not larger than 1 or nan.")
+
+                # check if the supernova is valid and doesn't disrupt the system
+                if not all(SNflags):
+                    flag_binary = False
+
+                return flag_binary
+
+            # check if the binary is disrupted
+            flag_binary = SNCheck(M_he_star, M_companion, M_compact_object, rpre,
+                                  Apost, epost, Vr, Vkick, cos_theta,
+                                  verbose=self.verbose)
+
+            # update the binary object which was bound at least before the SN
+            if flag_binary:
+                # update the tilt
+                if binary.event == "CC1":
+                    binary.star_1.spin_orbit_tilt = tilt
+                elif binary.event == "CC2":
+                    binary.star_2.spin_orbit_tilt = tilt
+                else:
+                    raise ValueError("This should never happen!")
+
+                # compute new orbital period before reseting the binary properties
+
+                for key in BINARYPROPERTIES:
+                    if key != 'nearest_neighbour_distance':
+                        setattr(binary, key, None)
+
+                binary.state = "detached"
+                binary.event = None
+                binary.separation = Apost / const.Rsun
+                binary.eccentricity = epost
+                binary.V_sys = np.array([VSx / const.km2cm, VSy / const.km2cm, VSz
+                                         / const.km2cm])
+                binary.time = binary.time_history[-1]
+                # in future we will make the orbital period a callable property
+                new_orbital_period = orbital_period_from_separation(
+                    binary.separation, binary.star_1.mass, binary.star_2.mass)
+                binary.orbital_period = new_orbital_period
+                binary.mass_transfer_case = 'None'
+            else:
+                # update the tilt
+                if binary.event == "CC1":
+                    binary.star_1.spin_orbit_tilt = np.nan
+                elif binary.event == "CC2":
+                    binary.star_2.spin_orbit_tilt = np.nan
+                else:
+                    raise ValueError("This should never happen!")
+
+                for key in BINARYPROPERTIES:
+                    if key != 'nearest_neighbour_distance':
+                        setattr(binary, key, None)
+                binary.state = "disrupted"
+                binary.event = None
+                binary.separation = np.nan
+                binary.eccentricity = np.nan
+                binary.V_sys = np.array([0, 0, 0])
+                binary.time = binary.time_history[-1]
+                binary.orbital_period = np.nan
+                binary.mass_transfer_case = 'None'
 
     """
     ##### Generating the CCSN SN kick of a single star #####
