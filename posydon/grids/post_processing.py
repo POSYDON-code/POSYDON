@@ -30,6 +30,7 @@ MODEL = {
     "engine": None,
     "PISN": "Marchant+19",
     "ECSN": "Podsiadlowksi+04",
+    "conserve_hydrogen_envelope" : False,
     "max_neutrino_mass_loss": 0.5,
     "kick": True,
     "sigma_kick_CCSN_NS": 265.0,
