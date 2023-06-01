@@ -70,6 +70,7 @@ MODEL = {
     "engine": 'N20',
     "PISN": "Marchant+19",
     "ECSN": "Podsiadlowksi+04",
+    "conserve_hydrogen_envelope" : False,
     "max_neutrino_mass_loss": 0.5,
     "kick": True,
     "kick_normalisation": 'one_over_mass',
@@ -229,24 +230,7 @@ class StepSN(object):
 
     """
 
-    def __init__(self,
-                 mechanism=MODEL['mechanism'],
-                 engine=MODEL['engine'],
-                 PISN=MODEL['PISN'],
-                 ECSN=MODEL['ECSN'],
-                 max_neutrino_mass_loss=MODEL['max_neutrino_mass_loss'],
-                 kick=MODEL['kick'],
-                 kick_normalisation=MODEL['kick_normalisation'],
-                 sigma_kick_CCSN_NS=MODEL['sigma_kick_CCSN_NS'],
-                 sigma_kick_CCSN_BH=MODEL['sigma_kick_CCSN_BH'],
-                 sigma_kick_ECSN=MODEL['sigma_kick_ECSN'],
-                 max_NS_mass=MODEL['max_NS_mass'],
-                 use_interp_values=MODEL['use_interp_values'],
-                 use_profiles=MODEL['use_profiles'],
-                 use_core_masses=MODEL['use_core_masses'],
-                 approx_at_he_depletion=MODEL['approx_at_he_depletion'],
-                 verbose=MODEL['verbose'],
-                 **kwargs):
+    def __init__(self, **kwargs):
         """Initialize a StepSN instance."""
         # read kwargs to initialize the class
         if kwargs:
@@ -257,22 +241,9 @@ class StepSN(object):
                 default_value = MODEL[varname]
                 setattr(self, varname, kwargs.get(varname, default_value))
         else:
-            self.mechanism = mechanism
-            self.engine = engine
-            self.PISN = PISN
-            self.ECSN = ECSN
-            self.max_neutrino_mass_loss = max_neutrino_mass_loss
-            self.kick = kick
-            self.kick_normalisation = kick_normalisation
-            self.sigma_kick_CCSN_NS = sigma_kick_CCSN_NS
-            self.sigma_kick_CCSN_BH = sigma_kick_CCSN_BH
-            self.sigma_kick_ECSN = sigma_kick_ECSN
-            self.max_NS_mass = max_NS_mass
-            self.use_interp_values = use_interp_values
-            self.use_profiles = use_profiles
-            self.use_core_masses = use_core_masses
-            self.approx_at_he_depletion = approx_at_he_depletion
-            self.verbose = verbose
+            for varname in MODEL:
+                default_value = MODEL[varname]
+                setattr(self, varname, default_value)
 
         if self.max_neutrino_mass_loss is None:
             self.max_neutrino_mass_loss = 0
@@ -818,6 +789,7 @@ class StepSN(object):
             # perform the PISN prescription in terms of the
             # He core mass at pre-supernova
             m_He_core = star.he_core_mass
+            m_star = star.mass
             if self.PISN == "Marchant+19":
                 if m_He_core >= 31.99 and m_He_core <= 61.10:
                     # this is the 8th-order polynomial fit of table 1
@@ -840,8 +812,10 @@ class StepSN(object):
 
                 else:
                     # above the PISN gap we assume direct collapse of the
-                    # He-core
-                    m_PISN = m_He_core
+                    if self.conserve_hydrogen_envelope:
+                        m_PISN = m_star
+                    else:
+                        m_PISN = m_He_core
 
             elif is_number(self.PISN) and m_He_core > self.PISN:
                 m_PISN = self.PISN
@@ -1030,6 +1004,12 @@ class StepSN(object):
             raise ValueError("The CO core mass is not correct! CO core = {}".
                              format(m_core))
 
+        # define the collapsing stellar mass: either the H or He core mass
+        if self.conserve_hydrogen_envelope:
+            m_collapsing = m_star
+        else:
+            m_collapsing = m_He_core
+
         m_rembar, f_fb, state, star.SN_type = self.check_SN_type(
             m_core=m_core, m_He_core=m_He_core, m_star=m_star)
 
@@ -1051,21 +1031,21 @@ class StepSN(object):
                 f_fb = 0.0
             elif m_core < 2.5:
                 m_fb = 0.2
-                f_fb = m_fb / (m_He_core - m_proto)
+                f_fb = m_fb / (m_collapsing - m_proto)
             elif m_core >= 2.5 and m_core < 6.0:
                 m_fb = 0.286 * m_core - 0.514
-                f_fb = m_fb / (m_He_core - m_proto)
+                f_fb = m_fb / (m_collapsing - m_proto)
             elif m_core >= 6.0 and m_core < 7.0:
                 f_fb = 1.0
-                m_fb = f_fb * (m_He_core - m_proto)
+                m_fb = f_fb * (m_collapsing - m_proto)
             elif m_core >= 7.0 and m_core < 11.0:
-                a = 0.25 - 1.275 / (m_He_core - m_proto)
+                a = 0.25 - 1.275 / (m_collapsing - m_proto)
                 b = -11.0 * a + 1.0
                 f_fb = a * m_core + b
-                m_fb = f_fb * (m_He_core - m_proto)
+                m_fb = f_fb * (m_collapsing - m_proto)
             elif m_core >= 11.0:
                 f_fb = 1.0
-                m_fb = f_fb * (m_He_core - m_proto)
+                m_fb = f_fb * (m_collapsing - m_proto)
             m_rembar = m_proto + m_fb
             state = None
 
@@ -1090,24 +1070,24 @@ class StepSN(object):
                 f_fb = 0.0
             elif m_core < 2.5:
                 m_fb = 0.2
-                f_fb = m_fb / (m_He_core - m_proto)
+                f_fb = m_fb / (m_collapsing - m_proto)
             elif m_core >= 2.5 and m_core < 3.5:
                 m_fb = 0.5 * m_core - 1.05
-                f_fb = m_fb / (m_He_core - m_proto)
+                f_fb = m_fb / (m_collapsing - m_proto)
             elif m_core >= 3.5 and m_core < 11.0:
-                a = 0.133 - 0.093 / (m_He_core - m_proto)
+                a = 0.133 - 0.093 / (m_collapsing - m_proto)
                 b = -11.0 * a + 1.0
                 f_fb = a * m_core + b
-                m_fb = f_fb * (m_He_core - m_proto)
+                m_fb = f_fb * (m_collapsing - m_proto)
             elif m_core > 11.0:
                 f_fb = 1.0
-                m_fb = f_fb * (m_He_core - m_proto)
+                m_fb = f_fb * (m_collapsing - m_proto)
             m_rembar = m_proto + m_fb
             state = None
 
         # direct collapse and f_fb = 1. (no kicks)
         elif self.mechanism == self.direct_collapse:
-            m_rembar = m_He_core
+            m_rembar = m_collapsing
             f_fb = 1.0
             state = None
 
@@ -1125,7 +1105,8 @@ class StepSN(object):
                 m_rembar = m_proto + m_fb
                 state = 'NS'
             else:
-                m_rembar, f_fb, state = self.Sukhbold_corecollapse_engine(star)
+                m_rembar, f_fb, state = self.Sukhbold_corecollapse_engine(star,
+                                                self.conserve_hydrogen_envelope)
 
         # Collapse prescription from the results of
         # Couch, S. M., Warren, M. L., & O’Connor, E. P. 2020, ApJ, 890, 127
@@ -1141,7 +1122,8 @@ class StepSN(object):
                 m_rembar = m_proto + m_fb
                 state = 'NS'
             else:
-                m_rembar, f_fb, state = self.Couch_corecollapse_engine(star)
+                m_rembar, f_fb, state = self.Couch_corecollapse_engine(star,
+                                                self.conserve_hydrogen_envelope)
 
         elif self.mechanism == self.Patton20_engines:
             if star.SN_type == "ECSN":
@@ -1155,7 +1137,8 @@ class StepSN(object):
                 state = 'NS'
             else:
                 m_rembar, f_fb, state = self.Patton20_corecollapse(star,
-                                                                   self.engine)
+                                                self.engine,
+                                                self.conserve_hydrogen_envelope)
         else:
             raise ValueError("Mechanism %s not supported." % self.mechanism)
 
@@ -1790,7 +1773,7 @@ class StepSN(object):
 
         return M4, mu4
 
-    def Patton20_corecollapse(self, star, engine):
+    def Patton20_corecollapse(self, star, engine, conserve_hydrogen_envelope=False):
         """Compute supernova final remnant mass and fallback fraction.
 
         It uses the results from [1]. The prediction for the core-collapse
@@ -1849,13 +1832,21 @@ class StepSN(object):
                 state = 'NS'
 
             elif CO_core_mass >= 10.0:
-                m_rem = star.he_core_mass
+                # Assuming BH formation by direct collapse
+                if conserve_hydrogen_envelope:
+                    m_rem = star.mass
+                else:
+                    m_rem = star.he_core_mass
                 f_fb = 1.0
                 state = 'BH'
 
             elif ((k1 * (mu4 * M4) + k2) < mu4):
                 # The prediction is a failed explosion
-                m_rem = star.he_core_mass
+                # Assuming BH formation by direct collapse
+                if conserve_hydrogen_envelope:
+                    m_rem = star.mass
+                else:
+                    m_rem = star.he_core_mass
                 f_fb = 1.0
                 state = 'BH'
             else:
@@ -2014,14 +2005,14 @@ class Sukhbold16_corecollapse(object):
                 self.engines,
             )
 
-    def __call__(self, star):
+    def __call__(self, star, conserve_hydrogen_envelope=False):
         """Get the mass, fallback franction and state of the remnant."""
         if star.state in STAR_STATES_CC:
-            # m_star = star.mass  # M_sun
+            m_star = star.mass  # M_sun
             # m_core = star.co_core_mass  # M_sun
             m_He_core = star.he_core_mass  # M_sun
         elif star.state_history[-1] in STAR_STATES_CC:
-            # m_star = star.mass_history[-1]  # M_sun
+            m_star = star.mass_history[-1]  # M_sun
             # m_core = star.co_core_mass_history[-1]  # M_sun
             m_He_core = star.he_core_mass_history[-1]  # M_sun
         else:
@@ -2037,8 +2028,11 @@ class Sukhbold16_corecollapse(object):
             state = None
 
         if state == "BH":
-            # Assuming a BH formation by direct collapse of te He core
-            m_rem = self.extrapolate_BH(m_He_core, self.mass_BH_interpolator)
+            # Assuming BH formation by direct collapse
+            if conserve_hydrogen_envelope:
+                m_rem = self.extrapolate_BH(m_star, self.mass_BH_interpolator)
+            else:
+                m_rem = self.extrapolate_BH(m_He_core, self.mass_BH_interpolator)
             f_fb = 1.
         elif state == "NS":
             m_rem = self.extrapolate_NS(m_He_core, self.mass_NS_interpolator)
@@ -2269,14 +2263,14 @@ class Couch20_corecollapse(object):
                 "choose one of the following engines to compute the collapse:",
                 self.turbulence_strength_options)
 
-    def __call__(self, star):
+    def __call__(self, star, conserve_hydrogen_envelope=False):
         """Get the mass, fallback fraction and state of the remnant."""
         if star.state in STAR_STATES_CC:
-            # m_star = star.mass                          # M_sun
+            m_star = star.mass                          # M_sun
             # m_core = star.co_core_mass                  # M_sun
             m_He_core = star.he_core_mass               # M_sun
         elif star.state_history[-1] in STAR_STATES_CC:
-            # m_star = star.mass_history[-1]              # M_sun
+            m_star = star.mass_history[-1]              # M_sun
             # m_core = star.co_core_mass_history[-1]      # M_sun
             m_He_core = star.he_core_mass_history[-1]   # M_sun
         else:
@@ -2295,11 +2289,13 @@ class Couch20_corecollapse(object):
             state = None
 
         if state == "BH":
-            # Assuming BH formation by direct collapse of the He core
-
+            # Assuming BH formation by direct collapse
+            if conserve_hydrogen_envelope:
+                m_rem = m_star
+            else:
+                m_rem = m_He_core
             # m_rem = self.extrapolate_BH(m_He_core, self.mass_BH_interpolator)
             # TODO: We need to contact Couch et al. to get the remnant masses
-            m_rem = m_He_core
             # f_fb = m_rem / m_He_core
             f_fb = 1.
         elif state == "NS":
