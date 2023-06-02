@@ -221,10 +221,10 @@ for b in ['initial_RLOF',
 for b in ['initially_single_star']:
     for s1 in STAR_STATES_ALL:
         for s2 in STAR_STATES_ALL:
-
             for e in BINARY_EVENTS_ALL:
-                POSYDON_FLOW_CHART[(s1, s2, b, e)] = 'step_initially_single'
-                POSYDON_FLOW_CHART[(s2, s1, b, e)] = 'step_initially_single'
+                if e == 'ZAMS':
+                    POSYDON_FLOW_CHART[(s1, s2, b, e)] = 'step_initially_single'
+                    POSYDON_FLOW_CHART[(s2, s1, b, e)] = 'step_initially_single'
 
 
 for s1 in STAR_STATES_CO:
