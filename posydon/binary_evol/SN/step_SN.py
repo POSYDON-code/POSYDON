@@ -1236,7 +1236,7 @@ class StepSN(object):
                     # if key is 'nearest_neighbour_distance':
                     #     setattr(binary, key, ['None', 'None', 'None'])
                 binary.separation = new_separation
-                if binary.state is not "disrupted":
+                if binary.state != "disrupted":
                     binary.state = "detached"
                 binary.event = None
                 binary.time = binary.time_history[-1]
@@ -1333,7 +1333,7 @@ class StepSN(object):
                     # if key is 'nearest_neighbour_distance':
                     #     setattr(binary, key, ['None', 'None', 'None'])
                 binary.separation = new_separation
-                if binary.state is not "disrupted":
+                if binary.state != "disrupted":
                     binary.state = "detached"
                 binary.event = None
                 binary.time = binary.time_history[-1]
@@ -1417,7 +1417,7 @@ class StepSN(object):
 
             # update the binary object which was disrupted already before the SN
             for key in BINARYPROPERTIES:
-                if key is not 'nearest_neighbour_distance':
+                if key != 'nearest_neighbour_distance':
                     setattr(binary, key, None)
             binary.state = "disrupted"
             binary.event = None
@@ -1651,7 +1651,7 @@ class StepSN(object):
                 # compute new orbital period before reseting the binary properties
 
                 for key in BINARYPROPERTIES:
-                    if key is not 'nearest_neighbour_distance':
+                    if key != 'nearest_neighbour_distance':
                         setattr(binary, key, None)
 
                 binary.state = "detached"
@@ -1676,7 +1676,7 @@ class StepSN(object):
                     raise ValueError("This should never happen!")
 
                 for key in BINARYPROPERTIES:
-                    if key is not 'nearest_neighbour_distance':
+                    if key != 'nearest_neighbour_distance':
                         setattr(binary, key, None)
                 binary.state = "disrupted"
                 binary.event = None
