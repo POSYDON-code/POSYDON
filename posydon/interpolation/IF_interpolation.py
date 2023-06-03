@@ -566,6 +566,8 @@ class BaseIFInterpolator:
             YT_class = YT_sort[ic[self.valid > 0] == classes]
             index = YT_class[:,0]
             data = np.hsplit(YT_class,np.array([1]))[1]
+            if classes == 'unstable_MT':
+                data[:,66][data[:,66]>=1e99] = 1e-5
             self.Y_scaler_norm.append(MatrixScaler(self.out_scaling,
                                                              data))
             YT_class_norm = self.Y_scaler_norm[i].normalize(data)
