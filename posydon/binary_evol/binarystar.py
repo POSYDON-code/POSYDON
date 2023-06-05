@@ -36,6 +36,8 @@ from posydon.binary_evol.singlestar import SingleStar, STARPROPERTIES
 from posydon.utils.common_functions import (
     check_state_of_star, orbital_period_from_separation,
     orbital_separation_from_period, get_binary_state_and_event_and_mt_case)
+from posydon.popsyn.io import (
+BINARYPROPERTIES_DTYPES, STARPROPERTIES_DTYPES, EXTRA_COLUMNS_DTYPES)
 
 
 # star property: column names in binary history for star 1 and star 2
@@ -393,6 +395,39 @@ class BinaryStar:
         binary_df = pd.concat(frames, axis=1)
 
         binary_df.set_index('binary_index', inplace=True)
+
+
+        # Set data types for all columns explicitly
+        hist_columns =  set( binary_df.columns )
+        binary_keys = set( BINARYPROPERTIES_DTYPES.keys()  )
+        S1_keys = set( ['S1_' + key for key in STARPROPERTIES_DTYPES.keys()] )
+        S2_keys = set( ['S2_' + key for key in STARPROPERTIES_DTYPES.keys()] )
+        extra_keys = set( EXTRA_COLUMNS_DTYPES.keys() )
+        
+        # Find common keys between the binary_df and default output parameters
+        common_keys =  hist_columns & ( binary_keys | S1_keys | S2_keys | extra_keys )
+        
+        # Create a dict with column-dtype mapping only for columns in binary_df
+        common_dtype_dict = {}
+        for key in common_keys:
+            if key in BINARYPROPERTIES_DTYPES.keys():
+                common_dtype_dict[key] = BINARYPROPERTIES_DTYPES.get( key )
+            elif key.replace('S1_', '') in STARPROPERTIES_DTYPES.keys():
+                common_dtype_dict[key] = STARPROPERTIES_DTYPES.get( key.replace('S1_', '') )
+            elif key.replace('S2_', '') in STARPROPERTIES_DTYPES.keys():
+                common_dtype_dict[key] = STARPROPERTIES_DTYPES.get( key.replace('S2_', '') )        
+            elif key in EXTRA_COLUMNS_DTYPES.keys():
+                common_dtype_dict[key] = EXTRA_COLUMNS_DTYPES.get( key )
+            else:
+                raise ValueError(f'No data type found for {key}.')
+        # set dtypes
+        binary_df = binary_df.astype( common_dtype_dict )
+	# unset clean str data because strings
+        convert_to_obj = {}
+        for key, val in common_dtype_dict.items():
+            if val == 'string':
+                convert_to_obj[key] = 'object'
+        binary_df = binary_df.astype( convert_to_obj )
         return binary_df
 
     @classmethod
