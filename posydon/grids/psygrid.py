@@ -757,7 +757,7 @@ class PSyGrid:
                     continue
 
                 # check whether stop at He depletion is requested
-                if stop_at_He_depletion:
+                if stop_at_He_depletion and initial_values[i]["star_1_mass"]>=100.0:
                     kept = keep_till_He_depletion(binary_history, history1,
                                   history2, THRESHOLD_CENTRAL_ABUNDANCE, 0.1)
                     binary_history, history1, history2, newTF1 = kept
