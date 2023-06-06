@@ -66,22 +66,25 @@ path_to_Couch_datasets = os.path.join(PATH_TO_POSYDON_DATA,
                                       "Couch+2020/")
 
 MODEL = {
+    # core collapse physics
     "mechanism": 'Patton&Sukhbold20-engine',
     "engine": 'N20',
     "PISN": "Marchant+19",
     "ECSN": "Podsiadlowksi+04",
     "conserve_hydrogen_envelope" : False,
     "max_neutrino_mass_loss": 0.5,
-    "kick": True,
-    "kick_normalisation": 'one_over_mass',
-    "sigma_kick_CCSN_NS": 265.0,
-    "sigma_kick_CCSN_BH": 265.0,
-    "sigma_kick_ECSN": 20.0,
     "max_NS_mass": 2.5,
     "use_interp_values": True,
     "use_profiles": True,
     "use_core_masses": True,
     "approx_at_he_depletion": False,
+    # kick physics
+    "kick": True,
+    "kick_normalisation": 'one_over_mass',
+    "sigma_kick_CCSN_NS": 265.0,
+    "sigma_kick_CCSN_BH": 265.0,
+    "sigma_kick_ECSN": 20.0,
+    # other
     "verbose": False,
 }
 

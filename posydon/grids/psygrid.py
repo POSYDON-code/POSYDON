@@ -1177,7 +1177,10 @@ class PSyGrid:
 
     def add_column(self, colname, array, where="final_values", overwrite=True):
         """Add a new numerical column in the final values array."""
-        arr = np.asarray(array)
+        if not isinstance(array, np.ndarray):
+            arr = np.asarray(array)
+        else:
+            arr = array
 
         if where != "final_values":
             raise ValueError("Only adding columns to `final_values` allowed.")
@@ -1205,9 +1208,11 @@ class PSyGrid:
         for dtype in self.final_values.dtype.descr:
             if (dtype[0].startswith("termination_flag")
                     or dtype[0] == "interpolation_class"
-                    or "SN_type" in dtype[0] or "_state" in dtype[0]):
+                    or "_type" in dtype[0] or "_state" in dtype[0]):
                 dtype = (dtype[0], H5_REC_STR_DTYPE.replace("U", "S"))
             new_dtype.append(dtype)
+            if dtype[1] == np.dtype('O'):
+                print(dtype[0])
         final_values = self.final_values.astype(new_dtype)
         del self.hdf5["/grid/final_values"]
         self.hdf5.create_dataset("/grid/final_values", data=final_values,
