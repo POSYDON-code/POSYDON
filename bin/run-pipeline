@@ -83,7 +83,7 @@ def create_grid_slice(i, path_to_csv_file, CO_HMS_GRID_START_AT_RLO, verbose=Fal
     grid_name = grid_path.split('/')[-1]
     otuput_path = os.path.join('/', os.path.join(*grid_path.split('/')[:-1]),
                                compression)
-    grid_output = os.path.join(otuput_path, grid_name+'_He_depletion.h5')
+    grid_output = os.path.join(otuput_path, grid_name+'.h5')
 
     # check that LITE/ or ORIGINAL/ directory exists
     if not os.path.isdir(otuput_path):
