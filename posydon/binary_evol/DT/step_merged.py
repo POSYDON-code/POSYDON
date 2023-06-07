@@ -166,8 +166,8 @@ class MergedStep(IsolatedStep):
             else:
                 M2 = getattr(star2, mass_weight2)
             #print(2.2, M1, M2)
-            print(abundance_name, A1,A2,M1, M2)
-            print("avg", (A1*M1 + A2*M2 ) / (M1+M2))
+            #print(abundance_name, A1,A2,M1, M2)
+            #print("avg", (A1*M1 + A2*M2 ) / (M1+M2))
             return (A1*M1 + A2*M2 ) / (M1+M2)
 
         # MS + MS
@@ -565,5 +565,6 @@ class MergedStep(IsolatedStep):
         # ad hoc spin of merged star to be used in the detached step
         merged_star.surf_avg_omega_div_omega_crit = self.merger_critical_rot
 
+        #print(merged_star)
         #print("3", merged_star.state,massless_remnant.state)
         return merged_star, massless_remnant
