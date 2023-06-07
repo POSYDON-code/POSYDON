@@ -240,7 +240,7 @@ class ProfileInterpolator:
                 if arr_copy[i]>arr_copy[i-1]:
                     arr_copy[i]=arr_copy[i-1]
             # cut off points below surface value
-            np.where(arr_copy<arr[-1], arr[-1], arr_copy)
+            return np.where(arr_copy<arr[-1], arr[-1], arr_copy)
         
         profiles_copy=profiles.copy()
         
