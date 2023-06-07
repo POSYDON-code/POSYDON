@@ -166,11 +166,11 @@ def assign_core_collapse_quantities_none(EXTRA_COLUMNS, star_i, MODEL_NAME=None)
     """"Assign None values to all core collapse properties."""
     if MODEL_NAME is None:
         for MODEL_NAME, MODEL in MODELS.items():
-            for quantitiy in CC_quantities:
-                EXTRA_COLUMNS[f'S{star_i}_{MODEL_NAME}_{quantitiy}'].append(None)
+            for quantity in CC_quantities:
+                EXTRA_COLUMNS[f'S{star_i}_{MODEL_NAME}_{quantity}'].append(None)
     else:
-        for quantitiy in CC_quantities:
-                EXTRA_COLUMNS[f'S{star_i}_{MODEL_NAME}_{quantitiy}'].append(None)
+        for quantity in CC_quantities:
+                EXTRA_COLUMNS[f'S{star_i}_{MODEL_NAME}_{quantity}'].append(None)
 
 def print_CC_quantities(EXTRA_COLUMNS, star, MODEL_NAME=None):
     format_string = "{:<50} {:<33} {:12} {:10} {:15} {:10} {:25} {:25}"
@@ -197,7 +197,7 @@ def print_CC_quantities(EXTRA_COLUMNS, star, MODEL_NAME=None):
                     
 def post_process_grid(grid, index=None, star_2_CO=True, MODELS=MODELS,
                       single_star=False, verbose=False):
-    """Compute post processed quantitiy of any grid.
+    """Compute post processed quantity of any grid.
 
     This function post process any supported grid and computes:
     - Core collpase quantities for 5 prescritions given the fiducial POSYDON
@@ -253,8 +253,8 @@ def post_process_grid(grid, index=None, star_2_CO=True, MODELS=MODELS,
                 EXTRA_COLUMNS[f'S{star}_{quantity}_{val}cent'] = []
         # Core collapse qunatities: [state, SN_type, f_fb, mass, spin]
         for MODEL_NAME, MODEL in MODELS.items():
-            for quantitiy in CC_quantities:
-                EXTRA_COLUMNS[f'S{star}_{MODEL_NAME}_{quantitiy}'] = []
+            for quantity in CC_quantities:
+                EXTRA_COLUMNS[f'S{star}_{MODEL_NAME}_{quantity}'] = []
                 
     # remove star 2 columns in case of single star grid
     if single_star:
@@ -353,7 +353,7 @@ def post_process_grid(grid, index=None, star_2_CO=True, MODELS=MODELS,
                                f'in check_state_of_star(star_{j+1}) with IC={IC}.')
                 for quantity in ['avg_c_in_c_core_at_He_depletion', 'co_core_mass_at_He_depletion',
                                  'surface_other', 'center_other', 'lambda_CE', 'm_core_CE', 'r_core_CE']:
-                    if 'CE' in quantitiy:
+                    if 'CE' in quantity:
                         for val in [1, 10, 30, 'pure_He_star_10']:
                             EXTRA_COLUMNS[f'S{j+1}_{quantity}_{val}cent'].append(None)
                     else:  
@@ -414,9 +414,9 @@ def post_process_grid(grid, index=None, star_2_CO=True, MODELS=MODELS,
                     try:
                         star_copy = copy.copy(star)
                         SN.collapse_star(star_copy)
-                        for quantitiy in CC_quantities:
-                            EXTRA_COLUMNS[f'S{star_i}_{MODEL_NAME}_{quantitiy}'].append(
-                            getattr(star_copy, quantitiy))
+                        for quantity in CC_quantities:
+                            EXTRA_COLUMNS[f'S{star_i}_{MODEL_NAME}_{quantity}'].append(
+                            getattr(star_copy, quantity))
                         if verbose:
                             print_CC_quantities(EXTRA_COLUMNS, star_copy, f'{MODEL_NAME}_{mechanism}')
                     except Exception as e:
@@ -444,9 +444,9 @@ def post_process_grid(grid, index=None, star_2_CO=True, MODELS=MODELS,
                     try:
                         star_copy = copy.copy(star)
                         SN.collapse_star(star_copy)
-                        for quantitiy in CC_quantities:
-                            EXTRA_COLUMNS[f'S1_{MODEL_NAME}_{quantitiy}'].append(
-                            getattr(star_copy, quantitiy))
+                        for quantity in CC_quantities:
+                            EXTRA_COLUMNS[f'S1_{MODEL_NAME}_{quantity}'].append(
+                            getattr(star_copy, quantity))
                         if verbose:
                             print_CC_quantities(EXTRA_COLUMNS, star, f'{MODEL_NAME}_{mechanism}')
                     except Exception as e:
