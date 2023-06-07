@@ -419,11 +419,10 @@ def post_process_grid(grid, index=None, star_2_CO=True, MODELS=MODELS,
                             print('TF1', TF1)
                             print('interpolation class',  interpolation_class)
 
-            else:    # inital_RLOF, unstable_MT not_convergedd
-                warnings.warn(f'{grid.MESA_dirs[i]} ended with '
-                            f'TF={TF1} but was not collapsed! '
-                            'This should never happen!')
-                assign_core_collapse_quantities_none(EXTRA_COLUMNS, star_i, MODEL_NAME)
+            else: 
+                # inital_RLOF, unstable_MT not_converged
+                assign_core_collapse_quantities_none(EXTRA_COLUMNS, 1)
+                assign_core_collapse_quantities_none(EXTRA_COLUMNS, 2)
 
         else:
             if star.state in STAR_STATES_CC:
@@ -464,7 +463,7 @@ def post_process_grid(grid, index=None, star_2_CO=True, MODELS=MODELS,
                             print('TF1', TF1)
                             print('interpolation class',  interpolation_class)
             else:
-                assign_core_collapse_quantities_none(EXTRA_COLUMNS, 1, MODEL_NAME)
+                assign_core_collapse_quantities_none(EXTRA_COLUMNS, 1)
 
         # check dataset completeness
         n_control = len(EXTRA_COLUMNS['S1_state'])
