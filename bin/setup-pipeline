@@ -386,38 +386,67 @@ def create_csv(GRID_TYPES, METALLICITIES, GRID_SLICES, COMPRESSIONS,
         if DROP_MISSING_FILES:
             drop_rows = []
             for row in range(df.shape[0]):
-                path = df.loc[row,'path_to_grid']
+                path = df.at[row,'path_to_grid']
                 if not os.path.exists(path):
                     drop_rows.append(row)
             if any(drop_rows):
                 print('')
                 print(f'----------- {step_name} -----------')
-                print('The following grids will not be processed '
-                      'because the files are missing! If this warning message is '
-                      'unexpected to you, please check the file paths!')
-                for i in drop_rows:
-                    print(df.loc[i,'path_to_grid'])
+                print('The following grids will not be processed because the '
+                      'files/directories are missing! If this warning message '
+                      'is unexpected to you, please check the file paths!')
+                for row in drop_rows:
+                    print(df.loc[row,'path_to_grid'])
                 print('')
             df = df.drop(index=drop_rows)
     else:
         # step 2
         # drop columns when psygrid files are not found
         if DROP_MISSING_FILES:
+            first_time = True
             drop_columns = []
             for column in df.keys():
-                for path in df[column].dropna().to_list():
-                    if not os.path.exists(path):
+                drop_rows = []
+                for row in range(df.shape[0]):
+                    path = df.at[row,column]
+                    if pd.notna(path):
+                        if not os.path.exists(path):
+                            drop_rows.append(row)
+                if any(drop_rows):
+                    if first_time:
+                        print('')
+                        print(f'----------- {step_name} -----------')
+                        print('If this warning message is unexpected to you, '
+                              'please check that step 1 occoured '
+                              'succesffully!')
+                        first_time = False
+                    print(f'In {column} the following grids are skipped!')
+                    for row in drop_rows:
+                        print(df.loc[row,column])
+                        df.at[row,column] = np.NaN
+                    print('')
+                    newcol = df[column].dropna().to_list()
+                    if len(newcol)==0:
                         drop_columns.append(column)
+#                        print(f'No grids left drop {column}')
+#                        print('')
+                    newcol.extend((df.shape[0]-len(newcol))*[np.nan])
+                    df[column] = newcol
             if any(drop_columns):
+                if first_time:
+                    print('')
+                    print(f'----------- {step_name} -----------')
+                    print('If this warning message is unexpected to you, '
+                          'please check that step 1 occoured '
+                          'succesffully!')
+                    first_time = False
+                print('The following grids will not be combined as all grid '
+                      'slices are missing!')
+                for column in drop_columns
+                    print(column)
                 print('')
-                print(f'----------- {step_name} -----------')
-                print('The following grids will not be combined as one or more '
-                      'grid slices are missing! If this warning message is '
-                      'unexpected to you, please check that step 1 occoured '
-                      'succesffully!')
-                print(drop_columns)
-                print('')
-            df = df.drop(columns=drop_columns)
+#            df = df.drop(columns=drop_columns)
+            df = df.dropna(how='all')
 
     output_fname = f'{step_name}.csv'
     df.to_csv(os.path.join(PATH, output_fname), index=False)
