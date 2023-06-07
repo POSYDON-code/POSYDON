@@ -86,6 +86,7 @@ class PostProcessingPipeline:
         return pipeline_kwargs
 
     def create_csv_and_slurm_job_files(self):
+        previously_created_files = []
         setup_kwargs = self.pipeline_kwargs['pipeline setup']
         account_kwargs = self.pipeline_kwargs['account']
 
@@ -113,8 +114,9 @@ class PostProcessingPipeline:
                         print( pformat(step_kwargs, indent=2) )
 
 
-                    create_csv(
+                    previously_created_files += create_csv(
                         step_name=step_number,
+                        previously_created_files=previously_created_files,
                         **{**step_kwargs, **setup_kwargs}
                     )
                     slurm_job(
@@ -263,7 +265,7 @@ def create_csv(GRID_TYPES, METALLICITIES, GRID_SLICES, COMPRESSIONS,
                step_name=None, VERSION=None, GRIDS_COMBINED=None,
                INTERPOLATION_METHODS=None, RERUN_TYPE='',
                DROP_MISSING_FILES=False, PATH_TO_GRIDS=None,
-               PATH=None, **kwargs):
+               PATH=None, previously_created_files=[], **kwargs):
 
     # number of grid types
     N = len(GRID_TYPES)
@@ -279,6 +281,7 @@ def create_csv(GRID_TYPES, METALLICITIES, GRID_SLICES, COMPRESSIONS,
     interpolators = []
     export_path = []
     rerun_path = []
+    newly_created_files = []
     df = pd.DataFrame()
     for l, grid_type in enumerate(GRID_TYPES):
 
@@ -387,7 +390,8 @@ def create_csv(GRID_TYPES, METALLICITIES, GRID_SLICES, COMPRESSIONS,
             drop_rows = []
             for row in range(df.shape[0]):
                 path = df.at[row,'path_to_grid']
-                if not os.path.exists(path):
+                if (not os.path.exists(path) and
+                    path not in previously_created_files):
                     drop_rows.append(row)
             if any(drop_rows):
                 print('')
@@ -399,6 +403,18 @@ def create_csv(GRID_TYPES, METALLICITIES, GRID_SLICES, COMPRESSIONS,
                     print(df.at[row,'path_to_grid'])
                 print('')
             df = df.drop(index=drop_rows)
+        if step_name == 'step_1':
+            newly_created_files = df['compression'].to_list()
+        elif step_name == 'step_3':
+            newly_created_files = df['path_to_plot'].to_list()
+        elif step_name == 'step_5':
+            newly_created_files = df['path_to_processed_grid'].to_list()
+        elif step_name == 'step_6':
+            newly_created_files = df['path_to_interpolator'].to_list()
+        elif step_name == 'step_7':
+            newly_created_files = df['export_path'].to_list()
+        elif step_name == 'rerun':
+            newly_created_files = df['rerun_path'].to_list()
     else:
         # step 2
         # drop columns when psygrid files are not found
@@ -410,7 +426,8 @@ def create_csv(GRID_TYPES, METALLICITIES, GRID_SLICES, COMPRESSIONS,
                 for row in range(df.shape[0]):
                     path = df.at[row,column]
                     if pd.notna(path):
-                        if not os.path.exists(path):
+                        if (not os.path.exists(path) and
+                            path not in previously_created_files):
                             drop_rows.append(row)
                 if any(drop_rows):
                     if first_time:
@@ -447,9 +464,12 @@ def create_csv(GRID_TYPES, METALLICITIES, GRID_SLICES, COMPRESSIONS,
                 print('')
 #            df = df.drop(columns=drop_columns)
             df = df.dropna(how='all')
+        newly_created_files = df.keys()
 
     output_fname = f'{step_name}.csv'
     df.to_csv(os.path.join(PATH, output_fname), index=False)
+    
+    return newly_created_files
 
 if __name__ == '__main__':
 
