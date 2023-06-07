@@ -78,7 +78,7 @@ class IsolatedStep(detached_step):
 
         self.initialize_isolated_binary_orbit(binary)
 
-        if binary.state == 'initially_single_star' or binary.star_1 == None or binary.star_2 == None:
+        if binary.state == 'initially_single_star' or binary.star_1.state is 'massless_remnant' or binary.star_2 is 'massless_remnant':
         #if binary.star_1 == None or binary.star_2 == None: # already one star became None in step_merged or step_initially_single
             pass
         elif binary.state == "disrupted":
