@@ -67,6 +67,161 @@ STAR_STATES_H_RICH = [
     'H-rich_non_burning'
 ]
 
+STAR_STATES_CO = ['BH', 
+                  'NS', 
+                  'WD',
+                  ]
+
+DEFAULT_TRANSLATION = {
+    "time": "time",
+    "orbital_period": "porb",
+    "eccentricity": "ecc",
+    "separation": "sep",
+    "state": None,
+    "event": None,
+    "rl_relative_overflow_1": "rl_relative_overflow_1",
+    "rl_relative_overflow_2": "rl_relative_overflow_2",
+    "lg_mtransfer_rate": "lg_mtransfer_rate",
+    "V_sys": None,
+    "mass": "mass",
+    "log_R": "log_R",
+    "R": "R",
+    "lg_mdot": "mdot",
+    "log_L": "log_L",
+    "lg_wind_mdot": "mdot",
+    "lg_system_mdot": "lg_mdot",
+    "he_core_mass": "he_core_mass",
+    "he_core_radius": "he_core_radius",
+    "c_core_mass": "c_core_mass",
+    "c_core_radius": "c_core_radius",
+    "o_core_mass": "o_core_mass",
+    "o_core_radius": "o_core_radius",
+    "center_h1": "center_h1",
+    "center_he4": "center_he4",
+    "center_c12": "center_c12",
+    "center_o16": "center_o16",
+    "center_n14": "center_n14",
+    "surface_h1": "surface_h1",
+    "surface_he4": "surface_he4",
+    "surface_c12": "surface_c12",
+    "surface_n14": "surface_n14",
+    "surface_o16": "surface_o16",
+    "center_gamma": "center_gamma",
+    "log_LH": "log_LH",
+    "log_LHe": "log_LHe",
+    "log_LZ": "log_LZ",
+    "log_Lnuc": "log_Lnuc",
+    "c12_c12": "c12_c12",
+    "avg_c_in_c_core": "avg_c_in_c_core",
+    "surf_avg_omega_div_omega_crit": "surf_avg_omega_div_omega_crit",
+    "surf_avg_omega": "omega",
+    "total_moment_of_inertia": "inertia",
+    "log_total_angular_momentum": "log_total_angular_momentum",
+    "profile": None,
+    "metallicity": None,
+    "spin": "spin_parameter",
+    "log_total_angular_momentum": "log_total_angular_momentum",
+    "conv_env_top_mass": "conv_env_top_mass",
+    "conv_env_bot_mass": "conv_env_bot_mass",
+    "conv_env_top_radius": "conv_env_top_radius",
+    "conv_env_bot_radius": "conv_env_bot_radius",
+    "conv_env_turnover_time_g": "conv_env_turnover_time_g",
+    "conv_env_turnover_time_l_b": "conv_env_turnover_time_l_b",
+    "conv_env_turnover_time_l_t": "conv_env_turnover_time_l_t",
+    "envelope_binding_energy": "envelope_binding_energy",
+    "mass_conv_reg_fortides": "mass_conv_reg_fortides",
+    "thickness_conv_reg_fortides": "thickness_conv_reg_fortides",
+    "radius_conv_reg_fortides": "radius_conv_reg_fortides",
+    "lambda_CE_1cent": "lambda_CE_1cent",
+    "lambda_CE_10cent": "lambda_CE_10cent",
+    "lambda_CE_30cent": "lambda_CE_30cent",
+    "co_core_mass": "co_core_mass",
+    "co_core_radius": "co_core_radius",
+    "lambda_CE_pure_He_star_10cent": "lambda_CE_pure_He_star_10cent",
+    "trap_radius": "trap_radius",
+    "acc_radius": "acc_radius",
+    "t_sync_rad_1": "t_sync_rad_1",
+    "t_sync_conv_1": "t_sync_conv_1",
+    "t_sync_rad_2": "t_sync_rad_2",
+    "t_sync_conv_2": "t_sync_conv_2",
+    "mass_transfer_case": None,
+    "nearest_neighbour_distance": None,
+}
+
+
+# TODO: are these supposed to be the same as the keys of the previous
+#       dictionary? If yes... then we should use them directrly instead of
+#       redefining the strings here.
+
+DEFAULT_TRANSLATED_KEYS = (
+    'age',
+    'mass',
+    'mdot',
+    'inertia',
+    'conv_mx1_top_r',
+    'conv_mx1_bot_r',
+    'surface_h1',
+    'center_h1',
+    'mass_conv_reg_fortides',
+    'thickness_conv_reg_fortides',
+    'radius_conv_reg_fortides',
+    'log_Teff',
+    'surface_he3',
+    'surface_he4',
+    'center_he4',
+    'avg_c_in_c_core',
+    'log_LH',
+    'log_LHe',
+    'log_LZ',
+    'log_Lnuc',
+    'c12_c12',
+    'center_c12',
+    'he_core_mass',
+    'log_L',
+    'log_R',
+    'c_core_mass',
+    'o_core_mass',
+    'co_core_mass',
+    'c_core_radius',
+    'o_core_radius',
+    'co_core_radius',
+    'spin_parameter',
+    'log_total_angular_momentum',
+    'center_n14',
+    'center_o16',
+    'surface_n14',
+    'surface_o16',
+    'conv_env_top_mass',
+    'conv_env_bot_mass',
+    'conv_env_top_radius',
+    'conv_env_bot_radius',
+    'conv_env_turnover_time_g',
+    'conv_env_turnover_time_l_b',
+    'conv_env_turnover_time_l_t',
+    'envelope_binding_energy',
+    'lambda_CE_1cent',
+    'lambda_CE_10cent',
+    'lambda_CE_30cent',
+    'lambda_CE_pure_He_star_10cent',
+    'center_gamma'
+)
+
+
+DEFAULT_PROFILE_KEYS = (
+    'radius',
+    'mass',
+    'logRho',
+    'energy',
+    'x_mass_fraction_H',
+    'y_mass_fraction_He',
+    'z_mass_fraction_metals',
+    'neutral_fraction_H',
+    'neutral_fraction_He',
+    'avg_charge_He'
+)
+
+MATCHING_WITH_RELATIVE_DIFFERENCE = ["center_he4"]
+
 
 DEFAULT_TRANSLATION = {
     "time": "time",
@@ -312,7 +467,7 @@ class detached_step:
             matching_method="minimize",
             initial_mass=None,
             rootm=None,
-            verbose=1,
+            verbose=False,
             do_wind_loss=True,
             do_tides=True,
             do_gravitational_radiation=True,
@@ -695,6 +850,7 @@ class detached_step:
                 list_for_matching = self.list_for_matching_HMS
             elif star.state in LIST_ACCEPTABLE_STATES_FOR_postMS:
                 list_for_matching = self.list_for_matching_postMS
+
             elif star.state in LIST_ACCEPTABLE_STATES_FOR_HeStar:
                 list_for_matching = self.list_for_matching_HeStar
 
@@ -830,6 +986,7 @@ class detached_step:
 
                     x0 = get_root0(
                         MESA_label, posydon_attribute, htrack, rs=rs)
+
                     # bnds = ([m_min_H, m_max_H], [0, None])
                     sol = minimize(sq_diff_function, x0,
                                    method="TNC", bounds=bnds)
@@ -880,6 +1037,7 @@ class detached_step:
                     ) / star.total_moment_of_inertia
                 '''
 
+
         if self.verbose or self.verbose == 1:
             print(
                 "matching ", star.state,
@@ -916,42 +1074,43 @@ class detached_step:
         KEYS = self.KEYS
         KEYS_POSITIVE = self.KEYS_POSITIVE
 
-        if binary.star_1 is None:
+        if binary.star_1 is None or binary.star_1.state == "massless_remnant":
             self.non_existent_companion = 1
-        if binary.star_2 is None:
+        if binary.star_2 is None or binary.star_2.state == "massless_remnant":
             self.non_existent_companion = 2
         else:
             # detached step of an actual binary
             self.non_existent_companion = 0
 
-        # no isolated evolution, detached step of an actual binary, the primary
-        # in a real binary is potential compact object or the more evolved star
-        if self.non_existent_companion == 0:
-
-            if (binary.star_1.state in ("BH", "NS", "WD")
+        if self.non_existent_companion == 0: #no isolated evolution, detached step of an actual binary
+            # the primary in a real binary is potential compact object, or the more evolved star
+            #Eirini's comment make a list in STAR_STATES_CO
+            if (binary.star_1.state in STAR_STATES_CO
                     and binary.star_2.state in STAR_STATES_H_RICH):
                 primary = binary.star_1
                 secondary = binary.star_2
                 secondary.htrack = True
                 primary.htrack = secondary.htrack
                 primary.co = True
-            elif ((binary.star_1.state in ("BH", "NS", "WD")) and (
-                    binary.star_2.state in LIST_ACCEPTABLE_STATES_FOR_HeStar)):
+
+            elif (binary.star_1.state in STAR_STATES_CO 
+                    and binary.star_2.state in LIST_ACCEPTABLE_STATES_FOR_HeStar):
                 primary = binary.star_1
                 secondary = binary.star_2
                 secondary.htrack = False
                 primary.htrack = secondary.htrack
                 primary.co = True
-            elif (binary.star_2.state in ("BH", "NS", "WD")
+
+            elif (binary.star_2.state in STAR_STATES_CO
                     and binary.star_1.state in STAR_STATES_H_RICH):
                 primary = binary.star_2
                 secondary = binary.star_1
                 secondary.htrack = True
                 primary.htrack = secondary.htrack
                 primary.co = True
-            elif (binary.star_2.state in ("BH", "NS", "WD")
-                  and binary.star_1.state
-                  in LIST_ACCEPTABLE_STATES_FOR_HeStar):
+
+            elif (binary.star_2.state in STAR_STATES_CO
+                    and binary.star_1.state in LIST_ACCEPTABLE_STATES_FOR_HeStar):
                 primary = binary.star_2
                 secondary = binary.star_1
                 secondary.htrack = False
@@ -1059,9 +1218,10 @@ class detached_step:
                 self.grid = self.grid_Hrich
             elif not htrack:
                 self.grid = self.grid_strippedHe
+
             get_track = self.grid.get
 
-            if np.any(np.isnan([m0, t0])):
+            if np.isnan(m0) or np.isnan(t0):
                 #    binary.event = "END"
                 #    binary.state += " (GridMatchingFailed)"
                 #    if self.verbose:
@@ -1125,6 +1285,7 @@ class detached_step:
         # get the matched data of two stars, respectively
         interp1d_sec, m0, t0 = get_star_data(
             binary, secondary, primary, secondary.htrack, co=False)
+
         if (primary.co) or (self.non_existent_companion != 0):
             # copy the secondary star except mass which is of the primary,
             # and radius, mdot, Idot = 0
@@ -1780,15 +1941,18 @@ class detached_step:
                 secondary.state_history[timestep] = check_state_of_star(
                     secondary, i=timestep, star_CO=False)
 
-            if primary.co:
+            #Eirini's comment check what the elif was here.   
+            if primary.state == "massless_remnant":
+                pass
+            
+            elif primary.co:
                 mdot_acc = np.atleast_1d(bondi_hoyle(
                     binary, primary, secondary, slice(-len(t), None),
                     wind_disk_criteria=True, scheme='Kudritzki+2000'))
                 primary.lg_mdot = np.log10(mdot_acc.item(-1))
                 primary.lg_mdot_history[len(primary.lg_mdot_history) - len(t)
                                         + 1:] = np.log10(mdot_acc[:-1])
-
-            elif not primary.co:
+            else:
                 primary.state = check_state_of_star(primary, star_CO=False)
                 for timestep in range(-len(t[:-1]), 0):
 
