@@ -78,16 +78,19 @@ class IsolatedStep(detached_step):
 
         self.initialize_isolated_binary_orbit(binary)
 
-        if binary.state == 'initially_single_star' or binary.star_1.state is 'massless_remnant' or binary.star_2 is 'massless_remnant':
-        #if binary.star_1 == None or binary.star_2 == None: # already one star became None in step_merged or step_initially_single
-            pass
+        if binary.state == 'initially_single_star' or binary.state == 'merged':
+            if binary.star_1.state == 'massless_remnant' or binary.star_2 == 'massless_remnant':
+                pass
+            else:
+                raise ValueError("In merged or initially single stars, step one of the two stars should be 'massless_remnant' ")
         elif binary.state == "disrupted":
             pass
         else:
-            raise ValueError("In isolated step one of the two stars should be None or the the binary.state=='disrupted' ")
+            raise ValueError("In isolated step binary.state=='disrupted' or 'initially_single_star' or 'merged' ")
 
+        print("going to detached now")
         super().__call__(binary)
-
+        print(binary)
         self.re_erase_isolated_binary_orbit(binary)
 
 
