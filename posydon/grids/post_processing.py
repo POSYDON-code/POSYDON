@@ -159,17 +159,41 @@ MODELS = {
 
 }
 
+CC_quantities = ['state', 'SN_type', 'f_fb', 'mass', 'spin',
+                 'm_disk_accreted', 'm_disk_radiated']
 
 def assign_core_collapse_quantities_none(EXTRA_COLUMNS, star_i, MODEL_NAME=None):
     """"Assign None values to all core collapse properties."""
     if MODEL_NAME is None:
         for MODEL_NAME, MODEL in MODELS.items():
-            for quantitiy in ['state', 'SN_type', 'f_fb', 'mass', 'spin']:
+            for quantitiy in CC_quantities:
                 EXTRA_COLUMNS[f'S{star_i}_{MODEL_NAME}_{quantitiy}'].append(None)
     else:
-        for quantitiy in ['state', 'SN_type', 'f_fb', 'mass', 'spin']:
+        for quantitiy in CC_quantities:
                 EXTRA_COLUMNS[f'S{star_i}_{MODEL_NAME}_{quantitiy}'].append(None)
-                
+
+def print_CC_quantities(EXTRA_COLUMNS, star, MODEL_NAME=None):
+    format_string = "{:<50} {:<33} {:12} {:10} {:15} {:10} {:25} {:25}"
+    format_val_preSN = "{:<50} {:<33} {:12} {:10} {:7.2f} {:12.2f} {:25} {:25}"
+    format_val = "{:<50} {:<33} {:12} {:1.2f} {:13.2f} {:12.2f} {:20.2f} {:20.2f}"
+    if MODEL_NAME is None:
+        print('')
+        print(format_string.format(
+            "mechanism", "state", "SN type", "f_fb",
+            "mass [Msun]", "spin", "m_disk_accreted [Msun]",
+            "m_disk_radiated [Msun]"))
+        print('')
+        print(format_val_preSN.format(
+            'PRE SN STAR', star.state, '',
+            '', star.mass, star.spin, '', ''))
+        print('')
+    else:
+        print(format_val.format(MODEL_NAME,
+                star.state, star.SN_type, star.f_fb,
+                star.mass, star.spin, star.m_disk_accreted,
+                star.m_disk_radiated))
+        
+    
                     
 def post_process_grid(grid, index=None, star_2_CO=True, MODELS=MODELS,
                       single_star=False, verbose=False):
@@ -229,7 +253,7 @@ def post_process_grid(grid, index=None, star_2_CO=True, MODELS=MODELS,
                 EXTRA_COLUMNS[f'S{star}_{quantity}_{val}cent'] = []
         # Core collapse qunatities: [state, SN_type, f_fb, mass, spin]
         for MODEL_NAME, MODEL in MODELS.items():
-            for quantitiy in ['state', 'SN_type', 'f_fb', 'mass', 'spin']:
+            for quantitiy in CC_quantities:
                 EXTRA_COLUMNS[f'S{star}_{MODEL_NAME}_{quantitiy}'] = []
                 
     # remove star 2 columns in case of single star grid
@@ -382,15 +406,7 @@ def post_process_grid(grid, index=None, star_2_CO=True, MODELS=MODELS,
                     continue
 
                 if verbose:
-                    print('')
-                    print("{:<50} {:<33} {:12} {:10} {:15} {:10}".format(
-                        "mechanism", "state", "SN type", "f_fb",
-                        "mass [Msun]", "spin"))
-                    print('')
-                    print("{:<50} {:<33} {:10} {:10} {:7.2f} {:14.2f}".format(
-                        'PRE SN STAR', star.state, '',
-                        '', star.mass, star.spin))
-                    print('')
+                    print_CC_quantities(EXTRA_COLUMNS, star)
 
                 for MODEL_NAME, MODEL in MODELS.items():
                     mechanism = MODEL['mechanism']+MODEL['engine']
@@ -398,20 +414,13 @@ def post_process_grid(grid, index=None, star_2_CO=True, MODELS=MODELS,
                     try:
                         star_copy = copy.copy(star)
                         SN.collapse_star(star_copy)
-                        for quantitiy in ['state', 'SN_type', 'f_fb', 'mass', 'spin']:
+                        for quantitiy in CC_quantities:
                             EXTRA_COLUMNS[f'S{star_i}_{MODEL_NAME}_{quantitiy}'].append(
                             getattr(star_copy, quantitiy))
-
                         if verbose:
-                            print(
-                                "{:<50} {:<33} {:10} {:6.2f} {:11.2f} {:14.2f}"
-                                .format(f'{MODEL_NAME}_{mechanism}', 
-                                        star_copy.state,
-                                        star_copy.SN_type, star_copy.f_fb,
-                                        star_copy.mass, star_copy.spin))
+                            print_CC_quantities(EXTRA_COLUMNS, star_copy, f'{MODEL_NAME}_{mechanism}')
                     except Exception as e:
                         assign_core_collapse_quantities_none(EXTRA_COLUMNS, star_i, MODEL_NAME)
-
                         if verbose:
                             print('')
                             print(f'Error during {MODEL_NAME} {mechanism} core collapse prescrition!')
@@ -427,15 +436,7 @@ def post_process_grid(grid, index=None, star_2_CO=True, MODELS=MODELS,
         else:
             if star.state in STAR_STATES_CC:
                 if verbose:
-                    print('')
-                    print("{:<50} {:<33} {:12} {:10} {:15} {:10}".format(
-                        "mechanism", "state", "SN type", "f_fb",
-                        "mass [Msun]", "spin"))
-                    print('')
-                    print("{:<50} {:<33} {:10} {:10} {:7.2f} {:14.2f}".format(
-                        'PRE SN STAR', star.state,
-                        '', '', star.mass, star.spin))
-                    print('')
+                    print_CC_quantities(EXTRA_COLUMNS, star)
 
                 for MODEL_NAME, MODEL in MODELS.items():
                     mechanism = MODEL['mechanism']+MODEL['engine']
@@ -443,16 +444,11 @@ def post_process_grid(grid, index=None, star_2_CO=True, MODELS=MODELS,
                     try:
                         star_copy = copy.copy(star)
                         SN.collapse_star(star_copy)
-                        for quantitiy in ['state', 'SN_type', 'f_fb', 'mass', 'spin']:
+                        for quantitiy in CC_quantities:
                             EXTRA_COLUMNS[f'S1_{MODEL_NAME}_{quantitiy}'].append(
                             getattr(star_copy, quantitiy))
                         if verbose:
-                            print(
-                                "{:<50} {:<33} {:10} {:6.2f} {:11.2f} {:14.2f}"
-                                .format(f'{MODEL_NAME}_{mechanism}',
-                                        star_copy.state,
-                                        star_copy.SN_type, star_copy.f_fb,
-                                        star_copy.mass, star_copy.spin))
+                            print_CC_quantities(EXTRA_COLUMNS, star, f'{MODEL_NAME}_{mechanism}')
                     except Exception as e:
                         assign_core_collapse_quantities_none(EXTRA_COLUMNS, 1, MODEL_NAME)
 

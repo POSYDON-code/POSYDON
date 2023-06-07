@@ -560,11 +560,9 @@ class StepSN(object):
                     star.spin = np.nan
                     star.m_disk_accreted = np.nan
                     star.m_disk_radiated = np.nan
-                    star.max_he_mass_ejected = np.nan
                     for key in STARPROPERTIES:
                         if key not in ["state", "mass", "spin",
-                                       "m_disk_accreted ", "m_disk_radiated",
-                                       "max_he_mass_ejected"]:
+                                       "m_disk_accreted ", "m_disk_radiated"]:
                             setattr(star, key, None)
                     return
 
@@ -592,17 +590,14 @@ class StepSN(object):
                         )
                         star.mass = final_BH[0]
                         star.spin = final_BH[1]
-                        Mo = const.Msun
-                        star.m_disk_accreted = final_BH[11][-1]/Mo
-                        star.m_disk_radiated = sum(final_BH[7]*final_BH[13])/Mo
-                        star.max_he_mass_ejected = final_BH[17]
+                        star.m_disk_accreted = final_BH[2]
+                        star.m_disk_radiated = final_BH[3]
                         star.state = "BH"
                     else:
                         star.mass = m_grav
                         star.spin = 0.
                         star.m_disk_accreted = 0.
                         star.m_disk_radiated = 0.
-                        star.max_he_mass_ejected = np.nan
                         star.state = 'NS'
 
                 elif self.use_core_masses:
@@ -626,13 +621,11 @@ class StepSN(object):
                             star.spin = 1.0
                         star.m_disk_accreted = 0.0
                         star.m_disk_radiated = 0.0
-                        star.max_he_mass_ejected = np.nan
                         star.state = "BH"
                     else:
                         star.spin = 0.0
                         star.m_disk_accreted = 0.0
                         star.m_disk_radiated = 0.0
-                        star.max_he_mass_ejected = np.nan
                         star.state = "NS"
                 else:
                     for key in STARPROPERTIES:
@@ -671,11 +664,9 @@ class StepSN(object):
                     star.spin = np.nan
                     star.m_disk_accreted = np.nan
                     star.m_disk_radiated = np.nan
-                    star.max_he_mass_ejected = np.nan
                     for key in STARPROPERTIES:
                         if key not in ["state", "mass", "spin",
-                                       "m_disk_accreted ", "m_disk_radiated",
-                                       "max_he_mass_ejected"]:
+                                       "m_disk_accreted ", "m_disk_radiated"]:
                             setattr(star, key, None)
                     return
 
@@ -707,15 +698,12 @@ class StepSN(object):
                                   "and lost", round(final_BH[0] - m_rembar, 2),
                                   "M_sun.")
                         star.spin = final_BH[1]
-                        Mo = const.Msun
-                        star.m_disk_accreted = final_BH[11][-1]/Mo
-                        star.m_disk_radiated = sum(final_BH[7]*final_BH[13])/Mo
-                        star.max_he_mass_ejected = final_BH[17]
+                        star.m_disk_accreted = final_BH[2]
+                        star.m_disk_radiated = final_BH[3]
                     elif star.state == "NS":
                         star.mass = m_grav
                         star.m_disk_accreted = 0.0
                         star.m_disk_radiated = 0.0
-                        star.max_he_mass_ejected = np.nan
                         star.spin = 0.0
                     else:
                         for key in STARPROPERTIES:
@@ -742,13 +730,11 @@ class StepSN(object):
                             star.spin = 1.0
                         star.m_disk_accreted = 0.0
                         star.m_disk_radiated = 0.0
-                        star.max_he_mass_ejected = np.nan
                         star.state = "BH"
                     else:
                         star.spin = 0.0
                         star.m_disk_accreted = 0.0
                         star.m_disk_radiated = 0.0
-                        star.max_he_mass_ejected = np.nan
                         star.state = "NS"
 
                 else:
@@ -767,8 +753,7 @@ class StepSN(object):
         for key in STARPROPERTIES:
             if key not in [
                 "state", "mass", "spin", "log_R", "metallicity",
-                "m_disk_accreted ", "m_disk_radiated", "max_he_mass_ejected"
-            ]:
+                "m_disk_accreted ", "m_disk_radiated"]:
                 setattr(star, key, None)
 
     def PISN_prescription(self, star):

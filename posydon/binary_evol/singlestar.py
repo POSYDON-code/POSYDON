@@ -131,8 +131,10 @@ class SingleStar:
             self.spin_orbit_tilt = None
         if not hasattr(self, 'f_fb'):
             self.f_fb = None
-        if not hasattr(self, 'SN_type'):
-            self.SN_type = None
+        if not hasattr(self, 'm_disk_accreted'):
+            self.m_disk_accreted = None
+        if not hasattr(self, 'm_disk_radiated'):
+            self.m_disk_radiated = None
 
         # these quantities are updated in mesa_step.py
         if not hasattr(self, 'avg_c_in_c_core_at_He_depletion'):
