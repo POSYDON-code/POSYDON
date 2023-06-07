@@ -209,7 +209,7 @@ from posydon.utils.gridutils import (read_MESA_data_file, read_EEP_data_file,
 from posydon.visualization.plot2D import plot2D
 from posydon.visualization.plot1D import plot1D
 from posydon.grids.downsampling import TrackDownsampler
-from posydon.grids.scrubbing import scrub, keep_after_RLO, keep_till_He_depletion
+from posydon.grids.scrubbing import scrub, keep_after_RLO, keep_till_central_abundance_He_C
 
 
 HDF5_MEMBER_SIZE = 2**31 - 1            # maximum HDF5 file size when splitting
@@ -347,7 +347,7 @@ GRIDPROPERTIES = {
     "final_value_columns": None,
     # grid-specific arguments
     "start_at_RLO": False,
-    "stop_at_He_depletion": False,
+    "stop_before_carbon_depletion": False,
     "binary": True,
     "eep": None,    # path to EEP files
     "initial_RLO_fix": False,
@@ -539,7 +539,7 @@ class PSyGrid:
         binary_grid = self.config["binary"]
         initial_RLO_fix = self.config["initial_RLO_fix"]
         start_at_RLO = self.config["start_at_RLO"]
-        stop_at_He_depletion = self.config["stop_at_He_depletion"]
+        stop_before_carbon_depletion = self.config["stop_before_carbon_depletion"]
         eep = self.config["eep"]
 
         if eep is not None:
@@ -757,8 +757,8 @@ class PSyGrid:
                     continue
 
                 # check whether stop at He depletion is requested
-                if stop_at_He_depletion and initial_values[i]["star_1_mass"]>=100.0:
-                    kept = keep_till_He_depletion(binary_history, history1,
+                if stop_before_carbon_depletion and initial_values[i]["star_1_mass"]>=100.0:
+                    kept = keep_till_central_abundance_He_C(binary_history, history1,
                                   history2, THRESHOLD_CENTRAL_ABUNDANCE, 0.1)
                     binary_history, history1, history2, newTF1 = kept
                     
@@ -1981,7 +1981,7 @@ PROPERTIES_TO_BE_NONE = {
 }
 
 PROPERTIES_TO_BE_CONSISTENT = ["binary", "eep", "start_at_RLO",
-                               "stop_at_He_depletion",
+                               "stop_before_carbon_depletion",
                                "initial_RLO_fix", "He_core_fix",
                                "accept_missing_profile", "history_DS_error",
                                "history_DS_exclude", "profile_DS_error",

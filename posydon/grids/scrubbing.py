@@ -155,8 +155,9 @@ def keep_after_RLO(bh, h1, h2):
     return new_bh, new_h1, new_h2
 
 
-def keep_till_He_depletion(bh, h1, h2, Ystop=1.0e-5, XCstop=1.0):
-    """Scrub histories to stop at He depletion.
+def keep_till_central_abundance_He_C(bh, h1, h2, Ystop=1.0e-5, XCstop=1.0):
+    """Scrub histories to stop when central helium and carbon abundance are
+    below the stopping criteria.
 
     Parameters
     ----------
@@ -167,16 +168,16 @@ def keep_till_He_depletion(bh, h1, h2, Ystop=1.0e-5, XCstop=1.0):
     h2 : array
         The `history2` array.
     Ystop : float
-        The He abundance threshold for depletion
+        The He abundance threshold for stopping
     XCstop : float
-        The C abundance threshold for depletion
+        The C abundance threshold for stopping
 
     Returns
     -------
     tuple
         The binary, history1 and history2 arrays after removing the final
-        steps after He depletion. If He depletion is not reached the
-        histories will be returned unchanged.
+        steps after He depletion. If the stopping criteria are not reached
+        the histories will be returned unchanged.
 
     """
     if (bh is None) or (h1 is None) or (h2 is None):
@@ -217,7 +218,7 @@ def keep_till_He_depletion(bh, h1, h2, Ystop=1.0e-5, XCstop=1.0):
             warnings.warn("No He depletion found in h1, while expected.")
             return bh, h1, h2, ''
         last_index = where_conditions_met1[0]
-        newTF1 = 'Primary has depleted central helium'
+        newTF1 = 'Primary got stopped before central carbon depletion'
     if depleted2:
 #        where_conditions_met2 = np.where((h2["center_he4"]<Ystop) and (h2["center_c12"]<XCstop))[0]
         where_conditions_met2 = []
@@ -241,10 +242,10 @@ def keep_till_He_depletion(bh, h1, h2, Ystop=1.0e-5, XCstop=1.0):
             if age_He_depletion1>age_He_depletion2:
                 #take star which reached He depletion first
                 last_index = last_index2
-                newTF1 = 'Secondary has depleted central helium'
+                newTF1 = 'Secondary got stopped before central carbon depletion'
         else:
             last_index = where_conditions_met2[0]
-            newTF1 = 'Secondary has depleted central helium'
+            newTF1 = 'Secondary got stopped before central carbon depletion'
     
     new_bh = bh[:last_index]
     new_h1 = h1[:last_index]
