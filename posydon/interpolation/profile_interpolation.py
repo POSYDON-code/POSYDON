@@ -164,13 +164,13 @@ class ProfileInterpolator:
         linear_initial = np.transpose([
             self.scalars["m1"],self.scalars["m2"],self.scalars["p"]])
         initial = np.log10(np.array(linear_initial))
-        finalmass = self.scalars["final_m1"].astype(np.float64)
+        final_m1 = self.scalars["final_m1"].astype(np.float64)
 
         valid_linear_initial = np.transpose([self.valid_scalars["m1"],
                                              self.valid_scalars["m2"],
                                              self.valid_scalars["p"]]) 
         valid_initial = np.log10(np.array(valid_linear_initial))
-        valid_finalmass = self.valid_scalars["final_m1"].astype(np.float64)
+        valid_final_m1 = self.valid_scalars["final_m1"].astype(np.float64)
         
         # instantiate and train H mass fraction profile model
         h_ind = self.names.index("x_mass_fraction_H")
@@ -272,7 +272,7 @@ class Density:
         rho_max = np.max(profiles,axis=1)
         profiles_norm = (profiles-self.rho_min[:,np.newaxis])\
                             /(rho_max-self.rho_min)[:,np.newaxis]  # minmax normalized profiles
-        self.pca = PCA(n_components=self.n_comp).fit(profiles_norm)
+        self.pca = PCA(n_components=self.n_comp).fit(profiles_norm) # perform principal component analysis
         weights_unscaled = self.pca.transform(profiles_norm)
         self.scaling = np.std(weights_unscaled,axis=0)
         self.weights = weights_unscaled/self.scaling  # scaled PCA weights
@@ -394,18 +394,19 @@ class X_H:
         self.interp = self.model_IF.interpolators[0]
         
         # star 1 states
-        self.class_names = ['None',
-                             'H-rich_Shell_H_burning',
-                             'H-rich_Central_He_depleted',
+        self.class_names = ['None','WD','NS','BH',
+                             'stripped_He_non_burning',
+                             'stripped_He_Core_He_burning',
+                             'stripped_He_Core_C_burning',
+                             'stripped_He_Central_He_depleted',
+                             'stripped_He_Central_C_depletion',
                              'H-rich_non_burning',
+                             'H-rich_Central_He_depleted',
+                             'H-rich_Central_C_depletion',
+                             'H-rich_Shell_H_burning',
                              'H-rich_Core_H_burning',
                              'H-rich_Core_He_burning',
-                             'stripped_He_Central_He_depleted',
-                             'stripped_He_non_burning',
-                             'NS',
-                             'stripped_He_Central_C_depletion',
-                             'H-rich_Central_C_depletion',
-                             'BH']
+                             'H-rich_Core_C_burning']
         
         # sort training data into classes by s1 state
         self.sort_ind = {class_name:[] for class_name in self.class_names}
@@ -428,12 +429,13 @@ class X_H:
             b_models (array-like) : dictionary containing boundary models.
         """
         b_models = {}
-        for state in ["H-rich_Shell_H_burning",
-                  "H-rich_Core_H_burning",
-                  "H-rich_Core_He_burning", 
-                  "H-rich_Central_He_depleted",
-                  "H-rich_Central_C_depletion",
-                  "NS","BH"]:
+        for state in ['WD','NS','BH',
+                      'H-rich_Central_He_depleted',
+                      'H-rich_Central_C_depletion',
+                      'H-rich_Shell_H_burning',
+                      'H-rich_Core_H_burning',
+                      'H-rich_Core_He_burning',
+                      'H-rich_Core_C_burning']:
             
             # identify input/output training data for class
             indices = self.sort_ind[state]
@@ -449,7 +451,7 @@ class X_H:
             if "burning" in state:  # these classes' profile shapes have 2 boundary points
                 outs = 2
                 bounds = []
-                nonflat = []
+                nonflat = []  # TODO: explain this
                 valid_bounds = []
                 valid_nonflat = []
                 # calculate first and points in each profile with large increases
@@ -486,8 +488,11 @@ class X_H:
 
             model.compile(optimizers.Adam(clipnorm=1),loss=losses.MeanSquaredError())
             callback = tf.keras.callbacks.EarlyStopping(monitor='loss', patience=50)
-                        
-            if state == 'H-rich_Core_H_burning':
+            
+            if len(indices)==0:
+                warnings.warn(f"no training data available for s1 state {state}. model will return random results")
+                
+            elif "burning" in state:
                 history = model.fit(inputs[nonflat],np.array(bounds)[nonflat],
                                     epochs=500,verbose=0,callbacks=[callback],
                                     validation_data=(valid_inputs[valid_nonflat],
@@ -499,7 +504,7 @@ class X_H:
                                                      np.array(valid_bounds)))
             
             b_models[state] = model
-            print("finished training",state)
+            print(f"finished {state}")
         return b_models
             
     def predict_single(self,initial,center,surface,s1):
@@ -519,7 +524,7 @@ class X_H:
         # construct step-shaped profile
         if s1 in ["H-rich_Central_He_depleted",
                   "H-rich_Central_C_depletion",
-                  "NS","BH"]:
+                  "WD","NS","BH"]:
             b = self.bounds_models[s1](tf.convert_to_tensor([initial])).numpy()[0]            
             new = np.ones(200)*center
             new[int(b*200):] = surface
@@ -528,11 +533,14 @@ class X_H:
         # construct shell-shaped profile
         if s1 in ["H-rich_Shell_H_burning",
                   "H-rich_Core_H_burning",
-                  "H-rich_Core_He_burning"]:
+                  "H-rich_Core_He_burning",
+                  "H-rich_Core_C_burning"]:
             b = self.bounds_models[s1](tf.convert_to_tensor([initial])).numpy()[0]                        
             new = np.ones(200)*center
             new[int(b[1]*200):] = surface
+            # "f" defines the shape of the H abundance profile in the shell burning region
             f = interp1d(b,[center,surface],fill_value="extrapolate")
+            # use f to construct the profile points in the shell burning region
             new[int(b[0]*200):int(b[1]*200)] = f(np.linspace(0,1,200)[int(b[0]*200):int(b[1]*200)])
             return new
         
