@@ -396,7 +396,7 @@ def create_csv(GRID_TYPES, METALLICITIES, GRID_SLICES, COMPRESSIONS,
                       'files/directories are missing! If this warning message '
                       'is unexpected to you, please check the file paths!')
                 for row in drop_rows:
-                    print(df.loc[row,'path_to_grid'])
+                    print(df.at[row,'path_to_grid'])
                 print('')
             df = df.drop(index=drop_rows)
     else:
@@ -422,7 +422,7 @@ def create_csv(GRID_TYPES, METALLICITIES, GRID_SLICES, COMPRESSIONS,
                         first_time = False
                     print(f'In {column} the following grids are skipped!')
                     for row in drop_rows:
-                        print(df.loc[row,column])
+                        print(df.at[row,column])
                         df.at[row,column] = np.NaN
                     print('')
                     newcol = df[column].dropna().to_list()
@@ -442,7 +442,7 @@ def create_csv(GRID_TYPES, METALLICITIES, GRID_SLICES, COMPRESSIONS,
                     first_time = False
                 print('The following grids will not be combined as all grid '
                       'slices are missing!')
-                for column in drop_columns
+                for column in drop_columns:
                     print(column)
                 print('')
 #            df = df.drop(columns=drop_columns)
