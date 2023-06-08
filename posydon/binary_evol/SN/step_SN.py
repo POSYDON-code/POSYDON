@@ -1238,7 +1238,7 @@ class StepSN(object):
                 binary.separation = new_separation
                 if binary.state != "disrupted":
                     binary.state = "detached"
-                binary.event = 'WD1_formed'
+                binary.event = 'CC1_end'
                 binary.time = binary.time_history[-1]
                 binary.eccentricity = binary.eccentricity_history[-1]
                 # TODO: in feature we will make the orbital period a callable
@@ -1335,7 +1335,7 @@ class StepSN(object):
                 binary.separation = new_separation
                 if binary.state != "disrupted":
                     binary.state = "detached"
-                binary.event = 'WD2_formed'
+                binary.event = 'CC2_end'
                 binary.time = binary.time_history[-1]
                 binary.eccentricity = binary.eccentricity_history[-1]
                 # TODO: is the following to be noted?
@@ -1629,10 +1629,10 @@ class StepSN(object):
                 # update the tilt
                 if binary.event == "CC1_start":
                     binary.star_1.spin_orbit_tilt = tilt
-                    end_event = binary.star_1.state + '1_formed'
+                    end_event = 'CC1_end'
                 elif binary.event == "CC2_start":
                     binary.star_2.spin_orbit_tilt = tilt
-                    end_event = binary.star_2.state + '2_formed'
+                    end_event = 'CC2_end'
                 else:
                     raise ValueError("This should never happen!")
 
@@ -1642,9 +1642,8 @@ class StepSN(object):
                     if key != 'nearest_neighbour_distance':
                         setattr(binary, key, None)
 
-                if binary.state != "disrupted":
-                    binary.state = "detached"
-                binary.event = None
+                binary.state = "detached"
+                binary.event = end_event
                 binary.separation = Apost / const.Rsun
                 binary.eccentricity = epost
                 binary.V_sys = np.array([VSx / const.km2cm, VSy / const.km2cm, VSz
@@ -1659,10 +1658,10 @@ class StepSN(object):
                 # update the tilt
                 if binary.event == "CC1_start":
                     binary.star_1.spin_orbit_tilt = np.nan
-                    end_event = 'CC1_disrupt'
+                    end_event = 'CC1_end'
                 elif binary.event == "CC2_start":
                     binary.star_2.spin_orbit_tilt = np.nan
-                    end_event = 'CC2_disrupt'
+                    end_event = 'CC2_end'
                 else:
                     raise ValueError("This should never happen!")
 
@@ -1670,7 +1669,7 @@ class StepSN(object):
                     if key != 'nearest_neighbour_distance':
                         setattr(binary, key, None)
                 binary.state = "disrupted"
-                binary.event = None
+                binary.event = end_event
                 binary.separation = np.nan
                 binary.eccentricity = np.nan
                 binary.V_sys = np.array([0, 0, 0])

@@ -186,18 +186,18 @@ class StepCEE(object):
     def __call__(self, binary):
         """Perform the CEE step for a BinaryStar object."""
         # Determine which star is the donor and which is the companion
-        if binary.event in ["CE1_start", "DCE1_start"]:
+        if binary.event in ["CE1_start", "DCE_start"]:
             donor_star = binary.star_1
             comp_star = binary.star_2
-        elif binary.event in ["CE2_start", "DCE2_start"]:
+        elif binary.event in ["CE2_start", "DCE_start"]:
             donor_star = binary.star_2
             comp_star = binary.star_1
         else:
             raise ValueError("CEE does not apply if `event` is not "
-                             "'CE1_start', 'DCE1_start' or 'CE2_start', 'DCE2_start'")
+                             "'CE1_start', 'CE2_start', or 'DCE_start'")
 
         # Check for double CE
-        if binary.event in ["DCE1_start", "DCE2_start"]:
+        if binary.event is "DCE_start":
             double_CE = True
         else:
             double_CE = False
@@ -718,14 +718,26 @@ class StepCEE(object):
                 elif donor == binary.star_2:
                     binary.event = 'CC2_start'
             else:
-                binary.event = 'CE_end'
+                if binary.event == 'CE1_start':
+                    binary.event = 'CE1_end'
+                elif binary.event == 'CE2_start':
+                    binary.event = 'CE2_end'
+                elif double_CE:
+                    binary.event = 'DCE_end'
+                else:
+                    raise ValueError(
+                    "Impossible binary.event condition. binary.event = {}"
+                    "dont know how to proceed",
+                    format(binary.event))
+
+
+
 
             # Adjust binary properties
             binary.separation = separation_f
             binary.orbital_period = orbital_period_f
             binary.eccentricity = 0.0
             binary.state = 'detached'
-            # binary.event = None
 
             for key in BINARYPROPERTIES:
                 # the binary attributes that are changed in the CE step

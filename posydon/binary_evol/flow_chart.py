@@ -80,25 +80,19 @@ BINARY_STATES_ALL = [
 ]
 
 BINARY_EVENTS_ALL = [
-    None,
     'CC1_start',
     'CC2_start',
-    'CC1_disrupt',
-    'CC2_disrupt',
-    'WD1_formed',
-    'WD2_formed',
-    'NS1_formed',
-    'NS2_formed',
-    'BH1_formed',
-    'BH2_formed',
+    'CC1_end',
+    'CC2_end',
     'ZAMS',
-    'oRLO1',
-    'oRLO2',
+    'RLO1_start',
+    'RLO2_start',
     'CE1_start',
     'CE2_start',
-    'DCE1_start',
-    'DCE2_start',
-    'CE_end',
+    'DCE_start',
+    'CE1_end',
+    'CE2_end',
+    'DCE_end',
     'CE_merger',
     'DCE_merger',
     'CO_contact',
@@ -117,12 +111,8 @@ POSYDON_FLOW_CHART = {}
 STAR_STATES_ZAMS = ['H-rich_Core_H_burning']
 BINARY_STATES_ZAMS = ['detached']
 
-BINARY_EVENTS_CC = ['WD1_formed',
-                    'WD2_formed',
-                    'NS1_formed',
-                    'NS2_formed',
-                    'BH1_formed',
-                    'BH2_formed']
+BINARY_EVENTS_CC = ['CC1_end',
+                    'CC2_end']
 
 
 for b in BINARY_STATES_ZAMS:
@@ -157,8 +147,8 @@ for s1 in STAR_STATES_H_RICH:
 # H-rich star roche-lobe overflow onto a compact object
 for s1 in STAR_STATES_H_RICH_EVOLVABLE:
     for s2 in STAR_STATES_CO:
-        POSYDON_FLOW_CHART[(s1, s2, 'RLO1', 'oRLO1')] = 'step_CO_HMS_RLO'
-        POSYDON_FLOW_CHART[(s2, s1, 'RLO2', 'oRLO2')] = 'step_CO_HMS_RLO'
+        POSYDON_FLOW_CHART[(s1, s2, 'RLO1', 'RLO1_start')] = 'step_CO_HMS_RLO'
+        POSYDON_FLOW_CHART[(s2, s1, 'RLO2', 'RLO2_start')] = 'step_CO_HMS_RLO'
 
 # H-rich star on a detached binary with a compact object
 # that fall outside the grid and has been returned by step_CO_HMS_RLO
@@ -187,13 +177,12 @@ for s1 in STAR_STATES_HE_RICH:
 for s1 in STAR_STATES_NOT_CO:
     for s2 in STAR_STATES_ALL:
         POSYDON_FLOW_CHART[(s1, s2, 'RLO1', 'CE1_start')] = 'step_CE'
-        POSYDON_FLOW_CHART[(s1, s2, 'RLO1', 'DCE1_start')] = 'step_CE'
+        POSYDON_FLOW_CHART[(s1, s2, 'RLO1', 'DCE_start')] = 'step_CE'
         POSYDON_FLOW_CHART[(s2, s1, 'RLO2', 'CE2_start')] = 'step_CE'
-        POSYDON_FLOW_CHART[(s2, s1, 'RLO2', 'DCE2_start')] = 'step_CE'
+        POSYDON_FLOW_CHART[(s2, s1, 'RLO2', 'DCE_start')] = 'step_CE'
         POSYDON_FLOW_CHART[(s2, s1, 'contact', 'CE1_start')] = 'step_CE'
         POSYDON_FLOW_CHART[(s2, s1, 'contact', 'CE2_start')] = 'step_CE'
-        POSYDON_FLOW_CHART[(s2, s1, 'contact', 'DCE1_start')] = 'step_CE'
-        POSYDON_FLOW_CHART[(s2, s1, 'contact', 'DCE2_start')] = 'step_CE'
+        POSYDON_FLOW_CHART[(s2, s1, 'contact', 'DCE_start')] = 'step_CE'
 
 
 # core collapse

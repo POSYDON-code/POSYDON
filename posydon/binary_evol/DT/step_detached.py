@@ -1844,17 +1844,17 @@ class detached_step:
                 if s.t_events[0]:
                     if secondary == binary.star_1:
                         binary.state = "RLO1"
-                        binary.event = "oRLO1"
+                        binary.event = "RLO1_start"
                     else:
                         binary.state = "RLO2"
-                        binary.event = "oRLO2"
+                        binary.event = "RLO2_start"
                 elif s.t_events[1]:
                     if secondary == binary.star_1:
                         binary.state = "RLO2"
-                        binary.event = "oRLO2"
+                        binary.event = "RLO2_start"
                     else:
                         binary.state = "RLO1"
-                        binary.event = "oRLO1"
+                        binary.event = "RLO1_start"
 
             elif s.t_events[2]:
                 # reached t_max of track. End of life (possible collapse) of

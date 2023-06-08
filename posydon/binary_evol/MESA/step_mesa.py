@@ -1333,7 +1333,7 @@ class CO_HMS_RLO_step(MesaGridStep):
 
         # check the star states
         if (state_2 in ["WD", "NS", "BH"]
-                and (state_1 in FOR_RLO_STATES) and event == "oRLO1"):
+                and (state_1 in FOR_RLO_STATES) and event == "RLO1_start"):
             self.flip_stars_before_step = False
             m1 = self.binary.star_1.mass
             m2 = self.binary.star_2.mass
@@ -1343,7 +1343,7 @@ class CO_HMS_RLO_step(MesaGridStep):
                 return
             # super().__call__(binary)
         elif (state_1 in ["WD", "NS", "BH"] and (state_2 in FOR_RLO_STATES)
-                and event == "oRLO2"):
+                and event == "RLO2_start"):
             self.flip_stars_before_step = True
             m1 = self.binary.star_2.mass
             m2 = self.binary.star_1.mass
@@ -1355,7 +1355,7 @@ class CO_HMS_RLO_step(MesaGridStep):
         else:
             raise ValueError(
                 'The star_1.state = %s, star_2.state = %s, binary.state = %s, '
-                'binary.event = %s and not CO - HMS - oRLO1/oRLO2!'
+                'binary.event = %s and not CO - HMS - RLO1_start/RLO2_start!'
                 % (state_1, state_2, state, event))
         # redirect if outside grids
         if 0.466 <= m1 <= 128.735 and 0.092 <= m2 <= 39.25 and p <= 3780.83:
