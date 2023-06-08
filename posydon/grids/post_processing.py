@@ -26,7 +26,7 @@ __credits__ = [
 
 
 MODELS = {
-    "MODEL1": {
+    "MODEL01": {
         "mechanism": "direct",
         "engine": "",
         "PISN": "Marchant+19",
@@ -39,7 +39,7 @@ MODELS = {
         "use_core_masses": False,
         "approx_at_he_depletion": False,
     },
-    "MODEL2": {
+    "MODEL02": {
         "mechanism": "Fryer+12-rapid",
         "engine": "",
         "PISN": "Marchant+19",
@@ -52,7 +52,7 @@ MODELS = {
         "use_core_masses": False,
         "approx_at_he_depletion": False,
     },
-    "MODEL3": {
+    "MODEL03": {
         "mechanism": "Fryer+12-delayed",
         "engine": "",
         "PISN": "Marchant+19",
@@ -65,7 +65,7 @@ MODELS = {
         "use_core_masses": False,
         "approx_at_he_depletion": False,
     },
-    "MODEL4": {
+    "MODEL04": {
         "mechanism": "Sukhbold+16-engine",
         "engine": "N20",
         "PISN": "Marchant+19",
@@ -78,7 +78,7 @@ MODELS = {
         "use_core_masses": False,
         "approx_at_he_depletion": False,
     },
-    "MODEL5": {
+    "MODEL05": {
         "mechanism": "Patton&Sukhbold20-engine",
         "engine": "N20",
         "PISN": "Marchant+19",
@@ -91,7 +91,7 @@ MODELS = {
         "use_core_masses": False,
         "approx_at_he_depletion": False,
     },
-    "MODEL6": {
+    "MODEL06": {
         "mechanism": "direct",
         "engine": "",
         "PISN": "Marchant+19",
@@ -104,7 +104,7 @@ MODELS = {
         "use_core_masses": False,
         "approx_at_he_depletion": False,
     },
-    "MODEL7": {
+    "MODEL07": {
         "mechanism": "Fryer+12-rapid",
         "engine": "",
         "PISN": "Marchant+19",
@@ -117,7 +117,7 @@ MODELS = {
         "use_core_masses": False,
         "approx_at_he_depletion": False,
     },
-    "MODEL8": {
+    "MODEL08": {
         "mechanism": "Fryer+12-delayed",
         "engine": "",
         "PISN": "Marchant+19",
@@ -130,7 +130,7 @@ MODELS = {
         "use_core_masses": False,
         "approx_at_he_depletion": False,
     },
-    "MODEL9": {
+    "MODEL09": {
         "mechanism": "Sukhbold+16-engine",
         "engine": "N20",
         "PISN": "Marchant+19",
