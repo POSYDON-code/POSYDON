@@ -314,18 +314,20 @@ class PrintStepInfoHooks(EvolveHooks):
 
 class PulsarHooks(EvolveHooks):
 
-    def get_pulsar_history(self, binary, star):
+    def get_pulsar_history(self, binary, star_NS, star_companion):
         """
         Get the pulsar evolution history for one star in the binary.
 
         Parameters
         ----------
         binary: BinaryStar object  
-        star: SingleStar object for which pulsar evolution is calculated
+        star_NS: SingleStar object for which pulsar evolution is calculated
+        star_companion: SingleStar object for the pulsar binary companion
         """
-        state_history = np.array(star.state_history)
+        state_history = np.array(star_NS.state_history)
         time = binary.time_history
         step_names = binary.step_names
+        states = binary.state_history
             
         pulsar_spin = []
         pulsar_Bfield = []
@@ -342,37 +344,40 @@ class PulsarHooks(EvolveHooks):
             pulsar_Bfield.extend(np.full(len(state_history[:NS_start]), np.nan))
             pulsar_alive.extend(np.full(len(state_history[:NS_start]), False))
 
+            donor_surface_h1 = np.array(star_companion.surface_h1_history, dtype=float)
+            NS_mdot = np.array(star_NS.lg_mdot_history, dtype=float)
+
+            ## initialize the pulsar
+            pulsar = Pulsar(star_NS.mass_history[NS_start], NS_mdot[NS_start])
+            pulsar_spin.append(pulsar.spin)
+            pulsar_Bfield.append(pulsar.Bfield)
+            pulsar_alive.append(pulsar.is_alive())
+
             ## loop through states where star is a NS
-            for i in NS_indices:
+            for i in NS_indices[1:]:
 
                 step_name = step_names[i]
+                state = states[i]
                 delta_t = time[i] - time[i-1]
-                delta_M = star.mass_history[i] - star.mass_history[i-1]
+                delta_M = star_NS.mass_history[i] - star_NS.mass_history[i-1]
+               
+                pulsar.Mdot_edd = pulsar.calc_NS_edd_lim(donor_surface_h1[i]) 
+                pulsar.Mdot = 10**NS_mdot[i]*const.Msun/const.secyer
 
-                surface_h1 = star.surface_h1_history[i]
-                if surface_h1 is None: surface_h1 = 0.7155
-
-                ## initialize the pulsar at NS formation
-                if i == NS_indices[0]: 
-                    pulsar = Pulsar(star.mass_history[i])
-     
-                elif step_name in ['step_detached', 'step_SN', 'step_dco']:
+                if step_name in ['step_detached', 'step_SN', 'step_dco']:
                     pulsar.detached_evolve(delta_t)
     
-                elif step_name == "step_CO_HMS_RLO":   ## change logic for if delta_M > 0 for all steps?
-                        Mdot_edd = pulsar.calc_NS_edd_lim(surface_h1)
-                        pulsar.RLO_evolve(delta_M, Mdot_edd)
+                elif step_name == "step_CO_HMS_RLO":     
+                    pulsar.RLO_evolve_COMPAS(delta_M)
 
                 elif step_name == 'step_CO_HeMS':
                     if delta_M > 0:
-                        Mdot_edd = pulsar.calc_NS_edd_lim(surface_h1)
-                        pulsar.RLO_evolve(delta_M, Mdot_edd)
+                        pulsar.RLO_evolve_COMPAS(delta_M)
                     else:
                         pulsar.detached_evolve(delta_t) 
-
-                elif step_name == "step_CE":
-                    Mdot_edd = pulsar.calc_NS_edd_lim(surface_h1)
-                    pulsar.CE_evolve(Mdot_edd)
+              
+                elif step_name == "step_CE" and state != "merged":
+                    pulsar.CE_evolve()
 
                 pulsar_spin.append(pulsar.spin)
                 pulsar_Bfield.append(pulsar.Bfield)
@@ -384,6 +389,8 @@ class PulsarHooks(EvolveHooks):
             pulsar_Bfield.extend(np.full(len(state_history), np.nan))
             pulsar_alive.extend(np.full(len(state_history), False))
 
+        ## raise an error if column mismatch here
+
         return np.array(pulsar_spin, dtype=float), np.array(pulsar_Bfield, dtype=float), np.array(pulsar_alive, dtype=bool)
 
     def post_evolve(self, binary):
@@ -392,8 +399,8 @@ class PulsarHooks(EvolveHooks):
         MUST be used with the step_names hook!
         extra_columns=['pulsar_spin', 'pulsar_Bfield', 'pulsar_alive'] for S1, S2 kwargs 
         """   
-        binary.star_1.pulsar_spin, binary.star_1.pulsar_Bfield, binary.star_1.pulsar_alive = self.get_pulsar_history(binary, binary.star_1)
-        binary.star_2.pulsar_spin, binary.star_2.pulsar_Bfield, binary.star_2.pulsar_alive = self.get_pulsar_history(binary, binary.star_2)
+        binary.star_1.pulsar_spin, binary.star_1.pulsar_Bfield, binary.star_1.pulsar_alive = self.get_pulsar_history(binary, binary.star_1,  binary.star_2)
+        binary.star_2.pulsar_spin, binary.star_2.pulsar_Bfield, binary.star_2.pulsar_alive = self.get_pulsar_history(binary, binary.star_2,  binary.star_1)
         return binary
 
             

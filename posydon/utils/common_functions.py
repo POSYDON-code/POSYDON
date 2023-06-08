@@ -2563,6 +2563,7 @@ def calculate_binding_energy(donor_mass, donor_radius, donor_dm,
         print("Ebind = Grav_energy + factor_internal_energy*U_i  :  ", Ebind_i)
     return Ebind_i
 
+
 class PchipInterpolator2:
     """Interpolation class."""
 

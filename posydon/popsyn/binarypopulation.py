@@ -283,24 +283,24 @@ class BinaryPopulation:
             if self.comm is None:
                 self.combine_saved_files(os.path.join(temp_directory,
                                                       "evolution.combined"),
-                                         filenames, mode = "w")
+                                         filenames, mode = "a")
             else:
                 self.combine_saved_files(
                     os.path.join(temp_directory,
                                  f"evolution.combined.{self.rank}"),
-                    filenames, mode = "w")
+                    filenames, mode = "a")
 
         else:
             if self.comm is None:
                 self.manager.save(os.path.join(temp_directory,
                                                "evolution.combined"),
-                                  mode='w',
+                                  mode='a',
                                   **kwargs)
             else:
                 self.manager.save(
                     os.path.join(temp_directory,
                                  f"evolution.combined.{self.rank}"),
-                    mode='w', **kwargs)
+                    mode='a', **kwargs)
 
     def save(self, save_path, mode='a', **kwargs):
         """Save BinaryPopulation to hdf file."""
@@ -347,12 +347,12 @@ class BinaryPopulation:
 
     def combine_saved_files(self, absolute_filepath, file_names, mode = "a"):
         """Combine various temporary files in a given folder."""
-        dir_name = os.path.dirname(absolute_filepath)
+        #dir_name = os.path.dirname(absolute_filepath)
 
         history_cols = pd.read_hdf(file_names[0], key='history').columns
         oneline_cols = pd.read_hdf(file_names[0], key='oneline').columns
 
-        history_tmp = pd.read_hdf(file_names[0], key='history')
+        #history_tmp = pd.read_hdf(file_names[0], key='history')
 
         history_min_itemsize = {key: val for key, val in
                                 HISTORY_MIN_ITEMSIZE.items()
@@ -366,12 +366,24 @@ class BinaryPopulation:
                 # strings itemsize set by first append max value,
                 # which may not be largest string
                 try:
-                    store.append('history', pd.read_hdf(f, key='history'),
-                                 min_itemsize=history_min_itemsize)
-                    store.append('oneline', pd.read_hdf(f, key='oneline'),
-                                 min_itemsize=oneline_min_itemsize)
+                    df_oneline = pd.read_hdf(f, key='oneline')
+                    df_history = pd.read_hdf(f, key='history')
+
+                    #df_oneline = df_oneline.astype({'step_names_f': 'object'})
+
+                    store.append('history', df_history,
+                                 min_itemsize=history_min_itemsize, data_columns=True)
+                    store.append('oneline', df_oneline,
+                                 min_itemsize=oneline_min_itemsize, data_columns=True)
                     os.remove(f)
                 except Exception:
+                    #store_df = store.get('oneline')
+                    #df = pd.read_hdf(f, key='oneline')
+                    #for i, type in enumerate(store_df.dtypes):
+                    #    if df.dtypes.iloc[i] != type:
+                    #        print (df.dtypes.iloc[i], type)
+                    #        print (df.columns[i])
+                    #        print (store_df[store_df.columns[i]].unique())
                     print(traceback.format_exc(), flush=True)
 
     def close(self):
@@ -630,8 +642,9 @@ class PopulationManager:
             return data
 
         with pd.HDFStore(fname, mode=mode) as store:
-
+            
             history_df = self.to_df(**kwargs)
+           
 
             # Set dtypes for saving
             history_df = history_df.infer_objects()

@@ -89,7 +89,7 @@ STARPROPERTIES = [
     'lambda_CE_10cent',
     'lambda_CE_30cent',
     'lambda_CE_pure_He_star_10cent',
-    'profile'  # the profile of the star, including extended information of
+    'profile'   # the profile of the star, including extended information of
                 # its internal structure, for a specific timestep, usually for
                 # the end of the previous step including MESA psygrid.
 ]
@@ -123,6 +123,7 @@ class SingleStar:
             setattr(self, item, val)
 
         # store extra values in the star object without a history
+        
         # these quantities are updated in step_SN.py
         if not hasattr(self, 'natal_kick_array'):
             self.natal_kick_array = [None] * 4
