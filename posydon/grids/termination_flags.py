@@ -22,6 +22,7 @@ __authors__ = [
 
 
 import os
+import gzip
 import warnings
 import numpy as np
 
@@ -55,8 +56,12 @@ def get_flag_from_MESA_output(MESA_log_path):
 
     """
     if MESA_log_path is not None and os.path.isfile(MESA_log_path):
-        with open(MESA_log_path, "r") as log_file:
-            log_lines = log_file.readlines()
+        if MESA_log_path.endswith(".gz"):
+            with gzip.open(MESA_log_path, "rt") as log_file:
+                log_lines = log_file.readlines()
+        else:
+            with open(MESA_log_path, "r") as log_file:
+                log_lines = log_file.readlines()
 
         for line in reversed(log_lines):
             has_term_code = line.startswith("termination code: ")
@@ -258,25 +263,25 @@ def get_detected_initial_RLO(grid):
             mass1 = grid.initial_values[i]["star_1_mass"]
             mass2 = grid.initial_values[i]["star_2_mass"]
             period = grid.initial_values[i]["period_days"]
-            e = False
+            exists_already = False
             #check for already existing entries of same mass combination
-            for d in detected:
+            for j, d in enumerate(detected):
                 if (abs(d["star_1_mass"]-mass1)<1.0e-5 and
                     abs(d["star_2_mass"]-mass2)<1.0e-5):
-                    e = True
+                    exists_already = True
                     #update values if new one has a larger period
                     if d["period_days"]<period:
-                        d=({"star_1_mass": mass1,
-                            "star_2_mass": mass2,
-                            "period_days": period,
-                            "termination_flag_3":
-                             grid.final_values[i]["termination_flag_3"],
-                            "termination_flag_4":
-                             grid.final_values[i]["termination_flag_4"],
-                            })
+                        detected[j]=({"star_1_mass": mass1,
+                                      "star_2_mass": mass2,
+                                      "period_days": period,
+                                      "termination_flag_3":
+                            grid.final_values[i]["termination_flag_3"],
+                                      "termination_flag_4":
+                            grid.final_values[i]["termination_flag_4"],
+                                     })
             #add masses, period, and termination flags 3 and 4 of detected
             # system to the list
-            if not e:
+            if not exists_already:
                 detected.append({"star_1_mass": mass1,
                                  "star_2_mass": mass2,
                                  "period_days": period,
