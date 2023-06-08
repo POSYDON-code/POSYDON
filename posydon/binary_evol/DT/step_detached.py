@@ -1150,16 +1150,16 @@ class detached_step:
             elif (binary.star_1.state in STAR_STATES_CO
                     and binary.star_2.state
                     in 'massless_remnant'):
-                binary.state += " TZO"
+                binary.state += " Thorne–Żytkow object"
                 if self.verbose or self.verbose == 1:
-                    print("Formation of TZO, nothing to do further")
+                    print("Formation of Thorne–Żytkow object, nothing to do further")
                 return
             elif (binary.star_2.state in STAR_STATES_CO
                     and binary.star_1.state
                     in 'massless_remnant'):
-                binary.state += " TZO"
+                binary.state += " Thorne–Żytkow object"
                 if self.verbose or self.verbose == 1:
-                    print("Formation of TZO, nothing to do further")
+                    print("Formation of Thorne–Żytkow object, nothing to do further")
                 return
             else:
                 raise Exception("States not recognized!", )

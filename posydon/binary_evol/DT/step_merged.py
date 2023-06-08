@@ -60,7 +60,8 @@ def convert_star_to_massless_remnant(star):
         if key is not "state":
             setattr(star, key, np.nan)
     for key in ['mass']:
-        setattr(star, key, 1e-99)
+        #setattr(star, key, 1e-99)
+        setattr(star, key, 0.0)
     return star
 
 
