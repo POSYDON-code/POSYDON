@@ -1502,11 +1502,13 @@ class detached_step:
                     else:
                         if is_secondary == True:
                             radius_to_be_used = interp1d_sec["R"](interp1d_sec["t0"])
+                            mass_to_be_used = interp1d_sec["mass"](interp1d_sec["t0"])
                         else:
                             radius_to_be_used = interp1d_pri["R"](interp1d_pri["t0"])
+                            mass_to_be_used = interp1d_pri["mass"](interp1d_pri["t0"])
                         omega_in_rad_per_year = (
                             star.surf_avg_omega_div_omega_crit * np.sqrt(
-                                const.standard_cgrav * star.mass * const.msol
+                                const.standard_cgrav * mass_to_be_used * const.msol
                                 / ((radius_to_be_used * const.rsol) ** 3))
                             * const.secyer)
 
