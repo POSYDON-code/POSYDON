@@ -1236,7 +1236,7 @@ class StepSN(object):
                     # if key is 'nearest_neighbour_distance':
                     #     setattr(binary, key, ['None', 'None', 'None'])
                 binary.separation = new_separation
-                if binary.state is not "disrupted":
+                if binary.state != "disrupted" and binary.state != "initially_single_star" and binary.state != "merged":
                     binary.state = "detached"
                 binary.event = None
                 binary.time = binary.time_history[-1]
@@ -1333,7 +1333,7 @@ class StepSN(object):
                     # if key is 'nearest_neighbour_distance':
                     #     setattr(binary, key, ['None', 'None', 'None'])
                 binary.separation = new_separation
-                if binary.state is not "disrupted":
+                if binary.state != "disrupted" and binary.state != "initially_single_star" and binary.state != "merged":
                     binary.state = "detached"
                 binary.event = None
                 binary.time = binary.time_history[-1]
@@ -1412,14 +1412,14 @@ class StepSN(object):
 
 
         # update the orbit
-        if binary.state == "disrupted":
+        if binary.state == "disrupted" or binary.state == "initially_single_star" or binary.state == "merged":
             #the binary was already disrupted before the SN
 
             # update the binary object which was disrupted already before the SN
             for key in BINARYPROPERTIES:
                 if key is not 'nearest_neighbour_distance':
                     setattr(binary, key, None)
-            binary.state = "disrupted"
+            #binary.state = "disrupted"
             binary.event = None
             binary.separation = np.nan
             binary.eccentricity = np.nan
