@@ -390,7 +390,7 @@ def create_csv(GRID_TYPES, METALLICITIES, GRID_SLICES, COMPRESSIONS,
         # drop lines when grid directories are not found
         if DROP_MISSING_FILES:
             drop_rows = []
-            for row in range(df.shape[0]):
+            for row in df.index:
                 path = df.at[row,'path_to_grid']
                 if (not os.path.exists(path) and
                     path not in previously_created_files):
@@ -406,7 +406,7 @@ def create_csv(GRID_TYPES, METALLICITIES, GRID_SLICES, COMPRESSIONS,
                 print('')
             df = df.drop(index=drop_rows)
         if step_name == 'step_1':
-            for row in range(df.shape[0]):
+            for row in df.index:
                 path = df.at[row,'path_to_grid']
                 compression = df.at[row,'compression']
                 newly_created_files.append(get_new_grid_name(path,compression))
@@ -426,7 +426,7 @@ def create_csv(GRID_TYPES, METALLICITIES, GRID_SLICES, COMPRESSIONS,
             drop_columns = []
             for column in df.keys():
                 drop_rows = []
-                for row in range(df.shape[0]):
+                for row in df.index:
                     path = df.at[row,column]
                     if pd.notna(path):
                         if (not os.path.exists(path) and
