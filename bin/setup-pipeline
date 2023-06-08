@@ -231,6 +231,9 @@ def slurm_job(job_name,
             N = df.shape[1]-1
         else:
             raise ValueError('This should never happen!')
+        if N<0:
+            raise ValueError(f'{job_name} has no jobs to run, please check '
+                             f'{path_to_csv_file}')
         f.write(f"#SBATCH --array=0-{N}\n")
         slurm_array = '$SLURM_ARRAY_TASK_ID'
 
