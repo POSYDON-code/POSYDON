@@ -59,6 +59,8 @@ def convert_star_to_massless_remnant(star):
     for key in STARPROPERTIES:
         if key is not "state":
             setattr(star, key, np.nan)
+    for key in ['mass']:
+        setattr(star, key, 1e-99)
     return star
 
 
@@ -74,18 +76,27 @@ class MergedStep(IsolatedStep):
         path=PATH_TO_POSYDON_DATA,
         merger_critical_rot = 0.4,
         rel_mass_lost_HMS_HMS = 0.1,
-        list_for_matching_HMS = [["mass", "center_h1", "log_R", "he_core_mass"],
-                              [20.0, 1.0, 2.0, 10.0],
-                                 # [[m_min_H, m_max_H], [0, None]],
-                              ["log_min_max" , "min_max", "min_max", "min_max"] ],
-        list_for_matching_postMS = [["mass", "center_he4", "he_core_mass"],
-                                 [20.0, 1.0, 10.0],
-                                 #[[m_min_H, m_max_H], [0, None]],
-                                 ["log_min_max" , "min_max",  "min_max"] ],
-        list_for_matching_HeStar = [["he_core_mass", "center_he4"],
-                                 [10.0, 1.0],
-                                 #[[m_min_He, m_max_He], [0, None]],
-                                 ["min_max" , "min_max"]  ],
+        list_for_matching_HMS = [
+                ["mass", "center_h1", "he_core_mass"],
+                [20.0, 1.0, 10.0],
+                ["log_min_max", "min_max", "min_max"],
+                #[m_min_H, m_max_H], [0, None]
+                [None, None], [0, None]
+            ],
+        list_for_matching_postMS = [
+                ["mass", "center_he4", "he_core_mass"],
+                [20.0, 1.0, 10.0],
+                ["log_min_max", "min_max", "min_max"],
+                #[m_min_H, m_max_H], [0, None]
+                [None, None], [0, None]
+            ],
+        list_for_matching_HeStar = [
+                ["he_core_mass", "center_he4"],
+                [10.0, 1.0],
+                ["min_max" , "min_max"],
+                #[[m_min_He, m_max_He], [0, None]],
+                [None, None], [0, None]
+            ],
         *args,
         **kwargs
     ):
