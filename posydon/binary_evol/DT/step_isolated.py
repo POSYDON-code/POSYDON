@@ -79,7 +79,6 @@ class IsolatedStep(detached_step):
         self.initialize_isolated_binary_orbit(binary)
 
         if binary.state == 'initially_single_star' or binary.state == 'merged':
-            print("MANOS massless ", binary.state)
             pass
             '''
             if binary.star_1.state.state == 'massless_remnant' or binary.star_2.state == 'massless_remnant':
@@ -92,10 +91,8 @@ class IsolatedStep(detached_step):
         else:
             raise ValueError("In isolated step binary.state=='disrupted' or 'initially_single_star' or 'merged' ")
 
-        print("going to detached now")
-        print(binary)
         super().__call__(binary)
-        print(binary)
+
         self.re_erase_isolated_binary_orbit(binary)
 
 

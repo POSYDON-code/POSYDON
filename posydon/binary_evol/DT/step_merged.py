@@ -116,9 +116,10 @@ class MergedStep(IsolatedStep):
 
     def __call__(self,binary):
         merged_star_properties = self.merged_star_properties
-        print("call step_merged")
-        print("BEFORE", binary.star_1.state,binary.star_2.state,binary.state, binary.event)
-        print(binary.star_1.mass,binary.star_2.mass,binary.star_1.center_he4,binary.star_2.center_he4, binary.star_1.surface_he4,binary.star_2.surface_he4)
+        if self.verbose:
+            print("Before Merger", binary.star_1.state,binary.star_2.state,binary.state, binary.event)
+            print("M1 , M2, he_core_mass1, he_core_mass2: ", binary.star_1.mass,binary.star_2.mass, binary.star_1.he_core_mass, binary.star_2.he_core_mass)
+            print("star_1.center_he4, star_2.center_he4, star_1.surface_he4, star_2.surface_he4: ",  binary.star_1.center_he4,binary.star_2.center_he4, binary.star_1.surface_he4,binary.star_2.surface_he4)
         if binary.state == "merged":
             if binary.event == 'oMerging1':
                 binary.star_1,binary.star_2 = merged_star_properties(binary.star_1,binary.star_2)
@@ -130,8 +131,10 @@ class MergedStep(IsolatedStep):
             raise ValueError("step_merging initiated but binary.state != 'merged'")
 
         binary.event = None
-        print("AFTER",binary.star_1.state,binary.star_2.state, binary.state, binary.event)
-        print(binary.star_1.mass,binary.star_2.mass,binary.star_1.center_he4,binary.star_2.center_he4, binary.star_1.surface_he4,binary.star_2.surface_he4)
+        if self.verbose:
+            print("After Merger", binary.star_1.state,binary.star_2.state,binary.state, binary.event)
+            print("M1 , M2, he_core_mass1, he_core_mass2: ", binary.star_1.mass,binary.star_2.mass, binary.star_1.he_core_mass, binary.star_2.he_core_mass)
+            print("star_1.center_he4, star_2.center_he4, star_1.surface_he4, star_2.surface_he4: ",  binary.star_1.center_he4,binary.star_2.center_he4, binary.star_1.surface_he4,binary.star_2.surface_he4)
 
         super().__call__(binary)
 
@@ -156,12 +159,9 @@ class MergedStep(IsolatedStep):
         def mass_weighted_avg(star1=star_base,star2=comp, abundance_name="center_h1", mass_weight1="mass", mass_weight2=None):
             A1 = getattr(star1, abundance_name)
             A2 = getattr(star2, abundance_name)
-            #print(2.1, A1, A2)
 
-            #print(2.15, mass_weight1, mass_weight2)
             if mass_weight1 == "H-rich_envelope_mass":
                 M1 = getattr(star1, "mass") - getattr(star1, "he_core_mass")
-                #print(2.16, getattr(star1, "mass"), getattr(star1, "he_core_mass"), M1)
             elif mass_weight1 == "He-rich_envelope_mass":
                 M1 = getattr(star1, "he_core_mass") - getattr(star1, "co_core_mass")
             else:
@@ -169,16 +169,12 @@ class MergedStep(IsolatedStep):
 
             if mass_weight2 is None:
                 mass_weight2 = mass_weight1
-            #print(2.17, mass_weight2)
             if mass_weight2 == "H-rich_envelope_mass":
                 M2 = getattr(star2, "mass") - getattr(star2, "he_core_mass")
             elif mass_weight2 == "He-rich_envelope_mass":
                 M2 = getattr(star2, "he_core_mass") - getattr(star2, "co_core_mass")
             else:
                 M2 = getattr(star2, mass_weight2)
-            #print(2.2, M1, M2)
-            #print(abundance_name, A1,A2,M1, M2)
-            #print("avg", (A1*M1 + A2*M2 ) / (M1+M2))
             return (A1*M1 + A2*M2 ) / (M1+M2)
 
         # MS + MS
@@ -217,7 +213,7 @@ class MergedStep(IsolatedStep):
             and s2 in LIST_ACCEPTABLE_STATES_FOR_HMS):
 
                 merged_star.mass = star_base.mass + comp.mass #TODO: in step_CEE we need to eject part of the (common) envelope
-                #print(1.1)
+
                 # weigheted mixing on the surface abundances of the whole comp with the envelope of star_base
                 merged_star.surface_h1 = mass_weighted_avg(abundance_name = "surface_h1", mass_weight1="H-rich_envelope_mass", mass_weight2="mass")
                 merged_star.surface_he4 = mass_weighted_avg(abundance_name = "surface_he4", mass_weight1="H-rich_envelope_mass", mass_weight2="mass")
@@ -233,13 +229,13 @@ class MergedStep(IsolatedStep):
                         if key in [ "c12_c12", "center_gamma",
                                    "avg_c_in_c_core", "total_moment_of_inertia", "spin"]:
                             setattr(merged_star, key, np.nan)
-                #print(1.2)
+
                 merged_star.log_LHe = star_base.log_LHe
                 merged_star.log_LZ = star_base.log_LZ
 
                 merged_star.state = check_state_of_star(merged_star, star_CO=False)  # TODO for sure this needs testing!
                 massless_remnant = convert_star_to_massless_remnant(comp)
-                #print(1.3)
+
         # as above but opposite stars
         elif (s1 in LIST_ACCEPTABLE_STATES_FOR_HMS
             and s2 in LIST_ACCEPTABLE_STATES_FOR_POSTMS):
@@ -576,6 +572,4 @@ class MergedStep(IsolatedStep):
         # ad hoc spin of merged star to be used in the detached step
         merged_star.surf_avg_omega_div_omega_crit = self.merger_critical_rot
 
-        #print(merged_star)
-        #print("3", merged_star.state,massless_remnant.state)
         return merged_star, massless_remnant
