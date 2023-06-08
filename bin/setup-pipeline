@@ -2,6 +2,7 @@
 __authors__ = [
     "Simone Bavera <Simone.Bavera@unige.ch>",
     "Kyle Akira Rocha <kylerocha2024@u.northwestern.edu>",
+    "Matthias Kruckow <Matthias.Kruckow@unige.ch>",
 ]
 
 import os
@@ -12,6 +13,7 @@ import numpy as np
 from pprint import pprint, pformat
 from posydon.popsyn.io import parse_inifile
 from posydon.utils.common_functions import PATH_TO_POSYDON
+from posydon.utils.gridutils import get_new_grid_name
 
 # this data processing pipeline was designed assuming POSYDON v2 data structure
 '''
@@ -404,9 +406,10 @@ def create_csv(GRID_TYPES, METALLICITIES, GRID_SLICES, COMPRESSIONS,
                 print('')
             df = df.drop(index=drop_rows)
         if step_name == 'step_1':
-            newly_created_files = df['compression'].to_list()
-        elif step_name == 'step_3':
-            newly_created_files = df['path_to_plot'].to_list()
+            for row in range(df.shape[0]):
+                path = df.at[row,'path_to_grid']
+                compression = df.at[row,'compression']
+                newly_created_files.append(get_new_grid_name(path,compression))
         elif step_name == 'step_5':
             newly_created_files = df['path_to_processed_grid'].to_list()
         elif step_name == 'step_6':
