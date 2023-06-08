@@ -395,7 +395,7 @@ def create_csv(GRID_TYPES, METALLICITIES, GRID_SLICES, COMPRESSIONS,
                 if (not os.path.exists(path) and
                     path not in previously_created_files):
                     drop_rows.append(row)
-            if any(drop_rows):
+            if len(drop_rows)>0:
                 print('')
                 print(f'----------- {step_name} -----------')
                 print('The following grids will not be processed because the '
@@ -432,7 +432,7 @@ def create_csv(GRID_TYPES, METALLICITIES, GRID_SLICES, COMPRESSIONS,
                         if (not os.path.exists(path) and
                             path not in previously_created_files):
                             drop_rows.append(row)
-                if any(drop_rows):
+                if len(drop_rows)>0:
                     if first_time:
                         print('')
                         print(f'----------- {step_name} -----------')
@@ -452,7 +452,7 @@ def create_csv(GRID_TYPES, METALLICITIES, GRID_SLICES, COMPRESSIONS,
 #                        print('')
                     newcol.extend((df.shape[0]-len(newcol))*[np.nan])
                     df[column] = newcol
-            if any(drop_columns):
+            if len(drop_columns)>0:
                 if first_time:
                     print('')
                     print(f'----------- {step_name} -----------')
