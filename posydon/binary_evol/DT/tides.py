@@ -177,8 +177,8 @@ def calculate_kT_radiative(a, P_orb, q, x_star, verbose=False):
 
     # Now, calculate the k/T term
     kT_rad = np.sqrt(const.standard_cgrav * (M * const.msol) *
-        (R * const.rsol)**2 / (a * const.rsol)** 5) * (1 + q) ** (5.0 / 6) *
-        E2 * const.secyer
+        (R * const.rsol)**2 / (a * const.rsol)**5.0 ) * (1 + q) ** (5.0 / 6)
+    kT_rad = kT_rad * E2 * const.secyer
 
     return kT_rad
 
