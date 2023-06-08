@@ -65,7 +65,7 @@ ONELINE_MIN_ITEMSIZE = {'state_i': 30, 'state_f': 30,
 # BinaryPopulation will enforce a constant metallicity accross all steps that
 # load stellar or binary models by checked this list of steps.
 STEP_NAMES_LOADING_GRIDS = [
-    'step_HMS_HMS', 'step_CO_HeMS', 'step_CO_HMS_RLO', 'step_detached','step_isolated','step_disrupted','step_initially_single'
+    'step_HMS_HMS', 'step_CO_HeMS', 'step_CO_HMS_RLO', 'step_detached','step_isolated','step_disrupted','step_initially_single', 'step_merged'
 ]
 
 class BinaryPopulation:
@@ -85,7 +85,7 @@ class BinaryPopulation:
         self.kwargs = default_kwargs.copy()
         for key, arg in kwargs.items():
             self.kwargs[key] = arg
-        # Have a binary fraction change the number_of binaries. 
+        # Have a binary fraction change the number_of binaries.
         #Eirini's change
         self.binary_fraction = self.kwargs.get('binary_fraction')
         self.number_of_binaries = self.kwargs.get('number_of_binaries')
@@ -921,7 +921,7 @@ class BinaryGenerator:
                 center_he4=0,
             )
         #do all of the above but with state = "initial_single star"
-        #in this case the second star can be a compact object. 
+        #in this case the second star can be a compact object.
 
 
         binary = BinaryStar(**binary_params,
