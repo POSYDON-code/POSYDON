@@ -34,7 +34,7 @@ from posydon.utils.common_functions import (
     PchipInterpolator2,
     convert_metallicity_to_string
 )
-from posydon.binary_evol.flow_chart import (STAR_STATES_CC)
+from posydon.binary_evol.flow_chart import (STAR_STATES_CC, STAR_STATES_CO)
 import posydon.utils.constants as const
 
 
@@ -67,10 +67,12 @@ STAR_STATES_H_RICH = [
     'H-rich_non_burning'
 ]
 
-STAR_STATES_CO = ['BH', 
-                  'NS', 
+'''
+STAR_STATES_CO = ['BH',
+                  'NS',
                   'WD',
                   ]
+'''
 
 DEFAULT_TRANSLATION = {
     "time": "time",
@@ -1093,7 +1095,7 @@ class detached_step:
                 primary.htrack = secondary.htrack
                 primary.co = True
 
-            elif (binary.star_1.state in STAR_STATES_CO 
+            elif (binary.star_1.state in STAR_STATES_CO
                     and binary.star_2.state in LIST_ACCEPTABLE_STATES_FOR_HeStar):
                 primary = binary.star_1
                 secondary = binary.star_2
@@ -1145,8 +1147,22 @@ class detached_step:
                 secondary.htrack = False
                 primary.htrack = False
                 primary.co = False
+            elif (binary.star_1.state in STAR_STATES_CO
+                    and binary.star_2.state
+                    in 'massless_remnant'):
+                binary.state += " Thorne–Żytkow object"
+                if self.verbose or self.verbose == 1:
+                    print("Formation of Thorne–Żytkow object, nothing to do further")
+                return
+            elif (binary.star_2.state in STAR_STATES_CO
+                    and binary.star_1.state
+                    in 'massless_remnant'):
+                binary.state += " Thorne–Żytkow object"
+                if self.verbose or self.verbose == 1:
+                    print("Formation of Thorne–Żytkow object, nothing to do further")
+                return
             else:
-                raise Exception("States not recognized!")
+                raise Exception("States not recognized!", )
 
         # non-existent, far away, star
         elif self.non_existent_companion == 1:
@@ -1447,7 +1463,7 @@ class detached_step:
             return t_max_pri + t_offset_pri - t
 
         # make a function to get the spin of two stars
-        def get_omega(star):
+        def get_omega(star, is_secondary = True):
             if (star.log_total_angular_momentum is not None
                     and star.total_moment_of_inertia is not None
                     and not np.isnan(star.log_total_angular_momentum)
@@ -1473,14 +1489,29 @@ class detached_step:
                               omega_in_rad_per_year)
                 elif (star.surf_avg_omega_div_omega_crit is not None
                         and not np.isnan(star.surf_avg_omega_div_omega_crit)):
-                    omega_in_rad_per_year = (
-                        star.surf_avg_omega_div_omega_crit * np.sqrt(
-                            const.standard_cgrav * star.mass * const.msol
-                            / ((10.0 ** (star.log_R) * const.rsol) ** 3))
-                        * const.secyer)
-                    # the last factor transforms it from rad/s to rad/yr
-                    # EDIT: We assume POSYDON surf_avg_omega is provided in
-                    # rad/yr already.
+                    if (star.log_R is not None
+                            and not np.isnan(star.log_R)):
+                        omega_in_rad_per_year = (
+                            star.surf_avg_omega_div_omega_crit * np.sqrt(
+                                const.standard_cgrav * star.mass * const.msol
+                                / ((10.0 ** (star.log_R) * const.rsol) ** 3))
+                            * const.secyer)
+                        # the last factor transforms it from rad/s to rad/yr
+                        # EDIT: We assume POSYDON surf_avg_omega is provided in
+                        # rad/yr already.
+                    else:
+                        if is_secondary == True:
+                            radius_to_be_used = interp1d_sec["R"](interp1d_sec["t0"])
+                            mass_to_be_used = interp1d_sec["mass"](interp1d_sec["t0"])
+                        else:
+                            radius_to_be_used = interp1d_pri["R"](interp1d_pri["t0"])
+                            mass_to_be_used = interp1d_pri["mass"](interp1d_pri["t0"])
+                        omega_in_rad_per_year = (
+                            star.surf_avg_omega_div_omega_crit * np.sqrt(
+                                const.standard_cgrav * mass_to_be_used * const.msol
+                                / ((radius_to_be_used * const.rsol) ** 3))
+                            * const.secyer)
+
                     if self.verbose and self.verbose != 1:
                         print("calculating initial omega from "
                               "surf_avg_omega_div_omega_crit",
@@ -1509,11 +1540,11 @@ class detached_step:
                                 "lower times.")
             with np.errstate(all="ignore"):
                 omega_in_rad_per_year_sec = get_omega(secondary)
-                if primary.co:
-                    # omega of compact objects won't be used for intergration
+                if primary_not_normal:
+                    # omega of compact objects or masslessremnant won't be used for intergration
                     omega_in_rad_per_year_pri = omega_in_rad_per_year_sec
                 elif not primary.co:
-                    omega_in_rad_per_year_pri = get_omega(primary)
+                    omega_in_rad_per_year_pri = get_omega(primary,is_secondary = False)
 
                 t_before_ODEsolution = time.time()
                 try:

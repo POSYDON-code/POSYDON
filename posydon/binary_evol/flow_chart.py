@@ -20,6 +20,7 @@ STAR_STATES_ALL = [
     'WD',
     'NS',
     'BH',
+    'massless_remnant',
     'H-rich_Core_H_burning',
     'H-rich_Core_He_burning',
     'H-rich_Shell_H_burning',
@@ -31,22 +32,26 @@ STAR_STATES_ALL = [
     'stripped_He_Core_He_burning',
     'stripped_He_Central_He_depleted',
     'stripped_He_Central_C_depletion',
-    'stripped_He_non_burning',
-    'massless_remnant'
+    'stripped_He_non_burning'
 ]
 
-STAR_STATES_CO = ['BH', 'NS', 'WD','massless_remnant']
+STAR_STATES_CO = ['BH', 'NS', 'WD']
+STAR_STATES_NOT_NORMALSTAR = STAR_STATES_CO.copy()
+STAR_STATES_NOT_NORMALSTAR.append('massless_remnant')
 
 STAR_STATES_NOT_CO = STAR_STATES_ALL.copy()
 [STAR_STATES_NOT_CO.remove(x) for x in STAR_STATES_CO]
 
-STAR_STATES_H_RICH = STAR_STATES_NOT_CO.copy()
+STAR_STATES_NORMALSTAR = STAR_STATES_ALL
+[STAR_STATES_NORMALSTAR.remove(x) for x in STAR_STATES_NOT_NORMALSTAR]
+
+STAR_STATES_H_RICH = STAR_STATES_NORMALSTAR.copy()
 [STAR_STATES_H_RICH.remove(x) for x in ['stripped_He_Core_He_burning',
                                         'stripped_He_Central_He_depleted',
                                         'stripped_He_Central_C_depletion',
                                         'stripped_He_non_burning']]
 
-STAR_STATES_HE_RICH = STAR_STATES_NOT_CO.copy()
+STAR_STATES_HE_RICH = STAR_STATES_NORMALSTAR.copy()
 [STAR_STATES_HE_RICH.remove(x) for x in ['H-rich_Core_H_burning',
                                          'H-rich_Core_He_burning',
                                          'H-rich_Shell_H_burning',
@@ -122,8 +127,8 @@ for b in BINARY_STATES_ZAMS:
 
 # stripped_He star on a detached binary another H- or stripped_He star
 # This will be the outcome of a CE.
-for s1 in STAR_STATES_NOT_CO:
-    for s2 in STAR_STATES_NOT_CO:
+for s1 in STAR_STATES_NORMALSTAR:
+    for s2 in STAR_STATES_NORMALSTAR:
         POSYDON_FLOW_CHART[(s1, s2, 'detached', None)] = 'step_detached'
         POSYDON_FLOW_CHART[(s2, s1, 'detached', None)] = 'step_detached'
 
@@ -165,7 +170,7 @@ for s1 in STAR_STATES_HE_RICH:
 
 # Binaries that go to common envelope
 
-for s1 in STAR_STATES_NOT_CO:
+for s1 in STAR_STATES_NORMALSTAR:
     for s2 in STAR_STATES_ALL:
         POSYDON_FLOW_CHART[(s1, s2, 'RLO1', 'oCE1')] = 'step_CE'
         POSYDON_FLOW_CHART[(s1, s2, 'RLO1', 'oDoubleCE1')] = 'step_CE'
@@ -255,8 +260,8 @@ for b in ['merged']:
     for s1 in STAR_STATES_ALL:
         for s2 in STAR_STATES_ALL:
             for e in ['oMerging1', 'oMerging2']:
-                POSYDON_FLOW_CHART[(s1, s2, b, e)] = 'step_end' #'step_merged'
-                POSYDON_FLOW_CHART[(s2, s1, b, e)] = 'step_end' #'step_merged'
+                POSYDON_FLOW_CHART[(s1, s2, b, e)] = 'step_merged' #'step_merged'
+                POSYDON_FLOW_CHART[(s2, s1, b, e)] = 'step_merged' #'step_merged'
 
 # catch initial_RLO states
 for s1 in STAR_STATES_ALL:

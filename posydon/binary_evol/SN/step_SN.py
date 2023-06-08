@@ -1236,7 +1236,7 @@ class StepSN(object):
                     # if key is 'nearest_neighbour_distance':
                     #     setattr(binary, key, ['None', 'None', 'None'])
                 binary.separation = new_separation
-                if binary.state != "disrupted":
+                if binary.state != "disrupted" and binary.state != "initially_single_star" and binary.state != "merged":
                     binary.state = "detached"
                 binary.event = None
                 binary.time = binary.time_history[-1]
@@ -1333,7 +1333,7 @@ class StepSN(object):
                     # if key is 'nearest_neighbour_distance':
                     #     setattr(binary, key, ['None', 'None', 'None'])
                 binary.separation = new_separation
-                if binary.state != "disrupted":
+                if binary.state != "disrupted" and binary.state != "initially_single_star" and binary.state != "merged":
                     binary.state = "detached"
                 binary.event = None
                 binary.time = binary.time_history[-1]
@@ -1412,28 +1412,14 @@ class StepSN(object):
 
 
         # update the orbit
-        if binary.state == "disrupted":
+        if binary.state == "disrupted" or binary.state == "initially_single_star" or binary.state == "merged":
             #the binary was already disrupted before the SN
 
             # update the binary object which was disrupted already before the SN
             for key in BINARYPROPERTIES:
-                if key != 'nearest_neighbour_distance':
-                    setattr(binary, key, None)
-            binary.state = "disrupted"
-            binary.event = None
-            binary.separation = np.nan
-            binary.eccentricity = np.nan
-            binary.V_sys = np.array([0, 0, 0])
-            binary.time = binary.time_history[-1]
-            binary.orbital_period = np.nan
-            binary.mass_transfer_case = 'None'
-            
-        elif binary.star_1.state == "massless_remnant" or binary.star_2.state == "massless_remnant":
-            #For an initially single star. 
-            for key in BINARYPROPERTIES:
                 if key is not 'nearest_neighbour_distance':
                     setattr(binary, key, None)
-            binary.state = "single_star"
+            #binary.state = "disrupted"
             binary.event = None
             binary.separation = np.nan
             binary.eccentricity = np.nan
