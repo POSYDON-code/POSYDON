@@ -59,6 +59,7 @@ rhonuc = 2.342e14                   # density of nucleus (g cm^3)
 # ASTRONOMICAL CONSTANTS.
 # Solar age, L, and R values from Bahcall et al, ApJ 618 (2005) 1049-1056.
 
+Zsun = 0.0142                   # Asplund+09
 msol = 1.9892e33                # solar mass, gravitational not baryonic (g)
 rsol = 6.9598e10                # solar radius (cm)
 lsol = 3.8418e33                # solar luminosity (erg s^-1)

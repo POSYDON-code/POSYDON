@@ -33,7 +33,7 @@ def scrub(tables, models, ages):
     scr_tables = []
     scr_models = []
     for table, model, age in zip(tables, models, ages):
-        if table is None:
+        if (table is None) or (model is None) or (age is None):
             scr_tables.append(None)
             scr_models.append(None)
         else:

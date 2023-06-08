@@ -47,6 +47,8 @@ def initial_total_underlying_mass(df=None, **kwargs):
         initial_ZAMS_mass_2 = initial_ZAMS_mass[3]
         initial_ZAMS_TOTAL_mass = (sum(initial_ZAMS_mass_1)
                                    + sum(initial_ZAMS_mass_2))
+    elif isinstance(df, float):
+        initial_ZAMS_TOTAL_mass = df
     else:
         sel = df['event'] == 'ZAMS'
         initial_ZAMS_TOTAL_mass = sum(df['S1_mass'][sel]+df['S2_mass'][sel])

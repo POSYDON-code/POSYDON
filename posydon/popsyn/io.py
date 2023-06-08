@@ -295,6 +295,13 @@ def binarypop_kwargs_from_ini(path, verbose=False):
             for key, val in parser[section].items():
                 pop_kwargs[key] = ast.literal_eval(val)
 
+            # hard code for running with MPI, only try to import if use_MPI
+            if pop_kwargs['use_MPI']:
+                from mpi4py import MPI
+                pop_kwargs['comm'] = MPI.COMM_WORLD
+            else:
+                pop_kwargs['comm'] = None
+
         # right now binary, S1, and S2 output kwargs are all passed
         # into the BinaryPopulation during init
         elif section == 'BinaryStar_output':

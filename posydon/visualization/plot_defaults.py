@@ -14,6 +14,7 @@ __authors__ = [
     "Devina Misra <devina.misra@unige.ch>",
     "Scott Coughlin <scottcoughlin2014@u.northwestern.edu>",
     "Emmanouil Zapartas <ezapartas@gmail.com>",
+    "Matthias Kruckow <Matthias.Kruckow@unige.ch>",
 ]
 
 
@@ -116,6 +117,14 @@ DEFAULT_MARKERS_COLORS_LEGENDS = {
             ['s', 2, None, TF1_label_stable],
         'Secondary has depleted central carbon':
             ['o', 2, None, TF1_label_stable],
+        'Primary enters pair-instability regime':
+            ['s', 2, None, TF1_label_stable],
+        'Secondary enters pair-instability regime':
+            ['o', 2, None, TF1_label_stable],
+        'Primary enters pulsational pair-instability regime':
+            ['s', 2, None, TF1_label_stable],
+        'Secondary enters pulsational pair-instability regime':
+            ['o', 2, None, TF1_label_stable],
         'offcenter neon ignition for primary':
             ['s', 2, None, TF1_label_stable],
         'offcenter neon ignition for secondary':
@@ -147,6 +156,8 @@ DEFAULT_MARKERS_COLORS_LEGENDS = {
         'donor is star 1':
             ['D', 1, color_unstable, TF1_label_unstable],
         'overflow from L2 (R_L2) surface for q(=Macc/Mdon)<1, donor is star 2':
+            ['D', 1, color_unstable, TF1_label_unstable],
+        'overflow from L2 (R_L2) surface for q(=Macc/Mdon)>1, donor is star 2':
             ['D', 1, color_unstable, TF1_label_unstable],
         'reached maximum mass transfer rate: 10.0d0':
             ['D', 1, color_unstable, TF1_label_unstable],
@@ -424,6 +435,14 @@ DEFAULT_MARKERS_COLORS_LEGENDS = {
             ['s', 2, None, TF1_label_stable],
         'Secondary has depleted central carbon':
             ['o', 2, None, TF1_label_stable],
+        'Primary enters pair-instability regime':
+            ['s', 2, None, TF1_label_stable],
+        'Secondary enters pair-instability regime':
+            ['o', 2, None, TF1_label_stable],
+        'Primary enters pulsational pair-instability regime':
+            ['s', 2, None, TF1_label_stable],
+        'Secondary enters pulsational pair-instability regime':
+            ['o', 2, None, TF1_label_stable],
         'offcenter neon ignition for primary':
             ['s', 2, None, TF1_label_stable],
         'offcenter neon ignition for secondary':
@@ -453,6 +472,9 @@ DEFAULT_MARKERS_COLORS_LEGENDS = {
         'donor is star 1':
             ['D', 1, None, TF1_label_unstable],
         'overflow from L2 (R_L2) surface for q(=Macc/Mdon)<1, '
+        'donor is star 2':
+            ['D', 1, None, TF1_label_unstable],
+        'overflow from L2 (R_L2) surface for q(=Macc/Mdon)>1, '
         'donor is star 2':
             ['D', 1, None, TF1_label_unstable],
         'reached maximum mass transfer rate: 10.0d0':
@@ -747,4 +769,16 @@ DEFAULT_LABELS = {
     't_sync_conv_2':
         [r'$t^2_\mathrm{conv}\,[\mathrm{s}]$',
          r'$\log_{10}(t^2_\mathrm{conv}/\mathrm{s})$'],
+
+    # POSYDON population synthesis
+    'z_formation': r'$z_\mathrm{formation}$',
+    'z_merger': r'$z_\mathrm{merger}$',
+    'm_tot': r'$m_\mathrm{tot}\,[M_\odot]$',
+    'm_chirp': r'$m_\mathrm{chirp}\,[M_\odot]$',
+    'q': r'$q$',
+    'chi_eff': r'$\chi_\mathrm{eff}$',
+    'S1_mass': r'$m_\mathrm{CO}\,[M_\odot]$',
+    'S2_mass': r'$m_\mathrm{CO}\,[M_\odot]$',
+    'S1_spin': r'$\chi_\mathrm{CO}$',
+    'S2_spin': r'$\chi_\mathrm{CO}$',
 }

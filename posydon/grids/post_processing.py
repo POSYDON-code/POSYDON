@@ -11,6 +11,7 @@ from posydon.utils.common_functions import (
 import numpy as np
 from tqdm import tqdm
 import copy
+import warnings
 
 
 __authors__ = [
@@ -183,10 +184,25 @@ def post_process_grid(grid, index=None, star_2_CO=True, MODEL=MODEL,
             if not stars_CO[j] and IC in ['no_MT', 'stable_MT', 'unstable_MT']:
                 EXTRA_COLUMNS['S%s_state' % (j+1)].append(check_state_of_star(
                     star, star_CO=False))
-                calculate_Patton20_values_at_He_depl(star)
+                with warnings.catch_warnings(record=True) as w:
+                    calculate_Patton20_values_at_He_depl(star)
+                    if len(w) > 0:
+                        print(w[0].message)
+                        print(f'The warning was raised by {grid.MESA_dirs[i]} '
+                               f'in calculate_Patton20_values_at_He_depl(star_{j+1}).')
                 EXTRA_COLUMNS['S%s_avg_c_in_c_core_at_He_depletion' % (j+1)].append(star.avg_c_in_c_core_at_He_depletion)
                 EXTRA_COLUMNS['S%s_co_core_mass_at_He_depletion' % (j+1)].append(star.co_core_mass_at_He_depletion)
-                CEE_parameters_from_core_abundance_thresholds(star)
+                with warnings.catch_warnings(record=True) as w:
+                    try:
+                        CEE_parameters_from_core_abundance_thresholds(star)
+                    except Exception as ex:
+                        print(ex)
+                        print(f'The exception was raised by {grid.MESA_dirs[i]} '
+                               f'in CEE_parameters_from_core_abundance_thresholds(star_{j+1}).')
+                    if len(w) > 0:
+                        print(w[0].message)
+                        print(f'The warning was raised by {grid.MESA_dirs[i]} '
+                               f'in CEE_parameters_from_core_abundance_thresholds(star_{j+1}).')
                 EXTRA_COLUMNS['S%s_m_core_CE_1cent' % (j+1)].append(star.m_core_CE_1cent)
                 EXTRA_COLUMNS['S%s_m_core_CE_10cent' % (j+1)].append(star.m_core_CE_10cent)
                 EXTRA_COLUMNS['S%s_m_core_CE_30cent' % (j+1)].append(star.m_core_CE_30cent)
@@ -199,8 +215,15 @@ def post_process_grid(grid, index=None, star_2_CO=True, MODEL=MODEL,
                 EXTRA_COLUMNS['S%s_lambda_CE_10cent' % (j+1)].append(star.lambda_CE_10cent)
                 EXTRA_COLUMNS['S%s_lambda_CE_30cent' % (j+1)].append(star.lambda_CE_30cent)
                 EXTRA_COLUMNS['S%s_lambda_CE_pure_He_star_10cent' % (j+1)].append(star.lambda_CE_pure_He_star_10cent)
-                s_o = 1. - star.surface_h1 - star.surface_he4 - star.surface_c12 - star.surface_n14 - star.surface_o16
-                c_o = 1. - star.center_h1 - star.center_he4 - star.center_c12 - star.center_n14 - star.center_o16
+                try:
+                    s_o = 1. - star.surface_h1 - star.surface_he4 - star.surface_c12 - star.surface_n14 - star.surface_o16
+                    c_o = 1. - star.center_h1 - star.center_he4 - star.center_c12 - star.center_n14 - star.center_o16
+                except TypeError as ex:
+                    s_o = 0.
+                    c_o = 0.
+                    print(ex)
+                    print(f'The error was raised by {grid.MESA_dirs[i]} '
+                           f'while accessing aboundances in star_{j+1}.')
                 EXTRA_COLUMNS['S%s_surface_other' % (j+1)].append(s_o)
                 EXTRA_COLUMNS['S%s_center_other' % (j+1)].append(c_o)
             else:
@@ -208,7 +231,13 @@ def post_process_grid(grid, index=None, star_2_CO=True, MODEL=MODEL,
                     EXTRA_COLUMNS['S%s_state' % (j+1)].append(None)
                 else:
                     # CO states are classified and used in mesa step
-                    EXTRA_COLUMNS['S%s_state' % (j+1)].append(check_state_of_star(star, star_CO=True))
+                    try:
+                        EXTRA_COLUMNS['S%s_state' % (j+1)].append(check_state_of_star(star, star_CO=True))
+                    except TypeError as ex:
+                        EXTRA_COLUMNS['S%s_state' % (j+1)].append(None)
+                        print(ex)
+                        print(f'The error was raised by {grid.MESA_dirs[i]} '
+                               f'in check_state_of_star(star_{j+1}) with IC={IC}.')
                 EXTRA_COLUMNS['S%s_avg_c_in_c_core_at_He_depletion' % (j+1)].append(None)
                 EXTRA_COLUMNS['S%s_co_core_mass_at_He_depletion' % (j+1)].append(None)
                 EXTRA_COLUMNS['S%s_m_core_CE_1cent' % (j+1)].append(None)
@@ -240,20 +269,39 @@ def post_process_grid(grid, index=None, star_2_CO=True, MODEL=MODEL,
                     for m in CORE_COLLAPSES:
                         EXTRA_COLUMNS['S1_'+m[0]+m[1]].append([None]*5)
                 elif TF1 == 'gamma_center_limit':
-                    if binary.star_1.center_gamma >= 10.:
+                    if (binary.star_1.center_gamma is not None and
+                        binary.star_1.center_gamma >= 10.):
                         star = binary.star_1
                         s = 'S1_'
                         for m in CORE_COLLAPSES:
                             EXTRA_COLUMNS['S2_'+m[0]+m[1]].append([None]*5)
-                    elif binary.star_2.center_gamma >= 10.:
+                    elif (binary.star_2.center_gamma is not None and
+                          binary.star_2.center_gamma >= 10.):
                         star = binary.star_2
                         s = 'S2_'
                         for m in CORE_COLLAPSES:
                             EXTRA_COLUMNS['S1_'+m[0]+m[1]].append([None]*5)
                     else:
-                        raise ValueError('No star has center_gamma < 10')
+                        for m in CORE_COLLAPSES:
+                            EXTRA_COLUMNS['S1_'+m[0]+m[1]].append([None]*5)
+                            EXTRA_COLUMNS['S2_'+m[0]+m[1]].append([None]*5)
+                        warnings.warn(f'{grid.MESA_dirs[i]} ended with '
+                                     'TF1=gamma_center_limit however '
+                                     'the star has center_gamma < 10. '
+                                     'This star cannot go through step_SN '
+                                     'appending NONE compact object '
+                                     'properties!')
+                        continue
                 else:
-                    raise ValueError('TF1 = %s not supported' % TF1)
+                    for m in CORE_COLLAPSES:
+                        EXTRA_COLUMNS['S1_'+m[0]+m[1]].append([None]*5)
+                        EXTRA_COLUMNS['S2_'+m[0]+m[1]].append([None]*5)
+                    warnings.warn(f'{grid.MESA_dirs[i]} ended with '
+                                 f'TF={TF1} and IC={interpolation_class}. '
+                                 'This star cannot go through step_SN '
+                                 'appending NONE compact object '
+                                 'properties!')
+                    continue
 
                 if verbose:
                     print("{:<30} {:<33} {:12} {:10} {:15} {:10}".format(
@@ -293,15 +341,11 @@ def post_process_grid(grid, index=None, star_2_CO=True, MODEL=MODEL,
                             print('interpolation class',  interpolation_class)
 
             else:    # inital_RLOF, unstable_MT not_convergedd
-                if TF1 == 'Primary has depleted central carbon':
-                    raise ValueError(
-                        'Primary reached carbon depletion but was not '
-                        'collapsed! This should not happen!')
-                if TF1 == 'Secondary has depleted central carbon':
-                    raise ValueError(
-                        'Secondary reached carbon depletion but was not '
-                        'collapsed! This should not happen!')
-
+                if (TF1 == 'Primary has depleted central carbon' or
+                    TF1 == 'Secondary has depleted central carbon'):
+                    warnings.warn(f'{grid.MESA_dirs[i]} ended with '
+                                 f'TF={TF1} but was not collapsed! '
+                                 'This should never happen!')
                 for m in CORE_COLLAPSES:
                     EXTRA_COLUMNS['S1_'+m[0]+m[1]].append([None]*5)
                     EXTRA_COLUMNS['S2_'+m[0]+m[1]].append([None]*5)

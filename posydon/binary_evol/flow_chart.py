@@ -69,6 +69,7 @@ STAR_STATES_HE_RICH_EVOLVABLE = list(set(STAR_STATES_HE_RICH)
 STAR_STATES_HE_RICH_EVOLVABLE.append('H-rich_non_burning')
 
 BINARY_STATES_ALL = [
+    'initially_single_star',
     'detached',
     'RLO1',
     'RLO2',
@@ -81,7 +82,7 @@ BINARY_STATES_ALL = [
 BINARY_EVENTS_ALL = [
     None,
     'CC1',
-    'CC2'
+    'CC2',
     'ZAMS',
     'oRLO1',
     'oRLO2',
@@ -92,7 +93,9 @@ BINARY_EVENTS_ALL = [
     'CO_contact',
     'redirect',
     'MaxTime_exceeded',
-    'maxtime'
+    'maxtime',
+    'oMerging1',
+    'oMerging2'
 ]
 
 
@@ -187,7 +190,8 @@ STAR_STATES_CC = [
 
 
 BINARY_STATES_CC = BINARY_STATES_ALL.copy()
-BINARY_STATES_CC.remove('disrupted')
+#BINARY_STATES_CC = BINARY_STATES_ALL.copy()
+#BINARY_STATES_CC.remove('disrupted')
 
 for b in BINARY_STATES_CC:
     for s1 in STAR_STATES_CC:
@@ -204,7 +208,7 @@ for s1 in STAR_STATES_CO:
 
 
 # catch states to be ended
-for b in ['merged', 'disrupted', 'initial_RLOF',
+for b in ['initial_RLOF',
           'detached (Integration failure)',
           'detached (GridMatchingFailed)', 'RLO2 (OutsideGrid)']:
     for s1 in STAR_STATES_ALL:
@@ -212,6 +216,38 @@ for b in ['merged', 'disrupted', 'initial_RLOF',
             for e in BINARY_EVENTS_ALL:
                 POSYDON_FLOW_CHART[(s1, s2, b, e)] = 'step_end'
                 POSYDON_FLOW_CHART[(s1, s2, b, e)] = 'step_end'
+
+for b in ['initially_single_star']:
+    for s1 in STAR_STATES_ALL:
+        for s2 in STAR_STATES_ALL:
+            for e in BINARY_EVENTS_ALL:
+                POSYDON_FLOW_CHART[(s1, s2, b, e)] = 'step_end'#'step_initially_single'
+                POSYDON_FLOW_CHART[(s1, s2, b, e)] = 'step_end'#'step_initially_single'
+
+BINARY_EVENTS_OF_SN_OR_AFTER_DETACHED = BINARY_EVENTS_ALL.copy()
+[BINARY_EVENTS_OF_SN_OR_AFTER_DETACHED.remove(x) for x in ['CC1','CC2','MaxTime_exceeded','maxtime']]
+
+for b in ['disrupted']:
+    for s1 in STAR_STATES_ALL:
+        for s2 in STAR_STATES_ALL:
+            for e in BINARY_EVENTS_OF_SN_OR_AFTER_DETACHED:
+                POSYDON_FLOW_CHART[(s1, s2, b, e)] = 'step_disrupted'
+                POSYDON_FLOW_CHART[(s1, s2, b, e)] = 'step_disrupted'
+# if we have two compcat objects in a disrupted binary, we stop the evolution.
+for b in ['disrupted']:
+    for s1 in STAR_STATES_CO:
+        for s2 in STAR_STATES_CO:
+            for e in BINARY_EVENTS_ALL:
+                POSYDON_FLOW_CHART[(s1, s2, b, e)] = 'step_end'
+                POSYDON_FLOW_CHART[(s1, s2, b, e)] = 'step_end'
+
+
+for b in ['merged']:
+    for s1 in STAR_STATES_ALL:
+        for s2 in STAR_STATES_ALL:
+            for e in ['oMerging1', 'oMerging2']:
+                POSYDON_FLOW_CHART[(s1, s2, b, e)] = 'step_end' #'step_merged'
+                POSYDON_FLOW_CHART[(s1, s2, b, e)] = 'step_end' #'step_merged'
 
 # catch initial_RLO states
 for s1 in STAR_STATES_ALL:
