@@ -48,6 +48,7 @@ from posydon.binary_evol.singlestar import STARPROPERTIES
 from posydon.binary_evol.SN.profile_collapse import do_core_collapse_BH
 from posydon.binary_evol.flow_chart import (STAR_STATES_CO, STAR_STATES_CC,
                                             STAR_STATES_C_DEPLETION)
+from posydon.grids.MODELS import MODELS
 
 from pandas import read_csv
 from sklearn import neighbors
@@ -480,43 +481,35 @@ class StepSN(object):
 
             # if no profile is avaiable but interpolation quantities are,
             # use those, else continue with or without profile.
-            key = self.mechanism
-            key = key.replace('+', '')
-            key = key.replace('-', '_')
-            key = key.replace('&', '_')
-            if self.mechanism in ['Sukhbold+16-engine',
-                                  'Patton&Sukhbold20-engine']:
-                key += self.engine
-            if (self.use_interp_values and (getattr(star, key) is not None)):
-                # check the assumptions for the CC of preprocessed quantities
-                supported_CC = [
-                    'direct', 'Fryer+12-rapid', 'Fryer+12-delayed',
-                    'Sukhbold+16-engine', 'Patton&Sukhbold20-engine']
-
-                if self.mechanism not in supported_CC:
-                    raise ValueError('Mechanism not supported by '
-                                     'use_interp_values=True!')
-                if self.mechanism in ['Sukhbold+16-engine',
-                                      'Patton&Sukhbold20-engine']:
-                    if self.engine != 'N20':
-                        raise ValueError('Engine not supported by '
-                                         'use_interp_values=True!')
-                if self.PISN != "Marchant+19":
-                    raise ValueError('PISN option not supported by '
-                                     'use_interp_values=True!')
-                if self.ECSN != "Podsiadlowksi+04":
-                    raise ValueError('ECSN option not supported by '
-                                     'use_interp_values=True!')
-                if self.max_neutrino_mass_loss != 0.5:
-                    raise ValueError('max_neutrino_mass_loss option not '
-                                     'supported by use_intrp_values=True!')
-
-                CC_properites = getattr(star, key)
-                star.state, star.SN_type, star.f_fb, star.mass, star.spin = (
-                    CC_properites)
-
+            if self.use_interp_values:
+                # find MODEL_NAME corresponding to class variable
+                MODEL_NAME_SEL = None
+                for MODEL_NAME, MODEL in MODELS.items():
+                    tmp = MODEL_NAME
+                    for key, val in MODEL.items():
+                        if "use_" in key:
+                            continue
+                        if getattr(self, key) != val:
+                            if self.verbose:
+                                print(tmp, 'mismatch:', key, getattr(self, key), val)
+                            tmp = None
+                            break
+                    if tmp is not None:
+                        if self.verbose:
+                            print('matched to model:', tmp)
+                        MODEL_NAME_SEL = tmp
+                
+                # check if selected MODEL is supported
+                if MODEL_NAME_SEL is None:
+                    raise ValueError('Your model assumptions are not'
+                                     'supported!')                    
+                else:
+                    MODEL_properties = getattr(star, MODEL_NAME_SEL)
+                    for key, value in MODEL_properties.items():
+                        setattr(star, key, value)
+                            
                 for key in STARPROPERTIES:
-                    if key not in ["state", "mass", "spin"]:
+                    if key not in MODEL_properties.keys() or key != "state":
                         setattr(star, key, None)
                 return
 
