@@ -129,15 +129,10 @@ class CompileData:
             
 class ProfileInterpolator:
     
-    def __init__(self,load_interpolator=None):
+    def __init__(self):
         """Interfaces with other classes, trains models and predicts profiles.
-        Args:
-            load_interpolator (str) : optional path/name of interpolator file to be loaded
         """
 
-        if load_interpolator is not None:
-            self.load(load_interpolator)
-        
     def load_profiles(self,filename):
         """Load extracted profile data.
         Args:
@@ -155,7 +150,8 @@ class ProfileInterpolator:
         self.profiles = np.array(self.profiles)
         self.valid_profiles = np.array(self.valid_profiles)
     
-    def train(self,IF_interpolator):
+    def train(self,IF_interpolator,density_epochs=3000,density_patience=200,
+             H_bounds_epochs=500,H_bounds_patience=50):
         """Trains models for density and H mass fraction profile models. 
         Args:
             IF_interpolator (str) : path to '.pkl' file for IF interpolator.
@@ -176,7 +172,8 @@ class ProfileInterpolator:
         h_ind = self.names.index("x_mass_fraction_H")
         self.h = X_H(initial, self.profiles[:,h_ind], self.scalars["s1_state"], 
                      valid_initial, self.valid_profiles[:,h_ind], 
-                     self.valid_scalars["s1_state"], IF_interpolator)
+                     self.valid_scalars["s1_state"], IF_interpolator,
+                     H_bounds_epochs,H_bounds_patience)
 
         # instantiate and train density profile model
         dens_ind = self.names.index("logRho")
@@ -185,7 +182,7 @@ class ProfileInterpolator:
                        valid_initial,
                        self.valid_profiles[:,dens_ind],
                        IF_interpolator)
-        self.dens.train()        
+        self.dens.train(prof_epochs=density_epochs,prof_patience=density_patience)        
 
     def predict(self,inputs):
         """Predict density and H mass fraction profiles from inputs.
@@ -273,9 +270,9 @@ class Density:
         profiles_norm = (profiles-self.rho_min[:,np.newaxis])\
                             /(rho_max-self.rho_min)[:,np.newaxis]  # minmax normalized profiles
         self.pca = PCA(n_components=self.n_comp).fit(profiles_norm) # perform principal component analysis
-        weights_unscaled = self.pca.transform(profiles_norm)
-        self.scaling = np.std(weights_unscaled,axis=0)
-        self.weights = weights_unscaled/self.scaling  # scaled PCA weights
+        pca_weights_unscaled = self.pca.transform(profiles_norm)
+        self.scaling = np.std(pca_weights_unscaled,axis=0)
+        self.pca_weights = pca_weights_unscaled/self.scaling  # scaled PCA weights
         
         # process testing data
         self.valid_initial = valid_initial
@@ -283,8 +280,8 @@ class Density:
         valid_rho_max = np.max(valid_profiles,axis=1)
         valid_profiles_norm = (valid_profiles-self.valid_rho_min[:,np.newaxis])\
                             /(valid_rho_max-self.valid_rho_min)[:,np.newaxis]
-        valid_weights_unscaled = self.pca.transform(valid_profiles_norm)
-        self.valid_weights = valid_weights_unscaled/self.scaling
+        valid_pca_weights_unscaled = self.pca.transform(valid_profiles_norm)
+        self.valid_pca_weights = valid_pca_weights_unscaled/self.scaling
         
         # instantiate models
         self.model_prof = models.Sequential([
@@ -309,7 +306,7 @@ class Density:
         self.model_IF = IFInterpolator()  # instantiate POSYDON initial-final interpolator object
         self.model_IF.load(filename=IF_interpolator)
                 
-    def train(self,loss=losses.MeanSquaredError()):
+    def train(self,loss=losses.MeanSquaredError(),prof_epochs=3000,prof_patience=200):
         """Trains NN models. 
         Args: 
             loss (object) : loss function for training.
@@ -317,11 +314,11 @@ class Density:
         print("training on PCA weights...")
         
         self.model_prof.compile(optimizers.Adam(clipnorm=1),loss=loss)
-        callback = tf.keras.callbacks.EarlyStopping(monitor="loss",patience=200)
-        history = self.model_prof.fit(self.initial,self.weights,
-                                      epochs=3000,callbacks=[callback],verbose=0,
+        callback = tf.keras.callbacks.EarlyStopping(monitor="loss",patience=prof_patience)
+        history = self.model_prof.fit(self.initial,self.pca_weights,
+                                      epochs=prof_epochs,callbacks=[callback],verbose=0,
                                       validation_data=(self.valid_initial,
-                                                       self.valid_weights))
+                                                       self.valid_pca_weights))
         
         self.model_rho.compile(optimizers.Adam(clipnorm=1),loss=loss)
         callback = tf.keras.callbacks.EarlyStopping(monitor="loss",patience=40)
@@ -342,7 +339,7 @@ class Density:
         """
         # predict PCA weights
         regress_prof = lambda x: self.model_prof(x)
-        weights_pred = regress_prof(inputs).numpy()
+        pca_weights_pred = regress_prof(inputs).numpy()
                 
         # predict surface density
         regress_rho = lambda x: self.model_rho(x)
@@ -353,7 +350,7 @@ class Density:
         max_rho = self.model_IF.interpolators[0].test_interpolator(10**inputs)[:,center_ind]                    
              
         # reconstruct profile
-        norm_prof = self.pca.inverse_transform(weights_pred*self.scaling)
+        norm_prof = self.pca.inverse_transform(pca_weights_pred*self.scaling)
         density_profiles = norm_prof*(max_rho[:,np.newaxis]-min_rho[:,np.newaxis]) \
                            + min_rho[:,np.newaxis]
         
@@ -368,7 +365,8 @@ class Density:
 class X_H:
     
     def __init__(self,initial,profiles,s1,valid_initial, 
-                 valid_profiles,valid_s1,IF_interpolator):
+                 valid_profiles,valid_s1,IF_interpolator,
+                 training_epochs=500, training_patience=50):
         """Creates and trains H mass fraction profile model.
         Args:
             initial (array-like) : log-space initial conditions for training data.
@@ -421,9 +419,9 @@ class X_H:
             self.valid_sort_ind[state].append(i)
         
         # create and train models for profile boundaries
-        self.bounds_models = self.learn_bounds()
+        self.bounds_models = self.learn_bounds(training_epochs,training_patience)
         
-    def learn_bounds(self):
+    def learn_bounds(self,training_epochs,training_patience):
         """Creates and trains NNs to predict boundary points for each star 1 state.
         Returns:
             b_models (array-like) : dictionary containing boundary models.
@@ -451,7 +449,8 @@ class X_H:
             if "burning" in state:  # these classes' profile shapes have 2 boundary points
                 outs = 2
                 bounds = []
-                nonflat = []  # TODO: explain this
+                nonflat = []  # ensures that training data only has the correct "non-flat" shape
+                              # to avoid issues with calculating the boundary points
                 valid_bounds = []
                 valid_nonflat = []
                 # calculate first and points in each profile with large increases
@@ -487,19 +486,19 @@ class X_H:
                     layers.Dense(outs,input_dim=10,activation="sigmoid")])
 
             model.compile(optimizers.Adam(clipnorm=1),loss=losses.MeanSquaredError())
-            callback = tf.keras.callbacks.EarlyStopping(monitor='loss', patience=50)
+            callback = tf.keras.callbacks.EarlyStopping(monitor='loss', patience=training_patience)
             
             if len(indices)==0:
                 warnings.warn(f"no training data available for s1 state {state}. model will return random results")
                 
             elif "burning" in state:
                 history = model.fit(inputs[nonflat],np.array(bounds)[nonflat],
-                                    epochs=500,verbose=0,callbacks=[callback],
+                                    epochs=training_epochs,verbose=0,callbacks=[callback],
                                     validation_data=(valid_inputs[valid_nonflat],
                                                      np.array(valid_bounds)[valid_nonflat]))
             else:
                 history = model.fit(inputs,np.array(bounds),
-                                    epochs=500,verbose=0,callbacks=[callback],
+                                    epochs=training_epochs,verbose=0,callbacks=[callback],
                                     validation_data=(valid_inputs,
                                                      np.array(valid_bounds)))
             
