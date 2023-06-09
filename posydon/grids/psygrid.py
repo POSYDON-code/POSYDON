@@ -690,8 +690,12 @@ class PSyGrid:
                         run.history1_path, [colname])
                     if history1_mod is not None:
                         history1_mod = np.int_(history1_mod[colname])
-                        if len(history1_mod) == len(history1) + 1:
-                            history1_mod = history1_mod[:-1]
+                        len_diff = len(history1)-len(history1_mod)
+                        if len_diff<0: #shorten history1_mod
+                            history1_mod = history1_mod[:len_diff]
+                        elif len_diff>0: #entend history1_mod
+                            add_mod = np.full(len_diff,history1_mod[-1])
+                            history1_mod = np.concatenate((history1_mod, add_mod))
                     else:
                         ignore_data = True
                         ignore_reason = "corrupted_history1"
@@ -699,8 +703,12 @@ class PSyGrid:
                         run.history1_path, ["star_age"])
                     if history1_age is not None:
                         history1_age = history1_age["star_age"]
-                        if len(history1_age) == len(history1) + 1:
-                            history1_age = history1_age[:-1]
+                        len_diff = len(history1)-len(history1_age)
+                        if len_diff<0: #shorten history1_age
+                            history1_age = history1_age[:len_diff]
+                        elif len_diff>0: #entend history1_age
+                            add_age = np.full(len_diff,history1_age[-1])
+                            history1_age = np.concatenate((history1_age, add_age))
                     else:
                         ignore_data = True
                         ignore_reason = "corrupted_history1"
@@ -713,8 +721,12 @@ class PSyGrid:
                         run.history2_path, [colname])
                     if history2_mod is not None:
                         history2_mod = np.int_(history2_mod[colname])
-                        if len(history2_mod) == len(history2) + 1:
-                            history2_mod = history2_mod[:-1]
+                        len_diff = len(history2)-len(history2_mod)
+                        if len_diff<0: #shorten history2_mod
+                            history2_mod = history2_mod[:len_diff]
+                        elif len_diff>0: #entend history2_mod
+                            add_mod = np.full(len_diff,history2_mod[-1])
+                            history2_mod = np.concatenate((history2_mod, add_mod))
                     else:
                         ignore_data = True
                         ignore_reason = "corrupted_history2"
@@ -722,8 +734,12 @@ class PSyGrid:
                         run.history2_path, ["star_age"])
                     if history2_age is not None:
                         history2_age = history2_age["star_age"]
-                        if len(history2_age) == len(history2) + 1:
-                            history2_age = history2_age[:-1]
+                        len_diff = len(history2)-len(history2_age)
+                        if len_diff<0: #shorten history2_age
+                            history2_age = history2_age[:len_diff]
+                        elif len_diff>0: #entend history2_age
+                            add_age = np.full(len_diff,history2_age[-1])
+                            history2_age = np.concatenate((history2_age, add_age))
                     else:
                         ignore_data = True
                         ignore_reason = "corrupted_history2"
@@ -736,8 +752,12 @@ class PSyGrid:
                         run.binary_history_path, [colname])
                     if binary_history_mod is not None:
                         binary_history_mod = np.int_(binary_history_mod[colname])
-                        if len(binary_history_mod) == len(binary_history) + 1:
-                            binary_history_mod = binary_history_mod[:-1]
+                        len_diff = len(binary_history)-len(binary_history_mod)
+                        if len_diff<0: #shorten binary_history_mod
+                            binary_history_mod = binary_history_mod[:len_diff]
+                        elif len_diff>0: #entend binary_history_mod
+                            add_mod = np.full(len_diff,binary_history_mod[-1])
+                            binary_history_mod = np.concatenate((binary_history_mod, add_mod))
                     else:
                         ignore_data = True
                         ignore_reason = "corrupted_binary_history"
@@ -745,8 +765,12 @@ class PSyGrid:
                         run.binary_history_path, ["age"])
                     if binary_history_age is not None:
                         binary_history_age = binary_history_age["age"]
-                        if len(binary_history_age) == len(binary_history) + 1:
-                            binary_history_age = binary_history_age[:-1]
+                        len_diff = len(binary_history)-len(binary_history_age)
+                        if len_diff<0: #shorten binary_history_age
+                            binary_history_age = binary_history_age[:len_diff]
+                        elif len_diff>0: #entend binary_history_age
+                            add_age = np.full(len_diff,binary_history_age[-1])
+                            binary_history_age = np.concatenate((binary_history_age, add_age))
                     else:
                         ignore_data = True
                         ignore_reason = "corrupted_binary_history"
