@@ -549,6 +549,7 @@ class StepSN(object):
                     for key in STARPROPERTIES:
                         if key in ["state", "SN_type", "f_fb", "mass", "spin"]:
                             setattr(star, key, None)
+                    star.state = state
                 else:
                     for key in STARPROPERTIES:
                         if key not in ["state", "mass", "spin"]:
