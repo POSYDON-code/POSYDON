@@ -35,7 +35,7 @@ MNRAS, 388, 393, doi: 10.1111/j.1365-2966.2008.13402.x
 
 class Pulsar:
 
-    def __init__(self, initial_mass, initial_Mdot):
+    def __init__(self, initial_mass):
         '''
         Construct a Pulsar object.
 
@@ -52,7 +52,6 @@ class Pulsar:
         self.moment_inertia = self.calc_moment_of_inertia()   ## moment of inertia of the NS  [g*cm^2]
         ## Note: Because the NS radius is constant, moment of inertia should also be constant throughout NS evolution
 
-        self.Mdot = initial_Mdot*const.Msun/const.secyer      ## rate of change in mass of the NS [g/s]
         self.Mdot_edd = self.calc_NS_edd_lim(np.nan)          ## Eddington accretion rate for the NS [g/s]
 
         self.spin = self.draw_NS_spin()          ## NS spin angular frequency [1/s]
@@ -103,17 +102,20 @@ class Pulsar:
 
     def calc_NS_luminosity(self):
         """
-        Calculate the Eddington-limited luminosity of the NS.
+        Calculate the radio luminosity of the NS.
+        units of distribution from Szary et al. 2014 are mJy*kpc^2
         """
-        if self.Mdot > self.Mdot_edd: lum_Mdot = self.Mdot_edd
-        else: lum_Mdot = self.Mdot
+        kpc2cm = 3.086e21           ## kpc to cm
+        mJy2cgs = 1e-23*1e-3        ## milliJansky in CGS units [erg/s/cm^2/Hz]
+        Hz = 1400*1e6               ## Hz conversion for radio luminosity (1400 MHz)
+        mJykpcsq2ergs = mJy2cgs*kpc2cm**2*Hz
 
-        luminosity = const.standard_cgrav*self.mass*lum_Mdot/self.radius
+        luminosity =10**np.random.lognormal(0.5*mJykpcsq2ergs, 1.0*mJykpcsq2ergs)
         return luminosity
     
     def calc_NS_spindown_power(self):
         """
-        Calculate the spindown power of the NS.
+        Calculate the spindown power of the NS [erg/s].
         From Szary et al. 2014
         """
         P = 2*np.pi/self.spin                                ## NS spin period

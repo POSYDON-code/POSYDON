@@ -345,10 +345,9 @@ class PulsarHooks(EvolveHooks):
             pulsar_alive.extend(np.full(len(state_history[:NS_start]), False))
 
             donor_surface_h1 = np.array(star_companion.surface_h1_history, dtype=float)
-            NS_mdot = np.array(star_NS.lg_mdot_history, dtype=float)
 
             ## initialize the pulsar
-            pulsar = Pulsar(star_NS.mass_history[NS_start], NS_mdot[NS_start])
+            pulsar = Pulsar(star_NS.mass_history[NS_start])
             pulsar_spin.append(pulsar.spin)
             pulsar_Bfield.append(pulsar.Bfield)
             pulsar_alive.append(pulsar.is_alive())
@@ -362,10 +361,9 @@ class PulsarHooks(EvolveHooks):
                 delta_M = star_NS.mass_history[i] - star_NS.mass_history[i-1]
                
                 pulsar.Mdot_edd = pulsar.calc_NS_edd_lim(donor_surface_h1[i]) 
-                pulsar.Mdot = 10**NS_mdot[i]*const.Msun/const.secyer
-
-                if step_name in ['step_detached', 'step_SN', 'step_dco']:
-                    pulsar.detached_evolve(delta_t)
+                
+                if step_name in ['step_detached', 'step_dco']:
+                    pulsar.detached_evolve(delta_t)                   
     
                 elif step_name == "step_CO_HMS_RLO":     
                     pulsar.RLO_evolve_COMPAS(delta_M)
@@ -389,7 +387,9 @@ class PulsarHooks(EvolveHooks):
             pulsar_Bfield.extend(np.full(len(state_history), np.nan))
             pulsar_alive.extend(np.full(len(state_history), False))
 
-        ## raise an error if column mismatch here
+        ## raise an error if history length mismatch
+        if ((len(pulsar_spin) != len(state_history)) | len(pulsar_Bfield) != len(state_history) | len(pulsar_alive) != len(state_history)):
+            raise ValueError("length of pulsar history does not match length of binary history")
 
         return np.array(pulsar_spin, dtype=float), np.array(pulsar_Bfield, dtype=float), np.array(pulsar_alive, dtype=bool)
 
