@@ -687,12 +687,13 @@ class PSyGrid:
                 colname = "model_number"
                 if history1 is not None:
                     if colname in H1_columns:
-                        history1_mod = history1[colname].copy()
+                        history1_mod = np.int_(history1[colname].copy())
                     else:
                         history1_mod = read_MESA_data_file(run.history1_path, 
                                                            [colname])
+                        if history1_mod is not None:
+                            history1_mod = np.int_(history1_mod[colname])
                     if history1_mod is not None:
-                        history1_mod = np.int_(history1_mod[colname])
                         len_diff = len(history1)-len(history1_mod)
                         if len_diff<0: #shorten history1_mod
                             history1_mod = history1_mod[:len_diff]
@@ -709,8 +710,9 @@ class PSyGrid:
                     else:
                         history1_age = read_MESA_data_file(run.history1_path, 
                                                            ["star_age"])
+                        if history1_age is not None:
+                            history1_age = history1_age["star_age"]
                     if history1_age is not None:
-                        history1_age = history1_age["star_age"]
                         len_diff = len(history1)-len(history1_age)
                         if len_diff<0: #shorten history1_age
                             history1_age = history1_age[:len_diff]
@@ -728,12 +730,13 @@ class PSyGrid:
 
                 if history2 is not None:
                     if colname in H2_columns:
-                        history2_mod = history2[colname].copy()
+                        history2_mod = np.int_(history2[colname].copy())
                     else:
                         history2_mod = read_MESA_data_file(run.history2_path, 
                                                            [colname])
+                        if history2_mod is not None:
+                            history2_mod = np.int_(history2_mod[colname])
                     if history2_mod is not None:
-                        history2_mod = np.int_(history2_mod[colname])
                         len_diff = len(history2)-len(history2_mod)
                         if len_diff<0: #shorten history2_mod
                             history2_mod = history2_mod[:len_diff]
@@ -750,8 +753,9 @@ class PSyGrid:
                     else:
                         history2_age = read_MESA_data_file(run.history2_path, 
                                                            ["star_age"])
+                        if history2_age is not None:
+                            history2_age = history2_age["star_age"]
                     if history2_age is not None:
-                        history2_age = history2_age["star_age"]
                         len_diff = len(history2)-len(history2_age)
                         if len_diff<0: #shorten history2_age
                             history2_age = history2_age[:len_diff]
@@ -769,12 +773,13 @@ class PSyGrid:
 
                 if binary_history is not None:
                     if colname in BH_columns:
-                        binary_history_mod = binary_history[colname].copy()
+                        binary_history_mod = np.int_(binary_history[colname].copy())
                     else:
                         binary_history_mod = read_MESA_data_file(
                             run.binary_history_path, [colname])
+                        if binary_history_mod is not None:
+                            binary_history_mod = np.int_(binary_history_mod[colname])
                     if binary_history_mod is not None:
-                        binary_history_mod = np.int_(binary_history_mod[colname])
                         len_diff = len(binary_history)-len(binary_history_mod)
                         if len_diff<0: #shorten binary_history_mod
                             binary_history_mod = binary_history_mod[:len_diff]
@@ -791,8 +796,9 @@ class PSyGrid:
                     else:
                         binary_history_age = read_MESA_data_file(
                             run.binary_history_path, ["age"])
+                        if binary_history_age is not None:
+                            binary_history_age = binary_history_age["age"]
                     if binary_history_age is not None:
-                        binary_history_age = binary_history_age["age"]
                         len_diff = len(binary_history)-len(binary_history_age)
                         if len_diff<0: #shorten binary_history_age
                             binary_history_age = binary_history_age[:len_diff]
