@@ -37,8 +37,8 @@ class OptionsWindow(QWidget):
         self.setWindowTitle("Visualizer Options")
 
         screen_geometry = QApplication.desktop().screenGeometry()
-        self.resize(screen_geometry.width() * 0.20,
-                    screen_geometry.height() * 0.20)
+        self.resize(int(screen_geometry.width() * 0.20),
+                    int(screen_geometry.height() * 0.20))
 
         self._dropdow_options_signals = {
             self._mode_to_text[PresenterMode.DETAILED]:

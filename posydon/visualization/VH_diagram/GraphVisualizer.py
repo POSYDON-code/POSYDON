@@ -9,8 +9,7 @@ __authors__ = [
 from PyQt5.QtWidgets import (QWidget, QFrame, QHBoxLayout, QVBoxLayout,
                              QLabel, QGridLayout)
 from PyQt5.QtCore import Qt, QPoint, QSize
-from PyQt5.QtGui import QPainter, QPixmap
-
+from PyQt5.QtGui import QPainter, QPixmap, QFont
 from .MathTextLabel import MathTextLabel
 
 from dataclasses import dataclass
@@ -308,6 +307,7 @@ class StateInfos(Infos):
 
     S1_filename: str
     S2_filename: str
+    event_filename : str
     distance: int
     top_texts: list
     bot_texts: list
@@ -461,7 +461,7 @@ class GraphVisualizerState(GraphVisualizerItem):
         if index >= len(self._bot_labels):
             print(f"Can't set text to bot label {index}")
             return
-
+        
         self._bot_labels[index].setText(text)
 
     def get_attach_point_top(self):
@@ -495,7 +495,7 @@ class GraphVisualizerState(GraphVisualizerItem):
                 * (1 - self._distance))
         y_S1 = self._bg.height() / 2 - self._S1_pixmap.height() / 2
 
-        painter.drawPixmap(x_S1, y_S1, self._S1_pixmap)
+        painter.drawPixmap(int(x_S1), int(y_S1), self._S1_pixmap)
 
         x_S2 = (
             self._bg.width() / 2
@@ -609,6 +609,9 @@ class GraphVisualizercolumn:
 
     def set_title(self, title):
         """Set the title."""
+        font = QFont()
+        font.setPointSize(25)
+        self._title_label.setFont(font)
         self._title_label.setText(title)
 
     def add_item(self, item):

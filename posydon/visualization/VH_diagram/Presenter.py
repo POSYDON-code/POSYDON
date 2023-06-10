@@ -349,6 +349,7 @@ class Presenter:
             self._set_visualisation_diagram)
         self._visualizer.distance_representation_required().connect(
             self._set_distance_representation)
+        breakpoint()
         self._visualizer.save_required().connect(self.screen)
 
         self._present_mode = PresenterMode.DETAILED
@@ -962,3 +963,326 @@ class Presenter:
                 "state"].state_after
             aditional_info.connected = False
             self._visualizer().add_line([aditional_info])
+
+class Presenter_m(Presenter):
+    """Handle multiple Diagram view"""
+    def __init__(self,filename, path="./", count_dict=None):
+        super(Presenter_m, self).__init__(filename, path)
+        self._count_dict = count_dict
+        
+    def present_m(self, indexes, mode=PresenterMode.DETAILED):
+        """Preset the binary."""
+        self._present_mode = mode
+        self._visualizer.options().set_showed_mode(self._present_mode)
+        self._visualizer().reset()
+        
+        if self._count_dict== None :
+            self._count_dict = {i: 1/len(indexes) for i in indexes}
+    
+        for i in indexes :
+            self._prepare_corresponding_data(i)
+            self._update_visualisation_m()#redefined
+
+        self._main_window.show()
+
+    def _update_visualisation_m(self):
+        """Update the display according to current_index and present_mode."""
+        if self._current_index is None:
+            return
+
+        if self._present_mode == PresenterMode.DETAILED:
+            self._prepare_basic_columns_m()
+            self._detailed_presentation(self._current_data)
+        elif self._present_mode == PresenterMode.REDUCED:
+            self._prepare_basic_columns_m()
+            self._reduced_presentation(self._current_data)
+        elif self._present_mode == PresenterMode.SIMPLIFIED:
+            self._prepare_basic_columns_m()
+            self._simplified_presentation(self._current_data)
+        elif self._present_mode == PresenterMode.DIAGRAM:
+            self._prepare_diagram_columns_m()#only this is modified
+            self._digram_presentation(self._current_data)
+    
+    def _prepare_basic_columns_m(self):#THE REST USES 3 COLUMNS COL_SPAN=1
+        """Add columns for Detailled/Reduced/Simplified View."""
+        self._time_id = self._visualizer().add_column(columnTYPE.TIMELINE)
+        self._visualizer().get_column(self._time_id).set_title(f"{self._current_index} : TIME")
+
+        self._S1_id = self._visualizer().add_column(columnTYPE.CONNECTED)
+        self._visualizer().get_column(self._S1_id).set_title("S1")
+
+        self._event_id = self._visualizer().add_column(columnTYPE.CONNECTED)
+        self._visualizer().get_column(self._event_id).set_title("EVENT/STATE")
+
+        self._S2_id = self._visualizer().add_column(columnTYPE.CONNECTED)
+        self._visualizer().get_column(self._S2_id).set_title("S2")
+    
+    def _prepare_diagram_columns_m(self):
+        """Add columns for multiple Diagram View."""
+        self._time_id = self._visualizer().add_column(columnTYPE.TIMELINE)
+        self._state_id = self._visualizer().add_column(columnTYPE.CONNECTED)
+        self._visualizer().get_column(self._state_id).set_title(f"{self._current_index} : {self._count_dict[self._current_index] : .2f} %")
+
+class Presenter_h(Presenter):
+    """Handle hierarchycal Diagram view"""
+    def __init__(self,filename, path="./", count_dict=None):
+        super(Presenter_h, self).__init__(filename, path)
+        self._count_dict = count_dict
+        self._column_width = 400 
+        
+    def present_h(self, indexes, mode=PresenterMode.DIAGRAM, count_dict=None):
+        """Preset the binary."""
+        self._present_mode = PresenterMode.DIAGRAM
+        self._visualizer.options().set_showed_mode(self._present_mode)
+        self._visualizer().reset()
+        
+        if self._count_dict == None :
+            self._count_dict = {i: 1/len(indexes) for i in indexes}
+        
+        self._columns_indexes = []
+        self._columns_data = []
+        self._edges = []
+        self._relative_percentage = dict()
+    
+        for i in indexes :
+            self._prepare_corresponding_data(i)
+            self._columns_data.append(self._current_data.copy())
+            self._update_visualisation_h()
+            
+        self._sort_hierarchy()
+        self._remove_duplicate(0,len(self._columns_data)-1,0)
+        self._digram_presentation_h()
+        self._paint_obl_edges()
+        self._main_window.show()
+    
+    def _sort_hierarchy(self):
+        nb_level = min(self._columns_data ,
+                       key=lambda dataf: dataf.shape[0]).shape[0]
+         
+        self._columns_data.sort(key=lambda dataf : self._tuple_hierarchy(dataf))
+        
+    def _tuple_hierarchy(self, dataf):
+        return [dataf.iloc[i].at['S1_state'].split("_")[0] +
+                str(dataf.iloc[i].at['state']) + 
+                str(dataf.iloc[i].at['event']) +
+                dataf.iloc[i].at['S2_state'].split("_")[0] 
+                for i in range(len(dataf))]
+    
+    def _remove_duplicate(self,start_col,end_col,line):
+        if start_col >= end_col : 
+            return
+
+        shortest_df = min(self._columns_data[start_col : end_col+1] ,
+                       key=lambda dataf: dataf.shape[0])
+        if shortest_df.shape[0] > line:
+            df0 = self._columns_data[start_col]
+
+            col_id_S1 = df0.columns.get_loc('S1_state')
+            col_id_S2 = df0.columns.get_loc('S2_state')
+            col_id_s = df0.columns.get_loc('state')
+            col_id_e = df0.columns.get_loc('event')
+
+            rg_column = [[start_col]]        
+            for j in range(start_col+1, end_col+1):
+                df1 = self._columns_data[j]
+                if (
+                    df0.iloc[line,col_id_S1] == df1.iloc[line,col_id_S1]
+                ) and (
+                    df0.iloc[line,col_id_S2] == df1.iloc[line,col_id_S2]
+                ) and (
+                    str(df0.iloc[line,col_id_s]) == str(df1.iloc[line,col_id_s])
+                ) and (
+                    str(df0.iloc[line,col_id_e]) == str(df1.iloc[line,col_id_e])
+                ):
+                    df0.iloc[line,col_id_S1] = 'Duplicated'
+                else:
+                    rg_column[-1].append(j-1)
+                    rg_column.append([j])
+                df0 = df1
+            rg_column[-1].append(end_col)
+            self._edges.extend([[line-1, start_col + (end_col-start_col)//2,
+                                 line, 
+                                 c[0] + (c[1]-c[0])//2] for c in rg_column])
+            for c in rg_column :
+                list_of_ind = [d.index[0] for d in self._columns_data]
+                sub_sum = sum([self._count_dict[i] for i in list_of_ind[c[0]:c[1]+1]])
+                tot_sum = sum([self._count_dict[i] for i in list_of_ind])
+                self._relative_percentage[(line,
+                                           c[0] + (c[1]-c[0])//2)] = 100 * sub_sum / tot_sum
+            self._center_column(rg_column, line, col_id_S1)
+            
+            for start,stop in rg_column :
+                self._remove_duplicate(start, stop, line+1)
+        else :
+            no_col = self._columns_data.index(shortest_df, start_col, end_col+1)
+            self._remove_duplicate(start_col, no_col-1, line)
+            self._remove_duplicate(no_col+1, end_col, line)
+        
+    def _center_column(self, range_column, line, col_id_S1):
+        for k,j in range_column:
+            if j - k >= 1 :
+                state_name = self._columns_data[j].iloc[line , col_id_S1]
+                self._columns_data[j].iloc[line , col_id_S1] = 'Duplicated'
+                self._columns_data[k + (j-k)//2].iloc[line ,col_id_S1] = state_name
+        
+
+    def _update_visualisation_h(self):
+        """Update the display according to current_index and present_mode."""
+        if self._current_index is None:
+            return
+
+        if self._present_mode == PresenterMode.DETAILED:
+            self._prepare_basic_columns()
+        elif self._present_mode == PresenterMode.REDUCED:
+            self._prepare_basic_columns()
+            self._reduced_presentation(self._current_data)
+        elif self._present_mode == PresenterMode.SIMPLIFIED:
+            self._prepare_basic_columns()
+            self._simplified_presentation(self._current_data)
+        elif self._present_mode == PresenterMode.DIAGRAM:
+            self._prepare_diagram_columns_h()
+            
+    
+    def _prepare_diagram_columns_h(self):
+        """Add columns for Diagram View."""
+        self._state_id = self._visualizer().add_column(columnTYPE.CONNECTED)
+        self._visualizer()._layout.setColumnMinimumWidth(self._state_id, self._column_width)
+        self._columns_indexes.append(self._state_id)
+        
+    
+    def _digram_presentation_h(self):
+        
+        simplified_datas = []
+        for i in self._columns_indexes:
+            simplified_datas.append(self._simplify_data(self._columns_data[i]))
+        
+        for i in self._columns_indexes:
+            simplified_data = simplified_datas[i]
+            self._state_id = i
+            max_distance_data = max(simplified_data, key=get_max_distance)
+            max_distance = get_max_distance(max_distance_data)
+
+            self._visualizer()._columns[i]._row_index = 16
+            binary = self._columns_data[i].index[0]
+            self._visualizer().get_column(i).set_title(f"{binary} : {self._count_dict[binary]: .2f} %")
+            
+            self._isOrph = True
+            
+            for line_data in simplified_data:
+                self._visualizer().add_line(
+                    self._prepare_diagram_line(line_data, max_distance)
+                )
+            if (
+                simplified_data[-1]["state"].state_after == "disrupted"
+                or simplified_data[-1]["state"].state_after == "merged"
+            ):
+                aditional_info = CaseInfos(self._state_id)
+                aditional_info.centered_text = simplified_data[-1][
+                    "state"].state_after
+                aditional_info.connected = False
+                binary = self._columns_data[self._state_id].index[0]
+                col = self._state_id
+                lin = self._visualizer()._columns[col]._row_index - 16
+                if (lin,col) in self._relative_percentage :
+                    aditional_info.top_left_text = "{:.2f} %".format(self._relative_percentage[(lin, col)])
+                if not self._isOrph :
+                    aditional_info.connected = True
+                    
+                self._visualizer().add_line([aditional_info])
+    
+    def _prepare_diagram_line(self, data, max_distance):
+
+        if data['S1_state'].state_before == 'Duplicated' :
+            aditional_info = CaseInfos(self._state_id)
+            aditional_info.centered_text = " "
+            aditional_info.connected = False
+            
+            self._isOrph = True
+            return [aditional_info]
+        
+        state_info = StateInfos(self._state_id)
+        if self._distance_representation and "separation" in data:
+            state_info.distance = self._get_distance_representation(
+                data["separation"], max_distance
+            )
+        else:
+            state_info.distance = 1
+
+        state_before_filename = os.path.join(
+            self.PATH_TO_DRAWS,
+            get_event_state_filename(
+                data["S1_state"].state_before,
+                data["state"].state_before,
+                data["S2_state"].state_before,
+                suffix=".png",
+            ),
+        )
+        state_after_filename = os.path.join(
+            self.PATH_TO_DRAWS,
+            get_event_state_filename(
+                data["S1_state"].state_before,
+                data["state"].state_before,
+                data["S2_state"].state_before,
+                suffix=".png",
+            ),
+        )
+        if (data["state"].state_after != "detached"
+                and file_exist(state_after_filename)):
+            state_info.event_filename = state_after_filename
+        elif data["state"].state_before != "detached" and file_exist(
+            state_before_filename
+        ):
+            state_info.event_filename = state_before_filename
+        else:
+            if data["S1_state"].state_after is not None:
+                state_info.S1_filename = os.path.join(
+                    self.PATH_TO_DRAWS,
+                    get_star_state_filename(
+                        data["S1_state"].state_after, suffix=".png"
+                    ),
+                )
+            else:
+                state_info.S1_filename = os.path.join(
+                    self.PATH_TO_DRAWS,
+                    get_star_state_filename(
+                        data["S1_state"].state_before, suffix=".png"
+                    ),
+                )
+
+            if data["S2_state"].state_after is not None:
+                state_info.S2_filename = os.path.join(
+                    self.PATH_TO_DRAWS,
+                    get_star_state_filename(
+                        data["S2_state"].state_after, suffix=".png"
+                    ),
+                )
+            else:
+                state_info.S2_filename = os.path.join(
+                    self.PATH_TO_DRAWS,
+                    get_star_state_filename(
+                        data["S2_state"].state_before, suffix=".png"
+                    ),
+                )
+                
+        binary = self._columns_data[self._state_id].index[0]
+        col = self._state_id
+        lin = self._visualizer()._columns[col]._row_index - 16
+        if (lin,col) in self._relative_percentage :
+            state_info.bot_texts.append("{:<25} {:.2f}  % {:>25}".format(data['event'].state_before, self._relative_percentage[(lin, col)], data['state'].state_before))
+        
+        state_info.top_texts.append("{:<25}{:>25}".format(data['S1_state'].state_before , data['S2_state'].state_before))
+            
+        
+        if self._isOrph : self._isOrph = False
+        else : state_info.connected = True 
+            
+        return [state_info]
+    
+    def _paint_obl_edges(self):
+        for i1,j1,i2,j2 in self._edges :
+            if j1==j2 : continue
+            else :
+                self._visualizer()._columns[j1]._connected_items.append(
+                            ConnectedItem(
+                                self._visualizer()._columns[j1]._items[i1],
+                                self._visualizer()._columns[j2]._items[i2]))         
