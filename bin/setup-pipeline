@@ -8,6 +8,7 @@ __authors__ = [
 import os
 import sys
 import ast
+import shutil
 import pandas as pd
 import numpy as np
 from pprint import pprint, pformat
@@ -238,30 +239,76 @@ def slurm_job(job_name,
         slurm_array = '$SLURM_ARRAY_TASK_ID'
 
         if job_name == 'step_1':
+            f.write("#SBATCH --open-mode=truncate\n")
             f.write(f"#SBATCH --output={PATH}/logs/grid_slice_%a.out\n")
 
         if job_name == 'step_2':
-            f.write(f"#SBATCH --output={PATH}/logs/combine_grid_slices.out\n")
+            path_to_out_file = os.path.join(PATH, 'logs',
+                                            'combine_grid_slices.out')
+            if os.path.exists(path_to_out_file): # move old data to a copy
+                path_to_old_out_file = os.path.join(PATH, 'logs',
+                                                 'combine_grid_slices.old.out')
+                if os.path.exists(path_to_old_out_file): # delete old copy
+                    os.remove(path_to_old_out_file)
+                shutil.move(path_to_out_file, path_to_old_out_file)
+            f.write("#SBATCH --open-mode=append\n")
+            f.write(f"#SBATCH --output={path_to_out_file}\n")
 
         if job_name == 'step_3':
-            f.write(f"#SBATCH --output={PATH}/logs/plot_grid.out\n")
+            path_to_out_file = os.path.join(PATH, 'logs', 'plot_grid.out')
+            if os.path.exists(path_to_out_file): # move old data to a copy
+                path_to_old_out_file = os.path.join(PATH, 'logs',
+                                                    'plot_grid.old.out')
+                if os.path.exists(path_to_old_out_file): # delete old copy
+                    os.remove(path_to_old_out_file)
+                shutil.move(path_to_out_file, path_to_old_out_file)
+            f.write("#SBATCH --open-mode=append\n")
+            f.write(f"#SBATCH --output={path_to_out_file}\n")
             f.write("unset DISPLAY\n")
 
         if job_name == 'step_4':
-            f.write(f"#SBATCH --output={PATH}/logs/check_failure_rate.out\n")
+            path_to_out_file = os.path.join(PATH, 'logs',
+                                            'check_failure_rate.out')
+            if os.path.exists(path_to_out_file): # move old data to a copy
+                path_to_old_out_file = os.path.join(PATH, 'logs',
+                                                  'check_failure_rate.old.out')
+                if os.path.exists(path_to_old_out_file): # delete old copy
+                    os.remove(path_to_old_out_file)
+                shutil.move(path_to_out_file, path_to_old_out_file)
+            f.write("#SBATCH --open-mode=append\n")
+            f.write(f"#SBATCH --output={path_to_out_file}\n")
 
         if job_name == 'step_5':
+            f.write("#SBATCH --open-mode=truncate\n")
             f.write(f"#SBATCH --output={PATH}/logs/post_processing_%a.out\n")
             f.write(f"export PATH_TO_POSYDON={PATH_TO_POSYDON}\n")
 
         if job_name == 'step_6':
+            f.write("#SBATCH --open-mode=truncate\n")
             f.write(f"#SBATCH --output={PATH}/logs/train_interpolators_%a.out\n")
 
         if job_name == 'step_7':
-            f.write(f"#SBATCH --output={PATH}/logs/export_dataset.out\n")
+            path_to_out_file = os.path.join(PATH, 'logs',
+                                            'export_dataset.out')
+            if os.path.exists(path_to_out_file): # move old data to a copy
+                path_to_old_out_file = os.path.join(PATH, 'logs',
+                                                    'export_dataset.old.out')
+                if os.path.exists(path_to_old_out_file): # delete old copy
+                    os.remove(path_to_old_out_file)
+                shutil.move(path_to_out_file, path_to_old_out_file)
+            f.write("#SBATCH --open-mode=append\n")
+            f.write(f"#SBATCH --output={path_to_out_file}\n")
 
         if job_name == 'rerun':
-            f.write(f"#SBATCH --output={PATH}/logs/rerun.out\n")
+            path_to_out_file = os.path.join(PATH, 'logs', 'rerun.out')
+            if os.path.exists(path_to_out_file): # move old data to a copy
+                path_to_old_out_file = os.path.join(PATH, 'logs',
+                                                    'rerun.old.out')
+                if os.path.exists(path_to_old_out_file): # delete old copy
+                    os.remove(path_to_old_out_file)
+                shutil.move(path_to_out_file, path_to_old_out_file)
+            f.write("#SBATCH --open-mode=append\n")
+            f.write(f"#SBATCH --output={path_to_out_file}\n")
 
         f.write(f"\nsrun python {PATH_TO_POSYDON}/bin/run-pipeline {PATH_TO_GRIDS} {path_to_csv_file} {slurm_array} {CO_HMS_GRID_START_AT_RLO} {RERUN_TYPE}")
 
