@@ -502,16 +502,30 @@ class StepSN(object):
                 # check if selected MODEL is supported
                 if MODEL_NAME_SEL is None:
                     raise ValueError('Your model assumptions are not'
-                                     'supported!')                    
+                                     'supported!')   
+                elif getattr(star, MODEL_NAME_SEL) is None:
+                    # NOTE: this option is needed to do the collapse
+                    # for stars evolved with the step_detached or 
+                    # steo_disrupted.
+                    # allow to continue with the collapse with profile
+                    # or core masses
+                    warnings.warn(f'{MODEL_NAME_SEL}: The collapsed star '
+                                     'was not interpolated! If use_profiles '
+                                     'or use_core_masses is set to True, '
+                                     'continue with the collapse.')                 
                 else:
                     MODEL_properties = getattr(star, MODEL_NAME_SEL)
                     for key, value in MODEL_properties.items():
                         setattr(star, key, value)
-                            
-                for key in STARPROPERTIES:
-                    if key not in MODEL_properties.keys() or key != "state":
-                        setattr(star, key, None)
-                return
+                
+                    for key in STARPROPERTIES:
+                        if key not in ["state", "mass", "spin",
+                                        "m_disk_accreted ", "m_disk_radiated"]:
+                            setattr(star, key, None)
+                    
+                    star.log_R = np.log10(CO_radius(star.mass, star.state))
+                    
+                    return
 
             # Verifies the selection of core-collapse mechnism to perform
             # the collapse
