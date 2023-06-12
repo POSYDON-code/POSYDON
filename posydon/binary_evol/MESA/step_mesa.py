@@ -28,7 +28,6 @@ from posydon.utils.common_functions import (flip_stars,
                                             convert_metallicity_to_string,
                                             CO_radius, infer_star_state)
 from posydon.utils.data_download import data_download, PATH_TO_POSYDON_DATA
-from posydon.grids.post_processing import CC_quantities
 from posydon.grids.MODELS import MODELS
 
 
@@ -794,7 +793,8 @@ class MesaGridStep:
                 for i, star in enumerate(stars):
                     if not stars_CO[i]:
                         values = {}
-                        for key in CC_quantities:
+                        for key in ['state', 'SN_type', 'f_fb', 'mass', 'spin',
+                                    'm_disk_accreted', 'm_disk_radiated']:
                             if key == 'state': 
                                 key = 'CO_type'
                             values[key] = cb.final_values[f'S{i+1}_{MODEL_NAME}_{key}']
@@ -964,7 +964,8 @@ class MesaGridStep:
                     if (not stars_CO[i] and 
                         self.classes[f'S{i+1}_{MODEL_NAME}_CO_type'] != 'None'):
                         values = {}
-                        for key in CC_quantities:
+                        for key in ['state', 'SN_type', 'f_fb', 'mass', 'spin',
+                                    'm_disk_accreted', 'm_disk_radiated']:
                             if key == "state" in key: 
                                 state = self.classes[f'S{i+1}_{MODEL_NAME}_CO_type']
                                 values[key] = state
