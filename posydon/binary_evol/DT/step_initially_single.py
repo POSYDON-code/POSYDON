@@ -64,7 +64,6 @@ class InitiallySingleStep(IsolatedStep):
         path=PATH_TO_POSYDON_DATA,
         *args, **kwargs):
         
-        print("Inside Isolated")
         super().__init__(
         grid_name_Hrich=grid_name_Hrich,
         grid_name_strippedHe=grid_name_strippedHe,

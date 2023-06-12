@@ -42,7 +42,7 @@ STAR_STATES_NOT_NORMALSTAR.append('massless_remnant')
 STAR_STATES_NOT_CO = STAR_STATES_ALL.copy()
 [STAR_STATES_NOT_CO.remove(x) for x in STAR_STATES_CO]
 
-STAR_STATES_NORMALSTAR = STAR_STATES_ALL
+STAR_STATES_NORMALSTAR = STAR_STATES_ALL.copy()
 [STAR_STATES_NORMALSTAR.remove(x) for x in STAR_STATES_NOT_NORMALSTAR]
 
 STAR_STATES_H_RICH = STAR_STATES_NORMALSTAR.copy()
@@ -223,20 +223,21 @@ for b in ['initial_RLOF',
                 POSYDON_FLOW_CHART[(s1, s2, b, e)] = 'step_end'
                 POSYDON_FLOW_CHART[(s1, s2, b, e)] = 'step_end'
 
+
 for b in ['initially_single_star']:
     for s1 in STAR_STATES_ALL:
         for s2 in STAR_STATES_ALL:
-            for e in BINARY_EVENTS_ALL:
-                if e == 'ZAMS':
-                    POSYDON_FLOW_CHART[(s1, s2, b, e)] = 'step_initially_single'
-                    POSYDON_FLOW_CHART[(s2, s1, b, e)] = 'step_initially_single'
-
+            for e in ['ZAMS']:
+                POSYDON_FLOW_CHART[(s1, s2, b, e)] = 'step_initially_single'
+                POSYDON_FLOW_CHART[(s2, s1, b, e)] = 'step_initially_single'
 
 for s1 in STAR_STATES_CO:
     for s2 in ['massless_remnant']:
         for e in BINARY_EVENTS_ALL:
             POSYDON_FLOW_CHART[(s1, s2, b, e)] = 'step_end'
             POSYDON_FLOW_CHART[(s2, s1, b, e)] = 'step_end'
+
+
 
 BINARY_EVENTS_OF_SN_OR_AFTER_DETACHED = BINARY_EVENTS_ALL.copy()
 [BINARY_EVENTS_OF_SN_OR_AFTER_DETACHED.remove(x) for x in ['CC1','CC2','MaxTime_exceeded','maxtime']]
