@@ -516,7 +516,7 @@ def create_csv(GRID_TYPES, METALLICITIES, GRID_SLICES, COMPRESSIONS,
                     print(column)
                 print('')
 #            df = df.drop(columns=drop_columns)
-            df = df.dropna(how='all')
+            df = df.dropna(axis=0, how='all').dropna(axis=1, how='all')
         newly_created_files = df.keys().to_list()
 
     output_fname = f'{step_name}.csv'
