@@ -18,6 +18,7 @@ from scipy.optimize import root
 from posydon.utils.data_download import PATH_TO_POSYDON_DATA
 from posydon.binary_evol.binarystar import BINARYPROPERTIES
 from posydon.binary_evol.singlestar import STARPROPERTIES
+from posydon.binary_evol.singlestar import properties_massless_remnant
 from posydon.interpolation import GRIDInterpolator
 from posydon.interpolation.data_scaling import DataScaler
 from posydon.utils.common_functions import (
@@ -26,8 +27,7 @@ from posydon.utils.common_functions import (
     orbital_separation_from_period,
     roche_lobe_radius,
     check_state_of_star,
-    PchipInterpolator2,
-    properties_massless_remnant
+    PchipInterpolator2
 )
 from posydon.binary_evol.flow_chart import (STAR_STATES_CC)
 import posydon.utils.constants as const
@@ -152,7 +152,7 @@ class MergedStep(IsolatedStep):
 
         s1 = star_base.state
         s2 = comp.state
-
+        print(**properties_massless_remnant)
         def mass_weighted_avg(star1=star_base,star2=comp, abundance_name="center_h1", mass_weight1="mass", mass_weight2=None):
             A1 = getattr(star1, abundance_name)
             A2 = getattr(star2, abundance_name)

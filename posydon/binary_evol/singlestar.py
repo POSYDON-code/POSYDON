@@ -313,6 +313,16 @@ class SingleStar:
                 else:
                     oneline_df[prefix+name] = [getattr(self, name)]
         return oneline_df
+        
+    def properties_massless_remnant():
+        PROPERTIES_MASSLESS = dict(
+        state = "massless_remnant",
+        mass = 0.0
+        )
+        for key in STARPROPERTIES:
+            if key is not PROPERTIES_MASSLESS:
+                PROPERTIES_MASSLESS[key] =  np.nan
+        return PROPERTIES_MASSLESS
 
     def __repr__(self):
         """Return the object representation when print is called."""
