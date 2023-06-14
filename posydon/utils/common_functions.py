@@ -2588,3 +2588,14 @@ def convert_metallicity_to_string(Z):
     if not Z in valid_Z:
         raise ValueError(f'Metallicity {Z} not supported! Available metallicities in POSYDON v2 are {valid_Z}.')
     return f'{Z:1.0e}'
+
+
+def properties_massless_remnant():
+    PROPERTIES_MASSLESS = dict(
+    state = "massless_remnant",
+    mass = 0.0
+    )
+    for key in STARPROPERTIES:
+        if key is not PROPERTIES_MASSLESS:
+            PROPERTIES_MASSLESS[key] =  np.nan
+    return PROPERTIES_MASSLESS

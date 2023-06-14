@@ -26,7 +26,8 @@ from posydon.utils.common_functions import (
     orbital_separation_from_period,
     roche_lobe_radius,
     check_state_of_star,
-    PchipInterpolator2
+    PchipInterpolator2,
+    properties_massless_remnant
 )
 from posydon.binary_evol.flow_chart import (STAR_STATES_CC)
 import posydon.utils.constants as const
@@ -42,8 +43,6 @@ from posydon.binary_evol.flow_chart import (STAR_STATES_ALL,
     STAR_STATES_NOT_CO
     )
 
-
-
 LIST_ACCEPTABLE_STATES_FOR_HMS = ["H-rich_Core_H_burning"]
 LIST_ACCEPTABLE_STATES_FOR_HeMS = ["stripped_He_Core_He_burning"]
 
@@ -53,7 +52,7 @@ LIST_ACCEPTABLE_STATES_FOR_POSTMS = STAR_STATES_H_RICH.copy()
 LIST_ACCEPTABLE_STATES_FOR_POSTHeMS = STAR_STATES_HE_RICH.copy()
 [LIST_ACCEPTABLE_STATES_FOR_POSTHeMS.remove(x) for x in LIST_ACCEPTABLE_STATES_FOR_HeMS]
 
-
+'''
 def convert_star_to_massless_remnant(star):
     star.state="massless_remnant"
     for key in STARPROPERTIES:
@@ -63,6 +62,8 @@ def convert_star_to_massless_remnant(star):
         #setattr(star, key, 1e-99)
         setattr(star, key, 0.0)
     return star
+'''
+
 
 
 class MergedStep(IsolatedStep):
@@ -264,6 +265,7 @@ class MergedStep(IsolatedStep):
 
                 merged_star.state = check_state_of_star(merged_star, star_CO=False)  # TODO for sure this needs testing!
                 massless_remnant = convert_star_to_massless_remnant(star_base)
+                massless_remnant = SingleStar(**)
 
         #postMS + postMS
         elif (s1 in LIST_ACCEPTABLE_STATES_FOR_POSTMS
