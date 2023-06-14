@@ -23,7 +23,7 @@ import posydon.visualization.plot_dco as plot_dco
 
 class SyntheticPopulation:
 
-    def __init__(self, path_to_ini, path_to_data=None, verbose=False):
+    def __init__(self, path_to_ini, path_to_data=None, verbose=False, MODEL=None):
         """
         Parameters
         ----------
@@ -35,6 +35,7 @@ class SyntheticPopulation:
         """
 
         self.verbose = verbose
+        self.MODEL = MODEL
         self.df = None
         self.df_oneline = None
         self.df_synthetic = None
@@ -394,7 +395,7 @@ class SyntheticPopulation:
         self.merger_efficiency = np.array(efficiencies)
 
 
-    def compute_cosmological_weights(self, sensitivity, flag_pdet, working_dir, load_data, **kwargs):
+    def compute_cosmological_weights(self, sensitivity, flag_pdet, working_dir, load_data):
         """Compute the DCO merger rate weights.
 
         Parameters
@@ -428,7 +429,7 @@ class SyntheticPopulation:
         """
 
         # TODO: make the class inputs kwargs
-        self.rates = Rates(self.df_synthetic, **kwargs)
+        self.rates = Rates(self.df_synthetic, **self.MODEL)
 
         # compute DCO merger rate density
         if not load_data:
