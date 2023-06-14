@@ -9,6 +9,7 @@ from posydon.utils.common_functions import (
     CEE_parameters_from_core_abundance_thresholds,
     check_state_of_star)
 from posydon.grids.MODELS import MODELS
+from posydon.visualization.combine_TF import TF1_POOL_STABLE
 import numpy as np
 from tqdm import tqdm
 import copy
@@ -229,15 +230,13 @@ def post_process_grid(grid, index=None, star_2_CO=True, MODELS=MODELS,
         # core collpase quantities
         if not single_star:
             if interpolation_class in ['no_MT', 'stable_MT']:
-                if (star_2_CO or TF1 == 'Primary has depleted central carbon' or
-                    TF1 == 'Primary enters pair-instability regime' or
-                    TF1 == 'Primary enters pulsational pair-instability regime'):
+                if (star_2_CO or (TF1 in TF1_POOL_STABLE and 
+                    ('primary' in TF1 or 'Primary' in TF1))):
                     star = binary.star_1
                     star_i = 1
                     assign_core_collapse_quantities_none(EXTRA_COLUMNS, 2)
-                elif (TF1 == 'Secondary has depleted central carbon' or
-                    TF1 == 'Secondary enters pair-instability regime' or
-                    TF1 == 'Secondary enters pulsational pair-instability regime'):
+                elif (TF1 in TF1_POOL_STABLE and 
+                    ('secondary' in TF1 or 'Secondary' in TF1)):
                     star = binary.star_2
                     star_i = 2
                     assign_core_collapse_quantities_none(EXTRA_COLUMNS, 1)
