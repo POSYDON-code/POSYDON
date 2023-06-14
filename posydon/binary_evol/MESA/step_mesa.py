@@ -802,7 +802,7 @@ class MesaGridStep:
                         if state is None or state == 'None':
                             # privent to any quantities for star that did not
                             # reach core collpase
-                            setattr(star, key, None)
+                            setattr(star, MODEL_NAME, None)
                         else:
                             setattr(star, MODEL_NAME, values)
 
