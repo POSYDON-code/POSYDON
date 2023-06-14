@@ -253,83 +253,34 @@ class EvaluateIFInterpolator:
 
         pass
 
-    def plot2D(self, x_var_str, y_var_str, z_var_str = None,
-               termination_flag = "termination_flag_1",
-               grid_3D = True, slice_3D_var_str = "star_2_mass", slice_3D_var_range = None,
-               grid_4D = False, slice_4D_var_str = None, slice_4D_var_range = None,
-               extra_grid = None, slice_at_RLO = False,
-               MARKERS_COLORS_LEGENDS = None,
-               verbose = False, **kwargs):
-        """Plot a 2D slice of x_var_str vs y_var_str of one or more runs.
+    def plot2D(self):
 
-        Parameters
-        ----------
-        x_var_str : str
-            String of the initial value to plot on the x axis. Allowed strings
-            are `psygrid.initial_values.dtype.names`.
-        y_var_str : str
-            String of the initial value to plot on the y axis. Allowed strings
-            are `psygrid.initial_values.dtype.names`.
-        z_var_str : str
-            String of the initial value to plot on the z axis (displayed as
-            a color). Allowed strings are
-            `psygrid.final_values.dtype.names`, `psygrid.history1.dtype.names`,
-            `psygrid.binary_history.dtype.names`.
-        termination_flag : str
-            Termination flag to display, allowed values are:
-            "termination_flag_1", "termination_flag_2", "termination_flag_3",
-            "termination_flag_4", "all".
-        grid_3D : bool
-            If `True`, the psygrid object is a 3D grid and needs to be sliced.
-        slice_3D_var_str : str
-            Variable along which the 3D space will be sliced. Allowed values
-            are `psygrid.initial_values.dtype.names`.
-        slice_3D_var_range : tuple
-            Range between which you want to slice the variable slice_3D_var_str
-            e.g., `(2.5,3.)`.
-        grid_4D : bool
-            If `True`, the psygrid object is a 4D grid and needs to be sliced.
-        slice_4D_var_str : str
-            Variable along which the 4D space will be sliced. Allowed values
-            are `psygrid.initial_values.dtype.names`.
-        slice_4D_var_range : toople
-            Range between which you want to slice the variable slice_4D_var_str
-            e.g., `(2.5,3.)`.
-        extra_grid : object or array of objects
-            If subset of the grid was rerun a or an extention was added, one
-            can overlay the new psygrid by passing it here.
-        slice_at_RLO : bool
-            If `True`, the object plots the tracks until onset of Roche Lobe
-            overflow.
-        MARKERS_COLORS_LEGENDS : dict
-            Each termination flag is associated with a marker shape, size,
-            color and label (cf. `MARKERS_COLORS_LEGENDS` in
-            `plot_defaults.py`).
-        verbose : bool
-            If `True`, the object reports by printing to standard output.
-        **kwargs : dict
-            Dictionary containing extra visualisation options (cf.
-            `PLOT_PROPERTIES` in `plot_defaults.py`.
+        q = 0.7
+        PLOT_PROPERTIES_TF12 = {
+            'figsize': (4.5, 4.),
+            'show_fig' : True,
+            'close_fig' : True,
+            'path_to_file': '~/research/posydon/grid_slices',
+            'fname': 'q_%1.1f_TF12.png'%q,
+            'title' : "hi",
+            'log10_x' : True,
+            'log10_y' : True,
+        }
 
-        """
-        plot = plot2D(psygrid = self.test_grid,
-                      x_var_str = x_var_str,
-                      y_var_str = y_var_str,
-                      z_var_str = z_var_str,
-                      termination_flag = termination_flag,
-                      grid_3D = grid_3D,
-                      slice_3D_var_str = slice_3D_var_str,
-                      slice_3D_var_range = slice_3D_var_range,
-                      grid_4D = grid_4D,
-                      slice_4D_var_str = slice_4D_var_str,
-                      slice_4D_var_range = slice_4D_var_range,
-                      extra_grid = extra_grid,
-                      slice_at_RLO = slice_at_RLO,
-                      MARKERS_COLORS_LEGENDS = MARKERS_COLORS_LEGENDS,
-                      verbose = verbose,
-                      **kwargs)
+        PLOT_PROPERTIES_TF1 = PLOT_PROPERTIES_TF12
+        PLOT_PROPERTIES_TF1['fname'] = 'q_%1.1f_TF1_max.png'%q
+        PLOT_PROPERTIES_TF1['figsize'] = (4.5,6.)
+        PLOT_PROPERTIES_TF1['colorbar'] = {'label' : "bye"}
 
-        plot()
+        max_omega = [max(self.test_grid[i].history2['surf_avg_omega_div_omega_crit'])
+                    if self.test_grid[i].history2 is not None else np.nan
+                    for i in range(len(self.test_grid.MESA_dirs))]
+
+        fig = self.test_grid.plot2D('star_1_mass', 'period_days', np.array(max_omega),
+                    termination_flag='termination_flag_1',
+                    grid_3D=True, slice_3D_var_str='mass_ratio',
+                    slice_3D_var_range=(q-0.025,q+0.025),
+                    verbose=False, **PLOT_PROPERTIES_TF1)
 
 
         
