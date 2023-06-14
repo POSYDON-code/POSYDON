@@ -23,7 +23,7 @@ import posydon.visualization.plot_dco as plot_dco
 
 class SyntheticPopulation:
 
-    def __init__(self, path_to_ini, path_to_data=None, verbose=False, MODEL=None):
+    def __init__(self, path_to_ini, path_to_data=None, verbose=False, MODEL={}):
         """
         Parameters
         ----------
