@@ -882,9 +882,9 @@ class BinaryGenerator:
         #If binary_fraction not default a initially single star binary is created.
         else:
             formation_time = output['time'].item()
-            separation = 1e99
-            orbital_period = output['orbital_period'].item()
-            eccentricity = output['eccentricity'].item()
+            separation = np.nan
+            orbital_period = np.nan
+            eccentricity = np.nan
             m1 = output['S1_mass'].item()
             m2 = output['S2_mass'].item()
             Z_div_Zsun = kwargs.get('metallicity', 1.)

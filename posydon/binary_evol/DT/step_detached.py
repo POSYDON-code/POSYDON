@@ -1768,7 +1768,7 @@ class detached_step:
                             current = interp1d_pri["omega"][-1] / const.secyer
                             history = interp1d_pri["omega"][:-1] / const.secyer
                     elif key in ["rl_relative_overflow_1"] and obj == binary:
-                        if binary.star_1.state in ("BH", "NS", "WD"):
+                        if binary.star_1.state in ("BH", "NS", "WD","massless_remnant"):
                             current = None
                             history = [current] * len(t[:-1])
                         elif secondary == binary.star_1:
@@ -1786,7 +1786,7 @@ class detached_step:
                                                   [interp1d_sec["sep"][:-1],
                                                    interp1d_sec["ecc"][:-1]])
                     elif key in ["rl_relative_overflow_2"] and obj == binary:
-                        if binary.star_2.state in ("BH", "NS", "WD"):
+                        if binary.star_2.state in ("BH", "NS", "WD","massless_remnant"):
                             current = None
                             history = [current] * len(t[:-1])
                         elif secondary == binary.star_2:
@@ -1980,7 +1980,7 @@ class detached_step:
                 secondary.state_history[timestep] = check_state_of_star(
                     secondary, i=timestep, star_CO=False)
 
-            #Eirini's comment check what the elif was here.   
+
             if primary.state == "massless_remnant":
                 pass
             
