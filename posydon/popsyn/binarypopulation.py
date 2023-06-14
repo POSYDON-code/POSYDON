@@ -37,7 +37,7 @@ import psutil
 import random
 
 from posydon.binary_evol.binarystar import BinaryStar
-from posydon.binary_evol.singlestar import SingleStar
+from posydon.binary_evol.singlestar import (SingleStar,properties_massless_remnant)
 from posydon.binary_evol.simulationproperties import SimulationProperties
 from posydon.popsyn.star_formation_history import get_formation_times
 
@@ -913,13 +913,8 @@ class BinaryGenerator:
                 center_h1=X,
                 center_he4=Y,
             )
-            star2_params = dict(
-                mass=0,
-                state="massless_remnant",
-                metallicity=Z,
-                center_h1=0,
-                center_he4=0,
-            )
+            star2_params = properties_massless_remnant()
+
         #do all of the above but with state = "initial_single star"
         #in this case the second star can be a compact object.
 
