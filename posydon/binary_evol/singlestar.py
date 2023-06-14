@@ -103,6 +103,14 @@ STAR_ATTRIBUTES_FROM_STAR_HISTORY_SINGLE = {
     'profile': None
 }
 
+def properties_massless_remnant():
+    PROPERTIES_MASSLESS = {}
+    for key in STARPROPERTIES:
+        PROPERTIES_MASSLESS[key] =  np.nan
+    PROPERTIES_MASSLESS["state"] = "massless_remnant"
+    PROPERTIES_MASSLESS["mass"] = 0.0
+    return PROPERTIES_MASSLESS
+
 
 class SingleStar:
     """Class describing a single star."""
@@ -313,16 +321,6 @@ class SingleStar:
                 else:
                     oneline_df[prefix+name] = [getattr(self, name)]
         return oneline_df
-        
-    def properties_massless_remnant():
-        PROPERTIES_MASSLESS = dict(
-        state = "massless_remnant",
-        mass = 0.0
-        )
-        for key in STARPROPERTIES:
-            if key is not PROPERTIES_MASSLESS:
-                PROPERTIES_MASSLESS[key] =  np.nan
-        return PROPERTIES_MASSLESS
 
     def __repr__(self):
         """Return the object representation when print is called."""

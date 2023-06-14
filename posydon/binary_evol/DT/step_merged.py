@@ -55,7 +55,7 @@ LIST_ACCEPTABLE_STATES_FOR_POSTHeMS = STAR_STATES_HE_RICH.copy()
 
 def convert_star_to_massless_remnant(star):
     for key in STARPROPERTIES:
-        setattr(star, key, properties_massless_remnant[key])
+        setattr(star, key, properties_massless_remnant()[key])
     return star
 
 
@@ -152,7 +152,6 @@ class MergedStep(IsolatedStep):
 
         s1 = star_base.state
         s2 = comp.state
-        print(**properties_massless_remnant)
         def mass_weighted_avg(star1=star_base,star2=comp, abundance_name="center_h1", mass_weight1="mass", mass_weight2=None):
             A1 = getattr(star1, abundance_name)
             A2 = getattr(star2, abundance_name)
