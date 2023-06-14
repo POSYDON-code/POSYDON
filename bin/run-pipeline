@@ -125,6 +125,7 @@ def create_grid_slice(i, path_to_csv_file, CO_HMS_GRID_START_AT_RLO, verbose=Fal
                 profile_DS_interval=profile_DS_interval,
                 compression="gzip9",
                 start_at_RLO=start_at_RLO,
+                stop_before_carbon_depletion=True,
                 initial_RLO_fix=True)
     grid.close()
 
