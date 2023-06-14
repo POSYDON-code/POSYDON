@@ -52,17 +52,12 @@ LIST_ACCEPTABLE_STATES_FOR_POSTMS = STAR_STATES_H_RICH.copy()
 LIST_ACCEPTABLE_STATES_FOR_POSTHeMS = STAR_STATES_HE_RICH.copy()
 [LIST_ACCEPTABLE_STATES_FOR_POSTHeMS.remove(x) for x in LIST_ACCEPTABLE_STATES_FOR_HeMS]
 
-'''
+
 def convert_star_to_massless_remnant(star):
-    star.state="massless_remnant"
     for key in STARPROPERTIES:
-        if key is not "state":
-            setattr(star, key, np.nan)
-    for key in ['mass']:
-        #setattr(star, key, 1e-99)
-        setattr(star, key, 0.0)
+        setattr(star, key, properties_massless_remnant[key])
     return star
-'''
+
 
 
 
@@ -265,7 +260,6 @@ class MergedStep(IsolatedStep):
 
                 merged_star.state = check_state_of_star(merged_star, star_CO=False)  # TODO for sure this needs testing!
                 massless_remnant = convert_star_to_massless_remnant(star_base)
-                massless_remnant = SingleStar(**)
 
         #postMS + postMS
         elif (s1 in LIST_ACCEPTABLE_STATES_FOR_POSTMS
