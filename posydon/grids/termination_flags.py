@@ -57,10 +57,10 @@ def get_flag_from_MESA_output(MESA_log_path):
     """
     if MESA_log_path is not None and os.path.isfile(MESA_log_path):
         if MESA_log_path.endswith(".gz"):
-            with gzip.open(MESA_log_path, "rt") as log_file:
+            with gzip.open(MESA_log_path, "rt", errors='ignore') as log_file:
                 log_lines = log_file.readlines()
         else:
-            with open(MESA_log_path, "r") as log_file:
+            with open(MESA_log_path, "r", errors='ignore') as log_file:
                 log_lines = log_file.readlines()
 
         for line in reversed(log_lines):

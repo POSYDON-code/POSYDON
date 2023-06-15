@@ -51,6 +51,7 @@ call STEP 4: ['gird_low_res_combined_rerun_1.h5']
 
 __authors__ = [
     "Simone Bavera <Simone.Bavera@unige.ch>",
+    "Matthias Kruckow <Matthias.Kruckow@unige.ch>",
 ]
 
 import os
@@ -73,6 +74,7 @@ from posydon.grids.post_processing import (post_process_grid,
 from posydon.grids.MODELS import MODELS
 from posydon.interpolation.IF_interpolation import IFInterpolator
 from posydon.utils.common_functions import PATH_TO_POSYDON
+from posydon.utils.gridutils import get_new_grid_name
 
 
 def create_grid_slice(i, path_to_csv_file, CO_HMS_GRID_START_AT_RLO, verbose=False):
@@ -81,14 +83,16 @@ def create_grid_slice(i, path_to_csv_file, CO_HMS_GRID_START_AT_RLO, verbose=Fal
     grid_path = df.loc[i,'path_to_grid']
     compression = df.loc[i,'compression']
 
-    grid_name = grid_path.split('/')[-1]
-    otuput_path = os.path.join('/', os.path.join(*grid_path.split('/')[:-1]),
-                               compression)
-    grid_output = os.path.join(otuput_path, grid_name+'.h5')
-
-    # check that LITE/ or ORIGINAL/ directory exists
-    if not os.path.isdir(otuput_path):
-        os.makedirs(otuput_path)
+#    grid_name = grid_path.split('/')[-1]
+#    otuput_path = os.path.join('/', os.path.join(*grid_path.split('/')[:-1]),
+#                               compression)
+#    grid_output = os.path.join(otuput_path, grid_name+'.h5')
+#
+#    # check that LITE/ or ORIGINAL/ directory exists
+#    if not os.path.isdir(otuput_path):
+#        os.makedirs(otuput_path)
+    grid_output = get_new_grid_name(grid_path, compression,
+                                    create_missing_directories=True)
 
     if verbose:
         print('processing ', grid_path)
