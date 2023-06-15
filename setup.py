@@ -93,6 +93,7 @@ extras_require = {
         "sphinx_rtd_theme",
         "sphinxcontrib_programoutput",
         "PSphinxTheme",
+        "tensorflow == 2.12.0"
     ],
     "hpc": ["mpi4py == 3.0.3"],
 }
