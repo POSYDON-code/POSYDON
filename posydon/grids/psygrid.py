@@ -856,7 +856,7 @@ class PSyGrid:
                     continue
 
                 # check whether stop at He depletion is requested
-                if stop_before_carbon_depletion and initial_values[i]["star_1_mass"]>=100.0:
+                if stop_before_carbon_depletion and self.initial_values[i]["star_1_mass"]>=100.0:
                     kept = keep_till_central_abundance_He_C(binary_history, history1,
                                   history2, THRESHOLD_CENTRAL_ABUNDANCE, 0.1)
                     binary_history, history1, history2, newTF1 = kept
