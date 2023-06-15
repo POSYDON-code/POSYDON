@@ -1,9 +1,11 @@
 """Various utility functions used for the manipulating grid data."""
 
-import numpy as np
 import os
-import pandas as pd
+import gzip
 import warnings
+
+import numpy as np
+import pandas as pd
 
 from posydon.utils.constants import clight, Msun, Rsun
 from posydon.utils.constants import standard_cgrav as cgrav
@@ -49,6 +51,8 @@ def join_lists(A, B):
 def read_MESA_data_file(path, columns):
     """Read specific columns from a MESA output file to an array.
 
+    Note that this function also works with `.gz` files.
+
     Parameters
     ----------
     path : str
@@ -65,17 +69,25 @@ def read_MESA_data_file(path, columns):
     if path is None:
         return None
     elif os.path.exists(path):
-        return np.atleast_1d(np.genfromtxt(path, skip_header=5, names=True,
-                                           usecols=columns,
-                                           invalid_raise=False))
+        try:
+            return np.atleast_1d(np.genfromtxt(path, skip_header=5, names=True,
+                                               usecols=columns,
+                                               invalid_raise=False))
+        except:
+            warnings.warn("Problems with reading file "+path)
+            return None
     else:
         return None
 
 
 def read_EEP_data_file(path, columns):
-    """Read an EEP file - similar to `read_MESA_data_file()`."""
-    return np.atleast_1d(np.genfromtxt(path, skip_header=11, names=True,
-                                       usecols=columns, invalid_raise=False))
+    """Read an EEP file (can be `.gz`) - similar to `read_MESA_data_file()`."""
+    try:
+        return np.atleast_1d(np.genfromtxt(path, skip_header=11, names=True,
+                                           usecols=columns, invalid_raise=False))
+    except:
+        warnings.warn("Problems with reading file "+path)
+        return None
 
 
 def fix_He_core(history):
@@ -319,6 +331,8 @@ def convert_output_to_table(
         "log_L_2", "log_T_2", "He_core_2(Msun)", "C_core_2(Msun)"]):
     """Convert output of a run, to a pandas dataframe.
 
+    Note that this function also works with `.gz` files.
+
     Parameters
     ----------
     output_file : str
@@ -369,7 +383,14 @@ def convert_output_to_table(
         warnings.warn("You have not supplied a star2 history file to parse. "
                       "This will cause all star2 history columns to be dashes")
 
-    outdata = os.popen('cat ' + output_file).read()
+    # TODO: is this necessary to be done with `popen`?
+    # outdata = os.popen('cat ' + output_file).read()
+    if output_file.endswith(".gz"):
+        with gzip.open(output_file, "rt") as f:
+            outdata = f.read()
+    else:
+        with open(output_file, "r") as f:
+            outdata = f.read()
 
     # Checking for individual terminating conditions
 
