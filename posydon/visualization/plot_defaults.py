@@ -117,6 +117,10 @@ DEFAULT_MARKERS_COLORS_LEGENDS = {
             ['s', 2, None, TF1_label_stable],
         'Secondary has depleted central carbon':
             ['o', 2, None, TF1_label_stable],
+        'Primary got stopped before central carbon depletion':
+            ['s', 2, None, TF1_label_stable],
+        'Secondary got stopped before central carbon depletion':
+            ['o', 2, None, TF1_label_stable],
         'Primary enters pair-instability regime':
             ['s', 2, None, TF1_label_stable],
         'Secondary enters pair-instability regime':
@@ -434,6 +438,10 @@ DEFAULT_MARKERS_COLORS_LEGENDS = {
         'Primary has depleted central carbon':
             ['s', 2, None, TF1_label_stable],
         'Secondary has depleted central carbon':
+            ['o', 2, None, TF1_label_stable],
+        'Primary got stopped before central carbon depletion':
+            ['s', 2, None, TF1_label_stable],
+        'Secondary got stopped before central carbon depletion':
             ['o', 2, None, TF1_label_stable],
         'Primary enters pair-instability regime':
             ['s', 2, None, TF1_label_stable],

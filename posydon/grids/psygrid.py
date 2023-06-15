@@ -202,13 +202,14 @@ from posydon.grids.termination_flags import (get_flags_from_MESA_run,
 from posydon.utils.configfile import ConfigFile
 from posydon.utils.common_functions import (orbital_separation_from_period,
                                             initialize_empty_array,
-                                            infer_star_state)
+                                            infer_star_state,
+                                            THRESHOLD_CENTRAL_ABUNDANCE)
 from posydon.utils.gridutils import (read_MESA_data_file, read_EEP_data_file,
                                      add_field, join_lists, fix_He_core)
 from posydon.visualization.plot2D import plot2D
 from posydon.visualization.plot1D import plot1D
 from posydon.grids.downsampling import TrackDownsampler
-from posydon.grids.scrubbing import scrub, keep_after_RLO
+from posydon.grids.scrubbing import scrub, keep_after_RLO, keep_till_central_abundance_He_C
 
 
 HDF5_MEMBER_SIZE = 2**31 - 1            # maximum HDF5 file size when splitting
@@ -346,6 +347,7 @@ GRIDPROPERTIES = {
     "final_value_columns": None,
     # grid-specific arguments
     "start_at_RLO": False,
+    "stop_before_carbon_depletion": False,
     "binary": True,
     "eep": None,    # path to EEP files
     "initial_RLO_fix": False,
@@ -538,6 +540,7 @@ class PSyGrid:
         binary_grid = self.config["binary"]
         initial_RLO_fix = self.config["initial_RLO_fix"]
         start_at_RLO = self.config["start_at_RLO"]
+        stop_before_carbon_depletion = self.config["stop_before_carbon_depletion"]
         eep = self.config["eep"]
 
         if eep is not None:
@@ -633,6 +636,7 @@ class PSyGrid:
             # Select the ith run
             run = grid.runs[i]
             ignore_data = False    # if failed run, do not save any data
+            newTF1 = ''
             self._say('Processing {}'.format(run.path))
 
             # Restrict number of runs if limit is set inside config
@@ -851,6 +855,12 @@ class PSyGrid:
                                   " history in: {}\n".format(run.path))
                     continue
 
+                # check whether stop at He depletion is requested
+                if stop_before_carbon_depletion and self.initial_values[i]["star_1_mass"]>=100.0:
+                    kept = keep_till_central_abundance_He_C(binary_history, history1,
+                                  history2, THRESHOLD_CENTRAL_ABUNDANCE, 0.1)
+                    binary_history, history1, history2, newTF1 = kept
+                    
                 # check whether start at RLO is requested, and chop the history
                 if start_at_RLO:
                     kept = keep_after_RLO(binary_history, history1, history2)
@@ -1042,7 +1052,7 @@ class PSyGrid:
                     termination_flags = get_flags_from_MESA_run(
                         run.out_txt_path, binary_history=binary_history,
                         history1=history1, history2=history2,
-                        start_at_RLO=start_at_RLO)
+                        start_at_RLO=start_at_RLO, newTF1=newTF1)
             else:
                 if ignore_data:
                     termination_flags = [ignore_reason] * N_FLAGS_SINGLE
@@ -2076,6 +2086,7 @@ PROPERTIES_TO_BE_NONE = {
 }
 
 PROPERTIES_TO_BE_CONSISTENT = ["binary", "eep", "start_at_RLO",
+                               "stop_before_carbon_depletion",
                                "initial_RLO_fix", "He_core_fix",
                                "accept_missing_profile", "history_DS_error",
                                "history_DS_exclude", "profile_DS_error",
