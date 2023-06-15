@@ -19,6 +19,7 @@ __authors__ = [
     "Emmanouil Zapartas <ezapartas@gmail.com>",
     "Kyle Akira Rocha <kylerocha2024@u.northwestern.edu>",
     "Jeffrey Andrews <jeffrey.andrews@northwestern.edu>",
+    "Matthias Kruckow <Matthias.Kruckow@unige.ch>",
 ]
 
 
@@ -524,3 +525,33 @@ def clean_inlist_file(inlist, **kwargs):
                     i.split('=', 1)[1].strip()
 
     return dict_of_parameters
+
+def get_new_grid_name(path, compression, create_missing_directories=False):
+    """Get the name of a new grid slice based on the path and the compression.
+
+    Parameters
+    ----------
+    path : str
+        Path to grid slice data.
+    compression : str
+        Compression value. (Directory to put the new grid slice in.)
+    create_missing_directories : bool
+        Flag to create missing directories.
+
+    Returns
+    -------
+    grid_output
+        File name for the new grid slice.
+
+    """
+    grid_name = path.split('/')[-1]
+    output_path = os.path.join('/', os.path.join(*path.split('/')[:-1]),
+                               compression)
+    grid_output = os.path.join(output_path, grid_name+'.h5')
+    if create_missing_directories:
+        # check that LITE/ or ORIGINAL/ directory exists
+        if not os.path.isdir(output_path):
+            os.makedirs(output_path)
+    return grid_output
+
+
