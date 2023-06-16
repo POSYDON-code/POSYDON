@@ -276,8 +276,7 @@ def post_process_grid(grid, index=None, star_2_CO=True, MODELS=MODELS,
 
                 for MODEL_NAME, MODEL in MODELS.items():
                     mechanism = MODEL['mechanism']+MODEL['engine']
-                    SN = StepSN(**MODEL)
-                    
+                    SN = StepSN(**MODEL)     
                     star_copy = copy.copy(star)
                     try:
                         flush = False
@@ -322,16 +321,21 @@ def post_process_grid(grid, index=None, star_2_CO=True, MODELS=MODELS,
                 for MODEL_NAME, MODEL in MODELS.items():
                     mechanism = MODEL['mechanism']+MODEL['engine']
                     SN = StepSN(**MODEL)
+                    star_copy = copy.copy(star)
                     try:
-                        star_copy = copy.copy(star)
+                        flush = False
                         SN.collapse_star(star_copy)
                         for quantity in CC_quantities:
-                            EXTRA_COLUMNS[f'S1_{MODEL_NAME}_{quantity}'].append(
-                            getattr(star_copy, quantity))
-                        if verbose:
-                            print_CC_quantities(EXTRA_COLUMNS, star, f'{MODEL_NAME}_{mechanism}')
+                            if quantity in ['state', 'SN_type']:
+                                if not isinstance(getattr(star_copy, quantity), str):
+                                    flush = True
+                                    warnings.warn(f'{MODEL_NAME} {mechanism} state/SN_type not a string!')
+                            else:
+                                if not isinstance(getattr(star_copy, quantity), (float, None)):
+                                    flush = True
+                                    warnings.warn(f'{MODEL_NAME} {mechanism} {quantity} not a float!')
                     except Exception as e:
-                        assign_core_collapse_quantities_none(EXTRA_COLUMNS, 1, MODEL_NAME)
+                        flush = True
                         if verbose:
                             print('')
                             print(f'Error during {MODEL_NAME} {mechanism} core collapse prescrition!')
@@ -339,6 +343,14 @@ def post_process_grid(grid, index=None, star_2_CO=True, MODELS=MODELS,
                             print('TF1', TF1)
                             print('interpolation class',  interpolation_class)
                             print('')
+                    if flush:
+                        assign_core_collapse_quantities_none(EXTRA_COLUMNS, 1, MODEL_NAME)
+                    else:
+                        for quantity in CC_quantities:
+                            EXTRA_COLUMNS[f'S1_{MODEL_NAME}_{quantity}'].append(
+                            getattr(star_copy, quantity))
+                        if verbose:
+                            print_CC_quantities(EXTRA_COLUMNS, star_copy, f'{MODEL_NAME}_{mechanism}')
             else:
                 assign_core_collapse_quantities_none(EXTRA_COLUMNS, 1)
 
