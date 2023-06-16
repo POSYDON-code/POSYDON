@@ -94,16 +94,16 @@ We can specify the display mode wanted with the named parameter 'displayMode':
 Visualize multiple indexes
 ==========================
 
-The `VDdiagramm_m` module allow you to print more than one indexes horizontally in the
+The `VDdiagramm_m` module allows you to print more than one index horizontally in the
 same plot.
 
 Counting binaries populations
 -----------------------------
 
 You can browse throught binaries file to get the count of all the distinct binaries occurences
-with the 'ParseDataFrame' class. Counts can be accessed in the 'count_dict' witch is a python 
-`Counter` object, and frequencies with the 'get_frequencies()' method.(Parsing may exceed
-10 s/M lines for fixed format Dataframes).You can also get the n most frequent binaries by
+with the 'ParseDataFrame' class. Counts can be accessed in the 'count_dict' attribute witch is
+a python `Counter` object, and frequencies with the 'get_frequencies()' method (Parsing may 
+excee d10 s/M lines for fixed format Dataframes).You can also get the n most frequent binaries by
 using the 'get_most_numpy(k)' method.
 
 .. code-block:: python
@@ -144,10 +144,10 @@ Side by side visualization
 --------------------------
 
 Here you can simply provide a list of index instead of a single one and everything
-act as with the previous class. Binaries are plot by their order in the provided list.
+work like with the previous class. Binaries are plot by their order in the provided list.
 The class initialization requires a dict of frequenties distribution witch is by 
-default generated as an uniform distribution. (Open the picture in a new tab ofyour
-browser for a better visualization)
+default generated as uniform. (Open the picture in a new tab ofyourbrowser for a better
+ visualization)
 
 .. code-block:: python
 
@@ -169,8 +169,8 @@ browser for a better visualization)
 Hierarchical visualization
 --------------------------
 
-The hierarchical visualization tends to "factorize" identical steps resulting in a tree 
-where the nodes are the common steps. The nodes are labeled by precentages relatives to the
+The hierarchical visualization aims to "factorize" identical steps resulting in a tree 
+where the nodes are the common steps. Thay are labeled by precentages relatively to the
 parent node precentage (witch is also uniform by default).
 
 .. code-block:: python
