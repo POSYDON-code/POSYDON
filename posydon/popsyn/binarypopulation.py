@@ -86,7 +86,6 @@ class BinaryPopulation:
         for key, arg in kwargs.items():
             self.kwargs[key] = arg
         # Have a binary fraction change the number_of binaries.
-        #Eirini's change
         self.binary_fraction = self.kwargs.get('binary_fraction')
         self.number_of_binaries = self.kwargs.get('number_of_binaries')
 
@@ -836,7 +835,6 @@ class BinaryGenerator:
         output = self.draw_initial_samples(**sampler_kwargs)
 
         default_index = output['binary_index'].item()
-        #Eirini's comments:
         # Randomly generated variables
 
         if self.RNG.uniform() < self.binary_fraction:
@@ -914,9 +912,6 @@ class BinaryGenerator:
                 center_he4=Y,
             )
             star2_params = properties_massless_remnant()
-
-        #do all of the above but with state = "initial_single star"
-        #in this case the second star can be a compact object.
 
 
         binary = BinaryStar(**binary_params,

@@ -1086,7 +1086,6 @@ class detached_step:
 
         if self.non_existent_companion == 0: #no isolated evolution, detached step of an actual binary
             # the primary in a real binary is potential compact object, or the more evolved star
-            #Eirini's comment make a list in STAR_STATES_CO
             if (binary.star_1.state in STAR_STATES_CO
                     and binary.star_2.state in STAR_STATES_H_RICH):
                 primary = binary.star_1
