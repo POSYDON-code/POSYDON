@@ -76,7 +76,6 @@ class population_spectra():
         #To do put an option for changing the wavelength 
         self.grids = spectral_grids()
         self.grids.global_limits()
-        self.F_empty = self.grids.F_empty
 
     
 
@@ -84,15 +83,14 @@ class population_spectra():
     def new_create_spectrum_single(self,star,binary_number,**kwargs):
         #global bin_num
         #bin_num = binary_number
-        F_empty = self.F_empty*0
-        new_create_spectrum_single = F_empty
+
         if "stripped" in star.state:
             M = star.mass/con.M_sun
             M_min = self.grids.specgrid_stripped.axis_x_min['M_init']
             M_max = self.grids.specgrid_stripped.axis_x_max['M_init']
             if M < M_min or M > M_max:
                 self.failed_stars +=1
-                return F_empty
+                return None
             return self.grids.stripped_grid_flux(star)
         
         Fe_H = star.Fe_H
@@ -114,7 +112,7 @@ class population_spectra():
                 else:
             """
             self.failed_stars +=1 
-            return F_empty
+            return None
         
         #For temperature higher than then lo_limits of Teff in main grids we calculate the spectra using the Ostar girds. 
         if Teff >= 30000:
@@ -127,10 +125,10 @@ class population_spectra():
                         return Flux
                     except:
                         self.failed_stars +=1
-                        return F_empty
+                        return None
             else:
                 self.failed_stars +=1
-                return F_empty
+                return None
             
         try:
             Flux = self.grids.main_grid_flux(Teff,Fe_H,logg,star)
@@ -171,13 +169,19 @@ class population_spectra():
                 except Exception as e: 
                     print(e)
                     self.failed_stars +=1
-                    return F_empty*0  
+                    return None
 
 
 
-
-    def add_spectra(self,spectrum_1,spectrum_2):
-        return spectrum_1 + spectrum_2
+    def new_add_spectra(spectrum_1,spectrum_2):
+        if spectrum_1 is not None and spectrum_2 is not None:
+            return spectrum_1 + spectrum_2
+        elif spectrum_1 is None:
+            return spectrum_2
+        elif spectrum_2 is None:
+            return spectrum_1
+        else:
+            raise Exception("Spectrum 1 and Spectrum 2 have not allowed values.")
     
     def create_spectrum_binary(self,binary):
     # check if binary has two or any non-degenerate stars
@@ -186,26 +190,39 @@ class population_spectra():
         if star1.state not in ['NS','BH','Failed']:
             spectrum_1 = self.new_create_spectrum_single(star1,star1.binary_number)
         else:
-            spectrum_1 = self.F_empty*0
+            spectrum_1 = None
 
         if star2.state not in ['NS','BH','Failed']:
             spectrum_2 = self.new_create_spectrum_single(star2,star2.binary_number)
         else: 
-            spectrum_2 = self.F_empty*0
+            spectrum_2 = None
 
         return self.add_spectra(spectrum_1, spectrum_2)
 
 
     def create_spectrum_population(self):
-        create_spectrum_population = self.F_empty*0
-        self.failed_stars = 0
-        for binary in self.population:
-            create_spectrum_population += self.create_spectrum_binary(binary)
-        print(len(self.population))
-        print(self.failed_stars)
+        create_spectrum_population = F_empty*0
+        failed_binaries = 0
+        for binary_number in range(total_binary_number):
+            spectrum = new_create_spectrum_binary(binary_number)
+            if spectrum is not None:
+                create_spectrum_population += spectrum
         return create_spectrum_population
        
-    
+
+    def create_spectrum_subpopulation(total_binary_number,state):
+        create_spectrum_population = F_empty*0
+        failed_binaries = 0
+        for binary_number in range(total_binary_number): 
+            star1 = star(binary_number,1)
+            if star1.binary_state == state:
+                spectrum = new_create_spectrum_binary(binary_number)
+                if spectrum is not None:
+                    create_spectrum_population += spectrum
+        return create_spectrum_population
+
+
+
     
 def array_data(N,last_binary_line,first_binary_line):
     total_binaries = N
@@ -231,7 +248,6 @@ def array_data(N,last_binary_line,first_binary_line):
             elif "stripped" in state_arr[i][1]:
                 mass_arr[i][1] = first_binary_line.S2_mass[i]
     return mass_arr,radius_arr,L_arr,state_arr
-
 
 
 
