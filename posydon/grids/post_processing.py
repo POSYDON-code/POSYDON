@@ -38,7 +38,7 @@ def assign_core_collapse_quantities_none(EXTRA_COLUMNS, star_i, MODEL_NAME=None)
                 EXTRA_COLUMNS[f'S{star_i}_{MODEL_NAME}_{quantity}'].append(None)
     else:
         for quantity in CC_quantities:
-                EXTRA_COLUMNS[f'S{star_i}_{MODEL_NAME}_{quantity}'].append(None)
+            EXTRA_COLUMNS[f'S{star_i}_{MODEL_NAME}_{quantity}'].append(None)
 
 def print_CC_quantities(EXTRA_COLUMNS, star, MODEL_NAME=None):
     format_string = "{:<50} {:<33} {:12} {:10} {:15} {:10} {:25} {:25}"
@@ -277,22 +277,37 @@ def post_process_grid(grid, index=None, star_2_CO=True, MODELS=MODELS,
                 for MODEL_NAME, MODEL in MODELS.items():
                     mechanism = MODEL['mechanism']+MODEL['engine']
                     SN = StepSN(**MODEL)
+                    
+                    star_copy = copy.copy(star)
                     try:
-                        star_copy = copy.copy(star)
+                        flush = False
                         SN.collapse_star(star_copy)
                         for quantity in CC_quantities:
-                            EXTRA_COLUMNS[f'S{star_i}_{MODEL_NAME}_{quantity}'].append(
-                            getattr(star_copy, quantity))
-                        if verbose:
-                            print_CC_quantities(EXTRA_COLUMNS, star_copy, f'{MODEL_NAME}_{mechanism}')
+                            if quantity in ['state', 'SN_type']:
+                                if not isinstance(getattr(star_copy, quantity), str):
+                                    flush = True
+                                    warnings.warn(f'{MODEL_NAME} {mechanism} state/SN_type not a string!')
+                            else:
+                                if not isinstance(getattr(star_copy, quantity), (float, None)):
+                                    flush = True
+                                    warnings.warn(f'{MODEL_NAME} {mechanism} {quantity} not a float!')
                     except Exception as e:
-                        assign_core_collapse_quantities_none(EXTRA_COLUMNS, star_i, MODEL_NAME)
+                        flush = True
                         if verbose:
                             print('')
                             print(f'Error during {MODEL_NAME} {mechanism} core collapse prescrition!')
                             print(e)
                             print('TF1', TF1)
                             print('interpolation class',  interpolation_class)
+                            print('')
+                    if flush:
+                        assign_core_collapse_quantities_none(EXTRA_COLUMNS, star_i, MODEL_NAME)
+                    else:
+                        for quantity in CC_quantities:
+                            EXTRA_COLUMNS[f'S{star_i}_{MODEL_NAME}_{quantity}'].append(
+                            getattr(star_copy, quantity))
+                        if verbose:
+                            print_CC_quantities(EXTRA_COLUMNS, star_copy, f'{MODEL_NAME}_{mechanism}')
 
             else: 
                 # inital_RLOF, unstable_MT not_converged
@@ -317,13 +332,13 @@ def post_process_grid(grid, index=None, star_2_CO=True, MODELS=MODELS,
                             print_CC_quantities(EXTRA_COLUMNS, star, f'{MODEL_NAME}_{mechanism}')
                     except Exception as e:
                         assign_core_collapse_quantities_none(EXTRA_COLUMNS, 1, MODEL_NAME)
-
                         if verbose:
                             print('')
                             print(f'Error during {MODEL_NAME} {mechanism} core collapse prescrition!')
                             print(e)
                             print('TF1', TF1)
                             print('interpolation class',  interpolation_class)
+                            print('')
             else:
                 assign_core_collapse_quantities_none(EXTRA_COLUMNS, 1)
 
