@@ -477,10 +477,19 @@ def train_interpolators(i, path_to_csv_file, verbose=False):
                                             (type(grid.final_values[key][0]) != np.str_)
                                             and any(~np.isnan(grid.final_values[key])) and
                                             f"S{i}_{MODEL_NAME}" in key)]
+            
+            # catch cases where there is no WD formation
+            if "WD" in grid.final_values[f'S{i}_{MODEL_NAME}_CO_type']:
+                interp_method = [method, method, method]
+                interp_classes = ["BH", "NS", "WD"]
+            else:
+                interp_method = [method, method]
+                interp_classes = ["BH", "NS"]
+
             interpolators.append(
                 {
-                    "interp_method": [method, method, method],
-                    "interp_classes": ["BH", "NS", "WD"],
+                    "interp_method": interp_method,
+                    "interp_classes": interp_classes,
                     "out_keys": out_keys,
                     "class_method": "kNN",
                     "c_keys": [f'S{i}_{MODEL_NAME}_CO_type'],
