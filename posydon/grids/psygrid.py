@@ -854,9 +854,14 @@ class PSyGrid:
                     warnings.warn("Ignored MESA run because of scrubbed"
                                   " history in: {}\n".format(run.path))
                     continue
-
+                
+                try: #get mass from binary history
+                    init_mass_1 = binary_history["star_1_mass"]
+                except: #otherwise get it from directory name
+                    params_from_path = initial_values_from_dirname(run.path)
+                    init_mass_1 = params_from_path[0]
                 # check whether stop at He depletion is requested
-                if stop_before_carbon_depletion and self.initial_values[i]["star_1_mass"]>=100.0:
+                if stop_before_carbon_depletion and init_mass_1>=100.0:
                     kept = keep_till_central_abundance_He_C(binary_history, history1,
                                   history2, THRESHOLD_CENTRAL_ABUNDANCE, 0.1)
                     binary_history, history1, history2, newTF1 = kept
