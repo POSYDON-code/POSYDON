@@ -375,11 +375,11 @@ def create_csv(GRID_TYPES, METALLICITIES, GRID_SLICES, COMPRESSIONS,
                         if 'RLO' in compression:
                             plot_dirs.append(os.path.join(PATH_TO_GRIDS,
                                              grid_type, VERSION, metallicity,
-                                             'plots', grid_slice))
+                                             'plots', 'RLO_'+grid_slice))
                         else:
                             plot_dirs.append(os.path.join(PATH_TO_GRIDS,
                                              grid_type, VERSION, metallicity,
-                                             'plots', 'RLO_'+grid_slice))
+                                             'plots', grid_slice))
                     elif step_name == 'step_4':
                         grids.append(os.path.join(PATH_TO_GRIDS,
                                       grid_type, VERSION, metallicity,
