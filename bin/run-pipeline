@@ -77,7 +77,7 @@ from posydon.utils.common_functions import PATH_TO_POSYDON
 from posydon.utils.gridutils import get_new_grid_name
 
 
-def create_grid_slice(i, path_to_csv_file, CO_HMS_GRID_START_AT_RLO, verbose=False):
+def create_grid_slice(i, path_to_csv_file, STOP_BEFORE_CARBON_DEPLETION=True, verbose=False):
 
     df = pd.read_csv(path_to_csv_file)
     grid_path = df.loc[i,'path_to_grid']
@@ -98,13 +98,13 @@ def create_grid_slice(i, path_to_csv_file, CO_HMS_GRID_START_AT_RLO, verbose=Fal
         print('processing ', grid_path)
         print('saving file ',  grid_output)
 
-    if compression == 'ORIGINAL':
+    if 'ORIGINAL' in compression:
         history_DS_error = None
         profile_DS_error = None
         profile_DS_interval = None
         history_DS_exclude = DEFAULT_HISTORY_DS_EXCLUDE
         profile_DS_exclude = DEFAULT_PROFILE_DS_EXCLUDE
-    elif compression == 'LITE':
+    elif 'LITE' in compression:
         history_DS_error = 0.1
         profile_DS_error = 0.1
         profile_DS_interval = -0.005
@@ -113,10 +113,15 @@ def create_grid_slice(i, path_to_csv_file, CO_HMS_GRID_START_AT_RLO, verbose=Fal
     else:
         raise ValueError('compression = %s not supported!'%compression)
 
-    if 'CO-HMS_RLO' in grid_path and CO_HMS_GRID_START_AT_RLO:
+    if 'CO' in grid_path and 'RLO' in compression:
         start_at_RLO = True
     else:
         start_at_RLO = False
+
+    if 'HMS' in grid_path and STOP_BEFORE_CARBON_DEPLETION:
+        stop_before_carbon_depletion = True
+    else:
+        stop_before_carbon_depletion = False
 
     grid = PSyGrid(verbose=True)
     grid.create(grid_path,
@@ -129,7 +134,7 @@ def create_grid_slice(i, path_to_csv_file, CO_HMS_GRID_START_AT_RLO, verbose=Fal
                 profile_DS_interval=profile_DS_interval,
                 compression="gzip9",
                 start_at_RLO=start_at_RLO,
-                stop_before_carbon_depletion=True,
+                stop_before_carbon_depletion=stop_before_carbon_depletion,
                 initial_RLO_fix=True)
     grid.close()
 
@@ -675,7 +680,7 @@ if __name__ == '__main__':
     PATH_TO_GRIDS = str(sys.argv[1])
     path_to_csv_file = str(sys.argv[2])
     i = int(sys.argv[3])
-    CO_HMS_GRID_START_AT_RLO = bool(int(sys.argv[4]))
+    STOP_BEFORE_CARBON_DEPLETION = bool(int(sys.argv[4]))
     if len(sys.argv) == 6:
         rerun_type = str(sys.argv[5])
 
@@ -693,7 +698,7 @@ if __name__ == '__main__':
 
     if 'step_1' in path_to_csv_file:
         create_grid_slice(i, path_to_csv_file,
-                          CO_HMS_GRID_START_AT_RLO=CO_HMS_GRID_START_AT_RLO,
+                          STOP_BEFORE_CARBON_DEPLETION=STOP_BEFORE_CARBON_DEPLETION,
                           verbose=VERBOSE)
 
     if 'step_2' in path_to_csv_file:
