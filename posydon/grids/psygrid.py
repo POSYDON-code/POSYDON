@@ -856,10 +856,10 @@ class PSyGrid:
                     continue
                 
                 try: #get mass from binary history
-                    init_mass_1 = binary_history["star_1_mass"][0]
+                    init_mass_1 = float(binary_history["star_1_mass"][0])
                 except: #otherwise get it from directory name
                     params_from_path = initial_values_from_dirname(run.path)
-                    init_mass_1 = params_from_path[0]
+                    init_mass_1 = float(params_from_path[0])
                 # check whether stop at He depletion is requested
                 if stop_before_carbon_depletion and init_mass_1>=100.0:
                     kept = keep_till_central_abundance_He_C(binary_history, history1,
