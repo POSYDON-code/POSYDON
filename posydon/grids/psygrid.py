@@ -856,7 +856,7 @@ class PSyGrid:
                     continue
                 
                 try: #get mass from binary history
-                    init_mass_1 = binary_history["star_1_mass"]
+                    init_mass_1 = binary_history["star_1_mass"][0]
                 except: #otherwise get it from directory name
                     params_from_path = initial_values_from_dirname(run.path)
                     init_mass_1 = params_from_path[0]
