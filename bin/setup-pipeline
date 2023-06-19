@@ -195,7 +195,7 @@ def slurm_job(job_name,
               TRAIN_INTERPOLATORS=False,
               EXPORT_DATASET=False,
               RERUN=False,
-              CO_HMS_GRID_START_AT_RLO=1,
+              STOP_BEFORE_CARBON_DEPLETION=1,
               RERUN_TYPE='',
               verbose=False,
               **kwargs):
@@ -310,7 +310,7 @@ def slurm_job(job_name,
             f.write("#SBATCH --open-mode=append\n")
             f.write(f"#SBATCH --output={path_to_out_file}\n")
 
-        f.write(f"\nsrun python {PATH_TO_POSYDON}/bin/run-pipeline {PATH_TO_GRIDS} {path_to_csv_file} {slurm_array} {CO_HMS_GRID_START_AT_RLO} {RERUN_TYPE}")
+        f.write(f"\nsrun python {PATH_TO_POSYDON}/bin/run-pipeline {PATH_TO_GRIDS} {path_to_csv_file} {slurm_array} {STOP_BEFORE_CARBON_DEPLETION} {RERUN_TYPE}")
 
 # create csv file with a list of all grid paths to process
 def create_csv(GRID_TYPES, METALLICITIES, GRID_SLICES, COMPRESSIONS,
