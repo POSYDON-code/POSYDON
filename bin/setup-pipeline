@@ -396,24 +396,48 @@ def create_csv(GRID_TYPES, METALLICITIES, GRID_SLICES, COMPRESSIONS,
                             grids.append(os.path.join(PATH_TO_GRIDS,
                                           grid_type, VERSION, metallicity,
                                           compression, grid_slice+'.h5'))
-                            interpolators.append(os.path.join(PATH_TO_GRIDS,
-                                          grid_type, VERSION, metallicity,
-                                          'interpolation_objects',
-                                          'IF_'+method+'.pkl'))
+                            if 'RLO' in compression:
+                                interpolators.append(os.path.join(PATH_TO_GRIDS,
+                                                grid_type, VERSION, metallicity,
+                                                'interpolation_objects',
+                                                'IF_'+method+'_RLO.pkl'))
+                            else:
+                                interpolators.append(os.path.join(PATH_TO_GRIDS,
+                                                grid_type, VERSION, metallicity,
+                                                'interpolation_objects',
+                                                'IF_'+method+'.pkl'))
                     elif step_name == 'step_7':
                         grids.append(os.path.join(PATH_TO_GRIDS,
                                       grid_type, VERSION, metallicity,
                                       compression, grid_slice+'.h5'))
-                        export_path.append(os.path.join(PATH, 'POSYDON_data',
-                                                        grid_type,
-                                                        metallicity+'.h5'))
+                        if 'RLO' in compression:
+                            export_path.append(os.path.join(PATH, 'POSYDON_data',
+                                                            grid_type+'_RLO',
+                                                            metallicity+'.h5'))
+                        else:
+                            export_path.append(os.path.join(PATH, 'POSYDON_data',
+                                                            grid_type,
+                                                            metallicity+'.h5'))
                         for method in [['linear','linear3c_kNN'],
                                         ['1NN','1NN_1NN']]:
-                            grids.append(os.path.join(PATH_TO_GRIDS,
+                            if 'RLO' in compression:
+                                grids.append(os.path.join(PATH_TO_GRIDS,
+                                          grid_type, VERSION, metallicity,
+                                          'interpolation_objects',
+                                          'IF_'+method[0]+'_RLO.pkl'))
+                                export_path.append(os.path.join(PATH,
+                                                            'POSYDON_data',
+                                                            grid_type,
+                                                            'interpolators',
+                                                            method[1],
+                                                            metallicity+'_RLO.pkl'))
+                            else:
+                                grids.append(os.path.join(PATH_TO_GRIDS,
                                           grid_type, VERSION, metallicity,
                                           'interpolation_objects',
                                           'IF_'+method[0]+'.pkl'))
-                            export_path.append(os.path.join(PATH, 'POSYDON_data',
+                                export_path.append(os.path.join(PATH,
+                                                            'POSYDON_data',
                                                             grid_type,
                                                             'interpolators',
                                                             method[1],
