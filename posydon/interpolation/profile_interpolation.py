@@ -24,7 +24,7 @@ from scipy.interpolate import interp1d
 
 class CompileData:
 
-    def __init__(self, train_path, test_path,
+    def __init__(self, train_path, test_path, hms_s2=False,
                  profile_names=['radius','logRho', 'x_mass_fraction_H',
                                 'y_mass_fraction_He','z_mass_fraction_metals',
                                 'omega','energy']):
@@ -32,6 +32,7 @@ class CompileData:
         Args:
             train_path (str) : path/name of '.h5' file for training data.
             test_path (str) : path/name of '.h5' file for testing data.
+            hms_s2 (Boolean) : option to get profiles of star 2 in HMS-HMS grid
             profile_names (array-like) : list of profile quantities to extract.
         """
         self.names = profile_names
@@ -43,15 +44,9 @@ class CompileData:
         self.test_profiles = []
         testing_failed = []
         
-        try:
-            print(test.final_values["S1_state"][0])
-        except:
-            print("grid does not have S1_state information")
-
-
         for i in range(len(test)):
             try:
-                scalars,profiles = self.scrape(test,i)
+                scalars,profiles = self.scrape(test,i,hms_s2)
                 self.test_scalars = self.test_scalars.append(scalars,ignore_index=True)
                 self.test_profiles.append(profiles)
             except:
@@ -68,7 +63,7 @@ class CompileData:
         
         for i in range(len(train)):
             try:
-                scalars,profiles = self.scrape(train,i)
+                scalars,profiles = self.scrape(train,i,hms_s2)
                 self.scalars = self.scalars.append(scalars,ignore_index=True)
                 self.profiles.append(profiles)
             except:
@@ -77,35 +72,46 @@ class CompileData:
         warnings.warn(f"{len(training_failed)} training binaries failed")
         
 
-    def scrape(self,grid,ind):
+    def scrape(self,grid,ind,hms_s2):
         """Extracts profile data from one MESA run.
         Args:
             grid (obj) : PSyGrid object.
             ind (int) : index of run to be scraped.
+            hms_s2 (Boolean) : option to get profiles of star 2 in HMS-HMS grid
         Returns:
             scalars (array-like) : dictionary containing initial 
                                    m1, m2, p and final s1_state, final_m1.
             profiles (array-like) : all N specified profiles, shape (N,200).
         """
         # open individual run as a DataFrame
-        df = pd.DataFrame(grid[ind]['final_profile1'])
+        
+        if hms_s2==False: # default star 1 profile information
+            df = pd.DataFrame(grid[ind]['final_profile1'])
+            mass_key = "star_1_mass"
+            state_key = "S1_state"
+        else: # requesting star 2 information for HMS-HMS grid
+            df = pd.DataFrame(grid[ind]['final_profile2'])
+            mass_key = "star_2_mass"
+            state_key = "S2_state"
+            
         df = df.sort_values(by="mass")
         df = df.reset_index(drop=True)
 
         # grab input values, final star 1 state, final star 1 mass
-        final_m1 = grid.final_values["star_1_mass"][ind]
+        total_mass = grid.final_values[mass_key][ind]
         scalars = {"m1":grid.initial_values["star_1_mass"][ind],
                    "m2":grid.initial_values["star_2_mass"][ind],
                    "p":grid.initial_values["period_days"][ind],
-                   "s1_state":grid.final_values["S1_state"][ind],
-                   "final_m1":final_m1}
+                   "MT_class":grid.final_values["interpolation_class"][ind],
+                   "star_state":grid.final_values[state_key][ind],
+                   "total_mass":total_mass}
 
         # grab output vectors, interpolate to normalize
         profiles=np.zeros([len(self.names),200])
         for i,prof in enumerate(self.names):
             if prof in df.columns:
             
-                f = interp1d(df['mass']/final_m1,df[prof],
+                f = interp1d(df['mass']/total_mass,df[prof],
                              fill_value="extrapolate")
                 profile_new = f(np.linspace(0,1,200))
                 profiles[i] = profile_new
