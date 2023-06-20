@@ -165,8 +165,8 @@ class PostProcessingPipeline:
                 os.makedirs(data_path)
 
                 dirs = []
-                grid_dirs = ['HMS-HMS', 'CO-HMS_RLO', 'CO-HeMS', 'single_HMS',
-                            'single_HeMS']
+                grid_dirs = ['HMS-HMS', 'CO-HMS_RLO', 'CO-HeMS', 'CO-HeMS_RLO',
+                             'single_HMS', 'single_HeMS']
                 interp_dirs = ['interpolators', 'interpolators/1NN_1NN',
                                'interpolators/linear3c_kNN']
                 for name1 in grid_dirs:
