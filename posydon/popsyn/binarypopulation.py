@@ -848,7 +848,10 @@ class BinaryGenerator:
             m1 = output['S1_mass'].item()
             m2 = output['S2_mass'].item()
             Z_div_Zsun = kwargs.get('metallicity', 1.)
-            zams_table = {1.: 2.703e-01,
+            zams_table = {2.: 2.915e-01,
+                          1.: 2.703e-01,
+                          0.45: 2.586e-01,
+                          0.2: 2.533e-01,
                           0.1: 2.511e-01,
                           0.01: 2.492e-01,
                           0.001: 2.49e-01,
@@ -889,7 +892,10 @@ class BinaryGenerator:
             m1 = output['S1_mass'].item()
             m2 = output['S2_mass'].item()
             Z_div_Zsun = kwargs.get('metallicity', 1.)
-            zams_table = {1.: 2.703e-01,
+            zams_table = {2.: 2.915e-01,
+                          1.: 2.703e-01,
+                          0.45: 2.586e-01,
+                          0.2: 2.533e-01,
                           0.1: 2.511e-01,
                           0.01: 2.492e-01,
                           0.001: 2.49e-01,
