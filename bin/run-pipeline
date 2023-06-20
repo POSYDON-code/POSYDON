@@ -423,6 +423,8 @@ def train_interpolators(i, path_to_csv_file, verbose=False):
     grid_path = df.loc[i,'path_to_grid']
     interpolator_path = df.loc[i,'path_to_interpolator']
     method = interpolator_path.split('IF_')[-1].split('.pkl')[0]
+    if '_RLO' in method:
+        method = method.split('_RLO')[0]
 
     if verbose:
         print(f'train interpolators {grid_path} with method {method}')
