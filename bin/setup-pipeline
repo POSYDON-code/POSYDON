@@ -427,10 +427,10 @@ def create_csv(GRID_TYPES, METALLICITIES, GRID_SLICES, COMPRESSIONS,
                                           'IF_'+method[0]+'_RLO.pkl'))
                                 export_path.append(os.path.join(PATH,
                                                             'POSYDON_data',
-                                                            grid_type,
+                                                            grid_type+'_RLO',
                                                             'interpolators',
                                                             method[1],
-                                                            metallicity+'_RLO.pkl'))
+                                                            metallicity+'.pkl'))
                             else:
                                 grids.append(os.path.join(PATH_TO_GRIDS,
                                           grid_type, VERSION, metallicity,
