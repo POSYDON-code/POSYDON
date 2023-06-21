@@ -151,7 +151,24 @@ class ProfileInterpolator:
                 setattr(self, key, myattrs[key])
         self.profiles = np.array(self.profiles)
         self.test_profiles = np.array(self.test_profiles)
-    
+        
+        # processing
+        linear_initial = np.transpose([
+            self.scalars["m1"],self.scalars["m2"],self.scalars["p"]])
+        self.initial = np.log10(np.array(linear_initial))
+        self.total_mass = self.scalars["total_mass"].astype(np.float64)
+
+        test_linear_initial = np.transpose([self.test_scalars["m1"],
+                                             self.test_scalars["m2"],
+                                             self.test_scalars["p"]]) 
+        self.test_initial = np.log10(np.array(test_linear_initial))
+        self.test_total_mass = self.test_scalars["total_mass"].astype(np.float64)
+
+
+        self.valid_initial = self.test_initial  #TODO: update these
+        self.valid_scalars = self.test_scalars
+        self.valid_profiles = self.test_profiles
+
     def train(self,IF_interpolator,density_epochs=3000,density_patience=200,
              comp_bounds_epochs=500,comp_bounds_patience=50,loss_history=False):
         """Trains models for density, H mass fraction, and He mass fraction profile models. 
@@ -166,40 +183,25 @@ class ProfileInterpolator:
             self.comp.loss_history (array-like) : training and validation loss history for composition profiles
             self.dens.loss_history (array-like) : training and validation loss history for density profiles
             
-        """
-        # processing
-        linear_initial = np.transpose([
-            self.scalars["m1"],self.scalars["m2"],self.scalars["p"]])
-        initial = np.log10(np.array(linear_initial))
-        total_mass = self.scalars["total_mass"].astype(np.float64)
-
-        test_linear_initial = np.transpose([self.test_scalars["m1"],
-                                             self.test_scalars["m2"],
-                                             self.test_scalars["p"]]) 
-        test_initial = np.log10(np.array(test_linear_initial))
-        test_total_mass = self.test_scalars["total_mass"].astype(np.float64)
-        
-        
-        valid_initial = test_intial  #TODO: update these
-        valid_scalars = self.test_scalars
-        valid_profiles = self.test_profiles
-        
-        
+        """        
         # instantiate and train H mass fraction profile model
-        h_ind = self.names.index("x_mass_fraction_H")
-        he_ind = self.names.index("y_mass_fraction_He")
-        self.comp = Composition(initial, self.profiles[:,h_ind], self.profiles[:,he_ind], self.scalars["star_state"], 
-                     valid_initial, valid_profiles[:,h_ind], valid_profiles[:,he_ind], 
-                     valid_scalars["star_state"], IF_interpolator,
-                     comp_bounds_epochs,comp_bounds_patience)
+        self.comp = Composition(self.initial, 
+                                self.profiles[:,self.names.index("x_mass_fraction_H")], 
+                                self.profiles[:,self.names.index("y_mass_fraction_He")], 
+                                self.scalars["star_state"], 
+                                self.valid_initial, 
+                                self.valid_profiles[:,self.names.index("x_mass_fraction_H")], 
+                                self.valid_profiles[:,self.names.index("y_mass_fraction_He")], 
+                                self.valid_scalars["star_state"], 
+                                IF_interpolator,
+                                comp_bounds_epochs,comp_bounds_patience)
 
         # instantiate and train density profile model
-        dens_ind = self.names.index("logRho")
-        self.dens = Density(initial,
-                       self.profiles[:,dens_ind],
-                       valid_initial,
-                       valid_profiles[:,dens_ind],
-                       IF_interpolator)
+        self.dens = Density(self.initial,
+                            self.profiles[:,self.names.index("logRho")],
+                            self.valid_initial,
+                            self.valid_profiles[:,self.names.index("logRho")],
+                            IF_interpolator)
         self.dens.train(prof_epochs=density_epochs,prof_patience=density_patience)
         
         if loss_history==True:
@@ -261,13 +263,13 @@ class ProfileInterpolator:
             # cut off points below surface value
             return np.where(arr_copy<arr[-1], arr[-1], arr_copy)
         
-        profiles_copy=profiles.copy()
+        profiles_mono=profiles.copy()
         
         for i in range(len(profiles)):
             if len(np.where(profiles[i][1:]-profiles[i][:-1]>0)[0]>0):
-                profiles_copy[i] = mono_renorm(profiles[i])
+                profiles_mono[i] = mono_renorm(profiles[i])
                 
-        return profiles_copy
+        return profiles_mono
     
     
 class Density:
@@ -420,11 +422,11 @@ class Composition:
         # load IF interpolator
         self.model_IF = IFInterpolator()  # instantiate POSYDON initial-final interpolator object
         self.model_IF.load(filename=IF_interpolator)
-        self.c_h_ind = self.model_IF.interpolators[0].out_keys.index("S1_center_h1")
-        self.s_h_ind = self.model_IF.interpolators[0].out_keys.index("S1_surface_h1")
-        self.c_he_ind = self.model_IF.interpolators[0].out_keys.index("S1_center_he4")
-        self.s_he_ind = self.model_IF.interpolators[0].out_keys.index("S1_surface_he4")
         self.interp = self.model_IF.interpolators[0]
+        self.c_h_ind = self.interp.out_keys.index("S1_center_h1")
+        self.s_h_ind = self.interp.out_keys.index("S1_surface_h1")
+        self.c_he_ind = self.interp.out_keys.index("S1_center_he4")
+        self.s_he_ind = self.interp.out_keys.index("S1_surface_he4")
         
         # star 1 states
         self.star_states = ['None','WD','NS','BH',
@@ -676,8 +678,8 @@ class Composition:
             pred_profiles.append([pred_H,pred_He])
            
         # IF interpolate final masses, generate mass enclosed profile coordinates
-        m1_ind = self.model_IF.interpolators[0].out_keys.index("star_1_mass")
-        pred_mass = self.model_IF.interpolators[0].test_interpolator(10**inputs)[:,m1_ind]
+        m1_ind = self.interp.out_keys.index("star_1_mass")
+        pred_mass = self.interp.test_interpolator(10**inputs)[:,m1_ind]
         mass_coords = np.linspace(0,1,200)*pred_mass[:,np.newaxis] 
         h_profiles = np.array(pred_profiles)[:,0]
         he_profiles = np.array(pred_profiles)[:,1]
