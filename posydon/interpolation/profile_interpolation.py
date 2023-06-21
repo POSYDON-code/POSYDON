@@ -171,7 +171,7 @@ class ProfileInterpolator:
         linear_initial = np.transpose([
             self.scalars["m1"],self.scalars["m2"],self.scalars["p"]])
         initial = np.log10(np.array(linear_initial))
-        final_m1 = self.scalars["final_m1"].astype(np.float64)
+        total_mass = self.scalars["total_mass"].astype(np.float64)
 
         test_linear_initial = np.transpose([self.test_scalars["m1"],
                                              self.test_scalars["m2"],
@@ -188,7 +188,7 @@ class ProfileInterpolator:
         # instantiate and train H mass fraction profile model
         h_ind = self.names.index("x_mass_fraction_H")
         he_ind = self.names.index("y_mass_fraction_He")
-        self.comp = Composition(initial, self.profiles[:,h_ind], self.profiles[:,he_ind], self.scalars["s1_state"], 
+        self.comp = Composition(initial, self.profiles[:,h_ind], self.profiles[:,he_ind], self.scalars["star_state"], 
                      valid_initial, valid_profiles[:,h_ind], valid_profiles[:,he_ind], 
                      valid_scalars["star_state"], IF_interpolator,
                      comp_bounds_epochs,comp_bounds_patience)
@@ -427,7 +427,7 @@ class Composition:
         self.interp = self.model_IF.interpolators[0]
         
         # star 1 states
-        self.class_names = ['None','WD','NS','BH',
+        self.star_states = ['None','WD','NS','BH',
                              'stripped_He_non_burning',
                              'stripped_He_Core_He_burning',
                              'stripped_He_Core_C_burning',
@@ -444,7 +444,7 @@ class Composition:
         # sort training data into classes by s1 state
         self.sort_ind = {}
         self.valid_sort_ind = {}
-        for name in class_names:
+        for name in star_states:
             self.sort_ind[name] = np.where(self.s1==name)[0]
             self.valid_sort_ind[name] = np.where(self.valid_s1==name)[0]
         
