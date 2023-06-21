@@ -140,34 +140,41 @@ class ProfileInterpolator:
         """Interfaces with other classes, trains models and predicts profiles.
         """
 
-    def load_profiles(self,filename):
-        """Load extracted profile data.
+    def load_profiles(self,filename,valid_split=0.2):
+        """Load and process extracted profile data.
         Args:
             filename (str) : path/name of '.pkl' file to be loaded.
+            valid_split (float) : percentage of training data used for validation data
         """
         with open(filename, 'rb') as f:
             myattrs = pd.read_pickle(f)
             for key in myattrs:
                 setattr(self, key, myattrs[key])
-        self.profiles = np.array(self.profiles)
-        self.test_profiles = np.array(self.test_profiles)
-        
+                
         # processing
-        linear_initial = np.transpose([
-            self.scalars["m1"],self.scalars["m2"],self.scalars["p"]])
-        self.initial = np.log10(np.array(linear_initial))
-        self.total_mass = self.scalars["total_mass"].astype(np.float64)
-
+        self.test_profiles = np.array(self.test_profiles)
         test_linear_initial = np.transpose([self.test_scalars["m1"],
                                              self.test_scalars["m2"],
                                              self.test_scalars["p"]]) 
         self.test_initial = np.log10(np.array(test_linear_initial))
-        self.test_total_mass = self.test_scalars["total_mass"].astype(np.float64)
+        
+        linear_initial = np.transpose([self.scalars["m1"],
+                                       self.scalars["m2"],
+                                       self.scalars["p"]])
+        
+        # 80/20 split for training and validation data
+        binaries = np.arange(len(self.profiles))
+        np.random.shuffle(binaries)    
+        split = int(len(self.profiles)*valid_split) # index at which to split data
 
-
-        self.valid_initial = self.test_initial  #TODO: update these
-        self.valid_scalars = self.test_scalars
-        self.valid_profiles = self.test_profiles
+    
+        self.valid_profiles = np.array(self.profiles)[binaries[:split]]      
+        self.valid_initial = np.log10(linear_initial)[binaries[:split]]  
+        self.valid_scalars = self.scalars.iloc[binaries[:split]]
+        
+        self.profiles = np.array(self.profiles)[binaries[split:]]
+        self.initial = np.log10(linear_initial)[binaries[split:]]
+        self.scalars = self.scalars.iloc[binaries[split:]]
 
     def train(self,IF_interpolator,density_epochs=3000,density_patience=200,
              comp_bounds_epochs=500,comp_bounds_patience=50,loss_history=False):
@@ -567,7 +574,7 @@ class Composition:
             callback = tf.keras.callbacks.EarlyStopping(monitor='loss', patience=training_patience)
             
             if len(indices)==0:
-                warnings.warn(f"no training data available for s1 state {state}. model will return random results")
+                warnings.warn(f"no training data available for {state}. model will return random results")
                 
             
             elif state in ['H-rich_Central_He_depleted',
