@@ -453,7 +453,7 @@ class Composition:
         # sort training data into classes by s1 state
         self.sort_ind = {}
         self.valid_sort_ind = {}
-        for name in star_states:
+        for name in self.star_states:
             self.sort_ind[name] = np.where(self.s1==name)[0]
             self.valid_sort_ind[name] = np.where(self.valid_s1==name)[0]
         
@@ -575,7 +575,7 @@ class Composition:
             
             if len(indices)==0:
                 warnings.warn(f"no training data available for {state}. model will return random results")
-                
+                loss_history[state]=np.nan
             
             elif state in ['H-rich_Central_He_depleted',
                          'H-rich_Central_C_depletion']:
@@ -583,15 +583,16 @@ class Composition:
                                     epochs=training_epochs,verbose=0,callbacks=[callback],
                                     validation_data=(valid_inputs,
                                                      np.array(valid_bounds)))
-            
+                loss_history[state] = np.array([history.history['loss'],history.history['val_loss']])
+
             else:
                 history = model.fit(inputs[nonflat],np.array(bounds)[nonflat],
                                     epochs=training_epochs,verbose=0,callbacks=[callback],
                                     validation_data=(valid_inputs[valid_nonflat],
                                                      np.array(valid_bounds)[valid_nonflat]))
+                loss_history[state] = np.array([history.history['loss'],history.history['val_loss']])
                         
             b_models[state] = model
-            loss_history[state] = np.array([history.history['loss'],history.history['val_loss']])
             print(f"finished {state}")
         return b_models, loss_history
             
