@@ -1,3 +1,16 @@
+"""
+This file contains all core-collapse models
+we use in our post processing and, as a 
+consequence, what the user will be able to 
+select in the initial/final interpolation.
+Each model is a dictionary containing the 
+properties of the model used by step_SN. 
+"""
+
+__authors__ = [
+    "Simone Bavera <Simone.Bavera@unige.ch>",
+]
+
 MODELS = {
     "MODEL01": {
         "mechanism": "direct",
