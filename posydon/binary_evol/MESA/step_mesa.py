@@ -882,6 +882,7 @@ class MesaGridStep:
         # EXPERIMENTAL feature
         # infer stellar states
         interpolation_class = self.classes['interpolation_class']
+        setattr(self.binary, f'interp_class_{self.grid_type}', interpolation_class)
 
         S1_state_inferred = cf.check_state_of_star(self.binary.star_1,
                                                    star_CO=star_1_CO)
@@ -1215,7 +1216,7 @@ class MesaGridStep:
         """
 
         # Error handling
-        if v_before is "None" or v_after is "None":
+        if v_before == "None" or v_after == "None":
             return "None"
 
         slope = (v_after - v_before) / (t_after - t_before)
@@ -1229,6 +1230,7 @@ class MS_MS_step(MesaGridStep):
 
     def __init__(self, metallicity=1., grid_name=None, *args, **kwargs):
         """Initialize a MS_MS_step instance."""
+        self.grid_type = 'HMS_HMS'
         self.interp_in_q = True
         if grid_name is None:
             metallicity = convert_metallicity_to_string(metallicity)
@@ -1286,6 +1288,7 @@ class CO_HMS_RLO_step(MesaGridStep):
 
     def __init__(self, metallicity=1., grid_name=None, *args, **kwargs):
         """Initialize a CO_HMS_RLO_step instance."""
+        self.grid_type = 'CO_HMS_RLO'
         self.interp_in_q = False
         if grid_name is None:
             metallicity = convert_metallicity_to_string(metallicity)
@@ -1358,6 +1361,7 @@ class CO_HeMS_step(MesaGridStep):
 
     def __init__(self, metallicity=1., grid_name=None, *args, **kwargs):
         """Initialize a CO_HeMS_step instance."""
+        self.grid_type = 'CO_HeMS'
         self.interp_in_q = False
         if grid_name is None:
             metallicity = convert_metallicity_to_string(metallicity)

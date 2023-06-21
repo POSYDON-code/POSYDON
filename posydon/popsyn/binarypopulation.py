@@ -60,7 +60,9 @@ ONELINE_MIN_ITEMSIZE = {'state_i': 30, 'state_f': 30,
                         'S1_state_i': 31, 'S1_state_f': 31,
                         'S2_state_i': 31, 'S2_state_f': 31,
                         'mass_transfer_case_i': 7, 'mass_transfer_case_f': 7,
-                        'S1_SN_type': 5, 'S2_SN_type': 5}
+                        'S1_SN_type': 5, 'S2_SN_type': 5,
+                        'interp_class_HMS_HMS' : 10, 'interp_class_CO_HeMS' : 10,
+                        'interp_class_CO_HMS_RLO' : 10}
 
 # BinaryPopulation will enforce a constant metallicity accross all steps that
 # load stellar or binary models by checked this list of steps.
