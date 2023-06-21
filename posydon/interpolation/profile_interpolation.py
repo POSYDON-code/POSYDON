@@ -80,7 +80,8 @@ class CompileData:
             hms_s2 (Boolean) : option to get profiles of star 2 in HMS-HMS grid
         Returns:
             scalars (array-like) : dictionary containing initial 
-                                   m1, m2, p and final s1_state, final_m1.
+                                   m1, m2, p, mass transfer class, 
+                                   final star_state, final total_mass.
             profiles (array-like) : all N specified profiles, shape (N,200).
         """
         # open individual run as a DataFrame
@@ -149,7 +150,7 @@ class ProfileInterpolator:
             for key in myattrs:
                 setattr(self, key, myattrs[key])
         self.profiles = np.array(self.profiles)
-        self.valid_profiles = np.array(self.valid_profiles)
+        self.test_profiles = np.array(self.test_profiles)
     
     def train(self,IF_interpolator,density_epochs=3000,density_patience=200,
              comp_bounds_epochs=500,comp_bounds_patience=50,loss_history=False):
@@ -172,18 +173,24 @@ class ProfileInterpolator:
         initial = np.log10(np.array(linear_initial))
         final_m1 = self.scalars["final_m1"].astype(np.float64)
 
-        valid_linear_initial = np.transpose([self.valid_scalars["m1"],
-                                             self.valid_scalars["m2"],
-                                             self.valid_scalars["p"]]) 
-        valid_initial = np.log10(np.array(valid_linear_initial))
-        valid_final_m1 = self.valid_scalars["final_m1"].astype(np.float64)
+        test_linear_initial = np.transpose([self.test_scalars["m1"],
+                                             self.test_scalars["m2"],
+                                             self.test_scalars["p"]]) 
+        test_initial = np.log10(np.array(test_linear_initial))
+        test_total_mass = self.test_scalars["total_mass"].astype(np.float64)
+        
+        
+        valid_initial = test_intial  #TODO: update these
+        valid_scalars = self.test_scalars
+        valid_profiles = self.test_profiles
+        
         
         # instantiate and train H mass fraction profile model
         h_ind = self.names.index("x_mass_fraction_H")
         he_ind = self.names.index("y_mass_fraction_He")
         self.comp = Composition(initial, self.profiles[:,h_ind], self.profiles[:,he_ind], self.scalars["s1_state"], 
-                     valid_initial, self.valid_profiles[:,h_ind], self.valid_profiles[:,he_ind], 
-                     self.valid_scalars["s1_state"], IF_interpolator,
+                     valid_initial, valid_profiles[:,h_ind], valid_profiles[:,he_ind], 
+                     valid_scalars["star_state"], IF_interpolator,
                      comp_bounds_epochs,comp_bounds_patience)
 
         # instantiate and train density profile model
@@ -191,7 +198,7 @@ class ProfileInterpolator:
         self.dens = Density(initial,
                        self.profiles[:,dens_ind],
                        valid_initial,
-                       self.valid_profiles[:,dens_ind],
+                       valid_profiles[:,dens_ind],
                        IF_interpolator)
         self.dens.train(prof_epochs=density_epochs,prof_patience=density_patience)
         
@@ -271,8 +278,8 @@ class Density:
         Args:
             initial (array-like) : log-space initial conditions for training data.
             profiles (array-like) : final density profiles for training data. 
-            valid_initial (array-like) : log-space initial conditions for testing data.
-            valid_profiles (array-like) : final density profiles for testing data.
+            valid_initial (array-like) : log-space initial conditions for validation data.
+            valid_profiles (array-like) : final density profiles for validation data.
             IF_interpolator (string) : path to .pkl file for IF interpolator for central density, final mass values
             n_comp (int) : number of PCA components. 
         """
@@ -392,9 +399,9 @@ class Composition:
             h_profiles (array-like) : final H mass fraction profiles for training data. 
             he_profiles (array-like) : final He mass fraction profiles for training data. 
             s1 (array-like) : final star 1 state for training data.
-            valid_initial (array-like) : log-space initial conditions for testing data.
-            valid_h_profiles (array-like) : final H mass fraction profiles for testing data.
-            valid_he_profiles (array-like) : final He mass fraction profiles for testing data.
+            valid_initial (array-like) : log-space initial conditions for validation data.
+            valid_h_profiles (array-like) : final H mass fraction profiles for validation data.
+            valid_he_profiles (array-like) : final He mass fraction profiles for validation data.
             valid_s1 (array-like) : final star 1 state for testing data.
             IF_interpolator (string) : path to .pkl file for IF interpolator
             training_epochs (int) : number of epochs used to train neural networks
@@ -435,16 +442,11 @@ class Composition:
                              'H-rich_Core_C_burning']
         
         # sort training data into classes by s1 state
-        self.sort_ind = {class_name:[] for class_name in self.class_names}
-        for i in range(len(self.s1)):
-            state = self.s1[i]
-            self.sort_ind[state].append(i)
-        
-        # sort testing data into classes by s1 state
-        self.valid_sort_ind = {class_name:[] for class_name in self.class_names}
-        for i in range(len(self.valid_s1)):
-            state = self.valid_s1[i]
-            self.valid_sort_ind[state].append(i)
+        self.sort_ind = {}
+        self.valid_sort_ind = {}
+        for name in class_names:
+            self.sort_ind[name] = np.where(self.s1==name)[0]
+            self.valid_sort_ind[name] = np.where(self.valid_s1==name)[0]
         
         # create and train models for profile boundaries
         self.bounds_models, self.loss_history = self.learn_bounds(training_epochs,training_patience)
