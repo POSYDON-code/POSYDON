@@ -132,6 +132,8 @@ class SingleStar:
             self.spin_orbit_tilt = None
         if not hasattr(self, 'f_fb'):
             self.f_fb = None
+        if not hasattr(self, 'SN_type'):
+            self.SN_type = None
         if not hasattr(self, 'm_disk_accreted'):
             self.m_disk_accreted = None
         if not hasattr(self, 'm_disk_radiated'):
