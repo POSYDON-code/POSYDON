@@ -230,6 +230,10 @@ class SyntheticPopulation:
                     df_sel_met = pd.concat([df_sel_met, df_tmp])
                     del df_tmp
 
+            if k != 0:
+                largest_index = max(np.unique(df_sel.index))
+                df_sel_met.index += largest_index
+
             # store simulated and underlying stellar mass
             df_sel_met['simulated_mass_for_met'] = simulated_mass_for_met
             df_sel_met['underlying_mass_for_met'] = initial_total_underlying_mass(df=simulated_mass_for_met, **self.ini_kw)[0]
@@ -243,6 +247,11 @@ class SyntheticPopulation:
             df_sel_met_oneline = pd.read_hdf(file,  key='oneline')
             df_sel_met_oneline = df_sel_met_oneline.loc[sel_met]
             df_sel_met_oneline['metallicity'] = met
+
+            if k != 0:
+                largest_index = max(np.unique(df_sel_oneline.index))
+                df_sel_met_oneline.index += largest_index
+
             df_sel_oneline = pd.concat([df_sel_oneline, df_sel_met_oneline])
 
             if self.verbose:
