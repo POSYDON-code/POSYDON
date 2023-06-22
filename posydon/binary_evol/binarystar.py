@@ -424,10 +424,10 @@ class BinaryStar:
             elif key in EXTRA_COLUMNS_DTYPES.keys():
                 common_dtype_dict[key] = EXTRA_COLUMNS_DTYPES.get( key )
             else:
-                raise ValueError(f'No data type found for {key}.')
+                raise ValueError(f'No data type found for {key}. Dtypes must be explicity declared.')
         # set dtypes
         binary_df = binary_df.astype( common_dtype_dict )
-	# unset clean str data because strings
+        # unset clean str data because pandas strings are broken for hdf saving
         convert_to_obj = {}
         for key, val in common_dtype_dict.items():
             if val == 'string':
@@ -606,6 +606,51 @@ class BinaryStar:
             oneline_df['WARNING'] = [0]
 
         oneline_df.set_index('binary_index', inplace=True)
+
+        #Set data types for all columns explicitly        
+        oneline_columns =  set( oneline_df.columns )
+        binary_keys = set( [key + "_i" for key in BINARYPROPERTIES_DTYPES.keys()] 
+                         + [key + "_f" for key in BINARYPROPERTIES_DTYPES.keys()])
+        S1_keys = set( ['S1_' + key + '_i' for key in STARPROPERTIES_DTYPES.keys()] 
+                     + ['S1_' + key + '_f' for key in STARPROPERTIES_DTYPES.keys()] )
+        S2_keys = set( ['S2_' + key +'_i' for key in STARPROPERTIES_DTYPES.keys()] 
+                     + ['S2_' + key + '_f' for key in STARPROPERTIES_DTYPES.keys()] )
+        extra_keys = set( [key + '_i' for key in EXTRA_COLUMNS_DTYPES.keys()] 
+                        + [key + '_f' for key in EXTRA_COLUMNS_DTYPES.keys()])
+        
+        # Find common keys between the oneline_df and default output parameters
+        common_keys =  oneline_columns & ( binary_keys | S1_keys | S2_keys | extra_keys )
+
+        # Create a dict with column-dtype mapping only for columns in oneline_df
+        common_dtype_dict = {}
+        for key in common_keys:
+            if key.replace('_i', '') in BINARYPROPERTIES_DTYPES.keys():
+                common_dtype_dict[key] = BINARYPROPERTIES_DTYPES.get( key.replace('_i', '') )
+            elif key.replace('_f', '') in BINARYPROPERTIES_DTYPES.keys():
+                common_dtype_dict[key] = BINARYPROPERTIES_DTYPES.get( key.replace('_f', '') )
+            elif key.replace('S1_', '').replace('_i', '') in STARPROPERTIES_DTYPES.keys():
+                 common_dtype_dict[key] = STARPROPERTIES_DTYPES.get(key.replace('S1_','').replace('_i', '') )
+            elif key.replace('S1_', '').replace('_f', '') in STARPROPERTIES_DTYPES.keys():
+                 common_dtype_dict[key] = STARPROPERTIES_DTYPES.get(key.replace('S1_','').replace('_f', '') )
+            elif key.replace('S2_', '').replace('_i', '') in STARPROPERTIES_DTYPES.keys():
+                 common_dtype_dict[key] = STARPROPERTIES_DTYPES.get( key.replace('S2_', '').replace('_i', '') )
+            elif key.replace('S2_', '').replace('_f', '') in STARPROPERTIES_DTYPES.keys():
+                 common_dtype_dict[key] = STARPROPERTIES_DTYPES.get( key.replace('S2_', '').replace('_f', '') )
+            elif key.replace('_i', '') in EXTRA_COLUMNS_DTYPES.keys():
+                 common_dtype_dict[key] = EXTRA_COLUMNS_DTYPES.get( key.replace('_i', '') )
+            elif key.replace('_f', '') in EXTRA_COLUMNS_DTYPES.keys():
+                 common_dtype_dict[key] = EXTRA_COLUMNS_DTYPES.get( key.replace('_f', '') )
+            else:
+                 raise ValueError(f'No data type found for {key}.')
+        # set dtypes
+        oneline_df = oneline_df.astype( common_dtype_dict )
+        # unset clean str data because pandas strings are broken for hdf saving
+        convert_to_obj = {}
+        for key, val in common_dtype_dict.items():
+            if val == 'string':
+                convert_to_obj[key] = 'object'
+        oneline_df = oneline_df.astype( convert_to_obj )
+        
         return oneline_df
 
     @classmethod
