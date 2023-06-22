@@ -2,16 +2,19 @@
 __authors__ = [
     "Simone Bavera <Simone.Bavera@unige.ch>",
     "Kyle Akira Rocha <kylerocha2024@u.northwestern.edu>",
+    "Matthias Kruckow <Matthias.Kruckow@unige.ch>",
 ]
 
 import os
 import sys
 import ast
+import shutil
 import pandas as pd
 import numpy as np
 from pprint import pprint, pformat
 from posydon.popsyn.io import parse_inifile
 from posydon.utils.common_functions import PATH_TO_POSYDON
+from posydon.utils.gridutils import get_new_grid_name
 
 # this data processing pipeline was designed assuming POSYDON v2 data structure
 '''
@@ -86,6 +89,7 @@ class PostProcessingPipeline:
         return pipeline_kwargs
 
     def create_csv_and_slurm_job_files(self):
+        previously_created_files = []
         setup_kwargs = self.pipeline_kwargs['pipeline setup']
         account_kwargs = self.pipeline_kwargs['account']
 
@@ -113,8 +117,9 @@ class PostProcessingPipeline:
                         print( pformat(step_kwargs, indent=2) )
 
 
-                    create_csv(
+                    previously_created_files += create_csv(
                         step_name=step_number,
+                        previously_created_files=previously_created_files,
                         **{**step_kwargs, **setup_kwargs}
                     )
                     slurm_job(
@@ -160,8 +165,8 @@ class PostProcessingPipeline:
                 os.makedirs(data_path)
 
                 dirs = []
-                grid_dirs = ['HMS-HMS', 'CO-HMS_RLO', 'CO-HeMS', 'single_HMS',
-                            'single_HeMS']
+                grid_dirs = ['HMS-HMS', 'CO-HMS_RLO', 'CO-HeMS', 'CO-HeMS_RLO',
+                             'single_HMS', 'single_HeMS']
                 interp_dirs = ['interpolators', 'interpolators/1NN_1NN',
                                'interpolators/linear3c_kNN']
                 for name1 in grid_dirs:
@@ -190,7 +195,7 @@ def slurm_job(job_name,
               TRAIN_INTERPOLATORS=False,
               EXPORT_DATASET=False,
               RERUN=False,
-              CO_HMS_GRID_START_AT_RLO=1,
+              STOP_BEFORE_CARBON_DEPLETION=1,
               RERUN_TYPE='',
               verbose=False,
               **kwargs):
@@ -227,43 +232,92 @@ def slurm_job(job_name,
             N = df.shape[1]-1
         else:
             raise ValueError('This should never happen!')
+        if N<0:
+            raise ValueError(f'{job_name} has no jobs to run, please check '
+                             f'{path_to_csv_file}')
         f.write(f"#SBATCH --array=0-{N}\n")
         slurm_array = '$SLURM_ARRAY_TASK_ID'
 
         if job_name == 'step_1':
+            f.write("#SBATCH --open-mode=truncate\n")
             f.write(f"#SBATCH --output={PATH}/logs/grid_slice_%a.out\n")
 
         if job_name == 'step_2':
-            f.write(f"#SBATCH --output={PATH}/logs/combine_grid_slices.out\n")
+            path_to_out_file = os.path.join(PATH, 'logs',
+                                            'combine_grid_slices.out')
+            if os.path.exists(path_to_out_file): # move old data to a copy
+                path_to_old_out_file = os.path.join(PATH, 'logs',
+                                                 'combine_grid_slices.old.out')
+                if os.path.exists(path_to_old_out_file): # delete old copy
+                    os.remove(path_to_old_out_file)
+                shutil.move(path_to_out_file, path_to_old_out_file)
+            f.write("#SBATCH --open-mode=append\n")
+            f.write(f"#SBATCH --output={path_to_out_file}\n")
 
         if job_name == 'step_3':
-            f.write(f"#SBATCH --output={PATH}/logs/plot_grid.out\n")
+            path_to_out_file = os.path.join(PATH, 'logs', 'plot_grid.out')
+            if os.path.exists(path_to_out_file): # move old data to a copy
+                path_to_old_out_file = os.path.join(PATH, 'logs',
+                                                    'plot_grid.old.out')
+                if os.path.exists(path_to_old_out_file): # delete old copy
+                    os.remove(path_to_old_out_file)
+                shutil.move(path_to_out_file, path_to_old_out_file)
+            f.write("#SBATCH --open-mode=append\n")
+            f.write(f"#SBATCH --output={path_to_out_file}\n")
             f.write("unset DISPLAY\n")
 
         if job_name == 'step_4':
-            f.write(f"#SBATCH --output={PATH}/logs/check_failure_rate.out\n")
+            path_to_out_file = os.path.join(PATH, 'logs',
+                                            'check_failure_rate.out')
+            if os.path.exists(path_to_out_file): # move old data to a copy
+                path_to_old_out_file = os.path.join(PATH, 'logs',
+                                                  'check_failure_rate.old.out')
+                if os.path.exists(path_to_old_out_file): # delete old copy
+                    os.remove(path_to_old_out_file)
+                shutil.move(path_to_out_file, path_to_old_out_file)
+            f.write("#SBATCH --open-mode=append\n")
+            f.write(f"#SBATCH --output={path_to_out_file}\n")
 
         if job_name == 'step_5':
+            f.write("#SBATCH --open-mode=truncate\n")
             f.write(f"#SBATCH --output={PATH}/logs/post_processing_%a.out\n")
             f.write(f"export PATH_TO_POSYDON={PATH_TO_POSYDON}\n")
 
         if job_name == 'step_6':
+            f.write("#SBATCH --open-mode=truncate\n")
             f.write(f"#SBATCH --output={PATH}/logs/train_interpolators_%a.out\n")
 
         if job_name == 'step_7':
-            f.write(f"#SBATCH --output={PATH}/logs/export_dataset.out\n")
+            path_to_out_file = os.path.join(PATH, 'logs',
+                                            'export_dataset.out')
+            if os.path.exists(path_to_out_file): # move old data to a copy
+                path_to_old_out_file = os.path.join(PATH, 'logs',
+                                                    'export_dataset.old.out')
+                if os.path.exists(path_to_old_out_file): # delete old copy
+                    os.remove(path_to_old_out_file)
+                shutil.move(path_to_out_file, path_to_old_out_file)
+            f.write("#SBATCH --open-mode=append\n")
+            f.write(f"#SBATCH --output={path_to_out_file}\n")
 
         if job_name == 'rerun':
-            f.write(f"#SBATCH --output={PATH}/logs/rerun.out\n")
+            path_to_out_file = os.path.join(PATH, 'logs', 'rerun.out')
+            if os.path.exists(path_to_out_file): # move old data to a copy
+                path_to_old_out_file = os.path.join(PATH, 'logs',
+                                                    'rerun.old.out')
+                if os.path.exists(path_to_old_out_file): # delete old copy
+                    os.remove(path_to_old_out_file)
+                shutil.move(path_to_out_file, path_to_old_out_file)
+            f.write("#SBATCH --open-mode=append\n")
+            f.write(f"#SBATCH --output={path_to_out_file}\n")
 
-        f.write(f"\nsrun python {PATH_TO_POSYDON}/bin/run-pipeline {PATH_TO_GRIDS} {path_to_csv_file} {slurm_array} {CO_HMS_GRID_START_AT_RLO} {RERUN_TYPE}")
+        f.write(f"\nsrun python {PATH_TO_POSYDON}/bin/run-pipeline {PATH_TO_GRIDS} {path_to_csv_file} {slurm_array} {STOP_BEFORE_CARBON_DEPLETION} {RERUN_TYPE}")
 
 # create csv file with a list of all grid paths to process
 def create_csv(GRID_TYPES, METALLICITIES, GRID_SLICES, COMPRESSIONS,
                step_name=None, VERSION=None, GRIDS_COMBINED=None,
                INTERPOLATION_METHODS=None, RERUN_TYPE='',
                DROP_MISSING_FILES=False, PATH_TO_GRIDS=None,
-               PATH=None, **kwargs):
+               PATH=None, previously_created_files=[], **kwargs):
 
     # number of grid types
     N = len(GRID_TYPES)
@@ -279,6 +333,7 @@ def create_csv(GRID_TYPES, METALLICITIES, GRID_SLICES, COMPRESSIONS,
     interpolators = []
     export_path = []
     rerun_path = []
+    newly_created_files = []
     df = pd.DataFrame()
     for l, grid_type in enumerate(GRID_TYPES):
 
@@ -317,9 +372,14 @@ def create_csv(GRID_TYPES, METALLICITIES, GRID_SLICES, COMPRESSIONS,
                         grids.append(os.path.join(PATH_TO_GRIDS,
                                       grid_type, VERSION, metallicity,
                                       compression, grid_slice+'.h5'))
-                        plot_dirs.append(os.path.join(PATH_TO_GRIDS,
-                                    grid_type, VERSION, metallicity,
-                                    'plots', grid_slice))
+                        if 'RLO' in compression:
+                            plot_dirs.append(os.path.join(PATH_TO_GRIDS,
+                                             grid_type, VERSION, metallicity,
+                                             'plots', 'RLO_'+grid_slice))
+                        else:
+                            plot_dirs.append(os.path.join(PATH_TO_GRIDS,
+                                             grid_type, VERSION, metallicity,
+                                             'plots', grid_slice))
                     elif step_name == 'step_4':
                         grids.append(os.path.join(PATH_TO_GRIDS,
                                       grid_type, VERSION, metallicity,
@@ -336,24 +396,48 @@ def create_csv(GRID_TYPES, METALLICITIES, GRID_SLICES, COMPRESSIONS,
                             grids.append(os.path.join(PATH_TO_GRIDS,
                                           grid_type, VERSION, metallicity,
                                           compression, grid_slice+'.h5'))
-                            interpolators.append(os.path.join(PATH_TO_GRIDS,
-                                          grid_type, VERSION, metallicity,
-                                          'interpolation_objects',
-                                          'IF_'+method+'.pkl'))
+                            if 'RLO' in compression:
+                                interpolators.append(os.path.join(PATH_TO_GRIDS,
+                                                grid_type, VERSION, metallicity,
+                                                'interpolation_objects',
+                                                'IF_'+method+'_RLO.pkl'))
+                            else:
+                                interpolators.append(os.path.join(PATH_TO_GRIDS,
+                                                grid_type, VERSION, metallicity,
+                                                'interpolation_objects',
+                                                'IF_'+method+'.pkl'))
                     elif step_name == 'step_7':
                         grids.append(os.path.join(PATH_TO_GRIDS,
                                       grid_type, VERSION, metallicity,
                                       compression, grid_slice+'.h5'))
-                        export_path.append(os.path.join(PATH, 'POSYDON_data',
-                                                        grid_type,
-                                                        metallicity+'.h5'))
+                        if 'RLO' in compression:
+                            export_path.append(os.path.join(PATH, 'POSYDON_data',
+                                                            grid_type+'_RLO',
+                                                            metallicity+'.h5'))
+                        else:
+                            export_path.append(os.path.join(PATH, 'POSYDON_data',
+                                                            grid_type,
+                                                            metallicity+'.h5'))
                         for method in [['linear','linear3c_kNN'],
                                         ['1NN','1NN_1NN']]:
-                            grids.append(os.path.join(PATH_TO_GRIDS,
+                            if 'RLO' in compression:
+                                grids.append(os.path.join(PATH_TO_GRIDS,
+                                          grid_type, VERSION, metallicity,
+                                          'interpolation_objects',
+                                          'IF_'+method[0]+'_RLO.pkl'))
+                                export_path.append(os.path.join(PATH,
+                                                            'POSYDON_data',
+                                                            grid_type+'_RLO',
+                                                            'interpolators',
+                                                            method[1],
+                                                            metallicity+'.pkl'))
+                            else:
+                                grids.append(os.path.join(PATH_TO_GRIDS,
                                           grid_type, VERSION, metallicity,
                                           'interpolation_objects',
                                           'IF_'+method[0]+'.pkl'))
-                            export_path.append(os.path.join(PATH, 'POSYDON_data',
+                                export_path.append(os.path.join(PATH,
+                                                            'POSYDON_data',
                                                             grid_type,
                                                             'interpolators',
                                                             method[1],
@@ -385,42 +469,89 @@ def create_csv(GRID_TYPES, METALLICITIES, GRID_SLICES, COMPRESSIONS,
         # drop lines when grid directories are not found
         if DROP_MISSING_FILES:
             drop_rows = []
-            for row in range(df.shape[0]):
-                path = df.loc[row,'path_to_grid']
-                if not os.path.exists(path):
+            for row in df.index:
+                path = df.at[row,'path_to_grid']
+                if (not os.path.exists(path) and
+                    path not in previously_created_files):
                     drop_rows.append(row)
-            if any(drop_rows):
+            if len(drop_rows)>0:
                 print('')
                 print(f'----------- {step_name} -----------')
-                print('The following grids will not be processed '
-                      'because the files are missing! If this warning message is '
-                      'unexpected to you, please check the file paths!')
-                for i in drop_rows:
-                    print(df.loc[i,'path_to_grid'])
+                print('The following grids will not be processed because the '
+                      'files/directories are missing! If this warning message '
+                      'is unexpected to you, please check the file paths!')
+                for row in drop_rows:
+                    print(df.at[row,'path_to_grid'])
                 print('')
             df = df.drop(index=drop_rows)
+        if step_name == 'step_1':
+            for row in df.index:
+                path = df.at[row,'path_to_grid']
+                compression = df.at[row,'compression']
+                newly_created_files.append(get_new_grid_name(path,compression))
+        elif step_name == 'step_5':
+            newly_created_files = df['path_to_processed_grid'].to_list()
+        elif step_name == 'step_6':
+            newly_created_files = df['path_to_interpolator'].to_list()
+        elif step_name == 'step_7':
+            newly_created_files = df['export_path'].to_list()
+        elif step_name == 'rerun':
+            newly_created_files = df['rerun_path'].to_list()
     else:
         # step 2
         # drop columns when psygrid files are not found
         if DROP_MISSING_FILES:
+            first_time = True
             drop_columns = []
             for column in df.keys():
-                for path in df[column].dropna().to_list():
-                    if not os.path.exists(path):
+                drop_rows = []
+                for row in df.index:
+                    path = df.at[row,column]
+                    if pd.notna(path):
+                        if (not os.path.exists(path) and
+                            path not in previously_created_files):
+                            drop_rows.append(row)
+                if len(drop_rows)>0:
+                    if first_time:
+                        print('')
+                        print(f'----------- {step_name} -----------')
+                        print('If this warning message is unexpected to you, '
+                              'please check that step 1 occoured '
+                              'succesffully!')
+                        first_time = False
+                    print(f'In {column} the following grids are skipped!')
+                    for row in drop_rows:
+                        print(df.at[row,column])
+                        df.at[row,column] = np.NaN
+                    print('')
+                    newcol = df[column].dropna().to_list()
+                    if len(newcol)==0:
                         drop_columns.append(column)
-            if any(drop_columns):
+#                        print(f'No grids left drop {column}')
+#                        print('')
+                    newcol.extend((df.shape[0]-len(newcol))*[np.nan])
+                    df[column] = newcol
+            if len(drop_columns)>0:
+                if first_time:
+                    print('')
+                    print(f'----------- {step_name} -----------')
+                    print('If this warning message is unexpected to you, '
+                          'please check that step 1 occoured '
+                          'succesffully!')
+                    first_time = False
+                print('The following grids will not be combined as all grid '
+                      'slices are missing!')
+                for column in drop_columns:
+                    print(column)
                 print('')
-                print(f'----------- {step_name} -----------')
-                print('The following grids will not be combined as one or more '
-                      'grid slices are missing! If this warning message is '
-                      'unexpected to you, please check that step 1 occoured '
-                      'succesffully!')
-                print(drop_columns)
-                print('')
-            df = df.drop(columns=drop_columns)
+#            df = df.drop(columns=drop_columns)
+            df = df.dropna(axis=0, how='all').dropna(axis=1, how='all')
+        newly_created_files = df.keys().to_list()
 
     output_fname = f'{step_name}.csv'
     df.to_csv(os.path.join(PATH, output_fname), index=False)
+    
+    return newly_created_files
 
 if __name__ == '__main__':
 

@@ -202,13 +202,14 @@ from posydon.grids.termination_flags import (get_flags_from_MESA_run,
 from posydon.utils.configfile import ConfigFile
 from posydon.utils.common_functions import (orbital_separation_from_period,
                                             initialize_empty_array,
-                                            infer_star_state)
+                                            infer_star_state,
+                                            THRESHOLD_CENTRAL_ABUNDANCE)
 from posydon.utils.gridutils import (read_MESA_data_file, read_EEP_data_file,
                                      add_field, join_lists, fix_He_core)
 from posydon.visualization.plot2D import plot2D
 from posydon.visualization.plot1D import plot1D
 from posydon.grids.downsampling import TrackDownsampler
-from posydon.grids.scrubbing import scrub, keep_after_RLO
+from posydon.grids.scrubbing import scrub, keep_after_RLO, keep_till_central_abundance_He_C
 
 
 HDF5_MEMBER_SIZE = 2**31 - 1            # maximum HDF5 file size when splitting
@@ -346,6 +347,7 @@ GRIDPROPERTIES = {
     "final_value_columns": None,
     # grid-specific arguments
     "start_at_RLO": False,
+    "stop_before_carbon_depletion": False,
     "binary": True,
     "eep": None,    # path to EEP files
     "initial_RLO_fix": False,
@@ -538,6 +540,7 @@ class PSyGrid:
         binary_grid = self.config["binary"]
         initial_RLO_fix = self.config["initial_RLO_fix"]
         start_at_RLO = self.config["start_at_RLO"]
+        stop_before_carbon_depletion = self.config["stop_before_carbon_depletion"]
         eep = self.config["eep"]
 
         if eep is not None:
@@ -633,6 +636,7 @@ class PSyGrid:
             # Select the ith run
             run = grid.runs[i]
             ignore_data = False    # if failed run, do not save any data
+            newTF1 = ''
             self._say('Processing {}'.format(run.path))
 
             # Restrict number of runs if limit is set inside config
@@ -686,21 +690,41 @@ class PSyGrid:
                 # read the model numbers and ages from the histories
                 colname = "model_number"
                 if history1 is not None:
-                    history1_mod = read_MESA_data_file(
-                        run.history1_path, [colname])
+                    if colname in H1_columns:
+                        history1_mod = np.int_(history1[colname].copy())
+                    else:
+                        history1_mod = read_MESA_data_file(run.history1_path, 
+                                                           [colname])
+                        if history1_mod is not None:
+                            history1_mod = np.int_(history1_mod[colname])
                     if history1_mod is not None:
-                        history1_mod = np.int_(history1_mod[colname])
-                        if len(history1_mod) == len(history1) + 1:
-                            history1_mod = history1_mod[:-1]
+                        len_diff = len(history1)-len(history1_mod)
+                        if len_diff<0: #shorten history1_mod
+                            history1_mod = history1_mod[:len_diff]
+                            warnings.warn("Reduce mod in {}\n".format(run.history1_path))
+                        elif len_diff>0: #entend history1_mod
+                            add_mod = np.full(len_diff,history1_mod[-1])
+                            history1_mod = np.concatenate((history1_mod, add_mod))
+                            warnings.warn("Expand mod in {}\n".format(run.history1_path))
                     else:
                         ignore_data = True
                         ignore_reason = "corrupted_history1"
-                    history1_age = read_MESA_data_file(
-                        run.history1_path, ["star_age"])
+                    if "star_age" in H1_columns:
+                        history1_age = history1["star_age"].copy()
+                    else:
+                        history1_age = read_MESA_data_file(run.history1_path, 
+                                                           ["star_age"])
+                        if history1_age is not None:
+                            history1_age = history1_age["star_age"]
                     if history1_age is not None:
-                        history1_age = history1_age["star_age"]
-                        if len(history1_age) == len(history1) + 1:
-                            history1_age = history1_age[:-1]
+                        len_diff = len(history1)-len(history1_age)
+                        if len_diff<0: #shorten history1_age
+                            history1_age = history1_age[:len_diff]
+                            warnings.warn("Reduce age in {}\n".format(run.history1_path))
+                        elif len_diff>0: #entend history1_age
+                            add_age = np.full(len_diff,history1_age[-1])
+                            history1_age = np.concatenate((history1_age, add_age))
+                            warnings.warn("Expand age in {}\n".format(run.history1_path))
                     else:
                         ignore_data = True
                         ignore_reason = "corrupted_history1"
@@ -709,21 +733,41 @@ class PSyGrid:
                     history1_age = None
 
                 if history2 is not None:
-                    history2_mod = read_MESA_data_file(
-                        run.history2_path, [colname])
+                    if colname in H2_columns:
+                        history2_mod = np.int_(history2[colname].copy())
+                    else:
+                        history2_mod = read_MESA_data_file(run.history2_path, 
+                                                           [colname])
+                        if history2_mod is not None:
+                            history2_mod = np.int_(history2_mod[colname])
                     if history2_mod is not None:
-                        history2_mod = np.int_(history2_mod[colname])
-                        if len(history2_mod) == len(history2) + 1:
-                            history2_mod = history2_mod[:-1]
+                        len_diff = len(history2)-len(history2_mod)
+                        if len_diff<0: #shorten history2_mod
+                            history2_mod = history2_mod[:len_diff]
+                            warnings.warn("Reduce mod in {}\n".format(run.history2_path))
+                        elif len_diff>0: #entend history2_mod
+                            add_mod = np.full(len_diff,history2_mod[-1])
+                            history2_mod = np.concatenate((history2_mod, add_mod))
+                            warnings.warn("Expand mod in {}\n".format(run.history2_path))
                     else:
                         ignore_data = True
                         ignore_reason = "corrupted_history2"
-                    history2_age = read_MESA_data_file(
-                        run.history2_path, ["star_age"])
+                    if "star_age" in H2_columns:
+                        history2_age = history2["star_age"].copy()
+                    else:
+                        history2_age = read_MESA_data_file(run.history2_path, 
+                                                           ["star_age"])
+                        if history2_age is not None:
+                            history2_age = history2_age["star_age"]
                     if history2_age is not None:
-                        history2_age = history2_age["star_age"]
-                        if len(history2_age) == len(history2) + 1:
-                            history2_age = history2_age[:-1]
+                        len_diff = len(history2)-len(history2_age)
+                        if len_diff<0: #shorten history2_age
+                            history2_age = history2_age[:len_diff]
+                            warnings.warn("Reduce age in {}\n".format(run.history2_path))
+                        elif len_diff>0: #entend history2_age
+                            add_age = np.full(len_diff,history2_age[-1])
+                            history2_age = np.concatenate((history2_age, add_age))
+                            warnings.warn("Expand age in {}\n".format(run.history2_path))
                     else:
                         ignore_data = True
                         ignore_reason = "corrupted_history2"
@@ -732,21 +776,41 @@ class PSyGrid:
                     history2_age = None
 
                 if binary_history is not None:
-                    binary_history_mod = read_MESA_data_file(
-                        run.binary_history_path, [colname])
+                    if colname in BH_columns:
+                        binary_history_mod = np.int_(binary_history[colname].copy())
+                    else:
+                        binary_history_mod = read_MESA_data_file(
+                            run.binary_history_path, [colname])
+                        if binary_history_mod is not None:
+                            binary_history_mod = np.int_(binary_history_mod[colname])
                     if binary_history_mod is not None:
-                        binary_history_mod = np.int_(binary_history_mod[colname])
-                        if len(binary_history_mod) == len(binary_history) + 1:
-                            binary_history_mod = binary_history_mod[:-1]
+                        len_diff = len(binary_history)-len(binary_history_mod)
+                        if len_diff<0: #shorten binary_history_mod
+                            binary_history_mod = binary_history_mod[:len_diff]
+                            warnings.warn("Reduce mod in {}\n".format(run.binary_history_path))
+                        elif len_diff>0: #entend binary_history_mod
+                            add_mod = np.full(len_diff,binary_history_mod[-1])
+                            binary_history_mod = np.concatenate((binary_history_mod, add_mod))
+                            warnings.warn("Expand mod in {}\n".format(run.binary_history_path))
                     else:
                         ignore_data = True
                         ignore_reason = "corrupted_binary_history"
-                    binary_history_age = read_MESA_data_file(
-                        run.binary_history_path, ["age"])
+                    if "age" in BH_columns:
+                        binary_history_age = binary_history["age"].copy()
+                    else:
+                        binary_history_age = read_MESA_data_file(
+                            run.binary_history_path, ["age"])
+                        if binary_history_age is not None:
+                            binary_history_age = binary_history_age["age"]
                     if binary_history_age is not None:
-                        binary_history_age = binary_history_age["age"]
-                        if len(binary_history_age) == len(binary_history) + 1:
-                            binary_history_age = binary_history_age[:-1]
+                        len_diff = len(binary_history)-len(binary_history_age)
+                        if len_diff<0: #shorten binary_history_age
+                            binary_history_age = binary_history_age[:len_diff]
+                            warnings.warn("Reduce age in {}\n".format(run.binary_history_path))
+                        elif len_diff>0: #entend binary_history_age
+                            add_age = np.full(len_diff,binary_history_age[-1])
+                            binary_history_age = np.concatenate((binary_history_age, add_age))
+                            warnings.warn("Expand age in {}\n".format(run.binary_history_path))
                     else:
                         ignore_data = True
                         ignore_reason = "corrupted_binary_history"
@@ -790,7 +854,18 @@ class PSyGrid:
                     warnings.warn("Ignored MESA run because of scrubbed"
                                   " history in: {}\n".format(run.path))
                     continue
-
+                
+                try: #get mass from binary history
+                    init_mass_1 = float(binary_history["star_1_mass"][0])
+                except: #otherwise get it from directory name
+                    params_from_path = initial_values_from_dirname(run.path)
+                    init_mass_1 = float(params_from_path[0])
+                # check whether stop at He depletion is requested
+                if stop_before_carbon_depletion and init_mass_1>=100.0:
+                    kept = keep_till_central_abundance_He_C(binary_history, history1,
+                                  history2, THRESHOLD_CENTRAL_ABUNDANCE, 0.1)
+                    binary_history, history1, history2, newTF1 = kept
+                    
                 # check whether start at RLO is requested, and chop the history
                 if start_at_RLO:
                     kept = keep_after_RLO(binary_history, history1, history2)
@@ -982,7 +1057,7 @@ class PSyGrid:
                     termination_flags = get_flags_from_MESA_run(
                         run.out_txt_path, binary_history=binary_history,
                         history1=history1, history2=history2,
-                        start_at_RLO=start_at_RLO)
+                        start_at_RLO=start_at_RLO, newTF1=newTF1)
             else:
                 if ignore_data:
                     termination_flags = [ignore_reason] * N_FLAGS_SINGLE
@@ -1177,7 +1252,10 @@ class PSyGrid:
 
     def add_column(self, colname, array, where="final_values", overwrite=True):
         """Add a new numerical column in the final values array."""
-        arr = np.asarray(array)
+        if not isinstance(array, np.ndarray):
+            arr = np.asarray(array)
+        else:
+            arr = array
 
         if where != "final_values":
             raise ValueError("Only adding columns to `final_values` allowed.")
@@ -1205,9 +1283,11 @@ class PSyGrid:
         for dtype in self.final_values.dtype.descr:
             if (dtype[0].startswith("termination_flag")
                     or dtype[0] == "interpolation_class"
-                    or "SN_type" in dtype[0] or "_state" in dtype[0]):
+                    or "_type" in dtype[0] or "_state" in dtype[0]):
                 dtype = (dtype[0], H5_REC_STR_DTYPE.replace("U", "S"))
             new_dtype.append(dtype)
+            if dtype[1] == np.dtype('O'):
+                print(dtype[0])
         final_values = self.final_values.astype(new_dtype)
         del self.hdf5["/grid/final_values"]
         self.hdf5.create_dataset("/grid/final_values", data=final_values,
@@ -1255,7 +1335,7 @@ class PSyGrid:
         for dtype in self.final_values.dtype.descr:
             if (dtype[0].startswith("termination_flag")
                     or dtype[0] == "interpolation_class"
-                    or "SN_type" in dtype[0] or "_state" in dtype[0]):
+                    or "_type" in dtype[0] or "_state" in dtype[0]):
                 dtype = (dtype[0], H5_REC_STR_DTYPE.replace("S", "U"))
             new_dtype.append(dtype)
         self.final_values = self.final_values.astype(new_dtype)
@@ -2016,6 +2096,7 @@ PROPERTIES_TO_BE_NONE = {
 }
 
 PROPERTIES_TO_BE_CONSISTENT = ["binary", "eep", "start_at_RLO",
+                               "stop_before_carbon_depletion",
                                "initial_RLO_fix", "He_core_fix",
                                "accept_missing_profile", "history_DS_error",
                                "history_DS_exclude", "profile_DS_error",

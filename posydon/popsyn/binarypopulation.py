@@ -60,7 +60,9 @@ ONELINE_MIN_ITEMSIZE = {'state_i': 30, 'state_f': 30,
                         'S1_state_i': 31, 'S1_state_f': 31,
                         'S2_state_i': 31, 'S2_state_f': 31,
                         'mass_transfer_case_i': 7, 'mass_transfer_case_f': 7,
-                        'S1_SN_type': 5, 'S2_SN_type': 5}
+                        'S1_SN_type': 5, 'S2_SN_type': 5,
+                        'interp_class_HMS_HMS' : 15, 'interp_class_CO_HeMS' : 15,
+                        'interp_class_CO_HMS_RLO' : 15}
 
 # BinaryPopulation will enforce a constant metallicity accross all steps that
 # load stellar or binary models by checked this list of steps.
@@ -848,7 +850,10 @@ class BinaryGenerator:
             m1 = output['S1_mass'].item()
             m2 = output['S2_mass'].item()
             Z_div_Zsun = kwargs.get('metallicity', 1.)
-            zams_table = {1.: 2.703e-01,
+            zams_table = {2.: 2.915e-01,
+                          1.: 2.703e-01,
+                          0.45: 2.586e-01,
+                          0.2: 2.533e-01,
                           0.1: 2.511e-01,
                           0.01: 2.492e-01,
                           0.001: 2.49e-01,
@@ -889,7 +894,10 @@ class BinaryGenerator:
             m1 = output['S1_mass'].item()
             m2 = output['S2_mass'].item()
             Z_div_Zsun = kwargs.get('metallicity', 1.)
-            zams_table = {1.: 2.703e-01,
+            zams_table = {2.: 2.915e-01,
+                          1.: 2.703e-01,
+                          0.45: 2.586e-01,
+                          0.2: 2.533e-01,
                           0.1: 2.511e-01,
                           0.01: 2.492e-01,
                           0.001: 2.49e-01,
