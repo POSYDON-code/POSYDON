@@ -8,12 +8,11 @@ __authors__ = [
 
 import pickle
 import numpy as np
-import pandas as pd
+from scipy import interpolate
 from sklearn.neighbors import NearestNeighbors
 from .data_scaling import DataScaler
 from posydon.grids.psygrid import PSyGrid
-from posydon.grids.SN_MODELS import SN_MODELS
-from posydon.utils.interpolators import interp1d
+from posydon.grids.MODELS import MODELS
 
 
 class psyTrackInterp:
@@ -101,9 +100,9 @@ class psyTrackInterp:
         # mask out binaries with any nan value
         # mask = np.logical_and(self.grid.final_values['interpolation_class']
         #                       != 'not_converged',
-        # np.invert([pd.isna(XTn)[x,:].any() for x in range(XTn.shape[0])]))
+        # np.invert([np.isnan(XTn)[x,:].any() for x in range(XTn.shape[0])]))
         mask = (self.grid.final_values['interpolation_class']
-                != 'not_converged') & pd.notna(np.sum(XT, axis=1))
+                != 'not_converged') & ~np.isnan(np.sum(XT, axis=1))
         self.valid_ind = np.arange(XT.shape[0])[mask]
 
         if self.method == 'NearestNeighbor':
@@ -123,9 +122,7 @@ class psyTrackInterp:
             distance, index = self.model.kneighbors(Xtn)
             closest_run = self.grid[self.valid_ind[index[0, 0]]]
             tflags = [closest_run.final_values['interpolation_class'],
-                      closest_run.final_values['termination_flag_2'],
-                      closest_run.final_values['mt_history'],
-                      ]
+                      closest_run.final_values['termination_flag_2']]
             dist = np.array([binary.star_1.mass
                              - closest_run.initial_values['star_1_mass'],
                              binary.star_2.mass
@@ -198,7 +195,8 @@ class psyTrackInterp:
 
         """
         if not (X.shape[1] == self.n_in) or not (len(norms) == self.n_in):
-            raise ValueError("The number of columns in X must match the length of norms.")
+            raise ValueError(
+                "The number of columns in X must match the length of norms.")
 
         self.scalers = []
         Xn = np.empty_like(X)
@@ -391,9 +389,7 @@ class GRIDInterpolator():
                      'lambda_CE_30cent',
                      'co_core_mass',
                      'co_core_radius',
-                     'lambda_CE_pure_He_star_10cent',
-                     'total_mass_h1',
-                     'total_mass_he4')
+                     'lambda_CE_pure_He_star_10cent')
 
         self.translate = {
             'age': 'star_age',
@@ -453,8 +449,6 @@ class GRIDInterpolator():
             'thickness_conv_reg_fortides': 'thickness_conv_reg_fortides',
             'radius_conv_reg_fortides': 'radius_conv_reg_fortides',
             'surface_he3': 'surface_he3',
-            'total_mass_h1': 'total_mass_h1',
-            'total_mass_he4': 'total_mass_he4',
             }
 
         # processed keys
@@ -470,14 +464,13 @@ class GRIDInterpolator():
             'S1_r_core_CE_30cent',
             'S1_r_core_CE_pure_He_star_10cent'
         )
-
+        
         # core collapse keys
         keys = []
-        for SN_MODEL_NAME in SN_MODELS.keys():
+        for MODEL_NAME in MODELS.keys():
             for key in ['CO_type', 'SN_type', 'f_fb', 'mass', 'spin',
-                        'm_disk_accreted', 'm_disk_radiated','M4', 'mu4',
-                        'h1_mass_ej', 'he4_mass_ej']:
-                keys.append('S1_' + SN_MODEL_NAME + '_' + key )
+                        'm_disk_accreted', 'm_disk_radiated']:
+                keys.append('S1_' + MODEL_NAME + '_' + key )
         self.final_keys += tuple(keys)
 
         self.profile_keys = (
@@ -607,10 +600,7 @@ class GRIDInterpolator():
                 self.load_grid(mass_low)
                 kvalue_low = self.grid_final_values[mass_low][key]
 
-            while pd.isna(kvalue_low):
-                # escape if no lower mass is available
-                if np.sum(mass_low > self.grid_mass) == 0:
-                    break
+            while (kvalue_low is None or np.isnan(kvalue_low)):
                 mass_low = np.max(self.grid_mass[mass_low > self.grid_mass])
                 try:
                     kvalue_low = self.grid_final_values[mass_low][key]
@@ -624,10 +614,7 @@ class GRIDInterpolator():
                 self.load_grid(mass_high)
                 kvalue_high = self.grid_final_values[mass_high][key]
 
-            while pd.isna(kvalue_high):
-                # escape if no higher mass is available
-                if np.sum(mass_high < self.grid_mass) == 0:
-                    break
+            while (kvalue_high is None or np.isnan(kvalue_high)):
                 mass_high = np.min(self.grid_mass[mass_high < self.grid_mass])
                 try:
                     kvalue_high = self.grid_final_values[mass_high][key]
@@ -712,13 +699,13 @@ class GRIDInterpolator():
                 m_cor = m_cor_high
                 idx = np.argmax(mass_high == self.grid_mass)
                 profile_old = grid[idx].final_profile1
-                f = interp1d(m_cor_low, kvalue_low)
+                f = interpolate.interp1d(m_cor_low, kvalue_low)
                 kvalue_low = f(m_cor)
             else:
                 m_cor = m_cor_low
                 idx = np.argmax(mass_low == self.grid_mass)
                 profile_old = grid[idx].final_profile1
-                f = interp1d(m_cor_high, kvalue_high)
+                f = interpolate.interp1d(m_cor_high, kvalue_high)
                 kvalue_high = f(m_cor)
 
             weight = (M_new - mass_low) / (mass_high - mass_low)

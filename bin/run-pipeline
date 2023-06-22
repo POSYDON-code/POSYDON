@@ -71,12 +71,13 @@ from posydon.grids.psygrid import (PSyGrid,
                                    EXTRA_COLS_DS_EXCLUDE)
 from posydon.grids.post_processing import (post_process_grid,
                                            add_post_processed_quantities)
+from posydon.grids.MODELS import MODELS
 from posydon.interpolation.IF_interpolation import IFInterpolator
 from posydon.utils.common_functions import PATH_TO_POSYDON
 from posydon.utils.gridutils import get_new_grid_name
 
 
-def create_grid_slice(i, path_to_csv_file, CO_HMS_GRID_START_AT_RLO, verbose=False):
+def create_grid_slice(i, path_to_csv_file, STOP_BEFORE_CARBON_DEPLETION=True, verbose=False):
 
     df = pd.read_csv(path_to_csv_file)
     grid_path = df.loc[i,'path_to_grid']
@@ -97,13 +98,13 @@ def create_grid_slice(i, path_to_csv_file, CO_HMS_GRID_START_AT_RLO, verbose=Fal
         print('processing ', grid_path)
         print('saving file ',  grid_output)
 
-    if compression == 'ORIGINAL':
+    if 'ORIGINAL' in compression:
         history_DS_error = None
         profile_DS_error = None
         profile_DS_interval = None
         history_DS_exclude = DEFAULT_HISTORY_DS_EXCLUDE
         profile_DS_exclude = DEFAULT_PROFILE_DS_EXCLUDE
-    elif compression == 'LITE':
+    elif 'LITE' in compression:
         history_DS_error = 0.1
         profile_DS_error = 0.1
         profile_DS_interval = -0.005
@@ -112,10 +113,15 @@ def create_grid_slice(i, path_to_csv_file, CO_HMS_GRID_START_AT_RLO, verbose=Fal
     else:
         raise ValueError('compression = %s not supported!'%compression)
 
-    if 'CO-HMS_RLO' in grid_path and CO_HMS_GRID_START_AT_RLO:
+    if 'CO' in grid_path and 'RLO' in compression:
         start_at_RLO = True
     else:
         start_at_RLO = False
+
+    if 'HMS' in grid_path and STOP_BEFORE_CARBON_DEPLETION:
+        stop_before_carbon_depletion = True
+    else:
+        stop_before_carbon_depletion = False
 
     grid = PSyGrid(verbose=True)
     grid.create(grid_path,
@@ -128,7 +134,7 @@ def create_grid_slice(i, path_to_csv_file, CO_HMS_GRID_START_AT_RLO, verbose=Fal
                 profile_DS_interval=profile_DS_interval,
                 compression="gzip9",
                 start_at_RLO=start_at_RLO,
-                stop_before_carbon_depletion=True,
+                stop_before_carbon_depletion=stop_before_carbon_depletion,
                 initial_RLO_fix=True)
     grid.close()
 
@@ -384,7 +390,7 @@ def post_processing(i, path_to_csv_file, verbose=False):
     grid.load(grid_path)
 
     if verbose:
-        print('Compute process quantities ...')
+        print('Compute processed quantities ...')
     if 'CO' in grid_path:
         star_2_CO = True
     else:
@@ -407,7 +413,7 @@ def post_processing(i, path_to_csv_file, verbose=False):
     add_post_processed_quantities(grid_LITE, MESA_dirs_EXTRA_COLUMNS,
                                   EXTRA_COLUMNS, verbose=verbose)
     if verbose:
-        print('Added process quantities to grid:',processed_grid_path)
+        print('Added processed quantities to grid:',processed_grid_path)
     grid_LITE.close()
 
 
@@ -417,6 +423,8 @@ def train_interpolators(i, path_to_csv_file, verbose=False):
     grid_path = df.loc[i,'path_to_grid']
     interpolator_path = df.loc[i,'path_to_interpolator']
     method = interpolator_path.split('IF_')[-1].split('.pkl')[0]
+    if '_RLO' in method:
+        method = method.split('_RLO')[0]
 
     if verbose:
         print(f'train interpolators {grid_path} with method {method}')
@@ -430,117 +438,74 @@ def train_interpolators(i, path_to_csv_file, verbose=False):
     grid = PSyGrid(verbose=False)
     grid.load(grid_path)
 
-    second = ['S1_direct_f_fb', 'S1_direct_mass', 'S1_direct_spin']
-    third = ['S1_Fryer+12-rapid_f_fb', 'S1_Fryer+12-rapid_mass',
-             'S1_Fryer+12-rapid_spin']
-    fourth = ['S1_Fryer+12-delayed_f_fb', 'S1_Fryer+12-delayed_mass',
-              'S1_Fryer+12-delayed_spin']
-    fifth = ['S1_Sukhbold+16-engineN20_f_fb', 'S1_Sukhbold+16-engineN20_mass',
-             'S1_Sukhbold+16-engineN20_spin']
-    sixth = ['S1_Patton&Sukhbold20-engineN20_f_fb',
-             'S1_Patton&Sukhbold20-engineN20_mass',
-             'S1_Patton&Sukhbold20-engineN20_spin']
-
-
-    first = [key for key in grid.final_values.dtype.names if (
-                                    key != "model_number" and
-                                    (type(grid.final_values[key][0]) != np.str_)
-                                    and any(~np.isnan(grid.final_values[key])))]
-
-    for sec in second:
-        first.remove(sec)
-
-    for thrd in third:
-        first.remove(thrd)
-
-    for frth in fourth:
-        first.remove(frth)
-
-    for ffth in fifth:
-        first.remove(ffth)
-
-    for sxth in sixth:
-        first.remove(sxth)
-
-    if 'CO-HMS_RLO' in grid_path:
+    if '_RLO' in grid_path:
         interp_method = [method, method]
         interp_classes = ["stable_MT", "unstable_MT"]
     else:
         interp_method = [method, method, method]
         interp_classes = ["no_MT", "stable_MT", "unstable_MT"]
-
-    # TODO: train CC2 quantities coming from reverse MT systems
-    interp = IFInterpolator(grid=grid, interpolators = [
+        
+    # all magnitues that are not model numbers, supernova properites or strings
+    # are interpolated with respect to interpolation_class
+    out_keys = [key for key in grid.final_values.dtype.names if (
+                                    key != "model_number" and
+                                    (type(grid.final_values[key][0]) != np.str_)
+                                    and any(~np.isnan(grid.final_values[key]))
+                                    and "MODEL" not in key)]
+    
+    # define all string keys in final values
+    c_keys = ['interpolation_class', 'S1_state', 'S2_state']
+    for MODEL_NAME in MODELS.keys():
+        for i in range(1,3):
+            c_keys.append(f'S{i}_{MODEL_NAME}_SN_type')
+            c_keys.append(f'S{i}_{MODEL_NAME}_CO_type')
+    
+    # specify the interpolation methods
+    interpolators = [
         {
             "interp_method": interp_method,
             "interp_classes": interp_classes,
-            "out_keys": first,
+            "out_keys": out_keys,
             "class_method": "kNN",
-            "c_keys": ['interpolation_class',
-                       'S1_state',
-                       'S2_state',
-                       # Collapse quantities
-                       'S1_direct_SN_type',
-                       'S1_Fryer+12-rapid_SN_type',
-                       'S1_Fryer+12-delayed_SN_type',
-                       'S1_Sukhbold+16-engineN20_SN_type',
-                       'S1_Patton&Sukhbold20-engineN20_SN_type',
-                       # v1 POSYDON does not have S2 reaching CC before S1
-                       # all these classifier map to None
-                       'S2_direct_state',
-                       'S2_Fryer+12-rapid_state',
-                       'S2_Fryer+12-delayed_state',
-                       'S2_Sukhbold+16-engineN20_state',
-                       'S2_Patton&Sukhbold20-engineN20_state',
-                       'S2_direct_SN_type',
-                       'S2_Fryer+12-rapid_SN_type',
-                       'S2_Fryer+12-delayed_SN_type',
-                       'S2_Sukhbold+16-engineN20_SN_type',
-                       'S2_Patton&Sukhbold20-engineN20_SN_type'
-                      ],
+            "c_keys": c_keys,
             "c_key": "interpolation_class"
         },
-        {
-            "interp_method": [method, method, method],
-            "interp_classes": ["BH", "WD", "NS"],
-            "out_keys": second,
-            "class_method": "kNN",
-            "c_keys": ['S1_direct_state'],
-            "c_key": 'S1_direct_state'
-        },
-        {
-            "interp_method": [method, method, method],
-            "interp_classes": ["BH", "WD", "NS"],
-            "out_keys": third,
-            "class_method": "kNN",
-            "c_keys": ['S1_Fryer+12-rapid_state'],
-            "c_key": 'S1_Fryer+12-rapid_state'
-        },
-        {
-            "interp_method": [method, method, method],
-            "interp_classes": ["BH", "WD", "NS"],
-            "out_keys": fourth,
-            "class_method": "kNN",
-            "c_keys": ['S1_Fryer+12-delayed_state'],
-            "c_key": 'S1_Fryer+12-delayed_state'
-        },
-        {
-            "interp_method": [method, method, method],
-            "interp_classes": ["BH", "WD", "NS"],
-            "out_keys": fifth,
-            "class_method": "kNN",
-            "c_keys": ['S1_Sukhbold+16-engineN20_state'],
-            "c_key": 'S1_Sukhbold+16-engineN20_state'
-        },
-        {
-            "interp_method": [method, method, method],
-            "interp_classes": ["BH", "WD", "NS"],
-            "out_keys": sixth,
-            "class_method": "kNN",
-            "c_keys": ['S1_Patton&Sukhbold20-engineN20_state'],
-            "c_key": 'S1_Patton&Sukhbold20-engineN20_state'
-        }
-    ])
+    ]
+    
+    # core collapse quantities are interpolated with respect to the
+    # compact object type
+    # TODO: we need to train core collapse for secondary star as well
+    # to catch reverse mass transfer cases where the primary undergoes
+    # core collapse first
+    for MODEL_NAME in MODELS.keys():
+        for i in range(1,2): #TODO: range(1,3):
+            out_keys = [key for key in grid.final_values.dtype.names if (
+                                            key != "model_number" and
+                                            (type(grid.final_values[key][0]) != np.str_)
+                                            and any(~np.isnan(grid.final_values[key])) and
+                                            f"S{i}_{MODEL_NAME}" in key)]
+            
+            # catch cases where there is no WD formation
+            if "WD" in grid.final_values[f'S{i}_{MODEL_NAME}_CO_type']:
+                interp_method = [method, method, method]
+                interp_classes = ["BH", "NS", "WD"]
+            else:
+                interp_method = [method, method]
+                interp_classes = ["BH", "NS"]
+
+            interpolators.append(
+                {
+                    "interp_method": interp_method,
+                    "interp_classes": interp_classes,
+                    "out_keys": out_keys,
+                    "class_method": "kNN",
+                    "c_keys": [f'S{i}_{MODEL_NAME}_CO_type'],
+                    "c_key": f'S{i}_{MODEL_NAME}_CO_type'
+                },   
+            )
+    
+    
+    interp = IFInterpolator(grid=grid, interpolators=interpolators)
 
      # training and saving
     interp.train()
@@ -717,7 +682,7 @@ if __name__ == '__main__':
     PATH_TO_GRIDS = str(sys.argv[1])
     path_to_csv_file = str(sys.argv[2])
     i = int(sys.argv[3])
-    CO_HMS_GRID_START_AT_RLO = bool(int(sys.argv[4]))
+    STOP_BEFORE_CARBON_DEPLETION = bool(int(sys.argv[4]))
     if len(sys.argv) == 6:
         rerun_type = str(sys.argv[5])
 
@@ -735,7 +700,7 @@ if __name__ == '__main__':
 
     if 'step_1' in path_to_csv_file:
         create_grid_slice(i, path_to_csv_file,
-                          CO_HMS_GRID_START_AT_RLO=CO_HMS_GRID_START_AT_RLO,
+                          STOP_BEFORE_CARBON_DEPLETION=STOP_BEFORE_CARBON_DEPLETION,
                           verbose=VERBOSE)
 
     if 'step_2' in path_to_csv_file:

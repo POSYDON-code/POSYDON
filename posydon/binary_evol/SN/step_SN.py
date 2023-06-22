@@ -48,6 +48,7 @@ from posydon.binary_evol.singlestar import STARPROPERTIES
 from posydon.binary_evol.SN.profile_collapse import do_core_collapse_BH
 from posydon.binary_evol.flow_chart import (STAR_STATES_CO, STAR_STATES_CC,
                                             STAR_STATES_C_DEPLETION)
+from posydon.grids.MODELS import MODELS
 
 from pandas import read_csv
 from sklearn import neighbors
@@ -66,21 +67,25 @@ path_to_Couch_datasets = os.path.join(PATH_TO_POSYDON_DATA,
                                       "Couch+2020/")
 
 MODEL = {
+    # core collapse physics
     "mechanism": 'Patton&Sukhbold20-engine',
     "engine": 'N20',
     "PISN": "Marchant+19",
     "ECSN": "Podsiadlowksi+04",
+    "conserve_hydrogen_envelope" : False,
     "max_neutrino_mass_loss": 0.5,
-    "kick": True,
-    "kick_normalisation": 'one_over_mass',
-    "sigma_kick_CCSN_NS": 265.0,
-    "sigma_kick_CCSN_BH": 265.0,
-    "sigma_kick_ECSN": 20.0,
     "max_NS_mass": 2.5,
     "use_interp_values": True,
     "use_profiles": True,
     "use_core_masses": True,
     "approx_at_he_depletion": False,
+    # kick physics
+    "kick": True,
+    "kick_normalisation": 'one_over_mass',
+    "sigma_kick_CCSN_NS": 265.0,
+    "sigma_kick_CCSN_BH": 265.0,
+    "sigma_kick_ECSN": 20.0,
+    # other
     "verbose": False,
 }
 
@@ -229,24 +234,7 @@ class StepSN(object):
 
     """
 
-    def __init__(self,
-                 mechanism=MODEL['mechanism'],
-                 engine=MODEL['engine'],
-                 PISN=MODEL['PISN'],
-                 ECSN=MODEL['ECSN'],
-                 max_neutrino_mass_loss=MODEL['max_neutrino_mass_loss'],
-                 kick=MODEL['kick'],
-                 kick_normalisation=MODEL['kick_normalisation'],
-                 sigma_kick_CCSN_NS=MODEL['sigma_kick_CCSN_NS'],
-                 sigma_kick_CCSN_BH=MODEL['sigma_kick_CCSN_BH'],
-                 sigma_kick_ECSN=MODEL['sigma_kick_ECSN'],
-                 max_NS_mass=MODEL['max_NS_mass'],
-                 use_interp_values=MODEL['use_interp_values'],
-                 use_profiles=MODEL['use_profiles'],
-                 use_core_masses=MODEL['use_core_masses'],
-                 approx_at_he_depletion=MODEL['approx_at_he_depletion'],
-                 verbose=MODEL['verbose'],
-                 **kwargs):
+    def __init__(self, **kwargs):
         """Initialize a StepSN instance."""
         # read kwargs to initialize the class
         if kwargs:
@@ -257,22 +245,9 @@ class StepSN(object):
                 default_value = MODEL[varname]
                 setattr(self, varname, kwargs.get(varname, default_value))
         else:
-            self.mechanism = mechanism
-            self.engine = engine
-            self.PISN = PISN
-            self.ECSN = ECSN
-            self.max_neutrino_mass_loss = max_neutrino_mass_loss
-            self.kick = kick
-            self.kick_normalisation = kick_normalisation
-            self.sigma_kick_CCSN_NS = sigma_kick_CCSN_NS
-            self.sigma_kick_CCSN_BH = sigma_kick_CCSN_BH
-            self.sigma_kick_ECSN = sigma_kick_ECSN
-            self.max_NS_mass = max_NS_mass
-            self.use_interp_values = use_interp_values
-            self.use_profiles = use_profiles
-            self.use_core_masses = use_core_masses
-            self.approx_at_he_depletion = approx_at_he_depletion
-            self.verbose = verbose
+            for varname in MODEL:
+                default_value = MODEL[varname]
+                setattr(self, varname, default_value)
 
         if self.max_neutrino_mass_loss is None:
             self.max_neutrino_mass_loss = 0
@@ -506,45 +481,51 @@ class StepSN(object):
 
             # if no profile is avaiable but interpolation quantities are,
             # use those, else continue with or without profile.
-            key = self.mechanism
-            key = key.replace('+', '')
-            key = key.replace('-', '_')
-            key = key.replace('&', '_')
-            if self.mechanism in ['Sukhbold+16-engine',
-                                  'Patton&Sukhbold20-engine']:
-                key += self.engine
-            if (self.use_interp_values and (getattr(star, key) is not None)):
-                # check the assumptions for the CC of preprocessed quantities
-                supported_CC = [
-                    'direct', 'Fryer+12-rapid', 'Fryer+12-delayed',
-                    'Sukhbold+16-engine', 'Patton&Sukhbold20-engine']
-
-                if self.mechanism not in supported_CC:
-                    raise ValueError('Mechanism not supported by '
-                                     'use_interp_values=True!')
-                if self.mechanism in ['Sukhbold+16-engine',
-                                      'Patton&Sukhbold20-engine']:
-                    if self.engine != 'N20':
-                        raise ValueError('Engine not supported by '
-                                         'use_interp_values=True!')
-                if self.PISN != "Marchant+19":
-                    raise ValueError('PISN option not supported by '
-                                     'use_interp_values=True!')
-                if self.ECSN != "Podsiadlowksi+04":
-                    raise ValueError('ECSN option not supported by '
-                                     'use_interp_values=True!')
-                if self.max_neutrino_mass_loss != 0.5:
-                    raise ValueError('max_neutrino_mass_loss option not '
-                                     'supported by use_intrp_values=True!')
-
-                CC_properites = getattr(star, key)
-                star.state, star.SN_type, star.f_fb, star.mass, star.spin = (
-                    CC_properites)
-
-                for key in STARPROPERTIES:
-                    if key not in ["state", "mass", "spin"]:
-                        setattr(star, key, None)
-                return
+            if self.use_interp_values:
+                # find MODEL_NAME corresponding to class variable
+                MODEL_NAME_SEL = None
+                for MODEL_NAME, MODEL in MODELS.items():
+                    tmp = MODEL_NAME
+                    for key, val in MODEL.items():
+                        if "use_" in key:
+                            continue
+                        if getattr(self, key) != val:
+                            if self.verbose:
+                                print(tmp, 'mismatch:', key, getattr(self, key), val)
+                            tmp = None
+                            break
+                    if tmp is not None:
+                        if self.verbose:
+                            print('matched to model:', tmp)
+                        MODEL_NAME_SEL = tmp
+                
+                # check if selected MODEL is supported
+                if MODEL_NAME_SEL is None:
+                    raise ValueError('Your model assumptions are not'
+                                     'supported!')   
+                elif getattr(star, MODEL_NAME_SEL) is None:
+                    # NOTE: this option is needed to do the collapse
+                    # for stars evolved with the step_detached or 
+                    # steo_disrupted.
+                    # allow to continue with the collapse with profile
+                    # or core masses
+                    warnings.warn(f'{MODEL_NAME_SEL}: The collapsed star '
+                                     'was not interpolated! If use_profiles '
+                                     'or use_core_masses is set to True, '
+                                     'continue with the collapse.')                 
+                else:
+                    MODEL_properties = getattr(star, MODEL_NAME_SEL)
+                    for key, value in MODEL_properties.items():
+                        setattr(star, key, value)
+                
+                    for key in STARPROPERTIES:
+                        if key not in ["state", "mass", "spin",
+                                        "m_disk_accreted ", "m_disk_radiated"]:
+                            setattr(star, key, None)
+                    
+                    star.log_R = np.log10(CO_radius(star.mass, star.state))
+                    
+                    return
 
             # Verifies the selection of core-collapse mechnism to perform
             # the collapse
@@ -586,11 +567,9 @@ class StepSN(object):
                     star.spin = np.nan
                     star.m_disk_accreted = np.nan
                     star.m_disk_radiated = np.nan
-                    star.max_he_mass_ejected = np.nan
                     for key in STARPROPERTIES:
                         if key not in ["state", "mass", "spin",
-                                       "m_disk_accreted ", "m_disk_radiated",
-                                       "max_he_mass_ejected"]:
+                                       "m_disk_accreted ", "m_disk_radiated"]:
                             setattr(star, key, None)
                     return
 
@@ -618,17 +597,14 @@ class StepSN(object):
                         )
                         star.mass = final_BH[0]
                         star.spin = final_BH[1]
-                        Mo = const.Msun
-                        star.m_disk_accreted = final_BH[11][-1]/Mo
-                        star.m_disk_radiated = sum(final_BH[7]*final_BH[13])/Mo
-                        star.max_he_mass_ejected = final_BH[17]
+                        star.m_disk_accreted = final_BH[2]
+                        star.m_disk_radiated = final_BH[3]
                         star.state = "BH"
                     else:
                         star.mass = m_grav
                         star.spin = 0.
                         star.m_disk_accreted = 0.
                         star.m_disk_radiated = 0.
-                        star.max_he_mass_ejected = np.nan
                         star.state = 'NS'
 
                 elif self.use_core_masses:
@@ -652,13 +628,11 @@ class StepSN(object):
                             star.spin = 1.0
                         star.m_disk_accreted = 0.0
                         star.m_disk_radiated = 0.0
-                        star.max_he_mass_ejected = np.nan
                         star.state = "BH"
                     else:
                         star.spin = 0.0
                         star.m_disk_accreted = 0.0
                         star.m_disk_radiated = 0.0
-                        star.max_he_mass_ejected = np.nan
                         star.state = "NS"
                 else:
                     for key in STARPROPERTIES:
@@ -697,11 +671,9 @@ class StepSN(object):
                     star.spin = np.nan
                     star.m_disk_accreted = np.nan
                     star.m_disk_radiated = np.nan
-                    star.max_he_mass_ejected = np.nan
                     for key in STARPROPERTIES:
                         if key not in ["state", "mass", "spin",
-                                       "m_disk_accreted ", "m_disk_radiated",
-                                       "max_he_mass_ejected"]:
+                                       "m_disk_accreted ", "m_disk_radiated"]:
                             setattr(star, key, None)
                     return
 
@@ -733,15 +705,12 @@ class StepSN(object):
                                   "and lost", round(final_BH[0] - m_rembar, 2),
                                   "M_sun.")
                         star.spin = final_BH[1]
-                        Mo = const.Msun
-                        star.m_disk_accreted = final_BH[11][-1]/Mo
-                        star.m_disk_radiated = sum(final_BH[7]*final_BH[13])/Mo
-                        star.max_he_mass_ejected = final_BH[17]
+                        star.m_disk_accreted = final_BH[2]
+                        star.m_disk_radiated = final_BH[3]
                     elif star.state == "NS":
                         star.mass = m_grav
                         star.m_disk_accreted = 0.0
                         star.m_disk_radiated = 0.0
-                        star.max_he_mass_ejected = np.nan
                         star.spin = 0.0
                     else:
                         for key in STARPROPERTIES:
@@ -768,13 +737,11 @@ class StepSN(object):
                             star.spin = 1.0
                         star.m_disk_accreted = 0.0
                         star.m_disk_radiated = 0.0
-                        star.max_he_mass_ejected = np.nan
                         star.state = "BH"
                     else:
                         star.spin = 0.0
                         star.m_disk_accreted = 0.0
                         star.m_disk_radiated = 0.0
-                        star.max_he_mass_ejected = np.nan
                         star.state = "NS"
 
                 else:
@@ -793,8 +760,7 @@ class StepSN(object):
         for key in STARPROPERTIES:
             if key not in [
                 "state", "mass", "spin", "log_R", "metallicity",
-                "m_disk_accreted ", "m_disk_radiated", "max_he_mass_ejected"
-            ]:
+                "m_disk_accreted ", "m_disk_radiated"]:
                 setattr(star, key, None)
 
     def PISN_prescription(self, star):
@@ -818,6 +784,7 @@ class StepSN(object):
             # perform the PISN prescription in terms of the
             # He core mass at pre-supernova
             m_He_core = star.he_core_mass
+            m_star = star.mass
             if self.PISN == "Marchant+19":
                 if m_He_core >= 31.99 and m_He_core <= 61.10:
                     # this is the 8th-order polynomial fit of table 1
@@ -839,7 +806,11 @@ class StepSN(object):
                     m_PISN = np.nan
 
                 else:
-                    m_PISN = None
+                    # above the PISN gap we assume direct collapse of the
+                    if self.conserve_hydrogen_envelope:
+                        m_PISN = m_star
+                    else:
+                        m_PISN = m_He_core
 
             elif is_number(self.PISN) and m_He_core > self.PISN:
                 m_PISN = self.PISN
@@ -1028,6 +999,12 @@ class StepSN(object):
             raise ValueError("The CO core mass is not correct! CO core = {}".
                              format(m_core))
 
+        # define the collapsing stellar mass: either the H or He core mass
+        if self.conserve_hydrogen_envelope:
+            m_collapsing = m_star
+        else:
+            m_collapsing = m_He_core
+
         m_rembar, f_fb, state, star.SN_type = self.check_SN_type(
             m_core=m_core, m_He_core=m_He_core, m_star=m_star)
 
@@ -1049,21 +1026,21 @@ class StepSN(object):
                 f_fb = 0.0
             elif m_core < 2.5:
                 m_fb = 0.2
-                f_fb = m_fb / (m_star - m_proto)
+                f_fb = m_fb / (m_collapsing - m_proto)
             elif m_core >= 2.5 and m_core < 6.0:
                 m_fb = 0.286 * m_core - 0.514
-                f_fb = m_fb / (m_star - m_proto)
+                f_fb = m_fb / (m_collapsing - m_proto)
             elif m_core >= 6.0 and m_core < 7.0:
                 f_fb = 1.0
-                m_fb = f_fb * (m_star - m_proto)
+                m_fb = f_fb * (m_collapsing - m_proto)
             elif m_core >= 7.0 and m_core < 11.0:
-                a = 0.25 - 1.275 / (m_star - m_proto)
+                a = 0.25 - 1.275 / (m_collapsing - m_proto)
                 b = -11.0 * a + 1.0
                 f_fb = a * m_core + b
-                m_fb = f_fb * (m_star - m_proto)
+                m_fb = f_fb * (m_collapsing - m_proto)
             elif m_core >= 11.0:
                 f_fb = 1.0
-                m_fb = f_fb * (m_star - m_proto)
+                m_fb = f_fb * (m_collapsing - m_proto)
             m_rembar = m_proto + m_fb
             state = None
 
@@ -1088,30 +1065,24 @@ class StepSN(object):
                 f_fb = 0.0
             elif m_core < 2.5:
                 m_fb = 0.2
-                f_fb = m_fb / (m_star - m_proto)
+                f_fb = m_fb / (m_collapsing - m_proto)
             elif m_core >= 2.5 and m_core < 3.5:
                 m_fb = 0.5 * m_core - 1.05
-                f_fb = m_fb / (m_star - m_proto)
+                f_fb = m_fb / (m_collapsing - m_proto)
             elif m_core >= 3.5 and m_core < 11.0:
-                a = 0.133 - 0.093 / (m_star - m_proto)
+                a = 0.133 - 0.093 / (m_collapsing - m_proto)
                 b = -11.0 * a + 1.0
                 f_fb = a * m_core + b
-                m_fb = f_fb * (m_star - m_proto)
+                m_fb = f_fb * (m_collapsing - m_proto)
             elif m_core > 11.0:
                 f_fb = 1.0
-                m_fb = f_fb * (m_star - m_proto)
+                m_fb = f_fb * (m_collapsing - m_proto)
             m_rembar = m_proto + m_fb
             state = None
 
         # direct collapse and f_fb = 1. (no kicks)
         elif self.mechanism == self.direct_collapse:
-            m_rembar = m_star
-            f_fb = 1.0
-            state = None
-
-        # direct collapse and f_fb = 1. (no kicks)
-        elif self.mechanism == self.direct_collapse_hecore:
-            m_rembar = m_He_core
+            m_rembar = m_collapsing
             f_fb = 1.0
             state = None
 
@@ -1129,7 +1100,8 @@ class StepSN(object):
                 m_rembar = m_proto + m_fb
                 state = 'NS'
             else:
-                m_rembar, f_fb, state = self.Sukhbold_corecollapse_engine(star)
+                m_rembar, f_fb, state = self.Sukhbold_corecollapse_engine(star,
+                                                self.conserve_hydrogen_envelope)
 
         # Collapse prescription from the results of
         # Couch, S. M., Warren, M. L., & O’Connor, E. P. 2020, ApJ, 890, 127
@@ -1145,7 +1117,8 @@ class StepSN(object):
                 m_rembar = m_proto + m_fb
                 state = 'NS'
             else:
-                m_rembar, f_fb, state = self.Couch_corecollapse_engine(star)
+                m_rembar, f_fb, state = self.Couch_corecollapse_engine(star,
+                                                self.conserve_hydrogen_envelope)
 
         elif self.mechanism == self.Patton20_engines:
             if star.SN_type == "ECSN":
@@ -1159,7 +1132,8 @@ class StepSN(object):
                 state = 'NS'
             else:
                 m_rembar, f_fb, state = self.Patton20_corecollapse(star,
-                                                                   self.engine)
+                                                self.engine,
+                                                self.conserve_hydrogen_envelope)
         else:
             raise ValueError("Mechanism %s not supported." % self.mechanism)
 
@@ -1794,7 +1768,7 @@ class StepSN(object):
 
         return M4, mu4
 
-    def Patton20_corecollapse(self, star, engine):
+    def Patton20_corecollapse(self, star, engine, conserve_hydrogen_envelope=False):
         """Compute supernova final remnant mass and fallback fraction.
 
         It uses the results from [1]. The prediction for the core-collapse
@@ -1853,13 +1827,21 @@ class StepSN(object):
                 state = 'NS'
 
             elif CO_core_mass >= 10.0:
-                m_rem = star.he_core_mass
+                # Assuming BH formation by direct collapse
+                if conserve_hydrogen_envelope:
+                    m_rem = star.mass
+                else:
+                    m_rem = star.he_core_mass
                 f_fb = 1.0
                 state = 'BH'
 
             elif ((k1 * (mu4 * M4) + k2) < mu4):
                 # The prediction is a failed explosion
-                m_rem = star.he_core_mass
+                # Assuming BH formation by direct collapse
+                if conserve_hydrogen_envelope:
+                    m_rem = star.mass
+                else:
+                    m_rem = star.he_core_mass
                 f_fb = 1.0
                 state = 'BH'
             else:
@@ -2018,14 +2000,14 @@ class Sukhbold16_corecollapse(object):
                 self.engines,
             )
 
-    def __call__(self, star):
+    def __call__(self, star, conserve_hydrogen_envelope=False):
         """Get the mass, fallback franction and state of the remnant."""
         if star.state in STAR_STATES_CC:
-            # m_star = star.mass  # M_sun
+            m_star = star.mass  # M_sun
             # m_core = star.co_core_mass  # M_sun
             m_He_core = star.he_core_mass  # M_sun
         elif star.state_history[-1] in STAR_STATES_CC:
-            # m_star = star.mass_history[-1]  # M_sun
+            m_star = star.mass_history[-1]  # M_sun
             # m_core = star.co_core_mass_history[-1]  # M_sun
             m_He_core = star.he_core_mass_history[-1]  # M_sun
         else:
@@ -2041,8 +2023,11 @@ class Sukhbold16_corecollapse(object):
             state = None
 
         if state == "BH":
-            # Assuming a BH formation by direct collapse of te He core
-            m_rem = self.extrapolate_BH(m_He_core, self.mass_BH_interpolator)
+            # Assuming BH formation by direct collapse
+            if conserve_hydrogen_envelope:
+                m_rem = self.extrapolate_BH(m_star, self.mass_BH_interpolator)
+            else:
+                m_rem = self.extrapolate_BH(m_He_core, self.mass_BH_interpolator)
             f_fb = 1.
         elif state == "NS":
             m_rem = self.extrapolate_NS(m_He_core, self.mass_NS_interpolator)
@@ -2273,14 +2258,14 @@ class Couch20_corecollapse(object):
                 "choose one of the following engines to compute the collapse:",
                 self.turbulence_strength_options)
 
-    def __call__(self, star):
+    def __call__(self, star, conserve_hydrogen_envelope=False):
         """Get the mass, fallback fraction and state of the remnant."""
         if star.state in STAR_STATES_CC:
-            # m_star = star.mass                          # M_sun
+            m_star = star.mass                          # M_sun
             # m_core = star.co_core_mass                  # M_sun
             m_He_core = star.he_core_mass               # M_sun
         elif star.state_history[-1] in STAR_STATES_CC:
-            # m_star = star.mass_history[-1]              # M_sun
+            m_star = star.mass_history[-1]              # M_sun
             # m_core = star.co_core_mass_history[-1]      # M_sun
             m_He_core = star.he_core_mass_history[-1]   # M_sun
         else:
@@ -2299,11 +2284,13 @@ class Couch20_corecollapse(object):
             state = None
 
         if state == "BH":
-            # Assuming BH formation by direct collapse of the He core
-
+            # Assuming BH formation by direct collapse
+            if conserve_hydrogen_envelope:
+                m_rem = m_star
+            else:
+                m_rem = m_He_core
             # m_rem = self.extrapolate_BH(m_He_core, self.mass_BH_interpolator)
             # TODO: We need to contact Couch et al. to get the remnant masses
-            m_rem = m_He_core
             # f_fb = m_rem / m_He_core
             f_fb = 1.
         elif state == "NS":

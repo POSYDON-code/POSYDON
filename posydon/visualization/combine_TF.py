@@ -11,6 +11,8 @@ __authors__ = [
 
 import numpy as np
 
+# TODO: rename the varaible, these are termination flags that indicates
+# the star has reached the end of the evolution
 TF1_POOL_STABLE = ['Primary has depleted central carbon',
                    'Secondary has depleted central carbon',
                    'Primary got stopped before central carbon depletion',

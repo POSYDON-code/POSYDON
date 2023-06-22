@@ -28,6 +28,7 @@ from posydon.utils.common_functions import (flip_stars,
                                             convert_metallicity_to_string,
                                             CO_radius, infer_star_state)
 from posydon.utils.data_download import data_download, PATH_TO_POSYDON_DATA
+from posydon.grids.MODELS import MODELS
 
 
 # left POSYDON, right MESA
@@ -788,31 +789,22 @@ class MesaGridStep:
 
         # update nearest neighbor core collapse quantites
         if interpolation_class != 'unstable_MT':
-            for prescrition in ['direct', 'Fryer+12-rapid', 'Fryer+12-delayed',
-                                'Sukhbold+16-engineN20',
-                                'Patton&Sukhbold20-engineN20']:
+            for MODEL_NAME in MODELS.keys():
                 for i, star in enumerate(stars):
                     if not stars_CO[i]:
-                        state = cb.final_values['S%d_%s_state'
-                                                % (i+1, prescrition)]
-                        SN_type = cb.final_values['S%d_%s_SN_type'
-                                                  % (i+1, prescrition)]
-                        f_fb = cb.final_values['S%d_%s_f_fb'
-                                               % (i+1, prescrition)]
-                        mass = cb.final_values['S%d_%s_mass'
-                                               % (i+1, prescrition)]
-                        spin = cb.final_values['S%d_%s_spin'
-                                               % (i+1, prescrition)]
-                        key = prescrition.replace('+', '')
-                        key = key.replace('-', '_')
-                        key = key.replace('&', '_')
+                        values = {}
+                        for key in ['state', 'SN_type', 'f_fb', 'mass', 'spin',
+                                    'm_disk_accreted', 'm_disk_radiated']:
+                            if key == 'state': 
+                                key = 'CO_type'
+                            values[key] = cb.final_values[f'S{i+1}_{MODEL_NAME}_{key}']
+                        state = cb.final_values[f'S{i+1}_{MODEL_NAME}_CO_type'] 
                         if state is None or state == 'None':
                             # privent to any quantities for star that did not
                             # reach core collpase
-                            setattr(star, key, None)
+                            setattr(star, MODEL_NAME, None)
                         else:
-                            setattr(star, key,
-                                    [state, SN_type, f_fb, mass, spin])
+                            setattr(star, MODEL_NAME, values)
 
     def initial_final_interpolation(self, star_1_CO=False, star_2_CO=False):
         """Update the binary through initial-final interpolation."""
@@ -890,6 +882,7 @@ class MesaGridStep:
         # EXPERIMENTAL feature
         # infer stellar states
         interpolation_class = self.classes['interpolation_class']
+        setattr(self.binary, f'interp_class_{self.grid_type}', interpolation_class)
 
         S1_state_inferred = cf.check_state_of_star(self.binary.star_1,
                                                    star_CO=star_1_CO)
@@ -967,28 +960,23 @@ class MesaGridStep:
 
         # update interpolated core collapse quantites
         if interpolation_class != 'unstable_MT':
-            for prescrition in ['direct', 'Fryer+12-rapid', 'Fryer+12-delayed',
-                                'Sukhbold+16-engineN20',
-                                'Patton&Sukhbold20-engineN20']:
+            for MODEL_NAME in MODELS.keys():
                 for i, star in enumerate(stars):
-                    if not stars_CO[i]:
-                        state = self.classes['S%d_%s_state'
-                                             % (i+1, prescrition)]
-                        SN_type = self.classes['S%d_%s_SN_type'
-                                               % (i+1, prescrition)]
-                        key = prescrition.replace('+', '')
-                        key = key.replace('-', '_')
-                        key = key.replace('&', '_')
-                        if state is None or state == 'None':
-                            # privent to any quantities for star that did not
-                            # reach core collpase
-                            setattr(star, key, None)
-                        else:
-                            f_fb = fv['S%d_%s_f_fb' % (i+1, prescrition)]
-                            mass = fv['S%d_%s_mass' % (i+1, prescrition)]
-                            spin = fv['S%d_%s_spin' % (i+1, prescrition)]
-                            setattr(star, key,
-                                    [state, SN_type, f_fb, mass, spin])
+                    if (not stars_CO[i] and 
+                        self.classes[f'S{i+1}_{MODEL_NAME}_CO_type'] != 'None'):
+                        values = {}
+                        for key in ['state', 'SN_type', 'f_fb', 'mass', 'spin',
+                                    'm_disk_accreted', 'm_disk_radiated']:
+                            if key == "state" in key: 
+                                state = self.classes[f'S{i+1}_{MODEL_NAME}_CO_type']
+                                values[key] = state
+                            elif key == "SN_type":
+                                values[key] = self.classes[f'S{i+1}_{MODEL_NAME}_{key}']
+                            else:
+                                values[key] = fv[f'S{i+1}_{MODEL_NAME}_{key}']
+                            setattr(star, MODEL_NAME, values)
+                    else:
+                        setattr(star, key, None)
 
     # STOPPING METHODS
 
@@ -1228,7 +1216,7 @@ class MesaGridStep:
         """
 
         # Error handling
-        if v_before is "None" or v_after is "None":
+        if v_before == "None" or v_after == "None":
             return "None"
 
         slope = (v_after - v_before) / (t_after - t_before)
@@ -1242,6 +1230,7 @@ class MS_MS_step(MesaGridStep):
 
     def __init__(self, metallicity=1., grid_name=None, *args, **kwargs):
         """Initialize a MS_MS_step instance."""
+        self.grid_type = 'HMS_HMS'
         self.interp_in_q = True
         if grid_name is None:
             metallicity = convert_metallicity_to_string(metallicity)
@@ -1299,6 +1288,7 @@ class CO_HMS_RLO_step(MesaGridStep):
 
     def __init__(self, metallicity=1., grid_name=None, *args, **kwargs):
         """Initialize a CO_HMS_RLO_step instance."""
+        self.grid_type = 'CO_HMS_RLO'
         self.interp_in_q = False
         if grid_name is None:
             metallicity = convert_metallicity_to_string(metallicity)
@@ -1371,6 +1361,7 @@ class CO_HeMS_step(MesaGridStep):
 
     def __init__(self, metallicity=1., grid_name=None, *args, **kwargs):
         """Initialize a CO_HeMS_step instance."""
+        self.grid_type = 'CO_HeMS'
         self.interp_in_q = False
         if grid_name is None:
             metallicity = convert_metallicity_to_string(metallicity)
