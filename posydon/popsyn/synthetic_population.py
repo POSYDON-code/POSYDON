@@ -556,6 +556,36 @@ class SyntheticPopulation:
         # TODO: store p_det
         self.df_detectable = self.resample_synthetic_population(index, z_formation, z_merger, w_ijk, export_cols=export_cols)
 
+    def get_formation_channels(self):
+        """Get formation channel and add to df and df_online.
+
+        """
+        # loop through each binary
+        unique_binary_index = np.unique(self.df.index)
+        for index in unique_binary_index:
+
+            # get event column and information from interpolated classes
+            df_binary = self.df.loc[index,['event']].dropna()
+            df_binary_online = self.df_oneline.loc[index,['interp_class_HMS_HMS','interp_class_CO_HMS_RLO', 'interp_class_CO_HeMS']].dropna()
+            event_array = df_binary['event'].values.tolist()
+
+        
+            # make interpolated class information consistent with event column
+            HMS_HMS_event_dict = {'stable_MT':'RLO1', 'no_MT':'None', 'unstable_MT':'oCE1 or oDoubleCE'}
+            event_HMS_HMS = HMS_HMS_event_dict[df_binary_online['interp_class_HMS_HMS']]
+            
+            # for now, only append information for RLO1; unstable_MT information already exists
+            if event_HMS_HMS == 'RLO1':
+                event_array.insert(1, event_HMS_HMS)
+                formation_channel = "_".join(event_array)
+                
+            else:
+                formation_channel = "_".join(event_array)
+                
+            self.df.loc[index,'channel'] = formation_channel
+            self.df_oneline.loc[index,'channel'] = formation_channel
+
+
     def save_intrinsic_pop(self, path='./intrinsic_population.h5'):
         """Save intrinsic population.
 
