@@ -80,16 +80,21 @@ BINARY_STATES_ALL = [
 ]
 
 BINARY_EVENTS_ALL = [
-    None,
-    'CC1',
-    'CC2',
+    'CC1_start',
+    'CC2_start',
+    'CC1_end',
+    'CC2_end',
     'ZAMS',
-    'oRLO1',
-    'oRLO2',
-    'oCE1',
-    'oCE2',
-    'oDoubleCE1',
-    'oDoubleCE2',
+    'RLO1_start',
+    'RLO2_start',
+    'CE1_start',
+    'CE2_start',
+    'DCE_start',
+    'CE1_end',
+    'CE2_end',
+    'DCE_end',
+    'CE_merger',
+    'DCE_merger',
     'CO_contact',
     'redirect',
     'MaxTime_exceeded',
@@ -105,6 +110,10 @@ POSYDON_FLOW_CHART = {}
 # mesa grid ZAMS
 STAR_STATES_ZAMS = ['H-rich_Core_H_burning']
 BINARY_STATES_ZAMS = ['detached']
+
+BINARY_EVENTS_CC = ['CC1_end',
+                    'CC2_end']
+
 
 for b in BINARY_STATES_ZAMS:
     for s1 in STAR_STATES_ZAMS:
@@ -123,22 +132,23 @@ for b in BINARY_STATES_ZAMS:
 # This will be the outcome of a CE.
 for s1 in STAR_STATES_NOT_CO:
     for s2 in STAR_STATES_NOT_CO:
-        POSYDON_FLOW_CHART[(s1, s2, 'detached', None)] = 'step_detached'
-        POSYDON_FLOW_CHART[(s2, s1, 'detached', None)] = 'step_detached'
+        POSYDON_FLOW_CHART[(s1, s2, 'detached', 'CE_end')] = 'step_detached'
+        POSYDON_FLOW_CHART[(s2, s1, 'detached', 'CE_end')] = 'step_detached'
 
 
 # H-rich star on a detached binary with a compact object
 for s1 in STAR_STATES_H_RICH:
     for s2 in STAR_STATES_CO:
-        POSYDON_FLOW_CHART[(s1, s2, 'detached', None)] = 'step_detached'
-        POSYDON_FLOW_CHART[(s2, s1, 'detached', None)] = 'step_detached'
+        for e in BINARY_EVENTS_CC:
+            POSYDON_FLOW_CHART[(s1, s2, 'detached', e)] = 'step_detached'
+            POSYDON_FLOW_CHART[(s2, s1, 'detached', e)] = 'step_detached'
 
 
 # H-rich star roche-lobe overflow onto a compact object
 for s1 in STAR_STATES_H_RICH_EVOLVABLE:
     for s2 in STAR_STATES_CO:
-        POSYDON_FLOW_CHART[(s1, s2, 'RLO1', 'oRLO1')] = 'step_CO_HMS_RLO'
-        POSYDON_FLOW_CHART[(s2, s1, 'RLO2', 'oRLO2')] = 'step_CO_HMS_RLO'
+        POSYDON_FLOW_CHART[(s1, s2, 'RLO1', 'RLO1_start')] = 'step_CO_HMS_RLO'
+        POSYDON_FLOW_CHART[(s2, s1, 'RLO2', 'RLO2_start')] = 'step_CO_HMS_RLO'
 
 # H-rich star on a detached binary with a compact object
 # that fall outside the grid and has been returned by step_CO_HMS_RLO
@@ -150,8 +160,8 @@ for s1 in STAR_STATES_H_RICH:
 # stripped_He star on a detached binary with a compact object
 for s1 in STAR_STATES_HE_RICH_EVOLVABLE:
     for s2 in STAR_STATES_CO:
-        POSYDON_FLOW_CHART[(s1, s2, 'detached', None)] = 'step_CO_HeMS'
-        POSYDON_FLOW_CHART[(s2, s1, 'detached', None)] = 'step_CO_HeMS'
+        POSYDON_FLOW_CHART[(s1, s2, 'detached', 'CE_end')] = 'step_CO_HeMS'
+        POSYDON_FLOW_CHART[(s2, s1, 'detached', 'CE_end')] = 'step_CO_HeMS'
 
 
 # stripped_He star on a detached binary with a compact object
@@ -166,14 +176,13 @@ for s1 in STAR_STATES_HE_RICH:
 
 for s1 in STAR_STATES_NOT_CO:
     for s2 in STAR_STATES_ALL:
-        POSYDON_FLOW_CHART[(s1, s2, 'RLO1', 'oCE1')] = 'step_CE'
-        POSYDON_FLOW_CHART[(s1, s2, 'RLO1', 'oDoubleCE1')] = 'step_CE'
-        POSYDON_FLOW_CHART[(s2, s1, 'RLO2', 'oCE2')] = 'step_CE'
-        POSYDON_FLOW_CHART[(s2, s1, 'RLO2', 'oDoubleCE2')] = 'step_CE'
-        POSYDON_FLOW_CHART[(s2, s1, 'contact', 'oCE1')] = 'step_CE'
-        POSYDON_FLOW_CHART[(s2, s1, 'contact', 'oCE2')] = 'step_CE'
-        POSYDON_FLOW_CHART[(s2, s1, 'contact', 'oDoubleCE1')] = 'step_CE'
-        POSYDON_FLOW_CHART[(s2, s1, 'contact', 'oDoubleCE2')] = 'step_CE'
+        POSYDON_FLOW_CHART[(s1, s2, 'RLO1', 'CE1_start')] = 'step_CE'
+        POSYDON_FLOW_CHART[(s1, s2, 'RLO1', 'DCE_start')] = 'step_CE'
+        POSYDON_FLOW_CHART[(s2, s1, 'RLO2', 'CE2_start')] = 'step_CE'
+        POSYDON_FLOW_CHART[(s2, s1, 'RLO2', 'DCE_start')] = 'step_CE'
+        POSYDON_FLOW_CHART[(s2, s1, 'contact', 'CE1_start')] = 'step_CE'
+        POSYDON_FLOW_CHART[(s2, s1, 'contact', 'CE2_start')] = 'step_CE'
+        POSYDON_FLOW_CHART[(s2, s1, 'contact', 'DCE_start')] = 'step_CE'
 
 
 # core collapse
@@ -196,15 +205,16 @@ BINARY_STATES_CC = BINARY_STATES_ALL.copy()
 for b in BINARY_STATES_CC:
     for s1 in STAR_STATES_CC:
         for s2 in STAR_STATES_ALL:
-            POSYDON_FLOW_CHART[(s1, s2, b, 'CC1')] = 'step_SN'
-            POSYDON_FLOW_CHART[(s2, s1, b, 'CC2')] = 'step_SN'
+            POSYDON_FLOW_CHART[(s1, s2, b, 'CC1_start')] = 'step_SN'
+            POSYDON_FLOW_CHART[(s2, s1, b, 'CC2_start')] = 'step_SN'
 
 # Double compact objects. These can either be send to the orbital evolution
 # due to GR step, or end the evolution by setting the 'step_dco' to end
 for s1 in STAR_STATES_CO:
     for s2 in STAR_STATES_CO:
-        POSYDON_FLOW_CHART[(s1, s2, 'detached', None)] = 'step_dco'
-        POSYDON_FLOW_CHART[(s2, s1, 'detached', None)] = 'step_dco'
+        for e in BINARY_EVENTS_CC:
+            POSYDON_FLOW_CHART[(s1, s2, 'detached', e)] = 'step_dco'
+            POSYDON_FLOW_CHART[(s2, s1, 'detached', e)] = 'step_dco'
 
 
 # catch states to be ended

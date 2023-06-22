@@ -102,7 +102,7 @@ class TestSingleStar(unittest.TestCase):
 
         kwargs3 = {
             'state': 'detached',
-            'event': 'CC1',
+            'event': 'CC1_start',
             'time': grid.final_values['age'][i],
             'orbital_period': grid.final_values['period_days'][i],
             'eccentricity': 0.,

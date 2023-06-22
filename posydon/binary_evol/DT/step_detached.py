@@ -1017,7 +1017,7 @@ class detached_step:
                 raise Exception("State not recognized!")
         else:
             raise Exception("Non existent companion has not a recognized value!")
-        
+
         def get_star_data(binary, star1, star2, htrack,
                           co, copy_prev_m0=None, copy_prev_t0=None):
             """Get and interpolate the properties of stars.
@@ -1128,10 +1128,10 @@ class detached_step:
         # get the matched data of two stars, respectively
         interp1d_sec, m0, t0 = get_star_data(
             binary, secondary, primary, secondary.htrack, co=False)
-        
+
         primary_not_normal = (primary.co) or (self.non_existent_companion in [1,2])
-        primary_normal = (not primary.co) and self.non_existent_companion == 0 
-        
+        primary_normal = (not primary.co) and self.non_existent_companion == 0
+
         if primary_not_normal:
             # copy the secondary star except mass which is of the primary,
             # and radius, mdot, Idot = 0
@@ -1143,8 +1143,8 @@ class detached_step:
                 binary, primary, secondary, primary.htrack, False)[0]
         else:
             raise Exception("During matching primary is either should be either normal or not normal. `non_existent_companion` should be zero.")
-        
-        
+
+
         if interp1d_sec is None or interp1d_pri is None:
             # binary.event = "END"
             binary.state += " (GridMatchingFailed)"
@@ -1844,25 +1844,25 @@ class detached_step:
                 if s.t_events[0]:
                     if secondary == binary.star_1:
                         binary.state = "RLO1"
-                        binary.event = "oRLO1"
+                        binary.event = "RLO1_start"
                     else:
                         binary.state = "RLO2"
-                        binary.event = "oRLO2"
+                        binary.event = "RLO2_start"
                 elif s.t_events[1]:
                     if secondary == binary.star_1:
                         binary.state = "RLO2"
-                        binary.event = "oRLO2"
+                        binary.event = "RLO2_start"
                     else:
                         binary.state = "RLO1"
-                        binary.event = "oRLO1"
+                        binary.event = "RLO1_start"
 
             elif s.t_events[2]:
                 # reached t_max of track. End of life (possible collapse) of
                 # secondary
                 if secondary == binary.star_1:
-                    binary.event = "CC1"
+                    binary.event = "CC1_start"
                 else:
-                    binary.event = "CC2"
+                    binary.event = "CC2_start"
                 get_star_final_values(secondary, secondary.htrack, m01)
                 get_star_profile(secondary, secondary.htrack, m01)
                 if not primary.co and primary.state in STAR_STATES_CC:
@@ -1883,9 +1883,9 @@ class detached_step:
                 # reached t_max of track. End of life (possible collapse) of
                 # primary
                 if secondary == binary.star_1:
-                    binary.event = "CC2"
+                    binary.event = "CC2_start"
                 else:
-                    binary.event = "CC1"
+                    binary.event = "CC1_start"
                 get_star_final_values(primary, primary.htrack, m02)
                 get_star_profile(primary, primary.htrack, m02)
             else:  # Reached max_time asked.
@@ -1987,6 +1987,9 @@ def diffeq(
         Convective turnover time of the star, calculated @
         0.5*pressure_scale_height above the bottom of the outer convection
         zone in yr.
+    wdivwc: float
+        The ratio of angular rotation rate (omega) to critical angular
+        rotation rate (omega_crit). This is dimensionless.
     L : float
         Luminosity of the star in solar units.
     #mass_conv_core : float
@@ -2401,10 +2404,11 @@ def diffeq(
 
         if magnetic_braking_mode == "RVJ83":
             # Torque from Rappaport, Verbunt, and Joss 1983, ApJ, 275, 713
-            # The torque is eq.36 of Rapport+1983, with γ = 4. Torque units
-            # converted from cgs units to [Msol], [Rsol], [yr] as all stellar
-            # parameters are given in units of [Msol], [Rsol], [yr] and so that
-            # dOmega_mb/dt is in units of [yr^-2].
+            # The torque is eq.36 of Rapport+1983, with γ = 4
+            # Torque units converted from cgs units to [Msol], [Rsol], [yr]
+            # as all stellar parameters are given in units of [Msol], [Rsol], [yr]
+            # and so that dOmega_mb/dt is in units of [yr^-2].
+
             dOmega_mb_sec = (
                 -3.8e30 * (const.rsol**2 / const.secyer)
                 * M_sec
@@ -2515,8 +2519,10 @@ def diffeq(
             Prot_sec = 2 * np.pi / Omega_sec            # [yr]
             Rossby_number_sec = Prot_sec / tau_conv_sec
 
-            n_pri = (0.03 / Rossby_number_pri) + 0.5 * Rossby_number_pri + 1.0
-            n_sec = (0.03 / Rossby_number_sec) + 0.5 * Rossby_number_sec + 1.0
+            n_pri = (0.03 / Rossby_number_pri) \
+                    + 0.5 * Rossby_number_pri + 1.0
+            n_sec = (0.03 / Rossby_number_sec) \
+                    + 0.5 * Rossby_number_sec + 1.0
 
             Qn_pri = 4.05 * np.exp(-1.4 * n_pri)
             Qn_sec = 4.05 * np.exp(-1.4 * n_sec)

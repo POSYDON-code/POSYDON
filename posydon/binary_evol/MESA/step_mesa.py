@@ -1271,10 +1271,10 @@ class MS_MS_step(MesaGridStep):
             self.binary.event = 'redirect'
             return
         elif (state_1 == 'H-rich_Central_C_depletion'):     # redirect if CC1
-            self.binary.event = 'CC1'
+            self.binary.event = 'CC1_start'
             return
         elif (state_2 == 'H-rich_Central_C_depletion'):     # redirect if CC2
-            self.binary.event = 'CC2'
+            self.binary.event = 'CC2_start'
             return
         else:
             raise ValueError('The star_1.state = %s, star_2.state = %s, '
@@ -1323,29 +1323,29 @@ class CO_HMS_RLO_step(MesaGridStep):
 
         # check the star states
         if (state_2 in ["WD", "NS", "BH"]
-                and (state_1 in FOR_RLO_STATES) and event == "oRLO1"):
+                and (state_1 in FOR_RLO_STATES) and event == "RLO1_start"):
             self.flip_stars_before_step = False
             m1 = self.binary.star_1.mass
             m2 = self.binary.star_2.mass
             # catch and redirect double core collapse, this happens if q=1:
             if self.binary.star_1.state == 'H-rich_Central_C_depletion':
-                self.binary.event = 'CC1'
+                self.binary.event = 'CC1_start'
                 return
             # super().__call__(binary)
         elif (state_1 in ["WD", "NS", "BH"] and (state_2 in FOR_RLO_STATES)
-                and event == "oRLO2"):
+                and event == "RLO2_start"):
             self.flip_stars_before_step = True
             m1 = self.binary.star_2.mass
             m2 = self.binary.star_1.mass
             # catch and redirect double core collapse, this happens if q=1:
             if self.binary.star_2.state == 'H-rich_Central_C_depletion':
-                self.binary.event = 'CC2'
+                self.binary.event = 'CC2_start'
                 return
             # super().__call__(binary)
         else:
             raise ValueError(
                 'The star_1.state = %s, star_2.state = %s, binary.state = %s, '
-                'binary.event = %s and not CO - HMS - oRLO1/oRLO2!'
+                'binary.event = %s and not CO - HMS - RLO1_start/RLO2_start!'
                 % (state_1, state_2, state, event))
         # redirect if outside grids
         if 0.466 <= m1 <= 128.735 and 0.092 <= m2 <= 39.25 and p <= 3780.83:
@@ -1402,7 +1402,7 @@ class CO_HeMS_step(MesaGridStep):
             m2 = self.binary.star_1.mass
             # catch and redirect double core collapse, this happens if q=1:
             if self.binary.star_1.state == 'stripped_He_Central_C_depletion':
-                self.binary.event = 'CC1'
+                self.binary.event = 'CC1_start'
                 # REMOVED assume circularisation after first CC
                 # new_separation = self.binary.separation*(
                 #     1.-self.binary.eccentricity**2)
@@ -1418,7 +1418,7 @@ class CO_HeMS_step(MesaGridStep):
             m2 = self.binary.star_2.mass
             # catch and redirect double core collapse, this happens if q=1:
             if self.binary.star_2.state == 'stripped_He_Central_C_depletion':
-                self.binary.event = 'CC2'
+                self.binary.event = 'CC2_start'
                 return
         else:
             raise ValueError(

@@ -61,7 +61,7 @@ class TestCommonEnvelope(unittest.TestCase):
             orbital_separation_for_RLOF, giantstar.mass, compstar.mass)
         PROPERTIES_BINARY = {
             "binary_state": "RLO1",
-            "event": "oCE1",
+            "event": "CE1_start",
             "orbital_period": orbital_period_for_RLOF
         }
         binary = BinaryStar(star_1=giantstar,
@@ -125,7 +125,7 @@ class TestCommonEnvelope(unittest.TestCase):
 
         PROPERTIES_BINARY_withprofile = {
             "binary_state": "RLO1",
-            "event": "oCE1",
+            "event": "CE1_start",
             "orbital_period": orbital_period_for_RLOF
         }
         binary_withprofile = BinaryStar(giantstar_withprofile, compstar,
@@ -192,7 +192,7 @@ class TestCommonEnvelope(unittest.TestCase):
 
         PROPERTIES_BINARY_withprofile = {
             "binary_state": "RLO1",
-            "event": "oCE1",
+            "event": "CE1_start",
             "orbital_period": orbital_period_for_RLOF
         }
         binary_withprofile = BinaryStar(giantstar_withprofile, compstar,
@@ -255,7 +255,7 @@ class TestCommonEnvelope(unittest.TestCase):
 
         PROPERTIES_BINARY_withprofile = {
             "binary_state": "RLO1",
-            "event": "oCE1",
+            "event": "CE1_start",
             "orbital_period": orbital_period_for_RLOF
         }
         binary_withprofile = BinaryStar(giantstar_withprofile, compstar,
@@ -321,7 +321,7 @@ class TestCommonEnvelope(unittest.TestCase):
 
         PROPERTIES_BINARY_withprofile = {
             "binary_state": "RLO1",
-            "event": "oCE1",
+            "event": "CE1_start",
             "orbital_period": orbital_period_for_RLOF
         }
         binary_withprofile = BinaryStar(giantstar_withprofile, compstar,
@@ -379,7 +379,7 @@ class TestCommonEnvelope(unittest.TestCase):
 
         PROPERTIES_BINARY_withprofile = {
             "binary_state": "RLO1",
-            "event": "oCE1",
+            "event": "CE1_start",
             "orbital_period": orbital_period_for_RLOF
         }
         binary_withprofile = BinaryStar(giantstar_withprofile, compstar,
@@ -449,7 +449,7 @@ class TestCommonEnvelope(unittest.TestCase):
 
         PROPERTIES_BINARY_withprofile = {
             "binary_state": "RLO1",
-            "event": "oCE1",
+            "event": "CE1_start",
             "orbital_period": orbital_period_for_RLOF
         }
         binary_withprofile = BinaryStar(giantstar_withprofile, compstar,
@@ -516,7 +516,7 @@ class TestCommonEnvelope(unittest.TestCase):
 
         PROPERTIES_BINARY_withprofile = {
             "binary_state": "RLO1",
-            "event": "oCE1",
+            "event": "CE1_start",
             "orbital_period": orbital_period_for_RLOF
         }
         binary_withprofile = BinaryStar(giantstar_withprofile, compstar,
@@ -581,7 +581,7 @@ class TestCommonEnvelope(unittest.TestCase):
 
         PROPERTIES_BINARY_withprofile = {
             "binary_state": "RLO1",
-            "event": "oCE1",
+            "event": "CE1_start",
             "orbital_period": orbital_period_for_RLOF
         }
         binary_withprofile = BinaryStar(giantstar_withprofile, compstar,
@@ -650,7 +650,7 @@ class TestCommonEnvelope(unittest.TestCase):
 
         PROPERTIES_BINARY_withprofile = {
             "binary_state": "RLO1",
-            "event": "oCE1",
+            "event": "CE1_start",
             "orbital_period": orbital_period_for_RLOF
         }
         binary_withprofile = BinaryStar(giantstar_withprofile, compstar,
