@@ -515,6 +515,8 @@ class SyntheticPopulation:
                      'S1_mass','S2_mass','S1_spin','S2_spin',
                      'orbital_period','eccentricity', 'q', 'm_tot',
                      'm_chirp', 'chi_eff']
+        if "channel" in self.rates.df:
+            save_cols.append('channel')
         if export_cols is not None:
             for c in export_cols:
                 if c not in save_cols:

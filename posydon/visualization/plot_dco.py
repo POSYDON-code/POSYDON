@@ -44,6 +44,7 @@ def plot_merger_rate_density(z, rate_density, Rmin=1e-1, zmax=10., show=True, pa
         plt.show()
 
 def plot_hist_dco_properties(x, df_intrinsic=None, df_detectable=None,
+                             channel=None,
                              show=True, path=None, alpha=0.5,
                              range=None, bins=20, ylog=False):
     if df_intrinsic is not None and df_detectable is not None:
@@ -58,10 +59,14 @@ def plot_hist_dco_properties(x, df_intrinsic=None, df_detectable=None,
 
     colors = ['tab:blue', 'tab:orange', 'tab:green', 'tab:red', 'tab:purple']
     plt.figure()
-    plt.title(title)
     if df_intrinsic is not None:
+        if channel is not None:
+            sel = (df_intrinsic['weight'] > 0) & (df_intrinsic['channel'] == channel)
+            title += f'\n{channel}'
+        else:
+            sel = df_intrinsic['weight'] > 0
         if isinstance(x, str):
-            plt.hist(df_intrinsic[x], weights=df_intrinsic['weight'], color=colors[0],
+            plt.hist(df_intrinsic.loc[sel,x], weights=df_intrinsic.loc[sel,'weight'], color=colors[0],
                      alpha=alpha, density=True, range=range, bins=bins)
         elif isinstance(x, list):
             for i, x_i in enumerate(x):
@@ -71,12 +76,18 @@ def plot_hist_dco_properties(x, df_intrinsic=None, df_detectable=None,
                     label = 'S2'
                 else:
                     label = x_i
-                plt.hist(df_intrinsic[x_i], weights=df_intrinsic['weight'],
+                plt.hist(df_intrinsic.loc[sel,x_i], weights=df_intrinsic.loc[sel,'weight'],
                          color=colors[i], label=label,
                          alpha=alpha, density=True, range=range, bins=bins)
     if df_detectable is not None:
+        if channel is not None:
+            sel = (df_detectable['weight'] > 0) & (df_detectable['channel'] == channel)
+            if channel not in title:
+                title += f'\n{channel}'
+        else:
+            sel = df_detectable['weight'] > 0
         if isinstance(x, str):
-            plt.hist(df_detectable[x], weights=df_detectable['weight'],
+            plt.hist(df_detectable.loc[sel,x], weights=df_detectable.loc[sel,'weight'],
                      color=colors[0],
                      histtype=u'step', linestyle='--',
                      alpha=alpha, density=True, range=range, bins=bins)
@@ -88,10 +99,11 @@ def plot_hist_dco_properties(x, df_intrinsic=None, df_detectable=None,
                     label = 'S2'
                 else:
                     label = x_i
-                plt.hist(df_detectable[x_i], weights=df_detectable['weight'],
+                plt.hist(df_detectable.loc[sel,x_i], weights=df_detectable.loc[sel,'weight'],
                          color=colors[i], label=label,
                          histtype=u'step', linestyle='--',
                          alpha=alpha, density=True, range=range, bins=bins)
+    plt.title(title)
     if ylog:
         plt.yscale('log')
     plt.ylabel(r'PDF')
