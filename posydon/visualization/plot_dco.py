@@ -1,4 +1,4 @@
-__authors__ = ["Simone Bavera <Simone.Bavera@unige.ch>",
+__authors__ = ["Simone Bavera <Simone.Bavera@unige.ch>"]
     
 import os
 import matplotlib.pyplot as plt
@@ -27,7 +27,7 @@ def plot_merger_efficiency(met, merger_efficiency, show=True, path=None, channel
     if show:
         plt.show()
 
-def plot_merger_rate_density(z, rate_density, Rmin=1e-1, zmax=10., show=True, path=None, channels=False):
+def plot_merger_rate_density(z, rate_density, ylim=(1e-1,4e2), zmax=10., show=True, path=None, channels=False):
     title = r'Merger rate density'
     plt.figure()
     plt.title(title)
@@ -39,7 +39,7 @@ def plot_merger_rate_density(z, rate_density, Rmin=1e-1, zmax=10., show=True, pa
     plt.ylabel(r'$\mathcal{R}_\mathrm{BBH}\,[\mathrm{Gpc}^{-3}\,\mathrm{yr}^{-1}]$')
     plt.xlabel(r'$z$')
     plt.legend(loc='center left', bbox_to_anchor=(1, 0.5))
-    plt.ylim([Rmin, 1e3])
+    plt.ylim(ylim)
     if path:
         plt.savefig(path)
     if show:

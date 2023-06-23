@@ -7,7 +7,7 @@ Anticipates data as Pandas dataframe with series ['m1', 'q', 'z', 'chieff']
 """
 
 __authors__ = ["Michael Zevin <michael.zevin@ligo.org>",
-               "Simone Bavera <Simone.Bavera@unige.ch>",
+               "Simone Bavera <Simone.Bavera@unige.ch>",]
     
 import numpy as np
 import pandas as pd
