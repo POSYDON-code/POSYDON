@@ -10,7 +10,7 @@ def plot_merger_efficiency(met, merger_efficiency, show=True, path=None, channel
     title = r'Merger efficiency'
     plt.figure()
     plt.title(title)
-    plt.plot(met/Zsun, merger_efficiency['total'], label='total')
+    plt.plot(met/Zsun, merger_efficiency['total'], label='total', color='black')
     if channels:
         for ch in merger_efficiency.keys():
             if ch != 'total':
@@ -25,14 +25,19 @@ def plot_merger_efficiency(met, merger_efficiency, show=True, path=None, channel
     if show:
         plt.show()
 
-def plot_merger_rate_density(z, rate_density, zmax=10., show=True, path=None):
+def plot_merger_rate_density(z, rate_density, Rmin=1e-1, zmax=10., show=True, path=None, channels=False):
     title = r'Merger rate density'
     plt.figure()
     plt.title(title)
-    plt.plot(z[z<zmax], rate_density[z<zmax])
+    plt.plot(z[z<zmax], rate_density['total'][z<zmax], label='total', color='black')
+    for ch in rate_density:
+        if ch != 'total':
+            plt.plot(z[z<zmax], rate_density[ch][z<zmax], label=ch)
     plt.yscale('log')
     plt.ylabel(r'$\mathcal{R}_\mathrm{BBH}\,[\mathrm{Gpc}^{-3}\,\mathrm{yr}^{-1}]$')
     plt.xlabel(r'$z$')
+    plt.legend(loc='center left', bbox_to_anchor=(1, 0.5))
+    plt.ylim([Rmin, 1e3])
     if path:
         plt.savefig(path)
     if show:

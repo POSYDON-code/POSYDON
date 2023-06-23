@@ -549,8 +549,17 @@ class SyntheticPopulation:
 
         # compute rate density weights
         self.z_rate_density = self.rates.get_centers_redshift_bins()
-        self.rate_density = self.rates.compute_merger_rate_density(w_ijk, z_merger, observable='DCOs', sensitivity=sensitivity)
-        print(f'DCO merger rate density in the local Universe (z={self.z_rate_density[0]:1.2f}): {round(self.rate_density[0],2)} Gpc^-3 yr^-1')
+        self.rate_density = {}
+        total_rate = self.rates.compute_merger_rate_density(w_ijk, z_merger, observable='DCOs', sensitivity=sensitivity)
+        self.rate_density['total'] = total_rate
+        if "channel" in self.df_synthetic:
+            channels = np.unique(self.df_synthetic['channel'])
+            for ch in channels:
+                sel = (self.df_synthetic.loc[index,'channel'] == ch)
+                rate = self.rates.compute_merger_rate_density(w_ijk[sel], z_merger[sel], observable='DCOs', sensitivity=sensitivity)
+                self.rate_density[ch] = rate
+            
+        print(f'DCO merger rate density in the local Universe (z={self.z_rate_density[0]:1.2f}): {round(total_rate[0],2)} Gpc^-3 yr^-1')
 
         # export the intrinsic DCO population
         self.df_intrinsic = self.resample_synthetic_population(index, z_formation, z_merger, w_ijk, export_cols=export_cols)
