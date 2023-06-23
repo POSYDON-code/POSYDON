@@ -12,13 +12,13 @@ import warnings
 import numpy as np
 import pandas as pd
 from posydon.utils.constants import Zsun
-from posydon.popsyn.io import parse_inifile, binarypop_kwargs_from_ini
+from posydon.popsyn.io import binarypop_kwargs_from_ini
 from posydon.popsyn.binarypopulation import BinaryPopulation
 from posydon.utils.common_functions import convert_metallicity_to_string
 from posydon.popsyn.normalized_pop_mass import initial_total_underlying_mass
-from posydon.utils.common_functions import inspiral_timescale_from_orbital_period
 from posydon.popsyn.rate_calculation import Rates
 import posydon.visualization.plot_dco as plot_dco
+from posydon.popsyn.GRB import get_GRB_properties, GRB_PROPERTIES
 
 
 class SyntheticPopulation:
@@ -311,6 +311,10 @@ class SyntheticPopulation:
             into the synthetic population.
 
         """
+        # compute GRB properties boolean
+        compute_GRB_properties = (self.MODEL is not None and 
+                                  "compute_GRB_properties" in self.MODEL and 
+                                  self.MODEL["compute_GRB_properties"])
 
         # to avoid the user making mistake automatically check the inverse of
         # the stellar states, since the df is already parsed this will not
@@ -327,11 +331,13 @@ class SyntheticPopulation:
         time_contact = self.df.loc[self.df['event'] == 'END',['time']]
         self.df_synthetic['t_delay'] = (time_contact - self.df_synthetic[['time']])*1e-6 # Myr
         self.df_synthetic['time'] *= 1e-6 # Myr
-
+        
         # add properties of the oneline dataframe
         if self.df_oneline is not None:
             # TODO: add kicks as well by default?
             save_cols = ['S1_spin_orbit_tilt', 'S2_spin_orbit_tilt']
+            if compute_GRB_properties:
+                save_cols += ['S1_m_disk_radiated', 'S2_m_disk_radiated']
             if oneline_cols is not None:
                 for c in oneline_cols:
                     if c not in save_cols:
@@ -342,6 +348,19 @@ class SyntheticPopulation:
                 else:
                     warnings.warn(f'The column {c} is not present in the '
                                    'oneline dataframe.')
+
+        # compute GRB properties
+        if compute_GRB_properties:
+            if ('GRB_efficiency' not in self.MODEL or
+                self.MODEL['GRB_efficiency'] is None):
+                raise ValueError('Missing GRB_efficiency variable in the MODEL!')
+            if ('GRB_beaming' not in self.MODEL or
+                self.MODEL['GRB_beaming'] is None):
+                raise ValueError('Missing GRB_beaming variable in the MODEL!')
+            self.df_synthetic = get_GRB_properties(self.df_synthetic,
+                                                   self.MODEL['GRB_efficiency'],
+                                                   self.MODEL['GRB_beaming']
+                                                   )
 
         # for convinience reindex the DataFrame
         n_rows = len(self.df_synthetic.index)
@@ -463,6 +482,10 @@ class SyntheticPopulation:
             population.
 
         """
+        # compute GRB properties boolean
+        compute_GRB_properties = (self.MODEL is not None and 
+                                  "compute_GRB_properties" in self.MODEL and 
+                                  self.MODEL["compute_GRB_properties"])
 
         # drop all zero weights to save memory
         sel = w_ijk > 0.
@@ -481,6 +504,8 @@ class SyntheticPopulation:
                      'S1_mass','S2_mass','S1_spin','S2_spin',
                      'orbital_period','eccentricity', 'q', 'm_tot',
                      'm_chirp', 'chi_eff']
+        if compute_GRB_properties:
+            save_cols += GRB_PROPERTIES
         if export_cols is not None:
             for c in export_cols:
                 if c not in save_cols:

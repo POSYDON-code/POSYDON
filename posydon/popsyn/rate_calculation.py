@@ -20,6 +20,7 @@ from posydon.popsyn.star_formation_history import (star_formation_rate,
                                                    get_illustrisTNG_data,
                                                    fractional_SFR_at_given_redshift)
 from posydon.utils.data_download import PATH_TO_POSYDON_DATA
+from posydon.popsyn.GRB import GRB_PROPERTIES, get_GRB_properties
 
 PATH_TO_PDET_GRID = os.path.join(PATH_TO_POSYDON_DATA, 'selection_effects/pdet_grid.hdf5')
 
@@ -31,11 +32,15 @@ DEFAULT_MODEL = {
     'Z_max' : 1.,
     'select_one_met' : False,
     'dlogZ' : None, # e.g, [np.log10(0.0142/2),np.log10(0.0142*2)]
-    'Zsun' : Zsun
+    'Zsun' : Zsun,
+    'compute_GRB_properties' : False,
+    'GRB_beaming' : None, # e.g., 0.5, 'Goldstein+15'
+    'GRB_efficiency' : None, # e.g., 0.01
 }
 
-class Rates(object):
 
+class Rates(object):
+    """Compute DCO rates."""
     def __init__(self, df, verbose=False, **kwargs):
         """Compute DCO rates.
 
@@ -90,6 +95,15 @@ class Rates(object):
             for varname in DEFAULT_MODEL:
                 default_value = DEFAULT_MODEL[varname]
                 setattr(self, varname, default_value)
+                
+        if self.compute_GRB_properties:
+            for key in GRB_PROPERTIES:
+                if key not in self.df:
+                    warnings.warn("GRB properties not in the dataset, "
+                                  "computing them right now!")
+                    self.df = get_GRB_properties(self.df, 
+                                                 self.GRB_efficiency, 
+                                                 self.GRB_beaming)
 
     ######################################################
     ###   DCO detection rate and merger rate density   ###
@@ -706,3 +720,14 @@ class Rates(object):
                 raise ValueError('Unsupported sensitivity!')
         else:
             raise ValueError('Unknown observable!')
+
+    ##############################
+    ##### GRBs class methods #####
+    ##############################
+    
+
+
+            
+
+
+        
