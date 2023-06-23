@@ -558,7 +558,7 @@ class SyntheticPopulation:
         if "channel" in self.df_synthetic:
             channels = np.unique(self.df_synthetic['channel'])
             for ch in channels:
-                sel = (self.df_synthetic.loc[index,'channel'] == ch)
+                sel = (self.rates.get_data('channel', index) == ch)
                 rate = self.rates.compute_merger_rate_density(w_ijk[sel], z_merger[sel], observable='DCOs', sensitivity=sensitivity)
                 self.rate_density[ch] = rate
             
