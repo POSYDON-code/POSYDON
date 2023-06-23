@@ -2,18 +2,24 @@ import os
 import matplotlib.pyplot as plt
 from posydon.utils.common_functions import PATH_TO_POSYDON
 from posydon.visualization.plot_defaults import DEFAULT_LABELS
+from posydon.utils.constants import Zsun
 
 plt.style.use(os.path.join(PATH_TO_POSYDON, "posydon/visualization/posydon.mplstyle"))
 
-def plot_merger_efficiency(met, merger_efficiency, show=True, path=None, Zsun=0.0142):
+def plot_merger_efficiency(met, merger_efficiency, show=True, path=None, channels=False):
     title = r'Merger efficiency'
     plt.figure()
     plt.title(title)
-    plt.plot(met/Zsun, merger_efficiency)
+    plt.plot(met/Zsun, merger_efficiency['total'], label='total')
+    if channels:
+        for ch in merger_efficiency.keys():
+            if ch != 'total':
+                plt.plot(met/Zsun, merger_efficiency[ch], label=ch)
     plt.yscale('log')
     plt.xscale('log')
     plt.xlabel(r'$Z/Z_\odot$')
     plt.ylabel(r'\#DCOs [$M_\odot^{-1}$]')
+    plt.legend(loc='center left', bbox_to_anchor=(1, 0.5))
     if path:
         plt.savefig(path)
     if show:
