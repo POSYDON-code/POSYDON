@@ -2584,7 +2584,7 @@ class PchipInterpolator2:
 def convert_metallicity_to_string(Z):
     """Check if metallicity is supported by POSYDON v2."""
     # check supported metallicity
-    valid_Z = [1e+00,1e-01,1e-02,1e-03,1e-04]
+    valid_Z = [2e+00,1e+00,4.5e-01,2e-01,1e-01,1e-02,1e-03,1e-04]
     if not Z in valid_Z:
         raise ValueError(f'Metallicity {Z} not supported! Available metallicities in POSYDON v2 are {valid_Z}.')
-    return f'{Z:1.0e}'
+    return f'{Z:1.1e}'.replace('.0','')

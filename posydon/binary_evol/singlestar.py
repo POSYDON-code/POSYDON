@@ -21,6 +21,7 @@ __authors__ = [
 import numpy as np
 import pandas as pd
 from posydon.utils.common_functions import check_state_of_star
+from posydon.grids.MODELS import MODELS
 
 
 STARPROPERTIES = [
@@ -141,39 +142,28 @@ class SingleStar:
             self.f_fb = None
         if not hasattr(self, 'SN_type'):
             self.SN_type = None
+        if not hasattr(self, 'm_disk_accreted'):
+            self.m_disk_accreted = None
+        if not hasattr(self, 'm_disk_radiated'):
+            self.m_disk_radiated = None
 
-        # these quantities are updated in mesa_step.py
-        if not hasattr(self, 'avg_c_in_c_core_at_He_depletion'):
-            self.avg_c_in_c_core_at_He_depletion = None
-        if not hasattr(self, 'co_core_mass_at_He_depletion'):
-            self.co_core_mass_at_He_depletion = None
-        if not hasattr(self, 'm_core_CE_1cent'):
-            self.m_core_CE_1cent = None
-        if not hasattr(self, 'm_core_CE_10cent'):
-            self.m_core_CE_10cent = None
-        if not hasattr(self, 'm_core_CE_30cent'):
-            self.m_core_CE_30cent = None
-        if not hasattr(self, 'm_core_CE_pure_He_star_10cent'):
-            self.m_core_CE_pure_He_star_10cent = None
-        if not hasattr(self, 'r_core_CE_1cent'):
-            self.r_core_CE_1cent = None
-        if not hasattr(self, 'r_core_CE_10cent'):
-            self.r_core_CE_10cent = None
-        if not hasattr(self, 'r_core_CE_30cent'):
-            self.r_core_CE_30cent = None
-        if not hasattr(self, 'r_core_CE_pure_He_star_10cent'):
-            self.r_core_CE_pure_He_star_10cent = None
-        # core collapse initial/final inteprolation
-        if not hasattr(self, 'direct'):
-            self.direct = None
-        if not hasattr(self, 'Fryer12_rapid'):
-            self.Fryer12_rapid = None
-        if not hasattr(self, 'Fryer12_delayed'):
-            self.Fryer12_delayed = None
-        if not hasattr(self, 'Sukhbold_16_engineN20'):
-            self.Sukhbold_16_engineN20 = None
-        if not hasattr(self, 'Patton_Sukhbold20_engineN20'):
-            self.Patton_Sukhbold20_engineN20 = None
+        # the following quantities are updated in mesa_step.py
+            
+        # common envelope quantities
+        for quantity in ['m_core_CE', 'r_core_CE']:
+            for val in [1, 10, 30, 'pure_He_star_10']:
+                if not hasattr(self, f'{quantity}_{val}cent'):
+                    setattr(self, f'{quantity}_{val}cent', None)
+                
+        # core masses at He depletion
+        for quantity in ['avg_c_in_c_core_at_He_depletion',
+                         'co_core_mass_at_He_depletion']:
+            setattr(self, quantity, None)
+                
+        # core collapse quantities
+        for MODEL_NAME in MODELS.keys():
+            if not hasattr(self, MODEL_NAME):
+                setattr(self, MODEL_NAME, None)
 
     def append_state(self):
         """Append the new version of the star to the end of the star state."""

@@ -550,7 +550,9 @@ DEFAULT_MARKERS_COLORS_LEGENDS = {
         'ECSN':
             ['o', 2, 'tab:orange', 'ECSN'],
         'PPISN':
-            ['o', 2, 'tab:red', 'PPISN'],
+            ['o', 2, 'tab:pink', 'PPISN'],
+        'PISN':
+            ['o', 2, 'tab:red', 'PISN'],
         'WD':
             ['o', 2, 'tab:purple', 'WD'],
         'None':
@@ -563,6 +565,8 @@ DEFAULT_MARKERS_COLORS_LEGENDS = {
             ['o', 2, 'tab:orange', 'NS'],
         'WD':
             ['o', 2, 'tab:purple', 'WD'],
+        'PISN':
+            ['o', 2, 'tab:red', 'PISN'],
         'None':
             ['o', 2, 'black', 'intial MT / unstable MT / not converged'],
     }

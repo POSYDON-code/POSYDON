@@ -163,6 +163,11 @@ class BinaryStar:
             self.mass_transfer_case = 'None'
         # if not hasattr(self, 'V_sys'):
         #     self.V_sys = [0, 0, 0]
+        
+        # store innterpolation_class for each step_MESA
+        for grid_type in ['HMS_HMS','CO_HMS_RLO','CO_HeMS']:
+            if not hasattr(self, f'interp_class_{grid_type}'):
+                setattr(self, f'interp_class_{grid_type}', None)
 
         # SimulationProperties object - parameters & parameterizations
         if isinstance(properties, SimulationProperties):
