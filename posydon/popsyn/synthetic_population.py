@@ -6,6 +6,7 @@ e.g. with multiple metallicities
 __authors__ = [
     "Simone Bavera <Simone.Bavera@unige.ch>",
     "Kyle Akira Rocha <kylerocha2024@u.northwestern.edu>",
+    "Monica Gallegos-Garcia <monicagallegosgarcia2024@u.northwestern.edu>",
 ]
 
 import warnings

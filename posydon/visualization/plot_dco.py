@@ -1,3 +1,5 @@
+__authors__ = ["Simone Bavera <Simone.Bavera@unige.ch>",
+    
 import os
 import matplotlib.pyplot as plt
 from posydon.utils.common_functions import PATH_TO_POSYDON
