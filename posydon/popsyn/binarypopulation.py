@@ -350,10 +350,11 @@ class BinaryPopulation:
                                  f"evolution.combined.{self.rank}"),
                     mode='w', **kwargs)
 
-    def save(self, save_path, mode='a', **kwargs):
+    def save(self, save_path, **kwargs):
         """Save BinaryPopulation to hdf file."""
         optimize_ram = self.kwargs['optimize_ram']
         temp_directory = self.kwargs['temp_directory']
+        mode = self.kwargs.get('mode', 'a')
 
         if self.comm is None:
             if optimize_ram:
@@ -381,8 +382,7 @@ class BinaryPopulation:
                     self.kwargs["temp_directory"], f"evolution.combined.{i}")
                              for i in range(self.size)]
 
-
-                self.combine_saved_files(absolute_filepath, tmp_files, mode = mode)
+                self.combine_saved_files(absolute_filepath, tmp_files, mode=mode, **kwargs)
 
             else:
                 return
@@ -393,7 +393,7 @@ class BinaryPopulation:
         return os.path.join(temp_directory, f"evolution.combined.{self.rank}")
         # return os.path.join(dir_name, '.tmp{}_'.format(rank) + file_name)
 
-    def combine_saved_files(self, absolute_filepath, file_names, mode = "a"):
+    def combine_saved_files(self, absolute_filepath, file_names, **kwargs):
         """Combine various temporary files in a given folder."""
         dir_name = os.path.dirname(absolute_filepath)
 
@@ -408,8 +408,11 @@ class BinaryPopulation:
         oneline_min_itemsize = {key: val for key, val in
                                 ONELINE_MIN_ITEMSIZE.items()
                                 if key in oneline_cols}
-
-        with pd.HDFStore(absolute_filepath, mode=mode) as store:
+        mode = kwargs.get('mode', 'a')
+        complib = kwargs.get('complib', 'zlib')
+        complevel = kwargs.get('complevel', 9)
+        
+        with pd.HDFStore(absolute_filepath, mode=mode, complevel=complevel, complib=complib) as store:
             for f in file_names:
                 # strings itemsize set by first append max value,
                 # which may not be largest string
