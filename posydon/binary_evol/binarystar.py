@@ -408,50 +408,12 @@ class BinaryStar:
 
         binary_df.set_index('binary_index', inplace=True)
 
-        
-#         # try to coerce data types automatically
-#         binary_df = binary_df.infer_objects()
-
-#         # Set data types for all columns explicitly
-#         hist_columns =  set( binary_df.columns )
-#         binary_keys = set( BINARYPROPERTIES_DTYPES.keys()  )
-#         S1_keys = set( ['S1_' + key for key in STARPROPERTIES_DTYPES.keys()] )
-#         S2_keys = set( ['S2_' + key for key in STARPROPERTIES_DTYPES.keys()] )
-#         # combine extra column dtypes if user passes them directly
-#         extra_keys = set( EXTRA_COLUMNS_DTYPES.keys() ) | set( extra_columns_dtypes_user )
-        
-#         # Find common keys between the binary_df and default output parameters
-#         common_keys =  hist_columns & ( binary_keys | S1_keys | S2_keys | extra_keys )
-        
-#         # Create a dict with column-dtype mapping only for columns in binary_df
-#         common_dtype_dict = {}
-#         for key in common_keys:
-#             if key in BINARYPROPERTIES_DTYPES.keys():
-#                 common_dtype_dict[key] = BINARYPROPERTIES_DTYPES.get( key )
-#             elif key.replace('S1_', '') in STARPROPERTIES_DTYPES.keys():
-#                 common_dtype_dict[key] = STARPROPERTIES_DTYPES.get( key.replace('S1_', '') )
-#             elif key.replace('S2_', '') in STARPROPERTIES_DTYPES.keys():
-#                 common_dtype_dict[key] = STARPROPERTIES_DTYPES.get( key.replace('S2_', '') )        
-#             elif key in EXTRA_COLUMNS_DTYPES.keys():
-#                 common_dtype_dict[key] = EXTRA_COLUMNS_DTYPES.get( key )
-#             else:
-#                 raise ValueError(f'No data type found for {key}. Dtypes must be explicity declared.')
-#         # set dtypes
-#         binary_df = binary_df.astype( common_dtype_dict )
-#         # unset clean str data because pandas strings are broken for hdf saving
-#         convert_to_obj = {}
-#         for key, val in common_dtype_dict.items():
-#             if val == 'string':
-#                 convert_to_obj[key] = 'object'
-#         binary_df = binary_df.astype( convert_to_obj )
-
         extra_s1_cols_dict = kwargs.get('S1_kwargs', {}).get('extra_columns', {})
         extra_s2_cols_dict = kwargs.get('S2_kwargs', {}).get('extra_columns', {})
         binary_df = clean_binary_history_df(binary_df,
                                             extra_binary_dtypes_user=extra_binary_cols_dict,
                                             extra_S1_dtypes_user=extra_s1_cols_dict,
                                             extra_S2_dtypes_user=extra_s2_cols_dict)
-    
         return binary_df
 
     @classmethod
@@ -464,7 +426,7 @@ class BinaryStar:
             data to turn into a BinaryStar instance.
         index : int, optional
             Sets the binary index.
-        extra_columns : list, optional
+        extra_columns : dict, optional
             Column names to be added directly to binary
             not in BINARYPROPERTIES.
 
@@ -479,7 +441,7 @@ class BinaryStar:
         # split input dataframe into kwargs dicts
         binary_params, star1_params, star2_params = dict(), dict(), dict()
         extra_params = dict()
-        extra_columns = kwargs.get('extra_columns', [])
+        extra_columns = kwargs.get('extra_columns', {})
         hist_lengths = []
         for name in list(dataframe.columns):
             if 'S1' in name:
@@ -655,7 +617,7 @@ class BinaryStar:
             A oneline DataFrame describing a binary.
         index : int, None
             Binary index
-        extra_columns : list
+        extra_columns : dict
             Names of any extra history columns not inlcuded
             in BINARYPROPERTIES
 
@@ -669,7 +631,7 @@ class BinaryStar:
 
         binary_params, star1_params, star2_params = dict(), dict(), dict()
         extra_params = dict()
-        extra_columns = kwargs.get('extra_columns', [])
+        extra_columns = kwargs.get('extra_columns', {})
         hist_lengths = []
         for name in list(oneline_df.columns):
             if '_f' in name[-2:]:
