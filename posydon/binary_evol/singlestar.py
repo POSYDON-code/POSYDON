@@ -265,35 +265,6 @@ class SingleStar:
         # try to coerce data types automatically
         star_df = star_df.infer_objects()
 
-#         # Set data types for all columns explicitly
-#         star_columns =  set( star_df.columns )
-#         S_keys = set( [prefix + key for key in STARPROPERTIES_DTYPES.keys()] )
-#         # combine extra column dtypes if user passes them directly
-#         extra_keys = set(EXTRA_COLUMNS_DTYPES.keys()) | set(extra_columns_dtypes_user)
-        
-#         # Find common keys between the binary_df and default output parameters
-#         common_keys =  star_columns & ( S_keys | extra_keys )
-        
-#         # Create a dict with column-dtype mapping only for columns in binary_df
-#         common_dtype_dict = {}
-#         for key in common_keys:
-#             if key.replace(prefix, '') in STARPROPERTIES_DTYPES.keys():
-#                 common_dtype_dict[key] = STARPROPERTIES_DTYPES.get( key.replace(prefix, '') )
-#             elif key in EXTRA_COLUMNS_DTYPES.keys():
-#                 common_dtype_dict[key] = EXTRA_COLUMNS_DTYPES.get( key )
-#             elif key in extra_columns_dtypes_user:
-#                 common_dtype_dict[key] = extra_cols_dict.get( key.replace(prefix, '') )
-#             else:
-#                 raise ValueError(f'No data type found for {key}. Dtypes must be explicity declared.')
-#         # set dtypes
-#         star_df = star_df.astype( common_dtype_dict )
-#         # unset clean str data because pandas strings are broken for hdf saving
-#         convert_to_obj = {}
-#         for key, val in common_dtype_dict.items():
-#             if val == 'string':
-#                 convert_to_obj[key] = 'object'
-#         star_df = star_df.astype( convert_to_obj )
-
         return star_df
 
     def to_oneline_df(self, history=True, prefix='', **kwargs):

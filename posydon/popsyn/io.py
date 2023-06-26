@@ -224,6 +224,8 @@ def clean_binary_oneline_df(oneline_df, extra_binary_dtypes_user=None,
     This method is similar to clean_binary_history_df since they
     have many overalapping columns, with a few extras and different naming.
     
+    Note: there may be edge cases not handed if new scalar_names are added.
+    
     Parameters
     ---------
     binary_df : DataFrame
@@ -241,8 +243,6 @@ def clean_binary_oneline_df(oneline_df, extra_binary_dtypes_user=None,
     binary_df : DataFrame
         A cleaned binary history ready for saving to HDF.
     """
-
-
     assert isinstance( oneline_df, pd.DataFrame )
     
     # User specified extra binary and star columns
