@@ -409,7 +409,7 @@ class BinaryPopulation:
                                 ONELINE_MIN_ITEMSIZE.items()
                                 if key in oneline_cols}
 
-        with pd.HDFStore(absolute_filepath, mode = mode) as store:
+        with pd.HDFStore(absolute_filepath, mode=mode) as store:
             for f in file_names:
                 # strings itemsize set by first append max value,
                 # which may not be largest string
@@ -645,7 +645,7 @@ class PopulationManager:
 
         return binary_holder
 
-    def save(self, fname, mode='a', **kwargs):
+    def save(self, fname, **kwargs):
         """Save binaries to an hdf file using pandas HDFStore.
 
         Any object dtype columns not parsed by infer_objects() is converted to
@@ -655,75 +655,32 @@ class PopulationManager:
         ----------
         fname : str
             Name of hdf file saved.
-        **kwargs
+        mode : {'a', 'w', 'r', 'r+'}, default 'a'
+            See pandas HDFStore docs
+        complib : {'zlib', 'lzo', 'bzip2', 'blosc'}, default 'zlib'
+            Compression library. See HDFStore docs
+        complevel : int, 0-9, default 9
+            Level of compression. See HDFStore docs
+        kwargs : dict
+            Arguments for `BinaryStar` methods `to_df` and `to_oneline_df`.
 
         Returns
         -------
         None
         """
-        def set_dtypes_oneline(data):
-            """Change the dtypes for consistency in saving."""
-            for col in data.columns:
-                if 'natal_kick_array' in col:
-                    # First convert None's to NaN's
-                    # data[col][data[col] == 'None'] = np.nan
-                    data.loc[data[col] == 'None', col] = np.nan
+        mode = kwargs.get('mode', 'a')
+        complib = kwargs.get('complib', 'zlib')
+        complevel = kwargs.get('complevel', 9)
 
-                    # Next, convert dtype
-                    data = data.astype({col: np.float64})
-
-            return data
-
-        with pd.HDFStore(fname, mode=mode) as store:
-
+        with pd.HDFStore(fname, mode=mode, complevel=complevel, complib=complib) as store:
             history_df = self.to_df(**kwargs)
-
-            # Set dtypes for saving
-            history_df = history_df.infer_objects()
-
-            object_to_str = {name: 'str' for i, name
-                             in enumerate(history_df.columns)
-                             if history_df.iloc[:, i].dtype == 'object'}
-            history_df = history_df.astype(object_to_str)
-
             store.append('history', history_df, data_columns=True)
 
             online_df = self.to_oneline_df(**kwargs)
-            online_df = online_df.infer_objects()
-            object_to_str = {name: 'str' for i, name
-                             in enumerate(online_df.columns)
-                             if online_df.iloc[:, i].dtype == 'object'}
-            online_df = online_df.astype(object_to_str)
-            online_df = set_dtypes_oneline(online_df)
-
             store.append('oneline', online_df, data_columns=True)
+        
+        return
 
-#         store = pd.HDFStore(fname, mode=mode)
-
-#         history_df = self.to_df(**kwargs)
-
-#         # Set dtypes for saving
-#         history_df = history_df.infer_objects()
-
-#         # TODO: move these data type conversions into to_df, to_oneline_df
-#         object_to_str = {name:'str'
-#                          for i, name in enumerate(history_df.columns)
-#                         if history_df.iloc[:,i].dtype == 'object'}
-#         history_df = history_df.astype(object_to_str)
-
-#         store.append('history', history_df, data_columns=True)
-
-#         online_df = self.to_oneline_df(**kwargs)
-#         online_df = online_df.infer_objects()
-#         object_to_str = {name:'str'
-#                          for i, name in enumerate(online_df.columns)
-#                         if online_df.iloc[:,i].dtype == 'object'}
-#         online_df = online_df.astype(object_to_str)
-#         online_df = set_dtypes_oneline(online_df)
-
-#         store.append('oneline', online_df, data_columns=True)
-
-#         store.close()
 
     def __getitem__(self, key):
         """Return the key-th binary."""

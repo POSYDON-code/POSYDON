@@ -37,7 +37,8 @@ from posydon.utils.common_functions import (
     check_state_of_star, orbital_period_from_separation,
     orbital_separation_from_period, get_binary_state_and_event_and_mt_case)
 from posydon.popsyn.io import (
-BINARYPROPERTIES_DTYPES, STARPROPERTIES_DTYPES, EXTRA_COLUMNS_DTYPES)
+BINARYPROPERTIES_DTYPES, STARPROPERTIES_DTYPES, EXTRA_BINARY_COLUMNS_DTYPES, 
+    clean_binary_history_df, clean_binary_oneline_df)
 
 
 # star property: column names in binary history for star 1 and star 2
@@ -297,9 +298,10 @@ class BinaryStar:
 
         Parameters
         ----------
-        extra_columns : list
+        extra_columns : dict( 'name':dtype, .... )
             Extra binary parameters to return in DataFrame that are not
-            included in BINARYPROPERTIES.
+            included in BINARYPROPERTIES. All columns must have an
+            associated pandas data type.
             Can be used in combination with `only_select_columns`.
             Assumes names have no suffix.
         ignore_columns : list
@@ -323,9 +325,13 @@ class BinaryStar:
         pandas DataFrame
 
         """
+        extra_binary_cols_dict = kwargs.get('extra_columns', {})
+        extra_columns = list(extra_binary_cols_dict.keys())
+        extra_columns_dtypes_user = list(extra_binary_cols_dict.values())
+        
         all_keys = (["binary_index"]
                     + [key+'_history' for key in BINARYPROPERTIES]
-                    + list(kwargs.get('extra_columns', [])))
+                    + extra_columns)
 
         ignore_cols = list(kwargs.get('ignore_columns', []))
         keys_to_save = [i for i in all_keys if not (
@@ -335,7 +341,7 @@ class BinaryStar:
             user_keys_to_save = list(kwargs.get('only_select_columns'))
             keys_to_save = (["binary_index"]
                             + [key+'_history' for key in user_keys_to_save]
-                            + list(kwargs.get('extra_columns', [])))
+                            + extra_columns)
 
         try:
             data_to_save = [getattr(self, key) for key in keys_to_save[1:]]
@@ -390,6 +396,7 @@ class BinaryStar:
 
         frames = [bin_df]
         if kwargs.get('include_S1', True):
+            # we are hard coding the prefix
             frames.append(self.star_1.to_df(
                 prefix='S1_', null_value=kwargs.get('null_value', np.NAN),
                 **kwargs.get('S1_kwargs', {})))
@@ -401,38 +408,50 @@ class BinaryStar:
 
         binary_df.set_index('binary_index', inplace=True)
 
+        
+#         # try to coerce data types automatically
+#         binary_df = binary_df.infer_objects()
 
-        # Set data types for all columns explicitly
-        hist_columns =  set( binary_df.columns )
-        binary_keys = set( BINARYPROPERTIES_DTYPES.keys()  )
-        S1_keys = set( ['S1_' + key for key in STARPROPERTIES_DTYPES.keys()] )
-        S2_keys = set( ['S2_' + key for key in STARPROPERTIES_DTYPES.keys()] )
-        extra_keys = set( EXTRA_COLUMNS_DTYPES.keys() )
+#         # Set data types for all columns explicitly
+#         hist_columns =  set( binary_df.columns )
+#         binary_keys = set( BINARYPROPERTIES_DTYPES.keys()  )
+#         S1_keys = set( ['S1_' + key for key in STARPROPERTIES_DTYPES.keys()] )
+#         S2_keys = set( ['S2_' + key for key in STARPROPERTIES_DTYPES.keys()] )
+#         # combine extra column dtypes if user passes them directly
+#         extra_keys = set( EXTRA_COLUMNS_DTYPES.keys() ) | set( extra_columns_dtypes_user )
         
-        # Find common keys between the binary_df and default output parameters
-        common_keys =  hist_columns & ( binary_keys | S1_keys | S2_keys | extra_keys )
+#         # Find common keys between the binary_df and default output parameters
+#         common_keys =  hist_columns & ( binary_keys | S1_keys | S2_keys | extra_keys )
         
-        # Create a dict with column-dtype mapping only for columns in binary_df
-        common_dtype_dict = {}
-        for key in common_keys:
-            if key in BINARYPROPERTIES_DTYPES.keys():
-                common_dtype_dict[key] = BINARYPROPERTIES_DTYPES.get( key )
-            elif key.replace('S1_', '') in STARPROPERTIES_DTYPES.keys():
-                common_dtype_dict[key] = STARPROPERTIES_DTYPES.get( key.replace('S1_', '') )
-            elif key.replace('S2_', '') in STARPROPERTIES_DTYPES.keys():
-                common_dtype_dict[key] = STARPROPERTIES_DTYPES.get( key.replace('S2_', '') )        
-            elif key in EXTRA_COLUMNS_DTYPES.keys():
-                common_dtype_dict[key] = EXTRA_COLUMNS_DTYPES.get( key )
-            else:
-                raise ValueError(f'No data type found for {key}. Dtypes must be explicity declared.')
-        # set dtypes
-        binary_df = binary_df.astype( common_dtype_dict )
-        # unset clean str data because pandas strings are broken for hdf saving
-        convert_to_obj = {}
-        for key, val in common_dtype_dict.items():
-            if val == 'string':
-                convert_to_obj[key] = 'object'
-        binary_df = binary_df.astype( convert_to_obj )
+#         # Create a dict with column-dtype mapping only for columns in binary_df
+#         common_dtype_dict = {}
+#         for key in common_keys:
+#             if key in BINARYPROPERTIES_DTYPES.keys():
+#                 common_dtype_dict[key] = BINARYPROPERTIES_DTYPES.get( key )
+#             elif key.replace('S1_', '') in STARPROPERTIES_DTYPES.keys():
+#                 common_dtype_dict[key] = STARPROPERTIES_DTYPES.get( key.replace('S1_', '') )
+#             elif key.replace('S2_', '') in STARPROPERTIES_DTYPES.keys():
+#                 common_dtype_dict[key] = STARPROPERTIES_DTYPES.get( key.replace('S2_', '') )        
+#             elif key in EXTRA_COLUMNS_DTYPES.keys():
+#                 common_dtype_dict[key] = EXTRA_COLUMNS_DTYPES.get( key )
+#             else:
+#                 raise ValueError(f'No data type found for {key}. Dtypes must be explicity declared.')
+#         # set dtypes
+#         binary_df = binary_df.astype( common_dtype_dict )
+#         # unset clean str data because pandas strings are broken for hdf saving
+#         convert_to_obj = {}
+#         for key, val in common_dtype_dict.items():
+#             if val == 'string':
+#                 convert_to_obj[key] = 'object'
+#         binary_df = binary_df.astype( convert_to_obj )
+
+        extra_s1_cols_dict = kwargs.get('S1_kwargs', {}).get('extra_columns', {})
+        extra_s2_cols_dict = kwargs.get('S2_kwargs', {}).get('extra_columns', {})
+        binary_df = clean_binary_history_df(binary_df,
+                                            extra_binary_dtypes_user=extra_binary_cols_dict,
+                                            extra_S1_dtypes_user=extra_s1_cols_dict,
+                                            extra_S2_dtypes_user=extra_s2_cols_dict)
+    
         return binary_df
 
     @classmethod
@@ -606,50 +625,19 @@ class BinaryStar:
             oneline_df['WARNING'] = [0]
 
         oneline_df.set_index('binary_index', inplace=True)
-
-        #Set data types for all columns explicitly        
-        oneline_columns =  set( oneline_df.columns )
-        binary_keys = set( [key + "_i" for key in BINARYPROPERTIES_DTYPES.keys()] 
-                         + [key + "_f" for key in BINARYPROPERTIES_DTYPES.keys()])
-        S1_keys = set( ['S1_' + key + '_i' for key in STARPROPERTIES_DTYPES.keys()] 
-                     + ['S1_' + key + '_f' for key in STARPROPERTIES_DTYPES.keys()] )
-        S2_keys = set( ['S2_' + key +'_i' for key in STARPROPERTIES_DTYPES.keys()] 
-                     + ['S2_' + key + '_f' for key in STARPROPERTIES_DTYPES.keys()] )
-        extra_keys = set( [key + '_i' for key in EXTRA_COLUMNS_DTYPES.keys()] 
-                        + [key + '_f' for key in EXTRA_COLUMNS_DTYPES.keys()])
         
-        # Find common keys between the oneline_df and default output parameters
-        common_keys =  oneline_columns & ( binary_keys | S1_keys | S2_keys | extra_keys )
+        # try to coerce data types automatically
+        oneline_df = oneline_df.infer_objects()
 
-        # Create a dict with column-dtype mapping only for columns in oneline_df
-        common_dtype_dict = {}
-        for key in common_keys:
-            if key.replace('_i', '') in BINARYPROPERTIES_DTYPES.keys():
-                common_dtype_dict[key] = BINARYPROPERTIES_DTYPES.get( key.replace('_i', '') )
-            elif key.replace('_f', '') in BINARYPROPERTIES_DTYPES.keys():
-                common_dtype_dict[key] = BINARYPROPERTIES_DTYPES.get( key.replace('_f', '') )
-            elif key.replace('S1_', '').replace('_i', '') in STARPROPERTIES_DTYPES.keys():
-                 common_dtype_dict[key] = STARPROPERTIES_DTYPES.get(key.replace('S1_','').replace('_i', '') )
-            elif key.replace('S1_', '').replace('_f', '') in STARPROPERTIES_DTYPES.keys():
-                 common_dtype_dict[key] = STARPROPERTIES_DTYPES.get(key.replace('S1_','').replace('_f', '') )
-            elif key.replace('S2_', '').replace('_i', '') in STARPROPERTIES_DTYPES.keys():
-                 common_dtype_dict[key] = STARPROPERTIES_DTYPES.get( key.replace('S2_', '').replace('_i', '') )
-            elif key.replace('S2_', '').replace('_f', '') in STARPROPERTIES_DTYPES.keys():
-                 common_dtype_dict[key] = STARPROPERTIES_DTYPES.get( key.replace('S2_', '').replace('_f', '') )
-            elif key.replace('_i', '') in EXTRA_COLUMNS_DTYPES.keys():
-                 common_dtype_dict[key] = EXTRA_COLUMNS_DTYPES.get( key.replace('_i', '') )
-            elif key.replace('_f', '') in EXTRA_COLUMNS_DTYPES.keys():
-                 common_dtype_dict[key] = EXTRA_COLUMNS_DTYPES.get( key.replace('_f', '') )
-            else:
-                 raise ValueError(f'No data type found for {key}.')
-        # set dtypes
-        oneline_df = oneline_df.astype( common_dtype_dict )
-        # unset clean str data because pandas strings are broken for hdf saving
-        convert_to_obj = {}
-        for key, val in common_dtype_dict.items():
-            if val == 'string':
-                convert_to_obj[key] = 'object'
-        oneline_df = oneline_df.astype( convert_to_obj )
+        # Set data types for all columns explicitly
+        # we are assuming you may pass the same kwargs to both to_df and oneline
+        extra_binary_cols_dict = kwargs.get('extra_columns', {})
+        extra_s1_cols_dict = kwargs.get('S1_kwargs', {}).get('extra_columns', {})
+        extra_s2_cols_dict = kwargs.get('S2_kwargs', {}).get('extra_columns', {})
+        oneline_df = clean_binary_oneline_df(oneline_df,
+                                            extra_binary_dtypes_user=extra_binary_cols_dict,
+                                            extra_S1_dtypes_user=extra_s1_cols_dict,
+                                            extra_S2_dtypes_user=extra_s2_cols_dict)
         
         return oneline_df
 

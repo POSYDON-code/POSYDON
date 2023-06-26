@@ -24,6 +24,7 @@ from posydon.utils.common_functions import check_state_of_star
 from posydon.grids.MODELS import MODELS
 
 
+
 STARPROPERTIES = [
     'state',            # the evolutionary state of the star. For more info see
                         # `posydon.utils.common_functions.check_state_of_star`
@@ -188,9 +189,10 @@ class SingleStar:
 
         Parameters
         ----------
-        extra_columns : list
+        extra_columns : dict( 'name':dtype, .... )
             Extra star history parameters to return in DataFrame that are not
-            included in STARPROPERTIES.
+            included in STARPROPERTIES. All columns must have an
+            associated pandas data type.
             Can be used in combination with `only_select_columns`.
             Assumes names have no suffix.
         ignore_columns : list
@@ -213,8 +215,12 @@ class SingleStar:
         -------
         pandas DataFrame
         """
+        extra_cols_dict = kwargs.get('extra_columns', {})
+        extra_columns = list(extra_cols_dict.keys())
+        extra_columns_dtypes_user = list(extra_cols_dict.values())
+
         all_keys = ([key+'_history' for key in STARPROPERTIES]
-                    + list(kwargs.get('extra_columns', [])))
+                    + extra_columns)
 
         ignore_cols = list(kwargs.get('ignore_columns', []))
 
@@ -230,7 +236,7 @@ class SingleStar:
         if bool(kwargs.get('only_select_columns')):
             user_keys_to_save = list(kwargs.get('only_select_columns'))
             keys_to_save = ([key+'_history' for key in user_keys_to_save]
-                            + list(kwargs.get('extra_columns', [])))
+                            + extra_columns)
         try:
             # shape of data_to_save (history columns , time steps)
             data_to_save = [getattr(self, key) for key in keys_to_save]
@@ -249,13 +255,46 @@ class SingleStar:
         # sets rows as time steps, columns as history output
         star_data = np.transpose(star_data)
 
-        # remove the _history at the end of all column names
+        # add star prefix and remove the '_history' at the end of all column names
         prefix = kwargs.get('prefix', "")
         column_names = [prefix + name.split('_history')[0]
                         for name in keys_to_save]
 
-        data_frame = pd.DataFrame(star_data, columns=column_names)
-        return data_frame
+        star_df = pd.DataFrame(star_data, columns=column_names)
+        
+        # try to coerce data types automatically
+        star_df = star_df.infer_objects()
+
+#         # Set data types for all columns explicitly
+#         star_columns =  set( star_df.columns )
+#         S_keys = set( [prefix + key for key in STARPROPERTIES_DTYPES.keys()] )
+#         # combine extra column dtypes if user passes them directly
+#         extra_keys = set(EXTRA_COLUMNS_DTYPES.keys()) | set(extra_columns_dtypes_user)
+        
+#         # Find common keys between the binary_df and default output parameters
+#         common_keys =  star_columns & ( S_keys | extra_keys )
+        
+#         # Create a dict with column-dtype mapping only for columns in binary_df
+#         common_dtype_dict = {}
+#         for key in common_keys:
+#             if key.replace(prefix, '') in STARPROPERTIES_DTYPES.keys():
+#                 common_dtype_dict[key] = STARPROPERTIES_DTYPES.get( key.replace(prefix, '') )
+#             elif key in EXTRA_COLUMNS_DTYPES.keys():
+#                 common_dtype_dict[key] = EXTRA_COLUMNS_DTYPES.get( key )
+#             elif key in extra_columns_dtypes_user:
+#                 common_dtype_dict[key] = extra_cols_dict.get( key.replace(prefix, '') )
+#             else:
+#                 raise ValueError(f'No data type found for {key}. Dtypes must be explicity declared.')
+#         # set dtypes
+#         star_df = star_df.astype( common_dtype_dict )
+#         # unset clean str data because pandas strings are broken for hdf saving
+#         convert_to_obj = {}
+#         for key, val in common_dtype_dict.items():
+#             if val == 'string':
+#                 convert_to_obj[key] = 'object'
+#         star_df = star_df.astype( convert_to_obj )
+
+        return star_df
 
     def to_oneline_df(self, history=True, prefix='', **kwargs):
         """Convert SingleStar into a single row DataFrame.
