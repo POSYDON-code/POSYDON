@@ -36,9 +36,7 @@ from posydon.binary_evol.singlestar import SingleStar, STARPROPERTIES
 from posydon.utils.common_functions import (
     check_state_of_star, orbital_period_from_separation,
     orbital_separation_from_period, get_binary_state_and_event_and_mt_case)
-from posydon.popsyn.io import (
-BINARYPROPERTIES_DTYPES, STARPROPERTIES_DTYPES, EXTRA_BINARY_COLUMNS_DTYPES, 
-    clean_binary_history_df, clean_binary_oneline_df)
+from posydon.popsyn.io import (clean_binary_history_df, clean_binary_oneline_df)
 
 
 # star property: column names in binary history for star 1 and star 2
