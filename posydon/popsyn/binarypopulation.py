@@ -787,13 +787,13 @@ class BinaryGenerator:
         binary_fraction = self.kwargs.get('binary_fraction', 1)
         if not ('RNG' in kwargs.keys()):
             kwargs['RNG'] = self.RNG
-        # a, e, M_1, M_2, P
+        # a, e, M_1, M_2, M_0, P 
         sampler_output = self.sampler(orbital_scheme, **kwargs)
         if orbital_scheme == 'separation':
-            separation, eccentricity, m1, m2 = sampler_output
+            separation, eccentricity, m1, m2 , m0 = sampler_output
             orbital_period = orbital_period_from_separation(separation, m1, m2)
         elif orbital_scheme == 'period':
-            orbital_period, eccentricity, m1, m2 = sampler_output
+            orbital_period, eccentricity, m1, m2 , m0= sampler_output
             separation = orbital_separation_from_period(orbital_period, m1, m2)
         else:
             raise ValueError("Allowed orbital schemes: separation or period.")
@@ -814,6 +814,7 @@ class BinaryGenerator:
             'orbital_period': orbital_period,
             'S1_mass': m1,
             'S2_mass': m2,
+            'S_mass' : m0,
         }
         self._num_gen += N_binaries
         return output_dict
@@ -888,8 +889,8 @@ class BinaryGenerator:
             separation = np.nan
             orbital_period = np.nan
             eccentricity = np.nan
-            m1 = output['S1_mass'].item()
-            m2 = output['S2_mass'].item()
+            m0 = output['S_mass'].item()
+            
             Z_div_Zsun = kwargs.get('metallicity', 1.)
             zams_table = {2.: 2.915e-01,
                           1.: 2.703e-01,
@@ -913,7 +914,7 @@ class BinaryGenerator:
                 eccentricity=eccentricity,
             )
             star1_params = dict(
-                mass=m1,
+                mass=m0,
                 state="H-rich_Core_H_burning",
                 metallicity=Z,
                 center_h1=X,
