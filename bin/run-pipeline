@@ -608,7 +608,7 @@ def copy_ini_file(grid, rerun_type, destination, cluster):
     elif rerun_type == 'opacity_max_hms-hms':
         replace_text = "zepei_fix_implicit-afa1860ddf9894aa1d82742ee2a73e8e92acd4a9"
     elif rerun_type == 'TPAGBwind':
-        replace_text = "agbwind-27f4fa05c4ebabaa85a67c2845818a36e1ecab01"
+        replace_text = "development-22c1bb9e730343558c3e70984a99b3fc1f3c346e"
     elif rerun_type == 'other': # e.g. 'envelope_mass_limit', 'fe_core_infall_limit'
         # this rerun uses the default inlist commit
         return
