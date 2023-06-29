@@ -47,7 +47,7 @@ class CompileData:
         for i in range(len(test)):
             try:
                 scalars,profiles = self.scrape(test,i,hms_s2)
-                self.test_scalars = self.test_scalars.append(scalars,ignore_index=True)
+                self.test_scalars = self.test_scalars.append(scalars,ignofre_index=True)
                 self.test_profiles.append(profiles)
             except:
                 testing_failed.append(i)
@@ -68,9 +68,9 @@ class CompileData:
                 self.profiles.append(profiles)
             except:
                 training_failed.append(i)
-                pass
+                pass        
+            
         warnings.warn(f"{len(training_failed)} training binaries failed")
-        
 
     def scrape(self,grid,ind,hms_s2):
         """Extracts profile data from one MESA run.
@@ -177,7 +177,7 @@ class ProfileInterpolator:
         self.scalars = self.scalars.iloc[binaries[split:]]
 
     def train(self,IF_interpolator,density_epochs=3000,density_patience=200,
-             comp_bounds_epochs=500,comp_bounds_patience=50,loss_history=False):
+             comp_bounds_epochs=500,comp_bounds_patience=50,loss_history=False,hms_s2=False):
         """Trains models for density, H mass fraction, and He mass fraction profile models. 
         Args:
             IF_interpolator (str) : path to '.pkl' file for IF interpolator.
@@ -186,6 +186,7 @@ class ProfileInterpolator:
             comp_bounds_epochs (int) : number of epochs used to train composition profiles model
             comp_bounds_patience (int) : patience parameter for NN callback in composition profiles model
             loss_history (Boolean) : option to return training and validation loss histories
+            hms_s2 (Boolean) : option to get profiles of star 2 in HMS-HMS grid
         Returns:
             self.comp.loss_history (array-like) : training and validation loss history for composition profiles
             self.dens.loss_history (array-like) : training and validation loss history for density profiles
@@ -201,7 +202,7 @@ class ProfileInterpolator:
                                 self.valid_profiles[:,self.names.index("y_mass_fraction_He")], 
                                 self.valid_scalars["star_state"], 
                                 IF_interpolator,
-                                comp_bounds_epochs,comp_bounds_patience)
+                                comp_bounds_epochs,comp_bounds_patience,hms_s2)
 
         # instantiate and train density profile model
         self.dens = Density(self.initial,
@@ -209,7 +210,7 @@ class ProfileInterpolator:
                             self.valid_initial,
                             self.valid_profiles[:,self.names.index("logRho")],
                             IF_interpolator)
-        self.dens.train(prof_epochs=density_epochs,prof_patience=density_patience)
+        self.dens.train(prof_epochs=density_epochs,prof_patience=density_patience,hms_s2)
         
         if loss_history==True:
             return self.comp.loss_history, self.dens.loss_history
@@ -282,7 +283,7 @@ class ProfileInterpolator:
 class Density:
 
     def __init__(self,initial,profiles,valid_initial,
-                 valid_profiles,IF_interpolator,n_comp=8):
+                 valid_profiles,IF_interpolator,n_comp=8, hms_s2=False):
         """Creates and trains density profile model.
         Args:
             initial (array-like) : log-space initial conditions for training data.
@@ -291,8 +292,10 @@ class Density:
             valid_profiles (array-like) : final density profiles for validation data.
             IF_interpolator (string) : path to .pkl file for IF interpolator for central density, final mass values
             n_comp (int) : number of PCA components. 
+            hms_s2 (Boolean) : option to get profiles of star 2 in HMS-HMS grid
         """
         self.n_comp = n_comp
+        self.hms_s2 = hms_s2
         
         # process training data 
         self.initial = initial  # initial conditions in log space
@@ -390,8 +393,11 @@ class Density:
                            + min_rho[:,np.newaxis]
         
         # IF interpolate final mass, construct mass enclosed profile coordinates
-        m1_ind = self.model_IF.interpolators[0].out_keys.index("star_1_mass")
-        pred_mass = self.model_IF.interpolators[0].test_interpolator(10**inputs)[:,m1_ind]
+        if self.hms_s2==False:
+            m_ind = self.model_IF.interpolators[0].out_keys.index("star_1_mass")
+        else:
+            m_ind = self.model_IF.interpolators[0].out_keys.index("star_2_mass")
+        pred_mass = self.model_IF.interpolators[0].test_interpolator(10**inputs)[:,m_ind]
         mass_coords = np.linspace(0,1,200)*pred_mass[:,np.newaxis] 
         
         return mass_coords,density_profiles
@@ -401,7 +407,7 @@ class Composition:
     
     def __init__(self,initial,h_profiles,he_profiles,s1,
                  valid_initial,valid_h_profiles,valid_he_profiles,valid_s1,
-                 IF_interpolator,training_epochs=500, training_patience=50):
+                 IF_interpolator,training_epochs=500, training_patience=50,hms_s2=False):
         """Creates and trains H mass fraction and He mass fraction profiles model.
         Args:
             initial (array-like) : log-space initial conditions for training data.
@@ -415,8 +421,10 @@ class Composition:
             IF_interpolator (string) : path to .pkl file for IF interpolator
             training_epochs (int) : number of epochs used to train neural networks
             training_patience (int) : patience parameter for callback in neural networks
-
+            hms_s2 (Boolean) : option to get profiles of star 2 in HMS-HMS grid
         """
+        self.hms_s2 = hms_s2
+        
         self.initial = initial
         self.h_profiles = h_profiles
         self.he_profiles = he_profiles
@@ -430,11 +438,18 @@ class Composition:
         self.model_IF = IFInterpolator()  # instantiate POSYDON initial-final interpolator object
         self.model_IF.load(filename=IF_interpolator)
         self.interp = self.model_IF.interpolators[0]
-        self.c_h_ind = self.interp.out_keys.index("S1_center_h1")
-        self.s_h_ind = self.interp.out_keys.index("S1_surface_h1")
-        self.c_he_ind = self.interp.out_keys.index("S1_center_he4")
-        self.s_he_ind = self.interp.out_keys.index("S1_surface_he4")
         
+        if self.hms_s2==False:
+            self.c_h_ind = self.interp.out_keys.index("S1_center_h1")
+            self.s_h_ind = self.interp.out_keys.index("S1_surface_h1")
+            self.c_he_ind = self.interp.out_keys.index("S1_center_he4")
+            self.s_he_ind = self.interp.out_keys.index("S1_surface_he4")
+        else: 
+            self.c_h_ind = self.interp.out_keys.index("S2_center_h1")
+            self.s_h_ind = self.interp.out_keys.index("S2_surface_h1")
+            self.c_he_ind = self.interp.out_keys.index("S2_center_he4")
+            self.s_he_ind = self.interp.out_keys.index("S2_surface_he4")
+            
         # star 1 states
         self.star_states = ['None','WD','NS','BH',
                              'stripped_He_non_burning',
@@ -686,8 +701,11 @@ class Composition:
             pred_profiles.append([pred_H,pred_He])
            
         # IF interpolate final masses, generate mass enclosed profile coordinates
-        m1_ind = self.interp.out_keys.index("star_1_mass")
-        pred_mass = self.interp.test_interpolator(10**inputs)[:,m1_ind]
+        if self.hms_s2==False:
+            m_ind = self.model_IF.interpolators[0].out_keys.index("star_1_mass")
+        else:
+            m_ind = self.model_IF.interpolators[0].out_keys.index("star_2_mass")
+        pred_mass = self.interp.test_interpolator(10**inputs)[:,m_ind]
         mass_coords = np.linspace(0,1,200)*pred_mass[:,np.newaxis] 
         h_profiles = np.array(pred_profiles)[:,0]
         he_profiles = np.array(pred_profiles)[:,1]
