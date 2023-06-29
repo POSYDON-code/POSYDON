@@ -418,7 +418,7 @@ class StepSN(object):
         # Checks if the binary is not disrupted to compute the
         # inspiral time due to gravitational wave emission
         state1, state2 = binary.star_1.state, binary.star_2.state
-        if binary.state == "disrupted":
+        if binary.state == "disrupted" or state1 == "massless_remnant" or state2 == "massless_remnant":
             binary.inspiral_time = np.nan
         elif state1 in STAR_STATES_CO and state2 in STAR_STATES_CO:
             binary.inspiral_time = inspiral_timescale_from_separation(
@@ -1210,8 +1210,9 @@ class StepSN(object):
                     # if key is 'nearest_neighbour_distance':
                     #     setattr(binary, key, ['None', 'None', 'None'])
                 binary.separation = new_separation
-                if binary.state != "disrupted":
+                if binary.state != "disrupted" and binary.state != "initially_single_star" and binary.state != "merged":
                     binary.state = "detached"
+                
                 binary.event = None
                 binary.time = binary.time_history[-1]
                 binary.eccentricity = binary.eccentricity_history[-1]
@@ -1307,7 +1308,7 @@ class StepSN(object):
                     # if key is 'nearest_neighbour_distance':
                     #     setattr(binary, key, ['None', 'None', 'None'])
                 binary.separation = new_separation
-                if binary.state != "disrupted":
+                if binary.state != "disrupted" and binary.state != "initially_single_star" and binary.state != "merged":
                     binary.state = "detached"
                 binary.event = None
                 binary.time = binary.time_history[-1]
@@ -1386,14 +1387,14 @@ class StepSN(object):
 
 
         # update the orbit
-        if binary.state == "disrupted":
+        if binary.state == "disrupted" or binary.state == "initially_single_star" or binary.state == "merged":
             #the binary was already disrupted before the SN
 
             # update the binary object which was disrupted already before the SN
             for key in BINARYPROPERTIES:
-                if key != 'nearest_neighbour_distance':
+                if key not in  ('nearest_neighbour_distance','state'):
                     setattr(binary, key, None)
-            binary.state = "disrupted"
+            #binary.state = "disrupted"
             binary.event = None
             binary.separation = np.nan
             binary.eccentricity = np.nan
@@ -1401,7 +1402,7 @@ class StepSN(object):
             binary.time = binary.time_history[-1]
             binary.orbital_period = np.nan
             binary.mass_transfer_case = 'None'
-
+            
         else:
             # the binary is not disrupted at least before the SN
             # The binary exists : flag_binary is True at least before the SN
