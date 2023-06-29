@@ -274,12 +274,14 @@ class plot2D(object):
             "combined_TF12",
             "debug",
             "interpolation_class"
-        ] or 'SN_type' in termination_flag or 'state' in termination_flag:
+        ] or ('SN_type' in termination_flag or 
+              'CO_type' in termination_flag or 
+              'state' in termination_flag):
             self.all_termination_flags = False
             if 'SN_type' in termination_flag:
                 self.update_markers_colors_legends('SN_type',
                                                    MARKERS_COLORS_LEGENDS)
-            elif 'state' in termination_flag:
+            elif 'state' in termination_flag or 'CO_type' in termination_flag:
                 self.update_markers_colors_legends('state',
                                                    MARKERS_COLORS_LEGENDS)
             else:
