@@ -166,7 +166,6 @@ class ProfileInterpolator:
         binaries = np.arange(len(self.profiles))
         np.random.shuffle(binaries)    
         split = int(len(self.profiles)*valid_split) # index at which to split data
-
     
         self.valid_profiles = np.array(self.profiles)[binaries[:split]]      
         self.valid_initial = np.log10(linear_initial)[binaries[:split]]  
@@ -486,6 +485,7 @@ class Composition:
         """
         b_models = {}
         loss_history = {}
+        self.empty = []
         for state in ['stripped_He_Core_He_burning',
                       'stripped_He_Core_C_burning',
                       'stripped_He_Central_He_depleted',
@@ -589,8 +589,9 @@ class Composition:
             callback = tf.keras.callbacks.EarlyStopping(monitor='loss', patience=training_patience)
             
             if len(indices)==0:
-                warnings.warn(f"no training data available for {state}. model will return random results")
+                warnings.warn(f"no training data available for {state}")
                 loss_history[state]=np.nan
+                self.empty.append(state)
             
             elif state in ['H-rich_Central_He_depleted',
                          'H-rich_Central_C_depletion']:
@@ -674,6 +675,11 @@ class Composition:
             new[1][int(b[0]*200):int(b[1]*200)] = f_He(np.linspace(0,1,200)[int(b[0]*200):int(b[1]*200)])
             H = new[0]
             He = new[1]
+        
+        # if there is no training data in the state, return nans
+        if s1 in self.empty:
+            H = np.ones(200)*np.nan
+            He = np.ones(200)*np.nan
             
         return H, He
         
