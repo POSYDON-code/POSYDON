@@ -84,7 +84,7 @@ tests_require = [
     "pytest-cov >= 4.0.0",
 ]
 
-# For documenation
+# For documentation
 extras_require = {
     "doc": [
         "ipython",
@@ -94,6 +94,7 @@ extras_require = {
         "sphinxcontrib_programoutput",
         "PSphinxTheme",
     ],
+    "profile": ["tensorflow == 2.12.0"] # for profile interpolation
     "hpc": ["mpi4py == 3.0.3"],
 }
 
