@@ -44,7 +44,7 @@ BURNING_STATES = ["Core_H_burning", "Core_He_burning",
                   "Shell_H_burning", "Central_He_depleted",
                   "Central_C_depletion"]
 RICHNESS_STATES = ["H-rich", "stripped_He"]
-COMPACT_OBJECTS = ["WD", "NS", "BH"]
+COMPACT_OBJECTS = ["WD", "NS", "BH","massless_remnant"]
 
 ALL_STAR_STATES = COMPACT_OBJECTS + [STATE_UNDETERMINED]
 ALL_STAR_STATES.extend(["{}_{}".format(rich_in, burning)
@@ -468,7 +468,7 @@ def beaming(binary):
 
 
 def bondi_hoyle(binary, accretor, donor, idx=-1, wind_disk_criteria=True,
-                scheme='Hurley+2012'):
+                scheme='Hurley+2002'):
     """Calculate the Bondi-Hoyle accretion rate of a binary.
 
     Parameters
@@ -575,7 +575,7 @@ def bondi_hoyle(binary, accretor, donor, idx=-1, wind_disk_criteria=True,
                 slope = (3.7 - 3.25) / (-2.5 + 5.25)
             else:
                 slope = (3.25 - 3.75) / (-5.25 + 7.25)
-            v_wind = 10 ** (slope * lg_mdot[i] + 3.25 + 5.25 * slope) * 1000
+            v_wind[i] = 10 ** (slope * lg_mdot[i] + 3.25 + 5.25 * slope) * 1000
         else:
             pass
 
@@ -933,7 +933,7 @@ def inspiral_timescale_from_orbital_period(star1_mass, star2_mass,
     return T_merge
 
 
-def spin_stable_mass_transfer(star_mass_preMT, star_mass_postMT):
+def spin_stable_mass_transfer(spin_i, star_mass_preMT, star_mass_postMT):
     """Calculate the spin of an accreting BH under stable mass transfer.
 
     Based on Thorne 1974 eq. 2a.
@@ -941,12 +941,14 @@ def spin_stable_mass_transfer(star_mass_preMT, star_mass_postMT):
     """
     if star_mass_preMT is None or star_mass_postMT is None:
         return None
-
+    z1 = 1+(1-spin_i**2)**(1/3)*((1+spin_i)**(1/3)+(1-spin_i)**(1/3))
+    z2 = (3*spin_i**2+z1**2)**0.5
+    r_isco = 3 + z2 - ((3-z1)*(3+z1+2*z2))**0.5
     if (1 <= star_mass_postMT / star_mass_preMT
-            and star_mass_postMT / star_mass_preMT <= 6**0.5):
-        spin = (2. / 3)**(0.5) * (star_mass_preMT / star_mass_postMT) * (
-            4 - (18 * star_mass_preMT**2 / star_mass_postMT**2 - 2)**(0.5))
-    elif star_mass_postMT / star_mass_preMT > 6**(0.5):
+            and star_mass_postMT / star_mass_preMT <= r_isco**0.5):
+        spin = r_isco**(0.5) / 3 * (star_mass_preMT / star_mass_postMT) * (
+            4 - (3 * r_isco * star_mass_preMT**2 / star_mass_postMT**2 - 2)**(0.5))
+    elif star_mass_postMT / star_mass_preMT > r_isco**(0.5):
         spin = 1.
     else:
         spin = np.nan
@@ -2578,3 +2580,11 @@ class PchipInterpolator2:
         if self.positive:
             result = np.maximum(result, 0.0)
         return result
+
+def convert_metallicity_to_string(Z):
+    """Check if metallicity is supported by POSYDON v2."""
+    # check supported metallicity
+    valid_Z = [2e+00,1e+00,4.5e-01,2e-01,1e-01,1e-02,1e-03,1e-04]
+    if not Z in valid_Z:
+        raise ValueError(f'Metallicity {Z} not supported! Available metallicities in POSYDON v2 are {valid_Z}.')
+    return f'{Z:1.1e}'.replace('.0','')
