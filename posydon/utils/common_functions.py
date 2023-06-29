@@ -44,7 +44,7 @@ BURNING_STATES = ["Core_H_burning", "Core_He_burning",
                   "Shell_H_burning", "Central_He_depleted",
                   "Central_C_depletion"]
 RICHNESS_STATES = ["H-rich", "stripped_He"]
-COMPACT_OBJECTS = ["WD", "NS", "BH"]
+COMPACT_OBJECTS = ["WD", "NS", "BH","massless_remnant"]
 
 ALL_STAR_STATES = COMPACT_OBJECTS + [STATE_UNDETERMINED]
 ALL_STAR_STATES.extend(["{}_{}".format(rich_in, burning)

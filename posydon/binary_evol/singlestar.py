@@ -104,6 +104,14 @@ STAR_ATTRIBUTES_FROM_STAR_HISTORY_SINGLE = {
     'profile': None
 }
 
+def properties_massless_remnant():
+    PROPERTIES_MASSLESS = {}
+    for key in STARPROPERTIES:
+        PROPERTIES_MASSLESS[key] =  np.nan
+    PROPERTIES_MASSLESS["state"] = "massless_remnant"
+    PROPERTIES_MASSLESS["mass"] = 0.0
+    return PROPERTIES_MASSLESS
+
 
 class SingleStar:
     """Class describing a single star."""

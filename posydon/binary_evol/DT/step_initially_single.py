@@ -31,7 +31,7 @@ from posydon.utils.common_functions import (
 from posydon.binary_evol.flow_chart import (STAR_STATES_CC)
 import posydon.utils.constants as const
 from posydon.binary_evol.DT.step_detached import detached_step
-from posydon.binary_evol.DT.step_isolated import isolated_step
+from posydon.binary_evol.DT.step_isolated import IsolatedStep
 
 import warnings
 
@@ -53,7 +53,7 @@ LIST_ACCEPTABLE_STATES_FOR_POSTMS = STAR_STATES_H_RICH.copy()
 LIST_ACCEPTABLE_STATES_FOR_POSTHeMS = STAR_STATES_HE_RICH.copy()
 [LIST_ACCEPTABLE_STATES_FOR_POSTHeMS.remove(x) for x in LIST_ACCEPTABLE_STATES_FOR_HeMS]
 
-class InitiallySingleStep(isolated_step):
+class InitiallySingleStep(IsolatedStep):
     """
     Prepare a runaway star to do an an isolated_step)
     """
@@ -63,7 +63,7 @@ class InitiallySingleStep(isolated_step):
         grid_name_strippedHe=None,
         path=PATH_TO_POSYDON_DATA,
         *args, **kwargs):
-
+        
         super().__init__(
         grid_name_Hrich=grid_name_Hrich,
         grid_name_strippedHe=grid_name_strippedHe,
@@ -72,11 +72,9 @@ class InitiallySingleStep(isolated_step):
 
 
     def __call__(self,binary):
-        if binary.state == "initially_single_star":
-            binary.star_2 = None
-        else:
+        if binary.state != "initially_single_star":
             raise ValueError("sent to InitiallySingleStep without the binary.state being initially_single_star")
-    
+
         binary.event == None
 
         super().__call__(binary)
