@@ -250,7 +250,7 @@ class SyntheticPopulation:
             df_sel_met_oneline['metallicity'] = met
 
             if k != 0:
-                lshift_index = max(np.unique(df_sel_oneline.index)) + 1
+                shift_index = max(np.unique(df_sel_oneline.index)) + 1
                 df_sel_met_oneline.index += shift_index 
 
             df_sel_oneline = pd.concat([df_sel_oneline, df_sel_met_oneline])
