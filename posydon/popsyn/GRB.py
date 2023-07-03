@@ -3,8 +3,8 @@ __author__ = ['Simone Bavera <Simone.Bavera@unige.ch>']
 import numpy as np
 from posydon.utils.constants import Msun, clight
 
-GRB_PROPERTIES = ['S1_eta', 'S1_f_beaming', 'S1_E_GRB', 'S1_E_GRB_iso', 'S1_L_GRB_iso',
-                  'S2_eta', 'S2_f_beaming', 'S2_E_GRB', 'S2_E_GRB_iso', 'S2_L_GRB_iso']
+GRB_PROPERTIES = ['GRB1', 'S1_eta', 'S1_f_beaming', 'S1_E_GRB', 'S1_E_GRB_iso', 'S1_L_GRB_iso',
+                  'GRB2', 'S2_eta', 'S2_f_beaming', 'S2_E_GRB', 'S2_E_GRB_iso', 'S2_L_GRB_iso']
 
 def get_GRB_properties(df, GRB_efficiency, GRB_beaming):
     """Compute GRB properties for a given binary population."""
@@ -89,9 +89,13 @@ def get_GRB_properties(df, GRB_efficiency, GRB_beaming):
         # compute the GRB isotropic equivalent luminosity assuming a
         # constant average timescale of 2.5s 
         # TODO: improve this assumption
-        E_GRB_iso = df.loc[sel,f'S{i}_L_GRB_iso']
+        E_GRB_iso = df.loc[sel,f'S{i}_E_GRB_iso']
         df.loc[sel,f'S{i}_L_GRB_iso'] = E_GRB_iso/2.5 # erg/s
     
+    def flag_GRB_systems(i, sel):
+        # flag all systems emitting at least one GRB
+        df[f'GRB{i}'] = [False] * df.shape[0]
+        df.loc[sel,f'GRB{i}'] = df.loc[sel,f'S{i}_E_GRB_iso'] > 0
 
     # loop over the two star components and compute GRB properties
     # only for stars that formed a disk
@@ -103,5 +107,6 @@ def get_GRB_properties(df, GRB_efficiency, GRB_beaming):
         compute_beaming_factor(i, sel)
         compute_E_GRB_iso(i, sel)
         compute_L_GRB_iso(i, sel)
+        flag_GRB_systems(i, sel)
         
     return df

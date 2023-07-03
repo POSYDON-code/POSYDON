@@ -671,10 +671,8 @@ class Rates(object):
         return sp.integrate.quad(f, z_hor_i, z_hor_f, args=(sensitivity))[0] # Gpc^3
 
 
-    def compute_merger_rate_density(self, w_ijk, z_event, observable='DCOs', sensitivity='infiite', index=None):
-        """Compute the DCOs merger rate density.
-
-        TODO: add support for GRBs.
+    def compute_rate_density(self, w_ijk, z_event, observable='DCO', sensitivity='infiite', index=None):
+        """Compute the GRB/DCO rate density.
 
         Parameters
         ----------
@@ -682,7 +680,7 @@ class Rates(object):
             Cosmological weights computed with Eq. B.8 of Bavera et at. (2020).
         z_event : array doubles
             Cosmolgocial redshift of the event you are tracking.
-        Type : string
+        observable : string
             Event you are tracking, available:
             'DCOs': merger event of a DCO system
             'GRBs': coming soon.
@@ -703,31 +701,230 @@ class Rates(object):
         z_hor = self.get_edges_redshift_bins()
         n = len(z_hor)
 
-        if observable=='DCOs':
+        if observable=='DCO':
             z_merger_DCO = z_event
-            Rate_DCOs = np.zeros(n-1)
+            Rate_DCO = np.zeros(n-1)
             if sensitivity=='infinite':
                 for i in range(1,n):
                     # compute Eq. (D.1) in Bavera et al. (2022) arXiv:2106.15841
-                    condition_DCOs = np.logical_and(z_merger_DCO>z_hor[i-1],
+                    cond_DCO = np.logical_and(z_merger_DCO>z_hor[i-1],
                                                     z_merger_DCO<=z_hor[i])
-                    Rate_DCOs[i-1] = (sum(w_ijk[condition_DCOs])
+                    Rate_DCO[i-1] = (sum(w_ijk[cond_DCO])
                                      /self.get_shell_comovig_volume(z_hor[i-1],
                                                                     z_hor[i],
                                                                     sensitivity))
-                return Rate_DCOs # Gpc^-3 yr^-1
+                return Rate_DCO # Gpc^-3 yr^-1
             else:
                 raise ValueError('Unsupported sensitivity!')
+        
+        elif observable in ['GRB1','GRB2']:
+            s = observable[-1]
+            z_GRB = z_event
+            if sensitivity=='beamed':
+                if index is not None:
+                    f_beaming = self.get_data(f"S{s}_f_beaming",index)
+                    flag_GRB = self.get_data(f"GRB{s}",index)
+                else:
+                    raise ValueError('Missing f_beaming parameter!')
+                Rate_GRB = np.zeros(n-1)
+                for i in range(1,n):
+                    cond_GRB = np.logical_and(np.logical_and(z_GRB>z_hor[i-1], z_GRB<=z_hor[i]),
+                                              flag_GRB)
+                    f_fb = f_beaming[cond_GRB]
+                    Rate_GRB[i-1] = (sum(w_ijk[cond_GRB]*f_fb)
+                                      /self.get_shell_comovig_volume(z_hor[i-1],
+                                                                     z_hor[i],
+                                                                     sensitivity='infinite'))
+                return Rate_GRB
+
+            elif sensitivity=='infinite':
+                if index is not None:
+                    flag_GRB = self.get_data(f"GRB{s}",index)
+                else:
+                    raise ValueError('Missing f_beaming parameter!')
+                Rate_GRB = np.zeros(n-1)
+                for i in range(1,n):
+                    if index is None:
+                        raise ValueError('Provide index comlumn to identify GRB systems.')
+                    cond_GRB = np.logical_and(np.logical_and(z_GRB>z_hor[i-1], z_GRB<=z_hor[i]),
+                                              flag_GRB)
+                    Rate_GRB[i-1] = (sum(w_ijk[cond_GRB])
+                                      /self.get_shell_comovig_volume(z_hor[i-1],
+                                                                     z_hor[i],
+                                                                     sensitivity))
+                return Rate_GRB
+            else:
+                raise ValueError('Unknown sensitivity!')
         else:
             raise ValueError('Unknown observable!')
 
     ##############################
-    ##### GRBs class methods #####
+    #####  GRB class methods #####
     ##############################
     
+    def get_time_GRB(self, z_birth, event=None):
+        """Get the time of the GRB.
 
+        Parameters
+        ----------
+        z_brith : double
+            Redshif of birth.
+        event : string
+            Event you are tracking, either first or second core collpase:
+            'CC1', 'CC2'.
+
+        Returns
+        -------
+        t_BRB : double
+            Cosmic time of the GRB event in Gyr.
+
+        """
+        if event not in ['CC1', 'CC2']:
+            raise ValueError(f'Unknown event {event}!')
+        n = self.df.shape[0]
+        t_birth = self.get_cosmic_time_from_redshift(z_birth) * np.ones(n)  # Gyr
+        t_GRB = t_birth + self.df[f"time_{event}"] * 10 ** (-3) # Gyr
+        return t_GRB
 
             
+    def compute_GRB_rate_weights(self, sensitivity='infinity', path_to_dir='./', extention='npz'):
+        """Compute the cosmological weights of the transient events associated to the population.
 
+        This function will create a directory path_to_dir/GRBs/sensitivity where
+        it will save the weigths, binary indicies k, z_formation, z_grb.
+        This is needed for scalability as a ~100k DCO population generates ~10M
+        non-zero weights assuming a delta_t=100Myr.
 
+        Parameters
+        ----------
+        sensitivity : string
+            Assume there are no selection effects. Available:
+            'infinite': whole GRB population, i.e. p_det = 1
+        path_to_dir : string
+            Path to the workingn directory where you want to store the
+            cosmological weights.
+
+        """
         
+        # check if the folder three exists, otherwise create it
+        GRB_dir = os.path.join(path_to_dir,'GRBs')
+        if 'GRBs' not in os.listdir(path_to_dir):
+            os.makedirs(GRB_dir)
+
+        sensitivity_dir = os.path.join(GRB_dir, f'{sensitivity}_sensitivity')
+        if f'{sensitivity}_sensitivity' not in os.listdir(GRB_dir):
+            os.makedirs(sensitivity_dir)
+
+        # index of all DCOs
+        n = self.df.shape[0]
+        index = np.arange(0, n)
+
+        # redshif of each time bin
+        z_birth = self.get_centers_redshift_bins()
+
+        # define interpolator
+        get_redshift_from_time = self.get_redshift_from_cosmic_time_interpolator()
+
+        # hashmap to store everythig
+        data = {'index_1': {}, 'z_grb_1': {}, 'weights_1': {},
+                'index_2': {}, 'z_grb_2': {}, 'weights_2': {}}
+
+        # loop over all redshift bins
+        for i in tqdm(range(len(z_birth))):
+            
+            for s, event in enumerate(['CC1', 'CC2']):
+                # compute the CC time of each compact object
+                t_CC = self.get_time_GRB(z_birth[i], event)
+
+                # intrinsic population
+                if sensitivity == 'infinite':
+                    
+                    # sort out system not emitting GRBs
+                    bool_GRB = np.logical_and(t_CC < cosmology.age(1e-08).value*0.9999999 , self.df[f"GRB{s+1}"])
+                    
+                    # if there are no system emitting any GRB, continue
+                    if len(index[bool_GRB]) == 0:
+                        data[f'index_{s+1}'][str(z_birth[i])] = np.array([])
+                        data[f'z_grb_{s+1}'][str(z_birth[i])] = np.array([])
+                        data[f'weights_{s+1}'][str(z_birth[i])] = np.array([])
+                        continue
+                
+                    # get GRB redshifts
+                    z_GRB = get_redshift_from_time(t_CC[bool_GRB])
+
+                    # set detection probabilities to 1
+                    p_det = np.ones(len(index[bool_GRB]))
+
+                    # store index and redshift of merger
+                    data[f'index_{s+1}'][str(z_birth[i])] = index[bool_GRB]
+                    data[f'z_grb_{s+1}'][str(z_birth[i])] = z_GRB
+
+                    # compute and store cosmological rate weights as in eq. B.8 in Bavera et al. (2020)
+                    z_b = np.ones(len(index[bool_GRB]))*z_birth[i]
+                    w_ijk = self.merger_rate_weight(z_b, z_GRB, p_det, index[bool_GRB])
+                    data[f'weights_{s+1}'][str(z_birth[i])] = w_ijk
+
+                else:
+                    raise ValueError('Unknnown sensitivity!')
+
+        # TODO: implemet the saving to h5 files
+        if extention == 'npz':
+            if self.verbose:
+                print('Formatting the data ....')
+            for s in [1,2]:
+                data_to_save = [[],[],[],[]]
+                for i, dict in enumerate([data[key] for key in data.keys() if f'{s}' in key]):
+                    for key in dict.keys():
+                        data_to_save[i].extend(dict[key].tolist())
+                        if i == 0:
+                            data_to_save[3].extend(np.ones(len(dict[key]))*float(key))
+                if self.verbose:
+                    print('Saving the data ....')
+                for i, key in enumerate([key for key in data.keys() if f'{s}' in key]):
+                    if key == 'index':
+                        fmt_str = '%i'
+                    else:
+                        fmt_str = '%.8E'
+                    np.savez(os.path.join(sensitivity_dir, f"{key}.npz"),
+                            key=data_to_save[i], fmt=fmt_str)
+
+                np.savez(os.path.join(sensitivity_dir,f"z_formation_{s}.npz"),
+                        key=data_to_save[3], fmt='%.8E')
+        else:
+            raise ValueError('Extension not supported!')
+
+
+    def load_grb_rate_weights(self, sensitivity, path_to_dir='./', extention='npz'):
+        """Load the cosmological weights of the transient events associated to the population.
+
+        Parameters
+        ----------
+        sensitivity : string
+            Assume there are no selection effects. Available:
+            'infinite': whole GRB population, i.e. p_det = 1
+        path_to_dir : string
+            Path to the directory where you the cosmological weights are stored.
+
+        Returns
+        -------
+        array doubles
+            Return the cosmological weights, z_formation, z_GRB and binary
+            index k associated to each weighted binary.
+
+        """
+        dir_ = os.path.join(path_to_dir, f'GRBs/{sensitivity}_sensitivity')
+
+        if extention == 'npz':
+            if self.verbose:
+                print('Loading the data ...')
+            index_1 = np.load(os.path.join(dir_, 'index_1.npz'), allow_pickle=True)['key']
+            z_formation_1 = np.load(os.path.join(dir_, 'z_formation_1.npz'), allow_pickle=True)['key']
+            z_grb_1 = np.load(os.path.join(dir_, 'z_grb_1.npz'), allow_pickle=True)['key']
+            weights_1 = np.load(os.path.join(dir_, 'weights_1.npz'), allow_pickle=True)['key']
+            index_2 = np.load(os.path.join(dir_, 'index_2.npz'), allow_pickle=True)['key']
+            z_formation_2 = np.load(os.path.join(dir_, 'z_formation_2.npz'), allow_pickle=True)['key']
+            z_grb_2 = np.load(os.path.join(dir_, 'z_grb_2.npz'), allow_pickle=True)['key']
+            weights_2 = np.load(os.path.join(dir_, 'weights_2.npz'), allow_pickle=True)['key']
+        else:
+            raise ValueError('Extension not supported!')
+        return index_1, z_formation_1, z_grb_1, weights_1, index_2, z_formation_2, z_grb_2, weights_2

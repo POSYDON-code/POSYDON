@@ -18,7 +18,7 @@ from posydon.popsyn.binarypopulation import BinaryPopulation
 from posydon.utils.common_functions import convert_metallicity_to_string
 from posydon.popsyn.normalized_pop_mass import initial_total_underlying_mass
 from posydon.popsyn.rate_calculation import Rates
-import posydon.visualization.plot_dco as plot_dco
+import posydon.visualization.plot_pop as plot_pop
 from posydon.popsyn.GRB import get_GRB_properties, GRB_PROPERTIES
 
 
@@ -44,8 +44,10 @@ class SyntheticPopulation:
         self.df_detectable = None
         self.met_merger_efficiency = None
         self.merger_efficiency = None
-        self.z_rate_density = None
-        self.rate_density = None
+        self.dco_z_rate_density = None
+        self.dco_rate_density = None
+        self.grb_z_rate_density = None
+        self.grb_rate_density = None
 
         if '.ini' not in path_to_ini:
             raise ValueError('You did not provide a valid path_to_ini!')
@@ -86,7 +88,8 @@ class SyntheticPopulation:
         return convert_metallicity_to_string(met) + '_Zsun_'
 
     def apply_logic(self, df, S1_state=None, S2_state=None, binary_state=None,
-                    binary_event=None, step_name=None, invert_S1S2=False):
+                    binary_event=None, step_name=None, invert_S1S2=False,
+                    warn=True):
         """Select binaries in a dataframe given some properties.
 
         Parameters
@@ -113,7 +116,7 @@ class SyntheticPopulation:
             List of binaries to select given the search parameters.
 
         """
-        if not invert_S1S2 and S1_state != S2_state:
+        if not invert_S1S2 and S1_state != S2_state and warn:
             warnings.warn('Note that invert_S1S2=False, hence you are not parsing '
                           f'the dataset for {S1_state}-{S2_state} binaries and '
                           f'and not for for {S1_state}-{S2_state}. If this is '
@@ -379,6 +382,28 @@ class SyntheticPopulation:
                                                    self.MODEL['GRB_efficiency'],
                                                    self.MODEL['GRB_beaming']
                                                    )
+            # get time_CC1 and time_CC2 note that for GRB calculations we
+            # do not use the "time" column indicating the time of formation
+            # of the DCO systems as there might be cases where 
+            # CC2 might happen before CC1 due to mass ratio reversal
+            DCO = [[S1_state, None], [None, S2_state]]
+            events = ['CC1', 'CC2']
+            for i, event in enumerate(events):
+                logic = self.apply_logic(self.df, S1_state=DCO[i][0],
+                            S2_state=DCO[i][1],
+                            binary_state='detached',
+                            step_name = 'step_SN',
+                            invert_S1S2=False,
+                            warn=False)
+                last_index = -1
+                time = []
+                for index, value in self.df.loc[logic,'time'].items():
+                    if index != last_index:
+                        time.append(value)
+                    last_index = index
+                if len(time) != self.df_synthetic.shape[0]:
+                    raise ValueError('Missing values in time_{event}!')
+                self.df_synthetic[f'time_{event}'] = np.array(time)*1e-6 # Myr
 
         # for convinience reindex the DataFrame
         n_rows = len(self.df_synthetic.index)
@@ -449,8 +474,8 @@ class SyntheticPopulation:
                 self.merger_efficiency[ch] = np.array(efficiencies)
 
 
-    def compute_cosmological_weights(self, sensitivity, flag_pdet, working_dir, load_data):
-        """Compute the DCO merger rate weights.
+    def compute_cosmological_weights(self, sensitivity, flag_pdet, working_dir, load_data, pop='DCO'):
+        """Compute the GRB/DCO merger rate weights.
 
         Parameters
         ----------
@@ -486,13 +511,24 @@ class SyntheticPopulation:
         self.rates = Rates(self.df_synthetic, **self.MODEL)
 
         # compute DCO merger rate density
-        if not load_data:
-            self.rates.compute_merger_rate_weights(sensitivity=sensitivity, flag_pdet=flag_pdet, path_to_dir=working_dir)
-        index, z_formation, z_merger, w_ijk = self.rates.load_merger_rate_weights(sensitivity, path_to_dir=working_dir)
+        if pop == 'DCO':
+            if not load_data:
+                self.rates.compute_merger_rate_weights(sensitivity=sensitivity, flag_pdet=flag_pdet, path_to_dir=working_dir)
+            index, z_formation, z_merger, w_ijk = self.rates.load_merger_rate_weights(sensitivity, path_to_dir=working_dir)
 
-        return index, z_formation, z_merger, w_ijk
+            return index, z_formation, z_merger, w_ijk
+        elif pop == 'GRB':
+            if not load_data:
+                self.rates.compute_GRB_rate_weights(sensitivity=sensitivity, path_to_dir=working_dir)
+            index_1, z_formation_1, z_grb_1, w_ijk_1, \
+                index_2, z_formation_2, z_grb_2, w_ijk_2 = self.rates.load_grb_rate_weights(sensitivity, path_to_dir=working_dir)
 
-    def resample_synthetic_population(self, index, z_formation, z_merger, w_ijk, export_cols=None):
+            return index_1, z_formation_1, z_grb_1, w_ijk_1, index_2, z_formation_2, z_grb_2, w_ijk_2
+        else:
+            raise ValueError('Population not recognized!')  
+
+    def resample_synthetic_population(self, index, z_formation, z_event, w_ijk, export_cols=None, 
+                                      pop='DCO', reset_grb_properties=False):
         """Resample synthetc population to obtain intrinsic/detectable population.
 
         Parameters
@@ -526,7 +562,7 @@ class SyntheticPopulation:
         sel = w_ijk > 0.
         index = index[sel]
         z_formation = z_formation[sel]
-        z_merger = z_merger[sel]
+        z_event = z_event[sel]
         w_ijk = w_ijk[sel]
 
         # export results, we do a selections of columns else the dataframe
@@ -534,7 +570,12 @@ class SyntheticPopulation:
         df = pd.DataFrame()
         df['weight'] = w_ijk
         df['z_formation'] = z_formation
-        df['z_merger'] = z_merger
+        if pop == 'DCO':
+            df['z_merger'] = z_event
+        elif pop == 'GRB':
+            df['z_grb'] = z_event
+        else:
+            raise ValueError('Population not recognized!')
         save_cols = ['metallicity','time','t_delay','S1_state','S2_state',
                      'S1_mass','S2_mass','S1_spin','S2_spin',
                      'orbital_period','eccentricity', 'q', 'm_tot',
@@ -549,6 +590,19 @@ class SyntheticPopulation:
                     save_cols.append(c)
         for c in save_cols:
             df[c] = self.rates.get_data(c, index)
+        
+        # the same binary system can emit two GRBs, we remove the
+        # GRB properties of the other GRB to prevent mistakes
+        if reset_grb_properties == 'GRB1':
+            for key in GRB_PROPERTIES:
+                if "S1" in key:
+                    df[key] = np.nan
+        elif reset_grb_properties == 'GRB2':
+            for key in GRB_PROPERTIES:
+                if "S2" in key:
+                    df[key] = np.nan
+        else:
+            raise ValueError('reset_grb_properties key not recognized!')
 
         return df
 
@@ -573,25 +627,77 @@ class SyntheticPopulation:
         # compute cosmological weights (detection rate weights with infinite sensitivity)
         sensitivity='infinite'
         flag_pdet = False
-        index, z_formation, z_merger, w_ijk = self.compute_cosmological_weights(sensitivity, flag_pdet, working_dir=working_dir, load_data=load_data)
+        index, z_formation, z_merger, w_ijk = self.compute_cosmological_weights(sensitivity, flag_pdet, working_dir=working_dir, load_data=load_data, pop='DCO')
 
         # compute rate density weights
-        self.z_rate_density = self.rates.get_centers_redshift_bins()
-        self.rate_density = {}
-        total_rate = self.rates.compute_merger_rate_density(w_ijk, z_merger, observable='DCOs', sensitivity=sensitivity)
-        self.rate_density['total'] = total_rate
+        self.dco_z_rate_density = self.rates.get_centers_redshift_bins()
+        self.dco_rate_density = {}
+        total_rate = self.rates.compute_rate_density(w_ijk, z_merger, observable='DCO', sensitivity=sensitivity)
+        self.dco_rate_density['total'] = total_rate
         if "channel" in self.df_synthetic:
             channels = np.unique(self.df_synthetic['channel'])
             for ch in channels:
                 sel = (self.rates.get_data('channel', index) == ch)
-                rate = self.rates.compute_merger_rate_density(w_ijk[sel], z_merger[sel], observable='DCOs', sensitivity=sensitivity)
-                self.rate_density[ch] = rate
+                rate = self.rates.compute_rate_density(w_ijk[sel], z_merger[sel], observable='DCO', sensitivity=sensitivity)
+                self.dco_rate_density[ch] = rate
             
-        print(f'DCO merger rate density in the local Universe (z={self.z_rate_density[0]:1.2f}): {round(total_rate[0],2)} Gpc^-3 yr^-1')
+        print(f'DCO merger rate density in the local Universe (z={self.dco_z_rate_density[0]:1.2f}): {round(total_rate[0],2)} Gpc^-3 yr^-1')
 
         # export the intrinsic DCO population
-        self.df_intrinsic = self.resample_synthetic_population(index, z_formation, z_merger, w_ijk, export_cols=export_cols)
+        self.df_intrinsic = self.resample_synthetic_population(index, z_formation, z_merger, w_ijk, export_cols=export_cols, pop='DCO')
 
+
+    def get_grb_rate_density(self, export_cols=None,  working_dir='./', load_data=False):
+        """Compute the GRB density as a function of redshift.
+
+        Parameters
+        ----------
+        export_cols : list str
+            List of additional columns to save in the underlying/detectable
+            population.
+        working_dir : str
+            Working directory where the weights will be saved.
+        load_data : bool
+            `True` if you want to load the weights computed by this function
+            in your working directory.
+
+        """
+        if self.df_synthetic is None:
+            raise ValueError('You first need to isolated the DCO synthetic population!')
+
+        # compute cosmological weights (detection rate weights with infinite sensitivity)
+        sensitivity='infinite'
+        flag_pdet = False
+        index_1, z_formation_1, z_grb_1, w_ijk_1, \
+            index_2, z_formation_2, z_grb_2, w_ijk_2 = self.compute_cosmological_weights(sensitivity, flag_pdet, working_dir=working_dir, load_data=load_data, pop='GRB')
+
+        # compute rate density weights
+        self.grb_z_rate_density = self.rates.get_centers_redshift_bins()
+        self.grb_rate_density = {}
+        total_rate = (self.rates.compute_rate_density(w_ijk_1, z_grb_1, observable='GRB1', sensitivity=sensitivity, index=index_1) +
+                      self.rates.compute_rate_density(w_ijk_2, z_grb_2, observable='GRB2', sensitivity=sensitivity, index=index_2))
+        self.grb_rate_density['total'] = total_rate
+        if "channel" in self.df_synthetic:
+            channels = np.unique(self.df_synthetic['channel'])
+            for ch in channels:
+                sel1 = (self.rates.get_data('channel', index_1) == ch)
+                sel2 = (self.rates.get_data('channel', index_2) == ch)
+                rate = (self.rates.compute_rate_density(w_ijk_1[sel1], z_grb_1[sel1], observable='GRB1', sensitivity=sensitivity, index=index_1) +
+                        self.rates.compute_rate_density(w_ijk_2[sel2], z_grb_2[sel2], observable='GRB2', sensitivity=sensitivity, index=index_2))
+                self.grb_rate_density[ch] = rate
+            
+        print(f'GRB rate density in the local Universe (z={self.grb_z_rate_density[0]:1.2f}): {round(total_rate[0],2)} Gpc^-3 yr^-1')
+
+        # export the intrinsic grb intrisic population
+        # TODO: instead of concatenating two dataframe and duplicating the information of the same
+        # binary system we should combine the two datraframes where we have two columns for GRB1 and GRB2
+        # such dataframe will have z_grb_1, z_grb_2, weight_1, weight_2
+        # when this is addressed, remove reset_grb_properties feature
+        self.df_grb_intrinsic = pd.DataFrame()
+        df_grb_1 = self.resample_synthetic_population(index_1, z_formation_1, z_grb_1, w_ijk_1, export_cols=export_cols, pop='GRB', reset_grb_properties='GRB2')
+        df_grb_2 = self.resample_synthetic_population(index_2, z_formation_2, z_grb_2, w_ijk_2, export_cols=export_cols, pop='GRB', reset_grb_properties='GRB1')
+        self.df_grb_intrinsic = pd.concat([df_grb_1, df_grb_2], ignore_index=True, sort=False)
+        
     def get_dco_detection_rate(self, sensitivity='design_H1L1V1', export_cols=None,  working_dir='./', load_data=False):
         """Compute the detection rate per yr.
 
@@ -724,13 +830,13 @@ class SyntheticPopulation:
         """Plot merger rate efficinty."""
         if self.met_merger_efficiency is None or self.merger_efficiency is None:
             raise ValueError('First you need to compute the merger efficinty!')
-        plot_dco.plot_merger_efficiency(self.met_merger_efficiency, self.merger_efficiency, **kwargs)
+        plot_pop.plot_merger_efficiency(self.met_merger_efficiency, self.merger_efficiency, **kwargs)
 
     def plot_merger_rate_density(self, **kwargs):
         """Plot merger rate density."""
-        if self.z_rate_density is None or self.rate_density is None:
+        if self.dco_z_rate_density is None or self.dco_rate_density is None:
             raise ValueError('First you need to compute the merger rate density!')
-        plot_dco.plot_merger_rate_density(self.z_rate_density, self.rate_density, **kwargs)
+        plot_pop.plot_merger_rate_density(self.dco_z_rate_density, self.dco_rate_density, **kwargs)
 
     def plot_hist_dco_properties(self, var, intrinsic=False, detectable=False, **kwargs):
         """Plot histogram of intrinsic/detectable properites.
@@ -747,10 +853,42 @@ class SyntheticPopulation:
             ploting arguments
 
         """
-        if self.z_rate_density is None or self.rate_density is None:
+        if self.dco_z_rate_density is None or self.dco_rate_density is None:
             raise ValueError('First you need to compute the merger rate density!')
         if intrinsic:
             intrinsic = self.df_intrinsic
         if detectable:
             detectable = self.df_detectable
-        plot_dco.plot_hist_dco_properties(var, df_intrinsic=intrinsic, df_detectable=detectable, **kwargs)
+        plot_pop.plot_hist_dco_properties(var, df_intrinsic=intrinsic, df_detectable=detectable, **kwargs)
+
+    def plot_grb_rate_density(self, **kwargs):
+        """Plot grb rate density."""
+        if self.grb_z_rate_density is None or self.grb_rate_density is None:
+            raise ValueError('First you need to compute the GRB rate density!')
+        plot_pop.plot_grb_rate_density(self.grb_z_rate_density, self.grb_rate_density, **kwargs)
+        
+    def plot_hist_grb_properties(self, var, intrinsic=False, detectable=False, **kwargs):
+        """Plot histogram of intrinsic/detectable properites.
+
+        Parameters
+        ----------
+        var : str
+            Property to plot stored in intrinsic/detectable dataframe.
+        intrinsic : bool
+            `True` if you want to deplay the intrisc population.
+        detectable : bool
+            `True` if you want to deplay the detectable population.
+        **kwargs : dict
+            ploting arguments
+
+        """
+        if self.grb_z_rate_density is None or self.grb_rate_density is None:
+            raise ValueError('First you need to compute the merger rate density!')
+        if intrinsic:
+            intrinsic = self.df_grb_intrinsic
+        if detectable:
+            detectable = self.df_grb_intrinsic.copy()
+            for i in [1,2]:
+                sel = detectable[f'S{i}_f_beaming'] > 0 
+                detectable.loc[sel,'weight'] *= detectable.loc[sel,f'S{i}_f_beaming']
+        plot_pop.plot_hist_grb_properties(var, df_intrinsic=intrinsic, df_detectable=detectable, **kwargs)
