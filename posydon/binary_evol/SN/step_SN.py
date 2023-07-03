@@ -1541,7 +1541,7 @@ class StepSN(object):
             References
             ----------
             .. [1] Willems, B., Henninger, M., Levin, T., et al. 2005, ApJ, 625, 324
-
+            """
         # update the orbit
         if binary.state == "disrupted" or binary.state == "initially_single_star" or binary.state == "merged":
             #the binary was already disrupted before the SN
