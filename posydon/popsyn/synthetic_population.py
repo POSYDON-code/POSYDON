@@ -6,6 +6,7 @@ e.g. with multiple metallicities
 __authors__ = [
     "Simone Bavera <Simone.Bavera@unige.ch>",
     "Kyle Akira Rocha <kylerocha2024@u.northwestern.edu>",
+    "Monica Gallegos-Garcia <monicagallegosgarcia2024@u.northwestern.edu>",
 ]
 
 import warnings
@@ -230,6 +231,10 @@ class SyntheticPopulation:
                     df_sel_met = pd.concat([df_sel_met, df_tmp])
                     del df_tmp
 
+            if k != 0:
+                largest_index = max(np.unique(df_sel.index))
+                df_sel_met.index += largest_index
+
             # store simulated and underlying stellar mass
             df_sel_met['simulated_mass_for_met'] = simulated_mass_for_met
             df_sel_met['underlying_mass_for_met'] = initial_total_underlying_mass(df=simulated_mass_for_met, **self.ini_kw)[0]
@@ -243,6 +248,11 @@ class SyntheticPopulation:
             df_sel_met_oneline = pd.read_hdf(file,  key='oneline')
             df_sel_met_oneline = df_sel_met_oneline.loc[sel_met]
             df_sel_met_oneline['metallicity'] = met
+
+            if k != 0:
+                largest_index = max(np.unique(df_sel_oneline.index))
+                df_sel_met_oneline.index += largest_index
+
             df_sel_oneline = pd.concat([df_sel_oneline, df_sel_met_oneline])
 
             if self.verbose:
@@ -294,7 +304,7 @@ class SyntheticPopulation:
         else:
             raise ValueError('You already have a population stored in memory!')
 
-    def get_dco_at_formation(self, S1_state, S2_state, oneline_cols=None):
+    def get_dco_at_formation(self, S1_state, S2_state, oneline_cols=None, formation_channels=False):
         """Sort synthetic population, i.e. DCO at formation.
 
         Note: by default this function looks for the symmetric state
@@ -315,6 +325,12 @@ class SyntheticPopulation:
         compute_GRB_properties = (self.MODEL is not None and 
                                   "compute_GRB_properties" in self.MODEL and 
                                   self.MODEL["compute_GRB_properties"])
+
+        # add channel column to oneline dataframe
+        if formation_channels:
+            if self.verbose:
+                print('Computing formation channels...')
+            self.get_formation_channels()
 
         # to avoid the user making mistake automatically check the inverse of
         # the stellar states, since the df is already parsed this will not
@@ -338,6 +354,8 @@ class SyntheticPopulation:
             save_cols = ['S1_spin_orbit_tilt', 'S2_spin_orbit_tilt']
             if compute_GRB_properties:
                 save_cols += ['S1_m_disk_radiated', 'S2_m_disk_radiated']
+            if formation_channels:
+                save_cols.append('channel')
             if oneline_cols is not None:
                 for c in oneline_cols:
                     if c not in save_cols:
@@ -411,7 +429,24 @@ class SyntheticPopulation:
             efficiencies.append(eff)
             print(f'DCO merger efficiency at Z={met:1.2E}: {eff:1.2E} Msun^-1')
         self.met_merger_efficiency = np.array(self.met_merger_efficiency)
-        self.merger_efficiency = np.array(efficiencies)
+        self.merger_efficiency = {}
+        self.merger_efficiency['total'] = np.array(efficiencies)
+        # if the channel column is present compute the merger efficiency per channel
+        if "channel" in self.df_synthetic:
+            channels = np.unique(self.df_synthetic['channel'])
+            for ch in channels:
+                efficiencies = []
+                for met in self.met_merger_efficiency:
+                    sel = (self.df_synthetic['metallicity'] == met) & (self.df_synthetic['channel'] == ch)
+                    count = self.df_synthetic[sel].shape[0]
+                    if count > 0.:
+                        underlying_stellar_mass = self.df_synthetic.loc[sel,'underlying_mass_for_met'].values[0]
+                        eff = count/underlying_stellar_mass
+                    else:
+                        eff = np.nan
+                    efficiencies.append(eff)
+                    # print(f'Z={met:1.2E} {ch}: {eff:1.2E} Msun^-1')
+                self.merger_efficiency[ch] = np.array(efficiencies)
 
 
     def compute_cosmological_weights(self, sensitivity, flag_pdet, working_dir, load_data):
@@ -506,6 +541,8 @@ class SyntheticPopulation:
                      'm_chirp', 'chi_eff']
         if compute_GRB_properties:
             save_cols += GRB_PROPERTIES
+        if "channel" in self.rates.df:
+            save_cols.append('channel')
         if export_cols is not None:
             for c in export_cols:
                 if c not in save_cols:
@@ -540,8 +577,17 @@ class SyntheticPopulation:
 
         # compute rate density weights
         self.z_rate_density = self.rates.get_centers_redshift_bins()
-        self.rate_density = self.rates.compute_merger_rate_density(w_ijk, z_merger, observable='DCOs', sensitivity=sensitivity)
-        print(f'DCO merger rate density in the local Universe (z={self.z_rate_density[0]:1.2f}): {round(self.rate_density[0],2)} Gpc^-3 yr^-1')
+        self.rate_density = {}
+        total_rate = self.rates.compute_merger_rate_density(w_ijk, z_merger, observable='DCOs', sensitivity=sensitivity)
+        self.rate_density['total'] = total_rate
+        if "channel" in self.df_synthetic:
+            channels = np.unique(self.df_synthetic['channel'])
+            for ch in channels:
+                sel = (self.rates.get_data('channel', index) == ch)
+                rate = self.rates.compute_merger_rate_density(w_ijk[sel], z_merger[sel], observable='DCOs', sensitivity=sensitivity)
+                self.rate_density[ch] = rate
+            
+        print(f'DCO merger rate density in the local Universe (z={self.z_rate_density[0]:1.2f}): {round(total_rate[0],2)} Gpc^-3 yr^-1')
 
         # export the intrinsic DCO population
         self.df_intrinsic = self.resample_synthetic_population(index, z_formation, z_merger, w_ijk, export_cols=export_cols)
@@ -580,6 +626,35 @@ class SyntheticPopulation:
         # export the detectable DCO population
         # TODO: store p_det
         self.df_detectable = self.resample_synthetic_population(index, z_formation, z_merger, w_ijk, export_cols=export_cols)
+
+    def get_formation_channels(self):
+        """Get formation channel and add to df and df_online."""
+        
+        # loop through each binary
+        unique_binary_index = np.unique(self.df.index)
+        for index in unique_binary_index:
+
+            # get event column and information from interpolated classes
+            df_binary = self.df.loc[index,['event']].dropna()
+            df_binary_online = self.df_oneline.loc[index,['interp_class_HMS_HMS','interp_class_CO_HMS_RLO', 'interp_class_CO_HeMS']].dropna()
+            event_array = df_binary['event'].values.tolist()
+        
+            # make interpolated class information consistent with event column
+            HMS_HMS_event_dict = {'stable_MT':'oRLO1', 'no_MT':'None', 'unstable_MT':'oCE1/oDoubleCE1'}
+            event_HMS_HMS = HMS_HMS_event_dict[df_binary_online['interp_class_HMS_HMS']]
+            
+            # for now, only append information for RLO1; unstable_MT information already exists
+            if event_HMS_HMS == 'oRLO1':
+                event_array.insert(1, event_HMS_HMS)
+                formation_channel = "_".join(event_array)
+            else:
+                formation_channel = "_".join(event_array)
+                
+            # TODO: drop the envent CO_contact
+            # TODO: once we trust the redirection to the detached step
+            #       drop also the redirect event
+                
+            self.df_oneline.loc[index,'channel'] = formation_channel
 
     def save_intrinsic_pop(self, path='./intrinsic_population.h5'):
         """Save intrinsic population.
