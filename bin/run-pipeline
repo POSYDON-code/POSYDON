@@ -632,32 +632,37 @@ def logic_rerun(grid, rerun_type):
         N_runs = len(grid)
         runs_to_rerun = []
         for i in range(N_runs):
-          if  grid[i].binary_history is not None and grid[i].history1 is not None:
-              rl1 = grid[i].binary_history['rl_relative_overflow_1']
-              rl2 = grid[i].binary_history['rl_relative_overflow_2']
-              w_wcrit = grid[i].history1['surf_avg_omega_div_omega_crit']
-              reverse = np.logical_and(rl1<-0.05, rl2>-0.05)
-              transfer = np.logical_and(reverse, w_wcrit>0.9)
-              if np.max(transfer) == True:
-                runs_to_rerun += [i]
+            if grid[i].binary_history is not None and grid[i].history1 is not None:
+                rl1 = grid[i].binary_history['rl_relative_overflow_1']
+                rl2 = grid[i].binary_history['rl_relative_overflow_2']
+                w_wcrit = grid[i].history1['surf_avg_omega_div_omega_crit']
+                reverse = np.logical_and(rl1<-0.05, rl2>-0.05)
+                transfer = np.logical_and(reverse, w_wcrit>0.9)
+                if np.max(transfer) == True:
+                    runs_to_rerun += [i]
         runs_to_rerun = np.array(runs_to_rerun)
     elif rerun_type == 'TPAGBwind':
         N_runs = len(grid)
         runs_to_rerun = []
+        hot_wind_full_on_T = 1.2e4 # inlist value
         for i in range(N_runs):
-          if  grid[i].binary_history is not None and grid[i].history1 is not None:
-              hot_wind_full_on_T = 1.2e4 # inlist value
-              s1_Teff = 10**grid[i].history1['log_Teff']
-              s2_Teff = 10**grid[i].history2['log_Teff']
-              s1_Yc = grid[i].history1['center_he4']
-              s2_Yc = grid[i].history2['center_he4']
-              s1_he_shell_mass = grid[i].history1['he_core_mass'] - grid[i].history1['co_core_mass']
-              s2_he_shell_mass = grid[i].history2['he_core_mass'] - grid[i].history2['co_core_mass']
-              tpagb_1 = np.logical_and(s1_Teff <= hot_wind_full_on_T, s1_Yc <= 1e-6)
-              tpagb_1 = np.logical_and(tpagb_1, s1_he_shell_mass <= 1e-1)
-              tpagb_2 = np.logical_and(s2_Teff <= hot_wind_full_on_T, s2_Yc <= 1e-6)
-              tpagb_2 = np.logical_and(tpagb_2, s2_he_shell_mass <= 1e-1)
-              if np.max(np.logical_or(tpagb_1, tpagb_2)) == True:
+            if grid[i].history1 is not None:
+                s1_Teff = 10**grid[i].history1['log_Teff']
+                s1_Yc = grid[i].history1['center_he4']
+                s1_he_shell_mass = grid[i].history1['he_core_mass'] - grid[i].history1['co_core_mass']
+                tpagb_1 = np.logical_and(s1_Teff <= hot_wind_full_on_T, s1_Yc <= 1e-6)
+                tpagb_1 = np.logical_and(tpagb_1, s1_he_shell_mass <= 1e-1)
+            else:
+                tpagb_1 = np.array([False])
+            if grid[i].history2 is not None:
+                s2_Teff = 10**grid[i].history2['log_Teff']
+                s2_Yc = grid[i].history2['center_he4']
+                s2_he_shell_mass = grid[i].history2['he_core_mass'] - grid[i].history2['co_core_mass']
+                tpagb_2 = np.logical_and(s2_Teff <= hot_wind_full_on_T, s2_Yc <= 1e-6)
+                tpagb_2 = np.logical_and(tpagb_2, s2_he_shell_mass <= 1e-1)
+            else:
+                tpagb_2 = np.array([False])
+            if np.max(np.logical_or(tpagb_1, tpagb_2)) == True:
                 runs_to_rerun += [i]
         runs_to_rerun = np.array(runs_to_rerun)
     elif rerun_type == 'envelope_mass_limit': # maybe 'fe_core_infall_limit' as well?
