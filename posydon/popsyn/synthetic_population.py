@@ -933,7 +933,7 @@ class SyntheticPopulation:
                 df_observable = None       
         else:
             raise ValueError('Population not recognized!')
-        plot_pop.plot_hist_properties(var, df_intrinsic=df_intrinsic, df_observable=df_observable, **kwargs)
+        plot_pop.plot_hist_properties(var, df_intrinsic=df_intrinsic, df_observable=df_observable, pop=pop, **kwargs)
 
     def plot_rate_density(self, DCO=False, GRB=False, **kwargs):
         """Plot DCO and GRB rate densities."""

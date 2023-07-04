@@ -117,7 +117,10 @@ def plot_hist_properties(x, df_intrinsic=None, df_observable=None,
                         channel=None,
                         show=True, path=None, alpha=0.5,
                         range=None, bins=20, xlog=False, ylog=False,
-                        **kwargs):
+                        pop=None, **kwargs):
+    if pop is None:
+        raise ValueError('Population type not specified.')
+    
     if df_intrinsic is not None and df_observable is not None:
         title = r'Intrinsic vs. observable (dashed) population'
     elif df_intrinsic is not None:
@@ -130,15 +133,19 @@ def plot_hist_properties(x, df_intrinsic=None, df_observable=None,
 
     plt.figure()
     if df_intrinsic is not None:
-        # reweight to have GRB1/GRB2 ratio
-        df_intrinsic['weight'] /= sum(df_intrinsic['weight'])
+        if pop == 'GRB':
+            # reweight to have GRB1/GRB2 ratio
+            df_intrinsic['weight'] /= sum(df_intrinsic['weight'])
         if channel is not None:
             sel = (df_intrinsic['weight'] > 0) & (df_intrinsic['channel'] == channel)
             title += f'\n{channel}'
         else:
             sel = df_intrinsic['weight'] > 0
         if isinstance(x, str):
-            sel_tmp = sel & ~df_intrinsic[x].isna()
+            if pop == 'GRB':
+                sel_tmp = sel & ~df_intrinsic[x].isna()
+            else:
+                sel_tmp = sel
             values, weights = df_intrinsic.loc[sel_tmp,[x,'weight']].values.T
             if xlog:
                 mask = values > 0
@@ -150,11 +157,16 @@ def plot_hist_properties(x, df_intrinsic=None, df_observable=None,
             for i, x_i in enumerate(x):
                 if "S1" in x_i:
                     label = 'S1'
+                    s = 1
                 elif "S2" in x_i:
                     label = 'S2'
+                    s = 2 
                 else:
                     label = x_i
-                sel_tmp = sel & ~df_intrinsic[x_i].isna()
+                if pop == 'GRB':
+                    sel_tmp = sel & ~df_intrinsic[x_i].isna() & df_intrinsic[f'GRB{s}'] 
+                else:
+                    sel_tmp = sel
                 values, weights = df_intrinsic.loc[sel_tmp,[x_i,'weight']].values.T
                 if xlog:
                     mask = values > 0
@@ -164,8 +176,9 @@ def plot_hist_properties(x, df_intrinsic=None, df_observable=None,
                          color=COLORS[i], label=label,
                          alpha=alpha, range=range, bins=bins)
     if df_observable is not None:
-        # reweight to have GRB1/GRB2 ratio
-        df_observable['weight'] /= sum(df_observable['weight'])
+        if pop == 'GRB':
+            # reweight to have GRB1/GRB2 ratio
+            df_observable['weight'] /= sum(df_observable['weight'])
         if channel is not None:
             sel = (df_observable['weight'] > 0) & (df_observable['channel'] == channel)
             if channel not in title:
@@ -173,7 +186,10 @@ def plot_hist_properties(x, df_intrinsic=None, df_observable=None,
         else:
             sel = df_observable['weight'] > 0
         if isinstance(x, str):
-            sel_tmp = sel & ~df_observable[x].isna()
+            if pop == 'GRB':
+                sel_tmp = sel & ~df_observable[x].isna()
+            else:
+                sel_tmp = sel
             values, weights = df_observable.loc[sel_tmp,[x,'weight']].values.T
             if xlog:
                 mask = values > 0
@@ -187,11 +203,16 @@ def plot_hist_properties(x, df_intrinsic=None, df_observable=None,
             for i, x_i in enumerate(x):
                 if "S1" in x_i:
                     label = 'S1'
+                    s = 1
                 elif "S2" in x_i:
                     label = 'S2'
+                    s = 2
                 else:
                     label = x_i
-                sel_tmp = sel & ~df_observable[x_i].isna()
+                if pop == 'GRB':
+                    sel_tmp = sel & ~df_observable[x_i].isna() & df_observable[f'GRB{s}']
+                else:
+                    sel_tmp = sel
                 values, weights = df_observable.loc[sel_tmp,[x_i,'weight']].values.T
                 if xlog:
                     mask = values > 0
