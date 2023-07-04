@@ -12,6 +12,7 @@ __authors__ = [
 import warnings
 import numpy as np
 import pandas as pd
+from tqdm import tqdm
 from posydon.utils.constants import Zsun
 from posydon.popsyn.io import binarypop_kwargs_from_ini
 from posydon.popsyn.binarypopulation import BinaryPopulation
@@ -37,15 +38,19 @@ class SyntheticPopulation:
 
         self.verbose = verbose
         self.MODEL = MODEL
+        # DCOs
         self.df = None
         self.df_oneline = None
         self.df_synthetic = None
-        self.df_intrinsic = None
-        self.df_detectable = None
+        self.df_dco_intrinsic = None
+        self.df_dco_observable = None
         self.met_merger_efficiency = None
         self.merger_efficiency = None
         self.dco_z_rate_density = None
         self.dco_rate_density = None
+        # GRBs
+        self.df_grb_intrinsic = None
+        self.df_grb_observable = None
         self.grb_z_rate_density = None
         self.grb_rate_density = None
 
@@ -378,9 +383,13 @@ class SyntheticPopulation:
             if ('GRB_beaming' not in self.MODEL or
                 self.MODEL['GRB_beaming'] is None):
                 raise ValueError('Missing GRB_beaming variable in the MODEL!')
+            if ('E_GRB_iso_min' not in self.MODEL or
+                self.MODEL['E_GRB_iso_min'] is None):
+                raise ValueError('Missing GRB_beaming variable in the MODEL!')
             self.df_synthetic = get_GRB_properties(self.df_synthetic,
                                                    self.MODEL['GRB_efficiency'],
-                                                   self.MODEL['GRB_beaming']
+                                                   self.MODEL['GRB_beaming'],
+                                                   self.MODEL['E_GRB_iso_min']
                                                    )
             # get time_CC1 and time_CC2 note that for GRB calculations we
             # do not use the "time" column indicating the time of formation
@@ -528,8 +537,8 @@ class SyntheticPopulation:
             raise ValueError('Population not recognized!')  
 
     def resample_synthetic_population(self, index, z_formation, z_event, w_ijk, export_cols=None, 
-                                      pop='DCO', reset_grb_properties=False):
-        """Resample synthetc population to obtain intrinsic/detectable population.
+                                      pop='DCO', reset_grb_properties=None):
+        """Resample synthetc population to obtain intrinsic/observable population.
 
         Parameters
         ----------
@@ -543,7 +552,7 @@ class SyntheticPopulation:
         w_ijk : array float
             Cosmological weights computed with Eq. B.8 of Bavera et at. (2020).
         export_cols : list str
-            List of additional columns to save in the underlying/detectable
+            List of additional columns to save in the intrinsic/observable
             population.
 
         Returns
@@ -593,16 +602,17 @@ class SyntheticPopulation:
         
         # the same binary system can emit two GRBs, we remove the
         # GRB properties of the other GRB to prevent mistakes
-        if reset_grb_properties == 'GRB1':
-            for key in GRB_PROPERTIES:
-                if "S1" in key:
-                    df[key] = np.nan
-        elif reset_grb_properties == 'GRB2':
-            for key in GRB_PROPERTIES:
-                if "S2" in key:
-                    df[key] = np.nan
-        else:
-            raise ValueError('reset_grb_properties key not recognized!')
+        if reset_grb_properties is not None:
+            if reset_grb_properties == 'GRB1':
+                for key in GRB_PROPERTIES:
+                    if "S1" in key:
+                        df[key] = np.nan
+            elif reset_grb_properties == 'GRB2':
+                for key in GRB_PROPERTIES:
+                    if "S2" in key:
+                        df[key] = np.nan
+            else:
+                raise ValueError(f'reset_grb_properties=={reset_grb_properties} key not recognized!')
 
         return df
 
@@ -612,7 +622,7 @@ class SyntheticPopulation:
         Parameters
         ----------
         export_cols : list str
-            List of additional columns to save in the underlying/detectable
+            List of additional columns to save in the intrinsic/observable
             population.
         working_dir : str
             Working directory where the weights will be saved.
@@ -636,7 +646,7 @@ class SyntheticPopulation:
         self.dco_rate_density['total'] = total_rate
         if "channel" in self.df_synthetic:
             channels = np.unique(self.df_synthetic['channel'])
-            for ch in channels:
+            for ch in tqdm(channels):
                 sel = (self.rates.get_data('channel', index) == ch)
                 rate = self.rates.compute_rate_density(w_ijk[sel], z_merger[sel], observable='DCO', sensitivity=sensitivity)
                 self.dco_rate_density[ch] = rate
@@ -644,7 +654,7 @@ class SyntheticPopulation:
         print(f'DCO merger rate density in the local Universe (z={self.dco_z_rate_density[0]:1.2f}): {round(total_rate[0],2)} Gpc^-3 yr^-1')
 
         # export the intrinsic DCO population
-        self.df_intrinsic = self.resample_synthetic_population(index, z_formation, z_merger, w_ijk, export_cols=export_cols, pop='DCO')
+        self.df_dco_intrinsic = self.resample_synthetic_population(index, z_formation, z_merger, w_ijk, export_cols=export_cols, pop='DCO')
 
 
     def get_grb_rate_density(self, export_cols=None,  working_dir='./', load_data=False):
@@ -653,7 +663,7 @@ class SyntheticPopulation:
         Parameters
         ----------
         export_cols : list str
-            List of additional columns to save in the underlying/detectable
+            List of additional columns to save in the intrinsic/observable
             population.
         working_dir : str
             Working directory where the weights will be saved.
@@ -671,22 +681,31 @@ class SyntheticPopulation:
         index_1, z_formation_1, z_grb_1, w_ijk_1, \
             index_2, z_formation_2, z_grb_2, w_ijk_2 = self.compute_cosmological_weights(sensitivity, flag_pdet, working_dir=working_dir, load_data=load_data, pop='GRB')
 
-        # compute rate density weights
+        # compute beamed rate density weights
+        # note we compute the beamed rate density for GRBs as this is what is often reported in the literature
+        # as the beaming factor is not known a priori
         self.grb_z_rate_density = self.rates.get_centers_redshift_bins()
         self.grb_rate_density = {}
-        total_rate = (self.rates.compute_rate_density(w_ijk_1, z_grb_1, observable='GRB1', sensitivity=sensitivity, index=index_1) +
-                      self.rates.compute_rate_density(w_ijk_2, z_grb_2, observable='GRB2', sensitivity=sensitivity, index=index_2))
+        self.grb_rate_density['total_GRB1'] = self.rates.compute_rate_density(w_ijk_1, z_grb_1, observable='GRB1', sensitivity='beamed', index=index_1)
+        self.grb_rate_density['total_GRB2'] = self.rates.compute_rate_density(w_ijk_2, z_grb_2, observable='GRB2', sensitivity='beamed', index=index_2)
+        total_rate = self.grb_rate_density['total_GRB1'] + self.grb_rate_density['total_GRB2']
         self.grb_rate_density['total'] = total_rate
         if "channel" in self.df_synthetic:
             channels = np.unique(self.df_synthetic['channel'])
-            for ch in channels:
+            for ch in tqdm(channels):
                 sel1 = (self.rates.get_data('channel', index_1) == ch)
+                if any(sel1):
+                    self.grb_rate_density[ch+'_GRB1'] = self.rates.compute_rate_density(w_ijk_1[sel1], z_grb_1[sel1], observable='GRB1', sensitivity='beamed', index=index_1[sel1])
+                else:
+                    self.grb_rate_density[ch+'_GRB1'] = np.zeros(len(self.grb_z_rate_density))
                 sel2 = (self.rates.get_data('channel', index_2) == ch)
-                rate = (self.rates.compute_rate_density(w_ijk_1[sel1], z_grb_1[sel1], observable='GRB1', sensitivity=sensitivity, index=index_1) +
-                        self.rates.compute_rate_density(w_ijk_2[sel2], z_grb_2[sel2], observable='GRB2', sensitivity=sensitivity, index=index_2))
-                self.grb_rate_density[ch] = rate
+                if any(sel2):
+                    self.grb_rate_density[ch+'_GRB2'] = self.rates.compute_rate_density(w_ijk_2[sel2], z_grb_2[sel2], observable='GRB2', sensitivity='beamed', index=index_2[sel2])
+                else:
+                    self.grb_rate_density[ch+'_GRB2'] = np.zeros(len(self.grb_z_rate_density))
+                self.grb_rate_density[ch] = self.grb_rate_density[ch+'_GRB1'] + self.grb_rate_density[ch+'_GRB2']
             
-        print(f'GRB rate density in the local Universe (z={self.grb_z_rate_density[0]:1.2f}): {round(total_rate[0],2)} Gpc^-3 yr^-1')
+        print(f'GRB (beamed) rate density in the local Universe (z={self.grb_z_rate_density[0]:1.2f}): {round(total_rate[0],2)} Gpc^-3 yr^-1')
 
         # export the intrinsic grb intrisic population
         # TODO: instead of concatenating two dataframe and duplicating the information of the same
@@ -697,6 +716,11 @@ class SyntheticPopulation:
         df_grb_1 = self.resample_synthetic_population(index_1, z_formation_1, z_grb_1, w_ijk_1, export_cols=export_cols, pop='GRB', reset_grb_properties='GRB2')
         df_grb_2 = self.resample_synthetic_population(index_2, z_formation_2, z_grb_2, w_ijk_2, export_cols=export_cols, pop='GRB', reset_grb_properties='GRB1')
         self.df_grb_intrinsic = pd.concat([df_grb_1, df_grb_2], ignore_index=True, sort=False)
+        # the observable population accounts for beaming
+        self.df_grb_observable = self.df_grb_intrinsic.copy()
+        for i in [1,2]:
+            sel = self.df_grb_observable[f'S{i}_f_beaming'] > 0 
+            self.df_grb_observable.loc[sel,'weight'] *= self.df_grb_observable.loc[sel,f'S{i}_f_beaming']
         
     def get_dco_detection_rate(self, sensitivity='design_H1L1V1', export_cols=None,  working_dir='./', load_data=False):
         """Compute the detection rate per yr.
@@ -712,7 +736,7 @@ class SyntheticPopulation:
                 'O4high_H1L1V1' : aligo_O4high.txt, aligo_O4high.txt, avirgo_O4high_NEW.txt
                 'design_H1L1V1' : AplusDesign.txt, AplusDesign.txt, avirgo_O5high_NEW.txt
         export_cols : list str
-            List of additional columns to save in the underlying/detectable
+            List of additional columns to save in the intrinsic/observable
             population.
         working_dir : str
             Working directory where the weights will be saved.
@@ -729,9 +753,9 @@ class SyntheticPopulation:
         index, z_formation, z_merger, w_ijk = self.compute_cosmological_weights(sensitivity, flag_pdet, working_dir=working_dir, load_data=load_data)
         print(f'DCO detection rate at {sensitivity} sensitivity: {sum(w_ijk):1.2f} yr^-1')
 
-        # export the detectable DCO population
+        # export the observable DCO population
         # TODO: store p_det
-        self.df_detectable = self.resample_synthetic_population(index, z_formation, z_merger, w_ijk, export_cols=export_cols)
+        self.df_dco_observable = self.resample_synthetic_population(index, z_formation, z_merger, w_ijk, export_cols=export_cols)
 
     def get_formation_channels(self):
         """Get formation channel and add to df and df_online."""
@@ -762,7 +786,7 @@ class SyntheticPopulation:
                 
             self.df_oneline.loc[index,'channel'] = formation_channel
 
-    def save_intrinsic_pop(self, path='./intrinsic_population.h5'):
+    def save_intrinsic_pop(self, path='./intrinsic_population_type.h5', pop='DCO'):
         """Save intrinsic population.
 
         Parameters
@@ -771,14 +795,24 @@ class SyntheticPopulation:
             Path to dataset.
 
         """
-        if self.df_intrinsic is None:
-            raise ValueError('Nothing to save!')
+        if pop == 'DCO':
+            if self.df_dco_intrinsic is None:
+                raise ValueError('Nothing to save!')
+            else:
+                self.df_dco_intrinsic.to_hdf(path.replace('type', pop), key='history')
+                if self.verbose:
+                    print('Intrinsic population successfully saved!')
+        elif pop == 'GRB':
+            if self.df_grb_intrinsic is None:
+                raise ValueError('Nothing to save!')
+            else:
+                self.df_grb_intrinsic.to_hdf(path.replace('type', pop), key='history')
+                if self.verbose:
+                    print('Intrinsic population successfully saved!')
         else:
-            self.df_intrinsic.to_hdf(path, key='history')
-            if self.verbose:
-                print('Intrinsic population successfully saved!')
+            raise ValueError('Population not recognized!')
 
-    def load_intrinsic_pop(self, path):
+    def load_intrinsic_pop(self, path, pop='DCO'):
         """Load intrinsic population.
 
         Parameters
@@ -787,31 +821,23 @@ class SyntheticPopulation:
             Path to dataset.
 
         """
-        if self.df_intrinsic is None:
-            self.df_intrinsic = pd.read_hdf(path, key='history')
-            if self.verbose:
-                print('Intrinsic population successfully loaded!')
-        else:
-            raise ValueError('You already have an intrinsic population stored in memory!')
-
-    def save_detectable_pop(self, path='./detectable_population.h5'):
-        """Save detectable population.
-
-        Parameters
-        ----------
-        path : str
-            Path to dataset.
-
-        """
-        if self.df_detectable is None:
-            raise ValueError('Nothing to save!')
-        else:
-            self.df_detectable.to_hdf(path, key='history')
-            if self.verbose:
-                print('Detectable population successfully saved!')
-
-    def load_detectable_pop(self, path):
-        """Load detectable population.
+        if pop == 'DCO':
+            if self.df_dco_intrinsic is None:
+                self.df_dco_intrinsic = pd.read_hdf(path, key='history')
+                if self.verbose:
+                    print('Intrinsic population successfully loaded!')
+            else:
+                raise ValueError('You already have an intrinsic population stored in memory!')
+        elif pop == 'GRB':
+            if self.df_grb_intrinsic is None:
+                self.df_grb_intrinsic = pd.read_hdf(path, key='history')
+                if self.verbose:
+                    print('Intrinsic population successfully loaded!')
+            else:
+                raise ValueError('You already have an intrinsic population stored in memory!')
+            
+    def save_observable_pop(self, path='./observable_population_type.h5', pop='DCO'):
+        """Save observable population.
 
         Parameters
         ----------
@@ -819,12 +845,48 @@ class SyntheticPopulation:
             Path to dataset.
 
         """
-        if self.df_detectable is None:
-            self.df_detectable = pd.read_hdf(path, key='history')
-            if self.verbose:
-                print('Detectable population successfully loaded!')
+        if pop == 'DCO':
+            if self.df_dco_observable is None:
+                raise ValueError('Nothing to save!')
+            else:
+                self.df_dco_observable.to_hdf(path.replace('type', pop), key='history')
+                if self.verbose:
+                    print('observable population successfully saved!')
+        elif pop == 'GRB':
+            if self.df_grb_observable is None:
+                raise ValueError('Nothing to save!')
+            else:
+                self.df_grb_observable.to_hdf(path.replace('type', pop), key='history')
+                if self.verbose:
+                    print('observable population successfully saved!') 
         else:
-            raise ValueError('You already have an detectable population stored in memory!')
+            raise ValueError('Population not recognized!')
+
+    def load_observable_pop(self, path, pop='DCO'):
+        """Load observable population.
+
+        Parameters
+        ----------
+        path : str
+            Path to dataset.
+
+        """
+        if pop == 'DCO':
+            if self.df_dco_observable is None:
+                self.df_dco_observable = pd.read_hdf(path, key='history')
+                if self.verbose:
+                    print('observable population successfully loaded!')
+            else:
+                raise ValueError('You already have an observable population stored in memory!')
+        elif pop == 'GRB':
+            if self.df_grb_observable is None:
+                self.df_grb_observable = pd.read_hdf(path, key='history')
+                if self.verbose:
+                    print('observable population successfully loaded!')
+            else:
+                raise ValueError('You already have an observable population stored in memory!')
+        else:
+            raise ValueError('Population not recognized!')       
 
     def plot_merger_efficiency(self, **kwargs):
         """Plot merger rate efficinty."""
@@ -832,63 +894,67 @@ class SyntheticPopulation:
             raise ValueError('First you need to compute the merger efficinty!')
         plot_pop.plot_merger_efficiency(self.met_merger_efficiency, self.merger_efficiency, **kwargs)
 
-    def plot_merger_rate_density(self, **kwargs):
-        """Plot merger rate density."""
-        if self.dco_z_rate_density is None or self.dco_rate_density is None:
-            raise ValueError('First you need to compute the merger rate density!')
-        plot_pop.plot_merger_rate_density(self.dco_z_rate_density, self.dco_rate_density, **kwargs)
-
-    def plot_hist_dco_properties(self, var, intrinsic=False, detectable=False, **kwargs):
-        """Plot histogram of intrinsic/detectable properites.
+    def plot_hist_properties(self, var, intrinsic=False, observable=False, pop=None, **kwargs):
+        """Plot histogram of intrinsic/observable properites.
 
         Parameters
         ----------
         var : str
-            Property to plot stored in intrinsic/detectable dataframe.
+            Property to plot stored in intrinsic/observable dataframe.
         intrinsic : bool
             `True` if you want to deplay the intrisc population.
-        detectable : bool
-            `True` if you want to deplay the detectable population.
+        observable : bool
+            `True` if you want to deplay the observable population.
         **kwargs : dict
             ploting arguments
 
         """
-        if self.dco_z_rate_density is None or self.dco_rate_density is None:
-            raise ValueError('First you need to compute the merger rate density!')
-        if intrinsic:
-            intrinsic = self.df_intrinsic
-        if detectable:
-            detectable = self.df_detectable
-        plot_pop.plot_hist_dco_properties(var, df_intrinsic=intrinsic, df_detectable=detectable, **kwargs)
+        if pop == 'DCO':
+            if self.df_dco_intrinsic is None and self.df_dco_observable is None:
+                raise ValueError('First you need to compute the merger rate density!')
+            if intrinsic:
+                df_intrinsic = self.df_dco_intrinsic
+            else:
+                df_intrinsic = None
+            if observable:
+                df_observable = self.df_dco_observable
+            else:
+                df_observable = None
+        elif pop == 'GRB':
+            if self.df_grb_intrinsic is None and self.df_grb_observable is None:
+                raise ValueError('First you need to compute the merger rate density!')
+            if intrinsic:
+                df_intrinsic = self.df_grb_intrinsic
+            else:
+                df_intrinsic = None
+            if observable:
+                df_observable = self.df_grb_observable
+            else:
+                df_observable = None       
+        else:
+            raise ValueError('Population not recognized!')
+        plot_pop.plot_hist_properties(var, df_intrinsic=df_intrinsic, df_observable=df_observable, **kwargs)
 
-    def plot_grb_rate_density(self, **kwargs):
-        """Plot grb rate density."""
-        if self.grb_z_rate_density is None or self.grb_rate_density is None:
-            raise ValueError('First you need to compute the GRB rate density!')
-        plot_pop.plot_grb_rate_density(self.grb_z_rate_density, self.grb_rate_density, **kwargs)
-        
-    def plot_hist_grb_properties(self, var, intrinsic=False, detectable=False, **kwargs):
-        """Plot histogram of intrinsic/detectable properites.
-
-        Parameters
-        ----------
-        var : str
-            Property to plot stored in intrinsic/detectable dataframe.
-        intrinsic : bool
-            `True` if you want to deplay the intrisc population.
-        detectable : bool
-            `True` if you want to deplay the detectable population.
-        **kwargs : dict
-            ploting arguments
-
-        """
-        if self.grb_z_rate_density is None or self.grb_rate_density is None:
-            raise ValueError('First you need to compute the merger rate density!')
-        if intrinsic:
-            intrinsic = self.df_grb_intrinsic
-        if detectable:
-            detectable = self.df_grb_intrinsic.copy()
-            for i in [1,2]:
-                sel = detectable[f'S{i}_f_beaming'] > 0 
-                detectable.loc[sel,'weight'] *= detectable.loc[sel,f'S{i}_f_beaming']
-        plot_pop.plot_hist_grb_properties(var, df_intrinsic=intrinsic, df_detectable=detectable, **kwargs)
+    def plot_rate_density(self, DCO=False, GRB=False, **kwargs):
+        """Plot DCO and GRB rate densities."""
+        if not DCO and not GRB:
+            raise ValueError('You need to choose at least one population to plot!')
+        if DCO:
+            if self.dco_z_rate_density is None or self.dco_rate_density is None:
+                raise ValueError('First you need to compute the merger rate density!')
+            else:
+                z_dco = self.dco_z_rate_density
+                rate_dco =  self.dco_rate_density
+        else:
+            z_dco = None
+            rate_dco = None
+        if GRB:
+            if self.grb_z_rate_density is None or self.grb_rate_density is None:
+                raise ValueError('First you need to compute the GRB rate density!')
+            else:
+                z_grb = self.grb_z_rate_density
+                rate_grb =  self.grb_rate_density
+        else:
+            z_grb = None
+            rate_grb = None
+        plot_pop.plot_rate_density(z_dco, rate_dco, z_grb, rate_grb, **kwargs)

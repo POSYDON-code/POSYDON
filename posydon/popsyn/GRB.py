@@ -1,18 +1,24 @@
 __author__ = ['Simone Bavera <Simone.Bavera@unige.ch>']
 
+import warnings
 import numpy as np
 from posydon.utils.constants import Msun, clight
 
 GRB_PROPERTIES = ['GRB1', 'S1_eta', 'S1_f_beaming', 'S1_E_GRB', 'S1_E_GRB_iso', 'S1_L_GRB_iso',
                   'GRB2', 'S2_eta', 'S2_f_beaming', 'S2_E_GRB', 'S2_E_GRB_iso', 'S2_L_GRB_iso']
 
-def get_GRB_properties(df, GRB_efficiency, GRB_beaming):
+def get_GRB_properties(df, GRB_efficiency, GRB_beaming, E_GRB_iso_min=0.):
     """Compute GRB properties for a given binary population."""
     
     # check if radiated disk mass is avaialble to compute GRB properties
     if ('S1_m_disk_radiated' not in df or
         'S2_m_disk_radiated' not in df):
         raise ValueError('m_disk_radiated not found in the dataframe!')
+    
+    # reminder the user about the threshold cut
+    if E_GRB_iso_min != 0.:
+        warnings.warn("We only consider GRBs with isotropic equivalent "
+                        f"energy larger than {E_GRB_iso_min} erg!")
         
     # define some methods
     
@@ -95,7 +101,8 @@ def get_GRB_properties(df, GRB_efficiency, GRB_beaming):
     def flag_GRB_systems(i, sel):
         # flag all systems emitting at least one GRB
         df[f'GRB{i}'] = [False] * df.shape[0]
-        df.loc[sel,f'GRB{i}'] = df.loc[sel,f'S{i}_E_GRB_iso'] > 0
+        df.loc[sel,f'GRB{i}'] = df.loc[sel,f'S{i}_E_GRB_iso'] > E_GRB_iso_min
+            
 
     # loop over the two star components and compute GRB properties
     # only for stars that formed a disk

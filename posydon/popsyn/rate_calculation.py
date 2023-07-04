@@ -36,6 +36,7 @@ DEFAULT_MODEL = {
     'compute_GRB_properties' : False,
     'GRB_beaming' : None, # e.g., 0.5, 'Goldstein+15'
     'GRB_efficiency' : None, # e.g., 0.01
+    'E_GRB_iso_min' : None, # e.g., 1e51 erg 
 }
 
 
@@ -103,7 +104,8 @@ class Rates(object):
                                   "computing them right now!")
                     self.df = get_GRB_properties(self.df, 
                                                  self.GRB_efficiency, 
-                                                 self.GRB_beaming)
+                                                 self.GRB_beaming,
+                                                 self.E_GRB_iso_min)
 
     ######################################################
     ###   DCO detection rate and merger rate density   ###
