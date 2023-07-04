@@ -133,9 +133,8 @@ def plot_hist_properties(x, df_intrinsic=None, df_observable=None,
 
     plt.figure()
     if df_intrinsic is not None:
-        if pop == 'GRB':
-            # reweight to have GRB1/GRB2 ratio
-            df_intrinsic['weight'] /= sum(df_intrinsic['weight'])
+        # normalise weight, for GRB this will conserve GRB1/GRB2 ratio
+        df_intrinsic['weight'] /= sum(df_intrinsic['weight'])
         if channel is not None:
             sel = (df_intrinsic['weight'] > 0) & (df_intrinsic['channel'] == channel)
             title += f'\n{channel}'
@@ -176,9 +175,8 @@ def plot_hist_properties(x, df_intrinsic=None, df_observable=None,
                          color=COLORS[i], label=label,
                          alpha=alpha, range=range, bins=bins)
     if df_observable is not None:
-        if pop == 'GRB':
-            # reweight to have GRB1/GRB2 ratio
-            df_observable['weight'] /= sum(df_observable['weight'])
+        # normalise weight, for GRB this will conserve GRB1/GRB2 ratio
+        df_observable['weight'] /= sum(df_observable['weight'])
         if channel is not None:
             sel = (df_observable['weight'] > 0) & (df_observable['channel'] == channel)
             if channel not in title:
