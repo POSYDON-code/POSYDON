@@ -5,13 +5,22 @@ __authors__ = [
     "Simone Bavera <Simone.Bavera@unige.ch>",
     "Konstantinos Kovlakas <Konstantinos.Kovlakas@unige.ch>",
     "Emmanouil Zapartas <ezapartas@gmail.com>",
+    "Matthias Kruckow <Matthias.Kruckow@unige.ch>",
 ]
 
 
 import numpy as np
 
+# TODO: rename the varaible, these are termination flags that indicates
+# the star has reached the end of the evolution
 TF1_POOL_STABLE = ['Primary has depleted central carbon',
                    'Secondary has depleted central carbon',
+                   'Primary got stopped before central carbon depletion',
+                   'Secondary got stopped before central carbon depletion',
+                   'Primary enters pair-instability regime',
+                   'Secondary enters pair-instability regime',
+                   'Primary enters pulsational pair-instability regime',
+                   'Secondary enters pulsational pair-instability regime',
                    'offcenter neon ignition for primary',
                    'offcenter neon ignition for secondary',
                    'envelope_mass_limit',
@@ -26,6 +35,7 @@ TF1_POOL_UNSTABLE = [
     'overflow from L2 (R_L2) surface for q(=Macc/Mdon)>1, donor is star 1',
     'overflow from L2 (D_L2) distance for q(=Macc/Mdon)<1, donor is star 1',
     'overflow from L2 (R_L2) surface for q(=Macc/Mdon)<1, donor is star 2',
+    'overflow from L2 (R_L2) surface for q(=Macc/Mdon)>1, donor is star 2',
     'reached maximum mass transfer rate: 10.0d0',
     'Reached maximum mass transfer rate: 1d-1',
     'Reached the critical mt rate',
@@ -48,7 +58,8 @@ TF1_POOL_ERROR = ['logQ_limit',
                   'min_timestep_limit',
                   'cluster timelimit',
                   'reach cluster timelimit',
-                  'no termination code']
+                  'no termination code',
+                  'fe_core_infall_limit']
 
 TF2_POOL_NO_RLO = [
     'no_RLOF',

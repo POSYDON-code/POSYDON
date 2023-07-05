@@ -2,6 +2,7 @@
 
 from __future__ import print_function
 import glob
+import sys
 import versioneer
 import os.path
 
@@ -60,39 +61,40 @@ else:
 # are all used in the example below for specifying specific version of the
 # packages that are compatbile with your software.
 install_requires = [
-    'numpy == 1.19.1',
-    'scipy == 1.5.2',
-    'iminuit == 1.4.9',
-    'configparser == 5.0.0',
-    'astropy == 4.0.1',
-    'pandas == 1.1.0',
-    'scikit-learn == 0.21.3',
-    'matplotlib ==  3.2.2',
-    'matplotlib-label-lines == 0.3.8',
-    'PyQt5 == 5.15.3',
-    'h5py == 2.10.0',
-    'psutil == 5.6.7',
-    'tqdm == 4.48.2',
-    'tables == 3.6.1',
-    'progressbar2 == 4.0.0',
+    'numpy == 1.24.2',
+    'scipy == 1.10.1',
+    'iminuit == 2.21.3',
+    'configparser == 5.3.0',
+    'astropy == 5.2.2',
+    'pandas == 2.0.0',
+    'scikit-learn == 1.2.2',
+    'matplotlib ==  3.7.1',
+    'matplotlib-label-lines == 0.5.2',
+    'PyQt5 == 5.15.9',
+    'h5py == 3.8.0',
+    'psutil == 5.9.4',
+    'tqdm == 4.65.0',
+    'tables == 3.8.0',
+    'progressbar2 == 4.2.0',
+    'hurry.filesize == 0.9',
 ]
 
 tests_require = [
-    "pytest == 6.2.2",
-    "pytest-cov >= 2.4.0",
+    "pytest == 7.3.1",
+    "pytest-cov >= 4.0.0",
 ]
 
-# For documenation
+# For documentation
 extras_require = {
     "doc": [
-        "matplotlib",
         "ipython",
-        "sphinx <= 4.2.0",
+        "sphinx == 6.1.3",
         "numpydoc",
         "sphinx_rtd_theme",
         "sphinxcontrib_programoutput",
         "PSphinxTheme",
     ],
+    "profile": ["tensorflow == 2.12.0"], # for profile interpolation
     "hpc": ["mpi4py == 3.0.3"],
 }
 

@@ -175,6 +175,7 @@ __authors__ = [
     "Scott Coughlin <scottcoughlin2014@u.northwestern.edu>",
     "Devina Misra <devina.misra@unige.ch>",
     "Kyle Akira Rocha <kylerocha2024@u.northwestern.edu>",
+    "Matthias Kruckow <Matthias.Kruckow@unige.ch>",
 ]
 
 
@@ -196,17 +197,19 @@ from posydon.grids.termination_flags import (get_flags_from_MESA_run,
                                              check_state_from_history,
                                              get_flag_from_MESA_output,
                                              infer_interpolation_class,
-                                             initial_RLO_fix_applies)
+                                             get_detected_initial_RLO,
+                                             get_nearest_known_initial_RLO)
 from posydon.utils.configfile import ConfigFile
 from posydon.utils.common_functions import (orbital_separation_from_period,
                                             initialize_empty_array,
-                                            infer_star_state)
+                                            infer_star_state,
+                                            THRESHOLD_CENTRAL_ABUNDANCE)
 from posydon.utils.gridutils import (read_MESA_data_file, read_EEP_data_file,
                                      add_field, join_lists, fix_He_core)
 from posydon.visualization.plot2D import plot2D
 from posydon.visualization.plot1D import plot1D
 from posydon.grids.downsampling import TrackDownsampler
-from posydon.grids.scrubbing import scrub, keep_after_RLO
+from posydon.grids.scrubbing import scrub, keep_after_RLO, keep_till_central_abundance_He_C
 
 
 HDF5_MEMBER_SIZE = 2**31 - 1            # maximum HDF5 file size when splitting
@@ -344,10 +347,12 @@ GRIDPROPERTIES = {
     "final_value_columns": None,
     # grid-specific arguments
     "start_at_RLO": False,
+    "stop_before_carbon_depletion": False,
     "binary": True,
     "eep": None,    # path to EEP files
     "initial_RLO_fix": False,
     "He_core_fix": True,
+    "accept_missing_profile": False,
 }
 
 
@@ -412,6 +417,7 @@ class PSyGrid:
         for extension in EEP_FILE_EXTENSIONS:
             searchfor = os.path.join(path, "*" + extension)
             for filename in glob.glob(searchfor):
+                # note that this is consistent with additional `.gz` extension
                 identifier = os.path.basename(filename.split(extension)[-2])
                 assert identifier not in self.eeps
                 self.eeps[identifier] = filename
@@ -534,6 +540,7 @@ class PSyGrid:
         binary_grid = self.config["binary"]
         initial_RLO_fix = self.config["initial_RLO_fix"]
         start_at_RLO = self.config["start_at_RLO"]
+        stop_before_carbon_depletion = self.config["stop_before_carbon_depletion"]
         eep = self.config["eep"]
 
         if eep is not None:
@@ -618,17 +625,18 @@ class PSyGrid:
         # in case lists were used, get a proper `dtype` object
         dtype_initial_values = self.initial_values.dtype
         dtype_final_values = self.final_values.dtype
-
+        
         self._say('Loading MESA data...')
 
-        # this boolean array will store whether the i-th run is to be included
-        # (i.e. it has a binary_history file)
-        run_included = np.zeros(N_runs, dtype=bool)
+        #this int array will store the run_index of the i-th run and will be
+        # -1 if the run is not included.
+        run_included_at = np.full(N_runs, -1, dtype=int)
         run_index = 0
         for i in tqdm.tqdm(range(N_runs)):
             # Select the ith run
             run = grid.runs[i]
             ignore_data = False    # if failed run, do not save any data
+            newTF1 = ''
             self._say('Processing {}'.format(run.path))
 
             # Restrict number of runs if limit is set inside config
@@ -682,40 +690,130 @@ class PSyGrid:
                 # read the model numbers and ages from the histories
                 colname = "model_number"
                 if history1 is not None:
-                    history1_mod = np.int_(read_MESA_data_file(
-                        run.history1_path, [colname])[colname])
-                    if len(history1_mod) == len(history1) + 1:
-                        history1_mod = history1_mod[:-1]
-                    history1_age = read_MESA_data_file(
-                        run.history1_path, ["star_age"])["star_age"]
-                    if len(history1_age) == len(history1) + 1:
-                        history1_age = history1_age[:-1]
+                    if colname in H1_columns:
+                        history1_mod = np.int_(history1[colname].copy())
+                    else:
+                        history1_mod = read_MESA_data_file(run.history1_path, 
+                                                           [colname])
+                        if history1_mod is not None:
+                            history1_mod = np.int_(history1_mod[colname])
+                    if history1_mod is not None:
+                        len_diff = len(history1)-len(history1_mod)
+                        if len_diff<0: #shorten history1_mod
+                            history1_mod = history1_mod[:len_diff]
+                            warnings.warn("Reduce mod in {}\n".format(run.history1_path))
+                        elif len_diff>0: #entend history1_mod
+                            add_mod = np.full(len_diff,history1_mod[-1])
+                            history1_mod = np.concatenate((history1_mod, add_mod))
+                            warnings.warn("Expand mod in {}\n".format(run.history1_path))
+                    else:
+                        ignore_data = True
+                        ignore_reason = "corrupted_history1"
+                    if "star_age" in H1_columns:
+                        history1_age = history1["star_age"].copy()
+                    else:
+                        history1_age = read_MESA_data_file(run.history1_path, 
+                                                           ["star_age"])
+                        if history1_age is not None:
+                            history1_age = history1_age["star_age"]
+                    if history1_age is not None:
+                        len_diff = len(history1)-len(history1_age)
+                        if len_diff<0: #shorten history1_age
+                            history1_age = history1_age[:len_diff]
+                            warnings.warn("Reduce age in {}\n".format(run.history1_path))
+                        elif len_diff>0: #entend history1_age
+                            add_age = np.full(len_diff,history1_age[-1])
+                            history1_age = np.concatenate((history1_age, add_age))
+                            warnings.warn("Expand age in {}\n".format(run.history1_path))
+                    else:
+                        ignore_data = True
+                        ignore_reason = "corrupted_history1"
                 else:
                     history1_mod = None
                     history1_age = None
 
                 if history2 is not None:
-                    history2_mod = np.int_(read_MESA_data_file(
-                        run.history2_path, [colname])[colname])
-                    if len(history2_mod) == len(history2) + 1:
-                        history2_mod = history2_mod[:-1]
-                    history2_age = read_MESA_data_file(
-                        run.history2_path, ["star_age"])["star_age"]
-                    if len(history2_age) == len(history2) + 1:
-                        history2_age = history2_age[:-1]
+                    if colname in H2_columns:
+                        history2_mod = np.int_(history2[colname].copy())
+                    else:
+                        history2_mod = read_MESA_data_file(run.history2_path, 
+                                                           [colname])
+                        if history2_mod is not None:
+                            history2_mod = np.int_(history2_mod[colname])
+                    if history2_mod is not None:
+                        len_diff = len(history2)-len(history2_mod)
+                        if len_diff<0: #shorten history2_mod
+                            history2_mod = history2_mod[:len_diff]
+                            warnings.warn("Reduce mod in {}\n".format(run.history2_path))
+                        elif len_diff>0: #entend history2_mod
+                            add_mod = np.full(len_diff,history2_mod[-1])
+                            history2_mod = np.concatenate((history2_mod, add_mod))
+                            warnings.warn("Expand mod in {}\n".format(run.history2_path))
+                    else:
+                        ignore_data = True
+                        ignore_reason = "corrupted_history2"
+                    if "star_age" in H2_columns:
+                        history2_age = history2["star_age"].copy()
+                    else:
+                        history2_age = read_MESA_data_file(run.history2_path, 
+                                                           ["star_age"])
+                        if history2_age is not None:
+                            history2_age = history2_age["star_age"]
+                    if history2_age is not None:
+                        len_diff = len(history2)-len(history2_age)
+                        if len_diff<0: #shorten history2_age
+                            history2_age = history2_age[:len_diff]
+                            warnings.warn("Reduce age in {}\n".format(run.history2_path))
+                        elif len_diff>0: #entend history2_age
+                            add_age = np.full(len_diff,history2_age[-1])
+                            history2_age = np.concatenate((history2_age, add_age))
+                            warnings.warn("Expand age in {}\n".format(run.history2_path))
+                    else:
+                        ignore_data = True
+                        ignore_reason = "corrupted_history2"
                 else:
                     history2_mod = None
                     history2_age = None
 
                 if binary_history is not None:
-                    binary_history_mod = np.int_(read_MESA_data_file(
-                        run.binary_history_path, [colname])[colname])
-                    if len(binary_history_mod) == len(binary_history) + 1:
-                        binary_history_mod = binary_history_mod[:-1]
-                    binary_history_age = read_MESA_data_file(
-                        run.binary_history_path, ["age"])["age"]
-                    if len(binary_history_age) == len(binary_history) + 1:
-                        binary_history_age = binary_history_age[:-1]
+                    if colname in BH_columns:
+                        binary_history_mod = np.int_(binary_history[colname].copy())
+                    else:
+                        binary_history_mod = read_MESA_data_file(
+                            run.binary_history_path, [colname])
+                        if binary_history_mod is not None:
+                            binary_history_mod = np.int_(binary_history_mod[colname])
+                    if binary_history_mod is not None:
+                        len_diff = len(binary_history)-len(binary_history_mod)
+                        if len_diff<0: #shorten binary_history_mod
+                            binary_history_mod = binary_history_mod[:len_diff]
+                            warnings.warn("Reduce mod in {}\n".format(run.binary_history_path))
+                        elif len_diff>0: #entend binary_history_mod
+                            add_mod = np.full(len_diff,binary_history_mod[-1])
+                            binary_history_mod = np.concatenate((binary_history_mod, add_mod))
+                            warnings.warn("Expand mod in {}\n".format(run.binary_history_path))
+                    else:
+                        ignore_data = True
+                        ignore_reason = "corrupted_binary_history"
+                    if "age" in BH_columns:
+                        binary_history_age = binary_history["age"].copy()
+                    else:
+                        binary_history_age = read_MESA_data_file(
+                            run.binary_history_path, ["age"])
+                        if binary_history_age is not None:
+                            binary_history_age = binary_history_age["age"]
+                    if binary_history_age is not None:
+                        len_diff = len(binary_history)-len(binary_history_age)
+                        if len_diff<0: #shorten binary_history_age
+                            binary_history_age = binary_history_age[:len_diff]
+                            warnings.warn("Reduce age in {}\n".format(run.binary_history_path))
+                        elif len_diff>0: #entend binary_history_age
+                            add_age = np.full(len_diff,binary_history_age[-1])
+                            binary_history_age = np.concatenate((binary_history_age, add_age))
+                            warnings.warn("Expand age in {}\n".format(run.binary_history_path))
+                    else:
+                        ignore_data = True
+                        ignore_reason = "corrupted_binary_history"
                 else:
                     binary_history_mod = None
                     binary_history_age = None
@@ -736,19 +834,38 @@ class PSyGrid:
                     )
 
                 # if scubbing wiped all the binary history, discard run
-                if binary_grid and len(binary_history) == 0:
+                if binary_history is not None:
+                    binary_history_len = len(binary_history)
+                else:
+                    binary_history_len = 0
+                if binary_grid and binary_history_len == 0:
                     ignore_data = True
                     ignore_reason = "ignored_scrubbed"
                     warnings.warn("Ignored MESA run because of scrubbed binary"
                                   " history in: {}\n".format(run.path))
                     if not initial_RLO_fix:
                         continue
-                if not binary_grid and len(history1) == 0:
+                if history1 is not None:
+                    history1_len = len(history1)
+                else:
+                    history1_len = 0
+                if not binary_grid and history1_len == 0:
                     ignore_data = True
                     warnings.warn("Ignored MESA run because of scrubbed"
                                   " history in: {}\n".format(run.path))
                     continue
-
+                
+                try: #get mass from binary history
+                    init_mass_1 = float(binary_history["star_1_mass"][0])
+                except: #otherwise get it from directory name
+                    params_from_path = initial_values_from_dirname(run.path)
+                    init_mass_1 = float(params_from_path[0])
+                # check whether stop at He depletion is requested
+                if stop_before_carbon_depletion and init_mass_1>=100.0:
+                    kept = keep_till_central_abundance_He_C(binary_history, history1,
+                                  history2, THRESHOLD_CENTRAL_ABUNDANCE, 0.1)
+                    binary_history, history1, history2, newTF1 = kept
+                    
                 # check whether start at RLO is requested, and chop the history
                 if start_at_RLO:
                     kept = keep_after_RLO(binary_history, history1, history2)
@@ -772,11 +889,16 @@ class PSyGrid:
                 final_profile2 = read_MESA_data_file(
                     run.final_profile2_path, P2_columns)
                 if not binary_grid and final_profile1 is None:
-                    warnings.warn("Ignored MESA run because of missing "
-                                  "profile in: {}\n".format(run.path))
-                    ignore_data = True
-                    ignore_reason = "ignore_no_FP"
-                    continue
+                    if self.config["accept_missing_profile"]:
+                        warnings.warn("Including MESA run despite the missing "
+                                      "profile in {}\n".format(run.path))
+                        ignore_data = False
+                    else:
+                        warnings.warn("Ignored MESA run because of missing "
+                                      "profile in: {}\n".format(run.path))
+                        ignore_data = True
+                        ignore_reason = "ignore_no_FP"
+                        continue
 
             if binary_history is not None:
                 if binary_history.shape == ():  # if history is only one line
@@ -817,6 +939,7 @@ class PSyGrid:
             # get some initial values from the `binary_history.data` header
             # if of course, no RLO fix is applied
             if binary_grid and not (start_at_RLO or ignore_data):
+                # this is compatible with `.gz` files
                 bh_header = np.genfromtxt(run.binary_history_path,
                                           skip_header=1,
                                           max_rows=1, names=True)
@@ -846,6 +969,15 @@ class PSyGrid:
                     init_separation = orbital_separation_from_period(
                         init_period, init_mass_1, init_mass_2)
                     initial_BH["binary_separation"] = init_separation
+            elif not binary_grid and not (start_at_RLO or ignore_data):
+                # use header to get initial mass in single-star grids
+                # this is compatible with `.gz` files
+                h1_header = np.genfromtxt(run.history1_path,
+                                          skip_header=1,
+                                          max_rows=1, names=True)
+                if "S1_star_mass" in dtype_initial_values.names:
+                    init_mass_1 = h1_header["initial_m"]
+                    initial_H1["star_mass"] = init_mass_1
 
             # get some initial values from the `LOGS1/history.data` header
             addX = "X" in dtype_initial_values.names
@@ -863,6 +995,10 @@ class PSyGrid:
                 # if not star history file, NaN values
                 if read_from is None:
                     init_X, init_Y, init_Z = np.nan, np.nan, np.nan
+                    # try to get metallicity from directory name
+                    params_from_path = initial_values_from_dirname(run.path)
+                    if (len(params_from_path)==4) or (len(params_from_path)==2):
+                        init_Z = params_from_path[-1]
                 else:
                     star_header = np.genfromtxt(
                         read_from, skip_header=1, max_rows=1, names=True)
@@ -908,11 +1044,11 @@ class PSyGrid:
 
             if not ignore_data:
                 if addX:
-                    self.initial_values["X"] = where_to_add["X"]
+                    self.initial_values[i]["X"] = where_to_add["X"]
                 if addY:
-                    self.initial_values["Y"] = where_to_add["Y"]
+                    self.initial_values[i]["Y"] = where_to_add["Y"]
                 if addZ:
-                    self.initial_values["Z"] = where_to_add["Z"]
+                    self.initial_values[i]["Z"] = where_to_add["Z"]
 
             if binary_grid:
                 if ignore_data:
@@ -921,7 +1057,7 @@ class PSyGrid:
                     termination_flags = get_flags_from_MESA_run(
                         run.out_txt_path, binary_history=binary_history,
                         history1=history1, history2=history2,
-                        start_at_RLO=start_at_RLO)
+                        start_at_RLO=start_at_RLO, newTF1=newTF1)
             else:
                 if ignore_data:
                     termination_flags = [ignore_reason] * N_FLAGS_SINGLE
@@ -958,46 +1094,7 @@ class PSyGrid:
                     self.final_values[i]["interpolation_class"] = \
                         infer_interpolation_class(*termination_flags[:2])
 
-            if initial_RLO_fix:
-                star_1_mass = self.initial_values[i]["star_1_mass"]
-                period_days = self.initial_values[i]["period_days"]
-                colnames = ["termination_flag_1", "termination_flag_2",
-                            "interpolation_class"]
-                valtoset = ["forced_initial_RLO", "forced_initial_RLO",
-                            "initial_MT"]
-                if initial_RLO_fix_applies(star_1_mass, period_days):
-                    # if initial MT is forced but not detected immediately,
-                    # remove the data
-                    if (self.final_values[i]["termination_flag_1"]
-                            != "initial_MT"):
-                        # remove all initial values, except for metallicities
-                        for colname in self.initial_values[i].dtype.names:
-                            if colname not in ["X", "Y", "Z"]:
-                                self.initial_values[i][colname] = np.nan
-                        # remove all final values, except for termination flags
-                        for colname in self.final_values[i].dtype.names:
-                            if not (colname.startswith("termination_flag")
-                                    or colname == "interpolation_class"):
-                                self.final_values[i][colname] = np.nan
-                        # do not include the histories and profiles...
-                        ignore_data = True
-                    # set the termination flags
-                    for colname, value in zip(colnames, valtoset):
-                        self.final_values[i][colname] = value
-                    # update the initial values from the grid point data
-                    grid_point = read_initial_values(run.path)
-                    for colname, value in grid_point.items():
-                        if colname in self.initial_values.dtype.names:
-                            self.initial_values[i][colname] = value
-
-                    # now that we have the masses (even if missing data)...
-                    self.final_values[i]["termination_flag_4"] = (
-                        infer_star_state(self.final_values[i]["star_2_mass"],
-                                         star_CO=True))
-                elif ignore_data:
-                    # if fix does not apply and failed run, do not include it
-                    continue
-            elif ignore_data:
+            if ignore_data:
                 # if not fix requested and failed run, do not include it
                 continue
 
@@ -1035,13 +1132,107 @@ class PSyGrid:
 
             # consider the run (and the input directory) included
             self.MESA_dirs.append(run.path)
-            run_included[i] = True
+            run_included_at[i] = run_index
             run_index += 1
+            #check that new MESA path is added at run_index
+            lenMESA_dirs = len(self.MESA_dirs)
+            if lenMESA_dirs!=run_index:
+                warnings.warn("Non synchronous indexing: " +
+                          "run_index={} != ".format(run_index) +
+                          "length(MESA_dirs)={}".format(lenMESA_dirs))
+
+        #general fix for termination_flag in case of initial RLO in binaries
+        if binary_grid and initial_RLO_fix:
+            #create list of already detected initial RLO
+            detected_initial_RLO = get_detected_initial_RLO(self)
+            colnames = ["termination_flag_1", "termination_flag_2",
+                        "interpolation_class"]
+            valtoset = ["forced_initial_RLO", "forced_initial_RLO",
+                        "initial_MT"]
+            for i in range(N_runs):
+                flag1 = self.final_values[i]["termination_flag_1"]
+                if flag1 != "Terminate because of overflowing initial model":
+                    #use grid point data (if existing) to detect initial RLO
+                    grid_point = read_initial_values(grid.runs[i].path)
+                    if "star_1_mass" in grid_point:
+                        mass1 = grid_point["star_1_mass"]
+                    else:
+                        mass1 = self.initial_values[i]["star_1_mass"]
+                        warnings.warn("No star_1_mass in "+grid.runs[i].path)
+                    if "star_2_mass" in grid_point:
+                        mass2 = grid_point["star_2_mass"]
+                    else:
+                        mass2 = self.initial_values[i]["star_2_mass"]
+                        warnings.warn("No star_2_mass in "+grid.runs[i].path)
+                    if "period_days" in grid_point:
+                        period = grid_point["period_days"]
+                    else:
+                        period = self.initial_values[i]["period_days"]
+                        warnings.warn("No period_days in "+grid.runs[i].path)
+                    nearest = get_nearest_known_initial_RLO(mass1, mass2,
+                                                        detected_initial_RLO)
+                    if period<nearest["period_days"]:
+                        #set values
+                        for colname, value in zip(colnames, valtoset):
+                            self.final_values[i][colname] = value
+                        #copy values from nearest known system
+                        for colname in ["termination_flag_3",
+                                        "termination_flag_4"]:
+                            if colname in nearest:
+                                self.final_values[i][colname]=nearest[colname]
+                        #reset the initial values to the grid point data
+                        for colname, value in grid_point.items():
+                            if colname in self.initial_values.dtype.names:
+                                self.initial_values[i][colname] = value
+                        #add initial RLO system if not added before
+                        if run_included_at[i]==-1:
+                            if not slim:
+                                hdf5.create_group(
+                                    "/grid/run{}/".format(run_index))
+                            #include the run (and the input directory)
+                            self.MESA_dirs.append(grid.runs[i].path)
+                            run_included_at[i] = run_index
+                            run_index += 1
+                            #check that new MESA path is added at run_index
+                            lenMESA_dirs = len(self.MESA_dirs)
+                            if lenMESA_dirs!=run_index:
+                                warnings.warn("Non synchronous indexing: " +
+                                  "run_index={} != ".format(run_index) +
+                                  "length(MESA_dirs)={}".format(lenMESA_dirs))
+
 
         self._say("Storing initial/final values and metadata to HDF5...")
-        # exclude rows in initial/final_values corresponding to excluded runs
-        self.initial_values = self.initial_values[run_included]
-        self.final_values = self.final_values[run_included]
+        #create new array of initial and finial values with included runs
+        # only and sort it by run_index
+        new_initial_values = initialize_empty_array(
+            np.empty(run_index, dtype=dtype_initial_values))
+        new_final_values = initialize_empty_array(
+            np.empty(run_index, dtype=dtype_final_values))
+        for i in range(N_runs):
+            #only use included runs with a valid index
+            if run_included_at[i]>=0:
+                #check for index range
+                if run_included_at[i]>=run_index:
+                    warnings.warn("run {} has a run_index out of ".format(i) +
+                        "range: {}>={}".format(run_included_at[i], run_index))
+                    continue
+                #copy initial values or fill with nan if not existing in original
+                for colname in dtype_initial_values.names:
+                    if colname in self.initial_values.dtype.names:
+                        value = self.initial_values[i][colname]
+                        new_initial_values[run_included_at[i]][colname] = value
+                    else:
+                        new_initial_values[run_included_at[i]][colname] = np.nan
+                #copy final values or fill with nan if not existing in original
+                for colname in dtype_final_values.names:
+                    if colname in self.final_values.dtype.names:
+                        value = self.final_values[i][colname]
+                        new_final_values[run_included_at[i]][colname] = value
+                    else:
+                        new_final_values[run_included_at[i]][colname] = np.nan
+        #replace old initial/final value array
+        self.initial_values = np.copy(new_initial_values)
+        self.final_values = np.copy(new_final_values)
 
         # Store the full table of initial_values
         hdf5.create_dataset("/grid/initial_values", data=self.initial_values,
@@ -1061,7 +1252,10 @@ class PSyGrid:
 
     def add_column(self, colname, array, where="final_values", overwrite=True):
         """Add a new numerical column in the final values array."""
-        arr = np.asarray(array)
+        if not isinstance(array, np.ndarray):
+            arr = np.asarray(array)
+        else:
+            arr = array
 
         if where != "final_values":
             raise ValueError("Only adding columns to `final_values` allowed.")
@@ -1089,9 +1283,11 @@ class PSyGrid:
         for dtype in self.final_values.dtype.descr:
             if (dtype[0].startswith("termination_flag")
                     or dtype[0] == "interpolation_class"
-                    or "SN_type" in dtype[0] or "_state" in dtype[0]):
+                    or "_type" in dtype[0] or "_state" in dtype[0]):
                 dtype = (dtype[0], H5_REC_STR_DTYPE.replace("U", "S"))
             new_dtype.append(dtype)
+            if dtype[1] == np.dtype('O'):
+                print(dtype[0])
         final_values = self.final_values.astype(new_dtype)
         del self.hdf5["/grid/final_values"]
         self.hdf5.create_dataset("/grid/final_values", data=final_values,
@@ -1139,7 +1335,7 @@ class PSyGrid:
         for dtype in self.final_values.dtype.descr:
             if (dtype[0].startswith("termination_flag")
                     or dtype[0] == "interpolation_class"
-                    or "SN_type" in dtype[0] or "_state" in dtype[0]):
+                    or "_type" in dtype[0] or "_state" in dtype[0]):
                 dtype = (dtype[0], H5_REC_STR_DTYPE.replace("S", "U"))
             new_dtype.append(dtype)
         self.final_values = self.final_values.astype(new_dtype)
@@ -1241,7 +1437,7 @@ class PSyGrid:
                     run.final_profile1.dtype.names)
             if run.final_profile2 is not None:
                 ret += "\nColumns in final_profile2: {}\n".format(
-                    run.final_profile1.dtype.names)
+                    run.final_profile2.dtype.names)
         ret += "\n"
 
         # Print out initial values array parameters
@@ -1362,13 +1558,24 @@ class PSyGrid:
                     initial_values[key].append(self.initial_values[key][i])
 
             # replace star_1_mass, star_2_mass, period_days, Z
+            NDIG = 10 # rounding matches initial point rounding
             if 'star_1_mass' in self.initial_values.dtype.names:
-                initial_values['m1'] = initial_values['star_1_mass']
+                initial_values['m1'] = np.around(initial_values['star_1_mass'],
+                                                 NDIG)
             if 'star_2_mass' in self.initial_values.dtype.names:
-                initial_values['m2'] = initial_values['star_2_mass']
+                initial_values['m2'] = np.around(initial_values['star_2_mass'],
+                                                 NDIG)
             if 'period_days' in self.initial_values.dtype.names:
-                initial_values['initial_period_in_days'] = initial_values[
-                    'period_days']
+                initial_values['initial_period_in_days'] = np.around(
+                                            initial_values['period_days'],NDIG)
+            MESA_dir_name = self.MESA_dirs[0].decode("utf-8")
+            if  'initial_z' in MESA_dir_name:
+                initial_values['initial_z'] = np.around(initial_values['Z'],
+                                                        NDIG)
+            if  'Zbase' in MESA_dir_name:
+                initial_values['Zbase'] = np.around(initial_values['Z'], NDIG)
+            if  'new_Z' in MESA_dir_name:
+                initial_values['new_Z'] = np.around(initial_values['Z'], NDIG)
             for key in self.initial_values.dtype.names:
                 if key not in ['m1', 'm2', 'initial_period_in_days',
                                'Zbase', 'new_Z', 'initial_z']:
@@ -1380,12 +1587,12 @@ class PSyGrid:
                     initial_values[key] = [new_mesa_flag[key]]*n_runs_to_rerun
 
             # create the CSV file
-            with open(path_to_file+'grid.csv', 'w', newline='') as file:
+            with open(os.path.join(path_to_file,'grid.csv'), 'w', newline='') as file:
                 writer = csv.writer(file)
                 writer.writerow(initial_values.keys())
                 for i in range(n_runs_to_rerun):
                     writer.writerow(
-                        [initial_values[key][i] for key in initial_values])
+                        [initial_values[key][i]for key in initial_values])
         elif termination_flags is not None and runs_to_rerun is None:
             if isinstance(termination_flags, str):
                 rerun_flags = [termination_flags]
@@ -1412,13 +1619,24 @@ class PSyGrid:
                         initial_values[key].append(self.initial_values[key][i])
 
             # replace star_1_mass, star_2_mass, period_days, Z
+            NDIG = 10 # rounding matches initial point rounding
             if 'star_1_mass' in self.initial_values.dtype.names:
-                initial_values['m1'] = initial_values['star_1_mass']
+                initial_values['m1'] = np.around(initial_values['star_1_mass'],
+                                                 NDIG)
             if 'star_2_mass' in self.initial_values.dtype.names:
-                initial_values['m2'] = initial_values['star_2_mass']
+                initial_values['m2'] = np.around(initial_values['star_2_mass'],
+                                                 NDIG)
             if 'period_days' in self.initial_values.dtype.names:
-                initial_values['initial_period_in_days'] = initial_values[
-                    'period_days']
+                initial_values['initial_period_in_days'] = np.around(
+                                            initial_values['period_days'],NDIG)
+            MESA_dir_name = self.MESA_dirs[0].decode("utf-8")
+            if  'initial_z' in MESA_dir_name:
+                initial_values['initial_z'] = np.around(initial_values['Z'],
+                                                        NDIG)
+            if  'Zbase' in MESA_dir_name:
+                initial_values['Zbase'] = np.around(initial_values['Z'], NDIG)
+            if  'new_Z' in MESA_dir_name:
+                initial_values['new_Z'] = np.around(initial_values['Z'], NDIG)
             for key in self.initial_values.dtype.names:
                 if key not in ['m1', 'm2', 'initial_period_in_days', 'Zbase',
                                'new_Z', 'initial_z']:
@@ -1430,12 +1648,12 @@ class PSyGrid:
                     initial_values[key] = [new_mesa_flag[key]]*n_runs_to_rerun
 
             # create the CSV file
-            with open(path_to_file+'grid.csv', 'w', newline='') as file:
+            with open(os.path.join(path_to_file,'grid.csv'), 'w', newline='') as file:
                 writer = csv.writer(file)
                 writer.writerow(initial_values.keys())
                 for i in range(n_runs_to_rerun):
                     writer.writerow(
-                        [initial_values[key][i] for key in initial_values])
+                        [initial_values[key][i]for key in initial_values])
         else:
             raise ValueError("Choose either the runs manually, or "
                              "indicate the termination flag(s).")
@@ -1878,10 +2096,11 @@ PROPERTIES_TO_BE_NONE = {
 }
 
 PROPERTIES_TO_BE_CONSISTENT = ["binary", "eep", "start_at_RLO",
+                               "stop_before_carbon_depletion",
                                "initial_RLO_fix", "He_core_fix",
-                               "history_DS_error", "history_DS_exclude",
-                               "profile_DS_error", "profile_DS_exclude",
-                               "profile_DS_interval"]
+                               "accept_missing_profile", "history_DS_error",
+                               "history_DS_exclude", "profile_DS_error",
+                               "profile_DS_exclude", "profile_DS_interval"]
 
 ALL_PROPERTIES = (list(PROPERTIES_ALLOWED.keys()) + PROPERTIES_TO_BE_CONSISTENT
                   + list(PROPERTIES_TO_BE_NONE.keys()) + PROPERTIES_TO_BE_SET)
@@ -1956,6 +2175,27 @@ def join_grids(input_paths, output_path,
     say("    {} substituions detected.".format(n_substitutions))
     say("    {} runs to be joined.".format(len(initial_params)))
 
+    if (newconfig["initial_RLO_fix"]):
+        say("Determine initial RLO boundary from all grids")
+        detected_initial_RLO = []
+        colnames = ["termination_flag_1", "termination_flag_2", "interpolation_class"]
+        valtoset = ["forced_initial_RLO", "forced_initial_RLO", "initial_MT"]
+        for grid in grids:
+            new_detected_initial_RLO = get_detected_initial_RLO(grid)
+            for new_sys in new_detected_initial_RLO:
+                exists_already = False
+                for i, sys in enumerate(detected_initial_RLO):
+                    # check whether there are double entries
+                    if (abs(sys["star_1_mass"]-new_sys["star_1_mass"])<1.0e-5 and
+                        abs(sys["star_2_mass"]-new_sys["star_2_mass"])<1.0e-5):
+                        exists_already = True
+                        # if so, replace old entry if the new one has a larger period
+                        if sys["period_days"]<new_sys["period_days"]:
+                            detected_initial_RLO[i] = new_sys.copy()
+                # add non existing new entry
+                if not exists_already:
+                    detected_initial_RLO.append(new_sys)
+    
     say("Opening new file...")
     # open new HDF5 file and start copying runs
     driver_args = {} if "%d" not in output_path else {
@@ -1991,6 +2231,25 @@ def join_grids(input_paths, output_path,
             new_mesa_dirs.append(grid.MESA_dirs[run_index])
             new_initial_values.append(grid.initial_values[run_index])
             new_final_values.append(grid.final_values[run_index])
+            
+            if (newconfig["initial_RLO_fix"]):
+                flag1 = new_final_values[-1]["termination_flag_1"]
+                if (flag1 != "Terminate because of overflowing initial model" and 
+                    flag1 != "forced_initial_RLO"):
+                    mass1 = new_initial_values[-1]["star_1_mass"]
+                    mass2 = new_initial_values[-1]["star_2_mass"]
+                    period = new_initial_values[-1]["period_days"]
+                    nearest = get_nearest_known_initial_RLO(mass1, mass2,
+                                                        detected_initial_RLO)
+                    if period<nearest["period_days"]:
+                        #set values
+                        for colname, value in zip(colnames, valtoset):
+                            new_final_values[-1][colname] = value
+                        #copy values from nearest known system
+                        for colname in ["termination_flag_3",
+                                        "termination_flag_4"]:
+                            if colname in nearest:
+                                new_final_values[-1][colname]=nearest[colname]
 
             for subarray in ['binary_history', 'history1', 'history2',
                              'final_profile1', 'final_profile2']:
