@@ -363,11 +363,11 @@ def generate_secondary_masses(primary_masses,
     return secondary_masses
 
 def generate_single_star_masses(number_of_binaries=1,
-                            single_mass_min=7,
-                            single_mass_max=120,
-                            primary_mass_scheme='Salpeter',
+                            single_star_mass_min=7,
+                            single_star_mass_max=120,
+                            single_star_mass_scheme='Salpeter',
                             **kwargs):
-    """Generate random primary masses.
+    """Generate random masses in the same way as the primary masses.
 
     Use the scheme defined in this particular instance of BinaryPopulation.
 
@@ -376,51 +376,51 @@ def generate_single_star_masses(number_of_binaries=1,
     number_of_binaries : int
         Number of binaries that require randomly sampled orbital separations
     single_mass_min : float
-        Minimum primary mass
-    single_mass_max : float
-        Maximum primary mass
-    primary_mass_scheme : string
+        Minimum of single star mass
+    single_star_mass_max : float
+        Maximum of single star mass
+    single_star_mass_scheme : string
         Distribution from which the primary masses are randomly drawn
 
     Returns
     -------
     single_star_masses : ndarray of floats
-        Randomly drawn primary masses
+        Randomly drawn single star masses
 
     """
     RNG = kwargs.get('RNG', np.random.default_rng())
 
-    primary_mass_scheme_options = ['Salpeter', 'Kroupa1993', 'Kroupa2001']
+    single_star_mass_scheme_options = ['Salpeter', 'Kroupa1993', 'Kroupa2001']
 
-    if primary_mass_scheme not in primary_mass_scheme_options:
+    if single_star_mass_scheme not in single_star_mass_scheme_options:
         raise ValueError("You must provide an allowed primary mass scheme.")
 
     # Salpeter E. E., 1955, ApJ, 121, 161
-    if primary_mass_scheme == 'Salpeter':
+    if single_star_mass_scheme == 'Salpeter':
         alpha = 2.35
-        normalization_constant = (1.0-alpha) / (single_mass_max**(1-alpha)
-                                                - single_mass_min**(1-alpha))
+        normalization_constant = (1.0-alpha) / (single_star_mass_max**(1-alpha)
+                                                - single_star_mass_min**(1-alpha))
         random_variable = RNG.uniform(size=number_of_binaries)
         single_star_masses = (random_variable*(1.0-alpha)/normalization_constant
-                          + single_mass_min**(1.0-alpha))**(1.0/(1.0-alpha))
+                          + single_star_mass_min**(1.0-alpha))**(1.0/(1.0-alpha))
 
     # Kroupa P., Tout C. A., Gilmore G., 1993, MNRAS, 262, 545
-    elif primary_mass_scheme == 'Kroupa1993':
+    elif single_star_mass_scheme == 'Kroupa1993':
         alpha = 2.7
-        normalization_constant = (1.0-alpha) / (single_mass_max**(1-alpha)
-                                                - single_mass_min**(1-alpha))
+        normalization_constant = (1.0-alpha) / (single_star_mass_max**(1-alpha)
+                                                - single_star_mass_min**(1-alpha))
         random_variable = RNG.uniform(size=number_of_binaries)
         single_star_masses = (random_variable*(1.0-alpha)/normalization_constant
-                          + single_mass_min**(1.0-alpha))**(1.0/(1.0-alpha))
+                          + single_star_mass_min**(1.0-alpha))**(1.0/(1.0-alpha))
 
     # Kroupa P., 2001, MNRAS, 322, 231
-    elif primary_mass_scheme == 'Kroupa2001':
+    elif single_star_mass_scheme == 'Kroupa2001':
         alpha = 2.3
-        normalization_constant = (1.0-alpha) / (single_mass_max**(1-alpha)
-                                                - single_mass_min**(1-alpha))
+        normalization_constant = (1.0-alpha) / (single_star_mass_max**(1-alpha)
+                                                - single_star_mass_min**(1-alpha))
         random_variable = RNG.uniform(size=number_of_binaries)
         single_star_masses = (random_variable*(1.0-alpha)/normalization_constant
-                          + single_mass_min**(1.0-alpha))**(1.0/(1.0-alpha))
+                          + single_star_mass_min**(1.0-alpha))**(1.0/(1.0-alpha))
     else:
         pass
 

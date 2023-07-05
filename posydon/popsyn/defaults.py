@@ -56,8 +56,8 @@ default_kwargs = {
     'secondary_mass_min': 0.35,
     'secondary_mass_max': 120.0,
 
-    #Single star mass
-    'single_mass_min': 0.8,
-    
+    #Initially single star mass
+    'single_star_mass_scheme' : 'Kroupa2001',
+    'single_star_mass_min': 0.8,
     'single_mass_max': 120.0,
 }

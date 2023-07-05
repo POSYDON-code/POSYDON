@@ -814,7 +814,7 @@ class BinaryGenerator:
             'orbital_period': orbital_period,
             'S1_mass': m1,
             'S2_mass': m2,
-            'S_mass' : m0,
+            'S_mass' : m0,#the mass assigned to initially single stars
         }
         self._num_gen += N_binaries
         return output_dict
@@ -890,7 +890,6 @@ class BinaryGenerator:
             orbital_period = np.nan
             eccentricity = np.nan
             m0 = output['S_mass'].item()
-            
             Z_div_Zsun = kwargs.get('metallicity', 1.)
             zams_table = {2.: 2.915e-01,
                           1.: 2.703e-01,
