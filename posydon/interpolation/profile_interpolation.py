@@ -5,6 +5,9 @@ __authors__ = [
     "Elizabeth Teng <elizabethteng@u.northwestern.edu>"
 ]
 
+##TEST 
+
+
 import pickle
 import warnings
 
@@ -185,7 +188,7 @@ class ProfileInterpolator:
             comp_bounds_epochs (int) : number of epochs used to train composition profiles model
             comp_bounds_patience (int) : patience parameter for NN callback in composition profiles model
             loss_history (Boolean) : option to return training and validation loss histories
-            hms_s2 (Boolean) : option to get profiles of star 2 in HMS-HMS grid
+            hms_s2 (Boolean) : option to do profiles of star 2 in HMS-HMS grid
         Returns:
             self.comp.loss_history (array-like) : training and validation loss history for composition profiles
             self.dens.loss_history (array-like) : training and validation loss history for density profiles
@@ -291,7 +294,7 @@ class Density:
             valid_profiles (array-like) : final density profiles for validation data.
             IF_interpolator (string) : path to .pkl file for IF interpolator for central density, final mass values
             n_comp (int) : number of PCA components. 
-            hms_s2 (Boolean) : option to get profiles of star 2 in HMS-HMS grid
+            hms_s2 (Boolean) : option to do profiles of star 2 in HMS-HMS grid
         """
         self.n_comp = n_comp
         self.hms_s2 = hms_s2
@@ -420,7 +423,7 @@ class Composition:
             IF_interpolator (string) : path to .pkl file for IF interpolator
             training_epochs (int) : number of epochs used to train neural networks
             training_patience (int) : patience parameter for callback in neural networks
-            hms_s2 (Boolean) : option to get profiles of star 2 in HMS-HMS grid
+            hms_s2 (Boolean) : option to do profiles of star 2 in HMS-HMS grid
         """
         self.hms_s2 = hms_s2
         
