@@ -758,7 +758,7 @@ class SyntheticPopulation:
         self.df_dco_observable = self.resample_synthetic_population(index, z_formation, z_merger, w_ijk, export_cols=export_cols)
 
     def get_formation_channels(self):
-        """Get formation channel and add to df and df_online."""
+        """Get formation channel and add to df and df_oneline."""
         
         # loop through each binary
         unique_binary_index = np.unique(self.df.index)
@@ -766,7 +766,7 @@ class SyntheticPopulation:
 
             # get event column and information from interpolated classes
             df_binary = self.df.loc[index,['event']].dropna()
-            intep_cls = [key for key in self.df_online.keys() if 'interp_class' in key]
+            intep_cls = [key for key in self.df_oneline.keys() if 'interp_class' in key]
             df_binary_online = self.df_oneline.loc[index, intep_cls].dropna()
             event_array = df_binary['event'].values.tolist()
         
