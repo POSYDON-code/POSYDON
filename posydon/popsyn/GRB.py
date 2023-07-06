@@ -23,7 +23,7 @@ def get_GRB_properties(df, GRB_efficiency, GRB_beaming, E_GRB_iso_min=0.):
     # define some methods
     
     def compute_eta(i, sel):
-        """Compute GRB energy conversion efficiency factor."""
+        """Set GRB energy conversion efficiency factor."""
         if (not isinstance(GRB_efficiency, float) and
             GRB_efficiency >= 0. and GRB_efficiency <= 1.):
             raise ValueError(f'GRB efficiency {GRB_efficiency} '
@@ -46,22 +46,29 @@ def get_GRB_properties(df, GRB_efficiency, GRB_beaming, E_GRB_iso_min=0.):
             # generate a opening angle from a lognormal distribution 
             # as in Table 3 of https://arxiv.org/pdf/1512.04464.pdf
             theta = 10**(np.random.normal(0.77,0.37,n))/180.*np.pi # radian
+            # TODO: truncate the angle between 0 and pi/2
             # compute the solid angle, factor 2 to accounts for the two emispheres
             solid_angle = 4*np.pi*(1.-np.cos(theta)) 
             df.loc[sel,f'S{i}_f_beaming'] = solid_angle/(4*np.pi)
-        elif GRB_beaming == 'Lloyd-Ronning+19':
-            if z is None:
-                raise ValueError('Redshift not specified!')
-            else:
-                z = df.loc[sel,'z_formation']
-            n = df.loc[sel,f'S{i}_f_beaming'].shape[0]
-            # generate a opening angle from a lognormal distribution
-            # as in Table 3 of https://arxiv.org/pdf/1512.04464.pdf
-            theta =10**(np.random.normal(0.77*(1+z)**(-0.75),0.37,n))/180.*np.pi # radian
-            # compute the solid angle, factor 2 to accounts for the two emispheres
-            solid_angle = 4*np.pi*(1.-np.cos(theta))
-            df.loc[sel,f'S{i}_f_beaming'] = solid_angle/(4*np.pi)
+        # TODO: this option is not usable at the moment as it requires
+        # redshift information which is not available in the dataframe
+        # the refshift is compute by rate_calculation.py after GRB properties
+        # are computed, fix this.
+        # elif GRB_beaming == 'Lloyd-Ronning+19':
+        #     if z is None:
+        #         raise ValueError('Redshift not specified!')
+        #     else:
+        #         z = df.loc[sel,'z_formation']
+        #     n = df.loc[sel,f'S{i}_f_beaming'].shape[0]
+        #     # generate a opening angle from a lognormal distribution
+        #     # as in Table 3 of https://arxiv.org/pdf/1512.04464.pdf
+        #     theta =10**(np.random.normal(0.77*(1+z)**(-0.75),0.37,n))/180.*np.pi # radian
+        #     # TODO: truncate the angle between 0 and pi/2
+        #     # compute the solid angle, factor 2 to accounts for the two emispheres
+        #     solid_angle = 4*np.pi*(1.-np.cos(theta))
+        #     df.loc[sel,f'S{i}_f_beaming'] = solid_angle/(4*np.pi)
         elif GRB_beaming == 'Pescalli+15':
+            # TODO: check the reference and the equation
             def f_B(E,eta):
                 xi=0.5
                 t=25.
@@ -93,15 +100,15 @@ def get_GRB_properties(df, GRB_efficiency, GRB_beaming, E_GRB_iso_min=0.):
         """Compute the GRB isotropic equivalet luminosity."""
         df[f'S{i}_L_GRB_iso'] = np.zeros(df.shape[0])
         # compute the GRB isotropic equivalent luminosity assuming a
-        # constant average timescale of 2.5s 
+        # constant average timescale of 25s from Pescalli+15 
         # TODO: improve this assumption
         E_GRB_iso = df.loc[sel,f'S{i}_E_GRB_iso']
-        df.loc[sel,f'S{i}_L_GRB_iso'] = E_GRB_iso/2.5 # erg/s
+        df.loc[sel,f'S{i}_L_GRB_iso'] = E_GRB_iso/25. # erg/s
     
     def flag_GRB_systems(i, sel):
         # flag all systems emitting at least one GRB
         df[f'GRB{i}'] = [False] * df.shape[0]
-        df.loc[sel,f'GRB{i}'] = df.loc[sel,f'S{i}_E_GRB_iso'] > E_GRB_iso_min
+        df.loc[sel,f'GRB{i}'] = df.loc[sel,f'S{i}_E_GRB_iso'] >= E_GRB_iso_min
             
 
     # loop over the two star components and compute GRB properties

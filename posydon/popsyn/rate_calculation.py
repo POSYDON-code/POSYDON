@@ -34,9 +34,9 @@ DEFAULT_MODEL = {
     'dlogZ' : None, # e.g, [np.log10(0.0142/2),np.log10(0.0142*2)]
     'Zsun' : Zsun,
     'compute_GRB_properties' : False,
-    'GRB_beaming' : None, # e.g., 0.5, 'Goldstein+15'
-    'GRB_efficiency' : None, # e.g., 0.01
-    'E_GRB_iso_min' : None, # e.g., 1e51 erg 
+    'GRB_beaming' : 1., # e.g., 0.5, 'Goldstein+15'
+    'GRB_efficiency' : 0., # e.g., 0.01
+    'E_GRB_iso_min' : 0., # e.g., 1e51 erg 
 }
 
 
@@ -673,7 +673,7 @@ class Rates(object):
         return sp.integrate.quad(f, z_hor_i, z_hor_f, args=(sensitivity))[0] # Gpc^3
 
 
-    def compute_rate_density(self, w_ijk, z_event, observable='DCO', sensitivity='infiite', index=None):
+    def compute_rate_density(self, w_ijk, z_event, observable='DCO', sensitivity='infinite', index=None):
         """Compute the GRB/DCO rate density.
 
         Parameters
@@ -685,7 +685,8 @@ class Rates(object):
         observable : string
             Event you are tracking, available:
             'DCOs': merger event of a DCO system
-            'GRBs': coming soon.
+            'GRB1': gamma ray bursts of star 1
+            'GRB2': gamma ray bursts of star 2
         sensitivity : string
             This takes into account the detector sensitivity, available:
             'infinite': p_det = 1
@@ -867,7 +868,7 @@ class Rates(object):
                     data[f'weights_{s+1}'][str(z_birth[i])] = w_ijk
 
                 else:
-                    raise ValueError('Unknnown sensitivity!')
+                    raise ValueError('Unknown sensitivity!')
 
         # TODO: implemet the saving to h5 files
         if extention == 'npz':
@@ -879,7 +880,7 @@ class Rates(object):
                     for key in dict.keys():
                         data_to_save[i].extend(dict[key].tolist())
                         if i == 0:
-                            data_to_save[3].extend(np.ones(len(dict[key]))*float(key))
+                            data_to_save[-1].extend(np.ones(len(dict[key]))*float(key))
                 if self.verbose:
                     print('Saving the data ....')
                 for i, key in enumerate([key for key in data.keys() if f'{s}' in key]):
@@ -891,7 +892,7 @@ class Rates(object):
                             key=data_to_save[i], fmt=fmt_str)
 
                 np.savez(os.path.join(sensitivity_dir,f"z_formation_{s}.npz"),
-                        key=data_to_save[3], fmt='%.8E')
+                        key=data_to_save[-1], fmt='%.8E')
         else:
             raise ValueError('Extension not supported!')
 

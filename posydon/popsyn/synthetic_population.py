@@ -239,7 +239,7 @@ class SyntheticPopulation:
                     df_sel_met = pd.concat([df_sel_met, df_tmp])
                     del df_tmp
 
-            if k != 0:
+            if k > 0:
                 largest_index = max(np.unique(df_sel.index))
                 df_sel_met.index += largest_index
 
@@ -257,7 +257,7 @@ class SyntheticPopulation:
             df_sel_met_oneline = df_sel_met_oneline.loc[sel_met]
             df_sel_met_oneline['metallicity'] = met
 
-            if k != 0:
+            if k > 0:
                 largest_index = max(np.unique(df_sel_oneline.index))
                 df_sel_met_oneline.index += largest_index
 
@@ -353,6 +353,9 @@ class SyntheticPopulation:
         # compute the inspiral timescale from the integrated orbit
         # this estimate is better than evaluating Peters approxiamtion
         time_contact = self.df.loc[self.df['event'] == 'END',['time']]
+        # NOTE/TODO: we change the units of time in the dataframe to Myr
+        # this might be confusion to the user? Note that Myr are convinient
+        # when inspecting the data frame.
         self.df_synthetic['t_delay'] = (time_contact - self.df_synthetic[['time']])*1e-6 # Myr
         self.df_synthetic['time'] *= 1e-6 # Myr
         
@@ -463,8 +466,7 @@ class SyntheticPopulation:
             efficiencies.append(eff)
             print(f'DCO merger efficiency at Z={met:1.2E}: {eff:1.2E} Msun^-1')
         self.met_merger_efficiency = np.array(self.met_merger_efficiency)
-        self.merger_efficiency = {}
-        self.merger_efficiency['total'] = np.array(efficiencies)
+        self.merger_efficiency = {'total' : np.array(efficiencies)}
         # if the channel column is present compute the merger efficiency per channel
         if "channel" in self.df_synthetic:
             channels = np.unique(self.df_synthetic['channel'])
@@ -473,7 +475,7 @@ class SyntheticPopulation:
                 for met in self.met_merger_efficiency:
                     sel = (self.df_synthetic['metallicity'] == met) & (self.df_synthetic['channel'] == ch)
                     count = self.df_synthetic[sel].shape[0]
-                    if count > 0.:
+                    if count > 0:
                         underlying_stellar_mass = self.df_synthetic.loc[sel,'underlying_mass_for_met'].values[0]
                         eff = count/underlying_stellar_mass
                     else:
@@ -641,9 +643,8 @@ class SyntheticPopulation:
 
         # compute rate density weights
         self.dco_z_rate_density = self.rates.get_centers_redshift_bins()
-        self.dco_rate_density = {}
         total_rate = self.rates.compute_rate_density(w_ijk, z_merger, observable='DCO', sensitivity=sensitivity)
-        self.dco_rate_density['total'] = total_rate
+        self.dco_rate_density = {'total' : total_rate}
         if "channel" in self.df_synthetic:
             channels = np.unique(self.df_synthetic['channel'])
             for ch in tqdm(channels):
@@ -685,11 +686,10 @@ class SyntheticPopulation:
         # note we compute the beamed rate density for GRBs as this is what is often reported in the literature
         # as the beaming factor is not known a priori
         self.grb_z_rate_density = self.rates.get_centers_redshift_bins()
-        self.grb_rate_density = {}
-        self.grb_rate_density['total_GRB1'] = self.rates.compute_rate_density(w_ijk_1, z_grb_1, observable='GRB1', sensitivity='beamed', index=index_1)
-        self.grb_rate_density['total_GRB2'] = self.rates.compute_rate_density(w_ijk_2, z_grb_2, observable='GRB2', sensitivity='beamed', index=index_2)
+        total_GRB1 = self.rates.compute_rate_density(w_ijk_1, z_grb_1, observable='GRB1', sensitivity='beamed', index=index_1)
+        total_GRB2 = self.rates.compute_rate_density(w_ijk_2, z_grb_2, observable='GRB2', sensitivity='beamed', index=index_2)
         total_rate = self.grb_rate_density['total_GRB1'] + self.grb_rate_density['total_GRB2']
-        self.grb_rate_density['total'] = total_rate
+        self.grb_rate_density = {'total' : total_rate, 'total_GRB1' : total_GRB1, 'total_GRB2': total_GRB2}
         if "channel" in self.df_synthetic:
             channels = np.unique(self.df_synthetic['channel'])
             for ch in tqdm(channels):
@@ -766,7 +766,8 @@ class SyntheticPopulation:
 
             # get event column and information from interpolated classes
             df_binary = self.df.loc[index,['event']].dropna()
-            df_binary_online = self.df_oneline.loc[index,['interp_class_HMS_HMS','interp_class_CO_HMS_RLO', 'interp_class_CO_HeMS']].dropna()
+            intep_cls = [key for key in self.df_online.keys() if 'interp_class' in key]
+            df_binary_online = self.df_oneline.loc[index, intep_cls].dropna()
             event_array = df_binary['event'].values.tolist()
         
             # make interpolated class information consistent with event column
