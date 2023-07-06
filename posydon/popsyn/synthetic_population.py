@@ -688,7 +688,7 @@ class SyntheticPopulation:
         self.grb_z_rate_density = self.rates.get_centers_redshift_bins()
         total_GRB1 = self.rates.compute_rate_density(w_ijk_1, z_grb_1, observable='GRB1', sensitivity='beamed', index=index_1)
         total_GRB2 = self.rates.compute_rate_density(w_ijk_2, z_grb_2, observable='GRB2', sensitivity='beamed', index=index_2)
-        total_rate = self.grb_rate_density['total_GRB1'] + self.grb_rate_density['total_GRB2']
+        total_rate = total_GRB1 + total_GRB2
         self.grb_rate_density = {'total' : total_rate, 'total_GRB1' : total_GRB1, 'total_GRB2': total_GRB2}
         if "channel" in self.df_synthetic:
             channels = np.unique(self.df_synthetic['channel'])
