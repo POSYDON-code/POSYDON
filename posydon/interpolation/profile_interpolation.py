@@ -5,9 +5,6 @@ __authors__ = [
     "Elizabeth Teng <elizabethteng@u.northwestern.edu>"
 ]
 
-##TEST 
-
-
 import pickle
 import warnings
 
