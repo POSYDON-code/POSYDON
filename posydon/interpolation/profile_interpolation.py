@@ -307,7 +307,7 @@ class Density:
         self.scaling = np.std(pca_weights_unscaled,axis=0)
         self.pca_weights = pca_weights_unscaled/self.scaling  # scaled PCA weights
         
-        # process testing data
+        # process validation data
         self.valid_initial = valid_initial
         self.valid_rho_min = np.min(valid_profiles,axis=1)
         valid_rho_max = np.max(valid_profiles,axis=1)
