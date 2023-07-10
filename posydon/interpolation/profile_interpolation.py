@@ -209,7 +209,7 @@ class ProfileInterpolator:
                             self.valid_initial,
                             self.valid_profiles[:,self.names.index("logRho")],
                             IF_interpolator)
-        self.dens.train(prof_epochs=density_epochs,prof_patience=density_patience,hms_s2)
+        self.dens.train(prof_epochs=density_epochs,prof_patience=density_patience,hms_s2=hms_s2)
         
         if loss_history==True:
             return self.comp.loss_history, self.dens.loss_history
