@@ -47,7 +47,7 @@ class CompileData:
         for i in range(len(test)):
             try:
                 scalars,profiles = self.scrape(test,i,hms_s2)
-                self.test_scalars = self.test_scalars.append(scalars,ignofre_index=True)
+                self.test_scalars = self.test_scalars.append(scalars,ignore_index=True)
                 self.test_profiles.append(profiles)
             except:
                 testing_failed.append(i)
@@ -68,7 +68,10 @@ class CompileData:
                 self.profiles.append(profiles)
             except:
                 training_failed.append(i)
-                pass        
+                pass       
+            
+        if 'omega' in self.names:
+            self.names.append('norm_omega')
             
         warnings.warn(f"{len(training_failed)} training binaries failed")
 
@@ -98,8 +101,9 @@ class CompileData:
         df = df.sort_values(by="mass")
         df = df.reset_index(drop=True)
 
-        # grab input values, mass transfer class, final star state, final star mass
+        # grab input values, final star 1 state, final star 1 mass
         total_mass = grid.final_values[mass_key][ind]
+        
         scalars = {"m1":grid.initial_values["star_1_mass"][ind],
                    "m2":grid.initial_values["star_2_mass"][ind],
                    "p":grid.initial_values["period_days"][ind],
@@ -108,7 +112,7 @@ class CompileData:
                    "total_mass":total_mass}
 
         # grab output vectors, interpolate to normalize
-        profiles=np.zeros([len(self.names),200])
+        profiles=np.zeros([1+len(self.names),200])
         for i,prof in enumerate(self.names):
             if prof in df.columns:
             
@@ -118,7 +122,11 @@ class CompileData:
                 profiles[i] = profile_new
             else:
                 warnings.warn(f"{prof} profile not saved in grid, will not be included in file")
-
+        
+        if 'omega' in self.names:
+            profiles[-1]= profiles[self.names.index('omega')]/  \
+                          grid.final_values['S1_surf_avg_omega_div_omega_crit'][ind]
+        
         return scalars, profiles
 
     def save(self, filename):
