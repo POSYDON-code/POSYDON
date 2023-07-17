@@ -47,7 +47,9 @@ class population_spectra():
         self.grids = spectral_grids()
         self.grids.global_limits()
         self.scaling_factor = kwargs.get('scaling_factor')
-       
+        self.main_grid_flux = self.grids.main_grid_flux
+        self.specgrid_ostar_flux = self.grids.ostar_grid_flux
+        self.secondary_grid_flux = self.grids.secondary_grid_flux
 
 
     
@@ -55,12 +57,10 @@ class population_spectra():
 
     def create_spectrum_single(self,star,**kwargs):
         scale = self.scaling_factor
-        grids = self.grids
-
         if "stripped" in star.state:
             M = star.mass/con.M_sun
-            M_min = grids.specgrid_stripped.axis_x_min['M_init']
-            M_max = grids.specgrid_stripped.axis_x_max['M_init']
+            M_min = self.grids.specgrid_stripped.axis_x_min['M_init']
+            M_max = self.grids.specgrid_stripped.axis_x_max['M_init']
             if M < M_min or M > M_max:
                 self.failed_stars +=1
                 return None
@@ -79,11 +79,11 @@ class population_spectra():
         #For temperature higher than then lo_limits of Teff in main grids we calculate the spectra using the Ostar girds. 
         if Teff >= 30000:
             #Setting the acceptable boundaries for the ostar grid in the logg.
-            logg_min = grids.specgrid_ostar.axis_x_min['log(g)']
-            logg_max = grids.specgrid_ostar.axis_x_max['log(g)']
+            logg_min = self.specgrid_ostar.axis_x_min['log(g)']
+            logg_max = self.specgrid_ostar.axis_x_max['log(g)']
             if logg > logg_min and logg<logg_max: 
                     try:
-                        Flux = grids.ostar_grid_flux(**x)
+                        Flux = self.ostar_grid_flux(**x)
                         return Flux*star.R**2*scale**-2
                     except Exception as e:
                         print(e)
@@ -95,7 +95,7 @@ class population_spectra():
             
         try:
             #normal_start = datetime.datetime.now()
-            Flux = grids.main_grid_flux(**x) 
+            Flux = self.main_grid_flux(**x) 
             #normal_end = datetime.datetime.now()
             #print( 'The spectral normal time is: {time}'.format(time = normal_end - normal_start ))            
             return Flux*star.R**2*scale**-2
@@ -108,7 +108,7 @@ class population_spectra():
                 #Teff_min = grids.specgrid_secondary.axis_x_min['Teff']
                 #Calculating all the exeption that the first grid gave with the secondary. 
                 #if Teff>15000.0 and logg > logg_min:
-                F = grids.secondary_grid_flux(**x)
+                F = self.secondary_grid_flux(**x)
                 return F*star.R**2*scale**-2
             except Exception as e:
                 print(e)
@@ -122,7 +122,7 @@ class population_spectra():
                 elif Teff > 6000:
                     logg = max(logg, 1.0)
                 try:
-                    F = grids.main_grid_flux(**x)
+                    F = self.main_grid_flux(**x)
                     return F*star.R**2*scale**-2 
                 except Exception as e: 
                     print(e)
