@@ -544,15 +544,8 @@ def get_new_grid_name(path, compression, create_missing_directories=False):
         File name for the new grid slice.
 
     """
-    grid_name = path.split('/')[-1]
-    if path[0]=='/':
-        #path is an absolute path
-        output_path = os.path.join('/', os.path.join(*path.split('/')[:-1]),
-                                   compression)
-    else:
-        #path is a relative path
-        output_path = os.path.join(os.path.join(*path.split('/')[:-1]),
-                                   compression)
+    grid_path, grid_name = os.path.split(os.path.normpath(path))
+    output_path = os.path.join(grid_path, compression)
     grid_output = os.path.join(output_path, grid_name+'.h5')
     if create_missing_directories:
         # check that LITE/ or ORIGINAL/ directory exists
