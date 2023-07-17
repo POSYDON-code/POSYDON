@@ -83,14 +83,6 @@ def create_grid_slice(i, path_to_csv_file, STOP_BEFORE_CARBON_DEPLETION=True, ve
     grid_path = df.loc[i,'path_to_grid']
     compression = df.loc[i,'compression']
 
-#    grid_name = grid_path.split('/')[-1]
-#    otuput_path = os.path.join('/', os.path.join(*grid_path.split('/')[:-1]),
-#                               compression)
-#    grid_output = os.path.join(otuput_path, grid_name+'.h5')
-#
-#    # check that LITE/ or ORIGINAL/ directory exists
-#    if not os.path.isdir(otuput_path):
-#        os.makedirs(otuput_path)
     grid_output = get_new_grid_name(grid_path, compression,
                                     create_missing_directories=True)
 
@@ -160,7 +152,7 @@ def plot_grid(i, path_to_csv_file, verbose=False):
         print(f'plotting {grid_path}')
 
     # check that plots/ directories exist
-    plot_path = os.path.join('/', os.path.join(*plot_dir.split('/')[:-1]))
+    plot_path = os.path.split(os.path.normpath(plot_dir))[0]
     check_dirs = [plot_path, plot_dir]
 
     sub_dirs = ['TF12/', 'TF1/', 'TF2/', 'TF3/', 'TF4/', 'debug_mt/',
@@ -430,7 +422,7 @@ def train_interpolators(i, path_to_csv_file, verbose=False):
         print(f'train interpolators {grid_path} with method {method}')
 
     # check interpolation_objects directory exists
-    interp_path = os.path.join('/', os.path.join(*interpolator_path.split('/')[:-1]))
+    interp_path = os.path.split(interpolator_path)[0]
     if not os.path.isdir(interp_path):
         os.makedirs(interp_path)
 
