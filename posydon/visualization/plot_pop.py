@@ -384,10 +384,10 @@ def plot_popsyn_over_grid_slice(pop, grid_type, met_Zsun, slices=None, channel=N
             else:
                 plt.scatter(log10_m1, log10_p, s=s, marker='v', color='black', alpha=alpha)
             
-            if show_fig:
-                plt.show()
             if save_fig:
                 plt.savefig(os.path.join(plot_dir, fname%var), bbox_inches='tight')
+            if show_fig:
+                plt.show()
             if close_fig:
                 plt.close()
         except:
