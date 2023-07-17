@@ -2,45 +2,24 @@
 import numpy as np
 import astropy.constants as con
 import astropy.units as unt
+import pandas as pd
+import time 
 
-def array_data(N,last_binary_line,first_binary_line):
-    total_binaries = N
-    mass_arr = np.zeros((total_binaries,2))
-    radius_arr = np.zeros((total_binaries,2))
-    L_arr = np.zeros((total_binaries,2))
-    state_arr = np.zeros((total_binaries,2),dtype=object)
+#Loading the population data in an array of binaries. 
+# Inputs: the h5 file of the population and the END time. 
 
-    for i in range(N):
-        try:
-            mass_arr[i][:] = np.array([ last_binary_line.S1_mass[i], last_binary_line.S2_mass[i]])
-            radius_arr[i][:] = np.array([ 10**last_binary_line.S1_log_R[i], 10**last_binary_line.S2_log_R[i]])
-            L_arr[i][:] = np.array([ 10**last_binary_line.S1_log_L[i], 10**last_binary_line.S2_log_L[i]])
-            state_arr[i][:] = np.array([ str(last_binary_line.S1_state[i]), str(last_binary_line.S2_state[i])])
-        except:
-            mass_arr[i][:] = np.array(None,None)
-            radius_arr[i][:] = np.array(None,None)
-            L_arr[i][:] =  np.array(None,None)
-            state_arr[i][:] = np.array(["Failed","Failed"])
-        finally:
-            if "stripped" in state_arr[i][0]:
-                mass_arr[i][0] = first_binary_line.S1_mass[i]
-            elif "stripped" in state_arr[i][1]:
-                mass_arr[i][1] = first_binary_line.S2_mass[i]
-    return mass_arr,radius_arr,L_arr,state_arr
+Zo = 0.0142
+
+
 
 class star():
     
-    def __init__(self,binary_number,number,mass,state,R,L,metallicity):
-        self.binary_number = binary_number
-        self.number = number
-        self.mass = mass*con.M_sun
-        self.state = state
-        self.R = R*con.R_sun
-        self.L = L*con.L_sun
+    def __init__(self,**kwargs):
+        for key, value in kwargs.items():
+            setattr(self, key, value)
         self.logg = None
         self.Teff = None
-        self.metallicity = metallicity
-        self.Fe_H = np.log10(metallicity)
+        self.Fe_H = np.log10(self.metallicity)
         
         
     def get_logg(self,max_logg,min_logg): 
@@ -66,3 +45,39 @@ class star():
     def new_radius(self,new_logg):
         R = np.sqrt(con.G*self.mass/10**(new_logg)/unt.cm *unt.s**2).decompose()
         return R
+
+
+def population_data(population_file,time, number_of_binaries = True ):
+    history = pd.read_hdf(population_file, key='history')
+    final_stars = history[(history.time == time ) & (history.event == "END")].reset_index()
+    zams_stars = history[history.event == 'ZAMS']
+    if number_of_binaries:
+        total_binaries = len(final_stars)
+    elif number_of_binaries <= len(final_stars):
+        total_binaries = number_of_binaries
+    else: 
+        raise Exception('The total number of binaries {N} is less than the input number_of_binaries {number_of_binaries}'.format(N = total_binaries, number_of_binaries = number_of_binaries  ))
+
+    star1_properties = {}
+    star2_properties = {}
+    population = [None]*total_binaries
+    for i in range(total_binaries):
+        star1_properties['mass'],star2_properties['mass'] =  final_stars.S1_mass[i]*con.M_sun,final_stars.S2_mass[i]*con.M_sun
+        star1_properties['R'],star2_properties['R']  =  10**final_stars.S1_log_R[i]*con.R_sun, 10**final_stars.S2_log_R[i]*con.R_sun
+        star1_properties['L'],star2_properties['L'] = 10**final_stars.S1_log_L[i]*con.L_sun, 10**final_stars.S2_log_L[i]*con.L_sun
+        star1_properties['binary_index'],star2_properties['binary_index'] = final_stars.binary_index[i],final_stars.binary_index[i]
+        star1_properties['state'],star2_properties['state'] = final_stars.S1_state[i], final_stars.S2_state[i]
+        star1_properties['binary_state'],star2_properties['binary_state'] = final_stars.state[i], final_stars.state[i]
+        star1_properties['star_number'],star2_properties['star_number'] = 1,2
+        star1_properties['binary_number'],star2_properties['binary_number'] = i,i
+        star1_properties['metallicity'],star2_properties['metallicity'] = final_stars.S1_metallicity[i]/Zo, final_stars.S2_metallicity[i]/Zo
+
+        if "stripped" in star1_properties['state']:
+            star1_properties['mass'] = zams_stars.S1_mass[final_stars.binary_index[i]]*con.M_sun
+        elif "stripped" in star2_properties['state']:
+            star2_properties['mass'] = zams_stars.S2_mass[final_stars.binary_index[i]]*con.M_sun
+
+        star1 = star(**star1_properties)
+        star2 = star(**star2_properties)
+        population[i] = [star1,star2]
+    return population
