@@ -78,32 +78,13 @@ def compress_dir(args):
 
     og_size = size(get_size(args.mesa_dir))
 
-    for folder in tqdm(os.listdir(args.mesa_dir)):
+    for root, dirs, _file in tqdm(os.walk(args.mesa_dir)):
+        for f in _file:
+            ext = f.split(".")[-1]
 
-        if os.path.isdir(os.path.join(args.mesa_dir, folder)):
-            is_mesa_run = False
-            sub_dir = os.listdir(os.path.join(args.mesa_dir, folder))
-            track_dirs = []
+            if ext in ["data", "mod", "txt"]:
 
-            for _f in sub_dir:
-                if "_grid_index_" in _f:    # checking if directory is mesa run
-                    is_mesa_run = True
-
-                if (os.path.isdir(os.path.join(args.mesa_dir, folder, _f))
-                        and _f not in ["star1", "star2", "binary"]):
-                    track_dirs.append(os.path.join(args.mesa_dir, folder, _f))
-
-            if is_mesa_run:
-                # iterating over directory containing MESA runs
-                for track_obj in track_dirs:
-                    for root, _dir, files in os.walk(track_obj):
-                        # traversing over directory tree of copied mesa tracks
-                        # and compressing .data, .mod, .txt files
-                        for file in files:
-                            ext = file.split(".")[-1]
-                            if ext not in ["data", "mod", "txt"]:
-                                continue
-                            os.system(f"gzip -1 {os.path.join(root, file)}")
+                os.system(f"gzip -1 {os.path.join(root, f)}")
 
     print("\nCompressed MESA tracks\nOriginal size {} | Compressed size {}\n".
           format(og_size, size(get_size(args.mesa_dir))))
