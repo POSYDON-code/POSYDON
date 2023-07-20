@@ -890,7 +890,7 @@ class detached_step:
                 f'{star.center_c12:.4f}'
             )
             for rel_diff_parameter in ["mass", "log_R", "center_he4", "surface_he4", "surface_h1", "he_core_mass", "center_c12"]:
-                if np.abs(sol.fun) is not None and np.abs(sol.fun) < tolerance_matching_integration_hard
+                if np.abs(sol.fun) is not None and np.abs(sol.fun) < tolerance_matching_integration_hard \
                     and getattr(star, rel_diff_parameter) is not None and ~np.isnan(getattr(star, rel_diff_parameter)):
                     rel_diff = self.get_track_val(rel_diff_parameter, htrack, *sol.x) - getattr(star, rel_diff_parameter)
                     setattr(star, "diff_"+rel_diff_parameter, rel_diff)
