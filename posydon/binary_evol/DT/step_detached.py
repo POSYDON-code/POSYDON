@@ -895,7 +895,7 @@ class detached_step:
                     rel_diff = self.get_track_val(rel_diff_parameter, htrack, *sol.x) - getattr(star, rel_diff_parameter)
                     setattr(star, "diff_"+rel_diff_parameter, rel_diff)
                 else:
-                    setattr(star, "diff_"+rel_diff_parameter, rel_diff)
+                    setattr(star, "diff_"+rel_diff_parameter, np.nan)
 
         return initials[0], initials[1], htrack
 
