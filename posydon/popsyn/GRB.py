@@ -24,8 +24,10 @@ def get_GRB_properties(df, GRB_efficiency, GRB_beaming, E_GRB_iso_min=0.):
     
     def compute_eta(i, sel):
         """Set GRB energy conversion efficiency factor."""
-        if (not isinstance(GRB_efficiency, float) and
-            GRB_efficiency >= 0. and GRB_efficiency <= 1.):
+        if not isinstance(GRB_efficiency, float):
+            raise ValueError(f'GRB efficiency {GRB_efficiency} '
+                             'must be float value in [0,1] range!')
+        if GRB_efficiency < 0. or GRB_efficiency > 1.:
             raise ValueError(f'GRB efficiency {GRB_efficiency} '
                              'must be float value in [0,1] range!')
         # preset all efficiency factors to NaN and set them
