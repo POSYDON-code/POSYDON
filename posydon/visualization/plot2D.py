@@ -149,6 +149,7 @@ class plot2D(object):
                     temp_var[sub_varname] = kwargs[varname].get(
                         sub_varname, default_value
                     )
+
                 setattr(self, varname, temp_var)
 
         # plotting fonts
@@ -274,12 +275,14 @@ class plot2D(object):
             "combined_TF12",
             "debug",
             "interpolation_class"
-        ] or 'SN_type' in termination_flag or 'state' in termination_flag:
+        ] or ('SN_type' in termination_flag or 
+              'CO_type' in termination_flag or 
+              'state' in termination_flag):
             self.all_termination_flags = False
             if 'SN_type' in termination_flag:
                 self.update_markers_colors_legends('SN_type',
                                                    MARKERS_COLORS_LEGENDS)
-            elif 'state' in termination_flag:
+            elif 'state' in termination_flag or 'CO_type' in termination_flag:
                 self.update_markers_colors_legends('state',
                                                    MARKERS_COLORS_LEGENDS)
             else:
@@ -976,7 +979,7 @@ class plot2D(object):
         else:
             label = None
 
-        plt.colorbar(
+        cbar = plt.colorbar(
             mappable=scatter,
             orientation=self.colorbar["orientation"],
             fraction=self.colorbar["fraction"],
@@ -986,4 +989,8 @@ class plot2D(object):
             anchor=self.colorbar["anchor"],
             panchor=self.colorbar["panchor"],
             extend=self.colorbar["extend"],
-        ).set_label(label=label, size=self.colorbar["label_size"])
+        )
+        
+        cbar.set_label(label=label, size=self.colorbar["label_size"])
+        cbar.mappable.set_clim(self.colorbar["vmin"], vmax = self.colorbar["vmax"])
+        

@@ -65,7 +65,9 @@ PLOT_PROPERTIES = {
         'aspect': 20,
         'anchor': (0.0, 0.5),
         'panchor': (1.0, 0.5),
-        'extend': 'neither'
+        'extend': 'neither',
+        'vmin': None,
+        'vmax': None
     },
     'legend1D': {
         'title': None,
@@ -111,6 +113,8 @@ color_unstable = 'black'
 DEFAULT_MARKERS_COLORS_LEGENDS = {
     'termination_flag_1': {
         'terminate due to primary depleting carbon (inverse sn?)':
+            ['s', 2, None, TF1_label_stable],
+        'Primary got stopped before central carbon depletion':
             ['s', 2, None, TF1_label_stable],
         'Primary has depleted central carbon':
             ['s', 2, None, TF1_label_stable],
