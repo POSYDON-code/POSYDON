@@ -202,14 +202,14 @@ class MesaGridStep:
             # Set the interpolation path
             if interpolation_path is None:
                 interpolation_path = (
-                    self.path + grid_name.split('/')[0]
+                    self.path + os.path.split(grid_name)[0]
                     + '/interpolators/%s/' % self.interpolation_method)
 
             # Set the interpolation filename
             if interpolation_filename is None:
                 interpolation_filename = (
                     interpolation_path
-                    + grid_name.split('/')[1].replace('h5', 'pkl'))
+                    + os.path.split(grid_name)[1].replace('h5', 'pkl'))
             else:
                 interpolation_filename = (interpolation_path
                                           + interpolation_filename)
