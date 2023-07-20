@@ -2445,7 +2445,7 @@ def diffeq(
             # parameters are given in units of [Msol], [Rsol], [yr] and so that
             # dOmega_mb/dt is in units of [yr^-2].
             dOmega_mb_sec = (
-                -3.8e30 * (const.rsol**2 / const.secyer)
+                -3.8e-30 * (const.rsol**2 / const.secyer)
                 * M_sec
                 * R_sec**4
                 * Omega_sec**3
@@ -2453,7 +2453,7 @@ def diffeq(
                 * np.clip((1.5 - M_sec) / (1.5 - 1.3), 0, 1)
             )
             dOmega_mb_pri = (
-                -3.8e30 * (const.rsol**2 / const.secyer)
+                -3.8e-30 * (const.rsol**2 / const.secyer)
                 * M_pri
                 * R_pri**4
                 * Omega_pri**3
