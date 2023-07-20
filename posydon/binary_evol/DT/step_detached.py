@@ -855,36 +855,13 @@ class detached_step:
                           np.abs(sol.fun), ">", tolerance_matching_integration,
                           "tolerance")
                 initials = (np.nan, np.nan)
-                '''
-                star.fun = np.nan
-                star.stiching_rel_mass_difference = np.nan
-                star.stiching_rel_radius_difference = np.nan
-                star.stiching_rel_inertia_difference = np.nan
-                '''
+
             elif np.abs(sol.fun) < tolerance_matching_integration_hard:
                 if self.verbose or self.verbose == 1:
                     print("minimization in matching considered acceptable,"
                           " with", f'{np.abs(sol.fun):.8f}', "<",
                           tolerance_matching_integration, "tolerance")
                 initials = sol.x
-                '''
-                star.fun = sol.fun
-                star.stiching_rel_mass_difference = (
-                    self.get_track_val("mass", htrack, *sol.x) - star.mass
-                ) / star.mass
-                if star.log_R in MESA_label:
-                    star.stiching_rel_logRadius_difference = (
-                        self.get_track_val("log_R", htrack, *sol.x)
-                        - star.log_R) / star.log_R
-                else:
-                    star.stiching_rel_logRadius_difference = np.nan
-                if (star.total_moment_of_inertia is not None
-                        and not np.isnan(star.total_moment_of_inertia)):
-                    star.stiching_rel_inertia_difference = (
-                        self.get_track_val("inertia", htrack, *sol.x)
-                        - star.total_moment_of_inertia
-                    ) / star.total_moment_of_inertia
-                '''
 
 
         if self.verbose or self.verbose == 1:
@@ -912,6 +889,14 @@ class detached_step:
                 f'{star.he_core_mass:.3f}',
                 f'{star.center_c12:.4f}'
             )
+            for rel_diff_parameter in ["mass", "log_R", "center_he4", "surface_he4", "surface_h1", "he_core_mass", "center_c12"]:
+                if np.abs(sol.fun) is not None and np.abs(sol.fun) < tolerance_matching_integration_hard
+                    and getattr(star, rel_diff_parameter) is not None and ~np.isnan(getattr(star, rel_diff_parameter)):
+                    rel_diff = self.get_track_val(rel_diff_parameter, htrack, *sol.x) - getattr(star, rel_diff_parameter)
+                    setattr(star, "diff_"+rel_diff_parameter, rel_diff)
+                else:
+                    setattr(star, "diff_"+rel_diff_parameter, rel_diff)
+
         return initials[0], initials[1], htrack
 
     def __repr__(self):
@@ -1038,7 +1023,7 @@ class detached_step:
                 raise Exception("State not recognized!")
         else:
             raise Exception("Non existent companion has not a recognized value!")
-        
+
         def get_star_data(binary, star1, star2, htrack,
                           co, copy_prev_m0=None, copy_prev_t0=None):
             """Get and interpolate the properties of stars.
@@ -1149,10 +1134,10 @@ class detached_step:
         # get the matched data of two stars, respectively
         interp1d_sec, m0, t0 = get_star_data(
             binary, secondary, primary, secondary.htrack, co=False)
-        
+
         primary_not_normal = (primary.co) or (self.non_existent_companion in [1,2])
-        primary_normal = (not primary.co) and self.non_existent_companion == 0 
-        
+        primary_normal = (not primary.co) and self.non_existent_companion == 0
+
         if primary_not_normal:
             # copy the secondary star except mass which is of the primary,
             # and radius, mdot, Idot = 0
@@ -1164,8 +1149,8 @@ class detached_step:
                 binary, primary, secondary, primary.htrack, False)[0]
         else:
             raise Exception("During matching primary is either should be either normal or not normal. `non_existent_companion` should be zero.")
-        
-        
+
+
         if interp1d_sec is None or interp1d_pri is None:
             # binary.event = "END"
             binary.state += " (GridMatchingFailed)"
@@ -1829,7 +1814,7 @@ class detached_step:
 
             if primary.state == "massless_remnant":
                 pass
-            
+
             elif primary.co:
                 mdot_acc = np.atleast_1d(bondi_hoyle(
                     binary, primary, secondary, slice(-len(t), None),
