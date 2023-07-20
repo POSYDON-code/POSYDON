@@ -94,7 +94,7 @@ extras_require = {
         "sphinxcontrib_programoutput",
         "PSphinxTheme",
     ],
-    "profile": ["tensorflow == 2.12.0"], # for profile interpolation
+    "profile": ["tensorflow == 2.13.0"], # for profile interpolation
     "hpc": ["mpi4py == 3.0.3"],
 }
 
