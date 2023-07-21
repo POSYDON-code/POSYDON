@@ -49,13 +49,14 @@ class EvaluateIFInterpolator:
             (self.test_grid.final_values["interpolation_class"] != "initial_MT")
         )
 
-        i = self.interpolator.test_interpolator(iv[ivalid_inds]) # interpolated
-        ifv = fv[ivalid_inds]
+        i = self.interpolator.test_interpolator(iv) # interpolated
+        # ifv = fv[ivalid_inds]
 
         self.errs = {}
 
-        self.errs["relative"] = np.abs((ifv - i) / ifv)
-        self.errs["absolute"] = np.abs(ifv - i)
+        self.errs["relative"] = np.abs((fv - i) / fv)
+        self.errs["absolute"] = np.abs(fv - i)
+        self.errs["valid_inds"] = ivalid_inds
         
 
         cvalid_inds = np.where(
@@ -92,7 +93,7 @@ class EvaluateIFInterpolator:
 
         # saving classes
         self.c = c
-        self.ic = ic[ivalid_inds]
+        self.ic = ic
                 
 
     def __format(self, s, title = False):
@@ -350,30 +351,16 @@ class EvaluateIFInterpolator:
         slice_3D_var_range = (q-0.05,q+0.05)
         mass_ratio = self.test_grid.initial_values["star_2_mass"] / self.test_grid.initial_values["star_1_mass"]
 
-        slice = np.logical_and(
-            mass_ratio
-            >= slice_3D_var_range[0],
-            mass_ratio
-            <= slice_3D_var_range[1],
-        )
+        slice = (mass_ratio >= slice_3D_var_range[0]) & (mass_ratio <= slice_3D_var_range[1])
 
         max_omega = [max(self.test_grid[i].history2['surf_avg_omega_div_omega_crit'])
                     if self.test_grid[i].history2 is not None else np.nan
                     for i in range(len(self.test_grid.MESA_dirs))]
 
-        
-        errs = []
+        slice_errs = np.nanmean(self.errs["relative"], axis = 1)
+        slice_errs = [slice_errs[i] if in_slice and i in self.errs["valid_inds"][0] else np.nan for i, in_slice in enumerate(slice)]
 
-        ic = self.test_grid.final_values["interpolation_class"]
-
-        for ind in slice:
-            if ic[ind] == "not_converged" or ic[ind] == "initial_MT":
-                errs.append(np.nan)
-            else:
-                pass
-        # FIX HERE
-        # print(nanerrors.min(), nanerrors.max(), np.median(nanerrors), nanerrors.mean(), sorted(nanerrors))
-        fig = self.test_grid.plot2D('star_1_mass', 'period_days', np.array(max_omega),
+        fig = self.test_grid.plot2D('star_1_mass', 'period_days', np.array(slice_errs),
                     termination_flag='termination_flag_1',
                     grid_3D=True, slice_3D_var_str='mass_ratio',
                     slice_3D_var_range=slice_3D_var_range,
