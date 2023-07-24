@@ -147,9 +147,20 @@ class SingleStar:
         if not hasattr(self, 'm_disk_radiated'):
             self.m_disk_radiated = None
 
-        for rel_diff_parameter in ["mass", "log_R", "center_he4", "surface_he4", "surface_h1", "he_core_mass", "center_c12"]:
-            if not hasattr(self, "diff_"+rel_diff_parameter):
-                setattr(self, "diff_"+rel_diff_parameter, None)
+        if not hasattr(self, 'diff_mass'):
+            self.m_disk_radiated = None
+        if not hasattr(self, 'diff_log_R'):
+            self.m_disk_radiated = None
+        if not hasattr(self, 'diff_center_he4'):
+            self.m_disk_radiated = None
+        if not hasattr(self, 'diff_surface_he4'):
+            self.m_disk_radiated = None
+        if not hasattr(self, 'diff_surface_h1'):
+            self.m_disk_radiated = None
+        if not hasattr(self, 'diff_he_core_mass'):
+            self.m_disk_radiated = None
+        if not hasattr(self, 'diff_center_c12'):
+            self.m_disk_radiated = None
 
 
         # the following quantities are updated in mesa_step.py
