@@ -144,23 +144,21 @@ class SingleStar:
             self.SN_type = None
         if not hasattr(self, 'm_disk_accreted'):
             self.m_disk_accreted = None
-        if not hasattr(self, 'm_disk_radiated'):
-            self.m_disk_radiated = None
 
         if not hasattr(self, 'diff_mass'):
-            self.m_disk_radiated = None
+            self.diff_mass = None
         if not hasattr(self, 'diff_log_R'):
-            self.m_disk_radiated = None
+            self.diff_log_R = None
         if not hasattr(self, 'diff_center_he4'):
-            self.m_disk_radiated = None
+            self.diff_center_he4 = None
         if not hasattr(self, 'diff_surface_he4'):
-            self.m_disk_radiated = None
+            self.diff_surface_he4 = None
         if not hasattr(self, 'diff_surface_h1'):
-            self.m_disk_radiated = None
+            self.diff_surface_h1 = None
         if not hasattr(self, 'diff_he_core_mass'):
-            self.m_disk_radiated = None
+            self.diff_he_core_mass = None
         if not hasattr(self, 'diff_center_c12'):
-            self.m_disk_radiated = None
+            self.diff_center_c12 = None
 
 
         # the following quantities are updated in mesa_step.py
