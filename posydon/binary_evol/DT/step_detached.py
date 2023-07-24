@@ -893,7 +893,9 @@ class detached_step:
                 if np.abs(sol.fun) is not None and np.abs(sol.fun) < tolerance_matching_integration_hard \
                     and getattr(star, rel_diff_parameter) is not None and ~np.isnan(getattr(star, rel_diff_parameter)):
                     rel_diff = self.get_track_val(rel_diff_parameter, htrack, *sol.x) - getattr(star, rel_diff_parameter)
+                    print("rel_diff = ", rel_diff)
                     setattr(star, "diff_"+rel_diff_parameter, rel_diff)
+                    print(getattr(star, "diff_"+rel_diff_parameter))
                 else:
                     setattr(star, "diff_"+rel_diff_parameter, np.nan)
 

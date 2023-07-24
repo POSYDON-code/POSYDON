@@ -147,19 +147,24 @@ class SingleStar:
         if not hasattr(self, 'm_disk_radiated'):
             self.m_disk_radiated = None
 
+        for rel_diff_parameter in ["mass", "log_R", "center_he4", "surface_he4", "surface_h1", "he_core_mass", "center_c12"]:
+            if not hasattr(self, "diff_"+rel_diff_parameter):
+                setattr(self, "diff_"+rel_diff_parameter, None)
+
+
         # the following quantities are updated in mesa_step.py
-            
+
         # common envelope quantities
         for quantity in ['m_core_CE', 'r_core_CE']:
             for val in [1, 10, 30, 'pure_He_star_10']:
                 if not hasattr(self, f'{quantity}_{val}cent'):
                     setattr(self, f'{quantity}_{val}cent', None)
-                
+
         # core masses at He depletion
         for quantity in ['avg_c_in_c_core_at_He_depletion',
                          'co_core_mass_at_He_depletion']:
             setattr(self, quantity, None)
-                
+
         # core collapse quantities
         for MODEL_NAME in MODELS.keys():
             if not hasattr(self, MODEL_NAME):
