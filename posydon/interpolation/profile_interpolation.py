@@ -390,11 +390,6 @@ class Density:
         regress_rho = lambda x: self.model_rho(x)
         min_rho = regress_rho(inputs).numpy()[:,0]
         
-        # reconstruct profile
-        norm_prof = self.pca.inverse_transform(pca_weights_pred*self.scaling)
-        density_profiles = norm_prof*(max_rho[:,np.newaxis]-min_rho[:,np.newaxis]) \
-                           + min_rho[:,np.newaxis]
-        
         # IF interpolate final mass, center density 
         if self.hms_s2==False:
             m_ind = self.model_IF.interpolators[0].out_keys.index("star_1_mass")
@@ -405,6 +400,11 @@ class Density:
         max_rho = self.model_IF.interpolators[0].test_interpolator(10**inputs)[:,center_ind]                    
         pred_mass = self.model_IF.interpolators[0].test_interpolator(10**inputs)[:,m_ind]
             
+        # reconstruct profile
+        norm_prof = self.pca.inverse_transform(pca_weights_pred*self.scaling)
+        density_profiles = norm_prof*(max_rho[:,np.newaxis]-min_rho[:,np.newaxis]) \
+                           + min_rho[:,np.newaxis]
+        
         # construct mass enclosed profile coordinates
         mass_coords = np.linspace(0,1,200)*pred_mass[:,np.newaxis] 
         
