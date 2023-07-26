@@ -1689,17 +1689,19 @@ class PSyGrid:
         slice_3D_var_str : str
             Variable along which the 3D space will be sliced. Allowed values
             are `psygrid.initial_values.dtype.names`.
-        slice_3D_var_range : tuple
+        slice_3D_var_range : tuple or a list of tuples
             Range between which you want to slice the variable slice_3D_var_str
-            e.g., `(2.5,3.)`.
+            e.g., `(2.5,3.)`. In case of a list of tuples, one will get a large
+            plot with one subplot for each tuple in the list.
         grid_4D : bool
             If `True`, the psygrid object is a 4D grid and needs to be sliced.
         slice_4D_var_str : str
             Variable along which the 4D space will be sliced. Allowed values
             are `psygrid.initial_values.dtype.names`.
-        slice_4D_var_range : toople
+        slice_4D_var_range : tuple or a list of tuples
             Range between which you want to slice the variable slice_4D_var_str
-            e.g., `(2.5,3.)`.
+            e.g., `(2.5,3.)`. In case of a list of tuples, one will get a large
+            plot with one subplot for each tuple in the list.
         extra_grid : object or array of objects
             If subset of the grid was rerun a or an extention was added, one
             can overlay the new psygrid by passing it here.
