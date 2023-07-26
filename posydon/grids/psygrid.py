@@ -1663,7 +1663,7 @@ class PSyGrid:
                grid_3D=None, slice_3D_var_str=None, slice_3D_var_range=None,
                grid_4D=None, slice_4D_var_str=None, slice_4D_var_range=None,
                extra_grid=None, slice_at_RLO=False,
-               MARKERS_COLORS_LEGENDS=None,
+               MARKERS_COLORS_LEGENDS=None, max_cols=3, legend_pos=(3, 3),
                verbose=False, **kwargs):
         """Plot a 2D slice of x_var_str vs y_var_str of one or more runs.
 
@@ -1710,6 +1710,11 @@ class PSyGrid:
             Each termination flag is associated with a marker shape, size,
             color and label (cf. `MARKERS_COLORS_LEGENDS` in
             `plot_defaults.py`).
+        max_cols : int
+            Defines the maximum number of columns of subplots. Default: 3
+        legend_pos : SubplotSpec (int or tuple)
+            Defines which subplots won't contain an axis but are used to
+            display the legend there. Default: (3, 3)
         verbose : bool
             If `True`, the object reports by printing to standard output.
         **kwargs : dict
@@ -1731,6 +1736,8 @@ class PSyGrid:
                       extra_grid=extra_grid,
                       slice_at_RLO=slice_at_RLO,
                       MARKERS_COLORS_LEGENDS=MARKERS_COLORS_LEGENDS,
+                      max_cols=max_cols,
+                      legend_pos=legend_pos,
                       verbose=verbose,
                       **kwargs)
         plot()
