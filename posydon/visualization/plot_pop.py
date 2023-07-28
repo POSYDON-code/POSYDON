@@ -281,23 +281,19 @@ def plot_popsyn_over_grid_slice(pop, grid_type, met_Zsun, slices=None, channel=N
         
     if 'CO' in grid_path:
         # compact object mass slices
-        def log_range(x_min,x_max,x_n):
-            return 10**np.linspace(np.log10(x_min),np.log10(x_max), x_n)
-        m_CO_min = 1.
-        m_CO_max = 51.32759630397827
-        m_CO_n = 23
-        m_COs = log_range(m_CO_min, m_CO_max, m_CO_n)
-        m_COs_edges = 10**(np.log10(np.array(m_COs)[:-1])+
-                                (np.log10(np.array(m_COs)[1:])-np.log10(np.array(m_COs)[:-1]))/2)
-        m2 = [0.]+m_COs_edges.tolist()+[55.]
+        m_COs = np.unique(np.around(grid.initial_values['star_2_mass'],1))
+        m_COs_edges = 10**((np.log10(np.array(m_COs)[1:])+np.log10(np.array(m_COs)[:-1]))*0.5)
+        m2 = [0.]+m_COs_edges.tolist()+[2*m_COs_edges[-1]]
         vars = m_COs
         fname = 'grid_m_%1.2f.png'
         title = '$m_\mathrm{CO}=%1.2f\,M_\odot$'
         slice_3D_var_str='star_2_mass'
     elif 'HMS-HMS' in grid_path:
         # mass ratio slices
-        qs = np.linspace(0.05,1.,20)
-        qs[-1] = 0.99
+        qs = np.unique(np.around(grid.initial_values['star_2_mass']/grid.initial_values['star_1_mass'],2))
+        dq = (qs[1:]-qs[:-1])*0.5
+        dq_edges = (qs[:-1]+dq).tolist()
+        dq_edges = [0.]+dq_edges+[1.]
         vars = qs.tolist()
         fname = 'grid_q_%1.2f.png'
         title = '$q=%1.2f$'
@@ -312,7 +308,7 @@ def plot_popsyn_over_grid_slice(pop, grid_type, met_Zsun, slices=None, channel=N
                 print(f'Skipping {round(var,2)}')
             continue
         if 'HMS-HMS' in grid_path:
-            slice_3D_var_range = (var-2.5e-2,var+2.5e-2)
+            slice_3D_var_range = (dq_edges[i],dq_edges[i+1])
             # select popsynth binaries in the given mass ratio range
             sel = (pop.df['metallicity'] == met_Zsun*Zsun) & (pop.df['event'] == 'ZAMS')
             q = pop.df['S2_mass'].values/pop.df['S1_mass'].values
