@@ -959,7 +959,7 @@ class SyntheticPopulation:
             z_grb = None
             rate_grb = None
         plot_pop.plot_rate_density(z_dco, rate_dco, z_grb, rate_grb, **kwargs)
-        
+
     def plot_popsyn_over_grid_slice(self, grid_type, met_Zsun, **kwargs):
         """Plot popsyn over grid slice."""
         plot_pop.plot_popsyn_over_grid_slice(self, grid_type, met_Zsun, **kwargs)
