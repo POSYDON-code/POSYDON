@@ -366,7 +366,7 @@ def plot_popsyn_over_grid_slice(pop, grid_type, met_Zsun, slices=None, channel=N
                     prop_values = np.log10(prop_values)
                     vmin = np.log10(vmin)
                     vmax = np.log10(vmax)
-                plt.scatter(log10_m1, log10_p, c=prop_values, s=s, vmin=vmin, vmax=vmax, marker='v', cmap='viridis', alpha=alpha)
+                plt.scatter(log10_m1, log10_p, c=prop_values, s=s, vmin=vmin, vmax=vmax, marker='v', cmap='viridis', alpha=alpha, zorder=0.5)
                 if prop in DEFAULT_LABELS:
                     if log_prop:
                         label = DEFAULT_LABELS[prop][1]
@@ -378,7 +378,7 @@ def plot_popsyn_over_grid_slice(pop, grid_type, met_Zsun, slices=None, channel=N
                         label = 'log10_'+label
                 plt.colorbar(label=label, orientation='horizontal')
             else:
-                plt.scatter(log10_m1, log10_p, s=s, marker='v', color='black', alpha=alpha)
+                plt.scatter(log10_m1, log10_p, s=s, marker='v', color='black', alpha=alpha, zorder=0.5)
             
             if save_fig:
                 plt.savefig(os.path.join(plot_dir, fname%var), bbox_inches='tight')
