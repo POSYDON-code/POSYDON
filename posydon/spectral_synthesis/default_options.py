@@ -13,4 +13,11 @@ default_kwargs = {
     'lam_max':7000.,
     #Number of points in the wavelength range:
     'lam_res':2000,
+    
+
+
+    #Performance variables: 
+    'cache_limit' : 256
+
+
 }

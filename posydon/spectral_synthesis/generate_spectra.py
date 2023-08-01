@@ -6,15 +6,18 @@ Spectral Synthesis code
 import numpy as np
 import astropy.constants as con
 import astropy.units as unt
-import h5py
 import datetime
-import math
 import traceback
 import copy
 from posydon.spectral_synthesis.spectral_tools import population_data
 from posydon.spectral_synthesis.spectral_grids import spectral_grids
-kpc = 3.08e19*unt.m
 
+grid_keys = [
+    'main_grid',
+    'secondary_grid',
+    'ostar_grid',
+    'stripped_grid',
+]
 #########################################Creating the class population_spectra ###############################################
 
 
@@ -47,10 +50,7 @@ class population_spectra():
         self.grids = spectral_grids()
         self.grids.global_limits()
         self.scaling_factor = kwargs.get('scaling_factor')
-        self.main_grid_flux = self.grids.main_grid_flux
-        self.specgrid_ostar_flux = self.grids.ostar_grid_flux
-        self.secondary_grid_flux = self.grids.secondary_grid_flux
-
+        self.grid_flux  = self.grids.grid_flux
 
     
 
@@ -59,8 +59,8 @@ class population_spectra():
         scale = self.scaling_factor
         if "stripped" in star.state:
             M = star.mass/con.M_sun
-            M_min = self.grids.specgrid_stripped.axis_x_min['M_init']
-            M_max = self.grids.specgrid_stripped.axis_x_max['M_init']
+            M_min =  self.grids.spectral_grids['stripped_grid'].axis_x_min['M_init']
+            M_max = self.grids.spectral_grids['stripped_grid'].axis_x_max['M_init']
             if M < M_min or M > M_max:
                 self.failed_stars +=1
                 return None
@@ -79,14 +79,13 @@ class population_spectra():
         #For temperature higher than then lo_limits of Teff in main grids we calculate the spectra using the Ostar girds. 
         if Teff >= 30000:
             #Setting the acceptable boundaries for the ostar grid in the logg.
-            logg_min = self.specgrid_ostar.axis_x_min['log(g)']
-            logg_max = self.specgrid_ostar.axis_x_max['log(g)']
+            logg_min = self.grids.spectral_grids['ostar_grid'].axis_x_min['log(g)']
+            logg_max = self.grids.spectral_grids['ostar_grid'].axis_x_max['log(g)']
             if logg > logg_min and logg<logg_max: 
                     try:
-                        Flux = self.ostar_grid_flux(**x)
+                        Flux = self.grid_flux('ostar_grid',**x) 
                         return Flux*star.R**2*scale**-2
-                    except Exception as e:
-                        print(e)
+                    except LookupError:
                         self.failed_stars +=1
                         return None
             else:
@@ -95,23 +94,20 @@ class population_spectra():
             
         try:
             #normal_start = datetime.datetime.now()
-            Flux = self.main_grid_flux(**x) 
+            Flux = self.grid_flux('main_grid',**x) 
             #normal_end = datetime.datetime.now()
             #print( 'The spectral normal time is: {time}'.format(time = normal_end - normal_start ))            
             return Flux*star.R**2*scale**-2
-        except Exception as e:
-            if str(e) != 'unavailable data':
-                raise Exception(e)
+        except LookupError:
             try:
                 # lo limits for the secondary grid: 
                 #logg_min = grids.specgrid_secondary.axis_x_min['log(g)']
                 #Teff_min = grids.specgrid_secondary.axis_x_min['Teff']
                 #Calculating all the exeption that the first grid gave with the secondary. 
                 #if Teff>15000.0 and logg > logg_min:
-                F = self.secondary_grid_flux(**x)
-                return F*star.R**2*scale**-2
-            except Exception as e:
-                print(e)
+                Flux = self.grid_flux('secondary_grid',**x) 
+                return Flux*star.R**2*scale**-2
+            except LookupError:
                 # if and else statements that fix the grid voids.  
                 if Teff > 20000:
                     logg = max(logg, 4.0)
@@ -122,10 +118,9 @@ class population_spectra():
                 elif Teff > 6000:
                     logg = max(logg, 1.0)
                 try:
-                    F = self.main_grid_flux(**x)
-                    return F*star.R**2*scale**-2 
-                except Exception as e: 
-                    print(e)
+                    Flux = self.grid_flux('main_grid',**x) 
+                    return Flux*star.R**2*scale**-2 
+                except LookupError:
                     self.failed_stars +=1
                     return None
 
