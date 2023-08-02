@@ -115,6 +115,7 @@ class spectral_grids():
         return Flux
     
 
+    #Constractor that makes a dictionary of photogrids. 
     def photgrid_constractor(self,**kwargs):
         if self.filters is None: 
             filters = ['U', 'B', 'V']
@@ -132,22 +133,26 @@ class spectral_grids():
                     photgrids[key]= photgrid
         return photgrids
 
-
-        """
-        def create_photogrid(self,name):
+    
+    def photogrid_flux(self,name,scale,**kwargs):
+        if self.filters is None: 
             filters = ['U', 'B', 'V']
-            photgrids{}
+        else: 
+            filters = self.filters
 
+        if name not in grid_keys:
+            raise Exception('There is no grid with that name, please refer to the the grid dictonary')
+        x = copy.copy(kwargs)
+        photgrid = self.photgrids[name]
+        specgrid = self.spectral_grids[name]
+        F ={}
+        for key, arg in kwargs.items():
+            if key not in specgrid.axis_labels:
+                x.pop(key)
+        for filter in filters:
+           F[filter] = photgrid[filter].flux(x)*scale
+        return F
 
-            for filter in filters:
-                passband_file_name = os.path.join(PASS_DIR, f'pb-Generic-Johnson.{filter}-Vega.h5')
-                photgrids_main[filter] = pymsg.PhotGrid(self.main_grid_file, passband_file_name)
-                photgrids_secondary[filter] = pymsg.PhotGrid(self.secondary_grid_file, passband_file_name)
-                photgrids_ostar[filter] = pymsg.PhotGrid(self.ostar_grid_file, passband_file_name)
-                photgrids_stripped[filter] = pymsg.PhotGrid(self.stripped_grid_file, passband_file_name)
-            
-            return photgrids_main,photgrids_secondary,photgrids_ostar,photgrids_stripped
-        """
 ####TO DO:
 # Write a function that will make sure the wavelength coverage doesn't exceed the library's coverage. 
 # Set a default switch for C3K and CAP depending on the wavelength 
