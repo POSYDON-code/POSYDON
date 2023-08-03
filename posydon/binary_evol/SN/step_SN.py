@@ -543,10 +543,13 @@ class StepSN(object):
                 CC_properites = getattr(star, key)
                 star.state, star.SN_type, star.f_fb, star.mass, star.spin = (
                     CC_properites)
+                if star.state == 'BH_reverse':
+                    star.state = 'BH'
                 if star.state not in self.use_interp_values_classes:
                     for key in STARPROPERTIES:
                         if key in ["state", "SN_type", "f_fb", "mass", "spin"]:
                             setattr(star, key, None)
+                    star.state = state
                 else:
                     for key in STARPROPERTIES:
                         if key not in ["state", "mass", "spin"]:

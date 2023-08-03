@@ -499,40 +499,40 @@ def train_interpolators(i, path_to_csv_file, verbose=False):
             "c_key": "interpolation_class"
         },
         {
-            "interp_method": [method, method, method],
-            "interp_classes": ["BH", "WD", "NS"],
+            "interp_method": [method, method, method, method],
+            "interp_classes": ["BH", "WD", "NS", "BH_reverse"],
             "out_keys": second,
             "class_method": "kNN",
             "c_keys": ['S1_direct_state'],
             "c_key": 'S1_direct_state'
         },
         {
-            "interp_method": [method, method, method],
-            "interp_classes": ["BH", "WD", "NS"],
+            "interp_method": [method, method, method, method],
+            "interp_classes": ["BH", "WD", "NS", "BH_reverse"],
             "out_keys": third,
             "class_method": "kNN",
             "c_keys": ['S1_Fryer+12-rapid_state'],
             "c_key": 'S1_Fryer+12-rapid_state'
         },
         {
-            "interp_method": [method, method, method],
-            "interp_classes": ["BH", "WD", "NS"],
+            "interp_method": [method, method, method, method],
+            "interp_classes": ["BH", "WD", "NS", "BH_reverse"],
             "out_keys": fourth,
             "class_method": "kNN",
             "c_keys": ['S1_Fryer+12-delayed_state'],
             "c_key": 'S1_Fryer+12-delayed_state'
         },
         {
-            "interp_method": [method, method, method],
-            "interp_classes": ["BH", "WD", "NS"],
+            "interp_method": [method, method, method, method],
+            "interp_classes": ["BH", "WD", "NS", "BH_reverse"],
             "out_keys": fifth,
             "class_method": "kNN",
             "c_keys": ['S1_Sukhbold+16-engineN20_state'],
             "c_key": 'S1_Sukhbold+16-engineN20_state'
         },
         {
-            "interp_method": [method, method, method],
-            "interp_classes": ["BH", "WD", "NS"],
+            "interp_method": [method, method, method, method],
+            "interp_classes": ["BH", "WD", "NS", "BH_reverse"],
             "out_keys": sixth,
             "class_method": "kNN",
             "c_keys": ['S1_Patton&Sukhbold20-engineN20_state'],
