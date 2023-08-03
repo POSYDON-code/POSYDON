@@ -555,8 +555,11 @@ class StepSN(object):
                     star.state = "WD"
                     star.spin = 0.
                     star.log_R = np.log10(CO_radius(star.mass, star.state))
+                    star.m_disk_accreted = np.nan
+                    star.m_disk_radiated = np.nan
                     for key in STARPROPERTIES:
-                        if key not in ["state", "mass", "log_R", "spin"]:
+                        if key not in ["state", "mass", "log_R", "spin",
+                                       "m_disk_accreted", "m_disk_radiated"]:
                             setattr(star, key, None)
                     return
 
@@ -659,8 +662,11 @@ class StepSN(object):
                     star.state = "WD"
                     star.spin = 0.
                     star.log_R = np.log10(CO_radius(star.mass, star.state))
+                    star.m_disk_accreted = np.nan
+                    star.m_disk_radiated = np.nan
                     for key in STARPROPERTIES:
-                        if key not in ["state", "mass", "log_R", "spin"]:
+                        if key not in ["state", "mass", "log_R", "spin",
+                                       "m_disk_accreted", "m_disk_radiated"]:
                             setattr(star, key, None)
                     return
 
