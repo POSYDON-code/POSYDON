@@ -148,7 +148,7 @@ def mean_metallicity(SFR, z):
     if SFR == "Madau+Fragos17" or SFR == "Madau+Dickinson14":
         return 10 ** (0.153 - 0.074 * z ** 1.34) * Zsun
     elif SFR == "Neijssel+19":
-        return 0.035*10**(0.035*z)
+        return 0.035*10**(-0.23*z)
     else:
         raise ValueError('Invalid SFR!')
 
