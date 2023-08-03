@@ -66,7 +66,8 @@ PLOT_PROPERTIES = {
         'aspect': 20,
         'anchor': (0.0, 0.5),
         'panchor': (1.0, 0.5),
-        'extend': 'neither'
+        'extend': 'neither',
+        'bounds': [0.03, 0.7, 0.94, 0.05]
     },
     'legend1D': {
         'title': None,
@@ -96,6 +97,13 @@ PLOT_PROPERTIES = {
         },
         'shrink_box': 0.85,
         'bbox_to_anchor': (1, 0.5)
+    },
+    'slice_text_kwargs': {
+        'bbox': {'facecolor': 'white', 'alpha': 0.8, 'pad': 2},
+        'ha': 'right',
+        'va': 'bottom',
+        'x': 0.95,
+        'y': 0.05
     }
 }
 
@@ -387,6 +395,8 @@ DEFAULT_MARKERS_COLORS_LEGENDS = {
             ['s', 2, list_of_colors[2], 'Stable RLOF during MS'],
         'Stable case AB':
             ['s', 2, list_of_colors[1], 'Stable RLOF during postMS'],
+        'Stable case AC':
+            ['s', 2, list_of_colors[1], 'Stable RLOF during postMS'],
         'Stable case ABB':
             ['s', 2, list_of_colors[0], 'Stable RLOF during stripped He star'],
         'Stable case B':
@@ -404,6 +414,8 @@ DEFAULT_MARKERS_COLORS_LEGENDS = {
         'Unstable case A':
             ['D', 1, list_of_colors[2], 'Unstable RLOF during MS'],
         'Unstable case AB':
+            ['D', 1, list_of_colors[1], 'Unstable RLOF during postMS'],
+        'Unstable case AC':
             ['D', 1, list_of_colors[1], 'Unstable RLOF during postMS'],
         'Unstable case ABB':
             ['D', 1, list_of_colors[0],
@@ -577,6 +589,8 @@ DEFAULT_LABELS = {
     # extra
     'mass_ratio':
         [r'$q$', r'$\log_{10}(q)$'],
+    'Z_Zsun':
+        [r'$Z \, [Z_\odot]$', r'$\log_{10}(Z / Z_\odot)$'],
 
     # history1/history2
     'star_age':
