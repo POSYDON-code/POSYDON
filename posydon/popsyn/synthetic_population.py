@@ -241,7 +241,7 @@ class SyntheticPopulation:
 
             if k > 0:
                 shift_index = max(np.unique(df_sel.index)) + 1 
-                df_sel_met.index += shift_index 
+                df_sel_met.index += shift_index
 
             # store simulated and underlying stellar mass
             df_sel_met['simulated_mass_for_met'] = simulated_mass_for_met
