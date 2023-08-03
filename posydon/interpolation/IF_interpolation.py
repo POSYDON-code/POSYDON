@@ -417,21 +417,21 @@ class BaseIFInterpolator:
             if (self.interp_method == 'linear'
                     or isinstance(self.interp_method, list)):
                 print("\nFilling missing values (nans) with 1NN")
-                self._fillNans()
+                self._fillNans(grid.final_values[self.c_key])
             elif self.interp_method == '1NN':
                 self.YT[np.isnan(self.YT)] = -100
 
             if (self.in_scaling is None) or (self.out_scaling is None):
                 if self.interp_method == '1NN':
-                    self.in_scaling, self.out_scaling = (self._bestInScaling(),
+                    self.in_scaling, self.out_scaling = (self._bestInScaling(grid.final_values[self.c_key]),
                                                          ['none']*self.n_out)
                 else:
-                    self.in_scaling, self.out_scaling = self._bestScaling()
+                    self.in_scaling, self.out_scaling = self._bestScaling(grid.final_values[self.c_key])
 
-            self.X_scaler = MatrixScaler(self.in_scaling,
-                                         self.XT[self.valid >= 0, :])
-            self.Y_scaler = MatrixScaler(self.out_scaling,
-                                         self.YT[self.valid > 0, :])
+            self.X_scaler = Scaler(self.in_scaling,
+                                         self.XT[self.valid >= 0, :], grid.final_values[self.c_key][self.valid > 0])
+            self.Y_scaler = Scaler(self.out_scaling,
+                                         self.YT[self.valid > 0, :], grid.final_values[self.c_key][self.valid > 0])
 
             if self.class_method == "kNN":
                 options = {'nfolds': 3, 'p_test': 0.05, 'nmax': 10}
@@ -788,99 +788,138 @@ class BaseIFInterpolator:
         return (m2[m1 > 0.95 * m1.max()].min()
                 / m2[m1 < 1.05 * m1.min()].min() > 1 + tol)
 
-    def _bestInScaling(self):
+    def _bestInScaling(self, ic):
         """Find the best scaling for the input space."""
-        in_scaling = []  # I assume inputs are positive-valued
-        for i in range(self.n_in):
-            if (np.abs(np.mean(self.XT[:, i]) - np.median(self.XT[:, i]))
-                    / np.std(self.XT[:, i])
-                    < np.abs(np.mean(np.log10(self.XT[:, i]))
-                             - np.median(np.log10(self.XT[:, i])))
-                    / np.std(np.log10(self.XT[:, i]))):
-                in_scaling.append('min_max')
-            else:
-                in_scaling.append('log_min_max')
 
-        return in_scaling
+        def in_scale_one(klass = None):
 
-    def _bestScaling(self, unique_in=True):
-        """Find the best scaling for both input and output space."""
-        # Decide best scaling linear/log with cross validation
-        nfolds = 5
-        p_test = 0.15
+            in_scaling = []  # I assume inputs are positive-valued
+            for i in range(self.n_in):
 
-        # if False, the scaling for the inputs will be output-dependent
-        unique_in = True
+                dim = self.XT[:, i] if klass == None else self.XT[np.where(ic == klass)[0]]
 
-        if unique_in:
-            r = 1
+                if (np.abs(np.mean(dim) - np.median(dim))
+                        / np.std(dim)
+                        < np.abs(np.mean(np.log10(dim))
+                                - np.median(np.log10(dim)))
+                        / np.std(np.log10(dim))):
+                    in_scaling.append('min_max')
+                else:
+                    in_scaling.append('log_min_max')
+
+            return in_scaling
+
+        cin_scaling = in_scale_one()
+
+        if isinstance(self.interp_method, list):
+            in_scaling = {}
+
+            for c in self.interp_classes:
+                in_scaling[c] = in_scale_one(c)
         else:
-            r = 2 ** self.n_in
 
-        err = np.nan * np.ones((r * 2, self.n_out, nfolds))
-        which_abs = np.abs(self.YT[self.valid > 0, :]).min(axis=0) == 0
+            in_scaling = cin_scaling
 
-        out_scalings = [['min_max'] * self.n_out, ['log_min_max'] * self.n_out]
 
-        for i, key in enumerate(self.out_keys):
-            y = self.YT[self.valid > 0, i]
-            if np.nanmin(y) == np.nanmax(y):
-                out_scalings[0][i] = 'none'
-                out_scalings[1][i] = 'none'
-            elif np.nanmax(y) < 0:
-                out_scalings[1][i] = 'neg_log_min_max'
-            elif np.nanmin(y) <= 0:
-                out_scalings[1][i] = 'min_max'
 
-        in_scaling = self._bestInScaling()
+        return (in_scaling, cin_scaling)
 
-        XT = self.XT[self.valid > 0, :]
-        YT = self.YT[self.valid > 0, :]
-        for j in range(2):          # normal and log when possible
-            for i in range(r):      # valid also with metallicity included
-                if r > 1:
-                    in_scaling = [
-                        'min_max'
-                        if i % (2 ** (j + 1)) < 2 ** j else 'log_min_max'
-                        for j in range(self.n_in)
-                    ]
+        
 
-                xs, ys = (MatrixScaler(in_scaling, XT),
-                          MatrixScaler(out_scalings[j], YT))
-                XTn, YTn = xs.normalize(XT), ys.normalize(YT)
+    def _bestScaling(self, ic, unique_in=True, nfolds = 5, p_test = 0.15):
+        """Find the best scaling for both input and output space."""
 
-                np.random.seed(0)
+        in_scaling = self._bestInScaling(ic)
 
-                for fold in range(nfolds):
-                    iTrain, itest = xval_indices(np.sum(self.valid > 0),
-                                                 percent_test=p_test)
+        def scale_one(in_scaling, klass = None):
 
-                    X_T, Y_T = XTn[iTrain, :], YTn[iTrain, :]
-                    X_t, Y_t = XT[itest, :], YT[itest, :]
-
-                    interp = LinearNDInterpolator(X_T, Y_T)
-                    ypred_i = ys.denormalize(interp(xs.normalize(X_t)))
-
-                    err[i + r * j, ~which_abs, fold] = np.nanpercentile(
-                        np.abs((ypred_i[:, ~which_abs] - Y_t[:, ~which_abs])
-                               / Y_t[:, ~which_abs]), 90, axis=0)
-                    err[i + r * j, which_abs, fold] = np.nanpercentile(
-                        np.abs(ypred_i[:, which_abs] - Y_t[:, which_abs]), 90,
-                        axis=0)
-
-        where_min = np.nanargmin(np.nanmean(err, axis=2), axis=0)
-
-        out_scaling = []
-        for i in range(self.n_out):
-            if where_min[i] < r:
-                out_scaling.append(out_scalings[0][i])
+            # if False, the scaling for the inputs will be output-dependent
+            if unique_in:
+                r = 1
             else:
-                out_scaling.append(out_scalings[1][i])
-                where_min[i] -= r
+                r = 2 ** self.n_in
 
-        return in_scaling, out_scaling
+            inds = np.where(self.valid > 0 if klass == None else (ic == klass) & (self.valid > 0))[0]
 
-    def _fillNans(self):
+            err = np.nan * np.ones((r * 2, self.n_out, nfolds))
+            which_abs = np.abs(self.YT[inds, :]).min(axis=0) == 0
+
+            out_scalings = [['min_max'] * self.n_out, ['log_min_max'] * self.n_out]
+
+            for i, key in enumerate(self.out_keys):
+                y = self.YT[inds, i]
+                if np.nanmin(y) == np.nanmax(y):
+                    out_scalings[0][i] = 'none'
+                    out_scalings[1][i] = 'none'
+                elif np.nanmax(y) < 0:
+                    out_scalings[1][i] = 'neg_log_min_max'
+                elif np.nanmin(y) <= 0:
+                    out_scalings[1][i] = 'min_max'
+
+
+            XT = self.XT[inds, :]
+            YT = self.YT[inds, :]
+            for j in range(2):          # normal and log when possible
+                for i in range(r):      # valid also with metallicity included
+
+                    if r > 1:
+                        in_scaling = [
+                            'min_max'
+                            if i % (2 ** (j + 1)) < 2 ** j else 'log_min_max'
+                            for j in range(self.n_in)
+                        ]
+
+                    xs, ys = (MatrixScaler(in_scaling[1], XT), # using class cumulative scaling (not per class) to get optimal
+                            MatrixScaler(out_scalings[j], YT))
+                    XTn, YTn = xs.normalize(XT), ys.normalize(YT)
+
+                    np.random.seed(0)
+
+                    for fold in range(nfolds):
+
+                        iTrain, itest = xval_indices(inds.shape[0],
+                                                    percent_test=p_test)
+
+                        X_T, Y_T = XTn[iTrain, :], YTn[iTrain, :]
+                        X_t, Y_t = XT[itest, :], YT[itest, :]
+
+                        interp = LinearNDInterpolator(X_T, Y_T)
+                        ypred_i = ys.denormalize(interp(xs.normalize(X_t)))
+
+                        err[i + r * j, ~which_abs, fold] = np.nanpercentile(
+                            np.abs((ypred_i[:, ~which_abs] - Y_t[:, ~which_abs])
+                                / Y_t[:, ~which_abs]), 90, axis=0)
+                        err[i + r * j, which_abs, fold] = np.nanpercentile(
+                            np.abs(ypred_i[:, which_abs] - Y_t[:, which_abs]), 90,
+                            axis=0)
+
+            where_min = np.nanargmin(np.nanmean(err, axis=2), axis=0)
+
+            out_scaling = []
+            for i in range(self.n_out):
+                if where_min[i] < r:
+                    out_scaling.append(out_scalings[0][i])
+                else:
+                    out_scaling.append(out_scalings[1][i])
+                    where_min[i] -= r
+
+            return out_scaling
+
+        cout_scaling = scale_one(in_scaling)
+
+        if isinstance(self.interp_method, list):
+            out_scaling = {}
+
+            for c in self.interp_classes:
+                out_scaling[c] = scale_one(in_scaling, c)
+
+        else:
+            out_scaling = cout_scaling
+
+        return in_scaling, (out_scaling, cout_scaling)
+
+
+    def _fillNans(self, ic):
         """Fill nan values i numerical magnitudes with 1NN."""
         for i in range(self.n_out):
             wnan = np.isnan(self.YT[:, i]) | np.isinf(self.YT[:, i])
@@ -890,7 +929,7 @@ class BaseIFInterpolator:
             if any(wnan[self.valid > 0]):
                 k1r = KNeighborsRegressor(n_neighbors=1)
                 wT = (~wnan) & (self.valid > 0)
-                xs = MatrixScaler(self._bestInScaling(),
+                xs = MatrixScaler(self._bestInScaling(ic)[1],
                                   self.XT[self.valid >= 0, :])
                 k1r.fit(xs.normalize(self.XT[wT, :]), self.YT[wT, i])
                 wt = wnan & (self.valid > 0)
@@ -1284,6 +1323,29 @@ class KNNClassifier(Classifier):
 
 
 # MATRIX SCALING
+class Scaler:
+
+    def __init__(self, norms, XT, ic):
+        
+        if norms[0] == norms[1]:
+            self.scaler = {
+                None:  MatrixScaler(norms[0], XT)
+            }
+        else:
+            self.scaler = {}
+
+            for klass, n in norms[0].items():
+                self.scaler[klass] = MatrixScaler(n, XT[np.where(ic == klass)[0]]) # need to only use relevant classes in XT
+
+            self.scaler[None] = MatrixScaler(norms[1], XT)
+
+    def normalize(self, X, klass = None):
+
+        return self.scaler[klass].normalize(X)
+
+    def denormalize(self, Xn, klass = None):
+
+        return self.scaler[klass].normalize(Xn)
 
 
 class MatrixScaler:
