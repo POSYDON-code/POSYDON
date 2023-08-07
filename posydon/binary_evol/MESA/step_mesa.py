@@ -1461,7 +1461,7 @@ class CO_HeMS_RLO_step(MesaGridStep):
         else:
             raise ValueError(
                 'The star_1.state = %s, star_2.state = %s, binary.state = %s, '
-                'binary.event = %s and not CO - HMS - oRLO1/oRLO2!'
+                'binary.event = %s and not CO - HeMS - oRLO1/oRLO2!'
                 % (state_1, state_2, state, event))
         # redirect if outside grids
         if ((not self.flip_stars_before_step and
