@@ -33,7 +33,7 @@ import posydon.utils.constants as const
 from posydon.binary_evol.DT.step_detached import detached_step
 
 
-class isolated_step(detached_step):
+class IsolatedStep(detached_step):
     """Evolve an isolated star (a single star, a merger product, a runaway star, etc.)
 
     The star will be matched in the beginning of the step and will be evolved
@@ -77,14 +77,19 @@ class isolated_step(detached_step):
         """
 
         self.initialize_isolated_binary_orbit(binary)
-        
-        if binary.state == 'initially_single_star' or binary.star_1 == None or binary.star_2 == None:
-        #if binary.star_1 == None or binary.star_2 == None: # already one star became None in step_merged or step_initially_single
+
+        if binary.state == 'initially_single_star' or binary.state == 'merged':
             pass
+            '''
+            if binary.star_1.state.state == 'massless_remnant' or binary.star_2.state == 'massless_remnant':
+                pass
+            else:
+                raise ValueError("In merged or initially single stars, step one of the two stars should be 'massless_remnant' ")
+            '''
         elif binary.state == "disrupted":
             pass
         else:
-            raise ValueError("In isolated step one of the two stars should be None or the the binary.state=='disrupted' ")
+            raise ValueError("In isolated step binary.state=='disrupted' or 'initially_single_star' or 'merged' ")
 
         super().__call__(binary)
 
@@ -95,7 +100,7 @@ class isolated_step(detached_step):
         # I give values to the orbital parameters so that the detached step will not complain
         binary.orbital_period = 10.**99
         binary.eccentricity = 0.0
-        binary.separation = orbital_separation_from_period(binary.orbital_period, 1.,1.)
+        binary.separation = orbital_separation_from_period(binary.orbital_period, binary.star_1.mass, binary.star_2.mass)
 
     def re_erase_isolated_binary_orbit(self,binary):
         # I give values to the orbital parameters so that the detached step will not complain

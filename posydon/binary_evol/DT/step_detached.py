@@ -34,7 +34,7 @@ from posydon.utils.common_functions import (
     PchipInterpolator2,
     convert_metallicity_to_string
 )
-from posydon.binary_evol.flow_chart import (STAR_STATES_CC)
+from posydon.binary_evol.flow_chart import (STAR_STATES_CC, STAR_STATES_CO)
 import posydon.utils.constants as const
 
 
@@ -67,6 +67,12 @@ STAR_STATES_H_RICH = [
     'H-rich_non_burning'
 ]
 
+'''
+STAR_STATES_CO = ['BH',
+                  'NS',
+                  'WD',
+                  ]
+'''
 
 DEFAULT_TRANSLATION = {
     "time": "time",
@@ -145,10 +151,6 @@ DEFAULT_TRANSLATION = {
 }
 
 
-# TODO: are these supposed to be the same as the keys of the previous
-#       dictionary? If yes... then we should use them directrly instead of
-#       redefining the strings here.
-
 DEFAULT_TRANSLATED_KEYS = (
     'age',
     'mass',
@@ -217,6 +219,8 @@ DEFAULT_PROFILE_KEYS = (
 )
 
 MATCHING_WITH_RELATIVE_DIFFERENCE = ["center_he4"]
+
+
 
 
 class detached_step:
@@ -695,6 +699,7 @@ class detached_step:
                 list_for_matching = self.list_for_matching_HMS
             elif star.state in LIST_ACCEPTABLE_STATES_FOR_postMS:
                 list_for_matching = self.list_for_matching_postMS
+
             elif star.state in LIST_ACCEPTABLE_STATES_FOR_HeStar:
                 list_for_matching = self.list_for_matching_HeStar
 
@@ -830,6 +835,7 @@ class detached_step:
 
                     x0 = get_root0(
                         MESA_label, posydon_attribute, htrack, rs=rs)
+
                     # bnds = ([m_min_H, m_max_H], [0, None])
                     sol = minimize(sq_diff_function, x0,
                                    method="TNC", bounds=bnds)
@@ -880,6 +886,7 @@ class detached_step:
                     ) / star.total_moment_of_inertia
                 '''
 
+
         if self.verbose or self.verbose == 1:
             print(
                 "matching ", star.state,
@@ -916,42 +923,42 @@ class detached_step:
         KEYS = self.KEYS
         KEYS_POSITIVE = self.KEYS_POSITIVE
 
-        if binary.star_1 is None:
+        if binary.star_1 is None or binary.star_1.state == "massless_remnant":
             self.non_existent_companion = 1
-        if binary.star_2 is None:
+        if binary.star_2 is None or binary.star_2.state == "massless_remnant":
             self.non_existent_companion = 2
         else:
             # detached step of an actual binary
             self.non_existent_companion = 0
 
-        # no isolated evolution, detached step of an actual binary, the primary
-        # in a real binary is potential compact object or the more evolved star
-        if self.non_existent_companion == 0:
-
-            if (binary.star_1.state in ("BH", "NS", "WD")
+        if self.non_existent_companion == 0: #no isolated evolution, detached step of an actual binary
+            # the primary in a real binary is potential compact object, or the more evolved star
+            if (binary.star_1.state in STAR_STATES_CO
                     and binary.star_2.state in STAR_STATES_H_RICH):
                 primary = binary.star_1
                 secondary = binary.star_2
                 secondary.htrack = True
                 primary.htrack = secondary.htrack
                 primary.co = True
-            elif ((binary.star_1.state in ("BH", "NS", "WD")) and (
-                    binary.star_2.state in LIST_ACCEPTABLE_STATES_FOR_HeStar)):
+
+            elif (binary.star_1.state in STAR_STATES_CO
+                    and binary.star_2.state in LIST_ACCEPTABLE_STATES_FOR_HeStar):
                 primary = binary.star_1
                 secondary = binary.star_2
                 secondary.htrack = False
                 primary.htrack = secondary.htrack
                 primary.co = True
-            elif (binary.star_2.state in ("BH", "NS", "WD")
+
+            elif (binary.star_2.state in STAR_STATES_CO
                     and binary.star_1.state in STAR_STATES_H_RICH):
                 primary = binary.star_2
                 secondary = binary.star_1
                 secondary.htrack = True
                 primary.htrack = secondary.htrack
                 primary.co = True
-            elif (binary.star_2.state in ("BH", "NS", "WD")
-                  and binary.star_1.state
-                  in LIST_ACCEPTABLE_STATES_FOR_HeStar):
+
+            elif (binary.star_2.state in STAR_STATES_CO
+                    and binary.star_1.state in LIST_ACCEPTABLE_STATES_FOR_HeStar):
                 primary = binary.star_2
                 secondary = binary.star_1
                 secondary.htrack = False
@@ -986,6 +993,20 @@ class detached_step:
                 secondary.htrack = False
                 primary.htrack = False
                 primary.co = False
+            elif (binary.star_1.state in STAR_STATES_CO
+                    and binary.star_2.state
+                    in 'massless_remnant'):
+                binary.state += " Thorne–Żytkow object"
+                if self.verbose or self.verbose == 1:
+                    print("Formation of Thorne–Żytkow object, nothing to do further")
+                return
+            elif (binary.star_2.state in STAR_STATES_CO
+                    and binary.star_1.state
+                    in 'massless_remnant'):
+                binary.state += " Thorne–Żytkow object"
+                if self.verbose or self.verbose == 1:
+                    print("Formation of Thorne–Żytkow object, nothing to do further")
+                return
             else:
                 raise Exception("States not recognized!")
 
@@ -1288,7 +1309,7 @@ class detached_step:
             return t_max_pri + t_offset_pri - t
 
         # make a function to get the spin of two stars
-        def get_omega(star):
+        def get_omega(star, is_secondary = True):
             if (star.log_total_angular_momentum is not None
                     and star.total_moment_of_inertia is not None
                     and not np.isnan(star.log_total_angular_momentum)
@@ -1314,14 +1335,29 @@ class detached_step:
                               omega_in_rad_per_year)
                 elif (star.surf_avg_omega_div_omega_crit is not None
                         and not np.isnan(star.surf_avg_omega_div_omega_crit)):
-                    omega_in_rad_per_year = (
-                        star.surf_avg_omega_div_omega_crit * np.sqrt(
-                            const.standard_cgrav * star.mass * const.msol
-                            / ((10.0 ** (star.log_R) * const.rsol) ** 3))
-                        * const.secyer)
-                    # the last factor transforms it from rad/s to rad/yr
-                    # EDIT: We assume POSYDON surf_avg_omega is provided in
-                    # rad/yr already.
+                    if (star.log_R is not None
+                            and not np.isnan(star.log_R)):
+                        omega_in_rad_per_year = (
+                            star.surf_avg_omega_div_omega_crit * np.sqrt(
+                                const.standard_cgrav * star.mass * const.msol
+                                / ((10.0 ** (star.log_R) * const.rsol) ** 3))
+                            * const.secyer)
+                        # the last factor transforms it from rad/s to rad/yr
+                        # EDIT: We assume POSYDON surf_avg_omega is provided in
+                        # rad/yr already.
+                    else:
+                        if is_secondary == True:
+                            radius_to_be_used = interp1d_sec["R"](interp1d_sec["t0"])
+                            mass_to_be_used = interp1d_sec["mass"](interp1d_sec["t0"])
+                        else:
+                            radius_to_be_used = interp1d_pri["R"](interp1d_pri["t0"])
+                            mass_to_be_used = interp1d_pri["mass"](interp1d_pri["t0"])
+                        omega_in_rad_per_year = (
+                            star.surf_avg_omega_div_omega_crit * np.sqrt(
+                                const.standard_cgrav * mass_to_be_used * const.msol
+                                / ((radius_to_be_used * const.rsol) ** 3))
+                            * const.secyer)
+
                     if self.verbose and self.verbose != 1:
                         print("calculating initial omega from "
                               "surf_avg_omega_div_omega_crit",
@@ -1350,11 +1386,11 @@ class detached_step:
                                 "lower times.")
             with np.errstate(all="ignore"):
                 omega_in_rad_per_year_sec = get_omega(secondary)
-                if primary.co:
-                    # omega of compact objects won't be used for intergration
+                if primary_not_normal:
+                    # omega of compact objects or masslessremnant won't be used for intergration
                     omega_in_rad_per_year_pri = omega_in_rad_per_year_sec
                 elif not primary.co:
-                    omega_in_rad_per_year_pri = get_omega(primary)
+                    omega_in_rad_per_year_pri = get_omega(primary,is_secondary = False)
 
                 t_before_ODEsolution = time.time()
                 try:
@@ -1578,7 +1614,7 @@ class detached_step:
                             current = interp1d_pri["omega"][-1] / const.secyer
                             history = interp1d_pri["omega"][:-1] / const.secyer
                     elif key in ["rl_relative_overflow_1"] and obj == binary:
-                        if binary.star_1.state in ("BH", "NS", "WD"):
+                        if binary.star_1.state in ("BH", "NS", "WD","massless_remnant"):
                             current = None
                             history = [current] * len(t[:-1])
                         elif secondary == binary.star_1:
@@ -1596,7 +1632,7 @@ class detached_step:
                                                   [interp1d_sec["sep"][:-1],
                                                    interp1d_sec["ecc"][:-1]])
                     elif key in ["rl_relative_overflow_2"] and obj == binary:
-                        if binary.star_2.state in ("BH", "NS", "WD"):
+                        if binary.star_2.state in ("BH", "NS", "WD","massless_remnant"):
                             current = None
                             history = [current] * len(t[:-1])
                         elif secondary == binary.star_2:
@@ -1790,15 +1826,18 @@ class detached_step:
                 secondary.state_history[timestep] = check_state_of_star(
                     secondary, i=timestep, star_CO=False)
 
-            if primary.co:
+
+            if primary.state == "massless_remnant":
+                pass
+            
+            elif primary.co:
                 mdot_acc = np.atleast_1d(bondi_hoyle(
                     binary, primary, secondary, slice(-len(t), None),
                     wind_disk_criteria=True, scheme='Kudritzki+2000'))
                 primary.lg_mdot = np.log10(mdot_acc.item(-1))
                 primary.lg_mdot_history[len(primary.lg_mdot_history) - len(t)
                                         + 1:] = np.log10(mdot_acc[:-1])
-
-            elif not primary.co:
+            else:
                 primary.state = check_state_of_star(primary, star_CO=False)
                 for timestep in range(-len(t[:-1]), 0):
 
@@ -2406,7 +2445,7 @@ def diffeq(
             # parameters are given in units of [Msol], [Rsol], [yr] and so that
             # dOmega_mb/dt is in units of [yr^-2].
             dOmega_mb_sec = (
-                -3.8e30 * (const.rsol**2 / const.secyer)
+                -3.8e-30 * (const.rsol**2 / const.secyer)
                 * M_sec
                 * R_sec**4
                 * Omega_sec**3
@@ -2414,7 +2453,7 @@ def diffeq(
                 * np.clip((1.5 - M_sec) / (1.5 - 1.3), 0, 1)
             )
             dOmega_mb_pri = (
-                -3.8e30 * (const.rsol**2 / const.secyer)
+                -3.8e-30 * (const.rsol**2 / const.secyer)
                 * M_pri
                 * R_pri**4
                 * Omega_pri**3

@@ -37,7 +37,7 @@ import psutil
 import random
 
 from posydon.binary_evol.binarystar import BinaryStar
-from posydon.binary_evol.singlestar import SingleStar
+from posydon.binary_evol.singlestar import (SingleStar,properties_massless_remnant)
 from posydon.binary_evol.simulationproperties import SimulationProperties
 from posydon.popsyn.star_formation_history import get_formation_times
 
@@ -67,7 +67,7 @@ ONELINE_MIN_ITEMSIZE = {'state_i': 30, 'state_f': 30,
 # BinaryPopulation will enforce a constant metallicity accross all steps that
 # load stellar or binary models by checked this list of steps.
 STEP_NAMES_LOADING_GRIDS = [
-    'step_HMS_HMS', 'step_CO_HeMS', 'step_CO_HMS_RLO', 'step_detached','step_isolated','step_disrupted'
+    'step_HMS_HMS', 'step_CO_HeMS', 'step_CO_HMS_RLO', 'step_detached','step_isolated','step_disrupted','step_initially_single', 'step_merged'
 ]
 
 class BinaryPopulation:
@@ -88,7 +88,6 @@ class BinaryPopulation:
         for key, arg in kwargs.items():
             self.kwargs[key] = arg
         # Have a binary fraction change the number_of binaries.
-        #Eirini's change
         self.binary_fraction = self.kwargs.get('binary_fraction')
         self.number_of_binaries = self.kwargs.get('number_of_binaries')
 
@@ -798,9 +797,7 @@ class BinaryGenerator:
         output = self.draw_initial_samples(**sampler_kwargs)
 
         default_index = output['binary_index'].item()
-        #Eirini's comments:
         # Randomly generated variables
-
 
         if self.RNG.uniform() < self.binary_fraction:
             formation_time = output['time'].item()
@@ -848,9 +845,9 @@ class BinaryGenerator:
         #If binary_fraction not default a initially single star binary is created.
         else:
             formation_time = output['time'].item()
-            separation = output['separation'].item()
-            orbital_period = output['orbital_period'].item()
-            eccentricity = output['eccentricity'].item()
+            separation = np.nan
+            orbital_period = np.nan
+            eccentricity = np.nan
             m1 = output['S1_mass'].item()
             m2 = output['S2_mass'].item()
             Z_div_Zsun = kwargs.get('metallicity', 1.)
@@ -882,15 +879,7 @@ class BinaryGenerator:
                 center_h1=X,
                 center_he4=Y,
             )
-            star2_params = dict(
-                mass=m2,
-                state="BH",
-                metallicity=Z,
-                center_h1=X,
-                center_he4=Y,
-            )
-        #do all of the above but with state = "initial_single star"
-        #in this case the second star can be a compact object.
+            star2_params = properties_massless_remnant()
 
 
         binary = BinaryStar(**binary_params,

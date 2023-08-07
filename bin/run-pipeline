@@ -83,14 +83,6 @@ def create_grid_slice(i, path_to_csv_file, STOP_BEFORE_CARBON_DEPLETION=True, ve
     grid_path = df.loc[i,'path_to_grid']
     compression = df.loc[i,'compression']
 
-#    grid_name = grid_path.split('/')[-1]
-#    otuput_path = os.path.join('/', os.path.join(*grid_path.split('/')[:-1]),
-#                               compression)
-#    grid_output = os.path.join(otuput_path, grid_name+'.h5')
-#
-#    # check that LITE/ or ORIGINAL/ directory exists
-#    if not os.path.isdir(otuput_path):
-#        os.makedirs(otuput_path)
     grid_output = get_new_grid_name(grid_path, compression,
                                     create_missing_directories=True)
 
@@ -160,7 +152,7 @@ def plot_grid(i, path_to_csv_file, verbose=False):
         print(f'plotting {grid_path}')
 
     # check that plots/ directories exist
-    plot_path = os.path.join('/', os.path.join(*plot_dir.split('/')[:-1]))
+    plot_path = os.path.split(os.path.normpath(plot_dir))[0]
     check_dirs = [plot_path, plot_dir]
 
     sub_dirs = ['TF12/', 'TF1/', 'TF2/', 'TF3/', 'TF4/', 'debug_mt/',
@@ -430,7 +422,7 @@ def train_interpolators(i, path_to_csv_file, verbose=False):
         print(f'train interpolators {grid_path} with method {method}')
 
     # check interpolation_objects directory exists
-    interp_path = os.path.join('/', os.path.join(*interpolator_path.split('/')[:-1]))
+    interp_path = os.path.split(interpolator_path)[0]
     if not os.path.isdir(interp_path):
         os.makedirs(interp_path)
 
@@ -577,6 +569,8 @@ def copy_ini_file(grid, rerun_type, destination, cluster):
         replace_text = "matthias_PISN-d68228338b91fd487ef5d55c9b6ebb8cc5f0e668"
     elif rerun_type == 'opacity_max_hms-hms':
         replace_text = "zepei_fix_implicit-afa1860ddf9894aa1d82742ee2a73e8e92acd4a9"
+    elif rerun_type == 'TPAGBwind':
+        replace_text = "development-22c1bb9e730343558c3e70984a99b3fc1f3c346e"
     elif rerun_type == 'other': # e.g. 'envelope_mass_limit', 'fe_core_infall_limit'
         # this rerun uses the default inlist commit
         return
@@ -630,13 +624,37 @@ def logic_rerun(grid, rerun_type):
         N_runs = len(grid)
         runs_to_rerun = []
         for i in range(N_runs):
-          if  grid[i].binary_history is not None and grid[i].history1 is not None:
-              rl1 = grid[i].binary_history['rl_relative_overflow_1']
-              rl2 = grid[i].binary_history['rl_relative_overflow_2']
-              w_wcrit = grid[i].history1['surf_avg_omega_div_omega_crit']
-              reverse = np.logical_and(rl1<-0.05, rl2>-0.05)
-              transfer = np.logical_and(reverse, w_wcrit>0.9)
-              if np.max(transfer) == True:
+            if grid[i].binary_history is not None and grid[i].history1 is not None:
+                rl1 = grid[i].binary_history['rl_relative_overflow_1']
+                rl2 = grid[i].binary_history['rl_relative_overflow_2']
+                w_wcrit = grid[i].history1['surf_avg_omega_div_omega_crit']
+                reverse = np.logical_and(rl1<-0.05, rl2>-0.05)
+                transfer = np.logical_and(reverse, w_wcrit>0.9)
+                if np.max(transfer) == True:
+                    runs_to_rerun += [i]
+        runs_to_rerun = np.array(runs_to_rerun)
+    elif rerun_type == 'TPAGBwind':
+        N_runs = len(grid)
+        runs_to_rerun = []
+        hot_wind_full_on_T = 1.2e4 # inlist value
+        for i in range(N_runs):
+            if grid[i].history1 is not None:
+                s1_Teff = 10**grid[i].history1['log_Teff']
+                s1_Yc = grid[i].history1['center_he4']
+                s1_he_shell_mass = grid[i].history1['he_core_mass'] - grid[i].history1['co_core_mass']
+                tpagb_1 = np.logical_and(s1_Teff <= hot_wind_full_on_T, s1_Yc <= 1e-6)
+                tpagb_1 = np.logical_and(tpagb_1, s1_he_shell_mass <= 1e-1)
+            else:
+                tpagb_1 = np.array([False])
+            if grid[i].history2 is not None:
+                s2_Teff = 10**grid[i].history2['log_Teff']
+                s2_Yc = grid[i].history2['center_he4']
+                s2_he_shell_mass = grid[i].history2['he_core_mass'] - grid[i].history2['co_core_mass']
+                tpagb_2 = np.logical_and(s2_Teff <= hot_wind_full_on_T, s2_Yc <= 1e-6)
+                tpagb_2 = np.logical_and(tpagb_2, s2_he_shell_mass <= 1e-1)
+            else:
+                tpagb_2 = np.array([False])
+            if np.max(np.logical_or(tpagb_1, tpagb_2)) == True:
                 runs_to_rerun += [i]
         runs_to_rerun = np.array(runs_to_rerun)
     elif rerun_type == 'envelope_mass_limit': # maybe 'fe_core_infall_limit' as well?
