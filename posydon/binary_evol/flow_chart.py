@@ -145,6 +145,12 @@ for s1 in STAR_STATES_H_RICH_EVOLVABLE:
     for s2 in STAR_STATES_CO:
         POSYDON_FLOW_CHART[(s1, s2, 'RLO1', 'oRLO1')] = 'step_CO_HMS_RLO'
         POSYDON_FLOW_CHART[(s2, s1, 'RLO2', 'oRLO2')] = 'step_CO_HMS_RLO'
+        
+# He-rich star roche-lobe overflow onto a compact object
+for s1 in STAR_STATES_HE_RICH_EVOLVABLE:
+    for s2 in STAR_STATES_CO:
+        POSYDON_FLOW_CHART[(s1, s2, 'RLO1', 'oRLO1')] = 'step_CO_HeMS_RLO'
+        POSYDON_FLOW_CHART[(s2, s1, 'RLO2', 'oRLO2')] = 'step_CO_HeMS_RLO'
 
 # H-rich star on a detached binary with a compact object
 # that fall outside the grid and has been returned by step_CO_HMS_RLO
