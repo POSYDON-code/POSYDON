@@ -1129,6 +1129,8 @@ class plot2D(object):
         
         if ax is not None:
             cax = ax.inset_axes(self.colorbar["bounds"])
+        else:
+            cax = None
         plt.colorbar(
             mappable=scatter,
             ax=ax,
