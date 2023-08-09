@@ -198,7 +198,6 @@ class plot2D(object):
                     temp_var[sub_varname] = kwargs[varname].get(
                         sub_varname, default_value
                     )
-
                 setattr(self, varname, temp_var)
 
         # plotting fonts
