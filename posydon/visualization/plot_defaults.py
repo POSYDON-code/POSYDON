@@ -814,3 +814,263 @@ DEFAULT_LABELS = {
     'S1_eta' : [r'$\eta$', r'$\log_{10}(\eta)$'],
     'S2_eta' : [r'$\eta$', r'$\log_{10}(\eta)$'],
 }
+
+# pre defined plottings
+PRE_SET_PLOTS = {
+    'combined_TF12' : {
+        'plot_dir_name' : 'TF12',
+        'zvar' : None,
+        'term_flag' : 'combined_TF12',
+        'cbar' : False,
+        'zlog' : False,
+        'zmin' : None,
+        'zmax' : None
+    },
+    'termination_flag_1' : {
+        'plot_dir_name' : 'TF1',
+        'zvar' : 'lg_mtransfer_rate',
+        'term_flag' : 'termination_flag_1',
+        'cbar' : True,
+        'zlog' : False,
+        'zmin' : -8,
+        'zmax' : -1
+    },
+    'termination_flag_2' : {
+        'plot_dir_name' : 'TF2',
+        'zvar' : None,
+        'term_flag' : 'termination_flag_2',
+        'cbar' : False,
+        'zlog' : False,
+        'zmin' : None,
+        'zmax' : None
+    },
+    'termination_flag_3' : {
+        'plot_dir_name' : 'TF3',
+        'zvar' : None,
+        'term_flag' : 'termination_flag_3',
+        'cbar' : False,
+        'zlog' : False,
+        'zmin' : None,
+        'zmax' : None
+    },
+    'termination_flag_4' : {
+        'plot_dir_name' : 'TF4',
+        'zvar' : None,
+        'term_flag' : 'termination_flag_4',
+        'cbar' : False,
+        'zlog' : False,
+        'zmin' : None,
+        'zmax' : None
+    },
+    'rl_relative_overflow_1' : {
+        'plot_dir_name' : 'debug_rl_1',
+        'zvar' : 'rl_relative_overflow_1',
+        'term_flag' : 'debug',
+        'cbar' : True,
+        'zlog' : False,
+        'zmin' : -0.5,
+        'zmax' : 0.5
+    },
+    'rl_relative_overflow_2' : {
+        'plot_dir_name' : 'debug_rl_2',
+        'zvar' : 'rl_relative_overflow_2',
+        'term_flag' : 'debug',
+        'cbar' : True,
+        'zlog' : False,
+        'zmin' : -0.5,
+        'zmax' : 0.5
+    },
+    'lg_mtransfer_rate' : {
+        'plot_dir_name' : 'debug_mt',
+        'zvar' : 'lg_mtransfer_rate',
+        'term_flag' : 'debug',
+        'cbar' : True,
+        'zlog' : False,
+        'zmin' : -8,
+        'zmax' : -1
+    },
+    # SN stuff
+    'S1_MODEL01_CO_type' : {
+        'plot_dir_name' : 'S1_MODEL01/CO_type',
+        'zvar' : None,
+        'term_flag' : 'S1_MODEL01_CO_type',
+        'cbar' : False,
+        'zlog' : False,
+        'zmin' : None,
+        'zmax' : None
+    },
+    'S1_MODEL01_SN_type' : {
+        'plot_dir_name' : 'S1_MODEL01/SN_type',
+        'zvar' : None,
+        'term_flag' : 'S1_MODEL01_SN_type',
+        'cbar' : False,
+        'zlog' : False,
+        'zmin' : None,
+        'zmax' : None
+    },
+    'S1_MODEL01_mass' : {
+        'plot_dir_name' : 'S1_MODEL01/mass',
+        'zvar' : 'S1_MODEL01_mass',
+        'term_flag' : 'termination_flag_1',
+        'cbar' : True,
+        'zlog' : True,
+        'zmin' : 0.,
+        'zmax' : 2.
+    },
+    'S1_MODEL01_spin' : {
+        'plot_dir_name' : 'S1_MODEL01/spin',
+        'zvar' : 'S1_MODEL01_spin',
+        'term_flag' : 'termination_flag_1',
+        'cbar' : True,
+        'zlog' : False,
+        'zmin' : 0.,
+        'zmax' : 1.
+    },
+    'S1_MODEL01_m_disk_radiated' : {
+        'plot_dir_name' : 'S1_MODEL01/m_disk_radiated',
+        'zvar' : 'S1_MODEL01_m_disk_radiated',
+        'term_flag' : 'termination_flag_1',
+        'cbar' : True,
+        'zlog' : False,
+        'zmin' : 0.,
+        'zmax' : 3.
+    },
+    'S1_MODEL05_CO_type' : {
+        'plot_dir_name' : 'S1_MODEL05/CO_type',
+        'zvar' : None,
+        'term_flag' : 'S1_MODEL05_CO_type',
+        'cbar' : False,
+        'zlog' : False,
+        'zmin' : None,
+        'zmax' : None
+    },
+    'S1_MODEL05_SN_type' : {
+        'plot_dir_name' : 'S1_MODEL05/SN_type',
+        'zvar' : None,
+        'term_flag' : 'S1_MODEL05_SN_type',
+        'cbar' : False,
+        'zlog' : False,
+        'zmin' : None,
+        'zmax' : None
+    },
+    'S1_MODEL05_mass' : {
+        'plot_dir_name' : 'S1_MODEL05/mass',
+        'zvar' : 'S1_MODEL05_mass',
+        'term_flag' : 'termination_flag_1',
+        'cbar' : True,
+        'zlog' : True,
+        'zmin' : 0.,
+        'zmax' : 2.
+    },
+    'S1_MODEL05_spin' : {
+        'plot_dir_name' : 'S1_MODEL05/spin',
+        'zvar' : 'S1_MODEL05_spin',
+        'term_flag' : 'termination_flag_1',
+        'cbar' : True,
+        'zlog' : False,
+        'zmin' : 0.,
+        'zmax' : 1.
+    },
+    'S1_MODEL05_m_disk_radiated' : {
+        'plot_dir_name' : 'S1_MODEL05/m_disk_radiated',
+        'zvar' : 'S1_MODEL05_m_disk_radiated',
+        'term_flag' : 'termination_flag_1',
+        'cbar' : True,
+        'zlog' : False,
+        'zmin' : 0.,
+        'zmax' : 3.
+    },
+    'S1_MODEL06_CO_type' : {
+        'plot_dir_name' : 'S1_MODEL06/CO_type',
+        'zvar' : None,
+        'term_flag' : 'S1_MODEL06_CO_type',
+        'cbar' : False,
+        'zlog' : False,
+        'zmin' : None,
+        'zmax' : None
+    },
+    'S1_MODEL06_SN_type' : {
+        'plot_dir_name' : 'S1_MODEL06/SN_type',
+        'zvar' : None,
+        'term_flag' : 'S1_MODEL06_SN_type',
+        'cbar' : False,
+        'zlog' : False,
+        'zmin' : None,
+        'zmax' : None
+    },
+    'S1_MODEL06_mass' : {
+        'plot_dir_name' : 'S1_MODEL06/mass',
+        'zvar' : 'S1_MODEL06_mass',
+        'term_flag' : 'termination_flag_1',
+        'cbar' : True,
+        'zlog' : True,
+        'zmin' : 0.,
+        'zmax' : 2.
+    },
+    'S1_MODEL06_spin' : {
+        'plot_dir_name' : 'S1_MODEL06/spin',
+        'zvar' : 'S1_MODEL06_spin',
+        'term_flag' : 'termination_flag_1',
+        'cbar' : True,
+        'zlog' : False,
+        'zmin' : 0.,
+        'zmax' : 1.
+    },
+    'S1_MODEL06_m_disk_radiated' : {
+        'plot_dir_name' : 'S1_MODEL06/m_disk_radiated',
+        'zvar' : 'S1_MODEL06_m_disk_radiated',
+        'term_flag' : 'termination_flag_1',
+        'cbar' : True,
+        'zlog' : False,
+        'zmin' : 0.,
+        'zmax' : 3.
+    },
+    'S1_MODEL10_CO_type' : {
+        'plot_dir_name' : 'S1_MODEL10/CO_type',
+        'zvar' : None,
+        'term_flag' : 'S1_MODEL10_CO_type',
+        'cbar' : False,
+        'zlog' : False,
+        'zmin' : None,
+        'zmax' : None
+    },
+    'S1_MODEL10_SN_type' : {
+        'plot_dir_name' : 'S1_MODEL10/SN_type',
+        'zvar' : None,
+        'term_flag' : 'S1_MODEL10_SN_type',
+        'cbar' : False,
+        'zlog' : False,
+        'zmin' : None,
+        'zmax' : None
+    },
+    'S1_MODEL10_mass' : {
+        'plot_dir_name' : 'S1_MODEL10/mass',
+        'zvar' : 'S1_MODEL10_mass',
+        'term_flag' : 'termination_flag_1',
+        'cbar' : True,
+        'zlog' : True,
+        'zmin' : 0.,
+        'zmax' : 2.
+    },
+    'S1_MODEL10_spin' : {
+        'plot_dir_name' : 'S1_MODEL10/spin',
+        'zvar' : 'S1_MODEL10_spin',
+        'term_flag' : 'termination_flag_1',
+        'cbar' : True,
+        'zlog' : False,
+        'zmin' : 0.,
+        'zmax' : 1.
+    },
+    'S1_MODEL10_m_disk_radiated' : {
+        'plot_dir_name' : 'S1_MODEL10/m_disk_radiated',
+        'zvar' : 'S1_MODEL10_m_disk_radiated',
+        'term_flag' : 'termination_flag_1',
+        'cbar' : True,
+        'zlog' : False,
+        'zmin' : 0.,
+        'zmax' : 3.
+    }
+    # TODO: add more
+}
+
+
