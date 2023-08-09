@@ -48,6 +48,7 @@ from posydon.binary_evol.singlestar import STARPROPERTIES
 from posydon.binary_evol.SN.profile_collapse import do_core_collapse_BH
 from posydon.binary_evol.flow_chart import (STAR_STATES_CO, STAR_STATES_CC,
                                             STAR_STATES_C_DEPLETION)
+from posydon.grids.MODELS import MODELS
 
 from pandas import read_csv
 from sklearn import neighbors
@@ -66,21 +67,25 @@ path_to_Couch_datasets = os.path.join(PATH_TO_POSYDON_DATA,
                                       "Couch+2020/")
 
 MODEL = {
+    # core collapse physics
     "mechanism": 'Patton&Sukhbold20-engine',
     "engine": 'N20',
     "PISN": "Marchant+19",
     "ECSN": "Podsiadlowksi+04",
+    "conserve_hydrogen_envelope" : False,
     "max_neutrino_mass_loss": 0.5,
-    "kick": True,
-    "kick_normalisation": 'one_over_mass',
-    "sigma_kick_CCSN_NS": 265.0,
-    "sigma_kick_CCSN_BH": 265.0,
-    "sigma_kick_ECSN": 20.0,
     "max_NS_mass": 2.5,
     "use_interp_values": True,
     "use_profiles": True,
     "use_core_masses": True,
     "approx_at_he_depletion": False,
+    # kick physics
+    "kick": True,
+    "kick_normalisation": 'one_over_mass',
+    "sigma_kick_CCSN_NS": 265.0,
+    "sigma_kick_CCSN_BH": 265.0,
+    "sigma_kick_ECSN": 20.0,
+    # other
     "verbose": False,
 }
 
@@ -229,24 +234,7 @@ class StepSN(object):
 
     """
 
-    def __init__(self,
-                 mechanism=MODEL['mechanism'],
-                 engine=MODEL['engine'],
-                 PISN=MODEL['PISN'],
-                 ECSN=MODEL['ECSN'],
-                 max_neutrino_mass_loss=MODEL['max_neutrino_mass_loss'],
-                 kick=MODEL['kick'],
-                 kick_normalisation=MODEL['kick_normalisation'],
-                 sigma_kick_CCSN_NS=MODEL['sigma_kick_CCSN_NS'],
-                 sigma_kick_CCSN_BH=MODEL['sigma_kick_CCSN_BH'],
-                 sigma_kick_ECSN=MODEL['sigma_kick_ECSN'],
-                 max_NS_mass=MODEL['max_NS_mass'],
-                 use_interp_values=MODEL['use_interp_values'],
-                 use_profiles=MODEL['use_profiles'],
-                 use_core_masses=MODEL['use_core_masses'],
-                 approx_at_he_depletion=MODEL['approx_at_he_depletion'],
-                 verbose=MODEL['verbose'],
-                 **kwargs):
+    def __init__(self, **kwargs):
         """Initialize a StepSN instance."""
         # read kwargs to initialize the class
         if kwargs:
@@ -257,22 +245,9 @@ class StepSN(object):
                 default_value = MODEL[varname]
                 setattr(self, varname, kwargs.get(varname, default_value))
         else:
-            self.mechanism = mechanism
-            self.engine = engine
-            self.PISN = PISN
-            self.ECSN = ECSN
-            self.max_neutrino_mass_loss = max_neutrino_mass_loss
-            self.kick = kick
-            self.kick_normalisation = kick_normalisation
-            self.sigma_kick_CCSN_NS = sigma_kick_CCSN_NS
-            self.sigma_kick_CCSN_BH = sigma_kick_CCSN_BH
-            self.sigma_kick_ECSN = sigma_kick_ECSN
-            self.max_NS_mass = max_NS_mass
-            self.use_interp_values = use_interp_values
-            self.use_profiles = use_profiles
-            self.use_core_masses = use_core_masses
-            self.approx_at_he_depletion = approx_at_he_depletion
-            self.verbose = verbose
+            for varname in MODEL:
+                default_value = MODEL[varname]
+                setattr(self, varname, default_value)
 
         if self.max_neutrino_mass_loss is None:
             self.max_neutrino_mass_loss = 0
@@ -443,7 +418,7 @@ class StepSN(object):
         # Checks if the binary is not disrupted to compute the
         # inspiral time due to gravitational wave emission
         state1, state2 = binary.star_1.state, binary.star_2.state
-        if binary.state == "disrupted":
+        if binary.state == "disrupted" or state1 == "massless_remnant" or state2 == "massless_remnant":
             binary.inspiral_time = np.nan
         elif state1 in STAR_STATES_CO and state2 in STAR_STATES_CO:
             binary.inspiral_time = inspiral_timescale_from_separation(
@@ -506,45 +481,51 @@ class StepSN(object):
 
             # if no profile is avaiable but interpolation quantities are,
             # use those, else continue with or without profile.
-            key = self.mechanism
-            key = key.replace('+', '')
-            key = key.replace('-', '_')
-            key = key.replace('&', '_')
-            if self.mechanism in ['Sukhbold+16-engine',
-                                  'Patton&Sukhbold20-engine']:
-                key += self.engine
-            if (self.use_interp_values and (getattr(star, key) is not None)):
-                # check the assumptions for the CC of preprocessed quantities
-                supported_CC = [
-                    'direct', 'Fryer+12-rapid', 'Fryer+12-delayed',
-                    'Sukhbold+16-engine', 'Patton&Sukhbold20-engine']
-
-                if self.mechanism not in supported_CC:
-                    raise ValueError('Mechanism not supported by '
-                                     'use_interp_values=True!')
-                if self.mechanism in ['Sukhbold+16-engine',
-                                      'Patton&Sukhbold20-engine']:
-                    if self.engine != 'N20':
-                        raise ValueError('Engine not supported by '
-                                         'use_interp_values=True!')
-                if self.PISN != "Marchant+19":
-                    raise ValueError('PISN option not supported by '
-                                     'use_interp_values=True!')
-                if self.ECSN != "Podsiadlowksi+04":
-                    raise ValueError('ECSN option not supported by '
-                                     'use_interp_values=True!')
-                if self.max_neutrino_mass_loss != 0.5:
-                    raise ValueError('max_neutrino_mass_loss option not '
-                                     'supported by use_intrp_values=True!')
-
-                CC_properites = getattr(star, key)
-                star.state, star.SN_type, star.f_fb, star.mass, star.spin = (
-                    CC_properites)
-
-                for key in STARPROPERTIES:
-                    if key not in ["state", "mass", "spin"]:
-                        setattr(star, key, None)
-                return
+            if self.use_interp_values:
+                # find MODEL_NAME corresponding to class variable
+                MODEL_NAME_SEL = None
+                for MODEL_NAME, MODEL in MODELS.items():
+                    tmp = MODEL_NAME
+                    for key, val in MODEL.items():
+                        if "use_" in key:
+                            continue
+                        if getattr(self, key) != val:
+                            if self.verbose:
+                                print(tmp, 'mismatch:', key, getattr(self, key), val)
+                            tmp = None
+                            break
+                    if tmp is not None:
+                        if self.verbose:
+                            print('matched to model:', tmp)
+                        MODEL_NAME_SEL = tmp
+                
+                # check if selected MODEL is supported
+                if MODEL_NAME_SEL is None:
+                    raise ValueError('Your model assumptions are not'
+                                     'supported!')   
+                elif getattr(star, MODEL_NAME_SEL) is None:
+                    # NOTE: this option is needed to do the collapse
+                    # for stars evolved with the step_detached or 
+                    # steo_disrupted.
+                    # allow to continue with the collapse with profile
+                    # or core masses
+                    warnings.warn(f'{MODEL_NAME_SEL}: The collapsed star '
+                                     'was not interpolated! If use_profiles '
+                                     'or use_core_masses is set to True, '
+                                     'continue with the collapse.')                 
+                else:
+                    MODEL_properties = getattr(star, MODEL_NAME_SEL)
+                    for key, value in MODEL_properties.items():
+                        setattr(star, key, value)
+                
+                    for key in STARPROPERTIES:
+                        if key not in ["state", "mass", "spin",
+                                        "m_disk_accreted ", "m_disk_radiated"]:
+                            setattr(star, key, None)
+                    
+                    star.log_R = np.log10(CO_radius(star.mass, star.state))
+                    
+                    return
 
             # Verifies the selection of core-collapse mechnism to perform
             # the collapse
@@ -574,8 +555,11 @@ class StepSN(object):
                     star.state = "WD"
                     star.spin = 0.
                     star.log_R = np.log10(CO_radius(star.mass, star.state))
+                    star.m_disk_accreted = np.nan
+                    star.m_disk_radiated = np.nan
                     for key in STARPROPERTIES:
-                        if key not in ["state", "mass", "log_R", "spin"]:
+                        if key not in ["state", "mass", "log_R", "spin",
+                                       "m_disk_accreted", "m_disk_radiated"]:
                             setattr(star, key, None)
                     return
 
@@ -586,11 +570,9 @@ class StepSN(object):
                     star.spin = np.nan
                     star.m_disk_accreted = np.nan
                     star.m_disk_radiated = np.nan
-                    star.max_he_mass_ejected = np.nan
                     for key in STARPROPERTIES:
                         if key not in ["state", "mass", "spin",
-                                       "m_disk_accreted ", "m_disk_radiated",
-                                       "max_he_mass_ejected"]:
+                                       "m_disk_accreted ", "m_disk_radiated"]:
                             setattr(star, key, None)
                     return
 
@@ -618,17 +600,14 @@ class StepSN(object):
                         )
                         star.mass = final_BH[0]
                         star.spin = final_BH[1]
-                        Mo = const.Msun
-                        star.m_disk_accreted = final_BH[11][-1]/Mo
-                        star.m_disk_radiated = sum(final_BH[7]*final_BH[13])/Mo
-                        star.max_he_mass_ejected = final_BH[17]
+                        star.m_disk_accreted = final_BH[2]
+                        star.m_disk_radiated = final_BH[3]
                         star.state = "BH"
                     else:
                         star.mass = m_grav
                         star.spin = 0.
                         star.m_disk_accreted = 0.
                         star.m_disk_radiated = 0.
-                        star.max_he_mass_ejected = np.nan
                         star.state = 'NS'
 
                 elif self.use_core_masses:
@@ -652,13 +631,11 @@ class StepSN(object):
                             star.spin = 1.0
                         star.m_disk_accreted = 0.0
                         star.m_disk_radiated = 0.0
-                        star.max_he_mass_ejected = np.nan
                         star.state = "BH"
                     else:
                         star.spin = 0.0
                         star.m_disk_accreted = 0.0
                         star.m_disk_radiated = 0.0
-                        star.max_he_mass_ejected = np.nan
                         star.state = "NS"
                 else:
                     for key in STARPROPERTIES:
@@ -685,8 +662,11 @@ class StepSN(object):
                     star.state = "WD"
                     star.spin = 0.
                     star.log_R = np.log10(CO_radius(star.mass, star.state))
+                    star.m_disk_accreted = np.nan
+                    star.m_disk_radiated = np.nan
                     for key in STARPROPERTIES:
-                        if key not in ["state", "mass", "log_R", "spin"]:
+                        if key not in ["state", "mass", "log_R", "spin",
+                                       "m_disk_accreted", "m_disk_radiated"]:
                             setattr(star, key, None)
                     return
 
@@ -697,11 +677,9 @@ class StepSN(object):
                     star.spin = np.nan
                     star.m_disk_accreted = np.nan
                     star.m_disk_radiated = np.nan
-                    star.max_he_mass_ejected = np.nan
                     for key in STARPROPERTIES:
                         if key not in ["state", "mass", "spin",
-                                       "m_disk_accreted ", "m_disk_radiated",
-                                       "max_he_mass_ejected"]:
+                                       "m_disk_accreted ", "m_disk_radiated"]:
                             setattr(star, key, None)
                     return
 
@@ -733,15 +711,12 @@ class StepSN(object):
                                   "and lost", round(final_BH[0] - m_rembar, 2),
                                   "M_sun.")
                         star.spin = final_BH[1]
-                        Mo = const.Msun
-                        star.m_disk_accreted = final_BH[11][-1]/Mo
-                        star.m_disk_radiated = sum(final_BH[7]*final_BH[13])/Mo
-                        star.max_he_mass_ejected = final_BH[17]
+                        star.m_disk_accreted = final_BH[2]
+                        star.m_disk_radiated = final_BH[3]
                     elif star.state == "NS":
                         star.mass = m_grav
                         star.m_disk_accreted = 0.0
                         star.m_disk_radiated = 0.0
-                        star.max_he_mass_ejected = np.nan
                         star.spin = 0.0
                     else:
                         for key in STARPROPERTIES:
@@ -768,13 +743,11 @@ class StepSN(object):
                             star.spin = 1.0
                         star.m_disk_accreted = 0.0
                         star.m_disk_radiated = 0.0
-                        star.max_he_mass_ejected = np.nan
                         star.state = "BH"
                     else:
                         star.spin = 0.0
                         star.m_disk_accreted = 0.0
                         star.m_disk_radiated = 0.0
-                        star.max_he_mass_ejected = np.nan
                         star.state = "NS"
 
                 else:
@@ -793,8 +766,7 @@ class StepSN(object):
         for key in STARPROPERTIES:
             if key not in [
                 "state", "mass", "spin", "log_R", "metallicity",
-                "m_disk_accreted ", "m_disk_radiated", "max_he_mass_ejected"
-            ]:
+                "m_disk_accreted ", "m_disk_radiated"]:
                 setattr(star, key, None)
 
     def PISN_prescription(self, star):
@@ -818,6 +790,7 @@ class StepSN(object):
             # perform the PISN prescription in terms of the
             # He core mass at pre-supernova
             m_He_core = star.he_core_mass
+            m_star = star.mass
             if self.PISN == "Marchant+19":
                 if m_He_core >= 31.99 and m_He_core <= 61.10:
                     # this is the 8th-order polynomial fit of table 1
@@ -839,7 +812,11 @@ class StepSN(object):
                     m_PISN = np.nan
 
                 else:
-                    m_PISN = None
+                    # above the PISN gap we assume direct collapse of the
+                    if self.conserve_hydrogen_envelope:
+                        m_PISN = m_star
+                    else:
+                        m_PISN = m_He_core
 
             elif is_number(self.PISN) and m_He_core > self.PISN:
                 m_PISN = self.PISN
@@ -1028,6 +1005,12 @@ class StepSN(object):
             raise ValueError("The CO core mass is not correct! CO core = {}".
                              format(m_core))
 
+        # define the collapsing stellar mass: either the H or He core mass
+        if self.conserve_hydrogen_envelope:
+            m_collapsing = m_star
+        else:
+            m_collapsing = m_He_core
+
         m_rembar, f_fb, state, star.SN_type = self.check_SN_type(
             m_core=m_core, m_He_core=m_He_core, m_star=m_star)
 
@@ -1049,21 +1032,21 @@ class StepSN(object):
                 f_fb = 0.0
             elif m_core < 2.5:
                 m_fb = 0.2
-                f_fb = m_fb / (m_star - m_proto)
+                f_fb = m_fb / (m_collapsing - m_proto)
             elif m_core >= 2.5 and m_core < 6.0:
                 m_fb = 0.286 * m_core - 0.514
-                f_fb = m_fb / (m_star - m_proto)
+                f_fb = m_fb / (m_collapsing - m_proto)
             elif m_core >= 6.0 and m_core < 7.0:
                 f_fb = 1.0
-                m_fb = f_fb * (m_star - m_proto)
+                m_fb = f_fb * (m_collapsing - m_proto)
             elif m_core >= 7.0 and m_core < 11.0:
-                a = 0.25 - 1.275 / (m_star - m_proto)
+                a = 0.25 - 1.275 / (m_collapsing - m_proto)
                 b = -11.0 * a + 1.0
                 f_fb = a * m_core + b
-                m_fb = f_fb * (m_star - m_proto)
+                m_fb = f_fb * (m_collapsing - m_proto)
             elif m_core >= 11.0:
                 f_fb = 1.0
-                m_fb = f_fb * (m_star - m_proto)
+                m_fb = f_fb * (m_collapsing - m_proto)
             m_rembar = m_proto + m_fb
             state = None
 
@@ -1088,30 +1071,24 @@ class StepSN(object):
                 f_fb = 0.0
             elif m_core < 2.5:
                 m_fb = 0.2
-                f_fb = m_fb / (m_star - m_proto)
+                f_fb = m_fb / (m_collapsing - m_proto)
             elif m_core >= 2.5 and m_core < 3.5:
                 m_fb = 0.5 * m_core - 1.05
-                f_fb = m_fb / (m_star - m_proto)
+                f_fb = m_fb / (m_collapsing - m_proto)
             elif m_core >= 3.5 and m_core < 11.0:
-                a = 0.133 - 0.093 / (m_star - m_proto)
+                a = 0.133 - 0.093 / (m_collapsing - m_proto)
                 b = -11.0 * a + 1.0
                 f_fb = a * m_core + b
-                m_fb = f_fb * (m_star - m_proto)
+                m_fb = f_fb * (m_collapsing - m_proto)
             elif m_core > 11.0:
                 f_fb = 1.0
-                m_fb = f_fb * (m_star - m_proto)
+                m_fb = f_fb * (m_collapsing - m_proto)
             m_rembar = m_proto + m_fb
             state = None
 
         # direct collapse and f_fb = 1. (no kicks)
         elif self.mechanism == self.direct_collapse:
-            m_rembar = m_star
-            f_fb = 1.0
-            state = None
-
-        # direct collapse and f_fb = 1. (no kicks)
-        elif self.mechanism == self.direct_collapse_hecore:
-            m_rembar = m_He_core
+            m_rembar = m_collapsing
             f_fb = 1.0
             state = None
 
@@ -1129,7 +1106,8 @@ class StepSN(object):
                 m_rembar = m_proto + m_fb
                 state = 'NS'
             else:
-                m_rembar, f_fb, state = self.Sukhbold_corecollapse_engine(star)
+                m_rembar, f_fb, state = self.Sukhbold_corecollapse_engine(star,
+                                                self.conserve_hydrogen_envelope)
 
         # Collapse prescription from the results of
         # Couch, S. M., Warren, M. L., & O’Connor, E. P. 2020, ApJ, 890, 127
@@ -1145,7 +1123,8 @@ class StepSN(object):
                 m_rembar = m_proto + m_fb
                 state = 'NS'
             else:
-                m_rembar, f_fb, state = self.Couch_corecollapse_engine(star)
+                m_rembar, f_fb, state = self.Couch_corecollapse_engine(star,
+                                                self.conserve_hydrogen_envelope)
 
         elif self.mechanism == self.Patton20_engines:
             if star.SN_type == "ECSN":
@@ -1159,7 +1138,8 @@ class StepSN(object):
                 state = 'NS'
             else:
                 m_rembar, f_fb, state = self.Patton20_corecollapse(star,
-                                                                   self.engine)
+                                                self.engine,
+                                                self.conserve_hydrogen_envelope)
         else:
             raise ValueError("Mechanism %s not supported." % self.mechanism)
 
@@ -1178,31 +1158,31 @@ class StepSN(object):
         """Do the orbital kick.
 
         This function computes the supernova step of the binary object. It
-        checks which binary_state riched the core collapse flag, either CC1 or
-        CC2, and run the step accordingly updating the binary object.
+        checks which binary_state reached the core collapse flag, either CC1 or
+        CC2, and runs the step accordingly updating the binary object.
 
         Geometry:
-        The collapsing helium star, here M_he_star, lies on the origin of the
-        coordinate system moving in direction of positive y axis. The
-        companion, here M_companion, lies on the negative X axis and Z-axis
-        completes right-handed coordinate system. See Fig 1 in Kalogera 1996
-        for a coordinate system drawing.
+        We work in a right-handed coordinate system. The collapsing helium star, 
+        here M_he_star, lies on the origin. The companion, here M_companion, 
+        lies on the negative X axis at rest. The relative velocity of the M_he_star
+        with respect to M_companion lies in the X-Y plane, with vY>0.
+        The orbital angular momentum vector is in Z direction, which completes the
+        right-handed coordinate system.
 
-        phi :
-            Angle between z-axis and projection of kick onto x-z plane.
+        psi:
+            The angle in the orbital plane between the X axis and the pre-core
+            collapse relative velocity. (psi = pi/2 points in Y direction)
+        
         theta :
-            Angle between pre- supernova star velocity relative to the
-            companion (i.e. along the positive y axis) and the kick velocity.
+            The polar angle between the kick velocity and the pre-core collapse
+            relative velocity of the M_he_star with respect to M_companion.
+        
+        phi :
+            The corresponding azimuthal angle such that phi=0 is on the Z axis.
+
         tilt :
-            The angle between pre- and post- supenova orbial
-            planes. This is equal to the angle between the relative velocity of
-            the helium star to the companion just before the explosion (see Vr)
-            and the projection of the relative velocy just after the explosion
-            onto the y-z plane.
-        mean_anomaly:
-            is the mean anomaly, i.e the fraction of an elliptical orbit's
-            period that has elapsed since the orbiting body passed periapsis,
-            expressed as an angle.
+            The angle between pre- and post- supernova orbital angular momentum vectors.
+            
 
         Parameters
         ----------
@@ -1231,12 +1211,14 @@ class StepSN(object):
                     new_separation, binary.star_1.mass, binary.star_2.mass
                 )
                 for key in BINARYPROPERTIES:
-                    if key not in ['V_sys', 'nearest_neighbour_distance']:
+                    if key not in ['V_sys', 'nearest_neighbour_distance', 'state']:
                         setattr(binary, key, None)
                     # if key is 'nearest_neighbour_distance':
                     #     setattr(binary, key, ['None', 'None', 'None'])
                 binary.separation = new_separation
-                binary.state = "detached"
+                if binary.state != "disrupted" and binary.state != "initially_single_star" and binary.state != "merged":
+                    binary.state = "detached"
+                
                 binary.event = None
                 binary.time = binary.time_history[-1]
                 binary.eccentricity = binary.eccentricity_history[-1]
@@ -1327,12 +1309,13 @@ class StepSN(object):
                     new_separation, binary.star_1.mass, binary.star_2.mass
                 )
                 for key in BINARYPROPERTIES:
-                    if key not in ['V_sys', 'nearest_neighbour_distance']:
+                    if key not in ['V_sys', 'nearest_neighbour_distance', 'state']:
                         setattr(binary, key, None)
                     # if key is 'nearest_neighbour_distance':
                     #     setattr(binary, key, ['None', 'None', 'None'])
                 binary.separation = new_separation
-                binary.state = "detached"
+                if binary.state != "disrupted" and binary.state != "initially_single_star" and binary.state != "merged":
+                    binary.state = "detached"
                 binary.event = None
                 binary.time = binary.time_history[-1]
                 binary.eccentricity = binary.eccentricity_history[-1]
@@ -1408,6 +1391,7 @@ class StepSN(object):
                 mean_anomaly = np.random.uniform(0, 2 * np.pi)
                 binary.star_2.natal_kick_array[3] = mean_anomaly
 
+
         # The binary exist: flag_binary is True if the binary is not disrupted
         flag_binary = True
 
@@ -1434,43 +1418,55 @@ class StepSN(object):
         Apre = Apre * const.Rsun
         Vkick = Vkick * const.km2cm
         rpre = rpre * const.Rsun
+        Mtot_pre = M_he_star + M_companion
+        Mtot_post = M_compact_object + M_companion
 
         # get useful quantity
         sin_theta = np.sqrt(1 - (cos_theta ** 2))
 
-        # get kicks componets in the coordinate system
-        Vkx = Vkick * sin_theta * np.sin(phi)
-        Vky = Vkick * cos_theta
-        Vkz = Vkick * sin_theta * np.cos(phi)
-
         # Eq 1, in Kalogera, V. 1996, ApJ, 471, 352
         # extended to Eq 17 in Wong, T.-W., Valsecchi, F., Fragos, T., & Kalogera, V. 2012, ApJ, 747, 111
-        # Vr is velocity of preSN He core relative to M_companion, directed
-        # along the positive y axis
-        Vr = np.sqrt(G * (M_he_star + M_companion) * (2.0 / rpre - 1.0 / Apre))
-        Mtot = M_compact_object + M_companion
+        # Vr is velocity of preSN He core relative to M_companion, NOT necessarily
+        # in the direction of the Y axis if eccentric
+        # Eq from conservation of energy
+        Vr = np.sqrt(G * (Mtot_pre) * (2.0 / rpre - 1.0 / Apre))
+
+        # Eq 18, Wong, T.-W., Valsecchi, F., Fragos, T., & Kalogera, V. 2012, ApJ, 747, 111
+        # psi is the polar angle of the position vector of the CO with respect
+        # to its pre-SN orbital velocity in the companions frame. i.e. angle between Vr and X axis
+        # If epre = 0, sin_psi should be 1
+        # Eq from setting specific angular momentum r X Vr = sqrt(G*M*A*(1-e**2))
+        sin_psi = np.round(
+            np.sqrt(G * (Mtot_pre) * (1 - epre ** 2) * Apre)
+            / (rpre * Vr), 5)
+        cos_psi = np.sqrt(1 - sin_psi ** 2)
+        # Allow for -cos_psi (Vr in the -X, +Y quadrant)
+        if E_ma > np.pi: cos_psi *= -1
 
         # Eq 3, in Kalogera, V. 1996, ApJ, 471, 352
         # extended to Eq 13, in Wong, T.-W., Valsecchi, F., Fragos, T., & Kalogera, V. 2012, ApJ, 747, 111
         # get the orbital separation post SN
+        # Eq from conservation of energy
         Apost = ((2.0 / rpre)
-                 - (((Vkick ** 2) + (Vr ** 2) + (2 * Vky * Vr)) / (G * Mtot))
+                 - (((Vkick ** 2) + (Vr ** 2) + (2 * (Vkick * cos_theta) * Vr)) / (G * Mtot_post))
                  ) ** -1
 
-        # Eq 18, Wong, T.-W., Valsecchi, F., Fragos, T., & Kalogera, V. 2012, ApJ, 747, 111
-        # psi: is the polar angle of the position vector of the CO with respect
-        # to its pre-SN orbital velocity in the companions frame.
-        sin_psi = np.round(
-            np.sqrt(G * (M_he_star + M_companion) * (1 - epre ** 2) * Apre)
-            / (rpre * Vr), 5)
-        cos_psi = np.sqrt(1 - sin_psi ** 2)
+
+                # get kicks componets in the coordinate system
+        Vkx = Vkick * (sin_theta * np.sin(phi) * sin_psi + cos_theta * cos_psi)
+        Vky = Vkick * (-sin_theta * np.sin(phi) * cos_psi + cos_theta * sin_psi)
+        Vkz = Vkick * sin_theta * np.cos(phi)
+
 
         # Eq 4, in Kalogera, V. 1996, ApJ, 471, 352
         # extended to Eq 14 in Wong, T.-W., Valsecchi, F., Fragos, T., & Kalogera, V. 2012, ApJ, 747, 111
         # get the eccentricity post SN
-        x = ((Vkz ** 2 + (sin_psi * (Vr + Vky) - cos_psi * Vkx) ** 2)
+        # Eq from setting specific angular momentum r X Vr = sqrt(G*M*A*(1-e**2))
+
+
+        x = ((Vkz ** 2 + (Vky + Vr * sin_psi)** 2)
              * rpre ** 2
-             / (G * Mtot * Apost))
+             / (G * Mtot_post * Apost))
 
         # catch negative values, i.e. disrupted binaries
         if 1.-x < 0.:
@@ -1478,25 +1474,33 @@ class StepSN(object):
         else:
             epost = np.sqrt(1 - x)
 
-        # Eq 34, in Kalogera, V. 1996, ApJ, 471, 352
-        # V_sys: is the resulting center of mass velocity of the system
-        # IN THE TRANSLATED COMOVING FRAME, imparted by the SN
-        VSx = M_compact_object * Vkx / Mtot
-        VSy = (
-            M_compact_object * Vky
-            - (
-                (M_he_star - M_compact_object)
-                * M_companion
-                * Vr
-                / (M_he_star + M_companion)
-            )
-        ) / Mtot
-        VSz = M_compact_object * Vkz / Mtot
+        # Compute COM velocity, VS, post SN
+        # VS_pre in COM frame is 0. So VS_post in COM frame is 
+        # VS_post - VS_pre in our working frame
+        
+        VC0x = M_he_star * Vr * cos_psi / Mtot_pre
+        VC0y = M_he_star * Vr * sin_psi / Mtot_pre
+        VC0z = 0
+
+        VC1x = M_compact_object * (Vkx + Vr * cos_psi) / Mtot_post
+        VC1y = M_compact_object * (Vky + Vr * sin_psi) / Mtot_post
+        VC1z = M_compact_object * Vkz / Mtot_post
+
+
+        VSx = VC1x - VC0x
+        VSy = VC1y - VC0y
+        VSz = VC1z - VC0z
+
+
         # V_sys = np.sqrt(VSx ** 2 + VSy ** 2 + VSz ** 2)
 
-        # Eq 5, in Kalogera, V. 1996, ApJ, 471, 352:
-        # calculate the tilt of the orbital plane after the SN
-        tilt = np.arccos((Vky + Vr) / ((Vky + Vr) ** 2 + Vkz ** 2) ** (1. / 2))
+        # Calculate the angle between the pre and post-SN orbital angular momentum vectors
+        # Lpre || Z axis
+        # Lpost || X axis cross the post SN velocity of the compact object
+        # cos(tilt) = Lpre dot Lpost / ||Lpre||||Lpost||
+        # For epre=0 (sin_psi=1), reduces to Eq 4, in Kalogera, V. 1996, ApJ, 471, 352
+
+        tilt = np.arccos((Vky + Vr * sin_psi) / np.sqrt( Vkz ** 2 + (Vky + Vr * sin_psi) ** 2 ))
 
         def SNCheck(
             M_he_star,
@@ -1543,105 +1547,16 @@ class StepSN(object):
             References
             ----------
             .. [1] Willems, B., Henninger, M., Levin, T., et al. 2005, ApJ, 625, 324
-
-            .. [2] Kalogera, V. & Lorimer, D.R. 2000, ApJ, 530, 890
-
             """
-            # flag_binary is True if the binary is not disrupted
-            flag_binary = True
-            Mtot_pre = M_he_star + M_companion
-            Mtot_post = M_compact_object + M_companion
+        # update the orbit
+        if binary.state == "disrupted" or binary.state == "initially_single_star" or binary.state == "merged":
+            #the binary was already disrupted before the SN
 
-            # Define machine precision (we can probaly lower this number)
-            err = const.SNcheck_ERR
-
-            # SNflag1: Eq. 21, Willems, B., Henninger, M., Levin, T., et al. 2005, ApJ, 625, 324 (with typo fixed)
-            # from Eq. 10, Flannery, B.P. & van den Heuvel, E.P.J. 1975, A&A, 39, 61
-            # Continuity demands post-SN orbit to pass through preSN positions.
-            # Updated to work for eccentric orbits,
-            # see Eq. 15 in Wong, T.-W., Valsecchi, F., Fragos, T., & Kalogera, V. 2012, ApJ, 747, 111
-            SNflag1 = (1 - epost - rpre / Apost <= err) and (
-                rpre / Apost - (1 + epost) <= err
-            )
-
-            # SNflag2: Equations 22-23, Willems, B., Henninger, M., Levin, T., et al. 2005, ApJ, 625, 324
-            # (see, e.g., Kalogera, V. & Lorimer, D.R. 2000, ApJ, 530, 890)
-            tmp1 = 2 - Mtot_pre / Mtot_post * (Vkick / Vr - 1) ** 2
-            tmp2 = 2 - Mtot_pre / Mtot_post * (Vkick / Vr + 1) ** 2
-            SNflag2 = ((rpre / Apost - tmp1 < err)
-                       and (err > tmp2 - rpre / Apost))
-
-            # SNflag3: check that epost does not exeed 1 or is nan
-            if epost >= 1.0 or np.isnan(epost):
-                SNflag3 = False
-            else:
-                SNflag3 = True
-
-            SNflags = [SNflag1, SNflag2, SNflag3]
-
-            if verbose:
-                print()
-                print("The orbital checks are:", SNflags)
-                print()
-                print("1. Post-SN orbit must pass through pre-SN positions.")
-                print("2. Lower and upper limits on amount of orbital "
-                      "contraction or expansion that can take place for a "
-                      "given amount of mass loss and a given magnitude of the "
-                      "kick velocity.")
-                print("3. Checks that e_post is not larger than 1 or nan.")
-
-            # check if the supernova is valid and doesn't disrupt the system
-            if not all(SNflags):
-                flag_binary = False
-
-            return flag_binary
-
-        # check if the binary is disrupted
-        flag_binary = SNCheck(M_he_star, M_companion, M_compact_object, rpre,
-                              Apost, epost, Vr, Vkick, cos_theta,
-                              verbose=self.verbose)
-
-        # update the binary object
-        if flag_binary:
-            # update the tilt
-            if binary.event == "CC1":
-                binary.star_1.spin_orbit_tilt = tilt
-            elif binary.event == "CC2":
-                binary.star_2.spin_orbit_tilt = tilt
-            else:
-                raise ValueError("This should never happen!")
-
-            # compute new orbital period before reseting the binary properties
-
+            # update the binary object which was disrupted already before the SN
             for key in BINARYPROPERTIES:
-                if key is not 'nearest_neighbour_distance':
+                if key not in  ('nearest_neighbour_distance','state'):
                     setattr(binary, key, None)
-
-            binary.state = "detached"
-            binary.event = None
-            binary.separation = Apost / const.Rsun
-            binary.eccentricity = epost
-            binary.V_sys = np.array([VSx / const.km2cm, VSy / const.km2cm, VSz
-                                     / const.km2cm])
-            binary.time = binary.time_history[-1]
-            # in future we will make the orbital period a callable property
-            new_orbital_period = orbital_period_from_separation(
-                binary.separation, binary.star_1.mass, binary.star_2.mass)
-            binary.orbital_period = new_orbital_period
-            binary.mass_transfer_case = 'None'
-        else:
-            # update the tilt
-            if binary.event == "CC1":
-                binary.star_1.spin_orbit_tilt = np.nan
-            elif binary.event == "CC2":
-                binary.star_2.spin_orbit_tilt = np.nan
-            else:
-                raise ValueError("This should never happen!")
-
-            for key in BINARYPROPERTIES:
-                if key is not 'nearest_neighbour_distance':
-                    setattr(binary, key, None)
-            binary.state = "disrupted"
+            #binary.state = "disrupted"
             binary.event = None
             binary.separation = np.nan
             binary.eccentricity = np.nan
@@ -1649,6 +1564,251 @@ class StepSN(object):
             binary.time = binary.time_history[-1]
             binary.orbital_period = np.nan
             binary.mass_transfer_case = 'None'
+            
+        else:
+            # the binary is not disrupted at least before the SN
+            # The binary exists : flag_binary is True at least before the SN
+            flag_binary = True
+
+            # eccentricity before the SN
+            epre = binary.eccentricity
+            # the orbital semimajor axis is the orbital separation
+            Apre = binary.separation
+            # Eq 16, Wong, T.-W., Valsecchi, F., Fragos, T., & Kalogera, V. 2012, ApJ, 747, 111
+            # for eccentric anomaly
+            E_ma = sp.optimize.brentq(
+                lambda x: mean_anomaly - x + epre * np.sin(x), 0, 2 * np.pi
+            )
+            # Eq 15, Wong, T.-W., Valsecchi, F., Fragos, T., & Kalogera, V. 2012, ApJ, 747, 111
+            # orbital separation at the time of the exlosion
+            rpre = Apre * (1.0 - epre * np.cos(E_ma))
+
+            # load constants in CGS
+            G = const.standard_cgrav
+
+            # Convert inputs to CGS
+            M_he_star = M_he_star * const.Msun
+            M_companion = M_companion * const.Msun
+            M_compact_object = M_compact_object * const.Msun
+            Apre = Apre * const.Rsun
+            Vkick = Vkick * const.km2cm
+            rpre = rpre * const.Rsun
+
+            # get useful quantity
+            sin_theta = np.sqrt(1 - (cos_theta ** 2))
+
+            # get kicks componets in the coordinate system
+            Vkx = Vkick * sin_theta * np.sin(phi)
+            Vky = Vkick * cos_theta
+            Vkz = Vkick * sin_theta * np.cos(phi)
+
+            # Eq 1, in Kalogera, V. 1996, ApJ, 471, 352
+            # extended to Eq 17 in Wong, T.-W., Valsecchi, F., Fragos, T., & Kalogera, V. 2012, ApJ, 747, 111
+            # Vr is velocity of preSN He core relative to M_companion, directed
+            # along the positive y axis
+            Vr = np.sqrt(G * (M_he_star + M_companion) * (2.0 / rpre - 1.0 / Apre))
+            Mtot = M_compact_object + M_companion
+
+            # Eq 3, in Kalogera, V. 1996, ApJ, 471, 352
+            # extended to Eq 13, in Wong, T.-W., Valsecchi, F., Fragos, T., & Kalogera, V. 2012, ApJ, 747, 111
+            # get the orbital separation post SN
+            Apost = ((2.0 / rpre)
+                     - (((Vkick ** 2) + (Vr ** 2) + (2 * Vky * Vr)) / (G * Mtot))
+                     ) ** -1
+
+            # Eq 18, Wong, T.-W., Valsecchi, F., Fragos, T., & Kalogera, V. 2012, ApJ, 747, 111
+            # psi: is the polar angle of the position vector of the CO with respect
+            # to its pre-SN orbital velocity in the companions frame.
+            sin_psi = np.round(
+                np.sqrt(G * (M_he_star + M_companion) * (1 - epre ** 2) * Apre)
+                / (rpre * Vr), 5)
+            cos_psi = np.sqrt(1 - sin_psi ** 2)
+
+            # Eq 4, in Kalogera, V. 1996, ApJ, 471, 352
+            # extended to Eq 14 in Wong, T.-W., Valsecchi, F., Fragos, T., & Kalogera, V. 2012, ApJ, 747, 111
+            # get the eccentricity post SN
+            x = ((Vkz ** 2 + (sin_psi * (Vr + Vky) - cos_psi * Vkx) ** 2)
+                 * rpre ** 2
+                 / (G * Mtot * Apost))
+
+            # catch negative values, i.e. disrupted binaries
+            if 1.-x < 0.:
+                epost = np.nan
+            else:
+                epost = np.sqrt(1 - x)
+
+            # Eq 34, in Kalogera, V. 1996, ApJ, 471, 352
+            # V_sys: is the resulting center of mass velocity of the system
+            # IN THE TRANSLATED COMOVING FRAME, imparted by the SN
+            VSx = M_compact_object * Vkx / Mtot
+            VSy = (
+                M_compact_object * Vky
+                - (
+                    (M_he_star - M_compact_object)
+                    * M_companion
+                    * Vr
+                    / (M_he_star + M_companion)
+                )
+            ) / Mtot
+            VSz = M_compact_object * Vkz / Mtot
+            # V_sys = np.sqrt(VSx ** 2 + VSy ** 2 + VSz ** 2)
+
+            # Eq 5, in Kalogera, V. 1996, ApJ, 471, 352:
+            # calculate the tilt of the orbital plane after the SN
+            tilt = np.arccos((Vky + Vr) / ((Vky + Vr) ** 2 + Vkz ** 2) ** (1. / 2))
+
+
+            def SNCheck(
+                M_he_star,
+                M_companion,
+                M_compact_object,
+                rpre,
+                Apost,
+                epost,
+                Vr,
+                Vkick,
+                cos_theta,
+                verbose,
+            ):
+                """Check that the binary is not disrupted.
+
+                Parameters
+                ----------
+                M_he_star : double
+                    Helium star mass before the SN in g.
+                M_companion : double
+                    Companion star mass in g.
+                M_compact_object : double
+                    Compact object mass left  by the SN in g.
+                rpre : double
+                    Oribtal separation at the time of the exlosion in cm. If the
+                    eccentricity pre SN is 0 this correpond to Apre.
+                Apost : double
+                    Orbital separtion after the SN in cm.
+                epost : double
+                    Eccentricity after the SN.
+                Vr : double
+                    Velocity of pre-SN He core relative to M_companion, directed
+                    along the positive y axis in cm/s.
+                Vkick : double
+                    Kick velocity in cm/s.
+                cos_theta : double
+                    The cosine of the angle between pre- & post-SN orbital planes.
+
+                Returns
+                -------
+                flag_binary : bool
+                    flag_binary is True if the binary is not disrupted.
+
+                References
+                ----------
+                .. [1] Willems, B., Henninger, M., Levin, T., et al. 2005, ApJ, 625, 324
+
+                .. [2] Kalogera, V. & Lorimer, D.R. 2000, ApJ, 530, 890
+
+                """
+                # flag_binary is True if the binary is not disrupted
+                flag_binary = True
+                Mtot_pre = M_he_star + M_companion
+                Mtot_post = M_compact_object + M_companion
+
+                # Define machine precision (we can probaly lower this number)
+                err = const.SNcheck_ERR
+
+                # SNflag1: Eq. 21, Willems, B., Henninger, M., Levin, T., et al. 2005, ApJ, 625, 324 (with typo fixed)
+                # from Eq. 10, Flannery, B.P. & van den Heuvel, E.P.J. 1975, A&A, 39, 61
+                # Continuity demands post-SN orbit to pass through preSN positions.
+                # Updated to work for eccentric orbits,
+                # see Eq. 15 in Wong, T.-W., Valsecchi, F., Fragos, T., & Kalogera, V. 2012, ApJ, 747, 111
+                SNflag1 = (1 - epost - rpre / Apost <= err) and (
+                    rpre / Apost - (1 + epost) <= err
+                )
+
+                # SNflag2: Equations 22-23, Willems, B., Henninger, M., Levin, T., et al. 2005, ApJ, 625, 324
+                # (see, e.g., Kalogera, V. & Lorimer, D.R. 2000, ApJ, 530, 890)
+                tmp1 = 2 - Mtot_pre / Mtot_post * (Vkick / Vr - 1) ** 2
+                tmp2 = 2 - Mtot_pre / Mtot_post * (Vkick / Vr + 1) ** 2
+                SNflag2 = ((rpre / Apost - tmp1 < err)
+                           and (err > tmp2 - rpre / Apost))
+
+                # SNflag3: check that epost does not exeed 1 or is nan
+                if epost >= 1.0 or np.isnan(epost):
+                    SNflag3 = False
+                else:
+                    SNflag3 = True
+
+                SNflags = [SNflag1, SNflag2, SNflag3]
+
+                if verbose:
+                    print()
+                    print("The orbital checks are:", SNflags)
+                    print()
+                    print("1. Post-SN orbit must pass through pre-SN positions.")
+                    print("2. Lower and upper limits on amount of orbital "
+                          "contraction or expansion that can take place for a "
+                          "given amount of mass loss and a given magnitude of the "
+                          "kick velocity.")
+                    print("3. Checks that e_post is not larger than 1 or nan.")
+
+                # check if the supernova is valid and doesn't disrupt the system
+                if not all(SNflags):
+                    flag_binary = False
+
+                return flag_binary
+
+            # check if the binary is disrupted
+            flag_binary = SNCheck(M_he_star, M_companion, M_compact_object, rpre,
+                                  Apost, epost, Vr, Vkick, cos_theta,
+                                  verbose=self.verbose)
+
+            # update the binary object which was bound at least before the SN
+            if flag_binary:
+                # update the tilt
+                if binary.event == "CC1":
+                    binary.star_1.spin_orbit_tilt = tilt
+                elif binary.event == "CC2":
+                    binary.star_2.spin_orbit_tilt = tilt
+                else:
+                    raise ValueError("This should never happen!")
+
+                # compute new orbital period before reseting the binary properties
+
+                for key in BINARYPROPERTIES:
+                    if key != 'nearest_neighbour_distance':
+                        setattr(binary, key, None)
+
+                binary.state = "detached"
+                binary.event = None
+                binary.separation = Apost / const.Rsun
+                binary.eccentricity = epost
+                binary.V_sys = np.array([VSx / const.km2cm, VSy / const.km2cm, VSz
+                                         / const.km2cm])
+                binary.time = binary.time_history[-1]
+                # in future we will make the orbital period a callable property
+                new_orbital_period = orbital_period_from_separation(
+                    binary.separation, binary.star_1.mass, binary.star_2.mass)
+                binary.orbital_period = new_orbital_period
+                binary.mass_transfer_case = 'None'
+            else:
+                # update the tilt
+                if binary.event == "CC1":
+                    binary.star_1.spin_orbit_tilt = np.nan
+                elif binary.event == "CC2":
+                    binary.star_2.spin_orbit_tilt = np.nan
+                else:
+                    raise ValueError("This should never happen!")
+
+                for key in BINARYPROPERTIES:
+                    if key != 'nearest_neighbour_distance':
+                        setattr(binary, key, None)
+                binary.state = "disrupted"
+                binary.event = None
+                binary.separation = np.nan
+                binary.eccentricity = np.nan
+                binary.V_sys = np.array([0, 0, 0])
+                binary.time = binary.time_history[-1]
+                binary.orbital_period = np.nan
+                binary.mass_transfer_case = 'None'
 
     """
     ##### Generating the CCSN SN kick of a single star #####
@@ -1771,7 +1931,7 @@ class StepSN(object):
 
         return M4, mu4
 
-    def Patton20_corecollapse(self, star, engine):
+    def Patton20_corecollapse(self, star, engine, conserve_hydrogen_envelope=False):
         """Compute supernova final remnant mass and fallback fraction.
 
         It uses the results from [1]. The prediction for the core-collapse
@@ -1830,13 +1990,21 @@ class StepSN(object):
                 state = 'NS'
 
             elif CO_core_mass >= 10.0:
-                m_rem = star.he_core_mass
+                # Assuming BH formation by direct collapse
+                if conserve_hydrogen_envelope:
+                    m_rem = star.mass
+                else:
+                    m_rem = star.he_core_mass
                 f_fb = 1.0
                 state = 'BH'
 
             elif ((k1 * (mu4 * M4) + k2) < mu4):
                 # The prediction is a failed explosion
-                m_rem = star.he_core_mass
+                # Assuming BH formation by direct collapse
+                if conserve_hydrogen_envelope:
+                    m_rem = star.mass
+                else:
+                    m_rem = star.he_core_mass
                 f_fb = 1.0
                 state = 'BH'
             else:
@@ -1995,14 +2163,14 @@ class Sukhbold16_corecollapse(object):
                 self.engines,
             )
 
-    def __call__(self, star):
+    def __call__(self, star, conserve_hydrogen_envelope=False):
         """Get the mass, fallback franction and state of the remnant."""
         if star.state in STAR_STATES_CC:
-            # m_star = star.mass  # M_sun
+            m_star = star.mass  # M_sun
             # m_core = star.co_core_mass  # M_sun
             m_He_core = star.he_core_mass  # M_sun
         elif star.state_history[-1] in STAR_STATES_CC:
-            # m_star = star.mass_history[-1]  # M_sun
+            m_star = star.mass_history[-1]  # M_sun
             # m_core = star.co_core_mass_history[-1]  # M_sun
             m_He_core = star.he_core_mass_history[-1]  # M_sun
         else:
@@ -2018,8 +2186,11 @@ class Sukhbold16_corecollapse(object):
             state = None
 
         if state == "BH":
-            # Assuming a BH formation by direct collapse of te He core
-            m_rem = self.extrapolate_BH(m_He_core, self.mass_BH_interpolator)
+            # Assuming BH formation by direct collapse
+            if conserve_hydrogen_envelope:
+                m_rem = self.extrapolate_BH(m_star, self.mass_BH_interpolator)
+            else:
+                m_rem = self.extrapolate_BH(m_He_core, self.mass_BH_interpolator)
             f_fb = 1.
         elif state == "NS":
             m_rem = self.extrapolate_NS(m_He_core, self.mass_NS_interpolator)
@@ -2250,14 +2421,14 @@ class Couch20_corecollapse(object):
                 "choose one of the following engines to compute the collapse:",
                 self.turbulence_strength_options)
 
-    def __call__(self, star):
+    def __call__(self, star, conserve_hydrogen_envelope=False):
         """Get the mass, fallback fraction and state of the remnant."""
         if star.state in STAR_STATES_CC:
-            # m_star = star.mass                          # M_sun
+            m_star = star.mass                          # M_sun
             # m_core = star.co_core_mass                  # M_sun
             m_He_core = star.he_core_mass               # M_sun
         elif star.state_history[-1] in STAR_STATES_CC:
-            # m_star = star.mass_history[-1]              # M_sun
+            m_star = star.mass_history[-1]              # M_sun
             # m_core = star.co_core_mass_history[-1]      # M_sun
             m_He_core = star.he_core_mass_history[-1]   # M_sun
         else:
@@ -2276,11 +2447,13 @@ class Couch20_corecollapse(object):
             state = None
 
         if state == "BH":
-            # Assuming BH formation by direct collapse of the He core
-
+            # Assuming BH formation by direct collapse
+            if conserve_hydrogen_envelope:
+                m_rem = m_star
+            else:
+                m_rem = m_He_core
             # m_rem = self.extrapolate_BH(m_He_core, self.mass_BH_interpolator)
             # TODO: We need to contact Couch et al. to get the remnant masses
-            m_rem = m_He_core
             # f_fb = m_rem / m_He_core
             f_fb = 1.
         elif state == "NS":

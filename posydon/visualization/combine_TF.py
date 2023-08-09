@@ -5,13 +5,22 @@ __authors__ = [
     "Simone Bavera <Simone.Bavera@unige.ch>",
     "Konstantinos Kovlakas <Konstantinos.Kovlakas@unige.ch>",
     "Emmanouil Zapartas <ezapartas@gmail.com>",
+    "Matthias Kruckow <Matthias.Kruckow@unige.ch>",
 ]
 
 
 import numpy as np
 
+# TODO: rename the varaible, these are termination flags that indicates
+# the star has reached the end of the evolution
 TF1_POOL_STABLE = ['Primary has depleted central carbon',
                    'Secondary has depleted central carbon',
+                   'Primary got stopped before central carbon depletion',
+                   'Secondary got stopped before central carbon depletion',
+                   'Primary enters pair-instability regime',
+                   'Secondary enters pair-instability regime',
+                   'Primary enters pulsational pair-instability regime',
+                   'Secondary enters pulsational pair-instability regime',
                    'offcenter neon ignition for primary',
                    'offcenter neon ignition for secondary',
                    'envelope_mass_limit',
@@ -26,6 +35,7 @@ TF1_POOL_UNSTABLE = [
     'overflow from L2 (R_L2) surface for q(=Macc/Mdon)>1, donor is star 1',
     'overflow from L2 (D_L2) distance for q(=Macc/Mdon)<1, donor is star 1',
     'overflow from L2 (R_L2) surface for q(=Macc/Mdon)<1, donor is star 2',
+    'overflow from L2 (R_L2) surface for q(=Macc/Mdon)>1, donor is star 2',
     'reached maximum mass transfer rate: 10.0d0',
     'Reached maximum mass transfer rate: 1d-1',
     'Reached the critical mt rate',
@@ -44,6 +54,7 @@ TF1_POOL_INITIAL_RLO = ['Initial RLOF',
                         'ignored_scrubbed']
 
 TF1_POOL_ERROR = ['logQ_limit',
+                  'logQ_min_limit',
                   'min timestep',
                   'min_timestep_limit',
                   'cluster timelimit',
@@ -83,6 +94,8 @@ def combine_TF12(IC, TF2, verbose=False):
                     'caseA/B/C_from_star1',
                     'caseA/B/C/BB_from_star1',
                     'caseA/B/A_from_star1']
+
+    TF2_pool_SAC = ['caseA/C_from_star1']
 
     TF2_pool_SABB = ['caseA/BB_from_star1',
                      'caseA/BB_from_star2']
@@ -129,6 +142,8 @@ def combine_TF12(IC, TF2, verbose=False):
                 TF12[i] = 'Stable case A'
             elif TF2[i] in TF2_pool_SAB:
                 TF12[i] = 'Stable case AB'
+            elif TF2[i] in TF2_pool_SAC:
+                TF12[i] = 'Stable case AC'
             elif TF2[i] in TF2_pool_SABB:
                 TF12[i] = 'Stable case ABB'
             elif TF2[i] in TF2_pool_SB:
@@ -148,6 +163,8 @@ def combine_TF12(IC, TF2, verbose=False):
                 TF12[i] = 'Unstable case A'
             elif TF2[i] in TF2_pool_SAB:
                 TF12[i] = 'Unstable case AB'
+            elif TF2[i] in TF2_pool_SAC:
+                TF12[i] = 'Unstable case AC'
             elif TF2[i] in TF2_pool_SABB:
                 TF12[i] = 'Unstable case ABB'
             elif TF2[i] in TF2_pool_SB:
