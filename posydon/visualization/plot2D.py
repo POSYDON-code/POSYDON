@@ -13,7 +13,7 @@ __authors__ = [
     "Matthias Kruckow <Matthias.Kruckow@unige.ch>",
 ]
 
-
+import warnings
 import numpy as np
 import matplotlib.pyplot as plt
 from posydon.utils.gridutils import add_field
@@ -210,7 +210,7 @@ class plot2D(object):
         self.initial_values_str = self.initial_values.dtype.names
         self.final_values = self.psygrid.final_values
         # add extra properties to final_values
-        if termination_flag in ["combined_TF12", "debug"]:
+        if termination_flag in ["combined_TF12", "debug", "interpolation_class_errors"]:
             self.add_properties_to_final_values(termination_flag)
         if termination_flag == 'termination_flag_2':
             # remmove ? from strings
@@ -331,7 +331,8 @@ class plot2D(object):
             "termination_flag_4",
             "combined_TF12",
             "debug",
-            "interpolation_class"
+            "interpolation_class",
+            "interpolation_class_errors",
         ] or ('SN_type' in termination_flag or 
               'CO_type' in termination_flag or 
               'state' in termination_flag):
@@ -585,16 +586,20 @@ class plot2D(object):
                                 )
 
                     else:
-                        sc = ax.scatter(
-                            self.x_var[selection],
-                            self.y_var[selection],
-                            marker=self.MARKERS_COLORS_LEGENDS[flag][0],
-                            linewidths=self.MARKERS_COLORS_LEGENDS[flag][1],
-                            c=self.z_var[selection],
-                            s=self.marker_size,
-                            vmin=self.zmin,
-                            vmax=self.zmax,
-                        )
+                        try:
+                            sc = ax.scatter(
+                                self.x_var[selection],
+                                self.y_var[selection],
+                                marker=self.MARKERS_COLORS_LEGENDS[flag][0],
+                                linewidths=self.MARKERS_COLORS_LEGENDS[flag][1],
+                                c=self.z_var[selection],
+                                s=self.marker_size,
+                                vmin=self.zmin,
+                                vmax=self.zmax,
+                            )
+                        except:
+                            warnings.warn(f'Failed to plot values for flag {flag}, '
+                                          'likely all values are NaN.')
                     sc_last = sc
             # collect scatters for legend
             if self.MARKERS_COLORS_LEGENDS[flag][3] not in scatters_legend:
@@ -641,6 +646,9 @@ class plot2D(object):
         elif termination_flag == "debug":
             new_final_values = add_field(old_final_values, [("debug", "<U70")])
             new_final_values["debug"] = old_final_values['termination_flag_1']
+        elif termination_flag == "interpolation_class_errors":
+            new_final_values = add_field(old_final_values, [("interpolation_class_errors", "<U70")])
+            new_final_values["interpolation_class_errors"] = old_final_values['interpolation_class']
         elif 'relative_change' in self.z_var_str:
             key = self.z_var_str.split('relative_change_')[1]
             relative_change_key = (
@@ -1129,6 +1137,8 @@ class plot2D(object):
         
         if ax is not None:
             cax = ax.inset_axes(self.colorbar["bounds"])
+        else:
+            cax = None
         plt.colorbar(
             mappable=scatter,
             ax=ax,

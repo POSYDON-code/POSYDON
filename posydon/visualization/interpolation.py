@@ -328,43 +328,20 @@ class EvaluateIFInterpolator:
 
         pass
 
-    def plot2D(self, q):
+    def plot2D(self, slice_3D_var_range, PLOT_PROPERTIES):
 
-        PLOT_PROPERTIES_TF12 = {
-            'figsize': (4.5, 4.),
-            'show_fig' : True,
-            'close_fig' : True,
-            'path_to_file': '/projects/b1119/prs5019/grid_slices',
-            'fname': 'q_%1.1f_TF12.png'%q,
-            'title' : f"Grid Slice q = {q}",
-            'log10_x' : True,
-            'log10_y' : True,
-        }
-
-        clean_errs = self.__clean_errs(self.errs["relative"].T[[0]].T)
-
-        PLOT_PROPERTIES_TF1 = PLOT_PROPERTIES_TF12
-        PLOT_PROPERTIES_TF1['fname'] = 'q_%1.1f_TF1_max.png'%q
-        PLOT_PROPERTIES_TF1['figsize'] = (4.5,6.)
-        PLOT_PROPERTIES_TF1['colorbar'] = {'label' : "Relative Error", 'vmin' : clean_errs.T[0].min(), 'vmax' : 0.00001}
-
-        slice_3D_var_range = (q-0.05,q+0.05)
         mass_ratio = self.test_grid.initial_values["star_2_mass"] / self.test_grid.initial_values["star_1_mass"]
 
         slice = (mass_ratio >= slice_3D_var_range[0]) & (mass_ratio <= slice_3D_var_range[1])
-
-        max_omega = [max(self.test_grid[i].history2['surf_avg_omega_div_omega_crit'])
-                    if self.test_grid[i].history2 is not None else np.nan
-                    for i in range(len(self.test_grid.MESA_dirs))]
 
         slice_errs = np.nanmean(self.errs["relative"], axis = 1)
         slice_errs = [slice_errs[i] if in_slice and i in self.errs["valid_inds"][0] else np.nan for i, in_slice in enumerate(slice)]
 
         fig = self.test_grid.plot2D('star_1_mass', 'period_days', np.array(slice_errs),
-                    termination_flag='termination_flag_1',
+                    termination_flag='interpolation_class_errors',
                     grid_3D=True, slice_3D_var_str='mass_ratio',
                     slice_3D_var_range=slice_3D_var_range,
-                    verbose=False, **PLOT_PROPERTIES_TF1)
+                    verbose=False, **PLOT_PROPERTIES)
 
 
         
