@@ -337,9 +337,12 @@ class EvaluateIFInterpolator:
         slice = (mass_ratio >= slice_3D_var_range[0]) & (mass_ratio <= slice_3D_var_range[1])
 
         slice_errs = self.errs["relative"].T[k_ind]
-        slice_errs = [slice_errs[i] if in_slice and i in self.errs["valid_inds"][0] else np.nan for i, in_slice in enumerate(slice)]
+        slice_errs = np.array([slice_errs[i] if in_slice and i in self.errs["valid_inds"][0] else np.nan for i, in_slice in enumerate(slice)])
 
-        fig = self.test_grid.plot2D('star_1_mass', 'period_days', np.array(slice_errs),
+        # find inf and assign large value else they are not plotted
+        slice_errs[np.isinf(slice_errs)] = 1e99
+        
+        fig = self.test_grid.plot2D('star_1_mass', 'period_days', slice_errs,
                     termination_flag='interpolation_class_errors',
                     grid_3D=True, slice_3D_var_str='mass_ratio',
                     slice_3D_var_range=slice_3D_var_range,
