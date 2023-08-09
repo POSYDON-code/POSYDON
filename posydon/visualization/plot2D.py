@@ -13,7 +13,7 @@ __authors__ = [
     "Matthias Kruckow <Matthias.Kruckow@unige.ch>",
 ]
 
-
+import warnings
 import numpy as np
 import matplotlib.pyplot as plt
 from posydon.utils.gridutils import add_field
@@ -585,16 +585,20 @@ class plot2D(object):
                                 )
 
                     else:
-                        sc = ax.scatter(
-                            self.x_var[selection],
-                            self.y_var[selection],
-                            marker=self.MARKERS_COLORS_LEGENDS[flag][0],
-                            linewidths=self.MARKERS_COLORS_LEGENDS[flag][1],
-                            c=self.z_var[selection],
-                            s=self.marker_size,
-                            vmin=self.zmin,
-                            vmax=self.zmax,
-                        )
+                        try:
+                            sc = ax.scatter(
+                                self.x_var[selection],
+                                self.y_var[selection],
+                                marker=self.MARKERS_COLORS_LEGENDS[flag][0],
+                                linewidths=self.MARKERS_COLORS_LEGENDS[flag][1],
+                                c=self.z_var[selection],
+                                s=self.marker_size,
+                                vmin=self.zmin,
+                                vmax=self.zmax,
+                            )
+                        except:
+                            warnings.warn(f'Failed to plot values for flag {flag}, '
+                                          'likely all values are NaN.')
                     sc_last = sc
             # collect scatters for legend
             if self.MARKERS_COLORS_LEGENDS[flag][3] not in scatters_legend:

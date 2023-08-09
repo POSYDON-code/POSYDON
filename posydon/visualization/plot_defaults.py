@@ -828,3 +828,14 @@ DEFAULT_LABELS = {
     'S1_eta' : [r'$\eta$', r'$\log_{10}(\eta)$'],
     'S2_eta' : [r'$\eta$', r'$\log_{10}(\eta)$'],
 }
+
+# add core collapse MODEL variables
+for i in range(1, 11):
+    DEFAULT_LABELS[f'MODEL{i:02d}_mass'] = [r'$M_\mathrm{CO} \, [M_\odot]$',
+                                              r'$\log_{10}(M_\mathrm{CO} / M_\odot)$']
+    DEFAULT_LABELS[f'MODEL{i:02d}_spin'] = [r'$\chi_\mathrm{CO}$', r'$\log_{10}(\chi_\mathrm{CO})$']
+    DEFAULT_LABELS[f'MODEL{i:02d}_m_disk_accreted'] = [r'$M_\mathrm{disk, acc} \, [M_\odot]$',
+                                              r'$\log_{10}(M_\mathrm{disk, acc} / M_\odot)$']
+    DEFAULT_LABELS[f'MODEL{i:02d}_m_disk_radiated'] = [r'$M_\mathrm{disk, rad} \, [M_\odot]$',
+                                              r'$\log_{10}(M_\mathrm{disk, rad} / M_\odot)$']
+    

@@ -142,7 +142,39 @@ def combine_grid_slices(i, path_to_csv_file, verbose=False):
     join_grids(gird_names, grid_combined_key)
 
 
-def plot_grid(i, path_to_csv_file, options=[], verbose=False):
+def plot_grid(i, path_to_csv_file, options=['default_cols'], verbose=False):
+    
+    # utility functions
+    def add_col(pdir, zvar, term_flag, cbar=False, zlog=False, zmin=None, zmax=None):
+        cols[pdir+'/'] = {'zvar': zvar, 'term_flag': term_flag, 
+                          'cbar': cbar, 'zlog': zlog,
+                          'zmin': zmin, 'zmax': zmax}   
+    def add_string(_dict, _key, _str):
+        '''add strign to dictionary key variable'''
+        _dict[_key] = _dict[_key]%_str
+    
+    # store all variables to plot in a dictionary
+    # key: dir_name
+    # value: dict zvar, termination_flag, colorbar, zmin, zmax
+    cols = {} 
+    if 'default_cols' in options:
+        add_col('TF12', None, 'combined_TF12')
+        add_col('TF1', 'lg_mtransfer_rate', 'termination_flag_1', True, False, -8, -1)
+        add_col('TF2', None, 'termination_flag_2')
+        add_col('TF3', None, 'termination_flag_3')
+        add_col('TF4', None, 'termination_flag_4')
+        add_col('debug_rl_1', 'rl_relative_overflow_1', 'debug', True, False, -0.5, 0.5)
+        add_col('debug_rl_2', 'rl_relative_overflow_2', 'debug', True, False, -0.5, 0.5)
+        add_col('debug_mt', 'lg_mtransfer_rate', 'debug', True, False, -8, -1)
+    if 'processed_cols' in options:
+        for l in [1,5,6,10]:
+            add_col(f'S1_MODEL{l:02d}/CO_type', None, f'S1_MODEL{l:02d}_CO_type')
+            add_col(f'S1_MODEL{l:02d}/SN_type', None, f'S1_MODEL{l:02d}_SN_type')
+            add_col(f'S1_MODEL{l:02d}/mass', f'S1_MODEL{l:02d}_mass', 'termination_flag_1', True, True, 0., 2.)
+            add_col(f'S1_MODEL{l:02d}/spin', f'S1_MODEL{l:02d}_spin', 'termination_flag_1', True, False, 0., 1.)
+            add_col(f'S1_MODEL{l:02d}/m_disk_radiated', f'S1_MODEL{l:02d}_m_disk_radiated', 'termination_flag_1', True, False, 0., 3.)
+    if not cols:
+        raise ValueError('Plotting options not recognized!')
 
     df = pd.read_csv(path_to_csv_file)
     grid_path = df.loc[i,'path_to_grid']
@@ -154,13 +186,9 @@ def plot_grid(i, path_to_csv_file, options=[], verbose=False):
     # check that plots/ directories exist
     plot_path = os.path.split(os.path.normpath(plot_dir))[0]
     check_dirs = [plot_path, plot_dir]
-
-    sub_dirs = ['TF12/', 'TF1/', 'TF2/', 'TF3/',
-                'TF4/', 'debug_mt/',
-                'debug_rl_1/', 'debug_rl_2/']
+    sub_dirs = list(cols.keys())
     for name in sub_dirs:
         check_dirs.append(os.path.join(plot_dir,name))
-
     for dir_ in  check_dirs:
         if not os.path.isdir(dir_):
             os.makedirs(dir_)
@@ -190,115 +218,50 @@ def plot_grid(i, path_to_csv_file, options=[], verbose=False):
         slice_3D_var_str='mass_ratio' 
     else:
         raise ValueError('Grid type not supported!')
-
-    for i, var in enumerate(vars):
-        if 'HMS-HMS' in grid_path:
-            slice_3D_var_range = (dq_edges[i],dq_edges[i+1])
-        elif 'CO' in grid_path:
-            if i == len(m2):
-                continue
-            slice_3D_var_range = (m2[i],m2[i+1])
-        # TODO: skip plotting slice if there are no data
-        PLOT_PROPERTIES_DEFAULT = {
-            'figsize' : (4,3.5),
-            'path_to_file' : os.path.join(plot_dir,'%s/'),
-            'show_fig' : False,
-            'fname' : fname%var,
-            'title' : title%var,
-            'log10_x' : True,
-            'log10_y' : True,
-            'legend2D' : {'bbox_to_anchor' : (1.03, 0.5)}
-        }
-        PLOT_PROPERTIES_DEFAULT_COLBAR = PLOT_PROPERTIES_DEFAULT.copy()
-        PLOT_PROPERTIES_DEFAULT_COLBAR['figsize'] = (4,5)
-        PLOT_PROPERTIES_DEFAULT_COLBAR['colorbar'] = {'pad': 0.12}
-        def add_string(_dict, _key, _str):
-            '''add strign to dictionary key variable'''
-            _dict[_key] = _dict[_key]%_str
         
+    # loop over all grid slices and all cols
+    for k, var in enumerate(vars):
+        if 'HMS-HMS' in grid_path:
+            slice_3D_var_range = (dq_edges[k],dq_edges[k+1])
+        elif 'CO' in grid_path:
+            if k == len(m2):
+                continue
+            slice_3D_var_range = (m2[k],m2[k+1])
+        # TODO: skip plotting slice if there are no data
         try:
-            if 'default_cols' in options:
-                PLOT_PROPERTIES = PLOT_PROPERTIES_DEFAULT.copy()
-                add_string(PLOT_PROPERTIES, 'path_to_file', 'TF12')
+            # default plot properties
+            PLOT_PROPERTIES_DEFAULT = {
+                'figsize' : (4,3.5),
+                'path_to_file' : os.path.join(plot_dir,'%s/'),
+                'show_fig' : False,
+                'fname' : fname%var,
+                'title' : title%var,
+                'log10_x' : True,
+                'log10_y' : True,
+                'legend2D' : {'bbox_to_anchor' : (1.03, 0.5)}
+            }
+            # default plot properties with colorbar
+            PLOT_PROPERTIES_DEFAULT_COLBAR = PLOT_PROPERTIES_DEFAULT.copy()
+            PLOT_PROPERTIES_DEFAULT_COLBAR['figsize'] = (4,5)
+            PLOT_PROPERTIES_DEFAULT_COLBAR['colorbar'] = {'pad': 0.12}
+        
+            for _dname, _dict in cols.items():
+                if _dict['cbar']:
+                    PLOT_PROPERTIES = PLOT_PROPERTIES_DEFAULT_COLBAR.copy()
+                    add_string(PLOT_PROPERTIES, 'path_to_file', _dname)
+                    PLOT_PROPERTIES['log10_z'] = _dict['zlog']
+                    PLOT_PROPERTIES['zmin'] = _dict['zmin']
+                    PLOT_PROPERTIES['zmax'] = _dict['zmax']
+                else:
+                    PLOT_PROPERTIES = PLOT_PROPERTIES_DEFAULT.copy()
+                    add_string(PLOT_PROPERTIES, 'path_to_file', _dname)
 
-                grid.plot2D('star_1_mass', 'period_days', None,
-                            termination_flag='combined_TF12',
+                grid.plot2D('star_1_mass', 'period_days', _dict['zvar'],
+                            termination_flag=_dict['term_flag'],
                             grid_3D=True, slice_3D_var_str=slice_3D_var_str,
                             slice_3D_var_range=slice_3D_var_range,
                             verbose=False, **PLOT_PROPERTIES)
 
-                PLOT_PROPERTIES = PLOT_PROPERTIES_DEFAULT_COLBAR.copy()
-                add_string(PLOT_PROPERTIES, 'path_to_file', 'TF1')
-                PLOT_PROPERTIES['zmin'] = -8
-                PLOT_PROPERTIES['zmax'] = -1
-
-                grid.plot2D('star_1_mass', 'period_days', 'lg_mtransfer_rate',
-                            termination_flag='termination_flag_1',
-                            grid_3D=True, slice_3D_var_str=slice_3D_var_str,
-                            slice_3D_var_range=slice_3D_var_range,
-                            verbose=False, **PLOT_PROPERTIES)
-
-                PLOT_PROPERTIES = PLOT_PROPERTIES_DEFAULT.copy()
-                add_string(PLOT_PROPERTIES, 'path_to_file', 'TF2')
-
-                grid.plot2D('star_1_mass', 'period_days', None,
-                            termination_flag='termination_flag_2',
-                            grid_3D=True, slice_3D_var_str=slice_3D_var_str,
-                            slice_3D_var_range=slice_3D_var_range,
-                            verbose=False, **PLOT_PROPERTIES)
-
-                PLOT_PROPERTIES = PLOT_PROPERTIES_DEFAULT.copy()
-                add_string(PLOT_PROPERTIES, 'path_to_file', 'TF3')
-
-                grid.plot2D('star_1_mass', 'period_days', None,
-                            termination_flag='termination_flag_3',
-                            grid_3D=True, slice_3D_var_str=slice_3D_var_str,
-                            slice_3D_var_range=slice_3D_var_range,
-                            verbose=False, **PLOT_PROPERTIES)
-
-                PLOT_PROPERTIES = PLOT_PROPERTIES_DEFAULT.copy()
-                add_string(PLOT_PROPERTIES, 'path_to_file', 'TF4')
-
-                grid.plot2D('star_1_mass', 'period_days', None,
-                            termination_flag='termination_flag_4',
-                            grid_3D=True, slice_3D_var_str=slice_3D_var_str,
-                            slice_3D_var_range=slice_3D_var_range,
-                            verbose=False, **PLOT_PROPERTIES)
-
-                PLOT_PROPERTIES = PLOT_PROPERTIES_DEFAULT_COLBAR.copy()
-                add_string(PLOT_PROPERTIES, 'path_to_file', 'debug_rl_1')
-                PLOT_PROPERTIES['zmin'] = -0.5
-                PLOT_PROPERTIES['zmax'] = 0.5
-
-                grid.plot2D('star_1_mass', 'period_days',
-                            'rl_relative_overflow_1',
-                            termination_flag='debug',
-                            grid_3D=True, slice_3D_var_str=slice_3D_var_str,
-                            slice_3D_var_range=slice_3D_var_range,
-                            verbose=False, **PLOT_PROPERTIES)
-
-                PLOT_PROPERTIES = PLOT_PROPERTIES_DEFAULT_COLBAR.copy()
-                add_string(PLOT_PROPERTIES, 'path_to_file', 'debug_rl_2')
-                PLOT_PROPERTIES['zmin'] = -0.5
-                PLOT_PROPERTIES['zmax'] = 0.5
-
-                grid.plot2D('star_1_mass', 'period_days',
-                            'rl_relative_overflow_2',
-                            termination_flag='debug',
-                            grid_3D=True, slice_3D_var_str=slice_3D_var_str,
-                            slice_3D_var_range=slice_3D_var_range,
-                            verbose=False, **PLOT_PROPERTIES)
-
-                PLOT_PROPERTIES = PLOT_PROPERTIES_DEFAULT_COLBAR.copy()
-                add_string(PLOT_PROPERTIES, 'path_to_file', 'debug_mt')
-                PLOT_PROPERTIES['zmin'] = -8
-                PLOT_PROPERTIES['zmax'] = -1
-
-                grid.plot2D('star_1_mass', 'period_days', 'lg_mtransfer_rate',
-                            termination_flag='debug',
-                            grid_3D=True, slice_3D_var_str=slice_3D_var_str,
-                            slice_3D_var_range=slice_3D_var_range,
-                            verbose=False, **PLOT_PROPERTIES)
         except Exception as e:
             print('FAILED TO PLOT '+title%var)
             print('')
