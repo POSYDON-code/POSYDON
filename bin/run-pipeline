@@ -75,6 +75,8 @@ from posydon.grids.MODELS import MODELS
 from posydon.interpolation.IF_interpolation import IFInterpolator
 from posydon.utils.common_functions import PATH_TO_POSYDON
 from posydon.utils.gridutils import get_new_grid_name
+from posydon.interpolation.IF_interpolation import IFInterpolator
+from posydon.visualization.interpolation import EvaluateIFInterpolator
 
 
 def create_grid_slice(i, path_to_csv_file, STOP_BEFORE_CARBON_DEPLETION=True, verbose=False):
@@ -173,12 +175,31 @@ def plot_grid(i, path_to_csv_file, options=['default_cols'], verbose=False):
             add_col(f'S1_MODEL{l:02d}/mass', f'S1_MODEL{l:02d}_mass', 'termination_flag_1', True, True, 0., 2.)
             add_col(f'S1_MODEL{l:02d}/spin', f'S1_MODEL{l:02d}_spin', 'termination_flag_1', True, False, 0., 1.)
             add_col(f'S1_MODEL{l:02d}/m_disk_radiated', f'S1_MODEL{l:02d}_m_disk_radiated', 'termination_flag_1', True, False, 0., 3.)
+    if 'interp_err' in options:
+        for key in ['star_1_mass', 'period_days']:
+            add_col(f'interp_err/{key}/', key, None, True, False, 0., 0.1)
+        #     add_colf(f'violins/{key}/', key, None)
+        # for key in ['interpolation_class', 'S1_MODEL01_CO_type']:
+        #     add_col(f'class_err/{key}/', None, None)
     if not cols:
         raise ValueError('Plotting options not recognized!')
 
     df = pd.read_csv(path_to_csv_file)
     grid_path = df.loc[i,'path_to_grid']
     plot_dir = df.loc[i,'path_to_plot']
+    
+    # load grid
+    grid = PSyGrid(verbose=False)
+    grid.load(grid_path)
+    # load interpolator and evaluate interp errors
+    if "interp_err" in options:
+        grid_test_path = df.loc[i,'path_to_grid_test']
+        grid_test = PSyGrid(verbose=False)
+        grid_test.load(grid_test_path)
+        interp_path = df.loc[i,'interp_path']
+        model = IFInterpolator()
+        model.load(interp_path)
+        evalIFerr = EvaluateIFInterpolator(model, grid_test)
 
     if verbose:
         print(f'plotting {grid_path}')
@@ -193,16 +214,15 @@ def plot_grid(i, path_to_csv_file, options=['default_cols'], verbose=False):
         if not os.path.isdir(dir_):
             os.makedirs(dir_)
 
-    # load grid
-    grid = PSyGrid(verbose=False)
-    grid.load(grid_path)
-
     if 'CO' in grid_path:
         # compact object mass slices
         m_COs = np.unique(np.around(grid.initial_values['star_2_mass'],1))
+        # remove accreting COs mass slices
+        m_COs = [m_COs[0]]+  [m for i, m in enumerate(m_COs) if m/m_COs[i-1] > 1.1]
         m_COs_edges = 10**((np.log10(np.array(m_COs)[1:])+np.log10(np.array(m_COs)[:-1]))*0.5)
         m2 = [0.]+m_COs_edges.tolist()+[2*m_COs_edges[-1]]
         vars = m_COs
+        vars_eges = (0., 2*m_COs_edges[-1])
         fname = 'grid_m_%1.2f.png'
         title = '$m_\mathrm{CO}=%1.2f\,M_\odot$'
         slice_3D_var_str='star_2_mass'
@@ -213,6 +233,7 @@ def plot_grid(i, path_to_csv_file, options=['default_cols'], verbose=False):
         dq_edges = (qs[:-1]+dq).tolist()
         dq_edges = [0.]+dq_edges+[1.]
         vars = qs.tolist()
+        vars_eges = (0., 1.)
         fname = 'grid_q_%1.2f.png'
         title = '$q=%1.2f$'
         slice_3D_var_str='mass_ratio' 
@@ -252,15 +273,36 @@ def plot_grid(i, path_to_csv_file, options=['default_cols'], verbose=False):
                     PLOT_PROPERTIES['log10_z'] = _dict['zlog']
                     PLOT_PROPERTIES['zmin'] = _dict['zmin']
                     PLOT_PROPERTIES['zmax'] = _dict['zmax']
+                    if 'interp_err' in _dname:
+                        PLOT_PROPERTIES['colorbar']['label'] = _dict['zvar']
                 else:
                     PLOT_PROPERTIES = PLOT_PROPERTIES_DEFAULT.copy()
                     add_string(PLOT_PROPERTIES, 'path_to_file', _dname)
-
-                grid.plot2D('star_1_mass', 'period_days', _dict['zvar'],
-                            termination_flag=_dict['term_flag'],
-                            grid_3D=True, slice_3D_var_str=slice_3D_var_str,
-                            slice_3D_var_range=slice_3D_var_range,
-                            verbose=False, **PLOT_PROPERTIES)
+                
+                if 'interp_err' in _dname:
+                    # TODO: add violin plots
+                    # initial/final error slices
+                    evalIFerr.plot2D(_dict['zvar'], slice_3D_var_str, 
+                                    slice_3D_var_range, PLOT_PROPERTIES)
+                    # initial/final error all points in one plot
+                    if k == 0:
+                        PLOT_PROPERTIES_ALL = PLOT_PROPERTIES.copy()
+                        PLOT_PROPERTIES_ALL['title'] = title.replace('=%1.2f', ' all ')
+                        PLOT_PROPERTIES_ALL['fname'] = fname.replace('%1.2f', 'all')
+                        evalIFerr.plot2D(_dict['zvar'], slice_3D_var_str, 
+                                        vars_eges, PLOT_PROPERTIES_ALL)
+                elif 'class_err' in _dname:
+                    if k == 0:
+                        evalIFerr.confusion_matrix(_dict['zvar'])
+                elif 'violins' in _dname:
+                    if k == 0:
+                        evalIFerr.violin_plots("relative", keys=[_dict['zvar']])
+                else:
+                    grid.plot2D('star_1_mass', 'period_days', _dict['zvar'],
+                                termination_flag=_dict['term_flag'],
+                                grid_3D=True, slice_3D_var_str=slice_3D_var_str,
+                                slice_3D_var_range=slice_3D_var_range,
+                                verbose=False, **PLOT_PROPERTIES)
 
         except Exception as e:
             print('FAILED TO PLOT '+title%var)
