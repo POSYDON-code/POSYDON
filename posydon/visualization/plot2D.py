@@ -210,7 +210,7 @@ class plot2D(object):
         self.initial_values_str = self.initial_values.dtype.names
         self.final_values = self.psygrid.final_values
         # add extra properties to final_values
-        if termination_flag in ["combined_TF12", "debug"]:
+        if termination_flag in ["combined_TF12", "debug", "interpolation_class_errors"]:
             self.add_properties_to_final_values(termination_flag)
         if termination_flag == 'termination_flag_2':
             # remmove ? from strings
@@ -331,7 +331,8 @@ class plot2D(object):
             "termination_flag_4",
             "combined_TF12",
             "debug",
-            "interpolation_class"
+            "interpolation_class",
+            "interpolation_class_errors",
         ] or ('SN_type' in termination_flag or 
               'CO_type' in termination_flag or 
               'state' in termination_flag):
@@ -645,6 +646,9 @@ class plot2D(object):
         elif termination_flag == "debug":
             new_final_values = add_field(old_final_values, [("debug", "<U70")])
             new_final_values["debug"] = old_final_values['termination_flag_1']
+        elif termination_flag == "interpolation_class_errors":
+            new_final_values = add_field(old_final_values, [("interpolation_class_errors", "<U70")])
+            new_final_values["interpolation_class_errors"] = old_final_values['interpolation_class']
         elif 'relative_change' in self.z_var_str:
             key = self.z_var_str.split('relative_change_')[1]
             relative_change_key = (

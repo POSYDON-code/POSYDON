@@ -546,7 +546,7 @@ DEFAULT_MARKERS_COLORS_LEGENDS = {
     },
     'interpolation_class': {
         'initial_MT':
-            ['o', 2, 'tab:blue', 'initial_MT'],
+            ['.', 2, 'black', 'initial_MT'],
         'no_MT':
             ['o', 2, 'tab:pink', 'no_MT'],
         'not_converged':
@@ -555,6 +555,18 @@ DEFAULT_MARKERS_COLORS_LEGENDS = {
             ['o', 2, 'tab:orange', 'stable_MT'],
         'unstable_MT':
             ['o', 2, 'tab:purple', 'unstable_MT']
+    },
+    'interpolation_class_errors': {
+        'initial_MT':
+            ['.', 1, 'black', 'initial_MT'],
+        'no_MT':
+            ['o', 2, None, 'no_MT'],
+        'not_converged':
+            ['x', 1, 'tab:red', 'not_converged'],
+        'stable_MT':
+            ['s', 2, None, 'stable_MT'],
+        'unstable_MT':
+            ['D', 1, None, 'unstable_MT']
     },
     'SN_type': {
         'CCSN':
