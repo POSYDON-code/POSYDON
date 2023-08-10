@@ -85,17 +85,17 @@ from posydon.visualization.plot_defaults import PRE_SET_PLOTS
 # pre defined compressions
 COMPRESSIONS = {
     'ORIGINAL' : {
-        'history_DS_error'    : None
-        'profile_DS_error'    : None
-        'profile_DS_interval' : None
-        'history_DS_exclude'  : DEFAULT_HISTORY_DS_EXCLUDE
+        'history_DS_error'    : None,
+        'profile_DS_error'    : None,
+        'profile_DS_interval' : None,
+        'history_DS_exclude'  : DEFAULT_HISTORY_DS_EXCLUDE,
         'profile_DS_exclude'  : DEFAULT_PROFILE_DS_EXCLUDE
     },
     'LITE' : {
-        'history_DS_error'    : 0.1
-        'profile_DS_error'    : 0.1
-        'profile_DS_interval' : -0.005
-        'history_DS_exclude'  : EXTRA_COLS_DS_EXCLUDE
+        'history_DS_error'    : 0.1,
+        'profile_DS_error'    : 0.1,
+        'profile_DS_interval' : -0.005,
+        'history_DS_exclude'  : EXTRA_COLS_DS_EXCLUDE,
         'profile_DS_exclude'  : EXTRA_COLS_DS_EXCLUDE
     }
 }

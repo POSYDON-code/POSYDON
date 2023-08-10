@@ -184,7 +184,7 @@ class PostProcessingPipeline:
                                   f"{step_number}")
                             self.pipeline_kwargs[step_number][attribute] = \
                                     self.pipeline_kwargs[last_step][attribute]
-                # preplace pre defined sets
+                # replace pre defined sets
                 if 'CREATE_PLOTS' in self.pipeline_kwargs[step_number].keys():
                     for set_name, set_content in PLOTTING_SETS.items():
                         if set_name in self.pipeline_kwargs[step_number]['CREATE_PLOTS']:
