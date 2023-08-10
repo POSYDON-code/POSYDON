@@ -2,10 +2,9 @@
 
 __authors__ = [
     "Philipp Moura Srivastava <philipp.msrivastava@gmail.com>"
+    "Simone Bavera <Simone.Bavera@unige.ch>"
 ]
 
-
-from posydon.visualization.plot2D import plot2D
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -73,21 +72,26 @@ class EvaluateIFInterpolator:
         for key, value in c.items():
 
             labels = self.cfv[key]
-
+  
             classes = self.__find_labels(key)
 
             matrix = {}
-
-            for _class in classes:
-                class_inds = np.where(labels == _class)[0]
-                pred_classes, counts = np.unique(value[class_inds], return_counts = True)
-
-                row = {c: 0 for c in classes}
-
-                for pred_class, count in zip(pred_classes, counts):
-                    row[pred_class] = count / len(class_inds)
             
-                matrix[_class] = row
+            # catch cases where nothing is cl,assified, e.g. S2_MODELXX_SN_type
+            # when S2 is a compact object
+            if len(classes) == 1 and  classes[0] == 'None':
+                matrix['None'] = 1.
+            else:
+                for _class in classes:
+                    class_inds = np.where(labels == _class)[0]
+                    pred_classes, counts = np.unique(value[class_inds], return_counts = True)
+
+                    row = {c: 0 for c in classes}
+
+                    for pred_class, count in zip(pred_classes, counts):
+                        row[pred_class] = count / len(class_inds)
+
+                    matrix[_class] = row
 
             self.matrices[key] = matrix
 
@@ -127,7 +131,13 @@ class EvaluateIFInterpolator:
         for interp in self.interpolator.interpolators:
             
             if key in interp.classifiers.keys():
-                labels = interp.classifiers[key].labels # finding labels and saving
+                # if classifier does not exist assign 'None' label
+                # this happens, e.g. for S2_MODELXX_SN_type, when S2 is
+                # a compac object
+                if interp.classifiers[key] is None:
+                    labels = ['None']
+                else:
+                    labels = interp.classifiers[key].labels
 
         return labels
 
@@ -328,13 +338,18 @@ class EvaluateIFInterpolator:
 
         pass
 
-    def plot2D(self, key, slice_3D_var_range, PLOT_PROPERTIES):
+    def plot2D(self, key, slice_3D_var_str, slice_3D_var_range, PLOT_PROPERTIES):
 
         k_ind = self.out_keys.index(key)
         
-        mass_ratio = self.test_grid.initial_values["star_2_mass"] / self.test_grid.initial_values["star_1_mass"]
-
-        slice = (mass_ratio >= slice_3D_var_range[0]) & (mass_ratio <= slice_3D_var_range[1])
+        if slice_3D_var_str == 'mass_ratio':
+            var = self.test_grid.initial_values["star_2_mass"] / self.test_grid.initial_values["star_1_mass"]
+        elif slice_3D_var_str == 'star_2_mass':
+            var = self.test_grid.initial_values["star_2_mass"]
+        else:
+            raise ValueError("slice_3D_var_str must be either 'mass_ratio' or 'star_2_mass'")
+        
+        slice = (var >= slice_3D_var_range[0]) & (var <= slice_3D_var_range[1])
 
         slice_errs = self.errs["relative"].T[k_ind]
         slice_errs = np.array([slice_errs[i] if in_slice and i in self.errs["valid_inds"][0] else np.nan for i, in_slice in enumerate(slice)])
@@ -344,17 +359,8 @@ class EvaluateIFInterpolator:
         
         fig = self.test_grid.plot2D('star_1_mass', 'period_days', slice_errs,
                     termination_flag='interpolation_class_errors',
-                    grid_3D=True, slice_3D_var_str='mass_ratio',
+                    grid_3D=True, slice_3D_var_str=slice_3D_var_str,
                     slice_3D_var_range=slice_3D_var_range,
                     verbose=False, **PLOT_PROPERTIES)
 
 
-        
-
-
-
-
-        
-
-
-    
