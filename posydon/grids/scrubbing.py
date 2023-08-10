@@ -196,7 +196,7 @@ def keep_till_central_abundance_He_C(bh, h1, h2, Ystop=1.0e-5, XCstop=1.0):
     else:
         depleted1 = False
     h2_colnames = h2.dtype.names
-    if ("center_he4" in h1_colnames) and ("center_c12" in h1_colnames):
+    if ("center_he4" in h2_colnames) and ("center_c12" in h2_colnames):
         if (len(h2["center_he4"])>0) and (len(h2["center_c12"])>0):
             depleted2 = ((h2["center_he4"][-1]<Ystop) and (h2["center_c12"][-1]<XCstop))
         else:
