@@ -615,7 +615,7 @@ def plot_grid(i, path_to_csv_file, verbose=False):
     if 'path_to_plot' in df.keys():
         plot_dir = df.loc[i,'path_to_plot']
         plot_path = os.path.dirname(os.path.normpath(plot_dir))
-        check_dirs.expend([plot_path, plot_dir])
+        check_dirs.extend([plot_path, plot_dir])
     else:
         raise ValueError(f'No path_to_plot in {path_to_csv_file}')
     if 'quantity_to_plot' in df.keys():
