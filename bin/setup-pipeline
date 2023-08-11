@@ -729,7 +729,7 @@ def create_csv(GRID_TYPES=[],
                 if (not os.path.exists(path) and
                     path not in previously_created_files):
                     drop_rows.append(row)
-                if step_name == 'step_3':
+                elif step_name == 'step_3':
                     # grid file with ORIGINAL compression needed
                     path = df.at[row,'path_to_grid_ORIGINAL']
                     if (not os.path.exists(path) and
