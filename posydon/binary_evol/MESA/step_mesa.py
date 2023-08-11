@@ -1275,7 +1275,7 @@ class MS_MS_step(MesaGridStep):
               state_2 == 'H-rich_Core_H_burning' and 
               event == 'ZAMS' and
               self.m1_min <= m2 <= self.m1_max and
-              1./self.q_min >= mass_ratio > self.q_max and 
+              self.q_min <= 1./mass_ratio <= self.q_max and 
               self.p_min <= p <= self.p_max):
             self.flip_stars_before_step = True
             super().__call__(self.binary)
@@ -1341,7 +1341,7 @@ class CO_HMS_RLO_step(MesaGridStep):
         p = self.binary.orbital_period
         ecc = self.binary.eccentricity
 
-        # TODO: import from flow_chart.py
+        # TODO: import states from flow_chart.py
         FOR_RLO_STATES = ["H-rich_Core_H_burning",
                           "H-rich_Shell_H_burning",
                           "H-rich_Core_He_burning",
@@ -1352,6 +1352,7 @@ class CO_HMS_RLO_step(MesaGridStep):
                           "H-rich_non_burning"]
 
         # check the star states
+        # TODO: import states from flow_chart.py
         if (state_2 in ["WD", "NS", "BH"]
                 and (state_1 in FOR_RLO_STATES) and event == "oRLO1"):
             self.flip_stars_before_step = False
@@ -1359,6 +1360,7 @@ class CO_HMS_RLO_step(MesaGridStep):
             if self.binary.star_1.state == 'H-rich_Central_C_depletion':
                 self.binary.event = 'CC1'
                 return
+        # TODO: import states from flow_chart.py
         elif (state_1 in ["WD", "NS", "BH"] and (state_2 in FOR_RLO_STATES)
                 and event == "oRLO2"):
             self.flip_stars_before_step = True
@@ -1427,7 +1429,7 @@ class CO_HeMS_RLO_step(MesaGridStep):
         p = self.binary.orbital_period
         ecc = self.binary.eccentricity
 
-        # TODO: import from flow_chart.py
+        # TODO: import states from flow_chart.py
         CO_He_STATES = [
             'stripped_He_Core_He_burning',
             'stripped_He_Shell_He_burning',
@@ -1440,6 +1442,7 @@ class CO_HeMS_RLO_step(MesaGridStep):
                         ]
 
         # check the star states
+        # TODO: import states from flow_chart.py
         if (state_2 in ["WD", "NS", "BH"]
                 and (state_1 in CO_He_STATES) and event == "oRLO1"):
             self.flip_stars_before_step = False
@@ -1447,6 +1450,7 @@ class CO_HeMS_RLO_step(MesaGridStep):
             if self.binary.star_1.state == 'stripped_He_Central_C_depletion':
                 self.binary.event = 'CC1'
                 return
+        # TODO: import states from flow_chart.py
         elif (state_1 in ["WD", "NS", "BH"] and (state_2 in CO_He_STATES)
                 and event == "oRLO2"):
             self.flip_stars_before_step = True
@@ -1514,6 +1518,7 @@ class CO_HeMS_step(MesaGridStep):
         p = self.binary.orbital_period
         ecc = self.binary.eccentricity
 
+        # TODO: import states from flow_chart.py
         CO_He_STATES = [
             'stripped_He_Core_He_burning',
             'stripped_He_Shell_He_burning',
@@ -1524,7 +1529,7 @@ class CO_HeMS_step(MesaGridStep):
             # include systems post CE with core_definition_H_fraction=0.1
             'H-rich_non_burning'
                         ]
-
+        # TODO: import states from flow_chart.py
         if (state_2 in ['WD', 'NS', 'BH']
                 and state_1 in CO_He_STATES and event is None):
             self.flip_stars_before_step = False
@@ -1539,6 +1544,7 @@ class CO_HeMS_step(MesaGridStep):
                 #     new_separation, m1, m2)
                 # self.binary.eccentricity = 0.
                 return
+        # TODO: import states from flow_chart.py
         elif (state_1 in ['WD', 'NS', 'BH']
                 and state_2 in CO_He_STATES and event is None):
             self.flip_stars_before_step = True
