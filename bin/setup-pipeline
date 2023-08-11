@@ -81,7 +81,7 @@ PLOTTING_SETS = {
                              'S1_MODEL10_CO_type', 'S1_MODEL10_SN_type',\
                              'S1_MODEL10_mass', 'S1_MODEL10_spin',\
                              'S1_MODEL10_m_disk_radiated'],
-    'PLOT_AFTER_TRAINING' : []
+    'PLOT_AFTER_TRAINING' : ['interp_err_star_1_mass', 'interp_err_period_days']
 }
 # predefined checking sets
 CHECKING_SETS = {

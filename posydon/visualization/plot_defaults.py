@@ -1106,6 +1106,63 @@ PRE_SET_PLOTS = {
         'zlog' : False,
         'zmin' : 0.,
         'zmax' : 3.
-    }
-    # TODO: add more
+    },
+    'interp_err_star_1_mass' : {
+        'plot_dir_name' : 'interp_err/star_1_mass',
+        'zvar' : 'star_1_mass',
+        'term_flag' : None,
+        'cbar' : True,
+        'zlog' : False,
+        'zmin' : 0.,
+        'zmax' : 0.1
+    },
+    'interp_err_period_days' : {
+        'plot_dir_name' : 'interp_err/period_days',
+        'zvar' : 'period_days',
+        'term_flag' : None,
+        'cbar' : True,
+        'zlog' : False,
+        'zmin' : 0.,
+        'zmax' : 0.1
+    },
 }
+
+"""
+    # utility functions
+    def add_col(pdir, zvar, term_flag, cbar=False, zlog=False, zmin=None, zmax=None):
+        cols[pdir+'/'] = {'zvar': zvar, 'term_flag': term_flag, 
+                          'cbar': cbar, 'zlog': zlog,
+                          'zmin': zmin, 'zmax': zmax}   
+    def add_string(_dict, _key, _str):
+        '''add strign to dictionary key variable'''
+        _dict[_key] = _dict[_key]%_str
+    
+    # store all variables to plot in a dictionary
+    # key: dir_name
+    # value: dict zvar, termination_flag, colorbar, zmin, zmax
+    cols = {} 
+    if 'default_cols' in options:
+        add_col('TF12', None, 'combined_TF12')
+        add_col('TF1', 'lg_mtransfer_rate', 'termination_flag_1', True, False, -8, -1)
+        add_col('TF2', None, 'termination_flag_2')
+        add_col('TF3', None, 'termination_flag_3')
+        add_col('TF4', None, 'termination_flag_4')
+        add_col('debug_rl_1', 'rl_relative_overflow_1', 'debug', True, False, -0.5, 0.5)
+        add_col('debug_rl_2', 'rl_relative_overflow_2', 'debug', True, False, -0.5, 0.5)
+        add_col('debug_mt', 'lg_mtransfer_rate', 'debug', True, False, -8, -1)
+    if 'processed_cols' in options:
+        for l in [1,5,6,10]:
+            add_col(f'S1_MODEL{l:02d}/CO_type', None, f'S1_MODEL{l:02d}_CO_type')
+            add_col(f'S1_MODEL{l:02d}/SN_type', None, f'S1_MODEL{l:02d}_SN_type')
+            add_col(f'S1_MODEL{l:02d}/mass', f'S1_MODEL{l:02d}_mass', 'termination_flag_1', True, True, 0., 2.)
+            add_col(f'S1_MODEL{l:02d}/spin', f'S1_MODEL{l:02d}_spin', 'termination_flag_1', True, False, 0., 1.)
+            add_col(f'S1_MODEL{l:02d}/m_disk_radiated', f'S1_MODEL{l:02d}_m_disk_radiated', 'termination_flag_1', True, False, 0., 3.)
+    if 'interp_err' in options:
+        for key in ['star_1_mass', 'period_days']:
+            add_col(f'interp_err/{key}/', key, None, True, False, 0., 0.1)
+        #     add_colf(f'violins/{key}/', key, None)
+        # for key in ['interpolation_class', 'S1_MODEL01_CO_type']:
+        #     add_col(f'class_err/{key}/', None, None)
+    if not cols:
+        raise ValueError('Plotting options not recognized!')
+"""

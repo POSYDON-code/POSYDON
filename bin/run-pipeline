@@ -684,8 +684,6 @@ def plot_grid(i, path_to_csv_file, verbose=False):
 
     # check that plots/ directories exist
     name = plot_attributes['plot_dir_name']
-    if "MODEL" in name:
-        name = name.replace('_'+name.split('_')[-1],'/') + name.split('_')[-1]
     check_dirs.append(os.path.join(plot_dir, name))
     for dir_ in check_dirs:
         if not os.path.isdir(dir_):
@@ -758,19 +756,23 @@ def plot_grid(i, path_to_csv_file, verbose=False):
             if 'interp_err' in _dname:
                 # TODO: add violin plots
                 # initial/final error slices
-                evalIFerr.plot2D(_dict['zvar'], slice_3D_var_str, 
-                                slice_3D_var_range, PLOT_PROPERTIES)
+                evalIFerr.plot2D(_dict['zvar'].replace('interp_err_',''), 
+                                 slice_3D_var_str, 
+                                 slice_3D_var_range, 
+                                 PLOT_PROPERTIES)
                 # initial/final error all points in one plot
                 if k == 0:
                     PLOT_PROPERTIES_ALL = PLOT_PROPERTIES.copy()
                     PLOT_PROPERTIES_ALL['title'] = title.replace('=%1.2f', ' all ')
                     PLOT_PROPERTIES_ALL['fname'] = fname.replace('%1.2f', 'all')
-                    evalIFerr.plot2D(_dict['zvar'], slice_3D_var_str, 
-                                    vars_eges, PLOT_PROPERTIES_ALL)
+                    evalIFerr.plot2D(_dict['zvar'], 
+                                     slice_3D_var_str, 
+                                     vars_eges, 
+                                     PLOT_PROPERTIES_ALL)
             elif 'class_err' in _dname:
                 if k == 0:
                     evalIFerr.confusion_matrix(_dict['zvar'])
-            elif 'violins' in _dname:
+            elif 'violin' in _dname:
                 if k == 0:
                     evalIFerr.violin_plots("relative", keys=[_dict['zvar']])
             else:
@@ -786,9 +788,6 @@ def plot_grid(i, path_to_csv_file, verbose=False):
             print(e)
             continue
 
-i = 0
-path_to_csv_file = '/Users/simone/Desktop/example.csv'
-plot_grid(i, path_to_csv_file, verbose=True)
 
 def do_check(i, path_to_csv_file, verbose=False):
     """Perform a check on a grid."""
