@@ -76,10 +76,11 @@ from posydon.grids.psygrid import (PSyGrid,
 from posydon.grids.post_processing import (post_process_grid,
                                            add_post_processed_quantities)
 from posydon.grids.MODELS import MODELS
-from posydon.interpolation.IF_interpolation import IFInterpolator
 from posydon.utils.common_functions import PATH_TO_POSYDON
 from posydon.utils.gridutils import get_new_grid_name
 from posydon.visualization.plot_defaults import PRE_SET_PLOTS
+from posydon.interpolation.IF_interpolation import IFInterpolator
+from posydon.visualization.interpolation import EvaluateIFInterpolator
 
 
 # pre defined compressions
@@ -601,7 +602,7 @@ def rerun(i, path_to_csv_file, verbose=False):
 
 def plot_grid(i, path_to_csv_file, verbose=False):
     """Creates plots of a grid."""
-    
+
     # read csv file
     if os.path.exists(path_to_csv_file):
         df = pd.read_csv(path_to_csv_file)
@@ -612,14 +613,20 @@ def plot_grid(i, path_to_csv_file, verbose=False):
     # get values from csv file
     if 'path_to_grid' in df.keys():
         grid_path = df.loc[i,'path_to_grid']
-        if not os.path.isdir(grid_path):
+        if not os.path.isfile(grid_path):
             raise ValueError(f'{grid_path} not found!')
     else:
         raise ValueError(f'No path_to_grid in {path_to_csv_file}')
+    if 'path_to_grid_test' in df.keys():
+        grid_test_path = df.loc[i,'path_to_grid_test']
+        if not os.path.isfile(grid_test_path):
+            raise ValueError(f'{grid_test_path} not found!')
+    else:
+        grid_test_path = ''
     if 'path_to_plot' in df.keys():
         plot_dir = df.loc[i,'path_to_plot']
         plot_path = os.path.dirname(os.path.normpath(plot_dir))
-        check_dirs.expand([plot_path, plot_dir])
+        check_dirs.extend([plot_path, plot_dir])
     else:
         raise ValueError(f'No path_to_plot in {path_to_csv_file}')
     if 'quantity_to_plot' in df.keys():
@@ -637,7 +644,16 @@ def plot_grid(i, path_to_csv_file, verbose=False):
     # load grid
     grid = PSyGrid(verbose=verbose)
     grid.load(grid_path)
-    
+    # load interpolator and evaluate interp errors
+    if ('err' in quantity_to_plot 
+        and path_to_interpolator != '' 
+        and grid_test_path != ''):
+        grid_test = PSyGrid(verbose=verbose)
+        grid_test.load(grid_test_path)
+        model = IFInterpolator()
+        model.load(path_to_interpolator)
+        evalIFerr = EvaluateIFInterpolator(model, grid_test)
+
     # get attributes for plotting
     if quantity_to_plot in PRE_SET_PLOTS:
         plot_attributes = PRE_SET_PLOTS[quantity_to_plot]
@@ -665,9 +681,11 @@ def plot_grid(i, path_to_csv_file, verbose=False):
             }
     else:
         raise TypeError(f'{quantity_to_plot} should be a string!')
-    
+
     # check that plots/ directories exist
     name = plot_attributes['plot_dir_name']
+    if "MODEL" in name:
+        name = name.replace('_'+name.split('_')[-1],'/') + name.split('_')[-1]
     check_dirs.append(os.path.join(plot_dir, name))
     for dir_ in check_dirs:
         if not os.path.isdir(dir_):
@@ -675,46 +693,44 @@ def plot_grid(i, path_to_csv_file, verbose=False):
 
     if 'CO' in grid_path:
         # compact object mass slices
-        def log_range(x_min,x_max,x_n):
-            return 10**np.linspace(np.log10(x_min),np.log10(x_max),x_n)
-        m_CO_min = 1.
-        m_CO_max = 51.32759630397827
-        m_CO_n = 23
-        m_COs = log_range(m_CO_min, m_CO_max, m_CO_n)
-        m_COs_edges = 10**(0.5*(np.log10(np.array(m_COs)[1:]) + \
-                                np.log10(np.array(m_COs)[:-1])))
+        m_COs = np.unique(np.around(grid.initial_values['star_2_mass'],1))
+        # remove accreting COs mass slices
+        m_COs = [m_COs[0]]+  [m for i, m in enumerate(m_COs) if m/m_COs[i-1] > 1.1]
+        m_COs_edges = 10**((np.log10(np.array(m_COs)[1:])+np.log10(np.array(m_COs)[:-1]))*0.5)
         m2 = [0.]+m_COs_edges.tolist()+[2*m_COs_edges[-1]]
         vars = m_COs
+        vars_eges = (0., 2*m_COs_edges[-1])
         fname = 'grid_m_%1.2f.png'
         title = '$m_\mathrm{CO}=%1.2f\,M_\odot$'
         slice_3D_var_str='star_2_mass'
-    elif 'HMS-HMS' in grid_path:
+    elif 'HMS-HMS' in grid_path:        
         # mass ratio slices
-        qs = np.linspace(0.05,1.,20)
-        qs[-1] = 0.99
+        qs = np.unique(np.around(grid.initial_values['star_2_mass']/grid.initial_values['star_1_mass'],2))
         dq = (qs[1:]-qs[:-1])*0.5
-        dq_edges = [0.]+(qs[:-1]+dq).tolist()+[1.]
+        dq_edges = (qs[:-1]+dq).tolist()
+        dq_edges = [0.]+dq_edges+[1.]
         vars = qs.tolist()
+        vars_eges = (0., 1.)
         fname = 'grid_q_%1.2f.png'
         title = '$q=%1.2f$'
-        slice_3D_var_str='mass_ratio'
+        slice_3D_var_str='mass_ratio' 
     else:
         raise ValueError('Grid type not supported!')
-
-    for i, var in enumerate(vars):
+        
+    # loop over all grid slices and all cols
+    for k, var in enumerate(vars):
         if 'HMS-HMS' in grid_path:
-            if i >= len(dq_edges):
-                continue
-            slice_3D_var_range = (dq_edges[i],dq_edges[i+1])
+            slice_3D_var_range = (dq_edges[k],dq_edges[k+1])
         elif 'CO' in grid_path:
-            if i >= len(m2):
+            if k == len(m2):
                 continue
-            slice_3D_var_range = (m2[i],m2[i+1])
+            slice_3D_var_range = (m2[k],m2[k+1])
         # TODO: skip plotting slice if there are no data
         try:
-            PLOT_PROPERTIES = {
+            # default plot properties
+            PLOT_PROPERTIES_DEFAULT = {
                 'figsize' : (4,3.5),
-                'path_to_file' : os.path.join(plot_dir,'TF12/'),
+                'path_to_file' : os.path.join(plot_dir, name)+"/",
                 'show_fig' : False,
                 'fname' : fname%var,
                 'title' : title%var,
@@ -722,150 +738,57 @@ def plot_grid(i, path_to_csv_file, verbose=False):
                 'log10_y' : True,
                 'legend2D' : {'bbox_to_anchor' : (1.03, 0.5)}
             }
+            # default plot properties with colorbar
+            PLOT_PROPERTIES_DEFAULT_COLBAR = PLOT_PROPERTIES_DEFAULT.copy()
+            PLOT_PROPERTIES_DEFAULT_COLBAR['figsize'] = (4,5)
+            PLOT_PROPERTIES_DEFAULT_COLBAR['colorbar'] = {'pad': 0.12}
+        
+            _dname = quantity_to_plot
+            _dict = plot_attributes
+            if _dict['cbar']:
+                PLOT_PROPERTIES = PLOT_PROPERTIES_DEFAULT_COLBAR.copy()
+                PLOT_PROPERTIES['log10_z'] = _dict['zlog']
+                PLOT_PROPERTIES['zmin'] = _dict['zmin']
+                PLOT_PROPERTIES['zmax'] = _dict['zmax']
+                if 'interp_err' in _dname:
+                    PLOT_PROPERTIES['colorbar']['label'] = _dict['zvar']
+            else:
+                PLOT_PROPERTIES = PLOT_PROPERTIES_DEFAULT.copy()
+            
+            if 'interp_err' in _dname:
+                # TODO: add violin plots
+                # initial/final error slices
+                evalIFerr.plot2D(_dict['zvar'], slice_3D_var_str, 
+                                slice_3D_var_range, PLOT_PROPERTIES)
+                # initial/final error all points in one plot
+                if k == 0:
+                    PLOT_PROPERTIES_ALL = PLOT_PROPERTIES.copy()
+                    PLOT_PROPERTIES_ALL['title'] = title.replace('=%1.2f', ' all ')
+                    PLOT_PROPERTIES_ALL['fname'] = fname.replace('%1.2f', 'all')
+                    evalIFerr.plot2D(_dict['zvar'], slice_3D_var_str, 
+                                    vars_eges, PLOT_PROPERTIES_ALL)
+            elif 'class_err' in _dname:
+                if k == 0:
+                    evalIFerr.confusion_matrix(_dict['zvar'])
+            elif 'violins' in _dname:
+                if k == 0:
+                    evalIFerr.violin_plots("relative", keys=[_dict['zvar']])
+            else:
+                grid.plot2D('star_1_mass', 'period_days', _dict['zvar'],
+                            termination_flag=_dict['term_flag'],
+                            grid_3D=True, slice_3D_var_str=slice_3D_var_str,
+                            slice_3D_var_range=slice_3D_var_range,
+                            verbose=False, **PLOT_PROPERTIES)
 
-            grid.plot2D('star_1_mass', 'period_days', None,
-                         termination_flag='combined_TF12',
-                         grid_3D=True, slice_3D_var_str=slice_3D_var_str,
-                         slice_3D_var_range=slice_3D_var_range,
-                         verbose=False, **PLOT_PROPERTIES)
-
-            PLOT_PROPERTIES = {
-                'figsize' : (4,5),
-                'path_to_file' : os.path.join(plot_dir,'TF1/'),
-                'show_fig' : False,
-                'fname' : fname%var,
-                'title' : title%var,
-                'log10_x' : True,
-                'log10_y' : True,
-                'zmin' : -8,
-                'zmax' : -1,
-                'legend2D' : {'bbox_to_anchor' : (1.03, 0.5)},
-                'colorbar': {'pad': 0.12}
-            }
-
-            grid.plot2D('star_1_mass', 'period_days', 'lg_mtransfer_rate',
-                         termination_flag='termination_flag_1',
-                         grid_3D=True, slice_3D_var_str=slice_3D_var_str,
-                         slice_3D_var_range=slice_3D_var_range,
-                         verbose=False, **PLOT_PROPERTIES)
-
-            PLOT_PROPERTIES = {
-                'figsize' : (4,3.5),
-                'path_to_file' : os.path.join(plot_dir,'TF2/'),
-                'show_fig' : False,
-                'fname' : fname%var,
-                'title' : title%var,
-                'log10_x' : True,
-                'log10_y' : True,
-                'legend2D' : {'bbox_to_anchor' : (1.03, 0.5)}
-            }
-
-            grid.plot2D('star_1_mass', 'period_days', None,
-                         termination_flag='termination_flag_2',
-                         grid_3D=True, slice_3D_var_str=slice_3D_var_str,
-                         slice_3D_var_range=slice_3D_var_range,
-                         verbose=False, **PLOT_PROPERTIES)
-
-            PLOT_PROPERTIES = {
-                'figsize' : (4,3.5),
-                'path_to_file' : os.path.join(plot_dir,'TF3/'),
-                'show_fig' : False,
-                'fname' : fname%var,
-                'title' : title%var,
-                'log10_x' : True,
-                'log10_y' : True,
-                'legend2D' : {'bbox_to_anchor' : (1.03, 0.5)}
-            }
-
-            grid.plot2D('star_1_mass', 'period_days', None,
-                         termination_flag='termination_flag_3',
-                         grid_3D=True, slice_3D_var_str=slice_3D_var_str,
-                         slice_3D_var_range=slice_3D_var_range,
-                         verbose=False, **PLOT_PROPERTIES)
-
-            PLOT_PROPERTIES = {
-                'figsize' : (4,3.5),
-                'path_to_file' : os.path.join(plot_dir,'TF4/'),
-                'show_fig' : False,
-                'fname' : fname%var,
-                'title' : title%var,
-                'log10_x' : True,
-                'log10_y' : True,
-                'legend2D' : {'bbox_to_anchor' : (1.03, 0.5)}
-            }
-
-            grid.plot2D('star_1_mass', 'period_days', None,
-                         termination_flag='termination_flag_4',
-                         grid_3D=True, slice_3D_var_str=slice_3D_var_str,
-                         slice_3D_var_range=slice_3D_var_range,
-                         verbose=False, **PLOT_PROPERTIES)
-
-            PLOT_PROPERTIES = {
-                'figsize' : (4,5),
-                'path_to_file' : os.path.join(plot_dir,'debug_rl_1/'),
-                'show_fig' : False,
-                'fname' : fname%var,
-                'title' : title%var,
-                'log10_x' : True,
-                'log10_y' : True,
-                'zmin' : -0.5,
-                'zmax' : 0.5,
-                'legend2D' : {'bbox_to_anchor' : (1.03, 0.5)},
-                'colorbar': {'pad': 0.12}
-            }
-
-            grid.plot2D('star_1_mass', 'period_days',
-                        'rl_relative_overflow_1',
-                         termination_flag='debug',
-                         grid_3D=True, slice_3D_var_str=slice_3D_var_str,
-                         slice_3D_var_range=slice_3D_var_range,
-                         verbose=False, **PLOT_PROPERTIES)
-
-            PLOT_PROPERTIES = {
-                'figsize' : (4,5),
-                'path_to_file' : os.path.join(plot_dir,'debug_rl_2/'),
-                'show_fig' : False,
-                'fname' : fname%var,
-                'title' : title%var,
-                'log10_x' : True,
-                'log10_y' : True,
-                'zmin' : -0.5,
-                'zmax' : 0.5,
-                'legend2D' : {'bbox_to_anchor' : (1.03, 0.5)},
-                'colorbar': {'pad': 0.12}
-            }
-
-            grid.plot2D('star_1_mass', 'period_days',
-                        'rl_relative_overflow_2',
-                         termination_flag='debug',
-                         grid_3D=True, slice_3D_var_str=slice_3D_var_str,
-                         slice_3D_var_range=slice_3D_var_range,
-                         verbose=False, **PLOT_PROPERTIES)
-
-            PLOT_PROPERTIES = {
-                'figsize' : (4,5),
-                'path_to_file' : os.path.join(plot_dir,'debug_mt/'),
-                'show_fig' : False,
-                'fname' : fname%var,
-                'title' : title%var,
-                'log10_x' : True,
-                'log10_y' : True,
-                'zmin' : -8,
-                'zmax' : -1,
-                'legend2D' : {'bbox_to_anchor' : (1.03, 0.5)},
-                'colorbar': {'pad': 0.12}
-            }
-
-            grid.plot2D('star_1_mass', 'period_days', 'lg_mtransfer_rate',
-                         termination_flag='debug',
-                         grid_3D=True, slice_3D_var_str=slice_3D_var_str,
-                         slice_3D_var_range=slice_3D_var_range,
-                         verbose=False, **PLOT_PROPERTIES)
         except Exception as e:
             print('FAILED TO PLOT '+title%var)
             print('')
             print(e)
             continue
+
+i = 0
+path_to_csv_file = '/Users/simone/Desktop/example.csv'
+plot_grid(i, path_to_csv_file, verbose=True)
 
 def do_check(i, path_to_csv_file, verbose=False):
     """Perform a check on a grid."""

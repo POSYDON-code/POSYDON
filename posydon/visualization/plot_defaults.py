@@ -546,7 +546,7 @@ DEFAULT_MARKERS_COLORS_LEGENDS = {
     },
     'interpolation_class': {
         'initial_MT':
-            ['o', 2, 'tab:blue', 'initial_MT'],
+            ['.', 2, 'black', 'initial_MT'],
         'no_MT':
             ['o', 2, 'tab:pink', 'no_MT'],
         'not_converged':
@@ -555,6 +555,18 @@ DEFAULT_MARKERS_COLORS_LEGENDS = {
             ['o', 2, 'tab:orange', 'stable_MT'],
         'unstable_MT':
             ['o', 2, 'tab:purple', 'unstable_MT']
+    },
+    'interpolation_class_errors': {
+        'initial_MT':
+            ['.', 1, 'black', 'initial_MT'],
+        'no_MT':
+            ['o', 2, None, 'no_MT'],
+        'not_converged':
+            ['x', 1, 'tab:red', 'not_converged'],
+        'stable_MT':
+            ['s', 2, None, 'stable_MT'],
+        'unstable_MT':
+            ['D', 1, None, 'unstable_MT']
     },
     'SN_type': {
         'CCSN':
@@ -829,6 +841,17 @@ DEFAULT_LABELS = {
     'S2_eta' : [r'$\eta$', r'$\log_{10}(\eta)$'],
 }
 
+# add core collapse MODEL variables
+for i in range(1, 11):
+    DEFAULT_LABELS[f'MODEL{i:02d}_mass'] = [r'$M_\mathrm{CO} \, [M_\odot]$',
+                                              r'$\log_{10}(M_\mathrm{CO} / M_\odot)$']
+    DEFAULT_LABELS[f'MODEL{i:02d}_spin'] = [r'$\chi_\mathrm{CO}$', r'$\log_{10}(\chi_\mathrm{CO})$']
+    DEFAULT_LABELS[f'MODEL{i:02d}_m_disk_accreted'] = [r'$M_\mathrm{disk, acc} \, [M_\odot]$',
+                                              r'$\log_{10}(M_\mathrm{disk, acc} / M_\odot)$']
+    DEFAULT_LABELS[f'MODEL{i:02d}_m_disk_radiated'] = [r'$M_\mathrm{disk, rad} \, [M_\odot]$',
+                                              r'$\log_{10}(M_\mathrm{disk, rad} / M_\odot)$']
+    
+
 # pre defined plottings
 PRE_SET_PLOTS = {
     'combined_TF12' : {
@@ -1086,5 +1109,3 @@ PRE_SET_PLOTS = {
     }
     # TODO: add more
 }
-
-
