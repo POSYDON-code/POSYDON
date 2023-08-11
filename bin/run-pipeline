@@ -950,7 +950,7 @@ if __name__ == '__main__':
         if SLURM_I<0: # check value
             raise ValueError(f'The slurm index cannot be negative: {SLURM_I}')
     else:
-        slurm_i = 0
+        SLURM_I = 0
     
     if n_args > 4: # verbose flag
         VERBOSE = bool(int(sys.argv[4]))
@@ -966,6 +966,7 @@ if __name__ == '__main__':
     time.sleep(random.uniform(0.,30.))
 
     STEP = os.path.splitext(os.path.basename(PATH_TO_CSV_FILE))
+    print(f'STEP: {STEP}, PATH_TO_CSV_FILE: {PATH_TO_CSV_FILE}, SLURM_I: {SLURM_I}, VERBOSE: {VERBOSE}')
     if STEP=='step_1': # grid slices creation
         create_grid_slice(SLURM_I, PATH_TO_CSV_FILE, verbose=VERBOSE)
 
