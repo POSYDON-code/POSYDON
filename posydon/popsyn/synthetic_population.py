@@ -241,7 +241,7 @@ class SyntheticPopulation:
 
             if k > 0:
                 shift_index = max(np.unique(df_sel.index)) + 1 
-                df_sel_met.index += shift_index 
+                df_sel_met.index += shift_index
 
             # store simulated and underlying stellar mass
             df_sel_met['simulated_mass_for_met'] = simulated_mass_for_met
@@ -959,3 +959,7 @@ class SyntheticPopulation:
             z_grb = None
             rate_grb = None
         plot_pop.plot_rate_density(z_dco, rate_dco, z_grb, rate_grb, **kwargs)
+
+    def plot_popsyn_over_grid_slice(self, grid_type, met_Zsun, **kwargs):
+        """Plot popsyn over grid slice."""
+        plot_pop.plot_popsyn_over_grid_slice(self, grid_type, met_Zsun, **kwargs)

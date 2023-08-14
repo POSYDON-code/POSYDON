@@ -54,6 +54,7 @@ TF1_POOL_INITIAL_RLO = ['Initial RLOF',
                         'ignored_scrubbed']
 
 TF1_POOL_ERROR = ['logQ_limit',
+                  'logQ_min_limit',
                   'min timestep',
                   'min_timestep_limit',
                   'cluster timelimit',
@@ -93,6 +94,8 @@ def combine_TF12(IC, TF2, verbose=False):
                     'caseA/B/C_from_star1',
                     'caseA/B/C/BB_from_star1',
                     'caseA/B/A_from_star1']
+
+    TF2_pool_SAC = ['caseA/C_from_star1']
 
     TF2_pool_SABB = ['caseA/BB_from_star1',
                      'caseA/BB_from_star2']
@@ -139,6 +142,8 @@ def combine_TF12(IC, TF2, verbose=False):
                 TF12[i] = 'Stable case A'
             elif TF2[i] in TF2_pool_SAB:
                 TF12[i] = 'Stable case AB'
+            elif TF2[i] in TF2_pool_SAC:
+                TF12[i] = 'Stable case AC'
             elif TF2[i] in TF2_pool_SABB:
                 TF12[i] = 'Stable case ABB'
             elif TF2[i] in TF2_pool_SB:
@@ -158,6 +163,8 @@ def combine_TF12(IC, TF2, verbose=False):
                 TF12[i] = 'Unstable case A'
             elif TF2[i] in TF2_pool_SAB:
                 TF12[i] = 'Unstable case AB'
+            elif TF2[i] in TF2_pool_SAC:
+                TF12[i] = 'Unstable case AC'
             elif TF2[i] in TF2_pool_SABB:
                 TF12[i] = 'Unstable case ABB'
             elif TF2[i] in TF2_pool_SB:
