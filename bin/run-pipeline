@@ -904,12 +904,12 @@ def do_check(i, path_to_csv_file, verbose=False):
             failure_rate_in_percent = 0.
         print(f'Failure rate: {failure_rate_in_percent}% in {grid_path}')
     elif check_to_do=='CO_TYPE':
-        for quantity in grid.final_values.keys():
+        for quantity in grid.final_values.dtype.names:
             if (('S1_MODEL' in quantity) and ('CO_TYPE' in quantity)):
                 count = Counter(grid.final_values[quantity])
                 print(f'{quantity}: {count} in {grid_path}')
     elif check_to_do=='SN_TYPE':
-        for quantity in grid.final_values.keys():
+        for quantity in grid.final_values.dtype.names:
             if (('S1_MODEL' in quantity) and ('SN_TYPE' in quantity)):
                 count = Counter(grid.final_values[quantity])
                 print(f'{quantity}: {count} in {grid_path}')
