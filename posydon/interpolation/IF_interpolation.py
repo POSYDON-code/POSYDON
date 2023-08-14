@@ -557,8 +557,11 @@ class BaseIFInterpolator:
             for training the interpolator.
 
         """
-        XTn = self.X_scaler.normalize(self.XT[self.valid > 0, :])
-        YTn = self.Y_scaler.normalize(self.YT[self.valid > 0, :])
+
+        ic = ic[self.valid > 0] if isinstance(self.interp_method, list) else None
+
+        XTn = self.X_scaler.normalize(self.XT[self.valid > 0, :], ic)
+        YTn = self.Y_scaler.normalize(self.YT[self.valid > 0, :], ic)
         
         if self.interp_method == "linear":
             self.interpolator = LinInterpolator()
@@ -572,7 +575,7 @@ class BaseIFInterpolator:
                 self.interp_classes, self.interp_method)
             self.interpolator.train(XTn, YTn, ic[self.valid > 0])
 
-    def test_interpolator(self, Xt, classes):
+    def test_interpolator(self, Xt):
         """Use the interpolator to approximate output vector.
 
         Parameters
@@ -587,11 +590,22 @@ class BaseIFInterpolator:
 
         """
         Xtn = self.X_scaler.normalize(Xt)
+
+        classes = None
+
+        if isinstance(self.interp_method, list):
+            classes = self.interpolator.classifier(Xtn)
+            Xtn = self.X_scaler.normalize(self.Xt, classes)
+
+            Ypredn = self.interpolator.predict(Xtn, classes)
+        else:
+            Ypredn = self.interpolator.predict(Xtn)
+        
         Ypredn = np.array([
              list(sanitize_interpolated_quantities(
                  dict(zip(self.out_keys, track)),
                  self.constraints, verbose=False).values())
-             for track in self.Y_scaler.denormalize(Ypredn)
+             for track in self.Y_scaler.denormalize(Ypredn, classes)
          ])
         return Ypredn
 
@@ -1127,7 +1141,11 @@ class MC_Interpolator:
                 which += z == self.classes[i][j]
             self.interpolators[i].train(XT[which, :], YT[which, :])
 
-    def predict(self, Xt):
+    def classifier(self, Xt):
+
+        return self.classifier.predict(Xt)
+
+    def predict(self, Xt, zpred):
         """Interpolate and approximate output vectors given input vectors.
 
         Parameters
@@ -1140,7 +1158,7 @@ class MC_Interpolator:
         Output space approximation as numpy array
 
         """
-        zpred = self.classifier.predict(Xt)
+
         Ypred = np.ones((Xt.shape[0], self.M)) * np.nan
         for i in range(len(self.classes)):
             which = np.zeros_like(zpred, dtype=bool)
@@ -1339,11 +1357,39 @@ class Scaler:
 
     def normalize(self, X, klass = None):
 
-        return self.scaler[klass].normalize(X)
+        if klass == None:
+            return self.scaler[klass].normalize(X)
+        
+        else:
+
+            normalized = X
+
+            classes = np.unique(klass)
+
+            for c in classes:
+                inds = np.where(klass == c)[0]
+
+                normalized[inds] = self.scaler[c].normalize(X[inds])
+
+            return normalized
 
     def denormalize(self, Xn, klass = None):
 
-        return self.scaler[klass].normalize(Xn)
+        if klass == None:
+            return self.scaler[klass].denormalize(X)
+        
+        else:
+
+            normalized = X
+
+            classes = np.unique(klass)
+
+            for c in classes:
+                inds = np.where(klass == c)[0]
+
+                normalized[inds] = self.scaler[c].denormalize(X[inds])
+
+            return normalized
 
 
 class MatrixScaler:
