@@ -87,7 +87,7 @@ PLOTTING_SETS = {
 CHECKING_SETS = {
     'CHECK_AFTER_CREATE'   : [],
     'CHECK_AFTER_COMBINE'  : ['failure_rate'],
-    'CHECK_AFTER_EXTRA'    : ['CO_TYPE', 'SN_TYPE'],
+    'CHECK_AFTER_EXTRA'    : ['CO_type', 'SN_type'],
     'CHECK_AFTER_TRAINING' : []
 }
 # common attributes for all steps
