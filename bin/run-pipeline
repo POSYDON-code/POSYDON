@@ -602,7 +602,28 @@ def rerun(i, path_to_csv_file, verbose=False):
 
 def plot_grid(i, path_to_csv_file, verbose=False):
     """Creates plots of a grid."""
-
+    # grid mass ranges
+    grid_sample = {
+        'HMS-HMS' : {
+            'log' : False,
+            'nbin' : 20,
+            'qmin' : 0.05,
+            'qmax' : 1.,
+        },
+        'CO-HeMS' : {
+            'log' : True,
+            'nbin' : 23,
+            'mmin' : 1.0,
+            'mmax' : 51.328,
+        },
+        'CO-HMS' : {
+            'log' : True,
+            'nbin' : 23,
+            'mmin' : 1.0,
+            'mmax' : 51.328,
+        }
+    }
+    
     # read csv file
     if os.path.exists(path_to_csv_file):
         df = pd.read_csv(path_to_csv_file)
@@ -617,12 +638,6 @@ def plot_grid(i, path_to_csv_file, verbose=False):
             raise ValueError(f'{grid_path} not found!')
     else:
         raise ValueError(f'No path_to_grid in {path_to_csv_file}')
-    if 'path_to_grid_test' in df.keys():
-        grid_test_path = df.loc[i,'path_to_grid_test']
-        if not os.path.isfile(grid_test_path):
-            raise ValueError(f'{grid_test_path} not found!')
-    else:
-        grid_test_path = ''
     if 'path_to_plot' in df.keys():
         plot_dir = df.loc[i,'path_to_plot']
         plot_path = os.path.dirname(os.path.normpath(plot_dir))
@@ -646,13 +661,10 @@ def plot_grid(i, path_to_csv_file, verbose=False):
     grid.load(grid_path)
     # load interpolator and evaluate interp errors
     if ('err' in quantity_to_plot 
-        and path_to_interpolator != '' 
-        and grid_test_path != ''):
-        grid_test = PSyGrid(verbose=verbose)
-        grid_test.load(grid_test_path)
+        and path_to_interpolator != ''):
         model = IFInterpolator()
         model.load(path_to_interpolator)
-        evalIFerr = EvaluateIFInterpolator(model, grid_test)
+        evalIFerr = EvaluateIFInterpolator(model, grid)
 
     # get attributes for plotting
     if quantity_to_plot in PRE_SET_PLOTS:
@@ -689,26 +701,29 @@ def plot_grid(i, path_to_csv_file, verbose=False):
         if not os.path.isdir(dir_):
             os.makedirs(dir_)
 
-    if 'CO' in grid_path:
-        # compact object mass slices
-        m_COs = np.unique(np.around(grid.initial_values['star_2_mass'],1))
-        # remove accreting COs mass slices
-        m_COs = [m_COs[0]]+  [m for i, m in enumerate(m_COs) if m/m_COs[i-1] > 1.1]
-        m_COs_edges = 10**((np.log10(np.array(m_COs)[1:])+np.log10(np.array(m_COs)[:-1]))*0.5)
-        m2 = [0.]+m_COs_edges.tolist()+[2*m_COs_edges[-1]]
-        vars = m_COs
-        vars_eges = (0., 2*m_COs_edges[-1])
+    def _range(x_min, x_max, x_n, log=False):
+        if log:
+            vars = 10**np.linspace(np.log10(x_min),np.log10(x_max), x_n)
+            vars_edges = 10**((np.log10(vars[1:])+np.log10(vars)[:-1])*0.5)
+        else:
+            vars = np.linspace(x_min,x_max,x_n)
+            vars_edges = (vars[1:]+vars[:-1])*0.5
+        vars_edges = [0.]+vars_edges.tolist()+[float("inf")]
+        return vars.tolist(), vars_edges
+        
+    if ('CO-HeMS' in grid_path or 'CO-HMS' in grid_path):
+        # both grids are sampled in the same way with respect to the compact
+        # object mass
+        smpl = grid_sample['CO-HeMS']
+        vars, vars_edges = _range(smpl['mmin'], smpl['mmax'], smpl['nbin'], log=smpl['log'])
         fname = 'grid_m_%1.2f.png'
         title = '$m_\mathrm{CO}=%1.2f\,M_\odot$'
         slice_3D_var_str='star_2_mass'
     elif 'HMS-HMS' in grid_path:        
         # mass ratio slices
-        qs = np.unique(np.around(grid.initial_values['star_2_mass']/grid.initial_values['star_1_mass'],2))
-        dq = (qs[1:]-qs[:-1])*0.5
-        dq_edges = (qs[:-1]+dq).tolist()
-        dq_edges = [0.]+dq_edges+[1.]
-        vars = qs.tolist()
-        vars_eges = (0., 1.)
+        smpl = grid_sample['HMS-HMS']
+        vars, vars_edges = _range(smpl['qmin'], smpl['qmax'], smpl['nbin'], log=smpl['log'])
+        vars[-1] = 0.99 # we replaced q=1 with q=0.99 in mesa runs
         fname = 'grid_q_%1.2f.png'
         title = '$q=%1.2f$'
         slice_3D_var_str='mass_ratio' 
@@ -717,12 +732,7 @@ def plot_grid(i, path_to_csv_file, verbose=False):
         
     # loop over all grid slices and all cols
     for k, var in enumerate(vars):
-        if 'HMS-HMS' in grid_path:
-            slice_3D_var_range = (dq_edges[k],dq_edges[k+1])
-        elif 'CO' in grid_path:
-            if k == len(m2):
-                continue
-            slice_3D_var_range = (m2[k],m2[k+1])
+        slice_3D_var_range = (vars_edges[k],vars_edges[k+1])
         # TODO: skip plotting slice if there are no data
         try:
             # default plot properties
@@ -767,7 +777,7 @@ def plot_grid(i, path_to_csv_file, verbose=False):
                     PLOT_PROPERTIES_ALL['fname'] = fname.replace('%1.2f', 'all')
                     evalIFerr.plot2D(_dict['zvar'], 
                                      slice_3D_var_str, 
-                                     vars_eges, 
+                                     (vars_edges[0], vars_edges[-1]), 
                                      PLOT_PROPERTIES_ALL)
             elif 'class_err' in _dname:
                 if k == 0:
@@ -792,7 +802,7 @@ def plot_grid(i, path_to_csv_file, verbose=False):
 def do_check(i, path_to_csv_file, verbose=False):
     """Perform a check on a grid."""
     
-    # read csv file
+    # read csv fil d
     if os.path.exists(path_to_csv_file):
         df = pd.read_csv(path_to_csv_file)
     else:
