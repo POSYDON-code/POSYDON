@@ -1425,7 +1425,10 @@ class StepSN(object):
             # Eq 15, Wong, T.-W., Valsecchi, F., Fragos, T., & Kalogera, V. 2012, ApJ, 747, 111
             # orbital separation at the time of the exlosion
             rpre = Apre * (1.0 - epre * np.cos(E_ma))
-
+            
+            true_anomaly = 2 * np.arctan(
+                np.sqrt((1 + epre) / (1 - epre)) * np.tan(E_ma / 2)
+            )
             # load constants in CGS
             G = const.standard_cgrav
 
@@ -1625,18 +1628,43 @@ class StepSN(object):
             # update the binary object which was bound at least before the SN
             if flag_binary:
                 # update the tilt
-                if binary.event == "CC1":
-                    binary.star_1.spin_orbit_tilt = tilt
-                elif binary.event == "CC2":
-                    binary.star_2.spin_orbit_tilt = tilt
-                else:
-                    raise ValueError("This should never happen!")
-
-                # compute new orbital period before reseting the binary properties
+                #Check if this is the first SN
+                first_SN = binary.true_anomaly_first_SN is None
 
                 for key in BINARYPROPERTIES:
-                    if key != 'nearest_neighbour_distance':
+                    if key != 'nearest_neighbour_distance' and key != 'true_anomaly_first_SN':
                         setattr(binary, key, None)
+
+                if first_SN:
+                    # update the tilt
+                    binary.star_1.spin_orbit_tilt_first_SN = tilt
+                    binary.star_2.spin_orbit_tilt_first_SN = tilt
+                    binary.true_anomaly_first_SN = true_anomaly
+                else:
+                    if binary.event == 'CC2':
+                        # Assume progenitor has aligned with the preSN orbital angular momentum
+                        binary.star_2.spin_orbit_tilt_second_SN = tilt
+                        binary.star_1.spin_orbit_tilt_second_SN = get_combined_tilt(
+                            tilt_1 = binary.star_1.spin_orbit_tilt_first_SN, 
+                            tilt_2 = tilt, 
+                            true_anomaly_1 = binary.true_anomaly_first_SN, 
+                            true_anomaly_2 = true_anomaly
+                            )
+                        binary.true_anomaly_SN2 = true_anomaly
+                    elif binary.event == 'CC1':
+                        # Assume progenitor has aligned with the preSN orbital angular momentum
+                        binary.star_1.spin_orbit_tilt_second_SN = tilt
+                        binary.star_2.spin_orbit_tilt_second_SN = get_combined_tilt(
+                            tilt_1 = binary.star_1.spin_orbit_tilt_first_SN, 
+                            tilt_2 = tilt, 
+                            true_anomaly_1 = binary.true_anomaly_first_SN, 
+                            true_anomaly_2 = true_anomaly
+                            )
+                        binary.true_anomaly_second_SN = true_anomaly
+                    else:
+                        raise ValueError("This should never happen!")
+
+                # compute new orbital period before reseting the binary properties
 
                 binary.state = "detached"
                 binary.event = None
@@ -1650,18 +1678,20 @@ class StepSN(object):
                     binary.separation, binary.star_1.mass, binary.star_2.mass)
                 binary.orbital_period = new_orbital_period
                 binary.mass_transfer_case = 'None'
-            else:
-                # update the tilt
-                if binary.event == "CC1":
-                    binary.star_1.spin_orbit_tilt = np.nan
-                elif binary.event == "CC2":
-                    binary.star_2.spin_orbit_tilt = np.nan
-                else:
-                    raise ValueError("This should never happen!")
 
+            else:
                 for key in BINARYPROPERTIES:
                     if key != 'nearest_neighbour_distance':
                         setattr(binary, key, None)
+                # update the tilt
+                if first_SN:
+                    binary.star_1.spin_orbit_tilt_SN1 = np.nan
+                    binary.star_2.spin_orbit_tilt_SN1 = np.nan
+                else:
+                    binary.star_1.spin_orbit_tilt_SN2 = np.nan
+                    binary.star_2.spin_orbit_tilt_SN2 = np.nan
+
+             
                 binary.state = "disrupted"
                 binary.event = None
                 binary.separation = np.nan
@@ -1726,7 +1756,82 @@ class StepSN(object):
             Vkick = 0.0
 
         return Vkick
+    def rotate(axis, angle):
 
+        """Generate rotation matrix to rotate a vector about an arbitrary axis 
+            by a given angle
+
+        Parameters
+        ----------
+        axis : array of length 3
+            Axis to rotate about
+        angle : float
+            Angle, in radians, through which to rotate about axis
+
+        Returns
+        -------
+        rotation_matrix : 3x3 array
+            Array such that rotation_matrix.dot(vector) rotates vector
+            about the given axis by the given angle
+
+        """
+
+        # normalize the axis vector
+        axis = axis / np.linalg.norm(axis)
+        
+
+        # calculate the cosine and sine of the angle
+        cos_theta = np.cos(angle)
+        sin_theta = np.sin(angle)
+        
+        # construct the rotation matrix
+        rotation_matrix = np.array([
+            [cos_theta + axis[0]**2 * (1 - cos_theta),
+            axis[0] * axis[1] * (1 - cos_theta) - axis[2] * sin_theta,
+            axis[0] * axis[2] * (1 - cos_theta) + axis[1] * sin_theta],
+            [axis[1] * axis[0] * (1 - cos_theta) + axis[2] * sin_theta,
+            cos_theta + axis[1]**2 * (1 - cos_theta),
+            axis[1] * axis[2] * (1 - cos_theta) - axis[0] * sin_theta],
+            [axis[2] * axis[0] * (1 - cos_theta) - axis[1] * sin_theta,
+            axis[2] * axis[1] * (1 - cos_theta) + axis[0] * sin_theta,
+            cos_theta + axis[2]**2 * (1 - cos_theta)]
+        ])
+        
+        
+        return rotation_matrix
+        
+    def get_combined_tilt(tilt_1, tilt_2, true_anomaly_1, true_anomaly_2):
+        """Get the combined spin-orbit-tilt after two supernovae, assuming
+        the spin as not realigned with the orbital angular momentum after
+        SN1
+
+            Parameters
+            ----------
+            tilt_1: float
+                Angle, in radians, through which the orbital plane was tilted 
+                by SN1
+            tilt_2: float
+                Angle, in radians, through which the orbital plane was tilted 
+                by SN2
+            true_anomaly_1: float
+                Angle, in radians, of the true anomaly at the moment of SN1
+            true_anomaly_2: float
+                Angle, in radians, of the true anomaly at the moment of SN2
+
+
+            Returns
+            -------
+            combined_tilt: float
+                Angle, in radians, between the spin and orbital angular momentum
+                after SN2
+        """
+        z_prime = rotate((1,0,0), tilt_1).dot((0,0,1))
+        x_prime = rotate(z_prime, true_anomaly_2-true_anomaly_1).dot((1,0,0))
+
+        cos_tilt = np.dot((0,0,1),rotate(x_prime, tilt_2).dot(z_prime))
+        combined_tilt = np.arccos(cos_tilt)
+        return combined_tilt
+    
     def C_abundance_for_H_stars(self, CO_core_mass):
         """Get the C abundance for a H-star given it's CO core mass."""
         return 0.20/CO_core_mass + 0.15
