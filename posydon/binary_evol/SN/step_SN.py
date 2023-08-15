@@ -1625,13 +1625,13 @@ class StepSN(object):
                                   verbose=self.verbose)
 
             # update the binary object which was bound at least before the SN
+            #Check if this is the first SN
+            first_SN = binary.true_anomaly_first_SN is None
             if flag_binary:
                 # update the tilt
-                #Check if this is the first SN
-                first_SN = binary.true_anomaly_first_SN is None
 
                 for key in BINARYPROPERTIES:
-                    if key != 'nearest_neighbour_distance' and key != 'true_anomaly_first_SN':
+                    if key != 'nearest_neighbour_distance':
                         setattr(binary, key, None)
 
                 if first_SN:
@@ -1649,7 +1649,7 @@ class StepSN(object):
                             true_anomaly_1 = binary.true_anomaly_first_SN, 
                             true_anomaly_2 = true_anomaly
                             )
-                        binary.true_anomaly_SN2 = true_anomaly
+                        binary.true_anomaly_second_SN = true_anomaly
                     elif binary.event == 'CC1':
                         # Assume progenitor has aligned with the preSN orbital angular momentum
                         binary.star_1.spin_orbit_tilt_second_SN = tilt
@@ -1684,11 +1684,11 @@ class StepSN(object):
                         setattr(binary, key, None)
                 # update the tilt
                 if first_SN:
-                    binary.star_1.spin_orbit_tilt_SN1 = np.nan
-                    binary.star_2.spin_orbit_tilt_SN1 = np.nan
+                    binary.star_1.spin_orbit_tilt_first_SN = np.nan
+                    binary.star_2.spin_orbit_tilt_first_SN = np.nan
                 else:
-                    binary.star_1.spin_orbit_tilt_SN2 = np.nan
-                    binary.star_2.spin_orbit_tilt_SN2 = np.nan
+                    binary.star_1.spin_orbit_tilt_first_SN = np.nan
+                    binary.star_2.spin_orbit_tilt_first_SN = np.nan
 
              
                 binary.state = "disrupted"
