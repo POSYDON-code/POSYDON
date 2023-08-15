@@ -51,15 +51,21 @@ def print_CC_quantities(EXTRA_COLUMNS, star, MODEL_NAME=None):
             "mass [Msun]", "spin", "m_disk_accreted [Msun]",
             "m_disk_radiated [Msun]"))
         print('')
-        print(format_val_preSN.format(
-            'PRE SN STAR', star.state, '',
-            '', star.mass, star.spin, '', ''))
+        try:
+            print(format_val_preSN.format(
+                'PRE SN STAR', star.state, '',
+                '', star.mass, star.spin, '', ''))
+        except:
+            warnings.warn('Failed to print star values!')
         print('')
     else:
-        print(format_val.format(MODEL_NAME,
-                star.state, star.SN_type, star.f_fb,
-                star.mass, star.spin, star.m_disk_accreted,
-                star.m_disk_radiated))
+        try:
+            print(format_val.format(MODEL_NAME,
+                    star.state, star.SN_type, star.f_fb,
+                    star.mass, star.spin, star.m_disk_accreted,
+                    star.m_disk_radiated))
+        except:
+            warnings.warn('Failed to print star values!')
         
     
                     
