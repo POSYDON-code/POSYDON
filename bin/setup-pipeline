@@ -87,7 +87,7 @@ PLOTTING_SETS = {
 CHECKING_SETS = {
     'CHECK_AFTER_CREATE'   : [],
     'CHECK_AFTER_COMBINE'  : ['failure_rate'],
-    'CHECK_AFTER_EXTRA'    : ['CO_TYPE', 'SN_TYPE'],
+    'CHECK_AFTER_EXTRA'    : ['CO_type', 'SN_type'],
     'CHECK_AFTER_TRAINING' : []
 }
 # common attributes for all steps
@@ -488,7 +488,7 @@ def slurm_job(job_name,
                                             'run-pipeline')
         # encode the verbose information for running the pipeline as a command
         # line argument
-        if VERBOSE:
+        if VERBOSE and 'check' not in job_name:
             f.write(f"\nsrun python {path_to_run_pipeline} {PATH_TO_GRIDS} "
                     f"{path_to_csv_file} {slurm_array} 1")
         else:

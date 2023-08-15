@@ -201,7 +201,7 @@ def calculate_extra_values(i, path_to_csv_file, verbose=False):
     # get values from csv file
     if 'path_to_grid' in df.keys():
         grid_path = df.loc[i,'path_to_grid']
-        if not os.path.isdir(grid_path):
+        if not os.path.isfile(grid_path):
             raise ValueError(f'{grid_path} not found!')
     else:
         raise ValueError(f'No path_to_grid in {path_to_csv_file}')
@@ -211,7 +211,7 @@ def calculate_extra_values(i, path_to_csv_file, verbose=False):
         raise ValueError(f'No path_to_processed_grid in {path_to_csv_file}')
     if 'path_to_grid_ORIGINAL' in df.keys():
         grid_ORIGINAL_path = df.loc[i,'path_to_grid_ORIGINAL']
-        if not os.path.isdir(grid_ORIGINAL_path):
+        if not os.path.isfile(grid_ORIGINAL_path):
             raise ValueError(f'{grid_ORIGINAL_path} not found!')
     else:
         raise ValueError(f'No path_to_grid_ORIGINAL in {path_to_csv_file}')
@@ -257,7 +257,7 @@ def train_interpolators(i, path_to_csv_file, verbose=False):
     # get values from csv file
     if 'path_to_grid' in df.keys():
         grid_path = df.loc[i,'path_to_grid']
-        if not os.path.isdir(grid_path):
+        if not os.path.isfile(grid_path):
             raise ValueError(f'{grid_path} not found!')
     else:
         raise ValueError(f'No path_to_grid in {path_to_csv_file}')
@@ -367,14 +367,12 @@ def export_dataset(i, path_to_csv_file, verbose=False):
     # get values from csv file
     if 'path_to_grid' in df.keys():
         grid_path = df.loc[i,'path_to_grid']
-        if not os.path.isdir(grid_path):
+        if not os.path.isfile(grid_path):
             raise ValueError(f'{grid_path} not found!')
     else:
         raise ValueError(f'No path_to_grid in {path_to_csv_file}')
     if 'export_path' in df.keys():
         export_path = df.loc[i,'export_path']
-        if not os.path.isdir(export_path):
-            raise ValueError(f'{export_path} not found!')
     else:
         raise ValueError(f'No export_path in {path_to_csv_file}')
     
@@ -561,14 +559,12 @@ def rerun(i, path_to_csv_file, verbose=False):
     # get values from csv file
     if 'path_to_grid' in df.keys():
         grid_path = df.loc[i,'path_to_grid']
-        if not os.path.isdir(grid_path):
+        if not os.path.isfile(grid_path):
             raise ValueError(f'{grid_path} not found!')
     else:
         raise ValueError(f'No path_to_grid in {path_to_csv_file}')
     if 'rerun_path' in df.keys():
         rerun_path = df.loc[i,'rerun_path']
-        if not os.path.isdir(rerun_path):
-            raise ValueError(f'{rerun_path} not found!')
     else:
         raise ValueError(f'No rerun_path in {path_to_csv_file}')
     if 'rerun_type' in df.keys():
@@ -811,7 +807,7 @@ def do_check(i, path_to_csv_file, verbose=False):
     # get values from csv file
     if 'path_to_grid' in df.keys():
         grid_path = df.loc[i,'path_to_grid']
-        if not os.path.isdir(grid_path):
+        if not os.path.isfile(grid_path):
             raise ValueError(f'{grid_path} not found!')
     else:
         raise ValueError(f'No path_to_grid in {path_to_csv_file}')
@@ -839,14 +835,14 @@ def do_check(i, path_to_csv_file, verbose=False):
         else:
             failure_rate_in_percent = 0.
         print(f'Failure rate: {failure_rate_in_percent}% in {grid_path}')
-    elif check_to_do=='CO_TYPE':
-        for quantity in grid.final_values.keys():
-            if (('S1_MODEL' in quantity) and ('CO_TYPE' in quantity)):
+    elif check_to_do=='CO_type':
+        for quantity in grid.final_values.dtype.names:
+            if (('S1_MODEL' in quantity) and ('CO_type' in quantity)):
                 count = Counter(grid.final_values[quantity])
                 print(f'{quantity}: {count} in {grid_path}')
-    elif check_to_do=='SN_TYPE':
-        for quantity in grid.final_values.keys():
-            if (('S1_MODEL' in quantity) and ('SN_TYPE' in quantity)):
+    elif check_to_do=='SN_type':
+        for quantity in grid.final_values.dtype.names:
+            if (('S1_MODEL' in quantity) and ('SN_type' in quantity)):
                 count = Counter(grid.final_values[quantity])
                 print(f'{quantity}: {count} in {grid_path}')
         #TODO: add more checks
