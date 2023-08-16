@@ -214,7 +214,7 @@ def post_process_grid(grid, index=None, star_2_CO=True, MODELS=MODELS,
                 EXTRA_COLUMNS['S%s_center_other' % (j+1)].append(c_o)
             else:
                 # fill everything with Nones
-                if IC == 'initial_MT':
+                if IC == 'initial_MT' or IC == 'not_converged':
                     EXTRA_COLUMNS['S%s_state' % (j+1)].append(None)
                 else:
                     # CO states are classified and used in mesa step
