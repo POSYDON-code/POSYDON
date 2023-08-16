@@ -639,7 +639,7 @@ def create_csv(GRID_TYPES=[],
                         elif 'step_3' in step_name:
                             grid_s = grid_slice+'_processed'
                         elif 'step_4' in step_name:
-                            grid_s = CONTROL_GRIDS[i]
+                            grid_s = CONTROL_GRIDS[l][i]
                         else:
                             grid_s = grid_slice
                         
