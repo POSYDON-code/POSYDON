@@ -856,6 +856,81 @@ for i in range(1, 11):
 PRE_SET_PLOTS = {
     'combined_TF12' : {
         'plot_dir_name' : 'TF12',
+        'term_flag' : 'combined_TF12'
+    },
+    'termination_flag_1' : {
+        'plot_dir_name' : 'TF1',
+        'zvar' : 'lg_mtransfer_rate',
+        'zmin' : -8,
+        'zmax' : -1
+    },
+    'termination_flag_2' : {
+        'plot_dir_name' : 'TF2',
+        'term_flag' : 'termination_flag_2'
+    },
+    'termination_flag_3' : {
+        'plot_dir_name' : 'TF3',
+        'term_flag' : 'termination_flag_3'
+    },
+    'termination_flag_4' : {
+        'plot_dir_name' : 'TF4',
+        'term_flag' : 'termination_flag_4'
+    },
+    'rl_relative_overflow_1' : {
+        'plot_dir_name' : 'debug_rl_1',
+        'zvar' : 'rl_relative_overflow_1',
+        'term_flag' : 'debug',
+        'zmin' : -0.5,
+        'zmax' : 0.5
+    },
+    'rl_relative_overflow_2' : {
+        'plot_dir_name' : 'debug_rl_2',
+        'zvar' : 'rl_relative_overflow_2',
+        'term_flag' : 'debug',
+        'zmin' : -0.5,
+        'zmax' : 0.5
+    },
+    'lg_mtransfer_rate' : {
+        'plot_dir_name' : 'debug_mt',
+        'zvar' : 'lg_mtransfer_rate',
+        'term_flag' : 'debug',
+        'zmin' : -8,
+        'zmax' : -1
+    },
+    # SN stuff
+    'S1_MODEL_DEFAULT_CO_type' : {
+        'zvar' : None,
+        'term_flag' : 'S1_MODEL01_CO_type'
+    },
+    'S1_MODEL_DEFAULT_SN_type' : {
+        'zvar' : None,
+        'term_flag' : 'S1_MODEL01_SN_type'
+    },
+    'S1_MODEL_DEFAULT_mass' : {
+        'zlog' : True,
+        'zmin' : 0.,
+        'zmax' : 2.
+    },
+    'S1_MODEL_DEFAULT_spin' : {
+        'zmin' : 0.,
+        'zmax' : 1.
+    },
+    'S1_MODEL_DEFAULT_m_disk_radiated' : {
+        'zmin' : 0.,
+        'zmax' : 3.
+    },
+    # interpolator stuff
+    'INTERP_ERROR_DEFAULT' : {
+        'term_flag' : None,
+        'zmin' : 0.,
+        'zmax' : 0.1
+    },
+}
+
+"""To remove:
+PRE_SET_PLOTS = {
+    'combined_TF12' : {
+        'plot_dir_name' : 'TF12',
         'zvar' : None,
         'term_flag' : 'combined_TF12',
         'cbar' : False,
@@ -1107,6 +1182,7 @@ PRE_SET_PLOTS = {
         'zmin' : 0.,
         'zmax' : 3.
     },
+    # interpolator stuff
     'interp_err_star_1_mass' : {
         'plot_dir_name' : 'interp_err/star_1_mass',
         'zvar' : 'star_1_mass',
@@ -1126,6 +1202,7 @@ PRE_SET_PLOTS = {
         'zmax' : 0.1
     },
 }
+"""
 
 """
     # utility functions

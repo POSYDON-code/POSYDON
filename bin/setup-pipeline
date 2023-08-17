@@ -81,7 +81,47 @@ PLOTTING_SETS = {
                              'S1_MODEL10_CO_type', 'S1_MODEL10_SN_type',\
                              'S1_MODEL10_mass', 'S1_MODEL10_spin',\
                              'S1_MODEL10_m_disk_radiated'],
-    'PLOT_AFTER_TRAINING' : ['interp_err_star_1_mass', 'interp_err_period_days']
+    'PLOT_AFTER_TRAINING' : ['INTERP_ERROR_age', 'INTERP_ERROR_star_1_mass',\
+                             'INTERP_ERROR_star_2_mass',\
+                             'INTERP_ERROR_period_days',\
+                             'INTERP_ERROR_S1_co_core_mass',\
+                             'INTERP_ERROR_S1_co_core_radius',\
+                             'INTERP_ERROR_S1_he_core_mass',\
+                             'INTERP_ERROR_S1_he_core_radius',\
+                             'INTERP_ERROR_S1_center_h1',\
+                             'INTERP_ERROR_S1_center_he4',\
+                             'INTERP_ERROR_S1_surface_h1',\
+                             'INTERP_ERROR_S1_surface_he4',\
+                             'INTERP_ERROR_S1_surf_avg_omega_div_omega_crit',\
+                             'INTERP_ERROR_S1_log_Teff',\
+                             'INTERP_ERROR_S1_log_L', 'INTERP_ERROR_S1_log_R',\
+                             'INTERP_ERROR_S1_spin_parameter',\
+                             'INTERP_ERROR_S1_lambda_CE_10cent',\
+                             'INTERP_ERROR_S2_co_core_mass',\
+                             'INTERP_ERROR_S2_co_core_radius',\
+                             'INTERP_ERROR_S2_he_core_mass',\
+                             'INTERP_ERROR_S2_he_core_radius',\
+                             'INTERP_ERROR_S2_center_h1',\
+                             'INTERP_ERROR_S2_center_he4',\
+                             'INTERP_ERROR_S2_surface_h1',\
+                             'INTERP_ERROR_S2_surface_he4',\
+                             'INTERP_ERROR_S2_surf_avg_omega_div_omega_crit',\
+                             'INTERP_ERROR_S2_log_Teff',\
+                             'INTERP_ERROR_S2_log_L', 'INTERP_ERROR_S2_log_R',\
+                             'INTERP_ERROR_S2_spin_parameter',\
+                             'INTERP_ERROR_S2_lambda_CE_10cent',\
+                             'INTERP_ERROR_S1_MODEL01_mass',\
+                             'INTERP_ERROR_S1_MODEL01_spin',\
+                             'INTERP_ERROR_S1_MODEL01_m_disk_radiated',\
+                             'INTERP_ERROR_S1_MODEL05_mass',\
+                             'INTERP_ERROR_S1_MODEL05_spin',\
+                             'INTERP_ERROR_S1_MODEL05_m_disk_radiated',\
+                             'INTERP_ERROR_S1_MODEL06_mass',\
+                             'INTERP_ERROR_S1_MODEL06_spin',\
+                             'INTERP_ERROR_S1_MODEL06_m_disk_radiated',\
+                             'INTERP_ERROR_S1_MODEL10_mass',\
+                             'INTERP_ERROR_S1_MODEL10_spin',\
+                             'INTERP_ERROR_S1_MODEL10_m_disk_radiated']
 }
 # predefined checking sets
 CHECKING_SETS = {
@@ -660,8 +700,10 @@ def create_csv(GRID_TYPES=[],
                                 continue
                             # loop over interpolation methods and plots
                             for method in INTERPOLATION_METHODS:
-                                for to_plot in CREATE_PLOTS:
-                                    plot_quantities.append(to_plot)
+#                                for to_plot in CREATE_PLOTS:
+#                                    plot_quantities.append(to_plot)
+                                if len(CREATE_PLOTS)>0:
+                                    plot_quantities.append(CREATE_PLOTS)
                                     grids.append(os.path.join(PATH_TO_GRIDS,
                                                   grid_type, VERSION,
                                                   metallicity, compression,
@@ -680,8 +722,10 @@ def create_csv(GRID_TYPES=[],
                         elif 'check' in step_name: # CHECKS
                             # loop over interpolation methods and checks
                             for method in INTERPOLATION_METHODS:
-                                for to_check in DO_CHECKS:
-                                    checks.append(to_check)
+#                                for to_check in DO_CHECKS:
+#                                    checks.append(to_check)
+                                if len(DO_CHECKS)>0:
+                                    checks.append(DO_CHECKS)
                                     grids.append(os.path.join(PATH_TO_GRIDS,
                                                   grid_type, VERSION,
                                                   metallicity, compression,
@@ -712,12 +756,12 @@ def create_csv(GRID_TYPES=[],
             df['rerun_path'] = rerun_path
             df['rerun_type'] = rerun_type
         elif 'plot' in step_name:
-            df['quantity_to_plot'] = plot_quantities
+            df['quantities_to_plot'] = plot_quantities
             df['path_to_plot'] = plot_dirs
             if len(interpolators)>0:
                 df['path_to_interpolator'] = interpolators
         elif 'check' in step_name:
-            df['check_to_do'] = checks
+            df['checks_to_do'] = checks
             if len(interpolators)>0:
                 df['path_to_interpolator'] = interpolators
         # drop lines when grid directories/files are not found
