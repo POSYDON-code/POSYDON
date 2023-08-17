@@ -132,14 +132,16 @@ def create_grid_slice(i, path_to_csv_file, verbose=False, overwrite_psygrid=True
                                     create_missing_directories=True)
     
     # get compression dependent attributes
-    if compression.split('_')[0] in COMPRESSIONS.keys():
-        history_DS_error = COMPRESSIONS[compression]['history_DS_error']
-        profile_DS_error = COMPRESSIONS[compression]['profile_DS_error']
-        profile_DS_interval = COMPRESSIONS[compression]['profile_DS_interval']
-        history_DS_exclude = COMPRESSIONS[compression]['history_DS_exclude']
-        profile_DS_exclude = COMPRESSIONS[compression]['profile_DS_exclude']
+    pure_compression = compression.split('_')[0]
+    if pure_compression in COMPRESSIONS.keys():
+        history_DS_error = COMPRESSIONS[pure_compression]['history_DS_error']
+        profile_DS_error = COMPRESSIONS[pure_compression]['profile_DS_error']
+        profile_DS_interval = COMPRESSIONS[pure_compression]['profile_DS_interval']
+        history_DS_exclude = COMPRESSIONS[pure_compression]['history_DS_exclude']
+        profile_DS_exclude = COMPRESSIONS[pure_compression]['profile_DS_exclude']
     else:
-        raise ValueError(f'compression = {compression} not supported!')
+        raise ValueError(f'pure_compression = {pure_compression} not '
+                         f'supported! (compression={compression})')
     
     if ('CO' in grid_path) and ('RLO' in compression):
         start_at_RLO = True
