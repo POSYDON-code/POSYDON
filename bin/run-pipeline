@@ -60,6 +60,7 @@ __authors__ = [
 
 import os
 import sys
+import ast
 import time
 import shutil
 import pickle
@@ -622,6 +623,16 @@ def plot_grid(i, path_to_csv_file, verbose=False):
         }
     }
     
+    def _range(x_min, x_max, x_n, log=False):
+        if log:
+            vars = 10**np.linspace(np.log10(x_min),np.log10(x_max), x_n)
+            vars_edges = 10**((np.log10(vars[1:])+np.log10(vars)[:-1])*0.5)
+        else:
+            vars = np.linspace(x_min,x_max,x_n)
+            vars_edges = (vars[1:]+vars[:-1])*0.5
+        vars_edges = [0.]+vars_edges.tolist()+[float("inf")]
+        return vars.tolist(), vars_edges
+    
     # read csv file
     if os.path.exists(path_to_csv_file):
         df = pd.read_csv(path_to_csv_file)
@@ -642,165 +653,187 @@ def plot_grid(i, path_to_csv_file, verbose=False):
         check_dirs.extend([plot_path, plot_dir])
     else:
         raise ValueError(f'No path_to_plot in {path_to_csv_file}')
-    if 'quantity_to_plot' in df.keys():
-        quantity_to_plot = df.loc[i,'quantity_to_plot']
+    if 'quantities_to_plot' in df.keys():
+        quantities_to_plot = ast.literal_eval(df.loc[i,'quantities_to_plot'])
     else:
-        raise ValueError(f'No quantity_to_plot in {path_to_csv_file}')
+        raise ValueError(f'No quantities_to_plot in {path_to_csv_file}')
     if 'path_to_interpolator' in df.keys():
         path_to_interpolator = df.loc[i,'path_to_interpolator']
     else:
         path_to_interpolator = ''
-
-    if verbose:
-        print(f'plotting: {quantity_to_plot} from {grid_path} to {plot_dir}')
-
-    # load grid
-    grid = PSyGrid(verbose=verbose)
-    grid.load(grid_path)
-    # load interpolator and evaluate interp errors
-    if ('err' in quantity_to_plot 
-        and path_to_interpolator != ''):
-        model = IFInterpolator()
-        model.load(path_to_interpolator)
-        evalIFerr = EvaluateIFInterpolator(model, grid)
-
-    # get attributes for plotting
-    if quantity_to_plot in PRE_SET_PLOTS:
-        plot_attributes = PRE_SET_PLOTS[quantity_to_plot]
-    elif isinstance(quantity_to_plot, str):
-        #TODO: check if quantity_to_plot is plotable as Z value
-        if quantity_to_plot[:3]=='lg_':
-            plot_attributes = {
-                'plot_dir_name' : quantity_to_plot[3:],
-                'zvar' : quantity_to_plot[3:],
-                'term_flag' : 'termination_flag_1',
-                'cbar' : True,
-                'zlog' : True,
-                'zmin' : None,
-                'zmax' : None
-            }
-        else:
-            plot_attributes = {
-                'plot_dir_name' : quantity_to_plot,
-                'zvar' : quantity_to_plot,
-                'term_flag' : 'termination_flag_1',
-                'cbar' : True,
-                'zlog' : False,
-                'zmin' : None,
-                'zmax' : None
-            }
-    else:
-        raise TypeError(f'{quantity_to_plot} should be a string!')
-
+    
     # check that plots/ directories exist
-    name = plot_attributes['plot_dir_name']
-    check_dirs.append(os.path.join(plot_dir, name))
     for dir_ in check_dirs:
         if not os.path.isdir(dir_):
             os.makedirs(dir_)
-
-    def _range(x_min, x_max, x_n, log=False):
-        if log:
-            vars = 10**np.linspace(np.log10(x_min),np.log10(x_max), x_n)
-            vars_edges = 10**((np.log10(vars[1:])+np.log10(vars)[:-1])*0.5)
+        
+    # load grid
+    grid = PSyGrid(verbose=verbose)
+    grid.load(grid_path)
+    
+    for quantity_to_plot in quantities_to_plot:
+        if verbose:
+            print(f'plotting: {quantity_to_plot} from {grid_path} to '
+                  f'{plot_dir}')
+        
+        # load interpolator and evaluate interp errors
+        if ('INTERP_ERROR' in quantity_to_plot 
+            and path_to_interpolator != ''):
+            model = IFInterpolator()
+            model.load(path_to_interpolator)
+            evalIFerr = EvaluateIFInterpolator(model, grid)
+            interp_error = True
         else:
-            vars = np.linspace(x_min,x_max,x_n)
-            vars_edges = (vars[1:]+vars[:-1])*0.5
-        vars_edges = [0.]+vars_edges.tolist()+[float("inf")]
-        return vars.tolist(), vars_edges
+            interp_error = False
         
-    if ('CO-HeMS' in grid_path or 'CO-HMS' in grid_path):
-        # both grids are sampled in the same way with respect to the compact
-        # object mass
-        smpl = grid_sample['CO-HeMS']
-        vars, vars_edges = _range(smpl['mmin'], smpl['mmax'], smpl['nbin'], log=smpl['log'])
-        fname = 'grid_m_%1.2f.png'
-        title = '$m_\mathrm{CO}=%1.2f\,M_\odot$'
-        slice_3D_var_str='star_2_mass'
-    elif 'HMS-HMS' in grid_path:        
-        # mass ratio slices
-        smpl = grid_sample['HMS-HMS']
-        vars, vars_edges = _range(smpl['qmin'], smpl['qmax'], smpl['nbin'], log=smpl['log'])
-        vars[-1] = 0.99 # we replaced q=1 with q=0.99 in mesa runs
-        fname = 'grid_q_%1.2f.png'
-        title = '$q=%1.2f$'
-        slice_3D_var_str='mass_ratio' 
-    else:
-        raise ValueError('Grid type not supported!')
-        
-    # loop over all grid slices and all cols
-    for k, var in enumerate(vars):
-        slice_3D_var_range = (vars_edges[k],vars_edges[k+1])
-        # TODO: skip plotting slice if there are no data
-        try:
-            # default plot properties
-            PLOT_PROPERTIES_DEFAULT = {
-                'figsize' : (4,3.5),
-                'path_to_file' : os.path.join(plot_dir, name)+"/",
-                'show_fig' : False,
-                'fname' : fname%var,
-                'title' : title%var,
-                'log10_x' : True,
-                'log10_y' : True,
-                'legend2D' : {'bbox_to_anchor' : (1.03, 0.5)}
-            }
-            # default plot properties with colorbar
-            PLOT_PROPERTIES_DEFAULT_COLBAR = PLOT_PROPERTIES_DEFAULT.copy()
-            PLOT_PROPERTIES_DEFAULT_COLBAR['figsize'] = (4,5)
-            PLOT_PROPERTIES_DEFAULT_COLBAR['colorbar'] = {'pad': 0.12}
-        
-            _dname = quantity_to_plot
-            _dict = plot_attributes
-            if _dict['cbar']:
-                PLOT_PROPERTIES = PLOT_PROPERTIES_DEFAULT_COLBAR.copy()
-                PLOT_PROPERTIES['log10_z'] = _dict['zlog']
-                PLOT_PROPERTIES['zmin'] = _dict['zmin']
-                PLOT_PROPERTIES['zmax'] = _dict['zmax']
-                if 'interp_err' in _dname:
-                    PLOT_PROPERTIES['colorbar']['label'] = _dict['zvar']
+        # get attributes for plotting
+        plot_attributes = {
+            'plot_dir_name' : 'default',
+            'zvar' : None,
+            'term_flag' : 'termination_flag_1',
+            'zlog' : False,
+            'zmin' : None,
+            'zmax' : None
+        }
+        if quantity_to_plot in PRE_SET_PLOTS:
+            for attr in PRE_SET_PLOTS[quantity_to_plot].keys():
+                plot_attributes[attr] = PRE_SET_PLOTS[quantity_to_plot][attr]
+        elif isinstance(quantity_to_plot, str):
+            #TODO: check if quantity_to_plot is plotable as Z value
+            if 'INTERP_ERROR_' in quantity_to_plot:
+                short_quantity = quantity_to_plot.split('INTERP_ERROR_')[-1]
+                set_name = 'INTERP_ERROR_DEFAULT'
+                if set_name in PRE_SET_PLOTS:
+                    plot_attributes['plot_dir_name'] = os.path.join(\
+                                                        'INTERP_ERROR',
+                                                        short_quantity)
+                    plot_attributes['zvar'] = short_quantity
+                    for attr in PRE_SET_PLOTS[set_name].keys():
+                        plot_attributes[attr] = PRE_SET_PLOTS[set_name][attr]
+                else:
+                    print(f'Warning: {set_name} not in PRE_SET_PLOTS.')
+            elif '_MODEL' in quantity_to_plot:
+                short_quantity = quantity_to_plot.split('_MODEL')[-1]
+                short_quantity = short_quantity[short_quantity.find('_')+1:]
+                model_name = quantity_to_plot.split('_'+short_quantity)[0]
+                set_name = quantity_to_plot.split('_MODEL')[0] +\
+                           '_MODEL_DEFAULT_' + short_quantity
+                if set_name in PRE_SET_PLOTS:
+                    plot_attributes['plot_dir_name'] = os.path.join(model_name,
+                                                                short_quantity)
+                    plot_attributes['zvar'] = quantity_to_plot
+                    for attr in PRE_SET_PLOTS[set_name].keys():
+                        plot_attributes[attr] = PRE_SET_PLOTS[set_name][attr]
+                else:
+                    print(f'Warning: {set_name} not in PRE_SET_PLOTS.')
+            elif quantity_to_plot[:6]=='LOG10_':
+                short_quantity = quantity_to_plot[6:]
+                plot_attributes['plot_dir_name'] = short_quantity
+                plot_attributes['zvar'] = short_quantity
+                plot_attributes['zlog'] = True
             else:
-                PLOT_PROPERTIES = PLOT_PROPERTIES_DEFAULT.copy()
+                plot_attributes['plot_dir_name'] = quantity_to_plot
+                plot_attributes['zvar'] = quantity_to_plot
+        else:
+            raise TypeError(f'{quantity_to_plot} should be a string!')
+        
+        # check that plots/ directories exist
+        name = plot_attributes['plot_dir_name']
+        dir_ = os.path.join(plot_dir, name)
+        if not os.path.isdir(dir_):
+            os.makedirs(dir_)
+        
+        if ('CO-' in grid_path):
+            # both grids are sampled in the same way with respect to the
+            # compact object mass
+            if 'CO-HeMS' in grid_path:
+                smpl = grid_sample['CO-HeMS']
+            else:
+                smpl = grid_sample['CO-HMS']
+            vars, vars_edges = _range(smpl['mmin'], smpl['mmax'], smpl['nbin'],
+                                      log=smpl['log'])
+            fname = 'grid_m_%1.2f.png'
+            title = '$m_\mathrm{CO}=%1.2f\,M_\odot$'
+            slice_3D_var_str = 'star_2_mass'
+        elif 'HMS-HMS' in grid_path:        
+            # mass ratio slices
+            smpl = grid_sample['HMS-HMS']
+            vars, vars_edges = _range(smpl['qmin'], smpl['qmax'], smpl['nbin'],
+                                      log=smpl['log'])
+            vars[-1] = 0.99 # we replaced q=1 with q=0.99 in mesa runs
+            fname = 'grid_q_%1.2f.png'
+            title = '$q=%1.2f$'
+            slice_3D_var_str = 'mass_ratio' 
+        else:
+            raise ValueError('Grid type not supported!')
+        
+        # loop over all grid slices
+        for k, var in enumerate(vars):
+            slice_3D_var_range = (vars_edges[k],vars_edges[k+1])
+            # TODO: skip plotting slice if there are no data
+            try:
+                # default plot properties
+                PLOT_PROPERTIES_DEFAULT = {
+                    'figsize' : (4,3.5),
+                    'path_to_file' : os.path.join(plot_dir, name)+"/",
+                    'show_fig' : False,
+                    'fname' : fname%var,
+                    'title' : title%var,
+                    'log10_x' : True,
+                    'log10_y' : True,
+                    'legend2D' : {'bbox_to_anchor' : (1.03, 0.5)}
+                }
             
-            if 'interp_err' in _dname:
-                # TODO: add violin plots
-                # initial/final error slices
-                evalIFerr.plot2D(_dict['zvar'].replace('interp_err_',''), 
-                                 slice_3D_var_str, 
-                                 slice_3D_var_range, 
-                                 PLOT_PROPERTIES)
-                # initial/final error all points in one plot
-                if k == 0:
-                    PLOT_PROPERTIES_ALL = PLOT_PROPERTIES.copy()
-                    PLOT_PROPERTIES_ALL['title'] = title.replace('=%1.2f', ' all ')
-                    PLOT_PROPERTIES_ALL['fname'] = fname.replace('%1.2f', 'all')
-                    evalIFerr.plot2D(_dict['zvar'], 
-                                     slice_3D_var_str, 
-                                     (vars_edges[0], vars_edges[-1]), 
-                                     PLOT_PROPERTIES_ALL)
-            elif 'class_err' in _dname:
-                if k == 0:
-                    evalIFerr.confusion_matrix(_dict['zvar'])
-            elif 'violin' in _dname:
-                if k == 0:
-                    evalIFerr.violin_plots("relative", keys=[_dict['zvar']])
-            else:
-                grid.plot2D('star_1_mass', 'period_days', _dict['zvar'],
-                            termination_flag=_dict['term_flag'],
-                            grid_3D=True, slice_3D_var_str=slice_3D_var_str,
-                            slice_3D_var_range=slice_3D_var_range,
-                            verbose=False, **PLOT_PROPERTIES)
-
-        except Exception as e:
-            print('FAILED TO PLOT '+title%var)
-            print('')
-            print(e)
-            continue
+                PLOT_PROPERTIES = PLOT_PROPERTIES_DEFAULT.copy()
+                if plot_attributes['zvar'] is not None:
+                    # default plot properties with colorbar
+                    PLOT_PROPERTIES['figsize'] = (4,5)
+                    PLOT_PROPERTIES['colorbar'] = {'pad': 0.12}
+                    PLOT_PROPERTIES['log10_z'] = plot_attributes['zlog']
+                    PLOT_PROPERTIES['zmin'] = plot_attributes['zmin']
+                    PLOT_PROPERTIES['zmax'] = plot_attributes['zmax']
+                    if 'INTERP_ERROR' in quantity_to_plot: # why only for INTERP_ERROR?
+                        PLOT_PROPERTIES['colorbar']['label'] = quantity_to_plot
+                
+                if 'INTERP_ERROR' in quantity_to_plot:
+                    # initial/final error slices
+                    evalIFerr.plot2D(plot_attributes['zvar'], slice_3D_var_str,
+                                     slice_3D_var_range, PLOT_PROPERTIES)
+                    # initial/final error all points in one plot
+                    if k == 0:
+                        PLOT_PROPERTIES_ALL = PLOT_PROPERTIES.copy()
+                        PLOT_PROPERTIES_ALL['title'] = title.replace('=%1.2f', ' all ')
+                        PLOT_PROPERTIES_ALL['fname'] = fname.replace('%1.2f', 'all')
+                        evalIFerr.plot2D(plot_attributes['zvar'], 
+                                         slice_3D_var_str, 
+                                         (vars_edges[0], vars_edges[-1]), 
+                                         PLOT_PROPERTIES_ALL)
+                elif 'CLASS_ERROR' in quantity_to_plot:
+                    # TODO: add class error plots
+                    if k == 0:
+                        evalIFerr.confusion_matrix(plot_attributes['zvar'])
+                elif 'VIOLIN' in quantity_to_plot:
+                    # TODO: add violin plots
+                    if k == 0:
+                        evalIFerr.violin_plots("relative", keys=[plot_attributes['zvar']])
+                else:
+                    grid.plot2D('star_1_mass', 'period_days', plot_attributes['zvar'],
+                                termination_flag=plot_attributes['term_flag'],
+                                grid_3D=True, slice_3D_var_str=slice_3D_var_str,
+                                slice_3D_var_range=slice_3D_var_range,
+                                verbose=False, **PLOT_PROPERTIES)
+            
+            except Exception as e:
+                print('FAILED TO PLOT '+title%var)
+                print('')
+                print(e)
+                continue
 
 
 def do_check(i, path_to_csv_file, verbose=False):
     """Perform a check on a grid."""
     
-    # read csv fil d
+    # read csv file
     if os.path.exists(path_to_csv_file):
         df = pd.read_csv(path_to_csv_file)
     else:
@@ -813,10 +846,10 @@ def do_check(i, path_to_csv_file, verbose=False):
             raise ValueError(f'{grid_path} not found!')
     else:
         raise ValueError(f'No path_to_grid in {path_to_csv_file}')
-    if 'check_to_do' in df.keys():
-        check_to_do = df.loc[i,'check_to_do']
+    if 'checks_to_do' in df.keys():
+        checks_to_do = ast.literal_eval(df.loc[i,'checks_to_do'])
     else:
-        raise ValueError(f'No check_to_do in {path_to_csv_file}')
+        raise ValueError(f'No checks_to_do in {path_to_csv_file}')
     if 'path_to_interpolator' in df.keys():
         path_to_interpolator = df.loc[i,'path_to_interpolator']
     else:
@@ -826,30 +859,31 @@ def do_check(i, path_to_csv_file, verbose=False):
     grid = PSyGrid(verbose=verbose)
     grid.load(grid_path)
     
-    # do the check
-    if check_to_do=='failure_rate':
-        count = Counter(grid.final_values['interpolation_class'])
-        n = 0.
-        for key in count.keys():
-            n += count[key]
-        if 'not_converged' in count.keys():
-            failure_rate_in_percent = round(count['not_converged']/n*100,2)
+    # do the checks
+    for check_to_do in checks_to_do:
+        if check_to_do=='failure_rate':
+            count = Counter(grid.final_values['interpolation_class'])
+            n = 0.
+            for key in count.keys():
+                n += count[key]
+            if 'not_converged' in count.keys():
+                failure_rate_in_percent = round(count['not_converged']/n*100,2)
+            else:
+                failure_rate_in_percent = 0.
+            print(f'Failure rate: {failure_rate_in_percent}% in {grid_path}')
+        elif check_to_do=='CO_type':
+            for quantity in grid.final_values.dtype.names:
+                if (('S1_MODEL' in quantity) and ('CO_type' in quantity)):
+                    count = Counter(grid.final_values[quantity])
+                    print(f'{quantity}: {count} in {grid_path}')
+        elif check_to_do=='SN_type':
+            for quantity in grid.final_values.dtype.names:
+                if (('S1_MODEL' in quantity) and ('SN_type' in quantity)):
+                    count = Counter(grid.final_values[quantity])
+                    print(f'{quantity}: {count} in {grid_path}')
+            #TODO: add more checks
         else:
-            failure_rate_in_percent = 0.
-        print(f'Failure rate: {failure_rate_in_percent}% in {grid_path}')
-    elif check_to_do=='CO_type':
-        for quantity in grid.final_values.dtype.names:
-            if (('S1_MODEL' in quantity) and ('CO_type' in quantity)):
-                count = Counter(grid.final_values[quantity])
-                print(f'{quantity}: {count} in {grid_path}')
-    elif check_to_do=='SN_type':
-        for quantity in grid.final_values.dtype.names:
-            if (('S1_MODEL' in quantity) and ('SN_type' in quantity)):
-                count = Counter(grid.final_values[quantity])
-                print(f'{quantity}: {count} in {grid_path}')
-        #TODO: add more checks
-    else:
-        print(f'Do not know how to do {check_to_do} for {grid_path}!')
+            print(f'Do not know how to do {check_to_do} for {grid_path}!')
 
 
 if __name__ == '__main__':
