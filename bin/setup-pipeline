@@ -666,11 +666,15 @@ def create_csv(GRID_TYPES=[],
                                                   'interpolation_objects',
                                                   'IF_'+method+RLO+'.pkl'))
                     elif step_name == 'step_9': # EXPORT_DATASET
+                        if "RLO" in grid_type:
+                            export_dir = grid_type
+                        else:
+                            export_dir = grid_type+RLO
                         grids.append(os.path.join(PATH_TO_GRIDS,
                                       grid_type, VERSION, metallicity,
                                       compression, grid_slice+'.h5'))
                         export_path.append(os.path.join(PATH, 'POSYDON_data',
-                                            grid_type+RLO, metallicity+'.h5'))
+                                            export_dir, metallicity+'.h5'))
                         for method in [['linear','linear3c_kNN'],
                                         ['1NN','1NN_1NN']]:
                             grids.append(os.path.join(PATH_TO_GRIDS, grid_type,
@@ -678,7 +682,7 @@ def create_csv(GRID_TYPES=[],
                                           'interpolation_objects',
                                           'IF_'+method[0]+RLO+'.pkl'))
                             export_path.append(os.path.join(PATH,
-                                                'POSYDON_data', grid_type+RLO,
+                                                'POSYDON_data', export_dir,
                                                 'interpolators', method[1],
                                                 metallicity+'.pkl'))
                     elif step_name == 'rerun': # RERUN
