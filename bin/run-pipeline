@@ -744,6 +744,9 @@ def plot_grid(i, path_to_csv_file, verbose=False):
             os.makedirs(dir_)
         
         if ('CO-' in grid_path):
+            # skip plotting CO properties
+            if 'S2_' in quantity_to_plot:
+                continue
             # both grids are sampled in the same way with respect to the
             # compact object mass
             if 'CO-HeMS' in grid_path:
