@@ -792,7 +792,7 @@ def plot_grid(i, path_to_csv_file, verbose=False):
                     PLOT_PROPERTIES['log10_z'] = plot_attributes['zlog']
                     PLOT_PROPERTIES['zmin'] = plot_attributes['zmin']
                     PLOT_PROPERTIES['zmax'] = plot_attributes['zmax']
-                    if 'INTERP_ERROR' in quantity_to_plot: # why only for INTERP_ERROR?
+                    if 'INTERP_ERROR' in quantity_to_plot:
                         PLOT_PROPERTIES['colorbar']['label'] = quantity_to_plot
                 
                 if 'INTERP_ERROR' in quantity_to_plot:
@@ -802,7 +802,7 @@ def plot_grid(i, path_to_csv_file, verbose=False):
                     # initial/final error all points in one plot
                     if k == 0:
                         PLOT_PROPERTIES_ALL = PLOT_PROPERTIES.copy()
-                        PLOT_PROPERTIES_ALL['title'] = title.replace('=%1.2f', ' all ')
+                        PLOT_PROPERTIES_ALL['title'] = title.replace('=%1.2f', '$ all')
                         PLOT_PROPERTIES_ALL['fname'] = fname.replace('%1.2f', 'all')
                         evalIFerr.plot2D(plot_attributes['zvar'], 
                                          slice_3D_var_str, 

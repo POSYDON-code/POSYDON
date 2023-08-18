@@ -1122,7 +1122,17 @@ class plot2D(object):
         
         """
         if self.colorbar["label"] is not None:
-            label = self.colorbar["label"]
+            z_var_str = self.colorbar["label"]         
+            z_var_str = z_var_str.replace('INTERP_ERROR_', '')
+            z_var_str = z_var_str.replace('CLASS_ERROR_', '')
+            z_var_str = z_var_str.replace('VIOLIN_', '')
+            if z_var_str in DEFAULT_LABELS.keys():
+                if self.log10_z:
+                    label = DEFAULT_LABELS[z_var_str][1]
+                else:
+                    label = DEFAULT_LABELS[z_var_str][0]
+            else:
+                label = self.colorbar["label"]
         elif isinstance(self.z_var_str, str):
             z_var_str = self.z_var_str.replace('S1_', '').replace('S2_', '')
             if z_var_str in DEFAULT_LABELS.keys():

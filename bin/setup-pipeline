@@ -72,12 +72,30 @@ PLOTTING_SETS = {
     'PLOT_AFTER_EXTRA'    : ['S1_MODEL01_CO_type', 'S1_MODEL01_SN_type',\
                              'S1_MODEL01_mass', 'S1_MODEL01_spin',\
                              'S1_MODEL01_m_disk_radiated',
+                             'S1_MODEL02_CO_type', 'S1_MODEL02_SN_type',\
+                             'S1_MODEL02_mass', 'S1_MODEL02_spin',\
+                             'S1_MODEL02_m_disk_radiated',
+                             'S1_MODEL03_CO_type', 'S1_MODEL03_SN_type',\
+                             'S1_MODEL03_mass', 'S1_MODEL03_spin',\
+                             'S1_MODEL03_m_disk_radiated',
+                             'S1_MODEL04_CO_type', 'S1_MODEL04_SN_type',\
+                             'S1_MODEL04_mass', 'S1_MODEL04_spin',\
+                             'S1_MODEL04_m_disk_radiated',
                              'S1_MODEL05_CO_type', 'S1_MODEL05_SN_type',\
                              'S1_MODEL05_mass', 'S1_MODEL05_spin',\
                              'S1_MODEL05_m_disk_radiated',
                              'S1_MODEL06_CO_type', 'S1_MODEL06_SN_type',\
                              'S1_MODEL06_mass', 'S1_MODEL06_spin',\
                              'S1_MODEL06_m_disk_radiated',
+                             'S1_MODEL07_CO_type', 'S1_MODEL07_SN_type',\
+                             'S1_MODEL07_mass', 'S1_MODEL07_spin',\
+                             'S1_MODEL07_m_disk_radiated',
+                             'S1_MODEL08_CO_type', 'S1_MODEL08_SN_type',\
+                             'S1_MODEL08_mass', 'S1_MODEL08_spin',\
+                             'S1_MODEL08_m_disk_radiated',
+                             'S1_MODEL09_CO_type', 'S1_MODEL09_SN_type',\
+                             'S1_MODEL09_mass', 'S1_MODEL09_spin',\
+                             'S1_MODEL09_m_disk_radiated',
                              'S1_MODEL10_CO_type', 'S1_MODEL10_SN_type',\
                              'S1_MODEL10_mass', 'S1_MODEL10_spin',\
                              'S1_MODEL10_m_disk_radiated'],
