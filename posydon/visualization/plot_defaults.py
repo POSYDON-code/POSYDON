@@ -607,12 +607,6 @@ DEFAULT_LABELS = {
     # history1/history2
     'star_age':
         [r'$t \, [\mathrm{yr}]$', r'$\log_{10}(t / \mathrm{yr})$'],
-    'star_1_mass':
-        [r'$M_\mathrm{\star,1} \, [M_\odot]$',
-         r'$\log_{10}(M_\mathrm{\star,1} / M_\odot)$'],
-    'star_2_mass':
-        [r'$M_\mathrm{\star,2} \, [M_\odot]$',
-         r'$\log_{10}(M_\mathrm{\star,2} / M_\odot)$'],
     'star_mass':
         [r'$M_\mathrm{\star} \, [M_\odot]$',
          r'$\log_{10}(M_\mathrm{\star} / M_\odot)$'],
