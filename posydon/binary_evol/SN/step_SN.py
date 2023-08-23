@@ -523,7 +523,8 @@ class StepSN(object):
                                         "m_disk_accreted ", "m_disk_radiated"]:
                             setattr(star, key, None)
                     
-                    star.log_R = np.log10(CO_radius(star.mass, star.state))
+                    if getattr(star, 'SN_type') != 'PISN':
+                        star.log_R = np.log10(CO_radius(star.mass, star.state))
                     
                     return
 

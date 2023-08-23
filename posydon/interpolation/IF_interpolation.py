@@ -1109,7 +1109,8 @@ class MC_Interpolator:
             which = np.zeros_like(zpred, dtype=bool)
             for j in range(len(self.classes[i])):
                 which += zpred == self.classes[i][j]
-            Ypred[which, :] = self.interpolators[i].predict(Xt[which, :])
+            if which.any():
+                Ypred[which, :] = self.interpolators[i].predict(Xt[which, :])
         return Ypred
 
 
