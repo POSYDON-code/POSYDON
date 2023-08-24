@@ -237,12 +237,15 @@ class IFInterpolator:
                             f"than one set of out_keys)")
                     else:
                         out_keys.append(key)
+        
 
     def train(self):
         """Train the interpolator(s) on the PSyGrid used for construction."""
         for interpolator in self.interpolator_parameters:
             self.interpolators.append(BaseIFInterpolator(grid=self.grid,
                                                          **interpolator))
+
+        self.interp_in_q = self.interpolators[0].interp_in_q
 
     def evaluate(self, binary, sanitization_verbose=False):
         """Get the output vector approximation.
@@ -272,6 +275,58 @@ class IFInterpolator:
 
         return ynums, ycats
 
+
+    def test_interpolator(self, initial_values, sanitization_verbose = False):
+        """ Method that can take in a 2-D numpy array for more efficient use of the interpolator
+
+        Parameters
+        ----------
+        initial_values : numpy array
+            A numpy array containing the in-key values of the binaries to be evolved 
+
+        Return
+        ------
+        Interpolated values
+        """
+        new_values = np.array(initial_values, copy = True)
+
+        if self.interp_in_q:
+            new_values.T[1] = new_values.T[1] / new_values.T[0]
+
+        final_values = []
+
+        for interpolator in self.interpolators:
+            final_values.append(interpolator.test_interpolator(new_values).T)
+
+        return np.concatenate(final_values).T
+
+    def test_classifiers(self, initial_values):
+        """ Method that can take in a 2-D numpy array for more efficient use of classifiers
+
+        Parameters
+        ----------
+        initial_values : numpy array
+            A numpy array containing the in-key values of the binaries to be classified 
+
+        Return
+        ------
+        Classified values
+        """
+        new_values = np.array(initial_values, copy = True)
+
+        if self.interp_in_q:
+            new_values.T[1] = new_values.T[1] / new_values.T[0]
+
+        classes = {}
+
+        for interpolator in self.interpolators:
+
+            classes = {**classes, **interpolator.test_classifiers(new_values)}
+            
+        return classes
+
+
+
     def load(self, filename):
         """Load a saved IFInterpolator from a .pkl file.
 
@@ -283,6 +338,8 @@ class IFInterpolator:
         """
         with open(filename, 'rb') as f:
             self.interpolators = pickle.load(f)
+
+        self.interp_in_q = self.interpolators[0].interp_in_q
 
     def save(self, filename):
         """Save the interpolator to a .pkl file.
