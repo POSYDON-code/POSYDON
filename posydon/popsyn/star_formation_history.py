@@ -14,8 +14,8 @@ import scipy as sp
 from scipy import stats
 from posydon.utils.data_download import PATH_TO_POSYDON_DATA
 from posydon.utils.constants import age_of_universe
-from posydon.utils import (rejection_sampler, histogram_sampler,
-                           read_histogram_from_file)
+from posydon.utils.common_functions import (
+    rejection_sampler, histogram_sampler, read_histogram_from_file)
 from posydon.utils.constants import Zsun
 from scipy.interpolate import interp1d
 from astropy.cosmology import Planck15 as cosmology

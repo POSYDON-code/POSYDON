@@ -18,7 +18,6 @@ from scipy.optimize import root
 from posydon.utils.data_download import PATH_TO_POSYDON_DATA
 from posydon.binary_evol.binarystar import BINARYPROPERTIES
 from posydon.binary_evol.singlestar import STARPROPERTIES
-from posydon.interpolation import GRIDInterpolator
 from posydon.interpolation.data_scaling import DataScaler
 from posydon.utils.common_functions import (
     bondi_hoyle,
