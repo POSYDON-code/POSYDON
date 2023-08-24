@@ -15,7 +15,10 @@ from posydon.interpolation.IF_interpolation import IFInterpolator
 # Math and ML
 import numpy as np
 import pandas as pd
-import tensorflow as tf
+try:
+    import tensorflow as tf
+except ImportError:
+    raise ImportError('tensorflow is not installed. Please run `pip install .[profile]` in the POSYDON base directory')
 tf.get_logger().setLevel('ERROR')
 from tensorflow.keras import layers, losses, models, optimizers
 from sklearn.decomposition import PCA
