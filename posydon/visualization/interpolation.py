@@ -7,7 +7,6 @@ __authors__ = [
 
 import matplotlib.pyplot as plt
 import numpy as np
-import pandas as pd
 
 class EvaluateIFInterpolator:
     """ Class that is helpful for evaluating interpolation performance
@@ -40,10 +39,8 @@ class EvaluateIFInterpolator:
     def __compute_errs(self):
         """ Method that computes both interpolation and classification errors """
 
-        iv = np.array(self.test_grid.initial_values[self.in_keys].tolist(),
-                      dtype=float) # initial values
-        fv = np.array(self.test_grid.final_values[self.out_keys].tolist(),
-                      dtype=float) # final values
+        iv = np.array(self.test_grid.initial_values[self.in_keys].tolist()) # initial values
+        fv = np.array(self.test_grid.final_values[self.out_keys].tolist()) # final values
         ic = self.test_grid.final_values["interpolation_class"] # final values
 
         ivalid_inds = np.where(
@@ -56,8 +53,7 @@ class EvaluateIFInterpolator:
 
         self.errs = {}
 
-        with np.errstate(divide='ignore', invalid='ignore'):
-            self.errs["relative"] = np.abs((fv - i) / fv)
+        self.errs["relative"] = np.abs((fv - i) / fv)
         self.errs["absolute"] = np.abs(fv - i)
         self.errs["valid_inds"] = ivalid_inds
         
@@ -81,8 +77,8 @@ class EvaluateIFInterpolator:
 
             matrix = {}
             
-            # catch cases where nothing is classified, e.g.
-            # S2_SN_MODEL_v2_XX_SN_type when S2 is a compact object
+            # catch cases where nothing is cl,assified, e.g. S2_MODELXX_SN_type
+            # when S2 is a compact object
             if len(classes) == 1 and  classes[0] == 'None':
                 matrix['None'] = 1.
             else:
@@ -136,7 +132,7 @@ class EvaluateIFInterpolator:
             
             if key in interp.classifiers.keys():
                 # if classifier does not exist assign 'None' label
-                # this happens, e.g. for S2_SN_MODEL_v2_XX_SN_type, when S2 is
+                # this happens, e.g. for S2_MODELXX_SN_type, when S2 is
                 # a compac object
                 if interp.classifiers[key] is None:
                     labels = ['None']
@@ -147,14 +143,13 @@ class EvaluateIFInterpolator:
 
     def __clean_errs(self, errs):
 
-        errs = errs[pd.notna(errs).any(axis = 1)] # dropping nans
+        errs = errs[~np.isnan(errs).any(axis = 1)] # dropping nans
         errs = errs[~np.isinf(errs).any(axis = 1)] # dropping infs
 
         return errs
 
 
-    def violin_plots(self, err_type = "relative", keys = None,
-                     save_path = None, close_fig = False):
+    def violin_plots(self, err_type = "relative", keys = None, save_path = None):
         """ Method that plots distribution of specified error for given keys and
         optionally saves it.
 
@@ -167,8 +162,6 @@ class EvaluateIFInterpolator:
             A list of keys for which the errors will be shown, by default is all of them
         save_path: str
             The path where the figure should be saved to
-        close_fig: bool
-            Flag whether figure should be closed
 
         """
 
@@ -186,7 +179,6 @@ class EvaluateIFInterpolator:
         stable_inds = np.where(self.ic == "stable_MT")
         no_inds = np.where(self.ic == "no_MT")
         unstable_inds = np.where(self.ic == "unstable_MT")
-        #TODO: add interpolation class "stable_reverse_MT"
 
         stable_errs = self.__clean_errs(self.errs[err_type].T[k_inds].T[stable_inds])
         no_errs = self.__clean_errs(self.errs[err_type].T[k_inds].T[no_inds])
@@ -262,12 +254,8 @@ class EvaluateIFInterpolator:
         if save_path is not None:
             fig.save(save_path)
 
-        # close figure
-        if close_fig:
-            plt.close(fig)
 
-    def confusion_matrix(self, key, params = {}, save_path = None,
-                         close_fig = False):
+    def confusion_matrix(self, key, params = {}, save_path = None):
         """ Method that plots confusion matrices to evaluate classification
 
         Parameters
@@ -278,8 +266,6 @@ class EvaluateIFInterpolator:
             Extra params to pass to matplolib, x_labels (list), y_labels (list), title (str)
         save_path : str
             The path where the figure should be saved to
-        close_fig: bool
-            Flag whether figure should be closed
 
         """
 
@@ -327,10 +313,6 @@ class EvaluateIFInterpolator:
 
         if save_path is not None: # saving
             fig.save(save_path)
-
-        # close figure
-        if close_fig:
-            plt.close(fig)
 
     def classifiers(self):
         """ Method that lists classifiers available """

@@ -1,4 +1,4 @@
-"""Module for performing initial-final interpolation.
+"""Module for performing initial-final inteprolation.
 
 We showcase the initial-final interpolator which plays a critical role in the
 evolving binary populations. To use the initial-final interpolator we first
@@ -44,9 +44,7 @@ for all classes.
 
 2. interp_classes: a list of classes that the simulation tracks can
 fall into. Usually specified as the mass transfer type. This only needs
-be specified if interp_method is a list. Note that when using class-wise normalization 
-only classes in interp_classes are normalized. This is the behavior for interpolation normalization
-but not classification normalization.
+be specified if interp_method is a list.
 
 3. class_method: the classification method to be used, either kNN or
 1NN.
@@ -78,8 +76,8 @@ For most applications specifying only the first four parameters is recommended.
 
     interp = IFInterpolator(grid = grid, interpolators = [
         {
-            "interp_method": ["linear", "linear", "linear", "linear"],
-            "interp_classes": ["no_MT", "stable_MT", "unstable_MT", "stable_reverse_MT"], # classes not in this array will not be normalized in class-wise normalization
+            "interp_method": ["linear", "linear", "linear"],
+            "interp_classes": ["no_MT", "stable_MT", "unstable_MT"],
             "out_keys": first,
             "class_method": "kNN",
             "c_keys": ["interpolation_class"],
@@ -87,7 +85,7 @@ For most applications specifying only the first four parameters is recommended.
         },
         {
             "interp_method": ["linear", "linear", "linear", "linear"],
-            "interp_classes": ["None", "BH", "WD", "NS"], # classes not in this array will not be normalized in class-wise normalization
+            "interp_classes": ["None", "BH", "WD", "NS"],
             "out_keys": second,
             "class_method": "kNN",
             "c_keys": ['S1_direct_state'],
@@ -95,7 +93,7 @@ For most applications specifying only the first four parameters is recommended.
         },
         {
             "interp_method": ["linear", "linear", "linear", "linear"],
-            "interp_classes": ["None", "BH", "WD", "NS"], # classes not in this array will not be normalized in class-wise normalization
+            "interp_classes": ["None", "BH", "WD", "NS"],
             "out_keys": third,
             "class_method": "kNN",
             "c_keys": ['S1_Fryer+12-rapid_state'],
@@ -103,7 +101,7 @@ For most applications specifying only the first four parameters is recommended.
         },
         {
             "interp_method": ["linear", "linear", "linear", "linear"],
-            "interp_classes": ["None", "BH", "WD", "NS"], # classes not in this array will not be normalized in class-wise normalization
+            "interp_classes": ["None", "BH", "WD", "NS"],
             "out_keys": fourth,
             "class_method": "kNN",
             "c_keys": ['S1_Fryer+12-delayed_state'],
@@ -111,7 +109,7 @@ For most applications specifying only the first four parameters is recommended.
         },
         {
             "interp_method": ["linear", "linear", "linear", "linear"],
-            "interp_classes": ["None", "BH", "WD", "NS"], # classes not in this array will not be normalized in class-wise normalization
+            "interp_classes": ["None", "BH", "WD", "NS"],
             "out_keys": fifth,
             "class_method": "kNN",
             "c_keys": ['S1_Sukhbold+16-engineN20_state'],
@@ -119,7 +117,7 @@ For most applications specifying only the first four parameters is recommended.
         },
         {
             "interp_method": ["linear", "linear", "linear", "linear"],
-            "interp_classes": ["None", "BH", "WD", "NS"], # classes not in this array will not be normalized in class-wise normalization
+            "interp_classes": ["None", "BH", "WD", "NS"],
             "out_keys": sixth,
             "class_method": "kNN",
             "c_keys": ['S1_Patton&Sukhbold20-engineN20_state'],
@@ -173,14 +171,13 @@ __authors__ = [
 
 import os
 import pickle
+import warnings
 from datetime import date
 # POSYDON
 from posydon.grids.psygrid import PSyGrid
 from posydon.interpolation.data_scaling import DataScaler
-from posydon.utils.posydonwarning import Pwarn
 # Maths
 import numpy as np
-import pandas as pd
 # Machine Learning
 from scipy.interpolate import LinearNDInterpolator
 from sklearn.neighbors import KNeighborsRegressor
@@ -227,20 +224,20 @@ class IFInterpolator:
 
                 if ("out_keys" not in params
                         and len(self.interpolator_parameters) > 1):
-                    raise ValueError("Overlapping out keys between different "
+                    raise Exception("Overlapping out keys between different "
                                     "interpolators are not permited!")
                 elif "out_keys" not in params:
                     continue
 
                 for key in params["out_keys"]:
                     if(key in out_keys):
-                        raise ValueError(
+                        raise Exception(
                             f"Overlapping out keys between different "
                             f"interpolators are not permited! ({key} in more "
                             f"than one set of out_keys)")
                     else:
                         out_keys.append(key)
-
+        
 
     def train(self):
         """Train the interpolator(s) on the PSyGrid used for construction."""
@@ -285,7 +282,7 @@ class IFInterpolator:
         Parameters
         ----------
         initial_values : numpy array
-            A numpy array containing the in-key values of the binaries to be evolved
+            A numpy array containing the in-key values of the binaries to be evolved 
 
         Return
         ------
@@ -309,7 +306,7 @@ class IFInterpolator:
         Parameters
         ----------
         initial_values : numpy array
-            A numpy array containing the in-key values of the binaries to be classified
+            A numpy array containing the in-key values of the binaries to be classified 
 
         Return
         ------
@@ -325,7 +322,7 @@ class IFInterpolator:
         for interpolator in self.interpolators:
 
             classes = {**classes, **interpolator.test_classifiers(new_values)}
-
+            
         return classes
 
 
@@ -360,7 +357,7 @@ class IFInterpolator:
 class BaseIFInterpolator:
     """Class handling the initial-final interpolation for POSYDON."""
 
-    def __init__(self, grid=None, in_keys=None, out_keys=None, out_nan_keys=None, in_scaling=None,
+    def __init__(self, grid=None, in_keys=None, out_keys=None, in_scaling=None,
                  out_scaling=None, filename=None, interp_method="linear",
                  interp_classes=None, class_method="kNN",
                  c_keys=None, c_key=None):
@@ -380,9 +377,6 @@ class BaseIFInterpolator:
         out_keys : list of strings
             The keys for which the interpolator is supposed to provide values,
             by default all keys are used.
-        out_nan_keys : list of strings
-            The keys for which the interpolator is supposed to provide values,
-            but are all nan in the grid.
         in_scaling : list of strings
             The scalings for the input keys, by default these scalings are
             optimized through Monte Carlo Cross Validation.
@@ -411,7 +405,7 @@ class BaseIFInterpolator:
 
         """
         self.in_keys, self.out_keys = in_keys, out_keys
-        self.out_nan_keys = out_nan_keys
+        self.out_nan_keys = []
         self.in_scaling, self.out_scaling = in_scaling, out_scaling
         self.n_in, self.n_out = 0, 0
         self.in_scalers, self.out_scalers = [], []
@@ -422,21 +416,14 @@ class BaseIFInterpolator:
 
         self.interp_method = interp_method
         self.interpolator = None
-        ignored_classes = ['not_converged', 'ignored_no_BH', 'ignored_no_RLO', 'initial_MT']
-        self.valid_classes = np.unique(grid.final_values["interpolation_class"]).tolist()
-        # A list of mass-transfer classes that are kept for interpolations (exclude e.g. 'not_converged' class).
-        for i in ignored_classes:
-            while(i in self.valid_classes):
-                self.valid_classes.remove(i)
-        
         if interp_classes is not None:
             if not isinstance(interp_classes, list):
-                raise ValueError("interp_classes must be a list of "
+                raise Exception("interp_classes must be a list of "
                                 "valid interpolation methods.")
             if isinstance(self.interp_method, list):
                 if len(self.interp_method) != len(interp_classes):
-                    raise ValueError("Number of interpolation methods must "
-                                    "match number of interpolation classes.")
+                    raise Exception("No. of interpolation methods must "
+                                    "match no. of interpolation classes.")
             else:
                 self.interp_method = [self.interp_method] * len(interp_classes)
             self.interp_classes = interp_classes
@@ -448,7 +435,7 @@ class BaseIFInterpolator:
 
         else:
             if grid is None:
-                raise RuntimeError(
+                raise Exception(
                     "grid must be specified to create an IF interpolator."
                     " Conversely, load an existing model specifying filename.")
 
@@ -459,13 +446,12 @@ class BaseIFInterpolator:
                     key for key in grid.final_values.dtype.names
                     if key != "model_number"
                     and (type(grid.final_values[key][0]) != np.str_)
-                    and any(pd.notna(grid.final_values[key]))
+                    and any(~np.isnan(grid.final_values[key]))
                 ]
-            if self.out_nan_keys is None:
                 self.out_nan_keys = [
                     key for key in grid.final_values.dtype.names
                     if type(grid.final_values[key][0]) != np.str_
-                    and all(pd.isna(grid.final_values[key]))
+                    and all(np.isnan(grid.final_values[key]))
                 ]
 
             self.constraints = find_constraints_to_apply(self.out_keys)
@@ -479,7 +465,7 @@ class BaseIFInterpolator:
             self.interp_in_q = self._interpIn_q(grid)
             self.XT, self.YT = self._grid2array(grid)
             self.valid = self._setValid(
-                grid.final_values["interpolation_class"], self.XT)
+                grid.final_values[self.c_key], self.XT)
             self.N = np.sum(self.valid >= 0)
 
             analize_nans(self.out_keys, self.YT, self.valid)
@@ -488,23 +474,21 @@ class BaseIFInterpolator:
             if (self.interp_method == 'linear'
                     or isinstance(self.interp_method, list)):
                 print("\nFilling missing values (nans) with 1NN")
-                self._fillNans(grid.final_values[self.c_key])
+                self._fillNans()
             elif self.interp_method == '1NN':
-                self.YT[pd.isna(self.YT)] = -100
+                self.YT[np.isnan(self.YT)] = -100
 
             if (self.in_scaling is None) or (self.out_scaling is None):
                 if self.interp_method == '1NN':
-                    self.in_scaling, self.out_scaling = (self._bestInScaling(grid.final_values[self.c_key]),
+                    self.in_scaling, self.out_scaling = (self._bestInScaling(),
                                                          ['none']*self.n_out)
                 else:
-                    self.in_scaling, self.out_scaling = self._bestScaling(grid.final_values[self.c_key])
+                    self.in_scaling, self.out_scaling = self._bestScaling()
 
-            self.X_scaler = Scaler(self.in_scaling,
-                                   self.XT[self.valid >= 0, :],
-                                   grid.final_values[self.c_key][self.valid > 0])
-            self.Y_scaler = Scaler(self.out_scaling,
-                                   self.YT[self.valid > 0, :],
-                                   grid.final_values[self.c_key][self.valid > 0])
+            self.X_scaler = MatrixScaler(self.in_scaling,
+                                         self.XT[self.valid >= 0, :])
+            self.Y_scaler = MatrixScaler(self.out_scaling,
+                                         self.YT[self.valid > 0, :])
 
             if self.class_method == "kNN":
                 options = {'nfolds': 3, 'p_test': 0.05, 'nmax': 10}
@@ -600,17 +584,17 @@ class BaseIFInterpolator:
         """Set binary tracks as (in)valid depending on termination flags."""
         valid = np.zeros(len(ic), dtype=int)
 
-        for flag in ['not_converged', 'ignored_no_RLO',
-                     'ignored_no_binary_history']:
+        for flag in ['not_converged', 'ignored_no_BH', 'ignored_no_RLO']:
             which = (ic == flag)
             valid[which] = -1
             print(f"Discarded {np.sum(which)} binaries with "
                   f"interpolation_class = [{flag}]")
 
-        which = pd.isna(np.sum(X, axis=1))
+        which = np.isnan(np.sum(X, axis=1))
         valid[which] = -1
         print(f"Discarded {np.sum(which)} binaries with nans in input values.")
-        for i, flag in enumerate(self.valid_classes):
+
+        for i, flag in enumerate(self.interp_classes):
             valid[ic == flag] = i + 1
 
         if(self.interp_in_q):   # if HMS-HMS grid, take out q = 1
@@ -630,10 +614,8 @@ class BaseIFInterpolator:
             for training the interpolator.
 
         """
-        ic = ic[self.valid > 0] if isinstance(self.interp_method, list) else None
-
-        XTn = self.X_scaler.normalize(self.XT[self.valid > 0, :], ic)
-        YTn = self.Y_scaler.normalize(self.YT[self.valid > 0, :], ic)
+        XTn = self.X_scaler.normalize(self.XT[self.valid > 0, :])
+        YTn = self.Y_scaler.normalize(self.YT[self.valid > 0, :])
 
         if self.interp_method == "linear":
             self.interpolator = LinInterpolator()
@@ -645,7 +627,7 @@ class BaseIFInterpolator:
             self.interpolator = MC_Interpolator(
                 self.classifiers[self.c_key],
                 self.interp_classes, self.interp_method)
-            self.interpolator.train(XTn, YTn, ic)
+            self.interpolator.train(XTn, YTn, ic[self.valid > 0])
 
     def test_interpolator(self, Xt):
         """Use the interpolator to approximate output vector.
@@ -661,21 +643,14 @@ class BaseIFInterpolator:
         Output space approximation as numpy array
 
         """
-        classes = self.test_classifier(self.c_key, Xt)
-
-
-        if isinstance(self.interp_method, list):
-            Xtn = self.X_scaler.normalize(Xt, classes)
-            Ypredn = self.interpolator.predict(Xtn, classes, self.X_scaler)
-        else:
-            Xtn = self.X_scaler.normalize(Xt)
-            Ypredn = self.interpolator.predict(Xtn)
+        Xtn = self.X_scaler.normalize(Xt)
+        Ypredn = self.interpolator.predict(Xtn)
 
         Ypredn = np.array([
             list(sanitize_interpolated_quantities(
-                 dict(zip(self.out_keys, track)),
-                 self.constraints, verbose=False).values())
-            for track in self.Y_scaler.denormalize(Ypredn, classes)
+                dict(zip(self.out_keys, track)),
+                self.constraints, verbose=False).values())
+            for track in self.Y_scaler.denormalize(Ypredn)
         ])
 
         return Ypredn
@@ -801,7 +776,7 @@ class BaseIFInterpolator:
         if len(Xt.shape) == 1:
             Xt = Xt.reshape((1, -1))
         if Xt.shape[1] != self.n_in:
-            raise ValueError("Wrong dimensions. Xt should have as many "
+            raise Exception("Wrong dimensions. Xt should have as many "
                             "columns as it was trained with.")
         # if binary classified as 'initial_MT', set numerical quantities to nan
         ynum, ycat = self.test_interpolator(Xt), self.test_classifiers(Xt)
@@ -862,7 +837,7 @@ class BaseIFInterpolator:
         m1 = grid.initial_values['star_1_mass'].copy()
         m2 = grid.initial_values['star_2_mass'].copy()
         # Make sure nans do not affect
-        wnan = pd.isna(m1) | pd.isna(m2)
+        wnan = np.isnan(m1) | np.isnan(m2)
         m1, m2 = m1[~wnan], m2[~wnan]
 
         tol = 1
@@ -870,160 +845,114 @@ class BaseIFInterpolator:
         return (m2[m1 > 0.95 * m1.max()].min()
                 / m2[m1 < 1.05 * m1.min()].min() > 1 + tol)
 
-    def _bestInScaling(self, ic):
+    def _bestInScaling(self):
         """Find the best scaling for the input space."""
-
-        def in_scale_one(klass = None):
-
-            in_scaling = []  # I assume inputs are positive-valued
-            for i in range(self.n_in):
-
-                dim = self.XT[:, i] if klass is None else self.XT[np.where(ic == klass)[0]]
-
-                if (np.abs(np.mean(dim) - np.median(dim))
-                        / np.std(dim)
-                        < np.abs(np.mean(np.log10(dim))
-                                - np.median(np.log10(dim)))
-                        / np.std(np.log10(dim))):
-                    in_scaling.append('min_max')
-                else:
-                    in_scaling.append('log_min_max')
-
-            return in_scaling
-
-        cin_scaling = in_scale_one()
-
-        if isinstance(self.interp_method, list):
-            in_scaling = {}
-
-            for c in self.interp_classes:
-                in_scaling[c] = in_scale_one(c)
-        else:
-
-            in_scaling = cin_scaling
-
-
-
-        return (in_scaling, cin_scaling)
-
-
-
-    def _bestScaling(self, ic, unique_in=True, nfolds = 5, p_test = 0.15):
-        """Find the best scaling for both input and output space."""
-
-        in_scaling = self._bestInScaling(ic)
-
-        def scale_one(in_scaling, klass = None):
-
-            # if False, the scaling for the inputs will be output-dependent
-            if unique_in:
-                r = 1
+        in_scaling = []  # I assume inputs are positive-valued
+        for i in range(self.n_in):
+            if (np.abs(np.mean(self.XT[:, i]) - np.median(self.XT[:, i]))
+                    / np.std(self.XT[:, i])
+                    < np.abs(np.mean(np.log10(self.XT[:, i]))
+                             - np.median(np.log10(self.XT[:, i])))
+                    / np.std(np.log10(self.XT[:, i]))):
+                in_scaling.append('min_max')
             else:
-                r = 2 ** self.n_in
+                in_scaling.append('log_min_max')
 
-            inds = np.where(self.valid > 0 if klass is None else (ic == klass) & (self.valid > 0))[0]
+        return in_scaling
 
-            err = np.nan * np.ones((r * 2, self.n_out, nfolds))
-            which_abs = np.abs(self.YT[inds, :]).min(axis=0) == 0
+    def _bestScaling(self, unique_in=True):
+        """Find the best scaling for both input and output space."""
+        # Decide best scaling linear/log with cross validation
+        nfolds = 5
+        p_test = 0.15
 
-            out_scalings = [['min_max'] * self.n_out, ['log_min_max'] * self.n_out]
+        # if False, the scaling for the inputs will be output-dependent
+        unique_in = True
 
-            for i, key in enumerate(self.out_keys):
-                y = self.YT[inds, i]
-                if np.nanmin(y) == np.nanmax(y):
-                    out_scalings[0][i] = 'none'
-                    out_scalings[1][i] = 'none'
-                elif np.nanmax(y) < 0:
-                    out_scalings[1][i] = 'neg_log_min_max'
-                elif np.nanmin(y) <= 0:
-                    out_scalings[1][i] = 'min_max'
-
-
-            XT = self.XT[inds, :]
-            YT = self.YT[inds, :]
-            for j in range(2):          # normal and log when possible
-                for i in range(r):      # valid also with metallicity included
-
-                    if r > 1:
-                        in_scaling = [
-                            'min_max'
-                            if i % (2 ** (j + 1)) < 2 ** j else 'log_min_max'
-                            for j in range(self.n_in)
-                        ]
-
-                    xs, ys = (MatrixScaler(in_scaling[1], XT), # using class cumulative scaling (not per class) to get optimal
-                            MatrixScaler(out_scalings[j], YT))
-                    XTn, YTn = xs.normalize(XT), ys.normalize(YT)
-
-                    np.random.seed(0)
-
-                    for fold in range(nfolds):
-
-                        iTrain, itest = xval_indices(inds.shape[0],
-                                                    percent_test=p_test)
-
-                        X_T, Y_T = XTn[iTrain, :], YTn[iTrain, :]
-                        X_t, Y_t = XT[itest, :], YT[itest, :]
-
-                        interp = LinearNDInterpolator(X_T, Y_T)
-                        ypred_i = ys.denormalize(interp(xs.normalize(X_t)))
-
-                        err[i + r * j, ~which_abs, fold] = np.nanpercentile(
-                            np.abs((ypred_i[:, ~which_abs] - Y_t[:, ~which_abs])
-                                / Y_t[:, ~which_abs]), 90, axis=0)
-                        err[i + r * j, which_abs, fold] = np.nanpercentile(
-                            np.abs(ypred_i[:, which_abs] - Y_t[:, which_abs]), 90,
-                            axis=0)
-
-
-            no_nan_slices = np.isfinite(np.nanmean(err, axis = 2)).all(axis = 0)
-
-            where_min = np.full(shape = (self.n_out, ), fill_value = np.nan)
-            where_min[no_nan_slices] = np.nanargmin(np.nanmean(err, axis=2)[:, no_nan_slices], axis=0)
-
-            out_scaling = []
-            for i in range(self.n_out):
-                if where_min[i] < r or pd.isna(where_min[i]):
-                    out_scaling.append(out_scalings[0][i])
-                else:
-                    out_scaling.append(out_scalings[1][i])
-                    where_min[i] -= r
-
-            return out_scaling
-
-        cout_scaling = scale_one(in_scaling)
-
-        if isinstance(self.interp_method, list):
-            out_scaling = {}
-
-            for c in self.interp_classes:
-                out_scaling[c] = scale_one(in_scaling, c)
-
+        if unique_in:
+            r = 1
         else:
-            out_scaling = cout_scaling
+            r = 2 ** self.n_in
 
-        return in_scaling, (out_scaling, cout_scaling)
+        err = np.nan * np.ones((r * 2, self.n_out, nfolds))
+        which_abs = np.abs(self.YT[self.valid > 0, :]).min(axis=0) == 0
 
-    def _fillNans(self, ic):
+        out_scalings = [['min_max'] * self.n_out, ['log_min_max'] * self.n_out]
+
+        for i, key in enumerate(self.out_keys):
+            y = self.YT[self.valid > 0, i]
+            if np.nanmin(y) == np.nanmax(y):
+                out_scalings[0][i] = 'none'
+                out_scalings[1][i] = 'none'
+            elif np.nanmax(y) < 0:
+                out_scalings[1][i] = 'neg_log_min_max'
+            elif np.nanmin(y) <= 0:
+                out_scalings[1][i] = 'min_max'
+
+        in_scaling = self._bestInScaling()
+
+        XT = self.XT[self.valid > 0, :]
+        YT = self.YT[self.valid > 0, :]
+        for j in range(2):          # normal and log when possible
+            for i in range(r):      # valid also with metallicity included
+                if r > 1:
+                    in_scaling = [
+                        'min_max'
+                        if i % (2 ** (j + 1)) < 2 ** j else 'log_min_max'
+                        for j in range(self.n_in)
+                    ]
+
+                xs, ys = (MatrixScaler(in_scaling, XT),
+                          MatrixScaler(out_scalings[j], YT))
+                XTn, YTn = xs.normalize(XT), ys.normalize(YT)
+
+                np.random.seed(0)
+
+                for fold in range(nfolds):
+                    iTrain, itest = xval_indices(np.sum(self.valid > 0),
+                                                 percent_test=p_test)
+
+                    X_T, Y_T = XTn[iTrain, :], YTn[iTrain, :]
+                    X_t, Y_t = XT[itest, :], YT[itest, :]
+
+                    interp = LinearNDInterpolator(X_T, Y_T)
+                    ypred_i = ys.denormalize(interp(xs.normalize(X_t)))
+
+                    err[i + r * j, ~which_abs, fold] = np.nanpercentile(
+                        np.abs((ypred_i[:, ~which_abs] - Y_t[:, ~which_abs])
+                               / Y_t[:, ~which_abs]), 90, axis=0)
+                    err[i + r * j, which_abs, fold] = np.nanpercentile(
+                        np.abs(ypred_i[:, which_abs] - Y_t[:, which_abs]), 90,
+                        axis=0)
+
+        where_min = np.nanargmin(np.nanmean(err, axis=2), axis=0)
+
+        out_scaling = []
+        for i in range(self.n_out):
+            if where_min[i] < r:
+                out_scaling.append(out_scalings[0][i])
+            else:
+                out_scaling.append(out_scalings[1][i])
+                where_min[i] -= r
+
+        return in_scaling, out_scaling
+
+    def _fillNans(self):
         """Fill nan values i numerical magnitudes with 1NN."""
         for i in range(self.n_out):
-            wnan = pd.isna(self.YT[:, i]) | np.isinf(self.YT[:, i])
+            wnan = np.isnan(self.YT[:, i]) | np.isinf(self.YT[:, i])
             if any(np.isinf(self.YT[:, i])):
                 print(f"inftys: {np.sum(np.isinf(self.YT[:, i]))}, "
                       f"{self.out_keys[i]}")
             if any(wnan[self.valid > 0]):
                 k1r = KNeighborsRegressor(n_neighbors=1)
                 wT = (~wnan) & (self.valid > 0)
-                if wT.any():
-                    xs = MatrixScaler(self._bestInScaling(ic)[1],
-                                      self.XT[self.valid >= 0, :])
-                    k1r.fit(xs.normalize(self.XT[wT, :]), self.YT[wT, i])
-                    wt = wnan & (self.valid > 0)
-                    self.YT[wt, i] = k1r.predict(xs.normalize(self.XT[wt, :]))
-                else:
-                    wt = wnan & (self.valid > 0)
-                    self.YT[wt, i] = 0.0
-                    self.out_nan_keys.append(self.out_keys[i])
+                xs = MatrixScaler(self._bestInScaling(),
+                                  self.XT[self.valid >= 0, :])
+                k1r.fit(xs.normalize(self.XT[wT, :]), self.YT[wT, i])
+                wt = wnan & (self.valid > 0)
+                self.YT[wt, i] = k1r.predict(xs.normalize(self.XT[wt, :]))
+
 
 # BASE INTERPOLATORS
 
@@ -1059,9 +988,9 @@ class Interpolator:
 
         """
         if self.interpolator is None:
-            raise RuntimeError("Train Interpolator first.")
+            raise Exception("Train Interpolator first.")
         if Xt.shape[1] != self.D:
-            raise ValueError("Wrong input dimension.")
+            raise Exception("Wrong input dimension.")
 
     def train_error(self, XT, YT):
         """Calculate approximation error given testing data.
@@ -1098,15 +1027,13 @@ class NNInterpolator(Interpolator):
         self.interpolator.fit(XT, YT)
         # self.train_error(XT, YT)
 
-    def predict(self, Xt, scaler = None, klass = None):
+    def predict(self, Xt):
         """Interpolate and approximate output vectors given input vectors.
 
         Parameters
         ----------
         XT : numpy array
             List of input vectors
-        scaler : #TODO
-        klass : #TODO
 
         Returns
         -------
@@ -1138,15 +1065,13 @@ class LinInterpolator(Interpolator):
         self.interpolator.append(OoH)
         # self.train_error(XT, YT)
 
-    def predict(self, Xt, scaler = None, klass = None):
+    def predict(self, Xt):
         """Interpolate and approximate output vectors given input vectors.
 
         Parameters
         ----------
         XT : numpy array
             List of input vectors
-        scaler : #TODO
-        klass : #TODO
 
         Returns
         -------
@@ -1154,26 +1079,14 @@ class LinInterpolator(Interpolator):
 
         """
         super().predict(Xt)
-
         Ypred = self.interpolator[0](Xt)
-        wnan = pd.isna(Ypred[:, 0])
+        wnan = np.isnan(Ypred[:, 0])
         # 1NN interpolation for binaries out of hull
         if np.any(wnan):
             Ypred[wnan, :] = self.interpolator[1].predict(Xt[wnan, :])
-
-            dists, _ = self.interpolator[1].kneighbors(Xt[wnan, :])
-            max_distance = dists.argmax() # only finding information for furthest nearest neighbor
-
-            neighbors = scaler.denormalize(self.interpolator[1]._tree.data.base) # unnormalizing 
-            max_distance_point = scaler.denormalize(Xt[[max_distance]])
-
-            nearest_neighbor = np.sum(np.square(neighbors - max_distance_point), axis = 1)
-            nearest_neighbor = nearest_neighbor.argsort()[0]
-
-            Pwarn(f"1NN interpolation used for {np.sum(wnan)} "
-                f"binaries out of hull. Parameter-wise distance (Unnormalized) for point with"
-                f" maximum out-of-hull euclidian distance (Normalized): {np.abs(neighbors[nearest_neighbor] - max_distance_point[0])}", 
-                "InterpolationWarning")
+        if np.any(wnan):
+            warnings.warn(f"1NN interpolation used for {np.sum(wnan)} "
+                          "binaries out of hull.")
         return Ypred
 
 
@@ -1204,8 +1117,8 @@ class MC_Interpolator:
             self.methods = [methods] * len(self.classes)
         else:
             if len(methods) != len(self.classes):
-                raise ValueError("Number of interpolators must match "
-                                "number of classes.")
+                raise Exception("No. of interpolators must match "
+                                "no. of classes.")
             self.methods = methods
         for i, method in enumerate(self.methods):
             if method == "linear":
@@ -1225,7 +1138,6 @@ class MC_Interpolator:
             List of input vectors
         YT : numpy array
             List of corresponding output vectors
-        z : #TODO
 
         """
         self.M = YT.shape[1]
@@ -1235,33 +1147,26 @@ class MC_Interpolator:
                 which += z == self.classes[i][j]
             self.interpolators[i].train(XT[which, :], YT[which, :])
 
-    def classifier(self, Xt):
-
-        return self.classifier.predict(Xt)
-
-    def predict(self, Xt, zpred, scaler = None):
+    def predict(self, Xt):
         """Interpolate and approximate output vectors given input vectors.
 
         Parameters
         ----------
         XT : numpy array
             List of input vectors
-        zpred : #TODO
-        scaler : #TODO
 
         Returns
         -------
         Output space approximation as numpy array
 
         """
-
+        zpred = self.classifier.predict(Xt)
         Ypred = np.ones((Xt.shape[0], self.M)) * np.nan
         for i in range(len(self.classes)):
             which = np.zeros_like(zpred, dtype=bool)
             for j in range(len(self.classes[i])):
                 which += zpred == self.classes[i][j]
-            if which.any():
-                Ypred[which, :] = self.interpolators[i].predict(Xt[which, :], scaler = scaler, klass = self.classes[i])
+            Ypred[which, :] = self.interpolators[i].predict(Xt[which, :])
         return Ypred
 
 
@@ -1306,9 +1211,9 @@ class Classifier:
 
         """
         if self.classifier is None:
-            raise RuntimeError("Train Classifier first.")
+            raise Exception("Train Classifier first.")
         if Xt.shape[1] != self.D:
-            raise ValueError("Wrong input dimension.")
+            raise Exception("Wrong input dimension.")
 
     def predict_prob(self, Xt):
         """Classify and get probability of input vector belonging to any class.
@@ -1324,9 +1229,9 @@ class Classifier:
 
         """
         if self.classifier is None:
-            raise RuntimeError("Train Classifier first.")
+            raise Exception("Train Classifier first.")
         if Xt.shape[1] != self.D:
-            raise ValueError("Wrong input dimension.")
+            raise Exception("Wrong input dimension.")
 
     def train_error(self, XT, yT):
         """Calculate approximation error given testing data.
@@ -1356,7 +1261,6 @@ class KNNClassifier(Classifier):
             List of input vectors
         YT : numpy array
             List of corresponding classes
-        K : #TODO
 
         """
         super().train(XT, yT)
@@ -1420,7 +1324,7 @@ class KNNClassifier(Classifier):
         else:
             acc = np.zeros(nmax)
             for n in range(1, nmax + 1):
-
+                # print(f"  - xval for k = {n}")
                 for i in range(nfolds):
                     iTrain, itest = xval_indices(
                         XT.shape[0], percent_test=p_test, labels=yT)
@@ -1433,75 +1337,10 @@ class KNNClassifier(Classifier):
 
             n_opt = np.argmax(acc) + 1
 
-            if n_opt < 3: # k must be at least 3
-                n_opt = 3
-
         self.train(XT, yT, K=n_opt)
 
 
 # MATRIX SCALING
-class Scaler:
-
-    def __init__(self, norms, XT, ic):
-
-        if norms[0] == norms[1]:
-            self.scaler = {
-                None:  MatrixScaler(norms[0], XT)
-            }
-        else:
-            self.scaler = {}
-
-            for klass, n in norms[0].items():
-                self.scaler[klass] = MatrixScaler(n, XT[np.where(ic == klass)[0]]) # need to only use relevant classes in XT
-
-            self.scaler[None] = MatrixScaler(norms[1], XT)
-
-    def normalize(self, X, klass = None):
-
-        if klass is None:
-            return self.scaler[klass].normalize(X)
-
-        else:
-
-            normalized = X.copy()
-
-            classes = np.unique(klass)
-
-            for c in classes:
-                inds = np.where(klass == c)[0]
-                c = None if c == "None" else c
-
-                if c not in self.scaler.keys():
-                    Pwarn(f"normalization was skipped during interpolation: c={c}, inds={inds}", 
-                                  "InterpolationWarning")
-                    continue
-
-                normalized[inds] = self.scaler[c].normalize(X[inds])
-
-            return normalized
-
-    def denormalize(self, Xn, klass = None):
-
-        if klass is None:
-            return self.scaler[klass].denormalize(Xn)
-        
-        else:
-
-            normalized = Xn
-
-            classes = np.unique(klass)
-
-            for c in classes:
-                inds = np.where(klass == c)[0]
-                c = None if c == "None" else c
-
-                if c not in self.scaler.keys():
-                    Pwarn(f"de-normalization was skipped during interpolation: c={c}, inds={inds}",
-                                  "InterpolationWarning")
-                    continue
-                normalized[inds] = self.scaler[c].denormalize(Xn[inds])
-
-            return normalized
 
 
 class MatrixScaler:
@@ -1510,14 +1349,13 @@ class MatrixScaler:
     def __init__(self, norms, XT):
         """Initialize the Scaler with desired scalings."""
         if len(norms) != XT.shape[1]:
-            raise ValueError("The number of columns in XT must be equal "
+            raise Exception("The no. of columns in XT must be equal "
                             "to the length of norms.")
-
         self.N = XT.shape[1]
         self.scalers = []
         for i in range(self.N):
             self.scalers.append(DataScaler())
-            which = pd.notna(XT[:, i])
+            which = ~np.isnan(XT[:, i])
             self.scalers[i].fit(XT[which, i], method=norms[i])
 
     def normalize(self, X):
@@ -1531,7 +1369,6 @@ class MatrixScaler:
 
     def denormalize(self, Xn):
         """Unscale input X."""
-
         assert Xn.shape[1] == self.N
         X = np.empty_like(Xn)
         for i in range(self.N):
@@ -1551,7 +1388,6 @@ def xval_indices(N, percent_test=0.15, labels=None):
         number of samples in the data set.
     percent_test : float
         Percentage of samples to be in the test sets. (0 < percent_test < 0.5)
-    labels : #TODO
 
     Returns
     -------
@@ -1638,7 +1474,7 @@ def train_and_assess(grid_train, grid_test, ux2, path, classes):
     m1NN.save(os.path.join(path2obj, name))
 
     interp_method, class_method = "linear", "kNN"
-    # classes = ['no_MT', 'stable_MT', 'unstable_MT', 'stable_reverse_MT']
+    # classes = ['no_MT', 'stable_MT', 'unstable_MT']
     mMC = IFInterpolator(grid=grid_T, interp_method=interp_method,
                          class_method=class_method, interp_classes=classes)
     interp_method = "linear3c"
@@ -1661,8 +1497,6 @@ def assess_models(models, grid_T, grid_t, ux2, path='./'):
         Train grid
     grid_t : psg.PSyGrid
         Test grid
-    ux2 : #TODO
-    path : #TODO
 
     """
     if not isinstance(models, list):
@@ -1766,7 +1600,6 @@ def assess_models(models, grid_T, grid_t, ux2, path='./'):
             w_sMT.append(((ic_gt == 'stable_MT') & (ic_t == 'stable_MT')))
             w_uMT.append(((ic_gt == 'unstable_MT') & (ic_t == 'unstable_MT')))
             w_nMT.append(((ic_gt == 'no_MT') & (ic_t == 'no_MT')))
-            #TODO: add interpolation class "stable_reverse_MT"
 
             w = [w_sMT, w_uMT, w_nMT, correct]
             percent = [50, 90]
@@ -1803,7 +1636,7 @@ def analize_nans(out_keys, YT, valid):
     for i, key in enumerate(out_keys):
         n = []
         for v in range(4):
-            n.append(np.sum(pd.isna(YT[valid == v, i])))
+            n.append(np.sum(np.isnan(YT[valid == v, i])))
         if np.sum(np.array(n)) > 0:
             print(f"[i_MT] = {n[0]:5d}, [no_MT] = {n[1]:5d}, "
                   f"[st_MT] = {n[2]:5d}, [u_MT] = {n[3]:5d} : {i:3d} {key}")
@@ -2064,10 +1897,6 @@ def plot_interpolation(m, keys, v2, ux2, scales=None, path=None, **pltargs):
         A trained instance of the IFInterpolator
     keys : List of strings
         Variables for which interpolation errors will be plotted
-    v2 : #TODO
-    ux2 : #TODO
-    scales : #TODO
-    path : #TODO
 
     """
     N = pltargs.pop('N', PLT_INTERP_KWARGS['N'])
@@ -2121,7 +1950,7 @@ def plot_interpolation(m, keys, v2, ux2, scales=None, path=None, **pltargs):
                 name = (key + '_' + m.classifiers['interpolation_class'].method
                         + '_' + method + '_' + str(round(v, 2)) + '.png')
                 name = os.path.join(path, name)
-
+                print(name)
                 fig.savefig(name)
             plt.close(fig)
 
@@ -2135,12 +1964,10 @@ def plot_interp_error(Ygt, Ys, ind_MT, methods, keys, path='.'):
         Ground truth of the final values of testing tracks
     Ys : numpy array
         Model's approximation of the final values of testing tracks
-    ind_MT : #TODO
     methods : List of strings
         List that indicates the interpolation methods
     keys : List of strings
         List indicating for which variables error distributions will be plotted
-    path : #TODO
 
     """
     labels = ['stable MT', 'unstable MT', 'no MT']
