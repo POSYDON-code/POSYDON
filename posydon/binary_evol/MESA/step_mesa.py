@@ -787,24 +787,25 @@ class MesaGridStep:
             for key in key_post_processed:
                 setattr(star, key, cb.final_values['S%d_%s' % (k+1, key)])
 
-        # update nearest neighbor core collapse quantites
+        # update nearest neighbor core collapse quantites                            
         if interpolation_class != 'unstable_MT':
             for MODEL_NAME in MODELS.keys():
                 for i, star in enumerate(stars):
-                    if not stars_CO[i]:
+                    if (not stars_CO[i] and 
+                        cb.final_values[f'S{i+1}_{MODEL_NAME}_CO_type'] != 'None'):
                         values = {}
                         for key in ['state', 'SN_type', 'f_fb', 'mass', 'spin',
                                     'm_disk_accreted', 'm_disk_radiated']:
-                            if key == 'state': 
-                                key = 'CO_type'
-                            values[key] = cb.final_values[f'S{i+1}_{MODEL_NAME}_{key}']
-                        state = cb.final_values[f'S{i+1}_{MODEL_NAME}_CO_type'] 
-                        if state is None or state == 'None':
-                            # privent to any quantities for star that did not
-                            # reach core collpase
-                            setattr(star, MODEL_NAME, None)
-                        else:
-                            setattr(star, MODEL_NAME, values)
+                            if key == "state": 
+                                state = cb.final_values[f'S{i+1}_{MODEL_NAME}_CO_type']
+                                values[key] = state
+                            elif key == "SN_type":
+                                values[key] = cb.final_values[f'S{i+1}_{MODEL_NAME}_{key}']
+                            else:
+                                values[key] = cb.final_values[f'S{i+1}_{MODEL_NAME}_{key}']
+                        setattr(star, MODEL_NAME, values)
+                    else:
+                        setattr(star, key, None)
 
     def initial_final_interpolation(self, star_1_CO=False, star_2_CO=False):
         """Update the binary through initial-final interpolation."""
@@ -967,14 +968,14 @@ class MesaGridStep:
                         values = {}
                         for key in ['state', 'SN_type', 'f_fb', 'mass', 'spin',
                                     'm_disk_accreted', 'm_disk_radiated']:
-                            if key == "state" in key: 
+                            if key == "state": 
                                 state = self.classes[f'S{i+1}_{MODEL_NAME}_CO_type']
                                 values[key] = state
                             elif key == "SN_type":
                                 values[key] = self.classes[f'S{i+1}_{MODEL_NAME}_{key}']
                             else:
                                 values[key] = fv[f'S{i+1}_{MODEL_NAME}_{key}']
-                            setattr(star, MODEL_NAME, values)
+                        setattr(star, MODEL_NAME, values)
                     else:
                         setattr(star, key, None)
 
