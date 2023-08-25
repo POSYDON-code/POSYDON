@@ -35,8 +35,10 @@ import os
 from tqdm import tqdm
 import psutil
 import random
+import sys
 
-from posydon.binary_evol.binarystar import BinaryStar
+if 'posydon.binary_evol.binarystar' not in sys.modules.keys():
+    from posydon.binary_evol.binarystar import BinaryStar
 from posydon.binary_evol.singlestar import (SingleStar,properties_massless_remnant)
 from posydon.binary_evol.simulationproperties import SimulationProperties
 from posydon.popsyn.star_formation_history import get_formation_times
