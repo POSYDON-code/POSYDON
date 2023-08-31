@@ -52,24 +52,24 @@ from posydon.utils.constants import Zsun
 
 
 # 'event' usually 10 but 'detached (Integration failure)' can occur
-HISTORY_MIN_ITEMSIZE = {'state': 30, 'event': 10, 'step_names': 15,
+HISTORY_MIN_ITEMSIZE = {'state': 30, 'event': 10, 'step_names': 20,
                         'S1_state': 31, 'S2_state': 31,
                         'mass_transfer_case': 7,
                         'S1_SN_type': 5, 'S2_SN_type': 5}
 ONELINE_MIN_ITEMSIZE = {'state_i': 30, 'state_f': 30,
                         'event_i': 10, 'event_f': 10,
-                        'step_names_i': 15, 'step_names_f': 15,
+                        'step_names_i': 20, 'step_names_f': 20,
                         'S1_state_i': 31, 'S1_state_f': 31,
                         'S2_state_i': 31, 'S2_state_f': 31,
                         'mass_transfer_case_i': 7, 'mass_transfer_case_f': 7,
                         'S1_SN_type': 5, 'S2_SN_type': 5,
                         'interp_class_HMS_HMS' : 15, 'interp_class_CO_HeMS' : 15,
-                        'interp_class_CO_HMS_RLO' : 15}
+                        'interp_class_CO_HMS_RLO' : 15, 'interp_class_CO_HeMS_RLO' : 15}
 
 # BinaryPopulation will enforce a constant metallicity accross all steps that
 # load stellar or binary models by checked this list of steps.
 STEP_NAMES_LOADING_GRIDS = [
-    'step_HMS_HMS', 'step_CO_HeMS', 'step_CO_HMS_RLO', 'step_detached','step_isolated','step_disrupted','step_initially_single', 'step_merged'
+    'step_HMS_HMS', 'step_CO_HeMS', 'step_CO_HMS_RLO', 'step_CO_HeMS_RLO', 'step_detached','step_isolated','step_disrupted','step_initially_single', 'step_merged'
 ]
 
 class BinaryPopulation:

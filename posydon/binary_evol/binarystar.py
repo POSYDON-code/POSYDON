@@ -166,7 +166,7 @@ class BinaryStar:
         #     self.V_sys = [0, 0, 0]
         
         # store innterpolation_class for each step_MESA
-        for grid_type in ['HMS_HMS','CO_HMS_RLO','CO_HeMS']:
+        for grid_type in ['HMS_HMS','CO_HMS_RLO','CO_HeMS','CO_HeMS_RLO']:
             if not hasattr(self, f'interp_class_{grid_type}'):
                 setattr(self, f'interp_class_{grid_type}', None)
 

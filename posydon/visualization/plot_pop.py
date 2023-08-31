@@ -21,9 +21,9 @@ COLORS = ['tab:blue', 'tab:orange', 'tab:green', 'tab:red', 'tab:purple',
 COLORS *= 10
 
 def plot_merger_rate_density(z, rate_density, ylim=(1e-1,4e2), zmax=10., show=True, 
-                             path=None, channels=False, GWTC3=False, **kwargs):
+                             path=None, channels=False, GWTC3=False, label='DCO', **kwargs):
 
-    plt.plot(z[z<zmax], rate_density['total'][z<zmax], label='BBH total', color='black')
+    plt.plot(z[z<zmax], rate_density['total'][z<zmax], label=f'{label} total', color='black')
     if channels:
         for ch in [key for key in rate_density.keys() if key != 'total']:
             if ch != 'total':
