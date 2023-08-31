@@ -425,3 +425,48 @@ def generate_single_star_masses(number_of_binaries=1,
         pass
 
     return single_star_masses
+
+def binary_fraction_value(binary_fraction_const=1,binary_fraction_scheme = 'const',m1 = None,**kwargs):
+    """
+    Getting the binary fraction depending on the scheme. The two possible option are a constant binary fraction 
+    and a binary fraction based on the values given in Maxwell and Di Stefano (2017). 
+
+    Parameters:
+    --------------------
+    binary scheme: string
+        Determines if the value of the binary fraction will be constant or not  
+    binary fraction const: int 
+        Gives the value the constant value of the binary if the constant scheme is choosen. 
+
+    Returns 
+    ------------------
+    binary fraction: int
+
+    """
+    binary_fraction_scheme_options = ['const','Maxwell_17']
+
+    if binary_fraction_scheme not in binary_fraction_scheme_options: 
+        raise ValueError("You must provide an allowed binary fraction scheme.")
+    
+
+    if binary_fraction_scheme == 'const': 
+        binary_fraction = binary_fraction_const
+    
+    elif binary_fraction_scheme == 'Maxwell_17':
+        if m1 is None: 
+            raise ValueError("There was not a primary mass provided in the inputs. Unable to return a binary fraction")
+        if m1 <= 2  and m1 > 0.8 :
+            binary_fraction = 0.4
+        if m1 <= 5 and m1 > 2 :
+            binary_fraction = 0.59
+        if m1<=9 and m1 > 5 :
+            binary_fraction = 0.76
+        if m1<= 16 and m1 > 9  : 
+            binary_fraction = 0.84
+        if m1 > 16:
+            binary_fraction = 0.94
+    else: 
+        pass 
+    return binary_fraction
+
+    

@@ -15,8 +15,6 @@ default_kwargs = {
 
     # Size of the population
     'number_of_binaries': 100,
-    #Binary fraction
-    'binary_fraction' : 1,
     'metallicity' : 1.0, # in Zsolar
 
     # Star Formation History
@@ -60,4 +58,8 @@ default_kwargs = {
     'single_star_mass_scheme' : 'Kroupa2001',
     'single_star_mass_min': 0.8,
     'single_mass_max': 120.0,
+
+    #Binary fraction
+    'binary_fraction_const' : 1,
+    'binary_fraction_scheme' : 'const',
 }
