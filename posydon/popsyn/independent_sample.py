@@ -48,9 +48,6 @@ def generate_independent_samples(orbital_scheme, **kwargs):
     # Generate secondary masses
     m2_set = generate_secondary_masses(m1_set, **kwargs)
 
-    #Generate single star masses 
-    m_set = generate_single_star_masses(**kwargs)
-
     if orbital_scheme == 'separation':
         # Generate orbital separations
         orbital_scheme_set = generate_orbital_separations(**kwargs)
@@ -60,7 +57,7 @@ def generate_independent_samples(orbital_scheme, **kwargs):
     else:
         raise ValueError("Allowed orbital schemes are separation or period.")
 
-    return orbital_scheme_set, eccentricity_set, m1_set, m2_set, m_set
+    return orbital_scheme_set, eccentricity_set, m1_set, m2_set
 
 
 def generate_orbital_periods(primary_masses,
@@ -362,70 +359,6 @@ def generate_secondary_masses(primary_masses,
 
     return secondary_masses
 
-def generate_single_star_masses(number_of_binaries=1,
-                            single_star_mass_min=7,
-                            single_star_mass_max=120,
-                            single_star_mass_scheme='Salpeter',
-                            **kwargs):
-    """Generate random masses in the same way as the primary masses.
-
-    Use the scheme defined in this particular instance of BinaryPopulation.
-
-    Parameters
-    ----------
-    number_of_binaries : int
-        Number of binaries that require randomly sampled orbital separations
-    single_mass_min : float
-        Minimum of single star mass
-    single_star_mass_max : float
-        Maximum of single star mass
-    single_star_mass_scheme : string
-        Distribution from which the primary masses are randomly drawn
-
-    Returns
-    -------
-    single_star_masses : ndarray of floats
-        Randomly drawn single star masses
-
-    """
-    RNG = kwargs.get('RNG', np.random.default_rng())
-
-    single_star_mass_scheme_options = ['Salpeter', 'Kroupa1993', 'Kroupa2001']
-
-    if single_star_mass_scheme not in single_star_mass_scheme_options:
-        raise ValueError("You must provide an allowed primary mass scheme.")
-
-    # Salpeter E. E., 1955, ApJ, 121, 161
-    if single_star_mass_scheme == 'Salpeter':
-        alpha = 2.35
-        normalization_constant = (1.0-alpha) / (single_star_mass_max**(1-alpha)
-                                                - single_star_mass_min**(1-alpha))
-        random_variable = RNG.uniform(size=number_of_binaries)
-        single_star_masses = (random_variable*(1.0-alpha)/normalization_constant
-                          + single_star_mass_min**(1.0-alpha))**(1.0/(1.0-alpha))
-
-    # Kroupa P., Tout C. A., Gilmore G., 1993, MNRAS, 262, 545
-    elif single_star_mass_scheme == 'Kroupa1993':
-        alpha = 2.7
-        normalization_constant = (1.0-alpha) / (single_star_mass_max**(1-alpha)
-                                                - single_star_mass_min**(1-alpha))
-        random_variable = RNG.uniform(size=number_of_binaries)
-        single_star_masses = (random_variable*(1.0-alpha)/normalization_constant
-                          + single_star_mass_min**(1.0-alpha))**(1.0/(1.0-alpha))
-
-    # Kroupa P., 2001, MNRAS, 322, 231
-    elif single_star_mass_scheme == 'Kroupa2001':
-        alpha = 2.3
-        normalization_constant = (1.0-alpha) / (single_star_mass_max**(1-alpha)
-                                                - single_star_mass_min**(1-alpha))
-        random_variable = RNG.uniform(size=number_of_binaries)
-        single_star_masses = (random_variable*(1.0-alpha)/normalization_constant
-                          + single_star_mass_min**(1.0-alpha))**(1.0/(1.0-alpha))
-    else:
-        pass
-
-    return single_star_masses
-
 def binary_fraction_value(binary_fraction_const=1,binary_fraction_scheme = 'const',m1 = None,**kwargs):
     """
     Getting the binary fraction depending on the scheme. The two possible option are a constant binary fraction 
@@ -443,7 +376,7 @@ def binary_fraction_value(binary_fraction_const=1,binary_fraction_scheme = 'cons
     binary fraction: int
 
     """
-    binary_fraction_scheme_options = ['const','Maxwell_17']
+    binary_fraction_scheme_options = ['const','Moe_17']
 
     if binary_fraction_scheme not in binary_fraction_scheme_options: 
         raise ValueError("You must provide an allowed binary fraction scheme.")
@@ -452,7 +385,7 @@ def binary_fraction_value(binary_fraction_const=1,binary_fraction_scheme = 'cons
     if binary_fraction_scheme == 'const': 
         binary_fraction = binary_fraction_const
     
-    elif binary_fraction_scheme == 'Maxwell_17':
+    elif binary_fraction_scheme == 'Moe_17':
         if m1 is None: 
             raise ValueError("There was not a primary mass provided in the inputs. Unable to return a binary fraction")
         if m1 <= 2  and m1 > 0.8 :
