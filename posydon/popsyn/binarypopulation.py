@@ -785,7 +785,7 @@ class BinaryGenerator:
         """Generate all random varibles."""
         if not ('RNG' in kwargs.keys()):
             kwargs['RNG'] = self.RNG
-        # a, e, M_1, M_2, M_0, P 
+        # a, e, M_1, M_2, P 
         sampler_output = self.sampler(orbital_scheme, **kwargs)
         if orbital_scheme == 'separation':
             separation, eccentricity, m1, m2 = sampler_output
@@ -913,7 +913,7 @@ class BinaryGenerator:
                 eccentricity=eccentricity,
             )
             star1_params = dict(
-                mass = m1,
+                mass=m1,
                 state="H-rich_Core_H_burning",
                 metallicity=Z,
                 center_h1=X,
