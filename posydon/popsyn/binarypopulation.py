@@ -163,7 +163,7 @@ class BinaryPopulation:
         breakdown_to_df_bool = kw.get('breakdown_to_df', True)
         from_hdf_bool = kw.get('from_hdf', False)
 
-        if self.comm is None:   # do regular evolution=
+        if self.comm is None:   # do regular evolution
             indices = kw.get('indices',
                              list(range(self.number_of_binaries)))
             params = {'indices':indices,
@@ -785,7 +785,7 @@ class BinaryGenerator:
         """Generate all random varibles."""
         if not ('RNG' in kwargs.keys()):
             kwargs['RNG'] = self.RNG
-        # a, e, M_1, M_2, P 
+        # a, e, M_1, M_2, P
         sampler_output = self.sampler(orbital_scheme, **kwargs)
         if orbital_scheme == 'separation':
             separation, eccentricity, m1, m2 = sampler_output
