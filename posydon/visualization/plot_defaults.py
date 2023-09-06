@@ -317,6 +317,10 @@ DEFAULT_MARKERS_COLORS_LEGENDS = {
             ['>', 2, 'tab:pink', 'case A1/B1/B2'],
         'case_A1/B1/A2/B2':
             ['>', 2, 'tab:olive', 'case A1/B1/A2/B2'],
+        'case_A1/B1/A2/B1/B2':
+            ['>', 2, 'yellow', 'case A1/B1/A2/B1/B2'],
+        'case_A1/B1/A2/B2/C1':
+            ['>', 2, '', 'case A1/B1/A2/B2/C1'],
         'case_A1/B1/B2':
             ['>', 2, 'brown', 'case A1/B1/B2'],
         'case_A1/B1/B2/B1':
@@ -331,6 +335,8 @@ DEFAULT_MARKERS_COLORS_LEGENDS = {
             ['<', 2, 'tab:gray', 'case B1/B2'],
         'case_B1/B2/B1':
             ['<', 2, 'tab:red', 'case B1/B2/B1'],
+        'case_B1/B2/BB1':
+            ['<', 2, 'brown', 'case B1/B2/BB1'],
         'case_B1/B2/B1/B2/B1/B2/B1/B2/B1':
             ['<', 2, 'tab:pink', 'case B1/B2/B1/B2/B1/B2/B1/B2/B1'],
         'case_B1/B2/B1/C1':
@@ -347,6 +353,14 @@ DEFAULT_MARKERS_COLORS_LEGENDS = {
             ['v', 2, 'tab:green', 'case B2/B1/C1'],
         'case_B2/C1':
             ['v', 2, 'tab:orange', 'case B2/C1'],
+        'case_B1/A2/B2/C1':
+            ['v', 2, 'tab:red', 'case B1/A2/B2/C1'],
+        'case_A2/B1/B2':
+            ['v', 2, 'tab:pink', 'case A2/B1/B2'],
+        'case_A1/B1/B2/C1':
+            ['v', 2, 'tab:purple', 'case A1/B1/B2/C1'],
+        'case_A1/B1/B2/B1/C1':
+            ['v', 2, 'tab:olive', 'case A1/B1/B2/B1/C1'],
             
         'None':
             ['x', 1, 'tab:red', 'failed'],
