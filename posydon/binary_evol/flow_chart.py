@@ -20,6 +20,7 @@ STAR_STATES_ALL = [
     'WD',
     'NS',
     'BH',
+    'massless_remnant',
     'H-rich_Core_H_burning',
     'H-rich_Core_He_burning',
     'H-rich_Shell_H_burning',
@@ -35,17 +36,22 @@ STAR_STATES_ALL = [
 ]
 
 STAR_STATES_CO = ['BH', 'NS', 'WD']
+STAR_STATES_NOT_NORMALSTAR = STAR_STATES_CO.copy()
+STAR_STATES_NOT_NORMALSTAR.append('massless_remnant')
 
 STAR_STATES_NOT_CO = STAR_STATES_ALL.copy()
 [STAR_STATES_NOT_CO.remove(x) for x in STAR_STATES_CO]
 
-STAR_STATES_H_RICH = STAR_STATES_NOT_CO.copy()
+STAR_STATES_NORMALSTAR = STAR_STATES_ALL.copy()
+[STAR_STATES_NORMALSTAR.remove(x) for x in STAR_STATES_NOT_NORMALSTAR]
+
+STAR_STATES_H_RICH = STAR_STATES_NORMALSTAR.copy()
 [STAR_STATES_H_RICH.remove(x) for x in ['stripped_He_Core_He_burning',
                                         'stripped_He_Central_He_depleted',
                                         'stripped_He_Central_C_depletion',
                                         'stripped_He_non_burning']]
 
-STAR_STATES_HE_RICH = STAR_STATES_NOT_CO.copy()
+STAR_STATES_HE_RICH = STAR_STATES_NORMALSTAR.copy()
 [STAR_STATES_HE_RICH.remove(x) for x in ['H-rich_Core_H_burning',
                                          'H-rich_Core_He_burning',
                                          'H-rich_Shell_H_burning',
@@ -121,8 +127,8 @@ for b in BINARY_STATES_ZAMS:
 
 # stripped_He star on a detached binary another H- or stripped_He star
 # This will be the outcome of a CE.
-for s1 in STAR_STATES_NOT_CO:
-    for s2 in STAR_STATES_NOT_CO:
+for s1 in STAR_STATES_NORMALSTAR:
+    for s2 in STAR_STATES_NORMALSTAR:
         POSYDON_FLOW_CHART[(s1, s2, 'detached', None)] = 'step_detached'
         POSYDON_FLOW_CHART[(s2, s1, 'detached', None)] = 'step_detached'
 
@@ -139,6 +145,12 @@ for s1 in STAR_STATES_H_RICH_EVOLVABLE:
     for s2 in STAR_STATES_CO:
         POSYDON_FLOW_CHART[(s1, s2, 'RLO1', 'oRLO1')] = 'step_CO_HMS_RLO'
         POSYDON_FLOW_CHART[(s2, s1, 'RLO2', 'oRLO2')] = 'step_CO_HMS_RLO'
+        
+# He-rich star roche-lobe overflow onto a compact object
+for s1 in STAR_STATES_HE_RICH_EVOLVABLE:
+    for s2 in STAR_STATES_CO:
+        POSYDON_FLOW_CHART[(s1, s2, 'RLO1', 'oRLO1')] = 'step_CO_HeMS_RLO'
+        POSYDON_FLOW_CHART[(s2, s1, 'RLO2', 'oRLO2')] = 'step_CO_HeMS_RLO'
 
 # H-rich star on a detached binary with a compact object
 # that fall outside the grid and has been returned by step_CO_HMS_RLO
@@ -164,7 +176,7 @@ for s1 in STAR_STATES_HE_RICH:
 
 # Binaries that go to common envelope
 
-for s1 in STAR_STATES_NOT_CO:
+for s1 in STAR_STATES_NORMALSTAR:
     for s2 in STAR_STATES_ALL:
         POSYDON_FLOW_CHART[(s1, s2, 'RLO1', 'oCE1')] = 'step_CE'
         POSYDON_FLOW_CHART[(s1, s2, 'RLO1', 'oDoubleCE1')] = 'step_CE'
@@ -217,12 +229,21 @@ for b in ['initial_RLOF',
                 POSYDON_FLOW_CHART[(s1, s2, b, e)] = 'step_end'
                 POSYDON_FLOW_CHART[(s1, s2, b, e)] = 'step_end'
 
+
 for b in ['initially_single_star']:
     for s1 in STAR_STATES_ALL:
         for s2 in STAR_STATES_ALL:
-            for e in BINARY_EVENTS_ALL:
-                POSYDON_FLOW_CHART[(s1, s2, b, e)] = 'step_end'#'step_initially_single'
-                POSYDON_FLOW_CHART[(s1, s2, b, e)] = 'step_end'#'step_initially_single'
+            for e in ['ZAMS']:
+                POSYDON_FLOW_CHART[(s1, s2, b, e)] = 'step_initially_single'
+                POSYDON_FLOW_CHART[(s2, s1, b, e)] = 'step_initially_single'
+
+for s1 in STAR_STATES_CO:
+    for s2 in ['massless_remnant']:
+        for e in BINARY_EVENTS_ALL:
+            POSYDON_FLOW_CHART[(s1, s2, b, e)] = 'step_end'
+            POSYDON_FLOW_CHART[(s2, s1, b, e)] = 'step_end'
+
+
 
 BINARY_EVENTS_OF_SN_OR_AFTER_DETACHED = BINARY_EVENTS_ALL.copy()
 [BINARY_EVENTS_OF_SN_OR_AFTER_DETACHED.remove(x) for x in ['CC1','CC2','MaxTime_exceeded','maxtime']]
@@ -232,28 +253,28 @@ for b in ['disrupted']:
         for s2 in STAR_STATES_ALL:
             for e in BINARY_EVENTS_OF_SN_OR_AFTER_DETACHED:
                 POSYDON_FLOW_CHART[(s1, s2, b, e)] = 'step_disrupted'
-                POSYDON_FLOW_CHART[(s1, s2, b, e)] = 'step_disrupted'
+                POSYDON_FLOW_CHART[(s2, s1, b, e)] = 'step_disrupted'
 # if we have two compcat objects in a disrupted binary, we stop the evolution.
 for b in ['disrupted']:
     for s1 in STAR_STATES_CO:
         for s2 in STAR_STATES_CO:
             for e in BINARY_EVENTS_ALL:
                 POSYDON_FLOW_CHART[(s1, s2, b, e)] = 'step_end'
-                POSYDON_FLOW_CHART[(s1, s2, b, e)] = 'step_end'
+                POSYDON_FLOW_CHART[(s2, s1, b, e)] = 'step_end'
 
 
 for b in ['merged']:
     for s1 in STAR_STATES_ALL:
         for s2 in STAR_STATES_ALL:
             for e in ['oMerging1', 'oMerging2']:
-                POSYDON_FLOW_CHART[(s1, s2, b, e)] = 'step_end' #'step_merged'
-                POSYDON_FLOW_CHART[(s1, s2, b, e)] = 'step_end' #'step_merged'
+                POSYDON_FLOW_CHART[(s1, s2, b, e)] = 'step_merged' #'step_merged'
+                POSYDON_FLOW_CHART[(s2, s1, b, e)] = 'step_merged' #'step_merged'
 
 # catch initial_RLO states
 for s1 in STAR_STATES_ALL:
     for s2 in STAR_STATES_ALL:
         POSYDON_FLOW_CHART[(s1, s2, 'initial_RLOF', 'ZAMS')] = 'step_end'
-        POSYDON_FLOW_CHART[(s1, s2, 'initial_RLOF', 'ZAMS')] = 'step_end'
+        POSYDON_FLOW_CHART[(s2, s1, 'initial_RLOF', 'ZAMS')] = 'step_end'
 
 # catch all maxtime
 for b in BINARY_STATES_ALL:

@@ -35,6 +35,7 @@ from posydon.binary_evol.singlestar import SingleStar, STARPROPERTIES
 from posydon.utils.common_functions import (
     check_state_of_star, orbital_period_from_separation,
     orbital_separation_from_period, get_binary_state_and_event_and_mt_case)
+from posydon.popsyn.io import (clean_binary_history_df, clean_binary_oneline_df)
 
 
 # star property: column names in binary history for star 1 and star 2
@@ -162,6 +163,11 @@ class BinaryStar:
             self.mass_transfer_case = 'None'
         # if not hasattr(self, 'V_sys'):
         #     self.V_sys = [0, 0, 0]
+        
+        # store innterpolation_class for each step_MESA
+        for grid_type in ['HMS_HMS','CO_HMS_RLO','CO_HeMS','CO_HeMS_RLO']:
+            if not hasattr(self, f'interp_class_{grid_type}'):
+                setattr(self, f'interp_class_{grid_type}', None)
 
         # SimulationProperties object - parameters & parameterizations
         if isinstance(properties, SimulationProperties):
@@ -204,7 +210,7 @@ class BinaryStar:
             total_state = (self.star_1.state, self.star_2.state, self.state,
                            self.event)
             next_step_name = self.properties.flow.get(total_state)
-
+            
             if next_step_name is None:
                 warnings.warn("Undefined next step given stars/binary states "
                               "{}.".format(total_state))
@@ -289,9 +295,10 @@ class BinaryStar:
 
         Parameters
         ----------
-        extra_columns : list
+        extra_columns : dict( 'name':dtype, .... )
             Extra binary parameters to return in DataFrame that are not
-            included in BINARYPROPERTIES.
+            included in BINARYPROPERTIES. All columns must have an
+            associated pandas data type.
             Can be used in combination with `only_select_columns`.
             Assumes names have no suffix.
         ignore_columns : list
@@ -315,9 +322,13 @@ class BinaryStar:
         pandas DataFrame
 
         """
+        extra_binary_cols_dict = kwargs.get('extra_columns', {})
+        extra_columns = list(extra_binary_cols_dict.keys())
+        extra_columns_dtypes_user = list(extra_binary_cols_dict.values())
+        
         all_keys = (["binary_index"]
                     + [key+'_history' for key in BINARYPROPERTIES]
-                    + list(kwargs.get('extra_columns', [])))
+                    + extra_columns)
 
         ignore_cols = list(kwargs.get('ignore_columns', []))
         keys_to_save = [i for i in all_keys if not (
@@ -327,7 +338,7 @@ class BinaryStar:
             user_keys_to_save = list(kwargs.get('only_select_columns'))
             keys_to_save = (["binary_index"]
                             + [key+'_history' for key in user_keys_to_save]
-                            + list(kwargs.get('extra_columns', [])))
+                            + extra_columns)
 
         try:
             data_to_save = [getattr(self, key) for key in keys_to_save[1:]]
@@ -382,6 +393,7 @@ class BinaryStar:
 
         frames = [bin_df]
         if kwargs.get('include_S1', True):
+            # we are hard coding the prefix
             frames.append(self.star_1.to_df(
                 prefix='S1_', null_value=kwargs.get('null_value', np.NAN),
                 **kwargs.get('S1_kwargs', {})))
@@ -393,6 +405,12 @@ class BinaryStar:
 
         binary_df.set_index('binary_index', inplace=True)
 
+        extra_s1_cols_dict = kwargs.get('S1_kwargs', {}).get('extra_columns', {})
+        extra_s2_cols_dict = kwargs.get('S2_kwargs', {}).get('extra_columns', {})
+        binary_df = clean_binary_history_df(binary_df,
+                                            extra_binary_dtypes_user=extra_binary_cols_dict,
+                                            extra_S1_dtypes_user=extra_s1_cols_dict,
+                                            extra_S2_dtypes_user=extra_s2_cols_dict)
         return binary_df
 
     @classmethod
@@ -405,7 +423,7 @@ class BinaryStar:
             data to turn into a BinaryStar instance.
         index : int, optional
             Sets the binary index.
-        extra_columns : list, optional
+        extra_columns : dict, optional
             Column names to be added directly to binary
             not in BINARYPROPERTIES.
 
@@ -420,7 +438,7 @@ class BinaryStar:
         # split input dataframe into kwargs dicts
         binary_params, star1_params, star2_params = dict(), dict(), dict()
         extra_params = dict()
-        extra_columns = kwargs.get('extra_columns', [])
+        extra_columns = kwargs.get('extra_columns', {})
         hist_lengths = []
         for name in list(dataframe.columns):
             if 'S1' in name:
@@ -566,6 +584,20 @@ class BinaryStar:
             oneline_df['WARNING'] = [0]
 
         oneline_df.set_index('binary_index', inplace=True)
+        
+        # try to coerce data types automatically
+        oneline_df = oneline_df.infer_objects()
+
+        # Set data types for all columns explicitly
+        # we are assuming you may pass the same kwargs to both to_df and oneline
+        extra_binary_cols_dict = kwargs.get('extra_columns', {})
+        extra_s1_cols_dict = kwargs.get('S1_kwargs', {}).get('extra_columns', {})
+        extra_s2_cols_dict = kwargs.get('S2_kwargs', {}).get('extra_columns', {})
+        oneline_df = clean_binary_oneline_df(oneline_df,
+                                            extra_binary_dtypes_user=extra_binary_cols_dict,
+                                            extra_S1_dtypes_user=extra_s1_cols_dict,
+                                            extra_S2_dtypes_user=extra_s2_cols_dict)
+        
         return oneline_df
 
     @classmethod
@@ -582,7 +614,7 @@ class BinaryStar:
             A oneline DataFrame describing a binary.
         index : int, None
             Binary index
-        extra_columns : list
+        extra_columns : dict
             Names of any extra history columns not inlcuded
             in BINARYPROPERTIES
 
@@ -596,7 +628,7 @@ class BinaryStar:
 
         binary_params, star1_params, star2_params = dict(), dict(), dict()
         extra_params = dict()
-        extra_columns = kwargs.get('extra_columns', [])
+        extra_columns = kwargs.get('extra_columns', {})
         hist_lengths = []
         for name in list(oneline_df.columns):
             if '_f' in name[-2:]:
