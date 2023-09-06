@@ -361,6 +361,12 @@ DEFAULT_MARKERS_COLORS_LEGENDS = {
             ['v', 2, 'tab:olive', 'case A1/B1/B2/B1/C1'],
         'case_A1/B1/A2/B2/C1':
             ['v', 2, 'brown', 'case A1/B1/A2/B2/C1'],
+        'case_A1/B2/C1':
+            ['v', 2, 'yellow', 'case A1/B2/C1'],
+        'case_A1/A2/B2/C1':
+            ['v', 2, 'black', 'case A1/A2/B2/C1'],
+        'case_A2/A1':
+            ['v', 2, 'tab:gray', 'case A2/A1'],
             
         'None':
             ['x', 1, 'tab:red', 'failed'],
