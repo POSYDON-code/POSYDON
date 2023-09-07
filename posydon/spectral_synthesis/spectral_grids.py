@@ -7,7 +7,8 @@ import astropy.units as unt
 import astropy.constants as con
 import pymsg
 import datetime
-from posydon.spectral_synthesis.default_options import default_kwargs
+from posydon.spectral_synthesis.default_options import default_grid_kwargs
+from posydon.spectral_synthesis.spectral_tools import grid_global_limits
 import copy
 kpc = 3.08e19*unt.m
 MSG_DIR = os.environ['MSG_DIR']
@@ -32,11 +33,12 @@ def spec_grid(name):
 class spectral_grids():
     def __init__(self,**kwargs):
         #Assigning the grid files and creating the spec_grid ojects. 
-        self.kwargs = default_kwargs.copy()
+        self.kwargs = default_grid_kwargs.copy()
         for key, arg in kwargs.items():
             self.kwargs[key] = arg
         
         self.filters = None
+
         #Create a dictonary named grids that has stored the spec_grid objects for each keys. 
         self.spectral_grids = self.grid_constractor(**self.kwargs)
         self.photgrids = self.photgrid_constractor(**self.kwargs)
@@ -50,41 +52,17 @@ class spectral_grids():
         self.specgrid_stripped = spec_grid(self.stripped_grid_file)
         self.specgrid_stripped.cache_limit = cache
         
-        self.T_max = 0  #Global_min 
-        self.T_min = 0  #Global_max 
-        self.logg_max = 0 
-        self.logg_min = 0 
+        #Getting the global limits for the grids 
+        self.T_max,self.T_min,self.logg_max,self.logg_min = grid_global_limits(self.spectral_grids)
 
-        lam_min = self.kwargs.get('lam_min')
-        lam_max = self.kwargs.get('lam_max')
-        self.lam = np.linspace(lam_min,lam_max, 2000)
+        lam_min = self.kwargs.get('lam_min',3000)
+        lam_max = self.kwargs.get('lam_max',7000)
+        lam_res = self.kwargs.get('lam_res',2000)
+        self.lam = np.linspace(lam_min,lam_max, lam_res)
         self.lam_c = 0.5*(self.lam[1:] + self.lam[:-1])
         self.F_empty = np.zeros(((len(self.lam_c))))*unt.m/unt.m*0
-        
-
-    #function that calculates the global min. 
-    def global_limits(self):
-        T_max  = 0 
-        T_min = 100000
-        logg_max = 0 
-        logg_min = 20
-
-        for key in self.spectral_grids:
-            specgrid = self.spectral_grids[key]
-            for label in specgrid.axis_labels:
-                if label== 'Teff':
-                    T_max = max(T_max,specgrid.axis_x_max[label])
-                    T_min = min(T_min,specgrid.axis_x_min[label])
-                elif label == 'log(g)':
-                    logg_max = max(logg_max,specgrid.axis_x_max[label])
-                    logg_min = min(logg_min,specgrid.axis_x_min[label])
-        self.T_max = T_max
-        self.T_min = T_min 
-        self.logg_max = logg_max
-        self.logg_min = logg_min
-        #print(self.T_max,self.T_min,self.logg_max,self.logg_min)
-        
     
+
     #Function that creates the specgrid objects of all the spectral libraries and then storing them in a list. 
     def grid_constractor(self,**kwargs):
         grids = {}
@@ -106,6 +84,7 @@ class spectral_grids():
         return Flux  
 
     #Function that return the flux from every grid. 
+
 
     def stripped_grid_flux(self,star):
         Z = 0.0142

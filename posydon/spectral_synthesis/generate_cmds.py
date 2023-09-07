@@ -35,7 +35,6 @@ class population_cmd():
         #Initializing the spectral_grids object and parameters used.
         #To do put an option for changing the wavelength 
         self.grids = spectral_grids()
-        self.grids.global_limits()
         self.scaling_factor = kwargs.get('scaling_factor')
         self.filters = self.grids.filters
         self.photgrids = self.grids.photgrids

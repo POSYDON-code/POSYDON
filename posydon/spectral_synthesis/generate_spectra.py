@@ -11,6 +11,7 @@ import traceback
 import copy
 from posydon.spectral_synthesis.spectral_tools import population_data
 from posydon.spectral_synthesis.spectral_grids import spectral_grids
+from posydon.spectral_synthesis.default_options import default_kwargs
 
 grid_keys = [
     'main_grid',
@@ -18,6 +19,7 @@ grid_keys = [
     'ostar_grid',
     'stripped_grid',
 ]
+
 #########################################Creating the class population_spectra ###############################################
 
 
@@ -25,12 +27,13 @@ class population_spectra():
     
     def __init__(self,file,**kwargs):
         ######Initializing the parameters ##################
-        for key, value in kwargs.items():
-            setattr(self, key, value)
-
+        self.kwargs = default_kwargs.copy()
+        for key, arg in kwargs.items():
+            self.kwargs[key] = arg
+        
         #population_file = kwargs.get('population_file')
-        population_file = file
-        time = kwargs.get('time')
+        self.kwargs['population_file'] = file
+        #time = kwargs.get('time')
         self.failed_stars = 0 #int, the stars that failed durin the spectra process 
         self.missing_stars = 0 #The stars that are missing due to POSYDON, some detached cases for now. 
         #Creating lists/numpy arrays for investigation for the failled and succesful stars. 
@@ -40,7 +43,7 @@ class population_spectra():
         
         #Creating readable arrays for the stars objects. 
         time_start_pop = datetime.datetime.now()
-        self.population = population_data(population_file,time)
+        self.population = population_data(**self.kwargs)
         time_end_pop = datetime.datetime.now()
         print('Total time is: ',time_end_pop - time_start_pop)
         self.total_binaries = len(self.population)
@@ -48,14 +51,13 @@ class population_spectra():
         #Initializing the spectral_grids object and parameters used.
         #To do put an option for changing the wavelength 
         self.grids = spectral_grids()
-        self.grids.global_limits()
         self.scaling_factor = kwargs.get('scaling_factor')
         self.grid_flux  = self.grids.grid_flux
 
     
 
 
-    def create_spectrum_single(self,star,**kwargs):
+    def create_spectrum_single(self,star,ostar_temp_cut_off=27000,**kwargs):
         scale = self.scaling_factor
         if "stripped" in star.state:
             M = star.mass/con.M_sun
@@ -76,8 +78,8 @@ class population_spectra():
             self.failed_stars +=1 
             return None
         
-        #For temperature higher than then lo_limits of Teff in main grids we calculate the spectra using the Ostar girds. 
-        if Teff >= 30000:
+        #For temperature higher than the desired cut_off we calculate the spectra using the Ostar girds. 
+        if Teff >= ostar_temp_cut_off:
             #Setting the acceptable boundaries for the ostar grid in the logg.
             logg_min = self.grids.spectral_grids['ostar_grid'].axis_x_min['log(g)']
             logg_max = self.grids.spectral_grids['ostar_grid'].axis_x_max['log(g)']
@@ -91,7 +93,8 @@ class population_spectra():
             else:
                 self.failed_stars +=1
                 return None
-            
+
+
         try:
             #normal_start = datetime.datetime.now()
             Flux = self.grid_flux('main_grid',**x) 

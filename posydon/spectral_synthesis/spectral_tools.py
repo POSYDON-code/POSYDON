@@ -47,7 +47,10 @@ class star():
         return R
 
 
-def population_data(population_file,time, number_of_binaries = True ):
+
+def population_data(population_file = None ,time = None, number_of_binaries = True,**kwargs):
+    if population_file is None or time is None: 
+        raise Exception('File of population or time not provided')
     history = pd.read_hdf(population_file, key='history')
     final_stars = history[(history.time == time ) & (history.event == "END")].reset_index()
     zams_stars = history[history.event == 'ZAMS']
@@ -81,3 +84,21 @@ def population_data(population_file,time, number_of_binaries = True ):
         star2 = star(**star2_properties)
         population[i] = [star1,star2]
     return population
+
+
+def grid_global_limits(spectral_grids):
+    T_max  = 0 
+    T_min = 100000
+    logg_max = 0 
+    logg_min = 20
+    for key in spectral_grids:
+        specgrid = spectral_grids[key]
+        for label in specgrid.axis_labels:
+            if label== 'Teff':
+                T_max = max(T_max,specgrid.axis_x_max[label])
+                T_min = min(T_min,specgrid.axis_x_min[label])
+            elif label == 'log(g)':
+                logg_max = max(logg_max,specgrid.axis_x_max[label])
+                logg_min = min(logg_min,specgrid.axis_x_min[label])
+    return T_max,T_min,logg_max,logg_min 
+
