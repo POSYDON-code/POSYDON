@@ -57,10 +57,10 @@ def get_flag_from_MESA_output(MESA_log_path):
     """
     if MESA_log_path is not None and os.path.isfile(MESA_log_path):
         if MESA_log_path.endswith(".gz"):
-            with gzip.open(MESA_log_path, "rt") as log_file:
+            with gzip.open(MESA_log_path, "rt", errors='ignore') as log_file:
                 log_lines = log_file.readlines()
         else:
-            with open(MESA_log_path, "r") as log_file:
+            with open(MESA_log_path, "r", errors='ignore') as log_file:
                 log_lines = log_file.readlines()
 
         for line in reversed(log_lines):
@@ -192,7 +192,8 @@ def check_state_from_history(history, mass, model_index=-1):
 
 
 def get_flags_from_MESA_run(MESA_log_path, binary_history=None,
-                            history1=None, history2=None, start_at_RLO=False):
+                            history1=None, history2=None, start_at_RLO=False,
+                            newTF1=''):
     """Return the four termination flags.
 
     Parameters
@@ -201,6 +202,8 @@ def get_flags_from_MESA_run(MESA_log_path, binary_history=None,
         path to the MESA terminal output
     binary_history, history1, history2: np.array
         MESA output histories.
+    newTF1: str
+        replacement for the termination flag from the MESA output
 
     Returns
     -------
@@ -210,7 +213,10 @@ def get_flags_from_MESA_run(MESA_log_path, binary_history=None,
         final_state_1, final_state_2: describe the final evolutionary
             state of the two stars. None if history star is not provided.
     """
-    flag_out = get_flag_from_MESA_output(MESA_log_path)
+    if newTF1=='':
+        flag_out = get_flag_from_MESA_output(MESA_log_path)
+    else:
+        flag_out = newTF1
     final_state_1 = check_state_from_history(history1,
                                              binary_history["star_1_mass"])
     final_state_2 = check_state_from_history(history2,
