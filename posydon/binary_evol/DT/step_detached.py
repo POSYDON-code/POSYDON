@@ -885,7 +885,7 @@ class detached_step:
                         - star.total_moment_of_inertia
                     ) / star.total_moment_of_inertia
                 '''
-
+        
 
         if self.verbose or self.verbose == 1:
             print(

@@ -82,7 +82,8 @@ BINARY_STATES_ALL = [
     'contact',
     'disrupted',
     'merged',
-    'initial_RLOF'
+    'initial_RLOF',
+    'low_mass_binary'
 ]
 
 BINARY_EVENTS_ALL = [
@@ -173,6 +174,10 @@ for s1 in STAR_STATES_HE_RICH:
         POSYDON_FLOW_CHART[(s1, s2, 'detached', "redirect")] = 'step_detached'
         POSYDON_FLOW_CHART[(s2, s1, 'detached', "redirect")] = 'step_detached'
 
+
+for s1 in STAR_STATES_ZAMS:
+    for s2 in STAR_STATES_ZAMS:
+        POSYDON_FLOW_CHART[(s1, s2, 'low_mass_binaries', 'ZAMS')] = 'step_detached'#low_mass_binaries
 
 # Binaries that go to common envelope
 
