@@ -9,6 +9,7 @@ import astropy.units as unt
 import datetime
 import traceback
 import copy
+
 from posydon.spectral_synthesis.spectral_tools import population_data
 from posydon.spectral_synthesis.spectral_grids import spectral_grids
 from posydon.spectral_synthesis.default_options import default_kwargs
