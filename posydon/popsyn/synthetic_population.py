@@ -22,6 +22,11 @@ from posydon.popsyn.rate_calculation import Rates
 import posydon.visualization.plot_pop as plot_pop
 from posydon.popsyn.GRB import get_GRB_properties, GRB_PROPERTIES
 
+# TODO: temp import, remove after TF2 classification is implemented in pop synth
+from posydon.interpolation.IF_interpolation import IFInterpolator
+from posydon.binary_evol.binarystar import BinaryStar
+from posydon.binary_evol.singlestar import SingleStar
+from posydon.utils.common_functions import convert_metallicity_to_string
 
 class SyntheticPopulation:
 
@@ -780,12 +785,52 @@ class SyntheticPopulation:
                 formation_channel = "_".join(event_array)
             else:
                 formation_channel = "_".join(event_array)
-                
+                        
             # TODO: drop the envent CO_contact
             # TODO: once we trust the redirection to the detached step
             #       drop also the redirect event
-                
+            
+            # TODO: for debugging purposes we keep the full channel
+            self.df_oneline.loc[index,'channel_debug'] = formation_channel
+            # clean the redirect and CO_contact events
+            formation_channel = formation_channel.replace('_redirect', '')
+            formation_channel = formation_channel.replace('_CO_contact', '')
             self.df_oneline.loc[index,'channel'] = formation_channel
+            
+        ####### DEVELOPMENT CODE: DO NOT MERGE ######
+        # TODO: embed the TF2 classifier in the MESA step and store the
+        # outcome in the pop synth instead of evaluating it here
+        def eval_class_MT_case(met):
+            # get initial conditions
+            sel = (self.df['event'] == 'ZAMS') & (self.df['metallicity'] == 0.0142*met)
+            if not any(sel):
+                return
+            cols = ['orbital_period', 'S1_mass', 'S2_mass']
+            p, m1, m2 = self.df.loc[sel, cols].values.T
+            
+            # evaluate interpolators
+            interpolator_path =  f'/Users/simone/Desktop/POSYDON_data/HMS-HMS/interpolators/1NN_1NN/TF2_{convert_metallicity_to_string(met)}_Zsun.pkl'
+            Interp = IFInterpolator()
+            Interp.load(filename=interpolator_path)
+
+            MT_cases = []
+            for i in tqdm(range(len(p))):
+                binary = BinaryStar(
+                    star_1=SingleStar(**{'mass':m1[i]}), 
+                    star_2=SingleStar(**{'mass':m2[i]}),
+                    **{'orbital_period':p[i]}
+                )
+                _, classes = Interp.evaluate(binary)
+                MT_cases.append(classes['termination_flag_2'])
+            self.df_oneline.loc[self.df[sel].index, 'interp_class_HMS_HMS_TF2'] = MT_cases
+        # compute interp_class_HMS_HMS_TF2
+        self.df_oneline['interp_class_HMS_HMS_TF2'] = 'None'
+        for met in [2e+00,1e+00,4.5e-01,2e-01,1e-01,1e-02,1e-03,1e-04]:
+            eval_class_MT_case(met)
+        sel = ((self.df_oneline['interp_class_HMS_HMS_TF2'] == 'contact_during_MS') & 
+               self.df_oneline['channel'].str.contains('oRLO1'))
+        self.df_oneline.loc[sel, 'channel'] = self.df_oneline.loc[sel, 'channel'].apply(lambda x: x.replace('oRLO1', 'oRLO1-contact'))
+        ############################################################# 
 
     def save_intrinsic_pop(self, path='./intrinsic_population_type.h5', pop='DCO'):
         """Save intrinsic population.
