@@ -193,13 +193,13 @@ class GraphVisualizerCase(GraphVisualizerItem):
         """Get coordinate to connect this widget with the previous one."""
         return self._center_widget.mapToGlobal(
             self._center_widget.rect().topLeft()
-        ) + QPoint(self._center_widget.width() / 2, 0)
+        ) + QPoint(int(self._center_widget.width() / 2), 0)
 
     def get_attach_point_bot(self):
         """Get coordinate to connect this widget with the next one."""
         return self._center_widget.mapToGlobal(
             self._center_widget.rect().bottomLeft()
-        ) + QPoint(self._center_widget.width() / 2, 0)
+        ) + QPoint(int(self._center_widget.width() / 2), 0)
 
 
 def prepare_case(infos: CaseInfos):
@@ -348,7 +348,7 @@ class GraphVisualizerState(GraphVisualizerItem):
         self.done = False
 
         layout = QGridLayout()
-        layout.setContentsMargins(0, 0, 0, 0)
+        layout.setContentsMargins(0, 10, 0, 10)
         self.setLayout(layout)
 
         self._bg_container = QLabel()
@@ -468,13 +468,13 @@ class GraphVisualizerState(GraphVisualizerItem):
         """Get coordinate to connect this widget with the previous one."""
         return self._bg_container.mapToGlobal(
             self._bg_container.rect().topLeft()
-        ) + QPoint(self._bg_container.width() / 2, 0)
+        ) + QPoint(int(self._bg_container.width() / 2), 0)
 
     def get_attach_point_bot(self):
         """Get coordinate to connect this widget with the next one."""
         return self._bg_container.mapToGlobal(
             self._bg_container.rect().bottomLeft()
-        ) + QPoint(self._bg_container.width() / 2, 0)
+        ) + QPoint(int(self._bg_container.width() / 2), 0)
 
     def resizeEvent(self, event):
         """Resize the event."""
@@ -503,12 +503,12 @@ class GraphVisualizerState(GraphVisualizerItem):
         )
         y_S2 = self._bg.height() / 2 - self._S2_pixmap.height() / 2
 
-        painter.drawPixmap(x_S2, y_S2, self._S2_pixmap)
+        painter.drawPixmap(int(x_S2), int(y_S2), self._S2_pixmap)
 
         if not self._event_pixmap.isNull():
             x_event = self._bg.width() / 2 - self._event_pixmap.width() / 2
 
-            painter.drawPixmap(x_event, 0, self._event_pixmap)
+            painter.drawPixmap(int(x_event), 0, self._event_pixmap)
 
         self._bg_container.setPixmap(self._bg)
 
@@ -711,12 +711,14 @@ class GraphVisualizerConnectedcolumn(GraphVisualizercolumn):
             end = surface.mapFromGlobal(
                 connection.to_item.get_attach_point_top())
 
-            painter.drawLine(start, end)
+            painter.drawLine(start + QPoint(0, 36)
+                             ,end + QPoint(0, -8))
 
             left = end + QPoint(-4, -8)
             rigth = end + QPoint(4, -8)
 
             painter.setBrush(Qt.black)
+            painter.drawEllipse(start + QPoint(0, 36), 2, 2)
             painter.drawPolygon(end, left, rigth)
 
 
@@ -751,6 +753,7 @@ class GraphVisualizer(QWidget):
         super(GraphVisualizer, self).__init__()
 
         self._layout = QGridLayout()
+        self._layout.setContentsMargins(0, 0, 0, 0)
         self.setLayout(self._layout)
 
         self._next_column = 0

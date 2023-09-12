@@ -100,11 +100,10 @@ same plot.
 Counting binaries populations
 -----------------------------
 
-You can browse throught binaries file to get the count of all the distinct binaries occurences
-with the 'ParseDataFrame' class. Counts can be accessed in the 'count_dict' attribute witch is
-a python `Counter` object, and frequencies with the 'get_frequencies()' method (Parsing may 
-excee d10 s/M lines for fixed format Dataframes).You can also get the n most frequent binaries by
-using the 'get_most_numpy(k)' method.
+You can loop through the binary file to count identical binary simulations with the `ParseDataFrame`
+class. The counts are accessible in the `count_dict` attribute which is a `Counter` python object 
+and the frequencies with the `get_frequencies()` method. You can also get the n most frequent
+binaries using the `get_most_numpy(k)` method.
 
 .. code-block:: python
 
@@ -143,11 +142,9 @@ using the 'get_most_numpy(k)' method.
 Side by side visualization
 --------------------------
 
-Here you can simply provide a list of index instead of a single one and everything
-work like with the previous class. Binaries are plot by their order in the provided list.
-The class initialization requires a dict of frequenties distribution witch is by 
-default generated as uniform. (Open the picture in a new tab ofyourbrowser for a better
- visualization)
+You can get multiple binary simulations printed side by side by providing a list of their index
+in wanted order. The initialization call requires a dict of frequenties as parameter `frequency`
+witch is by default uniform. `hierarchy` parameter must be set to false.
 
 .. code-block:: python
 
@@ -155,11 +152,9 @@ default generated as uniform. (Open the picture in a new tab ofyourbrowser for a
     from posydon.visualization.VHdiagram import DisplayMode
     from posydon.visualization.VH_diagram.PresenterMode import PresenterMode
 
-    cnt = parse_df.get_most_numpy(len(parse_df.count_dict))
-
     VHD = VHdiagramm_m('./data/population.h5',
                     index=cnt[:,0],
-                    count_dict=parse_df.get_frequencies(),
+                    frequency=parse_df.get_frequencies(),
                     hierarchy=False,
                     presentMode = PresenterMode.DIAGRAM,
                     displayMode = DisplayMode.INLINE_B)
@@ -169,9 +164,9 @@ default generated as uniform. (Open the picture in a new tab ofyourbrowser for a
 Hierarchical visualization
 --------------------------
 
-The hierarchical visualization aims to "factorize" identical steps resulting in a tree 
-where the nodes are the common steps. Thay are labeled by precentages relatively to the
-parent node precentage (witch is also uniform by default).
+The hierarchical visualization aims to "factorize" identical steps resulting in a tree plot
+where the nodes are the common steps. They are labeled by precentages relatively to the parent
+node precentage (witch is also uniform by default).
 
 .. code-block:: python
 
@@ -181,17 +176,15 @@ parent node precentage (witch is also uniform by default).
 
     VHD = VHdiagramm_m('./data/population.h5',
                     index=cnt[:,0],
-                    count_dict=parse_df.get_frequencies(),
+                    frequency=parse_df.get_frequencies(),
                     hierarchy=True,
                     presentMode = PresenterMode.DIAGRAM,
                     displayMode = DisplayMode.INLINE_B)
 
 .. image:: pngs/diagram_hierarchy.png
 
-Note that binaries 36 and 30 are considered distinct since they refer to differents simulation
-representation image filenames. Distincts states or event may look the same for distinct png's
-haven't been found yet for all possible pictures. This is set to change with future updates 
-where every state / event png representation should be different.
+Steps differentiation is based on picture's file names. So binaries like 30 and 36
+are considered different since they refer to distinct files.
 
 .. code-block:: python
 
@@ -201,17 +194,16 @@ where every state / event png representation should be different.
     H-rich_oCE2_H-rich_.png
 
 
-Also You can see the effect of that factorisation with the representaion before the elimination
-form the index list of binaries sorted hierarchycally with the `get_sorted_index()` method of the
-`VHdiagramm_m` object
+The `get_sorted_index()` method of the `VHdiagramm_m` object give a list of indexes
+sorted regarding the filenames of the pictures representing their steps
 
 .. code-block:: python
 
     VHD = VHdiagramm_m('./data/population.h5',
-                   index=VHD.get_sorted_index(),
-                   count_dict=parse_df.get_frequencies(),
-                   hierarchy=False,
-                   presentMode = PresenterMode.DIAGRAM,
-                  displayMode = DisplayMode.INLINE_B)
+                    index=VHD.get_sorted_index(),
+                    frequency=parse_df.get_frequencies(),
+                    hierarchy=False,
+                    presentMode = PresenterMode.DIAGRAM,
+                    displayMode = DisplayMode.INLINE_B)
 
 .. image:: pngs/diagram_multiple_sort.png

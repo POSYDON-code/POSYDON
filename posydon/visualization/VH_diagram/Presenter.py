@@ -959,6 +959,7 @@ class Presenter:
             or simplified_data[-1]["state"].state_after == "merged"
         ):
             aditional_info = CaseInfos(self._state_id)
+            aditional_info.border_width = 2
             aditional_info.centered_text = simplified_data[-1][
                 "state"].state_after
             aditional_info.connected = False

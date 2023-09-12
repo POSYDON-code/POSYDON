@@ -39,8 +39,8 @@ class ParseDataFrame:
         
 
     def _f_lambda(self, df_gb):
-        #.to_numpy() recommanded by pandas doc instead of .values
-        h = hash(tuple(df_gb.to_numpy().ravel()))
+        """function to be given as key argument to DataFrameGroupBy.apply()"""
+        h = hash(tuple(df_gb.to_numpy().ravel()))#.to_numpy() recommanded by pandas doc instead of .values
         
         self.counts[h] += 1
         self.index_list.setdefault(h, df_gb.index[0])
@@ -69,7 +69,7 @@ class ParseDataFrame:
     
     def get_frequencies(self):
         total = sum(self.counts.values())
-        return Counter({self.index_list[k]: self.counts[k] / total
+        return Counter({self.index_list[k]: 100 * self.counts[k] / total
                           for k in self.counts.keys()})
     
     def get_most_numpy(self, k):
@@ -93,6 +93,6 @@ class ParseDataFrame:
 
             gb_df_col = dataf.groupby(dataf.index.name)
             for i,s in gb_df_col.__iter__():
-                h = hash(tuple(s.to_numpy().ravel()))
+                h = hash(tuple(df_gb.to_numpy().ravel()))
                 self.counts[h] += 1
                 self.index_list.setdefault(h, df_gb.index[0])
