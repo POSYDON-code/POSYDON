@@ -48,7 +48,7 @@ class plot2D(object):
         max_cols=3,
         legend_pos=(3, 3),
         verbose=False,
-        debug=None,
+        #debug=None,
         **kwargs
     ):
         """Read a PsyGrid object and plot a 2D slice of x vs y.
@@ -216,9 +216,9 @@ class plot2D(object):
         if termination_flag == 'termination_flag_2':
             # remmove ? from strings
             TF2 = self.final_values['termination_flag_2']
-            #TF2_clean = [TF.replace('?', '') for TF in TF2]
-            # self.final_values['termination_flag_2'] = TF2_clean
-            self.final_values['termination_flag_2'] = debug
+            TF2_clean = [TF.replace('?', '') for TF in TF2]
+            self.final_values['termination_flag_2'] = TF2_clean
+            #self.final_values['termination_flag_2'] = debug
         self.final_values_str = self.final_values.dtype.names
 
         idx_with_histories=0
