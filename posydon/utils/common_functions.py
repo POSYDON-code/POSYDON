@@ -44,7 +44,7 @@ BURNING_STATES = ["Core_H_burning", "Core_He_burning",
                   "Shell_H_burning", "Central_He_depleted",
                   "Central_C_depletion"]
 RICHNESS_STATES = ["H-rich", "stripped_He"]
-COMPACT_OBJECTS = ["WD", "NS", "BH"]
+COMPACT_OBJECTS = ["WD", "NS", "BH","massless_remnant"]
 
 ALL_STAR_STATES = COMPACT_OBJECTS + [STATE_UNDETERMINED]
 ALL_STAR_STATES.extend(["{}_{}".format(rich_in, burning)
@@ -2584,8 +2584,7 @@ class PchipInterpolator2:
 def convert_metallicity_to_string(Z):
     """Check if metallicity is supported by POSYDON v2."""
     # check supported metallicity
-    valid_Z = [1e+00,1e-01,1e-02,1e-03,1e-04]
-    print("Metallicity =", Z)
+    valid_Z = [2e+00,1e+00,4.5e-01,2e-01,1e-01,1e-02,1e-03,1e-04]
     if not Z in valid_Z:
         raise ValueError(f'Metallicity {Z} not supported! Available metallicities in POSYDON v2 are {valid_Z}.')
-    return f'{Z:1.0e}'
+    return f'{Z:1.1e}'.replace('.0','')

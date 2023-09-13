@@ -53,6 +53,7 @@ class Pulsar:
         ## Note: Because the NS radius is constant, moment of inertia should also be constant throughout NS evolution
 
         self.Mdot_edd = self.calc_NS_edd_lim(np.nan)          ## Eddington accretion rate for the NS [g/s]
+        self.luminosity = self.calc_NS_luminosity()           ## radio luminosity of the pulsar [erg/s]
 
         self.spin = self.draw_NS_spin()          ## NS spin angular frequency [1/s]
         self.Bfield = self.draw_NS_Bfield()      ## NS magnetic field [G]
@@ -102,7 +103,7 @@ class Pulsar:
 
     def calc_NS_luminosity(self):
         """
-        Calculate the radio luminosity of the NS.
+        Calculate the radio luminosity of the NS at 1400 MHz.
         units of distribution from Szary et al. 2014 are mJy*kpc^2
         """
         kpc2cm = 3.086e21           ## kpc to cm
@@ -110,7 +111,8 @@ class Pulsar:
         Hz = 1400*1e6               ## Hz conversion for radio luminosity (1400 MHz)
         mJykpcsq2ergs = mJy2cgs*kpc2cm**2*Hz
 
-        luminosity =10**np.random.lognormal(0.5*mJykpcsq2ergs, 1.0*mJykpcsq2ergs)
+        lum_draw = np.random.lognormal(0.5, 1.0)
+        luminosity = 10**lum_draw*mJykpcsq2ergs
         return luminosity
     
     def calc_NS_spindown_power(self):
@@ -259,13 +261,13 @@ class Pulsar:
         death_line = 0.17e12
 
         E_max = 0.01   ## threshold radio efficiency
-        L = self.calc_NS_luminosity()
+        L = self.luminosity
         Edot = self.calc_NS_spindown_power()
+  
+        if (self.Bfield/P**2 > death_line): return True
+        elif (L/Edot) < E_max: return True
 
-        if (L/Edot) > E_max: return False
-        elif (self.Bfield/P**2 < death_line): return False
-
-        else: return True
+        else: return False
 
 
 

@@ -8,16 +8,17 @@ import errno
 import pprint
 
 import numpy as np
+import pandas as pd
 
 from posydon.binary_evol.simulationproperties import SimulationProperties
 
 
-## from HDF5 PR, here for testing only
 """
 POSYDON Data Types are enforced when converting BinaryStar
 and SingleStar instances to Pandas DataFrames. This is done to
 ensure memory efficient data storage and to solve problems
 combining temp batch files.
+
 Check Pandas docs for allowed data types in DataFrames.
 """
 
@@ -125,11 +126,184 @@ STARPROPERTIES_DTYPES = {
                             # the end of the previous step including MESA psygrid.
 }
 
-EXTRA_COLUMNS_DTYPES = {
+EXTRA_BINARY_COLUMNS_DTYPES = {
     'step_names' : 'string',
     'step_times' : 'float64', 
 }
-## END TEST CODE
+
+# no default extras for history attributes
+EXTRA_STAR_COLUMNS_DTYPES = {}
+
+
+
+def clean_binary_history_df(binary_df, extra_binary_dtypes_user=None, 
+                            extra_S1_dtypes_user=None, extra_S2_dtypes_user=None):
+    """Take a posydon binary history DataFrame from the
+    BinaryStar.to_df method and clean the data for saving
+    by setting Data Types of the columns explicitly.
+    
+    Parameters
+    ---------
+    binary_df : DataFrame
+        A pandas Dataframe containing binary history
+    extra_binary_dtypes_user : dict, optional
+        A dictionary with extra column names as keys, and their
+        associated data types as values.
+    extra_S1_dtypes_user : dict, optional
+        Same as above, but only for star 1.
+    extra_S2_dtypes_user : dict, optional
+        Same as above, but only for star 2.
+        
+    Returns
+    -------
+    binary_df : DataFrame
+        A cleaned binary history ready for saving to HDF.
+    """
+    
+    assert isinstance( binary_df, pd.DataFrame )
+    
+    # User specified extra binary and star columns
+    if extra_binary_dtypes_user is None:
+        extra_binary_dtypes_user = {}
+    if extra_S1_dtypes_user is None:
+        extra_S1_dtypes_user = {}
+    if extra_S2_dtypes_user is None:
+        extra_S2_dtypes_user = {}
+
+    # try to coerce data types automatically first
+    binary_df = binary_df.infer_objects()
+
+    # Set data types for all columns explicitly
+    hist_columns =  set(binary_df.columns)
+    
+    # combine columns for binary history with extras
+    BP_comb_extras_dict = {**BINARYPROPERTIES_DTYPES, **EXTRA_BINARY_COLUMNS_DTYPES, 
+                           **extra_binary_dtypes_user}
+    # combine columns for star 1 and star 2 history with extras
+    SP_comb_S1_dict = {**STARPROPERTIES_DTYPES, **EXTRA_STAR_COLUMNS_DTYPES, 
+                       **extra_S1_dtypes_user}
+    SP_comb_S2_dict = {**STARPROPERTIES_DTYPES, **EXTRA_STAR_COLUMNS_DTYPES, 
+                       **extra_S2_dtypes_user}
+    
+    # All default & user passed keys which we have mappings for
+    binary_keys = set( BP_comb_extras_dict.keys() )
+    S1_keys = set( ['S1_' + key for key in SP_comb_S1_dict.keys()] )
+    S2_keys = set( ['S2_' + key for key in SP_comb_S2_dict.keys()] )
+    
+    # Find common keys between the binary_df and our column-dtype mapping
+    common_keys =  hist_columns & ( binary_keys | S1_keys | S2_keys )
+
+    # Create a dict with column-dtype mapping only for columns in binary_df
+    common_dtype_dict = {}
+    for key in common_keys:
+        if key in binary_keys:
+            common_dtype_dict[key] = BP_comb_extras_dict.get( key )
+        elif key in S1_keys:
+            common_dtype_dict[key] = SP_comb_S1_dict.get( key.replace('S1_', '') )
+        elif key in S2_keys:
+            common_dtype_dict[key] = SP_comb_S2_dict.get( key.replace('S2_', '') )
+        else:
+            raise ValueError(f'No data type found for {key}. Dtypes must be explicity declared.')
+    # set dtypes
+    binary_df = binary_df.astype( common_dtype_dict )
+    # unset clean str data because pandas strings are broken for hdf saving
+    convert_to_obj = {}
+    for key, val in common_dtype_dict.items():
+        if val == 'string':
+            convert_to_obj[key] = 'object'
+    binary_df = binary_df.astype( convert_to_obj )
+    return binary_df
+
+
+def clean_binary_oneline_df(oneline_df, extra_binary_dtypes_user=None, 
+                            extra_S1_dtypes_user=None, extra_S2_dtypes_user=None):
+    """Take a posydon binary oneline DataFrame from the
+    BinaryStar.to_oneline_df method and clean the data for saving
+    by setting Data Types of the columns explicitly.
+    
+    This method is similar to clean_binary_history_df since they
+    have many overalapping columns, with a few extras and different naming.
+    
+    Note: there may be edge cases not handed if new scalar_names are added.
+    
+    Parameters
+    ---------
+    binary_df : DataFrame
+        A pandas Dataframe containing binary history
+    extra_binary_dtypes_user : dict, optional
+        A dictionary with extra column names as keys, and their
+        associated data types as values.
+    extra_S1_dtypes_user : dict, optional
+        Same as above, but only for star 1.
+    extra_S2_dtypes_user : dict, optional
+        Same as above, but only for star 2.
+        
+    Returns
+    -------
+    binary_df : DataFrame
+        A cleaned binary history ready for saving to HDF.
+    """
+    assert isinstance( oneline_df, pd.DataFrame )
+    
+    # User specified extra binary and star columns
+    if extra_binary_dtypes_user is None:
+        extra_binary_dtypes_user = {}
+    if extra_S1_dtypes_user is None:
+        extra_S1_dtypes_user = {}
+    if extra_S2_dtypes_user is None:
+        extra_S2_dtypes_user = {}
+
+    # try to coerce data types automatically first
+    oneline_df = oneline_df.infer_objects()
+
+    # Set data types for all columns explicitly
+    oneline_columns =  set(oneline_df.columns)
+    
+    # combine columns for binary history with extras
+    BP_comb_extras_dict = {**BINARYPROPERTIES_DTYPES, **EXTRA_BINARY_COLUMNS_DTYPES, 
+                           **extra_binary_dtypes_user}
+    # combine columns for star 1 and star 2 history with extras
+    SP_comb_S1_dict = {**STARPROPERTIES_DTYPES, **EXTRA_STAR_COLUMNS_DTYPES, 
+                       **extra_S1_dtypes_user}
+    SP_comb_S2_dict = {**STARPROPERTIES_DTYPES, **EXTRA_STAR_COLUMNS_DTYPES, 
+                       **extra_S2_dtypes_user}
+    
+    # All default & user passed keys which we have mappings for
+    binary_keys = set( [key + '_i' for key in BP_comb_extras_dict.keys()] 
+                     + [key + '_f' for key in BP_comb_extras_dict.keys()] )
+    S1_keys = set( ['S1_' + key + '_i' for key in SP_comb_S1_dict.keys()] 
+                 + ['S1_' + key + '_f' for key in SP_comb_S1_dict.keys()] )
+    S2_keys = set( ['S2_' + key + '_i' for key in SP_comb_S2_dict.keys()]
+                 + ['S2_' + key + '_f' for key in SP_comb_S2_dict.keys()] )
+    
+    # Find common keys between the binary_df and our column-dtype mapping
+    common_keys =  oneline_columns & ( binary_keys | S1_keys | S2_keys )
+    
+
+    # Create a dict with column-dtype mapping only for columns in binary_df
+    common_dtype_dict = {}
+    # helper function to remove the '_i' and '_f' 
+    strip_prefix_and_suffix = lambda key : key.strip('_i').strip('_f').strip('S1_').strip('S2_')
+    for key in common_keys:
+        if key in binary_keys:
+            common_dtype_dict[key] = BP_comb_extras_dict.get( strip_prefix_and_suffix(key) )
+        elif key in S1_keys:
+            common_dtype_dict[key] = SP_comb_S1_dict.get( strip_prefix_and_suffix(key) )
+        elif key in S2_keys:
+            common_dtype_dict[key] = SP_comb_S2_dict.get( strip_prefix_and_suffix(key) )
+        else:
+            raise ValueError(f'No data type found for {key}. Dtypes must be explicity declared.')
+    # set dtypes
+    oneline_df = oneline_df.astype( common_dtype_dict )
+    # unset clean str data because pandas strings are broken for hdf saving
+    convert_to_obj = {}
+    for key, val in common_dtype_dict.items():
+        if val == 'string':
+            convert_to_obj[key] = 'object'
+    oneline_df = oneline_df.astype( convert_to_obj )
+    
+    return oneline_df
+
 
 
 def parse_inifile(path, verbose=False):
@@ -141,7 +315,6 @@ def parse_inifile(path, verbose=False):
         Path to inifile. If multiple files are given,
         duplicate args are overwritten (stacked) first
         to last.
-
     verbose : bool
         Print helpful info.
 
