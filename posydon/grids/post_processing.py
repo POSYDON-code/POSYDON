@@ -9,7 +9,8 @@ from posydon.utils.common_functions import (
     CEE_parameters_from_core_abundance_thresholds,
     check_state_of_star)
 from posydon.grids.MODELS import MODELS
-from posydon.visualization.combine_TF import TF1_POOL_STABLE
+from posydon.visualization.combine_TF import combine_TF12, TF1_POOL_STABLE
+from posydon.visualization.plot_defaults import DEFAULT_MARKERS_COLORS_LEGENDS
 import numpy as np
 from tqdm import tqdm
 import copy
@@ -114,6 +115,14 @@ def post_process_grid(grid, index=None, star_2_CO=True, MODELS=MODELS,
 
     """
     EXTRA_COLUMNS = {}
+    
+    # add MT history column by combining TF1 and TF2
+    if not single_star:
+        interp_class = grid.final_values['interpolation_class']
+        TF2 = grid.final_values['termination_flag_2']
+        combined_TF12 = combine_TF12(interp_class, TF2)
+        mt_history = [DEFAULT_MARKERS_COLORS_LEGENDS['combined_TF12'][TF12][3] for TF12 in combined_TF12]
+        EXTRA_COLUMNS['mt_history'] = mt_history
     
     for star in [1, 2]:
         # core masses at He depletion. stellar states and composition
