@@ -73,8 +73,9 @@ class Pulsar:
         Draw the initial NS B-field [G] from a lognormal distribution.
         Range is 10^11.5 - 10^13.8 Gauss.
         '''
-        return np.random.uniform(3.16e11, 6.31e13)
-    
+        # return np.random.uniform(3.16e11, 6.31e13)
+        return 10**np.random.uniform(11.5, 13.8)
+
     def calc_moment_of_inertia(self):
         '''
         Calculate the moment of intertia of the NS [g*cm^2]
