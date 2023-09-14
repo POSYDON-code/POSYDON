@@ -396,12 +396,12 @@ class BinaryPopulation:
 
     def combine_saved_files(self, absolute_filepath, file_names, **kwargs):
         """Combine various temporary files in a given folder."""
-        #dir_name = os.path.dirname(absolute_filepath)
+        dir_name = os.path.dirname(absolute_filepath)
 
         history_cols = pd.read_hdf(file_names[0], key='history').columns
         oneline_cols = pd.read_hdf(file_names[0], key='oneline').columns
 
-        #history_tmp = pd.read_hdf(file_names[0], key='history')
+        history_tmp = pd.read_hdf(file_names[0], key='history')
 
         history_min_itemsize = {key: val for key, val in
                                 HISTORY_MIN_ITEMSIZE.items()
@@ -421,21 +421,12 @@ class BinaryPopulation:
                     df_oneline = pd.read_hdf(f, key='oneline')
                     df_history = pd.read_hdf(f, key='history')
 
-                    #df_oneline = df_oneline.astype({'step_names_f': 'object'})
-
                     store.append('history', df_history,
                                  min_itemsize=history_min_itemsize, data_columns=True)
                     store.append('oneline', df_oneline,
                                  min_itemsize=oneline_min_itemsize, data_columns=True)
                     os.remove(f)
                 except Exception:
-                    #store_df = store.get('oneline')
-                    #df = pd.read_hdf(f, key='oneline')
-                    #for i, type in enumerate(store_df.dtypes):
-                    #    if df.dtypes.iloc[i] != type:
-                    #        print (df.dtypes.iloc[i], type)
-                    #        print (df.columns[i])
-                    #        print (store_df[store_df.columns[i]].unique())
                     print(traceback.format_exc(), flush=True)
 
     def close(self):

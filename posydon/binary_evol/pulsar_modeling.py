@@ -221,6 +221,7 @@ class Pulsar:
         I = self.moment_inertia
 
         R_alfven = (2*np.pi**2/(G*mu_0**2))**(1/7) * (R**6/(self.Mdot_edd*M_i**(1/2)))**(2/7) * B_i**(4/7) ## Alfven radius
+        R_mag = R_alfven/2   ## magnetic radius
 
         delta_M = delta_M*const.Msun          ## convert Msun to g
         
@@ -228,8 +229,8 @@ class Pulsar:
         #J_i = 2/5*M_i*R**2*self.spin     ## spin angular momentum (J) of the NS before accretion
         J_i = I*self.spin
         
-        omega_k = np.sqrt(G*M_i/R_alfven**3)
-        delta_J = 2/5*delta_M*R_alfven**2*omega_k    ## change in J due to accretion
+        omega_k = np.sqrt(G*M_i/R_mag**3)
+        delta_J = 2/5*delta_M*R_mag**2*omega_k    ## change in J due to accretion
 
         J_f = J_i + delta_J
         M_f = M_i + delta_M
