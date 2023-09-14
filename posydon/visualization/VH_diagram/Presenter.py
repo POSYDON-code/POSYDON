@@ -349,6 +349,7 @@ class Presenter:
             self._set_visualisation_diagram)
         self._visualizer.distance_representation_required().connect(
             self._set_distance_representation)
+        breakpoint()
         self._visualizer.save_required().connect(self.screen)
 
         self._present_mode = PresenterMode.DETAILED
@@ -958,6 +959,7 @@ class Presenter:
             or simplified_data[-1]["state"].state_after == "merged"
         ):
             aditional_info = CaseInfos(self._state_id)
+            aditional_info.border_width = 2
             aditional_info.centered_text = simplified_data[-1][
                 "state"].state_after
             aditional_info.connected = False
