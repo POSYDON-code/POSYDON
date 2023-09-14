@@ -115,15 +115,7 @@ def post_process_grid(grid, index=None, star_2_CO=True, MODELS=MODELS,
 
     """
     EXTRA_COLUMNS = {}
-    
-    # add MT history column by combining TF1 and TF2
-    if not single_star:
-        interp_class = grid.final_values['interpolation_class']
-        TF2 = grid.final_values['termination_flag_2']
-        combined_TF12 = combine_TF12(interp_class, TF2)
-        mt_history = [DEFAULT_MARKERS_COLORS_LEGENDS['combined_TF12'][TF12][3] for TF12 in combined_TF12]
-        EXTRA_COLUMNS['mt_history'] = mt_history
-    
+        
     for star in [1, 2]:
         # core masses at He depletion. stellar states and composition
         for quantity in ['avg_c_in_c_core_at_He_depletion',
@@ -376,6 +368,14 @@ def post_process_grid(grid, index=None, star_2_CO=True, MODELS=MODELS,
                 raise ValueError(
                     '%s has not the correct dimension! Error occoured after '
                     'collapsing binary index=%s' % (key, i))
+
+    # add MT history column by combining TF1 and TF2
+    if not single_star:
+        interp_class = grid.final_values['interpolation_class']
+        TF2 = grid.final_values['termination_flag_2']
+        combined_TF12 = combine_TF12(interp_class, TF2)
+        mt_history = [DEFAULT_MARKERS_COLORS_LEGENDS['combined_TF12'][TF12][3] for TF12 in combined_TF12]
+        EXTRA_COLUMNS['mt_history'] = mt_history
 
     # to avoid confusion rename core-collaspe compact object state "MODEL_NAME_state"
     # to "MODEL_NAME_CO_type"
