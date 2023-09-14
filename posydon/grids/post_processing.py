@@ -418,7 +418,7 @@ def add_post_processed_quantities(grid, MESA_dirs_EXTRA_COLUMNS, EXTRA_COLUMNS,
             'EXTRA_COLUMNS do not follow the correct order of grid!')
 
     for column in EXTRA_COLUMNS.keys():
-        if "state" in column or "type" in column:
+        if "state" in column or "type" in column or column == 'mt_history':
             values = np.asarray(EXTRA_COLUMNS[column], str)
         else:
             values = np.asarray(EXTRA_COLUMNS[column], float)
