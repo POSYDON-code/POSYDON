@@ -1342,6 +1342,7 @@ class PSyGrid:
         for dtype in self.final_values.dtype.descr:
             if (dtype[0].startswith("termination_flag")
                     or dtype[0] == "interpolation_class"
+                    or dtype[0] == "mt_history"
                     or "_type" in dtype[0] or "_state" in dtype[0]):
                 dtype = (dtype[0], H5_REC_STR_DTYPE.replace("S", "U"))
             new_dtype.append(dtype)
