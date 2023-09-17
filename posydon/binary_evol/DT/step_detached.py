@@ -1008,7 +1008,7 @@ class detached_step:
                     print("Formation of Thorne–Żytkow object, nothing to do further")
                 return
             else:
-                raise Exception("States not recognized!")
+                raise Exception("States not recognized!", )
 
         # non-existent, far away, star
         elif self.non_existent_companion == 1:
