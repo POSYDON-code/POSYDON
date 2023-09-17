@@ -1217,7 +1217,7 @@ class StepSN(object):
                     # if key is 'nearest_neighbour_distance':
                     #     setattr(binary, key, ['None', 'None', 'None'])
                 binary.separation = new_separation
-                if binary.state != "disrupted" and binary.state != "initially_single_star" and binary.state != "merged":
+                if binary.state != "disrupted" and binary.state != "initially_single_star" and binary.state != "merged" and binary.state != 'low_mass_binary':
                     binary.state = "detached"
                 
                 binary.event = None
@@ -1315,7 +1315,7 @@ class StepSN(object):
                     # if key is 'nearest_neighbour_distance':
                     #     setattr(binary, key, ['None', 'None', 'None'])
                 binary.separation = new_separation
-                if binary.state != "disrupted" and binary.state != "initially_single_star" and binary.state != "merged":
+                if binary.state != "disrupted" and binary.state != "initially_single_star" and binary.state != "merged" and binary.state != 'low_mass_binary':
                     binary.state = "detached"
                 binary.event = None
                 binary.time = binary.time_history[-1]

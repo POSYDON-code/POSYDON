@@ -112,6 +112,11 @@ def generate_orbital_periods(primary_masses,
         orbital_periods = np.where(primary_masses <= 15.0,
                                    orbital_periods_M_lt_15,
                                    orbital_periods_M_gt_15)
+        #TODO orbital for primary mass< current limit set orbital period = 1e8
+        orbital_periods = np.where(primary_masses <= 5.55,
+                                   1e8,
+                                   orbital_periods)
+        
     else:
         raise ValueError("You must provide an allowed orbital period scheme.")
 
@@ -347,7 +352,7 @@ def generate_secondary_masses(primary_masses,
 
     # Generate secondary masses
     if secondary_mass_scheme == 'flat_mass_ratio':
-        mass_ratio_min = secondary_mass_min / primary_masses
+        mass_ratio_min = max(secondary_mass_min / primary_masses , 0.05) 
         mass_ratio_max = np.min([secondary_mass_max / primary_masses,
                                  np.ones(len(primary_masses))], axis=0)
         secondary_masses = (
