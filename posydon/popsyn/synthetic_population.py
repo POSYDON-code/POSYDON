@@ -244,7 +244,7 @@ class SyntheticPopulation:
                     df_sel_met = pd.concat([df_sel_met, df_tmp])
                     del df_tmp
 
-            if k > 0:
+            if k > 0 and df_sel.shape[0] > 0:
                 shift_index = max(np.unique(df_sel.index)) + 1 
                 df_sel_met.index += shift_index
 
@@ -262,7 +262,7 @@ class SyntheticPopulation:
             df_sel_met_oneline = df_sel_met_oneline.loc[sel_met]
             df_sel_met_oneline['metallicity'] = met
 
-            if k > 0:
+            if k > 0 and df_sel_oneline.shape[0] > 0:
                 shift_index = max(np.unique(df_sel_oneline.index)) + 1
                 df_sel_met_oneline.index += shift_index 
 
@@ -317,7 +317,7 @@ class SyntheticPopulation:
         else:
             raise ValueError('You already have a population stored in memory!')
 
-    def get_dco_at_formation(self, S1_state, S2_state, oneline_cols=None, formation_channels=False):
+    def get_dco_at_formation(self, S1_state, S2_state, oneline_cols=None, formation_channels=False, mt_history=False):
         """Sort synthetic population, i.e. DCO at formation.
 
         Note: by default this function looks for the symmetric state
@@ -332,6 +332,14 @@ class SyntheticPopulation:
         oneline_cols : list str
             List of columns preset in the oneline dataframe you want to export
             into the synthetic population.
+        formation_channels : bool
+            Compute the formation channel, a string containing the binary
+            event evolution.
+        mt_history : bool
+            If `True`, split the event oRLO1/oRLO2 into oRLO1-contact/oRLO2-contact,
+            oRLO1-reverse/oRLO2-reverse and oRLO1/oRLO2. This is useful to
+            identify binaries undergoing contact stable mass-transfer phases and 
+            reverse mass-transfer phase .
 
         """
         # compute GRB properties boolean
@@ -343,7 +351,7 @@ class SyntheticPopulation:
         if formation_channels:
             if self.verbose:
                 print('Computing formation channels...')
-            self.get_formation_channels()
+            self.get_formation_channels(mt_history=mt_history)
 
         # to avoid the user making mistake automatically check the inverse of
         # the stellar states, since the df is already parsed this will not
@@ -762,7 +770,7 @@ class SyntheticPopulation:
         # TODO: store p_det
         self.df_dco_observable = self.resample_synthetic_population(index, z_formation, z_merger, w_ijk, export_cols=export_cols)
 
-    def get_formation_channels(self):
+    def get_formation_channels(self, mt_history):
         """Get formation channel and add to df and df_oneline."""
         
         # loop through each binary
@@ -797,41 +805,27 @@ class SyntheticPopulation:
             formation_channel = formation_channel.replace('_CO_contact', '')
             self.df_oneline.loc[index,'channel'] = formation_channel
             
-        ####### DEVELOPMENT CODE: DO NOT MERGE ######
-        # TODO: embed the TF2 classifier in the MESA step and store the
-        # outcome in the pop synth instead of evaluating it here
-        def eval_class_MT_case(met):
-            # get initial conditions
-            sel = (self.df['event'] == 'ZAMS') & (self.df['metallicity'] == 0.0142*met)
-            if not any(sel):
-                return
-            cols = ['orbital_period', 'S1_mass', 'S2_mass']
-            p, m1, m2 = self.df.loc[sel, cols].values.T
+        if mt_history and 'mt_history_HMS_HMS' not in self.df_oneline:
+            raise ValueError('mt_history_HMS_HMS not saved in the oneline dataframe!')
+        else:   
+            # split oRLO1 into oRLO1, oRLO1-contact and oRLO1-reverse
+            sel = ((self.df_oneline['mt_history_HMS_HMS'] == 'Stable contact phase') & 
+                    self.df_oneline['channel'].str.contains('oRLO1'))
+            self.df_oneline.loc[sel, 'channel'] = self.df_oneline.loc[sel, 'channel'].apply(lambda x: x.replace('oRLO1', 'oRLO1-contact'))
+            sel = ((self.df_oneline['mt_history_HMS_HMS'] == 'Stable reverse mass-transfer phase') & 
+                    self.df_oneline['channel'].str.contains('oRLO1'))
+            self.df_oneline.loc[sel, 'channel'] = self.df_oneline.loc[sel, 'channel'].apply(lambda x: x.replace('oRLO1', 'oRLO1-reverse'))
+            # split oRLO1 into oRLO1, oRLO1-contact and oRLO1-reverse
+            sel = ((self.df_oneline['mt_history_HMS_HMS'] == 'Stable contact phase') & 
+                    self.df_oneline['channel'].str.contains('oRLO2'))
+            self.df_oneline.loc[sel, 'channel'] = self.df_oneline.loc[sel, 'channel'].apply(lambda x: x.replace('oRLO2', 'oRLO2-contact'))
+            sel = ((self.df_oneline['mt_history_HMS_HMS'] == 'Stable reverse mass-transfer phase') & 
+                    self.df_oneline['channel'].str.contains('oRLO2'))
+            self.df_oneline.loc[sel, 'channel'] = self.df_oneline.loc[sel, 'channel'].apply(lambda x: x.replace('oRLO2', 'oRLO2-reverse'))
             
-            # evaluate interpolators
-            interpolator_path =  f'/Users/simone/Desktop/POSYDON_data/HMS-HMS/interpolators/1NN_1NN/TF2_{convert_metallicity_to_string(met)}_Zsun.pkl'
-            Interp = IFInterpolator()
-            Interp.load(filename=interpolator_path)
-
-            MT_cases = []
-            for i in tqdm(range(len(p))):
-                binary = BinaryStar(
-                    star_1=SingleStar(**{'mass':m1[i]}), 
-                    star_2=SingleStar(**{'mass':m2[i]}),
-                    **{'orbital_period':p[i]}
-                )
-                _, classes = Interp.evaluate(binary)
-                MT_cases.append(classes['termination_flag_2'])
-            self.df_oneline.loc[self.df[sel].index, 'interp_class_HMS_HMS_TF2'] = MT_cases
-        # compute interp_class_HMS_HMS_TF2
-        self.df_oneline['interp_class_HMS_HMS_TF2'] = 'None'
-        for met in [2e+00,1e+00,4.5e-01,2e-01,1e-01,1e-02,1e-03,1e-04]:
-            eval_class_MT_case(met)
-        sel = ((self.df_oneline['interp_class_HMS_HMS_TF2'] == 'contact_during_MS') & 
-               self.df_oneline['channel'].str.contains('oRLO1'))
-        self.df_oneline.loc[sel, 'channel'] = self.df_oneline.loc[sel, 'channel'].apply(lambda x: x.replace('oRLO1', 'oRLO1-contact'))
-        ############################################################# 
-
+            # TODO: do the above split for unstable MT as well
+            
+    
     def save_intrinsic_pop(self, path='./intrinsic_population_type.h5', pop='DCO'):
         """Save intrinsic population.
 
