@@ -70,7 +70,7 @@ class SyntheticPopulation:
                 self.metallicity = [self.metallicity]
 
             self.binary_populations = []
-            for met in self.metallicity:
+            for met in self.metallicity[::-1]:
                 self.ini_kw = binarypop_kwargs_from_ini(path_to_ini)
                 self.ini_kw['metallicity'] = met
                 self.ini_kw['temp_directory'] = self.create_met_prefix(met) + self.ini_kw['temp_directory']
@@ -86,11 +86,13 @@ class SyntheticPopulation:
 
     def evolve(self):
         """Evolve population(s) at given Z(s)."""
-        for ind, pop in enumerate( self.binary_populations ):
+        while self.binary_populations:
+            pop =  self.binary_populations.pop()
             print( f'Z={pop.kwargs["metallicity"]:.2e} Z_sun' )
             pop.evolve()
             met_prefix = f'{pop.kwargs["metallicity"]:.2e}_Zsun_'
             pop.save( met_prefix + 'population.h5' )
+            del pop
 
     @staticmethod
     def create_met_prefix(met):
