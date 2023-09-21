@@ -16,23 +16,22 @@ PATH_TO_POSYDON_DATA = os.environ.get("PATH_TO_POSYDON_DATA",'./')
 
 plt.style.use(os.path.join(PATH_TO_POSYDON, "posydon/visualization/posydon.mplstyle"))
 
-COLORS = ['tab:blue', 'tab:orange', 'tab:green', 'tab:red', 'tab:purple',
-          'tab:brown', 'tab:pink', 'tab:gray', 'tab:olive', 'tab:cyan']
-COLORS *= 10
+cm = plt.cm.get_cmap('tab20')
+COLORS = [cm.colors[i] for i in range(len(cm.colors))]
 
-def plot_merger_rate_density(z, rate_density, ylim=(1e-1,4e2), zmax=10., show=True, 
-                             path=None, channels=False, GWTC3=False, label='DCO', **kwargs):
+def plot_merger_rate_density(z, rate_density, zmax=10., channels=False, 
+                             GWTC3=False, label='DCO', **kwargs):
 
     plt.plot(z[z<zmax], rate_density['total'][z<zmax], label=f'{label} total', color='black')
     if channels:
-        for ch in [key for key in rate_density.keys() if key != 'total']:
+        for i, ch in enumerate([key for key in rate_density.keys() if key != 'total']):
             if ch != 'total':
-                plt.plot(z[z<zmax], rate_density[ch][z<zmax], label=ch)
+                plt.plot(z[z<zmax], rate_density[ch][z<zmax], label=ch, color=COLORS[i])
     
     if GWTC3:
         plt.errorbar(0.2,17.9, yerr=[[0],[26.1]], fmt='',color='black', label='$\mathcal{R}_\mathrm{BBH}$ GWTC-3')
         
-def plot_grb_rate_density(z, rate_density, ylim=(1e-1,4e2), zmax=10., show=True, path=None, channels=False,
+def plot_grb_rate_density(z, rate_density, zmax=10., channels=False,
                           grb_components=False, Perley16=False, **kwargs):
     
     plt.plot(z[z<zmax], rate_density['total'][z<zmax], label='GRB total', color='black', linestyle='--')
@@ -106,9 +105,9 @@ def plot_merger_efficiency(met, merger_efficiency, show=True, path=None, channel
     plt.title(title)
     plt.plot(met/Zsun, merger_efficiency['total'], label='total', color='black')
     if channels:
-        for ch in merger_efficiency.keys():
+        for i, ch in enumerate(merger_efficiency.keys()):
             if ch != 'total':
-                plt.plot(met/Zsun, merger_efficiency[ch], label=ch)
+                plt.plot(met/Zsun, merger_efficiency[ch], label=ch, color=COLORS[i])
     plt.yscale('log')
     plt.xscale('log')
     plt.xlabel(r'$Z/Z_\odot$')
