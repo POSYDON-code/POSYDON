@@ -817,14 +817,7 @@ class SyntheticPopulation:
             sel = ((self.df_oneline['mt_history_HMS_HMS'] == 'Stable reverse mass-transfer phase') & 
                     self.df_oneline['channel'].str.contains('oRLO1'))
             self.df_oneline.loc[sel, 'channel'] = self.df_oneline.loc[sel, 'channel'].apply(lambda x: x.replace('oRLO1', 'oRLO1-reverse'))
-            # split oRLO1 into oRLO1, oRLO1-contact and oRLO1-reverse
-            sel = ((self.df_oneline['mt_history_HMS_HMS'] == 'Stable contact phase') & 
-                    self.df_oneline['channel'].str.contains('oRLO2'))
-            self.df_oneline.loc[sel, 'channel'] = self.df_oneline.loc[sel, 'channel'].apply(lambda x: x.replace('oRLO2', 'oRLO2-contact'))
-            sel = ((self.df_oneline['mt_history_HMS_HMS'] == 'Stable reverse mass-transfer phase') & 
-                    self.df_oneline['channel'].str.contains('oRLO2'))
-            self.df_oneline.loc[sel, 'channel'] = self.df_oneline.loc[sel, 'channel'].apply(lambda x: x.replace('oRLO2', 'oRLO2-reverse'))
-            
+
             # TODO: do the above split for unstable MT as well
             
     
