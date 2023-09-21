@@ -11,6 +11,8 @@ import random
 import string
 import itertools
 import stat
+import signal
+import functools
 
 import numpy as np
 import pandas
@@ -397,6 +399,41 @@ def create_star_formation(mass, work_dir, star_inlist_project, initial_z=None, n
 
     return
 
+def move_mesa_output(work_dir, final_dir):
+    """Moves the data from the working directory to the final directory.
+    Parameters:
+        work_dir:
+            Working directory (i.e. where the mesa exectuable should run)
+        final_dir:
+            When completed where would you like the output to go
+    """
+    if not work_dir == final_dir:
+        print ("move data from " + work_dir+ " to "+ final_dir)
+        if os.path.isdir(final_dir):
+            print ("folder "+ final_dir +" exists, replacing with new data")
+            sys.stdout.flush()
+            shutil.rmtree(final_dir)
+        shutil.move(work_dir, final_dir)
+    
+    return
+
+def signal_handler_move_mesa_output(signum, frame, work_dir, final_dir):
+    """The signal handler function, which will be called, if python receives a signal this function is equipt to. It calls the function moving the mesa data.
+    Parameters (required by signal):
+        signum:
+            Number of the received signal.
+        frame:
+            Current stack frame.
+    Own Parameters: (required to be passed indirectly via partial)
+        work_dir:
+            Working directory (i.e. where the mesa exectuable should run)
+        final_dir:
+            When completed where would you like the output to go
+    """
+    move_mesa_output(work_dir, final_dir)
+    
+    return
+
 def run_mesa(mesa_executable, work_dir, final_dir, **kwargs):
     """Provides minor utility for actually spawning the mesa job for each grid
 
@@ -411,6 +448,14 @@ def run_mesa(mesa_executable, work_dir, final_dir, **kwargs):
     outfile_name = kwargs.pop('outfile_name', 'out.txt')
     keep_profiles = kwargs.pop('keep_profiles', False)
     keep_photos = kwargs.pop('keep_photos', False)
+
+    #redefine the handler function to use the own arguments as static ones specified here
+    signal_handler_move_mesa_output = functools.partial(signal_handler_move_mesa_output, work_dir=work_dir, final_dir=final_dir)
+    #add signal handler for certain signals
+    signal.signal(signal.SIGABRT, signal_handler_move_mesa_output)
+    signal.signal(signal.SIGUSR1, signal_handler_move_mesa_output)
+    signal.signal(signal.SIGSEGV, signal_handler_move_mesa_output)
+    #signal.signal(signal.SIGTERM, signal_handler_move_mesa_output)
 
     os.chdir(work_dir)
     os.system("{0} &> {1}".format(mesa_executable, os.path.join(work_dir, outfile_name)))
@@ -430,13 +475,7 @@ def run_mesa(mesa_executable, work_dir, final_dir, **kwargs):
     if not keep_photos:
         os.system("rm -rf photos*")
 
-    if not work_dir == final_dir:
-        if os.path.isdir(final_dir):
-            print ("folder "+ final_dir +" exists, replacing with new data")
-            sys.stdout.flush()
-            shutil.rmtree(final_dir)
-
-        shutil.move(work_dir, final_dir)
+    move_mesa_output(work_dir, final_dir)
 
     os.chdir(final_dir)
     print("Done")
