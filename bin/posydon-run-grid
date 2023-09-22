@@ -431,6 +431,7 @@ def signal_handler_move_mesa_output(signum, frame, work_dir, final_dir):
             When completed where would you like the output to go
     """
     print("Got signal: ", signum, " work_dir=", work_dir, " final_dir=", final_dir)
+    sys.stdout.flush()
     move_mesa_output(work_dir, final_dir)
     
     return
@@ -459,6 +460,7 @@ def run_mesa(mesa_executable, work_dir, final_dir, **kwargs):
     signal.signal(signal.SIGSEGV, signal_handler_move_mesa_output)
     #signal.signal(signal.SIGTERM, signal_handler_move_mesa_output)
     print(signal.getsignal(signal.SIGUSR1))
+    sys.stdout.flush()
 
     os.chdir(work_dir)
     os.system("{0} &> {1}".format(mesa_executable, os.path.join(work_dir, outfile_name)))
