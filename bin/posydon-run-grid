@@ -444,6 +444,7 @@ def run_mesa(mesa_executable, work_dir, final_dir, **kwargs):
         final_dir:
             When completed where would you like the output to go
     """
+    global signal_handler_move_mesa_output
 
     outfile_name = kwargs.pop('outfile_name', 'out.txt')
     keep_profiles = kwargs.pop('keep_profiles', False)
