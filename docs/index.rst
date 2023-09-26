@@ -12,10 +12,12 @@ About POSYDON
 
 POSYDON is a next-generation single and binary-star population synthesis tool. Our vision is to provide researchers and enthusiasts with a state-of-the-art platform to delve into the intricacies of stellar structures and binary evolutions using MESA. With full stellar structure modeling, advanced machine learning techniques, and a modular architecture, POSYDON stands at the forefront of astrophysical simulations.
 
+To stay up to data with the latest news about POSYDON, check out our `official website <https://www.posydon.org>`_ for more details.
+
 How is this Documentation Structured?
 -------------------------------------
 
-- **Introduction** Discover what POSYDON is, our objectives, and the team behind it.
+- **Introductions** Discover what POSYDON is, its objectives, and its science scope.
 - **Getting Started:** A quick guide to get POSYDON up and running on your machine.
 - **In-Depth Components Overview:** Delve deep into the core components of POSYDON.
 - **POSYDON Workflow:** Learn about how to conduct simulations from start to finish.
@@ -25,7 +27,6 @@ How is this Documentation Structured?
 - **Troubleshooting and FAQs:** Answers to common questions and problems.
 - **Contributing to POSYDON:** Join our community and help us grow!
 - **Release Notes and Changelog:** Stay updated with our version history.
-- **Acknowledgements and References:** Giving credit where it's due.
 - **Contact and Support:** Reach out to us with your queries or feedback.
 
 
@@ -33,9 +34,9 @@ How is this Documentation Structured?
    :maxdepth: 1
    :caption: Introduction
 
-   introduction/intro
-   introduction/objectives-highlights
-   introduction/collaborative-team
+   introduction-acknowledgements/intro
+   introduction-acknowledgements/collaborative-team
+   introduction-acknowledgements/published-works
 
 .. toctree::
    :maxdepth: 1
@@ -123,14 +124,6 @@ How is this Documentation Structured?
 
 .. toctree::
    :maxdepth: 1
-   :caption: Acknowledgements and References
-
-   acknowledgements-references/collaborative-team
-   acknowledgements-references/referenced-works
-
-
-.. toctree::
-   :maxdepth: 1
    :caption: Contact and Support
 
    contact-support/contact-information
@@ -141,7 +134,7 @@ How is this Documentation Structured?
 Acknowledgments
 ---------------
 
-**Team Members:** POSYDON is being led and developed by a dedicated team of astrophysicists and computer scientists. At the helm are Principal Investigators Tassos Fragos (Université de Genève) and Vicky Kalogera (Northwestern University), along with many talented individuals. You can read more about the team and they research on `Collaborative Team <_team-page>`_ page.
+**Team Members:** POSYDON is being led and developed by a dedicated team of astrophysicists and computer scientists. At the helm are Principal Investigators Tassos Fragos (Université de Genève) and Vicky Kalogera (Northwestern University), along with many talented individuals. You can read more about the team and they research on :ref:`Collaborative Team <team-page>` page.
 
 **Funding Agencies:** The POSYDON project is supported primarily by two sources: the Swiss National Science Foundation Professorship grant (PI Fragos) and the Gordon and Betty Moore Foundation (PI Kalogera).
 

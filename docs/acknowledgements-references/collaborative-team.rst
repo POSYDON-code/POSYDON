@@ -1,2 +1,0 @@
-Collaborative Team
-------------------

@@ -1,2 +1,0 @@
-Referenced Works
-----------------
