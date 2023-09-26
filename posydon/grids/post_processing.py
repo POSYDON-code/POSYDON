@@ -28,7 +28,7 @@ __credits__ = [
 
 
 CC_quantities = ['state', 'SN_type', 'f_fb', 'mass', 'spin',
-                 'm_disk_accreted', 'm_disk_radiated']
+                 'm_disk_accreted', 'm_disk_radiated', 'interpolation_class']
 
 def assign_core_collapse_quantities_none(EXTRA_COLUMNS, star_i, MODEL_NAME=None):
     """"Assign None values to all core collapse properties."""
@@ -49,7 +49,7 @@ def print_CC_quantities(EXTRA_COLUMNS, star, MODEL_NAME=None):
         print(format_string.format(
             "mechanism", "state", "SN type", "f_fb",
             "mass [Msun]", "spin", "m_disk_accreted [Msun]",
-            "m_disk_radiated [Msun]"))
+            "m_disk_radiated [Msun]","interpolation_class"))
         print('')
         try:
             print(format_val_preSN.format(
@@ -63,12 +63,12 @@ def print_CC_quantities(EXTRA_COLUMNS, star, MODEL_NAME=None):
             print(format_val.format(MODEL_NAME,
                     star.state, star.SN_type, star.f_fb,
                     star.mass, star.spin, star.m_disk_accreted,
-                    star.m_disk_radiated))
+                    star.m_disk_radiated, star.interpolation_class))
         except:
             warnings.warn('Failed to print star values!')
-        
-    
-                    
+
+
+
 def post_process_grid(grid, index=None, star_2_CO=True, MODELS=MODELS,
                       single_star=False, verbose=False):
     """Compute post processed quantity of any grid.
@@ -114,7 +114,7 @@ def post_process_grid(grid, index=None, star_2_CO=True, MODELS=MODELS,
 
     """
     EXTRA_COLUMNS = {}
-    
+
     for star in [1, 2]:
         # core masses at He depletion. stellar states and composition
         for quantity in ['avg_c_in_c_core_at_He_depletion',
@@ -129,7 +129,7 @@ def post_process_grid(grid, index=None, star_2_CO=True, MODELS=MODELS,
         for MODEL_NAME, MODEL in MODELS.items():
             for quantity in CC_quantities:
                 EXTRA_COLUMNS[f'S{star}_{MODEL_NAME}_{quantity}'] = []
-                
+
     # remove star 2 columns in case of single star grid
     if single_star:
         for key in list(EXTRA_COLUMNS.keys()):
@@ -164,6 +164,7 @@ def post_process_grid(grid, index=None, star_2_CO=True, MODELS=MODELS,
             stars_CO = [False]
             IC = 'no_MT'
         TF1 = grid.final_values['termination_flag_1'][i]
+        TF2 = grid.final_values['termination_flag_2'][i]
 
         # compute properties
         for j, star in enumerate(stars):
@@ -200,9 +201,9 @@ def post_process_grid(grid, index=None, star_2_CO=True, MODELS=MODELS,
                                             getattr(star, f'{quantity}_{val}cent'))
                 # aboundances
                 try:
-                    s_o = (1. - star.surface_h1 - star.surface_he4 - star.surface_c12 
+                    s_o = (1. - star.surface_h1 - star.surface_he4 - star.surface_c12
                            - star.surface_n14 - star.surface_o16)
-                    c_o = (1. - star.center_h1 - star.center_he4 - star.center_c12 
+                    c_o = (1. - star.center_h1 - star.center_he4 - star.center_c12
                            - star.center_n14 - star.center_o16)
                 except TypeError as ex:
                     s_o = 0.
@@ -230,18 +231,18 @@ def post_process_grid(grid, index=None, star_2_CO=True, MODELS=MODELS,
                     if 'CE' in quantity:
                         for val in [1, 10, 30, 'pure_He_star_10']:
                             EXTRA_COLUMNS[f'S{j+1}_{quantity}_{val}cent'].append(None)
-                    else:  
+                    else:
                         EXTRA_COLUMNS[f'S{j+1}_{quantity}'].append(None)
-        
+
         # core collpase quantities
         if not single_star:
             if interpolation_class in ['no_MT', 'stable_MT']:
-                if (star_2_CO or (TF1 in TF1_POOL_STABLE and 
+                if (star_2_CO or (TF1 in TF1_POOL_STABLE and
                     ('primary' in TF1 or 'Primary' in TF1))):
                     star = binary.star_1
                     star_i = 1
                     assign_core_collapse_quantities_none(EXTRA_COLUMNS, 2)
-                elif (TF1 in TF1_POOL_STABLE and 
+                elif (TF1 in TF1_POOL_STABLE and
                     ('secondary' in TF1 or 'Secondary' in TF1)):
                     star = binary.star_2
                     star_i = 2
@@ -282,7 +283,7 @@ def post_process_grid(grid, index=None, star_2_CO=True, MODELS=MODELS,
 
                 for MODEL_NAME, MODEL in MODELS.items():
                     mechanism = MODEL['mechanism']+MODEL['engine']
-                    SN = StepSN(**MODEL)     
+                    SN = StepSN(**MODEL)
                     star_copy = copy.copy(star)
                     try:
                         flush = False
@@ -309,12 +310,20 @@ def post_process_grid(grid, index=None, star_2_CO=True, MODELS=MODELS,
                         assign_core_collapse_quantities_none(EXTRA_COLUMNS, star_i, MODEL_NAME)
                     else:
                         for quantity in CC_quantities:
-                            EXTRA_COLUMNS[f'S{star_i}_{MODEL_NAME}_{quantity}'].append(
-                            getattr(star_copy, quantity))
+                            if quantity is not 'interpolation_class':
+                                EXTRA_COLUMNS[f'S{star_i}_{MODEL_NAME}_{quantity}'].append(
+                                getattr(star_copy, quantity))
+                            else:
+                                if getattr(star_copy, 'state') == 'BH' and '1' in TF2 and '2' in TF2:
+                                    EXTRA_COLUMNS[f'S{star_i}_{MODEL_NAME}_{quantity}'].append(
+                                    getattr(star_copy, quantity)+'reverse_MT')
+                                else:
+                                    EXTRA_COLUMNS[f'S{star_i}_{MODEL_NAME}_{quantity}'].append(
+                                    getattr(star_copy, 'state'))
                         if verbose:
                             print_CC_quantities(EXTRA_COLUMNS, star_copy, f'{MODEL_NAME}_{mechanism}')
 
-            else: 
+            else:
                 # inital_RLOF, unstable_MT not_converged
                 assign_core_collapse_quantities_none(EXTRA_COLUMNS, 1)
                 assign_core_collapse_quantities_none(EXTRA_COLUMNS, 2)
@@ -353,8 +362,16 @@ def post_process_grid(grid, index=None, star_2_CO=True, MODELS=MODELS,
                         assign_core_collapse_quantities_none(EXTRA_COLUMNS, 1, MODEL_NAME)
                     else:
                         for quantity in CC_quantities:
-                            EXTRA_COLUMNS[f'S1_{MODEL_NAME}_{quantity}'].append(
-                            getattr(star_copy, quantity))
+                            if quantity is not 'interpolation_class':
+                                EXTRA_COLUMNS[f'S{star_i}_{MODEL_NAME}_{quantity}'].append(
+                                getattr(star_copy, quantity))
+                            else:
+                                if getattr(star_copy, 'state') == 'BH' and '1' in TF2 and '2' in TF2:
+                                    EXTRA_COLUMNS[f'S{star_i}_{MODEL_NAME}_{quantity}'].append(
+                                    getattr(star_copy, quantity)+'reverse_MT')
+                                else:
+                                    EXTRA_COLUMNS[f'S{star_i}_{MODEL_NAME}_{quantity}'].append(
+                                    getattr(star_copy, 'state'))
                         if verbose:
                             print_CC_quantities(EXTRA_COLUMNS, star_copy, f'{MODEL_NAME}_{mechanism}')
             else:

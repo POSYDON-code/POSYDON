@@ -106,7 +106,7 @@ COMPRESSIONS = {
 
 def create_grid_slice(i, path_to_csv_file, verbose=False, overwrite_psygrid=True):
     """Creates a new PSyGrid slice."""
-    
+
     # read csv file
     if os.path.exists(path_to_csv_file):
         df = pd.read_csv(path_to_csv_file)
@@ -129,10 +129,10 @@ def create_grid_slice(i, path_to_csv_file, verbose=False, overwrite_psygrid=True
             stop_before_carbon_depletion = False
     else:
         stop_before_carbon_depletion = False
-    
+
     grid_output = get_new_grid_name(grid_path, compression,
                                     create_missing_directories=True)
-    
+
     # get compression dependent attributes
     pure_compression = compression.split('_')[0]
     if pure_compression in COMPRESSIONS.keys():
@@ -144,12 +144,12 @@ def create_grid_slice(i, path_to_csv_file, verbose=False, overwrite_psygrid=True
     else:
         raise ValueError(f'pure_compression = {pure_compression} not '
                          f'supported! (compression={compression})')
-    
+
     if ('CO' in grid_path) and ('RLO' in compression):
         start_at_RLO = True
     else:
         start_at_RLO = False
-    
+
     if verbose:
         print(f'processing: {grid_path} with compression: {compression}')
         if os.path.isfile(grid_output):
@@ -159,7 +159,7 @@ def create_grid_slice(i, path_to_csv_file, verbose=False, overwrite_psygrid=True
                 print(f'file {grid_output} already exists!')
         else:
             print(f'saving to file: {grid_output}')
-    
+
     # create the new PSyGrid
     grid = PSyGrid(verbose=verbose)
     grid.create(grid_path,
@@ -179,7 +179,7 @@ def create_grid_slice(i, path_to_csv_file, verbose=False, overwrite_psygrid=True
 
 def combine_grid_slices(i, path_to_csv_file, verbose=False):
     """Combining grid slices to one grid."""
-    
+
     # read csv file
     if os.path.exists(path_to_csv_file):
         df = pd.read_csv(path_to_csv_file)
@@ -196,7 +196,7 @@ def combine_grid_slices(i, path_to_csv_file, verbose=False):
 
 def calculate_extra_values(i, path_to_csv_file, verbose=False):
     """Calculating extra values, e.g. values derived from the final profile."""
-    
+
     # read csv file
     if os.path.exists(path_to_csv_file):
         df = pd.read_csv(path_to_csv_file)
@@ -219,20 +219,20 @@ def calculate_extra_values(i, path_to_csv_file, verbose=False):
             raise ValueError(f'{grid_ORIGINAL_path} not found!')
     else:
         raise ValueError(f'No path_to_grid_ORIGINAL in {path_to_csv_file}')
-    
+
     if verbose:
         print(f'Compute processed quantities for {grid_path} ...')
     if 'CO' in grid_path:
         star_2_CO = True
     else:
         star_2_CO = False
-    
+
     # load grid with ORIGINAL compression and get extra colums
     grid_ORIGINAL = PSyGrid(grid_ORIGINAL_path)
     MESA_dirs_EXTRA_COLUMNS, EXTRA_COLUMNS = post_process_grid(grid_ORIGINAL,
                                               index=None, star_2_CO=star_2_CO,
                                               verbose=verbose)
-    
+
     # post processed quantities are appended to the grid object, hence
     # we create a copy of it and append back to it
     if os.path.exists(processed_grid_path):
@@ -240,7 +240,7 @@ def calculate_extra_values(i, path_to_csv_file, verbose=False):
             print('Post processed grid file alredy exist, removing it.')
         os.remove(processed_grid_path)
     copyfile(grid_path, processed_grid_path)
-    
+
     # load processed grid and append values
     grid = PSyGrid(processed_grid_path)
     add_post_processed_quantities(grid, MESA_dirs_EXTRA_COLUMNS,
@@ -252,7 +252,7 @@ def calculate_extra_values(i, path_to_csv_file, verbose=False):
 
 def train_interpolators(i, path_to_csv_file, verbose=False):
     """Train an interpolator on a grid."""
-    
+
     # read csv file
     if os.path.exists(path_to_csv_file):
         df = pd.read_csv(path_to_csv_file)
@@ -269,30 +269,30 @@ def train_interpolators(i, path_to_csv_file, verbose=False):
         interpolator_path = df.loc[i,'path_to_interpolator']
     else:
         raise ValueError(f'No path_to_interpolator in {path_to_csv_file}')
-    
+
     method = os.path.splitext(interpolator_path.split('IF_')[-1])[0]
     if '_RLO' in method:
         method = method.split('_RLO')[0]
-    
+
     if verbose:
         print(f'Train interpolators on {grid_path} with method {method}')
-    
+
     # check interpolation_objects directory exists
     interp_path = os.path.dirname(interpolator_path)
     if not os.path.isdir(interp_path):
         os.makedirs(interp_path)
-    
+
     # load grid
     grid = PSyGrid(verbose=verbose)
     grid.load(grid_path)
-    
+
     if '_RLO' in grid_path:
         interp_method = [method, method]
         interp_classes = ["stable_MT", "unstable_MT"]
     else:
         interp_method = [method, method, method]
         interp_classes = ["no_MT", "stable_MT", "unstable_MT"]
-    
+
     # all magnitues that are not model numbers, supernova properites or strings
     # are interpolated with respect to interpolation_class
     out_keys = [key for key in grid.final_values.dtype.names if (
@@ -300,14 +300,14 @@ def train_interpolators(i, path_to_csv_file, verbose=False):
                                    (type(grid.final_values[key][0]) != np.str_)
                                    and any(~np.isnan(grid.final_values[key]))
                                    and "MODEL" not in key)]
-    
+
     # define all string keys in final values
     c_keys = ['interpolation_class', 'S1_state', 'S2_state']
     for MODEL_NAME in MODELS.keys():
         for i in range(1,3):
             c_keys.append(f'S{i}_{MODEL_NAME}_SN_type')
             c_keys.append(f'S{i}_{MODEL_NAME}_CO_type')
-    
+
     # specify the interpolation methods
     interpolators = [
         {
@@ -319,7 +319,7 @@ def train_interpolators(i, path_to_csv_file, verbose=False):
             "c_key": "interpolation_class"
         },
     ]
-    
+
     # core collapse quantities are interpolated with respect to the
     # compact object type
     # TODO: we need to train core collapse for secondary star as well
@@ -335,8 +335,8 @@ def train_interpolators(i, path_to_csv_file, verbose=False):
             # get interpolations classes dynamically
             interp_method = []
             interp_classes = []
-            for CO_type in ["BH", "NS", "WD"]:
-                if CO_type in grid.final_values[f'S{i}_{MODEL_NAME}_CO_type']:
+            for CO_type in ["BH", "NS", "WD","BHreverse_MT"]:
+                if CO_type in grid.final_values[f'S{i}_{MODEL_NAME}_interpolation_class']:
                     interp_method.append(method)
                     interp_classes.append(CO_type)
 
@@ -346,11 +346,11 @@ def train_interpolators(i, path_to_csv_file, verbose=False):
                     "interp_classes": interp_classes,
                     "out_keys": out_keys,
                     "class_method": "kNN",
-                    "c_keys": [f'S{i}_{MODEL_NAME}_CO_type'],
-                    "c_key": f'S{i}_{MODEL_NAME}_CO_type'
-                },   
+                    "c_keys": [f'S{i}_{MODEL_NAME}_interpolation_class'],
+                    "c_key": f'S{i}_{MODEL_NAME}_interpolation_class'
+                },
             )
-    
+
     # initialize initial to final interpolator
     interp = IFInterpolator(grid=grid, interpolators=interpolators)
 
@@ -362,7 +362,7 @@ def train_interpolators(i, path_to_csv_file, verbose=False):
 def export_dataset(i, path_to_csv_file, verbose=False):
     """Moving the data set to a place containing all, what is needed to run a
     population synthesis with POSYDON."""
-    
+
     # read csv file
     if os.path.exists(path_to_csv_file):
         df = pd.read_csv(path_to_csv_file)
@@ -379,7 +379,7 @@ def export_dataset(i, path_to_csv_file, verbose=False):
         export_path = df.loc[i,'export_path']
     else:
         raise ValueError(f'No export_path in {path_to_csv_file}')
-    
+
     if verbose:
         print(f'copying {grid_path} to {export_path}')
     # copy the file
@@ -388,7 +388,7 @@ def export_dataset(i, path_to_csv_file, verbose=False):
 
 def zams_file_name(dirname):
     """Gives the name of the ZAMS file depending on the metallicity."""
-    
+
     if '2e+00_Zsun' in dirname:
         zams_filename = 'zams_z2.84m2_y0.2915.data'
     elif '1e+00_Zsun'  in dirname:
@@ -412,7 +412,7 @@ def zams_file_name(dirname):
 
 def copy_ini_file(grid_path, rerun_type, destination, cluster):
     """Copies the ini file and make replacements according to the rerun."""
-    
+
     # copy the default ini file to directory
     if cluster in ['quest','yggdrasil']:
         ini_dir_path = os.path.join(PATH_TO_POSYDON,
@@ -456,7 +456,7 @@ def copy_ini_file(grid_path, rerun_type, destination, cluster):
         return
     else:
         raise ValueError(f'Unsupported rerun type {rerun_type}!')
-    
+
     # make replacements in ini file
     search_text1 = "main-18710e943edd926a5653c4cdb7d6e18e5bdb35a2"
     search_text2 = "main-a060b7bf1a4d94d693f77be9a1b0b3a522c1eadf"
@@ -474,11 +474,11 @@ def copy_ini_file(grid_path, rerun_type, destination, cluster):
 
 def logic_rerun(grid, rerun_type):
     """Get the runs, which need a rerun."""
-    
+
     runs_to_rerun=None
     termination_flags=None
     new_mesa_flag = None
-    
+
     # handle different rerun types
     if rerun_type == 'opacity_max' or rerun_type == 'opacity_max_hms-hms':
         # TODO: consider using TF1_POOL_ERROR
@@ -551,16 +551,16 @@ def logic_rerun(grid, rerun_type):
         runs_to_rerun = None # implement logic
     else:
         raise ValueError(f'Unsupported rerun type {rerun_type}!')
-    
+
     if (runs_to_rerun is None) and (termination_flags is None):
         raise ValueError('Undefined rerun!')
-    
+
     return runs_to_rerun, termination_flags, new_mesa_flag
 
 
 def rerun(i, path_to_csv_file, verbose=False):
     """Generate files to start a rerun."""
-    
+
     # read csv file
     if os.path.exists(path_to_csv_file):
         df = pd.read_csv(path_to_csv_file)
@@ -581,11 +581,11 @@ def rerun(i, path_to_csv_file, verbose=False):
         rerun_type = df.loc[i,'rerun_type']
     else:
         raise ValueError(f'No rerun_type in {path_to_csv_file}')
-    
+
     # load grid
     grid = PSyGrid(verbose=verbose)
     grid.load(grid_path)
-    
+
     # export point to rerun
     if verbose:
         print(f'rerun {grid_path} in {rerun_path}')
@@ -596,7 +596,7 @@ def rerun(i, path_to_csv_file, verbose=False):
     grid.rerun(path_to_file=rerun_path, runs_to_rerun=runs_to_rerun,
                termination_flags=termination_flags,
                new_mesa_flag=new_mesa_flag)
-    
+
     # copy ini file and set the new inlist commit
     # TODO: make cluster an input
     if 'b1119' in grid.MESA_dirs[0].decode('utf-8'):
@@ -629,7 +629,7 @@ def plot_grid(i, path_to_csv_file, verbose=False):
             'mmax' : 51.328,
         }
     }
-    
+
     def _range(x_min, x_max, x_n, log=False):
         if log:
             vars = 10**np.linspace(np.log10(x_min),np.log10(x_max), x_n)
@@ -639,13 +639,13 @@ def plot_grid(i, path_to_csv_file, verbose=False):
             vars_edges = (vars[1:]+vars[:-1])*0.5
         vars_edges = [0.]+vars_edges.tolist()+[float("inf")]
         return vars.tolist(), vars_edges
-    
+
     # read csv file
     if os.path.exists(path_to_csv_file):
         df = pd.read_csv(path_to_csv_file)
     else:
         raise ValueError(f'{path_to_csv_file} not found!')
-    
+
     check_dirs = []
     # get values from csv file
     if 'path_to_grid' in df.keys():
@@ -668,23 +668,23 @@ def plot_grid(i, path_to_csv_file, verbose=False):
         path_to_interpolator = df.loc[i,'path_to_interpolator']
     else:
         path_to_interpolator = ''
-    
+
     # check that plots/ directories exist
     for dir_ in check_dirs:
         if not os.path.isdir(dir_):
             os.makedirs(dir_)
-        
+
     # load grid
     grid = PSyGrid(verbose=verbose)
     grid.load(grid_path)
-    
+
     for quantity_to_plot in quantities_to_plot:
         if verbose:
             print(f'plotting: {quantity_to_plot} from {grid_path} to '
                   f'{plot_dir}')
-        
+
         # load interpolator and evaluate interp errors
-        if ('INTERP_ERROR' in quantity_to_plot 
+        if ('INTERP_ERROR' in quantity_to_plot
             and path_to_interpolator != ''):
             model = IFInterpolator()
             model.load(path_to_interpolator)
@@ -692,7 +692,7 @@ def plot_grid(i, path_to_csv_file, verbose=False):
             interp_error = True
         else:
             interp_error = False
-        
+
         # get attributes for plotting
         plot_attributes = {
             'plot_dir_name' : 'default',
@@ -743,13 +743,13 @@ def plot_grid(i, path_to_csv_file, verbose=False):
                 plot_attributes['zvar'] = quantity_to_plot
         else:
             raise TypeError(f'{quantity_to_plot} should be a string!')
-        
+
         # check that plots/ directories exist
         name = plot_attributes['plot_dir_name']
         dir_ = os.path.join(plot_dir, name)
         if not os.path.isdir(dir_):
             os.makedirs(dir_)
-        
+
         if ('CO-' in grid_path):
             # skip plotting CO properties
             if 'S2_' in quantity_to_plot:
@@ -765,7 +765,7 @@ def plot_grid(i, path_to_csv_file, verbose=False):
             fname = 'grid_m_%1.2f.png'
             title = '$m_\mathrm{CO}=%1.2f\,M_\odot$'
             slice_3D_var_str = 'star_2_mass'
-        elif 'HMS-HMS' in grid_path:        
+        elif 'HMS-HMS' in grid_path:
             # mass ratio slices
             smpl = grid_sample['HMS-HMS']
             vars, vars_edges = _range(smpl['qmin'], smpl['qmax'], smpl['nbin'],
@@ -773,10 +773,10 @@ def plot_grid(i, path_to_csv_file, verbose=False):
             vars[-1] = 0.99 # we replaced q=1 with q=0.99 in mesa runs
             fname = 'grid_q_%1.2f.png'
             title = '$q=%1.2f$'
-            slice_3D_var_str = 'mass_ratio' 
+            slice_3D_var_str = 'mass_ratio'
         else:
             raise ValueError('Grid type not supported!')
-        
+
         # loop over all grid slices
         for k, var in enumerate(vars):
             slice_3D_var_range = (vars_edges[k],vars_edges[k+1])
@@ -793,7 +793,7 @@ def plot_grid(i, path_to_csv_file, verbose=False):
                     'log10_y' : True,
                     'legend2D' : {'bbox_to_anchor' : (1.03, 0.5)}
                 }
-            
+
                 PLOT_PROPERTIES = PLOT_PROPERTIES_DEFAULT.copy()
                 if plot_attributes['zvar'] is not None:
                     # default plot properties with colorbar
@@ -804,7 +804,7 @@ def plot_grid(i, path_to_csv_file, verbose=False):
                     PLOT_PROPERTIES['zmax'] = plot_attributes['zmax']
                     if 'INTERP_ERROR' in quantity_to_plot:
                         PLOT_PROPERTIES['colorbar']['label'] = quantity_to_plot
-                
+
                 if 'INTERP_ERROR' in quantity_to_plot:
                     # initial/final error slices
                     evalIFerr.plot2D(plot_attributes['zvar'], slice_3D_var_str,
@@ -814,9 +814,9 @@ def plot_grid(i, path_to_csv_file, verbose=False):
                         PLOT_PROPERTIES_ALL = PLOT_PROPERTIES.copy()
                         PLOT_PROPERTIES_ALL['title'] = title.replace('=%1.2f$', '$ all')
                         PLOT_PROPERTIES_ALL['fname'] = fname.replace('%1.2f', 'all')
-                        evalIFerr.plot2D(plot_attributes['zvar'], 
-                                         slice_3D_var_str, 
-                                         (vars_edges[0], vars_edges[-1]), 
+                        evalIFerr.plot2D(plot_attributes['zvar'],
+                                         slice_3D_var_str,
+                                         (vars_edges[0], vars_edges[-1]),
                                          PLOT_PROPERTIES_ALL)
                 elif 'CLASS_ERROR' in quantity_to_plot:
                     # TODO: add class error plots
@@ -832,7 +832,7 @@ def plot_grid(i, path_to_csv_file, verbose=False):
                                 grid_3D=True, slice_3D_var_str=slice_3D_var_str,
                                 slice_3D_var_range=slice_3D_var_range,
                                 verbose=False, **PLOT_PROPERTIES)
-            
+
             except Exception as e:
                 print('FAILED TO PLOT '+title%var)
                 print('')
@@ -842,13 +842,13 @@ def plot_grid(i, path_to_csv_file, verbose=False):
 
 def do_check(i, path_to_csv_file, verbose=False):
     """Perform a check on a grid."""
-    
+
     # read csv file
     if os.path.exists(path_to_csv_file):
         df = pd.read_csv(path_to_csv_file)
     else:
         raise ValueError(f'{path_to_csv_file} not found!')
-    
+
     # get values from csv file
     if 'path_to_grid' in df.keys():
         grid_path = df.loc[i,'path_to_grid']
@@ -864,11 +864,11 @@ def do_check(i, path_to_csv_file, verbose=False):
         path_to_interpolator = df.loc[i,'path_to_interpolator']
     else:
         path_to_interpolator = ''
-    
+
     # load grid
     grid = PSyGrid(verbose=verbose)
     grid.load(grid_path)
-    
+
     # do the checks
     for check_to_do in checks_to_do:
         if check_to_do=='failure_rate':
@@ -900,7 +900,7 @@ if __name__ == '__main__':
 
     # read commond line arguments
     n_args = len(sys.argv)
-    
+
     if n_args > 1: # path to girds
         PATH_TO_GRIDS = str(sys.argv[1])
         if not os.path.isdir(PATH_TO_GRIDS): # check given path
@@ -909,7 +909,7 @@ if __name__ == '__main__':
     else:
         raise ValueError('No path to the grids given. It should be specified '
                          'as first commandline argument.')
-    
+
     if n_args > 2: # path to csv file
         PATH_TO_CSV_FILE = str(sys.argv[2])
         if not os.path.isfile(PATH_TO_CSV_FILE): # check given path
@@ -918,14 +918,14 @@ if __name__ == '__main__':
     else:
         raise ValueError('No csv file given. It should be specified as '
                          'second commandline argument.')
-    
+
     if n_args > 3: # slurm index
         SLURM_I = int(sys.argv[3])
         if SLURM_I<0: # check value
             raise ValueError(f'The slurm index cannot be negative: {SLURM_I}')
     else:
         SLURM_I = 0
-    
+
     if n_args > 4: # verbose flag
         VERBOSE = bool(int(sys.argv[4]))
     else:
@@ -957,11 +957,9 @@ if __name__ == '__main__':
 
     if STEP=='rerun': # export rerun
         rerun(SLURM_I, PATH_TO_CSV_FILE, verbose=VERBOSE)
-    
+
     if 'plot' in STEP: # plot grid slices
         plot_grid(SLURM_I, PATH_TO_CSV_FILE, verbose=VERBOSE)
 
     if 'check' in STEP: # do checks, e.g. failure rate
         do_check(SLURM_I, PATH_TO_CSV_FILE, verbose=VERBOSE)
-
-
