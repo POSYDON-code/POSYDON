@@ -625,7 +625,7 @@ class PSyGrid:
         # in case lists were used, get a proper `dtype` object
         dtype_initial_values = self.initial_values.dtype
         dtype_final_values = self.final_values.dtype
-        
+
         self._say('Loading MESA data...')
 
         #this int array will store the run_index of the i-th run and will be
@@ -693,7 +693,7 @@ class PSyGrid:
                     if colname in H1_columns:
                         history1_mod = np.int_(history1[colname].copy())
                     else:
-                        history1_mod = read_MESA_data_file(run.history1_path, 
+                        history1_mod = read_MESA_data_file(run.history1_path,
                                                            [colname])
                         if history1_mod is not None:
                             history1_mod = np.int_(history1_mod[colname])
@@ -712,7 +712,7 @@ class PSyGrid:
                     if "star_age" in H1_columns:
                         history1_age = history1["star_age"].copy()
                     else:
-                        history1_age = read_MESA_data_file(run.history1_path, 
+                        history1_age = read_MESA_data_file(run.history1_path,
                                                            ["star_age"])
                         if history1_age is not None:
                             history1_age = history1_age["star_age"]
@@ -736,7 +736,7 @@ class PSyGrid:
                     if colname in H2_columns:
                         history2_mod = np.int_(history2[colname].copy())
                     else:
-                        history2_mod = read_MESA_data_file(run.history2_path, 
+                        history2_mod = read_MESA_data_file(run.history2_path,
                                                            [colname])
                         if history2_mod is not None:
                             history2_mod = np.int_(history2_mod[colname])
@@ -755,7 +755,7 @@ class PSyGrid:
                     if "star_age" in H2_columns:
                         history2_age = history2["star_age"].copy()
                     else:
-                        history2_age = read_MESA_data_file(run.history2_path, 
+                        history2_age = read_MESA_data_file(run.history2_path,
                                                            ["star_age"])
                         if history2_age is not None:
                             history2_age = history2_age["star_age"]
@@ -854,7 +854,7 @@ class PSyGrid:
                     warnings.warn("Ignored MESA run because of scrubbed"
                                   " history in: {}\n".format(run.path))
                     continue
-                
+
                 try: #get mass from binary history
                     init_mass_1 = float(binary_history["star_1_mass"][0])
                 except: #otherwise get it from directory name
@@ -865,7 +865,7 @@ class PSyGrid:
                     kept = keep_till_central_abundance_He_C(binary_history, history1,
                                   history2, THRESHOLD_CENTRAL_ABUNDANCE, 0.1)
                     binary_history, history1, history2, newTF1 = kept
-                    
+
                 # check whether start at RLO is requested, and chop the history
                 if start_at_RLO:
                     kept = keep_after_RLO(binary_history, history1, history2)
@@ -1288,8 +1288,8 @@ class PSyGrid:
         new_dtype = []
         for dtype in self.final_values.dtype.descr:
             if (dtype[0].startswith("termination_flag")
-                    or dtype[0] == "interpolation_class"
-                    or "_type" in dtype[0] or "_state" in dtype[0]):
+                    or "_type" in dtype[0] or "_state" in dtype[0]
+                    or "_class" in dtype[0]):
                 dtype = (dtype[0], H5_REC_STR_DTYPE.replace("U", "S"))
             new_dtype.append(dtype)
             if dtype[1] == np.dtype('O'):
@@ -1340,8 +1340,8 @@ class PSyGrid:
         new_dtype = []
         for dtype in self.final_values.dtype.descr:
             if (dtype[0].startswith("termination_flag")
-                    or dtype[0] == "interpolation_class"
-                    or "_type" in dtype[0] or "_state" in dtype[0]):
+                    or "_type" in dtype[0] or "_state" in dtype[0]
+                    or "_class" in dtype[0]):
                 dtype = (dtype[0], H5_REC_STR_DTYPE.replace("S", "U"))
             new_dtype.append(dtype)
         self.final_values = self.final_values.astype(new_dtype)
@@ -2210,7 +2210,7 @@ def join_grids(input_paths, output_path,
                 # add non existing new entry
                 if not exists_already:
                     detected_initial_RLO.append(new_sys)
-    
+
     say("Opening new file...")
     # open new HDF5 file and start copying runs
     driver_args = {} if "%d" not in output_path else {
@@ -2246,10 +2246,10 @@ def join_grids(input_paths, output_path,
             new_mesa_dirs.append(grid.MESA_dirs[run_index])
             new_initial_values.append(grid.initial_values[run_index])
             new_final_values.append(grid.final_values[run_index])
-            
+
             if (newconfig["initial_RLO_fix"]):
                 flag1 = new_final_values[-1]["termination_flag_1"]
-                if (flag1 != "Terminate because of overflowing initial model" and 
+                if (flag1 != "Terminate because of overflowing initial model" and
                     flag1 != "forced_initial_RLO"):
                     mass1 = new_initial_values[-1]["star_1_mass"]
                     mass2 = new_initial_values[-1]["star_2_mass"]
@@ -2292,8 +2292,8 @@ def join_grids(input_paths, output_path,
         new_final_dtype = []
         for dtype in final_dtype.descr:
             if (dtype[0].startswith("termination_flag")
-                    or dtype[0] == "interpolation_class"
-                    or "SN_type" in dtype[0] or "_state" in dtype[0]):
+                    or "_type" in dtype[0] or "_state" in dtype[0]
+                    or "_class" in dtype[0]):
                 dtype = (dtype[0], H5_REC_STR_DTYPE.replace("U", "S"))
             new_final_dtype.append(dtype)
         new_final_values = np.array(new_final_values, dtype=new_final_dtype)

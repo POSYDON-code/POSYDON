@@ -290,8 +290,8 @@ def train_interpolators(i, path_to_csv_file, verbose=False):
         interp_method = [method, method]
         interp_classes = ["stable_MT", "unstable_MT"]
     else:
-        interp_method = [method, method, method]
-        interp_classes = ["no_MT", "stable_MT", "unstable_MT"]
+        interp_method = [method, method, method, method]
+        interp_classes = ["no_MT", "stable_MT", "unstable_MT", "stable_reverse_MT"]
 
     # all magnitues that are not model numbers, supernova properites or strings
     # are interpolated with respect to interpolation_class
