@@ -1,5 +1,6 @@
 default_grid_kwargs = {
     #Default grid options:
+
     #The main grid option: 
     'main_grid_file' : "sg-CAP18-coarse.h5",
     #Secondary grid option to capture the failures of the main grid.
