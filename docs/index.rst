@@ -93,6 +93,7 @@ How is this Documentation Structured?
    api-reference/modules-classes
    api-reference/functions-methods
    api-reference/return-values-outputs
+   api/*
 
 
 .. toctree::
@@ -100,9 +101,7 @@ How is this Documentation Structured?
    :caption: Troubleshooting and FAQs
 
    troubleshooting-faqs/installation-issues
-   troubleshooting-faqs/simulation-questions
-   troubleshooting-faqs/database-ml-issues
-   troubleshooting-faqs/web-application-queries
+   troubleshooting-faqs/code-questions
 
 
 .. toctree::
@@ -120,15 +119,13 @@ How is this Documentation Structured?
 
    release-notes/version-history
    release-notes/major-updates
-
+   
 
 .. toctree::
    :maxdepth: 1
    :caption: Contact and Support
 
    contact-support/contact-information
-   contact-support/mailing-list-forum
-   contact-support/reporting-bugs-issues
 
 
 Acknowledgments

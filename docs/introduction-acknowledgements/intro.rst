@@ -23,7 +23,7 @@ Citation Disclaimer
 
 If you use POSYDON for your research and it contributes to a publication, we kindly request that you cite our foundational papers for this version:
 
-- Fragos et al. (2023)
-- Andrews et al. (in prep.)
+- `POSYDON: A General-purpose Population Synthesis Code with Detailed Binary-evolution Simulations <https://ui.adsabs.harvard.edu/abs/2023ApJS..264...45F/abstract>`_, **Fragos et al. (2023)**
+- POSYDON Version 2:  Population Synthesis across Metallicities with Detailed Binary-Evolution Simulation, Andrews et al. (in prep.)
 
 Acknowledging these works ensures that the development team receives proper credit and supports the continued advancement and maintenance of the POSYDON software.
