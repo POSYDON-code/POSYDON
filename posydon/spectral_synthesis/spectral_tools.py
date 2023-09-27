@@ -1,55 +1,80 @@
-#This is tools and useful funtion that are using in the spectral synthesis and the creation of CMD diagrams combined. 
+"""Docstring here.
+
+This is tools and useful funtion that are using in the spectral synthesis and
+the creation of CMD diagrams combined.
+"""
+
+__authors__ = [
+    "Eirini Kasdagli <kasdaglie@ufl.edu>",
+    "Jeffrey Andrews <jeffrey.andrews@ufl.edu>"]
+
 import numpy as np
 import astropy.constants as con
 import astropy.units as unt
 import pandas as pd
-import time 
-
-#Loading the population data in an array of binaries. 
-# Inputs: the h5 file of the population and the END time. 
 
 Zo = 0.0142
 
 
-
 class star():
-    
-    def __init__(self,**kwargs):
+    """Write a docstring."""
+
+    def __init__(self, **kwargs):
         for key, value in kwargs.items():
             setattr(self, key, value)
         self.logg = None
         self.Teff = None
         self.Fe_H = np.log10(self.metallicity)
-        
-        
-    def get_logg(self,max_logg,min_logg): 
+
+    def get_logg(self, max_logg, min_logg):
         self.logg = np.log10(con.G*self.mass/self.R**2/(unt.cm/unt.s**2))
         if self.logg < max_logg and self.logg > min_logg:
             return self.logg
         else:
             return None
-    
-    def get_Teff(self,max_Teff,min_Teff):
+
+    def get_Teff(self, max_Teff, min_Teff):
         self.Teff = (self.L/(4*np.pi*self.R**2*con.sigma_sb))**0.25/unt.K
         if self.Teff < max_Teff and self.Teff > min_Teff:
             return self.Teff
         else:
             return None
-        
-    def set_metallicity(self,new_Fe_H,max_Fe_H,min_Fe_H):
+
+    def set_metallicity(self, new_Fe_H, max_Fe_H, min_Fe_H):
         if new_Fe_H < max_Fe_H and new_Fe_H > min_Fe_H:
             self.Fe_H = new_Fe_H
-        else: 
+        else:
             raise TypeError
-    #This is for the stars that we can't calculate their spectra so we change their logg and thus we need a new radius for them and we set and return. 
-    def new_radius(self,new_logg):
+    #This is for the stars that we can't calculate their spectra so we change their logg and thus we need a new radius for them and we set and return.
+    def new_radius(self, new_logg):
         R = np.sqrt(con.G*self.mass/10**(new_logg)/unt.cm *unt.s**2).decompose()
         return R
 
 
+def find_max_time(history):
+    """Find the max time of a population."""
+    times = history[np.where(history.event == "maxtime")[0]].time
+
+    return np.max(times)
+
+def load_posydon_population(population_file, max_number_of_binaries=None,
+                            **kwargs):
+    """Write a docstring."""
+    history = pd.read_hdf(population_file, key='history')
+
+    max_time = find_max_time(history)
+
+    i_final_star = (history.time == max_time) & (history.event == "END")
+    final_stars = history[i_final_star].reset_index()
+    zams_stars = history[history.event == 'ZAMS']
+
+
+
+
+
 
 def population_data(population_file = None ,time = None, number_of_binaries = True,**kwargs):
-    if population_file is None or time is None: 
+    if population_file is None or time is None:
         raise Exception('File of population or time not provided')
     history = pd.read_hdf(population_file, key='history')
     final_stars = history[(history.time == time ) & (history.event == "END")].reset_index()
@@ -58,7 +83,7 @@ def population_data(population_file = None ,time = None, number_of_binaries = Tr
         total_binaries = len(final_stars)
     elif number_of_binaries <= len(final_stars):
         total_binaries = number_of_binaries
-    else: 
+    else:
         raise Exception('The total number of binaries {N} is less than the input number_of_binaries {number_of_binaries}'.format(N = total_binaries, number_of_binaries = number_of_binaries  ))
 
     star1_properties = {}
@@ -87,9 +112,9 @@ def population_data(population_file = None ,time = None, number_of_binaries = Tr
 
 
 def grid_global_limits(spectral_grids):
-    T_max  = 0 
+    T_max  = 0
     T_min = 100000
-    logg_max = 0 
+    logg_max = 0
     logg_min = 20
     for key in spectral_grids:
         specgrid = spectral_grids[key]
@@ -100,5 +125,4 @@ def grid_global_limits(spectral_grids):
             elif label == 'log(g)':
                 logg_max = max(logg_max,specgrid.axis_x_max[label])
                 logg_min = min(logg_min,specgrid.axis_x_min[label])
-    return T_max,T_min,logg_max,logg_min 
-
+    return T_max,T_min,logg_max,logg_min

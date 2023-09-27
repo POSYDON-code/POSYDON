@@ -1,5 +1,5 @@
 """
-Spectral Synthesis code 
+Spectral Synthesis code
 """
 #################################### Imports ##############################################
 
@@ -21,41 +21,67 @@ grid_keys = [
     'stripped_grid',
 ]
 
-#########################################Creating the class population_spectra ###############################################
+######### Creating the class population_spectra ###########################
 
 
 class population_spectra():
-    
-    def __init__(self,file,**kwargs):
-        ######Initializing the parameters ##################
+    """Write a class docstring."""
+
+    def __init__(self, file, **kwargs):
+        """Initialize a population_spectra class instance."""
         self.kwargs = default_kwargs.copy()
         for key, arg in kwargs.items():
             self.kwargs[key] = arg
-        
-        #population_file = kwargs.get('population_file')
+
+        # population_file = kwargs.get('population_file')
         self.kwargs['population_file'] = file
         #time = kwargs.get('time')
-        self.failed_stars = 0 #int, the stars that failed durin the spectra process 
-        self.missing_stars = 0 #The stars that are missing due to POSYDON, some detached cases for now. 
-        #Creating lists/numpy arrays for investigation for the failled and succesful stars. 
+        self.failed_stars = 0  # int, the stars that failed durin the spectra process
+        #Creating lists/numpy arrays for investigation for the failled and succesful stars.
         self.stars_fails = []
-        self.stars_run   = []
+        self.stars_run = []
         self.stars_grid_fail = []
-        
-        #Creating readable arrays for the stars objects. 
+
+        # Create readable arrays for the stars objects.
         time_start_pop = datetime.datetime.now()
         self.population = population_data(**self.kwargs)
         time_end_pop = datetime.datetime.now()
-        print('Total time is: ',time_end_pop - time_start_pop)
+        print('Total time is: ', time_end_pop - time_start_pop)
         self.total_binaries = len(self.population)
 
-        #Initializing the spectral_grids object and parameters used.
-        #To do put an option for changing the wavelength 
+        # Initialize the spectral_grids object and parameters used.
+        # TODO put an option for changing the wavelength
         self.grids = spectral_grids()
         self.scaling_factor = kwargs.get('scaling_factor')
-        self.grid_flux  = self.grids.grid_flux
+        self.grid_flux = self.grids.grid_flux
 
-    
+    def load_population():
+        """Function to load up a POSYDON population."""
+
+
+
+        self.population = load_population()
+
+
+    def create_population_spectrum():
+
+        pop_spectrum = {}
+
+        state_list = ['disrupted', 'merged', 'detached']
+
+        # Create empty spectral arrays
+        for state in state_list:
+            pop_spectrum[state] = np.zeros(len(self.grids.lam_c))
+
+        for binary in self.population:
+            if not include_binary_conditions(binary):
+                continue
+
+            spectrum_1, state_1 = generate_spectrum(binary.star_1)
+            spectrum_2, state_2 = generate_spectrum(binary.star_2)
+
+            pop_spectrum[state_1] += spectrum_1
+            pop_spectrum[state_2] += spectrum_2
 
 
     def create_spectrum_single(self,star,ostar_temp_cut_off=27000,**kwargs):
@@ -68,7 +94,7 @@ class population_spectra():
                 self.failed_stars +=1
                 return None
             return self.grids.stripped_grid_flux(star)
-        
+
         Fe_H = star.Fe_H
         Z_Zo = star.metallicity
         Teff = copy.copy(star.get_Teff(self.grids.T_max,self.grids.T_min))
@@ -76,17 +102,17 @@ class population_spectra():
         x = {'Teff':Teff ,'log(g)': logg,'[Fe/H]': Fe_H,'Z/Zo':Z_Zo}
 
         if Teff == None or logg == None:
-            self.failed_stars +=1 
+            self.failed_stars +=1
             return None
-        
-        #For temperature higher than the desired cut_off we calculate the spectra using the Ostar girds. 
+
+        #For temperature higher than the desired cut_off we calculate the spectra using the Ostar girds.
         if Teff >= ostar_temp_cut_off:
             #Setting the acceptable boundaries for the ostar grid in the logg.
             logg_min = self.grids.spectral_grids['ostar_grid'].axis_x_min['log(g)']
             logg_max = self.grids.spectral_grids['ostar_grid'].axis_x_max['log(g)']
-            if logg > logg_min and logg<logg_max: 
+            if logg > logg_min and logg<logg_max:
                     try:
-                        Flux = self.grid_flux('ostar_grid',**x) 
+                        Flux = self.grid_flux('ostar_grid',**x)
                         return Flux*star.R**2*scale**-2
                     except LookupError:
                         self.failed_stars +=1
@@ -98,21 +124,21 @@ class population_spectra():
 
         try:
             #normal_start = datetime.datetime.now()
-            Flux = self.grid_flux('main_grid',**x) 
+            Flux = self.grid_flux('main_grid',**x)
             #normal_end = datetime.datetime.now()
-            #print( 'The spectral normal time is: {time}'.format(time = normal_end - normal_start ))            
+            #print( 'The spectral normal time is: {time}'.format(time = normal_end - normal_start ))
             return Flux*star.R**2*scale**-2
         except LookupError:
             try:
-                # lo limits for the secondary grid: 
+                # lo limits for the secondary grid:
                 #logg_min = grids.specgrid_secondary.axis_x_min['log(g)']
                 #Teff_min = grids.specgrid_secondary.axis_x_min['Teff']
-                #Calculating all the exeption that the first grid gave with the secondary. 
+                #Calculating all the exeption that the first grid gave with the secondary.
                 #if Teff>15000.0 and logg > logg_min:
-                Flux = self.grid_flux('secondary_grid',**x) 
+                Flux = self.grid_flux('secondary_grid',**x)
                 return Flux*star.R**2*scale**-2
             except LookupError:
-                # if and else statements that fix the grid voids.  
+                # if and else statements that fix the grid voids.
                 if Teff > 20000:
                     logg = max(logg, 4.0)
                 elif Teff > 12000:
@@ -122,8 +148,8 @@ class population_spectra():
                 elif Teff > 6000:
                     logg = max(logg, 1.0)
                 try:
-                    Flux = self.grid_flux('main_grid',**x) 
-                    return Flux*star.R**2*scale**-2 
+                    Flux = self.grid_flux('main_grid',**x)
+                    return Flux*star.R**2*scale**-2
                 except LookupError:
                     self.failed_stars +=1
                     return None
@@ -139,7 +165,7 @@ class population_spectra():
             return spectrum_1
         else:
             raise Exception("Spectrum 1 and Spectrum 2 have not allowed values.")
-    
+
     def create_spectrum_binary(self,binary):
     # check if binary has two or any non-degenerate stars
         star1 = binary[0]
@@ -151,7 +177,7 @@ class population_spectra():
 
         if star2.state not in ['NS','BH','massless_remnant']:
             spectrum_2 = self.create_spectrum_single(star2)
-        else: 
+        else:
             spectrum_2 = None
         return self.add_spectra(spectrum_1, spectrum_2)
 
@@ -161,7 +187,7 @@ class population_spectra():
             num_binaries = len(self.population)
         elif num_binaries > len(self.population):
             raise Exception('The number of binaries exceeds the number of binaries in the population!')
-        
+
         create_spectrum_population = np.zeros(len(self.grids.lam_c))*unt.m/unt.m*0
         failed_binaries = 0
         population = self.population
@@ -174,7 +200,7 @@ class population_spectra():
             if spectrum is not None:
                 create_spectrum_population += spectrum
         return create_spectrum_population , self.grids.lam_c
-       
+
 
     def create_spectrum_subpopulation(self,state,num_binaries = None):
         if num_binaries is None:
@@ -193,4 +219,3 @@ class population_spectra():
                 if spectrum is not None:
                     self.create_spectrum_population += spectrum
         return create_spectrum_population , self.grids.lam_c
-
