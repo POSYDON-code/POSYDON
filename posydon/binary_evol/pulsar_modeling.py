@@ -248,11 +248,22 @@ class Pulsar:
         ## check if pulsar crossed the death line
         self.alive_state = self.is_alive()
 
-    def CE_evolve(self):
+    def CE_evolve(self, acc_prescription, M_comp, R_comp):
         '''
-        Evolve a pulsar during common envelope.
+        Evolve a pulsar during common envelope, accounting for mass accretion onto the NS.
         '''   
-        delta_M = np.random.uniform(0.04, 0.1)  ## assume amount of mass accreted during CE is 0.04-0.1 Msun        
+        if acc_prescription == "uniform":
+            ## assume amount of mass accreted during CE is 0.04-0.1 Msun  
+            delta_M = np.random.uniform(0.04, 0.1)  
+
+        elif acc_prescription == "macleod":
+            ## use the MacLeod prescription from COMPAS paper, fit to Fig. 4 in Macleod & Ramirez-Ruiz 
+            a_a = -1.1e-5; a_b = 1.5e-2; b_a = 1.2e-4; b_b = -1.5e-1
+
+            a = a_a*M_comp + b_a
+            b = a_b*M_comp + b_b
+            delta_M = a*R_comp + b
+
         self.RLO_evolve_COMPAS(delta_M)
 
     def is_alive(self):
