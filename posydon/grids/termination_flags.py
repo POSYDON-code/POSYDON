@@ -245,20 +245,24 @@ def infer_interpolation_class(tf1, tf2):
     if tf2 in TF2_POOL_NO_RLO:
         return "no_MT"
     if tf1 in TF1_POOL_STABLE:
-        return "stable_MT"
+        if '1' in tf2 and '2' in tf2:
+            return "stable_reverse_MT"
+        else:
+            return "stable_MT"
     if tf1 in TF1_POOL_UNSTABLE:
         return "unstable_MT"
+
     return "unknown"
 
 
 def get_detected_initial_RLO(grid):
     """Generates a list of already detected initial RLO
-    
+
     Parameters
     ----------
     grid : a PSyGrid
         The grid to check.
-    
+
     Retruns
     -------
     list
@@ -323,4 +327,3 @@ def get_nearest_known_initial_RLO(mass1, mass2, known_initial_RLO):
             d2min = d2
             nearest = sys
     return nearest
-
