@@ -317,7 +317,7 @@ def post_process_grid(grid, index=None, star_2_CO=True, MODELS=MODELS,
                             else:
                                 if getattr(star_copy, 'state') == 'BH' and '1' in TF2 and '2' in TF2:
                                     EXTRA_COLUMNS[f'S{star_i}_{MODEL_NAME}_{quantity}'].append(
-                                    getattr(star_copy, 'state')+'reverse_MT')
+                                    getattr(star_copy, 'state')+'_reverse_MT')
                                 else:
                                     EXTRA_COLUMNS[f'S{star_i}_{MODEL_NAME}_{quantity}'].append(
                                     getattr(star_copy, 'state'))

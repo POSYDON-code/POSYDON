@@ -335,7 +335,7 @@ def train_interpolators(i, path_to_csv_file, verbose=False):
             # get interpolations classes dynamically
             interp_method = []
             interp_classes = []
-            for CO_type in ["BH", "NS", "WD","BHreverse_MT"]:
+            for CO_type in ["BH", "NS", "WD","BH_reverse_MT"]:
                 if CO_type in grid.final_values[f'S{i}_{MODEL_NAME}_interpolation_class']:
                     interp_method.append(method)
                     interp_classes.append(CO_type)
