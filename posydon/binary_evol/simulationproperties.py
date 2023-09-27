@@ -362,7 +362,7 @@ class PulsarHooks(EvolveHooks):
 
                 ## get companion mass and radius at this timestep
                 M_comp = star_companion.mass_history[i]
-                R_comp = star_companion.radius_history[i]
+                R_comp = 10**star_companion.log_R_history[i]
                
                 pulsar.Mdot_edd = pulsar.calc_NS_edd_lim(donor_surface_h1[i]) 
                 
@@ -379,7 +379,7 @@ class PulsarHooks(EvolveHooks):
                         pulsar.detached_evolve(delta_t) 
               
                 elif step_name == "step_CE" and state != "merged":
-                    acc_prescription = "macleod"
+                    acc_prescription = "uniform"
                     pulsar.CE_evolve(acc_prescription, M_comp, R_comp)
 
                 pulsar_spin.append(pulsar.spin)
