@@ -50,6 +50,6 @@ jobs:
       uses: crazy-max/ghaction-github-pages@v2
       with:
         target_branch: gh-pages-dev
-        build_dir: docs/_build/html/unstable
+        build_dir: docs/_build/html/
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
