@@ -8,24 +8,45 @@ Embark on a journey into the fascinating world of binary-star population synthes
 Getting Started Tutorials
 -------------------------
 
-- **Your First Binary Simulations with POSYDON** 🌠
-   - Simulate your first 10 binaries and experience the power of POSYDON.
-   - 🔗 [Jump into the tutorial](link-to-first-jupyter-notebook)
+Your First Binary Simulations with POSYDON 🌠
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-- **Large-Scale Population Synthesis on HPC Facilities** 🚀
-   - Learn to run massive simulations of 1 million binaries across 8 different metallicities.
-   - Dive deep into data extraction and discover merging double compact object populations.
-   - 🚨 **Prerequisite**: Ensure you've installed `mpi4py` to leverage this tutorial. If not, follow our [installation guide](link-to-installation-guide).
-   - 🔗 [Dive into this expansive tutorial](link-to-second-jupyter-notebook)
+Simulate your first 10 binaries and experience the power of POSYDON.
 
-- **Analyzing Merging Populations: Rates & Observations** 🔍
-   - Delve into the results of your simulations, compute rates, and predict observational properties of merging populations.
-   - 🔗 [Unearth the analysis techniques](link-to-third-jupyter-notebook)
+.. toctree::
+
+   10_binaries_pop_syn
+
+Now that you know how to run your first simulations, explore the different customization options reading the :ref:`population prameters <pop-params>` documentation.
+
+
+Large-Scale Population Synthesis on HPC Facilities 🚀
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+In this tutorial, you'll learn to run massive simulations of 1 million binaries across 8 different metallicities.
+
+.. note:: 
+    
+    Ensure you've installed `mpi4py` to leverage this tutorial. If not, follow our :ref:`installation guide <installation-guide>`.
+
+.. toctree::
+
+   pop_syn
+
+Analyzing Merging Populations: Rates & Observations 🔍
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Delve into the results of your simulations learning how to analyze the results of your simulations and compute rates and observational properties of merging double compact object populations.
+
+.. toctree::
+
+   bbh_analysis
 
 Advanced Tutorials
 ------------------
 
-- **Computing Long-Duration Gamma-Ray Bursts from Double Compact Object Populations** 🌌
+Computing Long-Duration Gamma-Ray Bursts from Double Compact Object Populations 🌌
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
    - Understand the phenomena and learn how to compute and analyze gamma-ray bursts from your simulation data.
    - 🔗 [Explore this advanced topic](link-to-gamma-ray-bursts-notebook)
 
@@ -36,7 +57,8 @@ Deep Dive: Behind the Scenes Customizations
 
 Dive into the nitty-gritty of POSYDON's inner workings. Customize, extend, and tweak the system to fit your unique requirements:
 
-- **Customizing the Population Synthesis Class** 🛠️
+Customizing the Population Synthesis Class 🛠️
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
    - Understand the foundational class driving our binary-star population synthesis. Learn to modify and adapt it to your needs.
    - 🔗 [Delve into class customizations](link-to-customization-notebook1)
 

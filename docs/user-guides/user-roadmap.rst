@@ -19,7 +19,7 @@ Start your adventure by exploring the magic of binary-star population synthesis 
 - **Exporting Outputs**: Master the techniques to neatly export and archive your simulation results.
 - **Analyzing Outcomes**: Delve deep into the results to identify and analyze phenomena like merging double compact object populations.
 
-🔗 Dive into this tutorial: [Binary-Star Population Synthesis with POSYDON](link-to-jupyter-notebook1)
+🔗 Dive into this tutorial: :ref:`Binary-Star Population Synthesis with POSYDON <binary-pop-syn>`.
 
 ---
 

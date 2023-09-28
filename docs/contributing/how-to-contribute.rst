@@ -57,7 +57,7 @@ Feedback and Questions
 If you have feedback or questions, please don't hesitate to reach out, see the :ref:`contact us <_contact-info>`_ page or check our FAQ section on :ref:`code usage <code-usage>`_.
 
 Additional Resources
---------------------
+~~~~~~~~~~~~~~~~~~~~
 - **POSYDON Documentation**: Dive deeper into POSYDON's features, architecture, and best practices.
 - **Community Chat/Forum**: Engage with other community members, seek help, share your ideas, and discuss relevant topics.
 

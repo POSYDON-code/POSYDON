@@ -19,8 +19,6 @@ How is this Documentation Structured?
 
 - **Introductions** Discover what POSYDON is, its objectives, and its science scope.
 - **Getting Started:** A quick guide to get POSYDON up and running on your machine.
-- **In-Depth Components Overview:** Delve deep into the core components of POSYDON.
-- **POSYDON Workflow:** Learn about how to conduct simulations from start to finish.
 - **User Guides:** Detailed guides on using various features.
 - **Tutorials and Examples:** Step-by-step walkthroughs of typical use-cases.
 - **API Reference:** A comprehensive reference for developers.
@@ -28,7 +26,8 @@ How is this Documentation Structured?
 - **Contributing to POSYDON:** Join our community and help us grow!
 - **Release Notes and Changelog:** Stay updated with our version history.
 - **Contact and Support:** Reach out to us with your queries or feedback.
-
+.. - **In-Depth Components Overview:** Delve deep into the core components of POSYDON.
+.. - **POSYDON Workflow:** Learn about how to conduct simulations from start to finish.
 
 .. toctree::
    :maxdepth: 1
@@ -52,8 +51,8 @@ How is this Documentation Structured?
    :caption: User Guides
 
    user-guides/user-roadmap
-   user-guides/database-query-system
-   user-guides/web-application
+   .. user-guides/database-query-system
+   .. user-guides/web-application
 
 
 .. toctree::
@@ -67,24 +66,24 @@ How is this Documentation Structured?
    tutorials-examples/MESA-grids/visualization
 
 
-.. toctree::
-   :maxdepth: 1
-   :caption: In-Depth Components Overview
+.. .. toctree::
+..    :maxdepth: 1
+..    :caption: In-Depth Components Overview
 
-   components-overview/stellar-binary-simulation
-   components-overview/processing-pipeline
-   components-overview/machine-learning-components
+..    components-overview/stellar-binary-simulation
+..    components-overview/processing-pipeline
+..    components-overview/machine-learning-components
 
 
-.. toctree::
-   :maxdepth: 1
-   :caption: POSYDON Workflow
+.. .. toctree::
+..    :maxdepth: 1
+..    :caption: POSYDON Workflow
 
-   posydon-workflow/population-specification
-   posydon-workflow/stellar-evolution-choices
-   posydon-workflow/mesa-evolutionary-tracks
-   posydon-workflow/interacting-binary-grids
-   posydon-workflow/running-simulations
+..    posydon-workflow/population-specification
+..    posydon-workflow/stellar-evolution-choices
+..    posydon-workflow/mesa-evolutionary-tracks
+..    posydon-workflow/interacting-binary-grids
+..    posydon-workflow/running-simulations
 
 .. toctree::
    :maxdepth: 1

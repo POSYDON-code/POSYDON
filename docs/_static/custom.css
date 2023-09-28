@@ -1,0 +1,9 @@
+.dropdown .section {
+    display: none;
+    margin: 10px 0;
+  }
+  
+  .dropdown:hover .section {
+    display: block;
+  }
+  
