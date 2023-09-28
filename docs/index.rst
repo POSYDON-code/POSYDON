@@ -90,10 +90,10 @@ How is this Documentation Structured?
    :maxdepth: 1
    :caption: API Reference
 
+   modules
    api-reference/modules-classes
    api-reference/functions-methods
    api-reference/return-values-outputs
-   api/*
 
 
 .. toctree::
