@@ -49,6 +49,26 @@ How is this Documentation Structured?
 
 .. toctree::
    :maxdepth: 1
+   :caption: User Guides
+
+   user-guides/user-roadmap
+   user-guides/database-query-system
+   user-guides/web-application
+
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Tutorials and Examples
+
+   tutorials-examples/population-synthesis/binary-pop-syn
+   tutorials-examples/population-synthesis/advanced-interacting-binary
+   tutorials-examples/generating-datasets/pipeline-api
+   tutorials-examples/MESA-grids/running-grids-api
+   tutorials-examples/MESA-grids/visualization
+
+
+.. toctree::
+   :maxdepth: 1
    :caption: In-Depth Components Overview
 
    components-overview/stellar-binary-simulation
@@ -66,35 +86,11 @@ How is this Documentation Structured?
    posydon-workflow/interacting-binary-grids
    posydon-workflow/running-simulations
 
-
-.. toctree::
-   :maxdepth: 1
-   :caption: User Guides
-
-   user-guides/setting-up-simulations
-   user-guides/database-query-system
-   user-guides/web-application
-   user-guides/third-party-tools
-
-
-.. toctree::
-   :maxdepth: 1
-   :caption: Tutorials and Examples
-
-   tutorials-examples/population-synthesis/basic-binary-simulation
-   tutorials-examples/population-synthesis/advanced-interacting-binary
-   tutorials-examples/MESA-grids/ml-data-preparation
-
-
 .. toctree::
    :maxdepth: 1
    :caption: API Reference
 
    modules
-   api-reference/modules-classes
-   api-reference/functions-methods
-   api-reference/return-values-outputs
-
 
 .. toctree::
    :maxdepth: 1

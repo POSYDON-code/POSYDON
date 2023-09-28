@@ -6,7 +6,7 @@ Installation Issues
 From time to time, users might encounter issues during the installation of POSYDON. This page aims to address common installation problems and offer solutions. If your problem isn't covered here, please [report the issue](link-to-reporting-issues-page) so we can assist you and possibly update this page for the benefit of others.
 
 Common Installation Issues
---------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 1. **Failed Dependencies**:
     - **Description**: Sometimes, certain dependencies might fail to install or conflict with pre-existing ones.
@@ -29,7 +29,7 @@ Common Installation Issues
     - **Solution**: These libraries are experimental. Please ensure you have all required system dependencies. Consider reaching out to our support channels for more guidance or troubleshooting.
 
 Troubleshooting Tips
---------------------
+~~~~~~~~~~~~~~~~~~~~
 
 1. **Check Error Messages**: Always read the error messages during the installation. They often provide hints or exact reasons for the failure.
 
@@ -42,7 +42,7 @@ Troubleshooting Tips
 5. **Check Online Forums**: Platforms like Stack Overflow often have threads related to common Python package installation issues.
 
 Still Facing Issues?
---------------------
+~~~~~~~~~~~~~~~~~~~~
 
 If you've tried the solutions above and are still encountering problems, please :ref:`contact us <contact-info>`_ with as much detail as possible. We're here to help!
 

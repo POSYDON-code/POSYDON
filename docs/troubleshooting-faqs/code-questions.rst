@@ -6,7 +6,7 @@ Code Usage Questions
 Welcome to the code usage FAQ for POSYDON. This section is designed to answer questions related to how to use various features and functionalities of POSYDON. If your question isn't addressed here, consider reaching out to our [support channels](link-to-contact-information) or checking our [general FAQ](link-to-general-faq).
 
 Frequently Asked Questions
---------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 1. **How do I start a basic population synthesis simulation with POSYDON?**
     - Answer: Start by ... (TODO provide a brief procedure or a link to the relevant documentation section).
@@ -33,7 +33,7 @@ Frequently Asked Questions
     - Answer: You can regularly visit our TODO [official website](https://poseydon.org) for news and updates. Also, consider subscribing to our mailing list.
 
 Additional Resources
---------------------
+~~~~~~~~~~~~~~~~~~~~
 
 1. **User Guide**: For detailed instructions on all features of POSYDON, visit our comprehensive TODO [User Guide](link-to-user-guide).
  
@@ -42,7 +42,7 @@ Additional Resources
 3. **Examples and Tutorials**: Learn by doing! Visit our TODO [Examples and Tutorials](link-to-examples-and-tutorials) page for hands-on learning.
 
 Still Have Questions?
----------------------
+~~~~~~~~~~~~~~~~~~~~~
 
 If your query remains unanswered, we're here to help! Reach out to our community through the :ref:`support channels <contact-info>` or consider checking our :ref:`general installation FAQ <installation-issues>` for non-usage related questions.
 
