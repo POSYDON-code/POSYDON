@@ -1072,7 +1072,7 @@ class detached_step:
 
             with np.errstate(all="ignore"):
                 # get the initial m0, t0 track
-                if binary.event == 'ZAMS':
+                if binary.event == 'ZAMS' or binary.event == 'redirect_from_ZAMS':
                     # ZAMS stars in wide (non-mass exchaging binaries) that are
                     # directed to detached step at birth
                     m0, t0 = star1.mass, 0

@@ -52,7 +52,7 @@ from posydon.utils.constants import Zsun
 
 
 # 'event' usually 10 but 'detached (Integration failure)' can occur
-HISTORY_MIN_ITEMSIZE = {'state': 30, 'event': 10, 'step_names': 20,
+HISTORY_MIN_ITEMSIZE = {'state': 30, 'event': 25, 'step_names': 20,
                         'S1_state': 31, 'S2_state': 31,
                         'mass_transfer_case': 7,
                         'S1_SN_type': 5, 'S2_SN_type': 5}
