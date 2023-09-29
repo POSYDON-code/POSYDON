@@ -29,11 +29,10 @@ Using Anaconda (Recommended)
 
         conda activate posydon_env
 
-.. note::
-    WARNING: This documentation describes the POSYDON v2.0.0 code which is not yet available on Anaconda. Please use the development version for now. See :ref:`Using the Development Version <dev-version>` for more details.
-
-
 3. **Install POSYDON**
+
+    .. note::
+        WARNING: This documentation describes the POSYDON v2.0.0 code which is not yet available on Anaconda. Please use the development version for now. See :ref:`Using the Development Version <dev-version>` for more details.
 
     With the environment activated, install POSYDON using:
 
@@ -54,6 +53,9 @@ Using Anaconda (Recommended)
 
 5. **Download the Dataset**
 
+    .. note::
+        WARNING: The POSYDON v2.0.0 dataset is not yet available on Zenodo. The above instructions currently point to the POSYDON v1.0.0 dataset release. Please refer to the development version of the dataset available on Northwestern and UNIGE HPC facilities for now. To have access to latest pre-release dataset (230914) you must be a POSYDON core developer, please refer to the #developers Slack channel.
+
     You can use POSYDON's built-in API command:
 
     .. code-block:: bash
@@ -61,9 +63,6 @@ Using Anaconda (Recommended)
         get-posydon-data
 
     Alternatively, you can manually download the dataset from Zenodo using the provided `link <https://zenodo.org/record/6384235>`_. (TODO: update link to v2)
-
-    .. note::
-        WARNING: The POSYDON v2.0.0 dataset is not yet available on Zenodo. The above instructions currently point to the POSYDON v1.0.0 dataset release. Please refer to the development version of the dataset available on Northwestern and UNIGE HPC facilities for now (to have access to pre-release datasets you must be a POSYDON core developer).
 
 .. _dev-version:
 
@@ -188,6 +187,62 @@ If you're interested in building the POSYDON documentation locally:
 
     .. note::
         The `open` command works on macOS. If you're using a different OS, you might need to open the `index.html` using your file manager or use a different command.
+
+
+Installing Jupyter for Tutorials
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The tutorials in the "Getting Started" guide are provided as Jupyter notebooks. If you want to run these notebooks interactively, you will need to have either Jupyter Lab or Jupyter Notebook installed.
+
+1. **Using Anaconda (Recommended)**
+
+
+    If you have already installed Anaconda as suggested earlier in the installation guide, installing Jupyter Lab or Notebook is straightforward:
+
+    .. code-block:: bash
+
+        conda install -c conda-forge jupyterlab
+
+    Or, for the classic Jupyter Notebook:
+
+    .. code-block:: bash
+
+        conda install -c conda-forge notebook
+
+2. **Alternatively, via pip**
+
+
+    If you prefer using `pip`, you can also install Jupyter Lab or Notebook using the following commands:
+
+    .. code-block:: bash
+
+        pip install jupyterlab
+
+    Or, for the classic Jupyter Notebook:
+
+    .. code-block:: bash
+
+        pip install notebook
+
+3. **After Installation**
+
+
+    Once installed, you can start Jupyter Lab or Notebook by running:
+
+    .. code-block:: bash
+
+        jupyter lab
+
+    Or:
+
+    .. code-block:: bash
+
+        jupyter notebook
+
+    From the terminal or command prompt. This will open a browser window where you can navigate to the downloaded notebooks and run them interactively.
+
+    .. note::
+        Remember to navigate to the directory containing the Jupyter notebooks or you won't see them listed in the Jupyter interface.
 
 
 Additional Notes

@@ -33,10 +33,10 @@ In this tutorial, you'll learn to run massive simulations of 1 million binaries 
 
    pop_syn
 
-Analyzing Merging Populations: Rates & Observations 🔍
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Analyzing Merging DCO Populations: Rates & Observations 🔍
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Delve into the results of your simulations learning how to analyze the results of your simulations and compute rates and observational properties of merging double compact object populations.
+Delve into the results of your simulations learning how to analyze the results of your simulations and compute rates and observational properties of merging double compact object (DCO) populations.
 
 .. toctree::
 
