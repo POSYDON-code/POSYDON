@@ -21,13 +21,17 @@ Using Anaconda (Recommended)
 
     .. code-block:: bash
 
-        conda create --name posydon_env python=3.11
+        conda create --name posydon_env python=3.11 -y
 
     Activate the new environment:
 
     .. code-block:: bash
 
         conda activate posydon_env
+
+.. note::
+    WARNING: This documentation describes the POSYDON v2.0.0 code which is not yet available on Anaconda. Please use the development version for now. See :ref:`Using the Development Version <dev-version>` for more details.
+
 
 3. **Install POSYDON**
 
@@ -36,6 +40,8 @@ Using Anaconda (Recommended)
     .. code-block:: bash
 
         conda install -c posydon posydon
+
+.. _posydon-env:
 
 4. **Set Environment Variables**
 
@@ -55,6 +61,11 @@ Using Anaconda (Recommended)
         get-posydon-data
 
     Alternatively, you can manually download the dataset from Zenodo using the provided `link <https://zenodo.org/record/6384235>`_. (TODO: update link to v2)
+
+    .. note::
+        WARNING: The POSYDON v2.0.0 dataset is not yet available on Zenodo. The above instructions currently point to the POSYDON v1.0.0 dataset release. Please refer to the development version of the dataset available on Northwestern and UNIGE HPC facilities for now (to have access to pre-release datasets you must be a POSYDON core developer).
+
+.. _dev-version:
 
 Using the Development Version
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -85,24 +96,28 @@ For users interested in the latest features and developments, you can install PO
 
 3. **Set Environment Variables and Download Data**
 
-    Refer back to the recommended installation steps, starting from point 4, to set the necessary environment variables and download the required dataset.
+    Refer back to the recommended installation steps, starting from :ref:`point 4 <posydon-env>`, to set the necessary environment variables and download the required dataset.
+
 
 Using POSYDON on HPC Facilities
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 If you are planning to run POSYDON's population synthesis on a High-Performance Computing (HPC) facility, it's essential to have `mpi4py` installed to enable parallel computations. 
 
-1. **Install mpi4py via Anaconda**:
+1. **Install mpi4py via Anaconda (Recommended)**:
 
     .. code-block:: bash
 
-        conda install -c anaconda mpi4py
+        conda install mpi4py
 
 2. **Alternatively, via pip**:
 
     .. code-block:: bash
 
-        pip install mpi4py
+        pip install .[hpc]
+
+    .. note::
+        Users have reported issues when trying to install `mpi4py` via pip. If you encounter any issues, try installing `mpi4py` through Anaconda. If you cannot solve the issue, please refer to the :ref:`Troubleshooting Guide <installation-issues>` or seek support from the community or developers, see the :ref:`contact us <contact-info>` page.
 
 Machine Learning Modules Installation
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -118,18 +133,21 @@ For users who wish to utilize POSYDON's latest machine learning features:
 
 Installing Experimental Visualization Libraries
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 POSYDON provides experimental visualization libraries to enhance the experience of data analysis and results visualization. While these libraries offer advanced features, please note that they might still be in development and could be subject to changes.
 
-To install these experimental visualization libraries, you can use the following pip command:
+To install these experimental visualization libraries
 
-.. code-block:: bash
+1. **Navigate to your POSYDON directory** (where the `setup.py` is located) and run:
 
-   pip install .[vis]
+    .. code-block:: bash
+   
+        pip install .[vis]
 
-After installing these libraries, you can access various visualization tools and features integrated within POSYDON. Ensure to consult the documentation or any guides associated with these features for their optimal usage.
+    After installing these libraries, you can access various visualization tools and features integrated within POSYDON. Ensure to consult the documentation or any guides associated with these features for their optimal usage.
 
-.. note::
-   As these are experimental features, feedback, and bug reports regarding the visualization tools are highly appreciated. It will aid the development and optimization of these features for future stable releases.
+    .. note::
+        As these are experimental features, feedback, and bug reports regarding the visualization tools are highly appreciated. It will aid the development and optimization of these features for future stable releases.
 
 
 Documentation Installation & Compilation
@@ -154,7 +172,13 @@ If you're interested in building the POSYDON documentation locally:
         cd docs
         make html
 
-3. **Open the Compiled Documentation**:
+3. **Install Pandoc via Anaconda**
+
+    .. code-block:: bash
+
+        conda install pandoc
+
+4. **Open the Compiled Documentation**:
 
     After successfully building the documentation, you can view it in your preferred browser. Navigate to the build directory and open the `index.html`:
 
@@ -162,7 +186,8 @@ If you're interested in building the POSYDON documentation locally:
 
         open _build/html/index.html
 
-    Note: The `open` command works on macOS. If you're using a different OS, you might need to open the `index.html` using your file manager or use a different command.
+    .. note::
+        The `open` command works on macOS. If you're using a different OS, you might need to open the `index.html` using your file manager or use a different command.
 
 
 Additional Notes

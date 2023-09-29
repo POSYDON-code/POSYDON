@@ -2,6 +2,13 @@
 POSYDON Documentation
 ==============================
 
+
+
+.. image:: posydon_logo.pdf
+  :width: 800
+
+
+
 Welcome to POSYDON!
 -------------------
 
