@@ -12,72 +12,77 @@ grid_keys = [
     'stripped_grid',
 ]
 Zo = 0.0142
+
+
 class population_cmd():
-    
-    def __init__(self,file,**kwargs):
-        ######Initializing the parameters ##################
+
+    def __init__(self, file, **kwargs):
+        ###### Initializing the parameters ##################
         for key, value in kwargs.items():
             setattr(self, key, value)
 
-        #population_file = kwargs.get('population_file')
+        # population_file = kwargs.get('population_file')
         population_file = file
         time = kwargs.get('time')
-        self.failed_stars = 0 #int, the stars that failed durin the spectra process 
-        self.missing_stars = 0 #The stars that are missing due to POSYDON, some detached cases for now. 
-        #Creating lists/numpy arrays for investigation for the failled and succesful stars. 
+        self.failed_stars = 0  # int, the stars that failed durin the spectra process
+        # The stars that are missing due to POSYDON, some detached cases for now.
+        self.missing_stars = 0
+        # Creating lists/numpy arrays for investigation for the failled and succesful stars.
         self.stars_fails = []
-        self.stars_run   = []
+        self.stars_run = []
         self.stars_grid_fail = []
-        self.population = population_data(population_file,time)
-        #Creating readable arrays for the stars objects. 
+        self.population = population_data(population_file, time)
+        # Creating readable arrays for the stars objects.
         self.total_binaries = len(self.population)
 
-        #Initializing the spectral_grids object and parameters used.
-        #To do put an option for changing the wavelength 
+        # Initializing the spectral_grids object and parameters used.
+        # To do put an option for changing the wavelength
         self.grids = spectral_grids()
         self.scaling_factor = kwargs.get('scaling_factor')
         self.filters = self.grids.filters
         self.photgrids = self.grids.photgrids
-    #Making a V-(B-V) diagram! Working on a similar logic that has been used for the spectra!
+    # Making a V-(B-V) diagram! Working on a similar logic that has been used for the spectra!
 
-    
-    
-    def calc_colours(self,star):
-   
+    def calc_colours(self, star):
+
         scale = self.scaling_factor
         F_obs = {}
 
         if "stripped" in star.state:
             Z = star.metallicity*Zo
             M = star.mass/con.M_sun
-            M_min =  self.grids.spectral_grids['stripped_grid'].axis_x_min['M_init']
+            M_min = self.grids.spectral_grids['stripped_grid'].axis_x_min['M_init']
             M_max = self.grids.spectral_grids['stripped_grid'].axis_x_max['M_init']
             if M < M_min or M > M_max:
-                self.failed_stars +=1
+                self.failed_stars += 1
                 return None
-            x = {'M_init':M,'Z': Z}
-            F_obs = self.grids.photogrid_flux('stripped_grid',1*unt.m/unt.m,**x)
+            x = {'M_init': M, 'Z': Z}
+            F_obs = self.grids.photogrid_flux(
+                'stripped_grid', 1*unt.m/unt.m, **x)
             return F_obs
-    
+
         Fe_H = star.Fe_H
         Z_Zo = star.metallicity
-        Teff = copy.copy(star.get_Teff(self.grids.T_max,self.grids.T_min))
-        logg = copy.copy(star.get_logg(self.grids.logg_max,self.grids.logg_min))
-        x = {'Teff':Teff ,'log(g)': logg,'[Fe/H]': Fe_H,'Z/Zo':Z_Zo}
+        Teff = copy.copy(star.get_Teff(self.grids.T_max, self.grids.T_min))
+        logg = copy.copy(star.get_logg(
+            self.grids.logg_max, self.grids.logg_min))
+        x = {'Teff': Teff, 'log(g)': logg, '[Fe/H]': Fe_H, 'Z/Zo': Z_Zo}
 
-        if Teff is None or logg is None: 
-            return None 
+        if Teff is None or logg is None:
+            return None
 
-        #For warmer stars we go to the ostar regime:
+        # For warmer stars we go to the ostar regime:
         if Teff > 30000:
             try:
 
-                F_obs = self.grids.photogrid_flux('ostar_grid',star.R**2*scale**-2,**x)
+                F_obs = self.grids.photogrid_flux(
+                    'ostar_grid', star.R**2*scale**-2, **x)
                 return F_obs
             except:
                 return None
-        try: 
-            F_obs= self.grids.photogrid_flux('main_grid',star.R**2*scale**-2,**x)
+        try:
+            F_obs = self.grids.photogrid_flux(
+                'main_grid', star.R**2*scale**-2, **x)
             return F_obs
         except LookupError:
             if Teff > 20000:
@@ -88,55 +93,53 @@ class population_cmd():
                 logg = max(logg, 2.0)
             elif Teff > 6000:
                 logg = max(logg, 1.0)
-            
-            F_obs = self.grids.photogrid_flux('main_grid',star.R**2*scale**-2,**x)
+
+            F_obs = self.grids.photogrid_flux(
+                'main_grid', star.R**2*scale**-2, **x)
             return F_obs
-  
-            
-    def colour_mag(self,star):
+
+    def colour_mag(self, star):
         mags = {}
         F_obs = self.calc_colours(star)
 
         if F_obs is None:
-            return None 
+            return None
 
         for filter in F_obs:
             mags[filter] = -2.5*np.log10(F_obs[filter])
         return mags
-  
-        
 
-
-    def population_mag(self,num_binaries = None ):
+    def population_mag(self, num_binaries=None):
         if num_binaries is None:
             num_binaries = len(self.population)
         elif num_binaries > len(self.population):
-            raise Exception('The number of binaries exceeds the number of binaries in the population!')
+            raise Exception(
+                'The number of binaries exceeds the number of binaries in the population!')
         V = []
         B_V = []
         L = []
         population = self.population\
-        
+
         for i in range(num_binaries):
             binary = population[i]
-            for j in (0,1):
+            for j in (0, 1):
                 newstar = binary[j]
                 magnitude = self.colour_mag(newstar)
                 if magnitude is not None:
                     V.append(magnitude['V'].value)
                     B_V.append(magnitude['B'].value-magnitude['V'].value)
                     L.append(newstar.L/con.L_sun)
-        return B_V,V,L
+        return B_V, V, L
 
-    def sub_population_mag(self,number_of_binaries,state):
+    def sub_population_mag(self, number_of_binaries, state):
         V = []
         B_V = []
         L = []
         stars = []
         for binary_number in range(number_of_binaries):
-            for i in (1,2):
-                newstar = star(binary_number,i)
-                #if state in newstar.state:
+            for i in (1, 2):
+                newstar = star(binary_number, i)
+                # if state in newstar.state:
                 if newstar.binary_state in state:
                     magnitude = self.colour_mag(newstar)
                     if magnitude is not None:
@@ -144,17 +147,7 @@ class population_cmd():
                         V.append(magnitude['V'].value)
                         B_V.append(magnitude['B'].value-magnitude['V'].value)
                         L.append(newstar.L/con.L_sun)
-        return B_V,L,V,stars
-
-
-
-
-
-
-
-
-
-
+        return B_V, L, V, stars
 
     """
     def create_spectrum_single(self,star,**kwargs):

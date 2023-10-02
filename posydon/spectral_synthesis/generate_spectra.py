@@ -83,9 +83,10 @@ class population_spectra():
             pop_spectrum[state_1] += spectrum_1
             pop_spectrum[state_2] += spectrum_2
 
-
+    
     def create_spectrum_single(self,star,ostar_temp_cut_off=27000,**kwargs):
         scale = self.scaling_factor
+
         if "stripped" in star.state:
             M = star.mass/con.M_sun
             M_min =  self.grids.spectral_grids['stripped_grid'].axis_x_min['M_init']

@@ -75,12 +75,13 @@ class spectral_grids():
         """
         grids = {}
         for key, arg in kwargs.items():
+            print(key,arg)
             if key in GRID_KEYS:
-                grids[key] = spec_grid(kwargs.get(arg))
+                grids[key] = spec_grid(arg)
         return grids
 
     def grid_flux(self, name, **kwargs):
-        """Write docstring here."""
+        """Returns the flux of a star."""
         if name not in GRID_KEYS:
             raise ValueError('There is no grid with that name' +
                              'please refer to the the grid dictonary')
@@ -109,13 +110,14 @@ class spectral_grids():
                 for filter in self.filters:
                     # Generate filename and check if file exists
                     filename = f'pb-Generic-Johnson.{filter}-Vega.h5'
-                    if not os.path.isfile(filename):
+                    passband_file_name = os.path.join(PASS_DIR, filename)
+                    if not os.path.isfile(passband_file_name):
                         raise ValueError('We do not support the ' +
                                          str(filter) + ' filter.')
                         continue
 
-                    passband_file_name = os.path.join(PASS_DIR, filename)
-                    spectral_file = os.path.join(GRID_DIR, kwargs.get(arg))
+                    
+                    spectral_file = os.path.join(GRID_DIR, kwargs.get(key))
                     photgrid[filter] = pymsg.PhotGrid(spectral_file,
                                                       passband_file_name)
                 photgrids[key] = photgrid
