@@ -58,8 +58,8 @@ How is this Documentation Structured?
    :caption: User Guides
 
    user-guides/user-roadmap
-   .. user-guides/database-query-system
-   .. user-guides/web-application
+   user-guides/web-application
+   user-guides/database-query-system
 
 
 .. toctree::
