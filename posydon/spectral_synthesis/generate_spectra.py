@@ -8,9 +8,9 @@ import astropy.constants as con
 import astropy.units as unt
 import datetime
 import traceback
-import copy
+from copy import copy
 
-from posydon.spectral_synthesis.spectral_tools import population_data
+from posydon.spectral_synthesis.spectral_tools import population_data,load_posydon_population
 from posydon.spectral_synthesis.spectral_grids import spectral_grids
 from posydon.spectral_synthesis.default_options import default_kwargs
 
@@ -41,30 +41,96 @@ class population_spectra():
         self.stars_fails = []
         self.stars_run = []
         self.stars_grid_fail = []
-
+        self.file = file
         # Create readable arrays for the stars objects.
         time_start_pop = datetime.datetime.now()
         self.population = population_data(**self.kwargs)
         time_end_pop = datetime.datetime.now()
         print('Total time is: ', time_end_pop - time_start_pop)
         self.total_binaries = len(self.population)
-
         # Initialize the spectral_grids object and parameters used.
         # TODO put an option for changing the wavelength
         self.grids = spectral_grids()
         self.scaling_factor = kwargs.get('scaling_factor')
         self.grid_flux = self.grids.grid_flux
 
-    def load_population():
+    def load_population(self):
         """Function to load up a POSYDON population."""
+        self.population = load_posydon_population(self.file)
+
+
+    def generate_spectrum(self,star,x):
+        ostar_temp_cut_off=27000
+        #TODO write a function check if CO
+        scale = self.scaling_factor
+         
+        if "stripped" in star[f'{x}_state']:
+            #TODO make stripped work
+            return None,None
+        Fe_H = np.log(star['Z/Zo'])
+        Z_Zo = star['Z/Zo']
+        Teff = copy(star[f'{x}_Teff'])
+        logg = copy(star[f'{x}_log_g'])
+        x = {'Teff':Teff ,'log(g)': logg,'[Fe/H]': Fe_H,'Z/Zo':Z_Zo}
+        #TODO Create a function call check_bounds()
+        #This function will check if the star is or isn't inside the Teff and logg boundaries of the library collection
+
+            #For temperature higher than the desired cut_off we calculate the spectra using the Ostar girds.
+        if Teff >= ostar_temp_cut_off:
+            #Setting the acceptable boundaries for the ostar grid in the logg.
+            logg_min = self.grids.spectral_grids['ostar_grid'].axis_x_min['log(g)']
+            logg_max = self.grids.spectral_grids['ostar_grid'].axis_x_max['log(g)']
+            if logg > logg_min and logg<logg_max:
+                    try:
+                        Flux = self.grid_flux('ostar_grid',**x)
+                        return Flux*star.R**2*scale**-2,star['state']
+                    except LookupError:
+                        self.failed_stars +=1
+                        return None,None
+            else:
+                self.failed_stars +=1
+                return None, None  
+
+        try:
+            #normal_start = datetime.datetime.now()
+            Flux = self.grid_flux('main_grid',**x)
+            #normal_end = datetime.datetime.now()
+            #print( 'The spectral normal time is: {time}'.format(time = normal_end - normal_start ))
+            return Flux*star.R**2*scale**-2,star['state']
+        #except LookupError:
+        #TODO look where those lower limit errors come from
+        except:
+            try:
+                # lo limits for the secondary grid:
+                #logg_min = grids.specgrid_secondary.axis_x_min['log(g)']
+                #Teff_min = grids.specgrid_secondary.axis_x_min['Teff']
+                #Calculating all the exeption that the first grid gave with the secondary.
+                #if Teff>15000.0 and logg > logg_min:
+                Flux = self.grid_flux('secondary_grid',**x)
+                return Flux*star.R**2*scale**-2,star['state']
+            except:
+            #except LookupError:
+                # if and else statements that fix the grid voids.
+                if Teff > 20000:
+                    logg = max(logg, 4.0)
+                elif Teff > 12000:
+                    logg = max(logg, 3.0)
+                elif Teff > 8000:
+                    logg = max(logg, 2.0)
+                elif Teff > 6000:
+                    logg = max(logg, 1.0)
+                try:
+                    Flux = self.grid_flux('main_grid',**x)
+                    return Flux*star.R**2*scale**-2,star['state']
+                #except LookupError:
+                except:
+                    self.failed_stars +=1
+                    return None,None
 
 
 
-        self.population = load_population()
-
-
-    def create_population_spectrum():
-
+    def create_population_spectrum(self):
+        self.load_population()
         pop_spectrum = {}
 
         state_list = ['disrupted', 'merged', 'detached']
@@ -72,16 +138,28 @@ class population_spectra():
         # Create empty spectral arrays
         for state in state_list:
             pop_spectrum[state] = np.zeros(len(self.grids.lam_c))
+        
 
-        for binary in self.population:
+        for i,binary in self.population.iterrows():
+            #TODO write line bellow
+            """
             if not include_binary_conditions(binary):
                 continue
+            """
+            spectrum_1,state_1 = self.generate_spectrum(binary,'S1')
+            spectrum_2,state_2 = self.generate_spectrum(binary,'S2')
 
-            spectrum_1, state_1 = generate_spectrum(binary.star_1)
-            spectrum_2, state_2 = generate_spectrum(binary.star_2)
+            if spectrum_1 is not None and state_1 is not None:
+                pop_spectrum[state_1] += spectrum_1
+            if spectrum_2 is not None and state_2 is not None:
+                pop_spectrum[state_2] += spectrum_2
 
-            pop_spectrum[state_1] += spectrum_1
-            pop_spectrum[state_2] += spectrum_2
+        return pop_spectrum
+
+
+
+
+
 
     
     def create_spectrum_single(self,star,ostar_temp_cut_off=27000,**kwargs):
@@ -93,18 +171,18 @@ class population_spectra():
             M_max = self.grids.spectral_grids['stripped_grid'].axis_x_max['M_init']
             if M < M_min or M > M_max:
                 self.failed_stars +=1
-                return None
+                return None,None
             return self.grids.stripped_grid_flux(star)
 
         Fe_H = star.Fe_H
         Z_Zo = star.metallicity
-        Teff = copy.copy(star.get_Teff(self.grids.T_max,self.grids.T_min))
-        logg = copy.copy(star.get_logg(self.grids.logg_max,self.grids.logg_min))
+        Teff = copy(star.get_Teff(self.grids.T_max,self.grids.T_min))
+        logg = copy(star.get_logg(self.grids.logg_max,self.grids.logg_min))
         x = {'Teff':Teff ,'log(g)': logg,'[Fe/H]': Fe_H,'Z/Zo':Z_Zo}
 
         if Teff == None or logg == None:
             self.failed_stars +=1
-            return None
+            return None,None
 
         #For temperature higher than the desired cut_off we calculate the spectra using the Ostar girds.
         if Teff >= ostar_temp_cut_off:
@@ -129,7 +207,9 @@ class population_spectra():
             #normal_end = datetime.datetime.now()
             #print( 'The spectral normal time is: {time}'.format(time = normal_end - normal_start ))
             return Flux*star.R**2*scale**-2
-        except LookupError:
+        #TODO
+        #except LookupError:
+        except:
             try:
                 # lo limits for the secondary grid:
                 #logg_min = grids.specgrid_secondary.axis_x_min['log(g)']
@@ -138,7 +218,8 @@ class population_spectra():
                 #if Teff>15000.0 and logg > logg_min:
                 Flux = self.grid_flux('secondary_grid',**x)
                 return Flux*star.R**2*scale**-2
-            except LookupError:
+            #except LookupError:
+            except:
                 # if and else statements that fix the grid voids.
                 if Teff > 20000:
                     logg = max(logg, 4.0)
@@ -151,7 +232,8 @@ class population_spectra():
                 try:
                     Flux = self.grid_flux('main_grid',**x)
                     return Flux*star.R**2*scale**-2
-                except LookupError:
+                #except LookupError:
+                except:
                     self.failed_stars +=1
                     return None
 

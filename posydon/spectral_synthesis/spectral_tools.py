@@ -12,18 +12,31 @@ import numpy as np
 import astropy.constants as con
 import astropy.units as unt
 import pandas as pd
+from copy import copy
 
 Zo = 0.0142
-keys_to_save= {'binary_number',
+key_traslation = {
+    'log_L',
+    'log_R',
+}
+keys_to_save= ['state',
+               'S1_log_g',
+               'S2_log_g',
+               'S1_Teff',
+               'S2_Teff',
                'S1_state',
                'S2_state',
                'S1_mass',
                'S2_mass',
-               'S1_R',
-               'S2_R',
-               'S1_L',
-               'S2_L',
-               'Z/Zo'}
+               'S1_log_L',
+               'S2_log_L',
+               'S1_log_R',
+               'S2_log_R',
+               'Z/Zo'
+               #'Z/Zo',
+               #'log_g',
+               #'Teff'
+                ]
 
 
 class star():
@@ -76,20 +89,34 @@ def load_posydon_population(population_file, max_number_of_binaries=None,
 
     i_final_star = (history.time == max_time) & (history.event == "END")
     final_stars = history[i_final_star].reset_index()
+    metallicity = final_stars.S1_metallicity[0]/Zo 
     zams_stars = history[history.event == 'ZAMS']
-
-    star1_properties = {}
-    star2_properties = {}
-    #columns = {'binary_number':[],'S1_mass':[],'S2_mass':[],'S1_R':[],'S2_R':[],'S1_L':[],'S2_L':[],'Z/Zo':[]}
-    #df = pd.DataFrame(columns)
+    pop = pd.DataFrame(columns = keys_to_save)
     for col in final_stars:
         if col not in keys_to_save:
             del final_stars[str(col)]
-    return final_stars
+    for i in range(len(final_stars)):
+        row = copy(final_stars.loc[i])
+        row['Z/Z0'] = metallicity
+        for star in ['S1','S2']:
+            row[f'{star}_log_g'] = calculate_logg(row,star)
+            row[f'{star}_Teff'] = calculate_Teff(row,star)
+        pop.loc[i] = row
+    return pop
 
 
+def calculate_logg(row,x):
+    """Calculate log_g of S1 and S2 from the population data"""
 
+    mass = row[f'{x}_mass']*con.M_sun
+    R = 10**row[f'{x}_log_R']*con.R_sun
+    return np.log10(con.G*mass/R**2/(unt.cm/unt.s**2))
 
+def calculate_Teff(row,x):
+    """Calculate Teff of S1 and S2 from the population data"""
+    L = 10**row[f'{x}_log_L']*con.L_sun
+    R = 10**row[f'{x}_log_R']*con.R_sun
+    return (L/(4*np.pi*R**2*con.sigma_sb))**0.25/unt.K
 
 
 
