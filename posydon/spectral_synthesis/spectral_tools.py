@@ -14,6 +14,16 @@ import astropy.units as unt
 import pandas as pd
 
 Zo = 0.0142
+keys_to_save= {'binary_number',
+               'S1_state',
+               'S2_state',
+               'S1_mass',
+               'S2_mass',
+               'S1_R',
+               'S2_R',
+               'S1_L',
+               'S2_L',
+               'Z/Zo'}
 
 
 class star():
@@ -53,7 +63,7 @@ class star():
 
 def find_max_time(history):
     """Find the max time of a population."""
-    times = history[np.where(history.event == "maxtime")[0]].time
+    times = history[history.event == "maxtime"].time
 
     return np.max(times)
 
@@ -68,15 +78,25 @@ def load_posydon_population(population_file, max_number_of_binaries=None,
     final_stars = history[i_final_star].reset_index()
     zams_stars = history[history.event == 'ZAMS']
 
+    star1_properties = {}
+    star2_properties = {}
+    #columns = {'binary_number':[],'S1_mass':[],'S2_mass':[],'S1_R':[],'S2_R':[],'S1_L':[],'S2_L':[],'Z/Zo':[]}
+    #df = pd.DataFrame(columns)
+    for col in final_stars:
+        if col not in keys_to_save:
+            del final_stars[str(col)]
+    return final_stars
 
 
 
 
 
-def population_data(population_file = None ,time = None, number_of_binaries = True,**kwargs):
-    if population_file is None or time is None:
-        raise Exception('File of population or time not provided')
+
+
+def population_data(population_file = None, number_of_binaries = True,**kwargs):
     history = pd.read_hdf(population_file, key='history')
+    time = find_max_time(history)
+    print(time)
     final_stars = history[(history.time == time ) & (history.event == "END")].reset_index()
     zams_stars = history[history.event == 'ZAMS']
     if number_of_binaries:

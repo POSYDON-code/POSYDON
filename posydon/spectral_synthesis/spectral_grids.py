@@ -76,7 +76,7 @@ class spectral_grids():
         grids = {}
         for key, arg in kwargs.items():
             if key in GRID_KEYS:
-                grids[key] = spec_grid(kwargs.get(arg))
+                grids[key] = spec_grid(str(arg))
         return grids
 
     def grid_flux(self, name, **kwargs):
@@ -109,13 +109,12 @@ class spectral_grids():
                 for filter in self.filters:
                     # Generate filename and check if file exists
                     filename = f'pb-Generic-Johnson.{filter}-Vega.h5'
-                    if not os.path.isfile(filename):
+                    if not os.path.isfile(os.path.join(PASS_DIR,filename)):
                         raise ValueError('We do not support the ' +
                                          str(filter) + ' filter.')
                         continue
-
                     passband_file_name = os.path.join(PASS_DIR, filename)
-                    spectral_file = os.path.join(GRID_DIR, kwargs.get(arg))
+                    spectral_file = os.path.join(GRID_DIR, arg)
                     photgrid[filter] = pymsg.PhotGrid(spectral_file,
                                                       passband_file_name)
                 photgrids[key] = photgrid

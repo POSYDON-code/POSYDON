@@ -1,3 +1,12 @@
+"""Default spectal synthesis and spectral grid parameters parameters."""
+
+
+__authors__ = [
+    "Eirini Kasdagli <kasdaglie@ufl.edu>",
+    "Jeffrey Andrews <jeffrey.andrews@northwestern.edu>",
+]
+
+
 default_grid_kwargs = {
     """Write docstring here."""
     # Default grid options:
@@ -22,6 +31,6 @@ default_grid_kwargs = {
     'ostar_temp_cut_off': 27000,
     'filters': ['U', 'B', 'V']
 }
-# default_kwargs = {
-#
-# }
+default_kwargs = {
+
+ }
