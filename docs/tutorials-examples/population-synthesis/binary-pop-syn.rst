@@ -65,6 +65,14 @@ In this tutorial, you will learn how to change the assumption of star-formation 
     one_met_pop_syn
 
 
+Advanced Visualization with Van den Heuvel Diagrams 🎨
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Dive deeper into POSYDON's visualization capabilities. This tutorial explores the intricacies of the Van den Heuvel diagrams, allowing users to intuitively visualize and analyze individual or multiple binaries from the population synthesis models. Discover multiple visualization modes, interactive features, and binary analysis tools to enhance your understanding of the synthesized data. Perfect for those looking to gain a richer visual perspective on their simulations.
+
+    - Dive into this tutorial: :ref:`Van den Heuvel diagrams with POSYDON 🎨 <VHD>`
+
+
 Deep Dive: Behind the Scenes Customizations
 -------------------------------------------
 

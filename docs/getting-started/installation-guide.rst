@@ -31,8 +31,8 @@ Using Anaconda (Recommended)
 
 3. **Install POSYDON**
 
-    .. note::
-        WARNING: This documentation describes the POSYDON v2.0.0 code which is not yet available on Anaconda. Please use the development version for now. See :ref:`Using the Development Version <dev-version>` for more details.
+    .. warning::
+        This documentation describes the POSYDON v2.0.0 code which is not yet available on Anaconda. Please use the development version for now. See :ref:`Using the Development Version <dev-version>` for more details.
 
     With the environment activated, install POSYDON using:
 
@@ -42,7 +42,7 @@ Using Anaconda (Recommended)
 
 .. _posydon-env:
 
-4. **Set Environment Variables**
+1. **Set Environment Variables**
 
     Export the required paths:
 
@@ -51,10 +51,10 @@ Using Anaconda (Recommended)
         export PATH_TO_POSYDON=/path/to/your/posydon/installation
         export PATH_TO_POSYDON_DATA=/path/where/you/want/to/store/data
 
-5. **Download the Dataset**
+2. **Download the Dataset**
 
-    .. note::
-        WARNING: The POSYDON v2.0.0 dataset is not yet available on Zenodo. The above instructions currently point to the POSYDON v1.0.0 dataset release. Please refer to the development version of the dataset available on Northwestern and UNIGE HPC facilities for now. To have access to latest pre-release dataset (230914) you must be a POSYDON core developer, please refer to the #developers Slack channel.
+    .. warning::
+        The POSYDON v2.0.0 dataset is not yet available on Zenodo. The above instructions currently point to the POSYDON v1.0.0 dataset release. Please refer to the development version of the dataset available on Northwestern and UNIGE HPC facilities for now. To have access to latest pre-release dataset (230914) you must be a POSYDON core developer, please refer to the #developers Slack channel.
 
     You can use POSYDON's built-in API command:
 
@@ -81,17 +81,20 @@ For users interested in the latest features and developments, you can install PO
 
 2. **Install the Development Version**
 
+    .. warning::
+        If you are installing POSYDON on a Mac with Apple M1 or M2 chips, you should first install `hdf5` and `pytables` through conda with `conda install hdf5 pytables`, before following the instractions below.
+
     Navigate to the cloned repository's directory:
 
     .. code-block:: bash
 
         cd POSYDON
 
-    Install the software using:
+    Install the software as an editable package using:
 
     .. code-block:: bash
 
-        pip install .
+        pip install -e .
 
 3. **Set Environment Variables and Download Data**
 
@@ -115,7 +118,7 @@ If you are planning to run POSYDON's population synthesis on a High-Performance 
 
         pip install .[hpc]
 
-    .. note::
+    .. warning::
         Users have reported issues when trying to install `mpi4py` via pip. If you encounter any issues, try installing `mpi4py` through Anaconda. If you cannot solve the issue, please refer to the :ref:`Troubleshooting Guide <installation-issues>` or seek support from the community or developers, see the :ref:`contact us <contact-info>` page.
 
 Machine Learning Modules Installation
