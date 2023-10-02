@@ -7,6 +7,15 @@ Our team consists of dedicated scientists and researchers, working together to s
 
 We're grateful to all our team members, both current and past, for their relentless efforts and dedication to the POSYDON project.
 
+.. image:: UF_F2F_02_2023.jpg
+   :align: center
+   :width: 800
+   :alt: POSYDON Team, F2F meeting - University of Florida, February 2023
+
+
+POSYDON Team, F2F meeting - University of Florida, February 2023
+
+
 Current Team Members
 ~~~~~~~~~~~~~~~~~~~~
 
