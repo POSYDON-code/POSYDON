@@ -10,8 +10,6 @@ Let's set forth on this voyage and unleash the true power of POSYDON!
 Step 1: Dive Into Binary-Star Population Synthesis 🌌
 ----------------------------------------------------
 
-**Badge Earned**: 🌠 POSYDON Binary Population Master 🌠
-
 Start your adventure by exploring the magic of binary-star population synthesis with POSYDON:
 
 - **Model Assumptions**: Learn to select and configure the right assumptions for your simulations.
@@ -19,14 +17,14 @@ Start your adventure by exploring the magic of binary-star population synthesis 
 - **Exporting Outputs**: Master the techniques to neatly export and archive your simulation results.
 - **Analyzing Outcomes**: Delve deep into the results to identify and analyze phenomena like merging double compact object populations.
 
-🔗 Dive into this tutorial: :ref:`Binary-Star Population Synthesis with POSYDON <binary-pop-syn>`.
+🔗 Dive into this tutorial: :ref:`Binary-Star Population Synthesis with POSYDON <binary-pop-syn>`
+
+**Badge Earned**: 🌠 POSYDON Binary Population Master 🌠
 
 ---
 
 Step 2: Behind the Scenes - Generating Datasets 📊
 --------------------------------------------------
-
-**Badge Earned**: 🔧 POSYDON MESA Engineer 🔧
 
 Unravel the mysteries behind the datasets driving your population synthesis models:
 
@@ -34,21 +32,23 @@ Unravel the mysteries behind the datasets driving your population synthesis mode
 - **Data Downsampling**: Learn how we efficiently downsample these datasets without compromising on quality.
 - **Processing Pipeline API**: Get hands-on with our robust API that controls every nuance of data processing.
 
-🔗 Dive into this tutorial: [Crafting the Core Datasets for POSYDON](link-to-jupyter-notebook2)
+🔗 Dive into this tutorial: :ref:`Crafting the Core Datasets for POSYDON <generating-datasets>`
+
+**Badge Earned**: 🔧 POSYDON MESA Engineer 🔧
 
 ---
 
 Step 3: Architecting MESA Simulation Grids 🏗️
 -----------------------------------------------
 
-**Badge Earned**: 🛠️ POSYDON MESA Grid Architect 🛠️
-
 Elevate your expertise by diving deep into the creation of MESA simulation grids:
 
 - **MESA Configuration Repository**: Unearth the treasure of our dedicated repository, housing a plethora of MESA configurations.
 - **Harnessing the API Interface**: Utilize the API to craft and customize MESA grids with precision.
 
-🔗 Dive into this tutorial: [Building Robust MESA Simulation Grids](link-to-jupyter-notebook3)
+🔗 Dive into this tutorial: :ref:`Architecting MESA Simulation Grids with POSYDON <MESA-grids>`
+
+**Badge Earned**: 🛠️ POSYDON MESA Grid Architect 🛠️
 
 ---
 

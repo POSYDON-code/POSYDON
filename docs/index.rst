@@ -67,10 +67,8 @@ How is this Documentation Structured?
    :caption: Tutorials and Examples
 
    tutorials-examples/population-synthesis/binary-pop-syn
-   tutorials-examples/population-synthesis/advanced-interacting-binary
-   tutorials-examples/generating-datasets/pipeline-api
-   tutorials-examples/MESA-grids/running-grids-api
-   tutorials-examples/MESA-grids/visualization
+   tutorials-examples/generating-datasets/generating-datasets
+   tutorials-examples/MESA-grids/running-grids
 
 
 .. .. toctree::
