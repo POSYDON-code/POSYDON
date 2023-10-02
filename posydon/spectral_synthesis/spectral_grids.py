@@ -77,7 +77,7 @@ class spectral_grids():
         for key, arg in kwargs.items():
             print(key,arg)
             if key in GRID_KEYS:
-                grids[key] = spec_grid(arg)
+                grids[key] = spec_grid(str(arg))
         return grids
 
     def grid_flux(self, name, **kwargs):

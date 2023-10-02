@@ -1,3 +1,12 @@
+"""Default spectal synthesis and spectral grid parameters parameters."""
+
+
+__authors__ = [
+    "Eirini Kasdagli <kasdaglie@ufl.edu>",
+    "Jeffrey Andrews <jeffrey.andrews@northwestern.edu>",
+]
+
+
 default_grid_kwargs = {
     # Default grid options:
 
