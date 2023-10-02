@@ -47,10 +47,23 @@ Advanced Tutorials
 
 Computing Long-Duration Gamma-Ray Bursts from Double Compact Object Populations 🌌
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   - Understand the phenomena and learn how to compute and analyze gamma-ray bursts from your simulation data.
-   - 🔗 [Explore this advanced topic](link-to-gamma-ray-bursts-notebook)
 
-(Add other advanced tutorials here...)
+In this tutorial, you will learn how to compute long-duration gamma-ray bursts rates associated to the formation of merging binary black holes
+
+.. toctree::
+
+    lgrb_pop_syn
+
+
+Explore the assumption of star-formation history and compute DCO rates for one single metallicity 📖
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+In this tutorial, you will learn how to change the assumption of star-formation history and how to analysise and compute rates for a population synthesis model consisting of one single metallicity.
+
+.. toctree::
+
+    one_met_pop_syn
+
 
 Deep Dive: Behind the Scenes Customizations
 -------------------------------------------

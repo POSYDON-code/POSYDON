@@ -3,3 +3,5 @@
 *.csv
 *.batch
 *.npz
+*.pdf
+.DS_store
