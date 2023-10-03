@@ -176,6 +176,9 @@ If you're interested in building the POSYDON documentation locally:
 
 3. **Install Pandoc via Anaconda**
 
+    .. warning::
+        If you are installing POSYDON on a Mac with Apple M1 or M2 chips, you should install `pandoc` through brew with `brew install pandoc`.
+
     .. code-block:: bash
 
         conda install pandoc
