@@ -24,6 +24,29 @@ Citation Disclaimer
 If you use POSYDON for your research and it contributes to a publication, we kindly request that you cite our foundational papers for this version:
 
 - `POSYDON: A General-purpose Population Synthesis Code with Detailed Binary-evolution Simulations <https://ui.adsabs.harvard.edu/abs/2023ApJS..264...45F/abstract>`_, **Fragos et al. (2023)**
+
+.. code-block::
+
+        @ARTICLE{2023ApJS..264...45F,
+            author = {{Fragos}, Tassos and {Andrews}, Jeff J. and {Bavera}, Simone S. and {Berry}, Christopher P.~L. and {Coughlin}, Scott and {Dotter}, Aaron and {Giri}, Prabin and {Kalogera}, Vicky and {Katsaggelos}, Aggelos and {Kovlakas}, Konstantinos and {Lalvani}, Shamal and {Misra}, Devina and {Srivastava}, Philipp M. and {Qin}, Ying and {Rocha}, Kyle A. and {Rom{\'a}n-Garza}, Jaime and {Serra}, Juan Gabriel and {Stahle}, Petter and {Sun}, Meng and {Teng}, Xu and {Trajcevski}, Goce and {Tran}, Nam Hai and {Xing}, Zepei and {Zapartas}, Emmanouil and {Zevin}, Michael},
+            title = "{POSYDON: A General-purpose Population Synthesis Code with Detailed Binary-evolution Simulations}",
+            journal = {\apjs},
+            keywords = {Binary stars, Close binary stars, Compact binary stars, Interacting binary stars, X-ray binary stars, Compact objects, Stellar remnants, Black holes, Neutron stars, Gravitational wave sources, Stellar evolutionary models, Stellar populations, 154, 254, 283, 801, 1811, 288, 1627, 162, 1108, 677, 2046, 1622, Astrophysics - Solar and Stellar Astrophysics},
+            year = 2023,
+            month = feb,
+            volume = {264},
+            number = {2},
+            eid = {45},
+            pages = {45},
+            doi = {10.3847/1538-4365/ac90c1},
+            archivePrefix = {arXiv},
+            eprint = {2202.05892},
+            primaryClass = {astro-ph.SR},
+            adsurl = {https://ui.adsabs.harvard.edu/abs/2023ApJS..264...45F},
+            adsnote = {Provided by the SAO/NASA Astrophysics Data System}
+        }
+
+
 - POSYDON Version 2:  Population Synthesis across Metallicities with Detailed Binary-Evolution Simulation, Andrews et al. (in prep.)
 
 Acknowledging these works ensures that the development team receives proper credit and supports the continued advancement and maintenance of the POSYDON software.
