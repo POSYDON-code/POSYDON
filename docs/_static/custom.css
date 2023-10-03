@@ -3,7 +3,10 @@
     margin: 10px 0;
   }
   
-  .dropdown:hover .section {
+.dropdown:hover .section {
     display: block;
   }
   
+section {
+    text-align:justify;
+}

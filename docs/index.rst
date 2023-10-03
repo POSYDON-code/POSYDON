@@ -28,12 +28,12 @@ How is this Documentation Structured?
 - **Getting Started:** A quick guide to get POSYDON up and running on your machine.
 - **User Guides:** Detailed guides on using various features.
 - **Tutorials and Examples:** Step-by-step walkthroughs of typical use-cases.
+- **In-Depth Components Overview:** Delve deep into the core components of POSYDON.
 - **API Reference:** A comprehensive reference for developers.
 - **Troubleshooting and FAQs:** Answers to common questions and problems.
 - **Contributing to POSYDON:** Join our community and help us grow!
 - **Release Notes and Changelog:** Stay updated with our version history.
 - **Contact and Support:** Reach out to us with your queries or feedback.
-.. - **In-Depth Components Overview:** Delve deep into the core components of POSYDON.
 .. - **POSYDON Workflow:** Learn about how to conduct simulations from start to finish.
 
 .. toctree::
@@ -71,13 +71,13 @@ How is this Documentation Structured?
    tutorials-examples/MESA-grids/running-grids
 
 
-.. .. toctree::
-..    :maxdepth: 1
-..    :caption: In-Depth Components Overview
+.. toctree::
+   :maxdepth: 1
+   :caption: In-Depth Components Overview
 
-..    components-overview/stellar-binary-simulation
-..    components-overview/processing-pipeline
-..    components-overview/machine-learning-components
+   components-overview/stellar-binary-simulation
+   components-overview/processing-pipeline
+   components-overview/machine-learning-components
 
 
 .. .. toctree::

@@ -30,7 +30,7 @@ TODO: add description
 Flow Chart
 ~~~~~~~~~~
 
-The flow chart is the core of POSYDON. It controls the mapping between a POSYDON binary object and its step evolution, see the :ref:`flowchart` section for more details.
+The flow chart is the core of POSYDON. It controls the mapping between a POSYDON binary object and its step evolution, see the :ref:`Flow Chart Object <flow-chart>` page for more details.
 
 .. list-table::
    :widths: 50 50
