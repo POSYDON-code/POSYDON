@@ -42,7 +42,7 @@ Using Anaconda (Recommended)
 
 .. _posydon-env:
 
-1. **Set Environment Variables**
+4. **Set Environment Variables**
 
     Export the required paths:
 
@@ -51,7 +51,7 @@ Using Anaconda (Recommended)
         export PATH_TO_POSYDON=/path/to/your/posydon/installation
         export PATH_TO_POSYDON_DATA=/path/where/you/want/to/store/data
 
-2. **Download the Dataset**
+5. **Download the Dataset**
 
     .. warning::
         The POSYDON v2.0.0 dataset is not yet available on Zenodo. The above instructions currently point to the POSYDON v1.0.0 dataset release. Please refer to the development version of the dataset available on Northwestern and UNIGE HPC facilities for now. To have access to latest pre-release dataset (230914) you must be a POSYDON core developer, please refer to the #developers Slack channel.
