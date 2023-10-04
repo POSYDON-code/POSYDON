@@ -3,6 +3,13 @@
 Machine Learning Components
 ---------------------------
 
+Intial Final Classifiaction & Interpolation
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+    - :ref:`Intial Final Classifiaction & Interpolation <initial-final-interp>`
+
+
 Profile Interpolation
 ~~~~~~~~~~~~~~~~~~~~~
 
