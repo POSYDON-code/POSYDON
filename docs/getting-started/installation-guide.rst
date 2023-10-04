@@ -116,7 +116,7 @@ If you are planning to run POSYDON's population synthesis on a High-Performance 
 
     .. code-block:: bash
 
-        pip install .[hpc]
+        pip install ".[hpc]"
 
     .. warning::
         Users have reported issues when trying to install `mpi4py` via pip. If you encounter any issues, try installing `mpi4py` through Anaconda. If you cannot solve the issue, please refer to the :ref:`Troubleshooting Guide <installation-issues>` or seek support from the community or developers, see the :ref:`contact us <contact-info>` page.
@@ -130,7 +130,7 @@ For users who wish to utilize POSYDON's latest machine learning features:
 
     .. code-block:: bash
 
-        pip install .[ml]
+        pip install ".[ml]"
 
 
 Installing Experimental Visualization Libraries
@@ -144,7 +144,7 @@ To install these experimental visualization libraries
 
     .. code-block:: bash
    
-        pip install .[vis]
+        pip install ".[vis]"
 
     After installing these libraries, you can access various visualization tools and features integrated within POSYDON. Ensure to consult the documentation or any guides associated with these features for their optimal usage.
 
@@ -163,7 +163,7 @@ If you're interested in building the POSYDON documentation locally:
 
     .. code-block:: bash
 
-        pip install .[doc]
+        pip install ".[doc]"
 
 2. **Compile the Documentation**:
 
