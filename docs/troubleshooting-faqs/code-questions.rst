@@ -3,7 +3,7 @@
 Code Usage Questions
 --------------------
 
-Welcome to the code usage FAQ for POSYDON. This section is designed to answer questions related to how to use various features and functionalities of POSYDON. If your question isn't addressed here, consider reaching out to our [support channels](link-to-contact-information) or checking our [general FAQ](link-to-general-faq).
+Welcome to the code usage FAQ for POSYDON. This section is designed to answer questions related to how to use various features and functionalities of POSYDON. If your question isn't addressed here, consider reaching out to our :ref:`support channels <contact_info>` or checking our :ref:`general FAQ <installation-issues>`.
 
 Frequently Asked Questions
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -30,7 +30,7 @@ Frequently Asked Questions
     - Answer: Absolutely! Ensure you've installed `mpi4py` as outlined in our installation guide. Refer to our HPC guide [here](link-to-HPC-guide) for detailed instructions on running POSYDON in an HPC environment.
 
 8. **How can I stay updated with the latest features and updates?**
-    - Answer: You can regularly visit our TODO [official website](https://poseydon.org) for news and updates. Also, consider subscribing to our mailing list.
+    - Answer: You can regularly visit our `official website <https://poseydon.org>`_ for news and updates. Also, consider subscribing to our mailing list.
 
 Additional Resources
 ~~~~~~~~~~~~~~~~~~~~
