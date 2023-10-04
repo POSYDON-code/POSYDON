@@ -51,6 +51,9 @@ Using Anaconda (Recommended)
         export PATH_TO_POSYDON=/path/to/your/posydon/installation
         export PATH_TO_POSYDON_DATA=/path/where/you/want/to/store/data
 
+    .. note:: 
+        You can add these lines to your ``~/.bashrc`` or ``~/.bash_profile`` or your shell equivalent to ensure the environment variables are set every time you open a new terminal.
+
 5. **Download the Dataset**
 
     .. warning::
