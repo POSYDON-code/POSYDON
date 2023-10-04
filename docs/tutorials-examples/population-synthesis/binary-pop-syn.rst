@@ -64,8 +64,8 @@ In this tutorial, you will learn how to change the assumption of star-formation 
 
     one_met_pop_syn
 
-X-ray binaries: computing the X-ray luminosity function 📖
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+X-ray binaries: computing the X-ray luminosity function 🩻 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 TODO: bring v1 tutorial to v2 leveraging the SyntheticPopulation class
 
