@@ -15,7 +15,7 @@ For the latest news, updates, and comprehensive information about POSYDON, visit
 Mailing List
 ~~~~~~~~~~~~
 
-Before reaching out, we recommend checking our FAQ section on :ref:`istallation <installation-issues>` and :ref:`code usage <code-usage>`. If your query is not addressed there, join our mailing list where you can ask questions and seek support from the POSYDON community:
+Before reaching out, we recommend checking our FAQ section on :ref:`installation <installation-issues>` and :ref:`code usage <code-usage>`. If your query is not addressed there, join our mailing list where you can ask questions and seek support from the POSYDON community:
 
 - [Join the POSYDON Mailing List](mailing_list_link_here) TODO: add email address
 
