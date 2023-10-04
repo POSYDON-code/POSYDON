@@ -10,7 +10,7 @@ Official Website
 
 For the latest news, updates, and comprehensive information about POSYDON, visit our official website:
 
-- `POSYDON Official Website <https://poseydon.org>`_
+- `POSYDON Official Website <https://posydon.org>`_
 
 Mailing List
 ~~~~~~~~~~~~

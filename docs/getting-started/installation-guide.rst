@@ -42,7 +42,7 @@ Using Anaconda (Recommended)
 
 .. _posydon-env:
 
-1. **Set Environment Variables**
+4. **Set Environment Variables**
 
     Export the required paths:
 
@@ -51,7 +51,7 @@ Using Anaconda (Recommended)
         export PATH_TO_POSYDON=/path/to/your/posydon/installation
         export PATH_TO_POSYDON_DATA=/path/where/you/want/to/store/data
 
-2. **Download the Dataset**
+5. **Download the Dataset**
 
     .. warning::
         The POSYDON v2.0.0 dataset is not yet available on Zenodo. The above instructions currently point to the POSYDON v1.0.0 dataset release. Please refer to the development version of the dataset available on Northwestern and UNIGE HPC facilities for now. To have access to latest pre-release dataset (230914) you must be a POSYDON core developer, please refer to the #developers Slack channel.
@@ -116,7 +116,7 @@ If you are planning to run POSYDON's population synthesis on a High-Performance 
 
     .. code-block:: bash
 
-        pip install .[hpc]
+        pip install ".[hpc]"
 
     .. warning::
         Users have reported issues when trying to install `mpi4py` via pip. If you encounter any issues, try installing `mpi4py` through Anaconda. If you cannot solve the issue, please refer to the :ref:`Troubleshooting Guide <installation-issues>` or seek support from the community or developers, see the :ref:`contact us <contact-info>` page.
@@ -130,7 +130,7 @@ For users who wish to utilize POSYDON's latest machine learning features:
 
     .. code-block:: bash
 
-        pip install .[ml]
+        pip install ".[ml]"
 
 
 Installing Experimental Visualization Libraries
@@ -144,7 +144,7 @@ To install these experimental visualization libraries
 
     .. code-block:: bash
    
-        pip install .[vis]
+        pip install ".[vis]"
 
     After installing these libraries, you can access various visualization tools and features integrated within POSYDON. Ensure to consult the documentation or any guides associated with these features for their optimal usage.
 
@@ -163,7 +163,7 @@ If you're interested in building the POSYDON documentation locally:
 
     .. code-block:: bash
 
-        pip install .[doc]
+        pip install ".[doc]"
 
 2. **Compile the Documentation**:
 
