@@ -24,7 +24,7 @@ Frequently Asked Questions
     - Answer: To leverage the ML features, ensure you've installed the necessary dependencies. Then, you can ... (TODO brief overview or link to ML features documentation).
 
 6. **Are there any examples or tutorials available?**
-    - Answer: Yes, you can check our :ref:`roadmap <roadmap>` for tutorials related to different POSYDON components, including population synthesis, creating core datasets for POSYDON, and running your own MESA grids with POSYDON.
+    - Answer: Yes, you can check our :ref:`roadmap <roadmap>` for tutorials related to different POSYDON components, including population synthesis, creating core datasets, and running your own MESA grids with POSYDON.
 
 7. **Can I run POSYDON on an HPC facility?**
     - Answer: Absolutely! Ensure you've installed ``mpi4py`` as outlined in :ref:`our installation guide <installation-guide>`. Refer to `our HPC guide <../tutorials-examples/population-synthesis/pop_syn.ipynb>`_ for detailed instructions on running POSYDON in an HPC environment.
