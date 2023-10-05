@@ -3,13 +3,13 @@
 Code Usage Questions
 --------------------
 
-Welcome to the code usage FAQ for POSYDON. This section is designed to answer questions related to how to use various features and functionalities of POSYDON. If your question isn't addressed here, consider reaching out to our [support channels](link-to-contact-information) or checking our [general FAQ](link-to-general-faq).
+Welcome to the code usage FAQ for POSYDON. This section is designed to answer questions related to how to use various features and functionalities of POSYDON. If your question isn't addressed here, consider reaching out to our :ref:`support channels <contact_info>` or checking our :ref:`general FAQ <installation-issues>`.
 
 Frequently Asked Questions
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 1. **How do I start a basic population synthesis simulation with POSYDON?**
-    - Answer: Start by ... (TODO provide a brief procedure or a link to the relevant documentation section).
+    - Answer: Start with the :ref:`binary population synthesis guide <binary-pop-syn>` to learn how to run POSYDON.
 
 2. **Which parameters can I customize for my simulations?**
     - Answer: POSYDON allows customization of ... (TODO list or briefly describe customizable parameters).
@@ -24,26 +24,26 @@ Frequently Asked Questions
     - Answer: To leverage the ML features, ensure you've installed the necessary dependencies. Then, you can ... (TODO brief overview or link to ML features documentation).
 
 6. **Are there any examples or tutorials available?**
-    - Answer: Yes, you can check our examples section TODO [here](link-to-examples-section) or our dedicated tutorials page TODO [here](link-to-tutorials-page).
+    - Answer: Yes, you can check our :ref:`roadmap <roadmap>` for tutorials related to different POSYDON components, including population synthesis, creating core datasets, and running your own MESA grids with POSYDON.
 
 7. **Can I run POSYDON on an HPC facility?**
-    - Answer: Absolutely! Ensure you've installed `mpi4py` as outlined in our installation guide. Refer to our HPC guide [here](link-to-HPC-guide) for detailed instructions on running POSYDON in an HPC environment.
+    - Answer: Absolutely! Ensure you've installed ``mpi4py`` as outlined in :ref:`our installation guide <installation-guide>`. Refer to `our HPC guide <../tutorials-examples/population-synthesis/pop_syn.ipynb>`_ for detailed instructions on running POSYDON in an HPC environment.
 
 8. **How can I stay updated with the latest features and updates?**
-    - Answer: You can regularly visit our TODO [official website](https://poseydon.org) for news and updates. Also, consider subscribing to our mailing list.
+    - Answer: You can regularly visit our `official website <https://posydon.org>`_ for news and updates. Also, consider subscribing to our mailing list.
 
 Additional Resources
 ~~~~~~~~~~~~~~~~~~~~
 
-1. **User Guide**: For detailed instructions on all features of POSYDON, visit our comprehensive TODO [User Guide](link-to-user-guide).
+1. **User Guide**: For detailed instructions on all features of POSYDON, visit our comprehensive :ref:`roadmap <roadmap>`.
  
-2. **API Reference**: Dive deep into the functionality provided by POSYDON with our TODO [API Reference](link-to-api-reference).
+2. **API Reference**: Dive deep into the functionality provided by POSYDON with our :ref:`API Reference <modules>`.
 
-3. **Examples and Tutorials**: Learn by doing! Visit our TODO [Examples and Tutorials](link-to-examples-and-tutorials) page for hands-on learning.
+3. **Examples and Tutorials**: Learn by doing! Visit :ref:`our roadmap page <roadmap>` for hands-on learning.
 
 Still Have Questions?
 ~~~~~~~~~~~~~~~~~~~~~
 
-If your query remains unanswered, we're here to help! Reach out to our community through the :ref:`support channels <contact-info>` or consider checking our :ref:`general installation FAQ <installation-issues>` for non-usage related questions.
+If your query remains unanswered, we're here to help! Reach out to our community through the :ref:`support channels <contact_info>` or consider checking our :ref:`general installation FAQ <installation-issues>` for non-usage related questions.
 
 Your feedback helps us improve. If you think a common question should be added here, don't hesitate to suggest it!
