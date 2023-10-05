@@ -802,7 +802,7 @@ class BinaryGenerator:
         formation_times = get_formation_times(N_binaries, **kwargs)
 
         #Get the binary_fraction
-        binary_fraction = self.binary_fraction_generator(m1=m1,**kwargs)
+        binary_fraction = self.binary_fraction_generator(m1=m1, **kwargs)
 
         # indices
         indices = np.arange(self._num_gen, self._num_gen+N_binaries, 1)
