@@ -41,7 +41,8 @@ from posydon.binary_evol.singlestar import (SingleStar,properties_massless_remna
 from posydon.binary_evol.simulationproperties import SimulationProperties
 from posydon.popsyn.star_formation_history import get_formation_times
 
-from posydon.popsyn.independent_sample import generate_independent_samples,binary_fraction_value
+from posydon.popsyn.independent_sample import (generate_independent_samples,
+                                               binary_fraction_value)
 from posydon.utils.common_functions import (orbital_period_from_separation,
                                             orbital_separation_from_period)
 from posydon.popsyn.defaults import default_kwargs
