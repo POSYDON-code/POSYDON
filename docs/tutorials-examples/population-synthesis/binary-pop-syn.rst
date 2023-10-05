@@ -8,7 +8,9 @@ Embark on a journey into the fascinating world of binary-star population synthes
 Getting Started Tutorials
 -------------------------
 
-Your First Binary Simulations with POSYDON 🌠
+The tutorials are designed to be followed in order, as some depend on the outputs of the previous tutorials.
+
+I. Your First Binary Simulations with POSYDON 🌠
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Simulate your first 10 binaries and experience the power of POSYDON.
@@ -20,7 +22,7 @@ Simulate your first 10 binaries and experience the power of POSYDON.
 Now that you know how to run your first simulations, explore the different customization options reading the :ref:`population prameters <pop-params>` documentation.
 
 
-Large-Scale Population Synthesis on HPC Facilities 🚀
+II. Large-Scale Population Synthesis on HPC Facilities 🚀
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 In this tutorial, you'll learn to run massive simulations of 1 million binaries across 8 different metallicities.
@@ -33,7 +35,7 @@ In this tutorial, you'll learn to run massive simulations of 1 million binaries 
 
    pop_syn
 
-Analyzing Merging DCO Populations: Rates & Observations 🔍
+III. Analyzing Merging DCO Populations: Rates & Observations 🔍
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Delve into the results of your simulations learning how to analyze the results of your simulations and compute rates and observational properties of merging double compact object (DCO) populations.
@@ -41,6 +43,8 @@ Delve into the results of your simulations learning how to analyze the results o
 .. toctree::
 
    bbh_analysis
+
+
 
 Advanced Tutorials
 ------------------
