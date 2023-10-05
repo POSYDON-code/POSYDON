@@ -840,7 +840,7 @@ class BinaryGenerator:
 
         default_index = output['binary_index'].item()
         binary_fraction = output['binary_fraction']
-        
+
         if self.RNG.uniform() < binary_fraction:
             formation_time = output['time'].item()
             separation = output['separation'].item()
