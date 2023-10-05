@@ -84,6 +84,7 @@ class population_spectra():
                     try:
                         Flux = self.grid_flux('ostar_grid',**x)
                         return Flux*star.R**2*scale**-2,star['state']
+                        print(Flux)
                     except LookupError:
                         self.failed_stars +=1
                         return None,None
@@ -253,12 +254,12 @@ class population_spectra():
     # check if binary has two or any non-degenerate stars
         star1 = binary[0]
         star2 = binary[1]
-        if star1.state not in ['NS','BH','massless_remnant']:
+        if star1.state not in ['NS','BH','massless_remnant','WD']:
             spectrum_1 = self.create_spectrum_single(star1)
         else:
             spectrum_1 = None
 
-        if star2.state not in ['NS','BH','massless_remnant']:
+        if star2.state not in ['NS','BH','massless_remnant','WD']:
             spectrum_2 = self.create_spectrum_single(star2)
         else:
             spectrum_2 = None
