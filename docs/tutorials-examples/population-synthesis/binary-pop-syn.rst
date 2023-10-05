@@ -7,8 +7,8 @@ Embark on a journey into the fascinating world of binary-star population synthes
 
 Getting Started Tutorials
 -------------------------
-
-The tutorials are designed to be followed in order, as some depend on the outputs of the previous tutorials.
+    .. warning::
+        The tutorials are designed to be followed in order, as some depend on the outputs of the previous tutorials.
 
 I. Your First Binary Simulations with POSYDON 🌠
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
