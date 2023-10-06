@@ -8,6 +8,28 @@ Boost your MESA simulation grid prowess by diving into the intricacies of POSYDO
 Getting Started Tutorials
 -------------------------
 
+The POSYDON MESA simulation parameters are stored in `POSYDON-MESA-INLISTS <https://github.com/POSYDON-code/POSYDON-MESA-INLISTS>`_ GitHub submodule. To obtain the submodule, clone the POSYDON repository with the following command in your terminal:
+
+.. code-block:: bash
+
+    cd $PATH_TO_POSYDON
+    git submodule init
+    git submodule update grid_params/POSYDON-MESA-INLISTS/
+
+Similarly to the POSYDON code repository, there is a `main` branch that points to the latest stable version of the POSYDON-MESA-INLISTS repository associated to a POSYDON code release and a `development` branch that contains the latest stable version of our fiducial MESA configurations, run the following command to get the lates development version of the sumodule:
+
+.. code-block:: bash
+
+    cd grid_params/POSYDON-MESA-INLISTS/
+    git checkout development
+
+To follow the next step of the tutorial, you will need to have MESA installed on your machine. If you do not have MESA installed, please follow the instructions on the `MESA website <https://docs.mesastar.org/en/release-r23.05.1/>`_.
+
+.. warning::
+
+    The POSYDON v2.0.0 code is compatible with MESA r11701. Support might not be available for the latest MacOS version.
+
+
 MESA Configuration Repository
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
