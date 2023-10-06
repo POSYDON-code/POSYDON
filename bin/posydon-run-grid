@@ -21,11 +21,6 @@ from posydon.utils import gridutils as utils
 from posydon.grids.psygrid import PSyGrid
 from posydon.active_learning.psy_cris.utils import parse_inifile
 from collections import ChainMap
-try:
-    from mpi4py import MPI
-    MPI_IMPORTED = True
-except ImportError:
-    MPI_IMPORTED = False
 
 ###############################################################################
 # DEFINE COMMANDLINE ARGUMENTS
@@ -399,21 +394,28 @@ def create_star_formation(mass, work_dir, star_inlist_project, initial_z=None, n
 
     return
 
-def move_mesa_output(work_dir, final_dir):
+def move_mesa_output(work_dir, final_dir, copyinstead=False):
     """Moves the data from the working directory to the final directory.
     Parameters:
         work_dir:
             Working directory (i.e. where the mesa exectuable should run)
         final_dir:
             When completed where would you like the output to go
+        copyinstead:
+            Indicates that the files should be copied instead of moved
     """
     if not work_dir == final_dir:
-        print ("move data from " + work_dir+ " to "+ final_dir)
         if os.path.isdir(final_dir):
             print ("folder "+ final_dir +" exists, replacing with new data")
             sys.stdout.flush()
             shutil.rmtree(final_dir)
-        shutil.move(work_dir, final_dir)
+        if copyinstead:
+            print ("copy data from " + work_dir+ " to "+ final_dir)
+            shutil.copy2(work_dir, final_dir)
+        else:
+            print ("move data from " + work_dir+ " to "+ final_dir)
+            shutil.move(work_dir, final_dir)
+        sys.stdout.flush()
     
     return
 
@@ -432,7 +434,7 @@ def signal_handler_move_mesa_output(signum, frame, work_dir, final_dir):
     """
     print("Got signal: ", signum, " work_dir=", work_dir, " final_dir=", final_dir)
     sys.stdout.flush()
-    move_mesa_output(work_dir, final_dir)
+    move_mesa_output(work_dir, final_dir, copyinstead=True)
     
     return
 
@@ -745,10 +747,6 @@ def run_grid_point(grid, star1_formation, star2_formation,
 ###############################################################################
 if __name__ == '__main__':
 
-    # check MPI was imported
-    if not MPI_IMPORTED:
-        raise ImportError('MPI module mpi4py not installed! Plese check your POSYDON installation!')
-
     # READ COMMANDLINE ARGUMENTS
     ###########################################################################
     args = parse_commandline()
@@ -783,6 +781,15 @@ if __name__ == '__main__':
         raise ValueError('Grid format not recognized, please feed in an acceptable format: csv')
 
     if args.grid_type == 'dynamic':
+        # TODO: initialize the MPI well to avoid errors due to conflicts with slurm's MPI
+        try:
+            from mpi4py import MPI
+            MPI_IMPORTED = True
+        except ImportError:
+            MPI_IMPORTED = False
+        # check MPI was imported
+        if not MPI_IMPORTED:
+            raise ImportError('MPI module mpi4py not installed! Plese check your POSYDON installation!')
         comm = MPI.COMM_WORLD
         size = comm.Get_size()
         rank = comm.Get_rank()
