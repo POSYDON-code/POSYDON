@@ -13,6 +13,7 @@
 import sys
 import os
 import re
+import datetime
 
 from PSphinxTheme import utils
 from posydon import __version__ as posydon_version
@@ -109,7 +110,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'posydon'
-copyright = u'2022, Tassos Fragos'
+copyright =f'{datetime.datetime.now().year}, Tassos Fragos'
 author = u'POSYDON Collaboration'
 
 # The version info for the project you're documenting, acts as replacement for
