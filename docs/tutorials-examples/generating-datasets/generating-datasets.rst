@@ -8,83 +8,40 @@ Discover the intricate details behind POSYDON's dataset generation, including di
 Getting Started Tutorials
 -------------------------
 
-The Origin of Datasets
-~~~~~~~~~~~~~~~~~~~~~~
+Generating a POSYDON PSyGrid Dataset
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Dive into our Jupyter Notebook that will guide you through the vast raw MESA datasets, giving you a first-hand experience of their extensive nature and essence. 
-
-.. toctree::
-    
-    notebook: Explore MESA Datasets
-
-Data Downsampling
-~~~~~~~~~~~~~~~~~
-
-Understand the delicate balance of maintaining data integrity while downsampling for efficiency. Walk through our tutorial on how this process is executed within POSYDON.
-
-.. toctree::
-
-    notebook: The Art of Data Downsampling
-
-Mastering the Processing Pipeline API
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-A hands-on tutorial that introduces you to the functionalities of our API, letting you control and customize data processing with ease.
+Dive into our Jupyter Notebook that will show you how to create a MESA PSyGrid dataset from scratch.
 
 .. toctree::
     
-    notebook: Unveiling the Processing Pipeline API
+    just_step_1
+
+To learn more about the PSyGrid object or the Processing Pipeline API ini file, check out the [API Documentation](api.rst).
+
+
+The fullt POSYDON Processing Pipeline experince 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+From A to Z, this tutorial shows you how to process, concatenate, downsample, plot the grids and check failure rate, train the interpolation object and export the POSYDON dataset for population synthesis.
+
+.. toctree::
+
+    processing_pipeline
+
 
 Advanced Tutorials
 ------------------
 
-Optimizing Dataset Generation
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Export MESA Simulation Points to Rerun Using the Processing Pipeline
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Tips and tricks on how to efficiently generate and process datasets for your specific needs.
-
-.. toctree::
-    
-    notebook: Optimization Techniques
-
-Automation with the Processing Pipeline API
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Learn how to automate various tasks using the API for a seamless dataset generation experience.
-
-.. toctree::
-
-    notebook: API Automation
-
-Deep Dive: Behind the Scene Customizations
-------------------------------------------
-
-Custom Dataset Creation
-~~~~~~~~~~~~~~~~~~~~~~~
-
-Delve deeper into creating datasets tailored for specific simulations and scenarios.
-
-.. toctree::
-
-    notebook: Crafting Custom Datasets
-
-Advanced API Functions
-~~~~~~~~~~~~~~~~~~~~~~
-
-Explore advanced functionalities of the Processing Pipeline API, unlocking further customization possibilities.
+Learn how to export MESA simulation points to rerun using the Processing Pipeline.
 
 .. toctree::
     
-    notebook: Advanced API Mastery
+    step_1_and_rerun
 
-Dataset Integrity Checks
-~~~~~~~~~~~~~~~~~~~~~~~~
-
-Ensure the reliability and accuracy of your datasets by performing a series of integrity checks.
-
-.. toctree::
-
-    notebook: Ensuring Dataset Quality
 
 Support & Feedback
 ------------------

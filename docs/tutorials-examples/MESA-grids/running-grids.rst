@@ -30,73 +30,72 @@ To follow the next step of the tutorial, you will need to have MESA installed on
     The POSYDON v2.0.0 code is compatible with MESA r11701. Support might not be available for the latest MacOS version.
 
 
-MESA Configuration Repository
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Running your first MESA simulation using POSYDON
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Immerse yourself in our Jupyter Notebook which guides you through our dedicated repository, showcasing the vast array of MESA configurations available.
+Immerse yourself in our Jupyter Notebook which guides you through our dedicated MESA submission API, showcasing how to simulate a HMS-HMS binary systems.
 
-.. toctree::
-    
-    notebook: Exploring the MESA Configuration Repository
-
-Harnessing the API Interface
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Step-by-step guide on how to leverage our API for creating and customizing MESA grids to suit your needs.
+The first version of this tutorial showcases how to run the simulation using SLURM on HPC. 
 
 .. toctree::
     
-    notebook: Mastering Grid Creation with the API
+    1_hms_hms
+
+In case you want to run the simulation locally, you can follow the second version of this tutorial.
+
+.. toctree::
+   
+    laptop
+
+To gather more information about the MESA simulation submission API ini file, please refer to the :ref:`MESA Grids API <mesa-grids-api>` section of the documentation.
+
+Running your first MESA grid simulation using POSYDON
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The following tutorial will show you how to run a grid of MESA simulations using POSYDON. The grid will consist of 100 simulations of HMS-HMS binary systems at 0.1Zsun metallicity in the mass ratio slice 0.7 each with different primary masses and orbital periods. The simulations will be run on a HPC using SLURM.
+
+.. toctree::
+    
+    running_a_grid
+
+Now that you have run your first grid, you can process, visualize and explore the results using the POSYDON post-processing pipeline API. TODO: link
 
 Advanced Tutorials
 ------------------
 
-Optimizing Grid Creation
-~~~~~~~~~~~~~~~~~~~~~~~~
+Rimulating single stars with POSYDON
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Dive deeper into advanced techniques for grid creation, ensuring efficiency and precision.
-.. toctree::
-    
-    notebook: Advanced Grid Crafting Techniques
-
-Automation with the API
-~~~~~~~~~~~~~~~~~~~~~~~
-
-Explore automation possibilities with the API, streamlining your grid creation processes.
+This tutorials shows how to run a grid of single star simulations using POSYDON. The grid will later be processed to export EEPs and other stellar parameters to a CSV file.
 
 .. toctree::
    
-   notebook: API-driven Grid Automation
+   notebook: single stars
 
-Deep Dive: Behind the Scene Customizations
-------------------------------------------
+Creating and Customizing MESA Grids layer by layer
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Custom Grid Configurations
-~~~~~~~~~~~~~~~~~~~~~~~~~~
+Step-by-step guide on how to leverage our MESA simulation submission API for creating and customizing MESA grids to suit your needs.
 
-Learn the art of crafting specialized grid configurations tailored for specific simulations.
-
-.. toctree::
-
-   notebook: Tailoring Custom Grid Configurations
-
-Advanced API Features
-~~~~~~~~~~~~~~~~~~~~~
-
-Delve into the more intricate functionalities of the API, unlocking extensive customization options for MESA grid creation.
+Dive deeper into advanced techniques for grid creation, by layering MESA and POSYDON default inlist parameters and customizing your inlists variables on top to your needs.
 
 .. toctree::
+    
+    notebook: Creating and Customizing MESA Grids layer by layer
 
-    notebook: Diving Deeper into API Features
+Running a dynamically sampled grid of MESA simulations
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Grid Integrity and Validation
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.. warning::
 
-Ensure the grids you create are of the highest standard by performing dedicated validation checks.
+    This feature is experimental. Please contact us if you encounter any issues.
+
+Provided a sparsed, rectilinearly sampled MESA grid, POSYDON allows to dynamically sample the parameter space to henence the coverage of the paramter space to imporve classification and interpolation accuracy.
 
 .. toctree::
+   
+   dynamic
 
-    notebook: Grid Integrity and Assurance
 
 Support & Feedback
 ------------------
