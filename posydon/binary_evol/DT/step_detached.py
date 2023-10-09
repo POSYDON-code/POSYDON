@@ -24,7 +24,7 @@ from scipy.optimize import root
 from posydon.utils.data_download import PATH_TO_POSYDON_DATA
 from posydon.binary_evol.binarystar import BINARYPROPERTIES
 from posydon.binary_evol.singlestar import STARPROPERTIES
-from posydon.interpolation import GRIDInterpolator
+from posydon.interpolation.interpolation import GRIDInterpolator
 from posydon.interpolation.data_scaling import DataScaler
 from posydon.utils.common_functions import (
     bondi_hoyle,
@@ -923,13 +923,21 @@ class detached_step:
         KEYS = self.KEYS
         KEYS_POSITIVE = self.KEYS_POSITIVE
 
-        if binary.star_1 is None or binary.star_1.state == "massless_remnant":
-            self.non_existent_companion = 1
-        if binary.star_2 is None or binary.star_2.state == "massless_remnant":
-            self.non_existent_companion = 2
+        companion_1_exists = (binary.star_1 is not None
+                              and binary.star_1.state != "massless_remnant")
+        companion_2_exists = (binary.star_2 is not None
+                              and binary.star_2.state != "massless_remnant")
+
+        if companion_1_exists:
+            if companion_2_exists:                  # to evolve a binary star
+                self.non_existent_companion = 0
+            else:                                   # star1 is a single star
+                self.non_existent_companion = 2
         else:
-            # detached step of an actual binary
-            self.non_existent_companion = 0
+            if companion_2_exists:                  # star2 is a single star
+                self.non_existent_companion = 1
+            else:                                   # no star in the system
+                raise Exception("There is no star to evolve. Who summoned me?")
 
         if self.non_existent_companion == 0: #no isolated evolution, detached step of an actual binary
             # the primary in a real binary is potential compact object, or the more evolved star
@@ -993,24 +1001,10 @@ class detached_step:
                 secondary.htrack = False
                 primary.htrack = False
                 primary.co = False
-            elif (binary.star_1.state in STAR_STATES_CO
-                    and binary.star_2.state
-                    in 'massless_remnant'):
-                binary.state += " Thorne–Żytkow object"
-                if self.verbose or self.verbose == 1:
-                    print("Formation of Thorne–Żytkow object, nothing to do further")
-                return
-            elif (binary.star_2.state in STAR_STATES_CO
-                    and binary.star_1.state
-                    in 'massless_remnant'):
-                binary.state += " Thorne–Żytkow object"
-                if self.verbose or self.verbose == 1:
-                    print("Formation of Thorne–Żytkow object, nothing to do further")
-                return
             else:
                 raise Exception("States not recognized!", )
 
-        # non-existent, far away, star
+        # star 1 is a massless remnant, only star 2 exists
         elif self.non_existent_companion == 1:
             # we force primary.co=True for all isolated evolution,
             # where the secondary is the one evolving one
@@ -1022,9 +1016,15 @@ class detached_step:
                 secondary.htrack = True
             elif (binary.star_2.state in LIST_ACCEPTABLE_STATES_FOR_HeStar):
                 secondary.htrack = False
+            elif (binary.star_2.state in STAR_STATES_CO):
+                binary.state += " Thorne-Zytkow object"
+                if self.verbose or self.verbose == 1:
+                    print("Formation of Thorne-Zytkow object, nothing to do further")
+                return
             else:
                 raise Exception("State not recognized!")
 
+        # star 2 is a massless remnant, only star 1 exists
         elif self.non_existent_companion == 2:
             primary = binary.star_2
             primary.co = True
@@ -1034,11 +1034,16 @@ class detached_step:
                 secondary.htrack = True
             elif (binary.star_1.state in LIST_ACCEPTABLE_STATES_FOR_HeStar):
                 secondary.htrack = False
+            elif (binary.star_1.state in STAR_STATES_CO):
+                binary.state += " Thorne-Zytkow object"
+                if self.verbose or self.verbose == 1:
+                    print("Formation of Thorne-Zytkow object, nothing to do further")
+                return
             else:
                 raise Exception("State not recognized!")
         else:
             raise Exception("Non existent companion has not a recognized value!")
-        
+
         def get_star_data(binary, star1, star2, htrack,
                           co, copy_prev_m0=None, copy_prev_t0=None):
             """Get and interpolate the properties of stars.
@@ -1064,7 +1069,7 @@ class detached_step:
 
             with np.errstate(all="ignore"):
                 # get the initial m0, t0 track
-                if binary.event == 'ZAMS':
+                if binary.event == 'ZAMS' or binary.event == 'redirect_from_ZAMS':
                     # ZAMS stars in wide (non-mass exchaging binaries) that are
                     # directed to detached step at birth
                     m0, t0 = star1.mass, 0
@@ -1149,10 +1154,10 @@ class detached_step:
         # get the matched data of two stars, respectively
         interp1d_sec, m0, t0 = get_star_data(
             binary, secondary, primary, secondary.htrack, co=False)
-        
+
         primary_not_normal = (primary.co) or (self.non_existent_companion in [1,2])
-        primary_normal = (not primary.co) and self.non_existent_companion == 0 
-        
+        primary_normal = (not primary.co) and self.non_existent_companion == 0
+
         if primary_not_normal:
             # copy the secondary star except mass which is of the primary,
             # and radius, mdot, Idot = 0
@@ -1164,8 +1169,8 @@ class detached_step:
                 binary, primary, secondary, primary.htrack, False)[0]
         else:
             raise Exception("During matching primary is either should be either normal or not normal. `non_existent_companion` should be zero.")
-        
-        
+
+
         if interp1d_sec is None or interp1d_pri is None:
             # binary.event = "END"
             binary.state += " (GridMatchingFailed)"
@@ -1829,7 +1834,7 @@ class detached_step:
 
             if primary.state == "massless_remnant":
                 pass
-            
+
             elif primary.co:
                 mdot_acc = np.atleast_1d(bondi_hoyle(
                     binary, primary, secondary, slice(-len(t), None),
@@ -2445,7 +2450,7 @@ def diffeq(
             # parameters are given in units of [Msol], [Rsol], [yr] and so that
             # dOmega_mb/dt is in units of [yr^-2].
             dOmega_mb_sec = (
-                -3.8e30 * (const.rsol**2 / const.secyer)
+                -3.8e-30 * (const.rsol**2 / const.secyer)
                 * M_sec
                 * R_sec**4
                 * Omega_sec**3
@@ -2453,7 +2458,7 @@ def diffeq(
                 * np.clip((1.5 - M_sec) / (1.5 - 1.3), 0, 1)
             )
             dOmega_mb_pri = (
-                -3.8e30 * (const.rsol**2 / const.secyer)
+                -3.8e-30 * (const.rsol**2 / const.secyer)
                 * M_pri
                 * R_pri**4
                 * Omega_pri**3

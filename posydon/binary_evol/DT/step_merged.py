@@ -8,36 +8,17 @@ __authors__ = [
 ]
 
 
-import os
 import numpy as np
-from scipy.integrate import solve_ivp
-from scipy.interpolate import PchipInterpolator
-from scipy.optimize import minimize
-from scipy.optimize import root
 
 from posydon.utils.data_download import PATH_TO_POSYDON_DATA
-from posydon.binary_evol.binarystar import BINARYPROPERTIES
 from posydon.binary_evol.singlestar import STARPROPERTIES
 from posydon.binary_evol.singlestar import properties_massless_remnant
-from posydon.interpolation import GRIDInterpolator
-from posydon.interpolation.data_scaling import DataScaler
-from posydon.utils.common_functions import (
-    bondi_hoyle,
-    orbital_period_from_separation,
-    orbital_separation_from_period,
-    roche_lobe_radius,
-    check_state_of_star,
-    PchipInterpolator2
-)
-from posydon.binary_evol.flow_chart import (STAR_STATES_CC)
-import posydon.utils.constants as const
-from posydon.binary_evol.DT.step_detached import detached_step
+from posydon.utils.common_functions import check_state_of_star
 from posydon.binary_evol.DT.step_isolated import IsolatedStep
 
 import warnings
 
-from posydon.binary_evol.flow_chart import (STAR_STATES_ALL,
-    STAR_STATES_CO,
+from posydon.binary_evol.flow_chart import (
     STAR_STATES_H_RICH,
     STAR_STATES_HE_RICH,
     STAR_STATES_NOT_CO

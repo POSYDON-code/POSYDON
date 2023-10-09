@@ -14,7 +14,7 @@ __authors__ = [
 
 import numpy as np
 from scipy.stats import truncnorm
-from posydon.utils import rejection_sampler
+from posydon.utils.common_functions import rejection_sampler
 
 
 def generate_independent_samples(orbital_scheme, **kwargs):

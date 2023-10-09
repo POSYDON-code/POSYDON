@@ -22,10 +22,11 @@ class SimulationModel:
 
     def load_csv(self):
         """Load dataframe as CSV with .gz compression."""
-        self._df = pd.read_hdf(
+        """self._df = pd.read_hdf(
             os.path.join(self.path, self.filename), compression="gzip",
             key='history', low_memory=False
-        )
+        )"""
+        return None
 
     def get_by_binary_index(self, index):
         """Return a copy of dataframe's slice with binary_index == index.
@@ -41,4 +42,10 @@ class SimulationModel:
             Copy of a sub-dataframe with binary_index == index
 
         """
-        return self._df.loc[index].copy()
+        #return self._df.loc[index].copy()
+        return pd.read_hdf(
+                    os.path.join(self.path, self.filename),
+                    where=f"index == {index}",
+                    compression="gzip",
+                    key='history', low_memory=False
+                )

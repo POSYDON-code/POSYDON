@@ -51,15 +51,21 @@ def print_CC_quantities(EXTRA_COLUMNS, star, MODEL_NAME=None):
             "mass [Msun]", "spin", "m_disk_accreted [Msun]",
             "m_disk_radiated [Msun]"))
         print('')
-        print(format_val_preSN.format(
-            'PRE SN STAR', star.state, '',
-            '', star.mass, star.spin, '', ''))
+        try:
+            print(format_val_preSN.format(
+                'PRE SN STAR', star.state, '',
+                '', star.mass, star.spin, '', ''))
+        except:
+            warnings.warn('Failed to print star values!')
         print('')
     else:
-        print(format_val.format(MODEL_NAME,
-                star.state, star.SN_type, star.f_fb,
-                star.mass, star.spin, star.m_disk_accreted,
-                star.m_disk_radiated))
+        try:
+            print(format_val.format(MODEL_NAME,
+                    star.state, star.SN_type, star.f_fb,
+                    star.mass, star.spin, star.m_disk_accreted,
+                    star.m_disk_radiated))
+        except:
+            warnings.warn('Failed to print star values!')
         
     
                     
@@ -208,7 +214,7 @@ def post_process_grid(grid, index=None, star_2_CO=True, MODELS=MODELS,
                 EXTRA_COLUMNS['S%s_center_other' % (j+1)].append(c_o)
             else:
                 # fill everything with Nones
-                if IC == 'initial_MT':
+                if IC == 'initial_MT' or IC == 'not_converged':
                     EXTRA_COLUMNS['S%s_state' % (j+1)].append(None)
                 else:
                     # CO states are classified and used in mesa step
@@ -285,11 +291,11 @@ def post_process_grid(grid, index=None, star_2_CO=True, MODELS=MODELS,
                             if quantity in ['state', 'SN_type']:
                                 if not isinstance(getattr(star_copy, quantity), str):
                                     flush = True
-                                    warnings.warn(f'{MODEL_NAME} {mechanism} state/SN_type not a string!')
+                                    warnings.warn(f'{MODEL_NAME} {mechanism} {quantity} is not a string!')
                             else:
-                                if not isinstance(getattr(star_copy, quantity), (float, None)):
+                                if not isinstance(getattr(star_copy, quantity), float):
                                     flush = True
-                                    warnings.warn(f'{MODEL_NAME} {mechanism} {quantity} not a float!')
+                                    warnings.warn(f'{MODEL_NAME} {mechanism} {quantity} is not a float!')
                     except Exception as e:
                         flush = True
                         if verbose:
@@ -329,11 +335,11 @@ def post_process_grid(grid, index=None, star_2_CO=True, MODELS=MODELS,
                             if quantity in ['state', 'SN_type']:
                                 if not isinstance(getattr(star_copy, quantity), str):
                                     flush = True
-                                    warnings.warn(f'{MODEL_NAME} {mechanism} state/SN_type not a string!')
+                                    warnings.warn(f'{MODEL_NAME} {mechanism} {quantity} is not a string!')
                             else:
-                                if not isinstance(getattr(star_copy, quantity), (float, None)):
+                                if not isinstance(getattr(star_copy, quantity), float):
                                     flush = True
-                                    warnings.warn(f'{MODEL_NAME} {mechanism} {quantity} not a float!')
+                                    warnings.warn(f'{MODEL_NAME} {mechanism} {quantity} is not a float!')
                     except Exception as e:
                         flush = True
                         if verbose:
