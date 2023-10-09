@@ -89,7 +89,7 @@ def load_posydon_population(population_file, max_number_of_binaries=None,
 
     i_final_star = (history.time == max_time) & (history.event == "END")
     final_stars = history[i_final_star].reset_index()
-    metallicity = final_stars.S1_metallicity[0]/Zo 
+    metallicity = final_stars.S1_metallicity[0]/Zo
     zams_stars = history[history.event == 'ZAMS']
     pop = pd.DataFrame(columns = keys_to_save)
     for col in final_stars:
@@ -97,7 +97,7 @@ def load_posydon_population(population_file, max_number_of_binaries=None,
             del final_stars[str(col)]
     for i in range(len(final_stars)):
         row = copy(final_stars.loc[i])
-        row['Z/Z0'] = metallicity
+        row['Z/Zo'] = metallicity
         for star in ['S1','S2']:
             row[f'{star}_log_g'] = calculate_logg(row,star)
             row[f'{star}_Teff'] = calculate_Teff(row,star)
