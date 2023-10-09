@@ -1002,7 +1002,7 @@ class detached_step:
                 primary.htrack = False
                 primary.co = False
             else:
-                raise Exception("States not recognized!", )
+                raise Exception("States not recognized!")
 
         # star 1 is a massless remnant, only star 2 exists
         elif self.non_existent_companion == 1:
