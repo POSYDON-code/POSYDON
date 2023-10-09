@@ -362,7 +362,7 @@ def generate_secondary_masses(primary_masses,
 def binary_fraction_value(binary_fraction_const=1,binary_fraction_scheme = 'const',m1 = None,**kwargs):
     """
     Getting the binary fraction depending on the scheme. The two possible option are a constant binary fraction 
-    and a binary fraction based on the values given in Maxwell and Di Stefano (2017). 
+    and a binary fraction based on the values given in Moe and Di Stefano (2017). 
 
     Parameters:
     --------------------
@@ -378,6 +378,7 @@ def binary_fraction_value(binary_fraction_const=1,binary_fraction_scheme = 'cons
     """
     binary_fraction_scheme_options = ['const','Moe_17']
 
+    # Input parameter checks
     if binary_fraction_scheme not in binary_fraction_scheme_options: 
         raise ValueError("You must provide an allowed binary fraction scheme.")
     
@@ -388,18 +389,18 @@ def binary_fraction_value(binary_fraction_const=1,binary_fraction_scheme = 'cons
     elif binary_fraction_scheme == 'Moe_17':
         if m1 is None: 
             raise ValueError("There was not a primary mass provided in the inputs. Unable to return a binary fraction")
-        if m1 <= 2  and m1 > 0.8 :
+        elif m1 <= 2  and m1 > 0.8:
             binary_fraction = 0.4
-        if m1 <= 5 and m1 > 2 :
+        elif m1 <= 5 and m1 > 2:
             binary_fraction = 0.59
-        if m1<=9 and m1 > 5 :
+        elif m1<=9 and m1 > 5 :
             binary_fraction = 0.76
-        if m1<= 16 and m1 > 9  : 
+        elif m1<= 16 and m1 > 9:
             binary_fraction = 0.84
-        if m1 > 16:
+        elif m1 > 16:
             binary_fraction = 0.94
     else: 
-        pass 
+        pass
     return binary_fraction
 
     
