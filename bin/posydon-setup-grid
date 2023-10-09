@@ -156,7 +156,7 @@ def find_inlist_from_scenario(source, gitcommit, system_type):
                 for line in f.readlines():
                     if 'zams_filename' in line:
                         print("ZAMS_FILENAME detected, setting mesa_inlists['zams_filename']")
-                        zams_filename = line.split("'")[1].split("/")[1]
+                        zams_filename = os.path.split(line.split("'")[1])[1]
                         zams_file_path = os.path.join(inlists_dir, 'r11701', "ZAMS_models", zams_filename)
                         if os.path.isfile(zams_file_path):
                             print("Verified locations of ZAMS data file, {0}".format(zams_file_path))

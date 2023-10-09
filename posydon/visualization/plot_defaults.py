@@ -66,7 +66,8 @@ PLOT_PROPERTIES = {
         'aspect': 20,
         'anchor': (0.0, 0.5),
         'panchor': (1.0, 0.5),
-        'extend': 'neither'
+        'extend': 'neither',
+        'bounds': [0.03, 0.7, 0.94, 0.05]
     },
     'legend1D': {
         'title': None,
@@ -96,6 +97,13 @@ PLOT_PROPERTIES = {
         },
         'shrink_box': 0.85,
         'bbox_to_anchor': (1, 0.5)
+    },
+    'slice_text_kwargs': {
+        'bbox': {'facecolor': 'white', 'alpha': 0.8, 'pad': 2},
+        'ha': 'right',
+        'va': 'bottom',
+        'x': 0.95,
+        'y': 0.05
     }
 }
 
@@ -387,6 +395,8 @@ DEFAULT_MARKERS_COLORS_LEGENDS = {
             ['s', 2, list_of_colors[2], 'Stable RLOF during MS'],
         'Stable case AB':
             ['s', 2, list_of_colors[1], 'Stable RLOF during postMS'],
+        'Stable case AC':
+            ['s', 2, list_of_colors[1], 'Stable RLOF during postMS'],
         'Stable case ABB':
             ['s', 2, list_of_colors[0], 'Stable RLOF during stripped He star'],
         'Stable case B':
@@ -404,6 +414,8 @@ DEFAULT_MARKERS_COLORS_LEGENDS = {
         'Unstable case A':
             ['D', 1, list_of_colors[2], 'Unstable RLOF during MS'],
         'Unstable case AB':
+            ['D', 1, list_of_colors[1], 'Unstable RLOF during postMS'],
+        'Unstable case AC':
             ['D', 1, list_of_colors[1], 'Unstable RLOF during postMS'],
         'Unstable case ABB':
             ['D', 1, list_of_colors[0],
@@ -534,7 +546,7 @@ DEFAULT_MARKERS_COLORS_LEGENDS = {
     },
     'interpolation_class': {
         'initial_MT':
-            ['o', 2, 'tab:blue', 'initial_MT'],
+            ['.', 2, 'black', 'initial_MT'],
         'no_MT':
             ['o', 2, 'tab:pink', 'no_MT'],
         'not_converged':
@@ -543,6 +555,18 @@ DEFAULT_MARKERS_COLORS_LEGENDS = {
             ['o', 2, 'tab:orange', 'stable_MT'],
         'unstable_MT':
             ['o', 2, 'tab:purple', 'unstable_MT']
+    },
+    'interpolation_class_errors': {
+        'initial_MT':
+            ['.', 1, 'black', 'initial_MT'],
+        'no_MT':
+            ['o', 2, None, 'no_MT'],
+        'not_converged':
+            ['x', 1, 'tab:red', 'not_converged'],
+        'stable_MT':
+            ['s', 2, None, 'stable_MT'],
+        'unstable_MT':
+            ['D', 1, None, 'unstable_MT']
     },
     'SN_type': {
         'CCSN':
@@ -577,6 +601,8 @@ DEFAULT_LABELS = {
     # extra
     'mass_ratio':
         [r'$q$', r'$\log_{10}(q)$'],
+    'Z_Zsun':
+        [r'$Z \, [Z_\odot]$', r'$\log_{10}(Z / Z_\odot)$'],
 
     # history1/history2
     'star_age':
@@ -783,14 +809,120 @@ DEFAULT_LABELS = {
          r'$\log_{10}(t^2_\mathrm{conv}/\mathrm{s})$'],
 
     # POSYDON population synthesis
-    'z_formation': r'$z_\mathrm{formation}$',
-    'z_merger': r'$z_\mathrm{merger}$',
-    'm_tot': r'$m_\mathrm{tot}\,[M_\odot]$',
-    'm_chirp': r'$m_\mathrm{chirp}\,[M_\odot]$',
-    'q': r'$q$',
-    'chi_eff': r'$\chi_\mathrm{eff}$',
-    'S1_mass': r'$m_\mathrm{CO}\,[M_\odot]$',
-    'S2_mass': r'$m_\mathrm{CO}\,[M_\odot]$',
-    'S1_spin': r'$\chi_\mathrm{CO}$',
-    'S2_spin': r'$\chi_\mathrm{CO}$',
+    'z_formation': [r'$z_\mathrm{formation}$', r'$\log_{10}(z_\mathrm{formation})$'],
+    'z_merger': [r'$z_\mathrm{merger}$', r'$\log_{10}(z_\mathrm{merger})$'],
+    'm_tot': [r'$m_\mathrm{tot}\,[M_\odot]$', 
+              r'$\log_{10}(m_\mathrm{tot}/M_\odot)$'],
+    'm_chirp': [r'$m_\mathrm{chirp}\,[M_\odot]$',
+                r'$\log_{10}(m_\mathrm{chirp}/M_\odot)$',],
+    'q': [r'$q$', r'$\log_{10}(q)$'],
+    'chi_eff': [r'$\chi_\mathrm{eff}$', r'$\log_{10}(\chi_\mathrm{eff})$'],
+    'S1_mass': [r'$m_\mathrm{CO}\,[M_\odot]$', 
+                r'$\log_{10}(m_\mathrm{CO}/M_\odot)$'],
+    'S2_mass': [r'$m_\mathrm{CO}\,[M_\odot]$'
+                r'$\log_{10}(m_\mathrm{CO}/M_\odot)$'],
+    'S1_spin': [r'$\chi_\mathrm{CO}$', r'$\log_{10}(\chi_\mathrm{CO}$)'],
+    'S2_spin': [r'$\chi_\mathrm{CO}$', r'$\log_{10}(\chi_\mathrm{CO}$)'],
+    'S1_E_GRB': [r'$E_\mathrm{GRB}\,[\mathrm{erg}]$',
+                r'$\log_{10}(E_\mathrm{GRB}/\mathrm{erg})$'],
+    'S2_E_GRB': [r'$E_\mathrm{GRB}\,[\mathrm{erg}]$',
+                r'$\log_{10}(E_\mathrm{GRB}/\mathrm{erg})$'],
+    'S1_E_GRB_iso': [r'$E^\mathrm{iso}_\mathrm{GRB}\,[\mathrm{erg}]$',
+                r'$\log_{10}(E^\mathrm{iso}_\mathrm{GRB}/\mathrm{erg})$'],
+    'S2_E_GRB_iso': [r'$E^\mathrm{iso}_\mathrm{GRB}\,[\mathrm{erg}]$',
+                r'$\log_{10}(E^\mathrm{iso}_\mathrm{GRB}/\mathrm{erg})$'],
+    'S1_L_GRB_iso': [r'$L^\mathrm{iso}_\mathrm{GRB}\,[\mathrm{erg}\,\mathrm{s}^{-1}]$',
+                r'$\log_{10}(L^\mathrm{iso}_\mathrm{GRB}/\mathrm{erg}\,\mathrm{s}^{-1})$'],
+    'S2_L_GRB_iso': [r'$L^\mathrm{iso}_\mathrm{GRB}\,[\mathrm{erg}\,\mathrm{s}^{-1}]$',
+                r'$\log_{10}(L^\mathrm{iso}_\mathrm{GRB}/\mathrm{erg}\,\mathrm{s}^{-1})$'],
+    'S1_f_beaming': [r'$f_\mathrm{beaming}$', r'$\log_{10}(f_\mathrm{beaming})$'],
+    'S2_f_beaming': [r'$f_\mathrm{beaming}$', r'$\log_{10}(f_\mathrm{beaming})$'],
+    'S1_eta' : [r'$\eta$', r'$\log_{10}(\eta)$'],
+    'S2_eta' : [r'$\eta$', r'$\log_{10}(\eta)$'],
+}
+
+# add core collapse MODEL variables
+for i in range(1, 11):
+    DEFAULT_LABELS[f'MODEL{i:02d}_mass'] = [r'$M_\mathrm{CO} \, [M_\odot]$',
+                                              r'$\log_{10}(M_\mathrm{CO} / M_\odot)$']
+    DEFAULT_LABELS[f'MODEL{i:02d}_spin'] = [r'$\chi_\mathrm{CO}$', r'$\log_{10}(\chi_\mathrm{CO})$']
+    DEFAULT_LABELS[f'MODEL{i:02d}_m_disk_accreted'] = [r'$M_\mathrm{disk, acc} \, [M_\odot]$',
+                                              r'$\log_{10}(M_\mathrm{disk, acc} / M_\odot)$']
+    DEFAULT_LABELS[f'MODEL{i:02d}_m_disk_radiated'] = [r'$M_\mathrm{disk, rad} \, [M_\odot]$',
+                                              r'$\log_{10}(M_\mathrm{disk, rad} / M_\odot)$']
+    
+
+# pre defined plottings
+PRE_SET_PLOTS = {
+    'combined_TF12' : {
+        'plot_dir_name' : 'TF12',
+        'term_flag' : 'combined_TF12'
+    },
+    'termination_flag_1' : {
+        'plot_dir_name' : 'TF1',
+        'zvar' : 'lg_mtransfer_rate',
+        'zmin' : -8,
+        'zmax' : -1
+    },
+    'termination_flag_2' : {
+        'plot_dir_name' : 'TF2',
+        'term_flag' : 'termination_flag_2'
+    },
+    'termination_flag_3' : {
+        'plot_dir_name' : 'TF3',
+        'term_flag' : 'termination_flag_3'
+    },
+    'termination_flag_4' : {
+        'plot_dir_name' : 'TF4',
+        'term_flag' : 'termination_flag_4'
+    },
+    'rl_relative_overflow_1' : {
+        'plot_dir_name' : 'debug_rl_1',
+        'zvar' : 'rl_relative_overflow_1',
+        'term_flag' : 'debug',
+        'zmin' : -0.5,
+        'zmax' : 0.5
+    },
+    'rl_relative_overflow_2' : {
+        'plot_dir_name' : 'debug_rl_2',
+        'zvar' : 'rl_relative_overflow_2',
+        'term_flag' : 'debug',
+        'zmin' : -0.5,
+        'zmax' : 0.5
+    },
+    'lg_mtransfer_rate' : {
+        'plot_dir_name' : 'debug_mt',
+        'zvar' : 'lg_mtransfer_rate',
+        'term_flag' : 'debug',
+        'zmin' : -8,
+        'zmax' : -1
+    },
+    # SN stuff
+    'S1_MODEL_DEFAULT_CO_type' : {
+        'zvar' : None,
+        'term_flag' : 'S1_MODEL01_CO_type'
+    },
+    'S1_MODEL_DEFAULT_SN_type' : {
+        'zvar' : None,
+        'term_flag' : 'S1_MODEL01_SN_type'
+    },
+    'S1_MODEL_DEFAULT_mass' : {
+        'zlog' : True,
+        'zmin' : 0.,
+        'zmax' : 2.
+    },
+    'S1_MODEL_DEFAULT_spin' : {
+        'zmin' : 0.,
+        'zmax' : 1.
+    },
+    'S1_MODEL_DEFAULT_m_disk_radiated' : {
+        'zmin' : 0.,
+        'zmax' : 3.
+    },
+    # interpolator stuff
+    'INTERP_ERROR_DEFAULT' : {
+        'term_flag' : None,
+        'zmin' : 0.,
+        'zmax' : 0.1
+    },
 }

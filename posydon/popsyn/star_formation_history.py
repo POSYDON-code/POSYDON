@@ -14,8 +14,8 @@ import scipy as sp
 from scipy import stats
 from posydon.utils.data_download import PATH_TO_POSYDON_DATA
 from posydon.utils.constants import age_of_universe
-from posydon.utils import (rejection_sampler, histogram_sampler,
-                           read_histogram_from_file)
+from posydon.utils.common_functions import (
+    rejection_sampler, histogram_sampler, read_histogram_from_file)
 from posydon.utils.constants import Zsun
 from scipy.interpolate import interp1d
 from astropy.cosmology import Planck15 as cosmology
@@ -148,7 +148,7 @@ def mean_metallicity(SFR, z):
     if SFR == "Madau+Fragos17" or SFR == "Madau+Dickinson14":
         return 10 ** (0.153 - 0.074 * z ** 1.34) * Zsun
     elif SFR == "Neijssel+19":
-        return 0.035*10**(0.035*z)
+        return 0.035*10**(-0.23*z)
     else:
         raise ValueError('Invalid SFR!')
 
