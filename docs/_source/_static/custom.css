@@ -6,11 +6,12 @@
 .dropdown:hover .section {
     display: block;
   }
-  
-section {
-    text-align:justify;
-}
+
 
 .wy-side-nav-search {
   background-color: black;
+}
+
+p {
+ text-align: justify;
 }
