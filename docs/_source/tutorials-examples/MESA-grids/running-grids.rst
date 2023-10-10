@@ -60,8 +60,8 @@ The following tutorial will show you how to run a grid of MESA simulations using
 
 Now that you have run your first grid, you can process, visualize and explore the results using the POSYDON post-processing pipeline API. TODO: link
 
-Rimulating single stars with POSYDON
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Running single stars with POSYDON
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 This tutorials shows how to run a grid of single star simulations using POSYDON.
 

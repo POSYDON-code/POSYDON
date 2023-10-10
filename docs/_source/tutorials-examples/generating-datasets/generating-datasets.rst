@@ -27,8 +27,9 @@ From A to Z, this tutorial shows you how to process, concatenate, downsample, pl
 
 .. toctree::
 
-    processing_pipeline
+    run_full_piepeline
 
+Congratulations! You now master the POSYDON Processing Pipeline. To learn more about the PSyGrid object or the Processing Pipeline API ini file, check out the [API Documentation](api.rst) and the indepth components overview.
 
 Advanced Tutorials
 ------------------
@@ -42,6 +43,19 @@ Learn how to export MESA simulation points to rerun using the Processing Pipelin
     
     step_rerun
 
+
+Export Single Star PSyGrid Datasets
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Learn how to export single star PSyGrid datasets. This is an advaced tuotorial because it requires knowledge about the EEP code.
+
+.. node::
+    
+    POSYDON v2.0.0 does not embed a python interface to compute EEPs but relyes on the Fortran code of Aaron Dotter (2016). Feature POSYDON code releases will include a python interface to compute EEPs and embed the export of single stellar grid into the post-processig pipeline.
+
+.. toctree::
+
+    processing_single_hms
 
 Support & Feedback
 ------------------
