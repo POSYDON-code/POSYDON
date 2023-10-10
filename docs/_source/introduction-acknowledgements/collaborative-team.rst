@@ -73,6 +73,7 @@ Past Team Members
 - `Jaime Román-Garza <https://www.researchgate.net/profile/Jaime-Roman-Garza/>`_, *University of Geneva*: Jaime used POSYDON for his master thesis research project. Exploring the role of core-collapse physics in the formation of black hole neutron star mergers. 
 
 - `Juan Gabriel Serra Perez <https://ciera.northwestern.edu/directory/juan-gabriel-serra-perez//>`_,	*Northwestern University*
+
 (Continue listing all past team members...)
 
 Students Contributions
@@ -81,5 +82,3 @@ Students Contributions
 - `Petter Stahle </https://www.linkedin.com/in/petter-stahle/>`_, *Formerly, University of Geneva*: Developed the POSYDON web-application API interphase to run POSYDON v1 population synthesis simulations. 
 
 (Continue listing all past team members...)
-
-

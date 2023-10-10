@@ -1,101 +1,97 @@
-posydon.popsyn package
-======================
+posydon.popsyn
+==============
 
-Submodules
-----------
+.. automodule:: posydon.popsyn
+   :members:
+   :undoc-members:
+   :show-inheritance:
 
-posydon.popsyn.GRB module
--------------------------
+
+
+posydon.popsyn.GRB
+------------------
 
 .. automodule:: posydon.popsyn.GRB
    :members:
    :undoc-members:
    :show-inheritance:
 
-posydon.popsyn.analysis module
-------------------------------
+posydon.popsyn.analysis
+-----------------------
 
 .. automodule:: posydon.popsyn.analysis
    :members:
    :undoc-members:
    :show-inheritance:
 
-posydon.popsyn.binarypopulation module
---------------------------------------
+posydon.popsyn.binarypopulation
+-------------------------------
 
 .. automodule:: posydon.popsyn.binarypopulation
    :members:
    :undoc-members:
    :show-inheritance:
 
-posydon.popsyn.defaults module
-------------------------------
+posydon.popsyn.defaults
+-----------------------
 
 .. automodule:: posydon.popsyn.defaults
    :members:
    :undoc-members:
    :show-inheritance:
 
-posydon.popsyn.independent\_sample module
------------------------------------------
+posydon.popsyn.independent\_sample
+----------------------------------
 
 .. automodule:: posydon.popsyn.independent_sample
    :members:
    :undoc-members:
    :show-inheritance:
 
-posydon.popsyn.io module
-------------------------
+posydon.popsyn.io
+-----------------
 
 .. automodule:: posydon.popsyn.io
    :members:
    :undoc-members:
    :show-inheritance:
 
-posydon.popsyn.normalized\_pop\_mass module
--------------------------------------------
+posydon.popsyn.normalized\_pop\_mass
+------------------------------------
 
 .. automodule:: posydon.popsyn.normalized_pop_mass
    :members:
    :undoc-members:
    :show-inheritance:
 
-posydon.popsyn.rate\_calculation module
----------------------------------------
+posydon.popsyn.rate\_calculation
+--------------------------------
 
 .. automodule:: posydon.popsyn.rate_calculation
    :members:
    :undoc-members:
    :show-inheritance:
 
-posydon.popsyn.selection\_effects module
-----------------------------------------
+posydon.popsyn.selection\_effects
+---------------------------------
 
 .. automodule:: posydon.popsyn.selection_effects
    :members:
    :undoc-members:
    :show-inheritance:
 
-posydon.popsyn.star\_formation\_history module
-----------------------------------------------
+posydon.popsyn.star\_formation\_history
+---------------------------------------
 
 .. automodule:: posydon.popsyn.star_formation_history
    :members:
    :undoc-members:
    :show-inheritance:
 
-posydon.popsyn.synthetic\_population module
--------------------------------------------
+posydon.popsyn.synthetic\_population
+------------------------------------
 
 .. automodule:: posydon.popsyn.synthetic_population
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-Module contents
----------------
-
-.. automodule:: posydon.popsyn
    :members:
    :undoc-members:
    :show-inheritance:

@@ -2,7 +2,6 @@
 POSYDON Documentation
 ==============================
 
-
 .. image:: posydon_logo.pdf
   :width: 800
 
@@ -33,7 +32,7 @@ How is this Documentation Structured?
 - **Contributing to POSYDON:** Join our community and help us grow!
 - **Release Notes and Changelog:** Stay updated with our version history.
 - **Contact and Support:** Reach out to us with your queries or feedback.
-.. - **POSYDON Workflow:** Learn about how to conduct simulations from start to finish.
+
 
 .. toctree::
    :maxdepth: 1
@@ -41,7 +40,7 @@ How is this Documentation Structured?
 
    introduction-acknowledgements/intro
    introduction-acknowledgements/collaborative-team
-   introduction-acknowledgements/published-works
+   Publications <https://posydon.org/papers.html>
 
 .. toctree::
    :maxdepth: 1
@@ -93,7 +92,7 @@ How is this Documentation Structured?
    :maxdepth: 1
    :caption: API Reference
 
-   modules
+   api_reference/posydon
 
 .. toctree::
    :maxdepth: 1

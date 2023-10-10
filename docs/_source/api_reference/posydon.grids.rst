@@ -1,77 +1,73 @@
-posydon.grids package
-=====================
+posydon.grids
+=============
 
-Submodules
-----------
+.. automodule:: posydon.grids
+   :members:
+   :undoc-members:
+   :show-inheritance:
 
-posydon.grids.MODELS module
----------------------------
+
+
+posydon.grids.MODELS
+--------------------
 
 .. automodule:: posydon.grids.MODELS
    :members:
    :undoc-members:
    :show-inheritance:
 
-posydon.grids.downsampling module
----------------------------------
+posydon.grids.downsampling
+--------------------------
 
 .. automodule:: posydon.grids.downsampling
    :members:
    :undoc-members:
    :show-inheritance:
 
-posydon.grids.downsampling\_report module
------------------------------------------
+posydon.grids.downsampling\_report
+----------------------------------
 
 .. automodule:: posydon.grids.downsampling_report
    :members:
    :undoc-members:
    :show-inheritance:
 
-posydon.grids.io module
------------------------
+posydon.grids.io
+----------------
 
 .. automodule:: posydon.grids.io
    :members:
    :undoc-members:
    :show-inheritance:
 
-posydon.grids.post\_processing module
--------------------------------------
+posydon.grids.post\_processing
+------------------------------
 
 .. automodule:: posydon.grids.post_processing
    :members:
    :undoc-members:
    :show-inheritance:
 
-posydon.grids.psygrid module
-----------------------------
+posydon.grids.psygrid
+---------------------
 
 .. automodule:: posydon.grids.psygrid
    :members:
    :undoc-members:
    :show-inheritance:
 
-posydon.grids.scrubbing module
-------------------------------
+posydon.grids.scrubbing
+-----------------------
 
 .. automodule:: posydon.grids.scrubbing
    :members:
    :undoc-members:
    :show-inheritance:
 
-posydon.grids.termination\_flags module
----------------------------------------
+posydon.grids.termination\_flags
+--------------------------------
 
 .. automodule:: posydon.grids.termination_flags
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-Module contents
----------------
-
-.. automodule:: posydon.grids
    :members:
    :undoc-members:
    :show-inheritance:

@@ -1,11 +1,15 @@
-posydon package
-===============
+POSYDON
+=======
 
-Subpackages
------------
+.. automodule:: posydon
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 
 .. toctree::
-   :maxdepth: 4
+   :maxdepth: 2
+   :titlesonly:
 
    posydon.active_learning
    posydon.binary_evol
@@ -15,10 +19,12 @@ Subpackages
    posydon.utils
    posydon.visualization
 
-Module contents
----------------
 
-.. automodule:: posydon
+
+posydon.config
+--------------
+
+.. automodule:: posydon.config
    :members:
    :undoc-members:
    :show-inheritance:
