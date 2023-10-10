@@ -1,7 +1,0 @@
-*.h5
-*.ini
-*.csv
-*.batch
-*.npz
-*.pdf
-.DS_store
