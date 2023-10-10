@@ -40,7 +40,7 @@ Learn how to export MESA simulation points to rerun using the Processing Pipelin
 
 .. toctree::
     
-    step_1_and_rerun
+    step_rerun
 
 
 Support & Feedback

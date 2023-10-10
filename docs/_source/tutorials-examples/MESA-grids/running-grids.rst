@@ -60,17 +60,19 @@ The following tutorial will show you how to run a grid of MESA simulations using
 
 Now that you have run your first grid, you can process, visualize and explore the results using the POSYDON post-processing pipeline API. TODO: link
 
-Advanced Tutorials
-------------------
-
 Rimulating single stars with POSYDON
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-This tutorials shows how to run a grid of single star simulations using POSYDON. The grid will later be processed to export EEPs and other stellar parameters to a CSV file.
+This tutorials shows how to run a grid of single star simulations using POSYDON.
 
 .. toctree::
    
-   notebook: single stars
+   running_single_hms
+
+We show how to export EEPs and make a PSyGrid object in this tutorial TODO: link the advanced tutorial of step 2.
+
+Advanced Tutorials
+------------------
 
 Creating and Customizing MESA Grids layer by layer
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
