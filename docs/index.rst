@@ -75,9 +75,9 @@ How is this Documentation Structured?
    :caption: In-Depth Components Overview
 
    components-overview/stellar-binary-simulation
-   components-overview/processing-pipeline
    components-overview/machine-learning-components
-
+   components-overview/processing-pipeline
+   components-overview/mesa-grids
 
 .. .. toctree::
 ..    :maxdepth: 1
