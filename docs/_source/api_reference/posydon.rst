@@ -11,4 +11,4 @@ POSYDON
    posydon.interpolation
    posydon.popsyn
    posydon.utils
-   posydon.visualizationå
+   posydon.visualization
