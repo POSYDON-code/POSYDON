@@ -829,7 +829,7 @@ class Presenter:
 
         for index, row in data.iterrows():
 
-            if row["event"] == "END" or row["event"] == "redirect":
+            if row["event"] == "END" or "redirect" in row["event"]:
                 continue
 
             new_data = to_simplified_data(row)
