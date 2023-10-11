@@ -1,4 +1,4 @@
-.. _pop-params:
+.. _pop-params-guide:
 
 ================================================
 POSDYON Population Synthesis Configuration Guide
