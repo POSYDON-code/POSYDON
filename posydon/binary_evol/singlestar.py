@@ -251,10 +251,14 @@ class SingleStar:
             where_none = np.array(
                 [[True if var is None else False for var in column]
                  for column in data_to_save], dtype=bool)
-        except AttributeError as err:
-            raise AttributeError(
-                str(err) + "\n\nAvailable attributes in SingleStar: \n{}".
-                format(self.__dict__.keys()))
+        #except AttributeError as err:
+        #    print (data_to_save)
+        #    raise AttributeError(
+        #        str(err) + "\n\nAvailable attributes in SingleStar: \n{}".
+        #        format(self.__dict__.keys()))
+        except Exception as err:
+            print (err)
+            print (data_to_save)
 
         # casting into object array keeps things general
         star_data = np.array(data_to_save, dtype=object)

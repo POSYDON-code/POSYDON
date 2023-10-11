@@ -338,6 +338,7 @@ class PulsarHooks(EvolveHooks):
                    
             NS_indices = np.where(state_history == "NS")[0]
             NS_start = NS_indices[0]
+            NS_end = NS_indices[-1]
 
             ## fill history arrays with NaNs/False until NS is formed
             pulsar_spin.extend(np.full(len(state_history[:NS_start]), np.nan))
@@ -360,9 +361,10 @@ class PulsarHooks(EvolveHooks):
                 delta_t = time[i] - time[i-1]
                 delta_M = star_NS.mass_history[i] - star_NS.mass_history[i-1]
 
-                ## get companion mass and radius at this timestep
-                M_comp = star_companion.mass_history[i]
-                R_comp = 10**star_companion.log_R_history[i]
+                ## get companion mass and radius at previous timestep
+                ## these are only used for CE accretion & we want these values at the onset of CE
+                M_comp = star_companion.mass_history[i-1]
+                R_comp = 10**star_companion.log_R_history[i-1]
                
                 pulsar.Mdot_edd = pulsar.calc_NS_edd_lim(donor_surface_h1[i]) 
                 
@@ -379,12 +381,18 @@ class PulsarHooks(EvolveHooks):
                         pulsar.detached_evolve(delta_t) 
               
                 elif step_name == "step_CE" and state != "merged":
-                    acc_prescription = "uniform"
+                    acc_prescription = ""
                     pulsar.CE_evolve(acc_prescription, M_comp, R_comp)
 
                 pulsar_spin.append(pulsar.spin)
                 pulsar_Bfield.append(pulsar.Bfield)
                 pulsar_alive.append(pulsar.is_alive())
+            
+            ## fill remaining state history if NS becomes a different object after pulsar evolution
+            if (NS_end+1) < len(state_history):
+                pulsar_spin.extend(np.full(len(state_history[NS_end+1:]), np.nan))
+                pulsar_Bfield.extend(np.full(len(state_history[NS_end+1:]), np.nan))
+                pulsar_alive.extend(np.full(len(state_history[NS_end+1:]), False))
 
         ## if star is never a NS, fill history arrays with NaN/False               
         else:     

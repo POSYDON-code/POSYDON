@@ -262,11 +262,13 @@ class Pulsar:
 
             a = a_a*M_comp + b_a
             b = a_b*M_comp + b_b
-            delta_M = a*R_comp + b
+            delta_M = np.abs(a*R_comp + b)
 
             ## assume amount of mass accreted during CE is 0.04-0.1 Msun  
             if delta_M > 0.1: delta_M = 0.1
-            if delta_M < 0.04: delta_M = 0.04
+            #if delta_M < 0.04: delta_M = 0.04
+
+        else: delta_M = 0
 
         self.RLO_evolve_COMPAS(delta_M)
 
@@ -275,15 +277,15 @@ class Pulsar:
         Check if the pulsar has crossed the death line.
         ''' 
         P = 2*np.pi/self.spin     ## spin period of the pulsar [s]
-        P_dot = 9.87e-48 * const.secyer * self.Bfield**2/P  
+        P_dot = 9.87e-48*const.secyer * self.Bfield**2/P  
 
-        death_line = 10**(0.92*np.log10(P) - 18.65)  ## death line from Rudak & Ritter 1994 (b)
+        death_line = 0.17e12*P**2   ## death line from Ruderman & Sutherlandt 1975
 
         E_max = 0.01   ## threshold radio efficiency
         L = self.luminosity
         Edot = self.calc_NS_spindown_power()
   
-        if (P_dot > death_line): return True
+        if (self.Bfield > death_line): return True
         elif (L/Edot) < E_max: return True
 
         else: return False
