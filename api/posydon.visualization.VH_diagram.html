@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>posydon.visualization.VH_diagram package &mdash; posydon 0+untagged.1.g0e5e92d documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            posydon
+          </a>
+              <div class="version">
+                0+untagged.1.g0e5e92d
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">User guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../install/install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../data/data.html">Data Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">Application Programming Interface</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Binary Star Grids</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../run_mesa_grids/inifile.html">.ini file documentation for POSYDON GRIDS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../run_mesa_grids/fixed/fixed.html">Run a fixed MESA grid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PSyGrid/PSyGrid.html">The PSyGrid Object</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Generating Populations</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../pop_synth/POSYDON_populations.html">Running populations using POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../pop_synth/pop_synth.html">Running a POSYDON population synthesis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../pop_synth/custom_flow.html">Custom population synthesis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../SingleStar/SingleStar.html">The SingleStar object</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../BinaryStar/BinaryStar.html">The BinaryStar object</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../advanced_pop_options/custom_hooks.html">Evolutionary Hooks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../advanced_pop_options/debugging_binaries.html">Debugging Failed Binaries</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../interpolation/IF-Interpolator/IFInterpolator.html">Initial-Final Interpolation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Plotting</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../visualization/plot1D/plot1D.html">1D plotting functionalities for POSYON GRIDS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../visualization/plot2D/plot2D.html">2D plotting functionalities for POSYON GRIDS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../visualization/VHD/VHD.html">Van den Heuvel diagrams</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../interpolation/violinplot.html">Making the Violin Plot</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">About</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../about/licence.html">Licence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../about/attribution.html">Attribution</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">posydon</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">posydon.visualization.VH_diagram package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/api/posydon.visualization.VH_diagram.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="posydon-visualization-vh-diagram-package">
+<h1>posydon.visualization.VH_diagram package<a class="headerlink" href="#posydon-visualization-vh-diagram-package" title="Permalink to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading"></a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="posydon.visualization.VH_diagram.GraphVisualizer.html"><code class="docutils literal notranslate"><span class="pre">CaseInfos</span></code></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="posydon.visualization.VH_diagram.GraphVisualizer.html#posydon.visualization.VH_diagram.GraphVisualizer.CaseInfos.border_width"><code class="docutils literal notranslate"><span class="pre">CaseInfos.border_width</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.visualization.VH_diagram.GraphVisualizer.html#posydon.visualization.VH_diagram.GraphVisualizer.CaseInfos.bot_left_text"><code class="docutils literal notranslate"><span class="pre">CaseInfos.bot_left_text</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.visualization.VH_diagram.GraphVisualizer.html#posydon.visualization.VH_diagram.GraphVisualizer.CaseInfos.bot_right_text"><code class="docutils literal notranslate"><span class="pre">CaseInfos.bot_right_text</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.visualization.VH_diagram.GraphVisualizer.html#posydon.visualization.VH_diagram.GraphVisualizer.CaseInfos.centered_text"><code class="docutils literal notranslate"><span class="pre">CaseInfos.centered_text</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.visualization.VH_diagram.GraphVisualizer.html#posydon.visualization.VH_diagram.GraphVisualizer.CaseInfos.top_left_text"><code class="docutils literal notranslate"><span class="pre">CaseInfos.top_left_text</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.visualization.VH_diagram.GraphVisualizer.html#posydon.visualization.VH_diagram.GraphVisualizer.CaseInfos.top_right_text"><code class="docutils literal notranslate"><span class="pre">CaseInfos.top_right_text</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="posydon.visualization.VH_diagram.GraphVisualizer.html#posydon.visualization.VH_diagram.GraphVisualizer.ConnectedItem"><code class="docutils literal notranslate"><span class="pre">ConnectedItem</span></code></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="posydon.visualization.VH_diagram.GraphVisualizer.html#posydon.visualization.VH_diagram.GraphVisualizer.ConnectedItem.from_item"><code class="docutils literal notranslate"><span class="pre">ConnectedItem.from_item</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.visualization.VH_diagram.GraphVisualizer.html#posydon.visualization.VH_diagram.GraphVisualizer.ConnectedItem.to_item"><code class="docutils literal notranslate"><span class="pre">ConnectedItem.to_item</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="posydon.visualization.VH_diagram.GraphVisualizer.html#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizer"><code class="docutils literal notranslate"><span class="pre">GraphVisualizer</span></code></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="posydon.visualization.VH_diagram.GraphVisualizer.html#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizer.add_column"><code class="docutils literal notranslate"><span class="pre">GraphVisualizer.add_column()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.visualization.VH_diagram.GraphVisualizer.html#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizer.add_line"><code class="docutils literal notranslate"><span class="pre">GraphVisualizer.add_line()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.visualization.VH_diagram.GraphVisualizer.html#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizer.clear"><code class="docutils literal notranslate"><span class="pre">GraphVisualizer.clear()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.visualization.VH_diagram.GraphVisualizer.html#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizer.get_column"><code class="docutils literal notranslate"><span class="pre">GraphVisualizer.get_column()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.visualization.VH_diagram.GraphVisualizer.html#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizer.paintEvent"><code class="docutils literal notranslate"><span class="pre">GraphVisualizer.paintEvent()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.visualization.VH_diagram.GraphVisualizer.html#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizer.reset"><code class="docutils literal notranslate"><span class="pre">GraphVisualizer.reset()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.visualization.VH_diagram.GraphVisualizer.html#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizer.saveAsPicture"><code class="docutils literal notranslate"><span class="pre">GraphVisualizer.saveAsPicture()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="posydon.visualization.VH_diagram.GraphVisualizer.html#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerCase"><code class="docutils literal notranslate"><span class="pre">GraphVisualizerCase</span></code></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="posydon.visualization.VH_diagram.GraphVisualizer.html#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerCase.get_attach_point_bot"><code class="docutils literal notranslate"><span class="pre">GraphVisualizerCase.get_attach_point_bot()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.visualization.VH_diagram.GraphVisualizer.html#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerCase.get_attach_point_top"><code class="docutils literal notranslate"><span class="pre">GraphVisualizerCase.get_attach_point_top()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.visualization.VH_diagram.GraphVisualizer.html#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerCase.set_bottom_left_text"><code class="docutils literal notranslate"><span class="pre">GraphVisualizerCase.set_bottom_left_text()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.visualization.VH_diagram.GraphVisualizer.html#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerCase.set_bottom_rigth_text"><code class="docutils literal notranslate"><span class="pre">GraphVisualizerCase.set_bottom_rigth_text()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.visualization.VH_diagram.GraphVisualizer.html#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerCase.set_central_border"><code class="docutils literal notranslate"><span class="pre">GraphVisualizerCase.set_central_border()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.visualization.VH_diagram.GraphVisualizer.html#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerCase.set_central_text"><code class="docutils literal notranslate"><span class="pre">GraphVisualizerCase.set_central_text()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.visualization.VH_diagram.GraphVisualizer.html#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerCase.set_top_left_text"><code class="docutils literal notranslate"><span class="pre">GraphVisualizerCase.set_top_left_text()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.visualization.VH_diagram.GraphVisualizer.html#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerCase.set_top_right_text"><code class="docutils literal notranslate"><span class="pre">GraphVisualizerCase.set_top_right_text()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="posydon.visualization.VH_diagram.GraphVisualizer.html#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerConnectedcolumn"><code class="docutils literal notranslate"><span class="pre">GraphVisualizerConnectedcolumn</span></code></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="posydon.visualization.VH_diagram.GraphVisualizer.html#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerConnectedcolumn.draw"><code class="docutils literal notranslate"><span class="pre">GraphVisualizerConnectedcolumn.draw()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="posydon.visualization.VH_diagram.GraphVisualizer.html#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerItem"><code class="docutils literal notranslate"><span class="pre">GraphVisualizerItem</span></code></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="posydon.visualization.VH_diagram.GraphVisualizer.html#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerItem.connected"><code class="docutils literal notranslate"><span class="pre">GraphVisualizerItem.connected</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.visualization.VH_diagram.GraphVisualizer.html#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerItem.get_attach_point_bot"><code class="docutils literal notranslate"><span class="pre">GraphVisualizerItem.get_attach_point_bot()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.visualization.VH_diagram.GraphVisualizer.html#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerItem.get_attach_point_top"><code class="docutils literal notranslate"><span class="pre">GraphVisualizerItem.get_attach_point_top()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="posydon.visualization.VH_diagram.GraphVisualizer.html#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerPoint"><code class="docutils literal notranslate"><span class="pre">GraphVisualizerPoint</span></code></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="posydon.visualization.VH_diagram.GraphVisualizer.html#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerPoint.get_attach_point_bot"><code class="docutils literal notranslate"><span class="pre">GraphVisualizerPoint.get_attach_point_bot()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.visualization.VH_diagram.GraphVisualizer.html#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerPoint.get_attach_point_top"><code class="docutils literal notranslate"><span class="pre">GraphVisualizerPoint.get_attach_point_top()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.visualization.VH_diagram.GraphVisualizer.html#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerPoint.set_text"><code class="docutils literal notranslate"><span class="pre">GraphVisualizerPoint.set_text()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="posydon.visualization.VH_diagram.GraphVisualizer.html#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerPointDraw"><code class="docutils literal notranslate"><span class="pre">GraphVisualizerPointDraw</span></code></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="posydon.visualization.VH_diagram.GraphVisualizer.html#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerPointDraw.paintEvent"><code class="docutils literal notranslate"><span class="pre">GraphVisualizerPointDraw.paintEvent()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="posydon.visualization.VH_diagram.GraphVisualizer.html#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerState"><code class="docutils literal notranslate"><span class="pre">GraphVisualizerState</span></code></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="posydon.visualization.VH_diagram.GraphVisualizer.html#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerState.get_attach_point_bot"><code class="docutils literal notranslate"><span class="pre">GraphVisualizerState.get_attach_point_bot()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.visualization.VH_diagram.GraphVisualizer.html#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerState.get_attach_point_top"><code class="docutils literal notranslate"><span class="pre">GraphVisualizerState.get_attach_point_top()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.visualization.VH_diagram.GraphVisualizer.html#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerState.paintEvent"><code class="docutils literal notranslate"><span class="pre">GraphVisualizerState.paintEvent()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.visualization.VH_diagram.GraphVisualizer.html#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerState.resizeEvent"><code class="docutils literal notranslate"><span class="pre">GraphVisualizerState.resizeEvent()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.visualization.VH_diagram.GraphVisualizer.html#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerState.set_bot_text"><code class="docutils literal notranslate"><span class="pre">GraphVisualizerState.set_bot_text()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.visualization.VH_diagram.GraphVisualizer.html#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerState.set_distance"><code class="docutils literal notranslate"><span class="pre">GraphVisualizerState.set_distance()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.visualization.VH_diagram.GraphVisualizer.html#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerState.set_event"><code class="docutils literal notranslate"><span class="pre">GraphVisualizerState.set_event()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.visualization.VH_diagram.GraphVisualizer.html#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerState.set_first_star"><code class="docutils literal notranslate"><span class="pre">GraphVisualizerState.set_first_star()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.visualization.VH_diagram.GraphVisualizer.html#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerState.set_second_star"><code class="docutils literal notranslate"><span class="pre">GraphVisualizerState.set_second_star()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.visualization.VH_diagram.GraphVisualizer.html#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerState.set_top_text"><code class="docutils literal notranslate"><span class="pre">GraphVisualizerState.set_top_text()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="posydon.visualization.VH_diagram.GraphVisualizer.html#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerTimeline"><code class="docutils literal notranslate"><span class="pre">GraphVisualizerTimeline</span></code></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="posydon.visualization.VH_diagram.GraphVisualizer.html#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerTimeline.draw"><code class="docutils literal notranslate"><span class="pre">GraphVisualizerTimeline.draw()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="posydon.visualization.VH_diagram.GraphVisualizer.html#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizercolumn"><code class="docutils literal notranslate"><span class="pre">GraphVisualizercolumn</span></code></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="posydon.visualization.VH_diagram.GraphVisualizer.html#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizercolumn.add_item"><code class="docutils literal notranslate"><span class="pre">GraphVisualizercolumn.add_item()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.visualization.VH_diagram.GraphVisualizer.html#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizercolumn.clear"><code class="docutils literal notranslate"><span class="pre">GraphVisualizercolumn.clear()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.visualization.VH_diagram.GraphVisualizer.html#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizercolumn.get_id"><code class="docutils literal notranslate"><span class="pre">GraphVisualizercolumn.get_id()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.visualization.VH_diagram.GraphVisualizer.html#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizercolumn.reset"><code class="docutils literal notranslate"><span class="pre">GraphVisualizercolumn.reset()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.visualization.VH_diagram.GraphVisualizer.html#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizercolumn.set_title"><code class="docutils literal notranslate"><span class="pre">GraphVisualizercolumn.set_title()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.visualization.VH_diagram.GraphVisualizer.html#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizercolumn.skip"><code class="docutils literal notranslate"><span class="pre">GraphVisualizercolumn.skip()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="posydon.visualization.VH_diagram.GraphVisualizer.html#posydon.visualization.VH_diagram.GraphVisualizer.INFOSTYPE"><code class="docutils literal notranslate"><span class="pre">INFOSTYPE</span></code></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="posydon.visualization.VH_diagram.GraphVisualizer.html#posydon.visualization.VH_diagram.GraphVisualizer.INFOSTYPE.CASE"><code class="docutils literal notranslate"><span class="pre">INFOSTYPE.CASE</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.visualization.VH_diagram.GraphVisualizer.html#posydon.visualization.VH_diagram.GraphVisualizer.INFOSTYPE.POINT"><code class="docutils literal notranslate"><span class="pre">INFOSTYPE.POINT</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.visualization.VH_diagram.GraphVisualizer.html#posydon.visualization.VH_diagram.GraphVisualizer.INFOSTYPE.STATE"><code class="docutils literal notranslate"><span class="pre">INFOSTYPE.STATE</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="posydon.visualization.VH_diagram.GraphVisualizer.html#posydon.visualization.VH_diagram.GraphVisualizer.Infos"><code class="docutils literal notranslate"><span class="pre">Infos</span></code></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="posydon.visualization.VH_diagram.GraphVisualizer.html#posydon.visualization.VH_diagram.GraphVisualizer.Infos.column_id"><code class="docutils literal notranslate"><span class="pre">Infos.column_id</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.visualization.VH_diagram.GraphVisualizer.html#posydon.visualization.VH_diagram.GraphVisualizer.Infos.connected"><code class="docutils literal notranslate"><span class="pre">Infos.connected</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.visualization.VH_diagram.GraphVisualizer.html#posydon.visualization.VH_diagram.GraphVisualizer.Infos.infos_type"><code class="docutils literal notranslate"><span class="pre">Infos.infos_type</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="posydon.visualization.VH_diagram.GraphVisualizer.html#posydon.visualization.VH_diagram.GraphVisualizer.PointInfos"><code class="docutils literal notranslate"><span class="pre">PointInfos</span></code></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="posydon.visualization.VH_diagram.GraphVisualizer.html#posydon.visualization.VH_diagram.GraphVisualizer.PointInfos.text"><code class="docutils literal notranslate"><span class="pre">PointInfos.text</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="posydon.visualization.VH_diagram.GraphVisualizer.html#posydon.visualization.VH_diagram.GraphVisualizer.StateInfos"><code class="docutils literal notranslate"><span class="pre">StateInfos</span></code></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="posydon.visualization.VH_diagram.GraphVisualizer.html#posydon.visualization.VH_diagram.GraphVisualizer.StateInfos.S1_filename"><code class="docutils literal notranslate"><span class="pre">StateInfos.S1_filename</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.visualization.VH_diagram.GraphVisualizer.html#posydon.visualization.VH_diagram.GraphVisualizer.StateInfos.S2_filename"><code class="docutils literal notranslate"><span class="pre">StateInfos.S2_filename</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.visualization.VH_diagram.GraphVisualizer.html#posydon.visualization.VH_diagram.GraphVisualizer.StateInfos.bot_texts"><code class="docutils literal notranslate"><span class="pre">StateInfos.bot_texts</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.visualization.VH_diagram.GraphVisualizer.html#posydon.visualization.VH_diagram.GraphVisualizer.StateInfos.distance"><code class="docutils literal notranslate"><span class="pre">StateInfos.distance</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.visualization.VH_diagram.GraphVisualizer.html#posydon.visualization.VH_diagram.GraphVisualizer.StateInfos.event_filename"><code class="docutils literal notranslate"><span class="pre">StateInfos.event_filename</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.visualization.VH_diagram.GraphVisualizer.html#posydon.visualization.VH_diagram.GraphVisualizer.StateInfos.top_texts"><code class="docutils literal notranslate"><span class="pre">StateInfos.top_texts</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="posydon.visualization.VH_diagram.GraphVisualizer.html#posydon.visualization.VH_diagram.GraphVisualizer.columnTYPE"><code class="docutils literal notranslate"><span class="pre">columnTYPE</span></code></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="posydon.visualization.VH_diagram.GraphVisualizer.html#posydon.visualization.VH_diagram.GraphVisualizer.columnTYPE.CONNECTED"><code class="docutils literal notranslate"><span class="pre">columnTYPE.CONNECTED</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.visualization.VH_diagram.GraphVisualizer.html#posydon.visualization.VH_diagram.GraphVisualizer.columnTYPE.TIMELINE"><code class="docutils literal notranslate"><span class="pre">columnTYPE.TIMELINE</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="posydon.visualization.VH_diagram.GraphVisualizer.html#posydon.visualization.VH_diagram.GraphVisualizer.prepare_case"><code class="docutils literal notranslate"><span class="pre">prepare_case()</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="posydon.visualization.VH_diagram.GraphVisualizer.html#posydon.visualization.VH_diagram.GraphVisualizer.prepare_point"><code class="docutils literal notranslate"><span class="pre">prepare_point()</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="posydon.visualization.VH_diagram.GraphVisualizer.html#posydon.visualization.VH_diagram.GraphVisualizer.prepare_state"><code class="docutils literal notranslate"><span class="pre">prepare_state()</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="posydon.visualization.VH_diagram.MainWindow.html"><code class="docutils literal notranslate"><span class="pre">MainWindow</span></code></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="posydon.visualization.VH_diagram.MainWindow.html#posydon.visualization.VH_diagram.MainWindow.MainWindow.closeEvent"><code class="docutils literal notranslate"><span class="pre">MainWindow.closeEvent()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.visualization.VH_diagram.MainWindow.html#posydon.visualization.VH_diagram.MainWindow.MainWindow.save_requiered"><code class="docutils literal notranslate"><span class="pre">MainWindow.save_requiered</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.visualization.VH_diagram.MainWindow.html#posydon.visualization.VH_diagram.MainWindow.MainWindow.start_visualization"><code class="docutils literal notranslate"><span class="pre">MainWindow.start_visualization()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="posydon.visualization.VH_diagram.MainWindow.html#posydon.visualization.VH_diagram.MainWindow.VisualizerInterface"><code class="docutils literal notranslate"><span class="pre">VisualizerInterface</span></code></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="posydon.visualization.VH_diagram.MainWindow.html#posydon.visualization.VH_diagram.MainWindow.VisualizerInterface.detail_required"><code class="docutils literal notranslate"><span class="pre">VisualizerInterface.detail_required()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.visualization.VH_diagram.MainWindow.html#posydon.visualization.VH_diagram.MainWindow.VisualizerInterface.diagram_required"><code class="docutils literal notranslate"><span class="pre">VisualizerInterface.diagram_required()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.visualization.VH_diagram.MainWindow.html#posydon.visualization.VH_diagram.MainWindow.VisualizerInterface.distance_representation_required"><code class="docutils literal notranslate"><span class="pre">VisualizerInterface.distance_representation_required()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.visualization.VH_diagram.MainWindow.html#posydon.visualization.VH_diagram.MainWindow.VisualizerInterface.options"><code class="docutils literal notranslate"><span class="pre">VisualizerInterface.options()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.visualization.VH_diagram.MainWindow.html#posydon.visualization.VH_diagram.MainWindow.VisualizerInterface.reduce_required"><code class="docutils literal notranslate"><span class="pre">VisualizerInterface.reduce_required()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.visualization.VH_diagram.MainWindow.html#posydon.visualization.VH_diagram.MainWindow.VisualizerInterface.save_required"><code class="docutils literal notranslate"><span class="pre">VisualizerInterface.save_required()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.visualization.VH_diagram.MainWindow.html#posydon.visualization.VH_diagram.MainWindow.VisualizerInterface.simplify_required"><code class="docutils literal notranslate"><span class="pre">VisualizerInterface.simplify_required()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="posydon.visualization.VH_diagram.MathTextLabel.html"><code class="docutils literal notranslate"><span class="pre">MathTextLabel</span></code></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="posydon.visualization.VH_diagram.MathTextLabel.html#posydon.visualization.VH_diagram.MathTextLabel.MathTextLabel.setText"><code class="docutils literal notranslate"><span class="pre">MathTextLabel.setText()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="posydon.visualization.VH_diagram.OptionsWindow.html"><code class="docutils literal notranslate"><span class="pre">OptionsWindow</span></code></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="posydon.visualization.VH_diagram.OptionsWindow.html#posydon.visualization.VH_diagram.OptionsWindow.OptionsWindow.detail_requiered"><code class="docutils literal notranslate"><span class="pre">OptionsWindow.detail_requiered</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.visualization.VH_diagram.OptionsWindow.html#posydon.visualization.VH_diagram.OptionsWindow.OptionsWindow.diagram_required"><code class="docutils literal notranslate"><span class="pre">OptionsWindow.diagram_required</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.visualization.VH_diagram.OptionsWindow.html#posydon.visualization.VH_diagram.OptionsWindow.OptionsWindow.distance_representation_required"><code class="docutils literal notranslate"><span class="pre">OptionsWindow.distance_representation_required</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.visualization.VH_diagram.OptionsWindow.html#posydon.visualization.VH_diagram.OptionsWindow.OptionsWindow.reduce_required"><code class="docutils literal notranslate"><span class="pre">OptionsWindow.reduce_required</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.visualization.VH_diagram.OptionsWindow.html#posydon.visualization.VH_diagram.OptionsWindow.OptionsWindow.set_distance_representation"><code class="docutils literal notranslate"><span class="pre">OptionsWindow.set_distance_representation()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.visualization.VH_diagram.OptionsWindow.html#posydon.visualization.VH_diagram.OptionsWindow.OptionsWindow.set_showed_mode"><code class="docutils literal notranslate"><span class="pre">OptionsWindow.set_showed_mode()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.visualization.VH_diagram.OptionsWindow.html#posydon.visualization.VH_diagram.OptionsWindow.OptionsWindow.simplify_required"><code class="docutils literal notranslate"><span class="pre">OptionsWindow.simplify_required</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="posydon.visualization.VH_diagram.ParseDataFrame.html"><code class="docutils literal notranslate"><span class="pre">ParseDataFrame</span></code></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="posydon.visualization.VH_diagram.ParseDataFrame.html#posydon.visualization.VH_diagram.ParseDataFrame.ParseDataFrame.get_frequencies"><code class="docutils literal notranslate"><span class="pre">ParseDataFrame.get_frequencies()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.visualization.VH_diagram.ParseDataFrame.html#posydon.visualization.VH_diagram.ParseDataFrame.ParseDataFrame.get_most_numpy"><code class="docutils literal notranslate"><span class="pre">ParseDataFrame.get_most_numpy()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.visualization.VH_diagram.ParseDataFrame.html#posydon.visualization.VH_diagram.ParseDataFrame.ParseDataFrame.parse_dataf_gb_iter_chunk"><code class="docutils literal notranslate"><span class="pre">ParseDataFrame.parse_dataf_gb_iter_chunk()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="posydon.visualization.VH_diagram.Presenter.html"><code class="docutils literal notranslate"><span class="pre">Presenter</span></code></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="posydon.visualization.VH_diagram.Presenter.html#posydon.visualization.VH_diagram.Presenter.Presenter.PATH_TO_DRAWS"><code class="docutils literal notranslate"><span class="pre">Presenter.PATH_TO_DRAWS</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.visualization.VH_diagram.Presenter.html#posydon.visualization.VH_diagram.Presenter.Presenter.PATH_TO_SCREENS"><code class="docutils literal notranslate"><span class="pre">Presenter.PATH_TO_SCREENS</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.visualization.VH_diagram.Presenter.html#posydon.visualization.VH_diagram.Presenter.Presenter.close"><code class="docutils literal notranslate"><span class="pre">Presenter.close()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.visualization.VH_diagram.Presenter.html#posydon.visualization.VH_diagram.Presenter.Presenter.present"><code class="docutils literal notranslate"><span class="pre">Presenter.present()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.visualization.VH_diagram.Presenter.html#posydon.visualization.VH_diagram.Presenter.Presenter.screen"><code class="docutils literal notranslate"><span class="pre">Presenter.screen()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="posydon.visualization.VH_diagram.Presenter.html#posydon.visualization.VH_diagram.Presenter.SimplifiedInfo"><code class="docutils literal notranslate"><span class="pre">SimplifiedInfo</span></code></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="posydon.visualization.VH_diagram.Presenter.html#posydon.visualization.VH_diagram.Presenter.SimplifiedInfo.state_before"><code class="docutils literal notranslate"><span class="pre">SimplifiedInfo.state_before</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.visualization.VH_diagram.Presenter.html#posydon.visualization.VH_diagram.Presenter.SimplifiedInfo.state_after"><code class="docutils literal notranslate"><span class="pre">SimplifiedInfo.state_after</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="posydon.visualization.VH_diagram.Presenter.html#posydon.visualization.VH_diagram.Presenter.calculate_separation"><code class="docutils literal notranslate"><span class="pre">calculate_separation()</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="posydon.visualization.VH_diagram.Presenter.html#posydon.visualization.VH_diagram.Presenter.combine_simplified_data"><code class="docutils literal notranslate"><span class="pre">combine_simplified_data()</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="posydon.visualization.VH_diagram.Presenter.html#posydon.visualization.VH_diagram.Presenter.equal_with_epsilon"><code class="docutils literal notranslate"><span class="pre">equal_with_epsilon()</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="posydon.visualization.VH_diagram.Presenter.html#posydon.visualization.VH_diagram.Presenter.file_exist"><code class="docutils literal notranslate"><span class="pre">file_exist()</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="posydon.visualization.VH_diagram.Presenter.html#posydon.visualization.VH_diagram.Presenter.get_event_state_filename"><code class="docutils literal notranslate"><span class="pre">get_event_state_filename()</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="posydon.visualization.VH_diagram.Presenter.html#posydon.visualization.VH_diagram.Presenter.get_max_distance"><code class="docutils literal notranslate"><span class="pre">get_max_distance()</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="posydon.visualization.VH_diagram.Presenter.html#posydon.visualization.VH_diagram.Presenter.get_star_state_filename"><code class="docutils literal notranslate"><span class="pre">get_star_state_filename()</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="posydon.visualization.VH_diagram.Presenter.html#posydon.visualization.VH_diagram.Presenter.to_megayears"><code class="docutils literal notranslate"><span class="pre">to_megayears()</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="posydon.visualization.VH_diagram.Presenter.html#posydon.visualization.VH_diagram.Presenter.to_simplified_data"><code class="docutils literal notranslate"><span class="pre">to_simplified_data()</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="posydon.visualization.VH_diagram.PresenterMode.html"><code class="docutils literal notranslate"><span class="pre">PresenterMode</span></code></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="posydon.visualization.VH_diagram.PresenterMode.html#posydon.visualization.VH_diagram.PresenterMode.PresenterMode.DETAILED"><code class="docutils literal notranslate"><span class="pre">PresenterMode.DETAILED</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.visualization.VH_diagram.PresenterMode.html#posydon.visualization.VH_diagram.PresenterMode.PresenterMode.DIAGRAM"><code class="docutils literal notranslate"><span class="pre">PresenterMode.DIAGRAM</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.visualization.VH_diagram.PresenterMode.html#posydon.visualization.VH_diagram.PresenterMode.PresenterMode.REDUCED"><code class="docutils literal notranslate"><span class="pre">PresenterMode.REDUCED</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.visualization.VH_diagram.PresenterMode.html#posydon.visualization.VH_diagram.PresenterMode.PresenterMode.SIMPLIFIED"><code class="docutils literal notranslate"><span class="pre">PresenterMode.SIMPLIFIED</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="posydon.visualization.VH_diagram.PresenterMultiple.html"><code class="docutils literal notranslate"><span class="pre">Presenter_h</span></code></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="posydon.visualization.VH_diagram.PresenterMultiple.html#posydon.visualization.VH_diagram.PresenterMultiple.Presenter_h.present_h"><code class="docutils literal notranslate"><span class="pre">Presenter_h.present_h()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="posydon.visualization.VH_diagram.PresenterMultiple.html#posydon.visualization.VH_diagram.PresenterMultiple.Presenter_m"><code class="docutils literal notranslate"><span class="pre">Presenter_m</span></code></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="posydon.visualization.VH_diagram.PresenterMultiple.html#posydon.visualization.VH_diagram.PresenterMultiple.Presenter_m.present_m"><code class="docutils literal notranslate"><span class="pre">Presenter_m.present_m()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="posydon.visualization.VH_diagram.PresenterMultiple.html#posydon.visualization.VH_diagram.PresenterMultiple.VHdiagramm_m"><code class="docutils literal notranslate"><span class="pre">VHdiagramm_m</span></code></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="posydon.visualization.VH_diagram.PresenterMultiple.html#posydon.visualization.VH_diagram.PresenterMultiple.VHdiagramm_m.get_sorted_index"><code class="docutils literal notranslate"><span class="pre">VHdiagramm_m.get_sorted_index()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="posydon.visualization.VH_diagram.SimulationModel.html"><code class="docutils literal notranslate"><span class="pre">SimulationModel</span></code></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="posydon.visualization.VH_diagram.SimulationModel.html#posydon.visualization.VH_diagram.SimulationModel.SimulationModel.get_by_binary_index"><code class="docutils literal notranslate"><span class="pre">SimulationModel.get_by_binary_index()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.visualization.VH_diagram.SimulationModel.html#posydon.visualization.VH_diagram.SimulationModel.SimulationModel.load_csv"><code class="docutils literal notranslate"><span class="pre">SimulationModel.load_csv()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="module-posydon.visualization.VH_diagram">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-posydon.visualization.VH_diagram" title="Permalink to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Tassos Fragos.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

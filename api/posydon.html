@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>posydon package &mdash; posydon 0+untagged.1.g0e5e92d documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            posydon
+          </a>
+              <div class="version">
+                0+untagged.1.g0e5e92d
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">User guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../install/install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../data/data.html">Data Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">Application Programming Interface</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Binary Star Grids</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../run_mesa_grids/inifile.html">.ini file documentation for POSYDON GRIDS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../run_mesa_grids/fixed/fixed.html">Run a fixed MESA grid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PSyGrid/PSyGrid.html">The PSyGrid Object</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Generating Populations</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../pop_synth/POSYDON_populations.html">Running populations using POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../pop_synth/pop_synth.html">Running a POSYDON population synthesis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../pop_synth/custom_flow.html">Custom population synthesis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../SingleStar/SingleStar.html">The SingleStar object</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../BinaryStar/BinaryStar.html">The BinaryStar object</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../advanced_pop_options/custom_hooks.html">Evolutionary Hooks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../advanced_pop_options/debugging_binaries.html">Debugging Failed Binaries</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../interpolation/IF-Interpolator/IFInterpolator.html">Initial-Final Interpolation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Plotting</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../visualization/plot1D/plot1D.html">1D plotting functionalities for POSYON GRIDS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../visualization/plot2D/plot2D.html">2D plotting functionalities for POSYON GRIDS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../visualization/VHD/VHD.html">Van den Heuvel diagrams</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../interpolation/violinplot.html">Making the Violin Plot</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">About</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../about/licence.html">Licence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../about/attribution.html">Attribution</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">posydon</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">posydon package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/api/posydon.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="posydon-package">
+<h1>posydon package<a class="headerlink" href="#posydon-package" title="Permalink to this heading"></a></h1>
+<section id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this heading"></a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="posydon.active_learning.html">posydon.active_learning package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="posydon.active_learning.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="posydon.active_learning.psy_cris.html">posydon.active_learning.psy_cris package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="posydon.active_learning.psy_cris.html#subpackages">Subpackages</a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.active_learning.psy_cris.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.active_learning.psy_cris.html#module-posydon.active_learning.psy_cris">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.active_learning.html#module-posydon.active_learning">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="posydon.binary_evol.html">posydon.binary_evol package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="posydon.binary_evol.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="posydon.binary_evol.CE.html">posydon.binary_evol.CE package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="posydon.binary_evol.CE.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.binary_evol.CE.html#module-posydon.binary_evol.CE">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.binary_evol.DT.html">posydon.binary_evol.DT package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="posydon.binary_evol.DT.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.binary_evol.DT.html#module-posydon.binary_evol.DT">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.binary_evol.MESA.html">posydon.binary_evol.MESA package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="posydon.binary_evol.MESA.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.binary_evol.MESA.html#module-posydon.binary_evol.MESA">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.binary_evol.SN.html">posydon.binary_evol.SN package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="posydon.binary_evol.SN.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.binary_evol.SN.html#module-posydon.binary_evol.SN">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.binary_evol.html#submodules">Submodules</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="posydon.binary_evol.binarystar.html"><code class="docutils literal notranslate"><span class="pre">BinaryStar</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="posydon.binary_evol.binarystar.html#posydon.binary_evol.binarystar.BinaryStar.append_state"><code class="docutils literal notranslate"><span class="pre">BinaryStar.append_state()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.binary_evol.binarystar.html#posydon.binary_evol.binarystar.BinaryStar.evolve"><code class="docutils literal notranslate"><span class="pre">BinaryStar.evolve()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.binary_evol.binarystar.html#posydon.binary_evol.binarystar.BinaryStar.from_df"><code class="docutils literal notranslate"><span class="pre">BinaryStar.from_df()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.binary_evol.binarystar.html#posydon.binary_evol.binarystar.BinaryStar.from_oneline_df"><code class="docutils literal notranslate"><span class="pre">BinaryStar.from_oneline_df()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.binary_evol.binarystar.html#posydon.binary_evol.binarystar.BinaryStar.from_run"><code class="docutils literal notranslate"><span class="pre">BinaryStar.from_run()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.binary_evol.binarystar.html#posydon.binary_evol.binarystar.BinaryStar.reset"><code class="docutils literal notranslate"><span class="pre">BinaryStar.reset()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.binary_evol.binarystar.html#posydon.binary_evol.binarystar.BinaryStar.restore"><code class="docutils literal notranslate"><span class="pre">BinaryStar.restore()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.binary_evol.binarystar.html#posydon.binary_evol.binarystar.BinaryStar.run_step"><code class="docutils literal notranslate"><span class="pre">BinaryStar.run_step()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.binary_evol.binarystar.html#posydon.binary_evol.binarystar.BinaryStar.switch_star"><code class="docutils literal notranslate"><span class="pre">BinaryStar.switch_star()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.binary_evol.binarystar.html#posydon.binary_evol.binarystar.BinaryStar.to_df"><code class="docutils literal notranslate"><span class="pre">BinaryStar.to_df()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.binary_evol.binarystar.html#posydon.binary_evol.binarystar.BinaryStar.to_oneline_df"><code class="docutils literal notranslate"><span class="pre">BinaryStar.to_oneline_df()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.binary_evol.binarystar.html#posydon.binary_evol.binarystar.BinaryStar.update_star_states"><code class="docutils literal notranslate"><span class="pre">BinaryStar.update_star_states()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.binary_evol.binarystar.html#posydon.binary_evol.binarystar.signal_handler"><code class="docutils literal notranslate"><span class="pre">signal_handler()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.binary_evol.flow_chart.html"><code class="docutils literal notranslate"><span class="pre">flow_chart()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.binary_evol.simulationproperties.html"><code class="docutils literal notranslate"><span class="pre">EvolveHooks</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="posydon.binary_evol.simulationproperties.html#posydon.binary_evol.simulationproperties.EvolveHooks.post_evolve"><code class="docutils literal notranslate"><span class="pre">EvolveHooks.post_evolve()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.binary_evol.simulationproperties.html#posydon.binary_evol.simulationproperties.EvolveHooks.post_step"><code class="docutils literal notranslate"><span class="pre">EvolveHooks.post_step()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.binary_evol.simulationproperties.html#posydon.binary_evol.simulationproperties.EvolveHooks.pre_evolve"><code class="docutils literal notranslate"><span class="pre">EvolveHooks.pre_evolve()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.binary_evol.simulationproperties.html#posydon.binary_evol.simulationproperties.EvolveHooks.pre_step"><code class="docutils literal notranslate"><span class="pre">EvolveHooks.pre_step()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.binary_evol.simulationproperties.html#posydon.binary_evol.simulationproperties.PrintStepInfoHooks"><code class="docutils literal notranslate"><span class="pre">PrintStepInfoHooks</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="posydon.binary_evol.simulationproperties.html#posydon.binary_evol.simulationproperties.PrintStepInfoHooks.post_evolve"><code class="docutils literal notranslate"><span class="pre">PrintStepInfoHooks.post_evolve()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.binary_evol.simulationproperties.html#posydon.binary_evol.simulationproperties.PrintStepInfoHooks.pre_step"><code class="docutils literal notranslate"><span class="pre">PrintStepInfoHooks.pre_step()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.binary_evol.simulationproperties.html#posydon.binary_evol.simulationproperties.SimulationProperties"><code class="docutils literal notranslate"><span class="pre">SimulationProperties</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="posydon.binary_evol.simulationproperties.html#posydon.binary_evol.simulationproperties.SimulationProperties.close"><code class="docutils literal notranslate"><span class="pre">SimulationProperties.close()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.binary_evol.simulationproperties.html#posydon.binary_evol.simulationproperties.SimulationProperties.load_steps"><code class="docutils literal notranslate"><span class="pre">SimulationProperties.load_steps()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.binary_evol.simulationproperties.html#posydon.binary_evol.simulationproperties.SimulationProperties.post_evolve"><code class="docutils literal notranslate"><span class="pre">SimulationProperties.post_evolve()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.binary_evol.simulationproperties.html#posydon.binary_evol.simulationproperties.SimulationProperties.post_step"><code class="docutils literal notranslate"><span class="pre">SimulationProperties.post_step()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.binary_evol.simulationproperties.html#posydon.binary_evol.simulationproperties.SimulationProperties.pre_evolve"><code class="docutils literal notranslate"><span class="pre">SimulationProperties.pre_evolve()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.binary_evol.simulationproperties.html#posydon.binary_evol.simulationproperties.SimulationProperties.pre_step"><code class="docutils literal notranslate"><span class="pre">SimulationProperties.pre_step()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.binary_evol.simulationproperties.html#posydon.binary_evol.simulationproperties.StepNamesHooks"><code class="docutils literal notranslate"><span class="pre">StepNamesHooks</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="posydon.binary_evol.simulationproperties.html#posydon.binary_evol.simulationproperties.StepNamesHooks.post_evolve"><code class="docutils literal notranslate"><span class="pre">StepNamesHooks.post_evolve()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.binary_evol.simulationproperties.html#posydon.binary_evol.simulationproperties.StepNamesHooks.post_step"><code class="docutils literal notranslate"><span class="pre">StepNamesHooks.post_step()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.binary_evol.simulationproperties.html#posydon.binary_evol.simulationproperties.StepNamesHooks.pre_evolve"><code class="docutils literal notranslate"><span class="pre">StepNamesHooks.pre_evolve()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.binary_evol.simulationproperties.html#posydon.binary_evol.simulationproperties.StepNamesHooks.pre_step"><code class="docutils literal notranslate"><span class="pre">StepNamesHooks.pre_step()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.binary_evol.simulationproperties.html#posydon.binary_evol.simulationproperties.TimingHooks"><code class="docutils literal notranslate"><span class="pre">TimingHooks</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="posydon.binary_evol.simulationproperties.html#posydon.binary_evol.simulationproperties.TimingHooks.post_evolve"><code class="docutils literal notranslate"><span class="pre">TimingHooks.post_evolve()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.binary_evol.simulationproperties.html#posydon.binary_evol.simulationproperties.TimingHooks.post_step"><code class="docutils literal notranslate"><span class="pre">TimingHooks.post_step()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.binary_evol.simulationproperties.html#posydon.binary_evol.simulationproperties.TimingHooks.pre_evolve"><code class="docutils literal notranslate"><span class="pre">TimingHooks.pre_evolve()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.binary_evol.simulationproperties.html#posydon.binary_evol.simulationproperties.TimingHooks.pre_step"><code class="docutils literal notranslate"><span class="pre">TimingHooks.pre_step()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.binary_evol.singlestar.html"><code class="docutils literal notranslate"><span class="pre">SingleStar</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="posydon.binary_evol.singlestar.html#posydon.binary_evol.singlestar.SingleStar.append_state"><code class="docutils literal notranslate"><span class="pre">SingleStar.append_state()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.binary_evol.singlestar.html#posydon.binary_evol.singlestar.SingleStar.from_run"><code class="docutils literal notranslate"><span class="pre">SingleStar.from_run()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.binary_evol.singlestar.html#posydon.binary_evol.singlestar.SingleStar.restore"><code class="docutils literal notranslate"><span class="pre">SingleStar.restore()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.binary_evol.singlestar.html#posydon.binary_evol.singlestar.SingleStar.to_df"><code class="docutils literal notranslate"><span class="pre">SingleStar.to_df()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.binary_evol.singlestar.html#posydon.binary_evol.singlestar.SingleStar.to_oneline_df"><code class="docutils literal notranslate"><span class="pre">SingleStar.to_oneline_df()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.binary_evol.singlestar.html#posydon.binary_evol.singlestar.properties_massless_remnant"><code class="docutils literal notranslate"><span class="pre">properties_massless_remnant()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.binary_evol.step_end.html"><code class="docutils literal notranslate"><span class="pre">step_end</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.binary_evol.html#module-posydon.binary_evol">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="posydon.grids.html">posydon.grids package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="posydon.grids.html#submodules">Submodules</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="posydon.grids.downsampling.html"><code class="docutils literal notranslate"><span class="pre">TrackDownsampler</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="posydon.grids.downsampling.html#posydon.grids.downsampling.TrackDownsampler.downsample"><code class="docutils literal notranslate"><span class="pre">TrackDownsampler.downsample()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.grids.downsampling.html#posydon.grids.downsampling.TrackDownsampler.extract_downsample"><code class="docutils literal notranslate"><span class="pre">TrackDownsampler.extract_downsample()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.grids.downsampling.html#posydon.grids.downsampling.TrackDownsampler.find_downsample"><code class="docutils literal notranslate"><span class="pre">TrackDownsampler.find_downsample()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.grids.downsampling.html#posydon.grids.downsampling.TrackDownsampler.rescale"><code class="docutils literal notranslate"><span class="pre">TrackDownsampler.rescale()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.grids.downsampling.html#posydon.grids.downsampling.TrackDownsampler.say"><code class="docutils literal notranslate"><span class="pre">TrackDownsampler.say()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.grids.downsampling.html#posydon.grids.downsampling.rescale_from_0_to_1"><code class="docutils literal notranslate"><span class="pre">rescale_from_0_to_1()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.grids.downsampling_report.html"><code class="docutils literal notranslate"><span class="pre">compare_DS()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.grids.downsampling_report.html#posydon.grids.downsampling_report.report_DS"><code class="docutils literal notranslate"><span class="pre">report_DS()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.grids.io.html"><code class="docutils literal notranslate"><span class="pre">GridReader</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="posydon.grids.io.html#posydon.grids.io.GridReader.infer_history_columns"><code class="docutils literal notranslate"><span class="pre">GridReader.infer_history_columns()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.grids.io.html#posydon.grids.io.GridReader.read_posydon_format"><code class="docutils literal notranslate"><span class="pre">GridReader.read_posydon_format()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.grids.io.html#posydon.grids.io.RunReader"><code class="docutils literal notranslate"><span class="pre">RunReader</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="posydon.grids.io.html#posydon.grids.io.RunReader.read_posydon_format"><code class="docutils literal notranslate"><span class="pre">RunReader.read_posydon_format()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.grids.io.html#posydon.grids.io.RunReader.report"><code class="docutils literal notranslate"><span class="pre">RunReader.report()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.grids.io.html#posydon.grids.io.initial_values_from_dirname"><code class="docutils literal notranslate"><span class="pre">initial_values_from_dirname()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.grids.io.html#posydon.grids.io.print_meta_contents"><code class="docutils literal notranslate"><span class="pre">print_meta_contents()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.grids.io.html#posydon.grids.io.read_initial_values"><code class="docutils literal notranslate"><span class="pre">read_initial_values()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.grids.post_processing.html"><code class="docutils literal notranslate"><span class="pre">add_post_processed_quantities()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.grids.post_processing.html#posydon.grids.post_processing.assign_core_collapse_quantities_none"><code class="docutils literal notranslate"><span class="pre">assign_core_collapse_quantities_none()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.grids.post_processing.html#posydon.grids.post_processing.post_process_grid"><code class="docutils literal notranslate"><span class="pre">post_process_grid()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.grids.post_processing.html#posydon.grids.post_processing.print_CC_quantities"><code class="docutils literal notranslate"><span class="pre">print_CC_quantities()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.grids.psygrid.html">I. CREATING A GRID</a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.grids.psygrid.html#ii-reading-data-from-grid">II. READING DATA FROM GRID</a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.grids.psygrid.html#iii-other-functions">III. OTHER FUNCTIONS</a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.grids.psygrid.html#warning-reducing-reading-times-when-accessing-a-psygrid">WARNING: reducing reading times when accessing a PSyGrid</a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.grids.psygrid.html#posydon.grids.psygrid.PSyGrid"><code class="docutils literal notranslate"><span class="pre">PSyGrid</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="posydon.grids.psygrid.html#posydon.grids.psygrid.PSyGrid.HR"><code class="docutils literal notranslate"><span class="pre">PSyGrid.HR()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.grids.psygrid.html#posydon.grids.psygrid.PSyGrid.add_column"><code class="docutils literal notranslate"><span class="pre">PSyGrid.add_column()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.grids.psygrid.html#posydon.grids.psygrid.PSyGrid.close"><code class="docutils literal notranslate"><span class="pre">PSyGrid.close()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.grids.psygrid.html#posydon.grids.psygrid.PSyGrid.create"><code class="docutils literal notranslate"><span class="pre">PSyGrid.create()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.grids.psygrid.html#posydon.grids.psygrid.PSyGrid.generate_config"><code class="docutils literal notranslate"><span class="pre">PSyGrid.generate_config()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.grids.psygrid.html#posydon.grids.psygrid.PSyGrid.get_pandas_initial_final"><code class="docutils literal notranslate"><span class="pre">PSyGrid.get_pandas_initial_final()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.grids.psygrid.html#posydon.grids.psygrid.PSyGrid.load"><code class="docutils literal notranslate"><span class="pre">PSyGrid.load()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.grids.psygrid.html#posydon.grids.psygrid.PSyGrid.plot"><code class="docutils literal notranslate"><span class="pre">PSyGrid.plot()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.grids.psygrid.html#posydon.grids.psygrid.PSyGrid.plot2D"><code class="docutils literal notranslate"><span class="pre">PSyGrid.plot2D()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.grids.psygrid.html#posydon.grids.psygrid.PSyGrid.rerun"><code class="docutils literal notranslate"><span class="pre">PSyGrid.rerun()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.grids.psygrid.html#posydon.grids.psygrid.PSyGrid.update_final_values"><code class="docutils literal notranslate"><span class="pre">PSyGrid.update_final_values()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.grids.psygrid.html#posydon.grids.psygrid.PSyGridIterator"><code class="docutils literal notranslate"><span class="pre">PSyGridIterator</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.grids.psygrid.html#posydon.grids.psygrid.PSyRunView"><code class="docutils literal notranslate"><span class="pre">PSyRunView</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.grids.psygrid.html#posydon.grids.psygrid.downsample_history"><code class="docutils literal notranslate"><span class="pre">downsample_history()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.grids.psygrid.html#posydon.grids.psygrid.downsample_profile"><code class="docutils literal notranslate"><span class="pre">downsample_profile()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.grids.psygrid.html#posydon.grids.psygrid.join_grids"><code class="docutils literal notranslate"><span class="pre">join_grids()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.grids.scrubbing.html"><code class="docutils literal notranslate"><span class="pre">keep_after_RLO()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.grids.scrubbing.html#posydon.grids.scrubbing.keep_till_central_abundance_He_C"><code class="docutils literal notranslate"><span class="pre">keep_till_central_abundance_He_C()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.grids.scrubbing.html#posydon.grids.scrubbing.scrub"><code class="docutils literal notranslate"><span class="pre">scrub()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.grids.termination_flags.html"><code class="docutils literal notranslate"><span class="pre">check_state_from_history()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.grids.termination_flags.html#posydon.grids.termination_flags.get_detected_initial_RLO"><code class="docutils literal notranslate"><span class="pre">get_detected_initial_RLO()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.grids.termination_flags.html#posydon.grids.termination_flags.get_flag_from_MESA_output"><code class="docutils literal notranslate"><span class="pre">get_flag_from_MESA_output()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.grids.termination_flags.html#posydon.grids.termination_flags.get_flags_from_MESA_run"><code class="docutils literal notranslate"><span class="pre">get_flags_from_MESA_run()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.grids.termination_flags.html#posydon.grids.termination_flags.get_mass_transfer_flag"><code class="docutils literal notranslate"><span class="pre">get_mass_transfer_flag()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.grids.termination_flags.html#posydon.grids.termination_flags.get_nearest_known_initial_RLO"><code class="docutils literal notranslate"><span class="pre">get_nearest_known_initial_RLO()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.grids.termination_flags.html#posydon.grids.termination_flags.infer_interpolation_class"><code class="docutils literal notranslate"><span class="pre">infer_interpolation_class()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.grids.html#module-posydon.grids">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="posydon.interpolation.html">posydon.interpolation package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="posydon.interpolation.html#submodules">Submodules</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="posydon.interpolation.IF_interpolation.html">I. Loading a Pretrained Interpolator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.interpolation.IF_interpolation.html#ii-training-the-interpolator">II. Training the Interpolator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.interpolation.IF_interpolation.html#iii-using-the-interpolator">III. Using the Interpolator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.interpolation.IF_interpolation.html#posydon.interpolation.IF_interpolation.BaseIFInterpolator"><code class="docutils literal notranslate"><span class="pre">BaseIFInterpolator</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="posydon.interpolation.IF_interpolation.html#posydon.interpolation.IF_interpolation.BaseIFInterpolator.evaluate"><code class="docutils literal notranslate"><span class="pre">BaseIFInterpolator.evaluate()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.interpolation.IF_interpolation.html#posydon.interpolation.IF_interpolation.BaseIFInterpolator.evaluate_mat"><code class="docutils literal notranslate"><span class="pre">BaseIFInterpolator.evaluate_mat()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.interpolation.IF_interpolation.html#posydon.interpolation.IF_interpolation.BaseIFInterpolator.load"><code class="docutils literal notranslate"><span class="pre">BaseIFInterpolator.load()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.interpolation.IF_interpolation.html#posydon.interpolation.IF_interpolation.BaseIFInterpolator.save"><code class="docutils literal notranslate"><span class="pre">BaseIFInterpolator.save()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.interpolation.IF_interpolation.html#posydon.interpolation.IF_interpolation.BaseIFInterpolator.test_classifier"><code class="docutils literal notranslate"><span class="pre">BaseIFInterpolator.test_classifier()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.interpolation.IF_interpolation.html#posydon.interpolation.IF_interpolation.BaseIFInterpolator.test_classifier_prob"><code class="docutils literal notranslate"><span class="pre">BaseIFInterpolator.test_classifier_prob()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.interpolation.IF_interpolation.html#posydon.interpolation.IF_interpolation.BaseIFInterpolator.test_classifiers"><code class="docutils literal notranslate"><span class="pre">BaseIFInterpolator.test_classifiers()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.interpolation.IF_interpolation.html#posydon.interpolation.IF_interpolation.BaseIFInterpolator.test_interpolator"><code class="docutils literal notranslate"><span class="pre">BaseIFInterpolator.test_interpolator()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.interpolation.IF_interpolation.html#posydon.interpolation.IF_interpolation.BaseIFInterpolator.train_classifier"><code class="docutils literal notranslate"><span class="pre">BaseIFInterpolator.train_classifier()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.interpolation.IF_interpolation.html#posydon.interpolation.IF_interpolation.BaseIFInterpolator.train_classifiers"><code class="docutils literal notranslate"><span class="pre">BaseIFInterpolator.train_classifiers()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.interpolation.IF_interpolation.html#posydon.interpolation.IF_interpolation.BaseIFInterpolator.train_interpolator"><code class="docutils literal notranslate"><span class="pre">BaseIFInterpolator.train_interpolator()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.interpolation.IF_interpolation.html#posydon.interpolation.IF_interpolation.Classifier"><code class="docutils literal notranslate"><span class="pre">Classifier</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="posydon.interpolation.IF_interpolation.html#posydon.interpolation.IF_interpolation.Classifier.predict"><code class="docutils literal notranslate"><span class="pre">Classifier.predict()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.interpolation.IF_interpolation.html#posydon.interpolation.IF_interpolation.Classifier.predict_prob"><code class="docutils literal notranslate"><span class="pre">Classifier.predict_prob()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.interpolation.IF_interpolation.html#posydon.interpolation.IF_interpolation.Classifier.train"><code class="docutils literal notranslate"><span class="pre">Classifier.train()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.interpolation.IF_interpolation.html#posydon.interpolation.IF_interpolation.Classifier.train_error"><code class="docutils literal notranslate"><span class="pre">Classifier.train_error()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.interpolation.IF_interpolation.html#posydon.interpolation.IF_interpolation.IFInterpolator"><code class="docutils literal notranslate"><span class="pre">IFInterpolator</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="posydon.interpolation.IF_interpolation.html#posydon.interpolation.IF_interpolation.IFInterpolator.evaluate"><code class="docutils literal notranslate"><span class="pre">IFInterpolator.evaluate()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.interpolation.IF_interpolation.html#posydon.interpolation.IF_interpolation.IFInterpolator.load"><code class="docutils literal notranslate"><span class="pre">IFInterpolator.load()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.interpolation.IF_interpolation.html#posydon.interpolation.IF_interpolation.IFInterpolator.save"><code class="docutils literal notranslate"><span class="pre">IFInterpolator.save()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.interpolation.IF_interpolation.html#posydon.interpolation.IF_interpolation.IFInterpolator.test_classifiers"><code class="docutils literal notranslate"><span class="pre">IFInterpolator.test_classifiers()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.interpolation.IF_interpolation.html#posydon.interpolation.IF_interpolation.IFInterpolator.test_interpolator"><code class="docutils literal notranslate"><span class="pre">IFInterpolator.test_interpolator()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.interpolation.IF_interpolation.html#posydon.interpolation.IF_interpolation.IFInterpolator.train"><code class="docutils literal notranslate"><span class="pre">IFInterpolator.train()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.interpolation.IF_interpolation.html#posydon.interpolation.IF_interpolation.Interpolator"><code class="docutils literal notranslate"><span class="pre">Interpolator</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="posydon.interpolation.IF_interpolation.html#posydon.interpolation.IF_interpolation.Interpolator.predict"><code class="docutils literal notranslate"><span class="pre">Interpolator.predict()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.interpolation.IF_interpolation.html#posydon.interpolation.IF_interpolation.Interpolator.train"><code class="docutils literal notranslate"><span class="pre">Interpolator.train()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.interpolation.IF_interpolation.html#posydon.interpolation.IF_interpolation.Interpolator.train_error"><code class="docutils literal notranslate"><span class="pre">Interpolator.train_error()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.interpolation.IF_interpolation.html#posydon.interpolation.IF_interpolation.KNNClassifier"><code class="docutils literal notranslate"><span class="pre">KNNClassifier</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="posydon.interpolation.IF_interpolation.html#posydon.interpolation.IF_interpolation.KNNClassifier.predict"><code class="docutils literal notranslate"><span class="pre">KNNClassifier.predict()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.interpolation.IF_interpolation.html#posydon.interpolation.IF_interpolation.KNNClassifier.predict_prob"><code class="docutils literal notranslate"><span class="pre">KNNClassifier.predict_prob()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.interpolation.IF_interpolation.html#posydon.interpolation.IF_interpolation.KNNClassifier.train"><code class="docutils literal notranslate"><span class="pre">KNNClassifier.train()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.interpolation.IF_interpolation.html#posydon.interpolation.IF_interpolation.KNNClassifier.xtrain"><code class="docutils literal notranslate"><span class="pre">KNNClassifier.xtrain()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.interpolation.IF_interpolation.html#posydon.interpolation.IF_interpolation.LinInterpolator"><code class="docutils literal notranslate"><span class="pre">LinInterpolator</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="posydon.interpolation.IF_interpolation.html#posydon.interpolation.IF_interpolation.LinInterpolator.predict"><code class="docutils literal notranslate"><span class="pre">LinInterpolator.predict()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.interpolation.IF_interpolation.html#posydon.interpolation.IF_interpolation.LinInterpolator.train"><code class="docutils literal notranslate"><span class="pre">LinInterpolator.train()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.interpolation.IF_interpolation.html#posydon.interpolation.IF_interpolation.MC_Interpolator"><code class="docutils literal notranslate"><span class="pre">MC_Interpolator</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="posydon.interpolation.IF_interpolation.html#posydon.interpolation.IF_interpolation.MC_Interpolator.predict"><code class="docutils literal notranslate"><span class="pre">MC_Interpolator.predict()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.interpolation.IF_interpolation.html#posydon.interpolation.IF_interpolation.MC_Interpolator.train"><code class="docutils literal notranslate"><span class="pre">MC_Interpolator.train()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.interpolation.IF_interpolation.html#posydon.interpolation.IF_interpolation.MatrixScaler"><code class="docutils literal notranslate"><span class="pre">MatrixScaler</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="posydon.interpolation.IF_interpolation.html#posydon.interpolation.IF_interpolation.MatrixScaler.denormalize"><code class="docutils literal notranslate"><span class="pre">MatrixScaler.denormalize()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.interpolation.IF_interpolation.html#posydon.interpolation.IF_interpolation.MatrixScaler.normalize"><code class="docutils literal notranslate"><span class="pre">MatrixScaler.normalize()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.interpolation.IF_interpolation.html#posydon.interpolation.IF_interpolation.NNInterpolator"><code class="docutils literal notranslate"><span class="pre">NNInterpolator</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="posydon.interpolation.IF_interpolation.html#posydon.interpolation.IF_interpolation.NNInterpolator.predict"><code class="docutils literal notranslate"><span class="pre">NNInterpolator.predict()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.interpolation.IF_interpolation.html#posydon.interpolation.IF_interpolation.NNInterpolator.train"><code class="docutils literal notranslate"><span class="pre">NNInterpolator.train()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.interpolation.IF_interpolation.html#posydon.interpolation.IF_interpolation.analize_nans"><code class="docutils literal notranslate"><span class="pre">analize_nans()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.interpolation.IF_interpolation.html#posydon.interpolation.IF_interpolation.analize_nones"><code class="docutils literal notranslate"><span class="pre">analize_nones()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.interpolation.IF_interpolation.html#posydon.interpolation.IF_interpolation.assess_models"><code class="docutils literal notranslate"><span class="pre">assess_models()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.interpolation.IF_interpolation.html#posydon.interpolation.IF_interpolation.heatmap"><code class="docutils literal notranslate"><span class="pre">heatmap()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.interpolation.IF_interpolation.html#posydon.interpolation.IF_interpolation.is_in_ball"><code class="docutils literal notranslate"><span class="pre">is_in_ball()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.interpolation.IF_interpolation.html#posydon.interpolation.IF_interpolation.plot_conf_matrix"><code class="docutils literal notranslate"><span class="pre">plot_conf_matrix()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.interpolation.IF_interpolation.html#posydon.interpolation.IF_interpolation.plot_interp_error"><code class="docutils literal notranslate"><span class="pre">plot_interp_error()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.interpolation.IF_interpolation.html#posydon.interpolation.IF_interpolation.plot_interpolation"><code class="docutils literal notranslate"><span class="pre">plot_interpolation()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.interpolation.IF_interpolation.html#posydon.interpolation.IF_interpolation.plot_mc_classifier"><code class="docutils literal notranslate"><span class="pre">plot_mc_classifier()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.interpolation.IF_interpolation.html#posydon.interpolation.IF_interpolation.test_mesh"><code class="docutils literal notranslate"><span class="pre">test_mesh()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.interpolation.IF_interpolation.html#posydon.interpolation.IF_interpolation.train_and_assess"><code class="docutils literal notranslate"><span class="pre">train_and_assess()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.interpolation.IF_interpolation.html#posydon.interpolation.IF_interpolation.xval_indices"><code class="docutils literal notranslate"><span class="pre">xval_indices()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.interpolation.constraints.html"><code class="docutils literal notranslate"><span class="pre">Lnuc_func()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.interpolation.constraints.html#posydon.interpolation.constraints.boltzman_constraint_func"><code class="docutils literal notranslate"><span class="pre">boltzman_constraint_func()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.interpolation.constraints.html#posydon.interpolation.constraints.check_order_of_constraints"><code class="docutils literal notranslate"><span class="pre">check_order_of_constraints()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.interpolation.constraints.html#posydon.interpolation.constraints.correct_inequality"><code class="docutils literal notranslate"><span class="pre">correct_inequality()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.interpolation.constraints.html#posydon.interpolation.constraints.correct_sum"><code class="docutils literal notranslate"><span class="pre">correct_sum()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.interpolation.constraints.html#posydon.interpolation.constraints.find_constraints_to_apply"><code class="docutils literal notranslate"><span class="pre">find_constraints_to_apply()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.interpolation.constraints.html#posydon.interpolation.constraints.get_thickness_n_radius"><code class="docutils literal notranslate"><span class="pre">get_thickness_n_radius()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.interpolation.constraints.html#posydon.interpolation.constraints.kepler_3rd_law_func"><code class="docutils literal notranslate"><span class="pre">kepler_3rd_law_func()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.interpolation.constraints.html#posydon.interpolation.constraints.lg_system_mdot_func"><code class="docutils literal notranslate"><span class="pre">lg_system_mdot_func()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.interpolation.constraints.html#posydon.interpolation.constraints.sanitize_interpolated_quantities"><code class="docutils literal notranslate"><span class="pre">sanitize_interpolated_quantities()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.interpolation.constraints.html#posydon.interpolation.constraints.xfer_fraction_func"><code class="docutils literal notranslate"><span class="pre">xfer_fraction_func()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.interpolation.data_scaling.html"><code class="docutils literal notranslate"><span class="pre">DataScaler</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="posydon.interpolation.data_scaling.html#posydon.interpolation.data_scaling.DataScaler.fit"><code class="docutils literal notranslate"><span class="pre">DataScaler.fit()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.interpolation.data_scaling.html#posydon.interpolation.data_scaling.DataScaler.fit_and_transform"><code class="docutils literal notranslate"><span class="pre">DataScaler.fit_and_transform()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.interpolation.data_scaling.html#posydon.interpolation.data_scaling.DataScaler.inv_transform"><code class="docutils literal notranslate"><span class="pre">DataScaler.inv_transform()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.interpolation.data_scaling.html#posydon.interpolation.data_scaling.DataScaler.transform"><code class="docutils literal notranslate"><span class="pre">DataScaler.transform()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.interpolation.eep.html"><code class="docutils literal notranslate"><span class="pre">EEP</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.interpolation.interpolation.html"><code class="docutils literal notranslate"><span class="pre">GRIDInterpolator</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="posydon.interpolation.interpolation.html#posydon.interpolation.interpolation.GRIDInterpolator.path"><code class="docutils literal notranslate"><span class="pre">GRIDInterpolator.path</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.interpolation.interpolation.html#posydon.interpolation.interpolation.GRIDInterpolator.keys"><code class="docutils literal notranslate"><span class="pre">GRIDInterpolator.keys</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.interpolation.interpolation.html#posydon.interpolation.interpolation.GRIDInterpolator.close"><code class="docutils literal notranslate"><span class="pre">GRIDInterpolator.close()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.interpolation.interpolation.html#posydon.interpolation.interpolation.GRIDInterpolator.get"><code class="docutils literal notranslate"><span class="pre">GRIDInterpolator.get()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.interpolation.interpolation.html#posydon.interpolation.interpolation.GRIDInterpolator.get_final_state"><code class="docutils literal notranslate"><span class="pre">GRIDInterpolator.get_final_state()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.interpolation.interpolation.html#posydon.interpolation.interpolation.GRIDInterpolator.get_final_values"><code class="docutils literal notranslate"><span class="pre">GRIDInterpolator.get_final_values()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.interpolation.interpolation.html#posydon.interpolation.interpolation.GRIDInterpolator.get_masses_gridfiles"><code class="docutils literal notranslate"><span class="pre">GRIDInterpolator.get_masses_gridfiles()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.interpolation.interpolation.html#posydon.interpolation.interpolation.GRIDInterpolator.get_profile"><code class="docutils literal notranslate"><span class="pre">GRIDInterpolator.get_profile()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.interpolation.interpolation.html#posydon.interpolation.interpolation.GRIDInterpolator.load_grid"><code class="docutils literal notranslate"><span class="pre">GRIDInterpolator.load_grid()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.interpolation.interpolation.html#posydon.interpolation.interpolation.fscale"><code class="docutils literal notranslate"><span class="pre">fscale()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.interpolation.interpolation.html#posydon.interpolation.interpolation.inv_scaler"><code class="docutils literal notranslate"><span class="pre">inv_scaler()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.interpolation.interpolation.html#posydon.interpolation.interpolation.psyTrackInterp"><code class="docutils literal notranslate"><span class="pre">psyTrackInterp</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="posydon.interpolation.interpolation.html#posydon.interpolation.interpolation.psyTrackInterp.close"><code class="docutils literal notranslate"><span class="pre">psyTrackInterp.close()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.interpolation.interpolation.html#posydon.interpolation.interpolation.psyTrackInterp.evaluate"><code class="docutils literal notranslate"><span class="pre">psyTrackInterp.evaluate()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.interpolation.interpolation.html#posydon.interpolation.interpolation.psyTrackInterp.load"><code class="docutils literal notranslate"><span class="pre">psyTrackInterp.load()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.interpolation.interpolation.html#posydon.interpolation.interpolation.psyTrackInterp.save"><code class="docutils literal notranslate"><span class="pre">psyTrackInterp.save()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.interpolation.interpolation.html#posydon.interpolation.interpolation.psyTrackInterp.train"><code class="docutils literal notranslate"><span class="pre">psyTrackInterp.train()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.interpolation.interpolation.html#posydon.interpolation.interpolation.scaler"><code class="docutils literal notranslate"><span class="pre">scaler()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.interpolation.html#module-posydon.interpolation">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="posydon.popsyn.html">posydon.popsyn package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="posydon.popsyn.html#submodules">Submodules</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="posydon.popsyn.GRB.html"><code class="docutils literal notranslate"><span class="pre">get_GRB_properties()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.popsyn.analysis.html"><code class="docutils literal notranslate"><span class="pre">get_subsets()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.popsyn.analysis.html#posydon.popsyn.analysis.report_columns"><code class="docutils literal notranslate"><span class="pre">report_columns()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.popsyn.binarypopulation.html"><code class="docutils literal notranslate"><span class="pre">BinaryGenerator</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="posydon.popsyn.binarypopulation.html#posydon.popsyn.binarypopulation.BinaryGenerator.draw_initial_binary"><code class="docutils literal notranslate"><span class="pre">BinaryGenerator.draw_initial_binary()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.popsyn.binarypopulation.html#posydon.popsyn.binarypopulation.BinaryGenerator.draw_initial_samples"><code class="docutils literal notranslate"><span class="pre">BinaryGenerator.draw_initial_samples()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.popsyn.binarypopulation.html#posydon.popsyn.binarypopulation.BinaryGenerator.get_binary_by_iter"><code class="docutils literal notranslate"><span class="pre">BinaryGenerator.get_binary_by_iter()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.popsyn.binarypopulation.html#posydon.popsyn.binarypopulation.BinaryGenerator.get_original_rng"><code class="docutils literal notranslate"><span class="pre">BinaryGenerator.get_original_rng()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.popsyn.binarypopulation.html#posydon.popsyn.binarypopulation.BinaryGenerator.reset_rng"><code class="docutils literal notranslate"><span class="pre">BinaryGenerator.reset_rng()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.popsyn.binarypopulation.html#posydon.popsyn.binarypopulation.BinaryPopulation"><code class="docutils literal notranslate"><span class="pre">BinaryPopulation</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="posydon.popsyn.binarypopulation.html#posydon.popsyn.binarypopulation.BinaryPopulation.close"><code class="docutils literal notranslate"><span class="pre">BinaryPopulation.close()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.popsyn.binarypopulation.html#posydon.popsyn.binarypopulation.BinaryPopulation.combine_saved_files"><code class="docutils literal notranslate"><span class="pre">BinaryPopulation.combine_saved_files()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.popsyn.binarypopulation.html#posydon.popsyn.binarypopulation.BinaryPopulation.evolve"><code class="docutils literal notranslate"><span class="pre">BinaryPopulation.evolve()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.popsyn.binarypopulation.html#posydon.popsyn.binarypopulation.BinaryPopulation.from_ini"><code class="docutils literal notranslate"><span class="pre">BinaryPopulation.from_ini()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.popsyn.binarypopulation.html#posydon.popsyn.binarypopulation.BinaryPopulation.make_temp_fname"><code class="docutils literal notranslate"><span class="pre">BinaryPopulation.make_temp_fname()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.popsyn.binarypopulation.html#posydon.popsyn.binarypopulation.BinaryPopulation.save"><code class="docutils literal notranslate"><span class="pre">BinaryPopulation.save()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.popsyn.binarypopulation.html#posydon.popsyn.binarypopulation.PopulationManager"><code class="docutils literal notranslate"><span class="pre">PopulationManager</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="posydon.popsyn.binarypopulation.html#posydon.popsyn.binarypopulation.PopulationManager.append"><code class="docutils literal notranslate"><span class="pre">PopulationManager.append()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.popsyn.binarypopulation.html#posydon.popsyn.binarypopulation.PopulationManager.breakdown_to_df"><code class="docutils literal notranslate"><span class="pre">PopulationManager.breakdown_to_df()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.popsyn.binarypopulation.html#posydon.popsyn.binarypopulation.PopulationManager.clear_dfs"><code class="docutils literal notranslate"><span class="pre">PopulationManager.clear_dfs()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.popsyn.binarypopulation.html#posydon.popsyn.binarypopulation.PopulationManager.close"><code class="docutils literal notranslate"><span class="pre">PopulationManager.close()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.popsyn.binarypopulation.html#posydon.popsyn.binarypopulation.PopulationManager.find_failed"><code class="docutils literal notranslate"><span class="pre">PopulationManager.find_failed()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.popsyn.binarypopulation.html#posydon.popsyn.binarypopulation.PopulationManager.from_hdf"><code class="docutils literal notranslate"><span class="pre">PopulationManager.from_hdf()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.popsyn.binarypopulation.html#posydon.popsyn.binarypopulation.PopulationManager.generate"><code class="docutils literal notranslate"><span class="pre">PopulationManager.generate()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.popsyn.binarypopulation.html#posydon.popsyn.binarypopulation.PopulationManager.remove"><code class="docutils literal notranslate"><span class="pre">PopulationManager.remove()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.popsyn.binarypopulation.html#posydon.popsyn.binarypopulation.PopulationManager.save"><code class="docutils literal notranslate"><span class="pre">PopulationManager.save()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.popsyn.binarypopulation.html#posydon.popsyn.binarypopulation.PopulationManager.to_df"><code class="docutils literal notranslate"><span class="pre">PopulationManager.to_df()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.popsyn.binarypopulation.html#posydon.popsyn.binarypopulation.PopulationManager.to_oneline_df"><code class="docutils literal notranslate"><span class="pre">PopulationManager.to_oneline_df()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.popsyn.independent_sample.html"><code class="docutils literal notranslate"><span class="pre">binary_fraction_value()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.popsyn.independent_sample.html#posydon.popsyn.independent_sample.generate_eccentricities"><code class="docutils literal notranslate"><span class="pre">generate_eccentricities()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.popsyn.independent_sample.html#posydon.popsyn.independent_sample.generate_independent_samples"><code class="docutils literal notranslate"><span class="pre">generate_independent_samples()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.popsyn.independent_sample.html#posydon.popsyn.independent_sample.generate_orbital_periods"><code class="docutils literal notranslate"><span class="pre">generate_orbital_periods()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.popsyn.independent_sample.html#posydon.popsyn.independent_sample.generate_orbital_separations"><code class="docutils literal notranslate"><span class="pre">generate_orbital_separations()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.popsyn.independent_sample.html#posydon.popsyn.independent_sample.generate_primary_masses"><code class="docutils literal notranslate"><span class="pre">generate_primary_masses()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.popsyn.independent_sample.html#posydon.popsyn.independent_sample.generate_secondary_masses"><code class="docutils literal notranslate"><span class="pre">generate_secondary_masses()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.popsyn.io.html"><code class="docutils literal notranslate"><span class="pre">binarypop_kwargs_from_ini()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.popsyn.io.html#posydon.popsyn.io.clean_binary_history_df"><code class="docutils literal notranslate"><span class="pre">clean_binary_history_df()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.popsyn.io.html#posydon.popsyn.io.clean_binary_oneline_df"><code class="docutils literal notranslate"><span class="pre">clean_binary_oneline_df()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.popsyn.io.html#posydon.popsyn.io.parse_inifile"><code class="docutils literal notranslate"><span class="pre">parse_inifile()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.popsyn.io.html#posydon.popsyn.io.simprop_kwargs_from_ini"><code class="docutils literal notranslate"><span class="pre">simprop_kwargs_from_ini()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.popsyn.normalized_pop_mass.html"><code class="docutils literal notranslate"><span class="pre">initial_total_underlying_mass()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.popsyn.rate_calculation.html"><code class="docutils literal notranslate"><span class="pre">Rates</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="posydon.popsyn.rate_calculation.html#posydon.popsyn.rate_calculation.Rates.chi_eff"><code class="docutils literal notranslate"><span class="pre">Rates.chi_eff()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.popsyn.rate_calculation.html#posydon.popsyn.rate_calculation.Rates.compute_GRB_rate_weights"><code class="docutils literal notranslate"><span class="pre">Rates.compute_GRB_rate_weights()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.popsyn.rate_calculation.html#posydon.popsyn.rate_calculation.Rates.compute_merger_rate_weights"><code class="docutils literal notranslate"><span class="pre">Rates.compute_merger_rate_weights()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.popsyn.rate_calculation.html#posydon.popsyn.rate_calculation.Rates.compute_rate_density"><code class="docutils literal notranslate"><span class="pre">Rates.compute_rate_density()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.popsyn.rate_calculation.html#posydon.popsyn.rate_calculation.Rates.get_centers_metallicity_bins"><code class="docutils literal notranslate"><span class="pre">Rates.get_centers_metallicity_bins()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.popsyn.rate_calculation.html#posydon.popsyn.rate_calculation.Rates.get_centers_redshift_bins"><code class="docutils literal notranslate"><span class="pre">Rates.get_centers_redshift_bins()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.popsyn.rate_calculation.html#posydon.popsyn.rate_calculation.Rates.get_comoving_disntance_from_redshift"><code class="docutils literal notranslate"><span class="pre">Rates.get_comoving_disntance_from_redshift()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.popsyn.rate_calculation.html#posydon.popsyn.rate_calculation.Rates.get_cosmic_time_at_dco_merger"><code class="docutils literal notranslate"><span class="pre">Rates.get_cosmic_time_at_dco_merger()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.popsyn.rate_calculation.html#posydon.popsyn.rate_calculation.Rates.get_cosmic_time_from_redshift"><code class="docutils literal notranslate"><span class="pre">Rates.get_cosmic_time_from_redshift()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.popsyn.rate_calculation.html#posydon.popsyn.rate_calculation.Rates.get_data"><code class="docutils literal notranslate"><span class="pre">Rates.get_data()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.popsyn.rate_calculation.html#posydon.popsyn.rate_calculation.Rates.get_edges_metallicity_bins"><code class="docutils literal notranslate"><span class="pre">Rates.get_edges_metallicity_bins()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.popsyn.rate_calculation.html#posydon.popsyn.rate_calculation.Rates.get_edges_redshift_bins"><code class="docutils literal notranslate"><span class="pre">Rates.get_edges_redshift_bins()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.popsyn.rate_calculation.html#posydon.popsyn.rate_calculation.Rates.get_redshift_at_dco_merger"><code class="docutils literal notranslate"><span class="pre">Rates.get_redshift_at_dco_merger()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.popsyn.rate_calculation.html#posydon.popsyn.rate_calculation.Rates.get_redshift_from_cosmic_time"><code class="docutils literal notranslate"><span class="pre">Rates.get_redshift_from_cosmic_time()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.popsyn.rate_calculation.html#posydon.popsyn.rate_calculation.Rates.get_redshift_from_cosmic_time_interpolator"><code class="docutils literal notranslate"><span class="pre">Rates.get_redshift_from_cosmic_time_interpolator()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.popsyn.rate_calculation.html#posydon.popsyn.rate_calculation.Rates.get_shell_comovig_volume"><code class="docutils literal notranslate"><span class="pre">Rates.get_shell_comovig_volume()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.popsyn.rate_calculation.html#posydon.popsyn.rate_calculation.Rates.get_time_GRB"><code class="docutils literal notranslate"><span class="pre">Rates.get_time_GRB()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.popsyn.rate_calculation.html#posydon.popsyn.rate_calculation.Rates.load_grb_rate_weights"><code class="docutils literal notranslate"><span class="pre">Rates.load_grb_rate_weights()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.popsyn.rate_calculation.html#posydon.popsyn.rate_calculation.Rates.load_merger_rate_weights"><code class="docutils literal notranslate"><span class="pre">Rates.load_merger_rate_weights()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.popsyn.rate_calculation.html#posydon.popsyn.rate_calculation.Rates.m_chirp"><code class="docutils literal notranslate"><span class="pre">Rates.m_chirp()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.popsyn.rate_calculation.html#posydon.popsyn.rate_calculation.Rates.mass_ratio"><code class="docutils literal notranslate"><span class="pre">Rates.mass_ratio()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.popsyn.rate_calculation.html#posydon.popsyn.rate_calculation.Rates.merger_rate_weight"><code class="docutils literal notranslate"><span class="pre">Rates.merger_rate_weight()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.popsyn.selection_effects.html"><code class="docutils literal notranslate"><span class="pre">KNNmodel</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="posydon.popsyn.selection_effects.html#posydon.popsyn.selection_effects.KNNmodel.normalize"><code class="docutils literal notranslate"><span class="pre">KNNmodel.normalize()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.popsyn.selection_effects.html#posydon.popsyn.selection_effects.KNNmodel.predict_pdet"><code class="docutils literal notranslate"><span class="pre">KNNmodel.predict_pdet()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.popsyn.star_formation_history.html"><code class="docutils literal notranslate"><span class="pre">fractional_SFR_at_given_redshift()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.popsyn.star_formation_history.html#posydon.popsyn.star_formation_history.get_formation_times"><code class="docutils literal notranslate"><span class="pre">get_formation_times()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.popsyn.star_formation_history.html#posydon.popsyn.star_formation_history.get_illustrisTNG_data"><code class="docutils literal notranslate"><span class="pre">get_illustrisTNG_data()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.popsyn.star_formation_history.html#posydon.popsyn.star_formation_history.integrated_SFRH_over_redshift"><code class="docutils literal notranslate"><span class="pre">integrated_SFRH_over_redshift()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.popsyn.star_formation_history.html#posydon.popsyn.star_formation_history.mean_metallicity"><code class="docutils literal notranslate"><span class="pre">mean_metallicity()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.popsyn.star_formation_history.html#posydon.popsyn.star_formation_history.star_formation_rate"><code class="docutils literal notranslate"><span class="pre">star_formation_rate()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.popsyn.star_formation_history.html#posydon.popsyn.star_formation_history.std_log_metallicity_dist"><code class="docutils literal notranslate"><span class="pre">std_log_metallicity_dist()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.popsyn.synthetic_population.html"><code class="docutils literal notranslate"><span class="pre">SyntheticPopulation</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="posydon.popsyn.synthetic_population.html#posydon.popsyn.synthetic_population.SyntheticPopulation.apply_logic"><code class="docutils literal notranslate"><span class="pre">SyntheticPopulation.apply_logic()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.popsyn.synthetic_population.html#posydon.popsyn.synthetic_population.SyntheticPopulation.compute_cosmological_weights"><code class="docutils literal notranslate"><span class="pre">SyntheticPopulation.compute_cosmological_weights()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.popsyn.synthetic_population.html#posydon.popsyn.synthetic_population.SyntheticPopulation.create_met_prefix"><code class="docutils literal notranslate"><span class="pre">SyntheticPopulation.create_met_prefix()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.popsyn.synthetic_population.html#posydon.popsyn.synthetic_population.SyntheticPopulation.evolve"><code class="docutils literal notranslate"><span class="pre">SyntheticPopulation.evolve()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.popsyn.synthetic_population.html#posydon.popsyn.synthetic_population.SyntheticPopulation.get_dco_at_formation"><code class="docutils literal notranslate"><span class="pre">SyntheticPopulation.get_dco_at_formation()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.popsyn.synthetic_population.html#posydon.popsyn.synthetic_population.SyntheticPopulation.get_dco_detection_rate"><code class="docutils literal notranslate"><span class="pre">SyntheticPopulation.get_dco_detection_rate()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.popsyn.synthetic_population.html#posydon.popsyn.synthetic_population.SyntheticPopulation.get_dco_merger_efficiency"><code class="docutils literal notranslate"><span class="pre">SyntheticPopulation.get_dco_merger_efficiency()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.popsyn.synthetic_population.html#posydon.popsyn.synthetic_population.SyntheticPopulation.get_dco_merger_rate_density"><code class="docutils literal notranslate"><span class="pre">SyntheticPopulation.get_dco_merger_rate_density()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.popsyn.synthetic_population.html#posydon.popsyn.synthetic_population.SyntheticPopulation.get_formation_channels"><code class="docutils literal notranslate"><span class="pre">SyntheticPopulation.get_formation_channels()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.popsyn.synthetic_population.html#posydon.popsyn.synthetic_population.SyntheticPopulation.get_grb_rate_density"><code class="docutils literal notranslate"><span class="pre">SyntheticPopulation.get_grb_rate_density()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.popsyn.synthetic_population.html#posydon.popsyn.synthetic_population.SyntheticPopulation.get_ini_kw"><code class="docutils literal notranslate"><span class="pre">SyntheticPopulation.get_ini_kw()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.popsyn.synthetic_population.html#posydon.popsyn.synthetic_population.SyntheticPopulation.load_intrinsic_pop"><code class="docutils literal notranslate"><span class="pre">SyntheticPopulation.load_intrinsic_pop()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.popsyn.synthetic_population.html#posydon.popsyn.synthetic_population.SyntheticPopulation.load_observable_pop"><code class="docutils literal notranslate"><span class="pre">SyntheticPopulation.load_observable_pop()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.popsyn.synthetic_population.html#posydon.popsyn.synthetic_population.SyntheticPopulation.load_pop"><code class="docutils literal notranslate"><span class="pre">SyntheticPopulation.load_pop()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.popsyn.synthetic_population.html#posydon.popsyn.synthetic_population.SyntheticPopulation.load_synthetic_pop"><code class="docutils literal notranslate"><span class="pre">SyntheticPopulation.load_synthetic_pop()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.popsyn.synthetic_population.html#posydon.popsyn.synthetic_population.SyntheticPopulation.parse"><code class="docutils literal notranslate"><span class="pre">SyntheticPopulation.parse()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.popsyn.synthetic_population.html#posydon.popsyn.synthetic_population.SyntheticPopulation.plot_hist_properties"><code class="docutils literal notranslate"><span class="pre">SyntheticPopulation.plot_hist_properties()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.popsyn.synthetic_population.html#posydon.popsyn.synthetic_population.SyntheticPopulation.plot_merger_efficiency"><code class="docutils literal notranslate"><span class="pre">SyntheticPopulation.plot_merger_efficiency()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.popsyn.synthetic_population.html#posydon.popsyn.synthetic_population.SyntheticPopulation.plot_popsyn_over_grid_slice"><code class="docutils literal notranslate"><span class="pre">SyntheticPopulation.plot_popsyn_over_grid_slice()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.popsyn.synthetic_population.html#posydon.popsyn.synthetic_population.SyntheticPopulation.plot_rate_density"><code class="docutils literal notranslate"><span class="pre">SyntheticPopulation.plot_rate_density()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.popsyn.synthetic_population.html#posydon.popsyn.synthetic_population.SyntheticPopulation.resample_synthetic_population"><code class="docutils literal notranslate"><span class="pre">SyntheticPopulation.resample_synthetic_population()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.popsyn.synthetic_population.html#posydon.popsyn.synthetic_population.SyntheticPopulation.save_intrinsic_pop"><code class="docutils literal notranslate"><span class="pre">SyntheticPopulation.save_intrinsic_pop()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.popsyn.synthetic_population.html#posydon.popsyn.synthetic_population.SyntheticPopulation.save_observable_pop"><code class="docutils literal notranslate"><span class="pre">SyntheticPopulation.save_observable_pop()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.popsyn.synthetic_population.html#posydon.popsyn.synthetic_population.SyntheticPopulation.save_pop"><code class="docutils literal notranslate"><span class="pre">SyntheticPopulation.save_pop()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.popsyn.synthetic_population.html#posydon.popsyn.synthetic_population.SyntheticPopulation.save_synthetic_pop"><code class="docutils literal notranslate"><span class="pre">SyntheticPopulation.save_synthetic_pop()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.popsyn.html#module-posydon.popsyn">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="posydon.utils.html">posydon.utils package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="posydon.utils.html#submodules">Submodules</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="posydon.utils.common_functions.html"><code class="docutils literal notranslate"><span class="pre">BSE_to_POSYDON()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.utils.common_functions.html#posydon.utils.common_functions.CEE_parameters_from_core_abundance_thresholds"><code class="docutils literal notranslate"><span class="pre">CEE_parameters_from_core_abundance_thresholds()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.utils.common_functions.html#posydon.utils.common_functions.CO_radius"><code class="docutils literal notranslate"><span class="pre">CO_radius()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.utils.common_functions.html#posydon.utils.common_functions.He_MS_lifetime"><code class="docutils literal notranslate"><span class="pre">He_MS_lifetime()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.utils.common_functions.html#posydon.utils.common_functions.POSYDON_to_BSE"><code class="docutils literal notranslate"><span class="pre">POSYDON_to_BSE()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.utils.common_functions.html#posydon.utils.common_functions.PchipInterpolator2"><code class="docutils literal notranslate"><span class="pre">PchipInterpolator2</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.utils.common_functions.html#posydon.utils.common_functions.Schwarzschild_Radius"><code class="docutils literal notranslate"><span class="pre">Schwarzschild_Radius()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.utils.common_functions.html#posydon.utils.common_functions.beaming"><code class="docutils literal notranslate"><span class="pre">beaming()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.utils.common_functions.html#posydon.utils.common_functions.bondi_hoyle"><code class="docutils literal notranslate"><span class="pre">bondi_hoyle()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.utils.common_functions.html#posydon.utils.common_functions.calculate_H2recombination_energy"><code class="docutils literal notranslate"><span class="pre">calculate_H2recombination_energy()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.utils.common_functions.html#posydon.utils.common_functions.calculate_Patton20_values_at_He_depl"><code class="docutils literal notranslate"><span class="pre">calculate_Patton20_values_at_He_depl()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.utils.common_functions.html#posydon.utils.common_functions.calculate_binding_energy"><code class="docutils literal notranslate"><span class="pre">calculate_binding_energy()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.utils.common_functions.html#posydon.utils.common_functions.calculate_core_boundary"><code class="docutils literal notranslate"><span class="pre">calculate_core_boundary()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.utils.common_functions.html#posydon.utils.common_functions.calculate_lambda_from_profile"><code class="docutils literal notranslate"><span class="pre">calculate_lambda_from_profile()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.utils.common_functions.html#posydon.utils.common_functions.calculate_recombination_energy"><code class="docutils literal notranslate"><span class="pre">calculate_recombination_energy()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.utils.common_functions.html#posydon.utils.common_functions.check_state_of_star"><code class="docutils literal notranslate"><span class="pre">check_state_of_star()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.utils.common_functions.html#posydon.utils.common_functions.check_state_of_star_history_array"><code class="docutils literal notranslate"><span class="pre">check_state_of_star_history_array()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.utils.common_functions.html#posydon.utils.common_functions.convert_metallicity_to_string"><code class="docutils literal notranslate"><span class="pre">convert_metallicity_to_string()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.utils.common_functions.html#posydon.utils.common_functions.cumulative_mass_transfer_flag"><code class="docutils literal notranslate"><span class="pre">cumulative_mass_transfer_flag()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.utils.common_functions.html#posydon.utils.common_functions.cumulative_mass_transfer_numeric"><code class="docutils literal notranslate"><span class="pre">cumulative_mass_transfer_numeric()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.utils.common_functions.html#posydon.utils.common_functions.cumulative_mass_transfer_string"><code class="docutils literal notranslate"><span class="pre">cumulative_mass_transfer_string()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.utils.common_functions.html#posydon.utils.common_functions.eddington_limit"><code class="docutils literal notranslate"><span class="pre">eddington_limit()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.utils.common_functions.html#posydon.utils.common_functions.flip_stars"><code class="docutils literal notranslate"><span class="pre">flip_stars()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.utils.common_functions.html#posydon.utils.common_functions.get_binary_state_and_event_and_mt_case"><code class="docutils literal notranslate"><span class="pre">get_binary_state_and_event_and_mt_case()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.utils.common_functions.html#posydon.utils.common_functions.get_binary_state_and_event_and_mt_case_array"><code class="docutils literal notranslate"><span class="pre">get_binary_state_and_event_and_mt_case_array()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.utils.common_functions.html#posydon.utils.common_functions.get_internal_energy_from_profile"><code class="docutils literal notranslate"><span class="pre">get_internal_energy_from_profile()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.utils.common_functions.html#posydon.utils.common_functions.get_mass_radius_dm_from_profile"><code class="docutils literal notranslate"><span class="pre">get_mass_radius_dm_from_profile()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.utils.common_functions.html#posydon.utils.common_functions.histogram_sampler"><code class="docutils literal notranslate"><span class="pre">histogram_sampler()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.utils.common_functions.html#posydon.utils.common_functions.infer_mass_transfer_case"><code class="docutils literal notranslate"><span class="pre">infer_mass_transfer_case()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.utils.common_functions.html#posydon.utils.common_functions.infer_star_state"><code class="docutils literal notranslate"><span class="pre">infer_star_state()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.utils.common_functions.html#posydon.utils.common_functions.initialize_empty_array"><code class="docutils literal notranslate"><span class="pre">initialize_empty_array()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.utils.common_functions.html#posydon.utils.common_functions.inspiral_timescale_from_orbital_period"><code class="docutils literal notranslate"><span class="pre">inspiral_timescale_from_orbital_period()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.utils.common_functions.html#posydon.utils.common_functions.inspiral_timescale_from_separation"><code class="docutils literal notranslate"><span class="pre">inspiral_timescale_from_separation()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.utils.common_functions.html#posydon.utils.common_functions.inverse_sampler"><code class="docutils literal notranslate"><span class="pre">inverse_sampler()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.utils.common_functions.html#posydon.utils.common_functions.is_number"><code class="docutils literal notranslate"><span class="pre">is_number()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.utils.common_functions.html#posydon.utils.common_functions.linear_interpolation_between_two_cells"><code class="docutils literal notranslate"><span class="pre">linear_interpolation_between_two_cells()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.utils.common_functions.html#posydon.utils.common_functions.orbital_period_from_separation"><code class="docutils literal notranslate"><span class="pre">orbital_period_from_separation()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.utils.common_functions.html#posydon.utils.common_functions.orbital_separation_from_period"><code class="docutils literal notranslate"><span class="pre">orbital_separation_from_period()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.utils.common_functions.html#posydon.utils.common_functions.period_change_stabe_MT"><code class="docutils literal notranslate"><span class="pre">period_change_stabe_MT()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.utils.common_functions.html#posydon.utils.common_functions.period_evol_wind_loss"><code class="docutils literal notranslate"><span class="pre">period_evol_wind_loss()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.utils.common_functions.html#posydon.utils.common_functions.profile_recomb_energy"><code class="docutils literal notranslate"><span class="pre">profile_recomb_energy()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.utils.common_functions.html#posydon.utils.common_functions.read_histogram_from_file"><code class="docutils literal notranslate"><span class="pre">read_histogram_from_file()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.utils.common_functions.html#posydon.utils.common_functions.rejection_sampler"><code class="docutils literal notranslate"><span class="pre">rejection_sampler()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.utils.common_functions.html#posydon.utils.common_functions.roche_lobe_radius"><code class="docutils literal notranslate"><span class="pre">roche_lobe_radius()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.utils.common_functions.html#posydon.utils.common_functions.rzams"><code class="docutils literal notranslate"><span class="pre">rzams()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.utils.common_functions.html#posydon.utils.common_functions.separation_evol_wind_loss"><code class="docutils literal notranslate"><span class="pre">separation_evol_wind_loss()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.utils.common_functions.html#posydon.utils.common_functions.spin_stable_mass_transfer"><code class="docutils literal notranslate"><span class="pre">spin_stable_mass_transfer()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.utils.common_functions.html#posydon.utils.common_functions.stefan_boltzmann_law"><code class="docutils literal notranslate"><span class="pre">stefan_boltzmann_law()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.utils.configfile.html"><code class="docutils literal notranslate"><span class="pre">ConfigFile</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="posydon.utils.configfile.html#posydon.utils.configfile.ConfigFile.deepcopy"><code class="docutils literal notranslate"><span class="pre">ConfigFile.deepcopy()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.utils.configfile.html#posydon.utils.configfile.ConfigFile.items"><code class="docutils literal notranslate"><span class="pre">ConfigFile.items()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.utils.configfile.html#posydon.utils.configfile.ConfigFile.keys"><code class="docutils literal notranslate"><span class="pre">ConfigFile.keys()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.utils.configfile.html#posydon.utils.configfile.ConfigFile.load"><code class="docutils literal notranslate"><span class="pre">ConfigFile.load()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.utils.configfile.html#posydon.utils.configfile.ConfigFile.save"><code class="docutils literal notranslate"><span class="pre">ConfigFile.save()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.utils.configfile.html#posydon.utils.configfile.ConfigFile.update"><code class="docutils literal notranslate"><span class="pre">ConfigFile.update()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.utils.configfile.html#posydon.utils.configfile.ConfigFile.values"><code class="docutils literal notranslate"><span class="pre">ConfigFile.values()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.utils.configfile.html#posydon.utils.configfile.VariableKey"><code class="docutils literal notranslate"><span class="pre">VariableKey</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.utils.configfile.html#posydon.utils.configfile.parse_inifile"><code class="docutils literal notranslate"><span class="pre">parse_inifile()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.utils.data_download.html"><code class="docutils literal notranslate"><span class="pre">ProgressBar</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.utils.data_download.html#posydon.utils.data_download.data_download"><code class="docutils literal notranslate"><span class="pre">data_download()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.utils.gridutils.html"><code class="docutils literal notranslate"><span class="pre">T_merger_P()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.utils.gridutils.html#posydon.utils.gridutils.T_merger_a"><code class="docutils literal notranslate"><span class="pre">T_merger_a()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.utils.gridutils.html#posydon.utils.gridutils.add_field"><code class="docutils literal notranslate"><span class="pre">add_field()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.utils.gridutils.html#posydon.utils.gridutils.beta_gw"><code class="docutils literal notranslate"><span class="pre">beta_gw()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.utils.gridutils.html#posydon.utils.gridutils.clean_inlist_file"><code class="docutils literal notranslate"><span class="pre">clean_inlist_file()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.utils.gridutils.html#posydon.utils.gridutils.convert_output_to_table"><code class="docutils literal notranslate"><span class="pre">convert_output_to_table()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.utils.gridutils.html#posydon.utils.gridutils.find_index_nearest_neighbour"><code class="docutils literal notranslate"><span class="pre">find_index_nearest_neighbour()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.utils.gridutils.html#posydon.utils.gridutils.find_nearest"><code class="docutils literal notranslate"><span class="pre">find_nearest()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.utils.gridutils.html#posydon.utils.gridutils.fix_He_core"><code class="docutils literal notranslate"><span class="pre">fix_He_core()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.utils.gridutils.html#posydon.utils.gridutils.get_cell_edges"><code class="docutils literal notranslate"><span class="pre">get_cell_edges()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.utils.gridutils.html#posydon.utils.gridutils.get_final_proposed_points"><code class="docutils literal notranslate"><span class="pre">get_final_proposed_points()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.utils.gridutils.html#posydon.utils.gridutils.get_new_grid_name"><code class="docutils literal notranslate"><span class="pre">get_new_grid_name()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.utils.gridutils.html#posydon.utils.gridutils.join_lists"><code class="docutils literal notranslate"><span class="pre">join_lists()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.utils.gridutils.html#posydon.utils.gridutils.kepler3_a"><code class="docutils literal notranslate"><span class="pre">kepler3_a()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.utils.gridutils.html#posydon.utils.gridutils.read_EEP_data_file"><code class="docutils literal notranslate"><span class="pre">read_EEP_data_file()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.utils.gridutils.html#posydon.utils.gridutils.read_MESA_data_file"><code class="docutils literal notranslate"><span class="pre">read_MESA_data_file()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.utils.html#module-posydon.utils">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="posydon.visualization.html">posydon.visualization package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="posydon.visualization.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="posydon.visualization.VH_diagram.html">posydon.visualization.VH_diagram package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="posydon.visualization.VH_diagram.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.visualization.VH_diagram.html#module-posydon.visualization.VH_diagram">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.visualization.html#submodules">Submodules</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="posydon.visualization.VHdiagram.html"><code class="docutils literal notranslate"><span class="pre">DisplayMode</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="posydon.visualization.VHdiagram.html#posydon.visualization.VHdiagram.DisplayMode.INLINE_B"><code class="docutils literal notranslate"><span class="pre">DisplayMode.INLINE_B</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.visualization.VHdiagram.html#posydon.visualization.VHdiagram.DisplayMode.INLINE_S"><code class="docutils literal notranslate"><span class="pre">DisplayMode.INLINE_S</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.visualization.VHdiagram.html#posydon.visualization.VHdiagram.DisplayMode.WINDOW"><code class="docutils literal notranslate"><span class="pre">DisplayMode.WINDOW</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.visualization.VHdiagram.html#posydon.visualization.VHdiagram.VHdiagram"><code class="docutils literal notranslate"><span class="pre">VHdiagram</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.visualization.combine_TF.html"><code class="docutils literal notranslate"><span class="pre">combine_TF12()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.visualization.interpolation.html"><code class="docutils literal notranslate"><span class="pre">EvaluateIFInterpolator</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="posydon.visualization.interpolation.html#posydon.visualization.interpolation.EvaluateIFInterpolator.classifiers"><code class="docutils literal notranslate"><span class="pre">EvaluateIFInterpolator.classifiers()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.visualization.interpolation.html#posydon.visualization.interpolation.EvaluateIFInterpolator.confusion_matrix"><code class="docutils literal notranslate"><span class="pre">EvaluateIFInterpolator.confusion_matrix()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.visualization.interpolation.html#posydon.visualization.interpolation.EvaluateIFInterpolator.decision_boundaries"><code class="docutils literal notranslate"><span class="pre">EvaluateIFInterpolator.decision_boundaries()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.visualization.interpolation.html#posydon.visualization.interpolation.EvaluateIFInterpolator.keys"><code class="docutils literal notranslate"><span class="pre">EvaluateIFInterpolator.keys()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.visualization.interpolation.html#posydon.visualization.interpolation.EvaluateIFInterpolator.plot2D"><code class="docutils literal notranslate"><span class="pre">EvaluateIFInterpolator.plot2D()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.visualization.interpolation.html#posydon.visualization.interpolation.EvaluateIFInterpolator.violin_plots"><code class="docutils literal notranslate"><span class="pre">EvaluateIFInterpolator.violin_plots()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.visualization.plot1D.html"><code class="docutils literal notranslate"><span class="pre">plot1D</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="posydon.visualization.plot1D.html#posydon.visualization.plot1D.plot1D.HR_diagram"><code class="docutils literal notranslate"><span class="pre">plot1D.HR_diagram()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.visualization.plot1D.html#posydon.visualization.plot1D.plot1D.lines_constant_radius"><code class="docutils literal notranslate"><span class="pre">plot1D.lines_constant_radius()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.visualization.plot1D.html#posydon.visualization.plot1D.plot1D.plot_panel"><code class="docutils literal notranslate"><span class="pre">plot1D.plot_panel()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.visualization.plot1D.html#posydon.visualization.plot1D.plot1D.set_color_bar"><code class="docutils literal notranslate"><span class="pre">plot1D.set_color_bar()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.visualization.plot1D.html#posydon.visualization.plot1D.plot1D.set_legend"><code class="docutils literal notranslate"><span class="pre">plot1D.set_legend()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.visualization.plot1D.html#posydon.visualization.plot1D.plot1D.set_title"><code class="docutils literal notranslate"><span class="pre">plot1D.set_title()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.visualization.plot1D.html#posydon.visualization.plot1D.plot1D.set_xlabel"><code class="docutils literal notranslate"><span class="pre">plot1D.set_xlabel()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.visualization.plot1D.html#posydon.visualization.plot1D.plot1D.set_xlim"><code class="docutils literal notranslate"><span class="pre">plot1D.set_xlim()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.visualization.plot1D.html#posydon.visualization.plot1D.plot1D.set_ylabel"><code class="docutils literal notranslate"><span class="pre">plot1D.set_ylabel()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.visualization.plot1D.html#posydon.visualization.plot1D.plot1D.set_ylim"><code class="docutils literal notranslate"><span class="pre">plot1D.set_ylim()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.visualization.plot1D.html#posydon.visualization.plot1D.plot1D.update_values_to_plot"><code class="docutils literal notranslate"><span class="pre">plot1D.update_values_to_plot()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.visualization.plot2D.html"><code class="docutils literal notranslate"><span class="pre">plot2D</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="posydon.visualization.plot2D.html#posydon.visualization.plot2D.plot2D.add_properties_to_final_values"><code class="docutils literal notranslate"><span class="pre">plot2D.add_properties_to_final_values()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.visualization.plot2D.html#posydon.visualization.plot2D.plot2D.add_properties_to_initial_values"><code class="docutils literal notranslate"><span class="pre">plot2D.add_properties_to_initial_values()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.visualization.plot2D.html#posydon.visualization.plot2D.plot2D.get_x_var"><code class="docutils literal notranslate"><span class="pre">plot2D.get_x_var()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.visualization.plot2D.html#posydon.visualization.plot2D.plot2D.get_y_var"><code class="docutils literal notranslate"><span class="pre">plot2D.get_y_var()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.visualization.plot2D.html#posydon.visualization.plot2D.plot2D.get_z_var"><code class="docutils literal notranslate"><span class="pre">plot2D.get_z_var()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.visualization.plot2D.html#posydon.visualization.plot2D.plot2D.plot_panel"><code class="docutils literal notranslate"><span class="pre">plot2D.plot_panel()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.visualization.plot2D.html#posydon.visualization.plot2D.plot2D.plot_panels"><code class="docutils literal notranslate"><span class="pre">plot2D.plot_panels()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.visualization.plot2D.html#posydon.visualization.plot2D.plot2D.set_color_bar"><code class="docutils literal notranslate"><span class="pre">plot2D.set_color_bar()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.visualization.plot2D.html#posydon.visualization.plot2D.plot2D.set_legend"><code class="docutils literal notranslate"><span class="pre">plot2D.set_legend()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.visualization.plot2D.html#posydon.visualization.plot2D.plot2D.set_title"><code class="docutils literal notranslate"><span class="pre">plot2D.set_title()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.visualization.plot2D.html#posydon.visualization.plot2D.plot2D.set_xlabel"><code class="docutils literal notranslate"><span class="pre">plot2D.set_xlabel()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.visualization.plot2D.html#posydon.visualization.plot2D.plot2D.set_xlim"><code class="docutils literal notranslate"><span class="pre">plot2D.set_xlim()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.visualization.plot2D.html#posydon.visualization.plot2D.plot2D.set_ylabel"><code class="docutils literal notranslate"><span class="pre">plot2D.set_ylabel()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.visualization.plot2D.html#posydon.visualization.plot2D.plot2D.set_ylim"><code class="docutils literal notranslate"><span class="pre">plot2D.set_ylim()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.visualization.plot2D.html#posydon.visualization.plot2D.plot2D.update_markers_colors_legends"><code class="docutils literal notranslate"><span class="pre">plot2D.update_markers_colors_legends()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.visualization.plot2D.html#posydon.visualization.plot2D.plot2D.update_values_to_plot"><code class="docutils literal notranslate"><span class="pre">plot2D.update_values_to_plot()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.visualization.plot_pop.html"><code class="docutils literal notranslate"><span class="pre">plot_grb_rate_density()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.visualization.plot_pop.html#posydon.visualization.plot_pop.plot_hist_properties"><code class="docutils literal notranslate"><span class="pre">plot_hist_properties()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.visualization.plot_pop.html#posydon.visualization.plot_pop.plot_merger_efficiency"><code class="docutils literal notranslate"><span class="pre">plot_merger_efficiency()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.visualization.plot_pop.html#posydon.visualization.plot_pop.plot_merger_rate_density"><code class="docutils literal notranslate"><span class="pre">plot_merger_rate_density()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.visualization.plot_pop.html#posydon.visualization.plot_pop.plot_popsyn_over_grid_slice"><code class="docutils literal notranslate"><span class="pre">plot_popsyn_over_grid_slice()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.visualization.plot_pop.html#posydon.visualization.plot_pop.plot_rate_density"><code class="docutils literal notranslate"><span class="pre">plot_rate_density()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.visualization.html#module-posydon.visualization">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="module-posydon">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-posydon" title="Permalink to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Tassos Fragos.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

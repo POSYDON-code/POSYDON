@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>&lt;no title&gt; &mdash; posydon 0+untagged.1.g0e5e92d documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            posydon
+          </a>
+              <div class="version">
+                0+untagged.1.g0e5e92d
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">User guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../install/install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../data/data.html">Data Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">Application Programming Interface</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Binary Star Grids</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../run_mesa_grids/inifile.html">.ini file documentation for POSYDON GRIDS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../run_mesa_grids/fixed/fixed.html">Run a fixed MESA grid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PSyGrid/PSyGrid.html">The PSyGrid Object</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Generating Populations</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../pop_synth/POSYDON_populations.html">Running populations using POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../pop_synth/pop_synth.html">Running a POSYDON population synthesis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../pop_synth/custom_flow.html">Custom population synthesis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../SingleStar/SingleStar.html">The SingleStar object</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../BinaryStar/BinaryStar.html">The BinaryStar object</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../advanced_pop_options/custom_hooks.html">Evolutionary Hooks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../advanced_pop_options/debugging_binaries.html">Debugging Failed Binaries</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../interpolation/IF-Interpolator/IFInterpolator.html">Initial-Final Interpolation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Plotting</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../visualization/plot1D/plot1D.html">1D plotting functionalities for POSYON GRIDS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../visualization/plot2D/plot2D.html">2D plotting functionalities for POSYON GRIDS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../visualization/VHD/VHD.html">Van den Heuvel diagrams</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../interpolation/violinplot.html">Making the Violin Plot</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">About</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../about/licence.html">Licence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../about/attribution.html">Attribution</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">posydon</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">&lt;no title&gt;</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/api/posydon.popsyn.rate_calculation.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <span class="target" id="module-posydon.popsyn.rate_calculation"></span><dl class="py class">
+<dt class="sig sig-object py" id="posydon.popsyn.rate_calculation.Rates">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.popsyn.rate_calculation.</span></span><span class="sig-name descname"><span class="pre">Rates</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/rate_calculation.html#Rates"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.rate_calculation.Rates" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Compute DCO rates.</p>
+<p>Compute DCO rates.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.12)"><em>object</em></a>) – Pandas dataframe containing the synthetic binary population.</p></li>
+<li><p><strong>delta_t</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.12)"><em>float</em></a>) – Cosmic time bin size used to bin distribute the synthetc binary
+population.</p></li>
+<li><p><strong>SFR</strong> (<em>string</em>) – Star-formation-rate history you want to use:
+‘Madau+Dickinson14’, ‘Madau+Fragos17’, ‘Neijssel+19’, ‘IllustrisTNG’</p></li>
+<li><p><strong>sigma_SFR</strong> (<em>string</em>) – Standard deviation of the trucated log-normal metallicity distribution
+assumed for the star-formation rate history in the case you select
+‘Madau+Dickinson14’, ‘Madau+Fragos17’, ‘Neijssel+19’,</p></li>
+<li><p><strong>Z_max</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.12)"><em>float</em></a>) – The absolute maximum metallicity of the star formation rate history.
+NOTE: This should be used when assuming a truncated log-normal
+distribution of metallcities to not overpredict 1, also it can be
+used with the IllustrisTNG SFR to prevent unphysically high
+metallicities.</p></li>
+<li><p><strong>select_one_met</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><em>bool</em></a>) – If <cite>True</cite> your synthetic binary population should contain only one
+descrete metallicity.</p></li>
+<li><p><strong>dlogZ</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.12)"><em>float</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#range" title="(in Python v3.12)"><em>range</em></a>) – Used when <cite>select_one_met=True</cite> to select the metallicity range
+around which you want to integrate the SFR history. If float value
+value is provided we assume a symmetric range dlogZ/2 around the
+provided metallcity else we consider the range provided
+[Z_min, Z_max] which could also be asymmetric.</p></li>
+<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><em>bool</em></a>) – <cite>True</cite> if you want the print statements.</p></li>
+</ul>
+</dd>
+</dl>
+<p>TODO: add the definitios of the variables used by this class.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.popsyn.rate_calculation.Rates.chi_eff">
+<span class="sig-name descname"><span class="pre">chi_eff</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">m_1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">m_2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a_1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a_2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tilt_1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tilt_2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/rate_calculation.html#Rates.chi_eff"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.rate_calculation.Rates.chi_eff" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.popsyn.rate_calculation.Rates.compute_GRB_rate_weights">
+<span class="sig-name descname"><span class="pre">compute_GRB_rate_weights</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sensitivity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'infinity'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path_to_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'./'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extention</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'npz'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/rate_calculation.html#Rates.compute_GRB_rate_weights"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.rate_calculation.Rates.compute_GRB_rate_weights" title="Permalink to this definition"></a></dt>
+<dd><p>Compute the cosmological weights of the transient events associated to the population.</p>
+<p>This function will create a directory path_to_dir/GRBs/sensitivity where
+it will save the weigths, binary indicies k, z_formation, z_grb.
+This is needed for scalability as a ~100k DCO population generates ~10M
+non-zero weights assuming a delta_t=100Myr.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sensitivity</strong> (<em>string</em>) – Assume there are no selection effects. Available:
+‘infinite’: whole GRB population, i.e. p_det = 1</p></li>
+<li><p><strong>path_to_dir</strong> (<em>string</em>) – Path to the workingn directory where you want to store the
+cosmological weights.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.popsyn.rate_calculation.Rates.compute_merger_rate_weights">
+<span class="sig-name descname"><span class="pre">compute_merger_rate_weights</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sensitivity</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flag_pdet</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path_to_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'./'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extention</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'npz'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/rate_calculation.html#Rates.compute_merger_rate_weights"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.rate_calculation.Rates.compute_merger_rate_weights" title="Permalink to this definition"></a></dt>
+<dd><p>Compute the cosmological weights of the DCO population.</p>
+<p>This function will create a directory path_to_dir/DCOs/sensitivity where
+it will save the weigths, binary indicies k, z_formation, z_merger.
+This is needed for scalability as a ~100k DCO population generates ~10M
+non-zero weights assuming a delta_t=100Myr.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sensitivity</strong> (<em>string</em>) – <p>GW detector sensitivity and network configuration you want to use, see arXiv:1304.0670v3
+detector sensitivities are taken from: https://dcc.ligo.org/LIGO-T2000012-v2/public
+available sensitivity keys (for Hanford, Livingston, Virgo network):</p>
+<blockquote>
+<div><p>’O3actual_H1L1V1’ : aligo_O3actual_H1.txt, aligo_O3actual_L1.txt, avirgo_O3actual.txt
+‘O4low_H1L1V1’ : aligo_O4low.txt, aligo_O4low.txt, avirgo_O4high_NEW.txt
+‘O4high_H1L1V1’ : aligo_O4high.txt, aligo_O4high.txt, avirgo_O4high_NEW.txt
+‘design_H1L1V1’ : AplusDesign.txt, AplusDesign.txt, avirgo_O5high_NEW.txt
+‘infinite’: intrinsic merging DCO population, i.e. p_det = 1</p>
+</div></blockquote>
+</p></li>
+<li><p><strong>flag_pdet</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><em>bool</em></a>) – This is a control variable. In order to be sure you want to run
+infinite sensitivity set <cite>p_det=False</cite>.</p></li>
+<li><p><strong>path_to_dir</strong> (<em>string</em>) – Path to the workingn directory where you want to store the
+cosmological weights.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.popsyn.rate_calculation.Rates.compute_rate_density">
+<span class="sig-name descname"><span class="pre">compute_rate_density</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">w_ijk</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z_event</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">observable</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'DCO'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sensitivity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'infinite'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/rate_calculation.html#Rates.compute_rate_density"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.rate_calculation.Rates.compute_rate_density" title="Permalink to this definition"></a></dt>
+<dd><p>Compute the GRB/DCO rate density.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>w_ijk</strong> (<em>array doubles</em>) – Cosmological weights computed with Eq. B.8 of Bavera et at. (2020).</p></li>
+<li><p><strong>z_event</strong> (<em>array doubles</em>) – Cosmolgocial redshift of the event you are tracking.</p></li>
+<li><p><strong>observable</strong> (<em>string</em>) – Event you are tracking, available:
+‘DCOs’: merger event of a DCO system
+‘GRB1’: gamma ray bursts of star 1
+‘GRB2’: gamma ray bursts of star 2</p></li>
+<li><p><strong>sensitivity</strong> (<em>string</em>) – This takes into account the detector sensitivity, available:
+‘infinite’: p_det = 1
+‘beamed’: TODO for GRBs</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Return the DCOs merger rate density (Gpc^-3 yr^-1) as a function of
+cosmolgocial redshift as in Eq. (D.1) in Bavera et al. (2022)
+arXiv:2106.15841</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>array doubles</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.popsyn.rate_calculation.Rates.get_centers_metallicity_bins">
+<span class="sig-name descname"><span class="pre">get_centers_metallicity_bins</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/rate_calculation.html#Rates.get_centers_metallicity_bins"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.rate_calculation.Rates.get_centers_metallicity_bins" title="Permalink to this definition"></a></dt>
+<dd><p>Return the centers of the metallicity bins.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Returns sampled metallicities of the populattion. This correponds
+to the center of each metallicity bin.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>array double</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.popsyn.rate_calculation.Rates.get_centers_redshift_bins">
+<span class="sig-name descname"><span class="pre">get_centers_redshift_bins</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/rate_calculation.html#Rates.get_centers_redshift_bins"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.rate_calculation.Rates.get_centers_redshift_bins" title="Permalink to this definition"></a></dt>
+<dd><p>Compute redshift bin centers.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>We devide the cosmic time history of the Universe in equally spaced
+bins of cosmic time of self.delta_t (100 Myr default) an compute the
+redshift corresponding to center of these bins.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>array doubles</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.popsyn.rate_calculation.Rates.get_comoving_disntance_from_redshift">
+<span class="sig-name descname"><span class="pre">get_comoving_disntance_from_redshift</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">z</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/rate_calculation.html#Rates.get_comoving_disntance_from_redshift"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.rate_calculation.Rates.get_comoving_disntance_from_redshift" title="Permalink to this definition"></a></dt>
+<dd><p>Compute the comoving distance from redshift.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>z</strong> (<em>double</em>) – Cosmological redshift.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Comoving distance in Mpc corresponding to the redhisft z.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>double</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.popsyn.rate_calculation.Rates.get_cosmic_time_at_dco_merger">
+<span class="sig-name descname"><span class="pre">get_cosmic_time_at_dco_merger</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">z_birth</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/rate_calculation.html#Rates.get_cosmic_time_at_dco_merger"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.rate_calculation.Rates.get_cosmic_time_at_dco_merger" title="Permalink to this definition"></a></dt>
+<dd><p>Get cosmic time at DCO merger.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>z_birth</strong> (<em>double</em>) – Cosmological redshift of formation of the DCO system
+(must be the same for every binary).</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Cosmic time in Gyr at DCO merger for all binaries born at z_birth.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>double</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.popsyn.rate_calculation.Rates.get_cosmic_time_from_redshift">
+<span class="sig-name descname"><span class="pre">get_cosmic_time_from_redshift</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">z</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/rate_calculation.html#Rates.get_cosmic_time_from_redshift"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.rate_calculation.Rates.get_cosmic_time_from_redshift" title="Permalink to this definition"></a></dt>
+<dd><p>Compute the cosmic time from redshift.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>z</strong> (<em>double</em>) – Cosmological redshift.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Return age of the cosmic time in Gyr given the redshift z.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>double</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.popsyn.rate_calculation.Rates.get_data">
+<span class="sig-name descname"><span class="pre">get_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">var</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/rate_calculation.html#Rates.get_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.rate_calculation.Rates.get_data" title="Permalink to this definition"></a></dt>
+<dd><p>Resample class elements.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>var</strong> (<em>string</em>) – Key of self.df. This method support a list of custom definitios for
+DCO studies like q, m_tot, m_chirp, chi_eff.</p></li>
+<li><p><strong>index</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><em>list</em></a><em> of </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><em>int</em></a>) – List of indicies of the binaries of interest.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Array containing the self.df[var][index].</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.popsyn.rate_calculation.Rates.get_edges_metallicity_bins">
+<span class="sig-name descname"><span class="pre">get_edges_metallicity_bins</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/rate_calculation.html#Rates.get_edges_metallicity_bins"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.rate_calculation.Rates.get_edges_metallicity_bins" title="Permalink to this definition"></a></dt>
+<dd><p>Return the edges of the metallicity bins.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Returns the edges of all metallicity bins. We assume metallicities
+were binned in log-space.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>array double</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.popsyn.rate_calculation.Rates.get_edges_redshift_bins">
+<span class="sig-name descname"><span class="pre">get_edges_redshift_bins</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/rate_calculation.html#Rates.get_edges_redshift_bins"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.rate_calculation.Rates.get_edges_redshift_bins" title="Permalink to this definition"></a></dt>
+<dd><p>Compute redshift bin edges.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>We devide the cosmic time history of the Universe in equally spaced
+bins of cosmic time of self.delta_t (100 Myr default) an compute the
+redshift corresponding to edges of these bins.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>array doubles</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.popsyn.rate_calculation.Rates.get_redshift_at_dco_merger">
+<span class="sig-name descname"><span class="pre">get_redshift_at_dco_merger</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">z_birth</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/rate_calculation.html#Rates.get_redshift_at_dco_merger"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.rate_calculation.Rates.get_redshift_at_dco_merger" title="Permalink to this definition"></a></dt>
+<dd><p>Get redshift of merger of DCOs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>z_birth</strong> (<em>double</em>) – Redshift of formation of the DCO system (must be the same for every
+binary).</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Redshift of merger of DCOs born at z_birth.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>double</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.popsyn.rate_calculation.Rates.get_redshift_from_cosmic_time">
+<span class="sig-name descname"><span class="pre">get_redshift_from_cosmic_time</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t_cosm</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/rate_calculation.html#Rates.get_redshift_from_cosmic_time"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.rate_calculation.Rates.get_redshift_from_cosmic_time" title="Permalink to this definition"></a></dt>
+<dd><p>Compute the cosmological redshift given the cosmic time..</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>t_cosm</strong> (<em>array doubles</em>) – Cosmic time to which you want to know the redhisft.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Cosmolgocial redshift corresponding to the cosmic time.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>array doubles</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.popsyn.rate_calculation.Rates.get_redshift_from_cosmic_time_interpolator">
+<span class="sig-name descname"><span class="pre">get_redshift_from_cosmic_time_interpolator</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/rate_calculation.html#Rates.get_redshift_from_cosmic_time_interpolator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.rate_calculation.Rates.get_redshift_from_cosmic_time_interpolator" title="Permalink to this definition"></a></dt>
+<dd><p>Interpolator to compute the cosmological redshift given the cosmic time.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Returns the trained interpolator object.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.12)">object</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.popsyn.rate_calculation.Rates.get_shell_comovig_volume">
+<span class="sig-name descname"><span class="pre">get_shell_comovig_volume</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">z_hor_i</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z_hor_f</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sensitivity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'infinite'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/rate_calculation.html#Rates.get_shell_comovig_volume"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.rate_calculation.Rates.get_shell_comovig_volume" title="Permalink to this definition"></a></dt>
+<dd><p>Compute comoving volume corresponding to a redshift shell.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>z_hor_i</strong> (<em>double</em>) – Cosmological redshift. Lower bound of the integration.</p></li>
+<li><p><strong>z_hor_f</strong> (<em>double</em>) – Cosmological redshift. Upper bound of the integration.</p></li>
+<li><p><strong>sensitivity</strong> (<em>string</em>) – hoose which GW detector sensitivity you want to use. At the moment
+only ‘infinite’ is available, i.e. p_det = 1.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Retruns the comoving volume between the two shells z_hor_i
+and z_hor_f in Gpc^3.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>double</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.popsyn.rate_calculation.Rates.get_time_GRB">
+<span class="sig-name descname"><span class="pre">get_time_GRB</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">z_birth</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">event</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/rate_calculation.html#Rates.get_time_GRB"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.rate_calculation.Rates.get_time_GRB" title="Permalink to this definition"></a></dt>
+<dd><p>Get the time of the GRB.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>z_brith</strong> (<em>double</em>) – Redshif of birth.</p></li>
+<li><p><strong>event</strong> (<em>string</em>) – Event you are tracking, either first or second core collpase:
+‘CC1’, ‘CC2’.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>t_BRB</strong> – Cosmic time of the GRB event in Gyr.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>double</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.popsyn.rate_calculation.Rates.load_grb_rate_weights">
+<span class="sig-name descname"><span class="pre">load_grb_rate_weights</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sensitivity</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path_to_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'./'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extention</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'npz'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/rate_calculation.html#Rates.load_grb_rate_weights"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.rate_calculation.Rates.load_grb_rate_weights" title="Permalink to this definition"></a></dt>
+<dd><p>Load the cosmological weights of the transient events associated to the population.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sensitivity</strong> (<em>string</em>) – Assume there are no selection effects. Available:
+‘infinite’: whole GRB population, i.e. p_det = 1</p></li>
+<li><p><strong>path_to_dir</strong> (<em>string</em>) – Path to the directory where you the cosmological weights are stored.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Return the cosmological weights, z_formation, z_GRB and binary
+index k associated to each weighted binary.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>array doubles</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.popsyn.rate_calculation.Rates.load_merger_rate_weights">
+<span class="sig-name descname"><span class="pre">load_merger_rate_weights</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sensitivity</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path_to_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'./'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extention</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'npz'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/rate_calculation.html#Rates.load_merger_rate_weights"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.rate_calculation.Rates.load_merger_rate_weights" title="Permalink to this definition"></a></dt>
+<dd><p>Load the cosmological weights of the DCO populatio.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sensitivity</strong> (<em>string</em>) – <p>GW detector sensitivity and network configuration you want to use, see arXiv:1304.0670v3
+detector sensitivities are taken from: https://dcc.ligo.org/LIGO-T2000012-v2/public
+available sensitivity keys (for Hanford, Livingston, Virgo network):</p>
+<blockquote>
+<div><p>’O3actual_H1L1V1’ : aligo_O3actual_H1.txt, aligo_O3actual_L1.txt, avirgo_O3actual.txt
+‘O4low_H1L1V1’ : aligo_O4low.txt, aligo_O4low.txt, avirgo_O4high_NEW.txt
+‘O4high_H1L1V1’ : aligo_O4high.txt, aligo_O4high.txt, avirgo_O4high_NEW.txt
+‘design_H1L1V1’ : AplusDesign.txt, AplusDesign.txt, avirgo_O5high_NEW.txt
+‘infinite’: intrinsic merging DCO population, i.e. p_det = 1</p>
+</div></blockquote>
+</p></li>
+<li><p><strong>path_to_dir</strong> (<em>string</em>) – Path to the directory where you the cosmological weights are stored.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Return the cosmological weights, z_formation, z_merger and binary
+index k associated to each weighted binary.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>array doubles</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.popsyn.rate_calculation.Rates.m_chirp">
+<span class="sig-name descname"><span class="pre">m_chirp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">m_1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">m_2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/rate_calculation.html#Rates.m_chirp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.rate_calculation.Rates.m_chirp" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.popsyn.rate_calculation.Rates.mass_ratio">
+<span class="sig-name descname"><span class="pre">mass_ratio</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">m_1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">m_2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/rate_calculation.html#Rates.mass_ratio"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.rate_calculation.Rates.mass_ratio" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.popsyn.rate_calculation.Rates.merger_rate_weight">
+<span class="sig-name descname"><span class="pre">merger_rate_weight</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">z_birth</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z_merger</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p_det</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">i</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/rate_calculation.html#Rates.merger_rate_weight"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.rate_calculation.Rates.merger_rate_weight" title="Permalink to this definition"></a></dt>
+<dd><p>Compute the merger rate weight (w_ijk) in yr^-1 units.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>z_birth</strong> (<em>array doubles</em>) – Cosmological redshift of formation of the binary systems. This MUST
+be the same for all binaries.</p></li>
+<li><p><strong>z_merger</strong> (<em>array doubles</em>) – Cosmological redshift of merger of the binary systems.</p></li>
+<li><p><strong>p_det</strong> (<em>array doubles</em>) – Detection probability of the binary.</p></li>
+<li><p><strong>i</strong> (<em>array integers</em>) – Indicies correponding to the binaries you want to select out of the
+population.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Return the cosmological weights w_ijk (detection rate contibution)
+of the binary k in the metallicity bin j born at redshift birth i
+as in Eq. (B.8) of Bavera et al. (2020).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>array doubles</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Tassos Fragos.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

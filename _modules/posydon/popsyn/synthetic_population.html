@@ -1,0 +1,1131 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>posydon.popsyn.synthetic_population &mdash; posydon 0+untagged.1.g0e5e92d documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/sphinx_highlight.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            posydon
+          </a>
+              <div class="version">
+                0+untagged.1.g0e5e92d
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">User guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../install/install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../data/data.html">Data Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api.html">Application Programming Interface</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Binary Star Grids</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../run_mesa_grids/inifile.html">.ini file documentation for POSYDON GRIDS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../run_mesa_grids/fixed/fixed.html">Run a fixed MESA grid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../PSyGrid/PSyGrid.html">The PSyGrid Object</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Generating Populations</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../pop_synth/POSYDON_populations.html">Running populations using POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../pop_synth/pop_synth.html">Running a POSYDON population synthesis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../pop_synth/custom_flow.html">Custom population synthesis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../SingleStar/SingleStar.html">The SingleStar object</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../BinaryStar/BinaryStar.html">The BinaryStar object</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../advanced_pop_options/custom_hooks.html">Evolutionary Hooks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../advanced_pop_options/debugging_binaries.html">Debugging Failed Binaries</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../interpolation/IF-Interpolator/IFInterpolator.html">Initial-Final Interpolation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Plotting</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../visualization/plot1D/plot1D.html">1D plotting functionalities for POSYON GRIDS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../visualization/plot2D/plot2D.html">2D plotting functionalities for POSYON GRIDS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../visualization/VHD/VHD.html">Van den Heuvel diagrams</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../interpolation/violinplot.html">Making the Violin Plot</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">About</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../about/licence.html">Licence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../about/attribution.html">Attribution</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">posydon</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">posydon.popsyn.synthetic_population</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for posydon.popsyn.synthetic_population</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Evolve multiple BinaryPopulations together.</span>
+
+<span class="sd">e.g. with multiple metallicities</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="n">__authors__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;Simone Bavera &lt;Simone.Bavera@unige.ch&gt;&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Kyle Akira Rocha &lt;kylerocha2024@u.northwestern.edu&gt;&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Monica Gallegos-Garcia &lt;monicagallegosgarcia2024@u.northwestern.edu&gt;&quot;</span><span class="p">,</span>
+<span class="p">]</span>
+
+<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
+<span class="kn">from</span> <span class="nn">posydon.utils.constants</span> <span class="kn">import</span> <span class="n">Zsun</span>
+<span class="kn">from</span> <span class="nn">posydon.popsyn.io</span> <span class="kn">import</span> <span class="n">binarypop_kwargs_from_ini</span>
+<span class="kn">from</span> <span class="nn">posydon.popsyn.binarypopulation</span> <span class="kn">import</span> <span class="n">BinaryPopulation</span>
+<span class="kn">from</span> <span class="nn">posydon.utils.common_functions</span> <span class="kn">import</span> <span class="n">convert_metallicity_to_string</span>
+<span class="kn">from</span> <span class="nn">posydon.popsyn.normalized_pop_mass</span> <span class="kn">import</span> <span class="n">initial_total_underlying_mass</span>
+<span class="kn">from</span> <span class="nn">posydon.popsyn.rate_calculation</span> <span class="kn">import</span> <span class="n">Rates</span>
+<span class="kn">import</span> <span class="nn">posydon.visualization.plot_pop</span> <span class="k">as</span> <span class="nn">plot_pop</span>
+<span class="kn">from</span> <span class="nn">posydon.popsyn.GRB</span> <span class="kn">import</span> <span class="n">get_GRB_properties</span><span class="p">,</span> <span class="n">GRB_PROPERTIES</span>
+
+<span class="c1"># TODO: temp import, remove after TF2 classification is implemented in pop synth</span>
+<span class="kn">from</span> <span class="nn">posydon.interpolation.IF_interpolation</span> <span class="kn">import</span> <span class="n">IFInterpolator</span>
+<span class="kn">from</span> <span class="nn">posydon.binary_evol.binarystar</span> <span class="kn">import</span> <span class="n">BinaryStar</span>
+<span class="kn">from</span> <span class="nn">posydon.binary_evol.singlestar</span> <span class="kn">import</span> <span class="n">SingleStar</span>
+<span class="kn">from</span> <span class="nn">posydon.utils.common_functions</span> <span class="kn">import</span> <span class="n">convert_metallicity_to_string</span>
+
+<div class="viewcode-block" id="SyntheticPopulation"><a class="viewcode-back" href="../../../api/posydon.popsyn.synthetic_population.html#posydon.popsyn.synthetic_population.SyntheticPopulation">[docs]</a><span class="k">class</span> <span class="nc">SyntheticPopulation</span><span class="p">:</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path_to_ini</span><span class="p">,</span> <span class="n">path_to_data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">MODEL</span><span class="o">=</span><span class="p">{}):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+
+<span class="sd">        path : str</span>
+<span class="sd">            Path to the inifile to parse. You can supply a list in the</span>
+<span class="sd">            metallicity parameter to evolve more than one population.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span> <span class="o">=</span> <span class="n">verbose</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">MODEL</span> <span class="o">=</span> <span class="n">MODEL</span>
+        <span class="c1"># DCOs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">df</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">df_oneline</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">df_synthetic</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">df_dco_intrinsic</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">df_dco_observable</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">met_merger_efficiency</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">merger_efficiency</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dco_z_rate_density</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dco_rate_density</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="c1"># GRBs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">df_grb_intrinsic</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">df_grb_observable</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">grb_z_rate_density</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">grb_rate_density</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">if</span> <span class="s1">&#39;.ini&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">path_to_ini</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;You did not provide a valid path_to_ini!&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">synthetic_pop_params</span> <span class="o">=</span> <span class="n">binarypop_kwargs_from_ini</span><span class="p">(</span><span class="n">path_to_ini</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">metallicity</span> <span class="o">=</span> <span class="n">synthetic_pop_params</span><span class="p">[</span><span class="s1">&#39;metallicity&#39;</span><span class="p">]</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">metallicity</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">metallicity</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">metallicity</span><span class="p">]</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">binary_populations</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">met</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">metallicity</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">ini_kw</span> <span class="o">=</span> <span class="n">binarypop_kwargs_from_ini</span><span class="p">(</span><span class="n">path_to_ini</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">ini_kw</span><span class="p">[</span><span class="s1">&#39;metallicity&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">met</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">ini_kw</span><span class="p">[</span><span class="s1">&#39;temp_directory&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_met_prefix</span><span class="p">(</span><span class="n">met</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">ini_kw</span><span class="p">[</span><span class="s1">&#39;temp_directory&#39;</span><span class="p">]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">binary_populations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">BinaryPopulation</span><span class="p">(</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">ini_kw</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="n">path_to_data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="k">elif</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">path_to_data</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">and</span> <span class="s1">&#39;.h5&#39;</span> <span class="ow">in</span> <span class="n">path_to_data</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="ow">or</span> <span class="p">(</span><span class="s1">&#39;.h5&#39;</span> <span class="ow">in</span> <span class="n">path_to_data</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">path_to_data</span> <span class="o">=</span> <span class="n">path_to_data</span>
+
+<div class="viewcode-block" id="SyntheticPopulation.get_ini_kw"><a class="viewcode-back" href="../../../api/posydon.popsyn.synthetic_population.html#posydon.popsyn.synthetic_population.SyntheticPopulation.get_ini_kw">[docs]</a>    <span class="k">def</span> <span class="nf">get_ini_kw</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ini_kw</span></div>
+
+<div class="viewcode-block" id="SyntheticPopulation.evolve"><a class="viewcode-back" href="../../../api/posydon.popsyn.synthetic_population.html#posydon.popsyn.synthetic_population.SyntheticPopulation.evolve">[docs]</a>    <span class="k">def</span> <span class="nf">evolve</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Evolve population(s) at given Z(s).&quot;&quot;&quot;</span>
+        <span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span class="n">binary_populations</span><span class="p">:</span>
+            <span class="n">pop</span> <span class="o">=</span>  <span class="bp">self</span><span class="o">.</span><span class="n">binary_populations</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+            <span class="nb">print</span><span class="p">(</span> <span class="sa">f</span><span class="s1">&#39;Z=</span><span class="si">{</span><span class="n">pop</span><span class="o">.</span><span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;metallicity&quot;</span><span class="p">]</span><span class="si">:</span><span class="s1">.2e</span><span class="si">}</span><span class="s1"> Z_sun&#39;</span> <span class="p">)</span>
+            <span class="n">pop</span><span class="o">.</span><span class="n">evolve</span><span class="p">()</span>
+            <span class="n">met_prefix</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">pop</span><span class="o">.</span><span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;metallicity&quot;</span><span class="p">]</span><span class="si">:</span><span class="s1">.2e</span><span class="si">}</span><span class="s1">_Zsun_&#39;</span>
+            <span class="n">pop</span><span class="o">.</span><span class="n">save</span><span class="p">(</span> <span class="n">met_prefix</span> <span class="o">+</span> <span class="s1">&#39;population.h5&#39;</span> <span class="p">)</span>
+            <span class="k">del</span> <span class="n">pop</span></div>
+
+<div class="viewcode-block" id="SyntheticPopulation.create_met_prefix"><a class="viewcode-back" href="../../../api/posydon.popsyn.synthetic_population.html#posydon.popsyn.synthetic_population.SyntheticPopulation.create_met_prefix">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">create_met_prefix</span><span class="p">(</span><span class="n">met</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Append a prefix to the name of directories for batch saving.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">convert_metallicity_to_string</span><span class="p">(</span><span class="n">met</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;_Zsun_&#39;</span></div>
+
+<div class="viewcode-block" id="SyntheticPopulation.apply_logic"><a class="viewcode-back" href="../../../api/posydon.popsyn.synthetic_population.html#posydon.popsyn.synthetic_population.SyntheticPopulation.apply_logic">[docs]</a>    <span class="k">def</span> <span class="nf">apply_logic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">S1_state</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">S2_state</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">binary_state</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                    <span class="n">binary_event</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">step_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">invert_S1S2</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                    <span class="n">warn</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Select binaries in a dataframe given some properties.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        df : pd.DataFrame</span>
+<span class="sd">            POSYDON binary population synthesis dataframe.</span>
+<span class="sd">        S1_state : str</span>
+<span class="sd">            Star1 stellar state.</span>
+<span class="sd">        S2_state : str</span>
+<span class="sd">            Star2 stellar state.</span>
+<span class="sd">        binary_state : str</span>
+<span class="sd">            Binary state.</span>
+<span class="sd">        binary_event : str</span>
+<span class="sd">            Binary event.</span>
+<span class="sd">        step_name : str</span>
+<span class="sd">            Name of posydon step.</span>
+<span class="sd">        invert_S1S2 : bool</span>
+<span class="sd">            If `True` isolated also sort S1_state=S2_state and S2_state=S1_state</span>
+<span class="sd">            systems.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        pd.DataFrame of bools</span>
+<span class="sd">            List of binaries to select given the search parameters.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">invert_S1S2</span> <span class="ow">and</span> <span class="n">S1_state</span> <span class="o">!=</span> <span class="n">S2_state</span> <span class="ow">and</span> <span class="n">warn</span><span class="p">:</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s1">&#39;Note that invert_S1S2=False, hence you are not parsing &#39;</span>
+                          <span class="sa">f</span><span class="s1">&#39;the dataset for </span><span class="si">{</span><span class="n">S1_state</span><span class="si">}</span><span class="s1">-</span><span class="si">{</span><span class="n">S2_state</span><span class="si">}</span><span class="s1"> binaries and &#39;</span>
+                          <span class="sa">f</span><span class="s1">&#39;and not for for </span><span class="si">{</span><span class="n">S1_state</span><span class="si">}</span><span class="s1">-</span><span class="si">{</span><span class="n">S2_state</span><span class="si">}</span><span class="s1">. If this is &#39;</span>
+                          <span class="s1">&#39;done on purpose, ignore this message!&#39;</span><span class="p">)</span>
+
+        <span class="n">sel_all</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;S1_state&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">bool</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">S1_state</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">S1_logic</span> <span class="o">=</span> <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;S1_state&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">S1_state</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">S1_logic</span> <span class="o">=</span> <span class="n">sel_all</span>
+        <span class="k">if</span> <span class="n">S2_state</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">S2_logic</span> <span class="o">=</span> <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;S2_state&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">S2_state</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">S2_logic</span> <span class="o">=</span> <span class="n">sel_all</span>
+        <span class="k">if</span> <span class="n">binary_state</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">binary_state_logic</span> <span class="o">=</span> <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;state&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">binary_state</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">binary_state_logic</span> <span class="o">=</span> <span class="n">sel_all</span>
+        <span class="k">if</span> <span class="n">binary_event</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">binary_event_logic</span> <span class="o">=</span> <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;event&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">binary_event</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">binary_event_logic</span> <span class="o">=</span> <span class="n">sel_all</span>
+        <span class="k">if</span> <span class="n">step_name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">step_name_logic</span> <span class="o">=</span> <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;step_names&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">step_name</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">step_name_logic</span> <span class="o">=</span> <span class="n">sel_all</span>
+
+        <span class="k">if</span> <span class="n">invert_S1S2</span><span class="p">:</span>
+            <span class="n">S1_logic_inverted</span> <span class="o">=</span> <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;S1_state&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">S2_state</span><span class="p">)</span>
+            <span class="n">S2_logic_inverted</span> <span class="o">=</span> <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;S2_state&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">S1_state</span><span class="p">)</span>
+            <span class="c1"># find systems</span>
+            <span class="n">logic</span> <span class="o">=</span> <span class="p">((</span><span class="n">S1_logic</span> <span class="o">&amp;</span> <span class="n">S2_logic</span> <span class="o">&amp;</span> <span class="n">binary_state_logic</span> <span class="o">&amp;</span>
+                        <span class="n">binary_event_logic</span> <span class="o">&amp;</span> <span class="n">step_name_logic</span><span class="p">)</span> <span class="o">|</span>
+                     <span class="p">(</span><span class="n">S1_logic_inverted</span> <span class="o">&amp;</span> <span class="n">S2_logic_inverted</span> <span class="o">&amp;</span>
+                        <span class="n">binary_state_logic</span>  <span class="o">&amp;</span> <span class="n">binary_event_logic</span> <span class="o">&amp;</span>
+                        <span class="n">step_name_logic</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># find systems</span>
+            <span class="n">logic</span> <span class="o">=</span> <span class="p">(</span><span class="n">S1_logic</span> <span class="o">&amp;</span> <span class="n">S2_logic</span> <span class="o">&amp;</span> <span class="n">binary_state_logic</span> <span class="o">&amp;</span>
+                        <span class="n">binary_event_logic</span> <span class="o">&amp;</span> <span class="n">step_name_logic</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">logic</span></div>
+
+
+<div class="viewcode-block" id="SyntheticPopulation.parse"><a class="viewcode-back" href="../../../api/posydon.popsyn.synthetic_population.html#posydon.popsyn.synthetic_population.SyntheticPopulation.parse">[docs]</a>    <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">S1_state</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">S2_state</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">binary_state</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+               <span class="n">binary_event</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">invert_S1S2</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">chunksize</span><span class="o">=</span><span class="mi">500000</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Sort binaries of interests given some properties.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        S1_state : str</span>
+<span class="sd">            Star1 stellar state.</span>
+<span class="sd">        S2_state : str</span>
+<span class="sd">            Star2 stellar state.</span>
+<span class="sd">        binary_state : str</span>
+<span class="sd">            Binary state.</span>
+<span class="sd">        binary_event : str</span>
+<span class="sd">            Binary event.</span>
+<span class="sd">        step_name : str</span>
+<span class="sd">            Name of posydon step.</span>
+<span class="sd">        invert_S1S2 : bool</span>
+<span class="sd">            If `True` isolated also sort S1_state=S2_state and S2_state=S1_state</span>
+<span class="sd">            systems.</span>
+<span class="sd">        chunksize : int</span>
+<span class="sd">            Read the POSYDON binary population in chuncks to prevent OFM error.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">df_sel</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
+        <span class="n">df_sel_oneline</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
+        <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">tmp</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Binary count with (S1_state, S2_state, binary_state, binary_event) equal&#39;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;to (</span><span class="si">{</span><span class="n">S1_state</span><span class="si">}</span><span class="s1">, </span><span class="si">{</span><span class="n">S2_state</span><span class="si">}</span><span class="s1">, </span><span class="si">{</span><span class="n">binary_state</span><span class="si">}</span><span class="s1">, </span><span class="si">{</span><span class="n">binary_event</span><span class="si">}</span><span class="s1">)&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">invert_S1S2</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;and (</span><span class="si">{</span><span class="n">S2_state</span><span class="si">}</span><span class="s1">, </span><span class="si">{</span><span class="n">S1_state</span><span class="si">}</span><span class="s1">, </span><span class="si">{</span><span class="n">binary_state</span><span class="si">}</span><span class="s1">, </span><span class="si">{</span><span class="n">binary_event</span><span class="si">}</span><span class="s1">)&#39;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">file</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path_to_data</span><span class="p">):</span>
+            <span class="n">df_sel_met</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
+            <span class="n">sel_met</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="c1"># read metallicity from path</span>
+            <span class="n">met</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">file</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_Zsun&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span><span class="o">*</span><span class="n">Zsun</span>
+            <span class="n">simulated_mass_for_met</span> <span class="o">=</span> <span class="mf">0.</span>
+            <span class="c1"># TODO: handle binaries at the edge case of the chuncks</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">df</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">read_hdf</span><span class="p">(</span><span class="n">file</span><span class="p">,</span>  <span class="n">key</span><span class="o">=</span><span class="s1">&#39;history&#39;</span><span class="p">,</span> <span class="n">chunksize</span><span class="o">=</span><span class="n">chunksize</span><span class="p">)):</span>
+
+                <span class="n">logic</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">apply_logic</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">S1_state</span><span class="o">=</span><span class="n">S1_state</span><span class="p">,</span>
+                                    <span class="n">S2_state</span><span class="o">=</span><span class="n">S2_state</span><span class="p">,</span>
+                                    <span class="n">binary_state</span><span class="o">=</span><span class="n">binary_state</span><span class="p">,</span>
+                                    <span class="n">binary_event</span><span class="o">=</span><span class="n">binary_event</span><span class="p">,</span>
+                                    <span class="n">invert_S1S2</span><span class="o">=</span><span class="n">invert_S1S2</span><span class="p">)</span>
+
+                <span class="c1"># select systems</span>
+                <span class="c1"># remove duplicate indicies, e.g. if selecting &#39;contact&#39; state it appears twice</span>
+                <span class="c1"># if no specific event is selected (the second time is from the copied END event)</span>
+                <span class="n">sel</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">logic</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">drop_duplicates</span><span class="p">()</span>
+
+                <span class="c1"># count systems</span>
+                <span class="n">count</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">sel</span><span class="p">))</span>
+
+                <span class="c1"># read the simulated ZAMS mass</span>
+                <span class="n">sel_ZAMS</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;event&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;ZAMS&#39;</span>
+                <span class="n">mass</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;S1_mass&#39;</span><span class="p">][</span><span class="n">sel_ZAMS</span><span class="p">]</span><span class="o">+</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;S2_mass&#39;</span><span class="p">][</span><span class="n">sel_ZAMS</span><span class="p">])</span>
+                <span class="n">simulated_mass_for_met</span> <span class="o">+=</span> <span class="n">mass</span>
+
+                <span class="c1"># sort systems</span>
+                <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">sel</span><span class="p">):</span>
+                    <span class="n">df_tmp</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
+                    <span class="n">df_tmp</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">sel</span><span class="p">]</span>
+                    <span class="n">sel_met</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">sel</span><span class="p">)</span>
+                    <span class="c1"># store metallicity</span>
+                    <span class="n">df_tmp</span><span class="p">[</span><span class="s1">&#39;metallicity&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">met</span>
+                    <span class="c1"># concatenate results</span>
+                    <span class="n">df_sel_met</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">df_sel_met</span><span class="p">,</span> <span class="n">df_tmp</span><span class="p">])</span>
+                    <span class="k">del</span> <span class="n">df_tmp</span>
+
+            <span class="k">if</span> <span class="n">k</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">df_sel</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">shift_index</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">df_sel</span><span class="o">.</span><span class="n">index</span><span class="p">))</span> <span class="o">+</span> <span class="mi">1</span> 
+                <span class="n">df_sel_met</span><span class="o">.</span><span class="n">index</span> <span class="o">+=</span> <span class="n">shift_index</span>
+
+            <span class="c1"># store simulated and underlying stellar mass</span>
+            <span class="n">df_sel_met</span><span class="p">[</span><span class="s1">&#39;simulated_mass_for_met&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">simulated_mass_for_met</span>
+            <span class="n">df_sel_met</span><span class="p">[</span><span class="s1">&#39;underlying_mass_for_met&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">initial_total_underlying_mass</span><span class="p">(</span><span class="n">df</span><span class="o">=</span><span class="n">simulated_mass_for_met</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">ini_kw</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+            <span class="c1"># concatenate results</span>
+            <span class="n">df_sel</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">df_sel</span><span class="p">,</span> <span class="n">df_sel_met</span><span class="p">])</span>
+            <span class="k">del</span> <span class="n">df_sel_met</span>
+
+            <span class="c1"># load, parse and store oneline dataframe</span>
+            <span class="c1"># this dataframe is smaller, we can load it all at once</span>
+            <span class="n">df_sel_met_oneline</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_hdf</span><span class="p">(</span><span class="n">file</span><span class="p">,</span>  <span class="n">key</span><span class="o">=</span><span class="s1">&#39;oneline&#39;</span><span class="p">)</span>
+            <span class="n">df_sel_met_oneline</span> <span class="o">=</span> <span class="n">df_sel_met_oneline</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">sel_met</span><span class="p">]</span>
+            <span class="n">df_sel_met_oneline</span><span class="p">[</span><span class="s1">&#39;metallicity&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">met</span>
+
+            <span class="k">if</span> <span class="n">k</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">df_sel_oneline</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">shift_index</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">df_sel_oneline</span><span class="o">.</span><span class="n">index</span><span class="p">))</span> <span class="o">+</span> <span class="mi">1</span>
+                <span class="n">df_sel_met_oneline</span><span class="o">.</span><span class="n">index</span> <span class="o">+=</span> <span class="n">shift_index</span> 
+
+            <span class="n">df_sel_oneline</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">df_sel_oneline</span><span class="p">,</span> <span class="n">df_sel_met_oneline</span><span class="p">])</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;in </span><span class="si">{</span><span class="n">file</span><span class="si">}</span><span class="s1"> are </span><span class="si">{</span><span class="n">count</span><span class="o">-</span><span class="n">tmp</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="n">tmp</span> <span class="o">=</span> <span class="n">count</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Total binaries found are&#39;</span><span class="p">,</span> <span class="n">count</span><span class="p">)</span>
+
+        <span class="c1"># save parsed population as synthetic population</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s1">&#39;Overwriting the df population!&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">df</span> <span class="o">=</span> <span class="n">df_sel</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">df_oneline</span> <span class="o">=</span> <span class="n">df_sel_oneline</span></div>
+
+<div class="viewcode-block" id="SyntheticPopulation.save_pop"><a class="viewcode-back" href="../../../api/posydon.popsyn.synthetic_population.html#posydon.popsyn.synthetic_population.SyntheticPopulation.save_pop">[docs]</a>    <span class="k">def</span> <span class="nf">save_pop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="s1">&#39;./parsed_population.h5&#39;</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Save parsed population.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        path : str</span>
+<span class="sd">            Path to file where you want to export the dataset.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Nothing to save! The population was not parsed.&#39;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">df_oneline</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Missing oneline dataframe!&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">to_hdf</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="s1">&#39;history&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">df_oneline</span><span class="o">.</span><span class="n">to_hdf</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="s1">&#39;oneline&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Population successfully saved!&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="SyntheticPopulation.load_pop"><a class="viewcode-back" href="../../../api/posydon.popsyn.synthetic_population.html#posydon.popsyn.synthetic_population.SyntheticPopulation.load_pop">[docs]</a>    <span class="k">def</span> <span class="nf">load_pop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Load parsed population.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        path : str</span>
+<span class="sd">            Path to dataset.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">df_oneline</span> <span class="ow">is</span> <span class="kc">None</span> <span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_hdf</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="s1">&#39;history&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">df_oneline</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_hdf</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="s1">&#39;oneline&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Population successfully loaded!&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;You already have a population stored in memory!&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="SyntheticPopulation.get_dco_at_formation"><a class="viewcode-back" href="../../../api/posydon.popsyn.synthetic_population.html#posydon.popsyn.synthetic_population.SyntheticPopulation.get_dco_at_formation">[docs]</a>    <span class="k">def</span> <span class="nf">get_dco_at_formation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">S1_state</span><span class="p">,</span> <span class="n">S2_state</span><span class="p">,</span> <span class="n">oneline_cols</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">formation_channels</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">mt_history</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Sort synthetic population, i.e. DCO at formation.</span>
+
+<span class="sd">        Note: by default this function looks for the symmetric state</span>
+<span class="sd">        S1_state = S2_sate and S2_state = S1_sate.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        S1_state : str</span>
+<span class="sd">            Star1 stellar state.</span>
+<span class="sd">        S2_state : str</span>
+<span class="sd">            Star2 stellar state.</span>
+<span class="sd">        oneline_cols : list str</span>
+<span class="sd">            List of columns preset in the oneline dataframe you want to export</span>
+<span class="sd">            into the synthetic population.</span>
+<span class="sd">        formation_channels : bool</span>
+<span class="sd">            Compute the formation channel, a string containing the binary</span>
+<span class="sd">            event evolution.</span>
+<span class="sd">        mt_history : bool</span>
+<span class="sd">            If `True`, split the event oRLO1/oRLO2 into oRLO1-contact/oRLO2-contact,</span>
+<span class="sd">            oRLO1-reverse/oRLO2-reverse and oRLO1/oRLO2. This is useful to</span>
+<span class="sd">            identify binaries undergoing contact stable mass-transfer phases and </span>
+<span class="sd">            reverse mass-transfer phase .</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># compute GRB properties boolean</span>
+        <span class="n">compute_GRB_properties</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">MODEL</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> 
+                                  <span class="s2">&quot;compute_GRB_properties&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">MODEL</span> <span class="ow">and</span> 
+                                  <span class="bp">self</span><span class="o">.</span><span class="n">MODEL</span><span class="p">[</span><span class="s2">&quot;compute_GRB_properties&quot;</span><span class="p">])</span>
+
+        <span class="c1"># add channel column to oneline dataframe</span>
+        <span class="k">if</span> <span class="n">formation_channels</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Computing formation channels...&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">get_formation_channels</span><span class="p">(</span><span class="n">mt_history</span><span class="o">=</span><span class="n">mt_history</span><span class="p">)</span>
+
+        <span class="c1"># to avoid the user making mistake automatically check the inverse of</span>
+        <span class="c1"># the stellar states, since the df is already parsed this will not</span>
+        <span class="c1"># take too much extra time</span>
+        <span class="n">logic</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">apply_logic</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">,</span> <span class="n">S1_state</span><span class="o">=</span><span class="n">S1_state</span><span class="p">,</span>
+                                          <span class="n">S2_state</span><span class="o">=</span><span class="n">S2_state</span><span class="p">,</span>
+                                          <span class="n">binary_state</span><span class="o">=</span><span class="s1">&#39;detached&#39;</span><span class="p">,</span>
+                                          <span class="n">step_name</span> <span class="o">=</span> <span class="s1">&#39;step_SN&#39;</span><span class="p">,</span>
+                                          <span class="n">invert_S1S2</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">df_synthetic</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">logic</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+        <span class="c1"># compute the inspiral timescale from the integrated orbit</span>
+        <span class="c1"># this estimate is better than evaluating Peters approxiamtion</span>
+        <span class="n">time_contact</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;event&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;END&#39;</span><span class="p">,[</span><span class="s1">&#39;time&#39;</span><span class="p">]]</span>
+        <span class="c1"># NOTE/TODO: we change the units of time in the dataframe to Myr</span>
+        <span class="c1"># this might be confusion to the user? Note that Myr are convinient</span>
+        <span class="c1"># when inspecting the data frame.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">df_synthetic</span><span class="p">[</span><span class="s1">&#39;t_delay&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">time_contact</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">df_synthetic</span><span class="p">[[</span><span class="s1">&#39;time&#39;</span><span class="p">]])</span><span class="o">*</span><span class="mf">1e-6</span> <span class="c1"># Myr</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">df_synthetic</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">]</span> <span class="o">*=</span> <span class="mf">1e-6</span> <span class="c1"># Myr</span>
+        
+        <span class="c1"># add properties of the oneline dataframe</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">df_oneline</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># TODO: add kicks as well by default?</span>
+            <span class="n">save_cols</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;S1_spin_orbit_tilt&#39;</span><span class="p">,</span> <span class="s1">&#39;S2_spin_orbit_tilt&#39;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">compute_GRB_properties</span><span class="p">:</span>
+                <span class="n">save_cols</span> <span class="o">+=</span> <span class="p">[</span><span class="s1">&#39;S1_m_disk_radiated&#39;</span><span class="p">,</span> <span class="s1">&#39;S2_m_disk_radiated&#39;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">formation_channels</span><span class="p">:</span>
+                <span class="n">save_cols</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;channel&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">oneline_cols</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">oneline_cols</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">c</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">save_cols</span><span class="p">:</span>
+                        <span class="n">save_cols</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">save_cols</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">c</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">df_oneline</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">df_synthetic</span><span class="p">[</span><span class="n">c</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df_oneline</span><span class="p">[</span><span class="n">c</span><span class="p">]</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;The column </span><span class="si">{</span><span class="n">c</span><span class="si">}</span><span class="s1"> is not present in the &#39;</span>
+                                   <span class="s1">&#39;oneline dataframe.&#39;</span><span class="p">)</span>
+
+        <span class="c1"># compute GRB properties</span>
+        <span class="k">if</span> <span class="n">compute_GRB_properties</span><span class="p">:</span>
+            <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;GRB_efficiency&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">MODEL</span> <span class="ow">or</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">MODEL</span><span class="p">[</span><span class="s1">&#39;GRB_efficiency&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Missing GRB_efficiency variable in the MODEL!&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;GRB_beaming&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">MODEL</span> <span class="ow">or</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">MODEL</span><span class="p">[</span><span class="s1">&#39;GRB_beaming&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Missing GRB_beaming variable in the MODEL!&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;E_GRB_iso_min&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">MODEL</span> <span class="ow">or</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">MODEL</span><span class="p">[</span><span class="s1">&#39;E_GRB_iso_min&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Missing GRB_beaming variable in the MODEL!&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">df_synthetic</span> <span class="o">=</span> <span class="n">get_GRB_properties</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">df_synthetic</span><span class="p">,</span>
+                                                   <span class="bp">self</span><span class="o">.</span><span class="n">MODEL</span><span class="p">[</span><span class="s1">&#39;GRB_efficiency&#39;</span><span class="p">],</span>
+                                                   <span class="bp">self</span><span class="o">.</span><span class="n">MODEL</span><span class="p">[</span><span class="s1">&#39;GRB_beaming&#39;</span><span class="p">],</span>
+                                                   <span class="bp">self</span><span class="o">.</span><span class="n">MODEL</span><span class="p">[</span><span class="s1">&#39;E_GRB_iso_min&#39;</span><span class="p">]</span>
+                                                   <span class="p">)</span>
+            <span class="c1"># get time_CC1 and time_CC2 note that for GRB calculations we</span>
+            <span class="c1"># do not use the &quot;time&quot; column indicating the time of formation</span>
+            <span class="c1"># of the DCO systems as there might be cases where </span>
+            <span class="c1"># CC2 might happen before CC1 due to mass ratio reversal</span>
+            <span class="n">DCO</span> <span class="o">=</span> <span class="p">[[</span><span class="n">S1_state</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span> <span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">S2_state</span><span class="p">]]</span>
+            <span class="n">events</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;CC1&#39;</span><span class="p">,</span> <span class="s1">&#39;CC2&#39;</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">event</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">events</span><span class="p">):</span>
+                <span class="n">logic</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">apply_logic</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">,</span> <span class="n">S1_state</span><span class="o">=</span><span class="n">DCO</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
+                            <span class="n">S2_state</span><span class="o">=</span><span class="n">DCO</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span>
+                            <span class="n">binary_state</span><span class="o">=</span><span class="s1">&#39;detached&#39;</span><span class="p">,</span>
+                            <span class="n">step_name</span> <span class="o">=</span> <span class="s1">&#39;step_SN&#39;</span><span class="p">,</span>
+                            <span class="n">invert_S1S2</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                            <span class="n">warn</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+                <span class="n">last_index</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+                <span class="n">time</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">logic</span><span class="p">,</span><span class="s1">&#39;time&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                    <span class="k">if</span> <span class="n">index</span> <span class="o">!=</span> <span class="n">last_index</span><span class="p">:</span>
+                        <span class="n">time</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+                    <span class="n">last_index</span> <span class="o">=</span> <span class="n">index</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">time</span><span class="p">)</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df_synthetic</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Missing values in time_</span><span class="si">{event}</span><span class="s1">!&#39;</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">df_synthetic</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;time_</span><span class="si">{</span><span class="n">event</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">time</span><span class="p">)</span><span class="o">*</span><span class="mf">1e-6</span> <span class="c1"># Myr</span>
+
+        <span class="c1"># for convinience reindex the DataFrame</span>
+        <span class="n">n_rows</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">df_synthetic</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">df_synthetic</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df_synthetic</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">n_rows</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="n">n_rows</span><span class="p">,</span><span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="SyntheticPopulation.save_synthetic_pop"><a class="viewcode-back" href="../../../api/posydon.popsyn.synthetic_population.html#posydon.popsyn.synthetic_population.SyntheticPopulation.save_synthetic_pop">[docs]</a>    <span class="k">def</span> <span class="nf">save_synthetic_pop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="s1">&#39;./synthetic_population.h5&#39;</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Save synthetc population.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        path : str</span>
+<span class="sd">            Path to dataset.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">df_synthetic</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Nothing to save!&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">df_synthetic</span><span class="o">.</span><span class="n">to_hdf</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="s1">&#39;history&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Synthetic population successfully saved!&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="SyntheticPopulation.load_synthetic_pop"><a class="viewcode-back" href="../../../api/posydon.popsyn.synthetic_population.html#posydon.popsyn.synthetic_population.SyntheticPopulation.load_synthetic_pop">[docs]</a>    <span class="k">def</span> <span class="nf">load_synthetic_pop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Load synthetc population.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        path : str</span>
+<span class="sd">            Path to dataset.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">df_synthetic</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">df_synthetic</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_hdf</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="s1">&#39;history&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Synthetic population successfully loaded!&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;You already have an synthetic population stored in memory!&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="SyntheticPopulation.get_dco_merger_efficiency"><a class="viewcode-back" href="../../../api/posydon.popsyn.synthetic_population.html#posydon.popsyn.synthetic_population.SyntheticPopulation.get_dco_merger_efficiency">[docs]</a>    <span class="k">def</span> <span class="nf">get_dco_merger_efficiency</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute the DCO merger efficinty per Msun for each metallicities.&quot;&quot;&quot;</span>
+        <span class="n">metallicities</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">df_synthetic</span><span class="p">[</span><span class="s1">&#39;metallicity&#39;</span><span class="p">])</span>
+        <span class="n">efficiencies</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">met_merger_efficiency</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">metallicities</span><span class="p">)[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">met</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">met_merger_efficiency</span><span class="p">:</span>
+            <span class="n">sel</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">df_synthetic</span><span class="p">[</span><span class="s1">&#39;metallicity&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">met</span><span class="p">)</span>
+            <span class="n">count</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df_synthetic</span><span class="p">[</span><span class="n">sel</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">underlying_stellar_mass</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df_synthetic</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">sel</span><span class="p">,</span><span class="s1">&#39;underlying_mass_for_met&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">eff</span> <span class="o">=</span> <span class="n">count</span><span class="o">/</span><span class="n">underlying_stellar_mass</span>
+            <span class="n">efficiencies</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">eff</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;DCO merger efficiency at Z=</span><span class="si">{</span><span class="n">met</span><span class="si">:</span><span class="s1">1.2E</span><span class="si">}</span><span class="s1">: </span><span class="si">{</span><span class="n">eff</span><span class="si">:</span><span class="s1">1.2E</span><span class="si">}</span><span class="s1"> Msun^-1&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">met_merger_efficiency</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">met_merger_efficiency</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">merger_efficiency</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;total&#39;</span> <span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">efficiencies</span><span class="p">)}</span>
+        <span class="c1"># if the channel column is present compute the merger efficiency per channel</span>
+        <span class="k">if</span> <span class="s2">&quot;channel&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">df_synthetic</span><span class="p">:</span>
+            <span class="n">channels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">df_synthetic</span><span class="p">[</span><span class="s1">&#39;channel&#39;</span><span class="p">])</span>
+            <span class="k">for</span> <span class="n">ch</span> <span class="ow">in</span> <span class="n">channels</span><span class="p">:</span>
+                <span class="n">efficiencies</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="k">for</span> <span class="n">met</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">met_merger_efficiency</span><span class="p">:</span>
+                    <span class="n">sel</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">df_synthetic</span><span class="p">[</span><span class="s1">&#39;metallicity&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">met</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">df_synthetic</span><span class="p">[</span><span class="s1">&#39;channel&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">ch</span><span class="p">)</span>
+                    <span class="n">count</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df_synthetic</span><span class="p">[</span><span class="n">sel</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                    <span class="k">if</span> <span class="n">count</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                        <span class="n">underlying_stellar_mass</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df_synthetic</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">sel</span><span class="p">,</span><span class="s1">&#39;underlying_mass_for_met&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                        <span class="n">eff</span> <span class="o">=</span> <span class="n">count</span><span class="o">/</span><span class="n">underlying_stellar_mass</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">eff</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+                    <span class="n">efficiencies</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">eff</span><span class="p">)</span>
+                    <span class="c1"># print(f&#39;Z={met:1.2E} {ch}: {eff:1.2E} Msun^-1&#39;)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">merger_efficiency</span><span class="p">[</span><span class="n">ch</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">efficiencies</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="SyntheticPopulation.compute_cosmological_weights"><a class="viewcode-back" href="../../../api/posydon.popsyn.synthetic_population.html#posydon.popsyn.synthetic_population.SyntheticPopulation.compute_cosmological_weights">[docs]</a>    <span class="k">def</span> <span class="nf">compute_cosmological_weights</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sensitivity</span><span class="p">,</span> <span class="n">flag_pdet</span><span class="p">,</span> <span class="n">working_dir</span><span class="p">,</span> <span class="n">load_data</span><span class="p">,</span> <span class="n">pop</span><span class="o">=</span><span class="s1">&#39;DCO&#39;</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute the GRB/DCO merger rate weights.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        sensitivity : str</span>
+<span class="sd">            GW detector sensitivity and network configuration you want to use, see arXiv:1304.0670v3</span>
+<span class="sd">            detector sensitivities are taken from: https://dcc.ligo.org/LIGO-T2000012-v2/public</span>
+<span class="sd">            available sensitivity keys (for Hanford, Livingston, Virgo network):</span>
+<span class="sd">                &#39;O3actual_H1L1V1&#39; : aligo_O3actual_H1.txt, aligo_O3actual_L1.txt, avirgo_O3actual.txt</span>
+<span class="sd">                &#39;O4low_H1L1V1&#39; : aligo_O4low.txt, aligo_O4low.txt, avirgo_O4high_NEW.txt</span>
+<span class="sd">                &#39;O4high_H1L1V1&#39; : aligo_O4high.txt, aligo_O4high.txt, avirgo_O4high_NEW.txt</span>
+<span class="sd">                &#39;design_H1L1V1&#39; : AplusDesign.txt, AplusDesign.txt, avirgo_O5high_NEW.txt</span>
+<span class="sd">                &#39;infinite&#39;: intrinsic merging DCO population, i.e. p_det = 1</span>
+<span class="sd">        flag_pdet : bool</span>
+<span class="sd">            `True` if you use sensitivity != &#39;infinite&#39;.</span>
+<span class="sd">        working_dir : str</span>
+<span class="sd">            Working directory where the weights will be saved.</span>
+<span class="sd">        load_data : bool</span>
+<span class="sd">            `True` if you want to load the weights computed by this function</span>
+<span class="sd">            in your working directory.</span>
+<span class="sd">        **kwargs : dict</span>
+<span class="sd">            Kwargs containing the model parameters of your rate calculation.</span>
+<span class="sd">            See posydon/popsyn/rate_calculation.py</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        array doubles</span>
+<span class="sd">            Return the cosmological weights, z_formation, z_merger and binary</span>
+<span class="sd">            index k associated to each weighted binary.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># TODO: make the class inputs kwargs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rates</span> <span class="o">=</span> <span class="n">Rates</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">df_synthetic</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">MODEL</span><span class="p">)</span>
+
+        <span class="c1"># compute DCO merger rate density</span>
+        <span class="k">if</span> <span class="n">pop</span> <span class="o">==</span> <span class="s1">&#39;DCO&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">load_data</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="o">.</span><span class="n">compute_merger_rate_weights</span><span class="p">(</span><span class="n">sensitivity</span><span class="o">=</span><span class="n">sensitivity</span><span class="p">,</span> <span class="n">flag_pdet</span><span class="o">=</span><span class="n">flag_pdet</span><span class="p">,</span> <span class="n">path_to_dir</span><span class="o">=</span><span class="n">working_dir</span><span class="p">)</span>
+            <span class="n">index</span><span class="p">,</span> <span class="n">z_formation</span><span class="p">,</span> <span class="n">z_merger</span><span class="p">,</span> <span class="n">w_ijk</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="o">.</span><span class="n">load_merger_rate_weights</span><span class="p">(</span><span class="n">sensitivity</span><span class="p">,</span> <span class="n">path_to_dir</span><span class="o">=</span><span class="n">working_dir</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="n">index</span><span class="p">,</span> <span class="n">z_formation</span><span class="p">,</span> <span class="n">z_merger</span><span class="p">,</span> <span class="n">w_ijk</span>
+        <span class="k">elif</span> <span class="n">pop</span> <span class="o">==</span> <span class="s1">&#39;GRB&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">load_data</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="o">.</span><span class="n">compute_GRB_rate_weights</span><span class="p">(</span><span class="n">sensitivity</span><span class="o">=</span><span class="n">sensitivity</span><span class="p">,</span> <span class="n">path_to_dir</span><span class="o">=</span><span class="n">working_dir</span><span class="p">)</span>
+            <span class="n">index_1</span><span class="p">,</span> <span class="n">z_formation_1</span><span class="p">,</span> <span class="n">z_grb_1</span><span class="p">,</span> <span class="n">w_ijk_1</span><span class="p">,</span> \
+                <span class="n">index_2</span><span class="p">,</span> <span class="n">z_formation_2</span><span class="p">,</span> <span class="n">z_grb_2</span><span class="p">,</span> <span class="n">w_ijk_2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="o">.</span><span class="n">load_grb_rate_weights</span><span class="p">(</span><span class="n">sensitivity</span><span class="p">,</span> <span class="n">path_to_dir</span><span class="o">=</span><span class="n">working_dir</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="n">index_1</span><span class="p">,</span> <span class="n">z_formation_1</span><span class="p">,</span> <span class="n">z_grb_1</span><span class="p">,</span> <span class="n">w_ijk_1</span><span class="p">,</span> <span class="n">index_2</span><span class="p">,</span> <span class="n">z_formation_2</span><span class="p">,</span> <span class="n">z_grb_2</span><span class="p">,</span> <span class="n">w_ijk_2</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Population not recognized!&#39;</span><span class="p">)</span>  </div>
+
+<div class="viewcode-block" id="SyntheticPopulation.resample_synthetic_population"><a class="viewcode-back" href="../../../api/posydon.popsyn.synthetic_population.html#posydon.popsyn.synthetic_population.SyntheticPopulation.resample_synthetic_population">[docs]</a>    <span class="k">def</span> <span class="nf">resample_synthetic_population</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">z_formation</span><span class="p">,</span> <span class="n">z_event</span><span class="p">,</span> <span class="n">w_ijk</span><span class="p">,</span> <span class="n">export_cols</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> 
+                                      <span class="n">pop</span><span class="o">=</span><span class="s1">&#39;DCO&#39;</span><span class="p">,</span> <span class="n">reset_grb_properties</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Resample synthetc population to obtain intrinsic/observable population.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        index : array int</span>
+<span class="sd">            Index k of each binary corresponding to the synthetc dataframe</span>
+<span class="sd">            proeprties.</span>
+<span class="sd">        z_formation : array float</span>
+<span class="sd">            Redshift of formation of each binary.</span>
+<span class="sd">        z_merger : array float</span>
+<span class="sd">            Redshift of merger of each binary.</span>
+<span class="sd">        w_ijk : array float</span>
+<span class="sd">            Cosmological weights computed with Eq. B.8 of Bavera et at. (2020).</span>
+<span class="sd">        export_cols : list str</span>
+<span class="sd">            List of additional columns to save in the intrinsic/observable</span>
+<span class="sd">            population.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        pd.DataFrame</span>
+<span class="sd">            Resampled synthetc population to intrinsic or detecatable</span>
+<span class="sd">            population.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># compute GRB properties boolean</span>
+        <span class="n">compute_GRB_properties</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">MODEL</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> 
+                                  <span class="s2">&quot;compute_GRB_properties&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">MODEL</span> <span class="ow">and</span> 
+                                  <span class="bp">self</span><span class="o">.</span><span class="n">MODEL</span><span class="p">[</span><span class="s2">&quot;compute_GRB_properties&quot;</span><span class="p">])</span>
+
+        <span class="c1"># drop all zero weights to save memory</span>
+        <span class="n">sel</span> <span class="o">=</span> <span class="n">w_ijk</span> <span class="o">&gt;</span> <span class="mf">0.</span>
+        <span class="n">index</span> <span class="o">=</span> <span class="n">index</span><span class="p">[</span><span class="n">sel</span><span class="p">]</span>
+        <span class="n">z_formation</span> <span class="o">=</span> <span class="n">z_formation</span><span class="p">[</span><span class="n">sel</span><span class="p">]</span>
+        <span class="n">z_event</span> <span class="o">=</span> <span class="n">z_event</span><span class="p">[</span><span class="n">sel</span><span class="p">]</span>
+        <span class="n">w_ijk</span> <span class="o">=</span> <span class="n">w_ijk</span><span class="p">[</span><span class="n">sel</span><span class="p">]</span>
+
+        <span class="c1"># export results, we do a selections of columns else the dataframe</span>
+        <span class="c1"># risks to go out of memory</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
+        <span class="n">df</span><span class="p">[</span><span class="s1">&#39;weight&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">w_ijk</span>
+        <span class="n">df</span><span class="p">[</span><span class="s1">&#39;z_formation&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">z_formation</span>
+        <span class="k">if</span> <span class="n">pop</span> <span class="o">==</span> <span class="s1">&#39;DCO&#39;</span><span class="p">:</span>
+            <span class="n">df</span><span class="p">[</span><span class="s1">&#39;z_merger&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">z_event</span>
+        <span class="k">elif</span> <span class="n">pop</span> <span class="o">==</span> <span class="s1">&#39;GRB&#39;</span><span class="p">:</span>
+            <span class="n">df</span><span class="p">[</span><span class="s1">&#39;z_grb&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">z_event</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Population not recognized!&#39;</span><span class="p">)</span>
+        <span class="n">save_cols</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;metallicity&#39;</span><span class="p">,</span><span class="s1">&#39;time&#39;</span><span class="p">,</span><span class="s1">&#39;t_delay&#39;</span><span class="p">,</span><span class="s1">&#39;S1_state&#39;</span><span class="p">,</span><span class="s1">&#39;S2_state&#39;</span><span class="p">,</span>
+                     <span class="s1">&#39;S1_mass&#39;</span><span class="p">,</span><span class="s1">&#39;S2_mass&#39;</span><span class="p">,</span><span class="s1">&#39;S1_spin&#39;</span><span class="p">,</span><span class="s1">&#39;S2_spin&#39;</span><span class="p">,</span>
+                     <span class="s1">&#39;orbital_period&#39;</span><span class="p">,</span><span class="s1">&#39;eccentricity&#39;</span><span class="p">,</span> <span class="s1">&#39;q&#39;</span><span class="p">,</span> <span class="s1">&#39;m_tot&#39;</span><span class="p">,</span>
+                     <span class="s1">&#39;m_chirp&#39;</span><span class="p">,</span> <span class="s1">&#39;chi_eff&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">compute_GRB_properties</span><span class="p">:</span>
+            <span class="n">save_cols</span> <span class="o">+=</span> <span class="n">GRB_PROPERTIES</span>
+        <span class="k">if</span> <span class="s2">&quot;channel&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="o">.</span><span class="n">df</span><span class="p">:</span>
+            <span class="n">save_cols</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;channel&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">export_cols</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">export_cols</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">c</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">save_cols</span><span class="p">:</span>
+                    <span class="n">save_cols</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">save_cols</span><span class="p">:</span>
+            <span class="n">df</span><span class="p">[</span><span class="n">c</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="o">.</span><span class="n">get_data</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span>
+        
+        <span class="c1"># the same binary system can emit two GRBs, we remove the</span>
+        <span class="c1"># GRB properties of the other GRB to prevent mistakes</span>
+        <span class="k">if</span> <span class="n">reset_grb_properties</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">reset_grb_properties</span> <span class="o">==</span> <span class="s1">&#39;GRB1&#39;</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">GRB_PROPERTIES</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="s2">&quot;S1&quot;</span> <span class="ow">in</span> <span class="n">key</span><span class="p">:</span>
+                        <span class="n">df</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+            <span class="k">elif</span> <span class="n">reset_grb_properties</span> <span class="o">==</span> <span class="s1">&#39;GRB2&#39;</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">GRB_PROPERTIES</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="s2">&quot;S2&quot;</span> <span class="ow">in</span> <span class="n">key</span><span class="p">:</span>
+                        <span class="n">df</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;reset_grb_properties==</span><span class="si">{</span><span class="n">reset_grb_properties</span><span class="si">}</span><span class="s1"> key not recognized!&#39;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">df</span></div>
+
+<div class="viewcode-block" id="SyntheticPopulation.get_dco_merger_rate_density"><a class="viewcode-back" href="../../../api/posydon.popsyn.synthetic_population.html#posydon.popsyn.synthetic_population.SyntheticPopulation.get_dco_merger_rate_density">[docs]</a>    <span class="k">def</span> <span class="nf">get_dco_merger_rate_density</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">export_cols</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>  <span class="n">working_dir</span><span class="o">=</span><span class="s1">&#39;./&#39;</span><span class="p">,</span> <span class="n">load_data</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute the merger rate density as a function of redshift.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        export_cols : list str</span>
+<span class="sd">            List of additional columns to save in the intrinsic/observable</span>
+<span class="sd">            population.</span>
+<span class="sd">        working_dir : str</span>
+<span class="sd">            Working directory where the weights will be saved.</span>
+<span class="sd">        load_data : bool</span>
+<span class="sd">            `True` if you want to load the weights computed by this function</span>
+<span class="sd">            in your working directory.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">df_synthetic</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;You first need to isolated the DCO synthetic population!&#39;</span><span class="p">)</span>
+
+        <span class="c1"># compute cosmological weights (detection rate weights with infinite sensitivity)</span>
+        <span class="n">sensitivity</span><span class="o">=</span><span class="s1">&#39;infinite&#39;</span>
+        <span class="n">flag_pdet</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">index</span><span class="p">,</span> <span class="n">z_formation</span><span class="p">,</span> <span class="n">z_merger</span><span class="p">,</span> <span class="n">w_ijk</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">compute_cosmological_weights</span><span class="p">(</span><span class="n">sensitivity</span><span class="p">,</span> <span class="n">flag_pdet</span><span class="p">,</span> <span class="n">working_dir</span><span class="o">=</span><span class="n">working_dir</span><span class="p">,</span> <span class="n">load_data</span><span class="o">=</span><span class="n">load_data</span><span class="p">,</span> <span class="n">pop</span><span class="o">=</span><span class="s1">&#39;DCO&#39;</span><span class="p">)</span>
+
+        <span class="c1"># compute rate density weights</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dco_z_rate_density</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="o">.</span><span class="n">get_centers_redshift_bins</span><span class="p">()</span>
+        <span class="n">total_rate</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="o">.</span><span class="n">compute_rate_density</span><span class="p">(</span><span class="n">w_ijk</span><span class="p">,</span> <span class="n">z_merger</span><span class="p">,</span> <span class="n">observable</span><span class="o">=</span><span class="s1">&#39;DCO&#39;</span><span class="p">,</span> <span class="n">sensitivity</span><span class="o">=</span><span class="n">sensitivity</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dco_rate_density</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;total&#39;</span> <span class="p">:</span> <span class="n">total_rate</span><span class="p">}</span>
+        <span class="k">if</span> <span class="s2">&quot;channel&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">df_synthetic</span><span class="p">:</span>
+            <span class="n">channels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">df_synthetic</span><span class="p">[</span><span class="s1">&#39;channel&#39;</span><span class="p">])</span>
+            <span class="k">for</span> <span class="n">ch</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">channels</span><span class="p">):</span>
+                <span class="n">sel</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="o">.</span><span class="n">get_data</span><span class="p">(</span><span class="s1">&#39;channel&#39;</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span> <span class="o">==</span> <span class="n">ch</span><span class="p">)</span>
+                <span class="n">rate</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="o">.</span><span class="n">compute_rate_density</span><span class="p">(</span><span class="n">w_ijk</span><span class="p">[</span><span class="n">sel</span><span class="p">],</span> <span class="n">z_merger</span><span class="p">[</span><span class="n">sel</span><span class="p">],</span> <span class="n">observable</span><span class="o">=</span><span class="s1">&#39;DCO&#39;</span><span class="p">,</span> <span class="n">sensitivity</span><span class="o">=</span><span class="n">sensitivity</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">dco_rate_density</span><span class="p">[</span><span class="n">ch</span><span class="p">]</span> <span class="o">=</span> <span class="n">rate</span>
+            
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;DCO merger rate density in the local Universe (z=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">dco_z_rate_density</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">:</span><span class="s1">1.2f</span><span class="si">}</span><span class="s1">): </span><span class="si">{</span><span class="nb">round</span><span class="p">(</span><span class="n">total_rate</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="mi">2</span><span class="p">)</span><span class="si">}</span><span class="s1"> Gpc^-3 yr^-1&#39;</span><span class="p">)</span>
+
+        <span class="c1"># export the intrinsic DCO population</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">df_dco_intrinsic</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">resample_synthetic_population</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">z_formation</span><span class="p">,</span> <span class="n">z_merger</span><span class="p">,</span> <span class="n">w_ijk</span><span class="p">,</span> <span class="n">export_cols</span><span class="o">=</span><span class="n">export_cols</span><span class="p">,</span> <span class="n">pop</span><span class="o">=</span><span class="s1">&#39;DCO&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="SyntheticPopulation.get_grb_rate_density"><a class="viewcode-back" href="../../../api/posydon.popsyn.synthetic_population.html#posydon.popsyn.synthetic_population.SyntheticPopulation.get_grb_rate_density">[docs]</a>    <span class="k">def</span> <span class="nf">get_grb_rate_density</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">export_cols</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>  <span class="n">working_dir</span><span class="o">=</span><span class="s1">&#39;./&#39;</span><span class="p">,</span> <span class="n">load_data</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute the GRB density as a function of redshift.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        export_cols : list str</span>
+<span class="sd">            List of additional columns to save in the intrinsic/observable</span>
+<span class="sd">            population.</span>
+<span class="sd">        working_dir : str</span>
+<span class="sd">            Working directory where the weights will be saved.</span>
+<span class="sd">        load_data : bool</span>
+<span class="sd">            `True` if you want to load the weights computed by this function</span>
+<span class="sd">            in your working directory.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">df_synthetic</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;You first need to isolated the DCO synthetic population!&#39;</span><span class="p">)</span>
+
+        <span class="c1"># compute cosmological weights (detection rate weights with infinite sensitivity)</span>
+        <span class="n">sensitivity</span><span class="o">=</span><span class="s1">&#39;infinite&#39;</span>
+        <span class="n">flag_pdet</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">index_1</span><span class="p">,</span> <span class="n">z_formation_1</span><span class="p">,</span> <span class="n">z_grb_1</span><span class="p">,</span> <span class="n">w_ijk_1</span><span class="p">,</span> \
+            <span class="n">index_2</span><span class="p">,</span> <span class="n">z_formation_2</span><span class="p">,</span> <span class="n">z_grb_2</span><span class="p">,</span> <span class="n">w_ijk_2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">compute_cosmological_weights</span><span class="p">(</span><span class="n">sensitivity</span><span class="p">,</span> <span class="n">flag_pdet</span><span class="p">,</span> <span class="n">working_dir</span><span class="o">=</span><span class="n">working_dir</span><span class="p">,</span> <span class="n">load_data</span><span class="o">=</span><span class="n">load_data</span><span class="p">,</span> <span class="n">pop</span><span class="o">=</span><span class="s1">&#39;GRB&#39;</span><span class="p">)</span>
+
+        <span class="c1"># compute beamed rate density weights</span>
+        <span class="c1"># note we compute the beamed rate density for GRBs as this is what is often reported in the literature</span>
+        <span class="c1"># as the beaming factor is not known a priori</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">grb_z_rate_density</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="o">.</span><span class="n">get_centers_redshift_bins</span><span class="p">()</span>
+        <span class="n">total_GRB1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="o">.</span><span class="n">compute_rate_density</span><span class="p">(</span><span class="n">w_ijk_1</span><span class="p">,</span> <span class="n">z_grb_1</span><span class="p">,</span> <span class="n">observable</span><span class="o">=</span><span class="s1">&#39;GRB1&#39;</span><span class="p">,</span> <span class="n">sensitivity</span><span class="o">=</span><span class="s1">&#39;beamed&#39;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">index_1</span><span class="p">)</span>
+        <span class="n">total_GRB2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="o">.</span><span class="n">compute_rate_density</span><span class="p">(</span><span class="n">w_ijk_2</span><span class="p">,</span> <span class="n">z_grb_2</span><span class="p">,</span> <span class="n">observable</span><span class="o">=</span><span class="s1">&#39;GRB2&#39;</span><span class="p">,</span> <span class="n">sensitivity</span><span class="o">=</span><span class="s1">&#39;beamed&#39;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">index_2</span><span class="p">)</span>
+        <span class="n">total_rate</span> <span class="o">=</span> <span class="n">total_GRB1</span> <span class="o">+</span> <span class="n">total_GRB2</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">grb_rate_density</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;total&#39;</span> <span class="p">:</span> <span class="n">total_rate</span><span class="p">,</span> <span class="s1">&#39;total_GRB1&#39;</span> <span class="p">:</span> <span class="n">total_GRB1</span><span class="p">,</span> <span class="s1">&#39;total_GRB2&#39;</span><span class="p">:</span> <span class="n">total_GRB2</span><span class="p">}</span>
+        <span class="k">if</span> <span class="s2">&quot;channel&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">df_synthetic</span><span class="p">:</span>
+            <span class="n">channels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">df_synthetic</span><span class="p">[</span><span class="s1">&#39;channel&#39;</span><span class="p">])</span>
+            <span class="k">for</span> <span class="n">ch</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">channels</span><span class="p">):</span>
+                <span class="n">sel1</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="o">.</span><span class="n">get_data</span><span class="p">(</span><span class="s1">&#39;channel&#39;</span><span class="p">,</span> <span class="n">index_1</span><span class="p">)</span> <span class="o">==</span> <span class="n">ch</span><span class="p">)</span>
+                <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">sel1</span><span class="p">):</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">grb_rate_density</span><span class="p">[</span><span class="n">ch</span><span class="o">+</span><span class="s1">&#39;_GRB1&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="o">.</span><span class="n">compute_rate_density</span><span class="p">(</span><span class="n">w_ijk_1</span><span class="p">[</span><span class="n">sel1</span><span class="p">],</span> <span class="n">z_grb_1</span><span class="p">[</span><span class="n">sel1</span><span class="p">],</span> <span class="n">observable</span><span class="o">=</span><span class="s1">&#39;GRB1&#39;</span><span class="p">,</span> <span class="n">sensitivity</span><span class="o">=</span><span class="s1">&#39;beamed&#39;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">index_1</span><span class="p">[</span><span class="n">sel1</span><span class="p">])</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">grb_rate_density</span><span class="p">[</span><span class="n">ch</span><span class="o">+</span><span class="s1">&#39;_GRB1&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grb_z_rate_density</span><span class="p">))</span>
+                <span class="n">sel2</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="o">.</span><span class="n">get_data</span><span class="p">(</span><span class="s1">&#39;channel&#39;</span><span class="p">,</span> <span class="n">index_2</span><span class="p">)</span> <span class="o">==</span> <span class="n">ch</span><span class="p">)</span>
+                <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">sel2</span><span class="p">):</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">grb_rate_density</span><span class="p">[</span><span class="n">ch</span><span class="o">+</span><span class="s1">&#39;_GRB2&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="o">.</span><span class="n">compute_rate_density</span><span class="p">(</span><span class="n">w_ijk_2</span><span class="p">[</span><span class="n">sel2</span><span class="p">],</span> <span class="n">z_grb_2</span><span class="p">[</span><span class="n">sel2</span><span class="p">],</span> <span class="n">observable</span><span class="o">=</span><span class="s1">&#39;GRB2&#39;</span><span class="p">,</span> <span class="n">sensitivity</span><span class="o">=</span><span class="s1">&#39;beamed&#39;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">index_2</span><span class="p">[</span><span class="n">sel2</span><span class="p">])</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">grb_rate_density</span><span class="p">[</span><span class="n">ch</span><span class="o">+</span><span class="s1">&#39;_GRB2&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grb_z_rate_density</span><span class="p">))</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">grb_rate_density</span><span class="p">[</span><span class="n">ch</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">grb_rate_density</span><span class="p">[</span><span class="n">ch</span><span class="o">+</span><span class="s1">&#39;_GRB1&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">grb_rate_density</span><span class="p">[</span><span class="n">ch</span><span class="o">+</span><span class="s1">&#39;_GRB2&#39;</span><span class="p">]</span>
+            
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;GRB (beamed) rate density in the local Universe (z=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">grb_z_rate_density</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">:</span><span class="s1">1.2f</span><span class="si">}</span><span class="s1">): </span><span class="si">{</span><span class="nb">round</span><span class="p">(</span><span class="n">total_rate</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="mi">2</span><span class="p">)</span><span class="si">}</span><span class="s1"> Gpc^-3 yr^-1&#39;</span><span class="p">)</span>
+
+        <span class="c1"># export the intrinsic grb intrisic population</span>
+        <span class="c1"># TODO: instead of concatenating two dataframe and duplicating the information of the same</span>
+        <span class="c1"># binary system we should combine the two datraframes where we have two columns for GRB1 and GRB2</span>
+        <span class="c1"># such dataframe will have z_grb_1, z_grb_2, weight_1, weight_2</span>
+        <span class="c1"># when this is addressed, remove reset_grb_properties feature</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">df_grb_intrinsic</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
+        <span class="n">df_grb_1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">resample_synthetic_population</span><span class="p">(</span><span class="n">index_1</span><span class="p">,</span> <span class="n">z_formation_1</span><span class="p">,</span> <span class="n">z_grb_1</span><span class="p">,</span> <span class="n">w_ijk_1</span><span class="p">,</span> <span class="n">export_cols</span><span class="o">=</span><span class="n">export_cols</span><span class="p">,</span> <span class="n">pop</span><span class="o">=</span><span class="s1">&#39;GRB&#39;</span><span class="p">,</span> <span class="n">reset_grb_properties</span><span class="o">=</span><span class="s1">&#39;GRB2&#39;</span><span class="p">)</span>
+        <span class="n">df_grb_2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">resample_synthetic_population</span><span class="p">(</span><span class="n">index_2</span><span class="p">,</span> <span class="n">z_formation_2</span><span class="p">,</span> <span class="n">z_grb_2</span><span class="p">,</span> <span class="n">w_ijk_2</span><span class="p">,</span> <span class="n">export_cols</span><span class="o">=</span><span class="n">export_cols</span><span class="p">,</span> <span class="n">pop</span><span class="o">=</span><span class="s1">&#39;GRB&#39;</span><span class="p">,</span> <span class="n">reset_grb_properties</span><span class="o">=</span><span class="s1">&#39;GRB1&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">df_grb_intrinsic</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">df_grb_1</span><span class="p">,</span> <span class="n">df_grb_2</span><span class="p">],</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">sort</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="c1"># the observable population accounts for beaming</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">df_grb_observable</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df_grb_intrinsic</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">]:</span>
+            <span class="n">sel</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df_grb_observable</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;S</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1">_f_beaming&#39;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span> 
+            <span class="bp">self</span><span class="o">.</span><span class="n">df_grb_observable</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">sel</span><span class="p">,</span><span class="s1">&#39;weight&#39;</span><span class="p">]</span> <span class="o">*=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df_grb_observable</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">sel</span><span class="p">,</span><span class="sa">f</span><span class="s1">&#39;S</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1">_f_beaming&#39;</span><span class="p">]</span></div>
+        
+<div class="viewcode-block" id="SyntheticPopulation.get_dco_detection_rate"><a class="viewcode-back" href="../../../api/posydon.popsyn.synthetic_population.html#posydon.popsyn.synthetic_population.SyntheticPopulation.get_dco_detection_rate">[docs]</a>    <span class="k">def</span> <span class="nf">get_dco_detection_rate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sensitivity</span><span class="o">=</span><span class="s1">&#39;design_H1L1V1&#39;</span><span class="p">,</span> <span class="n">export_cols</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>  <span class="n">working_dir</span><span class="o">=</span><span class="s1">&#39;./&#39;</span><span class="p">,</span> <span class="n">load_data</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute the detection rate per yr.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        sensitivity : str</span>
+<span class="sd">            GW detector sensitivity and network configuration you want to use, see arXiv:1304.0670v3</span>
+<span class="sd">            detector sensitivities are taken from: https://dcc.ligo.org/LIGO-T2000012-v2/public</span>
+<span class="sd">            available sensitivity keys (for Hanford, Livingston, Virgo network):</span>
+<span class="sd">                &#39;O3actual_H1L1V1&#39; : aligo_O3actual_H1.txt, aligo_O3actual_L1.txt, avirgo_O3actual.txt</span>
+<span class="sd">                &#39;O4low_H1L1V1&#39; : aligo_O4low.txt, aligo_O4low.txt, avirgo_O4high_NEW.txt</span>
+<span class="sd">                &#39;O4high_H1L1V1&#39; : aligo_O4high.txt, aligo_O4high.txt, avirgo_O4high_NEW.txt</span>
+<span class="sd">                &#39;design_H1L1V1&#39; : AplusDesign.txt, AplusDesign.txt, avirgo_O5high_NEW.txt</span>
+<span class="sd">        export_cols : list str</span>
+<span class="sd">            List of additional columns to save in the intrinsic/observable</span>
+<span class="sd">            population.</span>
+<span class="sd">        working_dir : str</span>
+<span class="sd">            Working directory where the weights will be saved.</span>
+<span class="sd">        load_data : bool</span>
+<span class="sd">            `True` if you want to load the weights computed by this function</span>
+<span class="sd">            in your working directory.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">df_synthetic</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;You first need to isolated the DCO synthetic population!&#39;</span><span class="p">)</span>
+
+        <span class="c1"># compute detection rate weights</span>
+        <span class="n">flag_pdet</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">index</span><span class="p">,</span> <span class="n">z_formation</span><span class="p">,</span> <span class="n">z_merger</span><span class="p">,</span> <span class="n">w_ijk</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">compute_cosmological_weights</span><span class="p">(</span><span class="n">sensitivity</span><span class="p">,</span> <span class="n">flag_pdet</span><span class="p">,</span> <span class="n">working_dir</span><span class="o">=</span><span class="n">working_dir</span><span class="p">,</span> <span class="n">load_data</span><span class="o">=</span><span class="n">load_data</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;DCO detection rate at </span><span class="si">{</span><span class="n">sensitivity</span><span class="si">}</span><span class="s1"> sensitivity: </span><span class="si">{</span><span class="nb">sum</span><span class="p">(</span><span class="n">w_ijk</span><span class="p">)</span><span class="si">:</span><span class="s1">1.2f</span><span class="si">}</span><span class="s1"> yr^-1&#39;</span><span class="p">)</span>
+
+        <span class="c1"># export the observable DCO population</span>
+        <span class="c1"># TODO: store p_det</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">df_dco_observable</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">resample_synthetic_population</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">z_formation</span><span class="p">,</span> <span class="n">z_merger</span><span class="p">,</span> <span class="n">w_ijk</span><span class="p">,</span> <span class="n">export_cols</span><span class="o">=</span><span class="n">export_cols</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="SyntheticPopulation.get_formation_channels"><a class="viewcode-back" href="../../../api/posydon.popsyn.synthetic_population.html#posydon.popsyn.synthetic_population.SyntheticPopulation.get_formation_channels">[docs]</a>    <span class="k">def</span> <span class="nf">get_formation_channels</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mt_history</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get formation channel and add to df and df_oneline.&quot;&quot;&quot;</span>
+        
+        <span class="c1"># loop through each binary</span>
+        <span class="n">unique_binary_index</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="n">unique_binary_index</span><span class="p">:</span>
+
+            <span class="c1"># get event column and information from interpolated classes</span>
+            <span class="n">df_binary</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">index</span><span class="p">,[</span><span class="s1">&#39;event&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+            <span class="n">intep_cls</span> <span class="o">=</span> <span class="p">[</span><span class="n">key</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">df_oneline</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="k">if</span> <span class="s1">&#39;interp_class&#39;</span> <span class="ow">in</span> <span class="n">key</span><span class="p">]</span>
+            <span class="n">df_binary_online</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df_oneline</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">index</span><span class="p">,</span> <span class="n">intep_cls</span><span class="p">]</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+            <span class="n">event_array</span> <span class="o">=</span> <span class="n">df_binary</span><span class="p">[</span><span class="s1">&#39;event&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+        
+            <span class="c1"># make interpolated class information consistent with event column</span>
+            <span class="n">HMS_HMS_event_dict</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;stable_MT&#39;</span><span class="p">:</span><span class="s1">&#39;oRLO1&#39;</span><span class="p">,</span> <span class="s1">&#39;no_MT&#39;</span><span class="p">:</span><span class="s1">&#39;None&#39;</span><span class="p">,</span> <span class="s1">&#39;unstable_MT&#39;</span><span class="p">:</span><span class="s1">&#39;oCE1/oDoubleCE1&#39;</span><span class="p">}</span>
+            <span class="n">event_HMS_HMS</span> <span class="o">=</span> <span class="n">HMS_HMS_event_dict</span><span class="p">[</span><span class="n">df_binary_online</span><span class="p">[</span><span class="s1">&#39;interp_class_HMS_HMS&#39;</span><span class="p">]]</span>
+            
+            <span class="c1"># for now, only append information for RLO1; unstable_MT information already exists</span>
+            <span class="k">if</span> <span class="n">event_HMS_HMS</span> <span class="o">==</span> <span class="s1">&#39;oRLO1&#39;</span><span class="p">:</span>
+                <span class="n">event_array</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">event_HMS_HMS</span><span class="p">)</span>
+                <span class="n">formation_channel</span> <span class="o">=</span> <span class="s2">&quot;_&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">event_array</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">formation_channel</span> <span class="o">=</span> <span class="s2">&quot;_&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">event_array</span><span class="p">)</span>
+                        
+            <span class="c1"># TODO: drop the envent CO_contact</span>
+            <span class="c1"># TODO: once we trust the redirection to the detached step</span>
+            <span class="c1">#       drop also the redirect event</span>
+            
+            <span class="c1"># TODO: for debugging purposes we keep the full channel</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">df_oneline</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">index</span><span class="p">,</span><span class="s1">&#39;channel_debug&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">formation_channel</span>
+            <span class="c1"># clean the redirect and CO_contact events</span>
+            <span class="n">formation_channel</span> <span class="o">=</span> <span class="n">formation_channel</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;_redirect&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+            <span class="n">formation_channel</span> <span class="o">=</span> <span class="n">formation_channel</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;_CO_contact&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">df_oneline</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">index</span><span class="p">,</span><span class="s1">&#39;channel&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">formation_channel</span>
+            
+        <span class="k">if</span> <span class="n">mt_history</span> <span class="ow">and</span> <span class="s1">&#39;mt_history_HMS_HMS&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">df_oneline</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;mt_history_HMS_HMS not saved in the oneline dataframe!&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>   
+            <span class="c1"># split oRLO1 into oRLO1, oRLO1-contact and oRLO1-reverse</span>
+            <span class="n">sel</span> <span class="o">=</span> <span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">df_oneline</span><span class="p">[</span><span class="s1">&#39;mt_history_HMS_HMS&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;Stable contact phase&#39;</span><span class="p">)</span> <span class="o">&amp;</span> 
+                    <span class="bp">self</span><span class="o">.</span><span class="n">df_oneline</span><span class="p">[</span><span class="s1">&#39;channel&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="s1">&#39;oRLO1&#39;</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">df_oneline</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">sel</span><span class="p">,</span> <span class="s1">&#39;channel&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df_oneline</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">sel</span><span class="p">,</span> <span class="s1">&#39;channel&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;oRLO1&#39;</span><span class="p">,</span> <span class="s1">&#39;oRLO1-contact&#39;</span><span class="p">))</span>
+            <span class="n">sel</span> <span class="o">=</span> <span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">df_oneline</span><span class="p">[</span><span class="s1">&#39;mt_history_HMS_HMS&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;Stable reverse mass-transfer phase&#39;</span><span class="p">)</span> <span class="o">&amp;</span> 
+                    <span class="bp">self</span><span class="o">.</span><span class="n">df_oneline</span><span class="p">[</span><span class="s1">&#39;channel&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="s1">&#39;oRLO1&#39;</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">df_oneline</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">sel</span><span class="p">,</span> <span class="s1">&#39;channel&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df_oneline</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">sel</span><span class="p">,</span> <span class="s1">&#39;channel&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;oRLO1&#39;</span><span class="p">,</span> <span class="s1">&#39;oRLO1-reverse&#39;</span><span class="p">))</span></div>
+
+            <span class="c1"># TODO: do the above split for unstable MT as well</span>
+            
+    
+<div class="viewcode-block" id="SyntheticPopulation.save_intrinsic_pop"><a class="viewcode-back" href="../../../api/posydon.popsyn.synthetic_population.html#posydon.popsyn.synthetic_population.SyntheticPopulation.save_intrinsic_pop">[docs]</a>    <span class="k">def</span> <span class="nf">save_intrinsic_pop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="s1">&#39;./intrinsic_population_type.h5&#39;</span><span class="p">,</span> <span class="n">pop</span><span class="o">=</span><span class="s1">&#39;DCO&#39;</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Save intrinsic population.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        path : str</span>
+<span class="sd">            Path to dataset.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">pop</span> <span class="o">==</span> <span class="s1">&#39;DCO&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">df_dco_intrinsic</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Nothing to save!&#39;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">df_dco_intrinsic</span><span class="o">.</span><span class="n">to_hdf</span><span class="p">(</span><span class="n">path</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;type&#39;</span><span class="p">,</span> <span class="n">pop</span><span class="p">),</span> <span class="n">key</span><span class="o">=</span><span class="s1">&#39;history&#39;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Intrinsic population successfully saved!&#39;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">pop</span> <span class="o">==</span> <span class="s1">&#39;GRB&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">df_grb_intrinsic</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Nothing to save!&#39;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">df_grb_intrinsic</span><span class="o">.</span><span class="n">to_hdf</span><span class="p">(</span><span class="n">path</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;type&#39;</span><span class="p">,</span> <span class="n">pop</span><span class="p">),</span> <span class="n">key</span><span class="o">=</span><span class="s1">&#39;history&#39;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Intrinsic population successfully saved!&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Population not recognized!&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="SyntheticPopulation.load_intrinsic_pop"><a class="viewcode-back" href="../../../api/posydon.popsyn.synthetic_population.html#posydon.popsyn.synthetic_population.SyntheticPopulation.load_intrinsic_pop">[docs]</a>    <span class="k">def</span> <span class="nf">load_intrinsic_pop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">pop</span><span class="o">=</span><span class="s1">&#39;DCO&#39;</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Load intrinsic population.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        path : str</span>
+<span class="sd">            Path to dataset.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">pop</span> <span class="o">==</span> <span class="s1">&#39;DCO&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">df_dco_intrinsic</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">df_dco_intrinsic</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_hdf</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="s1">&#39;history&#39;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Intrinsic population successfully loaded!&#39;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;You already have an intrinsic population stored in memory!&#39;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">pop</span> <span class="o">==</span> <span class="s1">&#39;GRB&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">df_grb_intrinsic</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">df_grb_intrinsic</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_hdf</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="s1">&#39;history&#39;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Intrinsic population successfully loaded!&#39;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;You already have an intrinsic population stored in memory!&#39;</span><span class="p">)</span></div>
+            
+<div class="viewcode-block" id="SyntheticPopulation.save_observable_pop"><a class="viewcode-back" href="../../../api/posydon.popsyn.synthetic_population.html#posydon.popsyn.synthetic_population.SyntheticPopulation.save_observable_pop">[docs]</a>    <span class="k">def</span> <span class="nf">save_observable_pop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="s1">&#39;./observable_population_type.h5&#39;</span><span class="p">,</span> <span class="n">pop</span><span class="o">=</span><span class="s1">&#39;DCO&#39;</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Save observable population.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        path : str</span>
+<span class="sd">            Path to dataset.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">pop</span> <span class="o">==</span> <span class="s1">&#39;DCO&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">df_dco_observable</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Nothing to save!&#39;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">df_dco_observable</span><span class="o">.</span><span class="n">to_hdf</span><span class="p">(</span><span class="n">path</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;type&#39;</span><span class="p">,</span> <span class="n">pop</span><span class="p">),</span> <span class="n">key</span><span class="o">=</span><span class="s1">&#39;history&#39;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;observable population successfully saved!&#39;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">pop</span> <span class="o">==</span> <span class="s1">&#39;GRB&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">df_grb_observable</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Nothing to save!&#39;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">df_grb_observable</span><span class="o">.</span><span class="n">to_hdf</span><span class="p">(</span><span class="n">path</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;type&#39;</span><span class="p">,</span> <span class="n">pop</span><span class="p">),</span> <span class="n">key</span><span class="o">=</span><span class="s1">&#39;history&#39;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;observable population successfully saved!&#39;</span><span class="p">)</span> 
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Population not recognized!&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="SyntheticPopulation.load_observable_pop"><a class="viewcode-back" href="../../../api/posydon.popsyn.synthetic_population.html#posydon.popsyn.synthetic_population.SyntheticPopulation.load_observable_pop">[docs]</a>    <span class="k">def</span> <span class="nf">load_observable_pop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">pop</span><span class="o">=</span><span class="s1">&#39;DCO&#39;</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Load observable population.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        path : str</span>
+<span class="sd">            Path to dataset.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">pop</span> <span class="o">==</span> <span class="s1">&#39;DCO&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">df_dco_observable</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">df_dco_observable</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_hdf</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="s1">&#39;history&#39;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;observable population successfully loaded!&#39;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;You already have an observable population stored in memory!&#39;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">pop</span> <span class="o">==</span> <span class="s1">&#39;GRB&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">df_grb_observable</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">df_grb_observable</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_hdf</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="s1">&#39;history&#39;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;observable population successfully loaded!&#39;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;You already have an observable population stored in memory!&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Population not recognized!&#39;</span><span class="p">)</span>       </div>
+
+<div class="viewcode-block" id="SyntheticPopulation.plot_merger_efficiency"><a class="viewcode-back" href="../../../api/posydon.popsyn.synthetic_population.html#posydon.popsyn.synthetic_population.SyntheticPopulation.plot_merger_efficiency">[docs]</a>    <span class="k">def</span> <span class="nf">plot_merger_efficiency</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Plot merger rate efficinty.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">met_merger_efficiency</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">merger_efficiency</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;First you need to compute the merger efficinty!&#39;</span><span class="p">)</span>
+        <span class="n">plot_pop</span><span class="o">.</span><span class="n">plot_merger_efficiency</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">met_merger_efficiency</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">merger_efficiency</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="SyntheticPopulation.plot_hist_properties"><a class="viewcode-back" href="../../../api/posydon.popsyn.synthetic_population.html#posydon.popsyn.synthetic_population.SyntheticPopulation.plot_hist_properties">[docs]</a>    <span class="k">def</span> <span class="nf">plot_hist_properties</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">var</span><span class="p">,</span> <span class="n">intrinsic</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">observable</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">pop</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Plot histogram of intrinsic/observable properites.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        var : str</span>
+<span class="sd">            Property to plot stored in intrinsic/observable dataframe.</span>
+<span class="sd">        intrinsic : bool</span>
+<span class="sd">            `True` if you want to deplay the intrisc population.</span>
+<span class="sd">        observable : bool</span>
+<span class="sd">            `True` if you want to deplay the observable population.</span>
+<span class="sd">        **kwargs : dict</span>
+<span class="sd">            ploting arguments</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">pop</span> <span class="o">==</span> <span class="s1">&#39;DCO&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">df_dco_intrinsic</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">df_dco_observable</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;First you need to compute the merger rate density!&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">intrinsic</span><span class="p">:</span>
+                <span class="n">df_intrinsic</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df_dco_intrinsic</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">df_intrinsic</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">if</span> <span class="n">observable</span><span class="p">:</span>
+                <span class="n">df_observable</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df_dco_observable</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">df_observable</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">elif</span> <span class="n">pop</span> <span class="o">==</span> <span class="s1">&#39;GRB&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">df_grb_intrinsic</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">df_grb_observable</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;First you need to compute the merger rate density!&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">intrinsic</span><span class="p">:</span>
+                <span class="n">df_intrinsic</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df_grb_intrinsic</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">df_intrinsic</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">if</span> <span class="n">observable</span><span class="p">:</span>
+                <span class="n">df_observable</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df_grb_observable</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">df_observable</span> <span class="o">=</span> <span class="kc">None</span>       
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Population not recognized!&#39;</span><span class="p">)</span>
+        <span class="n">plot_pop</span><span class="o">.</span><span class="n">plot_hist_properties</span><span class="p">(</span><span class="n">var</span><span class="p">,</span> <span class="n">df_intrinsic</span><span class="o">=</span><span class="n">df_intrinsic</span><span class="p">,</span> <span class="n">df_observable</span><span class="o">=</span><span class="n">df_observable</span><span class="p">,</span> <span class="n">pop</span><span class="o">=</span><span class="n">pop</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="SyntheticPopulation.plot_rate_density"><a class="viewcode-back" href="../../../api/posydon.popsyn.synthetic_population.html#posydon.popsyn.synthetic_population.SyntheticPopulation.plot_rate_density">[docs]</a>    <span class="k">def</span> <span class="nf">plot_rate_density</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">DCO</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">GRB</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Plot DCO and GRB rate densities.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">DCO</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">GRB</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;You need to choose at least one population to plot!&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">DCO</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">dco_z_rate_density</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">dco_rate_density</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;First you need to compute the merger rate density!&#39;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">z_dco</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dco_z_rate_density</span>
+                <span class="n">rate_dco</span> <span class="o">=</span>  <span class="bp">self</span><span class="o">.</span><span class="n">dco_rate_density</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">z_dco</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="n">rate_dco</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">GRB</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">grb_z_rate_density</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">grb_rate_density</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;First you need to compute the GRB rate density!&#39;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">z_grb</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">grb_z_rate_density</span>
+                <span class="n">rate_grb</span> <span class="o">=</span>  <span class="bp">self</span><span class="o">.</span><span class="n">grb_rate_density</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">z_grb</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="n">rate_grb</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">plot_pop</span><span class="o">.</span><span class="n">plot_rate_density</span><span class="p">(</span><span class="n">z_dco</span><span class="p">,</span> <span class="n">rate_dco</span><span class="p">,</span> <span class="n">z_grb</span><span class="p">,</span> <span class="n">rate_grb</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="SyntheticPopulation.plot_popsyn_over_grid_slice"><a class="viewcode-back" href="../../../api/posydon.popsyn.synthetic_population.html#posydon.popsyn.synthetic_population.SyntheticPopulation.plot_popsyn_over_grid_slice">[docs]</a>    <span class="k">def</span> <span class="nf">plot_popsyn_over_grid_slice</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">grid_type</span><span class="p">,</span> <span class="n">met_Zsun</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Plot popsyn over grid slice.&quot;&quot;&quot;</span>
+        <span class="n">plot_pop</span><span class="o">.</span><span class="n">plot_popsyn_over_grid_slice</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">grid_type</span><span class="p">,</span> <span class="n">met_Zsun</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Tassos Fragos.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

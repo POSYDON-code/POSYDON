@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>posydon.binary_evol package &mdash; posydon 0+untagged.1.g0e5e92d documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            posydon
+          </a>
+              <div class="version">
+                0+untagged.1.g0e5e92d
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">User guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../install/install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../data/data.html">Data Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">Application Programming Interface</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Binary Star Grids</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../run_mesa_grids/inifile.html">.ini file documentation for POSYDON GRIDS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../run_mesa_grids/fixed/fixed.html">Run a fixed MESA grid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PSyGrid/PSyGrid.html">The PSyGrid Object</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Generating Populations</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../pop_synth/POSYDON_populations.html">Running populations using POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../pop_synth/pop_synth.html">Running a POSYDON population synthesis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../pop_synth/custom_flow.html">Custom population synthesis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../SingleStar/SingleStar.html">The SingleStar object</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../BinaryStar/BinaryStar.html">The BinaryStar object</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../advanced_pop_options/custom_hooks.html">Evolutionary Hooks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../advanced_pop_options/debugging_binaries.html">Debugging Failed Binaries</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../interpolation/IF-Interpolator/IFInterpolator.html">Initial-Final Interpolation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Plotting</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../visualization/plot1D/plot1D.html">1D plotting functionalities for POSYON GRIDS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../visualization/plot2D/plot2D.html">2D plotting functionalities for POSYON GRIDS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../visualization/VHD/VHD.html">Van den Heuvel diagrams</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../interpolation/violinplot.html">Making the Violin Plot</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">About</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../about/licence.html">Licence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../about/attribution.html">Attribution</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">posydon</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">posydon.binary_evol package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/api/posydon.binary_evol.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="posydon-binary-evol-package">
+<h1>posydon.binary_evol package<a class="headerlink" href="#posydon-binary-evol-package" title="Permalink to this heading"></a></h1>
+<section id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this heading"></a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="posydon.binary_evol.CE.html">posydon.binary_evol.CE package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="posydon.binary_evol.CE.html#submodules">Submodules</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="posydon.binary_evol.CE.step_CEE.html"><code class="docutils literal notranslate"><span class="pre">StepCEE</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="posydon.binary_evol.CE.step_CEE.html#posydon.binary_evol.CE.step_CEE.StepCEE.CEE_simple_alpha_prescription"><code class="docutils literal notranslate"><span class="pre">StepCEE.CEE_simple_alpha_prescription()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.binary_evol.CE.step_CEE.html#posydon.binary_evol.CE.step_CEE.StepCEE.calculate_lambda_CE"><code class="docutils literal notranslate"><span class="pre">StepCEE.calculate_lambda_CE()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.binary_evol.CE.html#module-posydon.binary_evol.CE">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="posydon.binary_evol.DT.html">posydon.binary_evol.DT package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="posydon.binary_evol.DT.html#submodules">Submodules</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="posydon.binary_evol.DT.double_CO.html"><code class="docutils literal notranslate"><span class="pre">DoubleCO</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.binary_evol.DT.double_CO.html#posydon.binary_evol.DT.double_CO.event"><code class="docutils literal notranslate"><span class="pre">event()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.binary_evol.DT.double_CO.html#posydon.binary_evol.DT.double_CO.gr"><code class="docutils literal notranslate"><span class="pre">gr()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.binary_evol.DT.step_detached.html"><code class="docutils literal notranslate"><span class="pre">STAR_STATES_H_RICH</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.binary_evol.DT.step_detached.html#posydon.binary_evol.DT.step_detached.detached_step"><code class="docutils literal notranslate"><span class="pre">detached_step</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="posydon.binary_evol.DT.step_detached.html#posydon.binary_evol.DT.step_detached.detached_step.KEYS"><code class="docutils literal notranslate"><span class="pre">detached_step.KEYS</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.binary_evol.DT.step_detached.html#posydon.binary_evol.DT.step_detached.detached_step.grid"><code class="docutils literal notranslate"><span class="pre">detached_step.grid</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.binary_evol.DT.step_detached.html#posydon.binary_evol.DT.step_detached.detached_step.initial_mass"><code class="docutils literal notranslate"><span class="pre">detached_step.initial_mass</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.binary_evol.DT.step_detached.html#posydon.binary_evol.DT.step_detached.detached_step.get_root0"><code class="docutils literal notranslate"><span class="pre">detached_step.get_root0()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.binary_evol.DT.step_detached.html#posydon.binary_evol.DT.step_detached.detached_step.get_track_val"><code class="docutils literal notranslate"><span class="pre">detached_step.get_track_val()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.binary_evol.DT.step_detached.html#posydon.binary_evol.DT.step_detached.detached_step.match_to_single_star"><code class="docutils literal notranslate"><span class="pre">detached_step.match_to_single_star()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.binary_evol.DT.step_detached.html#posydon.binary_evol.DT.step_detached.detached_step.scale"><code class="docutils literal notranslate"><span class="pre">detached_step.scale()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.binary_evol.DT.step_detached.html#posydon.binary_evol.DT.step_detached.detached_step.square_difference"><code class="docutils literal notranslate"><span class="pre">detached_step.square_difference()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.binary_evol.DT.step_detached.html#posydon.binary_evol.DT.step_detached.diffeq"><code class="docutils literal notranslate"><span class="pre">diffeq()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.binary_evol.DT.step_detached.html#posydon.binary_evol.DT.step_detached.event"><code class="docutils literal notranslate"><span class="pre">event()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.binary_evol.DT.step_disrupted.html"><code class="docutils literal notranslate"><span class="pre">DisruptedStep</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.binary_evol.DT.step_initially_single.html"><code class="docutils literal notranslate"><span class="pre">InitiallySingleStep</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.binary_evol.DT.step_isolated.html"><code class="docutils literal notranslate"><span class="pre">IsolatedStep</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="posydon.binary_evol.DT.step_isolated.html#posydon.binary_evol.DT.step_isolated.IsolatedStep.initialize_isolated_binary_orbit"><code class="docutils literal notranslate"><span class="pre">IsolatedStep.initialize_isolated_binary_orbit()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.binary_evol.DT.step_isolated.html#posydon.binary_evol.DT.step_isolated.IsolatedStep.re_erase_isolated_binary_orbit"><code class="docutils literal notranslate"><span class="pre">IsolatedStep.re_erase_isolated_binary_orbit()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.binary_evol.DT.step_merged.html"><code class="docutils literal notranslate"><span class="pre">MergedStep</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="posydon.binary_evol.DT.step_merged.html#posydon.binary_evol.DT.step_merged.MergedStep.merged_star_properties"><code class="docutils literal notranslate"><span class="pre">MergedStep.merged_star_properties()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.binary_evol.DT.step_merged.html#posydon.binary_evol.DT.step_merged.convert_star_to_massless_remnant"><code class="docutils literal notranslate"><span class="pre">convert_star_to_massless_remnant()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.binary_evol.DT.html#module-posydon.binary_evol.DT">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="posydon.binary_evol.MESA.html">posydon.binary_evol.MESA package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="posydon.binary_evol.MESA.html#submodules">Submodules</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="posydon.binary_evol.MESA.step_mesa.html"><code class="docutils literal notranslate"><span class="pre">CO_HMS_RLO_step</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.binary_evol.MESA.step_mesa.html#posydon.binary_evol.MESA.step_mesa.CO_HeMS_RLO_step"><code class="docutils literal notranslate"><span class="pre">CO_HeMS_RLO_step</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.binary_evol.MESA.step_mesa.html#posydon.binary_evol.MESA.step_mesa.CO_HeMS_step"><code class="docutils literal notranslate"><span class="pre">CO_HeMS_step</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.binary_evol.MESA.step_mesa.html#posydon.binary_evol.MESA.step_mesa.MS_MS_step"><code class="docutils literal notranslate"><span class="pre">MS_MS_step</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.binary_evol.MESA.step_mesa.html#posydon.binary_evol.MESA.step_mesa.MesaGridStep"><code class="docutils literal notranslate"><span class="pre">MesaGridStep</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="posydon.binary_evol.MESA.step_mesa.html#posydon.binary_evol.MESA.step_mesa.MesaGridStep.close"><code class="docutils literal notranslate"><span class="pre">MesaGridStep.close()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.binary_evol.MESA.step_mesa.html#posydon.binary_evol.MESA.step_mesa.MesaGridStep.get_final_MESA_step_time"><code class="docutils literal notranslate"><span class="pre">MesaGridStep.get_final_MESA_step_time()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.binary_evol.MESA.step_mesa.html#posydon.binary_evol.MESA.step_mesa.MesaGridStep.initial_final_interpolation"><code class="docutils literal notranslate"><span class="pre">MesaGridStep.initial_final_interpolation()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.binary_evol.MESA.step_mesa.html#posydon.binary_evol.MESA.step_mesa.MesaGridStep.interpolate_at_t"><code class="docutils literal notranslate"><span class="pre">MesaGridStep.interpolate_at_t()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.binary_evol.MESA.step_mesa.html#posydon.binary_evol.MESA.step_mesa.MesaGridStep.load_Interp"><code class="docutils literal notranslate"><span class="pre">MesaGridStep.load_Interp()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.binary_evol.MESA.step_mesa.html#posydon.binary_evol.MESA.step_mesa.MesaGridStep.load_psyTrackInterp"><code class="docutils literal notranslate"><span class="pre">MesaGridStep.load_psyTrackInterp()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.binary_evol.MESA.step_mesa.html#posydon.binary_evol.MESA.step_mesa.MesaGridStep.single_star"><code class="docutils literal notranslate"><span class="pre">MesaGridStep.single_star()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.binary_evol.MESA.step_mesa.html#posydon.binary_evol.MESA.step_mesa.MesaGridStep.step"><code class="docutils literal notranslate"><span class="pre">MesaGridStep.step()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.binary_evol.MESA.step_mesa.html#posydon.binary_evol.MESA.step_mesa.MesaGridStep.stop_at_condition"><code class="docutils literal notranslate"><span class="pre">MesaGridStep.stop_at_condition()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.binary_evol.MESA.step_mesa.html#posydon.binary_evol.MESA.step_mesa.MesaGridStep.stop_at_end"><code class="docutils literal notranslate"><span class="pre">MesaGridStep.stop_at_end()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.binary_evol.MESA.step_mesa.html#posydon.binary_evol.MESA.step_mesa.MesaGridStep.update_properties_NN"><code class="docutils literal notranslate"><span class="pre">MesaGridStep.update_properties_NN()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.binary_evol.MESA.html#module-posydon.binary_evol.MESA">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="posydon.binary_evol.SN.html">posydon.binary_evol.SN package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="posydon.binary_evol.SN.html#submodules">Submodules</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="posydon.binary_evol.SN.profile_collapse.html"><code class="docutils literal notranslate"><span class="pre">compute_isco_properties()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.binary_evol.SN.profile_collapse.html#posydon.binary_evol.SN.profile_collapse.do_core_collapse_BH"><code class="docutils literal notranslate"><span class="pre">do_core_collapse_BH()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.binary_evol.SN.profile_collapse.html#posydon.binary_evol.SN.profile_collapse.get_initial_BH_properties"><code class="docutils literal notranslate"><span class="pre">get_initial_BH_properties()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.binary_evol.SN.step_SN.html"><code class="docutils literal notranslate"><span class="pre">Couch20_corecollapse</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.binary_evol.SN.step_SN.html#posydon.binary_evol.SN.step_SN.StepSN"><code class="docutils literal notranslate"><span class="pre">StepSN</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="posydon.binary_evol.SN.step_SN.html#posydon.binary_evol.SN.step_SN.StepSN.C_abundance_for_H_stars"><code class="docutils literal notranslate"><span class="pre">StepSN.C_abundance_for_H_stars()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.binary_evol.SN.step_SN.html#posydon.binary_evol.SN.step_SN.StepSN.C_abundance_for_He_stars"><code class="docutils literal notranslate"><span class="pre">StepSN.C_abundance_for_He_stars()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.binary_evol.SN.step_SN.html#posydon.binary_evol.SN.step_SN.StepSN.PISN_prescription"><code class="docutils literal notranslate"><span class="pre">StepSN.PISN_prescription()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.binary_evol.SN.step_SN.html#posydon.binary_evol.SN.step_SN.StepSN.Patton20_corecollapse"><code class="docutils literal notranslate"><span class="pre">StepSN.Patton20_corecollapse()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.binary_evol.SN.step_SN.html#posydon.binary_evol.SN.step_SN.StepSN.check"><code class="docutils literal notranslate"><span class="pre">StepSN.check()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.binary_evol.SN.step_SN.html#posydon.binary_evol.SN.step_SN.StepSN.check_SN_type"><code class="docutils literal notranslate"><span class="pre">StepSN.check_SN_type()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.binary_evol.SN.step_SN.html#posydon.binary_evol.SN.step_SN.StepSN.collapse_star"><code class="docutils literal notranslate"><span class="pre">StepSN.collapse_star()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.binary_evol.SN.step_SN.html#posydon.binary_evol.SN.step_SN.StepSN.compute_m_rembar"><code class="docutils literal notranslate"><span class="pre">StepSN.compute_m_rembar()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.binary_evol.SN.step_SN.html#posydon.binary_evol.SN.step_SN.StepSN.generate_kick"><code class="docutils literal notranslate"><span class="pre">StepSN.generate_kick()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.binary_evol.SN.step_SN.html#posydon.binary_evol.SN.step_SN.StepSN.get_CO_core_params"><code class="docutils literal notranslate"><span class="pre">StepSN.get_CO_core_params()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.binary_evol.SN.step_SN.html#posydon.binary_evol.SN.step_SN.StepSN.get_M4_mu4_Patton20"><code class="docutils literal notranslate"><span class="pre">StepSN.get_M4_mu4_Patton20()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="posydon.binary_evol.SN.step_SN.html#posydon.binary_evol.SN.step_SN.StepSN.orbital_kick"><code class="docutils literal notranslate"><span class="pre">StepSN.orbital_kick()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.binary_evol.SN.step_SN.html#posydon.binary_evol.SN.step_SN.Sukhbold16_corecollapse"><code class="docutils literal notranslate"><span class="pre">Sukhbold16_corecollapse</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.binary_evol.SN.html#module-posydon.binary_evol.SN">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading"></a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="posydon.binary_evol.binarystar.html"><code class="docutils literal notranslate"><span class="pre">BinaryStar</span></code></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="posydon.binary_evol.binarystar.html#posydon.binary_evol.binarystar.BinaryStar.append_state"><code class="docutils literal notranslate"><span class="pre">BinaryStar.append_state()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.binary_evol.binarystar.html#posydon.binary_evol.binarystar.BinaryStar.evolve"><code class="docutils literal notranslate"><span class="pre">BinaryStar.evolve()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.binary_evol.binarystar.html#posydon.binary_evol.binarystar.BinaryStar.from_df"><code class="docutils literal notranslate"><span class="pre">BinaryStar.from_df()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.binary_evol.binarystar.html#posydon.binary_evol.binarystar.BinaryStar.from_oneline_df"><code class="docutils literal notranslate"><span class="pre">BinaryStar.from_oneline_df()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.binary_evol.binarystar.html#posydon.binary_evol.binarystar.BinaryStar.from_run"><code class="docutils literal notranslate"><span class="pre">BinaryStar.from_run()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.binary_evol.binarystar.html#posydon.binary_evol.binarystar.BinaryStar.reset"><code class="docutils literal notranslate"><span class="pre">BinaryStar.reset()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.binary_evol.binarystar.html#posydon.binary_evol.binarystar.BinaryStar.restore"><code class="docutils literal notranslate"><span class="pre">BinaryStar.restore()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.binary_evol.binarystar.html#posydon.binary_evol.binarystar.BinaryStar.run_step"><code class="docutils literal notranslate"><span class="pre">BinaryStar.run_step()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.binary_evol.binarystar.html#posydon.binary_evol.binarystar.BinaryStar.switch_star"><code class="docutils literal notranslate"><span class="pre">BinaryStar.switch_star()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.binary_evol.binarystar.html#posydon.binary_evol.binarystar.BinaryStar.to_df"><code class="docutils literal notranslate"><span class="pre">BinaryStar.to_df()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.binary_evol.binarystar.html#posydon.binary_evol.binarystar.BinaryStar.to_oneline_df"><code class="docutils literal notranslate"><span class="pre">BinaryStar.to_oneline_df()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.binary_evol.binarystar.html#posydon.binary_evol.binarystar.BinaryStar.update_star_states"><code class="docutils literal notranslate"><span class="pre">BinaryStar.update_star_states()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="posydon.binary_evol.binarystar.html#posydon.binary_evol.binarystar.signal_handler"><code class="docutils literal notranslate"><span class="pre">signal_handler()</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="posydon.binary_evol.flow_chart.html"><code class="docutils literal notranslate"><span class="pre">flow_chart()</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="posydon.binary_evol.simulationproperties.html"><code class="docutils literal notranslate"><span class="pre">EvolveHooks</span></code></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="posydon.binary_evol.simulationproperties.html#posydon.binary_evol.simulationproperties.EvolveHooks.post_evolve"><code class="docutils literal notranslate"><span class="pre">EvolveHooks.post_evolve()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.binary_evol.simulationproperties.html#posydon.binary_evol.simulationproperties.EvolveHooks.post_step"><code class="docutils literal notranslate"><span class="pre">EvolveHooks.post_step()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.binary_evol.simulationproperties.html#posydon.binary_evol.simulationproperties.EvolveHooks.pre_evolve"><code class="docutils literal notranslate"><span class="pre">EvolveHooks.pre_evolve()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.binary_evol.simulationproperties.html#posydon.binary_evol.simulationproperties.EvolveHooks.pre_step"><code class="docutils literal notranslate"><span class="pre">EvolveHooks.pre_step()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="posydon.binary_evol.simulationproperties.html#posydon.binary_evol.simulationproperties.PrintStepInfoHooks"><code class="docutils literal notranslate"><span class="pre">PrintStepInfoHooks</span></code></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="posydon.binary_evol.simulationproperties.html#posydon.binary_evol.simulationproperties.PrintStepInfoHooks.post_evolve"><code class="docutils literal notranslate"><span class="pre">PrintStepInfoHooks.post_evolve()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.binary_evol.simulationproperties.html#posydon.binary_evol.simulationproperties.PrintStepInfoHooks.pre_step"><code class="docutils literal notranslate"><span class="pre">PrintStepInfoHooks.pre_step()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="posydon.binary_evol.simulationproperties.html#posydon.binary_evol.simulationproperties.SimulationProperties"><code class="docutils literal notranslate"><span class="pre">SimulationProperties</span></code></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="posydon.binary_evol.simulationproperties.html#posydon.binary_evol.simulationproperties.SimulationProperties.close"><code class="docutils literal notranslate"><span class="pre">SimulationProperties.close()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.binary_evol.simulationproperties.html#posydon.binary_evol.simulationproperties.SimulationProperties.load_steps"><code class="docutils literal notranslate"><span class="pre">SimulationProperties.load_steps()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.binary_evol.simulationproperties.html#posydon.binary_evol.simulationproperties.SimulationProperties.post_evolve"><code class="docutils literal notranslate"><span class="pre">SimulationProperties.post_evolve()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.binary_evol.simulationproperties.html#posydon.binary_evol.simulationproperties.SimulationProperties.post_step"><code class="docutils literal notranslate"><span class="pre">SimulationProperties.post_step()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.binary_evol.simulationproperties.html#posydon.binary_evol.simulationproperties.SimulationProperties.pre_evolve"><code class="docutils literal notranslate"><span class="pre">SimulationProperties.pre_evolve()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.binary_evol.simulationproperties.html#posydon.binary_evol.simulationproperties.SimulationProperties.pre_step"><code class="docutils literal notranslate"><span class="pre">SimulationProperties.pre_step()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="posydon.binary_evol.simulationproperties.html#posydon.binary_evol.simulationproperties.StepNamesHooks"><code class="docutils literal notranslate"><span class="pre">StepNamesHooks</span></code></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="posydon.binary_evol.simulationproperties.html#posydon.binary_evol.simulationproperties.StepNamesHooks.post_evolve"><code class="docutils literal notranslate"><span class="pre">StepNamesHooks.post_evolve()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.binary_evol.simulationproperties.html#posydon.binary_evol.simulationproperties.StepNamesHooks.post_step"><code class="docutils literal notranslate"><span class="pre">StepNamesHooks.post_step()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.binary_evol.simulationproperties.html#posydon.binary_evol.simulationproperties.StepNamesHooks.pre_evolve"><code class="docutils literal notranslate"><span class="pre">StepNamesHooks.pre_evolve()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.binary_evol.simulationproperties.html#posydon.binary_evol.simulationproperties.StepNamesHooks.pre_step"><code class="docutils literal notranslate"><span class="pre">StepNamesHooks.pre_step()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="posydon.binary_evol.simulationproperties.html#posydon.binary_evol.simulationproperties.TimingHooks"><code class="docutils literal notranslate"><span class="pre">TimingHooks</span></code></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="posydon.binary_evol.simulationproperties.html#posydon.binary_evol.simulationproperties.TimingHooks.post_evolve"><code class="docutils literal notranslate"><span class="pre">TimingHooks.post_evolve()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.binary_evol.simulationproperties.html#posydon.binary_evol.simulationproperties.TimingHooks.post_step"><code class="docutils literal notranslate"><span class="pre">TimingHooks.post_step()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.binary_evol.simulationproperties.html#posydon.binary_evol.simulationproperties.TimingHooks.pre_evolve"><code class="docutils literal notranslate"><span class="pre">TimingHooks.pre_evolve()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.binary_evol.simulationproperties.html#posydon.binary_evol.simulationproperties.TimingHooks.pre_step"><code class="docutils literal notranslate"><span class="pre">TimingHooks.pre_step()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="posydon.binary_evol.singlestar.html"><code class="docutils literal notranslate"><span class="pre">SingleStar</span></code></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="posydon.binary_evol.singlestar.html#posydon.binary_evol.singlestar.SingleStar.append_state"><code class="docutils literal notranslate"><span class="pre">SingleStar.append_state()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.binary_evol.singlestar.html#posydon.binary_evol.singlestar.SingleStar.from_run"><code class="docutils literal notranslate"><span class="pre">SingleStar.from_run()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.binary_evol.singlestar.html#posydon.binary_evol.singlestar.SingleStar.restore"><code class="docutils literal notranslate"><span class="pre">SingleStar.restore()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.binary_evol.singlestar.html#posydon.binary_evol.singlestar.SingleStar.to_df"><code class="docutils literal notranslate"><span class="pre">SingleStar.to_df()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.binary_evol.singlestar.html#posydon.binary_evol.singlestar.SingleStar.to_oneline_df"><code class="docutils literal notranslate"><span class="pre">SingleStar.to_oneline_df()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="posydon.binary_evol.singlestar.html#posydon.binary_evol.singlestar.properties_massless_remnant"><code class="docutils literal notranslate"><span class="pre">properties_massless_remnant()</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="posydon.binary_evol.step_end.html"><code class="docutils literal notranslate"><span class="pre">step_end</span></code></a></li>
+</ul>
+</div>
+</section>
+<section id="module-posydon.binary_evol">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-posydon.binary_evol" title="Permalink to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Tassos Fragos.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

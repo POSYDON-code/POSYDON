@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>&lt;no title&gt; &mdash; posydon 0+untagged.1.g0e5e92d documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            posydon
+          </a>
+              <div class="version">
+                0+untagged.1.g0e5e92d
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">User guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../install/install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../data/data.html">Data Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">Application Programming Interface</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Binary Star Grids</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../run_mesa_grids/inifile.html">.ini file documentation for POSYDON GRIDS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../run_mesa_grids/fixed/fixed.html">Run a fixed MESA grid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PSyGrid/PSyGrid.html">The PSyGrid Object</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Generating Populations</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../pop_synth/POSYDON_populations.html">Running populations using POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../pop_synth/pop_synth.html">Running a POSYDON population synthesis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../pop_synth/custom_flow.html">Custom population synthesis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../SingleStar/SingleStar.html">The SingleStar object</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../BinaryStar/BinaryStar.html">The BinaryStar object</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../advanced_pop_options/custom_hooks.html">Evolutionary Hooks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../advanced_pop_options/debugging_binaries.html">Debugging Failed Binaries</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../interpolation/IF-Interpolator/IFInterpolator.html">Initial-Final Interpolation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Plotting</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../visualization/plot1D/plot1D.html">1D plotting functionalities for POSYON GRIDS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../visualization/plot2D/plot2D.html">2D plotting functionalities for POSYON GRIDS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../visualization/VHD/VHD.html">Van den Heuvel diagrams</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../interpolation/violinplot.html">Making the Violin Plot</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">About</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../about/licence.html">Licence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../about/attribution.html">Attribution</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">posydon</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">&lt;no title&gt;</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/api/posydon.binary_evol.DT.step_detached.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <span class="target" id="module-posydon.binary_evol.DT.step_detached"></span><p>Detached evolution step.</p>
+<dl class="py data">
+<dt class="sig sig-object py" id="posydon.binary_evol.DT.step_detached.STAR_STATES_H_RICH">
+<span class="sig-prename descclassname"><span class="pre">posydon.binary_evol.DT.step_detached.</span></span><span class="sig-name descname"><span class="pre">STAR_STATES_H_RICH</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['H-rich_Core_H_burning',</span> <span class="pre">'H-rich_Core_He_burning',</span> <span class="pre">'H-rich_Shell_H_burning',</span> <span class="pre">'H-rich_Central_He_depleted',</span> <span class="pre">'H-rich_Shell_He_burning',</span> <span class="pre">'H-rich_Core_C_burning',</span> <span class="pre">'H-rich_Central_C_depletion',</span> <span class="pre">'H-rich_non_burning']</span></em><a class="headerlink" href="#posydon.binary_evol.DT.step_detached.STAR_STATES_H_RICH" title="Permalink to this definition"></a></dt>
+<dd><p>STAR_STATES_CO = [‘BH’,
+‘NS’,
+‘WD’,
+]</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="posydon.binary_evol.DT.step_detached.detached_step">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.binary_evol.DT.step_detached.</span></span><span class="sig-name descname"><span class="pre">detached_step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grid_name_Hrich</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid_name_strippedHe</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metallicity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'./POSYDON_data/'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_o_steps_history</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">matching_method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'minimize'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">initial_mass</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rootm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">do_wind_loss</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">do_tides</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">do_gravitational_radiation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">do_magnetic_braking</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">magnetic_braking_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'RVJ83'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">do_stellar_evolution_and_spin_from_winds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">RLO_orbit_at_orbit_with_same_am</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">list_for_matching_HMS</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">list_for_matching_postMS</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">list_for_matching_HeStar</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/binary_evol/DT/step_detached.html#detached_step"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.binary_evol.DT.step_detached.detached_step" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Evolve a detached binary.</p>
+<p>The binary will be evolved until Roche-lobe overflow, core-collapse or
+maximum simulation time, using the standard equations that govern the
+orbital evolution.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a>) – Path to the directory that contains a HDF5 grid.</p></li>
+<li><p><strong>dt</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.12)"><em>float</em></a>) – The timestep size, in years, to be appended to the history of the
+binary. None means only the final step.
+Note: do not select very small timesteps cause it may mess with the
+solving of the ODE.</p></li>
+<li><p><strong>n_o_steps_history</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><em>int</em></a>) – Alternatively, we can define the number of timesteps to be appended to
+the history of the binary. None means only the final step. If both <cite>dt</cite>
+and <cite>n_o_steps_history</cite> are different than None, <cite>dt</cite> has priority.</p></li>
+<li><p><strong>matching_method</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a>) – Method to find the best match between a star from a previous step and a
+point in a single MIST-like stellar track. Options “root” (which tries
+to find a root of two matching quantities, and it is possible to not
+achieve it) or “minimize” (minimizes the sum of squares of differences
+of various quantities between the previous step and the track).</p></li>
+<li><p><strong>verbose</strong> (<em>Boolean</em>) – True if we want to print stuff.</p></li>
+<li><p><strong>do_wind_loss</strong> (<em>Boolean</em>) – If True, take into account change of separation due to mass loss from
+the star.</p></li>
+<li><p><strong>do_tides</strong> (<em>Booleans</em>) – If True, take into account change of separation, eccentricity and star
+spin due to tidal forces.</p></li>
+<li><p><strong>do_gravitational_radiation</strong> (<em>Boolean</em>) – If True, take into account change of separation and eccentricity due to
+gravitational wave radiation.</p></li>
+<li><p><strong>do_magnetic_braking</strong> (<em>Boolean</em>) – If True, take into account change of star spin due to magnetic braking.</p></li>
+<li><p><strong>magnetic_braking_mode</strong> (<em>String</em>) – <dl class="simple">
+<dt>A string corresponding to the desired magnetic braking prescription.</dt><dd><p>– RVJ83: Rappaport, Verbunt, &amp; Joss 1983
+– M15: Matt et al. 2015
+– G18: Garraffo et al. 2018
+– CARB: Van &amp; Ivanova 2019</p>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>do_stellar_evolution_and_spin_from_winds</strong> (<em>Boolean</em>) – If True, take into account change of star spin due to change of its
+moment of inertia during its evolution and due to spin angular momentum
+loss due to winds.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="posydon.binary_evol.DT.step_detached.detached_step.KEYS">
+<span class="sig-name descname"><span class="pre">KEYS</span></span><a class="headerlink" href="#posydon.binary_evol.DT.step_detached.detached_step.KEYS" title="Permalink to this definition"></a></dt>
+<dd><p>Contains valid keywords which is used
+to extract quantities from the grid.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)">list</a> of <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)">str</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="posydon.binary_evol.DT.step_detached.detached_step.grid">
+<span class="sig-name descname"><span class="pre">grid</span></span><a class="headerlink" href="#posydon.binary_evol.DT.step_detached.detached_step.grid" title="Permalink to this definition"></a></dt>
+<dd><p>Object to interpolate between the time-series in
+the h5 grid.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="posydon.interpolation.interpolation.html#posydon.interpolation.interpolation.GRIDInterpolator" title="posydon.interpolation.interpolation.GRIDInterpolator">GRIDInterpolator</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="posydon.binary_evol.DT.step_detached.detached_step.initial_mass">
+<span class="sig-name descname"><span class="pre">initial_mass</span></span><a class="headerlink" href="#posydon.binary_evol.DT.step_detached.detached_step.initial_mass" title="Permalink to this definition"></a></dt>
+<dd><p>Contains the initial masses of the stars in the grid.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)">list</a> of <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.12)">float</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>A matching between the properties of the star, and the h5 tracks are
+required. In the “root” solver matching_method, if the root solver fails
+then the evolution will immediately end, and the binary state will be
+tagged with “Root solver failed”. In the “minimize” matching_method, we
+minimize the sum of squares of differences of various quantities between
+the previous step and the h5 track.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Warns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>UserWarning</strong> – If the call cannot determine the primary or secondary in the binary.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#Exception" title="(in Python v3.12)"><strong>Exception</strong></a> – If the ode-solver fails to solve the differential equation
+    that governs the orbital evolution.</p>
+</dd>
+</dl>
+<p>Initialize the step. See class documentation for details.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.binary_evol.DT.step_detached.detached_step.get_root0">
+<span class="sig-name descname"><span class="pre">get_root0</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">keys</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">htrack</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/binary_evol/DT/step_detached.html#detached_step.get_root0"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.binary_evol.DT.step_detached.detached_step.get_root0" title="Permalink to this definition"></a></dt>
+<dd><p>Get the track in the grid with values closest to the requested ones.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>keys</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><em>list</em></a><em> of </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a>) – Contains the keys of the required specific quantities that will be
+matched in the MIST-like track.</p></li>
+<li><p><strong>x</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><em>list</em></a><em> of </em><em>floats</em><em>, of </em><em>same length as &quot;keys&quot;</em>) – Contains the latest values (from a previous POSYDON step) of the
+quantities of “keys” in the POSYDON SingleStar object.</p></li>
+<li><p><strong>rs</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><em>list</em></a><em> of </em><em>floats</em><em>, </em><em>same length as &quot;keys&quot;</em>) – Contains normalization factors to be divided for rescaling
+x values.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Contains the associated initial mass (in solar units) and the time
+(in years) such that the time-series of the <cite>keys</cite> at that time has
+the closest values to <cite>x</cite>. These will become m0, t0 for the later
+integration during the detached binary evolution.
+If there is no match then NaNs will be returned instead.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)">list</a> of 2 float values</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.binary_evol.DT.step_detached.detached_step.get_track_val">
+<span class="sig-name descname"><span class="pre">get_track_val</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">htrack</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">m0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/binary_evol/DT/step_detached.html#detached_step.get_track_val"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.binary_evol.DT.step_detached.detached_step.get_track_val" title="Permalink to this definition"></a></dt>
+<dd><p>Return a single value from the interpolated time-series.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>key</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a>) – Keyword of the required quantity.</p></li>
+<li><p><strong>m0</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.12)"><em>float</em></a>) – The associated initial mass of the required quantity.</p></li>
+<li><p><strong>t</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.12)"><em>float</em></a>) – The required time in the time-series.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The value of the quantity <cite>key</cite> from a MIST-like track of
+initial mass <cite>m0</cite> at the time <cite>t0</cite>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.12)">float</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.binary_evol.DT.step_detached.detached_step.match_to_single_star">
+<span class="sig-name descname"><span class="pre">match_to_single_star</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">star</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">htrack</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/binary_evol/DT/step_detached.html#detached_step.match_to_single_star"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.binary_evol.DT.step_detached.detached_step.match_to_single_star" title="Permalink to this definition"></a></dt>
+<dd><p>Get the track in the grid that matches the time and mass of a star.</p>
+<p>For “root” matching_method, the properties that are matched is always
+the mass of the secondary star.
+If the secondary has the state <cite>MS</cite> then
+the center hydrogen abundance will also be matched
+otherwise the mass of helium-core will be matched.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>star</strong> (<a class="reference internal" href="posydon.binary_evol.singlestar.html#posydon.binary_evol.singlestar.SingleStar" title="posydon.binary_evol.singlestar.SingleStar"><em>SingleStar</em></a>) – The star which properties are required
+to be matched with the single MIST-like grid.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Contains the associated (in solar units) and the time (in years)
+such that the time-series in the grid matches
+the properties of the secondary.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)">list</a> of 2 float values</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.binary_evol.DT.step_detached.detached_step.scale">
+<span class="sig-name descname"><span class="pre">scale</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">htrack</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/binary_evol/DT/step_detached.html#detached_step.scale"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.binary_evol.DT.step_detached.detached_step.scale" title="Permalink to this definition"></a></dt>
+<dd><p>Nomarlize quantities in the single star grids to (0,1).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>key</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a>) – Keyword of the required quantity.</p></li>
+<li><p><strong>method</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a>) – Scalling method in the data normalization class</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Data normalization class</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>class</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.binary_evol.DT.step_detached.detached_step.square_difference">
+<span class="sig-name descname"><span class="pre">square_difference</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">htrack</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mesa_labels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">posydon_attributes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colscalers</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scales</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/binary_evol/DT/step_detached.html#detached_step.square_difference"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.binary_evol.DT.step_detached.detached_step.square_difference" title="Permalink to this definition"></a></dt>
+<dd><p>Compute the square distance used for scaling.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.binary_evol.DT.step_detached.diffeq">
+<span class="sig-prename descclassname"><span class="pre">posydon.binary_evol.DT.step_detached.</span></span><span class="sig-name descname"><span class="pre">diffeq</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">R_sec</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">L_sec</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">M_sec</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Mdot_sec</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">I_sec</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">conv_mx1_top_r_sec</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">conv_mx1_bot_r_sec</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">surface_h1_sec</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">center_h1_sec</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">M_env_sec</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">DR_env_sec</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Renv_middle_sec</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Idot_sec</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tau_conv_sec</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">R_pri</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">L_pri</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">M_pri</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Mdot_pri</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">I_pri</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">conv_mx1_top_r_pri</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">conv_mx1_bot_r_pri</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">surface_h1_pri</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">center_h1_pri</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">M_env_pri</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">DR_env_pri</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Renv_middle_pri</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Idot_pri</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tau_conv_pri</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">do_wind_loss</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">do_tides</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">do_gravitational_radiation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">do_magnetic_braking</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">magnetic_braking_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'RVJ83'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">do_stellar_evolution_and_spin_from_winds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/binary_evol/DT/step_detached.html#diffeq"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.binary_evol.DT.step_detached.diffeq" title="Permalink to this definition"></a></dt>
+<dd><p>Diff. equation describing the orbital evolution of a detached binary.</p>
+<p>The equation handles wind mass-loss [<a class="reference internal" href="#id1">1</a>], tidal [<a class="reference internal" href="#id2">2</a>], gravational [<a class="reference internal" href="#id3">3</a>]
+effects and magnetic braking [<a class="reference internal" href="#id4">4</a>]. It also handles the change of the
+secondary’s stellar spin due to its change of moment of intertia and due to
+mass-loss from its spinning surface. It is assumed that the mass loss is
+fully non-conservative. Magnetic braking is fully applied to secondary
+stars with mass less than 1.3 Msun and fully off for stars with mass larger
+then 1.5 Msun. The effect of magnetic braking falls linearly for stars with
+mass between 1.3 Msun and 1.5 Msun.</p>
+<p>TODO: exaplin new features (e.g., double COs)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>t</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.12)"><em>float</em></a>) – The age of the system in years</p></li>
+<li><p><strong>y</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><em>list</em></a><em> of </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.12)"><em>float</em></a>) – Contains the separation, eccentricity and angular velocity, in Rsolar,
+dimensionless and rad/year units, respectively.</p></li>
+<li><p><strong>M_pri</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.12)"><em>float</em></a>) – Mass of the primary in Msolar units.</p></li>
+<li><p><strong>M_sec</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.12)"><em>float</em></a>) – Mass of the secondary in Msolar units.</p></li>
+<li><p><strong>Mdot</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.12)"><em>float</em></a>) – Rate of change of mass of the star in Msolar/year units.
+(Negative for wind mass loss.)</p></li>
+<li><p><strong>R</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.12)"><em>float</em></a>) – Radius of the star in Rsolar units.</p></li>
+<li><p><strong>I</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.12)"><em>float</em></a>) – Moment of inertia of the star in Msolar*Rsolar^2.</p></li>
+<li><p><strong>tau_conv</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.12)"><em>float</em></a>) – Convective turnover time of the star, calculated &#64;
+0.5*pressure_scale_height above the bottom of the outer convection
+zone in yr.</p></li>
+<li><p><strong>L</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.12)"><em>float</em></a>) – Luminosity of the star in solar units.</p></li>
+<li><p><strong>#mass_conv_core</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.12)"><em>float</em></a>) – </p></li>
+<li><p><strong>units.</strong> (<em>#    Convective core mass</em><em> of </em><em>the secondary in Msolar</em>) – </p></li>
+<li><p><strong>conv_mx1_top_r</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.12)"><em>float</em></a>) – Coordinate of top convective mixing zone coordinate in Rsolar.</p></li>
+<li><p><strong>conv_mx1_bot_r</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.12)"><em>float</em></a>) – Coordinate of bottom convective mixing zone coordinate in Rsolar.</p></li>
+<li><p><strong>surface_h1</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.12)"><em>float</em></a>) – surface mass Hydrogen abundance</p></li>
+<li><p><strong>center_h1</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.12)"><em>float</em></a>) – center mass Hydrogen abundance</p></li>
+<li><p><strong>M_env</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.12)"><em>float</em></a>) – mass of the dominant convective region for tides above the core,
+in Msolar.</p></li>
+<li><p><strong>DR_env</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.12)"><em>float</em></a>) – thickness of the dominant convective region for tides above the core,
+in Rsolar.</p></li>
+<li><p><strong>Renv_middle</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.12)"><em>float</em></a>) – position of the dominant convective region for tides above the core,
+in Rsolar.</p></li>
+<li><p><strong>Idot</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.12)"><em>float</em></a>) – Rate of change of the moment of inertia of the star in
+Msolar*Rsolar^2 per year.</p></li>
+<li><p><strong>do_wind_loss</strong> (<em>Boolean</em>) – If True, take into account change of separation due to mass loss from
+the secondary. Default: True.</p></li>
+<li><p><strong>do_tides</strong> (<em>Booleans</em>) – If True, take into account change of separation, eccentricity and
+secondary spin due to tidal forces. Default: True.</p></li>
+<li><p><strong>do_gravitational_radiation</strong> (<em>Boolean</em>) – If True, take into account change of separation and eccentricity due to
+gravitational wave radiation. Default: True</p></li>
+<li><p><strong>do_magnetic_braking</strong> (<em>Boolean</em>) – If True, take into account change of star spin due to magnetic braking.
+Default: True.</p></li>
+<li><p><strong>magnetic_braking_mode</strong> (<em>String</em>) – <dl class="simple">
+<dt>A string corresponding to the desired magnetic braking prescription.</dt><dd><p>– RVJ83: Rappaport, Verbunt, &amp; Joss 1983
+– M15: Matt et al. 2015
+– G18: Garraffo et al. 2018
+– CARB: Van &amp; Ivanova 2019</p>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>do_stellar_evolution_and_spin_from_winds</strong> (<em>Boolean</em>) – If True, take into account change of star spin due to change of its
+moment of inertia during its evolution and due to spin angular momentum
+loss due to winds. Default: True.</p></li>
+<li><p><strong>verbose</strong> (<em>Boolean</em>) – If we want to print stuff. Default: False.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Contains the change of
+the separation, eccentricity and angular velocity, in Rsolar,
+dimensionless and rad/year units, respectively.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)">list</a> of <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.12)">float</a></p>
+</dd>
+</dl>
+<p class="rubric">References</p>
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="id1" role="note">
+<span class="label"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></span>
+<p>Tauris, T. M., &amp; van den Heuvel, E. 2006,
+Compact stellar X-ray sources, 1, 623</p>
+</aside>
+<aside class="footnote brackets" id="id2" role="note">
+<span class="label"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></span>
+<p>Hut, P. 1981, A&amp;A, 99, 126</p>
+</aside>
+<aside class="footnote brackets" id="id3" role="note">
+<span class="label"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></span>
+<p>Junker, W., &amp; Schafer, G. 1992, MNRAS, 254, 146</p>
+</aside>
+<aside class="footnote brackets" id="id4" role="note">
+<span class="label"><span class="fn-bracket">[</span>4<span class="fn-bracket">]</span></span>
+<p>Rappaport, S., Joss, P. C., &amp; Verbunt, F. 1983, ApJ, 275, 713</p>
+</aside>
+<aside class="footnote brackets" id="id5" role="note">
+<span class="label"><span class="fn-bracket">[</span>5<span class="fn-bracket">]</span></span>
+<p>Matt et al. 2015, ApJ, 799, L23</p>
+</aside>
+<aside class="footnote brackets" id="id6" role="note">
+<span class="label"><span class="fn-bracket">[</span>6<span class="fn-bracket">]</span></span>
+<p>Garraffo et al. 2018, ApJ, 862, 90</p>
+</aside>
+<aside class="footnote brackets" id="id7" role="note">
+<span class="label"><span class="fn-bracket">[</span>7<span class="fn-bracket">]</span></span>
+<p>Van &amp; Ivanova 2019, ApJ, 886, L31</p>
+</aside>
+<aside class="footnote brackets" id="id8" role="note">
+<span class="label"><span class="fn-bracket">[</span>8<span class="fn-bracket">]</span></span>
+<p>Gossage et al. 2021, ApJ, 912, 65</p>
+</aside>
+</aside>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.binary_evol.DT.step_detached.event">
+<span class="sig-prename descclassname"><span class="pre">posydon.binary_evol.DT.step_detached.</span></span><span class="sig-name descname"><span class="pre">event</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">terminal</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">direction</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/binary_evol/DT/step_detached.html#event"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.binary_evol.DT.step_detached.event" title="Permalink to this definition"></a></dt>
+<dd><p>Return a helper function to set attributes for solve_ivp events.</p>
+</dd></dl>
+
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Tassos Fragos.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
