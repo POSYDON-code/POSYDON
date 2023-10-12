@@ -77,11 +77,6 @@ Learn how to export single star PSyGrid datasets. This is an advaced tuotorial b
 
     processing_single_hms
 
-Visualize Multiple 2D Grid slices in one plot1D
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-TODO: build a tutorial to show how to do the 9x9 plots appearing in POSYDON v2 paper at multi metallicity and multi mass ratio.
-
 
 Support & Feedback
 ------------------
