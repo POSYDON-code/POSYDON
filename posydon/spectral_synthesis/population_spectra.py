@@ -61,6 +61,11 @@ class population_spectra():
         
 
     def create_population_spectrum(self):
+        """_summary_
+
+        Returns:
+            _type_: _description_
+        """
         scale = self.scaling_factor
         self.load_population()
         pop_spectrum = {}
@@ -74,16 +79,16 @@ class population_spectra():
 
         for i,binary in self.population.iterrows():
             #TODO write line bellow
-            """
-            if not include_binary_conditions(binary):
-                continue
-            """
+
             spectrum_1,state_1 = generate_spectrum(self.grids,binary,'S1',scale)
             spectrum_2,state_2 = generate_spectrum(self.grids,binary,'S2',scale)
 
             if spectrum_1 is not None and state_1 is not None:
+                print("Into the first!")
+                print(spectrum_1)
                 pop_spectrum[state_1] += spectrum_1
             if spectrum_2 is not None and state_2 is not None:
+                print("Into the second!")
                 pop_spectrum[state_2] += spectrum_2
 
         return pop_spectrum,self.grids.lam_c
@@ -149,6 +154,7 @@ class population_spectra():
                 #Calculating all the exeption that the first grid gave with the secondary.
                 #if Teff>15000.0 and logg > logg_min:
                 Flux = self.grid_flux('secondary_grid',**x)
+                print("Secondary")
                 return Flux*star.R**2*scale**-2
             #except LookupError:
             except:
@@ -198,6 +204,17 @@ class population_spectra():
 
 
     def create_spectrum_population(self,num_binaries = None ):
+        """_summary_
+
+        Args:
+            num_binaries (_type_, optional): _description_. Defaults to None.
+
+        Raises:
+            Exception: _description_
+
+        Returns:
+            _type_: _description_
+        """
         if num_binaries is None:
             num_binaries = len(self.population)
         elif num_binaries > len(self.population):
