@@ -91,7 +91,7 @@ Finally, we are ready to submit our jobs with:
 
 Once the grid of runs is completed, we recommend you use our provided PSyGrid
 functionality to interpret and collate the individual binary runs
-(link for documentation: :ref:`PSyGrid`.)
+(link for documentation: :mod:`posydon.grids.psygrid`.)
 
 
 Non-default evolutionary parameters

@@ -14,7 +14,7 @@ import the ``IFInterpolator`` object from the POSYDON library.
   from posydon.interpolation.IF_interpolation import IFInterpolator
 
 Loading a Pretrained Interpolator
-===============================
+==================================
 
 To load a pretrained interpolator we need to
 pass in the ``filename`` argument into the ``IFInterpolator``

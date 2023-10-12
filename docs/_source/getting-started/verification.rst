@@ -32,5 +32,5 @@ If you encounter any discrepancies during verification:
 
 - Review the :ref:`Installation Guide <installation-guide>` to ensure all steps were followed correctly.
 - Consult the :ref:`Troubleshooting Guide <installation-issues>` for common issues and solutions.
-- If you continue to experience issues, :ref:`contact us <contact-info>`.
+- If you continue to experience issues, :ref:`contact us <contact_info>`.
 

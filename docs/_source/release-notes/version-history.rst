@@ -13,6 +13,7 @@ v2.0.0
 - Introduced capability for population synthesis across 8 different metallicities, from \(10^{-4}\) times solar metallicity up to 2 times solar metallicity.
 - [Other features or improvements made in v2.0.0]
 - Bug fixes:
+
   - [List of significant bug fixes]
 
 v1.0.0
@@ -24,6 +25,7 @@ v1.0.0
 - Focused on binary population synthesis of massive binary stars at solar metallicities.
 - [Other features or improvements made in v1.0.0]
 - Bug fixes:
+  
   - [List of significant bug fixes]
 
 Stay Informed

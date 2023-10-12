@@ -33,6 +33,7 @@ How is this Documentation Structured?
 - **Contributing to POSYDON:** Join our community and help us grow!
 - **Release Notes and Changelog:** Stay updated with our version history.
 - **Contact and Support:** Reach out to us with your queries or feedback.
+
 .. - **POSYDON Workflow:** Learn about how to conduct simulations from start to finish.
 
 .. toctree::

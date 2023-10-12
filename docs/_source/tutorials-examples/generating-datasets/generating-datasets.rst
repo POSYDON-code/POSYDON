@@ -69,7 +69,7 @@ Export Single Star PSyGrid Datasets
 
 Learn how to export single star PSyGrid datasets. This is an advaced tuotorial because it requires knowledge about the EEP code.
 
-.. node::
+.. note::
     
     POSYDON v2.0.0 does not embed a python interface to compute EEPs but relyes on the Fortran code of Aaron Dotter (2016). Feature POSYDON code releases will include a python interface to compute EEPs and embed the export of single stellar grid into the post-processig pipeline.
 

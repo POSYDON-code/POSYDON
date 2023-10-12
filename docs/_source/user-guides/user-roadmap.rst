@@ -8,7 +8,7 @@ Welcome to your journey towards mastering POSYDON! Below is your roadmap, carefu
 Let's set forth on this voyage and unleash the true power of POSYDON!
 
 Step 1: Dive Into Binary-Star Population Synthesis 🌌
-----------------------------------------------------
+------------------------------------------------------
 
 Start your adventure by exploring the magic of binary-star population synthesis with POSYDON:
 

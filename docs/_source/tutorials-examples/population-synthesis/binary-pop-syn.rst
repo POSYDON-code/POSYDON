@@ -2,7 +2,7 @@
 
 
 Binary-Star Population Synthesis with POSYDON
-=============================================
+==============================================
 
 Embark on a journey into the fascinating world of binary-star population synthesis with POSYDON! 
 Whether you are a budding astrophysicist or a seasoned researcher, our tutorials guide you every step of the way.
@@ -25,11 +25,11 @@ Simulate your first 10 binaries and experience the power of POSYDON.
 
     10_binaries_pop_syn
 
-Now that you know how to run your first simulations, explore the different customization options reading the :ref:`population prameters <pop-params>` documentation.
+Now that you know how to run your first simulations, explore the different customization options reading the :ref:`population prameters <pop-params-guide>` documentation.
 
 
 II. Large-Scale Population Synthesis on HPC Facilities 🚀
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 In this tutorial, you'll learn to run massive simulations of 1 million binaries across 8 different metallicities.
 
@@ -43,7 +43,7 @@ In this tutorial, you'll learn to run massive simulations of 1 million binaries 
     pop_syn
 
 III. Analyzing Merging DCO Populations: Rates & Observations 🔍
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Delve into the results of your simulations learning how to analyze the results of your simulations and compute rates and observational properties of merging double compact object (DCO) populations.
 

@@ -5,7 +5,7 @@
 #########################################
 
 How to write a configuration file
-=================================
+==================================
 
 The `posydon-setup-grid` command-line executable cannot run without a
 configuration file. This inifile is meant to specify all aspects of the MESA
@@ -241,7 +241,7 @@ This section designates all the parameters for MESA makefiles and fortran files.
 
 This section designates the run parameters for a grid.
 
-============================================================================
+==================== ========================================================
 ==================== ========================================================
 
 .. code-block:: ini

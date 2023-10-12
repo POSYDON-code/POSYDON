@@ -122,7 +122,7 @@ If you are planning to run POSYDON's population synthesis on a High-Performance 
         pip install ".[hpc]"
 
     .. warning::
-        Users have reported issues when trying to install `mpi4py` via pip. If you encounter any issues, try installing `mpi4py` through Anaconda. If you cannot solve the issue, please refer to the :ref:`Troubleshooting Guide <installation-issues>` or seek support from the community or developers, see the :ref:`contact us <contact-info>` page.
+        Users have reported issues when trying to install `mpi4py` via pip. If you encounter any issues, try installing `mpi4py` through Anaconda. If you cannot solve the issue, please refer to the :ref:`Troubleshooting Guide <installation-issues>` or seek support from the community or developers, see the :ref:`contact us <contact_info>` page.
 
 Machine Learning Modules Installation
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -199,7 +199,7 @@ If you're interested in building the POSYDON documentation locally:
 
 
 Installing Jupyter for Tutorials
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The tutorials in the "Getting Started" guide are provided as Jupyter notebooks. If you want to run these notebooks interactively, you will need to have either Jupyter Lab or Jupyter Notebook installed.
 
@@ -259,5 +259,5 @@ Additional Notes
 
 - After installation, ensure you verify the setup by following our :ref:`Verification Guide <verification>`.
 - Always ensure you activate the `posydon_env` environment before running POSYDON.
-- If you encounter issues during the installation, consult our :ref:`Troubleshooting Guide <installation-issues>` or seek support from the community or developers, see the :ref:`contact us <contact-info>` page.
+- If you encounter issues during the installation, consult our :ref:`Troubleshooting Guide <installation-issues>` or seek support from the community or developers, see the :ref:`contact us <contact_info>` page.
 

@@ -56,5 +56,5 @@ Final Notes
 
 Ensure all the above prerequisites are met before initiating the setup for POSYDON to ensure a seamless and hassle-free experience.
 
-If you encounter any issues, please refer to the :ref:`Troubleshooting Guide <installation-issues>` or :ref:`contact us <contact-info>`.
+If you encounter any issues, please refer to the :ref:`Troubleshooting Guide <installation-issues>` or :ref:`contact us <contact_info>`.
 
