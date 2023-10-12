@@ -8,8 +8,8 @@ Discover the intricate details behind POSYDON's dataset generation, including di
 Getting Started Tutorials
 -------------------------
 
-Generating a POSYDON PSyGrid Dataset
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+I. Generating a POSYDON PSyGrid Dataset
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Dive into our Jupyter Notebook that will show you how to create a MESA PSyGrid dataset from scratch.
 
@@ -20,8 +20,8 @@ Dive into our Jupyter Notebook that will show you how to create a MESA PSyGrid d
 To learn more about the PSyGrid object or the Processing Pipeline API ini file, check out the [API Documentation](api.rst).
 
 
-The fullt POSYDON Processing Pipeline experince 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+II. The Full POSYDON Processing Pipeline Experince 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 From A to Z, this tutorial shows you how to process, concatenate, downsample, plot the grids and check failure rate, train the interpolation object and export the POSYDON dataset for population synthesis.
 
@@ -30,6 +30,26 @@ From A to Z, this tutorial shows you how to process, concatenate, downsample, pl
     run_full_piepeline
 
 Congratulations! You now master the POSYDON Processing Pipeline. To learn more about the PSyGrid object or the Processing Pipeline API ini file, check out the [API Documentation](api.rst) and the indepth components overview.
+
+
+III. 1D Plotting Functionalities for POSYDON PSyGrids
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Unlock the power of 1D plotting functionalities for POSYDON PSyGrids. This tutorial shows you how to easily visualize your single and binary star tracks leveraging the `plot1D` method of the PSyGrid object.
+
+.. toctree::
+
+    plot_1D
+
+
+IV. 2D Plotting Functionalities for POSYDON PSyGrids
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Unlock the power of 2D plotting functionalities for POSYDON PSyGrids. This tutorial shows you how to easily visualize your single and binary star tracks leveraging the `plot2D` method of the PSyGrid object.
+
+.. toctree:: 
+
+    plot_2D
 
 Advanced Tutorials
 ------------------
@@ -56,6 +76,12 @@ Learn how to export single star PSyGrid datasets. This is an advaced tuotorial b
 .. toctree::
 
     processing_single_hms
+
+Visualize Multiple 2D Grid slices in one plot1D
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+TODO: build a tutorial to show how to do the 9x9 plots appearing in POSYDON v2 paper at multi metallicity and multi mass ratio.
+
 
 Support & Feedback
 ------------------

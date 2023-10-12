@@ -30,8 +30,8 @@ To follow the next step of the tutorial, you will need to have MESA installed on
     The POSYDON v2.0.0 code is compatible with MESA r11701. Support might not be available for the latest MacOS version.
 
 
-Running your first MESA simulation using POSYDON
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+I. Running your first MESA simulation using POSYDON
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Immerse yourself in our Jupyter Notebook which guides you through our dedicated MESA submission API, showcasing how to simulate a HMS-HMS binary systems.
 
@@ -49,8 +49,8 @@ In case you want to run the simulation locally, you can follow the second versio
 
 To gather more information about the MESA simulation submission API ini file, please refer to the :ref:`MESA Grids API <mesa-grids-api>` section of the documentation.
 
-Running your first MESA grid simulation using POSYDON
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+II. Running your first MESA grid simulation using POSYDON
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The following tutorial will show you how to run a grid of MESA simulations using POSYDON. The grid will consist of 100 simulations of HMS-HMS binary systems at 0.1Zsun metallicity in the mass ratio slice 0.7 each with different primary masses and orbital periods. The simulations will be run on a HPC using SLURM.
 
@@ -60,8 +60,8 @@ The following tutorial will show you how to run a grid of MESA simulations using
 
 Now that you have run your first grid, you can process, visualize and explore the results using the POSYDON post-processing pipeline API. TODO: link
 
-Running single stars with POSYDON
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+III. Running single stars with POSYDON
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 This tutorials shows how to run a grid of single star simulations using POSYDON.
 
