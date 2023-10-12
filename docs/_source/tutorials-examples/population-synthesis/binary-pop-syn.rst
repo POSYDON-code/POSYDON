@@ -21,7 +21,6 @@ I. Your First Binary Simulations with POSYDON 🌠
 Simulate your first 10 binaries and experience the power of POSYDON.
 
 .. toctree::
-    :maxdepth: 1
 
     10_binaries_pop_syn
 
@@ -38,7 +37,6 @@ In this tutorial, you'll learn to run massive simulations of 1 million binaries 
     Ensure you've installed `mpi4py` to use this tutorial. If not, follow our :ref:`installation guide <installation-guide>`.
 
 .. toctree::
-    :maxdepth: 1
 
     pop_syn
 
@@ -48,7 +46,6 @@ III. Analyzing Merging DCO Populations: Rates & Observations 🔍
 Delve into the results of your simulations learning how to analyze the results of your simulations and compute rates and observational properties of merging double compact object (DCO) populations.
 
 .. toctree::
-    :maxdepth: 1
 
     bbh_analysis
 
@@ -63,7 +60,6 @@ Computing Long-Duration Gamma-Ray Bursts from Double Compact Object Populations 
 In this tutorial, you will learn how to compute long-duration gamma-ray bursts rates associated to the formation of merging binary black holes
 
 .. toctree::
-    :maxdepth: 1
 
     lgrb_pop_syn
 
@@ -74,7 +70,6 @@ Explore the assumption of star-formation history and compute DCO rates for one s
 In this tutorial, you will learn how to change the assumption of star-formation history and how to analysise and compute rates for a population synthesis model consisting of one single metallicity.
 
 .. toctree::
-    :maxdepth: 1
 
     one_met_pop_syn
 
@@ -89,7 +84,6 @@ Advanced Visualization with Van den Heuvel Diagrams 🎨
 Dive deeper into POSYDON's visualization capabilities. This tutorial explores the intricacies of the Van den Heuvel diagrams, allowing users to intuitively visualize and analyze individual or multiple binaries from the population synthesis models. Discover multiple visualization modes, interactive features, and binary analysis tools to enhance your understanding of the synthesized data. Perfect for those looking to gain a richer visual perspective on their simulations.
 
 .. toctree::
-    :maxdepth: 1
 
     Van den Heuvel Diagrams <VHD>
 
