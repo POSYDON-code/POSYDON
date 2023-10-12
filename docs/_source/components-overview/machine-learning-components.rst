@@ -3,12 +3,18 @@
 Machine Learning Components
 ---------------------------
 
-Intial Final Classifiaction & Interpolation
+
+
+Intial Final Classification & Interpolation
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
-    - :ref:`Intial Final Classifiaction & Interpolation <initial-final-interp>`
+..  toctree::
+    :maxdepth: 2
 
+    machine_learning/initial_final_interp
+
+    
 
 Profile Interpolation
 ~~~~~~~~~~~~~~~~~~~~~
@@ -19,4 +25,8 @@ Profile Interpolation
 
 POSYDON support an experimental feature that allows the user to interpolate the final MESA profile of a supported binary MESA grid.
 
-    - :ref:`MESA Profile Interpolation <profile-interpolation>`
+
+.. toctree::
+    :maxdepth: 2
+
+    machine_learning/ProfileInterpolator
