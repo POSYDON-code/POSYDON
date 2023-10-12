@@ -42,7 +42,7 @@ How is this Documentation Structured?
 
    introduction-acknowledgements/intro
    introduction-acknowledgements/collaborative-team
-   introduction-acknowledgements/published-works
+   Publications <https://posydon.org/papers.html>
 
 .. toctree::
    :maxdepth: 1
