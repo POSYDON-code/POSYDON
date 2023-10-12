@@ -40,7 +40,7 @@ POSDYON Population Synthesis Configuration Guide
 
 The `SimulationProperties` objects contains the POSYDON population synthesis parameter configurations determining the evolution of each binaryes in the `BinaryPopulation` class. The following guide will walk you through the configuration parameters of a POSYDON binary population synthesis model.
 
-    - :ref:`POSDYON Population Synthesis Parameters <pop-params>`
+    - :ref:`POSDYON Population Synthesis Configuration Guide <pop-params-guide>`
 
 
 The Flow Chart Object
