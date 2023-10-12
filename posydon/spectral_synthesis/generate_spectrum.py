@@ -20,28 +20,28 @@ import traceback
 def check_boundaries(grids,grid_name,**kwargs):
     """Checks if the stellar parameters in inside the boundaries of the spectral grids.
 
-    It takes an input based on the grid check need to be made and returns a failled_grid message 
+    It takes an input based on the grid check need to be made and returns a failed_grid message 
     if parameters are outside the boundaries. 
     """
     x = copy(kwargs)
     'First we check the global limits'
     if grid_name == "global":
         if x['Teff'] < grids.T_min or x['Teff'] > grids.T_max:
-            return 'failled_grid'
+            return 'failed_grid'
         elif x['log(g)'] < grids.logg_min or x['log(g)'] > grids.logg_max:
-            return 'failled_grid'
+            return 'failed_grid'
         else: 
             return True
     elif grid_name == 'stripped_grid': 
         if x['M'] < grids.spectral_grids[grid_name].axis_x_min['M_init'] or x['M'] > grids.spectral_grids[grid_name].axis_x_max['M_init']:
-            return 'failled_grid'
+            return 'failed_grid'
         else: 
             return 'stripped_grid'
     else: 
         if x['Teff'] < grids.spectral_grids[grid_name].axis_x_min['Teff'] or x['Teff'] > grids.spectral_grids[grid_name].axis_x_max['Teff']:
-            return 'failled_grid'
+            return 'failed_grid'
         elif x['log(g)'] < grids.spectral_grids[grid_name].axis_x_min['log(g)'] or x['log(g)'] > grids.spectral_grids[grid_name].axis_x_max['log(g)']:
-            return 'failled_grid'
+            return 'failed_grid'
         else: 
             return grid_name
 
@@ -62,9 +62,9 @@ def point_the_grid(grids,x,ostar_temp_cut_off,label,**kwargs):
     if label is None:
         check = check_boundaries(grids,'main_grid',**x)
         return check
-    elif label == 'failled_attempt_1':
+    elif label == 'failed_attempt_1':
         return check_boundaries(grids,'secondary_grid',**x)
-    elif label == 'failled_attempt_2':
+    elif label == 'failed_attempt_2':
         return 'failed_grid'
     else:
         raise ValueError(f'The label {label} is not recognized!')
@@ -90,7 +90,7 @@ def generate_spectrum(grids,star,i,scale,**kwargs):
     label = point_the_grid(grids,x,ostar_temp_cut_off,label,**kwargs)
     count = 1
     while count <3:
-        if label == 'failled_grid':
+        if label == 'failed_grid':
             return None,state
         else: 
             try:
@@ -98,7 +98,7 @@ def generate_spectrum(grids,star,i,scale,**kwargs):
                 print(type(Flux))
                 return Flux.value,star['state']
             except LookupError:
-                label = f'failled_attempt_{count}'
+                label = f'failed_attempt_{count}'
         label = point_the_grid(grids,x,ostar_temp_cut_off,label,**kwargs)
         count =+ 1 
     if label == 'failed_grid':
