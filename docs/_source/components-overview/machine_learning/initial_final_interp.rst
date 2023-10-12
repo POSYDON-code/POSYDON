@@ -1,9 +1,8 @@
 .. _initial-final-interp:
 
 ###########################################
-Intial Final Classifiaction & Interpolation
+Intial Final Classification & Interpolation
 ###########################################
-
 
 We showcase the initial-final interpolator which plays a critical role in the
 evolving binary populations. To use the initial-final interpolator we first
@@ -15,7 +14,7 @@ import the ``IFInterpolator`` object from the POSYDON library.
   from posydon.interpolation.IF_interpolation import IFInterpolator
 
 Loading a Pretrained Interpolator
-===============================
+==================================
 
 To load a pretrained interpolator we need to
 pass in the ``filename`` argument into the ``IFInterpolator``

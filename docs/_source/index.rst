@@ -2,6 +2,7 @@
 POSYDON Documentation
 ==============================
 
+
 .. image:: posydon_logo.pdf
   :width: 800
 
@@ -33,6 +34,7 @@ How is this Documentation Structured?
 - **Release Notes and Changelog:** Stay updated with our version history.
 - **Contact and Support:** Reach out to us with your queries or feedback.
 
+.. - **POSYDON Workflow:** Learn about how to conduct simulations from start to finish.
 
 .. toctree::
    :maxdepth: 1
@@ -62,6 +64,7 @@ How is this Documentation Structured?
 
 .. toctree::
    :maxdepth: 1
+   :titlesonly:
    :caption: Tutorials and Examples
 
    tutorials-examples/population-synthesis/binary-pop-syn
@@ -71,12 +74,13 @@ How is this Documentation Structured?
 
 .. toctree::
    :maxdepth: 1
+   :titlesonly: 
    :caption: In-Depth Components Overview
 
    components-overview/stellar-binary-simulation
-   components-overview/processing-pipeline
    components-overview/machine-learning-components
-
+   components-overview/processing-pipeline
+   components-overview/mesa-grids
 
 .. .. toctree::
 ..    :maxdepth: 1

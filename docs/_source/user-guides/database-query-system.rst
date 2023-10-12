@@ -27,7 +27,7 @@ Our query system enables users to:
 4. **Export**: Extract the queried data for external analysis.
 
 Getting Started with Queries
----------------------------
+-----------------------------
 
 1. **Accessing the Query Interface**:
    

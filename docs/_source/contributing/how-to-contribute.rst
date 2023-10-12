@@ -54,7 +54,7 @@ We value our community's safety and well-being. Please ensure that your contribu
 
 Feedback and Questions
 ~~~~~~~~~~~~~~~~~~~~~~
-If you have feedback or questions, please don't hesitate to reach out, see the :ref:`contact us <_contact-info>`_ page or check our FAQ section on :ref:`code usage <code-usage>`_.
+If you have feedback or questions, please don't hesitate to reach out, see the :ref:`contact us <contact_info>` page or check our FAQ section on :ref:`code usage <code-usage>`.
 
 Additional Resources
 ~~~~~~~~~~~~~~~~~~~~
