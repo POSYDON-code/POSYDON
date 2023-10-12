@@ -1545,11 +1545,14 @@ def cumulative_mass_transfer_string(cumulative_integers):
             result += "no_RLO"
         else:
             if not added_case_word:
-                result += "case"
+                result += "case_"
                 added_case_word = True
             else:
                 result += "/"
-            result += MT_CASE_TO_STR[integer]
+            if integer in MT_CASE_TO_STR:
+                result += MT_CASE_TO_STR[integer] + '1' # from star 1
+            else:
+                result += MT_CASE_TO_STR[integer-10] + '2' # from star 2
     return result
 
 
