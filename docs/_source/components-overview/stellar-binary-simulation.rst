@@ -41,7 +41,7 @@ The `BinaryStar` object contains the binary properties and its evolutionary hist
 The Binary Population Object
 ----------------------------
 
-The `BinaryPopulation` object contains a list of `BinaryStar` objects and the `SimulationProperties` objcect which contains the information about the population synthesis model.
+The `BinaryPopulation` object contains a list of `BinaryStar` objects and the `SimulationProperties` object which contains the information about the population synthesis model.
 
 .. toctree::
     :maxdepth: 1
@@ -59,13 +59,13 @@ The Simulation Properties object
 POSDYON Population Synthesis Configuration Guide
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The `SimulationProperties` objects contains the POSYDON population synthesis parameter configurations determining the evolution of each binaryes in the `BinaryPopulation` class. The following guide will walk you through the configuration parameters of a POSYDON binary population synthesis model.
 
+The `SimulationProperties` objects contains the POSYDON population synthesis parameter configurations determining the evolution of each binaries in the `BinaryPopulation` class. The following guide will walk you through the configuration parameters of a POSYDON binary population synthesis model.
 
 .. toctree::
-    :maxdepth: 1
-
-    pop_syn/simulation_properties
+    :maxdepth: 1  
+    
+    pop_syn/population_params
 
 
 The Flow Chart Object
