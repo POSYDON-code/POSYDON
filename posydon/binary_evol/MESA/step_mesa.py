@@ -656,7 +656,7 @@ class MesaGridStep:
                             # DEBUG
                             # print(key, missing_values_star_1)
                             # print('fixed', len(getattr(self.binary.star_1,
-                            #                            key + "_history")))
+                            #                            key + "_history")))        
         # convert these flags to default POSYDON star states
         setattr(stars[0], 'state',
                 cf.check_state_of_star(stars[0], star_CO=stars_CO[0]))
@@ -669,6 +669,10 @@ class MesaGridStep:
         setattr(binary, 'state', binary_state)
         setattr(binary, 'event', binary_event)
         setattr(binary, 'mass_transfer_case', MT_case)
+
+        setattr(self.binary, f'interp_class_{self.grid_type}', interpolation_class)
+        mt_history = self.termination_flags[2] # mass transfer history (TF12 plot label)
+        setattr(self.binary, f'mt_history_{self.grid_type}', mt_history)
 
         if self.save_initial_conditions:
             # history N is how much to look back in the history
@@ -884,6 +888,8 @@ class MesaGridStep:
         # infer stellar states
         interpolation_class = self.classes['interpolation_class']
         setattr(self.binary, f'interp_class_{self.grid_type}', interpolation_class)
+        mt_history = self.classes['mt_history'] # mass transfer history (TF12 plot label)
+        setattr(self.binary, f'mt_history_{self.grid_type}', mt_history)
 
         S1_state_inferred = cf.check_state_of_star(self.binary.star_1,
                                                    star_CO=star_1_CO)
