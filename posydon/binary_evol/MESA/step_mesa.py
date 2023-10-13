@@ -709,7 +709,7 @@ class MesaGridStep:
                 getattr(binary, "state_history").extend(binary_state)
                 getattr(binary, "event_history").extend(binary_event)
                 getattr(binary, "mass_transfer_case_history").extend(MT_case)
-                getattr(binary, "culmulative_mt_case").extend(None)
+                getattr(binary, "culmulative_mt_case").extend([None]*len(MT_case))
                 self.flush_entries = len_binary_hist   # this is needded!
                 # this is to prevent the flushin of the initial value which is
                 # appended twice
@@ -835,7 +835,7 @@ class MesaGridStep:
             elif key in ['eccentricity', 'V_sys']:
                 current = getattr(self.binary, key + '_history')[-1]
                 setattr(self.binary, key, current)
-            elif key in ['state', 'event', 'mass_transfer_case']:
+            elif key in ['state', 'event', 'mass_transfer_case', 'culmulative_mt_case']:
                 continue
             else:
                 key_p = POSYDON_TO_MESA['binary'][key]
@@ -894,7 +894,8 @@ class MesaGridStep:
         setattr(self.binary, f'interp_class_{self.grid_type}', interpolation_class)
         mt_history = self.classes['mt_history'] # mass transfer history (TF12 plot label)
         setattr(self.binary, f'mt_history_{self.grid_type}', mt_history)
-
+        #TODO: add classifier for tf2
+        #setattr(self.binary, f'culmulative_mt_case', self.classes['termination_flags_2'])
         S1_state_inferred = cf.check_state_of_star(self.binary.star_1,
                                                    star_CO=star_1_CO)
         S2_state_inferred = cf.check_state_of_star(self.binary.star_2,
