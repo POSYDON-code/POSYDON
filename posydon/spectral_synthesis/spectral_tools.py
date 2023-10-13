@@ -13,6 +13,7 @@ import astropy.constants as con
 import astropy.units as unt
 import pandas as pd
 from copy import copy
+import datetime
 
 Zo = 0.0142
 key_traslation = {
@@ -32,7 +33,8 @@ keys_to_save= ['state',
                'S2_log_L',
                'S1_log_R',
                'S2_log_R',
-               'Z/Zo'
+               'S1_metallicity'
+               #'Z/Zo'
                #'Z/Zo',
                #'log_g',
                #'Teff'
@@ -41,7 +43,7 @@ keys_to_save= ['state',
 
 class star():
     """Write a docstring."""
-
+    __slots__ = ('logg','Teff','Fe_H','mass','binary_index','state','R','L','metallicity','binary_state','star_number','binary_number')
     def __init__(self, **kwargs):
         for key, value in kwargs.items():
             setattr(self, key, value)
@@ -84,24 +86,34 @@ def load_posydon_population(population_file, max_number_of_binaries=None,
                             **kwargs):
     """Write a docstring."""
     history = pd.read_hdf(population_file, key='history')
-
+    
     max_time = find_max_time(history)
 
     i_final_star = (history.time == max_time) & (history.event == "END")
     final_stars = history[i_final_star].reset_index()
     metallicity = final_stars.S1_metallicity[0]/Zo
     zams_stars = history[history.event == 'ZAMS']
-    pop = pd.DataFrame(columns = keys_to_save)
+    #pop = pd.DataFrame(columns = keys_to_save)
     for col in final_stars:
         if col not in keys_to_save:
             del final_stars[str(col)]
-    for i in range(len(final_stars)):
-        row = copy(final_stars.loc[i])
-        row['Z/Zo'] = metallicity
-        for star in ['S1','S2']:
-            row[f'{star}_log_g'] = calculate_logg(row,star)
-            row[f'{star}_Teff'] = calculate_Teff(row,star)
-        pop.loc[i] = row
+    pop = copy(final_stars)
+    pop.rename(columns = {'S1_metallicity' : 'Z/Zo'},inplace= True)
+    pop['Z/Zo'] = pop['Z/Zo']/Zo
+    logg1= [None]*len(pop)
+    logg2= [None]*len(pop)
+    Teff1 = [None]*len(pop)
+    Teff2 = [None]*len(pop)
+    for i,row in pop.iterrows():
+        #for star in ['S1','S2']:
+        logg1[i] = calculate_logg(row,'S1')
+        logg2[i] = calculate_logg(row,'S2')
+        Teff1[i] = calculate_Teff(row,'S1')
+        Teff2[i] = calculate_Teff(row,'S2')
+    pop['S1_log_g'] = logg1
+    pop['S2_log_g'] = logg2
+    pop['S1_Teff'] = Teff1
+    pop['S2_Teff'] = Teff2
     return pop
 
 
@@ -131,7 +143,7 @@ def population_data(population_file = None, number_of_binaries = True,**kwargs):
     elif number_of_binaries <= len(final_stars):
         total_binaries = number_of_binaries
     else:
-        raise Exception('The total number of binaries {N} is less than the input number_of_binaries {number_of_binaries}'.format(N = total_binaries, number_of_binaries = number_of_binaries  ))
+        raise ValueError(f'The total binaries {N} is less than the input number_of binaries {number_of_binaries}')
 
     star1_properties = {}
     star2_properties = {}

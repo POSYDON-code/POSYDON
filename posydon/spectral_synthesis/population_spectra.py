@@ -67,16 +67,17 @@ class population_spectra():
             _type_: _description_
         """
         scale = self.scaling_factor
+        load_start = datetime.datetime.now()
         self.load_population()
+        load_end = datetime.datetime.now()
+        print('Loading the population took',load_end - load_start,'s')
         pop_spectrum = {}
 
-        state_list = ['disrupted', 'merged', 'detached']
+        state_list = ['disrupted', 'merged', 'detached','initially_single_star','low_mass_binary','contact','RLO1','RLO2']
 
         # Create empty spectral arrays
         for state in state_list:
-            pop_spectrum[state] = np.zeros(len(self.grids.lam_c))
-        
-
+            pop_spectrum[state] = np.zeros(len(self.grids.lam_c))       
         for i,binary in self.population.iterrows():
             #TODO write line bellow
 
@@ -141,8 +142,7 @@ class population_spectra():
         try:
             #normal_start = datetime.datetime.now()
             Flux = self.grid_flux('main_grid',**x)
-            #normal_end = datetime.datetime.now()
-            #print( 'The spectral normal time is: {time}'.format(time = normal_end - normal_start ))
+
             return Flux*star.R**2*scale**-2
         #TODO
         #except LookupError:
@@ -155,6 +155,7 @@ class population_spectra():
                 #if Teff>15000.0 and logg > logg_min:
                 Flux = self.grid_flux('secondary_grid',**x)
                 print("Secondary")
+                print(x)
                 return Flux*star.R**2*scale**-2
             #except LookupError:
             except:
