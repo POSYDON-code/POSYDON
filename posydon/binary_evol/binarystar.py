@@ -103,6 +103,7 @@ BINARYPROPERTIES = [
                                     # The distance is normalized in the
                                     # parameter space and limits at which it
                                     # was calculated. See `mesa_step` for more.
+    'culmulative_mt_case',
 ]
 
 
@@ -153,6 +154,8 @@ class BinaryStar:
                 setattr(self, item, binary_kwargs.pop(item, ['None',
                                                              'None',
                                                              'None']))
+            elif item == 'culmulative_mt_case':
+                setattr(self, item, binary_kwargs.pop(item, 'None'))
             else:
                 setattr(self, item, binary_kwargs.pop(item, None))
             setattr(self, item + '_history', [getattr(self, item)])
@@ -162,9 +165,11 @@ class BinaryStar:
             self.inspiral_time = None
         if not hasattr(self, 'mass_transfer_case'):
             self.mass_transfer_case = 'None'
+        if not hasattr(self, 'culmulative_mt_case'):
+            self.culmulative_mt_case = 'None'
         # if not hasattr(self, 'V_sys'):
         #     self.V_sys = [0, 0, 0]
-        
+
         # store interpolation_class and mt_history for each step_MESA
         for grid_type in ['HMS_HMS','CO_HMS_RLO','CO_HeMS','CO_HeMS_RLO']:
             if not hasattr(self, f'interp_class_{grid_type}'):
@@ -213,7 +218,7 @@ class BinaryStar:
             total_state = (self.star_1.state, self.star_2.state, self.state,
                            self.event)
             next_step_name = self.properties.flow.get(total_state)
-            
+
             if next_step_name is None:
                 warnings.warn("Undefined next step given stars/binary states "
                               "{}.".format(total_state))
@@ -328,7 +333,7 @@ class BinaryStar:
         extra_binary_cols_dict = kwargs.get('extra_columns', {})
         extra_columns = list(extra_binary_cols_dict.keys())
         extra_columns_dtypes_user = list(extra_binary_cols_dict.values())
-        
+
         all_keys = (["binary_index"]
                     + [key+'_history' for key in BINARYPROPERTIES]
                     + extra_columns)
@@ -587,7 +592,7 @@ class BinaryStar:
             oneline_df['WARNING'] = [0]
 
         oneline_df.set_index('binary_index', inplace=True)
-        
+
         # try to coerce data types automatically
         oneline_df = oneline_df.infer_objects()
 
@@ -600,7 +605,7 @@ class BinaryStar:
                                             extra_binary_dtypes_user=extra_binary_cols_dict,
                                             extra_S1_dtypes_user=extra_s1_cols_dict,
                                             extra_S2_dtypes_user=extra_s2_cols_dict)
-        
+
         return oneline_df
 
     @classmethod

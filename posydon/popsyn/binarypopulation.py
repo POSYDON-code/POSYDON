@@ -56,6 +56,7 @@ from posydon.utils.constants import Zsun
 HISTORY_MIN_ITEMSIZE = {'state': 30, 'event': 25, 'step_names': 20,
                         'S1_state': 31, 'S2_state': 31,
                         'mass_transfer_case': 7,
+                        'culmulative_mt_case': 40,
                         'S1_SN_type': 5, 'S2_SN_type': 5}
 ONELINE_MIN_ITEMSIZE = {'state_i': 30, 'state_f': 30,
                         'event_i': 10, 'event_f': 10,
@@ -414,7 +415,7 @@ class BinaryPopulation:
         mode = kwargs.get('mode', 'a')
         complib = kwargs.get('complib', 'zlib')
         complevel = kwargs.get('complevel', 9)
-        
+
         with pd.HDFStore(absolute_filepath, mode=mode, complevel=complevel, complib=complib) as store:
             for f in file_names:
                 # strings itemsize set by first append max value,
@@ -684,7 +685,7 @@ class PopulationManager:
 
             online_df = self.to_oneline_df(**kwargs)
             store.append('oneline', online_df, data_columns=True)
-        
+
         return
 
 

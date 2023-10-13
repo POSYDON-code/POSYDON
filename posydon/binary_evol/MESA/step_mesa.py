@@ -656,7 +656,7 @@ class MesaGridStep:
                             # DEBUG
                             # print(key, missing_values_star_1)
                             # print('fixed', len(getattr(self.binary.star_1,
-                            #                            key + "_history")))        
+                            #                            key + "_history")))
         # convert these flags to default POSYDON star states
         setattr(stars[0], 'state',
                 cf.check_state_of_star(stars[0], star_CO=stars_CO[0]))
@@ -669,10 +669,12 @@ class MesaGridStep:
         setattr(binary, 'state', binary_state)
         setattr(binary, 'event', binary_event)
         setattr(binary, 'mass_transfer_case', MT_case)
-
+        culmulative_mt_case = self.termination_flags[1]
+        setattr(self.binary, 'culmulative_mt_case', culmulative_mt_case)
         setattr(self.binary, f'interp_class_{self.grid_type}', interpolation_class)
         mt_history = self.termination_flags[2] # mass transfer history (TF12 plot label)
         setattr(self.binary, f'mt_history_{self.grid_type}', mt_history)
+
 
         if self.save_initial_conditions:
             # history N is how much to look back in the history
@@ -690,6 +692,7 @@ class MesaGridStep:
             getattr(binary, "state_history").append(binary_state)
             getattr(binary, "event_history").append(None)
             getattr(binary, "mass_transfer_case_history").append(MT_case)
+            getattr(binary, "culmulative_mt_case").append(None)
 
         if track_interpolation:
             if not self.flush_history:
@@ -706,6 +709,7 @@ class MesaGridStep:
                 getattr(binary, "state_history").extend(binary_state)
                 getattr(binary, "event_history").extend(binary_event)
                 getattr(binary, "mass_transfer_case_history").extend(MT_case)
+                getattr(binary, "culmulative_mt_case").extend(None)
                 self.flush_entries = len_binary_hist   # this is needded!
                 # this is to prevent the flushin of the initial value which is
                 # appended twice
