@@ -1025,6 +1025,8 @@ if __name__ == '__main__':
                                               psycris_inifile = run_parameters["psycris_inifile"],
                                               keep_profiles=run_parameters['keep_profiles'],
                                               keep_photos=run_parameters['keep_photos'])
+    if 'work_dir' in slurm.keys() and not(slurm['work_dir'] == ''):
+        command_line += ' --temporary-directory '+slurm['work_dir']
 
     # now we need to know how this person plans to run the above created
     # command. As a shell script? As a SLURM submission? In some other way?
