@@ -78,6 +78,17 @@ X-ray binaries: computing the X-ray luminosity function 🩻
 
 TODO: bring v1 tutorial to v2 leveraging the SyntheticPopulation class
 
+
+Debugging the Evolution of a Single Binary saved in a POSYDON Population model 🐞
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This notebook shows you how to run the BinaryPopulation class in debug mode, which allows you to follow the evolution of a single binary through the population synthesis code. This is useful for debugging purposes, or for understanding the evolution of a single binary in detail, e.g. by changing the natal kicks. 
+
+.. toctree:: 
+
+    debug_pop
+
+
 Advanced Visualization with Van den Heuvel Diagrams 🎨
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
