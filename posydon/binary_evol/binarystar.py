@@ -103,7 +103,6 @@ BINARYPROPERTIES = [
                                     # The distance is normalized in the
                                     # parameter space and limits at which it
                                     # was calculated. See `mesa_step` for more.
-    'culmulative_mt_case',
 ]
 
 
@@ -154,8 +153,6 @@ class BinaryStar:
                 setattr(self, item, binary_kwargs.pop(item, ['None',
                                                              'None',
                                                              'None']))
-            elif item == 'culmulative_mt_case':
-                setattr(self, item, binary_kwargs.pop(item, 'None'))
             else:
                 setattr(self, item, binary_kwargs.pop(item, None))
             setattr(self, item + '_history', [getattr(self, item)])
@@ -165,8 +162,6 @@ class BinaryStar:
             self.inspiral_time = None
         if not hasattr(self, 'mass_transfer_case'):
             self.mass_transfer_case = 'None'
-        if not hasattr(self, 'culmulative_mt_case'):
-            self.culmulative_mt_case = 'None'
         # if not hasattr(self, 'V_sys'):
         #     self.V_sys = [0, 0, 0]
 
@@ -176,6 +171,8 @@ class BinaryStar:
                 setattr(self, f'interp_class_{grid_type}', None)
             if not hasattr(self, f'mt_history_{grid_type}'):
                 setattr(self, f'mt_history_{grid_type}', None)
+            if not hasattr(self, f'culmulative_mt_case_{grid_type}'):
+                setattr(self, f'culmulative_mt_case_{grid_type}', None)
 
         # SimulationProperties object - parameters & parameterizations
         if isinstance(properties, SimulationProperties):

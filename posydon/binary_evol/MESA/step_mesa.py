@@ -670,7 +670,7 @@ class MesaGridStep:
         setattr(binary, 'event', binary_event)
         setattr(binary, 'mass_transfer_case', MT_case)
         culmulative_mt_case = self.termination_flags[1]
-        setattr(binary, 'culmulative_mt_case', culmulative_mt_case)
+        setattr(self.binary, f'culmulative_mt_case_{self.grid_type}', culmulative_mt_case)
         setattr(self.binary, f'interp_class_{self.grid_type}', interpolation_class)
         mt_history = self.termination_flags[2] # mass transfer history (TF12 plot label)
         setattr(self.binary, f'mt_history_{self.grid_type}', mt_history)
@@ -692,7 +692,6 @@ class MesaGridStep:
             getattr(binary, "state_history").append(binary_state)
             getattr(binary, "event_history").append(None)
             getattr(binary, "mass_transfer_case_history").append(MT_case)
-            getattr(binary, "culmulative_mt_case").append(None)
 
         if track_interpolation:
             if not self.flush_history:
@@ -709,7 +708,6 @@ class MesaGridStep:
                 getattr(binary, "state_history").extend(binary_state)
                 getattr(binary, "event_history").extend(binary_event)
                 getattr(binary, "mass_transfer_case_history").extend(MT_case)
-                getattr(binary, "culmulative_mt_case").extend([None]*len(MT_case))
                 self.flush_entries = len_binary_hist   # this is needded!
                 # this is to prevent the flushin of the initial value which is
                 # appended twice
@@ -835,7 +833,7 @@ class MesaGridStep:
             elif key in ['eccentricity', 'V_sys']:
                 current = getattr(self.binary, key + '_history')[-1]
                 setattr(self.binary, key, current)
-            elif key in ['state', 'event', 'mass_transfer_case', 'culmulative_mt_case']:
+            elif key in ['state', 'event', 'mass_transfer_case']:
                 continue
             else:
                 key_p = POSYDON_TO_MESA['binary'][key]
