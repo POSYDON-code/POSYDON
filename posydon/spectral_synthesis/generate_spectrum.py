@@ -95,7 +95,7 @@ def generate_spectrum(grids,star,i,scale,**kwargs):
     """
     #First we check if the star is a CO. (for future we can add WD spectra)\
     if star[f'{i}_state'] in ['massless_remnant','BH','WD','NS']:
-        return None,star[f'{i}_state']
+        return None,star[f'{i}_state'],None
     ostar_temp_cut_off=27000
     Fe_H = np.log(star['Z/Zo'])
     Z_Zo = star['Z/Zo']
@@ -106,19 +106,19 @@ def generate_spectrum(grids,star,i,scale,**kwargs):
     R = 10**copy(star[f'{i}_log_R'])*con.R_sun
     #TODO have a star label that it's going to be None in the begining"
     #label = star[f'{i}_label']
-    x = {'Teff':Teff ,'log(g)': logg,'[Fe/H]': Fe_H,'Z/Zo':Z_Zo,'M_init':M,'state':state} 
+    x = {'Teff':Teff ,'log(g)': logg,'[Fe/H]': Fe_H,'Z/Zo':Z_Zo,'M_init':M,'state':state,'[alpha/Fe]':0.0}
     label = None
     label = point_the_grid(grids,x,ostar_temp_cut_off,label,**kwargs)
     count = 1
     while count <3:
         if label == 'failed_grid':
-            return None,state
+            return None,state,label
         else:
             try:
                 print(label)
                 print(x)
                 Flux = grids.grid_flux(label,**x)*R**2*scale**-2
-                return Flux.value,star['state']
+                return Flux.value,star['state'],label
             except LookupError:
                 label = f'failed_attempt_{count}'
                 print(label)
@@ -126,7 +126,7 @@ def generate_spectrum(grids,star,i,scale,**kwargs):
         count += 1
         print(count)
     if label == 'failed_grid':
-        return None,state
+        return None,state,label
     else:
         raise ValueError(f'The label:{label} is not "failed_grid" after all the possible checks')
     #TODO add this label in the star attributes

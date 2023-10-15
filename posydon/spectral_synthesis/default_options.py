@@ -18,6 +18,7 @@ default_grid_kwargs = {
     'stripped_grid': "sg-Gotberg18.h5",
     'ostar_grid': "sg-OSTAR2002-medium.h5",
 
+
     # Setting the wavelengths range:
     'lam_min': 3000.,
     'lam_max': 7000.,
