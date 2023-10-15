@@ -33,7 +33,7 @@ keys_to_save= ['state',
                'S2_log_L',
                'S1_log_R',
                'S2_log_R',
-               'S1_metallicity'
+               #'S1_metallicity'
                #'Z/Zo'
                #'Z/Zo',
                #'log_g',
@@ -98,22 +98,18 @@ def load_posydon_population(population_file, max_number_of_binaries=None,
         if col not in keys_to_save:
             del final_stars[str(col)]
     pop = copy(final_stars)
-    pop.rename(columns = {'S1_metallicity' : 'Z/Zo'},inplace= True)
-    pop['Z/Zo'] = pop['Z/Zo']/Zo
-    logg1= [None]*len(pop)
-    logg2= [None]*len(pop)
+    #pop.rename(columns = {'S1_metallicity' : 'Z/Zo'},inplace= True)
+    pop['Z/Zo'] = zams_stars['S1_metallicity']/Zo
+    #logg1= [None]*len(pop)
+    #logg2= [None]*len(pop)
     Teff1 = [None]*len(pop)
     Teff2 = [None]*len(pop)
-    for i,row in pop.iterrows():
-        #for star in ['S1','S2']:
-        logg1[i] = calculate_logg(row,'S1')
-        logg2[i] = calculate_logg(row,'S2')
-        Teff1[i] = calculate_Teff(row,'S1')
-        Teff2[i] = calculate_Teff(row,'S2')
-    pop['S1_log_g'] = logg1
-    pop['S2_log_g'] = logg2
-    pop['S1_Teff'] = Teff1
-    pop['S2_Teff'] = Teff2
+    for star in ['S1','S2']:
+        M = np.asarray(pop[f'{star}_mass'])*con.M_sun
+        R = np.asarray(10**pop[f'{star}_log_R'])*con.R_sun
+        L = np.asarray(10**pop[f'{star}_log_L'])*con.L_sun
+        pop[f'{star}_log_g'] = np.log10(con.G*M/R**2/(unt.cm/unt.s**2))
+        pop[f'{star}_Teff'] = (L/(4*np.pi*R**2*con.sigma_sb))**0.25/unt.K
     return pop
 
 
