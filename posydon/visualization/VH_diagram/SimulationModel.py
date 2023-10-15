@@ -14,11 +14,12 @@ import os
 class SimulationModel:
     """Model containing the dataset of simulations."""
 
-    def __init__(self, filename, path="./"):
+    def __init__(self, filename, path="./", binary=False):
         """Initialize a SimulationModel instance."""
         self._df = None
         self.path = path
         self.filename = filename
+        self.binary = binary
 
     def load_csv(self):
         """Load dataframe as CSV with .gz compression."""
@@ -41,4 +42,8 @@ class SimulationModel:
             Copy of a sub-dataframe with binary_index == index
 
         """
-        return self._df.loc[index].copy()
+
+        if self.binary:
+            return self._df.copy()
+        else:
+            return self._df.loc[index].copy()

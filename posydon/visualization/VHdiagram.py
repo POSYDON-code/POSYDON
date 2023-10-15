@@ -39,6 +39,7 @@ class VHdiagram:
         *,
         presentMode=PresenterMode.DETAILED,
         displayMode=DisplayMode.WINDOW,
+        binary = False,
         figsize=(10, 8)
     ):
         """Initialize a VHdiagram instance."""
@@ -47,8 +48,9 @@ class VHdiagram:
         )  # Check if there is instance of QApplication
         if not self._app:  # if not, create it
             self._app = QApplication([])
-
-        self._presenter = Presenter(filename=filename, path=path)
+        
+        print(binary)
+        self._presenter = Presenter(filename=filename, path=path, binary=binary)
 
         self._presenter.present(index, presentMode)
 
