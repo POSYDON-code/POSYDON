@@ -8,12 +8,12 @@ __authors__ = [
     "Eirini Kasdagli <kasdaglie@ufl.edu>",
     "Jeffrey Andrews <jeffrey.andrews@ufl.edu>"]
 
+from copy import copy
 import numpy as np
 import astropy.constants as con
 import astropy.units as unt
 import pandas as pd
-from copy import copy
-import datetime
+
 
 Zo = 0.0142
 key_traslation = {
@@ -84,14 +84,21 @@ def find_max_time(history):
 
 def load_posydon_population(population_file, max_number_of_binaries=None,
                             **kwargs):
-    """Write a docstring."""
+    """Loads the data of a POSYDON population h5 file saves and add all the data used for spectral synthesis.
+
+    Args:
+        population_file (_type_): _description_
+        max_number_of_binaries (_type_, optional): _description_. Defaults to None.
+
+    Returns:
+        _type_: _description_
+    """
     history = pd.read_hdf(population_file, key='history')
     
     max_time = find_max_time(history)
 
     i_final_star = (history.time == max_time) & (history.event == "END")
     final_stars = history[i_final_star].reset_index()
-    metallicity = final_stars.S1_metallicity[0]/Zo
     zams_stars = history[history.event == 'ZAMS']
     #pop = pd.DataFrame(columns = keys_to_save)
     for col in final_stars:
@@ -104,6 +111,7 @@ def load_posydon_population(population_file, max_number_of_binaries=None,
     #logg2= [None]*len(pop)
     Teff1 = [None]*len(pop)
     Teff2 = [None]*len(pop)
+    #Add two extra columns in the pop data
     for star in ['S1','S2']:
         M = np.asarray(pop[f'{star}_mass'])*con.M_sun
         R = np.asarray(10**pop[f'{star}_log_R'])*con.R_sun

@@ -7,6 +7,7 @@ import numpy as np
 import astropy.constants as con
 import astropy.units as unt
 import datetime
+import pandas as pd
 import traceback
 from copy import copy
 
@@ -96,11 +97,11 @@ class population_spectra():
             if spectrum_2 is not None and state_2 is not None:
                 pop_spectrum[state_2] += spectrum_2
         if self.save_data:
-            self.save_pop_data(self.population,labels_S1,labels_S2)
+            self.save_pop_data(self.population,labels_S1,labels_S2,pop_spectrum)
         return pop_spectrum,self.grids.lam_c
 
 
-    def save_pop_data(self,pop_data,labels_S1,labels_S2,file_path=None):
+    def save_pop_data(self,pop_data,labels_S1,labels_S2,pop_spectrum,file_path=None):
         """_summary_
 
         Args:
@@ -111,11 +112,13 @@ class population_spectra():
         """
         pop_data['S1_grid_status'] = labels_S1
         pop_data['S2_grid_status'] = labels_S2
+        spectrum_data = pd.DataFrame.from_dict(pop_spectrum)
+        spectrum_data.insert(loc = 0, column='wavelength',value =self.grids.lam_c )
         if file_path is None:
             file_path = "./"
         h5file =file_path + self.output_file
         pop_data.to_hdf(h5file,key = 'data',format = 'table')
-
+        spectrum_data.to_hdf(h5file,key = 'flux',format = 'table')
 
 
     
@@ -169,8 +172,6 @@ class population_spectra():
                 #Calculating all the exeption that the first grid gave with the secondary.
                 #if Teff>15000.0 and logg > logg_min:
                 Flux = self.grid_flux('secondary_grid',**x)
-                print("Secondary")
-                print(x)
                 return Flux*star.R**2*scale**-2
             #except LookupError:
             except:
@@ -241,10 +242,7 @@ class population_spectra():
         population = self.population
         for i in range(num_binaries):
             binary = population[i]
-            spec_start = datetime.datetime.now()
             spectrum = self.create_spectrum_binary(binary)
-            spec_end = datetime.datetime.now()
-           # print('The {i} binary time was: {time}'.format(i=i,time = spec_end - spec_start ))
             if spectrum is not None:
                 create_spectrum_population += spectrum
         return create_spectrum_population , self.grids.lam_c

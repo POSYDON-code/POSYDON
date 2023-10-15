@@ -16,6 +16,7 @@ default_grid_kwargs = {
     # Secondary grid option to capture the failures of the main grid.
     'secondary_grid': "sg-BSTAR2006-medium.h5",
     'stripped_grid': "sg-Gotberg18.h5",
+    'bstar_grid' : "sg-BSTAR2006-medium.h5",
     'ostar_grid': "sg-OSTAR2002-medium.h5",
 
 

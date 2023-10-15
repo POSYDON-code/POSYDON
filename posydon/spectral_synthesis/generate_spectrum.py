@@ -34,7 +34,7 @@ def check_boundaries(grids,grid_name,**kwargs):
         else:
             return grid_name
 
-def point_the_grid(grids,x,ostar_temp_cut_off,label,**kwargs):
+def point_the_grid(grids,x,ostar_temp_cut_off,bstar_temp_cut_off,label,**kwargs):
     """Assigning the write label that would point to the spectra grid needed to used
 
     Args:
@@ -65,6 +65,10 @@ def point_the_grid(grids,x,ostar_temp_cut_off,label,**kwargs):
         if label is not None:
             return 'failed_grid'
         return check_boundaries(grids,'ostar_grid',**x)
+    if x['Teff'] > bstar_temp_cut_off:
+        if label is not None:
+            return 'failed_grid'
+        return check_boundaries(grids,'bstar_grid',**x)
     #Now we are checking at the normal grid and the number of failed trails.
     if label is None:
         check = check_boundaries(grids,'main_grid',**x)
@@ -97,6 +101,7 @@ def generate_spectrum(grids,star,i,scale,**kwargs):
     if star[f'{i}_state'] in ['massless_remnant','BH','WD','NS']:
         return None,star[f'{i}_state'],None
     ostar_temp_cut_off=27000
+    bstar_temp_cut_off = 15000
     Fe_H = np.log(star['Z/Zo'])
     Z_Zo = star['Z/Zo']
     Teff = copy(star[f'{i}_Teff'])
@@ -108,23 +113,19 @@ def generate_spectrum(grids,star,i,scale,**kwargs):
     #label = star[f'{i}_label']
     x = {'Teff':Teff ,'log(g)': logg,'[Fe/H]': Fe_H,'Z/Zo':Z_Zo,'M_init':M,'state':state,'[alpha/Fe]':0.0}
     label = None
-    label = point_the_grid(grids,x,ostar_temp_cut_off,label,**kwargs)
+    label = point_the_grid(grids,x,ostar_temp_cut_off,bstar_temp_cut_off,label,**kwargs)
     count = 1
     while count <3:
         if label == 'failed_grid':
             return None,state,label
         else:
             try:
-                print(label)
-                print(x)
                 Flux = grids.grid_flux(label,**x)*R**2*scale**-2
                 return Flux.value,star['state'],label
             except LookupError:
                 label = f'failed_attempt_{count}'
-                print(label)
-        label = point_the_grid(grids,x,ostar_temp_cut_off,label,**kwargs)
+        label = point_the_grid(grids,x,ostar_temp_cut_off,bstar_temp_cut_off,label,**kwargs)
         count += 1
-        print(count)
     if label == 'failed_grid':
         return None,state,label
     else:

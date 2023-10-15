@@ -18,6 +18,7 @@ PASS_DIR = os.path.join(MSG_DIR, 'data', 'passbands')
 GRID_KEYS = [
     'main_grid',
     'secondary_grid',
+    'bstar_grid',
     'ostar_grid',
     'stripped_grid',
 ]
