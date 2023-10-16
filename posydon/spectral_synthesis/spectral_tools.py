@@ -84,33 +84,32 @@ def find_max_time(history):
 
 def load_posydon_population(population_file, max_number_of_binaries=None,
                             **kwargs):
-    """Loads the data of a POSYDON population h5 file saves and add all the data used for spectral synthesis.
+    """Loads the data of a POSYDON population h5 file saves 
+        and add all the data used for spectral synthesis.
 
     Args:
-        population_file (_type_): _description_
-        max_number_of_binaries (_type_, optional): _description_. Defaults to None.
+        population_file: h5 file 
+            POSYDON output population file
+        max_number_of_binaries: int. Defaults to None.
+            The number of binaries as subset of the total population 
+            if value is not the default one (Total population). 
 
     Returns:
-        _type_: _description_
+        pop: pd array
+            The data of the population that are useful for spectral synthesis. 
+            Includes the columns keys_to_save as well as metallicity, Teff and log(g) 
+            for each star.
     """
     history = pd.read_hdf(population_file, key='history')
-    
     max_time = find_max_time(history)
-
-    i_final_star = (history.time == max_time) & (history.event == "END")
-    final_stars = history[i_final_star].reset_index()
+    final_stars = history[(history.time == max_time) & (history.event == "END")].reset_index()
     zams_stars = history[history.event == 'ZAMS']
-    #pop = pd.DataFrame(columns = keys_to_save)
     for col in final_stars:
         if col not in keys_to_save:
             del final_stars[str(col)]
     pop = copy(final_stars)
-    #pop.rename(columns = {'S1_metallicity' : 'Z/Zo'},inplace= True)
+    #Get the metallicity values from ZAMS
     pop['Z/Zo'] = zams_stars['S1_metallicity']/Zo
-    #logg1= [None]*len(pop)
-    #logg2= [None]*len(pop)
-    Teff1 = [None]*len(pop)
-    Teff2 = [None]*len(pop)
     #Add two extra columns in the pop data
     for star in ['S1','S2']:
         M = np.asarray(pop[f'{star}_mass'])*con.M_sun
@@ -175,6 +174,15 @@ def population_data(population_file = None, number_of_binaries = True,**kwargs):
 
 
 def grid_global_limits(spectral_grids):
+    """Calculates the global limits of 
+    total collection of the spectral libraries
+
+    Args:
+        spectral_grids: dict of the spectral grids
+
+    Returns:
+        T_max,T_min,logg_max,logg_min: floats
+    """
     T_max  = 0
     T_min = 100000
     logg_max = 0

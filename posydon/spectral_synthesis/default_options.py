@@ -33,5 +33,7 @@ default_grid_kwargs = {
     'filters': ['U', 'B', 'V']
 }
 default_kwargs = {
-
+    'max_number_of_binaries': None,
+    'save_data': False,
+    
  }

@@ -12,7 +12,7 @@ def check_boundaries(grids,grid_name,**kwargs):
     It takes an input based on the grid check need to be made and returns a failed_grid message 
     if parameters are outside the boundaries. 
     """
-    x = copy(kwargs) 
+    x = copy(kwargs)
     #First we check the global limits
     if grid_name == "global":
         if x['Teff'] < grids.T_min or x['Teff'] > grids.T_max:

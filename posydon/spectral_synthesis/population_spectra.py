@@ -10,7 +10,7 @@ import datetime
 import pandas as pd
 import traceback
 from copy import copy
-
+import os
 from posydon.spectral_synthesis.spectral_tools import population_data,load_posydon_population
 from posydon.spectral_synthesis.spectral_grids import spectral_grids
 from posydon.spectral_synthesis.default_options import default_kwargs
@@ -28,24 +28,18 @@ grid_keys = [
 class population_spectra():
     """Write a class docstring."""
 
-    def __init__(self,file,output_file,**kwargs):
+    def __init__(self,**kwargs):
         """Initialize a population_spectra class instance."""
         self.kwargs = default_kwargs.copy()
         for key, arg in kwargs.items():
             self.kwargs[key] = arg
-
-        # population_file = kwargs.get('population_file')
-        self.kwargs['population_file'] = file
-        self.kwargs['output_file'] = output_file
+        file =  self.kwargs['population_file']
+        if os.path.isfile(file):
+            self.file = file
+        else:
+            raise FileNotFoundError
+        self.output_file = self.kwargs['output_file']
         self.save_data = self.kwargs['save_data']
-        #time = kwargs.get('time')
-        self.failed_stars = 0  # int, the stars that failed durin the spectra process
-        #Creating lists/numpy arrays for investigation for the failled and succesful stars.
-        self.stars_fails = []
-        self.stars_run = []
-        self.stars_grid_fail = []
-        self.file = file
-        self.output_file = output_file
         # Create readable arrays for the stars objects.
         time_start_pop = datetime.datetime.now()
         self.population = population_data(**self.kwargs)
@@ -62,13 +56,13 @@ class population_spectra():
         """Function to load up a POSYDON population."""
         self.population = load_posydon_population(self.file)
 
-        
-
     def create_population_spectrum(self):
-        """_summary_
+        """Creates the integrated spectrum of the population.
+        It also creates a file with the outputs if the save_data is True. 
 
         Returns:
-            _type_: _description_
+            pop_spectrum: dictonary of type of binaries and their corresponding spectrum.
+            wavelength: numpy array
         """
         scale = self.scaling_factor
         load_start = datetime.datetime.now()
@@ -76,39 +70,43 @@ class population_spectra():
         load_end = datetime.datetime.now()
         print('Loading the population took',load_end - load_start,'s')
         pop_spectrum = {}
-
-        state_list = ['disrupted', 'merged', 'detached','initially_single_star','low_mass_binary','contact','RLO1','RLO2']
+        state_list = ['disrupted',
+                      'merged', 
+                      'detached',
+                      'initially_single_star',
+                      'low_mass_binary',
+                      'contact',
+                      'RLO1',
+                      'RLO2']
         if self.save_data:
             labels_S1 = []
             labels_S2 = []
         # Create empty spectral arrays
         for state in state_list:
-            pop_spectrum[state] = np.zeros(len(self.grids.lam_c))       
-        for i,binary in self.population.iterrows():
-            #TODO write line bellow
-
-            spectrum_1,state_1,label1 = generate_spectrum(self.grids,binary,'S1',scale)
-            spectrum_2,state_2,label2 = generate_spectrum(self.grids,binary,'S2',scale)
-            if self.save_data:
-                labels_S1.append(label1)
-                labels_S2.append(label2)
-            if spectrum_1 is not None and state_1 is not None:
-                pop_spectrum[state_1] += spectrum_1
-            if spectrum_2 is not None and state_2 is not None:
-                pop_spectrum[state_2] += spectrum_2
+            pop_spectrum[state] = np.zeros(len(self.grids.lam_c))
+            for i,binary in self.population.iterrows():
+                spectrum_1,state_1,label1 = generate_spectrum(self.grids,binary,'S1',scale)
+                spectrum_2,state_2,label2 = generate_spectrum(self.grids,binary,'S2',scale)
+                if self.save_data:
+                    labels_S1.append(label1)
+                    labels_S2.append(label2)
+                if spectrum_1 is not None and state_1 is not None:
+                    pop_spectrum[state_1] += spectrum_1
+                if spectrum_2 is not None and state_2 is not None:
+                    pop_spectrum[state_2] += spectrum_2
         if self.save_data:
             self.save_pop_data(self.population,labels_S1,labels_S2,pop_spectrum)
         return pop_spectrum,self.grids.lam_c
 
 
     def save_pop_data(self,pop_data,labels_S1,labels_S2,pop_spectrum,file_path=None):
-        """_summary_
+        """Saves the population data and the spectrum outputs to the file 
 
         Args:
-            pop_data (_type_): _description_
-            labels_S1 (_type_): _description_
-            labels_S2 (_type_): _description_
-            file_path (_type_, optional): _description_. Defaults to None.
+            pop_data: pd array
+            labels_S1: string
+            labels_S2: string
+            file_path: string. Defaults to None.
         """
         pop_data['S1_grid_status'] = labels_S1
         pop_data['S2_grid_status'] = labels_S2
@@ -120,11 +118,8 @@ class population_spectra():
         pop_data.to_hdf(h5file,key = 'data',format = 'table')
         spectrum_data.to_hdf(h5file,key = 'flux',format = 'table')
 
-
-    
     def create_spectrum_single(self,star,ostar_temp_cut_off=27000,**kwargs):
         scale = self.scaling_factor
-
         if "stripped" in star.state:
             M = star.mass/con.M_sun
             M_min =  self.grids.spectral_grids['stripped_grid'].axis_x_min['M_init']
