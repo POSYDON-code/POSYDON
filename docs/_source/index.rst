@@ -3,7 +3,7 @@ POSYDON Documentation
 ==============================
 
 
-.. image:: posydon_logo.pdf
+.. image:: posydon_logo.*
   :width: 800
 
 
