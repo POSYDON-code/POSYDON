@@ -264,7 +264,7 @@ html_show_copyright = True
 htmlhelp_basename = 'posydondoc'
 
 # Add logo to the sidebar
-html_logo = 'posydon_logo.pdf'
+html_logo = 'posydon_logo.png'
 html_theme_options = {
     'logo_only': True,
     'display_version': True,
