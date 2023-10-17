@@ -84,16 +84,20 @@ class population_spectra():
         # Create empty spectral arrays
         for state in state_list:
             pop_spectrum[state] = np.zeros(len(self.grids.lam_c))
-            for i,binary in self.population.iterrows():
-                spectrum_1,state_1,label1 = generate_spectrum(self.grids,binary,'S1',scale)
-                spectrum_2,state_2,label2 = generate_spectrum(self.grids,binary,'S2',scale)
-                if self.save_data:
-                    labels_S1.append(label1)
-                    labels_S2.append(label2)
-                if spectrum_1 is not None and state_1 is not None:
-                    pop_spectrum[state_1] += spectrum_1
-                if spectrum_2 is not None and state_2 is not None:
-                    pop_spectrum[state_2] += spectrum_2
+
+        for i,binary in self.population.iterrows():
+            spectrum_1,state_1,label1 = generate_spectrum(self.grids,binary,'S1',scale)
+            spectrum_2,state_2,label2 = generate_spectrum(self.grids,binary,'S2',scale)
+            if self.save_data:
+                labels_S1.append(label1)
+                labels_S2.append(label2)
+            if spectrum_1 is not None and state_1 is not None:
+                print(state_1, spectrum_1)
+                for key,value in pop_spectrum.items():
+                    print(key)
+                pop_spectrum[state_1] += spectrum_1
+            if spectrum_2 is not None and state_2 is not None:
+                pop_spectrum[state_2] += spectrum_2
         if self.save_data:
             self.save_pop_data(self.population,labels_S1,labels_S2,pop_spectrum)
         return pop_spectrum,self.grids.lam_c
