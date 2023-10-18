@@ -8,7 +8,7 @@ Operating System
 
 POSYDON has been tested on the following operating systems:
 
-- Linux (Ubuntu 20.04, CentOS 7, etc.)
+- Linux (Ubuntu 20.04 and newer, CentOS 7, etc.)
 - macOS (10.14 and newer)
 - Windows 10
 

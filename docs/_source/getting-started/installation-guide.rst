@@ -17,7 +17,7 @@ Using Anaconda (Recommended)
 
 2. **Create a New Conda Environment**
 
-    Open your terminal or Anaconda prompt and create a new environment using Python 3.11:
+    Open your terminal or Anaconda prompt and create a new environment called ``posydon_env`` using Python 3.11 (the ``-y`` automatically answers all confirmations with yes):
 
     .. code-block:: bash
 
@@ -34,7 +34,7 @@ Using Anaconda (Recommended)
     .. warning::
         This documentation describes the POSYDON v2.0.0 code which is not yet available on Anaconda. Please use the development version for now. See :ref:`Using the Development Version <dev-version>` for more details.
 
-    With the environment activated, install POSYDON using:
+    With the environment activated, install the POSYDON code from the POSYDON channel using (by default the installation will take place in the current directory, hence please navigate to your desired location first or use the ``-p`` option to specify a path):
 
     .. code-block:: bash
 
@@ -42,9 +42,22 @@ Using Anaconda (Recommended)
 
 .. _posydon-env:
 
-4. **Set Environment Variables**
+4. **Download the Dataset**
 
-    Export the required paths:
+    .. warning::
+        The POSYDON v2.0.0 dataset is not yet available on Zenodo. The above instructions currently point to the POSYDON v1.0.0 dataset release. Please refer to the development version of the dataset available on Northwestern and UNIGE HPC facilities for now. To have access to latest pre-release dataset (230914) you must be a POSYDON core developer, please refer to the #developers Slack channel.
+
+    You can use POSYDON's built-in API command (by default the downloaded data will be saved in the current directory, hence please navigate to your desired location first):
+
+    .. code-block:: bash
+
+        get-posydon-data
+
+    Alternatively, you can manually download the dataset from Zenodo using the provided `link <https://zenodo.org/record/6384235>`_. (TODO: update link to v2)
+
+5. **Set Environment Variables**
+
+    Export the required paths (please change the location names accordingly to your installation):
 
     .. code-block:: bash
 
@@ -53,19 +66,6 @@ Using Anaconda (Recommended)
 
     .. note:: 
         You can add these lines to your ``~/.bashrc`` or ``~/.bash_profile`` or your shell equivalent to ensure the environment variables are set every time you open a new terminal.
-
-5. **Download the Dataset**
-
-    .. warning::
-        The POSYDON v2.0.0 dataset is not yet available on Zenodo. The above instructions currently point to the POSYDON v1.0.0 dataset release. Please refer to the development version of the dataset available on Northwestern and UNIGE HPC facilities for now. To have access to latest pre-release dataset (230914) you must be a POSYDON core developer, please refer to the #developers Slack channel.
-
-    You can use POSYDON's built-in API command:
-
-    .. code-block:: bash
-
-        get-posydon-data
-
-    Alternatively, you can manually download the dataset from Zenodo using the provided `link <https://zenodo.org/record/6384235>`_. (TODO: update link to v2)
 
 .. _dev-version:
 
@@ -76,7 +76,7 @@ For users interested in the latest features and developments, you can install PO
 
 1. **Clone the Repository**
 
-    In your terminal or command prompt:
+    In your terminal or command prompt (by default the repository will be placed in the current directory, hence please navigate to your desired location first):
 
     .. code-block:: bash
 
@@ -93,7 +93,7 @@ For users interested in the latest features and developments, you can install PO
 
         cd POSYDON
 
-    Install the software as an editable package using:
+    Install the software as an editable package using `pip`:
 
     .. code-block:: bash
 
@@ -101,12 +101,13 @@ For users interested in the latest features and developments, you can install PO
 
 3. **Set Environment Variables and Download Data**
 
-    Refer back to the recommended installation steps, starting from :ref:`point 4 <posydon-env>`, to set the necessary environment variables and download the required dataset.
+    Refer back to the recommended installation steps, starting from :ref:`point 4 <posydon-env>`, to download the required dataset and set the necessary environment variables.
 
 
 Using POSYDON on HPC Facilities
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+(TODO: check whether it is still needed)
 If you are planning to run POSYDON's population synthesis on a High-Performance Computing (HPC) facility, it's essential to have `mpi4py` installed to enable parallel computations. 
 
 1. **Install mpi4py via Anaconda (Recommended)**:
@@ -201,7 +202,7 @@ If you're interested in building the POSYDON documentation locally:
 Installing Jupyter for Tutorials
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The tutorials in the "Getting Started" guide are provided as Jupyter notebooks. If you want to run these notebooks interactively, you will need to have either Jupyter Lab or Jupyter Notebook installed.
+Our tutorials are provided as Jupyter notebooks. If you want to run these notebooks interactively, you will need to have either Jupyter Lab or Jupyter Notebook installed.
 
 1. **Using Anaconda (Recommended)**
 

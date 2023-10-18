@@ -3,7 +3,7 @@ POSYDON Documentation
 ==============================
 
 
-.. image:: posydon_logo.pdf
+.. image:: posydon_logo.*
   :width: 800
 
 
@@ -18,7 +18,7 @@ About POSYDON
 
 POSYDON is a next-generation single and binary-star population synthesis tool. Our vision is to provide researchers and enthusiasts with a state-of-the-art platform to delve into the intricacies of stellar structures and binary evolutions using MESA. With full stellar structure modeling, advanced machine learning techniques, and a modular architecture, POSYDON stands at the forefront of astrophysical simulations.
 
-To stay up to data with the latest news about POSYDON, check out our `official website <https://www.posydon.org>`_ for more details.
+To stay up to date with the latest news about POSYDON, check out our `official website <https://www.posydon.org>`_ for more details.
 
 How is this Documentation Structured?
 -------------------------------------
