@@ -1993,14 +1993,14 @@ def diffeq(
 ):
     """Diff. equation describing the orbital evolution of a detached binary.
 
-    The equation handles wind mass-loss [1_], tidal [2_], gravational [3_]
-    effects and magnetic braking [4_]. It also handles the change of the
-    secondary's stellar spin due to its change of moment of intertia and due to
-    mass-loss from its spinning surface. It is assumed that the mass loss is
-    fully non-conservative. Magnetic braking is fully applied to secondary
-    stars with mass less than 1.3 Msun and fully off for stars with mass larger
-    then 1.5 Msun. The effect of magnetic braking falls linearly for stars with
-    mass between 1.3 Msun and 1.5 Msun.
+    The equation handles wind mass-loss [1]_, tidal [2]_, gravational [3]_
+    effects and magnetic braking [4]_, [5]_, [6]_, [7]_, [8]_. It also handles
+    the change of the secondary's stellar spin due to its change of moment of
+    intertia and due to mass-loss from its spinning surface. It is assumed that
+    the mass loss is fully non-conservative. Magnetic braking is fully applied
+    to secondary stars with mass less than 1.3 Msun and fully off for stars
+    with mass larger then 1.5 Msun. The effect of magnetic braking falls
+    linearly for stars with mass between 1.3 Msun and 1.5 Msun.
 
     TODO: exaplin new features (e.g., double COs)
 
@@ -2064,10 +2064,10 @@ def diffeq(
         Default: True.
     magnetic_braking_mode: String
         A string corresponding to the desired magnetic braking prescription.
-            -- RVJ83: Rappaport, Verbunt, & Joss 1983
-            -- M15: Matt et al. 2015
-            -- G18: Garraffo et al. 2018
-            -- CARB: Van & Ivanova 2019
+            - RVJ83 : Rappaport, Verbunt, & Joss 1983 [4]_
+            - M15 : Matt et al. 2015 [5]_
+            - G18 : Garraffo et al. 2018 [6]_
+            - CARB : Van & Ivanova 2019 [7]_
     do_stellar_evolution_and_spin_from_winds: Boolean
         If True, take into account change of star spin due to change of its
         moment of inertia during its evolution and due to spin angular momentum

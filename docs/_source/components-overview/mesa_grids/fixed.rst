@@ -64,13 +64,13 @@ named `example_grid.ini`) in our example_grid directory.
 Now, with our `grid.csv` and `example_grid.ini` files ready to go, we use a
 POSYDON script `posydon-setup-grid` to generate all the necessary files to run
 the grid using slurm. Note the different arguments here. We are designating
-that: 1) we are using a fixed grid, 2) the name of the .ini file, and 3) that
-our job scheduler is slurm. We may expand compatibility for other job
+that: 1) we are using a fixed grid, 2) that our job scheduler is slurm, and 3)
+the name of the .ini file. We may expand compatibility for other job
 schedulers in the future, but for now slurm is the only implemented option.
 
 .. code-block::
 
-    posydon-setup-grid --grid-type fixed --inifile example_grid.ini --submission-type slurm
+    posydon-setup-grid --grid-type fixed --submission-type slurm --inifile example_grid.ini
 
 This will take a minute to run. You will note that it includes a pull from the
 POSYDON GitHub repository to ensure the correct, designated version of the MESA
