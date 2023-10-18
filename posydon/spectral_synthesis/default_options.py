@@ -28,12 +28,20 @@ default_grid_kwargs = {
     'lam_res': 2000,
     # Performance variables:
     'cache_limit': 256,
-    # Specific Temp cutoff:
-    'ostar_temp_cut_off': 27000,
     'filters': ['U', 'B', 'V']
 }
 default_kwargs = {
     'max_number_of_binaries': None,
+    #int
     'save_data': False,
-    
+    #False,True
+
+    #The desired path for the output file.
+    'output_file_path':None,
+    #The default option is ./
+
+    # Ostar Temp cutoff:
+    'ostar_temp_cut_off': 27000,
+    #Bstar Temp cutoff: 
+    'bstar_temp_cut_off': 15000,
  }

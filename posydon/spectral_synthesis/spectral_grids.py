@@ -7,6 +7,7 @@ import astropy.units as unt
 import astropy.constants as con
 import pymsg
 import datetime
+from functools import reduce 
 from posydon.spectral_synthesis.default_options import default_grid_kwargs
 from posydon.spectral_synthesis.spectral_tools import grid_global_limits
 import copy
@@ -61,12 +62,8 @@ class spectral_grids():
         # Getting the global limits for the grids
         self.T_max, self.T_min, self.logg_max, self.logg_min = \
             grid_global_limits(self.spectral_grids)
-
-        lam_min = self.kwargs.get('lam_min', 3000)
-        lam_max = self.kwargs.get('lam_max', 7000)
-        lam_res = self.kwargs.get('lam_res', 2000)
-        self.lam = np.linspace(lam_min, lam_max, lam_res)
-        self.lam_c = 0.5*(self.lam[1:] + self.lam[:-1])
+        #Getting the wavelength range
+        self.lam_c = self.wavelength_range(**self.kwargs)
 
     def grid_constructor(self, **kwargs):
         """Create the dictionary of MSG SpecGrid objects.
@@ -81,6 +78,21 @@ class spectral_grids():
                 grids[key] = spec_grid(str(arg))
         return grids
 
+    def wavelength_range(self,**kwargs):
+        grids = self.spectral_grids
+        #The min wavelength is the the max min of all of the libraries
+        lam_min_grids = reduce(lambda x,y: x if x > y else y, map(lambda x: grids[x].lam_min,grids))
+        #The max wavelength is the the min max of all of the libraries
+        lam_max_grids = reduce(lambda x,y: x if x < y else y, map(lambda x: grids[x].lam_max,grids))
+        lam_min = kwargs.get('lam_min', 3000)
+        lam_max = kwargs.get('lam_max', 7000)
+        lam_res = kwargs.get('lam_res', 2000)
+        if lam_min < lam_min_grids or lam_max > lam_max_grids: 
+            raise ValueError(f'The wavelength range chosen is out of the range being offer by the libraries',
+                             'The available wavelength range of this collection of libraries is [{lam_min}$\AA$,{lam_max}]$\AA$')
+        lam = np.linspace(lam_min, lam_max, lam_res)
+        return 0.5*(lam[1:] + lam[:-1])
+    
     def grid_flux(self, name, **kwargs):
         """Returns the flux of a star."""
         if name not in GRID_KEYS:

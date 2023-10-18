@@ -130,5 +130,3 @@ def generate_spectrum(grids,star,i,scale,**kwargs):
         return None,state,label
     else:
         raise ValueError(f'The label:{label} is not "failed_grid" after all the possible checks')
-    #TODO add this label in the star attributes
-
