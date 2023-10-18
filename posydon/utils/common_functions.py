@@ -113,7 +113,7 @@ def stefan_boltzmann_law(L, R):
 
 
 def rzams(m, z=0.02, Zsun=0.02):
-    """Evaluate the zero age main sequence radius.
+    """Evaluate the zero age main sequence radius [1]_.
 
     Parameters
     ----------
@@ -129,8 +129,8 @@ def rzams(m, z=0.02, Zsun=0.02):
 
     References
     ----------
-    .. [1] Tout C. A., Pols O. R., Eggleton P. P., Han Z., 1996,
-           MNRAS, 281, 257
+    .. [1] Tout C. A., Pols O. R., Eggleton P. P., Han Z., 1996, MNRAS, 281,
+        257
 
 
     """
@@ -212,7 +212,7 @@ RL -> Roche lobe radius in similar units as a_orb
 
 
 def roche_lobe_radius(q, a_orb=1):
-    """Approximate the Roche lobe radius from Eggleton (1983).
+    """Approximate the Roche lobe radius from [1]_.
 
     Parameters
     ----------
@@ -421,7 +421,8 @@ def eddington_limit(binary, idx=-1):
 
 
 def beaming(binary):
-    """Calculate the geometrical beaming of a super-Eddington accreting source.
+    """Calculate the geometrical beaming of a super-Eddington accreting source
+    [1]_, [2]_.
 
     Compute the super-Eddington isotropic-equivalent accretion rate and the
     beaming factor of a star. This does not change the intrinsic accretion onto
@@ -469,7 +470,7 @@ def beaming(binary):
 
 def bondi_hoyle(binary, accretor, donor, idx=-1, wind_disk_criteria=True,
                 scheme='Hurley+2002'):
-    """Calculate the Bondi-Hoyle accretion rate of a binary.
+    """Calculate the Bondi-Hoyle accretion rate of a binary [1]_.
 
     Parameters
     ----------
@@ -479,6 +480,15 @@ def bondi_hoyle(binary, accretor, donor, idx=-1, wind_disk_criteria=True,
         The accretor in the binary.
     donor : SingleStar
         The donor in the binary.
+    idx : int
+        default: -1
+    wind_disk_criteria : bool
+        default: True, see [5]_
+    scheme : str
+        There are different options:
+        
+        - 'Hurley+2002' : following [3]_
+        - 'Kudritzki+2000' : following [7]_
 
     Returns
     -------
@@ -487,18 +497,18 @@ def bondi_hoyle(binary, accretor, donor, idx=-1, wind_disk_criteria=True,
 
     Notes
     -----
-    A approximation is used for the accretion rate[2_]
-    and the wind velocity of the donor is moddeled as in [3_].
+    An approximation is used for the accretion rate [2]_ and the wind velocity
+    of the donor is moddeled as in [3]_, [6]_. Also see [4]_.
 
     References
     ----------
     .. [1] Bondi, H., & Hoyle, F. 1944, MNRAS, 104, 273
     .. [2] Boffin, H. M. J., & Jorissen, A. 1988, A&A, 205, 155
     .. [3] Hurley, J. R., Tout, C. A., & Pols, O. R. 2002, MNRAS, 329, 897
-    .. [4] Belczynski, K., Kalogera, V., Rasio, F. A., et al. 2008,
-           ApJS, 174, 223
+    .. [4] Belczynski, K., Kalogera, V., Rasio, F. A., et al. 2008, ApJS, 174,
+        223
     .. [5] Sen, K. ,Xu, X. -T., Langer, N., El Mellah, I. , Schurmann, C., &
-           Quast, M., 2021, A&A
+        Quast, M., 2021, A&A
     .. [6] Sander A. A. C., Vink J. S., 2020, MNRAS, 499, 873
     .. [7] Kudritzki, R.-P., & Puls, J. 2000, ARA&A, 38, 613
 
@@ -813,7 +823,7 @@ def inspiral_timescale_from_separation(star1_mass, star2_mass,
                                        separation, eccentricity):
     """Compute the timescale of GW inspiral using the orbital separation.
 
-    Based on Peters 1964:
+    Based on [1]_:
         https://journals.aps.org/pr/abstract/10.1103/PhysRev.136.B1224
 
     Parameters
@@ -901,7 +911,7 @@ def inspiral_timescale_from_orbital_period(star1_mass, star2_mass,
                                            orbital_period, eccentricity):
     """Compute the timescale of GW inspiral using the orbital period.
 
-    Based on Peters 1964:
+    Based on [1]_:
         https://journals.aps.org/pr/abstract/10.1103/PhysRev.136.B1224
 
     Parameters
@@ -1902,7 +1912,7 @@ def calculate_core_boundary(donor_mass,
 
 
 def period_evol_wind_loss(M_current, M_init, Mcomp, P_init):
-    """Calculate analytically the period widening due to wind mass loss.
+    """Calculate analytically the period widening due to wind mass loss [1]_.
 
     Parameters
     ----------
@@ -1922,7 +1932,7 @@ def period_evol_wind_loss(M_current, M_init, Mcomp, P_init):
     References
     ----------
     .. [1] Tauris, T. M., & van den Heuvel, E. 2006, Compact stellar X-ray
-           sources, 1, 623
+        sources, 1, 623
 
     """
     log10P = (-2.*np.log10(M_current+Mcomp)
@@ -1931,7 +1941,7 @@ def period_evol_wind_loss(M_current, M_init, Mcomp, P_init):
 
 
 def separation_evol_wind_loss(M_current, M_init, Mcomp, A_init):
-    """Calculate analytically the separation widening due to wind mass loss.
+    """Calculate analytically the separation widening due to wind mass loss [1]_.
 
     Parameters
     ----------
@@ -1951,7 +1961,7 @@ def separation_evol_wind_loss(M_current, M_init, Mcomp, A_init):
     References
     ----------
     .. [1] Tauris, T. M., & van den Heuvel, E. 2006, Compact stellar X-ray
-           sources, 1, 623.
+        sources, 1, 623.
 
     """
     log10A = (-np.log10(M_current+Mcomp)
