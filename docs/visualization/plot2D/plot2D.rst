@@ -301,3 +301,68 @@ You can combine the new grid by passing it to the option ``extra_grid=new_grid``
 If you want to stack more than one grid, pass them in a list, e.g.
 ``extra_grid=[new_grid_1,new_grid_2,new_grid_3]``, they will be stacked in
 the order provided where the last extra grid of the list will stacked as last.
+
+
+Creating plots with several slices
+----------------------------------
+
+We have the option to pass a list of slice ranges. In this case the plotting
+script will loop over those ranges and create one plot with several slice
+plots. It will get a common legend and/or color bar.
+
+There are two more options to the plot2D function:
+1. ``max_cols``: It specifies the maximum number of columns of subplots. The
+number of rows is automatically calculated to cover all plots and the legend.
+2. ``legend_pos``: It specifies which subplots are used for the legend/color
+bar and allows an index or tuple specifying a rectangle of indecies, like
+matplotlib requires for creating a subplot.
+
+Because the legend has its own axes, it is recommended to modify the default
+``bbox_to_anchor`` of the legend.
+To have a better control on the color bar, it got the additional field
+``bounds`` in the plot properties.
+To identify the subplots each of them will get a text box. Its attributes can
+be modified by changing the field ``slice_text_kwargs`` in the plot properties.
+The slices will loop over 3D and 4D idependently. If one of them has just a
+single range, this slicing will be added to the legend title instead of being
+reported in any subplot.
+
+.. code-block:: python
+  q_ranges = [(0.025, 0.075), (0.175, 0.225), (0.325, 0.375), (0.475, 0.525),
+              (0.625, 0.675), (0.775, 0.825), (0.925, 0.975), (0.98, 1.0)]
+
+  plot_properties = {
+      'show_fig': True,
+      'fname': 'HMS-HMS_MESA_grid_1e-04_Zsun_TF12_8mass_ratio_panels.png',
+      'figsize': (9, 9),
+      'log10_x': True,
+      'log10_y': True,
+      'xmin': 0.68,
+      'xmax': 2.52,
+      'ymin': -1.2,
+      'ymax': 3.9,
+      'wspace': 0.01,
+      'hspace': 0.01,
+      'colorbar': {
+          'bounds': [0.03, 0.7, 0.94, 0.05]
+      },
+      'legend2D': {
+          'title': 'Termination flags',
+          'loc': 'lower left',
+          'prop': {
+              'size': 7
+          },
+          'bbox_to_anchor': (0.0, 0.0),
+      },
+  }
+  grid.plot2D('star_1_mass', 'period_days', None,
+              termination_flag='combined_TF12',
+              grid_3D=True, slice_3D_var_str='mass_ratio',
+              slice_3D_var_range=q_ranges,
+              grid_4D=True, slice_4D_var_str='Z_Zsun',
+              slice_4D_var_range=(0.875e-4,1.125e-4),
+              legend_pos = (3,3),
+              verbose=False, **plot_properties)
+
+
+.. image:: pngs/HMS-HMS_MESA_grid_1e-04_Zsun_TF12_8mass_ratio_panels.png

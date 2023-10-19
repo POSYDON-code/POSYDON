@@ -58,10 +58,10 @@ def get_flag_from_MESA_output(MESA_log_path):
     """
     if MESA_log_path is not None and os.path.isfile(MESA_log_path):
         if MESA_log_path.endswith(".gz"):
-            with gzip.open(MESA_log_path, "rt") as log_file:
+            with gzip.open(MESA_log_path, "rt", errors='ignore') as log_file:
                 log_lines = log_file.readlines()
         else:
-            with open(MESA_log_path, "r") as log_file:
+            with open(MESA_log_path, "r", errors='ignore') as log_file:
                 log_lines = log_file.readlines()
 
         for line in reversed(log_lines):
@@ -100,20 +100,16 @@ def get_mass_transfer_flag(binary_history, history1, history2,
     Returns
     -------
     flag_system_evolution_history : string
-        Possible flags are: "contact during MS", "no_RLOF", a cumulative MT
-        flag + "_from_star1/2", or in case of missing binary history data,
-        "undetermined_flag_mass_transfer_with_no_binary_history".
+        Possible flags are: "None", "initial_RLOF", "contact_during_MS", 
+        "no_RLOF", a cumulative MT flag, e.g, "case_A1/B1/A2" where the
+        index indicates the donor star.
 
     """
-    if mesa_flag is not None:
-        if "overflow from L2" in mesa_flag:
-            if "at ZAMS" in mesa_flag:
-                return "initial_RLOF"
-            else:
-                return "L2_RLOF"
-
-    if binary_history is None:
-        return "undetermined_flag_mass_transfer_with_no_binary_history"
+    if mesa_flag in TF1_POOL_ERROR:
+        return "None"
+        
+    if mesa_flag in TF1_POOL_INITIAL_RLO:
+        return "initial_RLOF"
 
     rel1 = binary_history["rl_relative_overflow_1"]
     rel2 = binary_history["rl_relative_overflow_2"]
@@ -128,37 +124,49 @@ def get_mass_transfer_flag(binary_history, history1, history2,
     where_rlof_1 = where_rl_rel_1 & where_transfer
     where_rlof_2 = where_rl_rel_2 & where_transfer
 
+    if not np.any(where_rlof_1) and not np.any(where_rlof_2):
+        return "no_RLOF"
+    
+    MT = np.array([None]*len(where_rlof_1))
+    
     if np.any(where_rlof_1):
-        star = 1
         star_history = history1
         star_mass = binary_history["star_1_mass"]
         where_rlof = where_rlof_1
         rel_overflow = rel1
-    elif np.any(where_rlof_2):
-        star = 2
+        indices_with_rlo = np.arange(len(where_rlof))[where_rlof]
+        if not start_at_RLO and indices_with_rlo[0] == 0:
+            return "initial_RLOF"
+        mass_transfer_cases = []
+        for index in indices_with_rlo:
+            star_state = check_state_from_history(
+                history=star_history, mass=star_mass, model_index=index)
+            mt_case = infer_mass_transfer_case(
+                rl_relative_overflow=rel_overflow[index],
+                lg_mtransfer_rate=rate[index], donor_state=star_state)
+            mass_transfer_cases.append(mt_case)
+        MT[where_rlof] = mass_transfer_cases
+        
+    if np.any(where_rlof_2):
         star_history = history2
         star_mass = binary_history["star_2_mass"]
         where_rlof = where_rlof_2
         rel_overflow = rel2
-    else:
-        return "no_RLOF"
+        indices_with_rlo = np.arange(len(where_rlof))[where_rlof]
+        if not start_at_RLO and indices_with_rlo[0] == 0:
+            return "initial_RLOF"        
+        mass_transfer_cases = []
+        for index in indices_with_rlo:
+            star_state = check_state_from_history(
+                history=star_history, mass=star_mass, model_index=index)
+            mt_case = infer_mass_transfer_case(
+                rl_relative_overflow=rel_overflow[index],
+                lg_mtransfer_rate=rate[index], donor_state=star_state)
+            mass_transfer_cases.append(mt_case)
+        MT[where_rlof] = [t+10 for t in mass_transfer_cases] # shift by 10
 
-    indices_with_rlo = np.arange(len(where_rlof))[where_rlof]
-
-    if not start_at_RLO and indices_with_rlo[0] == 0:
-        return "initial_RLOF"
-
-    mass_transfer_cases = []
-    for index in indices_with_rlo:
-        star_state = check_state_from_history(
-            history=star_history, mass=star_mass, model_index=index)
-        mt_case = infer_mass_transfer_case(
-            rl_relative_overflow=rel_overflow[index],
-            lg_mtransfer_rate=rate[index], donor_state=star_state)
-        mass_transfer_cases.append(mt_case)
-
-    flag = cumulative_mass_transfer_flag(mass_transfer_cases)
-    return flag + "_from_star{}".format(star)
+    flag = cumulative_mass_transfer_flag([t for t in MT if t is not None])
+    return flag
 
 
 def check_state_from_history(history, mass, model_index=-1):
@@ -193,7 +201,8 @@ def check_state_from_history(history, mass, model_index=-1):
 
 
 def get_flags_from_MESA_run(MESA_log_path, binary_history=None,
-                            history1=None, history2=None, start_at_RLO=False):
+                            history1=None, history2=None, start_at_RLO=False,
+                            newTF1=''):
     """Return the four termination flags.
 
     Parameters
@@ -202,6 +211,8 @@ def get_flags_from_MESA_run(MESA_log_path, binary_history=None,
         path to the MESA terminal output
     binary_history, history1, history2: np.array
         MESA output histories.
+    newTF1: str
+        replacement for the termination flag from the MESA output
 
     Returns
     -------
@@ -211,7 +222,10 @@ def get_flags_from_MESA_run(MESA_log_path, binary_history=None,
         final_state_1, final_state_2: describe the final evolutionary
             state of the two stars. None if history star is not provided.
     """
-    flag_out = get_flag_from_MESA_output(MESA_log_path)
+    if newTF1=='':
+        flag_out = get_flag_from_MESA_output(MESA_log_path)
+    else:
+        flag_out = newTF1
     final_state_1 = check_state_from_history(history1,
                                              binary_history["star_1_mass"])
     final_state_2 = check_state_from_history(history2,

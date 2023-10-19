@@ -526,10 +526,14 @@ def do_core_collapse_BH(star,
         else:
             J_disk_shell_array.append((J_shell - J_direct) / dm_disk)
 
-    # BH mass from the collapse of the entire star in M_sun.
+    # BH mass from the collapse of the entire star in Msun
     M_BH_total = M_BH_array[-1] / Mo
     # BH spin from the collapse of the entire star
     a_BH_total = a_BH_array[-1]
+    # BH disk mass accreted in Msun
+    m_disk_accreted = M_disk_array[-1] / Mo
+    # BH disk mass radiate in Msun
+    m_disk_radiated = sum(np.array(dm_disk_array)*np.array(radiation_eff_array))/Mo
     # max He mass tht can be ejected during the disk formation
     max_he_mass_ejected /= Mo
 
@@ -546,21 +550,24 @@ def do_core_collapse_BH(star,
         print('')
 
     return [
-        M_BH_total, a_BH_total,
-        np.array(M_BH_array),
-        np.array(a_BH_array),
-        np.array(J_accreted_array),
-        np.array(J_total_array),
-        np.array(J_disk_shell_array),
-        np.array(radiation_eff_array),
-        np.array(r_isco_array),
-        np.array(j_isco_array),
-        np.array(M_direct_collapse_array),
-        np.array(M_disk_array),
-        np.array(dm_direct_array),
-        np.array(dm_disk_array),
-        np.array(j_shell_array),
-        np.array(M_total_array),
-        np.array(a_star_array),
-        max_he_mass_ejected,
+        M_BH_total,
+        a_BH_total,
+        m_disk_accreted, 
+        m_disk_radiated,
+        # np.array(M_BH_array),
+        # np.array(a_BH_array),
+        # np.array(J_accreted_array),
+        # np.array(J_total_array),
+        # np.array(J_disk_shell_array),
+        # np.array(radiation_eff_array),
+        # np.array(r_isco_array),
+        # np.array(j_isco_array),
+        # np.array(M_direct_collapse_array),
+        # np.array(M_disk_array),
+        # np.array(dm_direct_array),
+        # np.array(dm_disk_array),
+        # np.array(j_shell_array),
+        # np.array(M_total_array),
+        # np.array(a_star_array),
+        # max_he_mass_ejected,
     ]

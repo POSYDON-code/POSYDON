@@ -19,6 +19,7 @@ __authors__ = [
     "Emmanouil Zapartas <ezapartas@gmail.com>",
     "Kyle Akira Rocha <kylerocha2024@u.northwestern.edu>",
     "Jeffrey Andrews <jeffrey.andrews@northwestern.edu>",
+    "Matthias Kruckow <Matthias.Kruckow@unige.ch>",
 ]
 
 
@@ -69,17 +70,25 @@ def read_MESA_data_file(path, columns):
     if path is None:
         return None
     elif os.path.exists(path):
-        return np.atleast_1d(np.genfromtxt(path, skip_header=5, names=True,
-                                           usecols=columns,
-                                           invalid_raise=False))
+        try:
+            return np.atleast_1d(np.genfromtxt(path, skip_header=5, names=True,
+                                               usecols=columns,
+                                               invalid_raise=False))
+        except:
+            warnings.warn("Problems with reading file "+path)
+            return None
     else:
         return None
 
 
 def read_EEP_data_file(path, columns):
     """Read an EEP file (can be `.gz`) - similar to `read_MESA_data_file()`."""
-    return np.atleast_1d(np.genfromtxt(path, skip_header=11, names=True,
-                                       usecols=columns, invalid_raise=False))
+    try:
+        return np.atleast_1d(np.genfromtxt(path, skip_header=11, names=True,
+                                           usecols=columns, invalid_raise=False))
+    except:
+        warnings.warn("Problems with reading file "+path)
+        return None
 
 
 def fix_He_core(history):
@@ -516,3 +525,32 @@ def clean_inlist_file(inlist, **kwargs):
                     i.split('=', 1)[1].strip()
 
     return dict_of_parameters
+
+def get_new_grid_name(path, compression, create_missing_directories=False):
+    """Get the name of a new grid slice based on the path and the compression.
+
+    Parameters
+    ----------
+    path : str
+        Path to grid slice data.
+    compression : str
+        Compression value. (Directory to put the new grid slice in.)
+    create_missing_directories : bool
+        Flag to create missing directories.
+
+    Returns
+    -------
+    grid_output
+        File name for the new grid slice.
+
+    """
+    grid_path, grid_name = os.path.split(os.path.normpath(path))
+    output_path = os.path.join(grid_path, compression)
+    grid_output = os.path.join(output_path, grid_name+'.h5')
+    if create_missing_directories:
+        # check that LITE/ or ORIGINAL/ directory exists
+        if not os.path.isdir(output_path):
+            os.makedirs(output_path)
+    return grid_output
+
+
