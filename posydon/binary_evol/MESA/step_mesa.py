@@ -791,16 +791,16 @@ class MesaGridStep:
             for key in key_post_processed:
                 setattr(star, key, cb.final_values['S%d_%s' % (k+1, key)])
 
-        # update nearest neighbor core collapse quantites                            
+        # update nearest neighbor core collapse quantites
         if interpolation_class != 'unstable_MT':
             for MODEL_NAME in MODELS.keys():
                 for i, star in enumerate(stars):
-                    if (not stars_CO[i] and 
+                    if (not stars_CO[i] and
                         cb.final_values[f'S{i+1}_{MODEL_NAME}_CO_type'] != 'None'):
                         values = {}
                         for key in ['state', 'SN_type', 'f_fb', 'mass', 'spin',
                                     'm_disk_accreted', 'm_disk_radiated']:
-                            if key == "state": 
+                            if key == "state":
                                 state = cb.final_values[f'S{i+1}_{MODEL_NAME}_CO_type']
                                 values[key] = state
                             elif key == "SN_type":
@@ -969,12 +969,12 @@ class MesaGridStep:
         if interpolation_class != 'unstable_MT':
             for MODEL_NAME in MODELS.keys():
                 for i, star in enumerate(stars):
-                    if (not stars_CO[i] and 
+                    if (not stars_CO[i] and
                         self.classes[f'S{i+1}_{MODEL_NAME}_CO_type'] != 'None'):
                         values = {}
                         for key in ['state', 'SN_type', 'f_fb', 'mass', 'spin',
                                     'm_disk_accreted', 'm_disk_radiated']:
-                            if key == "state": 
+                            if key == "state":
                                 state = self.classes[f'S{i+1}_{MODEL_NAME}_CO_type']
                                 values[key] = state
                             elif key == "SN_type":
@@ -1247,7 +1247,7 @@ class MS_MS_step(MesaGridStep):
                          *args, **kwargs)
         # special stuff for my step goes here
         # If nothing to do, no init necessary
-        
+
         # load grid boundaries
         self.m1_min = min(self._psyTrackInterp.grid.initial_values['star_1_mass'])
         self.m1_max = max(self._psyTrackInterp.grid.initial_values['star_1_mass'])
@@ -1270,35 +1270,35 @@ class MS_MS_step(MesaGridStep):
         m2 = self.binary.star_2.mass
         mass_ratio = m2/m1
         p = self.binary.orbital_period
-        if (state_1 == 'H-rich_Core_H_burning' and 
-            state_2 == 'H-rich_Core_H_burning' and 
+        if (state_1 == 'H-rich_Core_H_burning' and
+            state_2 == 'H-rich_Core_H_burning' and
             event == 'ZAMS' and
-            self.m1_min <= m1 <= self.m1_max and 
-            self.q_min <= mass_ratio <= self.q_max and 
+            self.m1_min <= m1 <= self.m1_max and
+            self.q_min <= mass_ratio <= self.q_max and
             self.p_min <= p <= self.p_max):
             self.flip_stars_before_step = False
             super().__call__(self.binary)
-        elif (state_1 == 'H-rich_Core_H_burning' and 
-              state_2 == 'H-rich_Core_H_burning' and 
+        elif (state_1 == 'H-rich_Core_H_burning' and
+              state_2 == 'H-rich_Core_H_burning' and
               event == 'ZAMS' and
               self.m1_min <= m2 <= self.m1_max and
-              self.q_min <= 1./mass_ratio <= self.q_max and 
+              self.q_min <= 1./mass_ratio <= self.q_max and
               self.p_min <= p <= self.p_max):
             self.flip_stars_before_step = True
             super().__call__(self.binary)
         # redirect if outside grid
-        elif (state_1 == 'H-rich_Core_H_burning' and 
-              state_2 == 'H-rich_Core_H_burning' and 
-              event == 'ZAMS' and 
+        elif (state_1 == 'H-rich_Core_H_burning' and
+              state_2 == 'H-rich_Core_H_burning' and
+              event == 'ZAMS' and
               p > self.p_max):
-            self.binary.event = 'redirect'
+            self.binary.event = 'redirect_from_ZAMS'
             return
         # redirect if CC1
-        elif (state_1 == 'H-rich_Central_C_depletion'):     
+        elif (state_1 == 'H-rich_Central_C_depletion'):
             self.binary.event = 'CC1'
             return
         # redirect if CC2
-        elif (state_2 == 'H-rich_Central_C_depletion'):     
+        elif (state_2 == 'H-rich_Central_C_depletion'):
             self.binary.event = 'CC2'
             return
         else:
@@ -1323,7 +1323,7 @@ class CO_HMS_RLO_step(MesaGridStep):
                          *args, **kwargs)
         # special stuff for my step goes here
         # If nothing to do, no init necessary
-        
+
         # load grid boundaries
         self.m1_min = min(self._psyTrackInterp.grid.initial_values['star_1_mass'])
         self.m1_max = max(self._psyTrackInterp.grid.initial_values['star_1_mass'])
@@ -1382,18 +1382,18 @@ class CO_HMS_RLO_step(MesaGridStep):
                 % (state_1, state_2, state, event))
         # redirect if outside grids
         if ((not self.flip_stars_before_step and
-            self.m1_min <= m1 <= self.m1_max and 
-            self.m2_min <= m2 <= self.m2_max and 
+            self.m1_min <= m1 <= self.m1_max and
+            self.m2_min <= m2 <= self.m2_max and
             self.p_min <= p <= self.p_max and
             ecc == 0.) or (self.flip_stars_before_step and
-            self.m1_min <= m2 <= self.m1_max and 
-            self.m2_min <= m1 <= self.m2_max and 
+            self.m1_min <= m2 <= self.m1_max and
+            self.m2_min <= m1 <= self.m2_max and
             self.p_min <= p <= self.p_max and
             ecc == 0.)):
             super().__call__(self.binary)
         else:
             self.binary.state = "detached"
-            self.binary.event = "redirect"
+            self.binary.event = "redirect_from_CO_HMS_RLO"
             return
 
 class CO_HeMS_RLO_step(MesaGridStep):
@@ -1411,7 +1411,7 @@ class CO_HeMS_RLO_step(MesaGridStep):
                          *args, **kwargs)
         # special stuff for my step goes here
         # If nothing to do, no init necessary
-        
+
         # load grid boundaries
         self.m1_min = min(self._psyTrackInterp.grid.initial_values['star_1_mass'])
         self.m1_max = max(self._psyTrackInterp.grid.initial_values['star_1_mass'])
@@ -1472,18 +1472,18 @@ class CO_HeMS_RLO_step(MesaGridStep):
                 % (state_1, state_2, state, event))
         # redirect if outside grids
         if ((not self.flip_stars_before_step and
-            self.m1_min <= m1 <= self.m1_max and 
-            self.m2_min <= m2 <= self.m2_max and 
+            self.m1_min <= m1 <= self.m1_max and
+            self.m2_min <= m2 <= self.m2_max and
             self.p_min <= p <= self.p_max and
             ecc == 0.) or (self.flip_stars_before_step and
-            self.m1_min <= m2 <= self.m1_max and 
-            self.m2_min <= m1 <= self.m2_max and 
+            self.m1_min <= m2 <= self.m1_max and
+            self.m2_min <= m1 <= self.m2_max and
             self.p_min <= p <= self.p_max and
             ecc == 0.)):
             super().__call__(self.binary)
         else:
             self.binary.state = "detached"
-            self.binary.event = "redirect"
+            self.binary.event = "redirect_from_CO_HeMS_RLO"
             return
 
 class CO_HeMS_step(MesaGridStep):
@@ -1501,7 +1501,7 @@ class CO_HeMS_step(MesaGridStep):
                          *args, **kwargs)
         # special stuff for my step goes here
         # If nothing to do, no init necessary
-        
+
         # load grid boundaries
         self.m1_min = min(self._psyTrackInterp.grid.initial_values['star_1_mass'])
         self.m1_max = max(self._psyTrackInterp.grid.initial_values['star_1_mass'])
@@ -1567,15 +1567,15 @@ class CO_HeMS_step(MesaGridStep):
         # redirect if outside grids
         # remember that in MESA the CO object is star_2
         if ((not self.flip_stars_before_step and
-            self.m1_min <= m1 <= self.m1_max and 
-            self.m2_min <= m2 <= self.m2_max and 
+            self.m1_min <= m1 <= self.m1_max and
+            self.m2_min <= m2 <= self.m2_max and
             self.p_min <= p <= self.p_max and
             ecc == 0.) or (self.flip_stars_before_step and
-            self.m1_min <= m2 <= self.m1_max and 
-            self.m2_min <= m1 <= self.m2_max and 
+            self.m1_min <= m2 <= self.m1_max and
+            self.m2_min <= m1 <= self.m2_max and
             self.p_min <= p <= self.p_max and
             ecc == 0.)):
             super().__call__(binary)
         else:
-            self.binary.event = 'redirect'
+            self.binary.event = 'redirect_from_CO_HeMS'
             return

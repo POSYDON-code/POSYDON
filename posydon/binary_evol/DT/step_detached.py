@@ -923,13 +923,21 @@ class detached_step:
         KEYS = self.KEYS
         KEYS_POSITIVE = self.KEYS_POSITIVE
 
-        if binary.star_1 is None or binary.star_1.state == "massless_remnant":
-            self.non_existent_companion = 1
-        if binary.star_2 is None or binary.star_2.state == "massless_remnant":
-            self.non_existent_companion = 2
+        companion_1_exists = (binary.star_1 is not None
+                              and binary.star_1.state != "massless_remnant")
+        companion_2_exists = (binary.star_2 is not None
+                              and binary.star_2.state != "massless_remnant")
+
+        if companion_1_exists:
+            if companion_2_exists:                  # to evolve a binary star
+                self.non_existent_companion = 0
+            else:                                   # star1 is a single star
+                self.non_existent_companion = 2
         else:
-            # detached step of an actual binary
-            self.non_existent_companion = 0
+            if companion_2_exists:                  # star2 is a single star
+                self.non_existent_companion = 1
+            else:                                   # no star in the system
+                raise Exception("There is no star to evolve. Who summoned me?")
 
         if self.non_existent_companion == 0: #no isolated evolution, detached step of an actual binary
             # the primary in a real binary is potential compact object, or the more evolved star
@@ -993,24 +1001,10 @@ class detached_step:
                 secondary.htrack = False
                 primary.htrack = False
                 primary.co = False
-            elif (binary.star_1.state in STAR_STATES_CO
-                    and binary.star_2.state
-                    in 'massless_remnant'):
-                binary.state += " Thorne–Żytkow object"
-                if self.verbose or self.verbose == 1:
-                    print("Formation of Thorne–Żytkow object, nothing to do further")
-                return
-            elif (binary.star_2.state in STAR_STATES_CO
-                    and binary.star_1.state
-                    in 'massless_remnant'):
-                binary.state += " Thorne–Żytkow object"
-                if self.verbose or self.verbose == 1:
-                    print("Formation of Thorne–Żytkow object, nothing to do further")
-                return
             else:
                 raise Exception("States not recognized!")
 
-        # non-existent, far away, star
+        # star 1 is a massless remnant, only star 2 exists
         elif self.non_existent_companion == 1:
             # we force primary.co=True for all isolated evolution,
             # where the secondary is the one evolving one
@@ -1022,9 +1016,15 @@ class detached_step:
                 secondary.htrack = True
             elif (binary.star_2.state in LIST_ACCEPTABLE_STATES_FOR_HeStar):
                 secondary.htrack = False
+            elif (binary.star_2.state in STAR_STATES_CO):
+                binary.state += " Thorne-Zytkow object"
+                if self.verbose or self.verbose == 1:
+                    print("Formation of Thorne-Zytkow object, nothing to do further")
+                return
             else:
                 raise Exception("State not recognized!")
 
+        # star 2 is a massless remnant, only star 1 exists
         elif self.non_existent_companion == 2:
             primary = binary.star_2
             primary.co = True
@@ -1034,6 +1034,11 @@ class detached_step:
                 secondary.htrack = True
             elif (binary.star_1.state in LIST_ACCEPTABLE_STATES_FOR_HeStar):
                 secondary.htrack = False
+            elif (binary.star_1.state in STAR_STATES_CO):
+                binary.state += " Thorne-Zytkow object"
+                if self.verbose or self.verbose == 1:
+                    print("Formation of Thorne-Zytkow object, nothing to do further")
+                return
             else:
                 raise Exception("State not recognized!")
         else:
@@ -1064,7 +1069,7 @@ class detached_step:
 
             with np.errstate(all="ignore"):
                 # get the initial m0, t0 track
-                if binary.event == 'ZAMS':
+                if binary.event == 'ZAMS' or binary.event == 'redirect_from_ZAMS':
                     # ZAMS stars in wide (non-mass exchaging binaries) that are
                     # directed to detached step at birth
                     m0, t0 = star1.mass, 0
