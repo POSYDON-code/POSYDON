@@ -5,10 +5,12 @@ __authors__ = [
     "Maxime Rambosson <Maxime.Rambosson@etu.unige.ch>",
 ]
 
-
-from PyQt5.QtWidgets import (QApplication, QWidget, QVBoxLayout,
-                             QCheckBox, QComboBox)
-from PyQt5.QtCore import Qt, pyqtSignal
+try:
+    from PyQt5.QtWidgets import (QApplication, QWidget, QVBoxLayout,
+                                QCheckBox, QComboBox)
+    from PyQt5.QtCore import Qt, pyqtSignal
+except ImportError:
+    raise ImportError('PyQt5 is not installed. Please run `pip install .[vis]` in the POSYDON base directory')
 
 from .PresenterMode import PresenterMode
 

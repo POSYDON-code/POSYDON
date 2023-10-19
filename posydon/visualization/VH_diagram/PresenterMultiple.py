@@ -2,8 +2,12 @@ from posydon.visualization.VHdiagram import DisplayMode
 from posydon.visualization.VH_diagram.Presenter import Presenter, PresenterMode, get_max_distance,CaseInfos,equal_with_epsilon,get_event_state_filename,file_exist,get_star_state_filename
 from posydon.visualization.VH_diagram.GraphVisualizer import columnTYPE,StateInfos,ConnectedItem, GraphVisualizerCase
 
-from PyQt5.QtWidgets import QApplication
-from PyQt5.QtCore import QTimer
+try:
+    from PyQt5.QtWidgets import QApplication
+    from PyQt5.QtCore import QTimer
+except ImportError:
+    raise ImportError('PyQt5 is not installed. Please run `pip install .[vis]` in the POSYDON base directory')
+
 import matplotlib.pyplot as plt
 from IPython.display import Image, display
 from enum import Enum, auto

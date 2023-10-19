@@ -18,7 +18,7 @@ import pandas as pd
 try:
     import tensorflow as tf
 except ImportError:
-    raise ImportError('tensorflow is not installed. Please run `pip install .[profile]` in the POSYDON base directory')
+    raise ImportError('tensorflow is not installed. Please run `pip install .[ml]` in the POSYDON base directory')
 tf.get_logger().setLevel('ERROR')
 from tensorflow.keras import layers, losses, models, optimizers
 from sklearn.decomposition import PCA

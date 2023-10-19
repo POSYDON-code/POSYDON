@@ -5,9 +5,11 @@ __authors__ = [
     "Maxime Rambosson <Maxime.Rambosson@etu.unige.ch>",
 ]
 
-
-from PyQt5.QtWidgets import QMainWindow, QScrollArea, QApplication
-from PyQt5.QtCore import pyqtSignal
+try:
+    from PyQt5.QtWidgets import QMainWindow, QScrollArea, QApplication
+    from PyQt5.QtCore import pyqtSignal
+except ImportError:
+    raise ImportError('PyQt5 is not installed. Please run `pip install .[vis]` in the POSYDON base directory')
 
 from .GraphVisualizer import GraphVisualizer
 from .OptionsWindow import OptionsWindow
