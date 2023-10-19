@@ -43,7 +43,8 @@ from posydon.binary_evol.singlestar import (SingleStar,properties_massless_remna
 from posydon.binary_evol.simulationproperties import SimulationProperties
 from posydon.popsyn.star_formation_history import get_formation_times
 
-from posydon.popsyn.independent_sample import generate_independent_samples
+from posydon.popsyn.independent_sample import (generate_independent_samples,
+                                               binary_fraction_value)
 from posydon.utils.common_functions import (orbital_period_from_separation,
                                             orbital_separation_from_period)
 from posydon.popsyn.defaults import default_kwargs
@@ -52,7 +53,7 @@ from posydon.utils.constants import Zsun
 
 
 # 'event' usually 10 but 'detached (Integration failure)' can occur
-HISTORY_MIN_ITEMSIZE = {'state': 30, 'event': 10, 'step_names': 20,
+HISTORY_MIN_ITEMSIZE = {'state': 30, 'event': 25, 'step_names': 20,
                         'S1_state': 31, 'S2_state': 31,
                         'mass_transfer_case': 7,
                         'S1_SN_type': 5, 'S2_SN_type': 5}
@@ -92,8 +93,6 @@ class BinaryPopulation:
         self.kwargs = default_kwargs.copy()
         for key, arg in kwargs.items():
             self.kwargs[key] = arg
-        # Have a binary fraction change the number_of binaries.
-        self.binary_fraction = self.kwargs.get('binary_fraction')
         self.number_of_binaries = self.kwargs.get('number_of_binaries')
 
         self.population_properties = self.kwargs.get('population_properties',
@@ -724,7 +723,8 @@ class BinaryGenerator:
         self.kwargs = kwargs.copy()
         self.sampler = sampler
         self.star_formation = kwargs.get('star_formation', 'burst')
-        self.binary_fraction =  kwargs.get('binary_fraction', 1)
+        self.binary_fraction_generator =  binary_fraction_value
+
     def reset_rng(self):
         """Reset the RNG with the stored entropy."""
         self._num_gen = 0
@@ -749,7 +749,6 @@ class BinaryGenerator:
 
     def draw_initial_samples(self, orbital_scheme='separation', **kwargs):
         """Generate all random varibles."""
-        binary_fraction = self.kwargs.get('binary_fraction', 1)
         if not ('RNG' in kwargs.keys()):
             kwargs['RNG'] = self.RNG
         # a, e, M_1, M_2, P
@@ -767,9 +766,11 @@ class BinaryGenerator:
         N_binaries = len(orbital_period)
         formation_times = get_formation_times(N_binaries, **kwargs)
 
+        #Get the binary_fraction
+        binary_fraction = self.binary_fraction_generator(m1=m1, **kwargs)
+
         # indices
         indices = np.arange(self._num_gen, self._num_gen+N_binaries, 1)
-
         output_dict = {
             'binary_index': indices,
             'binary_fraction':binary_fraction,
@@ -799,12 +800,13 @@ class BinaryGenerator:
         sampler_kwargs = kwargs.copy()
         sampler_kwargs['number_of_binaries'] = 1
         sampler_kwargs['RNG'] = kwargs.get('RNG', self.RNG)
+        # Randomly generated variables
         output = self.draw_initial_samples(**sampler_kwargs)
 
         default_index = output['binary_index'].item()
-        # Randomly generated variables
+        binary_fraction = output['binary_fraction']
 
-        if self.RNG.uniform() < self.binary_fraction:
+        if self.RNG.uniform() < binary_fraction:
             formation_time = output['time'].item()
             separation = output['separation'].item()
             orbital_period = output['orbital_period'].item()
@@ -854,7 +856,6 @@ class BinaryGenerator:
             orbital_period = np.nan
             eccentricity = np.nan
             m1 = output['S1_mass'].item()
-            m2 = output['S2_mass'].item()
             Z_div_Zsun = kwargs.get('metallicity', 1.)
             zams_table = {2.: 2.915e-01,
                           1.: 2.703e-01,
