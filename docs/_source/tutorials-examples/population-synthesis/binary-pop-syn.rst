@@ -24,13 +24,17 @@ Simulate your first 10 binaries and experience the power of POSYDON.
 
     10_binaries_pop_syn
 
-Now that you know how to run your first simulations, explore the different customization options reading the :ref:`population parameters <pop-params-guide>` documentation.
+Now that you know how to run your first simulations, explore the different customization options reading the :ref:`population prameters <pop-params-guide>` documentation.
 
 
 II. Large-Scale Population Synthesis on HPC Facilities 🚀
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 In this tutorial, you'll learn to run massive simulations of 1 million binaries across 8 different metallicities.
+
+.. note:: 
+    
+    Ensure you've installed `mpi4py` to use this tutorial. If not, follow our :ref:`installation guide <installation-guide>`.
 
 .. toctree::
 
@@ -75,27 +79,14 @@ X-ray binaries: computing the X-ray luminosity function 🩻
 TODO: bring v1 tutorial to v2 leveraging the SyntheticPopulation class
 
 
-Evolving Single Binaries 🐞
+Debugging the Evolution of a Single Binary saved in a POSYDON Population model 🐞
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-This notebook shows you how to evolve a single binary using POSYDON.
-It allows you to test and to quickly understand the evolution of a single binary in detail.
-Moreover, it shows you how re-evolve binaries and change their properties, such as the natal kicks.
+This notebook shows you how to run the BinaryPopulation class in debug mode, which allows you to follow the evolution of a single binary through the population synthesis code. This is useful for debugging purposes, or for understanding the evolution of a single binary in detail, e.g. by changing the natal kicks. 
 
 .. toctree:: 
 
-    evolve_single_binaries
-
-
-Creating custom steps and flow chart for the evolution of a binary 📊
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-In this tutorial, we show you how to import your own custom steps and flow chart for a population and in a Jupyter notebook.
-
-.. toctree::
-
-    custom_step_and_flow
-
+    debug_pop
 
 
 Advanced Visualization with Van den Heuvel Diagrams 🎨

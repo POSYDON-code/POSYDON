@@ -99,11 +99,9 @@ class StepSN(object):
         Mechanism to perform the core-collapse on the star object and
         predict the supernova remnant outcome. Available options are:
 
-        * 'Fryer+12-rapid' : The rapid supernova-engine described in
-        [1]
+        * 'Fryer+12-rapid' : The rapid supernova-engine described in [1]_
 
-        * 'Fryer+12-delayed' : The delayed supernova-engine described in
-        [1]
+        * 'Fryer+12-delayed' : The delayed supernova-engine described in [1]_
 
         * 'direct' : The pre-supernova mass of the starr is collapsed into the
         remnant baryonic mass.
@@ -111,13 +109,13 @@ class StepSN(object):
         * 'direct_he_core' : The pre-supernova He core mass of the starr is
         collapsed into the remnant baryonic mass.
 
-        * 'Sukhbold+16-engine' : Uses the results from [2]
+        * 'Sukhbold+16-engine' : Uses the results from [2]_
         to describe the collapse of the star.
 
-        * 'Patton&Sukhbold20-engine': Uses the results from [5]
+        * 'Patton&Sukhbold20-engine': Uses the results from [5]_
         to describe the collapse of the star.
 
-        * 'Couch+20-engine': Uses the results from [6]
+        * 'Couch+20-engine': Uses the results from [6]_
         to describe the collapse of the star.
 
     engine : str
@@ -131,8 +129,7 @@ class StepSN(object):
         Prescrition to take on the pair-instability supernova.
         Avialable options:
 
-        - 'Marchant+19' : Descripes the pair-instability supernova as
-        [3].
+        - 'Marchant+19' : Descripes the pair-instability supernova as [3]_.
 
     mass_central_BH : double
         Central mass collapsed automatically on black-holes formed by direct
@@ -160,7 +157,7 @@ class StepSN(object):
         Avialable options:
 
         - 'Tauris+15': Determines the electron capture supernova in terms
-        of the CO core mass at pre-supernova, taking the limits from [4].
+        of the CO core mass at pre-supernova, taking the limits from [4]_.
 
     sigma_kick_CCSN_NS : double
         Standard deviation for a Maxwellian distribution to compute the
@@ -209,28 +206,28 @@ class StepSN(object):
     References
     ----------
     .. [1] Fryer, C. L., Belczynski, K., Wiktorowicz, G., Dominik, M.,
-    Kalogera, V., & Holz, D. E. (2012). Compact remnant mass function:
-    dependence on the explosion mechanism and metallicity.
-    The Astrophysical Journal, 749(1), 91.
+        Kalogera, V., & Holz, D. E. (2012). Compact remnant mass function:
+        dependence on the explosion mechanism and metallicity. The
+        Astrophysical Journal, 749(1), 91.
 
-    .. [2] Sukhbold, T., Ertl, T., Woosley, S. E., Brown, J. M., & Janka,
-    H. T. (2016). Core-collapse supernovae from 9 to 120 solar masses based
-    on neutrino-powered explosions. The Astrophysical Journal, 821(1), 38.
+    .. [2] Sukhbold, T., Ertl, T., Woosley, S. E., Brown, J. M., & Janka, H. T.
+        (2016). Core-collapse supernovae from 9 to 120 solar masses based on
+        neutrino-powered explosions. The Astrophysical Journal, 821(1), 38.
 
-    .. [3] Marchant, P., Renzo, M., Farmer, R., Pappas, K. M., Taam, R. E.,
-    De Mink, S. E., & Kalogera, V. (2019). Pulsational pair-instability
-    supernovae in very close binaries. The Astrophysical Journal, 882(1), 36.
+    .. [3] Marchant, P., Renzo, M., Farmer, R., Pappas, K. M., Taam, R. E., De
+        Mink, S. E., & Kalogera, V. (2019). Pulsational pair-instability
+        supernovae in very close binaries. The Astrophysical Journal, 882(1), 36.
 
     .. [4] Tauris, T. M., Langer, N., & Podsiadlowski, P. (2015).
-    Ultra-stripped supernovae: progenitors and fate. Monthly Notices of the
-    Royal Astronomical Society, 451(2), 2123-2144.
+        Ultra-stripped supernovae: progenitors and fate. Monthly Notices of the
+        Royal Astronomical Society, 451(2), 2123-2144.
 
-    ..[5] Patton, R. A. & Sukhbold, T. 2020, MNRAS, 499, 2803. Towards a
-    realistic explosion landscape for binary population synthesis
+    .. [5] Patton, R. A. & Sukhbold, T. 2020, MNRAS, 499, 2803. Towards a
+        realistic explosion landscape for binary population synthesis
 
-    ..[6] Couch, S. M., Warren, M. L., & O’Connor, E. P. 2020, ApJ, 890, 127.
-    Simulating Turbulence-aided Neutrino-driven Core-collapse Supernova
-    Explosions in One Dimension
+    .. [6] Couch, S. M., Warren, M. L., & O’Connor, E. P. 2020, ApJ, 890, 127.
+        Simulating Turbulence-aided Neutrino-driven Core-collapse Supernova
+        Explosions in One Dimension
 
     """
 
@@ -1158,9 +1155,10 @@ class StepSN(object):
     def orbital_kick(self, binary):
         """Do the orbital kick.
 
-        This function computes the supernova step of the binary object. It
-        checks which binary_state reached the core collapse flag, either CC1 or
-        CC2, and runs the step accordingly updating the binary object.
+        This function computes the supernova step of the binary object [1]_,
+        [2]_. It checks which binary_state reached the core collapse flag,
+        either CC1 or CC2, and runs the step accordingly updating the binary
+        object.
 
         Geometry:
         We work in a right-handed coordinate system. The collapsing helium star, 
@@ -1533,7 +1531,7 @@ class StepSN(object):
                 cos_theta,
                 verbose,
             ):
-                """Check that the binary is not disrupted.
+                """Check that the binary is not disrupted [1]_, [2]_.
 
                 Parameters
                 ----------
@@ -1796,9 +1794,9 @@ class StepSN(object):
     def Patton20_corecollapse(self, star, engine, conserve_hydrogen_envelope=False):
         """Compute supernova final remnant mass and fallback fraction.
 
-        It uses the results from [1]. The prediction for the core-collapse
+        It uses the results from [1]_. The prediction for the core-collapse
         outcome is performed using the C core mass and its C abundance.
-        The criterion by [2] is used to determine the final outcome.
+        The criterion by [2]_ is used to determine the final outcome.
 
         Parameters
         ----------
@@ -1816,8 +1814,8 @@ class StepSN(object):
         ----------
         .. [1] Patton, R. A., & Sukhbold, T. (2020). MNRAS, 499(2), 2803-2816.
 
-        .. [2] Ertl, T., Janka, H. T., Woosley, S. E., Sukhbold, T.,
-               & Ugliano, M. (2016). ApJ, 818(2), 124.
+        .. [2] Ertl, T., Janka, H. T., Woosley, S. E., Sukhbold, T., & Ugliano,
+            M. (2016). ApJ, 818(2), 124.
 
         """
         Ertl16_k_parameters = {
@@ -1889,12 +1887,11 @@ class Sukhbold16_corecollapse(object):
     Parameters
     ----------
     engine : string
-        Engine for the supernova explosion, from the one where used in
-        [1].
+        Engine for the supernova explosion, from the one where used in [1]_.
 
     path_engine_dataset : string
         Path to the location of the data on initial and final states
-        for each engine described in Sukhbold et al. 2016
+        for each engine described in [1]_
 
     Returns
     -------
@@ -1907,9 +1904,9 @@ class Sukhbold16_corecollapse(object):
 
     References
     ----------
-    .. [1] Sukhbold, T., Ertl, T., Woosley, S. E., Brown, J. M., & Janka,
-    H. T. (2016). Core-collapse supernovae from 9 to 120 solar masses based
-    on neutrino-powered explosions. The Astrophysical Journal, 821(1), 38.
+    .. [1] Sukhbold, T., Ertl, T., Woosley, S. E., Brown, J. M., & Janka, H. T.
+        (2016). Core-collapse supernovae from 9 to 120 solar masses based on
+        neutrino-powered explosions. The Astrophysical Journal, 821(1), 38.
 
     """
 
@@ -2074,12 +2071,11 @@ class Couch20_corecollapse(object):
     Parameters
     ----------
     engine : string
-        Engine for the supernova explosion, from the one where used in
-        [1].
+        Engine for the supernova explosion, from the one where used in [1]_.
 
     path_engine_dataset : string
         Path to the location of the data on initial and final states
-        for each engine described in Sukhbold et al. 2016
+        for each engine described in [1]_
 
     Returns
     -------
@@ -2090,15 +2086,19 @@ class Couch20_corecollapse(object):
     state : string
         Finall state of the stellar remnant after the supernova.
 
+    Notes
+    -----
+    We need [2]_ data for their cores.
+
     References
     ----------
 
-    .. [1] Sukhbold, T., Ertl, T., Woosley, S. E., Brown, J. M., & Janka,
-    H. T. (2016). Core-collapse supernovae from 9 to 120 solar masses based
-    on neutrino-powered explosions. The Astrophysical Journal, 821(1), 38.
-    .. [2] Couch, S. M., Warren, M. L., & O’Connor, E. P. 2020, ApJ, 890, 127
-    Simulating Turbulence-aided Neutrino-driven Core-collapse Supernova
-    Explosions in One Dimension
+    .. [1] Couch, S. M., Warren, M. L., & O’Connor, E. P. 2020, ApJ, 890, 127
+        Simulating Turbulence-aided Neutrino-driven Core-collapse Supernova
+        Explosions in One Dimension
+    .. [2] Sukhbold, T., Ertl, T., Woosley, S. E., Brown, J. M., & Janka, H. T.
+        (2016). Core-collapse supernovae from 9 to 120 solar masses based on
+        neutrino-powered explosions. The Astrophysical Journal, 821(1), 38.
 
     """
 

@@ -5,11 +5,14 @@ __authors__ = [
     "Maxime Rambosson <Maxime.Rambosson@etu.unige.ch>",
 ]
 
+try:
+    from PyQt5.QtWidgets import (QWidget, QFrame, QHBoxLayout, QVBoxLayout,
+                                QLabel, QGridLayout)
+    from PyQt5.QtCore import Qt, QPoint, QSize
+    from PyQt5.QtGui import QPainter, QPixmap, QFont
+except ImportError:
+    raise ImportError('PyQt5 is not installed. Please run `pip install .[vis]` in the POSYDON base directory')
 
-from PyQt5.QtWidgets import (QWidget, QFrame, QHBoxLayout, QVBoxLayout,
-                             QLabel, QGridLayout)
-from PyQt5.QtCore import Qt, QPoint, QSize
-from PyQt5.QtGui import QPainter, QPixmap, QFont
 from .MathTextLabel import MathTextLabel
 
 from dataclasses import dataclass

@@ -15,7 +15,7 @@ for the donor star, else we use the default values
 
 Parameters
 ----------
-binary : BinaryStar (An objets of class BinaryStar defined in POSYDON)
+binary : BinaryStar (An object of class BinaryStar defined in POSYDON)
 verbose : Boolean
     In case we want information about the CEE  (the default is False).
 
@@ -113,26 +113,25 @@ class StepCEE(object):
     verbose : bool
         If True, the messages will be prited in the console.
 
-
     Keyword Arguments
-    ----------
+    -----------------
     prescription : str
         Prescription to use for computing the prediction of common enevelope
         evolution. Available options are:
 
         * 'alpha-lambda' : Considers the the alpha-lambda prescription
-        described in [1] and [2] to predict the outcome of the common envelope
-        evolution. If the profile of the donor star is available then it is
-        used to compute the value of lambda.
+          described in [1]_ and [2]_ to predict the outcome of the common
+          envelope evolution. If the profile of the donor star is available
+          then it is used to compute the value of lambda.
 
     References
     ----------
     .. [1] Webbink, R. F. (1984). Double white dwarfs as progenitors of R
-    Coronae Borealis stars and Type I supernovae. The Astrophysical Journal,
-    277, 355-360.
+        Coronae Borealis stars and Type I supernovae. The Astrophysical
+        Journal, 277, 355-360.
 
     .. [2] De Kool, M. (1990). Common envelope evolution and double cores of
-    planetary nebulae. The Astrophysical Journal, 358, 189-195.
+        planetary nebulae. The Astrophysical Journal, 358, 189-195.
     """
 
     def __init__(
@@ -451,6 +450,7 @@ class StepCEE(object):
             In case we want information about the CEE.
         common_envelope_option_after_succ_CEE: str
             Options are:
+            
             1) "core_replaced_noMT"
                 he_core_mass/radius (or co_core_mass/radius for CEE of
                 stripped_He*) are replaced according to the new core boundary
