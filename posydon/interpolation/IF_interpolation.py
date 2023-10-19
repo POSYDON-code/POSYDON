@@ -573,7 +573,7 @@ class BaseIFInterpolator:
             self.interpolator = MC_Interpolator(
                 self.classifiers[self.c_key],
                 self.interp_classes, self.interp_method)
-            self.interpolator.train(XTn, YTn, ic[self.valid > 0])
+            self.interpolator.train(XTn, YTn, ic)
 
     def test_interpolator(self, Xt):
         """Use the interpolator to approximate output vector.
@@ -589,13 +589,13 @@ class BaseIFInterpolator:
         Output space approximation as numpy array
 
         """
+
+        classes = self.test_classifier(self.c_key, Xt)
         Xtn = self.X_scaler.normalize(Xt)
 
-        classes = None
-
         if isinstance(self.interp_method, list):
-            classes = self.interpolator.classifier(Xtn)
-            Xtn = self.X_scaler.normalize(self.Xt, classes)
+        
+            Xtn = self.X_scaler.normalize(Xt, classes)
 
             Ypredn = self.interpolator.predict(Xtn, classes)
         else:
@@ -808,7 +808,7 @@ class BaseIFInterpolator:
             in_scaling = []  # I assume inputs are positive-valued
             for i in range(self.n_in):
 
-                dim = self.XT[:, i] if klass == None else self.XT[np.where(ic == klass)[0]]
+                dim = self.XT[:, i] if klass is None else self.XT[np.where(ic == klass)[0]]
 
                 if (np.abs(np.mean(dim) - np.median(dim))
                         / np.std(dim)
@@ -851,7 +851,7 @@ class BaseIFInterpolator:
             else:
                 r = 2 ** self.n_in
 
-            inds = np.where(self.valid > 0 if klass == None else (ic == klass) & (self.valid > 0))[0]
+            inds = np.where(self.valid > 0 if klass is None else (ic == klass) & (self.valid > 0))[0]
 
             err = np.nan * np.ones((r * 2, self.n_out, nfolds))
             which_abs = np.abs(self.YT[inds, :]).min(axis=0) == 0
@@ -1357,7 +1357,7 @@ class Scaler:
 
     def normalize(self, X, klass = None):
 
-        if klass == None:
+        if klass is None:
             return self.scaler[klass].normalize(X)
         
         else:
@@ -1375,19 +1375,19 @@ class Scaler:
 
     def denormalize(self, Xn, klass = None):
 
-        if klass == None:
+        if klass is None:
             return self.scaler[klass].denormalize(X)
         
         else:
 
-            normalized = X
+            normalized = Xn
 
             classes = np.unique(klass)
 
             for c in classes:
                 inds = np.where(klass == c)[0]
 
-                normalized[inds] = self.scaler[c].denormalize(X[inds])
+                normalized[inds] = self.scaler[c].denormalize(Xn[inds])
 
             return normalized
 
