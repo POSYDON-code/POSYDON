@@ -73,8 +73,8 @@ class MainWindow(QMainWindow):
         self.setWindowTitle("Simulation visualisation")
 
         screen_geometry = QApplication.desktop().screenGeometry()
-        self.resize(screen_geometry.width() * 0.66,
-                    screen_geometry.height() * 0.66)
+        self.resize(int(screen_geometry.width() * 0.66),
+                    int(screen_geometry.height() * 0.66))
 
         self._visualizer = GraphVisualizer()
         self._option_window = OptionsWindow()

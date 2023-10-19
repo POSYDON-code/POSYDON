@@ -15,6 +15,7 @@ default_kwargs = {
 
     # Size of the population
     'number_of_binaries': 100,
+    'metallicity' : 1.0, # in Zsolar
 
     # Star Formation History
     'star_formation': 'constant',
@@ -52,4 +53,8 @@ default_kwargs = {
     'secondary_mass_scheme': 'flat_mass_ratio',
     'secondary_mass_min': 0.35,
     'secondary_mass_max': 120.0,
+
+    #Binary fraction
+    'binary_fraction_const' : 1,
+    'binary_fraction_scheme' : 'const',#'Moe_17'
 }
