@@ -105,4 +105,3 @@ Students Contributions
 
 - `Petter Stahle </https://www.linkedin.com/in/petter-stahle/>`_, *Formerly, University of Geneva*: Developed the POSYDON web-application API interphase to run POSYDON v1 population synthesis simulations. 
 
-
