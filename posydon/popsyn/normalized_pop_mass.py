@@ -79,7 +79,6 @@ def initial_total_underlying_mass(df=None, **kwargs):
         if m_min <= 0.08:
             #Include the all the imf parts
             a1, a2, a3 = 1, 1, 1
-
         elif 0.08 < m_min <= 0.5:
             m1 = m_min
             a1,a2,a3 = 0, 1, 1
@@ -88,9 +87,9 @@ def initial_total_underlying_mass(df=None, **kwargs):
             a1,a2,a3 = 0, 0, 1
             alpha1,alpha2 = 0,0 
             m_2 = m_min 
-        mean_mass = f0 * (1 + (f_bin/2))* (1 + (f_bin/2))*(quad(lambda x: imf_part_1(x, m_min, a1)*x , m_min, m_1)[0]
-        + quad(lambda x: imf_part_2(x,m_1,m_min,alpha1,alpha2)*x, m_1, m_2)[0]
-        + quad(lambda x: imf_part_3(x, m_1, m_2, m_min, alpha1, alpha2, alpha3)*x, m_2, m_max)[0])
+        mean_mass = f0 * (1 + (f_bin/2))* (1 + (f_bin/2))*(quad(lambda x: a1*imf_part_1(x, m_min, a1)*x , m_min, m_1)[0]
+        + quad(lambda x: a2*imf_part_2(x,m_1,m_min,alpha1,alpha2)*x, m_1, m_2)[0]
+        + quad(lambda x: a3*imf_part_3(x, m_1, m_2, m_min, alpha1, alpha2, alpha3)*x, m_2, m_max)[0])
         
         return mean_mass   
     #Normalization parameter.
