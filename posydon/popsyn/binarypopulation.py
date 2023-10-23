@@ -43,7 +43,8 @@ from posydon.binary_evol.singlestar import (SingleStar,properties_massless_remna
 from posydon.binary_evol.simulationproperties import SimulationProperties
 from posydon.popsyn.star_formation_history import get_formation_times
 
-from posydon.popsyn.independent_sample import generate_independent_samples,binary_fraction_value
+from posydon.popsyn.independent_sample import (generate_independent_samples,
+                                               binary_fraction_value)
 from posydon.utils.common_functions import (orbital_period_from_separation,
                                             orbital_separation_from_period)
 from posydon.popsyn.defaults import default_kwargs
@@ -52,7 +53,7 @@ from posydon.utils.constants import Zsun
 
 
 # 'event' usually 10 but 'detached (Integration failure)' can occur
-HISTORY_MIN_ITEMSIZE = {'state': 30, 'event': 10, 'step_names': 20,
+HISTORY_MIN_ITEMSIZE = {'state': 30, 'event': 25, 'step_names': 20,
                         'S1_state': 31, 'S2_state': 31,
                         'mass_transfer_case': 7,
                         'S1_SN_type': 5, 'S2_SN_type': 5}
@@ -64,7 +65,10 @@ ONELINE_MIN_ITEMSIZE = {'state_i': 30, 'state_f': 30,
                         'mass_transfer_case_i': 7, 'mass_transfer_case_f': 7,
                         'S1_SN_type': 5, 'S2_SN_type': 5,
                         'interp_class_HMS_HMS' : 15, 'interp_class_CO_HeMS' : 15,
-                        'interp_class_CO_HMS_RLO' : 15, 'interp_class_CO_HeMS_RLO' : 15}
+                        'interp_class_CO_HMS_RLO' : 15, 'interp_class_CO_HeMS_RLO' : 15,
+                        'mt_history_HMS_HMS' : 40, 'mt_history_CO_HeMS' : 40,
+                        'mt_history_CO_HMS_RLO' : 40, 'mt_history_CO_HeMS_RLO' : 40,
+                        }
 
 # BinaryPopulation will enforce a constant metallicity accross all steps that
 # load stellar or binary models by checked this list of steps.
@@ -764,7 +768,7 @@ class BinaryGenerator:
         formation_times = get_formation_times(N_binaries, **kwargs)
 
         #Get the binary_fraction
-        binary_fraction = self.binary_fraction_generator(m1=m1,**kwargs)
+        binary_fraction = self.binary_fraction_generator(m1=m1, **kwargs)
 
         # indices
         indices = np.arange(self._num_gen, self._num_gen+N_binaries, 1)
@@ -802,7 +806,6 @@ class BinaryGenerator:
 
         default_index = output['binary_index'].item()
         binary_fraction = output['binary_fraction']
-        
         if self.RNG.uniform() < binary_fraction:
             formation_time = output['time'].item()
             separation = output['separation'].item()

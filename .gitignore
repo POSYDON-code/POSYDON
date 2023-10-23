@@ -70,7 +70,8 @@ instance/
 # Sphinx documentation
 docs/_build/
 docs/api/
-
+*.h5
+*.batch
 
 # PyBuilder
 target/
@@ -95,6 +96,7 @@ venv/
 ENV/
 env.bak/
 venv.bak/
+.vscode
 
 # Spyder project settings
 .spyderproject
@@ -109,3 +111,6 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+
+# macOS
+.DS_store

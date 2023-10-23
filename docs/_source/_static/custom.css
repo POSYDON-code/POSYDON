@@ -1,0 +1,17 @@
+.dropdown .section {
+    display: none;
+    margin: 10px 0;
+  }
+  
+.dropdown:hover .section {
+    display: block;
+  }
+
+
+.wy-side-nav-search {
+  background-color: black;
+}
+
+p {
+ text-align: justify;
+}
