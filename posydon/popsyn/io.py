@@ -304,7 +304,7 @@ def clean_binary_oneline_df(oneline_df, extra_binary_dtypes_user=None,
         if key in scalar_keys:
             common_dtype_dict[key] = SCALAR_NAMES_DTYPES.get(
                                         key.replace('S1_', '').replace('S2_', '') )
-        if key in binary_keys:
+        elif key in binary_keys:
             common_dtype_dict[key] = BP_comb_extras_dict.get( strip_prefix_and_suffix(key) )
         elif key in S1_keys:
             common_dtype_dict[key] = SP_comb_S1_dict.get( strip_prefix_and_suffix(key) )
