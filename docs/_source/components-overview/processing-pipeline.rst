@@ -8,7 +8,7 @@ Post-process Grids
 
 After the MESA girds have finished, the important data needs to be extracted from them.
 
-Psygrid
+PSyGrid
 ~~~~~~~
 
 We have a dedicated object to deal with the MESA data outcome. Learn what you can do with it.

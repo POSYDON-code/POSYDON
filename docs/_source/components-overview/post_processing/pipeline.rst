@@ -4,7 +4,8 @@
 Post-processing pipeline
 ########################
 
-The post processing is done in steps with the posibility to get things run in parallel after each step.
+The post processing is done in steps with the posibility to get things run in
+parallel after each step.
 
 .. toctree::
 
@@ -14,4 +15,6 @@ The post processing is done in steps with the posibility to get things run in pa
 
    pipeline/pipeline_additions
    
-
+We recommend to run the pipeline with an :ref:`ini file <pipeline_ini>` to keep
+a better overview of large grids and being able to post-process them with a few
+commands.

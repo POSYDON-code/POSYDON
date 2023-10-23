@@ -10,6 +10,34 @@ Aim of the ini file
 Using an ini file should help to keep an overview on large grid repositories
 and ensures that all will be setup the same way.
 
+There is a setup-pipeline script takes one argument:
+
+.. code-block:: bash
+
+    setup-pipeline PATH_TO_INI
+
+The content of the ini file is desciped :ref:`below <pipeline_ini_sections>`.
+It will create for each step, plot or check two files:
+
+1. \*.csv
+2. \*.slurm
+
+Additionally, it will prepare a :samp:`logs` directory (it may creates a save
+of some old logs) and create a shell script :samp:`run_pipeline.sh` to submit
+all :ref:`tasks <pipeline>`. Hence, you can run all
+:ref:`steps <pipeline_steps>` with simply running this script.
+
+.. code-block:: bash
+
+    ./run_pipeline.sh
+
+.. note::
+    Currently, the user needs to take care of having a POSYDON_data directly
+    which includes the tables for the core-collape prescriptions him-/herself
+    in the working directory.
+
+.. _pipeline_ini_sections:
+
 Sections in the ini file
 ========================
 
@@ -62,8 +90,10 @@ Step sections
 -------------
 
 The path of each grid will be joint as
-:samp:`PATH_TO_GRIDS/VERSION/GRID_TYPE/METALLICITY/GRID_SLICE`. The corresponding h5 files will have names according to :samp:`PATH_TO_GRIDS/VERSION/GRID_TYPE/METALLICITY/COMPRESSION/GRID_SLICE.h5`. All sections
-have common keywords:
+:samp:`PATH_TO_GRIDS/VERSION/GRID_TYPE/METALLICITY/GRID_SLICE`. The
+corresponding h5 files will have names according to
+:samp:`PATH_TO_GRIDS/VERSION/GRID_TYPE/METALLICITY/COMPRESSION/GRID_SLICE.h5`.
+All sections have common keywords:
 
 .. table:: Common keywords of steps
 
@@ -79,7 +109,8 @@ have common keywords:
     DO_CHECKS           a list of checks to perform; this will be done independently whether the step is active or not, to make no checks put there an empty list
     ==================  ===========
 
-Some steps have more keywords, which are specific to that step:
+Some :ref:`steps <pipeline_steps>` have more keywords, which are specific to
+that step:
 
 .. table:: Step specific keywords
 
@@ -94,7 +125,7 @@ Some steps have more keywords, which are specific to that step:
        R  RERUN_TYPE                    a defined rerun type
     ====  ============================  ===========
 
-Here is an example of all the steps:
+Here is an example of all the :ref:`steps <pipeline_steps>`:
 
 .. code-block:: ini
 
@@ -313,3 +344,27 @@ Here is an example of all the steps:
         # example reruns are 'PISN', 'reverse_MT', 'TPAGBwind', 'opacity_max'
         RERUN_TYPE = 'opacity_max' 
 
+There are some predefined shortcuts for lists of :ref:`plots <pipeline_plots>`
+and :ref:`checks <pipeline_checks>`:
+
+.. table:: Plot sets
+
+    =====================  =====
+    Set name               plots
+    =====================  =====
+    'PLOT_AFTER_CREATE'    
+    'PLOT_AFTER_COMBINE'   'combined_TF12', 'termination_flag_1', 'termination_flag_2', 'termination_flag_3', 'termination_flag_4', 'rl_relative_overflow_1', 'rl_relative_overflow_2', 'lg_mtransfer_rate'
+    'PLOT_AFTER_EXTRA'     'S1_MODEL01_CO_type', 'S1_MODEL01_SN_type', 'S1_MODEL01_mass', 'S1_MODEL01_spin', 'S1_MODEL01_m_disk_radiated', 'S1_MODEL02_CO_type', 'S1_MODEL02_SN_type', 'S1_MODEL02_mass', 'S1_MODEL02_spin', 'S1_MODEL02_m_disk_radiated', 'S1_MODEL03_CO_type', 'S1_MODEL03_SN_type', 'S1_MODEL03_mass', 'S1_MODEL03_spin', 'S1_MODEL03_m_disk_radiated', 'S1_MODEL04_CO_type', 'S1_MODEL04_SN_type', 'S1_MODEL04_mass', 'S1_MODEL04_spin', 'S1_MODEL04_m_disk_radiated', 'S1_MODEL05_CO_type', 'S1_MODEL05_SN_type', 'S1_MODEL05_mass', 'S1_MODEL05_spin', 'S1_MODEL05_m_disk_radiated', 'S1_MODEL06_CO_type', 'S1_MODEL06_SN_type', 'S1_MODEL06_mass', 'S1_MODEL06_spin', 'S1_MODEL06_m_disk_radiated', 'S1_MODEL07_CO_type', 'S1_MODEL07_SN_type', 'S1_MODEL07_mass', 'S1_MODEL07_spin', 'S1_MODEL07_m_disk_radiated', 'S1_MODEL08_CO_type', 'S1_MODEL08_SN_type', 'S1_MODEL08_mass', 'S1_MODEL08_spin', 'S1_MODEL08_m_disk_radiated', 'S1_MODEL09_CO_type', 'S1_MODEL09_SN_type', 'S1_MODEL09_mass', 'S1_MODEL09_spin', 'S1_MODEL09_m_disk_radiated', 'S1_MODEL10_CO_type', 'S1_MODEL10_SN_type', 'S1_MODEL10_mass', 'S1_MODEL10_spin', 'S1_MODEL10_m_disk_radiated'
+    'PLOT_AFTER_TRAINING'  'INTERP_ERROR_age', 'INTERP_ERROR_star_1_mass', 'INTERP_ERROR_star_2_mass', 'INTERP_ERROR_period_days', 'INTERP_ERROR_S1_co_core_mass', 'INTERP_ERROR_S1_co_core_radius', 'INTERP_ERROR_S1_he_core_mass', 'INTERP_ERROR_S1_he_core_radius', 'INTERP_ERROR_S1_center_h1', 'INTERP_ERROR_S1_center_he4', 'INTERP_ERROR_S1_surface_h1', 'INTERP_ERROR_S1_surface_he4', 'INTERP_ERROR_S1_surf_avg_omega_div_omega_crit', 'INTERP_ERROR_S1_log_Teff', 'INTERP_ERROR_S1_log_L', 'INTERP_ERROR_S1_log_R', 'INTERP_ERROR_S1_spin_parameter', 'INTERP_ERROR_S1_lambda_CE_10cent', 'INTERP_ERROR_S2_co_core_mass', 'INTERP_ERROR_S2_co_core_radius', 'INTERP_ERROR_S2_he_core_mass', 'INTERP_ERROR_S2_he_core_radius', 'INTERP_ERROR_S2_center_h1', 'INTERP_ERROR_S2_center_he4', 'INTERP_ERROR_S2_surface_h1', 'INTERP_ERROR_S2_surface_he4', 'INTERP_ERROR_S2_surf_avg_omega_div_omega_crit', 'INTERP_ERROR_S2_log_Teff', 'INTERP_ERROR_S2_log_L', 'INTERP_ERROR_S2_log_R', 'INTERP_ERROR_S2_spin_parameter', 'INTERP_ERROR_S2_lambda_CE_10cent', 'INTERP_ERROR_S1_MODEL01_mass', 'INTERP_ERROR_S1_MODEL01_spin', 'INTERP_ERROR_S1_MODEL01_m_disk_radiated', 'INTERP_ERROR_S1_MODEL05_mass', 'INTERP_ERROR_S1_MODEL05_spin', 'INTERP_ERROR_S1_MODEL05_m_disk_radiated', 'INTERP_ERROR_S1_MODEL06_mass', 'INTERP_ERROR_S1_MODEL06_spin', 'INTERP_ERROR_S1_MODEL06_m_disk_radiated', 'INTERP_ERROR_S1_MODEL10_mass', 'INTERP_ERROR_S1_MODEL10_spin', 'INTERP_ERROR_S1_MODEL10_m_disk_radiated'
+    =====================  =====
+
+.. table:: Check sets
+
+    ======================  ======
+    Set name                checks
+    ======================  ======
+    'CHECK_AFTER_CREATE'    
+    'CHECK_AFTER_COMBINE'   'failure_rate'
+    'CHECK_AFTER_EXTRA'     'CO_type', 'SN_type'
+    'CHECK_AFTER_TRAINING'  
+    ======================  ======

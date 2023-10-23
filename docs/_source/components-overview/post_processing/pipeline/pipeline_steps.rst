@@ -23,7 +23,9 @@ The run-pipeline script takes four arguments:
     The current directory will be used as working directory, hence navigate to
     your work directory first.
 
-Step1: creating a `psygrid` object
+.. _pipeline_step1:
+
+Step1: creating a `PSyGrid` object
 ----------------------------------
 
 Frist, we need to create the `psygird` object. To do so, the pipeline needs to
@@ -52,11 +54,13 @@ The currently supported compression types are:
     \*_RLO    The `_RLO` can be put on any of the previous types to crop the history before the onset of Roche-lobe overflow for grids containing a compact object
     ========  ===========
 
-Step2: combining `psygrid` objects
+.. _pipeline_step2:
+
+Step2: combining `PSyGrid` objects
 ----------------------------------
 
 Usually, the girds are slitt into batches or reruns are done. In those cases,
-there will be several `psygrid` objects created for one gird. This step will
+there will be several `PSyGrid` objects created for one gird. This step will
 join them into one. The :samp:`step_2.csv` file should have a matrix structure.
 The columns contain the girds which should be combined to the one specified in
 the header (first) row. The :samp:`DATA_ID` corresponds here to the column
@@ -75,25 +79,124 @@ number (starting with 0). Here an example:
     :samp:`OLD_H5_FILE11` will be discarded and only the one in
     :samp:`OLD_H5_FILE12` will end up in :samp:`NEW_H5_FILE1`.
 
+.. _pipeline_step3:
+
 Step3: calculating extra values from detailed data
 --------------------------------------------------
 
-In this step we calculate extra quanties from the final profiles, which are
-important for the core collapse of the star to a compact object.
+In this step we calculate extra quanties from the histories and profiles. Those
+extra values are key parameters at He depletion, at onset of common envelope
+evolution, and at core collapse.
 
-TBC
+Because some of the values may require a high precission in the data, we
+recommend to use the data from the ORIGINAL compression to calculate them. But
+the new values can be added to any `PSyGrid` object. Hence this step requests
+three paths to be specified in :samp:`step_3.csv`:
+
+.. code-block::
+
+    path_to_grid,path_to_grid_ORIGINAL,path_to_processed_grid
+
+.. table:: Description of required paths
+
+    ======================  ===========
+    Path                    Description
+    ======================  ===========
+    path_to_grid            path of the gird, which get the values appended to it
+    path_to_grid_ORIGINAL   path of the grid, where the values are calculated from
+    path_to_processed_grid  path of the new grid (a copy of the one specified as `path_to_grid` with the appended values)
+    ======================  ===========
+
+.. note::
+    This step use the path to the original MESA data as the unique identifier
+    of each system in the `PSyGrid` object, thus the location of the MESA file
+    cannot be changed between creating two `PSyGrid` objects of the same grid
+    in :ref:`step1 <pipeline_step1>`. Similarly, the overlaying in
+    :ref:`step2 <pipeline_step2>` needs to be the same, too. Therefore, we
+    recommend to setup and run the pipeline with an
+    :ref:`ini file <pipeline_ini>`.
+
+.. _pipeline_step4:
 
 Step4: training of the interpolators
 ------------------------------------
 
-TODO
+To get interpolated data from our grids, we train in this step an interpolator
+on your `PSyGrid` object. The file :samp:`step_4.csv` therefore has to contain
+two information bits. First, the grid containing the data and second, the name
+of the interpolator object.
+
+.. code-block::
+
+    path_to_grid,path_to_interpolator
+
+.. note::
+    The type of interpolator will be recognized from the name of the
+    interpolator object. The syntax is :code:`IF_METHOD{_RLO}.pkl`. The `IF`
+    stands for initial-final interpolator, the `METHOD` refers to the
+    interpolator type. The girds starding at Roche-lobe overflow may be
+    indicated in the name as well, but is not required.
+
+.. table:: Currently supported interpolator types
+
+    ========  ===========
+    `METHOD`  Description
+    ========  ===========
+    linear    linear interpolation
+    1NN       nearest neighbour
+    ========  ===========
+
+.. _pipeline_step9:
 
 Step9: exporting the data set
 -----------------------------
 
-TODO
+After we have a complete data set, we would like to export it to be used for
+the population synthesis. We jump here to step 9, because this will always be
+the last step even more steps may get introduced in the future. In
+:samp:`step_9.csv`, there are again two paths required, a source and an export
+path. The step will simply copy the source to the export location. Hence, here
+the final `PSyGrid` objects and all the interpolator files are usually
+addressed by this step.
+
+.. code-block::
+
+    path_to_grid,export_path
+
+.. _pipeline_stepR:
 
 StepR: exporting a rerun
 ------------------------
 
-TODO
+Usually, a grid will not run well everywhere on the first go. So, there is a
+need to export reruns which changes for the next run to fix non converged
+models. This step is therefore only needed during the build of a new grid.
+Usually, one would run the steps to the point, where the need of a fix arises.
+Additionally, before exporting a rerun, the logic how to select a system to be
+included in the rerun and what should be changed needs to get implemented
+first.
+
+For this step the csv file is called :samp:`rerun.csv` to avoid too much
+confusion with other steps. It clearly has to run after a step, but it is no
+usuall step itself. It requires a path to a `PSyGrid` object to get the models
+from, a path, where the rerun should be stored (it creates in there the
+`grid.csv` and the `ini` file needed to
+:ref:`setup a new run <mesa-grids-api>`) and the type of the rerun specifing
+the logic and changes.
+
+.. code-block::
+
+    path_to_grid,rerun_path,rerun_type
+
+.. table:: Currently supported rerun types
+
+    ===================  ==============  ===========
+    `rerun_type`         Future version  Description
+    ===================  ==============  ===========
+    PISN                 default in v3+  it enables the MESA inlist commit, which stops MESA before getting dynamical to save a final profile there
+    reverse_MT           default in v3+  it uses a MESA version with a bug fix, that the role of donor and accretor can switch during the simulation
+    opacity_max          caution         it uses a fixed maximum opacity of 0.5 (this is only a last option change to get more stability)
+    TPAGBwind            default in v3+  it enables the MESA inlist commit, which changes the wind during the TPAGB phase
+    thermohaline_mixing  default in v3+  it enables the MESA inlist commit, which includes thermohaline mixing
+    ===================  ==============  ===========
+

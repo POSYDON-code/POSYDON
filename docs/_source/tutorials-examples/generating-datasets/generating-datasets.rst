@@ -42,6 +42,8 @@ Unlock the power of 1D plotting functionalities for POSYDON PSyGrids. This tutor
     plot_1D
 
 
+.. _plot_2d:
+
 IV. 2D Plotting Functionalities for POSYDON PSyGrids
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
