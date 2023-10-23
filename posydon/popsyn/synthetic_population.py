@@ -13,6 +13,7 @@ import warnings
 import numpy as np
 import pandas as pd
 from tqdm import tqdm
+import os
 from posydon.utils.constants import Zsun
 from posydon.popsyn.io import binarypop_kwargs_from_ini
 from posydon.popsyn.binarypopulation import BinaryPopulation
@@ -38,8 +39,11 @@ class SyntheticPopulation:
         path : str
             Path to the inifile to parse. You can supply a list in the
             metallicity parameter to evolve more than one population.
-
+        path_to_data : array of str
+            Paths of the h5 files containing POSYDON binary populations
         """
+        self.synthetic_pop_params = None
+        self.metallicity = None
 
         self.verbose = verbose
         self.MODEL = MODEL
@@ -62,27 +66,29 @@ class SyntheticPopulation:
         if '.ini' not in path_to_ini:
             raise ValueError('You did not provide a valid path_to_ini!')
         else:
-            synthetic_pop_params = binarypop_kwargs_from_ini(path_to_ini)
-
-            self.metallicity = synthetic_pop_params['metallicity']
-
+            self.synthetic_pop_params = binarypop_kwargs_from_ini(path_to_ini)
+            self.metallicities = self.synthetic_pop_params['metallicity']
             if not isinstance( self.metallicity, list):
                 self.metallicity = [self.metallicity]
-
-            self.binary_populations = []
-            for met in self.metallicity[::-1]:
-                self.ini_kw = binarypop_kwargs_from_ini(path_to_ini)
-                self.ini_kw['metallicity'] = met
-                self.ini_kw['temp_directory'] = self.create_met_prefix(met) + self.ini_kw['temp_directory']
-                self.binary_populations.append(BinaryPopulation(**self.ini_kw))
+            self.binary_populations = None
+        
 
         if path_to_data is None:
             return
         elif (isinstance(path_to_data, list) and '.h5' in path_to_data[0]) or ('.h5' in path_to_data):
             self.path_to_data = path_to_data
 
+        
+    def create_binary_populations(self):
+        self.binary_populations = []
+        ini_kw = self.synthetic_pop_params.copy()
+        for met in self.metallicity[::-1]:
+            ini_kw['metallicity'] = met
+            ini_kw['temp_directory'] = self.create_met_prefix(met) + self.synthetic_pop_params['temp_directory']
+            self.binary_populations.append(BinaryPopulation(**ini_kw))
+
     def get_ini_kw(self):
-        return self.ini_kw
+        return self.synthetic_pop_params
 
     def evolve(self):
         """Evolve population(s) at given Z(s)."""
@@ -90,9 +96,34 @@ class SyntheticPopulation:
             pop =  self.binary_populations.pop()
             print( f'Z={pop.kwargs["metallicity"]:.2e} Z_sun' )
             pop.evolve()
-            met_prefix = f'{pop.kwargs["metallicity"]:.2e}_Zsun_'
-            pop.save( met_prefix + 'population.h5' )
+            #met_prefix = f'{pop.kwargs["metallicity"]:.2e}_Zsun_'
+            #pop.save( met_prefix + 'population.h5' )
             del pop
+
+
+    def merge_parallel_run(self, path_to_batches):
+        """
+        Merge the folder or list of folders into a single file per metallicity.
+
+        Parameters
+        ----------
+        path_to_batches : str or list of str
+            Path to the folder(s) containing the batch folders.
+        """
+        
+        if isinstance(path_to_batches, str):
+            path_to_batches = [path_to_batches]
+        # check if path_to_batches is the same length as the number of metallicities
+        if len(path_to_batches) != len(self.metallicity):
+            raise ValueError('The number of metallicity and batch directories do not match!')
+
+        for met, path_to_batch in zip(self.metallicity, path_to_batches):
+            met_prefix = self.create_met_prefix(met)
+            tmp_files = [f for f in os.listdir(path_to_batch) if os.isfile(os.join(path_to_batch, f))]
+        
+
+            BinaryPopulation(**self.ini_kw).combine_saved_files( met_prefix + 'population.h5', tmp_files)
+
 
     @staticmethod
     def create_met_prefix(met):
@@ -174,7 +205,7 @@ class SyntheticPopulation:
         return logic
 
 
-    def parse(self, S1_state=None, S2_state=None, binary_state=None,
+    def parse(self,path_to_data, S1_state=None, S2_state=None, binary_state=None,
                binary_event=None, invert_S1S2=False, chunksize=500000):
         """Sort binaries of interests given some properties.
 
@@ -197,7 +228,11 @@ class SyntheticPopulation:
             Read the POSYDON binary population in chuncks to prevent OFM error.
 
         """
-
+        
+        # catch the case where the user did not provide a path to data
+        if not ((isinstance(path_to_data, list) and '.h5' in path_to_data[0]) or ('.h5' in path_to_data)):
+            raise ValueError('You did not provide a valid path_to_data!')
+        
         df_sel = pd.DataFrame()
         df_sel_oneline = pd.DataFrame()
         count = 0
@@ -252,7 +287,7 @@ class SyntheticPopulation:
 
             # store simulated and underlying stellar mass
             df_sel_met['simulated_mass_for_met'] = simulated_mass_for_met
-            df_sel_met['underlying_mass_for_met'] = initial_total_underlying_mass(df=simulated_mass_for_met, **self.ini_kw)[0]
+            df_sel_met['underlying_mass_for_met'] = initial_total_underlying_mass(df=simulated_mass_for_met, **self.synthetic_pop_params)[0] # This used to be init_kw
 
             # concatenate results
             df_sel = pd.concat([df_sel, df_sel_met])
@@ -320,7 +355,24 @@ class SyntheticPopulation:
             raise ValueError('You already have a population stored in memory!')
 
     def get_dco_at_formation(self, S1_state, S2_state, oneline_cols=None, formation_channels=False, mt_history=False):
-        """Sort synthetic population, i.e. DCO at formation.
+        """Populates `df_synthetic` with DCOs at their formation.
+        If `formation_channels` is `True` the `channel` column is added to the
+        `df_synthetic` dataframe.
+
+        if MODEL on class initialization is not None and
+        "compute_GRB_properties" in MODEL. 
+        If MODEL["compute_GRB_properties"] is `True` the following columns are
+        in the MODEL:
+
+            - ['GRB_efficiency'],
+            - self.MODEL['GRB_beaming'],
+            - self.MODEL['E_GRB_iso_min']
+
+        The following columns are added to the `df_synthetic` dataframe:
+            - S1_m_disk_radiated
+            - S2_m_disk_radiated
+
+
 
         Note: by default this function looks for the symmetric state
         S1_state = S2_sate and S2_state = S1_sate.
@@ -476,7 +528,7 @@ class SyntheticPopulation:
         for met in self.met_merger_efficiency:
             sel = (self.df_synthetic['metallicity'] == met)
             count = self.df_synthetic[sel].shape[0]
-            underlying_stellar_mass = self.df_synthetic.loc[sel,'underlying_mass_for_met'].values[0]
+            underlying_stellar_mass = self.df_synthetic.loc[sel,'underlying_mss_for_met'].values[0]
             eff = count/underlying_stellar_mass
             efficiencies.append(eff)
             print(f'DCO merger efficiency at Z={met:1.2E}: {eff:1.2E} Msun^-1')
@@ -655,7 +707,7 @@ class SyntheticPopulation:
         sensitivity='infinite'
         flag_pdet = False
         index, z_formation, z_merger, w_ijk = self.compute_cosmological_weights(sensitivity, flag_pdet, working_dir=working_dir, load_data=load_data, pop='DCO')
-
+    
         # compute rate density weights
         self.dco_z_rate_density = self.rates.get_centers_redshift_bins()
         total_rate = self.rates.compute_rate_density(w_ijk, z_merger, observable='DCO', sensitivity=sensitivity)

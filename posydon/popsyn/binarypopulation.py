@@ -105,11 +105,16 @@ class BinaryPopulation:
         entropy = self.kwargs.get('entropy', None)
         seq = np.random.SeedSequence(entropy=entropy)
 
-        self.comm = self.kwargs.pop('comm', None)
-        if self.comm is not None:
-            self.rank = self.comm.Get_rank()
-            self.size = self.comm.Get_size()
+        self.JOB_ID = self.kwargs.pop('JOB_ID', None)
+        if self.JOB_ID is not None:
+            self.rank = self.kwargs.pop('RANK', None)
+            self.size = self.kwargs.pop('size', None)
             seed_seq = [i for i in seq.spawn(self.size)][self.rank]
+        #self.comm = self.kwargs.pop('comm', None)
+        #if self.comm is not None:
+        #   self.rank = self.comm.Get_rank()
+        #    self.size = self.comm.Get_size()
+        #    seed_seq = [i for i in seq.spawn(self.size)][self.rank]
         else:
             seed_seq = seq
 
@@ -169,7 +174,7 @@ class BinaryPopulation:
         breakdown_to_df_bool = kw.get('breakdown_to_df', True)
         from_hdf_bool = kw.get('from_hdf', False)
 
-        if self.comm is None:   # do regular evolution
+        if self.JOB_ID is None:   # do regular evolution
             indices = kw.get('indices',
                              list(range(self.number_of_binaries)))
             params = {'indices':indices,
@@ -235,10 +240,11 @@ class BinaryPopulation:
 
         # Create temporary directory if it doesn't exist
         # Built to handle MPI
-        if self.comm is None:
+        if self.JOB_ID is None:
             if not os.path.exists(temp_directory):
                 os.makedirs(temp_directory)
         else:
+            # MAX: is this necessary?
             if self.rank == 0:
                 if not os.path.exists(temp_directory):
                     os.makedirs(temp_directory)
@@ -272,7 +278,7 @@ class BinaryPopulation:
                     and j % dump_rate == 0 and j != 0 and ram_per_cpu is None):
 
                 # Create filenames for each batch
-                if(self.comm is None):
+                if(self.JOB_ID is None):
                     path = os.path.join(temp_directory, f"{j}_evolution.batch")
                 else:
                     path = os.path.join(temp_directory,
@@ -293,7 +299,7 @@ class BinaryPopulation:
                   and psutil.Process().memory_info().rss / (1024**3)
                   >= 0.9 * ram_per_cpu):
 
-                if(self.comm is None):
+                if(self.JOB_ID is None):
                     path = os.path.join(temp_directory, f"{j}_evolution.batch")
                 else:
                     path = os.path.join(temp_directory,
@@ -314,7 +320,7 @@ class BinaryPopulation:
                 or len(self.manager.history_dfs) != 0)
                 and optimize_ram):
 
-            if(self.comm is None):
+            if(self.JOB_ID is None):
                 path = os.path.join(temp_directory, "leftover_evolution.batch")
             else:
                 path = os.path.join(temp_directory,
@@ -331,18 +337,18 @@ class BinaryPopulation:
 
         if optimize_ram:
             # combining files
-            if self.comm is None:
+            if self.JOB_ID is None:
                 self.combine_saved_files(os.path.join(temp_directory,
                                                       "evolution.combined"),
                                          filenames, mode = "w")
-            else:
+            else: 
                 self.combine_saved_files(
                     os.path.join(temp_directory,
                                  f"evolution.combined.{self.rank}"),
                     filenames, mode = "w")
 
         else:
-            if self.comm is None:
+            if self.JOB_ID is None:
                 self.manager.save(os.path.join(temp_directory,
                                                "evolution.combined"),
                                   mode='w',
@@ -359,7 +365,7 @@ class BinaryPopulation:
         temp_directory = self.kwargs['temp_directory']
         mode = self.kwargs.get('mode', 'a')
 
-        if self.comm is None:
+        if self.JOB_ID is None:
             if optimize_ram:
                 os.rename(os.path.join(temp_directory, "evolution.combined"),
                           save_path)
@@ -376,8 +382,7 @@ class BinaryPopulation:
                 warnings.warn('The provided path is a directory - saving '
                               'to {0} instead.'.format(file_path), Warning)
 
-            self.comm.Barrier()
-
+            #self.Barrier()
             if self.rank == 0:
 
                 file_name = os.path.basename(absolute_filepath)
@@ -397,7 +402,16 @@ class BinaryPopulation:
         # return os.path.join(dir_name, '.tmp{}_'.format(rank) + file_name)
 
     def combine_saved_files(self, absolute_filepath, file_names, **kwargs):
-        """Combine various temporary files in a given folder."""
+        """Combine various temporary files in a given folder.
+        
+        Parameters
+        ----------
+        absolute_filepath : str
+            Absolute path to the file to be saved.
+        file_names : list
+            List of absolute paths to the temporary files.  
+    
+        """
         dir_name = os.path.dirname(absolute_filepath)
 
         history_cols = pd.read_hdf(file_names[0], key='history').columns
@@ -438,7 +452,7 @@ class BinaryPopulation:
         # In order to be generally picklable, we need to discard the
         # communicator object before trying.
         d = self.__dict__
-        d["comm"] = None
+        #d["comm"] = None
         prop = d['population_properties']
         if prop.steps_loaded:
             prop.close()
