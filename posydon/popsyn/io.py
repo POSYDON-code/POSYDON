@@ -141,7 +141,7 @@ SCALAR_NAMES_DTYPES = {
     'natal_kick_array_3': 'float64',
     'SN_type':'string',
     'f_fb': 'float64',
-    'sping_orbit_tilt': 'float64',
+    'spin_orbit_tilt': 'float64',
 }
 
 
@@ -277,6 +277,7 @@ def clean_binary_oneline_df(oneline_df, extra_binary_dtypes_user=None,
     SP_comb_S2_dict = {**STARPROPERTIES_DTYPES, **EXTRA_STAR_COLUMNS_DTYPES, 
                        **SCALAR_NAMES_DTYPES, **extra_S2_dtypes_user}
     
+
     # All default & user passed keys which we have mappings for
     binary_keys = set( [key + '_i' for key in BP_comb_extras_dict.keys()] 
                      + [key + '_f' for key in BP_comb_extras_dict.keys()] )
@@ -284,16 +285,25 @@ def clean_binary_oneline_df(oneline_df, extra_binary_dtypes_user=None,
                  + ['S1_' + key + '_f' for key in SP_comb_S1_dict.keys()] )
     S2_keys = set( ['S2_' + key + '_i' for key in SP_comb_S2_dict.keys()]
                  + ['S2_' + key + '_f' for key in SP_comb_S2_dict.keys()] )
-    
+    scalar_keys = set( ['S1_' + key for key in SCALAR_NAMES_DTYPES.keys()]
+                     + ['S2_' + key for key in SCALAR_NAMES_DTYPES.keys()] )
+                        
     # Find common keys between the binary_df and our column-dtype mapping
-    common_keys =  oneline_columns & ( binary_keys | S1_keys | S2_keys )
+    common_keys =  oneline_columns & ( binary_keys 
+                                     | S1_keys
+                                     | S2_keys 
+                                     | scalar_keys)
     
 
     # Create a dict with column-dtype mapping only for columns in binary_df
     common_dtype_dict = {}
     # helper function to remove the '_i' and '_f' 
-    strip_prefix_and_suffix = lambda key : key.strip('_i').strip('_f').strip('S1_').strip('S2_')
+    strip_prefix_and_suffix = lambda key : key.replace('_i', '').replace('_f', '') \
+                                             .replace('S1_', '').replace('S2_', '')
     for key in common_keys:
+        if key in scalar_keys:
+            common_dtype_dict[key] = SCALAR_NAMES_DTYPES.get(
+                                        key.replace('S1_', '').replace('S2_', '') )
         if key in binary_keys:
             common_dtype_dict[key] = BP_comb_extras_dict.get( strip_prefix_and_suffix(key) )
         elif key in S1_keys:
