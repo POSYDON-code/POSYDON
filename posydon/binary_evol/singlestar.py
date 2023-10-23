@@ -314,16 +314,13 @@ class SingleStar:
         for name in scalar_names:
             if hasattr(self, name):
                 if name == 'natal_kick_array':
-                    natal_kick_array = np.array(getattr(self, name), dtype=np.float64)
+                    natal_kick_array = getattr(self, name)
                     for i in range(4):
                         col_name = prefix+name+'_{}'.format(int(i))
                         oneline_df[col_name] = [natal_kick_array[i]]
-                elif (name == 'spin_orbit_tilt') | (name == 'f_fb'):
-                    oneline_df[prefix+name] = [np.float64(getattr(self, name))]
                 else:
                     oneline_df[prefix+name] = [getattr(self, name)]
         return oneline_df
-
 
     def __repr__(self):
         """Return the object representation when print is called."""

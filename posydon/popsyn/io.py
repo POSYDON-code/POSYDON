@@ -134,6 +134,15 @@ EXTRA_BINARY_COLUMNS_DTYPES = {
 # no default extras for history attributes
 EXTRA_STAR_COLUMNS_DTYPES = {}
 
+SCALAR_NAMES_DTYPES = {
+    'natal_kick_array_0': 'float64',
+    'natal_kick_array_1': 'float64',
+    'natal_kick_array_2': 'float64',
+    'natal_kick_array_3': 'float64',
+    'SN_type':'string',
+    'f_fb': 'float64',
+    'sping_orbit_tilt': 'float64',
+}
 
 
 def clean_binary_history_df(binary_df, extra_binary_dtypes_user=None, 
@@ -264,9 +273,9 @@ def clean_binary_oneline_df(oneline_df, extra_binary_dtypes_user=None,
                            **extra_binary_dtypes_user}
     # combine columns for star 1 and star 2 history with extras
     SP_comb_S1_dict = {**STARPROPERTIES_DTYPES, **EXTRA_STAR_COLUMNS_DTYPES, 
-                       **extra_S1_dtypes_user}
+                       **SCALAR_NAMES_DTYPES, **extra_S1_dtypes_user}
     SP_comb_S2_dict = {**STARPROPERTIES_DTYPES, **EXTRA_STAR_COLUMNS_DTYPES, 
-                       **extra_S2_dtypes_user}
+                       **SCALAR_NAMES_DTYPES, **extra_S2_dtypes_user}
     
     # All default & user passed keys which we have mappings for
     binary_keys = set( [key + '_i' for key in BP_comb_extras_dict.keys()] 
