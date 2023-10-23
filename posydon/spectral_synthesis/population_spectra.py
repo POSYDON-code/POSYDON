@@ -11,7 +11,7 @@ import pandas as pd
 import traceback
 from copy import copy
 import os
-from posydon.spectral_synthesis.spectral_tools import population_data,load_posydon_population
+from posydon.spectral_synthesis.spectral_tools import load_posydon_population
 from posydon.spectral_synthesis.spectral_grids import spectral_grids
 from posydon.spectral_synthesis.default_options import default_kwargs
 from posydon.spectral_synthesis.generate_spectrum import generate_spectrum
@@ -41,11 +41,7 @@ class population_spectra():
         self.output_file = self.kwargs['output_file']
         self.save_data = self.kwargs['save_data']
         # Create readable arrays for the stars objects.
-        time_start_pop = datetime.datetime.now()
-        self.population = population_data(**self.kwargs)
-        time_end_pop = datetime.datetime.now()
-        print('Total time is: ', time_end_pop - time_start_pop)
-        self.total_binaries = len(self.population)
+        #self.total_binaries = len(self.population)
         # Initialize the spectral_grids object and parameters used.
         # TODO put an option for changing the wavelength
         self.grids = spectral_grids()

@@ -73,7 +73,7 @@ def load_posydon_population(population_file, max_number_of_binaries=None,
             del final_stars[str(col)]
     pop = copy(final_stars)
     #Get the metallicity values from ZAMS
-    pop['Z/Zo'] = zams_stars['S1_metallicity']/Zo
+    pop['Z/Zo'] = np.ones(len(pop))*zams_stars['S1_metallicity'].iloc[0]/Zo
     #Add two extra columns in the pop data
     for star in ['S1','S2']:
         M = np.asarray(pop[f'{star}_mass'])*con.M_sun
