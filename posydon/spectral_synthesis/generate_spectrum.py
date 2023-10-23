@@ -109,9 +109,13 @@ def generate_spectrum(grids,star,i,scale,**kwargs):
     M = copy(star[f'{i}_mass'])
     state = copy(star[f'{i}_state'])
     R = 10**copy(star[f'{i}_log_R'])*con.R_sun
-    #TODO have a star label that it's going to be None in the begining"
-    #label = star[f'{i}_label']
-    x = {'Teff':Teff ,'log(g)': logg,'[Fe/H]': Fe_H,'Z/Zo':Z_Zo,'M_init':M,'state':state,'[alpha/Fe]':0.0}
+    x = {'Teff':Teff ,
+         'log(g)': logg,
+         '[Fe/H]': Fe_H,
+         'Z/Zo':Z_Zo,
+         'M_init':M,
+         'state':state,
+         '[alpha/Fe]':0.0}
     label = None
     label = point_the_grid(grids,x,ostar_temp_cut_off,bstar_temp_cut_off,label,**kwargs)
     count = 1
@@ -120,7 +124,7 @@ def generate_spectrum(grids,star,i,scale,**kwargs):
             return None,state,label
         else:
             try:
-                Flux = grids.grid_flux(label,**x)*R**2*scale**-2
+                Flux = grids.grid_flux(label,**x)*R**2*4*np.pi/con.L_sun
                 return Flux.value,star['state'],label
             except LookupError:
                 label = f'failed_attempt_{count}'

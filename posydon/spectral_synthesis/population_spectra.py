@@ -88,9 +88,6 @@ class population_spectra():
                 labels_S1.append(label1)
                 labels_S2.append(label2)
             if spectrum_1 is not None and state_1 is not None:
-                print(state_1, spectrum_1)
-                for key,value in pop_spectrum.items():
-                    print(key)
                 pop_spectrum[state_1] += spectrum_1
             if spectrum_2 is not None and state_2 is not None:
                 pop_spectrum[state_2] += spectrum_2
