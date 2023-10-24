@@ -31,7 +31,7 @@ from posydon.utils.common_functions import convert_metallicity_to_string
 
 class SyntheticPopulation:
 
-    def __init__(self, path_to_ini, path_to_data=None, verbose=False, MODEL={}):
+    def __init__(self, path_to_ini, verbose=False, MODEL={}):
         """
         Parameters
         ----------
@@ -39,11 +39,10 @@ class SyntheticPopulation:
         path : str
             Path to the inifile to parse. You can supply a list in the
             metallicity parameter to evolve more than one population.
-        path_to_data : array of str
-            Paths of the h5 files containing POSYDON binary populations
         """
         self.synthetic_pop_params = None
         self.metallicity = None
+        self.binary_populations = None
 
         self.verbose = verbose
         self.MODEL = MODEL
@@ -72,13 +71,6 @@ class SyntheticPopulation:
                 self.metallicity = [self.metallicity]
             self.binary_populations = None
         
-
-        if path_to_data is None:
-            return
-        elif (isinstance(path_to_data, list) and '.h5' in path_to_data[0]) or ('.h5' in path_to_data):
-            self.path_to_data = path_to_data
-
-        
     def create_binary_populations(self):
         self.binary_populations = []
         ini_kw = self.synthetic_pop_params.copy()
@@ -92,6 +84,8 @@ class SyntheticPopulation:
 
     def evolve(self):
         """Evolve population(s) at given Z(s)."""
+        if self.binary_populations is None:
+            self.create_binary_populations()
         while self.binary_populations:
             pop =  self.binary_populations.pop()
             print( f'Z={pop.kwargs["metallicity"]:.2e} Z_sun' )
