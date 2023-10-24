@@ -76,6 +76,8 @@ STEP_NAMES_LOADING_GRIDS = [
     'step_HMS_HMS', 'step_CO_HeMS', 'step_CO_HMS_RLO', 'step_CO_HeMS_RLO', 'step_detached','step_isolated','step_disrupted','step_initially_single', 'step_merged'
 ]
 
+POSYDON_METALLICITIES = [2e+00,1e+00,4.5e-01,2e-01,1e-01,1e-02,1e-03,1e-04]
+
 class BinaryPopulation:
     """Handle a binary star population."""
 
@@ -109,12 +111,17 @@ class BinaryPopulation:
         if self.JOB_ID is not None:
             self.rank = self.kwargs.pop('RANK', None)
             self.size = self.kwargs.pop('size', None)
+            
+            # Make sure each of the MPI processes has the same entropy
+            # But unique per metallicity
+            if entropy is None:
+                met_shift = POSYDON_METALLICITIES.index(
+                                    self.kwargs.get('metallicity')) +1
+                
+                seq = np.random.SeedSequence(entropy=self.JOB_ID * met_shift)
+
+            # Split the seed sequence between processes for uniqueness
             seed_seq = [i for i in seq.spawn(self.size)][self.rank]
-        #self.comm = self.kwargs.pop('comm', None)
-        #if self.comm is not None:
-        #   self.rank = self.comm.Get_rank()
-        #    self.size = self.comm.Get_size()
-        #    seed_seq = [i for i in seq.spawn(self.size)][self.rank]
         else:
             seed_seq = seq
 
@@ -197,7 +204,6 @@ class BinaryPopulation:
                       'breakdown_to_df':breakdown_to_df_bool,
                       'from_hdf':from_hdf_bool}
             self.kwargs.update(params)
-
             self._safe_evolve(**self.kwargs)
 
     def _safe_evolve(self, **kwargs):
@@ -244,10 +250,11 @@ class BinaryPopulation:
             if not os.path.exists(temp_directory):
                 os.makedirs(temp_directory)
         else:
-            # MAX: is this necessary?
-            if self.rank == 0:
-                if not os.path.exists(temp_directory):
-                    os.makedirs(temp_directory)
+            # Create a directory for MPI runs
+            try: 
+                os.makedirs(temp_directory)
+            except FileExistsError:
+                pass
 
         filenames = []
 

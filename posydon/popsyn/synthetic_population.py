@@ -29,6 +29,8 @@ from posydon.binary_evol.binarystar import BinaryStar
 from posydon.binary_evol.singlestar import SingleStar
 from posydon.utils.common_functions import convert_metallicity_to_string
 
+
+
 class SyntheticPopulation:
 
     def __init__(self, path_to_ini, verbose=False, MODEL={}):
@@ -66,12 +68,13 @@ class SyntheticPopulation:
             raise ValueError('You did not provide a valid path_to_ini!')
         else:
             self.synthetic_pop_params = binarypop_kwargs_from_ini(path_to_ini)
-            self.metallicities = self.synthetic_pop_params['metallicity']
+            self.metallicity = self.synthetic_pop_params['metallicity']
             if not isinstance( self.metallicity, list):
                 self.metallicity = [self.metallicity]
             self.binary_populations = None
         
     def create_binary_populations(self):
+        """Create a list of BinaryPopulation objects."""
         self.binary_populations = []
         ini_kw = self.synthetic_pop_params.copy()
         for met in self.metallicity[::-1]:

@@ -470,14 +470,14 @@ def binarypop_kwargs_from_ini(path, verbose=False):
 
             # hard code for running with MPI, only try to import if use_MPI
             if pop_kwargs['use_MPI']:
-                #from mpi4py import MPI
-                #pop_kwargs['comm'] = MPI.COMM_WORLD
-                pop_kwargs['JOB_ID'] = os.environ['SLURM_ARRAY_JOB_ID']
-                pop_kwargs['RANK'] = os.environ['SLURM_ARRAY_TASK_ID']
-                pop_kwargs['size'] = os.environ['SLURM_ARRAY_TASK_COUNT']
+                pop_kwargs['JOB_ID'] = np.int64(os.environ['SLURM_ARRAY_JOB_ID'])
+                pop_kwargs['RANK'] = np.int64(os.environ['SLURM_ARRAY_TASK_ID'])
+                pop_kwargs['size'] = np.int64(os.environ['SLURM_ARRAY_TASK_COUNT'])
             else:
-                pop_kwargs['comm'] = None
-
+                pop_kwargs['JOB_ID'] = None
+                pop_kwargs['RANK'] = None
+                pop_kwargs['size'] = None
+                
         # right now binary, S1, and S2 output kwargs are all passed
         # into the BinaryPopulation during init
         elif section == 'BinaryStar_output':
