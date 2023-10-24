@@ -470,8 +470,11 @@ def binarypop_kwargs_from_ini(path, verbose=False):
 
             # hard code for running with MPI, only try to import if use_MPI
             if pop_kwargs['use_MPI']:
-                from mpi4py import MPI
-                pop_kwargs['comm'] = MPI.COMM_WORLD
+                #from mpi4py import MPI
+                #pop_kwargs['comm'] = MPI.COMM_WORLD
+                pop_kwargs['JOB_ID'] = os.environ['SLURM_ARRAY_JOB_ID']
+                pop_kwargs['RANK'] = os.environ['SLURM_ARRAY_TASK_ID']
+                pop_kwargs['size'] = os.environ['SLURM_ARRAY_TASK_COUNT']
             else:
                 pop_kwargs['comm'] = None
 
