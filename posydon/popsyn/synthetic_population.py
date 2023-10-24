@@ -175,7 +175,7 @@ class SyntheticPopulation:
 
 
     def parse(self, S1_state=None, S2_state=None, binary_state=None,
-               binary_event=None, invert_S1S2=False, chunksize=500000):
+               binary_event=None, step_name=None, invert_S1S2=False, chunksize=500000):
         """Sort binaries of interests given some properties.
 
         Parameters
@@ -203,10 +203,10 @@ class SyntheticPopulation:
         count = 0
         tmp = 0
         if self.verbose:
-            print('Binary count with (S1_state, S2_state, binary_state, binary_event) equal')
-            print(f'to ({S1_state}, {S2_state}, {binary_state}, {binary_event})')
+            print('Binary count with (S1_state, S2_state, binary_state, binary_event, step_name) equal')
+            print(f'to ({S1_state}, {S2_state}, {binary_state}, {binary_event}, {step_name})')
             if invert_S1S2:
-                print(f'and ({S2_state}, {S1_state}, {binary_state}, {binary_event})')
+                print(f'and ({S2_state}, {S1_state}, {binary_state}, {binary_event}, {step_name})')
         for k, file in enumerate(self.path_to_data):
             df_sel_met = pd.DataFrame()
             sel_met = []
@@ -220,6 +220,7 @@ class SyntheticPopulation:
                                     S2_state=S2_state,
                                     binary_state=binary_state,
                                     binary_event=binary_event,
+                                    step_name=step_name,
                                     invert_S1S2=invert_S1S2)
 
                 # select systems
