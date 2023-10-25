@@ -36,6 +36,7 @@ jobs:
       run: |
         sudo apt-get update
         sudo apt-get install gfortran swig libhdf5-serial-dev libmpich-dev
+        python -m pip install pandoc
         python -m pip install coverage cpp-coveralls flake8 pytest
         python -m pip install .[doc]
         python -m pip install .[ml]
