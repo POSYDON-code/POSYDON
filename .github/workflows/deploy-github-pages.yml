@@ -40,7 +40,6 @@ jobs:
         python -m pip install pandoc
         python -m pip install coverage cpp-coveralls flake8 pytest
         python -m pip install .[doc]
-        python -m pip install .[ml]
     - name: Make dependencies
       env:
         PATH_TO_POSYDON: /home/runner/work/POSYDON/POSYDON/
