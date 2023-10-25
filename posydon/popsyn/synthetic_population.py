@@ -279,6 +279,8 @@ class SyntheticPopulation:
                     df_sel_met = pd.concat([df_sel_met, df_tmp])
                     del df_tmp
 
+            sel_met = np.unique(sel_met)
+            
             if k > 0 and df_sel.shape[0] > 0:
                 shift_index = max(np.unique(df_sel.index)) + 1 
                 df_sel_met.index += shift_index
