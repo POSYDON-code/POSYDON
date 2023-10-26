@@ -471,7 +471,9 @@ def binarypop_kwargs_from_ini(path, verbose=False):
             # hard code for running with MPI, only try to import if use_MPI
             if pop_kwargs['use_MPI']:
                 pop_kwargs['JOB_ID'] = np.int64(os.environ['SLURM_ARRAY_JOB_ID'])
-                pop_kwargs['RANK'] = np.int64(os.environ['SLURM_ARRAY_TASK_ID'])
+                # account for job array not starting at 0
+                min_rank = np.int64(os.environ['SLURM_ARRAY_TASK_MIN'])
+                pop_kwargs['RANK'] = np.int64(os.environ['SLURM_ARRAY_TASK_ID'])-min_rank
                 pop_kwargs['size'] = np.int64(os.environ['SLURM_ARRAY_TASK_COUNT'])
             else:
                 pop_kwargs['JOB_ID'] = None
