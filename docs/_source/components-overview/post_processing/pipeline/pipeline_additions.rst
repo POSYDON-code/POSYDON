@@ -62,13 +62,13 @@ interpolators can be used.
 
 .. table:: Predefined plots with variable `QUANTITY`
 
-    =======================  ====================  ==========  ======  ======  ======
-    quantities_to_plot       'term_flag'           'zvar'      'zmin'  'zmax'  'zlog'
-    =======================  ====================  ==========  ======  ======  ======
-    'QUANTITY'               'termination_flag_1'  'QUANTITY'  None    None    False
-    'LOG10_QUANTITY'         'termination_flag_1'  'QUANTITY'  None    None    True
-    'INTERP_ERROR_QUANTITY'  None                  'QUANTITY'  0       0.1     False
-    =======================  ====================  ==========  ======  ======  ======
+    ============================  ====================  ============  ======  ======  ======
+    quantities_to_plot            'term_flag'           'zvar'        'zmin'  'zmax'  'zlog'
+    ============================  ====================  ============  ======  ======  ======
+    '`QUANTITY`'                  'termination_flag_1'  '`QUANTITY`'  None    None    False
+    'LOG10\_ `QUANTITY`'          'termination_flag_1'  '`QUANTITY`'  None    None    True
+    'INTERP\_ERROR\_ `QUANTITY`'  None                  '`QUANTITY`'  0       0.1     False
+    ============================  ====================  ============  ======  ======  ======
 
 .. _pipeline_checks:
 

@@ -197,6 +197,6 @@ the logic and changes.
     reverse_MT           default in v3+  it uses a MESA version with a bug fix, that the role of donor and accretor can switch during the simulation
     opacity_max          caution         it uses a fixed maximum opacity of 0.5 (this is only a last option change to get more stability)
     TPAGBwind            default in v3+  it enables the MESA inlist commit, which changes the wind during the TPAGB phase
-    thermohaline_mixing  default in v3+  it enables the MESA inlist commit, which includes thermohaline mixing
+    thermohaline_mixing  default in v3+  it uses thermohaline mixing in the inlist
     ===================  ==============  ===========
 
