@@ -31,7 +31,7 @@ BINARYPROPERTIES_DTYPES = {
     'separation': 'float64',               # binary orbital separation (solar radii)
     'orbital_period': 'float64',           # binary orbital period (days)
     'eccentricity': 'float64',             # binary eccentricity
-    'V_sys': 'object',                    # array of the 3 systemic velocity coordinates
+    'V_sys': 'object',                    # list of the 3 systemic velocity coordinates
     # (R_{star} - R_{Roche_lobe}) / R_{Roche_lobe}...
     'rl_relative_overflow_1': 'float64',   # ...for star 1
     'rl_relative_overflow_2': 'float64',   # ...for star 2
@@ -46,19 +46,14 @@ BINARYPROPERTIES_DTYPES = {
     't_sync_rad_2': 'float64',
     't_sync_conv_2': 'float64',
     'nearest_neighbour_distance': 'object',   # the distance of system from its nearest
-                                              # neighbour of MESA binary system  in case
-                                              # of interpolation during the the end of
-                                              # the previous step including MESA psygrid.
-                                              # The distance is normalized in the
-                                              # parameter space and limits at which it
-                                              # was calculated. See `mesa_step` for more.
+                                            # neighbour of MESA binary system  in case
+                                            # of interpolation during the the end of
+                                            # the previous step including MESA psygrid.
+                                            # The distance is normalized in the
+                                            # parameter space and limits at which it
+                                            # was calculated. See `mesa_step` for more.
 }
 
-# specifies the dtypes of elements within an object (e.g., of elements in an array)
-OBJECT_FIXED_SUB_DTYPES = {
-    'V_sys': 'float64',
-    'nearest_neighbour_distance': 'float64'
-}
 
 STARPROPERTIES_DTYPES = {
     'state': 'string',            # the evolutionary state of the star. For more info see
@@ -87,8 +82,8 @@ STARPROPERTIES_DTYPES = {
     'center_c12': 'float64',
     'center_n14': 'float64',
     'center_o16': 'float64',
-    # Mass fractions at the surface
     'surface_h1': 'float64',
+    # Mass fractions at the surface
     'surface_he4': 'float64',
     'surface_c12': 'float64',
     'surface_n14': 'float64',
@@ -129,20 +124,15 @@ STARPROPERTIES_DTYPES = {
     'profile': 'object',    # the profile of the star, including extended information of
                             # its internal structure, for a specific timestep, usually for
                             # the end of the previous step including MESA psygrid.
-    'total_mass_h1': 'float64',   # total mass of Hydrogen throughout the star
-    'total_mass_he4': 'float64',  # total mass of Helium throughout the star
 }
 
 EXTRA_BINARY_COLUMNS_DTYPES = {
     'step_names' : 'string',
-    'step_times' : 'float64',
+    'step_times' : 'float64', 
 }
 
 # no default extras for history attributes
-EXTRA_STAR_COLUMNS_DTYPES = {
-    'm_disk_radiated': 'float64',
-    'm_disk_accreted': 'float64',
-}
+EXTRA_STAR_COLUMNS_DTYPES = {}
 
 SCALAR_NAMES_DTYPES = {
     'natal_kick_array_0': 'float64',
@@ -151,23 +141,16 @@ SCALAR_NAMES_DTYPES = {
     'natal_kick_array_3': 'float64',
     'SN_type':'string',
     'f_fb': 'float64',
-    'spin_orbit_tilt_first_SN': 'float64',
-    'spin_orbit_tilt_second_SN': 'float64',
-    'M4': 'float64',
-    'mu4': 'float64',
-    'avg_c_in_c_core_at_He_depletion' : 'float64',
-    'co_core_mass_at_He_depletion' : 'float64',
-    'h1_mass_ej': 'float64',
-    'he4_mass_ej': 'float64',
+    'spin_orbit_tilt': 'float64',
 }
 
 
-def clean_binary_history_df(binary_df, extra_binary_dtypes_user=None,
+def clean_binary_history_df(binary_df, extra_binary_dtypes_user=None, 
                             extra_S1_dtypes_user=None, extra_S2_dtypes_user=None):
     """Take a posydon binary history DataFrame from the
     BinaryStar.to_df method and clean the data for saving
     by setting Data Types of the columns explicitly.
-
+    
     Parameters
     ---------
     binary_df : DataFrame
@@ -179,15 +162,15 @@ def clean_binary_history_df(binary_df, extra_binary_dtypes_user=None,
         Same as above, but only for star 1.
     extra_S2_dtypes_user : dict, optional
         Same as above, but only for star 2.
-
+        
     Returns
     -------
     binary_df : DataFrame
         A cleaned binary history ready for saving to HDF.
     """
-
+    
     assert isinstance( binary_df, pd.DataFrame )
-
+    
     # User specified extra binary and star columns
     if extra_binary_dtypes_user is None:
         extra_binary_dtypes_user = {}
@@ -201,21 +184,21 @@ def clean_binary_history_df(binary_df, extra_binary_dtypes_user=None,
 
     # Set data types for all columns explicitly
     hist_columns =  set(binary_df.columns)
-
+    
     # combine columns for binary history with extras
-    BP_comb_extras_dict = {**BINARYPROPERTIES_DTYPES, **EXTRA_BINARY_COLUMNS_DTYPES,
+    BP_comb_extras_dict = {**BINARYPROPERTIES_DTYPES, **EXTRA_BINARY_COLUMNS_DTYPES, 
                            **extra_binary_dtypes_user}
     # combine columns for star 1 and star 2 history with extras
-    SP_comb_S1_dict = {**STARPROPERTIES_DTYPES, **EXTRA_STAR_COLUMNS_DTYPES,
+    SP_comb_S1_dict = {**STARPROPERTIES_DTYPES, **EXTRA_STAR_COLUMNS_DTYPES, 
                        **extra_S1_dtypes_user}
-    SP_comb_S2_dict = {**STARPROPERTIES_DTYPES, **EXTRA_STAR_COLUMNS_DTYPES,
+    SP_comb_S2_dict = {**STARPROPERTIES_DTYPES, **EXTRA_STAR_COLUMNS_DTYPES, 
                        **extra_S2_dtypes_user}
-
+    
     # All default & user passed keys which we have mappings for
     binary_keys = set( BP_comb_extras_dict.keys() )
     S1_keys = set( ['S1_' + key for key in SP_comb_S1_dict.keys()] )
     S2_keys = set( ['S2_' + key for key in SP_comb_S2_dict.keys()] )
-
+    
     # Find common keys between the binary_df and our column-dtype mapping
     common_keys =  hist_columns & ( binary_keys | S1_keys | S2_keys )
 
@@ -241,17 +224,17 @@ def clean_binary_history_df(binary_df, extra_binary_dtypes_user=None,
     return binary_df
 
 
-def clean_binary_oneline_df(oneline_df, extra_binary_dtypes_user=None,
+def clean_binary_oneline_df(oneline_df, extra_binary_dtypes_user=None, 
                             extra_S1_dtypes_user=None, extra_S2_dtypes_user=None):
     """Take a posydon binary oneline DataFrame from the
     BinaryStar.to_oneline_df method and clean the data for saving
     by setting Data Types of the columns explicitly.
-
+    
     This method is similar to clean_binary_history_df since they
     have many overalapping columns, with a few extras and different naming.
-
+    
     Note: there may be edge cases not handed if new scalar_names are added.
-
+    
     Parameters
     ---------
     binary_df : DataFrame
@@ -263,14 +246,14 @@ def clean_binary_oneline_df(oneline_df, extra_binary_dtypes_user=None,
         Same as above, but only for star 1.
     extra_S2_dtypes_user : dict, optional
         Same as above, but only for star 2.
-
+        
     Returns
     -------
     binary_df : DataFrame
         A cleaned binary history ready for saving to HDF.
     """
     assert isinstance( oneline_df, pd.DataFrame )
-
+    
     # User specified extra binary and star columns
     if extra_binary_dtypes_user is None:
         extra_binary_dtypes_user = {}
@@ -284,37 +267,37 @@ def clean_binary_oneline_df(oneline_df, extra_binary_dtypes_user=None,
 
     # Set data types for all columns explicitly
     oneline_columns =  set(oneline_df.columns)
-
+    
     # combine columns for binary history with extras
-    BP_comb_extras_dict = {**BINARYPROPERTIES_DTYPES, **EXTRA_BINARY_COLUMNS_DTYPES,
+    BP_comb_extras_dict = {**BINARYPROPERTIES_DTYPES, **EXTRA_BINARY_COLUMNS_DTYPES, 
                            **extra_binary_dtypes_user}
     # combine columns for star 1 and star 2 history with extras
-    SP_comb_S1_dict = {**STARPROPERTIES_DTYPES, **EXTRA_STAR_COLUMNS_DTYPES,
+    SP_comb_S1_dict = {**STARPROPERTIES_DTYPES, **EXTRA_STAR_COLUMNS_DTYPES, 
                        **SCALAR_NAMES_DTYPES, **extra_S1_dtypes_user}
-    SP_comb_S2_dict = {**STARPROPERTIES_DTYPES, **EXTRA_STAR_COLUMNS_DTYPES,
+    SP_comb_S2_dict = {**STARPROPERTIES_DTYPES, **EXTRA_STAR_COLUMNS_DTYPES, 
                        **SCALAR_NAMES_DTYPES, **extra_S2_dtypes_user}
-
+    
 
     # All default & user passed keys which we have mappings for
-    binary_keys = set( [key + '_i' for key in BP_comb_extras_dict.keys()]
+    binary_keys = set( [key + '_i' for key in BP_comb_extras_dict.keys()] 
                      + [key + '_f' for key in BP_comb_extras_dict.keys()] )
-    S1_keys = set( ['S1_' + key + '_i' for key in SP_comb_S1_dict.keys()]
+    S1_keys = set( ['S1_' + key + '_i' for key in SP_comb_S1_dict.keys()] 
                  + ['S1_' + key + '_f' for key in SP_comb_S1_dict.keys()] )
     S2_keys = set( ['S2_' + key + '_i' for key in SP_comb_S2_dict.keys()]
                  + ['S2_' + key + '_f' for key in SP_comb_S2_dict.keys()] )
     scalar_keys = set( ['S1_' + key for key in SCALAR_NAMES_DTYPES.keys()]
                      + ['S2_' + key for key in SCALAR_NAMES_DTYPES.keys()] )
-
+                        
     # Find common keys between the binary_df and our column-dtype mapping
-    common_keys =  oneline_columns & ( binary_keys
+    common_keys =  oneline_columns & ( binary_keys 
                                      | S1_keys
-                                     | S2_keys
+                                     | S2_keys 
                                      | scalar_keys)
-
+    
 
     # Create a dict with column-dtype mapping only for columns in binary_df
     common_dtype_dict = {}
-    # helper function to remove the '_i' and '_f'
+    # helper function to remove the '_i' and '_f' 
     strip_prefix_and_suffix = lambda key : key.replace('_i', '').replace('_f', '') \
                                              .replace('S1_', '').replace('S2_', '')
     for key in common_keys:
@@ -337,7 +320,7 @@ def clean_binary_oneline_df(oneline_df, extra_binary_dtypes_user=None,
         if val == 'string':
             convert_to_obj[key] = 'object'
     oneline_df = oneline_df.astype( convert_to_obj )
-
+    
     return oneline_df
 
 
@@ -431,27 +414,13 @@ def simprop_kwargs_from_ini(path, verbose=False):
             # from posydon.... import ....
             #      ^ import      as   ^ name
             import_and_name = sect_dict.pop('import')
-            absolute_import_and_name = sect_dict.pop('absolute_import', None)
+            package = sect_dict.pop('absolute_import', None)
 
-            # Use absolute import if provided
-            if absolute_import_and_name is not None:
-                # unpack user specified py file, and class name to import
-                import_location, class_name = absolute_import_and_name
-                absolute_import_location = os.path.abspath(import_location)
-                # Format: remove leading / in abs path, replace / with dots, remove '.py'
-                location_as_module_name = absolute_import_location[1:].replace('/', '.').replace('.py', '')
-
-                # create spec and load module
-                spec = importlib.util.spec_from_file_location( location_as_module_name, location=absolute_import_location)
-                module = importlib.util.module_from_spec(spec)
-                spec.loader.exec_module(module)
-            else:
-                # Use builtin posydon classes
-                import_location, class_name = import_and_name
-                # import module
-                module = importlib.import_module(import_location)
+            # import module
+            module = importlib.import_module(import_and_name[0],
+                                             package=package)
             # extract class or function
-            cls = getattr(module, class_name)
+            cls = getattr(module, import_and_name[1])
             # match the form SimulationProperties expects
             parser_dict[section] = (cls, sect_dict)
 
@@ -518,31 +487,12 @@ def binarypop_kwargs_from_ini(path, verbose=False):
             for key, val in parser[section].items():
                 pop_kwargs[key] = ast.literal_eval(val)
 
-
-            JOB_ID = os.getenv('SLURM_ARRAY_JOB_ID')
-            # MPI import for local use only
-            if pop_kwargs['use_MPI'] == True and JOB_ID is not None:
-                raise ValueError('MPI must be turned off for job arrays.')
-                exit()
-            elif pop_kwargs['use_MPI'] == True:
+            # hard code for running with MPI, only try to import if use_MPI
+            if pop_kwargs['use_MPI']:
                 from mpi4py import MPI
                 pop_kwargs['comm'] = MPI.COMM_WORLD
-            # MPI needs to be turned off for job arrays
             else:
                 pop_kwargs['comm'] = None
-
-                # Check if we are running as a job array
-                if JOB_ID is not None and pop_kwargs['use_MPI'] is True:
-                    raise ValueError('MPI must be turned off for job arrays.')
-                elif JOB_ID is not None:
-                    pop_kwargs['JOB_ID'] = np.int64(os.environ['SLURM_ARRAY_JOB_ID'])
-                    # account for job array not starting at 0
-                    min_rank = np.int64(os.environ['SLURM_ARRAY_TASK_MIN'])
-                    pop_kwargs['RANK'] = np.int64(os.environ['SLURM_ARRAY_TASK_ID'])-min_rank
-                    pop_kwargs['size'] = np.int64(os.environ['SLURM_ARRAY_TASK_COUNT'])
-                else:
-                    pop_kwargs['RANK'] = None
-                    pop_kwargs['size'] = None
 
         # right now binary, S1, and S2 output kwargs are all passed
         # into the BinaryPopulation during init
@@ -574,55 +524,3 @@ def binarypop_kwargs_from_ini(path, verbose=False):
         **sim_prop_kwargs)
 
     return pop_kwargs
-
-
-def create_run_script_text(ini_file):
-
-
-    text=["from posydon.popsyn.binarypopulation import BinaryPopulation",
-         "from posydon.popsyn.io import binarypop_kwargs_from_ini",
-         "from posydon.utils.common_functions import convert_metallicity_to_string",
-         "import argparse",
-
-         'if __name__ == "__main__":',
-         "    parser = argparse.ArgumentParser()",
-         "    parser.add_argument('metallicity', type=float)",
-         "    args = parser.parse_args()",
-        f"    ini_kw = binarypop_kwargs_from_ini('{ini_file}')",
-         "    ini_kw['metallicity'] = args.metallicity",
-         "    str_met = convert_metallicity_to_string(args.metallicity)",
-         "    ini_kw['temp_directory'] = str_met+'_Zsun_' + ini_kw['temp_directory']",
-         "    synpop = BinaryPopulation(**ini_kw)",
-         "    synpop.evolve()"]
-
-    text = '\n'.join(text)
-    return text
-
-
-def create_merge_script_text(ini_file):
-
-
-    text = ['from posydon.popsyn.binarypopulation import BinaryPopulation',
-            'from posydon.popsyn.io import binarypop_kwargs_from_ini',
-            'from posydon.utils.common_functions import convert_metallicity_to_string',
-            'import argparse',
-            'import os',
-            'if __name__ == "__main__":',
-            '    parser = argparse.ArgumentParser()',
-            '    parser.add_argument("metallicity", type=float)',
-            '    args = parser.parse_args()',
-           f'    ini_kw = binarypop_kwargs_from_ini("{ini_file}")',
-            '    ini_kw["metallicity"] = args.metallicity',
-            '    str_met = convert_metallicity_to_string(args.metallicity)',
-            '    ini_kw["temp_directory"] = str_met+"_Zsun_" + ini_kw["temp_directory"]',
-            '    synpop = BinaryPopulation(**ini_kw)',
-            '    path_to_batch = ini_kw["temp_directory"]',
-            '    tmp_files = [os.path.join(path_to_batch, f) for f in os.listdir(path_to_batch) if os.path.isfile(os.path.join(path_to_batch, f))]',
-            '    tmp_files = sorted(tmp_files, key=lambda x: int(x.split(".")[-1]))',
-            '    synpop.combine_saved_files(str_met+ "_Zsun_population.h5", tmp_files)',
-            '    print("done")',
-            '    if len(os.listdir(path_to_batch)) == 0:',
-            '        os.rmdir(path_to_batch)']
-
-    text = '\n'.join(text)
-    return text
