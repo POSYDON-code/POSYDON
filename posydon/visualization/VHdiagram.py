@@ -48,7 +48,7 @@ class VHdiagram:
         )  # Check if there is instance of QApplication
         if not self._app:  # if not, create it
             self._app = QApplication([])
-        
+
         self._presenter = Presenter(filename=filename, path=path, binary=binary)
 
         self._presenter.present(index, presentMode)
