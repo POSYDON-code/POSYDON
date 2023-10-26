@@ -7,6 +7,7 @@ __authors__ = [
     "Simone Bavera <Simone.Bavera@unige.ch>",
     "Kyle Akira Rocha <kylerocha2024@u.northwestern.edu>",
     "Monica Gallegos-Garcia <monicagallegosgarcia2024@u.northwestern.edu>",
+    "Max Merlijn Briel < max.briel@gmail.com",
 ]
 
 import warnings
@@ -93,8 +94,6 @@ class SyntheticPopulation:
             pop =  self.binary_populations.pop()
             print( f'Z={pop.kwargs["metallicity"]:.2e} Z_sun' )
             pop.evolve()
-            #met_prefix = f'{pop.kwargs["metallicity"]:.2e}_Zsun_'
-            #pop.save( met_prefix + 'population.h5' )
             del pop
 
 
@@ -117,7 +116,6 @@ class SyntheticPopulation:
         for met, path_to_batch in zip(self.metallicity, path_to_batches):
             met_prefix = self.create_met_prefix(met)
             tmp_files = [f for f in os.listdir(path_to_batch) if os.isfile(os.join(path_to_batch, f))]
-        
 
             BinaryPopulation(**self.ini_kw).combine_saved_files( met_prefix + 'population.h5', tmp_files)
 
@@ -226,9 +224,14 @@ class SyntheticPopulation:
 
         """
         
-        # catch the case where the user did not provide a path to data
-        if not ((isinstance(path_to_data, list) and '.h5' in path_to_data[0]) or ('.h5' in path_to_data)):
+        # if the user provided a single string instead of a list of strings
+        if type(path_to_data) is str and ('.h5' in path_to_data):
+            path_to_data = [path_to_data]
+        
+        # catch the case where the user did not provide a path to data     
+        if not (isinstance(path_to_data, list) and '.h5' in path_to_data[0]):
             raise ValueError('You did not provide a valid path_to_data!')
+
         
         df_sel = pd.DataFrame()
         df_sel_oneline = pd.DataFrame()
@@ -239,27 +242,37 @@ class SyntheticPopulation:
             print(f'to ({S1_state}, {S2_state}, {binary_state}, {binary_event}, {step_name})')
             if invert_S1S2:
                 print(f'and ({S2_state}, {S1_state}, {binary_state}, {binary_event}, {step_name})')
-        for k, file in enumerate(self.path_to_data):
+        for k, file in enumerate(path_to_data):
             df_sel_met = pd.DataFrame()
             sel_met = []
+            last_binary_df = None
+            
             # read metallicity from path
             met = float(file.split('/')[-1].split('_Zsun')[0])*Zsun
             simulated_mass_for_met = 0.
-            # TODO: handle binaries at the edge case of the chuncks
+            
             for i, df in enumerate(pd.read_hdf(file,  key='history', chunksize=chunksize)):
-
-                logic = self.apply_logic(df, S1_state=S1_state,
-                                    S2_state=S2_state,
-                                    binary_state=binary_state,
-                                    binary_event=binary_event,
-                                    step_name=step_name,
-                                    invert_S1S2=invert_S1S2)
-
+                
+                if last_binary_df is not None:
+                    df = pd.concat([last_binary_df, df])
+                    last_binary_df = None
+                    
+                last_bindary_df = df.loc[[df.index[-1]]]
+                df.drop(df.index[-1], inplace=True)
+                
+                logic = self.apply_logic(df, 
+                                         S1_state     = S1_state,
+                                         S2_state     = S2_state,
+                                         binary_state = binary_state,
+                                         binary_event = binary_event,
+                                         step_name    = step_name,
+                                         invert_S1S2  = invert_S1S2)
+                
                 # select systems
                 # remove duplicate indicies, e.g. if selecting 'contact' state it appears twice
                 # if no specific event is selected (the second time is from the copied END event)
                 sel = df.loc[logic].index.drop_duplicates()
-
+                
                 # count systems
                 count += len(np.unique(sel))
 
@@ -272,24 +285,41 @@ class SyntheticPopulation:
                 if any(sel):
                     df_tmp = pd.DataFrame()
                     df_tmp = df.loc[sel]
-                    sel_met.extend(sel)
                     # store metallicity
                     df_tmp['metallicity'] = met
                     # concatenate results
                     df_sel_met = pd.concat([df_sel_met, df_tmp])
                     del df_tmp
 
-            sel_met = np.unique(sel_met)
+            # check last binary if it should be included
+            if last_binary_df is not None:
+                logic = self.apply_logic(last_binary_df, 
+                                    S1_state     = S1_state,
+                                    S2_state     = S2_state,
+                                    binary_state = binary_state,
+                                    binary_even  = binary_event,
+                                    step_name    = step_name,
+                                    invert_S1S2  = invert_S1S2)
+                
+                # The last binary is selected
+                if any(logic) == True:
+                    df_tmp = last_binary_df.loc[logic]
+                    df_sel_met = pd.concat([df_sel_met, df_tmp])
+
+            # get unique indicies
+            sel_met = df_sel_met.index.unique()
             
             if k > 0 and df_sel.shape[0] > 0:
                 shift_index = max(np.unique(df_sel.index)) + 1 
-                df_sel_met.index += shift_index
-
+            else:
+                shift_index = 0
+            
             # store simulated and underlying stellar mass
             df_sel_met['simulated_mass_for_met'] = simulated_mass_for_met
             df_sel_met['underlying_mass_for_met'] = initial_total_underlying_mass(df=simulated_mass_for_met, **self.synthetic_pop_params)[0] # This used to be init_kw
 
-            # concatenate results
+            # concatenate results with shifted indices for each metallicity
+            df_sel_met.index += shift_index
             df_sel = pd.concat([df_sel, df_sel_met])
             del df_sel_met
 
@@ -299,10 +329,7 @@ class SyntheticPopulation:
             df_sel_met_oneline = df_sel_met_oneline.loc[sel_met]
             df_sel_met_oneline['metallicity'] = met
 
-            if k > 0 and df_sel_oneline.shape[0] > 0:
-                shift_index = max(np.unique(df_sel_oneline.index)) + 1
-                df_sel_met_oneline.index += shift_index 
-
+            df_sel_met_oneline.index += shift_index
             df_sel_oneline = pd.concat([df_sel_oneline, df_sel_met_oneline])
 
             if self.verbose:
