@@ -120,7 +120,8 @@ class SyntheticPopulation:
                             if os.path.isfile(os.path.join(path_to_batch, f))]
             
             BinaryPopulation(**self.get_ini_kw()).combine_saved_files(met_prefix+ 'population.h5', tmp_files)
-
+            print(f'Population at Z={met:.2e} Z_sun successfully merged!')
+            os.rmdir(path_to_batch)
 
     @staticmethod
     def create_met_prefix(met):
