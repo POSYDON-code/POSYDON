@@ -49,7 +49,6 @@ class VHdiagram:
         if not self._app:  # if not, create it
             self._app = QApplication([])
         
-        print(binary)
         self._presenter = Presenter(filename=filename, path=path, binary=binary)
 
         self._presenter.present(index, presentMode)
