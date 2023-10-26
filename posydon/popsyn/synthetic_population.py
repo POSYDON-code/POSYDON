@@ -97,7 +97,7 @@ class SyntheticPopulation:
             del pop
 
 
-    def merge_parallel_run(self, path_to_batches):
+    def merge_parallel_runs(self, path_to_batches):
         """
         Merge the folder or list of folders into a single file per metallicity.
 
@@ -115,9 +115,11 @@ class SyntheticPopulation:
 
         for met, path_to_batch in zip(self.metallicity, path_to_batches):
             met_prefix = self.create_met_prefix(met)
-            tmp_files = [f for f in os.listdir(path_to_batch) if os.isfile(os.join(path_to_batch, f))]
-
-            BinaryPopulation(**self.ini_kw).combine_saved_files( met_prefix + 'population.h5', tmp_files)
+            tmp_files = [os.path.join(path_to_batch, f)     \
+                         for f in os.listdir(path_to_batch) \
+                            if os.path.isfile(os.path.join(path_to_batch, f))]
+            
+            BinaryPopulation(**self.get_ini_kw()).combine_saved_files(met_prefix+ 'population.h5', tmp_files)
 
 
     @staticmethod
