@@ -348,7 +348,7 @@ class BinaryPopulation:
                 self.combine_saved_files(os.path.join(temp_directory,
                                                       "evolution.combined"),
                                          filenames, mode = "w")
-            else: 
+            else:
                 self.combine_saved_files(
                     os.path.join(temp_directory,
                                  f"evolution.combined.{self.rank}"),
@@ -388,19 +388,6 @@ class BinaryPopulation:
                 file_path = os.path.join(dir_name, file_name)
                 warnings.warn('The provided path is a directory - saving '
                               'to {0} instead.'.format(file_path), Warning)
-
-            #self.Barrier()
-            if self.rank == 0:
-
-                file_name = os.path.basename(absolute_filepath)
-                tmp_files = [os.path.join(
-                    self.kwargs["temp_directory"], f"evolution.combined.{i}")
-                             for i in range(self.size)]
-
-                self.combine_saved_files(absolute_filepath, tmp_files, mode=mode, **kwargs)
-
-            else:
-                return
 
     def make_temp_fname(self):
         """Get a valid filename for the temporary file."""
@@ -457,9 +444,7 @@ class BinaryPopulation:
     def __getstate__(self):
         """Prepare the BinaryPopulation to be 'pickled'."""
         # In order to be generally picklable, we need to discard the
-        # communicator object before trying.
         d = self.__dict__
-        #d["comm"] = None
         prop = d['population_properties']
         if prop.steps_loaded:
             prop.close()

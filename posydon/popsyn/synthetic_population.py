@@ -84,7 +84,7 @@ class SyntheticPopulation:
             self.binary_populations.append(BinaryPopulation(**ini_kw))
 
     def get_ini_kw(self):
-        return self.synthetic_pop_params
+        return self.synthetic_pop_params.copy()
 
     def evolve(self):
         """Evolve population(s) at given Z(s)."""
@@ -260,7 +260,7 @@ class SyntheticPopulation:
                     df = pd.concat([last_binary_df, df])
                     last_binary_df = None
                     
-                last_bindary_df = df.loc[[df.index[-1]]]
+                last_binary_df = df.loc[[df.index[-1]]]
                 df.drop(df.index[-1], inplace=True)
                 
                 logic = self.apply_logic(df, 
@@ -386,6 +386,7 @@ class SyntheticPopulation:
 
     def get_dco_at_formation(self, S1_state, S2_state, oneline_cols=None, formation_channels=False, mt_history=False):
         """Populates `df_synthetic` with DCOs at their formation.
+        
         If `formation_channels` is `True` the `channel` column is added to the
         `df_synthetic` dataframe.
 
@@ -401,8 +402,6 @@ class SyntheticPopulation:
         The following columns are added to the `df_synthetic` dataframe:
             - S1_m_disk_radiated
             - S2_m_disk_radiated
-
-
 
         Note: by default this function looks for the symmetric state
         S1_state = S2_sate and S2_state = S1_sate.
@@ -558,7 +557,7 @@ class SyntheticPopulation:
         for met in self.met_merger_efficiency:
             sel = (self.df_synthetic['metallicity'] == met)
             count = self.df_synthetic[sel].shape[0]
-            underlying_stellar_mass = self.df_synthetic.loc[sel,'underlying_mss_for_met'].values[0]
+            underlying_stellar_mass = self.df_synthetic.loc[sel,'underlying_mass_for_met'].values[0]
             eff = count/underlying_stellar_mass
             efficiencies.append(eff)
             print(f'DCO merger efficiency at Z={met:1.2E}: {eff:1.2E} Msun^-1')
@@ -737,7 +736,6 @@ class SyntheticPopulation:
         sensitivity='infinite'
         flag_pdet = False
         index, z_formation, z_merger, w_ijk = self.compute_cosmological_weights(sensitivity, flag_pdet, working_dir=working_dir, load_data=load_data, pop='DCO')
-    
         # compute rate density weights
         self.dco_z_rate_density = self.rates.get_centers_redshift_bins()
         total_rate = self.rates.compute_rate_density(w_ijk, z_merger, observable='DCO', sensitivity=sensitivity)
