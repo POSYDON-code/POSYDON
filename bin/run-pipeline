@@ -285,13 +285,21 @@ def train_interpolators(i, path_to_csv_file, verbose=False):
     # load grid
     grid = PSyGrid(verbose=verbose)
     grid.load(grid_path)
-    
-    if '_RLO' in grid_path:
+
+    if 'HMS-HMS' in grid_path and not '_RLO' in grid_path:
+        interp_method = [method, method, method, method]
+        interp_classes = ["no_MT", "stable_MT", "unstable_MT", "stable_reverse_MT"]
+    elif 'HMS-HMS' in grid_path and '_RLO' in grid_path:
+        # This grid currently does not exist. But in case we want to include it
+        # in the future, we have added the functionality.
+        interp_method = [method, method, method]
+        interp_classes = ["stable_MT", "unstable_MT", "stable_reverse_MT"]
+    elif '_RLO' in grid_path:
         interp_method = [method, method]
         interp_classes = ["stable_MT", "unstable_MT"]
     else:
-        interp_method = [method, method, method, method]
-        interp_classes = ["no_MT", "stable_MT", "unstable_MT", "stable_reverse_MT"]
+        interp_method = [method, method, method]
+        interp_classes = ["no_MT", "stable_MT", "unstable_MT"]
     
     # all magnitues that are not model numbers, supernova properites or strings
     # are interpolated with respect to interpolation_class
