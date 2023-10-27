@@ -4,7 +4,7 @@ Generate the spectrum of a single star.
 from copy import copy
 import numpy as np
 from astropy import constants as con
-
+Lo = 3.828e33
 
 def check_boundaries(grids,grid_name,**kwargs):
     """Checks if the stellar parameters in inside the boundaries of the spectral grids.
@@ -124,7 +124,7 @@ def generate_spectrum(grids,star,i,scale,**kwargs):
             return None,state,label
         else:
             try:
-                Flux = grids.grid_flux(label,**x)*R**2*4*np.pi/con.L_sun
+                Flux = grids.grid_flux(label,**x)*R**2*4*np.pi/Lo
                 return Flux.value,star['state'],label
             except LookupError:
                 label = f'failed_attempt_{count}'

@@ -103,6 +103,8 @@ class spectral_grids():
         for key, arg in kwargs.items():
             if key not in specgrid.axis_labels:
                 x.pop(key)
+        if name == "stripped_grid":
+            return None 
         Flux = np.asarray(specgrid.flux(x, self.lam))
         return Flux
 
