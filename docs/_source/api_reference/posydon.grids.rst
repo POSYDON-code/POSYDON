@@ -49,6 +49,7 @@ posydon.grids.post\_processing
    :show-inheritance:
 
 .. _code_psygrid:
+
 posydon.grids.psygrid
 ---------------------
 

@@ -39,6 +39,8 @@ posydon.visualization.interpolation
    :undoc-members:
    :show-inheritance:
 
+.. _vis_plot1D:
+
 posydon.visualization.plot1D
 ----------------------------
 
@@ -46,6 +48,8 @@ posydon.visualization.plot1D
    :members:
    :undoc-members:
    :show-inheritance:
+
+.. _vis_plot2D:
 
 posydon.visualization.plot2D
 ----------------------------

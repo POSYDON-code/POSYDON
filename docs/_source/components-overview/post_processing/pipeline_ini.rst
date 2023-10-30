@@ -16,7 +16,7 @@ There is a setup-pipeline script takes one argument:
 
     setup-pipeline PATH_TO_INI
 
-The content of the ini file is desciped :ref:`below <pipeline_ini_sections>`.
+The content of the ini file is described :ref:`below <pipeline_ini_sections>`.
 It will create for each step, plot or check two files:
 
 1. \*.csv
@@ -33,7 +33,7 @@ all :ref:`tasks <pipeline>`. Hence, you can run all
 
 .. note::
     Currently, the user needs to take care of having a POSYDON_data directly
-    which includes the tables for the core-collape prescriptions him-/herself
+    which includes the tables for the core-collapse prescriptions him-/herself
     in the working directory.
 
 .. _pipeline_ini_sections:
@@ -60,13 +60,13 @@ example to show the supported key words:
 General pipeline settings
 -------------------------
 
-The next sections deals with the general inforamtion about the pipeline. First
+The next sections deals with the general information about the pipeline. First
 it needs to know where the grids are located. The `PATH` specifies, where you
 would like to get the pipeline files being created. The `VERBOSE` option will
 be used for the creation of the pipeline files and during the run of the
 pipeline.
 
-Finially, we have switches to turn on (`True`) and off (`False`) individual
+Finally, we have switches to turn on (`True`) and off (`False`) individual
 :ref:`steps <pipeline_steps>`.
 
 .. code-block:: ini
@@ -104,7 +104,7 @@ All sections have common keywords:
     METALLICITIES       a list of lists of the metallicities of the grids; the looped :samp:`METALLICITY` is used in the path name; the outer list allows you to have different lists for each grid type
     GRID_SLICES         a list of lists of the grid slices; the looped :samp:`GRID_SLICE` is used in the path name; the outer list allows you to have different lists for each grid type
     COMPRESSIONS        a list of lists of compression types
-    DROP_MISSING_FILES  boolean to igrnore missing files
+    DROP_MISSING_FILES  boolean to ignore missing files
     CREATE_PLOTS        a list of plots to make; this will be done independently whether the step is active or not, to make no plots put there an empty list or comment out such a line
     DO_CHECKS           a list of checks to perform; this will be done independently whether the step is active or not, to make no checks put there an empty list or comment out such a line
     ==================  ===========
@@ -119,7 +119,7 @@ that step:
     ====  ============================  ===========
        1  STOP_BEFORE_CARBON_DEPLETION  indicating, whether high mass HMS stars should get their history croped short before carbon depletion (1) or not (0)
        2  GRID_SLICES                   for this step, we have 3 layers of lists: the outermost is still the grid type, the inner most is still the grid slice, the middle layer is the combined grid
-       2  GRIDS_COMBINED                a list of lists of combined grids; the outermost list is again refering to grid type; this is used as name for the new combined grid instead of `GRID_SLICE`
+       2  GRIDS_COMBINED                a list of lists of combined grids; the outermost list is again referring to grid type; this is used as name for the new combined grid instead of `GRID_SLICE`
        4  INTERPOLATION_METHODS         a list of the interpolator types which are trained
        4  CONTROL_GRIDS                 a list of lists of control grids for the `GRID_SLICES`; it need to have the same number of entries as the `GRID_SLICES`, to specify no control grid use an empty string
        R  RERUN_TYPE                    a defined rerun type

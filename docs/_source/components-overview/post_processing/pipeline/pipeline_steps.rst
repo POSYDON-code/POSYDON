@@ -4,7 +4,7 @@
 Pipeline steps
 ##############
 
-The pipeline is devided into several steps, which build up on eachother. Each
+The pipeline is divided into several steps, which build up on each other. Each
 step will take a csv file as input. The name of this file is used to tell the
 pipeline, which step should be performed.
 
@@ -28,7 +28,7 @@ The run-pipeline script takes four arguments:
 Step1: creating a `PSyGrid` object
 ----------------------------------
 
-Frist, we need to create the `psygird` object. To do so, the pipeline needs to
+First, we need to create the `psygird` object. To do so, the pipeline needs to
 now the directory which contains the MESA runs, the compression, and whether to
 crop the history for some certain runs. Hence, the :samp:`step_1.csv` file
 should have those columns:
@@ -40,7 +40,7 @@ should have those columns:
 And the lines below contain the data for each unique combination of the three
 parameters to be processed. Here the :samp:`DATA_ID` simply refers to the line
 below the header starting by 0. Thus, the second line in the file has the index
-0, the thrid one has index 1 and so on.
+0, the third one has index 1 and so on.
 
 The currently supported compression types are:
 
@@ -59,7 +59,7 @@ The currently supported compression types are:
 Step2: combining `PSyGrid` objects
 ----------------------------------
 
-Usually, the girds are slitt into batches or reruns are done. In those cases,
+Usually, the girds are split into batches or reruns are done. In those cases,
 there will be several `PSyGrid` objects created for one gird. This step will
 join them into one. The :samp:`step_2.csv` file should have a matrix structure.
 The columns contain the girds which should be combined to the one specified in
@@ -74,9 +74,9 @@ number (starting with 0). Here an example:
     ,OLD_H5_FILE23
 
 .. warning::
-    The data will be put on top of eachother. E.g. if there is the same initial
-    system in :samp:`OLD_H5_FILE11` and :samp:`OLD_H5_FILE12`, the one in
-    :samp:`OLD_H5_FILE11` will be discarded and only the one in
+    The data will be put on top of each other. E.g. if there is the same
+    initial system in :samp:`OLD_H5_FILE11` and :samp:`OLD_H5_FILE12`, the one
+    in :samp:`OLD_H5_FILE11` will be discarded and only the one in
     :samp:`OLD_H5_FILE12` will end up in :samp:`NEW_H5_FILE1`.
 
 .. _pipeline_step3:
@@ -84,11 +84,11 @@ number (starting with 0). Here an example:
 Step3: calculating extra values from detailed data
 --------------------------------------------------
 
-In this step we calculate extra quanties from the histories and profiles. Those
-extra values are key parameters at He depletion, at onset of common envelope
-evolution, and at core collapse.
+In this step we calculate extra quantities from the histories and profiles.
+Those extra values are key parameters at He depletion, at onset of common
+envelope evolution, and at core collapse.
 
-Because some of the values may require a high precission in the data, we
+Because some of the values may require a high precision in the data, we
 recommend to use the data from the ORIGINAL compression to calculate them. But
 the new values can be added to any `PSyGrid` object. Hence this step requests
 three paths to be specified in :samp:`step_3.csv`:
@@ -134,7 +134,7 @@ of the interpolator object.
     The type of interpolator will be recognized from the name of the
     interpolator object. The syntax is :code:`IF_METHOD{_RLO}.pkl`. The `IF`
     stands for initial-final interpolator, the `METHOD` refers to the
-    interpolator type. The girds starding at Roche-lobe overflow may be
+    interpolator type. The girds starting at Roche-lobe overflow may be
     indicated in the name as well, but is not required.
 
 .. table:: Currently supported interpolator types
@@ -143,7 +143,7 @@ of the interpolator object.
     `METHOD`  Description
     ========  ===========
     linear    linear interpolation
-    1NN       nearest neighbour
+    1NN       nearest neighbor
     ========  ===========
 
 .. _pipeline_step9:
@@ -178,10 +178,10 @@ first.
 
 For this step the csv file is called :samp:`rerun.csv` to avoid too much
 confusion with other steps. It clearly has to run after a step, but it is no
-usuall step itself. It requires a path to a `PSyGrid` object to get the models
+usual step itself. It requires a path to a `PSyGrid` object to get the models
 from, a path, where the rerun should be stored (it creates in there the
 `grid.csv` and the `ini` file needed to
-:ref:`setup a new run <mesa-grids-api>`) and the type of the rerun specifing
+:ref:`setup a new run <mesa-grids-api>`) and the type of the rerun specifying
 the logic and changes.
 
 .. code-block::

@@ -23,7 +23,7 @@ where the question mark will be the number of the step the plots take the final
 
 Beside the grid, it takes a list of quantities to plot and finally the path to
 the directory, where the plots should get stored. All final quantities
-supported for a :ref:`2D plot <plot_2d>`, as thrid dimension can be specified.
+supported for a :ref:`2D plot <plot_2d>`, as third dimension can be specified.
 Additionally, you can put a :samp:`LOG10_` in front of each of them to switch
 on plotting in log-scale. Beside that there are predefined plots.
 

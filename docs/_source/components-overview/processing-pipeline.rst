@@ -20,14 +20,14 @@ We have a dedicated object to deal with the MESA data outcome. Learn what you ca
 Our post-processing pipeline
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-We use a pipeline to post-process the data in a more automatised way. Learn to what you can do with this tool.
+We use a pipeline to post-process the data in a more automatized way. Learn to what you can do with this tool.
 
 .. toctree::
 
    post_processing/pipeline
    
-Ini file documetation
-~~~~~~~~~~~~~~~~~~~~~
+Ini file documentation
+~~~~~~~~~~~~~~~~~~~~~~
 
 Learn how to use an ini file to setup the post-processing pipeline.
 
