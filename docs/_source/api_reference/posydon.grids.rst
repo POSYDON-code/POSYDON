@@ -48,8 +48,6 @@ posydon.grids.post\_processing
    :undoc-members:
    :show-inheritance:
 
-.. _code_psygrid:
-
 posydon.grids.psygrid
 ---------------------
 

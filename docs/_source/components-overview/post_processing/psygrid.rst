@@ -41,20 +41,20 @@ directory, where the MESA runs are in.
 .. table:: Optional arguments of the PSyGrid creation
     :widths: 18,10,72
 
-    =============  =========  ===========
-    Argument       Default    Description
-    =============  =========  ===========
-    psygrid_path   None       the path to the associated h5 file (it needs to be given if none was specified during initialization)
-    overwrite      False      if `True` overwrite a potentially already existing file
-    slim           False      if `True` only initial and final values as well as the meta data will be stored
-    warn           "end"      if "normal" warnings are printed, when they arise
+    ===============  =========  ===========
+    Argument         Default    Description
+    ===============  =========  ===========
+    psygrid_path     None       the path to the associated h5 file (it needs to be given if none was specified during initialization)
+    overwrite        False      if `True` overwrite a potentially already existing file
+    slim             False      if `True` only initial and final values as well as the meta data will be stored
+    warn             "end"      if "normal" warnings are printed, when they arise
                               
-                              if "end" all warnings are printed at the end
+                                if "end" all warnings are printed at the end
                               
-                              if "suppress" no warnings are printed
-    fmt            "posydon"  grid format; only "posydon" is currently supported
-    **grid_kwargs             further grid properties can be specified in a dictionary
-    =============  =========  ===========
+                                if "suppress" no warnings are printed
+    fmt              "posydon"  grid format; only "posydon" is currently supported
+    \*\*grid_kwargs             further grid properties can be specified in a dictionary
+    ===============  =========  ===========
 
 .. _tab_grid_properties:
 
@@ -273,12 +273,13 @@ functionalities:
 
 - :samp:`plot`: This creates a one dimensional plot from the `PSyGrid`. An
   example can be found in the :ref:`tutorials <plot_1d>`. The code details are
-  available in the :ref:`PSyGrid code <code_psygrid>` and the
-  :ref:`visualisation libary <vis_plot1D>`.
+  available in the :py:func:`PSyGrid.plot <posydon.grids.psygrid.PSyGrid.plot>`
+  code and the :py:class:`visualisation libary <posydon.visualization.plot1D>`.
 - :samp:`plot2D`: This creates a two dimensional representation from the
   `PSyGrid`. Again, an example can be found in the :ref:`tutorials <plot_2d>`.
-  The code details are available in the :ref:`PSyGrid code <code_psygrid>`
-  and the :ref:`visualisation libary <vis_plot2D>`.
+  The code details are available in the
+  :py:func:`PSyGrid.plot <posydon.grids.psygrid.PSyGrid.plot2D>` code and the
+  :py:class:`visualisation libary <posydon.visualization.plot2D>`.
 - :samp:`HR`: This is similar to :samp:`plot` but specialized on producing
   Hertzsprung–Russell diagrams.
 
@@ -425,4 +426,4 @@ object.
 
 
 The code summary of the `PSyGrid` object can be found at the
-:ref:`dedicated reference page <code_psygrid>`.
+:py:class:`~posydon.grids.psygrid` reference page.
