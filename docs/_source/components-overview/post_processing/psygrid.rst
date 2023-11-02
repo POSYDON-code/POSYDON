@@ -368,13 +368,14 @@ Get reruns from a `PSyGrid` object
 
 Usually, not all runs of a grid will be successfully run in MESA. Hence, one
 may wants to rerun some of them with changed parameters. There is a function,
-to export runs from a `PSyGrid` object. There are two general way to specify,
+to export runs from a `PSyGrid` object. There are two general ways to specify,
 which systems should be exported to rerun:
 
 1. Write your own logic and create a numpy array with the indexes of the systems, you would like to run again.
 2. Specify, which termination flag(s) the systems should have to be rerun.
 
-.. table:: Arguments of the :samp:`rerun` function
+..
+    .. table:: Arguments of the :samp:`rerun` function
 
     =================  =======  ===========
     Argument           Default  Description
@@ -384,6 +385,22 @@ which systems should be exported to rerun:
     termination_flags  None     a single termination flag code or a list of them (if given, leave :samp:`runs_to_rerun=None`)
     new_mesa_flag      None     dictionary with the names and the values of MESA parameters to be changed for the inlists of the new runs
     =================  =======  ===========
+
+.. table:: Arguments of the :samp:`rerun` function
+
+    =================  =======  ===========
+    Argument           Default  Description
+    =================  =======  ===========
+    path_to_file       './'     where to create the file(s) for the rerun
+    runs_to_rerun      None     a list containing the indexes of the runs in the `PSyGrid` object
+    termination_flags  None     a single termination flag code or a list of them
+    new_mesa_flag      None     dictionary with the names and the values of MESA parameters to be changed for the inlists of the new runs
+    flags_to_check     None     a termination flag key or a list of them (if None check only `termination_flag_1`)
+    =================  =======  ===========
+
+.. note::
+    If both :samp:`runs_to_rerun` and :samp:`termination_flags` is given, all
+    systems matching at least one of the two will be selected for rerun.
 
 The :ref:`post-processing pipeline <pipeline_stepR>` already provides some pre
 defined rerun options.
