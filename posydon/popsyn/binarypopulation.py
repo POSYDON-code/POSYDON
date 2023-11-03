@@ -411,6 +411,8 @@ class BinaryPopulation:
                 file_path = os.path.join(dir_name, file_name)
                 warnings.warn('The provided path is a directory - saving '
                               'to {0} instead.'.format(file_path), Warning)
+                
+            self.combine_save_files(absolute_filepath, temp_directory, file_name, **kwargs)
 
     def make_temp_fname(self):
         """Get a valid filename for the temporary file."""
@@ -467,7 +469,9 @@ class BinaryPopulation:
     def __getstate__(self):
         """Prepare the BinaryPopulation to be 'pickled'."""
         # In order to be generally picklable, we need to discard the
+        # communication object before picking
         d = self.__dict__
+        d['comm'] = None
         prop = d['population_properties']
         if prop.steps_loaded:
             prop.close()
