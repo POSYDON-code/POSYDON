@@ -111,9 +111,7 @@ class BinaryPopulation:
         self.entropy = self.kwargs.get('entropy', None)
         seq = np.random.SeedSequence(entropy=self.entropy)
         
-        # Local MPI run
         self.comm = self.kwargs.pop('comm', None)
-        # Job array ID runs
         self.JOB_ID = self.kwargs.pop('JOB_ID', None)
         if self.comm is not None and self.JOB_ID is not None:
             raise ValueError('MPI and Job array runs are not compatible.')
@@ -128,20 +126,18 @@ class BinaryPopulation:
             self.size = self.comm.Get_size()
             # Make seed sequence unique per metallicity
             met_shift = self.metallicities.index(self.metallicity)
-            seq = np.random.SeedSequence(entropy=self.entropy + met_shift)
-                
+            seq = np.random.SeedSequence(entropy=self.entropy + met_shift)   
             seed_seq = [i for i in seq.spawn(self.size)][self.rank]
+            
         # Job array runs
         elif self.JOB_ID is not None:
             self.rank = self.kwargs.pop('RANK', None)
             self.size = self.kwargs.pop('size', None)       
-             
             # Make sure each of the processes has the same entropy
             # But unique per metallicity
             if self.entropy is None:
                 met_shift = self.metallicities.index(self.metallicity)
                 seq = np.random.SeedSequence(entropy=self.JOB_ID + met_shift)
-
             # Split the seed sequence between processes for uniqueness
             seed_seq = [i for i in seq.spawn(self.size)][self.rank]
         else:
@@ -411,6 +407,8 @@ class BinaryPopulation:
                 file_path = os.path.join(dir_name, file_name)
                 warnings.warn('The provided path is a directory - saving '
                               'to {0} instead.'.format(file_path), Warning)
+                
+            self.combine_save_files(absolute_filepath, temp_directory, file_name, **kwargs)
 
     def make_temp_fname(self):
         """Get a valid filename for the temporary file."""
@@ -467,7 +465,9 @@ class BinaryPopulation:
     def __getstate__(self):
         """Prepare the BinaryPopulation to be 'pickled'."""
         # In order to be generally picklable, we need to discard the
+        # communication object before picking
         d = self.__dict__
+        d['comm'] = None
         prop = d['population_properties']
         if prop.steps_loaded:
             prop.close()
