@@ -239,7 +239,7 @@ class SyntheticPopulation:
             for path in path_to_data:
                 if os.path.splitext(path)[-1] != '.h5':
                     raise ValueError('You did not provide a valid path_to_data!')
-        else
+        else:
             raise ValueError('You did not provide a valid path_to_data!')
         
         df_sel = pd.DataFrame()
