@@ -108,14 +108,13 @@ class BinaryPopulation:
         self.population_properties.max_simulation_time = self.kwargs.get(
             'max_simulation_time')  # years
 
-        entropy = self.kwargs.get('entropy', None)
-        seq = np.random.SeedSequence(entropy=entropy)
+        self.entropy = self.kwargs.get('entropy', None)
+        seq = np.random.SeedSequence(entropy=self.entropy)
         
         # Local MPI run
         self.comm = self.kwargs.pop('comm', None)
         # Job array ID runs
         self.JOB_ID = self.kwargs.pop('JOB_ID', None)
-        
         if self.comm is not None and self.JOB_ID is not None:
             raise ValueError('MPI and Job array runs are not compatible.')
         # To guarantee reproducibility, we need to set the seed sequence
@@ -138,7 +137,7 @@ class BinaryPopulation:
              
             # Make sure each of the processes has the same entropy
             # But unique per metallicity
-            if entropy is None:
+            if self.entropy is None:
                 met_shift = self.metallicities.index(self.metallicity)
                 seq = np.random.SeedSequence(entropy=self.JOB_ID + met_shift)
 

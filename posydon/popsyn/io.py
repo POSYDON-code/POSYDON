@@ -488,15 +488,19 @@ def binarypop_kwargs_from_ini(path, verbose=False):
                 pop_kwargs[key] = ast.literal_eval(val)
 
 
+            JOB_ID = os.getenv('SLURM_ARRAY_JOB_ID')
             # MPI import for local use only
-            if pop_kwargs['use_MPI']:
+            if pop_kwargs['use_MPI'] == True and JOB_ID is not None:
+                raise ValueError('MPI must be turned off for job arrays.')
+                exit()
+            elif pop_kwargs['use_MPI'] == True:
                 from mpi4py import MPI
                 pop_kwargs['comm'] = MPI.COMM_WORLD
             # MPI needs to be turned off for job arrays
             else:
                 pop_kwargs['comm'] = None
+                
                 # Check if we are running as a job array
-                JOB_ID = os.getenv('SLURM_ARRAY_JOB_ID')
                 if JOB_ID is not None and pop_kwargs['use_MPI'] is True:
                     raise ValueError('MPI must be turned off for job arrays.')
                 elif JOB_ID is not None:
