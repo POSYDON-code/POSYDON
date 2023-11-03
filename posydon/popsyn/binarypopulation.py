@@ -117,12 +117,13 @@ class BinaryPopulation:
         self.JOB_ID = self.kwargs.pop('JOB_ID', None)
         if self.comm is not None and self.JOB_ID is not None:
             raise ValueError('MPI and Job array runs are not compatible.')
-        # To guarantee reproducibility, we need to set the seed sequence
-        # to be the same across all processes.
-        elif self.comm is not None and self.entropy is None:
-            raise ValueError('A local MPI run requires an entropy value to be set.')
         # local MPI run
         elif self.comm is not None:
+            # To guarantee reproducibility, we need to set the seed sequence
+            # to be the same across all processes.
+            if self.entropy is None:
+                raise ValueError('A local MPI run requires an entropy value to be set.')
+            
             self.rank = self.comm.Get_rank()
             self.size = self.comm.Get_size()
             # Make seed sequence unique per metallicity
