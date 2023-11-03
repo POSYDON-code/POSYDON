@@ -497,7 +497,9 @@ def binarypop_kwargs_from_ini(path, verbose=False):
                 pop_kwargs['comm'] = None
                 # Check if we are running as a job array
                 JOB_ID = os.getenv('SLURM_ARRAY_JOB_ID')
-                if JOB_ID is not None:
+                if JOB_ID is not None and pop_kwargs['use_MPI'] is True:
+                    raise ValueError('MPI must be turned off for job arrays.')
+                elif JOB_ID is not None:
                     pop_kwargs['JOB_ID'] = np.int64(os.environ['SLURM_ARRAY_JOB_ID'])
                     # account for job array not starting at 0
                     min_rank = np.int64(os.environ['SLURM_ARRAY_TASK_MIN'])
