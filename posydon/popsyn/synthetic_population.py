@@ -44,7 +44,7 @@ class SyntheticPopulation:
             metallicity parameter to evolve more than one population.
         """
         self.synthetic_pop_params = None
-        self.metallicity = None
+        self.metallicities = None
         self.binary_populations = None
 
         self.verbose = verbose
@@ -69,16 +69,16 @@ class SyntheticPopulation:
             raise ValueError('You did not provide a valid path_to_ini!')
         else:
             self.synthetic_pop_params = binarypop_kwargs_from_ini(path_to_ini)
-            self.metallicity = self.synthetic_pop_params['metallicity']
-            if not isinstance( self.metallicity, list):
-                self.metallicity = [self.metallicity]
+            self.metallicities = self.synthetic_pop_params['metallicity']
+            if not isinstance( self.metallicities, list):
+                self.metallicities = [self.metallicities]
             self.binary_populations = None
         
     def create_binary_populations(self):
         """Create a list of BinaryPopulation objects."""
         self.binary_populations = []
         ini_kw = self.synthetic_pop_params.copy()
-        for met in self.metallicity[::-1]:
+        for met in self.metallicities[::-1]:
             ini_kw['metallicity'] = met
             ini_kw['temp_directory'] = self.create_met_prefix(met) + self.synthetic_pop_params['temp_directory']
             self.binary_populations.append(BinaryPopulation(**ini_kw))
@@ -110,10 +110,10 @@ class SyntheticPopulation:
         if isinstance(path_to_batches, str):
             path_to_batches = [path_to_batches]
         # check if path_to_batches is the same length as the number of metallicities
-        if len(path_to_batches) != len(self.metallicity):
+        if len(path_to_batches) != len(self.metallicities):
             raise ValueError('The number of metallicity and batch directories do not match!')
 
-        for met, path_to_batch in zip(self.metallicity, path_to_batches):
+        for met, path_to_batch in zip(self.metallicities, path_to_batches):
             met_prefix = self.create_met_prefix(met)
             tmp_files = [os.path.join(path_to_batch, f)     \
                          for f in os.listdir(path_to_batch) \
@@ -121,7 +121,8 @@ class SyntheticPopulation:
             
             BinaryPopulation(**self.get_ini_kw()).combine_saved_files(met_prefix+ 'population.h5', tmp_files)
             print(f'Population at Z={met:.2e} Z_sun successfully merged!')
-            os.rmdir(path_to_batch)
+            if len(os.listdir(path_to_batch)) == 0:
+                os.rmdir(path_to_batch)
 
     @staticmethod
     def create_met_prefix(met):
@@ -231,10 +232,13 @@ class SyntheticPopulation:
         if type(path_to_data) is str and ('.h5' in path_to_data):
             path_to_data = [path_to_data]
         
-        # catch the case where the user did not provide a path to data     
-        if not (isinstance(path_to_data, list) and '.h5' in path_to_data[0]):
+        # catch the case where the user did not provide a path to data 
+        if (isinstance(path_to_data, list)):
+            for path in path_to_data:
+                if os.path.splitext(path)[-1] != '.h5':
+                    raise ValueError('You did not provide a valid path_to_data!')
+        else
             raise ValueError('You did not provide a valid path_to_data!')
-
         
         df_sel = pd.DataFrame()
         df_sel_oneline = pd.DataFrame()
@@ -256,9 +260,8 @@ class SyntheticPopulation:
             
             for i, df in enumerate(pd.read_hdf(file,  key='history', chunksize=chunksize)):
                 
-                if last_binary_df is not None:
-                    df = pd.concat([last_binary_df, df])
-                    last_binary_df = None
+                df = pd.concat([last_binary_df, df])
+                last_binary_df = None
                     
                 last_binary_df = df.loc[[df.index[-1]]]
                 df.drop(df.index[-1], inplace=True)
@@ -310,10 +313,10 @@ class SyntheticPopulation:
                     df_sel_met = pd.concat([df_sel_met, df_tmp])
 
             # get unique indicies
-            sel_met = df_sel_met.index.unique()
+            sel_met = df_sel_met.index.drop_duplicates()
             
             if k > 0 and df_sel.shape[0] > 0:
-                shift_index = max(np.unique(df_sel.index)) + 1 
+                shift_index = max(np.unique(df.index)) + 1 
             else:
                 shift_index = 0
             

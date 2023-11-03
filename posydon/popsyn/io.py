@@ -487,17 +487,25 @@ def binarypop_kwargs_from_ini(path, verbose=False):
             for key, val in parser[section].items():
                 pop_kwargs[key] = ast.literal_eval(val)
 
-            # Check if we are running as a job array
-            JOB_ID = os.getenv('SLURM_ARRAY_JOB_ID')
-            if JOB_ID is not None:
-                pop_kwargs['JOB_ID'] = np.int64(os.environ['SLURM_ARRAY_JOB_ID'])
-                # account for job array not starting at 0
-                min_rank = np.int64(os.environ['SLURM_ARRAY_TASK_MIN'])
-                pop_kwargs['RANK'] = np.int64(os.environ['SLURM_ARRAY_TASK_ID'])-min_rank
-                pop_kwargs['size'] = np.int64(os.environ['SLURM_ARRAY_TASK_COUNT'])
+
+            # MPI import for local use only
+            if pop_kwargs['use_MPI']:
+                from mpi4py import MPI
+                pop_kwargs['comm'] = MPI.COMM_WORLD
+            # MPI needs to be turned off for job arrays
             else:
-                pop_kwargs['RANK'] = None
-                pop_kwargs['size'] = None
+                pop_kwargs['comm'] = None
+                # Check if we are running as a job array
+                JOB_ID = os.getenv('SLURM_ARRAY_JOB_ID')
+                if JOB_ID is not None:
+                    pop_kwargs['JOB_ID'] = np.int64(os.environ['SLURM_ARRAY_JOB_ID'])
+                    # account for job array not starting at 0
+                    min_rank = np.int64(os.environ['SLURM_ARRAY_TASK_MIN'])
+                    pop_kwargs['RANK'] = np.int64(os.environ['SLURM_ARRAY_TASK_ID'])-min_rank
+                    pop_kwargs['size'] = np.int64(os.environ['SLURM_ARRAY_TASK_COUNT'])
+                else:
+                    pop_kwargs['RANK'] = None
+                    pop_kwargs['size'] = None
                 
         # right now binary, S1, and S2 output kwargs are all passed
         # into the BinaryPopulation during init

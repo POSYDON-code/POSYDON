@@ -20,6 +20,7 @@ __authors__ = [
     "Konstantinos Kovlakas <Konstantinos.Kovlakas@unige.ch>",
     "Devina Misra <devina.misra@unige.ch>",
     "Simone Bavera <Simone.Bavera@unige.ch>",
+    "Max Briel <max.briel@gmail.com>"
 ]
 
 
@@ -76,7 +77,6 @@ STEP_NAMES_LOADING_GRIDS = [
     'step_HMS_HMS', 'step_CO_HeMS', 'step_CO_HMS_RLO', 'step_CO_HeMS_RLO', 'step_detached','step_isolated','step_disrupted','step_initially_single', 'step_merged'
 ]
 
-POSYDON_METALLICITIES = [2e+00,1e+00,4.5e-01,2e-01,1e-01,1e-02,1e-03,1e-04]
 
 class BinaryPopulation:
     """Handle a binary star population."""
@@ -100,25 +100,47 @@ class BinaryPopulation:
         self.population_properties = self.kwargs.get('population_properties',
                                                      SimulationProperties())
         atexit.register(lambda: BinaryPopulation.close(self))
-
+        self.metallicity = self.kwargs.get('metallicity', 1)
+        
+        # grab all metallicities in population or use single metallicity
+        self.metallicities = self.kwargs.get('metallicities', [self.metallicity])
+        
         self.population_properties.max_simulation_time = self.kwargs.get(
             'max_simulation_time')  # years
 
         entropy = self.kwargs.get('entropy', None)
         seq = np.random.SeedSequence(entropy=entropy)
-
+        
+        # Local MPI run
+        self.comm = self.kwargs.pop('comm', None)
+        # Job array ID runs
         self.JOB_ID = self.kwargs.pop('JOB_ID', None)
-        if self.JOB_ID is not None:
+        
+        if self.comm is not None and self.JOB_ID is not None:
+            raise ValueError('MPI and Job array runs are not compatible.')
+        # To guarantee reproducibility, we need to set the seed sequence
+        # to be the same across all processes.
+        elif self.comm is not None and self.entropy is None:
+            raise ValueError('A local MPI run requires an entropy value to be set.')
+        # local MPI run
+        elif self.comm is not None:
+            self.rank = self.comm.Get_rank()
+            self.size = self.comm.Get_size()
+            # Make seed sequence unique per metallicity
+            met_shift = self.metallicities.index(self.metallicity)
+            seq = np.random.SeedSequence(entropy=self.entropy + met_shift)
+                
+            seed_seq = [i for i in seq.spawn(self.size)][self.rank]
+        # Job array runs
+        elif self.JOB_ID is not None:
             self.rank = self.kwargs.pop('RANK', None)
-            self.size = self.kwargs.pop('size', None)
-            
-            # Make sure each of the MPI processes has the same entropy
+            self.size = self.kwargs.pop('size', None)       
+             
+            # Make sure each of the processes has the same entropy
             # But unique per metallicity
             if entropy is None:
-                met_shift = POSYDON_METALLICITIES.index(
-                                    self.kwargs.get('metallicity')) +1
-                
-                seq = np.random.SeedSequence(entropy=self.JOB_ID * met_shift)
+                met_shift = self.metallicities.index(self.metallicity)
+                seq = np.random.SeedSequence(entropy=self.JOB_ID + met_shift)
 
             # Split the seed sequence between processes for uniqueness
             seed_seq = [i for i in seq.spawn(self.size)][self.rank]
@@ -181,7 +203,7 @@ class BinaryPopulation:
         breakdown_to_df_bool = kw.get('breakdown_to_df', True)
         from_hdf_bool = kw.get('from_hdf', False)
 
-        if self.JOB_ID is None:   # do regular evolution
+        if self.JOB_ID is None and self.comm is None:   # do regular evolution
             indices = kw.get('indices',
                              list(range(self.number_of_binaries)))
             params = {'indices':indices,
@@ -192,7 +214,7 @@ class BinaryPopulation:
 
             self._safe_evolve(**self.kwargs)
         else:
-            # do MPI evolution
+            # do local MPI or cluster job array evolution
             indices = kw.get('indices',
                             list(range(self.number_of_binaries)))
             indices_split = np.array_split(indices, self.size)
@@ -246,15 +268,16 @@ class BinaryPopulation:
 
         # Create temporary directory if it doesn't exist
         # Built to handle MPI
-        if self.JOB_ID is None:
+        if self.JOB_ID is None and self.comm is None:
             if not os.path.exists(temp_directory):
                 os.makedirs(temp_directory)
         else:
-            # Create a directory for MPI runs
-            try: 
-                os.makedirs(temp_directory)
-            except FileExistsError:
-                pass
+            # Create a directory for parallel runs
+            if not os.path.exists(temp_directory):
+                try: 
+                    os.makedirs(temp_directory)
+                except FileExistsError:
+                    pass
 
         filenames = []
 
@@ -285,7 +308,7 @@ class BinaryPopulation:
                     and j % dump_rate == 0 and j != 0 and ram_per_cpu is None):
 
                 # Create filenames for each batch
-                if(self.JOB_ID is None):
+                if(self.JOB_ID is None and self.comm is None):
                     path = os.path.join(temp_directory, f"{j}_evolution.batch")
                 else:
                     path = os.path.join(temp_directory,
@@ -306,7 +329,7 @@ class BinaryPopulation:
                   and psutil.Process().memory_info().rss / (1024**3)
                   >= 0.9 * ram_per_cpu):
 
-                if(self.JOB_ID is None):
+                if(self.JOB_ID is None and self.comm is None):
                     path = os.path.join(temp_directory, f"{j}_evolution.batch")
                 else:
                     path = os.path.join(temp_directory,
@@ -327,7 +350,7 @@ class BinaryPopulation:
                 or len(self.manager.history_dfs) != 0)
                 and optimize_ram):
 
-            if(self.JOB_ID is None):
+            if(self.JOB_ID is None and self.comm is None):
                 path = os.path.join(temp_directory, "leftover_evolution.batch")
             else:
                 path = os.path.join(temp_directory,
@@ -344,7 +367,7 @@ class BinaryPopulation:
 
         if optimize_ram:
             # combining files
-            if self.JOB_ID is None:
+            if self.JOB_ID is None and self.comm is None:
                 self.combine_saved_files(os.path.join(temp_directory,
                                                       "evolution.combined"),
                                          filenames, mode = "w")
@@ -355,7 +378,7 @@ class BinaryPopulation:
                     filenames, mode = "w")
 
         else:
-            if self.JOB_ID is None:
+            if self.JOB_ID is None and self.comm is None:
                 self.manager.save(os.path.join(temp_directory,
                                                "evolution.combined"),
                                   mode='w',
@@ -372,7 +395,7 @@ class BinaryPopulation:
         temp_directory = self.kwargs['temp_directory']
         mode = self.kwargs.get('mode', 'a')
 
-        if self.JOB_ID is None:
+        if self.JOB_ID is None and self.comm is None:
             if optimize_ram:
                 os.rename(os.path.join(temp_directory, "evolution.combined"),
                           save_path)
