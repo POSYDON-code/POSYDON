@@ -1426,6 +1426,7 @@ class Scaler:
 
             for c in classes:
                 inds = np.where(klass == c)[0]
+                c = None if c == "None" else c
 
                 normalized[inds] = self.scaler[c].normalize(X[inds])
 
@@ -1444,6 +1445,7 @@ class Scaler:
 
             for c in classes:
                 inds = np.where(klass == c)[0]
+                c = None if c == "None" else c
 
                 normalized[inds] = self.scaler[c].denormalize(Xn[inds])
 
