@@ -100,7 +100,7 @@ def generate_spectrum(grids,star,i,scale,**kwargs):
     #First we check if the star is a CO. (for future we can add WD spectra)\
     if star[f'{i}_state'] in ['massless_remnant','BH','WD','NS']:
         return None,star[f'{i}_state'],None
-    ostar_temp_cut_off=27000
+    ostar_temp_cut_off=28000
     bstar_temp_cut_off = 15000
     Fe_H = np.log(star['Z/Zo'])
     Z_Zo = star['Z/Zo']
