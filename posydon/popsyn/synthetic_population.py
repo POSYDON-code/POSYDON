@@ -123,6 +123,8 @@ class SyntheticPopulation:
             print(f'Population at Z={met:.2e} Z_sun successfully merged!')
             if len(os.listdir(path_to_batch)) == 0:
                 os.rmdir(path_to_batch)
+            elif self.verbose:
+                print(f'{path_to_batch} is not empty, it was not removed!')
 
     @staticmethod
     def create_met_prefix(met):
@@ -261,7 +263,6 @@ class SyntheticPopulation:
             for i, df in enumerate(pd.read_hdf(file,  key='history', chunksize=chunksize)):
                 
                 df = pd.concat([last_binary_df, df])
-                last_binary_df = None
                     
                 last_binary_df = df.loc[[df.index[-1]]]
                 df.drop(df.index[-1], inplace=True)

@@ -111,37 +111,34 @@ class BinaryPopulation:
         entropy = self.kwargs.get('entropy', None)
         seq = np.random.SeedSequence(entropy=entropy)
         
-        # Local MPI run
         self.comm = self.kwargs.pop('comm', None)
-        # Job array ID runs
         self.JOB_ID = self.kwargs.pop('JOB_ID', None)
         
         if self.comm is not None and self.JOB_ID is not None:
             raise ValueError('MPI and Job array runs are not compatible.')
-        # To guarantee reproducibility, we need to set the seed sequence
-        # to be the same across all processes.
         elif self.comm is not None and self.entropy is None:
+            # To guarantee reproducibility, we need to set the seed sequence
+            # to be the same across all processes.
             raise ValueError('A local MPI run requires an entropy value to be set.')
+        
         # local MPI run
         elif self.comm is not None:
             self.rank = self.comm.Get_rank()
             self.size = self.comm.Get_size()
             # Make seed sequence unique per metallicity
             met_shift = self.metallicities.index(self.metallicity)
-            seq = np.random.SeedSequence(entropy=self.entropy + met_shift)
-                
+            seq = np.random.SeedSequence(entropy=self.entropy + met_shift)   
             seed_seq = [i for i in seq.spawn(self.size)][self.rank]
+            
         # Job array runs
         elif self.JOB_ID is not None:
             self.rank = self.kwargs.pop('RANK', None)
             self.size = self.kwargs.pop('size', None)       
-             
             # Make sure each of the processes has the same entropy
             # But unique per metallicity
             if entropy is None:
                 met_shift = self.metallicities.index(self.metallicity)
                 seq = np.random.SeedSequence(entropy=self.JOB_ID + met_shift)
-
             # Split the seed sequence between processes for uniqueness
             seed_seq = [i for i in seq.spawn(self.size)][self.rank]
         else:
