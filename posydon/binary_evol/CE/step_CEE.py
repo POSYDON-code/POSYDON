@@ -198,10 +198,7 @@ class StepCEE(object):
                              "`oCE1`, 'oDoubleCE1' or `oCE2`, 'oDoubleCE1'")
 
         # Check for double CE
-        if binary.event in ["oDoubleCE1", "oDoubleCE2"]:
-            double_CE = True
-        else:
-            double_CE = False
+        double_CE = binary.event in ["oDoubleCE1", "oDoubleCE2"]
 
         if self.verbose:
             print("binary.event : ", binary.event)
