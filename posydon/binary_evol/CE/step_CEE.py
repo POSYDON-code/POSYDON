@@ -215,11 +215,10 @@ class StepCEE(object):
             binary.state = 'merged'
             if binary.event in ["oCE1", "oDoubleCE1"]:
                 binary.event = "oMerging1"
-                return
-            if  binary.event in ["oCE2", "oDoubleCE2"]:
+            if binary.event in ["oCE2", "oDoubleCE2"]:
                 binary.event = "oMerging2"
-                return
-            raise ValueError("This is unexpected.")
+
+            return
 
         if self.common_envelope_option_for_HG_star == "pessimistic":
             # Merging if HG donor
@@ -451,7 +450,7 @@ class StepCEE(object):
             In case we want information about the CEE.
         common_envelope_option_after_succ_CEE: str
             Options are:
-
+            
             1) "core_replaced_noMT"
                 he_core_mass/radius (or co_core_mass/radius for CEE of
                 stripped_He*) are replaced according to the new core boundary
