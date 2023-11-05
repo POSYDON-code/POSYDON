@@ -188,9 +188,11 @@ class StepCEE(object):
         if binary.event in ["oCE1", "oDoubleCE1"]:
             donor_star = binary.star_1
             comp_star = binary.star_2
+            star_to_merge = "1"
         elif binary.event in ["oCE2", "oDoubleCE2"]:
             donor_star = binary.star_2
             comp_star = binary.star_1
+            star_to_merge = "2"
         else:
             raise ValueError("CEE does not apply if `event` is not "
                              "`oCE1`, 'oDoubleCE1' or `oCE2`, 'oDoubleCE1'")
@@ -213,11 +215,7 @@ class StepCEE(object):
                                 'stripped_He_Core_He_burning']:
             # system merges
             binary.state = 'merged'
-            if binary.event in ["oCE1", "oDoubleCE1"]:
-                binary.event = "oMerging1"
-            if binary.event in ["oCE2", "oDoubleCE2"]:
-                binary.event = "oMerging2"
-
+            binary.event = "oMerging" + star_to_merge
             return
 
         if self.common_envelope_option_for_HG_star == "pessimistic":
@@ -225,11 +223,7 @@ class StepCEE(object):
             if donor_star.state in ['H-rich_Shell_H_burning']:
                 # system merges
                 binary.state = 'merged'
-                if binary.event in ["oCE1", "oDoubleCE1"]:
-                    binary.event = "oMerging1"
-                if binary.event in ["oCE2", "oDoubleCE2"]:
-                    binary.event = "oMerging2"
-
+                binary.event = "oMerging" + star_to_merge
                 return
 
         # Calculate binary's evolution
@@ -450,7 +444,7 @@ class StepCEE(object):
             In case we want information about the CEE.
         common_envelope_option_after_succ_CEE: str
             Options are:
-            
+
             1) "core_replaced_noMT"
                 he_core_mass/radius (or co_core_mass/radius for CEE of
                 stripped_He*) are replaced according to the new core boundary
