@@ -211,20 +211,16 @@ class StepCEE(object):
                   self.common_envelope_option_for_lambda)
 
         # Check to make sure binary can go through a CE
-        if donor_star.state in ['H-rich_Core_H_burning',
-                                'stripped_He_Core_He_burning']:
+        mergeable_donor = (donor_star.state in [
+            'H-rich_Core_H_burning', 'stripped_He_Core_He_burning'])
+        mergeable_HG_donor = (
+            self.common_envelope_option_for_HG_star == "pessimistic"
+            and donor_star.state in ['H-rich_Shell_H_burning'])
+        if mergeable_donor or mergeable_HG_donor:
             # system merges
             binary.state = 'merged'
             binary.event = "oMerging" + star_to_merge
             return
-
-        if self.common_envelope_option_for_HG_star == "pessimistic":
-            # Merging if HG donor
-            if donor_star.state in ['H-rich_Shell_H_burning']:
-                # system merges
-                binary.state = 'merged'
-                binary.event = "oMerging" + star_to_merge
-                return
 
         # Calculate binary's evolution
         if self.prescription == 'alpha-lambda':
