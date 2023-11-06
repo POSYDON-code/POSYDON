@@ -209,6 +209,9 @@ class SyntheticPopulation:
     def parse(self, path_to_data, S1_state=None, S2_state=None, binary_state=None,
                binary_event=None, step_name=None, invert_S1S2=False, chunksize=500000):
         """Sort binaries of interests given some properties.
+        
+        It also stores the underlying stellar mass and 
+        the initial simulated stellar mass for each metallicity.
 
         Parameters
         ----------
@@ -317,7 +320,7 @@ class SyntheticPopulation:
             sel_met = df_sel_met.index.drop_duplicates()
             
             if k > 0 and df_sel.shape[0] > 0:
-                shift_index = max(np.unique(df.index)) + 1 
+                shift_index += max(np.unique(df.index)) + 1 
             else:
                 shift_index = 0
             
@@ -399,9 +402,9 @@ class SyntheticPopulation:
         If MODEL["compute_GRB_properties"] is `True` the following columns are
         in the MODEL:
 
-            - ['GRB_efficiency'],
-            - self.MODEL['GRB_beaming'],
-            - self.MODEL['E_GRB_iso_min']
+            - 'GRB_efficiency',
+            - 'GRB_beaming',
+            - 'E_GRB_iso_min'
 
         The following columns are added to the `df_synthetic` dataframe:
             - S1_m_disk_radiated
