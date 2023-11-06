@@ -304,7 +304,7 @@ class SyntheticPopulation:
                                     S1_state     = S1_state,
                                     S2_state     = S2_state,
                                     binary_state = binary_state,
-                                    binary_even  = binary_event,
+                                    binary_event = binary_event,
                                     step_name    = step_name,
                                     invert_S1S2  = invert_S1S2)
                 
