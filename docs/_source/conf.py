@@ -35,6 +35,7 @@ release = posydon_version
 # Point towards the posydon source code directory
 # autodoc uses this to automatically generate documentation from docstrings
 sys.path.insert(0, os.path.abspath('../../posydon/'))
+sys.path.insert(0, os.path.abspath('../api/'))
 
 # -- General configuration ------------------------------------------------
 # Add any Sphinx extension module names here, as strings. They can be
