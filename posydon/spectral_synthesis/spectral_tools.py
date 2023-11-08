@@ -20,6 +20,11 @@ key_traslation = {
     'log_L',
     'log_R',
 }
+stripped_stars = ["stripped_He_Central_C_depletion",
+                  'stripped_He_Core_He_burning',
+                  'stripped_He_Central_He_depleted',
+                  'stripped_He_Central_C_depletion',
+                  'stripped_He_non_burning']
 keys_to_save= ['state',
                'S1_log_g',
                'S2_log_g',
@@ -39,6 +44,7 @@ keys_to_save= ['state',
                #'log_g',
                #'Teff'
                 ]
+
 
 def find_max_time(history):
     """Find the max time of a population."""
@@ -66,12 +72,17 @@ def load_posydon_population(population_file, max_number_of_binaries=None,
     """
     history = pd.read_hdf(population_file, key='history')
     max_time = find_max_time(history)
-    final_stars = history[(history.time == max_time) & (history.event == "END")].reset_index()
+    final_stars = history[(history.time == max_time) & (history.event == "END")]
     zams_stars = history[history.event == 'ZAMS']
     for col in final_stars:
         if col not in keys_to_save:
             del final_stars[str(col)]
-    pop = copy(final_stars)
+    #Find the stripped stars and put their final mass as M_init (mass at ZAMS).
+    for star in ['S1','S2']:
+        stripped_index = copy(final_stars[final_stars[f'{star}_state'].isin(stripped_stars)].index.values)
+        M_init = zams_stars.loc[stripped_index][f'{star}_mass'].values
+        final_stars.loc[stripped_index][f'{star}_mass'] = M_init
+    pop = copy(final_stars.reset_index())
     #Get the metallicity values from ZAMS
     pop['Z/Zo'] = np.ones(len(pop))*zams_stars['S1_metallicity'].iloc[0]/Zo
     #Add two extra columns in the pop data

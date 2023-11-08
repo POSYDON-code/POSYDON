@@ -96,15 +96,15 @@ class spectral_grids():
     def grid_flux(self, name, **kwargs):
         """Returns the flux of a star."""
         if name not in GRID_KEYS:
-            raise ValueError('There is no grid with that name' +
-                             'please refer to the the grid dictonary')
+            raise ValueError(f'There is no grid with that name,{name}.' +
+                             ' Please refer to the the grid dictonary')
         x = copy.copy(kwargs)
         specgrid = self.spectral_grids[name]
         for key, arg in kwargs.items():
             if key not in specgrid.axis_labels:
                 x.pop(key)
         if name == "stripped_grid":
-            return stripped_grid_flux(**x)
+            return self.stripped_grid_flux(**x)
         Flux = np.asarray(specgrid.flux(x, self.lam))
         return Flux
 
