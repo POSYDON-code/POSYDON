@@ -28,10 +28,10 @@ The run-pipeline script takes four arguments:
 Step1: creating a `PSyGrid` object
 ----------------------------------
 
-First, we need to create the `psygird` object. To do so, the pipeline needs to
-now the directory which contains the MESA runs, the compression, and whether to
-crop the history for some certain runs. Hence, the :samp:`step_1.csv` file
-should have those columns:
+First, we need to create the :samp:`PSyGird` object. To do so, the pipeline
+needs to now the directory which contains the MESA runs, the compression, and
+whether to crop the history for some certain runs. Hence, the
+:samp:`step_1.csv` file should have those columns:
 
 .. code-block::
 
@@ -51,7 +51,7 @@ The currently supported compression types are:
     ========  ===========
     ORIGINAL  It keeps all columns and history entries given by MESA
     LITE      It discards some columns and reduces the history and final profiles to an maximum error of 0.1 and limit profiles to contain in maximum 200 data points
-    \*_RLO    The `_RLO` can be put on any of the previous types to crop the history before the onset of Roche-lobe overflow for grids containing a compact object
+    \*_RLO    The :samp:`_RLO` can be put on any of the previous types to crop the history before the onset of Roche-lobe overflow for grids containing a compact object
     ========  ===========
 
 .. _pipeline_step2:
@@ -60,11 +60,11 @@ Step2: combining `PSyGrid` objects
 ----------------------------------
 
 Usually, the girds are split into batches or reruns are done. In those cases,
-there will be several `PSyGrid` objects created for one gird. This step will
-join them into one. The :samp:`step_2.csv` file should have a matrix structure.
-The columns contain the girds which should be combined to the one specified in
-the header (first) row. The :samp:`DATA_ID` corresponds here to the column
-number (starting with 0). Here an example:
+there will be several :samp:`PSyGrid` objects created for one gird. This step
+will join them into one. The :samp:`step_2.csv` file should have a matrix
+structure. The columns contain the girds which should be combined to the one
+specified in the header (first) row. The :samp:`DATA_ID` corresponds here to
+the column number (starting with 0). Here an example:
 
 .. code-block::
 
@@ -90,8 +90,8 @@ envelope evolution, and at core collapse.
 
 Because some of the values may require a high precision in the data, we
 recommend to use the data from the ORIGINAL compression to calculate them. But
-the new values can be added to any `PSyGrid` object. Hence this step requests
-three paths to be specified in :samp:`step_3.csv`:
+the new values can be added to any :samp:`PSyGrid` object. Hence this step
+requests three paths to be specified in :samp:`step_3.csv`:
 
 .. code-block::
 
@@ -104,14 +104,14 @@ three paths to be specified in :samp:`step_3.csv`:
     ======================  ===========
     path_to_grid            path of the gird, which get the values appended to it
     path_to_grid_ORIGINAL   path of the grid, where the values are calculated from
-    path_to_processed_grid  path of the new grid (a copy of the one specified as `path_to_grid` with the appended values)
+    path_to_processed_grid  path of the new grid (a copy of the one specified as :samp:`path_to_grid` with the appended values)
     ======================  ===========
 
 .. note::
     This step use the path to the original MESA data as the unique identifier
-    of each system in the `PSyGrid` object, thus the location of the MESA file
-    cannot be changed between creating two `PSyGrid` objects of the same grid
-    in :ref:`step1 <pipeline_step1>`. Similarly, the overlaying in
+    of each system in the :samp:`PSyGrid` object, thus the location of the MESA
+    file cannot be changed between creating two :samp:`PSyGrid` objects of the
+    same grid in :ref:`step1 <pipeline_step1>`. Similarly, the overlaying in
     :ref:`step2 <pipeline_step2>` needs to be the same, too. Therefore, we
     recommend to setup and run the pipeline with an
     :ref:`ini file <pipeline_ini>`.
@@ -122,9 +122,9 @@ Step4: training of the interpolators
 ------------------------------------
 
 To get interpolated data from our grids, we train in this step an interpolator
-on your `PSyGrid` object. The file :samp:`step_4.csv` therefore has to contain
-two information bits. First, the grid containing the data and second, the name
-of the interpolator object.
+on your :samp:`PSyGrid` object. The file :samp:`step_4.csv` therefore has to
+contain two information bits. First, the grid containing the data and second,
+the name of the interpolator object.
 
 .. code-block::
 
@@ -132,19 +132,19 @@ of the interpolator object.
 
 .. note::
     The type of interpolator will be recognized from the name of the
-    interpolator object. The syntax is :code:`IF_METHOD{_RLO}.pkl`. The `IF`
-    stands for initial-final interpolator, the `METHOD` refers to the
-    interpolator type. The girds starting at Roche-lobe overflow may be
+    interpolator object. The syntax is :code:`IF_METHOD{_RLO}.pkl`. The
+    :samp:`IF` stands for initial-final interpolator, the :samp:`METHOD` refers
+    to the interpolator type. The girds starting at Roche-lobe overflow may be
     indicated in the name as well, but is not required.
 
 .. table:: Currently supported interpolator types
 
-    ========  ===========
-    `METHOD`  Description
-    ========  ===========
-    linear    linear interpolation
-    1NN       nearest neighbor
-    ========  ===========
+    ==============  ===========
+    :samp:`METHOD`  Description
+    ==============  ===========
+    linear          linear interpolation
+    1NN             nearest neighbor
+    ==============  ===========
 
 .. _pipeline_step9:
 
@@ -156,7 +156,7 @@ the population synthesis. We jump here to step 9, because this will always be
 the last step even more steps may get introduced in the future. In
 :samp:`step_9.csv`, there are again two paths required, a source and an export
 path. The step will simply copy the source to the export location. Hence, here
-the final `PSyGrid` objects and all the interpolator files are usually
+the final :samp:`PSyGrid` objects and all the interpolator files are usually
 addressed by this step.
 
 .. code-block::
@@ -178,9 +178,9 @@ first.
 
 For this step the csv file is called :samp:`rerun.csv` to avoid too much
 confusion with other steps. It clearly has to run after a step, but it is no
-usual step itself. It requires a path to a `PSyGrid` object to get the models
-from, a path, where the rerun should be stored (it creates in there the
-`grid.csv` and the `ini` file needed to
+usual step itself. It requires a path to a :samp:`PSyGrid` object to get the
+models from, a path, where the rerun should be stored (it creates in there the
+:samp:`grid.csv` and the ini file needed to
 :ref:`setup a new run <mesa-grids-api>`) and the type of the rerun specifying
 the logic and changes.
 
@@ -191,7 +191,7 @@ the logic and changes.
 .. table:: Currently supported rerun types
 
     ===================  ==============  ===========
-    `rerun_type`         Future version  Description
+    :samp:`rerun_type`   Future version  Description
     ===================  ==============  ===========
     PISN                 default in v3+  it enables the MESA inlist commit, which stops MESA before getting dynamical to save a final profile there
     reverse_MT           default in v3+  it uses a MESA version with a bug fix, that the role of donor and accretor can switch during the simulation

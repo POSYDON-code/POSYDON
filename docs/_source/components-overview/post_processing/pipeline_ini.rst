@@ -61,13 +61,13 @@ General pipeline settings
 -------------------------
 
 The next sections deals with the general information about the pipeline. First
-it needs to know where the grids are located. The `PATH` specifies, where you
-would like to get the pipeline files being created. The `VERBOSE` option will
-be used for the creation of the pipeline files and during the run of the
-pipeline.
+it needs to know where the grids are located. The :samp:`PATH` specifies, where
+you would like to get the pipeline files being created. The :samp:`VERBOSE`
+option will be used for the creation of the pipeline files and during the run
+of the pipeline.
 
-Finally, we have switches to turn on (`True`) and off (`False`) individual
-:ref:`steps <pipeline_steps>`.
+Finally, we have switches to turn on (:samp:`True`) and off (:samp:`False`)
+individual :ref:`steps <pipeline_steps>`.
 
 .. code-block:: ini
 
@@ -119,9 +119,9 @@ that step:
     ====  ============================  ===========
        1  STOP_BEFORE_CARBON_DEPLETION  indicating, whether high mass HMS stars should get their history croped short before carbon depletion (1) or not (0)
        2  GRID_SLICES                   for this step, we have 3 layers of lists: the outermost is still the grid type, the inner most is still the grid slice, the middle layer is the combined grid
-       2  GRIDS_COMBINED                a list of lists of combined grids; the outermost list is again referring to grid type; this is used as name for the new combined grid instead of `GRID_SLICE`
+       2  GRIDS_COMBINED                a list of lists of combined grids; the outermost list is again referring to grid type; this is used as name for the new combined grid instead of :samp:`GRID_SLICE`
        4  INTERPOLATION_METHODS         a list of the interpolator types which are trained
-       4  CONTROL_GRIDS                 a list of lists of control grids for the `GRID_SLICES`; it need to have the same number of entries as the `GRID_SLICES`, to specify no control grid use an empty string
+       4  CONTROL_GRIDS                 a list of lists of control grids for the :samp:`GRID_SLICES`; it need to have the same number of entries as the :samp:`GRID_SLICES`, to specify no control grid use an empty string
        R  RERUN_TYPE                    a defined rerun type
     ====  ============================  ===========
 
