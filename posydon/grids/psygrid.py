@@ -184,7 +184,6 @@ import glob
 import json
 import ast
 import warnings
-import csv
 import h5py
 import numpy as np
 import pandas as pd
@@ -1525,7 +1524,8 @@ class PSyGrid:
         self.close()
 
     def rerun(self, path_to_file='./', runs_to_rerun=None,
-              termination_flags=None, new_mesa_flag=None):
+                         termination_flags=None, new_mesa_flag=None,
+                         flags_to_check=None):
         """Create a CSV file with the PSyGrid initial values to rerun.
 
         This methods allows you to create a CSV file with the psygrid initial
@@ -1536,135 +1536,118 @@ class PSyGrid:
         path_to_file : str
             The path to the directory where the new `grid.csv` file will be
             saved. If the directory does not exist it will be created.
-        runs_to_rerun : integer array
+        runs_to_rerun : list of integers
             Array containing the indecies of the psygrid runs you want to rerun
-            e.g., runs_to_rerun = np.array([2,3])
-        termination_flags : str
+            e.g., runs_to_rerun = [2,3]
+        termination_flags : str or list of str
             The runs with this termination flag will be rerun.
             e.g. termination_flags='max_number_retries'
         new_mesa_flag : dict
             Dictionary of flags with their value to add as extra columns to the
             `grid.csv`. The user can specify any arbitrary amount of flags.
             e.g. new_mesa_flag = {'varcontrol_target': 0.01}
+        flags_to_check : str or list of str
+            The key(s) of flags to check the termination_flags against.
+            e.g. check_flags = 'termination_flag_1'
 
         """
-        # check that the `path_to_file` exists
+        # check that the 'path_to_file' exists
         if not os.path.exists(path_to_file):
             os.makedirs(path_to_file)
-
-        if runs_to_rerun is not None and termination_flags is None:
-            n_runs_to_rerun = len(runs_to_rerun)
-
-            # find the key of initial values to save
-            initial_values = {}
-            for key in self.initial_values.dtype.names:
-                initial_values[key] = []
-
-            # find the value of initial values to save
-            for i in runs_to_rerun.tolist():
-                for key in initial_values:
-                    initial_values[key].append(self.initial_values[key][i])
-
-            # replace star_1_mass, star_2_mass, period_days, Z
-            NDIG = 10 # rounding matches initial point rounding
-            if 'star_1_mass' in self.initial_values.dtype.names:
-                initial_values['m1'] = np.around(initial_values['star_1_mass'],
-                                                 NDIG)
-            if 'star_2_mass' in self.initial_values.dtype.names:
-                initial_values['m2'] = np.around(initial_values['star_2_mass'],
-                                                 NDIG)
-            if 'period_days' in self.initial_values.dtype.names:
-                initial_values['initial_period_in_days'] = np.around(
-                                            initial_values['period_days'],NDIG)
-            MESA_dir_name = self.MESA_dirs[0].decode("utf-8")
-            if  'initial_z' in MESA_dir_name:
-                initial_values['initial_z'] = np.around(initial_values['Z'],
-                                                        NDIG)
-            if  'Zbase' in MESA_dir_name:
-                initial_values['Zbase'] = np.around(initial_values['Z'], NDIG)
-            if  'new_Z' in MESA_dir_name:
-                initial_values['new_Z'] = np.around(initial_values['Z'], NDIG)
-            for key in self.initial_values.dtype.names:
-                if key not in ['m1', 'm2', 'initial_period_in_days',
-                               'Zbase', 'new_Z', 'initial_z']:
-                    del initial_values[key]
-
-            # add new_mesa_flag
-            if new_mesa_flag is not None:
-                for key in new_mesa_flag.keys():
-                    initial_values[key] = [new_mesa_flag[key]]*n_runs_to_rerun
-
-            # create the CSV file
-            with open(os.path.join(path_to_file,'grid.csv'), 'w', newline='') as file:
-                writer = csv.writer(file)
-                writer.writerow(initial_values.keys())
-                for i in range(n_runs_to_rerun):
-                    writer.writerow(
-                        [initial_values[key][i]for key in initial_values])
-        elif termination_flags is not None and runs_to_rerun is None:
-            if isinstance(termination_flags, str):
-                rerun_flags = [termination_flags]
+        
+        # check 'runs_to_rerun' has a valid type
+        if isinstance(runs_to_rerun, list):
+            runs_to_rerun_list = runs_to_rerun
+        elif runs_to_rerun is not None:
+            try:
+                runs_to_rerun_list = list(runs_to_rerun)
+            except:
+                raise TypeError("'runs_to_rerun' should be a list or None.")
+        
+        # check termination flags
+        if termination_flags is not None:
+            if flags_to_check is None:
+                flags_to_check_list = ['termination_flag_1']
+            elif isinstance(flags_to_check, str):
+                flags_to_check_list = [flags_to_check]
+            elif isinstance(flags_to_check, list):
+                flags_to_check_list = flags_to_check
             else:
                 try:
-                    rerun_flags = list(termination_flags)
-                except TypeError as err:
-                    msg = "`termination_flags` should be a str of a list."
-                    raise ValueError(msg) from err
-
-            # find the key of initial values to save
-            initial_values = {}
-            for key in self.initial_values.dtype.names:
-                initial_values[key] = []
-
-            # find the value of initial values to save
-            n_runs_to_rerun = 0
-            n = self.initial_values.shape[0]
-            for i in range(n):
-                # this should be accessed with key when possible
-                if self.final_values[i]['termination_flag_1'] in rerun_flags:
-                    n_runs_to_rerun += 1
-                    for key in initial_values:
-                        initial_values[key].append(self.initial_values[key][i])
-
-            # replace star_1_mass, star_2_mass, period_days, Z
-            NDIG = 10 # rounding matches initial point rounding
-            if 'star_1_mass' in self.initial_values.dtype.names:
-                initial_values['m1'] = np.around(initial_values['star_1_mass'],
-                                                 NDIG)
-            if 'star_2_mass' in self.initial_values.dtype.names:
-                initial_values['m2'] = np.around(initial_values['star_2_mass'],
-                                                 NDIG)
-            if 'period_days' in self.initial_values.dtype.names:
-                initial_values['initial_period_in_days'] = np.around(
-                                            initial_values['period_days'],NDIG)
-            MESA_dir_name = self.MESA_dirs[0].decode("utf-8")
-            if  'initial_z' in MESA_dir_name:
-                initial_values['initial_z'] = np.around(initial_values['Z'],
-                                                        NDIG)
-            if  'Zbase' in MESA_dir_name:
-                initial_values['Zbase'] = np.around(initial_values['Z'], NDIG)
-            if  'new_Z' in MESA_dir_name:
-                initial_values['new_Z'] = np.around(initial_values['Z'], NDIG)
-            for key in self.initial_values.dtype.names:
-                if key not in ['m1', 'm2', 'initial_period_in_days', 'Zbase',
-                               'new_Z', 'initial_z']:
-                    del initial_values[key]
-
-            # add new_mesa_flag
-            if new_mesa_flag is not None:
-                for key in new_mesa_flag.keys():
-                    initial_values[key] = [new_mesa_flag[key]]*n_runs_to_rerun
-
-            # create the CSV file
-            with open(os.path.join(path_to_file,'grid.csv'), 'w', newline='') as file:
-                writer = csv.writer(file)
-                writer.writerow(initial_values.keys())
-                for i in range(n_runs_to_rerun):
-                    writer.writerow(
-                        [initial_values[key][i]for key in initial_values])
+                    flags_to_check_list = list(flags_to_check)
+                except:
+                    raise TypeError("'flags_to_check' should be a string or a "
+                                    "list of strings.")
+            if isinstance(termination_flags, str):
+                termination_flags_list = [termination_flags]
+            elif isinstance(termination_flags, list):
+                termination_flags_list = termination_flags
+            else:
+                try:
+                    termination_flags_list = list(termination_flags)
+                except:
+                    raise TypeError("'termination_flags' should be a string or"
+                                    " a list of strings.")
+            # getting indices of runs with the termination flag(s)
+            new_runs_to_rerun_list = []
+            for flag in flags_to_check_list:
+                if flag in self.final_values.dtype.names:
+                    for i, tf in enumerate(self.final_values[flag]):
+                        if tf in termination_flags_list:
+                            new_runs_to_rerun_list.append(i)
+                else:
+                    self._say("\tFlag: {} not found. Skip it.".format(flag))
+            # add runs with the termination flag(s) to the collection of reruns
+            if runs_to_rerun is None:
+                runs_to_rerun_list = new_runs_to_rerun_list
+            else:
+                runs_to_rerun_list += new_runs_to_rerun_list
+        elif runs_to_rerun is None:
+            raise ValueError("Either 'runs_to_rerun' or 'termination_flags' "
+                             "has to be specified and therefore different from"
+                             " None.")
+        # ensure that each index only appears once
+        runs_to_rerun_list_unique = list(dict.fromkeys(runs_to_rerun_list))
+        # getting columns for the new grid.csv file
+        column_names = {}
+        if 'star_1_mass' in self.initial_values.dtype.names:
+            column_names['m1'] = 'star_1_mass'
+        if 'star_2_mass' in self.initial_values.dtype.names:
+            column_names['m2'] = 'star_2_mass'
+        if 'period_days' in self.initial_values.dtype.names:
+            column_names['initial_period_in_days'] = 'period_days'
+        if 'Z' in self.initial_values.dtype.names:
+            if len(self.MESA_dirs)>0:
+                # assume first entry of the MESA_dirs is representative of the
+                # grid
+                MESA_dir_name = self.MESA_dirs[0].decode("utf-8")
+                if 'initial_z' in MESA_dir_name:
+                    column_names['initial_z'] = 'Z'
+                if 'Zbase' in MESA_dir_name:
+                    column_names['Zbase'] = 'Z'
+                if 'new_Z' in MESA_dir_name:
+                    column_names['new_Z'] = 'Z'
+            else:
+                raise Exception("No MESA dirs of previous runs in the grid.")
+        # getting the initial data set
+        NDIG = 10 # rounding matches initial point rounding
+        runs_data = {}
+        for key in column_names.keys():
+            grid_key = column_names[key]
+            runs_data[key] = []
+            for idx in runs_to_rerun_list_unique:
+                runs_data[key].append(np.around(self.initial_values[grid_key][idx], NDIG))
+        if len(column_names)>0:
+            n_runs = len(runs_data[list(column_names)[0]])            
         else:
-            raise ValueError("Choose either the runs manually, or "
-                             "indicate the termination flag(s).")
+            n_runs = 0
+        # add new_mesa_flag
+        if new_mesa_flag is not None:
+            for key in new_mesa_flag.keys():
+                runs_data[key] = [new_mesa_flag[key]]*n_runs
+        runs_data_frame = pd.DataFrame(runs_data)
+        runs_data_frame.to_csv(os.path.join(path_to_file, 'grid.csv'),
+                               na_rep='nan', index=False)
 
     def plot2D(self, x_var_str, y_var_str, z_var_str=None,
                termination_flag='termination_flag_1',
