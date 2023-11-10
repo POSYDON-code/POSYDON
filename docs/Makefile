@@ -52,6 +52,7 @@ help:
 .PHONY: clean
 clean:
 	rm -rf $(BUILDDIR)/*
+	rm -rf _tmp
 
 .PHONY: html
 html: checkautodoc
@@ -230,16 +231,16 @@ apidoc:
 	rm -f ./_source/api_reference/*.rst
 #	generate posydon reference (ignore config.py file)
 	sphinx-apidoc --module-first --templatedir=_source/sphinx-apidoc-templates -d 2 --force --no-toc -o ./_source/api_reference ../posydon ../posydon/config.py
-#	create "api" directory if not existing
-	mkdir -p api
-#	copy script files from "bin" directory to "api", on the fly replace "-" with "_" and add extension ".py"
+#	create "_tmp/executables" directory if not existing
+	mkdir -p _tmp/executables
+#	copy script files from "bin" directory to "_tmp/executables", on the fly replace "-" with "_" and add extension ".py"
 	for FILE in $$(ls ../bin); do \
 	  OLDFILE=$$(echo ../bin/$${FILE}); \
-	  NEWFILE=$$(echo ./api/$${FILE}.py | sed s/-/_/g); \
+	  NEWFILE=$$(echo ./_tmp/executables/$${FILE}.py | sed s/-/_/g); \
 	  cp $${OLDFILE} $${NEWFILE}; \
 	done
 #	generate reference for script files
-	sphinx-apidoc --module-first --templatedir=_source/sphinx-apidoc-templates -d 2 --force --tocfile bin -o ./_source/api_reference ./api
+	sphinx-apidoc --module-first --templatedir=_source/sphinx-apidoc-templates -d 2 --force --tocfile bin -o ./_source/api_reference ./_tmp/executables
 	@echo
 	@echo "APIdoc run is complete."
 
