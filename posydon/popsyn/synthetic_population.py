@@ -30,9 +30,872 @@ from posydon.binary_evol.binarystar import BinaryStar
 from posydon.binary_evol.singlestar import SingleStar
 from posydon.utils.common_functions import convert_metallicity_to_string
 
+class PopulationRunner:
+    
+    def __init__(self, path_to_ini, verbose=False):
+        '''A Synthetic Population to run, process, and parse BinaryPopulations.
+        
+        Parameters
+        -----------
+        path_to_ini : str
+            path to the ini file to parse, which determines the populations.
+        verbose : bool (optional; True)
+            Whether to print progress statements.
+        '''
+        self.synthetic_pop_params = None
+        self.metallicities = None
+        self.binary_populations = None
+        
+        if '.ini' not in path_to_ini:
+            raise ValueError('You did not provide a valid path_to_ini!')
+        else:
+            self.synthetic_pop_params = binarypop_kwargs_from_ini(path_to_ini)
+            self.metallicities = self.synthetic_pop_params['metallicity']
+            if not isinstance( self.metallicities, list):
+                self.metallicities = [self.metallicities]
+            self.binary_populations = None
+
+    def create_binary_populations(self):
+        """Create a list of BinaryPopulation objects."""
+        self.binary_populations = []
+        ini_kw = self.synthetic_pop_params.copy()
+        for met in self.metallicities[::-1]:
+            ini_kw['metallicity'] = met
+            ini_kw['temp_directory'] = self.create_met_prefix(met) + self.synthetic_pop_params['temp_directory']
+            self.binary_populations.append(BinaryPopulation(**ini_kw))  
+            
+    def get_ini_kw(self):
+        return self.synthetic_pop_params.copy()
+
+    def evolve(self):
+        """Evolve population(s) at given Z(s)."""
+        if self.binary_populations is None:
+            self.create_binary_populations()
+        while self.binary_populations:
+            pop =  self.binary_populations.pop()
+            print( f'Z={pop.kwargs["metallicity"]:.2e} Z_sun' )
+            pop.evolve()
+            del pop
+
+    def merge_parallel_runs(self, path_to_batches):
+        """
+        Merge the folder or list of folders into a single file per metallicity.
+
+        Parameters
+        ----------
+        path_to_batches : str or list of str
+            Path to the folder(s) containing the batch folders.
+        """
+        # Max Briel: Should this function read in the ini file from the batch?
+        
+        if isinstance(path_to_batches, str):
+            path_to_batches = [path_to_batches]
+        # check if path_to_batches is the same length as the number of metallicities
+        if len(path_to_batches) != len(self.metallicities):
+            raise ValueError('The number of metallicity and batch directories do not match!')
+
+        for met, path_to_batch in zip(self.metallicities, path_to_batches):
+            met_prefix = self.create_met_prefix(met)
+            tmp_files = [os.path.join(path_to_batch, f)     \
+                         for f in os.listdir(path_to_batch) \
+                            if os.path.isfile(os.path.join(path_to_batch, f))]
+            
+            BinaryPopulation(**self.get_ini_kw()).combine_saved_files(met_prefix+ 'population.h5', tmp_files)
+            print(f'Population at Z={met:.2e} Z_sun successfully merged!')
+            # Store the population ini parameters inside the file.
+            # This is useful to keep track of the population parameters
+            # when merging multiple populations.
+            with pd.HDFStore(met_prefix+ 'population.h5', mode='a') as store:
+                store.put('ini_parameters', pd.Series(self.get_ini_kw()))
+            
+            if len(os.listdir(path_to_batch)) == 0:
+                os.rmdir(path_to_batch)
+            elif self.verbose:
+                print(f'{path_to_batch} is not empty, it was not removed!')
+
+    @staticmethod
+    def create_met_prefix(met):
+        """Append a prefix to the name of directories for batch saving."""
+        return convert_metallicity_to_string(met) + '_Zsun_'
+    
+###############################################################################
+
+class ParsedPopAttrs:
+    
+    def __init__(self):
+        self.verbose = False
+        self.synthetic_pop_params = None
+        self.metallicities = None
+        self.df = None
+        self.df_oneline = None
+        self.underlying_mass_per_met = None
+        self.simulated_mass_per_met = None
+        self.synthetic_pop_params = None
+
+class ParsedPopulation():
+
+    def __init__(self, path_to_ini, verbose=False):
+        '''A parsed stellar population from raw BinaryPopulations.
+        
+        Calculates the total number of binaries in the population, and the
+        total mass of the simulated and underlying stellar populations.
+        
+        The user has to make sure that the ini file and population files
+        are consistent!
+        
+        Parameters
+        -----------
+        
+        path_to_data : str or list of str
+            Path to the data to parse.
+            
+        '''
+        # initialise the parsed population class variables
+        
+        ParsedPopAttrs.__init__(self)
+        self.verbose = verbose        
+        # Check if ini file path correct
+        if '.ini' not in path_to_ini:
+            raise ValueError('You did not provide a valid path_to_ini!')
+        else:
+            self.synthetic_pop_params = binarypop_kwargs_from_ini(path_to_ini)
+            self.metallicities = self.synthetic_pop_params['metallicity']
+            if not isinstance( self.metallicities, list):
+                self.metallicities = [self.metallicities]
+        
+    def parse(self, path_to_data, S1_state=None, S2_state=None, binary_state=None,
+               binary_event=None, step_name=None, invert_S1S2=False, chunksize=500000):
+        """Given the path to the data, parse the datafiles for binaries which
+        satisfy the given conditions.
+        
+        It also stores the underlying stellar mass and
+        the initial simulated stellar mass for each metallicity.
+
+        Parameters
+        ----------
+        S1_state : str
+            Star1 stellar state.
+        S2_state : str
+            Star2 stellar state.
+        binary_state : str
+            Binary state.
+        binary_event : str
+            Binary event.
+        step_name : str
+            Name of posydon step.
+        invert_S1S2 : bool
+            If `True` isolated also sort S1_state=S2_state and S2_state=S1_state
+            systems.
+        chunksize : int
+            Read the POSYDON binary population in chuncks to prevent OFM error.
+
+        """
+        # TODO: A check should be applied in the gien S1_state, S2_state, etc.
+        # are valid.
+        
+        # The ini file and path_to_data metallities should match.
+        if len(path_to_data) != len(self.metallicities):
+            raise ValueError('The number of metallicities and data files do not match!')
+        
+        # if the user provided a single string instead of a list of strings
+        if type(path_to_data) is str and ('.h5' in path_to_data):
+            path_to_data = [path_to_data]
+        
+        # catch the case where the user did not provide a path to data 
+        if (isinstance(path_to_data, list)):
+            for path in path_to_data:
+                if os.path.splitext(path)[-1] != '.h5':
+                    raise ValueError('You did not provide a valid path_to_data!')
+        else:
+            raise ValueError('You did not provide a valid path_to_data!')
+        
+        df_sel = pd.DataFrame()
+        df_sel_oneline = pd.DataFrame()
+        count = 0
+        tmp = 0
+        self.underlying_mass_per_met = np.zeros(len(path_to_data))
+        self.simulated_mass_per_met = np.zeros(len(path_to_data))
+        if self.verbose:
+            print('Binary count with (S1_state, S2_state, binary_state, binary_event, step_name) equal')
+            print(f'to ({S1_state}, {S2_state}, {binary_state}, {binary_event}, {step_name})')
+            if invert_S1S2:
+                print(f'and ({S2_state}, {S1_state}, {binary_state}, {binary_event}, {step_name})')
+        for k, file in enumerate(path_to_data):
+            df_sel_met = pd.DataFrame()
+            sel_met = []
+            last_binary_df = None
+            
+            # read metallicity from path
+            met = float(file.split('/')[-1].split('_Zsun')[0])*Zsun
+            simulated_mass_for_met = 0.
+            
+            for i, df in enumerate(pd.read_hdf(file,  key='history', chunksize=chunksize)):
+                
+                df = pd.concat([last_binary_df, df])
+                    
+                last_binary_df = df.loc[[df.index[-1]]]
+                df.drop(df.index[-1], inplace=True)
+                
+                logic = self.apply_logic(df, 
+                                         S1_state     = S1_state,
+                                         S2_state     = S2_state,
+                                         binary_state = binary_state,
+                                         binary_event = binary_event,
+                                         step_name    = step_name,
+                                         invert_S1S2  = invert_S1S2)
+                
+                # select systems
+                # remove duplicate indicies, e.g. if selecting 'contact' state it appears twice
+                # if no specific event is selected (the second time is from the copied END event)
+                sel = df.loc[logic].index.drop_duplicates()
+                
+                # count systems
+                count += len(np.unique(sel))
+
+                # read the simulated ZAMS mass
+                sel_ZAMS = df['event'] == 'ZAMS'
+                mass = sum(df['S1_mass'][sel_ZAMS]+df['S2_mass'][sel_ZAMS])
+                simulated_mass_for_met += mass
+
+                # sort systems
+                if any(sel):
+                    df_tmp = pd.DataFrame()
+                    df_tmp = df.loc[sel]
+                    # store metallicity
+                    df_tmp['metallicity'] = met
+                    # concatenate results
+                    df_sel_met = pd.concat([df_sel_met, df_tmp])
+                    del df_tmp
+
+            # check last binary if it should be included
+            if last_binary_df is not None:
+                logic = self.apply_logic(last_binary_df, 
+                                    S1_state     = S1_state,
+                                    S2_state     = S2_state,
+                                    binary_state = binary_state,
+                                    binary_event = binary_event,
+                                    step_name    = step_name,
+                                    invert_S1S2  = invert_S1S2)
+                
+                # The last binary is selected
+                if any(logic) == True:
+                    df_tmp = last_binary_df.loc[logic]
+                    df_sel_met = pd.concat([df_sel_met, df_tmp])
+
+            # get unique indicies
+            sel_met = df_sel_met.index.drop_duplicates()
+            
+            if k > 0 and df_sel.shape[0] > 0:
+                shift_index += max(np.unique(df.index)) + 1 
+            else:
+                shift_index = 0
+            
+            
+            # store simulated and underlying stellar mass
+            self.simulated_mass_per_met[k] = simulated_mass_for_met
+            self.underlying_mass_per_met[k] = initial_total_underlying_mass(df=simulated_mass_for_met, **self.synthetic_pop_params)[0] # This used to be init_kw
+
+            # concatenate results with shifted indices for each metallicity
+            df_sel_met.index += shift_index
+            df_sel = pd.concat([df_sel, df_sel_met])
+            del df_sel_met
+
+            # load, parse and store oneline dataframe
+            # this dataframe is smaller, we can load it all at once
+            df_sel_met_oneline = pd.read_hdf(file,  key='oneline')
+            df_sel_met_oneline = df_sel_met_oneline.loc[sel_met]
+            df_sel_met_oneline['metallicity'] = met
+
+            df_sel_met_oneline.index += shift_index
+            df_sel_oneline = pd.concat([df_sel_oneline, df_sel_met_oneline])
+
+            if self.verbose:
+                print(f'in {file} are {count-tmp}')
+            tmp = count
+
+        if self.verbose:
+            print('Total binaries found are', count)
+
+        # save parsed population as synthetic population
+        if self.df is not None:
+            warnings.warn('Overwriting the df population!')
+            
+        self.df = df_sel
+        self.df_oneline = df_sel_oneline
+        self.path_to_data = path_to_data
+        self.parse_kwargs = {'S1_state': S1_state,
+                            'S2_state': S2_state,
+                            'binary_state': binary_state,
+                            'binary_event': binary_event,
+                            'step_name': step_name,
+                            'invert_S1S2': invert_S1S2}
+        
+    def apply_logic(self, df, S1_state=None, S2_state=None, binary_state=None,
+                    binary_event=None, step_name=None, invert_S1S2=False,
+                    warn=True):
+        """Select binaries in a dataframe given some properties.
+
+        Parameters
+        ----------
+        df : pd.DataFrame
+            POSYDON binary population synthesis dataframe.
+        S1_state : str
+            Star1 stellar state.
+        S2_state : str
+            Star2 stellar state.
+        binary_state : str
+            Binary state.
+        binary_event : str
+            Binary event.
+        step_name : str
+            Name of posydon step.
+        invert_S1S2 : bool
+            If `True` isolated also sort S1_state=S2_state and S2_state=S1_state
+            systems.
+
+        Returns
+        -------
+        pd.DataFrame of bools
+            List of binaries to select given the search parameters.
+
+        """
+        if not invert_S1S2 and S1_state != S2_state and warn:
+            warnings.warn('Note that invert_S1S2=False, hence you are not parsing '
+                          f'the dataset for {S1_state}-{S2_state} binaries and '
+                          f'and not for for {S1_state}-{S2_state}. If this is '
+                          'done on purpose, ignore this message!')
+
+        sel_all = df['S1_state'].astype(bool)
+
+        if S1_state is not None:
+            S1_logic = (df['S1_state'] == S1_state)
+        else:
+            S1_logic = sel_all
+        if S2_state is not None:
+            S2_logic = (df['S2_state'] == S2_state)
+        else:
+            S2_logic = sel_all
+        if binary_state is not None:
+            binary_state_logic = (df['state'] == binary_state)
+        else:
+            binary_state_logic = sel_all
+        if binary_event is not None:
+            binary_event_logic = (df['event'] == binary_event)
+        else:
+            binary_event_logic = sel_all
+        if step_name is not None:
+            step_name_logic = (df['step_names'] == step_name)
+        else:
+            step_name_logic = sel_all
+
+        if invert_S1S2:
+            S1_logic_inverted = (df['S1_state'] == S2_state)
+            S2_logic_inverted = (df['S2_state'] == S1_state)
+            # find systems
+            logic = ((S1_logic & S2_logic & binary_state_logic &
+                        binary_event_logic & step_name_logic) |
+                     (S1_logic_inverted & S2_logic_inverted &
+                        binary_state_logic  & binary_event_logic &
+                        step_name_logic))
+        else:
+            # find systems
+            logic = (S1_logic & S2_logic & binary_state_logic &
+                        binary_event_logic & step_name_logic)
+
+        return logic
+        
+    def save(self, path='./parsed_population.h5'):
+        """Save parsed population.
+
+        Parameters
+        ----------
+        path : str
+            Path to file where you want to export the dataset.
+
+        """
+        if self.df is None:
+            raise ValueError('Nothing to save! The population was not parsed.')
+        elif self.df_oneline is None:
+            raise ValueError('Missing oneline dataframe!')
+        else:
+            self.df.to_hdf(path, key='history')
+            self.df_oneline.to_hdf(path, key='oneline')
+            # write the ini parameters and underlying mass data to the file
+            with pd.HDFStore(path, mode='a') as store:
+                store.put('ini_parameters', pd.Series(self.synthetic_pop_params))
+                store.put('mass_per_met',
+                          pd.DataFrame(index=self.metallicities,
+                                       data={'underlying_mass': self.underlying_mass_per_met,
+                                             'simulated_mass': self.simulated_mass_per_met}
+                                        ))
+                store.put('path_to_data', pd.Series(self.path_to_data))
+                store.put('parse_kwargs', pd.Series(self.parse_kwargs))
+            if self.verbose:
+                print('Population successfully saved!')
+
+    def load(self, path, skip_ini_check=False):
+        """Load parsed population.
+
+        Parameters
+        ----------
+        path : str
+            Path to dataset.
+        skip_ini_check : bool
+            If `True` skip the check of the ini parameters.
+
+        """
+        if self.df is None and self.df_oneline is None :
+            self.df = pd.read_hdf(path, key='history')
+            self.df_oneline = pd.read_hdf(path, key='oneline')
+            with pd.HDFStore(path, mode='r') as store:
+                tmp_synthetic_pop_param = store['ini_parameters'].to_dict()                
+                self.underlying_mass_per_met = store['mass_per_met']['underlying_mass'].to_numpy()
+                self.simulated_mass_per_met = store['mass_per_met']['simulated_mass'].to_numpy()
+                self.metallicities = store['mass_per_met'].index.to_numpy()
+                self.path_to_data = store['path_to_data'].to_numpy()
+                self.parse_kwargs = store['parse_kwargs'].to_dict()
+                # check if the ini parameters are the same
+                if not skip_ini_check:
+                    diff = set(tmp_synthetic_pop_param.keys()) ^ set(self.synthetic_pop_params.keys())
+                    if len(diff) > 0:
+                        # this shows both all variables that are different.
+                        print('Check the following parameters:')
+                        print(diff)
+                        raise ValueError('The ini parameters in the file do not match the ones in the class!')
+                    
+            if self.verbose:
+                print('Population successfully loaded!')
+        else:
+            raise ValueError('You already have a population stored in memory!')
+
+    def get_formation_channels(self, mt_history=False):
+        """Get formation channel and add to df_oneline.
+        
+        Parameters
+        ----------
+        mt_history : bool
+            If `True`, split the event oRLO1/oRLO2 into oRLO1-contact/oRLO2-contact,
+            oRLO1-reverse/oRLO2-reverse and oRLO1/oRLO2. This is useful to
+            identify binaries undergoing contact stable mass-transfer phases and 
+            reverse mass-transfer phase .
+        """
+        
+        # loop through each binary
+        unique_binary_index = np.unique(self.df.index)
+        for index in unique_binary_index:
+
+            # get event column and information from interpolated classes
+            df_binary = self.df.loc[index,['event']].dropna()
+            intep_cls = [key for key in self.df_oneline.keys() if 'interp_class' in key]
+            df_binary_online = self.df_oneline.loc[index, intep_cls].dropna()
+            event_array = df_binary['event'].values.tolist()
+        
+            # make interpolated class information consistent with event column
+            HMS_HMS_event_dict = {'stable_MT':'oRLO1', 'no_MT':'None', 'unstable_MT':'oCE1/oDoubleCE1'}
+            event_HMS_HMS = HMS_HMS_event_dict[df_binary_online['interp_class_HMS_HMS']]
+            
+            # for now, only append information for RLO1; unstable_MT information already exists
+            if event_HMS_HMS == 'oRLO1':
+                event_array.insert(1, event_HMS_HMS)
+                formation_channel = "_".join(event_array)
+            else:
+                formation_channel = "_".join(event_array)
+                        
+            # TODO: drop the envent CO_contact
+            # TODO: once we trust the redirection to the detached step
+            #       drop also the redirect event
+            
+            # TODO: for debugging purposes we keep the full channel
+            self.df_oneline.loc[index,'channel_debug'] = formation_channel
+            # clean the redirect and CO_contact events
+            formation_channel = formation_channel.replace('_redirect', '')
+            formation_channel = formation_channel.replace('_CO_contact', '')
+            self.df_oneline.loc[index,'channel'] = formation_channel
+            
+        if mt_history and 'mt_history_HMS_HMS' not in self.df_oneline:
+            raise ValueError('mt_history_HMS_HMS not saved in the oneline dataframe!')
+        else:   
+            # split oRLO1 into oRLO1, oRLO1-contact and oRLO1-reverse
+            sel = ((self.df_oneline['mt_history_HMS_HMS'] == 'Stable contact phase') & 
+                    self.df_oneline['channel'].str.contains('oRLO1'))
+            self.df_oneline.loc[sel, 'channel'] = self.df_oneline.loc[sel, 'channel'].apply(lambda x: x.replace('oRLO1', 'oRLO1-contact'))
+            sel = ((self.df_oneline['mt_history_HMS_HMS'] == 'Stable reverse mass-transfer phase') & 
+                    self.df_oneline['channel'].str.contains('oRLO1'))
+            self.df_oneline.loc[sel, 'channel'] = self.df_oneline.loc[sel, 'channel'].apply(lambda x: x.replace('oRLO1', 'oRLO1-reverse'))
+            # TODO: do the above split for unstable MT as well     
+        
+    def create_DCO_population(self, oneline_cols=None):
+        '''Create a DCO population from the parsed population.
+        
+        A DCO Population will contain one 'time' for each 'event',
+        which represents the time after starburst that the event takes place.
+        
+        All DCO events in the population will be contained in the new population.
+        If no filtering for the BH or NS formation is done, the DCO population
+        will contain both.
+        
+        Parameters
+        -----------
+        oneline_cols : list of str
+            List of columns to extract from the oneline dataframe and add to
+            the DCO population dataframe.
+            
+        Returns
+        --------
+        DCO_synthetic_population : SyntheticPopulation
+            A synthetic population containing DCOs with the time of formation
+            and merger.
+        '''
+        
+        # The user will have done an initial parse, when inputting the parsed
+        # population data. Additional filtering can be done manually.
+        # Using the data from the parsed population, 
+        # we find the DCO at their formation.
+        
+        DCO_synthetic_population = SyntheticPopulation(verbose=self.verbose)
+        
+        # Select NSs and BHs in the population at formation of the DCO.
+        logic1 = self.apply_logic(self.df, S1_state='NS',
+                                          S2_state='NS',
+                                          binary_state='detached',
+                                          step_name = 'step_SN',
+                                          invert_S1S2=True)
+        logic2 = self.apply_logic(self.df, S1_state='BH',
+                                          S2_state='BH',
+                                          binary_state='detached',
+                                          step_name = 'step_SN',
+                                          invert_S1S2=True)
+        logic3 = self.apply_logic(self.df, S1_state='BH',
+                                            S2_state='NS',
+                                            binary_state='detached',
+                                            step_name = 'step_SN',
+                                            invert_S1S2=True)
+        logic = logic1 | logic2 | logic3
+        DCO_synthetic_population.df_synthetic = self.df.loc[logic].copy()
+        
+        # compute the inspiral timescale from the integrated orbit
+        # this estimate is better than evaluating Peters approxiamtion
+        time_contact = self.df.loc[self.df['event'] == 'END',['time']]
+        # NOTE/TODO: we change the units of time in the dataframe to Myr
+        # this might be confusion to the user? Note that Myr are convinient
+        # when inspecting the data frame.
+        DCO_synthetic_population.df_synthetic['t_delay'] = (time_contact - DCO_synthetic_population.df_synthetic[['time']])*1e-6 # Myr
+        DCO_synthetic_population.df_synthetic['time'] *= 1e-6 # Myr
+        
+         # add properties of the oneline dataframe
+        if self.df_oneline is not None:
+            # TODO: add kicks as well by default?
+            # Needed for the effective spin calculation
+            save_cols = ['S1_spin_orbit_tilt', 'S2_spin_orbit_tilt']
+            if oneline_cols is not None:
+                for c in oneline_cols:
+                    if c not in save_cols:
+                        save_cols.append(c)
+            for c in save_cols:
+                if c in self.df_oneline:
+                    DCO_synthetic_population.df_synthetic[c] = self.df_oneline[c]
+                else:
+                    warnings.warn(f'The column {c} is not present in the '
+                                   'oneline dataframe.')
+        
+        return DCO_synthetic_population
+
+    def create_GRB_population(self, GRB_properties={}):
+        '''Create a GRB population from the parsed population.
+        
+        The Synthetic Population will contain a 'time for each 'event',
+        which represents the time after starburst that the event takes place.
+        
+        Parameters
+        ----------
+        GRB_properties : dict
+            Dictionary containing the GRB properties to use.
+            The dictionary must contain
+            
+            - 'GRB_efficiency',
+            - 'GRB_beaming',
+            - 'E_GRB_iso_min'
+        
+        '''
+        
+        if ('GRB_efficiency' not in GRB_properties or
+            GRB_properties['GRB_efficiency'] is None):
+            raise ValueError('Missing GRB_efficiency variable in the MODEL!')
+        if ('GRB_beaming' not in GRB_properties or
+            GRB_properties['GRB_beaming'] is None):
+            raise ValueError('Missing GRB_beaming variable in the MODEL!')
+        if ('E_GRB_iso_min' not in GRB_properties or
+            GRB_properties['E_GRB_iso_min'] is None):
+            raise ValueError('Missing GRB_beaming variable in the MODEL!')
+        
+        GRB_synthetic_population = SyntheticPopulation(verbose=self.verbose)
+        
+        # store the model parameters
+        GRB_synthetic_population.model_parameters = GRB_properties
+
+        # 1. Get the BH formation events
+        # 2. Calculate GRB occuring/properties
+        logic = self.apply_logic(self.df,
+                                 S1_state='BH',
+                                 S2_state=None,
+                                 binary_state='detached',
+                                 step_name = 'step_SN',
+                                 invert_S1S2=False)  
 
 
-class SyntheticPopulation:
+
+        tmp_df = get_GRB_properties(self.df,
+                                    GRB_properties['GRB_efficiency'],
+                                    GRB_properties['GRB_beaming'],
+                                    GRB_properties['E_GRB_iso_min']
+                                    )
+        
+        # only get the GRB events
+        mask = tmp_df['GRB1'] == True | tmp_df['GRB2'] == True
+        
+        
+        # get time_CC1 and time_CC2 note that for GRB calculations we
+        # do not use the "time" column indicating the time of formation
+        # of the DCO systems as there might be cases where 
+        # CC2 might happen before CC1 due to mass ratio reversal
+        DCO = [['BH', None], [None, 'BH']]
+        events = ['CC1', 'CC2']
+        for i, event in enumerate(events):
+            logic = self.apply_logic(self.df, S1_state=DCO[i][0],
+                        S2_state=DCO[i][1],
+                        binary_state='detached',
+                        step_name = 'step_SN',
+                        invert_S1S2=False,
+                        warn=False)
+            last_index = -1
+            time = []
+            for index, value in self.df.loc[logic,'time'].items():
+                if index != last_index:
+                    time.append(value)
+                last_index = index
+            if len(time) != GRB_synthetic_population.df_synthetic.shape[0]:
+                raise ValueError('Missing values in time_{event}!')
+            GRB_synthetic_population.df_synthetic[f'time_{event}'] = np.array(time)*1e-6 # Myr
+
+    def create_synthetic_population(self):
+        '''Create a synthetic population from the parsed population.
+        
+        A Synthetic Population will contain one 'event' with a 'time',
+        which represents the time after starburst that the event takes place.
+        
+        
+        '''
+        # Create a synthetic population
+
+        
+        return SyntheticPopulation()
+
+class SyntheticPopulation():
+    
+    def __init__(self,
+                 verbose=False,
+                 ):
+        '''This class is for analysis of a parsed population.
+    
+        You can calculate additional properties of the population, such as
+        the formation channel, merger times, GRB properties, etc.
+        
+        Parameters
+        -----------
+        MODEL : dict
+            describes the star formation history for the population to use.
+            The dictionary should contain the following keys:
+                - 'delta_t' : the time step to use in Myr
+                - 'SFR' : a string describing the star formation history
+                - 'sigma_SFR' : the uncertainty in the SFR in Msun/yr 
+                - 'Z_max' : the maximum metallicity to use in the SFR calculation
+                - 'Zsun' : the solar metallicity
+        '''    
+        # initialise the parsed population class variables
+        ParsedPopAttrs.__init__(self)
+        self.verbose = verbose
+        self.df_synthetic = None
+        self.model_parameters = None
+
+
+
+                      
+    def get_dco_at_formation(self, S1_state, S2_state, oneline_cols=None, formation_channels=False, mt_history=False):
+        """Populates `df_synthetic` with DCOs at their formation.
+        
+        If `formation_channels` is `True` the `channel` column is added to the
+        `df_synthetic` dataframe.
+
+        if MODEL on class initialization is not None and
+        "compute_GRB_properties" in MODEL. 
+        If MODEL["compute_GRB_properties"] is `True` the following columns are
+        in the MODEL:
+
+            - 'GRB_efficiency',
+            - 'GRB_beaming',
+            - 'E_GRB_iso_min'
+
+        The following columns are added to the `df_synthetic` dataframe:
+            - S1_m_disk_radiated
+            - S2_m_disk_radiated
+
+        Note: by default this function looks for the symmetric state
+        S1_state = S2_sate and S2_state = S1_sate.
+
+        Parameters
+        ----------
+        S1_state : str
+            Star1 stellar state.
+        S2_state : str
+            Star2 stellar state.
+        oneline_cols : list str
+            List of columns preset in the oneline dataframe you want to export
+            into the synthetic population.
+        formation_channels : bool
+            Compute the formation channel, a string containing the binary
+            event evolution.
+        mt_history : bool
+            If `True`, split the event oRLO1/oRLO2 into oRLO1-contact/oRLO2-contact,
+            oRLO1-reverse/oRLO2-reverse and oRLO1/oRLO2. This is useful to
+            identify binaries undergoing contact stable mass-transfer phases and 
+            reverse mass-transfer phase .
+
+        """
+        # compute GRB properties boolean
+        compute_GRB_properties = (GRB_properties is not None and 
+                                  "compute_GRB_properties" in GRB_properties and 
+                                  GRB_properties["compute_GRB_properties"])
+
+        # add channel column to oneline dataframe
+        if formation_channels:
+            if self.verbose:
+                print('Computing formation channels...')
+            self.get_formation_channels(mt_history=mt_history)
+
+        # to avoid the user making mistake automatically check the inverse of
+        # the stellar states, since the df is already parsed this will not
+        # take too much extra time
+        logic = self.apply_logic(self.df, S1_state=S1_state,
+                                          S2_state=S2_state,
+                                          binary_state='detached',
+                                          step_name = 'step_SN',
+                                          invert_S1S2=True)
+        self.df_synthetic = self.df.loc[logic].copy()
+
+        # compute the inspiral timescale from the integrated orbit
+        # this estimate is better than evaluating Peters approxiamtion
+        time_contact = self.df.loc[self.df['event'] == 'END',['time']]
+        # NOTE/TODO: we change the units of time in the dataframe to Myr
+        # this might be confusion to the user? Note that Myr are convinient
+        # when inspecting the data frame.
+        self.df_synthetic['t_delay'] = (time_contact - self.df_synthetic[['time']])*1e-6 # Myr
+        self.df_synthetic['time'] *= 1e-6 # Myr
+        
+        # add properties of the oneline dataframe
+        if self.df_oneline is not None:
+            # TODO: add kicks as well by default?
+            save_cols = ['S1_spin_orbit_tilt', 'S2_spin_orbit_tilt']
+            if compute_GRB_properties:
+                save_cols += ['S1_m_disk_radiated', 'S2_m_disk_radiated']
+            if formation_channels:
+                save_cols.append('channel')
+            if oneline_cols is not None:
+                for c in oneline_cols:
+                    if c not in save_cols:
+                        save_cols.append(c)
+            for c in save_cols:
+                if c in self.df_oneline:
+                    self.df_synthetic[c] = self.df_oneline[c]
+                else:
+                    warnings.warn(f'The column {c} is not present in the '
+                                   'oneline dataframe.')
+
+        # compute GRB properties
+        if compute_GRB_properties:
+            if ('GRB_efficiency' not in GRB_properties or
+                GRB_properties['GRB_efficiency'] is None):
+                raise ValueError('Missing GRB_efficiency variable in the MODEL!')
+            if ('GRB_beaming' not in GRB_properties or
+                GRB_properties['GRB_beaming'] is None):
+                raise ValueError('Missing GRB_beaming variable in the MODEL!')
+            if ('E_GRB_iso_min' not in GRB_properties or
+                GRB_properties['E_GRB_iso_min'] is None):
+                raise ValueError('Missing GRB_beaming variable in the MODEL!')
+            self.df_synthetic = get_GRB_properties(self.df_synthetic,
+                                                   GRB_properties['GRB_efficiency'],
+                                                   GRB_properties['GRB_beaming'],
+                                                   GRB_properties['E_GRB_iso_min']
+                                                   )
+            # get time_CC1 and time_CC2 note that for GRB calculations we
+            # do not use the "time" column indicating the time of formation
+            # of the DCO systems as there might be cases where 
+            # CC2 might happen before CC1 due to mass ratio reversal
+            DCO = [[S1_state, None], [None, S2_state]]
+            events = ['CC1', 'CC2']
+            for i, event in enumerate(events):
+                logic = self.apply_logic(self.df, S1_state=DCO[i][0],
+                            S2_state=DCO[i][1],
+                            binary_state='detached',
+                            step_name = 'step_SN',
+                            invert_S1S2=False,
+                            warn=False)
+                last_index = -1
+                time = []
+                for index, value in self.df.loc[logic,'time'].items():
+                    if index != last_index:
+                        time.append(value)
+                    last_index = index
+                if len(time) != self.df_synthetic.shape[0]:
+                    raise ValueError('Missing values in time_{event}!')
+                self.df_synthetic[f'time_{event}'] = np.array(time)*1e-6 # Myr
+
+        # for convinience reindex the DataFrame
+        n_rows = len(self.df_synthetic.index)
+        self.df_synthetic = self.df_synthetic.set_index(np.linspace(0,n_rows-1,n_rows,dtype=int))
+
+    def get_dco_merger_efficiency(self):
+        """Compute the DCO merger efficinty per Msun for each metallicities."""
+        metallicities = np.unique(self.df_synthetic['metallicity'])
+        efficiencies = []
+        self.met_merger_efficiency = sorted(metallicities)[::-1]
+        for met in self.met_merger_efficiency:
+            sel = (self.df_synthetic['metallicity'] == met)
+            count = self.df_synthetic[sel].shape[0]
+            underlying_stellar_mass = self.df_synthetic.loc[sel,'underlying_mass_for_met'].values[0]
+            eff = count/underlying_stellar_mass
+            efficiencies.append(eff)
+            print(f'DCO merger efficiency at Z={met:1.2E}: {eff:1.2E} Msun^-1')
+        self.met_merger_efficiency = np.array(self.met_merger_efficiency)
+        self.merger_efficiency = {'total' : np.array(efficiencies)}
+        # if the channel column is present compute the merger efficiency per channel
+        if "channel" in self.df_synthetic:
+            channels = np.unique(self.df_synthetic['channel'])
+            for ch in channels:
+                efficiencies = []
+                for met in self.met_merger_efficiency:
+                    sel = (self.df_synthetic['metallicity'] == met) & (self.df_synthetic['channel'] == ch)
+                    count = self.df_synthetic[sel].shape[0]
+                    if count > 0:
+                        underlying_stellar_mass = self.df_synthetic.loc[sel,'underlying_mass_for_met'].values[0]
+                        eff = count/underlying_stellar_mass
+                    else:
+                        eff = np.nan
+                    efficiencies.append(eff)
+                    # print(f'Z={met:1.2E} {ch}: {eff:1.2E} Msun^-1')
+                self.merger_efficiency[ch] = np.array(efficiencies)
+# Should this population just contain the synthetic components?
+# That is the 'moment' of the events?
+
+    def save(self, path):
+        return
+    
+    def load(self, path):
+        return    
+
+    
+##-------------------------------------------------------------------------####    
+
+class SyntheticPopulation2:
 
     def __init__(self, path_to_ini, verbose=False, MODEL={}):
         """
@@ -48,7 +911,7 @@ class SyntheticPopulation:
         self.binary_populations = None
 
         self.verbose = verbose
-        self.MODEL = MODEL
+        GRB_properties = MODEL
         # DCOs
         self.df = None
         self.df_oneline = None
@@ -433,9 +1296,9 @@ class SyntheticPopulation:
 
         """
         # compute GRB properties boolean
-        compute_GRB_properties = (self.MODEL is not None and 
-                                  "compute_GRB_properties" in self.MODEL and 
-                                  self.MODEL["compute_GRB_properties"])
+        compute_GRB_properties = (GRB_properties is not None and 
+                                  "compute_GRB_properties" in GRB_properties and 
+                                  GRB_properties["compute_GRB_properties"])
 
         # add channel column to oneline dataframe
         if formation_channels:
@@ -483,19 +1346,19 @@ class SyntheticPopulation:
 
         # compute GRB properties
         if compute_GRB_properties:
-            if ('GRB_efficiency' not in self.MODEL or
-                self.MODEL['GRB_efficiency'] is None):
+            if ('GRB_efficiency' not in GRB_properties or
+                GRB_properties['GRB_efficiency'] is None):
                 raise ValueError('Missing GRB_efficiency variable in the MODEL!')
-            if ('GRB_beaming' not in self.MODEL or
-                self.MODEL['GRB_beaming'] is None):
+            if ('GRB_beaming' not in GRB_properties or
+                GRB_properties['GRB_beaming'] is None):
                 raise ValueError('Missing GRB_beaming variable in the MODEL!')
-            if ('E_GRB_iso_min' not in self.MODEL or
-                self.MODEL['E_GRB_iso_min'] is None):
+            if ('E_GRB_iso_min' not in GRB_properties or
+                GRB_properties['E_GRB_iso_min'] is None):
                 raise ValueError('Missing GRB_beaming variable in the MODEL!')
             self.df_synthetic = get_GRB_properties(self.df_synthetic,
-                                                   self.MODEL['GRB_efficiency'],
-                                                   self.MODEL['GRB_beaming'],
-                                                   self.MODEL['E_GRB_iso_min']
+                                                   GRB_properties['GRB_efficiency'],
+                                                   GRB_properties['GRB_beaming'],
+                                                   GRB_properties['E_GRB_iso_min']
                                                    )
             # get time_CC1 and time_CC2 note that for GRB calculations we
             # do not use the "time" column indicating the time of formation
@@ -622,7 +1485,7 @@ class SyntheticPopulation:
         """
 
         # TODO: make the class inputs kwargs
-        self.rates = Rates(self.df_synthetic, **self.MODEL)
+        self.rates = Rates(self.df_synthetic, **GRB_properties)
 
         # compute DCO merger rate density
         if pop == 'DCO':
@@ -668,9 +1531,9 @@ class SyntheticPopulation:
 
         """
         # compute GRB properties boolean
-        compute_GRB_properties = (self.MODEL is not None and 
-                                  "compute_GRB_properties" in self.MODEL and 
-                                  self.MODEL["compute_GRB_properties"])
+        compute_GRB_properties = (GRB_properties is not None and 
+                                  "compute_GRB_properties" in GRB_properties and 
+                                  GRB_properties["compute_GRB_properties"])
 
         # drop all zero weights to save memory
         sel = w_ijk > 0.
