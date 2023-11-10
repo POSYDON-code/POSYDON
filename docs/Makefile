@@ -51,8 +51,9 @@ help:
 
 .PHONY: clean
 clean:
-	rm -rf $(BUILDDIR)/*
+	rm -rf $(BUILDDIR)
 	rm -rf _tmp
+	rm -f checkautodoc
 
 .PHONY: html
 html: checkautodoc
