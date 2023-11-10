@@ -249,6 +249,7 @@ class SyntheticPopulation:
         df_sel_oneline = pd.DataFrame()
         count = 0
         tmp = 0
+        shift_index = 0
         if self.verbose:
             print('Binary count with (S1_state, S2_state, binary_state, binary_event, step_name) equal')
             print(f'to ({S1_state}, {S2_state}, {binary_state}, {binary_event}, {step_name})')
@@ -319,11 +320,6 @@ class SyntheticPopulation:
             # get unique indicies
             sel_met = df_sel_met.index.drop_duplicates()
             
-            if k > 0 and df_sel.shape[0] > 0:
-                shift_index += max(np.unique(df.index)) + 1 
-            else:
-                shift_index = 0
-            
             # store simulated and underlying stellar mass
             df_sel_met['simulated_mass_for_met'] = simulated_mass_for_met
             df_sel_met['underlying_mass_for_met'] = initial_total_underlying_mass(df=simulated_mass_for_met, **self.synthetic_pop_params)[0] # This used to be init_kw
@@ -345,6 +341,9 @@ class SyntheticPopulation:
             if self.verbose:
                 print(f'in {file} are {count-tmp}')
             tmp = count
+            
+            # shift the index for the next metallicity
+            shift_index += max(np.unique(df.index)) + 1
 
         if self.verbose:
             print('Total binaries found are', count)
