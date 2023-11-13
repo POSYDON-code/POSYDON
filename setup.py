@@ -74,6 +74,7 @@ install_requires = [
     'psutil == 5.6.7',
     'tqdm == 4.48.2',
     'tables == 3.6.1',
+    'python_utils == 3.5.2',
     'progressbar2 == 4.0.0',
 ]
 
