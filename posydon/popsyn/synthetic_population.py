@@ -101,7 +101,8 @@ class PopulationRunner:
                             if os.path.isfile(os.path.join(path_to_batch, f))]
             
             BinaryPopulation(**self.get_ini_kw()).combine_saved_files(met_prefix+ 'population.h5', tmp_files)
-            print(f'Population at Z={met:.2e} Z_sun successfully merged!')
+            if self.verbose:
+                print(f'Population at Z={met:.2e} Z_sun successfully merged!')
             # Store the population ini parameters inside the file.
             # This is useful to keep track of the population parameters
             # when merging multiple populations.
@@ -654,6 +655,9 @@ class ParsedPopulation():
         mask = tmp_df['GRB1'] == True | tmp_df['GRB2'] == True
         
         
+        
+        
+        
         # get time_CC1 and time_CC2 note that for GRB calculations we
         # do not use the "time" column indicating the time of formation
         # of the DCO systems as there might be cases where 
@@ -716,8 +720,6 @@ class SyntheticPopulation():
         self.verbose = verbose
         self.df_synthetic = None
         self.model_parameters = None
-
-
 
                       
     def get_dco_at_formation(self, S1_state, S2_state, oneline_cols=None, formation_channels=False, mt_history=False):
