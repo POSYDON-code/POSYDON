@@ -486,7 +486,7 @@ def bondi_hoyle(binary, accretor, donor, idx=-1, wind_disk_criteria=True,
         default: True, see [5]_
     scheme : str
         There are different options:
-        
+
         - 'Hurley+2002' : following [3]_
         - 'Kudritzki+2000' : following [7]_
 

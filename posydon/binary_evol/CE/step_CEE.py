@@ -60,6 +60,9 @@ MODEL = {"prescription": 'alpha-lambda',
          "verbose": False,
          "common_envelope_option_after_succ_CEE": 'core_not_replaced_noMT',
          # "core_replaced_noMT" for core_definition_H_fraction=0.01
+         "mass_loss_during_CEE_merged": False # If False, then no mass loss from this step for a merged star
+                                              # If True, then we remove mass according to the alpha-lambda prescription
+                                              # assuming a final separation where the inner core RLOF starts.
          }
 
 
@@ -152,6 +155,7 @@ class StepCEE(object):
             core_definition_He_fraction=MODEL[
                 'core_definition_He_fraction'],
             CEE_tolerance_err=MODEL['CEE_tolerance_err'],
+            mass_loss_during_CEE_merged=MODEL['mass_loss_during_CEE_merged'],
             verbose=MODEL['verbose'],
             **kwargs):
         """Initialize a StepCEE instance."""
@@ -178,6 +182,7 @@ class StepCEE(object):
             self.CEE_tolerance_err = CEE_tolerance_err
             self.common_envelope_option_after_succ_CEE = \
                 common_envelope_option_after_succ_CEE
+            self.mass_loss_during_CEE_merged = mass_loss_during_CEE_merged
 
         self.verbose = verbose
         self.path_to_posydon = PATH_TO_POSYDON
@@ -450,7 +455,7 @@ class StepCEE(object):
             In case we want information about the CEE.
         common_envelope_option_after_succ_CEE: str
             Options are:
-            
+
             1) "core_replaced_noMT"
                 he_core_mass/radius (or co_core_mass/radius for CEE of
                 stripped_He*) are replaced according to the new core boundary
@@ -808,10 +813,63 @@ class StepCEE(object):
             if binary.event in ["oCE2", "oDoubleCE2"]:
                 binary.event = "oMerging2"
 
+            if mass_loss_during_CEE_merged:
+                # we calculate the ejected mass from part of the commone envelope, using
+                # a_f = separation_postCEE so that one of the cores (or MS star) is filling its inner Roche lobe,
+                # and assuming that lambda(Menvelope) ~ lamda(Mejected) although
+                # Mejected < Menvelope (e.g. see Fig1 of Dewi+Tauris2000)
+
+                separation_for_inner_RLO1 = rc1_i / cf.roche_lobe_radius(mc1_i/mc2_i, a=1)
+                separation_for_inner_RLO2 = rc2_i / cf.roche_lobe_radius(mc2_i/mc1_i, a=1)
+
+                separation_postCEE = np.max( separation_for_inner_RLO1, separation_for_inner_RLO2 ) * const.Rsun
+
+                # Ebind(Mejected) = a_CE*D_orb =>
+                # GMMej/(lambda * R)  = a_CE * [ - GM1M2/(2a_i) +  G(M1-Mej)*M2/(2a_f) ]
+                # with a_f = separation_postCEE
+                # and solvind it for Mejected
+                Mejected_donor = alpha_CE * (m1_i * const.Msun * m2_i * const.Msun)/2. * (1./separation_i - 1./separation_postCEE) \
+                          / ( (m1_i * const.Msun/(lambda1_CE*radius1 * const.Rsun)) + ((alpha_CE*m2_i * const.Msun)/(2.*separation_postCEE))  )
+
+                Mejected_donor = Mejected / const.Msun # to go from cgs to solar masses again
+                Mejected_comp = 0.0
+
+
+                if double_CE:
+                    # Assuming that the ratio of ejected mass of each (common) envelope
+                    # is the same as the ratio of the initial envelope masses:
+                    # the root of the mass lost for each is the solution of a quadratic algebraic equation
+
+                    WF = (m1_i  - mc1_i)/ (m2_i - mc2_i) # weight factor:
+                                                        # = Mdonor,envelope / Mcomp,envelope == Mejected_donor / Mejected_comp
+
+                    # Mejected_comp = Mejected_donor / WF
+                    # A*Mejected_donor^2 + B*Mejected_donor + C = 0
+
+                    A = alpha_CE / (WF*2.*separation_postCEE)
+                    B = ( ( - alpha_CE*m1_i * const.Msun/ (WF*2.*separation_postCEE)) - (alpha_CE*m2_i * const.Msun/ (2.*separation_postCEE)) \
+                        - (m1_i * const.Msun/ (lambda1_CE*radius1 * const.Rsun)) - (m2_i * const.Msun/ (WF*lambda2_CE*radius2 * const.Rsun)))
+                    C = alpha_CE * (m1_i * const.Msun * m2_i * const.Msun)/2. * (1./separation_i - 1./separation_postCEE)
+                    roots = np.roots([A,B,C])
+                    root = np.max( np.real(roots[0]), np.real(roots[1])
+
+                    if not (root >= 0.)
+                        raise Exception("Mejected_donor in double CEE with mass_loss_during_CEE_merged is found negative")
+                    if not (np.min( np.real(roots[0]), np.real(roots[1]) ) < 0.)
+                        raise Exception("The second root of the equation double CEE with mass_loss_during_CEE_merged is NOT found negative")
+                    Mejected_donor = root  / const.Msun # to go from cgs to solar masses again
+                    Mejected_comp = Mejected_donor / WF
+
+                donor.mass = m1_i - Mejected_donor
+                comp_star.mass = m2_i - Mejected_comp
+
             if verbose:
                 print("system merges due to one of the two star's core filling"
                       "its RL")
                 print("Rdonor core vs RLdonor core = ", rc1_i, RL1)
                 print("Rcompanion vs RLcompanion= ", rc2_i, RL2)
+                print("The mass loss during merging_CEE is: ", mass_loss_during_CEE_merged)
+                print("so m1_i , m1_f = ", m1_i, donor.mass)
+                print("so m2_i , m2_f = ", m2_i, comp_star.mass)
 
         return
