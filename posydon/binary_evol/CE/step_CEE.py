@@ -827,7 +827,7 @@ class StepCEE(object):
                 # Ebind(Mejected) = a_CE*D_orb =>
                 # GMMej/(lambda * R)  = a_CE * [ - GM1M2/(2a_i) +  G(M1-Mej)*M2/(2a_f) ]
                 # with a_f = separation_postCEE
-                # and solvind it for Mejected
+                # and solving it for Mejected
                 Mejected_donor = alpha_CE * (m1_i * const.Msun * m2_i * const.Msun)/2. * (1./separation_i - 1./separation_postCEE) \
                           / ( (m1_i * const.Msun/(lambda1_CE*radius1 * const.Rsun)) + ((alpha_CE*m2_i * const.Msun)/(2.*separation_postCEE))  )
 
