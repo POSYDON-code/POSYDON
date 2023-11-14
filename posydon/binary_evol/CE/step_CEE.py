@@ -828,7 +828,7 @@ class StepCEE(object):
                 # GMMej/(lambda * R)  = a_CE * [ - GM1M2/(2a_i) +  G(M1-Mej)*M2/(2a_f) ]
                 # with a_f = separation_postCEE
                 # and solving it for Mejected
-                Mejected_donor = alpha_CE * (m1_i * const.Msun * m2_i * const.Msun)/2. * (1./separation_i - 1./separation_postCEE) \
+                Mejected_donor = alpha_CE * (m1_i * const.Msun * m2_i * const.Msun)/2. * (1./separation_postCEE - 1./separation_i) \
                           / ( (m1_i * const.Msun/(lambda1_CE*radius1 * const.Rsun)) + ((alpha_CE*m2_i * const.Msun)/(2.*separation_postCEE))  )
 
                 Mejected_donor = Mejected / const.Msun # to go from cgs to solar masses again
