@@ -68,12 +68,14 @@ install_requires = [
     'pandas == 1.3.0',
     'scikit-learn == 0.21.3',
     'matplotlib ==  3.5.0',
+    'more-itertools == 9.1.0',
     'matplotlib-label-lines == 0.3.8',
     'PyQt5 == 5.15.3',
     'h5py == 3.7.0',
     'psutil == 5.6.7',
     'tqdm == 4.48.2',
     'tables == 3.6.1',
+    'python_utils == 3.5.2',
     'progressbar2 == 4.0.0',
 ]
 
