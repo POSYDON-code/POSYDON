@@ -783,7 +783,7 @@ class StepCEE(object):
                                             'co_core_mass',
                                             'co_core_radius'
 
-                        ])
+                        ]) 
                 elif star_type == "not_giant_companion":
                     continue
                 else:
