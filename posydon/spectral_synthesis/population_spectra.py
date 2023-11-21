@@ -44,7 +44,7 @@ class population_spectra():
         #self.total_binaries = len(self.population)
         # Initialize the spectral_grids object and parameters used.
         # TODO put an option for changing the wavelength
-        self.grids = spectral_grids()
+        self.grids = spectral_grids(**self.kwargs)
         self.scaling_factor = kwargs.get('scaling_factor')
         self.grid_flux = self.grids.grid_flux
 
