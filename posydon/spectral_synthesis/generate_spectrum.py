@@ -25,7 +25,6 @@ def check_boundaries(grids,grid_name,**kwargs):
     grid = grids.spectral_grids[grid_name]
     if grid_name == 'stripped_grid':
         if x['M_init'] < grid.axis_x_min['M_init'] or x['M_init'] > grid.axis_x_max['M_init']:
-            print("In here! outside limits!")
             return 'failed_grid'
         else:
             return 'stripped_grid'
@@ -62,7 +61,6 @@ def point_the_grid(grids,x,ostar_temp_cut_off,bstar_temp_cut_off,label,**kwargs)
     #First check for stripped stars because their temp can be a lot 
     # higher than the Teff of the Ostar grid limit
     if "stripped" in x['state']:
-        print("Inside here!1")
         if label is not None:
             return 'failed_grid'
         return check_boundaries(grids,'stripped_grid',**x)
