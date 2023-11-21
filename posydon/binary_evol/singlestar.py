@@ -24,6 +24,7 @@ from posydon.utils.common_functions import check_state_of_star
 from posydon.grids.MODELS import MODELS
 
 
+
 STARPROPERTIES = [
     'state',            # the evolutionary state of the star. For more info see
                         # `posydon.utils.common_functions.check_state_of_star`
@@ -75,21 +76,21 @@ STARPROPERTIES = [
     'spin',                         # the dimesionless spin of the star, if it
                                     # is a compact object, which is equal to
                                     # c*J/(GM^2).
-    'conv_env_top_mass',
-    'conv_env_bot_mass',
-    'conv_env_top_radius',
-    'conv_env_bot_radius',
-    'conv_env_turnover_time_g',
+    'conv_env_top_mass',            #The mass at the top of the convective envelope
+    'conv_env_bot_mass',            #bottom
+    'conv_env_top_radius',          #The radius at the top of the convective envelope
+    'conv_env_bot_radius',          #The radius at the bottom of the convective envelope  
+    'conv_env_turnover_time_g',     
     'conv_env_turnover_time_l_b',
     'conv_env_turnover_time_l_t',
-    'envelope_binding_energy',
-    'mass_conv_reg_fortides',
-    'thickness_conv_reg_fortides',
-    'radius_conv_reg_fortides',
-    'lambda_CE_1cent',
-    'lambda_CE_10cent',
+    'envelope_binding_energy',     
+    'mass_conv_reg_fortides',      #Total mass of convective regions
+    'thickness_conv_reg_fortides', #The total thickness of convective regions
+    'radius_conv_reg_fortides',    #
+    'lambda_CE_1cent',           #The lambda_CE using a core definition of hydrogen fraction 1%
+    'lambda_CE_10cent',          #
     'lambda_CE_30cent',
-    'lambda_CE_pure_He_star_10cent',
+    'lambda_CE_pure_He_star_10cent', #
     'profile',  # the profile of the star, including extended information of
                 # its internal structure, for a specific timestep, usually for
                 # the end of the previous step including MESA psygrid.
@@ -196,9 +197,10 @@ class SingleStar:
 
         Parameters
         ----------
-        extra_columns : list
+        extra_columns : dict( 'name':dtype, .... )
             Extra star history parameters to return in DataFrame that are not
-            included in STARPROPERTIES.
+            included in STARPROPERTIES. All columns must have an
+            associated pandas data type.
             Can be used in combination with `only_select_columns`.
             Assumes names have no suffix.
         ignore_columns : list
@@ -221,8 +223,12 @@ class SingleStar:
         -------
         pandas DataFrame
         """
+        extra_cols_dict = kwargs.get('extra_columns', {})
+        extra_columns = list(extra_cols_dict.keys())
+        extra_columns_dtypes_user = list(extra_cols_dict.values())
+
         all_keys = ([key+'_history' for key in STARPROPERTIES]
-                    + list(kwargs.get('extra_columns', [])))
+                    + extra_columns)
 
         ignore_cols = list(kwargs.get('ignore_columns', []))
 
@@ -238,7 +244,7 @@ class SingleStar:
         if bool(kwargs.get('only_select_columns')):
             user_keys_to_save = list(kwargs.get('only_select_columns'))
             keys_to_save = ([key+'_history' for key in user_keys_to_save]
-                            + list(kwargs.get('extra_columns', [])))
+                            + extra_columns)
         try:
             # shape of data_to_save (history columns , time steps)
             data_to_save = [getattr(self, key) for key in keys_to_save]
@@ -257,13 +263,17 @@ class SingleStar:
         # sets rows as time steps, columns as history output
         star_data = np.transpose(star_data)
 
-        # remove the _history at the end of all column names
+        # add star prefix and remove the '_history' at the end of all column names
         prefix = kwargs.get('prefix', "")
         column_names = [prefix + name.split('_history')[0]
                         for name in keys_to_save]
 
-        data_frame = pd.DataFrame(star_data, columns=column_names)
-        return data_frame
+        star_df = pd.DataFrame(star_data, columns=column_names)
+        
+        # try to coerce data types automatically
+        star_df = star_df.infer_objects()
+
+        return star_df
 
     def to_oneline_df(self, history=True, prefix='', **kwargs):
         """Convert SingleStar into a single row DataFrame.

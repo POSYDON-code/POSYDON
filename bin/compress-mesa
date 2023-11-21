@@ -44,12 +44,12 @@ def set_up_test(args):
                         shutil.copytree(track_dirs[ind], os.path.join(
                             args.test_dir,
                             folder,
-                            track_dirs[ind].split("/")[-1]))
+                            os.path.split(track_dirs[ind])[1]))
                     else:
                         shutil.copy(track_dirs[ind], os.path.join(
                             args.test_dir,
                             folder,
-                            track_dirs[ind].split("/")[-1]))
+                            os.path.split(track_dirs[ind])[1]))
 
     print(f"Created Test Directory at {args.test_dir}.")
 
