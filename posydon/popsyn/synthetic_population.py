@@ -134,11 +134,10 @@ class ParsedPopAttrs:
     
     def __init__(self):
         self.verbose = False
-        self.synthetic_pop_params = None
+        self.parse_kwargs = None
+        self.ini_params = None
         self.solar_metallicities = None
         self.metallicities = None
-        self.df = None
-        self.df_oneline = None
         self.underlying_mass_per_met = None
         self.simulated_mass_per_met = None
 
@@ -159,9 +158,8 @@ parameter_array = [ "number_of_binaries",
                    'orbital_period_max',
                    'eccentricity_scheme']
 
-
 class ParsedPopulationIO():
-        
+
     def __init__(self, path_to_parsed_pop_file=None):
         self.parsed_pop_file = path_to_parsed_pop_file    
     
@@ -214,7 +212,6 @@ class ParsedPopulationIO():
         """load the parse arguments used to create the population
         """    
         with pd.HDFStore(self.parsed_pop_file, mode='r') as store:
-            
             parsed_pop_instance.parse_kwargs = store['parse_kwargs'].loc[0].to_dict()
 
     def save_per_metallicity_info(self, parsed_pop_instance):
@@ -242,15 +239,39 @@ class ParsedPopulationIO():
             parsed_pop_instance.total_systems = tmp_df['total_systems'].to_numpy()
             
     def load_path_to_data(self, parsed_pop_instance):
-        """lload the path_to_data array
+        """Load the path_to_data array
         
         Contains which population files were used to create the
         Parsed Population file"""
         with pd.HDFStore(self.parsed_pop_file, model='r') as store:
             parsed_pop_instance.path_to_data = store['path_to_data'].to_numpy()
 
+    def read_formation_channels(self, parsed_pop_instance):
+        '''Read the formation channels from the ParsedPopulation file'''
+        with pd.HDFStore(self.parsed_pop_file, mode='r') as store:
+            tmp_df = store['formation_channels']
+        return tmp_df
+    
+    def write_formation_channels(self, parsed_pop_instance, df):
+        '''Write the formation channels to the ParsedPopulation file'''
+        with pd.HDFStore(self.parsed_pop_file, mode='a') as store:
+            store.append('formation_channels',
+                      df,
+                      data_columns=True,
+                      min_itemsize = {'channel': 100, 'channel_debug': 100})
+            
+    def load_parsed_pop_path(self, synthetic_pop_instance):
+        '''Load the path to the parsed population file'''
+        with pd.HDFStore(self.parsed_pop_file, model='r') as store:
+            synthetic_pop_instance.parsed_pop_path = store['parsed_pop_path'].to_numpy()
+            
+    def save_parsed_pop_path(self, parsed_pop_path):
+        '''Save the path to the parsed population file'''
+        with pd.HDFStore(self.parsed_pop_file, mode='a') as store:
+            store.put('parsed_pop_path', pd.Series(parsed_pop_path))
+    
 class ParsedPopulation():
-
+    
     def __init__(self, path_to_parsed_pop_file, path_to_ini=None, verbose=False):
         '''A parsed stellar population from raw BinaryPopulations.
         
@@ -282,7 +303,7 @@ class ParsedPopulation():
                 ParsedPopulationIO().load_params_from_ini(self,path_to_ini)
             
             # makes sure the parsed population isn't overwritten or double added
-            if os.isfile(path_to_parsed_pop_file):
+            if os.path.isfile(path_to_parsed_pop_file):
                 raise FileExistsError('The parsed population file already exists!')                
             
             # create parsed_pop_file
@@ -377,7 +398,6 @@ class ParsedPopulation():
                 
         for k, file in enumerate(path_to_data):
             indices_sel_met = []
-            sel_met = []
             last_binary_df = None
             total = 0
             # read metallicity from path
@@ -395,7 +415,6 @@ class ParsedPopulation():
             oneline_min_itemsize = {key: val for key, val in 
                                     ONELINE_MIN_ITEMSIZE.items()
                                     if key in oneline_cols}
-
             
             for i, df in enumerate(pd.read_hdf(file,  key='history', chunksize=chunksize)):
                 
@@ -432,7 +451,7 @@ class ParsedPopulation():
                     df_tmp = df.loc[sel]
                     # store metallicity
                     df_tmp['metallicity'] = met
-                    indices_sel_met.extend(df_tmp.index.values)
+                    indices_sel_met.extend(sel.values)
 
                     # shift index
                     df_tmp.index += index_shift
@@ -458,7 +477,7 @@ class ParsedPopulation():
                 if any(logic) == True:
                     df_tmp = last_binary_df.loc[logic]
                     df_tmp['metallicity'] = met
-                    indices_sel_met.extend(df_tmp.index.values)
+                    indices_sel_met.extend(df_tmp.index.drop_duplicates().values)
                     df_tmp.index += index_shift
                     parsed_population_file.append('history',
                                                   df_tmp,
@@ -476,13 +495,13 @@ class ParsedPopulation():
             
             # Now select the oneline data
             # 1. Get indices from history
-            unique_indices = np.unique(indices_sel_met)
+            unique_indices = np.unique(indices_sel_met).tolist()
             
             # 2. Select indices from oneline
             for i, df in enumerate(pd.read_hdf(file, 
                                                key='oneline',
                                                chunksize=chunksize,
-                                               where=unique_indices)):
+                                               where="index in unique_indices")):
                 df.index += index_shift
                 parsed_population_file.append('oneline',
                                               df,
@@ -496,10 +515,6 @@ class ParsedPopulation():
 
         if self.verbose:
             print('Total binaries found are', count)
-
-        # save parsed population as parsed population
-        if self.df is not None:
-            warnings.warn('Overwriting the df population!')
         
         # close the file first since the other functions open the file again
         parsed_population_file.close()    
@@ -511,12 +526,27 @@ class ParsedPopulation():
     def head(self, n=10, type='history'):
         """Return the first n rows of the parsed population."""
         return pd.read_hdf(self.parsed_pop_file, key=type, start=0, stop=n)
-
-    def read_binary(self, index, type='history'):
-        """return a specific binary
-        """
-        return pd.read_hdf(self.parsed_pop_file, key=type, where=f'index=={index}')
     
+    def read_binary(self, index, type='history', columns=None):
+        """Return a specific binary and specified columns
+        
+        Parameters
+        ----------
+        index : int
+            Index of the binary to read.
+        type : str
+            Type of data to read, either 'history' or 'oneline'.
+        columns : list of str
+            List of columns to read.
+        
+        Returns
+        -------
+        pd.DataFrame
+            Dataframe containing the binary.
+        """
+        # No checks are done if the columns of indices are present in the file.
+        return pd.read_hdf(self.parsed_pop_file, key=type, columns=columns, where=f'index=={index}')
+        
     def apply_logic(self, df, S1_state=None, S2_state=None, binary_state=None,
                     binary_event=None, step_name=None, invert_S1S2=False,
                     warn=True):
@@ -590,71 +620,15 @@ class ParsedPopulation():
                         binary_event_logic & step_name_logic)
 
         return logic
-        
-  
-    def save(self, path='./parsed_population.h5'):
-        """Save parsed population.
-
-        Parameters
-        ----------
-        path : str
-            Path to file where you want to export the dataset.
-
-        """
-        if self.df is None:
-            raise ValueError('Nothing to save! The population was not parsed.')
-        elif self.df_oneline is None:
-            raise ValueError('Missing oneline dataframe!')
-        else:
-            self.df.to_hdf(path, key='history')
-            self.df_oneline.to_hdf(path, key='oneline')
-            # write the ini parameters and underlying mass data to the file
-            with pd.HDFStore(path, mode='a') as store:
-                store.put('ini_parameters', pd.Series(self.synthetic_pop_params))
-                tmp = pd.DataFrame(index=self.metallicities)
-                tmp['underlying_mass'] = self.underlying_mass_per_met
-                tmp['simulated_mass'] = self.simulated_mass_per_met
-                store.put('mass_per_met', tmp)
-                store.put('path_to_data', pd.Series(self.path_to_data))
-                store.put('parse_kwargs', pd.Series(self.parse_kwargs))
-            if self.verbose:
-                print('Population successfully saved!')
-
-    def load(self, path, skip_ini_check=False):
-        """Load parsed population.
-
-        Parameters
-        ----------
-        path : str
-            Path to dataset.
-        skip_ini_check : bool
-            If `True` skip the check of the ini parameters.
-
-        """
-        if self.df is None and self.df_oneline is None :
-            self.df = pd.read_hdf(path, key='history')
-            self.df_oneline = pd.read_hdf(path, key='oneline')
-            with pd.HDFStore(path, mode='r') as store:
-                tmp_synthetic_pop_param = store['ini_parameters'].to_dict()                
-                self.underlying_mass_per_met = store['mass_per_met']['underlying_mass'].to_numpy()
-                self.simulated_mass_per_met = store['mass_per_met']['simulated_mass'].to_numpy()
-                self.metallicities = store['mass_per_met'].index.to_numpy()
-                self.solar_metallicities = self.metallicities / Zsun
-                self.path_to_data = store['path_to_data'].to_numpy()
-                self.parse_kwargs = store['parse_kwargs'].to_dict()
-                # check if the ini parameters are the same
-                if not skip_ini_check:
-                    diff = set(tmp_synthetic_pop_param.keys()) ^ set(self.synthetic_pop_params.keys())
-                    if len(diff) > 0:
-                        # this shows both all variables that are different.
-                        print('Check the following parameters:')
-                        print(diff)
-                        raise ValueError('The ini parameters in the file do not match the ones in the class!')
-                    
-            if self.verbose:
-                print('Population successfully loaded!')
-        else:
-            raise ValueError('You already have a population stored in memory!')
+ 
+    @property
+    def indices(self):
+        """Return the indices of the parsed population."""
+        if not hasattr(self, '_indices'):
+            self._indices = pd.read_hdf(self.parsed_pop_file,
+                                        key='oneline',
+                                        columns=['binary_index']).index.to_numpy()
+        return self._indices
 
     def get_formation_channels(self, mt_history=False):
         """Get formation channel and add to df_oneline.
@@ -668,21 +642,32 @@ class ParsedPopulation():
             reverse mass-transfer phase .
         """
         
-        # loop through each binary
-        unique_binary_index = np.unique(self.df.index)
-        self.df_oneline['channel_debug'] = None
-        self.df_oneline['channel'] = None
-        for index in unique_binary_index:
+        # 1. Get the binary indices from the oneline df
+        # 2. Read the specific columns from the history df and oneline for each binary
+        # 3. Store them into a new dataframe and save it to the ParsedPopulation file
+        
+        HMS_HMS_event_dict = {'stable_MT'   : 'oRLO1', 
+                              'no_MT'       : 'None', 
+                              'unstable_MT' : 'oCE1/oDoubleCE1'}
+        
+        unique_binary_indices = self.indices
+        
+        # this might become too big?
+        df = pd.DataFrame(index=unique_binary_indices, columns=['channel_debug', 'channel'])
+        df.index.name = 'binary_index'
+        
+        for index in tqdm(unique_binary_indices, total=len(unique_binary_indices)):
 
             # get event column and information from interpolated classes
-            df_binary = self.df.loc[index,['event']].dropna()
-            intep_cls = [key for key in self.df_oneline.keys() if 'interp_class' in key]
-            df_binary_online = self.df_oneline.loc[index, intep_cls].dropna()
-            event_array = df_binary['event'].values.tolist()
-        
-            # make interpolated class information consistent with event column
-            HMS_HMS_event_dict = {'stable_MT':'oRLO1', 'no_MT':'None', 'unstable_MT':'oCE1/oDoubleCE1'}
-            event_HMS_HMS = HMS_HMS_event_dict[df_binary_online['interp_class_HMS_HMS']]
+            event_array = self.read_binary(index,
+                                           type='history',
+                                           columns=['event']).dropna().values.flatten().tolist()
+            
+            # load the HMS-HMS interp class
+            HMS_HMS_interp_class = self.read_binary(index,
+                                              type='oneline',
+                                              columns=['interp_class_HMS_HMS']).values[0][0]
+            event_HMS_HMS = HMS_HMS_event_dict[HMS_HMS_interp_class]
             
             # for now, only append information for RLO1; unstable_MT information already exists
             if event_HMS_HMS == 'oRLO1':
@@ -696,25 +681,30 @@ class ParsedPopulation():
             #       drop also the redirect event
             
             # TODO: for debugging purposes we keep the full channel
-            self.df_oneline.loc[index,'channel_debug'] = formation_channel
+            df.loc[index,'channel_debug'] = formation_channel
             # clean the redirect and CO_contact events
             formation_channel = formation_channel.replace('_redirect', '')
             formation_channel = formation_channel.replace('_CO_contact', '')
-            self.df_oneline.loc[index,'channel'] = formation_channel
+            df.loc[index,'channel'] = formation_channel
             
-        if mt_history and 'mt_history_HMS_HMS' not in self.df_oneline:
-            raise ValueError('mt_history_HMS_HMS not saved in the oneline dataframe!')
-        else:   
-            # split oRLO1 into oRLO1, oRLO1-contact and oRLO1-reverse
-            sel = ((self.df_oneline['mt_history_HMS_HMS'] == 'Stable contact phase') & 
-                    self.df_oneline['channel'].str.contains('oRLO1'))
-            self.df_oneline.loc[sel, 'channel'] = self.df_oneline.loc[sel, 'channel'].apply(lambda x: x.replace('oRLO1', 'oRLO1-contact'))
-            sel = ((self.df_oneline['mt_history_HMS_HMS'] == 'Stable reverse mass-transfer phase') & 
-                    self.df_oneline['channel'].str.contains('oRLO1'))
-            self.df_oneline.loc[sel, 'channel'] = self.df_oneline.loc[sel, 'channel'].apply(lambda x: x.replace('oRLO1', 'oRLO1-reverse'))
-            # TODO: do the above split for unstable MT as well     
+            # add more detailed mt history
+            if mt_history: 
+                tmp = self.read_binary(index, type='oneline', columns=['mt_history_HMS_HMS'])
+                if 'mt_history_HMS_HMS' not in tmp:
+                    raise ValueError('mt_history_HMS_HMS not saved in the oneline dataframe!')
+                else:
+                    tmp_MT = tmp['mt_history_HMS_HMS'].values[0]
+                    if 'oRLO1' in df.loc[index,'channel']:
+                        if tmp_MT == 'Stable contact phase':
+                            df.loc[index,'channel'] = df.loc[index, 'channel'].replace('oRLO1', 'oRLO1-contact')
+                        elif tmp_MT == 'Stable reverse mass-transfer phase':
+                            df.loc[index, 'channel'] = df.loc[index, 'channel'].replace('oRLO1', 'oRLO1-reverse')
         
-    def create_DCO_population(self, oneline_cols=None):
+        # finished loop through each binary
+        # write the dataframe to the ParsedPopulation file
+        self.io.write_formation_channels(self, df)
+             
+    def create_DCO_population(self,output_file=None, additional_oneline_cols=None, chunksize=500000):
         '''Create a DCO population from the parsed population.
         
         A DCO Population will contain one 'time' for each 'event',
@@ -741,61 +731,123 @@ class ParsedPopulation():
         # population data. Additional filtering can be done manually.
         # Using the data from the parsed population, 
         # we find the DCO at their formation.
+        if output_file == None:
+            DCO_synthetic_population = SyntheticPopulation(self.parsed_pop_file,
+                                                           verbose=self.verbose)
+            parsed_file = pd.HDFStore(self.parsed_pop_file, mode='a')
+            output_store = parsed_file
+            
+        else:
+            DCO_synthetic_population = SyntheticPopulation(output_file,
+                                                           verbose=self.verbose)
+            
+            # write population data to the new file!
+            DCO_synthetic_population.io.save_ini_params(self)
+            DCO_synthetic_population.io.save_parse_kwargs(self)
+            DCO_synthetic_population.io.save_per_metallicity_info(self)
+            DCO_synthetic_population.io.save_path_to_data(self)
+            DCO_synthetic_population.io.save_parsed_pop_path(self.parsed_pop_file)
+            
+            # load data into DCO class
+            DCO_synthetic_population.io.load_ini_params(DCO_synthetic_population)
+            DCO_synthetic_population.io.load_parse_kwargs(DCO_synthetic_population)
+            DCO_synthetic_population.io.load_per_metallicity_info(DCO_synthetic_population)
+            DCO_synthetic_population.io.load_path_to_data(DCO_synthetic_population)
+            DCO_synthetic_population.io.load_parsed_pop_path(DCO_synthetic_population)
+            
+            # Open the file for writing the synthetic population
+            parsed_file = pd.HDFStore(self.parsed_pop_file, mode='r')
+            output_store = pd.HDFStore(DCO_synthetic_population.pop_file, mode='a')
+
         
-        DCO_synthetic_population = SyntheticPopulation(verbose=self.verbose)
-        # copy over the class variables
-        DCO_synthetic_population.solar_metallicities = self.solar_metallicities
-        DCO_synthetic_population.synthetic_pop_params = self.synthetic_pop_params
-        DCO_synthetic_population.underlying_mass_per_met = self.underlying_mass_per_met
-        DCO_synthetic_population.simulated_mass_per_met = self.simulated_mass_per_met
-        DCO_synthetic_population.path_to_data = self.path_to_data
-        DCO_synthetic_population.parse_kwargs = self.parse_kwargs
-        DCO_synthetic_population.metallicities = self.metallicities
+        if 'synthetic' in parsed_file.keys():
+            print('A synthetic population already exists in this file.\
+                The current population will be added to the existing one.!')                    
+        
         DCO_synthetic_population.population_selection = 'DCO'
         
-        # Select NSs and BHs in the population at formation of the DCO.
-        logic1 = self.apply_logic(self.df, S1_state='NS',
-                                          S2_state='NS',
-                                          binary_state='detached',
-                                          step_name = 'step_SN',
-                                          invert_S1S2=True)
-        logic2 = self.apply_logic(self.df, S1_state='BH',
-                                          S2_state='BH',
-                                          binary_state='detached',
-                                          step_name = 'step_SN',
-                                          invert_S1S2=True)
-        logic3 = self.apply_logic(self.df, S1_state='BH',
-                                            S2_state='NS',
-                                            binary_state='detached',
-                                            step_name = 'step_SN',
-                                            invert_S1S2=True)
-        logic = logic1 | logic2 | logic3
-        DCO_synthetic_population.df_synthetic = self.df.loc[logic].copy()
+        where_BHNS = '((S1_state == "BH")'\
+                    + ' & (S2_state == "NS")'\
+                    + ' & (state == "detached")'\
+                    + ' & (step_names == "step_SN"))'\
+                    + ' | ((S1_state == "NS")' \
+                    + ' & (S2_state == "BH")' \
+                    + ' & (state == "detached")' \
+                    + ' & (step_names == "step_SN"))'
+        where_BNS = '((S1_state == "NS")'\
+                    + ' & (S2_state == "NS")'\
+                    + ' & (state == "detached")'\
+                    + ' & (step_names == "step_SN"))'
+        where_BBH = '((S1_state == "BH")'\
+                    + ' & (S2_state == "BH")'\
+                    + ' & (state == "detached")'\
+                    + ' & (step_names == "step_SN"))'
         
-        # compute the inspiral timescale from the integrated orbit
-        # this estimate is better than evaluating Peters approxiamtion
-        time_contact = self.df.loc[self.df['event'] == 'END',['time']]
-        # NOTE/TODO: we change the units of time in the dataframe to Myr
-        # this might be confusion to the user? Note that Myr are convinient
-        # when inspecting the data frame.
-        DCO_synthetic_population.df_synthetic['t_delay'] = (time_contact - DCO_synthetic_population.df_synthetic[['time']])*1e-6 # Myr
-        DCO_synthetic_population.df_synthetic['time'] *= 1e-6 # Myr
+        # get the history columns + min_itemsize
+        history_cols = parsed_file.select('history',start=0, stop=0).columns
+        history_min_itemsize = {key: val for key, val in
+                                HISTORY_MIN_ITEMSIZE.items()
+                                if key in history_cols}
         
-         # add properties of the oneline dataframe
-        if self.df_oneline is not None:
-            # TODO: add kicks as well by default?
-            # Needed for the effective spin calculation
-            save_cols = ['S1_spin_orbit_tilt', 'S2_spin_orbit_tilt']
-            if oneline_cols is not None:
-                for c in oneline_cols:
-                    if c not in save_cols:
-                        save_cols.append(c)
-            for c in save_cols:
-                if c in self.df_oneline:
-                    DCO_synthetic_population.df_synthetic[c] = self.df_oneline[c]
-                else:
-                    warnings.warn(f'The column {c} is not present in the '
-                                   'oneline dataframe.')
+        oneline_cols = parsed_file.select(key='oneline', start=0, stop=0).columns
+        oneline_min_itemsize = {key: val for key, val in 
+                                ONELINE_MIN_ITEMSIZE.items()
+                                if key in oneline_cols}
+        min_itemsize = history_min_itemsize.update(oneline_min_itemsize)
+        
+        save_cols = ['S1_spin_orbit_tilt', 'S2_spin_orbit_tilt']
+        if additional_oneline_cols is not None:
+            for c in additional_oneline_cols:
+                if c not in save_cols:
+                    save_cols.append(c)
+
+
+        for selection in [where_BHNS, where_BNS, where_BBH]:
+            
+            # select BBH models and store them in the DCO population
+            for df_synthetic in parsed_file.select('history', 
+                                                where=selection,
+                                                chunksize=chunksize):
+                selected_indices = df_synthetic.index.values.tolist()
+                if len(selected_indices) == 0:
+                    continue
+                
+                # compute the inspiral timescale from the integrated orbit
+                # this estimate is better than evaluating Peters approxiamtion
+                time_contact = parsed_file.select('history',
+                                                where='event == END & index in selected_indices',
+                                                columns=['time'])
+                # NOTE/TODO: we change the units of time in the dataframe to Myr
+                # this might be confusion to the user? Note that Myr are convinient
+                # when inspecting the data frame.
+                df_synthetic['t_delay'] = (time_contact - df_synthetic[['time']])*1e-6 # Myr
+                df_synthetic['time'] *= 1e-6 # Myr
+                
+                # read oneline data 
+                df_oneline = parsed_file.select('oneline',
+                                                where='index in selected_indices',
+                                                columns=save_cols)
+                df_mt_channels = parsed_file.select('formation_channels',
+                                                    where=f'index in selected_indices')
+                                              
+                for c in save_cols:
+                    if c in df_oneline:
+                       df_synthetic[c] = df_oneline[c]
+                    elif c in df_mt_channels:
+                        df_synthetic[c] = df_mt_channels[c]
+                    else:
+                        warnings.warn(f'The column {c} is not present in the '
+                                    'oneline dataframe.')
+            
+                # store the synthetic populations
+                output_store.append('synthetic',
+                                    df_synthetic,
+                                    data_columns=True,
+                                    min_itemsize=min_itemsize
+                                    )
+            
+        output_store.close()
+        parsed_file.close()
         return DCO_synthetic_population
 
     def create_GRB_population(self, GRB_properties={}):
@@ -866,20 +918,19 @@ class ParsedPopulation():
         for c in columns_pre_post:
             S1_GRB_df_synthetic['preSN_'+c] = pre_sn[c].values
             S1_GRB_df_synthetic['postSN_'+c] = post_sn[c].values
-            
+        
         columns = ['S2_mass','metallicity']
         S1_GRB_df_synthetic.index = post_sn.index
         S1_GRB_df_synthetic['time'] = post_sn['time'].values *1e-6
 
         for c in columns:
             S1_GRB_df_synthetic[c] = pre_sn[c].values
-            
+        
         oneline_columns = ['channel', 'S1_eta', 'S1_E_GRB', 'S1_f_beaming', 'S1_E_GRB_iso', 'S1_L_GRB_iso', 'S1_spin_orbit_tilt']
-            
+
         # add formation channel from df_oneline
         for c in oneline_columns:
             S1_GRB_df_synthetic[c] = self.df_oneline.loc[indices][c].values
-
             
         
         
@@ -933,31 +984,62 @@ class ParsedPopulation():
 class SyntheticPopulation():
     
     def __init__(self,
+                 pop_file,
                  verbose=False,
+                 
                  ):
-        '''This class is for analysis of a parsed population.
-    
+        '''This class contains a synthetic population of transient events.
+
         You can calculate additional properties of the population, such as
         the formation channel, merger times, GRB properties, etc.
-        
-        Parameters
-        -----------
-        MODEL : dict
-            describes the star formation history for the population to use.
-            The dictionary should contain the following keys:
-                - 'delta_t' : the time step to use in Myr
-                - 'SFR' : a string describing the star formation history
-                - 'sigma_SFR' : the uncertainty in the SFR in Msun/yr 
-                - 'Z_max' : the maximum metallicity to use in the SFR calculation
-                - 'Zsun' : the solar metallicity
-        '''    
+        '''
         # initialise the parsed population class variables
         ParsedPopAttrs.__init__(self)
+        self.io = ParsedPopulationIO(pop_file)
+        self.pop_file = pop_file
         self.verbose = verbose
-        self.df_synthetic = None
         self.population_selection = None
+        if os.path.isfile(self.pop_file):
+            store = pd.HDFStore(self.pop_file, mode='r')
+            keys = store.keys()
+            store.close()
+            # Try to load the population parameters
+            if '/ini_parameters' in keys:
+                self.io.load_ini_params(self)
+            if '/mass_per_met' in keys:
+                self.io.load_per_metallicity_info(self)
+            if '/parse_kwargs' in keys:
+                self.io.load_parse_kwargs(self)            
+            if '/path_to_data' in keys:
+                self.io.load_path_to_data(self)
+            if '/parsed_pop_file' in keys:
+                self.io.load_parsed_pop_file(self)
+             
+    def head(self, n=10):
+        """Return the first n rows of the synthetic population."""
+        return pd.read_hdf(self.pop_file, key='synthetic', start=0, stop=n)
+    
+    def get_transient(self, index, columns=None):
+        """Get a specific transient in the population."""
+        return pd.read_hdf(self.pop_file,
+                           key='synthetic',
+                           columns=columns,
+                           where=f'index=={index}')
+    
+    @property
+    def synthetic_population(self):
+        '''Returns the whole synthetic populaiton as a pandas dataframe.
         
-    def plot_DTD(self, metallicity=None, ax=None, bins=None,):
+        Warning: might be too big to load in memory!
+        
+        Returns
+        -------
+        pd.DataFrame
+            Dataframe containing the synthetic population.
+        '''
+        return pd.read_hdf(self.pop_file, key='synthetic')
+    
+    def plot_DTD(self, metallicity=None, ax=None, bins=100,):
         '''Plot the delay time distribution of the events in the population.
         
         Parameters
@@ -978,16 +1060,15 @@ class SyntheticPopulation():
         if ax is None:
             fig, ax = plt.subplots()
         
-        if self.df_synthetic is None:
-            raise ValueError('No synthetic population present!')
         
         # plot all solar_metallicities
         if metallicity is None:
             # Values have to be copied to avoid overwriting the original data
-            time = self.df_synthetic['time'].values.copy()
+            df_tmp = pd.read_hdf(self.pop_file, key='synthetic', columns=['time', 't_delay'])
+            time = df_tmp['time'].to_numpy()
             # Add the delay time (GW inspiral time) if present
-            if 't_delay' in self.df_synthetic:
-                time += self.df_synthetic['t_delay'].values
+            if 't_delay' in df_tmp:
+                time += df_tmp['t_delay'].to_numpy()
             time *= 1e6 # yr
             h, bin_edges = np.histogram(time, bins=bins)
         
@@ -998,12 +1079,15 @@ class SyntheticPopulation():
                 raise ValueError('The metallicity is not present in the population!')
 
             # get the time of the events
-            time = self.df_synthetic[
-                np.isclose(self.df_synthetic['metallicity'], metallicity)]['time'].values
+            df_tmp = pd.read_hdf(self.pop_file,
+                                 key='synthetic',
+                                 where='metallicity == metallicity',
+                                 columns= ['time', 't_delay'])
+            time = df_tmp['time'].to_numpy()
+            
             # Add the delay time (GW inspiral time) if present
-            if 't_delay' in self.df_synthetic:
-                time += self.df_synthetic[
-                    np.isclose(self.df_synthetic['metallicity'], metallicity)]['t_delay'].values
+            if 't_delay' in df_tmp:
+                time += df_tmp['t_delay'].to_numpy()
             time *= 1e6 # yr
                 
             h, bin_edges = np.histogram(time, bins=bins)
@@ -1021,9 +1105,11 @@ class SyntheticPopulation():
         efficiencies = []
         self.met_efficiency = sorted(self.metallicities, reverse=True)
         for met in self.met_efficiency:
-            sel = (self.df_synthetic['metallicity'] == met)
+            count = len(pd.read_hdf(self.pop_file, key='synthetic', 
+                              where='metallicity == met',
+                              columns=['index']))
             # just sums the number of events
-            count = np.sum(sel)
+            #count = np.sum(sel)
             underlying_stellar_mass = self.underlying_mass_per_met[np.isclose(met, self.metallicities)][0]
             eff = count/underlying_stellar_mass
             efficiencies.append(eff)
@@ -1031,13 +1117,22 @@ class SyntheticPopulation():
         self.met_efficiency = np.array(self.met_efficiency)
         self.efficiency = {'total' : np.array(efficiencies)}
         # if the channel column is present compute the merger efficiency per channel
-        if "channel" in self.df_synthetic:
-            channels = np.unique(self.df_synthetic['channel'])
+        if 'channel' in pd.read_hdf(self.pop_file,
+                                              key='synthetic',
+                                              start=0,
+                                              stop=0).columns:   
+        #if "channel" in self.df_synthetic:
+            channels = np.unique(pd.read_hdf(self.pop_file,
+                                             key='synthetic',
+                                             columns=['channel']).values)
             for ch in channels:
                 efficiencies = []
                 for met in self.met_efficiency:
-                    sel = (self.df_synthetic['metallicity'] == met) & (self.df_synthetic['channel'] == ch)
-                    count = self.df_synthetic[sel].shape[0]
+                    count = len(pd.read_hdf(self.pop_file,
+                                          key='synthetic',
+                                          where='metallicity == met & channel == ch',))
+
+                    #count = self.df_synthetic[sel].shape[0]
                     if count > 0:
                         underlying_stellar_mass =self.underlying_mass_per_met[np.isclose(met, self.metallicities)][0]
                         eff = count/underlying_stellar_mass
@@ -1046,8 +1141,7 @@ class SyntheticPopulation():
                     efficiencies.append(eff)
                     # print(f'Z={met:1.2E} {ch}: {eff:1.2E} Msun^-1')
                 self.efficiency[ch] = np.array(efficiencies)
-        
-        
+         
     def plot_met_efficiency(self, **kwargs):
         """Plot merger rate efficiency.
         
@@ -1059,7 +1153,7 @@ class SyntheticPopulation():
         if self.met_efficiency is None or self.efficiency is None:
             raise ValueError('First you need to compute the merger efficinty!')
         plot_pop.plot_merger_efficiency(self.met_efficiency, self.efficiency, **kwargs)
- 
+    
     def save(self, path='./synthetic_population.h5'):
         '''Save the synthetic population to a file.
         
