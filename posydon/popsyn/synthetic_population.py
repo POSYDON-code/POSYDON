@@ -423,6 +423,7 @@ class ParsedPopulation():
                 last_binary_df = df.loc[[df.index[-1]]]
                 df.drop(df.index[-1], inplace=True)
                 total += len(df.index.drop_duplicates())
+                max_index = df.index.max()
                 
                 logic = self.apply_logic(df, 
                                          S1_state     = S1_state,
@@ -464,6 +465,7 @@ class ParsedPopulation():
 
             # check last binary if it should be included
             if last_binary_df is not None:
+                max_index = np.max([max_index, last_binary_df.index.max()])
                 total += 1
                 logic = self.apply_logic(last_binary_df, 
                                     S1_state     = S1_state,
@@ -483,6 +485,7 @@ class ParsedPopulation():
                                                   df_tmp,
                                                   data_columns=True,
                                                   min_itemsize=history_min_itemsize)
+                    del df_tmp
             
             # calculate population masses and parameters
             self.simulated_mass_per_met[met_index] = simulated_mass_for_met
@@ -503,6 +506,7 @@ class ParsedPopulation():
                                                chunksize=chunksize,
                                                where="index in unique_indices")):
                 df.index += index_shift
+                df['metallicity'] = met
                 parsed_population_file.append('oneline',
                                               df,
                                               data_columns=True,
@@ -511,7 +515,8 @@ class ParsedPopulation():
             if self.verbose:
                 print(f'in {file} are {count-tmp}')
             tmp = count
-            index_shift += total
+            # either the max of the population in the file or the total number of systems.
+            index_shift += np.max([max_index, total])
 
         if self.verbose:
             print('Total binaries found are', count)
@@ -630,7 +635,7 @@ class ParsedPopulation():
                                         columns=['binary_index']).index.to_numpy()
         return self._indices
 
-    def get_formation_channels(self, mt_history=False):
+    def get_formation_channels(self, mt_history=False, chunksize=500000):
         """Get formation channel and add to df_oneline.
         
         Parameters
@@ -650,59 +655,135 @@ class ParsedPopulation():
                               'no_MT'       : 'None', 
                               'unstable_MT' : 'oCE1/oDoubleCE1'}
         
-        unique_binary_indices = self.indices
+        unique_binary_indices = self.indices.tolist()
         
         # this might become too big?
         df = pd.DataFrame(index=unique_binary_indices, columns=['channel_debug', 'channel'])
         df.index.name = 'binary_index'
         
-        for index in tqdm(unique_binary_indices, total=len(unique_binary_indices)):
-
-            # get event column and information from interpolated classes
-            event_array = self.read_binary(index,
-                                           type='history',
-                                           columns=['event']).dropna().values.flatten().tolist()
-            
-            # load the HMS-HMS interp class
-            HMS_HMS_interp_class = self.read_binary(index,
-                                              type='oneline',
-                                              columns=['interp_class_HMS_HMS']).values[0][0]
-            event_HMS_HMS = HMS_HMS_event_dict[HMS_HMS_interp_class]
-            
-            # for now, only append information for RLO1; unstable_MT information already exists
-            if event_HMS_HMS == 'oRLO1':
-                event_array.insert(1, event_HMS_HMS)
-                formation_channel = "_".join(event_array)
+        def get_events(group):
+            if 'oRLO1' in group['event_HMS_HMS']:
+                combined_events = '_'.join(group['event'] + group['event_HMS_HMS'])
             else:
-                formation_channel = "_".join(event_array)
-                        
-            # TODO: drop the envent CO_contact
-            # TODO: once we trust the redirection to the detached step
-            #       drop also the redirect event
+                combined_events = '_'.join(group['event'])
+            return pd.Series({'channel_debug': combined_events})
+        
+        def mt_history(row):
+            if pd.notna(row['mt_history_HMS_HMS']) and row['mt_history_HMS_HMS'] == 'Stable contact phase':
+                return row['channel'].replace('oRLO1','oRLO1-contact')
+            elif pd.notna(row['mt_history_HMS_HMS']) and row['mt_history_HMS_HMS'] == 'Stable reverse mass-transfer phase':
+                return row['channel'].replace('oRLO1', 'oRLO1-contact')
+            else:
+                return row['channel']
+        
+        
+        for oneline in pd.read_hdf(self.parsed_pop_file,
+                                        key='oneline',
+                                        columns=['interp_class_HMS_HMS', 'mt_history_HMS_HMS'],
+                                        where='index in unique_binary_indices',
+                                        chunksize=chunksize):
             
-            # TODO: for debugging purposes we keep the full channel
-            df.loc[index,'channel_debug'] = formation_channel
-            # clean the redirect and CO_contact events
-            formation_channel = formation_channel.replace('_redirect', '')
-            formation_channel = formation_channel.replace('_CO_contact', '')
-            df.loc[index,'channel'] = formation_channel
+            unique_oneline = oneline.index.drop_duplicates()
             
-            # add more detailed mt history
-            if mt_history: 
-                tmp = self.read_binary(index, type='oneline', columns=['mt_history_HMS_HMS'])
-                if 'mt_history_HMS_HMS' not in tmp:
+            hist = pd.read_hdf(self.parsed_pop_file,
+                                                key='history',
+                                                where='index in unique_oneline',
+                                                columns=['event'])
+            print(len(hist.index.drop_duplicates()))
+            print(len(oneline.index.drop_duplicates()))
+            print(len(oneline))
+            
+            # replace the HMS_HMS interp class with the event
+            oneline['event_HMS_HMS'] = oneline['interp_class_HMS_HMS'].apply(lambda x: HMS_HMS_event_dict[x])
+            merged = pd.merge(hist.dropna(), oneline['event_HMS_HMS'], on='binary_index')
+            del hist
+            del oneline['interp_class_HMS_HMS']
+            del oneline['event_HMS_HMS']
+
+            df['chanel_debug'] = merged.groupby('binary_index').apply(get_events)
+            
+            
+            df['channel'] = df['channel_debug'].str.replace('_redirect', '').str.replace('_CO_contact', '')
+
+            if mt_history:
+                if 'mt_history_HMS_HMS' not in oneline:
                     raise ValueError('mt_history_HMS_HMS not saved in the oneline dataframe!')
-                else:
-                    tmp_MT = tmp['mt_history_HMS_HMS'].values[0]
-                    if 'oRLO1' in df.loc[index,'channel']:
-                        if tmp_MT == 'Stable contact phase':
-                            df.loc[index,'channel'] = df.loc[index, 'channel'].replace('oRLO1', 'oRLO1-contact')
-                        elif tmp_MT == 'Stable reverse mass-transfer phase':
-                            df.loc[index, 'channel'] = df.loc[index, 'channel'].replace('oRLO1', 'oRLO1-reverse')
+                else:                    
+                    df['mt_history_HMS_HMS'] = oneline['mt_history_HMS_HMS']
+                    del oneline
+                    df['channel'] = df.apply(mt_history, axis=1)
+                    del df['mt_history_HMS_HMS']
+        
+        self.io.write_formation_channels(self, df)                          
+                                        
+                                        
+                    # tmp_MT = tmp['mt_history_HMS_HMS'].values[0]
+                    # df['channel']
+                    
+                    # if 'oRLO1' in df.loc[index,'channel']:
+                    #     if tmp_MT == 'Stable contact phase':
+                    #         df.loc[index,'channel'] = df.loc[index, 'channel'].replace('oRLO1', 'oRLO1-contact')
+                    #     elif tmp_MT == 'Stable reverse mass-transfer phase':
+                    #         df.loc[index, 'channel'] = df.loc[index, 'channel'].replace('oRLO1', 'oRLO1-reverse')
+        
+                
+                
+                
+        # history.groupby('binary_index').apply(get_events)
+        
+        # ['event']
+        
+        # .agg(lambda x: '_'.join(x))
+        
+        
+        
+        # for index in tqdm(unique_binary_indices, total=len(unique_binary_indices)):
+
+        #     # get event column and information from interpolated classes
+        #     event_array = self.read_binary(index,
+        #                                    type='history',
+        #                                    columns=['event']).dropna().values.flatten().tolist()
+            
+        #     # load the HMS-HMS interp class
+        #     HMS_HMS_interp_class = self.read_binary(index,
+        #                                       type='oneline',
+        #                                       columns=['interp_class_HMS_HMS']).values[0][0]
+        #     event_HMS_HMS = HMS_HMS_event_dict[HMS_HMS_interp_class]
+            
+        #     # for now, only append information for RLO1; unstable_MT information already exists
+        #     if event_HMS_HMS == 'oRLO1':
+        #         event_array.insert(1, event_HMS_HMS)
+        #         formation_channel = "_".join(event_array)
+        #     else:
+        #         formation_channel = "_".join(event_array)
+                        
+        #     # TODO: drop the envent CO_contact
+        #     # TODO: once we trust the redirection to the detached step
+        #     #       drop also the redirect event
+            
+        #     # TODO: for debugging purposes we keep the full channel
+        #     df.loc[index,'channel_debug'] = formation_channel
+        #     # clean the redirect and CO_contact events
+        #     formation_channel = formation_channel.replace('_redirect', '')
+        #     formation_channel = formation_channel.replace('_CO_contact', '')
+        #     df.loc[index,'channel'] = formation_channel
+            
+        #     # add more detailed mt history
+        #     if mt_history: 
+        #         tmp = self.read_binary(index, type='oneline', columns=['mt_history_HMS_HMS'])
+        #         if 'mt_history_HMS_HMS' not in tmp:
+        #             raise ValueError('mt_history_HMS_HMS not saved in the oneline dataframe!')
+        #         else:
+        #             tmp_MT = tmp['mt_history_HMS_HMS'].values[0]
+        #             if 'oRLO1' in df.loc[index,'channel']:
+        #                 if tmp_MT == 'Stable contact phase':
+        #                     df.loc[index,'channel'] = df.loc[index, 'channel'].replace('oRLO1', 'oRLO1-contact')
+        #                 elif tmp_MT == 'Stable reverse mass-transfer phase':
+        #                     df.loc[index, 'channel'] = df.loc[index, 'channel'].replace('oRLO1', 'oRLO1-reverse')
         
         # finished loop through each binary
         # write the dataframe to the ParsedPopulation file
-        self.io.write_formation_channels(self, df)
+        # self.io.write_formation_channels(self, df)
              
     def create_DCO_population(self,output_file=None, additional_oneline_cols=None, chunksize=500000):
         '''Create a DCO population from the parsed population.
