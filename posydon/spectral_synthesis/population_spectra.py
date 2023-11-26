@@ -1,16 +1,23 @@
 """
 Spectral Synthesis code
 """
-#################################### Imports ##############################################
 
+
+__authors__ = [
+    "Eirini Kasdagli <kasdaglie@ufl.edu>",
+    "Jeffrey Andrews <jeffrey.andrews@northwestern.edu>",
+]
+
+import os
+from copy import copy
+import datetime
 import numpy as np
 import astropy.constants as con
 import astropy.units as unt
-import datetime
+
 import pandas as pd
 import traceback
-from copy import copy
-import os
+
 from posydon.spectral_synthesis.spectral_tools import load_posydon_population
 from posydon.spectral_synthesis.spectral_grids import spectral_grids
 from posydon.spectral_synthesis.default_options import default_kwargs
@@ -22,11 +29,10 @@ grid_keys = [
     'stripped_grid',
 ]
 
-######### Creating the class population_spectra ###########################
 
 
 class population_spectra():
-    """Write a class docstring."""
+    """Creates and saves the output flux of a POSYDON population"""
 
     def __init__(self,**kwargs):
         """Initialize a population_spectra class instance."""
@@ -82,8 +88,8 @@ class population_spectra():
             pop_spectrum[state] = np.zeros(len(self.grids.lam_c))
 
         for i,binary in self.population.iterrows():
-            spectrum_1,state_1,label1 = generate_spectrum(self.grids,binary,'S1',scale)
-            spectrum_2,state_2,label2 = generate_spectrum(self.grids,binary,'S2',scale)
+            spectrum_1,state_1,label1 = generate_spectrum(self.grids,binary,'S1',**self.kwargs)
+            spectrum_2,state_2,label2 = generate_spectrum(self.grids,binary,'S2',**self.kwargs)
             if self.save_data:
                 labels_S1.append(label1)
                 labels_S2.append(label2)

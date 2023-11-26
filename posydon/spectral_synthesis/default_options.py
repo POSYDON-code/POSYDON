@@ -41,7 +41,7 @@ default_kwargs = {
     #The default option is ./
 
     # Ostar Temp cutoff:
-    'ostar_temp_cut_off': 27000,
-    #Bstar Temp cutoff: 
+    'ostar_temp_cut_off': 28000,
+    #Bstar Temp cutoff:
     'bstar_temp_cut_off': 15000,
  }

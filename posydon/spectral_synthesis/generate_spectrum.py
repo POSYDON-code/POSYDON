@@ -1,11 +1,23 @@
+"""Generates the spectrum of a single star 
+
+These functions are determining, based on the star's properties which is the appropiate 
+grid to be used for calculated the flux.
+If not such a grid is found or the interpolation fails, it returns a failed_grid message.
 """
-Generate the spectrum of a single star. 
-"""
+
+
+__authors__ = [
+    "Eirini Kasdagli <kasdaglie@ufl.edu>",
+    "Jeffrey Andrews <jeffrey.andrews@northwestern.edu>",
+]
+
 from copy import copy
 import numpy as np
 from astropy import constants as con
-Lo = 3.828e33
-Zo = 0.0142
+
+#Constants
+Lo = 3.828e33 #Solar Luminosity erg/s
+Zo = 0.0142 #Solar metallicity
 
 def check_boundaries(grids,grid_name,**kwargs):
     """Checks if the stellar parameters in inside the boundaries of the spectral grids.
@@ -36,7 +48,7 @@ def check_boundaries(grids,grid_name,**kwargs):
         else:
             return grid_name
 
-def point_the_grid(grids,x,ostar_temp_cut_off,bstar_temp_cut_off,label,**kwargs):
+def point_the_grid(grids,x,label,**kwargs):
     """Assigning the write label that would point to the spectra grid needed to used
 
     Args:
@@ -57,14 +69,14 @@ def point_the_grid(grids,x,ostar_temp_cut_off,bstar_temp_cut_off,label,**kwargs)
         string: Returns the name of the grid needed to be used. 
         Failed grid if it can't be matched to a grid.
     """
-
-    #First check for stripped stars because their temp can be a lot 
+    ostar_temp_cut_off = kwargs.get('ostar_temp_cut_off',28000)
+    bstar_temp_cut_off = kwargs.get('bstar_temp_cut_off',15000)
+    #First check for stripped stars because their temp can be a lot
     # higher than the Teff of the Ostar grid limit
     if "stripped" in x['state']:
         if label is not None:
             return 'failed_grid'
         return check_boundaries(grids,'stripped_grid',**x)
-    
     if isinstance(check_boundaries(grids,'global',**x),str):
         return check_boundaries(grids,'global',**x)
     #Second check for ostar stars.
@@ -86,29 +98,28 @@ def point_the_grid(grids,x,ostar_temp_cut_off,bstar_temp_cut_off,label,**kwargs)
         return 'failed_grid'
     else:
         raise ValueError(f'The label {label} is not recognized!')
-    #TODO include a BSTAR cutoff.
 
-def generate_spectrum(grids,star,i,scale,**kwargs):
+def generate_spectrum(grids,star,i,**kwargs):
     """Generates the spectrum of star. 
 
     Args:
         grids: grid object
             Instance of the grids created in generate_spectrum
         star: tuple
-        i (_type_): _description_
-        scale (_type_): _description_
+        i: string
+            S1 or S2 
 
     Raises:
-        ValueError: _description_
+        ValueError: If the final label is not "failed_grid" or not recognised
 
     Returns:
-        _type_: _description_
+        Flax: float 
+        state: string
+        label: string 
     """
     #First we check if the star is a CO. (for future we can add WD spectra)\
     if star[f'{i}_state'] in ['massless_remnant','BH','WD','NS']:
         return None,star[f'{i}_state'],None
-    ostar_temp_cut_off=28000
-    bstar_temp_cut_off = 15000
     Fe_H = np.log(star['Z/Zo'])
     Z_Zo = star['Z/Zo']
     Z= star['Z/Zo']*Zo
@@ -126,7 +137,7 @@ def generate_spectrum(grids,star,i,scale,**kwargs):
          'state':state,
          '[alpha/Fe]':0.0}
     label = None
-    label = point_the_grid(grids,x,ostar_temp_cut_off,bstar_temp_cut_off,label,**kwargs)
+    label = point_the_grid(grids,x,label,**kwargs)
     count = 1
     if label == 'failed_grid':
         return None,state,label
@@ -136,13 +147,11 @@ def generate_spectrum(grids,star,i,scale,**kwargs):
                 Flux = grids.grid_flux(label,**x)*4*np.pi*1e4/Lo
             else:
                 Flux = grids.grid_flux(label,**x)*R**2*4*np.pi*1e4/Lo
-
             return Flux.value,star['state'],label
         except LookupError:
-                label = f'failed_attempt_{count}'
-        label = point_the_grid(grids,x,ostar_temp_cut_off,bstar_temp_cut_off,label,**kwargs)
+            label = f'failed_attempt_{count}'
+        label = point_the_grid(grids,x,label,**kwargs)
         count += 1
         if label == 'failed_grid':
             return None,state,label
-        else:
-            raise ValueError(f'The label:{label} is not "failed_grid" after all the possible checks')
+    raise ValueError(f'The label:{label} is not "failed_grid" after all the possible checks')

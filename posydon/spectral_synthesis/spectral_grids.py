@@ -1,16 +1,19 @@
-######################################################################
-#Calculation of the spectra
-#Creating a class that will create the grid objects and potentially calculate the fluxes as well.
-import numpy as np
+"""A class with functionalities that are setting up initializing the grids with MSG tools."""
+
+__authors__ = [
+    "Eirini Kasdagli <kasdaglie@ufl.edu>",
+    "Jeffrey Andrews <jeffrey.andrews@northwestern.edu>",
+]
+
+
 import os
+import copy
+from functools import reduce
+import numpy as np
 import astropy.units as unt
-import astropy.constants as con
 import pymsg
-import datetime
-from functools import reduce 
 from posydon.spectral_synthesis.default_options import default_grid_kwargs
 from posydon.spectral_synthesis.spectral_tools import grid_global_limits
-import copy
 kpc = 3.08e19*unt.m
 MSG_DIR = os.environ['MSG_DIR']
 GRID_DIR = os.path.join(MSG_DIR, 'data', 'grids')
@@ -33,7 +36,8 @@ def spec_grid(name):
 
 ########################################################################
 class spectral_grids():
-    """Write a docstring here."""
+    """Constructs and initializes all the grids.
+    """
 
     def __init__(self, **kwargs):
         """Class constructor."""
@@ -79,6 +83,16 @@ class spectral_grids():
         return grids
 
     def wavelength_range(self,**kwargs):
+        """Generates the waveelength related variables 
+        and checks if the input wavelength range is available.
+
+
+        Raises:
+            ValueError: If the wavelength range is not offered by the specific libraries
+
+        Returns:
+            lam: numpy array
+        """
         grids = self.spectral_grids
         #The min wavelength is the the max min of all of the libraries
         lam_min_grids = reduce(lambda x,y: x if x > y else y, map(lambda x: grids[x].lam_min,grids))
@@ -87,12 +101,14 @@ class spectral_grids():
         lam_min = kwargs.get('lam_min', 3000)
         lam_max = kwargs.get('lam_max', 7000)
         lam_res = kwargs.get('lam_res', 2000)
-        if lam_min < lam_min_grids or lam_max > lam_max_grids: 
-            raise ValueError(f'The wavelength range chosen is out of the range being offer by the libraries',
-                             'The available wavelength range of this collection of libraries is [{lam_min}$\AA$,{lam_max}]$\AA$')
+        if lam_min < lam_min_grids or lam_max > lam_max_grids:
+            raise ValueError('The wavelength range chosen is out of the',
+                            ' range being offer by the libraries',
+                             'The available wavelength range of this collection of libraries is [',
+                             {lam_min},r'$\AA$',{lam_max},r']$\AA$')
         lam = np.linspace(lam_min, lam_max, lam_res)
         return lam,0.5*(lam[1:] + lam[:-1])
-    
+
     def grid_flux(self, name, **kwargs):
         """Returns the flux of a star."""
         if name not in GRID_KEYS:
@@ -100,7 +116,7 @@ class spectral_grids():
                              ' Please refer to the the grid dictonary')
         x = copy.copy(kwargs)
         specgrid = self.spectral_grids[name]
-        for key, arg in kwargs.items():
+        for key in kwargs:
             if key not in specgrid.axis_labels:
                 x.pop(key)
         if name == "stripped_grid":
@@ -117,7 +133,7 @@ class spectral_grids():
     def photgrid_constructor(self, **kwargs):
         """Construct a dictionary of photogrids."""
         photgrids = {}
-        for key, arg in kwargs.items():
+        for key in kwargs:
             if key in GRID_KEYS:
                 photgrid = {}
                 for filter in self.filters:
@@ -127,9 +143,6 @@ class spectral_grids():
                     if not os.path.isfile(passband_file_name):
                         raise ValueError('We do not support the ' +
                                          str(filter) + ' filter.')
-                        continue
-
-                    
                     spectral_file = os.path.join(GRID_DIR, kwargs.get(key))
                     photgrid[filter] = pymsg.PhotGrid(spectral_file,
                                                       passband_file_name)
@@ -146,13 +159,9 @@ class spectral_grids():
         photgrid = self.photgrids[name]
         specgrid = self.spectral_grids[name]
         F = {}
-        for key, arg in kwargs.items():
+        for key in kwargs:
             if key not in specgrid.axis_labels:
                 x.pop(key)
         for filter in self.filters:
             F[filter] = photgrid[filter].flux(x)*scale
         return F
-
-####TO DO:
-# Write a function that will make sure the wavelength coverage doesn't exceed the library's coverage.
-# Set a default switch for C3K and CAP depending on the wavelength

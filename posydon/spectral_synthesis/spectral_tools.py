@@ -1,4 +1,4 @@
-"""Docstring here.
+"""
 
 This is tools and useful funtions that are using in the spectral synthesis and
 the creation of CMD diagrams combined.
@@ -13,8 +13,7 @@ import numpy as np
 import astropy.constants as con
 import astropy.units as unt
 import pandas as pd
-from functools import reduce
-
+#Constants
 Zo = 0.0142
 key_traslation = {
     'log_L',
@@ -52,8 +51,7 @@ def find_max_time(history):
 
     return np.max(times)
 
-def load_posydon_population(population_file, max_number_of_binaries=None,
-                            **kwargs):
+def load_posydon_population(population_file):
     """Loads the data of a POSYDON population h5 file saves 
         and add all the data used for spectral synthesis.
 
@@ -70,6 +68,7 @@ def load_posydon_population(population_file, max_number_of_binaries=None,
             Includes the columns keys_to_save as well as metallicity, Teff and log(g) 
             for each star.
     """
+
     history = pd.read_hdf(population_file, key='history')
     max_time = find_max_time(history)
     final_stars = history[(history.time == max_time) & (history.event == "END")]
@@ -121,11 +120,8 @@ def grid_global_limits(spectral_grids):
     T_min = 100000
     logg_max = 0
     logg_min = 20
-    #T_max = reduce(lambda x,y: x if x < y else y, map(lambda x: spectral_grids[x].axis_x_max['Teff'],spectral_grids))
-        
     for key in spectral_grids:
         specgrid = spectral_grids[key]
-        
         for label in specgrid.axis_labels:
             if label== 'Teff':
                 T_max = max(T_max,specgrid.axis_x_max[label])

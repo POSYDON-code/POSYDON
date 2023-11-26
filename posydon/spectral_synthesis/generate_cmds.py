@@ -1,3 +1,5 @@
+"""Generate and saves CMD's
+"""
 from posydon.spectral_synthesis.spectral_tools import population_data
 from posydon.spectral_synthesis.spectral_grids import spectral_grids
 import copy
