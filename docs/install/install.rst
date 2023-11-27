@@ -4,22 +4,36 @@
 Installation
 ############
 
-=======================================
-Installing POSYDON v1.0.0 from Anaconda
-=======================================
+The easiest way to start with POSYDON is to install it from Anaconda
+(Automatic Installation), and call an executable script that downloads the grid
+data automatically (Automatic Data Download).
 
-We recommend to install the Python distribution Anaconda and to install POSYDON 
-in a virtual environment. Specifically, we recommend using the installation we 
-have provided which can be accessed through conda-forge. On Linux, the new 
-conda environment can be created (we have named our environment posydon-example, 
-but you can choose any name), the conda-forge channel added, and the required 
+Alternatively, if you are interested in modifying the code, you can install
+POSYDON manually through `github` (Manual Installation). You can still use the
+automatic script to download the data, however, if you are about to modify the
+grid data, you can get them using the `git-lfs` module (Manual Data Download).
+
+Below we describe both ways.
+
+==========================================================
+Recommended way (Automatic installation and Data Download)
+==========================================================
+
+Installing POSYDON v1.0.0 from Anaconda (Automatic Installation)
+----------------------------------------------------------------
+
+We recommend to install the Python distribution Anaconda and to install POSYDON
+in a virtual environment. Specifically, we recommend using the installation we
+have provided which can be accessed through conda-forge. On Linux, the new
+conda environment can be created (we have named our environment posydon-example,
+but you can choose any name), the conda-forge channel added, and the required
 library installation can all be completed in one line:
 
 .. code-block::
 
     conda create --name posydon-example -c posydon -c conda-forge posydon
 
-On Mac (or if you have problems with the above command on Linux), these steps 
+On Mac (or if you have problems with the above command on Linux), these steps
 likely need to be separately run:
 
 .. code-block::
@@ -38,9 +52,23 @@ Now, you can source the environment with
     conda activate posydon
 
 
-=========================================
-Installing the latest release from GitHub
-=========================================
+Getting the POSYDON data (Automatic Data Download)
+--------------------------------------------------
+Export the path to where you want to clone the data, e.g. `/home/`, and
+download the data from ZENODO with the following commands
+
+.. code-block::
+
+    export PATH_TO_POSYDON_DATA=/home/
+    get-posydon-data
+
+(Note that you can add the export command to your .bashrc or .bash_profile.)
+
+
+
+==========================================================
+Installing POSYDON v.1.0 from GitHub (Manual Installation)
+==========================================================
 
 
 Creating a conda environment
@@ -97,12 +125,13 @@ the `mpi4py` dependency
 
 .. code-block::
 
+    git checkout main
     pip install -e .
     conda install mpi4py
 
 
-Downloading POSYDON data
-------------------------
+Downloading POSYDON data (after Manual Installation via `github`)
+-----------------------------------------------------------------
 OPTION 1: Zenodo (latest official version)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Export the path to where you want to clone the data, e.g. `/home/`, and
@@ -128,11 +157,11 @@ install and initialise git LFS, and download the data.
     git submodule update data/POSYDON_data
 
 
-=========================================
 Installing POSYDON documentations modules
-=========================================
+-----------------------------------------
 
-These modules are needed in order to compile the documentation
+In the case of manual installation you can also alter and build the
+documentation. These modules are needed in order to compile the documentation
 
 .. code-block::
 
