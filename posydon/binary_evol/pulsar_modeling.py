@@ -212,7 +212,8 @@ class Pulsar:
         delta_M: the total amount of mass accreted by the pulsar during RLO [Msun]
         '''
         G = const.standard_cgrav     ## gravitational constant [cm^3 g^-1 s^-2]
-        delta_Md = 0.025*const.Msun  ## magnetic field mass decay scale [g]
+        #delta_Md = 0.025*const.Msun  ## magnetic field mass decay scale [g]
+        delta_Md = 0.025*const.Msun
         B_min = 1e8                  ## minimum Bfield strength at which Bfield decay ceases [G]
         mu_0 = 1                     ## permeability of free space [has value unity in cgs]
 
@@ -285,10 +286,10 @@ class Pulsar:
         L = self.luminosity
         Edot = self.calc_NS_spindown_power()
   
-        if (self.Bfield > death_line): return True
-        elif (L/Edot) < E_max: return True
-
+        if ((L/Edot) < E_max): return True
+        #elif (self.Bfield < death_line): return False
         else: return False
+       
 
 
 

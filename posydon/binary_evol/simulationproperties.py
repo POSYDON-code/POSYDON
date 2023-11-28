@@ -381,7 +381,7 @@ class PulsarHooks(EvolveHooks):
                         pulsar.detached_evolve(delta_t) 
               
                 elif step_name == "step_CE" and state != "merged":
-                    acc_prescription = ""
+                    acc_prescription = "macleod"
                     pulsar.CE_evolve(acc_prescription, M_comp, R_comp)
 
                 pulsar_spin.append(pulsar.spin)
