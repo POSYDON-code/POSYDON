@@ -452,7 +452,7 @@ def copy_ini_file(grid_path, rerun_type, destination, cluster):
     elif rerun_type == 'thermohaline_mixing':
         replace_text = "development-22c1bb9e730343558c3e70984a99b3fc1f3c346e"
     elif rerun_type == 'HeMB_MTLp_mesh':
-        replace_text = "development-72d61123df1a669cebbf5811d6f1398221b1f081" #TODO:update
+        replace_text = "development-435d16c9158e4608530f21b8169ce6f31160e23e"
     elif rerun_type == 'more_mesh':
         replace_text = "development-72d61123df1a669cebbf5811d6f1398221b1f081" #TODO:update
     elif rerun_type == 'conv_bdy_weight':
