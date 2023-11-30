@@ -1420,7 +1420,7 @@ class Scaler:
         
         else:
 
-            normalized = X
+            normalized = X.copy()
 
             classes = np.unique(klass)
 
