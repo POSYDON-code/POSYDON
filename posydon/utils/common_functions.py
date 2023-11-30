@@ -66,11 +66,13 @@ MT_CASE_C = 3
 MT_CASE_BA = 4
 MT_CASE_BB = 5
 MT_CASE_BC = 6
+MT_CASE_NONBURNING = 8
 MT_CASE_UNDETERMINED = 9
 
 # All cases meaning RLO is happening
 ALL_RLO_CASES = set([MT_CASE_A, MT_CASE_B, MT_CASE_C,
-                     MT_CASE_BA, MT_CASE_BB, MT_CASE_BC])
+                     MT_CASE_BA, MT_CASE_BB, MT_CASE_BC,
+                     MT_CASE_NONBURNING])
 
 # Conversion of integer mass-transfer flags to strings
 MT_CASE_TO_STR = {
@@ -81,6 +83,7 @@ MT_CASE_TO_STR = {
     MT_CASE_BA: "BA",
     MT_CASE_BB: "BB",
     MT_CASE_BC: "BC",
+    MT_CASE_NONBURNING: "nonburning",
     MT_CASE_UNDETERMINED: "undetermined_MT"
 }
 
@@ -486,7 +489,7 @@ def bondi_hoyle(binary, accretor, donor, idx=-1, wind_disk_criteria=True,
         default: True, see [5]_
     scheme : str
         There are different options:
-        
+
         - 'Hurley+2002' : following [3]_
         - 'Kudritzki+2000' : following [7]_
 
@@ -1457,6 +1460,8 @@ def infer_mass_transfer_case(rl_relative_overflow,
         if ("Central_He_depleted" in donor_state
                 or "Central_C_depletion" in donor_state):
             return MT_CASE_BB
+    elif "non_burning" in donor_state:
+        return MT_CASE_NONBURNING
     return MT_CASE_UNDETERMINED
 
 
