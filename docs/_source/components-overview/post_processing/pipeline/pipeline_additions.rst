@@ -13,24 +13,20 @@ Creating plots
 --------------
 
 Plots can be created after each step with the data available from the previous
-step. Hence, each corresponding :samp:`csv` file is called 
-:samp:`step_?_plots.csv`, where the question mark will be the number of the step 
-the plots take the final :samp:`PSyGrid` object from. All the :samp:`csv` files 
-for plotting have the same structure:
+step. Hence, each corresponding csv file is called :samp:`step_?_plots.csv`,
+where the question mark will be the number of the step the plots take the final
+:samp:`PSyGrid` object from. All the csv files for plotting have the same
+structure:
 
 .. code-block::
 
-    path_to_grid,grid_type,quantities_to_plot,path_to_plot,plot_extension
+    path_to_grid,quantities_to_plot,path_to_plot
 
-Beside the grid, it states the type and takes a list of quantities to plot. All
-final quantities supported for a :ref:`2D plot <plot_2d>`, as third dimension
-can be specified. Additionally, you can put a :samp:`LOG10_` in front of each
-of them to switch on plotting in log-scale. Beside that there are predefined
-plots. Finally, the path to the directory, where the plots should get stored,
-and the extension of the image files (those need to be valid extension for
-`mathplotlib <https://matplotlib.org/>`_) are given. There is one additional
-extension :samp:`multipage-pdf`, which will create a PDF, where several plots
-are stored as pages in a single PDF.
+Beside the grid, it takes a list of quantities to plot and finally the path to
+the directory, where the plots should get stored. All final quantities
+supported for a :ref:`2D plot <plot_2d>`, as third dimension can be specified.
+Additionally, you can put a :samp:`LOG10_` in front of each of them to switch
+on plotting in log-scale. Beside that there are predefined plots.
 
 .. table:: Basic predefined plots
 
@@ -47,8 +43,8 @@ are stored as pages in a single PDF.
     'lg_mtransfer_rate'       'debug'               'lg_mtransfer_rate'       -8      -1      False
     ========================  ====================  ========================  ======  ======  ======
 
-After :ref:`Step3: calculating extra values from detailed data 
-<pipeline_step3>`, the supernova model quantities get available, too.
+After :ref:`Step3: calculating extra values from detailed data <pipeline_step3>`,
+the supernova model quantities get available, too.
 
 .. table:: Supernova predefined plots
 

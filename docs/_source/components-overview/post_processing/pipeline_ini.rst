@@ -1,29 +1,28 @@
 .. _pipeline_ini:
 
-#######################################################################
-Documentation of the :samp:`ini` file for the post-processing pipeline
-#######################################################################
+##############################################################
+Documentation of the ini file for the post-processing pipeline
+##############################################################
 
-Aim of the :samp:`ini` file
-===========================
+Aim of the ini file
+===================
 
-Using an :samp:`ini` file should help to keep an overview on large grid 
-repositories and ensures that all workflows will be set up the same way.
+Using an ini file should help to keep an overview on large grid repositories
+and ensures that all will be setup the same way.
 
-There is a script to set up the pipeline, it takes one argument:
+There is a setup-pipeline script takes one argument:
 
 .. code-block:: bash
 
-    posydon-setup-pipeline PATH_TO_INI
+    setup-pipeline PATH_TO_INI
 
-The content of the :samp:`ini` file is described :ref:`below 
-<pipeline_ini_sections>`. It will create two files for each step, plot or 
-check:
+The content of the ini file is described :ref:`below <pipeline_ini_sections>`.
+It will create for each step, plot or check two files:
 
 1. \*.csv
 2. \*.slurm
 
-Additionally, it will prepare a :samp:`logs` directory (it may create a save
+Additionally, it will prepare a :samp:`logs` directory (it may creates a save
 of some old logs) and create a shell script :samp:`run_pipeline.sh` to submit
 all :ref:`tasks <pipeline>`. Hence, you can run all
 :ref:`steps <pipeline_steps>` with simply running this script.
@@ -33,14 +32,14 @@ all :ref:`tasks <pipeline>`. Hence, you can run all
     ./run_pipeline.sh
 
 .. note::
-    Currently, the user needs to take care of having a POSYDON_data directory
-    which includes the tables for the core-collapse prescriptions themselves
+    Currently, the user needs to take care of having a POSYDON_data directly
+    which includes the tables for the core-collapse prescriptions him-/herself
     in the working directory.
 
 .. _pipeline_ini_sections:
 
-Sections in the :samp:`ini` file
-=================================
+Sections in the ini file
+========================
 
 Account and slurm settings
 --------------------------
@@ -57,34 +56,24 @@ example to show the supported key words:
         WALLTIME = '23:00:00'
         MAILTYPE = 'ALL'
         EMAIL = 'matthias.kruckow@unige.ch'
-        GROUP = 'GL_S_Astro_POSYDON'
-
-The last one :samp:`GROUP` is a bit special. If it is set, ownership 
-of all the files created by the pipeline will be assigned to :samp:`GROUP`. 
-This is especially helpful if more than one
-user is making changes to the data set.
 
 General pipeline settings
 -------------------------
 
-The next section outlines general information about the pipeline. The 
-:samp:`PATH` specifies where you would like to have the pipeline files created. 
-The :samp:`VERBOSE` option will be used for the creation of the pipeline files 
-and during the run of the pipeline.
+The next sections deals with the general information about the pipeline. First
+it needs to know where the grids are located. The :samp:`PATH` specifies, where
+you would like to get the pipeline files being created. The :samp:`VERBOSE`
+option will be used for the creation of the pipeline files and during the run
+of the pipeline.
 
 Finally, we have switches to turn on (:samp:`True`) and off (:samp:`False`)
-individual :ref:`steps <pipeline_steps>` and
-:ref:`additions <pipeline_additions>`. Additionally, the file extension of the
-plots can be set according to the restrictions of
-`matplotlib <https://matplotlib.org/>`_. There is one additional extension
-:samp:`multipage-pdf`, which will create a PDF, where several plots are stored
-as pages in a single PDF.
+individual :ref:`steps <pipeline_steps>`.
 
 .. code-block:: ini
 
     [pipeline setup]
         PATH_TO_GRIDS = '/srv/beegfs/scratch/shares/astro/posydon/POSYDON_GRIDS_v2/'
-        VERSION = '' # to have a version below the grid type level
+        VERSION = '' # 'v2' in quest and '' in yggdrasil
         PATH = '.' # working dir
         VERBOSE = True
         
@@ -96,18 +85,14 @@ as pages in a single PDF.
         EXPORT_DATASET = True
         # rerun step
         RERUN = False
-        # additions
-        MAKE_PLOTS = True
-        PLOT_EXTENSION = 'pdf'
-        MAKE_CHECKS = True
 
 Step sections
 -------------
 
-The path of each grid will be joined as
-:samp:`PATH_TO_GRIDS/GRID_TYPE/VERSION/METALLICITY/GRID_SLICE`. The
-corresponding :samp:`h5` files will have names according to
-:samp:`PATH_TO_GRIDS/GRID_TYPE/VERSION/METALLICITY/COMPRESSION/GRID_SLICE.h5`.
+The path of each grid will be joint as
+:samp:`PATH_TO_GRIDS/VERSION/GRID_TYPE/METALLICITY/GRID_SLICE`. The
+corresponding h5 files will have names according to
+:samp:`PATH_TO_GRIDS/VERSION/GRID_TYPE/METALLICITY/COMPRESSION/GRID_SLICE.h5`.
 All sections have common keywords:
 
 .. table:: Common keywords of steps
@@ -119,9 +104,9 @@ All sections have common keywords:
     METALLICITIES       a list of lists of the metallicities of the grids; the looped :samp:`METALLICITY` is used in the path name; the outer list allows you to have different lists for each grid type
     GRID_SLICES         a list of lists of the grid slices; the looped :samp:`GRID_SLICE` is used in the path name; the outer list allows you to have different lists for each grid type
     COMPRESSIONS        a list of lists of compression types
-    DROP_MISSING_FILES  boolean to ignore missing files; it allows to have different substructures and taking the existing ones into account when specifying union of all possible substructures
-    CREATE_PLOTS        a list of plots to make; this will be done independently whether the step is active or not; to make no plots put there an empty list or comment out such a line
-    DO_CHECKS           a list of checks to perform; this will be done independently whether the step is active or not; to omit checks, specify an empty list or comment out the line
+    DROP_MISSING_FILES  boolean to ignore missing files
+    CREATE_PLOTS        a list of plots to make; this will be done independently whether the step is active or not, to make no plots put there an empty list or comment out such a line
+    DO_CHECKS           a list of checks to perform; this will be done independently whether the step is active or not, to make no checks put there an empty list or comment out such a line
     ==================  ===========
 
 Some :ref:`steps <pipeline_steps>` have more keywords, which are specific to
@@ -132,14 +117,12 @@ that step:
     ====  ============================  ===========
     Step  Keyword                       Description
     ====  ============================  ===========
-       1  STOP_BEFORE_CARBON_DEPLETION  indicating, whether high mass HMS stars should get their history cropped before carbon depletion (set to 1 if so) or not (set to 0 if not)
+       1  STOP_BEFORE_CARBON_DEPLETION  indicating, whether high mass HMS stars should get their history croped short before carbon depletion (1) or not (0)
        2  GRID_SLICES                   for this step, we have 3 layers of lists: the outermost is still the grid type, the inner most is still the grid slice, the middle layer is the combined grid
        2  GRIDS_COMBINED                a list of lists of combined grids; the outermost list is again referring to grid type; this is used as name for the new combined grid instead of :samp:`GRID_SLICE`
-       3  ORIGINAL_COMPRESSIONS         a list of lists of the ORIGINAL compression to calculate the extra values from (the first one is used for all compressions for that grid type)
        4  INTERPOLATION_METHODS         a list of the interpolator types which are trained
-       4  CONTROL_GRIDS                 a list of lists of control grids for the :samp:`GRID_SLICES`; it needs to have the same number of entries as the :samp:`GRID_SLICES`; use an empty string to specify no control grid
+       4  CONTROL_GRIDS                 a list of lists of control grids for the :samp:`GRID_SLICES`; it need to have the same number of entries as the :samp:`GRID_SLICES`, to specify no control grid use an empty string
        R  RERUN_TYPE                    a defined rerun type
-       R  CLUSTER                       cluster name to get the appropriate :samp:`ini` file
     ====  ============================  ===========
 
 Here is an example of all the :ref:`steps <pipeline_steps>`:
@@ -263,13 +246,6 @@ Here is an example of all the :ref:`steps <pipeline_steps>`:
                         # HMS-HMS
                         ['LITE']
                        ]
-        ORIGINAL_COMPRESSIONS = [# CO-HMS_RLO
-                                 ['ORIGINAL'],
-                                 # CO-HeMS
-                                 ['ORIGINAL'],
-                                 # HMS-HMS
-                                 ['ORIGINAL']
-                                ]
         DROP_MISSING_FILES = True
         # supported plots: e.g. 'combined_TF12', 'termination_flag_1', 'termination_flag_2', 'termination_flag_3', 'termination_flag_4', and any quantity valid for a Z-plotting
         CREATE_PLOTS = ['PLOT_AFTER_EXTRA']
@@ -315,7 +291,7 @@ Here is an example of all the :ref:`steps <pipeline_steps>`:
         DO_CHECKS = ['CHECK_AFTER_TRAINING']
     
     #EXPORT_DATASET
-    [step_F]
+    [step_9]
         GRID_TYPES = ['CO-HMS_RLO', 'CO-HeMS', 'HMS-HMS']
         METALLICITIES = [# CO-HMS_RLO
                          ['2e+00_Zsun', '1e+00_Zsun', '4.5e-01_Zsun', '2e-01_Zsun', '1e-01_Zsun', '1e-02_Zsun', '1e-03_Zsun', '1e-04_Zsun'],
@@ -367,7 +343,6 @@ Here is an example of all the :ref:`steps <pipeline_steps>`:
         DROP_MISSING_FILES = True
         # example reruns are 'PISN', 'reverse_MT', 'TPAGBwind', 'opacity_max'
         RERUN_TYPE = 'opacity_max' 
-        CLUSTER = 'quest'
 
 There are some predefined shortcuts for lists of :ref:`plots <pipeline_plots>`
 and :ref:`checks <pipeline_checks>`:

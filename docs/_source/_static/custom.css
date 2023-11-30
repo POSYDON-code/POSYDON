@@ -15,3 +15,7 @@
 p {
  text-align: justify;
 }
+
+.wy-table-responsive table td {
+  white-space: normal;
+}
