@@ -97,6 +97,7 @@ How is this Documentation Structured?
    :caption: API Reference
 
    api_reference/posydon
+   api_reference/bin
 
 .. toctree::
    :maxdepth: 1
