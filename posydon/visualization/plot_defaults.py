@@ -18,8 +18,8 @@ __authors__ = [
 ]
 
 
-from matplotlib import checkdep_usetex
-
+from matplotlib import rcParams
+import shutil
 
 PLOT_PROPERTIES = {
     'show_fig': False,
@@ -39,7 +39,7 @@ PLOT_PROPERTIES = {
     'zmin': None,
     'zmax': None,
     'title': None,
-    'rcParams': {"text.usetex": checkdep_usetex(True),
+    'rcParams': {"text.usetex": True if shutil.which('latex') else False,
                  "font.family": "serif",
                  "font.sans-serif": ["Computer Modern Roman"]},
     'title_font_dict': {'fontsize': 10},
@@ -235,74 +235,141 @@ DEFAULT_MARKERS_COLORS_LEGENDS = {
         'L2_RLOF':
             ['^', 1, 'black', 'L2 RLOF'],
 
-        'caseA_from_star1':
-            ['s', 2, 'tab:blue', 'case A from star1'],
-        'caseA/B_from_star1':
-            ['s', 2, 'tab:green', 'case A/B from star1'],
-        'caseA/B/A_from_star1':
-            ['s', 2, 'lightgrey', 'case A/B/A from star1'],
-        'caseA/B/C_from_star1':
-            ['s', 2, 'yellow', 'case A/B/C from star1'],
-        'caseA/C_from_star1':
-            ['s', 2, 'yellow', 'case A/C from star1'],
-        'caseA/B/BB_from_star1':
-            ['s', 2, 'tab:red', 'case A/B/BB from star1'],
-        'caseA/B/C/BB_from_star1':
-            ['s', 2, 'tab:cyan', 'case A/B/C/BB from star1'],
-        'caseB_from_star1':
-            ['s', 2, 'tab:purple', 'case B from star1'],
-        'caseB/A_from_star1':
-            ['s', 2, 'tab:olive', 'case B/A from star1'],
-        'caseB/BB_from_star1':
-            ['s', 2, 'tab:pink', 'case B/BB from star1'],
-        'caseB/C/BB_from_star1':
-            ['s', 2, 'tab:gray', 'case B/C/BB from star1'],
-        'caseB/C_from_star1':
-            ['s', 2, 'tab:orange', 'case B/C from star1'],
-        'caseC_from_star1':
-            ['s', 2, 'black', 'case C from star1'],
-        'caseC/BB_from_star1':
-            ['s', 2, 'brown', 'case C/BB from star1'],
-
-        'caseA_from_star2':
-            ['o', 2, 'tab:blue', 'case A from star2'],
-        'caseA/B_from_star2':
-            ['o', 2, 'tab:green', 'case A/B from star2'],
-        'caseA/B/A_from_star2':
-            ['s', 2, 'lightgrey', 'case A/B/A from star2'],
-        'caseA/B/C_from_star2':
-            ['s', 2, 'yellow', 'case A/B/C from star2'],
-        'caseA/B/BB_from_star2':
-            ['o', 2, 'tab:red', 'case A/B/BB from star2'],
-        'caseA/B/C/BB_from_star2':
-            ['o', 2, 'tab:cyan', 'case A/B/C/BB from star2'],
-        'caseB_from_star2':
-            ['o', 2, 'tab:purple', 'case B from star2'],
-        'caseB/A_from_star2':
-            ['o', 2, 'tab:olive', 'case B/A from star2'],
-        'caseB/BB_from_star2':
-            ['o', 2, 'tab:pink', 'case B/BB from star2'],
-        'caseB/C/BB_from_star2':
-            ['o', 2, 'tab:gray', 'case B/C/BB from star2'],
-        'caseB/C_from_star2':
-            ['o', 2, 'tab:orange', 'case B/C from star2'],
-        'caseC_from_star2':
-            ['o', 2, 'black', 'case C from star2'],
-        'caseC/BB_from_star2':
-            ['s', 2, 'brown', 'case C/BB from star2'],
-
-        'caseBA_from_star1':
-            ['s', 2, 'tab:blue', 'case BA from star1'],
-        'caseBB_from_star1':
-            ['s', 2, 'tab:green', 'case BB from star1'],
-        'caseBA/BB_from_star1':
-            ['s', 2, 'tab:red', 'case BA/BB from star1'],
-
-        '_from_star1':
-            ['x', 1, 'black', 'unknown'],
-        '_from_star2':
-            ['x', 1, 'black', 'unknown'],
-
+        'case_A1':
+            ['s', 2, 'tab:blue', 'case A1'],
+        'case_A1/B1':
+            ['s', 2, 'tab:green', 'case A1/B1'],
+        'case_A1/B1/A1':
+            ['s', 2, 'lightgrey', 'case A1/B1/A1'],
+        'case_A1/B1/C1':
+            ['s', 2, 'yellow', 'case A1/B1/C1'],
+        'case_A1/C1':
+            ['s', 2, 'yellow', 'case A1/C1'],
+        'case_A1/B1/BB1':
+            ['s', 2, 'tab:red', 'case A1/B1/BB1'],
+        'case_A1/B1/C1/BB1':
+            ['s', 2, 'tab:cyan', 'case A1/B1/C1/BB1'],
+        'case_B1':
+            ['s', 2, 'tab:purple', 'case B1'],
+        'case_B1/BB1':
+            ['s', 2, 'tab:pink', 'case B1/BB1'],
+        'case_B1/C1/BB1':
+            ['s', 2, 'tab:gray', 'case B1/C1/BB1'],
+        'case_B1/C1':
+            ['s', 2, 'tab:orange', 'case B1/C1'],
+        'case_C1':
+            ['s', 2, 'black', 'case C1'],
+        'case_C1/BB1':
+            ['s', 2, 'brown', 'case C1/BB1'],
+        'case_BA1':
+            ['s', 2, 'tab:blue', 'case BA1'],
+        'case_BB1':
+            ['s', 2, 'tab:green', 'case BB1'],
+        'case_BA1/BB1':
+            ['s', 2, 'tab:red', 'case BA1/BB1'],
+            
+        'case_A2':
+            ['o', 2, 'tab:blue', 'case A2'],
+        'case_A2/B2':
+            ['o', 2, 'tab:green', 'case A2/B2'],
+        'case_A2/B2/A2':
+            ['o', 2, 'lightgrey', 'case A2/B2/A2'],
+        'case_A2/B2/C2':
+            ['o', 2, 'yellow', 'case A2/B2/C2'],
+        'case_A2/C2':
+            ['o', 2, 'yellow', 'case A2/C2'],
+        'case_A2/B2/BB2':
+            ['o', 2, 'tab:red', 'case A2/B2/BB2'],
+        'case_A2/B2/C2/BB2':
+            ['o', 2, 'tab:cyan', 'case A2/B2/C2/BB2'],
+        'case_B2':
+            ['o', 2, 'tab:purple', 'case B2'],
+        'case_B2/BB2':
+            ['o', 2, 'tab:pink', 'case B2/BB2'],
+        'case_B2/C2/BB2':
+            ['o', 2, 'tab:gray', 'case B2/C2/BB2'],
+        'case_B2/C2':
+            ['o', 2, 'tab:orange', 'case B2/C2'],
+        'case_C2':
+            ['o', 2, 'black', 'case C2'],
+        'case_C2/BB2':
+            ['o', 2, 'brown', 'case C2/BB2'],            
+        'case_BA2':
+            ['o', 2, 'tab:blue', 'case BA2'],
+        'case_BB2':
+            ['o', 2, 'tab:green', 'case BB2'],
+        'case_BA2/BB2':
+            ['o', 2, 'tab:red', 'case BA1/BB2'],
+            
+        'case_A1/A2':
+            ['>', 2, 'tab:blue', 'case A1/A2'],
+        'case_A1/A2/A1':
+            ['>', 2, 'tab:green', 'case A1/A2/A1'],
+        'case_A1/A2/B1':
+            ['>', 2, 'tab:gray', 'case A1/A2/B1'],
+        'case_A1/A2/B1/B2':
+            ['>', 2, 'tab:orange', 'case A1/A2/B1/B2'],
+        'case_A1/B1/BB1':
+            ['>', 2, 'tab:purple', 'case A1/B1/BB1'],
+        'case_A1/A2/B2':
+            ['>', 2, 'tab:red', 'case A1/A2/B2'],
+        'case_A1/B1/A2':
+            ['>', 2, 'tab:pink', 'case A1/B1/B2'],
+        'case_A1/B1/A2/B2':
+            ['>', 2, 'tab:olive', 'case A1/B1/A2/B2'],
+        'case_A1/B1/A2/B1/B2':
+            ['>', 2, 'yellow', 'case A1/B1/A2/B1/B2'],
+        'case_A1/B1/B2':
+            ['>', 2, 'brown', 'case A1/B1/B2'],
+        'case_A1/B1/B2/B1':
+            ['>', 2, 'black', 'case A1/B1/B2/B1'],
+        'case_A1/B2':
+            ['>', 2, 'tab:cyan', 'case A1/B1/C1/BB1'],
+        'case_B1/A2':
+            ['<', 2, 'tab:blue', 'case B1/A2'],
+        'case_B1/A2/B2':
+            ['<', 2, 'tab:green', 'case B1/A2/B2'],
+        'case_B1/B2':
+            ['<', 2, 'tab:gray', 'case B1/B2'],
+        'case_B1/B2/B1':
+            ['<', 2, 'tab:red', 'case B1/B2/B1'],
+        'case_B1/B2/BB1':
+            ['<', 2, 'brown', 'case B1/B2/BB1'],
+        'case_B1/B2/B1/B2/B1/B2/B1/B2/B1':
+            ['<', 2, 'tab:pink', 'case B1/B2/B1/B2/B1/B2/B1/B2/B1'],
+        'case_B1/B2/B1/C1':
+            ['<', 2, 'tab:olive', 'case B1/B2/B1/C1'],
+        'case_B1/B2/C1':
+            ['<', 2, 'tab:purple', 'case B1/B2/C1'],
+        'case_B1/B2/C1/BB1':
+            ['<', 2, 'black', 'case B1/B2/C1/BB1'],
+        'case_B1/C2':
+            ['<', 2, 'tab:cyan', 'case B1/C1'],
+        'case_B2/B1':
+            ['v', 2, 'tab:blue', 'case B2/B1'],
+        'case_B2/B1/C1':
+            ['v', 2, 'tab:green', 'case B2/B1/C1'],
+        'case_B2/C1':
+            ['v', 2, 'tab:orange', 'case B2/C1'],
+        'case_B1/A2/B2/C1':
+            ['v', 2, 'tab:red', 'case B1/A2/B2/C1'],
+        'case_A2/B1/B2':
+            ['v', 2, 'tab:pink', 'case A2/B1/B2'],
+        'case_A1/B1/B2/C1':
+            ['v', 2, 'tab:purple', 'case A1/B1/B2/C1'],
+        'case_A1/B1/B2/B1/C1':
+            ['v', 2, 'tab:olive', 'case A1/B1/B2/B1/C1'],
+        'case_A1/B1/A2/B2/C1':
+            ['v', 2, 'brown', 'case A1/B1/A2/B2/C1'],
+        'case_A1/B2/C1':
+            ['v', 2, 'yellow', 'case A1/B2/C1'],
+        'case_A1/A2/B2/C1':
+            ['v', 2, 'black', 'case A1/A2/B2/C1'],
+        'case_A2/A1':
+            ['v', 2, 'tab:gray', 'case A2/A1'],
+            
+        'None':
+            ['x', 1, 'tab:red', 'failed'],
     },
 
     'termination_flag_3': {
@@ -443,6 +510,10 @@ DEFAULT_MARKERS_COLORS_LEGENDS = {
             ['x', 1, 'red', 'Not converged'],
         'unknown':
             ['+', 1, 'green', 'unknown'],
+        'Reverse stable MT':    
+            ['s', 2, 'tab:olive', 'Stable reverse mass-transfer phase'],
+        'Reverse unstable MT':    
+            ['D', 1, 'tab:olive', 'Unstable reverse mass-transfer phase'],
         },
     'debug': {
         'terminate due to primary depleting carbon (inverse sn?)':

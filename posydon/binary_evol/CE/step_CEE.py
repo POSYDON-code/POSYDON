@@ -15,7 +15,7 @@ for the donor star, else we use the default values
 
 Parameters
 ----------
-binary : BinaryStar (An objets of class BinaryStar defined in POSYDON)
+binary : BinaryStar (An object of class BinaryStar defined in POSYDON)
 verbose : Boolean
     In case we want information about the CEE  (the default is False).
 
@@ -113,26 +113,25 @@ class StepCEE(object):
     verbose : bool
         If True, the messages will be prited in the console.
 
-
     Keyword Arguments
-    ----------
+    -----------------
     prescription : str
         Prescription to use for computing the prediction of common enevelope
         evolution. Available options are:
 
         * 'alpha-lambda' : Considers the the alpha-lambda prescription
-        described in [1] and [2] to predict the outcome of the common envelope
-        evolution. If the profile of the donor star is available then it is
-        used to compute the value of lambda.
+          described in [1]_ and [2]_ to predict the outcome of the common
+          envelope evolution. If the profile of the donor star is available
+          then it is used to compute the value of lambda.
 
     References
     ----------
     .. [1] Webbink, R. F. (1984). Double white dwarfs as progenitors of R
-    Coronae Borealis stars and Type I supernovae. The Astrophysical Journal,
-    277, 355-360.
+        Coronae Borealis stars and Type I supernovae. The Astrophysical
+        Journal, 277, 355-360.
 
     .. [2] De Kool, M. (1990). Common envelope evolution and double cores of
-    planetary nebulae. The Astrophysical Journal, 358, 189-195.
+        planetary nebulae. The Astrophysical Journal, 358, 189-195.
     """
 
     def __init__(
@@ -189,18 +188,17 @@ class StepCEE(object):
         if binary.event in ["oCE1", "oDoubleCE1"]:
             donor_star = binary.star_1
             comp_star = binary.star_2
+            star_to_merge = "1"
         elif binary.event in ["oCE2", "oDoubleCE2"]:
             donor_star = binary.star_2
             comp_star = binary.star_1
+            star_to_merge = "2"
         else:
             raise ValueError("CEE does not apply if `event` is not "
                              "`oCE1`, 'oDoubleCE1' or `oCE2`, 'oDoubleCE1'")
 
         # Check for double CE
-        if binary.event in ["oDoubleCE1", "oDoubleCE2"]:
-            double_CE = True
-        else:
-            double_CE = False
+        double_CE = binary.event in ["oDoubleCE1", "oDoubleCE2"]
 
         if self.verbose:
             print("binary.event : ", binary.event)
@@ -210,28 +208,16 @@ class StepCEE(object):
                   self.common_envelope_option_for_lambda)
 
         # Check to make sure binary can go through a CE
-        if donor_star.state in ['H-rich_Core_H_burning',
-                                'stripped_He_Core_He_burning']:
+        mergeable_donor = (donor_star.state in [
+            'H-rich_Core_H_burning', 'stripped_He_Core_He_burning'])
+        mergeable_HG_donor = (
+            self.common_envelope_option_for_HG_star == "pessimistic"
+            and donor_star.state in ['H-rich_Shell_H_burning'])
+        if mergeable_donor or mergeable_HG_donor:
             # system merges
             binary.state = 'merged'
-            if binary.event in ["oCE1", "oDoubleCE1"]:
-                binary.event = "oMerging1"
-            if binary.event in ["oCE2", "oDoubleCE2"]:
-                binary.event = "oMerging2"
-
+            binary.event = "oMerging" + star_to_merge
             return
-
-        if self.common_envelope_option_for_HG_star == "pessimistic":
-            # Merging if HG donor
-            if donor_star.state in ['H-rich_Shell_H_burning']:
-                # system merges
-                binary.state = 'merged'
-                if binary.event in ["oCE1", "oDoubleCE1"]:
-                    binary.event = "oMerging1"
-                if binary.event in ["oCE2", "oDoubleCE2"]:
-                    binary.event = "oMerging2"
-
-                return
 
         # Calculate binary's evolution
         if self.prescription == 'alpha-lambda':
@@ -451,6 +437,7 @@ class StepCEE(object):
             In case we want information about the CEE.
         common_envelope_option_after_succ_CEE: str
             Options are:
+
             1) "core_replaced_noMT"
                 he_core_mass/radius (or co_core_mass/radius for CEE of
                 stripped_He*) are replaced according to the new core boundary

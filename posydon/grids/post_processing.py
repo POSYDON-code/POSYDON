@@ -9,7 +9,8 @@ from posydon.utils.common_functions import (
     CEE_parameters_from_core_abundance_thresholds,
     check_state_of_star)
 from posydon.grids.MODELS import MODELS
-from posydon.visualization.combine_TF import TF1_POOL_STABLE
+from posydon.visualization.combine_TF import combine_TF12, TF1_POOL_STABLE
+from posydon.visualization.plot_defaults import DEFAULT_MARKERS_COLORS_LEGENDS
 import numpy as np
 from tqdm import tqdm
 import copy
@@ -114,7 +115,7 @@ def post_process_grid(grid, index=None, star_2_CO=True, MODELS=MODELS,
 
     """
     EXTRA_COLUMNS = {}
-    
+        
     for star in [1, 2]:
         # core masses at He depletion. stellar states and composition
         for quantity in ['avg_c_in_c_core_at_He_depletion',
@@ -368,6 +369,14 @@ def post_process_grid(grid, index=None, star_2_CO=True, MODELS=MODELS,
                     '%s has not the correct dimension! Error occoured after '
                     'collapsing binary index=%s' % (key, i))
 
+    # add MT history column by combining TF1 and TF2
+    if not single_star:
+        interp_class = grid.final_values['interpolation_class']
+        TF2 = grid.final_values['termination_flag_2']
+        combined_TF12 = combine_TF12(interp_class, TF2)
+        mt_history = [DEFAULT_MARKERS_COLORS_LEGENDS['combined_TF12'][TF12][3] for TF12 in combined_TF12]
+        EXTRA_COLUMNS['mt_history'] = mt_history
+
     # to avoid confusion rename core-collaspe compact object state "MODEL_NAME_state"
     # to "MODEL_NAME_CO_type"
     for MODEL_NAME in MODELS.keys():
@@ -409,7 +418,7 @@ def add_post_processed_quantities(grid, MESA_dirs_EXTRA_COLUMNS, EXTRA_COLUMNS,
             'EXTRA_COLUMNS do not follow the correct order of grid!')
 
     for column in EXTRA_COLUMNS.keys():
-        if "state" in column or "type" in column:
+        if "state" in column or "type" in column or column == 'mt_history':
             values = np.asarray(EXTRA_COLUMNS[column], str)
         else:
             values = np.asarray(EXTRA_COLUMNS[column], float)

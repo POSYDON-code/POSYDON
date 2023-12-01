@@ -302,7 +302,7 @@ def train_interpolators(i, path_to_csv_file, verbose=False):
                                    and "MODEL" not in key)]
     
     # define all string keys in final values
-    c_keys = ['interpolation_class', 'S1_state', 'S2_state']
+    c_keys = ['interpolation_class', 'S1_state', 'S2_state', 'mt_history']
     for MODEL_NAME in MODELS.keys():
         for i in range(1,3):
             c_keys.append(f'S{i}_{MODEL_NAME}_SN_type')
@@ -451,6 +451,12 @@ def copy_ini_file(grid_path, rerun_type, destination, cluster):
         replace_text = "development-22c1bb9e730343558c3e70984a99b3fc1f3c346e"
     elif rerun_type == 'thermohaline_mixing':
         replace_text = "development-22c1bb9e730343558c3e70984a99b3fc1f3c346e"
+    elif rerun_type == 'HeMB_MLTp_mesh':
+        replace_text = "development-435d16c9158e4608530f21b8169ce6f31160e23e"
+    elif rerun_type == 'more_mesh':
+        replace_text = "development-435d16c9158e4608530f21b8169ce6f31160e23e"
+    elif rerun_type == 'conv_bdy_weight':
+        replace_text = "development-435d16c9158e4608530f21b8169ce6f31160e23e"
     elif rerun_type == 'other': # e.g. 'envelope_mass_limit', 'fe_core_infall_limit'
         # this rerun uses the default inlist commit
         return
@@ -547,6 +553,36 @@ def logic_rerun(grid, rerun_type):
     elif rerun_type == 'thermohaline_mixing':
         termination_flags = TF1_POOL_ERROR
         new_mesa_flag = {'thermohaline_coeff' : 17.5}
+    elif rerun_type == 'HeMB_MLTp_mesh':
+        termination_flags = TF1_POOL_ERROR
+    elif rerun_type == 'more_mesh':
+        termination_flags = TF1_POOL_ERROR
+        new_mesa_flag = {'mesh_Pgas_div_P_exponent' : 2, 'max_allowed_nz' : 50000} # may put this in a MESA-inlist PR
+    elif rerun_type == 'conv_bdy_weight':
+        N_runs = len(grid)
+        runs_to_rerun = []
+        for i in range(N_runs):
+            dirname = grid.MESA_dirs[i].decode('utf-8')
+            if not os.path.isdir(dirname):
+                # TODO: handle the case when grids were moved location
+                raise ValueError(f'Grid directory not found at {dirname}')
+            if "single_HMS" in dirname:
+                out_txt_path = os.path.join(dirname,
+                                            "out_star1_formation_step0.txt")
+            elif "single_HeMS" in dirname:
+                out_txt_path = os.path.join(dirname,
+                                            "out_star1_formation_step2.txt")
+            else:
+                out_txt_path = os.path.join(dirname, "out.txt")
+            if (out_txt_path is not None) and os.path.isfile(out_txt_path):
+                with open(out_txt_path, "r") as log_file:
+                    log_lines = log_file.readlines()
+                for line in log_lines:
+                    if (("STOP prepare_for_new_try: bad num omega" in line) or
+                        ("Segmentation fault" in line)):
+                        runs_to_rerun += [i]
+        runs_to_rerun = np.array(runs_to_rerun)
+        new_mesa_flag = {'convective_bdy_weight' : 0}
     elif rerun_type == 'envelope_mass_limit': # maybe 'fe_core_infall_limit' as well?
         runs_to_rerun = None # implement logic
     else:

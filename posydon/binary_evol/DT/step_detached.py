@@ -923,15 +923,6 @@ class detached_step:
         KEYS = self.KEYS
         KEYS_POSITIVE = self.KEYS_POSITIVE
 
-        #if binary.star_1 is None or binary.star_1.state == "massless_remnant":
-        #    self.non_existent_companion = 1
-        #if binary.star_2 is None or binary.star_2.state == "massless_remnant":
-        #    self.non_existent_companion = 2
-        #else:
-            # detached step of an actual binary
-        #    self.non_existent_companion = 0
-        
-        ### NEW CODE TESTING PR
         companion_1_exists = (binary.star_1 is not None
                               and binary.star_1.state != "massless_remnant")
         companion_2_exists = (binary.star_2 is not None
@@ -947,8 +938,6 @@ class detached_step:
                 self.non_existent_companion = 1
             else:                                   # no star in the system
                 raise Exception("There is no star to evolve. Who summoned me?")
-        ### END OF NEW CODE
-        
 
         if self.non_existent_companion == 0: #no isolated evolution, detached step of an actual binary
             # the primary in a real binary is potential compact object, or the more evolved star
@@ -1012,24 +1001,10 @@ class detached_step:
                 secondary.htrack = False
                 primary.htrack = False
                 primary.co = False
-            elif (binary.star_1.state in STAR_STATES_CO
-                    and binary.star_2.state
-                    in 'massless_remnant'):
-                binary.state += " Thorne–Żytkow object"
-                if self.verbose or self.verbose == 1:
-                    print("Formation of Thorne–Żytkow object, nothing to do further")
-                return
-            elif (binary.star_2.state in STAR_STATES_CO
-                    and binary.star_1.state
-                    in 'massless_remnant'):
-                binary.state += " Thorne–Żytkow object"
-                if self.verbose or self.verbose == 1:
-                    print("Formation of Thorne–Żytkow object, nothing to do further")
-                return
             else:
                 raise Exception("States not recognized!")
 
-        # non-existent, far away, star
+        # star 1 is a massless remnant, only star 2 exists
         elif self.non_existent_companion == 1:
             # we force primary.co=True for all isolated evolution,
             # where the secondary is the one evolving one
@@ -1041,9 +1016,15 @@ class detached_step:
                 secondary.htrack = True
             elif (binary.star_2.state in LIST_ACCEPTABLE_STATES_FOR_HeStar):
                 secondary.htrack = False
+            elif (binary.star_2.state in STAR_STATES_CO):
+                binary.state += " Thorne-Zytkow object"
+                if self.verbose or self.verbose == 1:
+                    print("Formation of Thorne-Zytkow object, nothing to do further")
+                return
             else:
                 raise Exception("State not recognized!")
 
+        # star 2 is a massless remnant, only star 1 exists
         elif self.non_existent_companion == 2:
             primary = binary.star_2
             primary.co = True
@@ -1053,6 +1034,11 @@ class detached_step:
                 secondary.htrack = True
             elif (binary.star_1.state in LIST_ACCEPTABLE_STATES_FOR_HeStar):
                 secondary.htrack = False
+            elif (binary.star_1.state in STAR_STATES_CO):
+                binary.state += " Thorne-Zytkow object"
+                if self.verbose or self.verbose == 1:
+                    print("Formation of Thorne-Zytkow object, nothing to do further")
+                return
             else:
                 raise Exception("State not recognized!")
         else:
@@ -1083,7 +1069,7 @@ class detached_step:
 
             with np.errstate(all="ignore"):
                 # get the initial m0, t0 track
-                if binary.event == 'ZAMS':
+                if binary.event == 'ZAMS' or binary.event == 'redirect_from_ZAMS':
                     # ZAMS stars in wide (non-mass exchaging binaries) that are
                     # directed to detached step at birth
                     m0, t0 = star1.mass, 0
@@ -2012,14 +1998,14 @@ def diffeq(
 ):
     """Diff. equation describing the orbital evolution of a detached binary.
 
-    The equation handles wind mass-loss [1_], tidal [2_], gravational [3_]
-    effects and magnetic braking [4_]. It also handles the change of the
-    secondary's stellar spin due to its change of moment of intertia and due to
-    mass-loss from its spinning surface. It is assumed that the mass loss is
-    fully non-conservative. Magnetic braking is fully applied to secondary
-    stars with mass less than 1.3 Msun and fully off for stars with mass larger
-    then 1.5 Msun. The effect of magnetic braking falls linearly for stars with
-    mass between 1.3 Msun and 1.5 Msun.
+    The equation handles wind mass-loss [1]_, tidal [2]_, gravational [3]_
+    effects and magnetic braking [4]_, [5]_, [6]_, [7]_, [8]_. It also handles
+    the change of the secondary's stellar spin due to its change of moment of
+    intertia and due to mass-loss from its spinning surface. It is assumed that
+    the mass loss is fully non-conservative. Magnetic braking is fully applied
+    to secondary stars with mass less than 1.3 Msun and fully off for stars
+    with mass larger then 1.5 Msun. The effect of magnetic braking falls
+    linearly for stars with mass between 1.3 Msun and 1.5 Msun.
 
     TODO: exaplin new features (e.g., double COs)
 
@@ -2083,10 +2069,10 @@ def diffeq(
         Default: True.
     magnetic_braking_mode: String
         A string corresponding to the desired magnetic braking prescription.
-            -- RVJ83: Rappaport, Verbunt, & Joss 1983
-            -- M15: Matt et al. 2015
-            -- G18: Garraffo et al. 2018
-            -- CARB: Van & Ivanova 2019
+            - RVJ83 : Rappaport, Verbunt, & Joss 1983 [4]_
+            - M15 : Matt et al. 2015 [5]_
+            - G18 : Garraffo et al. 2018 [6]_
+            - CARB : Van & Ivanova 2019 [7]_
     do_stellar_evolution_and_spin_from_winds: Boolean
         If True, take into account change of star spin due to change of its
         moment of inertia during its evolution and due to spin angular momentum

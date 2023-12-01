@@ -22,6 +22,11 @@ from posydon.popsyn.rate_calculation import Rates
 import posydon.visualization.plot_pop as plot_pop
 from posydon.popsyn.GRB import get_GRB_properties, GRB_PROPERTIES
 
+# TODO: temp import, remove after TF2 classification is implemented in pop synth
+from posydon.interpolation.IF_interpolation import IFInterpolator
+from posydon.binary_evol.binarystar import BinaryStar
+from posydon.binary_evol.singlestar import SingleStar
+from posydon.utils.common_functions import convert_metallicity_to_string
 
 class SyntheticPopulation:
 
@@ -65,7 +70,7 @@ class SyntheticPopulation:
                 self.metallicity = [self.metallicity]
 
             self.binary_populations = []
-            for met in self.metallicity:
+            for met in self.metallicity[::-1]:
                 self.ini_kw = binarypop_kwargs_from_ini(path_to_ini)
                 self.ini_kw['metallicity'] = met
                 self.ini_kw['temp_directory'] = self.create_met_prefix(met) + self.ini_kw['temp_directory']
@@ -81,11 +86,14 @@ class SyntheticPopulation:
 
     def evolve(self):
         """Evolve population(s) at given Z(s)."""
-        for ind, pop in enumerate( self.binary_populations ):
-            print( f'Z={pop.kwargs["metallicity"]:.2e} Z_sun' )
+        while self.binary_populations:
+            pop =  self.binary_populations.pop()
+            if self.verbose:
+                print(f'Z={pop.kwargs["metallicity"]:.2e} Z_sun')
             pop.evolve()
             met_prefix = f'{pop.kwargs["metallicity"]:.2e}_Zsun_'
             pop.save( met_prefix + 'population.h5' )
+            del pop
 
     @staticmethod
     def create_met_prefix(met):
@@ -239,8 +247,8 @@ class SyntheticPopulation:
                     df_sel_met = pd.concat([df_sel_met, df_tmp])
                     del df_tmp
 
-            if k > 0:
-                shift_index = max(np.unique(df_sel.index)) + 1 
+            if k > 0 and df_sel.shape[0] > 0:
+                shift_index = max(np.unique(df_sel.index)) + 1
                 df_sel_met.index += shift_index
 
             # store simulated and underlying stellar mass
@@ -257,9 +265,9 @@ class SyntheticPopulation:
             df_sel_met_oneline = df_sel_met_oneline.loc[sel_met]
             df_sel_met_oneline['metallicity'] = met
 
-            if k > 0:
+            if k > 0 and df_sel_oneline.shape[0] > 0:
                 shift_index = max(np.unique(df_sel_oneline.index)) + 1
-                df_sel_met_oneline.index += shift_index 
+                df_sel_met_oneline.index += shift_index
 
             df_sel_oneline = pd.concat([df_sel_oneline, df_sel_met_oneline])
 
@@ -312,7 +320,7 @@ class SyntheticPopulation:
         else:
             raise ValueError('You already have a population stored in memory!')
 
-    def get_dco_at_formation(self, S1_state, S2_state, oneline_cols=None, formation_channels=False):
+    def get_dco_at_formation(self, S1_state, S2_state, oneline_cols=None, formation_channels=False, mt_history=False):
         """Sort synthetic population, i.e. DCO at formation.
 
         Note: by default this function looks for the symmetric state
@@ -327,18 +335,26 @@ class SyntheticPopulation:
         oneline_cols : list str
             List of columns preset in the oneline dataframe you want to export
             into the synthetic population.
+        formation_channels : bool
+            Compute the formation channel, a string containing the binary
+            event evolution.
+        mt_history : bool
+            If `True`, split the event oRLO1/oRLO2 into oRLO1-contact/oRLO2-contact,
+            oRLO1-reverse/oRLO2-reverse and oRLO1/oRLO2. This is useful to
+            identify binaries undergoing contact stable mass-transfer phases and
+            reverse mass-transfer phase .
 
         """
         # compute GRB properties boolean
-        compute_GRB_properties = (self.MODEL is not None and 
-                                  "compute_GRB_properties" in self.MODEL and 
+        compute_GRB_properties = (self.MODEL is not None and
+                                  "compute_GRB_properties" in self.MODEL and
                                   self.MODEL["compute_GRB_properties"])
 
         # add channel column to oneline dataframe
         if formation_channels:
             if self.verbose:
                 print('Computing formation channels...')
-            self.get_formation_channels()
+            self.get_formation_channels(mt_history=mt_history)
 
         # to avoid the user making mistake automatically check the inverse of
         # the stellar states, since the df is already parsed this will not
@@ -358,7 +374,7 @@ class SyntheticPopulation:
         # when inspecting the data frame.
         self.df_synthetic['t_delay'] = (time_contact - self.df_synthetic[['time']])*1e-6 # Myr
         self.df_synthetic['time'] *= 1e-6 # Myr
-        
+
         # add properties of the oneline dataframe
         if self.df_oneline is not None:
             # TODO: add kicks as well by default?
@@ -396,7 +412,7 @@ class SyntheticPopulation:
                                                    )
             # get time_CC1 and time_CC2 note that for GRB calculations we
             # do not use the "time" column indicating the time of formation
-            # of the DCO systems as there might be cases where 
+            # of the DCO systems as there might be cases where
             # CC2 might happen before CC1 due to mass ratio reversal
             DCO = [[S1_state, None], [None, S2_state]]
             events = ['CC1', 'CC2']
@@ -536,9 +552,9 @@ class SyntheticPopulation:
 
             return index_1, z_formation_1, z_grb_1, w_ijk_1, index_2, z_formation_2, z_grb_2, w_ijk_2
         else:
-            raise ValueError('Population not recognized!')  
+            raise ValueError('Population not recognized!')
 
-    def resample_synthetic_population(self, index, z_formation, z_event, w_ijk, export_cols=None, 
+    def resample_synthetic_population(self, index, z_formation, z_event, w_ijk, export_cols=None,
                                       pop='DCO', reset_grb_properties=None):
         """Resample synthetc population to obtain intrinsic/observable population.
 
@@ -565,8 +581,8 @@ class SyntheticPopulation:
 
         """
         # compute GRB properties boolean
-        compute_GRB_properties = (self.MODEL is not None and 
-                                  "compute_GRB_properties" in self.MODEL and 
+        compute_GRB_properties = (self.MODEL is not None and
+                                  "compute_GRB_properties" in self.MODEL and
                                   self.MODEL["compute_GRB_properties"])
 
         # drop all zero weights to save memory
@@ -601,7 +617,7 @@ class SyntheticPopulation:
                     save_cols.append(c)
         for c in save_cols:
             df[c] = self.rates.get_data(c, index)
-        
+
         # the same binary system can emit two GRBs, we remove the
         # GRB properties of the other GRB to prevent mistakes
         if reset_grb_properties is not None:
@@ -651,7 +667,7 @@ class SyntheticPopulation:
                 sel = (self.rates.get_data('channel', index) == ch)
                 rate = self.rates.compute_rate_density(w_ijk[sel], z_merger[sel], observable='DCO', sensitivity=sensitivity)
                 self.dco_rate_density[ch] = rate
-            
+
         print(f'DCO merger rate density in the local Universe (z={self.dco_z_rate_density[0]:1.2f}): {round(total_rate[0],2)} Gpc^-3 yr^-1')
 
         # export the intrinsic DCO population
@@ -704,7 +720,7 @@ class SyntheticPopulation:
                 else:
                     self.grb_rate_density[ch+'_GRB2'] = np.zeros(len(self.grb_z_rate_density))
                 self.grb_rate_density[ch] = self.grb_rate_density[ch+'_GRB1'] + self.grb_rate_density[ch+'_GRB2']
-            
+
         print(f'GRB (beamed) rate density in the local Universe (z={self.grb_z_rate_density[0]:1.2f}): {round(total_rate[0],2)} Gpc^-3 yr^-1')
 
         # export the intrinsic grb intrisic population
@@ -719,9 +735,9 @@ class SyntheticPopulation:
         # the observable population accounts for beaming
         self.df_grb_observable = self.df_grb_intrinsic.copy()
         for i in [1,2]:
-            sel = self.df_grb_observable[f'S{i}_f_beaming'] > 0 
+            sel = self.df_grb_observable[f'S{i}_f_beaming'] > 0
             self.df_grb_observable.loc[sel,'weight'] *= self.df_grb_observable.loc[sel,f'S{i}_f_beaming']
-        
+
     def get_dco_detection_rate(self, sensitivity='design_H1L1V1', export_cols=None,  working_dir='./', load_data=False):
         """Compute the detection rate per yr.
 
@@ -757,9 +773,9 @@ class SyntheticPopulation:
         # TODO: store p_det
         self.df_dco_observable = self.resample_synthetic_population(index, z_formation, z_merger, w_ijk, export_cols=export_cols)
 
-    def get_formation_channels(self):
+    def get_formation_channels(self, mt_history):
         """Get formation channel and add to df and df_oneline."""
-        
+
         # loop through each binary
         unique_binary_index = np.unique(self.df.index)
         for index in unique_binary_index:
@@ -769,23 +785,42 @@ class SyntheticPopulation:
             intep_cls = [key for key in self.df_oneline.keys() if 'interp_class' in key]
             df_binary_online = self.df_oneline.loc[index, intep_cls].dropna()
             event_array = df_binary['event'].values.tolist()
-        
+
             # make interpolated class information consistent with event column
             HMS_HMS_event_dict = {'stable_MT':'oRLO1', 'no_MT':'None', 'unstable_MT':'oCE1/oDoubleCE1'}
             event_HMS_HMS = HMS_HMS_event_dict[df_binary_online['interp_class_HMS_HMS']]
-            
+
             # for now, only append information for RLO1; unstable_MT information already exists
             if event_HMS_HMS == 'oRLO1':
                 event_array.insert(1, event_HMS_HMS)
                 formation_channel = "_".join(event_array)
             else:
                 formation_channel = "_".join(event_array)
-                
+
             # TODO: drop the envent CO_contact
             # TODO: once we trust the redirection to the detached step
             #       drop also the redirect event
-                
+
+            # TODO: for debugging purposes we keep the full channel
+            self.df_oneline.loc[index,'channel_debug'] = formation_channel
+            # clean the redirect and CO_contact events
+            formation_channel = formation_channel.replace('_redirect', '')
+            formation_channel = formation_channel.replace('_CO_contact', '')
             self.df_oneline.loc[index,'channel'] = formation_channel
+
+        if mt_history and 'mt_history_HMS_HMS' not in self.df_oneline:
+            raise ValueError('mt_history_HMS_HMS not saved in the oneline dataframe!')
+        else:
+            # split oRLO1 into oRLO1, oRLO1-contact and oRLO1-reverse
+            sel = ((self.df_oneline['mt_history_HMS_HMS'] == 'Stable contact phase') &
+                    self.df_oneline['channel'].str.contains('oRLO1'))
+            self.df_oneline.loc[sel, 'channel'] = self.df_oneline.loc[sel, 'channel'].apply(lambda x: x.replace('oRLO1', 'oRLO1-contact'))
+            sel = ((self.df_oneline['mt_history_HMS_HMS'] == 'Stable reverse mass-transfer phase') &
+                    self.df_oneline['channel'].str.contains('oRLO1'))
+            self.df_oneline.loc[sel, 'channel'] = self.df_oneline.loc[sel, 'channel'].apply(lambda x: x.replace('oRLO1', 'oRLO1-reverse'))
+
+            # TODO: do the above split for unstable MT as well
+
 
     def save_intrinsic_pop(self, path='./intrinsic_population_type.h5', pop='DCO'):
         """Save intrinsic population.
@@ -836,7 +871,7 @@ class SyntheticPopulation:
                     print('Intrinsic population successfully loaded!')
             else:
                 raise ValueError('You already have an intrinsic population stored in memory!')
-            
+
     def save_observable_pop(self, path='./observable_population_type.h5', pop='DCO'):
         """Save observable population.
 
@@ -859,7 +894,7 @@ class SyntheticPopulation:
             else:
                 self.df_grb_observable.to_hdf(path.replace('type', pop), key='history')
                 if self.verbose:
-                    print('observable population successfully saved!') 
+                    print('observable population successfully saved!')
         else:
             raise ValueError('Population not recognized!')
 
@@ -887,7 +922,7 @@ class SyntheticPopulation:
             else:
                 raise ValueError('You already have an observable population stored in memory!')
         else:
-            raise ValueError('Population not recognized!')       
+            raise ValueError('Population not recognized!')
 
     def plot_merger_efficiency(self, **kwargs):
         """Plot merger rate efficinty."""
@@ -931,7 +966,7 @@ class SyntheticPopulation:
             if observable:
                 df_observable = self.df_grb_observable
             else:
-                df_observable = None       
+                df_observable = None
         else:
             raise ValueError('Population not recognized!')
         plot_pop.plot_hist_properties(var, df_intrinsic=df_intrinsic, df_observable=df_observable, pop=pop, **kwargs)
