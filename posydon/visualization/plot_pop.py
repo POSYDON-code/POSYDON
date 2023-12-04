@@ -105,7 +105,10 @@ def plot_merger_efficiency(met, merger_efficiency, show=True, path=None, channel
     plt.title(title)
     plt.plot(met/Zsun, merger_efficiency['total'], label='total', color='black')
     if channels:
-        for i, ch in enumerate(merger_efficiency.keys()):
+        unique_channels = [key for key in merger_efficiency.keys() if key != 'total']
+        if len(unique_channels) > len(cm.colors):
+            raise ValueError('Too many channels to plot!')
+        for i, ch in enumerate(unique_channels):
             if ch != 'total':
                 plt.plot(met/Zsun, merger_efficiency[ch], label=ch, color=COLORS[i])
     plt.yscale('log')

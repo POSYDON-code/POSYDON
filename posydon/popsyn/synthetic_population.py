@@ -160,7 +160,8 @@ parameter_array = [ "number_of_binaries",
 
 class ParsedPopulationIO():
 
-    def __init__(self, path_to_parsed_pop_file=None):
+    def __init__(self, path_to_parsed_pop_file=None, verbose=False):
+        self.verbose = verbose
         self.parsed_pop_file = path_to_parsed_pop_file    
     
     def load_params_from_ini(self, parsed_pop_instance,  path_to_ini):
@@ -254,16 +255,26 @@ class ParsedPopulationIO():
     
     def write_formation_channels(self, parsed_pop_instance, df):
         '''Write the formation channels to the ParsedPopulation file'''
+        mask = df['channel_debug'].str.len() > 100
+        if any(mask):
+            if self.verbose:
+                print('Warning: Channels are longer than 100 characters:')
+                print('This should not be possible and there is likely a bug in the flow_chart')
+                print('We will truncate the channels to 100 characters!')
+            df.loc[mask, 'channel_debug'] = df.loc[mask, 'channel_debug'].str[:100]
+            df.loc[mask, 'channel'] = df.loc[mask, 'channel'].str[:100]
+
         with pd.HDFStore(self.parsed_pop_file, mode='a') as store:
             store.append('formation_channels',
                       df,
+                      format='table',
                       data_columns=True,
                       min_itemsize = {'channel': 100, 'channel_debug': 100})
             
     def load_parsed_pop_path(self, synthetic_pop_instance):
         '''Load the path to the parsed population file'''
         with pd.HDFStore(self.parsed_pop_file, model='r') as store:
-            synthetic_pop_instance.parsed_pop_path = store['parsed_pop_path'].to_numpy()
+            synthetic_pop_instance.parsed_pop_path = store['parsed_pop_path'].to_numpy()[0]
             
     def save_parsed_pop_path(self, parsed_pop_path):
         '''Save the path to the parsed population file'''
@@ -272,7 +283,7 @@ class ParsedPopulationIO():
     
 class ParsedPopulation():
     
-    def __init__(self, path_to_parsed_pop_file, path_to_ini=None, verbose=False):
+    def __init__(self, path_to_parsed_pop_file, path_to_ini=None, verbose=False, chunksize=500000):
         '''A parsed stellar population from raw BinaryPopulations.
         
         Calculates the total number of binaries in the population, and the
@@ -293,7 +304,7 @@ class ParsedPopulation():
         ParsedPopAttrs.__init__(self)
     
         self.verbose = verbose
-        
+        self.chunksize = chunksize
         # ini file given, create parsed_pop_file
         if path_to_ini is not None:
             # Read path_to_ini
@@ -308,13 +319,13 @@ class ParsedPopulation():
             
             # create parsed_pop_file
             self.parsed_pop_file = path_to_parsed_pop_file
-            self.io = ParsedPopulationIO(self.parsed_pop_file)
+            self.io = ParsedPopulationIO(self.parsed_pop_file, self.verbose)
             self.io.save_ini_params(self)
             
         # if only parsed_pop_file is given, load the data from the file
         else:
             self.parsed_pop_file = path_to_parsed_pop_file
-            self.io = ParsedPopulationIO(self.parsed_pop_file)
+            self.io = ParsedPopulationIO(self.parsed_pop_file, self.verbose)
             self.io.load_ini_params(self)
             self.io.load_parse_kwargs(self)
             self.io.load_per_metallicity_info(self)
@@ -630,9 +641,8 @@ class ParsedPopulation():
     def indices(self):
         """Return the indices of the parsed population."""
         if not hasattr(self, '_indices'):
-            self._indices = pd.read_hdf(self.parsed_pop_file,
-                                        key='oneline',
-                                        columns=['binary_index']).index.to_numpy()
+            with pd.HDFStore(self.parsed_pop_file, mode='r') as store:
+                self._indices = store.select_column('oneline', 'index').to_numpy()
         return self._indices
 
     def get_formation_channels(self, mt_history=False, chunksize=500000):
@@ -651,19 +661,31 @@ class ParsedPopulation():
         # 2. Read the specific columns from the history df and oneline for each binary
         # 3. Store them into a new dataframe and save it to the ParsedPopulation file
         
+        if self.verbose: print('Calculating formation channels...')  
+        
+        
+        # load the HMS-HMS interp class
         HMS_HMS_event_dict = {'stable_MT'   : 'oRLO1', 
                               'no_MT'       : 'None', 
                               'unstable_MT' : 'oCE1/oDoubleCE1'}
         
-        unique_binary_indices = self.indices.tolist()
+        unique_binary_indices = self.indices
         
-        # this might become too big?
-        df = pd.DataFrame(index=unique_binary_indices, columns=['channel_debug', 'channel'])
-        df.index.name = 'binary_index'
+        # check if formation channels already exist
+        with pd.HDFStore(self.parsed_pop_file, mode='a') as store:
+            if '/formation_channels' in store.keys():
+                print('Formation channels already exist in the parsed population file!')
+                print('Channels will be overwriten')
+                del store['formation_channels']
+        
         
         def get_events(group):
-            if 'oRLO1' in group['event_HMS_HMS']:
-                combined_events = '_'.join(group['event'] + group['event_HMS_HMS'])
+             # for now, only append information for RLO1; unstable_MT information already exists
+            if 'oRLO1' in group['interp_class_HMS_HMS'].tolist():
+                combined_events = group['event'].iloc[0] + '_' + group['interp_class_HMS_HMS'].iloc[0]
+                tmp = [combined_events]
+                tmp.extend(group['event'].iloc[1:])
+                combined_events = '_'.join(tmp)
             else:
                 combined_events = '_'.join(group['event'])
             return pd.Series({'channel_debug': combined_events})
@@ -672,120 +694,101 @@ class ParsedPopulation():
             if pd.notna(row['mt_history_HMS_HMS']) and row['mt_history_HMS_HMS'] == 'Stable contact phase':
                 return row['channel'].replace('oRLO1','oRLO1-contact')
             elif pd.notna(row['mt_history_HMS_HMS']) and row['mt_history_HMS_HMS'] == 'Stable reverse mass-transfer phase':
-                return row['channel'].replace('oRLO1', 'oRLO1-contact')
+                return row['channel'].replace('oRLO1', 'oRLO1-reverse')
             else:
                 return row['channel']
         
+        if self.verbose:
+            print('Getting history counts...')
         
-        for oneline in pd.read_hdf(self.parsed_pop_file,
-                                        key='oneline',
-                                        columns=['interp_class_HMS_HMS', 'mt_history_HMS_HMS'],
-                                        where='index in unique_binary_indices',
-                                        chunksize=chunksize):
-            
-            unique_oneline = oneline.index.drop_duplicates()
-            
-            hist = pd.read_hdf(self.parsed_pop_file,
-                                                key='history',
-                                                where='index in unique_oneline',
-                                                columns=['event'])
-            print(len(hist.index.drop_duplicates()))
-            print(len(oneline.index.drop_duplicates()))
-            print(len(oneline))
-            
-            # replace the HMS_HMS interp class with the event
-            oneline['event_HMS_HMS'] = oneline['interp_class_HMS_HMS'].apply(lambda x: HMS_HMS_event_dict[x])
-            merged = pd.merge(hist.dropna(), oneline['event_HMS_HMS'], on='binary_index')
-            del hist
-            del oneline['interp_class_HMS_HMS']
-            del oneline['event_HMS_HMS']
+        # get the length of each binary's history
+        # oneline can be accessed using the counter (i) + chunksize
+        # but each binary has a different history length
+        with pd.HDFStore(self.parsed_pop_file, mode='r') as store:
+            history_events = store.select_column('history', 'index')
+        history_lengths = history_events.groupby(history_events).count()
+        
+        if self.verbose:
+            print("Done")
 
-            df['chanel_debug'] = merged.groupby('binary_index').apply(get_events)
+        unique_binary_indices = self.indices
+        
+        if self.verbose: print('looping over the binaries now')
+        
+        previous = 0
+        for i in tqdm(range(0,len(unique_binary_indices), self.chunksize), disable=not self.verbose):
+            selection = unique_binary_indices[i:i+self.chunksize]
             
+            # create the dataframe for the chunk
+            df = pd.DataFrame(index=selection, columns=['channel_debug', 'channel'])
+            end = previous + history_lengths[i:i+self.chunksize].sum()
             
+            # get the history of chunk events and transform the interp_class_HMS_HMS
+            with pd.HDFStore(self.parsed_pop_file, mode='r') as store:
+                interp_class_HMS_HMS = store.select_column('oneline',
+                                                            'interp_class_HMS_HMS',
+                                                            start=i,
+                                                            stop=i+self.chunksize)
+                
+                interp_class_HMS_HMS.index = selection
+                
+                interp_class_HMS_HMS = interp_class_HMS_HMS.apply(lambda x : HMS_HMS_event_dict[x])
+                
+                hist = store.select_column('history',
+                                            'event',
+                                            start=previous,
+                                            stop=end)
+            
+            hist.index = history_events.loc[previous:end-1]
+            previous = end
+            
+            # combine based on the index, this allows for an easier apply later
+            merged = pd.merge(hist.dropna(), interp_class_HMS_HMS, left_index=True, right_index=True)
+            del hist, interp_class_HMS_HMS
+            
+            merged.index.name='binary_index'
+            df['channel_debug'] = merged.groupby('binary_index').apply(get_events)
+            del merged
             df['channel'] = df['channel_debug'].str.replace('_redirect', '').str.replace('_CO_contact', '')
-
+            
             if mt_history:
-                if 'mt_history_HMS_HMS' not in oneline:
-                    raise ValueError('mt_history_HMS_HMS not saved in the oneline dataframe!')
-                else:                    
-                    df['mt_history_HMS_HMS'] = oneline['mt_history_HMS_HMS']
-                    del oneline
-                    df['channel'] = df.apply(mt_history, axis=1)
-                    del df['mt_history_HMS_HMS']
-        
-        self.io.write_formation_channels(self, df)                          
-                                        
-                                        
-                    # tmp_MT = tmp['mt_history_HMS_HMS'].values[0]
-                    # df['channel']
-                    
-                    # if 'oRLO1' in df.loc[index,'channel']:
-                    #     if tmp_MT == 'Stable contact phase':
-                    #         df.loc[index,'channel'] = df.loc[index, 'channel'].replace('oRLO1', 'oRLO1-contact')
-                    #     elif tmp_MT == 'Stable reverse mass-transfer phase':
-                    #         df.loc[index, 'channel'] = df.loc[index, 'channel'].replace('oRLO1', 'oRLO1-reverse')
-        
                 
-                
-                
-        # history.groupby('binary_index').apply(get_events)
-        
-        # ['event']
-        
-        # .agg(lambda x: '_'.join(x))
-        
-        
-        
-        # for index in tqdm(unique_binary_indices, total=len(unique_binary_indices)):
-
-        #     # get event column and information from interpolated classes
-        #     event_array = self.read_binary(index,
-        #                                    type='history',
-        #                                    columns=['event']).dropna().values.flatten().tolist()
-            
-        #     # load the HMS-HMS interp class
-        #     HMS_HMS_interp_class = self.read_binary(index,
-        #                                       type='oneline',
-        #                                       columns=['interp_class_HMS_HMS']).values[0][0]
-        #     event_HMS_HMS = HMS_HMS_event_dict[HMS_HMS_interp_class]
-            
-        #     # for now, only append information for RLO1; unstable_MT information already exists
-        #     if event_HMS_HMS == 'oRLO1':
-        #         event_array.insert(1, event_HMS_HMS)
-        #         formation_channel = "_".join(event_array)
-        #     else:
-        #         formation_channel = "_".join(event_array)
+                with pd.HDFStore(self.parsed_pop_file, mode='r') as store:
+                    # check if mt_history in df
+                    columns = store.select('oneline', start=0, stop=0).columns
+                    if 'mt_history_HMS_HMS' not in columns:
+                        raise ValueError('mt_history_HMS_HMS not saved in the oneline dataframe!')
+                    else:
+                        tmp_df = pd.DataFrame(index=selection, columns=['channel', 'mt_history_HMS_HMS'])
+                        #print(df.loc[selection,'channel'])
+                        tmp_df['channel'] = df['channel']
+                        x = store.select_column('oneline',
+                                                'mt_history_HMS_HMS',
+                                                start=i,
+                                                stop=i+self.chunksize)
                         
-        #     # TODO: drop the envent CO_contact
-        #     # TODO: once we trust the redirection to the detached step
-        #     #       drop also the redirect event
+                        x.index = selection
+                        tmp_df['mt_history_HMS_HMS'] = x
+                        df['channel'] = tmp_df.apply(mt_history, axis=1)
+                        del tmp_df
             
-        #     # TODO: for debugging purposes we keep the full channel
-        #     df.loc[index,'channel_debug'] = formation_channel
-        #     # clean the redirect and CO_contact events
-        #     formation_channel = formation_channel.replace('_redirect', '')
-        #     formation_channel = formation_channel.replace('_CO_contact', '')
-        #     df.loc[index,'channel'] = formation_channel
+            self.io.write_formation_channels(self, df)
+            del df
             
-        #     # add more detailed mt history
-        #     if mt_history: 
-        #         tmp = self.read_binary(index, type='oneline', columns=['mt_history_HMS_HMS'])
-        #         if 'mt_history_HMS_HMS' not in tmp:
-        #             raise ValueError('mt_history_HMS_HMS not saved in the oneline dataframe!')
-        #         else:
-        #             tmp_MT = tmp['mt_history_HMS_HMS'].values[0]
-        #             if 'oRLO1' in df.loc[index,'channel']:
-        #                 if tmp_MT == 'Stable contact phase':
-        #                     df.loc[index,'channel'] = df.loc[index, 'channel'].replace('oRLO1', 'oRLO1-contact')
-        #                 elif tmp_MT == 'Stable reverse mass-transfer phase':
-        #                     df.loc[index, 'channel'] = df.loc[index, 'channel'].replace('oRLO1', 'oRLO1-reverse')
-        
-        # finished loop through each binary
-        # write the dataframe to the ParsedPopulation file
-        # self.io.write_formation_channels(self, df)
              
-    def create_DCO_population(self,output_file=None, additional_oneline_cols=None, chunksize=500000):
+    @property
+    def formation_channels(self):
+        '''Return the formation channel if calculated
+        '''
+        
+        with pd.HDFStore(self.parsed_pop_file, mode='r') as store:
+            if '/formation_channels' in store.keys():
+                return store['formation_channels']
+            else:
+                print('No formation channels found in the file')                
+                return None
+        
+    def create_DCO_population(self, output_file=None, additional_oneline_cols=None, chunksize=500000):
         '''Create a DCO population from the parsed population.
         
         A DCO Population will contain one 'time' for each 'event',
@@ -841,11 +844,13 @@ class ParsedPopulation():
             output_store = pd.HDFStore(DCO_synthetic_population.pop_file, mode='a')
 
         
-        if 'synthetic' in parsed_file.keys():
+        if '/synthetic' in output_store.keys():
             print('A synthetic population already exists in this file.\
-                The current population will be added to the existing one.!')                    
+                The current population will overwrite the existing one.!')                    
+            output_store.remove('synthetic')
         
         DCO_synthetic_population.population_selection = 'DCO'
+        DCO_synthetic_population._save_population_selection()
         
         where_BHNS = '((S1_state == "BH")'\
                     + ' & (S2_state == "NS")'\
@@ -874,7 +879,10 @@ class ParsedPopulation():
         oneline_min_itemsize = {key: val for key, val in 
                                 ONELINE_MIN_ITEMSIZE.items()
                                 if key in oneline_cols}
-        min_itemsize = history_min_itemsize.update(oneline_min_itemsize)
+        
+        min_itemsize = history_min_itemsize
+        min_itemsize.update(oneline_min_itemsize)
+        min_itemsize.update({'channel': 100, 'channel_debug': 100}) 
         
         save_cols = ['S1_spin_orbit_tilt', 'S2_spin_orbit_tilt']
         if additional_oneline_cols is not None:
@@ -882,9 +890,18 @@ class ParsedPopulation():
                 if c not in save_cols:
                     save_cols.append(c)
 
+        # remove columnns from min_itemsize not in save_cols
+        for c in min_itemsize.copy():
+            if c not in save_cols:
+                min_itemsize.pop(c)
+        
+        # never add time to the save_cols from the oneline dataframe
+        # add based on the history data
 
         for selection in [where_BHNS, where_BNS, where_BBH]:
-            
+            if self.verbose:
+                print(f'Parsing {selection}')
+                
             # select BBH models and store them in the DCO population
             for df_synthetic in parsed_file.select('history', 
                                                 where=selection,
@@ -904,34 +921,35 @@ class ParsedPopulation():
                 df_synthetic['t_delay'] = (time_contact - df_synthetic[['time']])*1e-6 # Myr
                 df_synthetic['time'] *= 1e-6 # Myr
                 
-                # read oneline data 
+                # If columns are not present, they're skipped.
                 df_oneline = parsed_file.select('oneline',
                                                 where='index in selected_indices',
                                                 columns=save_cols)
+                
                 df_mt_channels = parsed_file.select('formation_channels',
-                                                    where=f'index in selected_indices')
-                                              
-                for c in save_cols:
-                    if c in df_oneline:
-                       df_synthetic[c] = df_oneline[c]
-                    elif c in df_mt_channels:
-                        df_synthetic[c] = df_mt_channels[c]
-                    else:
-                        warnings.warn(f'The column {c} is not present in the '
-                                    'oneline dataframe.')
-            
+                                                    where=f'index in selected_indices',
+                                                    columns=save_cols)
+               
+
+                # add the columns to the synthetic population
+                df_synthetic = pd.concat([df_synthetic, df_oneline], axis=1)
+                df_synthetic = pd.concat([df_synthetic, df_mt_channels], axis=1)
+        
                 # store the synthetic populations
                 output_store.append('synthetic',
-                                    df_synthetic,
-                                    data_columns=True,
-                                    min_itemsize=min_itemsize
-                                    )
+                                df_synthetic,
+                                format='table',
+                                data_columns=True,
+                                min_itemsize=min_itemsize
+                                )
             
         output_store.close()
         parsed_file.close()
         return DCO_synthetic_population
 
-    def create_GRB_population(self, GRB_properties={}):
+
+    # TODO: add output_file to this function!!
+    def create_GRB_population(self, output_file=None, GRB_properties={}, chunksize=500000, additional_oneline_cols=None):
         '''Create a GRB population from the parsed population.
         
         The Synthetic Population will contain a 'time for each 'event',
@@ -948,6 +966,46 @@ class ParsedPopulation():
             - 'E_GRB_iso_min'
         
         '''
+        # The user will have done an initial parse, when inputting the parsed
+        # population data. Additional filtering can be done manually.
+        # Using the data from the parsed population, 
+        # we find the DCO at their formation.
+        if output_file is None:
+            GRB_synthetic_population = SyntheticPopulation(self.parsed_pop_file,
+                                                           verbose=self.verbose)
+            parsed_store = pd.HDFStore(self.parsed_pop_file, mode='a')
+            output_store = parsed_file
+        else:
+            GRB_synthetic_population = SyntheticPopulation(output_file,
+                                                           verbose=self.verbose)
+            
+            # write population data to the new file!
+            GRB_synthetic_population.io.save_ini_params(self)
+            GRB_synthetic_population.io.save_parse_kwargs(self)
+            GRB_synthetic_population.io.save_per_metallicity_info(self)
+            GRB_synthetic_population.io.save_path_to_data(self)
+            GRB_synthetic_population.io.save_parsed_pop_path(self.parsed_pop_file)
+            
+            # load data into GRB_data
+            GRB_synthetic_population.io.load_ini_params(GRB_synthetic_population)
+            GRB_synthetic_population.io.load_parse_kwargs(GRB_synthetic_population)
+            GRB_synthetic_population.io.load_per_metallicity_info(GRB_synthetic_population)
+            GRB_synthetic_population.io.load_path_to_data(GRB_synthetic_population)
+            GRB_synthetic_population.io.load_parsed_pop_path(GRB_synthetic_population)
+            
+            # Open the file for writing the synthetic population
+            parsed_store = pd.HDFStore(self.parsed_pop_file, mode='r')
+            output_store = pd.HDFStore(GRB_synthetic_population.pop_file, mode='a')
+
+        
+        if 'synthetic' in output_store.keys():
+            print('A synthetic population already exists in this file.\
+                The current population will be removed!')      
+            del output_store['synthetic']
+        
+        GRB_synthetic_population.population_selection = 'GRB'
+        GRB_synthetic_population._save_population_selection()
+        GRB_synthetic_population.model_parameters = GRB_properties  
         
         if ('GRB_efficiency' not in GRB_properties or
             GRB_properties['GRB_efficiency'] is None):
@@ -959,108 +1017,212 @@ class ParsedPopulation():
             GRB_properties['E_GRB_iso_min'] is None):
             raise ValueError('Missing GRB_beaming variable in the MODEL!')
         
-        GRB_synthetic_population = SyntheticPopulation(verbose=self.verbose)
+        # S1 and S2 mass are autmatically added to their respective columns
+        # changing columns over the SN
+        columns_pre_post = ['orbital_period', 'eccentricity']
+        # unchanged columns
+        columns = ['metallicity']
+        # LGRB parameters
+        oneline_columns = ['S1_spin_orbit_tilt']
+        if additional_oneline_cols is not None:
+            for c in additional_oneline_cols:
+                if c not in oneline_columns:
+                    oneline_columns.append(c)
+                    
+                    
+        min_itemsize = {'channel': 100,}
+        min_itemsize.update({key:val for key, val in 
+                             HISTORY_MIN_ITEMSIZE.items() 
+                             if key in columns_pre_post})
+        min_itemsize.update({key:val for key, val in
+                             HISTORY_MIN_ITEMSIZE.items()
+                                if key in columns})
+        min_itemsize.update({key:val for key, val in
+                             ONELINE_MIN_ITEMSIZE.items()
+                            if key in oneline_columns})
         
-        # store the model parameters
-        GRB_synthetic_population.model_parameters = GRB_properties
-
-        # 1. Calculate GRB occuring/properties
-        tmp_df = get_GRB_properties(self.df_oneline,
-                                    GRB_properties['GRB_efficiency'],
-                                    GRB_properties['GRB_beaming'],
-                                    GRB_properties['E_GRB_iso_min']
-                                    )
+        def multi_columns_read(key, parsed_store, columns, previous, end, additional_oneline_cols=None):
+            '''Read multiple columns from the history dataframe
+            '''
+            df = pd.DataFrame()
+            for c in columns:
+                df[c] = parsed_store.select_column(key, c, start=previous, stop=end)
+            df.index = parsed_store.select_column(key, 'index', start=previous, stop=end)
+            return df                  
         
-        # Add first GRBs to the dataframe
-        indices = tmp_df[tmp_df['GRB1'] == True].index
-        logic1 = self.apply_logic(self.df.loc[indices],
+        def GRB_data_store(tmp_df, parsed_store, previous, end, S1_S2='S1'):                    
+            indices = tmp_df.index
+            
+            # Read history of the chunk
+            hist = multi_columns_read('history',
+                                    parsed_store, 
+                                    ['S1_state', 'S2_state', 'event', 'step_names', 'time', 'S1_mass', 'S2_mass', 'metallicity', 'orbital_period', 'eccentricity'],
+                                    previous,
+                                    end)
+            
+            GRB_df_synthetic = pd.DataFrame()
+            
+            if S1_S2 == 'S1':
+            # get the SN event of the GRB
+            # This also select the second step_SN if S1_S2 goes SN first.
+                logic1 = self.apply_logic(hist,
                                         S1_state='BH',
                                         S2_state=None,
                                         step_name='step_SN',
                                         invert_S1S2=False)
-
-
-        # select previous rows
-        mask2 =  logic1.shift(-1)
-        mask2.iloc[-1]  = False
-
-        # Check if S1 was not a BH before undergoing the SN
-        S1_SN = self.df.loc[indices][mask2]['S1_state'] != 'BH'
-        post_sn = self.df.loc[indices][logic1][S1_SN]
-        pre_sn = self.df.loc[indices][mask2][S1_SN]
-        # Select just the first event, but the GRB might be the second event
-
-        # Write properties to the Synthetic Population.
-        post_sn
-
-        S1_GRB_df_synthetic = pd.DataFrame()
-        columns_pre_post = ['S1_mass', 'orbital_period', 'eccentricity']
-
-        for c in columns_pre_post:
-            S1_GRB_df_synthetic['preSN_'+c] = pre_sn[c].values
-            S1_GRB_df_synthetic['postSN_'+c] = post_sn[c].values
+            elif S1_S2 == 'S2':
+                logic1 = self.apply_logic(hist,
+                                        S1_state=None,
+                                        S2_state='BH',
+                                        step_name='step_SN',
+                                        invert_S1S2=False)   
         
-        columns = ['S2_mass','metallicity']
-        S1_GRB_df_synthetic.index = post_sn.index
-        S1_GRB_df_synthetic['time'] = post_sn['time'].values *1e-6
-
-        for c in columns:
-            S1_GRB_df_synthetic[c] = pre_sn[c].values
-        
-        oneline_columns = ['channel', 'S1_eta', 'S1_E_GRB', 'S1_f_beaming', 'S1_E_GRB_iso', 'S1_L_GRB_iso', 'S1_spin_orbit_tilt']
-
-        # add formation channel from df_oneline
-        for c in oneline_columns:
-            S1_GRB_df_synthetic[c] = self.df_oneline.loc[indices][c].values
+            # select the previous row
+            mask2 = logic1.shift(-1)
+            mask2.iloc[-1]  = False
             
+            # Select just the event where S1_S2 was not BH before undergoing the SN
+            S1_SN = hist.loc[mask2].loc[indices][f'{S1_S2}_state'] != 'BH'
+            post_sn = hist.loc[logic1].loc[indices][S1_SN]
+            pre_sn = hist.loc[mask2].loc[indices][S1_SN]
+            # write properties to the Synthetic Population
+            GRB_df_synthetic = pd.DataFrame()
+            if S1_S2 == 'S1':
+                columns_pre_post.append('S1_mass')
+                columns.append('S2_mass')
+            elif S1_S2 == 'S2':
+                columns_pre_post.append('S2_mass')
+                columns.append('S1_mass')
+                
+            for c in columns_pre_post:
+                GRB_df_synthetic['preSN_'+c] = pre_sn[c].values
+                GRB_df_synthetic['postSN_'+c] = post_sn[c].values
+            
+            GRB_df_synthetic.index = post_sn.index
+            GRB_df_synthetic['time'] = post_sn['time'].values * 1e-6 # Myr
+            for c in columns:
+                GRB_df_synthetic[c] = pre_sn[c].values
+            
+
+            # add oneline parameters
+            df_oneline = multi_columns_read('oneline',
+                                            parsed_store,
+                                            oneline_columns,
+                                            i,
+                                            i+self.chunksize)
+            
+            for c in oneline_columns:
+                GRB_df_synthetic[c] = df_oneline.loc[indices,c].values
+            
+            # Add GRB parameters
+            for c in tmp_df.columns:
+                GRB_df_synthetic[c] = tmp_df.loc[indices,c].values
+
+            
+            
+            # add formation channels
+            df_channel = parsed_store.select_column('formation_channels',
+                                                    'channel', 
+                                                    start = i,
+                                                    stop=i+self.chunksize)
+            
+            df_channel.index = parsed_store.select_column('formation_channels',
+                                                         'index',
+                                                          start = i,
+                                                          stop=i+self.chunksize)
+            
+            GRB_df_synthetic['channel'] = df_channel.loc[indices].values
+            
+            return GRB_df_synthetic
         
+        history_events = parsed_store.select_column('history', 'index')
+        history_lengths = history_events.groupby(history_events).count()
+        del history_events
         
-        # get properties pre-SN, post-GRB
-        # The time of the second GRB
+        unique_binary_indices = self.indices
+        if self.verbose: print('looping over the binaries now')
         
-        
-        
-        
-        
-        last_index = -1
-        time = []
-        for index, value in self.df.loc[logic,'time'].items():
-            if index != last_index:
-                time.append(value)
-            last_index = index
-        if len(time) != GRB_synthetic_population.df_synthetic.shape[0]:
-            raise ValueError('Missing values in time_{event}!')
-        GRB_synthetic_population.df_synthetic[f'time_{event}'] = np.array(time)*1e-6 # Myr
-    
+        previous = 0
+        for i in tqdm(range(0,len(unique_binary_indices), self.chunksize), disable=not self.verbose):
+            
+            selection = unique_binary_indices[i:i+self.chunksize]
+            end = previous + history_lengths[i:i+self.chunksize].sum()
+                        
+            # Read oneline
+            m_disk_radiated = parsed_store.select_column('oneline',
+                                                         'S1_m_disk_radiated',
+                                                         start = i,
+                                                         stop=i+chunksize)
+            m_disk_radiated = pd.concat([m_disk_radiated, 
+                                         parsed_store.select_column('oneline',
+                                                               'S2_m_disk_radiated',
+                                                               start = i,
+                                                               stop=i+self.chunksize)],
+                                   axis=1)
+            
+            m_disk_radiated.index = parsed_store.select_column('oneline',
+                                                              'index',
+                                                              start = i,
+                                                              stop=i+self.chunksize)
+            
+            tmp_df = get_GRB_properties(m_disk_radiated,
+                                        GRB_properties['GRB_efficiency'],
+                                        GRB_properties['GRB_beaming'],
+                                        GRB_properties['E_GRB_iso_min']
+                                        )
+            
+            # S1 GRBs
+            S1_tmp_df = tmp_df[tmp_df['GRB1'] == True]
+            S1_GRB_df_synthetic = GRB_data_store(S1_tmp_df, parsed_store, previous, end, 'S1')
+            # Set all S2 columns to NaN
+            for c in S1_GRB_df_synthetic.columns:
+                if c in ['S2_eta', 'S2_E_GRB', 'S2_f_beaming', 'S2_E_GRB_iso', 'S2_L_GRB_iso', 'GRB2']:
+                    S1_GRB_df_synthetic[c] = None
+            
+            
+            # S2 GRBs
+            S2_tmp_df = tmp_df[tmp_df['GRB2'] == True]
+            S2_GRB_df_synthetic = GRB_data_store(S2_tmp_df, parsed_store, previous, end, 'S2')
+            # Set all S1 columns to NaN
+            for c in S2_GRB_df_synthetic.columns:
+                if c in ['S1_eta', 'S1_E_GRB', 'S1_f_beaming', 'S1_E_GRB_iso', 'S1_L_GRB_iso', 'GRB1']:
+                    S2_GRB_df_synthetic[c] = None
+            
+            out = pd.concat([S1_GRB_df_synthetic, S2_GRB_df_synthetic])
+            
+            out['GRB1'] = out['GRB1'].astype(bool)
+            out['GRB2'] = out['GRB2'].astype(bool)
+            # store the synthetic populations
+            output_store.append('synthetic',
+                                out,
+                                format='table',
+                                data_columns=True,
+                                min_itemsize=min_itemsize
+                                )
+            previous = end
+            
+            
+        output_store.close()
+        parsed_store.close()
+        return GRB_synthetic_population
 
 
-
+    def plot_popsyn_over_grid_slice(self, grid_type, met_Zsun, **kwargs):
+      # option for formation channel selection
+    # needs the full history
+    # This should be part of parsed population since it uses only df and df_oneline.
+    # should not rely on a population class.
+        """Plot popsyn over grid slice."""
         
+        # TODO: does this fit into memory?
+        df = pd.read_hdf(self.parsed_pop_file,
+                               key='history',
+                               columns=['S1_mass', 'S2_mass', 'metallicity', 'event'].append(),)
+        df_oneline = pd.read_hdf(self.parsed_pop_file,
+                                 key='oneline',
+                                 columns=['channel'])
         
-        
-        # get time_CC1 and time_CC2 note that for GRB calculations we
-        # do not use the "time" column indicating the time of formation
-        # of the DCO systems as there might be cases where 
-        # CC2 might happen before CC1 due to mass ratio reversal
-        DCO = [['BH', None], [None, 'BH']]
-        events = ['CC1', 'CC2']
-        for i, event in enumerate(events):
-            logic = self.apply_logic(self.df, S1_state=DCO[i][0],
-                        S2_state=DCO[i][1],
-                        binary_state='detached',
-                        step_name = 'step_SN',
-                        invert_S1S2=False,
-                        warn=False)
-            last_index = -1
-            time = []
-            for index, value in self.df.loc[logic,'time'].items():
-                if index != last_index:
-                    time.append(value)
-                last_index = index
-            if len(time) != GRB_synthetic_population.df_synthetic.shape[0]:
-                raise ValueError('Missing values in time_{event}!')
-            GRB_synthetic_population.df_synthetic[f'time_{event}'] = np.array(time)*1e-6 # Myr
-
+        plot_pop.plot_popsyn_over_grid_slice(temp_pop, grid_type, met_Zsun, **kwargs)
 
 class SyntheticPopulation():
     
@@ -1073,6 +1235,11 @@ class SyntheticPopulation():
 
         You can calculate additional properties of the population, such as
         the formation channel, merger times, GRB properties, etc.
+        
+        pop_file : str
+            Path to the synthetic population file.
+        verbose : bool
+            If `True`, print additional information.
         '''
         # initialise the parsed population class variables
         ParsedPopAttrs.__init__(self)
@@ -1095,10 +1262,80 @@ class SyntheticPopulation():
                 self.io.load_path_to_data(self)
             if '/parsed_pop_file' in keys:
                 self.io.load_parsed_pop_file(self)
-             
+            if '/parsed_pop_path' in keys:
+                self.io.load_parsed_pop_path(self)
+            if '/efficiency' in keys:
+                self._load_efficiency()
+            if '/population_selection' in keys:
+                self._load_population_selection()
+    
+    def _load_efficiency(self):
+        '''Loads the transient efficiency over metallicity from the population file'''
+        with pd.HDFStore(self.pop_file, mode='r') as store:
+            self.efficiency = store['efficiency'].to_dict()
+            for key in self.efficiency:
+                self.efficiency[key] = np.fromiter(self.efficiency[key].values(), dtype=float)
+            self.met_efficiency = store['efficiency'].index.to_numpy()
+    
+    def _save_efficiency(self):
+        '''Save the transient efficiency over metallicity to the population file.
+        '''
+        with pd.HDFStore(self.pop_file, mode='a') as store:
+            # writing them as a fixed format to avoid problems with the
+            # columns names
+            store.put('efficiency',
+                      pd.DataFrame(index=self.met_efficiency,
+                                   data=self.efficiency),
+                      format='fixed')
+
+    def _load_population_selection(self):
+        '''Loads the population selection from the synthetic population file'''
+        with pd.HDFStore(self.pop_file, mode='r') as store:
+            if '/population_selection' in store.keys():
+                self.population_selection = store['population_selection'].values[0][0]
+            
+    def _save_population_selection(self):
+        '''Stores the population selection to the synthetic population file'''
+        with pd.HDFStore(self.pop_file, mode='a') as store:
+            store.put('population_selection',
+                      pd.DataFrame([self.population_selection]),
+                      format='fixed')
+
+    def export_synthetic_population(self, output_file, columns=None, chunksize=500000):
+        '''Export the synthetic population to a separate file.'''
+        
+        synthetic_population = SyntheticPopulation(output_file)
+        
+        # write population data to the new file!
+        synthetic_population.io.save_ini_params(self)
+        synthetic_population.io.save_parse_kwargs(self)
+        synthetic_population.io.save_per_metallicity_info(self)
+        synthetic_population.io.save_path_to_data(self)
+        synthetic_population.io.save_parsed_pop_path(self.parsed_pop_path)
+        synthetic_population.population_selection = self.population_selection
+        synthetic_population._save_population_selection()
+        # Open the file for writing the synthetic population
+        with pd.HDFStore(synthetic_population.pop_file, mode='a') as store:
+            if '/synthetic' in store.keys():
+                print('A synthetic population already exists in this file.\
+                    The current population will be removed!')
+                store.remove('synthetic')
+                
+            for df in pd.read_hdf(self.pop_file, key='synthetic', chunksize=chunksize):
+                if columns is not None:
+                    df = df[columns]
+                store.append('synthetic',
+                             df,
+                             format='table',
+                             data_columns=True)
+                                       
     def head(self, n=10):
         """Return the first n rows of the synthetic population."""
         return pd.read_hdf(self.pop_file, key='synthetic', start=0, stop=n)
+    
+    def iloc(self, i,j):
+        """Return the `i` to `j` entry of the synthetic population."""
+        return pd.read_hdf(self.pop_file, key='synthetic', start=i, stop=j)
     
     def get_transient(self, index, columns=None):
         """Get a specific transient in the population."""
@@ -1119,6 +1356,13 @@ class SyntheticPopulation():
             Dataframe containing the synthetic population.
         '''
         return pd.read_hdf(self.pop_file, key='synthetic')
+    
+    @property
+    def indices(self):
+        if not hasattr(self, '_indices'):
+            with pd.HDFStore(self.pop_file, mode='r') as store:
+                self._indices = store.select_column('synthetic', 'index').to_numpy()
+        return self._indices
     
     def plot_DTD(self, metallicity=None, ax=None, bins=100,):
         '''Plot the delay time distribution of the events in the population.
@@ -1145,11 +1389,12 @@ class SyntheticPopulation():
         # plot all solar_metallicities
         if metallicity is None:
             # Values have to be copied to avoid overwriting the original data
-            df_tmp = pd.read_hdf(self.pop_file, key='synthetic', columns=['time', 't_delay'])
-            time = df_tmp['time'].to_numpy()
-            # Add the delay time (GW inspiral time) if present
-            if 't_delay' in df_tmp:
-                time += df_tmp['t_delay'].to_numpy()
+            with pd.HDFStore(self.pop_file, mode='r') as store:
+                # only load in 1 column at the time
+                time = store.select_column('synthetic', 'time').to_numpy()
+                if 't_delay' in store.select('synthetic', start=0, stop=0).columns:
+                    t_delay = store.select_column('synthetic', 't_delay').to_numpy()
+                    time += t_delay
             time *= 1e6 # yr
             h, bin_edges = np.histogram(time, bins=bins)
         
@@ -1160,6 +1405,8 @@ class SyntheticPopulation():
                 raise ValueError('The metallicity is not present in the population!')
 
             # get the time of the events
+            # select_columns cannot be used with where
+            # TODO: this might need to be rewritten to not go out of memory!
             df_tmp = pd.read_hdf(self.pop_file,
                                  key='synthetic',
                                  where='metallicity == metallicity',
@@ -1183,6 +1430,10 @@ class SyntheticPopulation():
      
     def get_efficiency_over_metallicity(self):
         """Compute the efficiency of events per Msun for each solar_metallicities."""
+        
+        if hasattr(self, 'efficiency'):
+            print('Efficiencies already computed! Overwriting them!')
+            
         efficiencies = []
         self.met_efficiency = sorted(self.metallicities, reverse=True)
         for met in self.met_efficiency:
@@ -1222,6 +1473,9 @@ class SyntheticPopulation():
                     efficiencies.append(eff)
                     # print(f'Z={met:1.2E} {ch}: {eff:1.2E} Msun^-1')
                 self.efficiency[ch] = np.array(efficiencies)
+        
+        # save the efficiency
+        self._save_efficiency()
          
     def plot_met_efficiency(self, **kwargs):
         """Plot merger rate efficiency.
@@ -1234,72 +1488,406 @@ class SyntheticPopulation():
         if self.met_efficiency is None or self.efficiency is None:
             raise ValueError('First you need to compute the merger efficinty!')
         plot_pop.plot_merger_efficiency(self.met_efficiency, self.efficiency, **kwargs)
-    
-    def save(self, path='./synthetic_population.h5'):
-        '''Save the synthetic population to a file.
-        
-        Parameters
-        ----------
-        path : str
-            Path to the file.
-        '''
-        # 1. Save the synthetic Df
-        # 2. Save the underlying mass
-        # 3. Save the simulated mass
-        # 4. Save the model parameters
-        # 5. Save the parse kwargs
-        # 6. Save the path to the data
-        if self.df_synthetic is None:
-            raise ValueError('Nothing to save!')
-        else:
-            self.df_synthetic.to_hdf(path, key='synthetic')
-            with pd.HDFStore(path, mode='a') as store:
-                store.put('ini_parameters', pd.Series(self.synthetic_pop_params))
-                tmp = pd.DataFrame(index=self.metallicities)
-                tmp['underlying_mass'] = self.underlying_mass_per_met
-                tmp['simulated_mass'] = self.simulated_mass_per_met
-                store.put('mass_per_met', tmp)
-                store.put('path_to_data', pd.Series(self.path_to_data))
-                store.put('parse_kwargs', pd.Series(self.parse_kwargs))
-                store.put('population_selection', pd.Series(self.population_selection))
+            
 
-    def load(self, path):
-        '''Load the synthetic population from a file.
-        
-        Parameters
-        ----------
-        path : str
-            Path to the file.
-        '''
-        if self.df_synthetic is None:
-            self.df_synthetic = pd.read_hdf(path, key='synthetic')
-            with pd.HDFStore(path, mode='r') as store:
-                self.synthetic_pop_param = store['ini_parameters'].to_dict()                
-                self.underlying_mass_per_met = store['mass_per_met']['underlying_mass'].to_numpy()
-                self.simulated_mass_per_met = store['mass_per_met']['simulated_mass'].to_numpy()
-                self.metallicities = store['mass_per_met'].index.to_numpy()
-                self.solar_metallicities = self.metallicities / Zsun
-                self.path_to_data = store['path_to_data'].to_numpy()
-                self.parse_kwargs = store['parse_kwargs'].to_dict()
-                self.population_selection = store['population_selection'][0]
-        else:
-            raise ValueError('You already have a population stored in memory!')
 
 
 
 class IntrinsicPopulation(SyntheticPopulation):
     
-    # This class should contain the intrinsic population
-    # which requires a MODEL to be defined
-    
-    def __init__(self, MODEL={}, verbose=False):
+    def __init__(self, file_name, verbose=False):
+        '''Create an intrinsic population from a synthetic population.'''
         
-        # it should basically contain the Information the synthetic population has
-        # and the MODEL parameters
-        # and calculate the intrinsic rate density over redshift
-        # 
-        return 0
+        self.synthetic_file = synthetic_file
+        self.verbose = verbose
+        
+        if os.path.isfile(self.synthetic_file):
+            self.synthetic_population = SyntheticPopulation(synthetic_file, verbose=verbose)
+        else:
+            raise ValueError('Synthetic population does not exist!')
+        
+        self.MODEL = MODEL
+        self.work_dir = work_dir
+        
+     
     
+    
+    
+    def plot_hist_properties(self, var, intrinsic=False, observable=False, pop=None, **kwargs):
+        """Plot histogram of intrinsic/observable properites.
+
+        Parameters
+        ----------
+        var : str
+            Property to plot stored in intrinsic/observable dataframe.
+        intrinsic : bool
+            `True` if you want to deplay the intrisc population.
+        observable : bool
+            `True` if you want to deplay the observable population.
+        **kwargs : dict
+            ploting arguments
+
+        """
+        if pop == 'DCO':
+            if self.df_dco_intrinsic is None and self.df_dco_observable is None:
+                raise ValueError('First you need to compute the merger rate density!')
+            if intrinsic:
+                df_intrinsic = self.df_dco_intrinsic
+            else:
+                df_intrinsic = None
+            if observable:
+                df_observable = self.df_dco_observable
+            else:
+                df_observable = None
+        elif pop == 'GRB':
+            if self.df_grb_intrinsic is None and self.df_grb_observable is None:
+                raise ValueError('First you need to compute the merger rate density!')
+            if intrinsic:
+                df_intrinsic = self.df_grb_intrinsic
+            else:
+                df_intrinsic = None
+            if observable:
+                df_observable = self.df_grb_observable
+            else:
+                df_observable = None       
+        else:
+            raise ValueError('Population not recognized!')
+        plot_pop.plot_hist_properties(var, df_intrinsic=df_intrinsic, df_observable=df_observable, pop=pop, **kwargs)
+
+    def plot_rate_density(self, DCO=False, GRB=False, **kwargs):
+        """Plot DCO and GRB rate densities."""
+        if not DCO and not GRB:
+            raise ValueError('You need to choose at least one population to plot!')
+        if DCO:
+            if self.dco_z_rate_density is None or self.dco_rate_density is None:
+                raise ValueError('First you need to compute the merger rate density!')
+            else:
+                z_dco = self.dco_z_rate_density
+                rate_dco =  self.dco_rate_density
+        else:
+            z_dco = None
+            rate_dco = None
+        if GRB:
+            if self.grb_z_rate_density is None or self.grb_rate_density is None:
+                raise ValueError('First you need to compute the GRB rate density!')
+            else:
+                z_grb = self.grb_z_rate_density
+                rate_grb =  self.grb_rate_density
+        else:
+            z_grb = None
+            rate_grb = None
+        plot_pop.plot_rate_density(z_dco, rate_dco, z_grb, rate_grb, **kwargs)
+
+    def plot_popsyn_over_grid_slice(self, grid_type, met_Zsun, **kwargs):
+        """Plot popsyn over grid slice."""
+        plot_pop.plot_popsyn_over_grid_slice(self, grid_type, met_Zsun, **kwargs)
+    
+    def compute_cosmological_weights(self, sensitivity, flag_pdet, working_dir, load_data, pop='DCO'):
+        """Compute the GRB/DCO merger rate weights.
+
+        Parameters
+        ----------
+        sensitivity : str
+            GW detector sensitivity and network configuration you want to use, see arXiv:1304.0670v3
+            detector sensitivities are taken from: https://dcc.ligo.org/LIGO-T2000012-v2/public
+            available sensitivity keys (for Hanford, Livingston, Virgo network):
+                'O3actual_H1L1V1' : aligo_O3actual_H1.txt, aligo_O3actual_L1.txt, avirgo_O3actual.txt
+                'O4low_H1L1V1' : aligo_O4low.txt, aligo_O4low.txt, avirgo_O4high_NEW.txt
+                'O4high_H1L1V1' : aligo_O4high.txt, aligo_O4high.txt, avirgo_O4high_NEW.txt
+                'design_H1L1V1' : AplusDesign.txt, AplusDesign.txt, avirgo_O5high_NEW.txt
+                'infinite': intrinsic merging DCO population, i.e. p_det = 1
+        flag_pdet : bool
+            `True` if you use sensitivity != 'infinite'.
+        working_dir : str
+            Working directory where the weights will be saved.
+        load_data : bool
+            `True` if you want to load the weights computed by this function
+            in your working directory.
+        **kwargs : dict
+            Kwargs containing the model parameters of your rate calculation.
+            See posydon/popsyn/rate_calculation.py
+
+        Returns
+        -------
+        array doubles
+            Return the cosmological weights, z_formation, z_merger and binary
+            index k associated to each weighted binary.
+
+        """
+
+        # TODO: make the class inputs kwargs
+        self.rates = Rates(self.df_synthetic, **GRB_properties)
+
+        # compute DCO merger rate density
+        if pop == 'DCO':
+            if not load_data:
+                self.rates.compute_merger_rate_weights(sensitivity=sensitivity, flag_pdet=flag_pdet, path_to_dir=working_dir)
+            index, z_formation, z_merger, w_ijk = self.rates.load_merger_rate_weights(sensitivity, path_to_dir=working_dir)
+
+            return index, z_formation, z_merger, w_ijk
+        elif pop == 'GRB':
+            if not load_data:
+                self.rates.compute_GRB_rate_weights(sensitivity=sensitivity, path_to_dir=working_dir)
+            index_1, z_formation_1, z_grb_1, w_ijk_1, \
+                index_2, z_formation_2, z_grb_2, w_ijk_2 = self.rates.load_grb_rate_weights(sensitivity, path_to_dir=working_dir)
+
+            return index_1, z_formation_1, z_grb_1, w_ijk_1, index_2, z_formation_2, z_grb_2, w_ijk_2
+        else:
+            raise ValueError('Population not recognized!')  
+    
+    def resample_synthetic_population(self, index, z_formation, z_event, w_ijk, export_cols=None, 
+                                      pop='DCO', reset_grb_properties=None):
+        """Resample synthetc population to obtain intrinsic/observable population.
+
+        Parameters
+        ----------
+        index : array int
+            Index k of each binary corresponding to the synthetc dataframe
+            proeprties.
+        z_formation : array float
+            Redshift of formation of each binary.
+        z_merger : array float
+            Redshift of merger of each binary.
+        w_ijk : array float
+            Cosmological weights computed with Eq. B.8 of Bavera et at. (2020).
+        export_cols : list str
+            List of additional columns to save in the intrinsic/observable
+            population.
+
+        Returns
+        -------
+        pd.DataFrame
+            Resampled synthetc population to intrinsic or detecatable
+            population.
+
+        """
+        # compute GRB properties boolean
+        compute_GRB_properties = (GRB_properties is not None and 
+                                  "compute_GRB_properties" in GRB_properties and 
+                                  GRB_properties["compute_GRB_properties"])
+
+        # drop all zero weights to save memory
+        sel = w_ijk > 0.
+        index = index[sel]
+        z_formation = z_formation[sel]
+        z_event = z_event[sel]
+        w_ijk = w_ijk[sel]
+
+        # export results, we do a selections of columns else the dataframe
+        # risks to go out of memory
+        df = pd.DataFrame()
+        df['weight'] = w_ijk
+        df['z_formation'] = z_formation
+        if pop == 'DCO':
+            df['z_merger'] = z_event
+        elif pop == 'GRB':
+            df['z_grb'] = z_event
+        else:
+            raise ValueError('Population not recognized!')
+        save_cols = ['metallicity','time','t_delay','S1_state','S2_state',
+                     'S1_mass','S2_mass','S1_spin','S2_spin',
+                     'orbital_period','eccentricity', 'q', 'm_tot',
+                     'm_chirp', 'chi_eff']
+        if compute_GRB_properties:
+            save_cols += GRB_PROPERTIES
+        if "channel" in self.rates.df:
+            save_cols.append('channel')
+        if export_cols is not None:
+            for c in export_cols:
+                if c not in save_cols:
+                    save_cols.append(c)
+        for c in save_cols:
+            df[c] = self.rates.get_data(c, index)
+        
+        # the same binary system can emit two GRBs, we remove the
+        # GRB properties of the other GRB to prevent mistakes
+        if reset_grb_properties is not None:
+            if reset_grb_properties == 'GRB1':
+                for key in GRB_PROPERTIES:
+                    if "S1" in key:
+                        df[key] = np.nan
+            elif reset_grb_properties == 'GRB2':
+                for key in GRB_PROPERTIES:
+                    if "S2" in key:
+                        df[key] = np.nan
+            else:
+                raise ValueError(f'reset_grb_properties=={reset_grb_properties} key not recognized!')
+
+        return df
+    
+    def get_dco_merger_rate_density(self, export_cols=None,  working_dir='./', load_data=False):
+        """Compute the merger rate density as a function of redshift.
+
+        Parameters
+        ----------
+        export_cols : list str
+            List of additional columns to save in the intrinsic/observable
+            population.
+        working_dir : str
+            Working directory where the weights will be saved.
+        load_data : bool
+            `True` if you want to load the weights computed by this function
+            in your working directory.
+
+        """
+        if self.df_synthetic is None:
+            raise ValueError('You first need to isolated the DCO synthetic population!')
+
+        # compute cosmological weights (detection rate weights with infinite sensitivity)
+        sensitivity='infinite'
+        flag_pdet = False
+        index, z_formation, z_merger, w_ijk = self.compute_cosmological_weights(sensitivity, flag_pdet, working_dir=working_dir, load_data=load_data, pop='DCO')
+        # compute rate density weights
+        self.dco_z_rate_density = self.rates.get_centers_redshift_bins()
+        total_rate = self.rates.compute_rate_density(w_ijk, z_merger, observable='DCO', sensitivity=sensitivity)
+        self.dco_rate_density = {'total' : total_rate}
+        if "channel" in self.df_synthetic:
+            channels = np.unique(self.df_synthetic['channel'])
+            for ch in tqdm(channels):
+                sel = (self.rates.get_data('channel', index) == ch)
+                rate = self.rates.compute_rate_density(w_ijk[sel], z_merger[sel], observable='DCO', sensitivity=sensitivity)
+                self.dco_rate_density[ch] = rate
+            
+        print(f'DCO merger rate density in the local Universe (z={self.dco_z_rate_density[0]:1.2f}): {round(total_rate[0],2)} Gpc^-3 yr^-1')
+
+        # export the intrinsic DCO population
+        self.df_dco_intrinsic = self.resample_synthetic_population(index, z_formation, z_merger, w_ijk, export_cols=export_cols, pop='DCO')
+
+    def get_dco_detection_rate(self, sensitivity='design_H1L1V1', export_cols=None,  working_dir='./', load_data=False):
+        """Compute the detection rate per yr.
+
+        Parameters
+        ----------
+        sensitivity : str
+            GW detector sensitivity and network configuration you want to use, see arXiv:1304.0670v3
+            detector sensitivities are taken from: https://dcc.ligo.org/LIGO-T2000012-v2/public
+            available sensitivity keys (for Hanford, Livingston, Virgo network):
+                'O3actual_H1L1V1' : aligo_O3actual_H1.txt, aligo_O3actual_L1.txt, avirgo_O3actual.txt
+                'O4low_H1L1V1' : aligo_O4low.txt, aligo_O4low.txt, avirgo_O4high_NEW.txt
+                'O4high_H1L1V1' : aligo_O4high.txt, aligo_O4high.txt, avirgo_O4high_NEW.txt
+                'design_H1L1V1' : AplusDesign.txt, AplusDesign.txt, avirgo_O5high_NEW.txt
+        export_cols : list str
+            List of additional columns to save in the intrinsic/observable
+            population.
+        working_dir : str
+            Working directory where the weights will be saved.
+        load_data : bool
+            `True` if you want to load the weights computed by this function
+            in your working directory.
+
+        """
+        if self.df_synthetic is None:
+            raise ValueError('You first need to isolated the DCO synthetic population!')
+
+        # compute detection rate weights
+        flag_pdet = True
+        index, z_formation, z_merger, w_ijk = self.compute_cosmological_weights(sensitivity, flag_pdet, working_dir=working_dir, load_data=load_data)
+        print(f'DCO detection rate at {sensitivity} sensitivity: {sum(w_ijk):1.2f} yr^-1')
+
+        # export the observable DCO population
+        # TODO: store p_det
+        self.df_dco_observable = self.resample_synthetic_population(index, z_formation, z_merger, w_ijk, export_cols=export_cols)
+
+
+    def get_grb_rate_density(self, export_cols=None,  working_dir='./', load_data=False):
+        """Compute the GRB density as a function of redshift.
+
+        Parameters
+        ----------
+        export_cols : list str
+            List of additional columns to save in the intrinsic/observable
+            population.
+        working_dir : str
+            Working directory where the weights will be saved.
+        load_data : bool
+            `True` if you want to load the weights computed by this function
+            in your working directory.
+
+        """
+        if self.df_synthetic is None:
+            raise ValueError('You first need to isolated the DCO synthetic population!')
+
+        # compute cosmological weights (detection rate weights with infinite sensitivity)
+        sensitivity='infinite'
+        flag_pdet = False
+        index_1, z_formation_1, z_grb_1, w_ijk_1, \
+            index_2, z_formation_2, z_grb_2, w_ijk_2 = self.compute_cosmological_weights(sensitivity, flag_pdet, working_dir=working_dir, load_data=load_data, pop='GRB')
+
+        # compute beamed rate density weights
+        # note we compute the beamed rate density for GRBs as this is what is often reported in the literature
+        # as the beaming factor is not known a priori
+        self.grb_z_rate_density = self.rates.get_centers_redshift_bins()
+        total_GRB1 = self.rates.compute_rate_density(w_ijk_1, z_grb_1, observable='GRB1', sensitivity='beamed', index=index_1)
+        total_GRB2 = self.rates.compute_rate_density(w_ijk_2, z_grb_2, observable='GRB2', sensitivity='beamed', index=index_2)
+        total_rate = total_GRB1 + total_GRB2
+        self.grb_rate_density = {'total' : total_rate, 'total_GRB1' : total_GRB1, 'total_GRB2': total_GRB2}
+        if "channel" in self.df_synthetic:
+            channels = np.unique(self.df_synthetic['channel'])
+            for ch in tqdm(channels):
+                sel1 = (self.rates.get_data('channel', index_1) == ch)
+                if any(sel1):
+                    self.grb_rate_density[ch+'_GRB1'] = self.rates.compute_rate_density(w_ijk_1[sel1], z_grb_1[sel1], observable='GRB1', sensitivity='beamed', index=index_1[sel1])
+                else:
+                    self.grb_rate_density[ch+'_GRB1'] = np.zeros(len(self.grb_z_rate_density))
+                sel2 = (self.rates.get_data('channel', index_2) == ch)
+                if any(sel2):
+                    self.grb_rate_density[ch+'_GRB2'] = self.rates.compute_rate_density(w_ijk_2[sel2], z_grb_2[sel2], observable='GRB2', sensitivity='beamed', index=index_2[sel2])
+                else:
+                    self.grb_rate_density[ch+'_GRB2'] = np.zeros(len(self.grb_z_rate_density))
+                self.grb_rate_density[ch] = self.grb_rate_density[ch+'_GRB1'] + self.grb_rate_density[ch+'_GRB2']
+            
+        print(f'GRB (beamed) rate density in the local Universe (z={self.grb_z_rate_density[0]:1.2f}): {round(total_rate[0],2)} Gpc^-3 yr^-1')
+
+        # export the intrinsic grb intrisic population
+        # TODO: instead of concatenating two dataframe and duplicating the information of the same
+        # binary system we should combine the two datraframes where we have two columns for GRB1 and GRB2
+        # such dataframe will have z_grb_1, z_grb_2, weight_1, weight_2
+        # when this is addressed, remove reset_grb_properties feature
+        self.df_grb_intrinsic = pd.DataFrame()
+        df_grb_1 = self.resample_synthetic_population(index_1, z_formation_1, z_grb_1, w_ijk_1, export_cols=export_cols, pop='GRB', reset_grb_properties='GRB2')
+        df_grb_2 = self.resample_synthetic_population(index_2, z_formation_2, z_grb_2, w_ijk_2, export_cols=export_cols, pop='GRB', reset_grb_properties='GRB1')
+        self.df_grb_intrinsic = pd.concat([df_grb_1, df_grb_2], ignore_index=True, sort=False)
+        # the observable population accounts for beaming
+        self.df_grb_observable = self.df_grb_intrinsic.copy()
+        for i in [1,2]:
+            sel = self.df_grb_observable[f'S{i}_f_beaming'] > 0 
+            self.df_grb_observable.loc[sel,'weight'] *= self.df_grb_observable.loc[sel,f'S{i}_f_beaming']
+    
+    def get_dco_detection_rate(self, sensitivity='design_H1L1V1', export_cols=None,  working_dir='./', load_data=False):
+        """Compute the detection rate per yr.
+
+        Parameters
+        ----------
+        sensitivity : str
+            GW detector sensitivity and network configuration you want to use, see arXiv:1304.0670v3
+            detector sensitivities are taken from: https://dcc.ligo.org/LIGO-T2000012-v2/public
+            available sensitivity keys (for Hanford, Livingston, Virgo network):
+                'O3actual_H1L1V1' : aligo_O3actual_H1.txt, aligo_O3actual_L1.txt, avirgo_O3actual.txt
+                'O4low_H1L1V1' : aligo_O4low.txt, aligo_O4low.txt, avirgo_O4high_NEW.txt
+                'O4high_H1L1V1' : aligo_O4high.txt, aligo_O4high.txt, avirgo_O4high_NEW.txt
+                'design_H1L1V1' : AplusDesign.txt, AplusDesign.txt, avirgo_O5high_NEW.txt
+        export_cols : list str
+            List of additional columns to save in the intrinsic/observable
+            population.
+        working_dir : str
+            Working directory where the weights will be saved.
+        load_data : bool
+            `True` if you want to load the weights computed by this function
+            in your working directory.
+
+        """
+        if self.df_synthetic is None:
+            raise ValueError('You first need to isolated the DCO synthetic population!')
+
+        # compute detection rate weights
+        flag_pdet = True
+        index, z_formation, z_merger, w_ijk = self.compute_cosmological_weights(sensitivity, flag_pdet, working_dir=working_dir, load_data=load_data)
+        print(f'DCO detection rate at {sensitivity} sensitivity: {sum(w_ijk):1.2f} yr^-1')
+
+        # export the observable DCO population
+        # TODO: store p_det
+        self.df_dco_observable = self.resample_synthetic_population(index, z_formation, z_merger, w_ijk, export_cols=export_cols)
+   
     def save(self, path):
         # overwrite the save function to also store the MODEL parameters
         return
@@ -1899,7 +2487,7 @@ class SyntheticPopulation2:
         ----------
         index : array int
             Index k of each binary corresponding to the synthetc dataframe
-            proeprties.
+            properties.
         z_formation : array float
             Redshift of formation of each binary.
         z_merger : array float
@@ -2108,9 +2696,6 @@ class SyntheticPopulation2:
         # export the observable DCO population
         # TODO: store p_det
         self.df_dco_observable = self.resample_synthetic_population(index, z_formation, z_merger, w_ijk, export_cols=export_cols)
-
-   
-            
     
     def save_intrinsic_pop(self, path='./intrinsic_population_type.h5', pop='DCO'):
         """Save intrinsic population.
