@@ -332,7 +332,7 @@ class ParsedPopulation():
             self.io.load_path_to_data(self)
         
     def parse(self, path_to_data, S1_state=None, S2_state=None, binary_state=None,
-               binary_event=None, step_name=None, invert_S1S2=False, chunksize=500000):
+               binary_event=None, step_name=None, invert_S1S2=False):
         """Given the path to the data, parse the datafiles for binaries which
         satisfy the given conditions.
         
@@ -427,7 +427,7 @@ class ParsedPopulation():
                                     ONELINE_MIN_ITEMSIZE.items()
                                     if key in oneline_cols}
             
-            for i, df in enumerate(pd.read_hdf(file,  key='history', chunksize=chunksize)):
+            for i, df in enumerate(pd.read_hdf(file,  key='history', chunksize=self.chunksize)):
                 
                 df = pd.concat([last_binary_df, df])
                     
@@ -514,7 +514,7 @@ class ParsedPopulation():
             # 2. Select indices from oneline
             for i, df in enumerate(pd.read_hdf(file, 
                                                key='oneline',
-                                               chunksize=chunksize,
+                                               chunksize=self.chunksize,
                                                where="index in unique_indices")):
                 df.index += index_shift
                 df['metallicity'] = met
@@ -645,7 +645,7 @@ class ParsedPopulation():
                 self._indices = store.select_column('oneline', 'index').to_numpy()
         return self._indices
 
-    def get_formation_channels(self, mt_history=False, chunksize=500000):
+    def get_formation_channels(self, mt_history=False):
         """Get formation channel and add to df_oneline.
         
         Parameters
@@ -788,7 +788,7 @@ class ParsedPopulation():
                 print('No formation channels found in the file')                
                 return None
         
-    def create_DCO_population(self, output_file=None, additional_oneline_cols=None, chunksize=500000):
+    def create_DCO_population(self, output_file=None, additional_oneline_cols=None):
         '''Create a DCO population from the parsed population.
         
         A DCO Population will contain one 'time' for each 'event',
@@ -905,7 +905,7 @@ class ParsedPopulation():
             # select BBH models and store them in the DCO population
             for df_synthetic in parsed_file.select('history', 
                                                 where=selection,
-                                                chunksize=chunksize):
+                                                chunksize=self.chunksize):
                 selected_indices = df_synthetic.index.values.tolist()
                 if len(selected_indices) == 0:
                     continue
@@ -949,7 +949,7 @@ class ParsedPopulation():
 
 
     # TODO: add output_file to this function!!
-    def create_GRB_population(self, output_file=None, GRB_properties={}, chunksize=500000, additional_oneline_cols=None):
+    def create_GRB_population(self, output_file=None, GRB_properties={}, additional_oneline_cols=None):
         '''Create a GRB population from the parsed population.
         
         The Synthetic Population will contain a 'time for each 'event',
@@ -1140,6 +1140,7 @@ class ParsedPopulation():
         del history_events
         
         unique_binary_indices = self.indices
+            
         if self.verbose: print('looping over the binaries now')
         
         previous = 0
@@ -1152,7 +1153,7 @@ class ParsedPopulation():
             m_disk_radiated = parsed_store.select_column('oneline',
                                                          'S1_m_disk_radiated',
                                                          start = i,
-                                                         stop=i+chunksize)
+                                                         stop=i+self.chunksize)
             m_disk_radiated = pd.concat([m_disk_radiated, 
                                          parsed_store.select_column('oneline',
                                                                'S2_m_disk_radiated',
