@@ -1,4 +1,4 @@
-"""Module for performing final profile interpolation
+"""Module for performing initial-final profile interpolation
 """
 
 __authors__ = [
@@ -274,20 +274,22 @@ class ProfileInterpolator:
         
         def mono_renorm(arr):
             arr_copy = arr.copy()
-            # force rising points down
+            # starting from surface, force dropping points up
             for i in range(1,len(arr_copy)):
-                if arr_copy[i]>arr_copy[i-1]:
-                    arr_copy[i]=arr_copy[i-1]
-            # cut off points below surface value
-            return np.where(arr_copy<arr[-1], arr[-1], arr_copy)
-        
+                if arr_copy[-i]>arr_copy[-i-1]:
+                    arr_copy[-i-1]=arr_copy[-i]
+            # cut off points above center value
+            return np.where(arr_copy>arr[0], arr[0], arr_copy)
+
         profiles_mono=profiles.copy()
-        
+
         for i in range(len(profiles)):
             if len(np.where(profiles[i][1:]-profiles[i][:-1]>0)[0]>0):
                 profiles_mono[i] = mono_renorm(profiles[i])
-                
+
         return profiles_mono
+
+    
     
     
 class Density:
