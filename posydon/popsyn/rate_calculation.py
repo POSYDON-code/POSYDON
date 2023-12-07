@@ -498,7 +498,7 @@ class Rates(object):
         if sensitivity != 'infinite' and self.synthetic_population.population_selection != 'DCO':
             raise ValueError("You can only compute non-infinite sensitivity for a DCO population.")
         elif sensitivity != 'infinite' and self.synthetic_population.population_selection == 'DCO' :
-            self.compute_sensitivity_rate_weights(sensitivity, overwrite=overwerite)
+            self.compute_sensitivity_rate_weights(sensitivity, overwrite=overwrite)
         elif sensitivity == 'infinite':
             self.compute_sensitivity_rate_weights(sensitivity='infinite', overwrite=overwrite)        
         else:
@@ -532,7 +532,7 @@ class Rates(object):
 
         """
         
-        PATH_TO_PDET_GRID = os.path.join(PATH_TO_POSYDON_DATA, 'POSYDON_data/selection_effects/pdet_grid.hdf5')
+        PATH_TO_PDET_GRID = os.path.join(PATH_TO_POSYDON_DATA, 'selection_effects/pdet_grid.hdf5')
         pop = self.synthetic_population.population_selection
         # check if the rates have been computed
         with pd.HDFStore(self.rates_file, 'r') as store:
@@ -832,7 +832,7 @@ class Rates(object):
         w_ijk_flat = w_ijk.to_numpy(na_value=0).flatten()
         indices = w_ijk.index.to_numpy()
         indices_flat = np.repeat(indices, len(w_ijk.columns))
-        z_formation_flat = np.repeat(r.centers_redshift_bins, len(indices))
+        z_formation_flat = np.repeat(self.centers_redshift_bins, len(indices))
         z_event_flat = z_events.to_numpy(na_value=0).flatten()
         
         # select events with non-zero weights
@@ -908,6 +908,68 @@ class Rates(object):
             rate_grb = None
         plot_pop.plot_rate_density(z_dco, rate_dco, z_grb, rate_grb, **kwargs)
         
+
+
+class Population():
+    
+    def __init__(self, file_name, verbose=False):
+        '''Interface to the population file'''
+        
+        self.verbose = verbose
+        self.file_name = file_name
+       
+    @property 
+    def columns(self):
+        if hasattr(self, '_columns'):
+            return self._columns
+        else:
+            with pd.HDFStore(self.file_name, 'r') as store:
+                if f'/rates/infinite/sampled_population' not in store.keys():
+                    raise KeyError('The intrinsic population has not been computed yet!')
+                else:
+                    self._columns = store.select(f'rates/infinite/sampled_population',
+                                                 start=0,
+                                                 stop=0).columns.to_numpy()
+                    return self._columns
+                            
+    def plot_hist_properties(self, var, pop='DCO', intrinsic=True, observable=None, **kwargs):
+        """Plot histogram of intrinsic/observable properites.
+
+        Parameters
+        ----------
+        var : str
+            Property to plot stored in intrinsic/observable dataframe.
+        intrinsic : bool
+            `True` if you want to deplay the intrisc population.
+        observable : bool
+            `True` if you want to deplay the observable population.
+        **kwargs : dict
+            ploting arguments
+
+        """
+        df_intrinsic = None
+        df_observable = None
+        # check if intrinsic and/or observable population is available
+        if intrinsic:
+            with pd.HDFStore(self.file_name, 'r') as store:
+                if f'/rates/{pop}/infinite/sampled_population' not in store.keys():
+                    print('The intrinsic population has not been computed yet!')
+                else:
+                    df_intrinsic = pd.read_hdf(self.file_name,
+                                                key=f'rates/{pop}/infinite/sampled_population',
+                                                columns=[var, 'weight'])
+
+        if observable:
+            with pd.HDFStore(self.file_name, 'r') as store:
+                if f'/rates/{pop}/{observable}/sampled_population' not in store.keys():
+                    print(f'The observable population with {observable} sensitivity as not been computed yet!')
+                else:
+                    df_observable = pd.read_hdf(self.file_name,
+                                                key=f'rates/{pop}/{observable}/sampled_population',
+                                                columns=[var, 'weight'])
+        
+        plot_pop.plot_hist_properties(var, df_intrinsic=df_intrinsic, df_observable=df_observable, pop=pop, **kwargs)
+    
 
 
 
