@@ -924,6 +924,7 @@ class Population():
             return self._columns
         else:
             with pd.HDFStore(self.file_name, 'r') as store:
+                # TODO: This should check if any sampled population is present. Not jsut the intrinsic population!
                 if f'/rates/infinite/sampled_population' not in store.keys():
                     raise KeyError('The intrinsic population has not been computed yet!')
                 else:

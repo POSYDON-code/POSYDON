@@ -7,7 +7,7 @@ __authors__ = [
     "Simone Bavera <Simone.Bavera@unige.ch>",
     "Kyle Akira Rocha <kylerocha2024@u.northwestern.edu>",
     "Monica Gallegos-Garcia <monicagallegosgarcia2024@u.northwestern.edu>",
-    "Max Merlijn Briel < max.briel@gmail.com",
+    "Max Briel < max.briel@gmail.com",
 ]
 
 import warnings
@@ -775,7 +775,6 @@ class ParsedPopulation():
             self.io.write_formation_channels(self, df)
             del df
             
-             
     @property
     def formation_channels(self):
         '''Return the formation channel if calculated
@@ -1490,71 +1489,6 @@ class SyntheticPopulation():
             raise ValueError('First you need to compute the merger efficinty!')
         plot_pop.plot_merger_efficiency(self.met_efficiency, self.efficiency, **kwargs)
             
-
-
-from posydon.visualization import plot_pop
-
-class Population():
-    
-    def __init__(self, file_name, verbose=False):
-        '''Interface to the population file'''
-        
-        self.verbose = verbose
-        self.file_name = file_name
-       
-    @property 
-    def columns(self):
-        if hasattr(self, '_columns'):
-            return self._columns
-        else:
-            with pd.HDFStore(self.file_name, 'r') as store:
-                if f'/rates/infinite/sampled_population' not in store.keys():
-                    raise KeyError('The intrinsic population has not been computed yet!')
-                else:
-                    self._columns = store.select(f'rates/infinite/sampled_population',
-                                                 start=0,
-                                                 stop=0).columns.to_numpy()
-                    return self._columns
-                            
-    def plot_hist_properties(self, var, pop='DCO', intrinsic=True, observable=None):
-        """Plot histogram of intrinsic/observable properites.
-
-        Parameters
-        ----------
-        var : str
-            Property to plot stored in intrinsic/observable dataframe.
-        intrinsic : bool
-            `True` if you want to deplay the intrisc population.
-        observable : bool
-            `True` if you want to deplay the observable population.
-        **kwargs : dict
-            ploting arguments
-
-        """
-        df_intrinsic = None
-        df_observable = None
-        # check if intrinsic and/or observable population is available
-        if intrinsic:
-            with pd.HDFStore(self.file_name, 'r') as store:
-                if f'/rates/{pop}/infinite/sampled_population' not in store.keys():
-                    print('The intrinsic population has not been computed yet!')
-                else:
-                    df_intrinsic = pd.read_hdf(self.file_name,
-                                                key=f'rates/{pop}/infinite/sampled_population',
-                                                columns=[var, 'weight'])
-
-        if observable:
-            with pd.HDFStore(self.file_name, 'r') as store:
-                if f'/rates/{pop}/{observable}/sampled_population' not in store.keys():
-                    print(f'The observable population with {observable} sensitivity as not been computed yet!')
-                else:
-                    df_observable = pd.read_hdf(self.file_name,
-                                                key=f'rates/{pop}/{observable}/sampled_population',
-                                                columns=[var, 'weight'])
-        
-        plot_pop.plot_hist_properties(var, df_intrinsic=df_intrinsic, df_observable=df_observable, pop=pop)
-    
-
 
 
 class IntrinsicPopulation(SyntheticPopulation):
