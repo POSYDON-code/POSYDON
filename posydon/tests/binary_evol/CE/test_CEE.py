@@ -1,13 +1,10 @@
 import unittest
-import warnings
 import os
 import numpy as np
 from posydon.utils.common_functions import PATH_TO_POSYDON
-from posydon.utils import constants as const
 from posydon.utils import common_functions as cf
 from posydon.binary_evol.binarystar import BinaryStar
 from posydon.binary_evol.singlestar import SingleStar
-from posydon.binary_evol.simulationproperties import SimulationProperties
 from posydon.binary_evol.CE.step_CEE import StepCEE
 
 # spaces are read '\\ ' instead of ' '

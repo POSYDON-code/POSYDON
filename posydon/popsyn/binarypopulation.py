@@ -35,13 +35,16 @@ import os
 from tqdm import tqdm
 import psutil
 import random
+import sys
 
-from posydon.binary_evol.binarystar import BinaryStar
+if 'posydon.binary_evol.binarystar' not in sys.modules.keys():
+    from posydon.binary_evol.binarystar import BinaryStar
 from posydon.binary_evol.singlestar import (SingleStar,properties_massless_remnant)
 from posydon.binary_evol.simulationproperties import SimulationProperties
 from posydon.popsyn.star_formation_history import get_formation_times
 
-from posydon.popsyn.independent_sample import generate_independent_samples
+from posydon.popsyn.independent_sample import (generate_independent_samples,
+                                               binary_fraction_value)
 from posydon.utils.common_functions import (orbital_period_from_separation,
                                             orbital_separation_from_period)
 from posydon.popsyn.defaults import default_kwargs
@@ -50,24 +53,27 @@ from posydon.utils.constants import Zsun
 
 
 # 'event' usually 10 but 'detached (Integration failure)' can occur
-HISTORY_MIN_ITEMSIZE = {'state': 30, 'event': 10, 'step_names': 15,
+HISTORY_MIN_ITEMSIZE = {'state': 30, 'event': 25, 'step_names': 20,
                         'S1_state': 31, 'S2_state': 31,
                         'mass_transfer_case': 7,
                         'S1_SN_type': 5, 'S2_SN_type': 5}
 ONELINE_MIN_ITEMSIZE = {'state_i': 30, 'state_f': 30,
                         'event_i': 10, 'event_f': 10,
-                        'step_names_i': 15, 'step_names_f': 15,
+                        'step_names_i': 20, 'step_names_f': 20,
                         'S1_state_i': 31, 'S1_state_f': 31,
                         'S2_state_i': 31, 'S2_state_f': 31,
                         'mass_transfer_case_i': 7, 'mass_transfer_case_f': 7,
                         'S1_SN_type': 5, 'S2_SN_type': 5,
                         'interp_class_HMS_HMS' : 15, 'interp_class_CO_HeMS' : 15,
-                        'interp_class_CO_HMS_RLO' : 15}
+                        'interp_class_CO_HMS_RLO' : 15, 'interp_class_CO_HeMS_RLO' : 15,
+                        'mt_history_HMS_HMS' : 40, 'mt_history_CO_HeMS' : 40,
+                        'mt_history_CO_HMS_RLO' : 40, 'mt_history_CO_HeMS_RLO' : 40,
+                        }
 
 # BinaryPopulation will enforce a constant metallicity accross all steps that
 # load stellar or binary models by checked this list of steps.
 STEP_NAMES_LOADING_GRIDS = [
-    'step_HMS_HMS', 'step_CO_HeMS', 'step_CO_HMS_RLO', 'step_detached','step_isolated','step_disrupted','step_initially_single', 'step_merged'
+    'step_HMS_HMS', 'step_CO_HeMS', 'step_CO_HMS_RLO', 'step_CO_HeMS_RLO', 'step_detached','step_isolated','step_disrupted','step_initially_single', 'step_merged'
 ]
 
 class BinaryPopulation:
@@ -87,8 +93,6 @@ class BinaryPopulation:
         self.kwargs = default_kwargs.copy()
         for key, arg in kwargs.items():
             self.kwargs[key] = arg
-        # Have a binary fraction change the number_of binaries.
-        self.binary_fraction = self.kwargs.get('binary_fraction')
         self.number_of_binaries = self.kwargs.get('number_of_binaries')
 
         self.population_properties = self.kwargs.get('population_properties',
@@ -349,10 +353,11 @@ class BinaryPopulation:
                                  f"evolution.combined.{self.rank}"),
                     mode='w', **kwargs)
 
-    def save(self, save_path, mode='a', **kwargs):
+    def save(self, save_path, **kwargs):
         """Save BinaryPopulation to hdf file."""
         optimize_ram = self.kwargs['optimize_ram']
         temp_directory = self.kwargs['temp_directory']
+        mode = self.kwargs.get('mode', 'a')
 
         if self.comm is None:
             if optimize_ram:
@@ -380,8 +385,7 @@ class BinaryPopulation:
                     self.kwargs["temp_directory"], f"evolution.combined.{i}")
                              for i in range(self.size)]
 
-
-                self.combine_saved_files(absolute_filepath, tmp_files, mode = mode)
+                self.combine_saved_files(absolute_filepath, tmp_files, mode=mode, **kwargs)
 
             else:
                 return
@@ -392,7 +396,7 @@ class BinaryPopulation:
         return os.path.join(temp_directory, f"evolution.combined.{self.rank}")
         # return os.path.join(dir_name, '.tmp{}_'.format(rank) + file_name)
 
-    def combine_saved_files(self, absolute_filepath, file_names, mode = "a"):
+    def combine_saved_files(self, absolute_filepath, file_names, **kwargs):
         """Combine various temporary files in a given folder."""
         dir_name = os.path.dirname(absolute_filepath)
 
@@ -407,8 +411,11 @@ class BinaryPopulation:
         oneline_min_itemsize = {key: val for key, val in
                                 ONELINE_MIN_ITEMSIZE.items()
                                 if key in oneline_cols}
-
-        with pd.HDFStore(absolute_filepath, mode = mode) as store:
+        mode = kwargs.get('mode', 'a')
+        complib = kwargs.get('complib', 'zlib')
+        complevel = kwargs.get('complevel', 9)
+        
+        with pd.HDFStore(absolute_filepath, mode=mode, complevel=complevel, complib=complib) as store:
             for f in file_names:
                 # strings itemsize set by first append max value,
                 # which may not be largest string
@@ -644,7 +651,7 @@ class PopulationManager:
 
         return binary_holder
 
-    def save(self, fname, mode='a', **kwargs):
+    def save(self, fname, **kwargs):
         """Save binaries to an hdf file using pandas HDFStore.
 
         Any object dtype columns not parsed by infer_objects() is converted to
@@ -654,75 +661,32 @@ class PopulationManager:
         ----------
         fname : str
             Name of hdf file saved.
-        **kwargs
+        mode : {'a', 'w', 'r', 'r+'}, default 'a'
+            See pandas HDFStore docs
+        complib : {'zlib', 'lzo', 'bzip2', 'blosc'}, default 'zlib'
+            Compression library. See HDFStore docs
+        complevel : int, 0-9, default 9
+            Level of compression. See HDFStore docs
+        kwargs : dict
+            Arguments for `BinaryStar` methods `to_df` and `to_oneline_df`.
 
         Returns
         -------
         None
         """
-        def set_dtypes_oneline(data):
-            """Change the dtypes for consistency in saving."""
-            for col in data.columns:
-                if 'natal_kick_array' in col:
-                    # First convert None's to NaN's
-                    # data[col][data[col] == 'None'] = np.nan
-                    data.loc[data[col] == 'None', col] = np.nan
+        mode = kwargs.get('mode', 'a')
+        complib = kwargs.get('complib', 'zlib')
+        complevel = kwargs.get('complevel', 9)
 
-                    # Next, convert dtype
-                    data = data.astype({col: np.float64})
-
-            return data
-
-        with pd.HDFStore(fname, mode=mode) as store:
-
+        with pd.HDFStore(fname, mode=mode, complevel=complevel, complib=complib) as store:
             history_df = self.to_df(**kwargs)
-
-            # Set dtypes for saving
-            history_df = history_df.infer_objects()
-
-            object_to_str = {name: 'str' for i, name
-                             in enumerate(history_df.columns)
-                             if history_df.iloc[:, i].dtype == 'object'}
-            history_df = history_df.astype(object_to_str)
-
             store.append('history', history_df, data_columns=True)
 
             online_df = self.to_oneline_df(**kwargs)
-            online_df = online_df.infer_objects()
-            object_to_str = {name: 'str' for i, name
-                             in enumerate(online_df.columns)
-                             if online_df.iloc[:, i].dtype == 'object'}
-            online_df = online_df.astype(object_to_str)
-            online_df = set_dtypes_oneline(online_df)
-
             store.append('oneline', online_df, data_columns=True)
+        
+        return
 
-#         store = pd.HDFStore(fname, mode=mode)
-
-#         history_df = self.to_df(**kwargs)
-
-#         # Set dtypes for saving
-#         history_df = history_df.infer_objects()
-
-#         # TODO: move these data type conversions into to_df, to_oneline_df
-#         object_to_str = {name:'str'
-#                          for i, name in enumerate(history_df.columns)
-#                         if history_df.iloc[:,i].dtype == 'object'}
-#         history_df = history_df.astype(object_to_str)
-
-#         store.append('history', history_df, data_columns=True)
-
-#         online_df = self.to_oneline_df(**kwargs)
-#         online_df = online_df.infer_objects()
-#         object_to_str = {name:'str'
-#                          for i, name in enumerate(online_df.columns)
-#                         if online_df.iloc[:,i].dtype == 'object'}
-#         online_df = online_df.astype(object_to_str)
-#         online_df = set_dtypes_oneline(online_df)
-
-#         store.append('oneline', online_df, data_columns=True)
-
-#         store.close()
 
     def __getitem__(self, key):
         """Return the key-th binary."""
@@ -759,7 +723,8 @@ class BinaryGenerator:
         self.kwargs = kwargs.copy()
         self.sampler = sampler
         self.star_formation = kwargs.get('star_formation', 'burst')
-        self.binary_fraction =  kwargs.get('binary_fraction', 1)
+        self.binary_fraction_generator =  binary_fraction_value
+
     def reset_rng(self):
         """Reset the RNG with the stored entropy."""
         self._num_gen = 0
@@ -784,7 +749,6 @@ class BinaryGenerator:
 
     def draw_initial_samples(self, orbital_scheme='separation', **kwargs):
         """Generate all random varibles."""
-        binary_fraction = self.kwargs.get('binary_fraction', 1)
         if not ('RNG' in kwargs.keys()):
             kwargs['RNG'] = self.RNG
         # a, e, M_1, M_2, P
@@ -802,9 +766,11 @@ class BinaryGenerator:
         N_binaries = len(orbital_period)
         formation_times = get_formation_times(N_binaries, **kwargs)
 
+        #Get the binary_fraction
+        binary_fraction = self.binary_fraction_generator(m1=m1, **kwargs)
+
         # indices
         indices = np.arange(self._num_gen, self._num_gen+N_binaries, 1)
-
         output_dict = {
             'binary_index': indices,
             'binary_fraction':binary_fraction,
@@ -834,12 +800,13 @@ class BinaryGenerator:
         sampler_kwargs = kwargs.copy()
         sampler_kwargs['number_of_binaries'] = 1
         sampler_kwargs['RNG'] = kwargs.get('RNG', self.RNG)
+        # Randomly generated variables
         output = self.draw_initial_samples(**sampler_kwargs)
 
         default_index = output['binary_index'].item()
-        # Randomly generated variables
+        binary_fraction = output['binary_fraction']
 
-        if self.RNG.uniform() < self.binary_fraction:
+        if self.RNG.uniform() < binary_fraction:
             formation_time = output['time'].item()
             separation = output['separation'].item()
             orbital_period = output['orbital_period'].item()
@@ -889,7 +856,6 @@ class BinaryGenerator:
             orbital_period = np.nan
             eccentricity = np.nan
             m1 = output['S1_mass'].item()
-            m2 = output['S2_mass'].item()
             Z_div_Zsun = kwargs.get('metallicity', 1.)
             zams_table = {2.: 2.915e-01,
                           1.: 2.703e-01,

@@ -196,7 +196,7 @@ def keep_till_central_abundance_He_C(bh, h1, h2, Ystop=1.0e-5, XCstop=1.0):
     else:
         depleted1 = False
     h2_colnames = h2.dtype.names
-    if ("center_he4" in h1_colnames) and ("center_c12" in h1_colnames):
+    if ("center_he4" in h2_colnames) and ("center_c12" in h2_colnames):
         if (len(h2["center_he4"])>0) and (len(h2["center_c12"])>0):
             depleted2 = ((h2["center_he4"][-1]<Ystop) and (h2["center_c12"][-1]<XCstop))
         else:
@@ -247,6 +247,14 @@ def keep_till_central_abundance_He_C(bh, h1, h2, Ystop=1.0e-5, XCstop=1.0):
             last_index = where_conditions_met2[0]
             newTF1 = 'Secondary got stopped before central carbon depletion'
     
+    # include the point above the stopping criteria so that the last inferred
+    # stellar state will be XXX_Central_He_depleted. This is essential to find
+    # the core mass at He depletion with the calculate_Patton20_values_at_He_depl
+    # method used to calculate the core collapse properties with the 
+    # Patton&Sukhbold mechanism.
+    if len(bh) >= last_index+2:
+        last_index += 1
+        
     new_bh = bh[:last_index]
     new_h1 = h1[:last_index]
     new_h2 = h2[:last_index]
