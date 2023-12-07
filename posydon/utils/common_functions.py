@@ -256,6 +256,11 @@ def orbital_separation_from_period(period_days, m1_solar, m2_solar):
         The separation of the binary in solar radii.
 
     """
+    # cast to float64 to avoid overflow
+    m1_solar = np.float64(m1_solar)
+    m2_solar = np.float64(m2_solar)
+    period_days = np.float64(period_days)
+    
     separation_cm = (const.standard_cgrav
                      * (m1_solar * const.Msun + m2_solar * const.Msun)
                      / (4.0 * const.pi**2.0)
