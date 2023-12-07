@@ -19,11 +19,11 @@ Installing POSYDON v1.0.0 from Anaconda (Recommended way)
 Installation
 ------------
 
-We recommend using Anaconda and to install POSYDON in a virtual environment. 
-We have created a package which can be accessed through conda-forge. On Linux, 
-the new conda environment can be created (we have named our environment 
-posydon-example, but you can choose any name), the conda-forge channel added, 
-and the required library installation can all be completed in one line using 
+We recommend using Anaconda and to install POSYDON in a virtual environment.
+We have created a package which can be accessed through conda-forge. On Linux,
+the new conda environment can be created (we have named our environment
+posydon-example, but you can choose any name), the conda-forge channel added,
+and the required library installation can all be completed in one line using
 the terminal or command line:
 
 .. code-block::
@@ -52,8 +52,8 @@ Now, you can activate the environment with
 Downloading the POSYDON data
 ----------------------------
 Because the data is large, ~10 GB, it must be downloaded
-with an explicit command. Export the path to where you want 
-to clone the data, e.g. `/home/`, and download the data from 
+with an explicit command. Export the path to where you want
+to clone the data, e.g. `/home/`, and download the data from
 ZENODO with the following commands
 
 .. code-block::
@@ -72,8 +72,8 @@ Installing POSYDON v.1.0 from GitHub (Manual Installation)
 Creating a conda environment
 ----------------------------
 
-As above, we recommend using Anaconda to install POSYDON in a virtual 
-environment. After creating the environment (you can choose any name, e.g., 
+As above, we recommend using Anaconda to install POSYDON in a virtual
+environment. After creating the environment (you can choose any name, e.g.,
 `posydon`, or `posydon_env`) like this:
 
 .. code-block::
