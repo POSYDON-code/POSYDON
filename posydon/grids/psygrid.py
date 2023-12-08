@@ -624,7 +624,7 @@ class PSyGrid:
         # in case lists were used, get a proper `dtype` object
         dtype_initial_values = self.initial_values.dtype
         dtype_final_values = self.final_values.dtype
-        
+
         self._say('Loading MESA data...')
 
         #this int array will store the run_index of the i-th run and will be
@@ -692,7 +692,7 @@ class PSyGrid:
                     if colname in H1_columns:
                         history1_mod = np.int_(history1[colname].copy())
                     else:
-                        history1_mod = read_MESA_data_file(run.history1_path, 
+                        history1_mod = read_MESA_data_file(run.history1_path,
                                                            [colname])
                         if history1_mod is not None:
                             history1_mod = np.int_(history1_mod[colname])
@@ -711,7 +711,7 @@ class PSyGrid:
                     if "star_age" in H1_columns:
                         history1_age = history1["star_age"].copy()
                     else:
-                        history1_age = read_MESA_data_file(run.history1_path, 
+                        history1_age = read_MESA_data_file(run.history1_path,
                                                            ["star_age"])
                         if history1_age is not None:
                             history1_age = history1_age["star_age"]
@@ -735,7 +735,7 @@ class PSyGrid:
                     if colname in H2_columns:
                         history2_mod = np.int_(history2[colname].copy())
                     else:
-                        history2_mod = read_MESA_data_file(run.history2_path, 
+                        history2_mod = read_MESA_data_file(run.history2_path,
                                                            [colname])
                         if history2_mod is not None:
                             history2_mod = np.int_(history2_mod[colname])
@@ -754,7 +754,7 @@ class PSyGrid:
                     if "star_age" in H2_columns:
                         history2_age = history2["star_age"].copy()
                     else:
-                        history2_age = read_MESA_data_file(run.history2_path, 
+                        history2_age = read_MESA_data_file(run.history2_path,
                                                            ["star_age"])
                         if history2_age is not None:
                             history2_age = history2_age["star_age"]
@@ -853,7 +853,7 @@ class PSyGrid:
                     warnings.warn("Ignored MESA run because of scrubbed"
                                   " history in: {}\n".format(run.path))
                     continue
-                
+
                 try: #get mass from binary history
                     init_mass_1 = float(binary_history["star_1_mass"][0])
                 except: #otherwise get it from directory name
@@ -864,7 +864,7 @@ class PSyGrid:
                     kept = keep_till_central_abundance_He_C(binary_history, history1,
                                   history2, THRESHOLD_CENTRAL_ABUNDANCE, 0.1)
                     binary_history, history1, history2, newTF1 = kept
-                    
+
                 # check whether start at RLO is requested, and chop the history
                 if start_at_RLO:
                     kept = keep_after_RLO(binary_history, history1, history2)
@@ -874,6 +874,9 @@ class PSyGrid:
                         warnings.warn("Ignored MESA run because of no RLO"
                                       " in: {}\n".format(run.path))
                         if not initial_RLO_fix:
+                            # TODO: we may want to keep these systems for
+                            # allowing rerun grids to inform the old grids that
+                            # a system is not RLOing anymore!
                             continue
                         binary_history, history1, history2 = None, None, None
                     else:
@@ -1101,7 +1104,14 @@ class PSyGrid:
 
             if ignore_data:
                 # if not fix requested and failed run, do not include it
-                continue
+                if start_at_RLO and (ignore_reason == "ignored_no_RLO"):
+                    # allow non-RLOing systems to be included in the grid
+                    # so that rerun grid can signify systems as non-RLOing
+                    # instead of keeping the old system
+                    pass
+                else:
+                    continue
+                    # no fix... discard this system
 
             # if data to be included, downsample and store
             if not slim:
@@ -1139,7 +1149,7 @@ class PSyGrid:
             self.MESA_dirs.append(run.path)
             run_included_at[i] = run_index
             run_index += 1
-            #check that new MESA path is added at run_index
+            # check that new MESA path is added at run_index
             lenMESA_dirs = len(self.MESA_dirs)
             if lenMESA_dirs!=run_index:
                 warnings.warn("Non synchronous indexing: " +
@@ -1554,7 +1564,7 @@ class PSyGrid:
         # check that the 'path_to_file' exists
         if not os.path.exists(path_to_file):
             os.makedirs(path_to_file)
-        
+
         # check 'runs_to_rerun' has a valid type
         if isinstance(runs_to_rerun, list):
             runs_to_rerun_list = runs_to_rerun
@@ -1563,7 +1573,7 @@ class PSyGrid:
                 runs_to_rerun_list = list(runs_to_rerun)
             except:
                 raise TypeError("'runs_to_rerun' should be a list or None.")
-        
+
         # check termination flags
         if termination_flags is not None:
             if flags_to_check is None:
@@ -1638,7 +1648,7 @@ class PSyGrid:
             for idx in runs_to_rerun_list_unique:
                 runs_data[key].append(np.around(self.initial_values[grid_key][idx], NDIG))
         if len(column_names)>0:
-            n_runs = len(runs_data[list(column_names)[0]])            
+            n_runs = len(runs_data[list(column_names)[0]])
         else:
             n_runs = 0
         # add new_mesa_flag
@@ -2195,7 +2205,7 @@ def join_grids(input_paths, output_path,
                 # add non existing new entry
                 if not exists_already:
                     detected_initial_RLO.append(new_sys)
-    
+
     say("Opening new file...")
     # open new HDF5 file and start copying runs
     driver_args = {} if "%d" not in output_path else {
@@ -2231,10 +2241,10 @@ def join_grids(input_paths, output_path,
             new_mesa_dirs.append(grid.MESA_dirs[run_index])
             new_initial_values.append(grid.initial_values[run_index])
             new_final_values.append(grid.final_values[run_index])
-            
+
             if (newconfig["initial_RLO_fix"]):
                 flag1 = new_final_values[-1]["termination_flag_1"]
-                if (flag1 != "Terminate because of overflowing initial model" and 
+                if (flag1 != "Terminate because of overflowing initial model" and
                     flag1 != "forced_initial_RLO"):
                     mass1 = new_initial_values[-1]["star_1_mass"]
                     mass2 = new_initial_values[-1]["star_2_mass"]
