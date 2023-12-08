@@ -70,7 +70,7 @@ install_requires = [
     'matplotlib ==  3.5.0',
     'more-itertools == 9.1.0',
     'matplotlib-label-lines == 0.5.1',
-    'PyQt5 == 5.15.10',
+    'PyQt5 == 5.15.4',
     'h5py == 3.7.0',
     'psutil == 5.6.7',
     'tqdm == 4.48.2',
