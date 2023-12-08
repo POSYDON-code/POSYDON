@@ -643,7 +643,7 @@ class PopulationManager:
         binary_holder = []
         for i in np.unique(hist.index):
             binary = BinaryStar.from_df(
-                hist.loc[i],
+                hist.loc[[i]],
                 extra_columns=self.kwargs.get('extra_columns', []))
 
             # if the binary has failed

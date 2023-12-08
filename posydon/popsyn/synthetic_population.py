@@ -109,7 +109,7 @@ class PopulationRunner:
                          for f in os.listdir(path_to_batch) \
                             if os.path.isfile(os.path.join(path_to_batch, f))]
             
-            BinaryPopulation(ini_kw).combine_saved_files(met_prefix+ 'population.h5', tmp_files)
+            BinaryPopulation(**ini_kw).combine_saved_files(met_prefix+ 'population.h5', tmp_files)
             if self.verbose:
                 print(f'Population at Z={met:.2e} Z_sun successfully merged!')
             # Store the population ini parameters inside the file.
