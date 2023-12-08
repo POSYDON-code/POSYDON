@@ -1488,27 +1488,6 @@ class SyntheticPopulation():
         if self.met_efficiency is None or self.efficiency is None:
             raise ValueError('First you need to compute the merger efficinty!')
         plot_pop.plot_merger_efficiency(self.met_efficiency, self.efficiency, **kwargs)
-            
-
-
-class IntrinsicPopulation(SyntheticPopulation):
-    
-    def __init__(self, file_name, verbose=False):
-        '''Create an intrinsic population from a synthetic population.'''
-        
-        self.synthetic_file = synthetic_file
-        self.verbose = verbose
-        
-        if os.path.isfile(self.synthetic_file):
-            self.synthetic_population = SyntheticPopulation(synthetic_file, verbose=verbose)
-        else:
-            raise ValueError('Synthetic population does not exist!')
-        
-        self.MODEL = MODEL
-        self.work_dir = work_dir
-        
-     
-    
     
     
     def plot_hist_properties(self, var, intrinsic=False, observable=False, pop=None, **kwargs):
