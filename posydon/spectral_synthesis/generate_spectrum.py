@@ -120,6 +120,10 @@ def generate_spectrum(grids,star,i,**kwargs):
     #First we check if the star is a CO. (for future we can add WD spectra)\
     if star[f'{i}_state'] in ['massless_remnant','BH','WD','NS']:
         return None,star[f'{i}_state'],None
+    if star[f'{i}_Teff'] >= 40000:
+        #Check if the stars is false labeled as H_rich 
+        rename_star_state(star,i)
+    
     Fe_H = np.log(star['Z/Zo'])
     Z_Zo = star['Z/Zo']
     Z= star['Z/Zo']*Zo
@@ -155,3 +159,24 @@ def generate_spectrum(grids,star,i,**kwargs):
         if label == 'failed_grid':
             return None,state,label
     raise ValueError(f'The label:{label} is not "failed_grid" after all the possible checks')
+
+def rename_star_state(star,i):
+    """Rename the star states of WR stars and 
+    stripped He-stars that look like a H-rich star in the POSYDON_data
+
+    Args:
+        star: object
+
+    """
+    xH_surf = copy(star[f'{i}_surface_h1'])
+    T = copy(star[f'{i}_Teff'])
+    lg_M_dot = copy(star[f'{i}_lg_mdot'])
+    k_e = 0.2*(1 + xH_surf)
+    logg = copy(star[f'{i}_log_g'])
+    Gamma = k_e * con.sigma_sb*T**4/(con.c * 10**logg)
+    if xH_surf < 0.4:
+        if lg_M_dot < -6:
+            star[f'{i}_state'] = 'stripped_He_star'
+            print('here!')
+        else:
+            star[f'{i}_state'] = 'WR_star'     

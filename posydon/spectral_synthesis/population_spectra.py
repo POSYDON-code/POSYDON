@@ -86,7 +86,7 @@ class population_spectra():
         # Create empty spectral arrays
         for state in state_list:
             pop_spectrum[state] = np.zeros(len(self.grids.lam_c))
-
+            
         for i,binary in self.population.iterrows():
             spectrum_1,state_1,label1 = generate_spectrum(self.grids,binary,'S1',**self.kwargs)
             spectrum_2,state_2,label2 = generate_spectrum(self.grids,binary,'S2',**self.kwargs)

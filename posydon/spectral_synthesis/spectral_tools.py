@@ -37,6 +37,10 @@ keys_to_save= ['state',
                'S2_log_L',
                'S1_log_R',
                'S2_log_R',
+               'S1_surface_h1',
+               'S2_surface_h1',
+               'S1_lg_mdot',
+               'S2_lg_mdot'
                #'S1_metallicity'
                #'Z/Zo'
                #'Z/Zo',
