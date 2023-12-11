@@ -632,8 +632,9 @@ class PopulationManager:
             Restore binaries back to initial conditions.
 
         """
+        # TODO: this does not work for a integer list!
         if where is None:
-            query_str = 'index==indices'
+            query_str = 'index==int(indices)'
         else:
             query_str = str(where)
 
