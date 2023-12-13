@@ -540,9 +540,12 @@ class MergedStep(IsolatedStep):
         # Star + NS/BH
         elif (s1 in STAR_STATES_NOT_CO
             and s2 in ["NS", "BH"]):
+                ## DEBUGGING
+                ## in this case, we want to keep the CO object the same and set the base star to massless remnant
                 merged_star = comp
                 # TODO: potentially flag a Thorne-Zytkov object
                 massless_remnant = convert_star_to_massless_remnant(star_base)
+                return massless_remnant, merged_star
         else:
             print("Combination of merging star states not expected: ", s1, s2)
 

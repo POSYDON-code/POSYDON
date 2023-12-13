@@ -55,14 +55,14 @@ from posydon.utils.constants import Zsun
 # 'event' usually 10 but 'detached (Integration failure)' can occur
 HISTORY_MIN_ITEMSIZE = {'state': 30, 'event': 25, 'step_names': 20,
                         'S1_state': 31, 'S2_state': 31,
-                        'mass_transfer_case': 7,
+                        'mass_transfer_case': 20,
                         'S1_SN_type': 5, 'S2_SN_type': 5}
 ONELINE_MIN_ITEMSIZE = {'state_i': 30, 'state_f': 30,
-                        'event_i': 10, 'event_f': 10,
+                        'event_i': 10, 'event_f': 25,
                         'step_names_i': 20, 'step_names_f': 20,
                         'S1_state_i': 31, 'S1_state_f': 31,
                         'S2_state_i': 31, 'S2_state_f': 31,
-                        'mass_transfer_case_i': 7, 'mass_transfer_case_f': 7,
+                        'mass_transfer_case_i': 7, 'mass_transfer_case_f': 20,
                         'S1_SN_type': 5, 'S2_SN_type': 5,
                         'interp_class_HMS_HMS' : 15, 'interp_class_CO_HeMS' : 15,
                         'interp_class_CO_HMS_RLO' : 15, 'interp_class_CO_HeMS_RLO' : 15,

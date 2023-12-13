@@ -66,11 +66,13 @@ MT_CASE_C = 3
 MT_CASE_BA = 4
 MT_CASE_BB = 5
 MT_CASE_BC = 6
+MT_CASE_NONBURNING = 8                                    ## TESTING PR 206
 MT_CASE_UNDETERMINED = 9
 
 # All cases meaning RLO is happening
 ALL_RLO_CASES = set([MT_CASE_A, MT_CASE_B, MT_CASE_C,
-                     MT_CASE_BA, MT_CASE_BB, MT_CASE_BC])
+                     MT_CASE_BA, MT_CASE_BB, MT_CASE_BC,
+                     MT_CASE_NONBURNING])                ## TESTING PR 206
 
 # Conversion of integer mass-transfer flags to strings
 MT_CASE_TO_STR = {
@@ -81,6 +83,7 @@ MT_CASE_TO_STR = {
     MT_CASE_BA: "BA",
     MT_CASE_BB: "BB",
     MT_CASE_BC: "BC",
+    MT_CASE_NONBURNING: "nonburning",                     ## TESTING PR 206      
     MT_CASE_UNDETERMINED: "undetermined_MT"
 }
 
@@ -1133,13 +1136,12 @@ def get_binary_state_and_event_and_mt_case(binary, interpolation_class=None,
     elif rlof1 and not rlof2:                       # only in star 1
         result = ['RLO1', None, mt_flag_1_str]
         if interpolation_class == 'unstable_MT':
-            return ['RLO1', 'oCE1', mt_flag_1_str]
-        # if prev_state not in ALL_RLO_CASES:
-        #    return ['RLO1', 'oRLO1', mt_flag_1_str]
+            result = ['RLO1', 'oCE1', mt_flag_1_str]
+            #if mt_flag_1 == MT_CASE_NONBURNING: print (result)         ## debugging
     elif rlof2 and not rlof1:                       # only in star 2
         result = ['RLO2', None, mt_flag_2_str]
         if interpolation_class == 'unstable_MT':
-            return ['RLO2', 'oCE2', mt_flag_2_str]
+            result = ['RLO2', 'oCE2', mt_flag_2_str]
     else:                                           # undetermined in any star
         result = ["undefined", None, 'None']
 
@@ -1441,8 +1443,11 @@ def infer_mass_transfer_case(rl_relative_overflow,
             print("checking rl_relative_overflow / lg_mtransfer_rate,",
                   rl_relative_overflow, lg_mtransfer_rate)
         return MT_CASE_NO_RLO
-
-    if "H-rich" in donor_state:
+    
+    if "non_burning" in donor_state:                               ## TESTING PR 206
+        #print ("found non-burning case")
+        return MT_CASE_NONBURNING                                  ## TESTING PR 206
+    elif "H-rich" in donor_state:
         if "Core_H_burning" in donor_state:
             return MT_CASE_A
         if ("Core_He_burning" in donor_state
@@ -1560,9 +1565,10 @@ def cumulative_mass_transfer_string(cumulative_integers):
             else:
                 result += "/"
             if integer in MT_CASE_TO_STR:
-                result += MT_CASE_TO_STR[integer] + '1' # from star 1
+                result += MT_CASE_TO_STR[integer] #+ '1' # from star 1
             else:
-                result += MT_CASE_TO_STR[integer-10] + '2' # from star 2
+                #result += MT_CASE_TO_STR[integer-10] + '2' # from star 2
+                raise Exception("mass transfer case does not exist!")         ## debugging
     return result
 
 
