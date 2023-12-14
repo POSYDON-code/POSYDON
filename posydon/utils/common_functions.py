@@ -1445,7 +1445,9 @@ def infer_mass_transfer_case(rl_relative_overflow,
                   rl_relative_overflow, lg_mtransfer_rate)
         return MT_CASE_NO_RLO
 
-    if "H-rich" in donor_state:
+    if "non_burning" in donor_state:
+        return MT_CASE_NONBURNING
+    elif "H-rich" in donor_state:
         if "Core_H_burning" in donor_state:
             return MT_CASE_A
         if ("Core_He_burning" in donor_state
@@ -1460,8 +1462,6 @@ def infer_mass_transfer_case(rl_relative_overflow,
         if ("Central_He_depleted" in donor_state
                 or "Central_C_depletion" in donor_state):
             return MT_CASE_BB
-    elif "non_burning" in donor_state:
-        return MT_CASE_NONBURNING
     return MT_CASE_UNDETERMINED
 
 
