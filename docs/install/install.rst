@@ -42,6 +42,17 @@ likely need to be separately run:
     conda config --set channel_priority false
     conda install posydon
 
+In case of OSX-ARM architectures, where many packages of Python 3.7 are not
+available, please use the following commands:
+
+.. code-block::
+
+    conda create --name posydon_conda
+    conda activate posydon_conda
+    conda config --env --set subdir osx-64
+    conda install python=3.7
+    conda install posydon
+
 Now, you can activate the environment with
 
 .. code-block::
