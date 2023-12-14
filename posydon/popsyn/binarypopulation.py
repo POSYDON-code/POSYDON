@@ -20,6 +20,7 @@ __authors__ = [
     "Konstantinos Kovlakas <Konstantinos.Kovlakas@unige.ch>",
     "Devina Misra <devina.misra@unige.ch>",
     "Simone Bavera <Simone.Bavera@unige.ch>",
+    "Max Briel <max.briel@gmail.com>"
 ]
 
 
@@ -76,6 +77,7 @@ STEP_NAMES_LOADING_GRIDS = [
     'step_HMS_HMS', 'step_CO_HeMS', 'step_CO_HMS_RLO', 'step_CO_HeMS_RLO', 'step_detached','step_isolated','step_disrupted','step_initially_single', 'step_merged'
 ]
 
+
 class BinaryPopulation:
     """Handle a binary star population."""
 
@@ -98,17 +100,45 @@ class BinaryPopulation:
         self.population_properties = self.kwargs.get('population_properties',
                                                      SimulationProperties())
         atexit.register(lambda: BinaryPopulation.close(self))
-
+        self.metallicity = self.kwargs.get('metallicity', 1)
+        
+        # grab all metallicities in population or use single metallicity
+        self.metallicities = self.kwargs.get('metallicities', [self.metallicity])
+        
         self.population_properties.max_simulation_time = self.kwargs.get(
             'max_simulation_time')  # years
 
-        entropy = self.kwargs.get('entropy', None)
-        seq = np.random.SeedSequence(entropy=entropy)
-
+        self.entropy = self.kwargs.get('entropy', None)
+        seq = np.random.SeedSequence(entropy=self.entropy)
+        
         self.comm = self.kwargs.pop('comm', None)
-        if self.comm is not None:
+        self.JOB_ID = self.kwargs.pop('JOB_ID', None)
+        if self.comm is not None and self.JOB_ID is not None:
+            raise ValueError('MPI and Job array runs are not compatible.')
+        # local MPI run
+        elif self.comm is not None:
+            # To guarantee reproducibility, we need to set the seed sequence
+            # to be the same across all processes.
+            if self.entropy is None:
+                raise ValueError('A local MPI run requires an entropy value to be set.')
+            
             self.rank = self.comm.Get_rank()
             self.size = self.comm.Get_size()
+            # Make seed sequence unique per metallicity
+            met_shift = self.metallicities.index(self.metallicity)
+            seq = np.random.SeedSequence(entropy=self.entropy + met_shift)   
+            seed_seq = [i for i in seq.spawn(self.size)][self.rank]
+            
+        # Job array runs
+        elif self.JOB_ID is not None:
+            self.rank = self.kwargs.pop('RANK', None)
+            self.size = self.kwargs.pop('size', None)       
+            # Make sure each of the processes has the same entropy
+            # But unique per metallicity
+            if self.entropy is None:
+                met_shift = self.metallicities.index(self.metallicity)
+                seq = np.random.SeedSequence(entropy=self.JOB_ID + met_shift)
+            # Split the seed sequence between processes for uniqueness
             seed_seq = [i for i in seq.spawn(self.size)][self.rank]
         else:
             seed_seq = seq
@@ -169,7 +199,7 @@ class BinaryPopulation:
         breakdown_to_df_bool = kw.get('breakdown_to_df', True)
         from_hdf_bool = kw.get('from_hdf', False)
 
-        if self.comm is None:   # do regular evolution
+        if self.JOB_ID is None and self.comm is None:   # do regular evolution
             indices = kw.get('indices',
                              list(range(self.number_of_binaries)))
             params = {'indices':indices,
@@ -180,7 +210,7 @@ class BinaryPopulation:
 
             self._safe_evolve(**self.kwargs)
         else:
-            # do MPI evolution
+            # do local MPI or cluster job array evolution
             indices = kw.get('indices',
                             list(range(self.number_of_binaries)))
             indices_split = np.array_split(indices, self.size)
@@ -192,7 +222,6 @@ class BinaryPopulation:
                       'breakdown_to_df':breakdown_to_df_bool,
                       'from_hdf':from_hdf_bool}
             self.kwargs.update(params)
-
             self._safe_evolve(**self.kwargs)
 
     def _safe_evolve(self, **kwargs):
@@ -235,13 +264,16 @@ class BinaryPopulation:
 
         # Create temporary directory if it doesn't exist
         # Built to handle MPI
-        if self.comm is None:
+        if self.JOB_ID is None and self.comm is None:
             if not os.path.exists(temp_directory):
                 os.makedirs(temp_directory)
         else:
-            if self.rank == 0:
-                if not os.path.exists(temp_directory):
+            # Create a directory for parallel runs
+            if not os.path.exists(temp_directory):
+                try: 
                     os.makedirs(temp_directory)
+                except FileExistsError:
+                    pass
 
         filenames = []
 
@@ -272,7 +304,7 @@ class BinaryPopulation:
                     and j % dump_rate == 0 and j != 0 and ram_per_cpu is None):
 
                 # Create filenames for each batch
-                if(self.comm is None):
+                if(self.JOB_ID is None and self.comm is None):
                     path = os.path.join(temp_directory, f"{j}_evolution.batch")
                 else:
                     path = os.path.join(temp_directory,
@@ -293,7 +325,7 @@ class BinaryPopulation:
                   and psutil.Process().memory_info().rss / (1024**3)
                   >= 0.9 * ram_per_cpu):
 
-                if(self.comm is None):
+                if(self.JOB_ID is None and self.comm is None):
                     path = os.path.join(temp_directory, f"{j}_evolution.batch")
                 else:
                     path = os.path.join(temp_directory,
@@ -314,7 +346,7 @@ class BinaryPopulation:
                 or len(self.manager.history_dfs) != 0)
                 and optimize_ram):
 
-            if(self.comm is None):
+            if(self.JOB_ID is None and self.comm is None):
                 path = os.path.join(temp_directory, "leftover_evolution.batch")
             else:
                 path = os.path.join(temp_directory,
@@ -331,7 +363,7 @@ class BinaryPopulation:
 
         if optimize_ram:
             # combining files
-            if self.comm is None:
+            if self.JOB_ID is None and self.comm is None:
                 self.combine_saved_files(os.path.join(temp_directory,
                                                       "evolution.combined"),
                                          filenames, mode = "a")
@@ -342,7 +374,7 @@ class BinaryPopulation:
                     filenames, mode = "a")
 
         else:
-            if self.comm is None:
+            if self.JOB_ID is None and self.comm is None:
                 self.manager.save(os.path.join(temp_directory,
                                                "evolution.combined"),
                                   mode='a',
@@ -359,7 +391,7 @@ class BinaryPopulation:
         temp_directory = self.kwargs['temp_directory']
         mode = self.kwargs.get('mode', 'a')
 
-        if self.comm is None:
+        if self.JOB_ID is None and self.comm is None:
             if optimize_ram:
                 os.rename(os.path.join(temp_directory, "evolution.combined"),
                           save_path)
@@ -369,26 +401,18 @@ class BinaryPopulation:
             absolute_filepath = os.path.abspath(save_path)
             dir_name = os.path.dirname(absolute_filepath)
             file_name = os.path.basename(absolute_filepath)
-
+            # get the temporary files in the directory
+            tmp_files = [os.path.join(temp_directory, f)     \
+                         for f in os.listdir(temp_directory) \
+                            if os.path.isfile(os.path.join(temp_directory, f))]            
+            
             if os.path.isdir(absolute_filepath):
                 file_name = 'backup_save_pop_data.h5'
                 file_path = os.path.join(dir_name, file_name)
                 warnings.warn('The provided path is a directory - saving '
                               'to {0} instead.'.format(file_path), Warning)
-
-            self.comm.Barrier()
-
-            if self.rank == 0:
-
-                file_name = os.path.basename(absolute_filepath)
-                tmp_files = [os.path.join(
-                    self.kwargs["temp_directory"], f"evolution.combined.{i}")
-                             for i in range(self.size)]
-
-                self.combine_saved_files(absolute_filepath, tmp_files, mode=mode, **kwargs)
-
-            else:
-                return
+                
+            self.combine_saved_files(absolute_filepath, tmp_files, **kwargs)
 
     def make_temp_fname(self):
         """Get a valid filename for the temporary file."""
@@ -397,7 +421,16 @@ class BinaryPopulation:
         # return os.path.join(dir_name, '.tmp{}_'.format(rank) + file_name)
 
     def combine_saved_files(self, absolute_filepath, file_names, **kwargs):
-        """Combine various temporary files in a given folder."""
+        """Combine various temporary files in a given folder.
+        
+        Parameters
+        ----------
+        absolute_filepath : str
+            Absolute path to the file to be saved.
+        file_names : list
+            List of absolute paths to the temporary files.  
+    
+        """
         dir_name = os.path.dirname(absolute_filepath)
 
         history_cols = pd.read_hdf(file_names[0], key='history').columns
@@ -439,9 +472,9 @@ class BinaryPopulation:
     def __getstate__(self):
         """Prepare the BinaryPopulation to be 'pickled'."""
         # In order to be generally picklable, we need to discard the
-        # communicator object before trying.
+        # communication object before picking
         d = self.__dict__
-        d["comm"] = None
+        d['comm'] = None
         prop = d['population_properties']
         if prop.steps_loaded:
             prop.close()
@@ -620,7 +653,7 @@ class PopulationManager:
         binary_holder = []
         for i in np.unique(hist.index):
             binary = BinaryStar.from_df(
-                hist.loc[i],
+                hist.loc[[i]],
                 extra_columns=self.kwargs.get('extra_columns', []))
 
             # if the binary has failed
