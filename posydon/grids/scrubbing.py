@@ -139,7 +139,7 @@ def keep_after_RLO(bh, h1, h2):
         min_dt = min(np.diff(new_bh["age"]))
         new_age_to_remove = (age_to_remove // min_dt) * min_dt
         if new_age_to_remove==age_to_remove:
-            new_age_to_remove = (age_to_remove // min_dt - 1.0) * min_dt
+            new_age_to_remove -= min_dt
         relative_error = abs(new_age_to_remove - age_to_remove) / age_to_remove
         if relative_error > 0.01:
             raise Exception("Numerical precision fix too aggressive.")
