@@ -634,7 +634,7 @@ class PopulationManager:
         """
         # TODO: this does not work for a integer list!
         if where is None:
-            query_str = 'index==int(indices)'
+            query_str = 'index==indices'
         else:
             query_str = str(where)
 
