@@ -50,6 +50,8 @@ available, please use the following commands:
     conda create --name posydon_conda
     conda activate posydon_conda
     conda config --env --set subdir osx-64
+    conda config --add channels conda-forge
+    conda config --add channels posydon
     conda install python=3.7
     conda install posydon
 
