@@ -443,6 +443,7 @@ def run_mesa(mesa_executable, work_dir, final_dir, **kwargs):
     outfile_name = kwargs.pop('outfile_name', 'out.txt')
     keep_profiles = kwargs.pop('keep_profiles', False)
     keep_photos = kwargs.pop('keep_photos', False)
+    keep_work_dir = kwargs.pop('keep_work_dir', False)
     job_time = kwargs.pop('job_end', 600) - kwargs.pop('job_start', 0)
 
     os.chdir(work_dir)
@@ -472,7 +473,7 @@ def run_mesa(mesa_executable, work_dir, final_dir, **kwargs):
         if child_ID>=1:
             #kill child process, because it is no longer needed
             os.kill(child_ID, 9)
-        move_mesa_output(work_dir, final_dir)
+        move_mesa_output(work_dir, final_dir, keep_work_dir)
     elif child_ID==0:
         #child process: waits till short before the job will get killed by slurm to copy the data beforehand and exit this process after the copy finished
         if job_time>300:
@@ -710,7 +711,7 @@ def run_grid_point(grid, star1_formation, star2_formation,
                 create_star_formation(grid_param_dict['m1'], work_dir, inlist_step)
             elif index == 1:
                 create_star_formation(grid_param_dict['m1'], work_dir, inlist_step, grid_param_dict['initial_z'], True)
-            run_mesa(args.mesa_star1_executable, work_dir, final_dir,
+            run_mesa(args.mesa_star1_executable, work_dir, final_dir, keep_work_dir=True,
                      outfile_name='out_star1_formation_step{0}.txt'.format(index))
 
     # are we first generating a model before running binary for the second star?
@@ -724,7 +725,7 @@ def run_grid_point(grid, star1_formation, star2_formation,
                 create_star_formation(grid_param_dict['m2'], work_dir, inlist_step)
             elif index == 1:
                 create_star_formation(grid_param_dict['m2'], work_dir, inlist_step, grid_param_dict['initial_z'], True)
-            run_mesa(args.mesa_star2_executable, work_dir, final_dir,
+            run_mesa(args.mesa_star2_executable, work_dir, final_dir, keep_work_dir=True,
                      outfile_name='out_star2_formation_step{0}.txt'.format(index))
 
     # now we can create the grid specific binary inlists and run the binary executable
