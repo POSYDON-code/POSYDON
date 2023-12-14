@@ -2629,7 +2629,7 @@ def calculate_Mejected_for_integrated_binding_energy(profile, Ebind_threshold,
         U_energy = U_energy + specific_internal_energy[i]*donor_dm[i]*const.Msun
         Ebind_so_far = Grav_energy + factor_internal_energy * U_energy
         i=i+1
-    ind_threshold = i
+    ind_threshold = i-1
 
     if donor_mass[ind_threshold]< mc1_i or  donor_radius[ind_threshold]<rc1_i:
         warnings.warn("partial mass ejected found more than the envelope mass")
