@@ -1,0 +1,7 @@
+setup\_pipeline
+===============
+
+.. automodule:: setup_pipeline
+   :members:
+   :undoc-members:
+   :show-inheritance:
