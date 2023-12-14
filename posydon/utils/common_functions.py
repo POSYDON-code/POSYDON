@@ -2620,7 +2620,7 @@ def calculate_Mejected_for_integrated_binding_energy(profile, Ebind_threshold,
     i = 0
     Ebind_so_far = 0.0 # the integration from surface going inwards of the binding energy (negative in principle)
 
-    while abs(Ebind_so_far) < Ebind_threshold:
+    while (abs(Ebind_so_far) < Ebind_threshold) and (i<len(donor_mass)):
         Grav_energy_of_cell = (-const.standard_cgrav * donor_mass[i]
                                * const.Msun * donor_dm[i]*const.Msun
                                / (donor_radius[i]*const.Rsun))
@@ -2628,10 +2628,10 @@ def calculate_Mejected_for_integrated_binding_energy(profile, Ebind_threshold,
         Grav_energy = Grav_energy + Grav_energy_of_cell
         U_energy = U_energy + specific_internal_energy[i]*donor_dm[i]*const.Msun
         Ebind_so_far = Grav_energy + factor_internal_energy * U_energy
-        ind_threshold = i
         i=i+1
+    ind_threshold = i
 
-    if donor_mass[ind_threshold]< mc1_i or  donor_radius[i]<rc1_i:
+    if donor_mass[ind_threshold]< mc1_i or  donor_radius[ind_threshold]<rc1_i:
         warnings.warn("partial mass ejected found more than the envelope mass")
         print("M_ejected, M_envelope = ", donor_mass[0] - donor_mass[ind_threshold], donor_mass[0] - mc1_i)
         donor_mass[ind_threshold] = mc1_i
