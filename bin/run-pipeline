@@ -457,6 +457,8 @@ def copy_ini_file(grid_path, rerun_type, destination, cluster):
         replace_text = "development-435d16c9158e4608530f21b8169ce6f31160e23e"
     elif rerun_type == 'conv_bdy_weight':
         replace_text = "development-435d16c9158e4608530f21b8169ce6f31160e23e"
+    elif rerun_type == 'initial_He':
+        replace_text = "fix_iniHe_pre_rerun5-0e736a853c3c2e522b76299a54aea8f5eea15d08"
     elif rerun_type == 'other': # e.g. 'envelope_mass_limit', 'fe_core_infall_limit'
         # this rerun uses the default inlist commit
         return
@@ -583,6 +585,18 @@ def logic_rerun(grid, rerun_type):
                         runs_to_rerun += [i]
         runs_to_rerun = np.array(runs_to_rerun)
         new_mesa_flag = {'convective_bdy_weight' : 0}
+    elif rerun_type == 'initial_He':
+        N_runs = len(grid)
+        runs_to_rerun = []
+        for i in range(N_runs):
+            iniY = -1
+            if 'Y' in grid.initial_values.dtype:
+                iniY = grid[i].initial_values['Y']
+            elif 'S1_center_he4' in grid.initial_values.dtype:
+                iniY = grid[i].initial_values['S1_center_he4']
+            if np.isnan(iniY) or iniY<0.96:
+                runs_to_rerun += [i]
+        runs_to_rerun = np.array(runs_to_rerun)
     elif rerun_type == 'envelope_mass_limit': # maybe 'fe_core_infall_limit' as well?
         runs_to_rerun = None # implement logic
     else:
