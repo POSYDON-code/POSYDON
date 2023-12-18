@@ -590,10 +590,10 @@ def logic_rerun(grid, rerun_type):
         runs_to_rerun = []
         for i in range(N_runs):
             iniY = -1
-            if 'Y' in grid.initial_values.dtype.names:
-                iniY = grid[i].initial_values['Y']
-            elif 'S1_center_he4' in grid.initial_values.dtype.names:
+            if 'S1_center_he4' in grid.initial_values.dtype.names:
                 iniY = grid[i].initial_values['S1_center_he4']
+            elif 'Y' in grid.initial_values.dtype.names:
+                iniY = grid[i].initial_values['Y']
             if np.isnan(iniY) or iniY<0.96:
                 runs_to_rerun += [i]
         runs_to_rerun = np.array(runs_to_rerun)
