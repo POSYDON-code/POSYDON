@@ -984,6 +984,20 @@ if __name__ == '__main__':
                                                           grid_parameters=grid_df.columns,
                                                           working_directory=args.run_directory)
 
+    # handle column lists
+    # first, creating a directory
+    column_lists_folder = os.path.join(args.run_directory, 'column_lists')
+    if os.path.exists(column_lists_folder):  shutil.rmtree(column_lists_folder)
+    os.makedirs(column_lists_folder)    
+    # second, getting new location
+    star_history_columns = os.path.join(column_lists_folder, 'history_columns.list')
+    binary_history_columns = os.path.join(column_lists_folder, 'binary_history_columns.list')
+    profile_columns = os.path.join(column_lists_folder, 'profile_columns.list')
+    # third, copy lists
+    shutil.copy(mesa_inlists['star_history_columns'], star_history_columns)
+    shutil.copy(mesa_inlists['binary_history_columns'], binary_history_columns)
+    shutil.copy(mesa_inlists['profile_columns'], profile_columns)
+
     # now we can write the mpi command line
     if slurm['job_array']:
         command_line = construct_command_line(1,
@@ -996,9 +1010,9 @@ if __name__ == '__main__':
                                               inlist_star2_binary,
                                               inlist_star1_formation,
                                               inlist_star2_formation,
-                                              mesa_inlists['star_history_columns'],
-                                              mesa_inlists['binary_history_columns'],
-                                              mesa_inlists['profile_columns'],
+                                              star_history_columns,
+                                              binary_history_columns,
+                                              profile_columns,
                                               args.run_directory,
                                               'fixed',
                                               path_to_run_grid_exec,
@@ -1016,9 +1030,9 @@ if __name__ == '__main__':
                                               inlist_star2_binary,
                                               inlist_star1_formation,
                                               inlist_star2_formation,
-                                              mesa_inlists['star_history_columns'],
-                                              mesa_inlists['binary_history_columns'],
-                                              mesa_inlists['profile_columns'],
+                                              star_history_columns,
+                                              binary_history_columns,
+                                              profile_columns,
                                               args.run_directory,
                                               args.grid_type,
                                               path_to_run_grid_exec,
