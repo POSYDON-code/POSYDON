@@ -465,7 +465,6 @@ class BinaryPopulation:
         """Close loaded h5 files from SimulationProperties."""
         self.population_properties.close()
 
-
     def __getstate__(self):
         """Prepare the BinaryPopulation to be 'pickled'."""
         # In order to be generally picklable, we need to discard the
@@ -515,7 +514,6 @@ class PopulationManager:
 
         if file_name:
             self.store_file = file_name
-
 
     def append(self, binary):
         """Add a binary instance internaly."""
