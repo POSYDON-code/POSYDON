@@ -401,14 +401,18 @@ class BinaryPopulation:
             absolute_filepath = os.path.abspath(save_path)
             dir_name = os.path.dirname(absolute_filepath)
             file_name = os.path.basename(absolute_filepath)
-
+            # get the temporary files in the directory
+            tmp_files = [os.path.join(temp_directory, f)     \
+                         for f in os.listdir(temp_directory) \
+                            if os.path.isfile(os.path.join(temp_directory, f))]            
+            
             if os.path.isdir(absolute_filepath):
                 file_name = 'backup_save_pop_data.h5'
                 file_path = os.path.join(dir_name, file_name)
                 warnings.warn('The provided path is a directory - saving '
                               'to {0} instead.'.format(file_path), Warning)
                 
-            self.combine_save_files(absolute_filepath, temp_directory, file_name, **kwargs)
+            self.combine_saved_files(absolute_filepath, tmp_files, **kwargs)
 
     def make_temp_fname(self):
         """Get a valid filename for the temporary file."""
@@ -460,7 +464,6 @@ class BinaryPopulation:
     def close(self):
         """Close loaded h5 files from SimulationProperties."""
         self.population_properties.close()
-        #self.manager.close()
 
     def __getstate__(self):
         """Prepare the BinaryPopulation to be 'pickled'."""
@@ -510,13 +513,7 @@ class PopulationManager:
         self.entropy = self.binary_generator.entropy
 
         if file_name:
-            self.store_file = file_name #pd.HDFStore(file_name, mode='r',)
-            #atexit.register(lambda: PopulationManager.close(self))
-
-    #def close(self):
-    #    """Close the HDF5 file."""
-    #    if hasattr(self, 'store'):
-    #        self.store.close()
+            self.store_file = file_name
 
     def append(self, binary):
         """Add a binary instance internaly."""
