@@ -1936,7 +1936,8 @@ class SyntheticPopulation2:
             self.create_binary_populations()
         while self.binary_populations:
             pop =  self.binary_populations.pop()
-            print( f'Z={pop.kwargs["metallicity"]:.2e} Z_sun' )
+            if self.verbose:
+                print(f'Z={pop.kwargs["metallicity"]:.2e} Z_sun')
             pop.evolve()
             del pop
 
@@ -2093,6 +2094,7 @@ class SyntheticPopulation2:
         df_sel_oneline = pd.DataFrame()
         count = 0
         tmp = 0
+        shift_index = 0
         if self.verbose:
             print('Binary count with (S1_state, S2_state, binary_state, binary_event, step_name) equal')
             print(f'to ({S1_state}, {S2_state}, {binary_state}, {binary_event}, {step_name})')
@@ -2189,6 +2191,9 @@ class SyntheticPopulation2:
             if self.verbose:
                 print(f'in {file} are {count-tmp}')
             tmp = count
+            
+            # shift the index for the next metallicity
+            shift_index += max(np.unique(df.index)) + 1
 
         if self.verbose:
             print('Total binaries found are', count)
@@ -2272,7 +2277,7 @@ class SyntheticPopulation2:
         mt_history : bool
             If `True`, split the event oRLO1/oRLO2 into oRLO1-contact/oRLO2-contact,
             oRLO1-reverse/oRLO2-reverse and oRLO1/oRLO2. This is useful to
-            identify binaries undergoing contact stable mass-transfer phases and 
+            identify binaries undergoing contact stable mass-transfer phases and
             reverse mass-transfer phase .
 
         """
@@ -2305,7 +2310,7 @@ class SyntheticPopulation2:
         # when inspecting the data frame.
         self.df_synthetic['t_delay'] = (time_contact - self.df_synthetic[['time']])*1e-6 # Myr
         self.df_synthetic['time'] *= 1e-6 # Myr
-        
+
         # add properties of the oneline dataframe
         if self.df_oneline is not None:
             # TODO: add kicks as well by default?
@@ -2343,7 +2348,7 @@ class SyntheticPopulation2:
                                                    )
             # get time_CC1 and time_CC2 note that for GRB calculations we
             # do not use the "time" column indicating the time of formation
-            # of the DCO systems as there might be cases where 
+            # of the DCO systems as there might be cases where
             # CC2 might happen before CC1 due to mass ratio reversal
             DCO = [[S1_state, None], [None, S2_state]]
             events = ['CC1', 'CC2']
@@ -2454,9 +2459,9 @@ class SyntheticPopulation2:
 
             return index_1, z_formation_1, z_grb_1, w_ijk_1, index_2, z_formation_2, z_grb_2, w_ijk_2
         else:
-            raise ValueError('Population not recognized!')  
+            raise ValueError('Population not recognized!')
 
-    def resample_synthetic_population(self, index, z_formation, z_event, w_ijk, export_cols=None, 
+    def resample_synthetic_population(self, index, z_formation, z_event, w_ijk, export_cols=None,
                                       pop='DCO', reset_grb_properties=None):
         """Resample synthetc population to obtain intrinsic/observable population.
 
@@ -2519,7 +2524,7 @@ class SyntheticPopulation2:
                     save_cols.append(c)
         for c in save_cols:
             df[c] = self.rates.get_data(c, index)
-        
+
         # the same binary system can emit two GRBs, we remove the
         # GRB properties of the other GRB to prevent mistakes
         if reset_grb_properties is not None:
@@ -2568,7 +2573,7 @@ class SyntheticPopulation2:
                 sel = (self.rates.get_data('channel', index) == ch)
                 rate = self.rates.compute_rate_density(w_ijk[sel], z_merger[sel], observable='DCO', sensitivity=sensitivity)
                 self.dco_rate_density[ch] = rate
-            
+
         print(f'DCO merger rate density in the local Universe (z={self.dco_z_rate_density[0]:1.2f}): {round(total_rate[0],2)} Gpc^-3 yr^-1')
 
         # export the intrinsic DCO population
@@ -2621,7 +2626,7 @@ class SyntheticPopulation2:
                 else:
                     self.grb_rate_density[ch+'_GRB2'] = np.zeros(len(self.grb_z_rate_density))
                 self.grb_rate_density[ch] = self.grb_rate_density[ch+'_GRB1'] + self.grb_rate_density[ch+'_GRB2']
-            
+
         print(f'GRB (beamed) rate density in the local Universe (z={self.grb_z_rate_density[0]:1.2f}): {round(total_rate[0],2)} Gpc^-3 yr^-1')
 
         # export the intrinsic grb intrisic population
@@ -2636,9 +2641,9 @@ class SyntheticPopulation2:
         # the observable population accounts for beaming
         self.df_grb_observable = self.df_grb_intrinsic.copy()
         for i in [1,2]:
-            sel = self.df_grb_observable[f'S{i}_f_beaming'] > 0 
+            sel = self.df_grb_observable[f'S{i}_f_beaming'] > 0
             self.df_grb_observable.loc[sel,'weight'] *= self.df_grb_observable.loc[sel,f'S{i}_f_beaming']
-        
+
     def get_dco_detection_rate(self, sensitivity='design_H1L1V1', export_cols=None,  working_dir='./', load_data=False):
         """Compute the detection rate per yr.
 
@@ -2723,7 +2728,7 @@ class SyntheticPopulation2:
                     print('Intrinsic population successfully loaded!')
             else:
                 raise ValueError('You already have an intrinsic population stored in memory!')
-            
+
     def save_observable_pop(self, path='./observable_population_type.h5', pop='DCO'):
         """Save observable population.
 
@@ -2746,7 +2751,7 @@ class SyntheticPopulation2:
             else:
                 self.df_grb_observable.to_hdf(path.replace('type', pop), key='history')
                 if self.verbose:
-                    print('observable population successfully saved!') 
+                    print('observable population successfully saved!')
         else:
             raise ValueError('Population not recognized!')
 
@@ -2774,7 +2779,7 @@ class SyntheticPopulation2:
             else:
                 raise ValueError('You already have an observable population stored in memory!')
         else:
-            raise ValueError('Population not recognized!')       
+            raise ValueError('Population not recognized!')
 
     def plot_hist_properties(self, var, intrinsic=False, observable=False, pop=None, **kwargs):
         """Plot histogram of intrinsic/observable properites.
@@ -2812,7 +2817,7 @@ class SyntheticPopulation2:
             if observable:
                 df_observable = self.df_grb_observable
             else:
-                df_observable = None       
+                df_observable = None
         else:
             raise ValueError('Population not recognized!')
         plot_pop.plot_hist_properties(var, df_intrinsic=df_intrinsic, df_observable=df_observable, pop=pop, **kwargs)
