@@ -129,7 +129,7 @@ def generate_spectrum(grids,star,i,**kwargs):
     Z= star['Z/Zo']*Zo
     Teff = copy(star[f'{i}_Teff'])
     logg = copy(star[f'{i}_log_g'])
-    M = copy(star[f'{i}_mass'])
+    M_init = copy(star[f'{i}_M_init'])
     state = copy(star[f'{i}_state'])
     R = 10**copy(star[f'{i}_log_R'])*con.R_sun
     x = {'Teff':Teff ,
@@ -137,7 +137,7 @@ def generate_spectrum(grids,star,i,**kwargs):
          '[Fe/H]': Fe_H,
          'Z/Zo':Z_Zo,
          'Z':Z,
-         'M_init':M,
+         'M_init':M_init,
          'state':state,
          '[alpha/Fe]':0.0}
     label = None
@@ -178,5 +178,5 @@ def rename_star_state(star,i):
         if lg_M_dot < -6:
             star[f'{i}_state'] = 'stripped_He_star'
             print('here!')
-        else:
-            star[f'{i}_state'] = 'WR_star'     
+        #else:
+        #   star[f'{i}_state'] = 'WR_star'     

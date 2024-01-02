@@ -82,9 +82,10 @@ def load_posydon_population(population_file):
             del final_stars[str(col)]
     #Find the stripped stars and put their final mass as M_init (mass at ZAMS).
     for star in ['S1','S2']:
-        stripped_index = copy(final_stars[final_stars[f'{star}_state'].isin(stripped_stars)].index.values)
-        M_init = zams_stars.loc[stripped_index][f'{star}_mass'].values
-        final_stars.loc[stripped_index][f'{star}_mass'] = M_init
+        #stripped_index = copy(final_stars[final_stars[f'{star}_state'].isin(stripped_stars)].index.values)
+        index_values = copy(final_stars.index.values)
+        M_init = zams_stars.loc[index_values][f'{star}_mass'].values
+        #final_stars.loc[stripped_index][f'{star}_mass'] = M_init
     pop = copy(final_stars.reset_index())
     #Get the metallicity values from ZAMS
     pop['Z/Zo'] = np.ones(len(pop))*zams_stars['S1_metallicity'].iloc[0]/Zo
@@ -93,6 +94,7 @@ def load_posydon_population(population_file):
         M = np.asarray(pop[f'{star}_mass'])*con.M_sun
         R = np.asarray(10**pop[f'{star}_log_R'])*con.R_sun
         L = np.asarray(10**pop[f'{star}_log_L'])*con.L_sun
+        pop[f'{star}_M_init'] = M_init
         pop[f'{star}_log_g'] = np.log10(con.G*M/R**2/(unt.cm/unt.s**2))
         pop[f'{star}_Teff'] = (L/(4*np.pi*R**2*con.sigma_sb))**0.25/unt.K
     return pop
