@@ -109,8 +109,6 @@ POSYDON_TO_MESA = {
         'lambda_CE_1cent': 'lambda_CE_1cent',
         'lambda_CE_10cent': 'lambda_CE_10cent',
         'lambda_CE_30cent': 'lambda_CE_30cent',
-        'co_core_mass': 'co_core_mass',
-        'co_core_radius': 'co_core_radius',
         'lambda_CE_pure_He_star_10cent': 'lambda_CE_pure_He_star_10cent',
         'profile': True
     }
