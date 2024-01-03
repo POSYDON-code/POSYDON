@@ -366,7 +366,7 @@ class ParsedPopulation():
             path_to_data = [path_to_data]
         
         # The ini file and path_to_data metallities should match.
-        if len(path_to_data) != len(self.solar_metallicities):
+        if len(path_to_data) != len(self.solar_metallicities): #ok
             raise ValueError('The number of metallicities and data files do not match!')        
         
         # catch the case where the user did not provide a path to data 
