@@ -35,7 +35,6 @@ import atexit
 import os
 from tqdm import tqdm
 import psutil
-import random
 import sys
 
 if 'posydon.binary_evol.binarystar' not in sys.modules.keys():

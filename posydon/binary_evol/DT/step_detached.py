@@ -12,9 +12,9 @@ __authors__ = [
     "Jeffrey Andrews <jeffrey.andrews@northwestern.edu>",
 ]
 
-
 import os
 import numpy as np
+import pandas as pd
 import time
 from scipy.integrate import solve_ivp
 from scipy.interpolate import PchipInterpolator
@@ -122,7 +122,6 @@ DEFAULT_TRANSLATION = {
     "profile": None,
     "metallicity": None,
     "spin": "spin_parameter",
-    "log_total_angular_momentum": "log_total_angular_momentum",
     "conv_env_top_mass": "conv_env_top_mass",
     "conv_env_bot_mass": "conv_env_bot_mass",
     "conv_env_top_radius": "conv_env_top_radius",
@@ -834,7 +833,7 @@ class detached_step:
                             colscalers=colscalers, scales=scales)
 
                     x0 = get_root0(
-                        MESA_label, posydon_attribute, htrack, rs=rs)
+                        MESA_labels, posydon_attributes, htrack, rs=rs)
 
                     # bnds = ([m_min_H, m_max_H], [0, None])
                     sol = minimize(sq_diff_function, x0,
@@ -1083,19 +1082,19 @@ class detached_step:
                         print("Matching duration: "
                               f"{t_after_matching-t_before_matching:.6g}")
 
+            if pd.isna(m0) or pd.isna(t0):
+                    #    binary.event = "END"
+                    #    binary.state += " (GridMatchingFailed)"
+                    #    if self.verbose:
+                    #        print("Failed matching")
+                return None, None, None
+            
             if htrack:
                 self.grid = self.grid_Hrich
-            elif not htrack:
+            else:
                 self.grid = self.grid_strippedHe
 
             get_track = self.grid.get
-
-            if np.isnan(m0) or np.isnan(t0):
-                #    binary.event = "END"
-                #    binary.state += " (GridMatchingFailed)"
-                #    if self.verbose:
-                #        print("Failed matching")
-                return None, None, None
 
             max_time = binary.properties.max_simulation_time
             assert max_time > 0.0, "max_time is non-positive"
@@ -1351,7 +1350,7 @@ class detached_step:
                         # EDIT: We assume POSYDON surf_avg_omega is provided in
                         # rad/yr already.
                     else:
-                        if is_secondary == True:
+                        if is_secondary:
                             radius_to_be_used = interp1d_sec["R"](interp1d_sec["t0"])
                             mass_to_be_used = interp1d_sec["mass"](interp1d_sec["t0"])
                         else:
