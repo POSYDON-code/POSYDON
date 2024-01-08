@@ -729,10 +729,13 @@ class ParsedPopulation():
                                                             'interp_class_HMS_HMS',
                                                             start=i,
                                                             stop=i+self.chunksize)
-                
+                                
                 interp_class_HMS_HMS.index = selection
                 
-                interp_class_HMS_HMS = interp_class_HMS_HMS.apply(lambda x : HMS_HMS_event_dict[x])
+                # mask the nan values
+                mask = ~ interp_class_HMS_HMS.isna()
+                interp_class_HMS_HMS[mask] = interp_class_HMS_HMS[mask].apply(lambda x : HMS_HMS_event_dict[x])
+                del mask 
                 
                 hist = store.select_column('history',
                                             'event',
