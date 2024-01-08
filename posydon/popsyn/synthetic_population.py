@@ -543,6 +543,10 @@ class ParsedPopulation():
         """Return the first n rows of the parsed population."""
         return pd.read_hdf(self.parsed_pop_file, key=type, start=0, stop=n)
     
+    def iterator(self, key='history'):
+        """Return an iterator over the parsed population."""
+        return pd.read_hdf(self.parsed_pop_file, key=key, iterator=True)
+    
     def read_binary(self, index, type='history', columns=None):
         """Return a specific binary and specified columns
         
@@ -733,9 +737,9 @@ class ParsedPopulation():
                 interp_class_HMS_HMS.index = selection
                 
                 # mask the nan values
-                mask = ~ interp_class_HMS_HMS.isna()
+                mask = ~interp_class_HMS_HMS.isna()
                 interp_class_HMS_HMS[mask] = interp_class_HMS_HMS[mask].apply(lambda x : HMS_HMS_event_dict[x])
-                del mask 
+                del mask
                 
                 hist = store.select_column('history',
                                             'event',
