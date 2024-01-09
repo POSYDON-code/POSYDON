@@ -366,7 +366,7 @@ class ParsedPopulation():
             path_to_data = [path_to_data]
         
         # The ini file and path_to_data metallities should match.
-        if len(path_to_data) != len(self.solar_metallicities): #ok
+        if len(path_to_data) != len(self.solar_metallicities):
             raise ValueError('The number of metallicities and data files do not match!')        
         
         # catch the case where the user did not provide a path to data 
@@ -851,22 +851,7 @@ class ParsedPopulation():
         DCO_synthetic_population.population_selection = 'DCO'
         DCO_synthetic_population._save_population_selection()
         
-        where_BHNS = '((S1_state == "BH")'\
-                    + ' & (S2_state == "NS")'\
-                    + ' & (state == "detached")'\
-                    + ' & (step_names == "step_SN"))'\
-                    + ' | ((S1_state == "NS")' \
-                    + ' & (S2_state == "BH")' \
-                    + ' & (state == "detached")' \
-                    + ' & (step_names == "step_SN"))'
-        where_BNS = '((S1_state == "NS")'\
-                    + ' & (S2_state == "NS")'\
-                    + ' & (state == "detached")'\
-                    + ' & (step_names == "step_SN"))'
-        where_BBH = '((S1_state == "BH")'\
-                    + ' & (S2_state == "BH")'\
-                    + ' & (state == "detached")'\
-                    + ' & (step_names == "step_SN"))'
+        where_BHNS = '(S2_SN_type= "CCSN")'
         
         # get the history columns + min_itemsize
         history_cols = parsed_file.select('history',start=0, stop=0).columns
@@ -883,7 +868,7 @@ class ParsedPopulation():
         min_itemsize.update(oneline_min_itemsize)
         min_itemsize.update({'channel': 100, 'channel_debug': 100}) 
         
-        save_cols = ['S1_spin_orbit_tilt', 'S2_spin_orbit_tilt']
+        save_cols = ['S1_SN_type', 'S2_SN_type']
         if additional_oneline_cols is not None:
             for c in additional_oneline_cols:
                 if c not in save_cols:
@@ -897,38 +882,77 @@ class ParsedPopulation():
         # never add time to the save_cols from the oneline dataframe
         # add based on the history data
 
-        for selection in [where_BHNS, where_BNS, where_BBH]:
+        for selection in [where_BHNS]:
             if self.verbose:
                 print(f'Parsing {selection}')
                 
             # select BBH models and store them in the DCO population
-            for df_synthetic in parsed_file.select('history', 
+            for df_oneline in parsed_file.select('oneline', 
                                                 where=selection,
                                                 chunksize=self.chunksize):
-                selected_indices = df_synthetic.index.values.tolist()
+                selected_indices = df_oneline.index.values.tolist()
                 if len(selected_indices) == 0:
                     continue
                 
                 # compute the inspiral timescale from the integrated orbit
                 # this estimate is better than evaluating Peters approxiamtion
-                time_contact = parsed_file.select('history',
-                                                where='event == END & index in selected_indices',
-                                                columns=['time'])
+                #time_contact = parsed_file.select('history',
+                                               # where='event == END & index in selected_indices',
+                                                #columns=['time'])
                 # NOTE/TODO: we change the units of time in the dataframe to Myr
                 # this might be confusion to the user? Note that Myr are convinient
                 # when inspecting the data frame.
-                df_synthetic['t_delay'] = (time_contact - df_synthetic[['time']])*1e-6 # Myr
-                df_synthetic['time'] *= 1e-6 # Myr
-                
+                #df_synthetic['t_delay'] = (time_contact - df_synthetic[['time']])*1e-6 # Myr
+                #df_synthetic['time'] *= 1e-6 # Myr
+                def multi_columns_read(key, parsed_store, columns, previous, end, additional_oneline_cols=None):
+                    df = pd.DataFrame()
+                    for c in columns:
+                        df[c] = parsed_store.select_column(key, c, start=previous, stop=end)
+                        df.index = parsed_store.select_column(key, 'index', start=previous, stop=end)
+                        return df 
+
+                history_events = parsed_file.select_column('history', 'index')
+                history_lengths = history_events.groupby(history_events).count()
+                unique_binary_indices = self.indices
+                previous = 0
+
+                for i in tqdm(range(0,len(unique_binary_indices), self.chunksize), disable=not self.verbose):
+                    selection = unique_binary_indices[i:i+self.chunksize]
+                    end = previous + history_lengths[i:i+self.chunksize].sum()
+
+
+                df_synthetic = multi_columns_read('history',
+                                    parsed_file, 
+                                    ['S1_state', 'S2_state', 'event', 'step_names', 'time', 'S1_mass', 'S2_mass', 'metallicity', 'orbital_period', 'eccentricity'],
+                                    previous,
+                                    end)
+
+
+                logic1 = self.apply_logic(df_synthetic,
+                                        S1_state=None,
+                                        S2_state='BH',
+                                        step_name='step_SN',
+                                        invert_S1S2=False) 
                 # If columns are not present, they're skipped.
-                df_oneline = parsed_file.select('oneline',
-                                                where='index in selected_indices',
-                                                columns=save_cols)
+                #df_synthetic = parsed_file.select('history',
+                 #                               where='event == CC2 & index in selected_indices & step_names== step_SN',
+                  #                              columns=["time"])
                 
+                #df_synthetic['time'] *= 1e-6 # Myr
+                
+                mask2 = logic1.shift(-1)
+                mask2.iloc[-1]  = False
+            
+            # Select just the event where S1_S2 was not BH before undergoing the SN
+                S2_SN = df_synthetic.loc[mask2].loc[indices][f'{S2}_state'] != 'BH'
+                post_sn = df_synthetic.loc[logic1].loc[indices][S2_SN]
+                df_synthetic['time'] = post_sn['time'].values * 1e-6 # Myr
+
                 df_mt_channels = parsed_file.select('formation_channels',
                                                     where=f'index in selected_indices',
                                                     columns=save_cols)
                
+                #df_synthetic= df_synthetic.reindex(df_oneline.index)
 
                 # add the columns to the synthetic population
                 df_synthetic = pd.concat([df_synthetic, df_oneline], axis=1)
