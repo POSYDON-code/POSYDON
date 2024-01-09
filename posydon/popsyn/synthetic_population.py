@@ -80,9 +80,15 @@ class PopulationRunner:
             self.create_binary_populations()
         while self.binary_populations:
             pop =  self.binary_populations.pop()
+            
             if self.verbose:
-                print( f'Z={pop.kwargs["metallicity"]:.2e} Z_sun' )
-            pop.evolve()
+                print(f'Z={pop.kwargs["metallicity"]:.2e} Z_sun')
+                            
+            process = mp.Process(target=pop.evolve)
+            process.start()
+            process.join()
+            
+            pop.close()
             del pop
 
     def merge_parallel_runs(self, path_to_batches):
