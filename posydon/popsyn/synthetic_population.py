@@ -1100,7 +1100,7 @@ class ParsedPopulation():
                                         step_name='step_SN',
                                         invert_S1S2=False)   
         
-            # select the previous row
+            # select the previous row 
             mask2 = logic1.shift(-1)
             mask2.iloc[-1]  = False
             
