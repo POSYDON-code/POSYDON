@@ -629,7 +629,10 @@ class PopulationManager:
             Restore binaries back to initial conditions.
 
         """
-        # TODO: this does not work for a integer list!
+        # check if numpy64, since where does not support this
+        if isinstance(indices, np.int64):
+            indices = int(indices)
+
         if where is None:
             query_str = 'index==indices'
         else:
