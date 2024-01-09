@@ -284,7 +284,7 @@ class ParsedPopulationIO():
 
 class ParsedPopulation():
 
-    def __init__(self, path_to_parsed_pop_file, path_to_ini=None, verbose=False, chunksize=500000):
+    def __init__(self, path_to_parsed_pop_file, path_to_ini=None, verbose=False, chunksize=500000, overwrite=False):
         '''A parsed stellar population from raw BinaryPopulations.
 
         Calculates the total number of binaries in the population, and the
@@ -315,7 +315,7 @@ class ParsedPopulation():
                 ParsedPopulationIO().load_params_from_ini(self,path_to_ini)
 
             # makes sure the parsed population isn't overwritten or double added
-            if os.path.isfile(path_to_parsed_pop_file):
+            if os.path.isfile(path_to_parsed_pop_file) and overwrite==False:
                 raise FileExistsError('The parsed population file already exists!')
 
             # create parsed_pop_file
