@@ -15,6 +15,7 @@ import numpy as np
 import pandas as pd
 from tqdm import tqdm
 import os
+import copy
 
 from matplotlib import pyplot as plt
 
@@ -64,8 +65,8 @@ class PopulationRunner:
     def create_binary_populations(self):
         """Create a list of BinaryPopulation objects."""
         self.binary_populations = []
-        ini_kw = self.synthetic_pop_params.copy()
         for met in self.solar_metallicities[::-1]:
+            ini_kw = copy.deepcopy(self.synthetic_pop_params)
             ini_kw['metallicity'] = met
             ini_kw['temp_directory'] = self.create_met_prefix(met) + self.synthetic_pop_params['temp_directory']
             self.binary_populations.append(BinaryPopulation(**ini_kw))  
