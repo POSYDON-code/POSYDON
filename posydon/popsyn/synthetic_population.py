@@ -26,6 +26,7 @@ from posydon.popsyn.normalized_pop_mass import initial_total_underlying_mass
 from posydon.popsyn.rate_calculation import Rates
 import posydon.visualization.plot_pop as plot_pop
 from posydon.popsyn.GRB import get_GRB_properties, GRB_PROPERTIES
+from posydon.popsyn.ccSN import get_ccSN_properties, CCSN_PROPERTIES
 
 # TODO: temp import, remove after TF2 classification is implemented in pop synth
 from posydon.interpolation.IF_interpolation import IFInterpolator
@@ -816,34 +817,34 @@ class ParsedPopulation():
         # Using the data from the parsed population,
         # we find the DCO at their formation.
         if output_file == None:
-            SN_synthetic_population = SyntheticPopulation(self.parsed_pop_file,
+            ccSN_synthetic_population = SyntheticPopulation(self.parsed_pop_file,
                                                            verbose=self.verbose)
             parsed_file = pd.HDFStore(self.parsed_pop_file, mode='a')
             output_store = parsed_file
 
         else:
-            SN_synthetic_population = SyntheticPopulation(output_file,
+            ccSN_synthetic_population = SyntheticPopulation(output_file,
                                                            verbose=self.verbose)
 
             # write population data to the new file!
-            SN_synthetic_population.io.save_ini_params(self)
-            SN_synthetic_population.io.save_parse_kwargs(self)
-            SN_synthetic_population.io.save_per_metallicity_info(self)
-            SN_synthetic_population.io.save_path_to_data(self)
-            SN_synthetic_population.io.save_parsed_pop_path(self.parsed_pop_file)
+            ccSN_synthetic_population.io.save_ini_params(self)
+            ccSN_synthetic_population.io.save_parse_kwargs(self)
+            ccSN_synthetic_population.io.save_per_metallicity_info(self)
+            ccSN_synthetic_population.io.save_path_to_data(self)
+            ccSN_synthetic_population.io.save_parsed_pop_path(self.parsed_pop_file)
 
             # load data into SN class
-            SN_synthetic_population.io.load_ini_params(SN_synthetic_population)
-            SN_synthetic_population.io.load_parse_kwargs(SN_synthetic_population)
-            SN_synthetic_population.io.load_per_metallicity_info(SN_synthetic_population)
-            SN_synthetic_population.io.load_path_to_data(SN_synthetic_population)
-            SN_synthetic_population.io.load_parsed_pop_path(SN_synthetic_population)
+            ccSN_synthetic_population.io.load_ini_params(ccSN_synthetic_population)
+            ccSN_synthetic_population.io.load_parse_kwargs(ccSN_synthetic_population)
+            ccSN_synthetic_population.io.load_per_metallicity_info(ccSN_synthetic_population)
+            ccSN_synthetic_population.io.load_path_to_data(ccSN_synthetic_population)
+            ccSN_synthetic_population.io.load_parsed_pop_path(ccSN_synthetic_population)
 
             # Open the file for writing the synthetic population
             parsed_file = pd.HDFStore(self.parsed_pop_file, mode='r')
             output_store = pd.HDFStore(SN_synthetic_population.pop_file, mode='a')
 
-
+        '''
         if '/synthetic' in output_store.keys():
             print('A synthetic population already exists in this file.\
                 The current population will overwrite the existing one.!')
@@ -852,7 +853,10 @@ class ParsedPopulation():
         SN_synthetic_population.population_selection = 'SN'
         SN_synthetic_population._save_population_selection()
 
-        where_BHNS = '(S2_SN_type= "CCSN")'
+        where_ccSN = '(S1_SN_type == "CCSN")'\
+                    + ' | ((S1_SN_type == "ECSN")'\
+                    + ' | ((S2_SN_type == "CCSN")'\
+                    + ' | ((S2_SN_type == "ECSN")'
 
         # get the history columns + min_itemsize
         history_cols = parsed_file.select('history',start=0, stop=0).columns
@@ -882,8 +886,7 @@ class ParsedPopulation():
 
         # never add time to the save_cols from the oneline dataframe
         # add based on the history data
-
-        for selection in [where_BHNS]:
+        for selection in [where_ccSN]:
             if self.verbose:
                 print(f'Parsing {selection}')
 
@@ -895,241 +898,220 @@ class ParsedPopulation():
                 if len(selected_indices) == 0:
                     continue
 
-                # compute the inspiral timescale from the integrated orbit
-                # this estimate is better than evaluating Peters approxiamtion
-                #time_contact = parsed_file.select('history',
-                                               # where='event == END & index in selected_indices',
-                                                #columns=['time'])
-                # NOTE/TODO: we change the units of time in the dataframe to Myr
-                # this might be confusion to the user? Note that Myr are convinient
-                # when inspecting the data frame.
-                #df_synthetic['t_delay'] = (time_contact - df_synthetic[['time']])*1e-6 # Myr
+
                 #df_synthetic['time'] *= 1e-6 # Myr
-                def multi_columns_read(key, parsed_store, columns, previous, end, additional_oneline_cols=None):
-                    df = pd.DataFrame()
-                    for c in columns:
-                        df[c] = parsed_store.select_column(key, c, start=previous, stop=end)
-                        df.index = parsed_store.select_column(key, 'index', start=previous, stop=end)
-                        return df
 
-                history_events = parsed_file.select_column('history', 'index')
-                history_lengths = history_events.groupby(history_events).count()
-                unique_binary_indices = self.indices
-                previous = 0
-
-                for i in tqdm(range(0,len(unique_binary_indices), self.chunksize), disable=not self.verbose):
-                    selection = unique_binary_indices[i:i+self.chunksize]
-                    end = previous + history_lengths[i:i+self.chunksize].sum()
+                # If columns are not present, they're skipped.
+                df_synthetic = parsed_file.select('history',
+                                                where='index in selected_indices',
+                                                columns=save_cols)
 
 
-                df_synthetic = multi_columns_read('history',
-                                    parsed_file,
+                # add the columns to the synthetic population
+                df_synthetic = pd.concat([df_synthetic, df_oneline], axis=1)
+
+                # store the synthetic populations
+                output_store.append('synthetic',
+                                df_synthetic,
+                                format='table',
+                                data_columns=True,
+                                min_itemsize=min_itemsize
+                                )
+
+        '''
+        if 'synthetic' in output_store.keys():
+            print('A synthetic population already exists in this file.\
+                The current population will be removed!')
+            del output_store['synthetic']
+
+        ccSN_synthetic_population.population_selection = 'ccSN'
+        ccSN_synthetic_population._save_population_selection()
+        '''
+        ccSN_synthetic_population.model_parameters = GRB_properties
+
+        if ('GRB_efficiency' not in GRB_properties or
+            GRB_properties['GRB_efficiency'] is None):
+            raise ValueError('Missing GRB_efficiency variable in the MODEL!')
+        if ('GRB_beaming' not in GRB_properties or
+            GRB_properties['GRB_beaming'] is None):
+            raise ValueError('Missing GRB_beaming variable in the MODEL!')
+        if ('E_GRB_iso_min' not in GRB_properties or
+            GRB_properties['E_GRB_iso_min'] is None):
+            raise ValueError('Missing GRB_beaming variable in the MODEL!')
+        '''
+        # S1 and S2 mass are autmatically added to their respective columns
+        # changing columns over the SN
+        columns_pre_post = ['orbital_period', 'eccentricity']
+        # unchanged columns
+        columns = ['metallicity']
+        # LGRB parameters
+        oneline_columns = ['S1_SN_type']
+        if additional_oneline_cols is not None:
+            for c in additional_oneline_cols:
+                if c not in oneline_columns:
+                    oneline_columns.append(c)
+
+
+        min_itemsize = {'channel': 100,}
+        min_itemsize.update({key:val for key, val in
+                             HISTORY_MIN_ITEMSIZE.items()
+                             if key in columns_pre_post})
+        min_itemsize.update({key:val for key, val in
+                             HISTORY_MIN_ITEMSIZE.items()
+                                if key in columns})
+        min_itemsize.update({key:val for key, val in
+                             ONELINE_MIN_ITEMSIZE.items()
+                            if key in oneline_columns})
+
+
+
+        def multi_columns_read(key, parsed_store, columns, previous, end, additional_oneline_cols=None):
+            '''Read multiple columns from the history dataframe
+            '''
+            df = pd.DataFrame()
+            for c in columns:
+                df[c] = parsed_store.select_column(key, c, start=previous, stop=end)
+            df.index = parsed_store.select_column(key, 'index', start=previous, stop=end)
+            return df
+
+        def ccSN_data_store(tmp_df, parsed_store, previous, end, S1_S2='S1'):
+            indices = tmp_df.index
+
+            # Read history of the chunk
+            hist = multi_columns_read('history',
+                                    parsed_store,
                                     ['S1_state', 'S2_state', 'event', 'step_names', 'time', 'S1_mass', 'S2_mass', 'metallicity', 'orbital_period', 'eccentricity'],
                                     previous,
                                     end)
 
+            ccSN_df_synthetic = pd.DataFrame()
 
-                logic1 = self.apply_logic(df_synthetic,
-                                        S1_state=None,
-                                        S2_state='BH',
+            if S1_S2 == 'S1':
+            # get the SN event of the GRB
+            # This also select the second step_SN if S1_S2 goes SN first.
+                logic1 = self.apply_logic(hist,
+                                        S1_state='NS',
+                                        S2_state=None,
                                         step_name='step_SN',
                                         invert_S1S2=False)
-                # If columns are not present, they're skipped.
-                #df_synthetic = parsed_file.select('history',
-                 #                               where='event == CC2 & index in selected_indices & step_names== step_SN',
-                  #                              columns=["time"])
+            elif S1_S2 == 'S2':
+                logic1 = self.apply_logic(hist,
+                                        S1_state=None,
+                                        S2_state='NS',
+                                        step_name='step_SN',
+                                        invert_S1S2=False)
 
-                #df_synthetic['time'] *= 1e-6 # Myr
-
-                mask2 = logic1.shift(-1)
-                mask2.iloc[-1]  = False
+            # select the previous row
+            mask2 = logic1.shift(-1)
+            mask2.iloc[-1]  = False
 
             # Select just the event where S1_S2 was not BH before undergoing the SN
-                S2_SN = df_synthetic.loc[mask2].loc[indices][f'{S2}_state'] != 'BH'
-                post_sn = df_synthetic.loc[logic1].loc[indices][S2_SN]
-                df_synthetic['time'] = post_sn['time'].values * 1e-6 # Myr
+            S1_SN = hist.loc[mask2].loc[indices][f'{S1_S2}_state'] != 'NS'
+            post_sn = hist.loc[logic1].loc[indices][S1_SN]
+            pre_sn = hist.loc[mask2].loc[indices][S1_SN]
+            # write properties to the Synthetic Population
+            ccSN_df_synthetic = pd.DataFrame()
+            if S1_S2 == 'S1':
+                columns_pre_post.append('S1_mass')
+                columns.append('S2_mass')
+            elif S1_S2 == 'S2':
+                columns_pre_post.append('S2_mass')
+                columns.append('S1_mass')
 
-                df_mt_channels = parsed_file.select('formation_channels',
-                                                    where=f'index in selected_indices',
-                                                    columns=save_cols)
+            for c in columns_pre_post:
+                ccSN_df_synthetic['preSN_'+c] = pre_sn[c].values
+                ccSN_df_synthetic['postSN_'+c] = post_sn[c].values
 
-                #df_synthetic= df_synthetic.reindex(df_oneline.index)
+            ccSN_df_synthetic.index = post_sn.index
+            ccSN_df_synthetic['time'] = post_sn['time'].values * 1e-6 # Myr
+            for c in columns:
+                ccSN_df_synthetic[c] = pre_sn[c].values
 
-                # add the columns to the synthetic population
-                df_synthetic = pd.concat([df_synthetic, df_oneline], axis=1)
-                df_synthetic = pd.concat([df_synthetic, df_mt_channels], axis=1)
 
-                # store the synthetic populations
-                output_store.append('synthetic',
-                                df_synthetic,
+            # add oneline parameters
+            df_oneline = multi_columns_read('oneline',
+                                            parsed_store,
+                                            oneline_columns,
+                                            i,
+                                            i+self.chunksize)
+
+            for c in oneline_columns:
+                ccSN_df_synthetic[c] = df_oneline.loc[indices,c].values
+
+            # Add ccSN parameters
+            for c in tmp_df.columns:
+                ccSN_df_synthetic[c] = tmp_df.loc[indices,c].values
+
+
+            return ccSN_df_synthetic
+
+        history_events = parsed_store.select_column('history', 'index')
+        history_lengths = history_events.groupby(history_events).count()
+        del history_events
+
+        unique_binary_indices = self.indices
+
+        if self.verbose: print('looping over the binaries now')
+
+        previous = 0
+        for i in tqdm(range(0,len(unique_binary_indices), self.chunksize), disable=not self.verbose):
+
+            selection = unique_binary_indices[i:i+self.chunksize]
+            end = previous + history_lengths[i:i+self.chunksize].sum()
+
+            # Read oneline
+            SN_type = parsed_store.select_column('oneline',
+                                                         'S1_SN_type',
+                                                         start = i,
+                                                         stop=i+self.chunksize)
+            SN_type = pd.concat([SN_type,
+                                         parsed_store.select_column('oneline',
+                                                               'S2_SN_type',
+                                                               start = i,
+                                                               stop=i+self.chunksize)],
+                                   axis=1)
+
+            SN_type.index = parsed_store.select_column('oneline',
+                                                              'index',
+                                                              start = i,
+                                                              stop=i+self.chunksize)
+
+            tmp_df = get_ccSN_properties(SN_type
+                                        )
+
+            # S1 ccSN
+            S1_tmp_df = tmp_df[tmp_df['ccSN1'] == True]
+            S1_ccSN_df_synthetic = ccSN_data_store(S1_tmp_df, parsed_store, previous, end, 'S1')
+            # Set all S2 columns to NaN
+            for c in S1_ccSN_df_synthetic.columns:
+                if c in ['S2_SN_type']:
+                    S1_ccSN_df_synthetic[c] = None
+
+
+            # S2 ccSN
+            S2_tmp_df = tmp_df[tmp_df['ccSN2'] == True]
+            S2_ccSN_df_synthetic = ccSN_data_store(S2_tmp_df, parsed_store, previous, end, 'S2')
+            # Set all S1 columns to NaN
+            for c in S2_ccSN_df_synthetic.columns:
+                if c in ['S1_SN_type']:
+                    S2_ccSN_df_synthetic[c] = None
+
+            out = pd.concat([S1_ccSN_df_synthetic, S2_ccSN_df_synthetic])
+
+            out['ccSN1'] = out['ccSN1'].astype(bool)
+            out['ccSN2'] = out['ccSN2'].astype(bool)
+            # store the synthetic populations
+            output_store.append('synthetic',
+                                out,
                                 format='table',
                                 data_columns=True,
                                 min_itemsize=min_itemsize
                                 )
+            previous = end
 
         output_store.close()
         parsed_file.close()
-        return SN_synthetic_population
-
-
-    def create_DCO_population(self, output_file=None, additional_oneline_cols=None):
-        '''Create a DCO population from the parsed population.
-
-        A DCO Population will contain one 'time' for each 'event',
-        which represents the time after starburst that the event takes place.
-
-        All DCO events in the population will be contained in the new population.
-        If no filtering for the BH or NS formation is done, the DCO population
-        will contain both.
-
-        Parameters
-        -----------
-        oneline_cols : list of str
-            List of columns to extract from the oneline dataframe and add to
-            the DCO population dataframe.
-
-        Returns
-        --------
-        DCO_synthetic_population : SyntheticPopulation
-            A synthetic population containing DCOs with the time of formation
-            and merger.
-        '''
-
-        # The user will have done an initial parse, when inputting the parsed
-        # population data. Additional filtering can be done manually.
-        # Using the data from the parsed population,
-        # we find the DCO at their formation.
-        if output_file == None:
-            DCO_synthetic_population = SyntheticPopulation(self.parsed_pop_file,
-                                                           verbose=self.verbose)
-            parsed_file = pd.HDFStore(self.parsed_pop_file, mode='a')
-            output_store = parsed_file
-
-        else:
-            DCO_synthetic_population = SyntheticPopulation(output_file,
-                                                           verbose=self.verbose)
-
-            # write population data to the new file!
-            DCO_synthetic_population.io.save_ini_params(self)
-            DCO_synthetic_population.io.save_parse_kwargs(self)
-            DCO_synthetic_population.io.save_per_metallicity_info(self)
-            DCO_synthetic_population.io.save_path_to_data(self)
-            DCO_synthetic_population.io.save_parsed_pop_path(self.parsed_pop_file)
-
-            # load data into DCO class
-            DCO_synthetic_population.io.load_ini_params(DCO_synthetic_population)
-            DCO_synthetic_population.io.load_parse_kwargs(DCO_synthetic_population)
-            DCO_synthetic_population.io.load_per_metallicity_info(DCO_synthetic_population)
-            DCO_synthetic_population.io.load_path_to_data(DCO_synthetic_population)
-            DCO_synthetic_population.io.load_parsed_pop_path(DCO_synthetic_population)
-
-            # Open the file for writing the synthetic population
-            parsed_file = pd.HDFStore(self.parsed_pop_file, mode='r')
-            output_store = pd.HDFStore(DCO_synthetic_population.pop_file, mode='a')
-
-
-        if '/synthetic' in output_store.keys():
-            print('A synthetic population already exists in this file.\
-                The current population will overwrite the existing one.!')
-            output_store.remove('synthetic')
-
-        DCO_synthetic_population.population_selection = 'DCO'
-        DCO_synthetic_population._save_population_selection()
-
-        where_BHNS = '((S1_state == "BH")'\
-                    + ' & (S2_state == "NS")'\
-                    + ' & (state == "detached")'\
-                    + ' & (step_names == "step_SN"))'\
-                    + ' | ((S1_state == "NS")' \
-                    + ' & (S2_state == "BH")' \
-                    + ' & (state == "detached")' \
-                    + ' & (step_names == "step_SN"))'
-        where_BNS = '((S1_state == "NS")'\
-                    + ' & (S2_state == "NS")'\
-                    + ' & (state == "detached")'\
-                    + ' & (step_names == "step_SN"))'
-        where_BBH = '((S1_state == "BH")'\
-                    + ' & (S2_state == "BH")'\
-                    + ' & (state == "detached")'\
-                    + ' & (step_names == "step_SN"))'
-
-        # get the history columns + min_itemsize
-        history_cols = parsed_file.select('history',start=0, stop=0).columns
-        history_min_itemsize = {key: val for key, val in
-                                HISTORY_MIN_ITEMSIZE.items()
-                                if key in history_cols}
-
-        oneline_cols = parsed_file.select(key='oneline', start=0, stop=0).columns
-        oneline_min_itemsize = {key: val for key, val in
-                                ONELINE_MIN_ITEMSIZE.items()
-                                if key in oneline_cols}
-
-        min_itemsize = history_min_itemsize
-        min_itemsize.update(oneline_min_itemsize)
-        min_itemsize.update({'channel': 100, 'channel_debug': 100})
-
-        save_cols = ['S1_spin_orbit_tilt', 'S2_spin_orbit_tilt']
-        if additional_oneline_cols is not None:
-            for c in additional_oneline_cols:
-                if c not in save_cols:
-                    save_cols.append(c)
-
-        # remove columnns from min_itemsize not in save_cols
-        for c in min_itemsize.copy():
-            if c not in save_cols:
-                min_itemsize.pop(c)
-
-        # never add time to the save_cols from the oneline dataframe
-        # add based on the history data
-
-        for selection in [where_BHNS, where_BNS, where_BBH]:
-            if self.verbose:
-                print(f'Parsing {selection}')
-
-            # select BBH models and store them in the DCO population
-            for df_synthetic in parsed_file.select('history',
-                                                where=selection,
-                                                chunksize=self.chunksize):
-                selected_indices = df_synthetic.index.values.tolist()
-                if len(selected_indices) == 0:
-                    continue
-
-                # compute the inspiral timescale from the integrated orbit
-                # this estimate is better than evaluating Peters approxiamtion
-                time_contact = parsed_file.select('history',
-                                                where='event == END & index in selected_indices',
-                                                columns=['time'])
-                # NOTE/TODO: we change the units of time in the dataframe to Myr
-                # this might be confusion to the user? Note that Myr are convinient
-                # when inspecting the data frame.
-                df_synthetic['t_delay'] = (time_contact - df_synthetic[['time']])*1e-6 # Myr
-                df_synthetic['time'] *= 1e-6 # Myr
-
-                # If columns are not present, they're skipped.
-                df_oneline = parsed_file.select('oneline',
-                                                where='index in selected_indices',
-                                                columns=save_cols)
-
-                df_mt_channels = parsed_file.select('formation_channels',
-                                                    where=f'index in selected_indices',
-                                                    columns=save_cols)
-
-
-                # add the columns to the synthetic population
-                df_synthetic = pd.concat([df_synthetic, df_oneline], axis=1)
-                df_synthetic = pd.concat([df_synthetic, df_mt_channels], axis=1)
-
-                # store the synthetic populations
-                output_store.append('synthetic',
-                                df_synthetic,
-                                format='table',
-                                data_columns=True,
-                                min_itemsize=min_itemsize
-                                )
-
-        output_store.close()
-        parsed_file.close()
-        return DCO_synthetic_population
+        return ccSN_synthetic_population
 
 
     # TODO: add output_file to this function!!
@@ -1390,6 +1372,166 @@ class ParsedPopulation():
         output_store.close()
         parsed_store.close()
         return GRB_synthetic_population
+
+
+    def create_DCO_population(self, output_file=None, additional_oneline_cols=None):
+        '''Create a DCO population from the parsed population.
+
+        A DCO Population will contain one 'time' for each 'event',
+        which represents the time after starburst that the event takes place.
+
+        All DCO events in the population will be contained in the new population.
+        If no filtering for the BH or NS formation is done, the DCO population
+        will contain both.
+
+        Parameters
+        -----------
+        oneline_cols : list of str
+            List of columns to extract from the oneline dataframe and add to
+            the DCO population dataframe.
+
+        Returns
+        --------
+        DCO_synthetic_population : SyntheticPopulation
+            A synthetic population containing DCOs with the time of formation
+            and merger.
+        '''
+
+        # The user will have done an initial parse, when inputting the parsed
+        # population data. Additional filtering can be done manually.
+        # Using the data from the parsed population,
+        # we find the DCO at their formation.
+        if output_file == None:
+            DCO_synthetic_population = SyntheticPopulation(self.parsed_pop_file,
+                                                           verbose=self.verbose)
+            parsed_file = pd.HDFStore(self.parsed_pop_file, mode='a')
+            output_store = parsed_file
+
+        else:
+            DCO_synthetic_population = SyntheticPopulation(output_file,
+                                                           verbose=self.verbose)
+
+            # write population data to the new file!
+            DCO_synthetic_population.io.save_ini_params(self)
+            DCO_synthetic_population.io.save_parse_kwargs(self)
+            DCO_synthetic_population.io.save_per_metallicity_info(self)
+            DCO_synthetic_population.io.save_path_to_data(self)
+            DCO_synthetic_population.io.save_parsed_pop_path(self.parsed_pop_file)
+
+            # load data into DCO class
+            DCO_synthetic_population.io.load_ini_params(DCO_synthetic_population)
+            DCO_synthetic_population.io.load_parse_kwargs(DCO_synthetic_population)
+            DCO_synthetic_population.io.load_per_metallicity_info(DCO_synthetic_population)
+            DCO_synthetic_population.io.load_path_to_data(DCO_synthetic_population)
+            DCO_synthetic_population.io.load_parsed_pop_path(DCO_synthetic_population)
+
+            # Open the file for writing the synthetic population
+            parsed_file = pd.HDFStore(self.parsed_pop_file, mode='r')
+            output_store = pd.HDFStore(DCO_synthetic_population.pop_file, mode='a')
+
+
+        if '/synthetic' in output_store.keys():
+            print('A synthetic population already exists in this file.\
+                The current population will overwrite the existing one.!')
+            output_store.remove('synthetic')
+
+        DCO_synthetic_population.population_selection = 'DCO'
+        DCO_synthetic_population._save_population_selection()
+
+        where_BHNS = '((S1_state == "BH")'\
+                    + ' & (S2_state == "NS")'\
+                    + ' & (state == "detached")'\
+                    + ' & (step_names == "step_SN"))'\
+                    + ' | ((S1_state == "NS")' \
+                    + ' & (S2_state == "BH")' \
+                    + ' & (state == "detached")' \
+                    + ' & (step_names == "step_SN"))'
+        where_BNS = '((S1_state == "NS")'\
+                    + ' & (S2_state == "NS")'\
+                    + ' & (state == "detached")'\
+                    + ' & (step_names == "step_SN"))'
+        where_BBH = '((S1_state == "BH")'\
+                    + ' & (S2_state == "BH")'\
+                    + ' & (state == "detached")'\
+                    + ' & (step_names == "step_SN"))'
+
+        # get the history columns + min_itemsize
+        history_cols = parsed_file.select('history',start=0, stop=0).columns
+        history_min_itemsize = {key: val for key, val in
+                                HISTORY_MIN_ITEMSIZE.items()
+                                if key in history_cols}
+
+        oneline_cols = parsed_file.select(key='oneline', start=0, stop=0).columns
+        oneline_min_itemsize = {key: val for key, val in
+                                ONELINE_MIN_ITEMSIZE.items()
+                                if key in oneline_cols}
+
+        min_itemsize = history_min_itemsize
+        min_itemsize.update(oneline_min_itemsize)
+        min_itemsize.update({'channel': 100, 'channel_debug': 100})
+
+        save_cols = ['S1_spin_orbit_tilt', 'S2_spin_orbit_tilt']
+        if additional_oneline_cols is not None:
+            for c in additional_oneline_cols:
+                if c not in save_cols:
+                    save_cols.append(c)
+
+        # remove columnns from min_itemsize not in save_cols
+        for c in min_itemsize.copy():
+            if c not in save_cols:
+                min_itemsize.pop(c)
+
+        # never add time to the save_cols from the oneline dataframe
+        # add based on the history data
+
+        for selection in [where_BHNS, where_BNS, where_BBH]:
+            if self.verbose:
+                print(f'Parsing {selection}')
+
+            # select BBH models and store them in the DCO population
+            for df_synthetic in parsed_file.select('history',
+                                                where=selection,
+                                                chunksize=self.chunksize):
+                selected_indices = df_synthetic.index.values.tolist()
+                if len(selected_indices) == 0:
+                    continue
+
+                # compute the inspiral timescale from the integrated orbit
+                # this estimate is better than evaluating Peters approxiamtion
+                time_contact = parsed_file.select('history',
+                                                where='event == END & index in selected_indices',
+                                                columns=['time'])
+                # NOTE/TODO: we change the units of time in the dataframe to Myr
+                # this might be confusion to the user? Note that Myr are convinient
+                # when inspecting the data frame.
+                df_synthetic['t_delay'] = (time_contact - df_synthetic[['time']])*1e-6 # Myr
+                df_synthetic['time'] *= 1e-6 # Myr
+
+                # If columns are not present, they're skipped.
+                df_oneline = parsed_file.select('oneline',
+                                                where='index in selected_indices',
+                                                columns=save_cols)
+
+                df_mt_channels = parsed_file.select('formation_channels',
+                                                    where=f'index in selected_indices',
+                                                    columns=save_cols)
+
+
+                # add the columns to the synthetic population
+                df_synthetic = pd.concat([df_synthetic, df_oneline], axis=1)
+                df_synthetic = pd.concat([df_synthetic, df_mt_channels], axis=1)
+
+                # store the synthetic populations
+                output_store.append('synthetic',
+                                df_synthetic,
+                                format='table',
+                                data_columns=True,
+                                min_itemsize=min_itemsize
+                                )
+
+        output_store.close()
+        parsed_file.close()
+        return DCO_synthetic_population
 
 
     def plot_popsyn_over_grid_slice(self, grid_type, met_Zsun, **kwargs):
