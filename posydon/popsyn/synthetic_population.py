@@ -788,7 +788,7 @@ class ParsedPopulation():
                 print('No formation channels found in the file')
                 return None
 
-    def create_ccSN_population(self, output_file=None, additional_oneline_cols=None):
+    def create_ccSN_population(self, output_file=None, ccSN_properties={}, additional_oneline_cols=None):
         '''Create a SN population from the parsed population.
 
         A ccSN Population will contain
@@ -842,7 +842,7 @@ class ParsedPopulation():
 
             # Open the file for writing the synthetic population
             parsed_file = pd.HDFStore(self.parsed_pop_file, mode='r')
-            output_store = pd.HDFStore(SN_synthetic_population.pop_file, mode='a')
+            output_store = pd.HDFStore(ccSN_synthetic_population.pop_file, mode='a')
 
         '''
         if '/synthetic' in output_store.keys():
@@ -926,9 +926,8 @@ class ParsedPopulation():
 
         ccSN_synthetic_population.population_selection = 'ccSN'
         ccSN_synthetic_population._save_population_selection()
+        ccSN_synthetic_population.model_parameters = ccSN_properties
         '''
-        ccSN_synthetic_population.model_parameters = GRB_properties
-
         if ('GRB_efficiency' not in GRB_properties or
             GRB_properties['GRB_efficiency'] is None):
             raise ValueError('Missing GRB_efficiency variable in the MODEL!')
@@ -1045,7 +1044,7 @@ class ParsedPopulation():
 
             return ccSN_df_synthetic
 
-        history_events = parsed_store.select_column('history', 'index')
+        history_events = parsed_file.select_column('history', 'index')
         history_lengths = history_events.groupby(history_events).count()
         del history_events
 
@@ -1060,18 +1059,18 @@ class ParsedPopulation():
             end = previous + history_lengths[i:i+self.chunksize].sum()
 
             # Read oneline
-            SN_type = parsed_store.select_column('oneline',
+            SN_type = parsed_file.select_column('oneline',
                                                          'S1_SN_type',
                                                          start = i,
                                                          stop=i+self.chunksize)
             SN_type = pd.concat([SN_type,
-                                         parsed_store.select_column('oneline',
+                                         parsed_file.select_column('oneline',
                                                                'S2_SN_type',
                                                                start = i,
                                                                stop=i+self.chunksize)],
                                    axis=1)
 
-            SN_type.index = parsed_store.select_column('oneline',
+            SN_type.index = parsed_file.select_column('oneline',
                                                               'index',
                                                               start = i,
                                                               stop=i+self.chunksize)
@@ -1079,9 +1078,11 @@ class ParsedPopulation():
             tmp_df = get_ccSN_properties(SN_type
                                         )
 
+            print(tmp_df)
+            
             # S1 ccSN
             S1_tmp_df = tmp_df[tmp_df['ccSN1'] == True]
-            S1_ccSN_df_synthetic = ccSN_data_store(S1_tmp_df, parsed_store, previous, end, 'S1')
+            S1_ccSN_df_synthetic = ccSN_data_store(S1_tmp_df, parsed_file, previous, end, 'S1')
             # Set all S2 columns to NaN
             for c in S1_ccSN_df_synthetic.columns:
                 if c in ['S2_SN_type']:
@@ -1090,7 +1091,7 @@ class ParsedPopulation():
 
             # S2 ccSN
             S2_tmp_df = tmp_df[tmp_df['ccSN2'] == True]
-            S2_ccSN_df_synthetic = ccSN_data_store(S2_tmp_df, parsed_store, previous, end, 'S2')
+            S2_ccSN_df_synthetic = ccSN_data_store(S2_tmp_df, parsed_file, previous, end, 'S2')
             # Set all S1 columns to NaN
             for c in S2_ccSN_df_synthetic.columns:
                 if c in ['S1_SN_type']:
@@ -1302,7 +1303,9 @@ class ParsedPopulation():
             return GRB_df_synthetic
 
         history_events = parsed_store.select_column('history', 'index')
+        print(history_events)
         history_lengths = history_events.groupby(history_events).count()
+        print(history_lenghts)
         del history_events
 
         unique_binary_indices = self.indices
