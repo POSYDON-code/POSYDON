@@ -843,82 +843,10 @@ class ParsedPopulation():
             # Open the file for writing the synthetic population
             parsed_file = pd.HDFStore(self.parsed_pop_file, mode='r')
             output_store = pd.HDFStore(ccSN_synthetic_population.pop_file, mode='a')
-
-        '''
-        if '/synthetic' in output_store.keys():
-            print('A synthetic population already exists in this file.\
-                The current population will overwrite the existing one.!')
-            output_store.remove('synthetic')
-
-        SN_synthetic_population.population_selection = 'SN'
-        SN_synthetic_population._save_population_selection()
-
-        where_ccSN = '(S1_SN_type == "CCSN")'\
-                    + ' | ((S1_SN_type == "ECSN")'\
-                    + ' | ((S2_SN_type == "CCSN")'\
-                    + ' | ((S2_SN_type == "ECSN")'
-
-        # get the history columns + min_itemsize
-        history_cols = parsed_file.select('history',start=0, stop=0).columns
-        history_min_itemsize = {key: val for key, val in
-                                HISTORY_MIN_ITEMSIZE.items()
-                                if key in history_cols}
-
-        oneline_cols = parsed_file.select(key='oneline', start=0, stop=0).columns
-        oneline_min_itemsize = {key: val for key, val in
-                                ONELINE_MIN_ITEMSIZE.items()
-                                if key in oneline_cols}
-
-        min_itemsize = history_min_itemsize
-        min_itemsize.update(oneline_min_itemsize)
-        min_itemsize.update({'channel': 100, 'channel_debug': 100})
-
-        save_cols = ['S1_SN_type', 'S2_SN_type']
-        if additional_oneline_cols is not None:
-            for c in additional_oneline_cols:
-                if c not in save_cols:
-                    save_cols.append(c)
-
-        # remove columnns from min_itemsize not in save_cols
-        for c in min_itemsize.copy():
-            if c not in save_cols:
-                min_itemsize.pop(c)
-
-        # never add time to the save_cols from the oneline dataframe
-        # add based on the history data
-        for selection in [where_ccSN]:
-            if self.verbose:
-                print(f'Parsing {selection}')
-
-            # select BBH models and store them in the SN population
-            for df_oneline in parsed_file.select('oneline',
-                                                where=selection,
-                                                chunksize=self.chunksize):
-                selected_indices = df_oneline.index.values.tolist()
-                if len(selected_indices) == 0:
-                    continue
-
-
-                #df_synthetic['time'] *= 1e-6 # Myr
-
-                # If columns are not present, they're skipped.
-                df_synthetic = parsed_file.select('history',
-                                                where='index in selected_indices',
-                                                columns=save_cols)
-
-
-                # add the columns to the synthetic population
-                df_synthetic = pd.concat([df_synthetic, df_oneline], axis=1)
-
-                # store the synthetic populations
-                output_store.append('synthetic',
-                                df_synthetic,
-                                format='table',
-                                data_columns=True,
-                                min_itemsize=min_itemsize
-                                )
-
-        '''
+            #print(parsed_file)
+            #ccSN_synthetic_population.population_selection = 'SN'
+            #ccSN_synthetic_population._save_population_selection()
+        
         if 'synthetic' in output_store.keys():
             print('A synthetic population already exists in this file.\
                 The current population will be removed!')
@@ -927,23 +855,13 @@ class ParsedPopulation():
         ccSN_synthetic_population.population_selection = 'ccSN'
         ccSN_synthetic_population._save_population_selection()
         ccSN_synthetic_population.model_parameters = ccSN_properties
-        '''
-        if ('GRB_efficiency' not in GRB_properties or
-            GRB_properties['GRB_efficiency'] is None):
-            raise ValueError('Missing GRB_efficiency variable in the MODEL!')
-        if ('GRB_beaming' not in GRB_properties or
-            GRB_properties['GRB_beaming'] is None):
-            raise ValueError('Missing GRB_beaming variable in the MODEL!')
-        if ('E_GRB_iso_min' not in GRB_properties or
-            GRB_properties['E_GRB_iso_min'] is None):
-            raise ValueError('Missing GRB_beaming variable in the MODEL!')
-        '''
-        # S1 and S2 mass are autmatically added to their respective columns
-        # changing columns over the SN
-        columns_pre_post = ['orbital_period', 'eccentricity']
+        
+        
+        columns_pre_post = ['S2_mass']
+        columns_pre_post1= ["S1_mass"]
         # unchanged columns
         columns = ['metallicity']
-        # LGRB parameters
+        
         oneline_columns = ['S1_SN_type']
         if additional_oneline_cols is not None:
             for c in additional_oneline_cols:
@@ -951,13 +869,14 @@ class ParsedPopulation():
                     oneline_columns.append(c)
 
 
+        
         min_itemsize = {'channel': 100,}
         min_itemsize.update({key:val for key, val in
                              HISTORY_MIN_ITEMSIZE.items()
                              if key in columns_pre_post})
         min_itemsize.update({key:val for key, val in
                              HISTORY_MIN_ITEMSIZE.items()
-                                if key in columns})
+                             if key in columns})
         min_itemsize.update({key:val for key, val in
                              ONELINE_MIN_ITEMSIZE.items()
                             if key in oneline_columns})
@@ -972,84 +891,15 @@ class ParsedPopulation():
                 df[c] = parsed_store.select_column(key, c, start=previous, stop=end)
             df.index = parsed_store.select_column(key, 'index', start=previous, stop=end)
             return df
-
-        def ccSN_data_store(tmp_df, parsed_store, previous, end, S1_S2='S1'):
-            indices = tmp_df.index
-
-            # Read history of the chunk
-            hist = multi_columns_read('history',
-                                    parsed_store,
-                                    ['S1_state', 'S2_state', 'event', 'step_names', 'time', 'S1_mass', 'S2_mass', 'metallicity', 'orbital_period', 'eccentricity'],
-                                    previous,
-                                    end)
-
-            ccSN_df_synthetic = pd.DataFrame()
-
-            if S1_S2 == 'S1':
-            # get the SN event of the GRB
-            # This also select the second step_SN if S1_S2 goes SN first.
-                logic1 = self.apply_logic(hist,
-                                        S1_state='NS',
-                                        S2_state=None,
-                                        step_name='step_SN',
-                                        invert_S1S2=False)
-            elif S1_S2 == 'S2':
-                logic1 = self.apply_logic(hist,
-                                        S1_state=None,
-                                        S2_state='NS',
-                                        step_name='step_SN',
-                                        invert_S1S2=False)
-
-            # select the previous row
-            mask2 = logic1.shift(-1)
-            mask2.iloc[-1]  = False
-
-            # Select just the event where S1_S2 was not BH before undergoing the SN
-            S1_SN = hist.loc[mask2].loc[indices][f'{S1_S2}_state'] != 'NS'
-            post_sn = hist.loc[logic1].loc[indices][S1_SN]
-            pre_sn = hist.loc[mask2].loc[indices][S1_SN]
-            # write properties to the Synthetic Population
-            ccSN_df_synthetic = pd.DataFrame()
-            if S1_S2 == 'S1':
-                columns_pre_post.append('S1_mass')
-                columns.append('S2_mass')
-            elif S1_S2 == 'S2':
-                columns_pre_post.append('S2_mass')
-                columns.append('S1_mass')
-
-            for c in columns_pre_post:
-                ccSN_df_synthetic['preSN_'+c] = pre_sn[c].values
-                ccSN_df_synthetic['postSN_'+c] = post_sn[c].values
-
-            ccSN_df_synthetic.index = post_sn.index
-            ccSN_df_synthetic['time'] = post_sn['time'].values * 1e-6 # Myr
-            for c in columns:
-                ccSN_df_synthetic[c] = pre_sn[c].values
-
-
-            # add oneline parameters
-            df_oneline = multi_columns_read('oneline',
-                                            parsed_store,
-                                            oneline_columns,
-                                            i,
-                                            i+self.chunksize)
-
-            for c in oneline_columns:
-                ccSN_df_synthetic[c] = df_oneline.loc[indices,c].values
-
-            # Add ccSN parameters
-            for c in tmp_df.columns:
-                ccSN_df_synthetic[c] = tmp_df.loc[indices,c].values
-
-
-            return ccSN_df_synthetic
-
+       
         history_events = parsed_file.select_column('history', 'index')
+        #print(history_events)
         history_lengths = history_events.groupby(history_events).count()
+        #print(history_lengths)
         del history_events
 
         unique_binary_indices = self.indices
-
+        print(unique_binary_indices)
         if self.verbose: print('looping over the binaries now')
 
         previous = 0
@@ -1077,36 +927,98 @@ class ParsedPopulation():
 
             tmp_df = get_ccSN_properties(SN_type
                                         )
+            hist = multi_columns_read('history',
+                                    parsed_file,
+                                    ['S1_state', 'S2_state', 'event', 'step_names', 'time', 'S1_mass', 'S2_mass', 'S2_surface_h1', 'orbital_period', 'eccentricity','S1_surface_h1'],
+                                    previous,
+                                    end)
+            #print(hist)
 
-            print(tmp_df)
+            indices = tmp_df.index
+
+          
+
             
-            # S1 ccSN
-            S1_tmp_df = tmp_df[tmp_df['ccSN1'] == True]
-            S1_ccSN_df_synthetic = ccSN_data_store(S1_tmp_df, parsed_file, previous, end, 'S1')
-            # Set all S2 columns to NaN
-            for c in S1_ccSN_df_synthetic.columns:
-                if c in ['S2_SN_type']:
-                    S1_ccSN_df_synthetic[c] = None
+            logicSN = self.apply_logic(hist,
+                                        S1_state=None,
+                                        S2_state=None,
+                                        step_name='step_SN',
+                                        invert_S1S2=False)
+
+            logicmass = self.apply_logic(hist,
+                                        S1_state=None,
+                                        S2_state=None,
+                                        step_name='initial_cond',
+                                        invert_S1S2=False)
+
+            
+            mask2 = logicSN.shift(-1)
+            mask2.iloc[-1]  = False
+            mask3= logicmass
 
 
-            # S2 ccSN
-            S2_tmp_df = tmp_df[tmp_df['ccSN2'] == True]
-            S2_ccSN_df_synthetic = ccSN_data_store(S2_tmp_df, parsed_file, previous, end, 'S2')
-            # Set all S1 columns to NaN
-            for c in S2_ccSN_df_synthetic.columns:
-                if c in ['S1_SN_type']:
-                    S2_ccSN_df_synthetic[c] = None
+            # Select just the event where S1_S2 was not BH before undergoing the SN
+            SNtime = hist.loc[mask2].loc[indices][f'event'] == 'CC2'
+            #print(SNtime)
+            SNtime1 = hist.loc[mask2].loc[indices][f'event'] == 'CC1'
+            initial_mass= hist.loc[mask3].loc[indices]
 
-            out = pd.concat([S1_ccSN_df_synthetic, S2_ccSN_df_synthetic])
+            
+           
+            
+            post_sn = hist.loc[logicSN].loc[indices][SNtime]
+            post_sn1= hist.loc[logicSN].loc[indices][SNtime1]
+            pre_sn1 = hist.loc[mask2].loc[indices][SNtime1]
 
-            out['ccSN1'] = out['ccSN1'].astype(bool)
-            out['ccSN2'] = out['ccSN2'].astype(bool)
-            # store the synthetic populations
+            #print(post_sn)
+            
+            pre_sn = hist.loc[mask2].loc[indices][SNtime]
+            
+            ccSN_df_synthetic=pd.DataFrame()
+            ccSN_df_synthetic1=pd.DataFrame()
+
+           
+
+            for c in columns_pre_post:
+                ccSN_df_synthetic['preSN_'+c] = pre_sn[c].to_numpy()
+                ccSN_df_synthetic['postSN_'+c] = post_sn[c].to_numpy()
+
+            for c in columns_pre_post1:
+                ccSN_df_synthetic1['preSN_'+c] = pre_sn1[c].to_numpy()
+                ccSN_df_synthetic1['postSN_'+c] = post_sn1[c].to_numpy()
+               
+            ccSN_df_synthetic1['S1_SN_time'] = pre_sn1['time'].values * 1e-6 # Myr
+            ccSN_df_synthetic1['S1_surface_hydrogen'] = pre_sn1['S1_surface_h1'].values  # Myr
+            ccSN_df_synthetic1["S1_observed_type"]=np.where(ccSN_df_synthetic1["S1_surface_hydrogen"]>0.01, "type II","type Ib/c")
+            ccSN_df_synthetic1.index = post_sn1.index
+
+
+            #print(ccSN_df_synthetic1)
+
+            ccSN_df_synthetic['S2_SN_time'] = pre_sn['time'].values * 1e-6 # Myr
+            ccSN_df_synthetic['S2_surface_hydrogen'] = pre_sn['S2_surface_h1'].values  # Myr
+
+            ccSN_df_synthetic["S2_observed_type"]=np.where(ccSN_df_synthetic["S2_surface_hydrogen"]>0.01, "type II","type Ib/c")
+            ccSN_df_synthetic.index = post_sn.index
+            #print(ccSN_df_synthetic)
+            merged_df = tmp_df.join(ccSN_df_synthetic, how='outer')
+            rows_to_replace = merged_df['S2_SN_type'] == 'WD'
+            
+
+            merged_df.loc[rows_to_replace, merged_df.columns != 'S1_SN_type'] = np.nan
+            merged_df['S2_initial_mass'] = initial_mass['S2_mass'].values  # Myr
+            merged_df['S1_initial_mass'] = initial_mass['S1_mass'].values  # Myr
+
+            final= pd.concat([merged_df, ccSN_df_synthetic1] ,axis=1)
+
+
+            print(final)
+
+        
             output_store.append('synthetic',
-                                out,
+                                final,
                                 format='table',
                                 data_columns=True,
-                                min_itemsize=min_itemsize
                                 )
             previous = end
 
