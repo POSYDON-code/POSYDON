@@ -219,20 +219,24 @@ class plot2D(object):
             self.final_values['termination_flag_2'] = TF2_clean
         self.final_values_str = self.final_values.dtype.names
 
-        idx_with_histories=0
+        H1_names = ()
+        H2_names = ()
+        BH_names = ()
         for i in range(len(psygrid)):
-            if psygrid[i].history1 is not None and\
-                psygrid[i].history2 is not None and\
-                psygrid[i].binary_history is not None:
-                idx_with_histories = i
+            if len(H1_names)==0 and self.psygrid[i].history1 is not None:
+                H1_names = self.psygrid[i].history1.dtype.names
+            if len(H2_names)==0 and self.psygrid[i].history2 is not None:
+                H2_names = self.psygrid[i].history2.dtype.names
+            if len(BH_names)==0 and self.psygrid[i].binary_history is not None:
+                BH_names = self.psygrid[i].binary_history.dtype.names
+            if len(H1_names)>0 and len(H2_names)>0 and len(BH_names)>0:
                 break
         # x, y and z variables must exist
         if x_var_str not in self.initial_values_str and not self.slice_at_RLO:
             raise ValueError(
                 "x_var_str = {} is not available in psygrid.initial_values".
                 format(x_var_str))
-        elif (x_var_str not in self.psygrid[idx_with_histories].\
-              binary_history.dtype.names and self.slice_at_RLO):
+        elif (x_var_str not in BH_names and self.slice_at_RLO):
             raise ValueError("x_var_str = {} is not available in "
                              "psygrid.binary_history".format(x_var_str))
         else:
@@ -240,8 +244,7 @@ class plot2D(object):
         if y_var_str not in self.initial_values_str and not self.slice_at_RLO:
             raise ValueError("y_var_str = {} is not available in "
                              "psygrid.initial_values".format(y_var_str))
-        elif (y_var_str not in self.psygrid[idx_with_histories].\
-              binary_history.dtype.names and self.slice_at_RLO):
+        elif (y_var_str not in BH_names and self.slice_at_RLO):
             raise ValueError("y_var_str = {} is not available in "
                              "psygrid.binary_history".format(y_var_str))
         else:
@@ -271,19 +274,16 @@ class plot2D(object):
                     self.binary_history = False
                     self.add_properties_to_final_values(None)
                 elif (self.selected_star_history_for_z_var == 1
-                      and z_var_str in self.psygrid[idx_with_histories].\
-                      history1.dtype.names):
+                      and z_var_str in H1_names):
                     self.z_var_str = z_var_str
                     self.history = True
                     self.binary_history = False
                 elif (self.selected_star_history_for_z_var == 2
-                      and z_var_str in self.psygrid[idx_with_histories].\
-                      history2.dtype.names):
+                      and z_var_str in H2_names):
                     self.z_var_str = z_var_str
                     self.history = True
                     self.binary_history = False
-                elif z_var_str in self.psygrid[idx_with_histories].\
-                     binary_history.dtype.names:
+                elif z_var_str in BH_names:
                     self.z_var_str = z_var_str
                     self.history = False
                     self.binary_history = True
@@ -295,20 +295,17 @@ class plot2D(object):
                     )
 
             else:
-                if self.selected_star_history_for_z_var == 1 and \
-                  z_var_str in self.psygrid[idx_with_histories].history1.\
-                  dtype.names:
+                if (self.selected_star_history_for_z_var == 1 and
+                    z_var_str in H1_names):
                     self.z_var_str = z_var_str
                     self.history = True
                     self.binary_history = False
                 elif (self.selected_star_history_for_z_var == 2
-                      and z_var_str in self.psygrid[idx_with_histories].\
-                      history2.dtype.names):
+                      and z_var_str in H2_names):
                     self.z_var_str = z_var_str
                     self.history = True
                     self.binary_history = False
-                elif z_var_str in self.psygrid[idx_with_histories].\
-                     binary_history.dtype.names:
+                elif z_var_str in BH_names:
                     self.z_var_str = z_var_str
                     self.history = False
                     self.binary_history = True
