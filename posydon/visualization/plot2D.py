@@ -205,10 +205,14 @@ class plot2D(object):
 
         # store the initial/final values
         self.initial_values = self.psygrid.initial_values
+        if self.initial_values is None:
+            raise ValueError("No initial values in PSyGrid")
         # add extra properties to initial_values
         self.add_properties_to_initial_values()
         self.initial_values_str = self.initial_values.dtype.names
         self.final_values = self.psygrid.final_values
+        if self.final_values is None:
+            raise ValueError("No final values in PSyGrid")
         # add extra properties to final_values
         if termination_flag in ["combined_TF12", "debug", "interpolation_class_errors"]:
             self.add_properties_to_final_values(termination_flag)
