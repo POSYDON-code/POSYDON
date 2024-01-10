@@ -871,7 +871,8 @@ class PSyGrid:
                     if kept is None:
                         ignore_data = True
                         ignore_reason = "ignored_no_RLO"
-                        warnings.warn("Ignored MESA run because of no RLO"
+                        if self.verbose:
+                            self._say("Ignored MESA run because of no RLO"
                                       " in: {}\n".format(run.path))
                         if not initial_RLO_fix:
                             continue
