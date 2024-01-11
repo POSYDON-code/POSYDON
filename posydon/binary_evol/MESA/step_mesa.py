@@ -1392,6 +1392,11 @@ class CO_HMS_RLO_step(MesaGridStep):
             ecc == 0.)):
             super().__call__(self.binary)
         else:
+            if len(self.binary.state_history) > 2:
+                if self.binary.state_history[-2] == 'detached':
+                    self.state = "ERR"
+                    raise ValueError('CO_HMS_RLO binary outside grid and coming from detached')
+                
             self.binary.state = "detached"
             self.binary.event = "redirect_from_CO_HMS_RLO"
             return
