@@ -335,9 +335,10 @@ def do_core_collapse_BH(star,
     if len(enclosed_mass) == 0:
         arr = np.array([np.nan])
         return [
-            M_BH / Mo, a_BH, arr, arr, arr, arr, arr, arr,
-            arr, arr, arr, np.array([0.]), arr, arr, arr, arr,
-            arr, arr
+            M_BH / Mo, a_BH, np.nan, np.nan
+            #M_BH / Mo, a_BH, arr, arr, arr, arr, arr, arr,
+            #arr, arr, arr, np.array([0.]), arr, arr, arr, arr,
+            #arr, arr
         ]
 
     # shell's specific angular momentum at equator
