@@ -463,7 +463,6 @@ class BinaryPopulation:
     def close(self):
         """Close loaded h5 files from SimulationProperties."""
         self.population_properties.close()
-        self.manager.close()
 
     def __getstate__(self):
         """Prepare the BinaryPopulation to be 'pickled'."""
@@ -513,13 +512,7 @@ class PopulationManager:
         self.entropy = self.binary_generator.entropy
 
         if file_name:
-            self.store = pd.HDFStore(file_name, mode='r',)
-            atexit.register(lambda: PopulationManager.close(self))
-
-    def close(self):
-        """Close the HDF5 file."""
-        if hasattr(self, 'store'):
-            self.store.close()
+            self.store_file = file_name
 
     def append(self, binary):
         """Add a binary instance internaly."""
@@ -640,8 +633,9 @@ class PopulationManager:
         else:
             query_str = str(where)
 
-        hist = self.store.select(key='history', where=query_str)
-        oneline = self.store.select(key='oneline', where=query_str)
+        with pd.HDFStore(self.store_file, mode='r') as store:
+            hist = store.select(key='history', where=query_str)
+            oneline = store.select(key='oneline', where=query_str)
 
         binary_holder = []
         for i in np.unique(hist.index):
