@@ -314,6 +314,12 @@ class PrintStepInfoHooks(EvolveHooks):
 
 class PulsarHooks(EvolveHooks):
 
+    def __init__(self, **kwargs):
+        self.delta_Md = kwargs.get("delta_Md")
+        self.tau_d = kwargs.get("tau_d")
+        self.CE_acc_prescription = kwargs.get("CE_acc_prescription")
+        self.acc_decay_prescription = kwargs.get("acc_decay_prescription")
+
     def get_pulsar_history(self, binary, star_NS, star_companion):
         """
         Get the pulsar evolution history for one star in the binary.
@@ -355,7 +361,6 @@ class PulsarHooks(EvolveHooks):
 
             ## loop through states where star is a NS
             for i in NS_indices[1:]:
-
                 step_name = step_names[i]
                 state = states[i]
                 delta_t = time[i] - time[i-1]
@@ -368,21 +373,21 @@ class PulsarHooks(EvolveHooks):
                
                 pulsar.Mdot_edd = pulsar.calc_NS_edd_lim(donor_surface_h1[i]) 
                 
-                if step_name in ['step_detached', 'step_dco']:
-                    pulsar.detached_evolve(delta_t)                   
+                if step_name in ['step_detached', 'step_dco', 'step_disrupted']:
+                    pulsar.detached_evolve(delta_t, self.tau_d)                   
     
-                elif step_name == "step_CO_HMS_RLO":     
-                    pulsar.RLO_evolve_COMPAS(delta_M)
-
-                elif step_name == 'step_CO_HeMS':
+                elif step_name in ["step_CO_HMS_RLO", 'step_CO_HeMS', 'step_CO_HeMS_RLO']:  
                     if delta_M > 0:
-                        pulsar.RLO_evolve_COMPAS(delta_M)
+                        if self.acc_decay_prescription == "Ye2019" :
+                            pulsar.RLO_evolve_Ye2019(delta_t, self.tau_d, delta_M, self.delta_Md)  
+                        elif self.acc_decay_prescription == "COMPAS":
+                            pulsar.RLO_evolve_COMPAS(delta_M, self.delta_Md)
                     else:
-                        pulsar.detached_evolve(delta_t) 
+                        pulsar.detached_evolve(delta_t, self.tau_d) 
               
                 elif step_name == "step_CE" and state != "merged":
-                    acc_prescription = "macleod"
-                    pulsar.CE_evolve(acc_prescription, M_comp, R_comp)
+                    pulsar.CE_evolve(self.CE_acc_prescription, self.acc_decay_prescription, 
+                                     M_comp, R_comp, self.delta_Md, delta_t, self.tau_d)
 
                 pulsar_spin.append(pulsar.spin)
                 pulsar_Bfield.append(pulsar.Bfield)
@@ -414,6 +419,7 @@ class PulsarHooks(EvolveHooks):
         """   
         binary.star_1.pulsar_spin, binary.star_1.pulsar_Bfield, binary.star_1.pulsar_alive = self.get_pulsar_history(binary, binary.star_1,  binary.star_2)
         binary.star_2.pulsar_spin, binary.star_2.pulsar_Bfield, binary.star_2.pulsar_alive = self.get_pulsar_history(binary, binary.star_2,  binary.star_1)
+
         return binary
 
             

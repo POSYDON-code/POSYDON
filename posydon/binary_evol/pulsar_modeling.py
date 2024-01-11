@@ -46,7 +46,7 @@ class Pulsar:
         '''
 
         NS_RADIUS = CO_radius(initial_mass, "NS")*const.Rsun  ## POSYDON constant for NS radius [cm] 
-
+        
         self.mass = initial_mass*const.Msun                   ## mass of the NS [g]
         self.radius = NS_RADIUS                               ## radius of the NS [cm]
         self.moment_inertia = self.calc_moment_of_inertia()   ## moment of inertia of the NS  [g*cm^2]
@@ -127,7 +127,7 @@ class Pulsar:
         power = 4*np.pi**2 * self.moment_inertia * P_dot / P**3
         return power      
     
-    def detached_evolve(self, delta_t):
+    def detached_evolve(self, delta_t, tau_d):
         '''
         Evolve a pulsar during detached evolution.
 
@@ -138,9 +138,9 @@ class Pulsar:
         alpha = 45*const.a2rad          ## angle between the axis of rotation and magnetic axis [rad]
         mu_0 = 1                        ## permeability of free space [has value unity in cgs]
         B_min = 1e8                     ## minimum Bfield strength at which Bfield decay ceases [G]
-        tau_d = 3*1e9*const.secyer      ## B-field decay timescale = 3 Gyr [s]
+        tau_d *= (1e9*const.secyer)     ## B-field decay timescale [s]
 
-        delta_t = delta_t*const.secyer
+        delta_t *= const.secyer
 
         I = self.moment_inertia
         R = self.radius
@@ -159,7 +159,7 @@ class Pulsar:
         self.alive_state = self.is_alive()
 
     
-    def RLO_evolve_Ye2019(self, delta_t, delta_M):
+    def RLO_evolve_Ye2019(self, delta_t, tau_d, delta_M, delta_Md):
         '''
         Evolve a pulsar during Roche Lobe overflow (RLO).
 
@@ -170,21 +170,27 @@ class Pulsar:
         '''
 
         G = const.standard_cgrav     ## gravitational constant [cm^3 g^-1 s^-2]
-        tau_d = 3*1e9*const.secyer   ## B-field decay timescale = 3 Gyr [s]
+        mu_0 = 1                     ## permeability of free space [has value unity in cgs]
+        tau_d *= (1e9*const.secyer)  ## B-field decay timescale [s]
+        delta_Md *= const.Msun       ## magnetic field mass decay scale [g]
+
+        delta_M *= const.Msun
+        delta_t *= const.secyer
 
         M_i = self.mass              ## mass of the NS before accretion [g]
+        B_i = self.Bfield            ## B-field of the NS before accretion [G]
         R = self.radius              ## radius of the NS [cm]
         I = self.moment_inertia      ## Moment of inertia [CGS]
 
-        delta_M = delta_M*const.Msun
-        delta_t = delta_t*const.secyer
+        R_alfven = (2*np.pi**2/(G*mu_0**2))**(1/7) * (R**6/(self.Mdot_edd*M_i**(1/2)))**(2/7) * B_i**(4/7) ## Alfven radius
+        R_mag = R_alfven/2   ## magnetic radius
 
         ## evolve the NS spin
         #J_i = 2/5*M_i*R**2*self.spin     ## spin angular momentum (J) of the NS before accretion
         J_i = I*self.spin
         
         omega_k = np.sqrt(G*M_i/R**3)
-        delta_J = 2/5*delta_M*R**2*omega_k    ## change in J due to accretion
+        delta_J = 2/5*delta_M*R_mag**2*omega_k    ## change in J due to accretion
 
         J_f = J_i + delta_J
         M_f = M_i + delta_M
@@ -195,13 +201,13 @@ class Pulsar:
         self.spin = omega_f
 
         ## evolve the NS B-field
-        B_f = self.Bfield/(1 + delta_M/(1e-6*const.Msun)) * np.exp(-delta_t/tau_d)
+        B_f = B_i/(1 + delta_M/delta_Md) * np.exp(-delta_t/tau_d)
         self.Bfield = B_f
 
         ## check if pulsar has crossed the death line
         self.alive_state = self.is_alive()
     
-    def RLO_evolve_COMPAS(self, delta_M):
+    def RLO_evolve_COMPAS(self, delta_M, delta_Md):
         '''
         Evolve a pulsar during Roche Lobe overflow (RLO).
         This uses the prescription for B-field decay applied in COMPAS from Oslowski et al. 2011.
@@ -212,10 +218,11 @@ class Pulsar:
         delta_M: the total amount of mass accreted by the pulsar during RLO [Msun]
         '''
         G = const.standard_cgrav     ## gravitational constant [cm^3 g^-1 s^-2]
-        #delta_Md = 0.025*const.Msun  ## magnetic field mass decay scale [g]
-        delta_Md = 0.025*const.Msun
+        delta_Md *= const.Msun       ## magnetic field mass decay scale [g]
         B_min = 1e8                  ## minimum Bfield strength at which Bfield decay ceases [G]
         mu_0 = 1                     ## permeability of free space [has value unity in cgs]
+
+        delta_M *= const.Msun        ## convert Msun to g
 
         M_i = self.mass              ## mass of the NS before accretion [g]  
         R = self.radius              ## radius of the NS [cm]
@@ -224,9 +231,7 @@ class Pulsar:
 
         R_alfven = (2*np.pi**2/(G*mu_0**2))**(1/7) * (R**6/(self.Mdot_edd*M_i**(1/2)))**(2/7) * B_i**(4/7) ## Alfven radius
         R_mag = R_alfven/2   ## magnetic radius
-
-        delta_M = delta_M*const.Msun          ## convert Msun to g
-        
+   
         ## evolve the NS spin
         #J_i = 2/5*M_i*R**2*self.spin     ## spin angular momentum (J) of the NS before accretion
         J_i = I*self.spin
@@ -249,15 +254,17 @@ class Pulsar:
         ## check if pulsar crossed the death line
         self.alive_state = self.is_alive()
 
-    def CE_evolve(self, acc_prescription, M_comp, R_comp):
+    def CE_evolve(self, CE_acc_prescription, acc_decay_prescription, M_comp, R_comp, delta_Md, delta_t, tau_d):
         '''
         Evolve a pulsar during common envelope, accounting for mass accretion onto the NS.
         '''   
-        if acc_prescription == "uniform":
+        if CE_acc_prescription == "None": delta_M = 0
+        
+        elif CE_acc_prescription == "uniform":
             ## assume amount of mass accreted during CE is 0.04-0.1 Msun  
             delta_M = np.random.uniform(0.04, 0.1)  
 
-        elif acc_prescription == "macleod":
+        elif CE_acc_prescription in ["MacLeod", "MacLeod_bounded"]:
             ## use the MacLeod prescription from COMPAS paper, fit to Fig. 4 in Macleod & Ramirez-Ruiz 
             a_a = -1.1e-5; a_b = 1.5e-2; b_a = 1.2e-4; b_b = -1.5e-1
 
@@ -267,11 +274,14 @@ class Pulsar:
 
             ## assume amount of mass accreted during CE is 0.04-0.1 Msun  
             if delta_M > 0.1: delta_M = 0.1
-            #if delta_M < 0.04: delta_M = 0.04
 
-        else: delta_M = 0
+            if CE_acc_prescription == "MacLeod_bounded":
+                if delta_M < 0.04: delta_M = 0.04
 
-        self.RLO_evolve_COMPAS(delta_M)
+        if acc_decay_prescription == "Ye2019":
+            self.RLO_evolve_Ye2019(delta_t, tau_d, delta_M, delta_Md)
+        elif acc_decay_prescription == "COMPAS":
+            self.RLO_evolve_COMPAS(delta_M, delta_Md)
 
     def is_alive(self):
         '''
