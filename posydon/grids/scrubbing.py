@@ -122,7 +122,6 @@ def keep_after_RLO(bh, h1, h2):
     where_conditions_met = np.where(conditions_met)[0]
 
     if len(where_conditions_met) == 0:
-        warnings.warn("No RLO overflow for this binary.")
         return None
 
     first_index = where_conditions_met[0]
