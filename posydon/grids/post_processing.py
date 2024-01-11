@@ -316,7 +316,8 @@ def post_process_grid(grid, index=None, star_2_CO=True, MODELS=MODELS,
                             if verbose:
                                 print_CC_quantities(EXTRA_COLUMNS, star_copy, f'{MODEL_NAME}_{mechanism}')
                 else:
-                    assign_core_collapse_quantities_none(EXTRA_COLUMNS, 1)
+                    # star not explodable
+                    assign_core_collapse_quantities_none(EXTRA_COLUMNS, star_i)
 
             else: 
                 # inital_RLOF, unstable_MT not_converged
