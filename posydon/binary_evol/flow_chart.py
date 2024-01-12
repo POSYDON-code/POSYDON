@@ -281,8 +281,8 @@ for b in ['merged']:
     for s1 in STAR_STATES_ALL:
         for s2 in STAR_STATES_ALL:
             for e in ['oMerging1', 'oMerging2']:
-                POSYDON_FLOW_CHART[(s1, s2, b, e)] = 'step_merged' #'step_merged'
-                POSYDON_FLOW_CHART[(s2, s1, b, e)] = 'step_merged' #'step_merged'
+                POSYDON_FLOW_CHART[(s1, s2, b, e)] = 'step_merged'
+                POSYDON_FLOW_CHART[(s2, s1, b, e)] = 'step_merged'
 
 # catch initial_RLO states
 for s1 in STAR_STATES_ALL:

@@ -69,7 +69,9 @@ instance/
 
 # Sphinx documentation
 docs/_build/
-docs/api/
+docs/_tmp/
+docs/_source/api_reference
+docs/checkautodoc
 *.h5
 *.batch
 
