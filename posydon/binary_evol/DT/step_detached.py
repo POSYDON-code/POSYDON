@@ -1072,7 +1072,7 @@ class detached_step:
                     # ZAMS stars in wide (non-mass exchaging binaries) that are
                     # directed to detached step at birth
                     m0, t0 = star1.mass, 0
-                elif co:
+                elif co: 
                     m0, t0 = copy_prev_m0, copy_prev_t0
                 else:
                     t_before_matching = time.time()
@@ -1081,7 +1081,7 @@ class detached_step:
                     if self.verbose or self.verbose == 1:
                         print("Matching duration: "
                               f"{t_after_matching-t_before_matching:.6g}")
-
+            
             if pd.isna(m0) or pd.isna(t0):
                     #    binary.event = "END"
                     #    binary.state += " (GridMatchingFailed)"
@@ -1093,6 +1093,12 @@ class detached_step:
                 self.grid = self.grid_Hrich
             else:
                 self.grid = self.grid_strippedHe
+            
+            # cehck if m0 is in the grid
+            if m0 < self.grid.grid_mass.min() or m0 > self.grid.grid_mass.max():
+                binary.state = "ERR"
+                binary.event = "FAILED"
+                raise ValueError(f"The mass {m0} is out of the single star grid range and cannot be matched to a track.")
 
             get_track = self.grid.get
 
