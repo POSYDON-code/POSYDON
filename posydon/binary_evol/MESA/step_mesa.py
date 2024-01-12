@@ -109,8 +109,6 @@ POSYDON_TO_MESA = {
         'lambda_CE_1cent': 'lambda_CE_1cent',
         'lambda_CE_10cent': 'lambda_CE_10cent',
         'lambda_CE_30cent': 'lambda_CE_30cent',
-        'co_core_mass': 'co_core_mass',
-        'co_core_radius': 'co_core_radius',
         'lambda_CE_pure_He_star_10cent': 'lambda_CE_pure_He_star_10cent',
         'profile': True
     }
@@ -1392,6 +1390,11 @@ class CO_HMS_RLO_step(MesaGridStep):
             ecc == 0.)):
             super().__call__(self.binary)
         else:
+            if len(self.binary.state_history) > 2:
+                if self.binary.state_history[-2] == 'detached':
+                    self.state = "ERR"
+                    raise ValueError('CO_HMS_RLO binary outside grid and coming from detached')
+                
             self.binary.state = "detached"
             self.binary.event = "redirect_from_CO_HMS_RLO"
             return

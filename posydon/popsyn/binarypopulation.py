@@ -35,7 +35,6 @@ import atexit
 import os
 from tqdm import tqdm
 import psutil
-import random
 import sys
 
 if 'posydon.binary_evol.binarystar' not in sys.modules.keys():
@@ -513,6 +512,7 @@ class PopulationManager:
         self.entropy = self.binary_generator.entropy
 
         if file_name:
+            self.store_file = file_name
             self.store_file = file_name
 
     def append(self, binary):
