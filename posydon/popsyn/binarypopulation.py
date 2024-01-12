@@ -108,6 +108,7 @@ class BinaryPopulation:
         self.population_properties.max_simulation_time = self.kwargs.get(
             'max_simulation_time')  # years
 
+        
         self.entropy = self.kwargs.get('entropy', None)
         seq = np.random.SeedSequence(entropy=self.entropy)
 
