@@ -1392,7 +1392,7 @@ class CO_HMS_RLO_step(MesaGridStep):
         else:
             if len(self.binary.state_history) > 2:
                 if self.binary.state_history[-2] == 'detached':
-                    self.state = "ERR"
+                    self.state = "FAILED"
                     raise ValueError('CO_HMS_RLO binary outside grid and coming from detached')
                 
             self.binary.state = "detached"
@@ -1485,6 +1485,11 @@ class CO_HeMS_RLO_step(MesaGridStep):
             ecc == 0.)):
             super().__call__(self.binary)
         else:
+            if len(self.binary.state_history) > 2:
+                if self.binary.state_history[-2] == 'detached':
+                    self.state = "FAILED"
+                    raise ValueError('CO_HeMS_RLO binary outside grid and coming from detached')
+                
             self.binary.state = "detached"
             self.binary.event = "redirect_from_CO_HeMS_RLO"
             return
@@ -1580,5 +1585,10 @@ class CO_HeMS_step(MesaGridStep):
             ecc == 0.)):
             super().__call__(binary)
         else:
+            if len(self.binary.state_history) > 2:
+                if self.binary.state_history[-2] == 'detached':
+                    self.state = "FAILED"
+                    raise ValueError('CO_HeMS binary outside grid and coming from detached')
+                
             self.binary.event = 'redirect_from_CO_HeMS'
             return
