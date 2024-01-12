@@ -101,16 +101,16 @@ class BinaryPopulation:
                                                      SimulationProperties())
         atexit.register(lambda: BinaryPopulation.close(self))
         self.metallicity = self.kwargs.get('metallicity', 1)
-        
+
         # grab all metallicities in population or use single metallicity
         self.metallicities = self.kwargs.get('metallicities', [self.metallicity])
-        
+
         self.population_properties.max_simulation_time = self.kwargs.get(
             'max_simulation_time')  # years
 
         self.entropy = self.kwargs.get('entropy', None)
         seq = np.random.SeedSequence(entropy=self.entropy)
-        
+
         self.comm = self.kwargs.pop('comm', None)
         self.JOB_ID = self.kwargs.pop('JOB_ID', None)
         if self.comm is not None and self.JOB_ID is not None:
@@ -121,18 +121,18 @@ class BinaryPopulation:
             # to be the same across all processes.
             if self.entropy is None:
                 raise ValueError('A local MPI run requires an entropy value to be set.')
-            
+
             self.rank = self.comm.Get_rank()
             self.size = self.comm.Get_size()
             # Make seed sequence unique per metallicity
             met_shift = self.metallicities.index(self.metallicity)
-            seq = np.random.SeedSequence(entropy=self.entropy + met_shift)   
+            seq = np.random.SeedSequence(entropy=self.entropy + met_shift)
             seed_seq = [i for i in seq.spawn(self.size)][self.rank]
-            
+
         # Job array runs
         elif self.JOB_ID is not None:
             self.rank = self.kwargs.pop('RANK', None)
-            self.size = self.kwargs.pop('size', None)       
+            self.size = self.kwargs.pop('size', None)
             # Make sure each of the processes has the same entropy
             # But unique per metallicity
             if self.entropy is None:
@@ -270,7 +270,7 @@ class BinaryPopulation:
         else:
             # Create a directory for parallel runs
             if not os.path.exists(temp_directory):
-                try: 
+                try:
                     os.makedirs(temp_directory)
                 except FileExistsError:
                     pass
@@ -404,14 +404,14 @@ class BinaryPopulation:
             # get the temporary files in the directory
             tmp_files = [os.path.join(temp_directory, f)     \
                          for f in os.listdir(temp_directory) \
-                            if os.path.isfile(os.path.join(temp_directory, f))]            
-            
+                            if os.path.isfile(os.path.join(temp_directory, f))]
+
             if os.path.isdir(absolute_filepath):
                 file_name = 'backup_save_pop_data.h5'
                 file_path = os.path.join(dir_name, file_name)
                 warnings.warn('The provided path is a directory - saving '
                               'to {0} instead.'.format(file_path), Warning)
-                
+
             self.combine_saved_files(absolute_filepath, tmp_files, **kwargs)
 
     def make_temp_fname(self):
@@ -422,14 +422,14 @@ class BinaryPopulation:
 
     def combine_saved_files(self, absolute_filepath, file_names, **kwargs):
         """Combine various temporary files in a given folder.
-        
+
         Parameters
         ----------
         absolute_filepath : str
             Absolute path to the file to be saved.
         file_names : list
-            List of absolute paths to the temporary files.  
-    
+            List of absolute paths to the temporary files.
+
         """
         dir_name = os.path.dirname(absolute_filepath)
 
@@ -447,7 +447,7 @@ class BinaryPopulation:
         mode = kwargs.get('mode', 'a')
         complib = kwargs.get('complib', 'zlib')
         complevel = kwargs.get('complevel', 9)
-        
+
         with pd.HDFStore(absolute_filepath, mode=mode, complevel=complevel, complib=complib) as store:
             for f in file_names:
                 # strings itemsize set by first append max value,
@@ -565,6 +565,11 @@ class PopulationManager:
             self.oneline_dfs.append(oneline)
             self.remove(binary)
         except Exception as err:
+            print("Error in breakdown_to_df")
+            print("binary", binary)
+            print("history", history)
+            print("oneline", oneline)
+
             print("Error during breakdown of {0}:\n{1}".
                   format(str(binary), err))
 
@@ -717,7 +722,7 @@ class PopulationManager:
 
             online_df = self.to_oneline_df(**kwargs)
             store.append('oneline', online_df, data_columns=True)
-        
+
         return
 
 

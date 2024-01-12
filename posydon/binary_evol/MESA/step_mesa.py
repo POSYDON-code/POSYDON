@@ -279,6 +279,8 @@ class MesaGridStep:
             self.closest_binary, self.nearest_neighbour_distance, \
                 self.termination_flags = self._psyTrackInterp.evaluate(
                     self.binary)
+            if self.verbose:
+                print("closest_binary : ", closest_binary)
             if self.closest_binary.binary_history is None:
                 return
             key = POSYDON_TO_MESA['binary']['time']
@@ -447,6 +449,8 @@ class MesaGridStep:
             empy_h = [None] * length_hist
             MESA_history_bug_fix = False
             if length_binary_hist != length_star_hist:
+                if self.verbose:
+                    print("length_binary_hist != length_star_hist", length_binary_hist, length_star_hist)
                 MESA_history_bug_fix = True
                 warnings.warn(
                     'The MESA star_history and binary_history do not match '
@@ -656,7 +660,7 @@ class MesaGridStep:
                             # DEBUG
                             # print(key, missing_values_star_1)
                             # print('fixed', len(getattr(self.binary.star_1,
-                            #                            key + "_history")))        
+                            #                            key + "_history")))
         # convert these flags to default POSYDON star states
         setattr(stars[0], 'state',
                 cf.check_state_of_star(stars[0], star_CO=stars_CO[0]))
