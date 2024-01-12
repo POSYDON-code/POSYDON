@@ -503,7 +503,7 @@ class StepSN(object):
                 elif getattr(star, MODEL_NAME_SEL) is None:
                     # NOTE: this option is needed to do the collapse
                     # for stars evolved with the step_detached or 
-                    # steo_disrupted.
+                    # step_disrupted.
                     # allow to continue with the collapse with profile
                     # or core masses
                     warnings.warn(f'{MODEL_NAME_SEL}: The collapsed star '
@@ -511,14 +511,48 @@ class StepSN(object):
                                      'or use_core_masses is set to True, '
                                      'continue with the collapse.')                 
                 else:
+                    # store some properties of the star object
+                    # to be used for collapse verification
+                    pre_SN_c_core_mass = star.c_core_mass
+                    pre_SN_he_core_mass = star.he_core_mass
+                    pre_SN_mass = star.mass
+                    
                     MODEL_properties = getattr(star, MODEL_NAME_SEL)
                     for key, value in MODEL_properties.items():
                         setattr(star, key, value)
-                
+                    
+
                     for key in STARPROPERTIES:
                         if key not in ["state", "mass", "spin",
                                         "m_disk_accreted ", "m_disk_radiated"]:
                             setattr(star, key, None)
+                            
+                    # check if SN_type is not None
+                    print('state:',star.state)
+                    print('type:',star.SN_type)  
+                    # check if SN_type matches the predicted CO
+                    # ie WD is no SN
+                    if star.state == 'WD' and star.SN_type != "WD":
+                        star.SN_type = 'WD'
+                    elif (star.state == "NS" or star.state == "BH") and \
+                         (star.SN_type != 'ECSN' or star.SN_type != 'CCSN'):
+                        star.SN_type = self.check_SN_type(pre_SN_c_core_mass,
+                                                pre_SN_he_core_mass,
+                                                pre_SN_mass)[-1]
+                    #elif star.state == 'ERR':
+                    
+
+                    #print('state:',star.state)
+                    #print('type:',star.SN_type)   
+                    #print(MODEL_properties.keys())
+                    #print(star.c_core_mass, star.he_core_mass, star.mass)
+                   # print('calculated SN_type', self.check_SN_type(pre_SN_c_core_mass,
+                                                              #     pre_SN_he_core_mass,
+                                                               #    pre_SN_mass))
+                    # if NS/BH then ECSN or CCSN
+                    # if None then PISN?
+                    print('state:',star.state)
+                    print('type:',star.SN_type)  
                     
                     if getattr(star, 'SN_type') != 'PISN':
                         star.log_R = np.log10(CO_radius(star.mass, star.state))
