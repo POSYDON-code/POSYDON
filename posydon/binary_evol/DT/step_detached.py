@@ -1072,7 +1072,7 @@ class detached_step:
                     # ZAMS stars in wide (non-mass exchaging binaries) that are
                     # directed to detached step at birth
                     m0, t0 = star1.mass, 0
-                elif co: 
+                elif co:
                     m0, t0 = copy_prev_m0, copy_prev_t0
                 else:
                     t_before_matching = time.time()
@@ -1094,7 +1094,7 @@ class detached_step:
             else:
                 self.grid = self.grid_strippedHe
             
-            # cehck if m0 is in the grid
+            # check if m0 is in the grid
             if m0 < self.grid.grid_mass.min() or m0 > self.grid.grid_mass.max():
                 binary.state = "ERR"
                 binary.event = "FAILED"
