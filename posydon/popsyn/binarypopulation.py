@@ -566,12 +566,12 @@ class PopulationManager:
             self.oneline_dfs.append(oneline)
             self.remove(binary)
         except Exception as err:
-            print("Error in breakdown_to_df")
-            print("binary {0}".format(str(binary)))
+           # print("Error in breakdown_to_df")
+           # print("binary {0}".format(str(binary)))
             print("Error during breakdown of {0}:\n{1}".
                   format(str(binary), err))
-            print("binary {0}".format(str(binary.to_df(**kwargs))))
-            print("binary {0}".format(str(binary.to_oneline_df(**kwargs))))
+           # print("binary {0}".format(str(binary.to_df(**kwargs))))
+           # print("binary {0}".format(str(binary.to_oneline_df(**kwargs))))
 
     def to_df(self, selection_function=None, **kwargs):
         """Convert all binaries to dataframe."""
