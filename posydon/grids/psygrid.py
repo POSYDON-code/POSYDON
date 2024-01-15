@@ -2175,14 +2175,24 @@ def join_grids(input_paths, output_path,
     say("Inferring which runs to include, from which grid...")
     initial_params = {}
     n_substitutions = 0
+    n_ignored_noRLO = 0
     for grid_index, grid in enumerate(grids):
         for run_index, dir_path in enumerate(grid.MESA_dirs):
             # get the parameters part from the dir name
             params_from_path = initial_values_from_dirname(dir_path)
             if params_from_path in initial_params:
                 n_substitutions += 1
+
             initial_params[params_from_path] = (grid_index, run_index)
-    say("    {} substituions detected.".format(n_substitutions))
+
+            if (grid[run_index].final_values["termination_flag_1"]
+                    == "ignored_no_RLO"):
+                if params_from_path in initial_params:
+                    del initial_params[params_from_path]
+                n_ignored_noRLO += 1
+
+    say("    {} substitutions detected.".format(n_substitutions))
+    say("    {} runs ignored beacuse of no RLOF.".format(n_ignored_noRLO))
     say("    {} runs to be joined.".format(len(initial_params)))
 
     if (newconfig["initial_RLO_fix"]):
@@ -2244,18 +2254,18 @@ def join_grids(input_paths, output_path,
 
             if (newconfig["initial_RLO_fix"]):
                 flag1 = new_final_values[-1]["termination_flag_1"]
-                if (flag1 != "Terminate because of overflowing initial model" and
-                    flag1 != "forced_initial_RLO"):
+                if (flag1 != "Terminate because of overflowing initial model"
+                        and flag1 != "forced_initial_RLO"):
                     mass1 = new_initial_values[-1]["star_1_mass"]
                     mass2 = new_initial_values[-1]["star_2_mass"]
                     period = new_initial_values[-1]["period_days"]
                     nearest = get_nearest_known_initial_RLO(mass1, mass2,
                                                         detected_initial_RLO)
-                    if period<nearest["period_days"]:
-                        #set values
+                    if period < nearest["period_days"]:
+                        # set values
                         for colname, value in zip(colnames, valtoset):
                             new_final_values[-1][colname] = value
-                        #copy values from nearest known system
+                        # copy values from nearest known system
                         for colname in ["termination_flag_3",
                                         "termination_flag_4"]:
                             if colname in nearest:
