@@ -1016,10 +1016,13 @@ class detached_step:
             elif (binary.star_2.state in LIST_ACCEPTABLE_STATES_FOR_HeStar):
                 secondary.htrack = False
             elif (binary.star_2.state in STAR_STATES_CO):
-                binary.state += " Thorne-Zytkow object"
-                if self.verbose or self.verbose == 1:
-                    print("Formation of Thorne-Zytkow object, nothing to do further")
+                # only a compact object left
                 return
+            #elif (binary.star_2.state in STAR_STATES_CO):
+                #binary.state += " Thorne-Zytkow object"
+                #if self.verbose or self.verbose == 1:
+                #    print("Formation of Thorne-Zytkow object, nothing to do further")
+                #return
             else:
                 raise Exception("State not recognized!")
 

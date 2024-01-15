@@ -48,6 +48,7 @@ from posydon.binary_evol.singlestar import STARPROPERTIES
 from posydon.binary_evol.SN.profile_collapse import do_core_collapse_BH
 from posydon.binary_evol.flow_chart import (STAR_STATES_CO, STAR_STATES_CC,
                                             STAR_STATES_C_DEPLETION)
+from posydon.binary_evol.DT.step_merged import convert_star_to_massless_remnant
 from posydon.grids.MODELS import MODELS
 
 from pandas import read_csv
@@ -516,21 +517,18 @@ class StepSN(object):
                     pre_SN_c_core_mass = star.c_core_mass
                     pre_SN_he_core_mass = star.he_core_mass
                     pre_SN_mass = star.mass
-                    
+
                     MODEL_properties = getattr(star, MODEL_NAME_SEL)
                     for key, value in MODEL_properties.items():
                         setattr(star, key, value)
-                    
 
                     for key in STARPROPERTIES:
                         if key not in ["state", "mass", "spin",
                                         "m_disk_accreted ", "m_disk_radiated"]:
                             setattr(star, key, None)
                             
-                    # check if SN_type is not None
-                    print('state:',star.state)
-                    print('type:',star.SN_type)  
                     # check if SN_type matches the predicted CO
+                    # and force the SN_type to match the predicted CO.
                     # ie WD is no SN
                     if star.state == 'WD' and star.SN_type != "WD":
                         star.SN_type = 'WD'
@@ -539,20 +537,18 @@ class StepSN(object):
                         star.SN_type = self.check_SN_type(pre_SN_c_core_mass,
                                                 pre_SN_he_core_mass,
                                                 pre_SN_mass)[-1]
-                    #elif star.state == 'ERR':
+                    elif (star.state == "PISN" and star.SN_type != 'PISN'):
+                        # The state interpolator can predict a PISN,
+                        # while the SN_type is not PISN
+                        star.SN_type = 'PISN'
                     
-
-                    #print('state:',star.state)
-                    #print('type:',star.SN_type)   
-                    #print(MODEL_properties.keys())
-                    #print(star.c_core_mass, star.he_core_mass, star.mass)
-                   # print('calculated SN_type', self.check_SN_type(pre_SN_c_core_mass,
-                                                              #     pre_SN_he_core_mass,
-                                                               #    pre_SN_mass))
-                    # if NS/BH then ECSN or CCSN
-                    # if None then PISN?
-                    print('state:',star.state)
-                    print('type:',star.SN_type)  
+                    # No remnant if a PISN happens
+                    if star.SN_type == 'PISN':
+                        convert_star_to_massless_remnant(star=star)
+                        # the mass is set to None
+                        # but an orbital kick is still applied.
+                        # Since the mass is set to None, this will lead to a disruption
+                        # TODO: make it skip the kick caluclation
                     
                     if getattr(star, 'SN_type') != 'PISN':
                         star.log_R = np.log10(CO_radius(star.mass, star.state))

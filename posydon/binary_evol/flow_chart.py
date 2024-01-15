@@ -246,13 +246,6 @@ for b in ['initially_single_star']:
                 POSYDON_FLOW_CHART[(s1, s2, b, e)] = 'step_initially_single'
                 POSYDON_FLOW_CHART[(s2, s1, b, e)] = 'step_initially_single'
 
-for s1 in STAR_STATES_CO:
-    for s2 in ['massless_remnant']:
-        for e in BINARY_EVENTS_ALL:
-            POSYDON_FLOW_CHART[(s1, s2, b, e)] = 'step_end'
-            POSYDON_FLOW_CHART[(s2, s1, b, e)] = 'step_end'
-
-
 
 BINARY_EVENTS_OF_SN_OR_AFTER_DETACHED = BINARY_EVENTS_ALL.copy()
 [BINARY_EVENTS_OF_SN_OR_AFTER_DETACHED.remove(x) for x in ['CC1','CC2','MaxTime_exceeded','maxtime']]
@@ -291,6 +284,15 @@ for b in BINARY_STATES_ALL:
         for s2 in STAR_STATES_ALL:
             for e in ['maxtime', 'MaxTime_exceeded', 'CO_contact']:
                 POSYDON_FLOW_CHART[(s1, s2, b, e)] = 'step_end'
+
+# catch all massless remnants with compact objects
+for b in BINARY_STATES_ALL:
+    for s1 in STAR_STATES_CO:
+        for s2 in ['massless_remnant']:
+            for e in BINARY_EVENTS_ALL:
+                POSYDON_FLOW_CHART[(s1, s2, b, e)] = 'step_end'
+                POSYDON_FLOW_CHART[(s2, s1, b, e)] = 'step_end'
+
 
 
 def flow_chart(FLOW_CHART=POSYDON_FLOW_CHART, CHANGE_FLOW_CHART=None):
