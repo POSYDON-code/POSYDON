@@ -157,21 +157,10 @@ if __name__ == "__main__":
     parser.add_argument("-dsr", "--dsr", type=str,
                         help="Downsampling rate when creating testing "
                         "directory", default=0.01)
-    parser.add_argument("-md", "--mesa_dir", type=str,
+    parser.add_argument("mesa_dir", type=str,
                         help="The path to the directory containing "
                         "MESA-generated data")
 
     functions = {"set_up_test": set_up_test, "compress_dir": compress_dir}
     arguments = parser.parse_args()
-
-    if arguments.function is None:
-        parser.print_help()
-        print()
-        sys.exit("ERROR: A function must be specified to use this script.")
-
-    if arguments.function == "compress_dir" and arguments.mesa_dir is None:
-        parser.print_help()
-        print()
-        sys.exit("ERROR: `MESA_DIR` is not defined.")
-
     functions[arguments.function](arguments)
