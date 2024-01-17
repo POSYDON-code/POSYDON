@@ -149,7 +149,8 @@ def compress_dir(args):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("-f", "--function", type=str,
-                        help="The name of the function to be called.")
+                        help="The name of the function to be called.",
+                        default='compress_dir')
     parser.add_argument("-td", "--test_dir", type=str,
                         help="The path to where the testing directory should "
                         "be set up, either set_up_test or compress_dir.")
@@ -162,8 +163,15 @@ if __name__ == "__main__":
 
     functions = {"set_up_test": set_up_test, "compress_dir": compress_dir}
     arguments = parser.parse_args()
+
     if arguments.function is None:
         parser.print_help()
         print()
         sys.exit("ERROR: A function must be specified to use this script.")
+
+    if arguments.function == "compress_dir" and arguments.mesa_dir is None:
+        parser.print_help()
+        print()
+        sys.exit("ERROR: `MESA_DIR` is not defined.")
+
     functions[arguments.function](arguments)
