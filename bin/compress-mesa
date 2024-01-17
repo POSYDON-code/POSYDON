@@ -163,5 +163,7 @@ if __name__ == "__main__":
     functions = {"set_up_test": set_up_test, "compress_dir": compress_dir}
     arguments = parser.parse_args()
     if arguments.function is None:
-        sys.exit("A function must be specified to use this script.")
+        parser.print_help()
+        print()
+        sys.exit("ERROR: A function must be specified to use this script.")
     functions[arguments.function](arguments)
