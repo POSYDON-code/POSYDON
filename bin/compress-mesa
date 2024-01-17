@@ -5,7 +5,44 @@ import shutil
 import random
 import argparse
 from tqdm import tqdm
-from hurry.filesize import size
+
+
+def textsize(filesize, floatfmt=".3g", base=1024, threshold=1000):
+    """Get a human-readable file size in string.
+
+    Parameters
+    ----------
+    filesize : int or float
+        The size of the file, or directory, ...
+    floatfmt : str
+        The format for the float before the size descriptor (e.g., 2.34K).
+    base : int
+        The base of the units. Typically 1024 but 1000 can be used as well.
+    threshold : int or float
+        The threshold for using the next unit. For example, if base is 1024
+        and threshold is 1000, then 1000 bytes will be returned as 0.98K.
+
+    Returns
+    -------
+    str
+        The filesize in string format using b, K, M, ...
+
+    """
+    assert base in [1000, 1024]
+
+    units = ["b", "K", "M", "G", "T", "P", "E", "Z", "Y"]
+    unit_values = [base**i for i in range(len(units))]
+
+    if filesize < 0:
+        return "-" + textsize(
+            -filesize, floatfmt=floatfmt, base=base)
+
+    for unit, unit_value in zip(units, unit_values):
+        if filesize < unit_value * threshold:
+            quantity = filesize / unit_value
+            return f"{quantity:{floatfmt}}{unit}"
+
+    return f"{filesize:.3g} bytes"
 
 
 def set_up_test(args):
@@ -76,7 +113,7 @@ def compress_dir(args):
     if not os.path.isdir(args.mesa_dir):
         sys.exit("The MESA directory does not exist.")
 
-    og_size = size(get_size(args.mesa_dir))
+    og_size = textsize(get_size(args.mesa_dir))
 
     for folder in tqdm(os.listdir(args.mesa_dir)):
 
@@ -106,7 +143,7 @@ def compress_dir(args):
                             os.system(f"gzip -1 {os.path.join(root, file)}")
 
     print("\nCompressed MESA tracks\nOriginal size {} | Compressed size {}\n".
-          format(og_size, size(get_size(args.mesa_dir))))
+          format(og_size, textsize(get_size(args.mesa_dir))))
 
 
 if __name__ == "__main__":
