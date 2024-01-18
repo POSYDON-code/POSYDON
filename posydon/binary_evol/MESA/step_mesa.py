@@ -1297,8 +1297,8 @@ class MS_MS_step(MesaGridStep):
               event == 'ZAMS' and
               p <= self.p_max and
               (m1 < self.m1_min or m1 > self.m1_max)):
-            self.binary.event = 'ERR'
-            self.binary.state = 'FAILED'
+            self.binary.event = 'FAILED'
+            self.binary.state = 'ERR'
             raise ValueError(f'The mass of m1 ({m1}) is outside the grid,'
                              'while the period is inside the grid.')
         # outside the mass grid for m2
