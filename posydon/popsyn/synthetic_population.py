@@ -16,6 +16,7 @@ import pandas as pd
 from tqdm import tqdm
 import os
 import copy
+import multiprocessing as mp
 from posydon.utils.constants import Zsun
 from posydon.popsyn.io import binarypop_kwargs_from_ini
 from posydon.popsyn.binarypopulation import BinaryPopulation
@@ -93,9 +94,15 @@ class SyntheticPopulation:
             self.create_binary_populations()
         while self.binary_populations:
             pop =  self.binary_populations.pop()
+            
             if self.verbose:
                 print(f'Z={pop.kwargs["metallicity"]:.2e} Z_sun')
-            pop.evolve()
+                            
+            process = mp.Process(target=pop.evolve)
+            process.start()
+            process.join()
+            
+            pop.close()
             del pop
 
 
