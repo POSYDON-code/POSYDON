@@ -121,6 +121,13 @@ def compress_dir(args):
                         continue
                     os.system(f"gzip -1 {os.path.join(root, file)}")
 
+    def remove_core_dumps(track_dirs):
+        for track_obj in track_dirs:
+            for root, _dir, files in os.walk(track_obj):
+                for file in files:
+                    core_string = file.split(".")[0]0
+                    if core_string == 'core':
+                        print("To delete:", file)
 
     if not os.path.isdir(args.mesa_dir):
         sys.exit("The MESA directory does not exist.")
@@ -138,6 +145,7 @@ def compress_dir(args):
                 track_dirs.append(os.path.join(args.mesa_dir, folder))
             
             compress_subdirs(track_dirs)
+            remove_core_dumps(track_dirs)
             continue
 
         if os.path.isdir(os.path.join(args.mesa_dir, folder)):
@@ -155,6 +163,7 @@ def compress_dir(args):
 
             if is_mesa_run:
                 compress_subdirs(track_dirs)
+                remove_core_dumps(track_dirs)
 
     print("\nCompressed MESA tracks\nOriginal size {} | Compressed size {}\n".
           format(og_size, textsize(get_size(args.mesa_dir))))
