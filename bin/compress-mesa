@@ -125,7 +125,7 @@ def compress_dir(args):
         for track_obj in track_dirs:
             for root, _dir, files in os.walk(track_obj):
                 for file in files:
-                    core_string = file.split(".")[0]0
+                    core_string = file.split(".")[0]
                     if core_string == 'core':
                         print("To delete:", file)
 
