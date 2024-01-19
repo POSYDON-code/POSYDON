@@ -26,7 +26,8 @@ from posydon.binary_evol.binarystar import BinaryStar
 from posydon.interpolation.IF_interpolation import IFInterpolator
 from posydon.utils.common_functions import (flip_stars,
                                             convert_metallicity_to_string,
-                                            CO_radius, infer_star_state)
+                                            CO_radius, infer_star_state,
+                                            set_binary_to_failed,)
 from posydon.utils.data_download import data_download, PATH_TO_POSYDON_DATA
 from posydon.grids.MODELS import MODELS
 
@@ -1297,8 +1298,7 @@ class MS_MS_step(MesaGridStep):
               event == 'ZAMS' and
               p <= self.p_max and
               (m1 < self.m1_min or m1 > self.m1_max)):
-            self.binary.event = 'FAILED'
-            self.binary.state = 'ERR'
+            set_binary_to_failed(self.binary)
             raise ValueError(f'The mass of m1 ({m1}) is outside the grid,'
                              'while the period is inside the grid.')
         # outside the mass grid for m2
@@ -1307,8 +1307,7 @@ class MS_MS_step(MesaGridStep):
               event == 'ZAMS' and
               p <= self.p_max and
               (mass_ratio < self.q_min or mass_ratio > self.q_max)):
-            self.binary.event = 'FAILED'
-            self.binary.state = 'ERR'
+            set_binary_to_failed(self.binary)
             raise ValueError(f'The mass of m2 ({m2}) is outside the grid,'
                              'while the period is inside the grid.')
         # redirect if CC1
@@ -1320,8 +1319,7 @@ class MS_MS_step(MesaGridStep):
             self.binary.event = 'CC2'
             return
         else:
-            self.binary.event = 'FAILED'
-            self.binary.state = 'ERR'
+            set_binary_to_failed(self.binary)
             raise ValueError('The star_1.state = %s, star_2.state = %s, '
                              'binary.event = %s and not H-rich_Core_H_burning '
                              '- H-rich_Core_H_burning - * - ZAMS'
@@ -1414,8 +1412,7 @@ class CO_HMS_RLO_step(MesaGridStep):
         else:
             if len(self.binary.state_history) > 2:
                 if self.binary.state_history[-2] == 'detached':
-                    self.binary.state = "ERR"
-                    self.binary.event = "FAILED"
+                    set_binary_to_failed(self.binary)
                     raise ValueError('CO_HMS_RLO binary outside grid and coming from detached')
                 
             self.binary.state = "detached"
