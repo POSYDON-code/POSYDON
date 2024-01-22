@@ -44,11 +44,11 @@ from posydon.utils.common_functions import (
 )
 
 from posydon.binary_evol.binarystar import BINARYPROPERTIES
-from posydon.binary_evol.singlestar import STARPROPERTIES
+from posydon.binary_evol.singlestar import STARPROPERTIES, convert_star_to_massless_remnant
 from posydon.binary_evol.SN.profile_collapse import do_core_collapse_BH
 from posydon.binary_evol.flow_chart import (STAR_STATES_CO, STAR_STATES_CC,
                                             STAR_STATES_C_DEPLETION)
-from posydon.binary_evol.DT.step_merged import convert_star_to_massless_remnant
+
 from posydon.grids.MODELS import MODELS
 
 from pandas import read_csv

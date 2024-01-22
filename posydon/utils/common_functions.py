@@ -24,8 +24,6 @@ from posydon.utils import constants as const
 import copy
 import warnings
 from scipy.interpolate import PchipInterpolator
-from posydon.binary_evol.singlestar import properties_massless_remnant, STARPROPERTIES
-
 
 PATH_TO_POSYDON = os.environ.get("PATH_TO_POSYDON")
 
@@ -1375,10 +1373,6 @@ def flip_stars(binary):
         setattr(binary, i+'2_history', value1_history)
 
 
-def convert_star_to_massless_remnant(star):
-    for key in STARPROPERTIES:
-        setattr(star, key, properties_massless_remnant()[key])
-    return star
 
 def infer_star_state(star_mass=None, surface_h1=None,
                      center_h1=None, center_he4=None, center_c12=None,
