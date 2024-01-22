@@ -529,7 +529,6 @@ class StepSN(object):
                                         "m_disk_accreted ", "m_disk_radiated"]:
                             setattr(star, key, None)
                         
-                    print(star.SN_type)
                     # check if SN_type matches the predicted CO
                     # and force the SN_type to match the predicted CO.
                     # ie WD is no SN
