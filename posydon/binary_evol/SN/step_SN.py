@@ -472,7 +472,7 @@ class StepSN(object):
 
         """
         state = star.state
-
+        
         # Verifies if the star is in state state where it can
         # explode
         if state in STAR_STATES_CC:
@@ -496,6 +496,8 @@ class StepSN(object):
                         if self.verbose:
                             print('matched to model:', tmp)
                         MODEL_NAME_SEL = tmp
+                
+                
                 
                 # check if selected MODEL is supported
                 if MODEL_NAME_SEL is None:
@@ -526,7 +528,8 @@ class StepSN(object):
                         if key not in ["state", "mass", "spin",
                                         "m_disk_accreted ", "m_disk_radiated"]:
                             setattr(star, key, None)
-                            
+                        
+                    print(star.SN_type)
                     # check if SN_type matches the predicted CO
                     # and force the SN_type to match the predicted CO.
                     # ie WD is no SN
@@ -593,15 +596,7 @@ class StepSN(object):
 
                 # check if the star was disrupted by the PISN
                 if np.isnan(m_rembar):
-                    star.mass = np.nan
-                    star.state = "PISN"
-                    star.spin = np.nan
-                    star.m_disk_accreted = np.nan
-                    star.m_disk_radiated = np.nan
-                    for key in STARPROPERTIES:
-                        if key not in ["state", "mass", "spin",
-                                       "m_disk_accreted ", "m_disk_radiated"]:
-                            setattr(star, key, None)
+                    convert_star_to_massless_remnant(star=star)
                     return
 
                 # Computing the gravitational mass of the remnant
@@ -700,15 +695,7 @@ class StepSN(object):
 
                 # check if the star was disrupted by the PISN
                 if np.isnan(m_rembar):
-                    star.mass = np.nan
-                    star.state = "PISN"
-                    star.spin = np.nan
-                    star.m_disk_accreted = np.nan
-                    star.m_disk_radiated = np.nan
-                    for key in STARPROPERTIES:
-                        if key not in ["state", "mass", "spin",
-                                       "m_disk_accreted ", "m_disk_radiated"]:
-                            setattr(star, key, None)
+                    convert_star_to_massless_remnant(star=star)
                     return
 
                 # Computing the gravitational mass of the remnant
