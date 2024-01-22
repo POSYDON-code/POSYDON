@@ -1250,6 +1250,8 @@ class MS_MS_step(MesaGridStep):
         # load grid boundaries
         self.m1_min = min(self._psyTrackInterp.grid.initial_values['star_1_mass'])
         self.m1_max = max(self._psyTrackInterp.grid.initial_values['star_1_mass'])
+        self.m2_min = min(self._psyTrackInterp.grid.initial_values['star_2_mass'])
+        self.m2_max = max(self._psyTrackInterp.grid.initial_values['star_2_mass'])
         self.q_min = 0.05 # can be computed m2_min/m1_min
         self.q_max = 1. # note that for MESA stability we actually run q_max = 0.99
         self.p_min = min(self._psyTrackInterp.grid.initial_values['period_days'])
@@ -1306,7 +1308,7 @@ class MS_MS_step(MesaGridStep):
               state_2 == 'H-rich_Core_H_burning' and
               event == 'ZAMS' and
               p <= self.p_max and
-              (mass_ratio < self.q_min or mass_ratio > self.q_max)):
+              (m2 < self.m2_min or m2 > self.m2_max)):
             set_binary_to_failed(self.binary)
             raise ValueError(f'The mass of m2 ({m2}) is outside the grid,'
                              'while the period is inside the grid.')
