@@ -66,11 +66,13 @@ MT_CASE_C = 3
 MT_CASE_BA = 4
 MT_CASE_BB = 5
 MT_CASE_BC = 6
+MT_CASE_NONBURNING = 8
 MT_CASE_UNDETERMINED = 9
 
 # All cases meaning RLO is happening
 ALL_RLO_CASES = set([MT_CASE_A, MT_CASE_B, MT_CASE_C,
-                     MT_CASE_BA, MT_CASE_BB, MT_CASE_BC])
+                     MT_CASE_BA, MT_CASE_BB, MT_CASE_BC,
+                     MT_CASE_NONBURNING])
 
 # Conversion of integer mass-transfer flags to strings
 MT_CASE_TO_STR = {
@@ -81,6 +83,7 @@ MT_CASE_TO_STR = {
     MT_CASE_BA: "BA",
     MT_CASE_BB: "BB",
     MT_CASE_BC: "BC",
+    MT_CASE_NONBURNING: "nonburning",
     MT_CASE_UNDETERMINED: "undetermined_MT"
 }
 
@@ -1447,7 +1450,9 @@ def infer_mass_transfer_case(rl_relative_overflow,
                   rl_relative_overflow, lg_mtransfer_rate)
         return MT_CASE_NO_RLO
 
-    if "H-rich" in donor_state:
+    if "non_burning" in donor_state:
+        return MT_CASE_NONBURNING
+    elif "H-rich" in donor_state:
         if "Core_H_burning" in donor_state:
             return MT_CASE_A
         if ("Core_He_burning" in donor_state
