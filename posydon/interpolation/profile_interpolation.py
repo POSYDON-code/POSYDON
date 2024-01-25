@@ -1,4 +1,4 @@
-"""Module for performing final profile interpolation
+"""Module for performing initial-final profile interpolation
 """
 
 __authors__ = [
@@ -219,8 +219,8 @@ class ProfileInterpolator:
                             self.profiles[:,self.names.index("logRho")],
                             self.valid_initial,
                             self.valid_profiles[:,self.names.index("logRho")],
-                            IF_interpolator)
-        self.dens.train(prof_epochs=density_epochs,prof_patience=density_patience,hms_s2=hms_s2)
+                            IF_interpolator,hms_s2=hms_s2)
+        self.dens.train(prof_epochs=density_epochs,prof_patience=density_patience)
         
         if loss_history==True:
             return self.comp.loss_history, self.dens.loss_history
@@ -274,20 +274,22 @@ class ProfileInterpolator:
         
         def mono_renorm(arr):
             arr_copy = arr.copy()
-            # force rising points down
+            # starting from surface, force dropping points up
             for i in range(1,len(arr_copy)):
-                if arr_copy[i]>arr_copy[i-1]:
-                    arr_copy[i]=arr_copy[i-1]
-            # cut off points below surface value
-            return np.where(arr_copy<arr[-1], arr[-1], arr_copy)
-        
+                if arr_copy[-i]>arr_copy[-i-1]:
+                    arr_copy[-i-1]=arr_copy[-i]
+            # cut off points above center value
+            return np.where(arr_copy>arr[0], arr[0], arr_copy)
+
         profiles_mono=profiles.copy()
-        
+
         for i in range(len(profiles)):
             if len(np.where(profiles[i][1:]-profiles[i][:-1]>0)[0]>0):
                 profiles_mono[i] = mono_renorm(profiles[i])
-                
+
         return profiles_mono
+
+    
     
     
 class Density:
@@ -393,11 +395,6 @@ class Density:
         regress_rho = lambda x: self.model_rho(x)
         min_rho = regress_rho(inputs).numpy()[:,0]
         
-        # reconstruct profile
-        norm_prof = self.pca.inverse_transform(pca_weights_pred*self.scaling)
-        density_profiles = norm_prof*(max_rho[:,np.newaxis]-min_rho[:,np.newaxis]) \
-                           + min_rho[:,np.newaxis]
-        
         # IF interpolate final mass, center density 
         if self.hms_s2==False:
             m_ind = self.model_IF.interpolators[0].out_keys.index("star_1_mass")
@@ -408,6 +405,11 @@ class Density:
         max_rho = self.model_IF.interpolators[0].test_interpolator(10**inputs)[:,center_ind]                    
         pred_mass = self.model_IF.interpolators[0].test_interpolator(10**inputs)[:,m_ind]
             
+        # reconstruct profile
+        norm_prof = self.pca.inverse_transform(pca_weights_pred*self.scaling)
+        density_profiles = norm_prof*(max_rho[:,np.newaxis]-min_rho[:,np.newaxis]) \
+                           + min_rho[:,np.newaxis]
+        
         # construct mass enclosed profile coordinates
         mass_coords = np.linspace(0,1,200)*pred_mass[:,np.newaxis] 
         
