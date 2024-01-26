@@ -132,8 +132,7 @@ def find_inlist_from_scenario(source, gitcommit, system_type):
                                  stdout = subprocess.PIPE,
                                  stderr = subprocess.PIPE
                              )
-    proc.wait()
-
+    
 
     print("checking out commit/tag: {0}".format(githash))
 
