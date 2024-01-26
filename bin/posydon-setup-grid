@@ -124,6 +124,7 @@ def find_inlist_from_scenario(source, gitcommit, system_type):
                                  stdout = subprocess.PIPE,
                                  stderr = subprocess.PIPE
                              )
+    proc.wait()
 
     print("For posterity we are pulling (specifically needed if you already have the repo clone)")
     proc = subprocess.call(['git', 'pull'],
@@ -131,6 +132,7 @@ def find_inlist_from_scenario(source, gitcommit, system_type):
                                  stdout = subprocess.PIPE,
                                  stderr = subprocess.PIPE
                              )
+    proc.wait()
 
 
     print("checking out commit/tag: {0}".format(githash))
@@ -140,6 +142,7 @@ def find_inlist_from_scenario(source, gitcommit, system_type):
                                  stdout = subprocess.PIPE,
                                  stderr = subprocess.PIPE
                              )
+    proc.wait()
 
     # if this is looking at posydon defaults, all posydon defaults build from default common inlists
     if source == 'posydon':
