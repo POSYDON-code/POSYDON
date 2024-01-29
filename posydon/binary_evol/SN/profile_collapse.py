@@ -15,6 +15,7 @@ __authors__ = [
     "Emmanouil Zapartas <ezapartas@gmail.com>",
     "Scott Coughlin <scottcoughlin2014@u.northwestern.edu>",
     "Devina Misra <devina.misra@unige.ch>",
+    "Matthias Kruckow <Matthias.Kruckow@unige.ch>",
 ]
 
 

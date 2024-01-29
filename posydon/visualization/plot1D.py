@@ -8,6 +8,7 @@ and post processed with the psygrid object into an h5 file.
 
 __authors__ = [
     "Simone Bavera <Simone.Bavera@unige.ch>",
+    "Matthias Kruckow <Matthias.Kruckow@unige.ch>",
 ]
 
 
