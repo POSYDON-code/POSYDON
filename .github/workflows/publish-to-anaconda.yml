@@ -17,7 +17,7 @@ jobs:
       uses: scottcoughlin2014/publish_conda_package_action@v1.0.0
       with:
         CondaDir: 'conda'
-        Platforms: 'noarch'
+        Platforms: 'osx-64 linux-64'
         CondaUsername: ${{ secrets.CONDA_USERNAME }}
         CondaPassword: ${{ secrets.CONDA_PASSWORD }}
         CondaChannel: 'posydon'
