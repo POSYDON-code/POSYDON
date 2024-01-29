@@ -10,11 +10,11 @@ Aim of the ini file
 Using an ini file should help to keep an overview on large grid repositories
 and ensures that all will be setup the same way.
 
-There is a setup-pipeline script takes one argument:
+There is a script to setup the pipeline, it takes one argument:
 
 .. code-block:: bash
 
-    setup-pipeline PATH_TO_INI
+    posydon-setup-pipeline PATH_TO_INI
 
 The content of the ini file is described :ref:`below <pipeline_ini_sections>`.
 It will create for each step, plot or check two files:

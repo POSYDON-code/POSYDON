@@ -8,16 +8,16 @@ The pipeline is divided into several steps, which build up on each other. Each
 step will take a csv file as input. The name of this file is used to tell the
 pipeline, which step should be performed.
 
-The run-pipeline script takes four arguments:
+The script to run the pipeline takes four arguments:
 
 .. code-block:: bash
 
-    run-pipeline PATH_TO_GRIDS PATH_TO_CSV_FILE DATA_ID VERBOSE
+    posydon-run-pipeline PATH_TO_GRIDS PATH_TO_CSV_FILE DATA_ID VERBOSE
 
 1. [path] The path to the girds main directory (currently not used)
 2. [path] The path to the csv file
 3. [int] An index indicating the data entry to read from the csv file
-4. [int] Where one wants verbose output (1) or not (0)
+4. [int] Whether one wants verbose output (1) or not (0)
 
 .. note::
     The current directory will be used as working directory, hence navigate to

@@ -543,7 +543,7 @@ def slurm_job(job_name,
         
         # get path to run the pipeline
         path_to_run_pipeline = os.path.join(PATH_TO_POSYDON, 'bin',
-                                            'run-pipeline')
+                                            'posydon-run-pipeline')
         # encode the verbose information for running the pipeline as a command
         # line argument
         if VERBOSE and 'check' not in job_name:
