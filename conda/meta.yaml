@@ -16,14 +16,14 @@ build:
 requirements:
   host:
     - pip
-    - python==3.7.12
-    - python_abi==3.7
+    - python==3.7.12-hf930737_100_cpython
+    - python_abi==3.7-4_cp37m
     - numpy==1.19.1
     - setuptools>=38.2.5
 
   run:
-    - python==3.7.12
-    - python_abi==3.7
+    - python==3.7.12-hf930737_100_cpython
+    - python_abi==3.7-4_cp37m
     - numpy==1.19.1
     - scipy==1.5.2
     - iminuit==1.4.9
