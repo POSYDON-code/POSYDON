@@ -18,9 +18,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 from posydon.utils.gridutils import add_field
 from posydon.utils.constants import Zsun
-from posydon.visualization.plot_defaults import DEFAULT_MARKERS_COLORS_LEGENDS
-from posydon.visualization.plot_defaults import PLOT_PROPERTIES
-from posydon.visualization.plot_defaults import DEFAULT_LABELS
+from posydon.visualization.plot_defaults import (
+    DEFAULT_MARKERS_COLORS_LEGENDS, add_flag_to_MARKERS_COLORS_LEGENDS,
+    PLOT_PROPERTIES, DEFAULT_LABELS)
 from posydon.visualization.combine_TF import combine_TF12
 import copy
 
@@ -477,6 +477,9 @@ class plot2D(object):
         sc_last = None
         for flag in self.termination_flag_str:
             selection = self.termination_flag == flag
+            if flag not in self.MARKERS_COLORS_LEGENDS.keys():
+                add_flag_to_MARKERS_COLORS_LEGENDS(self.MARKERS_COLORS_LEGENDS,
+                                                   flag)
             if self.MARKERS_COLORS_LEGENDS[flag][2] is not None:
                 if self.slice_at_RLO:
                     for i in range(len(self.x_var[selection])):
@@ -1210,6 +1213,9 @@ class plot2D(object):
                 ax = axs[row, col]
                 for flag in self.termination_flag_str:
                     selection = self.termination_flag == flag
+                    if flag not in self.MARKERS_COLORS_LEGENDS.keys():
+                        add_flag_to_MARKERS_COLORS_LEGENDS(
+                            self.MARKERS_COLORS_LEGENDS, flag)
                     if self.MARKERS_COLORS_LEGENDS[flag][2] is not None:
                         if self.slice_at_RLO:
                             for i in range(len(self.x_var[selection])):
