@@ -31,6 +31,7 @@ import os
 import warnings
 import numpy as np
 import scipy as sp
+import copy
 
 from posydon.utils.data_download import PATH_TO_POSYDON_DATA, data_download
 import posydon.utils.constants as const
@@ -514,6 +515,7 @@ class StepSN(object):
                 else:
                     # store some properties of the star object
                     # to be used for collapse verification
+                    pre_SN_star = copy.deepcopy(star)
                     pre_SN_c_core_mass = star.c_core_mass
                     pre_SN_he_core_mass = star.he_core_mass
                     pre_SN_mass = star.mass
@@ -536,8 +538,8 @@ class StepSN(object):
                         if star.state == 'WD' and star.SN_type != "WD":
                             correct_SN_type = False
                         elif (star.state == "NS" or star.state == "BH") and \
-                                (star.SN_type != 'ECSN' or
-                                star.SN_type != 'CCSN' or
+                                (star.SN_type != 'ECSN' and
+                                star.SN_type != "CCSN" and
                                 star.SN_type != 'PPISN'):
                             correct_SN_type = False
                         elif (star.state == "PISN" and star.SN_type != 'PISN'):
@@ -552,12 +554,12 @@ class StepSN(object):
                                       'does not match the predicted CO!'
                                       'recalculating the SN_type and CO')
                         # recalculate the SN_type and CO
-                        m_PISN = self.PISN_prescription(star)
-                        _, _, star.state = self.compute_m_rembar(star, m_PISN)
-                        self.SN_type = self.check_SN_type(pre_SN_c_core_mass,
+                        # change some star properties back 
+                        m_PISN = self.PISN_prescription(pre_SN_star)
+                        _, _, star.state = self.compute_m_rembar(pre_SN_star, m_PISN)
+                        star.SN_type = self.check_SN_type(pre_SN_c_core_mass,
                                                 pre_SN_he_core_mass,
                                                 pre_SN_mass)[-1]
-                        
                         # check if the new SN_type matches new SN_type
                         if not check_SN_CO_match(star):
                             # still doesn't match
@@ -573,7 +575,9 @@ class StepSN(object):
                                 star.SN_type = 'PISN'
                             else:
                                 raise ValueError('Star state not recognized.')
-                                    
+                    
+                    del pre_SN_star
+                    
                     # No remnant if a PISN happens
                     if star.SN_type == 'PISN':
                         convert_star_to_massless_remnant(star=star)
