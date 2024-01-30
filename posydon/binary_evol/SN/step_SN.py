@@ -497,8 +497,6 @@ class StepSN(object):
                             print('matched to model:', tmp)
                         MODEL_NAME_SEL = tmp
                 
-                
-                
                 # check if selected MODEL is supported
                 if MODEL_NAME_SEL is None:
                     raise ValueError('Your model assumptions are not'
@@ -532,18 +530,50 @@ class StepSN(object):
                     # check if SN_type matches the predicted CO
                     # and force the SN_type to match the predicted CO.
                     # ie WD is no SN
-                    if star.state == 'WD' and star.SN_type != "WD":
-                        star.SN_type = 'WD'
-                    elif (star.state == "NS" or star.state == "BH") and \
-                         (star.SN_type != 'ECSN' or star.SN_type != 'CCSN'):
-                        star.SN_type = self.check_SN_type(pre_SN_c_core_mass,
+                    # 1. Check if SN_type and star state match
+                    def check_SN_CO_match(star):
+                        correct_SN_type = True
+                        if star.state == 'WD' and star.SN_type != "WD":
+                            correct_SN_type = False
+                        elif (star.state == "NS" or star.state == "BH") and \
+                                (star.SN_type != 'ECSN' or
+                                star.SN_type != 'CCSN' or
+                                star.SN_type != 'PPISN'):
+                            correct_SN_type = False
+                        elif (star.state == "PISN" and star.SN_type != 'PISN'):
+                            correct_SN_type = False     
+                        return correct_SN_type
+                   
+                    
+                    # Non-matching SN_type and star state
+                    if not check_SN_CO_match(star):
+                        # raise a warning
+                        warnings.warn(f'{MODEL_NAME_SEL}: The SN_type '
+                                      'does not match the predicted CO!'
+                                      'recalculating the SN_type and CO')
+                        # recalculate the SN_type and CO
+                        m_PISN = self.PISN_prescription(star)
+                        _, _, star.state = self.compute_m_rembar(star, m_PISN)
+                        self.SN_type = self.check_SN_type(pre_SN_c_core_mass,
                                                 pre_SN_he_core_mass,
                                                 pre_SN_mass)[-1]
-                    elif (star.state == "PISN" and star.SN_type != 'PISN'):
-                        # The state interpolator can predict a PISN,
-                        # while the SN_type is not PISN
-                        star.SN_type = 'PISN'
-                    
+                        
+                        # check if the new SN_type matches new SN_type
+                        if not check_SN_CO_match(star):
+                            # still doesn't match
+                            # raise a warning
+                            warnings.warn('The SN_type still does not match.'
+                                          'Forced the SN type to match the '
+                                          'predicted CO.')
+                            if star.state == 'WD':
+                                star.SN_type = 'WD'
+                            elif star.state == 'NS' or star.state == 'BH':
+                                star.SN_type = 'CCSN'
+                            elif star.state == 'PISN':
+                                star.SN_type = 'PISN'
+                            else:
+                                raise ValueError('Star state not recognized.')
+                                    
                     # No remnant if a PISN happens
                     if star.SN_type == 'PISN':
                         convert_star_to_massless_remnant(star=star)
