@@ -517,9 +517,6 @@ class StepSN(object):
                     # store some properties of the star object
                     # to be used for collapse verification
                     pre_SN_star = copy.deepcopy(star)
-                    pre_SN_c_core_mass = star.c_core_mass
-                    pre_SN_he_core_mass = star.he_core_mass
-                    pre_SN_mass = star.mass
 
                     MODEL_properties = getattr(star, MODEL_NAME_SEL)
                     for key, value in MODEL_properties.items():
@@ -549,9 +546,9 @@ class StepSN(object):
                             star.state = 'PISN'
                         else:
                             _, _, star.state = self.compute_m_rembar(pre_SN_star, m_PISN)
-                            star.SN_type = self.check_SN_type(pre_SN_c_core_mass,
-                                                            pre_SN_he_core_mass,
-                                                            pre_SN_mass)[-1]
+                            star.SN_type = self.check_SN_type(pre_SN_star.c_core_mass,
+                                                            pre_SN_star.he_core_mass,
+                                                            pre_SN_star.mass)[-1]
 
                         # check if the new SN_type matches new SN_type
                         if not check_SN_CO_match(star):
