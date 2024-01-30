@@ -32,6 +32,7 @@ import warnings
 import numpy as np
 import scipy as sp
 import copy
+import pandas as pd
 
 from posydon.utils.data_download import PATH_TO_POSYDON_DATA, data_download
 import posydon.utils.constants as const
@@ -537,20 +538,26 @@ class StepSN(object):
                     if not check_SN_CO_match(star):
                         # raise a warning
                         warnings.warn(f'{MODEL_NAME_SEL}: The SN_type '
-                                      'does not match the predicted CO!'
-                                      'recalculating the SN_type and CO')
+                                      'does not match the predicted CO! '
+                                      'Recalculating the SN_type and CO')
                         # recalculate the SN_type and CO
                         # change some star properties back 
                         m_PISN = self.PISN_prescription(pre_SN_star)
-                        _, _, star.state = self.compute_m_rembar(pre_SN_star, m_PISN)
-                        star.SN_type = self.check_SN_type(pre_SN_c_core_mass,
-                                                pre_SN_he_core_mass,
-                                                pre_SN_mass)[-1]
+                        # no remnant if a PISN happens
+                        if pd.isna(m_PISN):
+                            star.SN_type = 'PISN'
+                            star.state = 'PISN'
+                        else:
+                            _, _, star.state = self.compute_m_rembar(pre_SN_star, m_PISN)
+                            star.SN_type = self.check_SN_type(pre_SN_c_core_mass,
+                                                            pre_SN_he_core_mass,
+                                                            pre_SN_mass)[-1]
+
                         # check if the new SN_type matches new SN_type
                         if not check_SN_CO_match(star):
                             # still doesn't match
                             # raise a warning
-                            warnings.warn('The SN_type still does not match.'
+                            warnings.warn('The SN_type still does not match. '
                                           'Forced the SN type to match the '
                                           'predicted CO.')
                             if star.state == 'WD':
@@ -1179,7 +1186,7 @@ class StepSN(object):
 
         # check PISN
         if m_PISN is not None:
-            if np.isnan(m_PISN):
+            if pd.isna(m_PISN):
                 m_rembar = m_PISN
                 star.SN_type = "PISN"
             elif m_rembar > m_PISN:
