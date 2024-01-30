@@ -288,10 +288,10 @@ class BinaryStar:
         """Update the states of the two stars in the binary."""
         if self.star_1.state != 'massless_remnant':
             self.star_1.state = check_state_of_star(
-                self.star_1, star_CO=self.star_1.state in ["WD", "BH", "NS"])
+                self.star_1, star_CO=self.star_1.state in ["WD", "NS", "BH"])
         if self.star_2.state != 'massless_remnant':
             self.star_2.state = check_state_of_star(
-                self.star_2, star_CO=self.star_2.state in ["WD", "BH", "NS"])
+                self.star_2, star_CO=self.star_2.state in ["WD", "NS", "BH"])
 
     def to_df(self, **kwargs):
         """Return history parameters from the binary in a DataFrame.
