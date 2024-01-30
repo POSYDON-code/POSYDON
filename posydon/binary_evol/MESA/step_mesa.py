@@ -1276,7 +1276,7 @@ class MS_MS_step(MesaGridStep):
             state_2 == 'H-rich_Core_H_burning' and
             event == 'ZAMS' and
             self.m1_min <= m1 <= self.m1_max and
-            self.q_min <= mass_ratio <= self.q_max and
+            np.max(self.q_min, 0.5/m1) <= mass_ratio <= self.q_max and
             self.p_min <= p <= self.p_max):
             self.flip_stars_before_step = False
             super().__call__(self.binary)  
@@ -1285,7 +1285,7 @@ class MS_MS_step(MesaGridStep):
               state_2 == 'H-rich_Core_H_burning' and
               event == 'ZAMS' and
               self.m1_min <= m2 <= self.m1_max and
-              self.q_min <= 1./mass_ratio <= self.q_max and
+              np.max(self.q_min, 0.5/m1) <= 1./mass_ratio <= self.q_max and
               self.p_min <= p <= self.p_max):
             self.flip_stars_before_step = True
             super().__call__(self.binary)
@@ -1378,6 +1378,7 @@ class CO_HMS_RLO_step(MesaGridStep):
         m2 = self.binary.star_2.mass
         p = self.binary.orbital_period
         ecc = self.binary.eccentricity
+        mass_ratio = m2/m1
 
         # TODO: import states from flow_chart.py
         FOR_RLO_STATES = ["H-rich_Core_H_burning",
