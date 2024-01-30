@@ -1294,6 +1294,14 @@ class MS_MS_step(MesaGridStep):
               p > self.p_max):
             self.binary.event = 'redirect_from_ZAMS'
             return
+        # redirect if period smaller than the minimum period
+        elif (state_1 == 'H-rich_Core_H_burning' and
+              state_2 == 'H-rich_Core_H_burning' and
+              event == 'ZAMS' and
+              p < self.p_min):
+            self.binary.event = 'redirect_from_ZAMS'
+            return
+        
         # outside the mass grid for m1
         elif (state_1 == 'H-rich_Core_H_burning' and
               state_2 == 'H-rich_Core_H_burning' and
@@ -1303,12 +1311,13 @@ class MS_MS_step(MesaGridStep):
             set_binary_to_failed(self.binary)
             raise ValueError(f'The mass of m1 ({m1}) is outside the grid,'
                              'while the period is inside the grid.')
+        
         # outside the mass grid for m2
         elif (state_1 == 'H-rich_Core_H_burning' and
               state_2 == 'H-rich_Core_H_burning' and
               event == 'ZAMS' and
               self.p_min <= p <= self.p_max and
-              (m2 < self.m2_min or m2 > self.m2_max)):
+              (m2 < np.max(self.m2_min, 0.5) or m2 > self.m2_max)):
             set_binary_to_failed(self.binary)
             raise ValueError(f'The mass of m2 ({m2}) is outside the grid,'
                              'while the period is inside the grid.')
