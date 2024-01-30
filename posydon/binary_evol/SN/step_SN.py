@@ -532,21 +532,7 @@ class StepSN(object):
                     # check if SN_type matches the predicted CO
                     # and force the SN_type to match the predicted CO.
                     # ie WD is no SN
-                    # 1. Check if SN_type and star state match
-                    def check_SN_CO_match(star):
-                        correct_SN_type = True
-                        if star.state == 'WD' and star.SN_type != "WD":
-                            correct_SN_type = False
-                        elif (star.state == "NS" or star.state == "BH") and \
-                                (star.SN_type != 'ECSN' and
-                                star.SN_type != "CCSN" and
-                                star.SN_type != 'PPISN'):
-                            correct_SN_type = False
-                        elif (star.state == "PISN" and star.SN_type != 'PISN'):
-                            correct_SN_type = False     
-                        return correct_SN_type
-                   
-                    
+                    # 1. Check if SN_type and star state match                    
                     # Non-matching SN_type and star state
                     if not check_SN_CO_match(star):
                         # raise a warning
@@ -2377,3 +2363,30 @@ class Couch20_corecollapse(object):
             raise Exception("Need a NS or BH to apply `Sukhbold16_corecollapse`.")
 
         return float(m_rem), f_fb, state
+
+
+
+def check_SN_CO_match(star):
+    '''Check if the SN type matches the stellar state of the given star.
+    
+    Parameters
+    ----------
+    star : SingleStar object
+        Star object containing the star properties.
+        
+    Returns
+    -------
+    correct_SN_type : bool
+        True if the SN type matches the stellar state of the star.
+    '''
+    correct_SN_type = True
+    if star.state == 'WD' and star.SN_type != "WD":
+        correct_SN_type = False
+    elif (star.state == "NS" or star.state == "BH") and \
+            (star.SN_type != 'ECSN' and
+            star.SN_type != "CCSN" and
+            star.SN_type != 'PPISN'):
+        correct_SN_type = False
+    elif (star.state == "PISN" and star.SN_type != 'PISN'):
+        correct_SN_type = False     
+    return correct_SN_type
