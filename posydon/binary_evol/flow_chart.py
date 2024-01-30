@@ -293,6 +293,8 @@ for b in BINARY_STATES_ALL:
                 POSYDON_FLOW_CHART[(s1, s2, b, e)] = 'step_end'
                 POSYDON_FLOW_CHART[(s2, s1, b, e)] = 'step_end'
 
+# catch two massless remnants
+# separate for readability
 for b in BINARY_STATES_ALL:
     for s in ['massless_remnant']:
         for e in BINARY_EVENTS_ALL:
