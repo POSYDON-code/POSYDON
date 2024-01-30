@@ -1271,6 +1271,7 @@ class MS_MS_step(MesaGridStep):
         m2 = self.binary.star_2.mass
         mass_ratio = m2/m1
         p = self.binary.orbital_period
+        # check if the binary is in the grid
         if (state_1 == 'H-rich_Core_H_burning' and
             state_2 == 'H-rich_Core_H_burning' and
             event == 'ZAMS' and
@@ -1278,7 +1279,8 @@ class MS_MS_step(MesaGridStep):
             self.q_min <= mass_ratio <= self.q_max and
             self.p_min <= p <= self.p_max):
             self.flip_stars_before_step = False
-            super().__call__(self.binary)
+            super().__call__(self.binary)  
+        # binary in grid but masses flipped
         elif (state_1 == 'H-rich_Core_H_burning' and
               state_2 == 'H-rich_Core_H_burning' and
               event == 'ZAMS' and
@@ -1287,7 +1289,7 @@ class MS_MS_step(MesaGridStep):
               self.p_min <= p <= self.p_max):
             self.flip_stars_before_step = True
             super().__call__(self.binary)
-        # redirect if outside grid
+        # redirect if outside grid for period
         elif (state_1 == 'H-rich_Core_H_burning' and
               state_2 == 'H-rich_Core_H_burning' and
               event == 'ZAMS' and
@@ -1300,8 +1302,7 @@ class MS_MS_step(MesaGridStep):
               event == 'ZAMS' and
               p < self.p_min):
             self.binary.event = 'redirect_from_ZAMS'
-            return
-        
+            return 
         # outside the mass grid for m1
         elif (state_1 == 'H-rich_Core_H_burning' and
               state_2 == 'H-rich_Core_H_burning' and
@@ -1311,13 +1312,14 @@ class MS_MS_step(MesaGridStep):
             set_binary_to_failed(self.binary)
             raise ValueError(f'The mass of m1 ({m1}) is outside the grid,'
                              'while the period is inside the grid.')
-        
         # outside the mass grid for m2
+        # because m2_min is 0.5 Msun or from q_min, the minimum mass ratio is either
+        # q_min or 0.5/m1.
         elif (state_1 == 'H-rich_Core_H_burning' and
               state_2 == 'H-rich_Core_H_burning' and
               event == 'ZAMS' and
               self.p_min <= p <= self.p_max and
-              (m2 < np.max(self.m2_min, 0.5) or m2 > self.m2_max)):
+              (mass_ratio < np.max(self.q_min, 0.5/m1) or mass_ratio > self.q_max)):
             set_binary_to_failed(self.binary)
             raise ValueError(f'The mass of m2 ({m2}) is outside the grid,'
                              'while the period is inside the grid.')
