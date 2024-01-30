@@ -1378,7 +1378,6 @@ class CO_HMS_RLO_step(MesaGridStep):
         m2 = self.binary.star_2.mass
         p = self.binary.orbital_period
         ecc = self.binary.eccentricity
-        mass_ratio = m2/m1
 
         # TODO: import states from flow_chart.py
         FOR_RLO_STATES = ["H-rich_Core_H_burning",
