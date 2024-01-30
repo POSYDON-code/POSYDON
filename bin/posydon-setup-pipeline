@@ -507,7 +507,7 @@ def slurm_job(job_name,
 #                                log_file='combine_grid_slices')
 #            f.write("#SBATCH --open-mode=append\n")
 #            f.write(f"#SBATCH --output={path_to_out_file}\n")
-            f.write(f"#SBATCH --output={path_to_out_file}/combine_grid_slice_%a.out\n")
+            f.write(f"#SBATCH --output={path_to_logs}/combine_grid_slice_%a.out\n")
         
         if job_name == 'step_3': # CALCULATE_EXTRA_VALUES
 #            f.write("#SBATCH --open-mode=truncate\n")
@@ -523,21 +523,21 @@ def slurm_job(job_name,
 #                                                 log_file='export_dataset')
 #            f.write("#SBATCH --open-mode=append\n")
 #            f.write(f"#SBATCH --output={path_to_out_file}\n")
-            f.write(f"#SBATCH --output={path_to_out_file}/export_dataset_%a.out\n")
+            f.write(f"#SBATCH --output={path_to_logs}/export_dataset_%a.out\n")
         
         if job_name == 'rerun': # RERUN
 #            path_to_out_file = copy_old_log_file(path_to_logs=path_to_logs,
 #                                                 log_file='rerun')
 #            f.write("#SBATCH --open-mode=append\n")
 #            f.write(f"#SBATCH --output={path_to_out_file}\n")
-            f.write(f"#SBATCH --output={path_to_out_file}/rerun_%a.out\n")
+            f.write(f"#SBATCH --output={path_to_logs}/rerun_%a.out\n")
         
         if 'plot' in job_name: # PLOTS
 #            path_to_out_file = copy_old_log_file(path_to_logs=path_to_logs,
 #                                                 log_file='plots_'+step_name)
 #            f.write("#SBATCH --open-mode=append\n")
 #            f.write(f"#SBATCH --output={path_to_out_file}\n")
-            f.write(f"#SBATCH --output={path_to_out_file}/plots_"+step_name+"_slice_%a.out\n")
+            f.write(f"#SBATCH --output={path_to_logs}/plots_"+step_name+"_slice_%a.out\n")
             f.write("unset DISPLAY\n")
         
         if 'check' in job_name: # CHECKS
@@ -545,7 +545,7 @@ def slurm_job(job_name,
 #                                                 log_file='checks_'+step_name)
 #            f.write("#SBATCH --open-mode=append\n")
 #            f.write(f"#SBATCH --output={path_to_out_file}\n")
-            f.write(f"#SBATCH --output={path_to_out_file}/checks_"+step_name+"_slice_%a.out\n")
+            f.write(f"#SBATCH --output={path_to_logs}/checks_"+step_name+"_slice_%a.out\n")
         
         # get path to run the pipeline
         path_to_run_pipeline = os.path.join(PATH_TO_POSYDON, 'bin',
