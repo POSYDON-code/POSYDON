@@ -40,7 +40,8 @@ from posydon.utils.common_functions import (
     orbital_period_from_separation,
     inspiral_timescale_from_separation,
     separation_evol_wind_loss,
-    calculate_Patton20_values_at_He_depl
+    calculate_Patton20_values_at_He_depl,
+    rotate
 )
 
 from posydon.binary_evol.binarystar import BINARYPROPERTIES
@@ -1406,6 +1407,7 @@ class StepSN(object):
             binary.time = binary.time_history[-1]
             binary.orbital_period = np.nan
             binary.mass_transfer_case = 'None'
+            binary.first_SN_already_occurred = True
             
         else:
                 
@@ -1626,7 +1628,6 @@ class StepSN(object):
 
             # update the binary object which was bound at least before the SN
             #Check if this is the first SN
-            first_SN = binary.true_anomaly_first_SN is None
             if flag_binary:
                 # update the tilt
 
@@ -1634,11 +1635,12 @@ class StepSN(object):
                     if key != 'nearest_neighbour_distance':
                         setattr(binary, key, None)
 
-                if first_SN:
+                if not binary.first_SN_already_occurred:
                     # update the tilt
                     binary.star_1.spin_orbit_tilt_first_SN = tilt
                     binary.star_2.spin_orbit_tilt_first_SN = tilt
                     binary.true_anomaly_first_SN = true_anomaly
+                    binary.first_SN_already_occurred = True
                 else:
                     if binary.event == 'CC2':
                         # Assume progenitor has aligned with the preSN orbital angular momentum
@@ -1683,12 +1685,13 @@ class StepSN(object):
                     if key != 'nearest_neighbour_distance':
                         setattr(binary, key, None)
                 # update the tilt
-                if first_SN:
+                if not binary.first_SN_already_occurred:
                     binary.star_1.spin_orbit_tilt_first_SN = np.nan
                     binary.star_2.spin_orbit_tilt_first_SN = np.nan
+                    binary.first_SN_already_occurred = True
                 else:
-                    binary.star_1.spin_orbit_tilt_first_SN = np.nan
-                    binary.star_2.spin_orbit_tilt_first_SN = np.nan
+                    binary.star_1.spin_orbit_tilt_second_SN = np.nan
+                    binary.star_2.spin_orbit_tilt_second_SN = np.nan
 
              
                 binary.state = "disrupted"
@@ -1755,49 +1758,6 @@ class StepSN(object):
             Vkick = 0.0
 
         return Vkick
-    def rotate(axis, angle):
-
-        """Generate rotation matrix to rotate a vector about an arbitrary axis 
-            by a given angle
-
-        Parameters
-        ----------
-        axis : array of length 3
-            Axis to rotate about
-        angle : float
-            Angle, in radians, through which to rotate about axis
-
-        Returns
-        -------
-        rotation_matrix : 3x3 array
-            Array such that rotation_matrix.dot(vector) rotates vector
-            about the given axis by the given angle
-
-        """
-
-        # normalize the axis vector
-        axis = axis / np.linalg.norm(axis)
-        
-
-        # calculate the cosine and sine of the angle
-        cos_theta = np.cos(angle)
-        sin_theta = np.sin(angle)
-        
-        # construct the rotation matrix
-        rotation_matrix = np.array([
-            [cos_theta + axis[0]**2 * (1 - cos_theta),
-            axis[0] * axis[1] * (1 - cos_theta) - axis[2] * sin_theta,
-            axis[0] * axis[2] * (1 - cos_theta) + axis[1] * sin_theta],
-            [axis[1] * axis[0] * (1 - cos_theta) + axis[2] * sin_theta,
-            cos_theta + axis[1]**2 * (1 - cos_theta),
-            axis[1] * axis[2] * (1 - cos_theta) - axis[0] * sin_theta],
-            [axis[2] * axis[0] * (1 - cos_theta) - axis[1] * sin_theta,
-            axis[2] * axis[1] * (1 - cos_theta) + axis[0] * sin_theta,
-            cos_theta + axis[2]**2 * (1 - cos_theta)]
-        ])
-        
-        
-        return rotation_matrix
         
     def get_combined_tilt(tilt_1, tilt_2, true_anomaly_1, true_anomaly_2):
         """Get the combined spin-orbit-tilt after two supernovae, assuming

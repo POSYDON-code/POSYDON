@@ -167,6 +167,8 @@ class BinaryStar:
             self.true_anomaly_SN1 = None
         if not hasattr(self, 'true_anomaly_second_SN'):
             self.true_anomaly_SN2 = None
+        if not hasattr(self, 'first_SN_already_occurred'):
+            self.first_SN_already_occurred = False
         # if not hasattr(self, 'V_sys'):
         #     self.V_sys = [0, 0, 0]
         
