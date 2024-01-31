@@ -1181,7 +1181,7 @@ class StepSN(object):
             The corresponding azimuthal angle such that phi=0 is on the Z axis.
 
         tilt :
-            The angle between pre- and post- supernova orbital angular momentum vectors.
+            The angle between pre- and post- supernova orbital angular momentum vectors
             
 
         Parameters
@@ -1523,6 +1523,9 @@ class StepSN(object):
             # For epre=0 (sin_psi=1), reduces to Eq 4, in Kalogera, V. 1996, ApJ, 471, 352
 
             tilt = np.arccos((Vky + Vr * sin_psi) / np.sqrt( Vkz ** 2 + (Vky + Vr * sin_psi) ** 2 ))
+
+            # Track direction of tilt
+            if Vkz < 0: tilt *= -1 
 
             def SNCheck(
                 M_he_star,
