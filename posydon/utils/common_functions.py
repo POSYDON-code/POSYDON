@@ -66,11 +66,13 @@ MT_CASE_C = 3
 MT_CASE_BA = 4
 MT_CASE_BB = 5
 MT_CASE_BC = 6
+MT_CASE_NONBURNING = 8
 MT_CASE_UNDETERMINED = 9
 
 # All cases meaning RLO is happening
 ALL_RLO_CASES = set([MT_CASE_A, MT_CASE_B, MT_CASE_C,
-                     MT_CASE_BA, MT_CASE_BB, MT_CASE_BC])
+                     MT_CASE_BA, MT_CASE_BB, MT_CASE_BC,
+                     MT_CASE_NONBURNING])
 
 # Conversion of integer mass-transfer flags to strings
 MT_CASE_TO_STR = {
@@ -81,6 +83,7 @@ MT_CASE_TO_STR = {
     MT_CASE_BA: "BA",
     MT_CASE_BB: "BB",
     MT_CASE_BC: "BC",
+    MT_CASE_NONBURNING: "nonburning",
     MT_CASE_UNDETERMINED: "undetermined_MT"
 }
 
@@ -256,6 +259,11 @@ def orbital_separation_from_period(period_days, m1_solar, m2_solar):
         The separation of the binary in solar radii.
 
     """
+    # cast to float64 to avoid overflow
+    m1_solar = np.float64(m1_solar)
+    m2_solar = np.float64(m2_solar)
+    period_days = np.float64(period_days)
+    
     separation_cm = (const.standard_cgrav
                      * (m1_solar * const.Msun + m2_solar * const.Msun)
                      / (4.0 * const.pi**2.0)
@@ -486,7 +494,7 @@ def bondi_hoyle(binary, accretor, donor, idx=-1, wind_disk_criteria=True,
         default: True, see [5]_
     scheme : str
         There are different options:
-        
+
         - 'Hurley+2002' : following [3]_
         - 'Kudritzki+2000' : following [7]_
 
@@ -1442,7 +1450,9 @@ def infer_mass_transfer_case(rl_relative_overflow,
                   rl_relative_overflow, lg_mtransfer_rate)
         return MT_CASE_NO_RLO
 
-    if "H-rich" in donor_state:
+    if "non_burning" in donor_state:
+        return MT_CASE_NONBURNING
+    elif "H-rich" in donor_state:
         if "Core_H_burning" in donor_state:
             return MT_CASE_A
         if ("Core_He_burning" in donor_state
@@ -2081,7 +2091,7 @@ def calculate_lambda_from_profile(
     profile : numpy.array
         Donor's star profile from MESA
     donor_star_state : string
-        The POSYDON evolutionary state of the donor star !!!!
+        The POSYDON evolutionary state of the donor star
     common_envelope_option_for_lambda : str
         Available options:
         * 'default_lambda': using for lambda the constant value of
@@ -2577,6 +2587,68 @@ def calculate_binding_energy(donor_mass, donor_radius, donor_dm,
               "core [U_i] (0 if not taken into account) ", Grav_energy, U_i)
         print("Ebind = Grav_energy + factor_internal_energy*U_i  :  ", Ebind_i)
     return Ebind_i
+
+def calculate_Mejected_for_integrated_binding_energy(profile, Ebind_threshold,
+                             mc1_i, rc1_i,
+                             m1_i = 0.0, radius1 = 0.0,
+                             factor_internal_energy=1.0,tolerance=0.001
+                             ):
+    """Calculate the mass lost from the envelope for an energy budget of Ebind_threshold
+
+    Parameters
+    ----------
+    profile : numpy.array
+        Donor's star profile from MESA
+    Ebind_threshold : float
+        Orbital energy used from the spiral in to partial unbind the envelope. Positive
+        We integrate from surface to calcualte the partial loss of mass during CE that merges.
+    factor_internal_energy : float
+        The factor to multiply with internal energy to be taken into
+        account when we calculate the  binding energy of the enevelope
+    verbose : bool
+        In case we want information about the CEE  (the default is False).
+
+    Returns
+    -------
+    Ebind_i : float
+        The total binding energy of the envelope of the star
+
+    """
+
+    donor_mass, donor_radius, donor_dm = get_mass_radius_dm_from_profile(
+        profile, m1_i, radius1, tolerance)
+    specific_internal_energy = get_internal_energy_from_profile(
+        common_envelope_option_for_lambda = "lambda_from_profile_gravitational_plus_internal_minus_recombination",
+        profile = profile, tolerance = tolerance)
+
+    # Sum of gravitational energy from surface towards inside
+    Grav_energy = 0.0
+    # Sum of internal energy from surface towards.
+    U_energy = 0.0
+    # sum from surface to the core. Your threshold is in element [ind_threshold]
+    # in a normal MESA (and POSYDON) profile
+    i = 0
+    Ebind_so_far = 0.0 # the integration from surface going inwards of the binding energy (negative in principle)
+
+    while (abs(Ebind_so_far) < Ebind_threshold) and (i<len(donor_mass)):
+        Grav_energy_of_cell = (-const.standard_cgrav * donor_mass[i]
+                               * const.Msun * donor_dm[i]*const.Msun
+                               / (donor_radius[i]*const.Rsun))
+        # integral of gravitational energy as we go deeper into the star
+        Grav_energy = Grav_energy + Grav_energy_of_cell
+        U_energy = U_energy + specific_internal_energy[i]*donor_dm[i]*const.Msun
+        Ebind_so_far = Grav_energy + factor_internal_energy * U_energy
+        i=i+1
+    ind_threshold = i-1
+
+    if donor_mass[ind_threshold]< mc1_i or  donor_radius[ind_threshold]<rc1_i:
+        warnings.warn("partial mass ejected found more than the envelope mass")
+        print("M_ejected, M_envelope = ", donor_mass[0] - donor_mass[ind_threshold], donor_mass[0] - mc1_i)
+        donor_mass[ind_threshold] = mc1_i
+
+    M_ejected = donor_mass[0] - donor_mass[ind_threshold]
+
+    return M_ejected
 
 
 class PchipInterpolator2:
