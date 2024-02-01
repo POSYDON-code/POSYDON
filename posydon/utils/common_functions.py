@@ -1377,6 +1377,18 @@ def flip_stars(binary):
         setattr(binary, i+'2_history', value1_history)
 
 
+def set_binary_to_failed(binary):
+    '''Set the properties of the binary to indicate that it has failed.
+    
+    Parameters
+    ----------
+    binary : BinaryStar
+        The binary to set to failed.
+    '''
+    binary.state = "ERR"
+    binary.event = "FAILED"
+    
+
 def infer_star_state(star_mass=None, surface_h1=None,
                      center_h1=None, center_he4=None, center_c12=None,
                      log_LH=None, log_LHe=None, log_Lnuc=None, star_CO=False):
