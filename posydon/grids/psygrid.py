@@ -2192,7 +2192,8 @@ def join_grids(input_paths, output_path,
                 n_ignored_noRLO += 1
 
     say("    {} substitutions detected.".format(n_substitutions))
-    say("    {} runs ignored beacuse of no RLOF.".format(n_ignored_noRLO))
+    if newconfig["start_at_RLO"]:
+        say("    {} runs ignored beacuse of no RLOF.".format(n_ignored_noRLO))
     say("    {} runs to be joined.".format(len(initial_params)))
 
     if (newconfig["initial_RLO_fix"]):
