@@ -2394,6 +2394,6 @@ def check_SN_CO_match(star):
             (star.SN_type != "CCSN" and
             star.SN_type != 'PPISN'):
         correct_SN_type = False
-    elif (star.state == "PISN" and star.SN_type != 'PISN'):
+    elif (star.state == "massless_remnant" and star.SN_type != 'PISN'):
         correct_SN_type = False     
     return correct_SN_type
