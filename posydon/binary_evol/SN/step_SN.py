@@ -2386,9 +2386,12 @@ def check_SN_CO_match(star):
     correct_SN_type = True
     if star.state == 'WD' and star.SN_type != "WD":
         correct_SN_type = False
-    elif (star.state == "NS" or star.state == "BH") and \
+    elif (star.state == "NS") and \
             (star.SN_type != 'ECSN' and
-            star.SN_type != "CCSN" and
+            star.SN_type != "CCSN"):
+        correct_SN_type = False
+    elif (star.state =="BH") and \
+            (star.SN_type != "CCSN" and
             star.SN_type != 'PPISN'):
         correct_SN_type = False
     elif (star.state == "PISN" and star.SN_type != 'PISN'):
