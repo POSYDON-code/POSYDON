@@ -545,6 +545,8 @@ class MergedStep(IsolatedStep):
                 merged_star = comp
                 # TODO: potentially flag a Thorne-Zytkov object
                 massless_remnant = convert_star_to_massless_remnant(star_base)
+
+                ## in this case, want CO companion object to stay the same, and base star to be assigned massless remnant
                 return massless_remnant, merged_star
         else:
             print("Combination of merging star states not expected: ", s1, s2)
