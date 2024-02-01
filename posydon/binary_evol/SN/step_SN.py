@@ -561,7 +561,7 @@ class StepSN(object):
                                 star.SN_type = 'WD'
                             elif star.state == 'NS' or star.state == 'BH':
                                 star.SN_type = 'CCSN'
-                            elif star.state == 'PISN':
+                            elif star.state == 'massless_remnant':
                                 star.SN_type = 'PISN'
                             else:
                                 raise ValueError('Star state not recognized.')
