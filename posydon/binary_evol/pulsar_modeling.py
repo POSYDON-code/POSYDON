@@ -254,7 +254,8 @@ class Pulsar:
         ## check if pulsar crossed the death line
         self.alive_state = self.is_alive()
 
-    def CE_evolve(self, CE_acc_prescription, acc_decay_prescription, M_comp, R_comp, delta_Md, delta_t, tau_d):
+    def CE_evolve(self, CE_acc_prescription, acc_decay_prescription, acc_lower_limit, 
+                  M_comp, R_comp, delta_Md, delta_t, tau_d):
         '''
         Evolve a pulsar during common envelope, accounting for mass accretion onto the NS.
         '''   
@@ -276,7 +277,7 @@ class Pulsar:
             if delta_M > 0.1: delta_M = 0.1
 
             if CE_acc_prescription == "MacLeod_bounded":
-                if delta_M < 0.04: delta_M = 0.04
+                if delta_M < acc_lower_limit: delta_M = acc_lower_limit
 
         if acc_decay_prescription == "Ye2019":
             self.RLO_evolve_Ye2019(delta_t, tau_d, delta_M, delta_Md)

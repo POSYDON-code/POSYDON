@@ -319,6 +319,7 @@ class PulsarHooks(EvolveHooks):
         self.tau_d = kwargs.get("tau_d")
         self.CE_acc_prescription = kwargs.get("CE_acc_prescription")
         self.acc_decay_prescription = kwargs.get("acc_decay_prescription")
+        self.acc_lower_limit = kwargs.get("acc_lower_limit")
 
     def get_pulsar_history(self, binary, star_NS, star_companion):
         """
@@ -377,7 +378,7 @@ class PulsarHooks(EvolveHooks):
                     pulsar.detached_evolve(delta_t, self.tau_d)                   
     
                 elif step_name in ["step_CO_HMS_RLO", 'step_CO_HeMS', 'step_CO_HeMS_RLO']:  
-                    if delta_M > 0:
+                    if delta_M > self.acc_lower_limit:
                         if self.acc_decay_prescription == "Ye2019" :
                             pulsar.RLO_evolve_Ye2019(delta_t, self.tau_d, delta_M, self.delta_Md)  
                         elif self.acc_decay_prescription == "COMPAS":
@@ -386,7 +387,7 @@ class PulsarHooks(EvolveHooks):
                         pulsar.detached_evolve(delta_t, self.tau_d) 
               
                 elif step_name == "step_CE" and state != "merged":
-                    pulsar.CE_evolve(self.CE_acc_prescription, self.acc_decay_prescription, 
+                    pulsar.CE_evolve(self.CE_acc_prescription, self.acc_decay_prescription, self.acc_lower_limit,
                                      M_comp, R_comp, self.delta_Md, delta_t, self.tau_d)
 
                 pulsar_spin.append(pulsar.spin)
