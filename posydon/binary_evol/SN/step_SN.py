@@ -543,7 +543,7 @@ class StepSN(object):
                         # no remnant if a PISN happens
                         if pd.isna(m_PISN):
                             star.SN_type = 'PISN'
-                            star.state = 'PISN'
+                            star.state = 'massless_remnant'
                         else:
                             _, _, star.state = self.compute_m_rembar(pre_SN_star, m_PISN)
                             star.SN_type = self.check_SN_type(pre_SN_star.c_core_mass,
@@ -2394,6 +2394,6 @@ def check_SN_CO_match(star):
             (star.SN_type != "CCSN" and
             star.SN_type != 'PPISN'):
         correct_SN_type = False
-    elif (star.state == "massless_remnant" and star.SN_type != 'PISN'):
+    elif (star.state == "PISN" and star.SN_type != 'PISN'):
         correct_SN_type = False     
     return correct_SN_type
