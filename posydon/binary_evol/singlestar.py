@@ -91,7 +91,7 @@ STARPROPERTIES = [
     'lambda_CE_10cent',
     'lambda_CE_30cent',
     'lambda_CE_pure_He_star_10cent',
-    'profile',  # the profile of the star, including extended information of
+    'profile'   # the profile of the star, including extended information of
                 # its internal structure, for a specific timestep, usually for
                 # the end of the previous step including MESA psygrid.
 ]
@@ -133,7 +133,7 @@ class SingleStar:
             setattr(self, item, val)
 
         # store extra values in the star object without a history
-
+        
         # these quantities are updated in step_SN.py
         if not hasattr(self, 'natal_kick_array'):
             self.natal_kick_array = [None] * 4
@@ -251,10 +251,14 @@ class SingleStar:
             where_none = np.array(
                 [[True if var is None else False for var in column]
                  for column in data_to_save], dtype=bool)
-        except AttributeError as err:
-            raise AttributeError(
-                str(err) + "\n\nAvailable attributes in SingleStar: \n{}".
-                format(self.__dict__.keys()))
+        #except AttributeError as err:
+        #    print (data_to_save)
+        #    raise AttributeError(
+        #        str(err) + "\n\nAvailable attributes in SingleStar: \n{}".
+        #        format(self.__dict__.keys()))
+        except Exception as err:
+            print (err)
+            print (data_to_save)
 
         # casting into object array keeps things general
         star_data = np.array(data_to_save, dtype=object)
