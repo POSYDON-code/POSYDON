@@ -1276,7 +1276,11 @@ class MS_MS_step(MesaGridStep):
             state_2 == 'H-rich_Core_H_burning' and
             event == 'ZAMS' and
             self.m1_min <= m1 <= self.m1_max and
+<<<<<<< HEAD
             np.max([self.q_min, 0.5/m1]) <= mass_ratio <= self.q_max and
+=======
+            np.max(self.q_min, 0.5/m1) <= mass_ratio <= self.q_max and
+>>>>>>> development
             self.p_min <= p <= self.p_max):
             self.flip_stars_before_step = False
             super().__call__(self.binary)  
@@ -1285,7 +1289,11 @@ class MS_MS_step(MesaGridStep):
               state_2 == 'H-rich_Core_H_burning' and
               event == 'ZAMS' and
               self.m1_min <= m2 <= self.m1_max and
+<<<<<<< HEAD
               np.max([self.q_min, 0.5/m1]) <= 1./mass_ratio <= self.q_max and
+=======
+              np.max(self.q_min, 0.5/m1) <= 1./mass_ratio <= self.q_max and
+>>>>>>> development
               self.p_min <= p <= self.p_max):
             self.flip_stars_before_step = True
             super().__call__(self.binary)
@@ -1319,7 +1327,11 @@ class MS_MS_step(MesaGridStep):
               state_2 == 'H-rich_Core_H_burning' and
               event == 'ZAMS' and
               self.p_min <= p <= self.p_max and
+<<<<<<< HEAD
               (mass_ratio < np.max([self.q_min, 0.5/m1]) or mass_ratio > self.q_max)):
+=======
+              (mass_ratio < np.max(self.q_min, 0.5/m1) or mass_ratio > self.q_max)):
+>>>>>>> development
             set_binary_to_failed(self.binary)
             raise ValueError(f'The mass of m2 ({m2}) is outside the grid,'
                              'while the period is inside the grid.')
