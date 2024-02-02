@@ -56,6 +56,12 @@ example to show the supported key words:
         WALLTIME = '23:00:00'
         MAILTYPE = 'ALL'
         EMAIL = 'matthias.kruckow@unige.ch'
+        GROUP = 'GL_S_Astro_POSYDON'
+
+The last one :samp:`GROUP` is a bit special. If it is set, all the files
+created by the pipeline will get this owning group on the file system with read
+and write access for this group. This is especially helpful if more than one
+user is making changes to the data set.
 
 General pipeline settings
 -------------------------
