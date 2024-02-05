@@ -249,7 +249,7 @@ class SingleStar:
             # shape of data_to_save (history columns , time steps)
             data_to_save = [getattr(self, key) for key in keys_to_save]
 
-            '''
+            
             col_lengths = [len(x) for x in data_to_save]
             max_col_length = np.max(col_lengths)
 
@@ -259,7 +259,7 @@ class SingleStar:
             if not all_equal_length_cols:
                 for col in data_to_save:
                     col.extend(['NAN'] * abs(max_col_length - len(col)))
-            '''
+
 
             where_none = np.array(
                 [[True if var is None else False for var in column]
