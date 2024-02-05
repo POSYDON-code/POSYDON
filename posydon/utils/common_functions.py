@@ -2685,13 +2685,3 @@ def convert_metallicity_to_string(Z):
     if not Z in valid_Z:
         raise ValueError(f'Metallicity {Z} not supported! Available metallicities in POSYDON v2 are {valid_Z}.')
     return f'{Z:1.1e}'.replace('.0','')
-
-def homogeneous_array(input):
-    """ """
-    data = copy.copy(input)
-    max_len = max(len(row) for row in data )
-    for row in range(len(data)):
-        if len(data[row])< max_len:
-            for j in range(max_len-len(data[i])):
-                data[row].append(None)
-    return data
