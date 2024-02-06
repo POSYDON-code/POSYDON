@@ -438,9 +438,18 @@ class MesaGridStep:
             # setattr(binary, "event", "END")
             return
 
+        # check if the first interpolation gives 'initial_RLOF'
+        interpolation_class = self.termination_flags[0]
+        binary_state, binary_event, MT_case = (
+            cf.get_binary_state_and_event_and_mt_case(
+                binary, interpolation_class, verbose=self.verbose))
+        setattr(binary, 'state', binary_state)
+        setattr(binary, 'event', binary_event)
+        setattr(binary, 'mass_transfer_case', MT_case)
+        
         if binary.state == 'initial_RLOF':
             return
-
+        
         if track_interpolation or self.save_initial_conditions:
             len_binary_hist = len(getattr(binary, "time_history"))
             length_binary_hist = len(cb_bh['age']) - 1
