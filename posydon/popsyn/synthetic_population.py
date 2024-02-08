@@ -277,12 +277,14 @@ class ParsedPopulationIO():
                       format='table',
                       data_columns=True,
                       min_itemsize = {'channel': 100, 'channel_debug': 100})
-            
+        
+    # for the synthetic population only?
     def load_parsed_pop_path(self, synthetic_pop_instance):
         '''Load the path to the parsed population file'''
         with pd.HDFStore(self.parsed_pop_file, model='r') as store:
             synthetic_pop_instance.parsed_pop_path = store['parsed_pop_path'].to_numpy()[0]
-            
+    
+    # for the synthetic population only?
     def save_parsed_pop_path(self, parsed_pop_path):
         '''Save the path to the parsed population file'''
         with pd.HDFStore(self.parsed_pop_file, mode='a') as store:
@@ -417,131 +419,185 @@ class ParsedPopulation():
         if ((S1_state == None) & (S2_state == None) & (binary_state == None) & (binary_event == None) & (step_name == None)) and self.verbose:
             print('You did not specify any conditions to select binaries!')
             print('All binaries will be selected!')
-        
-        for k, file in enumerate(path_to_data):
-            indices_sel_met = []
-            last_binary_df = None
-            total = 0
-            # read metallicity from path
-            met = float(file.split('/')[-1].split('_Zsun')[0])*Zsun
-            met_index = np.where(np.isclose(self.metallicities, met))[0][0]
-            simulated_mass_for_met = 0.
             
-            # get the history columns + min_itemsize
-            history_cols = pd.read_hdf(file, key='history', start=0, stop=0).columns
-            history_min_itemsize = {key: val for key, val in
-                                    HISTORY_MIN_ITEMSIZE.items()
-                                    if key in history_cols}
-            
-            oneline_cols = pd.read_hdf(file, key='oneline', start=0, end=0).columns
-            oneline_min_itemsize = {key: val for key, val in 
-                                    ONELINE_MIN_ITEMSIZE.items()
-                                    if key in oneline_cols}
-            
-            # Loop over the binaries using a history length index.
-            # Store that history index too!
-            for i, df in enumerate(pd.read_hdf(file,  key='history', chunksize=self.chunksize)):
-                
-                df = pd.concat([last_binary_df, df])
+            for k, file in enumerate(path_to_data):
+                if self.verbose:
+                    print(f'Parsing {file}...')
                     
-                last_binary_df = df.loc[[df.index[-1]]]
-                df.drop(df.index[-1], inplace=True)
-                total += len(df.index.drop_duplicates())
-                max_index = df.index.max()
+                # read metallicity from path
+                met = float(file.split('/')[-1].split('_Zsun')[0])*Zsun
+                met_index = np.where(np.isclose(self.metallicities, met))[0][0]
+                simulated_mass_for_met = 0.
                 
-                # TODO: skip the logic step
-                logic = self.apply_logic(df, 
+                # get the history columns + min_itemsize
+                history_cols = pd.read_hdf(file, key='history', start=0, stop=0).columns
+                history_min_itemsize = {key: val for key, val in
+                                        HISTORY_MIN_ITEMSIZE.items()
+                                        if key in history_cols}
+                
+                oneline_cols = pd.read_hdf(file, key='oneline', start=0, end=0).columns
+                oneline_min_itemsize = {key: val for key, val in 
+                                        ONELINE_MIN_ITEMSIZE.items()
+                                        if key in oneline_cols}
+                simulated_mass_for_met = 0.
+
+                with pd.HDFStore(file, mode='r') as store:
+                    hist_total = store.get_storer('history').nrows
+
+                for df in tqdm(pd.read_hdf(file, key='history', chunksize=self.chunksize), total=hist_total/self.chunksize , disable=not self.verbose, desc='history'):
+                    df.index += index_shift
+                    simulated_mass_for_met += sum(df['S1_mass'][df['event'] == 'ZAMS']) + sum(df['S2_mass'][df['event'] == 'ZAMS'])
+                    
+                    # write history to file
+                    parsed_population_file.append('history',
+                                                df,
+                                                data_columns=True,
+                                                min_itemsize=history_min_itemsize)
+                    
+                
+                with pd.HDFStore(file, mode='r') as store:
+                    total = store.get_storer('oneline').nrows
+                    
+                for df in tqdm(pd.read_hdf(file, key='oneline', chunksize=self.chunksize), total=total/self.chunksize, disable=not self.verbose, desc='oneline'):
+                    df.index += index_shift
+                    parsed_population_file.append('oneline',
+                                                df,
+                                                data_columns=True,
+                                                min_itemsize=oneline_min_itemsize)
+                    max_index = df.index.max()
+    
+                self.simulated_mass_per_met[met_index] = simulated_mass_for_met        
+                self.underlying_mass_per_met[met_index] = initial_total_underlying_mass(df=simulated_mass_for_met, **self.ini_params)[0]
+                self.total_systems[met_index] = total
+                self.selected_systems[met_index] = total
+                
+                index_shift += np.max([max_index, total])
+                    
+        else:
+            for k, file in enumerate(path_to_data):
+                indices_sel_met = []
+                last_binary_df = None
+                total = 0
+                # read metallicity from path
+                met = float(file.split('/')[-1].split('_Zsun')[0])*Zsun
+                met_index = np.where(np.isclose(self.metallicities, met))[0][0]
+                simulated_mass_for_met = 0.
+                
+                # get the history columns + min_itemsize
+                history_cols = pd.read_hdf(file, key='history', start=0, stop=0).columns
+                history_min_itemsize = {key: val for key, val in
+                                        HISTORY_MIN_ITEMSIZE.items()
+                                        if key in history_cols}
+                
+                oneline_cols = pd.read_hdf(file, key='oneline', start=0, end=0).columns
+                oneline_min_itemsize = {key: val for key, val in 
+                                        ONELINE_MIN_ITEMSIZE.items()
+                                        if key in oneline_cols}
+                
+                # Loop over the binaries using a history length index.
+                # Store that history index too!
+                for i, df in enumerate(pd.read_hdf(file,  key='history', chunksize=self.chunksize)):
+                    
+                    df = pd.concat([last_binary_df, df])
+                        
+                    last_binary_df = df.loc[[df.index[-1]]]
+                    df.drop(df.index[-1], inplace=True)
+                    total += len(df.index.drop_duplicates())
+                    max_index = df.index.max()
+                    
+                    # TODO: skip the logic step
+                    logic = self.apply_logic(df, 
+                                            S1_state     = S1_state,
+                                            S2_state     = S2_state,
+                                            binary_state = binary_state,
+                                            binary_event = binary_event,
+                                            step_name    = step_name,
+                                            invert_S1S2  = invert_S1S2)
+                    
+                    # select systems
+                    # remove duplicate indicies, e.g. if selecting 'contact' state it appears twice
+                    # if no specific event is selected (the second time is from the copied END event)
+                    sel = df.loc[logic].index.drop_duplicates()
+                    
+                    # count systems
+                    count += len(np.unique(sel))
+
+                    # read the simulated ZAMS mass
+                    sel_ZAMS = df['event'] == 'ZAMS'
+                    mass = sum(df['S1_mass'][sel_ZAMS]+df['S2_mass'][sel_ZAMS])
+                    simulated_mass_for_met += mass
+
+                    # sort systems
+                    if any(sel):
+                        df_tmp = pd.DataFrame()
+                        df_tmp = df.loc[sel]
+                        # store metallicity
+                        df_tmp['metallicity'] = met
+                        indices_sel_met.extend(sel.values)
+
+                        # shift index
+                        df_tmp.index += index_shift
+                        parsed_population_file.append('history',
+                                                    df_tmp,
+                                                    data_columns=True,
+                                                    min_itemsize=history_min_itemsize)
+                        
+                        del df_tmp
+
+                # check last binary if it should be included
+                if last_binary_df is not None:
+                    max_index = np.max([max_index, last_binary_df.index.max()])
+                    total += 1
+                    logic = self.apply_logic(last_binary_df, 
                                         S1_state     = S1_state,
                                         S2_state     = S2_state,
                                         binary_state = binary_state,
                                         binary_event = binary_event,
                                         step_name    = step_name,
                                         invert_S1S2  = invert_S1S2)
-                
-                # select systems
-                # remove duplicate indicies, e.g. if selecting 'contact' state it appears twice
-                # if no specific event is selected (the second time is from the copied END event)
-                sel = df.loc[logic].index.drop_duplicates()
-                
-                # count systems
-                count += len(np.unique(sel))
-
-                # read the simulated ZAMS mass
-                sel_ZAMS = df['event'] == 'ZAMS'
-                mass = sum(df['S1_mass'][sel_ZAMS]+df['S2_mass'][sel_ZAMS])
-                simulated_mass_for_met += mass
-
-                # sort systems
-                if any(sel):
-                    df_tmp = pd.DataFrame()
-                    df_tmp = df.loc[sel]
-                    # store metallicity
-                    df_tmp['metallicity'] = met
-                    indices_sel_met.extend(sel.values)
-
-                    # shift index
-                    df_tmp.index += index_shift
-                    parsed_population_file.append('history',
-                                                df_tmp,
-                                                data_columns=True,
-                                                min_itemsize=history_min_itemsize)
                     
-                    del df_tmp
-
-            # check last binary if it should be included
-            if last_binary_df is not None:
-                max_index = np.max([max_index, last_binary_df.index.max()])
-                total += 1
-                logic = self.apply_logic(last_binary_df, 
-                                    S1_state     = S1_state,
-                                    S2_state     = S2_state,
-                                    binary_state = binary_state,
-                                    binary_event = binary_event,
-                                    step_name    = step_name,
-                                    invert_S1S2  = invert_S1S2)
+                    # The last binary is selected
+                    if any(logic) == True:
+                        df_tmp = last_binary_df.loc[logic]
+                        df_tmp['metallicity'] = met
+                        indices_sel_met.extend(df_tmp.index.drop_duplicates().values)
+                        df_tmp.index += index_shift
+                        parsed_population_file.append('history',
+                                                    df_tmp,
+                                                    data_columns=True,
+                                                    min_itemsize=history_min_itemsize)
+                        del df_tmp
                 
-                # The last binary is selected
-                if any(logic) == True:
-                    df_tmp = last_binary_df.loc[logic]
-                    df_tmp['metallicity'] = met
-                    indices_sel_met.extend(df_tmp.index.drop_duplicates().values)
-                    df_tmp.index += index_shift
-                    parsed_population_file.append('history',
-                                                df_tmp,
+                # calculate population masses and parameters
+                self.simulated_mass_per_met[met_index] = simulated_mass_for_met
+                self.underlying_mass_per_met[met_index] = initial_total_underlying_mass(df=simulated_mass_for_met, **self.ini_params)[0] # This used to be init_kw
+                self.selected_systems[met_index] = count-tmp
+                self.total_systems[met_index] = total
+                
+                # get unique indicies
+                #sel_met = df_sel_met.index.drop_duplicates()
+                
+                # Now select the oneline data
+                # 1. Get indices from history
+                unique_indices = np.unique(indices_sel_met).tolist()
+                
+                # 2. Select indices from oneline
+                for i, df in enumerate(pd.read_hdf(file, 
+                                                key='oneline',
+                                                chunksize=self.chunksize,
+                                                where="index in unique_indices")):
+                    df.index += index_shift
+                    df['metallicity'] = met
+                    parsed_population_file.append('oneline',
+                                                df,
                                                 data_columns=True,
-                                                min_itemsize=history_min_itemsize)
-                    del df_tmp
-            
-            # calculate population masses and parameters
-            self.simulated_mass_per_met[met_index] = simulated_mass_for_met
-            self.underlying_mass_per_met[met_index] = initial_total_underlying_mass(df=simulated_mass_for_met, **self.ini_params)[0] # This used to be init_kw
-            self.selected_systems[met_index] = count-tmp
-            self.total_systems[met_index] = total
-            
-            # get unique indicies
-            #sel_met = df_sel_met.index.drop_duplicates()
-            
-            # Now select the oneline data
-            # 1. Get indices from history
-            unique_indices = np.unique(indices_sel_met).tolist()
-            
-            # 2. Select indices from oneline
-            for i, df in enumerate(pd.read_hdf(file, 
-                                            key='oneline',
-                                            chunksize=self.chunksize,
-                                            where="index in unique_indices")):
-                df.index += index_shift
-                df['metallicity'] = met
-                parsed_population_file.append('oneline',
-                                            df,
-                                            data_columns=True,
-                                            min_itemsize=oneline_min_itemsize)
-            
-            if self.verbose:
-                print(f'in {file} are {count-tmp}')
-            tmp = count
-            # either the max of the population in the file or the total number of systems.
-            index_shift += np.max([max_index, total])
+                                                min_itemsize=oneline_min_itemsize)
+                
+                if self.verbose:
+                    print(f'in {file} are {count-tmp}')
+                tmp = count
+                # either the max of the population in the file or the total number of systems.
+                index_shift += np.max([max_index, total])
 
         if self.verbose:
             print('Total binaries found are', count)
@@ -987,6 +1043,17 @@ class ParsedPopulation():
                                 stop=stop,
                                 columns=columns)
 
+    
+    @property
+    def df(self):
+        with pd.HDFStore(self.parsed_pop_file, mode='r') as store:
+            return store.select('history')
+    
+    @property
+    def df_oneline(self):
+        with pd.HDFStore(self.parsed_pop_file, mode='r') as store:
+            return store.select('oneline')
+
     def create_synpop(self, func, output_file, oneline_cols=None, hist_cols=None):
         '''Given a function, create a synthetic population
         
@@ -1342,24 +1409,6 @@ class ParsedPopulation():
         parsed_store.close()
         return GRB_synthetic_population
 
-
-    def plot_popsyn_over_grid_slice(self, grid_type, met_Zsun, **kwargs):
-      # option for formation channel selection
-    # needs the full history
-    # This should be part of parsed population since it uses only df and df_oneline.
-    # should not rely on a population class.
-        """Plot popsyn over grid slice."""
-        
-        # TODO: does this fit into memory?
-        df = pd.read_hdf(self.parsed_pop_file,
-                               key='history',
-                               columns=['S1_mass', 'S2_mass', 'metallicity', 'event'],)
-        df_oneline = pd.read_hdf(self.parsed_pop_file,
-                                 key='oneline',
-                                 columns=['channel'])
-        
-        plot_pop.plot_popsyn_over_grid_slice(temp_pop, grid_type, met_Zsun, **kwargs)
-
 class SyntheticPopulation():
     
     def __init__(self,
@@ -1396,8 +1445,6 @@ class SyntheticPopulation():
                 self.io.load_parse_kwargs(self)            
             if '/path_to_data' in keys:
                 self.io.load_path_to_data(self)
-            if '/parsed_pop_file' in keys:
-                self.io.load_parsed_pop_file(self)
             if '/parsed_pop_path' in keys:
                 self.io.load_parsed_pop_path(self)
             if '/efficiency' in keys:
@@ -1440,6 +1487,7 @@ class SyntheticPopulation():
                          data_columns=data_columns,
                          min_itemsize=min_itemsize
                          )
+    
     def keys(self):
         with pd.HDFStore(self.pop_file, mode='r') as store:
             return store.keys()
@@ -1645,7 +1693,6 @@ class SyntheticPopulation():
             raise ValueError('First you need to compute the merger efficinty!')
         plot_pop.plot_merger_efficiency(self.met_efficiency, self.efficiency, **kwargs)
     
-    
     def plot_hist_properties(self, var, intrinsic=False, observable=False, pop=None, **kwargs):
         """Plot histogram of intrinsic/observable properites.
 
@@ -1713,7 +1760,27 @@ class SyntheticPopulation():
 
     def plot_popsyn_over_grid_slice(self, grid_type, met_Zsun, **kwargs):
         """Plot popsyn over grid slice."""
-        plot_pop.plot_popsyn_over_grid_slice(self, grid_type, met_Zsun, **kwargs)
+        # Create a 
+        if self.parsed_pop_path is None:
+            raise ValueError('No parsed population file found!')
+        try:
+            tmp_pop = ParsedPopulation(self.parsed_pop_path)
+        except FileNotFoundError:
+            pass
+        
+        class temp_pop:
+            def __init__(self, hist, oneline):
+                self.df = hist
+                self.df_oneline = oneline
+        
+        with pd.HDFStore(tmp_pop.parsed_pop_file, mode='r') as store:
+            indices = self.indices.tolist()
+            df = store.select('history', where='index in indices')
+            df_oneline = store.select('oneline', where='index in indices')
+        
+        tmp_pop = temp_pop(df, df_oneline)
+        
+        plot_pop.plot_popsyn_over_grid_slice(tmp_pop, grid_type, met_Zsun, **kwargs)
     
     def compute_cosmological_weights(self, sensitivity, flag_pdet, working_dir, load_data, pop='DCO'):
         """Compute the GRB/DCO merger rate weights.
