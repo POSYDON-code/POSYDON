@@ -526,7 +526,7 @@ class StepSN(object):
                         if key not in ["state", "mass", "spin",
                                         "m_disk_accreted ", "m_disk_radiated"]:
                             setattr(star, key, None)
-                        
+                    
                     # check if SN_type matches the predicted CO
                     # and force the SN_type to match the predicted CO.
                     # ie WD is no SN
@@ -2383,6 +2383,9 @@ def check_SN_CO_match(star):
     correct_SN_type : bool
         True if the SN type matches the stellar state of the star.
     '''
+    # TODO: remove star.state == PISN, because PISN shouldn't be a stellar state
+    if star.state == 'PISN':
+        star.state = 'massless_remnant'
     correct_SN_type = True
     if star.state == 'WD' and star.SN_type != "WD":
         correct_SN_type = False
