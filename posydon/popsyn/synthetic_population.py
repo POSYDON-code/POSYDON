@@ -1033,6 +1033,9 @@ class ParsedPopulation():
             
         min_itemsize = {'channel': 100,}
         if hist_cols is not None:
+            if 'time' not in hist_cols:
+                raise ValueError('The synthetic population requires a time column!')
+        
             min_itemsize.update({key:val for key, val in 
                                 HISTORY_MIN_ITEMSIZE.items() 
                                 if key in hist_cols})
@@ -1435,7 +1438,8 @@ class SyntheticPopulation():
                          df,
                          format=format,
                          data_columns=data_columns,
-                         min_itemsize=min_itemsize)
+                         min_itemsize=min_itemsize
+                         )
     def keys(self):
         with pd.HDFStore(self.pop_file, mode='r') as store:
             return store.keys()
