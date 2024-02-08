@@ -258,7 +258,7 @@ class SingleStar:
             all_equal_length_cols = len(set(col_lengths)) == 1
             if not all_equal_length_cols:
                 for col in data_to_save:
-                    col.extend(['NAN'] * abs(max_col_length - len(col)))
+                    col.extend([np.nan] * abs(max_col_length - len(col)))
 
 
             where_none = np.array(
