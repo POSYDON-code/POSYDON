@@ -413,7 +413,11 @@ class ParsedPopulation():
             print(f'to ({S1_state}, {S2_state}, {binary_state}, {binary_event}, {step_name})')
             if invert_S1S2:
                 print(f'and ({S2_state}, {S1_state}, {binary_state}, {binary_event}, {step_name})')
-                
+        
+        if ((S1_state == None) & (S2_state == None) & (binary_state == None) & (binary_event == None) & (step_name == None)) and self.verbose:
+            print('You did not specify any conditions to select binaries!')
+            print('All binaries will be selected!')
+        
         for k, file in enumerate(path_to_data):
             indices_sel_met = []
             last_binary_df = None
@@ -434,6 +438,8 @@ class ParsedPopulation():
                                     ONELINE_MIN_ITEMSIZE.items()
                                     if key in oneline_cols}
             
+            # Loop over the binaries using a history length index.
+            # Store that history index too!
             for i, df in enumerate(pd.read_hdf(file,  key='history', chunksize=self.chunksize)):
                 
                 df = pd.concat([last_binary_df, df])
@@ -443,13 +449,14 @@ class ParsedPopulation():
                 total += len(df.index.drop_duplicates())
                 max_index = df.index.max()
                 
+                # TODO: skip the logic step
                 logic = self.apply_logic(df, 
-                                         S1_state     = S1_state,
-                                         S2_state     = S2_state,
-                                         binary_state = binary_state,
-                                         binary_event = binary_event,
-                                         step_name    = step_name,
-                                         invert_S1S2  = invert_S1S2)
+                                        S1_state     = S1_state,
+                                        S2_state     = S2_state,
+                                        binary_state = binary_state,
+                                        binary_event = binary_event,
+                                        step_name    = step_name,
+                                        invert_S1S2  = invert_S1S2)
                 
                 # select systems
                 # remove duplicate indicies, e.g. if selecting 'contact' state it appears twice
@@ -475,9 +482,9 @@ class ParsedPopulation():
                     # shift index
                     df_tmp.index += index_shift
                     parsed_population_file.append('history',
-                                                  df_tmp,
-                                                  data_columns=True,
-                                                  min_itemsize=history_min_itemsize)
+                                                df_tmp,
+                                                data_columns=True,
+                                                min_itemsize=history_min_itemsize)
                     
                     del df_tmp
 
@@ -500,9 +507,9 @@ class ParsedPopulation():
                     indices_sel_met.extend(df_tmp.index.drop_duplicates().values)
                     df_tmp.index += index_shift
                     parsed_population_file.append('history',
-                                                  df_tmp,
-                                                  data_columns=True,
-                                                  min_itemsize=history_min_itemsize)
+                                                df_tmp,
+                                                data_columns=True,
+                                                min_itemsize=history_min_itemsize)
                     del df_tmp
             
             # calculate population masses and parameters
@@ -520,15 +527,15 @@ class ParsedPopulation():
             
             # 2. Select indices from oneline
             for i, df in enumerate(pd.read_hdf(file, 
-                                               key='oneline',
-                                               chunksize=self.chunksize,
-                                               where="index in unique_indices")):
+                                            key='oneline',
+                                            chunksize=self.chunksize,
+                                            where="index in unique_indices")):
                 df.index += index_shift
                 df['metallicity'] = met
                 parsed_population_file.append('oneline',
-                                              df,
-                                              data_columns=True,
-                                              min_itemsize=oneline_min_itemsize)
+                                            df,
+                                            data_columns=True,
+                                            min_itemsize=oneline_min_itemsize)
             
             if self.verbose:
                 print(f'in {file} are {count-tmp}')
@@ -960,8 +967,120 @@ class ParsedPopulation():
         parsed_file.close()
         return DCO_synthetic_population
 
+    @property
+    def history_lengths(self):
+        '''Return the length of the history for each binary'''
+        
+        if not hasattr(self, '_history_lengths'):
+            with pd.HDFStore(self.parsed_pop_file, mode='r') as store:
+                history_events = store.select_column('history', 'index')
+                self._history_lengths = history_events.groupby(history_events).count()
+                del history_events
+                
+        return self._history_lengths
+    
+    def select(self, key, start, stop, columns=None):
+        
+        with pd.HDFStore(self.parsed_pop_file, mode='r') as parsed_store:
+            return parsed_store.select(key,
+                                start=start,
+                                stop=stop,
+                                columns=columns)
 
-    # TODO: add output_file to this function!!
+    def create_synpop(self, func, output_file, oneline_cols=None, hist_cols=None):
+        '''Given a function, create a synthetic population
+        
+        Parameters
+        ----------
+        func : function
+            Function to apply to the parsed population to create the synthetic population.
+            The function needs to take 3 arguments:
+                - history_chunk : pd.DataFrame
+                - oneline_chunk : pd.DataFrame
+                - formation_channels_chunk : pd.DataFrame
+                and return a pd.DataFrame containing the synthetic population, which needs to contain a column 'time'.
+                
+        oneline_cols : list of str
+            Columns to extract from the oneline dataframe. default is all columns.
+        hist_cols : list of str
+            Columns to extract from the history dataframe. default is all columns.
+            
+        Returns
+        -------
+        SyntheticPopulation
+            A synthetic population containing the synthetic population.
+            
+            
+        '''
+        synth_pop = SyntheticPopulation(output_file, verbose=self.verbose) 
+        # write population data to the new file!
+        synth_pop.io.save_ini_params(self)
+        synth_pop.io.save_parse_kwargs(self)
+        synth_pop.io.save_per_metallicity_info(self)
+        synth_pop.io.save_path_to_data(self)
+        synth_pop.io.save_parsed_pop_path(self.parsed_pop_file)
+            
+        # load data into DCO class
+        synth_pop.io.load_ini_params(synth_pop)
+        synth_pop.io.load_parse_kwargs(synth_pop)
+        synth_pop.io.load_per_metallicity_info(synth_pop)
+        synth_pop.io.load_path_to_data(synth_pop)
+        synth_pop.io.load_parsed_pop_path(synth_pop)
+                
+        if '/synthetic' in synth_pop.keys():
+            print('overwriting synthetic population')
+            synth_pop.remove('synthetic')
+            
+        min_itemsize = {'channel': 100,}
+        if hist_cols is not None:
+            min_itemsize.update({key:val for key, val in 
+                                HISTORY_MIN_ITEMSIZE.items() 
+                                if key in hist_cols})
+        
+        if oneline_cols is not None:
+            min_itemsize.update({key:val for key, val in
+                                ONELINE_MIN_ITEMSIZE.items()
+                            if key in oneline_cols})
+
+        # setup a mapping to the size of each history colummn
+        history_lengths = self.history_lengths
+        unique_binary_indices = self.indices
+        
+        previous = 0
+        for i in tqdm(range(0,len(unique_binary_indices), self.chunksize), disable=not self.verbose):
+            end = previous + history_lengths[i:i+self.chunksize].sum()
+            
+            oneline_chunk = self.select('oneline',
+                                        start=i,
+                                        stop=i+self.chunksize,
+                                        columns=oneline_cols)
+            
+            history_chunk = self.select('history',
+                                                start=previous,
+                                                stop=end, 
+                                                columns=hist_cols)
+            
+            formation_channels_chunk = self.select('formation_channels', 
+                                                    start = i,
+                                                    stop=i+self.chunksize,
+                                                    columns=['channel'])
+            
+            syn_df = func(history_chunk, oneline_chunk, formation_channels_chunk)
+            
+            # filter out the columns in min_itemsize that are not in the dataframe
+            min_itemsize = {key:val for key, val in min_itemsize.items() if key in syn_df.columns}
+                
+            synth_pop.append('synthetic',
+                                syn_df,
+                                format='table',
+                                data_columns=True,
+                                min_itemsize=min_itemsize
+                                )
+            
+            previous = end
+            
+        return synth_pop
+
     def create_GRB_population(self, output_file=None, GRB_properties={}, additional_oneline_cols=None):
         '''Create a GRB population from the parsed population.
         
@@ -987,7 +1106,7 @@ class ParsedPopulation():
             GRB_synthetic_population = SyntheticPopulation(self.parsed_pop_file,
                                                            verbose=self.verbose)
             parsed_store = pd.HDFStore(self.parsed_pop_file, mode='a')
-            output_store = parsed_file
+            output_store = parsed_store
         else:
             GRB_synthetic_population = SyntheticPopulation(output_file,
                                                            verbose=self.verbose)
@@ -1011,7 +1130,7 @@ class ParsedPopulation():
             output_store = pd.HDFStore(GRB_synthetic_population.pop_file, mode='a')
 
         
-        if 'synthetic' in output_store.keys():
+        if '/synthetic' in output_store.keys():
             print('A synthetic population already exists in this file.\
                 The current population will be removed!')      
             del output_store['synthetic']
@@ -1108,7 +1227,8 @@ class ParsedPopulation():
                 columns.append('S1_mass')
                 
             for c in columns_pre_post:
-                GRB_df_synthetic['preSN_'+c] = pre_sn[c].values
+                GRB_df_synthetic['preSN_'+c] = pre_sn[c].valuesS
+                
                 GRB_df_synthetic['postSN_'+c] = post_sn[c].values
             
             GRB_df_synthetic.index = post_sn.index
@@ -1116,7 +1236,6 @@ class ParsedPopulation():
             for c in columns:
                 GRB_df_synthetic[c] = pre_sn[c].values
             
-
             # add oneline parameters
             df_oneline = multi_columns_read('oneline',
                                             parsed_store,
@@ -1301,6 +1420,25 @@ class SyntheticPopulation():
                       pd.DataFrame(index=self.met_efficiency,
                                    data=self.efficiency),
                       format='fixed')
+    
+    def select(self, key, start, stop, columns=None):
+        with pd.HDFStore(self.pop_file, mode='r') as store:
+            return store.select(key, start=start, stop=stop, columns=columns)
+
+    def remove(self, key):
+        with pd.HDFStore(self.pop_file, mode='a') as store:
+            store.remove(key)
+    
+    def append(self, key, df, format='table', data_columns=True, min_itemsize=None):
+        with pd.HDFStore(self.pop_file, mode='a') as store:
+            store.append(key,
+                         df,
+                         format=format,
+                         data_columns=data_columns,
+                         min_itemsize=min_itemsize)
+    def keys(self):
+        with pd.HDFStore(self.pop_file, mode='r') as store:
+            return store.keys()
 
     def _load_population_selection(self):
         '''Loads the population selection from the synthetic population file'''
