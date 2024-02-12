@@ -7,14 +7,14 @@ __authors__ = [
     "Eirini Kasdagli <kasdaglie@ufl.edu>",
     "Jeffrey Andrews <jeffrey.andrews@northwestern.edu>",
 ]
-
+import h5py
 import os
 from copy import copy
 import datetime
 import numpy as np
 import astropy.constants as con
 import astropy.units as unt
-
+from mpi4py import MPI
 import pandas as pd
 import traceback
 
@@ -58,7 +58,36 @@ class population_spectra():
         """Function to load up a POSYDON population."""
         self.population = load_posydon_population(self.file)
 
-    def create_population_spectrum(self):
+    def create_spectrum(self):
+        comm = MPI.COMM_WORLD
+        rank = comm.Get_rank()
+        nprocs = comm.Get_size()
+        load_start = datetime.datetime.now()
+        self.load_population()
+        load_end = datetime.datetime.now()
+        print('Loading the population took',load_end - load_start,'s')
+        pop = copy(self.population)
+        if rank == 0:
+            # determine the size of each sub-task
+            ave, res = divmod(len(pop), nprocs)
+            counts = [ave + 1 if p < res else ave for p in range(nprocs)]
+            # determine the starting and ending indices of each sub-task
+            starts = [sum(counts[:p]) for p in range(nprocs)]
+            ends = [sum(counts[:p+1]) for p in range(nprocs)]
+            # converts data into a list of arrays 
+            pop = [pop[starts[p]:ends[p]] for p in range(nprocs)]
+        else:
+            pop = None
+        pop = comm.scatter(pop, root=0)
+        pop_spectrum, labels_S1 , labels_S2 =  self.create_population_spectrum(pop)
+        total_pop_spectrum = comm.gather(pop_spectrum, root=0)
+        labels_S1 = comm.gather(labels_S1, root=0)
+        labels_S2 = comm.gather(labels_S2, root=0)
+        if self.save_data:
+            self.save_pop_data(self.population,np.array(labels_S1,dtype = object),np.array(labels_S2,dtype = object),total_pop_spectrum)
+
+
+    def create_population_spectrum(self,pop):
         """Creates the integrated spectrum of the population.
         It also creates a file with the outputs if the save_data is True. 
 
@@ -66,11 +95,15 @@ class population_spectra():
             pop_spectrum: dictonary of type of binaries and their corresponding spectrum.
             wavelength: numpy array
         """
-        scale = self.scaling_factor
-        load_start = datetime.datetime.now()
-        self.load_population()
-        load_end = datetime.datetime.now()
-        print('Loading the population took',load_end - load_start,'s')
+        if pop is None:
+            scale = self.scaling_factor
+            load_start = datetime.datetime.now()
+            self.load_population()
+            load_end = datetime.datetime.now()
+            print('Loading the population took',load_end - load_start,'s')
+            pop = self.population
+        
+        
         pop_spectrum = {}
         state_list = ['disrupted',
                       'merged', 
@@ -87,7 +120,7 @@ class population_spectra():
         for state in state_list:
             pop_spectrum[state] = np.zeros(len(self.grids.lam_c))
             
-        for i,binary in self.population.iterrows():
+        for i,binary in pop.iterrows():
             spectrum_1,state_1,label1 = generate_spectrum(self.grids,binary,'S1',**self.kwargs)
             spectrum_2,state_2,label2 = generate_spectrum(self.grids,binary,'S2',**self.kwargs)
             if self.save_data:
@@ -97,9 +130,12 @@ class population_spectra():
                 pop_spectrum[state_1] += spectrum_1
             if spectrum_2 is not None and state_2 is not None:
                 pop_spectrum[state_2] += spectrum_2
+        """
         if self.save_data:
             self.save_pop_data(self.population,labels_S1,labels_S2,pop_spectrum)
-        return pop_spectrum,self.grids.lam_c
+            """
+        return pop_spectrum,labels_S1,labels_S2
+        
 
 
     def save_pop_data(self,pop_data,labels_S1,labels_S2,pop_spectrum,file_path=None):
@@ -111,12 +147,38 @@ class population_spectra():
             labels_S2: string
             file_path: string. Defaults to None.
         """
-        pop_data['S1_grid_status'] = labels_S1
-        pop_data['S2_grid_status'] = labels_S2
-        spectrum_data = pd.DataFrame.from_dict(pop_spectrum)
+        if type(pop_spectrum)== list:
+            """
+            total_labels_S1 = []
+            total_labels_S2 = []
+            total_labels_S1.append(labels_S1[i] for i in range(len(labels_S1)))
+            total_labels_S2.append(labels_S2[i] for i in range(len(labels_S1)))
+            """
+            pop_data['S1_grid_status'] = np.hstack(labels_S1)
+            pop_data['S2_grid_status'] = np.hstack(labels_S2)
+            combined_spectrum = dict.fromkeys({'disrupted',
+                      'merged', 
+                      'detached',
+                      'initially_single_star',
+                      'low_mass_binary',
+                      'contact',
+                      'RLO1',
+                      'RLO2'}, np.zeros(len(self.grids.lam_c)))
+            for i in range(len(pop_spectrum)):
+                pop_dict = pop_spectrum[i]
+                for key in pop_dict:
+                    combined_spectrum[key] += pop_dict[key]
+            spectrum_data = pd.DataFrame.from_dict(combined_spectrum)
+
+        else:
+            pop_data['S1_grid_status'] = labels_S1
+            pop_data['S2_grid_status'] = labels_S2
+            spectrum_data = pd.DataFrame.from_dict(pop_spectrum)
+
         spectrum_data.insert(loc = 0, column='wavelength',value =self.grids.lam_c )
         if file_path is None:
             file_path = "./"
         h5file =file_path + self.output_file
-        pop_data.to_hdf(h5file,key = 'data',format = 'table')
-        spectrum_data.to_hdf(h5file,key = 'flux',format = 'table')
+        
+        spectrum_data.to_hdf(h5file,key = 'flux',format = 'table',mode='w')
+        pop_data.to_hdf(h5file,key = 'data',format = 'table',mode='w')
