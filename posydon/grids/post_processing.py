@@ -29,7 +29,7 @@ __credits__ = [
 
 
 CC_quantities = ['state', 'SN_type', 'f_fb', 'mass', 'spin',
-                 'm_disk_accreted', 'm_disk_radiated', 'interpolation_class']
+                 'm_disk_accreted', 'm_disk_radiated', 'CO_interpolation_class']
 
 def assign_core_collapse_quantities_none(EXTRA_COLUMNS, star_i, MODEL_NAME=None):
     """"Assign None values to all core collapse properties."""
@@ -294,7 +294,7 @@ def post_process_grid(grid, index=None, star_2_CO=True, MODELS=MODELS,
                                 if not isinstance(getattr(star_copy, quantity), str):
                                     flush = True
                                     warnings.warn(f'{MODEL_NAME} {mechanism} {quantity} is not a string!')
-                            elif quantity != 'interpolation_class':
+                            elif quantity != 'CO_interpolation_class':
                                 if not isinstance(getattr(star_copy, quantity), float):
                                     flush = True
                                     warnings.warn(f'{MODEL_NAME} {mechanism} {quantity} is not a float!')
@@ -311,11 +311,11 @@ def post_process_grid(grid, index=None, star_2_CO=True, MODELS=MODELS,
                         assign_core_collapse_quantities_none(EXTRA_COLUMNS, star_i, MODEL_NAME)
                     else:
                         for quantity in CC_quantities:
-                            if quantity != 'interpolation_class':
+                            if quantity != 'CO_interpolation_class':
                                 EXTRA_COLUMNS[f'S{star_i}_{MODEL_NAME}_{quantity}'].append(
                                 getattr(star_copy, quantity))
                             else:
-                                if getattr(star_copy, 'state') == 'BH' and '1' in TF2 and '2' in TF2:
+                                if getattr(star_copy, 'state') == 'BH' and 'case' in TF2 and '1' in TF2 and '2' in TF2:
                                     EXTRA_COLUMNS[f'S{star_i}_{MODEL_NAME}_{quantity}'].append(
                                     getattr(star_copy, 'state')+'_reverse_MT')
                                 else:
@@ -346,7 +346,7 @@ def post_process_grid(grid, index=None, star_2_CO=True, MODELS=MODELS,
                                 if not isinstance(getattr(star_copy, quantity), str):
                                     flush = True
                                     warnings.warn(f'{MODEL_NAME} {mechanism} {quantity} is not a string!')
-                            elif quantity != 'interpolation_class':
+                            elif quantity != 'CO_interpolation_class':
                                 if not isinstance(getattr(star_copy, quantity), float):
                                     flush = True
                                     warnings.warn(f'{MODEL_NAME} {mechanism} {quantity} is not a float!')
@@ -363,11 +363,11 @@ def post_process_grid(grid, index=None, star_2_CO=True, MODELS=MODELS,
                         assign_core_collapse_quantities_none(EXTRA_COLUMNS, 1, MODEL_NAME)
                     else:
                         for quantity in CC_quantities:
-                            if quantity != 'interpolation_class':
+                            if quantity != 'CO_interpolation_class':
                                 EXTRA_COLUMNS[f'S{star_i}_{MODEL_NAME}_{quantity}'].append(
                                 getattr(star_copy, quantity))
                             else:
-                                if getattr(star_copy, 'state') == 'BH' and '1' in TF2 and '2' in TF2:
+                                if getattr(star_copy, 'state') == 'BH' and 'case' in TF2 and '1' in TF2 and '2' in TF2:
                                     EXTRA_COLUMNS[f'S{star_i}_{MODEL_NAME}_{quantity}'].append(
                                     getattr(star_copy, 'state')+'_reverse_MT')
                                 else:

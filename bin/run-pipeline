@@ -286,20 +286,14 @@ def train_interpolators(i, path_to_csv_file, verbose=False):
     grid = PSyGrid(verbose=verbose)
     grid.load(grid_path)
 
-    if 'HMS-HMS' in grid_path and not '_RLO' in grid_path:
-        interp_method = [method, method, method, method]
-        interp_classes = ["no_MT", "stable_MT", "unstable_MT", "stable_reverse_MT"]
-    elif 'HMS-HMS' in grid_path and '_RLO' in grid_path:
-        # This grid currently does not exist. But in case we want to include it
-        # in the future, we have added the functionality.
-        interp_method = [method, method, method]
-        interp_classes = ["stable_MT", "unstable_MT", "stable_reverse_MT"]
-    elif '_RLO' in grid_path:
-        interp_method = [method, method]
-        interp_classes = ["stable_MT", "unstable_MT"]
-    else:
-        interp_method = [method, method, method]
-        interp_classes = ["no_MT", "stable_MT", "unstable_MT"]
+    interp_method = [method, method]
+    interp_classes = ["stable_MT", "unstable_MT"]
+    if '_RLO' not in grid_path:
+        interp_method += [method]
+        interp_classes += ["no_MT"]
+    if 'CO-' not in grid_path:
+        interp_method += [method]
+        interp_classes += ["stable_reverse_MT"]
     
     # all magnitues that are not model numbers, supernova properites or strings
     # are interpolated with respect to interpolation_class
@@ -343,10 +337,10 @@ def train_interpolators(i, path_to_csv_file, verbose=False):
             # get interpolations classes dynamically
             interp_method = []
             interp_classes = []
-            for CO_type in ["BH", "NS", "WD", "BH_reverse_MT"]:
-                if CO_type in grid.final_values[f'S{i}_{MODEL_NAME}_interpolation_class']:
+            for CO_interpolation_class in ["BH", "NS", "WD", "BH_reverse_MT"]:
+                if CO_interpolation_class in grid.final_values[f'S{i}_{MODEL_NAME}_CO_interpolation_class']:
                     interp_method.append(method)
-                    interp_classes.append(CO_type)
+                    interp_classes.append(CO_interpolation_class)
 
             interpolators.append(
                 {
@@ -354,8 +348,8 @@ def train_interpolators(i, path_to_csv_file, verbose=False):
                     "interp_classes": interp_classes,
                     "out_keys": out_keys,
                     "class_method": "kNN",
-                    "c_keys": [f'S{i}_{MODEL_NAME}_interpolation_class'],
-                    "c_key": f'S{i}_{MODEL_NAME}_interpolation_class'
+                    "c_keys": [f'S{i}_{MODEL_NAME}_CO_interpolation_class'],
+                    "c_key": f'S{i}_{MODEL_NAME}_CO_interpolation_class'
                 },   
             )
     
