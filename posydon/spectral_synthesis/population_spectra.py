@@ -83,7 +83,7 @@ class population_spectra():
         total_pop_spectrum = comm.gather(pop_spectrum, root=0)
         labels_S1 = comm.gather(labels_S1, root=0)
         labels_S2 = comm.gather(labels_S2, root=0)
-        if self.save_data:
+        if self.save_data and rank ==0 :
             self.save_pop_data(self.population,np.array(labels_S1,dtype = object),np.array(labels_S2,dtype = object),total_pop_spectrum)
 
 
@@ -179,6 +179,6 @@ class population_spectra():
         if file_path is None:
             file_path = "./"
         h5file =file_path + self.output_file
-        
+
         spectrum_data.to_hdf(h5file,key = 'flux',format = 'table',mode='w')
         pop_data.to_hdf(h5file,key = 'data',format = 'table',mode='w')
