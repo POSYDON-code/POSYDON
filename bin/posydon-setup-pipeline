@@ -299,6 +299,7 @@ class PostProcessingPipeline:
                  )
         
         previously_created_files = []
+        plot_dirs = []
         pipeline_steps = []
         
         # create a runfile script
@@ -358,7 +359,7 @@ class PostProcessingPipeline:
                         # step and the sub-step extension.
                         sub_step_number = step_number+step_extension
                         # create csv file for sub step
-                        create_csv(
+                        plot_dirs += create_csv(
                             step_name=sub_step_number,
                             previously_created_files=previously_created_files,
                             **{**step_kwargs, **setup_kwargs}
@@ -387,6 +388,16 @@ class PostProcessingPipeline:
             if create_cleanup_slurm_job(job_name='pipeline',\
                 step_name='pipeline',\
                 **{**step_kwargs, **setup_kwargs, **account_kwargs}):
+                # create csv with all created files
+                df = pd.DataFrame()
+                if 'PATH' in setup_kwargs.keys():
+                    PATH = setup_kwargs['PATH']
+                else:
+                    PATH = '.'
+                df['pipeline_files'] = previously_created_files + list(set(plot_dirs))
+                df.to_csv(os.path.join(PATH, 'pipeline_files.csv'), header=False, index=False)
+                
+                # add cleanup to run script
                 submission_line = f"IDpipeline_cleanup=$(sbatch --parsable "
                 for i, step in enumerate(pipeline_steps):
                     if i==0:
@@ -603,7 +614,6 @@ def slurm_job(job_name,
         else:
             f.write(f"\nsrun python {path_to_run_pipeline} {PATH_TO_GRIDS} "
                     f"{path_to_csv_file} {slurm_array} 0")
-        # TODO: add the change of group and permission for created files
 
 def create_csv(GRID_TYPES=[],
                METALLICITIES=[],
@@ -620,7 +630,7 @@ def create_csv(GRID_TYPES=[],
                CREATE_PLOTS=[],
                DO_CHECKS=[],
                PATH_TO_GRIDS='',
-               PATH='',
+               PATH='.',
                previously_created_files=[],
                **kwargs):
     """Create csv file with a list containing all data to process a step."""
@@ -887,6 +897,8 @@ def create_csv(GRID_TYPES=[],
             newly_created_files = df['export_path'].to_list()
         elif step_name == 'rerun':
             newly_created_files = df['rerun_path'].to_list()
+        elif 'plot' in step_name:
+            newly_created_files = plot_dirs
     else: # step 2
         # drop columns when psygrid files are not found
         if DROP_MISSING_FILES:
@@ -995,12 +1007,20 @@ def create_cleanup_slurm_job(job_name,
                 f.write(f"\nrm {path_to_log_files}/{old_log_file_names}")
             if (job_name == 'pipeline'):
                 if GROUP is not None:
-                    f.write(f"echo \"Acting on {PATH} and all subdirectories/files in there\"")
+                    f.write(f"\necho \"Change group to {GROUP} and group "
+                            "permission to rwX at least for all files stated "
+                            f"in {PATH}/pipeline_files.csv\"")
+                    f.write(f"\nfor FILE in $(cat {PATH}/pipeline_files.csv); do")
+                    f.write(f"\n  chgrp -fR {GROUP} $""{FILE};")
+                    f.write("\n  chmod -fR g+rwX ${FILE};")
+                    f.write("\ndone")
+                    f.write(f"\necho \"Acting on {PATH} and all subdirectories"
+                            "/files in there\"")
                     f.write(f"\necho \"Change group to {GROUP}\"")
                     f.write(f"\nchgrp -fR {GROUP} {PATH}")
-                    f.write(f"\necho \"Change group permission to rwX at least\"")
+                    f.write("\necho \"Change group permission to rwX at least\"")
                     f.write(f"\nchmod -fR g+rwX {PATH}")
-                    f.write(f"\necho \"Done, check ${PATH}:\"")
+                    f.write(f"\necho \"Done, check {PATH}:\"")
                     f.write(f"\nls -al {PATH}")
     else:
         return False
