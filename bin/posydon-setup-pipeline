@@ -653,6 +653,7 @@ def create_csv(GRID_TYPES=[],
 
     grids = []
     grids_compression = []
+    grids_type = []
     stop_before_carbon_depletion = []
     grids_ORIGINAL = []
     processed_grids = []
@@ -685,6 +686,7 @@ def create_csv(GRID_TYPES=[],
                                                   VERSION, metallicity,
                                                   grid_slice))
                         grids_compression.append(compression)
+                        grids_type.append(grid_type)
                         stop_before_carbon_depletion.append(STOP_BEFORE_CARBON_DEPLETION)
                     elif step_name == 'step_2': # COMBINE_GRID_SLICES
                         if len(GRID_SLICES[l]) != len(GRIDS_COMBINED[l]):
@@ -828,6 +830,7 @@ def create_csv(GRID_TYPES=[],
         df['path_to_grid'] = grids
         if step_name == 'step_1':
             df['compression'] = grids_compression
+            df['grid_type'] = grids_type
             df['stop_before_carbon_depletion'] = stop_before_carbon_depletion
         elif step_name == 'step_3':
             df['path_to_grid_ORIGINAL'] = grids_ORIGINAL

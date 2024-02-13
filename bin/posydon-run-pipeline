@@ -123,9 +123,13 @@ def create_grid_slice(i, path_to_csv_file, verbose=False, overwrite_psygrid=True
         compression = df.loc[i,'compression']
     else:
         raise ValueError(f'No compression in {path_to_csv_file}')
+    if 'grid_type' in df.keys():
+        grid_type = df.loc[i,'grid_type']
+    else:
+        raise ValueError(f'No grid_type in {path_to_csv_file}')
     if 'stop_before_carbon_depletion' in df.keys():
         stop_before_carbon_depletion = df.loc[i,'stop_before_carbon_depletion']
-        if 'HMS' not in grid_path:
+        if 'HMS' not in grid_type:
             stop_before_carbon_depletion = False
     else:
         stop_before_carbon_depletion = False
@@ -145,7 +149,7 @@ def create_grid_slice(i, path_to_csv_file, verbose=False, overwrite_psygrid=True
         raise ValueError(f'pure_compression = {pure_compression} not '
                          f'supported! (compression={compression})')
     
-    if ('CO' in grid_path) and ('RLO' in compression):
+    if ('CO' in grid_type) and ('RLO' in compression):
         start_at_RLO = True
     else:
         start_at_RLO = False

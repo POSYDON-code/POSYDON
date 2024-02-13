@@ -29,13 +29,13 @@ Step1: creating a `PSyGrid` object
 ----------------------------------
 
 First, we need to create the :samp:`PSyGird` object. To do so, the pipeline
-needs to now the directory which contains the MESA runs, the compression, and
-whether to crop the history for some certain runs. Hence, the
+needs to now the directory which contains the MESA runs, the compression, the
+grid type, and whether to crop the history for some certain runs. Hence, the
 :samp:`step_1.csv` file should have those columns:
 
 .. code-block::
 
-    path_to_grid,compression,stop_before_carbon_depletion
+    path_to_grid,compression,grid_type,stop_before_carbon_depletion
 
 And the lines below contain the data for each unique combination of the three
 parameters to be processed. Here the :samp:`DATA_ID` simply refers to the line
