@@ -848,7 +848,7 @@ def plot_grid(i, path_to_csv_file, verbose=False):
                     # initial/final error all points in one plot
                     if k == 0:
                         PLOT_PROPERTIES_ALL = PLOT_PROPERTIES.copy()
-                        PLOT_PROPERTIES_ALL['title'] = title.replace('=%1.2f$', '$ all')
+                        PLOT_PROPERTIES_ALL['title'] = title.split('=')[0] + '$ all'
                         PLOT_PROPERTIES_ALL['fname'] = fname.replace('%1.2f', 'all')
                         evalIFerr.plot2D(plot_attributes['zvar'], 
                                          slice_3D_var_str, 
