@@ -663,6 +663,7 @@ def create_csv(GRID_TYPES=[],
     stop_before_carbon_depletion = []
     grids_ORIGINAL = []
     processed_grids = []
+    interpolation_methods = []
     interpolators = []
     export_path = []
     rerun_path = []
@@ -743,6 +744,7 @@ def create_csv(GRID_TYPES=[],
                             grids.append(os.path.join(PATH_TO_GRIDS,
                                           grid_type, VERSION, metallicity,
                                           compression, grid_slice+'.h5'))
+                            interpolation_methods.append(method+RLO)
                             interpolators.append(os.path.join(PATH_TO_GRIDS,
                                                   grid_type, VERSION,
                                                   metallicity,
@@ -856,6 +858,7 @@ def create_csv(GRID_TYPES=[],
             df['path_to_grid_ORIGINAL'] = grids_ORIGINAL
             df['path_to_processed_grid'] = processed_grids
         elif step_name == 'step_4':
+            df['interpolation_method'] = interpolation_methods
             df['path_to_interpolator'] = interpolators
         elif step_name == 'step_9':
             df['export_path'] = export_path

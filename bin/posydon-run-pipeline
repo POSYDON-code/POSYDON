@@ -276,12 +276,16 @@ def train_interpolators(i, path_to_csv_file, verbose=False):
             raise ValueError(f'{grid_path} not found!')
     else:
         raise ValueError(f'No path_to_grid in {path_to_csv_file}')
+    if 'interpolation_method' in df.keys():
+        interpolation_method = df.loc[i,'interpolation_method']
+    else:
+        raise ValueError(f'No interpolation_method in {path_to_csv_file}')
     if 'path_to_interpolator' in df.keys():
         interpolator_path = df.loc[i,'path_to_interpolator']
     else:
         raise ValueError(f'No path_to_interpolator in {path_to_csv_file}')
     
-    method = os.path.splitext(interpolator_path.split('IF_')[-1])[0]
+    method = interpolation_method
     if '_RLO' in method:
         method = method.split('_RLO')[0]
     
@@ -297,7 +301,7 @@ def train_interpolators(i, path_to_csv_file, verbose=False):
     grid = PSyGrid(verbose=verbose)
     grid.load(grid_path)
     
-    if '_RLO' in grid_path:
+    if '_RLO' in interpolation_method:
         interp_method = [method, method]
         interp_classes = ["stable_MT", "unstable_MT"]
     else:

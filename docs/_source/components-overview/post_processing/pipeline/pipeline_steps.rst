@@ -125,12 +125,13 @@ Step4: training of the interpolators
 
 To get interpolated data from our grids, we train in this step an interpolator
 on your :samp:`PSyGrid` object. The file :samp:`step_4.csv` therefore has to
-contain two information bits. First, the grid containing the data and second,
+contain three information bits: First, the grid containing the data, second,
+the interpolation method (inlcuding whether the grid starts at RLO), and third,
 the name of the interpolator object.
 
 .. code-block::
 
-    path_to_grid,path_to_interpolator
+    path_to_grid,interpolation_method,path_to_interpolator
 
 .. note::
     The type of interpolator will be recognized from the name of the
