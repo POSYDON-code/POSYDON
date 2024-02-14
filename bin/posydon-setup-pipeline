@@ -818,6 +818,7 @@ def create_csv(GRID_TYPES=[],
                                                   grid_type, VERSION,
                                                   metallicity, compression,
                                                   grid_s+'.h5'))
+                                    grids_type.append(grid_type)
                                     plot_dirs.append(os.path.join(PATH_TO_GRIDS,
                                                           grid_type, VERSION,
                                                           metallicity, 'plots',
@@ -871,6 +872,7 @@ def create_csv(GRID_TYPES=[],
             df['rerun_metallicity'] = rerun_metallicities
             df['rerun_type'] = rerun_type
         elif 'plot' in step_name:
+            df['grid_type'] = grids_type
             df['quantities_to_plot'] = plot_quantities
             df['path_to_plot'] = plot_dirs
             if len(interpolators)>0:

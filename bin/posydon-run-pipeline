@@ -713,6 +713,10 @@ def plot_grid(i, path_to_csv_file, verbose=False):
             raise ValueError(f'{grid_path} not found!')
     else:
         raise ValueError(f'No path_to_grid in {path_to_csv_file}')
+    if 'grid_type' in df.keys():
+        grid_type = df.loc[i,'grid_type']
+    else:
+        raise ValueError(f'No grid_type in {path_to_csv_file}')
     if 'path_to_plot' in df.keys():
         plot_dir = df.loc[i,'path_to_plot']
         plot_path = os.path.dirname(os.path.normpath(plot_dir))
@@ -809,13 +813,13 @@ def plot_grid(i, path_to_csv_file, verbose=False):
         if not os.path.isdir(dir_):
             os.makedirs(dir_)
         
-        if ('CO-' in grid_path):
+        if ('CO' in grid_type):
             # skip plotting CO properties
             if 'S2_' in quantity_to_plot:
                 continue
             # both grids are sampled in the same way with respect to the
             # compact object mass
-            if 'CO-HeMS' in grid_path:
+            if 'CO-HeMS' in grid_type:
                 smpl = grid_sample['CO-HeMS']
             else:
                 smpl = grid_sample['CO-HMS']
@@ -824,7 +828,7 @@ def plot_grid(i, path_to_csv_file, verbose=False):
             fname = 'grid_m_%1.2f.png'
             title = '$m_\mathrm{CO}=%1.2f\,M_\odot$'
             slice_3D_var_str = 'star_2_mass'
-        elif 'HMS-HMS' in grid_path:        
+        elif 'HMS-HMS' in grid_type:        
             # mass ratio slices
             smpl = grid_sample['HMS-HMS']
             vars, vars_edges = _range(smpl['qmin'], smpl['qmax'], smpl['nbin'],
