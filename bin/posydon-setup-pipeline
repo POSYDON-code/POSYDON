@@ -666,6 +666,7 @@ def create_csv(GRID_TYPES=[],
     interpolation_methods = []
     interpolators = []
     export_path = []
+    rerun_metallicities = []
     rerun_path = []
     rerun_type = []
     plot_dirs = []
@@ -777,6 +778,8 @@ def create_csv(GRID_TYPES=[],
                         rerun_path.append(os.path.join(PATH_TO_GRIDS,
                                            grid_type, VERSION, metallicity,
                                            'rerun_'+RERUN_TYPE+'_'+grid_slice))
+                        grids_type.append(grid_type)
+                        rerun_metallicities.append(metallicity)
                         rerun_type.append(RERUN_TYPE)
                     
                     if (('plot' in step_name) or ('check' in step_name)):
@@ -864,6 +867,8 @@ def create_csv(GRID_TYPES=[],
             df['export_path'] = export_path
         elif step_name == 'rerun':
             df['rerun_path'] = rerun_path
+            df['grid_type'] = grids_type
+            df['rerun_metallicity'] = rerun_metallicities
             df['rerun_type'] = rerun_type
         elif 'plot' in step_name:
             df['quantities_to_plot'] = plot_quantities

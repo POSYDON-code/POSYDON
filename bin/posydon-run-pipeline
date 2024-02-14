@@ -401,54 +401,54 @@ def export_dataset(i, path_to_csv_file, verbose=False):
     shutil.copyfile(grid_path, export_path)
 
 
-def zams_file_name(dirname):
+def zams_file_name(metallicity):
     """Gives the name of the ZAMS file depending on the metallicity."""
     
-    if '2e+00_Zsun' in dirname:
+    if '2e+00_Zsun' in metallicity:
         zams_filename = 'zams_z2.84m2_y0.2915.data'
-    elif '1e+00_Zsun'  in dirname:
+    elif '1e+00_Zsun'  in metallicity:
         zams_filename = 'zams_z1.42m2_y0.2703.data'
-    elif '4.5e-01_Zsun'  in dirname:
+    elif '4.5e-01_Zsun'  in metallicity:
         zams_filename = 'zams_z6.39m3_y0.2586.data'
-    elif '2e-01_Zsun' in dirname:
+    elif '2e-01_Zsun' in metallicity:
         zams_filename = 'zams_z2.84m3_y0.2533.data'
-    elif '1e-01_Zsun' in dirname:
+    elif '1e-01_Zsun' in metallicity:
         zams_filename = 'zams_z1.42m3_y0.2511.data'
-    elif '1e-02_Zsun' in dirname:
+    elif '1e-02_Zsun' in metallicity:
         zams_filename = 'zams_z1.42m4_y0.2492.data'
-    elif '1e-03_Zsun' in dirname:
+    elif '1e-03_Zsun' in metallicity:
         zams_filename = 'zams_z1.42m5_y0.2490.data'
-    elif '1e-04_Zsun' in dirname:
+    elif '1e-04_Zsun' in metallicity:
         zams_filename = 'zams_z1.42m6_y0.2490.data'
     else:
         raise ValueError(f'Metallicity unknown: {dirname}')
     return zams_filename
 
 
-def copy_ini_file(grid_path, rerun_type, destination, cluster):
+def copy_ini_file(grid_type, rerun_metallicity, rerun_type, destination, cluster):
     """Copies the ini file and make replacements according to the rerun."""
     
     # copy the default ini file to directory
     if cluster in ['quest','yggdrasil']:
         ini_dir_path = os.path.join(PATH_TO_POSYDON,
                     'grid_params/POSYDON-MESA-INLISTS/r11701/running_scripts')
-        if "single_HMS" in grid_path:
+        if "single_HMS" in grid_type:
             ini_file_path = os.path.join(ini_dir_path, f'single_HMS_{cluster}.ini')
             ini_file_dest = os.path.join(destination, f'single_HMS_{cluster}.ini')
-        elif "single_HeMS" in grid_path:
+        elif "single_HeMS" in grid_type:
             ini_file_path = os.path.join(ini_dir_path, f'single_HeMS_{cluster}.ini')
             ini_file_dest = os.path.join(destination, f'single_HeMS_{cluster}.ini')
-        elif "HMS-HMS" in grid_path:
+        elif "HMS-HMS" in grid_type:
             ini_file_path = os.path.join(ini_dir_path, f'HMS-HMS_{cluster}.ini')
             ini_file_dest = os.path.join(destination, f'HMS-HMS_{cluster}.ini')
-        elif "CO-HMS_RLO" in grid_path:
+        elif "CO-HMS" in grid_type:
             ini_file_path = os.path.join(ini_dir_path, f'CO-HMS_RLO_{cluster}.ini')
             ini_file_dest = os.path.join(destination, f'CO-HMS_RLO_{cluster}.ini')
-        elif "CO-HeMS" in grid_path:
+        elif "CO-HeMS" in grid_type:
             ini_file_path = os.path.join(ini_dir_path, f'CO-HeMS_{cluster}.ini')
             ini_file_dest = os.path.join(destination, f'CO-HeMS_{cluster}.ini')
         else:
-            raise ValueError(f'Unsupported grid type in {grid_path}!')
+            raise ValueError(f'Unsupported grid type: {grid_type}!')
         shutil.copyfile(ini_file_path, ini_file_dest)
     else:
         raise ValueError(f'Unsupported cluster {cluster}!')
@@ -482,7 +482,7 @@ def copy_ini_file(grid_path, rerun_type, destination, cluster):
     search_text1 = "main-18710e943edd926a5653c4cdb7d6e18e5bdb35a2"
     search_text2 = "main-a060b7bf1a4d94d693f77be9a1b0b3a522c1eadf"
     search_text3 = 'zams_z1.42m3_y0.2511.data'
-    replace_zams_filename = zams_file_name(grid_path)
+    replace_zams_filename = zams_file_name(rerun_metallicity)
     with open(ini_file_dest, 'r') as file:
         data = file.read()
         data = data.replace(search_text1, replace_text)
@@ -628,6 +628,14 @@ def rerun(i, path_to_csv_file, verbose=False):
         rerun_path = df.loc[i,'rerun_path']
     else:
         raise ValueError(f'No rerun_path in {path_to_csv_file}')
+    if 'grid_type' in df.keys():
+        grid_type = df.loc[i,'grid_type']
+    else:
+        raise ValueError(f'No grid_type in {path_to_csv_file}')
+    if 'rerun_metallicity' in df.keys():
+        rerun_metallicity = df.loc[i,'rerun_metallicity']
+    else:
+        raise ValueError(f'No rerun_metallicity in {path_to_csv_file}')
     if 'rerun_type' in df.keys():
         rerun_type = df.loc[i,'rerun_type']
     else:
@@ -654,7 +662,7 @@ def rerun(i, path_to_csv_file, verbose=False):
         cluster = 'quest'
     else:
         cluster = 'yggdrasil'
-    copy_ini_file(grid_path, rerun_type, destination=rerun_path, cluster=cluster)
+    copy_ini_file(grid_type, rerun_metallicity, rerun_type, destination=rerun_path, cluster=cluster)
 
 
 def plot_grid(i, path_to_csv_file, verbose=False):
