@@ -131,6 +131,9 @@ def create_grid_slice(i, path_to_csv_file, verbose=False, overwrite_psygrid=True
         stop_before_carbon_depletion = df.loc[i,'stop_before_carbon_depletion']
         if 'HMS' not in grid_type:
             stop_before_carbon_depletion = False
+            if verbose:
+                print('stop_before_carbon_depletion set to False for non HMS'\
+                      f' gird: {grid_type} in {grid_path}')
     else:
         stop_before_carbon_depletion = False
     
@@ -213,6 +216,10 @@ def calculate_extra_values(i, path_to_csv_file, verbose=False):
             raise ValueError(f'{grid_path} not found!')
     else:
         raise ValueError(f'No path_to_grid in {path_to_csv_file}')
+    if 'grid_type' in df.keys():
+        grid_type = df.loc[i,'grid_type']
+    else:
+        raise ValueError(f'No grid_type in {path_to_csv_file}')
     if 'path_to_processed_grid' in df.keys():
         processed_grid_path = df.loc[i,'path_to_processed_grid']
     else:
@@ -226,7 +233,7 @@ def calculate_extra_values(i, path_to_csv_file, verbose=False):
     
     if verbose:
         print(f'Compute processed quantities for {grid_path} ...')
-    if 'CO' in grid_path:
+    if 'CO' in grid_type:
         star_2_CO = True
     else:
         star_2_CO = False

@@ -622,6 +622,7 @@ def create_csv(GRID_TYPES=[],
                step_name='',
                VERSION='',
                GRIDS_COMBINED=[],
+               ORIGINAL_COMPRESSIONS=[],
                INTERPOLATION_METHODS=[],
                CONTROL_GRIDS=[],
                STOP_BEFORE_CARBON_DEPLETION=0,
@@ -646,6 +647,11 @@ def create_csv(GRID_TYPES=[],
         # given to create them.
         if N != len(GRIDS_COMBINED):
             raise ValueError('len(GRID_TYPES) != len(GRIDS_COMBINED)!')
+    elif step_name == 'step_3':
+        # here we need a reference grid with ORIGINAL compression to
+        # calculated the extra quantities from.
+        if N != len(ORIGINAL_COMPRESSIONS):
+            raise ValueError('len(GRID_TYPES) != len(ORIGINAL_COMPRESSIONS)!')
     elif 'step_4_' in step_name:
         # sub steps of the interpolator training need a control grid
         if len(GRID_SLICES) != len(CONTROL_GRIDS):
@@ -671,6 +677,9 @@ def create_csv(GRID_TYPES=[],
         METALLICITIES_ = METALLICITIES[l]
         GRID_SLICES_ = GRID_SLICES[l]
         COMPRESSIONS_ = COMPRESSIONS[l]
+        if (isinstance(ORIGINAL_COMPRESSIONS, list) and\
+            len(ORIGINAL_COMPRESSIONS)>0):
+            ORIGINAL_COMPRESSIONS_ = ORIGINAL_COMPRESSIONS[l]
         # loop over all metallicities, grid slices and compressions
         for metallicity in METALLICITIES_:
             for i, grid_slice in enumerate(GRID_SLICES_):
@@ -708,12 +717,22 @@ def create_csv(GRID_TYPES=[],
                         df_tmp[path_to_grid_combined] = combine_grid_slices
                         df = pd.concat([df,df_tmp], axis=1)
                     elif step_name == 'step_3': # CALCULATE_EXTRA_VALUES
+                        if (isinstance(ORIGINAL_COMPRESSIONS_, list) and\
+                            len(ORIGINAL_COMPRESSIONS_)>0):
+                            # use one orginal for all compressions, hence use
+                            # first one and ignore others
+                            original_compression = ORIGINAL_COMPRESSIONS_[0]
+                        else:
+                            # if not defined assume 'ORIGINAL'
+                            original_compression = 'ORIGINAL'
                         grids.append(os.path.join(PATH_TO_GRIDS,
                                       grid_type, VERSION, metallicity,
                                       compression, grid_slice+'.h5'))
+                        grids_type.append(grid_type)
                         grids_ORIGINAL.append(os.path.join(PATH_TO_GRIDS,
                                                grid_type, VERSION,
-                                               metallicity, 'ORIGINAL'+RLO,
+                                               metallicity,
+                                               original_compression+RLO,
                                                grid_slice+'.h5'))
                         processed_grids.append(os.path.join(PATH_TO_GRIDS,
                                                 grid_type, VERSION,
@@ -833,6 +852,7 @@ def create_csv(GRID_TYPES=[],
             df['grid_type'] = grids_type
             df['stop_before_carbon_depletion'] = stop_before_carbon_depletion
         elif step_name == 'step_3':
+            df['grid_type'] = grids_type
             df['path_to_grid_ORIGINAL'] = grids_ORIGINAL
             df['path_to_processed_grid'] = processed_grids
         elif step_name == 'step_4':

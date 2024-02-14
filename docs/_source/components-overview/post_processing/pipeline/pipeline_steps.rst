@@ -91,11 +91,12 @@ envelope evolution, and at core collapse.
 Because some of the values may require a high precision in the data, we
 recommend to use the data from the ORIGINAL compression to calculate them. But
 the new values can be added to any :samp:`PSyGrid` object. Hence this step
-requests three paths to be specified in :samp:`step_3.csv`:
+requests three paths to be specified in :samp:`step_3.csv` beside the gird
+type:
 
 .. code-block::
 
-    path_to_grid,path_to_grid_ORIGINAL,path_to_processed_grid
+    path_to_grid,grid_type,path_to_grid_ORIGINAL,path_to_processed_grid
 
 .. table:: Description of required paths
 
@@ -103,6 +104,7 @@ requests three paths to be specified in :samp:`step_3.csv`:
     Path                    Description
     ======================  ===========
     path_to_grid            path of the gird, which get the values appended to it
+    grid_type               type of the grid
     path_to_grid_ORIGINAL   path of the grid, where the values are calculated from
     path_to_processed_grid  path of the new grid (a copy of the one specified as :samp:`path_to_grid` with the appended values)
     ======================  ===========
