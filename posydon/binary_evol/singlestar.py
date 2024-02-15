@@ -153,18 +153,18 @@ class SingleStar:
             self.m_disk_radiated = None
 
         # the following quantities are updated in mesa_step.py
-            
+
         # common envelope quantities
         for quantity in ['m_core_CE', 'r_core_CE']:
             for val in [1, 10, 30, 'pure_He_star_10']:
                 if not hasattr(self, f'{quantity}_{val}cent'):
                     setattr(self, f'{quantity}_{val}cent', None)
-                
+
         # core masses at He depletion
         for quantity in ['avg_c_in_c_core_at_He_depletion',
                          'co_core_mass_at_He_depletion']:
             setattr(self, quantity, None)
-                
+
         # core collapse quantities
         for MODEL_NAME in MODELS.keys():
             if not hasattr(self, MODEL_NAME):
@@ -252,9 +252,24 @@ class SingleStar:
         try:
             # shape of data_to_save (history columns , time steps)
             data_to_save = [getattr(self, key) for key in keys_to_save]
+
+            
+            col_lengths = [len(x) for x in data_to_save]
+            max_col_length = np.max(col_lengths)
+
+            # If a singlestar fails, usually history cols have diff lengths.
+            # This should append NAN to create even columns.
+            all_equal_length_cols = len(set(col_lengths)) == 1
+            if not all_equal_length_cols:
+                for col in data_to_save:
+                    col.extend([np.nan] * abs(max_col_length - len(col)))
+
+
             where_none = np.array(
                 [[True if var is None else False for var in column]
                  for column in data_to_save], dtype=bool)
+
+
         except AttributeError as err:
             raise AttributeError(
                 str(err) + "\n\nAvailable attributes in SingleStar: \n{}".
@@ -273,7 +288,7 @@ class SingleStar:
                         for name in keys_to_save]
 
         star_df = pd.DataFrame(star_data, columns=column_names)
-        
+
         # try to coerce data types automatically
         star_df = star_df.infer_objects()
 
