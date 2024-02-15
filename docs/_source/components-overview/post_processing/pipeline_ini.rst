@@ -110,9 +110,9 @@ All sections have common keywords:
     METALLICITIES       a list of lists of the metallicities of the grids; the looped :samp:`METALLICITY` is used in the path name; the outer list allows you to have different lists for each grid type
     GRID_SLICES         a list of lists of the grid slices; the looped :samp:`GRID_SLICE` is used in the path name; the outer list allows you to have different lists for each grid type
     COMPRESSIONS        a list of lists of compression types
-    DROP_MISSING_FILES  boolean to ignore missing files
-    CREATE_PLOTS        a list of plots to make; this will be done independently whether the step is active or not, to make no plots put there an empty list or comment out such a line
-    DO_CHECKS           a list of checks to perform; this will be done independently whether the step is active or not, to make no checks put there an empty list or comment out such a line
+    DROP_MISSING_FILES  boolean to ignore missing files; it allows to have different substructures and taking the existing ones into account when specifying union of all possible substructures
+    CREATE_PLOTS        a list of plots to make; this will be done independently whether the step is active or not; to make no plots put there an empty list or comment out such a line
+    DO_CHECKS           a list of checks to perform; this will be done independently whether the step is active or not; to make no checks put there an empty list or comment out such a line
     ==================  ===========
 
 Some :ref:`steps <pipeline_steps>` have more keywords, which are specific to
