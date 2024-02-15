@@ -719,8 +719,6 @@ class Rates(object):
             arXiv:2106.15841
 
         """
-        
-            
             
         pop = self.synthetic_population.population_selection
         
@@ -843,7 +841,7 @@ class Rates(object):
                         'z_event': z_event_flat[bool_weights]})
         
         # adding additional data increases the memory usage significantly
-        save_cols = ['metallicity','time','t_delay','S1_state','S2_state',
+        save_cols = ['metallicity','time','S1_state','S2_state',
                      'S1_mass','S2_mass','S1_spin','S2_spin',
                      'orbital_period','eccentricity', 'q', 'm_tot',
                      'm_chirp', 'chi_eff']

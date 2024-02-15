@@ -1777,8 +1777,16 @@ class SyntheticPopulation():
             indices = self.indices.tolist()
             df = store.select('history', where='index in indices')
             df_oneline = store.select('oneline', where='index in indices')
+            df_formation = store.select('formation_channels', where='index in indices')
+            df_oneline['channel'] = df_formation['channel']
         
         tmp_pop = temp_pop(df, df_oneline)
         
         plot_pop.plot_popsyn_over_grid_slice(tmp_pop, grid_type, met_Zsun, **kwargs)
+    
+    def __getitem__(self, item):
+        out = copy.deepcopy(self)
+        out.synthetic_population = self.synthetic_population[item]
+        return out
+    
     
