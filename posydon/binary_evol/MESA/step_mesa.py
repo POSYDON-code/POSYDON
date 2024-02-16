@@ -30,6 +30,7 @@ from posydon.utils.common_functions import (flip_stars,
                                             set_binary_to_failed,)
 from posydon.utils.data_download import data_download, PATH_TO_POSYDON_DATA
 from posydon.grids.MODELS import MODELS
+from posydon.utils.posydon_exception import FlowError, GridError
 
 
 # left POSYDON, right MESA
