@@ -1014,8 +1014,8 @@ def create_cleanup_slurm_job(job_name,
                 f.write(f"#SBATCH --time={WALLTIME}\n")
             f.write(f"#SBATCH --job-name=cleanup\n")
             f.write("#SBATCH --mem-per-cpu=4G\n")
-            if ((EMAIL is not None) and (MAILTYPE is not None)):
-                f.write(f"#SBATCH --mail-type={MAILTYPE}\n")
+            if (EMAIL is not None):
+                f.write(f"#SBATCH --mail-type=FAIL\n")
                 f.write(f"#SBATCH --mail-user={EMAIL}\n")
             path_to_logs = os.path.join(PATH, 'logs', 'cleanup')
             log_file_name = get_log_file_name(job_name="cleanup",\
