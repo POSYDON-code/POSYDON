@@ -98,14 +98,22 @@ def keep_after_RLO(bh, h1, h2):
     bh_colnames = bh.dtype.names
 
     if "lg_mtransfer_rate" in bh_colnames:
-        rate = bh["lg_mtransfer_rate"] >= -12
+        # This needs to be aligned with run_binary_extras.f
+        # old: rate = bh["lg_mtransfer_rate"] >= -12
+        rate = bh["lg_mtransfer_rate"] >= -10
     else:
         raise ValueError("No `lg_mtransfer_rate` in binary history.")
 
-    rlo1 = (bh["rl_relative_overflow_1"] >= -0.05
+    # This needs to be aligned with run_binary_extras.f
+    # old: rlo1 = (bh["rl_relative_overflow_1"] >= -0.05
+    #        if "rl_relative_overflow_1" in bh_colnames else None)
+    rlo1 = (bh["rl_relative_overflow_1"] >= 0.00
             if "rl_relative_overflow_1" in bh_colnames else None)
 
-    rlo2 = (bh["rl_relative_overflow_2"] >= -0.05
+    # This needs to be aligned with run_binary_extras.f
+    #old: rlo2 = (bh["rl_relative_overflow_2"] >= -0.05
+    #        if "rl_relative_overflow_2" in bh_colnames else None)
+    rlo2 = (bh["rl_relative_overflow_2"] >= 0.00
             if "rl_relative_overflow_2" in bh_colnames else None)
 
     if rlo1 is None:
@@ -118,6 +126,8 @@ def keep_after_RLO(bh, h1, h2):
     if rlo_1_or_2 is None:
         raise ValueError("No `rl_relative_overflow` in any star history.")
 
+    # This needs to be aligned with run_binary_extras.f, there it is less
+    # restrictive, which is fine
     conditions_met = rlo_1_or_2 & rate
     where_conditions_met = np.where(conditions_met)[0]
 
@@ -137,6 +147,8 @@ def keep_after_RLO(bh, h1, h2):
     if len(new_ages) > 1 and min(np.diff(new_ages)) == 0.0:
         min_dt = min(np.diff(new_bh["age"]))
         new_age_to_remove = (age_to_remove // min_dt) * min_dt
+        if new_age_to_remove==age_to_remove:
+            new_age_to_remove -= min_dt
         relative_error = abs(new_age_to_remove - age_to_remove) / age_to_remove
         if relative_error > 0.01:
             raise Exception("Numerical precision fix too aggressive.")

@@ -35,7 +35,6 @@ import atexit
 import os
 from tqdm import tqdm
 import psutil
-import random
 import sys
 
 if 'posydon.binary_evol.binarystar' not in sys.modules.keys():
@@ -59,11 +58,11 @@ HISTORY_MIN_ITEMSIZE = {'state': 30, 'event': 25, 'step_names': 20,
                         'mass_transfer_case': 7,
                         'S1_SN_type': 5, 'S2_SN_type': 5}
 ONELINE_MIN_ITEMSIZE = {'state_i': 30, 'state_f': 30,
-                        'event_i': 10, 'event_f': 10,
+                        'event_i': 10, 'event_f': 25,
                         'step_names_i': 20, 'step_names_f': 20,
                         'S1_state_i': 31, 'S1_state_f': 31,
                         'S2_state_i': 31, 'S2_state_f': 31,
-                        'mass_transfer_case_i': 7, 'mass_transfer_case_f': 7,
+                        'mass_transfer_case_i': 7, 'mass_transfer_case_f': 20,
                         'S1_SN_type': 5, 'S2_SN_type': 5,
                         'interp_class_HMS_HMS' : 15, 'interp_class_CO_HeMS' : 15,
                         'interp_class_CO_HMS_RLO' : 15, 'interp_class_CO_HeMS_RLO' : 15,
@@ -464,7 +463,6 @@ class BinaryPopulation:
     def close(self):
         """Close loaded h5 files from SimulationProperties."""
         self.population_properties.close()
-        self.manager.close()
 
     def __getstate__(self):
         """Prepare the BinaryPopulation to be 'pickled'."""
@@ -514,13 +512,7 @@ class PopulationManager:
         self.entropy = self.binary_generator.entropy
 
         if file_name:
-            self.store = pd.HDFStore(file_name, mode='r',)
-            atexit.register(lambda: PopulationManager.close(self))
-
-    def close(self):
-        """Close the HDF5 file."""
-        if hasattr(self, 'store'):
-            self.store.close()
+            self.store_file = file_name
 
     def append(self, binary):
         """Add a binary instance internaly."""
@@ -641,8 +633,9 @@ class PopulationManager:
         else:
             query_str = str(where)
 
-        hist = self.store.select(key='history', where=query_str)
-        oneline = self.store.select(key='oneline', where=query_str)
+        with pd.HDFStore(self.store_file, mode='r') as store:
+            hist = store.select(key='history', where=query_str)
+            oneline = store.select(key='oneline', where=query_str)
 
         binary_holder = []
         for i in np.unique(hist.index):

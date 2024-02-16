@@ -347,7 +347,7 @@ def generate_secondary_masses(primary_masses,
 
     # Generate secondary masses
     if secondary_mass_scheme == 'flat_mass_ratio':
-        mass_ratio_min = secondary_mass_min / primary_masses
+        mass_ratio_min = np.max([secondary_mass_min / primary_masses,np.ones(len(primary_masses))*0.05], axis=0)
         mass_ratio_max = np.min([secondary_mass_max / primary_masses,
                                  np.ones(len(primary_masses))], axis=0)
         secondary_masses = (

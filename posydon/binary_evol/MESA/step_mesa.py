@@ -26,7 +26,8 @@ from posydon.binary_evol.binarystar import BinaryStar
 from posydon.interpolation.IF_interpolation import IFInterpolator
 from posydon.utils.common_functions import (flip_stars,
                                             convert_metallicity_to_string,
-                                            CO_radius, infer_star_state)
+                                            CO_radius, infer_star_state,
+                                            set_binary_to_failed,)
 from posydon.utils.data_download import data_download, PATH_TO_POSYDON_DATA
 from posydon.grids.MODELS import MODELS
 
@@ -109,8 +110,6 @@ POSYDON_TO_MESA = {
         'lambda_CE_1cent': 'lambda_CE_1cent',
         'lambda_CE_10cent': 'lambda_CE_10cent',
         'lambda_CE_30cent': 'lambda_CE_30cent',
-        'co_core_mass': 'co_core_mass',
-        'co_core_radius': 'co_core_radius',
         'lambda_CE_pure_He_star_10cent': 'lambda_CE_pure_He_star_10cent',
         'profile': True
     }
@@ -439,6 +438,18 @@ class MesaGridStep:
             # setattr(binary, "event", "END")
             return
 
+        # check if the first interpolation gives 'initial_RLOF'
+        interpolation_class = self.termination_flags[0]
+        binary_state, binary_event, MT_case = (
+            cf.get_binary_state_and_event_and_mt_case(
+                binary, interpolation_class, verbose=self.verbose))
+        setattr(binary, 'state', binary_state)
+        setattr(binary, 'event', binary_event)
+        setattr(binary, 'mass_transfer_case', MT_case)
+        
+        if binary.state == 'initial_RLOF':
+            return
+        
         if track_interpolation or self.save_initial_conditions:
             len_binary_hist = len(getattr(binary, "time_history"))
             length_binary_hist = len(cb_bh['age']) - 1
@@ -656,7 +667,7 @@ class MesaGridStep:
                             # DEBUG
                             # print(key, missing_values_star_1)
                             # print('fixed', len(getattr(self.binary.star_1,
-                            #                            key + "_history")))        
+                            #                            key + "_history")))
         # convert these flags to default POSYDON star states
         setattr(stars[0], 'state',
                 cf.check_state_of_star(stars[0], star_CO=stars_CO[0]))
@@ -729,9 +740,6 @@ class MesaGridStep:
                 getattr(binary, "state_history").extend(binary_state)
                 getattr(binary, "event_history").extend(binary_event)
                 getattr(binary, "mass_transfer_case_history").extend(MT_case)
-
-        if binary.state == 'initial_RLOF':
-            return
 
         if (star_2_CO or star_1_CO):
             # Updating Bondi-Hoyle accretion
@@ -1251,6 +1259,8 @@ class MS_MS_step(MesaGridStep):
         # load grid boundaries
         self.m1_min = min(self._psyTrackInterp.grid.initial_values['star_1_mass'])
         self.m1_max = max(self._psyTrackInterp.grid.initial_values['star_1_mass'])
+        self.m2_min = min(self._psyTrackInterp.grid.initial_values['star_2_mass'])
+        self.m2_max = max(self._psyTrackInterp.grid.initial_values['star_2_mass'])
         self.q_min = 0.05 # can be computed m2_min/m1_min
         self.q_max = 1. # note that for MESA stability we actually run q_max = 0.99
         self.p_min = min(self._psyTrackInterp.grid.initial_values['period_days'])
@@ -1270,29 +1280,58 @@ class MS_MS_step(MesaGridStep):
         m2 = self.binary.star_2.mass
         mass_ratio = m2/m1
         p = self.binary.orbital_period
+        # check if the binary is in the grid
         if (state_1 == 'H-rich_Core_H_burning' and
             state_2 == 'H-rich_Core_H_burning' and
             event == 'ZAMS' and
             self.m1_min <= m1 <= self.m1_max and
-            self.q_min <= mass_ratio <= self.q_max and
+            np.max([self.q_min, 0.5/m1]) <= mass_ratio <= self.q_max and
             self.p_min <= p <= self.p_max):
             self.flip_stars_before_step = False
             super().__call__(self.binary)
+        # binary in grid but masses flipped
         elif (state_1 == 'H-rich_Core_H_burning' and
               state_2 == 'H-rich_Core_H_burning' and
               event == 'ZAMS' and
               self.m1_min <= m2 <= self.m1_max and
-              self.q_min <= 1./mass_ratio <= self.q_max and
+              np.max([self.q_min, 0.5/m1]) <= 1./mass_ratio <= self.q_max and
               self.p_min <= p <= self.p_max):
             self.flip_stars_before_step = True
             super().__call__(self.binary)
-        # redirect if outside grid
+        # redirect if outside grid for period
         elif (state_1 == 'H-rich_Core_H_burning' and
               state_2 == 'H-rich_Core_H_burning' and
               event == 'ZAMS' and
               p > self.p_max):
             self.binary.event = 'redirect_from_ZAMS'
             return
+        # redirect if period smaller than the minimum period
+        elif (state_1 == 'H-rich_Core_H_burning' and
+              state_2 == 'H-rich_Core_H_burning' and
+              event == 'ZAMS' and
+              p < self.p_min):
+            self.binary.event = 'redirect_from_ZAMS'
+            return
+        # outside the mass grid for m1
+        elif (state_1 == 'H-rich_Core_H_burning' and
+              state_2 == 'H-rich_Core_H_burning' and
+              event == 'ZAMS' and
+              self.p_min <= p <= self.p_max and
+              (m1 < self.m1_min or m1 > self.m1_max)):
+            set_binary_to_failed(self.binary)
+            raise ValueError(f'The mass of m1 ({m1}) is outside the grid,'
+                             'while the period is inside the grid.')
+        # outside the mass grid for m2
+        # because m2_min is 0.5 Msun or from q_min, the minimum mass ratio is either
+        # q_min or 0.5/m1.
+        elif (state_1 == 'H-rich_Core_H_burning' and
+              state_2 == 'H-rich_Core_H_burning' and
+              event == 'ZAMS' and
+              self.p_min <= p <= self.p_max and
+              (mass_ratio < np.max([self.q_min, 0.5/m1]) or mass_ratio > self.q_max)):
+            set_binary_to_failed(self.binary)
+            raise ValueError(f'The mass of m2 ({m2}) is outside the grid,'
+                             'while the period is inside the grid.')
         # redirect if CC1
         elif (state_1 == 'H-rich_Central_C_depletion'):
             self.binary.event = 'CC1'
@@ -1302,6 +1341,7 @@ class MS_MS_step(MesaGridStep):
             self.binary.event = 'CC2'
             return
         else:
+            set_binary_to_failed(self.binary)
             raise ValueError('The star_1.state = %s, star_2.state = %s, '
                              'binary.event = %s and not H-rich_Core_H_burning '
                              '- H-rich_Core_H_burning - * - ZAMS'
@@ -1391,7 +1431,31 @@ class CO_HMS_RLO_step(MesaGridStep):
             self.p_min <= p <= self.p_max and
             ecc == 0.)):
             super().__call__(self.binary)
+
+        # period inside the grid, but m1 outside the grid
+        elif ((not self.flip_stars_before_step and
+               self.p_min <= p <= self.p_max and
+               (m1 < self.m1_min or m1 > self.m1_max)
+               )):
+            set_binary_to_failed(self.binary)
+            raise ValueError(f'The mass of m1 ({m1}) is outside the grid,'
+                                'while the period is inside the grid.')
+
+        # period inside the grid, but m2 outside the grid
+        elif ((not self.flip_stars_before_step and
+               self.p_min <= p <= self.p_max and
+               (m2 < self.m2_min or m2 > self.m2_max)
+               )):
+            set_binary_to_failed(self.binary)
+            raise ValueError(f'The mass of m2 ({m2}) is outside the grid,'
+                                'while the period is inside the grid.')
+
         else:
+            if len(self.binary.state_history) > 2:
+                if self.binary.state_history[-2] == 'detached':
+                    set_binary_to_failed(self.binary)
+                    raise ValueError('CO_HMS_RLO binary outside grid and coming from detached')
+
             self.binary.state = "detached"
             self.binary.event = "redirect_from_CO_HMS_RLO"
             return
@@ -1481,7 +1545,29 @@ class CO_HeMS_RLO_step(MesaGridStep):
             self.p_min <= p <= self.p_max and
             ecc == 0.)):
             super().__call__(self.binary)
+        # period inside the grid, but m1 outside the grid
+        elif ((not self.flip_stars_before_step and
+               self.p_min <= p <= self.p_max and
+                (m1 < self.m1_min or m1 > self.m1_max)
+                )):
+            set_binary_to_failed(self.binary)
+            raise ValueError(f'The mass of m1 ({m1}) is outside the grid,'
+                                'while the period is inside the grid.')
+        # period inside the grid, but m2 outside the grid
+        elif ((not self.flip_stars_before_step and
+               self.p_min <= p <= self.p_max and
+               (m2 < self.m2_min or m2 > self.m2_max)
+               )):
+            set_binary_to_failed(self.binary)
+            raise ValueError(f'The mass of m2 ({m2}) is outside the grid,'
+                                'while the period is inside the grid.')
+
         else:
+            if len(self.binary.state_history) > 2:
+                if self.binary.state_history[-2] == 'detached':
+                    set_binary_to_failed(self.binary)
+                    raise ValueError('CO_HeMS_RLO binary outside grid and coming from detached')
+
             self.binary.state = "detached"
             self.binary.event = "redirect_from_CO_HeMS_RLO"
             return
@@ -1577,5 +1663,9 @@ class CO_HeMS_step(MesaGridStep):
             ecc == 0.)):
             super().__call__(binary)
         else:
+            if len(self.binary.state_history) > 2:
+                if self.binary.state_history[-2] == 'detached':
+                    set_binary_to_failed(self.binary)
+                    raise ValueError('CO_HeMS binary outside grid and coming from detached')
             self.binary.event = 'redirect_from_CO_HeMS'
             return
