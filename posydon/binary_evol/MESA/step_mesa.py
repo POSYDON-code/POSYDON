@@ -299,7 +299,7 @@ class MesaGridStep:
         if not isinstance(binary, BinaryStar):
             raise ValueError("Must be an instance of BinaryStar")
         if not hasattr(self, 'step'):
-            raise AttributeError("No step defined for {}".format(
+            raise FlowError("No step defined for {}".format(
                 self.__name__))
         if self.flip_stars_before_step:
             flip_stars(binary)
@@ -402,7 +402,7 @@ class MesaGridStep:
         elif star_type == 'single-HeMS':
             pass
         else:
-            raise ValueError('Single star_type = %s unknown!' % star_type)
+            raise FlowError('Single star_type = %s unknown!' % star_type)
 
     # UPDATE STAR AND BINARY METHODS
 
@@ -1019,7 +1019,7 @@ class MesaGridStep:
                                            property + "_history")
                 np.array(property_history.append(current_property))
             else:
-                raise ValueError(
+                raise FlowError(
                     'Star can only be "star_1" or "star_2", you passed {0}'.
                     format(star))
             # if property_history[-1] > value:
@@ -1310,7 +1310,7 @@ class MS_MS_step(MesaGridStep):
               self.p_min <= p <= self.p_max and
               (m1 < self.m1_min or m1 > self.m1_max)):
             set_binary_to_failed(self.binary)
-            raise ValueError(f'The mass of m1 ({m1}) is outside the grid,'
+            raise GridError(f'The mass of m1 ({m1}) is outside the grid,'
                              'while the period is inside the grid.')
         # outside the mass grid for m2
         # because m2_min is 0.5 Msun or from q_min, the minimum mass ratio is either
@@ -1321,7 +1321,7 @@ class MS_MS_step(MesaGridStep):
               self.p_min <= p <= self.p_max and
               (mass_ratio < np.max([self.q_min, 0.5/m1]) or mass_ratio > self.q_max)):
             set_binary_to_failed(self.binary)
-            raise ValueError(f'The mass of m2 ({m2}) is outside the grid,'
+            raise GridError(f'The mass of m2 ({m2}) is outside the grid,'
                              'while the period is inside the grid.')
         # redirect if CC1
         elif (state_1 == 'H-rich_Central_C_depletion'):
@@ -1333,7 +1333,7 @@ class MS_MS_step(MesaGridStep):
             return
         else:
             set_binary_to_failed(self.binary)
-            raise ValueError('The star_1.state = %s, star_2.state = %s, '
+            raise FlowError('The star_1.state = %s, star_2.state = %s, '
                              'binary.event = %s and not H-rich_Core_H_burning '
                              '- H-rich_Core_H_burning - * - ZAMS'
                              % (state_1, state_2, event))
@@ -1407,7 +1407,7 @@ class CO_HMS_RLO_step(MesaGridStep):
                 self.binary.event = 'CC2'
                 return
         else:
-            raise ValueError(
+            raise FlowError(
                 'The star_1.state = %s, star_2.state = %s, binary.state = %s, '
                 'binary.event = %s and not CO - HMS - oRLO1/oRLO2!'
                 % (state_1, state_2, state, event))
@@ -1429,7 +1429,7 @@ class CO_HMS_RLO_step(MesaGridStep):
                (m1 < self.m1_min or m1 > self.m1_max)
                )):
             set_binary_to_failed(self.binary)
-            raise ValueError(f'The mass of m1 ({m1}) is outside the grid,'
+            raise GridError(f'The mass of m1 ({m1}) is outside the grid,'
                                 'while the period is inside the grid.')
             
         # period inside the grid, but m2 outside the grid
@@ -1438,14 +1438,14 @@ class CO_HMS_RLO_step(MesaGridStep):
                (m2 < self.m2_min or m2 > self.m2_max)
                )):
             set_binary_to_failed(self.binary)
-            raise ValueError(f'The mass of m2 ({m2}) is outside the grid,'
+            raise GridError(f'The mass of m2 ({m2}) is outside the grid,'
                                 'while the period is inside the grid.')
             
         else:
             if len(self.binary.state_history) > 2:
                 if self.binary.state_history[-2] == 'detached':
                     set_binary_to_failed(self.binary)
-                    raise ValueError('CO_HMS_RLO binary outside grid and coming from detached')
+                    raise GridError('CO_HMS_RLO binary outside grid and coming from detached')
                 
             self.binary.state = "detached"
             self.binary.event = "redirect_from_CO_HMS_RLO"
@@ -1521,7 +1521,7 @@ class CO_HeMS_RLO_step(MesaGridStep):
                 self.binary.event = 'CC2'
                 return
         else:
-            raise ValueError(
+            raise FlowError(
                 'The star_1.state = %s, star_2.state = %s, binary.state = %s, '
                 'binary.event = %s and not CO - HeMS - oRLO1/oRLO2!'
                 % (state_1, state_2, state, event))
@@ -1542,7 +1542,7 @@ class CO_HeMS_RLO_step(MesaGridStep):
                 (m1 < self.m1_min or m1 > self.m1_max)
                 )):
             set_binary_to_failed(self.binary)
-            raise ValueError(f'The mass of m1 ({m1}) is outside the grid,'
+            raise GridError(f'The mass of m1 ({m1}) is outside the grid,'
                                 'while the period is inside the grid.')
         # period inside the grid, but m2 outside the grid
         elif ((not self.flip_stars_before_step and
@@ -1550,14 +1550,14 @@ class CO_HeMS_RLO_step(MesaGridStep):
                (m2 < self.m2_min or m2 > self.m2_max)
                )):
             set_binary_to_failed(self.binary)
-            raise ValueError(f'The mass of m2 ({m2}) is outside the grid,'
+            raise GridError(f'The mass of m2 ({m2}) is outside the grid,'
                                 'while the period is inside the grid.')
         
         else:
             if len(self.binary.state_history) > 2:
                 if self.binary.state_history[-2] == 'detached':
                     set_binary_to_failed(self.binary)
-                    raise ValueError('CO_HeMS_RLO binary outside grid and coming from detached')
+                    raise GridError('CO_HeMS_RLO binary outside grid and coming from detached')
                 
             self.binary.state = "detached"
             self.binary.event = "redirect_from_CO_HeMS_RLO"
@@ -1637,7 +1637,7 @@ class CO_HeMS_step(MesaGridStep):
                 self.binary.event = 'CC2'
                 return
         else:
-            raise ValueError(
+            raise FlowError(
                 'The star_1.state = %s, star_2.state = %s, binary.event = %s '
                 'not supported by CO - HeMS grid!' % (state_1, state_2, event))
 
@@ -1657,6 +1657,6 @@ class CO_HeMS_step(MesaGridStep):
             if len(self.binary.state_history) > 2:
                 if self.binary.state_history[-2] == 'detached':
                     set_binary_to_failed(self.binary)
-                    raise ValueError('CO_HeMS binary outside grid and coming from detached')
+                    raise GridError('CO_HeMS binary outside grid and coming from detached')
             self.binary.event = 'redirect_from_CO_HeMS'
             return
