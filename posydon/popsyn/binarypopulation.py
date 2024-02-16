@@ -286,19 +286,14 @@ class BinaryPopulation:
             binary.properties = self.population_properties
 
             with warnings.catch_warnings(record=True) as w:
-                error_catching = False
-                if error_catching:
-                    exception_type = POSYDON_Exception
-                else:
-                    exception_type = Exception
-
                 try:
                     binary.evolve()                    
-                except exception_type:
-                #except POSYDON_Exception    
-                    traceback.print_exc()
+                #except Exception:
+                except POSYDON_Exception as e:
                     binary.event = 'FAILED'
                     binary.traceback = traceback.format_exc()
+                    if e.error_checking:   
+                        traceback.print_exception(e)
                 if len(w) > 0:
                     warnings.simplefilter("always")
                     binary.warning_message = [x.message for x in w]
