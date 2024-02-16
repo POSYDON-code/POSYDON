@@ -697,7 +697,7 @@ def plot_grid(i, path_to_csv_file, verbose=False):
     def _nbin(x_min, x_max, step, log=False):
         if log:
             nbin = (np.log10(x_max)-np.log10(x_min))/step
-        else
+        else:
             nbin = (x_max-x_min)/step
         return int(nbin)+1
     
