@@ -12,6 +12,7 @@
 
 __authors__ = [
     "Scott Coughlin <scottcoughlin2014@u.northwestern.edu>",
+    "Matthias Kruckow <Matthias.Kruckow@unige.ch>",
 ]
 
 import errno

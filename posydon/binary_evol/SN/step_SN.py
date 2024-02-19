@@ -18,6 +18,7 @@ __authors__ = [
     "Zepei Xing <Zepei.Xing@unige.ch>",
     "Jeffrey Andrews <jeffrey.andrews@northwestern.edu>",
     "Tassos Fragos <Anastasios.Fragkos@unige.ch>",
+    "Matthias Kruckow <Matthias.Kruckow@unige.ch>",
 ]
 
 __credits__ = [
@@ -81,6 +82,7 @@ MODEL = {
     "use_interp_values": True,
     "use_profiles": True,
     "use_core_masses": True,
+    "allow_spin_None" : False,
     "approx_at_he_depletion": False,
     # kick physics
     "kick": True,
@@ -196,6 +198,11 @@ class StepSN(object):
        This option uses the core masses at carbon depletion to determine
        the core collapse outcoume (classical population sythesis
        threatment).
+       
+    allow_spin_None : bool
+       This option does not determine the spin during core collapse while
+       setting other values like in use_core_masses. (used to avoid jumps
+       in the spin for interpolator training because of missing profiles)
 
     approx_at_he_depletion : bool
        This option is relevant only for the mechanism Patton&Sukhbold20-engine.
@@ -456,6 +463,10 @@ class StepSN(object):
            This option uses the core masses at carbon depletion to determine
            the core collapse outcoume (classical population sythesis
            threatment).
+        4. allow_spin_None : False
+           This option does not determine the spin during core collapse while
+           setting other values like in use_core_masses. (used to avoid jumps
+           in the spin for interpolator training because of missing profiles)
 
         Parameters
         ----------
@@ -683,6 +694,19 @@ class StepSN(object):
                         star.m_disk_accreted = 0.0
                         star.m_disk_radiated = 0.0
                         star.state = "NS"
+                    
+                elif self.allow_spin_None:
+                    # If the profile is not available and spin can stay
+                    # undetermined
+                    star.mass = m_grav
+                    star.spin = None
+                    star.m_disk_accreted = 0.0
+                    star.m_disk_radiated = 0.0
+                    if m_grav >= self.max_NS_mass:
+                        star.state = "BH"
+                    else:
+                        star.state = "NS"
+
                 else:
                     for key in STARPROPERTIES:
                         setattr(star, key, None)
@@ -786,6 +810,18 @@ class StepSN(object):
                         star.spin = 0.0
                         star.m_disk_accreted = 0.0
                         star.m_disk_radiated = 0.0
+                        star.state = "NS"
+                    
+                elif self.allow_spin_None:
+                    # If the profile is not available and spin can stay
+                    # undetermined
+                    star.mass = m_grav
+                    star.spin = None
+                    star.m_disk_accreted = 0.0
+                    star.m_disk_radiated = 0.0
+                    if m_grav >= self.max_NS_mass:
+                        star.state = "BH"
+                    else:
                         star.state = "NS"
 
                 else:

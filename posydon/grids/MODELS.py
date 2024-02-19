@@ -23,6 +23,7 @@ MODELS = {
         "use_interp_values": False,
         "use_profiles": True,
         "use_core_masses": False,
+        "allow_spin_None" : True,
         "approx_at_he_depletion": False,
     },
     "MODEL02": {
@@ -36,6 +37,7 @@ MODELS = {
         "use_interp_values": False,
         "use_profiles": True,
         "use_core_masses": False,
+        "allow_spin_None" : True,
         "approx_at_he_depletion": False,
     },
     "MODEL03": {
@@ -49,6 +51,7 @@ MODELS = {
         "use_interp_values": False,
         "use_profiles": True,
         "use_core_masses": False,
+        "allow_spin_None" : True,
         "approx_at_he_depletion": False,
     },
     "MODEL04": {
@@ -62,6 +65,7 @@ MODELS = {
         "use_interp_values": False,
         "use_profiles": True,
         "use_core_masses": False,
+        "allow_spin_None" : True,
         "approx_at_he_depletion": False,
     },
     "MODEL05": {
@@ -75,6 +79,7 @@ MODELS = {
         "use_interp_values": False,
         "use_profiles": True,
         "use_core_masses": False,
+        "allow_spin_None" : True,
         "approx_at_he_depletion": False,
     },
     "MODEL06": {
@@ -88,6 +93,7 @@ MODELS = {
         "use_interp_values": False,
         "use_profiles": True,
         "use_core_masses": False,
+        "allow_spin_None" : True,
         "approx_at_he_depletion": False,
     },
     "MODEL07": {
@@ -101,6 +107,7 @@ MODELS = {
         "use_interp_values": False,
         "use_profiles": True,
         "use_core_masses": False,
+        "allow_spin_None" : True,
         "approx_at_he_depletion": False,
     },
     "MODEL08": {
@@ -114,6 +121,7 @@ MODELS = {
         "use_interp_values": False,
         "use_profiles": True,
         "use_core_masses": False,
+        "allow_spin_None" : True,
         "approx_at_he_depletion": False,
     },
     "MODEL09": {
@@ -127,6 +135,7 @@ MODELS = {
         "use_interp_values": False,
         "use_profiles": True,
         "use_core_masses": False,
+        "allow_spin_None" : True,
         "approx_at_he_depletion": False,
     },
     "MODEL10": {
@@ -140,6 +149,7 @@ MODELS = {
         "use_interp_values": False,
         "use_profiles": True,
         "use_core_masses": False,
+        "allow_spin_None" : True,
         "approx_at_he_depletion": False,
     },
 

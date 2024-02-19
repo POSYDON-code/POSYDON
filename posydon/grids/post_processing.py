@@ -307,8 +307,9 @@ def post_process_grid(grid, index=None, star_2_CO=True, MODELS=MODELS,
                                 print('')
                                 print(f'Error during {MODEL_NAME} {mechanism} core collapse prescrition!')
                                 print(e)
-                                print('TF1', TF1)
-                                print('interpolation class',  interpolation_class)
+                                print('TF1:', TF1)
+                                print('interpolation class:',  interpolation_class)
+                                print('run directory:', grid.MESA_dirs[i])
                                 print('')
                         if flush:
                             assign_core_collapse_quantities_none(EXTRA_COLUMNS, star_i, MODEL_NAME)
@@ -354,8 +355,9 @@ def post_process_grid(grid, index=None, star_2_CO=True, MODELS=MODELS,
                             print('')
                             print(f'Error during {MODEL_NAME} {mechanism} core collapse prescrition!')
                             print(e)
-                            print('TF1', TF1)
-                            print('interpolation class',  interpolation_class)
+                            print('TF1:', TF1)
+                            print('interpolation class:',  interpolation_class)
+                            print('run directory:', grid.MESA_dirs[i])
                             print('')
                     if flush:
                         assign_core_collapse_quantities_none(EXTRA_COLUMNS, 1, MODEL_NAME)
