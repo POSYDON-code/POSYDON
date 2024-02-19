@@ -297,10 +297,16 @@ def post_process_grid(grid, index=None, star_2_CO=True, MODELS=MODELS,
                                     if not isinstance(getattr(star_copy, quantity), str):
                                         flush = True
                                         warnings.warn(f'{MODEL_NAME} {mechanism} {quantity} is not a string!')
+                                        if verbose:
+                                            print(f'{quantity} is a', type(quantity))
+                                            print('run directory:', grid.MESA_dirs[i])
                                 else:
                                     if not isinstance(getattr(star_copy, quantity), float):
                                         flush = True
                                         warnings.warn(f'{MODEL_NAME} {mechanism} {quantity} is not a float!')
+                                        if verbose:
+                                            print(f'{quantity} is a', type(quantity))
+                                            print('run directory:', grid.MESA_dirs[i])
                         except Exception as e:
                             flush = True
                             if verbose:
