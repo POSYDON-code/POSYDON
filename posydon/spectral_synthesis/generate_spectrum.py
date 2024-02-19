@@ -36,7 +36,9 @@ def check_boundaries(grids,grid_name,**kwargs):
             return True
     grid = grids.spectral_grids[grid_name]
     if grid_name == 'stripped_grid':
-        if x['M_init'] < grid.axis_x_min['M_init'] or x['M_init'] > grid.axis_x_max['M_init']:
+        if x['Teff'] < grid.axis_x_min['Teff'] or x['Teff'] > grid.axis_x_max['Teff']:
+            return 'failed_grid'
+        elif x['log(g)'] < grid.axis_x_min['log(g)'] or x['log(g)'] > grid.axis_x_max['log(g)']:
             return 'failed_grid'
         else:
             return 'stripped_grid'
@@ -132,6 +134,7 @@ def generate_spectrum(grids,star,i,**kwargs):
     M_init = copy(star[f'{i}_M_init'])
     state = copy(star[f'{i}_state'])
     R = 10**copy(star[f'{i}_log_R'])*con.R_sun
+    surface_h1 = max(copy(star[f'{i}_surface_h1']),0.01)
     x = {'Teff':Teff ,
          'log(g)': logg,
          '[Fe/H]': Fe_H,
@@ -139,6 +142,7 @@ def generate_spectrum(grids,star,i,**kwargs):
          'Z':Z,
          'M_init':M_init,
          'state':state,
+         'surface_h1' : surface_h1,
          '[alpha/Fe]':0.0}
     label = None
     label = point_the_grid(grids,x,label,**kwargs)
