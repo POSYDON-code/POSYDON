@@ -42,6 +42,13 @@ def check_boundaries(grids,grid_name,**kwargs):
             return 'failed_grid'
         else:
             return 'stripped_grid'
+    if grid_name =='WR_grid':
+        if x['Teff'] < grid.axis_x_min['Teff'] or x['Teff'] > grid.axis_x_max['Teff']:
+            return 'failed_grid'
+        elif x['R_t'] < grid.axis_x_min['R_t'] or x['R_T'] > grid.axis_x_max['R_t']:
+            return 'failed_grid'
+        else: 
+            return 'WR_grid'
     else:
         if x['Teff'] < grid.axis_x_min['Teff'] or x['Teff'] > grid.axis_x_max['Teff']:
             return 'failed_grid'
@@ -49,6 +56,7 @@ def check_boundaries(grids,grid_name,**kwargs):
             return 'failed_grid'
         else:
             return grid_name
+    
 
 def point_the_grid(grids,x,label,**kwargs):
     """Assigning the write label that would point to the spectra grid needed to used
@@ -79,8 +87,15 @@ def point_the_grid(grids,x,label,**kwargs):
         if label is not None:
             return 'failed_grid'
         return check_boundaries(grids,'stripped_grid',**x)
+    
+    if x['state'] == "WR_star":
+        if label is not None:
+            return 'failed_grid'
+        return check_boundaries(grids,'WR_grid',**x)
+
     if isinstance(check_boundaries(grids,'global',**x),str):
         return check_boundaries(grids,'global',**x)
+
     #Second check for ostar stars.
     if x['Teff'] > ostar_temp_cut_off:
         if label is not None:
@@ -134,6 +149,7 @@ def generate_spectrum(grids,star,i,**kwargs):
     M_init = copy(star[f'{i}_M_init'])
     state = copy(star[f'{i}_state'])
     R = 10**copy(star[f'{i}_log_R'])*con.R_sun
+    L = 10**copy(star[f'{i}_log_L'])
     surface_h1 = max(copy(star[f'{i}_surface_h1']),0.01)
     x = {'Teff':Teff ,
          'log(g)': logg,
@@ -144,6 +160,8 @@ def generate_spectrum(grids,star,i,**kwargs):
          'state':state,
          'surface_h1' : surface_h1,
          '[alpha/Fe]':0.0}
+    if state == 'WR_star':
+        x['R_t'] = star[f'{i}_Rt']
     label = None
     label = point_the_grid(grids,x,label,**kwargs)
     count = 1
@@ -153,6 +171,8 @@ def generate_spectrum(grids,star,i,**kwargs):
         try:
             if label == "stripped_grid":
                 Flux = grids.grid_flux(label,**x)*4*np.pi*1e4/Lo
+            if label == 'WR_grid':
+                Flux = grids.grid_flux(label,**x)*4*np.pi*1e4/Lo *(L/10**5.3)
             else:
                 Flux = grids.grid_flux(label,**x)*R**2*4*np.pi*1e4/Lo
             return Flux.value,star['state'],label
@@ -182,5 +202,15 @@ def rename_star_state(star,i):
         if lg_M_dot < -6:
             star[f'{i}_state'] = 'stripped_He_star'
             print('here!')
-        #else:
-        #   star[f'{i}_state'] = 'WR_star'     
+        else:
+           star[f'{i}_state'] = 'WR_star'
+           star[f'{i}_Rt'] = calculated_Rt(star,i)
+           print('WR star!')
+
+def calculated_Rt(star,i):
+    M_dot = 10**copy(star[f'{i}_lg_mdot'])
+    v_terminal = 1000 #km/s
+    D_max = 4 
+    R  = 10**copy(star[f'{i}_log_R'])
+    Rt = R*((v_terminal/2500)/(np.sqrt(D_max)*M_dot/1e-4))**(2/3)
+    return Rt
