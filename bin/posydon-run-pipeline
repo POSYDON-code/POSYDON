@@ -933,7 +933,7 @@ def plot_grid(i, path_to_csv_file, verbose=False):
                                 verbose=False, **PLOT_PROPERTIES)
             
             except Exception as e:
-                print('FAILED TO PLOT '+title%var)
+                print('FAILED TO PLOT '+title%var+' to '+fname%var)
                 print('')
                 print(e)
                 continue
