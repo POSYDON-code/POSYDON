@@ -943,8 +943,12 @@ class StepSN(object):
                     # this is catching H-rich_non_burning stars
                     if m_star < 0.5:
                         m_rembar = m_star
-                        warnings.warn(
-                            'Invalid co/He core masses! Setting m_WD=m_star!')
+                        if ((m_core < 0.)or(m_He_core < 0.)):
+                            warnings.warn('Invalid co/He core masses! '
+                                          'Setting m_WD=m_star!')
+                        else:
+                            warnings.warn('co/He core masses are zero! '
+                                          'Setting m_WD=m_star!')
                     else:
                         raise ValueError('Invalid co/He core masses!')
                 f_fb = 1.0  # no SN the no kick is assumed
@@ -980,8 +984,12 @@ class StepSN(object):
                     # this is catching H-rich_non_burning stars
                     if m_star < 0.5:
                         m_rembar = m_star
-                        warnings.warn(
-                            'Invalid co/He core masses! Setting m_WD=m_star!')
+                        if ((m_core < 0.)or(m_He_core < 0.)):
+                            warnings.warn('Invalid co/He core masses! '
+                                          'Setting m_WD=m_star!')
+                        else:
+                            warnings.warn('co/He core masses are zero! '
+                                          'Setting m_WD=m_star!')
                     else:
                         raise ValueError('Invalid co/He core masses!')
                 f_fb = 1.0  # no SN the no kick is assumed
@@ -1016,8 +1024,12 @@ class StepSN(object):
                     # this is catching H-rich_non_burning stars
                     if m_star < 0.5:
                         m_rembar = m_star
-                        warnings.warn(
-                            'Invalid co/He core masses! Setting m_WD=m_star!')
+                        if ((m_core < 0.)or(m_He_core < 0.)):
+                            warnings.warn('Invalid co/He core masses! '
+                                          'Setting m_WD=m_star!')
+                        else:
+                            warnings.warn('co/He core masses are zero! '
+                                          'Setting m_WD=m_star!')
                     else:
                         raise ValueError('Invalid co/He core masses!')
                 f_fb = 1.0  # no SN the no kick is assumed
