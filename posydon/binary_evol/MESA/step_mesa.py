@@ -1545,6 +1545,9 @@ class CO_HeMS_RLO_step(MesaGridStep):
             self.p_min <= p <= self.p_max and
             ecc == 0.)):
             super().__call__(self.binary)
+        elif p > self.p_max:
+            self.binary.event = 'redirect_from_CO_HeMS_RLO'
+            return
         # period inside the grid, but m1 outside the grid
         elif ((not self.flip_stars_before_step and
                self.p_min <= p <= self.p_max and
@@ -1662,6 +1665,10 @@ class CO_HeMS_step(MesaGridStep):
             self.p_min <= p <= self.p_max and
             ecc == 0.)):
             super().__call__(binary)
+        # binary outside grid
+        elif p > self.p_max:
+            binary.event = 'redirect_from_CO_HeMS'
+            return
         else:
             if len(self.binary.state_history) > 2:
                 if self.binary.state_history[-2] == 'detached':
