@@ -1431,7 +1431,9 @@ class CO_HMS_RLO_step(MesaGridStep):
             self.p_min <= p <= self.p_max and
             ecc == 0.)):
             super().__call__(self.binary)
-
+        elif p > self.p_max:
+            self.binary.event = 'redirect_from_CO_HMS_RLO'
+            return
         # period inside the grid, but m1 outside the grid
         elif ((not self.flip_stars_before_step and
                self.p_min <= p <= self.p_max and
