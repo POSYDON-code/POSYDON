@@ -18,7 +18,7 @@ default_grid_kwargs = {
     'stripped_grid': "sg-Gotberg23.h5",
     'bstar_grid' : "sg-BSTAR2006-ufl-vtb2.h5",#,'sg-C3K-coarse.h5'
     'ostar_grid': "sg-OSTAR2002-ufl.h5",
-    'WR_grid' : "sg-PoWR-WNL-H20.h5"
+    'WR_grid' : "sg-PoWR-WNL-H20.h5",
 
     # Setting the wavelengths range:
     'lam_min': 105.,
