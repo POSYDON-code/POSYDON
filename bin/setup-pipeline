@@ -649,7 +649,7 @@ def create_csv(GRID_TYPES=[],
                                       compression, grid_slice+'.h5'))
                         grids_ORIGINAL.append(os.path.join(PATH_TO_GRIDS,
                                                grid_type, VERSION,
-                                               metallicity, 'ORIGINAL'+RLO,
+                                               metallicity, 'ORIGINAL_check'+RLO,
                                                grid_slice+'.h5'))
                         processed_grids.append(os.path.join(PATH_TO_GRIDS,
                                                 grid_type, VERSION,
