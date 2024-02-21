@@ -485,6 +485,11 @@ class StepSN(object):
 
         """
         state = star.state
+        # after this function is called certain quantities shouldn't be None
+        # type objects anymore
+        for key in ['m_disk_accreted', 'm_disk_radiated']:
+            if getattr(star, key) is None:
+                setattr(star, key, np.nan)
         
         # Verifies if the star is in state state where it can
         # explode
@@ -620,8 +625,6 @@ class StepSN(object):
                     star.state = "WD"
                     star.spin = 0.
                     star.log_R = np.log10(CO_radius(star.mass, star.state))
-                    star.m_disk_accreted = np.nan
-                    star.m_disk_radiated = np.nan
                     for key in STARPROPERTIES:
                         if key not in ["state", "mass", "log_R", "spin",
                                        "m_disk_accreted", "m_disk_radiated"]:
@@ -631,8 +634,6 @@ class StepSN(object):
                 # check if the star was disrupted by the PISN
                 if np.isnan(m_rembar):
                     convert_star_to_massless_remnant(star=star)
-                    star.m_disk_accreted = np.nan
-                    star.m_disk_radiated = np.nan
                     return
 
                 # Computing the gravitational mass of the remnant
@@ -734,8 +735,6 @@ class StepSN(object):
                     star.state = "WD"
                     star.spin = 0.
                     star.log_R = np.log10(CO_radius(star.mass, star.state))
-                    star.m_disk_accreted = np.nan
-                    star.m_disk_radiated = np.nan
                     for key in STARPROPERTIES:
                         if key not in ["state", "mass", "log_R", "spin",
                                        "m_disk_accreted", "m_disk_radiated"]:
@@ -745,8 +744,6 @@ class StepSN(object):
                 # check if the star was disrupted by the PISN
                 if np.isnan(m_rembar):
                     convert_star_to_massless_remnant(star=star)
-                    star.m_disk_accreted = np.nan
-                    star.m_disk_radiated = np.nan
                     return
 
                 # Computing the gravitational mass of the remnant
