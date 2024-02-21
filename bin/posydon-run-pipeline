@@ -854,11 +854,11 @@ def plot_grid(i, path_to_csv_file, verbose=False):
             max_3D_var = np.max(grid.initial_values[slice_3D_var_str])
             if smpl['mmin']>min_3D_var:
                 smpl['mmin'] = min_3D_var
-                smpl['nbin'] = _nbin(smpl['mmin'], smpl['mmax'], smpl['nbin'],
+                smpl['nbin'] = _nbin(smpl['mmin'], smpl['mmax'], smpl['step'],
                                      log=smpl['log'])
             if smpl['mmax']<max_3D_var:
                 smpl['mmax'] = max_3D_var
-                smpl['nbin'] = _nbin(smpl['mmin'], smpl['mmax'], smpl['nbin'],
+                smpl['nbin'] = _nbin(smpl['mmin'], smpl['mmax'], smpl['step'],
                                      log=smpl['log'])
             vars, vars_edges = _range(smpl['mmin'], smpl['mmax'], smpl['nbin'],
                                       log=smpl['log'])
