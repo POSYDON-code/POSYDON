@@ -631,6 +631,8 @@ class StepSN(object):
                 # check if the star was disrupted by the PISN
                 if np.isnan(m_rembar):
                     convert_star_to_massless_remnant(star=star)
+                    star.m_disk_accreted = np.nan
+                    star.m_disk_radiated = np.nan
                     return
 
                 # Computing the gravitational mass of the remnant
@@ -743,6 +745,8 @@ class StepSN(object):
                 # check if the star was disrupted by the PISN
                 if np.isnan(m_rembar):
                     convert_star_to_massless_remnant(star=star)
+                    star.m_disk_accreted = np.nan
+                    star.m_disk_radiated = np.nan
                     return
 
                 # Computing the gravitational mass of the remnant
