@@ -1868,8 +1868,9 @@ class StepSN(object):
             CO_core_mass = star.co_core_mass_at_He_depletion
 
             if (C_core_abundance is None) or (CO_core_mass is None):
-                raise ValueError(
-                    'The history did not contain core masses at He depletion!')
+                raise ValueError('The history did not contain core masses at'
+                                 f' He depletion! {CO_core_mass}'
+                                 f' {C_core_abundance}')
 
         return CO_core_mass, C_core_abundance
 
