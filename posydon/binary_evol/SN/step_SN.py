@@ -535,7 +535,7 @@ class StepSN(object):
 
                     for key in STARPROPERTIES:
                         if key not in ["state", "mass", "spin",
-                                        "m_disk_accreted ", "m_disk_radiated"]:
+                                        "m_disk_accreted", "m_disk_radiated"]:
                             setattr(star, key, None)
                     
                     # check if SN_type matches the predicted CO
@@ -840,7 +840,7 @@ class StepSN(object):
         for key in STARPROPERTIES:
             if key not in [
                 "state", "mass", "spin", "log_R", "metallicity",
-                "m_disk_accreted ", "m_disk_radiated"]:
+                "m_disk_accreted", "m_disk_radiated"]:
                 setattr(star, key, None)
 
     def PISN_prescription(self, star):
