@@ -291,6 +291,8 @@ def post_process_grid(grid, index=None, star_2_CO=True, MODELS=MODELS,
                         star_copy = copy.copy(star)
                         try:
                             flush = False
+                            if not isinstance(getattr(star_copy, 'm_disk_radiated'), float):
+                                print('m_disk_radiated is a', type(getattr(star_copy, 'm_disk_radiated')), getattr(star_copy, 'm_disk_radiated'))
                             SN.collapse_star(star_copy)
                             for quantity in CC_quantities:
                                 if quantity in ['state', 'SN_type']:
@@ -298,14 +300,14 @@ def post_process_grid(grid, index=None, star_2_CO=True, MODELS=MODELS,
                                         flush = True
                                         warnings.warn(f'{MODEL_NAME} {mechanism} {quantity} is not a string!')
                                         if verbose:
-                                            print(f'{quantity} is a', type(quantity))
+                                            print(f'{quantity} is a', type(getattr(star_copy, quantity)))
                                             print('run directory:', grid.MESA_dirs[i])
                                 else:
                                     if not isinstance(getattr(star_copy, quantity), float):
                                         flush = True
                                         warnings.warn(f'{MODEL_NAME} {mechanism} {quantity} is not a float!')
                                         if verbose:
-                                            print(f'{quantity} is a', type(quantity))
+                                            print(f'{quantity} is a', type(getattr(star_copy, quantity)))
                                             print('run directory:', grid.MESA_dirs[i])
                         except Exception as e:
                             flush = True
