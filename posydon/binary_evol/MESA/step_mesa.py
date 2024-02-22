@@ -1705,5 +1705,6 @@ class CO_HeMS_step(MesaGridStep):
         #    binary.event = 'redirect_from_CO_HeMS'
         #    return
         else:
+            self.binary.state = 'detached'
             self.binary.event = 'redirect_from_CO_HeMS'
             return
