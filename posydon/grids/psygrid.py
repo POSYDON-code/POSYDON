@@ -1287,9 +1287,9 @@ class PSyGrid:
         new_dtype = []
         for dtype in self.final_values.dtype.descr:
             if (dtype[0].startswith("termination_flag")
-                    or dtype[0] == "interpolation_class"
                     or dtype[0] == "mt_history"
-                    or "_type" in dtype[0] or "_state" in dtype[0]):
+                    or "_type" in dtype[0] or "_state" in dtype[0]
+                    or "_class" in dtype[0]):
                 dtype = (dtype[0], H5_REC_STR_DTYPE.replace("U", "S"))
             new_dtype.append(dtype)
             if dtype[1] == np.dtype('O'):
@@ -1340,9 +1340,9 @@ class PSyGrid:
         new_dtype = []
         for dtype in self.final_values.dtype.descr:
             if (dtype[0].startswith("termination_flag")
-                    or dtype[0] == "interpolation_class"
                     or dtype[0] == "mt_history"
-                    or "_type" in dtype[0] or "_state" in dtype[0]):
+                    or "_type" in dtype[0] or "_state" in dtype[0]
+                    or "_class" in dtype[0]):
                 dtype = (dtype[0], H5_REC_STR_DTYPE.replace("S", "U"))
             new_dtype.append(dtype)
         self.final_values = self.final_values.astype(new_dtype)
@@ -2277,8 +2277,8 @@ def join_grids(input_paths, output_path,
         new_final_dtype = []
         for dtype in final_dtype.descr:
             if (dtype[0].startswith("termination_flag")
-                    or dtype[0] == "interpolation_class"
-                    or "SN_type" in dtype[0] or "_state" in dtype[0]):
+                    or "SN_type" in dtype[0] or "_state" in dtype[0]
+                    or "_class" in dtype[0]):
                 dtype = (dtype[0], H5_REC_STR_DTYPE.replace("U", "S"))
             new_final_dtype.append(dtype)
         new_final_values = np.array(new_final_values, dtype=new_final_dtype)
