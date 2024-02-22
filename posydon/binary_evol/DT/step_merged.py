@@ -11,8 +11,7 @@ __authors__ = [
 import numpy as np
 
 from posydon.utils.data_download import PATH_TO_POSYDON_DATA
-from posydon.binary_evol.singlestar import STARPROPERTIES
-from posydon.binary_evol.singlestar import properties_massless_remnant
+from posydon.binary_evol.singlestar import STARPROPERTIES, convert_star_to_massless_remnant
 from posydon.utils.common_functions import check_state_of_star
 from posydon.binary_evol.DT.step_isolated import IsolatedStep
 
@@ -32,14 +31,6 @@ LIST_ACCEPTABLE_STATES_FOR_POSTMS = STAR_STATES_H_RICH.copy()
 
 LIST_ACCEPTABLE_STATES_FOR_POSTHeMS = STAR_STATES_HE_RICH.copy()
 [LIST_ACCEPTABLE_STATES_FOR_POSTHeMS.remove(x) for x in LIST_ACCEPTABLE_STATES_FOR_HeMS]
-
-
-def convert_star_to_massless_remnant(star):
-    for key in STARPROPERTIES:
-        setattr(star, key, properties_massless_remnant()[key])
-    return star
-
-
 
 
 class MergedStep(IsolatedStep):
@@ -543,6 +534,9 @@ class MergedStep(IsolatedStep):
                 merged_star = comp
                 # TODO: potentially flag a Thorne-Zytkov object
                 massless_remnant = convert_star_to_massless_remnant(star_base)
+
+                ## in this case, want CO companion object to stay the same, and base star to be assigned massless remnant
+                return massless_remnant, merged_star
         else:
             print("Combination of merging star states not expected: ", s1, s2)
 
