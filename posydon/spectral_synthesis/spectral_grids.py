@@ -25,6 +25,7 @@ GRID_KEYS = [
     'bstar_grid',
     'ostar_grid',
     'stripped_grid',
+    'WR-grid'
 ]
 
 
@@ -122,6 +123,9 @@ class spectral_grids():
         if name == "stripped_grid":
             return self.stripped_grid_flux(**x)
         Flux = np.asarray(specgrid.flux(x, self.lam))
+        if name == 'WR_grid':
+            distance_factor = (kpc/100)**2
+            return Flux*distance_factor 
         return Flux
 
     def stripped_grid_flux(self,**kwargs):
