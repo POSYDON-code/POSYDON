@@ -162,6 +162,13 @@ class BinaryStar:
             self.inspiral_time = None
         if not hasattr(self, 'mass_transfer_case'):
             self.mass_transfer_case = 'None'
+
+        if not hasattr(self, 'true_anomaly_first_SN'):
+            self.true_anomaly_SN1 = None
+        if not hasattr(self, 'true_anomaly_second_SN'):
+            self.true_anomaly_SN2 = None
+        if not hasattr(self, 'first_SN_already_occurred'):
+            self.first_SN_already_occurred = False
         # if not hasattr(self, 'V_sys'):
         #     self.V_sys = [0, 0, 0]
 
@@ -171,7 +178,8 @@ class BinaryStar:
                 setattr(self, f'interp_class_{grid_type}', None)
             if not hasattr(self, f'mt_history_{grid_type}'):
                 setattr(self, f'mt_history_{grid_type}', None)
-
+            if not hasattr(self, f'culmulative_mt_case_{grid_type}'):
+                setattr(self, f'culmulative_mt_case_{grid_type}', None)
         # SimulationProperties object - parameters & parameterizations
         if isinstance(properties, SimulationProperties):
             self.properties = properties
