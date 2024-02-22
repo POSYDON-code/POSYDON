@@ -406,9 +406,10 @@ def zams_file_name(metallicity):
     
     if '2e+00_Zsun' in metallicity:
         zams_filename = 'zams_z2.84m2_y0.2915.data'
-    elif '1e+00_Zsun'  in metallicity:
+    elif (('1e+00_Zsun' in metallicity)or(metallicity=='')):
+        # in v1 there is no metallicity, hence am empty string
         zams_filename = 'zams_z1.42m2_y0.2703.data'
-    elif '4.5e-01_Zsun'  in metallicity:
+    elif '4.5e-01_Zsun' in metallicity:
         zams_filename = 'zams_z6.39m3_y0.2586.data'
     elif '2e-01_Zsun' in metallicity:
         zams_filename = 'zams_z2.84m3_y0.2533.data'
