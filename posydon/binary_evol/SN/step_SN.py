@@ -1733,7 +1733,28 @@ class StepSN(object):
         Vkick : double
             Natal orbital kick in km/s.
 
+        ------------------------------------------------------------------
+
+        Some extra kick models were added for modeling the birth kicks for double 
+        neutron stars. Three kick options are listed below, each decides the kick
+        magnitude based on the mass of ejected material during the supernova event.
+
+        References
+        ----------
+
+        [1] Neutron Star Kicks by the Gravitational Tug-boat Mechanism in Asymmetric
+            Supernova Explosions: Progenitor and Explosion Dependence, Janka H.T., 2017, 
+            ApJ 837(1):84, arXiv:1611.07562 [astro-ph.HE]
+
+        [2] Calibration of neutron star natal kick velocities to isolated pulsar observations,
+            Kapil V., Mandel I., Berti E., Muller B., 2022, arXiv, arXiv:2209.09252
+
+        [3] New constraints on the Bray conservation-of-momentum natal kick model from 
+            multiple distinct observations, Richards S. M., Eldridge J. J., Briel M. M., 
+            Stevance H. F., Willcox R., 2022, arXiv e-prints, p. arXiv:2208.02407
+
         """
+
         if self.kick_normalisation == 'one_minus_fallback':
             # Normalization from Eq. 21, Fryer, C. L., Belczynski, K., Wiktorowicz,
             # G., Dominik, M., Kalogera, V., & Holz, D. E. (2012), ApJ, 749(1), 91.
@@ -1743,6 +1764,58 @@ class StepSN(object):
                 norm = 1.4/star.mass
             else:
                 norm = 1.0
+
+        elif self.kick_normalisation == 'env_mass_Janka+17':
+            
+            # print("Star mass =", star.mass)
+            # print("Star State History =", star.state_history)
+            # print("Star Mass History =", star.mass_history)
+            # print("Star Mass History [-1] =", star.mass_history[-1])
+            # print("Star He Core History =", star.he_core_mass_history)
+            # print("Star CO Core History =", star.co_core_mass_history)
+            # print("Star CO Core History [-1] =", star.co_core_mass_history[-1])
+            
+            # import pdb
+            # pdb.set_trace()
+           
+            f_kin = 0.1         # Fraction of SN explosion energy that is kinetic energy of the gas
+            beta = 0.1          # Fraction of ejecta mass that is neutrino heated
+            epsilon = 1         
+            alpha_ej = 0.01     # Momentum asymmetry parameter [= 0.1, 0.01]
+
+            # M_ej = star.co_core_mass_history[-1]-star.mass      # Ejecta mass
+            M_NS = star.mass                                    # Neutron star mass
+
+            M_rembar=(((3*M_NS/20 + 1)**2) - 1)/0.3
+            M_ej=abs(star.mass_history[-1] - M_rembar)
+
+            # print("Remnant Baryonic Mass =", M_rembar)
+            # print("Ejecta mass =", M_ej)
+            # print("NS mass =", M_NS)
+
+            Vkick_env = 211*(f_kin*beta*epsilon)**(1/2)*(alpha_ej/0.1)*(M_ej/0.1)*(M_NS/1.5)**(-1)
+
+        
+        elif self.kick_normalisation == 'env_mass_Kapil+23':
+
+            M_CO = star.co_core_mass_history[-1]      
+            M_NS = star.mass
+            mu_kick = 520 * (M_CO - M_NS)/M_NS        # Mean of the Gaussian distribution
+            sigma = 0.3 * mu_kick                     # Std dev of the Gaussian distribution
+
+            Vkick_env = np.random.normal(mu_kick, sigma, size=1)[0]
+
+        
+        elif self.kick_normalisation == 'env_mass_Elridge+23':
+
+            M_ej = star.co_core_mass_history[-1]-star.mass        # Ejecta mass
+            M_rem = star.mass                                     # Neutron star mass
+            alpha = 115                                           # alpha and beta are
+            beta = 15                                             # best-fit parameters
+
+            Vkick_env = alpha * (M_ej/M_rem) + beta
+ 
+
         elif self.kick_normalisation == 'NS_one_minus_fallback_BH_one':
             if star.state == 'BH':
                 norm = 1.
@@ -1759,8 +1832,12 @@ class StepSN(object):
 
         if sigma is not None:
             # f_fb = self.compute_m_rembar(star, None)[1]
-
-            Vkick = norm * sp.stats.maxwell.rvs(loc=0., scale=sigma, size=1)[0]
+            if self.kick_normalisation in ['env_mass_Janka+17', 'env_mass_Kapil+23',
+                                           'env_mass_Elridge+23']:
+                Vkick = Vkick_env
+                # print(self.kick_normalisation, Vkick)
+            else:
+                Vkick = norm * sp.stats.maxwell.rvs(loc=0., scale=sigma, size=1)[0]
         else:
             Vkick = 0.0
 
