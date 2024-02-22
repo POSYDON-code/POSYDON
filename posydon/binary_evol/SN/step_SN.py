@@ -403,6 +403,7 @@ class StepSN(object):
             # collapse star
             self.collapse_star(star=binary.star_1)
             self._reset_other_star_properties(star=binary.star_2)
+            
         elif binary.event == "CC2":
             # collapse star
             self.collapse_star(star=binary.star_2)
@@ -432,7 +433,9 @@ class StepSN(object):
             binary.event = "CC2"
         elif state1 in STAR_STATES_C_DEPLETION and state2 in STAR_STATES_CO:
             binary.event = "CC1"
-
+        
+        if binary.star_1.state == 'WD':
+            print('Exiting SN',binary.star_1.state ,binary.star_1.co_core_mass)
     def check(self):
         """Check the internal integrity and the values of the parameters."""
         if self.kick_distribution is None:
@@ -524,7 +527,7 @@ class StepSN(object):
 
                     for key in STARPROPERTIES:
                         if key not in ["state", "mass", "spin",
-                                        "m_disk_accreted ", "m_disk_radiated"]:
+                                        "m_disk_accreted ", "m_disk_radiated","co_core_mass"]:
                             setattr(star, key, None)
                     
                     # check if SN_type matches the predicted CO
@@ -578,7 +581,6 @@ class StepSN(object):
                     
                     if getattr(star, 'SN_type') != 'PISN':
                         star.log_R = np.log10(CO_radius(star.mass, star.state))
-                    
                     return
 
             # Verifies the selection of core-collapse mechnism to perform
@@ -611,9 +613,10 @@ class StepSN(object):
                     star.log_R = np.log10(CO_radius(star.mass, star.state))
                     star.m_disk_accreted = np.nan
                     star.m_disk_radiated = np.nan
+                    star.co_core_mass = m_rembar
                     for key in STARPROPERTIES:
                         if key not in ["state", "mass", "log_R", "spin",
-                                       "m_disk_accreted", "m_disk_radiated"]:
+                                       "m_disk_accreted", "m_disk_radiated","co_core_mass"]:
                             setattr(star, key, None)
                     return
 
@@ -710,9 +713,10 @@ class StepSN(object):
                     star.log_R = np.log10(CO_radius(star.mass, star.state))
                     star.m_disk_accreted = np.nan
                     star.m_disk_radiated = np.nan
+                    star.co_core_mass = m_rembar
                     for key in STARPROPERTIES:
                         if key not in ["state", "mass", "log_R", "spin",
-                                       "m_disk_accreted", "m_disk_radiated"]:
+                                       "m_disk_accreted", "m_disk_radiated","co_core_mass"]:
                             setattr(star, key, None)
                     return
 
@@ -804,7 +808,7 @@ class StepSN(object):
         for key in STARPROPERTIES:
             if key not in [
                 "state", "mass", "spin", "log_R", "metallicity",
-                "m_disk_accreted ", "m_disk_radiated"]:
+                "m_disk_accreted ", "m_disk_radiated","co_core_mass"]:
                 setattr(star, key, None)
 
     def PISN_prescription(self, star):

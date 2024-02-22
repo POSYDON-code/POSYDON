@@ -123,11 +123,11 @@ class MergedStep(IsolatedStep):
         merged_star = star_base
 
         s1 = star_base.state
-        s2 = comp.state
+        s2 = comp.state 
         def mass_weighted_avg(star1=star_base,star2=comp, abundance_name="center_h1", mass_weight1="mass", mass_weight2=None):
             A1 = getattr(star1, abundance_name)
             A2 = getattr(star2, abundance_name)
-
+            print(star2.state)
             if mass_weight1 == "H-rich_envelope_mass":
                 M1 = getattr(star1, "mass") - getattr(star1, "he_core_mass")
             elif mass_weight1 == "He-rich_envelope_mass":
@@ -143,6 +143,7 @@ class MergedStep(IsolatedStep):
                 M2 = getattr(star2, "he_core_mass") - getattr(star2, "co_core_mass")
             else:
                 M2 = getattr(star2, mass_weight2)
+            print(A1,A2,M1,M2)
             return (A1*M1 + A2*M2 ) / (M1+M2)
 
         # MS + MS
@@ -403,7 +404,7 @@ class MergedStep(IsolatedStep):
                 for key in ["mass", "he_core_mass", "c_core_mass", "o_core_mass", "co_core_mass"]:
                     current = getattr(merged_star, key) + getattr(star_base, key)
                     setattr(merged_star, key,current)
-
+                
                 # weighted central abundances if merging cores. Else only from star_base
                 if star_base.co_core_mass == 0 and comp.co_core_mass == 0: # two stars with Helium cores
                     merged_star.center_h1 = mass_weighted_avg(mass_weight1="he_core_mass")
@@ -495,12 +496,12 @@ class MergedStep(IsolatedStep):
             and s2 in ["WD"]):
 
                 #WD is considered a stripped CO core
-
+                print(comp.state,comp.co_core_mass)
                 # add total and core masses
                 for key in ["mass", "he_core_mass", "c_core_mass", "o_core_mass", "co_core_mass"]:
                     current = getattr(merged_star, key) + getattr(comp, "mass")
                     setattr(merged_star, key,current)
-
+                comp.co_core_mass = comp.mass
                 # weighted central abundances if merging cores. Else only from star_base
                 if (comp.co_core_mass > 0 and star_base.co_core_mass == 0): # comp with CO core and the star_base has not
                     merged_star.center_h1 = comp.center_h1

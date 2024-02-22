@@ -879,5 +879,6 @@ class BinaryStar:
         if profiles:
             binary.star_1.profile = run.final_profile1
             binary.star_2.profile = run.final_profile2
-
+        if binary.star_1.state == 'WD':
+            print('WD in binary star',binary.star_1.state ,binary.star_1.co_core_mass)
         return binary

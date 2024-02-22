@@ -302,8 +302,9 @@ class MesaGridStep:
             raise AttributeError("No step defined for {}".format(
                 self.__name__))
         if self.flip_stars_before_step:
+            print('Before flipping the stars', binary.star_1.state,binary.star_1.co_core_mass)
             flip_stars(binary)
-
+            print('After flipping the stars', binary.star_2.state,binary.star_2.co_core_mass)
         max_MESA_sim_time = self.get_final_MESA_step_time()
 
         if max_MESA_sim_time is None:
@@ -319,7 +320,6 @@ class MesaGridStep:
         if (step_will_exceed_max_time
                 and self.stop_method == 'stop_at_max_time'):
             # self.step(binary, interp_method='nearest_neighbour')
-
             if self.interpolation_method != 'nearest_neighbour':
                 self.closest_binary, self.nearest_neighbour_distance, \
                     self.termination_flags = self._psyTrackInterp.evaluate(
@@ -333,8 +333,9 @@ class MesaGridStep:
                                       star_2_CO=self.star_2_CO,
                                       track_interpolation=True)
         else:
+            print('After flipping the stars', binary.star_2.state,binary.star_2.co_core_mass)
             self.step(binary, interp_method=self.interpolation_method)
-
+        
         if (self.stop_method == 'stop_at_max_time'
                 and binary.time >= binary.properties.max_simulation_time):
             # self.flush_history = True # needed???
@@ -365,10 +366,10 @@ class MesaGridStep:
                              interpolate=self.stop_interpolate,
                              star_1_CO=self.star_1_CO,
                              star_2_CO=self.star_2_CO)
-
+        
         if self.flip_stars_before_step:
             flip_stars(binary)
-
+            print('Second flipping of the stars', binary.star_1.state,binary.star_1.co_core_mass)
         if binary.time > binary.properties.max_simulation_time:
             binary.event = 'MaxTime_exceeded'
         elif binary.time == binary.properties.max_simulation_time:
@@ -844,7 +845,7 @@ class MesaGridStep:
             else:
                 key_p = POSYDON_TO_MESA['binary'][key]
                 setattr(self.binary, key, fv[key_p])
-
+        print('1',binary.star_2.co_core_mass)
         for k, star in enumerate(stars):
             for key in STARPROPERTIES:
                 if not stars_CO[k]:
@@ -891,7 +892,7 @@ class MesaGridStep:
                         continue
                     else:
                         setattr(star, key, None)
-
+        
         # EXPERIMENTAL feature
         # infer stellar states
         interpolation_class = self.classes['interpolation_class']
@@ -949,7 +950,7 @@ class MesaGridStep:
             if 10**tmp_lg_mdot > mdot_edd:
                 tmp_lg_mdot = np.log10(mdot_edd)
             setattr(accretor, 'lg_mdot', tmp_lg_mdot)
-
+        print('3',binary.star_2.co_core_mass)
         # update post processed quanties
         key_post_processed = ['avg_c_in_c_core_at_He_depletion',
                               'co_core_mass_at_He_depletion',
@@ -1431,7 +1432,6 @@ class CO_HMS_RLO_step(MesaGridStep):
             self.p_min <= p <= self.p_max and
             ecc == 0.)):
             super().__call__(self.binary)
-
         # period inside the grid, but m1 outside the grid
         elif ((not self.flip_stars_before_step and
                self.p_min <= p <= self.p_max and
@@ -1455,7 +1455,6 @@ class CO_HMS_RLO_step(MesaGridStep):
                 if self.binary.state_history[-2] == 'detached':
                     set_binary_to_failed(self.binary)
                     raise ValueError('CO_HMS_RLO binary outside grid and coming from detached')
-
             self.binary.state = "detached"
             self.binary.event = "redirect_from_CO_HMS_RLO"
             return

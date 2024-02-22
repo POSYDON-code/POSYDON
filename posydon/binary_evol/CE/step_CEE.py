@@ -37,7 +37,7 @@ import numpy as np
 from posydon.utils import common_functions as cf
 from posydon.utils import constants as const
 import warnings
-
+import copy as copy
 from posydon.binary_evol.binarystar import BINARYPROPERTIES
 from posydon.binary_evol.singlestar import STARPROPERTIES
 from posydon.utils.common_functions import PATH_TO_POSYDON
@@ -202,7 +202,8 @@ class StepCEE(object):
         else:
             raise ValueError("CEE does not apply if `event` is not "
                              "`oCE1`, 'oDoubleCE1' or `oCE2`, 'oDoubleCE1'")
-
+        if comp_star.state == 'WD' or donor_star.state == 'WD':
+            print('entering CE as' , comp_star.state,binary.star_1.co_core_mass ,comp_star.co_core_mass)
         # Check for double CE
         double_CE = binary.event in ["oDoubleCE1", "oDoubleCE2"]
 
@@ -597,7 +598,7 @@ class StepCEE(object):
                         mc2_f = comp_star.he_core_mass
                         rc2_f = donor.he_core_radius
                     elif comp_type == "CO_core":
-                        mc2_f = comp_star.co_core_mass
+                        mc2_f = copy(comp_star.co_core_mass)
                         rc2_f = donor.co_core_radius
                     elif comp_type == "not_giant_companion":
                         mc2_f = comp_star.mass
@@ -801,6 +802,8 @@ class StepCEE(object):
 
         else:
             # system merges
+            if donor.state == 'WD' or comp_star.state == 'WD':
+                print('merges',donor.state,comp_star.state,comp_star.co_core_mass)
             binary.state = 'merged'
             if binary.event in ["oCE1", "oDoubleCE1"]:
                 binary.event = "oMerging1"
