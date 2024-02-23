@@ -699,6 +699,13 @@ def create_csv(GRID_TYPES=[],
                         grids_compression.append(compression)
                         grids_type.append(grid_type)
                         stop_before_carbon_depletion.append(STOP_BEFORE_CARBON_DEPLETION)
+                        if i==0:
+                            compression_dir = os.path.join(PATH_TO_GRIDS,
+                                                           grid_type, VERSION,
+                                                           metallicity,
+                                                           compression)
+                            if not os.path.isdir(compression_dir):
+                                newly_created_files.append(compression_dir)
                     elif step_name == 'step_2': # COMBINE_GRID_SLICES
                         if len(GRID_SLICES[l]) != len(GRIDS_COMBINED[l]):
                             raise ValueError(f'len(GRID_SLICES[{l}]) != '
@@ -751,6 +758,13 @@ def create_csv(GRID_TYPES=[],
                                                   metallicity,
                                                   'interpolation_objects',
                                                   'IF_'+method+RLO+'.pkl'))
+                        if i==0:
+                            interpolator_dir = os.path.join(PATH_TO_GRIDS,
+                                                grid_type, VERSION,
+                                                metallicity,
+                                                'interpolation_objects')
+                            if not os.path.isdir(interpolator_dir):
+                                newly_created_files.append(interpolator_dir)
                     elif step_name == 'step_9': # EXPORT_DATASET
                         if "RLO" in grid_type:
                             export_dir = grid_type
@@ -830,6 +844,12 @@ def create_csv(GRID_TYPES=[],
                                                               metallicity,
                                                               'interpolation_objects',
                                                               'IF_'+method+RLO+'.pkl'))
+                            if i==0:
+                                plots_dir = os.path.join(PATH_TO_GRIDS,
+                                                         grid_type, VERSION,
+                                                         metallicity, 'plots')
+                                if not os.path.isdir(plots_dir):
+                                    newly_created_files.append(plots_dir)
                         elif 'check' in step_name: # CHECKS
                             # loop over interpolation methods and checks
                             for method in INTERPOLATION_METHODS:
@@ -923,15 +943,15 @@ def create_csv(GRID_TYPES=[],
                 compression = df.at[row,'compression']
                 newly_created_files.append(get_new_grid_name(path,compression))
         elif step_name == 'step_3':
-            newly_created_files = df['path_to_processed_grid'].to_list()
+            newly_created_files.extend(df['path_to_processed_grid'].to_list())
         elif step_name == 'step_4':
-            newly_created_files = df['path_to_interpolator'].to_list()
+            newly_created_files.extend(df['path_to_interpolator'].to_list())
         elif step_name == 'step_9':
-            newly_created_files = df['export_path'].to_list()
+            newly_created_files.extend(df['export_path'].to_list())
         elif step_name == 'rerun':
-            newly_created_files = df['rerun_path'].to_list()
+            newly_created_files.extend(df['rerun_path'].to_list())
         elif 'plot' in step_name:
-            newly_created_files = plot_dirs
+            newly_created_files.extend(plot_dirs)
     else: # step 2
         # drop columns when psygrid files are not found
         if DROP_MISSING_FILES:
@@ -977,7 +997,7 @@ def create_csv(GRID_TYPES=[],
                     print(column)
                 print('')
             df = df.dropna(axis=0, how='all').dropna(axis=1, how='all')
-        newly_created_files = df.keys().to_list()
+        newly_created_files.extend(df.keys().to_list())
     # finally save data frame
     output_fname = f'{step_name}.csv'
     df.to_csv(os.path.join(PATH, output_fname), index=False)
