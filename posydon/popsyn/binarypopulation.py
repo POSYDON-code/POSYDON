@@ -47,9 +47,29 @@ from posydon.popsyn.independent_sample import (generate_independent_samples,
                                                binary_fraction_value)
 from posydon.utils.common_functions import (orbital_period_from_separation,
                                             orbital_separation_from_period)
+from posydon.popsyn.normalized_pop_mass import initial_total_underlying_mass
+
 from posydon.popsyn.defaults import default_kwargs
 from posydon.popsyn.io import binarypop_kwargs_from_ini
 from posydon.utils.constants import Zsun
+
+saved_ini_parameters = ['metallicity',
+                        "number_of_binaries",
+                   'binary_fraction_scheme',
+                   'binary_fraction_const',
+                   'star_formation',
+                   'max_simulation_time',
+                   'primary_mass_scheme',
+                   'primary_mass_min',                              
+                   'primary_mass_max',                                  
+                   'secondary_mass_scheme',
+                   'secondary_mass_min',
+                   'secondary_mass_max',
+                   'orbital_scheme',
+                   'orbital_period_scheme',
+                   'orbital_period_min',
+                   'orbital_period_max',
+                   'eccentricity_scheme']
 
 
 # 'event' usually 10 but 'detached (Integration failure)' can occur
@@ -435,7 +455,7 @@ class BinaryPopulation:
         history_cols = pd.read_hdf(file_names[0], key='history').columns
         oneline_cols = pd.read_hdf(file_names[0], key='oneline').columns
 
-        history_tmp = pd.read_hdf(file_names[0], key='history')
+        #history_tmp = pd.read_hdf(file_names[0], key='history')
 
         history_min_itemsize = {key: val for key, val in
                                 HISTORY_MIN_ITEMSIZE.items()
@@ -447,18 +467,40 @@ class BinaryPopulation:
         complib = kwargs.get('complib', 'zlib')
         complevel = kwargs.get('complevel', 9)
         
+        
         with pd.HDFStore(absolute_filepath, mode=mode, complevel=complevel, complib=complib) as store:
+            simulated_mass = 0
             for f in file_names:
                 # strings itemsize set by first append max value,
                 # which may not be largest string
                 try:
                     store.append('history', pd.read_hdf(f, key='history'),
-                                 min_itemsize=history_min_itemsize)
-                    store.append('oneline', pd.read_hdf(f, key='oneline'),
-                                 min_itemsize=oneline_min_itemsize)
+                                 min_itemsize=history_min_itemsize,
+                                 data_columns=True)
+                    
+                    oneline = pd.read_hdf(f, key='oneline')
+                    simulated_mass += oneline['S1_mass_i'].sum() + oneline['S2_mass_i'].sum()
+                    oneline['metallicity'] = self.metallicity
+                    
+                    store.append('oneline', oneline,
+                                 min_itemsize=oneline_min_itemsize,
+                                 data_columns=True)
                     os.remove(f)
+                    
                 except Exception:
                     print(traceback.format_exc(), flush=True)
+        
+            # store population metadata
+            tmp_df = pd.DataFrame()
+            for c in saved_ini_parameters:
+                tmp_df[c] = [self.kwargs[c]]
+            store.append('ini_parameters', tmp_df)
+            
+            tmp_df = pd.DataFrame(
+                index=[self.metallicity],
+                data={'simulated_mass': simulated_mass,
+                      'underlying_mass': initial_total_underlying_mass(df=simulated_mass, **self.kwargs)[0]})
+            store.append('mass_per_met', tmp_df)
 
     def close(self):
         """Close loaded h5 files from SimulationProperties."""

@@ -137,6 +137,945 @@ class PopulationRunner:
     
 ###############################################################################
 
+
+parameter_array = [ "number_of_binaries",
+                   'binary_fraction_scheme',
+                   'binary_fraction_const',
+                   'star_formation',
+                   'max_simulation_time',
+                   'primary_mass_scheme',
+                   'primary_mass_min',                              
+                   'primary_mass_max',                                  
+                   'secondary_mass_scheme',
+                   'secondary_mass_min',
+                   'secondary_mass_max',
+                   'orbital_scheme',
+                   'orbital_period_scheme',
+                   'orbital_period_min',
+                   'orbital_period_max',
+                   'eccentricity_scheme']
+
+
+def merge_populations(populations, filename, verbose=False):
+    '''merges multiple populations into a single population file'''
+    
+    
+    history_cols = populations[0].history.columns
+    oneline_cols = populations[0].oneline.columns
+    
+    history_min_itemsize = {key: val for key, val in
+                                HISTORY_MIN_ITEMSIZE.items()
+                                if key in history_cols}
+    oneline_min_itemsize = {key: val for key, val in
+                                ONELINE_MIN_ITEMSIZE.items()
+                                if key in oneline_cols}
+    
+    # open new file
+    with pd.HDFStore(filename, mode='a') as store:
+        
+        prev = 0            
+        for pop in populations:
+
+            # write history
+            for i in tqdm(range(0, len(pop), 10000), total=len(pop)//10000, disable=not verbose):
+                tmp_df = pop.history[i:i+10000]
+                tmp_df.index = tmp_df.index + prev
+                store.append('history', tmp_df, format='table', data_columns=True, min_itemsize=history_min_itemsize)    
+                
+            if verbose:
+                print(f'History for {pop.filename} written to population file!')
+                
+            # write oneline
+            for i in tqdm(range(0, len(pop), 10000), total=len(pop)//10000, disable=not verbose):
+                tmp_df = pop.oneline[i:i+10000]
+                tmp_df.index = tmp_df.index + prev
+                store.append('oneline', tmp_df, format='table', data_columns=True, min_itemsize=oneline_min_itemsize)
+            
+            if verbose:
+                print(f'Oneline for {pop.filename} written to population file!')
+                
+            prev += len(pop)
+
+        # merge mass_per_met
+        tmp_df = pd.concat([pop.mass_per_met for pop in populations])
+        mass_per_met = tmp_df.groupby(tmp_df.index).sum()
+        
+        store.put('mass_per_met', mass_per_met)
+        
+    # add ini parameters from the first population
+    populations[0]._save_ini_params(filename)
+
+    print(f'Populations merged into {filename}!')
+    
+
+class History():
+    
+    def __init__(self, filename, verbose=False, chunksize=10000):
+        self.filename = filename
+        self.verbose = verbose
+        self.chunksize = chunksize
+        self.lengths = None
+        self.number_of_systems = None
+        self.columns = None
+        
+        # add history_lengths
+        with pd.HDFStore(filename, mode='r') as store:
+            history_events = store.select_column('history', 'index')
+            self.lengths = history_events.groupby(history_events).count()
+            del history_events
+            self.columns = store.select('history', start=0, stop=0).columns
+        
+        self.indices = self.lengths.index.to_numpy()
+        self.number_of_systems = len(self.lengths)
+        
+    def __getitem__(self, key):
+        '''Return the history table'''
+        if isinstance(key, slice):
+            if key.start is None:
+                pre = 0
+            else: 
+                pre = self.lengths.loc[:key.start-1].sum()
+            if key.stop is None:
+                chunk = self.lengths.loc[key.start:].sum()
+            else:
+                chunk = self.lengths.loc[key.start:key.stop-1].sum()
+            return pd.read_hdf(self.filename, key='history', start=pre, stop=pre+chunk)
+        elif isinstance(key, int):
+            return pd.read_hdf(self.filename, where='index == key', key='history')
+        elif isinstance(key, list) and all(isinstance(x, int) for x in key):
+            return pd.read_hdf(self.filename, where='index in key', key='history')
+        elif isinstance(key, np.ndarray) and (key.dtype == int):
+            indices = self.lengths[key].index.tolist()
+            return pd.read_hdf(self.filename, where='index in indices', key='history')
+        elif isinstance(key, np.ndarray) and key.dtype == bool:
+            out_df = pd.DataFrame()
+            for i in range(0,len(key), self.chunksize):
+                tmp_df = pd.read_hdf(self.filename, key='history', start=i, stop=i+self.chunksize)[key[i:i+self.chunksize]]
+                out_df = pd.concat([out_df, tmp_df])
+            return out_df
+            
+        elif isinstance(key, str):
+            if key in self.columns:
+                return pd.read_hdf(self.filename, key='history', columns=[key])
+            else:
+                raise ValueError(f'{key} is not a valid column name!')
+        elif isinstance(key, list) and all(isinstance(x, str) for x in key):
+            if all(x in self.columns for x in key):
+                return pd.read_hdf(self.filename, key='history', columns=key)
+            else:
+                raise ValueError(f'Not all columns in {key} are valid column names!')
+        else:
+            raise ValueError('Invalid key type!')            
+        
+    def __len__(self):
+        return np.sum(self.lengths)
+    
+    def head(self, n=10):
+        '''Return the first n rows of the history table'''
+        return pd.read_hdf(self.filename, key='history', start=0, stop=n)
+        
+    def tail(self, n=10):
+        '''Return the last n rows of the history table'''
+        return pd.read_hdf(self.filename, key='history', start=-n)
+    
+    def __repr__(self):
+        return pd.read_hdf(self.filename, key='history').__repr__()
+    
+    def _repr_html_(self):
+        return pd.read_hdf(self.filename, key='history')._repr_html_()
+    
+    def iterator(self):
+        return pd.read_hdf(self.filename, key='history', iterator=True, chunksize=self.chunksize)
+        
+    def iterbinaries(self):
+        for i in self.indices:
+            yield pd.read_hdf(self.filename, key='history', where='index == i')   
+         
+    def select(self, where=None, start=None, stop=None, columns=None):
+        with pd.HDFStore(self.filename, mode='r') as store:
+            return store.select('history',where=where, start=start, stop=stop, columns=columns)
+
+class Oneline():
+    
+    def __init__(self, filename, verbose=False, chunksize=10000):
+        self.filename = filename
+        self.verbose = verbose
+        self.chunksize = chunksize
+        self.number_of_systems = None
+        self.indices = None
+                
+        with pd.HDFStore(filename, mode='r') as store:
+            self.indices = store.select_column('oneline', 'index')
+            self.columns = store.select('oneline', start=0, stop=0).columns
+            
+            
+        self.number_of_systems = len(self.indices)
+        
+    def __getitem__(self, key):
+        '''Return the oneline table'''
+        if isinstance(key, slice):
+            if key.start is None:
+                pre = 0
+            else:
+                pre = key.start
+            if key.stop is None:
+                chunk = self.number_of_systems
+            else:
+                chunk = key.stop - key.start
+            return pd.read_hdf(self.filename, key='oneline', start=pre, stop=pre+chunk)
+        elif isinstance(key, int):
+            return pd.read_hdf(self.filename, where='index == key', key='oneline')
+        elif isinstance(key, list) and all(isinstance(x, int) for x in key):
+            return pd.read_hdf(self.filename, where='index in key', key='oneline')
+        elif isinstance(key, np.ndarray) and key.dtype == bool:
+            indices = self.lengths[key].index
+            return pd.read_hdf(self.filename, where='index in indices', key='oneline')
+        elif isinstance(key, str):
+            if key in self.columns:
+                return pd.read_hdf(self.filename, key='oneline', columns=[key])
+            else:
+                raise ValueError(f'{key} is not a valid column name!')
+            
+        elif isinstance(key, list) and all(isinstance(x, str) for x in key):
+            if all(x in self.columns for x in key):
+                return pd.read_hdf(self.filename, key='oneline', columns=key)
+            else:
+                raise ValueError(f'Not all columns in {key} are valid column names!')
+        else:
+            raise ValueError('Invalid key type!')
+        
+    def __len__(self):
+        return self.number_of_systems
+    
+    def head(self, n=10):
+        '''Return the first n rows of the oneline table'''
+        return pd.read_hdf(self.filename, key='oneline', start=0, stop=n)
+    
+    def tail(self, n=10):
+        '''Return the last n rows of the oneline table'''
+        return pd.read_hdf(self.filename, key='oneline', start=-n)
+    
+    def __repr__(self):
+        return pd.read_hdf(self.filename, key='oneline').__repr__()
+    
+    def _repr_html_(self):
+        return pd.read_hdf(self.filename, key='oneline')._repr_html_()
+
+    def iterator(self):
+        return pd.read_hdf(self.filename, key='oneline', iterator=True, chunksize=self.chunksize)
+    
+    def iterbinaries(self):
+        for i in self.indices:
+            yield pd.read_hdf(self.filename, key='oneline', where='index == i')
+
+    def select(self,where=None, start=None, stop=None, columns=None):
+        with pd.HDFStore(self.filename, mode='r') as store:
+            return store.select('oneline', where=where, start=start, stop=stop, columns=columns)
+
+
+
+class PopulationIO():
+    def __init__(self):
+        pass
+    
+    def _load_metadata(self, filename):
+        '''Load the metadata from the file'''
+        if '.h5' not in filename:
+            raise ValueError(f'{filename} does not contain .h5 in the name.\n Is this a valid population file?')
+        
+        self._load_ini_params(filename)
+        self._load_mass_per_met(filename)
+    
+    def _save_mass_per_met(self, filename):
+        with pd.HDFStore(filename, mode='a') as store:
+            store.put('mass_per_met', self.mass_per_met)
+            if self.verbose:
+                print('mass_per_met table written to population file!')
+        
+    def _load_mass_per_met(self, filename):
+        with pd.HDFStore(filename, mode='r') as store:
+            self.mass_per_met = store['mass_per_met']
+            if self.verbose:
+                print('mass_per_met table read from population file!')
+
+    def _save_ini_params(self, filename):
+        '''
+        Store the ini parameters to the ParsedPopulation file'''
+        with pd.HDFStore(filename, mode='a') as store:
+            # write ini parameters to file
+            tmp_df = pd.DataFrame()
+            for c in parameter_array:
+                tmp_df[c] = [self.ini_params[c]]
+            store.put('ini_parameters', tmp_df)
+            
+    def _load_ini_params(self, filename):
+        # load ini parameters
+        with pd.HDFStore(filename, mode='r', ) as store:
+            tmp_df = store['ini_parameters']
+            self.ini_params = {}
+            for c in parameter_array:
+                self.ini_params[c] = tmp_df[c][0]
+    
+
+
+
+class Population(PopulationIO):
+    
+    def __init__(self, filename, metallicity=None, ini_file=None, verbose=False, chunksize=10000):
+        self.filename = filename
+        self.verbose = verbose
+        self.chunksize = chunksize
+        
+        self.mass_per_met = None
+        self.number_of_systems = None
+        self.history_lengths = None
+
+        # if the user provided a single string instead of a list of strings
+        if not ('.h5' in filename):
+            raise ValueError(f'{filename} does not contain .h5 in the name.\n Is this a valid population file?')
+        
+        # read the population file
+        with pd.HDFStore(filename, mode='r') as store:
+            keys = store.keys()
+        
+        # check if pop contains history
+        if '/history' not in keys:
+            raise ValueError(f'{filename} does not contain a history table!')
+        else:
+            self.history = History(filename, self.verbose, self.chunksize)
+        
+        # check if pop contains oneline
+        if '/oneline' not in keys:
+            raise ValueError(f'{filename} does not contain an oneline table!')
+        else:
+            self.oneline = Oneline(filename, self.verbose, self.chunksize)
+        
+        # check if formation channels are present
+        if '/formation_channels' not in keys:
+            warnings.warn(f'{filename} does not contain formation channels!')
+            self._formation_channels = None
+        else:
+            self._formation_channels = pd.read_hdf(self.filename, key='formation_channels')
+        
+        # if an ini file is given, read the parameters from the ini file
+        if ini_file is not None:
+            self.ini_params = binarypop_kwargs_from_ini(ini_file)
+            self._save_ini_params(filename)
+            self._load_ini_params(filename)
+        else:
+            if '/ini_parameters' not in keys:
+                raise ValueError(f'{filename} does not contain an ini_parameters table!')
+            else:
+                self._load_ini_params(filename)
+        
+        # check if pop contains mass_per_met table
+        if '/mass_per_met' in keys and metallicity is None:
+            self._load_mass_per_met(filename)
+            self.solar_metallicities = self.mass_per_met.index.to_numpy()
+            self.metallicities = self.solar_metallicities * Zsun
+        elif metallicity is None:
+            raise ValueError(f'{filename} does not contain a mass_per_met table and no metallicity for the file was given!')
+        
+        # calculate the metallicity information. This assumes the metallicity is for the whole file!    
+        if metallicity is not None and ini_file is not None:
+            simulated_mass = np.sum(self.oneline[['S1_mass_i', 'S2_mass_i']].to_numpy())
+            underlying_mass = initial_total_underlying_mass(df=simulated_mass, **self.ini_params)[0]
+            self.mass_per_met = pd.DataFrame(index=[metallicity], 
+                                              data={'simulated_mass':simulated_mass,
+                                                    'underlying_mass':underlying_mass})
+            self._save_mass_per_met(filename)
+            self.solar_metallicities = self.mass_per_met.index.to_numpy()
+            self.metallicities = self.solar_metallicities * Zsun
+            
+        elif metallicity is not None and ini_file is None:
+            raise ValueError(f'{filename} does not contain a mass_per_met table and no ini file was given!')        
+        
+        # add number of systems
+        self.history_lengths = self.history.lengths
+        self.number_of_systems = self.oneline.number_of_systems
+        self.indices = self.history.indices
+        
+    def export_selection(self, selection, filename):
+        '''Export a selection of the population to a new file
+        
+        Parameters
+        -----------
+        selection  : list of int
+            The indices of the systems to export    
+        filename   : str
+            The name of the export file to create or append to
+        '''
+        
+        if not ('.h5' in filename):
+            raise ValueError(f'{filename} does not contain .h5 in the name.\n Is this a valid population file?')
+        
+        history_cols = self.history.columns
+        oneline_cols = self.oneline.columns
+    
+        history_min_itemsize = {key: val for key, val in
+                                HISTORY_MIN_ITEMSIZE.items()
+                                if key in history_cols}
+        oneline_min_itemsize = {key: val for key, val in
+                                ONELINE_MIN_ITEMSIZE.items()
+                                if key in oneline_cols}
+        
+        with pd.HDFStore(filename, mode='a') as store:
+            # shift all new indices by the current length of data in the file
+            if '/history' in store.keys() and self.verbose:
+                print('history in file. Appending to file')
+                
+            if '/oneline' in store.keys() and self.verbose:
+                print('oneline in file. Appending to file')
+
+            if '/formation_channels' in store.keys() and self.verbose:
+                print('formation_channels in file. Appending to file')
+            
+            # write history of selected systems    
+            for i in tqdm(range(0, len(selection), 10000), total=len(selection)//10000, disable=not self.verbose):
+                tmp_df = self.history[selection[i:i+10000]]
+                store.append('history', tmp_df, format='table', data_columns=True, min_itemsize=history_min_itemsize)
+                
+            # write oneline of selected systems
+            for i in tqdm(range(0, len(selection), 10000), total=len(selection)//10000, disable=not self.verbose):
+                tmp_df = self.oneline[selection[i:i+10000]]
+                tmp_df['metallicity'] = tmp_df['metallicity'].astype('float')
+                store.append('oneline', tmp_df, format='table', data_columns=True, min_itemsize=oneline_min_itemsize)
+
+            # write formation channels of selected systems
+            if self._formation_channels is not None:
+                tmp_df = self._formation_channels.loc[selection]
+                store.append('formation_channels', tmp_df, format='table', data_columns=True, min_itemsize={'channel_debug': 100, 'channel': 100})
+            
+            # write mass_per_met
+            if '/mass_per_met' in store.keys():
+                
+                tmp_df = pd.concat([store['mass_per_met'], self.mass_per_met])
+                mass_per_met = tmp_df.groupby(tmp_df.index).sum()
+                store.put('mass_per_met', mass_per_met)
+        
+            else:
+                store.put('mass_per_met', self.mass_per_met)
+        
+        # write ini parameters
+        self._save_ini_params(filename)
+    
+    @property
+    def formation_channels(self):
+        '''Return the formation channels of the population'''
+        if self._formation_channels is None:
+            self._formation_channels = pd.read_hdf(self.filename, key='formation_channels')
+            
+        return self._formation_channels
+
+    def calculate_formation_channels(self, mt_history=False):
+        
+        if self.verbose: print('Calculating formation channels...')  
+        
+        # load the HMS-HMS interp class
+        HMS_HMS_event_dict = {'stable_MT'   : 'oRLO1', 
+                              'no_MT'       : 'None', 
+                              'unstable_MT' : 'oCE1/oDoubleCE1'}
+        
+        unique_binary_indices = self.indices
+        
+        # check if formation channels already exist
+        with pd.HDFStore(self.filename, mode='a') as store:
+            if '/formation_channels' in store.keys():
+                print('Formation channels already exist in the parsed population file!')
+                print('Channels will be overwriten')
+                del store['formation_channels']
+        
+        def get_events(group):
+             # for now, only append information for RLO1; unstable_MT information already exists
+            if 'oRLO1' in group['interp_class_HMS_HMS'].tolist():
+                combined_events = group['event'].iloc[0] + '_' + group['interp_class_HMS_HMS'].iloc[0]
+                tmp = [combined_events]
+                tmp.extend(group['event'].iloc[1:])
+                combined_events = '_'.join(tmp)
+            else:
+                combined_events = '_'.join(group['event'])
+            return pd.Series({'channel_debug': combined_events})
+        
+        def mt_history(row):
+            if pd.notna(row['mt_history_HMS_HMS']) and row['mt_history_HMS_HMS'] == 'Stable contact phase':
+                return row['channel'].replace('oRLO1','oRLO1-contact')
+            elif pd.notna(row['mt_history_HMS_HMS']) and row['mt_history_HMS_HMS'] == 'Stable reverse mass-transfer phase':
+                return row['channel'].replace('oRLO1', 'oRLO1-reverse')
+            else:
+                return row['channel']
+    
+    
+        previous = 0
+        
+        for i in tqdm(range(0,len(unique_binary_indices), self.chunksize), disable=not self.verbose):
+            selection = unique_binary_indices[i:i+self.chunksize]
+            
+            # create the dataframe for the chunk
+            df = pd.DataFrame(index=selection, columns=['channel_debug', 'channel'])
+            end = previous + self.history_lengths[i:i+self.chunksize].sum()
+
+            # get the history of chunk events and transform the interp_class_HMS_HMS
+            interp_class_HMS_HMS = self.oneline.select(start=i, stop=i+self.chunksize, columns=['interp_class_HMS_HMS'])
+            events = self.history.select(start=previous, stop=end, columns=['event'])
+            
+            mask = ~interp_class_HMS_HMS.isna()
+            
+            interp_class_HMS_HMS[mask].apply(lambda x: HMS_HMS_event_dict[x['interp_class_HMS_HMS']], axis=1)
+            del mask
+            
+            previous = end
+            # combine based on the index, this allows for an easier apply later
+            merged = pd.merge(events.dropna(), interp_class_HMS_HMS, left_index=True, right_index=True)
+            del events, interp_class_HMS_HMS
+            
+            merged.index.name='binary_index'
+            df['channel_debug'] = merged.groupby('binary_index').apply(get_events)
+            del merged
+            df['channel'] = df['channel_debug'].str.replace('_redirect', '').str.replace('_CO_contact', '')
+                        
+            if mt_history:
+                
+                columns = self.oneline.columns
+                if 'mt_history_HMS_HMS' not in columns:
+                    raise ValueError('mt_history_HMS_HMS not saved in the oneline dataframe!')
+                else:
+                    tmp_df = pd.DataFrame(index=selection, columns=['channel', 'mt_history_HMS_HMS'])
+                    tmp_df['channel'] = df['channel']
+                    x = self.oneline.select(start=i, stop=i+self.chunksize, columns=['mt_history_HMS_HMS'])
+                    tmp_df['mt_history_HMS_HMS'] = x
+                    df['channel'] = tmp_df.apply(mt_history, axis=1)
+                    del tmp_df
+                    del x
+                            
+            self._write_formation_channels(self.filename, df)
+            del df
+
+    def _write_formation_channels(self, filename, df):
+        '''Write the formation channels to the population file'''
+        with pd.HDFStore(filename, mode='a') as store:
+            store.append('formation_channels', df, format='table', data_columns=True, min_itemsize={'channel_debug': 100, 'channel': 100})
+            if self.verbose:
+                print('formation_channels written to population file!')
+
+    def __len__(self):
+        return self.number_of_systems
+
+    @property
+    def columns(self):
+        return {'history':self.history.columns,
+                'oneline':self.oneline.columns}
+        
+    def create_synpop(self, func, output_file, oneline_cols=None, hist_cols=None):
+        '''Given a function, create a synthetic population
+        
+        Parameters
+        ----------
+        func : function
+            Function to apply to the parsed population to create the synthetic population.
+            The function needs to take 3 arguments:
+                - history_chunk : pd.DataFrame
+                - oneline_chunk : pd.DataFrame
+                - formation_channels_chunk : pd.DataFrame
+                and return a pd.DataFrame containing the synthetic population, which needs to contain a column 'time'.
+                
+        oneline_cols : list of str
+            Columns to extract from the oneline dataframe. default is all columns.
+        hist_cols : list of str
+            Columns to extract from the history dataframe. default is all columns.
+            
+        Returns
+        -------
+        SyntheticPopulation
+            A synthetic population containing the synthetic population. 
+        '''
+        synth_pop = TransientPopulation(output_file, verbose=self.verbose) 
+        # write population data to the new file!
+        self._save_ini_params(output_file)
+        self._save_mass_per_met(output_file)
+                
+        if '/transients' in synth_pop.keys():
+            print('overwriting transient population')
+            with pd.HDFStore(output_file, mode='a') as store:
+                del store['transients']
+            
+        min_itemsize = {'channel': 100,}
+        if hist_cols is not None:
+            if 'time' not in hist_cols:
+                raise ValueError('The transient population requires a time column!')
+        
+            min_itemsize.update({key:val for key, val in 
+                                HISTORY_MIN_ITEMSIZE.items() 
+                                if key in hist_cols})
+        
+        if oneline_cols is not None:
+            min_itemsize.update({key:val for key, val in
+                                ONELINE_MIN_ITEMSIZE.items()
+                            if key in oneline_cols})
+
+        # setup a mapping to the size of each history colummn
+        history_lengths = self.history_lengths
+        unique_binary_indices = self.indices
+        
+        previous = 0
+        for i in tqdm(range(0,len(unique_binary_indices), self.chunksize), disable=not self.verbose):
+            end = previous + history_lengths[i:i+self.chunksize].sum()
+            
+            oneline_chunk = self.oneline.select(start=i,
+                                        stop=i+self.chunksize,
+                                        columns=oneline_cols)
+            
+            history_chunk = self.history.select(start=previous,
+                                                stop=end, 
+                                                columns=hist_cols)
+            
+            if self._formation_channels is not None:
+                formation_channels_chunk = self.formation_channels[i:i+self.chunksize]
+            else:
+                formation_channels_chunk = None
+            
+            syn_df = func(history_chunk, oneline_chunk, formation_channels_chunk)
+            
+            # filter out the columns in min_itemsize that are not in the dataframe
+            min_itemsize = {key:val for key, val in min_itemsize.items() if key in syn_df.columns}
+                
+            synth_pop.append('transients',
+                                syn_df,
+                                format='table',
+                                data_columns=True,
+                                min_itemsize=min_itemsize
+                                )
+            
+            previous = end
+            
+        return synth_pop
+
+    
+    def plot_binary_evolution(self, index):
+        '''Plot the binary evolution of a system'''
+        pass
+
+class TransientPopulation(PopulationIO):
+    
+    def __init__(self, pop_file, verbose=False):
+        '''This class contains a synthetic population of transient events.
+
+        You can calculate additional properties of the population, such as
+        the formation channel, merger times, GRB properties, etc.
+        
+        pop_file : str
+            Path to the synthetic population file.
+        verbose : bool
+            If `True`, print additional information.
+        ''' 
+        self.filename = pop_file
+        self.verbose = verbose
+        
+        if not ('.h5' in pop_file):
+            raise ValueError(f'{pop_file} does not contain .h5 in the name.\n Is this a valid population file?')
+        
+        # file does not exist, create it
+        if not os.path.isfile(pop_file):
+            with pd.HDFStore(pop_file, mode='w') as store:
+                pass
+        # load data from the file
+        else:
+            self._load_metadata(self.filename)
+            self.solar_metallicities = self.mass_per_met.index.to_numpy()
+            self.metallicities = self.solar_metallicities * Zsun
+            
+            # number of transients
+            with pd.HDFStore(self.filename, mode='r') as store:
+                self.number_of_systems = store.get_storer('transients').nrows
+    
+    
+    def append(self, key, df, format='table', data_columns=True, min_itemsize=None):
+        with pd.HDFStore(self.filename, mode='a') as store:
+            store.append(key,
+                         df,
+                         format=format,
+                         data_columns=data_columns,
+                         min_itemsize=min_itemsize
+                         )    
+         
+    @property
+    def full_population(self):
+        '''Returns the whole synthetic populaiton as a pandas dataframe.
+        
+        Warning: might be too big to load in memory!
+        
+        Returns
+        -------
+        pd.DataFrame
+            Dataframe containing the synthetic population.
+        '''
+        return pd.read_hdf(self.filename, key='transients')        
+    
+    def keys(self):
+        '''Return the keys of the population file'''
+        with pd.HDFStore(self.filename, mode='r') as store:
+            return store.keys()
+        
+
+    def _load_efficiency(self, filename):
+        '''Load the efficiency from the file'''
+        with pd.HDFStore(filename, mode='r') as store:
+            tmp_df = store.select('efficiency')
+            self.efficiency = tmp_df.to_numpy()
+            self.met_efficiency = tmp_df.index.to_numpy()
+            if self.verbose:
+                print('Efficiency table read from population file!')
+                
+    def _save_efficiency(self, filename):
+        '''Save the efficiency to the file'''
+        with pd.HDFStore(filename, mode='a') as store:
+            store.put('efficiency',
+                      pd.DataFrame(index=self.met_efficiency,
+                                   data=self.efficiency),
+                      format='fixed')
+        
+
+    
+    @property
+    def columns(self):
+        '''Return the columns of the synthetic population'''
+        if not hasattr(self, '_columns'):
+            with pd.HDFStore(self.filename, mode='r') as store:
+                self._columns = store.select('transients', start=0, stop=0).columns
+        return self._columns
+    
+        
+    def select(self, where=None, start=None, stop=None, columns=None):
+        '''Select a subset of the synthetic population'''
+        return pd.read_hdf(self.filename, key='transients', where=where, start=start, stop=stop, columns=columns)
+        
+    def get_efficiency_over_metallicity(self):
+        """Compute the efficiency of events per Msun for each solar_metallicities."""
+        
+        if hasattr(self, 'efficiency'):
+            print('Efficiencies already computed! Overwriting them!')
+            
+        efficiencies = []
+        self.met_efficiency = sorted(self.solar_metallicities, reverse=True)
+        
+        for met in self.met_efficiency:
+            count = self.select(where='metallicity == {}'.format(met)).shape[0]
+            
+            # just sums the number of events
+            underlying_stellar_mass = self.mass_per_met['underlying_mass'][met]
+            eff = count/underlying_stellar_mass
+            efficiencies.append(eff)
+            print(f'Efficiency at Z={met:1.2E}: {eff:1.2E} Msun^-1')
+        self.met_efficiency = np.array(self.met_efficiency)
+        self.efficiency = {'total' : np.array(efficiencies)}
+        # if the channel column is present compute the merger efficiency per channel
+        if 'channel' in self.columns:
+            channels = np.unique(self.select(columns=['channel']).values)
+            for ch in channels:
+                efficiencies = []
+                for met in self.met_efficiency:
+                    count = self.select(where='metallicity == {} & channel == {}'.format(met, ch)).shape[0]
+                    
+                    if count > 0:
+                        underlying_stellar_mass = self.mass_per_met['underlying_mass'][met]
+                        eff = count/underlying_stellar_mass
+                    else:
+                        eff = np.nan
+                    efficiencies.append(eff)
+                self.efficiency[ch] = np.array(efficiencies)
+        
+        # save the efficiency
+        self._save_efficiency(self.filename)
+
+    def plot_efficiency_over_metallicity(self, **kwargs):
+        '''plot the efficiency over metallicity
+        
+        Parameters
+        ----------
+        channel : bool
+            plot the subchannels
+        '''
+        if self.met_efficiency is None or self.efficiency is None:
+            raise ValueError('First you need to compute the merger efficinty!')
+        plot_pop.plot_merger_efficiency(self.met_efficiency, self.efficiency, **kwargs)
+
+    
+    def plot_delay_time_distribution(self):
+        '''Plot the delay time distribution of the transient population'''
+        pass
+    
+    def plot_popsyn_over_grid_slice(self, grid_type, met_Zsun, **kwargs):
+        '''Plot the transients over the grid slice'''
+        pass
+    
+
+class PopulationOld():
+    
+    def __init__(self, population_files, ini_file=None, verbose=False, chunksize=500000):
+
+        # initialise the population attributes
+        self.verbose = verbose
+        self.chunksize = chunksize
+        
+        # if the user provided a single string instead of a list of strings
+        if isinstance(population_files, str):
+            population_files = [population_files]
+        
+        self.population_files = population_files
+        self.populations = []
+        
+        if ini_file is not None:
+            # read the metallicities from the ini file and match them with the population files
+            self.ini_params = binarypop_kwargs_from_ini(ini_file)
+            self.solar_metallicities = np.array(self.ini_params['metallicity'])
+            print(self.solar_metallicities)
+            self.metallicities = self.solar_metallicities * Zsun
+            if len(self.solar_metallicities) != len(self.population_files):
+                raise ValueError('The number of metallicities in the ini file does not match the number of population files!')
+            
+            for file, met in zip(self.population_files, self.solar_metallicities):
+                if not os.path.isfile(file):
+                    raise ValueError(f'{file} does not exist!')
+                print('Loading population file: ', file)
+                print('attributing Metallicity: ', met)
+                self.populations.append(PopulationFile(file, metallicity=met, ini_file=ini_file, verbose=self.verbose, chunksize=self.chunksize))
+            
+        else:
+            # load the population files
+            for file in self.population_files:
+                if not os.path.isfile(file):
+                    raise ValueError(f'{file} does not exist!')
+                self.populations.append(PopulationFile(file, verbose=self.verbose, chunksize=self.chunksize))
+        
+        self.number_of_systems = np.array([pop.number_of_systems for pop in self.populations])
+        self.total_systems = np.sum(self.number_of_systems)
+        tmp_df = pd.concat([pop.mass_per_met for pop in self.populations])
+        self.mass_per_met = tmp_df.groupby(tmp_df.index).sum()
+        self.solar_metallicities = np.array([pop.metallicities for pop in self.populations]).flatten()
+        self.metallicities = self.solar_metallicities * Zsun
+        
+
+        self.indices = []
+        prev = 0
+        for pop in self.populations:
+            self.indices.extend(pop.indices+prev)
+            prev += pop.number_of_systems
+        self._cumsum = np.cumsum(self.number_of_systems) - self.number_of_systems[0]
+
+    def history(self, key):
+            
+        if isinstance(key, int):
+            if key > self.total_systems:
+                raise ValueError('Index out of range!')
+            # first find in which popfile the key is
+            
+            pop_idx = np.searchsorted(self._cumsum, key, side='right') 
+            id = int(key-self._cumsum[pop_idx-1])
+            df = self.populations[pop_idx-1].history[id]
+            df.index = [key] * len(df)
+            return df
+        elif isinstance(key, str):
+            df = pd.DataFrame()
+            for i, pop in enumerate(self.populations):
+                tmp_df = pop.history[key]
+                tmp_df.rename(index={x:y for x,y in zip(pop.indices, np.arange(self._cumsum[i-1], self._cumsum[i]))}, inplace=True)
+                df = pd.concat([df, tmp_df])
+            return df
+        
+        elif (isinstance(key, list) or isinstance(key, np.ndarray)) and all(isinstance(x, int) for x in key):
+            key = np.sort(key)
+            pop_idx = np.searchsorted(self._cumsum, key, side='right')
+            df = pd.DataFrame()
+            
+            for i in np.unique(pop_idx):
+                idx = pop_idx == i
+                index = key[idx] - self._cumsum[i-1]
+                tmp_df = self.populations[i-1].history[index]
+                tmp_df.rename(index={x:y for x,y in zip(index, key[idx])}, inplace=True)
+                df = pd.concat([df, tmp_df])
+            return df
+        
+            
+        elif isinstance(key, np.ndarray) and key.dtype == bool:
+            # split at the boundaries of the populations
+            # length should be the total number of systems
+            df = pd.DataFrame()
+            for i in range(0,len(self.populations)):
+                tmp_df = self.populations[0].history[key[self._cumsum[i-1]:self._cumsum[i]]]
+                tmp_df.rename(index={x:y for x,y in zip(tmp_df.index, np.arange(self._cumsum[i-1], self._cumsum[i]))}, inplace=True)
+                df = pd.concat([df, tmp_df])
+            return df
+        elif isinstance(key, slice):
+            raise ValueError('Slicing is not supported!')
+        
+        else:
+            raise ValueError('Invalid key type!')
+        
+    def oneline(self, key):
+        '''access the oneline from multiple files'''
+        if isinstance(key, int):
+            if key > self.total_systems:
+                raise ValueError('Index out of range!')
+            
+            pop_idx = np.searchsorted(self._cumsum, key, side='right')
+            id = int(key-self._cumsum[pop_idx-1])
+            df = self.populations[pop_idx-1].oneline[id]
+            df.index = key
+            return df
+            
+            
+
+    # def __getitem__(self, key):
+        
+    #     if key > self.total_systems:
+    #         raise ValueError('Index out of range!')
+        
+    #     if isinstance(key, int):
+    #         # first find in which popfile the key is
+    #         pop_idx = np.searchsorted(self._cumsum, key, side='right')
+    #         self.populations[pop_idx][key]
+        
+        
+        
+        
+        
+            
+
+    # @property
+    # def mass_per_metallicity(self):
+    #     '''Return the mass per metallicity'''
+        
+    #     tmp_df = pd.concat(self._mass_per_met)
+    #     tmp_df = tmp_df.groupby(tmp_df.index).sum()
+    #     return tmp_df
+    
+    # @property
+    # def mass_per_file(self):
+    #     '''Return the mass per file'''
+    #     return self._mass_per_met
+        
+        
+        # 1. Check if history and oneline are present
+        # 2. Check if a mass_per_met table is present
+        #    - if present read the underlying mass and simulated mass
+        # 3. Check metallicity / solar metallicities
+        # 4. Check if the formation channels are present    
+        
+        
+    # def calculate_population_masses(self, ini_file):
+    #     '''Calculate the underlying mass and simulated mass
+    #     for each metallicity in the population files
+    #     '''
+    #     pass
+        
+        # 1. Load the ini/population parameters
+        # 2. Check if the population files are consistent with the ini file (metallicities)
+        # 3. Check the information we can get from the population files
+        #   - underlying mass
+        #   - simulated mass
+        #   - total systems
+        #   - metallicity/metallicities?
+        # 4. Give access to the user to calculate it    
+
 class ParsedPopAttrs:
     
     def __init__(self):
@@ -231,10 +1170,10 @@ class ParsedPopulationIO():
             tmp_df['total_systems'] = parsed_pop_instance.total_systems
             store.put('mass_per_met', tmp_df)
     
-    def save_path_to_data(self, parsed_pop_instance):
+    def save_filename(self, parsed_pop_instance):
         with pd.HDFStore(self.parsed_pop_file, mode='a') as store:
-            tmp_df = pd.Series(parsed_pop_instance.path_to_data)
-            store.put('path_to_data', tmp_df)
+            tmp_df = pd.Series(parsed_pop_instance.filename)
+            store.put('filename', tmp_df)
         
     def load_per_metallicity_info(self, parsed_pop_instance):
         """Load the underlying mass, simulated mass, selected systems, 
@@ -246,13 +1185,13 @@ class ParsedPopulationIO():
             parsed_pop_instance.selected_systems = tmp_df['selected_systems'].to_numpy()
             parsed_pop_instance.total_systems = tmp_df['total_systems'].to_numpy()
             
-    def load_path_to_data(self, parsed_pop_instance):
-        """Load the path_to_data array
+    def load_filename(self, parsed_pop_instance):
+        """Load the filename array
         
         Contains which population files were used to create the
         Parsed Population file"""
         with pd.HDFStore(self.parsed_pop_file, model='r') as store:
-            parsed_pop_instance.path_to_data = store['path_to_data'].to_numpy()
+            parsed_pop_instance.filename = store['filename'].to_numpy()
 
     def read_formation_channels(self, parsed_pop_instance):
         '''Read the formation channels from the ParsedPopulation file'''
@@ -304,7 +1243,7 @@ class ParsedPopulation():
         Parameters
         -----------
         
-        path_to_data : str or list of str
+        filename : str or list of str
             Path to the data to parse.
             
         '''
@@ -338,9 +1277,9 @@ class ParsedPopulation():
             self.io.load_ini_params(self)
             self.io.load_parse_kwargs(self)
             self.io.load_per_metallicity_info(self)
-            self.io.load_path_to_data(self)
+            self.io.load_filename(self)
         
-    def parse(self, path_to_data, S1_state=None, S2_state=None, binary_state=None,
+    def parse(self, filename, S1_state=None, S2_state=None, binary_state=None,
                binary_event=None, step_name=None, invert_S1S2=False):
         """Given the path to the data, parse the datafiles for binaries which
         satisfy the given conditions.
@@ -371,20 +1310,20 @@ class ParsedPopulation():
         # are valid.
         
         # if the user provided a single string instead of a list of strings
-        if type(path_to_data) is str and ('.h5' in path_to_data):
-            path_to_data = [path_to_data]
+        if type(filename) is str and ('.h5' in filename):
+            filename = [filename]
         
-        # The ini file and path_to_data metallities should match.
-        if len(path_to_data) != len(self.solar_metallicities):
+        # The ini file and filename metallities should match.
+        if len(filename) != len(self.solar_metallicities):
             raise ValueError('The number of metallicities and data files do not match!')        
         
         # catch the case where the user did not provide a path to data 
-        if (isinstance(path_to_data, list)):
-            for path in path_to_data:
+        if (isinstance(filename, list)):
+            for path in filename:
                 if os.path.splitext(path)[-1] != '.h5':
-                    raise ValueError('You did not provide a valid path_to_data!')
+                    raise ValueError('You did not provide a valid filename!')
         else:
-            raise ValueError('You did not provide a valid path_to_data!')
+            raise ValueError('You did not provide a valid filename!')
         
         #df_sel = pd.DataFrame()
         #df_sel_oneline = pd.DataFrame()
@@ -404,7 +1343,7 @@ class ParsedPopulation():
                             'step_name': step_name,
                             'invert_S1S2': invert_S1S2}
 
-        self.path_to_data = path_to_data
+        self.filename = filename
         self.underlying_mass_per_met = np.zeros(len(self.metallicities))
         self.simulated_mass_per_met = np.zeros(len(self.metallicities))
         self.selected_systems = np.zeros(len(self.metallicities))
@@ -420,7 +1359,7 @@ class ParsedPopulation():
             print('You did not specify any conditions to select binaries!')
             print('All binaries will be selected!')
             
-            for k, file in enumerate(path_to_data):
+            for k, file in enumerate(filename):
                 if self.verbose:
                     print(f'Parsing {file}...')
                     
@@ -474,7 +1413,7 @@ class ParsedPopulation():
                 index_shift += np.max([max_index, total])
                     
         else:
-            for k, file in enumerate(path_to_data):
+            for k, file in enumerate(filename):
                 indices_sel_met = []
                 last_binary_df = None
                 total = 0
@@ -607,7 +1546,7 @@ class ParsedPopulation():
         # store the information into the ParsedPopulation file
         self.io.save_per_metallicity_info(self)
         self.io.save_parse_kwargs(self)
-        self.io.save_path_to_data(self)
+        self.io.save_filename(self)
         
     def head(self, n=10, type='history'):
         """Return the first n rows of the parsed population."""
@@ -905,14 +1844,14 @@ class ParsedPopulation():
             DCO_synthetic_population.io.save_ini_params(self)
             DCO_synthetic_population.io.save_parse_kwargs(self)
             DCO_synthetic_population.io.save_per_metallicity_info(self)
-            DCO_synthetic_population.io.save_path_to_data(self)
+            DCO_synthetic_population.io.save_filename(self)
             DCO_synthetic_population.io.save_parsed_pop_path(self.parsed_pop_file)
             
             # load data into DCO class
             DCO_synthetic_population.io.load_ini_params(DCO_synthetic_population)
             DCO_synthetic_population.io.load_parse_kwargs(DCO_synthetic_population)
             DCO_synthetic_population.io.load_per_metallicity_info(DCO_synthetic_population)
-            DCO_synthetic_population.io.load_path_to_data(DCO_synthetic_population)
+            DCO_synthetic_population.io.load_filename(DCO_synthetic_population)
             DCO_synthetic_population.io.load_parsed_pop_path(DCO_synthetic_population)
             
             # Open the file for writing the synthetic population
@@ -1084,14 +2023,14 @@ class ParsedPopulation():
         synth_pop.io.save_ini_params(self)
         synth_pop.io.save_parse_kwargs(self)
         synth_pop.io.save_per_metallicity_info(self)
-        synth_pop.io.save_path_to_data(self)
+        synth_pop.io.save_filename(self)
         synth_pop.io.save_parsed_pop_path(self.parsed_pop_file)
             
         # load data into DCO class
         synth_pop.io.load_ini_params(synth_pop)
         synth_pop.io.load_parse_kwargs(synth_pop)
         synth_pop.io.load_per_metallicity_info(synth_pop)
-        synth_pop.io.load_path_to_data(synth_pop)
+        synth_pop.io.load_filename(synth_pop)
         synth_pop.io.load_parsed_pop_path(synth_pop)
                 
         if '/synthetic' in synth_pop.keys():
@@ -1185,14 +2124,14 @@ class ParsedPopulation():
             GRB_synthetic_population.io.save_ini_params(self)
             GRB_synthetic_population.io.save_parse_kwargs(self)
             GRB_synthetic_population.io.save_per_metallicity_info(self)
-            GRB_synthetic_population.io.save_path_to_data(self)
+            GRB_synthetic_population.io.save_filename(self)
             GRB_synthetic_population.io.save_parsed_pop_path(self.parsed_pop_file)
             
             # load data into GRB_data
             GRB_synthetic_population.io.load_ini_params(GRB_synthetic_population)
             GRB_synthetic_population.io.load_parse_kwargs(GRB_synthetic_population)
             GRB_synthetic_population.io.load_per_metallicity_info(GRB_synthetic_population)
-            GRB_synthetic_population.io.load_path_to_data(GRB_synthetic_population)
+            GRB_synthetic_population.io.load_filename(GRB_synthetic_population)
             GRB_synthetic_population.io.load_parsed_pop_path(GRB_synthetic_population)
             
             # Open the file for writing the synthetic population
@@ -1409,7 +2348,7 @@ class ParsedPopulation():
         parsed_store.close()
         return GRB_synthetic_population
 
-class SyntheticPopulation():
+class SyntheticPopulation2():
     
     def __init__(self,
                  pop_file,
@@ -1441,10 +2380,8 @@ class SyntheticPopulation():
                 self.io.load_ini_params(self)
             if '/mass_per_met' in keys:
                 self.io.load_per_metallicity_info(self)
-            if '/parse_kwargs' in keys:
-                self.io.load_parse_kwargs(self)            
-            if '/path_to_data' in keys:
-                self.io.load_path_to_data(self)
+            if '/filename' in keys:
+                self.io.load_filename(self)
             if '/parsed_pop_path' in keys:
                 self.io.load_parsed_pop_path(self)
             if '/efficiency' in keys:
@@ -1514,7 +2451,7 @@ class SyntheticPopulation():
         synthetic_population.io.save_ini_params(self)
         synthetic_population.io.save_parse_kwargs(self)
         synthetic_population.io.save_per_metallicity_info(self)
-        synthetic_population.io.save_path_to_data(self)
+        synthetic_population.io.save_filename(self)
         synthetic_population.io.save_parsed_pop_path(self.parsed_pop_path)
         synthetic_population.population_selection = self.population_selection
         synthetic_population._save_population_selection()
@@ -1784,9 +2721,5 @@ class SyntheticPopulation():
         
         plot_pop.plot_popsyn_over_grid_slice(tmp_pop, grid_type, met_Zsun, **kwargs)
     
-    def __getitem__(self, item):
-        out = copy.deepcopy(self)
-        out.synthetic_population = self.synthetic_population[item]
-        return out
     
     
