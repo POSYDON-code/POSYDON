@@ -207,7 +207,6 @@ def merge_populations(populations, filename, verbose=False):
 
     print(f'Populations merged into {filename}!')
     
-
 class History():
     
     def __init__(self, filename, verbose=False, chunksize=10000):
@@ -521,34 +520,58 @@ class Population(PopulationIO):
         
         with pd.HDFStore(filename, mode='a') as store:
             # shift all new indices by the current length of data in the file
+            last_index_in_file = 0
+            
+            if '/oneline' in store.keys():
+                last_index_in_file = np.sort(store['oneline'].index)[-1]
+            elif '/history' in store.keys():
+                last_index_in_file = np.sort(store['history'].index)[-1]
+            
             if '/history' in store.keys() and self.verbose:
                 print('history in file. Appending to file')
                 
             if '/oneline' in store.keys() and self.verbose:
                 print('oneline in file. Appending to file')
-
+                
             if '/formation_channels' in store.keys() and self.verbose:
                 print('formation_channels in file. Appending to file')
             
-            # write history of selected systems    
-            for i in tqdm(range(0, len(selection), 10000), total=len(selection)//10000, disable=not self.verbose):
-                tmp_df = self.history[selection[i:i+10000]]
-                store.append('history', tmp_df, format='table', data_columns=True, min_itemsize=history_min_itemsize)
-                
+            # TODO: I need to shift the indices of the binaries or should I reindex them?
+            # since I'm storing the information, reindexing them should be fine. 
+            
+            if last_index_in_file == 0:
+                reindex = {i:j for i,j in zip(selection, 
+                                          np.arange(last_index_in_file, last_index_in_file+len(selection), 1)
+                                   )}
+            else:
+                reindex = {i:j for i,j in zip(selection, 
+                                          np.arange(last_index_in_file+1, last_index_in_file+len(selection)+1, 1)
+                                   )}
+                       
             # write oneline of selected systems
             for i in tqdm(range(0, len(selection), 10000), total=len(selection)//10000, disable=not self.verbose):
                 tmp_df = self.oneline[selection[i:i+10000]]
                 tmp_df['metallicity'] = tmp_df['metallicity'].astype('float')
+                tmp_df.rename(index=reindex, inplace=True)
                 store.append('oneline', tmp_df, format='table', data_columns=True, min_itemsize=oneline_min_itemsize)
 
+            
+            # write history of selected systems    
+            for i in tqdm(range(0, len(selection), 10000), total=len(selection)//10000, disable=not self.verbose):
+                tmp_df = self.history[selection[i:i+10000]]
+                #print(last_index_in_file)
+                # reindex the indices
+                tmp_df.rename(index=reindex, inplace=True)
+                store.append('history', tmp_df, format='table', data_columns=True, min_itemsize=history_min_itemsize)
+        
             # write formation channels of selected systems
             if self._formation_channels is not None:
                 tmp_df = self._formation_channels.loc[selection]
+                tmp_df.rename(index=reindex, inplace=True)
                 store.append('formation_channels', tmp_df, format='table', data_columns=True, min_itemsize={'channel_debug': 100, 'channel': 100})
             
             # write mass_per_met
             if '/mass_per_met' in store.keys():
-                
                 tmp_df = pd.concat([store['mass_per_met'], self.mass_per_met])
                 mass_per_met = tmp_df.groupby(tmp_df.index).sum()
                 store.put('mass_per_met', mass_per_met)
