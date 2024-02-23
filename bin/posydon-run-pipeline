@@ -921,11 +921,14 @@ def plot_grid(i, path_to_csv_file, verbose=False):
                 elif 'CLASS_ERROR' in quantity_to_plot:
                     # TODO: add class error plots
                     if k == 0:
-                        evalIFerr.confusion_matrix(plot_attributes['zvar'])
+                        evalIFerr.confusion_matrix(plot_attributes['zvar'],
+                                                   close_fig=True)
                 elif 'VIOLIN' in quantity_to_plot:
                     # TODO: add violin plots
                     if k == 0:
-                        evalIFerr.violin_plots("relative", keys=[plot_attributes['zvar']])
+                        evalIFerr.violin_plots("relative",
+                                               keys=[plot_attributes['zvar']],
+                                               close_fig=True)
                 else:
                     grid.plot2D('star_1_mass', 'period_days', plot_attributes['zvar'],
                                 termination_flag=plot_attributes['term_flag'],

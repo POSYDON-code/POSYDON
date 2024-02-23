@@ -152,7 +152,8 @@ class EvaluateIFInterpolator:
         return errs
 
 
-    def violin_plots(self, err_type = "relative", keys = None, save_path = None):
+    def violin_plots(self, err_type = "relative", keys = None,
+                     save_path = None, close_fig = False):
         """ Method that plots distribution of specified error for given keys and
         optionally saves it.
 
@@ -165,6 +166,8 @@ class EvaluateIFInterpolator:
             A list of keys for which the errors will be shown, by default is all of them
         save_path: str
             The path where the figure should be saved to
+        close_fig: bool
+            Flag whether figure should be closed
 
         """
 
@@ -257,8 +260,12 @@ class EvaluateIFInterpolator:
         if save_path is not None:
             fig.save(save_path)
 
+        # close figure
+        if close_fig:
+            plt.close(fig)
 
-    def confusion_matrix(self, key, params = {}, save_path = None):
+    def confusion_matrix(self, key, params = {}, save_path = None,
+                         close_fig = False):
         """ Method that plots confusion matrices to evaluate classification
 
         Parameters
@@ -269,6 +276,8 @@ class EvaluateIFInterpolator:
             Extra params to pass to matplolib, x_labels (list), y_labels (list), title (str)
         save_path : str
             The path where the figure should be saved to
+        close_fig: bool
+            Flag whether figure should be closed
 
         """
 
@@ -316,6 +325,10 @@ class EvaluateIFInterpolator:
 
         if save_path is not None: # saving
             fig.save(save_path)
+
+        # close figure
+        if close_fig:
+            plt.close(fig)
 
     def classifiers(self):
         """ Method that lists classifiers available """
