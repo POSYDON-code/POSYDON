@@ -39,8 +39,10 @@ class EvaluateIFInterpolator:
     def __compute_errs(self):
         """ Method that computes both interpolation and classification errors """
 
-        iv = np.array(self.test_grid.initial_values[self.in_keys].tolist()) # initial values
-        fv = np.array(self.test_grid.final_values[self.out_keys].tolist()) # final values
+        iv = np.array(self.test_grid.initial_values[self.in_keys].tolist(),
+                      dtype=float) # initial values
+        fv = np.array(self.test_grid.final_values[self.out_keys].tolist(),
+                      dtype=float) # final values
         ic = self.test_grid.final_values["interpolation_class"] # final values
 
         ivalid_inds = np.where(
@@ -53,7 +55,8 @@ class EvaluateIFInterpolator:
 
         self.errs = {}
 
-        self.errs["relative"] = np.abs((fv - i) / fv)
+        with np.errstate(divide='ignore', invalid='ignore'):
+            self.errs["relative"] = np.abs((fv - i) / fv)
         self.errs["absolute"] = np.abs(fv - i)
         self.errs["valid_inds"] = ivalid_inds
         
