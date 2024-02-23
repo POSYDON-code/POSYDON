@@ -88,7 +88,7 @@ class Pulsar:
     
     def calc_NS_edd_lim(self, surface_h1):
         """
-        Calculate the Eddington accretion rate for a NS [g/s]
+        Calculate the Eddington accretion rate for a NS [Msun/yr]
         Adapted from eddington_limit() in utils.common_functions
 
         Parameters
@@ -100,7 +100,7 @@ class Pulsar:
 
         eta = const.standard_cgrav*self.mass / (self.radius * const.clight**2)
         Mdot_edd = (4*np.pi*const.standard_cgrav*self.mass) / (0.2*(1 + surface_h1)*eta*const.clight)  
-        return Mdot_edd
+        return Mdot_edd / (const.secyer/const.Msun)
 
     def calc_NS_luminosity(self):
         """
@@ -125,8 +125,36 @@ class Pulsar:
         P_dot =  9.87e-48*const.secyer * self.Bfield**2/P    ## NS spindown rate
 
         power = 4*np.pi**2 * self.moment_inertia * P_dot / P**3
-        return power      
+        return power  
+
+    def calc_magnetosphere_radius(self, Mdot_acc):
+        '''
+        Calculate the magnetospheric radius of the NS.
+
+        Parameters
+        ----------
+        Mdot_acc: accretion rate onto the NS
+        '''
+        Mdot_acc *= const.Msun*const.secyer  ## convert [Msun/yr] to [g/s]
+
+        eta = 0.4    ## constant depending on disk-magnetosphere interaction
+        mu = self.Bfield * self.radius**3     ## NS mangetic moment
     
+        r_m = eta * (mu**4/(2*const.standard_cgrav*self.mass*Mdot_acc**2))**(1/7)
+        return r_m
+
+    def calc_NS_spin_equilibrium(self, Mdot_acc):
+        '''
+        Calculate the equilibrium spin of the NS.
+
+        Parameters
+        ----------
+        Mdot_acc: accretion rate onto the NS
+        '''
+        r_m = self.calc_magnetosphere_radius(Mdot_acc)
+        omega_eq = 1/(2*np.pi) * (const.standard_cgrav*self.mass/r_m**3)**(1/2)
+        return omega_eq
+   
     def detached_evolve(self, delta_t, tau_d):
         '''
         Evolve a pulsar during detached evolution.
@@ -207,7 +235,7 @@ class Pulsar:
         ## check if pulsar has crossed the death line
         self.alive_state = self.is_alive()
     
-    def RLO_evolve_COMPAS(self, delta_M, delta_Md):
+    def RLO_evolve_COMPAS(self, delta_M, delta_Md, Mdot_acc):
         '''
         Evolve a pulsar during Roche Lobe overflow (RLO).
         This uses the prescription for B-field decay applied in COMPAS from Oslowski et al. 2011.
@@ -229,8 +257,9 @@ class Pulsar:
         B_i = self.Bfield            ## B-field of the NS before accretion [G]
         I = self.moment_inertia
 
-        R_alfven = (2*np.pi**2/(G*mu_0**2))**(1/7) * (R**6/(self.Mdot_edd*M_i**(1/2)))**(2/7) * B_i**(4/7) ## Alfven radius
-        R_mag = R_alfven/2   ## magnetic radius
+        #R_alfven = (2*np.pi**2/(G*mu_0**2))**(1/7) * (R**6/(self.Mdot_edd*M_i**(1/2)))**(2/7) * B_i**(4/7) ## Alfven radius
+        #R_mag = R_alfven/2   ## magnetic radius
+        R_mag = self.calc_magnetosphere_radius(Mdot_acc)
    
         ## evolve the NS spin
         #J_i = 2/5*M_i*R**2*self.spin     ## spin angular momentum (J) of the NS before accretion
@@ -251,11 +280,15 @@ class Pulsar:
         B_f = (B_i - B_min)*np.exp(-delta_M/delta_Md) + B_min 
         self.Bfield = B_f
 
+        ## check if pulsar has reached the maximum spin limit
+        spin_eq = self.calc_NS_spin_equilibrium(Mdot_acc)
+        if self.spin > spin_eq: self.spin = spin_eq
+
         ## check if pulsar crossed the death line
         self.alive_state = self.is_alive()
 
     def CE_evolve(self, CE_acc_prescription, acc_decay_prescription, acc_lower_limit, 
-                  M_comp, R_comp, delta_Md, delta_t, tau_d):
+                  M_comp, R_comp, delta_Md, delta_t, tau_d, Mdot_acc):
         '''
         Evolve a pulsar during common envelope, accounting for mass accretion onto the NS.
         '''   
@@ -282,7 +315,7 @@ class Pulsar:
         if acc_decay_prescription == "Ye2019":
             self.RLO_evolve_Ye2019(delta_t, tau_d, delta_M, delta_Md)
         elif acc_decay_prescription == "COMPAS":
-            self.RLO_evolve_COMPAS(delta_M, delta_Md)
+            self.RLO_evolve_COMPAS(delta_M, delta_Md, Mdot_acc)
 
     def is_alive(self):
         '''

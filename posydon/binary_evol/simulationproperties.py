@@ -379,16 +379,23 @@ class PulsarHooks(EvolveHooks):
     
                 elif step_name in ["step_CO_HMS_RLO", 'step_CO_HeMS', 'step_CO_HeMS_RLO']:  
                     if delta_M > self.acc_lower_limit:
+                        
                         if self.acc_decay_prescription == "Ye2019" :
                             pulsar.RLO_evolve_Ye2019(delta_t, self.tau_d, delta_M, self.delta_Md)  
+
                         elif self.acc_decay_prescription == "COMPAS":
-                            pulsar.RLO_evolve_COMPAS(delta_M, self.delta_Md)
+
+                            ## get Eddington-limited accretion rate onto NS at this timestep
+                            Mdot_acc = delta_M/delta_t
+                            if Mdot_acc > pulsar.Mdot_edd: Mdot_acc = pulsar.Mdot_edd
+
+                            pulsar.RLO_evolve_COMPAS(delta_M, self.delta_Md, Mdot_acc)
                     else:
                         pulsar.detached_evolve(delta_t, self.tau_d) 
               
                 elif step_name == "step_CE" and state != "merged":
                     pulsar.CE_evolve(self.CE_acc_prescription, self.acc_decay_prescription, self.acc_lower_limit,
-                                     M_comp, R_comp, self.delta_Md, delta_t, self.tau_d)
+                                     M_comp, R_comp, self.delta_Md, delta_t, self.tau_d, pulsar.Mdot_edd)
 
                 pulsar_spin.append(pulsar.spin)
                 pulsar_Bfield.append(pulsar.Bfield)
