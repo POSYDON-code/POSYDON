@@ -132,7 +132,7 @@ class PopulationRunner:
 
     @staticmethod
     def create_met_prefix(met):
-        """Append a prefix to the name of directories for batch saving."""
+        """Append a prefix to the se of directories for batch saving."""
         return convert_metallicity_to_string(met) + '_Zsun_'
     
 ###############################################################################
@@ -257,7 +257,7 @@ class History():
             if key in self.columns:
                 return pd.read_hdf(self.filename, key='history', columns=[key])
             else:
-                raise ValueError(f'{key} is not a valid column name!')
+                raise ValueError(f'{key} is not a valid column se!')
         elif isinstance(key, list) and all(isinstance(x, str) for x in key):
             if all(x in self.columns for x in key):
                 return pd.read_hdf(self.filename, key='history', columns=key)
@@ -333,7 +333,7 @@ class Oneline():
             if key in self.columns:
                 return pd.read_hdf(self.filename, key='oneline', columns=[key])
             else:
-                raise ValueError(f'{key} is not a valid column name!')
+                raise ValueError(f'{key} is not a valid column se!')
             
         elif isinstance(key, list) and all(isinstance(x, str) for x in key):
             if all(x in self.columns for x in key):
@@ -380,7 +380,7 @@ class PopulationIO():
     def _load_metadata(self, filename):
         '''Load the metadata from the file'''
         if '.h5' not in filename:
-            raise ValueError(f'{filename} does not contain .h5 in the name.\n Is this a valid population file?')
+            raise ValueError(f'{filename} does not contain .h5 in the se.\n Is this a valid population file?')
         
         self._load_ini_params(filename)
         self._load_mass_per_met(filename)
@@ -431,7 +431,7 @@ class Population(PopulationIO):
 
         # if the user provided a single string instead of a list of strings
         if not ('.h5' in filename):
-            raise ValueError(f'{filename} does not contain .h5 in the name.\n Is this a valid population file?')
+            raise ValueError(f'{filename} does not contain .h5 in the se.\n Is this a valid population file?')
         
         # read the population file
         with pd.HDFStore(filename, mode='r') as store:
@@ -481,7 +481,9 @@ class Population(PopulationIO):
             underlying_mass = initial_total_underlying_mass(df=simulated_mass, **self.ini_params)[0]
             self.mass_per_met = pd.DataFrame(index=[metallicity], 
                                               data={'simulated_mass':simulated_mass,
-                                                    'underlying_mass':underlying_mass})
+                                                    'underlying_mass':underlying_mass,
+                                                    'number_of_systems':len(self.oneline)})
+            
             self._save_mass_per_met(filename)
             self.solar_metallicities = self.mass_per_met.index.to_numpy()
             self.metallicities = self.solar_metallicities * Zsun
@@ -502,11 +504,11 @@ class Population(PopulationIO):
         selection  : list of int
             The indices of the systems to export    
         filename   : str
-            The name of the export file to create or append to
+            The se of the export file to create or append to
         '''
         
         if not ('.h5' in filename):
-            raise ValueError(f'{filename} does not contain .h5 in the name.\n Is this a valid population file?')
+            raise ValueError(f'{filename} does not contain .h5 in the se.\n Is this a valid population file?')
         
         history_cols = self.history.columns
         oneline_cols = self.oneline.columns
@@ -572,12 +574,16 @@ class Population(PopulationIO):
             
             # write mass_per_met
             if '/mass_per_met' in store.keys():
-                tmp_df = pd.concat([store['mass_per_met'], self.mass_per_met])
+                self_mass = self.mass_per_met
+                self_mass['number_of_systems'] = len(selection)
+                tmp_df = pd.concat([store['mass_per_met'], self_mass])
                 mass_per_met = tmp_df.groupby(tmp_df.index).sum()
                 store.put('mass_per_met', mass_per_met)
         
             else:
-                store.put('mass_per_met', self.mass_per_met)
+                self_mass = self.mass_per_met
+                self_mass['number_of_systems'] = len(selection)
+                store.put('mass_per_met', self_mass)
         
         # write ini parameters
         self._save_ini_params(filename)
@@ -651,7 +657,7 @@ class Population(PopulationIO):
             merged = pd.merge(events.dropna(), interp_class_HMS_HMS, left_index=True, right_index=True)
             del events, interp_class_HMS_HMS
             
-            merged.index.name='binary_index'
+            merged.index.se='binary_index'
             df['channel_debug'] = merged.groupby('binary_index').apply(get_events)
             del merged
             df['channel'] = df['channel_debug'].str.replace('_redirect', '').str.replace('_CO_contact', '')
@@ -688,7 +694,7 @@ class Population(PopulationIO):
         return {'history':self.history.columns,
                 'oneline':self.oneline.columns}
         
-    def create_synpop(self, func, output_file, oneline_cols=None, hist_cols=None):
+    def create_transient_population(self, func, transient_name, oneline_cols=None, hist_cols=None):
         '''Given a function, create a synthetic population
         
         Parameters
@@ -711,18 +717,12 @@ class Population(PopulationIO):
         SyntheticPopulation
             A synthetic population containing the synthetic population. 
         '''
-        synth_pop = TransientPopulation(output_file, verbose=self.verbose) 
-        # write population data to the new file!
-        self._save_ini_params(output_file)
-        self._save_mass_per_met(output_file)
+        
+        with pd.HDFStore(self.filename, mode='a') as store:
+            if f'/transients/{transient_name}' in store.keys():
+                print('overwriting transient population')
+                del store['transients/'+transient_name]
 
-        # store in transient/name
-
-        if '/transients' in synth_pop.keys():
-            print('overwriting transient population')
-            with pd.HDFStore(output_file, mode='a') as store:
-                del store['transients']
-            
         min_itemsize = {'channel': 100,}
         if hist_cols is not None:
             if 'time' not in hist_cols:
@@ -753,7 +753,7 @@ class Population(PopulationIO):
                                                 stop=end, 
                                                 columns=hist_cols)
             
-            if self._formation_channels is not None:
+            if self.formation_channels is not None:
                 formation_channels_chunk = self.formation_channels[i:i+self.chunksize]
             else:
                 formation_channels_chunk = None
@@ -762,16 +762,18 @@ class Population(PopulationIO):
             
             # filter out the columns in min_itemsize that are not in the dataframe
             min_itemsize = {key:val for key, val in min_itemsize.items() if key in syn_df.columns}
-                
-            synth_pop.append('transients',
-                                syn_df,
-                                format='table',
-                                data_columns=True,
-                                min_itemsize=min_itemsize
-                                )
+            
+            with pd.HDFStore(self.filename, mode='a') as store:
+                store.append('transients/'+transient_name,
+                             syn_df,
+                             format='table',
+                             data_columns=True,
+                             min_itemsize=min_itemsize
+                             )
             
             previous = end
-            
+        
+        synth_pop = TransientPopulation(self.filename, transient_name, verbose=self.verbose)
         return synth_pop
 
     
@@ -781,7 +783,7 @@ class Population(PopulationIO):
 
 class TransientPopulation(Population):
     
-    def __init__(self, pop_file, verbose=False):
+    def __init__(self, filename, transient_name, verbose=False):
         '''This class contains a synthetic population of transient events.
 
         You can calculate additional properties of the population, such as
@@ -792,38 +794,16 @@ class TransientPopulation(Population):
         verbose : bool
             If `True`, print additional information.
         ''' 
-        self.filename = pop_file
-        self.verbose = verbose
+        super().__init__(filename, verbose=verbose)
         
-        if not ('.h5' in pop_file):
-            raise ValueError(f'{pop_file} does not contain .h5 in the name.\n Is this a valid population file?')
+        with pd.HDFStore(self.filename, mode='r') as store:
+            if '/transients/'+transient_name not in store.keys():
+                raise ValueError(f'{transient_name} is not a valid transient population in {filename}!')
         
-        # file does not exist, create it
-        if not os.path.isfile(pop_file):
-            with pd.HDFStore(pop_file, mode='w') as store:
-                pass
-        # load data from the file
-        else:
-            self._load_metadata(self.filename)
-            self.solar_metallicities = self.mass_per_met.index.to_numpy()
-            self.metallicities = self.solar_metallicities * Zsun
-            
-            # number of transients
-            with pd.HDFStore(self.filename, mode='r') as store:
-                self.number_of_systems = store.get_storer('transients').nrows
-    
-    
-    def append(self, key, df, format='table', data_columns=True, min_itemsize=None):
-        with pd.HDFStore(self.filename, mode='a') as store:
-            store.append(key,
-                         df,
-                         format=format,
-                         data_columns=data_columns,
-                         min_itemsize=min_itemsize
-                         )    
-         
+        self.transient_name = transient_name
+
     @property
-    def full_population(self):
+    def population(self):
         '''Returns the whole synthetic populaiton as a pandas dataframe.
         
         Warning: might be too big to load in memory!
@@ -833,78 +813,65 @@ class TransientPopulation(Population):
         pd.DataFrame
             Dataframe containing the synthetic population.
         '''
-        return pd.read_hdf(self.filename, key='transients')        
-    
-    def keys(self):
-        '''Return the keys of the population file'''
-        with pd.HDFStore(self.filename, mode='r') as store:
-            return store.keys()
-        
+        return pd.read_hdf(self.filename, key='transients/'+self.transient_name)        
 
     def _load_efficiency(self, filename):
         '''Load the efficiency from the file'''
         with pd.HDFStore(filename, mode='r') as store:
-            tmp_df = store.select('efficiency')
-            self.efficiency = tmp_df.to_numpy()
-            self.met_efficiency = tmp_df.index.to_numpy()
+            self.efficiency = store['transients/'+self.transient_name+'_efficiencies']
             if self.verbose:
                 print('Efficiency table read from population file!')
                 
     def _save_efficiency(self, filename):
         '''Save the efficiency to the file'''
         with pd.HDFStore(filename, mode='a') as store:
-            store.put('efficiency',
-                      pd.DataFrame(index=self.met_efficiency,
-                                   data=self.efficiency),
-                      format='fixed')
-        
-
+            store.put('transients/'+self.transient_name+'_efficiencies', self.efficiency)
     
     @property
     def columns(self):
         '''Return the columns of the synthetic population'''
         if not hasattr(self, '_columns'):
             with pd.HDFStore(self.filename, mode='r') as store:
-                self._columns = store.select('transients', start=0, stop=0).columns
+                self._columns = store.select('transients/'+self.transient_name, start=0, stop=0).columns
         return self._columns
     
         
     def select(self, where=None, start=None, stop=None, columns=None):
         '''Select a subset of the synthetic population'''
-        return pd.read_hdf(self.filename, key='transients', where=where, start=start, stop=stop, columns=columns)
+        return pd.read_hdf(self.filename, key='transients/'+self.transient_name, where=where, start=start, stop=stop, columns=columns)
         
     def get_efficiency_over_metallicity(self):
         """Compute the efficiency of events per Msun for each solar_metallicities."""
         
         if hasattr(self, 'efficiency'):
             print('Efficiencies already computed! Overwriting them!')
-            
-        efficiencies = []
-        self.met_efficiency = sorted(self.solar_metallicities, reverse=True)
         
-        for met in self.met_efficiency:
+        metallicities = self.mass_per_met.index.to_numpy()
+        efficiencies = []
+        for met in metallicities:
             count = self.select(where='metallicity == {}'.format(met)).shape[0]
             
             # just sums the number of events
             underlying_stellar_mass = self.mass_per_met['underlying_mass'][met]
+            
             eff = count/underlying_stellar_mass
             efficiencies.append(eff)
             print(f'Efficiency at Z={met:1.2E}: {eff:1.2E} Msun^-1')
-        self.met_efficiency = np.array(self.met_efficiency)
-        self.efficiency = {'total' : np.array(efficiencies)}
+        
+        self.efficiency = pd.DataFrame(index=metallicities, data={'total':np.array(efficiencies)})
+
         # if the channel column is present compute the merger efficiency per channel
         if 'channel' in self.columns:
             channels = np.unique(self.select(columns=['channel']).values)
             for ch in channels:
                 efficiencies = []
-                for met in self.met_efficiency:
+                for met in metallicities:
                     count = self.select(where='metallicity == {} & channel == {}'.format(met, ch)).shape[0]
-                    
                     if count > 0:
                         underlying_stellar_mass = self.mass_per_met['underlying_mass'][met]
                         eff = count/underlying_stellar_mass
                     else:
-                        eff = np.nan
+                        eff = 0
                     efficiencies.append(eff)
                 self.efficiency[ch] = np.array(efficiencies)
         
@@ -919,19 +886,44 @@ class TransientPopulation(Population):
         channel : bool
             plot the subchannels
         '''
-        if self.met_efficiency is None or self.efficiency is None:
-            raise ValueError('First you need to compute the merger efficinty!')
-        plot_pop.plot_merger_efficiency(self.met_efficiency, self.efficiency, **kwargs)
+        if not hasattr(self, 'efficiency'):
+            raise ValueError('First you need to compute the merger efficiency!')
+        plot_pop.plot_merger_efficiency(self.efficiency.index.to_numpy()*Zsun, self.efficiency, **kwargs)
 
     
-    def plot_delay_time_distribution(self):
+    def plot_delay_time_distribution(self, metallicity=None, ax=None, bins=100,):
         '''Plot the delay time distribution of the transient population'''
-        pass
+        
+        if ax is None:
+            fig, ax = plt.subplots()
+            
+        if metallicity is None:
+            time = self.select(columns=['time']).values
+            time = time*1e6 # yr
+            h, bin_edges = np.histogram(time, bins=bins)
+            h = h/np.diff(bin_edges)/self.mass_per_met['underlying_mass'].sum()
+            
+        else:
+            if not any(np.isclose(metallicity, self.solar_metallicities)):
+                raise ValueError('The metallicity is not present in the population!')
+        
+            time = self.select(where='metallicity == {}'.format(metallicity), columns=['time']).values
+            time = time*1e6 # yr
+            h, bin_edges = np.histogram(time, bins=bins)
+            h = h/np.diff(bin_edges)/self.mass_per_met['underlying_mass'][metallicity]
+                    
+        ax.step(bin_edges[:-1], h, where='post', color='black')
+        ax.set_xscale('log')
+        ax.set_yscale('log')
+        ax.set_xlabel('Time [yr]')
+        ax.set_ylabel('Number of events/Msun/yr')
     
     def plot_popsyn_over_grid_slice(self, grid_type, met_Zsun, **kwargs):
         '''Plot the transients over the grid slice'''
         pass
     
+
+
 
 class PopulationOld():
     
@@ -1787,7 +1779,7 @@ class ParsedPopulation():
             merged = pd.merge(hist.dropna(), interp_class_HMS_HMS, left_index=True, right_index=True)
             del hist, interp_class_HMS_HMS
             
-            merged.index.name='binary_index'
+            merged.index.se='binary_index'
             df['channel_debug'] = merged.groupby('binary_index').apply(get_events)
             del merged
             df['channel'] = df['channel_debug'].str.replace('_redirect', '').str.replace('_CO_contact', '')
