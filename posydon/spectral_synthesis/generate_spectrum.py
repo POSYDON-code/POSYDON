@@ -45,7 +45,7 @@ def check_boundaries(grids,grid_name,**kwargs):
     if grid_name =='WR_grid':
         if x['Teff'] < grid.axis_x_min['Teff'] or x['Teff'] > grid.axis_x_max['Teff']:
             return 'failed_grid'
-        elif x['R_t'] < grid.axis_x_min['R_t'] or x['R_T'] > grid.axis_x_max['R_t']:
+        elif x['R_t'] < grid.axis_x_min['R_t'] or x['R_t'] > grid.axis_x_max['R_t']:
             return 'failed_grid'
         else: 
             return 'WR_grid'
@@ -146,7 +146,6 @@ def generate_spectrum(grids,star,i,**kwargs):
     Z= star['Z/Zo']*Zo
     Teff = copy(star[f'{i}_Teff'])
     logg = copy(star[f'{i}_log_g'])
-    M_init = copy(star[f'{i}_M_init'])
     state = copy(star[f'{i}_state'])
     R = 10**copy(star[f'{i}_log_R'])*con.R_sun
     L = 10**copy(star[f'{i}_log_L'])
@@ -156,7 +155,6 @@ def generate_spectrum(grids,star,i,**kwargs):
          '[Fe/H]': Fe_H,
          'Z/Zo':Z_Zo,
          'Z':Z,
-         'M_init':M_init,
          'state':state,
          'surface_h1' : surface_h1,
          '[alpha/Fe]':0.0}
@@ -171,7 +169,7 @@ def generate_spectrum(grids,star,i,**kwargs):
         try:
             if label == "stripped_grid":
                 Flux = grids.grid_flux(label,**x)*4*np.pi*1e4/Lo
-            if label == 'WR_grid':
+            elif label == 'WR_grid':
                 Flux = grids.grid_flux(label,**x)*4*np.pi*1e4/Lo *(L/10**5.3)
             else:
                 Flux = grids.grid_flux(label,**x)*R**2*4*np.pi*1e4/Lo
