@@ -715,7 +715,9 @@ class Population(PopulationIO):
         # write population data to the new file!
         self._save_ini_params(output_file)
         self._save_mass_per_met(output_file)
-                
+
+        # store in transient/name
+
         if '/transients' in synth_pop.keys():
             print('overwriting transient population')
             with pd.HDFStore(output_file, mode='a') as store:
@@ -777,7 +779,7 @@ class Population(PopulationIO):
         '''Plot the binary evolution of a system'''
         pass
 
-class TransientPopulation(PopulationIO):
+class TransientPopulation(Population):
     
     def __init__(self, pop_file, verbose=False):
         '''This class contains a synthetic population of transient events.
