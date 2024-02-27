@@ -27,6 +27,7 @@ grid_keys = [
     'secondary_grid',
     'ostar_grid',
     'stripped_grid',
+    'WR_grid'
 ]
 
 

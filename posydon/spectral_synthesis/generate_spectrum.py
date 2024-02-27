@@ -45,7 +45,7 @@ def check_boundaries(grids,grid_name,**kwargs):
     if grid_name =='WR_grid':
         if x['Teff'] < grid.axis_x_min['Teff'] or x['Teff'] > grid.axis_x_max['Teff']:
             return 'failed_grid'
-        elif x['R_t'] < grid.axis_x_min['R_t'] or x['R_T'] > grid.axis_x_max['R_t']:
+        elif x['R_t'] < grid.axis_x_min['R_t'] or x['R_t'] > grid.axis_x_max['R_t']:
             return 'failed_grid'
         else: 
             return 'WR_grid'

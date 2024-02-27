@@ -25,7 +25,7 @@ GRID_KEYS = [
     'bstar_grid',
     'ostar_grid',
     'stripped_grid',
-    'WR-grid'
+    'WR_grid'
 ]
 
 
