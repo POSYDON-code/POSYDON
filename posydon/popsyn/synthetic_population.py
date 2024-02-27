@@ -414,13 +414,30 @@ class PopulationIO():
             self.ini_params = {}
             for c in parameter_array:
                 self.ini_params[c] = tmp_df[c][0]
-    
-
 
 
 class Population(PopulationIO):
     
     def __init__(self, filename, metallicity=None, ini_file=None, verbose=False, chunksize=10000):
+        '''A Population file.
+        
+        Parameters
+        -----------
+        filename : str
+            The path to the population file
+        verbose : bool
+            If `True`, print additional information.
+        chunksize : int
+            The chunksize to use when reading the population file.
+
+        Optional parameters for adding additional information to old population files.            
+        metallicity : float
+            The metallicity of the population. 
+        ini_file : str
+            The path to the ini file used to create the population. 
+        
+        '''
+        
         self.filename = filename
         self.verbose = verbose
         self.chunksize = chunksize
@@ -553,7 +570,11 @@ class Population(PopulationIO):
             # write oneline of selected systems
             for i in tqdm(range(0, len(selection), 10000), total=len(selection)//10000, disable=not self.verbose):
                 tmp_df = self.oneline[selection[i:i+10000]]
-                tmp_df['metallicity'] = tmp_df['metallicity'].astype('float')
+                if 'metallicity' in tmp_df.columns:
+                    tmp_df['metallicity'] = tmp_df['metallicity'].astype('float')
+                else:
+                    warnings.warn('No metallicity column in oneline dataframe! Using the metallicity of the population file and adding it to the oneline.')
+                    tmp_df['metallicity'] = self.metallicities[0]
                 tmp_df.rename(index=reindex, inplace=True)
                 store.append('oneline', tmp_df, format='table', data_columns=True, min_itemsize=oneline_min_itemsize)
 
