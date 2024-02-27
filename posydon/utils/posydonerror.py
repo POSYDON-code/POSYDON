@@ -1,9 +1,9 @@
-class POSYDON_Exception(Exception):
+class POSYDONError(Exception):
     """
     POSYDON Exception class that includes subclasses for POSYDON-specific errors.
     
     """
-    def __init__(self, error_checking=False, message=""):
+    def __init__(self,message=""):
         self.error_checking = error_checking
         self.message = message
         super().__init__(self.message)
@@ -11,11 +11,11 @@ class POSYDON_Exception(Exception):
     def __str__(self):
         return self.message
     
-class GridError(POSYDON_Exception):    
+class GridError(POSYDONError):    
     def __init__(self, err_message):
         super().__init__(message=err_message)
 
-class FlowError(POSYDON_Exception):    
+class FlowError(POSYDONError):    
     def __init__(self, err_message):
         super().__init__(message=err_message)
 

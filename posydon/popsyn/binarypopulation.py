@@ -50,7 +50,7 @@ from posydon.utils.common_functions import (orbital_period_from_separation,
 from posydon.popsyn.defaults import default_kwargs
 from posydon.popsyn.io import binarypop_kwargs_from_ini
 from posydon.utils.constants import Zsun
-from posydon.utils.posydon_exception import POSYDON_Exception
+from posydon.utils.posydonerror import POSYDONError
 
 # 'event' usually 10 but 'detached (Integration failure)' can occur
 HISTORY_MIN_ITEMSIZE = {'state': 30, 'event': 25, 'step_names': 20,
@@ -289,7 +289,7 @@ class BinaryPopulation:
                 try:
                     binary.evolve()                    
                 #except Exception:
-                except POSYDON_Exception as e:
+                except POSYDONError as e:
                     binary.event = 'FAILED'
                     binary.traceback = traceback.format_exc()
                     if e.error_checking:   
