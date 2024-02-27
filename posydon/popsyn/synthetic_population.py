@@ -218,10 +218,21 @@ class History():
         self.columns = None
         
         # add history_lengths
-        with pd.HDFStore(filename, mode='r') as store:
-            history_events = store.select_column('history', 'index')
-            self.lengths = history_events.groupby(history_events).count()
-            del history_events
+        with pd.HDFStore(filename, mode='a') as store:
+            # get the history lengths from the file
+            if '/history_lengths' in store.keys():
+                self.lengths = store['history_lengths']
+            else:
+                if self.verbose:
+                    print('history_lengths not found in population file. Calculating history lengths...')
+                history_events = store.select_column('history', 'index')
+                self.lengths = history_events.groupby(history_events).count()
+                if self.verbose:
+                    print('Storing history lengths in population file!')
+                store.put('history_lengths', pd.DataFrame(self.lengths), format='table')
+                
+                del history_events
+            
             self.columns = store.select('history', start=0, stop=0).columns
         
         self.indices = self.lengths.index.to_numpy()
@@ -372,7 +383,6 @@ class Oneline():
             return store.select('oneline', where=where, start=start, stop=stop, columns=columns)
 
 
-
 class PopulationIO():
     def __init__(self):
         pass
@@ -494,6 +504,9 @@ class Population(PopulationIO):
         
         # calculate the metallicity information. This assumes the metallicity is for the whole file!    
         if metallicity is not None and ini_file is not None:
+            if '/mass_per_met' in keys:
+                warnings.warn(f'{filename} already contains a mass_per_met table. Overwriting the table!')
+                
             simulated_mass = np.sum(self.oneline[['S1_mass_i', 'S2_mass_i']].to_numpy())
             underlying_mass = initial_total_underlying_mass(df=simulated_mass, **self.ini_params)[0]
             self.mass_per_met = pd.DataFrame(index=[metallicity], 
@@ -554,6 +567,9 @@ class Population(PopulationIO):
                 
             if '/formation_channels' in store.keys() and self.verbose:
                 print('formation_channels in file. Appending to file')
+                
+            if '/history_lengths' in store.keys() and self.verbose:
+                print('history_lengths in file. Appending to file')
             
             # TODO: I need to shift the indices of the binaries or should I reindex them?
             # since I'm storing the information, reindexing them should be fine. 
@@ -594,6 +610,14 @@ class Population(PopulationIO):
                     tmp_df = self.formation_channels.loc[selection[i:i+10000]]
                     tmp_df.rename(index=reindex, inplace=True)
                     store.append('formation_channels', tmp_df, format='table', data_columns=True, min_itemsize={'channel_debug': 100, 'channel': 100})
+            
+            
+            ## METADATA
+            
+            # write the history lengths
+            for i in tqdm(range(0, len(selection), 10000), total=len(selection)//10000, disable=not self.verbose):
+                tmp_df = self.history.lengths.loc[selection[i:i+10000]]
+                store.append('history_lengths', tmp_df, format='table')
             
             # write mass_per_met
             if '/mass_per_met' in store.keys():
