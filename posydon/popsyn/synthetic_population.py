@@ -590,9 +590,10 @@ class Population(PopulationIO):
         
             # write formation channels of selected systems
             if self.formation_channels is not None:
-                tmp_df = self.formation_channels.loc[selection]
-                tmp_df.rename(index=reindex, inplace=True)
-                store.append('formation_channels', tmp_df, format='table', data_columns=True, min_itemsize={'channel_debug': 100, 'channel': 100})
+                for i in tqdm(range(0, len(selection), 10000), total=len(selection)//10000, disable=not self.verbose):
+                    tmp_df = self.formation_channels.loc[selection[i:i+10000]]
+                    tmp_df.rename(index=reindex, inplace=True)
+                    store.append('formation_channels', tmp_df, format='table', data_columns=True, min_itemsize={'channel_debug': 100, 'channel': 100})
             
             # write mass_per_met
             if '/mass_per_met' in store.keys():
