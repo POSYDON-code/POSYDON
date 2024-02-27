@@ -100,7 +100,7 @@ class Pulsar:
 
         eta = const.standard_cgrav*self.mass / (self.radius * const.clight**2)
         Mdot_edd = (4*np.pi*const.standard_cgrav*self.mass) / (0.2*(1 + surface_h1)*eta*const.clight)  
-        return Mdot_edd / (const.secyer/const.Msun)
+        return Mdot_edd * (const.secyer/const.Msun)
 
     def calc_NS_luminosity(self):
         """
