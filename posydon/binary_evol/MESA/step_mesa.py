@@ -30,7 +30,7 @@ from posydon.utils.common_functions import (flip_stars,
                                             set_binary_to_failed,)
 from posydon.utils.data_download import data_download, PATH_TO_POSYDON_DATA
 from posydon.grids.MODELS import MODELS
-from posydon.utils.posydon_exception import FlowError, GridError
+from posydon.utils.posydonerror import FlowError, GridError
 
 
 # left POSYDON, right MESA
@@ -656,7 +656,7 @@ class MesaGridStep:
                             # DEBUG
                             # print(key, missing_values_star_1)
                             # print('fixed', len(getattr(self.binary.star_1,
-                            #                            key + "_history")))        
+                            #                            key + "_history")))
         # convert these flags to default POSYDON star states
         setattr(stars[0], 'state',
                 cf.check_state_of_star(stars[0], star_CO=stars_CO[0]))
@@ -1280,7 +1280,7 @@ class MS_MS_step(MesaGridStep):
             np.max([self.q_min, 0.5/m1]) <= mass_ratio <= self.q_max and
             self.p_min <= p <= self.p_max):
             self.flip_stars_before_step = False
-            super().__call__(self.binary)  
+            super().__call__(self.binary)
         # binary in grid but masses flipped
         elif (state_1 == 'H-rich_Core_H_burning' and
               state_2 == 'H-rich_Core_H_burning' and
@@ -1303,7 +1303,7 @@ class MS_MS_step(MesaGridStep):
               event == 'ZAMS' and
               p < self.p_min):
             self.binary.event = 'redirect_from_ZAMS'
-            return 
+            return
         # outside the mass grid for m1
         elif (state_1 == 'H-rich_Core_H_burning' and
               state_2 == 'H-rich_Core_H_burning' and
@@ -1423,7 +1423,7 @@ class CO_HMS_RLO_step(MesaGridStep):
             self.p_min <= p <= self.p_max and
             ecc == 0.)):
             super().__call__(self.binary)
-        
+
         # period inside the grid, but m1 outside the grid
         elif ((not self.flip_stars_before_step and
                self.p_min <= p <= self.p_max and
@@ -1432,7 +1432,7 @@ class CO_HMS_RLO_step(MesaGridStep):
             set_binary_to_failed(self.binary)
             raise GridError(f'The mass of m1 ({m1}) is outside the grid,'
                                 'while the period is inside the grid.')
-            
+
         # period inside the grid, but m2 outside the grid
         elif ((not self.flip_stars_before_step and
                self.p_min <= p <= self.p_max and
@@ -1441,13 +1441,13 @@ class CO_HMS_RLO_step(MesaGridStep):
             set_binary_to_failed(self.binary)
             raise GridError(f'The mass of m2 ({m2}) is outside the grid,'
                                 'while the period is inside the grid.')
-            
+
         else:
             if len(self.binary.state_history) > 2:
                 if self.binary.state_history[-2] == 'detached':
                     set_binary_to_failed(self.binary)
                     raise GridError('CO_HMS_RLO binary outside grid and coming from detached')
-                
+
             self.binary.state = "detached"
             self.binary.event = "redirect_from_CO_HMS_RLO"
             return
@@ -1553,13 +1553,13 @@ class CO_HeMS_RLO_step(MesaGridStep):
             set_binary_to_failed(self.binary)
             raise GridError(f'The mass of m2 ({m2}) is outside the grid,'
                                 'while the period is inside the grid.')
-        
+
         else:
             if len(self.binary.state_history) > 2:
                 if self.binary.state_history[-2] == 'detached':
                     set_binary_to_failed(self.binary)
                     raise GridError('CO_HeMS_RLO binary outside grid and coming from detached')
-                
+
             self.binary.state = "detached"
             self.binary.event = "redirect_from_CO_HeMS_RLO"
             return
