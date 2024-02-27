@@ -617,6 +617,7 @@ class Population(PopulationIO):
             # write the history lengths
             for i in tqdm(range(0, len(selection), 10000), total=len(selection)//10000, disable=not self.verbose):
                 tmp_df = self.history.lengths.loc[selection[i:i+10000]]
+                tmp_df.rename(index=reindex, inplace=True)
                 store.append('history_lengths', tmp_df, format='table')
             
             # write mass_per_met
