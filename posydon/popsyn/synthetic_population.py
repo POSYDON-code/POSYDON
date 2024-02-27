@@ -574,7 +574,10 @@ class Population(PopulationIO):
                     tmp_df['metallicity'] = tmp_df['metallicity'].astype('float')
                 else:
                     warnings.warn('No metallicity column in oneline dataframe! Using the metallicity of the population file and adding it to the oneline.')
-                    tmp_df['metallicity'] = self.metallicities[0]
+                    if len(self.metallicities) > 1:
+                        raise ValueError('The population file contains multiple metallicities. Please add a metallicity column to the oneline dataframe!')
+                    else:
+                        tmp_df['metallicity'] = self.metallicities[0]
                 tmp_df.rename(index=reindex, inplace=True)
                 store.append('oneline', tmp_df, format='table', data_columns=True, min_itemsize=oneline_min_itemsize)
 
