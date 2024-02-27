@@ -581,18 +581,16 @@ class Population(PopulationIO):
                 tmp_df.rename(index=reindex, inplace=True)
                 store.append('oneline', tmp_df, format='table', data_columns=True, min_itemsize=oneline_min_itemsize)
 
-            
             # write history of selected systems    
             for i in tqdm(range(0, len(selection), 10000), total=len(selection)//10000, disable=not self.verbose):
                 tmp_df = self.history[selection[i:i+10000]]
-                #print(last_index_in_file)
                 # reindex the indices
                 tmp_df.rename(index=reindex, inplace=True)
                 store.append('history', tmp_df, format='table', data_columns=True, min_itemsize=history_min_itemsize)
         
             # write formation channels of selected systems
-            if self._formation_channels is not None:
-                tmp_df = self._formation_channels.loc[selection]
+            if self.formation_channels is not None:
+                tmp_df = self.formation_channels.loc[selection]
                 tmp_df.rename(index=reindex, inplace=True)
                 store.append('formation_channels', tmp_df, format='table', data_columns=True, min_itemsize={'channel_debug': 100, 'channel': 100})
             
@@ -616,7 +614,12 @@ class Population(PopulationIO):
     def formation_channels(self):
         '''Return the formation channels of the population'''
         if self._formation_channels is None:
-            self._formation_channels = pd.read_hdf(self.filename, key='formation_channels')
+            with pd.HDFStore(self.filename, mode='r') as store:
+                if '/formation_channels' in store.keys():
+                    self._formation_channels = pd.read_hdf(self.filename, key='formation_channels')
+                else:
+                    warnings.warn('No formation channels in the population file!')
+                    self._formation_channels = None
             
         return self._formation_channels
 
@@ -625,7 +628,8 @@ class Population(PopulationIO):
         if self.verbose: print('Calculating formation channels...')  
         
         # load the HMS-HMS interp class
-        HMS_HMS_event_dict = {'stable_MT'   : 'oRLO1', 
+        HMS_HMS_event_dict = {'initial_MT'  : 'initial_MT',
+                              'stable_MT'   : 'oRLO1', 
                               'no_MT'       : 'None', 
                               'unstable_MT' : 'oCE1/oDoubleCE1'}
         
@@ -671,8 +675,8 @@ class Population(PopulationIO):
             interp_class_HMS_HMS = self.oneline.select(start=i, stop=i+self.chunksize, columns=['interp_class_HMS_HMS'])
             events = self.history.select(start=previous, stop=end, columns=['event'])
             
-            mask = ~interp_class_HMS_HMS.isna()
-            
+            mask = ~pd.isna(interp_class_HMS_HMS)
+
             interp_class_HMS_HMS[mask].apply(lambda x: HMS_HMS_event_dict[x['interp_class_HMS_HMS']], axis=1)
             del mask
             
