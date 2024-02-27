@@ -100,7 +100,7 @@ class Pulsar:
 
         eta = const.standard_cgrav*self.mass / (self.radius * const.clight**2)
         Mdot_edd = (4*np.pi*const.standard_cgrav*self.mass) / (0.2*(1 + surface_h1)*eta*const.clight)  
-        return Mdot_edd * (const.secyer/const.Msun)
+        return Mdot_edd / (const.Msun/const.secyer)      ## convert [g/s] to [Msun/yr]
 
     def calc_NS_luminosity(self):
         """
@@ -135,7 +135,7 @@ class Pulsar:
         ----------
         Mdot_acc: accretion rate onto the NS
         '''
-        Mdot_acc *= const.Msun*const.secyer  ## convert [Msun/yr] to [g/s]
+        Mdot_acc *= (const.Msun/const.secyer)  ## convert [Msun/yr] to [g/s]
 
         eta = 0.4    ## constant depending on disk-magnetosphere interaction
         mu = self.Bfield * self.radius**3     ## NS mangetic moment
