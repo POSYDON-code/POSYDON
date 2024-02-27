@@ -460,12 +460,6 @@ DEFAULT_MARKERS_COLORS_LEGENDS = {
             ['s', 2, list_of_colors[3], 'Stable contact phase'],
         'Stable case A':
             ['s', 2, list_of_colors[2], 'Stable RLOF during MS'],
-        'Stable case AB':
-            ['s', 2, list_of_colors[1], 'Stable RLOF during postMS'],
-        'Stable case AC':
-            ['s', 2, list_of_colors[1], 'Stable RLOF during postMS'],
-        'Stable case ABB':
-            ['s', 2, list_of_colors[0], 'Stable RLOF during stripped He star'],
         'Stable case B':
             ['s', 2, list_of_colors[1], 'Stable RLOF during postMS'],
         'Stable case C':
@@ -474,19 +468,36 @@ DEFAULT_MARKERS_COLORS_LEGENDS = {
             ['s', 2, list_of_colors[0], 'Stable RLOF during stripped He star'],
         'Stable case BB':
             ['s', 2, list_of_colors[0], 'Stable RLOF during stripped He star'],
+        'Stable case AB':
+            ['s', 2, list_of_colors[1], 'Stable RLOF during postMS'],
+        'Stable case AC':
+            ['s', 2, list_of_colors[1], 'Stable RLOF during postMS'],
+        'Stable case An':
+            ['s', 2, list_of_colors[1], 'Stable RLOF during postMS'],
+        'Stable case ABA':
+            ['s', 2, list_of_colors[0], 'Stable RLOF during stripped He star'],
+        'Stable case ABB':
+            ['s', 2, list_of_colors[0], 'Stable RLOF during stripped He star'],
         'Stable case BC':
             ['s', 2, list_of_colors[1], 'Stable RLOF during postMS'],
+        'Stable case Bn':
+            ['s', 2, list_of_colors[1], 'Stable RLOF during postMS'],
+        'Stable case BBA':
+            ['s', 2, list_of_colors[0], 'Stable RLOF during stripped He star'],
+        'Stable case BBB':
+            ['s', 2, list_of_colors[0], 'Stable RLOF during stripped He star'],
+        'Stable case BABB':
+            ['s', 2, list_of_colors[0], 'Stable RLOF during stripped He star'],
+        'Stable case BAn':
+            ['s', 2, list_of_colors[0], 'Stable RLOF during stripped He star'],
+        'Stable case BBn':
+            ['s', 2, list_of_colors[0], 'Stable RLOF during stripped He star'],
+        'Stable case n':
+            ['s', 2, list_of_colors[1], 'Stable RLOF while non burning'],
         'Unstable contact':
             ['D', 1, list_of_colors[3], 'Unstable contact phase'],
         'Unstable case A':
             ['D', 1, list_of_colors[2], 'Unstable RLOF during MS'],
-        'Unstable case AB':
-            ['D', 1, list_of_colors[1], 'Unstable RLOF during postMS'],
-        'Unstable case AC':
-            ['D', 1, list_of_colors[1], 'Unstable RLOF during postMS'],
-        'Unstable case ABB':
-            ['D', 1, list_of_colors[0],
-             'Unstable RLOF during stripped He star'],
         'Unstable case B':
             ['D', 1, list_of_colors[1], 'Unstable RLOF during postMS'],
         'Unstable case C':
@@ -497,8 +508,40 @@ DEFAULT_MARKERS_COLORS_LEGENDS = {
         'Unstable case BB':
             ['D', 1, list_of_colors[0],
              'Unstable RLOF during stripped He star'],
+        'Unstable case AB':
+            ['D', 1, list_of_colors[1], 'Unstable RLOF during postMS'],
+        'Unstable case AC':
+            ['D', 1, list_of_colors[1], 'Unstable RLOF during postMS'],
+        'Unstable case An':
+            ['D', 1, list_of_colors[1], 'Unstable RLOF during postMS'],
+        'Unstable case ABA':
+            ['D', 1, list_of_colors[0],
+             'Unstable RLOF during stripped He star'],
+        'Unstable case ABB':
+            ['D', 1, list_of_colors[0],
+             'Unstable RLOF during stripped He star'],
         'Unstable case BC':
             ['D', 1, list_of_colors[1], 'Unstable RLOF during postMS'],
+        'Unstable case Bn':
+            ['D', 1, list_of_colors[1], 'Unstable RLOF during postMS'],
+        'Unstable case BBA':
+            ['D', 2, list_of_colors[0], 
+             'Unstable RLOF during stripped He star'],
+        'Unstable case BBB':
+            ['D', 2, list_of_colors[0],
+             'Unstable RLOF during stripped He star'],
+        'Unstable case BABB':
+            ['D', 2, list_of_colors[0],
+             'Unstable RLOF during stripped He star'],
+        'Unstable case BAn':
+            ['D', 2, list_of_colors[0],
+             'Unstable RLOF during stripped He star'],
+        'Unstable case BBn':
+            ['D', 2, list_of_colors[0],
+             'Unstable RLOF during stripped He star'],
+        'Unstable case n':
+            ['D', 2, list_of_colors[1],
+             'Unstable RLOF while non burning'],
         'Unstable L2 RLOF':
             ['D', 1, list_of_colors[0],
              'Unstable RLOF during stripped He star'],
