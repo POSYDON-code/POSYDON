@@ -120,9 +120,11 @@ class spectral_grids():
         for key in kwargs:
             if key not in specgrid.axis_labels:
                 x.pop(key)
-        if name == "stripped_grid":
-            return self.stripped_grid_flux(**x)
         Flux = np.asarray(specgrid.flux(x, self.lam))
+        
+        if name == "stripped_grid":
+            distance_factor = (kpc)**2
+            return Flux*distance_factor
         if name == 'WR_grid':
             distance_factor = (kpc/100)**2
             return Flux*distance_factor 

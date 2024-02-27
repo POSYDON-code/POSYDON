@@ -47,12 +47,25 @@ keys_to_save= ['state',
                #'log_g',
                #'Teff'
                 ]
+keys_to_load = ['state',
+                'time',
+               'S1_state',
+               'S2_state',
+               'S1_mass',
+               'S2_mass',
+               'S1_log_L',
+               'S2_log_L',
+               'S1_log_R',
+               'S2_log_R',
+               'S1_surface_h1',
+               'S2_surface_h1',
+               'S1_lg_mdot',
+               'S2_lg_mdot']
 
 
 def find_max_time(history):
     """Find the max time of a population."""
-    times = history[history.event == "maxtime"].time
-
+    times = history.time
     return np.max(times)
 
 def load_posydon_population(population_file):
@@ -73,19 +86,21 @@ def load_posydon_population(population_file):
             for each star.
     """
 
-    history = pd.read_hdf(population_file, key='history')
+    history = pd.read_hdf(population_file, key='history',usecols = keys_to_load)
     max_time = find_max_time(history)
-    final_stars = history[(history.time == max_time) & (history.event == "END")]
-    zams_stars = history[history.event == 'ZAMS']
+    final_stars = history[(history.time == max_time)]
+    zams_stars = history[(history.time == 0.0)]
     for col in final_stars:
         if col not in keys_to_save:
             del final_stars[str(col)]
     #Find the stripped stars and put their final mass as M_init (mass at ZAMS).
+    """
     for star in ['S1','S2']:
         #stripped_index = copy(final_stars[final_stars[f'{star}_state'].isin(stripped_stars)].index.values)
         index_values = copy(final_stars.index.values)
         M_init = zams_stars.loc[index_values][f'{star}_mass'].values
         #final_stars.loc[stripped_index][f'{star}_mass'] = M_init
+    """
     pop = copy(final_stars.reset_index())
     #Get the metallicity values from ZAMS
     pop['Z/Zo'] = np.ones(len(pop))*zams_stars['S1_metallicity'].iloc[0]/Zo
@@ -94,7 +109,7 @@ def load_posydon_population(population_file):
         M = np.asarray(pop[f'{star}_mass'])*con.M_sun
         R = np.asarray(10**pop[f'{star}_log_R'])*con.R_sun
         L = np.asarray(10**pop[f'{star}_log_L'])*con.L_sun
-        pop[f'{star}_M_init'] = M_init
+        #pop[f'{star}_M_init'] = M_init
         pop[f'{star}_log_g'] = np.log10(con.G*M/R**2/(unt.cm/unt.s**2))
         pop[f'{star}_Teff'] = (L/(4*np.pi*R**2*con.sigma_sb))**0.25/unt.K
     return pop

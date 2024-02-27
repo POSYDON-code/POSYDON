@@ -17,7 +17,7 @@ import astropy.units as unt
 from mpi4py import MPI
 import pandas as pd
 import traceback
-
+from collections import Counter
 from posydon.spectral_synthesis.spectral_tools import load_posydon_population
 from posydon.spectral_synthesis.spectral_grids import spectral_grids
 from posydon.spectral_synthesis.default_options import default_kwargs
@@ -157,20 +157,34 @@ class population_spectra():
             """
             pop_data['S1_grid_status'] = np.hstack(labels_S1)
             pop_data['S2_grid_status'] = np.hstack(labels_S2)
-            combined_spectrum = dict.fromkeys({'disrupted',
+            
+            """
+            combined_spectrum = Counter(dict.fromkeys({'disrupted',
                       'merged', 
                       'detached',
                       'initially_single_star',
                       'low_mass_binary',
                       'contact',
                       'RLO1',
-                      'RLO2'}, np.zeros(len(self.grids.lam_c)))
-            for i in range(len(pop_spectrum)):
-                pop_dict = pop_spectrum[i]
-                for key in pop_dict:
-                    combined_spectrum[key] += pop_dict[key]
-                
-            spectrum_data = pd.DataFrame.from_dict(combined_spectrum)
+                      'RLO2'}, np.zeros(len(self.grids.lam_c))))
+            """
+            combined_spectrum = Counter(pop_spectrum[0])
+            if len(pop_spectrum) > 0: 
+                for i in range(1,len(pop_spectrum)):
+                    print(i)
+                    pop_dict = Counter(pop_spectrum[i])
+                    combined_spectrum.update(pop_dict)
+                #combined_spectrum.update(pop_dict)
+                """
+                for key,value in combined_spectrum.items():
+                    print(value)
+                    print(key,pop_dict[key])
+                    print(combined_spectrum[key])
+                    #value += copy(pop_dict[key])
+                    #combined_spectrum[key] += 
+                """
+            final_dict = dict(combined_spectrum)
+            spectrum_data = pd.DataFrame.from_dict(final_dict)
         else:
             pop_data['S1_grid_status'] = labels_S1
             pop_data['S2_grid_status'] = labels_S2
