@@ -433,9 +433,7 @@ class StepSN(object):
             binary.event = "CC2"
         elif state1 in STAR_STATES_C_DEPLETION and state2 in STAR_STATES_CO:
             binary.event = "CC1"
-        
-        if binary.star_1.state == 'WD':
-            print('Exiting SN',binary.star_1.state ,binary.star_1.co_core_mass)
+
     def check(self):
         """Check the internal integrity and the values of the parameters."""
         if self.kick_distribution is None:
@@ -525,10 +523,16 @@ class StepSN(object):
                     for key, value in MODEL_properties.items():
                         setattr(star, key, value)
 
-                    for key in STARPROPERTIES:
-                        if key not in ["state", "mass", "spin",
-                                        "m_disk_accreted ", "m_disk_radiated","co_core_mass"]:
-                            setattr(star, key, None)
+                    if star.state == 'WD':
+                        for key in STARPROPERTIES:
+                            if key not in ["state", "mass", "spin",
+                                        "m_disk_accreted ", "m_disk_radiated","co_core_mass","center_h1","center_he4","center_c12","center_n14","center_o16"]:
+                                setattr(star, key, None)           
+                    else:                    
+                        for key in STARPROPERTIES:
+                            if key not in ["state", "mass", "spin",
+                                            "m_disk_accreted ", "m_disk_radiated"]:
+                                setattr(star, key, None)
                     
                     # check if SN_type matches the predicted CO
                     # and force the SN_type to match the predicted CO.

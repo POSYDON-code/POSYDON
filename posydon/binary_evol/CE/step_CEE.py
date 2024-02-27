@@ -202,8 +202,6 @@ class StepCEE(object):
         else:
             raise ValueError("CEE does not apply if `event` is not "
                              "`oCE1`, 'oDoubleCE1' or `oCE2`, 'oDoubleCE1'")
-        if comp_star.state == 'WD' or donor_star.state == 'WD':
-            print('entering CE as' , comp_star.state,binary.star_1.co_core_mass ,comp_star.co_core_mass)
         # Check for double CE
         double_CE = binary.event in ["oDoubleCE1", "oDoubleCE2"]
 
@@ -802,8 +800,6 @@ class StepCEE(object):
 
         else:
             # system merges
-            if donor.state == 'WD' or comp_star.state == 'WD':
-                print('merges',donor.state,comp_star.state,comp_star.co_core_mass)
             binary.state = 'merged'
             if binary.event in ["oCE1", "oDoubleCE1"]:
                 binary.event = "oMerging1"

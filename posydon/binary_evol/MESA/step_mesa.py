@@ -302,9 +302,7 @@ class MesaGridStep:
             raise AttributeError("No step defined for {}".format(
                 self.__name__))
         if self.flip_stars_before_step:
-            print('Before flipping the stars', binary.star_1.state,binary.star_1.co_core_mass)
             flip_stars(binary)
-            print('After flipping the stars', binary.star_2.state,binary.star_2.co_core_mass)
         max_MESA_sim_time = self.get_final_MESA_step_time()
 
         if max_MESA_sim_time is None:
@@ -333,7 +331,6 @@ class MesaGridStep:
                                       star_2_CO=self.star_2_CO,
                                       track_interpolation=True)
         else:
-            print('After flipping the stars', binary.star_2.state,binary.star_2.co_core_mass)
             self.step(binary, interp_method=self.interpolation_method)
         
         if (self.stop_method == 'stop_at_max_time'
@@ -369,7 +366,6 @@ class MesaGridStep:
         
         if self.flip_stars_before_step:
             flip_stars(binary)
-            print('Second flipping of the stars', binary.star_1.state,binary.star_1.co_core_mass)
         if binary.time > binary.properties.max_simulation_time:
             binary.event = 'MaxTime_exceeded'
         elif binary.time == binary.properties.max_simulation_time:
@@ -502,7 +498,7 @@ class MesaGridStep:
                     getattr(binary, key_h).append(v_key)
                 if track_interpolation:
                     getattr(binary, key_h).extend([v_key]*length_hist)
-            elif key in ['state', 'event', 'mass_transfer_case']:
+            elif key in ['state', 'event']:
                 continue
             else:
                 key_p = POSYDON_TO_MESA['binary'][key]
@@ -649,7 +645,7 @@ class MesaGridStep:
                             getattr(star, key_h).append(cb_bh[key_p][0])
                         if track_interpolation:
                             getattr(star, key_h).extend(cb_bh[key_p][:-1])
-                    elif key in ['state', 'lg_mdot']:
+                    elif key in ['state', 'lg_mdot','co_core_mass']:
                         continue
                     else:
                         setattr(star, key, None)
@@ -845,7 +841,6 @@ class MesaGridStep:
             else:
                 key_p = POSYDON_TO_MESA['binary'][key]
                 setattr(self.binary, key, fv[key_p])
-        print('1',binary.star_2.co_core_mass)
         for k, star in enumerate(stars):
             for key in STARPROPERTIES:
                 if not stars_CO[k]:
@@ -889,6 +884,8 @@ class MesaGridStep:
                         key_p = POSYDON_TO_MESA['star'][key]+'_%d' % (k+1)
                         setattr(star, key, fv[key_p])
                     elif key == 'state':
+                        continue
+                    elif star.state == 'WD' and key in ['co_core_mass','center_h1','center_he4','center_c12','center_n14','center_o16']:
                         continue
                     else:
                         setattr(star, key, None)
@@ -950,7 +947,6 @@ class MesaGridStep:
             if 10**tmp_lg_mdot > mdot_edd:
                 tmp_lg_mdot = np.log10(mdot_edd)
             setattr(accretor, 'lg_mdot', tmp_lg_mdot)
-        print('3',binary.star_2.co_core_mass)
         # update post processed quanties
         key_post_processed = ['avg_c_in_c_core_at_He_depletion',
                               'co_core_mass_at_He_depletion',
