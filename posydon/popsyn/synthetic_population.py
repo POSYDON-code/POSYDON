@@ -605,7 +605,6 @@ class Population(PopulationIO):
             for i in tqdm(selection, total=len(selection), disable=not self.verbose):
                 tmp_df = self.history[int(i)]
                 tmp_df.rename(index={i:reindex[i]}, inplace=True)
-                # reindex the indices
                 store.append('history', tmp_df, format='table', data_columns=True, min_itemsize=history_min_itemsize, index=False)
         
             if self.verbose:
@@ -625,7 +624,7 @@ class Population(PopulationIO):
             for i in tqdm(range(0, len(selection), 10000), total=len(selection)//10000, disable=not self.verbose):
                 tmp_df = self.history.lengths.loc[selection[i:i+10000]]
                 tmp_df.rename(index=reindex, inplace=True)
-                store.append('history_lengths', tmp_df, format='table')
+                store.append('history_lengths', pd.DataFrame(tmp_df), format='table', index=False)
             
             # write mass_per_met
             if '/mass_per_met' in store.keys():
