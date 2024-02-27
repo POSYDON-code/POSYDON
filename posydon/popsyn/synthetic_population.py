@@ -253,10 +253,12 @@ class History():
         elif isinstance(key, int):
             return pd.read_hdf(self.filename, where='index == key', key='history')
         elif isinstance(key, list) and all(isinstance(x, int) for x in key):
-            return pd.read_hdf(self.filename, where='index in key', key='history')
+            with pd.HDFStore(self.filename, mode='r') as store:
+                return store.select('history', where='index in key')
         elif isinstance(key, np.ndarray) and (key.dtype == int):
             indices = self.lengths[key].index.tolist()
-            return pd.read_hdf(self.filename, where='index in indices', key='history')
+            with pd.HDFStore(self.filename, mode='r') as store:
+                return store.select('history', where='index in indices')
         elif isinstance(key, np.ndarray) and key.dtype == bool:
             out_df = pd.DataFrame()
             for i in range(0,len(key), self.chunksize):
@@ -303,7 +305,7 @@ class History():
          
     def select(self, where=None, start=None, stop=None, columns=None):
         with pd.HDFStore(self.filename, mode='r') as store:
-            return store.select('history',where=where, start=start, stop=stop, columns=columns)
+            return store.select('history', where=where, start=start, stop=stop, columns=columns)
 
 class Oneline():
     
@@ -550,6 +552,7 @@ class Population(PopulationIO):
                                 ONELINE_MIN_ITEMSIZE.items()
                                 if key in oneline_cols}
         
+        
         with pd.HDFStore(filename, mode='a') as store:
             # shift all new indices by the current length of data in the file
             last_index_in_file = 0
@@ -584,8 +587,8 @@ class Population(PopulationIO):
                                    )}
                        
             # write oneline of selected systems
-            for i in tqdm(range(0, len(selection), 10000), total=len(selection)//10000, disable=not self.verbose):
-                tmp_df = self.oneline[selection[i:i+10000]]
+            for i in tqdm(range(0, len(selection), 1000), total=len(selection)//1000, disable=not self.verbose):
+                tmp_df = self.oneline[selection[i:i+1000]]
                 if 'metallicity' in tmp_df.columns:
                     tmp_df['metallicity'] = tmp_df['metallicity'].astype('float')
                 else:
@@ -595,14 +598,18 @@ class Population(PopulationIO):
                     else:
                         tmp_df['metallicity'] = self.metallicities[0]
                 tmp_df.rename(index=reindex, inplace=True)
-                store.append('oneline', tmp_df, format='table', data_columns=True, min_itemsize=oneline_min_itemsize)
+                store.append('oneline', tmp_df, format='table', data_columns=True, min_itemsize=oneline_min_itemsize, index=False)
+            
 
             # write history of selected systems    
-            for i in tqdm(range(0, len(selection), 10000), total=len(selection)//10000, disable=not self.verbose):
-                tmp_df = self.history[selection[i:i+10000]]
+            for i in tqdm(selection, total=len(selection), disable=not self.verbose):
+                tmp_df = self.history[int(i)]
+                tmp_df.rename(index={i:reindex[i]}, inplace=True)
                 # reindex the indices
-                tmp_df.rename(index=reindex, inplace=True)
-                store.append('history', tmp_df, format='table', data_columns=True, min_itemsize=history_min_itemsize)
+                store.append('history', tmp_df, format='table', data_columns=True, min_itemsize=history_min_itemsize, index=False)
+        
+            if self.verbose:
+                print('Selected systems written to population file!')
         
             # write formation channels of selected systems
             if self.formation_channels is not None:
