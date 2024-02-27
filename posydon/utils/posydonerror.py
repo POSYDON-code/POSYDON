@@ -1,6 +1,6 @@
 """The POSYDON exception class and subclasses for more specific errors."""
 
-
+import copy
 from posydon.binary_evol.binarystar import BinaryStar
 from posydon.binary_evol.singlestar import SingleStar
 
@@ -21,7 +21,8 @@ class POSYDONError(Exception):
 
         """
         self.message = message
-        self.objects = objects
+        # copy the objects: we must know their state at the moment of the error
+        self.objects = copy.deepcopy(objects)
         super().__init__(self.message)
 
     def __str__(self):
@@ -30,8 +31,8 @@ class POSYDONError(Exception):
         if self.objects is not None:
             for i, obj in enumerate(self.objects):
                 if isinstance(obj, (BinaryStar, SingleStar)):
-                    result += f"\nOBJECT #{i+1} ({type(obj)}):\n{str(obj)}"
-        return self.message
+                    result += f"\n\nOBJECT #{i+1} ({type(obj)}):\n{str(obj)}"
+        return result
 
 
 class GridError(POSYDONError):
