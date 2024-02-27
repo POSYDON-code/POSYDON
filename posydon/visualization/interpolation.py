@@ -57,9 +57,6 @@ class EvaluateIFInterpolator:
 
         with np.errstate(divide='ignore', invalid='ignore'):
             self.errs["relative"] = np.abs((fv - i) / fv)
-            print(fv)
-            print(i)
-            print(fv-i)
         self.errs["absolute"] = np.abs(fv - i)
         self.errs["valid_inds"] = ivalid_inds
         
