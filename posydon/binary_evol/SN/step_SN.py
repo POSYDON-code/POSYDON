@@ -522,16 +522,18 @@ class StepSN(object):
                     MODEL_properties = getattr(star, MODEL_NAME_SEL)
                     for key, value in MODEL_properties.items():
                         setattr(star, key, value)
-
+                    
                     if star.state == 'WD':
                         for key in STARPROPERTIES:
-                            if key not in ["state", "mass", "spin",
-                                        "m_disk_accreted ", "m_disk_radiated","co_core_mass","center_h1","center_he4","center_c12","center_n14","center_o16"]:
+                            if key == "co_core_mass":
+                                setattr(star, key, star.mass)
+                            elif key not in ["state", "mass", "spin",
+                                        "m_disk_accreted ", "m_disk_radiated","center_h1","center_he4","center_c12","center_n14","center_o16"]:
                                 setattr(star, key, None)           
                     else:                    
                         for key in STARPROPERTIES:
                             if key not in ["state", "mass", "spin",
-                                            "m_disk_accreted ", "m_disk_radiated"]:
+                                        "m_disk_accreted ", "m_disk_radiated","co_core_mass","center_h1","center_he4","center_c12","center_n14","center_o16"]:
                                 setattr(star, key, None)
                     
                     # check if SN_type matches the predicted CO
@@ -540,6 +542,7 @@ class StepSN(object):
                     # 1. Check if SN_type and star state match                    
                     # Non-matching SN_type and star state
                     if not check_SN_CO_match(star):
+                        print('here in if!')
                         # raise a warning
                         warnings.warn(f'{MODEL_NAME_SEL}: The SN_type '
                                       'does not match the predicted CO! '
@@ -611,6 +614,7 @@ class StepSN(object):
 
                 # check if a white dwarf has been born
                 if star.SN_type == "WD":
+                    print('here!')
                     star.mass = m_rembar
                     star.state = "WD"
                     star.spin = 0.
