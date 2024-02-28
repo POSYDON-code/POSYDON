@@ -486,6 +486,12 @@ DEFAULT_MARKERS_COLORS_LEGENDS = {
             ['s', 2, list_of_colors[0], 'Stable RLOF during stripped He star'],
         'Stable case BBB':
             ['s', 2, list_of_colors[0], 'Stable RLOF during stripped He star'],
+        'Stable case Cn':
+            ['s', 2, list_of_colors[1], 'Stable RLOF during postMS'],
+        'Stable case CBA':
+            ['s', 2, list_of_colors[0], 'Stable RLOF during stripped He star'],
+        'Stable case CBB':
+            ['s', 2, list_of_colors[0], 'Stable RLOF during stripped He star'],
         'Stable case BABB':
             ['s', 2, list_of_colors[0], 'Stable RLOF during stripped He star'],
         'Stable case BAn':
@@ -528,6 +534,14 @@ DEFAULT_MARKERS_COLORS_LEGENDS = {
             ['D', 2, list_of_colors[0], 
              'Unstable RLOF during stripped He star'],
         'Unstable case BBB':
+            ['D', 2, list_of_colors[0],
+             'Unstable RLOF during stripped He star'],
+        'Unstable case Cn':
+            ['D', 1, list_of_colors[1], 'Unstable RLOF during postMS'],
+        'Unstable case CBA':
+            ['D', 2, list_of_colors[0], 
+             'Unstable RLOF during stripped He star'],
+        'Unstable case CBB':
             ['D', 2, list_of_colors[0],
              'Unstable RLOF during stripped He star'],
         'Unstable case BABB':

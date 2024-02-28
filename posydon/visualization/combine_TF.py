@@ -181,7 +181,10 @@ def combine_TF12(IC, TF2, verbose=False):
                 # record first case
                 TF12[i] = 'Stable '+MTcases[0].replace('_',' ')[:-1]
                 # record last case
-                TF12[i] += MTcases[-1][:-1]
+                if MTcases[-1][-1] in ['1', '2']:
+                    TF12[i] += MTcases[-1][:-1]
+                else:
+                    TF12[i] += MTcases[-1]
             # shorten nonburning to n
             if 'nonburning' in TF12[i]:
                 TF12[i] = TF12[i].replace('nonburning','n')
@@ -218,7 +221,10 @@ def combine_TF12(IC, TF2, verbose=False):
                 # record first case
                 TF12[i] = 'Unstable '+MTcases[0].replace('_',' ')[:-1]
                 # record last case
-                TF12[i] += MTcases[-1][:-1]
+                if MTcases[-1][-1] in ['1', '2']:
+                    TF12[i] += MTcases[-1][:-1]
+                else:
+                    TF12[i] += MTcases[-1]
             # shorten nonburning to n
             if 'nonburning' in TF12[i]:
                 TF12[i] = TF12[i].replace('nonburning','n')
