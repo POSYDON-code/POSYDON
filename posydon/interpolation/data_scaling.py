@@ -122,15 +122,15 @@ class DataScaler:
 
         if self.method == 'min_max':
             x_t = ((x - self.params[0]) / (self.params[1] - self.params[0])
-                   * (self.upper - self.lower) + self.lower)
+                    * (self.upper - self.lower) + self.lower)
         elif self.method == 'log_min_max':
             x_t = ((np.log10(x) - self.params[0])
-                   / (self.params[1] - self.params[0])
-                   * (self.upper - self.lower) + self.lower)
+                    / (self.params[1] - self.params[0])
+                    * (self.upper - self.lower) + self.lower)
         elif self.method == 'neg_log_min_max':
             x_t = ((np.log10(-x) - self.params[0])
-                   / (self.params[1] - self.params[0])
-                   * (self.upper - self.lower) + self.lower)
+                    / (self.params[1] - self.params[0])
+                    * (self.upper - self.lower) + self.lower)
         elif self.method == 'max_abs':
             x_t = x / self.params[0]
         elif self.method == 'log_max_abs':

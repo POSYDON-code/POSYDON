@@ -30,7 +30,7 @@ __credits__ = [
 
 
 CC_quantities = ['state', 'SN_type', 'f_fb', 'mass', 'spin',
-                 'm_disk_accreted', 'm_disk_radiated']
+                 'm_disk_accreted', 'm_disk_radiated', 'CO_interpolation_class']
 
 def assign_core_collapse_quantities_none(EXTRA_COLUMNS, star_i, MODEL_NAME=None):
     """"Assign None values to all core collapse properties."""
@@ -168,10 +168,11 @@ def post_process_grid(grid, index=None, star_2_CO=True, MODELS=MODELS,
             stars_CO = [False]
             IC = 'no_MT'
         TF1 = grid.final_values['termination_flag_1'][i]
+        TF2 = grid.final_values['termination_flag_2'][i]
 
         # compute properties
         for j, star in enumerate(stars):
-            if not stars_CO[j] and IC in ['no_MT', 'stable_MT', 'unstable_MT']:
+            if not stars_CO[j] and IC in ['no_MT', 'stable_MT', 'unstable_MT', 'stable_reverse_MT']:
                 # stellar states
                 EXTRA_COLUMNS['S%s_state' % (j+1)].append(check_state_of_star(
                     star, star_CO=False))
@@ -239,7 +240,7 @@ def post_process_grid(grid, index=None, star_2_CO=True, MODELS=MODELS,
         
         # core collpase quantities
         if not single_star:
-            if interpolation_class in ['no_MT', 'stable_MT']:
+            if interpolation_class in ['no_MT', 'stable_MT', 'stable_reverse_MT']:
                 if (star_2_CO or (TF1 in TF1_POOL_STABLE and 
                     ('primary' in TF1 or 'Primary' in TF1))):
                     star = binary.star_1
@@ -293,7 +294,7 @@ def post_process_grid(grid, index=None, star_2_CO=True, MODELS=MODELS,
                             flush = False
                             SN.collapse_star(star_copy)
                             for quantity in CC_quantities:
-                                if quantity in ['state', 'SN_type']:
+                                if quantity in ['state', 'SN_type', 'CO_interpolation_class']:
                                     if not isinstance(getattr(star_copy, quantity), str):
                                         flush = True
                                         warnings.warn(f'{MODEL_NAME} {mechanism} {quantity} is not a string!')
@@ -315,8 +316,16 @@ def post_process_grid(grid, index=None, star_2_CO=True, MODELS=MODELS,
                             assign_core_collapse_quantities_none(EXTRA_COLUMNS, star_i, MODEL_NAME)
                         else:
                             for quantity in CC_quantities:
-                                EXTRA_COLUMNS[f'S{star_i}_{MODEL_NAME}_{quantity}'].append(
-                                getattr(star_copy, quantity))
+                                if quantity != 'CO_interpolation_class':
+                                    EXTRA_COLUMNS[f'S{star_i}_{MODEL_NAME}_{quantity}'].append(
+                                    getattr(star_copy, quantity))
+                                else:
+                                    if getattr(star_copy, 'state') == 'BH' and 'case' in TF2 and '1' in TF2 and '2' in TF2:
+                                        EXTRA_COLUMNS[f'S{star_i}_{MODEL_NAME}_{quantity}'].append(
+                                        getattr(star_copy, 'state')+'_reverse_MT')
+                                    else:
+                                        EXTRA_COLUMNS[f'S{star_i}_{MODEL_NAME}_{quantity}'].append(
+                                        getattr(star_copy, 'state'))
                             if verbose:
                                 print_CC_quantities(EXTRA_COLUMNS, star_copy, f'{MODEL_NAME}_{mechanism}')
                 else:
@@ -345,7 +354,7 @@ def post_process_grid(grid, index=None, star_2_CO=True, MODELS=MODELS,
                                 if not isinstance(getattr(star_copy, quantity), str):
                                     flush = True
                                     warnings.warn(f'{MODEL_NAME} {mechanism} {quantity} is not a string!')
-                            else:
+                            elif quantity != 'CO_interpolation_class':
                                 if not isinstance(getattr(star_copy, quantity), float):
                                     flush = True
                                     warnings.warn(f'{MODEL_NAME} {mechanism} {quantity} is not a float!')
@@ -363,8 +372,16 @@ def post_process_grid(grid, index=None, star_2_CO=True, MODELS=MODELS,
                         assign_core_collapse_quantities_none(EXTRA_COLUMNS, 1, MODEL_NAME)
                     else:
                         for quantity in CC_quantities:
-                            EXTRA_COLUMNS[f'S1_{MODEL_NAME}_{quantity}'].append(
-                            getattr(star_copy, quantity))
+                            if quantity != 'CO_interpolation_class':
+                                EXTRA_COLUMNS[f'S{star_i}_{MODEL_NAME}_{quantity}'].append(
+                                getattr(star_copy, quantity))
+                            else:
+                                if getattr(star_copy, 'state') == 'BH' and 'case' in TF2 and '1' in TF2 and '2' in TF2:
+                                    EXTRA_COLUMNS[f'S{star_i}_{MODEL_NAME}_{quantity}'].append(
+                                    getattr(star_copy, 'state')+'_reverse_MT')
+                                else:
+                                    EXTRA_COLUMNS[f'S{star_i}_{MODEL_NAME}_{quantity}'].append(
+                                    getattr(star_copy, 'state'))
                         if verbose:
                             print_CC_quantities(EXTRA_COLUMNS, star_copy, f'{MODEL_NAME}_{mechanism}')
             else:
@@ -427,7 +444,7 @@ def add_post_processed_quantities(grid, MESA_dirs_EXTRA_COLUMNS, EXTRA_COLUMNS,
             'EXTRA_COLUMNS do not follow the correct order of grid!')
 
     for column in EXTRA_COLUMNS.keys():
-        if "state" in column or "type" in column or column == 'mt_history':
+        if "state" in column or "type" in column  or "class" in column or column == 'mt_history':
             values = np.asarray(EXTRA_COLUMNS[column], str)
         else:
             values = np.asarray(EXTRA_COLUMNS[column], float)
