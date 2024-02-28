@@ -174,20 +174,17 @@ def combine_TF12(IC, TF2, verbose=False):
 #            elif TF2[i] in TF2_POOL_BC:
 #                TF12[i] = 'Stable case BC'
             elif 'case_nonburning' in TF2[i]:
-                TF12[i] = 'Stable case nonburning'
+                TF12[i] = 'Stable case n'
             elif '/' in TF2[i]:
                 # multiple cases, split them up
                 MTcases = TF2[i].split('/')
                 # record first case
                 TF12[i] = 'Stable '+MTcases[0].replace('_',' ')[:-1]
                 # record last case
-                if MTcases[-1][-1] in ['1', '2']:
-                    TF12[i] += MTcases[-1][:-1]
+                if 'nonburning' in MTcases[-1]:
+                    TF12[i] += 'n'
                 else:
-                    TF12[i] += MTcases[-1]
-            # shorten nonburning to n
-            if 'nonburning' in TF12[i]:
-                TF12[i] = TF12[i].replace('nonburning','n')
+                    TF12[i] += MTcases[-1][:-1]
         elif IC[i] == 'unstable_MT':
             if '1' in TF2[i] and '2' in TF2[i]:
                 TF12[i] = 'Reverse unstable MT'
@@ -214,20 +211,17 @@ def combine_TF12(IC, TF2, verbose=False):
             elif TF2[i] in TF2_POOL_UNSTABLE:
                 TF12[i] = "Unstable L2 RLOF"
             elif 'case_nonburning' in TF2[i]:
-                TF12[i] = 'Unstable case nonburning'
+                TF12[i] = 'Unstable case n'
             elif '/' in TF2[i]:
                 # multiple cases, split them up
                 MTcases = TF2[i].split('/')
                 # record first case
                 TF12[i] = 'Unstable '+MTcases[0].replace('_',' ')[:-1]
                 # record last case
-                if MTcases[-1][-1] in ['1', '2']:
-                    TF12[i] += MTcases[-1][:-1]
+                if 'nonburning' in MTcases[-1]:
+                    TF12[i] += 'n'
                 else:
-                    TF12[i] += MTcases[-1]
-            # shorten nonburning to n
-            if 'nonburning' in TF12[i]:
-                TF12[i] = TF12[i].replace('nonburning','n')
+                    TF12[i] += MTcases[-1][:-1]
 
         # catch if something is missing from the logic
         if TF12[i] == 'unknown':
