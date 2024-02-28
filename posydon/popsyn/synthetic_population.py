@@ -226,7 +226,7 @@ class History():
                 if self.verbose:
                     print('history_lengths not found in population file. Calculating history lengths...')
                 history_events = store.select_column('history', 'index')
-                self.lengths = history_events.groupby(history_events).count()
+                self.lengths = pd.DataFrame(history_events.groupby(history_events).count())
                 if self.verbose:
                     print('Storing history lengths in population file!')
                 store.put('history_lengths', pd.DataFrame(self.lengths), format='table')
@@ -693,7 +693,6 @@ class Population(PopulationIO):
             else:
                 return row['channel']
     
-    
         previous = 0
         
         for i in tqdm(range(0,len(unique_binary_indices), self.chunksize), disable=not self.verbose):
@@ -701,7 +700,7 @@ class Population(PopulationIO):
             
             # create the dataframe for the chunk
             df = pd.DataFrame(index=selection, columns=['channel_debug', 'channel'])
-            end = previous + self.history_lengths[i:i+self.chunksize].sum()
+            end = previous + self.history_lengths.iloc[i:i+self.chunksize].sum().iloc[0]
 
             # get the history of chunk events and transform the interp_class_HMS_HMS
             interp_class_HMS_HMS = self.oneline.select(start=i, stop=i+self.chunksize, columns=['interp_class_HMS_HMS'])
@@ -802,7 +801,7 @@ class Population(PopulationIO):
         
         previous = 0
         for i in tqdm(range(0,len(unique_binary_indices), self.chunksize), disable=not self.verbose):
-            end = previous + history_lengths[i:i+self.chunksize].sum()
+            end = previous + history_lengths[i:i+self.chunksize].sum().iloc[0]
             
             oneline_chunk = self.oneline.select(start=i,
                                         stop=i+self.chunksize,
@@ -888,7 +887,7 @@ class TransientPopulation(Population):
     
     @property
     def columns(self):
-        '''Return the columns of the synthetic population'''
+        '''Return the columns of the transient population'''
         if not hasattr(self, '_columns'):
             with pd.HDFStore(self.filename, mode='r') as store:
                 self._columns = store.select('transients/'+self.transient_name, start=0, stop=0).columns
@@ -896,7 +895,7 @@ class TransientPopulation(Population):
     
         
     def select(self, where=None, start=None, stop=None, columns=None):
-        '''Select a subset of the synthetic population'''
+        '''Select a subset of the transient population'''
         return pd.read_hdf(self.filename, key='transients/'+self.transient_name, where=where, start=start, stop=stop, columns=columns)
         
     def get_efficiency_over_metallicity(self):
@@ -946,7 +945,7 @@ class TransientPopulation(Population):
             plot the subchannels
         '''
         if not hasattr(self, 'efficiency'):
-            raise ValueError('First you need to compute the merger efficiency!')
+            raise ValueError('First you need to compute the efficiency over metallicity!')
         plot_pop.plot_merger_efficiency(self.efficiency.index.to_numpy()*Zsun, self.efficiency, **kwargs)
 
     
