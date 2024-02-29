@@ -42,7 +42,8 @@ from posydon.utils.common_functions import (
     orbital_period_from_separation,
     inspiral_timescale_from_separation,
     separation_evol_wind_loss,
-    calculate_Patton20_values_at_He_depl
+    calculate_Patton20_values_at_He_depl,
+    THRESHOLD_CENTRAL_ABUNDANCE
 )
 
 from posydon.binary_evol.binarystar import BINARYPROPERTIES
@@ -525,15 +526,21 @@ class StepSN(object):
                     
                     if star.state == 'WD':
                         for key in STARPROPERTIES:
-                            if key == "co_core_mass":
+                            if key in ["he_core_mass"]:
                                 setattr(star, key, star.mass)
+                            elif key in ["co_core_mass"]:
+                                if star.center_he4 < THRESHOLD_CENTRAL_ABUNDANCE: 
+                                    setattr(star, key, star.mass)
+                                else: 
+                                    setattr(star, key, 0.)
                             elif key not in ["state", "mass", "spin",
                                         "m_disk_accreted ", "m_disk_radiated","center_h1","center_he4","center_c12","center_n14","center_o16"]:
-                                setattr(star, key, None)           
+                                setattr(star, key, None)          
+                    
                     else:                    
                         for key in STARPROPERTIES:
                             if key not in ["state", "mass", "spin",
-                                        "m_disk_accreted ", "m_disk_radiated","co_core_mass","center_h1","center_he4","center_c12","center_n14","center_o16"]:
+                                        "m_disk_accreted ", "m_disk_radiated"]:
                                 setattr(star, key, None)
                     
                     # check if SN_type matches the predicted CO
