@@ -65,7 +65,7 @@ def print_CC_quantities(EXTRA_COLUMNS, star, MODEL_NAME=None):
         try:
             if star.spin==None:
                 spin = np.nan
-            else
+            else:
                 spin = star.spin
             print(format_val.format(MODEL_NAME,
                     star.state, star.SN_type, star.f_fb,
