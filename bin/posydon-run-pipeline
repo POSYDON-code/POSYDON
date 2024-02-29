@@ -276,6 +276,10 @@ def train_interpolators(i, path_to_csv_file, verbose=False):
             raise ValueError(f'{grid_path} not found!')
     else:
         raise ValueError(f'No path_to_grid in {path_to_csv_file}')
+    if 'grid_type' in df.keys():
+        grid_type = df.loc[i,'grid_type']
+    else:
+        raise ValueError(f'No grid_type in {path_to_csv_file}')
     if 'interpolation_method' in df.keys():
         interpolation_method = df.loc[i,'interpolation_method']
     else:
@@ -306,7 +310,7 @@ def train_interpolators(i, path_to_csv_file, verbose=False):
     if '_RLO' not in interpolation_method:
         interp_method += [method]
         interp_classes += ["no_MT"]
-    if 'CO-' not in grid_path:
+    if 'CO' not in grid_type:
         interp_method += [method]
         interp_classes += ["stable_reverse_MT"]
     
