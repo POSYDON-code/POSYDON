@@ -268,6 +268,9 @@ def plot_popsyn_over_grid_slice(pop, grid_type, met_Zsun, slices=None, channel=N
                                 log_prop=False, alpha=0.3, s=5., 
                                 show_fig=True, save_fig=True, close_fig=True,
                                 verbose=False):
+    # Check if step_names in pop.history data
+    if 'step_names' not in pop.history.columns:
+        raise ValueError('Formation channel information not available in popsynth data.')
 
     # load grid
     met = convert_metallicity_to_string(met_Zsun)
@@ -276,13 +279,12 @@ def plot_popsyn_over_grid_slice(pop, grid_type, met_Zsun, slices=None, channel=N
     grid.load(grid_path)
 
     # check if formation channel information is avaialbe
-    if channel is not None and 'channel' not in pop.df_oneline.keys():
-        if verbose:
-            print('Computing formation channels...')
-        pop.get_formation_channels()
+    if channel is not None and 'channel' not in pop.columns:
+        raise ValueError('Formation channel information not available in popsynth data.')
         
     if 'CO' in grid_path:
         # compact object mass slices
+        # TODO: THIS SELECTION DOES NOT WORK!
         m_COs = np.unique(np.around(grid.initial_values['star_2_mass'],1))
         m_COs_edges = 10**((np.log10(np.array(m_COs)[1:])+np.log10(np.array(m_COs)[:-1]))*0.5)
         m2 = [0.]+m_COs_edges.tolist()+[2*m_COs_edges[-1]]
@@ -303,6 +305,11 @@ def plot_popsyn_over_grid_slice(pop, grid_type, met_Zsun, slices=None, channel=N
     else:
         raise ValueError('Grid type not supported!')
 
+    
+    if channel is not None:
+        channel_sel = ' & channel == '+str(channel)
+    else:
+        channel_sel = ''            
 
     for i, var in enumerate(vars):
         if slices is not None and round(var,2) not in np.around(slices,2):
@@ -311,11 +318,15 @@ def plot_popsyn_over_grid_slice(pop, grid_type, met_Zsun, slices=None, channel=N
             continue
         if 'HMS-HMS' in grid_path:
             slice_3D_var_range = (dq_edges[i],dq_edges[i+1])
+            
             # select popsynth binaries in the given mass ratio range
-            sel = (pop.df['metallicity'] == met_Zsun*Zsun) & (pop.df['event'] == 'ZAMS')
-            q = pop.df['S2_mass'].values/pop.df['S1_mass'].values
+            met_indices = pop.select(where='metallicity == '+str(met_Zsun)+channel_sel, columns=[]).index.to_list()
+            sel = 'index in '+str(met_indices)+' & event == "ZAMS"'
+            data = pop.history.select(where=sel, columns=['S1_mass','S2_mass' ,'orbital_period'])
+            
+            q = data['S2_mass'].values/data['S1_mass'].values
             q[q>1] = 1./q[q>1]
-            mask = sel & (q>=slice_3D_var_range[0]) & (q<=slice_3D_var_range[1])
+            mask = (q>=slice_3D_var_range[0]) & (q<=slice_3D_var_range[1])
         elif 'CO' in grid_path:
             if i == len(m2):
                 continue
@@ -323,13 +334,19 @@ def plot_popsyn_over_grid_slice(pop, grid_type, met_Zsun, slices=None, channel=N
             # select popsynth binaries in the given compact object mass
             # TODO: implement the case of reversal mass ratio
             if 'CO-HMS_RLO' in grid_path:
-                sel = (pop.df['metallicity'] == met_Zsun*Zsun) & (pop.df['event'] == 'oRLO2')
-                m_CO = pop.df['S1_mass'].values
-                mask = sel & (m_CO>=slice_3D_var_range[0]) & (m_CO<=slice_3D_var_range[1])
+                met_indices = pop.select(where='metallicity == '+str(met_Zsun)+channel_sel, columns=[]).index.to_list()
+                sel = 'index in '+str(met_indices)+' & event == "oRLO2"'
+                data = pop.history.select(where=sel, columns=['S1_mass','S2_mass' ,'orbital_period'])
+                
+                m_CO = data['S1_mass'].values
+                mask = (m_CO>=slice_3D_var_range[0]) & (m_CO<=slice_3D_var_range[1])
+                
             elif 'CO-HeMS' in grid_path:
-                sel = (pop.df['metallicity'] == met_Zsun*Zsun) & (pop.df['step_names'] == 'step_CE')
-                m_CO = pop.df['S1_mass'].values
-                mask = sel & (m_CO>=slice_3D_var_range[0]) & (m_CO<=slice_3D_var_range[1])
+                met_indices = pop.select(where='metallicity == '+str(met_Zsun)+channel_sel, columns=[]).index.to_list()
+                sel = 'index in '+str(met_indices)+' & step_names == "step_CE"'
+                data = pop.history.select(where=sel, columns=['S1_mass','S2_mass' ,'orbital_period'])
+                m_CO = data['S1_mass'].values
+                mask = (m_CO>=slice_3D_var_range[0]) & (m_CO<=slice_3D_var_range[1])
             else:
                 raise ValueError('Grid type not supported!')
         # TODO: skip plotting slice if there are no data
@@ -351,17 +368,19 @@ def plot_popsyn_over_grid_slice(pop, grid_type, met_Zsun, slices=None, channel=N
                             grid_3D=True, slice_3D_var_str=slice_3D_var_str,
                             slice_3D_var_range=slice_3D_var_range,
                             verbose=False, **PLOT_PROPERTIES)
-            # pop synth
-            # only plot selected channel
-            if channel is not None:
-                sel_binary_index = pop.df_oneline.loc[pop.df_oneline['channel'] == channel].index.values.tolist()
-                mask = mask & (pop.df.index.isin(sel_binary_index))
-            log10_m1 = np.log10(pop.df.loc[mask,'S1_mass'].values)
-            log10_p = np.log10(pop.df.loc[mask,'orbital_period'].values)
+            
+            log10_m1 = np.log10(data.loc[mask,'S1_mass'].values)
+            log10_p = np.log10(data.loc[mask,'orbital_period'].values)
             # plot color map of a given DCO variable
             if prop is not None:
-                sel = pop.df.index.isin(pop.df.loc[mask].index.values.tolist()) & (pop.df['event'] == 'CO_contact')
-                prop_values = pop.df.loc[sel,prop].values
+                if prop not in pop.columns:
+                    raise ValueError(f'Property {prop} not available in popsynth data.')
+                
+                # basically only for DCO systems
+                prop_sel = sel + ' & event == "CO_contact"'
+                prop_data = pop.history.select(where=prop_sel, columns=[prop])
+                prop_values = prop_data[prop].values
+                
                 vmin = prop_range[0]
                 vmax = prop_range[1]
                 if log_prop:

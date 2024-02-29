@@ -24,7 +24,7 @@ from posydon.popsyn.io import binarypop_kwargs_from_ini
 from posydon.popsyn.binarypopulation import BinaryPopulation
 from posydon.utils.common_functions import convert_metallicity_to_string
 from posydon.popsyn.normalized_pop_mass import initial_total_underlying_mass
-from posydon.popsyn.rate_calculation import Rates
+#from posydon.popsyn.rate_calculation import Rates
 import posydon.visualization.plot_pop as plot_pop
 from posydon.popsyn.GRB import get_GRB_properties, GRB_PROPERTIES
 
@@ -33,6 +33,18 @@ from posydon.interpolation.IF_interpolation import IFInterpolator
 from posydon.binary_evol.binarystar import BinaryStar
 from posydon.binary_evol.singlestar import SingleStar
 from posydon.utils.common_functions import convert_metallicity_to_string
+
+
+from astropy.cosmology import Planck15 as cosmology
+from astropy.cosmology import z_at_value
+from scipy.interpolate import interp1d
+from astropy import units as u
+from astropy import constants as const
+import scipy as sp
+
+
+from posydon.popsyn.star_formation_history import star_formation_rate,fractional_SFR_at_given_redshift, SFR_Z_fraction_at_given_redshift
+
 
 from posydon.popsyn.binarypopulation import HISTORY_MIN_ITEMSIZE, ONELINE_MIN_ITEMSIZE
 
@@ -156,6 +168,21 @@ parameter_array = [ "number_of_binaries",
                    'eccentricity_scheme']
 
 
+DEFAULT_MODEL = {
+    'delta_t' : 100, # Myr
+    'SFR' : 'IllustrisTNG',
+    'sigma_SFR' : None,
+    'Z_max' : 1.,
+    'select_one_met' : False,
+    'dlogZ' : None, # e.g, [np.log10(0.0142/2),np.log10(0.0142*2)]
+    'Zsun' : Zsun,
+    'compute_GRB_properties' : False,
+    'GRB_beaming' : 1., # e.g., 0.5, 'Goldstein+15'
+    'GRB_efficiency' : 0., # e.g., 0.01
+    'E_GRB_iso_min' : 0., # e.g., 1e51 erg 
+}
+
+# TODO: I don't know if the merge_populations function is still needed
 def merge_populations(populations, filename, verbose=False):
     '''merges multiple populations into a single population file'''
     
@@ -270,7 +297,7 @@ class History():
             if key in self.columns:
                 return pd.read_hdf(self.filename, key='history', columns=[key])
             else:
-                raise ValueError(f'{key} is not a valid column se!')
+                raise ValueError(f'{key} is not a valid column name!')
         elif isinstance(key, list) and all(isinstance(x, str) for x in key):
             if all(x in self.columns for x in key):
                 return pd.read_hdf(self.filename, key='history', columns=key)
@@ -430,7 +457,7 @@ class PopulationIO():
 
 class Population(PopulationIO):
     
-    def __init__(self, filename, metallicity=None, ini_file=None, verbose=False, chunksize=10000):
+    def __init__(self, filename, metallicity=None, ini_file=None, verbose=False, chunksize=1000):
         '''A Population file.
         
         Parameters
@@ -444,7 +471,7 @@ class Population(PopulationIO):
 
         Optional parameters for adding additional information to old population files.            
         metallicity : float
-            The metallicity of the population. 
+            The metallicity of the population in solar units.
         ini_file : str
             The path to the ini file used to create the population. 
         
@@ -528,7 +555,7 @@ class Population(PopulationIO):
         self.number_of_systems = self.oneline.number_of_systems
         self.indices = self.history.indices
         
-    def export_selection(self, selection, filename):
+    def export_selection(self, selection, filename, chunksize=1):
         '''Export a selection of the population to a new file
         
         Parameters
@@ -586,29 +613,35 @@ class Population(PopulationIO):
                                           np.arange(last_index_in_file+1, last_index_in_file+len(selection)+1, 1)
                                    )}
                        
+            if 'metallicity' not in self.oneline.columns:
+                warnings.warn('No metallicity column in oneline dataframe! Using the metallicity of the population file and adding it to the oneline.')
+                if len(self.metallicities) > 1:
+                    raise ValueError('The population file contains multiple metallicities. Please add a metallicity column to the oneline dataframe!')
+            
+            if self.verbose:
+                print('Writing selected systems to population file...')
+            
             # write oneline of selected systems
             for i in tqdm(range(0, len(selection), 1000), total=len(selection)//1000, disable=not self.verbose):
                 tmp_df = self.oneline[selection[i:i+1000]]
                 if 'metallicity' in tmp_df.columns:
                     tmp_df['metallicity'] = tmp_df['metallicity'].astype('float')
                 else:
-                    warnings.warn('No metallicity column in oneline dataframe! Using the metallicity of the population file and adding it to the oneline.')
-                    if len(self.metallicities) > 1:
-                        raise ValueError('The population file contains multiple metallicities. Please add a metallicity column to the oneline dataframe!')
-                    else:
-                        tmp_df['metallicity'] = self.metallicities[0]
+                    tmp_df['metallicity'] = self.metallicities[0]
                 tmp_df.rename(index=reindex, inplace=True)
                 store.append('oneline', tmp_df, format='table', data_columns=True, min_itemsize=oneline_min_itemsize, index=False)
             
+            if self.verbose:
+                print('Oneline: Done')
 
             # write history of selected systems    
-            for i in tqdm(selection, total=len(selection), disable=not self.verbose):
-                tmp_df = self.history[int(i)]
-                tmp_df.rename(index={i:reindex[i]}, inplace=True)
+            for i in tqdm(range(0,len(selection), chunksize), total=len(selection)//chunksize, disable=not self.verbose):
+                tmp_df = self.history[selection[i:i+chunksize]]
+                tmp_df.rename(index=reindex, inplace=True)
                 store.append('history', tmp_df, format='table', data_columns=True, min_itemsize=history_min_itemsize, index=False)
         
             if self.verbose:
-                print('Selected systems written to population file!')
+                print('History: Done')
         
             # write formation channels of selected systems
             if self.formation_channels is not None:
@@ -705,23 +738,23 @@ class Population(PopulationIO):
             # get the history of chunk events and transform the interp_class_HMS_HMS
             interp_class_HMS_HMS = self.oneline.select(start=i, stop=i+self.chunksize, columns=['interp_class_HMS_HMS'])
             events = self.history.select(start=previous, stop=end, columns=['event'])
-
-            mask = ~ pd.isna(interp_class_HMS_HMS['interp_class_HMS_HMS'])
-            interp_class_HMS_HMS[mask].apply(lambda x: HMS_HMS_event_dict[x['interp_class_HMS_HMS']], axis=1)
+            
+            mask = ~ pd.isna(interp_class_HMS_HMS['interp_class_HMS_HMS'].values)
+            interp_class_HMS_HMS.loc[mask, 'interp_class_HMS_HMS'] = interp_class_HMS_HMS[mask].apply(lambda x: HMS_HMS_event_dict[x['interp_class_HMS_HMS']], axis=1).values
             del mask
             
             previous = end
+            print(previous, end)
             # combine based on the index, this allows for an easier apply later
             merged = pd.merge(events.dropna(), interp_class_HMS_HMS, left_index=True, right_index=True)
             del events, interp_class_HMS_HMS
             
-            merged.index.se='binary_index'
+            merged.index.name ='binary_index'
             df['channel_debug'] = merged.groupby('binary_index').apply(get_events)
             del merged
             df['channel'] = df['channel_debug'].str.replace('_redirect', '').str.replace('_CO_contact', '')
-                        
+
             if mt_history:
-                
                 columns = self.oneline.columns
                 if 'mt_history_HMS_HMS' not in columns:
                     raise ValueError('mt_history_HMS_HMS not saved in the oneline dataframe!')
@@ -789,11 +822,17 @@ class Population(PopulationIO):
             min_itemsize.update({key:val for key, val in 
                                 HISTORY_MIN_ITEMSIZE.items() 
                                 if key in hist_cols})
+        else:
+            hist_cols = self.history.columns
+            min_itemsize.update(HISTORY_MIN_ITEMSIZE)
         
         if oneline_cols is not None:
             min_itemsize.update({key:val for key, val in
                                 ONELINE_MIN_ITEMSIZE.items()
                             if key in oneline_cols})
+        else:
+            oneline_cols = self.oneline.columns
+            min_itemsize.update(ONELINE_MIN_ITEMSIZE)
 
         # setup a mapping to the size of each history colummn
         history_lengths = self.history_lengths
@@ -801,6 +840,7 @@ class Population(PopulationIO):
         
         previous = 0
         for i in tqdm(range(0,len(unique_binary_indices), self.chunksize), disable=not self.verbose):
+
             end = previous + history_lengths[i:i+self.chunksize].sum().iloc[0]
             
             oneline_chunk = self.oneline.select(start=i,
@@ -817,6 +857,9 @@ class Population(PopulationIO):
                 formation_channels_chunk = None
             
             syn_df = func(history_chunk, oneline_chunk, formation_channels_chunk)
+
+            if len(syn_df.columns) != len(syn_df.columns.unique()):
+                raise ValueError('Synthetic population contains duplicate columns!')
             
             # filter out the columns in min_itemsize that are not in the dataframe
             min_itemsize = {key:val for key, val in min_itemsize.items() if key in syn_df.columns}
@@ -857,9 +900,11 @@ class TransientPopulation(Population):
         with pd.HDFStore(self.filename, mode='r') as store:
             if '/transients/'+transient_name not in store.keys():
                 raise ValueError(f'{transient_name} is not a valid transient population in {filename}!')
-        
-        self.transient_name = transient_name
 
+            self.transient_name = transient_name        
+            if '/transients/'+transient_name+'/efficiencies' in store.keys():
+                self._load_efficiency(filename)
+                
     @property
     def population(self):
         '''Returns the whole synthetic populaiton as a pandas dataframe.
@@ -876,14 +921,14 @@ class TransientPopulation(Population):
     def _load_efficiency(self, filename):
         '''Load the efficiency from the file'''
         with pd.HDFStore(filename, mode='r') as store:
-            self.efficiency = store['transients/'+self.transient_name+'_efficiencies']
+            self.efficiency = store['transients/'+self.transient_name+'/efficiencies']
             if self.verbose:
                 print('Efficiency table read from population file!')
                 
     def _save_efficiency(self, filename):
         '''Save the efficiency to the file'''
         with pd.HDFStore(filename, mode='a') as store:
-            store.put('transients/'+self.transient_name+'_efficiencies', self.efficiency)
+            store.put('transients/'+self.transient_name+'/efficiencies', self.efficiency)
     
     @property
     def columns(self):
@@ -903,6 +948,10 @@ class TransientPopulation(Population):
         
         if hasattr(self, 'efficiency'):
             print('Efficiencies already computed! Overwriting them!')
+            with pd.HDFStore(self.filename, mode='a') as store:
+                if '/transients/'+self.transient_name+'/efficiencies' in store.keys():
+                    del store['transients/'+self.transient_name+'/efficiencies']
+                
         
         metallicities = self.mass_per_met.index.to_numpy()
         efficiencies = []
@@ -924,7 +973,7 @@ class TransientPopulation(Population):
             for ch in channels:
                 efficiencies = []
                 for met in metallicities:
-                    count = self.select(where='metallicity == {} & channel == {}'.format(met, ch)).shape[0]
+                    count = np.sum((self.select(where='(metallicity == {})'.format(met), columns=['channel']) == ch).values)
                     if count > 0:
                         underlying_stellar_mass = self.mass_per_met['underlying_mass'][met]
                         eff = count/underlying_stellar_mass
@@ -936,6 +985,121 @@ class TransientPopulation(Population):
         # save the efficiency
         self._save_efficiency(self.filename)
 
+
+    def calculate_cosmic_weights(self, SFH_identifier, MODEL_in=None):
+        '''Calculate the cosmic weights of the transient population'''
+        
+        # Set model to DEFAULT or provided MODEL parameters
+        # Allows for partial model specification
+        if MODEL_in is None:
+            MODEL = DEFAULT_MODEL
+        else:
+            for key in MODEL_in:
+                if key not in DEFAULT_MODEL:
+                    raise ValueError(key + " is not a valid parameter name!")
+            
+            # write the DEFAULT_MODEL with updates parameters to self.MODEL.
+            MODEL = DEFAULT_MODEL
+            MODEL.update(MODEL_in)
+        
+        path_in_file = '/transients/'+self.transient_name+'/rates/'+SFH_identifier+'/'
+        
+        with pd.HDFStore(self.filename, mode='a') as store:
+            if path_in_file+'MODEL' in store.keys():
+                store.remove(path_in_file+'MODEL')
+                if self.verbose:
+                    print('Cosmic weights already computed! Overwriting them!')
+                if path_in_file+'weights' in store.keys():
+                    store.remove(path_in_file+'weights')
+                if path_in_file+'z_events' in store.keys():
+                    store.remove(path_in_file+'z_events')
+                if path_in_file+'birth' in store.keys():
+                    store.remove(path_in_file+'birth')
+            store.put(path_in_file+'MODEL', pd.DataFrame(MODEL, index=[0]))
+        
+        rates = Rates(self.filename,
+                      self.transient_name,
+                      SFH_identifier,
+                      verbose=self.verbose)
+        
+        z_birth = rates.centers_redshift_bins
+        t_birth = rates.get_cosmic_time_from_redshift(z_birth)
+        nr_of_birth_bins = len(z_birth)
+        # write birth to the population file
+        with pd.HDFStore(self.filename, mode='a') as store:
+            store.put(path_in_file+'birth', pd.DataFrame(data={'z':z_birth,
+                                                               't':t_birth}))
+        
+        get_redshift_from_time_cosmic_time = rates.redshift_from_cosmic_time_interpolator
+        indices = self.indices
+
+        for i in tqdm(range(0, len(indices), self.chunksize), desc='event loop', disable=not self.verbose):
+        
+            selected_indices = self.select(start=i,
+                                           stop=i+self.chunksize,
+                                           columns=['index']).index.to_numpy().flatten()
+
+            #selected_indices = indices[i:i+self.chunksize]
+            delay_time = self.select(start=i,
+                                     stop=i+self.chunksize,
+                                     columns=['time']).to_numpy() *1e-3 # Gyr
+            
+            
+            t_events = t_birth + delay_time
+            hubble_time_mask = t_events  <= cosmology.age(1e-08).value*0.9999999
+            
+            # get the redshift of the events
+            z_events = np.full(t_events.shape, np.nan)
+            z_events[hubble_time_mask] = get_redshift_from_time_cosmic_time(t_events[hubble_time_mask])
+            
+            # sample the SFH for only the events that are within the Hubble time
+            # I only need to sample the SFH at each metallicity and z_birth
+            # Not for every event!
+            SFR_at_z_birth = star_formation_rate(rates.MODEL['SFR'], z_birth)
+            # get metallicity bin edges
+            met_edges = rates.edges_metallicity_bins
+
+            # get the fractional SFR at each metallicity and z_birth
+            fSFR = SFR_Z_fraction_at_given_redshift(z_birth,
+                                                    rates.MODEL['SFR'],
+                                                    rates.MODEL['sigma_SFR'],
+                                                    met_edges,
+                                                    rates.MODEL['Z_max'],
+                                                    rates.MODEL['select_one_met'])
+                                                    
+            # simulated mass per given metallicity corrected for the unmodeled
+            # single and binary stellar mass
+            M_model = rates.mass_per_met.loc[rates.centers_metallicity_bins/Zsun]['underlying_mass'].values
+            
+            # speed of light
+            c = const.c.to('Mpc/yr').value  # Mpc/yr
+            
+            # delta cosmic time bin
+            deltaT = rates.MODEL['delta_t'] * 10 ** 6  # yr
+            
+            D_c = rates.get_comoving_distance_from_redshift(z_events)  # Mpc
+            
+            # the events have to be in solar metallicity
+            met_events = self.select(start=i,
+                                      stop=i+self.chunksize,
+                                      columns=['metallicity']).to_numpy().flatten() * Zsun
+
+            weights = np.zeros((len(met_events), nr_of_birth_bins))
+            for i, met in enumerate(rates.centers_metallicity_bins):
+                mask = met_events == met
+                weights[mask,:] = 4.*np.pi * c * D_c[mask]**2 * deltaT * (fSFR[:,i]*SFR_at_z_birth) / M_model[i] # yr^-1
+            
+            
+            with pd.HDFStore(self.filename, mode='a') as store:
+                store.append(path_in_file+'weights',
+                             pd.DataFrame(data=weights, index=selected_indices),
+                             format='table')
+                store.append(path_in_file+'z_events',
+                             pd.DataFrame(data=z_events, index=selected_indices),
+                             format='table')
+            
+        return rates
+    
     def plot_efficiency_over_metallicity(self, **kwargs):
         '''plot the efficiency over metallicity
         
@@ -948,7 +1112,6 @@ class TransientPopulation(Population):
             raise ValueError('First you need to compute the efficiency over metallicity!')
         plot_pop.plot_merger_efficiency(self.efficiency.index.to_numpy()*Zsun, self.efficiency, **kwargs)
 
-    
     def plot_delay_time_distribution(self, metallicity=None, ax=None, bins=100,):
         '''Plot the delay time distribution of the transient population'''
         
@@ -978,9 +1141,330 @@ class TransientPopulation(Population):
     
     def plot_popsyn_over_grid_slice(self, grid_type, met_Zsun, **kwargs):
         '''Plot the transients over the grid slice'''
+        
+        plot_pop.plot_popsyn_over_grid_slice(pop=self,
+                                             grid_type=grid_type, 
+                                             met_Zsun=met_Zsun,
+                                             **kwargs)
+    
+ 
+class Rates(TransientPopulation):
+    
+    def __init__(self, filename, transient_name, SFH_identifier, verbose=False):
+        
+        super().__init__(filename, transient_name, verbose=verbose)
+        self.SFH_identifier = SFH_identifier
+        
+        self.base_path = '/transients/'+self.transient_name+'/rates/'+self.SFH_identifier+'/'
+        
+        with pd.HDFStore(self.filename, mode='r') as store:
+            if '/transients/'+self.transient_name+'/rates/'+self.SFH_identifier+'/MODEL' not in store.keys():
+                raise ValueError(f'{self.SFH_identifier} is not a valid SFH_identifier in {filename}!')
+            
+        # load in the SFH_model
+        with pd.HDFStore(self.filename, mode='r') as store:
+            self.MODEL = store[self.base_path+'MODEL'].iloc[0].to_dict()
+        
+    @property
+    def weights(self):
+        with pd.HDFStore(self.filename, mode='r') as store:
+            return store[self.base_path+'weights']
+           
+    @property
+    def z_birth(self):
+        '''Get the redshift of the birth bins. Should return the same as centers_redshift_bins'''
+        with pd.HDFStore(self.filename, mode='r') as store:
+            return store[self.base_path+'birth']
+        
+    @property
+    def z_events(self):
+        with pd.HDFStore(self.filename, mode='r') as store:
+            return store[self.base_path+'z_events']
+    
+    
+    def intrinsic_rate_density(self, mt_channels=False):
+        '''Compute the intrinsic rate density of the transient population'''
+        
+        
+        z_events = self.z_events.to_numpy()
+        weights = self.weights.to_numpy()
+        z_horizon = self.edges_redshift_bins
+        n = len(z_horizon)
+        
+        if mt_channels:
+            channels = self.select(columns=['channel'])
+            unique_channels = np.unique(channels)
+        else:
+            unique_channels = []
+            
+        intrinsic_rate_density = pd.DataFrame(index=z_horizon[:-1], columns=['total'])
+        
+        normalisation = np.zeros(n-1)
+        
+        for i in tqdm(range(1, n), total=n-1, disable=not self.verbose):
+            normalisation[i-1] = self.get_shell_comoving_volume(z_horizon[i-1],z_horizon[i],'infinite')
+        
+        for i in tqdm(range(1, n), total=n-1, disable=not self.verbose):
+            mask = (z_events > z_horizon[i-1]) & (z_events <= z_horizon[i])
+            for ch in unique_channels:
+                mask_ch = channels == ch
+                intrinsic_rate_density.loc[z_horizon[i-1], ch] = np.nansum(weights[mask & mask_ch])/normalisation[i-1]
+            
+            intrinsic_rate_density.loc[z_horizon[i-1], 'total'] = np.nansum(weights[mask])/normalisation[i-1]
+                
+        with pd.HDFStore(self.filename, mode='a') as store:
+            store.put(self.base_path+'intrinsic_rate_density', intrinsic_rate_density)
+        
+        return intrinsic_rate_density                               
+                                                                    
+        
+    #### cosmolgy ####
+    ##################
+    
+    def get_shell_comoving_volume(self, z_hor_i, z_hor_f, sensitivity='infinite'):
+        """Compute comoving volume corresponding to a redshift shell.
+
+        Parameters
+        ----------
+        z_hor_i : double
+            Cosmological redshift. Lower bound of the integration.
+        z_hor_f : double
+            Cosmological redshift. Upper bound of the integration.
+        sensitivity : string
+            hoose which GW detector sensitivity you want to use. At the moment
+            only 'infinite' is available, i.e. p_det = 1.
+
+        Returns
+        -------
+        double
+            Retruns the comoving volume between the two shells z_hor_i
+            and z_hor_f in Gpc^3.
+
+        """
+        c = const.c.to('Gpc/yr').value  # Gpc/yr
+        H_0 = cosmology.H(0).to('1/yr').value # km/Gpc*s
+        def E(z):
+            Omega_m = cosmology.Om0
+            Omega_L = 1-cosmology.Om0
+            return np.sqrt(Omega_m*(1.+z)**3+Omega_L)
+        def f(z,sensitivity):
+            if sensitivity=='infinite':
+                return (1./(1.+z) * 4*np.pi*c / H_0
+                        * (self.get_comoving_distance_from_redshift(z)
+                        * 10**(-3.))**2. / E(z))
+            else:
+                # TODO: peanut-shaped antenna patter comoving volume calculation
+                raise ValueError('Sensitivity not supported!')
+        return sp.integrate.quad(f, z_hor_i, z_hor_f, args=(sensitivity))[0] # Gpc^3
+        
+    def get_comoving_distance_from_redshift(self, z):
+        """Compute the comoving distance from redshift.
+
+        Parameters
+        ----------
+        z : double
+            Cosmological redshift.
+
+        Returns
+        -------
+        double
+            Comoving distance in Mpc corresponding to the redhisft z.
+
+        """
+        return cosmology.comoving_distance(z).value  # Mpc
+        
+    
+    
+    ### metallicity bins ###
+    ########################
+    @property
+    def edges_metallicity_bins(self):
+        """Return the edges of the metallicity bins.
+
+        Returns
+        -------
+        array double
+            Returns the edges of all metallicity bins. We assume metallicities
+            were binned in log-space.
+
+        """
+        met_val = np.log10(self.centers_metallicity_bins)
+        bin_met = np.zeros(len(met_val)+1)
+        # if more than one metallicty bin
+        if len(met_val) > 1 :
+            bin_met[0] = met_val[0] - (met_val[1] - met_val[0]) / 2.
+            bin_met[-1] = met_val[-1] + (met_val[-1] - met_val[-2]) / 2.
+            bin_met[1:-1] = met_val[:-1] + (met_val[1:] - met_val[:-1]) / 2.
+        # one metallicty bin
+        elif len(met_val) == 1 :
+            if isinstance(self.MODEL['dlogZ'], float):
+                bin_met[0] = met_val[0] - self.MODEL['dlogZ'] / 2.
+                bin_met[-1] = met_val[0] + self.MODEL['dlogZ'] / 2.
+            elif isinstance(self.MODEL['dlogZ'], list) or isinstance(self.MODEL['dlogZ'], np.array):
+                bin_met[0] = self.MODEL['dlogZ'][0]
+                bin_met[-1] = self.MODEL['dlogZ'][1]
+        
+        return 10**bin_met
+    
+    @property
+    def centers_metallicity_bins(self):
+        """Return the centers of the metallicity bins.
+
+        Returns
+        -------
+        array double
+            Returns sampled metallicities of the population. This corresponds
+            to the center of each metallicity bin.
+        """
+        return np.sort(self.metallicities)
+    
+    ### redshift bins ###
+    #####################
+    @property
+    def edges_redshift_bins(self):
+        """Compute redshift bin edges.
+
+        Returns
+        -------
+        array doubles
+            We devide the cosmic time history of the Universe in equally spaced
+            bins of cosmic time of self.delta_t (100 Myr default) an compute the
+            redshift corresponding to edges of these bins.
+
+        """
+        self.n_redshift_bin_centers = int(cosmology.age(0).to('Myr').value/self.MODEL['delta_t'])
+        # generate t_birth at the middle of each self.delta_t bin
+        t_birth_bin = [cosmology.age(0.).value]
+        for i in range(self.n_redshift_bin_centers+1):
+            t_birth_bin.append(t_birth_bin[i] - self.MODEL['delta_t']*1e-3) # Gyr
+        # compute the redshift
+        z_birth_bin = []
+        for i in range(self.n_redshift_bin_centers):
+            # do not count first edge, we add z=0. later
+            z_birth_bin.append(z_at_value(cosmology.age, t_birth_bin[i+1] * u.Gyr))
+        # add the first and last bin edge at z=0. and z=inf.=100
+        z_birth_bin = np.array([0.]+z_birth_bin+[100.])
+
+        return z_birth_bin
+    
+    @property
+    def centers_redshift_bins(self):
+        """Compute redshift bin centers.
+
+        Returns
+        -------
+        array doubles
+            We devide the cosmic time history of the Universe in equally spaced
+            bins of cosmic time of self.delta_t (100 Myr default) an compute the
+            redshift corresponding to center of these bins.
+
+        """
+        # generate t_birth at the middle of each self.delta_t bin
+        t_birth_bin = [cosmology.age(0.).value]
+        t_birth = []
+        # devide the
+        self.n_redshift_bin_centers = int(cosmology.age(0).to('Myr').value/self.MODEL['delta_t'])
+        for i in range(self.n_redshift_bin_centers+1):
+            t_birth.append(t_birth_bin[i] - self.MODEL['delta_t']*1e-3/2.) # Gyr
+            t_birth_bin.append(t_birth_bin[i] - self.MODEL['delta_t']*1e-3) # Gyr
+        t_birth = np.array(t_birth)
+        # compute the redshift
+        z_birth = []
+        for i in range(self.n_redshift_bin_centers+1):
+            # z_at_value is from astopy.cosmology
+            z_birth.append(z_at_value(cosmology.age, t_birth[i] * u.Gyr))
+        z_birth = np.array(z_birth)
+
+        return z_birth
+    
+    
+    ###############################
+    ### cosmic time to redshift ###
+    ###############################
+    @property
+    def redshift_from_cosmic_time_interpolator(self):
+        """Interpolator to compute the cosmological redshift given the cosmic time.
+
+        Returns
+        -------
+        object
+            Returns the trained interpolator object.
+
+        """
+        # astropy z_at_value method is too slow to compute z_mergers efficinty
+        # we must implement interpolation
+        t = np.linspace(1e-2, cosmology.age(1e-08).value*0.9999999, 1000)
+        z = np.zeros(1000)
+        for i in range(1000):
+            z[i] = z_at_value(cosmology.age, t[i] * u.Gyr)
+        f_z_m = interp1d(t, z, kind='cubic')
+        return f_z_m
+    
+    def get_redshift_from_cosmic_time(self, t_cosm):
+        """Compute the cosmological redshift given the cosmic time..
+
+        Parameters
+        ----------
+        t_cosm : array doubles
+            Cosmic time to which you want to know the redhisft.
+
+        Returns
+        -------
+        array doubles
+            Cosmolgocial redshift corresponding to the cosmic time.
+
+        """
+        return self.redshift_from_cosmic_time_interpolator(t_cosm)
+    
+    ###############################
+    ### redshift to cosmic time ###
+    ###############################
+    
+    def get_cosmic_time_from_redshift(self, z):
+        """Compute the cosmic time from redshift.
+
+        Parameters
+        ----------
+        z : double
+            Cosmological redshift.
+
+        Returns
+        -------
+        double
+            Return age of the cosmic time in Gyr given the redshift z.
+
+        """
+        return cosmology.age(z).value  # Gyr
+        
+    def get_cosmic_time_at_event(self, z_birth, event_time):
+        """Get cosmic time at DCO merger.
+
+        Parameters
+        ----------
+        z_birth : double
+            Cosmological redshift of formation of the DCO system
+            (must be the same for every binary).
+        event_time : double 
+            Time at which the DCO system merges in Myr.
+
+        Returns
+        -------
+        double
+            Cosmic time in Gyr at DCO merger for all binaries born at z_birth.
+
+        """
+        t_birth = self.get_cosmic_time_from_redshift(z_birth) # Gyr
+        # add the cosmic time at birth
+        return t_birth + (event_time * 10 ** (-3))  # Gyr
+    
+    def observable_population(self):
         pass
     
+    def resampled_population(self):
+        pass
+        
 
+    
 
 
 class PopulationOld():
@@ -1097,59 +1581,6 @@ class PopulationOld():
             df.index = key
             return df
             
-            
-
-    # def __getitem__(self, key):
-        
-    #     if key > self.total_systems:
-    #         raise ValueError('Index out of range!')
-        
-    #     if isinstance(key, int):
-    #         # first find in which popfile the key is
-    #         pop_idx = np.searchsorted(self._cumsum, key, side='right')
-    #         self.populations[pop_idx][key]
-        
-        
-        
-        
-        
-            
-
-    # @property
-    # def mass_per_metallicity(self):
-    #     '''Return the mass per metallicity'''
-        
-    #     tmp_df = pd.concat(self._mass_per_met)
-    #     tmp_df = tmp_df.groupby(tmp_df.index).sum()
-    #     return tmp_df
-    
-    # @property
-    # def mass_per_file(self):
-    #     '''Return the mass per file'''
-    #     return self._mass_per_met
-        
-        
-        # 1. Check if history and oneline are present
-        # 2. Check if a mass_per_met table is present
-        #    - if present read the underlying mass and simulated mass
-        # 3. Check metallicity / solar metallicities
-        # 4. Check if the formation channels are present    
-        
-        
-    # def calculate_population_masses(self, ini_file):
-    #     '''Calculate the underlying mass and simulated mass
-    #     for each metallicity in the population files
-    #     '''
-    #     pass
-        
-        # 1. Load the ini/population parameters
-        # 2. Check if the population files are consistent with the ini file (metallicities)
-        # 3. Check the information we can get from the population files
-        #   - underlying mass
-        #   - simulated mass
-        #   - total systems
-        #   - metallicity/metallicities?
-        # 4. Give access to the user to calculate it    
 
 class ParsedPopAttrs:
     

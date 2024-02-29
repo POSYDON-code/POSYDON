@@ -23,6 +23,7 @@ from posydon.utils.data_download import PATH_TO_POSYDON_DATA
 from posydon.popsyn.GRB import GRB_PROPERTIES, get_GRB_properties
 import posydon.visualization.plot_pop as plot_pop
 
+
 PATH_TO_PDET_GRID = os.path.join(PATH_TO_POSYDON_DATA, 'selection_effects/pdet_grid.hdf5')
 
 
@@ -39,42 +40,11 @@ DEFAULT_MODEL = {
     'GRB_efficiency' : 0., # e.g., 0.01
     'E_GRB_iso_min' : 0., # e.g., 1e51 erg 
 }
-
-from astropy.cosmology import Planck15 as cosmology
-from astropy.cosmology import z_at_value
-from scipy.interpolate import interp1d
-from tqdm import tqdm
-import numpy as np
-import os
-from astropy import units as u
-from posydon.popsyn.star_formation_history import (star_formation_rate,
-                                                   mean_metallicity,
-                                                   std_log_metallicity_dist,
-                                                   get_illustrisTNG_data,
-                                                   fractional_SFR_at_given_redshift)
-from astropy import constants as const
-import warnings
-from posydon.utils.constants import Zsun
-import scipy as sp
-import posydon.popsyn.selection_effects as selection_effects
+    
 
 
-DEFAULT_MODEL = {
-    'delta_t' : 100, # Myr
-    'SFR' : 'IllustrisTNG',
-    'sigma_SFR' : None,
-    'Z_max' : 1.,
-    'select_one_met' : False,
-    'dlogZ' : None, # e.g, [np.log10(0.0142/2),np.log10(0.0142*2)]
-    'Zsun' : Zsun,
-    'compute_GRB_properties' : False,
-    'GRB_beaming' : 1., # e.g., 0.5, 'Goldstein+15'
-    'GRB_efficiency' : 0., # e.g., 0.01
-    'E_GRB_iso_min' : 0., # e.g., 1e51 erg 
-}
 
-
-class Rates(object):
+class Rates2(object):
     """Object for calculating rates from a synthetic population and a model.
     
     """

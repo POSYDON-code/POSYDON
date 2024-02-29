@@ -173,6 +173,87 @@ def std_log_metallicity_dist(sigma):
     else:
         raise ValueError(f'Invalid sigma value {sigma}!')
 
+
+def SFR_Z_fraction_at_given_redshift(z,SFR, sigma, metallicity_bins, Z_max, select_one_met):
+    ''''Fraction of the SFR at a given redshift z in a given metallicity bin as in Eq. (B.8) of Bavera et al. (2020).
+    
+    Parameters
+    ----------
+    z : double
+        Cosmological redshift.
+        
+    SFR : string
+        Star formation rate assumption:
+        - Madau+Fragos17 see arXiv:1606.07887
+        - Madau+Dickinson14 see arXiv:1403.0007
+        - IllustrisTNG see see arXiv:1707.03395
+        - Neijssel+19 see arXiv:1906.08136
+    sigma : double / string
+        Standard deviation of the log-metallicity distribution.
+        If string, it can be 'Bavera+20' or 'Neijssel+19'.
+    metallicity_bins : array
+        Metallicity bins edges in absolute metallicity.
+    Z_max : double
+        Maximum metallicity in absolute metallicity.
+    select_one_met : bool
+        If True, the function returns the fraction of the SFR in the given metallicity bin.
+        If False, the function returns the fraction of the SFR in the given metallicity bin and the fraction of the SFR in the metallicity bin
+        '''
+        
+    if SFR == "Madau+Fragos17" or SFR=="Madau+Dickinson14":
+        sigma = std_log_metallicity_dist(sigma)
+        mu = np.log10(mean_metallicity(SFR, z)) - sigma**2*np.log(10)/2.
+        # renormalisation constant. We can use mu[0], since we integrate over the whole metallicity range
+        norm = stats.norm.cdf(np.log10(Z_max), mu[0], sigma)
+        fSFR = np.empty((len(z), len(metallicity_bins)))
+        fSFR[:,1:] = np.array([(stats.norm.cdf(np.log10(metallicity_bins[1:]), m, sigma)/norm
+                        - stats.norm.cdf(np.log10(metallicity_bins[:-1]), m, sigma)/norm) for m in mu])
+        if not select_one_met:
+            fSFR[:,0] = stats.norm.cdf(np.log10(metallicity_bins[0]), mu, sigma)/norm
+        else:
+            fSFR = fSFR[:,1:]
+
+    elif SFR == "Neijssel+19":
+        # assume a truncated ln-normal distribution of metallicities
+        sigma = std_log_metallicity_dist(sigma)
+        mu = np.log(mean_metallicity(SFR, z))-sigma**2/2.
+        # renormalisation constant
+        norm = stats.norm.cdf(np.log(Z_max), mu[0], sigma)
+        fSFR = np.empty((len(z), len(metallicity_bins)))
+        fSFR[:,1:] = np.array([(stats.norm.cdf(np.log(metallicity_bins[1:]), m, sigma)/norm
+                        - stats.norm.cdf(np.log(metallicity_bins[:-1]), m, sigma)/norm) for m in mu])
+        if not select_one_met:
+            fSFR[:,0] = stats.norm.cdf(np.log(metallicity_bins[0]), mu, sigma)/norm
+        else:
+            fSFR = fSFR[:,1:]
+
+    elif SFR == 'IllustrisTNG':
+        # numerically itegrate the IlluystrisTNG SFR(z,Z)
+        illustris_data = get_illustrisTNG_data()
+        redshifts = illustris_data['redshifts']
+        Z = illustris_data['mets']
+        M = illustris_data['M'] # Msun
+        # only use data within the metallicity bounds (no lower bound)
+        Z_max_mask =  Z <= Z_max
+        redshift_indices = np.array([np.where(redshifts <= i)[0][0] for i in z])
+        Z_dist = M[:,Z_max_mask][redshift_indices]
+
+        fSFR = np.zeros((len(z), len(metallicity_bins)))
+        for i in range(len(z)):
+            if Z_dist[i].sum() == 0.:
+                continue
+            else:
+                Z_dist_cdf = np.cumsum(Z_dist[i])/Z_dist[i].sum()
+                Z_dist_cdf_interp = interp1d(np.log10(Z[Z_max_mask]), Z_dist_cdf, fill_value="extrapolate")
+                fSFR[i,1:] = (Z_dist_cdf_interp(np.log10(metallicity_bins[1:]))
+                                    - Z_dist_cdf_interp(np.log10(metallicity_bins[:-1])))
+                
+                if not select_one_met:
+                    #left edge
+                    fSFR[i,0] = Z_dist_cdf_interp(np.log10(metallicity_bins[0]))
+                
+    return fSFR
+
 def fractional_SFR_at_given_redshift(z, SFR_at_z, SFR, sigma, bins, binplace, Z_max, select_one_met=False):
     """Integrated SFR over deltaZ at a given z as in Eq. (B.9) of Bavera et al. (2020).
 
