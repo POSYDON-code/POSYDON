@@ -298,6 +298,11 @@ def post_process_grid(grid, index=None, star_2_CO=True, MODELS=MODELS,
                                     if not isinstance(getattr(star_copy, quantity), str):
                                         flush = True
                                         warnings.warn(f'{MODEL_NAME} {mechanism} {quantity} is not a string!')
+                                elif quantity=='spin':
+                                    if ((not isinstance(getattr(star_copy, quantity), float))
+                                        and (getattr(star_copy, quantity) != None)):
+                                        flush = True
+                                        warnings.warn(f'{MODEL_NAME} {mechanism} {quantity} is not a float nor None!')
                                 else:
                                     if not isinstance(getattr(star_copy, quantity), float):
                                         flush = True
@@ -355,6 +360,11 @@ def post_process_grid(grid, index=None, star_2_CO=True, MODELS=MODELS,
                                     flush = True
                                     warnings.warn(f'{MODEL_NAME} {mechanism} {quantity} is not a string!')
                             elif quantity != 'CO_interpolation_class':
+                                if ((quantity != 'spin') and
+                                    (not isinstance(getattr(star_copy, quantity), float))
+                                    and (getattr(star_copy, quantity) != None)):
+                                    flush = True
+                                    warnings.warn(f'{MODEL_NAME} {mechanism} {quantity} is not a float nor None!')
                                 if not isinstance(getattr(star_copy, quantity), float):
                                     flush = True
                                     warnings.warn(f'{MODEL_NAME} {mechanism} {quantity} is not a float!')
