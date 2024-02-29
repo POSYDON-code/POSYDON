@@ -294,17 +294,17 @@ def post_process_grid(grid, index=None, star_2_CO=True, MODELS=MODELS,
                             flush = False
                             SN.collapse_star(star_copy)
                             for quantity in CC_quantities:
-                                if quantity in ['state', 'SN_type', 'CO_interpolation_class']:
+                                if quantity in ['state', 'SN_type']:
                                     if not isinstance(getattr(star_copy, quantity), str):
                                         flush = True
                                         warnings.warn(f'{MODEL_NAME} {mechanism} {quantity} is not a string!')
-                                elif quantity=='spin':
-                                    if ((not isinstance(getattr(star_copy, quantity), float))
-                                        and (getattr(star_copy, quantity) != None)):
-                                        flush = True
-                                        warnings.warn(f'{MODEL_NAME} {mechanism} {quantity} is not a float nor None!')
-                                else:
-                                    if not isinstance(getattr(star_copy, quantity), float):
+                                elif quantity != 'CO_interpolation_class':
+                                    if quantity=='spin':
+                                        if ((not isinstance(getattr(star_copy, quantity), float))
+                                            and (getattr(star_copy, quantity) != None)):
+                                            flush = True
+                                            warnings.warn(f'{MODEL_NAME} {mechanism} {quantity} is not a float nor None!')
+                                    elif not isinstance(getattr(star_copy, quantity), float):
                                         flush = True
                                         warnings.warn(f'{MODEL_NAME} {mechanism} {quantity} is not a float!')
                         except Exception as e:
@@ -360,12 +360,12 @@ def post_process_grid(grid, index=None, star_2_CO=True, MODELS=MODELS,
                                     flush = True
                                     warnings.warn(f'{MODEL_NAME} {mechanism} {quantity} is not a string!')
                             elif quantity != 'CO_interpolation_class':
-                                if ((quantity != 'spin') and
-                                    (not isinstance(getattr(star_copy, quantity), float))
-                                    and (getattr(star_copy, quantity) != None)):
-                                    flush = True
-                                    warnings.warn(f'{MODEL_NAME} {mechanism} {quantity} is not a float nor None!')
-                                if not isinstance(getattr(star_copy, quantity), float):
+                                if quantity == 'spin':
+                                    if ((not isinstance(getattr(star_copy, quantity), float))
+                                        and (getattr(star_copy, quantity) != None)):
+                                        flush = True
+                                        warnings.warn(f'{MODEL_NAME} {mechanism} {quantity} is not a float nor None!')
+                                elif not isinstance(getattr(star_copy, quantity), float):
                                     flush = True
                                     warnings.warn(f'{MODEL_NAME} {mechanism} {quantity} is not a float!')
                     except Exception as e:
