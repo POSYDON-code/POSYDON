@@ -1207,7 +1207,7 @@ class Rates(TransientPopulation):
         for i in tqdm(range(1, n), total=n-1, disable=not self.verbose):
             mask = (z_events > z_horizon[i-1]) & (z_events <= z_horizon[i])
             for ch in unique_channels:
-                mask_ch = channels == ch
+                mask_ch = channels.to_numpy() == ch
                 intrinsic_rate_density.loc[z_horizon[i-1], ch] = np.nansum(weights[mask & mask_ch])/normalisation[i-1]
             
             intrinsic_rate_density.loc[z_horizon[i-1], 'total'] = np.nansum(weights[mask])/normalisation[i-1]
