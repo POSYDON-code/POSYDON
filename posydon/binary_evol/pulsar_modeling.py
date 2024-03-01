@@ -235,7 +235,7 @@ class Pulsar:
         ## check if pulsar has crossed the death line
         self.alive_state = self.is_alive()
     
-    def RLO_evolve_COMPAS(self, delta_M, delta_Md, Mdot_acc):
+    def RLO_evolve_COMPAS(self, delta_M, delta_Md, Mdot_acc, CE):
         '''
         Evolve a pulsar during Roche Lobe overflow (RLO).
         This uses the prescription for B-field decay applied in COMPAS from Oslowski et al. 2011.
@@ -243,7 +243,10 @@ class Pulsar:
 
         Parameters
         ----------
-        delta_M: the total amount of mass accreted by the pulsar during RLO [Msun]
+        delta_M: float, total mass accreted onto the pulsar during RLO [Msun]
+        delta_Md: float, mass decay scale (free parameter) [Msun]
+        Mdot_acc: float, mass accretion rate onto the pulsar  [Msun/yr]
+        CE: bool, True/False if the pulsar is accreting in a common envelope state
         '''
         G = const.standard_cgrav     ## gravitational constant [cm^3 g^-1 s^-2]
         delta_Md *= const.Msun       ## magnetic field mass decay scale [g]
@@ -280,15 +283,17 @@ class Pulsar:
         B_f = (B_i - B_min)*np.exp(-delta_M/delta_Md) + B_min 
         self.Bfield = B_f
 
-        ## check if pulsar has reached the maximum spin limit
-        spin_eq = self.calc_NS_spin_equilibrium(Mdot_acc)
-        if self.spin > spin_eq: self.spin = spin_eq
+        ## check if pulsar has reached the maximum spin limit 
+        ## (does not apply for CE accretion)
+        if not CE:
+            spin_eq = self.calc_NS_spin_equilibrium(Mdot_acc)
+            if self.spin > spin_eq: self.spin = spin_eq
 
         ## check if pulsar crossed the death line
         self.alive_state = self.is_alive()
 
     def CE_evolve(self, CE_acc_prescription, acc_decay_prescription, acc_lower_limit, 
-                  M_comp, R_comp, delta_Md, delta_t, tau_d, Mdot_acc):
+                  M_comp, R_comp, delta_Md, delta_t, tau_d):
         '''
         Evolve a pulsar during common envelope, accounting for mass accretion onto the NS.
         '''   
@@ -307,15 +312,14 @@ class Pulsar:
             delta_M = np.abs(a*R_comp + b)
 
             ## assume amount of mass accreted during CE is 0.04-0.1 Msun  
-            if delta_M > 0.1: delta_M = 0.1
-
             if CE_acc_prescription == "MacLeod_bounded":
-                if delta_M < 0.04: delta_M = 0.04
+                if delta_M > 0.1: delta_M = 0.1
+                elif delta_M < 0.04: delta_M = 0.04
 
         if acc_decay_prescription == "Ye2019":
             self.RLO_evolve_Ye2019(delta_t, tau_d, delta_M, delta_Md)
         elif acc_decay_prescription == "COMPAS":
-            self.RLO_evolve_COMPAS(delta_M, delta_Md, Mdot_acc)
+            self.RLO_evolve_COMPAS(delta_M, delta_Md, self.Mdot_edd, True)
 
     def is_alive(self):
         '''

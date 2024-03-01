@@ -389,13 +389,13 @@ class PulsarHooks(EvolveHooks):
                             Mdot_acc = delta_M/delta_t
                             if Mdot_acc > pulsar.Mdot_edd: Mdot_acc = pulsar.Mdot_edd
 
-                            pulsar.RLO_evolve_COMPAS(delta_M, self.delta_Md, Mdot_acc)
+                            pulsar.RLO_evolve_COMPAS(delta_M, self.delta_Md, Mdot_acc, False)
                     else:
                         pulsar.detached_evolve(delta_t, self.tau_d) 
               
                 elif step_name == "step_CE" and state != "merged":
                     pulsar.CE_evolve(self.CE_acc_prescription, self.acc_decay_prescription, self.acc_lower_limit,
-                                     M_comp, R_comp, self.delta_Md, delta_t, self.tau_d, pulsar.Mdot_edd)
+                                     M_comp, R_comp, self.delta_Md, delta_t, self.tau_d)
 
                 pulsar_spin.append(pulsar.spin)
                 pulsar_Bfield.append(pulsar.Bfield)
