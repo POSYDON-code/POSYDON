@@ -205,7 +205,7 @@ def SFR_Z_fraction_at_given_redshift(z,SFR, sigma, metallicity_bins, Z_max, sele
         mu = np.log10(mean_metallicity(SFR, z)) - sigma**2*np.log(10)/2.
         # renormalisation constant. We can use mu[0], since we integrate over the whole metallicity range
         norm = stats.norm.cdf(np.log10(Z_max), mu[0], sigma)
-        fSFR = np.empty((len(z), len(metallicity_bins)))
+        fSFR = np.empty((len(z), len(metallicity_bins)-1))
         fSFR[:,:] = np.array([(stats.norm.cdf(np.log10(metallicity_bins[1:]), m, sigma)/norm
                         - stats.norm.cdf(np.log10(metallicity_bins[:-1]), m, sigma)/norm) for m in mu])
         if not select_one_met:
@@ -219,7 +219,7 @@ def SFR_Z_fraction_at_given_redshift(z,SFR, sigma, metallicity_bins, Z_max, sele
         mu = np.log(mean_metallicity(SFR, z))-sigma**2/2.
         # renormalisation constant
         norm = stats.norm.cdf(np.log(Z_max), mu[0], sigma)
-        fSFR = np.empty((len(z), len(metallicity_bins)))
+        fSFR = np.empty((len(z), len(metallicity_bins)-1))
         fSFR[:,:] = np.array([(stats.norm.cdf(np.log(metallicity_bins[1:]), m, sigma)/norm
                         - stats.norm.cdf(np.log(metallicity_bins[:-1]), m, sigma)/norm) for m in mu])
         if not select_one_met:

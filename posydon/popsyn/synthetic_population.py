@@ -1014,7 +1014,10 @@ class TransientPopulation(Population):
                     store.remove(path_in_file+'z_events')
                 if path_in_file+'birth' in store.keys():
                     store.remove(path_in_file+'birth')
-            store.put(path_in_file+'MODEL', pd.DataFrame(MODEL, index=[0]))
+                    
+        self._write_MODEL_data(self.filename, path_in_file, MODEL)
+        
+            #store.put(path_in_file+'MODEL', pd.DataFrame(MODEL))
         
         rates = Rates(self.filename,
                       self.transient_name,
@@ -1146,6 +1149,12 @@ class TransientPopulation(Population):
                                              met_Zsun=met_Zsun,
                                              **kwargs)
     
+    def _write_MODEL_data(self, filename, path_in_file, MODEL):
+        with pd.HDFStore(filename, mode='a') as store:
+            store.put(path_in_file+'MODEL', pd.DataFrame(MODEL))
+            if self.verbose:
+                print('MODEL written to population file!')
+    
  
 class Rates(TransientPopulation):
     
@@ -1161,9 +1170,20 @@ class Rates(TransientPopulation):
                 raise ValueError(f'{self.SFH_identifier} is not a valid SFH_identifier in {filename}!')
             
         # load in the SFH_model
-        with pd.HDFStore(self.filename, mode='r') as store:
-            self.MODEL = store[self.base_path+'MODEL'].iloc[0].to_dict()
+        self._read_MODEL_data(self.filename)
         
+    def _read_MODEL_data(self, filename):
+        with pd.HDFStore(filename, mode='r') as store:
+            tmp_df = store[self.base_path+'MODEL']
+            if len(tmp_df) > 1:
+                self.MODEL = tmp_df.iloc[0].to_dict()
+                self.MODEL['dlogZ'] = [tmp_df['dlogZ'].min(), tmp_df['dlogZ'].max()]
+            else:
+                self.MODEL = tmp_df.iloc[0].to_dict()    
+            
+            if self.verbose:
+                print('MODEL read from population file!')    
+    
     @property
     def weights(self):
         with pd.HDFStore(self.filename, mode='r') as store:
@@ -1181,7 +1201,7 @@ class Rates(TransientPopulation):
             return store[self.base_path+'z_events']
     
     
-    def intrinsic_rate_density(self, mt_channels=False):
+    def calculate_intrinsic_rate_density(self, mt_channels=False):
         '''Compute the intrinsic rate density of the transient population'''
         
         
@@ -1215,7 +1235,13 @@ class Rates(TransientPopulation):
             store.put(self.base_path+'intrinsic_rate_density', intrinsic_rate_density)
         
         return intrinsic_rate_density                               
-                                                                    
+
+    @property        
+    def intrinsic_rate_density(self):
+        with pd.HDFStore(self.filename, mode='r') as store:
+            return store[self.base_path+'intrinsic_rate_density']
+        
+                                                    
         
     #### cosmolgy ####
     ##################
@@ -1270,9 +1296,7 @@ class Rates(TransientPopulation):
             Comoving distance in Mpc corresponding to the redhisft z.
 
         """
-        return cosmology.comoving_distance(z).value  # Mpc
-        
-    
+        return cosmology.comoving_distance(z).value  # Mpc    
     
     ### metallicity bins ###
     ########################
@@ -1463,7 +1487,6 @@ class Rates(TransientPopulation):
         pass
         
 
-    
 
 
 class PopulationOld():
