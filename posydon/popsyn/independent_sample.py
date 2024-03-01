@@ -394,9 +394,9 @@ def binary_fraction_value(binary_fraction_const=1,binary_fraction_scheme = 'cons
     elif binary_fraction_scheme == 'Moe_17':
         if m1 is None: 
             raise ValueError("There was not a primary mass provided in the inputs. Unable to return a binary fraction")
-        elif m1 < 0.8:
-            raise ValueError("The scheme doesn't support values of m1 less than 0.8")
-        elif m1 <= 2  and m1 >= 0.8:
+        #elif m1 < 0.8:
+         #   raise ValueError("The scheme doesn't support values of m1 less than 0.8")
+        elif m1 <= 2:#  and m1 >= 0.8:
             binary_fraction = 0.4
         elif m1 <= 5 and m1 > 2:
             binary_fraction = 0.59
