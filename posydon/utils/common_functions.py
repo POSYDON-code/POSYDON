@@ -25,7 +25,6 @@ import copy
 import warnings
 from scipy.interpolate import PchipInterpolator
 
-
 PATH_TO_POSYDON = os.environ.get("PATH_TO_POSYDON")
 
 
@@ -66,11 +65,13 @@ MT_CASE_C = 3
 MT_CASE_BA = 4
 MT_CASE_BB = 5
 MT_CASE_BC = 6
+MT_CASE_NONBURNING = 8
 MT_CASE_UNDETERMINED = 9
 
 # All cases meaning RLO is happening
 ALL_RLO_CASES = set([MT_CASE_A, MT_CASE_B, MT_CASE_C,
-                     MT_CASE_BA, MT_CASE_BB, MT_CASE_BC])
+                     MT_CASE_BA, MT_CASE_BB, MT_CASE_BC,
+                     MT_CASE_NONBURNING])
 
 # Conversion of integer mass-transfer flags to strings
 MT_CASE_TO_STR = {
@@ -81,6 +82,7 @@ MT_CASE_TO_STR = {
     MT_CASE_BA: "BA",
     MT_CASE_BB: "BB",
     MT_CASE_BC: "BC",
+    MT_CASE_NONBURNING: "nonburning",
     MT_CASE_UNDETERMINED: "undetermined_MT"
 }
 
@@ -260,7 +262,7 @@ def orbital_separation_from_period(period_days, m1_solar, m2_solar):
     m1_solar = np.float64(m1_solar)
     m2_solar = np.float64(m2_solar)
     period_days = np.float64(period_days)
-    
+
     separation_cm = (const.standard_cgrav
                      * (m1_solar * const.Msun + m2_solar * const.Msun)
                      / (4.0 * const.pi**2.0)
@@ -1374,6 +1376,18 @@ def flip_stars(binary):
         setattr(binary, i+'2_history', value1_history)
 
 
+def set_binary_to_failed(binary):
+    '''Set the properties of the binary to indicate that it has failed.
+
+    Parameters
+    ----------
+    binary : BinaryStar
+        The binary to set to failed.
+    '''
+    binary.state = "ERR"
+    binary.event = "FAILED"
+
+
 def infer_star_state(star_mass=None, surface_h1=None,
                      center_h1=None, center_he4=None, center_c12=None,
                      log_LH=None, log_LHe=None, log_Lnuc=None, star_CO=False):
@@ -1447,7 +1461,9 @@ def infer_mass_transfer_case(rl_relative_overflow,
                   rl_relative_overflow, lg_mtransfer_rate)
         return MT_CASE_NO_RLO
 
-    if "H-rich" in donor_state:
+    if "non_burning" in donor_state:
+        return MT_CASE_NONBURNING
+    elif "H-rich" in donor_state:
         if "Core_H_burning" in donor_state:
             return MT_CASE_A
         if ("Core_He_burning" in donor_state
@@ -2668,3 +2684,47 @@ def convert_metallicity_to_string(Z):
     if not Z in valid_Z:
         raise ValueError(f'Metallicity {Z} not supported! Available metallicities in POSYDON v2 are {valid_Z}.')
     return f'{Z:1.1e}'.replace('.0','')
+
+def rotate(axis, angle):
+
+        """Generate rotation matrix to rotate a vector about an arbitrary axis 
+            by a given angle
+
+        Parameters
+        ----------
+        axis : array of length 3
+            Axis to rotate about
+        angle : float
+            Angle, in radians, through which to rotate about axis
+
+        Returns
+        -------
+        rotation_matrix : 3x3 array
+            Array such that rotation_matrix.dot(vector) rotates vector
+            about the given axis by the given angle
+
+        """
+
+        # normalize the axis vector
+        axis = axis / np.linalg.norm(axis)
+        
+
+        # calculate the cosine and sine of the angle
+        cos_theta = np.cos(angle)
+        sin_theta = np.sin(angle)
+        
+        # construct the rotation matrix
+        rotation_matrix = np.array([
+            [cos_theta + axis[0]**2 * (1 - cos_theta),
+            axis[0] * axis[1] * (1 - cos_theta) - axis[2] * sin_theta,
+            axis[0] * axis[2] * (1 - cos_theta) + axis[1] * sin_theta],
+            [axis[1] * axis[0] * (1 - cos_theta) + axis[2] * sin_theta,
+            cos_theta + axis[1]**2 * (1 - cos_theta),
+            axis[1] * axis[2] * (1 - cos_theta) - axis[0] * sin_theta],
+            [axis[2] * axis[0] * (1 - cos_theta) - axis[1] * sin_theta,
+            axis[2] * axis[1] * (1 - cos_theta) + axis[0] * sin_theta,
+            cos_theta + axis[2]**2 * (1 - cos_theta)]
+        ])
+        
+        
+        return rotation_matrix
