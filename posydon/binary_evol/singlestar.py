@@ -113,10 +113,6 @@ def properties_massless_remnant():
     PROPERTIES_MASSLESS["mass"] = 0.0
     return PROPERTIES_MASSLESS
 
-def convert_star_to_massless_remnant(star):
-    for key in STARPROPERTIES:
-        setattr(star, key, properties_massless_remnant()[key])
-    return star
 
 class SingleStar:
     """Class describing a single star."""
