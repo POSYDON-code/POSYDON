@@ -60,9 +60,11 @@ class population_spectra():
         self.population = load_posydon_population(self.file)
 
     def create_spectrum(self):
+        print('before MPI')
         comm = MPI.COMM_WORLD
         rank = comm.Get_rank()
         nprocs = comm.Get_size()
+        print('before pop load')
         load_start = datetime.datetime.now()
         self.load_population()
         load_end = datetime.datetime.now()
