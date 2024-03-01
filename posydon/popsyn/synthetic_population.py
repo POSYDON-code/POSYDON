@@ -347,7 +347,6 @@ class Oneline():
             self.indices = store.select_column('oneline', 'index')
             self.columns = store.select('oneline', start=0, stop=0).columns
             
-            
         self.number_of_systems = len(self.indices)
         
     def __getitem__(self, key):
@@ -1033,6 +1032,31 @@ class TransientPopulation(Population):
         get_redshift_from_time_cosmic_time = rates.redshift_from_cosmic_time_interpolator
         indices = self.indices
 
+        # sample the SFH for only the events that are within the Hubble time
+        # I only need to sample the SFH at each metallicity and z_birth
+        # Not for every event!
+        SFR_at_z_birth = star_formation_rate(rates.MODEL['SFR'], z_birth)
+        # get metallicity bin edges
+        met_edges = rates.edges_metallicity_bins
+
+        # get the fractional SFR at each metallicity and z_birth
+        fSFR = SFR_Z_fraction_at_given_redshift(z_birth,
+                                                rates.MODEL['SFR'],
+                                                rates.MODEL['sigma_SFR'],
+                                                met_edges,
+                                                rates.MODEL['Z_max'],
+                                                rates.MODEL['select_one_met'])
+        
+        # simulated mass per given metallicity corrected for the unmodeled
+        # single and binary stellar mass
+        M_model = rates.mass_per_met.loc[rates.centers_metallicity_bins/Zsun]['underlying_mass'].values
+        
+        # speed of light
+        c = const.c.to('Mpc/yr').value  # Mpc/yr
+        
+        # delta cosmic time bin
+        deltaT = rates.MODEL['delta_t'] * 10 ** 6  # yr
+    
         for i in tqdm(range(0, len(indices), self.chunksize), desc='event loop', disable=not self.verbose):
         
             selected_indices = self.select(start=i,
@@ -1044,7 +1068,6 @@ class TransientPopulation(Population):
                                      stop=i+self.chunksize,
                                      columns=['time']).to_numpy() *1e-3 # Gyr
             
-            
             t_events = t_birth + delay_time
             hubble_time_mask = t_events  <= cosmology.age(1e-08).value*0.9999999
             
@@ -1052,30 +1075,6 @@ class TransientPopulation(Population):
             z_events = np.full(t_events.shape, np.nan)
             z_events[hubble_time_mask] = get_redshift_from_time_cosmic_time(t_events[hubble_time_mask])
             
-            # sample the SFH for only the events that are within the Hubble time
-            # I only need to sample the SFH at each metallicity and z_birth
-            # Not for every event!
-            SFR_at_z_birth = star_formation_rate(rates.MODEL['SFR'], z_birth)
-            # get metallicity bin edges
-            met_edges = rates.edges_metallicity_bins
-
-            # get the fractional SFR at each metallicity and z_birth
-            fSFR = SFR_Z_fraction_at_given_redshift(z_birth,
-                                                    rates.MODEL['SFR'],
-                                                    rates.MODEL['sigma_SFR'],
-                                                    met_edges,
-                                                    rates.MODEL['Z_max'],
-                                                    rates.MODEL['select_one_met'])
-                                                    
-            # simulated mass per given metallicity corrected for the unmodeled
-            # single and binary stellar mass
-            M_model = rates.mass_per_met.loc[rates.centers_metallicity_bins/Zsun]['underlying_mass'].values
-            
-            # speed of light
-            c = const.c.to('Mpc/yr').value  # Mpc/yr
-            
-            # delta cosmic time bin
-            deltaT = rates.MODEL['delta_t'] * 10 ** 6  # yr
             
             D_c = rates.get_comoving_distance_from_redshift(z_events)  # Mpc
             
@@ -3226,6 +3225,7 @@ class SyntheticPopulation2():
         tmp_pop = temp_pop(df, df_oneline)
         
         plot_pop.plot_popsyn_over_grid_slice(tmp_pop, grid_type, met_Zsun, **kwargs)
+    
     
     
     
