@@ -252,80 +252,9 @@ def SFR_Z_fraction_at_given_redshift(z,SFR, sigma, metallicity_bins, Z_max, sele
                     #left edge
                     fSFR[i,0] = Z_dist_cdf_interp(np.log10(metallicity_bins[1]))
                     fSFR[i,-1] = 1 - Z_dist_cdf_interp(np.log10(metallicity_bins[-1]))
-                
-    return fSFR
-
-def fractional_SFR_at_given_redshift(z, SFR_at_z, SFR, sigma, bins, binplace, Z_max, select_one_met=False):
-    """Integrated SFR over deltaZ at a given z as in Eq. (B.9) of Bavera et al. (2020).
-
-    Parameters
-    ----------
-    SFR : string
-        Star formation rate assumption:
-        - Madau+Fragos17 see arXiv:1606.07887
-        - Madau+Dickinson14 see arXiv:1403.0007
-        - IllustrisTNG see see arXiv:1707.03395
-        - Neijssel+19 see arXiv:1906.08136
-    Z : double
-        Metallicity.
-
-    Returns
-    -------
-    double
-        The total mass of stars formed per comoving volume at a given redshift z
-        for a given metallicity range deltaZ.
-
-    """
-    # Z_left_edge == bins[binplace-1]
-    # Z_right_edge == bins[binplace]
-    if SFR == "Madau+Fragos17" or SFR=="Madau+Dickinson14":
-        # assume a truncated log10-normal distribution of metallicities
-        # see Eq. (B.2) in Bavera et al. (2020)
-        sigma = std_log_metallicity_dist(sigma)
-        mu = np.log10(mean_metallicity(SFR, z)) - sigma**2*np.log(10)/2.
-        # renormalisation constant
-        norm = stats.norm.cdf(np.log10(Z_max), mu[0], sigma)
-        fSFR = SFR_at_z*(stats.norm.cdf(np.log10(bins[binplace]), mu, sigma)/norm
-                        - stats.norm.cdf(np.log10(bins[binplace-1]), mu, sigma)/norm)
-        if not select_one_met:
-            #left edge
-            fSFR[binplace == 1] = SFR_at_z[0]*stats.norm.cdf(np.log10(bins[1]), mu[0], sigma)/norm
-    elif SFR == "Neijssel+19":
-        # assume a truncated ln-normal distribution of metallicities
-        sigma = std_log_metallicity_dist(sigma)
-        mu = np.log(mean_metallicity(SFR, z))-sigma**2/2.
-        # renormalisation constant
-        norm = stats.norm.cdf(np.log(Z_max), mu[0], sigma)
-        fSFR = SFR_at_z*(stats.norm.cdf(np.log(bins[binplace]), mu, sigma)/norm
-                        - stats.norm.cdf(np.log(bins[binplace-1]), mu, sigma)/norm)
-        if not select_one_met:
-            #left edge
-            fSFR[binplace == 1] = SFR_at_z[0]*stats.norm.cdf(np.log(bins[1]), mu[0], sigma)/norm
-    elif SFR == 'IllustrisTNG':
-        # numerically itegrate the IlluystrisTNG SFR(z,Z)
-        illustris_data = get_illustrisTNG_data()
-        redshifts = illustris_data['redshifts']
-        Z = illustris_data['mets']
-        M = illustris_data['M'] # Msun
-        # only use data within the metallicity bounds (no lower bound)
-        valid_met_idxs = np.where(Z <= Z_max)[0]
-        # get the index of the correct redshift in the data
-        redz_idx = np.where(redshifts <= z[0])[0][0]
-        # take values of the data at this redshift between our metallicity bounds
-        Z_dist = M[redz_idx, valid_met_idxs]
-        if Z_dist.sum() == 0.:
-            fSFR = np.zeros(len(z))
-        else:
-            Z_dist_cdf = np.cumsum(Z_dist)/Z_dist.sum()
-            Z_dist_cdf_interp = interp1d(np.log10(Z[valid_met_idxs]), Z_dist_cdf, fill_value="extrapolate")
-            fSFR = SFR_at_z*(Z_dist_cdf_interp(np.log10(bins[binplace]))
-                            - Z_dist_cdf_interp(np.log10(bins[binplace-1])))
-            if not select_one_met:
-                #left edge
-                fSFR[binplace == 1] = SFR_at_z[0]*Z_dist_cdf_interp(np.log10(bins[1]))
     else:
         raise ValueError('Invalid SFR!')
-
+                
     return fSFR
 
 
