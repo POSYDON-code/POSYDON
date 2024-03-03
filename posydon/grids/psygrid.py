@@ -229,6 +229,17 @@ TERMINATION_FLAG_COLUMNS = ["termination_flag_{}".format(i+1)
                             for i in range(N_FLAGS)]
 TERMINATION_FLAG_COLUMNS_SINGLE = ["termination_flag_1", "termination_flag_3"]
 
+
+# Text keeping track why data was ignored in a run
+IGNORE_NO_BINARY_HISTORY = "ignored_no_BH"
+IGNORE_NO_HISTORY1 = "ignore_no_H1"
+IGNORE_CORRUPTED_HISTORY1 = "corrupted_history1"
+IGNORE_CORRUPTED_HISTORY2 = "corrupted_history2"
+IGNORE_CORRUPTED_BINARY_HISTORY = "corrupted_binary_history"
+IGNORE_SCRUBBED_HISTORY = "ignored_scrubbed"
+IGNORE_NO_RLO = "ignored_no_RLO"
+IGNORE_NO_FINAL_PROFILE = "ignore_no_FP"
+
 # Default columns to be included from history and profile tables
 DEFAULT_BINARY_HISTORY_COLS = [
     "model_number", "age",
@@ -650,7 +661,7 @@ class PSyGrid:
             # if no binary history, ignore this run
             if binary_grid and binary_history is None:
                 ignore_data = True
-                ignore_reason = "ignored_no_BH"
+                ignore_reason = IGNORE_NO_BINARY_HISTORY
                 warnings.warn("Ignored MESA run because of missing binary "
                               "history in: {}\n".format(run.path))
                 if not initial_RLO_fix:
@@ -675,7 +686,7 @@ class PSyGrid:
                 warnings.warn("Ignored MESA run because of missing "
                               "history in: {}\n".format(run.path))
                 ignore_data = True
-                ignore_reason = "ignore_no_H1"
+                ignore_reason = IGNORE_NO_HISTORY1
                 continue
 
             if ignore_data:
@@ -708,7 +719,7 @@ class PSyGrid:
                             warnings.warn("Expand mod in {}\n".format(run.history1_path))
                     else:
                         ignore_data = True
-                        ignore_reason = "corrupted_history1"
+                        ignore_reason = IGNORE_CORRUPTED_HISTORY1
                     if "star_age" in H1_columns:
                         history1_age = history1["star_age"].copy()
                     else:
@@ -727,7 +738,7 @@ class PSyGrid:
                             warnings.warn("Expand age in {}\n".format(run.history1_path))
                     else:
                         ignore_data = True
-                        ignore_reason = "corrupted_history1"
+                        ignore_reason = IGNORE_CORRUPTED_HISTORY1
                 else:
                     history1_mod = None
                     history1_age = None
@@ -751,7 +762,7 @@ class PSyGrid:
                             warnings.warn("Expand mod in {}\n".format(run.history2_path))
                     else:
                         ignore_data = True
-                        ignore_reason = "corrupted_history2"
+                        ignore_reason = IGNORE_CORRUPTED_HISTORY2
                     if "star_age" in H2_columns:
                         history2_age = history2["star_age"].copy()
                     else:
@@ -770,7 +781,7 @@ class PSyGrid:
                             warnings.warn("Expand age in {}\n".format(run.history2_path))
                     else:
                         ignore_data = True
-                        ignore_reason = "corrupted_history2"
+                        ignore_reason = IGNORE_CORRUPTED_HISTORY2
                 else:
                     history2_mod = None
                     history2_age = None
@@ -794,7 +805,7 @@ class PSyGrid:
                             warnings.warn("Expand mod in {}\n".format(run.binary_history_path))
                     else:
                         ignore_data = True
-                        ignore_reason = "corrupted_binary_history"
+                        ignore_reason = IGNORE_CORRUPTED_BINARY_HISTORY
                     if "age" in BH_columns:
                         binary_history_age = binary_history["age"].copy()
                     else:
@@ -813,7 +824,7 @@ class PSyGrid:
                             warnings.warn("Expand age in {}\n".format(run.binary_history_path))
                     else:
                         ignore_data = True
-                        ignore_reason = "corrupted_binary_history"
+                        ignore_reason = IGNORE_CORRUPTED_BINARY_HISTORY
                 else:
                     binary_history_mod = None
                     binary_history_age = None
@@ -840,7 +851,7 @@ class PSyGrid:
                     binary_history_len = 0
                 if binary_grid and binary_history_len == 0:
                     ignore_data = True
-                    ignore_reason = "ignored_scrubbed"
+                    ignore_reason = IGNORE_SCRUBBED_HISTORY
                     warnings.warn("Ignored MESA run because of scrubbed binary"
                                   " history in: {}\n".format(run.path))
                     if not initial_RLO_fix:
@@ -851,6 +862,7 @@ class PSyGrid:
                     history1_len = 0
                 if not binary_grid and history1_len == 0:
                     ignore_data = True
+                    ignore_reason = IGNORE_SCRUBBED_HISTORY
                     warnings.warn("Ignored MESA run because of scrubbed"
                                   " history in: {}\n".format(run.path))
                     continue
@@ -871,7 +883,7 @@ class PSyGrid:
                     kept = keep_after_RLO(binary_history, history1, history2)
                     if kept is None:
                         ignore_data = True
-                        ignore_reason = "ignored_no_RLO"
+                        ignore_reason = IGNORE_NO_RLO
                         warnings.warn("Ignored MESA run because of no RLO"
                                       " in: {}\n".format(run.path))
                         if not initial_RLO_fix:
@@ -900,7 +912,7 @@ class PSyGrid:
                         warnings.warn("Ignored MESA run because of missing "
                                       "profile in: {}\n".format(run.path))
                         ignore_data = True
-                        ignore_reason = "ignore_no_FP"
+                        ignore_reason = IGNORE_NO_FINAL_PROFILE
                         continue
 
             if binary_history is not None:
