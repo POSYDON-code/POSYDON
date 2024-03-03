@@ -468,6 +468,9 @@ DEFAULT_MARKERS_COLORS_LEGENDS = {
             ['s', 2, list_of_colors[0], 'Stable RLOF during stripped He star'],
         'Stable case BB':
             ['s', 2, list_of_colors[0], 'Stable RLOF during stripped He star'],
+        # hot fix for case AA should be removed later:
+        'Stable case AA':
+            ['s', 2, list_of_colors[2], 'Stable RLOF during MS'],
         'Stable case AB':
             ['s', 2, list_of_colors[1], 'Stable RLOF during postMS'],
         'Stable case AC':
