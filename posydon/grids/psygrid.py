@@ -240,6 +240,35 @@ IGNORE_SCRUBBED_HISTORY = "ignored_scrubbed"
 IGNORE_NO_RLO = "ignored_no_RLO"
 IGNORE_NO_FINAL_PROFILE = "ignore_no_FP"
 
+IGNORE_REASON_PRIORITY = [   # from high to low priority
+    IGNORE_CORRUPTED_BINARY_HISTORY,
+    IGNORE_CORRUPTED_HISTORY1,
+    IGNORE_CORRUPTED_HISTORY2,
+    IGNORE_NO_BINARY_HISTORY,
+    IGNORE_NO_HISTORY1,
+    IGNORE_SCRUBBED_HISTORY,
+    IGNORE_NO_FINAL_PROFILE,
+    IGNORE_NO_RLO,
+]
+
+
+def set_ignore_reason(old_value, new_value):
+    """Return the appropriate ignore reason given the decided priority."""
+    # only None or the strings in `IGNORE_REASON_PRIORITY` are allowed.
+    for value in [old_value, new_value]:
+        if value is not None and value not in IGNORE_REASON_PRIORITY:
+            raise ValueError(f"Ignore reason `{value}` not recognized.")
+
+    # always update if no ignore reason before, or when resetting ignoring
+    if (old_value == new_value) or (old_value is None) or (new_value is None):
+        return new_value
+
+    # now both old and new values are not None
+    order_of_old_value = IGNORE_REASON_PRIORITY.index(old_value)
+    order_of_new_value = IGNORE_REASON_PRIORITY.index(new_value)
+    return old_value if order_of_old_value < order_of_new_value else new_value
+
+
 # Default columns to be included from history and profile tables
 DEFAULT_BINARY_HISTORY_COLS = [
     "model_number", "age",
