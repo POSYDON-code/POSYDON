@@ -635,6 +635,7 @@ class PSyGrid:
             # Select the ith run
             run = grid.runs[i]
             ignore_data = False    # if failed run, do not save any data
+            ignore_reason = None
             newTF1 = ''
             self._say('Processing {}'.format(run.path))
 
