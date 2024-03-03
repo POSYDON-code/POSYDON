@@ -636,7 +636,6 @@ class PSyGrid:
         for i in tqdm.tqdm(range(N_runs)):
             # Select the ith run
             run = grid.runs[i]
-            ignore_data = False    # if failed run, do not save any data
             ignore = IgnoreReason()
             newTF1 = ''
             self._say('Processing {}'.format(run.path))
@@ -651,14 +650,13 @@ class PSyGrid:
                                                  BH_columns)
             # if no binary history, ignore this run
             if binary_grid and binary_history is None:
-                ignore_data = True
                 ignore.reason = "ignored_no_BH"
                 warnings.warn("Ignored MESA run because of missing binary "
                               "history in: {}\n".format(run.path))
                 if not initial_RLO_fix:
                     continue
 
-            if ignore_data:
+            if ignore:
                 history1 = None
             elif self.eeps is None:
                 history1 = read_MESA_data_file(run.history1_path, H1_columns)
@@ -676,11 +674,10 @@ class PSyGrid:
             if not binary_grid and history1 is None:
                 warnings.warn("Ignored MESA run because of missing "
                               "history in: {}\n".format(run.path))
-                ignore_data = True
                 ignore.reason = "ignore_no_H1"
                 continue
 
-            if ignore_data:
+            if ignore:
                 history2 = None
             else:
                 history2 = read_MESA_data_file(run.history2_path, H2_columns)
@@ -688,7 +685,7 @@ class PSyGrid:
                 history2 = fix_He_core(history2)
 
             # scrub histories (unless EEPs are selected or run is ignored)
-            if not ignore_data and self.eeps is None:
+            if not ignore and self.eeps is None:
                 # read the model numbers and ages from the histories
                 colname = "model_number"
                 if history1 is not None:
@@ -709,7 +706,6 @@ class PSyGrid:
                             history1_mod = np.concatenate((history1_mod, add_mod))
                             warnings.warn("Expand mod in {}\n".format(run.history1_path))
                     else:
-                        ignore_data = True
                         ignore.reason = "corrupted_history1"
                     if "star_age" in H1_columns:
                         history1_age = history1["star_age"].copy()
@@ -728,7 +724,6 @@ class PSyGrid:
                             history1_age = np.concatenate((history1_age, add_age))
                             warnings.warn("Expand age in {}\n".format(run.history1_path))
                     else:
-                        ignore_data = True
                         ignore.reason = "corrupted_history1"
                 else:
                     history1_mod = None
@@ -752,7 +747,6 @@ class PSyGrid:
                             history2_mod = np.concatenate((history2_mod, add_mod))
                             warnings.warn("Expand mod in {}\n".format(run.history2_path))
                     else:
-                        ignore_data = True
                         ignore.reason = "corrupted_history2"
                     if "star_age" in H2_columns:
                         history2_age = history2["star_age"].copy()
@@ -771,7 +765,6 @@ class PSyGrid:
                             history2_age = np.concatenate((history2_age, add_age))
                             warnings.warn("Expand age in {}\n".format(run.history2_path))
                     else:
-                        ignore_data = True
                         ignore.reason = "corrupted_history2"
                 else:
                     history2_mod = None
@@ -795,7 +788,6 @@ class PSyGrid:
                             binary_history_mod = np.concatenate((binary_history_mod, add_mod))
                             warnings.warn("Expand mod in {}\n".format(run.binary_history_path))
                     else:
-                        ignore_data = True
                         ignore.reason = "corrupted_binary_history"
                     if "age" in BH_columns:
                         binary_history_age = binary_history["age"].copy()
@@ -814,7 +806,6 @@ class PSyGrid:
                             binary_history_age = np.concatenate((binary_history_age, add_age))
                             warnings.warn("Expand age in {}\n".format(run.binary_history_path))
                     else:
-                        ignore_data = True
                         ignore.reason = "corrupted_binary_history"
                 else:
                     binary_history_mod = None
@@ -841,7 +832,6 @@ class PSyGrid:
                 else:
                     binary_history_len = 0
                 if binary_grid and binary_history_len == 0:
-                    ignore_data = True
                     ignore.reason = "ignored_scrubbed"
                     warnings.warn("Ignored MESA run because of scrubbed binary"
                                   " history in: {}\n".format(run.path))
@@ -852,7 +842,6 @@ class PSyGrid:
                 else:
                     history1_len = 0
                 if not binary_grid and history1_len == 0:
-                    ignore_data = True
                     ignore.reason = "ignored_scrubbed"
                     warnings.warn("Ignored MESA run because of scrubbed"
                                   " history in: {}\n".format(run.path))
@@ -873,7 +862,6 @@ class PSyGrid:
                 if start_at_RLO:
                     kept = keep_after_RLO(binary_history, history1, history2)
                     if kept is None:
-                        ignore_data = True
                         ignore.reason = "ignored_no_RLO"
                         warnings.warn("Ignored MESA run because of no RLO"
                                       " in: {}\n".format(run.path))
@@ -886,7 +874,7 @@ class PSyGrid:
                     else:
                         binary_history, history1, history2 = kept
 
-            if ignore_data:
+            if ignore:
                 binary_history, history1, history2 = None, None, None
                 final_profile1, final_profile2 = None, None
             else:
@@ -898,12 +886,10 @@ class PSyGrid:
                     if self.config["accept_missing_profile"]:
                         warnings.warn("Including MESA run despite the missing "
                                       "profile in {}\n".format(run.path))
-                        ignore_data = False
                         ignore.reason = None
                     else:
                         warnings.warn("Ignored MESA run because of missing "
                                       "profile in: {}\n".format(run.path))
-                        ignore_data = True
                         ignore.reason = "ignore_no_FP"
                         continue
 
@@ -945,7 +931,7 @@ class PSyGrid:
 
             # get some initial values from the `binary_history.data` header
             # if of course, no RLO fix is applied
-            if binary_grid and not (start_at_RLO or ignore_data):
+            if binary_grid and not (start_at_RLO or ignore):
                 # this is compatible with `.gz` files
                 bh_header = np.genfromtxt(run.binary_history_path,
                                           skip_header=1,
@@ -976,7 +962,7 @@ class PSyGrid:
                     init_separation = orbital_separation_from_period(
                         init_period, init_mass_1, init_mass_2)
                     initial_BH["binary_separation"] = init_separation
-            elif not binary_grid and not (start_at_RLO or ignore_data):
+            elif not binary_grid and not (start_at_RLO or ignore):
                 # use header to get initial mass in single-star grids
                 # this is compatible with `.gz` files
                 h1_header = np.genfromtxt(run.history1_path,
@@ -990,7 +976,7 @@ class PSyGrid:
             addX = "X" in dtype_initial_values.names
             addY = "Y" in dtype_initial_values.names
             addZ = "Z" in dtype_initial_values.names
-            if (addX or addY or addZ) and not ignore_data:
+            if (addX or addY or addZ) and not ignore:
                 # read abundances from history1 if present, else history2
                 if history1 is not None:
                     read_from = run.history1_path
@@ -1049,7 +1035,7 @@ class PSyGrid:
                     newcol = "S2_" + col
                     self.final_values[i][newcol] = final_H2[col]
 
-            if not ignore_data:
+            if not ignore:
                 if addX:
                     self.initial_values[i]["X"] = where_to_add["X"]
                 if addY:
@@ -1058,7 +1044,7 @@ class PSyGrid:
                     self.initial_values[i]["Z"] = where_to_add["Z"]
 
             if binary_grid:
-                if ignore_data:
+                if ignore:
                     termination_flags = [ignore.reason] * N_FLAGS
                 else:
                     termination_flags = get_flags_from_MESA_run(
@@ -1066,7 +1052,7 @@ class PSyGrid:
                         history1=history1, history2=history2,
                         start_at_RLO=start_at_RLO, newTF1=newTF1)
             else:
-                if ignore_data:
+                if ignore:
                     termination_flags = [ignore.reason] * N_FLAGS_SINGLE
                 else:
                     termination_flags = [
@@ -1075,7 +1061,7 @@ class PSyGrid:
                                                  history1["star_mass"])
                     ]
 
-            if ignore_data:
+            if ignore:
                 for colname in self.final_values.dtype.names:
                     if (colname.startswith("termination_flag_")
                             or colname.startswith("interpolation_class")):
@@ -1107,7 +1093,7 @@ class PSyGrid:
                     self.final_values[i]["interpolation_class"] = \
                         infer_interpolation_class(*termination_flags[:2])
 
-            if ignore_data:
+            if ignore:
                 # if not fix requested and failed run, do not include it
                 if start_at_RLO and (ignore.reason == "ignored_no_RLO"):
                     # allow non-RLOing systems to be included in the grid
@@ -1120,7 +1106,7 @@ class PSyGrid:
 
             # if data to be included, downsample and store
             if not slim:
-                if ignore_data:
+                if ignore:
                     hdf5.create_group("/grid/run{}/".format(run_index))
                 else:
                     # downsample and save
