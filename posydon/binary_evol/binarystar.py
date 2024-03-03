@@ -162,16 +162,24 @@ class BinaryStar:
             self.inspiral_time = None
         if not hasattr(self, 'mass_transfer_case'):
             self.mass_transfer_case = 'None'
+
+        if not hasattr(self, 'true_anomaly_first_SN'):
+            self.true_anomaly_SN1 = None
+        if not hasattr(self, 'true_anomaly_second_SN'):
+            self.true_anomaly_SN2 = None
+        if not hasattr(self, 'first_SN_already_occurred'):
+            self.first_SN_already_occurred = False
         # if not hasattr(self, 'V_sys'):
         #     self.V_sys = [0, 0, 0]
-        
+
         # store interpolation_class and mt_history for each step_MESA
         for grid_type in ['HMS_HMS','CO_HMS_RLO','CO_HeMS','CO_HeMS_RLO']:
             if not hasattr(self, f'interp_class_{grid_type}'):
                 setattr(self, f'interp_class_{grid_type}', None)
             if not hasattr(self, f'mt_history_{grid_type}'):
                 setattr(self, f'mt_history_{grid_type}', None)
-
+            if not hasattr(self, f'culmulative_mt_case_{grid_type}'):
+                setattr(self, f'culmulative_mt_case_{grid_type}', None)
         # SimulationProperties object - parameters & parameterizations
         if isinstance(properties, SimulationProperties):
             self.properties = properties
@@ -213,7 +221,7 @@ class BinaryStar:
             total_state = (self.star_1.state, self.star_2.state, self.state,
                            self.event)
             next_step_name = self.properties.flow.get(total_state)
-            
+
             if next_step_name is None:
                 warnings.warn("Undefined next step given stars/binary states "
                               "{}.".format(total_state))
@@ -286,10 +294,12 @@ class BinaryStar:
 
     def update_star_states(self):
         """Update the states of the two stars in the binary."""
-        self.star_1.state = check_state_of_star(
-            self.star_1, star_CO=self.star_1.state in ["WD", "BH", "NS"])
-        self.star_2.state = check_state_of_star(
-            self.star_2, star_CO=self.star_2.state in ["WD", "BH", "NS"])
+        if self.star_1.state != 'massless_remnant':
+            self.star_1.state = check_state_of_star(
+                self.star_1, star_CO=self.star_1.state in ["WD", "NS", "BH"])
+        if self.star_2.state != 'massless_remnant':
+            self.star_2.state = check_state_of_star(
+                self.star_2, star_CO=self.star_2.state in ["WD", "NS", "BH"])
 
     def to_df(self, **kwargs):
         """Return history parameters from the binary in a DataFrame.
@@ -328,7 +338,7 @@ class BinaryStar:
         extra_binary_cols_dict = kwargs.get('extra_columns', {})
         extra_columns = list(extra_binary_cols_dict.keys())
         extra_columns_dtypes_user = list(extra_binary_cols_dict.values())
-        
+
         all_keys = (["binary_index"]
                     + [key+'_history' for key in BINARYPROPERTIES]
                     + extra_columns)
@@ -343,6 +353,7 @@ class BinaryStar:
                             + [key+'_history' for key in user_keys_to_save]
                             + extra_columns)
 
+
         try:
             data_to_save = [getattr(self, key) for key in keys_to_save[1:]]
             col_lengths = [len(x) for x in data_to_save]
@@ -351,16 +362,16 @@ class BinaryStar:
             # binary_index
             data_to_save.insert(0, [self.index]*max_col_length)
 
-            where_none = np.array([[True if var is None else False
-                                    for var in column]
-                                   for column in data_to_save], dtype=bool)
-
             # If a binary fails, usually history cols have diff lengths.
             # This should append NAN to create even columns.
             all_equal_length_cols = len(set(col_lengths)) == 1
             if not all_equal_length_cols:
                 for col in data_to_save:
-                    col.extend(['NAN'] * abs(max_col_length - len(col)))
+                    col.extend([np.nan] * abs(max_col_length - len(col)))
+
+            where_none = np.array([[True if var is None else False
+                                    for var in column]
+                                   for column in data_to_save], dtype=bool)
 
         except AttributeError as err:
             raise AttributeError(
@@ -587,7 +598,7 @@ class BinaryStar:
             oneline_df['WARNING'] = [0]
 
         oneline_df.set_index('binary_index', inplace=True)
-        
+
         # try to coerce data types automatically
         oneline_df = oneline_df.infer_objects()
 
@@ -600,7 +611,7 @@ class BinaryStar:
                                             extra_binary_dtypes_user=extra_binary_cols_dict,
                                             extra_S1_dtypes_user=extra_s1_cols_dict,
                                             extra_S2_dtypes_user=extra_s2_cols_dict)
-        
+
         return oneline_df
 
     @classmethod
