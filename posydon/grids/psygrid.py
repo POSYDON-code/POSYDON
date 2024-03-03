@@ -908,6 +908,7 @@ class PSyGrid:
                         warnings.warn("Including MESA run despite the missing "
                                       "profile in {}\n".format(run.path))
                         ignore_data = False
+                        ignore_reason = None
                     else:
                         warnings.warn("Ignored MESA run because of missing "
                                       "profile in: {}\n".format(run.path))
