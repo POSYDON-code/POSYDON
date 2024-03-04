@@ -1,28 +1,42 @@
-"""Evolve multiple BinaryPopulations together.
+"""Processing of population files.
 
-e.g. with multiple solar_metallicities
+This module contains classes and functions to process population files.
+Population files are HDF5 files containing the history and oneline dataframes
+of a population of binary systems. The history dataframe contains the detailed
+evolution of each binary system, while the oneline dataframe contains the
+final state of each binary system.
+
+Classes
+-------
+Population
+    A class to handle population files.
+History
+    A class to handle the history dataframe of a population file.
+Oneline
+    A class to handle the oneline dataframe of a population file.
+    
+TransientPopulation
+    A class to handle transient populations.
+
+Rates
+    A class to handle the cosmic rates of in a population file.
 """
 
 __authors__ = [
     "Simone Bavera <Simone.Bavera@unige.ch>",
     "Kyle Akira Rocha <kylerocha2024@u.northwestern.edu>",
     "Monica Gallegos-Garcia <monicagallegosgarcia2024@u.northwestern.edu>",
-    "Max Briel < max.briel@gmail.com",
+    "Max Briel <max.briel@unige.ch>",
 ]
 
 import warnings
 import numpy as np
 import pandas as pd
 from tqdm import tqdm
-import os
-import copy
 from matplotlib import pyplot as plt
-import multiprocessing as mp
 
 from posydon.utils.constants import Zsun
 from posydon.popsyn.io import binarypop_kwargs_from_ini
-from posydon.popsyn.binarypopulation import BinaryPopulation
-from posydon.utils.common_functions import convert_metallicity_to_string
 from posydon.popsyn.normalized_pop_mass import initial_total_underlying_mass
 import posydon.visualization.plot_pop as plot_pop
 
