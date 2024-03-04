@@ -66,7 +66,7 @@ if __name__ == '__main__':
 
 ''')
 
-def create_slurm_submit(metallicity, job_array_length, partition, email, walltime, path_to_posydon, path_to_posydon_data):
+def create_slurm_submit(metallicity, job_array_length, partition, email, walltime, account, path_to_posydon, path_to_posydon_data):
     '''creates the slurm submit script'''
 
     str_met = convert_metallicity_to_string(metallicity)
@@ -79,6 +79,8 @@ def create_slurm_submit(metallicity, job_array_length, partition, email, walltim
 #SBATCH --time={walltime}
 #SBATCH --mem-per-cpu=4G
 '''
+    if account != None:
+        text += f'#SBATCH --account={account}\n'
     if partition!=None:
         text += f'#SBATCH --partition={partition}\n'
     if email != None:
@@ -96,7 +98,7 @@ python ./run_metallicity.py {metallicity}
     with open(filename, mode='w') as file:
         file.write(text)
 
-def create_slurm_merge(metallicity, partition, email, path_to_posydon, path_to_posydon_data):
+def create_slurm_merge(metallicity, partition, email, account, path_to_posydon, path_to_posydon_data):
 
     str_met = convert_metallicity_to_string(metallicity)
     if partition=='debug-cpu':
@@ -110,6 +112,9 @@ def create_slurm_merge(metallicity, partition, email, path_to_posydon, path_to_p
 #SBATCH --mem-per-cpu=4G
 #SBATCH --time={walltime}
 '''
+    if account != None:
+        text += f'#SBATCH --account={account}\n'
+
     if partition != None:
         text += f'#SBATCH --partition={partition}\n'
     if email != None:
@@ -139,6 +144,7 @@ if __name__ == '__main__':
     parser.add_argument('--email', help='an email for the slurm scripts', default=None)
     parser.add_argument('--partition', help='what cluster partition you want to run the script on', default=None)
     parser.add_argument('--walltime', help='the walltime you would like to use in SLURM format', default='23:00:00')
+    parser.add_argument('--account', help='the account you would like to use', default=None)
     args = parser.parse_args()
 
     synpop_params = binarypop_kwargs_from_ini(args.ini_file)    
@@ -153,9 +159,9 @@ if __name__ == '__main__':
             os.mkdir(f'{str_met}_logs')
         except:
             pass
-        create_slurm_submit(MET, args.job_array, args.partition, args.email, args.walltime, PATH_TO_POSYDON, PATH_TO_POSYDON_DATA)
+        create_slurm_submit(MET, args.job_array, args.partition, args.email, args.walltime, args.account, PATH_TO_POSYDON, PATH_TO_POSYDON_DATA)
         print("SLURM script created")
-        create_slurm_merge(MET, args.partition, args.email, PATH_TO_POSYDON, PATH_TO_POSYDON_DATA)
+        create_slurm_merge(MET, args.partition, args.email, args.account, PATH_TO_POSYDON, PATH_TO_POSYDON_DATA)
 
     # create submission script for all SLURM 
     filename = 'slurm_submit.sh'
