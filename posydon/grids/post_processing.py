@@ -159,13 +159,14 @@ def post_process_grid(grid, index=None, star_2_CO=True, MODELS=MODELS,
             stars_CO = [False, star_2_CO]
             interpolation_class = grid.final_values['interpolation_class'][i]
             IC = grid.final_values['interpolation_class'][i]
+            TF2 = grid.final_values['termination_flag_2'][i]
         else:
             star = SingleStar.from_run(grid[i], history=True, profile=True)
             stars = [star]
             stars_CO = [False]
             IC = 'no_MT'
         TF1 = grid.final_values['termination_flag_1'][i]
-        TF2 = grid.final_values['termination_flag_2'][i]
+        
 
         # compute properties
         for j, star in enumerate(stars):
@@ -363,16 +364,8 @@ def post_process_grid(grid, index=None, star_2_CO=True, MODELS=MODELS,
                         assign_core_collapse_quantities_none(EXTRA_COLUMNS, 1, MODEL_NAME)
                     else:
                         for quantity in CC_quantities:
-                            if quantity != 'CO_interpolation_class':
-                                EXTRA_COLUMNS[f'S{star_i}_{MODEL_NAME}_{quantity}'].append(
-                                getattr(star_copy, quantity))
-                            else:
-                                if getattr(star_copy, 'state') == 'BH' and 'case' in TF2 and '1' in TF2 and '2' in TF2:
-                                    EXTRA_COLUMNS[f'S{star_i}_{MODEL_NAME}_{quantity}'].append(
-                                    getattr(star_copy, 'state')+'_reverse_MT')
-                                else:
-                                    EXTRA_COLUMNS[f'S{star_i}_{MODEL_NAME}_{quantity}'].append(
-                                    getattr(star_copy, 'state'))
+                            EXTRA_COLUMNS[f'S1_{MODEL_NAME}_{quantity}'].append(
+                             getattr(star_copy, quantity))
                         if verbose:
                             print_CC_quantities(EXTRA_COLUMNS, star_copy, f'{MODEL_NAME}_{mechanism}')
             else:
