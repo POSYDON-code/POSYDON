@@ -25,7 +25,6 @@ import copy
 import warnings
 from scipy.interpolate import PchipInterpolator
 
-
 PATH_TO_POSYDON = os.environ.get("PATH_TO_POSYDON")
 
 
@@ -263,7 +262,7 @@ def orbital_separation_from_period(period_days, m1_solar, m2_solar):
     m1_solar = np.float64(m1_solar)
     m2_solar = np.float64(m2_solar)
     period_days = np.float64(period_days)
-    
+
     separation_cm = (const.standard_cgrav
                      * (m1_solar * const.Msun + m2_solar * const.Msun)
                      / (4.0 * const.pi**2.0)
@@ -1379,7 +1378,7 @@ def flip_stars(binary):
 
 def set_binary_to_failed(binary):
     '''Set the properties of the binary to indicate that it has failed.
-    
+
     Parameters
     ----------
     binary : BinaryStar
@@ -1387,7 +1386,7 @@ def set_binary_to_failed(binary):
     '''
     binary.state = "ERR"
     binary.event = "FAILED"
-    
+
 
 def infer_star_state(star_mass=None, surface_h1=None,
                      center_h1=None, center_he4=None, center_c12=None,
@@ -2685,3 +2684,47 @@ def convert_metallicity_to_string(Z):
     if not Z in valid_Z:
         raise ValueError(f'Metallicity {Z} not supported! Available metallicities in POSYDON v2 are {valid_Z}.')
     return f'{Z:1.1e}'.replace('.0','')
+
+def rotate(axis, angle):
+
+        """Generate rotation matrix to rotate a vector about an arbitrary axis 
+            by a given angle
+
+        Parameters
+        ----------
+        axis : array of length 3
+            Axis to rotate about
+        angle : float
+            Angle, in radians, through which to rotate about axis
+
+        Returns
+        -------
+        rotation_matrix : 3x3 array
+            Array such that rotation_matrix.dot(vector) rotates vector
+            about the given axis by the given angle
+
+        """
+
+        # normalize the axis vector
+        axis = axis / np.linalg.norm(axis)
+        
+
+        # calculate the cosine and sine of the angle
+        cos_theta = np.cos(angle)
+        sin_theta = np.sin(angle)
+        
+        # construct the rotation matrix
+        rotation_matrix = np.array([
+            [cos_theta + axis[0]**2 * (1 - cos_theta),
+            axis[0] * axis[1] * (1 - cos_theta) - axis[2] * sin_theta,
+            axis[0] * axis[2] * (1 - cos_theta) + axis[1] * sin_theta],
+            [axis[1] * axis[0] * (1 - cos_theta) + axis[2] * sin_theta,
+            cos_theta + axis[1]**2 * (1 - cos_theta),
+            axis[1] * axis[2] * (1 - cos_theta) - axis[0] * sin_theta],
+            [axis[2] * axis[0] * (1 - cos_theta) - axis[1] * sin_theta,
+            axis[2] * axis[1] * (1 - cos_theta) + axis[0] * sin_theta,
+            cos_theta + axis[2]**2 * (1 - cos_theta)]
+        ])
+        
+        
+        return rotation_matrix
