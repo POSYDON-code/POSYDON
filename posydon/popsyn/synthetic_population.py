@@ -51,7 +51,6 @@ from rate_calculation import DEFAULT_MODEL
 
 from posydon.popsyn.star_formation_history import star_formation_rate, SFR_Z_fraction_at_given_redshift
 
-
 from posydon.popsyn.binarypopulation import HISTORY_MIN_ITEMSIZE, ONELINE_MIN_ITEMSIZE
     
 ###############################################################################
@@ -126,6 +125,10 @@ def merge_populations(populations, filename, verbose=False):
 
     print(f'Populations merged into {filename}!')
     
+##################
+# Helper classes #
+################## 
+
 class History():
     
     def __init__(self, filename, verbose=False, chunksize=10000):
@@ -345,6 +348,9 @@ class PopulationIO():
             for c in parameter_array:
                 self.ini_params[c] = tmp_df[c][0]
 
+##########################
+# Main interface classes #
+##########################
 
 class Population(PopulationIO):
     
@@ -1046,7 +1052,6 @@ class TransientPopulation(Population):
             if self.verbose:
                 print('MODEL written to population file!')
     
- 
 class Rates(TransientPopulation):
     
     def __init__(self, filename, transient_name, SFH_identifier, verbose=False):
