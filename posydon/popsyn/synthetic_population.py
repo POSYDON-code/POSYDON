@@ -25,13 +25,6 @@ from posydon.popsyn.binarypopulation import BinaryPopulation
 from posydon.utils.common_functions import convert_metallicity_to_string
 from posydon.popsyn.normalized_pop_mass import initial_total_underlying_mass
 import posydon.visualization.plot_pop as plot_pop
-from posydon.popsyn.GRB import get_GRB_properties, GRB_PROPERTIES
-
-# TODO: temp import, remove after TF2 classification is implemented in pop synth
-from posydon.interpolation.IF_interpolation import IFInterpolator
-from posydon.binary_evol.binarystar import BinaryStar
-from posydon.binary_evol.singlestar import SingleStar
-from posydon.utils.common_functions import convert_metallicity_to_string
 
 from astropy.cosmology import Planck15 as cosmology
 from astropy.cosmology import z_at_value
@@ -40,113 +33,14 @@ from astropy import units as u
 from astropy import constants as const
 import scipy as sp
 
+from rate_calculation import DEFAULT_MODEL
 
 from posydon.popsyn.star_formation_history import star_formation_rate, SFR_Z_fraction_at_given_redshift
 
 
 from posydon.popsyn.binarypopulation import HISTORY_MIN_ITEMSIZE, ONELINE_MIN_ITEMSIZE
-
-class PopulationRunner:
-    
-    def __init__(self, path_to_ini, verbose=False):
-        '''A Synthetic Population to run, process, and parse BinaryPopulations.
-        
-        Parameters
-        -----------
-        path_to_ini : str
-            path to the ini file to parse, which determines the populations.
-        verbose : bool (optional; True)
-            Whether to print progress statements.
-        '''
-        self.synthetic_pop_params = None
-        self.solar_metallicities = None
-        self.binary_populations = None
-        self.verbose = verbose
-        
-        if '.ini' not in path_to_ini:
-            raise ValueError('You did not provide a valid path_to_ini!')
-        else:
-            self.synthetic_pop_params = binarypop_kwargs_from_ini(path_to_ini)
-            self.solar_metallicities = self.synthetic_pop_params['metallicity']
-            if not isinstance( self.solar_metallicities, list):
-                self.solar_metallicities = [self.solar_metallicities]
-            self.binary_populations = None
-
-    def create_binary_populations(self):
-        """Create a list of BinaryPopulation objects."""
-        self.binary_populations = []
-        for met in self.solar_metallicities[::-1]:
-            ini_kw = copy.deepcopy(self.synthetic_pop_params)
-            ini_kw['metallicity'] = met
-            ini_kw['temp_directory'] = self.create_met_prefix(met) + self.synthetic_pop_params['temp_directory']
-            self.binary_populations.append(BinaryPopulation(**ini_kw))  
-            
-    def get_ini_kw(self):
-        return self.synthetic_pop_params.copy()
-
-    def evolve(self):
-        """Evolve population(s) at given Z(s)."""
-        if self.binary_populations is None:
-            self.create_binary_populations()
-        while self.binary_populations:
-            pop =  self.binary_populations.pop()
-            
-            if self.verbose:
-                print(f'Z={pop.kwargs["metallicity"]:.2e} Z_sun')
-                            
-            process = mp.Process(target=pop.evolve)
-            process.start()
-            process.join()
-            
-            pop.close()
-            del pop
-
-    def merge_parallel_runs(self, path_to_batches):
-        """
-        Merge the folder or list of folders into a single file per metallicity.
-
-        Parameters
-        ----------
-        path_to_batches : str or list of str
-            Path to the folder(s) containing the batch folders.
-        """
-        # Max Briel: Should this function read in the ini file from the batch?
-        
-        if isinstance(path_to_batches, str):
-            path_to_batches = [path_to_batches]
-        # check if path_to_batches is the same length as the number of solar_metallicities
-        if len(path_to_batches) != len(self.solar_metallicities):
-            raise ValueError('The number of metallicity and batch directories do not match!')
-
-        for met, path_to_batch in zip(self.solar_metallicities, path_to_batches):
-            met_prefix = self.create_met_prefix(met)
-            ini_kw = self.synthetic_pop_params.copy()
-            ini_kw['metallicity'] = met
-            tmp_files = [os.path.join(path_to_batch, f)     \
-                         for f in os.listdir(path_to_batch) \
-                            if os.path.isfile(os.path.join(path_to_batch, f))]
-            
-            BinaryPopulation(**ini_kw).combine_saved_files(met_prefix+ 'population.h5', tmp_files)
-            if self.verbose:
-                print(f'Population at Z={met:.2e} Z_sun successfully merged!')
-            # Store the population ini parameters inside the file.
-            # This is useful to keep track of the population parameters
-            # when merging multiple populations.
-            with pd.HDFStore(met_prefix+ 'population.h5', mode='a') as store:
-                store.put('ini_parameters', pd.Series(ini_kw))
-            
-            if len(os.listdir(path_to_batch)) == 0:
-                os.rmdir(path_to_batch)
-            elif self.verbose:
-                print(f'{path_to_batch} is not empty, it was not removed!')
-
-    @staticmethod
-    def create_met_prefix(met):
-        """Append a prefix to the se of directories for batch saving."""
-        return convert_metallicity_to_string(met) + '_Zsun_'
     
 ###############################################################################
-
 
 parameter_array = [ "number_of_binaries",
                    'binary_fraction_scheme',
@@ -165,20 +59,6 @@ parameter_array = [ "number_of_binaries",
                    'orbital_period_max',
                    'eccentricity_scheme']
 
-
-DEFAULT_MODEL = {
-    'delta_t' : 100, # Myr
-    'SFR' : 'IllustrisTNG',
-    'sigma_SFR' : None,
-    'Z_max' : 1.,
-    'select_one_met' : False,
-    'dlogZ' : None, # e.g, [np.log10(0.0142/2),np.log10(0.0142*2)]
-    'Zsun' : Zsun,
-    'compute_GRB_properties' : False,
-    'GRB_beaming' : 1., # e.g., 0.5, 'Goldstein+15'
-    'GRB_efficiency' : 0., # e.g., 0.01
-    'E_GRB_iso_min' : 0., # e.g., 1e51 erg 
-}
 
 # TODO: I don't know if the merge_populations function is still needed
 def merge_populations(populations, filename, verbose=False):
@@ -1014,8 +894,6 @@ class TransientPopulation(Population):
                     
         self._write_MODEL_data(self.filename, path_in_file, MODEL)
         
-            #store.put(path_in_file+'MODEL', pd.DataFrame(MODEL))
-        
         rates = Rates(self.filename,
                       self.transient_name,
                       SFH_identifier,
@@ -1096,7 +974,6 @@ class TransientPopulation(Population):
                 store.append(path_in_file+'z_events',
                              pd.DataFrame(data=z_events, index=selected_indices),
                              format='table')
-            
         return rates
     
     def plot_efficiency_over_metallicity(self, **kwargs):

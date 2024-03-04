@@ -212,7 +212,6 @@ def SFR_Z_fraction_at_given_redshift(z,SFR, sigma, metallicity_bins, Z_max, sele
             fSFR[:,0] = stats.norm.cdf(np.log10(metallicity_bins[1]), mu, sigma)/norm
             fSFR[:,-1] = norm - stats.norm.cdf(np.log(metallicity_bins[-1]), mu, sigma)/norm
 
-
     elif SFR == "Neijssel+19":
         # assume a truncated ln-normal distribution of metallicities
         sigma = std_log_metallicity_dist(sigma)
@@ -225,7 +224,6 @@ def SFR_Z_fraction_at_given_redshift(z,SFR, sigma, metallicity_bins, Z_max, sele
         if not select_one_met:
             fSFR[:,0] = stats.norm.cdf(np.log(metallicity_bins[1]), mu, sigma)/norm
             fSFR[:,-1] = norm - stats.norm.cdf(np.log(metallicity_bins[-1]), mu, sigma)/norm
-
 
     elif SFR == 'IllustrisTNG':
         # numerically itegrate the IlluystrisTNG SFR(z,Z)
@@ -256,7 +254,6 @@ def SFR_Z_fraction_at_given_redshift(z,SFR, sigma, metallicity_bins, Z_max, sele
         raise ValueError('Invalid SFR!')
                 
     return fSFR
-
 
 def integrated_SFRH_over_redshift(SFR, sigma, Z, Z_max):
     """Integrated SFR history over z as in Eq. (B.10) of Bavera et al. (2020).
