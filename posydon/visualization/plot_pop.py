@@ -122,145 +122,55 @@ def plot_merger_efficiency(met, merger_efficiency, show=True, path=None, channel
         plt.show()
 
         
-def plot_hist_properties(x, df_intrinsic=None, df_observable=None,
+def plot_hist_properties(df, ax=None, df_intrinsic=None, df_observable=None,
                         channel=None,
                         show=True, path=None, alpha=0.5,
-                        range=None, bins=20, xlog=False, ylog=False,
-                        pop=None, **kwargs):
-    if pop is None:
-        raise ValueError('Population type not specified.')
-    
-    if df_intrinsic is not None and df_observable is not None:
+                        range=None, bins=20, normalise=False,color=COLORS[0], **kwargs):
+    if ax is None:
+        fig, ax = plt.subplots(1,1, figsize=(5,5))
+        
+    df_columns = df.columns
+    if 'intrinsic' in df_columns and 'observable' in df_columns:
         title = r'Intrinsic vs. observable (dashed) population'
-    elif df_intrinsic is not None:
+    elif 'intrinsic' in df_columns:
         title = r'Intrinsic population'
-    elif df_observable is not None:
+    elif 'observable' in df_columns:
         title = r'Observable population'
     else:
         raise ValueError('You should provide either an intrinsic or a '
                          'detectable population.')
 
-    plt.figure()
-    if df_intrinsic is not None:
-        # normalise weight, for GRB this will conserve GRB1/GRB2 ratio
-        df_intrinsic['weight'] /= sum(df_intrinsic['weight'])
-        if channel is not None:
-            sel = (df_intrinsic['weight'] > 0) & (df_intrinsic['channel'] == channel)
-            title += f'\n{channel}'
-        else:
-            sel = df_intrinsic['weight'] > 0
-        if isinstance(x, str):
-            if pop == 'GRB':
-                sel_tmp = sel & ~df_intrinsic[x].isna()
-            else:
-                sel_tmp = sel
-            values, weights = df_intrinsic.loc[sel_tmp,[x,'weight']].values.T
-            if xlog:
-                mask = values > 0
-                values = np.log10(values[mask])
-                weights = weights[mask]
-            plt.hist(values, weights=weights, color=COLORS[0],
-                     alpha=alpha, range=range, bins=bins)
-        elif isinstance(x, list):
-            for i, x_i in enumerate(x):
-                if "S1" in x_i:
-                    label = 'S1'
-                    s = 1
-                elif "S2" in x_i:
-                    label = 'S2'
-                    s = 2 
-                else:
-                    label = x_i
-                if pop == 'GRB':
-                    sel_tmp = sel & ~df_intrinsic[x_i].isna() & df_intrinsic[f'GRB{s}'] 
-                else:
-                    sel_tmp = sel
-                values, weights = df_intrinsic.loc[sel_tmp,[x_i,'weight']].values.T
-                if xlog:
-                    mask = values > 0
-                    values = np.log10(values[mask])
-                    weights = weights[mask]
-                plt.hist(values, weights=weights,
-                         color=COLORS[i], label=label,
-                         alpha=alpha, range=range, bins=bins)
-    if df_observable is not None:
-        # normalise weight, for GRB this will conserve GRB1/GRB2 ratio
-        df_observable['weight'] /= sum(df_observable['weight'])
-        if channel is not None:
-            sel = (df_observable['weight'] > 0) & (df_observable['channel'] == channel)
-            if channel not in title:
-                title += f'\n{channel}'
-        else:
-            sel = df_observable['weight'] > 0
-        if isinstance(x, str):
-            if pop == 'GRB':
-                sel_tmp = sel & ~df_observable[x].isna()
-            else:
-                sel_tmp = sel
-            values, weights = df_observable.loc[sel_tmp,[x,'weight']].values.T
-            if xlog:
-                mask = values > 0
-                values = np.log10(values[mask])
-                weights = weights[mask]
-            plt.hist(values, weights=weights,
-                     color=COLORS[0],
-                     histtype=u'step', linestyle='--',
-                     alpha=alpha, range=range, bins=bins)
-        elif isinstance(x, list):
-            for i, x_i in enumerate(x):
-                if "S1" in x_i:
-                    label = 'S1'
-                    s = 1
-                elif "S2" in x_i:
-                    label = 'S2'
-                    s = 2
-                else:
-                    label = x_i
-                if pop == 'GRB':
-                    sel_tmp = sel & ~df_observable[x_i].isna() & df_observable[f'GRB{s}']
-                else:
-                    sel_tmp = sel
-                values, weights = df_observable.loc[sel_tmp,[x_i,'weight']].values.T
-                if xlog:
-                    mask = values > 0
-                    values = np.log10(values[mask])
-                    weights = weights[mask]
-                plt.hist(values, weights=weights,
-                         color=COLORS[i], label=label,
-                         histtype=u'step', linestyle='--',
-                         alpha=alpha, range=range, bins=bins)
-    plt.title(title)
-    if ylog:
-        plt.yscale('log')
-    plt.ylabel(r'PDF')
-    try:
-        if isinstance(x, str):
-            if not xlog:
-                plt.xlabel(DEFAULT_LABELS[x][0])
-            else:
-                plt.xlabel(DEFAULT_LABELS[x][1])
-        else:
-            if not xlog:
-                plt.xlabel(DEFAULT_LABELS[x[0]][0])
-            else:
-                plt.xlabel(DEFAULT_LABELS[x[0]][1])
-    except:
-        if isinstance(x, str):
-            if not xlog:
-                plt.xlabel(x)
-            else:
-                plt.xlabel('log10_'+x)
-        else:
-            if not xlog:
-                plt.xlabel(x[0])
-            else:
-                plt.xlabel('log10_'+x[0])
-    if isinstance(x, list):
-        plt.legend(loc=1)
-    if path:
-        plt.savefig(path)
-    if show:
-        plt.show()
+    if 'intrinsic' in df_columns:
+        values =  df['intrinsic']
+        if normalise:
+            values /= sum(values)
+            
+        ax.hist(df['property'],
+                 weights=values,
+                 color=color,
+                 alpha=alpha,
+                 range=range,
+                 bins=bins,
+                 label='intrinsic')
+            
+    if 'observable' in df_columns:
+        values = df['observable']
+        if normalise:
+            values /= sum(values)
+        
+        ax.hist(df['property'],
+                 weights=values,
+                 color=color,
+                 alpha=alpha,
+                 range=range,
+                 histtype=u'step',
+                 linestyle='--',
+                 bins=bins,
+                 label='observable')
+        
+    ax.set_title(title)    
+
+        
         
         
 def plot_popsyn_over_grid_slice(pop, grid_type, met_Zsun, slices=None, channel=None, 
@@ -377,9 +287,11 @@ def plot_popsyn_over_grid_slice(pop, grid_type, met_Zsun, slices=None, channel=N
                     raise ValueError(f'Property {prop} not available in popsynth data.')
                 
                 # basically only for DCO systems
-                prop_sel = sel + ' & event == "CO_contact"'
+                met_indices = np.array(met_indices)[mask].tolist()
+                prop_sel = 'index in '+str(met_indices) + ' & event == "CO_contact"'
                 prop_data = pop.history.select(where=prop_sel, columns=[prop])
                 prop_values = prop_data[prop].values
+                print(len(prop_values))
                 
                 vmin = prop_range[0]
                 vmax = prop_range[1]

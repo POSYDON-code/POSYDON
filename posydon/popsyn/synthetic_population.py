@@ -949,7 +949,6 @@ class TransientPopulation(Population):
                 if '/transients/'+self.transient_name+'/efficiencies' in store.keys():
                     del store['transients/'+self.transient_name+'/efficiencies']
                 
-        
         metallicities = self.mass_per_met.index.to_numpy()
         efficiencies = []
         for met in metallicities:
@@ -1201,6 +1200,14 @@ class Rates(TransientPopulation):
         with pd.HDFStore(self.filename, mode='r') as store:
             return store[self.base_path+'z_events']
     
+    def select_rate_slice(self, key, start=None, stop=None):
+        '''select a slice of the rates'''
+        if key not in ['weights', 'z_events', 'birth']:
+            raise ValueError('key not in [weights, z_events, birth]')
+        
+        with pd.HDFStore(self.filename, mode='r') as store:
+            return store.select(self.base_path+key, start=start, stop=stop)
+        
     
     def calculate_intrinsic_rate_density(self, mt_channels=False):
         '''Compute the intrinsic rate density of the transient population'''
@@ -1237,13 +1244,96 @@ class Rates(TransientPopulation):
         
         return intrinsic_rate_density                               
 
+    def calculate_observable_population(self, observable_func, observable_name):
+        '''Calculate the observable population'''
+        
+        # file management and creation happens here
+        
+        # 1. recalculate the weights based on the observability function.
+        # 2. the observability function takes the TransientPopulation as input
+        
+        # 3. We loop over the transient population (events) and recalulate the weights.
+        # 4. the observability function takes the a transient population, the weights, and the z_events as input.
+        # It outputs a new weights as an output
+        # 5. It does this chunkwise
+        
+        with pd.HDFStore(self.filename, mode='a') as store:
+            # remove the observable population if it already exists
+            if '/transients/'+self.transient_name+'/rates/observable/'+observable_name in store.keys():
+                if self.verbose:
+                    print('Overwriting observable population!')
+                del store['transients/'+self.transient_name+'/rates/observable/'+observable_name]
+            
+            
+        # loop over the transient population and calculate the new weights, while writing to the file
+        for i in tqdm(range(0, len(self), self.chunksize), total=len(self)//self.chunksize, disable=not self.verbose):
+            transient_pop_chunk = self.select(start=i, stop=i+self.chunksize)
+            weights_chunk = self.select_rate_slice('weights', start=i, stop=i+self.chunksize)
+            z_events_chunk = self.select_rate_slice('z_events', start=i, stop=i+self.chunksize)
+            new_weights = observable_func(transient_pop_chunk, z_events_chunk, weights_chunk)
+            
+            with pd.HDFStore(self.filename, mode='a') as store:
+                store.append('transients/'+self.transient_name+'/rates/observable/'+observable_name,
+                            new_weights,
+                            format='table')
+                
+    def observable_population(self, observable_name):
+        '''Return the observable population'''
+        with pd.HDFStore(self.filename, mode='r') as store:
+            if '/transients/'+self.transient_name+'/rates/observable/'+observable_name not in store.keys():
+                raise ValueError(f'{observable_name} is not a valid observable population!')
+            else:
+                return store['transients/'+self.transient_name+'/rates/observable/'+observable_name]
+
+    @property
+    def observable_population_names(self):
+        '''Return the names of the observable populations'''
+        with pd.HDFStore(self.filename, mode='r') as store:
+            return [key.split('/')[-1] for key in store.keys() if '/transients/'+self.transient_name+'/rates/observable/' in key]
+
     @property        
     def intrinsic_rate_density(self):
         with pd.HDFStore(self.filename, mode='r') as store:
-            return store[self.base_path+'intrinsic_rate_density']
+            if self.base_path+'intrinsic_rate_density' not in store.keys():
+                raise ValueError('First you need to compute the intrinsic rate density!')
+            else:
+                return store[self.base_path+'intrinsic_rate_density']
+       
+    def plot_hist_properties(self, prop, intrinsic=True, observable=None, bins=50, channel=None, **kwargs):
+        '''plot a histogram of a given property available in the transient population'''
         
+        if prop not in self.columns:
+            raise ValueError(f'{prop} is not a valid property in the transient population!')
+       
+        # get the property and its associated weights in the population.
+        
+        df = self.select(columns=[prop])
+        df['property'] = df[prop]
+        del df[prop]
+        if intrinsic:
+            df['intrinsic'] = np.sum(self.weights, axis=1)       
+
+        if observable is not None:
+            with pd.HDFStore(self.filename, mode='r') as store:
+                if '/transients/'+self.transient_name+'/rates/observable/'+observable not in store.keys():
+                    raise ValueError(f'{observable} is not a valid observable population!')
+                else:
+                    df['observable'] = np.sum(store['transients/'+self.transient_name+'/rates/observable/'+observable], axis=1)
+        if channel is not None:
+            df['channel'] = self.select(columns=['channel'])
+            df = df[df['channel'] == channel]
+            if len(df) == 0:
+                raise ValueError(f'{channel} is not present in the transient population!')
+            plot_pop.plot_hist_properties(df, bins=bins, **kwargs)
+            
+        else:
+            # plot the histogram using plot_pop.plot_hist_properties
+            plot_pop.plot_hist_properties(df, bins=bins, **kwargs)
+        
+        
+        
+    
                                                     
-        
     #### cosmolgy ####
     ##################
     
@@ -1401,7 +1491,6 @@ class Rates(TransientPopulation):
 
         return z_birth
     
-    
     ###############################
     ### cosmic time to redshift ###
     ###############################
@@ -1459,31 +1548,3 @@ class Rates(TransientPopulation):
 
         """
         return cosmology.age(z).value  # Gyr
-        
-    def get_cosmic_time_at_event(self, z_birth, event_time):
-        """Get cosmic time at DCO merger.
-
-        Parameters
-        ----------
-        z_birth : double
-            Cosmological redshift of formation of the DCO system
-            (must be the same for every binary).
-        event_time : double 
-            Time at which the DCO system merges in Myr.
-
-        Returns
-        -------
-        double
-            Cosmic time in Gyr at DCO merger for all binaries born at z_birth.
-
-        """
-        t_birth = self.get_cosmic_time_from_redshift(z_birth) # Gyr
-        # add the cosmic time at birth
-        return t_birth + (event_time * 10 ** (-3))  # Gyr
-    
-    def observable_population(self):
-        pass
-    
-    def resampled_population(self):
-        pass
-        
