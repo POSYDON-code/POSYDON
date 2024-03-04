@@ -365,7 +365,7 @@ def post_process_grid(grid, index=None, star_2_CO=True, MODELS=MODELS,
                     else:
                         for quantity in CC_quantities:
                             EXTRA_COLUMNS[f'S1_{MODEL_NAME}_{quantity}'].append(
-                             getattr(star_copy, quantity))
+                            getattr(star_copy, quantity))
                         if verbose:
                             print_CC_quantities(EXTRA_COLUMNS, star_copy, f'{MODEL_NAME}_{mechanism}')
             else:
