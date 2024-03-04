@@ -166,13 +166,14 @@ def post_process_grid(grid, index=None, star_2_CO=True, MODELS=MODELS,
             stars_CO = [False, star_2_CO]
             interpolation_class = grid.final_values['interpolation_class'][i]
             IC = grid.final_values['interpolation_class'][i]
+            TF2 = grid.final_values['termination_flag_2'][i]
         else:
             star = SingleStar.from_run(grid[i], history=True, profile=True)
             stars = [star]
             stars_CO = [False]
             IC = 'no_MT'
+            TF2 = 'no_RLOF'
         TF1 = grid.final_values['termination_flag_1'][i]
-        TF2 = grid.final_values['termination_flag_2'][i]
 
         # compute properties
         for j, star in enumerate(stars):
