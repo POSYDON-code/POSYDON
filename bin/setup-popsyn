@@ -58,7 +58,7 @@ if __name__ == '__main__':
     tmp_files = [os.path.join(path_to_batch, f)    \\
                          for f in os.listdir(path_to_batch) \\
                             if os.path.isfile(os.path.join(path_to_batch, f))]
-    synpop.combine_saved_files(str_met+ '_population.h5', tmp_files)
+    synpop.combine_saved_files(str_met+ '_Zsun_population.h5', tmp_files)
     print('done')
 
     if len(os.listdir(path_to_batch)) == 0:
