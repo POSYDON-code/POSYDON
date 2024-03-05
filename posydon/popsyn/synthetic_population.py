@@ -33,12 +33,14 @@ import warnings
 import numpy as np
 import pandas as pd
 from tqdm import tqdm
+import os
 from matplotlib import pyplot as plt
 
 from posydon.utils.constants import Zsun
 from posydon.popsyn.io import binarypop_kwargs_from_ini
 from posydon.popsyn.normalized_pop_mass import initial_total_underlying_mass
 import posydon.visualization.plot_pop as plot_pop
+from posydon.utils.common_functions import convert_metallicity_to_string
 
 from astropy.cosmology import Planck15 as cosmology
 from astropy.cosmology import z_at_value
@@ -47,12 +49,16 @@ from astropy import units as u
 from astropy import constants as const
 import scipy as sp
 
-from rate_calculation import DEFAULT_MODEL
+
+from posydon.popsyn.rate_calculation import DEFAULT_MODEL
 
 from posydon.popsyn.star_formation_history import star_formation_rate, SFR_Z_fraction_at_given_redshift
 
-from posydon.popsyn.binarypopulation import HISTORY_MIN_ITEMSIZE, ONELINE_MIN_ITEMSIZE
+from posydon.popsyn.binarypopulation import (BinaryPopulation,
+                                             HISTORY_MIN_ITEMSIZE,
+                                             ONELINE_MIN_ITEMSIZE)
     
+
 ###############################################################################
 
 parameter_array = [ "number_of_binaries",
@@ -72,6 +78,44 @@ parameter_array = [ "number_of_binaries",
                    'orbital_period_max',
                    'eccentricity_scheme']
 
+class PopulationRunner():
+    
+    def __init__(self, path_to_ini, verbose=False):
+        '''initialise the binary populations'''
+        if '.ini' not in path_to_ini:
+            raise ValueError('You did not provide a valid path_to_ini!')
+        else:
+            self.synthetic_pop_params = binarypop_kwargs_from_ini(path_to_ini)
+            self.solar_metallicities = self.synthetic_pop_params['metallicity']
+            self.verbose = verbose
+            if not isinstance( self.solar_metallicities, list):
+                self.solar_metallicities = [self.solar_metallicities]
+                
+            self.binary_populations = []
+            for MET in self.solar_metallicities:
+                ini_kw = binarypop_kwargs_from_ini(path_to_ini)
+                ini_kw['metallicity'] = MET
+                ini_kw['temp_directory'] = convert_metallicity_to_string(MET) + "_Zsun_" + ini_kw['temp_directory']
+                self.binary_populations.append(BinaryPopulation(**ini_kw))
+                
+    def evolve(self):
+        '''evolve the binary populations'''
+        for pop in self.binary_populations:
+            pop.evolve()
+            # get the files in the batches
+            if pop.comm is None:
+                self.merge_parallel_runs(pop)
+                    
+    def merge_parallel_runs(self, pop):
+        path_to_batch = pop.kwargs['temp_directory']
+        tmp_files = [os.path.join(path_to_batch, f)    \
+                             for f in os.listdir(path_to_batch) \
+                                if os.path.isfile(os.path.join(path_to_batch, f))]
+        pop.combine_saved_files(convert_metallicity_to_string(pop.metallicity) + '_Zsun_population.h5', tmp_files)
+        # remove files
+        if len(os.listdir(path_to_batch)) == 0:
+            os.rmdir(path_to_batch)
+            
 
 # TODO: I don't know if the merge_populations function is still needed
 def merge_populations(populations, filename, verbose=False):
@@ -404,7 +448,8 @@ class Population(PopulationIO):
         
         # check if formation channels are present
         if '/formation_channels' not in keys:
-            warnings.warn(f'{filename} does not contain formation channels!')
+            if self.verbose:
+                warnings.warn(f'{filename} does not contain formation channels!')
             self._formation_channels = None
         else:
             self._formation_channels = pd.read_hdf(self.filename, key='formation_channels')
@@ -641,7 +686,6 @@ class Population(PopulationIO):
             del mask
             
             previous = end
-            print(previous, end)
             # combine based on the index, this allows for an easier apply later
             merged = pd.merge(events.dropna(), interp_class_HMS_HMS, left_index=True, right_index=True)
             del events, interp_class_HMS_HMS
