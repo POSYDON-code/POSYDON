@@ -388,14 +388,14 @@ def post_process_grid(grid, index=None, star_2_CO=True, MODELS=MODELS,
                     else:
                         for quantity in CC_quantities:
                             if quantity != 'CO_interpolation_class':
-                                EXTRA_COLUMNS[f'S{star_i}_{MODEL_NAME}_{quantity}'].append(
+                                EXTRA_COLUMNS[f'S1_{MODEL_NAME}_{quantity}'].append(
                                 getattr(star_copy, quantity))
                             else:
                                 if getattr(star_copy, 'state') == 'BH' and 'case' in TF2 and '1' in TF2 and '2' in TF2:
-                                    EXTRA_COLUMNS[f'S{star_i}_{MODEL_NAME}_{quantity}'].append(
+                                    EXTRA_COLUMNS[f'S1_{MODEL_NAME}_{quantity}'].append(
                                     getattr(star_copy, 'state')+'_reverse_MT')
                                 else:
-                                    EXTRA_COLUMNS[f'S{star_i}_{MODEL_NAME}_{quantity}'].append(
+                                    EXTRA_COLUMNS[f'S1_{MODEL_NAME}_{quantity}'].append(
                                     getattr(star_copy, 'state'))
                         if verbose:
                             print_CC_quantities(EXTRA_COLUMNS, star_copy, f'{MODEL_NAME}_{mechanism}')
