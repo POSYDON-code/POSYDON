@@ -470,6 +470,7 @@ class BinaryPopulation:
         
         with pd.HDFStore(absolute_filepath, mode=mode, complevel=complevel, complib=complib) as store:
             simulated_mass = 0
+            number_of_systems = 0
             for f in file_names:
                 # strings itemsize set by first append max value,
                 # which may not be largest string
@@ -480,7 +481,11 @@ class BinaryPopulation:
                     
                     oneline = pd.read_hdf(f, key='oneline')
                     simulated_mass += oneline['S1_mass_i'].sum() + oneline['S2_mass_i'].sum()
-                    oneline['metallicity'] = self.metallicity
+                    if 'metallicity' not in oneline.columns:
+                        met_df = pd.DataFrame(data={'metallicity': [self.metallicity] * len(oneline)}, index=oneline.index)
+                        oneline = pd.concat([oneline, met_df], axis=1)
+                    
+                    number_of_systems += len(oneline)
                     
                     store.append('oneline', oneline,
                                  min_itemsize=oneline_min_itemsize,
@@ -499,7 +504,8 @@ class BinaryPopulation:
             tmp_df = pd.DataFrame(
                 index=[self.metallicity],
                 data={'simulated_mass': simulated_mass,
-                      'underlying_mass': initial_total_underlying_mass(df=simulated_mass, **self.kwargs)[0]})
+                      'underlying_mass': initial_total_underlying_mass(df=simulated_mass, **self.kwargs)[0], 
+                      'number_of_systems': number_of_systems})
             store.append('mass_per_met', tmp_df)
 
     def close(self):
