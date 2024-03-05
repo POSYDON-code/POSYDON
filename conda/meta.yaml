@@ -17,12 +17,12 @@ requirements:
   host:
     - pip
     - python==3.7
-    - numpy
+    - numpy <= 1.26.4
     - setuptools>=38.2.5
 
   run:
     - python==3.7
-    - numpy
+    - numpy <= 1.26.4
     - scipy<=1.5.2
     - iminuit<=1.4.9
     - configparser<=5.0.0
