@@ -625,7 +625,8 @@ class Population(PopulationIO):
                 if '/formation_channels' in store.keys():
                     self._formation_channels = pd.read_hdf(self.filename, key='formation_channels')
                 else:
-                    warnings.warn('No formation channels in the population file!')
+                    if self.verbose:
+                        warnings.warn('No formation channels in the population file!')
                     self._formation_channels = None
             
         return self._formation_channels
