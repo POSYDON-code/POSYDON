@@ -773,13 +773,13 @@ class Oneline():
         Examples
         --------
         # Select rows based on a condition
-        >>> df = select(where="S2_mass_i > 30")
+        >>> df = Oneline.select(where="S2_mass_i > 30")
 
         # Select rows from index 10 to 20
-        >>> df = select(start=10, stop=20)
+        >>> df = Oneline.select(start=10, stop=20)
 
         # Select specific columns
-        >>> df = select(columns=['S1_mass_i', 'S1_mass_f'])
+        >>> df = Oneline.select(columns=['S1_mass_i', 'S1_mass_f'])
         """
         with pd.HDFStore(self.filename, mode='r') as store:
             return store.select('oneline', where=where, start=start, stop=stop, columns=columns)
@@ -891,17 +891,17 @@ class PopulationIO():
 
 class Population(PopulationIO):
     """A class to handle population files.
-    
+
     This class provides methods to handle population files. It includes methods to read and write population files,
     as well as methods to access and manipulate the history and oneline dataframes.
-    
+
     Attributes
     ----------
     history : History
         The history dataframe of the population.
     oneline : Oneline
         The oneline dataframe of the population.
-    _formation_channels : pd.DataFrame
+    formation_channels : pd.DataFrame
         The formation channels dataframe of the population.
     ini_params : dict
         The parameters from the ini file used to create the population.
@@ -913,13 +913,21 @@ class Population(PopulationIO):
         The metallicities of the population.
     indices : np.ndarray
         The indices of the binaries in the population.
-    
+    verbose : bool
+        If `True`, print additional information.
+    chunksize : int
+        The chunksize to use when reading the population file.
+    filename : str
+        The path to the population file.
+    number_of_systems : int
+        The number of systems in the population.
+    history_lengths : pd.DataFrame
+        The number of rows of each binary in the history dataframe. The index is the binary index.
+
     Methods
     -------
     export_selection(selection, filename, chunksize)
         Export a selection of the population to a new file.
-    formation_channels()
-        Get the formation channels dataframe of the population.
     calculate_formation_channels(mt_history=False)
         Calculate the formation channels of the population.
     __len__()
@@ -931,24 +939,48 @@ class Population(PopulationIO):
     """
 
     def __init__(self, filename, metallicity=None, ini_file=None, verbose=False, chunksize=1000):
-        '''A Population file.
+        """Initialize the Population object.
+
+        The Population object is initialised by creating History and Oneline objects,
+        which refer back to the population file (filename). The formation channels are also
+        linked to the population file, if present. The mass per metallicity data is loaded
+        from the file, if present, or calculated and saved to the file if not present.
+
+        If the mass per metallicity data is not present in the file, you can provide a metallicity
+        and the ini file (used to create the population) to calculate and save the mass per metallicity data.
+        You only need to do this once for a given population file. However, all systems in the population
+        will be given the same metallicity.
 
         Parameters
         -----------
         filename : str
             The path to the population file
-        verbose : bool
+        metallicity : float, optional
+            The metallicity of the population in solar units.
+        ini_file : str, optional
+            The path to the ini file used to create the population.
+        verbose : bool, optional
             If `True`, print additional information.
-        chunksize : int
+        chunksize : int, optional
             The chunksize to use when reading the population file.
 
-        Optional parameters for adding additional information to old population files.
-        metallicity : float
-            The metallicity of the population in solar units.
-        ini_file : str
-            The path to the ini file used to create the population.
+        Raises
+        ------
+        ValueError
+            If the provided filename does not contain '.h5' extension.
+            If the population file does not contain a history table.
+            If the population file does not contain an oneline table.
+            If the population file does not contain an ini_parameters table.
+            If the population file does not contain a mass_per_met table and no metallicity for the file was given.
 
-        '''
+        Examples
+        --------
+        # When the population file contains a mass_per_met table
+        >>> pop = Population('/path/to/population_file.h5')
+
+        # When the population file does not contain a mass_per_met table
+        >>> pop = Population('/path/to/population_file.h5', metallicity=0.02, ini_file='/path/to/ini_file.ini')
+        """
 
         self.filename = filename
         self.verbose = verbose
@@ -1030,15 +1062,53 @@ class Population(PopulationIO):
         self.indices = self.history.indices
 
     def export_selection(self, selection, filename, chunksize=1):
-        '''Export a selection of the population to a new file
+        """Export a selection of the population to a new file
+
+        This method exports a selection of systems from the population to a new file.
+        The selected systems are specified by their indices in the population.
+        
+        Systems will be appended to the existing file if it already exists and the indices will be shifted based on the current length of data in the file that is being appended to.
+        
 
         Parameters
-        -----------
-        selection  : list of int
-            The indices of the systems to export
-        filename   : str
-            The se of the export file to create or append to
-        '''
+        ----------
+        selection : list of int
+            The indices of the systems to export.
+        filename : str
+            The name of the export file to create or append to.
+        chunksize : int, optional
+            The number of systems to export at a time. Default is 1.
+
+        Raises
+        ------
+        ValueError
+            If the filename does not contain ".h5" extension.
+
+        Warnings
+        --------
+        UserWarning
+            If there is no "metallicity" column in the oneline dataframe and the population file contains multiple metallicities.
+
+        Notes
+        -----
+        - The exported systems will be appended to the existing file if it already exists.
+        - The indices of the exported systems will be shifted based on the current length of data in the file.
+        - The "oneline" and "history" dataframes of the selected systems will be written to the file.
+        - If available, the "formation_channels" dataframe and "history_lengths" dataframe of the selected systems will also be written to the file.
+        - The "metallicity" column of the oneline dataframe will be added if it is not present, using the metallicity of the population file.
+        - The "mass_per_met" dataframe will be updated with the number of selected systems.
+
+        Examples
+        --------
+        # Export systems with indices [0, 1, 2] to a new file named "selected.h5"
+        >>> population.export_selection([0, 1, 2], "selected.h5")
+
+        # Export systems with indices [3, 4, 5] to an existing file named "existing.h5"
+        >>> population.export_selection([3, 4, 5], "existing.h5")
+
+        # Export systems with indices [6, 7, 8] to a new file named "selected.h5" in chunks of 2
+        >>> population.export_selection([6, 7, 8], "selected.h5", chunksize=2)
+        """
 
         if not ('.h5' in filename):
             raise ValueError(f'{filename} does not contain .h5 in the se.\n Is this a valid population file?')
@@ -1151,7 +1221,12 @@ class Population(PopulationIO):
 
     @property
     def formation_channels(self):
-        '''Return the formation channels of the population'''
+        """
+        Retrieves the formation channels from the population file.
+
+        Returns:
+            pandas.DataFrame or None: The formation channels if available, otherwise None.
+        """
         if self._formation_channels is None:
             with pd.HDFStore(self.filename, mode='r') as store:
                 if '/formation_channels' in store.keys():
@@ -1164,6 +1239,22 @@ class Population(PopulationIO):
         return self._formation_channels
 
     def calculate_formation_channels(self, mt_history=False):
+        """Calculate the formation channels of the population.
+        
+        mt_history is a boolean that determines if the detailed mass-transfer history
+        from the HMS-HMS grid is included in the formation channels.
+        
+        
+        Parameters
+        ----------
+        mt_history : bool, optional
+            If `True`, include the mass-transfer history in the formation channels. Default is False.
+            
+        Raises
+        ------
+        ValueError
+            If the mt_history_HMS_HMS column is not present in the oneline dataframe.
+        """
 
         if self.verbose: print('Calculating formation channels...')
 
@@ -1249,42 +1340,86 @@ class Population(PopulationIO):
             del df
 
     def _write_formation_channels(self, filename, df):
-        '''Write the formation channels to the population file'''
+        '''Write the formation channels to the population file
+        
+        Parameters
+        ----------
+        filename : str
+            The name of the file to write the formation channels to.
+        df : pd.DataFrame
+            The dataframe containing the formation channels.
+        '''
         with pd.HDFStore(filename, mode='a') as store:
             store.append('formation_channels', df, format='table', data_columns=True, min_itemsize={'channel_debug': 100, 'channel': 100})
             if self.verbose:
                 print('formation_channels written to population file!')
 
     def __len__(self):
+        """Get the number of systems in the population.
+        
+        Returns
+        -------
+        int
+            The number of systems in the population.
+            
+        """
         return self.number_of_systems
 
     @property
     def columns(self):
-        return {'history':self.history.columns,
-                'oneline':self.oneline.columns}
+            """
+            Returns a dictionary containing the column names of the history and oneline dataframes.
+
+            Returns
+            -------
+            dict
+                A dictionary with keys 'history' and 'oneline', where the values are the column names of the respective dataframes.
+            """
+            return {'history': self.history.columns,
+                    'oneline': self.oneline.columns}
 
     def create_transient_population(self, func, transient_name, oneline_cols=None, hist_cols=None):
-        '''Given a function, create a synthetic population
+        '''Given a function, create a TransientPopulation
+
+        This method creates a transient population using the provided function.
+        `func` is given the history, oneline, and formation channels dataframes as arguments.
+        The function should return a dataframe containing the synthetic population, which needs to contain the columns 'time' and 'metallicity'.
+        
+        Processing is done in chunks to avoid memory issues and a pandas DataFrame is stored at `'/transients/transient_name'` in the population file.
+        
+        The creation of the transient population can be sped up by limiting the oneline_cols and hist_cols to only the columns needed for the function.
+        If you do not provide these, all columns will be used, which can be slow for large populations.
 
         Parameters
         ----------
         func : function
-            Function to apply to the parsed population to create the synthetic population.
+            Function to apply to the parsed population to create a transient population.
             The function needs to take 3 arguments:
                 - history_chunk : pd.DataFrame
                 - oneline_chunk : pd.DataFrame
                 - formation_channels_chunk : pd.DataFrame
-                and return a pd.DataFrame containing the synthetic population, which needs to contain a column 'time'.
+            and return a pd.DataFrame containing the synthetic population, which needs to contain the columns 'time' and 'metallicity'.
 
-        oneline_cols : list of str
-            Columns to extract from the oneline dataframe. default is all columns.
-        hist_cols : list of str
-            Columns to extract from the history dataframe. default is all columns.
+        oneline_cols : list of str, optional
+            Columns to extract from the oneline dataframe. Default is all columns.
+
+        hist_cols : list of str, optional
+            Columns to extract from the history dataframe. Default is all columns.
 
         Returns
         -------
-        SyntheticPopulation
-            A synthetic population containing the synthetic population.
+        TransientPopulation
+            A TransientPopulation object for interfacing with the transient population
+
+        Raises
+        ------
+        ValueError
+            If the transient population requires a time column or if the synthetic population contains duplicate columns.
+            
+        Examples
+        --------
+        See the tutorials for examples of how to use this method.
+        
         '''
 
         with pd.HDFStore(self.filename, mode='a') as store:
@@ -1357,21 +1492,80 @@ class Population(PopulationIO):
 
 
     def plot_binary_evolution(self, index):
-        '''Plot the binary evolution of a system'''
+        '''Plot the binary evolution of a system
+        
+        This method is not currently implemented.
+        '''
         pass
 
+
 class TransientPopulation(Population):
+    """A class representing a population of transient events.
+
+    This class allows you to calculate additional properties of the population,
+    such as the efficiency of events per Msun for each solar metallicity, and to
+    calculate the cosmic weights of the transient population.
+
+    Attributes
+    ----------
+    population : pandas.DataFrame
+        DataFrame containing the whole synthetic population.
+    transient_name : str
+        Name of the transient population.
+    efficiency : pandas.DataFrame
+        DataFrame containing the efficiency of events per Msun for each solar metallicity.
+    columns : list
+        List of columns in the transient population.
+
+
+    Methods
+    -------
+    select(where=None, start=None, stop=None, columns=None)
+        Select a subset of the transient population.
+    get_efficiency_over_metallicity()
+        Compute the efficiency of events per Msun for each solar metallicity.
+    calculate_cosmic_weights(SFH_identifier, MODEL_in=None)
+        Calculate the cosmic weights of the transient population.
+    plot_efficiency_over_metallicity()
+        Plot the efficiency of events per Msun for each solar metallicity.
+    plot_delay_time_distribution()
+        Plot the delay time distribution of the transient population.
+    plot_popsyn_pver_grid_slice()
+        Plot the transient population over the parameter space of a grid slice
+    """
 
     def __init__(self, filename, transient_name, verbose=False):
-        '''This class contains a synthetic population of transient events.
+        '''Initialise the TransientPopulation object.
 
-        You can calculate additional properties of the population, such as
-        the formation channel, merger times, GRB properties, etc.
+        This method initializes the TransientPopulation object by linking it to the population file.
+        The transient population linked is located at '/transients/{transient_name}' in the population file.
+        
 
-        pop_file : str
-            Path to the synthetic population file.
-        verbose : bool
-            If `True`, print additional information.
+        Parameters
+        ----------
+        filename : str
+            The name of the file containing the population. The file should be in HDF5 format.
+        transient_name : str
+            The name of the transient population within the file.
+        verbose : bool, optional
+            If `True`, additional information will be printed during the initialization process.
+
+        Raises
+        ------
+        ValueError
+            If the specified transient population name is not found in the file.
+
+        Notes
+        -----
+        The population data is stored in an HDF5 file format. The file should contain a group named '/transients' which
+        holds all the transient populations. The specified transient population name should be a valid group name within
+        '/transients'. If the transient population has associated efficiencies, they will be loaded as well.
+
+        Examples
+        --------
+        >>> filename = 'population_data.h5'
+        >>> transient_name = 'BBH'
+        >>> population = TransientPopulation(filename, transient_name, verbose=True)
         '''
         super().__init__(filename, verbose=verbose)
 
@@ -1385,45 +1579,106 @@ class TransientPopulation(Population):
 
     @property
     def population(self):
-        '''Returns the whole synthetic populaiton as a pandas dataframe.
+            '''Returns the entire synthetic population as a pandas DataFrame.
 
-        Warning: might be too big to load in memory!
+            This method retrieves the synthetic population data from a file and returns it as a pandas DataFrame.
+            Please note that if the synthetic population is too large, it may consume a significant amount of memory.
 
-        Returns
-        -------
-        pd.DataFrame
-            Dataframe containing the synthetic population.
-        '''
-        return pd.read_hdf(self.filename, key='transients/'+self.transient_name)
+            Returns
+            -------
+            pd.DataFrame
+                A DataFrame containing the synthetic population data.
+            '''
+            return pd.read_hdf(self.filename, key='transients/'+self.transient_name)
 
     def _load_efficiency(self, filename):
-        '''Load the efficiency from the file'''
+        '''Load the efficiency from the file
+        
+        Parameters:
+            filename (str): The path to the file containing the efficiency data.
+            
+        Returns:
+            None
+            
+        Raises:
+            None
+            
+        '''
         with pd.HDFStore(filename, mode='r') as store:
             self.efficiency = store['transients/'+self.transient_name+'/efficiencies']
             if self.verbose:
                 print('Efficiency table read from population file!')
 
     def _save_efficiency(self, filename):
-        '''Save the efficiency to the file'''
+        '''Save the efficiency to the file.
+
+        Args:
+            filename (str): The name of the file to save the efficiency to.
+
+        Returns:
+            None
+        '''
         with pd.HDFStore(filename, mode='a') as store:
             store.put('transients/'+self.transient_name+'/efficiencies', self.efficiency)
 
     @property
     def columns(self):
-        '''Return the columns of the transient population'''
-        if not hasattr(self, '_columns'):
-            with pd.HDFStore(self.filename, mode='r') as store:
-                self._columns = store.select('transients/'+self.transient_name, start=0, stop=0).columns
-        return self._columns
+            '''Return the columns of the transient population.
 
+            Returns:
+                list: A list of column names in the transient population.
+            '''
+            if not hasattr(self, '_columns'):
+                with pd.HDFStore(self.filename, mode='r') as store:
+                    self._columns = store.select('transients/'+self.transient_name, start=0, stop=0).columns
+            return self._columns
 
     def select(self, where=None, start=None, stop=None, columns=None):
-        '''Select a subset of the transient population'''
+        '''
+        Select a subset of the transient population.
+
+        This method allows you to filter and extract a subset of rows from the oneline table stored in an HDF file.
+        You can specify conditions to filter the rows, define the range of rows to select, and choose specific columns to include in the subset.
+
+        Parameters
+        ----------
+        where : str, optional
+            A condition to filter the rows of the oneline table. Default is None.
+        start : int, optional
+            The starting index of the subset. Default is None.
+        stop : int, optional
+            The ending index of the subset. Default is None.
+        columns : list, optional
+            The column names to include in the subset. Default is None.
+
+        Returns
+        -------
+        pd.DataFrame
+            The selected subset of the oneline table.
+
+        Examples
+        --------
+        # Select rows based on a condition
+        >>> df = transpop.select(where="S2_mass_i > 30")
+
+        # Select rows from index 10 to 20
+        >>> df = transpop.select(start=10, stop=20)
+
+        # Select specific columns
+        >>> df = transpop.select(columns=['time', 'metallicity'])
+        '''
         return pd.read_hdf(self.filename, key='transients/'+self.transient_name, where=where, start=start, stop=stop, columns=columns)
 
     def get_efficiency_over_metallicity(self):
-        """Compute the efficiency of events per Msun for each solar_metallicities."""
+        """
+        Compute the efficiency of events per Msun for each solar_metallicities.
 
+        This method calculates the efficiency of events per solar mass for each solar metallicity value in the synthetic population.
+        It first checks if the efficiencies have already been computed and if so, overwrites them.
+        Then, it iterates over each metallicity value and calculates the efficiency by dividing the count of events with the underlying stellar mass.
+        The efficiencies are stored in a DataFrame with the metallicity values as the index and the 'total' column representing the efficiency for all channels.
+        If the 'channel' column is present, it also computes the merger efficiency per channel and adds the results to the DataFrame.
+        """
         if hasattr(self, 'efficiency'):
             print('Efficiencies already computed! Overwriting them!')
             with pd.HDFStore(self.filename, mode='a') as store:
@@ -1462,9 +1717,50 @@ class TransientPopulation(Population):
         # save the efficiency
         self._save_efficiency(self.filename)
 
-
     def calculate_cosmic_weights(self, SFH_identifier, MODEL_in=None):
-        '''Calculate the cosmic weights of the transient population'''
+        """
+        Calculate the cosmic weights of the transient population.
+
+        This method calculates the cosmic weights of the transient population based on the provided star formation history identifier and model parameters.
+        It performs various calculations and stores the results in an HDF5 file at the location '/transients/{transient_name}/rates/{SFH_identifier}'.
+        This allows for multiple star formation histories to be used with the same transient population.
+        
+        The default MODEL parameters are used if none are provided, which come from the IllustrisTNG model.
+
+        Parameters
+        ----------
+        SFH_identifier : str
+            Identifier for the star formation history.
+        MODEL_in : dict, optional
+            Dictionary containing the model parameters. If not provided, the default model parameters will be used.
+
+        Returns
+        -------
+        Rates
+            An instance of the Rates class.
+
+        Raises
+        ------
+        ValueError
+            If a parameter name in MODEL_in is not valid.
+
+        Notes
+        -----
+        This function calculates the cosmic weights of the transient population based on the provided star formation history
+        identifier and model parameters. It performs various calculations and stores the results in an HDF5 file.
+
+        The cosmic weights are computed for each event in the population, taking into account the metallicity, redshift,
+        and birth time of the events. The weights are calculated using the provided model parameters and the underlying mass
+        distribution.
+
+        The calculated weights, along with the corresponding redshifts of the events, are stored in the HDF5 file for further analysis.
+        These can be accessed using the Rates class.
+
+        Examples
+        --------
+        >>> transient_population = TransientPopulation('filename.h5', 'transient_name')
+        >>> transient_population.calculate_cosmic_weights('IllustrisTNG', MODEL_in=DEFAULT_MODEL)
+        """
 
         # Set model to DEFAULT or provided MODEL parameters
         # Allows for partial model specification
@@ -1578,37 +1874,65 @@ class TransientPopulation(Population):
         return rates
 
     def plot_efficiency_over_metallicity(self, **kwargs):
-        '''plot the efficiency over metallicity
+        '''
+        Plot the efficiency over metallicity.
 
         Parameters
         ----------
-        channel : bool
-            plot the subchannels
+        channel : bool, optional
+            If True, plot the subchannels. Default is False.
         '''
         if not hasattr(self, 'efficiency'):
             raise ValueError('First you need to compute the efficiency over metallicity!')
-        plot_pop.plot_merger_efficiency(self.efficiency.index.to_numpy()*Zsun, self.efficiency, **kwargs)
+        plot_pop.plot_merger_efficiency(self.efficiency.index.to_numpy() * Zsun, self.efficiency, **kwargs)
 
-    def plot_delay_time_distribution(self, metallicity=None, ax=None, bins=100,color='black'):
-        '''Plot the delay time distribution of the transient population'''
+    def plot_delay_time_distribution(self, metallicity=None, ax=None, bins=100, color='black'):
+        """
+        Plot the delay time distribution of the transient population.
+        
+        This method plots the delay time distribution of the transient population. If a specific metallicity is provided,
+        the delay time distribution of the population at that metallicity will be plotted. Otherwise, the delay time distribution
+        of the entire population will be plotted. 
 
+        Parameters
+        ----------
+        metallicity : float or None
+            The metallicity value to select a specific population. If None, the delay time distribution of the entire population will be plotted.
+        ax : matplotlib.axes.Axes or None
+            The axes object to plot the distribution on. If None, a new figure and axes will be created.
+        bins : int
+            The number of bins to use for the histogram.
+        color : str
+            The color of the histogram.
+
+        Raises
+        ------
+        ValueError
+            If the specified metallicity is not present in the population.
+        
+        Notes
+        -----
+        - The delay time distribution is normalized by the total mass of the population if no metallicity is specified.
+        Otherwise, it is normalized by the mass of the population at the specified metallicity.
+        
+        """
         if ax is None:
             fig, ax = plt.subplots()
 
         if metallicity is None:
             time = self.select(columns=['time']).values
-            time = time*1e6 # yr
+            time = time * 1e6  # yr
             h, bin_edges = np.histogram(time, bins=bins)
-            h = h/np.diff(bin_edges)/self.mass_per_met['underlying_mass'].sum()
+            h = h / np.diff(bin_edges) / self.mass_per_met['underlying_mass'].sum()
 
         else:
             if not any(np.isclose(metallicity, self.solar_metallicities)):
                 raise ValueError('The metallicity is not present in the population!')
 
             time = self.select(where='metallicity == {}'.format(metallicity), columns=['time']).values
-            time = time*1e6 # yr
+            time = time * 1e6  # yr
             h, bin_edges = np.histogram(time, bins=bins)
-            h = h/np.diff(bin_edges)/self.mass_per_met['underlying_mass'][metallicity]
+            h = h / np.diff(bin_edges) / self.mass_per_met['underlying_mass'][metallicity]
 
         ax.step(bin_edges[:-1], h, where='post', color=color)
         ax.set_xscale('log')
@@ -1617,14 +1941,39 @@ class TransientPopulation(Population):
         ax.set_ylabel('Number of events/Msun/yr')
 
     def plot_popsyn_over_grid_slice(self, grid_type, met_Zsun, **kwargs):
-        '''Plot the transients over the grid slice'''
+            """
+            Plot the transients over the grid slice.
 
-        plot_pop.plot_popsyn_over_grid_slice(pop=self,
-                                             grid_type=grid_type,
-                                             met_Zsun=met_Zsun,
-                                             **kwargs)
+            Parameters
+            ----------
+            grid_type : str
+                The type of grid to plot.
+            met_Zsun : float
+                The metallicity of the Sun.
+            **kwargs
+                Additional keyword arguments to pass to the plot_pop.plot_popsyn_over_grid_slice function.
+                
+            """
+
+            plot_pop.plot_popsyn_over_grid_slice(pop=self,
+                                                 grid_type=grid_type,
+                                                 met_Zsun=met_Zsun,
+                                                 **kwargs)
 
     def _write_MODEL_data(self, filename, path_in_file, MODEL):
+        """
+        Write the MODEL data to an HDFStore file.
+
+        Parameters
+        ----------
+        filename : str
+            The path to the HDFStore file.
+        path_in_file : str
+            The path within the HDFStore file to store the MODEL data.
+        MODEL : dict
+            The MODEL data to be stored.
+
+        """
         with pd.HDFStore(filename, mode='a') as store:
             if MODEL['dlogZ'] is not None:
                 store.put(path_in_file+'MODEL', pd.DataFrame(MODEL))
@@ -1634,6 +1983,7 @@ class TransientPopulation(Population):
                 print('MODEL written to population file!')
 
 class Rates(TransientPopulation):
+    
 
     def __init__(self, filename, transient_name, SFH_identifier, verbose=False):
 
