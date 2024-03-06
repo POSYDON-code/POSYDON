@@ -549,7 +549,6 @@ class StepSN(object):
                     # 1. Check if SN_type and star state match                    
                     # Non-matching SN_type and star state
                     if not check_SN_CO_match(star):
-                        print('here in if!')
                         # raise a warning
                         warnings.warn(f'{MODEL_NAME_SEL}: The SN_type '
                                       'does not match the predicted CO! '
@@ -621,18 +620,23 @@ class StepSN(object):
 
                 # check if a white dwarf has been born
                 if star.SN_type == "WD":
-                    print('here!')
                     star.mass = m_rembar
                     star.state = "WD"
                     star.spin = 0.
                     star.log_R = np.log10(CO_radius(star.mass, star.state))
                     star.m_disk_accreted = np.nan
                     star.m_disk_radiated = np.nan
-                    star.co_core_mass = m_rembar
                     for key in STARPROPERTIES:
-                        if key not in ["state", "mass", "log_R", "spin",
-                                       "m_disk_accreted", "m_disk_radiated","co_core_mass"]:
-                            setattr(star, key, None)
+                        if key in ["he_core_mass"]:
+                            setattr(star, key, star.mass)
+                        elif key in ["co_core_mass"]:
+                            if star.center_he4 < THRESHOLD_CENTRAL_ABUNDANCE: 
+                                setattr(star, key, star.mass)
+                            else: 
+                                setattr(star, key, 0.)
+                        elif key not in ["state", "mass", "spin",
+                                "m_disk_accreted ", "m_disk_radiated","center_h1","center_he4","center_c12","center_n14","center_o16"]:
+                            setattr(star, key, None)  
                     return
 
                 # check if the star was disrupted by the PISN
@@ -728,11 +732,17 @@ class StepSN(object):
                     star.log_R = np.log10(CO_radius(star.mass, star.state))
                     star.m_disk_accreted = np.nan
                     star.m_disk_radiated = np.nan
-                    star.co_core_mass = m_rembar
                     for key in STARPROPERTIES:
-                        if key not in ["state", "mass", "log_R", "spin",
-                                       "m_disk_accreted", "m_disk_radiated","co_core_mass"]:
-                            setattr(star, key, None)
+                        if key in ["he_core_mass"]:
+                            setattr(star, key, star.mass)
+                        elif key in ["co_core_mass"]:
+                            if star.center_he4 < THRESHOLD_CENTRAL_ABUNDANCE: 
+                                setattr(star, key, star.mass)
+                            else: 
+                                setattr(star, key, 0.)
+                        elif key not in ["state", "mass", "spin",
+                                "m_disk_accreted ", "m_disk_radiated","center_h1","center_he4","center_c12","center_n14","center_o16"]:
+                            setattr(star, key, None)  
                     return
 
                 # check if the star was disrupted by the PISN

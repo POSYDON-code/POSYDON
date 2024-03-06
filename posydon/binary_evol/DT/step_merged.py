@@ -123,7 +123,7 @@ class MergedStep(IsolatedStep):
         merged_star = star_base
 
         s1 = star_base.state
-        s2 = comp.state 
+        s2 = comp.state
         def mass_weighted_avg(star1=star_base,star2=comp, abundance_name="center_h1", mass_weight1="mass", mass_weight2=None):
             A1 = getattr(star1, abundance_name)
             A2 = getattr(star2, abundance_name)
@@ -402,7 +402,6 @@ class MergedStep(IsolatedStep):
                 for key in ["mass", "he_core_mass", "c_core_mass", "o_core_mass", "co_core_mass"]:
                     current = getattr(merged_star, key) + getattr(star_base, key)
                     setattr(merged_star, key,current)
-                
                 # weighted central abundances if merging cores. Else only from star_base
                 if star_base.co_core_mass == 0 and comp.co_core_mass == 0: # two stars with Helium cores
                     merged_star.center_h1 = mass_weighted_avg(mass_weight1="he_core_mass")

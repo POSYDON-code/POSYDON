@@ -37,7 +37,6 @@ import numpy as np
 from posydon.utils import common_functions as cf
 from posydon.utils import constants as const
 import warnings
-import copy as copy
 from posydon.binary_evol.binarystar import BINARYPROPERTIES
 from posydon.binary_evol.singlestar import STARPROPERTIES
 from posydon.utils.common_functions import PATH_TO_POSYDON
@@ -596,7 +595,7 @@ class StepCEE(object):
                         mc2_f = comp_star.he_core_mass
                         rc2_f = donor.he_core_radius
                     elif comp_type == "CO_core":
-                        mc2_f = copy(comp_star.co_core_mass)
+                        mc2_f = comp_star.co_core_mass
                         rc2_f = donor.co_core_radius
                     elif comp_type == "not_giant_companion":
                         mc2_f = comp_star.mass

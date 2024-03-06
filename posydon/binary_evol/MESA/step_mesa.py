@@ -332,9 +332,9 @@ class MesaGridStep:
                                       track_interpolation=True)
         else:
             self.step(binary, interp_method=self.interpolation_method)
-        
         if (self.stop_method == 'stop_at_max_time'
                 and binary.time >= binary.properties.max_simulation_time):
+            
             # self.flush_history = True # needed???
 
             # stop_at_condition looks through the MESA output appended to the
@@ -363,7 +363,6 @@ class MesaGridStep:
                              interpolate=self.stop_interpolate,
                              star_1_CO=self.star_1_CO,
                              star_2_CO=self.star_2_CO)
-        
         if self.flip_stars_before_step:
             flip_stars(binary)
         if binary.time > binary.properties.max_simulation_time:
@@ -498,7 +497,7 @@ class MesaGridStep:
                     getattr(binary, key_h).append(v_key)
                 if track_interpolation:
                     getattr(binary, key_h).extend([v_key]*length_hist)
-            elif key in ['state', 'event']:
+            elif key in ['state', 'event', 'mass_transfer_case']:
                 continue
             else:
                 key_p = POSYDON_TO_MESA['binary'][key]
@@ -655,6 +654,8 @@ class MesaGridStep:
                             getattr(star, key_h).append(empy_h[0])
                         if track_interpolation:
                             getattr(star, key_h).extend(empy_h)
+
+
                 if track_interpolation:
                     if MESA_history_bug_fix:
                         real_len = max(length_binary_hist, length_star_hist)
@@ -891,7 +892,6 @@ class MesaGridStep:
                         continue
                     else:
                         setattr(star, key, None)
-        
         # EXPERIMENTAL feature
         # infer stellar states
         interpolation_class = self.classes['interpolation_class']
