@@ -125,7 +125,7 @@ def plot_merger_efficiency(met, merger_efficiency, show=True, path=None, channel
 def plot_hist_properties(df, ax=None, df_intrinsic=None, df_observable=None,
                         channel=None,
                         show=True, path=None, alpha=0.5,
-                        range=None, bins=20, normalise=False,color=COLORS[0], **kwargs):
+                        range=None, bins=20, normalise=False,color=COLORS[0],label='', **kwargs):
     if ax is None:
         fig, ax = plt.subplots(1,1, figsize=(5,5))
         
@@ -151,7 +151,7 @@ def plot_hist_properties(df, ax=None, df_intrinsic=None, df_observable=None,
                  alpha=alpha,
                  range=range,
                  bins=bins,
-                 label='intrinsic')
+                 label=label+' intrinsic')
             
     if 'observable' in df_columns:
         values = df['observable']
@@ -166,7 +166,7 @@ def plot_hist_properties(df, ax=None, df_intrinsic=None, df_observable=None,
                  histtype=u'step',
                  linestyle='--',
                  bins=bins,
-                 label='observable')
+                 label=label+' observable')
         
     ax.set_title(title)    
 
@@ -291,8 +291,6 @@ def plot_popsyn_over_grid_slice(pop, grid_type, met_Zsun, slices=None, channel=N
                 prop_sel = 'index in '+str(met_indices) + ' & event == "CO_contact"'
                 prop_data = pop.history.select(where=prop_sel, columns=[prop])
                 prop_values = prop_data[prop].values
-                print(len(prop_values))
-                
                 vmin = prop_range[0]
                 vmax = prop_range[1]
                 if log_prop:
