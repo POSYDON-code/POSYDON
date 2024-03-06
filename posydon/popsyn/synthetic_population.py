@@ -694,7 +694,11 @@ class Population(PopulationIO):
             merged.index.name ='binary_index'
             df['channel_debug'] = merged.groupby('binary_index').apply(get_events)
             del merged
-            df['channel'] = df['channel_debug'].str.replace('_redirect', '').str.replace('_CO_contact', '')
+            df['channel'] = df['channel_debug'].str.replace('_redirect_from_ZAMS', '')\
+                                               .str.replace('_redirect_from_CO_HMS_RLO','')\
+                                               .str.replace('_redirect_from_CO_HeMS_RLO', '')\
+                                               .str.replace('_redirect_from_CO_HeMS', '')\
+                                               .str.replace('_CO_contact', '')
 
             if mt_history:
                 columns = self.oneline.columns
@@ -1053,7 +1057,7 @@ class TransientPopulation(Population):
             raise ValueError('First you need to compute the efficiency over metallicity!')
         plot_pop.plot_merger_efficiency(self.efficiency.index.to_numpy()*Zsun, self.efficiency, **kwargs)
 
-    def plot_delay_time_distribution(self, metallicity=None, ax=None, bins=100,):
+    def plot_delay_time_distribution(self, metallicity=None, ax=None, bins=100,color='black'):
         '''Plot the delay time distribution of the transient population'''
         
         if ax is None:
@@ -1074,7 +1078,7 @@ class TransientPopulation(Population):
             h, bin_edges = np.histogram(time, bins=bins)
             h = h/np.diff(bin_edges)/self.mass_per_met['underlying_mass'][metallicity]
                     
-        ax.step(bin_edges[:-1], h, where='post', color='black')
+        ax.step(bin_edges[:-1], h, where='post', color=color)
         ax.set_xscale('log')
         ax.set_yscale('log')
         ax.set_xlabel('Time [yr]')
