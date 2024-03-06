@@ -121,20 +121,13 @@ class spectral_grids():
             if key not in specgrid.axis_labels:
                 x.pop(key)
         Flux = np.asarray(specgrid.flux(x, self.lam))
-        
+        distance_factor = 1
         if name == "stripped_grid":
             distance_factor = (kpc)**2
-            return Flux*distance_factor
         if name == 'WR_grid':
             distance_factor = (kpc/100)**2
-            return Flux*distance_factor 
-        return Flux
+        return Flux*distance_factor
 
-    def stripped_grid_flux(self,**kwargs):
-        """Return the flux for a stripped star."""
-        x = copy.copy(kwargs)
-        Flux = np.asarray(self.specgrid_stripped.flux(x, self.lam))
-        return Flux*kpc**2
 
     def photgrid_constructor(self, **kwargs):
         """Construct a dictionary of photogrids."""

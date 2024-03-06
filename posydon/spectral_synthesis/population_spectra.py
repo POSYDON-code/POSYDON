@@ -64,13 +64,12 @@ class population_spectra():
         comm = MPI.COMM_WORLD
         rank = comm.Get_rank()
         nprocs = comm.Get_size()
-        print('before pop load')
-        load_start = datetime.datetime.now()
-        self.load_population()
-        load_end = datetime.datetime.now()
-        print('Loading the population took',load_end - load_start,'s')
-        pop = copy(self.population)
         if rank == 0:
+            load_start = datetime.datetime.now()
+            self.load_population()
+            load_end = datetime.datetime.now()
+            print('Loading the population took',load_end - load_start,'s')
+            pop = copy(self.population)
             # determine the size of each sub-task
             ave, res = divmod(len(pop), nprocs)
             counts = [ave + 1 if p < res else ave for p in range(nprocs)]
@@ -122,8 +121,9 @@ class population_spectra():
         # Create empty spectral arrays
         for state in state_list:
             pop_spectrum[state] = np.zeros(len(self.grids.lam_c))
-            
+           
         for i,binary in pop.iterrows():
+            #print(pop.shape)
             spectrum_1,state_1,label1 = generate_spectrum(self.grids,binary,'S1',**self.kwargs)
             spectrum_2,state_2,label2 = generate_spectrum(self.grids,binary,'S2',**self.kwargs)
             if self.save_data:
@@ -133,6 +133,7 @@ class population_spectra():
                 pop_spectrum[state_1] += spectrum_1
             if spectrum_2 is not None and state_2 is not None:
                 pop_spectrum[state_2] += spectrum_2
+            pop = pop.drop(i)
         """
         if self.save_data:
             self.save_pop_data(self.population,labels_S1,labels_S2,pop_spectrum)
@@ -173,7 +174,6 @@ class population_spectra():
             combined_spectrum = Counter(pop_spectrum[0])
             if len(pop_spectrum) > 0: 
                 for i in range(1,len(pop_spectrum)):
-                    print(i)
                     pop_dict = Counter(pop_spectrum[i])
                     combined_spectrum.update(pop_dict)
                 #combined_spectrum.update(pop_dict)

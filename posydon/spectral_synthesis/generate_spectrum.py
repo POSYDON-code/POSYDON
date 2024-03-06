@@ -83,6 +83,7 @@ def point_the_grid(grids,x,label,**kwargs):
     bstar_temp_cut_off = kwargs.get('bstar_temp_cut_off',15000)
     #First check for stripped stars because their temp can be a lot
     # higher than the Teff of the Ostar grid limit
+    
     if "stripped" in x['state']:
         if label is not None:
             return 'failed_grid'
@@ -143,7 +144,7 @@ def generate_spectrum(grids,star,i,**kwargs):
     
     Fe_H = np.log(star['Z/Zo'])
     Z_Zo = star['Z/Zo']
-    Z= star['Z/Zo']*Zo
+    #Z= star['Z/Zo']*Zo
     Teff = copy(star[f'{i}_Teff'])
     logg = copy(star[f'{i}_log_g'])
     state = copy(star[f'{i}_state'])
@@ -154,7 +155,6 @@ def generate_spectrum(grids,star,i,**kwargs):
          'log(g)': logg,
          '[Fe/H]': Fe_H,
          'Z/Zo':Z_Zo,
-         'Z':Z,
          'state':state,
          'surface_h1' : surface_h1,
          '[alpha/Fe]':0.0}
