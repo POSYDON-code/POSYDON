@@ -120,7 +120,7 @@ def create_GRB_population(output_file=None, GRB_properties={}, additional_onelin
                                 previous,
                                 end)
         
-        GRB_df_synthetic = pd.DataFrame()
+        GRB_df_transients = pd.DataFrame()
         
         if S1_S2 == 'S1':
         # get the SN event of the GRB
@@ -146,7 +146,7 @@ def create_GRB_population(output_file=None, GRB_properties={}, additional_onelin
         post_sn = hist.loc[logic1].loc[indices][S1_SN]
         pre_sn = hist.loc[mask2].loc[indices][S1_SN]
         # write properties to the Synthetic Population
-        GRB_df_synthetic = pd.DataFrame()
+        GRB_df_transients = pd.DataFrame()
         if S1_S2 == 'S1':
             columns_pre_post.append('S1_mass')
             columns.append('S2_mass')
@@ -155,14 +155,14 @@ def create_GRB_population(output_file=None, GRB_properties={}, additional_onelin
             columns.append('S1_mass')
             
         for c in columns_pre_post:
-            GRB_df_synthetic['preSN_'+c] = pre_sn[c].valuesS
+            GRB_df_transients['preSN_'+c] = pre_sn[c].valuesS
             
-            GRB_df_synthetic['postSN_'+c] = post_sn[c].values
+            GRB_df_transients['postSN_'+c] = post_sn[c].values
         
-        GRB_df_synthetic.index = post_sn.index
-        GRB_df_synthetic['time'] = post_sn['time'].values * 1e-6 # Myr
+        GRB_df_transients.index = post_sn.index
+        GRB_df_transients['time'] = post_sn['time'].values * 1e-6 # Myr
         for c in columns:
-            GRB_df_synthetic[c] = pre_sn[c].values
+            GRB_df_transients[c] = pre_sn[c].values
         
         # add oneline parameters
         df_oneline = multi_columns_read('oneline',
@@ -172,11 +172,11 @@ def create_GRB_population(output_file=None, GRB_properties={}, additional_onelin
                                         i+self.chunksize)
         
         for c in oneline_columns:
-            GRB_df_synthetic[c] = df_oneline.loc[indices,c].values
+            GRB_df_transients[c] = df_oneline.loc[indices,c].values
         
         # Add GRB parameters
         for c in tmp_df.columns:
-            GRB_df_synthetic[c] = tmp_df.loc[indices,c].values
+            GRB_df_transients[c] = tmp_df.loc[indices,c].values
 
         
         
@@ -191,9 +191,9 @@ def create_GRB_population(output_file=None, GRB_properties={}, additional_onelin
                                                         start = i,
                                                         stop=i+self.chunksize)
         
-        GRB_df_synthetic['channel'] = df_channel.loc[indices].values
+        GRB_df_transients['channel'] = df_channel.loc[indices].values
         
-        return GRB_df_synthetic
+        return GRB_df_transients
     
     history_events = parsed_store.select_column('history', 'index')
     history_lengths = history_events.groupby(history_events).count()
@@ -234,22 +234,22 @@ def create_GRB_population(output_file=None, GRB_properties={}, additional_onelin
         
         # S1 GRBs
         S1_tmp_df = tmp_df[tmp_df['GRB1'] == True]
-        S1_GRB_df_synthetic = GRB_data_store(S1_tmp_df, parsed_store, previous, end, 'S1')
+        S1_GRB_df_transients = GRB_data_store(S1_tmp_df, parsed_store, previous, end, 'S1')
         # Set all S2 columns to NaN
-        for c in S1_GRB_df_synthetic.columns:
+        for c in S1_GRB_df_transients.columns:
             if c in ['S2_eta', 'S2_E_GRB', 'S2_f_beaming', 'S2_E_GRB_iso', 'S2_L_GRB_iso', 'GRB2']:
-                S1_GRB_df_synthetic[c] = None
+                S1_GRB_df_transients[c] = None
         
         
         # S2 GRBs
         S2_tmp_df = tmp_df[tmp_df['GRB2'] == True]
-        S2_GRB_df_synthetic = GRB_data_store(S2_tmp_df, parsed_store, previous, end, 'S2')
+        S2_GRB_df_transients = GRB_data_store(S2_tmp_df, parsed_store, previous, end, 'S2')
         # Set all S1 columns to NaN
-        for c in S2_GRB_df_synthetic.columns:
+        for c in S2_GRB_df_transients.columns:
             if c in ['S1_eta', 'S1_E_GRB', 'S1_f_beaming', 'S1_E_GRB_iso', 'S1_L_GRB_iso', 'GRB1']:
-                S2_GRB_df_synthetic[c] = None
+                S2_GRB_df_transients[c] = None
         
-        out = pd.concat([S1_GRB_df_synthetic, S2_GRB_df_synthetic])
+        out = pd.concat([S1_GRB_df_transients, S2_GRB_df_transients])
         
         out['GRB1'] = out['GRB1'].astype(bool)
         out['GRB2'] = out['GRB2'].astype(bool)
@@ -282,7 +282,7 @@ def mass_ratio(m_1, m_2):
     q[q>1.] = 1./q[q>1.]
     return q
 
-def BBH_selection_function(history_chunk, oneline_chunk, formation_pathway_chunks):
+def BBH_selection_function(history_chunk, oneline_chunk, formation_channels_chunk):
     '''A BBH selection function to create a transient population of BBHs mergers.
     
     This is an example function for selecting BBH mergers and some of their properties.
@@ -298,12 +298,12 @@ def BBH_selection_function(history_chunk, oneline_chunk, formation_pathway_chunk
         The history chunk of the DCO population.
     oneline_chunk : pd.DataFrame
         The oneline chunk of the DCO population.
-    formation_pathway_chunks : pd.DataFrame (can be made optional)
+    formation_channels_chunk : pd.DataFrame (can be made optional)
         The formation pathway chunk of the DCO population.
         
     Returns
     -------
-    df_synthetic : pd.DataFrame
+    df_transients : pd.DataFrame
         A DataFrame containing the transient population of BBHs.
         This DataFrame contains the following columns:
         - time : the time of the event
@@ -312,31 +312,30 @@ def BBH_selection_function(history_chunk, oneline_chunk, formation_pathway_chunk
     '''
     
     indices = oneline_chunk.index.to_numpy()
-    df_synthetic = pd.DataFrame(index = indices)
+    df_transients = pd.DataFrame(index = indices)
     
-    df_synthetic['time'] = history_chunk[history_chunk['event'] == 'END']['time'] * 1e-6 #Myr
+    df_transients['time'] = history_chunk[history_chunk['event'] == 'END']['time'] * 1e-6 #Myr
     mask = (history_chunk['S1_state'] == 'BH') & (history_chunk['S2_state'] == 'BH') & (history_chunk['step_names'] == 'step_SN') & (history_chunk['state'] == 'detached')
 
-    df_synthetic['t_inspiral'] = df_synthetic['time'] - history_chunk[mask]['time']*1e-6
-    
-    df_synthetic['metallicity'] = oneline_chunk['metallicity']/0.0142
-    df_synthetic['S1_state']  = history_chunk[mask]['S1_state']
-    df_synthetic['S2_state']  = history_chunk[mask]['S2_state']
-    df_synthetic['S1_mass'] = history_chunk[mask]['S1_mass']
-    df_synthetic['S2_mass'] = history_chunk[mask]['S2_mass']
-    df_synthetic['S1_spin'] = history_chunk[mask]['S1_spin']
-    df_synthetic['S2_spin'] = history_chunk[mask]['S2_spin']
-    df_synthetic['S1_spin_orbit_tilt'] = oneline_chunk['S1_spin_orbit_tilt']
-    df_synthetic['S2_spin_orbit_tilt'] = oneline_chunk['S2_spin_orbit_tilt']
-    df_synthetic['orbital_period'] = history_chunk[mask]['orbital_period']
-    df_synthetic['chirp_mass'] = m_chirp(history_chunk[mask]['S1_mass'], history_chunk[mask]['S2_mass'])
-    df_synthetic['mass_ratio'] = mass_ratio(history_chunk[mask]['S1_mass'], history_chunk[mask]['S2_mass'])
-    df_synthetic['chi_eff'] = chi_eff(history_chunk[mask]['S1_mass'], history_chunk[mask]['S2_mass'], history_chunk[mask]['S1_spin'], history_chunk[mask]['S2_spin'], oneline_chunk['S1_spin_orbit_tilt'], oneline_chunk['S2_spin_orbit_tilt'])
-    df_synthetic['eccentricity'] = history_chunk[mask]['eccentricity']
+    df_transients['t_inspiral'] = df_transients['time'] - history_chunk[mask]['time']*1e-6
+    df_transients['metallicity'] = oneline_chunk['metallicity']
+    df_transients['S1_state']  = history_chunk[mask]['S1_state']
+    df_transients['S2_state']  = history_chunk[mask]['S2_state']
+    df_transients['S1_mass'] = history_chunk[mask]['S1_mass']
+    df_transients['S2_mass'] = history_chunk[mask]['S2_mass']
+    df_transients['S1_spin'] = history_chunk[mask]['S1_spin']
+    df_transients['S2_spin'] = history_chunk[mask]['S2_spin']
+    df_transients['S1_spin_orbit_tilt'] = oneline_chunk['S1_spin_orbit_tilt']
+    df_transients['S2_spin_orbit_tilt'] = oneline_chunk['S2_spin_orbit_tilt']
+    df_transients['orbital_period'] = history_chunk[mask]['orbital_period']
+    df_transients['chirp_mass'] = m_chirp(history_chunk[mask]['S1_mass'], history_chunk[mask]['S2_mass'])
+    df_transients['mass_ratio'] = mass_ratio(history_chunk[mask]['S1_mass'], history_chunk[mask]['S2_mass'])
+    df_transients['chi_eff'] = chi_eff(history_chunk[mask]['S1_mass'], history_chunk[mask]['S2_mass'], history_chunk[mask]['S1_spin'], history_chunk[mask]['S2_spin'], oneline_chunk['S1_spin_orbit_tilt'], oneline_chunk['S2_spin_orbit_tilt'])
+    df_transients['eccentricity'] = history_chunk[mask]['eccentricity']
 
-    df_synthetic = pd.concat([df_synthetic, formation_pathway_chunks[['channel']]], axis=1)
+    df_transients = pd.concat([df_transients, formation_channels_chunk[['channel']]], axis=1)
     
-    return df_synthetic
+    return df_transients
     
 
 def DCO_detactability(sensitivity, transient_pop_chunk, z_events_chunk, z_weights_chunk, verbose=False):
