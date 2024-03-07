@@ -37,7 +37,7 @@ from posydon.utils.common_functions import (
 )
 from posydon.binary_evol.flow_chart import (STAR_STATES_CC, STAR_STATES_CO)
 import posydon.utils.constants as const
-
+from posydon.utils.posydonerror import MatchingError,POSYDONError
 
 LIST_ACCEPTABLE_STATES_FOR_HMS = ["H-rich_Core_H_burning"]
 
@@ -716,7 +716,7 @@ class detached_step:
                       MESA_labels, rs)
             for i in MESA_labels:
                 if i not in self.root_keys:
-                    raise Exception("Expected matching parameter not "
+                    raise MatchingError("Expected matching parameter not "
                                     "added in the single star grid options.")
 
             scales = []
@@ -819,7 +819,7 @@ class detached_step:
                               MESA_labels, rs)
                     for i in MESA_labels:
                         if i not in self.root_keys:
-                            raise Exception("Expected matching parameter not "
+                            raise MatchingError("Expected matching parameter not "
                                             "added in the single star grid options.")
 
                     scales = []
@@ -937,7 +937,7 @@ class detached_step:
             if companion_2_exists:                  # star2 is a single star
                 self.non_existent_companion = 1
             else:                                   # no star in the system
-                raise Exception("There is no star to evolve. Who summoned me?")
+                raise POSYDONError("There is no star to evolve. Who summoned me?")
 
         if self.non_existent_companion == 0: #no isolated evolution, detached step of an actual binary
             # the primary in a real binary is potential compact object, or the more evolved star
@@ -1002,7 +1002,7 @@ class detached_step:
                 primary.htrack = False
                 primary.co = False
             else:
-                raise Exception("States not recognized!")
+                raise POSYDONError("States not recognized!")
 
         # star 1 is a massless remnant, only star 2 exists
         elif self.non_existent_companion == 1:
@@ -1020,7 +1020,7 @@ class detached_step:
                 # only a compact object left
                 return
             else:
-                raise Exception("State not recognized!")
+                raise POSYDONError("State not recognized!")
 
         # star 2 is a massless remnant, only star 1 exists
         elif self.non_existent_companion == 2:
@@ -1035,9 +1035,9 @@ class detached_step:
             elif (binary.star_1.state in STAR_STATES_CO):
                 return
             else:
-                raise Exception("State not recognized!")
+                raise POSYDONError("State not recognized!")
         else:
-            raise Exception("Non existent companion has not a recognized value!")
+            raise POSYDONError("Non existent companion has not a recognized value!")
 
         def get_star_data(binary, star1, star2, htrack,
                           co, copy_prev_m0=None, copy_prev_t0=None):
@@ -1093,7 +1093,7 @@ class detached_step:
             # check if m0 is in the grid
             if m0 < self.grid.grid_mass.min() or m0 > self.grid.grid_mass.max():
                 set_binary_to_failed(binary)
-                raise ValueError(f"The mass {m0} is out of the single star grid range and cannot be matched to a track.")
+                raise MatchingError(f"The mass {m0} is out of the single star grid range and cannot be matched to a track.")
 
             get_track = self.grid.get
 
@@ -1168,7 +1168,7 @@ class detached_step:
             interp1d_pri = get_star_data(
                 binary, primary, secondary, primary.htrack, False)[0]
         else:
-            raise Exception("During matching primary is either should be either normal or not normal. `non_existent_companion` should be zero.")
+            raise MatchingError("During matching primary is either should be either normal or not normal. `non_existent_companion` should be zero.")
 
 
         if interp1d_sec is None or interp1d_pri is None:
@@ -1386,7 +1386,7 @@ class detached_step:
             # TODO: put it out of its misery here!
         else:
             if not (max_time - binary.time > 0.0):
-                raise Exception("max_time is lower than the current time. "
+                raise POSYDONError("max_time is lower than the current time. "
                                 "Evolution of the detached binary will go to "
                                 "lower times.")
             with np.errstate(all="ignore"):
@@ -1919,7 +1919,7 @@ class detached_step:
                         get_star_final_values(primary, primary.htrack, m02)
                         get_star_profile(primary, primary.htrack, m02)
                     if primary.mass != secondary.mass:
-                        raise ValueError(
+                        raise POSYDONError(
                             "Both stars are found to be ready for collapse "
                             "(i.e. end of their life) during the detached "
                             "step, but do not have the same mass")

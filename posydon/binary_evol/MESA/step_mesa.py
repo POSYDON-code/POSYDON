@@ -251,7 +251,8 @@ class MesaGridStep:
     def load_Interp(self, filename):
         """Load the interpolator that has been trained on the grid."""
         if self.verbose:
-
+            print("loading Interp: {}".format(filename))
+        
         # Check if interpolation files exist
         if not os.path.exists(filename):
             data_download()
@@ -1434,7 +1435,6 @@ class CO_HMS_RLO_step(MesaGridStep):
             self.p_min <= p <= self.p_max and
             ecc == 0.)):
             super().__call__(self.binary)
-
         # period inside the grid, but m1 outside the grid
         elif ((not self.flip_stars_before_step and
                self.p_min <= p <= self.p_max and

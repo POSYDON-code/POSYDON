@@ -13,6 +13,7 @@ from posydon.binary_evol.DT.step_isolated import IsolatedStep
 
 from posydon.binary_evol.flow_chart import (
     STAR_STATES_H_RICH, STAR_STATES_HE_RICH)
+from posydon.utils.posydonerror import FlowError
 
 
 LIST_ACCEPTABLE_STATES_FOR_HMS = ["H-rich_Core_H_burning"]
@@ -44,7 +45,7 @@ class InitiallySingleStep(IsolatedStep):
 
     def __call__(self,binary):
         if binary.state != "initially_single_star":
-            raise ValueError("sent to InitiallySingleStep without the binary.state being initially_single_star")
+            raise FlowError("sent to InitiallySingleStep without the binary.state being initially_single_star")
 
         binary.event == None
 

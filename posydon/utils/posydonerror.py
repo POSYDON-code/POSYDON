@@ -41,3 +41,9 @@ class GridError(POSYDONError):
 
 class FlowError(POSYDONError):
     """POSYDON error specific for binary evolution flow errors."""
+
+class MatchingError(POSYDONError):
+    """POSYDON error specific for matching stars to single grid during the detached."""
+
+class IntegrationError(POSYDONError):
+    """Integration erros"""

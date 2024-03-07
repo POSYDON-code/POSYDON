@@ -15,6 +15,7 @@ from posydon.binary_evol.binarystar import BINARYPROPERTIES
 from posydon.binary_evol.singlestar import STARPROPERTIES
 from posydon.utils.common_functions import orbital_period_from_separation
 from posydon.utils.common_functions import CO_radius
+from posydon.utils.posydonerror import IntegrationError
 
 
 class DoubleCO:
@@ -111,7 +112,7 @@ class DoubleCO:
 
         if s.status == -1:
             binary.state += ' (Integration failure)'
-            raise RuntimeError("Integrations failed", s.message)
+            raise IntegrationError("Integrations failed", s.message)
 
         elif s.status == 1:
 
