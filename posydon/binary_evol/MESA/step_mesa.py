@@ -1316,7 +1316,6 @@ class MS_MS_step(MesaGridStep):
               p < self.p_min):
             self.binary.event = 'redirect_from_ZAMS'
             return
-        
         # outside the mass grid for m1
         elif (state_1 == 'H-rich_Core_H_burning' and
               state_2 == 'H-rich_Core_H_burning' and
@@ -1436,7 +1435,11 @@ class CO_HMS_RLO_step(MesaGridStep):
             self.p_min <= p <= self.p_max and
             ecc == 0.)):
             super().__call__(self.binary)
+<<<<<<< HEAD
             
+=======
+
+>>>>>>> 4f2891f5b214dcc54e1359b7a1a87927fb53d13c
         # period inside the grid, but m1 outside the grid
         elif ((not self.flip_stars_before_step and
                self.p_min <= p <= self.p_max and
@@ -1455,6 +1458,7 @@ class CO_HMS_RLO_step(MesaGridStep):
             raise GridError(f'The mass of m2 ({m2}) is outside the grid,'
                                 'while the period is inside the grid.')
 
+<<<<<<< HEAD
         # period inside the grid, but m1 outside the grid (flipped stars)
         elif ((self.flip_stars_before_step and
                 self.p_min <= p <= self.p_max and
@@ -1473,6 +1477,14 @@ class CO_HMS_RLO_step(MesaGridStep):
                                   'while the period is inside the grid.')
                 
         else:
+=======
+        else:
+            if len(self.binary.state_history) > 2:
+                if self.binary.state_history[-2] == 'detached':
+                    set_binary_to_failed(self.binary)
+                    raise GridError('CO_HMS_RLO binary outside grid and coming from detached')
+
+>>>>>>> 4f2891f5b214dcc54e1359b7a1a87927fb53d13c
             self.binary.state = "detached"
             self.binary.event = "redirect_from_CO_HMS_RLO"
             return
@@ -1581,6 +1593,7 @@ class CO_HeMS_RLO_step(MesaGridStep):
             set_binary_to_failed(self.binary)
             raise GridError(f'The mass of m2 ({m2}) is outside the grid,'
                                 'while the period is inside the grid.')
+<<<<<<< HEAD
         
         # period inside the grid, but m1 outside the grid with flipped stars
         elif ((self.flip_stars_before_step and 
@@ -1600,6 +1613,15 @@ class CO_HeMS_RLO_step(MesaGridStep):
 
         # Redirect to the detached step
         else:
+=======
+
+        else:
+            if len(self.binary.state_history) > 2:
+                if self.binary.state_history[-2] == 'detached':
+                    set_binary_to_failed(self.binary)
+                    raise GridError('CO_HeMS_RLO binary outside grid and coming from detached')
+
+>>>>>>> 4f2891f5b214dcc54e1359b7a1a87927fb53d13c
             self.binary.state = "detached"
             self.binary.event = "redirect_from_CO_HeMS_RLO"
             return
