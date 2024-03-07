@@ -1,216 +1,320 @@
 import unittest
 import os
 import numpy as np
-from posydon.popsyn.synthetic_population import PopulationRunner, ParsedPopAttrs, ParsedPopulation, SyntheticPopulation
-
-from posydon.config import PATH_TO_POSYDON_DATA
+import pandas as pd
 
 
-# test the PopulationRunner class
-@unittest.skip
+from posydon.popsyn.synthetic_population import (
+    PopulationRunner,
+    History,
+    Oneline,
+    PopulationIO,
+    parameter_array
+)
+
+
+# Test the PopulationRunner class
 class TestPopulationRunner(unittest.TestCase):
-    
     # Test the initialisation of the PopulationRunner class
     def test_init(self):
         # Test the initialisation of the PopulationRunner class
-        poprun = PopulationRunner('../../popsyn/population_params_default.ini')
+        poprun = PopulationRunner('../../popsyn/population_params_default.ini', verbose=True)
 
-        # Parameters are based on the default values in the ini file
-        assert poprun.synthetic_pop_params['star_formation'] == 'burst', 'Default star formation is not correct'
-        assert poprun.synthetic_pop_params['number_of_binaries'] == 10, 'Default number of binaries is not correct'
-        assert poprun.synthetic_pop_params['binary_fraction_scheme'] == 'const', 'Default binary fraction scheme is not correct'
-        assert np.allclose(poprun.solar_metallicities, [0.0001]), 'Default metallicities are not correct'
-        assert poprun.binary_populations == None, 'Default binary populations are not correctly initialised'
+        # Check if the verbose attribute is set correctly
+        self.assertEqual(poprun.verbose, True, 'Verbose attribute is not set correctly')
 
-    # Test the create_population method
-    def test_create_population(self):
-        # Test the create_population method
+        # Check if the solar_metallicities attribute is a list
+        self.assertIsInstance(poprun.solar_metallicities, list, 'solar_metallicities attribute is not a list')
+
+        # Check if the binary_populations attribute is a list
+        self.assertIsInstance(poprun.binary_populations, list, 'binary_populations attribute is not a list')
+
+    # Test the evolve method
+    def test_changed_binarypop(self):
         poprun = PopulationRunner('../../popsyn/population_params_default.ini')
-        poprun.create_binary_populations()
-        assert poprun.binary_populations != None, 'Binary populations have not been created'
-        assert len(poprun.binary_populations) == 1, 'The binary_populations list is not the correct length'
+        # test 
+        self.assertEqual(poprun.binary_populations[0].metallicity, 0.0001)
+        # Check if the temp_directory attribute is set correctly
+        self.assertEqual(poprun.binary_populations[0].kwargs['temp_directory'],
+                         '1e-04_Zsun_batches',
+                         'temp_directory attribute is not set correctly')
         
-    def test_create_population_multi_met(self):
-        poprun = PopulationRunner('../../popsyn/population_params_default.ini')
-        # add additional metallicity manually 
-        poprun.solar_metallicities = [0.0001, 0.001]
-        poprun.create_binary_populations()
-        assert poprun.binary_populations != None, 'Binary populations have not been created'
-        assert len(poprun.binary_populations) == 2, 'The binary_populations list is not the correct length'
-    
-    
-    # Test the evolve
-    def test_evolve_pop(self):
-        # This only test the population creation for a single process.
-        poprun = PopulationRunner('../../popsyn/population_params_default.ini')
-        poprun.evolve()
-        # Check that the population has been created
-        # check the batch folder
-        for met in poprun.solar_metallicities:
-            folder_name = poprun.create_met_prefix(met) + poprun.synthetic_pop_params['temp_directory']
-            assert os.path.isdir(folder_name), 'Batch folder has not been created'                    
+        # Check if the binary_populations attribute is not empty after calling the evolve method
+        self.assertTrue(poprun.binary_populations, 'binary_populations attribute is empty after calling the evolve method')
 
 
-    # test the merge parallel runs
-    def test_merge_parallel_runs(self):
-        poprun = PopulationRunner('../../popsyn/population_params_default.ini')
-        paths_to_batches = []
-        for met in poprun.solar_metallicities:
-            paths_to_batches.append(poprun.create_met_prefix(met) + poprun.synthetic_pop_params['temp_directory'])
-        
-        poprun.merge_parallel_runs(paths_to_batches)
-        # Check that the population has been created
-        for met in poprun.solar_metallicities:
-            file_name = poprun.create_met_prefix(met) + 'population.h5'
-            assert os.path.isfile(file_name), 'Population file has not been created'
-        
+# Test the History class
+class TestHistory(unittest.TestCase):
     
     @classmethod
-    def tearDownClass(cls):
-        # remove files created by the tests
-        poprun = PopulationRunner('../../popsyn/population_params_default.ini')
-        for met in poprun.solar_metallicities:
-            file_name = poprun.create_met_prefix(met) + 'population.h5'
-            if os.path.isfile(file_name):
-                os.remove(file_name)
-            batch_folder = poprun.create_met_prefix(met) + poprun.synthetic_pop_params['temp_directory'] 
-            # remove files + folders if a test failed
-            if os.path.isdir(batch_folder):
-                os.remove(batch_folder+'/evolution.combined')
-                os.rmdir(batch_folder)
-    
+    def setUpClass(self):
+        # Set up a test HDF5 file using pandas HDFStore
+        self.filename = 'test_population.h5'
+        with pd.HDFStore(self.filename, 'w') as store:
+            # Create a history dataframe
+            history_data = pd.DataFrame({'time': [1, 2, 3], 'event': ['ZAMS','oRLO1', 'CEE']})
+            store.append('history',history_data, data_columns=True)
 
-# Test the ParsedPopAttrs class
-class TestParsedPopAttrs(unittest.TestCase):
+    def setUp(self):
+        self.history = History(self.filename, verbose=False, chunksize=10000)
+
+    def test_init(self):
+        history = History(self.filename, verbose=False, chunksize=10000)
+        self.assertEqual(history.filename, self.filename, 'Filename is not set correctly')
+        self.assertFalse(history.verbose, 'Verbose attribute is not set correctly')
+        self.assertEqual(history.chunksize, 10000, 'Chunksize attribute is not set correctly')
+        
+        expected_lengths = pd.DataFrame(index=[0, 1, 2],data={'index': [1, 1, 1]})
+        expected_lengths.index.name = 'index'
+        pd.testing.assert_frame_equal(history.lengths, expected_lengths, 'Lengths attribute is not equal to the expected dataframe')
+
+        #self.assertEquals(history.lengths, expected_lengths, 'Lengths attribute is not equal to the expected dataframe')
+        
+        self.assertEqual(history.number_of_systems, 3, 'Number of systems attribute is not None')
+        self.assertEqual(history.columns.to_list(), ['time', 'event'], 'Columns attribute is not None')
+        
+        self.assertIsInstance(history.indices, np.ndarray, 'Indices attribute is not an ndarray')
+        np.testing.assert_array_equal(history.indices, np.array([0, 1, 2]), 'Indices attribute is not equal to the expected list')
+        
+        with self.assertRaises(KeyError):
+            History('invalid_filename.h5', verbose=False, chunksize=10000)
+
+
+    def test_getitem_single_index(self):
+        df = self.history[0]
+        self.assertIsInstance(df, pd.DataFrame, 'Returned object is not a DataFrame')
+        self.assertEqual(len(df), 1, 'Returned DataFrame does not have the correct length')
+        
+
+    def test_getitem_multiple_indices(self):
+        df = self.history[[0, 1, 2]]
+        self.assertIsInstance(df, pd.DataFrame, 'Returned object is not a DataFrame')
+        self.assertEqual(len(df), 3, 'Returned DataFrame does not have the correct length')
+
+    def test_getitem_index_array(self):
+        indices = np.array([0, 1, 2])
+        df = self.history[indices]
+        self.assertIsInstance(df, pd.DataFrame, 'Returned object is not a DataFrame')
+        self.assertEqual(len(df), 3, 'Returned DataFrame does not have the correct length')
+
+    def test_getitem_single_column(self):
+        column = 'time'
+        df = self.history[column]
+        self.assertIsInstance(df, pd.DataFrame, 'Returned object is not a DataFrame')
+        self.assertEqual(len(df.columns), 1, 'Returned DataFrame does not have the correct number of columns')
+
+    def test_getitem_boolean_mask_numpy(self):
+        mask = (self.history['time'] > 1).to_numpy()
+        df = self.history[mask]
+        self.assertIsInstance(df, pd.DataFrame, 'Returned object is not a DataFrame')
+
+    def test_getitem_boolean_mask_pandas(self):
+        mask = self.history['time'] > 1
+        df = self.history[mask]
+        self.assertIsInstance(df, pd.DataFrame, 'Returned object is not a DataFrame')
+
+    def test_getitem_multiple_columns(self):
+        columns = ['time', 'event']
+        df = self.history[columns]
+        self.assertIsInstance(df, pd.DataFrame, 'Returned object is not a DataFrame')
+        self.assertEqual(len(df.columns), 2, 'Returned DataFrame does not have the correct number of columns')
+
+    def test_getitem_invalid_key(self):
+        with self.assertRaises(ValueError):
+            self.history['invalid_key']
+
+    def test_len(self):
+        length = len(self.history)
+        self.assertIsInstance(length, int, 'Returned object is not an integer')
+        self.assertEqual(length, 3, 'Returned length is not correct')
+        
+    def test_head(self):
+        n = 2
+        df = self.history.head(n)
+        self.assertIsInstance(df, pd.DataFrame, 'Returned object is not a DataFrame')
+        self.assertEqual(len(df), n, 'Returned DataFrame does not have the correct length')
+
+    def test_tail(self):
+        n = 2
+        df = self.history.tail(n)
+        self.assertIsInstance(df, pd.DataFrame, 'Returned object is not a DataFrame')
+        self.assertEqual(len(df), n, 'Returned DataFrame does not have the correct length')
+
+    def test_repr(self):
+        representation = self.history.__repr__()
+        self.assertIsInstance(representation, str, 'Returned object is not a string')
+
+    def test_repr_html(self):
+        html_representation = self.history._repr_html_()
+        self.assertIsInstance(html_representation, str, 'Returned object is not a string')
+
+
+    def test_select(self):
+        df = self.history.select(where="time > 1", start=0, stop=10, columns=['event', 'time'])
+        self.assertIsInstance(df, pd.DataFrame, 'Returned object is not a DataFrame')
+        self.assertEqual(len(df.columns), 2, 'Returned DataFrame does not have the correct number of columns')
+        self.assertEqual(len(df), 2, 'Returned DataFrame does not have the correct length')
+        
+        
+     
+    @classmethod   
+    def tearDownClass(self):
+        os.remove(self.filename)
+
+# Test the Oneline class
+class TestOneline(unittest.TestCase):
     
-    # Test the initialisation of the ParsedPopAttrs class
-    # Are all variables present?
-    def test_ini(self):
-        pop = ParsedPopAttrs()
-        assert pop.underlying_mass_per_met == None, 'Underlying mass per metallicity is not None'
-        assert pop.simulated_mass_per_met == None, 'Simulated mass per metallicity is not None'
-        assert pop.metallicities == None, 'Metallicities are not None'
-        assert pop.solar_metallicities == None, 'Solar metallicities are not None'
-        assert pop.verbose == False, 'Verbose is not False'
-        assert pop.synthetic_pop_params == None, 'Synthetic population parameters are not None'
+    @classmethod
+    def setUpClass(cls):
+        # Set up a test HDF5 file using pandas HDFStore
+        cls.filename = 'test_oneline.h5'
+        with pd.HDFStore(cls.filename, 'w') as store:
+            # Create a oneline dataframe
+            oneline_data = pd.DataFrame({'time': [1, 2, 3], 'S1_mass_i': ['30','30', '70']})
+            store.append('oneline', oneline_data, data_columns=True)
+
+    def setUp(self):
+        self.oneline = Oneline(self.filename, verbose=False, chunksize=10000)
+
+    def test_init(self):
+        oneline = Oneline(self.filename, verbose=True, chunksize=5000)
+
+        self.assertEqual(oneline.filename, self.filename, 'Filename is not set correctly')
+        self.assertTrue(oneline.verbose, 'Verbose attribute is not set correctly')
+        self.assertEqual(oneline.chunksize, 5000, 'Chunksize attribute is not set correctly')
+        self.assertEqual(oneline.number_of_systems, 3, 'Number of systems attribute is not set correctly')
+        self.assertEqual(oneline.columns.to_list(), ['time', 'S1_mass_i'], 'Columns attribute is not set correctly')
+        self.assertEqual(oneline.number_of_systems, 3, 'Number of systems attribute is not set correctly')
+        
+        self.assertIsInstance(oneline.indices, np.ndarray, 'Indices attribute is not an ndarray')
+        np.testing.assert_array_equal(oneline.indices, np.array([0, 1, 2]), 'Indices attribute is not equal to the expected list')
+
+        with self.assertRaises(KeyError):
+            Oneline('invalid_filename.h5', verbose=False, chunksize=10000)
+
+    def test_getitem_single_index(self):
+        df = self.oneline[0]
+        self.assertIsInstance(df, pd.DataFrame, 'Returned object is not a DataFrame')
+        self.assertEqual(len(df), 1, 'Returned DataFrame does not have the correct length')
+        
+    def test_getitem_multiple_indices(self):
+        df = self.oneline[[0, 1, 2]]
+        self.assertIsInstance(df, pd.DataFrame, 'Returned object is not a DataFrame')
+        self.assertEqual(len(df), 3, 'Returned DataFrame does not have the correct length')
+        
+    def test_getitem_index_array(self):
+        indices = np.array([0, 1, 2])
+        df = self.oneline[indices]
+        self.assertIsInstance(df, pd.DataFrame, 'Returned object is not a DataFrame')
+        self.assertEqual(len(df), 3, 'Returned DataFrame does not have the correct length')
+        pd.testing.assert_frame_equal(df, 
+                                      pd.DataFrame({'time': [1, 2, 3],
+                                                    'S1_mass_i': ['30','30', '70']}), 
+                                      'Returned DataFrame is not equal to the expected DataFrame')
+
+        
+    def test_getitem_single_column(self):
+        column = 'time'
+        df = self.oneline[column]
+        self.assertIsInstance(df, pd.DataFrame, 'Returned object is not a DataFrame')
+        self.assertEqual(len(df.columns), 1, 'Returned DataFrame does not have the correct number of columns')
     
+    def test_getitem_boolean_mask_numpy(self):
+        mask = (self.oneline['time'] > 1).to_numpy().flatten()
+        df = self.oneline[mask]
+        self.assertIsInstance(df, pd.DataFrame, 'Returned object is not a DataFrame')
+        
+    def test_getitem_boolean_mask_pandas(self):
+        mask = self.oneline['time'] > 1
+        print(mask)
+        df = self.oneline[mask]
+        self.assertIsInstance(df, pd.DataFrame, 'Returned object is not a DataFrame')
+        
+    def test_getitem_multiple_columns(self):
+        columns = ['time', 'S1_mass_i']
+        df = self.oneline[columns]
+        self.assertIsInstance(df, pd.DataFrame, 'Returned object is not a DataFrame')
+        self.assertEqual(len(df.columns), 2, 'Returned DataFrame does not have the correct number of columns')
+        
+    def test_getitem_invalid_key(self):
+        with self.assertRaises(ValueError):
+            self.oneline['invalid_key']
+            
+    def test_len(self):
+        length = len(self.oneline)
+        self.assertIsInstance(length, int, 'Returned object is not an integer')
+        self.assertEqual(length, 3, 'Returned length is not correct')
+        
+    def test_head(self):
+        n = 2
+        df = self.oneline.head(n)
+        self.assertIsInstance(df, pd.DataFrame, 'Returned object is not a DataFrame')
+        self.assertEqual(len(df), n, 'Returned DataFrame does not have the correct length')
+        
+    def test_tail(self):
+        n = 2
+        df = self.oneline.tail(n)
+        self.assertIsInstance(df, pd.DataFrame, 'Returned object is not a DataFrame')
+        self.assertEqual(len(df), n, 'Returned DataFrame does not have the correct length')
+        
+    def test_repr(self):
+        representation = self.oneline.__repr__()
+        self.assertIsInstance(representation, str, 'Returned object is not a string')
+    
+    def test_repr_html(self):
+        html_representation = self.oneline._repr_html_()
+        self.assertIsInstance(html_representation, str, 'Returned object is not a string')
+    
+    def test_select(self):
+        df = self.oneline.select(where="time > 1", start=0, stop=10, columns=['S1_mass_i', 'time'])
+        self.assertIsInstance(df, pd.DataFrame, 'Returned object is not a DataFrame')
+        self.assertEqual(len(df.columns), 2, 'Returned DataFrame does not have the correct number of columns')
+        self.assertEqual(len(df), 2, 'Returned DataFrame does not have the correct length')
+    
+        
+    @classmethod
+    def tearDownClass(self):
+        os.remove(self.filename)
+
+
+# Test the PopulationIO class
+class TestPopulationIO(unittest.TestCase):
+
+    def setUp(self):
+        self.filename = "test_population.hdf5"
+
+    def tearDown(self):
+        if os.path.exists(self.filename):
+            os.remove(self.filename)
+            
+    def test_init(self):
+        pop_io = PopulationIO()
+        self.assertEqual(pop_io.verbose, False, "Verbose attribute is not set correctly")
+
+    def test_save_and_load_mass_per_met(self):
+        population_io = PopulationIO()
+        population_io.mass_per_met = pd.DataFrame({"metallicity": [0.02, 0.04], "mass": [1.0, 2.0]})
+        population_io._save_mass_per_met(self.filename)
+        
+        loaded_io = PopulationIO()
+        loaded_io._load_mass_per_met(self.filename)
+        pd.testing.assert_frame_equal(population_io.mass_per_met, loaded_io.mass_per_met)
+
+    def test_save_and_load_ini_params(self):
+        population_io = PopulationIO()
+        population_io.ini_params = {i:10 for i in parameter_array}
+        population_io._save_ini_params(self.filename)
+        
+        loaded_io = PopulationIO()
+        loaded_io._load_ini_params(self.filename)
+
+        self.assertEqual(population_io.ini_params, 
+                         loaded_io.ini_params, "Loaded ini_params are not equal to the saved ini_params")
 
 
 
-class TestParsedPop(unittest.TestCase):
-    
-    # Test the initialisation of the ParsedPopulation class
-    def test_ini(self):
-        parsed_pop = ParsedPopulation('testing.h5',
-                                      path_to_ini='../../popsyn/population_params_default.ini',
-                                      verbose=True)
-        
-        # check metallicities
-        assert np.allclose(parsed_pop.solar_metallicities,[0.0001]), 'Default solar metallicities are not correct'
-        assert np.isclose(parsed_pop.metallicities[0], 1.42e-6), 'Absolute metallicity is incorrect'
-        # check ini_params
-        assert parsed_pop.ini_params != None, 'Ini params are not saved'
-        parameter_array = [ "number_of_binaries",
-                   'binary_fraction_scheme',
-                   'binary_fraction_const',
-                   'star_formation',
-                   'max_simulation_time',
-                   'primary_mass_scheme',
-                   'primary_mass_min',                              
-                   'primary_mass_max',                                  
-                   'secondary_mass_scheme',
-                   'secondary_mass_min',
-                   'secondary_mass_max',
-                   'orbital_scheme',
-                   'orbital_period_scheme',
-                   'orbital_period_min',
-                   'orbital_period_max',
-                   'eccentricity_scheme']
-        for param in parameter_array:
-            assert parsed_pop.ini_params[param] != None, f'{param} is not saved'
-        assert parsed_pop.verbose == True, 'Verbose is not True'
-    
-    # load in a population file and parse BBH
-    def test_parse_and_save_bbh(self):
-        parsed_pop = ParsedPopulation('testing.h5',
-                                      path_to_ini='../../popsyn/population_params_default.ini',)
-        # TODO: remove hard coded link!
-        path_to_data = os.path.join(PATH_TO_POSYDON_DATA, "POSYDON_data/tutorials/population-synthesis/example/")
-        path_to_data += '/1.00e+00_Zsun_population.h5'
-        
-        parsed_pop.solar_metallicities = [1.00]
-        parsed_pop.metallicities = [0.0142]
-        
-        parsed_pop.parse(path_to_data=[path_to_data],
-                         S1_state='BH',
-                         S2_state='BH',
-                         binary_state='contact',
-                         invert_S1S2=False,
-                         chunksize=5000000)
 
-        assert parsed_pop.total_systems[0] == 1000000, 'Parsed population is not the correct length'
-        assert parsed_pop.selected_systems[0] == 233, 'Parsed population is not the correct length'
-        # mass parameters
-        assert np.all(parsed_pop.underlying_mass_per_met != None), 'Underlying mass per metallicity is None'
-        assert np.all(parsed_pop.simulated_mass_per_met != None), 'Simulated mass per metallicity is None'
-        assert len(parsed_pop.underlying_mass_per_met) == 1, 'Underlying mass per metallicity is not the correct length'
-        # path to data
-        assert parsed_pop.path_to_data[0] == path_to_data, f'{path_to_data} is not equal to {parsed_pop.path_to_data[0]}'
-        # parse kwargs data
-        assert parsed_pop.parse_kwargs != None, 'Parse kwargs are not saved'
-        assert parsed_pop.parse_kwargs['S1_state'] == 'BH', 'S1_state is not saved'
-        assert parsed_pop.parse_kwargs['S2_state'] == 'BH', 'S2_state is not saved'
-        assert parsed_pop.parse_kwargs['binary_state'] == 'contact', 'binary_state is not saved'
-        assert parsed_pop.parse_kwargs['binary_event'] == None, 'binary_event is not saved'
-        assert parsed_pop.parse_kwargs['step_name'] == None, 'step_name is not saved'
-        assert parsed_pop.parse_kwargs['invert_S1S2'] == False, 'invert_S1S2 is not saved'
-        
-        pp = ParsedPopulation('testing.h5')
-        
-        assert pp.parse_kwargs != None, 'Parse kwargs are not saved'
-        assert len(pp.underlying_mass_per_met) == 1, 'Underlying mass per metallicity is None'
-        assert len(pp.simulated_mass_per_met) == 1, 'Simulated mass per metallicity is None'
-        assert pp.path_to_data[0] == path_to_data, 'Path to data is not saved'
-        assert pp.total_systems[0] == 1000000, 'total_systems is not saved'
-        assert pp.selected_systems[0] == 233, 'selected_systems is not saved'
 
-    
-        
-    # def test_get_formation_channel(self):
-    #     parsed_pop = ParsedPopulation('../../popsyn/population_params_default.ini')
-    #     parsed_pop.load('test.h5')
-    #     pre_shape = parsed_pop.df_oneline.shape
-    #     parsed_pop.get_formation_channels(mt_history=True)
-        
-    #     assert pre_shape[0] == parsed_pop.df_oneline.shape[0], 'df_oneline has changed nr of rows'
-    #     assert pre_shape[1] == parsed_pop.df_oneline.shape[1]-2, 'df_oneline does not have the additional columns'
-    #     assert any(parsed_pop.df_oneline['channel']), 'channels have not been added'
-    #     assert any(parsed_pop.df_oneline['channel_debug']), 'debug channels have not been added'
-    #     assert parsed_pop.df_oneline['channel'].iloc[0] == 'ZAMS_oRLO1-contact_CC1_oRLO2_CC2_END', 'channel is not correct'
-        
-    # def test_write_read_formation_channels(self):
-    #     parsed_pop = ParsedPopulation('../../popsyn/population_params_default.ini')
-    #     parsed_pop.load('test.h5')
-    #     parsed_pop.get_formation_channels(mt_history=True)
-    #     parsed_pop.save('mt_test.h5')
-    #     self.assertRaises(ValueError, parsed_pop.load, 'mt_test.h5')
-    #     parsed_pop = ParsedPopulation('../../popsyn/population_params_default.ini')
-    #     parsed_pop.load('mt_test.h5')
-    #     assert any(parsed_pop.df_oneline['channel']), 'channels have not been added'
-    #     assert any(parsed_pop.df_oneline['channel_debug']), 'debug channels have not been added'
-    #     assert parsed_pop.df_oneline['channel'].iloc[0] == 'ZAMS_oRLO1-contact_CC1_oRLO2_CC2_END', 'channel is not correct'
-        
-    # def test__create_DCO_population(self):
-        
-    #     parsed_pop = ParsedPopulation('../../popsyn/population_params_default.ini')
-    #     parsed_pop.load('mt_test.h5')
-    #     DCO_population = parsed_pop.create_DCO_population()
-        
-    #     assert type(DCO_population) == SyntheticPopulation
-        
-        
-        
-    
 if __name__ == '__main__':
     unittest.main()
     

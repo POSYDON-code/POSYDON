@@ -421,10 +421,10 @@ class History:
             with pd.HDFStore(self.filename, mode="r") as store:
                 return store.select("history", where="index in key")
         elif isinstance(key, np.ndarray) and (key.dtype == int):
-            indices = self.lengths[key].index.tolist()
+            indices = self.lengths.loc[key].index.tolist()
             with pd.HDFStore(self.filename, mode="r") as store:
                 return store.select("history", where="index in indices")
-        elif isinstance(key, np.ndarray) and key.dtype == bool:
+        elif (isinstance(key, np.ndarray) and key.dtype == bool) or (isinstance(key, pd.DataFrame) and all(key.dtypes == bool)):
             out_df = pd.DataFrame()
             for i in range(0, len(key), self.chunksize):
                 tmp_df = pd.read_hdf(
@@ -453,7 +453,7 @@ class History:
         int
             The number of rows in the history table.
         """
-        return np.sum(self.lengths)
+        return np.sum(self.lengths.values)
 
     def head(self, n=10):
         """Return the first n rows of the history table
@@ -509,34 +509,6 @@ class History:
         """
         return pd.read_hdf(self.filename, key="history")._repr_html_()
 
-    def iterator(self):
-        """
-        Returns an iterator for reading a large HDF file in chunks.
-
-        This can be used to read a large HDF file in chunks. The chunksize is
-        set to the chunksize attribute of the class.
-
-        Returns
-        -------
-        iterator
-            An iterator object that reads the HDF file in chunks.
-        """
-        return pd.read_hdf(
-            self.filename, key="history", iterator=True, chunksize=self.chunksize
-        )
-
-    def iterbinaries(self):
-        """
-        Iterate over the binary data in the  population file.
-
-        Yields
-        ------
-        pandas.DataFrame
-            A DataFrame containing the binary data for each index.
-
-        """
-        for i in self.indices:
-            yield pd.read_hdf(self.filename, key="history", where="index == i")
 
     def select(self, where=None, start=None, stop=None, columns=None):
         """Select a subset of the history table based on the given conditions.
@@ -633,7 +605,7 @@ class Oneline:
         self.indices = None
 
         with pd.HDFStore(filename, mode="r") as store:
-            self.indices = store.select_column("oneline", "index")
+            self.indices = store.select_column("oneline", "index").to_numpy()
             self.columns = store.select("oneline", start=0, stop=0).columns
 
         self.number_of_systems = len(self.indices)
@@ -693,14 +665,20 @@ class Oneline:
             return pd.read_hdf(self.filename, where="index == key", key="oneline")
         elif isinstance(key, list) and all(isinstance(x, int) for x in key):
             return pd.read_hdf(self.filename, where="index in key", key="oneline")
+        elif isinstance(key, np.ndarray) and (key.dtype == int):
+            indices = self.indices[key].tolist()
+            return pd.read_hdf(self.filename, where="index in indices", key="oneline")
+        elif isinstance(key, pd.DataFrame) and all(key.dtypes == bool):
+            indices = self.indices[key.to_numpy().flatten()].tolist()
+            return pd.read_hdf(self.filename, where="index in indices", key="oneline")
         elif isinstance(key, np.ndarray) and key.dtype == bool:
-            indices = self.lengths[key].index
+            indices = self.indices[key].tolist()
             return pd.read_hdf(self.filename, where="index in indices", key="oneline")
         elif isinstance(key, str):
             if key in self.columns:
                 return pd.read_hdf(self.filename, key="oneline", columns=[key])
             else:
-                raise ValueError(f"{key} is not a valid column se!")
+                raise ValueError(f"{key} is not a valid column!")
         elif isinstance(key, list) and all(isinstance(x, str) for x in key):
             if all(x in self.columns for x in key):
                 return pd.read_hdf(self.filename, key="oneline", columns=key)
@@ -773,30 +751,6 @@ class Oneline:
         """
         return pd.read_hdf(self.filename, key="oneline")._repr_html_()
 
-    def iterator(self):
-        """
-        Get an iterator over the oneline table.
-
-        Returns
-        -------
-        pd.io.pytables.TableIterator
-            An iterator over the oneline table.
-        """
-        return pd.read_hdf(
-            self.filename, key="oneline", iterator=True, chunksize=self.chunksize
-        )
-
-    def iterbinaries(self):
-        """
-        Get an iterator over the binary systems in the oneline table.
-
-        Yields
-        ------
-        pd.DataFrame
-            The next binary system in the oneline table.
-        """
-        for i in self.indices:
-            yield pd.read_hdf(self.filename, key="oneline", where="index == i")
 
     def select(self, where=None, start=None, stop=None, columns=None):
         """Select a subset of the oneline table based on the given conditions.
@@ -853,7 +807,8 @@ class PopulationIO:
     """
 
     def __init__(self):
-        pass
+        self.verbose = False        
+
 
     def _load_metadata(self, filename):
         """Load the metadata from the file.
@@ -933,10 +888,7 @@ class PopulationIO:
 
         """
         # load ini parameters
-        with pd.HDFStore(
-            filename,
-            mode="r",
-        ) as store:
+        with pd.HDFStore(filename,mode="r",) as store:
             tmp_df = store["ini_parameters"]
             self.ini_params = {}
             for c in parameter_array:
