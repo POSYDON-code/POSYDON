@@ -9,7 +9,8 @@ from posydon.popsyn.synthetic_population import (
     History,
     Oneline,
     PopulationIO,
-    parameter_array
+    parameter_array,
+    Population
 )
 
 
@@ -310,8 +311,6 @@ class TestPopulationIO(unittest.TestCase):
 
         self.assertEqual(population_io.ini_params, 
                          loaded_io.ini_params, "Loaded ini_params are not equal to the saved ini_params")
-
-
 
 
 
