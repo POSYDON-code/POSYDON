@@ -2369,10 +2369,6 @@ class Rates(TransientPopulation):
             # plot the histogram using plot_pop.plot_hist_properties
             plot_pop.plot_hist_properties(df, bins=bins, **kwargs)
 
-
-
-    ### metallicity bins ###
-    ########################
     @property
     def edges_metallicity_bins(self):
         """Return the edges of the metallicity bins.
@@ -2414,8 +2410,6 @@ class Rates(TransientPopulation):
         """
         return np.sort(self.metallicities)
 
-    ### redshift bins ###
-    #####################
     @property
     def edges_redshift_bins(self):
         """Compute redshift bin edges.
