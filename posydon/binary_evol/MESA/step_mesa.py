@@ -251,7 +251,6 @@ class MesaGridStep:
     def load_Interp(self, filename):
         """Load the interpolator that has been trained on the grid."""
         if self.verbose:
-            print("loading Interp: {}".format(filename))
 
         # Check if interpolation files exist
         if not os.path.exists(filename):
@@ -1435,11 +1434,7 @@ class CO_HMS_RLO_step(MesaGridStep):
             self.p_min <= p <= self.p_max and
             ecc == 0.)):
             super().__call__(self.binary)
-<<<<<<< HEAD
-            
-=======
 
->>>>>>> 4f2891f5b214dcc54e1359b7a1a87927fb53d13c
         # period inside the grid, but m1 outside the grid
         elif ((not self.flip_stars_before_step and
                self.p_min <= p <= self.p_max and
@@ -1458,33 +1453,12 @@ class CO_HMS_RLO_step(MesaGridStep):
             raise GridError(f'The mass of m2 ({m2}) is outside the grid,'
                                 'while the period is inside the grid.')
 
-<<<<<<< HEAD
-        # period inside the grid, but m1 outside the grid (flipped stars)
-        elif ((self.flip_stars_before_step and
-                self.p_min <= p <= self.p_max and
-                (m2 < self.m1_min or m2 > self.m1_max)
-                )):
-                set_binary_to_failed(self.binary)
-                raise ValueError(f'The mass of m1 ({m2}) is outside the grid,'
-                                  'while the period is inside the grid.')
-        # period inside the grid, but m2 outside the grid (flipped stars)
-        elif ((self.flip_stars_before_step and
-                self.p_min <= p <= self.p_max and
-                (m1 < self.m2_min or m1 > self.m2_max)
-                )):
-                set_binary_to_failed(self.binary)
-                raise ValueError(f'The mass of m2 ({m1}) is outside the grid,'
-                                  'while the period is inside the grid.')
-                
-        else:
-=======
         else:
             if len(self.binary.state_history) > 2:
                 if self.binary.state_history[-2] == 'detached':
                     set_binary_to_failed(self.binary)
                     raise GridError('CO_HMS_RLO binary outside grid and coming from detached')
 
->>>>>>> 4f2891f5b214dcc54e1359b7a1a87927fb53d13c
             self.binary.state = "detached"
             self.binary.event = "redirect_from_CO_HMS_RLO"
             return
@@ -1593,27 +1567,6 @@ class CO_HeMS_RLO_step(MesaGridStep):
             set_binary_to_failed(self.binary)
             raise GridError(f'The mass of m2 ({m2}) is outside the grid,'
                                 'while the period is inside the grid.')
-<<<<<<< HEAD
-        
-        # period inside the grid, but m1 outside the grid with flipped stars
-        elif ((self.flip_stars_before_step and 
-               self.p_min <= p <= self.p_max and
-               m1 < self.m2_min or m1 > self.m2_max)):
-            set_binary_to_failed(self.binary)
-            raise ValueError(f'The mass of m1 ({m1}) is outside the grid,'
-                                'while the period is inside the grid.')
-        
-        # period inside the grid, but m2 outside the grid with flipped stars
-        elif ((self.flip_stars_before_step and
-                self.p_min <= p <= self.p_max and
-                m2 < self.m1_min or m2 > self.m1_max)):
-                set_binary_to_failed(self.binary)
-                raise ValueError(f'The mass of m2 ({m2}) is outside the grid,'
-                                  'while the period is inside the grid.')
-
-        # Redirect to the detached step
-        else:
-=======
 
         else:
             if len(self.binary.state_history) > 2:
@@ -1621,7 +1574,6 @@ class CO_HeMS_RLO_step(MesaGridStep):
                     set_binary_to_failed(self.binary)
                     raise GridError('CO_HeMS_RLO binary outside grid and coming from detached')
 
->>>>>>> 4f2891f5b214dcc54e1359b7a1a87927fb53d13c
             self.binary.state = "detached"
             self.binary.event = "redirect_from_CO_HeMS_RLO"
             return
