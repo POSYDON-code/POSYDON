@@ -46,14 +46,16 @@ import posydon.visualization.plot_pop as plot_pop
 from posydon.utils.common_functions import convert_metallicity_to_string
 
 from astropy.cosmology import Planck15 as cosmology
-from astropy.cosmology import z_at_value
-from scipy.interpolate import interp1d
-from astropy import units as u
 from astropy import constants as const
-import scipy as sp
 
-
-from posydon.popsyn.rate_calculation import DEFAULT_MODEL
+from posydon.popsyn.rate_calculation import (get_shell_comoving_volume, 
+                                             get_comoving_distance_from_redshift,
+                                             get_cosmic_time_from_redshift,
+                                             redshift_from_cosmic_time_interpolator,
+                                             DEFAULT_MODEL,
+                                             get_redshift_bin_edges,
+                                             get_redshift_bin_centers,
+                                             )
 
 from posydon.popsyn.star_formation_history import star_formation_rate, SFR_Z_fraction_at_given_redshift
 
@@ -784,7 +786,6 @@ class Oneline():
         with pd.HDFStore(self.filename, mode='r') as store:
             return store.select('oneline', where=where, start=start, stop=stop, columns=columns)
 
-
 class PopulationIO():
     """A class to handle the input/output of population files.
 
@@ -1367,23 +1368,23 @@ class Population(PopulationIO):
 
     @property
     def columns(self):
-            """
-            Returns a dictionary containing the column names of the history and oneline dataframes.
+        """
+        Returns a dictionary containing the column names of the history and oneline dataframes.
 
-            Returns
-            -------
-            dict
-                A dictionary with keys 'history' and 'oneline', where the values are the column names of the respective dataframes.
-            """
-            return {'history': self.history.columns,
-                    'oneline': self.oneline.columns}
+        Returns
+        -------
+        dict
+            A dictionary with keys 'history' and 'oneline', where the values are the column names of the respective dataframes.
+        """
+        return {'history': self.history.columns,
+                'oneline': self.oneline.columns}
 
     def create_transient_population(self, func, transient_name, oneline_cols=None, hist_cols=None):
         '''Given a function, create a TransientPopulation
 
         This method creates a transient population using the provided function.
         `func` is given the history, oneline, and formation channels dataframes as arguments.
-        The function should return a dataframe containing the synthetic population, which needs to contain the columns 'time' and 'metallicity'.
+        The function should return a dataframe containing the transient population, which needs to contain the columns 'time' and 'metallicity'.
         
         Processing is done in chunks to avoid memory issues and a pandas DataFrame is stored at `'/transients/transient_name'` in the population file.
         
@@ -1398,7 +1399,7 @@ class Population(PopulationIO):
                 - history_chunk : pd.DataFrame
                 - oneline_chunk : pd.DataFrame
                 - formation_channels_chunk : pd.DataFrame
-            and return a pd.DataFrame containing the synthetic population, which needs to contain the columns 'time' and 'metallicity'.
+            and return a pd.DataFrame containing the transient population, which needs to contain the columns 'time' and 'metallicity'.
 
         oneline_cols : list of str, optional
             Columns to extract from the oneline dataframe. Default is all columns.
@@ -1414,7 +1415,7 @@ class Population(PopulationIO):
         Raises
         ------
         ValueError
-            If the transient population requires a time column or if the synthetic population contains duplicate columns.
+            If the transient population requires a time column or if the transient population contains duplicate columns.
             
         Examples
         --------
@@ -1472,7 +1473,7 @@ class Population(PopulationIO):
             syn_df = func(history_chunk, oneline_chunk, formation_channels_chunk)
 
             if len(syn_df.columns) != len(syn_df.columns.unique()):
-                raise ValueError('Synthetic population contains duplicate columns!')
+                raise ValueError('Transient population contains duplicate columns!')
 
             # filter out the columns in min_itemsize that are not in the dataframe
             min_itemsize = {key:val for key, val in min_itemsize.items() if key in syn_df.columns}
@@ -1489,7 +1490,6 @@ class Population(PopulationIO):
 
         synth_pop = TransientPopulation(self.filename, transient_name, verbose=self.verbose)
         return synth_pop
-
 
     def plot_binary_evolution(self, index):
         '''Plot the binary evolution of a system
@@ -1509,7 +1509,7 @@ class TransientPopulation(Population):
     Attributes
     ----------
     population : pandas.DataFrame
-        DataFrame containing the whole synthetic population.
+        DataFrame containing the whole transient population.
     transient_name : str
         Name of the transient population.
     efficiency : pandas.DataFrame
@@ -1579,17 +1579,17 @@ class TransientPopulation(Population):
 
     @property
     def population(self):
-            '''Returns the entire synthetic population as a pandas DataFrame.
+        '''Returns the entire transient population as a pandas DataFrame.
 
-            This method retrieves the synthetic population data from a file and returns it as a pandas DataFrame.
-            Please note that if the synthetic population is too large, it may consume a significant amount of memory.
+        This method retrieves the transient population data from a file and returns it as a pandas DataFrame.
+        Please note that if the transient population is too large, it may consume a significant amount of memory.
 
-            Returns
-            -------
-            pd.DataFrame
-                A DataFrame containing the synthetic population data.
-            '''
-            return pd.read_hdf(self.filename, key='transients/'+self.transient_name)
+        Returns
+        -------
+        pd.DataFrame
+            A DataFrame containing the transient population data.
+        '''
+        return pd.read_hdf(self.filename, key='transients/'+self.transient_name)
 
     def _load_efficiency(self, filename):
         '''Load the efficiency from the file
@@ -1623,15 +1623,15 @@ class TransientPopulation(Population):
 
     @property
     def columns(self):
-            '''Return the columns of the transient population.
+        '''Return the columns of the transient population.
 
-            Returns:
-                list: A list of column names in the transient population.
-            '''
-            if not hasattr(self, '_columns'):
-                with pd.HDFStore(self.filename, mode='r') as store:
-                    self._columns = store.select('transients/'+self.transient_name, start=0, stop=0).columns
-            return self._columns
+        Returns:
+            list: A list of column names in the transient population.
+        '''
+        if not hasattr(self, '_columns'):
+            with pd.HDFStore(self.filename, mode='r') as store:
+                self._columns = store.select('transients/'+self.transient_name, start=0, stop=0).columns
+        return self._columns
 
     def select(self, where=None, start=None, stop=None, columns=None):
         '''
@@ -1673,7 +1673,7 @@ class TransientPopulation(Population):
         """
         Compute the efficiency of events per Msun for each solar_metallicities.
 
-        This method calculates the efficiency of events per solar mass for each solar metallicity value in the synthetic population.
+        This method calculates the efficiency of events per solar mass for each solar metallicity value in the transient population.
         It first checks if the efficiencies have already been computed and if so, overwrites them.
         Then, it iterates over each metallicity value and calculates the efficiency by dividing the count of events with the underlying stellar mass.
         The efficiencies are stored in a DataFrame with the metallicity values as the index and the 'total' column representing the efficiency for all channels.
@@ -1797,14 +1797,14 @@ class TransientPopulation(Population):
                       verbose=self.verbose)
 
         z_birth = rates.centers_redshift_bins
-        t_birth = rates.get_cosmic_time_from_redshift(z_birth)
+        t_birth = get_cosmic_time_from_redshift(z_birth)
         nr_of_birth_bins = len(z_birth)
         # write birth to the population file
         with pd.HDFStore(self.filename, mode='a') as store:
             store.put(path_in_file+'birth', pd.DataFrame(data={'z':z_birth,
                                                                't':t_birth}))
 
-        get_redshift_from_time_cosmic_time = rates.redshift_from_cosmic_time_interpolator
+        get_redshift_from_cosmic_time = redshift_from_cosmic_time_interpolator()
         indices = self.indices
 
         # sample the SFH for only the events that are within the Hubble time
@@ -1848,10 +1848,10 @@ class TransientPopulation(Population):
 
             # get the redshift of the events
             z_events = np.full(t_events.shape, np.nan)
-            z_events[hubble_time_mask] = get_redshift_from_time_cosmic_time(t_events[hubble_time_mask])
+            z_events[hubble_time_mask] = get_redshift_from_cosmic_time(t_events[hubble_time_mask])
 
 
-            D_c = rates.get_comoving_distance_from_redshift(z_events)  # Mpc
+            D_c = get_comoving_distance_from_redshift(z_events)  # Mpc
 
             # the events have to be in solar metallicity
             met_events = self.select(start=i,
@@ -1941,28 +1941,28 @@ class TransientPopulation(Population):
         ax.set_ylabel('Number of events/Msun/yr')
 
     def plot_popsyn_over_grid_slice(self, grid_type, met_Zsun, **kwargs):
-            """
-            Plot the transients over the grid slice.
+        """
+        Plot the transients over the grid slice.
 
-            Parameters
-            ----------
-            grid_type : str
-                The type of grid to plot.
-            met_Zsun : float
-                The metallicity of the Sun.
-            **kwargs
-                Additional keyword arguments to pass to the plot_pop.plot_popsyn_over_grid_slice function.
-                
-            """
+        Parameters
+        ----------
+        grid_type : str
+            The type of grid to plot.
+        met_Zsun : float
+            The metallicity of the Sun.
+        **kwargs
+            Additional keyword arguments to pass to the plot_pop.plot_popsyn_over_grid_slice function.
+            
+        """
 
-            plot_pop.plot_popsyn_over_grid_slice(pop=self,
-                                                 grid_type=grid_type,
-                                                 met_Zsun=met_Zsun,
-                                                 **kwargs)
+        plot_pop.plot_popsyn_over_grid_slice(pop=self,
+                                                grid_type=grid_type,
+                                                met_Zsun=met_Zsun,
+                                                **kwargs)
 
     def _write_MODEL_data(self, filename, path_in_file, MODEL):
         """
-        Write the MODEL data to an HDFStore file.
+        Write the MODEL data to the HDFStore file.
 
         Parameters
         ----------
@@ -1983,9 +1983,68 @@ class TransientPopulation(Population):
                 print('MODEL written to population file!')
 
 class Rates(TransientPopulation):
+    """Class representing rates of a transient population.
+
+    Attributes
+    ----------
+    SFH_identifier : str
+        The identifier for the star formation history.
+    base_path : str
+        The base path for accessing the rates data.
+    MODEL : dict
+        The model data for the star formation history.
+    weights : pandas.DataFrame
+        The weights of the transient population.
+    z_birth : pandas.DataFrame
+        The redshift of the birth bins.
+    z_events : pandas.DataFrame
+        The redshift of the events.
+    intrinsic_rate_density : pandas.DataFrame
+        The intrinsic rate density of the transient population.
+    observable_population_names : list
+        The names of the observable populations.
+    edges_metallicity_bins : np.ndarray
+        The edges of the metallicity bins of the star formation history.
+    centers_metallicity_bins : np.ndarray
+        The centers of the metallicity bins of the star formation history.
+    edges_redshift_bins : np.ndarray
+        The edges of the redshift bins of the star formation history.
+    centers_redshift_bins : np.ndarray
+        The centers of the redshift bins of the star formation history.
     
+    Methods
+    -------
+    select_rate_slice(key, start=None, stop=None)
+        Selects a slice of a rates dataframe at key.
+    calculate_intrinsic_rate_density(mt_channels=False)
+        Compute the intrinsic rate density of the transient population.
+    calculate_observable_population(observable_func, observable_name)
+        Calculate the observable population based on the provided function.
+    observable_population(observable_name)
+        Return the observable population based on the provided name.
+    plot_hist_properties(prop, intrinsic=True, observable=None, bins=50, channel=None, **kwargs)
+        Plot a histogram of a given property available in the transient population.
+    """
 
     def __init__(self, filename, transient_name, SFH_identifier, verbose=False):
+        """
+        Initialize the Rates object.
+        
+        This method initializes a Rates object by linking it to the population file
+        with the specified transient name and star formation history identifier.
+        The path in the file is '/transients/{transient_name}/rates/{SFH_identifier}'.
+
+        Parameters:
+        -----------
+        filename : str
+            The path to the file containing the transient population data.
+        transient_name : str
+            The name of the transient.
+        SFH_identifier : str
+            The identifier for the star formation history.
+        verbose : bool, optional
+            Whether to print verbose output. Default is False.
+        """
 
         super().__init__(filename, transient_name, verbose=verbose)
         self.SFH_identifier = SFH_identifier
@@ -2000,6 +2059,14 @@ class Rates(TransientPopulation):
         self._read_MODEL_data(self.filename)
 
     def _read_MODEL_data(self, filename):
+        """
+        Reads the MODEL data from the specified file.
+
+        Parameters
+        ----------
+        filename : str
+            The path to the file containing the MODEL data.
+        """
         with pd.HDFStore(filename, mode='r') as store:
             tmp_df = store[self.base_path+'MODEL']
             if len(tmp_df) > 1:
@@ -2013,22 +2080,78 @@ class Rates(TransientPopulation):
 
     @property
     def weights(self):
+        """
+        Retrieves the weights from the HDFStore.
+
+        The rows are indexed by the binary index of the events, while to columns are indexed by the redshift of the birth bins.
+
+        Returns
+        -------
+        pandas.DataFrame
+            The weights DataFrame.
+        """
         with pd.HDFStore(self.filename, mode='r') as store:
             return store[self.base_path+'weights']
 
     @property
     def z_birth(self):
-        '''Get the redshift of the birth bins. Should return the same as centers_redshift_bins'''
+        """
+        Retrieves the 'birth' data from the HDFStore.
+
+        The 'birth' DataFrame contains the redshift and age of the Universe of the birth bins with columns 'z' and 't'.
+
+        Returns
+        -------
+        pandas.DataFrame
+            The 'birth' DataFrame, which contains the redshift and age of the Universe of the birth bins.
+        """
         with pd.HDFStore(self.filename, mode='r') as store:
             return store[self.base_path+'birth']
 
     @property
     def z_events(self):
+        """
+        Returns the 'z_events' data from the HDFStore.
+        
+        The 'z_events' data contains the redshifts at which the events occur.            
+        The rows of the returned DataFrame are indexed by the binary index of the events.
+        The columns of the returned DataFrame are indexed by the redshift of the birth bins.
+
+        Returns
+        -------
+        pandas.DataFrame
+            The 'z_events' data from the HDFStore.
+
+        """
         with pd.HDFStore(self.filename, mode='r') as store:
             return store[self.base_path+'z_events']
 
     def select_rate_slice(self, key, start=None, stop=None):
-        '''select a slice of the rates'''
+        """Selects a slice of a rates dataframe at key.
+        
+        This method allows you to select a slice in rows from the diffferent rates dataframes.
+        The slice is selected based on the start and stop indices.
+        The key specifies which rates dataframe to select, and must be one of ['weights', 'z_events', 'birth'].
+
+        Parameters
+        ----------
+        key : str
+            The key to select the slice from. Must be one of ['weights', 'z_events', 'birth'].
+        start : int, optional
+            The starting index of the slice. Defaults to None.
+        stop : int, optional
+            The ending index of the slice. Defaults to None.
+
+        Returns
+        -------
+        pandas.DataFrame
+            The selected slice of rates.
+
+        Raises
+        ------
+        ValueError
+            If the key is not one of ['weights', 'z_events', 'birth'].
+        """
         if key not in ['weights', 'z_events', 'birth']:
             raise ValueError('key not in [weights, z_events, birth]')
 
@@ -2037,9 +2160,22 @@ class Rates(TransientPopulation):
 
 
     def calculate_intrinsic_rate_density(self, mt_channels=False):
-        '''Compute the intrinsic rate density of the transient population'''
+        """
+        Compute the intrinsic rate density over redshift of the transient population.
 
+        Besides returning the intrinsic rate density, this method also stores the results in the HDF5 file for further analysis.
+        This can be accessed using the intrinsic_rate_density attribute of the Rates class.
 
+        Parameters
+        ----------
+        mt_channels : bool, optional
+            Flag indicating whether to calculate the intrinsic rate density for each channel separately. Default is False.
+
+        Returns
+        -------
+        pandas.DataFrame
+            DataFrame containing the intrinsic rate density values.
+        """
         z_events = self.z_events.to_numpy()
         weights = self.weights.to_numpy()
         z_horizon = self.edges_redshift_bins
@@ -2056,7 +2192,7 @@ class Rates(TransientPopulation):
         normalisation = np.zeros(n-1)
 
         for i in tqdm(range(1, n), total=n-1, disable=not self.verbose):
-            normalisation[i-1] = self.get_shell_comoving_volume(z_horizon[i-1],z_horizon[i],'infinite')
+            normalisation[i-1] = get_shell_comoving_volume(z_horizon[i-1],z_horizon[i],'infinite')
 
         for i in tqdm(range(1, n), total=n-1, disable=not self.verbose):
             mask = (z_events > z_horizon[i-1]) & (z_events <= z_horizon[i])
@@ -2072,40 +2208,71 @@ class Rates(TransientPopulation):
         return intrinsic_rate_density
 
     def calculate_observable_population(self, observable_func, observable_name):
-        '''Calculate the observable population'''
+            """
+            Calculate an observable population.
+            
+            The observable population is calculated based on the provided observable function.
+            It should recalculate your weights based on an observability probability given certain transinet parameters.
+            
+            This function requires the following input chunks:
+            1. transient_pop_chunk
+            2. z_events_chunk
+            3. weights_chunk
+            The observable function should output a DataFrame with the same shape as the weights_chunk.
+            
+            The observable population is stored in the HDF5 file at 
+            the location '/transients/{transient_name}/rates/observable/{observable_name}'.
 
-        # file management and creation happens here
+            Parameters
+            ----------
+            observable_func : function
+                The observability function that takes the TransientPopulation as input.
+            observable_name : str
+                The name of the observable.
 
-        # 1. recalculate the weights based on the observability function.
-        # 2. the observability function takes the TransientPopulation as input
-
-        # 3. We loop over the transient population (events) and recalulate the weights.
-        # 4. the observability function takes the a transient population, the weights, and the z_events as input.
-        # It outputs a new weights as an output
-        # 5. It does this chunkwise
-
-        with pd.HDFStore(self.filename, mode='a') as store:
-            # remove the observable population if it already exists
-            if '/transients/'+self.transient_name+'/rates/observable/'+observable_name in store.keys():
-                if self.verbose:
-                    print('Overwriting observable population!')
-                del store['transients/'+self.transient_name+'/rates/observable/'+observable_name]
-
-
-        # loop over the transient population and calculate the new weights, while writing to the file
-        for i in tqdm(range(0, len(self), self.chunksize), total=len(self)//self.chunksize, disable=not self.verbose):
-            transient_pop_chunk = self.select(start=i, stop=i+self.chunksize)
-            weights_chunk = self.select_rate_slice('weights', start=i, stop=i+self.chunksize)
-            z_events_chunk = self.select_rate_slice('z_events', start=i, stop=i+self.chunksize)
-            new_weights = observable_func(transient_pop_chunk, z_events_chunk, weights_chunk)
-
+            Note
+            ----
+            - If the observable population already exists in the file, it will be overwritten.
+            """
+            
             with pd.HDFStore(self.filename, mode='a') as store:
-                store.append('transients/'+self.transient_name+'/rates/observable/'+observable_name,
-                            new_weights,
-                            format='table')
+                # remove the observable population if it already exists
+                if '/transients/'+self.transient_name+'/rates/observable/'+observable_name in store.keys():
+                    if self.verbose:
+                        print('Overwriting observable population!')
+                    del store['transients/'+self.transient_name+'/rates/observable/'+observable_name]
+
+
+            # loop over the transient population and calculate the new weights, while writing to the file
+            for i in tqdm(range(0, len(self), self.chunksize), total=len(self)//self.chunksize, disable=not self.verbose):
+                transient_pop_chunk = self.select(start=i, stop=i+self.chunksize)
+                weights_chunk = self.select_rate_slice('weights', start=i, stop=i+self.chunksize)
+                z_events_chunk = self.select_rate_slice('z_events', start=i, stop=i+self.chunksize)
+                new_weights = observable_func(transient_pop_chunk, z_events_chunk, weights_chunk)
+
+                with pd.HDFStore(self.filename, mode='a') as store:
+                    store.append('transients/'+self.transient_name+'/rates/observable/'+observable_name,
+                                new_weights,
+                                format='table')
 
     def observable_population(self, observable_name):
-        '''Return the observable population'''
+        """Return the observable population based on the provided name.
+        
+        This method returns the observable population based on the provided name, 
+        which can take a while to load if the population is large.
+        It loads the observable population from '/transients/{transient_name}/rates/observable/{observable_name}' in the HDF5 file.
+        
+        Parameters
+        ----------
+        observable_name : str
+            The name of the observable population to return.
+            
+        Returns
+        -------
+        pandas.DataFrame
+            The observable population based on the provided name.
+        """
+        
         with pd.HDFStore(self.filename, mode='r') as store:
             if '/transients/'+self.transient_name+'/rates/observable/'+observable_name not in store.keys():
                 raise ValueError(f'{observable_name} is not a valid observable population!')
@@ -2114,12 +2281,29 @@ class Rates(TransientPopulation):
 
     @property
     def observable_population_names(self):
-        '''Return the names of the observable populations'''
+        """Return the names of the observable populations in the associated file.
+        
+        Returns
+        -------
+        list
+            The names of the observable populations.
+        """
+        
         with pd.HDFStore(self.filename, mode='r') as store:
             return [key.split('/')[-1] for key in store.keys() if '/transients/'+self.transient_name+'/rates/observable/' in key]
 
     @property
     def intrinsic_rate_density(self):
+        """Return the intrinsic rate density of the transient population at the specified SFH_identifier and transient_name.
+        
+        The data is read from the HDF5 file at '/transients/{transient_name}/rates/{SFH_identifier}/intrinsic_rate_density'.
+        
+        Returns
+        -------
+        pandas.DataFrame
+            The intrinsic rate density of the transient population.
+            
+        """
         with pd.HDFStore(self.filename, mode='r') as store:
             if self.base_path+'intrinsic_rate_density' not in store.keys():
                 raise ValueError('First you need to compute the intrinsic rate density!')
@@ -2127,7 +2311,35 @@ class Rates(TransientPopulation):
                 return store[self.base_path+'intrinsic_rate_density']
 
     def plot_hist_properties(self, prop, intrinsic=True, observable=None, bins=50, channel=None, **kwargs):
-        '''plot a histogram of a given property available in the transient population'''
+        """Plot a histogram of a given property available in the transient population.
+        
+        This method plots a histogram of a given property available in the transient population.
+        The property can be intrinsic or observable, and the histogram can be plotted for a specific channel if provided.
+        
+        Parameters
+        ----------
+        prop : str
+            The property to plot the histogram for.
+        intrinsic : bool, optional
+            If True, plot the intrinsic property. Default is True.
+        observable : str, optional
+            The observable population name to plot the histogram for. Default is None.
+        bins : int, optional
+            The number of bins to use for the histogram. Default is 50.
+        channel : str, optional
+            The channel to plot the histogram for. Default is None.
+            A channel column must be present in the transient population.
+        **kwargs
+            Additional keyword arguments to pass to the plot
+            
+        Raises
+        ------
+        ValueError
+            If the specified property is not a valid property in the transient population.
+            If the specified observable is not a valid observable population.
+            If the specified channel is not present in the transient population.
+        
+        """
 
         if prop not in self.columns:
             raise ValueError(f'{prop} is not a valid property in the transient population!')
@@ -2159,63 +2371,6 @@ class Rates(TransientPopulation):
 
 
 
-
-
-    #### cosmolgy ####
-    ##################
-
-    def get_shell_comoving_volume(self, z_hor_i, z_hor_f, sensitivity='infinite'):
-        """Compute comoving volume corresponding to a redshift shell.
-
-        Parameters
-        ----------
-        z_hor_i : double
-            Cosmological redshift. Lower bound of the integration.
-        z_hor_f : double
-            Cosmological redshift. Upper bound of the integration.
-        sensitivity : string
-            hoose which GW detector sensitivity you want to use. At the moment
-            only 'infinite' is available, i.e. p_det = 1.
-
-        Returns
-        -------
-        double
-            Retruns the comoving volume between the two shells z_hor_i
-            and z_hor_f in Gpc^3.
-
-        """
-        c = const.c.to('Gpc/yr').value  # Gpc/yr
-        H_0 = cosmology.H(0).to('1/yr').value # km/Gpc*s
-        def E(z):
-            Omega_m = cosmology.Om0
-            Omega_L = 1-cosmology.Om0
-            return np.sqrt(Omega_m*(1.+z)**3+Omega_L)
-        def f(z,sensitivity):
-            if sensitivity=='infinite':
-                return (1./(1.+z) * 4*np.pi*c / H_0
-                        * (self.get_comoving_distance_from_redshift(z)
-                        * 10**(-3.))**2. / E(z))
-            else:
-                # TODO: peanut-shaped antenna patter comoving volume calculation
-                raise ValueError('Sensitivity not supported!')
-        return sp.integrate.quad(f, z_hor_i, z_hor_f, args=(sensitivity))[0] # Gpc^3
-
-    def get_comoving_distance_from_redshift(self, z):
-        """Compute the comoving distance from redshift.
-
-        Parameters
-        ----------
-        z : double
-            Cosmological redshift.
-
-        Returns
-        -------
-        double
-            Comoving distance in Mpc corresponding to the redhisft z.
-
-        """
-        return cosmology.comoving_distance(z).value  # Mpc
-
     ### metallicity bins ###
     ########################
     @property
@@ -2224,7 +2379,7 @@ class Rates(TransientPopulation):
 
         Returns
         -------
-        array double
+        array float
             Returns the edges of all metallicity bins. We assume metallicities
             were binned in log-space.
 
@@ -2253,7 +2408,7 @@ class Rates(TransientPopulation):
 
         Returns
         -------
-        array double
+        array float
             Returns sampled metallicities of the population. This corresponds
             to the center of each metallicity bin.
         """
@@ -2267,26 +2422,13 @@ class Rates(TransientPopulation):
 
         Returns
         -------
-        array doubles
+        array floats
             We devide the cosmic time history of the Universe in equally spaced
-            bins of cosmic time of self.delta_t (100 Myr default) an compute the
+            bins of cosmic time of self.MODEL['delta_t'] (100 Myr default) an compute the
             redshift corresponding to edges of these bins.
 
         """
-        self.n_redshift_bin_centers = int(cosmology.age(0).to('Myr').value/self.MODEL['delta_t'])
-        # generate t_birth at the middle of each self.delta_t bin
-        t_birth_bin = [cosmology.age(0.).value]
-        for i in range(self.n_redshift_bin_centers+1):
-            t_birth_bin.append(t_birth_bin[i] - self.MODEL['delta_t']*1e-3) # Gyr
-        # compute the redshift
-        z_birth_bin = []
-        for i in range(self.n_redshift_bin_centers):
-            # do not count first edge, we add z=0. later
-            z_birth_bin.append(z_at_value(cosmology.age, t_birth_bin[i+1] * u.Gyr))
-        # add the first and last bin edge at z=0. and z=inf.=100
-        z_birth_bin = np.array([0.]+z_birth_bin+[100.])
-
-        return z_birth_bin
+        return get_redshift_bin_edges(self.MODEL['delta_t'])
 
     @property
     def centers_redshift_bins(self):
@@ -2294,84 +2436,10 @@ class Rates(TransientPopulation):
 
         Returns
         -------
-        array doubles
+        array floats
             We devide the cosmic time history of the Universe in equally spaced
-            bins of cosmic time of self.delta_t (100 Myr default) an compute the
+            bins of cosmic time of self.MODEL['delta_t'] (100 Myr default) an compute the
             redshift corresponding to center of these bins.
 
         """
-        # generate t_birth at the middle of each self.delta_t bin
-        t_birth_bin = [cosmology.age(0.).value]
-        t_birth = []
-        # devide the
-        self.n_redshift_bin_centers = int(cosmology.age(0).to('Myr').value/self.MODEL['delta_t'])
-        for i in range(self.n_redshift_bin_centers+1):
-            t_birth.append(t_birth_bin[i] - self.MODEL['delta_t']*1e-3/2.) # Gyr
-            t_birth_bin.append(t_birth_bin[i] - self.MODEL['delta_t']*1e-3) # Gyr
-        t_birth = np.array(t_birth)
-        # compute the redshift
-        z_birth = []
-        for i in range(self.n_redshift_bin_centers+1):
-            # z_at_value is from astopy.cosmology
-            z_birth.append(z_at_value(cosmology.age, t_birth[i] * u.Gyr))
-        z_birth = np.array(z_birth)
-
-        return z_birth
-
-    ###############################
-    ### cosmic time to redshift ###
-    ###############################
-    @property
-    def redshift_from_cosmic_time_interpolator(self):
-        """Interpolator to compute the cosmological redshift given the cosmic time.
-
-        Returns
-        -------
-        object
-            Returns the trained interpolator object.
-
-        """
-        # astropy z_at_value method is too slow to compute z_mergers efficinty
-        # we must implement interpolation
-        t = np.linspace(1e-2, cosmology.age(1e-08).value*0.9999999, 1000)
-        z = np.zeros(1000)
-        for i in range(1000):
-            z[i] = z_at_value(cosmology.age, t[i] * u.Gyr)
-        f_z_m = interp1d(t, z, kind='cubic')
-        return f_z_m
-
-    def get_redshift_from_cosmic_time(self, t_cosm):
-        """Compute the cosmological redshift given the cosmic time..
-
-        Parameters
-        ----------
-        t_cosm : array doubles
-            Cosmic time to which you want to know the redhisft.
-
-        Returns
-        -------
-        array doubles
-            Cosmolgocial redshift corresponding to the cosmic time.
-
-        """
-        return self.redshift_from_cosmic_time_interpolator(t_cosm)
-
-    ###############################
-    ### redshift to cosmic time ###
-    ###############################
-
-    def get_cosmic_time_from_redshift(self, z):
-        """Compute the cosmic time from redshift.
-
-        Parameters
-        ----------
-        z : double
-            Cosmological redshift.
-
-        Returns
-        -------
-        double
-            Return age of the cosmic time in Gyr given the redshift z.
-
-        """
-        return cosmology.age(z).value  # Gyr
+        return get_redshift_bin_centers(self.MODEL['delta_t'])
