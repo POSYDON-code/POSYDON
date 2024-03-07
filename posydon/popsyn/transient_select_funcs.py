@@ -5,9 +5,16 @@ from posydon.config import PATH_TO_POSYDON_DATA
 import os
 from tqdm import tqdm
 
+
+import warnings
+# This is to suppress the performance warnings from pandas
+# These warnings are not important for the user
+# We should alter the code to remove these warnings, but for now we suppress them
+warnings.simplefilter(action='ignore', category=pd.errors.PerformanceWarning)
+
 PATH_TO_PDET_GRID = os.path.join(PATH_TO_POSYDON_DATA, 'POSYDON_data/selection_effects/pdet_grid.hdf5')
 
-def GRB_selection(history_chunk, oneline_chunk, formation_channels_chunk=None, S1_S2='S1',):
+def GRB_selection(history_chunk, oneline_chunk, formation_channels_chunk=None, S1_S2='S1'):
     """A GRB selection function to create a transient population of LGRBs.
     
     This function requires a wrapper function to be used to create a transient population, because
@@ -54,24 +61,21 @@ def GRB_selection(history_chunk, oneline_chunk, formation_channels_chunk=None, S
     >>> GRB_selection_wrapper(pop.history[0], pop.oneline[0], pop.formation_channels.loc[0])
     >>> pop.create_transient_population(GRB_selection_wrapper, name='GRB_S1')
     """
-    
-   
     columns_pre_post  = ['orbital_period', 'eccentricity', 'S1_spin', 'S2_spin']
-    columns = ['metallicity']
-    oneline_columns = ['S1_m_disk_radiated', 'S2_m_disk_radiated']
+    columns = []
+    oneline_columns = ['metallicity', 'S1_m_disk_radiated', 'S2_m_disk_radiated']
    
     if S1_S2 == 'S1':
-        indices_selection = oneline_chunk.index[oneline_chunk['S1_m_disk_radiated'] > 0.0]
+        indices_selection = oneline_chunk.index[oneline_chunk['S1_m_disk_radiated'] > 0.0].to_numpy()
         oneline_chunk = oneline_chunk.drop(columns=['S2_m_disk_radiated'])
     elif S1_S2 == 'S2':
-        indices_selection = oneline_chunk.index[oneline_chunk['S2_m_disk_radiated'] > 0.0]
+        indices_selection = oneline_chunk.index[oneline_chunk['S2_m_disk_radiated'] > 0.0].to_numpy()
         oneline_chunk = oneline_chunk.drop(columns=['S1_m_disk_radiated'])
     else:
         raise ValueError('S1_S2 must be either S1 or S2')
-    
     # no events in this chunk
     if len(indices_selection) == 0:
-        return None
+        return pd.DataFrame()
     # filter out the events that are not relevant for the LGRB formation
     selection = history_chunk.loc[indices_selection]    
     if S1_S2 == 'S1':
@@ -100,19 +104,19 @@ def GRB_selection(history_chunk, oneline_chunk, formation_channels_chunk=None, S
         
     # unchanged columns
     for col in columns:
-        GRB_df_synthetic[col] = post_SN_hist[col].values    
-
+        GRB_df_synthetic[col] = post_SN_hist[col].values
+        
     # oneline data
     for col in oneline_chunk.columns:
         GRB_df_synthetic[col] = oneline_chunk.loc[indices_selection][col].values
-        
+    
     if any(formation_channels_chunk != None):
         formation_channels_chunk = formation_channels_chunk.loc[indices_selection]
         if S1_S2 == 'S1':
             GRB_df_synthetic['channel'] = formation_channels_chunk['channel'].str.split('_CC1').str[0].apply(lambda x: x+'_CC1')
         elif S1_S2 == 'S2':
             GRB_df_synthetic['channel'] = formation_channels_chunk['channel'].str.split('_CC2').str[0].apply(lambda x: x+'_CC2')
-        
+    
     # calculate the time!
     GRB_df_synthetic['time'] = post_SN_hist['time'].values * 1e-6 # convert to Myr
         
