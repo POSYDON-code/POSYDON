@@ -1092,13 +1092,16 @@ class Population(PopulationIO):
         self.number_of_systems = self.oneline.number_of_systems
         self.indices = self.history.indices
 
-    def export_selection(self, selection, filename, chunksize=1):
+    def export_selection(self, selection, filename, overwrite=True, chunksize=1):
         """Export a selection of the population to a new file
 
         This method exports a selection of systems from the population to a new file.
         The selected systems are specified by their indices in the population.
 
-        Systems will be appended to the existing file if it already exists and the indices will be shifted based on the current length of data in the file that is being appended to.
+        By default the selected systems will overwrite the file if it already exists.
+        If overwrite is set to False, the selected systems will be appended to 
+        the existing file if it already exists and the indices will be shifted 
+        based on the current length of data in the file that is being appended to.
 
 
         Parameters
@@ -1155,8 +1158,11 @@ class Population(PopulationIO):
         oneline_min_itemsize = {
             key: val for key, val in ONELINE_MIN_ITEMSIZE.items() if key in oneline_cols
         }
-
-        with pd.HDFStore(filename, mode="a") as store:
+        if overwrite:
+            mode = 'w'
+        else:
+            mode = 'a'
+        with pd.HDFStore(filename, mode=mode) as store:
             # shift all new indices by the current length of data in the file
             last_index_in_file = 0
 
