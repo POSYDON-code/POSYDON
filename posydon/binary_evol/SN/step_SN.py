@@ -43,6 +43,7 @@ from posydon.utils.common_functions import (
     inspiral_timescale_from_separation,
     separation_evol_wind_loss,
     calculate_Patton20_values_at_He_depl,
+    THRESHOLD_CENTRAL_ABUNDANCE,
     rotate
 )
 
@@ -404,6 +405,7 @@ class StepSN(object):
             # collapse star
             self.collapse_star(star=binary.star_1)
             self._reset_other_star_properties(star=binary.star_2)
+            
         elif binary.event == "CC2":
             # collapse star
             self.collapse_star(star=binary.star_2)
@@ -522,12 +524,26 @@ class StepSN(object):
                     MODEL_properties = getattr(star, MODEL_NAME_SEL)
                     for key, value in MODEL_properties.items():
                         setattr(star, key, value)
-
-                    for key in STARPROPERTIES:
-                        if key not in ["state", "mass", "spin",
+                    
+                    if star.state == 'WD':
+                        for key in STARPROPERTIES:
+                            if key in ["he_core_mass"]:
+                                setattr(star, key, star.mass)
+                            elif key in ["co_core_mass"]:
+                                if star.center_he4 < THRESHOLD_CENTRAL_ABUNDANCE: 
+                                    setattr(star, key, star.mass)
+                                else: 
+                                    setattr(star, key, 0.)
+                            elif key not in ["state", "mass", "spin",
+                                        "m_disk_accreted ", "m_disk_radiated","center_h1","center_he4","center_c12","center_n14","center_o16"]:
+                                setattr(star, key, None)          
+                    
+                    else:                    
+                        for key in STARPROPERTIES:
+                            if key not in ["state", "mass", "spin",
                                         "m_disk_accreted ", "m_disk_radiated"]:
-                            setattr(star, key, None)
-                        
+                                setattr(star, key, None)
+                    
                     # check if SN_type matches the predicted CO
                     # and force the SN_type to match the predicted CO.
                     # ie WD is no SN
@@ -579,7 +595,6 @@ class StepSN(object):
                     
                     if getattr(star, 'SN_type') != 'PISN':
                         star.log_R = np.log10(CO_radius(star.mass, star.state))
-                    
                     return
 
             # Verifies the selection of core-collapse mechnism to perform
@@ -613,9 +628,16 @@ class StepSN(object):
                     star.m_disk_accreted = np.nan
                     star.m_disk_radiated = np.nan
                     for key in STARPROPERTIES:
-                        if key not in ["state", "mass", "log_R", "spin",
-                                       "m_disk_accreted", "m_disk_radiated"]:
-                            setattr(star, key, None)
+                        if key in ["he_core_mass"]:
+                            setattr(star, key, star.mass)
+                        elif key in ["co_core_mass"]:
+                            if star.center_he4 < THRESHOLD_CENTRAL_ABUNDANCE: 
+                                setattr(star, key, star.mass)
+                            else: 
+                                setattr(star, key, 0.)
+                        elif key not in ["state", "mass", "spin",
+                                "m_disk_accreted ", "m_disk_radiated","center_h1","center_he4","center_c12","center_n14","center_o16"]:
+                            setattr(star, key, None)  
                     return
 
                 # check if the star was disrupted by the PISN
@@ -712,9 +734,16 @@ class StepSN(object):
                     star.m_disk_accreted = np.nan
                     star.m_disk_radiated = np.nan
                     for key in STARPROPERTIES:
-                        if key not in ["state", "mass", "log_R", "spin",
-                                       "m_disk_accreted", "m_disk_radiated"]:
-                            setattr(star, key, None)
+                        if key in ["he_core_mass"]:
+                            setattr(star, key, star.mass)
+                        elif key in ["co_core_mass"]:
+                            if star.center_he4 < THRESHOLD_CENTRAL_ABUNDANCE: 
+                                setattr(star, key, star.mass)
+                            else: 
+                                setattr(star, key, 0.)
+                        elif key not in ["state", "mass", "spin",
+                                "m_disk_accreted ", "m_disk_radiated","center_h1","center_he4","center_c12","center_n14","center_o16"]:
+                            setattr(star, key, None)  
                     return
 
                 # check if the star was disrupted by the PISN
@@ -805,7 +834,7 @@ class StepSN(object):
         for key in STARPROPERTIES:
             if key not in [
                 "state", "mass", "spin", "log_R", "metallicity",
-                "m_disk_accreted ", "m_disk_radiated"]:
+                "m_disk_accreted ", "m_disk_radiated","co_core_mass"]:
                 setattr(star, key, None)
 
     def PISN_prescription(self, star):
@@ -1669,7 +1698,6 @@ class StepSN(object):
                                   Apost, epost, Vr, Vkick, cos_theta,
                                   verbose=self.verbose)
 
-            
             # update the binary object which was bound at least before the SN
             #Check if this is the first SN
             if flag_binary:
