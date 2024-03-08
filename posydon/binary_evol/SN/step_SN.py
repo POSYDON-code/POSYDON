@@ -1,4 +1,4 @@
-se"""Supernova step.
+"""Supernova step.
 
 This step models the end of life of stars by being applied to a binary
 object and verifying its state. It performs the collapse prescription
