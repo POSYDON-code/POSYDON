@@ -1094,7 +1094,7 @@ class PSyGrid:
                         infer_interpolation_class(*termination_flags[:2])
 
             if ignore:
-                # if not fix requested and failed run, do not include it
+                # if not fix requested and failed run, do not include the data
                 if start_at_RLO and (ignore.reason == "ignored_no_RLO"):
                     # allow non-RLOing systems to be included in the grid
                     # so that rerun grid can signify systems as non-RLOing
