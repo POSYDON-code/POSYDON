@@ -1465,6 +1465,9 @@ class Population(PopulationIO):
 
     def _write_formation_channels(self, filename, df):
         """Write the formation channels to the population file
+        
+        This will append the formation channels to the population file, while restricting the maximum
+        length of the channel and channel_debug columns to 100 characters.
 
         Parameters
         ----------
@@ -1473,13 +1476,17 @@ class Population(PopulationIO):
         df : pd.DataFrame
             The dataframe containing the formation channels.
         """
+        str_length = 100
+        
         with pd.HDFStore(filename, mode="a") as store:
+            df['channel'] = df['channel'].str.slice(0, str_length)
+            df['channel_debug'] = df['channel_debug'].str.slice(0, str_length)
             store.append(
                 "formation_channels",
                 df,
                 format="table",
                 data_columns=True,
-                min_itemsize={"channel_debug": 100, "channel": 100},
+                min_itemsize={"channel_debug": str_length, "channel": str_length},
             )
             if self.verbose:
                 print("formation_channels written to population file!")
