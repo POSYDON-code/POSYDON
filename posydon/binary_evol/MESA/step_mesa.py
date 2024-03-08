@@ -304,7 +304,6 @@ class MesaGridStep:
                 self.__name__))
         if self.flip_stars_before_step:
             flip_stars(binary)
-
         max_MESA_sim_time = self.get_final_MESA_step_time()
 
         if max_MESA_sim_time is None:
@@ -320,7 +319,6 @@ class MesaGridStep:
         if (step_will_exceed_max_time
                 and self.stop_method == 'stop_at_max_time'):
             # self.step(binary, interp_method='nearest_neighbour')
-
             if self.interpolation_method != 'nearest_neighbour':
                 self.closest_binary, self.nearest_neighbour_distance, \
                     self.termination_flags = self._psyTrackInterp.evaluate(
@@ -335,9 +333,9 @@ class MesaGridStep:
                                       track_interpolation=True)
         else:
             self.step(binary, interp_method=self.interpolation_method)
-
         if (self.stop_method == 'stop_at_max_time'
                 and binary.time >= binary.properties.max_simulation_time):
+            
             # self.flush_history = True # needed???
 
             # stop_at_condition looks through the MESA output appended to the
@@ -366,10 +364,8 @@ class MesaGridStep:
                              interpolate=self.stop_interpolate,
                              star_1_CO=self.star_1_CO,
                              star_2_CO=self.star_2_CO)
-
         if self.flip_stars_before_step:
             flip_stars(binary)
-
         if binary.time > binary.properties.max_simulation_time:
             binary.event = 'MaxTime_exceeded'
         elif binary.time == binary.properties.max_simulation_time:
@@ -651,12 +647,16 @@ class MesaGridStep:
                             getattr(star, key_h).extend(cb_bh[key_p][:-1])
                     elif key in ['state', 'lg_mdot']:
                         continue
+                    elif star.state == 'WD' and key in ['co_core_mass','he_core_mass','center_h1','center_he4','center_c12','center_n14','center_o16']:
+                        continue
                     else:
                         setattr(star, key, None)
                         if self.save_initial_conditions:
                             getattr(star, key_h).append(empy_h[0])
                         if track_interpolation:
                             getattr(star, key_h).extend(empy_h)
+
+
                 if track_interpolation:
                     if MESA_history_bug_fix:
                         real_len = max(length_binary_hist, length_star_hist)
@@ -681,8 +681,7 @@ class MesaGridStep:
         setattr(binary, 'state', binary_state)
         setattr(binary, 'event', binary_event)
         setattr(binary, 'mass_transfer_case', MT_case)
-        culmulative_mt_case = self.termination_flags[1]
-        setattr(self.binary, f'culmulative_mt_case_{self.grid_type}', culmulative_mt_case)
+
         setattr(self.binary, f'interp_class_{self.grid_type}', interpolation_class)
         mt_history = self.termination_flags[2] # mass transfer history (TF12 plot label)
         setattr(self.binary, f'mt_history_{self.grid_type}', mt_history)
@@ -846,7 +845,6 @@ class MesaGridStep:
             else:
                 key_p = POSYDON_TO_MESA['binary'][key]
                 setattr(self.binary, key, fv[key_p])
-
         for k, star in enumerate(stars):
             for key in STARPROPERTIES:
                 if not stars_CO[k]:
@@ -891,17 +889,17 @@ class MesaGridStep:
                         setattr(star, key, fv[key_p])
                     elif key == 'state':
                         continue
+                    elif star.state == 'WD' and key in ['co_core_mass','he_core_mass','center_h1','center_he4','center_c12','center_n14','center_o16']:
+                        continue
                     else:
                         setattr(star, key, None)
-
         # EXPERIMENTAL feature
         # infer stellar states
         interpolation_class = self.classes['interpolation_class']
         setattr(self.binary, f'interp_class_{self.grid_type}', interpolation_class)
         mt_history = self.classes['mt_history'] # mass transfer history (TF12 plot label)
         setattr(self.binary, f'mt_history_{self.grid_type}', mt_history)
-        #TODO: add classifier for tf2
-        #setattr(self.binary, f'culmulative_mt_case', self.classes['termination_flags_2'])
+
         S1_state_inferred = cf.check_state_of_star(self.binary.star_1,
                                                    star_CO=star_1_CO)
         S2_state_inferred = cf.check_state_of_star(self.binary.star_2,
@@ -952,7 +950,6 @@ class MesaGridStep:
             if 10**tmp_lg_mdot > mdot_edd:
                 tmp_lg_mdot = np.log10(mdot_edd)
             setattr(accretor, 'lg_mdot', tmp_lg_mdot)
-
         # update post processed quanties
         key_post_processed = ['avg_c_in_c_core_at_He_depletion',
                               'co_core_mass_at_He_depletion',
@@ -1435,6 +1432,8 @@ class CO_HMS_RLO_step(MesaGridStep):
             self.p_min <= p <= self.p_max and
             ecc == 0.)):
             super().__call__(self.binary)
+
+            
         # period inside the grid, but m1 outside the grid
         elif ((not self.flip_stars_before_step and
                self.p_min <= p <= self.p_max and
