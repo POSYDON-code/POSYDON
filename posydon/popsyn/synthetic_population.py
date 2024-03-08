@@ -1094,7 +1094,7 @@ class Population(PopulationIO):
         self.number_of_systems = self.oneline.number_of_systems
         self.indices = self.history.indices
 
-    def export_selection(self, selection, filename, overwrite=True, chunksize=1):
+    def export_selection(self, selection, filename, overwrite=True, history_chunksize=1):
         """Export a selection of the population to a new file
 
         This method exports a selection of systems from the population to a new file.
@@ -1143,7 +1143,7 @@ class Population(PopulationIO):
         >>> population.export_selection([3, 4, 5], "existing.h5")
 
         # Export systems with indices [6, 7, 8] to a new file named "selected.h5" in chunks of 2
-        >>> population.export_selection([6, 7, 8], "selected.h5", chunksize=2)
+        >>> population.export_selection([6, 7, 8], "selected.h5", history_chunksize=2)
         """
 
         if not (".h5" in filename):
@@ -1217,12 +1217,12 @@ class Population(PopulationIO):
 
             # write oneline of selected systems
             for i in tqdm(
-                range(0, len(selection), 1000),
-                total=len(selection) // 1000,
+                range(0, len(selection), self.chunksize),
+                total=len(selection) // self.chunksize,
                 disable=not self.verbose,
             ):
                 
-                tmp_df = self.oneline[selection[i : i + 1000]]
+                tmp_df = self.oneline[selection[i : i + self.chunksize]]
                 if "metallicity" in tmp_df.columns:
                     tmp_df["metallicity"] = tmp_df["metallicity"].astype("float")
                 else:
@@ -1242,11 +1242,11 @@ class Population(PopulationIO):
 
             # write history of selected systems
             for i in tqdm(
-                range(0, len(selection), chunksize),
-                total=len(selection) // chunksize,
+                range(0, len(selection), history_chunksize),
+                total=len(selection) // history_chunksize,
                 disable=not self.verbose,
             ):
-                tmp_df = self.history[selection[i : i + chunksize]]
+                tmp_df = self.history[selection[i : i + history_chunksize]]
                 tmp_df.rename(index=reindex, inplace=True)
                 store.append(
                     "history",
@@ -1263,11 +1263,11 @@ class Population(PopulationIO):
             # write formation channels of selected systems
             if self.formation_channels is not None:
                 for i in tqdm(
-                    range(0, len(selection), 10000),
-                    total=len(selection) // 10000,
+                    range(0, len(selection), self.chunksize),
+                    total=len(selection) // self.chunksize,
                     disable=not self.verbose,
                 ):
-                    tmp_df = self.formation_channels.loc[selection[i : i + 10000]]
+                    tmp_df = self.formation_channels.loc[selection[i : i + self.chunksize]]
                     tmp_df.rename(index=reindex, inplace=True)
                     store.append(
                         "formation_channels",
@@ -1281,11 +1281,11 @@ class Population(PopulationIO):
 
             # write the history lengths
             for i in tqdm(
-                range(0, len(selection), 10000),
-                total=len(selection) // 10000,
+                range(0, len(selection), self.chunksize),
+                total=len(selection) // self.chunksize,
                 disable=not self.verbose,
             ):
-                tmp_df = self.history.lengths.loc[selection[i : i + 10000]]
+                tmp_df = self.history.lengths.loc[selection[i : i + self.chunksize]]
                 tmp_df.rename(index=reindex, inplace=True)
                 store.append(
                     "history_lengths", pd.DataFrame(tmp_df), format="table", index=False
@@ -1462,6 +1462,9 @@ class Population(PopulationIO):
 
             self._write_formation_channels(self.filename, df)
             del df
+            
+        if self.verbose:
+            print("formation_channels written to population file!")
 
     def _write_formation_channels(self, filename, df):
         """Write the formation channels to the population file
@@ -1488,8 +1491,6 @@ class Population(PopulationIO):
                 data_columns=True,
                 min_itemsize={"channel_debug": str_length, "channel": str_length},
             )
-            if self.verbose:
-                print("formation_channels written to population file!")
 
     def __len__(self):
         """Get the number of systems in the population.
