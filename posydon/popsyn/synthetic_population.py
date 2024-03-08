@@ -273,11 +273,11 @@ def merge_populations(populations, filename, verbose=False):
 
             prev += len(pop)
 
-        # merge mass_per_met
-        tmp_df = pd.concat([pop.mass_per_met for pop in populations])
-        mass_per_met = tmp_df.groupby(tmp_df.index).sum()
+        # merge mass_per_metallicity
+        tmp_df = pd.concat([pop.mass_per_metallicity for pop in populations])
+        mass_per_metallicity = tmp_df.groupby(tmp_df.index).sum()
 
-        store.put("mass_per_met", mass_per_met)
+        store.put("mass_per_metallicity", mass_per_metallicity)
 
     # add ini parameters from the first population
     populations[0]._save_ini_params(filename)
@@ -660,7 +660,7 @@ class Oneline:
                 chunk = key.stop - key.start
             return pd.read_hdf(
                 self.filename, key="oneline", start=pre, stop=pre + chunk
-            )
+            )            
         elif isinstance(key, int):
             return pd.read_hdf(self.filename, where="index == key", key="oneline")
         elif isinstance(key, list) and all(isinstance(x, int) for x in key):
@@ -668,6 +668,8 @@ class Oneline:
         elif isinstance(key, np.ndarray) and (key.dtype == int):
             indices = self.indices[key].tolist()
             return pd.read_hdf(self.filename, where="index in indices", key="oneline")
+        elif isinstance(key, list) and all(isinstance(x, float) for x in key):
+            raise ValueError("elements in list are not integers! Try casting to int.")
         elif isinstance(key, pd.DataFrame) and all(key.dtypes == bool):
             indices = self.indices[key.to_numpy().flatten()].tolist()
             return pd.read_hdf(self.filename, where="index in indices", key="oneline")
@@ -799,7 +801,7 @@ class PopulationIO:
 
     Attributes
     ----------
-    mass_per_met : pandas.DataFrame
+    mass_per_metallicity : pandas.DataFrame
         A DataFrame containing mass per metallicity data.
     ini_params : dict
         A dictionary containing some ini parameters, described in parameter_array.
@@ -830,9 +832,9 @@ class PopulationIO:
             )
 
         self._load_ini_params(filename)
-        self._load_mass_per_met(filename)
+        self._load_mass_per_metallicity(filename)
 
-    def _save_mass_per_met(self, filename):
+    def _save_mass_per_metallicity(self, filename):
         """Save the mass per metallicity data to the file.
 
         Parameters
@@ -842,11 +844,11 @@ class PopulationIO:
 
         """
         with pd.HDFStore(filename, mode="a") as store:
-            store.put("mass_per_met", self.mass_per_met)
+            store.put("mass_per_metallicity", self.mass_per_metallicity)
             if self.verbose:
-                print("mass_per_met table written to population file!")
+                print("mass_per_metallicity table written to population file!")
 
-    def _load_mass_per_met(self, filename):
+    def _load_mass_per_metallicity(self, filename):
         """Load the mass per metallicity data from the file.
 
         Parameters
@@ -856,9 +858,9 @@ class PopulationIO:
 
         """
         with pd.HDFStore(filename, mode="r") as store:
-            self.mass_per_met = store["mass_per_met"]
+            self.mass_per_metallicity = store["mass_per_metallicity"]
             if self.verbose:
-                print("mass_per_met table read from population file!")
+                print("mass_per_metallicity table read from population file!")
 
     def _save_ini_params(self, filename):
         """Save the ini parameters to the file.
@@ -916,7 +918,7 @@ class Population(PopulationIO):
         The formation channels dataframe of the population.
     ini_params : dict
         The parameters from the ini file used to create the population.
-    mass_per_met : pd.DataFrame
+    mass_per_metallicity : pd.DataFrame
         The mass per metallicity dataframe of the population.
     solar_metallicities : np.ndarray
         The solar metallicities of the population.
@@ -984,14 +986,14 @@ class Population(PopulationIO):
             If the population file does not contain a history table.
             If the population file does not contain an oneline table.
             If the population file does not contain an ini_parameters table.
-            If the population file does not contain a mass_per_met table and no metallicity for the file was given.
+            If the population file does not contain a mass_per_metallicity table and no metallicity for the file was given.
 
         Examples
         --------
-        # When the population file contains a mass_per_met table
+        # When the population file contains a mass_per_metallicity table
         >>> pop = Population('/path/to/population_file.h5')
 
-        # When the population file does not contain a mass_per_met table
+        # When the population file does not contain a mass_per_metallicity table
         >>> pop = Population('/path/to/population_file.h5', metallicity=0.02, ini_file='/path/to/ini_file.ini')
         """
 
@@ -999,7 +1001,7 @@ class Population(PopulationIO):
         self.verbose = verbose
         self.chunksize = chunksize
 
-        self.mass_per_met = None
+        self.mass_per_metallicity = None
         self.number_of_systems = None
         self.history_lengths = None
 
@@ -1048,28 +1050,28 @@ class Population(PopulationIO):
             else:
                 self._load_ini_params(filename)
 
-        # check if pop contains mass_per_met table
-        if "/mass_per_met" in keys and metallicity is None:
-            self._load_mass_per_met(filename)
-            self.solar_metallicities = self.mass_per_met.index.to_numpy()
+        # check if pop contains mass_per_metallicity table
+        if "/mass_per_metallicity" in keys and metallicity is None:
+            self._load_mass_per_metallicity(filename)
+            self.solar_metallicities = self.mass_per_metallicity.index.to_numpy()
             self.metallicities = self.solar_metallicities * Zsun
         elif metallicity is None:
             raise ValueError(
-                f"{filename} does not contain a mass_per_met table and no metallicity for the file was given!"
+                f"{filename} does not contain a mass_per_metallicity table and no metallicity for the file was given!"
             )
 
         # calculate the metallicity information. This assumes the metallicity is for the whole file!
         if metallicity is not None and ini_file is not None:
-            if "/mass_per_met" in keys:
+            if "/mass_per_metallicity" in keys:
                 warnings.warn(
-                    f"{filename} already contains a mass_per_met table. Overwriting the table!"
+                    f"{filename} already contains a mass_per_metallicity table. Overwriting the table!"
                 )
 
             simulated_mass = np.sum(self.oneline[["S1_mass_i", "S2_mass_i"]].to_numpy())
             underlying_mass = initial_total_underlying_mass(
                 df=simulated_mass, **self.ini_params
             )[0]
-            self.mass_per_met = pd.DataFrame(
+            self.mass_per_metallicity = pd.DataFrame(
                 index=[metallicity],
                 data={
                     "simulated_mass": simulated_mass,
@@ -1078,13 +1080,13 @@ class Population(PopulationIO):
                 },
             )
 
-            self._save_mass_per_met(filename)
-            self.solar_metallicities = self.mass_per_met.index.to_numpy()
+            self._save_mass_per_metallicity(filename)
+            self.solar_metallicities = self.mass_per_metallicity.index.to_numpy()
             self.metallicities = self.solar_metallicities * Zsun
 
         elif metallicity is not None and ini_file is None:
             raise ValueError(
-                f"{filename} does not contain a mass_per_met table and no ini file was given!"
+                f"{filename} does not contain a mass_per_metallicity table and no ini file was given!"
             )
 
         # add number of systems
@@ -1130,7 +1132,7 @@ class Population(PopulationIO):
         - The "oneline" and "history" dataframes of the selected systems will be written to the file.
         - If available, the "formation_channels" dataframe and "history_lengths" dataframe of the selected systems will also be written to the file.
         - The "metallicity" column of the oneline dataframe will be added if it is not present, using the metallicity of the population file.
-        - The "mass_per_met" dataframe will be updated with the number of selected systems.
+        - The "mass_per_metallicity" dataframe will be updated with the number of selected systems.
 
         Examples
         --------
@@ -1189,23 +1191,15 @@ class Population(PopulationIO):
             if last_index_in_file == 0:
                 reindex = {
                     i: j
-                    for i, j in zip(
-                        selection,
-                        np.arange(
-                            last_index_in_file, last_index_in_file + len(selection), 1
-                        ),
+                    for i, j in zip(selection,
+                                    np.arange(last_index_in_file, last_index_in_file + len(selection), 1),
                     )
                 }
             else:
                 reindex = {
                     i: j
-                    for i, j in zip(
-                        selection,
-                        np.arange(
-                            last_index_in_file + 1,
-                            last_index_in_file + len(selection) + 1,
-                            1,
-                        ),
+                    for i, j in zip(selection,
+                                    np.arange(last_index_in_file + 1, last_index_in_file + len(selection) + 1,1,),
                     )
                 }
 
@@ -1227,6 +1221,7 @@ class Population(PopulationIO):
                 total=len(selection) // 1000,
                 disable=not self.verbose,
             ):
+                
                 tmp_df = self.oneline[selection[i : i + 1000]]
                 if "metallicity" in tmp_df.columns:
                     tmp_df["metallicity"] = tmp_df["metallicity"].astype("float")
@@ -1296,18 +1291,18 @@ class Population(PopulationIO):
                     "history_lengths", pd.DataFrame(tmp_df), format="table", index=False
                 )
 
-            # write mass_per_met
-            if "/mass_per_met" in store.keys():
-                self_mass = self.mass_per_met
+            # write mass_per_metallicity
+            if "/mass_per_metallicity" in store.keys():
+                self_mass = self.mass_per_metallicity
                 self_mass["number_of_systems"] = len(selection)
-                tmp_df = pd.concat([store["mass_per_met"], self_mass])
-                mass_per_met = tmp_df.groupby(tmp_df.index).sum()
-                store.put("mass_per_met", mass_per_met)
+                tmp_df = pd.concat([store["mass_per_metallicity"], self_mass])
+                mass_per_metallicity = tmp_df.groupby(tmp_df.index).sum()
+                store.put("mass_per_metallicity", mass_per_metallicity)
 
             else:
-                self_mass = self.mass_per_met
+                self_mass = self.mass_per_metallicity
                 self_mass["number_of_systems"] = len(selection)
-                store.put("mass_per_met", self_mass)
+                store.put("mass_per_metallicity", self_mass)
 
         # write ini parameters
         self._save_ini_params(filename)
@@ -1857,13 +1852,13 @@ class TransientPopulation(Population):
                 ):
                     del store["transients/" + self.transient_name + "/efficiencies"]
 
-        metallicities = self.mass_per_met.index.to_numpy()
+        metallicities = self.mass_per_metallicity.index.to_numpy()
         efficiencies = []
         for met in metallicities:
             count = self.select(where="metallicity == {}".format(met)).shape[0]
 
             # just sums the number of events
-            underlying_stellar_mass = self.mass_per_met["underlying_mass"][met]
+            underlying_stellar_mass = self.mass_per_metallicity["underlying_mass"][met]
 
             eff = count / underlying_stellar_mass
             efficiencies.append(eff)
@@ -1889,7 +1884,7 @@ class TransientPopulation(Population):
                         ).values
                     )
                     if count > 0:
-                        underlying_stellar_mass = self.mass_per_met["underlying_mass"][
+                        underlying_stellar_mass = self.mass_per_metallicity["underlying_mass"][
                             met
                         ]
                         eff = count / underlying_stellar_mass
@@ -2012,7 +2007,7 @@ class TransientPopulation(Population):
 
         # simulated mass per given metallicity corrected for the unmodeled
         # single and binary stellar mass
-        M_model = rates.mass_per_met.loc[rates.centers_metallicity_bins / Zsun][
+        M_model = rates.mass_per_metallicity.loc[rates.centers_metallicity_bins / Zsun][
             "underlying_mass"
         ].values
 
@@ -2142,7 +2137,7 @@ class TransientPopulation(Population):
             time = self.select(columns=["time"]).values
             time = time * 1e6  # yr
             h, bin_edges = np.histogram(time, bins=bins)
-            h = h / np.diff(bin_edges) / self.mass_per_met["underlying_mass"].sum()
+            h = h / np.diff(bin_edges) / self.mass_per_metallicity["underlying_mass"].sum()
 
         else:
             if not any(np.isclose(metallicity, self.solar_metallicities)):
@@ -2156,7 +2151,7 @@ class TransientPopulation(Population):
             h = (
                 h
                 / np.diff(bin_edges)
-                / self.mass_per_met["underlying_mass"][metallicity]
+                / self.mass_per_metallicity["underlying_mass"][metallicity]
             )
 
         ax.step(bin_edges[:-1], h, where="post", color=color)
