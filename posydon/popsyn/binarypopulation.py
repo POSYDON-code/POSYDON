@@ -490,7 +490,6 @@ class BinaryPopulation:
                     store.append('oneline', oneline,
                                  min_itemsize=oneline_min_itemsize,
                                  data_columns=True)
-                    os.remove(f)
                     
                 except Exception:
                     print(traceback.format_exc(), flush=True)
@@ -507,6 +506,10 @@ class BinaryPopulation:
                       'underlying_mass': initial_total_underlying_mass(df=simulated_mass, **self.kwargs)[0], 
                       'number_of_systems': number_of_systems})
             store.append('mass_per_metallicity', tmp_df)
+        
+        # only remove the files once they've been written to the new file
+        for f in file_names:
+            os.remove(f)
 
     def close(self):
         """Close loaded h5 files from SimulationProperties."""
