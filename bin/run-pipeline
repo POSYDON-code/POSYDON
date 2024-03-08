@@ -597,6 +597,32 @@ def logic_rerun(grid, rerun_type):
             if np.isnan(iniY) or iniY<0.96:
                 runs_to_rerun += [i]
         runs_to_rerun = np.array(runs_to_rerun)
+    elif rerun_type == 'hms-hms_accretion':
+        termination_flags = TF1_POOL_ERROR
+    elif rerun_type == 'co-hems_convbdy_dedt':
+        for i in range(N_runs):
+            dirname = grid.MESA_dirs[i].decode('utf-8')
+            if not os.path.isdir(dirname):
+                # TODO: handle the case when grids were moved location
+                raise ValueError(f'Grid directory not found at {dirname}')
+            if "single_HMS" in dirname:
+                out_txt_path = os.path.join(dirname,
+                                            "out_star1_formation_step0.txt")
+            elif "single_HeMS" in dirname:
+                out_txt_path = os.path.join(dirname,
+                                            "out_star1_formation_step2.txt")
+            else:
+                out_txt_path = os.path.join(dirname, "out.txt")
+            if (out_txt_path is not None) and os.path.isfile(out_txt_path):
+                with open(out_txt_path, "r") as log_file:
+                    log_lines = log_file.readlines()
+                for line in log_lines:
+                    if (("STOP prepare_for_new_try: bad num omega" in line) or
+                        ("Segmentation fault" in line)):
+                        runs_to_rerun += [i]
+        runs_to_rerun = np.array(runs_to_rerun)
+        termination_flags = TF1_POOL_ERROR
+        new_mesa_flag = {'convective_bdy_weight' : 0, 'gradT_excess_f2': 0.4}
     elif rerun_type == 'envelope_mass_limit': # maybe 'fe_core_infall_limit' as well?
         runs_to_rerun = None # implement logic
     else:
