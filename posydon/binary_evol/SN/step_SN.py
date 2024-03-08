@@ -1,4 +1,4 @@
-"""Supernova step.
+se"""Supernova step.
 
 This step models the end of life of stars by being applied to a binary
 object and verifying its state. It performs the collapse prescription
@@ -1717,7 +1717,7 @@ class StepSN(object):
                     if binary.event == 'CC2':
                         # Assume progenitor has aligned with the preSN orbital angular momentum
                         binary.star_2.spin_orbit_tilt_second_SN = tilt
-                        binary.star_1.spin_orbit_tilt_second_SN = get_combined_tilt(
+                        binary.star_1.spin_orbit_tilt_second_SN = self.get_combined_tilt(
                             tilt_1 = binary.star_1.spin_orbit_tilt_first_SN, 
                             tilt_2 = tilt, 
                             true_anomaly_1 = binary.true_anomaly_first_SN, 
@@ -1727,7 +1727,7 @@ class StepSN(object):
                     elif binary.event == 'CC1':
                         # Assume progenitor has aligned with the preSN orbital angular momentum
                         binary.star_1.spin_orbit_tilt_second_SN = tilt
-                        binary.star_2.spin_orbit_tilt_second_SN = get_combined_tilt(
+                        binary.star_2.spin_orbit_tilt_second_SN = self.get_combined_tilt(
                             tilt_1 = binary.star_1.spin_orbit_tilt_first_SN, 
                             tilt_2 = tilt, 
                             true_anomaly_1 = binary.true_anomaly_first_SN, 
@@ -1831,7 +1831,7 @@ class StepSN(object):
 
         return Vkick
         
-    def get_combined_tilt(tilt_1, tilt_2, true_anomaly_1, true_anomaly_2):
+    def get_combined_tilt(self, tilt_1, tilt_2, true_anomaly_1, true_anomaly_2):
         """Get the combined spin-orbit-tilt after two supernovae, assuming
         the spin as not realigned with the orbital angular momentum after
         SN1
