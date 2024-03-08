@@ -323,7 +323,6 @@ class MesaGridStep:
             # binary.event = 'END'
             return
 
-        binary_start_time = binary.time
         step_will_exceed_max_time = (binary.time+max_MESA_sim_time
                                      > binary.properties.max_simulation_time)
         if (step_will_exceed_max_time
