@@ -187,6 +187,12 @@ class PopulationRunner:
             The binary population whose files have to be merged.
 
         """
+        if os.path.exists(convert_metallicity_to_string(pop.metallicity) + "_Zsun_population.h5"):
+            raise FileExistsError(
+                f"{convert_metallicity_to_string(pop.metallicity)}_Zsun_population.h5 already exists!\n"
+                +"Files were not merged. You can use PopulationRunner.merge_parallel_runs() to merge the files manually."
+            )
+                
         path_to_batch = pop.kwargs["temp_directory"]
         tmp_files = [
             os.path.join(path_to_batch, f)
