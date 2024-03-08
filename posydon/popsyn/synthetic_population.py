@@ -421,7 +421,7 @@ class History:
             with pd.HDFStore(self.filename, mode="r") as store:
                 return store.select("history", where="index in key")
         elif isinstance(key, np.ndarray) and (key.dtype == int):
-            indices = self.lengths.loc[key].index.tolist()
+            indices = key.tolist()
             with pd.HDFStore(self.filename, mode="r") as store:
                 return store.select("history", where="index in indices")
         elif (isinstance(key, np.ndarray) and key.dtype == bool) or (isinstance(key, pd.DataFrame) and all(key.dtypes == bool)):
@@ -666,7 +666,7 @@ class Oneline:
         elif isinstance(key, list) and all(isinstance(x, int) for x in key):
             return pd.read_hdf(self.filename, where="index in key", key="oneline")
         elif isinstance(key, np.ndarray) and (key.dtype == int):
-            indices = self.indices[key].tolist()
+            indices = key.tolist()
             return pd.read_hdf(self.filename, where="index in indices", key="oneline")
         elif isinstance(key, list) and all(isinstance(x, float) for x in key):
             raise ValueError("elements in list are not integers! Try casting to int.")

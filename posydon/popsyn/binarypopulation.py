@@ -506,7 +506,7 @@ class BinaryPopulation:
                 data={'simulated_mass': simulated_mass,
                       'underlying_mass': initial_total_underlying_mass(df=simulated_mass, **self.kwargs)[0], 
                       'number_of_systems': number_of_systems})
-            store.append('mass_per_met', tmp_df)
+            store.append('mass_per_metallicity', tmp_df)
 
     def close(self):
         """Close loaded h5 files from SimulationProperties."""
