@@ -245,10 +245,7 @@ def infer_interpolation_class(tf1, tf2):
     if tf2 in TF2_POOL_NO_RLO:
         return "no_MT"
     if tf1 in TF1_POOL_STABLE:
-        if 'case' in tf2 and '1' in tf2 and '2' in tf2:
-            return "stable_reverse_MT"
-        else:
-            return "stable_MT"
+        return "stable_MT"
     if tf1 in TF1_POOL_UNSTABLE:
         return "unstable_MT"
     return "unknown"

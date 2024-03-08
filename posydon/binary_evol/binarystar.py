@@ -178,8 +178,7 @@ class BinaryStar:
                 setattr(self, f'interp_class_{grid_type}', None)
             if not hasattr(self, f'mt_history_{grid_type}'):
                 setattr(self, f'mt_history_{grid_type}', None)
-            if not hasattr(self, f'culmulative_mt_case_{grid_type}'):
-                setattr(self, f'culmulative_mt_case_{grid_type}', None)
+
         # SimulationProperties object - parameters & parameterizations
         if isinstance(properties, SimulationProperties):
             self.properties = properties
@@ -887,5 +886,5 @@ class BinaryStar:
         if profiles:
             binary.star_1.profile = run.final_profile1
             binary.star_2.profile = run.final_profile2
-
+            
         return binary
