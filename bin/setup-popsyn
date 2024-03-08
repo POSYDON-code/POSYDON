@@ -105,7 +105,7 @@ def create_slurm_merge(metallicity, partition, email, account, path_to_posydon, 
     if partition=='debug-cpu':
         walltime='00:14:00'
     else:
-        walltime='01:00:00'
+        walltime='04:00:00'
 
     text = f'''#!/bin/bash
 #SBATCH --job-name=merge_pop_syn_{str_met}
