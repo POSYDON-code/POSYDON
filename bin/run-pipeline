@@ -461,7 +461,7 @@ def copy_ini_file(grid_path, rerun_type, destination, cluster):
         replace_text = "fix_iniHe_pre_rerun5-0e736a853c3c2e522b76299a54aea8f5eea15d08"
     elif rerun_type == "hms-hms_accretion":
         replace_text = "seth_HMS-HMS_rerun_accretion_fix-6a0f4bbcda1fd4591cc0d935a6b4d83e758f0e92"
-    elif rerun_type == "cohems_convbdy_weakMLTp":
+    elif rerun_type == "co-hems_convbdy_weakMLTp":
         replace_text = "seth_CO-HeMS_rerun_fix-df1f4c669dbb5f0119c9943f2598b432d2c5d45b"
     elif rerun_type == 'other': # e.g. 'envelope_mass_limit', 'fe_core_infall_limit'
         # this rerun uses the default inlist commit
@@ -603,7 +603,7 @@ def logic_rerun(grid, rerun_type):
         runs_to_rerun = np.array(runs_to_rerun)
     elif rerun_type == 'hms-hms_accretion':
         termination_flags = TF1_POOL_ERROR
-    elif rerun_type == 'co-hems_convbdy_dedt':
+    elif rerun_type == 'co-hems_convbdy_weakMLTp':
         for i in range(N_runs):
             dirname = grid.MESA_dirs[i].decode('utf-8')
             if not os.path.isdir(dirname):
