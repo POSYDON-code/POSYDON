@@ -462,7 +462,7 @@ def copy_ini_file(grid_path, rerun_type, destination, cluster):
     elif rerun_type == "hms-hms_accretion":
         replace_text = "seth_HMS-HMS_rerun_accretion_fix-6a0f4bbcda1fd4591cc0d935a6b4d83e758f0e92"
     elif rerun_type == "cohems_convbdy_dedt":
-        replace_text = "seth_CO-HeMS_rerun_fix-aba7946e73ae231b2f7c227a2f3636a1ac73cc7d"
+        replace_text = "seth_CO-HeMS_rerun_fix-df1f4c669dbb5f0119c9943f2598b432d2c5d45b"
     elif rerun_type == 'other': # e.g. 'envelope_mass_limit', 'fe_core_infall_limit'
         # this rerun uses the default inlist commit
         return
