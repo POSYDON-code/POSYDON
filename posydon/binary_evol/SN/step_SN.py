@@ -1700,6 +1700,9 @@ class StepSN(object):
 
             # update the binary object which was bound at least before the SN
             #Check if this is the first SN
+            for key in BINARYPROPERTIES:
+                if key not in ['nearest_neighbour_distance','event']:
+                    setattr(binary, key, None)
             if flag_binary:
                 # update the tilt
                 if not binary.first_SN_already_occurred:
@@ -1732,11 +1735,7 @@ class StepSN(object):
                     else:
                         raise ValueError("This should never happen!")
 
-                # compute new orbital period before reseting the binary properties
-                for key in BINARYPROPERTIES:
-                    if key != 'nearest_neighbour_distance':
-                        setattr(binary, key, None)
-                        
+                # compute new orbital period before reseting the binary properties     
                 binary.state = "detached"
                 binary.event = None
                 binary.separation = Apost / const.Rsun
@@ -1751,9 +1750,6 @@ class StepSN(object):
                 binary.mass_transfer_case = 'None'
 
             else:
-                for key in BINARYPROPERTIES:
-                    if key != 'nearest_neighbour_distance':
-                        setattr(binary, key, None)
                 # update the tilt
                 if not binary.first_SN_already_occurred:
                     binary.star_1.spin_orbit_tilt_first_SN = np.nan
