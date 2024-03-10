@@ -461,8 +461,8 @@ def copy_ini_file(grid_path, rerun_type, destination, cluster):
         replace_text = "fix_iniHe_pre_rerun5-0e736a853c3c2e522b76299a54aea8f5eea15d08"
     elif rerun_type == "hms-hms_accretion":
         replace_text = "seth_HMS-HMS_rerun_accretion_fix-6a0f4bbcda1fd4591cc0d935a6b4d83e758f0e92"
-    elif rerun_type == "co-hems_convbdy_weakMLTp":
-        replace_text = "seth_CO-HeMS_rerun_fix-df1f4c669dbb5f0119c9943f2598b432d2c5d45b"
+    elif rerun_type == "co-hems_MLTpOFF":
+        replace_text = "development-435d16c9158e4608530f21b8169ce6f31160e23e"
     elif rerun_type == 'other': # e.g. 'envelope_mass_limit', 'fe_core_infall_limit'
         # this rerun uses the default inlist commit
         return
@@ -603,30 +603,9 @@ def logic_rerun(grid, rerun_type):
         runs_to_rerun = np.array(runs_to_rerun)
     elif rerun_type == 'hms-hms_accretion':
         termination_flags = TF1_POOL_ERROR
-    elif rerun_type == 'co-hems_convbdy_weakMLTp':
-        for i in range(N_runs):
-            dirname = grid.MESA_dirs[i].decode('utf-8')
-            if not os.path.isdir(dirname):
-                # TODO: handle the case when grids were moved location
-                raise ValueError(f'Grid directory not found at {dirname}')
-            if "single_HMS" in dirname:
-                out_txt_path = os.path.join(dirname,
-                                            "out_star1_formation_step0.txt")
-            elif "single_HeMS" in dirname:
-                out_txt_path = os.path.join(dirname,
-                                            "out_star1_formation_step2.txt")
-            else:
-                out_txt_path = os.path.join(dirname, "out.txt")
-            if (out_txt_path is not None) and os.path.isfile(out_txt_path):
-                with open(out_txt_path, "r") as log_file:
-                    log_lines = log_file.readlines()
-                for line in log_lines:
-                    if (("STOP prepare_for_new_try: bad num omega" in line) or
-                        ("Segmentation fault" in line)):
-                        runs_to_rerun += [i]
-        runs_to_rerun = np.array(runs_to_rerun)
+    elif rerun_type == 'co-hems_MLTpOFF':
         termination_flags = TF1_POOL_ERROR
-        new_mesa_flag = {'convective_bdy_weight' : 0, 'gradT_excess_f2': 0.4}
+        new_mesa_flag = {'convective_bdy_weight' : 0, 'okay_to_reduce_gradT_excess': '.false.'}
     elif rerun_type == 'envelope_mass_limit': # maybe 'fe_core_infall_limit' as well?
         runs_to_rerun = None # implement logic
     else:
