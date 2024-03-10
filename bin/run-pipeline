@@ -604,7 +604,7 @@ def logic_rerun(grid, rerun_type):
     elif rerun_type == 'hms-hms_accretion':
         termination_flags = TF1_POOL_ERROR
     elif rerun_type == 'co-hems_MLTpOFF':
-        termination_flags = TF1_POOL_ERROR
+        termination_flags=['reach cluster timelimit']
         new_mesa_flag = {'convective_bdy_weight' : 0, 'okay_to_reduce_gradT_excess': '.false.'}
     elif rerun_type == 'envelope_mass_limit': # maybe 'fe_core_infall_limit' as well?
         runs_to_rerun = None # implement logic
