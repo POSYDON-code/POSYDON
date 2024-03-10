@@ -294,12 +294,12 @@ class TestPopulationIO(unittest.TestCase):
 
     def test_save_and_load_mass_per_met(self):
         population_io = PopulationIO()
-        population_io.mass_per_met = pd.DataFrame({"metallicity": [0.02, 0.04], "mass": [1.0, 2.0]})
-        population_io._save_mass_per_met(self.filename)
+        population_io.mass_per_metallicity = pd.DataFrame({"metallicity": [0.02, 0.04], "mass": [1.0, 2.0]})
+        population_io._save_mass_per_metallicity(self.filename)
         
         loaded_io = PopulationIO()
-        loaded_io._load_mass_per_met(self.filename)
-        pd.testing.assert_frame_equal(population_io.mass_per_met, loaded_io.mass_per_met)
+        loaded_io._load_mass_per_metallicity(self.filename)
+        pd.testing.assert_frame_equal(population_io.mass_per_metallicity, loaded_io.mass_per_metallicity)
 
     def test_save_and_load_ini_params(self):
         population_io = PopulationIO()
