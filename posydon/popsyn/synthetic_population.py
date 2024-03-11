@@ -342,6 +342,8 @@ class History:
         self.lengths = None
         self.number_of_systems = None
         self.columns = None
+        if not os.path.exists(filename):
+            raise FileNotFoundError(f"{filename} does not exist!")
 
         # add history_lengths
         with pd.HDFStore(filename, mode="a") as store:
@@ -410,18 +412,19 @@ class History:
         >>> population[['S1_mass', 'S2_mass']]
         Returns the 'S1_mass' and 'S2_mass' columns from the history table.
         """
-        # TODO: Slice is not currently working
-        # if isinstance(key, slice):
-        #     if key.start is None:
-        #         pre = 0
-        #     else:
-        #         pre = self.lengths.loc[:key.start-1].sum()
-        #     if key.stop is None:
-        #         chunk = self.lengths.loc[key.start:].sum()
-        #     else:
-        #         chunk = self.lengths.loc[key.start:key.stop-1].sum()
-        #     return pd.read_hdf(self.filename, key='history', start=pre, stop=pre+chunk)
-        if isinstance(key, int):
+        if isinstance(key, slice):
+            if key.start is None:
+                pre = 0
+            else:
+                pre = key.start
+            if key.stop is None:
+                chunk = self.number_of_systems
+            else:
+                chunk = key.stop - pre
+            indices = list(range(pre, pre + chunk))
+            return pd.read_hdf(self.filename, key="history", where='index in indices')       
+        
+        elif isinstance(key, int):
             return pd.read_hdf(self.filename, where="index == key", key="history")
         elif isinstance(key, list) and all(isinstance(x, int) for x in key):
             with pd.HDFStore(self.filename, mode="r") as store:
@@ -609,6 +612,8 @@ class Oneline:
         self.chunksize = chunksize
         self.number_of_systems = None
         self.indices = None
+        if not os.path.exists(filename):
+            raise FileNotFoundError(f"{filename} does not exist!")
 
         with pd.HDFStore(filename, mode="r") as store:
             self.indices = store.select_column("oneline", "index").to_numpy()
@@ -663,7 +668,7 @@ class Oneline:
             if key.stop is None:
                 chunk = self.number_of_systems
             else:
-                chunk = key.stop - key.start
+                chunk = key.stop - pre
             return pd.read_hdf(
                 self.filename, key="oneline", start=pre, stop=pre + chunk
             )            
