@@ -151,3 +151,19 @@ def grid_global_limits(spectral_grids):
                 logg_max = max(logg_max,specgrid.axis_x_max[label])
                 logg_min = min(logg_min,specgrid.axis_x_min[label])
     return T_max,T_min,logg_max,logg_min
+
+def final_mass(file,CO = True):
+    history = pd.read_hdf(file,key = 'history')
+    final_time = max(history[history.event == 'maxtime'].time)
+    end = history[(history.event == 'END')]
+    final = end[end.time == final_time]
+    if CO:
+        S1_CO = end[(end.time != final_time) & (np.isin(end.S1_state,CO_state))]
+        S2_CO = end[(end.time != final_time) & (np.isin(end.S2_state,CO_state))]
+        total_mass = sum(final.S1_mass) + sum(final.S2_mass) + sum(S1_CO.S1_mass) + sum(S2_CO.S2_mass)
+    else: 
+        S1_nCO = final[np.isin(final.S1_state,CO_state) == False]
+        S2_nCO = final[np.isin(final.S2_state,CO_state) == False]
+        total_mass = sum(S1_nCO.S1_mass) + sum(S2_nCO.S2_mass)
+    return total_mass
+
