@@ -460,7 +460,7 @@ def copy_ini_file(grid_path, rerun_type, destination, cluster):
     elif rerun_type == 'initial_He':
         replace_text = "fix_iniHe_pre_rerun5-0e736a853c3c2e522b76299a54aea8f5eea15d08"
     elif rerun_type == "timestep_MTlimit":
-        replace_text = "seth_HMS-HMS_rerun_accretion_fix-6a0f4bbcda1fd4591cc0d935a6b4d83e758f0e92"
+        replace_text = "seth_HMS-HMS_rerun_accretion_fix-690b5089c8339b12a7ff70de16ed2d0c8b0f0cc2"
     elif rerun_type == "MLTpOFF":
         replace_text = "development-435d16c9158e4608530f21b8169ce6f31160e23e"
     elif rerun_type == 'other': # e.g. 'envelope_mass_limit', 'fe_core_infall_limit'
