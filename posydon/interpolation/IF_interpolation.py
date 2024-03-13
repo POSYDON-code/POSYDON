@@ -965,10 +965,8 @@ class BaseIFInterpolator:
             try:
                 where_min = np.nanargmin(np.nanmean(err, axis=2), axis=0)
             except:
-                mean_array = np.nanmean(err, axis=2)
                 # replace nans by a large number before looking for minimum
-                mean_array[mean_array == np.nan] = 1e99
-                where_min = np.nanargmin(mean_array, axis=0)
+                where_min = np.nanargmin(np.nan_to_num(np.nanmean(err, axis=2), nan=1e99), axis=0)
 
             out_scaling = []
             for i in range(self.n_out):
