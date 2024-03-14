@@ -1429,11 +1429,12 @@ class Scaler:
             classes = np.unique(klass)
 
             for c in classes:
-                if c == 'initial_MT': # don't normalize of initial_MT
-                    continue
                 inds = np.where(klass == c)[0]
                 c = None if c == "None" else c
 
+                if c not in self.scaler.keys():
+                    warnings.warn(f"skip normalize: c={c}, inds={inds}")
+                    continue
                 normalized[inds] = self.scaler[c].normalize(X[inds])
 
             return normalized
@@ -1450,11 +1451,12 @@ class Scaler:
             classes = np.unique(klass)
 
             for c in classes:
-                if c == 'initial_MT': # don't normalize of initial_MT
-                    continue
                 inds = np.where(klass == c)[0]
                 c = None if c == "None" else c
 
+                if c not in self.scaler.keys():
+                    warnings.warn(f"skip denormalize: c={c}, inds={inds}")
+                    continue
                 normalized[inds] = self.scaler[c].denormalize(Xn[inds])
 
             return normalized
