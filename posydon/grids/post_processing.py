@@ -293,7 +293,7 @@ def post_process_grid(grid, index=None, star_2_CO=True, MODELS=MODELS,
 
                     for MODEL_NAME, MODEL in MODELS.items():
                         mechanism = MODEL['mechanism']+MODEL['engine']
-                        SN = StepSN(**MODEL)     
+                        SN = StepSN(**MODEL, allow_spin_None=True)     
                         star_copy = copy.copy(star)
                         try:
                             flush = False
@@ -354,7 +354,7 @@ def post_process_grid(grid, index=None, star_2_CO=True, MODELS=MODELS,
 
                 for MODEL_NAME, MODEL in MODELS.items():
                     mechanism = MODEL['mechanism']+MODEL['engine']
-                    SN = StepSN(**MODEL)
+                    SN = StepSN(**MODEL, allow_spin_None=True)
                     star_copy = copy.copy(star)
                     try:
                         flush = False
