@@ -1429,6 +1429,8 @@ class Scaler:
             classes = np.unique(klass)
 
             for c in classes:
+                if c == 'initial_MT': # don't normalize of initial_MT
+                    continue
                 inds = np.where(klass == c)[0]
                 c = None if c == "None" else c
 
@@ -1448,6 +1450,8 @@ class Scaler:
             classes = np.unique(klass)
 
             for c in classes:
+                if c == 'initial_MT': # don't normalize of initial_MT
+                    continue
                 inds = np.where(klass == c)[0]
                 c = None if c == "None" else c
 
