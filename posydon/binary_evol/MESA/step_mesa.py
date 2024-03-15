@@ -1474,11 +1474,6 @@ class CO_HMS_RLO_step(MesaGridStep):
                                   'while the period is inside the grid.')
                 
         else:
-            if len(self.binary.state_history) > 2:
-                if self.binary.state_history[-2] == 'detached':
-                    set_binary_to_failed(self.binary)
-                    raise ValueError('CO_HMS_RLO binary outside grid and coming from detached')
-
             self.binary.state = "detached"
             self.binary.event = "redirect_from_CO_HMS_RLO"
             return
@@ -1606,11 +1601,6 @@ class CO_HeMS_RLO_step(MesaGridStep):
 
         # Redirect to the detached step
         else:
-            if len(self.binary.state_history) > 2:
-                if self.binary.state_history[-2] == 'detached':
-                    set_binary_to_failed(self.binary)
-                    raise ValueError('CO_HeMS_RLO binary outside grid and coming from detached')
-
             self.binary.state = "detached"
             self.binary.event = "redirect_from_CO_HeMS_RLO"
             return
