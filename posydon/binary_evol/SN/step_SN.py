@@ -551,13 +551,17 @@ class StepSN(object):
                                 else: 
                                     setattr(star, key, 0.)
                             elif key not in ["state", "mass", "spin",
-                                        "m_disk_accreted ", "m_disk_radiated","center_h1","center_he4","center_c12","center_n14","center_o16"]:
+                                             "m_disk_accreted",
+                                             "m_disk_radiated", "center_h1",
+                                             "center_he4", "center_c12",
+                                             "center_n14", "center_o16"]:
                                 setattr(star, key, None)          
                     
                     else:                    
                         for key in STARPROPERTIES:
                             if key not in ["state", "mass", "spin",
-                                        "m_disk_accreted ", "m_disk_radiated"]:
+                                           "m_disk_accreted",
+                                           "m_disk_radiated"]:
                                 setattr(star, key, None)
                     
                     # check if SN_type matches the predicted CO
@@ -650,7 +654,10 @@ class StepSN(object):
                             else: 
                                 setattr(star, key, 0.)
                         elif key not in ["state", "mass", "spin",
-                                "m_disk_accreted ", "m_disk_radiated","center_h1","center_he4","center_c12","center_n14","center_o16"]:
+                                         "m_disk_accreted", "m_disk_radiated",
+                                         "center_h1", "center_he4",
+                                         "center_c12", "center_n14",
+                                         "center_o16"]:
                             setattr(star, key, None)  
                     return
 
@@ -767,7 +774,10 @@ class StepSN(object):
                             else: 
                                 setattr(star, key, 0.)
                         elif key not in ["state", "mass", "spin",
-                                "m_disk_accreted ", "m_disk_radiated","center_h1","center_he4","center_c12","center_n14","center_o16"]:
+                                         "m_disk_accreted", "m_disk_radiated",
+                                         "center_h1", "center_he4",
+                                         "center_c12", "center_n14",
+                                         "center_o16"]:
                             setattr(star, key, None)  
                     return
 
@@ -869,9 +879,9 @@ class StepSN(object):
         star.log_R = np.log10(CO_radius(star.mass, star.state))
 
         for key in STARPROPERTIES:
-            if key not in [
-                "state", "mass", "spin", "log_R", "metallicity",
-                "m_disk_accreted ", "m_disk_radiated","co_core_mass"]:
+            if key not in ["state", "mass", "spin", "log_R", "metallicity",
+                           "m_disk_accreted", "m_disk_radiated",
+                           "co_core_mass"]:
                 setattr(star, key, None)
 
     def PISN_prescription(self, star):
