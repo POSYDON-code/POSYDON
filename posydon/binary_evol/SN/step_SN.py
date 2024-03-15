@@ -44,6 +44,7 @@ from posydon.utils.common_functions import (
     inspiral_timescale_from_separation,
     separation_evol_wind_loss,
     calculate_Patton20_values_at_He_depl,
+    THRESHOLD_CENTRAL_ABUNDANCE,
     rotate
 )
 
@@ -411,6 +412,7 @@ class StepSN(object):
             # collapse star
             self.collapse_star(star=binary.star_1)
             self._reset_other_star_properties(star=binary.star_2)
+            
         elif binary.event == "CC2":
             # collapse star
             self.collapse_star(star=binary.star_2)
@@ -538,11 +540,25 @@ class StepSN(object):
                     MODEL_properties = getattr(star, MODEL_NAME_SEL)
                     for key, value in MODEL_properties.items():
                         setattr(star, key, value)
-
-                    for key in STARPROPERTIES:
-                        if key not in ["state", "mass", "spin",
-                                        "m_disk_accreted", "m_disk_radiated"]:
-                            setattr(star, key, None)
+                    
+                    if star.state == 'WD':
+                        for key in STARPROPERTIES:
+                            if key in ["he_core_mass"]:
+                                setattr(star, key, star.mass)
+                            elif key in ["co_core_mass"]:
+                                if star.center_he4 < THRESHOLD_CENTRAL_ABUNDANCE: 
+                                    setattr(star, key, star.mass)
+                                else: 
+                                    setattr(star, key, 0.)
+                            elif key not in ["state", "mass", "spin",
+                                        "m_disk_accreted ", "m_disk_radiated","center_h1","center_he4","center_c12","center_n14","center_o16"]:
+                                setattr(star, key, None)          
+                    
+                    else:                    
+                        for key in STARPROPERTIES:
+                            if key not in ["state", "mass", "spin",
+                                        "m_disk_accreted ", "m_disk_radiated"]:
+                                setattr(star, key, None)
                     
                     # check if SN_type matches the predicted CO
                     # and force the SN_type to match the predicted CO.
@@ -595,7 +611,6 @@ class StepSN(object):
                     
                     if getattr(star, 'SN_type') != 'PISN':
                         star.log_R = np.log10(CO_radius(star.mass, star.state))
-                    
                     return
 
             # Verifies the selection of core-collapse mechnism to perform
@@ -627,9 +642,16 @@ class StepSN(object):
                     star.spin = 0.
                     star.log_R = np.log10(CO_radius(star.mass, star.state))
                     for key in STARPROPERTIES:
-                        if key not in ["state", "mass", "log_R", "spin",
-                                       "m_disk_accreted", "m_disk_radiated"]:
-                            setattr(star, key, None)
+                        if key in ["he_core_mass"]:
+                            setattr(star, key, star.mass)
+                        elif key in ["co_core_mass"]:
+                            if star.center_he4 < THRESHOLD_CENTRAL_ABUNDANCE: 
+                                setattr(star, key, star.mass)
+                            else: 
+                                setattr(star, key, 0.)
+                        elif key not in ["state", "mass", "spin",
+                                "m_disk_accreted ", "m_disk_radiated","center_h1","center_he4","center_c12","center_n14","center_o16"]:
+                            setattr(star, key, None)  
                     return
 
                 # check if the star was disrupted by the PISN
@@ -737,9 +759,16 @@ class StepSN(object):
                     star.spin = 0.
                     star.log_R = np.log10(CO_radius(star.mass, star.state))
                     for key in STARPROPERTIES:
-                        if key not in ["state", "mass", "log_R", "spin",
-                                       "m_disk_accreted", "m_disk_radiated"]:
-                            setattr(star, key, None)
+                        if key in ["he_core_mass"]:
+                            setattr(star, key, star.mass)
+                        elif key in ["co_core_mass"]:
+                            if star.center_he4 < THRESHOLD_CENTRAL_ABUNDANCE: 
+                                setattr(star, key, star.mass)
+                            else: 
+                                setattr(star, key, 0.)
+                        elif key not in ["state", "mass", "spin",
+                                "m_disk_accreted ", "m_disk_radiated","center_h1","center_he4","center_c12","center_n14","center_o16"]:
+                            setattr(star, key, None)  
                     return
 
                 # check if the star was disrupted by the PISN
@@ -842,7 +871,7 @@ class StepSN(object):
         for key in STARPROPERTIES:
             if key not in [
                 "state", "mass", "spin", "log_R", "metallicity",
-                "m_disk_accreted", "m_disk_radiated"]:
+                "m_disk_accreted ", "m_disk_radiated","co_core_mass"]:
                 setattr(star, key, None)
 
     def PISN_prescription(self, star):
@@ -1720,13 +1749,11 @@ class StepSN(object):
 
             # update the binary object which was bound at least before the SN
             #Check if this is the first SN
+            for key in BINARYPROPERTIES:
+                if key not in ['nearest_neighbour_distance','event']:
+                    setattr(binary, key, None)
             if flag_binary:
                 # update the tilt
-
-                for key in BINARYPROPERTIES:
-                    if key != 'nearest_neighbour_distance':
-                        setattr(binary, key, None)
-
                 if not binary.first_SN_already_occurred:
                     # update the tilt
                     binary.star_1.spin_orbit_tilt_first_SN = tilt
@@ -1737,7 +1764,7 @@ class StepSN(object):
                     if binary.event == 'CC2':
                         # Assume progenitor has aligned with the preSN orbital angular momentum
                         binary.star_2.spin_orbit_tilt_second_SN = tilt
-                        binary.star_1.spin_orbit_tilt_second_SN = get_combined_tilt(
+                        binary.star_1.spin_orbit_tilt_second_SN = self.get_combined_tilt(
                             tilt_1 = binary.star_1.spin_orbit_tilt_first_SN, 
                             tilt_2 = tilt, 
                             true_anomaly_1 = binary.true_anomaly_first_SN, 
@@ -1747,7 +1774,7 @@ class StepSN(object):
                     elif binary.event == 'CC1':
                         # Assume progenitor has aligned with the preSN orbital angular momentum
                         binary.star_1.spin_orbit_tilt_second_SN = tilt
-                        binary.star_2.spin_orbit_tilt_second_SN = get_combined_tilt(
+                        binary.star_2.spin_orbit_tilt_second_SN = self.get_combined_tilt(
                             tilt_1 = binary.star_1.spin_orbit_tilt_first_SN, 
                             tilt_2 = tilt, 
                             true_anomaly_1 = binary.true_anomaly_first_SN, 
@@ -1757,8 +1784,7 @@ class StepSN(object):
                     else:
                         raise ValueError("This should never happen!")
 
-                # compute new orbital period before reseting the binary properties
-
+                # compute new orbital period before reseting the binary properties     
                 binary.state = "detached"
                 binary.event = None
                 binary.separation = Apost / const.Rsun
@@ -1773,9 +1799,6 @@ class StepSN(object):
                 binary.mass_transfer_case = 'None'
 
             else:
-                for key in BINARYPROPERTIES:
-                    if key != 'nearest_neighbour_distance':
-                        setattr(binary, key, None)
                 # update the tilt
                 if not binary.first_SN_already_occurred:
                     binary.star_1.spin_orbit_tilt_first_SN = np.nan
@@ -1851,7 +1874,7 @@ class StepSN(object):
 
         return Vkick
         
-    def get_combined_tilt(tilt_1, tilt_2, true_anomaly_1, true_anomaly_2):
+    def get_combined_tilt(self,tilt_1, tilt_2, true_anomaly_1, true_anomaly_2):
         """Get the combined spin-orbit-tilt after two supernovae, assuming
         the spin as not realigned with the orbital angular momentum after
         SN1
