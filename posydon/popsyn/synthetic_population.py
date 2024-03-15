@@ -1326,16 +1326,15 @@ class Population(PopulationIO):
         Returns:
             pandas.DataFrame or None: The formation channels if available, otherwise None.
         """
-        if self._formation_channels is None:
-            with pd.HDFStore(self.filename, mode="r") as store:
-                if "/formation_channels" in store.keys():
-                    self._formation_channels = pd.read_hdf(
-                        self.filename, key="formation_channels"
-                    )
-                else:
-                    if self.verbose:
-                        warnings.warn("No formation channels in the population file!")
-                    self._formation_channels = None
+        with pd.HDFStore(self.filename, mode="r") as store:
+            if "/formation_channels" in store.keys():
+                self._formation_channels = pd.read_hdf(
+                    self.filename, key="formation_channels"
+                )
+            else:
+                if self.verbose:
+                    warnings.warn("No formation channels in the population file!")
+                self._formation_channels = None
 
         return self._formation_channels
 
@@ -2046,6 +2045,8 @@ class TransientPopulation(Population):
                 .index.to_numpy()
                 .flatten()
             )
+            if len(selected_indices) == 0:
+                continue
 
             # selected_indices = indices[i:i+self.chunksize]
             delay_time = (
