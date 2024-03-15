@@ -10,11 +10,11 @@ Aim of the ini file
 Using an ini file should help to keep an overview on large grid repositories
 and ensures that all will be setup the same way.
 
-There is a setup-pipeline script takes one argument:
+There is a script to setup the pipeline, it takes one argument:
 
 .. code-block:: bash
 
-    setup-pipeline PATH_TO_INI
+    posydon-setup-pipeline PATH_TO_INI
 
 The content of the ini file is described :ref:`below <pipeline_ini_sections>`.
 It will create for each step, plot or check two files:
@@ -56,6 +56,12 @@ example to show the supported key words:
         WALLTIME = '23:00:00'
         MAILTYPE = 'ALL'
         EMAIL = 'matthias.kruckow@unige.ch'
+        GROUP = 'GL_S_Astro_POSYDON'
+
+The last one :samp:`GROUP` is a bit special. If it is set, all the files
+created by the pipeline will get this owning group on the file system with read
+and write access for this group. This is especially helpful if more than one
+user is making changes to the data set.
 
 General pipeline settings
 -------------------------
@@ -104,9 +110,9 @@ All sections have common keywords:
     METALLICITIES       a list of lists of the metallicities of the grids; the looped :samp:`METALLICITY` is used in the path name; the outer list allows you to have different lists for each grid type
     GRID_SLICES         a list of lists of the grid slices; the looped :samp:`GRID_SLICE` is used in the path name; the outer list allows you to have different lists for each grid type
     COMPRESSIONS        a list of lists of compression types
-    DROP_MISSING_FILES  boolean to ignore missing files
-    CREATE_PLOTS        a list of plots to make; this will be done independently whether the step is active or not, to make no plots put there an empty list or comment out such a line
-    DO_CHECKS           a list of checks to perform; this will be done independently whether the step is active or not, to make no checks put there an empty list or comment out such a line
+    DROP_MISSING_FILES  boolean to ignore missing files; it allows to have different substructures and taking the existing ones into account when specifying union of all possible substructures
+    CREATE_PLOTS        a list of plots to make; this will be done independently whether the step is active or not; to make no plots put there an empty list or comment out such a line
+    DO_CHECKS           a list of checks to perform; this will be done independently whether the step is active or not; to make no checks put there an empty list or comment out such a line
     ==================  ===========
 
 Some :ref:`steps <pipeline_steps>` have more keywords, which are specific to
@@ -120,6 +126,7 @@ that step:
        1  STOP_BEFORE_CARBON_DEPLETION  indicating, whether high mass HMS stars should get their history croped short before carbon depletion (1) or not (0)
        2  GRID_SLICES                   for this step, we have 3 layers of lists: the outermost is still the grid type, the inner most is still the grid slice, the middle layer is the combined grid
        2  GRIDS_COMBINED                a list of lists of combined grids; the outermost list is again referring to grid type; this is used as name for the new combined grid instead of :samp:`GRID_SLICE`
+       3  ORIGINAL_COMPRESSIONS         a list of lists of the ORIGINAL compression to calculate the extra values from (the first one is used for all compressions for that grid type)
        4  INTERPOLATION_METHODS         a list of the interpolator types which are trained
        4  CONTROL_GRIDS                 a list of lists of control grids for the :samp:`GRID_SLICES`; it need to have the same number of entries as the :samp:`GRID_SLICES`, to specify no control grid use an empty string
        R  RERUN_TYPE                    a defined rerun type
@@ -246,6 +253,13 @@ Here is an example of all the :ref:`steps <pipeline_steps>`:
                         # HMS-HMS
                         ['LITE']
                        ]
+        ORIGINAL_COMPRESSIONS = [# CO-HMS_RLO
+                                 ['ORIGINAL'],
+                                 # CO-HeMS
+                                 ['ORIGINAL'],
+                                 # HMS-HMS
+                                 ['ORIGINAL']
+                                ]
         DROP_MISSING_FILES = True
         # supported plots: e.g. 'combined_TF12', 'termination_flag_1', 'termination_flag_2', 'termination_flag_3', 'termination_flag_4', and any quantity valid for a Z-plotting
         CREATE_PLOTS = ['PLOT_AFTER_EXTRA']
