@@ -12,6 +12,7 @@ __authors__ = [
     "Tassos Fragos <Anastasios.Fragkos@unige.ch>",
     "Scott Coughlin <scottcoughlin2014@u.northwestern.edu>",
     "Kyle Akira Rocha <kylerocha2024@u.northwestern.edu>",
+    "Matthias Kruckow <Matthias.Kruckow@unige.ch>",
 ]
 
 
@@ -1518,8 +1519,51 @@ def cumulative_mass_transfer_string(cumulative_integers):
     return result
 
 
-def cumulative_mass_transfer_flag(MT_cases):
-    """Get the cumulative MT string from a list of integer MT casses."""
+def cumulative_mass_transfer_flag(MT_cases, shift_cases=False):
+    """Get the cumulative MT string from a list of integer MT casses.
+    
+    Arguments
+    ----------
+    MT_cases: list of integers
+        A list of MT cases.
+    shift_cases: bool
+        Flag to shift non-physical cases like A1 after B1 will turn into B1.
+
+    Returns
+    -------
+    str
+        A string summarizing the mass transfer cases.
+    
+    """
+    if shift_cases:
+        case_1_min = MT_CASE_NO_RLO
+        case_1_max = MT_CASE_UNDETERMINED
+        case_2_min = case_1_min+10
+        case_2_max = case_1_max+10
+        corrected_MT_cases = []
+        for MT in MT_cases:
+            if (MT<=case_1_max):
+                # star 1 is donor
+                if (MT<case_1_min): # replace MT case
+                    corrected_MT_cases.append(case_1_min)
+                else:
+                    corrected_MT_cases.append(MT)
+                if (MT>case_1_min): # update earliest possible MT case
+                    case_1_min = MT
+            elif (MT<=case_2_max):
+                # star 2 is donor
+                if (MT<case_2_min): # replace MT case
+                    corrected_MT_cases.append(case_2_min)
+                else:
+                    corrected_MT_cases.append(MT)
+                if (MT>case_2_min): # update earliest possible MT case
+                    case_2_min = MT
+            else:
+                # unknown donor
+                warnings.warn("MT case with unknown donor: {}".format(MT))
+                corrected_MT_cases.append(MT)
+    else:
+        corrected_MT_cases = MT_cases.copy()
     return cumulative_mass_transfer_string(
         cumulative_mass_transfer_numeric(MT_cases)
     )
