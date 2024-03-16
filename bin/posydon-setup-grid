@@ -1137,7 +1137,7 @@ if __name__ == '__main__':
         with open('run_grid.sh') as f:
             f.write('#!/bin/bash\n')
             f.write('ID_GRID=$(sbatch --parsable {0})\n'.format(grid_script))
-            f.write('echo \"{0}'.format(grid_script)' submitted as \"${ID_GRID}\n')
+            f.write('echo \"{0}'.format(grid_script)+' submitted as \"${ID_GRID}\n')
             f.write('ID_cleanup=$(sbatch --parsable --dependency=afterany:${ID_GRID} '
                     '--kill-on-invalid-dep=yes cleanup.sh)\n')
             f.write('echo \"cleanup.sh submitted as \"${ID_cleanup}\n')
