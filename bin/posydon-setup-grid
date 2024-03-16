@@ -1111,7 +1111,7 @@ if __name__ == '__main__':
                 f.write('export MESA_DIR={0}\n\n\n'.format(os.environ['MESA_DIR']))
                 f.write(command_line)
         # create a cleanup script
-        with open('cleanup.sh') as f:
+        with open('cleanup.sh', 'w') as f:
             f.write('#!/bin/bash\n')
             
             f.write('#SBATCH --account={0}\n'.format(slurm['account']))
@@ -1134,7 +1134,7 @@ if __name__ == '__main__':
                 f.write('chmod -fR g+rwX .\n')
             f.write('\necho \"Done.\"')
         # create a runfile script
-        with open('run_grid.sh') as f:
+        with open('run_grid.sh', 'w') as f:
             f.write('#!/bin/bash\n')
             f.write('ID_GRID=$(sbatch --parsable {0})\n'.format(grid_script))
             f.write('echo \"{0}'.format(grid_script)+' submitted as \"${ID_GRID}\n')
