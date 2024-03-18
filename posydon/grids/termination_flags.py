@@ -55,6 +55,7 @@ def get_flag_from_MESA_output(MESA_log_path):
         `min_timestep_limit`, or `termination code:`, or `Terminate:`.
 
     """
+    termination_code = ''
     if MESA_log_path is not None and os.path.isfile(MESA_log_path):
         if MESA_log_path.endswith(".gz"):
             with gzip.open(MESA_log_path, "rt", errors='ignore') as log_file:
@@ -75,8 +76,15 @@ def get_flag_from_MESA_output(MESA_log_path):
             else:
                 truncate_at = len(
                     "termination code: " if has_term_code else "Terminate: ")
-                return line[truncate_at:].strip()
+                if min_timestep:
+                    # in case of "min_timestep_limit" allow to find another
+                    # termination code to overrule "min_timestep_limit"
+                    termination_code = line[truncate_at:].strip()
+                else:
+                    return line[truncate_at:].strip()
 
+    if len(termination_code)>0:
+        return termination_code
     return "reach cluster timelimit"
 
 
