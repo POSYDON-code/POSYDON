@@ -460,12 +460,6 @@ DEFAULT_MARKERS_COLORS_LEGENDS = {
             ['s', 2, list_of_colors[3], 'Stable contact phase'],
         'Stable case A':
             ['s', 2, list_of_colors[2], 'Stable RLOF during MS'],
-        'Stable case AB':
-            ['s', 2, list_of_colors[1], 'Stable RLOF during postMS'],
-        'Stable case AC':
-            ['s', 2, list_of_colors[1], 'Stable RLOF during postMS'],
-        'Stable case ABB':
-            ['s', 2, list_of_colors[0], 'Stable RLOF during stripped He star'],
         'Stable case B':
             ['s', 2, list_of_colors[1], 'Stable RLOF during postMS'],
         'Stable case C':
@@ -474,19 +468,45 @@ DEFAULT_MARKERS_COLORS_LEGENDS = {
             ['s', 2, list_of_colors[0], 'Stable RLOF during stripped He star'],
         'Stable case BB':
             ['s', 2, list_of_colors[0], 'Stable RLOF during stripped He star'],
+        # hot fix for case AA should be removed later:
+        'Stable case AA':
+            ['s', 2, list_of_colors[2], 'Stable RLOF during MS'],
+        'Stable case AB':
+            ['s', 2, list_of_colors[1], 'Stable RLOF during postMS'],
+        'Stable case AC':
+            ['s', 2, list_of_colors[1], 'Stable RLOF during postMS'],
+        'Stable case An':
+            ['s', 2, list_of_colors[1], 'Stable RLOF during postMS'],
+        'Stable case ABA':
+            ['s', 2, list_of_colors[0], 'Stable RLOF during stripped He star'],
+        'Stable case ABB':
+            ['s', 2, list_of_colors[0], 'Stable RLOF during stripped He star'],
         'Stable case BC':
             ['s', 2, list_of_colors[1], 'Stable RLOF during postMS'],
+        'Stable case Bn':
+            ['s', 2, list_of_colors[1], 'Stable RLOF during postMS'],
+        'Stable case BBA':
+            ['s', 2, list_of_colors[0], 'Stable RLOF during stripped He star'],
+        'Stable case BBB':
+            ['s', 2, list_of_colors[0], 'Stable RLOF during stripped He star'],
+        'Stable case Cn':
+            ['s', 2, list_of_colors[1], 'Stable RLOF during postMS'],
+        'Stable case CBA':
+            ['s', 2, list_of_colors[0], 'Stable RLOF during stripped He star'],
+        'Stable case CBB':
+            ['s', 2, list_of_colors[0], 'Stable RLOF during stripped He star'],
+        'Stable case BABB':
+            ['s', 2, list_of_colors[0], 'Stable RLOF during stripped He star'],
+        'Stable case BAn':
+            ['s', 2, list_of_colors[0], 'Stable RLOF during stripped He star'],
+        'Stable case BBn':
+            ['s', 2, list_of_colors[0], 'Stable RLOF during stripped He star'],
+        'Stable case n':
+            ['s', 2, list_of_colors[1], 'Stable RLOF while non burning'],
         'Unstable contact':
             ['D', 1, list_of_colors[3], 'Unstable contact phase'],
         'Unstable case A':
             ['D', 1, list_of_colors[2], 'Unstable RLOF during MS'],
-        'Unstable case AB':
-            ['D', 1, list_of_colors[1], 'Unstable RLOF during postMS'],
-        'Unstable case AC':
-            ['D', 1, list_of_colors[1], 'Unstable RLOF during postMS'],
-        'Unstable case ABB':
-            ['D', 1, list_of_colors[0],
-             'Unstable RLOF during stripped He star'],
         'Unstable case B':
             ['D', 1, list_of_colors[1], 'Unstable RLOF during postMS'],
         'Unstable case C':
@@ -497,8 +517,48 @@ DEFAULT_MARKERS_COLORS_LEGENDS = {
         'Unstable case BB':
             ['D', 1, list_of_colors[0],
              'Unstable RLOF during stripped He star'],
+        'Unstable case AB':
+            ['D', 1, list_of_colors[1], 'Unstable RLOF during postMS'],
+        'Unstable case AC':
+            ['D', 1, list_of_colors[1], 'Unstable RLOF during postMS'],
+        'Unstable case An':
+            ['D', 1, list_of_colors[1], 'Unstable RLOF during postMS'],
+        'Unstable case ABA':
+            ['D', 1, list_of_colors[0],
+             'Unstable RLOF during stripped He star'],
+        'Unstable case ABB':
+            ['D', 1, list_of_colors[0],
+             'Unstable RLOF during stripped He star'],
         'Unstable case BC':
             ['D', 1, list_of_colors[1], 'Unstable RLOF during postMS'],
+        'Unstable case Bn':
+            ['D', 1, list_of_colors[1], 'Unstable RLOF during postMS'],
+        'Unstable case BBA':
+            ['D', 2, list_of_colors[0], 
+             'Unstable RLOF during stripped He star'],
+        'Unstable case BBB':
+            ['D', 2, list_of_colors[0],
+             'Unstable RLOF during stripped He star'],
+        'Unstable case Cn':
+            ['D', 1, list_of_colors[1], 'Unstable RLOF during postMS'],
+        'Unstable case CBA':
+            ['D', 2, list_of_colors[0], 
+             'Unstable RLOF during stripped He star'],
+        'Unstable case CBB':
+            ['D', 2, list_of_colors[0],
+             'Unstable RLOF during stripped He star'],
+        'Unstable case BABB':
+            ['D', 2, list_of_colors[0],
+             'Unstable RLOF during stripped He star'],
+        'Unstable case BAn':
+            ['D', 2, list_of_colors[0],
+             'Unstable RLOF during stripped He star'],
+        'Unstable case BBn':
+            ['D', 2, list_of_colors[0],
+             'Unstable RLOF during stripped He star'],
+        'Unstable case n':
+            ['D', 2, list_of_colors[1],
+             'Unstable RLOF while non burning'],
         'Unstable L2 RLOF':
             ['D', 1, list_of_colors[0],
              'Unstable RLOF during stripped He star'],
@@ -667,6 +727,60 @@ DEFAULT_MARKERS_COLORS_LEGENDS = {
     }
 }
 
+def add_flag_to_MARKERS_COLORS_LEGENDS(MARKERS_COLORS_LEGENDS, flag):
+    """Add not pre defined stuff to DEFAULT_MARKERS_COLORS_LEGENDS.
+    
+    Parameters
+    ----------
+    MARKERS_COLORS_LEGENDS : dict of lists
+        Dictionary with flags as keys given a list with marker, size, color,
+        and legend text for each flag.
+    flag : str
+        The flag itself.
+            
+    """
+    if flag not in MARKERS_COLORS_LEGENDS.keys():
+        if ('case_' in flag): # unknown MT flag
+            if '1' not in flag: # only star 1 is donor
+                s = 'o'
+            elif '2' not in flag: # only star 2 is donor
+                s = 's'
+            elif flag[-1]=='1': # star 1 is last donor
+                s = '>'
+            elif flag[-1]=='2': # star 2 is last donor
+                s = '<'
+            else:
+                s = 'v'
+            if '/' in flag: # multiple mass transfers
+                if (('case_A' in flag) or ('case_BA' in flag)):
+                    # first MT is case A or case BA
+                    c = 'tab:cyan'
+                elif (('case_C' in flag) or ('case_BC' in flag)):
+                    # first MT is case C or case BC
+                    c = 'tab:orange'
+                elif (('case_B' in flag) or ('case_BB' in flag)):
+                    # first MT is case B or case BB
+                    # (needs to be behind case BA and BC)
+                    c = 'tab:pink'
+                else:
+                    c = 'lightgrey'
+            elif 'BA' in flag: # only case BA
+                c = 'tab:red'
+            elif 'BB' in flag: # only case BB
+                c = 'brown'
+            elif 'BC' in flag: # only case BC
+                c = 'tab:gray'
+            elif 'A' in flag: # only case A
+                c = 'tab:blue'
+            elif 'B' in flag: # only case B
+                c = 'tab:green'
+            elif 'C' in flag: # only case C
+                c = 'tab:purple'
+            else:
+                c = 'black'
+            MARKERS_COLORS_LEGENDS[flag] = [s, 2, c, flag.replace('_',' ')]
+        else:
+            MARKERS_COLORS_LEGENDS[flag] = ['+', 1, 'black', flag.replace('_',' ')]
 
 DEFAULT_LABELS = {
     # extra
