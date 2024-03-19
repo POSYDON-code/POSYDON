@@ -177,8 +177,7 @@ def post_process_grid(grid, index=None, star_2_CO=True, MODELS=MODELS,
 
         # compute properties
         for j, star in enumerate(stars):
-            if not stars_CO[j] and IC in ['no_MT', 'stable_MT', 'unstable_MT',
-                                          'stable_reverse_MT']:
+            if not stars_CO[j] and IC in ['no_MT', 'stable_MT', 'unstable_MT']:
                 # stellar states
                 EXTRA_COLUMNS['S%s_state' % (j+1)].append(check_state_of_star(
                     star, star_CO=False))
@@ -246,8 +245,7 @@ def post_process_grid(grid, index=None, star_2_CO=True, MODELS=MODELS,
         
         # core collpase quantities
         if not single_star:
-            if interpolation_class in ['no_MT', 'stable_MT',
-                                       'stable_reverse_MT']:
+            if interpolation_class in ['no_MT', 'stable_MT']:
                 if (star_2_CO or (TF1 in TF1_POOL_STABLE and 
                     ('primary' in TF1 or 'Primary' in TF1))):
                     star = binary.star_1
@@ -293,56 +291,42 @@ def post_process_grid(grid, index=None, star_2_CO=True, MODELS=MODELS,
                     if verbose:
                         print_CC_quantities(EXTRA_COLUMNS, star)
 
-                    for MODEL_NAME, MODEL in MODELS.items():
-                        mechanism = MODEL['mechanism']+MODEL['engine']
-                        SN = StepSN(**MODEL, allow_spin_None=True)     
-                        star_copy = copy.copy(star)
-                        try:
-                            flush = False
-                            SN.collapse_star(star_copy)
-                            for quantity in CC_quantities:
-                                if quantity in ['state', 'SN_type']:
-                                    if not isinstance(getattr(star_copy, quantity), str):
-                                        flush = True
-                                        warnings.warn(f'{MODEL_NAME} {mechanism} {quantity} is not a string!')
-                                elif quantity != 'CO_interpolation_class':
-                                    if quantity=='spin':
-                                        if ((not isinstance(getattr(star_copy, quantity), float))
-                                            and (getattr(star_copy, quantity) != None)):
-                                            flush = True
-                                            warnings.warn(f'{MODEL_NAME} {mechanism} {quantity} is not a float nor None!')
-                                    elif not isinstance(getattr(star_copy, quantity), float):
-                                        flush = True
-                                        warnings.warn(f'{MODEL_NAME} {mechanism} {quantity} is not a float!')
-                        except Exception as e:
-                            flush = True
-                            if verbose:
-                                print('')
-                                print(f'Error during {MODEL_NAME} {mechanism} core collapse prescrition!')
-                                print(e)
-                                print('TF1:', TF1)
-                                print('interpolation class:',  interpolation_class)
-                                print('run directory:', grid.MESA_dirs[i])
-                                print('')
-                        if flush:
-                            assign_core_collapse_quantities_none(EXTRA_COLUMNS, star_i, MODEL_NAME)
-                        else:
-                            for quantity in CC_quantities:
-                                if quantity != 'CO_interpolation_class':
-                                    EXTRA_COLUMNS[f'S{star_i}_{MODEL_NAME}_{quantity}'].append(
-                                    getattr(star_copy, quantity))
-                                else:
-                                    if getattr(star_copy, 'state') == 'BH' and 'case' in TF2 and '1' in TF2 and '2' in TF2:
-                                        EXTRA_COLUMNS[f'S{star_i}_{MODEL_NAME}_{quantity}'].append(
-                                        getattr(star_copy, 'state')+'_reverse_MT')
-                                    else:
-                                        EXTRA_COLUMNS[f'S{star_i}_{MODEL_NAME}_{quantity}'].append(
-                                        getattr(star_copy, 'state'))
-                            if verbose:
-                                print_CC_quantities(EXTRA_COLUMNS, star_copy, f'{MODEL_NAME}_{mechanism}')
-                else:
-                    # star not explodable
-                    assign_core_collapse_quantities_none(EXTRA_COLUMNS, star_i)
+                if verbose:
+                    print_CC_quantities(EXTRA_COLUMNS, star)
+
+                for MODEL_NAME, MODEL in MODELS.items():
+                    mechanism = MODEL['mechanism']+MODEL['engine']
+                    SN = StepSN(**MODEL)     
+                    star_copy = copy.copy(star)
+                    try:
+                        flush = False
+                        SN.collapse_star(star_copy)
+                        for quantity in CC_quantities:
+                            if quantity in ['state', 'SN_type']:
+                                if not isinstance(getattr(star_copy, quantity), str):
+                                    flush = True
+                                    warnings.warn(f'{MODEL_NAME} {mechanism} {quantity} is not a string!')
+                            else:
+                                if not isinstance(getattr(star_copy, quantity), float):
+                                    flush = True
+                                    warnings.warn(f'{MODEL_NAME} {mechanism} {quantity} is not a float!')
+                    except Exception as e:
+                        flush = True
+                        if verbose:
+                            print('')
+                            print(f'Error during {MODEL_NAME} {mechanism} core collapse prescrition!')
+                            print(e)
+                            print('TF1', TF1)
+                            print('interpolation class',  interpolation_class)
+                            print('')
+                    if flush:
+                        assign_core_collapse_quantities_none(EXTRA_COLUMNS, star_i, MODEL_NAME)
+                    else:
+                        for quantity in CC_quantities:
+                            EXTRA_COLUMNS[f'S{star_i}_{MODEL_NAME}_{quantity}'].append(
+                            getattr(star_copy, quantity))
+                        if verbose:
+                            print_CC_quantities(EXTRA_COLUMNS, star_copy, f'{MODEL_NAME}_{mechanism}')
 
             else: 
                 # inital_RLOF, unstable_MT not_converged
@@ -366,13 +350,8 @@ def post_process_grid(grid, index=None, star_2_CO=True, MODELS=MODELS,
                                 if not isinstance(getattr(star_copy, quantity), str):
                                     flush = True
                                     warnings.warn(f'{MODEL_NAME} {mechanism} {quantity} is not a string!')
-                            elif quantity != 'CO_interpolation_class':
-                                if quantity == 'spin':
-                                    if ((not isinstance(getattr(star_copy, quantity), float))
-                                        and (getattr(star_copy, quantity) != None)):
-                                        flush = True
-                                        warnings.warn(f'{MODEL_NAME} {mechanism} {quantity} is not a float nor None!')
-                                elif not isinstance(getattr(star_copy, quantity), float):
+                            else:
+                                if not isinstance(getattr(star_copy, quantity), float):
                                     flush = True
                                     warnings.warn(f'{MODEL_NAME} {mechanism} {quantity} is not a float!')
                     except Exception as e:
@@ -389,16 +368,8 @@ def post_process_grid(grid, index=None, star_2_CO=True, MODELS=MODELS,
                         assign_core_collapse_quantities_none(EXTRA_COLUMNS, 1, MODEL_NAME)
                     else:
                         for quantity in CC_quantities:
-                            if quantity != 'CO_interpolation_class':
-                                EXTRA_COLUMNS[f'S1_{MODEL_NAME}_{quantity}'].append(
-                                getattr(star_copy, quantity))
-                            else:
-                                if getattr(star_copy, 'state') == 'BH' and 'case' in TF2 and '1' in TF2 and '2' in TF2:
-                                    EXTRA_COLUMNS[f'S1_{MODEL_NAME}_{quantity}'].append(
-                                    getattr(star_copy, 'state')+'_reverse_MT')
-                                else:
-                                    EXTRA_COLUMNS[f'S1_{MODEL_NAME}_{quantity}'].append(
-                                    getattr(star_copy, 'state'))
+                            EXTRA_COLUMNS[f'S1_{MODEL_NAME}_{quantity}'].append(
+                            getattr(star_copy, quantity))
                         if verbose:
                             print_CC_quantities(EXTRA_COLUMNS, star_copy, f'{MODEL_NAME}_{mechanism}')
             else:
@@ -461,8 +432,7 @@ def add_post_processed_quantities(grid, MESA_dirs_EXTRA_COLUMNS, EXTRA_COLUMNS,
             'EXTRA_COLUMNS do not follow the correct order of grid!')
 
     for column in EXTRA_COLUMNS.keys():
-        if (("state" in column) or ("type" in column) or ("class" in column)
-            or (column == 'mt_history')):
+        if "state" in column or "type" in column or column == 'mt_history':
             values = np.asarray(EXTRA_COLUMNS[column], str)
         else:
             values = np.asarray(EXTRA_COLUMNS[column], float)
