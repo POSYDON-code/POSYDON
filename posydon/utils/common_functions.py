@@ -12,6 +12,7 @@ __authors__ = [
     "Tassos Fragos <Anastasios.Fragkos@unige.ch>",
     "Scott Coughlin <scottcoughlin2014@u.northwestern.edu>",
     "Kyle Akira Rocha <kylerocha2024@u.northwestern.edu>",
+    "Matthias Kruckow <Matthias.Kruckow@unige.ch>",
 ]
 
 
@@ -292,75 +293,6 @@ def orbital_period_from_separation(separation, m1, m2):
     return const.dayyer * ((separation / const.aursun)**3.0 / (m1 + m2)) ** 0.5
 
 
-def BSE_to_POSYDON(ktype):
-    """Convert BSE numerical type to POSYDON string.
-
-    Parameters
-    ----------
-    ktype : int
-        The BSE numerical type.
-    core_mass : float
-        Core mass of the star.
-
-    Returns
-    -------
-    str
-        The corresponding POSYDON string.
-
-    """
-    if ktype in (0, 1):
-        state = 'H-rich_Core_H_burning'
-    elif ktype in (2, 3):   # Hertzprung Gap and Giant Branch star
-        state = 'H-rich_Shell_H_burning'
-    elif ktype == 4:        # Core Helium Burning
-        state = 'H-rich_Core_He_burning'
-    elif ktype in (5, 6):   # Early AGB and TPAGB
-        state = 'H-rich_Central_He_depleted'
-    elif ktype == 7:        # Naked Helium Star MS
-        state = 'stripped_He_Core_He_burning'
-    elif ktype in (8, 9):   # Naked Helium star (HG and GB)
-        state = 'stripped_He_Central_He_depleted'
-    elif ktype in (10, 11, 12):
-        state = 'WD'
-    elif ktype == 13:
-        state = 'NS'
-    elif ktype == 14:
-        state = 'BH'
-    elif ktype == 15:
-        state = 'Massless remnant'
-    else:
-        raise ValueError('Conversion of the ktype {} is not supported.'.
-                         format(ktype))
-    return state
-
-
-def POSYDON_to_BSE(star):
-    """Convert POSYDON state to BSE numerical type.
-
-    Parameters
-    ----------
-    star : SingleStar
-        The star which state requires conversion.
-
-    Returns
-    -------
-    int
-        The corresponding BSE numerical type.
-    """
-    if star.state == 'H-rich_Core_H_burning':
-        if star.mass < 0.7:
-            ktype = 0
-        else:
-            ktype = 1
-    elif star.state == 'NS':
-        ktype = 13
-    elif star.state == 'BH':
-        ktype = 14
-    else:
-        raise ValueError(
-            'Conversion of the state {} is currently not supported.'.format(
-                star.state))
-    return ktype
 
 
 def eddington_limit(binary, idx=-1):
@@ -1587,8 +1519,51 @@ def cumulative_mass_transfer_string(cumulative_integers):
     return result
 
 
-def cumulative_mass_transfer_flag(MT_cases):
-    """Get the cumulative MT string from a list of integer MT casses."""
+def cumulative_mass_transfer_flag(MT_cases, shift_cases=False):
+    """Get the cumulative MT string from a list of integer MT casses.
+    
+    Arguments
+    ----------
+    MT_cases: list of integers
+        A list of MT cases.
+    shift_cases: bool
+        Flag to shift non-physical cases like A1 after B1 will turn into B1.
+
+    Returns
+    -------
+    str
+        A string summarizing the mass transfer cases.
+    
+    """
+    if shift_cases:
+        case_1_min = MT_CASE_NO_RLO
+        case_1_max = MT_CASE_UNDETERMINED
+        case_2_min = case_1_min+10
+        case_2_max = case_1_max+10
+        corrected_MT_cases = []
+        for MT in MT_cases:
+            if (MT<=case_1_max):
+                # star 1 is donor
+                if (MT<case_1_min): # replace MT case
+                    corrected_MT_cases.append(case_1_min)
+                else:
+                    corrected_MT_cases.append(MT)
+                if (MT>case_1_min): # update earliest possible MT case
+                    case_1_min = MT
+            elif (MT<=case_2_max):
+                # star 2 is donor
+                if (MT<case_2_min): # replace MT case
+                    corrected_MT_cases.append(case_2_min)
+                else:
+                    corrected_MT_cases.append(MT)
+                if (MT>case_2_min): # update earliest possible MT case
+                    case_2_min = MT
+            else:
+                # unknown donor
+                warnings.warn("MT case with unknown donor: {}".format(MT))
+                corrected_MT_cases.append(MT)
+    else:
+        corrected_MT_cases = MT_cases.copy()
     return cumulative_mass_transfer_string(
         cumulative_mass_transfer_numeric(MT_cases)
     )
