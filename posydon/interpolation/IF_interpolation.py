@@ -474,16 +474,16 @@ class BaseIFInterpolator:
             if (self.interp_method == 'linear'
                     or isinstance(self.interp_method, list)):
                 print("\nFilling missing values (nans) with 1NN")
-                self._fillNans()
+                self._fillNans(grid.final_values[self.c_key])
             elif self.interp_method == '1NN':
                 self.YT[np.isnan(self.YT)] = -100
 
             if (self.in_scaling is None) or (self.out_scaling is None):
                 if self.interp_method == '1NN':
-                    self.in_scaling, self.out_scaling = (self._bestInScaling(),
+                    self.in_scaling, self.out_scaling = (self._bestInScaling(grid.final_values[self.c_key]),
                                                          ['none']*self.n_out)
                 else:
-                    self.in_scaling, self.out_scaling = self._bestScaling()
+                    self.in_scaling, self.out_scaling = self._bestScaling(grid.final_values[self.c_key])
 
             self.X_scaler = Scaler(self.in_scaling,
                                    self.XT[self.valid >= 0, :],
@@ -631,7 +631,7 @@ class BaseIFInterpolator:
             self.interpolator = MC_Interpolator(
                 self.classifiers[self.c_key],
                 self.interp_classes, self.interp_method)
-            self.interpolator.train(XTn, YTn, ic[self.valid > 0])
+            self.interpolator.train(XTn, YTn, ic)
 
     def test_interpolator(self, Xt):
         """Use the interpolator to approximate output vector.
@@ -854,7 +854,7 @@ class BaseIFInterpolator:
         return (m2[m1 > 0.95 * m1.max()].min()
                 / m2[m1 < 1.05 * m1.min()].min() > 1 + tol)
 
-    def _bestInScaling(self):
+    def _bestInScaling(self, ic)):
         """Find the best scaling for the input space."""
 
         def in_scale_one(klass = None):
@@ -999,7 +999,7 @@ class BaseIFInterpolator:
             if any(wnan[self.valid > 0]):
                 k1r = KNeighborsRegressor(n_neighbors=1)
                 wT = (~wnan) & (self.valid > 0)
-                xs = MatrixScaler(self._bestInScaling(),
+                xs = MatrixScaler(self._bestInScaling(ic)[1],
                                   self.XT[self.valid >= 0, :])
                 k1r.fit(xs.normalize(self.XT[wT, :]), self.YT[wT, i])
                 wt = wnan & (self.valid > 0)
@@ -1198,8 +1198,11 @@ class MC_Interpolator:
             for j in range(len(self.classes[i])):
                 which += z == self.classes[i][j]
             self.interpolators[i].train(XT[which, :], YT[which, :])
+    def classifier(self, Xt):
 
-    def predict(self, Xt):
+        return self.classifier.predict(Xt)
+
+    def predict(self, Xt, zpred):
         """Interpolate and approximate output vectors given input vectors.
 
         Parameters
