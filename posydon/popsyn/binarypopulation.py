@@ -292,7 +292,7 @@ class BinaryPopulation:
                     binary.evolve()
                 except Exception:
                     binary.event = 'FAILED'
-                    traceback.print_exc()
+                    binary.traceback = traceback.format_exc()
                 if len(w) > 0:
                     warnings.simplefilter("always")
                     binary.warning_message = [x.message for x in w]
