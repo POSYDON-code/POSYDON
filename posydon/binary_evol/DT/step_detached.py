@@ -1152,6 +1152,7 @@ class detached_step:
             return interp1d, m0, t0
 
         # get the matched data of two stars, respectively
+        
         interp1d_sec, m0, t0 = get_star_data(
             binary, secondary, primary, secondary.htrack, co=False)
 
@@ -1169,7 +1170,6 @@ class detached_step:
                 binary, primary, secondary, primary.htrack, False)[0]
         else:
             raise Exception("During matching primary is either should be either normal or not normal. `non_existent_companion` should be zero.")
-
 
         if interp1d_sec is None or interp1d_pri is None:
             # binary.event = "END"

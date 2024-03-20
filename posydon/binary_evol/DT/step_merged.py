@@ -79,6 +79,7 @@ class MergedStep(IsolatedStep):
         list_for_matching_HMS = list_for_matching_HMS,
         list_for_matching_postMS = list_for_matching_postMS,
         list_for_matching_HeStar = list_for_matching_HeStar,
+        verbose = 1,
         *args,
         **kwargs)
 
