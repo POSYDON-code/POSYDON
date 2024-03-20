@@ -854,7 +854,7 @@ class BaseIFInterpolator:
         return (m2[m1 > 0.95 * m1.max()].min()
                 / m2[m1 < 1.05 * m1.min()].min() > 1 + tol)
 
-    def _bestInScaling(self, ic)):
+    def _bestInScaling(self, ic):
         """Find the best scaling for the input space."""
 
         def in_scale_one(klass = None):
