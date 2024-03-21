@@ -18,6 +18,7 @@ __authors__ = [
     "Zepei Xing <Zepei.Xing@unige.ch>",
     "Jeffrey Andrews <jeffrey.andrews@northwestern.edu>",
     "Tassos Fragos <Anastasios.Fragkos@unige.ch>",
+    "Matthias Kruckow <Matthias.Kruckow@unige.ch>",
 ]
 
 __credits__ = [
@@ -83,6 +84,7 @@ MODEL = {
     "use_interp_values": True,
     "use_profiles": True,
     "use_core_masses": True,
+    "allow_spin_None" : False,
     "approx_at_he_depletion": False,
     # kick physics
     "kick": True,
@@ -198,6 +200,11 @@ class StepSN(object):
        This option uses the core masses at carbon depletion to determine
        the core collapse outcoume (classical population sythesis
        threatment).
+       
+    allow_spin_None : bool
+       This option does not determine the spin during core collapse while
+       setting other values like in use_core_masses. (used to avoid jumps
+       in the spin for interpolator training because of missing profiles)
 
     approx_at_he_depletion : bool
        This option is relevant only for the mechanism Patton&Sukhbold20-engine.
@@ -459,6 +466,10 @@ class StepSN(object):
            This option uses the core masses at carbon depletion to determine
            the core collapse outcoume (classical population sythesis
            threatment).
+        4. allow_spin_None : False
+           This option does not determine the spin during core collapse while
+           setting other values like in use_core_masses. (used to avoid jumps
+           in the spin for interpolator training because of missing profiles)
 
         Parameters
         ----------
@@ -477,6 +488,11 @@ class StepSN(object):
 
         """
         state = star.state
+        # after this function is called certain quantities shouldn't be None
+        # type objects anymore
+        for key in ['m_disk_accreted', 'm_disk_radiated']:
+            if getattr(star, key) is None:
+                setattr(star, key, np.nan)
         
         # Verifies if the star is in state state where it can
         # explode
@@ -535,13 +551,17 @@ class StepSN(object):
                                 else: 
                                     setattr(star, key, 0.)
                             elif key not in ["state", "mass", "spin",
-                                        "m_disk_accreted ", "m_disk_radiated","center_h1","center_he4","center_c12","center_n14","center_o16"]:
+                                             "m_disk_accreted",
+                                             "m_disk_radiated", "center_h1",
+                                             "center_he4", "center_c12",
+                                             "center_n14", "center_o16"]:
                                 setattr(star, key, None)          
                     
                     else:                    
                         for key in STARPROPERTIES:
                             if key not in ["state", "mass", "spin",
-                                        "m_disk_accreted ", "m_disk_radiated"]:
+                                           "m_disk_accreted",
+                                           "m_disk_radiated"]:
                                 setattr(star, key, None)
                     
                     # check if SN_type matches the predicted CO
@@ -625,8 +645,6 @@ class StepSN(object):
                     star.state = "WD"
                     star.spin = 0.
                     star.log_R = np.log10(CO_radius(star.mass, star.state))
-                    star.m_disk_accreted = np.nan
-                    star.m_disk_radiated = np.nan
                     for key in STARPROPERTIES:
                         if key in ["he_core_mass"]:
                             setattr(star, key, star.mass)
@@ -636,7 +654,10 @@ class StepSN(object):
                             else: 
                                 setattr(star, key, 0.)
                         elif key not in ["state", "mass", "spin",
-                                "m_disk_accreted ", "m_disk_radiated","center_h1","center_he4","center_c12","center_n14","center_o16"]:
+                                         "m_disk_accreted", "m_disk_radiated",
+                                         "center_h1", "center_he4",
+                                         "center_c12", "center_n14",
+                                         "center_o16"]:
                             setattr(star, key, None)  
                     return
 
@@ -706,6 +727,19 @@ class StepSN(object):
                         star.m_disk_accreted = 0.0
                         star.m_disk_radiated = 0.0
                         star.state = "NS"
+                    
+                elif self.allow_spin_None:
+                    # If the profile is not available and spin can stay
+                    # undetermined
+                    star.mass = m_grav
+                    star.spin = None
+                    star.m_disk_accreted = 0.0
+                    star.m_disk_radiated = 0.0
+                    if m_grav >= self.max_NS_mass:
+                        star.state = "BH"
+                    else:
+                        star.state = "NS"
+
                 else:
                     for key in STARPROPERTIES:
                         setattr(star, key, None)
@@ -731,8 +765,6 @@ class StepSN(object):
                     star.state = "WD"
                     star.spin = 0.
                     star.log_R = np.log10(CO_radius(star.mass, star.state))
-                    star.m_disk_accreted = np.nan
-                    star.m_disk_radiated = np.nan
                     for key in STARPROPERTIES:
                         if key in ["he_core_mass"]:
                             setattr(star, key, star.mass)
@@ -742,7 +774,10 @@ class StepSN(object):
                             else: 
                                 setattr(star, key, 0.)
                         elif key not in ["state", "mass", "spin",
-                                "m_disk_accreted ", "m_disk_radiated","center_h1","center_he4","center_c12","center_n14","center_o16"]:
+                                         "m_disk_accreted", "m_disk_radiated",
+                                         "center_h1", "center_he4",
+                                         "center_c12", "center_n14",
+                                         "center_o16"]:
                             setattr(star, key, None)  
                     return
 
@@ -817,6 +852,18 @@ class StepSN(object):
                         star.m_disk_accreted = 0.0
                         star.m_disk_radiated = 0.0
                         star.state = "NS"
+                    
+                elif self.allow_spin_None:
+                    # If the profile is not available and spin can stay
+                    # undetermined
+                    star.mass = m_grav
+                    star.spin = None
+                    star.m_disk_accreted = 0.0
+                    star.m_disk_radiated = 0.0
+                    if m_grav >= self.max_NS_mass:
+                        star.state = "BH"
+                    else:
+                        star.state = "NS"
 
                 else:
                     for key in STARPROPERTIES:
@@ -832,9 +879,9 @@ class StepSN(object):
         star.log_R = np.log10(CO_radius(star.mass, star.state))
 
         for key in STARPROPERTIES:
-            if key not in [
-                "state", "mass", "spin", "log_R", "metallicity",
-                "m_disk_accreted ", "m_disk_radiated","co_core_mass"]:
+            if key not in ["state", "mass", "spin", "log_R", "metallicity",
+                           "m_disk_accreted", "m_disk_radiated",
+                           "co_core_mass"]:
                 setattr(star, key, None)
 
     def PISN_prescription(self, star):
@@ -937,8 +984,12 @@ class StepSN(object):
                     # this is catching H-rich_non_burning stars
                     if m_star < 0.5:
                         m_rembar = m_star
-                        warnings.warn(
-                            'Invalid co/He core masses! Setting m_WD=m_star!')
+                        if ((m_core < 0.)or(m_He_core < 0.)):
+                            warnings.warn('Invalid co/He core masses! '
+                                          'Setting m_WD=m_star!')
+                        else:
+                            warnings.warn('co/He core masses are zero! '
+                                          'Setting m_WD=m_star!')
                     else:
                         raise ValueError('Invalid co/He core masses!')
                 f_fb = 1.0  # no SN the no kick is assumed
@@ -974,8 +1025,12 @@ class StepSN(object):
                     # this is catching H-rich_non_burning stars
                     if m_star < 0.5:
                         m_rembar = m_star
-                        warnings.warn(
-                            'Invalid co/He core masses! Setting m_WD=m_star!')
+                        if ((m_core < 0.)or(m_He_core < 0.)):
+                            warnings.warn('Invalid co/He core masses! '
+                                          'Setting m_WD=m_star!')
+                        else:
+                            warnings.warn('co/He core masses are zero! '
+                                          'Setting m_WD=m_star!')
                     else:
                         raise ValueError('Invalid co/He core masses!')
                 f_fb = 1.0  # no SN the no kick is assumed
@@ -1010,8 +1065,12 @@ class StepSN(object):
                     # this is catching H-rich_non_burning stars
                     if m_star < 0.5:
                         m_rembar = m_star
-                        warnings.warn(
-                            'Invalid co/He core masses! Setting m_WD=m_star!')
+                        if ((m_core < 0.)or(m_He_core < 0.)):
+                            warnings.warn('Invalid co/He core masses! '
+                                          'Setting m_WD=m_star!')
+                        else:
+                            warnings.warn('co/He core masses are zero! '
+                                          'Setting m_WD=m_star!')
                     else:
                         raise ValueError('Invalid co/He core masses!')
                 f_fb = 1.0  # no SN the no kick is assumed
@@ -1700,9 +1759,12 @@ class StepSN(object):
 
             # update the binary object which was bound at least before the SN
             #Check if this is the first SN
+            for key in BINARYPROPERTIES:
+                if key not in ['nearest_neighbour_distance','event']:
+                    setattr(binary, key, None)
+                    
             if flag_binary:
                 # update the tilt
-                
                 if not binary.first_SN_already_occurred:
                     # update the tilt
                     binary.star_1.spin_orbit_tilt_first_SN = tilt
@@ -1733,11 +1795,7 @@ class StepSN(object):
                     else:
                         raise ValueError("This should never happen!")
 
-                # compute new orbital period before reseting the binary properties
-                for key in BINARYPROPERTIES:
-                    if key != 'nearest_neighbour_distance':
-                        setattr(binary, key, None)
-
+                # compute new orbital period before reseting the binary properties     
                 binary.state = "detached"
                 binary.event = None
                 binary.separation = Apost / const.Rsun
@@ -1752,9 +1810,6 @@ class StepSN(object):
                 binary.mass_transfer_case = 'None'
 
             else:
-                for key in BINARYPROPERTIES:
-                    if key != 'nearest_neighbour_distance':
-                        setattr(binary, key, None)
                 # update the tilt
                 if not binary.first_SN_already_occurred:
                     binary.star_1.spin_orbit_tilt_first_SN = np.nan
@@ -1830,6 +1885,7 @@ class StepSN(object):
 
         return Vkick
         
+
     def get_combined_tilt(self, tilt_1, tilt_2, true_anomaly_1, true_anomaly_2):
         """Get the combined spin-orbit-tilt after two supernovae, assuming
         the spin as not realigned with the orbital angular momentum after
@@ -1915,8 +1971,9 @@ class StepSN(object):
             CO_core_mass = star.co_core_mass_at_He_depletion
 
             if (C_core_abundance is None) or (CO_core_mass is None):
-                raise ValueError(
-                    'The history did not contain core masses at He depletion!')
+                raise ValueError('The history did not contain core masses at'
+                                 f' He depletion! {CO_core_mass}'
+                                 f' {C_core_abundance}')
 
         return CO_core_mass, C_core_abundance
 

@@ -235,13 +235,16 @@ class PostProcessingPipeline:
                     if (attribute not in self.pipeline_kwargs[step_number].\
                         keys() or not isinstance(self.pipeline_kwargs\
                         [step_number][attribute], list)):
-                        if last_step not in self.pipeline_kwargs.keys():
-                            raise KeyError(f'{step_number} has no {attribute}')
-                        else: # infer missing attribute from last step
+                        if (last_step in self.pipeline_kwargs.keys()\
+                            and attribute in\
+                            self.pipeline_kwargs[step_number].keys()):
+                            # infer missing attribute from last step
                             print(f"\ncopy {attribute} from {last_step} to "
                                   f"{step_number}")
                             self.pipeline_kwargs[step_number][attribute] = \
                                     self.pipeline_kwargs[last_step][attribute]
+                        else:
+                            raise KeyError(f'{step_number} has no {attribute}')
                 # replace pre defined sets
                 if 'CREATE_PLOTS' in self.pipeline_kwargs[step_number].keys():
                     for set_name, set_content in PLOTTING_SETS.items():
@@ -296,6 +299,8 @@ class PostProcessingPipeline:
                  )
         
         previously_created_files = []
+        plot_dirs = []
+        pipeline_steps = []
         
         # create a runfile script
         with open('run_pipeline.sh', 'w') as runfile:
@@ -331,11 +336,19 @@ class PostProcessingPipeline:
                         PATH_TO_POSYDON=self.PATH_TO_POSYDON,
                         **{**step_kwargs, **setup_kwargs, **account_kwargs}
                     )
+                    pipeline_steps.append(step_number)
                     # add job to the list in the runfile script
                     expand_runfile(runfile, last_step=last_step,
                                    step_number=step_number)
-                    # remember that this step was done
+                    # remember that this step was done last
                     last_step = step_number
+                    # add cleanup
+                    if create_cleanup_slurm_job(job_name=step_number,\
+                        step_name=step_number,\
+                        **{**step_kwargs, **setup_kwargs, **account_kwargs}):
+                        pipeline_steps.append(step_number+"_cleanup")
+                        expand_runfile(runfile, last_step=last_step,
+                                       step_number=step_number+"_cleanup")
                 
                 for sub_step, step_extension in SUB_STEPS_TO_EXTENSION.items():
                     if sub_step not in self.pipeline_kwargs[step_number].keys():
@@ -346,7 +359,7 @@ class PostProcessingPipeline:
                         # step and the sub-step extension.
                         sub_step_number = step_number+step_extension
                         # create csv file for sub step
-                        create_csv(
+                        plot_dirs += create_csv(
                             step_name=sub_step_number,
                             previously_created_files=previously_created_files,
                             **{**step_kwargs, **setup_kwargs}
@@ -358,10 +371,45 @@ class PostProcessingPipeline:
                             PATH_TO_POSYDON=self.PATH_TO_POSYDON,
                             **{**step_kwargs, **setup_kwargs, **account_kwargs}
                         )
+                        pipeline_steps.append(sub_step_number)
                         # add job to the list in the runfile script
                         expand_runfile(runfile, last_step=last_step,
                                        step_number=sub_step_number)
+                        # add cleanup
+                        if create_cleanup_slurm_job(job_name=sub_step_number,\
+                            step_name=step_number,\
+                            **{**step_kwargs, **setup_kwargs, **account_kwargs}):
+                            pipeline_steps.append(sub_step_number+"_cleanup")
+                            expand_runfile(runfile, last_step=sub_step_number,
+                                           step_number=sub_step_number+"_cleanup")
                         # there are no dependencies supported on sub steps
+                        # beside the cleanup
+            # add cleanup for pipeline
+            if create_cleanup_slurm_job(job_name='pipeline',\
+                step_name='pipeline',\
+                **{**step_kwargs, **setup_kwargs, **account_kwargs}):
+                # create csv with all created files
+                df = pd.DataFrame()
+                if 'PATH' in setup_kwargs.keys():
+                    PATH = setup_kwargs['PATH']
+                else:
+                    PATH = '.'
+                df['pipeline_files'] = previously_created_files + list(set(plot_dirs))
+                df.to_csv(os.path.join(PATH, 'pipeline_files.csv'), header=False, index=False)
+                
+                # add cleanup to run script
+                submission_line = f"IDpipeline_cleanup=$(sbatch --parsable "
+                for i, step in enumerate(pipeline_steps):
+                    if i==0:
+                        submission_line += "--dependency="
+                    else:
+                        submission_line += ","
+                    submission_line += "afterany:$""{"f"ID{step}""}"
+                submission_line += " --kill-on-invalid-dep=yes "
+                submission_line += f"pipeline_cleanup.slurm)\n"
+                runfile.write(submission_line)
+                runfile.write(f"echo 'pipeline_cleanup.slurm submitted as '$"
+                              "{"f"IDpipeline_cleanup""}"f"\n")
         # make the runfile script executable
         os.system("chmod 755 run_pipeline.sh")
 
@@ -384,6 +432,11 @@ class PostProcessingPipeline:
                 step_log_path = os.path.join(logs_path, step_number)
                 if not os.path.isdir(step_log_path):
                     os.makedirs(step_log_path)
+        # create sub directory for cleanup
+        step_log_path = os.path.join(logs_path, 'cleanup')
+        if not os.path.isdir(step_log_path):
+             os.makedirs(step_log_path)
+        
 
     def create_export_dirs(self):
         """Create directories for the finally exported data."""
@@ -497,53 +550,20 @@ def slurm_job(job_name,
         else:
             path_to_logs = os.path.join(PATH, 'logs', job_name)
         
-        if job_name == 'step_1': # CREATE_GRID_SLICES
-            f.write("#SBATCH --open-mode=truncate\n")
-            f.write(f"#SBATCH --output={path_to_logs}/grid_slice_%a.out\n")
-        
-        if job_name == 'step_2': # COMBINE_GRID_SLICES
-            path_to_out_file = copy_old_log_file(path_to_logs=path_to_logs,
-                                log_file='combine_grid_slices')
-            f.write("#SBATCH --open-mode=append\n")
-            f.write(f"#SBATCH --output={path_to_out_file}\n")
+        log_file_name = get_log_file_name(job_name=job_name,\
+                                          step_name=step_name)
+        f.write("#SBATCH --open-mode=truncate\n")
+        f.write(f"#SBATCH --output={path_to_logs}/{log_file_name}\n")
         
         if job_name == 'step_3': # CALCULATE_EXTRA_VALUES
-            f.write("#SBATCH --open-mode=truncate\n")
-            f.write(f"#SBATCH --output={path_to_logs}/post_processing_%a.out\n")
             f.write(f"export PATH_TO_POSYDON={PATH_TO_POSYDON}\n")
-        
-        if job_name == 'step_4': # TRAIN_INTERPOLATORS
-            f.write("#SBATCH --open-mode=truncate\n")
-            f.write(f"#SBATCH --output={path_to_logs}/train_interpolators_%a.out\n")
-        
-        if job_name == 'step_9': # EXPORT_DATASET
-            path_to_out_file = copy_old_log_file(path_to_logs=path_to_logs,
-                                                 log_file='export_dataset')
-            f.write("#SBATCH --open-mode=append\n")
-            f.write(f"#SBATCH --output={path_to_out_file}\n")
-        
-        if job_name == 'rerun': # RERUN
-            path_to_out_file = copy_old_log_file(path_to_logs=path_to_logs,
-                                                 log_file='rerun')
-            f.write("#SBATCH --open-mode=append\n")
-            f.write(f"#SBATCH --output={path_to_out_file}\n")
-        
+                
         if 'plot' in job_name: # PLOTS
-            path_to_out_file = copy_old_log_file(path_to_logs=path_to_logs,
-                                                 log_file='plots_'+step_name)
-            f.write("#SBATCH --open-mode=append\n")
-            f.write(f"#SBATCH --output={path_to_out_file}\n")
             f.write("unset DISPLAY\n")
-        
-        if 'check' in job_name: # CHECKS
-            path_to_out_file = copy_old_log_file(path_to_logs=path_to_logs,
-                                                 log_file='checks_'+step_name)
-            f.write("#SBATCH --open-mode=append\n")
-            f.write(f"#SBATCH --output={path_to_out_file}\n")
         
         # get path to run the pipeline
         path_to_run_pipeline = os.path.join(PATH_TO_POSYDON, 'bin',
-                                            'run-pipeline')
+                                            'posydon-run-pipeline')
         # encode the verbose information for running the pipeline as a command
         # line argument
         if VERBOSE and 'check' not in job_name:
@@ -560,6 +580,7 @@ def create_csv(GRID_TYPES=[],
                step_name='',
                VERSION='',
                GRIDS_COMBINED=[],
+               ORIGINAL_COMPRESSIONS=[],
                INTERPOLATION_METHODS=[],
                CONTROL_GRIDS=[],
                STOP_BEFORE_CARBON_DEPLETION=0,
@@ -568,7 +589,7 @@ def create_csv(GRID_TYPES=[],
                CREATE_PLOTS=[],
                DO_CHECKS=[],
                PATH_TO_GRIDS='',
-               PATH='',
+               PATH='.',
                previously_created_files=[],
                **kwargs):
     """Create csv file with a list containing all data to process a step."""
@@ -584,6 +605,11 @@ def create_csv(GRID_TYPES=[],
         # given to create them.
         if N != len(GRIDS_COMBINED):
             raise ValueError('len(GRID_TYPES) != len(GRIDS_COMBINED)!')
+    elif step_name == 'step_3':
+        # here we need a reference grid with ORIGINAL compression to
+        # calculated the extra quantities from.
+        if N != len(ORIGINAL_COMPRESSIONS):
+            raise ValueError('len(GRID_TYPES) != len(ORIGINAL_COMPRESSIONS)!')
     elif 'step_4_' in step_name:
         # sub steps of the interpolator training need a control grid
         if len(GRID_SLICES) != len(CONTROL_GRIDS):
@@ -591,11 +617,14 @@ def create_csv(GRID_TYPES=[],
 
     grids = []
     grids_compression = []
+    grids_type = []
     stop_before_carbon_depletion = []
     grids_ORIGINAL = []
     processed_grids = []
+    interpolation_methods = []
     interpolators = []
     export_path = []
+    rerun_metallicities = []
     rerun_path = []
     rerun_type = []
     plot_dirs = []
@@ -608,6 +637,9 @@ def create_csv(GRID_TYPES=[],
         METALLICITIES_ = METALLICITIES[l]
         GRID_SLICES_ = GRID_SLICES[l]
         COMPRESSIONS_ = COMPRESSIONS[l]
+        if (isinstance(ORIGINAL_COMPRESSIONS, list) and\
+            len(ORIGINAL_COMPRESSIONS)>0):
+            ORIGINAL_COMPRESSIONS_ = ORIGINAL_COMPRESSIONS[l]
         # loop over all metallicities, grid slices and compressions
         for metallicity in METALLICITIES_:
             for i, grid_slice in enumerate(GRID_SLICES_):
@@ -623,7 +655,15 @@ def create_csv(GRID_TYPES=[],
                                                   VERSION, metallicity,
                                                   grid_slice))
                         grids_compression.append(compression)
+                        grids_type.append(grid_type)
                         stop_before_carbon_depletion.append(STOP_BEFORE_CARBON_DEPLETION)
+                        if i==0:
+                            compression_dir = os.path.join(PATH_TO_GRIDS,
+                                                           grid_type, VERSION,
+                                                           metallicity,
+                                                           compression)
+                            if not os.path.isdir(compression_dir):
+                                newly_created_files.append(compression_dir)
                     elif step_name == 'step_2': # COMBINE_GRID_SLICES
                         if len(GRID_SLICES[l]) != len(GRIDS_COMBINED[l]):
                             raise ValueError(f'len(GRID_SLICES[{l}]) != '
@@ -644,12 +684,22 @@ def create_csv(GRID_TYPES=[],
                         df_tmp[path_to_grid_combined] = combine_grid_slices
                         df = pd.concat([df,df_tmp], axis=1)
                     elif step_name == 'step_3': # CALCULATE_EXTRA_VALUES
+                        if (isinstance(ORIGINAL_COMPRESSIONS_, list) and\
+                            len(ORIGINAL_COMPRESSIONS_)>0):
+                            # use one orginal for all compressions, hence use
+                            # first one and ignore others
+                            original_compression = ORIGINAL_COMPRESSIONS_[0]
+                        else:
+                            # if not defined assume 'ORIGINAL'
+                            original_compression = 'ORIGINAL'
                         grids.append(os.path.join(PATH_TO_GRIDS,
                                       grid_type, VERSION, metallicity,
                                       compression, grid_slice+'.h5'))
+                        grids_type.append(grid_type)
                         grids_ORIGINAL.append(os.path.join(PATH_TO_GRIDS,
                                                grid_type, VERSION,
-                                               metallicity, 'ORIGINAL'+RLO,
+                                               metallicity,
+                                               original_compression+RLO,
                                                grid_slice+'.h5'))
                         processed_grids.append(os.path.join(PATH_TO_GRIDS,
                                                 grid_type, VERSION,
@@ -660,11 +710,20 @@ def create_csv(GRID_TYPES=[],
                             grids.append(os.path.join(PATH_TO_GRIDS,
                                           grid_type, VERSION, metallicity,
                                           compression, grid_slice+'.h5'))
+                            grids_type.append(grid_type)
+                            interpolation_methods.append(method+RLO)
                             interpolators.append(os.path.join(PATH_TO_GRIDS,
                                                   grid_type, VERSION,
                                                   metallicity,
                                                   'interpolation_objects',
                                                   'IF_'+method+RLO+'.pkl'))
+                        if i==0:
+                            interpolator_dir = os.path.join(PATH_TO_GRIDS,
+                                                grid_type, VERSION,
+                                                metallicity,
+                                                'interpolation_objects')
+                            if not os.path.isdir(interpolator_dir):
+                                newly_created_files.append(interpolator_dir)
                     elif step_name == 'step_9': # EXPORT_DATASET
                         if "RLO" in grid_type:
                             export_dir = grid_type
@@ -692,6 +751,8 @@ def create_csv(GRID_TYPES=[],
                         rerun_path.append(os.path.join(PATH_TO_GRIDS,
                                            grid_type, VERSION, metallicity,
                                            'rerun_'+RERUN_TYPE+'_'+grid_slice))
+                        grids_type.append(grid_type)
+                        rerun_metallicities.append(metallicity)
                         rerun_type.append(RERUN_TYPE)
                     
                     if (('plot' in step_name) or ('check' in step_name)):
@@ -730,6 +791,7 @@ def create_csv(GRID_TYPES=[],
                                                   grid_type, VERSION,
                                                   metallicity, compression,
                                                   grid_s+'.h5'))
+                                    grids_type.append(grid_type)
                                     plot_dirs.append(os.path.join(PATH_TO_GRIDS,
                                                           grid_type, VERSION,
                                                           metallicity, 'plots',
@@ -741,6 +803,12 @@ def create_csv(GRID_TYPES=[],
                                                               metallicity,
                                                               'interpolation_objects',
                                                               'IF_'+method+RLO+'.pkl'))
+                            if i==0:
+                                plots_dir = os.path.join(PATH_TO_GRIDS,
+                                                         grid_type, VERSION,
+                                                         metallicity, 'plots')
+                                if not os.path.isdir(plots_dir):
+                                    newly_created_files.append(plots_dir)
                         elif 'check' in step_name: # CHECKS
                             # loop over interpolation methods and checks
                             for method in INTERPOLATION_METHODS:
@@ -766,18 +834,25 @@ def create_csv(GRID_TYPES=[],
         df['path_to_grid'] = grids
         if step_name == 'step_1':
             df['compression'] = grids_compression
+            df['grid_type'] = grids_type
             df['stop_before_carbon_depletion'] = stop_before_carbon_depletion
         elif step_name == 'step_3':
+            df['grid_type'] = grids_type
             df['path_to_grid_ORIGINAL'] = grids_ORIGINAL
             df['path_to_processed_grid'] = processed_grids
         elif step_name == 'step_4':
+            df['grid_type'] = grids_type
+            df['interpolation_method'] = interpolation_methods
             df['path_to_interpolator'] = interpolators
         elif step_name == 'step_9':
             df['export_path'] = export_path
         elif step_name == 'rerun':
             df['rerun_path'] = rerun_path
+            df['grid_type'] = grids_type
+            df['rerun_metallicity'] = rerun_metallicities
             df['rerun_type'] = rerun_type
         elif 'plot' in step_name:
+            df['grid_type'] = grids_type
             df['quantities_to_plot'] = plot_quantities
             df['path_to_plot'] = plot_dirs
             if len(interpolators)>0:
@@ -828,13 +903,15 @@ def create_csv(GRID_TYPES=[],
                 compression = df.at[row,'compression']
                 newly_created_files.append(get_new_grid_name(path,compression))
         elif step_name == 'step_3':
-            newly_created_files = df['path_to_processed_grid'].to_list()
+            newly_created_files.extend(df['path_to_processed_grid'].to_list())
         elif step_name == 'step_4':
-            newly_created_files = df['path_to_interpolator'].to_list()
+            newly_created_files.extend(df['path_to_interpolator'].to_list())
         elif step_name == 'step_9':
-            newly_created_files = df['export_path'].to_list()
+            newly_created_files.extend(df['export_path'].to_list())
         elif step_name == 'rerun':
-            newly_created_files = df['rerun_path'].to_list()
+            newly_created_files.extend(df['rerun_path'].to_list())
+        elif 'plot' in step_name:
+            newly_created_files.extend(plot_dirs)
     else: # step 2
         # drop columns when psygrid files are not found
         if DROP_MISSING_FILES:
@@ -880,12 +957,123 @@ def create_csv(GRID_TYPES=[],
                     print(column)
                 print('')
             df = df.dropna(axis=0, how='all').dropna(axis=1, how='all')
-        newly_created_files = df.keys().to_list()
+        newly_created_files.extend(df.keys().to_list())
     # finally save data frame
     output_fname = f'{step_name}.csv'
     df.to_csv(os.path.join(PATH, output_fname), index=False)
     # return list of new files created by that step
     return newly_created_files
+
+def create_cleanup_slurm_job(job_name,
+                             step_name,
+                             PATH='.',
+                             ACCOUNT=None,
+                             PARTITION=None,
+                             WALLTIME=None,
+                             MAILTYPE=None,
+                             EMAIL=None,
+                             GROUP=None,
+                             VERBOSE=False,
+                             **kwargs):
+    """Create slurm file for cleanup job."""
+    if ((job_name == 'step_2') or (job_name == 'step_9') or
+        (job_name == 'rerun') or ('plot' in job_name) or
+        ('check' in job_name) or
+        ((job_name == 'pipeline') and (GROUP is not None))):
+        with open(f'{job_name}_cleanup.slurm', 'w') as f:
+            # write slurm file content
+            f.write("#!/bin/bash\n")
+            if ACCOUNT is not None:
+                f.write(f"#SBATCH --account={ACCOUNT}\n")
+            if PARTITION is not None:
+                f.write(f"#SBATCH --partition={PARTITION}\n")
+            f.write("#SBATCH -N 1\n")
+            f.write("#SBATCH --cpus-per-task 1\n")
+            f.write("#SBATCH --ntasks-per-node 1\n")
+            if WALLTIME is not None:
+                f.write(f"#SBATCH --time={WALLTIME}\n")
+            f.write(f"#SBATCH --job-name=cleanup\n")
+            f.write("#SBATCH --mem-per-cpu=4G\n")
+            if (EMAIL is not None):
+                f.write(f"#SBATCH --mail-type=FAIL\n")
+                f.write(f"#SBATCH --mail-user={EMAIL}\n")
+            path_to_logs = os.path.join(PATH, 'logs', 'cleanup')
+            log_file_name = get_log_file_name(job_name="cleanup",\
+                                              step_name=job_name)
+            f.write("#SBATCH --open-mode=truncate\n")
+            f.write(f"#SBATCH --output={path_to_logs}/{log_file_name}\n")
+            # get logs path and set the output of the slurm job
+            if step_name in job_name:
+                path_to_log_files = os.path.join(PATH, 'logs', step_name)
+            else:
+                path_to_log_files = os.path.join(PATH, 'logs', job_name)
+            if ((job_name == 'step_2') or (job_name == 'step_9') or
+                (job_name == 'rerun') or ('plot' in job_name) or
+                ('check' in job_name)):
+                # combine logs
+                old_log_file_names = get_log_file_name(job_name=job_name,\
+                                                       step_name=step_name)
+                new_log_file_name = old_log_file_names.replace("_%4a", "s")
+                old_log_file_names = old_log_file_names.replace("_%4a", "_*")
+                f.write(f"\ncat {path_to_log_files}/{old_log_file_names} >"
+                        f" {path_to_log_files}/{new_log_file_name}")
+                f.write(f"\nrm {path_to_log_files}/{old_log_file_names}")
+            if (job_name == 'pipeline'):
+                if GROUP is not None:
+                    f.write(f"\necho \"Change group to {GROUP} and group "
+                            "permission to rwX at least for all files stated "
+                            f"in {PATH}/pipeline_files.csv\"")
+                    f.write(f"\nfor FILE in $(cat {PATH}/pipeline_files.csv); do")
+                    f.write(f"\n  chgrp -fR {GROUP} $""{FILE};")
+                    f.write("\n  chmod -fR g+rwX ${FILE};")
+                    f.write("\ndone")
+                    f.write(f"\necho \"Acting on {PATH} and all subdirectories"
+                            "/files in there\"")
+                    f.write(f"\necho \"Change group to {GROUP}\"")
+                    f.write(f"\nchgrp -fR {GROUP} {PATH}")
+                    f.write("\necho \"Change group permission to rwX at least\"")
+                    f.write(f"\nchmod -fR g+rwX {PATH}")
+                    f.write(f"\necho \"Done, check {PATH}:\"")
+                    f.write(f"\nls -al {PATH}")
+    else:
+        return False
+    return True
+
+def get_log_file_name(job_name, step_name):
+    """Get name of log file
+
+    Parameters
+    ----------
+    job_name : string
+        Name of the job.
+    step_name : string
+        Name of the step/parent job the job belongs to.
+
+    Returns
+    -------
+    string
+        Name of the log file.
+
+    """
+    if job_name == 'step_1': # CREATE_GRID_SLICES
+        return "grid_slice_%4a.out"
+    if job_name == 'step_2': # COMBINE_GRID_SLICES
+        return "combine_grid_slice_%4a.out"
+    if job_name == 'step_3': # CALCULATE_EXTRA_VALUES
+        return "post_processing_%4a.out"
+    if job_name == 'step_4': # TRAIN_INTERPOLATORS
+        return "train_interpolator_%4a.out"
+    if job_name == 'step_9': # EXPORT_DATASET
+        return "export_dataset_%4a.out"
+    if job_name == 'rerun': # RERUN
+        return "rerun_%4a.out"
+    if 'plot' in job_name: # PLOTS
+        return "plots_"+step_name+"_slice_%4a.out"
+    if 'check' in job_name: # CHECKS
+        return "checks_"+step_name+"_slice_%4a.out"
+    if 'cleanup' in job_name: # CLEANUPS
+        return "cleanup_"+step_name+".out"
+    return "log.out"
 
 
 if __name__ == '__main__':

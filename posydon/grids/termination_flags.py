@@ -164,7 +164,7 @@ def get_mass_transfer_flag(binary_history, history1, history2,
             mass_transfer_cases.append(mt_case)
         MT[where_rlof] = [t+10 for t in mass_transfer_cases] # shift by 10
 
-    flag = cumulative_mass_transfer_flag([t for t in MT if t is not None])
+    flag = cumulative_mass_transfer_flag([t for t in MT if t is not None], shift_cases=True)
     return flag
 
 
@@ -245,7 +245,10 @@ def infer_interpolation_class(tf1, tf2):
     if tf2 in TF2_POOL_NO_RLO:
         return "no_MT"
     if tf1 in TF1_POOL_STABLE:
-        return "stable_MT"
+        if 'case' in tf2 and '1' in tf2 and '2' in tf2:
+            return "stable_reverse_MT"
+        else:
+            return "stable_MT"
     if tf1 in TF1_POOL_UNSTABLE:
         return "unstable_MT"
     return "unknown"
