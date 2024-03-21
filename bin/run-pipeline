@@ -461,7 +461,7 @@ def copy_ini_file(grid_path, rerun_type, destination, cluster):
         replace_text = "fix_iniHe_pre_rerun5-0e736a853c3c2e522b76299a54aea8f5eea15d08"
     elif rerun_type == "timestep_MTlimit":
         replace_text = "seth_HMS-HMS_rerun_accretion_fix-0d5ec079df47c8411895c9a8ab7ef08f469ba9bc"
-    elif rerun_type == "MLTpOFF":
+    elif rerun_type == "egrav_Pgas_dXdt_terms":
         replace_text = "development-435d16c9158e4608530f21b8169ce6f31160e23e"
     elif rerun_type == 'other': # e.g. 'envelope_mass_limit', 'fe_core_infall_limit'
         # this rerun uses the default inlist commit
@@ -603,9 +603,11 @@ def logic_rerun(grid, rerun_type):
         runs_to_rerun = np.array(runs_to_rerun)
     elif rerun_type == 'timestep_MTlimit':
         termination_flags = TF1_POOL_ERROR
-    elif rerun_type == 'MLTpOFF':
+    elif rerun_type == 'egrav_Pgas_dXdt_terms':
         termination_flags = TF1_POOL_ERROR #['reach cluster timelimit']
-        new_mesa_flag = {'okay_to_reduce_gradT_excess': '.false.'}
+        new_mesa_flag = {'include_composition_in_eps_grav': '.true.',
+                         'change_initial_lnPgas_flag': '.true.',
+                         'new_lnPgas_flag': '.true.'}
     elif rerun_type == 'envelope_mass_limit': # maybe 'fe_core_infall_limit' as well?
         runs_to_rerun = None # implement logic
     else:
