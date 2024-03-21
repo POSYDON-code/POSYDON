@@ -123,10 +123,17 @@ def create_grid_slice(i, path_to_csv_file, verbose=False, overwrite_psygrid=True
         compression = df.loc[i,'compression']
     else:
         raise ValueError(f'No compression in {path_to_csv_file}')
+    if 'grid_type' in df.keys():
+        grid_type = df.loc[i,'grid_type']
+    else:
+        raise ValueError(f'No grid_type in {path_to_csv_file}')
     if 'stop_before_carbon_depletion' in df.keys():
         stop_before_carbon_depletion = df.loc[i,'stop_before_carbon_depletion']
-        if 'HMS' not in grid_path:
+        if 'HMS' not in grid_type:
             stop_before_carbon_depletion = False
+            if verbose:
+                print('stop_before_carbon_depletion set to False for non HMS'\
+                      f' gird: {grid_type} in {grid_path}')
     else:
         stop_before_carbon_depletion = False
     
@@ -145,7 +152,7 @@ def create_grid_slice(i, path_to_csv_file, verbose=False, overwrite_psygrid=True
         raise ValueError(f'pure_compression = {pure_compression} not '
                          f'supported! (compression={compression})')
     
-    if ('CO' in grid_path) and ('RLO' in compression):
+    if ('CO' in grid_type) and ('RLO' in compression):
         start_at_RLO = True
     else:
         start_at_RLO = False
@@ -209,6 +216,10 @@ def calculate_extra_values(i, path_to_csv_file, verbose=False):
             raise ValueError(f'{grid_path} not found!')
     else:
         raise ValueError(f'No path_to_grid in {path_to_csv_file}')
+    if 'grid_type' in df.keys():
+        grid_type = df.loc[i,'grid_type']
+    else:
+        raise ValueError(f'No grid_type in {path_to_csv_file}')
     if 'path_to_processed_grid' in df.keys():
         processed_grid_path = df.loc[i,'path_to_processed_grid']
     else:
@@ -222,7 +233,7 @@ def calculate_extra_values(i, path_to_csv_file, verbose=False):
     
     if verbose:
         print(f'Compute processed quantities for {grid_path} ...')
-    if 'CO' in grid_path:
+    if 'CO' in grid_type:
         star_2_CO = True
     else:
         star_2_CO = False
@@ -265,12 +276,20 @@ def train_interpolators(i, path_to_csv_file, verbose=False):
             raise ValueError(f'{grid_path} not found!')
     else:
         raise ValueError(f'No path_to_grid in {path_to_csv_file}')
+    if 'grid_type' in df.keys():
+        grid_type = df.loc[i,'grid_type']
+    else:
+        raise ValueError(f'No grid_type in {path_to_csv_file}')
+    if 'interpolation_method' in df.keys():
+        interpolation_method = df.loc[i,'interpolation_method']
+    else:
+        raise ValueError(f'No interpolation_method in {path_to_csv_file}')
     if 'path_to_interpolator' in df.keys():
         interpolator_path = df.loc[i,'path_to_interpolator']
     else:
         raise ValueError(f'No path_to_interpolator in {path_to_csv_file}')
     
-    method = os.path.splitext(interpolator_path.split('IF_')[-1])[0]
+    method = interpolation_method
     if '_RLO' in method:
         method = method.split('_RLO')[0]
     
@@ -286,12 +305,14 @@ def train_interpolators(i, path_to_csv_file, verbose=False):
     grid = PSyGrid(verbose=verbose)
     grid.load(grid_path)
     
-    if '_RLO' in grid_path:
-        interp_method = [method, method]
-        interp_classes = ["stable_MT", "unstable_MT"]
-    else:
-        interp_method = [method, method, method]
-        interp_classes = ["no_MT", "stable_MT", "unstable_MT"]
+    interp_method = [method, method]
+    interp_classes = ["stable_MT", "unstable_MT"]
+    if '_RLO' not in interpolation_method:
+        interp_method += [method]
+        interp_classes += ["no_MT"]
+    if 'CO' not in grid_type:
+        interp_method += [method]
+        interp_classes += ["stable_reverse_MT"]
     
     # all magnitues that are not model numbers, supernova properites or strings
     # are interpolated with respect to interpolation_class
@@ -335,10 +356,10 @@ def train_interpolators(i, path_to_csv_file, verbose=False):
             # get interpolations classes dynamically
             interp_method = []
             interp_classes = []
-            for CO_type in ["BH", "NS", "WD"]:
-                if CO_type in grid.final_values[f'S{i}_{MODEL_NAME}_CO_type']:
+            for CO_interpolation_class in ["BH", "NS", "WD", "BH_reverse_MT"]:
+                if CO_interpolation_class in grid.final_values[f'S{i}_{MODEL_NAME}_CO_interpolation_class']:
                     interp_method.append(method)
-                    interp_classes.append(CO_type)
+                    interp_classes.append(CO_interpolation_class)
 
             interpolators.append(
                 {
@@ -346,8 +367,8 @@ def train_interpolators(i, path_to_csv_file, verbose=False):
                     "interp_classes": interp_classes,
                     "out_keys": out_keys,
                     "class_method": "kNN",
-                    "c_keys": [f'S{i}_{MODEL_NAME}_CO_type'],
-                    "c_key": f'S{i}_{MODEL_NAME}_CO_type'
+                    "c_keys": [f'S{i}_{MODEL_NAME}_CO_interpolation_class'],
+                    "c_key": f'S{i}_{MODEL_NAME}_CO_interpolation_class'
                 },   
             )
     
@@ -386,54 +407,55 @@ def export_dataset(i, path_to_csv_file, verbose=False):
     shutil.copyfile(grid_path, export_path)
 
 
-def zams_file_name(dirname):
+def zams_file_name(metallicity):
     """Gives the name of the ZAMS file depending on the metallicity."""
     
-    if '2e+00_Zsun' in dirname:
+    if '2e+00_Zsun' in metallicity:
         zams_filename = 'zams_z2.84m2_y0.2915.data'
-    elif '1e+00_Zsun'  in dirname:
+    elif (('1e+00_Zsun' in metallicity)or(pd.isna(metallicity))):
+        # in v1 there is no metallicity, hence am empty string
         zams_filename = 'zams_z1.42m2_y0.2703.data'
-    elif '4.5e-01_Zsun'  in dirname:
+    elif '4.5e-01_Zsun' in metallicity:
         zams_filename = 'zams_z6.39m3_y0.2586.data'
-    elif '2e-01_Zsun' in dirname:
+    elif '2e-01_Zsun' in metallicity:
         zams_filename = 'zams_z2.84m3_y0.2533.data'
-    elif '1e-01_Zsun' in dirname:
+    elif '1e-01_Zsun' in metallicity:
         zams_filename = 'zams_z1.42m3_y0.2511.data'
-    elif '1e-02_Zsun' in dirname:
+    elif '1e-02_Zsun' in metallicity:
         zams_filename = 'zams_z1.42m4_y0.2492.data'
-    elif '1e-03_Zsun' in dirname:
+    elif '1e-03_Zsun' in metallicity:
         zams_filename = 'zams_z1.42m5_y0.2490.data'
-    elif '1e-04_Zsun' in dirname:
+    elif '1e-04_Zsun' in metallicity:
         zams_filename = 'zams_z1.42m6_y0.2490.data'
     else:
         raise ValueError(f'Metallicity unknown: {dirname}')
     return zams_filename
 
 
-def copy_ini_file(grid_path, rerun_type, destination, cluster):
+def copy_ini_file(grid_type, rerun_metallicity, rerun_type, destination, cluster):
     """Copies the ini file and make replacements according to the rerun."""
     
     # copy the default ini file to directory
     if cluster in ['quest','yggdrasil']:
         ini_dir_path = os.path.join(PATH_TO_POSYDON,
                     'grid_params/POSYDON-MESA-INLISTS/r11701/running_scripts')
-        if "single_HMS" in grid_path:
+        if "single_HMS" in grid_type:
             ini_file_path = os.path.join(ini_dir_path, f'single_HMS_{cluster}.ini')
             ini_file_dest = os.path.join(destination, f'single_HMS_{cluster}.ini')
-        elif "single_HeMS" in grid_path:
+        elif "single_HeMS" in grid_type:
             ini_file_path = os.path.join(ini_dir_path, f'single_HeMS_{cluster}.ini')
             ini_file_dest = os.path.join(destination, f'single_HeMS_{cluster}.ini')
-        elif "HMS-HMS" in grid_path:
+        elif "HMS-HMS" in grid_type:
             ini_file_path = os.path.join(ini_dir_path, f'HMS-HMS_{cluster}.ini')
             ini_file_dest = os.path.join(destination, f'HMS-HMS_{cluster}.ini')
-        elif "CO-HMS_RLO" in grid_path:
+        elif "CO-HMS" in grid_type:
             ini_file_path = os.path.join(ini_dir_path, f'CO-HMS_RLO_{cluster}.ini')
             ini_file_dest = os.path.join(destination, f'CO-HMS_RLO_{cluster}.ini')
-        elif "CO-HeMS" in grid_path:
+        elif "CO-HeMS" in grid_type:
             ini_file_path = os.path.join(ini_dir_path, f'CO-HeMS_{cluster}.ini')
             ini_file_dest = os.path.join(destination, f'CO-HeMS_{cluster}.ini')
         else:
-            raise ValueError(f'Unsupported grid type in {grid_path}!')
+            raise ValueError(f'Unsupported grid type: {grid_type}!')
         shutil.copyfile(ini_file_path, ini_file_dest)
     else:
         raise ValueError(f'Unsupported cluster {cluster}!')
@@ -473,7 +495,7 @@ def copy_ini_file(grid_path, rerun_type, destination, cluster):
     search_text1 = "main-18710e943edd926a5653c4cdb7d6e18e5bdb35a2"
     search_text2 = "main-a060b7bf1a4d94d693f77be9a1b0b3a522c1eadf"
     search_text3 = 'zams_z1.42m3_y0.2511.data'
-    replace_zams_filename = zams_file_name(grid_path)
+    replace_zams_filename = zams_file_name(rerun_metallicity)
     with open(ini_file_dest, 'r') as file:
         data = file.read()
         data = data.replace(search_text1, replace_text)
@@ -638,6 +660,14 @@ def rerun(i, path_to_csv_file, verbose=False):
         rerun_path = df.loc[i,'rerun_path']
     else:
         raise ValueError(f'No rerun_path in {path_to_csv_file}')
+    if 'grid_type' in df.keys():
+        grid_type = df.loc[i,'grid_type']
+    else:
+        raise ValueError(f'No grid_type in {path_to_csv_file}')
+    if 'rerun_metallicity' in df.keys():
+        rerun_metallicity = df.loc[i,'rerun_metallicity']
+    else:
+        raise ValueError(f'No rerun_metallicity in {path_to_csv_file}')
     if 'rerun_type' in df.keys():
         rerun_type = df.loc[i,'rerun_type']
     else:
@@ -664,32 +694,44 @@ def rerun(i, path_to_csv_file, verbose=False):
         cluster = 'quest'
     else:
         cluster = 'yggdrasil'
-    copy_ini_file(grid_path, rerun_type, destination=rerun_path, cluster=cluster)
+    copy_ini_file(grid_type, rerun_metallicity, rerun_type, destination=rerun_path, cluster=cluster)
 
 
 def plot_grid(i, path_to_csv_file, verbose=False):
     """Creates plots of a grid."""
-    # grid mass ranges
+    # grid mass ranges:
+    # min and max values might get updated, than the step is used to update the
+    # nbin (in case of log==True the step is in log space)
     grid_sample = {
         'HMS-HMS' : {
             'log' : False,
             'nbin' : 20,
             'qmin' : 0.05,
             'qmax' : 1.,
+            'step' : 0.05,
         },
         'CO-HeMS' : {
             'log' : True,
             'nbin' : 23,
             'mmin' : 1.0,
-            'mmax' : 51.328,
+            'mmax' : 51.32759630397827,
+            'step' : 0.0777432239326138,
         },
         'CO-HMS' : {
             'log' : True,
             'nbin' : 23,
             'mmin' : 1.0,
-            'mmax' : 51.328,
+            'mmax' : 51.32759630397827,
+            'step' : 0.0777432239326138,
         }
     }
+    
+    def _nbin(x_min, x_max, step, log=False):
+        if log:
+            nbin = (np.log10(x_max)-np.log10(x_min))/step
+        else:
+            nbin = (x_max-x_min)/step
+        return int(nbin)+1
     
     def _range(x_min, x_max, x_n, log=False):
         if log:
@@ -715,6 +757,10 @@ def plot_grid(i, path_to_csv_file, verbose=False):
             raise ValueError(f'{grid_path} not found!')
     else:
         raise ValueError(f'No path_to_grid in {path_to_csv_file}')
+    if 'grid_type' in df.keys():
+        grid_type = df.loc[i,'grid_type']
+    else:
+        raise ValueError(f'No grid_type in {path_to_csv_file}')
     if 'path_to_plot' in df.keys():
         plot_dir = df.loc[i,'path_to_plot']
         plot_path = os.path.dirname(os.path.normpath(plot_dir))
@@ -811,30 +857,40 @@ def plot_grid(i, path_to_csv_file, verbose=False):
         if not os.path.isdir(dir_):
             os.makedirs(dir_)
         
-        if ('CO-' in grid_path):
+        if ('CO' in grid_type):
             # skip plotting CO properties
             if 'S2_' in quantity_to_plot:
                 continue
             # both grids are sampled in the same way with respect to the
             # compact object mass
-            if 'CO-HeMS' in grid_path:
+            if 'CO-HeMS' in grid_type:
                 smpl = grid_sample['CO-HeMS']
             else:
                 smpl = grid_sample['CO-HMS']
+            slice_3D_var_str = 'star_2_mass'
+            min_3D_var = np.min(grid.initial_values[slice_3D_var_str])
+            max_3D_var = np.max(grid.initial_values[slice_3D_var_str])
+            if smpl['mmin']>min_3D_var:
+                smpl['mmin'] = min_3D_var
+                smpl['nbin'] = _nbin(smpl['mmin'], smpl['mmax'], smpl['step'],
+                                     log=smpl['log'])
+            if smpl['mmax']<max_3D_var:
+                smpl['mmax'] = max_3D_var
+                smpl['nbin'] = _nbin(smpl['mmin'], smpl['mmax'], smpl['step'],
+                                     log=smpl['log'])
             vars, vars_edges = _range(smpl['mmin'], smpl['mmax'], smpl['nbin'],
                                       log=smpl['log'])
             fname = 'grid_m_%1.2f.png'
             title = '$m_\mathrm{CO}=%1.2f\,M_\odot$'
-            slice_3D_var_str = 'star_2_mass'
-        elif 'HMS-HMS' in grid_path:        
+        elif 'HMS-HMS' in grid_type:        
             # mass ratio slices
             smpl = grid_sample['HMS-HMS']
+            slice_3D_var_str = 'mass_ratio' 
             vars, vars_edges = _range(smpl['qmin'], smpl['qmax'], smpl['nbin'],
                                       log=smpl['log'])
             vars[-1] = 0.99 # we replaced q=1 with q=0.99 in mesa runs
             fname = 'grid_q_%1.2f.png'
             title = '$q=%1.2f$'
-            slice_3D_var_str = 'mass_ratio' 
         else:
             raise ValueError('Grid type not supported!')
         
@@ -873,7 +929,7 @@ def plot_grid(i, path_to_csv_file, verbose=False):
                     # initial/final error all points in one plot
                     if k == 0:
                         PLOT_PROPERTIES_ALL = PLOT_PROPERTIES.copy()
-                        PLOT_PROPERTIES_ALL['title'] = title.replace('=%1.2f$', '$ all')
+                        PLOT_PROPERTIES_ALL['title'] = title.split('=')[0] + '$ all'
                         PLOT_PROPERTIES_ALL['fname'] = fname.replace('%1.2f', 'all')
                         evalIFerr.plot2D(plot_attributes['zvar'], 
                                          slice_3D_var_str, 
@@ -882,11 +938,14 @@ def plot_grid(i, path_to_csv_file, verbose=False):
                 elif 'CLASS_ERROR' in quantity_to_plot:
                     # TODO: add class error plots
                     if k == 0:
-                        evalIFerr.confusion_matrix(plot_attributes['zvar'])
+                        evalIFerr.confusion_matrix(plot_attributes['zvar'],
+                                                   close_fig=True)
                 elif 'VIOLIN' in quantity_to_plot:
                     # TODO: add violin plots
                     if k == 0:
-                        evalIFerr.violin_plots("relative", keys=[plot_attributes['zvar']])
+                        evalIFerr.violin_plots("relative",
+                                               keys=[plot_attributes['zvar']],
+                                               close_fig=True)
                 else:
                     grid.plot2D('star_1_mass', 'period_days', plot_attributes['zvar'],
                                 termination_flag=plot_attributes['term_flag'],
@@ -895,7 +954,7 @@ def plot_grid(i, path_to_csv_file, verbose=False):
                                 verbose=False, **PLOT_PROPERTIES)
             
             except Exception as e:
-                print('FAILED TO PLOT '+title%var)
+                print('FAILED TO PLOT '+title%var+' to '+fname%var)
                 print('')
                 print(e)
                 continue
