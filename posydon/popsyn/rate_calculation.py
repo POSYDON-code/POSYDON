@@ -18,7 +18,7 @@ DEFAULT_MODEL = {
     "delta_t": 100,  # Myr
     "SFR": "IllustrisTNG",
     "sigma_SFR": None,
-    "Z_max": 5.0,
+    "Z_max": 1.0,
     "select_one_met": False,
     "dlogZ": None,  # e.g, [np.log10(0.0142/2),np.log10(0.0142*2)]
     "Zsun": Zsun,

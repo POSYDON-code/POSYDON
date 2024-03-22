@@ -1,4 +1,7 @@
-__authors__ = ["Simone Bavera <Simone.Bavera@unige.ch>"]
+__authors__ = [
+    "Simone Bavera <Simone.Bavera@unige.ch>",
+    "Max Briel <max.briel@unige.ch>",
+    ]
     
 import os
 import numpy as np

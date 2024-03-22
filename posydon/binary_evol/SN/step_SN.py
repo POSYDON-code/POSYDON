@@ -19,6 +19,7 @@ __authors__ = [
     "Jeffrey Andrews <jeffrey.andrews@northwestern.edu>",
     "Tassos Fragos <Anastasios.Fragkos@unige.ch>",
     "Matthias Kruckow <Matthias.Kruckow@unige.ch>",
+    "Max Briel <max.briel@unige.ch>",
 ]
 
 __credits__ = [

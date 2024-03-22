@@ -2,10 +2,11 @@
 
 
 __authors__ = [
-    'Simone Bavera <Simone.Bavera@unige.ch>',
+    "Simone Bavera <Simone.Bavera@unige.ch>",
     "Kyle Akira Rocha <kylerocha2024@u.northwestern.edu>",
     "Devina Misra <devina.misra@unige.ch>",
     "Konstantinos Kovlakas <Konstantinos.Kovlakas@unige.ch>",
+    "Max Briel <max.briel@unige.ch>",
 ]
 
 import os
@@ -15,17 +16,26 @@ from scipy import stats
 from posydon.utils.data_download import PATH_TO_POSYDON_DATA
 from posydon.utils.constants import age_of_universe
 from posydon.utils.common_functions import (
-    rejection_sampler, histogram_sampler, read_histogram_from_file)
+    rejection_sampler,
+    histogram_sampler,
+    read_histogram_from_file,
+)
 from posydon.utils.constants import Zsun
 from scipy.interpolate import interp1d
 from astropy.cosmology import Planck15 as cosmology
 
 
-SFH_SCENARIOS = ["burst", "constant", "custom_linear", "custom_log10",
-                 "custom_linear_histogram", "custom_log10_histogram"]
+SFH_SCENARIOS = [
+    "burst",
+    "constant",
+    "custom_linear",
+    "custom_log10",
+    "custom_linear_histogram",
+    "custom_log10_histogram",
+]
 
 
-def get_formation_times(N_binaries, star_formation='constant', **kwargs):
+def get_formation_times(N_binaries, star_formation="constant", **kwargs):
     """Get formation times of binaries in a population based on a SFH scenario.
 
     Parameters
@@ -49,46 +59,50 @@ def get_formation_times(N_binaries, star_formation='constant', **kwargs):
     array
         The formation times array.
     """
-    RNG = kwargs.get('RNG', np.random.default_rng())
+    RNG = kwargs.get("RNG", np.random.default_rng())
 
     scenario = star_formation.lower()
 
-    if scenario == 'burst':
-        burst_time = kwargs.get('burst_time', 0.0)
-        return np.ones(N_binaries)*burst_time
+    if scenario == "burst":
+        burst_time = kwargs.get("burst_time", 0.0)
+        return np.ones(N_binaries) * burst_time
 
-    max_time_default = kwargs.get('max_simulation_time', age_of_universe)
-    max_time = kwargs.get('max_time', max_time_default)
+    max_time_default = kwargs.get("max_simulation_time", age_of_universe)
+    max_time = kwargs.get("max_time", max_time_default)
 
-    if scenario == 'constant':
-        min_time = kwargs.get('min_time', 0.0)
+    if scenario == "constant":
+        min_time = kwargs.get("min_time", 0.0)
         return RNG.uniform(size=N_binaries, low=min_time, high=max_time)
 
     if scenario in ["custom_linear", "custom_log10"]:
-        custom_ages_file = kwargs.get('custom_ages_file')
+        custom_ages_file = kwargs.get("custom_ages_file")
         x, y = np.loadtxt(custom_ages_file, unpack=True)
         current_binary_ages = rejection_sampler(x, y, N_binaries)
         if "log10" in scenario:
-            current_binary_ages = 10.0 ** current_binary_ages
+            current_binary_ages = 10.0**current_binary_ages
         return max_time - current_binary_ages
 
     if scenario in ["custom_linear_histogram", "custom_log10_histogram"]:
-        custom_ages_file = kwargs.get('custom_ages_file')
+        custom_ages_file = kwargs.get("custom_ages_file")
         x, y = read_histogram_from_file(custom_ages_file)
         current_binary_ages = histogram_sampler(x, y)
         if "log10" in scenario:
-            current_binary_ages = 10.0 ** current_binary_ages
+            current_binary_ages = 10.0**current_binary_ages
         return max_time - current_binary_ages
 
     raise ValueError(
-        "Unknown star formation scenario '{}' given. Valid options: {}".
-        format(star_formation, ",".join(SFH_SCENARIOS)))
+        "Unknown star formation scenario '{}' given. Valid options: {}".format(
+            star_formation, ",".join(SFH_SCENARIOS)
+        )
+    )
+
 
 def get_illustrisTNG_data(verbose=False):
     """Load IllustrisTNG SFR dataset."""
     if verbose:
-        print('Loading IllustrisTNG data...')
-    return np.load(os.path.join(PATH_TO_POSYDON_DATA, 'SFR/IllustrisTNG.npz'))
+        print("Loading IllustrisTNG data...")
+    return np.load(os.path.join(PATH_TO_POSYDON_DATA, "SFR/IllustrisTNG.npz"))
+
 
 def star_formation_rate(SFR, z):
     """Star formation rate in M_sun yr^-1 Mpc^-3.
@@ -111,19 +125,26 @@ def star_formation_rate(SFR, z):
         per year.
     """
     if SFR == "Madau+Fragos17":
-        return 0.01 * (1. + z) ** 2.6 / (1. + ((1. + z) / 3.2) ** 6.2)  # M_sun yr^-1 Mpc^-3
+        return (
+            0.01 * (1.0 + z) ** 2.6 / (1.0 + ((1.0 + z) / 3.2) ** 6.2)
+        )  # M_sun yr^-1 Mpc^-3
     elif SFR == "Madau+Dickinson14":
-        return 0.015 * (1. + z) ** 2.7 / (1. + ((1. + z) / 2.9) ** 5.6)  # M_sun yr^-1 Mpc^-3
+        return (
+            0.015 * (1.0 + z) ** 2.7 / (1.0 + ((1.0 + z) / 2.9) ** 5.6)
+        )  # M_sun yr^-1 Mpc^-3
     elif SFR == "Neijssel+19":
-        return 0.01 * (1. + z) ** 2.77 / (1. + ((1. + z) / 2.9) ** 4.7) # M_sun yr^-1 Mpc^-3
-    elif SFR=='IllustrisTNG':
+        return (
+            0.01 * (1.0 + z) ** 2.77 / (1.0 + ((1.0 + z) / 2.9) ** 4.7)
+        )  # M_sun yr^-1 Mpc^-3
+    elif SFR == "IllustrisTNG":
         illustris_data = get_illustrisTNG_data()
-        SFR = illustris_data['SFR'] # M_sun yr^-1 Mpc^-3
-        redshifts = illustris_data['redshifts']
+        SFR = illustris_data["SFR"]  # M_sun yr^-1 Mpc^-3
+        redshifts = illustris_data["redshifts"]
         SFR_interp = interp1d(redshifts, SFR)
         return SFR_interp(z)
     else:
-        raise ValueError('Invalid SFR!')
+        raise ValueError("Invalid SFR!")
+
 
 def mean_metallicity(SFR, z):
     """Empiric mean metallicity function.
@@ -146,11 +167,12 @@ def mean_metallicity(SFR, z):
     """
 
     if SFR == "Madau+Fragos17" or SFR == "Madau+Dickinson14":
-        return 10 ** (0.153 - 0.074 * z ** 1.34) * Zsun
+        return 10 ** (0.153 - 0.074 * z**1.34) * Zsun
     elif SFR == "Neijssel+19":
-        return 0.035*10**(-0.23*z)
+        return 0.035 * 10 ** (-0.23 * z)
     else:
-        raise ValueError('Invalid SFR!')
+        raise ValueError("Invalid SFR!")
+
 
 def std_log_metallicity_dist(sigma):
     """Standard deviation of the log-metallicity distribution.
@@ -162,26 +184,28 @@ def std_log_metallicity_dist(sigma):
 
     """
     if isinstance(sigma, str):
-        if sigma == 'Bavera+20':
+        if sigma == "Bavera+20":
             return 0.5
         elif sigma == "Neijssel+19":
             return 0.39
         else:
-            raise ValueError('Uknown sigma choice!')
+            raise ValueError("Uknown sigma choice!")
     elif isinstance(sigma, float):
         return sigma
     else:
-        raise ValueError(f'Invalid sigma value {sigma}!')
+        raise ValueError(f"Invalid sigma value {sigma}!")
 
 
-def SFR_Z_fraction_at_given_redshift(z,SFR, sigma, metallicity_bins, Z_max, select_one_met):
-    ''''Fraction of the SFR at a given redshift z in a given metallicity bin as in Eq. (B.8) of Bavera et al. (2020).
-    
+def SFR_Z_fraction_at_given_redshift(
+    z, SFR, sigma, metallicity_bins, Z_max, select_one_met
+):
+    """'Fraction of the SFR at a given redshift z in a given metallicity bin as in Eq. (B.8) of Bavera et al. (2020).
+
     Parameters
     ----------
     z : double
         Cosmological redshift.
-        
+
     SFR : string
         Star formation rate assumption:
         - Madau+Fragos17 see arXiv:1606.07887
@@ -198,62 +222,83 @@ def SFR_Z_fraction_at_given_redshift(z,SFR, sigma, metallicity_bins, Z_max, sele
     select_one_met : bool
         If True, the function returns the fraction of the SFR in the given metallicity bin.
         If False, the function returns the fraction of the SFR in the given metallicity bin and the fraction of the SFR in the metallicity bin
-        '''
-        
-    if SFR == "Madau+Fragos17" or SFR=="Madau+Dickinson14":
+
+    Returns
+    -------
+    array
+        Fraction of the SFR in the given metallicity bin at the given redshift.
+        In absolute metallicity.
+    """
+
+    if SFR == "Madau+Fragos17" or SFR == "Madau+Dickinson14":
         sigma = std_log_metallicity_dist(sigma)
-        mu = np.log10(mean_metallicity(SFR, z)) - sigma**2*np.log(10)/2.
+        mu = np.log10(mean_metallicity(SFR, z)) - sigma**2 * np.log(10) / 2.0
         # renormalisation constant. We can use mu[0], since we integrate over the whole metallicity range
         norm = stats.norm.cdf(np.log10(Z_max), mu[0], sigma)
-        fSFR = np.empty((len(z), len(metallicity_bins)-1))
-        fSFR[:,:] = np.array([(stats.norm.cdf(np.log10(metallicity_bins[1:]), m, sigma)/norm
-                        - stats.norm.cdf(np.log10(metallicity_bins[:-1]), m, sigma)/norm) for m in mu])
+        fSFR = np.empty((len(z), len(metallicity_bins) - 1))
+        fSFR[:, :] = np.array(
+            [(stats.norm.cdf(np.log10(metallicity_bins[1:]), m, sigma) / norm
+                    - stats.norm.cdf(np.log10(metallicity_bins[:-1]), m, sigma) / norm
+             ) for m in mu ]
+        )
         if not select_one_met:
-            fSFR[:,0] = stats.norm.cdf(np.log10(metallicity_bins[1]), mu, sigma)/norm
+            fSFR[:, 0] = stats.norm.cdf(np.log10(metallicity_bins[1]), mu, sigma) / norm
             fSFR[:,-1] = norm - stats.norm.cdf(np.log(metallicity_bins[-1]), mu, sigma)/norm
 
     elif SFR == "Neijssel+19":
         # assume a truncated ln-normal distribution of metallicities
         sigma = std_log_metallicity_dist(sigma)
-        mu = np.log(mean_metallicity(SFR, z))-sigma**2/2.
+        mu = np.log(mean_metallicity(SFR, z)) - sigma**2 / 2.0
         # renormalisation constant
         norm = stats.norm.cdf(np.log(Z_max), mu[0], sigma)
-        fSFR = np.empty((len(z), len(metallicity_bins)-1))
-        fSFR[:,:] = np.array([(stats.norm.cdf(np.log(metallicity_bins[1:]), m, sigma)/norm
-                        - stats.norm.cdf(np.log(metallicity_bins[:-1]), m, sigma)/norm) for m in mu])
+        fSFR = np.empty((len(z), len(metallicity_bins) - 1))
+        fSFR[:, :] = np.array(
+            [
+                (
+                    stats.norm.cdf(np.log(metallicity_bins[1:]), m, sigma) / norm
+                    - stats.norm.cdf(np.log(metallicity_bins[:-1]), m, sigma) / norm
+                )
+                for m in mu
+            ]
+        )
         if not select_one_met:
-            fSFR[:,0] = stats.norm.cdf(np.log(metallicity_bins[1]), mu, sigma)/norm
+            fSFR[:, 0] = stats.norm.cdf(np.log(metallicity_bins[1]), mu, sigma) / norm
             fSFR[:,-1] = norm - stats.norm.cdf(np.log(metallicity_bins[-1]), mu, sigma)/norm
 
-    elif SFR == 'IllustrisTNG':
+    elif SFR == "IllustrisTNG":
         # numerically itegrate the IlluystrisTNG SFR(z,Z)
         illustris_data = get_illustrisTNG_data()
-        redshifts = illustris_data['redshifts']
-        Z = illustris_data['mets']
-        M = illustris_data['M'] # Msun
+        redshifts = illustris_data["redshifts"]
+        Z = illustris_data["mets"]
+        M = illustris_data["M"]  # Msun
         # only use data within the metallicity bounds (no lower bound)
-        Z_max_mask =  Z <= Z_max
+        Z_max_mask = Z <= Z_max
         redshift_indices = np.array([np.where(redshifts <= i)[0][0] for i in z])
-        Z_dist = M[:,Z_max_mask][redshift_indices]
+        Z_dist = M[:, Z_max_mask][redshift_indices]
 
-        fSFR = np.zeros((len(z), len(metallicity_bins)-1))
+        fSFR = np.zeros((len(z), len(metallicity_bins) - 1))
         for i in range(len(z)):
-            if Z_dist[i].sum() == 0.:
+            if Z_dist[i].sum() == 0.0:
                 continue
             else:
-                Z_dist_cdf = np.cumsum(Z_dist[i])/Z_dist[i].sum()
-                Z_dist_cdf_interp = interp1d(np.log10(Z[Z_max_mask]), Z_dist_cdf, fill_value="extrapolate")
-                fSFR[i,:] = (Z_dist_cdf_interp(np.log10(metallicity_bins[1:]))
-                                    - Z_dist_cdf_interp(np.log10(metallicity_bins[:-1])))
-                
+                # We add a final point to the CDF and metallicities to ensure normalisation to 1
+                Z_dist_cdf = np.cumsum(Z_dist[i]) / Z_dist[i].sum()
+                Z_dist_cdf = np.append(Z_dist_cdf, 1)
+                Z_x_values = np.append(np.log10(Z[Z_max_mask]), 0)
+                Z_dist_cdf_interp = interp1d(Z_x_values, Z_dist_cdf)
+
+                fSFR[i, :] = Z_dist_cdf_interp(np.log10(metallicity_bins[1:])) 
+                                - Z_dist_cdf_interp(np.log10(metallicity_bins[:-1]))
+
                 if not select_one_met:
-                    #left edge
-                    fSFR[i,0] = Z_dist_cdf_interp(np.log10(metallicity_bins[1]))
-                    fSFR[i,-1] = 1 - Z_dist_cdf_interp(np.log10(metallicity_bins[-1]))
+                    # add the fraction of the SFR in the first and last bin
+                    fSFR[i, 0] = Z_dist_cdf_interp(np.log10(metallicity_bins[1]))
+                    fSFR[i, -1] = 1 - Z_dist_cdf_interp(np.log10(metallicity_bins[-1]))
     else:
-        raise ValueError('Invalid SFR!')
-                
+        raise ValueError("Invalid SFR!")
+
     return fSFR
+
 
 def integrated_SFRH_over_redshift(SFR, sigma, Z, Z_max):
     """Integrated SFR history over z as in Eq. (B.10) of Bavera et al. (2020).
@@ -275,23 +320,34 @@ def integrated_SFRH_over_redshift(SFR, sigma, Z, Z_max):
         metallicity Z.
 
     """
+
     def E(z, Omega_m=cosmology.Om0):
-        Omega_L = 1.- Omega_m
-        return (Omega_m*(1.+z)**3 + Omega_L)**(1./2.)
-    def f(z,Z):
+        Omega_L = 1.0 - Omega_m
+        return (Omega_m * (1.0 + z) ** 3 + Omega_L) ** (1.0 / 2.0)
+
+    def f(z, Z):
         if SFR == "Madau+Fragos17" or SFR == "Madau+Dickinson14":
             sigma = std_log_metallicity_dist(sigma)
-            mu = np.log10(mean_metallicity(SFR, z))-sigma**2*np.log(10)/2.
-            H_0 = cosmology.H0.to('1/yr').value # yr
+            mu = np.log10(mean_metallicity(SFR, z)) - sigma**2 * np.log(10) / 2.0
+            H_0 = cosmology.H0.to("1/yr").value  # yr
             # put a cutoff on metallicity at Z_max
             norm = stats.norm.cdf(np.log10(Z_max), mu, sigma)
-            return star_formation_rate(SFR, z)*stats.norm.pdf(np.log10(Z), mu, sigma)/norm*(H_0*(1.+z)*E(z))**(-1)
+            return (
+                star_formation_rate(SFR, z)
+                * stats.norm.pdf(np.log10(Z), mu, sigma)
+                / norm
+                * (H_0 * (1.0 + z) * E(z)) ** (-1)
+            )
         elif SFR == "Neijssel+19":
             sigma = std_log_metallicity_dist(sigma)
-            mu = np.log10(mean_metallicity(SFR, z))-sigma**2/2.
-            H_0 = cosmology.H0.to('1/yr').value # yr
-            return star_formation_rate(SFR, z)*stats.norm.pdf(np.log(Z), mu, sigma)*(H_0*(1.+z)*E(z))**(-1)
+            mu = np.log10(mean_metallicity(SFR, z)) - sigma**2 / 2.0
+            H_0 = cosmology.H0.to("1/yr").value  # yr
+            return (
+                star_formation_rate(SFR, z)
+                * stats.norm.pdf(np.log(Z), mu, sigma)
+                * (H_0 * (1.0 + z) * E(z)) ** (-1)
+            )
         else:
-            raise ValueError('Invalid SFR!')
+            raise ValueError("Invalid SFR!")
 
-    return sp.integrate.quad(f, 1e-10, np.inf, args=(Z,))[0] # M_sun yr^-1 Mpc^-3
+    return sp.integrate.quad(f, 1e-10, np.inf, args=(Z,))[0]  # M_sun yr^-1 Mpc^-3
