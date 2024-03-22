@@ -1286,6 +1286,7 @@ class Population(PopulationIO):
                         format="table",
                         data_columns=True,
                         min_itemsize={"channel_debug": 100, "channel": 100},
+                        index=False,
                     )
 
             ## METADATA
@@ -1363,6 +1364,7 @@ class Population(PopulationIO):
         HMS_HMS_event_dict = {
             "initial_MT": "initial_MT",
             "stable_MT": "oRLO1",
+            "stable_reverse_MT": "oRLO1-reverse",
             "no_MT": "None",
             "unstable_MT": "oCE1/oDoubleCE1",
         }
@@ -1378,7 +1380,7 @@ class Population(PopulationIO):
 
         def get_events(group):
             # for now, only append information for RLO1; unstable_MT information already exists
-            if "oRLO1" in group["interp_class_HMS_HMS"].tolist():
+            if "oRLO1" in group["interp_class_HMS_HMS"].tolist() or "oRLO1-reverse" in group["interp_class_HMS_HMS"].tolist() :
                 combined_events = (
                     group["event"].iloc[0] + "_" + group["interp_class_HMS_HMS"].iloc[0]
                 )
@@ -1395,11 +1397,12 @@ class Population(PopulationIO):
                 and row["mt_history_HMS_HMS"] == "Stable contact phase"
             ):
                 return row["channel"].replace("oRLO1", "oRLO1-contact")
-            elif (
-                pd.notna(row["mt_history_HMS_HMS"])
-                and row["mt_history_HMS_HMS"] == "Stable reverse mass-transfer phase"
-            ):
-                return row["channel"].replace("oRLO1", "oRLO1-reverse")
+            # reverse is already included in the interpolation class now!
+            # elif (
+            #     pd.notna(row["mt_history_HMS_HMS"])
+            #     and row["mt_history_HMS_HMS"] == "Stable reverse mass-transfer phase"
+            # ):
+            #     return row["channel"].replace("oRLO1", "oRLO1-reverse")
             else:
                 return row["channel"]
 
