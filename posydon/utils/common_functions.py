@@ -1569,6 +1569,41 @@ def cumulative_mass_transfer_flag(MT_cases, shift_cases=False):
     )
 
 
+def get_i_He_depl(history):
+    """Get the index of He depletion in the history
+    
+    Arguments
+    ---------
+    history: numpy-array
+        Stellar history from MESA
+    
+    Return
+    ------
+    int
+        index of He depletion (-1 if no He depletion is found)
+    """
+    if (('surface_h1' in history.dtype.names) and
+        ('center_h1' in history.dtype.names) and
+        ('center_he4' in history.dtype.names) and
+        ('center_c12' in history.dtype.names) and
+        ('log_LH' in history.dtype.names) and
+        ('log_LHe' in history.dtype.names) and
+        ('log_Lnuc' in history.dtype.names)):
+        n_history = len(history['center_he4'])
+        for i in range(n_history):
+            state = infer_star_state(surface_h1=history['surface_h1'][i],
+                                     center_h1=history['center_h1'][i],
+                                     center_he4=history['center_he4'][i],
+                                     center_c12=history['center_c12'][i],
+                                     log_LH=history['log_LH'][i],
+                                     log_LHe=history['log_LHe'][i],
+                                     log_Lnuc=history['log_Lnuc'][i],
+                                     star_CO=False)
+            if "Central_He_depleted" in state:
+                return i 
+    return -1
+
+
 def calculate_Patton20_values_at_He_depl(star):
     """Calculate the carbon core mass and abundance very close to ignition.
 
