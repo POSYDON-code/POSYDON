@@ -482,7 +482,7 @@ def copy_ini_file(grid_type, rerun_metallicity, rerun_type, destination, cluster
     elif rerun_type == 'initial_He':
         replace_text = "fix_iniHe_pre_rerun5-0e736a853c3c2e522b76299a54aea8f5eea15d08"
     elif rerun_type == "timestep_MTlimit":
-        replace_text = "seth_HMS-HMS_rerun_accretion_fix-0d5ec079df47c8411895c9a8ab7ef08f469ba9bc"
+        replace_text = "seth_HMS-HMS_rerun_accretion_fix-f74d4ed021ae67aaa7b89e77da33041550a7d71a"
     elif rerun_type == "egrav_Pgas_dXdt_terms":
         replace_text = "seth_CO-HeMS_rerun_fix-ecae5eecfc3cecfb20f50b673d0f575bc5a75998"
     elif rerun_type == 'other': # e.g. 'envelope_mass_limit', 'fe_core_infall_limit'
