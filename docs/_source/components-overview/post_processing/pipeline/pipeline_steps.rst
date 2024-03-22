@@ -193,16 +193,18 @@ the type of the rerun specifying the logic and changes.
 
 .. table:: Currently supported rerun types
 
-    ===================  ==============  ===========
-    :samp:`rerun_type`   Future version  Description
-    ===================  ==============  ===========
-    PISN                 default in v3+  it enables the MESA inlist commit, which stops MESA before getting dynamical to save a final profile there
-    reverse_MT           default in v3+  it uses a MESA version with a bug fix, that the role of donor and accretor can switch during the simulation
-    opacity_max          caution         it uses a fixed maximum opacity of 0.5 (this is only a last option change to get more stability)
-    TPAGBwind            default in v3+  it enables the MESA inlist commit, which changes the wind during the TPAGB phase
-    thermohaline_mixing  default in v3+  it uses thermohaline mixing in the inlist
-    HeMB_MLTp_mesh       workaround      it turns off magnetic braking for He stars; it uses less extreme parameters of the MLT++; it changes some more input values to change the resulation close to the surface
-    more_mesh            workaround      it modifies the remeshing and allows for more cells in MESA
-    conv_bdy_weight      caution         it disabled the convective_bdy_weight where this caused segmentation faults (this avoids a bug in the old MESA version r11701)
-    ===================  ==============  ===========
+    ===================    ==============  ===========
+    :samp:`rerun_type`     Future version  Description
+    ===================    ==============  ===========
+    PISN                   default in v3+  it enables the MESA inlist commit, which stops MESA before getting dynamical to save a final profile there
+    reverse_MT             default in v3+  it uses a MESA version with a bug fix, that the role of donor and accretor can switch during the simulation
+    opacity_max            caution         it uses a fixed maximum opacity of 0.5 (this is only a last option change to get more stability)
+    TPAGBwind              default in v3+  it enables the MESA inlist commit, which changes the wind during the TPAGB phase
+    thermohaline_mixing    default in v3+  it uses thermohaline mixing in the inlist
+    HeMB_MLTp_mesh         workaround      it turns off magnetic braking for He stars; it uses less extreme parameters of the MLT++; it changes some more input values to change the resulation close to the surface
+    more_mesh              workaround      it modifies the remeshing and allows for more cells in MESA
+    conv_bdy_weight        caution         it disabled the convective_bdy_weight where this caused segmentation faults (this avoids a bug in the old MESA version r11701)
+    timestep_MTlimit       caution         it linearly decreases mass transfer when MESA takes timesteps less than 1 yr and fully turns it off w/ steps less than 1 day. This helps numerical convergence of some low mass accretors.
+    egrav_Pgas_dXdt_terms  caution         it switches the basic variable MESA uses to solve eps_grav from density to Pgas, and tells MESA to use the composition terms when solving. This helps some He stars experiencing numerical issues.
+    ===================    ==============  ===========
 
