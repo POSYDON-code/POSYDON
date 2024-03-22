@@ -1573,7 +1573,6 @@ class CO_HeMS_RLO_step(MesaGridStep):
             set_binary_to_failed(self.binary)
             raise ValueError(f'The mass of m1 ({m1}) is outside the grid,'
                                 'while the period is inside the grid.')
-        
         # period inside the grid, but m2 outside the grid
         elif ((not self.flip_stars_before_step and
                self.p_min <= p <= self.p_max and

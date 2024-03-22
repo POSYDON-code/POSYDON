@@ -19,6 +19,7 @@ __authors__ = [
     "Jeffrey Andrews <jeffrey.andrews@northwestern.edu>",
     "Tassos Fragos <Anastasios.Fragkos@unige.ch>",
     "Matthias Kruckow <Matthias.Kruckow@unige.ch>",
+    "Max Briel <max.briel@unige.ch>",
 ]
 
 __credits__ = [
@@ -1762,6 +1763,7 @@ class StepSN(object):
             for key in BINARYPROPERTIES:
                 if key not in ['nearest_neighbour_distance','event']:
                     setattr(binary, key, None)
+                    
             if flag_binary:
                 # update the tilt
                 if not binary.first_SN_already_occurred:
@@ -1884,7 +1886,8 @@ class StepSN(object):
 
         return Vkick
         
-    def get_combined_tilt(self,tilt_1, tilt_2, true_anomaly_1, true_anomaly_2):
+
+    def get_combined_tilt(self, tilt_1, tilt_2, true_anomaly_1, true_anomaly_2):
         """Get the combined spin-orbit-tilt after two supernovae, assuming
         the spin as not realigned with the orbital angular momentum after
         SN1

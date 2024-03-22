@@ -1,4 +1,7 @@
-__authors__ = ["Simone Bavera <Simone.Bavera@unige.ch>"]
+__authors__ = [
+    "Simone Bavera <Simone.Bavera@unige.ch>",
+    "Max Briel <max.briel@unige.ch>",
+    ]
     
 import os
 import numpy as np
@@ -105,7 +108,10 @@ def plot_merger_efficiency(met, merger_efficiency, show=True, path=None, channel
     plt.title(title)
     plt.plot(met/Zsun, merger_efficiency['total'], label='total', color='black')
     if channels:
-        for i, ch in enumerate(merger_efficiency.keys()):
+        unique_channels = [key for key in merger_efficiency.keys() if key != 'total']
+        if len(unique_channels) > len(cm.colors):
+            raise ValueError('Too many channels to plot!')
+        for i, ch in enumerate(unique_channels):
             if ch != 'total':
                 plt.plot(met/Zsun, merger_efficiency[ch], label=ch, color=COLORS[i])
     plt.yscale('log')
@@ -119,145 +125,55 @@ def plot_merger_efficiency(met, merger_efficiency, show=True, path=None, channel
         plt.show()
 
         
-def plot_hist_properties(x, df_intrinsic=None, df_observable=None,
+def plot_hist_properties(df, ax=None, df_intrinsic=None, df_observable=None,
                         channel=None,
                         show=True, path=None, alpha=0.5,
-                        range=None, bins=20, xlog=False, ylog=False,
-                        pop=None, **kwargs):
-    if pop is None:
-        raise ValueError('Population type not specified.')
-    
-    if df_intrinsic is not None and df_observable is not None:
+                        range=None, bins=20, normalise=False,color=COLORS[0],label='', **kwargs):
+    if ax is None:
+        fig, ax = plt.subplots(1,1, figsize=(5,5))
+        
+    df_columns = df.columns
+    if 'intrinsic' in df_columns and 'observable' in df_columns:
         title = r'Intrinsic vs. observable (dashed) population'
-    elif df_intrinsic is not None:
+    elif 'intrinsic' in df_columns:
         title = r'Intrinsic population'
-    elif df_observable is not None:
+    elif 'observable' in df_columns:
         title = r'Observable population'
     else:
         raise ValueError('You should provide either an intrinsic or a '
                          'detectable population.')
 
-    plt.figure()
-    if df_intrinsic is not None:
-        # normalise weight, for GRB this will conserve GRB1/GRB2 ratio
-        df_intrinsic['weight'] /= sum(df_intrinsic['weight'])
-        if channel is not None:
-            sel = (df_intrinsic['weight'] > 0) & (df_intrinsic['channel'] == channel)
-            title += f'\n{channel}'
-        else:
-            sel = df_intrinsic['weight'] > 0
-        if isinstance(x, str):
-            if pop == 'GRB':
-                sel_tmp = sel & ~df_intrinsic[x].isna()
-            else:
-                sel_tmp = sel
-            values, weights = df_intrinsic.loc[sel_tmp,[x,'weight']].values.T
-            if xlog:
-                mask = values > 0
-                values = np.log10(values[mask])
-                weights = weights[mask]
-            plt.hist(values, weights=weights, color=COLORS[0],
-                     alpha=alpha, range=range, bins=bins)
-        elif isinstance(x, list):
-            for i, x_i in enumerate(x):
-                if "S1" in x_i:
-                    label = 'S1'
-                    s = 1
-                elif "S2" in x_i:
-                    label = 'S2'
-                    s = 2 
-                else:
-                    label = x_i
-                if pop == 'GRB':
-                    sel_tmp = sel & ~df_intrinsic[x_i].isna() & df_intrinsic[f'GRB{s}'] 
-                else:
-                    sel_tmp = sel
-                values, weights = df_intrinsic.loc[sel_tmp,[x_i,'weight']].values.T
-                if xlog:
-                    mask = values > 0
-                    values = np.log10(values[mask])
-                    weights = weights[mask]
-                plt.hist(values, weights=weights,
-                         color=COLORS[i], label=label,
-                         alpha=alpha, range=range, bins=bins)
-    if df_observable is not None:
-        # normalise weight, for GRB this will conserve GRB1/GRB2 ratio
-        df_observable['weight'] /= sum(df_observable['weight'])
-        if channel is not None:
-            sel = (df_observable['weight'] > 0) & (df_observable['channel'] == channel)
-            if channel not in title:
-                title += f'\n{channel}'
-        else:
-            sel = df_observable['weight'] > 0
-        if isinstance(x, str):
-            if pop == 'GRB':
-                sel_tmp = sel & ~df_observable[x].isna()
-            else:
-                sel_tmp = sel
-            values, weights = df_observable.loc[sel_tmp,[x,'weight']].values.T
-            if xlog:
-                mask = values > 0
-                values = np.log10(values[mask])
-                weights = weights[mask]
-            plt.hist(values, weights=weights,
-                     color=COLORS[0],
-                     histtype=u'step', linestyle='--',
-                     alpha=alpha, range=range, bins=bins)
-        elif isinstance(x, list):
-            for i, x_i in enumerate(x):
-                if "S1" in x_i:
-                    label = 'S1'
-                    s = 1
-                elif "S2" in x_i:
-                    label = 'S2'
-                    s = 2
-                else:
-                    label = x_i
-                if pop == 'GRB':
-                    sel_tmp = sel & ~df_observable[x_i].isna() & df_observable[f'GRB{s}']
-                else:
-                    sel_tmp = sel
-                values, weights = df_observable.loc[sel_tmp,[x_i,'weight']].values.T
-                if xlog:
-                    mask = values > 0
-                    values = np.log10(values[mask])
-                    weights = weights[mask]
-                plt.hist(values, weights=weights,
-                         color=COLORS[i], label=label,
-                         histtype=u'step', linestyle='--',
-                         alpha=alpha, range=range, bins=bins)
-    plt.title(title)
-    if ylog:
-        plt.yscale('log')
-    plt.ylabel(r'PDF')
-    try:
-        if isinstance(x, str):
-            if not xlog:
-                plt.xlabel(DEFAULT_LABELS[x][0])
-            else:
-                plt.xlabel(DEFAULT_LABELS[x][1])
-        else:
-            if not xlog:
-                plt.xlabel(DEFAULT_LABELS[x[0]][0])
-            else:
-                plt.xlabel(DEFAULT_LABELS[x[0]][1])
-    except:
-        if isinstance(x, str):
-            if not xlog:
-                plt.xlabel(x)
-            else:
-                plt.xlabel('log10_'+x)
-        else:
-            if not xlog:
-                plt.xlabel(x[0])
-            else:
-                plt.xlabel('log10_'+x[0])
-    if isinstance(x, list):
-        plt.legend(loc=1)
-    if path:
-        plt.savefig(path)
-    if show:
-        plt.show()
+    if 'intrinsic' in df_columns:
+        values =  df['intrinsic']
+        if normalise:
+            values /= sum(values)
+            
+        ax.hist(df['property'],
+                 weights=values,
+                 color=color,
+                 alpha=alpha,
+                 range=range,
+                 bins=bins,
+                 label=label+' intrinsic')
+            
+    if 'observable' in df_columns:
+        values = df['observable']
+        if normalise:
+            values /= sum(values)
+        
+        ax.hist(df['property'],
+                 weights=values,
+                 color=color,
+                 alpha=alpha,
+                 range=range,
+                 histtype=u'step',
+                 linestyle='--',
+                 bins=bins,
+                 label=label+' observable')
+        
+    ax.set_title(title)    
+
+        
         
         
 def plot_popsyn_over_grid_slice(pop, grid_type, met_Zsun, slices=None, channel=None, 
@@ -265,6 +181,9 @@ def plot_popsyn_over_grid_slice(pop, grid_type, met_Zsun, slices=None, channel=N
                                 log_prop=False, alpha=0.3, s=5., 
                                 show_fig=True, save_fig=True, close_fig=True,
                                 verbose=False):
+    # Check if step_names in pop.history data
+    if 'step_names' not in pop.history.columns:
+        raise ValueError('Formation channel information not available in popsynth data.')
 
     # load grid
     met = convert_metallicity_to_string(met_Zsun)
@@ -273,13 +192,12 @@ def plot_popsyn_over_grid_slice(pop, grid_type, met_Zsun, slices=None, channel=N
     grid.load(grid_path)
 
     # check if formation channel information is avaialbe
-    if channel is not None and 'channel' not in pop.df_oneline.keys():
-        if verbose:
-            print('Computing formation channels...')
-        pop.get_formation_channels()
+    if channel is not None and 'channel' not in pop.columns:
+        raise ValueError('Formation channel information not available in popsynth data.')
         
     if 'CO' in grid_path:
         # compact object mass slices
+        # TODO: THIS SELECTION DOES NOT WORK!
         m_COs = np.unique(np.around(grid.initial_values['star_2_mass'],1))
         m_COs_edges = 10**((np.log10(np.array(m_COs)[1:])+np.log10(np.array(m_COs)[:-1]))*0.5)
         m2 = [0.]+m_COs_edges.tolist()+[2*m_COs_edges[-1]]
@@ -300,6 +218,11 @@ def plot_popsyn_over_grid_slice(pop, grid_type, met_Zsun, slices=None, channel=N
     else:
         raise ValueError('Grid type not supported!')
 
+    
+    if channel is not None:
+        channel_sel = ' & channel == '+str(channel)
+    else:
+        channel_sel = ''            
 
     for i, var in enumerate(vars):
         if slices is not None and round(var,2) not in np.around(slices,2):
@@ -308,11 +231,15 @@ def plot_popsyn_over_grid_slice(pop, grid_type, met_Zsun, slices=None, channel=N
             continue
         if 'HMS-HMS' in grid_path:
             slice_3D_var_range = (dq_edges[i],dq_edges[i+1])
+            
             # select popsynth binaries in the given mass ratio range
-            sel = (pop.df['metallicity'] == met_Zsun*Zsun) & (pop.df['event'] == 'ZAMS')
-            q = pop.df['S2_mass'].values/pop.df['S1_mass'].values
+            met_indices = pop.select(where='metallicity == '+str(met_Zsun)+channel_sel, columns=[]).index.to_list()
+            sel = 'index in '+str(met_indices)+' & event == "ZAMS"'
+            data = pop.history.select(where=sel, columns=['S1_mass','S2_mass' ,'orbital_period'])
+            
+            q = data['S2_mass'].values/data['S1_mass'].values
             q[q>1] = 1./q[q>1]
-            mask = sel & (q>=slice_3D_var_range[0]) & (q<=slice_3D_var_range[1])
+            mask = (q>=slice_3D_var_range[0]) & (q<=slice_3D_var_range[1])
         elif 'CO' in grid_path:
             if i == len(m2):
                 continue
@@ -320,13 +247,19 @@ def plot_popsyn_over_grid_slice(pop, grid_type, met_Zsun, slices=None, channel=N
             # select popsynth binaries in the given compact object mass
             # TODO: implement the case of reversal mass ratio
             if 'CO-HMS_RLO' in grid_path:
-                sel = (pop.df['metallicity'] == met_Zsun*Zsun) & (pop.df['event'] == 'oRLO2')
-                m_CO = pop.df['S1_mass'].values
-                mask = sel & (m_CO>=slice_3D_var_range[0]) & (m_CO<=slice_3D_var_range[1])
+                met_indices = pop.select(where='metallicity == '+str(met_Zsun)+channel_sel, columns=[]).index.to_list()
+                sel = 'index in '+str(met_indices)+' & event == "oRLO2"'
+                data = pop.history.select(where=sel, columns=['S1_mass','S2_mass' ,'orbital_period'])
+                
+                m_CO = data['S1_mass'].values
+                mask = (m_CO>=slice_3D_var_range[0]) & (m_CO<=slice_3D_var_range[1])
+                
             elif 'CO-HeMS' in grid_path:
-                sel = (pop.df['metallicity'] == met_Zsun*Zsun) & (pop.df['step_names'] == 'step_CE')
-                m_CO = pop.df['S1_mass'].values
-                mask = sel & (m_CO>=slice_3D_var_range[0]) & (m_CO<=slice_3D_var_range[1])
+                met_indices = pop.select(where='metallicity == '+str(met_Zsun)+channel_sel, columns=[]).index.to_list()
+                sel = 'index in '+str(met_indices)+' & step_names == "step_CE"'
+                data = pop.history.select(where=sel, columns=['S1_mass','S2_mass' ,'orbital_period'])
+                m_CO = data['S1_mass'].values
+                mask = (m_CO>=slice_3D_var_range[0]) & (m_CO<=slice_3D_var_range[1])
             else:
                 raise ValueError('Grid type not supported!')
         # TODO: skip plotting slice if there are no data
@@ -348,17 +281,19 @@ def plot_popsyn_over_grid_slice(pop, grid_type, met_Zsun, slices=None, channel=N
                             grid_3D=True, slice_3D_var_str=slice_3D_var_str,
                             slice_3D_var_range=slice_3D_var_range,
                             verbose=False, **PLOT_PROPERTIES)
-            # pop synth
-            # only plot selected channel
-            if channel is not None:
-                sel_binary_index = pop.df_oneline.loc[pop.df_oneline['channel'] == channel].index.values.tolist()
-                mask = mask & (pop.df.index.isin(sel_binary_index))
-            log10_m1 = np.log10(pop.df.loc[mask,'S1_mass'].values)
-            log10_p = np.log10(pop.df.loc[mask,'orbital_period'].values)
+            
+            log10_m1 = np.log10(data.loc[mask,'S1_mass'].values)
+            log10_p = np.log10(data.loc[mask,'orbital_period'].values)
             # plot color map of a given DCO variable
             if prop is not None:
-                sel = pop.df.index.isin(pop.df.loc[mask].index.values.tolist()) & (pop.df['event'] == 'CO_contact')
-                prop_values = pop.df.loc[sel,prop].values
+                if prop not in pop.columns:
+                    raise ValueError(f'Property {prop} not available in popsynth data.')
+                
+                # basically only for DCO systems
+                met_indices = np.array(met_indices)[mask].tolist()
+                prop_sel = 'index in '+str(met_indices) + ' & event == "CO_contact"'
+                prop_data = pop.history.select(where=prop_sel, columns=[prop])
+                prop_values = prop_data[prop].values
                 vmin = prop_range[0]
                 vmax = prop_range[1]
                 if log_prop:
