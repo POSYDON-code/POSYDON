@@ -287,8 +287,8 @@ def SFR_Z_fraction_at_given_redshift(
                 Z_x_values = np.append(np.log10(Z[Z_max_mask]), 0)
                 Z_dist_cdf_interp = interp1d(Z_x_values, Z_dist_cdf)
 
-                fSFR[i, :] = Z_dist_cdf_interp(np.log10(metallicity_bins[1:])) 
-                                - Z_dist_cdf_interp(np.log10(metallicity_bins[:-1]))
+                fSFR[i, :] = (Z_dist_cdf_interp(np.log10(metallicity_bins[1:])) 
+                                - Z_dist_cdf_interp(np.log10(metallicity_bins[:-1])))
 
                 if not select_one_met:
                     # add the fraction of the SFR in the first and last bin
