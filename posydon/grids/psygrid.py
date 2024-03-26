@@ -284,8 +284,11 @@ DEFAULT_PROFILE_COLS = [
     "avg_charge_He",
 ]
 
-EXTRA_STAR_FINAL_VALUES_COLS = [
-    "avg_c_in_c_core_at_He_depletion", "co_core_mass_at_He_depletion"
+EXTRA_BINARY_COLS_AT_HE_DEPLETION = [
+]
+
+EXTRA_STAR_COLS_AT_HE_DEPLETION = [
+    "avg_c_in_c_core", "co_core_mass"
 ]
 
 # Default columns to exclude from computing history/profile downsampling
@@ -615,13 +618,17 @@ class PSyGrid:
             [(col, 'f8') for col in initial_value_columns]
             + [(col, 'f8') for col in ["X", "Y", "Z"]]
         )
-        # get extra columns for final values
+        # get extra columns at He depletion for final values
         extra_final_values_cols = []
-        for starID in ["S1_","S2_"]:
+        for extra_col in EXTRA_BINARY_COLS_AT_HE_DEPLETION:
+            colname = extra_col + "_at_He_depletion"
+            extra_final_values_cols.append((colname, 'f8'))
+        for starID in ["S1_", "S2_"]:
             for col in all_history_columns:
                 if starID in col:
-                    for extra_col in EXTRA_STAR_FINAL_VALUES_COLS:
-                        extra_final_values_cols.append((starID+extra_col, 'f8'))
+                    for extra_col in EXTRA_STAR_COLS_AT_HE_DEPLETION:
+                        colname = starID + extra_col + "_at_He_depletion"
+                        extra_final_values_cols.append((colname, 'f8'))
                     break
         dtype_final_values = (
             [(col, 'f8') for col in all_history_columns]
@@ -699,24 +706,26 @@ class PSyGrid:
                 history2 = fix_He_core(history2)
 
             # get values at He depletion and add them to the final values
-            for starID in ["S1_", "S2_"]:
+            for starID in ["S1_", "S2_", ""]:
                 if starID == "S1_":
                     h = history1
                 elif starID == "S2_":
                     h = history2
+                elif starID == "":
+                    h = binary_history
                 else:
                     h = None
-                if h is not None:
-                    i_He_depl = -1
-                    for col in ["co_core_mass", "avg_c_in_c_core"]:
-                        fvcol = starID + col + "_at_He_depletion"
-                        if fvcol in dtype_final_values.names:
-                            if i_He_depl==-1:
-                                i_He_depl = get_i_He_depl(h)
-                            if ((col in h.dtype.names) and (i_He_depl>=0)):
-                                self.final_values[i][fvcol] = h[col][i_He_depl]
-                            else:
-                                self.final_values[i][fvcol] = np.nan
+                i_He_depl = -1
+                for col in EXTRA_BINARY_COLS_AT_HE_DEPLETION +\
+                           EXTRA_STAR_COLS_AT_HE_DEPLETION:
+                    fvcol = starID + col + "_at_He_depletion"
+                    if fvcol in dtype_final_values.names:
+                        if ((i_He_depl==-1) and (h is not None)):
+                            i_He_depl = get_i_He_depl(h)
+                        if ((col in h.dtype.names) and (i_He_depl>=0)):
+                            self.final_values[i][fvcol] = h[col][i_He_depl]
+                        else:
+                            self.final_values[i][fvcol] = np.nan
 
             # scrub histories (unless EEPs are selected or run is ignored)
             if not ignore_data and self.eeps is None:

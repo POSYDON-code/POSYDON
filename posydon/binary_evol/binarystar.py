@@ -860,6 +860,22 @@ class BinaryStar:
                 setattr(star, attr, final_value)
                 setattr(star, attr + "_history", col_history)
 
+        # add values at He depletion
+        for colname in run.final_values.dtype.names:
+            if "at_He_depletion" in colname:
+                if colname[0:3]=="S1_":
+                    attr = colname[3:]
+                    final_value = run.final_values[colname]
+                    setattr(binary.star_1, attr, final_value)
+                elif colname[0:3]=="S2_":
+                    attr = colname[3:]
+                    final_value = run.final_values[colname]
+                    setattr(binary.star_2, attr, final_value)
+                else:
+                    attr = colname
+                    final_value = run.final_values[colname]
+                    setattr(binary, attr, final_value)
+        
         # update eccentricity
         binary.eccentricity = 0.0
         binary.eccentricity_history = [0.0] * n_steps
