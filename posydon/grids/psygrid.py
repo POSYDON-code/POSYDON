@@ -722,7 +722,8 @@ class PSyGrid:
                     if fvcol in dtype_final_values.names:
                         if ((i_He_depl==-1) and (h is not None)):
                             i_He_depl = get_i_He_depl(h)
-                        if ((col in h.dtype.names) and (i_He_depl>=0)):
+                        if ((h is not None) and (col in h.dtype.names) and
+                            (i_He_depl>=0)):
                             self.final_values[i][fvcol] = h[col][i_He_depl]
                         else:
                             self.final_values[i][fvcol] = np.nan
