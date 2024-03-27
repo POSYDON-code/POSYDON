@@ -30,8 +30,8 @@ from posydon.utils.common_functions import (
     infer_star_state, cumulative_mass_transfer_flag, infer_mass_transfer_case,
     RL_RELATIVE_OVERFLOW_THRESHOLD, LG_MTRANSFER_RATE_THRESHOLD)
 from posydon.visualization.combine_TF import (
-    TF1_POOL_STABLE, TF1_POOL_UNSTABLE,
-    TF1_POOL_INITIAL_RLO, TF1_POOL_ERROR, TF2_POOL_NO_RLO
+    TF1_POOL_STABLE, TF1_POOL_UNSTABLE, TF1_POOL_INITIAL_RLO, TF1_POOL_ERROR,
+    TF2_POOL_NO_RLO, TF2_POOL_INITIAL_RLO
 )
 
 
@@ -246,7 +246,7 @@ def get_flags_from_MESA_run(MESA_log_path, binary_history=None,
 
 def infer_interpolation_class(tf1, tf2):
     """Use the first two termination flags to infer the interpolation class."""
-    if tf1 in TF1_POOL_INITIAL_RLO:
+    if ((tf1 in TF1_POOL_INITIAL_RLO) or (tf2 in TF2_POOL_INITIAL_RLO)):
         return "initial_MT"
     if tf1 in TF1_POOL_ERROR:
         return "not_converged"
