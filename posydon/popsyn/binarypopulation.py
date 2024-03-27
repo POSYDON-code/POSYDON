@@ -51,18 +51,19 @@ from posydon.popsyn.defaults import default_kwargs
 from posydon.popsyn.io import binarypop_kwargs_from_ini
 from posydon.utils.constants import Zsun
 from posydon.utils.posydonerror import POSYDONError
+from posydon.utils.common_functions import set_binary_to_failed
 
 # 'event' usually 10 but 'detached (Integration failure)' can occur
 HISTORY_MIN_ITEMSIZE = {'state': 30, 'event': 25, 'step_names': 20,
                         'S1_state': 31, 'S2_state': 31,
-                        'mass_transfer_case': 7,
+                        'mass_transfer_case': 16,
                         'S1_SN_type': 5, 'S2_SN_type': 5}
 ONELINE_MIN_ITEMSIZE = {'state_i': 30, 'state_f': 30,
-                        'event_i': 10, 'event_f': 10,
+                        'event_i': 10, 'event_f': 25,
                         'step_names_i': 20, 'step_names_f': 20,
                         'S1_state_i': 31, 'S1_state_f': 31,
                         'S2_state_i': 31, 'S2_state_f': 31,
-                        'mass_transfer_case_i': 7, 'mass_transfer_case_f': 7,
+                        'mass_transfer_case_i': 7, 'mass_transfer_case_f': 16,
                         'S1_SN_type': 5, 'S2_SN_type': 5,
                         'interp_class_HMS_HMS' : 15, 'interp_class_CO_HeMS' : 15,
                         'interp_class_CO_HMS_RLO' : 15, 'interp_class_CO_HeMS_RLO' : 15,
@@ -288,12 +289,23 @@ class BinaryPopulation:
             with warnings.catch_warnings(record=True) as w:
                 try:
                     binary.evolve()
-                #except Exception:
                 except POSYDONError as e:
-                    binary.event = 'FAILED'
+                    set_binary_to_failed(binary)
                     binary.traceback = traceback.format_exc()
                     if self.population_properties.verbose_binary_errors:
                         traceback.print_exception(e)
+                except Exception as e:
+                    print("Failed Binary Initial Conditions:\n", 
+                    "S1 mass: ", binary.star_1.mass_history[0], "\n",
+                    "S2 mass: ", binary.star_2.mass_history[0], "\n",
+                    "S1 state: ", binary.star_1.state_history[0], "\n",
+                    "S2 state: ", binary.star_2.state_history[0], "\n",
+                    "orbital period: ", binary.orbital_period_history[0], "\n",
+                    "binary state: ", binary.state_history[0], "\n",
+                    "binary event: ", binary.state_history[0], "\n",
+                    "S1 natal kick array: ", binary.star_1.natal_kick_array, "\n",
+                    "S2 natal kick array: ", binary.star_2.natal_kick_array)
+                    traceback.print_exception(e)
                 if len(w) > 0:
                     warnings.simplefilter("always")
                     binary.warning_message = [x.message for x in w]
