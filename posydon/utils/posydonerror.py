@@ -46,3 +46,9 @@ class ModelError(POSYDONError):
 
 class NumericalError(POSYDONError):
     """POSYDON error specific for when a binary FAILS due to limitations of numerical methods."""
+
+class MatchingError(POSYDONError):
+    """POSYDON error specific for matching stars to single grid during the detached."""
+
+class IntegrationError(POSYDONError):
+    """Integration erros"""

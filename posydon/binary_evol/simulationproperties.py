@@ -15,6 +15,7 @@ __authors__ = [
 
 import time
 from posydon.utils.constants import age_of_universe
+from posydon.utils.posydonerror import POSYDONError
 
 
 class SimulationProperties:
@@ -46,7 +47,7 @@ class SimulationProperties:
                     # setting extra_pre/post_step/evolve methods
                     setattr(self, item[0], item[1])
             else:
-                raise ValueError(
+                raise POSYDONError(
                     "`extra_hooks` must be list of tuples with either "
                     "(i) a class deriving from EvolveHooks and a kwargs dict, "
                     "or (ii) the name of the extra function and the callable.")
