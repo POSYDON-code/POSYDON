@@ -10,6 +10,7 @@ import pandas as pd
 from posydon.utils.constants import clight, Msun, Rsun
 from posydon.utils.constants import standard_cgrav as cgrav
 from posydon.utils.constants import secyer as secyear
+from posydon.utils.limits_thresholds import LG_MTRANSFER_RATE_THRESHOLD
 
 
 __authors__ = [
@@ -451,7 +452,7 @@ def convert_output_to_table(
                 values["Porb_f(d)"] = binary_history["period_days"].iloc[-1]
                 values["tmerge(Gyr)"] = tmerge
 
-            if max_lg_mtransfer_rate < -5:
+            if max_lg_mtransfer_rate < LG_MTRANSFER_RATE_THRESHOLD:
                 values["result"] = "no_interaction"
             elif CE_flag != -1:
                 if tmerge > 13.8:

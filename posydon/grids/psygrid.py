@@ -202,8 +202,10 @@ from posydon.utils.configfile import ConfigFile
 from posydon.utils.common_functions import (orbital_separation_from_period,
                                             initialize_empty_array,
                                             infer_star_state,
-                                            get_i_He_depl,
-                                            THRESHOLD_CENTRAL_ABUNDANCE)
+                                            get_i_He_depl)
+from posydon.utils.limits_thresholds import (THRESHOLD_CENTRAL_ABUNDANCE,
+    THRESHOLD_CENTRAL_ABUNDANCE_LOOSE_C
+)
 from posydon.utils.gridutils import (read_MESA_data_file, read_EEP_data_file,
                                      add_field, join_lists, fix_He_core)
 from posydon.visualization.plot2D import plot2D
@@ -905,8 +907,9 @@ class PSyGrid:
                     init_mass_1 = float(params_from_path[0])
                 # check whether stop at He depletion is requested
                 if stop_before_carbon_depletion and init_mass_1>=100.0:
-                    kept = keep_till_central_abundance_He_C(binary_history, history1,
-                                  history2, THRESHOLD_CENTRAL_ABUNDANCE, 0.1)
+                    kept = keep_till_central_abundance_He_C(binary_history,
+                               history1, history2, THRESHOLD_CENTRAL_ABUNDANCE,
+                               THRESHOLD_CENTRAL_ABUNDANCE_LOOSE_C)
                     binary_history, history1, history2, newTF1 = kept
                     
                 # check whether start at RLO is requested, and chop the history

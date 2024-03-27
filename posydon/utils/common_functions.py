@@ -25,18 +25,17 @@ from posydon.utils import constants as const
 import copy
 import warnings
 from scipy.interpolate import PchipInterpolator
+from posydon.utils.limits_thresholds import (THRESHOLD_CENTRAL_ABUNDANCE,
+    THRESHOLD_HE_NAKED_ABUNDANCE, REL_LOG10_BURNING_THRESHOLD,
+    LOG10_BURNING_THRESHOLD, STATE_NS_STARMASS_UPPER_LIMIT,
+    RL_RELATIVE_OVERFLOW_THRESHOLD, LG_MTRANSFER_RATE_THRESHOLD
+)
 
 PATH_TO_POSYDON = os.environ.get("PATH_TO_POSYDON")
 
 
 # Constants related to inferring star states
 THRESHOLD_CENTRAL_ABUNDANCE = 0.01   # central abundance for flagging depletion
-THRESHOLD_HE_NAKED_ABUNDANCE = 0.01  # for surface abundance for stripped_He
-THRESHOLD_NUCLEAR_LUMINOSITY = 0.97  # for element fraction in nuclear burning
-# relative burning threshold with respect to nuclear luminosity
-REL_LOG10_BURNING_THRESHOLD = np.log10(1.0 - THRESHOLD_NUCLEAR_LUMINOSITY)
-LOG10_BURNING_THRESHOLD = -10.0      # burning luminosity threshold (in Lsol)
-STATE_NS_STARMASS_UPPER_LIMIT = 2.5
 STATE_UNDETERMINED = "undetermined_evolutionary_state"
 
 # ALL POSSIBLE STAR STATES
@@ -90,11 +89,6 @@ MT_CASE_TO_STR = {
 # Conversion of strings to integer mass-transfer flags
 MT_STR_TO_CASE = {string: integer for integer, string
                   in MT_CASE_TO_STR.items()}
-
-# Threshold used for inferring mass-transfer, and RLO
-RL_RELATIVE_OVERFLOW_THRESHOLD = -0.05
-LG_MTRANSFER_RATE_THRESHOLD = -12
-
 
 DEFAULT_CE_OPTION_FOR_LAMBDA = \
     "lambda_from_profile_gravitational_plus_internal_minus_recombination"
