@@ -9,6 +9,10 @@ __authors__ = [
 
 import numpy as np
 import warnings
+from posydon.utils.limits_thresholds import (
+    RL_RELATIVE_OVERFLOW_THRESHOLD, LG_MTRANSFER_RATE_THRESHOLD,
+    THRESHOLD_CENTRAL_ABUNDANCE, THRESHOLD_CENTRAL_ABUNDANCE_LOOSE_C
+)
 
 
 def scrub(tables, models, ages):
@@ -98,22 +102,14 @@ def keep_after_RLO(bh, h1, h2):
     bh_colnames = bh.dtype.names
 
     if "lg_mtransfer_rate" in bh_colnames:
-        # This needs to be aligned with run_binary_extras.f
-        # old: rate = bh["lg_mtransfer_rate"] >= -12
-        rate = bh["lg_mtransfer_rate"] >= -10
+        rate = bh["lg_mtransfer_rate"] >= LG_MTRANSFER_RATE_THRESHOLD
     else:
         raise ValueError("No `lg_mtransfer_rate` in binary history.")
 
-    # This needs to be aligned with run_binary_extras.f
-    # old: rlo1 = (bh["rl_relative_overflow_1"] >= -0.05
-    #        if "rl_relative_overflow_1" in bh_colnames else None)
-    rlo1 = (bh["rl_relative_overflow_1"] >= 0.00
+    rlo1 = (bh["rl_relative_overflow_1"] >= RL_RELATIVE_OVERFLOW_THRESHOLD
             if "rl_relative_overflow_1" in bh_colnames else None)
 
-    # This needs to be aligned with run_binary_extras.f
-    #old: rlo2 = (bh["rl_relative_overflow_2"] >= -0.05
-    #        if "rl_relative_overflow_2" in bh_colnames else None)
-    rlo2 = (bh["rl_relative_overflow_2"] >= 0.00
+    rlo2 = (bh["rl_relative_overflow_2"] >= RL_RELATIVE_OVERFLOW_THRESHOLD
             if "rl_relative_overflow_2" in bh_colnames else None)
 
     if rlo1 is None:
@@ -166,7 +162,9 @@ def keep_after_RLO(bh, h1, h2):
     return new_bh, new_h1, new_h2
 
 
-def keep_till_central_abundance_He_C(bh, h1, h2, Ystop=1.0e-5, XCstop=1.0):
+def keep_till_central_abundance_He_C(bh, h1, h2,
+    Ystop=THRESHOLD_CENTRAL_ABUNDANCE,
+    XCstop=THRESHOLD_CENTRAL_ABUNDANCE_LOOSE_C):
     """Scrub histories to stop when central helium and carbon abundance are
     below the stopping criteria.
 

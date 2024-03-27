@@ -185,6 +185,7 @@ class EvaluateIFInterpolator:
         stable_inds = np.where(self.ic == "stable_MT")
         no_inds = np.where(self.ic == "no_MT")
         unstable_inds = np.where(self.ic == "unstable_MT")
+        #TODO: add interpolation class "stable_reverse_MT"
 
         stable_errs = self.__clean_errs(self.errs[err_type].T[k_inds].T[stable_inds])
         no_errs = self.__clean_errs(self.errs[err_type].T[k_inds].T[no_inds])

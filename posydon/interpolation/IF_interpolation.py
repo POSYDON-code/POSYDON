@@ -76,8 +76,8 @@ For most applications specifying only the first four parameters is recommended.
 
     interp = IFInterpolator(grid = grid, interpolators = [
         {
-            "interp_method": ["linear", "linear", "linear"],
-            "interp_classes": ["no_MT", "stable_MT", "unstable_MT"],
+            "interp_method": ["linear", "linear", "linear", "linear"],
+            "interp_classes": ["no_MT", "stable_MT", "unstable_MT", "stable_reverse_MT"],
             "out_keys": first,
             "class_method": "kNN",
             "c_keys": ["interpolation_class"],
@@ -1588,7 +1588,7 @@ def train_and_assess(grid_train, grid_test, ux2, path, classes):
     m1NN.save(os.path.join(path2obj, name))
 
     interp_method, class_method = "linear", "kNN"
-    # classes = ['no_MT', 'stable_MT', 'unstable_MT']
+    # classes = ['no_MT', 'stable_MT', 'unstable_MT', 'stable_reverse_MT']
     mMC = IFInterpolator(grid=grid_T, interp_method=interp_method,
                          class_method=class_method, interp_classes=classes)
     interp_method = "linear3c"
@@ -1714,6 +1714,7 @@ def assess_models(models, grid_T, grid_t, ux2, path='./'):
             w_sMT.append(((ic_gt == 'stable_MT') & (ic_t == 'stable_MT')))
             w_uMT.append(((ic_gt == 'unstable_MT') & (ic_t == 'unstable_MT')))
             w_nMT.append(((ic_gt == 'no_MT') & (ic_t == 'no_MT')))
+            #TODO: add interpolation class "stable_reverse_MT"
 
             w = [w_sMT, w_uMT, w_nMT, correct]
             percent = [50, 90]

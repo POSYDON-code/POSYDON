@@ -37,15 +37,12 @@ import pandas as pd
 
 from posydon.utils.data_download import PATH_TO_POSYDON_DATA, data_download
 import posydon.utils.constants as const
-from posydon.utils.common_functions import is_number
-from posydon.utils.common_functions import CO_radius
-from posydon.utils.common_functions import (
-    orbital_period_from_separation,
-    inspiral_timescale_from_separation,
-    separation_evol_wind_loss,
-    calculate_Patton20_values_at_He_depl,
-    THRESHOLD_CENTRAL_ABUNDANCE,
-    rotate
+from posydon.utils.common_functions import (is_number, CO_radius,
+    orbital_period_from_separation, inspiral_timescale_from_separation,
+    separation_evol_wind_loss, calculate_Patton20_values_at_He_depl, rotate
+)
+from posydon.utils.limits_thresholds import (THRESHOLD_CENTRAL_ABUNDANCE,
+    STATE_NS_STARMASS_UPPER_LIMIT, NEUTRINO_MASS_LOSS_UPPER_LIMIT
 )
 
 from posydon.binary_evol.binarystar import BINARYPROPERTIES
@@ -79,8 +76,8 @@ MODEL = {
     "PISN": "Marchant+19",
     "ECSN": "Podsiadlowksi+04",
     "conserve_hydrogen_envelope" : False,
-    "max_neutrino_mass_loss": 0.5,
-    "max_NS_mass": 2.5,
+    "max_neutrino_mass_loss": NEUTRINO_MASS_LOSS_UPPER_LIMIT,
+    "max_NS_mass": STATE_NS_STARMASS_UPPER_LIMIT,
     "use_interp_values": True,
     "use_profiles": True,
     "use_core_masses": True,
