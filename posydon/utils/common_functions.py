@@ -35,7 +35,6 @@ PATH_TO_POSYDON = os.environ.get("PATH_TO_POSYDON")
 
 
 # Constants related to inferring star states
-THRESHOLD_CENTRAL_ABUNDANCE = 0.01   # central abundance for flagging depletion
 STATE_UNDETERMINED = "undetermined_evolutionary_state"
 
 # ALL POSSIBLE STAR STATES
