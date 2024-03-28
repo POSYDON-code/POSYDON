@@ -1453,8 +1453,7 @@ class Scaler:
                 inds = np.where(klass == c)[0]
                 c = None if c == "None" else c
 
-                if c not in self.scaler.keys():
-                    warnings.warn(f"skip denormalize: c={c}, inds={inds}")
+                if c not in self.scaler.keys(): # if class not in classes to interpolate we ignore
                     continue
                 normalized[inds] = self.scaler[c].denormalize(Xn[inds])
 
