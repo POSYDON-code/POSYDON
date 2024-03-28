@@ -44,7 +44,9 @@ for all classes.
 
 2. interp_classes: a list of classes that the simulation tracks can
 fall into. Usually specified as the mass transfer type. This only needs
-be specified if interp_method is a list.
+be specified if interp_method is a list. Note that when using class-wise normalization 
+only classes in interp_classes are normalized. This is the behavior for interpolation normalization
+but not classification normalization.
 
 3. class_method: the classification method to be used, either kNN or
 1NN.
@@ -77,7 +79,7 @@ For most applications specifying only the first four parameters is recommended.
     interp = IFInterpolator(grid = grid, interpolators = [
         {
             "interp_method": ["linear", "linear", "linear", "linear"],
-            "interp_classes": ["no_MT", "stable_MT", "unstable_MT", "stable_reverse_MT"],
+            "interp_classes": ["no_MT", "stable_MT", "unstable_MT", "stable_reverse_MT"], # classes not in this array will not be normalized in class-wise normalization
             "out_keys": first,
             "class_method": "kNN",
             "c_keys": ["interpolation_class"],
@@ -85,7 +87,7 @@ For most applications specifying only the first four parameters is recommended.
         },
         {
             "interp_method": ["linear", "linear", "linear", "linear"],
-            "interp_classes": ["None", "BH", "WD", "NS"],
+            "interp_classes": ["None", "BH", "WD", "NS"], # classes not in this array will not be normalized in class-wise normalization
             "out_keys": second,
             "class_method": "kNN",
             "c_keys": ['S1_direct_state'],
@@ -93,7 +95,7 @@ For most applications specifying only the first four parameters is recommended.
         },
         {
             "interp_method": ["linear", "linear", "linear", "linear"],
-            "interp_classes": ["None", "BH", "WD", "NS"],
+            "interp_classes": ["None", "BH", "WD", "NS"], # classes not in this array will not be normalized in class-wise normalization
             "out_keys": third,
             "class_method": "kNN",
             "c_keys": ['S1_Fryer+12-rapid_state'],
@@ -101,7 +103,7 @@ For most applications specifying only the first four parameters is recommended.
         },
         {
             "interp_method": ["linear", "linear", "linear", "linear"],
-            "interp_classes": ["None", "BH", "WD", "NS"],
+            "interp_classes": ["None", "BH", "WD", "NS"], # classes not in this array will not be normalized in class-wise normalization
             "out_keys": fourth,
             "class_method": "kNN",
             "c_keys": ['S1_Fryer+12-delayed_state'],
@@ -109,7 +111,7 @@ For most applications specifying only the first four parameters is recommended.
         },
         {
             "interp_method": ["linear", "linear", "linear", "linear"],
-            "interp_classes": ["None", "BH", "WD", "NS"],
+            "interp_classes": ["None", "BH", "WD", "NS"], # classes not in this array will not be normalized in class-wise normalization
             "out_keys": fifth,
             "class_method": "kNN",
             "c_keys": ['S1_Sukhbold+16-engineN20_state'],
@@ -117,7 +119,7 @@ For most applications specifying only the first four parameters is recommended.
         },
         {
             "interp_method": ["linear", "linear", "linear", "linear"],
-            "interp_classes": ["None", "BH", "WD", "NS"],
+            "interp_classes": ["None", "BH", "WD", "NS"], # classes not in this array will not be normalized in class-wise normalization
             "out_keys": sixth,
             "class_method": "kNN",
             "c_keys": ['S1_Patton&Sukhbold20-engineN20_state'],
@@ -648,11 +650,13 @@ class BaseIFInterpolator:
 
         """
         classes = self.test_classifier(self.c_key, Xt)
-        Xtn = self.X_scaler.normalize(Xt)
+
+
         if isinstance(self.interp_method, list):
             Xtn = self.X_scaler.normalize(Xt, classes)
             Ypredn = self.interpolator.predict(Xtn, classes)
         else:
+            Xtn = self.X_scaler.normalize(Xt)
             Ypredn = self.interpolator.predict(Xtn)
 
         Ypredn = np.array([
@@ -1427,9 +1431,9 @@ class Scaler:
                 inds = np.where(klass == c)[0]
                 c = None if c == "None" else c
 
-                if c not in self.scaler.keys():
-                    warnings.warn(f"skip normalize: c={c}, inds={inds}")
+                if c not in self.scaler.keys(): # if class not in classes to interpolate we ignore
                     continue
+
                 normalized[inds] = self.scaler[c].normalize(X[inds])
 
             return normalized
