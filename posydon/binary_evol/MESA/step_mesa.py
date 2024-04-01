@@ -300,7 +300,7 @@ class MesaGridStep:
         if not isinstance(binary, BinaryStar):
             raise ValueError("Must be an instance of BinaryStar")
         if not hasattr(self, 'step'):
-            raise FlowError("No step defined for {}".format(
+            raise ValueError("No step defined for {}".format(
                 self.__name__))
         if self.flip_stars_before_step:
             flip_stars(binary)
@@ -1626,12 +1626,12 @@ class CO_HeMS_step(MesaGridStep):
         # period inside the grid, but m1 outside the grid
         elif (self.p_min <= p <= self.p_max) and (m1 < self.m1_min or m1 > self.m1_max):
             set_binary_to_failed(self.binary)
-            raise ValueError(f'The mass of m1 ({m1}) is outside the grid,'
+            raise GridError(f'The mass of m1 ({m1}) is outside the grid,'
                              'while the period is inside the grid.')
         # period inside the grid, but m2 outside the grid
         elif (self.p_min <= p <= self.p_max) and (m2 < self.m2_min or m2 > self.m2_max):
             set_binary_to_failed(self.binary)
-            raise ValueError(f'The mass of m2 ({m2}) is outside the grid,'
+            raise GridError(f'The mass of m2 ({m2}) is outside the grid,'
                              'while the period is inside the grid.')
         #elif p > self.p_max:
         #    binary.event = 'redirect_from_CO_HeMS'
