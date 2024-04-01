@@ -124,9 +124,13 @@ class spectral_grids():
         distance_factor = 1
         if name == "stripped_grid":
             distance_factor = (kpc)**2
+            return 10**Flux*distance_factor
         if name == 'WR_grid':
             distance_factor = (kpc/100)**2
-        return abs(Flux)*distance_factor
+        if 'log' in self.kwargs[name]:
+            print(name,'log')
+            return (10**Flux)*distance_factor
+        return Flux*distance_factor
 
 
     def photgrid_constructor(self, **kwargs):
@@ -161,6 +165,12 @@ class spectral_grids():
         for key in kwargs:
             if key not in specgrid.axis_labels:
                 x.pop(key)
+        distance_factor = 1
+        if name == "stripped_grid":
+            distance_factor = (kpc)**2
+        if name == 'WR_grid':
+            distance_factor = (kpc/100)**2
         for filter in self.filters:
-            F[filter] = photgrid[filter].flux(x)*scale
+            F[filter] = photgrid[filter].flux(x)*distance_factor
+
         return F

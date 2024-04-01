@@ -49,20 +49,6 @@ class population_cmd():
 
         scale = self.scaling_factor
         F_obs = {}
-
-        if "stripped" in star.state:
-            Z = star.metallicity*Zo
-            M = star.mass/con.M_sun
-            M_min = self.grids.spectral_grids['stripped_grid'].axis_x_min['M_init']
-            M_max = self.grids.spectral_grids['stripped_grid'].axis_x_max['M_init']
-            if M < M_min or M > M_max:
-                self.failed_stars += 1
-                return None
-            x = {'M_init': M, 'Z': Z}
-            F_obs = self.grids.photogrid_flux(
-                'stripped_grid', 1*unt.m/unt.m, **x)
-            return F_obs
-
         Fe_H = star.Fe_H
         Z_Zo = star.metallicity
         Teff = copy.copy(star.get_Teff(self.grids.T_max, self.grids.T_min))

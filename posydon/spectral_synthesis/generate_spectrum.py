@@ -212,3 +212,68 @@ def calculated_Rt(star,i):
     R  = 10**copy(star[f'{i}_log_R'])
     Rt = R*((v_terminal/2500)/(np.sqrt(D_max)*M_dot/1e-4))**(2/3)
     return Rt
+
+def generate_photgrid_flux(grids,star,i,**kwargs):
+    """Generates the spectrum of star. 
+
+    Args:
+        grids: grid object
+            Instance of the grids created in generate_spectrum
+        star: tuple
+        i: string
+            S1 or S2 
+
+    Raises:
+        ValueError: If the final label is not "failed_grid" or not recognised
+
+    Returns:
+        Flax: float 
+        state: string
+        label: string 
+    """
+    #First we check if the star is a CO. (for future we can add WD spectra)\
+    if star[f'{i}_state'] in ['massless_remnant','BH','WD','NS']:
+        return None,star[f'{i}_state'],None
+    if star[f'{i}_Teff'] >= 40000:
+        #Check if the stars is false labeled as H_rich 
+        rename_star_state(star,i)
+    
+    Fe_H = np.log(star['Z/Zo'])
+    Z_Zo = star['Z/Zo']
+    #Z= star['Z/Zo']*Zo
+    Teff = copy(star[f'{i}_Teff'])
+    logg = copy(star[f'{i}_log_g'])
+    state = copy(star[f'{i}_state'])
+    R = 10**copy(star[f'{i}_log_R'])*con.R_sun
+    L = 10**copy(star[f'{i}_log_L'])
+    surface_h1 = max(copy(star[f'{i}_surface_h1']),0.01)
+    x = {'Teff':Teff ,
+         'log(g)': logg,
+         '[Fe/H]': Fe_H,
+         'Z/Zo':Z_Zo,
+         'state':state,
+         'surface_h1' : surface_h1,
+         '[alpha/Fe]':0.0}
+    if state == 'WR_star':
+        x['R_t'] = star[f'{i}_Rt']
+    label = None
+    label = point_the_grid(grids,x,label,**kwargs)
+    count = 1
+    if label == 'failed_grid':
+        return None,state,label
+    while count <3:
+        try:
+            if label == "stripped_grid":
+                Flux = grids.photogrid_flux(label,**x)
+            elif label == 'WR_grid':
+                Flux = grids.grid_flux(label,**x)(L/10**5.3)
+            else:
+                Flux = grids.grid_flux(label,**x)
+            return Flux.value,star['state'],label
+        except LookupError:
+            label = f'failed_attempt_{count}'
+        label = point_the_grid(grids,x,label,**kwargs)
+        count += 1
+        if label == 'failed_grid':
+            return None,state,label
+    raise ValueError(f'The label:{label} is not "failed_grid" after all the possible checks')
