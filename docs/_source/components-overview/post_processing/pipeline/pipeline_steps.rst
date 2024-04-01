@@ -8,16 +8,16 @@ The pipeline is divided into several steps, which build up on each other. Each
 step will take a csv file as input. The name of this file is used to tell the
 pipeline, which step should be performed.
 
-The run-pipeline script takes four arguments:
+The script to run the pipeline takes four arguments:
 
 .. code-block:: bash
 
-    run-pipeline PATH_TO_GRIDS PATH_TO_CSV_FILE DATA_ID VERBOSE
+    posydon-run-pipeline PATH_TO_GRIDS PATH_TO_CSV_FILE DATA_ID VERBOSE
 
 1. [path] The path to the girds main directory (currently not used)
 2. [path] The path to the csv file
 3. [int] An index indicating the data entry to read from the csv file
-4. [int] Where one wants verbose output (1) or not (0)
+4. [int] Whether one wants verbose output (1) or not (0)
 
 .. note::
     The current directory will be used as working directory, hence navigate to
@@ -29,13 +29,13 @@ Step1: creating a `PSyGrid` object
 ----------------------------------
 
 First, we need to create the :samp:`PSyGird` object. To do so, the pipeline
-needs to now the directory which contains the MESA runs, the compression, and
-whether to crop the history for some certain runs. Hence, the
+needs to now the directory which contains the MESA runs, the compression, the
+grid type, and whether to crop the history for some certain runs. Hence, the
 :samp:`step_1.csv` file should have those columns:
 
 .. code-block::
 
-    path_to_grid,compression,stop_before_carbon_depletion
+    path_to_grid,compression,grid_type,stop_before_carbon_depletion
 
 And the lines below contain the data for each unique combination of the three
 parameters to be processed. Here the :samp:`DATA_ID` simply refers to the line
@@ -91,11 +91,12 @@ envelope evolution, and at core collapse.
 Because some of the values may require a high precision in the data, we
 recommend to use the data from the ORIGINAL compression to calculate them. But
 the new values can be added to any :samp:`PSyGrid` object. Hence this step
-requests three paths to be specified in :samp:`step_3.csv`:
+requests three paths to be specified in :samp:`step_3.csv` beside the gird
+type:
 
 .. code-block::
 
-    path_to_grid,path_to_grid_ORIGINAL,path_to_processed_grid
+    path_to_grid,grid_type,path_to_grid_ORIGINAL,path_to_processed_grid
 
 .. table:: Description of required paths
 
@@ -103,6 +104,7 @@ requests three paths to be specified in :samp:`step_3.csv`:
     Path                    Description
     ======================  ===========
     path_to_grid            path of the gird, which get the values appended to it
+    grid_type               type of the grid
     path_to_grid_ORIGINAL   path of the grid, where the values are calculated from
     path_to_processed_grid  path of the new grid (a copy of the one specified as :samp:`path_to_grid` with the appended values)
     ======================  ===========
@@ -123,12 +125,13 @@ Step4: training of the interpolators
 
 To get interpolated data from our grids, we train in this step an interpolator
 on your :samp:`PSyGrid` object. The file :samp:`step_4.csv` therefore has to
-contain two information bits. First, the grid containing the data and second,
-the name of the interpolator object.
+contain three information bits: First, the grid containing the data, second,
+the grid type, third, the interpolation method (inlcuding whether the grid
+starts at RLO), and finally, the name of the interpolator object.
 
 .. code-block::
 
-    path_to_grid,path_to_interpolator
+    path_to_grid,interpolation_method,path_to_interpolator
 
 .. note::
     The type of interpolator will be recognized from the name of the
@@ -181,12 +184,12 @@ confusion with other steps. It clearly has to run after a step, but it is no
 usual step itself. It requires a path to a :samp:`PSyGrid` object to get the
 models from, a path, where the rerun should be stored (it creates in there the
 :samp:`grid.csv` and the ini file needed to
-:ref:`setup a new run <mesa-grids-api>`) and the type of the rerun specifying
-the logic and changes.
+:ref:`setup a new run <mesa-grids-api>`), the grid type, the metallicity, and
+the type of the rerun specifying the logic and changes.
 
 .. code-block::
 
-    path_to_grid,rerun_path,rerun_type
+    path_to_grid,rerun_path,grid_type,rerun_metallicity,rerun_type
 
 .. table:: Currently supported rerun types
 
@@ -198,5 +201,8 @@ the logic and changes.
     opacity_max          caution         it uses a fixed maximum opacity of 0.5 (this is only a last option change to get more stability)
     TPAGBwind            default in v3+  it enables the MESA inlist commit, which changes the wind during the TPAGB phase
     thermohaline_mixing  default in v3+  it uses thermohaline mixing in the inlist
+    HeMB_MLTp_mesh       workaround      it turns off magnetic braking for He stars; it uses less extreme parameters of the MLT++; it changes some more input values to change the resulation close to the surface
+    more_mesh            workaround      it modifies the remeshing and allows for more cells in MESA
+    conv_bdy_weight      caution         it disabled the convective_bdy_weight where this caused segmentation faults (this avoids a bug in the old MESA version r11701)
     ===================  ==============  ===========
 

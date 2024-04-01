@@ -65,10 +65,12 @@ ONELINE_MIN_ITEMSIZE = {'state_i': 30, 'state_f': 30,
                         'S2_state_i': 31, 'S2_state_f': 31,
                         'mass_transfer_case_i': 7, 'mass_transfer_case_f': 20,
                         'S1_SN_type': 5, 'S2_SN_type': 5,
-                        'interp_class_HMS_HMS' : 15, 'interp_class_CO_HeMS' : 15,
+                        'interp_class_HMS_HMS' : 20, 'interp_class_CO_HeMS' : 15,
                         'interp_class_CO_HMS_RLO' : 15, 'interp_class_CO_HeMS_RLO' : 15,
                         'mt_history_HMS_HMS' : 40, 'mt_history_CO_HeMS' : 40,
                         'mt_history_CO_HMS_RLO' : 40, 'mt_history_CO_HeMS_RLO' : 40,
+                        'culmulative_mt_case_HMS_HMS': 40, 'culmulative_mt_case_CO_HeMS': 40,
+                        'culmulative_mt_case_CO_HMS_RLO': 40, 'culmulative_mt_case_CO_HeMS_RLO': 40,
                         }
 
 # BinaryPopulation will enforce a constant metallicity accross all steps that
