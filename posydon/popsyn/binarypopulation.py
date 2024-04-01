@@ -292,7 +292,7 @@ class BinaryPopulation:
                 except POSYDONError as e:
                     set_binary_to_failed(binary)
                     binary.traceback = traceback.format_exc()
-                    if self.population_properties.verbose_binary_errors:
+                    if self.kwargs.get("error_checking_verbose", False):
                         traceback.print_exception(e)
                 except Exception as e:
                     print("Failed Binary Initial Conditions:\n", 
@@ -301,6 +301,7 @@ class BinaryPopulation:
                     "S1 state: ", binary.star_1.state_history[0], "\n",
                     "S2 state: ", binary.star_2.state_history[0], "\n",
                     "orbital period: ", binary.orbital_period_history[0], "\n",
+                    "eccentricity: ", binary.eccentricity_history[0], "\n",
                     "binary state: ", binary.state_history[0], "\n",
                     "binary event: ", binary.state_history[0], "\n",
                     "S1 natal kick array: ", binary.star_1.natal_kick_array, "\n",

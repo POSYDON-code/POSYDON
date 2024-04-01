@@ -51,4 +51,4 @@ class MatchingError(POSYDONError):
     """POSYDON error specific for matching stars to single grid during the detached."""
 
 class IntegrationError(POSYDONError):
-    """Integration erros"""
+    """Integration errors"""

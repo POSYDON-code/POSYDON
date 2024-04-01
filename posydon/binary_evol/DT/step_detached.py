@@ -1084,10 +1084,6 @@ class detached_step:
                               f"{t_after_matching-t_before_matching:.6g}")
             
             if pd.isna(m0) or pd.isna(t0):
-                    #    binary.event = "END"
-                    #    binary.state += " (GridMatchingFailed)"
-                    #    if self.verbose:
-                    #        print("Failed matching")
                 return None, None, None
             
             if htrack:
