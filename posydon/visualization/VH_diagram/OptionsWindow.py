@@ -5,10 +5,12 @@ __authors__ = [
     "Maxime Rambosson <Maxime.Rambosson@etu.unige.ch>",
 ]
 
-
-from PyQt5.QtWidgets import (QApplication, QWidget, QVBoxLayout,
-                             QCheckBox, QComboBox)
-from PyQt5.QtCore import Qt, pyqtSignal
+try:
+    from PyQt5.QtWidgets import (QApplication, QWidget, QVBoxLayout,
+                                QCheckBox, QComboBox)
+    from PyQt5.QtCore import Qt, pyqtSignal
+except ImportError:
+    raise ImportError('PyQt5 is not installed. Please run `pip install .[vis]` in the POSYDON base directory')
 
 from .PresenterMode import PresenterMode
 
@@ -37,8 +39,8 @@ class OptionsWindow(QWidget):
         self.setWindowTitle("Visualizer Options")
 
         screen_geometry = QApplication.desktop().screenGeometry()
-        self.resize(screen_geometry.width() * 0.20,
-                    screen_geometry.height() * 0.20)
+        self.resize(int(screen_geometry.width() * 0.20),
+                    int(screen_geometry.height() * 0.20))
 
         self._dropdow_options_signals = {
             self._mode_to_text[PresenterMode.DETAILED]:

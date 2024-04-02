@@ -98,7 +98,10 @@ BINARY_EVENTS_ALL = [
     'oDoubleCE1',
     'oDoubleCE2',
     'CO_contact',
-    'redirect',
+    'redirect_from_ZAMS',
+    'redirect_from_CO_HMS_RLO',
+    'redirect_from_CO_HeMS',
+    'redirect_from_CO_HeMS_RLO',
     'MaxTime_exceeded',
     'maxtime',
     'oMerging1',
@@ -123,7 +126,7 @@ for b in BINARY_STATES_ZAMS:
 for b in BINARY_STATES_ZAMS:
     for s1 in STAR_STATES_ZAMS:
         for s2 in STAR_STATES_ZAMS:
-            POSYDON_FLOW_CHART[(s1, s2, b, 'redirect')] = 'step_detached'
+            POSYDON_FLOW_CHART[(s1, s2, b, 'redirect_from_ZAMS')] = 'step_detached'
 
 
 # stripped_He star on a detached binary another H- or stripped_He star
@@ -146,19 +149,13 @@ for s1 in STAR_STATES_H_RICH_EVOLVABLE:
     for s2 in STAR_STATES_CO:
         POSYDON_FLOW_CHART[(s1, s2, 'RLO1', 'oRLO1')] = 'step_CO_HMS_RLO'
         POSYDON_FLOW_CHART[(s2, s1, 'RLO2', 'oRLO2')] = 'step_CO_HMS_RLO'
-        
-# He-rich star roche-lobe overflow onto a compact object
-for s1 in STAR_STATES_HE_RICH_EVOLVABLE:
-    for s2 in STAR_STATES_CO:
-        POSYDON_FLOW_CHART[(s1, s2, 'RLO1', 'oRLO1')] = 'step_CO_HeMS_RLO'
-        POSYDON_FLOW_CHART[(s2, s1, 'RLO2', 'oRLO2')] = 'step_CO_HeMS_RLO'
 
 # H-rich star on a detached binary with a compact object
 # that fall outside the grid and has been returned by step_CO_HMS_RLO
 for s1 in STAR_STATES_H_RICH:
     for s2 in STAR_STATES_CO:
-        POSYDON_FLOW_CHART[(s1, s2, 'detached', "redirect")] = 'step_detached'
-        POSYDON_FLOW_CHART[(s2, s1, 'detached', "redirect")] = 'step_detached'
+        POSYDON_FLOW_CHART[(s1, s2, 'detached', "redirect_from_CO_HMS_RLO")] = 'step_detached'
+        POSYDON_FLOW_CHART[(s2, s1, 'detached', "redirect_from_CO_HMS_RLO")] = 'step_detached'
 
 # stripped_He star on a detached binary with a compact object
 for s1 in STAR_STATES_HE_RICH_EVOLVABLE:
@@ -166,13 +163,25 @@ for s1 in STAR_STATES_HE_RICH_EVOLVABLE:
         POSYDON_FLOW_CHART[(s1, s2, 'detached', None)] = 'step_CO_HeMS'
         POSYDON_FLOW_CHART[(s2, s1, 'detached', None)] = 'step_CO_HeMS'
 
-
 # stripped_He star on a detached binary with a compact object
 # that fall outside the grid and has been returned by step_CO_HeMS
 for s1 in STAR_STATES_HE_RICH:
     for s2 in STAR_STATES_CO:
-        POSYDON_FLOW_CHART[(s1, s2, 'detached', "redirect")] = 'step_detached'
-        POSYDON_FLOW_CHART[(s2, s1, 'detached', "redirect")] = 'step_detached'
+        POSYDON_FLOW_CHART[(s1, s2, 'detached', "redirect_from_CO_HeMS")] = 'step_detached'
+        POSYDON_FLOW_CHART[(s2, s1, 'detached', "redirect_from_CO_HeMS")] = 'step_detached'
+
+# He-rich star roche-lobe overflow onto a compact object
+for s1 in STAR_STATES_HE_RICH_EVOLVABLE:
+    for s2 in STAR_STATES_CO:
+        POSYDON_FLOW_CHART[(s1, s2, 'RLO1', 'oRLO1')] = 'step_CO_HeMS_RLO'
+        POSYDON_FLOW_CHART[(s2, s1, 'RLO2', 'oRLO2')] = 'step_CO_HeMS_RLO'
+
+# He-rich star roche-lobe overflow onto a compact object
+# that fall outside the grid and has been returned by step_CO_HeMS_RLO
+for s1 in STAR_STATES_HE_RICH:
+    for s2 in STAR_STATES_CO:
+        POSYDON_FLOW_CHART[(s1, s2, 'detached', "redirect_from_CO_HeMS_RLO")] = 'step_detached'
+        POSYDON_FLOW_CHART[(s2, s1, 'detached', "redirect_from_CO_HeMS_RLO")] = 'step_detached'
 
 
 for s1 in STAR_STATES_ZAMS:
@@ -242,13 +251,6 @@ for b in ['initially_single_star']:
                 POSYDON_FLOW_CHART[(s1, s2, b, e)] = 'step_initially_single'
                 POSYDON_FLOW_CHART[(s2, s1, b, e)] = 'step_initially_single'
 
-for s1 in STAR_STATES_CO:
-    for s2 in ['massless_remnant']:
-        for e in BINARY_EVENTS_ALL:
-            POSYDON_FLOW_CHART[(s1, s2, b, e)] = 'step_end'
-            POSYDON_FLOW_CHART[(s2, s1, b, e)] = 'step_end'
-
-
 
 BINARY_EVENTS_OF_SN_OR_AFTER_DETACHED = BINARY_EVENTS_ALL.copy()
 [BINARY_EVENTS_OF_SN_OR_AFTER_DETACHED.remove(x) for x in ['CC1','CC2','MaxTime_exceeded','maxtime']]
@@ -272,8 +274,8 @@ for b in ['merged']:
     for s1 in STAR_STATES_ALL:
         for s2 in STAR_STATES_ALL:
             for e in ['oMerging1', 'oMerging2']:
-                POSYDON_FLOW_CHART[(s1, s2, b, e)] = 'step_merged' #'step_merged'
-                POSYDON_FLOW_CHART[(s2, s1, b, e)] = 'step_merged' #'step_merged'
+                POSYDON_FLOW_CHART[(s1, s2, b, e)] = 'step_merged'
+                POSYDON_FLOW_CHART[(s2, s1, b, e)] = 'step_merged'
 
 # catch initial_RLO states
 for s1 in STAR_STATES_ALL:
@@ -287,6 +289,22 @@ for b in BINARY_STATES_ALL:
         for s2 in STAR_STATES_ALL:
             for e in ['maxtime', 'MaxTime_exceeded', 'CO_contact']:
                 POSYDON_FLOW_CHART[(s1, s2, b, e)] = 'step_end'
+
+# catch all massless remnants with compact objects
+for b in BINARY_STATES_ALL:
+    for s1 in STAR_STATES_CO:
+        for s2 in ['massless_remnant']:
+            for e in BINARY_EVENTS_ALL:
+                POSYDON_FLOW_CHART[(s1, s2, b, e)] = 'step_end'
+                POSYDON_FLOW_CHART[(s2, s1, b, e)] = 'step_end'
+
+# catch two massless remnants
+# separate for readability
+for b in BINARY_STATES_ALL:
+    for s in ['massless_remnant']:
+        for e in BINARY_EVENTS_ALL:
+            POSYDON_FLOW_CHART[(s, s, b, e)] = 'step_end'
+
 
 
 def flow_chart(FLOW_CHART=POSYDON_FLOW_CHART, CHANGE_FLOW_CHART=None):

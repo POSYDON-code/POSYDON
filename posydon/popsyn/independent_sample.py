@@ -347,7 +347,7 @@ def generate_secondary_masses(primary_masses,
 
     # Generate secondary masses
     if secondary_mass_scheme == 'flat_mass_ratio':
-        mass_ratio_min = secondary_mass_min / primary_masses
+        mass_ratio_min = np.max([secondary_mass_min / primary_masses,np.ones(len(primary_masses))*0.05], axis=0)
         mass_ratio_max = np.min([secondary_mass_max / primary_masses,
                                  np.ones(len(primary_masses))], axis=0)
         secondary_masses = (
@@ -358,3 +358,53 @@ def generate_secondary_masses(primary_masses,
         secondary_masses = primary_masses
 
     return secondary_masses
+
+def binary_fraction_value(binary_fraction_const=1,binary_fraction_scheme = 'const',m1 = None,**kwargs):
+    """
+    Getting the binary fraction depending on the scheme. The two possible option are a constant binary fraction 
+    and a binary fraction based on the values given in Moe and Di Stefano (2017). 
+
+    Parameters:
+    --------------------
+    binary scheme: string
+        Determines if the value of the binary fraction will be constant or not  
+    binary fraction const: int 
+        Gives the value the constant value of the binary if the constant scheme is choosen. 
+
+    Returns 
+    ------------------
+    binary fraction: int
+
+    """
+    binary_fraction_scheme_options = ['const','Moe_17']
+
+    # Input parameter checks
+    if binary_fraction_scheme not in binary_fraction_scheme_options: 
+        raise ValueError("You must provide an allowed binary fraction scheme.")
+    
+
+    if binary_fraction_scheme == 'const': 
+        binary_fraction = binary_fraction_const
+    
+    elif binary_fraction_scheme == 'Moe_17':
+        if m1 is None: 
+            raise ValueError("There was not a primary mass provided in the inputs. Unable to return a binary fraction")
+        elif m1 < 0.8:
+            raise ValueError("The scheme doesn't support values of m1 less than 0.8")
+        elif m1 <= 2  and m1 >= 0.8:
+            binary_fraction = 0.4
+        elif m1 <= 5 and m1 > 2:
+            binary_fraction = 0.59
+        elif m1<=9 and m1 > 5 :
+            binary_fraction = 0.76
+        elif m1<= 16 and m1 > 9:
+            binary_fraction = 0.84
+        elif m1 > 16:
+            binary_fraction = 0.94
+        else: 
+            raise ValueError(f'There primary mass provided {m1} is not supported by the Moe_17 scheme.')
+    else: 
+        pass
+    return binary_fraction
+
+    

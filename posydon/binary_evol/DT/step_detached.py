@@ -12,9 +12,9 @@ __authors__ = [
     "Jeffrey Andrews <jeffrey.andrews@northwestern.edu>",
 ]
 
-
 import os
 import numpy as np
+import pandas as pd
 import time
 from scipy.integrate import solve_ivp
 from scipy.interpolate import PchipInterpolator
@@ -32,7 +32,8 @@ from posydon.utils.common_functions import (
     roche_lobe_radius,
     check_state_of_star,
     PchipInterpolator2,
-    convert_metallicity_to_string
+    convert_metallicity_to_string,
+    set_binary_to_failed,
 )
 from posydon.binary_evol.flow_chart import (STAR_STATES_CC, STAR_STATES_CO)
 import posydon.utils.constants as const
@@ -122,7 +123,6 @@ DEFAULT_TRANSLATION = {
     "profile": None,
     "metallicity": None,
     "spin": "spin_parameter",
-    "log_total_angular_momentum": "log_total_angular_momentum",
     "conv_env_top_mass": "conv_env_top_mass",
     "conv_env_bot_mass": "conv_env_bot_mass",
     "conv_env_top_radius": "conv_env_top_radius",
@@ -834,7 +834,7 @@ class detached_step:
                             colscalers=colscalers, scales=scales)
 
                     x0 = get_root0(
-                        MESA_label, posydon_attribute, htrack, rs=rs)
+                        MESA_labels, posydon_attributes, htrack, rs=rs)
 
                     # bnds = ([m_min_H, m_max_H], [0, None])
                     sol = minimize(sq_diff_function, x0,
@@ -923,13 +923,21 @@ class detached_step:
         KEYS = self.KEYS
         KEYS_POSITIVE = self.KEYS_POSITIVE
 
-        if binary.star_1 is None or binary.star_1.state == "massless_remnant":
-            self.non_existent_companion = 1
-        if binary.star_2 is None or binary.star_2.state == "massless_remnant":
-            self.non_existent_companion = 2
+        companion_1_exists = (binary.star_1 is not None
+                              and binary.star_1.state != "massless_remnant")
+        companion_2_exists = (binary.star_2 is not None
+                              and binary.star_2.state != "massless_remnant")
+
+        if companion_1_exists:
+            if companion_2_exists:                  # to evolve a binary star
+                self.non_existent_companion = 0
+            else:                                   # star1 is a single star
+                self.non_existent_companion = 2
         else:
-            # detached step of an actual binary
-            self.non_existent_companion = 0
+            if companion_2_exists:                  # star2 is a single star
+                self.non_existent_companion = 1
+            else:                                   # no star in the system
+                raise Exception("There is no star to evolve. Who summoned me?")
 
         if self.non_existent_companion == 0: #no isolated evolution, detached step of an actual binary
             # the primary in a real binary is potential compact object, or the more evolved star
@@ -993,24 +1001,10 @@ class detached_step:
                 secondary.htrack = False
                 primary.htrack = False
                 primary.co = False
-            elif (binary.star_1.state in STAR_STATES_CO
-                    and binary.star_2.state
-                    in 'massless_remnant'):
-                binary.state += " Thorne–Żytkow object"
-                if self.verbose or self.verbose == 1:
-                    print("Formation of Thorne–Żytkow object, nothing to do further")
-                return
-            elif (binary.star_2.state in STAR_STATES_CO
-                    and binary.star_1.state
-                    in 'massless_remnant'):
-                binary.state += " Thorne–Żytkow object"
-                if self.verbose or self.verbose == 1:
-                    print("Formation of Thorne–Żytkow object, nothing to do further")
-                return
             else:
                 raise Exception("States not recognized!")
 
-        # non-existent, far away, star
+        # star 1 is a massless remnant, only star 2 exists
         elif self.non_existent_companion == 1:
             # we force primary.co=True for all isolated evolution,
             # where the secondary is the one evolving one
@@ -1022,9 +1016,13 @@ class detached_step:
                 secondary.htrack = True
             elif (binary.star_2.state in LIST_ACCEPTABLE_STATES_FOR_HeStar):
                 secondary.htrack = False
+            elif (binary.star_2.state in STAR_STATES_CO):
+                # only a compact object left
+                return
             else:
                 raise Exception("State not recognized!")
 
+        # star 2 is a massless remnant, only star 1 exists
         elif self.non_existent_companion == 2:
             primary = binary.star_2
             primary.co = True
@@ -1034,6 +1032,8 @@ class detached_step:
                 secondary.htrack = True
             elif (binary.star_1.state in LIST_ACCEPTABLE_STATES_FOR_HeStar):
                 secondary.htrack = False
+            elif (binary.star_1.state in STAR_STATES_CO):
+                return
             else:
                 raise Exception("State not recognized!")
         else:
@@ -1064,7 +1064,7 @@ class detached_step:
 
             with np.errstate(all="ignore"):
                 # get the initial m0, t0 track
-                if binary.event == 'ZAMS':
+                if binary.event == 'ZAMS' or binary.event == 'redirect_from_ZAMS':
                     # ZAMS stars in wide (non-mass exchaging binaries) that are
                     # directed to detached step at birth
                     m0, t0 = star1.mass, 0
@@ -1077,20 +1077,25 @@ class detached_step:
                     if self.verbose or self.verbose == 1:
                         print("Matching duration: "
                               f"{t_after_matching-t_before_matching:.6g}")
-
+            
+            if pd.isna(m0) or pd.isna(t0):
+                    #    binary.event = "END"
+                    #    binary.state += " (GridMatchingFailed)"
+                    #    if self.verbose:
+                    #        print("Failed matching")
+                return None, None, None
+            
             if htrack:
                 self.grid = self.grid_Hrich
-            elif not htrack:
+            else:
                 self.grid = self.grid_strippedHe
+            
+            # check if m0 is in the grid
+            if m0 < self.grid.grid_mass.min() or m0 > self.grid.grid_mass.max():
+                set_binary_to_failed(binary)
+                raise ValueError(f"The mass {m0} is out of the single star grid range and cannot be matched to a track.")
 
             get_track = self.grid.get
-
-            if np.isnan(m0) or np.isnan(t0):
-                #    binary.event = "END"
-                #    binary.state += " (GridMatchingFailed)"
-                #    if self.verbose:
-                #        print("Failed matching")
-                return None, None, None
 
             max_time = binary.properties.max_simulation_time
             assert max_time > 0.0, "max_time is non-positive"
@@ -1346,7 +1351,7 @@ class detached_step:
                         # EDIT: We assume POSYDON surf_avg_omega is provided in
                         # rad/yr already.
                     else:
-                        if is_secondary == True:
+                        if is_secondary:
                             radius_to_be_used = interp1d_sec["R"](interp1d_sec["t0"])
                             mass_to_be_used = interp1d_sec["mass"](interp1d_sec["t0"])
                         else:
@@ -1993,14 +1998,14 @@ def diffeq(
 ):
     """Diff. equation describing the orbital evolution of a detached binary.
 
-    The equation handles wind mass-loss [1_], tidal [2_], gravational [3_]
-    effects and magnetic braking [4_]. It also handles the change of the
-    secondary's stellar spin due to its change of moment of intertia and due to
-    mass-loss from its spinning surface. It is assumed that the mass loss is
-    fully non-conservative. Magnetic braking is fully applied to secondary
-    stars with mass less than 1.3 Msun and fully off for stars with mass larger
-    then 1.5 Msun. The effect of magnetic braking falls linearly for stars with
-    mass between 1.3 Msun and 1.5 Msun.
+    The equation handles wind mass-loss [1]_, tidal [2]_, gravational [3]_
+    effects and magnetic braking [4]_, [5]_, [6]_, [7]_, [8]_. It also handles
+    the change of the secondary's stellar spin due to its change of moment of
+    intertia and due to mass-loss from its spinning surface. It is assumed that
+    the mass loss is fully non-conservative. Magnetic braking is fully applied
+    to secondary stars with mass less than 1.3 Msun and fully off for stars
+    with mass larger then 1.5 Msun. The effect of magnetic braking falls
+    linearly for stars with mass between 1.3 Msun and 1.5 Msun.
 
     TODO: exaplin new features (e.g., double COs)
 
@@ -2064,10 +2069,10 @@ def diffeq(
         Default: True.
     magnetic_braking_mode: String
         A string corresponding to the desired magnetic braking prescription.
-            -- RVJ83: Rappaport, Verbunt, & Joss 1983
-            -- M15: Matt et al. 2015
-            -- G18: Garraffo et al. 2018
-            -- CARB: Van & Ivanova 2019
+            - RVJ83 : Rappaport, Verbunt, & Joss 1983 [4]_
+            - M15 : Matt et al. 2015 [5]_
+            - G18 : Garraffo et al. 2018 [6]_
+            - CARB : Van & Ivanova 2019 [7]_
     do_stellar_evolution_and_spin_from_winds: Boolean
         If True, take into account change of star spin due to change of its
         moment of inertia during its evolution and due to spin angular momentum
