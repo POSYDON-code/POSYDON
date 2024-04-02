@@ -53,6 +53,7 @@ class SyntheticPopulation:
         self.df_grb_observable = None
         self.grb_z_rate_density = None
         self.grb_rate_density = None
+        self.times = None 
 
         if '.ini' not in path_to_ini:
             raise ValueError('You did not provide a valid path_to_ini!')
@@ -60,16 +61,21 @@ class SyntheticPopulation:
             synthetic_pop_params = binarypop_kwargs_from_ini(path_to_ini)
 
             self.metallicity = synthetic_pop_params['metallicity']
-
+            self.times = synthetic_pop_params['max_simulation_time']
             if not isinstance( self.metallicity, list):
                 self.metallicity = [self.metallicity]
+            if not isinstance( self.times, list):
+                self.times = [self.times]
+            
 
             self.binary_populations = []
             for met in self.metallicity:
-                self.ini_kw = binarypop_kwargs_from_ini(path_to_ini)
-                self.ini_kw['metallicity'] = met
-                self.ini_kw['temp_directory'] = self.create_met_prefix(met) + self.ini_kw['temp_directory']
-                self.binary_populations.append(BinaryPopulation(**self.ini_kw))
+                for time in self.times:
+                    self.ini_kw = binarypop_kwargs_from_ini(path_to_ini)
+                    self.ini_kw['metallicity'] = met
+                    self.ini_kw['max_simulation_time'] = time
+                    self.ini_kw['temp_directory'] = self.create_met_prefix(met) +self.create_time_suffix(time) + self.ini_kw['temp_directory']
+                    self.binary_populations.append(BinaryPopulation(**self.ini_kw))
 
         if path_to_data is None:
             return
@@ -82,15 +88,20 @@ class SyntheticPopulation:
     def evolve(self):
         """Evolve population(s) at given Z(s)."""
         for ind, pop in enumerate( self.binary_populations ):
-            print( f'Z={pop.kwargs["metallicity"]:.2e} Z_sun' )
+            print( f'Z={pop.kwargs["metallicity"]:.2e} Z_sun',f'time = {pop.kwargs["max_simulation_time"]/1e6} Myr' )
             pop.evolve()
             met_prefix = f'{pop.kwargs["metallicity"]:.2e}_Zsun_'
+            time_suffix = f'{pop.kwargs["max_simulation_time"]/1e6}_Myr_'
             pop.save( met_prefix + 'population.h5' )
 
     @staticmethod
     def create_met_prefix(met):
         """Append a prefix to the name of directories for batch saving."""
         return convert_metallicity_to_string(met) + '_Zsun_'
+    @staticmethod    
+    def create_time_suffix(time):
+        "Append a suffix to the name of the directories for batch saving."
+        return str(time/1e6) + '_Myr_'
 
     def apply_logic(self, df, S1_state=None, S2_state=None, binary_state=None,
                     binary_event=None, step_name=None, invert_S1S2=False,
