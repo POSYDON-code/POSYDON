@@ -38,12 +38,17 @@ class POSYDONError(Exception):
 class GridError(POSYDONError):
     """POSYDON error specific for PSyGrid operations."""
 
-
 class FlowError(POSYDONError):
     """POSYDON error specific for binary evolution flow errors."""
+
+class ModelError(POSYDONError):
+    """POSYDON error specific for when a binary FAILS due to limitations of physics modeling assumptions."""
+
+class NumericalError(POSYDONError):
+    """POSYDON error specific for when a binary FAILS due to limitations of numerical methods."""
 
 class MatchingError(POSYDONError):
     """POSYDON error specific for matching stars to single grid during the detached."""
 
 class IntegrationError(POSYDONError):
-    """Integration erros"""
+    """Integration errors"""

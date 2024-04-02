@@ -300,7 +300,7 @@ class MesaGridStep:
         if not isinstance(binary, BinaryStar):
             raise ValueError("Must be an instance of BinaryStar")
         if not hasattr(self, 'step'):
-            raise FlowError("No step defined for {}".format(
+            raise ValueError("No step defined for {}".format(
                 self.__name__))
         if self.flip_stars_before_step:
             flip_stars(binary)
@@ -399,9 +399,7 @@ class MesaGridStep:
         elif star_type == 'single-HeMS':
             pass
         else:
-            raise FlowError('Single star_type = %s unknown!' % star_type)
-
-    # UPDATE STAR AND BINARY METHODS
+            raise ValueError('Single star_type = %s unknown!' % star_type)
 
     def update_properties_NN(self, star_1_CO=False, star_2_CO=False,
                              track_interpolation=False):
@@ -516,10 +514,6 @@ class MesaGridStep:
                         getattr(binary, key_h))
                     if missing_values > 0:
                         getattr(binary, key_h).extend([np.nan]*missing_values)
-                        # DEBUG
-                        # print(key, missing_values)
-                        # print('fixed', len(getattr(self.binary, key
-                        #                            + "_history")))
 
         for k, star in enumerate(stars):
             for key in STARPROPERTIES:
@@ -665,10 +659,7 @@ class MesaGridStep:
                         if missing_values_star > 0:
                             getattr(star, key_h).extend(
                                 [np.nan]*missing_values)
-                            # DEBUG
-                            # print(key, missing_values_star_1)
-                            # print('fixed', len(getattr(self.binary.star_1,
-                            #                            key + "_history")))
+
         # convert these flags to default POSYDON star states
         setattr(stars[0], 'state',
                 cf.check_state_of_star(stars[0], star_CO=stars_CO[0]))
@@ -681,7 +672,9 @@ class MesaGridStep:
         setattr(binary, 'state', binary_state)
         setattr(binary, 'event', binary_event)
         setattr(binary, 'mass_transfer_case', MT_case)
-
+        
+        culmulative_mt_case = self.termination_flags[1]
+        setattr(self.binary, f'culmulative_mt_case_{self.grid_type}', culmulative_mt_case)
         setattr(self.binary, f'interp_class_{self.grid_type}', interpolation_class)
         mt_history = self.termination_flags[2] # mass transfer history (TF12 plot label)
         setattr(self.binary, f'mt_history_{self.grid_type}', mt_history)
@@ -750,28 +743,32 @@ class MesaGridStep:
                     k_bh = k
                 else:
                     donor = star
+
             key_bh = POSYDON_TO_MESA['star']['lg_mdot']+'_%d' % (k_bh+1)
             tmp_lg_mdot = np.log10(10**cb_bh[key_bh][-1] + cf.bondi_hoyle(
                 binary, accretor, donor, idx=-1,
                 wind_disk_criteria=True, scheme='Kudritzki+2000'))
             mdot_edd = cf.eddington_limit(binary, idx=-1)[0]
+
             if 10**tmp_lg_mdot > mdot_edd:
                 tmp_lg_mdot = np.log10(mdot_edd)
             accretor.lg_mdot = tmp_lg_mdot
+
             if self.save_initial_conditions:
                 mdot_history = np.array(cb_bh[key_bh])
                 edd = cf.eddington_limit(binary, idx=len_binary_hist)[0]
                 history_of_attribute = (np.log10(
                     10**cb_bh[key_bh][0] + cf.bondi_hoyle(
                         binary, accretor, donor, idx=len_binary_hist,
-                        wind_disk_criteria=True, scheme='Kudritzki+2000')))
+                        wind_disk_criteria=True, scheme='Kudritzki+2000')))                
                 if 10**history_of_attribute > edd:
                     history_of_attribute = np.log10(edd)
                 accretor.lg_mdot_history.append(history_of_attribute)
+
             if track_interpolation:
                 mdot_history = np.array(cb_bh[key_bh])
                 # looping from range(-N,0) where 0 is excluded
-                # note taht bondi_hoyle concatenates the current binary state
+                # bondi_hoyle concatenates the current binary state,
                 # hence we loop one back range(-N-1,-1)
                 tmp_h = [cf.bondi_hoyle(binary, accretor, donor, idx=i,
                                         wind_disk_criteria=True,
@@ -893,36 +890,25 @@ class MesaGridStep:
                         continue
                     else:
                         setattr(star, key, None)
-        # EXPERIMENTAL feature
+
         # infer stellar states
         interpolation_class = self.classes['interpolation_class']
         setattr(self.binary, f'interp_class_{self.grid_type}', interpolation_class)
         mt_history = self.classes['mt_history'] # mass transfer history (TF12 plot label)
         setattr(self.binary, f'mt_history_{self.grid_type}', mt_history)
-
+        
+        #TODO: add classifier for tf2
+        #setattr(self.binary, f'culmulative_mt_case', self.classes['termination_flags_2'])
         S1_state_inferred = cf.check_state_of_star(self.binary.star_1,
                                                    star_CO=star_1_CO)
         S2_state_inferred = cf.check_state_of_star(self.binary.star_2,
                                                    star_CO=star_2_CO)
-        #S1_state_classified = self.classes['S1_state']
-        #S2_state_classified = self.classes['S2_state']
 
         if interpolation_class != 'initial_MT':
-            # DEBUG
-            # if S1_state_inferred != S1_state_classified:
-            #     warnings.warn('Inferred stellar state of star_1 %s is '
-            #                   'different from classified state %s, note that'
-            #                   'by default we use the inferred!' %
-            #                   (S1_state_inferred,S1_state_classified))
-            # if S2_state_inferred != S2_state_classified:
-            #     warnings.warn('Inferred stellar state of star_2 %s is '
-            #                   'different from classified state %s, note that'
-            #                   'by default we use the inferred!' %
-            #                   (S2_state_inferred,S2_state_classified))
             setattr(self.binary.star_1, 'state', S1_state_inferred)
             setattr(self.binary.star_2, 'state', S2_state_inferred)
-        # else keep the current state
 
+        # else keep the current state
         binary_state, binary_event, MT_case = (
             cf.get_binary_state_and_event_and_mt_case(
                 self.binary, interpolation_class, verbose=self.verbose))
@@ -942,10 +928,12 @@ class MesaGridStep:
                 else:
                     donor = star
             key_bh = POSYDON_TO_MESA['star']['lg_mdot']+'_%d' % (k_bh+1)
+
             tmp_lg_mdot = np.log10(
                 10**fv[key_bh] + cf.bondi_hoyle(
                     binary, accretor, donor, idx=-1,
                     wind_disk_criteria=True, scheme='Kudritzki+2000'))
+                    
             mdot_edd = cf.eddington_limit(binary, idx=-1)[0]
             if 10**tmp_lg_mdot > mdot_edd:
                 tmp_lg_mdot = np.log10(mdot_edd)
@@ -1028,19 +1016,10 @@ class MesaGridStep:
                                            property + "_history")
                 np.array(property_history.append(current_property))
             else:
-                raise FlowError(
+                raise ValueError(
                     'Star can only be "star_1" or "star_2", you passed {0}'.
                     format(star))
-            # if property_history[-1] > value:
-            #     binary.state += ' (OutsideGrid)'
-            #     binary.event = 'END'
-            #     return
-            # if value > property_history[-1]:
-            #     #t = delta_t[-1]
-            #     #binary.state += ' (OutsideGrid)'
-            #     #binary.event = 'END'
-            #     binary.event = 'MaxTime_exceeded'
-            #     return
+            
             i = np.where(np.array(property_history) <= value)[0][-1]
 
         elif property in BINARYPROPERTIES:
@@ -1048,9 +1027,6 @@ class MesaGridStep:
             property_history = getattr(binary, property + "_history")
             np.array(property_history.append(current_property))
 
-            # if value > property_history[-1]:
-            #     binary.event = 'MaxTime_exceeded'
-            #     return
             i = np.where(np.array(property_history) <= value)[0][-1]
 
             # time at which to interpolate all quantities
@@ -1089,24 +1065,11 @@ class MesaGridStep:
                         if v_before is None or v_after is None:
                             interpolated_quanties[star][key] = None
                             continue
-                        # Debug
-                        interpolated_quanties[star][
-                            key] = self.interpolate_at_t(
+                        interpolated_quanties[star][key] = self.interpolate_at_t(
                                 t, t_before, t_after, v_before, v_after)
-                        # except:
-                        # # DEBUG
-                        #     print('star', star, 'key', key)
-                        #     print('time', t_before, t, t_after)
-                        #     print('key', v_before,
-                        #           interpolated_quanties[star][key], v_after)
+                        
             for key in BINARYPROPERTIES:
-                if key in [
-                        'state', 'event', 'mass_transfer_case'
-                ]:
-                # if key in [
-                #         'state', 'event', 'mass_transfer_case',
-                #         'nearest_neighbour_distance'
-                # ]:
+                if key in ['state', 'event', 'mass_transfer_case']:
                     interpolated_quanties['binary'][key] = getattr(
                         binary, key + "_history")[-1]
                 elif key == 'time':
@@ -1176,9 +1139,6 @@ class MesaGridStep:
 
         # in case track_interpolation = False we will flush all the history
         if self.flush_history:
-            # DEBUG
-            # print('Flushing history between', self.flush_entries,
-            #        len(getattr(binary, 'time_history')))
             if self.flush_entries is None:
                 raise ValueError('flush_entries cannot be None!')
             for key in STARPROPERTIES:
@@ -1417,6 +1377,7 @@ class CO_HMS_RLO_step(MesaGridStep):
                 self.binary.event = 'CC2'
                 return
         else:
+            set_binary_to_failed(self.binary)
             raise FlowError(
                 'The star_1.state = %s, star_2.state = %s, binary.state = %s, '
                 'binary.event = %s and not CO - HMS - oRLO1/oRLO2!'
@@ -1532,6 +1493,7 @@ class CO_HeMS_RLO_step(MesaGridStep):
                 self.binary.event = 'CC2'
                 return
         else:
+            set_binary_to_failed(self.binary)
             raise FlowError(
                 'The star_1.state = %s, star_2.state = %s, binary.state = %s, '
                 'binary.event = %s and not CO - HeMS - oRLO1/oRLO2!'
@@ -1634,13 +1596,6 @@ class CO_HeMS_step(MesaGridStep):
             # catch and redirect double core collapse, this happens if q=1:
             if self.binary.star_1.state == 'stripped_He_Central_C_depletion':
                 self.binary.event = 'CC1'
-                # REMOVED assume circularisation after first CC
-                # new_separation = self.binary.separation*(
-                #     1.-self.binary.eccentricity**2)
-                # self.binary.separation = new_separation
-                # self.binary.orbital_period = orbital_period_from_separation(
-                #     new_separation, m1, m2)
-                # self.binary.eccentricity = 0.
                 return
         # TODO: import states from flow_chart.py
         elif (state_1 in ['WD', 'NS', 'BH']
@@ -1651,6 +1606,7 @@ class CO_HeMS_step(MesaGridStep):
                 self.binary.event = 'CC2'
                 return
         else:
+            set_binary_to_failed(self.binary)
             raise FlowError(
                 'The star_1.state = %s, star_2.state = %s, binary.event = %s '
                 'not supported by CO - HeMS grid!' % (state_1, state_2, event))
@@ -1670,12 +1626,12 @@ class CO_HeMS_step(MesaGridStep):
         # period inside the grid, but m1 outside the grid
         elif (self.p_min <= p <= self.p_max) and (m1 < self.m1_min or m1 > self.m1_max):
             set_binary_to_failed(self.binary)
-            raise ValueError(f'The mass of m1 ({m1}) is outside the grid,'
+            raise GridError(f'The mass of m1 ({m1}) is outside the grid,'
                              'while the period is inside the grid.')
         # period inside the grid, but m2 outside the grid
         elif (self.p_min <= p <= self.p_max) and (m2 < self.m2_min or m2 > self.m2_max):
             set_binary_to_failed(self.binary)
-            raise ValueError(f'The mass of m2 ({m2}) is outside the grid,'
+            raise GridError(f'The mass of m2 ({m2}) is outside the grid,'
                              'while the period is inside the grid.')
         #elif p > self.p_max:
         #    binary.event = 'redirect_from_CO_HeMS'

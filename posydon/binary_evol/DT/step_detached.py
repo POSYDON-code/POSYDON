@@ -37,6 +37,7 @@ from posydon.utils.common_functions import (
 )
 from posydon.binary_evol.flow_chart import (STAR_STATES_CC, STAR_STATES_CO)
 import posydon.utils.constants as const
+from posydon.utils.posydonerror import NumericalError
 from posydon.utils.posydonerror import MatchingError,POSYDONError
 
 LIST_ACCEPTABLE_STATES_FOR_HMS = ["H-rich_Core_H_burning"]
@@ -837,8 +838,12 @@ class detached_step:
                         MESA_labels, posydon_attributes, htrack, rs=rs)
 
                     # bnds = ([m_min_H, m_max_H], [0, None])
-                    sol = minimize(sq_diff_function, x0,
+                    try:
+                        sol = minimize(sq_diff_function, x0,
                                    method="TNC", bounds=bnds)
+                    except:
+                        raise NumericalError("SciPy numerical differentiation occured outside boundary ",
+                                             "while matching to single star track")
 
             # if still not acceptable matching, we fail the system:
             if (np.abs(sol.fun) > tolerance_matching_integration_hard
@@ -1079,10 +1084,6 @@ class detached_step:
                               f"{t_after_matching-t_before_matching:.6g}")
             
             if pd.isna(m0) or pd.isna(t0):
-                    #    binary.event = "END"
-                    #    binary.state += " (GridMatchingFailed)"
-                    #    if self.verbose:
-                    #        print("Failed matching")
                 return None, None, None
             
             if htrack:

@@ -111,7 +111,7 @@ MAXIMUM_STEP_TIME = 120
 
 def signal_handler(signum, frame):
     """React to a maximum time signal."""
-    raise Exception("Binary Step Exceeded Alloted Time: {}".
+    raise RuntimeError("Binary Step Exceeded Alloted Time: {}".
                     format(MAXIMUM_STEP_TIME))
 
 
@@ -178,7 +178,9 @@ class BinaryStar:
                 setattr(self, f'interp_class_{grid_type}', None)
             if not hasattr(self, f'mt_history_{grid_type}'):
                 setattr(self, f'mt_history_{grid_type}', None)
-
+            if not hasattr(self, f'culmulative_mt_case_{grid_type}'):
+                setattr(self, f'culmulative_mt_case_{grid_type}', None)
+        
         # SimulationProperties object - parameters & parameterizations
         if isinstance(properties, SimulationProperties):
             self.properties = properties
@@ -208,7 +210,7 @@ class BinaryStar:
                 n_steps += 1
                 if max_n_steps is not None:
                     if n_steps > max_n_steps:
-                        raise Exception("Exceeded maximum number of steps ({})"
+                        raise RuntimeError("Exceeded maximum number of steps ({})"
                                         .format(max_n_steps))
         finally:
             signal.alarm(0)     # turning off alarm

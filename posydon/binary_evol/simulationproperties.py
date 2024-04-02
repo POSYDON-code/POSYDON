@@ -15,8 +15,6 @@ __authors__ = [
 
 import time
 from posydon.utils.constants import age_of_universe
-from posydon.utils.posydonerror import POSYDONError
-
 
 class SimulationProperties:
     """Class describing the properties of a population synthesis simulation."""
@@ -47,7 +45,7 @@ class SimulationProperties:
                     # setting extra_pre/post_step/evolve methods
                     setattr(self, item[0], item[1])
             else:
-                raise POSYDONError(
+                raise ValueError(
                     "`extra_hooks` must be list of tuples with either "
                     "(i) a class deriving from EvolveHooks and a kwargs dict, "
                     "or (ii) the name of the extra function and the callable.")
@@ -69,8 +67,8 @@ class SimulationProperties:
         # for debugging purposes
         if not hasattr(self, 'max_n_steps_per_binary'):
             self.max_n_steps_per_binary = 100
-        if not hasattr(self, "verbose_binary_errors"):
-            self.verbose_binary_errors = False
+        #if not hasattr(self, "verbose_binary_errors"):
+        #    self.verbose_binary_errors = False
 
         # Set functions for evolution
         for key, val in kwargs.items():
