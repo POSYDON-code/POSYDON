@@ -22,18 +22,20 @@ class POSYDONError(Exception):
         """
         self.message = message
         # copy the objects: we must know their state at the moment of the error
-        self.objects = copy.deepcopy(objects)
+        self.objects = copy.copy(objects)
         super().__init__(self.message)
 
     def __str__(self):
         """Create the text that accompanies this exception."""
-        result = self.message
+        result = ""
         if self.objects is not None:
-            for i, obj in enumerate(self.objects):
-                if isinstance(obj, (BinaryStar, SingleStar)):
-                    result += f"\n\nOBJECT #{i+1} ({type(obj)}):\n{str(obj)}"
-        return result
-
+            if isinstance(self.objects,list):
+                for i, obj in enumerate(self.objects):
+                    if isinstance(obj, (BinaryStar, SingleStar)):
+                        result += f"\n\nOBJECT #{i+1} ({type(obj)}):\n{str(obj)}"
+            else:
+                result += f"\n\nOBJECT #({type(self.objects)}):\n{str(self.objects)}"
+        return result + '\n'+ super().__str__()
 
 class GridError(POSYDONError):
     """POSYDON error specific for PSyGrid operations."""
@@ -52,3 +54,21 @@ class MatchingError(POSYDONError):
 
 class IntegrationError(POSYDONError):
     """Integration errors"""
+
+def initial_condition_message(binary,ini_params = None ):
+    if ini_params is None:
+        ini_params = ["\n Failed Binary Initial Conditions:\n",
+                    f"S1 mass: {binary.star_1.mass_history[0]} \n",
+                    f"S2 mass: {binary.star_2.mass_history[0]} \n",
+                    f"S1 state: {binary.star_1.state_history[0]} \n",
+                    f"S2 state: { binary.star_2.state_history[0]}\n",
+                    f"orbital period: { binary.orbital_period_history[0] } \n",
+                    f"eccentricity: { binary.eccentricity_history[0]} \n",
+                    f"binary state: { binary.state_history[0] }\n",
+                    f"binary event: { binary.state_history[0] }\n",
+                    f"S1 natal kick array: { binary.star_1.natal_kick_array }\n",
+                    f"S2 natal kick array: { binary.star_2.natal_kick_array}"]
+    message = ""
+    for i in ini_params:
+        message +=  i 
+    return message

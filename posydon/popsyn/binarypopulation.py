@@ -50,7 +50,7 @@ from posydon.utils.common_functions import (orbital_period_from_separation,
 from posydon.popsyn.defaults import default_kwargs
 from posydon.popsyn.io import binarypop_kwargs_from_ini
 from posydon.utils.constants import Zsun
-from posydon.utils.posydonerror import POSYDONError
+from posydon.utils.posydonerror import POSYDONError,initial_condition_message
 from posydon.utils.common_functions import set_binary_to_failed
 
 # 'event' usually 10 but 'detached (Integration failure)' can occur
@@ -291,23 +291,13 @@ class BinaryPopulation:
             with warnings.catch_warnings(record=True) as w:
                 try:
                     binary.evolve()
-                except POSYDONError as e:
+                except POSYDONError as posydon_error:
                     set_binary_to_failed(binary)
-                    binary.traceback = traceback.format_exc()
                     if self.kwargs.get("error_checking_verbose", False):
-                        traceback.print_exception(e)
+                        posydon_error.add_note(initial_condition_message(binary))
+                        traceback.print_exception(posydon_error)
                 except Exception as e:
-                    print("Failed Binary Initial Conditions:\n", 
-                    "S1 mass: ", binary.star_1.mass_history[0], "\n",
-                    "S2 mass: ", binary.star_2.mass_history[0], "\n",
-                    "S1 state: ", binary.star_1.state_history[0], "\n",
-                    "S2 state: ", binary.star_2.state_history[0], "\n",
-                    "orbital period: ", binary.orbital_period_history[0], "\n",
-                    "eccentricity: ", binary.eccentricity_history[0], "\n",
-                    "binary state: ", binary.state_history[0], "\n",
-                    "binary event: ", binary.state_history[0], "\n",
-                    "S1 natal kick array: ", binary.star_1.natal_kick_array, "\n",
-                    "S2 natal kick array: ", binary.star_2.natal_kick_array)
+                    e.add_note(initial_condition_message(binary))
                     traceback.print_exception(e)
                 if len(w) > 0:
                     warnings.simplefilter("always")
