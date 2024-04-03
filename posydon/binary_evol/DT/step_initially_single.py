@@ -45,8 +45,7 @@ class InitiallySingleStep(IsolatedStep):
 
     def __call__(self,binary):
         if binary.state != "initially_single_star":
-            raise FlowError("sent to InitiallySingleStep without the binary.state being initially_single_star")
+            raise AttributeError("sent to InitiallySingleStep without the binary.state being initially_single_star")
 
         binary.event == None
-        raise POSYDONError("Evolving single star!!!",binary)
         super().__call__(binary)
