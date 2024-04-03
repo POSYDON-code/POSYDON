@@ -1077,6 +1077,7 @@ class detached_step:
                     m0, t0 = copy_prev_m0, copy_prev_t0
                 else:
                     t_before_matching = time.time()
+                    raise(POSYDONError('Matching to single star',[binary,star1,star2]))
                     m0, t0, htrack = self.match_to_single_star(star1, htrack)
                     t_after_matching = time.time()
                     if self.verbose or self.verbose == 1:

@@ -294,6 +294,7 @@ class BinaryPopulation:
                 except POSYDONError as e:
                     set_binary_to_failed(binary)
                     binary.traceback = traceback.format_exc()
+                    #print(e)
                     if self.kwargs.get("error_checking_verbose", False):
                         traceback.print_exception(e)
                 except Exception as e:
