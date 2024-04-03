@@ -826,7 +826,7 @@ class StepSN(object):
                         for key in STARPROPERTIES:
                             setattr(star, key, None)
                         set_binary_to_failed(self.binary)
-                        raise ModelError("Invalid core state", state)
+                        raise ModelError("Invalid core state: " + str(state))
 
                 elif self.use_core_masses:
                     star.mass = m_grav
@@ -991,7 +991,7 @@ class StepSN(object):
                             warnings.warn('co/He core masses are zero! '
                                           'Setting m_WD=m_star!')
                     else:
-                        raise ValueError('Invalid co/He core masses!')
+                        raise ModelError('Invalid co/He core masses!')
                 f_fb = 1.0  # no SN the no kick is assumed
                 state = "WD"
 
@@ -1032,7 +1032,7 @@ class StepSN(object):
                             warnings.warn('co/He core masses are zero! '
                                           'Setting m_WD=m_star!')
                     else:
-                        raise ValueError('Invalid co/He core masses!')
+                        raise ModelError('Invalid co/He core masses!')
                 f_fb = 1.0  # no SN the no kick is assumed
                 state = "WD"
 
@@ -1072,7 +1072,7 @@ class StepSN(object):
                             warnings.warn('co/He core masses are zero! '
                                           'Setting m_WD=m_star!')
                     else:
-                        raise ValueError('Invalid co/He core masses!')
+                        raise ModelError('Invalid co/He core masses!')
                 f_fb = 1.0  # no SN the no kick is assumed
                 state = "WD"
 
@@ -1790,7 +1790,7 @@ class StepSN(object):
                             )
                         binary.true_anomaly_second_SN = true_anomaly
                     else:
-                        raise ValueError("This should never happen!")
+                        raise ValueError(f"Binary is in SN step but binary state is not CC1 or CC2: {binary.state}")
 
                 # compute new orbital period before reseting the binary properties     
                 binary.state = "detached"
@@ -1967,7 +1967,7 @@ class StepSN(object):
             CO_core_mass = star.co_core_mass_at_He_depletion
 
             if (C_core_abundance is None) or (CO_core_mass is None):
-                raise ValueError('The history did not contain core masses at'
+                raise ModelError('The history did not contain core masses at'
                                  f' He depletion! {CO_core_mass}'
                                  f' {C_core_abundance}')
 
