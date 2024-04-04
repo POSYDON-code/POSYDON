@@ -17,7 +17,6 @@ from posydon.utils.common_functions import orbital_period_from_separation
 from posydon.utils.common_functions import CO_radius
 from posydon.utils.common_functions import set_binary_to_failed
 from posydon.utils.posydonerror import NumericalError
-from posydon.utils.posydonerror import IntegrationError
 
 class DoubleCO:
     """The double compact-object step class."""

@@ -54,7 +54,7 @@ class MatchingError(POSYDONError):
 
 def initial_condition_message(binary,ini_params = None ):
     if ini_params is None:
-        ini_params = ["\n Failed Binary Initial Conditions:\n",
+        ini_params = ["\nFailed Binary Initial Conditions:\n",
                     f"S1 mass: {binary.star_1.mass_history[0]} \n",
                     f"S2 mass: {binary.star_2.mass_history[0]} \n",
                     f"S1 state: {binary.star_1.state_history[0]} \n",
@@ -64,7 +64,7 @@ def initial_condition_message(binary,ini_params = None ):
                     f"binary state: { binary.state_history[0] }\n",
                     f"binary event: { binary.state_history[0] }\n",
                     f"S1 natal kick array: { binary.star_1.natal_kick_array }\n",
-                    f"S2 natal kick array: { binary.star_2.natal_kick_array}"]
+                    f"S2 natal kick array: { binary.star_2.natal_kick_array}\n"]
     message = ""
     for i in ini_params:
         message +=  i 
