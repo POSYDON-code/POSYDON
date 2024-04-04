@@ -35,7 +35,7 @@ MNRAS, 388, 393, doi: 10.1111/j.1365-2966.2008.13402.x
 
 class Pulsar:
 
-    def __init__(self, initial_mass):
+    def __init__(self, initial_mass, B_field=float("NaN"), spin=float("NaN")):
         '''
         Construct a Pulsar object.
 
@@ -55,8 +55,18 @@ class Pulsar:
         self.Mdot_edd = self.calc_NS_edd_lim(np.nan)          ## Eddington accretion rate for the NS [g/s]
         self.luminosity = self.calc_NS_luminosity()           ## radio luminosity of the pulsar [erg/s]
 
-        self.spin = self.draw_NS_spin()          ## NS spin angular frequency [1/s]
-        self.Bfield = self.draw_NS_Bfield()      ## NS magnetic field [G]
+        ## if magnetic field and spin not specified when initializing the pulsar,
+        ## draw random values
+        if np.isnan(B_field):
+            self.Bfield = self.draw_NS_Bfield()      ## NS magnetic field [G]
+        else:
+            self.Bfield = B_field
+
+        if np.isnan(spin):
+            self.spin = self.draw_NS_spin()          ## NS spin angular frequency [1/s]
+        else:
+            self.spin = spin
+        
 
         self.alive_state = self.is_alive()
  
@@ -260,34 +270,38 @@ class Pulsar:
         B_i = self.Bfield            ## B-field of the NS before accretion [G]
         I = self.moment_inertia
 
-        #R_alfven = (2*np.pi**2/(G*mu_0**2))**(1/7) * (R**6/(self.Mdot_edd*M_i**(1/2)))**(2/7) * B_i**(4/7) ## Alfven radius
-        #R_mag = R_alfven/2   ## magnetic radius
-        R_mag = self.calc_magnetosphere_radius(Mdot_acc)
-   
-        ## evolve the NS spin
-        #J_i = 2/5*M_i*R**2*self.spin     ## spin angular momentum (J) of the NS before accretion
-        J_i = I*self.spin
-        
-        omega_k = np.sqrt(G*M_i/R_mag**3)
-        delta_J = 2/5*delta_M*R_mag**2*omega_k    ## change in J due to accretion
+        R_mag = self.calc_magnetosphere_radius(Mdot_acc)   ## calculate magnetic radius BEFORE B-field decay and mass accretion
 
-        J_f = J_i + delta_J
         M_f = M_i + delta_M
         self.mass = M_f
 
-        #omega_f = J_f/(2/5*M_f*R**2)
-        omega_f = J_f/I
-        self.spin = omega_f
-
+        #R_alfven = (2*np.pi**2/(G*mu_0**2))**(1/7) * (R**6/(self.Mdot_edd*M_i**(1/2)))**(2/7) * B_i**(4/7) ## Alfven radius
+        #R_mag = R_alfven/2   ## magnetic radius
+   
         ## evolve the NS B-field
         B_f = (B_i - B_min)*np.exp(-delta_M/delta_Md) + B_min 
         self.Bfield = B_f
 
+        #R_mag = self.calc_magnetosphere_radius(Mdot_acc)   ## calculate magnetic radius AFTER B-field decay and mass accretion
+        
+        ## evolve the NS spin
+        J_i = I*self.spin   ## spin angular momentum (J) of the NS before accretion
+       
+        omega_k = np.sqrt(G*M_i/R_mag**3)
+        delta_J = 2/5*delta_M*R_mag**2*omega_k    ## change in J due to accretion
+        J_f = J_i + delta_J
+
+        R_mag = self.calc_magnetosphere_radius(Mdot_acc)   ## calculate magnetic radius AFTER B-field decay and mass accretion
+        
+        I_mag = 2/5*M_f*R_mag**2   ## use moment of inertia for sphere w/ magnetic radius during accretion
+        omega_f = J_f/I_mag
+        self.spin = omega_f
+
         ## check if pulsar has reached the maximum spin limit 
         ## (does not apply for CE accretion)
-        if not CE:
-            spin_eq = self.calc_NS_spin_equilibrium(Mdot_acc)
-            if self.spin > spin_eq: self.spin = spin_eq
+        #if not CE:
+        spin_eq = self.calc_NS_spin_equilibrium(Mdot_acc)
+        if self.spin > spin_eq: self.spin = spin_eq
 
         ## check if pulsar crossed the death line
         self.alive_state = self.is_alive()
@@ -311,10 +325,11 @@ class Pulsar:
             b = a_b*M_comp + b_b
             delta_M = np.abs(a*R_comp + b)
 
+            if delta_M > 0.1: delta_M = 0.1
+
             ## assume amount of mass accreted during CE is 0.04-0.1 Msun  
-            if CE_acc_prescription == "MacLeod_bounded":
-                if delta_M > 0.1: delta_M = 0.1
-                elif delta_M < 0.04: delta_M = 0.04
+            if CE_acc_prescription == "MacLeod_bounded": 
+                if delta_M < 0.04: delta_M = 0.04
 
         if acc_decay_prescription == "Ye2019":
             self.RLO_evolve_Ye2019(delta_t, tau_d, delta_M, delta_Md)
