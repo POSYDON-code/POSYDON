@@ -52,9 +52,6 @@ class NumericalError(POSYDONError):
 class MatchingError(POSYDONError):
     """POSYDON error specific for matching stars to single grid during the detached."""
 
-class IntegrationError(POSYDONError):
-    """Integration errors"""
-
 def initial_condition_message(binary,ini_params = None ):
     if ini_params is None:
         ini_params = ["\n Failed Binary Initial Conditions:\n",
