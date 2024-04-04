@@ -83,7 +83,7 @@ def point_the_grid(grids,x,label,**kwargs):
     bstar_temp_cut_off = kwargs.get('bstar_temp_cut_off',15000)
     #First check for stripped stars because their temp can be a lot
     # higher than the Teff of the Ostar grid limit
-    
+    print(x['state'])
     if "stripped" in x['state']:
         if label is not None:
             return 'failed_grid'
@@ -92,6 +92,8 @@ def point_the_grid(grids,x,label,**kwargs):
     if x['state'] == "WR_star":
         if label is not None:
             return 'failed_grid'
+        if ((x['Teff'] -100000)/100000) < 0.1:
+            x['Teff'] = 100000
         return check_boundaries(grids,'WR_grid',**x)
 
     if isinstance(check_boundaries(grids,'global',**x),str):
