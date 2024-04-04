@@ -66,24 +66,32 @@ class SyntheticPopulation:
         self.df_grb_observable = None
         self.grb_z_rate_density = None
         self.grb_rate_density = None
+        self.times = None 
 
         if '.ini' not in path_to_ini:
             raise ValueError('You did not provide a valid path_to_ini!')
         else:
             self.synthetic_pop_params = binarypop_kwargs_from_ini(path_to_ini)
             self.metallicities = self.synthetic_pop_params['metallicity']
+            self.times = self.synthetic_pop_params['max_simulation_time']
             if not isinstance( self.metallicities, list):
                 self.metallicities = [self.metallicities]
+                
+            if not isinstance( self.times, list):
+                    self.times = [self.times]
             self.binary_populations = None
-        
+
     def create_binary_populations(self):
         """Create a list of BinaryPopulation objects."""
         self.binary_populations = []
         for met in self.metallicities[::-1]:
-            ini_kw = copy.deepcopy(self.synthetic_pop_params)
-            ini_kw['metallicity'] = met
-            ini_kw['temp_directory'] = self.create_met_prefix(met) + self.synthetic_pop_params['temp_directory']
-            self.binary_populations.append(BinaryPopulation(**ini_kw))
+            for time in self.times[::-1]:
+                ini_kw = copy.deepcopy(self.synthetic_pop_params)
+                ini_kw['metallicity'] = met
+                ini_kw['max_simulation_time'] = time
+                ini_kw['temp_directory'] = self.create_met_prefix(met) +self.create_time_suffix(time) + ini_kw['temp_directory']
+                self.binary_populations.append(BinaryPopulation(**ini_kw))
+
 
     def get_ini_kw(self):
         return self.synthetic_pop_params.copy()
@@ -96,13 +104,15 @@ class SyntheticPopulation:
             pop =  self.binary_populations.pop()
             
             if self.verbose:
-                print(f'Z={pop.kwargs["metallicity"]:.2e} Z_sun')
+                print(f'Z={pop.kwargs["metallicity"]:.2e} Z_sun',f'time = {pop.kwargs["max_simulation_time"]/1e6} Myr')
                             
             process = mp.Process(target=pop.evolve)
             process.start()
             process.join()
-            
             pop.close()
+            met_prefix = self.create_met_prefix(pop.kwargs["metallicity"])
+            time_suffix = self.create_time_suffix(pop.kwargs["max_simulation_time"])
+            pop.save(met_prefix+time_suffix+'population.h5')
             del pop
 
 
@@ -122,23 +132,29 @@ class SyntheticPopulation:
         if len(path_to_batches) != len(self.metallicities):
             raise ValueError('The number of metallicity and batch directories do not match!')
 
-        for met, path_to_batch in zip(self.metallicities, path_to_batches):
+        for time,met,path_to_batch in zip(self.times,self.metallicities,path_to_batches):
             met_prefix = self.create_met_prefix(met)
+            time_suffix = self.create_time_suffix(time)
             tmp_files = [os.path.join(path_to_batch, f)     \
                          for f in os.listdir(path_to_batch) \
                             if os.path.isfile(os.path.join(path_to_batch, f))]
             
-            BinaryPopulation(**self.get_ini_kw()).combine_saved_files(met_prefix+ 'population.h5', tmp_files)
-            print(f'Population at Z={met:.2e} Z_sun successfully merged!')
+            BinaryPopulation(**self.get_ini_kw()).combine_saved_files(met_prefix+time_suffix+'population.h5', tmp_files)
+            print(f'Population at Z={met:.2e} Z_sun and time = {time/1e6} successfully merged!')
             if len(os.listdir(path_to_batch)) == 0:
                 os.rmdir(path_to_batch)
             elif self.verbose:
                 print(f'{path_to_batch} is not empty, it was not removed!')
 
+
     @staticmethod
     def create_met_prefix(met):
         """Append a prefix to the name of directories for batch saving."""
         return convert_metallicity_to_string(met) + '_Zsun_'
+    @staticmethod    
+    def create_time_suffix(time):
+        "Append a suffix to the name of the directories for batch saving."
+        return str(time/1e6) + '_Myr_'
 
     def apply_logic(self, df, S1_state=None, S2_state=None, binary_state=None,
                     binary_event=None, step_name=None, invert_S1S2=False,

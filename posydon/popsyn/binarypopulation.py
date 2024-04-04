@@ -208,7 +208,6 @@ class BinaryPopulation:
                       'breakdown_to_df':breakdown_to_df_bool,
                       'from_hdf':from_hdf_bool}
             self.kwargs.update(params)
-
             self._safe_evolve(**self.kwargs)
         else:
             # do local MPI or cluster job array evolution
@@ -224,6 +223,7 @@ class BinaryPopulation:
                       'from_hdf':from_hdf_bool}
             self.kwargs.update(params)
             self._safe_evolve(**self.kwargs)
+            
 
     def _safe_evolve(self, **kwargs):
         """Evolve binaries in a population, catching warnings/exceptions."""
