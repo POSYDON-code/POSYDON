@@ -717,7 +717,7 @@ class detached_step:
                       MESA_labels, rs)
             for i in MESA_labels:
                 if i not in self.root_keys:
-                    raise MatchingError("Expected matching parameter not "
+                    raise AttributeError("Expected matching parameter not "
                                     "added in the single star grid options.")
 
             scales = []
@@ -820,7 +820,7 @@ class detached_step:
                               MESA_labels, rs)
                     for i in MESA_labels:
                         if i not in self.root_keys:
-                            raise MatchingError("Expected matching parameter not "
+                            raise AttributeError("Expected matching parameter not "
                                             "added in the single star grid options.")
 
                     scales = []
@@ -1007,7 +1007,7 @@ class detached_step:
                 primary.htrack = False
                 primary.co = False
             else:
-                raise POSYDONError("States not recognized!")
+                raise ValueError("States not recognized!")
 
         # star 1 is a massless remnant, only star 2 exists
         elif self.non_existent_companion == 1:
@@ -1025,7 +1025,7 @@ class detached_step:
                 # only a compact object left
                 return
             else:
-                raise POSYDONError("State not recognized!")
+                raise ValueError("State not recognized!")
 
         # star 2 is a massless remnant, only star 1 exists
         elif self.non_existent_companion == 2:
@@ -1040,7 +1040,7 @@ class detached_step:
             elif (binary.star_1.state in STAR_STATES_CO):
                 return
             else:
-                raise POSYDONError("State not recognized!")
+                raise ValueError("State not recognized!")
         else:
             raise POSYDONError("Non existent companion has not a recognized value!")
 
@@ -1387,7 +1387,7 @@ class detached_step:
             # TODO: put it out of its misery here!
         else:
             if not (max_time - binary.time > 0.0):
-                raise POSYDONError("max_time is lower than the current time. "
+                raise ValueError("max_time is lower than the current time. "
                                 "Evolution of the detached binary will go to "
                                 "lower times.")
             with np.errstate(all="ignore"):
