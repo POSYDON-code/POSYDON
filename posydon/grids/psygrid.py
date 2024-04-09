@@ -286,9 +286,6 @@ DEFAULT_PROFILE_COLS = [
     "avg_charge_He",
 ]
 
-EXTRA_BINARY_COLS_AT_HE_DEPLETION = [
-]
-
 EXTRA_STAR_COLS_AT_HE_DEPLETION = [
     "avg_c_in_c_core", "co_core_mass"
 ]
@@ -623,10 +620,6 @@ class PSyGrid:
         # get extra columns at He depletion for final values
         extra_final_values_cols = []
         for starID in ["S1_", "S2_"]:
-            for extra_col in EXTRA_BINARY_COLS_AT_HE_DEPLETION:
-                colname = extra_col + "_at_" + starID + "He_depletion"
-                extra_final_values_cols.append((colname, 'f8'))
-        for starID in ["S1_", "S2_"]:
             for col in all_history_columns:
                 if starID in col:
                     for extra_col in EXTRA_STAR_COLS_AT_HE_DEPLETION:
@@ -709,28 +702,11 @@ class PSyGrid:
                 history2 = fix_He_core(history2)
 
             # get values at He depletion and add them to the final values
-            for starID in ["S1_", "S2_", ""]:
+            for starID in ["S1_", "S2_"]:
                 if starID == "S1_":
                     h = history1
                 elif starID == "S2_":
                     h = history2
-                elif starID == "":
-                    h = binary_history
-                    for sID in ["S1_", "S2_"]:
-                        if sID == "S1_":
-                            i_He_depl = get_i_He_depl(history1)
-                        elif sID == "S2_":
-                            i_He_depl = get_i_He_depl(history2)
-                        else:
-                            i_He_depl = -1
-                        for col in EXTRA_BINARY_COLS_AT_HE_DEPLETION:
-                            fvcol = col + "_at_" + sID + "He_depletion"
-                            if fvcol in dtype_final_values.names:
-                                if ((h is not None) and (col in h.dtype.names)
-                                    and (i_He_depl>=0)):
-                                    self.final_values[i][fvcol] = h[col][i_He_depl]
-                                else:
-                                    self.final_values[i][fvcol] = np.nan
                 else:
                     h = None
                 i_He_depl = -1
