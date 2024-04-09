@@ -508,7 +508,7 @@ class StepCEE(object):
         # calculate evolution of the orbit
         if pd.isna(lambda1_CE):
             ebind_i = 0.0
-        else
+        else:
             ebind_i = (-const.standard_cgrav / lambda1_CE
                        * (m1_i * const.Msun * (m1_i - mc1_i) * const.Msun)
                        / (radius1 * const.Rsun))
