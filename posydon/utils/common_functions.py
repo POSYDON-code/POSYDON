@@ -1658,12 +1658,30 @@ def CEE_parameters_from_core_abundance_thresholds(star, verbose=False):
     None
 
     It updates the following values in the star object
-    co_core_mass_at_He_depletion: float
-        co_core_mass at He core depletion
-        (almost at the same time as carbon core ignition).
-    avg_c_in_c_core_at_He_depletion : float
-        avg carbon abundance inside CO_core_mass at He core depletion
-        (almost at the same time as carbon core ignition).
+    m_core_CE_1cent: float
+        core mass (using an element abundance of 1%)
+    m_core_CE_10cent: float
+        core mass (using an element abundance of 10%)
+    m_core_CE_30cent: float
+        core mass (using an element abundance of 30%)
+    m_core_CE_pure_He_star_10cent: float
+        core mass (using an element abundance of 10% in He)
+    r_core_CE_1cent: float
+        core radius (using an element abundance of 1%)
+    r_core_CE_10cent: float
+        core radius (using an element abundance of 10%)
+    r_core_CE_30cent: float
+        core radius (using an element abundance of 30%)
+    r_core_CE_pure_He_star_10cent: float
+        core radius (using an element abundance of 10% in He)
+    lambda_CE_1cent: float
+        lambda value (using an element abundance of 1%)
+    lambda_CE_10cent: float
+        lambda value (using an element abundance of 10%)
+    lambda_CE_30cent: float
+        lambda value (using an element abundance of 30%)
+    lambda_CE_pure_He_star_10cent: float
+        lambda value (using an element abundance of 10% in He)
 
     """
     mass = star.mass
@@ -1744,11 +1762,9 @@ def CEE_parameters_from_core_abundance_thresholds(star, verbose=False):
                 r_core_CE_10cent = radius
                 r_core_CE_30cent = radius
                 lambda_CE_pure_He_star_10cent = lambda_CE
-                lambda_CE_1cent = 1e99
-                lambda_CE_10cent = 1e99
-                # TODO: decide whether this should be None
-                #       for interpolation reasons
-                lambda_CE_30cent = 1e99
+                lambda_CE_1cent = np.nan
+                lambda_CE_10cent = np.nan
+                lambda_CE_30cent = np.nan
         else:   # CO-object or undetermined_evolutionary_state?
             m_core_CE_pure_He_star_10cent = np.nan
             m_core_CE_1cent = np.nan
@@ -2177,8 +2193,7 @@ def calculate_lambda_from_profile(
                                            CO_core_in_Hrich_star)
     if ind_core == 0:       # all star is a core, immediate successful ejection
         Ebind_i = 0.0
-        # TODO: decide whether this should be None for interpolation reasons
-        lambda_CE = 1.0e99
+        lambda_CE = np.nan
         mc1_i = m1_i
         rc1_i = radius1
     else:
@@ -2231,7 +2246,7 @@ def calculate_lambda_from_profile(
         print("Ebind_i from profile ", Ebind_i)
         print("lambda_CE ", lambda_CE)
     if not (lambda_CE > -tolerance):
-        raise Exception("CEE problem, lamda_CE has negative value.")
+        raise Exception("CEE problem, lambda_CE has negative value.")
     return lambda_CE, mc1_i, rc1_i
 
 
@@ -2593,7 +2608,7 @@ def calculate_binding_energy(donor_mass, donor_radius, donor_dm,
     # binding energy of the enevelope equals its gravitational energy +
     # an a_th fraction of its internal energy
     Ebind_i = Grav_energy + factor_internal_energy * U_i
-    if Ebind_i > -tolerance:
+    if not (Ebind_i < tolerance):
         warnings.warn("Ebind_i of the envelope is found positive")
     if verbose:
         print("integration of gravitational energy surface to core "
