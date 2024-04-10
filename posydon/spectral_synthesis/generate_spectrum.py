@@ -14,6 +14,7 @@ __authors__ = [
 from copy import copy
 import numpy as np
 from astropy import constants as con
+import pandas as pd
 
 #Constants
 Lo = 3.828e33 #Solar Luminosity erg/s
@@ -183,6 +184,36 @@ def generate_spectrum(grids,star,i,**kwargs):
         if label == 'failed_grid':
             return None,state,label
     raise ValueError(f'The label:{label} is not "failed_grid" after all the possible checks')
+
+def regenerate_spectrum(grids,star,i,**kwargs):
+    label = star[f'{i}_grid_status']
+    if  pd.isna(label):
+        return None,star[f'{i}_state'],label
+    if label == "failed_grid":
+        return None,star[f'{i}_state'],label
+    Fe_H = np.log(star['Z/Zo'])
+    Z_Zo = star['Z/Zo']
+    #Z= star['Z/Zo']*Zo
+    Teff = copy(star[f'{i}_Teff'])
+    logg = copy(star[f'{i}_log_g'])
+    state = copy(star[f'{i}_state'])
+    R = 10**copy(star[f'{i}_log_R'])*con.R_sun
+    L = 10**copy(star[f'{i}_log_L'])
+    surface_h1 = max(copy(star[f'{i}_surface_h1']),0.01)
+    x = {'Teff':Teff ,
+         'log(g)': logg,
+         '[Fe/H]': Fe_H,
+         'Z/Zo':Z_Zo,
+         'state':state,
+         'surface_h1' : surface_h1,
+         '[alpha/Fe]':0.0}
+    if label == "stripped_grid":
+        Flux = grids.grid_flux(label,**x)*4*np.pi*1e4/Lo
+    elif label == 'WR_grid':
+        Flux = grids.grid_flux(label,**x)*4*np.pi*1e4/Lo *(L/10**5.3)
+    else:
+        Flux = grids.grid_flux(label,**x)*R**2*4*np.pi*1e4/Lo
+    return Flux.value,star['state'],label
 
 def rename_star_state(star,i):
     """Rename the star states of WR stars and 
