@@ -78,6 +78,7 @@ MODEL = {
     "mechanism": 'Patton&Sukhbold20-engine',
     "engine": 'N20',
     "PISN": "Marchant+19",
+    "PISN_CO_shift":0.0,
     "ECSN": "Podsiadlowksi+04",
     "conserve_hydrogen_envelope" : False,
     "max_neutrino_mass_loss": 0.5,
@@ -938,7 +939,7 @@ class StepSN(object):
             elif self.PISN == "Hendriks+23":
                 # Hendriks et al. 2023
                 # PISN prescription with a shifting PPI and PISN gap
-                delta_M_CO_shift = 0.0
+                delta_M_CO_shift = self.PISN_CO_shift
                 delta_M_PPI_extra_ML = 0.0
                 if (m_CO_core >= 38 + delta_M_CO_shift 
                     and m_CO_core < 114 + delta_M_CO_shift):
