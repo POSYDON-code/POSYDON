@@ -206,7 +206,10 @@ class plot1D(object):
             self.set_title(fig)
 
             # save figure
-            if self.fname is not None:
+            if self.PdfPages is not None:
+                self.PdfPages.savefig(figure=fig, dpi=self.dpi,
+                                      bbox_inches=self.bbox_inches)
+            elif self.fname is not None:
                 fig.savefig(self.path_to_file + self.fname,
                             dpi=self.dpi, bbox_inches=self.bbox_inches)
 
@@ -633,7 +636,10 @@ class plot1D(object):
         self.set_ylim()
         self.set_legend(ax, lines)
         # save figure
-        if self.fname is not None:
+        if self.PdfPages is not None:
+            self.PdfPages.savefig(figure=fig, dpi=self.dpi,
+                                  bbox_inches=self.bbox_inches)
+        elif self.fname is not None:
             fig.savefig(self.path_to_file + self.fname,
                         dpi=self.dpi, bbox_inches=self.bbox_inches)
 

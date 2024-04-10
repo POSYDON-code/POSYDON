@@ -69,6 +69,7 @@ import numpy as np
 import pandas as pd
 from shutil import copyfile
 from collections import Counter
+from matplotlib.backends.backend_pdf import PdfPages
 from posydon.grids.psygrid import (PSyGrid,
                                    join_grids,
                                    DEFAULT_HISTORY_DS_EXCLUDE,
@@ -759,8 +760,12 @@ def plot_grid(i, path_to_csv_file, verbose=False):
         quantities_to_plot = ast.literal_eval(df.loc[i,'quantities_to_plot'])
     else:
         raise ValueError(f'No quantities_to_plot in {path_to_csv_file}')
+    multipage = False
     if 'plot_extension' in df.keys():
         plot_extension = df.loc[i,'plot_extension']
+        if plot_extension=='multipage-pdf':
+            multipage = True
+            plot_extension = 'pdf'
     else:
         plot_extension = 'pdf'
     if 'path_to_interpolator' in df.keys():
@@ -887,6 +892,9 @@ def plot_grid(i, path_to_csv_file, verbose=False):
         else:
             raise ValueError('Grid type not supported!')
         
+        if multipage:
+            pdf_handler = PdfPages(fname.replace('%1.2f', 'all'),
+                                   metadata={'Author': 'POSYDON'})
         # loop over all grid slices
         for k, var in enumerate(vars):
             slice_3D_var_range = (vars_edges[k],vars_edges[k+1])
@@ -914,6 +922,8 @@ def plot_grid(i, path_to_csv_file, verbose=False):
                     PLOT_PROPERTIES['zmax'] = plot_attributes['zmax']
                     if 'INTERP_ERROR' in quantity_to_plot:
                         PLOT_PROPERTIES['colorbar']['label'] = quantity_to_plot
+                if multipage:
+                    PLOT_PROPERTIES['PdfPages'] = pdf_handler
                 
                 if 'INTERP_ERROR' in quantity_to_plot:
                     # initial/final error slices
@@ -951,6 +961,8 @@ def plot_grid(i, path_to_csv_file, verbose=False):
                 print('')
                 print(e)
                 continue
+        if multipage:
+            pdf_handler.close()
 
 
 def do_check(i, path_to_csv_file, verbose=False):
