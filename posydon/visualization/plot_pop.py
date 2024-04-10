@@ -14,6 +14,7 @@ from posydon.utils.common_functions import convert_metallicity_to_string
 from posydon.utils.constants import Zsun
 import matplotlib.pyplot as plt
 from posydon.visualization.plot_defaults import DEFAULT_LABELS
+import pandas as pd
 
 PATH_TO_POSYDON_DATA = os.environ.get("PATH_TO_POSYDON_DATA",'./')
 
@@ -234,12 +235,15 @@ def plot_popsyn_over_grid_slice(pop, grid_type, met_Zsun, slices=None, channel=N
             
             # select popsynth binaries in the given mass ratio range
             met_indices = pop.select(where='metallicity == '+str(met_Zsun)+channel_sel, columns=[]).index.to_list()
-            sel = 'index in '+str(met_indices)+' & event == "ZAMS"'
-            data = pop.history.select(where=sel, columns=['S1_mass','S2_mass' ,'orbital_period'])
-            
+            sel = '(index in '+str(met_indices)+') & (event == "ZAMS")'
+            if len(met_indices) == 0:
+                data = pd.DataFrame(columns=['S1_mass','S2_mass' ,'orbital_period'])
+            else:   
+                data = pop.history.select(where=sel, columns=['S1_mass','S2_mass' ,'orbital_period'])
             q = data['S2_mass'].values/data['S1_mass'].values
             q[q>1] = 1./q[q>1]
             mask = (q>=slice_3D_var_range[0]) & (q<=slice_3D_var_range[1])
+            
         elif 'CO' in grid_path:
             if i == len(m2):
                 continue
