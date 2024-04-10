@@ -237,7 +237,7 @@ class PostProcessingPipeline:
                         [step_number][attribute], list)):
                         if (last_step in self.pipeline_kwargs.keys()\
                             and attribute in\
-                            self.pipeline_kwargs[step_number].keys()):
+                            self.pipeline_kwargs[last_step].keys()):
                             # infer missing attribute from last step
                             print(f"\ncopy {attribute} from {last_step} to "
                                   f"{step_number}")
@@ -251,11 +251,17 @@ class PostProcessingPipeline:
                         if set_name in self.pipeline_kwargs[step_number]['CREATE_PLOTS']:
                             self.pipeline_kwargs[step_number]['CREATE_PLOTS'].remove(set_name)
                             self.pipeline_kwargs[step_number]['CREATE_PLOTS'].extend(set_content)
+                    if (('MAKE_PLOTS' in self.pipeline_kwargs['pipeline setup'].keys())
+                        and not (self.pipeline_kwargs['pipeline setup']['MAKE_PLOTS'])):
+                        self.pipeline_kwargs[step_number]['CREATE_PLOTS'] = []
                 if 'DO_CHECKS' in self.pipeline_kwargs[step_number].keys():
                     for set_name, set_content in CHECKING_SETS.items():
                         if set_name in self.pipeline_kwargs[step_number]['DO_CHECKS']:
                             self.pipeline_kwargs[step_number]['DO_CHECKS'].remove(set_name)
                             self.pipeline_kwargs[step_number]['DO_CHECKS'].extend(set_content)
+                    if (('MAKE_CHECKS' in self.pipeline_kwargs['pipeline setup'].keys())
+                        and not (self.pipeline_kwargs['pipeline setup']['MAKE_CHECKS'])):
+                        self.pipeline_kwargs[step_number]['DO_CHECKS'] = []
             # return attributes
             return self.pipeline_kwargs[step_number]
         
@@ -479,12 +485,12 @@ def slurm_job(job_name,
               WALLTIME=None,
               MAILTYPE=None,
               EMAIL=None,
-              CREATE_GRID_SLICES=False,
-              COMBINE_GRID_SLICES=False,
-              CALCULATE_EXTRA_VALUES=False,
-              TRAIN_INTERPOLATORS=False,
-              EXPORT_DATASET=False,
-              RERUN=False,
+#              CREATE_GRID_SLICES=False,
+#              COMBINE_GRID_SLICES=False,
+#              CALCULATE_EXTRA_VALUES=False,
+#              TRAIN_INTERPOLATORS=False,
+#              EXPORT_DATASET=False,
+#              RERUN=False,
               VERBOSE=False,
               **kwargs):
     """Create slurm file."""
@@ -579,12 +585,14 @@ def create_csv(GRID_TYPES=[],
                COMPRESSIONS=[],
                step_name='',
                VERSION='',
+               PLOT_EXTENSION='pdf',
                GRIDS_COMBINED=[],
                ORIGINAL_COMPRESSIONS=[],
                INTERPOLATION_METHODS=[],
                CONTROL_GRIDS=[],
                STOP_BEFORE_CARBON_DEPLETION=0,
                RERUN_TYPE='',
+               CLUSTER='quest',
                DROP_MISSING_FILES=False,
                CREATE_PLOTS=[],
                DO_CHECKS=[],
@@ -627,8 +635,10 @@ def create_csv(GRID_TYPES=[],
     rerun_metallicities = []
     rerun_path = []
     rerun_type = []
+    clusters = []
     plot_dirs = []
     plot_quantities = []
+    plot_extensions = []
     checks = []
     newly_created_files = []
     df = pd.DataFrame()
@@ -754,6 +764,7 @@ def create_csv(GRID_TYPES=[],
                         grids_type.append(grid_type)
                         rerun_metallicities.append(metallicity)
                         rerun_type.append(RERUN_TYPE)
+                        clusters.append(CLUSTER)
                     
                     if (('plot' in step_name) or ('check' in step_name)):
                         # get output grid names for sub steps
@@ -796,6 +807,7 @@ def create_csv(GRID_TYPES=[],
                                                           grid_type, VERSION,
                                                           metallicity, 'plots',
                                                           RLO[1:]+RLO[:1]+grid_s))
+                                    plot_extensions.append(PLOT_EXTENSION)
                                     if method != '': # if there is a method
                                         interpolators.append(os.path.join(PATH_TO_GRIDS,
                                                               grid_type,
@@ -851,10 +863,12 @@ def create_csv(GRID_TYPES=[],
             df['grid_type'] = grids_type
             df['rerun_metallicity'] = rerun_metallicities
             df['rerun_type'] = rerun_type
+            df['cluster'] = clusters
         elif 'plot' in step_name:
             df['grid_type'] = grids_type
             df['quantities_to_plot'] = plot_quantities
             df['path_to_plot'] = plot_dirs
+            df['plot_extension'] = plot_extensions
             if len(interpolators)>0:
                 df['path_to_interpolator'] = interpolators
         elif 'check' in step_name:

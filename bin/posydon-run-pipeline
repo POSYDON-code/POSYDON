@@ -661,6 +661,10 @@ def rerun(i, path_to_csv_file, verbose=False):
         rerun_type = df.loc[i,'rerun_type']
     else:
         raise ValueError(f'No rerun_type in {path_to_csv_file}')
+    if 'cluster' in df.keys():
+        cluster = df.loc[i,'cluster']
+    else:
+        cluster = 'quest'
     
     # load grid
     grid = PSyGrid(verbose=verbose)
@@ -678,11 +682,6 @@ def rerun(i, path_to_csv_file, verbose=False):
                new_mesa_flag=new_mesa_flag)
     
     # copy ini file and set the new inlist commit
-    # TODO: make cluster an input
-    if 'b1119' in grid.MESA_dirs[0].decode('utf-8'):
-        cluster = 'quest'
-    else:
-        cluster = 'yggdrasil'
     copy_ini_file(grid_type, rerun_metallicity, rerun_type, destination=rerun_path, cluster=cluster)
 
 
@@ -760,6 +759,10 @@ def plot_grid(i, path_to_csv_file, verbose=False):
         quantities_to_plot = ast.literal_eval(df.loc[i,'quantities_to_plot'])
     else:
         raise ValueError(f'No quantities_to_plot in {path_to_csv_file}')
+    if 'plot_extension' in df.keys():
+        plot_extension = df.loc[i,'plot_extension']
+    else:
+        plot_extension = 'pdf'
     if 'path_to_interpolator' in df.keys():
         path_to_interpolator = df.loc[i,'path_to_interpolator']
     else:
@@ -869,7 +872,7 @@ def plot_grid(i, path_to_csv_file, verbose=False):
                                      log=smpl['log'])
             vars, vars_edges = _range(smpl['mmin'], smpl['mmax'], smpl['nbin'],
                                       log=smpl['log'])
-            fname = 'grid_m_%1.2f.png'
+            fname = 'grid_m_%1.2f.' + plot_extension
             title = '$m_\mathrm{CO}=%1.2f\,M_\odot$'
         elif 'HMS-HMS' in grid_type:        
             # mass ratio slices
@@ -877,8 +880,9 @@ def plot_grid(i, path_to_csv_file, verbose=False):
             slice_3D_var_str = 'mass_ratio' 
             vars, vars_edges = _range(smpl['qmin'], smpl['qmax'], smpl['nbin'],
                                       log=smpl['log'])
-            vars[-1] = 0.99 # we replaced q=1 with q=0.99 in mesa runs
-            fname = 'grid_q_%1.2f.png'
+            if vars[-1]==1.0:
+                vars[-1] = 0.99 # we replaced q=1 with q=0.99 in mesa runs
+            fname = 'grid_q_%1.2f.' + plot_extension
             title = '$q=%1.2f$'
         else:
             raise ValueError('Grid type not supported!')

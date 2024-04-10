@@ -32,7 +32,7 @@ all :ref:`tasks <pipeline>`. Hence, you can run all
     ./run_pipeline.sh
 
 .. note::
-    Currently, the user needs to take care of having a POSYDON_data directly
+    Currently, the user needs to take care of having a POSYDON_data directory
     which includes the tables for the core-collapse prescriptions him-/herself
     in the working directory.
 
@@ -73,7 +73,10 @@ option will be used for the creation of the pipeline files and during the run
 of the pipeline.
 
 Finally, we have switches to turn on (:samp:`True`) and off (:samp:`False`)
-individual :ref:`steps <pipeline_steps>`.
+individual :ref:`steps <pipeline_steps>` and
+:ref:`additions <pipeline_additions>`. Additionally, the file extension of the
+plots can be set according to the restrictions of
+`mathplotlib <https://matplotlib.org/>`_.
 
 .. code-block:: ini
 
@@ -91,6 +94,10 @@ individual :ref:`steps <pipeline_steps>`.
         EXPORT_DATASET = True
         # rerun step
         RERUN = False
+        # additions
+        MAKE_PLOTS = True
+        PLOT_EXTENSION = 'pdf'
+        MAKE_CHECKS = True
 
 Step sections
 -------------
@@ -130,6 +137,7 @@ that step:
        4  INTERPOLATION_METHODS         a list of the interpolator types which are trained
        4  CONTROL_GRIDS                 a list of lists of control grids for the :samp:`GRID_SLICES`; it need to have the same number of entries as the :samp:`GRID_SLICES`, to specify no control grid use an empty string
        R  RERUN_TYPE                    a defined rerun type
+       R  CLUSTER                       cluster name to get the appropriate ini file
     ====  ============================  ===========
 
 Here is an example of all the :ref:`steps <pipeline_steps>`:
@@ -357,6 +365,7 @@ Here is an example of all the :ref:`steps <pipeline_steps>`:
         DROP_MISSING_FILES = True
         # example reruns are 'PISN', 'reverse_MT', 'TPAGBwind', 'opacity_max'
         RERUN_TYPE = 'opacity_max' 
+        CLUSTER = 'quest'
 
 There are some predefined shortcuts for lists of :ref:`plots <pipeline_plots>`
 and :ref:`checks <pipeline_checks>`:
