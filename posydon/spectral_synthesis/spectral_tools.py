@@ -65,7 +65,7 @@ keys_to_load = ['state',
 
 def find_max_time(history):
     """Find the max time of a population."""
-    times = history.time
+    times = history[history.event == 'maxtime'].time
     return np.max(times)
 
 def load_posydon_population(population_file):
