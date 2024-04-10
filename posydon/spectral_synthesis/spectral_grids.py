@@ -69,7 +69,7 @@ class spectral_grids():
             grid_global_limits(self.spectral_grids)
         #Getting the wavelength range
         self.lam,self.lam_c = self.wavelength_range(**self.kwargs)
-
+        
     def grid_constructor(self, **kwargs):
         """Create the dictionary of MSG SpecGrid objects.
 
@@ -127,9 +127,10 @@ class spectral_grids():
             return 10**Flux*distance_factor
         if name == 'WR_grid':
             distance_factor = (kpc/100)**2
-        if 'log' in self.kwargs[name]:
-            print(name,'log')
-            return (10**Flux)*distance_factor
+            return (Flux)*distance_factor
+        #if 'log' in self.kwargs.get(name):
+        #    print(name,'log')
+            
         return Flux*distance_factor
 
 

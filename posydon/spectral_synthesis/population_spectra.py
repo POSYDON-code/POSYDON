@@ -140,11 +140,11 @@ class population_spectra():
                 labels_S2.append(label2)
             if spectrum_1 is not None and state_1 is not None:
                 pop_spectrum[state_1] += spectrum_1
-                if spectral_type:
+                if self.spectral_type:
                     pop_spectrum[label1] += spectrum_1
             if spectrum_2 is not None and state_2 is not None:
                 pop_spectrum[state_2] += spectrum_2
-                if spectral_type:
+                if self.spectral_type:
                     pop_spectrum[label2] += spectrum_2
             pop = pop.drop(i)
         """
