@@ -229,7 +229,7 @@ class PostProcessingPipeline:
             missing attributes and may copies them from a previous step."""
             if step_number not in self.pipeline_kwargs.keys():
                 raise KeyError(f'{step_number} not in pipeline_kwargs!')
-            elif 'step' in step_number:
+            elif (('step' in step_number) or (step_number=='rerun')):
                 # check for attributes
                 for attribute in ATTRIBUTES_TO_CHECK:
                     if (attribute not in self.pipeline_kwargs[step_number].\
@@ -239,7 +239,7 @@ class PostProcessingPipeline:
                             and attribute in\
                             self.pipeline_kwargs[last_step].keys()):
                             # infer missing attribute from last step
-                            print(f"\ncopy {attribute} from {last_step} to "
+                            print(f"Copy {attribute} from {last_step} to "
                                   f"{step_number}")
                             self.pipeline_kwargs[step_number][attribute] = \
                                     self.pipeline_kwargs[last_step][attribute]
