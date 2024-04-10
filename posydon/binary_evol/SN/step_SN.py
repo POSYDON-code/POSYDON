@@ -906,6 +906,7 @@ class StepSN(object):
             # perform the PISN prescription in terms of the
             # He core mass at pre-supernova
             m_He_core = star.he_core_mass
+            m_CO_core = star.co_core_mass
             m_star = star.mass
             if self.PISN == "Marchant+19":
                 if m_He_core >= 31.99 and m_He_core <= 61.10:
@@ -934,6 +935,35 @@ class StepSN(object):
                     else:
                         m_PISN = m_He_core
 
+            elif self.PISN == "Hendriks+23":
+                # Hendriks et al. 2023
+                # PISN prescription with a shifting PPI and PISN gap
+                delta_M_CO_shift = 0.0
+                delta_M_PPI_extra_ML = 0.0
+                if (m_CO_core >= 38 + delta_M_CO_shift 
+                    and m_CO_core < 114 + delta_M_CO_shift):
+                    
+                    delta_M_PPI = (
+                        (0.0006 *np.log10(star.metallicity ) + 0.0054)
+                        * (m_CO_core - delta_M_CO_shift - 34.8)**3
+                        - 0.0013 * (m_CO_core - delta_M_CO_shift - 34.8)**2
+                        + delta_M_PPI_extra_ML
+                        )
+                    
+                    # if remnant from PPISN < 10 -> No remnant 
+                    if  m_star - delta_M_PPI < 10:
+                        m_PISN = np.nan
+                    # otherwise remnant = star - delta_M_PPI
+                    else:
+                        m_PISN = m_star - delta_M_PPI
+                    
+                # direct collapse to BH
+                elif m_CO_core > 114 + delta_M_CO_shift:
+                    if self.conserve_hydrogen_envelope:
+                        m_PISN = m_star
+                    else:
+                        m_PISN = m_He_core
+
             elif is_number(self.PISN) and m_He_core > self.PISN:
                 m_PISN = self.PISN
 
@@ -942,7 +972,7 @@ class StepSN(object):
 
             else:
                 raise ValueError(
-                    "This choice {} of PISN is not availabe!".format(self.PISN)
+                    "This choice {} of PISN is not availabe!".format(self.PISN) 
                 )
 
         if self.verbose:
