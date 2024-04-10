@@ -76,7 +76,9 @@ Finally, we have switches to turn on (:samp:`True`) and off (:samp:`False`)
 individual :ref:`steps <pipeline_steps>` and
 :ref:`additions <pipeline_additions>`. Additionally, the file extension of the
 plots can be set according to the restrictions of
-`mathplotlib <https://matplotlib.org/>`_.
+`mathplotlib <https://matplotlib.org/>`_. There is one additional extension
+:samp:`multipage-pdf`, which will create a PDF, where several plots are stored
+as pages in a single PDF.
 
 .. code-block:: ini
 

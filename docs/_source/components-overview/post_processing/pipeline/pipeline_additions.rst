@@ -28,7 +28,9 @@ can be specified. Additionally, you can put a :samp:`LOG10_` in front of each
 of them to switch on plotting in log-scale. Beside that there are predefined
 plots. Finally, the path to the directory, where the plots should get stored,
 and the extension of the image files (those need to be valid extension for
-`mathplotlib <https://matplotlib.org/>`_) are given.
+`mathplotlib <https://matplotlib.org/>`_) are given. There is one additional
+extension :samp:`multipage-pdf`, which will create a PDF, where several plots
+are stored as pages in a single PDF.
 
 .. table:: Basic predefined plots
 
