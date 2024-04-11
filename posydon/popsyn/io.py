@@ -141,7 +141,9 @@ SCALAR_NAMES_DTYPES = {
     'natal_kick_array_3': 'float64',
     'SN_type':'string',
     'f_fb': 'float64',
-    'spin_orbit_tilt': 'float64',
+    'spin_orbit_tilt_first_SN': 'float64',
+    'spin_orbit_tilt_second_SN': 'float64',
+    
 }
 
 
