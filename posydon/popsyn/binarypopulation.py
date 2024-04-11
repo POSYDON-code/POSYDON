@@ -297,6 +297,7 @@ class BinaryPopulation:
                         posydon_error.add_note(initial_condition_message(binary))
                         traceback.print_exception(posydon_error)
                 except Exception as e:
+                    set_binary_to_failed(binary)
                     e.add_note(initial_condition_message(binary))
                     traceback.print_exception(e)
                 if len(w) > 0:
