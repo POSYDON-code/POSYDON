@@ -674,7 +674,7 @@ class PSyGrid:
             if not binary_grid and history1 is None:
                 warnings.warn("Ignored MESA run because of missing "
                               "history in: {}\n".format(run.path))
-                ignore.reason = "ignore_no_H1"
+                ignore.reason = "ignored_no_H1"
                 continue
 
             if ignore:
@@ -890,7 +890,7 @@ class PSyGrid:
                     else:
                         warnings.warn("Ignored MESA run because of missing "
                                       "profile in: {}\n".format(run.path))
-                        ignore.reason = "ignore_no_FP"
+                        ignore.reason = "ignored_no_FP"
                         continue
 
             if binary_history is not None:

@@ -2,14 +2,19 @@
 
 
 IGNORE_REASONS_PRIORITY = [
-    'corrupted_binary_history',
+    # missing data files
+    'ignored_no_H1',                    # history1 is always needed
+    'ignored_no_BH',                    # needed for all binaries
+    # corrupted data files
     'corrupted_history1',
+    'corrupted_binary_history',
     'corrupted_history2',
-    'ignored_no_BH',
-    'ignore_no_H1',
-    'ignored_scrubbed',
-    'ignore_no_FP',
-    'ignored_no_RLO']
+    # issues with specific data files
+    'ignored_scrubbed',             # issues when scrubbing history data
+    'ignored_no_FP',                # issues with final profile data
+    # binaries to be ignored for specialized grids
+    'ignored_no_RLO'
+]
 
 
 class IgnoreReason():
