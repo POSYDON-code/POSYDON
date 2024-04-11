@@ -1704,7 +1704,7 @@ class TransientPopulation(Population):
         Plot the transient population over the parameter space of a grid slice
     """
 
-    def __init__(self, filename, transient_name, verbose=False):
+    def __init__(self, filename, transient_name, verbose=False, chunksize=10000):
         """Initialise the TransientPopulation object.
 
         This method initializes the TransientPopulation object by linking it to the population file.
@@ -1737,7 +1737,7 @@ class TransientPopulation(Population):
         >>> transient_name = 'BBH'
         >>> population = TransientPopulation(filename, transient_name, verbose=True)
         """
-        super().__init__(filename, verbose=verbose)
+        super().__init__(filename, verbose=verbose, chunksize=chunksize)
 
         with pd.HDFStore(self.filename, mode="r") as store:
             if "/transients/" + transient_name not in store.keys():
@@ -2217,7 +2217,7 @@ class TransientPopulation(Population):
 
         """
         with pd.HDFStore(filename, mode="a") as store:
-            if MODEL["dlogZ"] is not None:
+            if (MODEL["dlogZ"] is not None) and (not isinstance(MODEL["dlogZ"], float)):
                 store.put(path_in_file + "MODEL", pd.DataFrame(MODEL))
             else:
                 store.put(path_in_file + "MODEL", pd.DataFrame(MODEL, index=[0]))
@@ -2269,7 +2269,7 @@ class Rates(TransientPopulation):
         Plot a histogram of a given property available in the transient population.
     """
 
-    def __init__(self, filename, transient_name, SFH_identifier, verbose=False):
+    def __init__(self, filename, transient_name, SFH_identifier, verbose=False, chunksize=1000):
         """
         Initialize the Rates object.
 
@@ -2289,7 +2289,7 @@ class Rates(TransientPopulation):
             Whether to print verbose output. Default is False.
         """
 
-        super().__init__(filename, transient_name, verbose=verbose)
+        super().__init__(filename, transient_name, verbose=verbose, chunksize=chunksize)
         self.SFH_identifier = SFH_identifier
 
         self.base_path = (
