@@ -153,6 +153,10 @@ class SingleStar:
             self.m_disk_accreted = None
         if not hasattr(self, 'm_disk_radiated'):
             self.m_disk_radiated = None
+        if not hasattr(self, 'M4'):
+            self.M4 = None
+        if not hasattr(self, 'mu4'):
+            self.mu4 = None
 
         # the following quantities are updated in mesa_step.py
 
@@ -255,7 +259,7 @@ class SingleStar:
             # shape of data_to_save (history columns , time steps)
             data_to_save = [getattr(self, key) for key in keys_to_save]
 
-            
+
             col_lengths = [len(x) for x in data_to_save]
             max_col_length = np.max(col_lengths)
 
