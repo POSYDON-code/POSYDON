@@ -167,3 +167,59 @@ def final_mass(file,CO = True):
         total_mass = sum(S1_nCO.S1_mass) + sum(S2_nCO.S2_mass)
     return total_mass
 
+
+def smooth_flux_negatives(lam_f, flux):
+    flux_c = copy(flux)
+
+    i = 0
+    i_start = 0
+    i_end = 0
+
+    while i < len(flux_c):
+
+        i_low = None
+        i_high = None
+        low = None
+        high = None
+
+        if flux_c[i] > 0 :
+             i += 1
+             continue
+
+        i -= 1
+        # Find point 1
+        while low is None:
+            if flux_c[i] > 0:
+                low = flux_c[i]
+                i_low = i
+            i += 1
+            if i == len(flux_c)-1:
+               break
+        # Find point 2
+        while high is None:
+            if flux_c[i] > 0:
+                high = flux_c[i]
+                i_high = i
+            else:
+                i += 1
+            if i == len(flux_c) -1:
+                break
+        
+        if i == len(flux_c) -1:
+                break
+        
+        i_start = i_low + 1
+        i_end = i_high - 1
+
+        # Interpolate between them in log-space
+        slope = (np.log10(flux_c[i_high]) - np.log10(flux_c[i_low])) / (lam_f[i_high] - lam_f[i_low])
+        intercept = np.log10(flux_c[i_low]) - slope * lam_f[i_low]
+        # Replace bad fluxes
+        j = copy(i_start)
+        
+        while j <= i_end:
+            flux_c[j] = 10**(slope * lam_f[j] + intercept)
+            #print(j, 10**(slope * lam_f[j] + intercept) ,lam_f[j],i_start ,i_low , i_high , slope, intercept)
+            j += 1
+
+    return flux_c

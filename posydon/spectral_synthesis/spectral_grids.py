@@ -124,7 +124,7 @@ class spectral_grids():
         distance_factor = 1
         if name == "stripped_grid":
             distance_factor = (kpc)**2
-            return 10**Flux*distance_factor
+            return Flux*distance_factor
         if name == 'WR_grid':
             distance_factor = (kpc/100)**2
             return (Flux)*distance_factor

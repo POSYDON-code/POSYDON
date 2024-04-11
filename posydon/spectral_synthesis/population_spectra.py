@@ -132,7 +132,6 @@ class population_spectra():
             for key in spectral_types:
                 pop_spectrum[key] = np.zeros(len(self.grids.lam_c))
         for i,binary in pop.iterrows():
-            #print(pop.shape)
             spectrum_1,state_1,label1 = generate_spectrum(self.grids,binary,'S1',**self.kwargs)
             spectrum_2,state_2,label2 = generate_spectrum(self.grids,binary,'S2',**self.kwargs)
             if self.save_data:

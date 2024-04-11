@@ -15,6 +15,7 @@ from copy import copy
 import numpy as np
 from astropy import constants as con
 import pandas as pd
+from posydon.spectral_synthesis.spectral_tools import smooth_flux_negatives
 
 #Constants
 Lo = 3.828e33 #Solar Luminosity erg/s
@@ -84,7 +85,6 @@ def point_the_grid(grids,x,label,**kwargs):
     bstar_temp_cut_off = kwargs.get('bstar_temp_cut_off',15000)
     #First check for stripped stars because their temp can be a lot
     # higher than the Teff of the Ostar grid limit
-    print(x['state'])
     if "stripped" in x['state']:
         if label is not None:
             return 'failed_grid'
@@ -176,6 +176,9 @@ def generate_spectrum(grids,star,i,**kwargs):
                 Flux = grids.grid_flux(label,**x)*4*np.pi*1e4/Lo *(L/10**5.3)
             else:
                 Flux = grids.grid_flux(label,**x)*R**2*4*np.pi*1e4/Lo
+            if np.min(Flux) < 0 : 
+                Flux = smooth_flux_negatives(grids.lam_c,Flux.value)
+                return Flux,star['state'],label
             return Flux.value,star['state'],label
         except LookupError:
             label = f'failed_attempt_{count}'
