@@ -486,9 +486,11 @@ class BaseIFInterpolator:
                     self.in_scaling, self.out_scaling = self._bestScaling(grid.final_values[self.c_key])
 
             self.X_scaler = Scaler(self.in_scaling,
-                                         self.XT[self.valid >= 0, :], grid.final_values[self.c_key][self.valid > 0])
+                                   self.XT[self.valid >= 0, :],
+                                   grid.final_values[self.c_key][self.valid > 0])
             self.Y_scaler = Scaler(self.out_scaling,
-                                         self.YT[self.valid > 0, :], grid.final_values[self.c_key][self.valid > 0])
+                                   self.YT[self.valid > 0, :],
+                                   grid.final_values[self.c_key][self.valid > 0])
 
             if self.class_method == "kNN":
                 options = {'nfolds': 3, 'p_test': 0.05, 'nmax': 10}
@@ -614,12 +616,11 @@ class BaseIFInterpolator:
             for training the interpolator.
 
         """
-
         ic = ic[self.valid > 0] if isinstance(self.interp_method, list) else None
 
         XTn = self.X_scaler.normalize(self.XT[self.valid > 0, :], ic)
         YTn = self.Y_scaler.normalize(self.YT[self.valid > 0, :], ic)
-        
+
         if self.interp_method == "linear":
             self.interpolator = LinInterpolator()
             self.interpolator.train(XTn, YTn)
@@ -646,24 +647,21 @@ class BaseIFInterpolator:
         Output space approximation as numpy array
 
         """
-
         classes = self.test_classifier(self.c_key, Xt)
         Xtn = self.X_scaler.normalize(Xt)
-
         if isinstance(self.interp_method, list):
-        
             Xtn = self.X_scaler.normalize(Xt, classes)
-
             Ypredn = self.interpolator.predict(Xtn, classes)
         else:
             Ypredn = self.interpolator.predict(Xtn)
-        
+
         Ypredn = np.array([
-             list(sanitize_interpolated_quantities(
+            list(sanitize_interpolated_quantities(
                  dict(zip(self.out_keys, track)),
                  self.constraints, verbose=False).values())
-             for track in self.Y_scaler.denormalize(Ypredn, classes)
-         ])
+            for track in self.Y_scaler.denormalize(Ypredn, classes)
+        ])
+
         return Ypredn
 
     def train_classifiers(self, grid, method='kNN', **options):
@@ -791,7 +789,6 @@ class BaseIFInterpolator:
                             "columns as it was trained with.")
         # if binary classified as 'initial_MT', set numerical quantities to nan
         ynum, ycat = self.test_interpolator(Xt), self.test_classifiers(Xt)
-        
         if self.class_method != '1NN':
             ynum[ycat[self.c_key] == 'initial_MT', :] = np.nan
         if self.interp_method == '1NN':
@@ -893,7 +890,7 @@ class BaseIFInterpolator:
 
         return (in_scaling, cin_scaling)
 
-        
+
 
     def _bestScaling(self, ic, unique_in=True, nfolds = 5, p_test = 0.15):
         """Find the best scaling for both input and output space."""
@@ -962,7 +959,11 @@ class BaseIFInterpolator:
                             np.abs(ypred_i[:, which_abs] - Y_t[:, which_abs]), 90,
                             axis=0)
 
-            where_min = np.nanargmin(np.nanmean(err, axis=2), axis=0)
+            try:
+                where_min = np.nanargmin(np.nanmean(err, axis=2), axis=0)
+            except:
+                # replace nans by a large number before looking for minimum
+                where_min = np.nanargmin(np.nan_to_num(np.nanmean(err, axis=2), nan=1e99), axis=0)
 
             out_scaling = []
             for i in range(self.n_out):
@@ -986,7 +987,6 @@ class BaseIFInterpolator:
             out_scaling = cout_scaling
 
         return in_scaling, (out_scaling, cout_scaling)
-
 
     def _fillNans(self, ic):
         """Fill nan values i numerical magnitudes with 1NN."""
@@ -1215,7 +1215,6 @@ class MC_Interpolator:
         Output space approximation as numpy array
 
         """
-
         Ypred = np.ones((Xt.shape[0], self.M)) * np.nan
         for i in range(len(self.classes)):
             which = np.zeros_like(zpred, dtype=bool)
@@ -1428,6 +1427,9 @@ class Scaler:
                 inds = np.where(klass == c)[0]
                 c = None if c == "None" else c
 
+                if c not in self.scaler.keys():
+                    warnings.warn(f"skip normalize: c={c}, inds={inds}")
+                    continue
                 normalized[inds] = self.scaler[c].normalize(X[inds])
 
             return normalized
@@ -1447,6 +1449,9 @@ class Scaler:
                 inds = np.where(klass == c)[0]
                 c = None if c == "None" else c
 
+                if c not in self.scaler.keys():
+                    warnings.warn(f"skip denormalize: c={c}, inds={inds}")
+                    continue
                 normalized[inds] = self.scaler[c].denormalize(Xn[inds])
 
             return normalized
