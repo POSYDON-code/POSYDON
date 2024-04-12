@@ -1979,8 +1979,6 @@ class StepSN(object):
         """Get the M4 and mu4 using Patton+20."""
         M4 = self.M4_interpolator.predict([[C_core_abundance, CO_core_mass]])
         mu4 = self.mu4_interpolator.predict([[C_core_abundance, CO_core_mass]])
-        star.M4 = M4
-        star.mu4 = mu4
 
         return M4, mu4
 
@@ -2031,6 +2029,8 @@ class StepSN(object):
             CO_core_mass, C_core_abundance = self.get_CO_core_params(
                 star, self.approx_at_he_depletion)
             M4, mu4 = self.get_M4_mu4_Patton20(CO_core_mass, C_core_abundance)
+            star.M4 = M4
+            star.mu4 = mu4
             M4 = M4[0]
             mu4 = mu4[0]
 
