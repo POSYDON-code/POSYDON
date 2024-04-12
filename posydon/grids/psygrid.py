@@ -863,7 +863,6 @@ class PSyGrid:
                     kept = keep_after_RLO(binary_history, history1, history2)
                     if kept is None:
                         ignore.reason = "ignored_no_RLO"
-                        warnings.warn("Ignored MESA run because of no RLO"
                         if self.verbose:
                             self._say("Ignored MESA run because of no RLO"
                                       " in: {}\n".format(run.path))
@@ -888,7 +887,6 @@ class PSyGrid:
                     if self.config["accept_missing_profile"]:
                         warnings.warn("Including MESA run despite the missing "
                                       "profile in {}\n".format(run.path))
-                        ignore.reason = None
                     else:
                         warnings.warn("Ignored MESA run because of missing "
                                       "profile in: {}\n".format(run.path))
