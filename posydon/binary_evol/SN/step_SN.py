@@ -412,11 +412,13 @@ class StepSN(object):
             # collapse star
             self.collapse_star(star=binary.star_1)
             self._reset_other_star_properties(star=binary.star_2)
+            print("Manos CC1", binary, binary.star_1.M4, binary.star_1.mu4,binary.star_2.M4, binary.star_2.mu4)
 
         elif binary.event == "CC2":
             # collapse star
             self.collapse_star(star=binary.star_2)
             self._reset_other_star_properties(star=binary.star_1)
+            print("Manos CC2", binary, binary.star_1.M4, binary.star_1.mu4,binary.star_2.M4, binary.star_2.mu4)
         else:
             raise ValueError("Something went wrong: "
                              "invalid call of supernova step!")
