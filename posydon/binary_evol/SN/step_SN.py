@@ -940,7 +940,17 @@ class StepSN(object):
                 # Hendriks et al. 2023
                 # PISN prescription with a shifting PPI and PISN gap
                 # This works by removing delta_M_PPI from the star mass
-                # this new stellar mass will be used to calculate the remnant mass.
+                # and then applying the remant mass prescription.
+                
+                # steps:
+                # 1. compute PPI ML
+                # 2. compute star_mass with PPI ML
+                # 3. compute m_rembar
+                # 4. if m_rembar < 10 -> No remnant
+                # 5. if m_rembar > 10 -> m_PISN = m_rembar
+                
+                # m_PISN is the remnant mass according to the PPISN prescription from Marchant et al. 2019
+                # This contains the CCSN remnant mass prescription and not just the ML as this prescription does
                 
                 delta_M_CO_shift = self.PISN_CO_shift
                 delta_M_PPI_extra_ML = 0.0
@@ -957,29 +967,31 @@ class StepSN(object):
                         print("delta_M_PPI", delta_M_PPI)
                 else:
                     delta_M_PPI = 0.0
-                
-                m_PISN = m_star - delta_M_PPI
                     
-                PISN_star = copy.deepcopy(star)
-                PISN_star.mass = m_PISN
-                if PISN_star.he_core_mass > m_PISN:
-                    PISN_star.he_core_mass = PISN_star.mass
-                if PISN_star.co_core_mass > m_PISN:
-                    PISN_star.co_core_mass = PISN_star.mass
-                m_rembar, _, _ = self.compute_m_rembar(PISN_star, m_PISN)
-
-                # if remnant from PPISN < 10 -> No remnant 
-                if  m_rembar < 10:
-                    m_PISN = np.nan
-                # otherwise remnant = star - delta_M_PPI
+                if delta_M_PPI <= 0.0:
+                    m_PISN = m_star
                 else:
-                    m_PISN = m_rembar
+                    m_PISN = m_star - delta_M_PPI
+                    
+                    PISN_star = copy.deepcopy(star)
+                    PISN_star.mass = m_PISN
+                    if PISN_star.he_core_mass > m_PISN:
+                        PISN_star.he_core_mass = PISN_star.mass
+                    if PISN_star.co_core_mass > m_PISN:
+                        PISN_star.co_core_mass = PISN_star.mass
+                    m_rembar, _, _ = self.compute_m_rembar(PISN_star, m_PISN)
+
+                    # if remnant from PPISN < 10 -> No remnant 
+                    if  m_rembar < 10:
+                        m_PISN = np.nan
+                    else:
+                        m_PISN = m_rembar
                         
-                if self.verbose:
-                    print('m_star: ', m_star)
-                    print('m_rembar', m_rembar)
-                    print("m_PISN: ", m_PISN)
-                    print('m_CO_core: ', m_CO_core)
+                    if self.verbose:
+                        print('m_star: ', m_star)
+                        print('m_rembar', m_rembar)
+                        print("m_PISN: ", m_PISN)
+                        print('m_CO_core: ', m_CO_core)
 
             elif is_number(self.PISN) and m_He_core > self.PISN:
                 m_PISN = self.PISN
