@@ -2031,7 +2031,7 @@ class StepSN(object):
             M4, mu4 = self.get_M4_mu4_Patton20(CO_core_mass, C_core_abundance)
             star.M4 = M4
             star.mu4 = mu4
-            print("Manos1", star)
+            print("Manos1", star.M4, star.mu4)
             M4 = M4[0]
             mu4 = mu4[0]
 
