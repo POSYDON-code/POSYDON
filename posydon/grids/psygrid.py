@@ -650,7 +650,7 @@ class PSyGrid:
                                                  BH_columns)
             # if no binary history, ignore this run
             if binary_grid and binary_history is None:
-                ignore.reason = "ignored_no_BH"
+                ignore.reason = "ignored_no_binary_history"
                 warnings.warn("Ignored MESA run because of missing binary "
                               "history in: {}\n".format(run.path))
                 if not initial_RLO_fix:
@@ -674,7 +674,7 @@ class PSyGrid:
             if not binary_grid and history1 is None:
                 warnings.warn("Ignored MESA run because of missing "
                               "history in: {}\n".format(run.path))
-                ignore.reason = "ignored_no_H1"
+                ignore.reason = "ignored_no_history1"
                 continue
 
             if ignore:
@@ -832,7 +832,7 @@ class PSyGrid:
                 else:
                     binary_history_len = 0
                 if binary_grid and binary_history_len == 0:
-                    ignore.reason = "ignored_scrubbed"
+                    ignore.reason = "ignored_scrubbed_history"
                     warnings.warn("Ignored MESA run because of scrubbed binary"
                                   " history in: {}\n".format(run.path))
                     if not initial_RLO_fix:
@@ -842,7 +842,7 @@ class PSyGrid:
                 else:
                     history1_len = 0
                 if not binary_grid and history1_len == 0:
-                    ignore.reason = "ignored_scrubbed"
+                    ignore.reason = "ignored_scrubbed_history"
                     warnings.warn("Ignored MESA run because of scrubbed"
                                   " history in: {}\n".format(run.path))
                     continue
@@ -890,7 +890,7 @@ class PSyGrid:
                     else:
                         warnings.warn("Ignored MESA run because of missing "
                                       "profile in: {}\n".format(run.path))
-                        ignore.reason = "ignored_no_FP"
+                        ignore.reason = "ignored_no_final_profile"
                         continue
 
             if binary_history is not None:

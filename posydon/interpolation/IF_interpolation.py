@@ -237,7 +237,7 @@ class IFInterpolator:
                             f"than one set of out_keys)")
                     else:
                         out_keys.append(key)
-        
+
 
     def train(self):
         """Train the interpolator(s) on the PSyGrid used for construction."""
@@ -282,7 +282,7 @@ class IFInterpolator:
         Parameters
         ----------
         initial_values : numpy array
-            A numpy array containing the in-key values of the binaries to be evolved 
+            A numpy array containing the in-key values of the binaries to be evolved
 
         Return
         ------
@@ -306,7 +306,7 @@ class IFInterpolator:
         Parameters
         ----------
         initial_values : numpy array
-            A numpy array containing the in-key values of the binaries to be classified 
+            A numpy array containing the in-key values of the binaries to be classified
 
         Return
         ------
@@ -322,7 +322,7 @@ class IFInterpolator:
         for interpolator in self.interpolators:
 
             classes = {**classes, **interpolator.test_classifiers(new_values)}
-            
+
         return classes
 
 
@@ -584,7 +584,8 @@ class BaseIFInterpolator:
         """Set binary tracks as (in)valid depending on termination flags."""
         valid = np.zeros(len(ic), dtype=int)
 
-        for flag in ['not_converged', 'ignored_no_BH', 'ignored_no_RLO']:
+        for flag in ['not_converged', 'ignored_no_RLO',
+                     'ignored_no_binary_history']:
             which = (ic == flag)
             valid[which] = -1
             print(f"Discarded {np.sum(which)} binaries with "
@@ -619,7 +620,7 @@ class BaseIFInterpolator:
 
         XTn = self.X_scaler.normalize(self.XT[self.valid > 0, :], ic)
         YTn = self.Y_scaler.normalize(self.YT[self.valid > 0, :], ic)
-        
+
         if self.interp_method == "linear":
             self.interpolator = LinInterpolator()
             self.interpolator.train(XTn, YTn)
@@ -651,13 +652,13 @@ class BaseIFInterpolator:
         Xtn = self.X_scaler.normalize(Xt)
 
         if isinstance(self.interp_method, list):
-        
+
             Xtn = self.X_scaler.normalize(Xt, classes)
 
             Ypredn = self.interpolator.predict(Xtn, classes)
         else:
             Ypredn = self.interpolator.predict(Xtn)
-        
+
         Ypredn = np.array([
              list(sanitize_interpolated_quantities(
                  dict(zip(self.out_keys, track)),
@@ -791,7 +792,7 @@ class BaseIFInterpolator:
                             "columns as it was trained with.")
         # if binary classified as 'initial_MT', set numerical quantities to nan
         ynum, ycat = self.test_interpolator(Xt), self.test_classifiers(Xt)
-        
+
         if self.class_method != '1NN':
             ynum[ycat[self.c_key] == 'initial_MT', :] = np.nan
         if self.interp_method == '1NN':
@@ -893,7 +894,7 @@ class BaseIFInterpolator:
 
         return (in_scaling, cin_scaling)
 
-        
+
 
     def _bestScaling(self, ic, unique_in=True, nfolds = 5, p_test = 0.15):
         """Find the best scaling for both input and output space."""
@@ -1400,7 +1401,7 @@ class KNNClassifier(Classifier):
 class Scaler:
 
     def __init__(self, norms, XT, ic):
-        
+
         if norms[0] == norms[1]:
             self.scaler = {
                 None:  MatrixScaler(norms[0], XT)
@@ -1417,7 +1418,7 @@ class Scaler:
 
         if klass is None:
             return self.scaler[klass].normalize(X)
-        
+
         else:
 
             normalized = X.copy()
@@ -1436,7 +1437,7 @@ class Scaler:
 
         if klass is None:
             return self.scaler[klass].denormalize(X)
-        
+
         else:
 
             normalized = Xn
