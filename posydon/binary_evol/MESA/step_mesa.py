@@ -27,7 +27,8 @@ from posydon.interpolation.IF_interpolation import IFInterpolator
 from posydon.utils.common_functions import (flip_stars,
                                             convert_metallicity_to_string,
                                             CO_radius, infer_star_state,
-                                            set_binary_to_failed,)
+                                            set_binary_to_failed,
+                                            orbital_separation_from_period)
 from posydon.utils.data_download import data_download, PATH_TO_POSYDON_DATA
 from posydon.grids.MODELS import MODELS
 
@@ -1250,6 +1251,8 @@ class MS_MS_step(MesaGridStep):
         """Initialize a MS_MS_step instance."""
         self.grid_type = 'HMS_HMS'
         self.interp_in_q = True
+        # metallicity is in Zsun
+        self.metallicity = metallicity
         if grid_name is None:
             metallicity = convert_metallicity_to_string(metallicity)
             grid_name = 'HMS-HMS/' + metallicity + '_Zsun.h5'
@@ -1276,6 +1279,10 @@ class MS_MS_step(MesaGridStep):
         self.star_2_CO = False
         # check binary is ready before calling the step
         self.binary = binary
+        # set the initial metallicity
+        self.binary.star_1.metallicity = self.metallicity
+        self.binary.star_2.metallicity = self.metallicity
+        
         state_1 = self.binary.star_1.state
         state_2 = self.binary.star_2.state
         event = self.binary.event
@@ -1283,6 +1290,11 @@ class MS_MS_step(MesaGridStep):
         m2 = self.binary.star_2.mass
         mass_ratio = m2/m1
         p = self.binary.orbital_period
+        
+        # the separation is not set, compute it from the period if availble
+        if self.binary.separation is None and p is not None:
+            self.binary.separation = orbital_separation_from_period(p, m1, m2)
+            
         # check if the binary is in the grid
         if (state_1 == 'H-rich_Core_H_burning' and
             state_2 == 'H-rich_Core_H_burning' and

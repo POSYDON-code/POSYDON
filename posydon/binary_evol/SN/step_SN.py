@@ -939,31 +939,47 @@ class StepSN(object):
             elif self.PISN == "Hendriks+23":
                 # Hendriks et al. 2023
                 # PISN prescription with a shifting PPI and PISN gap
+                # This works by removing delta_M_PPI from the star mass
+                # this new stellar mass will be used to calculate the remnant mass.
+                
                 delta_M_CO_shift = self.PISN_CO_shift
                 delta_M_PPI_extra_ML = 0.0
                 if (m_CO_core >= 38 + delta_M_CO_shift 
                     and m_CO_core < 114 + delta_M_CO_shift):
                     
                     delta_M_PPI = (
-                        (0.0006 *np.log10(star.metallicity ) + 0.0054)
+                        (0.0006 * np.log10(star.metallicity * const.Zsun) + 0.0054)
                         * (m_CO_core - delta_M_CO_shift - 34.8)**3
                         - 0.0013 * (m_CO_core - delta_M_CO_shift - 34.8)**2
                         + delta_M_PPI_extra_ML
                         )
+                    if self.verbose:
+                        print("delta_M_PPI", delta_M_PPI)
+                else:
+                    delta_M_PPI = 0.0
+                
+                m_PISN = m_star - delta_M_PPI
                     
-                    # if remnant from PPISN < 10 -> No remnant 
-                    if  m_star - delta_M_PPI < 10:
-                        m_PISN = np.nan
-                    # otherwise remnant = star - delta_M_PPI
-                    else:
-                        m_PISN = m_star - delta_M_PPI
-                    
-                # direct collapse to BH
-                elif m_CO_core > 114 + delta_M_CO_shift:
-                    if self.conserve_hydrogen_envelope:
-                        m_PISN = m_star
-                    else:
-                        m_PISN = m_He_core
+                PISN_star = copy.deepcopy(star)
+                PISN_star.mass = m_PISN
+                if PISN_star.he_core_mass > m_PISN:
+                    PISN_star.he_core_mass = PISN_star.mass
+                if PISN_star.co_core_mass > m_PISN:
+                    PISN_star.co_core_mass = PISN_star.mass
+                m_rembar, _, _ = self.compute_m_rembar(PISN_star, m_PISN)
+
+                # if remnant from PPISN < 10 -> No remnant 
+                if  m_rembar < 10:
+                    m_PISN = np.nan
+                # otherwise remnant = star - delta_M_PPI
+                else:
+                    m_PISN = m_rembar
+                        
+                if self.verbose:
+                    print('m_star: ', m_star)
+                    print('m_rembar', m_rembar)
+                    print("m_PISN: ", m_PISN)
+                    print('m_CO_core: ', m_CO_core)
 
             elif is_number(self.PISN) and m_He_core > self.PISN:
                 m_PISN = self.PISN
@@ -984,9 +1000,9 @@ class StepSN(object):
             elif not np.isnan(m_PISN):
                 print("")
                 print(
-                    "The star with initial mass {:2.2f}".format(m_He_core),
+                    "The star with initial mass {:2.2f}".format(m_star),
                     "M_sun went through the PISN routine and lost",
-                    "{:2.2f} M_sun.".format(m_He_core - m_PISN),
+                    "{:2.2f} M_sun.".format(m_star - m_PISN),
                     "The new m_rembar mass that will collapse to form a ",
                     "CO object is {:2.2f} M_sun.".format(m_PISN))
             else:
@@ -1422,6 +1438,8 @@ class StepSN(object):
                         sigma = self.sigma_kick_CCSN_NS
                     elif binary.star_1.state == 'BH':
                         sigma = self.sigma_kick_CCSN_BH
+                    elif binary.star_1.state == 'massless_remnant':
+                        sigma = 0.0
                     else:
                         raise ValueError("CCSN/PPISN/PISN only for NS/BH.")
                     # Kick for core-collapse SN
@@ -1519,6 +1537,8 @@ class StepSN(object):
                         sigma = self.sigma_kick_CCSN_NS
                     elif binary.star_2.state == 'BH':
                         sigma = self.sigma_kick_CCSN_BH
+                    elif binary.star_2.state == 'massless_remnant':
+                        sigma = 0.0
                     else:
                         raise ValueError("CCSN/PPISN/PISN only for NS/BH.")
                     # Kick for core-collapse SN
