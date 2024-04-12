@@ -164,7 +164,7 @@ def get_mass_transfer_flag(binary_history, history1, history2,
             mass_transfer_cases.append(mt_case)
         MT[where_rlof] = [t+10 for t in mass_transfer_cases] # shift by 10
 
-    flag = cumulative_mass_transfer_flag([t for t in MT if t is not None])
+    flag = cumulative_mass_transfer_flag([t for t in MT if t is not None], shift_cases=True)
     return flag
 
 
