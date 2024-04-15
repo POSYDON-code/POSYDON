@@ -176,7 +176,7 @@ def generate_spectrum(grids,star,i,**kwargs):
                 Flux = grids.grid_flux(label,**x)*4*np.pi*1e4/Lo *(L/10**5.3)
             else:
                 Flux = grids.grid_flux(label,**x)*R**2*4*np.pi*1e4/Lo
-            if np.min(Flux) < 0 : 
+            if np.min(Flux) < 0 and label !=  'WR_grid': 
                 Flux = smooth_flux_negatives(grids.lam_c,Flux.value)
                 return Flux,star['state'],label
             return Flux.value,star['state'],label
