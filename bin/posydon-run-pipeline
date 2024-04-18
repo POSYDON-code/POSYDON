@@ -45,6 +45,9 @@ STEP 4.1: plot interpolator accuracy and confusion matricies
 ['grid_random_1']
 --> loop over all plot types
 
+STEP 5: train profile interpolators
+uses gird and initial-final interpolators to train the profile interpolators
+
 STEP 9: export dataset
 
 STEP RERUN: rerun grid with a fix
@@ -67,7 +70,6 @@ import pickle
 import random
 import numpy as np
 import pandas as pd
-from shutil import copyfile
 from collections import Counter
 from matplotlib.backends.backend_pdf import PdfPages
 from posydon.grids.psygrid import (PSyGrid,
@@ -80,8 +82,9 @@ from posydon.grids.post_processing import (post_process_grid,
 from posydon.grids.MODELS import MODELS
 from posydon.utils.common_functions import PATH_TO_POSYDON
 from posydon.utils.gridutils import get_new_grid_name
-from posydon.visualization.plot_defaults import PRE_SET_PLOTS
 from posydon.interpolation.IF_interpolation import IFInterpolator
+from posydon.interpolation.profile_interpolation import CompileData, ProfileInterpolator
+from posydon.visualization.plot_defaults import PRE_SET_PLOTS
 from posydon.visualization.interpolation import EvaluateIFInterpolator
 from posydon.visualization.combine_TF import TF1_POOL_ERROR
 
@@ -379,6 +382,72 @@ def train_interpolators(i, path_to_csv_file, verbose=False):
     # training and saving
     interp.train()
     interp.save(interpolator_path)
+
+
+def train_profile_interpolators(i, path_to_csv_file, verbose=False):
+    """Train a profile interpolator on a grid."""
+    
+    # read csv file
+    if os.path.exists(path_to_csv_file):
+        df = pd.read_csv(path_to_csv_file)
+    else:
+        raise ValueError(f'{path_to_csv_file} not found!')
+    # get values from csv file
+    if 'path_to_grid' in df.keys():
+        grid_path = df.loc[i,'path_to_grid']
+        if not os.path.isfile(grid_path):
+            raise ValueError(f'{grid_path} not found!')
+    else:
+        raise ValueError(f'No path_to_grid in {path_to_csv_file}')
+    if 'grid_type' in df.keys():
+        grid_type = df.loc[i,'grid_type']
+    else:
+        raise ValueError(f'No grid_type in {path_to_csv_file}')
+    if 'profile_names' in df.keys():
+        profile_names = df.loc[i,'profile_names']
+    else:
+        raise ValueError(f'No profile_names in {path_to_csv_file}')
+    if 'path_to_IF_interpolator' in df.keys():
+        IF_interpolator_path = df.loc[i,'path_to_IF_interpolator']
+        if not os.path.isfile(IF_interpolator_path):
+            raise ValueError(f'{IF_interpolator_path} not found!')
+    else:
+        raise ValueError(f'No path_to_IF_interpolator in {path_to_csv_file}')
+    if 'path_to_profile_interpolator' in df.keys():
+        profile_interpolator_path = df.loc[i,'path_to_profile_interpolator']
+    else:
+        raise ValueError(f'No path_to_profile_interpolator in {path_to_csv_file}')
+    
+    if verbose:
+        print(f'Train profile interpolators on {grid_path} with the '
+              f'initial-final interpolator {IF_interpolator_path} to get '
+              f'profiles of {profile_names}')
+    
+    # check interpolation_objects directory exists
+    interp_path = os.path.dirname(profile_interpolator_path)
+    if not os.path.isdir(interp_path):
+        os.makedirs(interp_path)
+
+    train_second_star = 'CO' not in grid_type
+    # load grid profiles
+    grid_profiles = Compile_Data(grid_path, grid_path,
+                                 hms_s2=train_second_star,
+                                 profile_names=profile_names)
+    # save the profiles in a temporary pickle
+    tmp_profile_interpolator_path = profile_interpolator_path+".tmp"
+    grid_profiles.save(tmp_profile_interpolator_path)
+
+    # create interpolator
+    interp = ProfileInterpolator()
+    # load profile pickle
+    interp.load_profiles(tmp_profile_interpolator_path)
+    # training
+    interp.train(IF_interpolator_path)
+    # saving
+    interp.save(profile_interpolator_path)
+    
+    # TODO: consider to remove the temporary pickle with the grid profiles
+    # os.remove(tmp_profile_interpolator_path)
 
 
 def export_dataset(i, path_to_csv_file, verbose=False):
@@ -1076,6 +1145,9 @@ if __name__ == '__main__':
 
     if STEP=='step_4': # train interpolators
         train_interpolators(SLURM_I, PATH_TO_CSV_FILE, verbose=VERBOSE)
+
+    if STEP=='step_5': # train profile interpolators
+        train_profile_interpolators(SLURM_I, PATH_TO_CSV_FILE, verbose=VERBOSE)
 
     if STEP=='step_9': # export dataset
         export_dataset(SLURM_I, PATH_TO_CSV_FILE, verbose=VERBOSE)

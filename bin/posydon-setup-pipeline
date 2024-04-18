@@ -50,12 +50,13 @@ PATH_TO_GRIDS/
 
 # pipeline steps
 ACTION_TO_STEP_NUM = {
-    'CREATE_GRID_SLICES'    : 'step_1',
-    'COMBINE_GRID_SLICES'   : 'step_2',
-    'CALCULATE_EXTRA_VALUES': 'step_3',
-    'TRAIN_INTERPOLATORS'   : 'step_4',
-    'EXPORT_DATASET'        : 'step_9',
-    'RERUN'                 : 'rerun'
+    'CREATE_GRID_SLICES'         : 'step_1',
+    'COMBINE_GRID_SLICES'        : 'step_2',
+    'CALCULATE_EXTRA_VALUES'     : 'step_3',
+    'TRAIN_INTERPOLATORS'        : 'step_4',
+    'TRAIN_PROFILE_INTERPOLATORS': 'step_4',
+    'EXPORT_DATASET'             : 'step_9',
+    'RERUN'                      : 'rerun'
 }
 # pipeline substeps
 SUB_STEPS_TO_EXTENSION = {
@@ -139,14 +140,16 @@ PLOTTING_SETS = {
                              'INTERP_ERROR_S1_MODEL06_m_disk_radiated',\
                              'INTERP_ERROR_S1_MODEL10_mass',\
                              'INTERP_ERROR_S1_MODEL10_spin',\
-                             'INTERP_ERROR_S1_MODEL10_m_disk_radiated']
+                             'INTERP_ERROR_S1_MODEL10_m_disk_radiated'],
+    'PLOT_AFTER_PROFILE_TRAINING' : []
 }
 # predefined checking sets
 CHECKING_SETS = {
-    'CHECK_AFTER_CREATE'   : [],
-    'CHECK_AFTER_COMBINE'  : ['failure_rate'],
-    'CHECK_AFTER_EXTRA'    : ['CO_type', 'SN_type'],
-    'CHECK_AFTER_TRAINING' : []
+    'CHECK_AFTER_CREATE'           : [],
+    'CHECK_AFTER_COMBINE'          : ['failure_rate'],
+    'CHECK_AFTER_EXTRA'            : ['CO_type', 'SN_type'],
+    'CHECK_AFTER_TRAINING'         : [],
+    'CHECK_AFTER_PROFILE_TRAINING' : []
 }
 # common attributes for all steps
 ATTRIBUTES_TO_CHECK = ['GRID_TYPES', 'METALLICITIES', 'GRID_SLICES',\
@@ -536,8 +539,8 @@ def slurm_job(job_name,
             f.write(f"#SBATCH --mail-type={MAILTYPE}\n")
             f.write(f"#SBATCH --mail-user={EMAIL}\n")
         # extract array size
-        if ((job_name in ['step_1', 'step_3', 'step_4', 'step_9', 'rerun']) or
-            ('plot' in job_name) or ('check' in job_name)):
+        if ((job_name in ['step_1', 'step_3', 'step_4', 'step_5', 'step_9',\
+            'rerun']) or ('plot' in job_name) or ('check' in job_name)):
             df = pd.read_csv(path_to_csv_file)
             N = df.shape[0]-1
         elif job_name in ['step_2']:
@@ -589,6 +592,7 @@ def create_csv(GRID_TYPES=[],
                GRIDS_COMBINED=[],
                ORIGINAL_COMPRESSIONS=[],
                INTERPOLATION_METHODS=[],
+               PROFILE_NAMES=[],
                CONTROL_GRIDS=[],
                STOP_BEFORE_CARBON_DEPLETION=0,
                RERUN_TYPE='',
@@ -618,7 +622,7 @@ def create_csv(GRID_TYPES=[],
         # calculated the extra quantities from.
         if N != len(ORIGINAL_COMPRESSIONS):
             raise ValueError('len(GRID_TYPES) != len(ORIGINAL_COMPRESSIONS)!')
-    elif 'step_4_' in step_name:
+    elif (('step_4_' in step_name) or ('step_5' in step_name)):
         # sub steps of the interpolator training need a control grid
         if len(GRID_SLICES) != len(CONTROL_GRIDS):
             raise ValueError('len(GRID_SLICES) != len(CONTROL_GRIDS)!')
@@ -631,6 +635,8 @@ def create_csv(GRID_TYPES=[],
     processed_grids = []
     interpolation_methods = []
     interpolators = []
+    profile_quantities = []
+    profile_interpolators = []
     export_path = []
     rerun_metallicities = []
     rerun_path = []
@@ -734,6 +740,29 @@ def create_csv(GRID_TYPES=[],
                                                 'interpolation_objects')
                             if not os.path.isdir(interpolator_dir):
                                 newly_created_files.append(interpolator_dir)
+                    elif step_name == 'step_5': # TRAIN_PROFILE_INTERPOLATORS
+                        if len(PROFILE_NAMES)>0:
+                            for method in INTERPOLATION_METHODS:
+                                grids.append(os.path.join(PATH_TO_GRIDS,
+                                              grid_type, VERSION, metallicity,
+                                              compression, grid_slice+'.h5'))
+                                grids_type.append(grid_type)
+                                interpolators.append(os.path.join(
+                                    PATH_TO_GRIDS, grid_type, VERSION,
+                                    metallicity, 'interpolation_objects',
+                                    'IF_'+method+RLO+'.pkl'))
+                                profile_quantities.append(PROFILE_NAMES)
+                                profile_interpolators.append(os.path.join(
+                                    PATH_TO_GRIDS, grid_type, VERSION,
+                                    metallicity, 'interpolation_objects',
+                                    'profile_'+method+RLO+'.pkl'))
+                            if i==0:
+                                interpolator_dir = os.path.join(PATH_TO_GRIDS,
+                                                    grid_type, VERSION,
+                                                    metallicity,
+                                                    'interpolation_objects')
+                                if not os.path.isdir(interpolator_dir):
+                                    newly_created_files.append(interpolator_dir)
                     elif step_name == 'step_9': # EXPORT_DATASET
                         if "RLO" in grid_type:
                             export_dir = grid_type
@@ -772,7 +801,8 @@ def create_csv(GRID_TYPES=[],
                             grid_s = GRIDS_COMBINED[l][i]
                         elif 'step_3' in step_name:
                             grid_s = grid_slice+'_processed'
-                        elif 'step_4' in step_name:
+                        elif (('step_4' in step_name) or
+                              ('step_5' in step_name)):
                             grid_s = CONTROL_GRIDS[l][i]
                         else:
                             grid_s = grid_slice
@@ -780,7 +810,8 @@ def create_csv(GRID_TYPES=[],
                         if grid_s == '': # skip that slice for sub steps
                             continue
                         
-                        if 'step_4' not in step_name:
+                        if (('step_4' not in step_name) and 
+                            ('step_5' not in step_name)):
                             # all steps without interpolation method get an
                             # empty method
                             if len(INTERPOLATION_METHODS)==0:
@@ -809,12 +840,18 @@ def create_csv(GRID_TYPES=[],
                                                           RLO[1:]+RLO[:1]+grid_s))
                                     plot_extensions.append(PLOT_EXTENSION)
                                     if method != '': # if there is a method
-                                        interpolators.append(os.path.join(PATH_TO_GRIDS,
-                                                              grid_type,
-                                                              VERSION,
-                                                              metallicity,
-                                                              'interpolation_objects',
-                                                              'IF_'+method+RLO+'.pkl'))
+                                        if 'step_4' not in step_name:
+                                            interpolators.append(os.path.join(
+                                                PATH_TO_GRIDS, grid_type,
+                                                VERSION, metallicity,
+                                                'interpolation_objects',
+                                                'IF_'+method+RLO+'.pkl'))
+                                        elif 'step_5' not in step_name:
+                                            interpolators.append(os.path.join(
+                                                PATH_TO_GRIDS, grid_type,
+                                                VERSION, metallicity,
+                                                'interpolation_objects',
+                                                'profile_'+method+RLO+'.pkl'))
                             if i==0:
                                 plots_dir = os.path.join(PATH_TO_GRIDS,
                                                          grid_type, VERSION,
@@ -833,12 +870,18 @@ def create_csv(GRID_TYPES=[],
                                                   metallicity, compression,
                                                   grid_s+'.h5'))
                                     if method != '': # if there is a method
-                                        interpolators.append(os.path.join(PATH_TO_GRIDS,
-                                                              grid_type,
-                                                              VERSION,
-                                                              metallicity,
-                                                              'interpolation_objects',
-                                                              'IF_'+method+RLO+'.pkl'))
+                                        if 'step_4' not in step_name:
+                                            interpolators.append(os.path.join(
+                                                PATH_TO_GRIDS, grid_type,
+                                                VERSION, metallicity,
+                                                'interpolation_objects',
+                                                'IF_'+method+RLO+'.pkl'))
+                                        elif 'step_5' not in step_name:
+                                            interpolators.append(os.path.join(
+                                                PATH_TO_GRIDS, grid_type,
+                                                VERSION, metallicity,
+                                                'interpolation_objects',
+                                                'profile_'+method+RLO+'.pkl'))
     
     # saving dataset to csv file
     if step_name != 'step_2':
@@ -856,6 +899,11 @@ def create_csv(GRID_TYPES=[],
             df['grid_type'] = grids_type
             df['interpolation_method'] = interpolation_methods
             df['path_to_interpolator'] = interpolators
+        elif step_name == 'step_5':
+            df['grid_type'] = grids_type
+            df['profile_names'] = profile_quantities
+            df['path_to_IF_interpolator'] = interpolators
+            df['path_to_profile_interpolator'] = profile_interpolators
         elif step_name == 'step_9':
             df['export_path'] = export_path
         elif step_name == 'rerun':
@@ -890,9 +938,15 @@ def create_csv(GRID_TYPES=[],
                     if (not os.path.exists(path) and
                         path not in previously_created_files):
                         drop_rows.append(row)
-                elif 'step_4_' in step_name:
+                elif (('step_4_' in step_name) or ('step_5_' in step_name)):
                     # interpolator files needed
                     path = df.at[row,'path_to_interpolator']
+                    if (not os.path.exists(path) and
+                        path not in previously_created_files):
+                        drop_rows.append(row)
+                elif 'step_5' in step_name:
+                    # interpolator files needed
+                    path = df.at[row,'path_to_IF_interpolator']
                     if (not os.path.exists(path) and
                         path not in previously_created_files):
                         drop_rows.append(row)
@@ -906,8 +960,11 @@ def create_csv(GRID_TYPES=[],
                     print(df.at[row,'path_to_grid'])
                     if step_name == 'step_3':
                         print(df.at[row,'path_to_grid_ORIGINAL'])
-                    elif 'step_4_' in step_name:
+                    elif (('step_4_' in step_name) or
+                          ('step_5_' in step_name)):
                         print(df.at[row,'path_to_interpolator'])
+                    elif 'step_5' in step_name:
+                        print(df.at[row,'path_to_IF_interpolator'])
                 print('')
             df = df.drop(index=drop_rows)
         # keep track of files created by a step
@@ -920,6 +977,8 @@ def create_csv(GRID_TYPES=[],
             newly_created_files.extend(df['path_to_processed_grid'].to_list())
         elif step_name == 'step_4':
             newly_created_files.extend(df['path_to_interpolator'].to_list())
+        elif step_name == 'step_5':
+            newly_created_files.extend(df['path_to_profile_interpolator'].to_list())
         elif step_name == 'step_9':
             newly_created_files.extend(df['export_path'].to_list())
         elif step_name == 'rerun':
@@ -1077,6 +1136,8 @@ def get_log_file_name(job_name, step_name):
         return "post_processing_%4a.out"
     if job_name == 'step_4': # TRAIN_INTERPOLATORS
         return "train_interpolator_%4a.out"
+    if job_name == 'step_5': # TRAIN_PROFILE_INTERPOLATORS
+        return "train_profile_interpolator_%4a.out"
     if job_name == 'step_9': # EXPORT_DATASET
         return "export_dataset_%4a.out"
     if job_name == 'rerun': # RERUN
