@@ -682,7 +682,9 @@ def create_csv(GRID_TYPES=[],
                                 newly_created_files.append(compression_dir)
                     elif step_name == 'step_2': # COMBINE_GRID_SLICES
                         if len(GRID_SLICES[l]) != len(GRIDS_COMBINED[l]):
-                            raise ValueError(f'len(GRID_SLICES[{l}]) != '
+                            raise ValueError(f'len(GRID_SLICES[{l}]) = '
+                                             f'{len(GRID_SLICES[l])} != '
+                                             f'{len(GRIDS_COMBINED[l])} ='
                                              f'len(GRIDS_COMBINED[{l}])!')
                         combine_grid_slices = []
                         # grid_slice is a batch
