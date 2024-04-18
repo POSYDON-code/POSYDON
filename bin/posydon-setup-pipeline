@@ -54,7 +54,7 @@ ACTION_TO_STEP_NUM = {
     'COMBINE_GRID_SLICES'        : 'step_2',
     'CALCULATE_EXTRA_VALUES'     : 'step_3',
     'TRAIN_INTERPOLATORS'        : 'step_4',
-    'TRAIN_PROFILE_INTERPOLATORS': 'step_4',
+    'TRAIN_PROFILE_INTERPOLATORS': 'step_5',
     'EXPORT_DATASET'             : 'step_9',
     'RERUN'                      : 'rerun'
 }
@@ -840,13 +840,13 @@ def create_csv(GRID_TYPES=[],
                                                           RLO[1:]+RLO[:1]+grid_s))
                                     plot_extensions.append(PLOT_EXTENSION)
                                     if method != '': # if there is a method
-                                        if 'step_4' not in step_name:
+                                        if 'step_4' in step_name:
                                             interpolators.append(os.path.join(
                                                 PATH_TO_GRIDS, grid_type,
                                                 VERSION, metallicity,
                                                 'interpolation_objects',
                                                 'IF_'+method+RLO+'.pkl'))
-                                        elif 'step_5' not in step_name:
+                                        elif 'step_5' in step_name:
                                             interpolators.append(os.path.join(
                                                 PATH_TO_GRIDS, grid_type,
                                                 VERSION, metallicity,
