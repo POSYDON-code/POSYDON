@@ -611,21 +611,27 @@ def create_csv(GRID_TYPES=[],
     if ( N != len(METALLICITIES) or N != len(GRID_SLICES) or
          N != len(COMPRESSIONS)):
         raise ValueError('Missmatch between the len of GRID_TYPES, '
-                         'METALLICITIES, GRID_SLICES, COMPRESSIONS.')
+                         'METALLICITIES, GRID_SLICES, COMPRESSIONS.'
+                         f'Lengths: {N}, {len(METALLICITIES)}, '
+                         f'{len(GRID_SLICES)}, {len(COMPRESSIONS)}')
     if step_name == 'step_2':
         # there need to be as many combined files specified as recipes are
         # given to create them.
         if N != len(GRIDS_COMBINED):
-            raise ValueError('len(GRID_TYPES) != len(GRIDS_COMBINED)!')
+            raise ValueError(f'len(GRID_TYPES) = {len(GRID_TYPES)} != '
+                             f'{len(GRIDS_COMBINED)} = len(GRIDS_COMBINED)!')
     elif step_name == 'step_3':
         # here we need a reference grid with ORIGINAL compression to
         # calculated the extra quantities from.
         if N != len(ORIGINAL_COMPRESSIONS):
-            raise ValueError('len(GRID_TYPES) != len(ORIGINAL_COMPRESSIONS)!')
+            raise ValueError(f'len(GRID_TYPES) = {len(GRID_TYPES)} != '
+                             f'{len(ORIGINAL_COMPRESSIONS)} = '
+                             'len(ORIGINAL_COMPRESSIONS)!')
     elif (('step_4_' in step_name) or ('step_5' in step_name)):
         # sub steps of the interpolator training need a control grid
         if len(GRID_SLICES) != len(CONTROL_GRIDS):
-            raise ValueError('len(GRID_SLICES) != len(CONTROL_GRIDS)!')
+            raise ValueError(f'len(GRID_SLICES) = {len(GRID_SLICES)} != '
+                             f'{len(CONTROL_GRIDS)} = len(CONTROL_GRIDS)!')
 
     grids = []
     grids_compression = []
