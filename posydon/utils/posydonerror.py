@@ -17,7 +17,8 @@ class POSYDONError(Exception):
             POSYDONError message.
         objects : None or list of objects.
             A list of accompanied objects (or None if not set), that will be
-            handled differently when `str` method is used.
+            handled differently when `str` method is used. This error can
+            only accept BinaryStar, SingleStar, or a list of each.
 
         """
         self.message = message
@@ -33,8 +34,10 @@ class POSYDONError(Exception):
                 for i, obj in enumerate(self.objects):
                     if isinstance(obj, (BinaryStar, SingleStar)):
                         result += f"\n\nOBJECT #{i+1} ({type(obj)}):\n{str(obj)}"
-            else:
+            elif isinstance(obj, (BinaryStar, SingleStar)):
                 result += f"\n\nOBJECT #({type(self.objects)}):\n{str(self.objects)}"
+            else:
+                pass
         return result + '\n'+ super().__str__()
 
 class GridError(POSYDONError):
