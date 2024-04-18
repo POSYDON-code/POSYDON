@@ -197,8 +197,7 @@ class psyTrackInterp:
 
         """
         if not (X.shape[1] == self.n_in) or not (len(norms) == self.n_in):
-            raise ValueError(
-                "The number of columns in X must match the length of norms.")
+            raise ValueError("The number of columns in X must match the length of norms.")
 
         self.scalers = []
         Xn = np.empty_like(X)

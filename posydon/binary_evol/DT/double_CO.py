@@ -45,7 +45,7 @@ class DoubleCO:
         max_time = binary.properties.max_simulation_time
         assert (
                 max_time - binary.time > 0.0
-        ), "max_time is loXer than the current time."
+        ), "max_time is lower than the current time."
         r1 = CO_radius(self.m1, self.state1) * constants.Rsun / 100000  # in km
         r2 = CO_radius(self.m2, self.state2) * constants.Rsun / 100000  # in km
 
@@ -104,9 +104,8 @@ class DoubleCO:
             t_final = [t_inspiral]
 
         if s.status == -1:
-            failed_state = binary.state
-            set_binary_to_failed(binary)
-            raise NumericalError(f"Integration failed for {failed_state} DCO ({self.state1}, {self.state2}): ", s.message)
+            binary.state += ' (Integration failure)'
+            raise NumericalError("Integrations failed", s.message)
 
         elif s.status == 1:
 

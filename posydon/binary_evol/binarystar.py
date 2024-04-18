@@ -111,7 +111,7 @@ MAXIMUM_STEP_TIME = 120
 
 def signal_handler(signum, frame):
     """React to a maximum time signal."""
-    raise Exception("Binary Step Exceeded Alloted Time: {}".
+    raise RuntimeError("Binary Step Exceeded Alloted Time: {}".
                     format(MAXIMUM_STEP_TIME))
 
 
@@ -210,7 +210,7 @@ class BinaryStar:
                 n_steps += 1
                 if max_n_steps is not None:
                     if n_steps > max_n_steps:
-                        raise Exception("Exceeded maximum number of steps ({})"
+                        raise RuntimeError("Exceeded maximum number of steps ({})"
                                         .format(max_n_steps))
         finally:
             signal.alarm(0)     # turning off alarm

@@ -67,14 +67,13 @@ class SimulationProperties:
         # for debugging purposes
         if not hasattr(self, 'max_n_steps_per_binary'):
             self.max_n_steps_per_binary = 100
-        
+        #if not hasattr(self, "verbose_binary_errors"):
+        #    self.verbose_binary_errors = False
+
         # Set functions for evolution
-        self.all_step_names = []  ## list of strings of all evolutionary steps
         for key, val in kwargs.items():
             if "step" not in key:   # skip loading steps
                 setattr(self, key, val)
-            elif "step" in key:
-                self.all_step_names.append(key)
         self.steps_loaded = False
 
     def load_steps(self, verbose=False):
@@ -102,7 +101,7 @@ class SimulationProperties:
     def close(self):
         """Close hdf5 files before exiting."""
         from posydon.binary_evol.MESA.step_mesa import MesaGridStep
-        from posydon.binary_evol.DT.step_detached import detached_step 
+        from posydon.binary_evol.DT.step_detached import detached_step
         all_step_funcs = [getattr(self, key) for key, val in
                           self.__dict__.items() if 'step_' in key]
         for step_func in all_step_funcs:
@@ -149,7 +148,7 @@ class SimulationProperties:
         -------
         binary : instance of <class, BinaryStar>
 
-        """   
+        """
         for hooks in self.all_hooks_classes:
             hooks.pre_step(binary, step_name)
         if hasattr(self, 'extra_pre_step'):
@@ -174,11 +173,6 @@ class SimulationProperties:
         binary : instance of <class, BinaryStar>
 
         """
-        ## do not call extra step hooks if history_verbose=False
-        if not binary.history_verbose and binary.event is not None:
-            if "redirect" in binary.event:
-                return binary
-            
         for hooks in self.all_hooks_classes:
             hooks.post_step(binary, step_name)
         if hasattr(self, 'extra_post_step'):
@@ -210,16 +204,6 @@ class SimulationProperties:
 
 class EvolveHooks:
     """Base class for hooking into binary evolution."""
-    
-    def __init__(self):
-        """
-        Add any new output columns to the hooks constructor.
-        Example for extra binary columns: 
-            self.extra_binary_col_names = ["column_name_1", "column_name_2"]
-        Example for extra star columns: 
-            self.extra_star_col_names = ["column_name_1", "column_name_2"]           
-        """
-        pass
 
     def pre_evolve(self, binary):
         """Perform actions before a binary evolves."""
@@ -243,15 +227,12 @@ class TimingHooks(EvolveHooks):
 
     Example
     -------
-    >>> pop.to_df(extra_columns={'step_times': float})
+    >>> pop.to_df(extra_columns=['step_times'])
     """
-    def __init__(self):
-        self.extra_binary_col_names = ["step_times"]
 
     def pre_evolve(self, binary):
         """Initialize the step time to match history."""
-        if not hasattr(binary, 'step_times'):
-            binary.step_times = [0.0]
+        binary.step_times = [0.0]
         return binary
 
     def pre_step(self, binary, step_name):
@@ -261,16 +242,13 @@ class TimingHooks(EvolveHooks):
 
     def post_step(self, binary, step_name):
         """Record the duration of the step."""
-            
         binary.step_times.append(time.time() - self.step_start_time)
-
         if len(binary.event_history) > len(binary.step_times):
             diff = len(binary.event_history) - len(binary.step_times)
             binary.step_times += [None] * (diff)
         elif len(binary.event_history) < len(binary.step_times):
             last_items = len(binary.event_history)
             binary.step_times = binary.step_times[-(last_items - 1):]
-
         return binary
 
     def post_evolve(self, binary):
@@ -286,15 +264,12 @@ class StepNamesHooks(EvolveHooks):
 
     Name of evolutionary step as defined in SimulationProperties.
 
-    >>> pop.to_df(extra_columns={'step_names': str})
+    >>> pop.to_df(extra_columns=['step_names'])
     """
-    def __init__(self):
-        self.extra_binary_col_names = ["step_names"]
 
     def pre_evolve(self, binary):
         """Initialize the step name to match history."""
-        if not hasattr(binary, 'step_names'):
-            binary.step_names = ['initial_cond']
+        binary.step_names = ['initial_cond']
         return binary
 
     def pre_step(self, binary, step_name):
@@ -303,17 +278,14 @@ class StepNamesHooks(EvolveHooks):
 
     def post_step(self, binary, step_name):
         """Record the step name."""
-            
         binary.step_names.append(step_name)
         len_binary_hist = len(binary.event_history)
         len_step_names = len(binary.step_names)
         diff = len_binary_hist - len_step_names
-
         if len_binary_hist > len_step_names:
             binary.step_names += [None] * (diff)
         elif len_binary_hist < len_step_names:
             binary.step_names = binary.step_names[-(len_binary_hist - 1):]
-
         return binary
 
     def post_evolve(self, binary):

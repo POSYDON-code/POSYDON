@@ -104,7 +104,7 @@ def initial_total_underlying_mass(df=None, **kwargs):
         alpha2 = 2.35
         alpha3 = 2.35
     else:
-        raise ValueError("Scheme not included yet")
+        raise ValueError("Primary/Secondary mass scheme not included")
 
     f_bin = 0.7
     m_min = 0.01
