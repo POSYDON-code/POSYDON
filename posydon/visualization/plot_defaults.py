@@ -209,7 +209,7 @@ DEFAULT_MARKERS_COLORS_LEGENDS = {
             ['x', 1, 'red', 'Not converged'],
         'fe_core_infall_limit':
             ['x', 1, 'tab:purple', 'fe_core_infall_limit'],
-        'ignored_no_BH':
+        'ignored_no_binary_history':
             ['.', 1, color_unstable, TF1_label_initial],
         'ignored_no_RLO':
             ['.', 1, color_unstable, TF1_label_initial],
@@ -224,7 +224,7 @@ DEFAULT_MARKERS_COLORS_LEGENDS = {
             ['+', 1, 'black', 'initial RLOF'],
         'forced_initial_RLO':
             ['+', 1, 'black', 'initial RLOF'],
-        'ignored_no_BH':
+        'ignored_no_binary_history':
             ['+', 1, 'black', 'initial RLOF'],
         'ignored_no_RLO':
             ['+', 1, 'black', 'initial RLOF'],
@@ -267,7 +267,7 @@ DEFAULT_MARKERS_COLORS_LEGENDS = {
             ['s', 2, 'tab:green', 'case BB1'],
         'case_BA1/BB1':
             ['s', 2, 'tab:red', 'case BA1/BB1'],
-            
+
         'case_A2':
             ['o', 2, 'tab:blue', 'case A2'],
         'case_A2/B2':
@@ -293,14 +293,14 @@ DEFAULT_MARKERS_COLORS_LEGENDS = {
         'case_C2':
             ['o', 2, 'black', 'case C2'],
         'case_C2/BB2':
-            ['o', 2, 'brown', 'case C2/BB2'],            
+            ['o', 2, 'brown', 'case C2/BB2'],
         'case_BA2':
             ['o', 2, 'tab:blue', 'case BA2'],
         'case_BB2':
             ['o', 2, 'tab:green', 'case BB2'],
         'case_BA2/BB2':
             ['o', 2, 'tab:red', 'case BA1/BB2'],
-            
+
         'case_A1/A2':
             ['>', 2, 'tab:blue', 'case A1/A2'],
         'case_A1/A2/A1':
@@ -367,7 +367,7 @@ DEFAULT_MARKERS_COLORS_LEGENDS = {
             ['v', 2, 'black', 'case A1/A2/B2/C1'],
         'case_A2/A1':
             ['v', 2, 'tab:gray', 'case A2/A1'],
-            
+
         'None':
             ['x', 1, 'tab:red', 'failed'],
     },
@@ -407,7 +407,7 @@ DEFAULT_MARKERS_COLORS_LEGENDS = {
             ['*', 1, 'black', 'BH'],
         'NS':
             ['*', 1, 'tab:gray', 'NS'],
-        'ignored_no_BH':
+        'ignored_no_binary_history':
             ['s', 2, 'tab:olive', 'H-rich core H buring'],
         'ignored_no_RLO':
             ['s', 2, 'tab:olive', 'H-rich core H buring'],
@@ -449,7 +449,7 @@ DEFAULT_MARKERS_COLORS_LEGENDS = {
             ['*', 1, 'black', 'BH'],
         'NS':
             ['*', 1, 'tab:gray', 'NS'],
-        'ignored_no_BH':
+        'ignored_no_binary_history':
             ['s', 2, 'tab:olive', 'H-rich core H buring'],
         'ignored_no_RLO':
             ['s', 2, 'tab:olive', 'H-rich core H buring'],
@@ -570,9 +570,9 @@ DEFAULT_MARKERS_COLORS_LEGENDS = {
             ['x', 1, 'red', 'Not converged'],
         'unknown':
             ['+', 1, 'green', 'unknown'],
-        'Reverse stable MT':    
+        'Reverse stable MT':
             ['s', 2, 'tab:olive', 'Stable reverse mass-transfer phase'],
-        'Reverse unstable MT':    
+        'Reverse unstable MT':
             ['D', 1, 'tab:olive', 'Unstable reverse mass-transfer phase'],
         },
     'debug': {
@@ -664,7 +664,7 @@ DEFAULT_MARKERS_COLORS_LEGENDS = {
             ['.', 1.5, 'black', TF1_label_initial],
         'Not converged':
             ['x', 1, None, 'Not converged'],
-        'ignored_no_BH':
+        'ignored_no_binary_history':
             ['.', 1.5, color_unstable, TF1_label_initial],
         'ignored_no_RLO':
             ['.', 1.5, color_unstable, TF1_label_initial],
@@ -996,13 +996,13 @@ DEFAULT_LABELS = {
     # POSYDON population synthesis
     'z_formation': [r'$z_\mathrm{formation}$', r'$\log_{10}(z_\mathrm{formation})$'],
     'z_merger': [r'$z_\mathrm{merger}$', r'$\log_{10}(z_\mathrm{merger})$'],
-    'm_tot': [r'$m_\mathrm{tot}\,[M_\odot]$', 
+    'm_tot': [r'$m_\mathrm{tot}\,[M_\odot]$',
               r'$\log_{10}(m_\mathrm{tot}/M_\odot)$'],
     'm_chirp': [r'$m_\mathrm{chirp}\,[M_\odot]$',
                 r'$\log_{10}(m_\mathrm{chirp}/M_\odot)$',],
     'q': [r'$q$', r'$\log_{10}(q)$'],
     'chi_eff': [r'$\chi_\mathrm{eff}$', r'$\log_{10}(\chi_\mathrm{eff})$'],
-    'S1_mass': [r'$m_\mathrm{CO}\,[M_\odot]$', 
+    'S1_mass': [r'$m_\mathrm{CO}\,[M_\odot]$',
                 r'$\log_{10}(m_\mathrm{CO}/M_\odot)$'],
     'S2_mass': [r'$m_\mathrm{CO}\,[M_\odot]$'
                 r'$\log_{10}(m_\mathrm{CO}/M_\odot)$'],
@@ -1035,7 +1035,7 @@ for i in range(1, 11):
                                               r'$\log_{10}(M_\mathrm{disk, acc} / M_\odot)$']
     DEFAULT_LABELS[f'MODEL{i:02d}_m_disk_radiated'] = [r'$M_\mathrm{disk, rad} \, [M_\odot]$',
                                               r'$\log_{10}(M_\mathrm{disk, rad} / M_\odot)$']
-    
+
 
 # pre defined plottings
 PRE_SET_PLOTS = {
