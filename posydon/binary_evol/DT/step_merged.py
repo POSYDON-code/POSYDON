@@ -11,10 +11,10 @@ __authors__ = [
 import numpy as np
 
 from posydon.utils.data_download import PATH_TO_POSYDON_DATA
-from posydon.binary_evol.singlestar import STARPROPERTIES
-from posydon.binary_evol.singlestar import properties_massless_remnant
+from posydon.binary_evol.singlestar import STARPROPERTIES, convert_star_to_massless_remnant
 from posydon.utils.common_functions import check_state_of_star
 from posydon.binary_evol.DT.step_isolated import IsolatedStep
+from posydon.utils.posydonerror import FlowError
 
 import warnings
 
@@ -32,14 +32,6 @@ LIST_ACCEPTABLE_STATES_FOR_POSTMS = STAR_STATES_H_RICH.copy()
 
 LIST_ACCEPTABLE_STATES_FOR_POSTHeMS = STAR_STATES_HE_RICH.copy()
 [LIST_ACCEPTABLE_STATES_FOR_POSTHeMS.remove(x) for x in LIST_ACCEPTABLE_STATES_FOR_HeMS]
-
-
-def convert_star_to_massless_remnant(star):
-    for key in STARPROPERTIES:
-        setattr(star, key, properties_massless_remnant()[key])
-    return star
-
-
 
 
 class MergedStep(IsolatedStep):
@@ -104,9 +96,9 @@ class MergedStep(IsolatedStep):
             elif binary.event == 'oMerging2':
                 binary.star_2,binary.star_1 = merged_star_properties(binary.star_2,binary.star_1)
             else:
-                raise ValueError("binary.state='merged' but binary.event != 'oMerging1/2'")
+                raise FlowError("binary.state='merged' but binary.event != 'oMerging1/2'")
         else:
-            raise ValueError("step_merging initiated but binary.state != 'merged'")
+            raise FlowError("step_merging initiated but binary.state != 'merged'")
 
         binary.event = None
         if self.verbose:
@@ -136,7 +128,6 @@ class MergedStep(IsolatedStep):
         def mass_weighted_avg(star1=star_base,star2=comp, abundance_name="center_h1", mass_weight1="mass", mass_weight2=None):
             A1 = getattr(star1, abundance_name)
             A2 = getattr(star2, abundance_name)
-
             if mass_weight1 == "H-rich_envelope_mass":
                 M1 = getattr(star1, "mass") - getattr(star1, "he_core_mass")
             elif mass_weight1 == "He-rich_envelope_mass":
@@ -412,7 +403,6 @@ class MergedStep(IsolatedStep):
                 for key in ["mass", "he_core_mass", "c_core_mass", "o_core_mass", "co_core_mass"]:
                     current = getattr(merged_star, key) + getattr(star_base, key)
                     setattr(merged_star, key,current)
-
                 # weighted central abundances if merging cores. Else only from star_base
                 if star_base.co_core_mass == 0 and comp.co_core_mass == 0: # two stars with Helium cores
                     merged_star.center_h1 = mass_weighted_avg(mass_weight1="he_core_mass")
@@ -504,12 +494,10 @@ class MergedStep(IsolatedStep):
             and s2 in ["WD"]):
 
                 #WD is considered a stripped CO core
-
                 # add total and core masses
                 for key in ["mass", "he_core_mass", "c_core_mass", "o_core_mass", "co_core_mass"]:
                     current = getattr(merged_star, key) + getattr(comp, "mass")
                     setattr(merged_star, key,current)
-
                 # weighted central abundances if merging cores. Else only from star_base
                 if (comp.co_core_mass > 0 and star_base.co_core_mass == 0): # comp with CO core and the star_base has not
                     merged_star.center_h1 = comp.center_h1

@@ -5,7 +5,44 @@ import shutil
 import random
 import argparse
 from tqdm import tqdm
-from hurry.filesize import size
+
+
+def textsize(filesize, floatfmt=".3g", base=1024, threshold=1000):
+    """Get a human-readable file size in string.
+
+    Parameters
+    ----------
+    filesize : int or float
+        The size of the file, or directory, ...
+    floatfmt : str
+        The format for the float before the size descriptor (e.g., 2.34K).
+    base : int
+        The base of the units. Typically 1024 but 1000 can be used as well.
+    threshold : int or float
+        The threshold for using the next unit. For example, if base is 1024
+        and threshold is 1000, then 1000 bytes will be returned as 0.98K.
+
+    Returns
+    -------
+    str
+        The filesize in string format using b, K, M, ...
+
+    """
+    assert base in [1000, 1024]
+
+    units = ["b", "K", "M", "G", "T", "P", "E", "Z", "Y"]
+    unit_values = [base**i for i in range(len(units))]
+
+    if filesize < 0:
+        return "-" + textsize(
+            -filesize, floatfmt=floatfmt, base=base)
+
+    for unit, unit_value in zip(units, unit_values):
+        if filesize < unit_value * threshold:
+            quantity = filesize / unit_value
+            return f"{quantity:{floatfmt}}{unit}"
+
+    return f"{filesize:.3g} bytes"
 
 
 def set_up_test(args):
@@ -73,12 +110,44 @@ def compress_dir(args):
                     total_size += os.path.getsize(filepath)
         return total_size
 
+    def compress_subdirs(track_dirs):
+        for track_obj in track_dirs:
+            for root, _dir, files in os.walk(track_obj):
+                # traversing over directory tree of copied mesa tracks
+                # and compressing .data, .mod, .txt files
+                for file in files:
+                    ext = file.split(".")[-1]
+                    if ext not in ["data", "mod", "txt"]:
+                        continue
+                    os.system(f"gzip -1 {os.path.join(root, file)}")
+
+    def remove_core_dumps(track_dirs):
+        for track_obj in track_dirs:
+            for root, _dir, files in os.walk(track_obj):
+                for file in files:
+                    core_string = file.split(".")[0]
+                    if (core_string == 'core'
+                            and os.path.isfile(os.path.join(root, file))):
+                        os.remove(os.path.join(root, file))
+
     if not os.path.isdir(args.mesa_dir):
         sys.exit("The MESA directory does not exist.")
 
-    og_size = size(get_size(args.mesa_dir))
+    og_size = textsize(get_size(args.mesa_dir))
 
     for folder in tqdm(os.listdir(args.mesa_dir)):
+
+        # To add the option of cycling through files one directory above
+        if "_grid_index_" in folder:
+            track_dirs = []
+
+            if (os.path.isdir(os.path.join(args.mesa_dir, folder))
+                    and folder not in ["star1", "star2", "binary"]):
+                track_dirs.append(os.path.join(args.mesa_dir, folder))
+            
+            compress_subdirs(track_dirs)
+            remove_core_dumps(track_dirs)
+            continue
 
         if os.path.isdir(os.path.join(args.mesa_dir, folder)):
             is_mesa_run = False
@@ -94,37 +163,28 @@ def compress_dir(args):
                     track_dirs.append(os.path.join(args.mesa_dir, folder, _f))
 
             if is_mesa_run:
-                # iterating over directory containing MESA runs
-                for track_obj in track_dirs:
-                    for root, _dir, files in os.walk(track_obj):
-                        # traversing over directory tree of copied mesa tracks
-                        # and compressing .data, .mod, .txt files
-                        for file in files:
-                            ext = file.split(".")[-1]
-                            if ext not in ["data", "mod", "txt"]:
-                                continue
-                            os.system(f"gzip -1 {os.path.join(root, file)}")
+                compress_subdirs(track_dirs)
+                remove_core_dumps(track_dirs)
 
     print("\nCompressed MESA tracks\nOriginal size {} | Compressed size {}\n".
-          format(og_size, size(get_size(args.mesa_dir))))
+          format(og_size, textsize(get_size(args.mesa_dir))))
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("-f", "--function", type=str,
-                        help="The name of the function to be called.")
+                        help="The name of the function to be called.",
+                        default='compress_dir')
     parser.add_argument("-td", "--test_dir", type=str,
                         help="The path to where the testing directory should "
                         "be set up, either set_up_test or compress_dir.")
     parser.add_argument("-dsr", "--dsr", type=str,
                         help="Downsampling rate when creating testing "
                         "directory", default=0.01)
-    parser.add_argument("-md", "--mesa_dir", type=str,
+    parser.add_argument("mesa_dir", type=str,
                         help="The path to the directory containing "
                         "MESA-generated data")
 
     functions = {"set_up_test": set_up_test, "compress_dir": compress_dir}
     arguments = parser.parse_args()
-    if arguments.function is None:
-        sys.exit("A function must be specified to use this script.")
     functions[arguments.function](arguments)

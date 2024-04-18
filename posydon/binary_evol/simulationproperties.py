@@ -19,7 +19,6 @@ from posydon.utils import constants as const
 from posydon.utils.common_functions import CO_radius
 from posydon.binary_evol.pulsar_modeling import Pulsar
 
-
 class SimulationProperties:
     """Class describing the properties of a population synthesis simulation."""
 
@@ -71,6 +70,8 @@ class SimulationProperties:
         # for debugging purposes
         if not hasattr(self, 'max_n_steps_per_binary'):
             self.max_n_steps_per_binary = 100
+        #if not hasattr(self, "verbose_binary_errors"):
+        #    self.verbose_binary_errors = False
 
         # Set functions for evolution
         for key, val in kwargs.items():
@@ -103,7 +104,7 @@ class SimulationProperties:
     def close(self):
         """Close hdf5 files before exiting."""
         from posydon.binary_evol.MESA.step_mesa import MesaGridStep
-        from posydon.binary_evol.DT.step_detached import detached_step 
+        from posydon.binary_evol.DT.step_detached import detached_step
         all_step_funcs = [getattr(self, key) for key, val in
                           self.__dict__.items() if 'step_' in key]
         for step_func in all_step_funcs:

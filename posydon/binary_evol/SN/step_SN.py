@@ -18,6 +18,7 @@ __authors__ = [
     "Zepei Xing <Zepei.Xing@unige.ch>",
     "Jeffrey Andrews <jeffrey.andrews@northwestern.edu>",
     "Tassos Fragos <Anastasios.Fragkos@unige.ch>",
+    "Matthias Kruckow <Matthias.Kruckow@unige.ch>",
 ]
 
 __credits__ = [
@@ -31,6 +32,8 @@ import os
 import warnings
 import numpy as np
 import scipy as sp
+import copy
+import pandas as pd
 
 from posydon.utils.data_download import PATH_TO_POSYDON_DATA, data_download
 import posydon.utils.constants as const
@@ -40,22 +43,26 @@ from posydon.utils.common_functions import (
     orbital_period_from_separation,
     inspiral_timescale_from_separation,
     separation_evol_wind_loss,
-    calculate_Patton20_values_at_He_depl
+    calculate_Patton20_values_at_He_depl,
+    THRESHOLD_CENTRAL_ABUNDANCE,
+    rotate
 )
 
 from posydon.binary_evol.binarystar import BINARYPROPERTIES
-from posydon.binary_evol.singlestar import STARPROPERTIES
+from posydon.binary_evol.singlestar import STARPROPERTIES, convert_star_to_massless_remnant
 from posydon.binary_evol.SN.profile_collapse import do_core_collapse_BH
 from posydon.binary_evol.flow_chart import (STAR_STATES_CO, STAR_STATES_CC,
                                             STAR_STATES_C_DEPLETION)
+
 from posydon.grids.MODELS import MODELS
+from posydon.utils.posydonerror import ModelError
+from posydon.utils.common_functions import set_binary_to_failed
 
 from pandas import read_csv
 from sklearn import neighbors
 from scipy.interpolate import interp1d
 
 import json
-
 
 path_to_Sukhbold_datasets = os.path.join(PATH_TO_POSYDON_DATA,
                                          "Sukhbold+16/")
@@ -78,6 +85,7 @@ MODEL = {
     "use_interp_values": True,
     "use_profiles": True,
     "use_core_masses": True,
+    "allow_spin_None" : False,
     "approx_at_he_depletion": False,
     # kick physics
     "kick": True,
@@ -193,6 +201,11 @@ class StepSN(object):
        This option uses the core masses at carbon depletion to determine
        the core collapse outcoume (classical population sythesis
        threatment).
+       
+    allow_spin_None : bool
+       This option does not determine the spin during core collapse while
+       setting other values like in use_core_masses. (used to avoid jumps
+       in the spin for interpolator training because of missing profiles)
 
     approx_at_he_depletion : bool
        This option is relevant only for the mechanism Patton&Sukhbold20-engine.
@@ -400,6 +413,7 @@ class StepSN(object):
             # collapse star
             self.collapse_star(star=binary.star_1)
             self._reset_other_star_properties(star=binary.star_2)
+            
         elif binary.event == "CC2":
             # collapse star
             self.collapse_star(star=binary.star_2)
@@ -453,6 +467,10 @@ class StepSN(object):
            This option uses the core masses at carbon depletion to determine
            the core collapse outcoume (classical population sythesis
            threatment).
+        4. allow_spin_None : False
+           This option does not determine the spin during core collapse while
+           setting other values like in use_core_masses. (used to avoid jumps
+           in the spin for interpolator training because of missing profiles)
 
         Parameters
         ----------
@@ -471,7 +489,12 @@ class StepSN(object):
 
         """
         state = star.state
-
+        # after this function is called certain quantities shouldn't be None
+        # type objects anymore
+        for key in ['m_disk_accreted', 'm_disk_radiated']:
+            if getattr(star, key) is None:
+                setattr(star, key, np.nan)
+        
         # Verifies if the star is in state state where it can
         # explode
         if state in STAR_STATES_CC:
@@ -503,7 +526,7 @@ class StepSN(object):
                 elif getattr(star, MODEL_NAME_SEL) is None:
                     # NOTE: this option is needed to do the collapse
                     # for stars evolved with the step_detached or 
-                    # steo_disrupted.
+                    # step_disrupted.
                     # allow to continue with the collapse with profile
                     # or core masses
                     warnings.warn(f'{MODEL_NAME_SEL}: The collapsed star '
@@ -511,18 +534,88 @@ class StepSN(object):
                                      'or use_core_masses is set to True, '
                                      'continue with the collapse.')                 
                 else:
+                    # store some properties of the star object
+                    # to be used for collapse verification
+                    pre_SN_star = copy.deepcopy(star)
+
                     MODEL_properties = getattr(star, MODEL_NAME_SEL)
                     for key, value in MODEL_properties.items():
                         setattr(star, key, value)
-                
-                    for key in STARPROPERTIES:
-                        if key not in ["state", "mass", "spin",
-                                        "m_disk_accreted ", "m_disk_radiated"]:
-                            setattr(star, key, None)
+                    
+                    if star.state == 'WD':
+                        for key in STARPROPERTIES:
+                            if key in ["he_core_mass"]:
+                                setattr(star, key, star.mass)
+                            elif key in ["co_core_mass"]:
+                                if star.center_he4 < THRESHOLD_CENTRAL_ABUNDANCE: 
+                                    setattr(star, key, star.mass)
+                                else: 
+                                    setattr(star, key, 0.)
+                            elif key not in ["state", "mass", "spin",
+                                             "m_disk_accreted",
+                                             "m_disk_radiated", "center_h1",
+                                             "center_he4", "center_c12",
+                                             "center_n14", "center_o16"]:
+                                setattr(star, key, None)          
+                    
+                    else:                    
+                        for key in STARPROPERTIES:
+                            if key not in ["state", "mass", "spin",
+                                           "m_disk_accreted",
+                                           "m_disk_radiated"]:
+                                setattr(star, key, None)
+                    
+                    # check if SN_type matches the predicted CO
+                    # and force the SN_type to match the predicted CO.
+                    # ie WD is no SN
+                    # 1. Check if SN_type and star state match                    
+                    # Non-matching SN_type and star state
+                    if not check_SN_CO_match(star):
+                        # raise a warning
+                        warnings.warn(f'{MODEL_NAME_SEL}: The SN_type '
+                                      'does not match the predicted CO! '
+                                      'Recalculating the SN_type and CO')
+                        # recalculate the SN_type and CO
+                        # change some star properties back 
+                        m_PISN = self.PISN_prescription(pre_SN_star)
+                        # no remnant if a PISN happens
+                        if pd.isna(m_PISN):
+                            star.SN_type = 'PISN'
+                            star.state = 'massless_remnant'
+                        else:
+                            _, _, star.state = self.compute_m_rembar(pre_SN_star, m_PISN)
+                            star.SN_type = self.check_SN_type(pre_SN_star.c_core_mass,
+                                                            pre_SN_star.he_core_mass,
+                                                            pre_SN_star.mass)[-1]
+
+                        # check if the new SN_type matches new SN_type
+                        if not check_SN_CO_match(star):
+                            # still doesn't match
+                            # raise a warning
+                            warnings.warn('The SN_type still does not match. '
+                                          'Forced the SN type to match the '
+                                          'predicted CO.')
+                            if star.state == 'WD':
+                                star.SN_type = 'WD'
+                            elif star.state == 'NS' or star.state == 'BH':
+                                star.SN_type = 'CCSN'
+                            elif star.state == 'massless_remnant':
+                                star.SN_type = 'PISN'
+                            else:
+                                raise ValueError('Star state not recognized.')
+                    
+                    del pre_SN_star
+                    
+                    # No remnant if a PISN happens
+                    if star.SN_type == 'PISN':
+                        convert_star_to_massless_remnant(star=star)
+                        # the mass is set to None
+                        # but an orbital kick is still applied.
+                        # Since the mass is set to None, this will lead to a disruption
+                        # TODO: make it skip the kick caluclation
                     
                     if getattr(star, 'SN_type') != 'PISN':
                         star.log_R = np.log10(CO_radius(star.mass, star.state))
-                    
                     return
 
             # Verifies the selection of core-collapse mechnism to perform
@@ -553,25 +646,25 @@ class StepSN(object):
                     star.state = "WD"
                     star.spin = 0.
                     star.log_R = np.log10(CO_radius(star.mass, star.state))
-                    star.m_disk_accreted = np.nan
-                    star.m_disk_radiated = np.nan
                     for key in STARPROPERTIES:
-                        if key not in ["state", "mass", "log_R", "spin",
-                                       "m_disk_accreted", "m_disk_radiated"]:
-                            setattr(star, key, None)
+                        if key in ["he_core_mass"]:
+                            setattr(star, key, star.mass)
+                        elif key in ["co_core_mass"]:
+                            if star.center_he4 < THRESHOLD_CENTRAL_ABUNDANCE: 
+                                setattr(star, key, star.mass)
+                            else: 
+                                setattr(star, key, 0.)
+                        elif key not in ["state", "mass", "spin",
+                                         "m_disk_accreted", "m_disk_radiated",
+                                         "center_h1", "center_he4",
+                                         "center_c12", "center_n14",
+                                         "center_o16"]:
+                            setattr(star, key, None)  
                     return
 
                 # check if the star was disrupted by the PISN
                 if np.isnan(m_rembar):
-                    star.mass = np.nan
-                    star.state = "PISN"
-                    star.spin = np.nan
-                    star.m_disk_accreted = np.nan
-                    star.m_disk_radiated = np.nan
-                    for key in STARPROPERTIES:
-                        if key not in ["state", "mass", "spin",
-                                       "m_disk_accreted ", "m_disk_radiated"]:
-                            setattr(star, key, None)
+                    convert_star_to_massless_remnant(star=star)
                     return
 
                 # Computing the gravitational mass of the remnant
@@ -635,11 +728,24 @@ class StepSN(object):
                         star.m_disk_accreted = 0.0
                         star.m_disk_radiated = 0.0
                         star.state = "NS"
+                    
+                elif self.allow_spin_None:
+                    # If the profile is not available and spin can stay
+                    # undetermined
+                    star.mass = m_grav
+                    star.spin = None
+                    star.m_disk_accreted = 0.0
+                    star.m_disk_radiated = 0.0
+                    if m_grav >= self.max_NS_mass:
+                        star.state = "BH"
+                    else:
+                        star.state = "NS"
+
                 else:
                     for key in STARPROPERTIES:
                         setattr(star, key, None)
-                    star.state = "ERR"
-                    raise ValueError("FAILED core collapse!")
+                    set_binary_to_failed(self.binary)
+                    raise ModelError("FAILED core collapse!")
 
             elif self.mechanism in [self.Sukhbold16_engines,
                                     self.Patton20_engines,
@@ -660,25 +766,25 @@ class StepSN(object):
                     star.state = "WD"
                     star.spin = 0.
                     star.log_R = np.log10(CO_radius(star.mass, star.state))
-                    star.m_disk_accreted = np.nan
-                    star.m_disk_radiated = np.nan
                     for key in STARPROPERTIES:
-                        if key not in ["state", "mass", "log_R", "spin",
-                                       "m_disk_accreted", "m_disk_radiated"]:
-                            setattr(star, key, None)
+                        if key in ["he_core_mass"]:
+                            setattr(star, key, star.mass)
+                        elif key in ["co_core_mass"]:
+                            if star.center_he4 < THRESHOLD_CENTRAL_ABUNDANCE: 
+                                setattr(star, key, star.mass)
+                            else: 
+                                setattr(star, key, 0.)
+                        elif key not in ["state", "mass", "spin",
+                                         "m_disk_accreted", "m_disk_radiated",
+                                         "center_h1", "center_he4",
+                                         "center_c12", "center_n14",
+                                         "center_o16"]:
+                            setattr(star, key, None)  
                     return
 
                 # check if the star was disrupted by the PISN
                 if np.isnan(m_rembar):
-                    star.mass = np.nan
-                    star.state = "PISN"
-                    star.spin = np.nan
-                    star.m_disk_accreted = np.nan
-                    star.m_disk_radiated = np.nan
-                    for key in STARPROPERTIES:
-                        if key not in ["state", "mass", "spin",
-                                       "m_disk_accreted ", "m_disk_radiated"]:
-                            setattr(star, key, None)
+                    convert_star_to_massless_remnant(star=star)
                     return
 
                 # Computing the gravitational mass of the remnant
@@ -719,8 +825,8 @@ class StepSN(object):
                     else:
                         for key in STARPROPERTIES:
                             setattr(star, key, None)
-                        star.state = "ERR"
-                        raise ValueError("Invalid core state", state)
+                        set_binary_to_failed(self.binary)
+                        raise ModelError("Invalid core state: " + str(state))
 
                 elif self.use_core_masses:
                     star.mass = m_grav
@@ -747,24 +853,37 @@ class StepSN(object):
                         star.m_disk_accreted = 0.0
                         star.m_disk_radiated = 0.0
                         star.state = "NS"
+                    
+                elif self.allow_spin_None:
+                    # If the profile is not available and spin can stay
+                    # undetermined
+                    star.mass = m_grav
+                    star.spin = None
+                    star.m_disk_accreted = 0.0
+                    star.m_disk_radiated = 0.0
+                    if m_grav >= self.max_NS_mass:
+                        star.state = "BH"
+                    else:
+                        star.state = "NS"
 
                 else:
                     for key in STARPROPERTIES:
                         setattr(star, key, None)
-                    star.state = "ERR"
-                    raise ValueError("FAILED core collapse!")
+                    set_binary_to_failed(self.binary)
+                    raise ModelError("FAILED core collapse!")
 
         else:
-            raise ValueError(f"The star cannot collapse: star state {state}.")
+            set_binary_to_failed(self.binary)
+            raise ModelError(f"The star cannot collapse: star state {state}.")
 
         star.metallicity = star.metallicity_history[-1]
 
         star.log_R = np.log10(CO_radius(star.mass, star.state))
 
         for key in STARPROPERTIES:
-            if key not in [
-                "state", "mass", "spin", "log_R", "metallicity",
-                "m_disk_accreted ", "m_disk_radiated"]:
+            if key not in ["state", "mass", "spin", "log_R", "metallicity",
+                           "m_disk_accreted", "m_disk_radiated",
+                           "co_core_mass"]:
                 setattr(star, key, None)
 
     def PISN_prescription(self, star):
@@ -823,9 +942,7 @@ class StepSN(object):
                 m_PISN = None
 
             else:
-                raise ValueError(
-                    "This choice {} of PISN is not availabe!".format(self.PISN)
-                )
+                raise ValueError("This choice {} of PISN is not available!".format(self.PISN))
 
         if self.verbose:
             if m_PISN is None:
@@ -867,10 +984,14 @@ class StepSN(object):
                     # this is catching H-rich_non_burning stars
                     if m_star < 0.5:
                         m_rembar = m_star
-                        warnings.warn(
-                            'Invalid co/He core masses! Setting m_WD=m_star!')
+                        if ((m_core < 0.)or(m_He_core < 0.)):
+                            warnings.warn('Invalid co/He core masses! '
+                                          'Setting m_WD=m_star!')
+                        else:
+                            warnings.warn('co/He core masses are zero! '
+                                          'Setting m_WD=m_star!')
                     else:
-                        raise ValueError('Invalid co/He core masses!')
+                        raise ModelError('Invalid co/He core masses!')
                 f_fb = 1.0  # no SN the no kick is assumed
                 state = "WD"
 
@@ -904,10 +1025,14 @@ class StepSN(object):
                     # this is catching H-rich_non_burning stars
                     if m_star < 0.5:
                         m_rembar = m_star
-                        warnings.warn(
-                            'Invalid co/He core masses! Setting m_WD=m_star!')
+                        if ((m_core < 0.)or(m_He_core < 0.)):
+                            warnings.warn('Invalid co/He core masses! '
+                                          'Setting m_WD=m_star!')
+                        else:
+                            warnings.warn('co/He core masses are zero! '
+                                          'Setting m_WD=m_star!')
                     else:
-                        raise ValueError('Invalid co/He core masses!')
+                        raise ModelError('Invalid co/He core masses!')
                 f_fb = 1.0  # no SN the no kick is assumed
                 state = "WD"
 
@@ -940,10 +1065,14 @@ class StepSN(object):
                     # this is catching H-rich_non_burning stars
                     if m_star < 0.5:
                         m_rembar = m_star
-                        warnings.warn(
-                            'Invalid co/He core masses! Setting m_WD=m_star!')
+                        if ((m_core < 0.)or(m_He_core < 0.)):
+                            warnings.warn('Invalid co/He core masses! '
+                                          'Setting m_WD=m_star!')
+                        else:
+                            warnings.warn('co/He core masses are zero! '
+                                          'Setting m_WD=m_star!')
                     else:
-                        raise ValueError('Invalid co/He core masses!')
+                        raise ModelError('Invalid co/He core masses!')
                 f_fb = 1.0  # no SN the no kick is assumed
                 state = "WD"
 
@@ -995,7 +1124,7 @@ class StepSN(object):
             m_He_core = star.he_core_mass_history[-1]  # M_sun
         else:
             raise ValueError(
-                "There are no informations in the evolutionary history"
+                "There is no information in the evolutionary history"
                 "about STAR_STATES_CC."
             )
         if m_core is None or np.isnan(m_core):
@@ -1143,7 +1272,7 @@ class StepSN(object):
 
         # check PISN
         if m_PISN is not None:
-            if np.isnan(m_PISN):
+            if pd.isna(m_PISN):
                 m_rembar = m_PISN
                 star.SN_type = "PISN"
             elif m_rembar > m_PISN:
@@ -1180,7 +1309,7 @@ class StepSN(object):
             The corresponding azimuthal angle such that phi=0 is on the Z axis.
 
         tilt :
-            The angle between pre- and post- supernova orbital angular momentum vectors.
+            The angle between pre- and post- supernova orbital angular momentum vectors
             
 
         Parameters
@@ -1235,7 +1364,7 @@ class StepSN(object):
                 # Mcore = binary.star_1.co_core_mass_history[-1]
             else:
                 raise ValueError(
-                    "There are no informations in the evolutionary history "
+                    "There is no information in the evolutionary history "
                     "about STAR_STATES_CC."
                 )
             M_compact_object = binary.star_1.mass
@@ -1292,8 +1421,7 @@ class StepSN(object):
                 mean_anomaly = binary.star_1.natal_kick_array[3]
                 # check that ONLY one value is passed and is of type float
                 if not isinstance(mean_anomaly, float):
-                    raise ValueError(
-                        "mean_anomaly must be a single float value.")
+                    raise ValueError("mean_anomaly must be a single float value.")
             else:
                 mean_anomaly = np.random.uniform(0, 2 * np.pi)
                 binary.star_1.natal_kick_array[3] = mean_anomaly
@@ -1332,7 +1460,7 @@ class StepSN(object):
                 # Mcore = binary.star_2.co_core_mass_history[-1]
             else:
                 raise ValueError(
-                    "There are no informations in the evolutionary history "
+                    "There is no information in the evolutionary history "
                     "about STAR_STATES_CC."
                 )
 
@@ -1384,8 +1512,7 @@ class StepSN(object):
                 mean_anomaly = binary.star_2.natal_kick_array[3]
                 # check that ONLY one value is passed and is of type float
                 if not isinstance(mean_anomaly, float):
-                    raise ValueError(
-                        "mean_anomaly must be a single float value.")
+                    raise ValueError("mean_anomaly must be a single float value.")
             else:
                 mean_anomaly = np.random.uniform(0, 2 * np.pi)
                 binary.star_2.natal_kick_array[3] = mean_anomaly
@@ -1406,6 +1533,7 @@ class StepSN(object):
             binary.time = binary.time_history[-1]
             binary.orbital_period = np.nan
             binary.mass_transfer_case = 'None'
+            binary.first_SN_already_occurred = True
             
         else:
                 
@@ -1424,7 +1552,10 @@ class StepSN(object):
             # Eq 15, Wong, T.-W., Valsecchi, F., Fragos, T., & Kalogera, V. 2012, ApJ, 747, 111
             # orbital separation at the time of the exlosion
             rpre = Apre * (1.0 - epre * np.cos(E_ma))
-
+            
+            true_anomaly = 2 * np.arctan(
+                np.sqrt((1 + epre) / (1 - epre)) * np.tan(E_ma / 2)
+            )
             # load constants in CGS
             G = const.standard_cgrav
 
@@ -1518,6 +1649,9 @@ class StepSN(object):
             # For epre=0 (sin_psi=1), reduces to Eq 4, in Kalogera, V. 1996, ApJ, 471, 352
 
             tilt = np.arccos((Vky + Vr * sin_psi) / np.sqrt( Vkz ** 2 + (Vky + Vr * sin_psi) ** 2 ))
+
+            # Track direction of tilt
+            if Vkz < 0: tilt *= -1 
 
             def SNCheck(
                 M_he_star,
@@ -1622,21 +1756,43 @@ class StepSN(object):
                                   verbose=self.verbose)
 
             # update the binary object which was bound at least before the SN
+            #Check if this is the first SN
+            for key in BINARYPROPERTIES:
+                if key not in ['nearest_neighbour_distance','event']:
+                    setattr(binary, key, None)
             if flag_binary:
                 # update the tilt
-                if binary.event == "CC1":
-                    binary.star_1.spin_orbit_tilt = tilt
-                elif binary.event == "CC2":
-                    binary.star_2.spin_orbit_tilt = tilt
+                if not binary.first_SN_already_occurred:
+                    # update the tilt
+                    binary.star_1.spin_orbit_tilt_first_SN = tilt
+                    binary.star_2.spin_orbit_tilt_first_SN = tilt
+                    binary.true_anomaly_first_SN = true_anomaly
+                    binary.first_SN_already_occurred = True
                 else:
-                    raise ValueError("This should never happen!")
+                    if binary.event == 'CC2':
+                        # Assume progenitor has aligned with the preSN orbital angular momentum
+                        binary.star_2.spin_orbit_tilt_second_SN = tilt
+                        binary.star_1.spin_orbit_tilt_second_SN = self.get_combined_tilt(
+                            tilt_1 = binary.star_1.spin_orbit_tilt_first_SN, 
+                            tilt_2 = tilt, 
+                            true_anomaly_1 = binary.true_anomaly_first_SN, 
+                            true_anomaly_2 = true_anomaly
+                            )
+                        binary.true_anomaly_second_SN = true_anomaly
+                    elif binary.event == 'CC1':
+                        # Assume progenitor has aligned with the preSN orbital angular momentum
+                        binary.star_1.spin_orbit_tilt_second_SN = tilt
+                        binary.star_2.spin_orbit_tilt_second_SN = self.get_combined_tilt(
+                            tilt_1 = binary.star_1.spin_orbit_tilt_first_SN, 
+                            tilt_2 = tilt, 
+                            true_anomaly_1 = binary.true_anomaly_first_SN, 
+                            true_anomaly_2 = true_anomaly
+                            )
+                        binary.true_anomaly_second_SN = true_anomaly
+                    else:
+                        raise ValueError(f"Binary is in SN step but binary state is not CC1 or CC2: {binary.state}")
 
-                # compute new orbital period before reseting the binary properties
-
-                for key in BINARYPROPERTIES:
-                    if key != 'nearest_neighbour_distance':
-                        setattr(binary, key, None)
-
+                # compute new orbital period before reseting the binary properties     
                 binary.state = "detached"
                 binary.event = None
                 binary.separation = Apost / const.Rsun
@@ -1649,18 +1805,18 @@ class StepSN(object):
                     binary.separation, binary.star_1.mass, binary.star_2.mass)
                 binary.orbital_period = new_orbital_period
                 binary.mass_transfer_case = 'None'
+
             else:
                 # update the tilt
-                if binary.event == "CC1":
-                    binary.star_1.spin_orbit_tilt = np.nan
-                elif binary.event == "CC2":
-                    binary.star_2.spin_orbit_tilt = np.nan
+                if not binary.first_SN_already_occurred:
+                    binary.star_1.spin_orbit_tilt_first_SN = np.nan
+                    binary.star_2.spin_orbit_tilt_first_SN = np.nan
+                    binary.first_SN_already_occurred = True
                 else:
-                    raise ValueError("This should never happen!")
+                    binary.star_1.spin_orbit_tilt_second_SN = np.nan
+                    binary.star_2.spin_orbit_tilt_second_SN = np.nan
 
-                for key in BINARYPROPERTIES:
-                    if key != 'nearest_neighbour_distance':
-                        setattr(binary, key, None)
+             
                 binary.state = "disrupted"
                 binary.event = None
                 binary.separation = np.nan
@@ -1725,7 +1881,39 @@ class StepSN(object):
             Vkick = 0.0
 
         return Vkick
+        
+    def get_combined_tilt(self,tilt_1, tilt_2, true_anomaly_1, true_anomaly_2):
+        """Get the combined spin-orbit-tilt after two supernovae, assuming
+        the spin as not realigned with the orbital angular momentum after
+        SN1
 
+            Parameters
+            ----------
+            tilt_1: float
+                Angle, in radians, through which the orbital plane was tilted 
+                by SN1
+            tilt_2: float
+                Angle, in radians, through which the orbital plane was tilted 
+                by SN2
+            true_anomaly_1: float
+                Angle, in radians, of the true anomaly at the moment of SN1
+            true_anomaly_2: float
+                Angle, in radians, of the true anomaly at the moment of SN2
+
+
+            Returns
+            -------
+            combined_tilt: float
+                Angle, in radians, between the spin and orbital angular momentum
+                after SN2
+        """
+        z_prime = rotate((1,0,0), tilt_1).dot((0,0,1))
+        x_prime = rotate(z_prime, true_anomaly_2-true_anomaly_1).dot((1,0,0))
+
+        cos_tilt = np.dot((0,0,1),rotate(x_prime, tilt_2).dot(z_prime))
+        combined_tilt = np.arccos(cos_tilt)
+        return combined_tilt
+    
     def C_abundance_for_H_stars(self, CO_core_mass):
         """Get the C abundance for a H-star given it's CO core mass."""
         return 0.20/CO_core_mass + 0.15
@@ -1779,8 +1967,9 @@ class StepSN(object):
             CO_core_mass = star.co_core_mass_at_He_depletion
 
             if (C_core_abundance is None) or (CO_core_mass is None):
-                raise ValueError(
-                    'The history did not contain core masses at He depletion!')
+                raise ModelError('The history did not contain core masses at'
+                                 f' He depletion! {CO_core_mass}'
+                                 f' {C_core_abundance}')
 
         return CO_core_mass, C_core_abundance
 
@@ -2033,7 +2222,7 @@ class Sukhbold16_corecollapse(object):
             # m_core = star.co_core_mass_history[-1]  # M_sun
             m_He_core = star.he_core_mass_history[-1]  # M_sun
         else:
-            raise ValueError("There are no informations in the evolutionary "
+            raise ValueError("There is no information in the evolutionary "
                              "history about STAR_STATES_CC.")
         k_result = int(self.stellar_type_classifier.predict([[m_He_core]])[0])
 
@@ -2055,7 +2244,7 @@ class Sukhbold16_corecollapse(object):
             m_rem = self.extrapolate_NS(m_He_core, self.mass_NS_interpolator)
             f_fb = 0.
         else:
-            raise Exception("Need a NS or BH to apply `Sukhbold16_corecollapse`.")
+            raise ValueError("Need a NS or BH to apply `Sukhbold16_corecollapse`.")
 
         return float(m_rem), f_fb, state
 
@@ -2294,7 +2483,7 @@ class Couch20_corecollapse(object):
             # m_core = star.co_core_mass_history[-1]      # M_sun
             m_He_core = star.he_core_mass_history[-1]   # M_sun
         else:
-            raise ValueError("There are no informations in the evolutionary "
+            raise ValueError("There is no information in the evolutionary "
                              "history about STAR_STATES_CC.")
         # single_star_equivalent_ZAMS = \
         #     self.stellar_ZAMS_classifier.predict([[m_He_core]])[0]
@@ -2324,6 +2513,39 @@ class Couch20_corecollapse(object):
             # f_fb = m_rem / m_He_core
             f_fb = 0.
         else:
-            raise Exception("Need a NS or BH to apply `Sukhbold16_corecollapse`.")
+            raise ValueError("Need a NS or BH to apply `Sukhbold16_corecollapse`.")
 
         return float(m_rem), f_fb, state
+
+
+
+def check_SN_CO_match(star):
+    '''Check if the SN type matches the stellar state of the given star.
+    
+    Parameters
+    ----------
+    star : SingleStar object
+        Star object containing the star properties.
+        
+    Returns
+    -------
+    correct_SN_type : bool
+        True if the SN type matches the stellar state of the star.
+    '''
+    # TODO: remove star.state == PISN, because PISN shouldn't be a stellar state
+    if star.state == 'PISN':
+        star.state = 'massless_remnant'
+    correct_SN_type = True
+    if star.state == 'WD' and star.SN_type != "WD":
+        correct_SN_type = False
+    elif (star.state == "NS") and \
+            (star.SN_type != 'ECSN' and
+            star.SN_type != "CCSN"):
+        correct_SN_type = False
+    elif (star.state =="BH") and \
+            (star.SN_type != "CCSN" and
+            star.SN_type != 'PPISN'):
+        correct_SN_type = False
+    elif (star.state == "massless_remnant" and star.SN_type != 'PISN'):
+        correct_SN_type = False     
+    return correct_SN_type
