@@ -237,7 +237,7 @@ class IFInterpolator:
                             f"than one set of out_keys)")
                     else:
                         out_keys.append(key)
-        
+
 
     def train(self):
         """Train the interpolator(s) on the PSyGrid used for construction."""
@@ -282,7 +282,7 @@ class IFInterpolator:
         Parameters
         ----------
         initial_values : numpy array
-            A numpy array containing the in-key values of the binaries to be evolved 
+            A numpy array containing the in-key values of the binaries to be evolved
 
         Return
         ------
@@ -306,7 +306,7 @@ class IFInterpolator:
         Parameters
         ----------
         initial_values : numpy array
-            A numpy array containing the in-key values of the binaries to be classified 
+            A numpy array containing the in-key values of the binaries to be classified
 
         Return
         ------
@@ -322,7 +322,7 @@ class IFInterpolator:
         for interpolator in self.interpolators:
 
             classes = {**classes, **interpolator.test_classifiers(new_values)}
-            
+
         return classes
 
 
@@ -586,7 +586,8 @@ class BaseIFInterpolator:
         """Set binary tracks as (in)valid depending on termination flags."""
         valid = np.zeros(len(ic), dtype=int)
 
-        for flag in ['not_converged', 'ignored_no_BH', 'ignored_no_RLO']:
+        for flag in ['not_converged', 'ignored_no_RLO',
+                     'ignored_no_binary_history']:
             which = (ic == flag)
             valid[which] = -1
             print(f"Discarded {np.sum(which)} binaries with "
@@ -1399,7 +1400,7 @@ class KNNClassifier(Classifier):
 class Scaler:
 
     def __init__(self, norms, XT, ic):
-        
+
         if norms[0] == norms[1]:
             self.scaler = {
                 None:  MatrixScaler(norms[0], XT)
@@ -1416,7 +1417,7 @@ class Scaler:
 
         if klass is None:
             return self.scaler[klass].normalize(X)
-        
+
         else:
 
             normalized = X.copy()
@@ -1438,7 +1439,7 @@ class Scaler:
 
         if klass is None:
             return self.scaler[klass].denormalize(X)
-        
+
         else:
 
             normalized = Xn
