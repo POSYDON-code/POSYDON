@@ -320,6 +320,7 @@ class PulsarHooks(EvolveHooks):
         self.CE_acc_prescription = kwargs.get("CE_acc_prescription")
         self.acc_decay_prescription = kwargs.get("acc_decay_prescription")
         self.acc_lower_limit = kwargs.get("acc_lower_limit")
+        self.param_sampling = kwargs.get("parameter_sampling")
 
     def get_pulsar_history(self, binary, star_NS, star_companion):
         """
@@ -353,6 +354,13 @@ class PulsarHooks(EvolveHooks):
             pulsar_alive.extend(np.full(len(state_history[:NS_start]), False))
 
             donor_surface_h1 = np.array(star_companion.surface_h1_history, dtype=float)
+
+            if self.param_sampling:
+                std_dev_taud = 0.5   ## standard deviation in Gyr
+                self.tau_d = np.random.normal(self.tau_d, std_dev_taud)
+
+                std_dev_dMd = 0.001  ## standard deviation in Myr
+                self.delta_Md = np.random.normal(self.delta_Md, std_dev_dMd)
 
             ## initialize the pulsar
             pulsar = Pulsar(star_NS.mass_history[NS_start])
