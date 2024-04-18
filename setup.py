@@ -70,7 +70,7 @@ install_requires = [
     'configparser >= 5.3.0',
     'astropy >= 5.2.2',
     'pandas >= 2.0.0',
-    'scikit-learn < 1.3.0', # 1.2.2
+    'scikit-learn==0.21.3',
     'matplotlib >=  3.7.1',
     'matplotlib-label-lines >= 0.5.2',
     'h5py >= 3.8.0',
