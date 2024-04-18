@@ -317,7 +317,7 @@ def eddington_limit(binary, idx=-1):
         accretor = binary.star_2
         donor = binary.star_1
     else:
-        raise Exception("Eddington-limit to be calculated for non-CO?")
+        raise ValueError("Eddington limit is being calculated for a non-CO")
 
     state_acc = np.atleast_1d(
         np.asanyarray([*accretor.state_history, accretor.state])[idx])
@@ -753,7 +753,7 @@ def read_histogram_from_file(path):
                 continue
             arrays.append(np.fromstring(line.strip(), dtype=float, sep=","))
             if len(arrays) > 2:
-                raise Exception("More than two lines found in the document.")
+                raise RuntimeError("More than two lines found in the histogram document.")
 
     return arrays
 
@@ -799,24 +799,15 @@ def inspiral_timescale_from_separation(star1_mass, star2_mass,
     ecc = eccentricity
 
     if m1 <= 0:
-        raise ValueError(
-            "Mass of star 1 is <= 0, which is not a physical value."
-        )
+        raise ValueError("Mass of star 1 is <= 0, which is not a physical value.")
     if m2 <= 0:
-        raise ValueError(
-            "Mass of star 2 is <= 0, which is not a physical value."
-        )
+        raise ValueError("Mass of star 2 is <= 0, which is not a physical value.")
     if a <= 0:
-        raise ValueError(
-            "Separation is <= 0, which is not a physical value.")
-
+        raise ValueError("Separation is <= 0, which is not a physical value.")
     if ecc < 0:
-        raise ValueError(
-            "Eccentricity is < 0, which is not a physical value.")
+        raise ValueError("Eccentricity is < 0, which is not a physical value.")
     if ecc >= 1:
-        raise ValueError(
-            "Eccentricity is >= 1, which is not a physical value."
-        )
+        raise ValueError("Eccentricity is >= 1, which is not a physical value.")
 
     # Eq. (5.9) in Peters 1964 Phys. Rev. 136, B1224
     beta = (64.0 / 5) * (G**3) * m1 * m2 * (m1 + m2) / (c**5)
@@ -1047,8 +1038,6 @@ def get_binary_state_and_event_and_mt_case(binary, interpolation_class=None,
             gamma2 = binary.star_2.center_gamma_history[i]
         except IndexError:  # this happens if compact object
             gamma2 = None
-        # prev_state currently unused, causing errors
-        # prev_state = binary.state_history[i-1] if i != 0 else MT_CASE_NO_RLO
 
     # get numerical MT cases
     mt_flag_1 = infer_mass_transfer_case(rl_overflow1, lg_mtransfer, state1,
@@ -1180,8 +1169,7 @@ def CO_radius(M, COtype):
         #   Stellar Interiors. Springer New York
         R = 2.9e8*(M)**(-1./3.)/const.Rsun
     else:
-        raise ValueError(
-            'COtype not in the list of valid options: "BH", "NS", "WD"')
+        raise ValueError('COtype not in the list of valid options: "BH", "NS", "WD"')
 
     return R
 
@@ -1902,8 +1890,8 @@ def calculate_core_boundary(donor_mass,
         # lowest value) for your MESA profile, so starting from the surface.
         ind_core = np.argmin(donor_mass >= mc1_i)
     else:
-        raise ValueError(
-            "Not possible to calculate the core boundary of the donor in CE")
+        raise ValueError("Not possible to calculate the core boundary of the donor in CE")
+    
     return ind_core
 
 
@@ -2203,7 +2191,7 @@ def calculate_lambda_from_profile(
         print("Ebind_i from profile ", Ebind_i)
         print("lambda_CE ", lambda_CE)
     if not (lambda_CE > -tolerance):
-        raise Exception("CEE problem, lamda_CE has negative value.")
+        raise ValueError("lamda_CE has a negative value")
     return lambda_CE, mc1_i, rc1_i
 
 
@@ -2325,11 +2313,8 @@ def get_internal_energy_from_profile(common_envelope_option_for_lambda,
         # specific internal energy - if we would have used the "total_energy"
         # it would include (internal+potential+kinetic+rotation)
         specific_donor_internal_energy = profile["energy"]
-        # if (np.any(specific_donor_internal_energy < -tolerance)):#if negative
-        # raise ValueError("CEE problem calculating internal energy, "
-        #                  "giving negative values")
         if not (np.any(specific_donor_internal_energy > -tolerance)):
-            raise Exception("CEE problem calculating internal energy, "
+            raise ValueError("CEE problem calculating internal energy, "
                             "giving negative values.")
 
         specific_donor_H2recomb_energy = calculate_H2recombination_energy(
@@ -2340,7 +2325,7 @@ def get_internal_energy_from_profile(common_envelope_option_for_lambda,
         specific_donor_internal_energy = (
             specific_donor_internal_energy - specific_donor_H2recomb_energy)
         if not (np.any(specific_donor_internal_energy > -tolerance)):
-            raise Exception(
+            raise ValueError(
                 "CEE problem calculating recombination (and H2 recombination) "
                 "energy, remaining internal energy giving negative values.")
     elif ((common_envelope_option_for_lambda == "lambda_from_profile_"
@@ -2350,7 +2335,7 @@ def get_internal_energy_from_profile(common_envelope_option_for_lambda,
         # include (internal+potential+kinetic+rotation)
         specific_donor_internal_energy = profile["energy"]
         if not (np.any(specific_donor_internal_energy > -tolerance)):
-            raise Exception("CEE problem calculating internal energy, "
+            raise ValueError("CEE problem calculating internal energy, "
                             "giving negative values.")
 
         # we still need to subtract the H2 recombination energy which is
@@ -2365,12 +2350,8 @@ def get_internal_energy_from_profile(common_envelope_option_for_lambda,
             specific_donor_internal_energy
             - specific_donor_recomb_energy
             - specific_donor_H2recomb_energy)
-        # if (np.any(specific_donor_internal_energy < -tolerance)):#if negative
-        #     raise ValueError("CEE problem calculating recombination (and H2 "
-        #     "recombination) energy, remaining internal energy "
-        #     "giving negative values")
         if not (np.any(specific_donor_internal_energy > -tolerance)):
-            raise Exception(
+            raise ValueError(
                 "CEE problem calculating recombination (and H2 recombination) "
                 "energy, remaining internal energy giving negative values.")
     return specific_donor_internal_energy
@@ -2405,11 +2386,8 @@ def calculate_H2recombination_energy(profile, tolerance=0.001):
             35999.582894 * const.inversecm2erg / (2.0 * const.H_weight)
             * profile['x_mass_fraction_H'] * const.avo)
         # http://www.nat.vu.nl/~griessen/STofHinM/ChapIIHatomMoleculeGas.pdf
-        # if np.any(specific_donor_H2recomb_energy < -tolerance): # if negative
-        #     raise ValueError("CEE problem calculating H2 recombination "
-        #     "energy, giving negative values")
         if not (np.any(specific_donor_H2recomb_energy > -tolerance)):
-            raise Exception("CEE problem calculating H2 recombination energy, "
+            raise ValueError("CEE problem calculating H2 recombination energy, "
                             "giving negative values")
     # return specific_donor_H2recomb_energy * const.ev2erg
     return specific_donor_H2recomb_energy
@@ -2463,12 +2441,8 @@ def calculate_recombination_energy(profile, tolerance=0.001):
         specific_donor_recomb_energy = profile_recomb_energy(
             profile['x_mass_fraction_H'], profile['y_mass_fraction_He'],
             frac_HII, frac_HeII, frac_HeIII)
-        # if (np.any(specific_donor_recomb_energy < -tolerance)): # if negative
-        #     print(specific_donor_recomb_energy)
-        #     raise ValueError("CEE problem calculating recombination energy,"
-        #     " giving negative values")
         if not (np.any(specific_donor_recomb_energy > -tolerance)):
-            raise Exception("CEE problem calculating recombination energy, "
+            raise ValueError("CEE problem calculating recombination energy, "
                             "giving negative values.")
     return specific_donor_recomb_energy
 
@@ -2560,7 +2534,7 @@ def calculate_binding_energy(donor_mass, donor_radius, donor_dm,
         print("Grav_energy, donor_mass, donor_dm, donor_radius",
               Grav_energy, donor_mass, donor_dm, donor_radius)
         if not (Grav_energy < tolerance):
-            raise Exception("CEE problem calculating gravitational energy, "
+            raise ValueError("CEE problem calculating gravitational energy, "
                             "giving positive values.")
     # binding energy of the enevelope equals its gravitational energy +
     # an a_th fraction of its internal energy
