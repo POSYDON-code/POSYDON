@@ -408,17 +408,20 @@ class StepSN(object):
         # Check if the binary event is calling correctly the SN_step,
         # this should occour only on the first or second core-collapse
         # CC1 and CC2 respectively.
+        print("Manos, calling class SN")
         if binary.event == "CC1":
             # collapse star
+            print("Manos, starting CC1")
             self.collapse_star(star=binary.star_1)
             self._reset_other_star_properties(star=binary.star_2)
-            print("Manos CC1", binary, binary.star_1.SN_type, binary.star_1.M4, binary.star_1.mu4, binary.star_2.SN_type, binary.star_2.M4, binary.star_2.mu4)
+            print("Manos CC1 outcome", binary, binary.star_1.SN_type, binary.star_1.M4, binary.star_1.mu4, binary.star_2.SN_type, binary.star_2.M4, binary.star_2.mu4)
 
         elif binary.event == "CC2":
             # collapse star
+            print("Manos, starting CC2")
             self.collapse_star(star=binary.star_2)
             self._reset_other_star_properties(star=binary.star_1)
-            print("Manos CC2", binary, binary.star_1.SN_type, binary.star_1.M4, binary.star_1.mu4, binary.star_2.SN_type, binary.star_2.M4, binary.star_2.mu4)
+            print("Manos CC2 outcome", binary, binary.star_1.SN_type, binary.star_1.M4, binary.star_1.mu4, binary.star_2.SN_type, binary.star_2.M4, binary.star_2.mu4)
         else:
             raise ValueError("Something went wrong: "
                              "invalid call of supernova step!")
@@ -885,6 +888,7 @@ class StepSN(object):
                            "m_disk_accreted", "m_disk_radiated",
                            "co_core_mass"]:
                 setattr(star, key, None)
+        print("Manos end of collapse_star", star.SN_type, star.M4, star.mu4)
 
     def PISN_prescription(self, star):
         """Compute baryonic remnant mass for the PPISN and PISN prescription.
@@ -2033,7 +2037,7 @@ class StepSN(object):
             M4, mu4 = self.get_M4_mu4_Patton20(CO_core_mass, C_core_abundance)
             star.M4 = M4
             star.mu4 = mu4
-            print("Manos1", star.M4, star.mu4)
+            print("Manos M4,m4 storage", star.M4, star.mu4)
             M4 = M4[0]
             mu4 = mu4[0]
 
