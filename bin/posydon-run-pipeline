@@ -83,7 +83,6 @@ from posydon.grids.MODELS import MODELS
 from posydon.utils.common_functions import PATH_TO_POSYDON
 from posydon.utils.gridutils import get_new_grid_name
 from posydon.interpolation.IF_interpolation import IFInterpolator
-from posydon.interpolation.profile_interpolation import CompileData, ProfileInterpolator
 from posydon.visualization.plot_defaults import PRE_SET_PLOTS
 from posydon.visualization.interpolation import EvaluateIFInterpolator
 from posydon.visualization.combine_TF import TF1_POOL_ERROR
@@ -386,7 +385,10 @@ def train_interpolators(i, path_to_csv_file, verbose=False):
 
 def train_profile_interpolators(i, path_to_csv_file, verbose=False):
     """Train a profile interpolator on a grid."""
-    
+
+    # load module only if needed
+    from posydon.interpolation.profile_interpolation import CompileData, ProfileInterpolator
+
     # read csv file
     if os.path.exists(path_to_csv_file):
         df = pd.read_csv(path_to_csv_file)

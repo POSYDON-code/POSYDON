@@ -358,6 +358,10 @@ class PostProcessingPipeline:
                         pipeline_steps.append(step_number+"_cleanup")
                         expand_runfile(runfile, last_step=last_step,
                                        step_number=step_number+"_cleanup")
+                    # try to load the profile interpolation module, because it
+                    # will be needed when running step 5
+                    if step_number == "step_5":
+                        import posydon.interpolation.profile_interpolation
                 
                 for sub_step, step_extension in SUB_STEPS_TO_EXTENSION.items():
                     if sub_step not in self.pipeline_kwargs[step_number].keys():
