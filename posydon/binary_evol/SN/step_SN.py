@@ -507,6 +507,7 @@ class StepSN(object):
             # use those, else continue with or without profile.
             if self.use_interp_values:
                 # find MODEL_NAME corresponding to class variable
+                print("Manos, entering use_interp_values")
                 MODEL_NAME_SEL = None
                 for MODEL_NAME, MODEL in MODELS.items():
                     tmp = MODEL_NAME
@@ -754,6 +755,7 @@ class StepSN(object):
             elif self.mechanism in [self.Sukhbold16_engines,
                                     self.Patton20_engines,
                                     self.Couch20_engines]:
+                print("Manos, self.mechanism in Patton20_engines")
                 # The final remnant mass and and state
                 # is computed by the selected mechanism
 
@@ -762,6 +764,7 @@ class StepSN(object):
 
                 m_rembar, star.f_fb, state = self.compute_m_rembar(star,
                                                                    m_PISN)
+                print("Manos after computer_m_rembar", star.SN_type, star.M4, star.mu4)
                 star.state = state
 
                 # check if a white dwarf has been born
@@ -801,6 +804,7 @@ class StepSN(object):
                 profile = star.profile
 
                 if self.use_profiles and profile is not None:
+                    print("Manos entering use_profiles", star.SN_type, star.M4, star.mu4)
                     delta_M = m_rembar - m_grav
                     if delta_M > self.max_neutrino_mass_loss:
                         delta_M = self.max_neutrino_mass_loss
@@ -833,6 +837,7 @@ class StepSN(object):
                         raise ValueError("Invalid core state", state)
 
                 elif self.use_core_masses:
+                    print("Manos entering use_core_masses", star.SN_type, star.M4, star.mu4)
                     star.mass = m_grav
                     if m_grav >= self.max_NS_mass:
                         # see Eq. 14, Fryer, C. L., Belczynski, K., Wiktorowicz,
