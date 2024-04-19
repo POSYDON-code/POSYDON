@@ -923,7 +923,7 @@ def plot_grid(i, path_to_csv_file, verbose=False):
         name = plot_attributes['plot_dir_name']
         if multipage:
             if not os.path.isdir(plot_dir):
-            os.makedirs(plot_dir)
+                os.makedirs(plot_dir)
         else:
             dir_ = os.path.join(plot_dir, name)
             if not os.path.isdir(dir_):
