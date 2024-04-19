@@ -361,7 +361,7 @@ class PostProcessingPipeline:
                     # try to load the profile interpolation module, because it
                     # will be needed when running step 5
                     if step_number == "step_5":
-                        import posydon.interpolation.profile_interpolation
+                        from posydon.interpolation.profile_interpolation import CompileData, ProfileInterpolator
                 
                 for sub_step, step_extension in SUB_STEPS_TO_EXTENSION.items():
                     if sub_step not in self.pipeline_kwargs[step_number].keys():
