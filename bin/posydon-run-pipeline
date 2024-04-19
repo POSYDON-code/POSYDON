@@ -253,7 +253,7 @@ def calculate_extra_values(i, path_to_csv_file, verbose=False):
         if verbose:
             print('Post processed grid file alredy exist, removing it.')
         os.remove(processed_grid_path)
-    copyfile(grid_path, processed_grid_path)
+    shutil.copyfile(grid_path, processed_grid_path)
     
     # load processed grid and append values
     grid = PSyGrid(processed_grid_path)
@@ -921,9 +921,13 @@ def plot_grid(i, path_to_csv_file, verbose=False):
         
         # check that plots/ directories exist
         name = plot_attributes['plot_dir_name']
-        dir_ = os.path.join(plot_dir, name)
-        if not os.path.isdir(dir_):
-            os.makedirs(dir_)
+        if multipage:
+            if not os.path.isdir(plot_dir):
+            os.makedirs(plot_dir)
+        else:
+            dir_ = os.path.join(plot_dir, name)
+            if not os.path.isdir(dir_):
+                os.makedirs(dir_)
         
         if ('CO' in grid_type):
             # skip plotting CO properties
@@ -964,7 +968,8 @@ def plot_grid(i, path_to_csv_file, verbose=False):
             raise ValueError('Grid type not supported!')
         
         if multipage:
-            pdf_handler = PdfPages(fname.replace('%1.2f', 'all'),
+            pdf_handler = PdfPages(os.path.join(plot_dir, name) + '_all.' +\
+                                   plot_extension,
                                    metadata={'Author': 'POSYDON'})
         # loop over all grid slices
         for k, var in enumerate(vars):
