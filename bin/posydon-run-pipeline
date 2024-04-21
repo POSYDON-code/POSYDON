@@ -432,9 +432,9 @@ def train_profile_interpolators(i, path_to_csv_file, verbose=False):
 
     train_second_star = 'CO' not in grid_type
     # load grid profiles
-    grid_profiles = Compile_Data(grid_path, grid_path,
-                                 hms_s2=train_second_star,
-                                 profile_names=profile_names)
+    grid_profiles = CompileData(grid_path, grid_path,
+                                hms_s2=train_second_star,
+                                profile_names=profile_names)
     # save the profiles in a temporary pickle
     tmp_profile_interpolator_path = profile_interpolator_path+".tmp"
     grid_profiles.save(tmp_profile_interpolator_path)
