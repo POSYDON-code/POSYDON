@@ -406,7 +406,10 @@ def train_profile_interpolators(i, path_to_csv_file, verbose=False):
     else:
         raise ValueError(f'No grid_type in {path_to_csv_file}')
     if 'profile_names' in df.keys():
-        profile_names = df.loc[i,'profile_names']
+        profile_names = ast.literal_eval(df.loc[i,'profile_names'])
+        if not isinstance(profile_names, list):
+            raise ValueError(f'profile_names is not a list in line {i} '
+                             f'in {path_to_csv_file}')
     else:
         raise ValueError(f'No profile_names in {path_to_csv_file}')
     if 'path_to_IF_interpolator' in df.keys():
@@ -829,6 +832,9 @@ def plot_grid(i, path_to_csv_file, verbose=False):
         raise ValueError(f'No path_to_plot in {path_to_csv_file}')
     if 'quantities_to_plot' in df.keys():
         quantities_to_plot = ast.literal_eval(df.loc[i,'quantities_to_plot'])
+        if not isinstance(quantities_to_plot, list):
+            raise ValueError(f'quantities_to_plot is not a list in line {i} '
+                             f'in {path_to_csv_file}')
     else:
         raise ValueError(f'No quantities_to_plot in {path_to_csv_file}')
     multipage = False
@@ -1059,6 +1065,9 @@ def do_check(i, path_to_csv_file, verbose=False):
         raise ValueError(f'No path_to_grid in {path_to_csv_file}')
     if 'checks_to_do' in df.keys():
         checks_to_do = ast.literal_eval(df.loc[i,'checks_to_do'])
+        if not isinstance(checks_to_do, list):
+            raise ValueError(f'checks_to_do is not a list in line {i} '
+                             f'in {path_to_csv_file}')
     else:
         raise ValueError(f'No checks_to_do in {path_to_csv_file}')
     if 'path_to_interpolator' in df.keys():
