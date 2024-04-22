@@ -1042,6 +1042,15 @@ def plot_grid(i, path_to_csv_file, verbose=False):
                 print('FAILED TO PLOT '+title%var+' to '+fname%var)
                 print('')
                 print(e)
+                if multipage:
+                    # close and reopen handler
+                    # (WARNING: this will overwrite the pdf file)
+                    print(f'delete and reopen: {os.path.join(plot_dir, name)}'
+                          f'_all.{plot_extension}')
+                    del pdf_handler
+                    pdf_handler = PdfPages(os.path.join(plot_dir, name) +\
+                                           '_all.' +plot_extension,
+                                           metadata={'Author': 'POSYDON'})
                 continue
         if multipage:
             pdf_handler.close()
