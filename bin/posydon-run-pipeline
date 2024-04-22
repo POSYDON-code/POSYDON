@@ -927,13 +927,12 @@ def plot_grid(i, path_to_csv_file, verbose=False):
         
         # check that plots/ directories exist
         name = plot_attributes['plot_dir_name']
+        dir_ = os.path.join(plot_dir, name)
         if multipage:
-            if not os.path.isdir(plot_dir):
-                os.makedirs(plot_dir)
-        else:
-            dir_ = os.path.join(plot_dir, name)
-            if not os.path.isdir(dir_):
-                os.makedirs(dir_)
+            # multipage plots don't need the lowest directory level
+            dir_ = os.dirname(dir_)
+        if not os.path.isdir(dir_):
+            os.makedirs(dir_)
         
         if ('CO' in grid_type):
             # skip plotting CO properties
