@@ -930,7 +930,7 @@ def plot_grid(i, path_to_csv_file, verbose=False):
         dir_ = os.path.join(plot_dir, name)
         if multipage:
             # multipage plots don't need the lowest directory level
-            dir_ = os.dirname(dir_)
+            dir_ = os.path.dirname(dir_)
         if not os.path.isdir(dir_):
             os.makedirs(dir_)
         
