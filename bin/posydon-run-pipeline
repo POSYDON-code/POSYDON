@@ -984,7 +984,7 @@ def plot_grid(i, path_to_csv_file, verbose=False):
                 # default plot properties
                 PLOT_PROPERTIES_DEFAULT = {
                     'figsize' : (4,3.5),
-                    'path_to_file' : os.path.join(plot_dir, name)+"/",
+                    'path_to_file' : os.path.join(plot_dir, name)+'/',
                     'show_fig' : False,
                     'fname' : fname%var,
                     'title' : title%var,
@@ -1007,16 +1007,13 @@ def plot_grid(i, path_to_csv_file, verbose=False):
                     PLOT_PROPERTIES['PdfPages'] = pdf_handler
                 
                 if 'INTERP_ERROR' in quantity_to_plot:
-                    # initial/final error slices
-                    evalIFerr.plot2D(plot_attributes['zvar'], slice_3D_var_str,
-                                     slice_3D_var_range, PLOT_PROPERTIES)
                     # initial/final error all points in one plot
                     if k == 0:
                         PLOT_PROPERTIES_ALL = PLOT_PROPERTIES.copy()
                         PLOT_PROPERTIES_ALL['title'] = title.split('=')[0] + '$ all'
                         PLOT_PROPERTIES_ALL['fname'] = fname.replace('%1.2f', 'all')
                         if multipage:
-                            PLOT_PROPERTIES_ALL['path_to_file'] = plot_dir
+                            PLOT_PROPERTIES_ALL['path_to_file'] = plot_dir+'/'
                             PLOT_PROPERTIES_ALL['fname'] = name + '_all.' +\
                                                            plot_extension
                             PLOT_PROPERTIES_ALL['PdfPages'] = None
@@ -1024,6 +1021,9 @@ def plot_grid(i, path_to_csv_file, verbose=False):
                                          slice_3D_var_str, 
                                          (vars_edges[0], vars_edges[-1]), 
                                          PLOT_PROPERTIES_ALL)
+                    # initial/final error slices
+                    evalIFerr.plot2D(plot_attributes['zvar'], slice_3D_var_str,
+                                     slice_3D_var_range, PLOT_PROPERTIES)
                 elif 'CLASS_ERROR' in quantity_to_plot:
                     # TODO: add class error plots
                     if k == 0:
