@@ -973,8 +973,8 @@ def plot_grid(i, path_to_csv_file, verbose=False):
             raise ValueError('Grid type not supported!')
         
         if multipage:
-            pdf_handler = PdfPages(os.path.join(plot_dir, name) + '_all.' +\
-                                   plot_extension,
+            pdf_handler = PdfPages(os.path.join(plot_dir, name) +\
+                                   '_all_slices.' + plot_extension,
                                    metadata={'Author': 'POSYDON'})
         # loop over all grid slices
         for k, var in enumerate(vars):
@@ -1015,6 +1015,11 @@ def plot_grid(i, path_to_csv_file, verbose=False):
                         PLOT_PROPERTIES_ALL = PLOT_PROPERTIES.copy()
                         PLOT_PROPERTIES_ALL['title'] = title.split('=')[0] + '$ all'
                         PLOT_PROPERTIES_ALL['fname'] = fname.replace('%1.2f', 'all')
+                        if multipage:
+                            PLOT_PROPERTIES_ALL['path_to_file'] = plot_dir
+                            PLOT_PROPERTIES_ALL['fname'] = name + '_all.' +\
+                                                           plot_extension
+                            PLOT_PROPERTIES_ALL['PdfPages'] = None
                         evalIFerr.plot2D(plot_attributes['zvar'], 
                                          slice_3D_var_str, 
                                          (vars_edges[0], vars_edges[-1]), 
@@ -1048,7 +1053,7 @@ def plot_grid(i, path_to_csv_file, verbose=False):
                           f'_all.{plot_extension}')
                     del pdf_handler
                     pdf_handler = PdfPages(os.path.join(plot_dir, name) +\
-                                           '_all.' +plot_extension,
+                                           '_all_slices.' +plot_extension,
                                            metadata={'Author': 'POSYDON'})
                 continue
         if multipage:
