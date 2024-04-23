@@ -212,6 +212,7 @@ from posydon.visualization.plot2D import plot2D
 from posydon.visualization.plot1D import plot1D
 from posydon.grids.downsampling import TrackDownsampler
 from posydon.grids.scrubbing import scrub, keep_after_RLO, keep_till_central_abundance_He_C
+from posydon.utils.ignorereason import IgnoreReason
 
 
 HDF5_MEMBER_SIZE = 2**31 - 1            # maximum HDF5 file size when splitting
@@ -231,6 +232,7 @@ N_FLAGS_SINGLE = 2
 TERMINATION_FLAG_COLUMNS = ["termination_flag_{}".format(i+1)
                             for i in range(N_FLAGS)]
 TERMINATION_FLAG_COLUMNS_SINGLE = ["termination_flag_1", "termination_flag_3"]
+
 
 # Default columns to be included from history and profile tables
 DEFAULT_BINARY_HISTORY_COLS = [
@@ -641,7 +643,7 @@ class PSyGrid:
         # in case lists were used, get a proper `dtype` object
         dtype_initial_values = self.initial_values.dtype
         dtype_final_values = self.final_values.dtype
-        
+
         self._say('Loading MESA data...')
 
         #this int array will store the run_index of the i-th run and will be
@@ -651,7 +653,7 @@ class PSyGrid:
         for i in tqdm.tqdm(range(N_runs)):
             # Select the ith run
             run = grid.runs[i]
-            ignore_data = False    # if failed run, do not save any data
+            ignore = IgnoreReason()
             newTF1 = ''
             self._say('Processing {}'.format(run.path))
 
@@ -665,14 +667,13 @@ class PSyGrid:
                                                  BH_columns)
             # if no binary history, ignore this run
             if binary_grid and binary_history is None:
-                ignore_data = True
-                ignore_reason = "ignored_no_BH"
+                ignore.reason = "ignored_no_binary_history"
                 warnings.warn("Ignored MESA run because of missing binary "
                               "history in: {}\n".format(run.path))
                 if not initial_RLO_fix:
                     continue
 
-            if ignore_data:
+            if ignore:
                 history1 = None
             elif self.eeps is None:
                 history1 = read_MESA_data_file(run.history1_path, H1_columns)
@@ -690,11 +691,10 @@ class PSyGrid:
             if not binary_grid and history1 is None:
                 warnings.warn("Ignored MESA run because of missing "
                               "history in: {}\n".format(run.path))
-                ignore_data = True
-                ignore_reason = "ignore_no_H1"
+                ignore.reason = "ignored_no_history1"
                 continue
 
-            if ignore_data:
+            if ignore:
                 history2 = None
             else:
                 history2 = read_MESA_data_file(run.history2_path, H2_columns)
@@ -722,14 +722,14 @@ class PSyGrid:
                             self.final_values[i][fvcol] = np.nan
 
             # scrub histories (unless EEPs are selected or run is ignored)
-            if not ignore_data and self.eeps is None:
+            if not ignore and self.eeps is None:
                 # read the model numbers and ages from the histories
                 colname = "model_number"
                 if history1 is not None:
                     if colname in H1_columns:
                         history1_mod = np.int_(history1[colname].copy())
                     else:
-                        history1_mod = read_MESA_data_file(run.history1_path, 
+                        history1_mod = read_MESA_data_file(run.history1_path,
                                                            [colname])
                         if history1_mod is not None:
                             history1_mod = np.int_(history1_mod[colname])
@@ -743,12 +743,11 @@ class PSyGrid:
                             history1_mod = np.concatenate((history1_mod, add_mod))
                             warnings.warn("Expand mod in {}\n".format(run.history1_path))
                     else:
-                        ignore_data = True
-                        ignore_reason = "corrupted_history1"
+                        ignore.reason = "corrupted_history1"
                     if "star_age" in H1_columns:
                         history1_age = history1["star_age"].copy()
                     else:
-                        history1_age = read_MESA_data_file(run.history1_path, 
+                        history1_age = read_MESA_data_file(run.history1_path,
                                                            ["star_age"])
                         if history1_age is not None:
                             history1_age = history1_age["star_age"]
@@ -762,8 +761,7 @@ class PSyGrid:
                             history1_age = np.concatenate((history1_age, add_age))
                             warnings.warn("Expand age in {}\n".format(run.history1_path))
                     else:
-                        ignore_data = True
-                        ignore_reason = "corrupted_history1"
+                        ignore.reason = "corrupted_history1"
                 else:
                     history1_mod = None
                     history1_age = None
@@ -772,7 +770,7 @@ class PSyGrid:
                     if colname in H2_columns:
                         history2_mod = np.int_(history2[colname].copy())
                     else:
-                        history2_mod = read_MESA_data_file(run.history2_path, 
+                        history2_mod = read_MESA_data_file(run.history2_path,
                                                            [colname])
                         if history2_mod is not None:
                             history2_mod = np.int_(history2_mod[colname])
@@ -786,12 +784,11 @@ class PSyGrid:
                             history2_mod = np.concatenate((history2_mod, add_mod))
                             warnings.warn("Expand mod in {}\n".format(run.history2_path))
                     else:
-                        ignore_data = True
-                        ignore_reason = "corrupted_history2"
+                        ignore.reason = "corrupted_history2"
                     if "star_age" in H2_columns:
                         history2_age = history2["star_age"].copy()
                     else:
-                        history2_age = read_MESA_data_file(run.history2_path, 
+                        history2_age = read_MESA_data_file(run.history2_path,
                                                            ["star_age"])
                         if history2_age is not None:
                             history2_age = history2_age["star_age"]
@@ -805,8 +802,7 @@ class PSyGrid:
                             history2_age = np.concatenate((history2_age, add_age))
                             warnings.warn("Expand age in {}\n".format(run.history2_path))
                     else:
-                        ignore_data = True
-                        ignore_reason = "corrupted_history2"
+                        ignore.reason = "corrupted_history2"
                 else:
                     history2_mod = None
                     history2_age = None
@@ -829,8 +825,7 @@ class PSyGrid:
                             binary_history_mod = np.concatenate((binary_history_mod, add_mod))
                             warnings.warn("Expand mod in {}\n".format(run.binary_history_path))
                     else:
-                        ignore_data = True
-                        ignore_reason = "corrupted_binary_history"
+                        ignore.reason = "corrupted_binary_history"
                     if "age" in BH_columns:
                         binary_history_age = binary_history["age"].copy()
                     else:
@@ -848,8 +843,7 @@ class PSyGrid:
                             binary_history_age = np.concatenate((binary_history_age, add_age))
                             warnings.warn("Expand age in {}\n".format(run.binary_history_path))
                     else:
-                        ignore_data = True
-                        ignore_reason = "corrupted_binary_history"
+                        ignore.reason = "corrupted_binary_history"
                 else:
                     binary_history_mod = None
                     binary_history_age = None
@@ -875,8 +869,7 @@ class PSyGrid:
                 else:
                     binary_history_len = 0
                 if binary_grid and binary_history_len == 0:
-                    ignore_data = True
-                    ignore_reason = "ignored_scrubbed"
+                    ignore.reason = "ignored_scrubbed_history"
                     warnings.warn("Ignored MESA run because of scrubbed binary"
                                   " history in: {}\n".format(run.path))
                     if not initial_RLO_fix:
@@ -886,11 +879,11 @@ class PSyGrid:
                 else:
                     history1_len = 0
                 if not binary_grid and history1_len == 0:
-                    ignore_data = True
+                    ignore.reason = "ignored_scrubbed_history"
                     warnings.warn("Ignored MESA run because of scrubbed"
                                   " history in: {}\n".format(run.path))
                     continue
-                
+
                 try: #get mass from binary history
                     init_mass_1 = float(binary_history["star_1_mass"][0])
                 except: #otherwise get it from directory name
@@ -902,23 +895,25 @@ class PSyGrid:
                                history1, history2, THRESHOLD_CENTRAL_ABUNDANCE,
                                THRESHOLD_CENTRAL_ABUNDANCE_LOOSE_C)
                     binary_history, history1, history2, newTF1 = kept
-                    
+
                 # check whether start at RLO is requested, and chop the history
                 if start_at_RLO:
                     kept = keep_after_RLO(binary_history, history1, history2)
                     if kept is None:
-                        ignore_data = True
-                        ignore_reason = "ignored_no_RLO"
+                        ignore.reason = "ignored_no_RLO"
                         if self.verbose:
                             self._say("Ignored MESA run because of no RLO"
                                       " in: {}\n".format(run.path))
                         if not initial_RLO_fix:
+                            # TODO: we may want to keep these systems for
+                            # allowing rerun grids to inform the old grids that
+                            # a system is not RLOing anymore!
                             continue
                         binary_history, history1, history2 = None, None, None
                     else:
                         binary_history, history1, history2 = kept
 
-            if ignore_data:
+            if ignore:
                 binary_history, history1, history2 = None, None, None
                 final_profile1, final_profile2 = None, None
             else:
@@ -930,12 +925,10 @@ class PSyGrid:
                     if self.config["accept_missing_profile"]:
                         warnings.warn("Including MESA run despite the missing "
                                       "profile in {}\n".format(run.path))
-                        ignore_data = False
                     else:
                         warnings.warn("Ignored MESA run because of missing "
                                       "profile in: {}\n".format(run.path))
-                        ignore_data = True
-                        ignore_reason = "ignore_no_FP"
+                        ignore.reason = "ignored_no_final_profile"
                         continue
 
             if binary_history is not None:
@@ -976,7 +969,7 @@ class PSyGrid:
 
             # get some initial values from the `binary_history.data` header
             # if of course, no RLO fix is applied
-            if binary_grid and not (start_at_RLO or ignore_data):
+            if binary_grid and not (start_at_RLO or ignore):
                 # this is compatible with `.gz` files
                 bh_header = np.genfromtxt(run.binary_history_path,
                                           skip_header=1,
@@ -1007,7 +1000,7 @@ class PSyGrid:
                     init_separation = orbital_separation_from_period(
                         init_period, init_mass_1, init_mass_2)
                     initial_BH["binary_separation"] = init_separation
-            elif not binary_grid and not (start_at_RLO or ignore_data):
+            elif not binary_grid and not (start_at_RLO or ignore):
                 # use header to get initial mass in single-star grids
                 # this is compatible with `.gz` files
                 h1_header = np.genfromtxt(run.history1_path,
@@ -1021,7 +1014,7 @@ class PSyGrid:
             addX = "X" in dtype_initial_values.names
             addY = "Y" in dtype_initial_values.names
             addZ = "Z" in dtype_initial_values.names
-            if (addX or addY or addZ) and not ignore_data:
+            if (addX or addY or addZ) and not ignore:
                 # read abundances from history1 if present, else history2
                 if history1 is not None:
                     read_from = run.history1_path
@@ -1080,7 +1073,7 @@ class PSyGrid:
                     newcol = "S2_" + col
                     self.final_values[i][newcol] = final_H2[col]
 
-            if not ignore_data:
+            if not ignore:
                 if addX:
                     self.initial_values[i]["X"] = where_to_add["X"]
                 if addY:
@@ -1089,16 +1082,16 @@ class PSyGrid:
                     self.initial_values[i]["Z"] = where_to_add["Z"]
 
             if binary_grid:
-                if ignore_data:
-                    termination_flags = [ignore_reason] * N_FLAGS
+                if ignore:
+                    termination_flags = [ignore.reason] * N_FLAGS
                 else:
                     termination_flags = get_flags_from_MESA_run(
                         run.out_txt_path, binary_history=binary_history,
                         history1=history1, history2=history2,
                         start_at_RLO=start_at_RLO, newTF1=newTF1)
             else:
-                if ignore_data:
-                    termination_flags = [ignore_reason] * N_FLAGS_SINGLE
+                if ignore:
+                    termination_flags = [ignore.reason] * N_FLAGS_SINGLE
                 else:
                     termination_flags = [
                         get_flag_from_MESA_output(run.out_txt_path),
@@ -1106,11 +1099,11 @@ class PSyGrid:
                                                  history1["star_mass"])
                     ]
 
-            if ignore_data:
+            if ignore:
                 for colname in self.final_values.dtype.names:
                     if (colname.startswith("termination_flag_")
                             or colname.startswith("interpolation_class")):
-                        self.final_values[i][colname] = ignore_reason
+                        self.final_values[i][colname] = ignore.reason
                     else:
                         self.final_values[i][colname] = np.nan
                 for colname in self.initial_values.dtype.names:
@@ -1138,13 +1131,20 @@ class PSyGrid:
                     self.final_values[i]["interpolation_class"] = \
                         infer_interpolation_class(*termination_flags[:2])
 
-            if ignore_data:
-                # if not fix requested and failed run, do not include it
-                continue
+            if ignore:
+                # if not fix requested and failed run, do not include the data
+                if start_at_RLO and (ignore.reason == "ignored_no_RLO"):
+                    # allow non-RLOing systems to be included in the grid
+                    # so that rerun grid can signify systems as non-RLOing
+                    # instead of keeping the old system
+                    pass
+                else:
+                    continue
+                    # no fix... discard this system
 
             # if data to be included, downsample and store
             if not slim:
-                if ignore_data:
+                if ignore:
                     hdf5.create_group("/grid/run{}/".format(run_index))
                 else:
                     # downsample and save
@@ -1178,7 +1178,7 @@ class PSyGrid:
             self.MESA_dirs.append(run.path)
             run_included_at[i] = run_index
             run_index += 1
-            #check that new MESA path is added at run_index
+            # check that new MESA path is added at run_index
             lenMESA_dirs = len(self.MESA_dirs)
             if lenMESA_dirs!=run_index:
                 warnings.warn("Non synchronous indexing: " +
@@ -1591,7 +1591,7 @@ class PSyGrid:
         # check that the 'path_to_file' exists
         if not os.path.exists(path_to_file):
             os.makedirs(path_to_file)
-        
+
         # check 'runs_to_rerun' has a valid type
         if isinstance(runs_to_rerun, list):
             runs_to_rerun_list = runs_to_rerun
@@ -1600,7 +1600,7 @@ class PSyGrid:
                 runs_to_rerun_list = list(runs_to_rerun)
             except:
                 raise TypeError("'runs_to_rerun' should be a list or None.")
-        
+
         # check termination flags
         if termination_flags is not None:
             if flags_to_check is None:
@@ -1675,7 +1675,7 @@ class PSyGrid:
             for idx in runs_to_rerun_list_unique:
                 runs_data[key].append(np.around(self.initial_values[grid_key][idx], NDIG))
         if len(column_names)>0:
-            n_runs = len(runs_data[list(column_names)[0]])            
+            n_runs = len(runs_data[list(column_names)[0]])
         else:
             n_runs = 0
         # add new_mesa_flag
@@ -2202,14 +2202,25 @@ def join_grids(input_paths, output_path,
     say("Inferring which runs to include, from which grid...")
     initial_params = {}
     n_substitutions = 0
+    n_ignored_noRLO = 0
     for grid_index, grid in enumerate(grids):
         for run_index, dir_path in enumerate(grid.MESA_dirs):
             # get the parameters part from the dir name
             params_from_path = initial_values_from_dirname(dir_path)
             if params_from_path in initial_params:
                 n_substitutions += 1
+
             initial_params[params_from_path] = (grid_index, run_index)
-    say("    {} substituions detected.".format(n_substitutions))
+
+            if (grid[run_index].final_values["termination_flag_1"]
+                    == "ignored_no_RLO"):
+                if params_from_path in initial_params:
+                    del initial_params[params_from_path]
+                n_ignored_noRLO += 1
+
+    say("    {} substitutions detected.".format(n_substitutions))
+    if newconfig["start_at_RLO"]:
+        say("    {} runs ignored beacuse of no RLOF.".format(n_ignored_noRLO))
     say("    {} runs to be joined.".format(len(initial_params)))
 
     if (newconfig["initial_RLO_fix"]):
@@ -2232,7 +2243,7 @@ def join_grids(input_paths, output_path,
                 # add non existing new entry
                 if not exists_already:
                     detected_initial_RLO.append(new_sys)
-    
+
     say("Opening new file...")
     # open new HDF5 file and start copying runs
     driver_args = {} if "%d" not in output_path else {
@@ -2268,21 +2279,21 @@ def join_grids(input_paths, output_path,
             new_mesa_dirs.append(grid.MESA_dirs[run_index])
             new_initial_values.append(grid.initial_values[run_index])
             new_final_values.append(grid.final_values[run_index])
-            
+
             if (newconfig["initial_RLO_fix"]):
                 flag1 = new_final_values[-1]["termination_flag_1"]
-                if (flag1 != "Terminate because of overflowing initial model" and 
-                    flag1 != "forced_initial_RLO"):
+                if (flag1 != "Terminate because of overflowing initial model"
+                        and flag1 != "forced_initial_RLO"):
                     mass1 = new_initial_values[-1]["star_1_mass"]
                     mass2 = new_initial_values[-1]["star_2_mass"]
                     period = new_initial_values[-1]["period_days"]
                     nearest = get_nearest_known_initial_RLO(mass1, mass2,
                                                         detected_initial_RLO)
-                    if period<nearest["period_days"]:
-                        #set values
+                    if period < nearest["period_days"]:
+                        # set values
                         for colname, value in zip(colnames, valtoset):
                             new_final_values[-1][colname] = value
-                        #copy values from nearest known system
+                        # copy values from nearest known system
                         for colname in ["termination_flag_3",
                                         "termination_flag_4"]:
                             if colname in nearest:

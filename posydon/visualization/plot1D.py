@@ -574,7 +574,8 @@ class plot1D(object):
                     custom_lines = []
                     custom_legend = []
                     key_skip = ['undetermined_evolutionary_state',
-                                'BH', 'NS', 'ignored_no_BH', 'ignored_no_RLO',
+                                'BH', 'NS',
+                                'ignored_no_binary_history', 'ignored_no_RLO',
                                 'H-rich_non_burning',
                                 'stripped_He_non_burning']
                     for key in convention.keys():
