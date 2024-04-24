@@ -66,7 +66,7 @@ install_requires = [
     'configparser <= 5.0.0',
     'astropy <= 4.0.1.post1',
     'pandas <= 1.3.0',
-    'scikit-learn <= 1.1',
+    'scikit-learn==0.21.3',
     'matplotlib <=  3.5.0',
     'more-itertools <= 9.1.0',
     'matplotlib-label-lines <= 0.5.1',
