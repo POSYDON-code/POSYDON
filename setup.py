@@ -60,7 +60,7 @@ else:
 # are all used in the example below for specifying specific version of the
 # packages that are compatbile with your software.
 install_requires = [
-    'numpy <= 1.26.4',
+    'numpy < 1.20.0',
     'scipy <= 1.5.2',
     'iminuit <= 1.4.9',
     'configparser <= 5.0.0',
