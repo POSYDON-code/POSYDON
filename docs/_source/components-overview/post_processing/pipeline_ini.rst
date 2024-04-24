@@ -84,7 +84,7 @@ as pages in a single PDF.
 
     [pipeline setup]
         PATH_TO_GRIDS = '/srv/beegfs/scratch/shares/astro/posydon/POSYDON_GRIDS_v2/'
-        VERSION = '' # 'v2' in quest and '' in yggdrasil
+        VERSION = '' # to have a verion below the grid type level
         PATH = '.' # working dir
         VERBOSE = True
         
@@ -105,9 +105,9 @@ Step sections
 -------------
 
 The path of each grid will be joint as
-:samp:`PATH_TO_GRIDS/VERSION/GRID_TYPE/METALLICITY/GRID_SLICE`. The
+:samp:`PATH_TO_GRIDS/GRID_TYPE/VERSION/METALLICITY/GRID_SLICE`. The
 corresponding h5 files will have names according to
-:samp:`PATH_TO_GRIDS/VERSION/GRID_TYPE/METALLICITY/COMPRESSION/GRID_SLICE.h5`.
+:samp:`PATH_TO_GRIDS/GRID_TYPE/VERSION/METALLICITY/COMPRESSION/GRID_SLICE.h5`.
 All sections have common keywords:
 
 .. table:: Common keywords of steps
