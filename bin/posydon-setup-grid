@@ -1065,7 +1065,7 @@ if __name__ == '__main__':
                 grid = pandas.read_csv(run_parameters['grid'])
             else:
                 raise ValueError('Grid format not recognized, please feed in an acceptable format: csv')
-            grid_script = 'slurm_job_array_grid_submit.sh'
+            grid_script = 'job_array_grid_submit.slurm'
             with open(grid_script, 'w') as f:
                 f.write('#!/bin/bash\n')
 
@@ -1089,7 +1089,7 @@ if __name__ == '__main__':
                 f.write('export MESA_DIR={0}\n\n\n'.format(os.environ['MESA_DIR']))
                 f.write(command_line)
         else:
-            grid_script = 'slurm_mpi_grid_submit.sh'
+            grid_script = 'mpi_grid_submit.slurm'
             with open(grid_script, 'w') as f:
                 f.write('#!/bin/bash\n')
 
@@ -1111,7 +1111,7 @@ if __name__ == '__main__':
                 f.write('export MESA_DIR={0}\n\n\n'.format(os.environ['MESA_DIR']))
                 f.write(command_line)
         # create a cleanup script
-        with open('cleanup.sh', 'w') as f:
+        with open('cleanup.slurm', 'w') as f:
             f.write('#!/bin/bash\n')
             
             f.write('#SBATCH --account={0}\n'.format(slurm['account']))
@@ -1139,7 +1139,7 @@ if __name__ == '__main__':
             f.write('ID_GRID=$(sbatch --parsable {0})\n'.format(grid_script))
             f.write('echo \"{0}'.format(grid_script)+' submitted as \"${ID_GRID}\n')
             f.write('ID_cleanup=$(sbatch --parsable --dependency=afterany:${ID_GRID} '
-                    '--kill-on-invalid-dep=yes cleanup.sh)\n')
-            f.write('echo \"cleanup.sh submitted as \"${ID_cleanup}\n')
+                    '--kill-on-invalid-dep=yes cleanup.slurm)\n')
+            f.write('echo \"cleanup.slurm submitted as \"${ID_cleanup}\n')
         # make the runfile script executable
         os.system("chmod 755 run_grid.sh")
