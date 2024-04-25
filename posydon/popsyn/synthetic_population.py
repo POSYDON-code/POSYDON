@@ -473,7 +473,7 @@ class SyntheticPopulation:
         # add properties of the oneline dataframe
         if self.df_oneline is not None:
             # TODO: add kicks as well by default?
-            save_cols = ['S1_spin_orbit_tilt', 'S2_spin_orbit_tilt']
+            save_cols = ['S1_spin_orbit_tilt_second_SN', 'S2_spin_orbit_tilt_second_SN']
             if compute_GRB_properties:
                 save_cols += ['S1_m_disk_radiated', 'S2_m_disk_radiated']
             if formation_channels:

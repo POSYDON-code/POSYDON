@@ -153,16 +153,16 @@ class Rates(object):
                 values = self.m_chirp(self.df["S1_mass"], self.df["S2_mass"])
             elif var == 'chi_eff':
                 # check if tilts are provided
-                if ("S1_spin_orbit_tilt" not in self.df or 
-                    "S2_spin_orbit_tilt" not in self.df):
+                if ("S1_spin_orbit_tilt_second_SN" not in self.df or 
+                    "S2_spin_orbit_tilt_second_SN" not in self.df):
                     warnings.warn('Spin tilts not in dataset! Assuming spins '
                                    'are aligned to orbital angular momentum '
                                    'to compute chi_eff!')
                     tilt_BH1 = np.zeros(len(self.df["S1_spin"]))
                     tilt_BH2 = tilt_BH1
                 else:
-                    tilt_BH1 = self.df["S1_spin_orbit_tilt"]
-                    tilt_BH2 = self.df["S2_spin_orbit_tilt"]
+                    tilt_BH1 = self.df["S1_spin_orbit_tilt_second_SN"]
+                    tilt_BH2 = self.df["S2_spin_orbit_tilt_second_SN"]
                 values = self.chi_eff(self.df["S1_mass"],
                                       self.df["S2_mass"],
                                       self.df["S1_spin"],
