@@ -335,7 +335,8 @@ def generate_secondary_masses(primary_masses,
     """
     RNG = kwargs.get('RNG', np.random.default_rng())
 
-    secondary_mass_scheme_options = ['flat_mass_ratio', 'q=1']
+    secondary_mass_scheme_options = ['flat_mass_ratio', 'flat_mass_ratio_all',
+                                     'q=1']
 
     # Input parameter checks
     if secondary_mass_scheme not in secondary_mass_scheme_options:
@@ -346,8 +347,14 @@ def generate_secondary_masses(primary_masses,
                          "larger than some primary masses")
 
     # Generate secondary masses
-    if secondary_mass_scheme == 'flat_mass_ratio':
-        mass_ratio_min = np.max([secondary_mass_min / primary_masses,np.ones(len(primary_masses))*0.05], axis=0)
+    if ((secondary_mass_scheme == 'flat_mass_ratio') or
+        (secondary_mass_scheme == 'flat_mass_ratio_all')):
+        if secondary_mass_scheme == 'flat_mass_ratio_all':
+            mass_ratio_min = secondary_mass_min / primary_masses
+        else:
+            mass_ratio_min = np.max([secondary_mass_min / primary_masses,
+                                     np.ones(len(primary_masses))*0.05],
+                                     axis=0)
         mass_ratio_max = np.min([secondary_mass_max / primary_masses,
                                  np.ones(len(primary_masses))], axis=0)
         secondary_masses = (
