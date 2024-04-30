@@ -9,6 +9,7 @@ __authors__ = [
     "Simone Bavera <Simone.Bavera@unige.ch>",
     "Emmanouil Zapartas <ezapartas@gmail.com>",
     "Scott Coughlin <scottcoughlin2014@u.northwestern.edu>",
+    "Matthias Kruckow <Matthias.Kruckow@unige.ch>",
 ]
 
 
