@@ -110,7 +110,7 @@ def initial_total_underlying_mass(df=None, **kwargs):
         warnings.warn("Scheme not included yet: primary_mass_scheme="
                       f"{kwargs['primary_mass_scheme']}, secondary_mass_scheme"
                       f"={kwargs['secondary_mass_scheme']}")
-        return np.nan
+        return np.nan, np.nan, np.nan
 #        raise ValueError("Scheme not included yet")
 
     f_bin = 0.7
