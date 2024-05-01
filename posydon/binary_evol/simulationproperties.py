@@ -322,6 +322,8 @@ class PulsarHooks(EvolveHooks):
         self.acc_decay_prescription = kwargs.get("acc_decay_prescription")
         self.acc_lower_limit = kwargs.get("acc_lower_limit")
         self.param_sampling = kwargs.get("parameter_sampling")
+        self.dMd_error = kwargs.get("dMd_error")
+        self.taud_error = kwargs.get("taud_error")
 
     def get_pulsar_history(self, binary, star_NS, star_companion):
         """
@@ -342,6 +344,10 @@ class PulsarHooks(EvolveHooks):
         pulsar_Bfield = []
         pulsar_alive = []
 
+        ## if sampling is turned-on, keep input values for decay paremeters
+        delta_Md = self.delta_Md
+        tau_d = self.tau_d
+
         ## check if star is ever a NS
         if "NS" in state_history:    
                    
@@ -356,12 +362,15 @@ class PulsarHooks(EvolveHooks):
 
             donor_surface_h1 = np.array(star_companion.surface_h1_history, dtype=float)
 
+            ## sample decay parameters from normal distribution > 0
             if self.param_sampling:
-                std_dev_taud = 0.5   ## standard deviation in Gyr
-                self.tau_d = np.random.normal(self.tau_d, std_dev_taud)
-
-                std_dev_dMd = 0.001  ## standard deviation in Myr
-                self.delta_Md = np.random.normal(self.delta_Md, std_dev_dMd)
+                self.tau_d = np.random.normal(tau_d, self.taud_error)
+                while self.tau_d <= 0:
+                    self.tau_d = np.random.normal(tau_d, self.taud_error)
+                
+                self.delta_Md = np.random.normal(delta_Md, self.dMd_error)
+                while self.delta_Md <= 0:
+                    self.delta_Md = np.random.normal(delta_Md, self.dMd_error)
 
             ## initialize the pulsar
             pulsar = Pulsar(star_NS.mass_history[NS_start])
@@ -375,11 +384,6 @@ class PulsarHooks(EvolveHooks):
                 state = states[i]
                 delta_t = time[i] - time[i-1]
                 delta_M = star_NS.mass_history[i] - star_NS.mass_history[i-1]
-
-                ## get companion mass and radius at previous timestep
-                ## these are only used for CE accretion & we want these values at the onset of CE
-                M_comp = star_companion.mass_history[i-1]
-                R_comp = 10**star_companion.log_R_history[i-1]
                
                 pulsar.Mdot_edd = pulsar.calc_NS_edd_lim(donor_surface_h1[i]) 
                 
@@ -403,6 +407,12 @@ class PulsarHooks(EvolveHooks):
                         pulsar.detached_evolve(delta_t, self.tau_d) 
               
                 elif step_name == "step_CE" and state != "merged":
+
+                    ## get companion mass and radius at previous timestep
+                    ## these are only used for CE accretion & we want these values at the onset of CE
+                    M_comp = star_companion.mass_history[i-1]
+                    R_comp = 10**star_companion.log_R_history[i-1]
+
                     pulsar.CE_evolve(self.CE_acc_prescription, self.acc_decay_prescription, self.acc_lower_limit,
                                      M_comp, R_comp, self.delta_Md, delta_t, self.tau_d)
 
