@@ -60,13 +60,13 @@ else:
 # are all used in the example below for specifying specific version of the
 # packages that are compatbile with your software.
 install_requires = [
-    'numpy <= 1.26.4',
+    'numpy < 1.20.0',
     'scipy <= 1.5.2',
     'iminuit <= 1.4.9',
     'configparser <= 5.0.0',
     'astropy <= 4.0.1.post1',
     'pandas <= 1.3.0',
-    'scikit-learn <= 1.1',
+    'scikit-learn==0.21.3',
     'matplotlib <=  3.5.0',
     'more-itertools <= 9.1.0',
     'matplotlib-label-lines <= 0.5.1',
