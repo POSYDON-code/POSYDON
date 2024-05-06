@@ -654,7 +654,7 @@ class BaseIFInterpolator:
 
         if isinstance(self.interp_method, list):
             Xtn = self.X_scaler.normalize(Xt, classes)
-            Ypredn = self.interpolator.predict(Xtn, classes)
+            Ypredn = self.interpolator.predict(Xtn, classes, self.X_scaler)
         else:
             Xtn = self.X_scaler.normalize(Xt)
             Ypredn = self.interpolator.predict(Xtn)
@@ -963,15 +963,15 @@ class BaseIFInterpolator:
                             np.abs(ypred_i[:, which_abs] - Y_t[:, which_abs]), 90,
                             axis=0)
 
-            try:
-                where_min = np.nanargmin(np.nanmean(err, axis=2), axis=0)
-            except:
-                # replace nans by a large number before looking for minimum
-                where_min = np.nanargmin(np.nan_to_num(np.nanmean(err, axis=2), nan=1e99), axis=0)
+
+            no_nan_slices = ~np.isnan(np.nanmean(err, axis = 2)).all(axis = 0)
+
+            where_min = np.full_like(np.zeros(shape = (self.n_out, )), fill_value = np.nan)
+            where_min[no_nan_slices] = np.nanargmin(np.nanmean(err, axis=2)[:, no_nan_slices], axis=0)
 
             out_scaling = []
             for i in range(self.n_out):
-                if where_min[i] < r:
+                if where_min[i] < r or np.isnan(where_min[i]):
                     out_scaling.append(out_scalings[0][i])
                 else:
                     out_scaling.append(out_scalings[1][i])
@@ -1120,7 +1120,7 @@ class LinInterpolator(Interpolator):
         self.interpolator.append(OoH)
         # self.train_error(XT, YT)
 
-    def predict(self, Xt):
+    def predict(self, Xt, scaler = None, klass = None):
         """Interpolate and approximate output vectors given input vectors.
 
         Parameters
@@ -1140,8 +1140,10 @@ class LinInterpolator(Interpolator):
         if np.any(wnan):
             Ypred[wnan, :] = self.interpolator[1].predict(Xt[wnan, :])
         if np.any(wnan):
+            dists, _ = self.interpolator[1].kneighbors(Xt[wnan, :])
+
             warnings.warn(f"1NN interpolation used for {np.sum(wnan)} "
-                          "binaries out of hull.")
+                          f"binaries out of hull. Max distance to neighbor: {dists.max()}")
         return Ypred
 
 
@@ -1206,7 +1208,7 @@ class MC_Interpolator:
 
         return self.classifier.predict(Xt)
 
-    def predict(self, Xt, zpred):
+    def predict(self, Xt, zpred, scaler = None):
         """Interpolate and approximate output vectors given input vectors.
 
         Parameters
@@ -1225,7 +1227,7 @@ class MC_Interpolator:
             for j in range(len(self.classes[i])):
                 which += zpred == self.classes[i][j]
             if which.any():
-                Ypred[which, :] = self.interpolators[i].predict(Xt[which, :])
+                Ypred[which, :] = self.interpolators[i].predict(Xt[which, :], scaler = scaler, klass = self.classes[i])
         return Ypred
 
 
@@ -1441,7 +1443,7 @@ class Scaler:
     def denormalize(self, Xn, klass = None):
 
         if klass is None:
-            return self.scaler[klass].denormalize(X)
+            return self.scaler[klass].denormalize(Xn)
         
         else:
 
@@ -1468,6 +1470,7 @@ class MatrixScaler:
         if len(norms) != XT.shape[1]:
             raise Exception("The no. of columns in XT must be equal "
                             "to the length of norms.")
+
         self.N = XT.shape[1]
         self.scalers = []
         for i in range(self.N):
@@ -1486,6 +1489,7 @@ class MatrixScaler:
 
     def denormalize(self, Xn):
         """Unscale input X."""
+
         assert Xn.shape[1] == self.N
         X = np.empty_like(Xn)
         for i in range(self.N):
