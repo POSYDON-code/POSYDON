@@ -40,20 +40,23 @@ class POSYDONError(Exception):
                 pass
         return result + '\n'+ super().__str__()
 
-class GridError(POSYDONError):
-    """POSYDON error specific for PSyGrid operations."""
+class FileError(POSYDONError):
+    """POSYDON error specific for reading/writing files."""
 
 class FlowError(POSYDONError):
     """POSYDON error specific for binary evolution flow errors."""
+
+class GridError(POSYDONError):
+    """POSYDON error specific for PSyGrid operations."""
+
+class MatchingError(POSYDONError):
+    """POSYDON error specific for matching stars to single grid during the detached."""
 
 class ModelError(POSYDONError):
     """POSYDON error specific for when a binary FAILS due to limitations of physics modeling assumptions."""
 
 class NumericalError(POSYDONError):
     """POSYDON error specific for when a binary FAILS due to limitations of numerical methods."""
-
-class MatchingError(POSYDONError):
-    """POSYDON error specific for matching stars to single grid during the detached."""
 
 def initial_condition_message(binary,ini_params = None ):
     if ini_params is None:

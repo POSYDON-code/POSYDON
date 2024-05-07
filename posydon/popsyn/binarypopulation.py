@@ -20,7 +20,8 @@ __authors__ = [
     "Konstantinos Kovlakas <Konstantinos.Kovlakas@unige.ch>",
     "Devina Misra <devina.misra@unige.ch>",
     "Simone Bavera <Simone.Bavera@unige.ch>",
-    "Max Briel <max.briel@gmail.com>"
+    "Max Briel <max.briel@gmail.com>",
+    "Matthias Kruckow <matthias.kruckow@unige.ch>",
 ]
 
 
@@ -45,6 +46,7 @@ from posydon.popsyn.star_formation_history import get_formation_times
 
 from posydon.popsyn.independent_sample import (generate_independent_samples,
                                                binary_fraction_value)
+from posydon.popsyn.sample_from_file import get_samples_from_file
 from posydon.utils.common_functions import (orbital_period_from_separation,
                                             orbital_separation_from_period)
 from posydon.popsyn.defaults import default_kwargs
@@ -517,7 +519,14 @@ class PopulationManager:
         self.history_dfs = []
         self.oneline_dfs = []
 
-        self.binary_generator = BinaryGenerator(**kwargs)
+        if (('read_samples_from_file' in self.kwargs) and
+            (self.kwargs['read_samples_from_file']!='')):
+            self.binary_generator = BinaryGenerator(\
+                                     sampler=get_samples_from_file, **kwargs)
+        else:
+            self.binary_generator = BinaryGenerator(\
+                                     sampler=generate_independent_samples,\
+                                     **kwargs)
         self.entropy = self.binary_generator.entropy
 
         if file_name:
