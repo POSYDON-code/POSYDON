@@ -1390,6 +1390,9 @@ class StepSN(object):
                         sigma = self.sigma_kick_CCSN_NS
                     elif binary.star_1.state == 'BH':
                         sigma = self.sigma_kick_CCSN_BH
+                    elif binary.star_1.state == 'massless_remnant':
+                        # No kick on a massless object
+                        sigma = None
                     else:
                         raise ValueError("CCSN/PPISN/PISN only for NS/BH.")
                     # Kick for core-collapse SN
@@ -1486,6 +1489,9 @@ class StepSN(object):
                         sigma = self.sigma_kick_CCSN_NS
                     elif binary.star_2.state == 'BH':
                         sigma = self.sigma_kick_CCSN_BH
+                    elif binary.star_2.state == 'massless_remnant':
+                        # No kick on a massless object
+                        sigma = None
                     else:
                         raise ValueError("CCSN/PPISN/PISN only for NS/BH.")
                     # Kick for core-collapse SN
