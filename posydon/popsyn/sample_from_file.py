@@ -17,8 +17,8 @@ from posydon.popsyn.independent_sample import (generate_orbital_periods,
                                                generate_primary_masses,
                                                generate_secondary_masses)
 
-PRIMARY_MASS_NAMES = ['S1_mass', 'primary_mass', 'mass_1', 'm_1', 'm1']
-SECONDARY_MASS_NAMES = ['S2_mass', 'secondary_mass', 'mass_2', 'm_2', 'm2']
+PRIMARY_MASS_NAMES = ['s1_mass', 'primary_mass', 'mass_1', 'm_1', 'm1']
+SECONDARY_MASS_NAMES = ['s2_mass', 'secondary_mass', 'mass_2', 'm_2', 'm2']
 PERIOD_NAMES = ['orbital_period', 'period', 'p_orb', 'porb', 'p']
 SEPARATION_NAMES = ['orbital_separation', 'separation', 'semi-major_axis',\
                     'semi_major_axis', 'a']
