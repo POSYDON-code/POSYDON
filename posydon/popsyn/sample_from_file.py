@@ -17,19 +17,12 @@ from posydon.popsyn.independent_sample import (generate_orbital_periods,
                                                generate_primary_masses,
                                                generate_secondary_masses)
 
-PRIMARY_MASS_NAMES = ['primary_mass', 'Primary_Mass', 'PRIMARY_MASS',\
-                      'mass_1', 'Mass_1', 'MASS_1', 'm_1', 'M_1', 'm1', 'M1']
-SECONDARY_MASS_NAMES = ['secondary_mass', 'Secondary_Mass', 'SECONDARY_MASS',\
-                        'mass_2', 'Mass_2', 'MASS_2', 'm_2', 'M_2', 'm2', 'M2']
-PERIOD_NAMES = ['orbital_period', 'Orbital_Period', 'ORBITAL_PERIOD',\
-                'period', 'Period', 'PERIOD', 'P_orb', 'porb', 'P']
-SEPARATION_NAMES = ['orbital_separation', 'Orbital_Separation',\
-                    'ORBITAL_SEPARATION', 'separation', 'Separation',\
-                    'SEPARATION', 'semi-major_axis', 'Semi-Major_Axis',\
-                    'SEMI-MAJOR_AXIS', 'semi_major_axis', 'Semi_Major_Axis',\
-                    'SEMI_MAJOR_AXIS', 'a']
-ECCENTRICITY_NAMES = ['eccentricity', 'Eccentricity', 'ECCENTRICITY',\
-                      'ecc', 'Ecc', 'ECC', 'e']
+PRIMARY_MASS_NAMES = ['primary_mass', 'mass_1', 'm_1', 'm1']
+SECONDARY_MASS_NAMES = ['secondary_mass', 'mass_2', 'm_2', 'm2']
+PERIOD_NAMES = ['orbital_period', 'period', 'p_orb', 'porb', 'p']
+SEPARATION_NAMES = ['orbital_separation', 'separation', 'semi-major_axis',\
+                    'semi_major_axis', 'a']
+ECCENTRICITY_NAMES = ['eccentricity', 'ecc', 'e']
 
 def infer_key(available_keys=[], allowed_keys=[]):
     """Infer key from list of allowed keys.
@@ -48,8 +41,9 @@ def infer_key(available_keys=[], allowed_keys=[]):
     """
 
     for k in allowed_keys:
-        if k in available_keys:
-            return k
+        for key in available_keys:
+            if key.casefold() == k.casefold():
+                return key
 
     return ''
 
