@@ -21,7 +21,7 @@ __authors__ = [
     "Devina Misra <devina.misra@unige.ch>",
     "Simone Bavera <Simone.Bavera@unige.ch>",
     "Max Briel <max.briel@gmail.com>",
-    "Matthias Kruckow <matthias.kruckow@unige.ch>",
+    "Matthias Kruckow <Matthias.Kruckow@unige.ch>",
 ]
 
 

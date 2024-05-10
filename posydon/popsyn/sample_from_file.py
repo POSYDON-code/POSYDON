@@ -2,7 +2,7 @@
 
 
 __authors__ = [
-    "Matthias Kruckow <matthias.kruckow@unige.ch>",
+    "Matthias Kruckow <Matthias.Kruckow@unige.ch>",
 ]
 
 
@@ -10,7 +10,6 @@ import os
 import numpy as np
 import pandas as pd
 import warnings
-from posydon.utils.posydonerror import FileError
 from posydon.popsyn.independent_sample import (generate_orbital_periods,
                                                generate_orbital_separations,
                                                generate_eccentricities,
@@ -92,7 +91,7 @@ def get_samples_from_file(orbital_scheme='', **kwargs):
     if os.path.isfile(filename):
         df = pd.read_csv(filename)
     else:
-        raise FileError(f'{filename} not found!')
+        raise FileNotFoundError(f'{filename} not found!')
 
     # Get number of data frame entries
     set_n = len(df)
@@ -202,7 +201,7 @@ def get_kick_samples_from_file(**kwargs):
     if os.path.isfile(filename):
         df = pd.read_csv(filename)
     else:
-        raise FileError(f'{filename} not found!')
+        raise FileNotFoundError(f'{filename} not found!')
 
     # Get number of data frame entries
     set_n = len(df)
