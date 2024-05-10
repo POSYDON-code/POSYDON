@@ -560,7 +560,8 @@ class StepSN(object):
                                              "m_disk_accreted",
                                              "m_disk_radiated", "center_h1",
                                              "center_he4", "center_c12",
-                                             "center_n14", "center_o16"]:
+                                             "center_n14", "center_o16",
+                                             "avg_c_in_c_core"]:
                                 setattr(star, key, None)
 
                     else:
@@ -663,7 +664,8 @@ class StepSN(object):
                                          "m_disk_accreted", "m_disk_radiated",
                                          "center_h1", "center_he4",
                                          "center_c12", "center_n14",
-                                         "center_o16"]:
+                                         "center_o16",
+                                         "avg_c_in_c_core"]:
                             setattr(star, key, None)
                     return
 
@@ -785,7 +787,8 @@ class StepSN(object):
                                          "m_disk_accreted", "m_disk_radiated",
                                          "center_h1", "center_he4",
                                          "center_c12", "center_n14",
-                                         "center_o16"]:
+                                         "center_o16",
+                                         "avg_c_in_c_core"]:
                             setattr(star, key, None)
                     return
 
