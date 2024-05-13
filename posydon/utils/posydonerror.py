@@ -3,6 +3,7 @@
 
 __authors__ = [
     "Camille Liotine <cliotine@u.northwestern.edu>",
+    "Eirini Kasdagli <kasdaglie@ufl.edu>",
     "Konstantinos Kovlakas <Konstantinos.Kovlakas@unige.ch>",
     "Matthias Kruckow <Matthias.Kruckow@unige.ch>",
 ]
