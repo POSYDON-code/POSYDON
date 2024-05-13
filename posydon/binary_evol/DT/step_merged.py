@@ -14,6 +14,7 @@ from posydon.utils.data_download import PATH_TO_POSYDON_DATA
 from posydon.binary_evol.singlestar import STARPROPERTIES, convert_star_to_massless_remnant
 from posydon.utils.common_functions import check_state_of_star
 from posydon.binary_evol.DT.step_isolated import IsolatedStep
+from posydon.utils.posydonerror import FlowError
 
 import warnings
 
@@ -96,9 +97,9 @@ class MergedStep(IsolatedStep):
             elif binary.event == 'oMerging2':
                 binary.star_2,binary.star_1 = merged_star_properties(binary.star_2,binary.star_1)
             else:
-                raise ValueError("binary.state='merged' but binary.event != 'oMerging1/2'")
+                raise FlowError("binary.state='merged' but binary.event != 'oMerging1/2'")
         else:
-            raise ValueError("step_merging initiated but binary.state != 'merged'")
+            raise FlowError("step_merging initiated but binary.state != 'merged'")
 
         binary.event = None
         if self.verbose:

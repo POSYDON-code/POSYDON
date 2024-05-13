@@ -42,6 +42,7 @@ from posydon.binary_evol.singlestar import STARPROPERTIES
 from posydon.utils.common_functions import PATH_TO_POSYDON
 from posydon.utils.common_functions import check_state_of_star
 from posydon.utils.common_functions import calculate_lambda_from_profile, calculate_Mejected_for_integrated_binding_energy
+from posydon.utils.posydonerror import FlowError
 
 
 warnings.simplefilter('always', UserWarning)
@@ -525,7 +526,7 @@ class StepCEE(object):
 
         # Check to make sure final orbital separation is positive
         if not (separation_postCEE > -self.CEE_tolerance_err):
-            raise Exception("CEE problem, negative postCEE separation")
+            raise ValueError("CEE problem, negative postCEE separation")
 
         if verbose:
             print("CEE alpha-lambda prescription")

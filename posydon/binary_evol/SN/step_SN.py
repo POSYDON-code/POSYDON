@@ -55,13 +55,14 @@ from posydon.binary_evol.flow_chart import (STAR_STATES_CO, STAR_STATES_CC,
                                             STAR_STATES_C_DEPLETION)
 
 from posydon.grids.MODELS import MODELS
+from posydon.utils.posydonerror import ModelError
+from posydon.utils.common_functions import set_binary_to_failed
 
 from pandas import read_csv
 from sklearn import neighbors
 from scipy.interpolate import interp1d
 
 import json
-
 
 path_to_Sukhbold_datasets = os.path.join(PATH_TO_POSYDON_DATA,
                                          "Sukhbold+16/")
@@ -743,8 +744,8 @@ class StepSN(object):
                 else:
                     for key in STARPROPERTIES:
                         setattr(star, key, None)
-                    star.state = "ERR"
-                    raise ValueError("FAILED core collapse!")
+                    set_binary_to_failed(self.binary)
+                    raise ModelError("FAILED core collapse!")
 
             elif self.mechanism in [self.Sukhbold16_engines,
                                     self.Patton20_engines,
@@ -824,8 +825,8 @@ class StepSN(object):
                     else:
                         for key in STARPROPERTIES:
                             setattr(star, key, None)
-                        star.state = "ERR"
-                        raise ValueError("Invalid core state", state)
+                        set_binary_to_failed(self.binary)
+                        raise ModelError("Invalid core state: " + str(state))
 
                 elif self.use_core_masses:
                     star.mass = m_grav
@@ -868,11 +869,12 @@ class StepSN(object):
                 else:
                     for key in STARPROPERTIES:
                         setattr(star, key, None)
-                    star.state = "ERR"
-                    raise ValueError("FAILED core collapse!")
+                    set_binary_to_failed(self.binary)
+                    raise ModelError("FAILED core collapse!")
 
         else:
-            raise ValueError(f"The star cannot collapse: star state {state}.")
+            set_binary_to_failed(self.binary)
+            raise ModelError(f"The star cannot collapse: star state {state}.")
 
         star.metallicity = star.metallicity_history[-1]
 
@@ -940,9 +942,7 @@ class StepSN(object):
                 m_PISN = None
 
             else:
-                raise ValueError(
-                    "This choice {} of PISN is not availabe!".format(self.PISN)
-                )
+                raise ValueError("This choice {} of PISN is not available!".format(self.PISN))
 
         if self.verbose:
             if m_PISN is None:
@@ -991,7 +991,7 @@ class StepSN(object):
                             warnings.warn('co/He core masses are zero! '
                                           'Setting m_WD=m_star!')
                     else:
-                        raise ValueError('Invalid co/He core masses!')
+                        raise ModelError('Invalid co/He core masses!')
                 f_fb = 1.0  # no SN the no kick is assumed
                 state = "WD"
 
@@ -1032,7 +1032,7 @@ class StepSN(object):
                             warnings.warn('co/He core masses are zero! '
                                           'Setting m_WD=m_star!')
                     else:
-                        raise ValueError('Invalid co/He core masses!')
+                        raise ModelError('Invalid co/He core masses!')
                 f_fb = 1.0  # no SN the no kick is assumed
                 state = "WD"
 
@@ -1072,7 +1072,7 @@ class StepSN(object):
                             warnings.warn('co/He core masses are zero! '
                                           'Setting m_WD=m_star!')
                     else:
-                        raise ValueError('Invalid co/He core masses!')
+                        raise ModelError('Invalid co/He core masses!')
                 f_fb = 1.0  # no SN the no kick is assumed
                 state = "WD"
 
@@ -1124,7 +1124,7 @@ class StepSN(object):
             m_He_core = star.he_core_mass_history[-1]  # M_sun
         else:
             raise ValueError(
-                "There are no informations in the evolutionary history"
+                "There is no information in the evolutionary history"
                 "about STAR_STATES_CC."
             )
         if m_core is None or np.isnan(m_core):
@@ -1364,7 +1364,7 @@ class StepSN(object):
                 # Mcore = binary.star_1.co_core_mass_history[-1]
             else:
                 raise ValueError(
-                    "There are no informations in the evolutionary history "
+                    "There is no information in the evolutionary history "
                     "about STAR_STATES_CC."
                 )
             M_compact_object = binary.star_1.mass
@@ -1390,6 +1390,9 @@ class StepSN(object):
                         sigma = self.sigma_kick_CCSN_NS
                     elif binary.star_1.state == 'BH':
                         sigma = self.sigma_kick_CCSN_BH
+                    elif binary.star_1.state == 'massless_remnant':
+                        # No kick on a massless object
+                        sigma = None
                     else:
                         raise ValueError("CCSN/PPISN/PISN only for NS/BH.")
                     # Kick for core-collapse SN
@@ -1421,8 +1424,7 @@ class StepSN(object):
                 mean_anomaly = binary.star_1.natal_kick_array[3]
                 # check that ONLY one value is passed and is of type float
                 if not isinstance(mean_anomaly, float):
-                    raise ValueError(
-                        "mean_anomaly must be a single float value.")
+                    raise ValueError("mean_anomaly must be a single float value.")
             else:
                 mean_anomaly = np.random.uniform(0, 2 * np.pi)
                 binary.star_1.natal_kick_array[3] = mean_anomaly
@@ -1461,7 +1463,7 @@ class StepSN(object):
                 # Mcore = binary.star_2.co_core_mass_history[-1]
             else:
                 raise ValueError(
-                    "There are no informations in the evolutionary history "
+                    "There is no information in the evolutionary history "
                     "about STAR_STATES_CC."
                 )
 
@@ -1487,6 +1489,9 @@ class StepSN(object):
                         sigma = self.sigma_kick_CCSN_NS
                     elif binary.star_2.state == 'BH':
                         sigma = self.sigma_kick_CCSN_BH
+                    elif binary.star_2.state == 'massless_remnant':
+                        # No kick on a massless object
+                        sigma = None
                     else:
                         raise ValueError("CCSN/PPISN/PISN only for NS/BH.")
                     # Kick for core-collapse SN
@@ -1513,8 +1518,7 @@ class StepSN(object):
                 mean_anomaly = binary.star_2.natal_kick_array[3]
                 # check that ONLY one value is passed and is of type float
                 if not isinstance(mean_anomaly, float):
-                    raise ValueError(
-                        "mean_anomaly must be a single float value.")
+                    raise ValueError("mean_anomaly must be a single float value.")
             else:
                 mean_anomaly = np.random.uniform(0, 2 * np.pi)
                 binary.star_2.natal_kick_array[3] = mean_anomaly
@@ -1792,7 +1796,7 @@ class StepSN(object):
                             )
                         binary.true_anomaly_second_SN = true_anomaly
                     else:
-                        raise ValueError("This should never happen!")
+                        raise ValueError(f"Binary is in SN step but binary state is not CC1 or CC2: {binary.state}")
 
                 # compute new orbital period before reseting the binary properties     
                 binary.state = "detached"
@@ -1969,7 +1973,7 @@ class StepSN(object):
             CO_core_mass = star.co_core_mass_at_He_depletion
 
             if (C_core_abundance is None) or (CO_core_mass is None):
-                raise ValueError('The history did not contain core masses at'
+                raise ModelError('The history did not contain core masses at'
                                  f' He depletion! {CO_core_mass}'
                                  f' {C_core_abundance}')
 
@@ -2224,7 +2228,7 @@ class Sukhbold16_corecollapse(object):
             # m_core = star.co_core_mass_history[-1]  # M_sun
             m_He_core = star.he_core_mass_history[-1]  # M_sun
         else:
-            raise ValueError("There are no informations in the evolutionary "
+            raise ValueError("There is no information in the evolutionary "
                              "history about STAR_STATES_CC.")
         k_result = int(self.stellar_type_classifier.predict([[m_He_core]])[0])
 
@@ -2246,7 +2250,7 @@ class Sukhbold16_corecollapse(object):
             m_rem = self.extrapolate_NS(m_He_core, self.mass_NS_interpolator)
             f_fb = 0.
         else:
-            raise Exception("Need a NS or BH to apply `Sukhbold16_corecollapse`.")
+            raise ValueError("Need a NS or BH to apply `Sukhbold16_corecollapse`.")
 
         return float(m_rem), f_fb, state
 
@@ -2485,7 +2489,7 @@ class Couch20_corecollapse(object):
             # m_core = star.co_core_mass_history[-1]      # M_sun
             m_He_core = star.he_core_mass_history[-1]   # M_sun
         else:
-            raise ValueError("There are no informations in the evolutionary "
+            raise ValueError("There is no information in the evolutionary "
                              "history about STAR_STATES_CC.")
         # single_star_equivalent_ZAMS = \
         #     self.stellar_ZAMS_classifier.predict([[m_He_core]])[0]
@@ -2515,7 +2519,7 @@ class Couch20_corecollapse(object):
             # f_fb = m_rem / m_He_core
             f_fb = 0.
         else:
-            raise Exception("Need a NS or BH to apply `Sukhbold16_corecollapse`.")
+            raise ValueError("Need a NS or BH to apply `Sukhbold16_corecollapse`.")
 
         return float(m_rem), f_fb, state
 
