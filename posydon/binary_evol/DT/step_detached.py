@@ -902,7 +902,7 @@ class detached_step:
                 f'{self.get_track_val("surface_h1", htrack, *sol.x):.4f}',
                 f'{self.get_track_val("he_core_mass", htrack, *sol.x):.3f}',
                 f'{self.get_track_val("center_c12", htrack, *sol.x):.4f}\n',
-                f'{self.get_track_val("co_core_mass", htrack, *sol.x):.4f}\n',
+                f'{self.get_track_val("co_core_mass", htrack, *sol.x):.3f}\n',
                 "The same values of the secondary at the end of the previous "
                 "step was = \n",
                 f'{star.mass:.3f}',
@@ -911,7 +911,7 @@ class detached_step:
                 f'{star.surface_he4:.4f}',
                 f'{star.surface_h1:.4f}',
                 f'{star.he_core_mass:.3f}',
-                f'{star.center_c12:.4f}'
+                f'{star.center_c12:.4f}',
                 f'{star.co_core_mass:.4f}'
             )
         return initials[0], initials[1], htrack
