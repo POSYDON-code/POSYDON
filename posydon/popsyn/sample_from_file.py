@@ -87,6 +87,11 @@ def get_samples_from_file(orbital_scheme='', **kwargs):
     else:
         raise KeyError("In get_samples_from_file no 'read_samples_from_file'"
                        " in kwargs.")
+    # Check for number of binaries and save its value
+    if 'number_of_binaries' in kwargs:
+        number_of_binaries = kwargs['number_of_binaries']
+    else:
+        number_of_binaries = 0
     # Check and read file into dataframe
     if os.path.isfile(filename):
         df = pd.read_csv(filename)
@@ -101,8 +106,8 @@ def get_samples_from_file(orbital_scheme='', **kwargs):
     if key=='':
         warnings.warn(f'No eccentricity column found in {filename}, hence get'
                       ' independent random ones.')
-        eccentricity_set = generate_eccentricities(number_of_binaries=set_n,\
-                                                   **kwargs)
+        kwargs['number_of_binaries'] = set_n
+        eccentricity_set = generate_eccentricities(**kwargs)
     else:
         eccentricity_set = np.array(df[key])
 
@@ -111,7 +116,8 @@ def get_samples_from_file(orbital_scheme='', **kwargs):
     if key=='':
         warnings.warn(f'No primary mass column found in {filename}, hence get'
                       ' independent random ones.')
-        m1_set = generate_primary_masses(number_of_binaries=set_n, **kwargs)
+        kwargs['number_of_binaries'] = set_n
+        m1_set = generate_primary_masses(**kwargs)
     else:
         m1_set = np.array(df[key])
 
@@ -121,8 +127,8 @@ def get_samples_from_file(orbital_scheme='', **kwargs):
     if key=='':
         warnings.warn(f'No secondary mass column found in {filename}, hence'
                       ' get independent random ones.')
-        m2_set = generate_secondary_masses(m1_set, number_of_binaries=set_n,\
-                                           **kwargs)
+        kwargs['number_of_binaries'] = set_n
+        m2_set = generate_secondary_masses(m1_set, **kwargs)
     else:
         m2_set = np.array(df[key])
 
@@ -133,8 +139,8 @@ def get_samples_from_file(orbital_scheme='', **kwargs):
         if key=='':
             warnings.warn(f'No separation column found in {filename}, hence'
                           ' get independent random ones.')
-            orbital_scheme_set = generate_orbital_separations(\
-                                  number_of_binaries=set_n, **kwargs)
+            kwargs['number_of_binaries'] = set_n
+            orbital_scheme_set = generate_orbital_separations(**kwargs)
         else:
             orbital_scheme_set = np.array(df[key])
     elif orbital_scheme == 'period':
@@ -143,15 +149,14 @@ def get_samples_from_file(orbital_scheme='', **kwargs):
         if key=='':
             warnings.warn(f'No period column found in {filename}, hence get'
                           ' independent random ones.')
-            orbital_scheme_set = generate_orbital_periods(m1_set,\
-                                  number_of_binaries=set_n, **kwargs)
+            kwargs['number_of_binaries'] = set_n
+            orbital_scheme_set = generate_orbital_periods(m1_set, **kwargs)
         else:
             orbital_scheme_set = np.array(df[key])
     else:
         raise ValueError("Allowed orbital schemes are separation or period.")
 
-    if 'number_of_binaries' in kwargs:
-        number_of_binaries = kwargs['number_of_binaries']
+    if number_of_binaries>0:
         if 'index' in kwargs:
             index = kwargs['index']
         else:
