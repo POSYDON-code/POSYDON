@@ -18,7 +18,7 @@ from mpi4py import MPI
 import pandas as pd
 import traceback
 from collections import Counter
-from posydon.spectral_synthesis.spectral_tools import load_posydon_population
+from posydon.spectral_synthesis.spectral_tools import load_posydon_population,isochrome_weight,IMF_WEIGHT
 from posydon.spectral_synthesis.spectral_grids import spectral_grids
 from posydon.spectral_synthesis.default_options import default_kwargs
 from posydon.spectral_synthesis.generate_spectrum import generate_spectrum,regenerate_spectrum
@@ -71,7 +71,8 @@ class population_spectra():
         self.scaling_factor = kwargs.get('scaling_factor')
         self.grid_flux = self.grids.grid_flux
         self.spectral_type = kwargs.get('spectral_type',False)
-
+        self.isochromes = kwargs.get('isochromes',False)
+        self.mini_file = self.kwargs['mini_file']
     def load_population(self):
         """Function to load up a POSYDON population."""
         self.population = load_posydon_population(self.file)
@@ -120,7 +121,10 @@ class population_spectra():
             self.load_population()
             load_end = datetime.datetime.now()
             print('Loading the population took',load_end - load_start,'s')
-            pop = self.population     
+            pop = self.population
+        if self.isochromes:
+            weights = IMF_WEIGHT(self.mini_file)
+
         pop_spectrum = {}
         if self.save_data:
             labels_S1 = []
@@ -134,6 +138,8 @@ class population_spectra():
         for i,binary in pop.iterrows():
             spectrum_1,state_1,label1 = generate_spectrum(self.grids,binary,'S1',**self.kwargs)
             spectrum_2,state_2,label2 = generate_spectrum(self.grids,binary,'S2',**self.kwargs)
+            if self.isochromes and spectrum_1 is not None:
+                spectrum_1 = spectrum_1*weights[i]
             if self.save_data:
                 labels_S1.append(label1)
                 labels_S2.append(label2)
