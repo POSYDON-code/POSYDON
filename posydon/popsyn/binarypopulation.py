@@ -866,26 +866,30 @@ class BinaryGenerator:
         default_index = output['binary_index'].item()
         binary_fraction = output['binary_fraction']
 
+        formation_time = output['time'].item()
+        m1 = output['S1_mass'].item()
+        Z_div_Zsun = kwargs.get('metallicity', 1.)
+        zams_table = {2.: 2.915e-01,
+                      1.: 2.703e-01,
+                      0.45: 2.586e-01,
+                      0.2: 2.533e-01,
+                      0.1: 2.511e-01,
+                      0.01: 2.492e-01,
+                      0.001: 2.49e-01,
+                      0.0001: 2.49e-01}
+        Z = Z_div_Zsun*Zsun
+        if Z_div_Zsun in zams_table.keys():
+            Y = zams_table[Z_div_Zsun]
+        else:
+            raise KeyError(f"{Z_div_Zsun} is a not defined metallicity")
+        X = 1. - Z - Y
+        kick1 = output['S1_natal_kick_array'][0]
+
         if self.RNG.uniform() < binary_fraction:
-            formation_time = output['time'].item()
             separation = output['separation'].item()
             orbital_period = output['orbital_period'].item()
             eccentricity = output['eccentricity'].item()
-            m1 = output['S1_mass'].item()
             m2 = output['S2_mass'].item()
-            Z_div_Zsun = kwargs.get('metallicity', 1.)
-            zams_table = {2.: 2.915e-01,
-                          1.: 2.703e-01,
-                          0.45: 2.586e-01,
-                          0.2: 2.533e-01,
-                          0.1: 2.511e-01,
-                          0.01: 2.492e-01,
-                          0.001: 2.49e-01,
-                          0.0001: 2.49e-01}
-            Y = zams_table[Z_div_Zsun]
-            Z = Z_div_Zsun*Zsun
-            X = 1. - Z - Y
-            kick1 = output['S1_natal_kick_array'][0]
             kick2 = output['S2_natal_kick_array'][0]
 
             binary_params = dict(
@@ -915,24 +919,9 @@ class BinaryGenerator:
             )
         #If binary_fraction not default a initially single star binary is created.
         else:
-            formation_time = output['time'].item()
             separation = np.nan
             orbital_period = np.nan
             eccentricity = np.nan
-            m1 = output['S1_mass'].item()
-            Z_div_Zsun = kwargs.get('metallicity', 1.)
-            zams_table = {2.: 2.915e-01,
-                          1.: 2.703e-01,
-                          0.45: 2.586e-01,
-                          0.2: 2.533e-01,
-                          0.1: 2.511e-01,
-                          0.01: 2.492e-01,
-                          0.001: 2.49e-01,
-                          0.0001: 2.49e-01}
-            Y = zams_table[Z_div_Zsun]
-            Z = Z_div_Zsun*Zsun
-            X = 1. - Z - Y
-            kick1 = output['S1_natal_kick_array'][0]
 
             binary_params = dict(
                 index=kwargs.get('index', default_index),
