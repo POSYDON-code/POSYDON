@@ -13,6 +13,8 @@ import numpy as np
 import astropy.constants as con
 import astropy.units as unt
 import pandas as pd
+from scipy import integrate
+
 #Constants
 Zo = 0.0142
 key_traslation = {
@@ -88,7 +90,7 @@ def load_posydon_population(population_file):
 
     history = pd.read_hdf(population_file, key='history',usecols = keys_to_load)
     max_time = find_max_time(history)
-    final_stars = history[(history.time == max_time)]
+    final_stars = history[(history.time == max_time) & (history.event == 'END')]
     zams_stars = history[(history.time == 0.0)]
     for col in final_stars:
         if col not in keys_to_save:
@@ -223,3 +225,74 @@ def smooth_flux_negatives(lam_f, flux):
             j += 1
 
     return flux_c
+
+def isochrome_weight(m1,IMF_type='Salpeter'):
+    #We will normalise the spectrum for a total mass of 1e6 M_sun
+    if IMF_type == 'Salpeter':
+        a = 2.35
+    else:
+        raise ValueError("IMF type not compatible")
+    m_min = 0.2
+    m_max = 120
+    norm = ( (-a + 2 ))/(m_max**(-a + 2) - m_min**(-a + 2))
+    if m1 > m_max or m1 < m_min: 
+        weight = 0
+    elif pd.isna(m1):
+        weight = 0
+    else:
+        weight = norm*m1**(-a)
+    return weight
+
+
+
+def IMF_WEIGHT(mini):
+    """
+    Make the weights a dictionary that for every m1 there is the weight according to fsps
+    !weight each star by the initial mass function (IMF)
+    !such that the total initial population consists of 
+    !one solar mass of stars.
+
+    !This weighting scheme assumes that the luminosity, mass, etc.
+    !does not vary within the mass bin.  The point is that we
+    !want each element to represent the whole bin, from 
+    !mass+/-0.5dm, rather than just the values at point i.
+    !Then every intergral over mass is just a sum.
+
+    USE sps_vars
+    USE sps_utils, ONLY : imf, funcint
+    IMPLICIT NONE
+
+    REAL(SP), INTENT(inout), DIMENSION(nm) :: wght
+    REAL(SP), INTENT(in), DIMENSION(nm)    :: mini
+    INTEGER, INTENT(in) :: nmass
+    INTEGER  :: i
+    REAL(SP) :: m1,m2
+
+    !--------------------------------------------------------!
+    !--------------------------------------------------------!
+    """
+    wght = {}
+    imf_lower_limit = 0.2
+    imf_upper_limit = 120
+    imf_type = 0 
+    a = 2.35
+    for i in range(len(mini)):
+        if mini[i] < imf_lower_limit or mini[i] > imf_upper_limit:
+            continue
+        if i ==0:
+            m1 = imf_lower_limit
+        else:
+            m1 = mini[i] - 0.5*(mini[i]-mini[i-1])
+        if i == len(mini):
+            m2 = mini[i]
+        else: 
+            m2 = mini[i] + 0.5*(mini[i+1]-mini[i])
+        if m2 < m1:
+            print('IMF_WEIGHT WARNING: non-monotonic mass!',m1,m2,m2-m1)
+            continue
+        if m2 == m1:
+            continue
+        wght[i] = integrate.quad(lambda x: x**(-a),m1,m2)[0]/integrate.quad(lambda x: x*x**(-a),imf_lower_limit,imf_upper_limit)[0]
+    #normalize the weights as an integral from lower to upper limits
+    
+    return wght
