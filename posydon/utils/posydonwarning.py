@@ -3,6 +3,8 @@
 
 __authors__ = [
     "Matthias Kruckow <Matthias.Kruckow@unige.ch>",
+    "Monica Gallegos-Garcia <monicagallegosgarcia@u.northwestern.edu>",
+    "Camille Liotine <cliotine@u.northwestern.edu>"
 ]
 
 
@@ -16,6 +18,11 @@ class ReplaceValueWarning(POSYDONWarning):
     """Warning that a value got replaced."""
     def __init__(self):
         warning.filterwarnings("default", category=ReplaceValueWarning)
+
+class InterpolationWarning(POSYDONWarning):
+    """Warning that a value got replaced."""
+    def __init__(self):
+        warning.filterwarnings("default", category=InterpolationWarning)
 
 
 # The base class of all warnings is "Warning", which is derived from Exception
