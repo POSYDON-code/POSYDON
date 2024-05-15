@@ -72,7 +72,7 @@ class population_spectra():
         self.grid_flux = self.grids.grid_flux
         self.spectral_type = kwargs.get('spectral_type',False)
         self.isochromes = kwargs.get('isochromes',False)
-        self.mini_file = self.kwargs['mini_file']
+        self.mini_file = kwargs.get('mini_file',None)
     def load_population(self):
         """Function to load up a POSYDON population."""
         self.population = load_posydon_population(self.file)
