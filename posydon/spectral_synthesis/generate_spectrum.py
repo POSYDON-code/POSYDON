@@ -174,9 +174,11 @@ def generate_spectrum(grids,star,i,**kwargs):
                 Flux = grids.grid_flux(label,**x)*4*np.pi*1e4/Lo
             elif label == 'WR_grid':
                 Flux = grids.grid_flux(label,**x)*4*np.pi*1e4/Lo *(L/10**5.3)
+                #Replace the negative values for WR
+                Flux[Flux < 0] = 1e-50
             else:
                 Flux = grids.grid_flux(label,**x)*R**2*4*np.pi*1e4/Lo
-            if np.min(Flux) < 0 and label !=  'WR_grid': 
+            if np.min(Flux) < 0: 
                 Flux = smooth_flux_negatives(grids.lam_c,Flux.value)
                 return Flux,star['state'],label
             return Flux.value,star['state'],label
@@ -237,9 +239,9 @@ def rename_star_state(star,i):
             star[f'{i}_state'] = 'stripped_He_star'
             print('here!')
         else:
-           star[f'{i}_state'] = 'WR_star'
-           star[f'{i}_Rt'] = calculated_Rt(star,i)
-           print('WR star!')
+            star[f'{i}_state'] = 'WR_star'
+            star[f'{i}_Rt'] = calculated_Rt(star,i)
+            print('WR star!')
 
 def calculated_Rt(star,i):
     M_dot = 10**copy(star[f'{i}_lg_mdot'])
