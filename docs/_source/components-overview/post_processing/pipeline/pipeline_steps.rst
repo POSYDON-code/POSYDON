@@ -204,7 +204,6 @@ the type of the rerun specifying the logic and changes.
     HeMB_MLTp_mesh         workaround      it turns off magnetic braking for He stars; it uses less extreme parameters of the MLT++; it changes some more input values to change the resulation close to the surface
     more_mesh              workaround      it modifies the remeshing and allows for more cells in MESA
     conv_bdy_weight        caution         it disabled the convective_bdy_weight where this caused segmentation faults (this avoids a bug in the old MESA version r11701)
-    timestep_MTlimit       caution         it linearly decreases mass transfer when MESA takes timesteps less than 10 yrs and fully turns it off w/ steps less than 1 day. This helps numerical convergence of some low mass accretors.
-    egrav_Pgas_dXdt_terms  caution         it switches the basic variable MESA uses to solve eps_grav from density to Pgas, and tells MESA to use the composition terms when solving. This helps some He stars experiencing numerical issues.
+    timestep_MTlimit       caution         it enables MESA's dedt-form of the energy equation for numerical stability during superthermal mass transfer and enables lnPgas_flag, v_flag, and a boosted wind to help stripped He stars converge.
     =====================  ==============  ===========
 
