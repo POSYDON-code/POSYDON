@@ -20,7 +20,8 @@ __authors__ = [
     "Konstantinos Kovlakas <Konstantinos.Kovlakas@unige.ch>",
     "Devina Misra <devina.misra@unige.ch>",
     "Simone Bavera <Simone.Bavera@unige.ch>",
-    "Max Briel <max.briel@gmail.com>"
+    "Max Briel <max.briel@gmail.com>",
+    "Matthias Kruckow <Matthias.Kruckow@unige.ch>",
 ]
 
 
@@ -45,6 +46,8 @@ from posydon.popsyn.star_formation_history import get_formation_times
 
 from posydon.popsyn.independent_sample import (generate_independent_samples,
                                                binary_fraction_value)
+from posydon.popsyn.sample_from_file import (get_samples_from_file,
+                                             get_kick_samples_from_file)
 from posydon.utils.common_functions import (orbital_period_from_separation,
                                             orbital_separation_from_period)
 from posydon.popsyn.defaults import default_kwargs
@@ -517,7 +520,14 @@ class PopulationManager:
         self.history_dfs = []
         self.oneline_dfs = []
 
-        self.binary_generator = BinaryGenerator(**kwargs)
+        if (('read_samples_from_file' in self.kwargs) and
+            (self.kwargs['read_samples_from_file']!='')):
+            self.binary_generator = BinaryGenerator(\
+                                     sampler=get_samples_from_file, **kwargs)
+        else:
+            self.binary_generator = BinaryGenerator(\
+                                     sampler=generate_independent_samples,\
+                                     **kwargs)
         self.entropy = self.binary_generator.entropy
 
         if file_name:
@@ -806,15 +816,30 @@ class BinaryGenerator:
 
         # indices
         indices = np.arange(self._num_gen, self._num_gen+N_binaries, 1)
+        
+        # kicks
+        if 'read_samples_from_file' in kwargs:
+            kick1, kick2 = get_kick_samples_from_file(**kwargs)
+        else:
+            if 'number_of_binaries' in kwargs:
+                number_of_binaries = kwargs['number_of_binaries']
+            else:
+                number_of_binaries = 1
+            kick1 = np.array(number_of_binaries*[[None, None, None, None]])
+            kick2 = np.array(number_of_binaries*[[None, None, None, None]])
+        
+        # output
         output_dict = {
             'binary_index': indices,
-            'binary_fraction':binary_fraction,
+            'binary_fraction': binary_fraction,
             'time': formation_times,
             'separation': separation,
             'eccentricity': eccentricity,
             'orbital_period': orbital_period,
             'S1_mass': m1,
             'S2_mass': m2,
+            'S1_natal_kick_array': kick1,
+            'S2_natal_kick_array': kick2,
         }
         self._num_gen += N_binaries
         return output_dict
@@ -841,25 +866,31 @@ class BinaryGenerator:
         default_index = output['binary_index'].item()
         binary_fraction = output['binary_fraction']
 
+        formation_time = output['time'].item()
+        m1 = output['S1_mass'].item()
+        Z_div_Zsun = kwargs.get('metallicity', 1.)
+        zams_table = {2.: 2.915e-01,
+                      1.: 2.703e-01,
+                      0.45: 2.586e-01,
+                      0.2: 2.533e-01,
+                      0.1: 2.511e-01,
+                      0.01: 2.492e-01,
+                      0.001: 2.49e-01,
+                      0.0001: 2.49e-01}
+        Z = Z_div_Zsun*Zsun
+        if Z_div_Zsun in zams_table.keys():
+            Y = zams_table[Z_div_Zsun]
+        else:
+            raise KeyError(f"{Z_div_Zsun} is a not defined metallicity")
+        X = 1. - Z - Y
+        kick1 = output['S1_natal_kick_array'][0]
+
         if self.RNG.uniform() < binary_fraction:
-            formation_time = output['time'].item()
             separation = output['separation'].item()
             orbital_period = output['orbital_period'].item()
             eccentricity = output['eccentricity'].item()
-            m1 = output['S1_mass'].item()
             m2 = output['S2_mass'].item()
-            Z_div_Zsun = kwargs.get('metallicity', 1.)
-            zams_table = {2.: 2.915e-01,
-                          1.: 2.703e-01,
-                          0.45: 2.586e-01,
-                          0.2: 2.533e-01,
-                          0.1: 2.511e-01,
-                          0.01: 2.492e-01,
-                          0.001: 2.49e-01,
-                          0.0001: 2.49e-01}
-            Y = zams_table[Z_div_Zsun]
-            Z = Z_div_Zsun*Zsun
-            X = 1. - Z - Y
+            kick2 = output['S2_natal_kick_array'][0]
 
             binary_params = dict(
                 index=kwargs.get('index', default_index),
@@ -876,6 +907,7 @@ class BinaryGenerator:
                 metallicity=Z,
                 center_h1=X,
                 center_he4=Y,
+                natal_kick_array=kick1,
             )
             star2_params = dict(
                 mass=m2,
@@ -883,26 +915,13 @@ class BinaryGenerator:
                 metallicity=Z,
                 center_h1=X,
                 center_he4=Y,
+                natal_kick_array=kick2,
             )
         #If binary_fraction not default a initially single star binary is created.
         else:
-            formation_time = output['time'].item()
             separation = np.nan
             orbital_period = np.nan
             eccentricity = np.nan
-            m1 = output['S1_mass'].item()
-            Z_div_Zsun = kwargs.get('metallicity', 1.)
-            zams_table = {2.: 2.915e-01,
-                          1.: 2.703e-01,
-                          0.45: 2.586e-01,
-                          0.2: 2.533e-01,
-                          0.1: 2.511e-01,
-                          0.01: 2.492e-01,
-                          0.001: 2.49e-01,
-                          0.0001: 2.49e-01}
-            Y = zams_table[Z_div_Zsun]
-            Z = Z_div_Zsun*Zsun
-            X = 1. - Z - Y
 
             binary_params = dict(
                 index=kwargs.get('index', default_index),
@@ -919,6 +938,7 @@ class BinaryGenerator:
                 metallicity=Z,
                 center_h1=X,
                 center_he4=Y,
+                natal_kick_array=kick1,
             )
             star2_params = properties_massless_remnant()
 
