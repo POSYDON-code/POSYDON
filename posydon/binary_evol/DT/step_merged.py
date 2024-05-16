@@ -131,6 +131,7 @@ class MergedStep(IsolatedStep):
         def mass_weighted_avg(star1=star_base,star2=comp, abundance_name="center_h1", mass_weight1="mass", mass_weight2=None):
             A1 = getattr(star1, abundance_name)
             A2 = getattr(star2, abundance_name)
+
             if mass_weight1 == "H-rich_envelope_mass":
                 M1 = getattr(star1, "mass") - getattr(star1, "he_core_mass")
             elif mass_weight1 == "He-rich_envelope_mass":
@@ -146,6 +147,11 @@ class MergedStep(IsolatedStep):
                 M2 = getattr(star2, "he_core_mass") - getattr(star2, "co_core_mass")
             else:
                 M2 = getattr(star2, mass_weight2)
+
+            if self.verbose:
+                print(abundance_name, mass_weight1,mass_weight2)
+                print("A_base, M_base_abundance, A_comp, M_comp_abundance", A1, M1, A2, M2)
+                print("mass_weighted_avg = ", (A1*M1 + A2*M2 ) / (M1+M2))
             return (A1*M1 + A2*M2 ) / (M1+M2)
 
         # MS + MS
