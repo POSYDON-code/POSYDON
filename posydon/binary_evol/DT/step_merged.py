@@ -88,7 +88,7 @@ class MergedStep(IsolatedStep):
         if self.verbose:
             print("Before Merger", binary.star_1.state,binary.star_2.state,binary.state, binary.event)
             print("M1 , M2, he_core_mass1, he_core_mass2, co_core_mass1, co_core_mass2: ", binary.star_1.mass,binary.star_2.mass, binary.star_1.he_core_mass, binary.star_2.he_core_mass, binary.star_1.co_core_mass, binary.star_2.co_core_mass)
-            print("star_1.center_he4, star_2.center_he4, star_1.surface_he4, star_2.surface_he4: ",  binary.star_1.center_he4,binary.star_2.center_he4, binary.star_1.surface_he4,binary.star_2.surface_he4)
+            print("star_1.center_h1, star_2.center_h1, star_1.center_he4, star_2.center_he4, star_1.center_c12, star_2.center_c12, star_1.surface_he4, star_2.surface_he4: ",  binary.star_1.center_h1,binary.star_2.center_h1, binary.star_1.center_he4,binary.star_2.center_he4, binary.star_1.center_c12,binary.star_2.center_c12, binary.star_1.surface_he4,binary.star_2.surface_he4)
         if binary.state == "merged":
             if binary.event == 'oMerging1':
                 binary.star_1,binary.star_2 = merged_star_properties(binary.star_1,binary.star_2)
@@ -103,10 +103,10 @@ class MergedStep(IsolatedStep):
             print("After Merger", binary.star_1.state,binary.star_2.state,binary.state, binary.event)
             if binary.event == 'oMerging1':
                 print("M_merged , he_core_mass, co_core_mass merged: ", binary.star_1.mass, binary.star_1.he_core_mass, binary.star_1.co_core_mass)
-                print("center_he4, center_c12, surface_he4: ",  binary.star_1.center_he4, binary.star_1.center_c12, binary.star_1.surface_he4)
+                print("center_h1, center_he4, center_c12, surface_h1, surface_he4: ", binary.star_1.center_h1, binary.star_1.center_he4, binary.star_1.center_c12, binary.star_1.surface_h1, binary.star_1.surface_he4)
             elif binary.event == 'oMerging2':
                 print("M_merged , he_core_mass, co_core_mass merged: ", binary.star_2.mass, binary.star_2.he_core_mass, binary.star_2.co_core_mass)
-                print("center_he4, center_c12, surface_he4: ",  binary.star_2.center_he4, binary.star_2.center_c12, binary.star_2.surface_he4)
+                print("center_h1, center_he4, center_c12, surface_h1, surface_he4: ", binary.star_2.center_h1, binary.star_2.center_he4, binary.star_2.center_c12, binary.star_2.surface_h1, binary.star_2.surface_he4)
 
         binary.event = None
         super().__call__(binary)
@@ -499,7 +499,10 @@ class MergedStep(IsolatedStep):
                 #WD is considered a stripped CO core
                 # add total and core masses
                 for key in ["mass", "he_core_mass", "c_core_mass", "o_core_mass", "co_core_mass"]:
-                    current = getattr(merged_star, key) + getattr(comp, "mass")
+                    if key not in ["c_core_mass", "o_core_mass"]:
+                        current = getattr(merged_star, key) + getattr(comp, key)
+                    else:
+                        current = getattr(merged_star, key) + getattr(comp, "co_core_mass")
                     setattr(merged_star, key,current)
                 # weighted central abundances if merging cores. Else only from star_base
 
@@ -511,10 +514,10 @@ class MergedStep(IsolatedStep):
                     merged_star.center_o16 = comp.center_o16
                 elif (comp.co_core_mass is not None and star_base.co_core_mass > 0):
                     merged_star.center_h1 = mass_weighted_avg(mass_weight1="co_core_mass")
-                    merged_star.center_he4 = mass_weighted_avg(abundance_name = "center_he4", mass_weight1="co_core_mass", mass_weight2="mass")
-                    merged_star.center_c12 = mass_weighted_avg(abundance_name = "center_c12", mass_weight1="co_core_mass", mass_weight2="mass")
-                    merged_star.center_n14 = mass_weighted_avg(abundance_name = "center_n14", mass_weight1="co_core_mass", mass_weight2="mass")
-                    merged_star.center_o16 = mass_weighted_avg(abundance_name = "center_o16", mass_weight1="co_core_mass", mass_weight2="mass")
+                    merged_star.center_he4 = mass_weighted_avg(abundance_name = "center_he4", mass_weight1="co_core_mass")
+                    merged_star.center_c12 = mass_weighted_avg(abundance_name = "center_c12", mass_weight1="co_core_mass")
+                    merged_star.center_n14 = mass_weighted_avg(abundance_name = "center_n14", mass_weight1="co_core_mass")
+                    merged_star.center_o16 = mass_weighted_avg(abundance_name = "center_o16", mass_weight1="co_core_mass")
                 else:
                     warnings.warn("weird combination of CO core masses during merging")
 
