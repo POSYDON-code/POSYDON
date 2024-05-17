@@ -56,6 +56,7 @@ from posydon.binary_evol.flow_chart import (STAR_STATES_CO, STAR_STATES_CC,
 
 from posydon.grids.MODELS import MODELS
 from posydon.utils.posydonerror import ModelError
+from posydon.utils.posydonwarning import InterpolationWarning
 from posydon.utils.common_functions import set_binary_to_failed
 
 from pandas import read_csv
@@ -532,7 +533,7 @@ class StepSN(object):
                     warnings.warn(f'{MODEL_NAME_SEL}: The collapsed star '
                                      'was not interpolated! If use_profiles '
                                      'or use_core_masses is set to True, '
-                                     'continue with the collapse.')                 
+                                     'continue with the collapse.', InterpolationWarning)                 
                 else:
                     # store some properties of the star object
                     # to be used for collapse verification
