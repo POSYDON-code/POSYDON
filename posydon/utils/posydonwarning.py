@@ -24,11 +24,6 @@ class InterpolationWarning(POSYDONWarning):
     def __init__(self):
         warnings.filterwarnings("default", category=InterpolationWarning)
 
-class InterpolationWarning(POSYDONWarning):
-    """Warning that a value got replaced."""
-    def __init__(self):
-        warning.filterwarnings("default", category=InterpolationWarning)
-
 
 # The base class of all warnings is "Warning", which is derived from Exception
 #
