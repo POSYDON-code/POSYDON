@@ -20,9 +20,19 @@ class ReplaceValueWarning(POSYDONWarning):
         warnings.filterwarnings("default", category=ReplaceValueWarning)
 
 class InterpolationWarning(POSYDONWarning):
-    """Warning related to interpolation during binary evolution."""
+    """Warnings related to interpolation during binary evolution."""
     def __init__(self):
         warnings.filterwarnings("default", category=InterpolationWarning)
+
+class ClassificationWarning(POSYDONWarning):
+    """Warnings related to interpolation during binary evolution."""
+    def __init__(self):
+        warnings.filterwarnings("default", category=ClassificationWarning)
+
+class ApproximationWarning(POSYDONWarning):
+    """Warnings related to interpolation during binary evolution."""
+    def __init__(self):
+        warnings.filterwarnings("default", category=ApproximationWarning)
 
 
 # The base class of all warnings is "Warning", which is derived from Exception

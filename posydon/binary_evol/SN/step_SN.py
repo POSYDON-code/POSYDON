@@ -56,7 +56,7 @@ from posydon.binary_evol.flow_chart import (STAR_STATES_CO, STAR_STATES_CC,
 
 from posydon.grids.MODELS import MODELS
 from posydon.utils.posydonerror import ModelError
-from posydon.utils.posydonwarning import InterpolationWarning
+from posydon.utils.posydonwarning import InterpolationWarning, ApproximationWarning, ClassificationWarning
 from posydon.utils.common_functions import set_binary_to_failed
 
 from pandas import read_csv
@@ -572,10 +572,9 @@ class StepSN(object):
                     # 1. Check if SN_type and star state match                    
                     # Non-matching SN_type and star state
                     if not check_SN_CO_match(star):
-                        # raise a warning
                         warnings.warn(f'{MODEL_NAME_SEL}: The SN_type '
                                       'does not match the predicted CO! '
-                                      'Recalculating the SN_type and CO')
+                                      'Recalculating the SN_type and CO.', ClassificationWarning)
                         # recalculate the SN_type and CO
                         # change some star properties back 
                         m_PISN = self.PISN_prescription(pre_SN_star)
@@ -592,10 +591,8 @@ class StepSN(object):
                         # check if the new SN_type matches new SN_type
                         if not check_SN_CO_match(star):
                             # still doesn't match
-                            # raise a warning
-                            warnings.warn('The SN_type still does not match. '
-                                          'Forced the SN type to match the '
-                                          'predicted CO.')
+                            warnings.warn('The SN_type still does not match the predicted CO. '
+                                          'Now forcing the SN_type and CO to match.', ClassificationWarning)
                             if star.state == 'WD':
                                 star.SN_type = 'WD'
                             elif star.state == 'NS' or star.state == 'BH':
@@ -987,12 +984,12 @@ class StepSN(object):
                         m_rembar = m_star
                         if ((m_core < 0.)or(m_He_core < 0.)):
                             warnings.warn('Invalid co/He core masses! '
-                                          'Setting m_WD=m_star!')
+                                          'Setting m_WD=m_star!', ApproximationWarning)
                         else:
                             warnings.warn('co/He core masses are zero! '
-                                          'Setting m_WD=m_star!')
+                                          'Setting m_WD=m_star!', ApproximationWarning)
                     else:
-                        raise ModelError('Invalid co/He core masses!')
+                        raise ModelError('Invalid co/He core masses! Cannot complete SN.')
                 f_fb = 1.0  # no SN the no kick is assumed
                 state = "WD"
 
@@ -1028,12 +1025,12 @@ class StepSN(object):
                         m_rembar = m_star
                         if ((m_core < 0.)or(m_He_core < 0.)):
                             warnings.warn('Invalid co/He core masses! '
-                                          'Setting m_WD=m_star!')
+                                          'Setting m_WD=m_star!', ApproximationWarning)
                         else:
                             warnings.warn('co/He core masses are zero! '
-                                          'Setting m_WD=m_star!')
+                                          'Setting m_WD=m_star!', ApproximationWarning)
                     else:
-                        raise ModelError('Invalid co/He core masses!')
+                        raise ModelError('Invalid co/He core masses! Cannot complete SN.')
                 f_fb = 1.0  # no SN the no kick is assumed
                 state = "WD"
 
@@ -1068,12 +1065,12 @@ class StepSN(object):
                         m_rembar = m_star
                         if ((m_core < 0.)or(m_He_core < 0.)):
                             warnings.warn('Invalid co/He core masses! '
-                                          'Setting m_WD=m_star!')
+                                          'Setting m_WD=m_star!', ApproximationWarning)
                         else:
                             warnings.warn('co/He core masses are zero! '
-                                          'Setting m_WD=m_star!')
+                                          'Setting m_WD=m_star!', ApproximationWarning)
                     else:
-                        raise ModelError('Invalid co/He core masses!')
+                        raise ModelError('Invalid co/He core masses! Cannot complete SN.')
                 f_fb = 1.0  # no SN the no kick is assumed
                 state = "WD"
 
