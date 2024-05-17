@@ -15,7 +15,7 @@ class POSYDONWarning(Warning):
 class ReplaceValueWarning(POSYDONWarning):
     """Warning that a value got replaced."""
     def __init__(self):
-        warning.filterwarnings("default", category=ReplaceValueWarning)
+        warnings.filterwarnings("default", category=ReplaceValueWarning)
 
 
 # The base class of all warnings is "Warning", which is derived from Exception
