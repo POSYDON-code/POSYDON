@@ -108,28 +108,42 @@ COMPRESSIONS = {
 
 
 def create_grid_slice(i, path_to_csv_file, verbose=False, overwrite_psygrid=True):
-    """Creates a new PSyGrid slice."""
+    """Creates a new PSyGrid slice.
+
+    Parameters
+    ----------
+    i : int
+        Index in csv file.
+    path_to_csv_file : str
+        Path to csv file.
+    verbose : bool
+        Enable/Disable additional output.
+    overwrite_psygrid : bool
+        Whether existing file(s) should be overwritten.
+    """
     
     # read csv file
     if os.path.exists(path_to_csv_file):
         df = pd.read_csv(path_to_csv_file)
     else:
-        raise ValueError(f'{path_to_csv_file} not found!')
+        raise FileNotFoundError(f'{path_to_csv_file} not found!')
+    if i not in df.index:
+        raise KeyError(f'Index={i} not available in {path_to_csv_file}.')
     # get values from csv file
     if 'path_to_grid' in df.keys():
         grid_path = df.loc[i,'path_to_grid']
         if not os.path.isdir(grid_path):
-            raise ValueError(f'{grid_path} not found!')
+            raise NotADirectoryError(f'{grid_path} not found!')
     else:
-        raise ValueError(f'No path_to_grid in {path_to_csv_file}')
+        raise KeyError(f'No path_to_grid in {path_to_csv_file}')
     if 'compression' in df.keys():
         compression = df.loc[i,'compression']
     else:
-        raise ValueError(f'No compression in {path_to_csv_file}')
+        raise KeyError(f'No compression in {path_to_csv_file}')
     if 'grid_type' in df.keys():
         grid_type = df.loc[i,'grid_type']
     else:
-        raise ValueError(f'No grid_type in {path_to_csv_file}')
+        raise KeyError(f'No grid_type in {path_to_csv_file}')
     if 'stop_before_carbon_depletion' in df.keys():
         stop_before_carbon_depletion = df.loc[i,'stop_before_carbon_depletion']
         if 'HMS' not in grid_type:
@@ -188,13 +202,25 @@ def create_grid_slice(i, path_to_csv_file, verbose=False, overwrite_psygrid=True
 
 
 def combine_grid_slices(i, path_to_csv_file, verbose=False):
-    """Combining grid slices to one grid."""
+    """Combining grid slices to one grid.
+
+    Parameters
+    ----------
+    i : int
+        Index in csv file.
+    path_to_csv_file : str
+        Path to csv file.
+    verbose : bool
+        Enable/Disable additional output.
+    """
     
     # read csv file
     if os.path.exists(path_to_csv_file):
         df = pd.read_csv(path_to_csv_file)
     else:
-        raise ValueError(f'{path_to_csv_file} not found!')
+        raise FileNotFoundError(f'{path_to_csv_file} not found!')
+    if i not in df.index:
+        raise KeyError(f'Index={i} not available in {path_to_csv_file}.')
     # get values from csv file
     grid_combined_key = df.keys()[i]
     gird_names = df[grid_combined_key].dropna().to_list()
@@ -205,34 +231,46 @@ def combine_grid_slices(i, path_to_csv_file, verbose=False):
 
 
 def calculate_extra_values(i, path_to_csv_file, verbose=False):
-    """Calculating extra values, e.g. values derived from the final profile."""
+    """Calculating extra values, e.g. values derived from the final profile.
+
+    Parameters
+    ----------
+    i : int
+        Index in csv file.
+    path_to_csv_file : str
+        Path to csv file.
+    verbose : bool
+        Enable/Disable additional output.
+    """
     
     # read csv file
     if os.path.exists(path_to_csv_file):
         df = pd.read_csv(path_to_csv_file)
     else:
-        raise ValueError(f'{path_to_csv_file} not found!')
+        raise FileNotFoundError(f'{path_to_csv_file} not found!')
+    if i not in df.index:
+        raise KeyError(f'Index={i} not available in {path_to_csv_file}.')
     # get values from csv file
     if 'path_to_grid' in df.keys():
         grid_path = df.loc[i,'path_to_grid']
         if not os.path.isfile(grid_path):
-            raise ValueError(f'{grid_path} not found!')
+            raise FileNotFoundError(f'{grid_path} not found!')
     else:
-        raise ValueError(f'No path_to_grid in {path_to_csv_file}')
+        raise KeyError(f'No path_to_grid in {path_to_csv_file}')
     if 'grid_type' in df.keys():
         grid_type = df.loc[i,'grid_type']
     else:
-        raise ValueError(f'No grid_type in {path_to_csv_file}')
+        raise KeyError(f'No grid_type in {path_to_csv_file}')
     if 'path_to_processed_grid' in df.keys():
         processed_grid_path = df.loc[i,'path_to_processed_grid']
     else:
-        raise ValueError(f'No path_to_processed_grid in {path_to_csv_file}')
+        raise KeyError(f'No path_to_processed_grid in {path_to_csv_file}')
     if 'path_to_grid_ORIGINAL' in df.keys():
         grid_ORIGINAL_path = df.loc[i,'path_to_grid_ORIGINAL']
         if not os.path.isfile(grid_ORIGINAL_path):
-            raise ValueError(f'{grid_ORIGINAL_path} not found!')
+            raise FileNotFoundError(f'{grid_ORIGINAL_path} not found!')
     else:
-        raise ValueError(f'No path_to_grid_ORIGINAL in {path_to_csv_file}')
+        raise KeyError(f'No path_to_grid_ORIGINAL in {path_to_csv_file}')
     
     if verbose:
         print(f'Compute processed quantities for {grid_path} ...')
@@ -265,32 +303,44 @@ def calculate_extra_values(i, path_to_csv_file, verbose=False):
 
 
 def train_interpolators(i, path_to_csv_file, verbose=False):
-    """Train an interpolator on a grid."""
+    """Train an interpolator on a grid.
+
+    Parameters
+    ----------
+    i : int
+        Index in csv file.
+    path_to_csv_file : str
+        Path to csv file.
+    verbose : bool
+        Enable/Disable additional output.
+    """
     
     # read csv file
     if os.path.exists(path_to_csv_file):
         df = pd.read_csv(path_to_csv_file)
     else:
-        raise ValueError(f'{path_to_csv_file} not found!')
+        raise FileNotFoundError(f'{path_to_csv_file} not found!')
+    if i not in df.index:
+        raise KeyError(f'Index={i} not available in {path_to_csv_file}.')
     # get values from csv file
     if 'path_to_grid' in df.keys():
         grid_path = df.loc[i,'path_to_grid']
         if not os.path.isfile(grid_path):
-            raise ValueError(f'{grid_path} not found!')
+            raise FileNotFoundError(f'{grid_path} not found!')
     else:
-        raise ValueError(f'No path_to_grid in {path_to_csv_file}')
+        raise KeyError(f'No path_to_grid in {path_to_csv_file}')
     if 'grid_type' in df.keys():
         grid_type = df.loc[i,'grid_type']
     else:
-        raise ValueError(f'No grid_type in {path_to_csv_file}')
+        raise KeyError(f'No grid_type in {path_to_csv_file}')
     if 'interpolation_method' in df.keys():
         interpolation_method = df.loc[i,'interpolation_method']
     else:
-        raise ValueError(f'No interpolation_method in {path_to_csv_file}')
+        raise KeyError(f'No interpolation_method in {path_to_csv_file}')
     if 'path_to_interpolator' in df.keys():
         interpolator_path = df.loc[i,'path_to_interpolator']
     else:
-        raise ValueError(f'No path_to_interpolator in {path_to_csv_file}')
+        raise KeyError(f'No path_to_interpolator in {path_to_csv_file}')
     
     method = interpolation_method
     if '_RLO' in method:
@@ -347,7 +397,7 @@ def train_interpolators(i, path_to_csv_file, verbose=False):
     # core collapse quantities are interpolated with respect to the
     # compact object type
     # TODO: we need to train core collapse for secondary star as well
-    # to catch reverse mass transfer cases where the primary undergoes
+    # to catch reverse mass transfer cases where the secondary undergoes
     # core collapse first
     for MODEL_NAME in MODELS.keys():
         for i in range(1,2): #TODO: range(1,3):
@@ -384,7 +434,17 @@ def train_interpolators(i, path_to_csv_file, verbose=False):
 
 
 def train_profile_interpolators(i, path_to_csv_file, verbose=False):
-    """Train a profile interpolator on a grid."""
+    """Train a profile interpolator on a grid.
+
+    Parameters
+    ----------
+    i : int
+        Index in csv file.
+    path_to_csv_file : str
+        Path to csv file.
+    verbose : bool
+        Enable/Disable additional output.
+    """
 
     # load module only if needed
     from posydon.interpolation.profile_interpolation import CompileData, ProfileInterpolator
@@ -393,35 +453,37 @@ def train_profile_interpolators(i, path_to_csv_file, verbose=False):
     if os.path.exists(path_to_csv_file):
         df = pd.read_csv(path_to_csv_file)
     else:
-        raise ValueError(f'{path_to_csv_file} not found!')
+        raise FileNotFoundError(f'{path_to_csv_file} not found!')
+    if i not in df.index:
+        raise KeyError(f'Index={i} not available in {path_to_csv_file}.')
     # get values from csv file
     if 'path_to_grid' in df.keys():
         grid_path = df.loc[i,'path_to_grid']
         if not os.path.isfile(grid_path):
-            raise ValueError(f'{grid_path} not found!')
+            raise FileNotFoundError(f'{grid_path} not found!')
     else:
-        raise ValueError(f'No path_to_grid in {path_to_csv_file}')
+        raise KeyError(f'No path_to_grid in {path_to_csv_file}')
     if 'grid_type' in df.keys():
         grid_type = df.loc[i,'grid_type']
     else:
-        raise ValueError(f'No grid_type in {path_to_csv_file}')
+        raise KeyError(f'No grid_type in {path_to_csv_file}')
     if 'profile_names' in df.keys():
         profile_names = ast.literal_eval(df.loc[i,'profile_names'])
         if not isinstance(profile_names, list):
-            raise ValueError(f'profile_names is not a list in line {i} '
-                             f'in {path_to_csv_file}')
+            raise TypeError(f'profile_names is not a list in line {i} '
+                            f'in {path_to_csv_file}')
     else:
-        raise ValueError(f'No profile_names in {path_to_csv_file}')
+        raise KeyError(f'No profile_names in {path_to_csv_file}')
     if 'path_to_IF_interpolator' in df.keys():
         IF_interpolator_path = df.loc[i,'path_to_IF_interpolator']
         if not os.path.isfile(IF_interpolator_path):
-            raise ValueError(f'{IF_interpolator_path} not found!')
+            raise FileNotFoundError(f'{IF_interpolator_path} not found!')
     else:
-        raise ValueError(f'No path_to_IF_interpolator in {path_to_csv_file}')
+        raise KeyError(f'No path_to_IF_interpolator in {path_to_csv_file}')
     if 'path_to_profile_interpolator' in df.keys():
         profile_interpolator_path = df.loc[i,'path_to_profile_interpolator']
     else:
-        raise ValueError(f'No path_to_profile_interpolator in {path_to_csv_file}')
+        raise KeyError(f'No path_to_profile_interpolator in {path_to_csv_file}')
     
     if verbose:
         print(f'Train profile interpolators on {grid_path} with the '
@@ -457,24 +519,36 @@ def train_profile_interpolators(i, path_to_csv_file, verbose=False):
 
 def export_dataset(i, path_to_csv_file, verbose=False):
     """Moving the data set to a place containing all, what is needed to run a
-    population synthesis with POSYDON."""
+    population synthesis with POSYDON.
+
+    Parameters
+    ----------
+    i : int
+        Index in csv file.
+    path_to_csv_file : str
+        Path to csv file.
+    verbose : bool
+        Enable/Disable additional output.
+    """
     
     # read csv file
     if os.path.exists(path_to_csv_file):
         df = pd.read_csv(path_to_csv_file)
     else:
-        raise ValueError(f'{path_to_csv_file} not found!')
+        raise FileNotFoundError(f'{path_to_csv_file} not found!')
+    if i not in df.index:
+        raise KeyError(f'Index={i} not available in {path_to_csv_file}.')
     # get values from csv file
     if 'path_to_grid' in df.keys():
         grid_path = df.loc[i,'path_to_grid']
         if not os.path.isfile(grid_path):
-            raise ValueError(f'{grid_path} not found!')
+            raise FileNotFoundError(f'{grid_path} not found!')
     else:
-        raise ValueError(f'No path_to_grid in {path_to_csv_file}')
+        raise KeyError(f'No path_to_grid in {path_to_csv_file}')
     if 'export_path' in df.keys():
         export_path = df.loc[i,'export_path']
     else:
-        raise ValueError(f'No export_path in {path_to_csv_file}')
+        raise KeyError(f'No export_path in {path_to_csv_file}')
     
     if verbose:
         print(f'copying {grid_path} to {export_path}')
@@ -483,7 +557,18 @@ def export_dataset(i, path_to_csv_file, verbose=False):
 
 
 def zams_file_name(metallicity):
-    """Gives the name of the ZAMS file depending on the metallicity."""
+    """Gives the name of the ZAMS file depending on the metallicity.
+
+    Parameters
+    ----------
+    metallicity : str
+        String representation of the metallicity (e.g. 1e+00_Zsun).
+
+    Returns
+    -------
+    str
+        Name of ZAMS file.
+    """
     
     if '2e+00_Zsun' in metallicity:
         zams_filename = 'zams_z2.84m2_y0.2915.data'
@@ -503,17 +588,38 @@ def zams_file_name(metallicity):
     elif '1e-04_Zsun' in metallicity:
         zams_filename = 'zams_z1.42m6_y0.2490.data'
     else:
-        raise ValueError(f'Metallicity unknown: {dirname}')
+        raise ValueError(f'Metallicity unknown: {metallicity}')
     return zams_filename
 
 
-def copy_ini_file(grid_type, rerun_metallicity, rerun_type, destination, cluster):
-    """Copies the ini file and make replacements according to the rerun."""
-    
+def copy_ini_file(grid_type, rerun_metallicity, rerun_type, destination,
+    cluster):
+    """Copies the ini file and make replacements according to the rerun.
+
+    Parameters
+    ----------
+    grid_type : str
+        Type of the grid.
+    rerun_metallicity : str
+        String representation of the metallicity (e.g. 1e+00_Zsun).
+    rerun_type : str
+        Type of rerun (e.g. PISN).
+    destination : str
+        Path to the directory for the new runs.
+    cluster : str
+        Cluster name (e.g. yggdrasil or quest).
+    """
+
     # copy the default ini file to directory
     if cluster in ['quest','yggdrasil']:
-        ini_dir_path = os.path.join(PATH_TO_POSYDON,
-                    'grid_params/POSYDON-MESA-INLISTS/r11701/running_scripts')
+        if os.path.isdir(PATH_TO_POSYDON):
+            ini_dir_path = os.path.join(PATH_TO_POSYDON,
+                'grid_params/POSYDON-MESA-INLISTS/r11701/running_scripts')
+            if not os.path.isdir(PATH_TO_POSYDON):
+                raise NotADirectoryError(f'{ini_dir_path} not found!')
+        else:
+            raise NotADirectoryError(f'PATH_TO_POSYDON={PATH_TO_POSYDON} not '
+                                     'found!')
         if "single_HMS" in grid_type:
             ini_file_path = os.path.join(ini_dir_path, f'single_HMS_{cluster}.ini')
             ini_file_dest = os.path.join(destination, f'single_HMS_{cluster}.ini')
@@ -531,6 +637,8 @@ def copy_ini_file(grid_type, rerun_metallicity, rerun_type, destination, cluster
             ini_file_dest = os.path.join(destination, f'CO-HeMS_{cluster}.ini')
         else:
             raise ValueError(f'Unsupported grid type: {grid_type}!')
+        if not os.path.isfile(ini_file_path):
+            raise FileNotFoundError(f'{ini_file_path} not found!')
         shutil.copyfile(ini_file_path, ini_file_dest)
     else:
         raise ValueError(f'Unsupported cluster {cluster}!')
@@ -578,8 +686,28 @@ def copy_ini_file(grid_type, rerun_metallicity, rerun_type, destination, cluster
 
 
 def logic_rerun(grid, rerun_type):
-    """Get the runs, which need a rerun."""
-    
+    """Get the runs, which need a rerun.
+
+    Parameters
+    ----------
+    grid : PSyGrid
+        PSyGrid to select runs from.
+    rerun_type : str
+        Type of rerun (e.g. PISN).
+
+    Returns
+    -------
+    runs_to_rerun : list
+        Indecies of runs to be rerun.
+    termination_flags : list
+        Termination flags to select reruns by.
+    new_mesa_flag : dict
+        Name and value of MESA inlist parameters to change to for this rerun.
+    """
+
+    if not isinstance(grid, PSyGrid):
+        raise TypeError(f'grid must be a PSyGrid, but it is {type(grid)}.')
+
     runs_to_rerun=None
     termination_flags=None
     new_mesa_flag = None
@@ -596,7 +724,8 @@ def logic_rerun(grid, rerun_type):
             dirname = grid.MESA_dirs[i].decode('utf-8')
             if not os.path.isdir(dirname):
                 # TODO: handle the case when grids were moved location
-                raise ValueError(f'Grid directory not found at {dirname}')
+                raise NotADirectoryError('Grid directory not found at '
+                                         f'{dirname}')
             if "single_HMS" in dirname:
                 out_txt_path = os.path.join(dirname,
                                             "out_star1_formation_step0.txt")
@@ -616,7 +745,8 @@ def logic_rerun(grid, rerun_type):
         N_runs = len(grid)
         runs_to_rerun = []
         for i in range(N_runs):
-            if grid[i].binary_history is not None and grid[i].history1 is not None:
+            if ((grid[i].binary_history is not None) and
+                (grid[i].history1 is not None)):
                 rl1 = grid[i].binary_history['rl_relative_overflow_1']
                 rl2 = grid[i].binary_history['rl_relative_overflow_2']
                 w_wcrit = grid[i].history1['surf_avg_omega_div_omega_crit']
@@ -633,16 +763,20 @@ def logic_rerun(grid, rerun_type):
             if grid[i].history1 is not None:
                 s1_Teff = 10**grid[i].history1['log_Teff']
                 s1_Yc = grid[i].history1['center_he4']
-                s1_he_shell_mass = grid[i].history1['he_core_mass'] - grid[i].history1['co_core_mass']
-                tpagb_1 = np.logical_and(s1_Teff <= hot_wind_full_on_T, s1_Yc <= 1e-6)
+                s1_he_shell_mass = grid[i].history1['he_core_mass'] -\
+                                   grid[i].history1['co_core_mass']
+                tpagb_1 = np.logical_and(s1_Teff <= hot_wind_full_on_T,\
+                                         s1_Yc <= 1e-6)
                 tpagb_1 = np.logical_and(tpagb_1, s1_he_shell_mass <= 1e-1)
             else:
                 tpagb_1 = np.array([False])
             if grid[i].history2 is not None:
                 s2_Teff = 10**grid[i].history2['log_Teff']
                 s2_Yc = grid[i].history2['center_he4']
-                s2_he_shell_mass = grid[i].history2['he_core_mass'] - grid[i].history2['co_core_mass']
-                tpagb_2 = np.logical_and(s2_Teff <= hot_wind_full_on_T, s2_Yc <= 1e-6)
+                s2_he_shell_mass = grid[i].history2['he_core_mass'] -\
+                                   grid[i].history2['co_core_mass']
+                tpagb_2 = np.logical_and(s2_Teff <= hot_wind_full_on_T,\
+                                         s2_Yc <= 1e-6)
                 tpagb_2 = np.logical_and(tpagb_2, s2_he_shell_mass <= 1e-1)
             else:
                 tpagb_2 = np.array([False])
@@ -656,7 +790,9 @@ def logic_rerun(grid, rerun_type):
         termination_flags = TF1_POOL_ERROR
     elif rerun_type == 'more_mesh':
         termination_flags = TF1_POOL_ERROR
-        new_mesa_flag = {'mesh_Pgas_div_P_exponent' : 2, 'max_allowed_nz' : 50000} # may put this in a MESA-inlist PR
+        # may put this in a MESA-inlist PR
+        new_mesa_flag = {'mesh_Pgas_div_P_exponent' : 2,\
+                         'max_allowed_nz' : 50000}
     elif rerun_type == 'conv_bdy_weight':
         N_runs = len(grid)
         runs_to_rerun = []
@@ -664,7 +800,8 @@ def logic_rerun(grid, rerun_type):
             dirname = grid.MESA_dirs[i].decode('utf-8')
             if not os.path.isdir(dirname):
                 # TODO: handle the case when grids were moved location
-                raise ValueError(f'Grid directory not found at {dirname}')
+                raise NotADirectoryError('Grid directory not found at '
+                                         f'{dirname}')
             if "single_HMS" in dirname:
                 out_txt_path = os.path.join(dirname,
                                             "out_star1_formation_step0.txt")
@@ -706,36 +843,48 @@ def logic_rerun(grid, rerun_type):
 
 
 def rerun(i, path_to_csv_file, verbose=False):
-    """Generate files to start a rerun."""
+    """Generate files to start a rerun.
+
+    Parameters
+    ----------
+    i : int
+        Index in csv file.
+    path_to_csv_file : str
+        Path to csv file.
+    verbose : bool
+        Enable/Disable additional output.
+    """
     
     # read csv file
     if os.path.exists(path_to_csv_file):
         df = pd.read_csv(path_to_csv_file)
     else:
-        raise ValueError(f'{path_to_csv_file} not found!')
+        raise FileNotFoundError(f'{path_to_csv_file} not found!')
+    if i not in df.index:
+        raise KeyError(f'Index={i} not available in {path_to_csv_file}.')
     # get values from csv file
     if 'path_to_grid' in df.keys():
         grid_path = df.loc[i,'path_to_grid']
         if not os.path.isfile(grid_path):
-            raise ValueError(f'{grid_path} not found!')
+            raise FileNotFoundError(f'{grid_path} not found!')
     else:
-        raise ValueError(f'No path_to_grid in {path_to_csv_file}')
+        raise KeyError(f'No path_to_grid in {path_to_csv_file}')
     if 'rerun_path' in df.keys():
         rerun_path = df.loc[i,'rerun_path']
     else:
-        raise ValueError(f'No rerun_path in {path_to_csv_file}')
+        raise KeyError(f'No rerun_path in {path_to_csv_file}')
     if 'grid_type' in df.keys():
         grid_type = df.loc[i,'grid_type']
     else:
-        raise ValueError(f'No grid_type in {path_to_csv_file}')
+        raise KeyError(f'No grid_type in {path_to_csv_file}')
     if 'rerun_metallicity' in df.keys():
         rerun_metallicity = df.loc[i,'rerun_metallicity']
     else:
-        raise ValueError(f'No rerun_metallicity in {path_to_csv_file}')
+        raise KeyError(f'No rerun_metallicity in {path_to_csv_file}')
     if 'rerun_type' in df.keys():
         rerun_type = df.loc[i,'rerun_type']
     else:
-        raise ValueError(f'No rerun_type in {path_to_csv_file}')
+        raise KeyError(f'No rerun_type in {path_to_csv_file}')
     if 'cluster' in df.keys():
         cluster = df.loc[i,'cluster']
     else:
@@ -757,11 +906,22 @@ def rerun(i, path_to_csv_file, verbose=False):
                new_mesa_flag=new_mesa_flag)
     
     # copy ini file and set the new inlist commit
-    copy_ini_file(grid_type, rerun_metallicity, rerun_type, destination=rerun_path, cluster=cluster)
+    copy_ini_file(grid_type, rerun_metallicity, rerun_type,
+                  destination=rerun_path, cluster=cluster)
 
 
 def plot_grid(i, path_to_csv_file, verbose=False):
-    """Creates plots of a grid."""
+    """Creates plots of a grid.
+
+    Parameters
+    ----------
+    i : int
+        Index in csv file.
+    path_to_csv_file : str
+        Path to csv file.
+    verbose : bool
+        Enable/Disable additional output.
+    """
     # grid mass ranges:
     # min and max values might get updated, than the step is used to update the
     # nbin (in case of log==True the step is in log space)
@@ -810,33 +970,35 @@ def plot_grid(i, path_to_csv_file, verbose=False):
     if os.path.exists(path_to_csv_file):
         df = pd.read_csv(path_to_csv_file)
     else:
-        raise ValueError(f'{path_to_csv_file} not found!')
+        raise FileNotFoundError(f'{path_to_csv_file} not found!')
+    if i not in df.index:
+        raise KeyError(f'Index={i} not available in {path_to_csv_file}.')
     
     check_dirs = []
     # get values from csv file
     if 'path_to_grid' in df.keys():
         grid_path = df.loc[i,'path_to_grid']
         if not os.path.isfile(grid_path):
-            raise ValueError(f'{grid_path} not found!')
+            raise FileNotFoundError(f'{grid_path} not found!')
     else:
-        raise ValueError(f'No path_to_grid in {path_to_csv_file}')
+        raise KeyError(f'No path_to_grid in {path_to_csv_file}')
     if 'grid_type' in df.keys():
         grid_type = df.loc[i,'grid_type']
     else:
-        raise ValueError(f'No grid_type in {path_to_csv_file}')
+        raise KeyError(f'No grid_type in {path_to_csv_file}')
     if 'path_to_plot' in df.keys():
         plot_dir = df.loc[i,'path_to_plot']
         plot_path = os.path.dirname(os.path.normpath(plot_dir))
         check_dirs.extend([plot_path, plot_dir])
     else:
-        raise ValueError(f'No path_to_plot in {path_to_csv_file}')
+        raise KeyError(f'No path_to_plot in {path_to_csv_file}')
     if 'quantities_to_plot' in df.keys():
         quantities_to_plot = ast.literal_eval(df.loc[i,'quantities_to_plot'])
         if not isinstance(quantities_to_plot, list):
-            raise ValueError(f'quantities_to_plot is not a list in line {i} '
-                             f'in {path_to_csv_file}')
+            raise TypeError(f'quantities_to_plot is not a list in line {i} '
+                            f'in {path_to_csv_file}')
     else:
-        raise ValueError(f'No quantities_to_plot in {path_to_csv_file}')
+        raise KeyError(f'No quantities_to_plot in {path_to_csv_file}')
     multipage = False
     if 'plot_extension' in df.keys():
         plot_extension = df.loc[i,'plot_extension']
@@ -1010,8 +1172,10 @@ def plot_grid(i, path_to_csv_file, verbose=False):
                     # initial/final error all points in one plot
                     if k == 0:
                         PLOT_PROPERTIES_ALL = PLOT_PROPERTIES.copy()
-                        PLOT_PROPERTIES_ALL['title'] = title.split('=')[0] + '$ all'
-                        PLOT_PROPERTIES_ALL['fname'] = fname.replace('%1.2f', 'all')
+                        PLOT_PROPERTIES_ALL['title'] = title.split('=')[0] +\
+                                                       '$ all'
+                        PLOT_PROPERTIES_ALL['fname'] = fname.replace('%1.2f',\
+                                                                     'all')
                         if multipage:
                             PLOT_PROPERTIES_ALL['path_to_file'] = plot_dir+'/'
                             PLOT_PROPERTIES_ALL['fname'] = name + '_all.' +\
@@ -1036,9 +1200,11 @@ def plot_grid(i, path_to_csv_file, verbose=False):
                                                keys=[plot_attributes['zvar']],
                                                close_fig=True)
                 else:
-                    grid.plot2D('star_1_mass', 'period_days', plot_attributes['zvar'],
+                    grid.plot2D('star_1_mass', 'period_days',
+                                plot_attributes['zvar'],
                                 termination_flag=plot_attributes['term_flag'],
-                                grid_3D=True, slice_3D_var_str=slice_3D_var_str,
+                                grid_3D=True,
+                                slice_3D_var_str=slice_3D_var_str,
                                 slice_3D_var_range=slice_3D_var_range,
                                 verbose=False, **PLOT_PROPERTIES)
             
@@ -1061,28 +1227,40 @@ def plot_grid(i, path_to_csv_file, verbose=False):
 
 
 def do_check(i, path_to_csv_file, verbose=False):
-    """Perform a check on a grid."""
+    """Perform a check on a grid.
+
+    Parameters
+    ----------
+    i : int
+        Index in csv file.
+    path_to_csv_file : str
+        Path to csv file.
+    verbose : bool
+        Enable/Disable additional output.
+    """
     
     # read csv file
     if os.path.exists(path_to_csv_file):
         df = pd.read_csv(path_to_csv_file)
     else:
-        raise ValueError(f'{path_to_csv_file} not found!')
+        raise FileNotFoundError(f'{path_to_csv_file} not found!')
+    if i not in df.index:
+        raise KeyError(f'Index={i} not available in {path_to_csv_file}.')
     
     # get values from csv file
     if 'path_to_grid' in df.keys():
         grid_path = df.loc[i,'path_to_grid']
         if not os.path.isfile(grid_path):
-            raise ValueError(f'{grid_path} not found!')
+            raise FileNotFoundError(f'{grid_path} not found!')
     else:
-        raise ValueError(f'No path_to_grid in {path_to_csv_file}')
+        raise KeyError(f'No path_to_grid in {path_to_csv_file}')
     if 'checks_to_do' in df.keys():
         checks_to_do = ast.literal_eval(df.loc[i,'checks_to_do'])
         if not isinstance(checks_to_do, list):
-            raise ValueError(f'checks_to_do is not a list in line {i} '
-                             f'in {path_to_csv_file}')
+            raise TypeError(f'checks_to_do is not a list in line {i} '
+                            f'in {path_to_csv_file}')
     else:
-        raise ValueError(f'No checks_to_do in {path_to_csv_file}')
+        raise KeyError(f'No checks_to_do in {path_to_csv_file}')
     if 'path_to_interpolator' in df.keys():
         path_to_interpolator = df.loc[i,'path_to_interpolator']
     else:
@@ -1125,22 +1303,34 @@ if __name__ == '__main__':
     n_args = len(sys.argv)
     
     if n_args > 1: # path to girds
+        if str(sys.argv[1])=='--help':
+            print('Programm to run a pipeline step')
+            print('syntax: posydon-run-pipeline PATH_TO_GRIDS PATH_TO_CSV_FILE'
+                  ' [SLURM_I] [VERBOSE]')
+            print('PATH_TO_GRIDS: path to the root directory with the grids')
+            print('PATH_TO_CSV_FILE: path to the csv file containing the step'
+                  ' data')
+            print('SLURM_I (optional): slurm array index, used to grep a'
+                  ' certain data set (usually line index) from the csv file;'
+                  ' if not given the first non header line is used')
+            print('VERBOSE (optional): flag for additional output')
+            sys.exit(0)
         PATH_TO_GRIDS = str(sys.argv[1])
         if not os.path.isdir(PATH_TO_GRIDS): # check given path
-            raise ValueError('Grids were not found! '
-                            f'Check your PATH_TO_GRIDS={PATH_TO_GRIDS}')
+            raise NotADirectoryError('Grids were not found! Check your '
+                                     f'PATH_TO_GRIDS={PATH_TO_GRIDS}')
     else:
-        raise ValueError('No path to the grids given. It should be specified '
-                         'as first commandline argument.')
+        raise KeyError('No path to the grids given. It should be specified '
+                       'as first commandline argument.')
     
     if n_args > 2: # path to csv file
         PATH_TO_CSV_FILE = str(sys.argv[2])
         if not os.path.isfile(PATH_TO_CSV_FILE): # check given path
-            raise ValueError('Csv file not found! '
-                            f'Check your path_to_csv_file={PATH_TO_CSV_FILE}')
+            raise FileNotFoundError('Csv file not found! Check your '
+                                    f'PATH_TO_CSV_FILE={PATH_TO_CSV_FILE}')
     else:
-        raise ValueError('No csv file given. It should be specified as '
-                         'second commandline argument.')
+        raise KeyError('No csv file given. It should be specified as '
+                       'second commandline argument.')
     
     if n_args > 3: # slurm index
         SLURM_I = int(sys.argv[3])
