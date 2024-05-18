@@ -219,9 +219,9 @@ def combine_grid_slices(i, path_to_csv_file, verbose=False):
         df = pd.read_csv(path_to_csv_file)
     else:
         raise FileNotFoundError(f'{path_to_csv_file} not found!')
-    if i < len(df.keys()):
+    if i >= len(df.keys()):
         raise KeyError(f'Not enought keys in {path_to_csv_file}: '
-                       f'{i}/{len(df.keys())}.')
+                       f'{i}>{len(df.keys())-1}.')
     # get values from csv file
     grid_combined_key = df.keys()[i]
     gird_names = df[grid_combined_key].dropna().to_list()
