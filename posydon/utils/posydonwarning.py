@@ -14,25 +14,31 @@ import warnings
 class POSYDONWarning(Warning):
     """General POSYDON warning class."""
 
-class ReplaceValueWarning(POSYDONWarning):
-    """Warning that a value got replaced."""
+class ApproximationWarning(POSYDONWarning):
+    """Warning that a physical approximation was used during binary evolution."""
     def __init__(self):
-        warnings.filterwarnings("default", category=ReplaceValueWarning)
+        warnings.filterwarnings("default", category=ApproximationWarning)
+
+class ClassificationWarning(POSYDONWarning):
+    """Warnings related to classification during binary evolution."""
+    def __init__(self):
+        warnings.filterwarnings("default", category=ClassificationWarning)
+
+class EvolutionWarning(POSYDONWarning):
+    """Warning that something unexpeted occurred during the binary evolution, but
+    the evolution is able to continue (binary did not fail)."""
+    def __init__(self):
+        warnings.filterwarnings("default", category=ClassificationWarning)
 
 class InterpolationWarning(POSYDONWarning):
     """Warnings related to interpolation during binary evolution."""
     def __init__(self):
         warnings.filterwarnings("default", category=InterpolationWarning)
 
-class ClassificationWarning(POSYDONWarning):
-    """Warnings related to interpolation during binary evolution."""
+class ReplaceValueWarning(POSYDONWarning):
+    """Warning that a value got replaced."""
     def __init__(self):
-        warnings.filterwarnings("default", category=ClassificationWarning)
-
-class ApproximationWarning(POSYDONWarning):
-    """Warnings related to interpolation during binary evolution."""
-    def __init__(self):
-        warnings.filterwarnings("default", category=ApproximationWarning)
+        warnings.filterwarnings("default", category=ReplaceValueWarning)
 
 class UnsupportedModelWarning(POSYDONWarning):
     """Warnings related to selecting a model that is not supported."""

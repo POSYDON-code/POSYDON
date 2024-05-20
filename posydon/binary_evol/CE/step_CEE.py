@@ -42,10 +42,10 @@ from posydon.binary_evol.singlestar import STARPROPERTIES
 from posydon.utils.common_functions import PATH_TO_POSYDON
 from posydon.utils.common_functions import check_state_of_star
 from posydon.utils.common_functions import calculate_lambda_from_profile, calculate_Mejected_for_integrated_binding_energy
-from posydon.utils.posydonerror import FlowError
+from posydon.utils.posydonwarning import ApproximationWarning
 
 
-warnings.simplefilter('always', UserWarning)
+#warnings.simplefilter('always', UserWarning)
 
 
 MODEL = {"prescription": 'alpha-lambda',
@@ -355,8 +355,8 @@ class StepCEE(object):
                       donor.he_core_mass, donor.co_core_mass)
 
         elif donor.profile is None:
-            warnings.warn("Profile does not exist -- Proceeding with "
-                          "default_lambda alpha-CE prescription")
+            warnings.warn("Donor profile does not exist -- proceeding with "
+                          "default_lambda alpha-CE prescription", ApproximationWarning)
             # like in the "default_lambda" option
             lambda_CE = self.common_envelope_lambda_default
             if donor_type == 'He_core':
@@ -585,9 +585,9 @@ class StepCEE(object):
                 if mc1_f > mc1_i:
                     mc1_f = mc1_i
                     warnings.warn(
-                        "donor core mass final (after even stable, postCEE MT)"
-                        " assumed higher than postCEE core mass. Equalized to "
-                        "postCEE mass")
+                        "The final donor core mass (even after stable, postCEE MT)"
+                        " is higher than the postCEE core mass. Now equalizing to "
+                        "postCEE mass", ApproximationWarning)
                 if not double_CE:
                     mc2_f = mc2_i
                     rc2_f = rc2_i
@@ -603,10 +603,10 @@ class StepCEE(object):
                         rc2_f = 10.**(comp_star.log_R)
                     if mc2_f > mc2_i:
                         mc2_f = mc2_i
-                        warnings.warn("accretor's core mass final (after even "
-                                      "non-conservative stable, postCEE MT) "
-                                      "assumed higher that postCEE core mass. "
-                                      "Equialized to postCEE mass")
+                        warnings.warn("The accretor's final core mass (even after "
+                                      "non-conservative stable, postCEE MT) is "
+                                      "higher that postCEE core mass. "
+                                      "Now equalizing to postCEE mass", ApproximationWarning)
                 if verbose:
                     print("difference between m1 core mass defined by CEE step"
                           " / to the final one as pre CEE : ", mc1_f, mc1_i)
@@ -824,11 +824,13 @@ class StepCEE(object):
                 if not double_CE and donor.profile is None:
                     Mejected_donor = 0.0
                     Mejected_comp = 0.0
-                    warnings.warn("mass_loss_during_CEE_merged == True, but no profile found for the donor star. Proceeding with no partial mass ejection.")
+                    warnings.warn("mass_loss_during_CEE_merged == True, but no profile found "
+                                  "for the donor star. Proceeding with no partial mass ejection.", ApproximationWarning)
                 elif double_CE and (donor.profile is None or comp_star.profile is None):
                     Mejected_comp = 0.0
                     Mejected_comp = 0.0
-                    warnings.warn("mass_loss_during_CEE_merged == True, but not profile found the donor or companion star in double_CE. Proceeding with no partial mass ejection.")
+                    warnings.warn("mass_loss_during_CEE_merged == True, but not profile found "
+                                  "for the donor or companion star in double_CE. Proceeding with no partial mass ejection.", ApproximationWarning)
 
                 else:
 
@@ -874,7 +876,8 @@ class StepCEE(object):
                 if (Mejected_donor > m1_i  - mc1_i) or (Mejected_comp > m2_i  - mc2_i):
                     Mejected_donor = (m1_i  - mc1_i) -0.01 # at least this value of envelope is left.
                     Mejected_comp = (m2_i  - mc2_i) -0.01
-                    warnings.warn("Mejected of at least one star in double CEE is found to be more that the initial envelope. Reduced both to their initial_envelope - 0.01 Msun")
+                    warnings.warn("M_ejected of at least one star in double CEE is found to be more than the initial envelope. "
+                                  "Reducing both to their initial_envelope - 0.01 Msun", ApproximationWarning)
 
             donor.mass = m1_i - Mejected_donor
             donor.log_R = np.nan

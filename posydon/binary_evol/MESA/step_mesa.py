@@ -459,7 +459,7 @@ class MesaGridStep:
                     'lenght %i != %i. This will cause errors, e.g. '
                     'get_binary_state_and_event_and_mt_case take '
                     'star.mdot_history - star.lg_wind_mdot. To '
-                    'avoid the code breaking, we appened np.nan '
+                    'avoid the code breaking, we append np.nan '
                     'to the missing values.' %
                     (length_binary_hist, length_star_hist), ReplaceValueWarning)
 
