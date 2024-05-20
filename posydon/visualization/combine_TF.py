@@ -40,7 +40,10 @@ TF1_POOL_UNSTABLE = [
     'Reached maximum mass transfer rate: 1d-1',
     'Reached maximum mass transfer rate: Exceeded photon trapping radius',
     'Both stars fill their Roche Lobe and at least one of them is off MS',
-    'Terminate due to L2 overflow during case A'
+    'Terminate due to L2 overflow during case A',
+    'Both stars fill their Roche Lobe and superthermal accretion',
+    'overflow from L2, superthermal accretion with disk (and w > w_crit), donor is star 1',
+    'overflow from L2, superthermal accretion with disk (and w > w_crit), donor is star 2'
     ]
 
 TF1_POOL_INITIAL_RLO = [
