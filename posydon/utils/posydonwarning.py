@@ -34,6 +34,10 @@ class ApproximationWarning(POSYDONWarning):
     def __init__(self):
         warnings.filterwarnings("default", category=ApproximationWarning)
 
+class UnsupportedModelWarning(POSYDONWarning):
+    """Warnings related to selecting a model that is not supported."""
+    def __init__(self):
+        warnings.filterwarnings("default", category=UnsupportedModelWarning)
 
 # The base class of all warnings is "Warning", which is derived from Exception
 #
