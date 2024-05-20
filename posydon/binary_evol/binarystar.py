@@ -156,6 +156,7 @@ class BinaryStar:
             else:
                 setattr(self, item, binary_kwargs.pop(item, None))
             setattr(self, item + '_history', [getattr(self, item)])
+
         for key, val in binary_kwargs.items():
             setattr(self, key, val)
         if not hasattr(self, 'inspiral_time'):
@@ -266,16 +267,28 @@ class BinaryStar:
 
         """
         # Move current binary properties to the ith step, using its history
-        for p in BINARYPROPERTIES:
+        for p in BINARYPROPERTIES:            
             setattr(self, p, getattr(self, '{}_history'.format(p))[i])
+
+            # Remove the obsolete history data
+            if delete_history:
+                setattr(self, p + '_history', getattr(self, p + '_history')[0:i + 1])
+                
+        
+        ## if running with extra hooks, restore any extra hook columns
+        for hook in self.properties.all_hooks_classes:
+            if hasattr(hook, 'extra_binary_col_names'):
+                extra_columns = getattr(hook, 'extra_binary_col_names')
+
+                for col in extra_columns:
+                    setattr(self, col,[getattr(self, col)[i]])
+                    # Remove the obsolete history data
+                    if delete_history:
+                        setattr(self, col, getattr(self, col)[0:i+1])
+        
         for star in (self.star_1, self.star_2):
             star.restore(i)
-
-        # Remove the obsolete history data
-        if delete_history:
-            for p in BINARYPROPERTIES:
-                setattr(self, p + '_history',
-                        getattr(self, p + '_history')[0:i + 1])
+       
 
     def reset(self, properties=None):
         """Reset the binary to its ZAMS state.

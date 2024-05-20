@@ -227,8 +227,10 @@ class TimingHooks(EvolveHooks):
 
     Example
     -------
-    >>> pop.to_df(extra_columns=['step_times'])
+    >>> pop.to_df(extra_columns={'step_times': float})
     """
+    def __init__(self):
+        self.extra_binary_col_names = ["step_times"]
 
     def pre_evolve(self, binary):
         """Initialize the step time to match history."""
@@ -264,8 +266,11 @@ class StepNamesHooks(EvolveHooks):
 
     Name of evolutionary step as defined in SimulationProperties.
 
-    >>> pop.to_df(extra_columns=['step_names'])
+    >>> pop.to_df(extra_columns={'step_names': str})
     """
+    def __init__(self):
+        self.extra_binary_col_names = ["step_names"]
+
 
     def pre_evolve(self, binary):
         """Initialize the step name to match history."""
