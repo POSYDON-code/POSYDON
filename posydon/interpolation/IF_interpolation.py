@@ -226,20 +226,20 @@ class IFInterpolator:
 
                 if ("out_keys" not in params
                         and len(self.interpolator_parameters) > 1):
-                    raise Exception("Overlapping out keys between different "
+                    raise ValueError("Overlapping out keys between different "
                                     "interpolators are not permited!")
                 elif "out_keys" not in params:
                     continue
 
                 for key in params["out_keys"]:
                     if(key in out_keys):
-                        raise Exception(
+                        raise ValueError(
                             f"Overlapping out keys between different "
                             f"interpolators are not permited! ({key} in more "
                             f"than one set of out_keys)")
                     else:
                         out_keys.append(key)
-        
+
 
     def train(self):
         """Train the interpolator(s) on the PSyGrid used for construction."""
@@ -284,7 +284,7 @@ class IFInterpolator:
         Parameters
         ----------
         initial_values : numpy array
-            A numpy array containing the in-key values of the binaries to be evolved 
+            A numpy array containing the in-key values of the binaries to be evolved
 
         Return
         ------
@@ -308,7 +308,7 @@ class IFInterpolator:
         Parameters
         ----------
         initial_values : numpy array
-            A numpy array containing the in-key values of the binaries to be classified 
+            A numpy array containing the in-key values of the binaries to be classified
 
         Return
         ------
@@ -324,7 +324,7 @@ class IFInterpolator:
         for interpolator in self.interpolators:
 
             classes = {**classes, **interpolator.test_classifiers(new_values)}
-            
+
         return classes
 
 
@@ -420,12 +420,12 @@ class BaseIFInterpolator:
         self.interpolator = None
         if interp_classes is not None:
             if not isinstance(interp_classes, list):
-                raise Exception("interp_classes must be a list of "
+                raise ValueError("interp_classes must be a list of "
                                 "valid interpolation methods.")
             if isinstance(self.interp_method, list):
                 if len(self.interp_method) != len(interp_classes):
-                    raise Exception("No. of interpolation methods must "
-                                    "match no. of interpolation classes.")
+                    raise ValueError("Number of interpolation methods must "
+                                    "match number of interpolation classes.")
             else:
                 self.interp_method = [self.interp_method] * len(interp_classes)
             self.interp_classes = interp_classes
@@ -437,7 +437,7 @@ class BaseIFInterpolator:
 
         else:
             if grid is None:
-                raise Exception(
+                raise RuntimeError(
                     "grid must be specified to create an IF interpolator."
                     " Conversely, load an existing model specifying filename.")
 
@@ -588,7 +588,8 @@ class BaseIFInterpolator:
         """Set binary tracks as (in)valid depending on termination flags."""
         valid = np.zeros(len(ic), dtype=int)
 
-        for flag in ['not_converged', 'ignored_no_BH', 'ignored_no_RLO']:
+        for flag in ['not_converged', 'ignored_no_RLO',
+                     'ignored_no_binary_history']:
             which = (ic == flag)
             valid[which] = -1
             print(f"Discarded {np.sum(which)} binaries with "
@@ -789,7 +790,7 @@ class BaseIFInterpolator:
         if len(Xt.shape) == 1:
             Xt = Xt.reshape((1, -1))
         if Xt.shape[1] != self.n_in:
-            raise Exception("Wrong dimensions. Xt should have as many "
+            raise ValueError("Wrong dimensions. Xt should have as many "
                             "columns as it was trained with.")
         # if binary classified as 'initial_MT', set numerical quantities to nan
         ynum, ycat = self.test_interpolator(Xt), self.test_classifiers(Xt)
@@ -1043,9 +1044,9 @@ class Interpolator:
 
         """
         if self.interpolator is None:
-            raise Exception("Train Interpolator first.")
+            raise RuntimeError("Train Interpolator first.")
         if Xt.shape[1] != self.D:
-            raise Exception("Wrong input dimension.")
+            raise ValueError("Wrong input dimension.")
 
     def train_error(self, XT, YT):
         """Calculate approximation error given testing data.
@@ -1182,8 +1183,8 @@ class MC_Interpolator:
             self.methods = [methods] * len(self.classes)
         else:
             if len(methods) != len(self.classes):
-                raise Exception("No. of interpolators must match "
-                                "no. of classes.")
+                raise ValueError("Number of interpolators must match "
+                                "number of classes.")
             self.methods = methods
         for i, method in enumerate(self.methods):
             if method == "linear":
@@ -1281,9 +1282,9 @@ class Classifier:
 
         """
         if self.classifier is None:
-            raise Exception("Train Classifier first.")
+            raise RuntimeError("Train Classifier first.")
         if Xt.shape[1] != self.D:
-            raise Exception("Wrong input dimension.")
+            raise ValueError("Wrong input dimension.")
 
     def predict_prob(self, Xt):
         """Classify and get probability of input vector belonging to any class.
@@ -1299,9 +1300,9 @@ class Classifier:
 
         """
         if self.classifier is None:
-            raise Exception("Train Classifier first.")
+            raise RuntimeError("Train Classifier first.")
         if Xt.shape[1] != self.D:
-            raise Exception("Wrong input dimension.")
+            raise ValueError("Wrong input dimension.")
 
     def train_error(self, XT, yT):
         """Calculate approximation error given testing data.
@@ -1414,7 +1415,7 @@ class KNNClassifier(Classifier):
 class Scaler:
 
     def __init__(self, norms, XT, ic):
-        
+
         if norms[0] == norms[1]:
             self.scaler = {
                 None:  MatrixScaler(norms[0], XT)
@@ -1431,7 +1432,7 @@ class Scaler:
 
         if klass is None:
             return self.scaler[klass].normalize(X)
-        
+
         else:
 
             normalized = X.copy()
@@ -1477,7 +1478,7 @@ class MatrixScaler:
     def __init__(self, norms, XT):
         """Initialize the Scaler with desired scalings."""
         if len(norms) != XT.shape[1]:
-            raise Exception("The no. of columns in XT must be equal "
+            raise ValueError("The number of columns in XT must be equal "
                             "to the length of norms.")
 
         self.N = XT.shape[1]
