@@ -44,7 +44,9 @@ for all classes.
 
 2. interp_classes: a list of classes that the simulation tracks can
 fall into. Usually specified as the mass transfer type. This only needs
-be specified if interp_method is a list.
+be specified if interp_method is a list. Note that when using class-wise normalization 
+only classes in interp_classes are normalized. This is the behavior for interpolation normalization
+but not classification normalization.
 
 3. class_method: the classification method to be used, either kNN or
 1NN.
@@ -77,7 +79,7 @@ For most applications specifying only the first four parameters is recommended.
     interp = IFInterpolator(grid = grid, interpolators = [
         {
             "interp_method": ["linear", "linear", "linear", "linear"],
-            "interp_classes": ["no_MT", "stable_MT", "unstable_MT", "stable_reverse_MT"],
+            "interp_classes": ["no_MT", "stable_MT", "unstable_MT", "stable_reverse_MT"], # classes not in this array will not be normalized in class-wise normalization
             "out_keys": first,
             "class_method": "kNN",
             "c_keys": ["interpolation_class"],
@@ -85,7 +87,7 @@ For most applications specifying only the first four parameters is recommended.
         },
         {
             "interp_method": ["linear", "linear", "linear", "linear"],
-            "interp_classes": ["None", "BH", "WD", "NS"],
+            "interp_classes": ["None", "BH", "WD", "NS"], # classes not in this array will not be normalized in class-wise normalization
             "out_keys": second,
             "class_method": "kNN",
             "c_keys": ['S1_direct_state'],
@@ -93,7 +95,7 @@ For most applications specifying only the first four parameters is recommended.
         },
         {
             "interp_method": ["linear", "linear", "linear", "linear"],
-            "interp_classes": ["None", "BH", "WD", "NS"],
+            "interp_classes": ["None", "BH", "WD", "NS"], # classes not in this array will not be normalized in class-wise normalization
             "out_keys": third,
             "class_method": "kNN",
             "c_keys": ['S1_Fryer+12-rapid_state'],
@@ -101,7 +103,7 @@ For most applications specifying only the first four parameters is recommended.
         },
         {
             "interp_method": ["linear", "linear", "linear", "linear"],
-            "interp_classes": ["None", "BH", "WD", "NS"],
+            "interp_classes": ["None", "BH", "WD", "NS"], # classes not in this array will not be normalized in class-wise normalization
             "out_keys": fourth,
             "class_method": "kNN",
             "c_keys": ['S1_Fryer+12-delayed_state'],
@@ -109,7 +111,7 @@ For most applications specifying only the first four parameters is recommended.
         },
         {
             "interp_method": ["linear", "linear", "linear", "linear"],
-            "interp_classes": ["None", "BH", "WD", "NS"],
+            "interp_classes": ["None", "BH", "WD", "NS"], # classes not in this array will not be normalized in class-wise normalization
             "out_keys": fifth,
             "class_method": "kNN",
             "c_keys": ['S1_Sukhbold+16-engineN20_state'],
@@ -117,7 +119,7 @@ For most applications specifying only the first four parameters is recommended.
         },
         {
             "interp_method": ["linear", "linear", "linear", "linear"],
-            "interp_classes": ["None", "BH", "WD", "NS"],
+            "interp_classes": ["None", "BH", "WD", "NS"], # classes not in this array will not be normalized in class-wise normalization
             "out_keys": sixth,
             "class_method": "kNN",
             "c_keys": ['S1_Patton&Sukhbold20-engineN20_state'],
@@ -649,11 +651,13 @@ class BaseIFInterpolator:
 
         """
         classes = self.test_classifier(self.c_key, Xt)
-        Xtn = self.X_scaler.normalize(Xt)
+
+
         if isinstance(self.interp_method, list):
             Xtn = self.X_scaler.normalize(Xt, classes)
-            Ypredn = self.interpolator.predict(Xtn, classes)
+            Ypredn = self.interpolator.predict(Xtn, classes, self.X_scaler)
         else:
+            Xtn = self.X_scaler.normalize(Xt)
             Ypredn = self.interpolator.predict(Xtn)
 
         Ypredn = np.array([
@@ -960,15 +964,15 @@ class BaseIFInterpolator:
                             np.abs(ypred_i[:, which_abs] - Y_t[:, which_abs]), 90,
                             axis=0)
 
-            try:
-                where_min = np.nanargmin(np.nanmean(err, axis=2), axis=0)
-            except:
-                # replace nans by a large number before looking for minimum
-                where_min = np.nanargmin(np.nan_to_num(np.nanmean(err, axis=2), nan=1e99), axis=0)
+
+            no_nan_slices = np.isfinite(np.nanmean(err, axis = 2)).all(axis = 0)
+
+            where_min = np.full(shape = (self.n_out, ), fill_value = np.nan)
+            where_min[no_nan_slices] = np.nanargmin(np.nanmean(err, axis=2)[:, no_nan_slices], axis=0)
 
             out_scaling = []
             for i in range(self.n_out):
-                if where_min[i] < r:
+                if where_min[i] < r or np.isnan(where_min[i]):
                     out_scaling.append(out_scalings[0][i])
                 else:
                     out_scaling.append(out_scalings[1][i])
@@ -1117,7 +1121,7 @@ class LinInterpolator(Interpolator):
         self.interpolator.append(OoH)
         # self.train_error(XT, YT)
 
-    def predict(self, Xt):
+    def predict(self, Xt, scaler = None, klass = None):
         """Interpolate and approximate output vectors given input vectors.
 
         Parameters
@@ -1131,14 +1135,24 @@ class LinInterpolator(Interpolator):
 
         """
         super().predict(Xt)
+
         Ypred = self.interpolator[0](Xt)
         wnan = np.isnan(Ypred[:, 0])
         # 1NN interpolation for binaries out of hull
         if np.any(wnan):
             Ypred[wnan, :] = self.interpolator[1].predict(Xt[wnan, :])
-        if np.any(wnan):
+
+            dists, _ = self.interpolator[1].kneighbors(Xt[wnan, :])
+            max_distance = dists.argmax() # only finding information for furthest nearest neighbor
+
+            neighbors = scaler.denormalize(self.interpolator[1]._tree.data.base) # unnormalizing 
+            max_distance_point = scaler.denormalize(Xt[[max_distance]])
+
+            nearest_neighbor = np.sum(np.square(neighbors - max_distance_point), axis = 1)
+            nearest_neighbor = nearest_neighbor.argsort()[0]
+
             warnings.warn(f"1NN interpolation used for {np.sum(wnan)} "
-                          "binaries out of hull.")
+                          f"binaries out of hull. Parameter-wise distance (Unnormalized) for point with maximum out-of-hull euclidian distance (Normalized): {np.abs(neighbors[nearest_neighbor] - max_distance_point[0])}")
         return Ypred
 
 
@@ -1203,7 +1217,7 @@ class MC_Interpolator:
 
         return self.classifier.predict(Xt)
 
-    def predict(self, Xt, zpred):
+    def predict(self, Xt, zpred, scaler = None):
         """Interpolate and approximate output vectors given input vectors.
 
         Parameters
@@ -1216,13 +1230,14 @@ class MC_Interpolator:
         Output space approximation as numpy array
 
         """
+
         Ypred = np.ones((Xt.shape[0], self.M)) * np.nan
         for i in range(len(self.classes)):
             which = np.zeros_like(zpred, dtype=bool)
             for j in range(len(self.classes[i])):
                 which += zpred == self.classes[i][j]
             if which.any():
-                Ypred[which, :] = self.interpolators[i].predict(Xt[which, :])
+                Ypred[which, :] = self.interpolators[i].predict(Xt[which, :], scaler = scaler, klass = self.classes[i])
         return Ypred
 
 
@@ -1380,7 +1395,7 @@ class KNNClassifier(Classifier):
         else:
             acc = np.zeros(nmax)
             for n in range(1, nmax + 1):
-                # print(f"  - xval for k = {n}")
+
                 for i in range(nfolds):
                     iTrain, itest = xval_indices(
                         XT.shape[0], percent_test=p_test, labels=yT)
@@ -1428,9 +1443,9 @@ class Scaler:
                 inds = np.where(klass == c)[0]
                 c = None if c == "None" else c
 
-                if c not in self.scaler.keys():
-                    warnings.warn(f"skip normalize: c={c}, inds={inds}")
+                if c not in self.scaler.keys(): # if class not in classes to interpolate we ignore
                     continue
+
                 normalized[inds] = self.scaler[c].normalize(X[inds])
 
             return normalized
@@ -1438,8 +1453,8 @@ class Scaler:
     def denormalize(self, Xn, klass = None):
 
         if klass is None:
-            return self.scaler[klass].denormalize(X)
-
+            return self.scaler[klass].denormalize(Xn)
+        
         else:
 
             normalized = Xn
@@ -1450,8 +1465,7 @@ class Scaler:
                 inds = np.where(klass == c)[0]
                 c = None if c == "None" else c
 
-                if c not in self.scaler.keys():
-                    warnings.warn(f"skip denormalize: c={c}, inds={inds}")
+                if c not in self.scaler.keys(): # if class not in classes to interpolate we ignore
                     continue
                 normalized[inds] = self.scaler[c].denormalize(Xn[inds])
 
@@ -1466,6 +1480,7 @@ class MatrixScaler:
         if len(norms) != XT.shape[1]:
             raise ValueError("The number of columns in XT must be equal "
                             "to the length of norms.")
+
         self.N = XT.shape[1]
         self.scalers = []
         for i in range(self.N):
@@ -1484,6 +1499,7 @@ class MatrixScaler:
 
     def denormalize(self, Xn):
         """Unscale input X."""
+
         assert Xn.shape[1] == self.N
         X = np.empty_like(Xn)
         for i in range(self.N):
@@ -2066,7 +2082,7 @@ def plot_interpolation(m, keys, v2, ux2, scales=None, path=None, **pltargs):
                 name = (key + '_' + m.classifiers['interpolation_class'].method
                         + '_' + method + '_' + str(round(v, 2)) + '.png')
                 name = os.path.join(path, name)
-                print(name)
+
                 fig.savefig(name)
             plt.close(fig)
 
