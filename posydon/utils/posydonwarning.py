@@ -45,6 +45,16 @@ class UnsupportedModelWarning(POSYDONWarning):
     def __init__(self):
         warnings.filterwarnings("default", category=UnsupportedModelWarning)
 
+class BinaryParsingWarning(POSYDONWarning):
+    """Warnings related to parsing of binaries."""
+    def __init__(self):
+        warnings.filterwarnings("default", category=BinaryParsingWarning)
+
+class WritingWarning(POSYDONWarning):
+    """Warnings related to writing and saving of file."""
+    def __init__(self):
+        warnings.filterwarnings("default", category=WritingWarning)
+
 # The base class of all warnings is "Warning", which is derived from Exception
 #
 # List of Python's default warnings (sub)classes in alphabetic order
