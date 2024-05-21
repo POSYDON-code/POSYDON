@@ -204,6 +204,16 @@ class SimulationProperties:
 
 class EvolveHooks:
     """Base class for hooking into binary evolution."""
+    
+    def __init__(self):
+        """
+        Add any new output columns to the hooks constructor.
+        Example for extra binary columns: 
+            self.extra_binary_col_names = ["column_name_1", "column_name_2"]
+        Example for extra star columns: 
+            self.extra_star_col_names = ["column_name_1", "column_name_2"]           
+        """
+        pass
 
     def pre_evolve(self, binary):
         """Perform actions before a binary evolves."""
@@ -234,7 +244,8 @@ class TimingHooks(EvolveHooks):
 
     def pre_evolve(self, binary):
         """Initialize the step time to match history."""
-        binary.step_times = [0.0]
+        if not hasattr(binary, 'step_times'):
+            binary.step_times = [0.0]
         return binary
 
     def pre_step(self, binary, step_name):
@@ -271,10 +282,10 @@ class StepNamesHooks(EvolveHooks):
     def __init__(self):
         self.extra_binary_col_names = ["step_names"]
 
-
     def pre_evolve(self, binary):
         """Initialize the step name to match history."""
-        binary.step_names = ['initial_cond']
+        if not hasattr(binary, 'step_names'):
+            binary.step_names = ['initial_cond']
         return binary
 
     def pre_step(self, binary, step_name):
