@@ -274,7 +274,7 @@ class IFInterpolator:
 
             ynums = {**ynums, **ynum}
             ycats = {**ycats, **ycat}
-
+        print(ycats.keys())
         return ynums, ycats
 
 
@@ -964,9 +964,9 @@ class BaseIFInterpolator:
                             axis=0)
 
 
-            no_nan_slices = ~np.isnan(np.nanmean(err, axis = 2)).all(axis = 0)
+            no_nan_slices = ~np.isfinite(np.nanmean(err, axis = 2)).all(axis = 0)
 
-            where_min = np.full_like(np.zeros(shape = (self.n_out, )), fill_value = np.nan)
+            where_min = np.full(shape = (self.n_out, ), fill_value = np.nan)
             where_min[no_nan_slices] = np.nanargmin(np.nanmean(err, axis=2)[:, no_nan_slices], axis=0)
 
             out_scaling = []
@@ -1134,12 +1134,13 @@ class LinInterpolator(Interpolator):
 
         """
         super().predict(Xt)
+
         Ypred = self.interpolator[0](Xt)
         wnan = np.isnan(Ypred[:, 0])
         # 1NN interpolation for binaries out of hull
         if np.any(wnan):
             Ypred[wnan, :] = self.interpolator[1].predict(Xt[wnan, :])
-        if np.any(wnan):
+
             dists, _ = self.interpolator[1].kneighbors(Xt[wnan, :])
 
             warnings.warn(f"1NN interpolation used for {np.sum(wnan)} "
@@ -1221,6 +1222,7 @@ class MC_Interpolator:
         Output space approximation as numpy array
 
         """
+        print(zpred)
         Ypred = np.ones((Xt.shape[0], self.M)) * np.nan
         for i in range(len(self.classes)):
             which = np.zeros_like(zpred, dtype=bool)
