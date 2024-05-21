@@ -224,10 +224,7 @@ class BinaryStar:
             next_step_name = self.properties.flow.get(total_state)
 
             if next_step_name is None:
-                warnings.warn("Undefined next step given stars/binary states "
-                              "{}.".format(total_state))
-                self.event = 'END'
-                return
+                raise ValueError("Undefined next step given stars/binary states {}.".format(total_state))
 
             next_step = getattr(self.properties, next_step_name, None)
             if next_step is None:

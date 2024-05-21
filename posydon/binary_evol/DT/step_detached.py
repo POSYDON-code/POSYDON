@@ -37,8 +37,8 @@ from posydon.utils.common_functions import (
 )
 from posydon.binary_evol.flow_chart import (STAR_STATES_CC, STAR_STATES_CO)
 import posydon.utils.constants as const
-from posydon.utils.posydonerror import NumericalError
-from posydon.utils.posydonerror import MatchingError,POSYDONError
+from posydon.utils.posydonerror import NumericalError,MatchingError, POSYDONError
+from posydon.utils.posydonwarning import UnsupportedModelWarning
 
 LIST_ACCEPTABLE_STATES_FOR_HMS = ["H-rich_Core_H_burning"]
 
@@ -842,7 +842,7 @@ class detached_step:
                         sol = minimize(sq_diff_function, x0,
                                    method="TNC", bounds=bnds)
                     except:
-                        raise NumericalError("SciPy numerical differentiation occured outside boundary ",
+                        raise NumericalError("SciPy numerical differentiation occured outside boundary "
                                              "while matching to single star track")
 
             # if still not acceptable matching, we fail the system:
@@ -2638,15 +2638,15 @@ def diffeq(
             )
 
         else:
-            print("WARNING: Magnetic braking is not being calculated in the "
+            warnings.warn("WARNING: Magnetic braking is not being calculated in the "
                   "detached step. The given magnetic_braking_mode string \"",
                   magnetic_braking_mode, "\" does not match the available "
                   "built-in cases. To enable magnetic braking, please set "
-                  "magnetc_braking_mode to one of the following strings:")
-            print("\"RVJ83\" for Rappaport, Verbunt, & Joss 1983")
-            print("\"G18\" for Garraffo et al. 2018")
-            print("\"M15\" for Matt et al. 2015")
-            print("\"CARB\" for Van & Ivanova 2019")
+                  "magnetc_braking_mode to one of the following strings: "
+                  "\"RVJ83\" for Rappaport, Verbunt, & Joss 1983"
+                  "\"G18\" for Garraffo et al. 2018"
+                  "\"M15\" for Matt et al. 2015"
+                  "\"CARB\" for Van & Ivanova 2019", UnsupportedModelWarning)
 
         if verbose and verbose != 1:
             print("magnetic_braking_mode = ", magnetic_braking_mode)

@@ -22,6 +22,7 @@ from scipy.interpolate import interp1d
 from scipy.optimize import newton
 from scipy.integrate import quad
 from posydon.utils import constants as const
+from posydon.utils.posydonwarning import EvolutionWarning, ApproximationWarning, InterpolationWarning, ClassificationWarning
 import copy
 import warnings
 from scipy.interpolate import PchipInterpolator
@@ -1548,7 +1549,7 @@ def cumulative_mass_transfer_flag(MT_cases, shift_cases=False):
                     case_2_min = MT
             else:
                 # unknown donor
-                warnings.warn("MT case with unknown donor: {}".format(MT))
+                warnings.warn("MT case with unknown donor: {}".format(MT), EvolutionWarning)
                 corrected_MT_cases.append(MT)
     else:
         corrected_MT_cases = MT_cases.copy()
@@ -1864,8 +1865,8 @@ def calculate_core_boundary(donor_mass,
         # ind_core=np.argmax(element[::-1]>=core_element_fraction_definition)
         else:
             ind_core = -1
-            warnings.warn("Profile columns not enough to calculate the core "
-                          "boundaries for CE, all star considered an envelope")
+            warnings.warn("Stellar profile columns were not enough to calculate the core-envelope "
+                          "boundaries for CE, entire star is now considered an envelope", ApproximationWarning)
             return ind_core
 
         # starting from the surface, both conditions become True when element
@@ -2023,7 +2024,7 @@ def linear_interpolation_between_two_cells(array_y, array_x, x_target,
 
     if top == bot:
         y_target = array_y[top]
-        warnings.warn("linear interpolation between the same point")
+        warnings.warn("linear interpolation occured between the same point", InterpolationWarning)
         if verbose:
             print("linear interpolation, but at the edge")
             print("x_target,top, bot, len(array_x), y_target",
@@ -2239,13 +2240,13 @@ def get_mass_radius_dm_from_profile(profile, m1_i=0.0,
         # checking if mass of profile agrees with the mass of the binary object
         if np.abs(donor_mass[0] - m1_i) > tolerance:
             warnings.warn("Donor mass from the binary class object "
-                          "and the profile do not agree")
-            print("mass profile/object:", (donor_mass[0]), (m1_i))
+                          "and the profile do not agree", ClassificationWarning)
+            #print("mass profile/object:", (donor_mass[0]), (m1_i))
         # checking if radius of profile agrees with the radius of the binary
         if np.abs(donor_radius[0] - radius1) > tolerance:
             warnings.warn("Donor radius from the binary class object "
-                          "and the profile do not agree")
-            print("radius profile/object:", (donor_radius[0]), (radius1))
+                          "and the profile do not agree", ClassificationWarning)
+            #print("radius profile/object:", (donor_radius[0]), (radius1))
 
         # MANOS: if dm exists as a column, else calculate it from mass column
         if "dm" in profile.dtype.names:
@@ -2304,7 +2305,7 @@ def get_internal_energy_from_profile(common_envelope_option_for_lambda,
            != "lambda_from_profile_gravitational")
             and (not("energy" in profile.dtype.names))):
         warnings.warn("Profile does not include internal energy -- "
-                      "Proceeding with 'lambda_from_profile_gravitational'")
+                      "proceeding with 'lambda_from_profile_gravitational'", ApproximationWarning)
         # initiate specific internal energy as 0
         specific_donor_internal_energy = profile["radius"] * 0.0
     elif ((common_envelope_option_for_lambda
@@ -2377,7 +2378,7 @@ def calculate_H2recombination_energy(profile, tolerance=0.001):
     if "x_mass_fraction_H" not in profile.dtype.names:
         warnings.warn("Profile does not include Hydrogen mass fraction "
                       "calculate H2 recombination energy -- "
-                      "H2 recombination energy is assumed 0")
+                      "H2 recombination energy is assumed 0", ApproximationWarning)
         specific_donor_H2recomb_energy = profile["radius"] * 0.0
     else:
         # Dissociation energy [cm^1] from Cheng+2018:
@@ -2417,7 +2418,7 @@ def calculate_recombination_energy(profile, tolerance=0.001):
             and ("avg_charge_He" in profile.dtype.names))):
         warnings.warn("Profile does not include mass fractions and ionizations"
                       " of elements to calculate recombination energy "
-                      "-- recombination energy is assumed 0")
+                      "-- recombination energy is assumed 0", ApproximationWarning)
         specific_donor_recomb_energy = profile["radius"] * 0.0
     else:
         # from MESA/binary/private/binary_ce.f90
@@ -2531,8 +2532,8 @@ def calculate_binding_energy(donor_mass, donor_radius, donor_dm,
         Grav_energy = Grav_energy + Grav_energy_of_cell
         U_i = U_i + specific_internal_energy[i]*donor_dm[i]*const.Msun
     if Grav_energy > 0.0:
-        print("Grav_energy, donor_mass, donor_dm, donor_radius",
-              Grav_energy, donor_mass, donor_dm, donor_radius)
+        #print("Grav_energy, donor_mass, donor_dm, donor_radius",
+        #      Grav_energy, donor_mass, donor_dm, donor_radius)
         if not (Grav_energy < tolerance):
             raise ValueError("CEE problem calculating gravitational energy, "
                             "giving positive values.")
@@ -2540,7 +2541,7 @@ def calculate_binding_energy(donor_mass, donor_radius, donor_dm,
     # an a_th fraction of its internal energy
     Ebind_i = Grav_energy + factor_internal_energy * U_i
     if Ebind_i > -tolerance:
-        warnings.warn("Ebind_i of the envelope is found positive")
+        warnings.warn("Ebind_i of the envelope is positive", EvolutionWarning)
     if verbose:
         print("integration of gravitational energy surface to core "
               "[Grav_energy], integration of internal energy surface to "
@@ -2602,8 +2603,8 @@ def calculate_Mejected_for_integrated_binding_energy(profile, Ebind_threshold,
     ind_threshold = i-1
 
     if donor_mass[ind_threshold]< mc1_i or  donor_radius[ind_threshold]<rc1_i:
-        warnings.warn("partial mass ejected found more than the envelope mass")
-        print("M_ejected, M_envelope = ", donor_mass[0] - donor_mass[ind_threshold], donor_mass[0] - mc1_i)
+        warnings.warn("partial mass ejected is greater than the envelope mass", EvolutionWarning)   
+        #print("M_ejected, M_envelope = ", donor_mass[0] - donor_mass[ind_threshold], donor_mass[0] - mc1_i)
         donor_mass[ind_threshold] = mc1_i
 
     M_ejected = donor_mass[0] - donor_mass[ind_threshold]

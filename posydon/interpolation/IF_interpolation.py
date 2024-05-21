@@ -192,6 +192,7 @@ from matplotlib.colors import ListedColormap
 from posydon.visualization.plot_defaults import DEFAULT_LABELS
 from posydon.interpolation.constraints import (
     find_constraints_to_apply, sanitize_interpolated_quantities)
+from posydon.utils.posydonwarning import InterpolationWarning
 
 
 # INITIAL-FINAL INTERPOLATOR
@@ -1138,7 +1139,7 @@ class LinInterpolator(Interpolator):
             Ypred[wnan, :] = self.interpolator[1].predict(Xt[wnan, :])
         if np.any(wnan):
             warnings.warn(f"1NN interpolation used for {np.sum(wnan)} "
-                          "binaries out of hull.")
+                          "binaries out of hull.", InterpolationWarning)
         return Ypred
 
 
@@ -1429,7 +1430,8 @@ class Scaler:
                 c = None if c == "None" else c
 
                 if c not in self.scaler.keys():
-                    warnings.warn(f"skip normalize: c={c}, inds={inds}")
+                    warnings.warn(f"normalization was skipped during interpolation: c={c}, inds={inds}", 
+                                  InterpolationWarning)
                     continue
                 normalized[inds] = self.scaler[c].normalize(X[inds])
 
@@ -1451,7 +1453,8 @@ class Scaler:
                 c = None if c == "None" else c
 
                 if c not in self.scaler.keys():
-                    warnings.warn(f"skip denormalize: c={c}, inds={inds}")
+                    warnings.warn(f"de-normalization was skipped during interpolation: c={c}, inds={inds}",
+                                  InterpolationWarning)
                     continue
                 normalized[inds] = self.scaler[c].denormalize(Xn[inds])
 

@@ -32,7 +32,7 @@ from posydon.binary_evol.binarystar import BinaryStar
 from posydon.binary_evol.singlestar import SingleStar
 from posydon.utils.common_functions import convert_metallicity_to_string
 
-
+from posydon.utils.posydonwarning import BinaryParsingWarning, WritingWarning
 
 class SyntheticPopulation:
 
@@ -173,7 +173,7 @@ class SyntheticPopulation:
             warnings.warn('Note that invert_S1S2=False, hence you are not parsing '
                           f'the dataset for {S1_state}-{S2_state} binaries and '
                           f'and not for for {S1_state}-{S2_state}. If this is '
-                          'done on purpose, ignore this message!')
+                          'done on purpose, ignore this message!', BinaryParsingWarning)
 
         sel_all = df['S1_state'].astype(bool)
 
@@ -359,7 +359,7 @@ class SyntheticPopulation:
 
         # save parsed population as synthetic population
         if self.df is not None:
-            warnings.warn('Overwriting the df population!')
+            warnings.warn('Overwriting the df population!', WritingWarning)
         self.df = df_sel
         self.df_oneline = df_sel_oneline
 
@@ -487,7 +487,7 @@ class SyntheticPopulation:
                     self.df_synthetic[c] = self.df_oneline[c]
                 else:
                     warnings.warn(f'The column {c} is not present in the '
-                                   'oneline dataframe.')
+                                   'oneline dataframe.', WritingWarning)
 
         # compute GRB properties
         if compute_GRB_properties:
