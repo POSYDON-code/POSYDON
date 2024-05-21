@@ -274,7 +274,7 @@ class IFInterpolator:
 
             ynums = {**ynums, **ynum}
             ycats = {**ycats, **ycat}
-        print(ycats.keys())
+
         return ynums, ycats
 
 
@@ -964,7 +964,7 @@ class BaseIFInterpolator:
                             axis=0)
 
 
-            no_nan_slices = ~np.isfinite(np.nanmean(err, axis = 2)).all(axis = 0)
+            no_nan_slices = np.isfinite(np.nanmean(err, axis = 2)).all(axis = 0)
 
             where_min = np.full(shape = (self.n_out, ), fill_value = np.nan)
             where_min[no_nan_slices] = np.nanargmin(np.nanmean(err, axis=2)[:, no_nan_slices], axis=0)
@@ -1222,7 +1222,7 @@ class MC_Interpolator:
         Output space approximation as numpy array
 
         """
-        print(zpred)
+
         Ypred = np.ones((Xt.shape[0], self.M)) * np.nan
         for i in range(len(self.classes)):
             which = np.zeros_like(zpred, dtype=bool)
@@ -1387,7 +1387,7 @@ class KNNClassifier(Classifier):
         else:
             acc = np.zeros(nmax)
             for n in range(1, nmax + 1):
-                # print(f"  - xval for k = {n}")
+
                 for i in range(nfolds):
                     iTrain, itest = xval_indices(
                         XT.shape[0], percent_test=p_test, labels=yT)
@@ -2074,7 +2074,7 @@ def plot_interpolation(m, keys, v2, ux2, scales=None, path=None, **pltargs):
                 name = (key + '_' + m.classifiers['interpolation_class'].method
                         + '_' + method + '_' + str(round(v, 2)) + '.png')
                 name = os.path.join(path, name)
-                print(name)
+
                 fig.savefig(name)
             plt.close(fig)
 
