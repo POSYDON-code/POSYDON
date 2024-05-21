@@ -37,8 +37,8 @@ from posydon.utils.common_functions import (
 )
 from posydon.binary_evol.flow_chart import (STAR_STATES_CC, STAR_STATES_CO)
 import posydon.utils.constants as const
-from posydon.utils.posydonerror import NumericalError
-from posydon.utils.posydonerror import MatchingError,POSYDONError
+from posydon.utils.posydonerror import NumericalError,MatchingError, POSYDONError
+from posydon.utils.posydonwarning import UnsupportedModelWarning
 
 LIST_ACCEPTABLE_STATES_FOR_HMS = ["H-rich_Core_H_burning"]
 
