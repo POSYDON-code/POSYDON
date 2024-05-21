@@ -1083,13 +1083,15 @@ class NNInterpolator(Interpolator):
         self.interpolator.fit(XT, YT)
         # self.train_error(XT, YT)
 
-    def predict(self, Xt):
+    def predict(self, Xt, scaler = None, klass = None):
         """Interpolate and approximate output vectors given input vectors.
 
         Parameters
         ----------
         XT : numpy array
             List of input vectors
+        scaler : #TODO
+        klass : #TODO
 
         Returns
         -------
@@ -1128,6 +1130,8 @@ class LinInterpolator(Interpolator):
         ----------
         XT : numpy array
             List of input vectors
+        scaler : #TODO
+        klass : #TODO
 
         Returns
         -------
@@ -1204,6 +1208,7 @@ class MC_Interpolator:
             List of input vectors
         YT : numpy array
             List of corresponding output vectors
+        z : #TODO
 
         """
         self.M = YT.shape[1]
@@ -1224,6 +1229,8 @@ class MC_Interpolator:
         ----------
         XT : numpy array
             List of input vectors
+        zpred : #TODO
+        scaler : #TODO
 
         Returns
         -------
@@ -1332,6 +1339,7 @@ class KNNClassifier(Classifier):
             List of input vectors
         YT : numpy array
             List of corresponding classes
+        K : #TODO
 
         """
         super().train(XT, yT)
@@ -1519,6 +1527,7 @@ def xval_indices(N, percent_test=0.15, labels=None):
         number of samples in the data set.
     percent_test : float
         Percentage of samples to be in the test sets. (0 < percent_test < 0.5)
+    labels : #TODO
 
     Returns
     -------
@@ -1628,6 +1637,8 @@ def assess_models(models, grid_T, grid_t, ux2, path='./'):
         Train grid
     grid_t : psg.PSyGrid
         Test grid
+    ux2 : #TODO
+    path : #TODO
 
     """
     if not isinstance(models, list):
@@ -2029,6 +2040,10 @@ def plot_interpolation(m, keys, v2, ux2, scales=None, path=None, **pltargs):
         A trained instance of the IFInterpolator
     keys : List of strings
         Variables for which interpolation errors will be plotted
+    v2 : #TODO
+    ux2 : #TODO
+    scales : #TODO
+    path : #TODO
 
     """
     N = pltargs.pop('N', PLT_INTERP_KWARGS['N'])
@@ -2096,10 +2111,12 @@ def plot_interp_error(Ygt, Ys, ind_MT, methods, keys, path='.'):
         Ground truth of the final values of testing tracks
     Ys : numpy array
         Model's approximation of the final values of testing tracks
+    ind_MT : #TODO
     methods : List of strings
         List that indicates the interpolation methods
     keys : List of strings
         List indicating for which variables error distributions will be plotted
+    path : #TODO
 
     """
     labels = ['stable MT', 'unstable MT', 'no MT']
