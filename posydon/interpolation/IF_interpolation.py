@@ -1142,9 +1142,16 @@ class LinInterpolator(Interpolator):
             Ypred[wnan, :] = self.interpolator[1].predict(Xt[wnan, :])
 
             dists, _ = self.interpolator[1].kneighbors(Xt[wnan, :])
+            max_distance = dists.argmax() # only finding information for furthest nearest neighbor
+
+            neighbors = scaler.denormalize(self.interpolator[1]._tree.data.base) # unnormalizing 
+            max_distance_point = scaler.denormalize(Xt[[max_distance]])
+
+            nearest_neighbor = np.sum(np.square(neighbors - max_distance_point), axis = 1)
+            nearest_neighbor = nearest_neighbor.argsort()[0]
 
             warnings.warn(f"1NN interpolation used for {np.sum(wnan)} "
-                          f"binaries out of hull. Max distance to neighbor: {dists.max()}")
+                          f"binaries out of hull. Parameter-wise distance (Unnormalized) for point with maximum out-of-hull euclidian distance (Normalized): {np.abs(neighbors[nearest_neighbor] - max_distance_point[0])}")
         return Ypred
 
 
