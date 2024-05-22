@@ -648,7 +648,11 @@ class PopulationManager:
 
         """
         if where is None:
-            query_str = f'index=={indices}'
+            if len(indices) > 0:
+                query_str = f'index=={indices}'
+            else:
+                raise ValueError("You must specify either the binary indices or a query string "
+                                 "to read from file.")
         else:
             query_str = str(where)
 
