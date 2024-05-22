@@ -644,11 +644,11 @@ class PopulationManager:
         where : str
             Query performed on disk to select history and oneline DataFrames.
         restore : bool
-            Restore binaries back to initial conditions.
+            If true, restore binaries back to initial conditions.
 
         """
         if where is None:
-            query_str = 'index==indices'
+            query_str = f'index=={indices}'
         else:
             query_str = str(where)
 
