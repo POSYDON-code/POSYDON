@@ -634,7 +634,7 @@ class PopulationManager:
         self.append(binary)
         return binary
 
-    def from_hdf(self, indices, where=None, restore=False):
+    def from_hdf(self, indices=[], where=None, restore=False):
         """Load a BinaryStar instance from an hdf file of a saved population.
 
         Parameters
