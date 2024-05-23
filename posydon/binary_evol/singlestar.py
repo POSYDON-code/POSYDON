@@ -177,7 +177,7 @@ class SingleStar:
         for item in STARPROPERTIES:
             getattr(self, item + '_history').append(getattr(self, item))
 
-    def restore(self, i=0, hooks=[]):
+    def restore(self, i=0, hooks=None):
         """Restore the SingleStar() object to its i-th state, keeping the star history before the i-th state.
 
         Parameters
@@ -190,6 +190,9 @@ class SingleStar:
             object containing this SingleStar(), if applicable. This parameter is 
             automatically set when restoring a BinaryStar() object. 
         """
+        if hooks is None:
+            hooks = []
+            
         # Move current star properties to the ith step, using its history
         for p in STARPROPERTIES:
             setattr(self, p, getattr(self, '{}_history'.format(p))[i])
