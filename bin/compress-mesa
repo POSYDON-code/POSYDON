@@ -170,7 +170,10 @@ def compress_dir(args):
         for remove_file in files:
             if os.path.isfile(os.path.join(folder, remove_file)):
 #                print("remove:", os.path.join(folder, remove_file))
-                os.remove(os.path.join(folder, remove_file))
+                try:
+                    os.remove(os.path.join(folder, remove_file))
+                except:
+                    print("Could not remove:", remove_file, "in", folder)
 
     if args.verbose:
         print("compress", n_compress_files, "files in", len(to_compress),\
@@ -180,7 +183,7 @@ def compress_dir(args):
             if os.path.isfile(os.path.join(folder, compress_file)):
 #                print(f"gzip -1 {os.path.join(folder, compress_file)}")
                 os.system(f"gzip -1 {os.path.join(folder, compress_file)}")
-    
+
     new_size, to_remove, to_compress, n_runs, n_remove_files, n_compress_files\
         = get_size(args.mesa_dir)
     if args.verbose:
