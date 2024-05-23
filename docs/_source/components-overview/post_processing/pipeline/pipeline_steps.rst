@@ -184,12 +184,12 @@ confusion with other steps. It clearly has to run after a step, but it is no
 usual step itself. It requires a path to a :samp:`PSyGrid` object to get the
 models from, a path, where the rerun should be stored (it creates in there the
 :samp:`grid.csv` and the ini file needed to
-:ref:`setup a new run <mesa-grids-api>`), the grid type, the metallicity, and
-the type of the rerun specifying the logic and changes.
+:ref:`setup a new run <mesa-grids-api>`), the grid type, the metallicity, the
+type of the rerun specifying the logic and changes, and the cluster name.
 
 .. code-block::
 
-    path_to_grid,rerun_path,grid_type,rerun_metallicity,rerun_type
+    path_to_grid,rerun_path,grid_type,rerun_metallicity,rerun_type,cluster
 
 .. table:: Currently supported rerun types
 

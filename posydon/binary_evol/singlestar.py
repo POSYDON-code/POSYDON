@@ -399,6 +399,14 @@ class SingleStar:
         except AttributeError:
             star.metallicity = None
 
+        # add values at He depletion
+        for colname in run.final_values.dtype.names:
+            if "at_He_depletion" in colname:
+                if colname[0:3]=="S1_":
+                    attr = colname[3:]
+                    final_value = run.final_values[colname]
+                    setattr(star, attr, final_value)
+        
         star.state_history = [check_state_of_star(star, i=i, star_CO=False)
                               for i in range(n_steps)]
         star.state = star.state_history[-1]

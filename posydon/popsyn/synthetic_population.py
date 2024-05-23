@@ -881,7 +881,7 @@ class SyntheticPopulation:
             event_array = df_binary['event'].values.tolist()
 
             # make interpolated class information consistent with event column
-            HMS_HMS_event_dict = {'stable_MT':'oRLO1', 'no_MT':'None', 'unstable_MT':'oCE1/oDoubleCE1'}
+            HMS_HMS_event_dict = {'stable_MT':'oRLO1', 'stable_reverse_MT':'oRLO1', 'no_MT':'None', 'unstable_MT':'oCE1/oDoubleCE1'}
             event_HMS_HMS = HMS_HMS_event_dict[df_binary_online['interp_class_HMS_HMS']]
 
             # for now, only append information for RLO1; unstable_MT information already exists
