@@ -1,0 +1,1561 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>posydon.popsyn &mdash; POSYDON v2.0.0-dev documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=8ace0c28" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../_static/documentation_options.js?v=f4b7fd8b"></script>
+        <script src="../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="posydon.utils" href="posydon.utils.html" />
+    <link rel="prev" title="posydon.interpolation" href="posydon.interpolation.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html">
+            
+              <img src="../_static/posydon_logo.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                v2.0.0-dev
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../introduction-acknowledgements/intro.html">Introduction, Objectives, and Scope</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../introduction-acknowledgements/collaborative-team.html">Collaborative Team</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://posydon.org/papers.html">Publications</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../getting-started/prerequisites.html">Prerequisites</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting-started/installation-guide.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting-started/verification.html">Verification</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">User Guides</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../user-guides/user-roadmap.html">Roadmap to Becoming an Expert POSYDON User</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user-guides/web-application.html">Web Application: POSYDON Interactive Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user-guides/database-query-system.html">Database and Query System</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials and Examples</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials-examples/population-synthesis/binary-pop-syn.html">Binary-Star Population Synthesis with POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials-examples/generating-datasets/generating-datasets.html">Crafting the Core Datasets for POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials-examples/MESA-grids/running-grids.html">Architecting MESA Simulation Grids with POSYDON</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">In-Depth Components Overview</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../components-overview/mesa-grids.html">MESA Grids API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../components-overview/processing-pipeline.html">Processing Pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../components-overview/machine-learning-components.html">Machine Learning Components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../components-overview/stellar-binary-simulation.html">Stellar &amp; Binary-star Simulation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="posydon.html">posydon</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="posydon.active_learning.html">posydon.active_learning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.binary_evol.html">posydon.binary_evol</a></li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.grids.html">posydon.grids</a></li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.interpolation.html">posydon.interpolation</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">posydon.popsyn</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#module-posydon.popsyn.GRB">posydon.popsyn.GRB</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#posydon.popsyn.GRB.get_GRB_properties"><code class="docutils literal notranslate"><span class="pre">get_GRB_properties()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-posydon.popsyn.analysis">posydon.popsyn.analysis</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#posydon.popsyn.analysis.get_subsets"><code class="docutils literal notranslate"><span class="pre">get_subsets()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#posydon.popsyn.analysis.report_columns"><code class="docutils literal notranslate"><span class="pre">report_columns()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-posydon.popsyn.binarypopulation">posydon.popsyn.binarypopulation</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#posydon.popsyn.binarypopulation.BinaryGenerator"><code class="docutils literal notranslate"><span class="pre">BinaryGenerator</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#posydon.popsyn.binarypopulation.BinaryPopulation"><code class="docutils literal notranslate"><span class="pre">BinaryPopulation</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#posydon.popsyn.binarypopulation.PopulationManager"><code class="docutils literal notranslate"><span class="pre">PopulationManager</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-posydon.popsyn.defaults">posydon.popsyn.defaults</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-posydon.popsyn.independent_sample">posydon.popsyn.independent_sample</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#posydon.popsyn.independent_sample.binary_fraction_value"><code class="docutils literal notranslate"><span class="pre">binary_fraction_value()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#posydon.popsyn.independent_sample.generate_eccentricities"><code class="docutils literal notranslate"><span class="pre">generate_eccentricities()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#posydon.popsyn.independent_sample.generate_independent_samples"><code class="docutils literal notranslate"><span class="pre">generate_independent_samples()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#posydon.popsyn.independent_sample.generate_orbital_periods"><code class="docutils literal notranslate"><span class="pre">generate_orbital_periods()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#posydon.popsyn.independent_sample.generate_orbital_separations"><code class="docutils literal notranslate"><span class="pre">generate_orbital_separations()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#posydon.popsyn.independent_sample.generate_primary_masses"><code class="docutils literal notranslate"><span class="pre">generate_primary_masses()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#posydon.popsyn.independent_sample.generate_secondary_masses"><code class="docutils literal notranslate"><span class="pre">generate_secondary_masses()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-posydon.popsyn.io">posydon.popsyn.io</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#posydon.popsyn.io.binarypop_kwargs_from_ini"><code class="docutils literal notranslate"><span class="pre">binarypop_kwargs_from_ini()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#posydon.popsyn.io.clean_binary_history_df"><code class="docutils literal notranslate"><span class="pre">clean_binary_history_df()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#posydon.popsyn.io.clean_binary_oneline_df"><code class="docutils literal notranslate"><span class="pre">clean_binary_oneline_df()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#posydon.popsyn.io.parse_inifile"><code class="docutils literal notranslate"><span class="pre">parse_inifile()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#posydon.popsyn.io.simprop_kwargs_from_ini"><code class="docutils literal notranslate"><span class="pre">simprop_kwargs_from_ini()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-posydon.popsyn.normalized_pop_mass">posydon.popsyn.normalized_pop_mass</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#posydon.popsyn.normalized_pop_mass.initial_total_underlying_mass"><code class="docutils literal notranslate"><span class="pre">initial_total_underlying_mass()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-posydon.popsyn.rate_calculation">posydon.popsyn.rate_calculation</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#posydon.popsyn.rate_calculation.Rates"><code class="docutils literal notranslate"><span class="pre">Rates</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-posydon.popsyn.sample_from_file">posydon.popsyn.sample_from_file</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#posydon.popsyn.sample_from_file.get_kick_samples_from_file"><code class="docutils literal notranslate"><span class="pre">get_kick_samples_from_file()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#posydon.popsyn.sample_from_file.get_samples_from_file"><code class="docutils literal notranslate"><span class="pre">get_samples_from_file()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#posydon.popsyn.sample_from_file.infer_key"><code class="docutils literal notranslate"><span class="pre">infer_key()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-posydon.popsyn.selection_effects">posydon.popsyn.selection_effects</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#posydon.popsyn.selection_effects.KNNmodel"><code class="docutils literal notranslate"><span class="pre">KNNmodel</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-posydon.popsyn.star_formation_history">posydon.popsyn.star_formation_history</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#posydon.popsyn.star_formation_history.fractional_SFR_at_given_redshift"><code class="docutils literal notranslate"><span class="pre">fractional_SFR_at_given_redshift()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#posydon.popsyn.star_formation_history.get_formation_times"><code class="docutils literal notranslate"><span class="pre">get_formation_times()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#posydon.popsyn.star_formation_history.get_illustrisTNG_data"><code class="docutils literal notranslate"><span class="pre">get_illustrisTNG_data()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#posydon.popsyn.star_formation_history.integrated_SFRH_over_redshift"><code class="docutils literal notranslate"><span class="pre">integrated_SFRH_over_redshift()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#posydon.popsyn.star_formation_history.mean_metallicity"><code class="docutils literal notranslate"><span class="pre">mean_metallicity()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#posydon.popsyn.star_formation_history.star_formation_rate"><code class="docutils literal notranslate"><span class="pre">star_formation_rate()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#posydon.popsyn.star_formation_history.std_log_metallicity_dist"><code class="docutils literal notranslate"><span class="pre">std_log_metallicity_dist()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#posydon-popsyn-synthetic-population">posydon.popsyn.synthetic_population</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.utils.html">posydon.utils</a></li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.visualization.html">posydon.visualization</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="bin.html">executables</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Troubleshooting and FAQs</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../troubleshooting-faqs/installation-issues.html">Installation Issues</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../troubleshooting-faqs/code-questions.html">Code Usage Questions</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contributing to POSYDON</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../contributing/how-to-contribute.html">How To Contribute</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing/code-style-guidelines.html">Code Style Guidelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing/reporting-issues.html">Reporting issues</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Release Notes and Changelog</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../release-notes/version-history.html">Version History of POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../release-notes/major-updates.html">Major Updates</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contact and Support</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../contact-support/contact-information.html">Contact Information</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">POSYDON</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="posydon.html">posydon</a></li>
+      <li class="breadcrumb-item active">posydon.popsyn</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/api_reference/posydon.popsyn.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-posydon.popsyn">
+<span id="posydon-popsyn"></span><h1>posydon.popsyn<a class="headerlink" href="#module-posydon.popsyn" title="Link to this heading"></a></h1>
+<section id="module-posydon.popsyn.GRB">
+<span id="posydon-popsyn-grb"></span><h2>posydon.popsyn.GRB<a class="headerlink" href="#module-posydon.popsyn.GRB" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.popsyn.GRB.get_GRB_properties">
+<span class="sig-prename descclassname"><span class="pre">posydon.popsyn.GRB.</span></span><span class="sig-name descname"><span class="pre">get_GRB_properties</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">GRB_efficiency</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">GRB_beaming</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">E_GRB_iso_min</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/GRB.html#get_GRB_properties"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.GRB.get_GRB_properties" title="Link to this definition"></a></dt>
+<dd><p>Compute GRB properties for a given binary population.</p>
+</dd></dl>
+
+</section>
+<section id="module-posydon.popsyn.analysis">
+<span id="posydon-popsyn-analysis"></span><h2>posydon.popsyn.analysis<a class="headerlink" href="#module-posydon.popsyn.analysis" title="Link to this heading"></a></h2>
+<p>Module for analyzing binary population simulation results.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.popsyn.analysis.get_subsets">
+<span class="sig-prename descclassname"><span class="pre">posydon.popsyn.analysis.</span></span><span class="sig-name descname"><span class="pre">get_subsets</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">find_n</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">select_oneline</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">select_history</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">select_columns</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/analysis.html#get_subsets"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.analysis.get_subsets" title="Link to this definition"></a></dt>
+<dd><p>Get the <cite>oneline</cite> and <cite>history</cite> subsets for a selection of binaries.</p>
+<p>You select binaries from an HDF5 population by providing a function that
+operates either on <cite>oneline</cite> or <cite>history</cite> and returns a boolean mask in-
+dicating which rows correspond to the binaries of interest. E.g.,</p>
+<blockquote>
+<div><dl class="simple">
+<dt>def find_no_end(df):</dt><dd><p>return df[“event_f”] != “END”</p>
+</dd>
+</dl>
+</div></blockquote>
+<p>can be used to find binaries that ended abruptly, based on the information
+in the <cite>oneline</cite> table. Therefore, we set <cite>select_oneline=find_no_end</cite>. If
+no selector has been set, all binaries are selected (combine this with the
+<cite>select_columns</cite> argument to get a column subset of the data.)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a>) – The fullpath of the HDF5 file.</p></li>
+<li><p><strong>find_n</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><em>int</em></a><em> or </em><em>None</em>) – The number of binaries to select (at most) or None to select all.</p></li>
+<li><p><strong>select_oneline</strong> (<em>function</em><em> or </em><em>None</em>) – The function to operate on chunks of the <cite>oneline</cite> table.</p></li>
+<li><p><strong>select_history</strong> (<em>function</em><em> or </em><em>None</em>) – The function to operate on chunks of the <cite>oneline</cite> table.</p></li>
+<li><p><strong>select_columns</strong> (<em>None</em><em> or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a><em> or </em><em>array</em>) – If None, all columns will be returned. If a string, only those columns
+with name containing this string will be returned. An array of strings
+can be used for multiple such patterns.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The subsets of the dataframes with the data for the selected binaries.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>oneline, history</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.popsyn.analysis.report_columns">
+<span class="sig-prename descclassname"><span class="pre">posydon.popsyn.analysis.</span></span><span class="sig-name descname"><span class="pre">report_columns</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/analysis.html#report_columns"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.analysis.report_columns" title="Link to this definition"></a></dt>
+<dd><p>Print the columns in the <cite>oneline</cite> and <cite>history</cite> keys in an HDF5 file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a>) – The fullpath of the HDF5 file.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-posydon.popsyn.binarypopulation">
+<span id="posydon-popsyn-binarypopulation"></span><h2>posydon.popsyn.binarypopulation<a class="headerlink" href="#module-posydon.popsyn.binarypopulation" title="Link to this heading"></a></h2>
+<p>Create, evolve and save a binary star population.</p>
+<p>Large populations are RAM limited when holding an arbitrary
+number of BinaryStar instances. Therefore, by default the BinaryPopulation
+will generate binaries, evolve, and try to save them to disk one at a time.</p>
+<p>Create a BinaryPopulation instance from an inifile:
+I. CREATING A POPULATION
+————————
+a) One-liner for creating a BinaryPopulation from an inifile:</p>
+<p>&gt; BinaryPopulation.from_ini(‘&lt;PATH_TO_POSYDON&gt;’             ‘/posydon/popsyn/population_params_default.ini’)</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="posydon.popsyn.binarypopulation.BinaryGenerator">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.popsyn.binarypopulation.</span></span><span class="sig-name descname"><span class="pre">BinaryGenerator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sampler</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">generate_independent_samples</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">RNG</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/binarypopulation.html#BinaryGenerator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.binarypopulation.BinaryGenerator" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Generate binaries to be included in a BinaryPopulation.</p>
+<p>Initialize the BinaryGenerator instance.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.popsyn.binarypopulation.BinaryGenerator.draw_initial_binary">
+<span class="sig-name descname"><span class="pre">draw_initial_binary</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/binarypopulation.html#BinaryGenerator.draw_initial_binary"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.binarypopulation.BinaryGenerator.draw_initial_binary" title="Link to this definition"></a></dt>
+<dd><p>Return a binary for evolution in a population.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>index</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><em>int</em></a>) – Sets binary index. Defaults to number of generated binaries.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>binary</strong></p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="posydon.binary_evol.html#posydon.binary_evol.binarystar.BinaryStar" title="posydon.binary_evol.binarystar.BinaryStar">BinaryStar</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.popsyn.binarypopulation.BinaryGenerator.draw_initial_samples">
+<span class="sig-name descname"><span class="pre">draw_initial_samples</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">orbital_scheme</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'separation'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/binarypopulation.html#BinaryGenerator.draw_initial_samples"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.binarypopulation.BinaryGenerator.draw_initial_samples" title="Link to this definition"></a></dt>
+<dd><p>Generate all random varibles.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.popsyn.binarypopulation.BinaryGenerator.get_binary_by_iter">
+<span class="sig-name descname"><span class="pre">get_binary_by_iter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/binarypopulation.html#BinaryGenerator.get_binary_by_iter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.binarypopulation.BinaryGenerator.get_binary_by_iter" title="Link to this definition"></a></dt>
+<dd><p>Get the nth binary as if n calls were made to draw_intial_binary.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.popsyn.binarypopulation.BinaryGenerator.get_original_rng">
+<span class="sig-name descname"><span class="pre">get_original_rng</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/binarypopulation.html#BinaryGenerator.get_original_rng"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.binarypopulation.BinaryGenerator.get_original_rng" title="Link to this definition"></a></dt>
+<dd><p>Return the random-number generator.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.popsyn.binarypopulation.BinaryGenerator.reset_rng">
+<span class="sig-name descname"><span class="pre">reset_rng</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/binarypopulation.html#BinaryGenerator.reset_rng"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.binarypopulation.BinaryGenerator.reset_rng" title="Link to this definition"></a></dt>
+<dd><p>Reset the RNG with the stored entropy.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="posydon.popsyn.binarypopulation.BinaryPopulation">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.popsyn.binarypopulation.</span></span><span class="sig-name descname"><span class="pre">BinaryPopulation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/binarypopulation.html#BinaryPopulation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.binarypopulation.BinaryPopulation" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Handle a binary star population.</p>
+<p>Initialize the binary population object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>number_of_binaries</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><em>int</em></a>) – Size of the population</p></li>
+<li><p><strong>population_properties</strong> (<a class="reference internal" href="posydon.binary_evol.html#posydon.binary_evol.simulationproperties.SimulationProperties" title="posydon.binary_evol.simulationproperties.SimulationProperties"><em>SimulationProperties</em></a>) – Instance of simulationproperties holding steps.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.popsyn.binarypopulation.BinaryPopulation.close">
+<span class="sig-name descname"><span class="pre">close</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/binarypopulation.html#BinaryPopulation.close"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.binarypopulation.BinaryPopulation.close" title="Link to this definition"></a></dt>
+<dd><p>Close loaded h5 files from SimulationProperties.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.popsyn.binarypopulation.BinaryPopulation.combine_saved_files">
+<span class="sig-name descname"><span class="pre">combine_saved_files</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">absolute_filepath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_names</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/binarypopulation.html#BinaryPopulation.combine_saved_files"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.binarypopulation.BinaryPopulation.combine_saved_files" title="Link to this definition"></a></dt>
+<dd><p>Combine various temporary files in a given folder.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>absolute_filepath</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a>) – Absolute path to the file to be saved.</p></li>
+<li><p><strong>file_names</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><em>list</em></a>) – List of absolute paths to the temporary files.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.popsyn.binarypopulation.BinaryPopulation.evolve">
+<span class="sig-name descname"><span class="pre">evolve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/binarypopulation.html#BinaryPopulation.evolve"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.binarypopulation.BinaryPopulation.evolve" title="Link to this definition"></a></dt>
+<dd><p>Evolve a binary population.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>indices</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><em>list</em></a><em>, </em><em>optional</em>) – Custom binary indices to use. Default is range(number_of_binaries).
+If running with MPI, indices are split between processes if given.</p></li>
+<li><p><strong>breakdown_to_df</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><em>bool</em></a><em>, </em><em>True</em>) – Breakdown a binary after evolution, converting to dataframe and
+removing the binary instance from memory.</p></li>
+<li><p><strong>tqdm</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><em>bool</em></a><em>, </em><em>False</em>) – Show tqdm progress bar during evolution.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.popsyn.binarypopulation.BinaryPopulation.from_ini">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_ini</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/binarypopulation.html#BinaryPopulation.from_ini"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.binarypopulation.BinaryPopulation.from_ini" title="Link to this definition"></a></dt>
+<dd><p>Create a BinaryPopulation instance from an inifile.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a>) – Path to an inifile to load in.</p></li>
+<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><em>bool</em></a>) – Print useful info.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A new instance of a BinaryPopulation.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#posydon.popsyn.binarypopulation.BinaryPopulation" title="posydon.popsyn.binarypopulation.BinaryPopulation">BinaryPopulation</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.popsyn.binarypopulation.BinaryPopulation.make_temp_fname">
+<span class="sig-name descname"><span class="pre">make_temp_fname</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/binarypopulation.html#BinaryPopulation.make_temp_fname"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.binarypopulation.BinaryPopulation.make_temp_fname" title="Link to this definition"></a></dt>
+<dd><p>Get a valid filename for the temporary file.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.popsyn.binarypopulation.BinaryPopulation.save">
+<span class="sig-name descname"><span class="pre">save</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">save_path</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/binarypopulation.html#BinaryPopulation.save"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.binarypopulation.BinaryPopulation.save" title="Link to this definition"></a></dt>
+<dd><p>Save BinaryPopulation to hdf file.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="posydon.popsyn.binarypopulation.PopulationManager">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.popsyn.binarypopulation.</span></span><span class="sig-name descname"><span class="pre">PopulationManager</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/binarypopulation.html#PopulationManager"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.binarypopulation.PopulationManager" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Manage a population of binaries.</p>
+<p>Initialize a PopulationManager instance.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.popsyn.binarypopulation.PopulationManager.append">
+<span class="sig-name descname"><span class="pre">append</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">binary</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/binarypopulation.html#PopulationManager.append"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.binarypopulation.PopulationManager.append" title="Link to this definition"></a></dt>
+<dd><p>Add a binary instance internaly.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.popsyn.binarypopulation.PopulationManager.breakdown_to_df">
+<span class="sig-name descname"><span class="pre">breakdown_to_df</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">binary</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/binarypopulation.html#PopulationManager.breakdown_to_df"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.binarypopulation.PopulationManager.breakdown_to_df" title="Link to this definition"></a></dt>
+<dd><p>Breakdown to a pandas DataFrame.</p>
+<p>Breakdown a binary into more convenient data type, store it, and
+remove the BinaryStar instance from self.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.popsyn.binarypopulation.PopulationManager.clear_dfs">
+<span class="sig-name descname"><span class="pre">clear_dfs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/binarypopulation.html#PopulationManager.clear_dfs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.binarypopulation.PopulationManager.clear_dfs" title="Link to this definition"></a></dt>
+<dd><p>Remove all dfs.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.popsyn.binarypopulation.PopulationManager.find_failed">
+<span class="sig-name descname"><span class="pre">find_failed</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/binarypopulation.html#PopulationManager.find_failed"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.binarypopulation.PopulationManager.find_failed" title="Link to this definition"></a></dt>
+<dd><p>Find any failed binaries in the population.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.popsyn.binarypopulation.PopulationManager.from_hdf">
+<span class="sig-name descname"><span class="pre">from_hdf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">indices</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">where</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">restore</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/binarypopulation.html#PopulationManager.from_hdf"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.binarypopulation.PopulationManager.from_hdf" title="Link to this definition"></a></dt>
+<dd><p>Load a BinaryStar instance from an hdf file of a saved population.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>indices</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><em>int</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><em>list</em></a>) – Selects the binaries to load.</p></li>
+<li><p><strong>where</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a>) – Query performed on disk to select history and oneline DataFrames.</p></li>
+<li><p><strong>restore</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><em>bool</em></a>) – If true, restore binaries back to initial conditions.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.popsyn.binarypopulation.PopulationManager.generate">
+<span class="sig-name descname"><span class="pre">generate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/binarypopulation.html#PopulationManager.generate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.binarypopulation.PopulationManager.generate" title="Link to this definition"></a></dt>
+<dd><p>Generate a binary by drawing from the binary_generator.</p>
+<p>This can be a callable or a generator.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.popsyn.binarypopulation.PopulationManager.remove">
+<span class="sig-name descname"><span class="pre">remove</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">binary</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/binarypopulation.html#PopulationManager.remove"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.binarypopulation.PopulationManager.remove" title="Link to this definition"></a></dt>
+<dd><p>Remove a binary instance.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.popsyn.binarypopulation.PopulationManager.save">
+<span class="sig-name descname"><span class="pre">save</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fname</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/binarypopulation.html#PopulationManager.save"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.binarypopulation.PopulationManager.save" title="Link to this definition"></a></dt>
+<dd><p>Save binaries to an hdf file using pandas HDFStore.</p>
+<p>Any object dtype columns not parsed by infer_objects() is converted to
+a string.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>fname</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a>) – Name of hdf file saved.</p></li>
+<li><p><strong>mode</strong> (<em>{'a'</em><em>, </em><em>'w'</em><em>, </em><em>'r'</em><em>, </em><em>'r+'}</em><em>, </em><em>default 'a'</em>) – See pandas HDFStore docs</p></li>
+<li><p><strong>complib</strong> (<em>{'zlib'</em><em>, </em><em>'lzo'</em><em>, </em><em>'bzip2'</em><em>, </em><em>'blosc'}</em><em>, </em><em>default 'zlib'</em>) – Compression library. See HDFStore docs</p></li>
+<li><p><strong>complevel</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><em>int</em></a><em>, </em><em>0-9</em><em>, </em><em>default 9</em>) – Level of compression. See HDFStore docs</p></li>
+<li><p><strong>kwargs</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.12)"><em>dict</em></a>) – Arguments for <cite>BinaryStar</cite> methods <cite>to_df</cite> and <cite>to_oneline_df</cite>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.popsyn.binarypopulation.PopulationManager.to_df">
+<span class="sig-name descname"><span class="pre">to_df</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">selection_function</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/binarypopulation.html#PopulationManager.to_df"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.binarypopulation.PopulationManager.to_df" title="Link to this definition"></a></dt>
+<dd><p>Convert all binaries to dataframe.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.popsyn.binarypopulation.PopulationManager.to_oneline_df">
+<span class="sig-name descname"><span class="pre">to_oneline_df</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">selection_function</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/binarypopulation.html#PopulationManager.to_oneline_df"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.binarypopulation.PopulationManager.to_oneline_df" title="Link to this definition"></a></dt>
+<dd><p>Convert all binaries to oneline dataframe.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-posydon.popsyn.defaults">
+<span id="posydon-popsyn-defaults"></span><h2>posydon.popsyn.defaults<a class="headerlink" href="#module-posydon.popsyn.defaults" title="Link to this heading"></a></h2>
+<p>Default binary population parameters.</p>
+</section>
+<section id="module-posydon.popsyn.independent_sample">
+<span id="posydon-popsyn-independent-sample"></span><h2>posydon.popsyn.independent_sample<a class="headerlink" href="#module-posydon.popsyn.independent_sample" title="Link to this heading"></a></h2>
+<p>Generate the initial parameters for a binary population.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.popsyn.independent_sample.binary_fraction_value">
+<span class="sig-prename descclassname"><span class="pre">posydon.popsyn.independent_sample.</span></span><span class="sig-name descname"><span class="pre">binary_fraction_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">binary_fraction_const</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">binary_fraction_scheme</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'const'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">m1</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/independent_sample.html#binary_fraction_value"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.independent_sample.binary_fraction_value" title="Link to this definition"></a></dt>
+<dd><p>Getting the binary fraction depending on the scheme. The two possible option are a constant binary fraction
+and a binary fraction based on the values given in Moe and Di Stefano (2017).</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.popsyn.independent_sample.generate_eccentricities">
+<span class="sig-prename descclassname"><span class="pre">posydon.popsyn.independent_sample.</span></span><span class="sig-name descname"><span class="pre">generate_eccentricities</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">number_of_binaries</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eccentricity_scheme</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'thermal'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/independent_sample.html#generate_eccentricities"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.independent_sample.generate_eccentricities" title="Link to this definition"></a></dt>
+<dd><p>Generate random eccentricities.</p>
+<p>Use the scheme defined in this particular instance of BinaryPopulation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>number_of_binaries</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><em>int</em></a>) – Number of binaries that require randomly sampled orbital separations</p></li>
+<li><p><strong>eccentricity_scheme</strong> (<em>string</em>) – Distribution from which eccentricities are randomly drawn</p></li>
+<li><p><strong>**kwargs</strong> (<em>dictionary</em>) – kwargs from BinaryPopulation class</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>eccentricities</strong> – Randomly drawn eccentricities</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>ndarray of floats</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.popsyn.independent_sample.generate_independent_samples">
+<span class="sig-prename descclassname"><span class="pre">posydon.popsyn.independent_sample.</span></span><span class="sig-name descname"><span class="pre">generate_independent_samples</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">orbital_scheme</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/independent_sample.html#generate_independent_samples"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.independent_sample.generate_independent_samples" title="Link to this definition"></a></dt>
+<dd><p>Randomly generate a population of binaries at ZAMS.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>number_of_binaries</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><em>int</em></a>) – Number of binaries that require randomly sampled orbital separations</p></li>
+<li><p><strong>**kwargs</strong> (<em>dictionary</em>) – kwargs from BinaryPopulation class</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>orbital_scheme_set</strong> (<em>ndarray of floats</em>) – Randomly drawn orbital separations/periods depending on the scheme</p></li>
+<li><p><strong>eccentricity_set</strong> (<em>ndarray of floats</em>) – Randomly drawn eccentricities</p></li>
+<li><p><strong>m1_set</strong> (<em>ndarray of floats</em>) – Randomly drawn primary masses</p></li>
+<li><p><strong>m2_set</strong> (<em>ndarray of floats</em>) – Randomly drawn secondary masses</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.popsyn.independent_sample.generate_orbital_periods">
+<span class="sig-prename descclassname"><span class="pre">posydon.popsyn.independent_sample.</span></span><span class="sig-name descname"><span class="pre">generate_orbital_periods</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">primary_masses</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">number_of_binaries</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orbital_period_min</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.35</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orbital_period_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10**3.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orbital_period_scheme</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Sana+12_period_extended'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/independent_sample.html#generate_orbital_periods"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.independent_sample.generate_orbital_periods" title="Link to this definition"></a></dt>
+<dd><p>Randomaly generate orbital periods for a sample of binaries.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.popsyn.independent_sample.generate_orbital_separations">
+<span class="sig-prename descclassname"><span class="pre">posydon.popsyn.independent_sample.</span></span><span class="sig-name descname"><span class="pre">generate_orbital_separations</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">number_of_binaries</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orbital_separation_min</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orbital_separation_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_orbital_separation_mean</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_orbital_separation_sigma</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orbital_separation_scheme</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'log_uniform'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/independent_sample.html#generate_orbital_separations"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.independent_sample.generate_orbital_separations" title="Link to this definition"></a></dt>
+<dd><p>Generate random orbital separations.</p>
+<p>Use the scheme defined in this particular instance of BinaryPopulation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>number_of_binaries</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><em>int</em></a>) – Number of binaries that require randomly sampled orbital separations</p></li>
+<li><p><strong>orbital_separation_min</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.12)"><em>float</em></a>) – Minimum orbital separation in solar radii</p></li>
+<li><p><strong>orbital_separation_max</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.12)"><em>float</em></a>) – Maximum orbital separation in solar radii</p></li>
+<li><p><strong>log_orbital_separation_mean</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.12)"><em>float</em></a>) – Mean of the lognormal distribution.</p></li>
+<li><p><strong>log_orbital_separation_sigma</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.12)"><em>float</em></a>) – Standard deviation of the lorgnormal distribution.</p></li>
+<li><p><strong>orbital_separation_scheme</strong> (<em>string</em>) – Distribution from which the orbital separations are randomly drawn</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>orbital_separations</strong> – Randomly drawn orbital separations</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>ndarray of floats</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.popsyn.independent_sample.generate_primary_masses">
+<span class="sig-prename descclassname"><span class="pre">posydon.popsyn.independent_sample.</span></span><span class="sig-name descname"><span class="pre">generate_primary_masses</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">number_of_binaries</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">primary_mass_min</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">7</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">primary_mass_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">120</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">primary_mass_scheme</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Salpeter'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/independent_sample.html#generate_primary_masses"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.independent_sample.generate_primary_masses" title="Link to this definition"></a></dt>
+<dd><p>Generate random primary masses.</p>
+<p>Use the scheme defined in this particular instance of BinaryPopulation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>number_of_binaries</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><em>int</em></a>) – Number of binaries that require randomly sampled orbital separations</p></li>
+<li><p><strong>primary_mass_min</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.12)"><em>float</em></a>) – Minimum primary mass</p></li>
+<li><p><strong>primary_mass_max</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.12)"><em>float</em></a>) – Maximum primary mass</p></li>
+<li><p><strong>primary_mass_scheme</strong> (<em>string</em>) – Distribution from which the primary masses are randomly drawn</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>primary_masses</strong> – Randomly drawn primary masses</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>ndarray of floats</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.popsyn.independent_sample.generate_secondary_masses">
+<span class="sig-prename descclassname"><span class="pre">posydon.popsyn.independent_sample.</span></span><span class="sig-name descname"><span class="pre">generate_secondary_masses</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">primary_masses</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">number_of_binaries</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">secondary_mass_min</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.35</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">secondary_mass_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">120</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">secondary_mass_scheme</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'flat_mass_ratio'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/independent_sample.html#generate_secondary_masses"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.independent_sample.generate_secondary_masses" title="Link to this definition"></a></dt>
+<dd><p>Generate random secondary masses.</p>
+<p>Use the scheme defined in this particular instance of BinaryPopulation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>primary_masses</strong> (<em>ndarray</em><em> of </em><em>floats</em>) – Previously drawn primary masses</p></li>
+<li><p><strong>number_of_binaries</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><em>int</em></a>) – Number of binaries that require randomly sampled orbital separations</p></li>
+<li><p><strong>secondary_mass_min</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.12)"><em>float</em></a>) – Minimum secondary mass</p></li>
+<li><p><strong>secondary_mass_max</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.12)"><em>float</em></a>) – Maximum secondary mass</p></li>
+<li><p><strong>secondary_mass_scheme</strong> (<em>string</em>) – Distribution from which the secondary masses are randomly drawn</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>secondary_masses</strong> – Randomly drawn secondary masses</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>ndarray of floats</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-posydon.popsyn.io">
+<span id="posydon-popsyn-io"></span><h2>posydon.popsyn.io<a class="headerlink" href="#module-posydon.popsyn.io" title="Link to this heading"></a></h2>
+<p>Handle I/O operations for the population synthesis code.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.popsyn.io.binarypop_kwargs_from_ini">
+<span class="sig-prename descclassname"><span class="pre">posydon.popsyn.io.</span></span><span class="sig-name descname"><span class="pre">binarypop_kwargs_from_ini</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/io.html#binarypop_kwargs_from_ini"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.io.binarypop_kwargs_from_ini" title="Link to this definition"></a></dt>
+<dd><p>Convert an inifile into kwargs for the BinaryPopulation class.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a><em> or </em><em>list like</em>) – Path to inifile. If multiple files are given,
+duplicate args are overwritten (stacked) first
+to last.</p></li>
+<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><em>bool</em></a>) – Print helpful info.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>parser_dict</strong> – The inifile converted to the kwargs.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>&lt;class, dict&gt;</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.popsyn.io.clean_binary_history_df">
+<span class="sig-prename descclassname"><span class="pre">posydon.popsyn.io.</span></span><span class="sig-name descname"><span class="pre">clean_binary_history_df</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">binary_df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extra_binary_dtypes_user</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extra_S1_dtypes_user</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extra_S2_dtypes_user</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/io.html#clean_binary_history_df"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.io.clean_binary_history_df" title="Link to this definition"></a></dt>
+<dd><p>Take a posydon binary history DataFrame from the
+BinaryStar.to_df method and clean the data for saving
+by setting Data Types of the columns explicitly.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>binary_df</strong> (<em>DataFrame</em>) – A pandas Dataframe containing binary history</p></li>
+<li><p><strong>extra_binary_dtypes_user</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.12)"><em>dict</em></a><em>, </em><em>optional</em>) – A dictionary with extra column names as keys, and their
+associated data types as values.</p></li>
+<li><p><strong>extra_S1_dtypes_user</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.12)"><em>dict</em></a><em>, </em><em>optional</em>) – Same as above, but only for star 1.</p></li>
+<li><p><strong>extra_S2_dtypes_user</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.12)"><em>dict</em></a><em>, </em><em>optional</em>) – Same as above, but only for star 2.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>binary_df</strong> – A cleaned binary history ready for saving to HDF.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.popsyn.io.clean_binary_oneline_df">
+<span class="sig-prename descclassname"><span class="pre">posydon.popsyn.io.</span></span><span class="sig-name descname"><span class="pre">clean_binary_oneline_df</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">oneline_df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extra_binary_dtypes_user</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extra_S1_dtypes_user</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extra_S2_dtypes_user</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/io.html#clean_binary_oneline_df"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.io.clean_binary_oneline_df" title="Link to this definition"></a></dt>
+<dd><p>Take a posydon binary oneline DataFrame from the
+BinaryStar.to_oneline_df method and clean the data for saving
+by setting Data Types of the columns explicitly.</p>
+<p>This method is similar to clean_binary_history_df since they
+have many overalapping columns, with a few extras and different naming.</p>
+<p>Note: there may be edge cases not handed if new scalar_names are added.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>binary_df</strong> (<em>DataFrame</em>) – A pandas Dataframe containing binary history</p></li>
+<li><p><strong>extra_binary_dtypes_user</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.12)"><em>dict</em></a><em>, </em><em>optional</em>) – A dictionary with extra column names as keys, and their
+associated data types as values.</p></li>
+<li><p><strong>extra_S1_dtypes_user</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.12)"><em>dict</em></a><em>, </em><em>optional</em>) – Same as above, but only for star 1.</p></li>
+<li><p><strong>extra_S2_dtypes_user</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.12)"><em>dict</em></a><em>, </em><em>optional</em>) – Same as above, but only for star 2.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>binary_df</strong> – A cleaned binary history ready for saving to HDF.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.popsyn.io.parse_inifile">
+<span class="sig-prename descclassname"><span class="pre">posydon.popsyn.io.</span></span><span class="sig-name descname"><span class="pre">parse_inifile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/io.html#parse_inifile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.io.parse_inifile" title="Link to this definition"></a></dt>
+<dd><p>Parse an inifile for evolving binary populations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a><em> or </em><em>list like</em>) – Path to inifile. If multiple files are given,
+duplicate args are overwritten (stacked) first
+to last.</p></li>
+<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><em>bool</em></a>) – Print helpful info.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>parser</strong> – An instance of ConfigParser.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>&lt;class, ConfigParser&gt;</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.popsyn.io.simprop_kwargs_from_ini">
+<span class="sig-prename descclassname"><span class="pre">posydon.popsyn.io.</span></span><span class="sig-name descname"><span class="pre">simprop_kwargs_from_ini</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/io.html#simprop_kwargs_from_ini"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.io.simprop_kwargs_from_ini" title="Link to this definition"></a></dt>
+<dd><p>Convert an inifile into kwargs for the SimulationProperties class.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a><em> or </em><em>list like</em>) – Path to inifile. If multiple files are given,
+duplicate args are overwritten (stacked) first
+to last.</p></li>
+<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><em>bool</em></a>) – Print helpful info.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>parser_dict</strong> – The inifile converted to the kwargs.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>&lt;class, dict&gt;</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-posydon.popsyn.normalized_pop_mass">
+<span id="posydon-popsyn-normalized-pop-mass"></span><h2>posydon.popsyn.normalized_pop_mass<a class="headerlink" href="#module-posydon.popsyn.normalized_pop_mass" title="Link to this heading"></a></h2>
+<p>Compute the underlying stellar population mass for a given simulation.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.popsyn.normalized_pop_mass.initial_total_underlying_mass">
+<span class="sig-prename descclassname"><span class="pre">posydon.popsyn.normalized_pop_mass.</span></span><span class="sig-name descname"><span class="pre">initial_total_underlying_mass</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/normalized_pop_mass.html#initial_total_underlying_mass"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.normalized_pop_mass.initial_total_underlying_mass" title="Link to this definition"></a></dt>
+<dd><p>Compute the initial total mass of the population.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df</strong> (<em>DataFrame</em>) – Data frame of a population class. If nothing is provided the code will
+sample initial conditions.</p></li>
+<li><p><strong>primary_mass_min</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#type" title="(in Python v3.12)"><em>type</em></a>) – Description of parameter <cite>primary_mass_min</cite>.</p></li>
+<li><p><strong>primary_mass_max</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#type" title="(in Python v3.12)"><em>type</em></a>) – Description of parameter <cite>primary_mass_max</cite>.</p></li>
+<li><p><strong>primary_mass_scheme</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#type" title="(in Python v3.12)"><em>type</em></a>) – Description of parameter <cite>primary_mass_scheme</cite>.</p></li>
+<li><p><strong>secondary_mass_scheme</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#type" title="(in Python v3.12)"><em>type</em></a>) – Description of parameter <cite>secondary_mass_scheme</cite>.</p></li>
+<li><p><strong>**kwargs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#type" title="(in Python v3.12)"><em>type</em></a>) – Description of parameter <cite>**kwargs</cite>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Description of returned object.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#type" title="(in Python v3.12)">type</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-posydon.popsyn.rate_calculation">
+<span id="posydon-popsyn-rate-calculation"></span><h2>posydon.popsyn.rate_calculation<a class="headerlink" href="#module-posydon.popsyn.rate_calculation" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="posydon.popsyn.rate_calculation.Rates">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.popsyn.rate_calculation.</span></span><span class="sig-name descname"><span class="pre">Rates</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/rate_calculation.html#Rates"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.rate_calculation.Rates" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Compute DCO rates.</p>
+<p>Compute DCO rates.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.12)"><em>object</em></a>) – Pandas dataframe containing the synthetic binary population.</p></li>
+<li><p><strong>delta_t</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.12)"><em>float</em></a>) – Cosmic time bin size used to bin distribute the synthetc binary
+population.</p></li>
+<li><p><strong>SFR</strong> (<em>string</em>) – Star-formation-rate history you want to use:
+‘Madau+Dickinson14’, ‘Madau+Fragos17’, ‘Neijssel+19’, ‘IllustrisTNG’</p></li>
+<li><p><strong>sigma_SFR</strong> (<em>string</em>) – Standard deviation of the trucated log-normal metallicity distribution
+assumed for the star-formation rate history in the case you select
+‘Madau+Dickinson14’, ‘Madau+Fragos17’, ‘Neijssel+19’,</p></li>
+<li><p><strong>Z_max</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.12)"><em>float</em></a>) – The absolute maximum metallicity of the star formation rate history.
+NOTE: This should be used when assuming a truncated log-normal
+distribution of metallcities to not overpredict 1, also it can be
+used with the IllustrisTNG SFR to prevent unphysically high
+metallicities.</p></li>
+<li><p><strong>select_one_met</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><em>bool</em></a>) – If <cite>True</cite> your synthetic binary population should contain only one
+descrete metallicity.</p></li>
+<li><p><strong>dlogZ</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.12)"><em>float</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#range" title="(in Python v3.12)"><em>range</em></a>) – Used when <cite>select_one_met=True</cite> to select the metallicity range
+around which you want to integrate the SFR history. If float value
+value is provided we assume a symmetric range dlogZ/2 around the
+provided metallcity else we consider the range provided
+[Z_min, Z_max] which could also be asymmetric.</p></li>
+<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><em>bool</em></a>) – <cite>True</cite> if you want the print statements.</p></li>
+</ul>
+</dd>
+</dl>
+<p>TODO: add the definitios of the variables used by this class.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.popsyn.rate_calculation.Rates.chi_eff">
+<span class="sig-name descname"><span class="pre">chi_eff</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">m_1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">m_2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a_1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a_2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tilt_1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tilt_2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/rate_calculation.html#Rates.chi_eff"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.rate_calculation.Rates.chi_eff" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.popsyn.rate_calculation.Rates.compute_GRB_rate_weights">
+<span class="sig-name descname"><span class="pre">compute_GRB_rate_weights</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sensitivity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'infinity'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path_to_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'./'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extention</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'npz'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/rate_calculation.html#Rates.compute_GRB_rate_weights"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.rate_calculation.Rates.compute_GRB_rate_weights" title="Link to this definition"></a></dt>
+<dd><p>Compute the cosmological weights of the transient events associated to the population.</p>
+<p>This function will create a directory path_to_dir/GRBs/sensitivity where
+it will save the weigths, binary indicies k, z_formation, z_grb.
+This is needed for scalability as a ~100k DCO population generates ~10M
+non-zero weights assuming a delta_t=100Myr.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sensitivity</strong> (<em>string</em>) – Assume there are no selection effects. Available:
+‘infinite’: whole GRB population, i.e. p_det = 1</p></li>
+<li><p><strong>path_to_dir</strong> (<em>string</em>) – Path to the workingn directory where you want to store the
+cosmological weights.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.popsyn.rate_calculation.Rates.compute_merger_rate_weights">
+<span class="sig-name descname"><span class="pre">compute_merger_rate_weights</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sensitivity</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flag_pdet</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path_to_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'./'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extention</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'npz'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/rate_calculation.html#Rates.compute_merger_rate_weights"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.rate_calculation.Rates.compute_merger_rate_weights" title="Link to this definition"></a></dt>
+<dd><p>Compute the cosmological weights of the DCO population.</p>
+<p>This function will create a directory path_to_dir/DCOs/sensitivity where
+it will save the weigths, binary indicies k, z_formation, z_merger.
+This is needed for scalability as a ~100k DCO population generates ~10M
+non-zero weights assuming a delta_t=100Myr.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sensitivity</strong> (<em>string</em>) – <p>GW detector sensitivity and network configuration you want to use, see arXiv:1304.0670v3
+detector sensitivities are taken from: https://dcc.ligo.org/LIGO-T2000012-v2/public
+available sensitivity keys (for Hanford, Livingston, Virgo network):</p>
+<blockquote>
+<div><p>’O3actual_H1L1V1’ : aligo_O3actual_H1.txt, aligo_O3actual_L1.txt, avirgo_O3actual.txt
+‘O4low_H1L1V1’ : aligo_O4low.txt, aligo_O4low.txt, avirgo_O4high_NEW.txt
+‘O4high_H1L1V1’ : aligo_O4high.txt, aligo_O4high.txt, avirgo_O4high_NEW.txt
+‘design_H1L1V1’ : AplusDesign.txt, AplusDesign.txt, avirgo_O5high_NEW.txt
+‘infinite’: intrinsic merging DCO population, i.e. p_det = 1</p>
+</div></blockquote>
+</p></li>
+<li><p><strong>flag_pdet</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><em>bool</em></a>) – This is a control variable. In order to be sure you want to run
+infinite sensitivity set <cite>p_det=False</cite>.</p></li>
+<li><p><strong>path_to_dir</strong> (<em>string</em>) – Path to the workingn directory where you want to store the
+cosmological weights.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.popsyn.rate_calculation.Rates.compute_rate_density">
+<span class="sig-name descname"><span class="pre">compute_rate_density</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">w_ijk</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z_event</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">observable</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'DCO'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sensitivity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'infinite'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/rate_calculation.html#Rates.compute_rate_density"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.rate_calculation.Rates.compute_rate_density" title="Link to this definition"></a></dt>
+<dd><p>Compute the GRB/DCO rate density.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>w_ijk</strong> (<em>array doubles</em>) – Cosmological weights computed with Eq. B.8 of Bavera et at. (2020).</p></li>
+<li><p><strong>z_event</strong> (<em>array doubles</em>) – Cosmolgocial redshift of the event you are tracking.</p></li>
+<li><p><strong>observable</strong> (<em>string</em>) – Event you are tracking, available:
+‘DCOs’: merger event of a DCO system
+‘GRB1’: gamma ray bursts of star 1
+‘GRB2’: gamma ray bursts of star 2</p></li>
+<li><p><strong>sensitivity</strong> (<em>string</em>) – This takes into account the detector sensitivity, available:
+‘infinite’: p_det = 1
+‘beamed’: TODO for GRBs</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Return the DCOs merger rate density (Gpc^-3 yr^-1) as a function of
+cosmolgocial redshift as in Eq. (D.1) in Bavera et al. (2022)
+arXiv:2106.15841</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>array doubles</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.popsyn.rate_calculation.Rates.get_centers_metallicity_bins">
+<span class="sig-name descname"><span class="pre">get_centers_metallicity_bins</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/rate_calculation.html#Rates.get_centers_metallicity_bins"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.rate_calculation.Rates.get_centers_metallicity_bins" title="Link to this definition"></a></dt>
+<dd><p>Return the centers of the metallicity bins.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Returns sampled metallicities of the populattion. This correponds
+to the center of each metallicity bin.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>array double</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.popsyn.rate_calculation.Rates.get_centers_redshift_bins">
+<span class="sig-name descname"><span class="pre">get_centers_redshift_bins</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/rate_calculation.html#Rates.get_centers_redshift_bins"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.rate_calculation.Rates.get_centers_redshift_bins" title="Link to this definition"></a></dt>
+<dd><p>Compute redshift bin centers.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>We devide the cosmic time history of the Universe in equally spaced
+bins of cosmic time of self.delta_t (100 Myr default) an compute the
+redshift corresponding to center of these bins.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>array doubles</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.popsyn.rate_calculation.Rates.get_comoving_disntance_from_redshift">
+<span class="sig-name descname"><span class="pre">get_comoving_disntance_from_redshift</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">z</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/rate_calculation.html#Rates.get_comoving_disntance_from_redshift"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.rate_calculation.Rates.get_comoving_disntance_from_redshift" title="Link to this definition"></a></dt>
+<dd><p>Compute the comoving distance from redshift.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>z</strong> (<em>double</em>) – Cosmological redshift.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Comoving distance in Mpc corresponding to the redhisft z.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>double</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.popsyn.rate_calculation.Rates.get_cosmic_time_at_dco_merger">
+<span class="sig-name descname"><span class="pre">get_cosmic_time_at_dco_merger</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">z_birth</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/rate_calculation.html#Rates.get_cosmic_time_at_dco_merger"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.rate_calculation.Rates.get_cosmic_time_at_dco_merger" title="Link to this definition"></a></dt>
+<dd><p>Get cosmic time at DCO merger.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>z_birth</strong> (<em>double</em>) – Cosmological redshift of formation of the DCO system
+(must be the same for every binary).</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Cosmic time in Gyr at DCO merger for all binaries born at z_birth.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>double</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.popsyn.rate_calculation.Rates.get_cosmic_time_from_redshift">
+<span class="sig-name descname"><span class="pre">get_cosmic_time_from_redshift</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">z</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/rate_calculation.html#Rates.get_cosmic_time_from_redshift"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.rate_calculation.Rates.get_cosmic_time_from_redshift" title="Link to this definition"></a></dt>
+<dd><p>Compute the cosmic time from redshift.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>z</strong> (<em>double</em>) – Cosmological redshift.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Return age of the cosmic time in Gyr given the redshift z.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>double</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.popsyn.rate_calculation.Rates.get_data">
+<span class="sig-name descname"><span class="pre">get_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">var</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/rate_calculation.html#Rates.get_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.rate_calculation.Rates.get_data" title="Link to this definition"></a></dt>
+<dd><p>Resample class elements.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>var</strong> (<em>string</em>) – Key of self.df. This method support a list of custom definitios for
+DCO studies like q, m_tot, m_chirp, chi_eff.</p></li>
+<li><p><strong>index</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><em>list</em></a><em> of </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><em>int</em></a>) – List of indicies of the binaries of interest.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Array containing the self.df[var][index].</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.popsyn.rate_calculation.Rates.get_edges_metallicity_bins">
+<span class="sig-name descname"><span class="pre">get_edges_metallicity_bins</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/rate_calculation.html#Rates.get_edges_metallicity_bins"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.rate_calculation.Rates.get_edges_metallicity_bins" title="Link to this definition"></a></dt>
+<dd><p>Return the edges of the metallicity bins.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Returns the edges of all metallicity bins. We assume metallicities
+were binned in log-space.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>array double</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.popsyn.rate_calculation.Rates.get_edges_redshift_bins">
+<span class="sig-name descname"><span class="pre">get_edges_redshift_bins</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/rate_calculation.html#Rates.get_edges_redshift_bins"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.rate_calculation.Rates.get_edges_redshift_bins" title="Link to this definition"></a></dt>
+<dd><p>Compute redshift bin edges.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>We devide the cosmic time history of the Universe in equally spaced
+bins of cosmic time of self.delta_t (100 Myr default) an compute the
+redshift corresponding to edges of these bins.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>array doubles</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.popsyn.rate_calculation.Rates.get_redshift_at_dco_merger">
+<span class="sig-name descname"><span class="pre">get_redshift_at_dco_merger</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">z_birth</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/rate_calculation.html#Rates.get_redshift_at_dco_merger"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.rate_calculation.Rates.get_redshift_at_dco_merger" title="Link to this definition"></a></dt>
+<dd><p>Get redshift of merger of DCOs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>z_birth</strong> (<em>double</em>) – Redshift of formation of the DCO system (must be the same for every
+binary).</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Redshift of merger of DCOs born at z_birth.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>double</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.popsyn.rate_calculation.Rates.get_redshift_from_cosmic_time">
+<span class="sig-name descname"><span class="pre">get_redshift_from_cosmic_time</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t_cosm</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/rate_calculation.html#Rates.get_redshift_from_cosmic_time"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.rate_calculation.Rates.get_redshift_from_cosmic_time" title="Link to this definition"></a></dt>
+<dd><p>Compute the cosmological redshift given the cosmic time..</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>t_cosm</strong> (<em>array doubles</em>) – Cosmic time to which you want to know the redhisft.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Cosmolgocial redshift corresponding to the cosmic time.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>array doubles</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.popsyn.rate_calculation.Rates.get_redshift_from_cosmic_time_interpolator">
+<span class="sig-name descname"><span class="pre">get_redshift_from_cosmic_time_interpolator</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/rate_calculation.html#Rates.get_redshift_from_cosmic_time_interpolator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.rate_calculation.Rates.get_redshift_from_cosmic_time_interpolator" title="Link to this definition"></a></dt>
+<dd><p>Interpolator to compute the cosmological redshift given the cosmic time.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Returns the trained interpolator object.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.12)">object</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.popsyn.rate_calculation.Rates.get_shell_comovig_volume">
+<span class="sig-name descname"><span class="pre">get_shell_comovig_volume</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">z_hor_i</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z_hor_f</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sensitivity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'infinite'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/rate_calculation.html#Rates.get_shell_comovig_volume"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.rate_calculation.Rates.get_shell_comovig_volume" title="Link to this definition"></a></dt>
+<dd><p>Compute comoving volume corresponding to a redshift shell.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>z_hor_i</strong> (<em>double</em>) – Cosmological redshift. Lower bound of the integration.</p></li>
+<li><p><strong>z_hor_f</strong> (<em>double</em>) – Cosmological redshift. Upper bound of the integration.</p></li>
+<li><p><strong>sensitivity</strong> (<em>string</em>) – hoose which GW detector sensitivity you want to use. At the moment
+only ‘infinite’ is available, i.e. p_det = 1.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Retruns the comoving volume between the two shells z_hor_i
+and z_hor_f in Gpc^3.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>double</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.popsyn.rate_calculation.Rates.get_time_GRB">
+<span class="sig-name descname"><span class="pre">get_time_GRB</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">z_birth</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">event</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/rate_calculation.html#Rates.get_time_GRB"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.rate_calculation.Rates.get_time_GRB" title="Link to this definition"></a></dt>
+<dd><p>Get the time of the GRB.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>z_brith</strong> (<em>double</em>) – Redshif of birth.</p></li>
+<li><p><strong>event</strong> (<em>string</em>) – Event you are tracking, either first or second core collpase:
+‘CC1’, ‘CC2’.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>t_BRB</strong> – Cosmic time of the GRB event in Gyr.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>double</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.popsyn.rate_calculation.Rates.load_grb_rate_weights">
+<span class="sig-name descname"><span class="pre">load_grb_rate_weights</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sensitivity</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path_to_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'./'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extention</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'npz'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/rate_calculation.html#Rates.load_grb_rate_weights"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.rate_calculation.Rates.load_grb_rate_weights" title="Link to this definition"></a></dt>
+<dd><p>Load the cosmological weights of the transient events associated to the population.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sensitivity</strong> (<em>string</em>) – Assume there are no selection effects. Available:
+‘infinite’: whole GRB population, i.e. p_det = 1</p></li>
+<li><p><strong>path_to_dir</strong> (<em>string</em>) – Path to the directory where you the cosmological weights are stored.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Return the cosmological weights, z_formation, z_GRB and binary
+index k associated to each weighted binary.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>array doubles</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.popsyn.rate_calculation.Rates.load_merger_rate_weights">
+<span class="sig-name descname"><span class="pre">load_merger_rate_weights</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sensitivity</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path_to_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'./'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extention</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'npz'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/rate_calculation.html#Rates.load_merger_rate_weights"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.rate_calculation.Rates.load_merger_rate_weights" title="Link to this definition"></a></dt>
+<dd><p>Load the cosmological weights of the DCO populatio.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sensitivity</strong> (<em>string</em>) – <p>GW detector sensitivity and network configuration you want to use, see arXiv:1304.0670v3
+detector sensitivities are taken from: https://dcc.ligo.org/LIGO-T2000012-v2/public
+available sensitivity keys (for Hanford, Livingston, Virgo network):</p>
+<blockquote>
+<div><p>’O3actual_H1L1V1’ : aligo_O3actual_H1.txt, aligo_O3actual_L1.txt, avirgo_O3actual.txt
+‘O4low_H1L1V1’ : aligo_O4low.txt, aligo_O4low.txt, avirgo_O4high_NEW.txt
+‘O4high_H1L1V1’ : aligo_O4high.txt, aligo_O4high.txt, avirgo_O4high_NEW.txt
+‘design_H1L1V1’ : AplusDesign.txt, AplusDesign.txt, avirgo_O5high_NEW.txt
+‘infinite’: intrinsic merging DCO population, i.e. p_det = 1</p>
+</div></blockquote>
+</p></li>
+<li><p><strong>path_to_dir</strong> (<em>string</em>) – Path to the directory where you the cosmological weights are stored.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Return the cosmological weights, z_formation, z_merger and binary
+index k associated to each weighted binary.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>array doubles</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.popsyn.rate_calculation.Rates.m_chirp">
+<span class="sig-name descname"><span class="pre">m_chirp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">m_1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">m_2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/rate_calculation.html#Rates.m_chirp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.rate_calculation.Rates.m_chirp" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.popsyn.rate_calculation.Rates.mass_ratio">
+<span class="sig-name descname"><span class="pre">mass_ratio</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">m_1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">m_2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/rate_calculation.html#Rates.mass_ratio"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.rate_calculation.Rates.mass_ratio" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.popsyn.rate_calculation.Rates.merger_rate_weight">
+<span class="sig-name descname"><span class="pre">merger_rate_weight</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">z_birth</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z_merger</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p_det</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">i</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/rate_calculation.html#Rates.merger_rate_weight"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.rate_calculation.Rates.merger_rate_weight" title="Link to this definition"></a></dt>
+<dd><p>Compute the merger rate weight (w_ijk) in yr^-1 units.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>z_birth</strong> (<em>array doubles</em>) – Cosmological redshift of formation of the binary systems. This MUST
+be the same for all binaries.</p></li>
+<li><p><strong>z_merger</strong> (<em>array doubles</em>) – Cosmological redshift of merger of the binary systems.</p></li>
+<li><p><strong>p_det</strong> (<em>array doubles</em>) – Detection probability of the binary.</p></li>
+<li><p><strong>i</strong> (<em>array integers</em>) – Indicies correponding to the binaries you want to select out of the
+population.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Return the cosmological weights w_ijk (detection rate contibution)
+of the binary k in the metallicity bin j born at redshift birth i
+as in Eq. (B.8) of Bavera et al. (2020).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>array doubles</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-posydon.popsyn.sample_from_file">
+<span id="posydon-popsyn-sample-from-file"></span><h2>posydon.popsyn.sample_from_file<a class="headerlink" href="#module-posydon.popsyn.sample_from_file" title="Link to this heading"></a></h2>
+<p>Get the initial parameters for a binary population.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.popsyn.sample_from_file.get_kick_samples_from_file">
+<span class="sig-prename descclassname"><span class="pre">posydon.popsyn.sample_from_file.</span></span><span class="sig-name descname"><span class="pre">get_kick_samples_from_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/sample_from_file.html#get_kick_samples_from_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.sample_from_file.get_kick_samples_from_file" title="Link to this definition"></a></dt>
+<dd><p>Read a kicks for population of binaries from a file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>**kwargs</strong> (<em>dictionary</em>) – kwargs from BinaryPopulation class, which should contain
+read_samples_from_file</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>s1_natal_kick_array_set</strong> (<em>ndarray of floats</em>) – natal kick array for the primary star
+containing: kick velocity, azimuthal angle, polar angle, mean anomaly</p></li>
+<li><p><strong>s2_natal_kick_array_set</strong> (<em>ndarray of floats</em>) – natal kick array for the secondary star
+containing: kick velocity, azimuthal angle, polar angle, mean anomaly</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.popsyn.sample_from_file.get_samples_from_file">
+<span class="sig-prename descclassname"><span class="pre">posydon.popsyn.sample_from_file.</span></span><span class="sig-name descname"><span class="pre">get_samples_from_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">orbital_scheme</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/sample_from_file.html#get_samples_from_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.sample_from_file.get_samples_from_file" title="Link to this definition"></a></dt>
+<dd><p>Read a population of binaries at ZAMS from a file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>orbital_scheme</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a>) – Scheme to get the orbit: ‘separation’, ‘period’</p></li>
+<li><p><strong>**kwargs</strong> (<em>dictionary</em>) – kwargs from BinaryPopulation class, which should contain
+read_samples_from_file</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>orbital_scheme_set</strong> (<em>ndarray of floats</em>) – orbital separations/periods depending on the scheme</p></li>
+<li><p><strong>eccentricity_set</strong> (<em>ndarray of floats</em>) – eccentricities</p></li>
+<li><p><strong>m1_set</strong> (<em>ndarray of floats</em>) – primary masses</p></li>
+<li><p><strong>m2_set</strong> (<em>ndarray of floats</em>) – secondary masses</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.popsyn.sample_from_file.infer_key">
+<span class="sig-prename descclassname"><span class="pre">posydon.popsyn.sample_from_file.</span></span><span class="sig-name descname"><span class="pre">infer_key</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">available_keys</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allowed_keys</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/sample_from_file.html#infer_key"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.sample_from_file.infer_key" title="Link to this definition"></a></dt>
+<dd><p>Infer key from list of allowed keys.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>available_keys</strong> (<em>iterable object</em><em> of </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a><em>, </em><em>e.g. list</em><em> of </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a>) – Collection of available keys.</p></li>
+<li><p><strong>allowed_keys</strong> (<em>iterable object</em><em> of </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a><em>, </em><em>e.g. list</em><em> of </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a>) – Collection of allowed keys.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>key</strong> – The first matched key.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)">str</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-posydon.popsyn.selection_effects">
+<span id="posydon-popsyn-selection-effects"></span><h2>posydon.popsyn.selection_effects<a class="headerlink" href="#module-posydon.popsyn.selection_effects" title="Link to this heading"></a></h2>
+<p>Simple utility for generating detection weights</p>
+<p>Uses grid of detection probabilities to estimate detection probabilities</p>
+<p>Anticipates data as Pandas dataframe with series [‘m1’, ‘q’, ‘z’, ‘chieff’]</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="posydon.popsyn.selection_effects.KNNmodel">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.popsyn.selection_effects.</span></span><span class="sig-name descname"><span class="pre">KNNmodel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grid_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sensitivity_key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/selection_effects.html#KNNmodel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.selection_effects.KNNmodel" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>K-nearest neighbor model that instantiates based on detection probability grid</p>
+<p>When instantiating, must supply path to the grid, and key that represents
+GW network and sensitivity.</p>
+<p>Instantiates KNNmodel class and trains the KNN.</p>
+<dl>
+<dt>grid_path<span class="classifier">string</span></dt><dd><p>Path to grid of detection probabilities.</p>
+</dd>
+<dt>sensitivity_key<span class="classifier">string</span></dt><dd><dl>
+<dt>GW detector sensitivity and network configuration you want to use,</dt><dd><p>see arXiv:1304.0670v3</p>
+</dd>
+<dt>detector sensitivities are taken from: <a class="reference external" href="https://dcc.ligo.org/LIGO-T2000012-v2/public">https://dcc.ligo.org/LIGO-T2000012-v2/public</a></dt><dd><dl class="simple">
+<dt>available sensitivity keys (for Hanford, Livingston, Virgo network):</dt><dd><p>‘O3actual_H1L1V1’ : aligo_O3actual_H1.txt, aligo_O3actual_L1.txt, avirgo_O3actual.txt
+‘O4low_H1L1V1’ : aligo_O4low.txt, aligo_O4low.txt, avirgo_O4high_NEW.txt
+‘O4high_H1L1V1’ : aligo_O4high.txt, aligo_O4high.txt, avirgo_O4high_NEW.txt
+‘design_H1L1V1’ : AplusDesign.txt, AplusDesign.txt, avirgo_O5high_NEW.txt</p>
+</dd>
+</dl>
+<p>detection probabilities are calculated using the IMRPhenomXHM approximant with a network SNR threshold of 10</p>
+</dd>
+</dl>
+</dd>
+<dt>verbose<span class="classifier">boolean</span></dt><dd><p>Adds verbosity.</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.popsyn.selection_effects.KNNmodel.normalize">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">normalize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xmin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xmax</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/selection_effects.html#KNNmodel.normalize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.selection_effects.KNNmodel.normalize" title="Link to this definition"></a></dt>
+<dd><p>normalizes data on range [a,b]</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.popsyn.selection_effects.KNNmodel.predict_pdet">
+<span class="sig-name descname"><span class="pre">predict_pdet</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/selection_effects.html#KNNmodel.predict_pdet"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.selection_effects.KNNmodel.predict_pdet" title="Link to this definition"></a></dt>
+<dd><p>Gives relative weight to each system in <cite>data</cite> based on its proximity to the points on the grid.
+Each system in <cite>data</cite> should have a primary mass <cite>m1</cite>, mass ratio <cite>q</cite>, redshift <cite>z</cite>, and effective spin <cite>chieff</cite>
+This function will determine detection probabilities using nearest neighbor algorithm in [log(m1), q, log(z), chieff] space
+Need to specify bounds (based on the trained grid) so that the grid and data get normalized properly</p>
+<dl>
+<dt>data<span class="classifier">Pandas dataframe</span></dt><dd><p>Data you wish to predict detection probabilities for.
+Required series in the dataframe:</p>
+<blockquote>
+<div><p>‘m1’ : primary source-frame mass
+‘q’ : mass ratio (secondary mass/primary mass)
+‘z’ : redshift of merger
+‘chieff’ : effective inspiral spin</p>
+</div></blockquote>
+</dd>
+<dt>verbose<span class="classifier">boolean</span></dt><dd><p>Adds verbosity.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-posydon.popsyn.star_formation_history">
+<span id="posydon-popsyn-star-formation-history"></span><h2>posydon.popsyn.star_formation_history<a class="headerlink" href="#module-posydon.popsyn.star_formation_history" title="Link to this heading"></a></h2>
+<p>Implements the selection of different star-formation history scenarios.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.popsyn.star_formation_history.fractional_SFR_at_given_redshift">
+<span class="sig-prename descclassname"><span class="pre">posydon.popsyn.star_formation_history.</span></span><span class="sig-name descname"><span class="pre">fractional_SFR_at_given_redshift</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">z</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">SFR_at_z</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">SFR</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bins</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">binplace</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Z_max</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">select_one_met</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/star_formation_history.html#fractional_SFR_at_given_redshift"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.star_formation_history.fractional_SFR_at_given_redshift" title="Link to this definition"></a></dt>
+<dd><p>Integrated SFR over deltaZ at a given z as in Eq. (B.9) of Bavera et al. (2020).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>SFR</strong> (<em>string</em>) – Star formation rate assumption:
+- Madau+Fragos17 see arXiv:1606.07887
+- Madau+Dickinson14 see arXiv:1403.0007
+- IllustrisTNG see see arXiv:1707.03395
+- Neijssel+19 see arXiv:1906.08136</p></li>
+<li><p><strong>Z</strong> (<em>double</em>) – Metallicity.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The total mass of stars formed per comoving volume at a given redshift z
+for a given metallicity range deltaZ.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>double</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.popsyn.star_formation_history.get_formation_times">
+<span class="sig-prename descclassname"><span class="pre">posydon.popsyn.star_formation_history.</span></span><span class="sig-name descname"><span class="pre">get_formation_times</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">N_binaries</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">star_formation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'constant'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/star_formation_history.html#get_formation_times"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.star_formation_history.get_formation_times" title="Link to this definition"></a></dt>
+<dd><p>Get formation times of binaries in a population based on a SFH scenario.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>N_binaries</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><em>int</em></a>) – Number of formation ages to produce.</p></li>
+<li><p><strong>star_formation</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a><em>, </em><em>{constant</em><em>, </em><em>burst}</em>) – Constant - random formation times from a uniform distribution.
+Burst - all stars are born at the same time.</p></li>
+<li><p><strong>burst_time</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.12)"><em>float</em></a><em>, </em><em>0</em><em> (</em><em>years</em><em>)</em>) – Sets birth time in years.</p></li>
+<li><p><strong>min_time</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.12)"><em>float</em></a><em>, </em><em>0</em><em> (</em><em>years</em><em>)</em>) – If constant SF, sets minimum of random sampling.</p></li>
+<li><p><strong>max_time</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.12)"><em>float</em></a><em>, </em><em>age_of_universe</em><em> (</em><em>years</em><em>)</em>) – If constant SF, sets maximum of random sampling.</p></li>
+<li><p><strong>RNG</strong> (<em>&lt;class</em><em>, </em><em>np.random.Generator&gt;</em>) – Random generator instance.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The formation times array.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.popsyn.star_formation_history.get_illustrisTNG_data">
+<span class="sig-prename descclassname"><span class="pre">posydon.popsyn.star_formation_history.</span></span><span class="sig-name descname"><span class="pre">get_illustrisTNG_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/star_formation_history.html#get_illustrisTNG_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.star_formation_history.get_illustrisTNG_data" title="Link to this definition"></a></dt>
+<dd><p>Load IllustrisTNG SFR dataset.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.popsyn.star_formation_history.integrated_SFRH_over_redshift">
+<span class="sig-prename descclassname"><span class="pre">posydon.popsyn.star_formation_history.</span></span><span class="sig-name descname"><span class="pre">integrated_SFRH_over_redshift</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">SFR</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Z</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Z_max</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/star_formation_history.html#integrated_SFRH_over_redshift"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.star_formation_history.integrated_SFRH_over_redshift" title="Link to this definition"></a></dt>
+<dd><p>Integrated SFR history over z as in Eq. (B.10) of Bavera et al. (2020).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>SFR</strong> (<em>string</em>) – Star formation rate assumption:
+- Madau+Fragos17 see arXiv:1606.07887
+- Madau+Dickinson14 see arXiv:1403.0007
+- Neijssel+19 see arXiv:1906.08136</p></li>
+<li><p><strong>Z</strong> (<em>double</em>) – Metallicity.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The total mass of stars formed per comoving volume at a given
+metallicity Z.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>double</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.popsyn.star_formation_history.mean_metallicity">
+<span class="sig-prename descclassname"><span class="pre">posydon.popsyn.star_formation_history.</span></span><span class="sig-name descname"><span class="pre">mean_metallicity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">SFR</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/star_formation_history.html#mean_metallicity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.star_formation_history.mean_metallicity" title="Link to this definition"></a></dt>
+<dd><p>Empiric mean metallicity function.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>SFR</strong> (<em>string</em>) – Star formation rate assumption:
+- Madau+Fragos17 see arXiv:1606.07887
+- Madau+Dickinson14 see arXiv:1403.0007
+- Neijssel+19 see arXiv:1906.08136</p></li>
+<li><p><strong>z</strong> (<em>double</em>) – Cosmological redshift.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Mean metallicty of the universe at the given redhist.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>double</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.popsyn.star_formation_history.star_formation_rate">
+<span class="sig-prename descclassname"><span class="pre">posydon.popsyn.star_formation_history.</span></span><span class="sig-name descname"><span class="pre">star_formation_rate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">SFR</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/star_formation_history.html#star_formation_rate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.star_formation_history.star_formation_rate" title="Link to this definition"></a></dt>
+<dd><p>Star formation rate in M_sun yr^-1 Mpc^-3.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>SFR</strong> (<em>string</em>) – Star formation rate assumption:
+- Madau+Fragos17 see arXiv:1606.07887
+- Madau+Dickinson14 see arXiv:1403.0007
+- Neijssel+19 see arXiv:1906.08136
+- IllustrisTNG see see arXiv:1707.03395</p></li>
+<li><p><strong>z</strong> (<em>double</em>) – Cosmological redshift.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The total mass of stars in M_sun formed per comoving volume Mpc^-3
+per year.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>double</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.popsyn.star_formation_history.std_log_metallicity_dist">
+<span class="sig-prename descclassname"><span class="pre">posydon.popsyn.star_formation_history.</span></span><span class="sig-name descname"><span class="pre">std_log_metallicity_dist</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sigma</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/star_formation_history.html#std_log_metallicity_dist"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.star_formation_history.std_log_metallicity_dist" title="Link to this definition"></a></dt>
+<dd><p>Standard deviation of the log-metallicity distribution.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Standard deviation of the adopted distribution.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>double</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="posydon-popsyn-synthetic-population">
+<h2>posydon.popsyn.synthetic_population<a class="headerlink" href="#posydon-popsyn-synthetic-population" title="Link to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="posydon.interpolation.html" class="btn btn-neutral float-left" title="posydon.interpolation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="posydon.utils.html" class="btn btn-neutral float-right" title="posydon.utils" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Tassos Fragos.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

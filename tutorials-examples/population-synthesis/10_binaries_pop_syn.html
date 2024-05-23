@@ -1,0 +1,1153 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Your First Binary Simulations with POSYDON 🌠 &mdash; POSYDON v2.0.0-dev documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/nbsphinx-code-cells.css" />
+      <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=8ace0c28" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../_static/documentation_options.js?v=f4b7fd8b"></script>
+        <script src="../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+        <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Large-Scale Population Synthesis on HPC Facilities 🚀" href="pop_syn.html" />
+    <link rel="prev" title="Binary-Star Population Synthesis with POSYDON" href="binary-pop-syn.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html">
+            
+              <img src="../../_static/posydon_logo.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                v2.0.0-dev
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../introduction-acknowledgements/intro.html">Introduction, Objectives, and Scope</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../introduction-acknowledgements/collaborative-team.html">Collaborative Team</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://posydon.org/papers.html">Publications</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started/prerequisites.html">Prerequisites</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started/installation-guide.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started/verification.html">Verification</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">User Guides</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../user-guides/user-roadmap.html">Roadmap to Becoming an Expert POSYDON User</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user-guides/web-application.html">Web Application: POSYDON Interactive Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user-guides/database-query-system.html">Database and Query System</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials and Examples</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="binary-pop-syn.html">Binary-Star Population Synthesis with POSYDON</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Your First Binary Simulations with POSYDON 🌠</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pop_syn.html">Large-Scale Population Synthesis on HPC Facilities 🚀</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pop_syn.html#Combining-runs-into-single-metallicity-files">Combining runs into single metallicity files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bbh_analysis.html">Analyzing Merging BBH Populations: Rates &amp; Observations 🔍</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lgrb_pop_syn.html">Computing Long-Duration Gamma-Ray Bursts from Double Compact Object Populations 🌌</a></li>
+<li class="toctree-l2"><a class="reference internal" href="one_met_pop_syn.html">Explore the assumption of star-formation history and DCO compute rates at one single metallicity 📖</a></li>
+<li class="toctree-l2"><a class="reference internal" href="debug_pop.html">Debugging POSYDON Binary Population Synthesis 🐞</a></li>
+<li class="toctree-l2"><a class="reference internal" href="VHD.html">Van den Heuvel Diagrams</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../generating-datasets/generating-datasets.html">Crafting the Core Datasets for POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../MESA-grids/running-grids.html">Architecting MESA Simulation Grids with POSYDON</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">In-Depth Components Overview</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../components-overview/mesa-grids.html">MESA Grids API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../components-overview/processing-pipeline.html">Processing Pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../components-overview/machine-learning-components.html">Machine Learning Components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../components-overview/stellar-binary-simulation.html">Stellar &amp; Binary-star Simulation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../api_reference/posydon.html">posydon</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api_reference/bin.html">executables</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Troubleshooting and FAQs</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../troubleshooting-faqs/installation-issues.html">Installation Issues</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../troubleshooting-faqs/code-questions.html">Code Usage Questions</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contributing to POSYDON</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing/how-to-contribute.html">How To Contribute</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing/code-style-guidelines.html">Code Style Guidelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing/reporting-issues.html">Reporting issues</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Release Notes and Changelog</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../release-notes/version-history.html">Version History of POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../release-notes/major-updates.html">Major Updates</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contact and Support</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../contact-support/contact-information.html">Contact Information</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">POSYDON</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="binary-pop-syn.html">Binary-Star Population Synthesis with POSYDON</a></li>
+      <li class="breadcrumb-item active">Your First Binary Simulations with POSYDON 🌠</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/tutorials-examples/population-synthesis/10_binaries_pop_syn.ipynb.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="Your-First-Binary-Simulations-with-POSYDON-🌠">
+<h1>Your First Binary Simulations with POSYDON 🌠<a class="headerlink" href="#Your-First-Binary-Simulations-with-POSYDON-🌠" title="Link to this heading"></a></h1>
+<p><strong>Tutorial goal:</strong></p>
+<ul class="simple">
+<li><p>Create your first binary population</p></li>
+</ul>
+<p><strong>New concepts:</strong></p>
+<ul class="simple">
+<li><p>Default population synthesis model</p></li>
+<li><p>Synthetic Population class</p></li>
+</ul>
+<p>If you haven’t done so yet, export the path POSYDON environment variables. Set these parameters in your <code class="docutils literal notranslate"><span class="pre">.bash_profile</span></code> or <code class="docutils literal notranslate"><span class="pre">.zshrc</span></code> if you use POSYDON regularly.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%</span><span class="k">env</span> PATH_TO_POSYDON=/YOUR/POSYDON/PATH/
+<span class="o">%</span><span class="k">env</span> PATH_TO_POSYDON_DATA=/YOUR/POSYDON_DATA/PATH/
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+env: PATH_TO_POSYDON=/Users/simone/Google Drive/github/POSYDON-public/
+env: PATH_TO_POSYDON_DATA=/Volumes/T7/
+</pre></div></div>
+</div>
+<section id="Creating-the-Initialisation-File">
+<h2>Creating the Initialisation File<a class="headerlink" href="#Creating-the-Initialisation-File" title="Link to this heading"></a></h2>
+<hr class="docutils" />
+<p>To run population synthesis with POSYDON, a <code class="docutils literal notranslate"><span class="pre">population_params.ini</span></code> file is required. This file described how the stellar population is created and what prescriptions are implemented.</p>
+<p>POSYDON comes with a default <code class="docutils literal notranslate"><span class="pre">population_params_detault.ini</span></code> file found at <code class="docutils literal notranslate"><span class="pre">PATH_TO_POSYDON/posydon/popsyn</span></code> or have a look <a class="reference external" href="population_params.ini">here</a>.</p>
+<p>Here we will run the notebook with the default parameters, which runs 10 binaries at <span class="math notranslate nohighlight">\(10^{-4}Z_\odot\)</span>.</p>
+<p>First, let’s copy the default population synthesis model to your working directory.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">shutil</span>
+<span class="kn">from</span> <span class="nn">posydon.config</span> <span class="kn">import</span> <span class="n">PATH_TO_POSYDON</span>
+
+<span class="n">path_to_params</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">PATH_TO_POSYDON</span><span class="p">,</span> <span class="s2">&quot;posydon/popsyn/population_params_default.ini&quot;</span><span class="p">)</span>
+<span class="n">shutil</span><span class="o">.</span><span class="n">copyfile</span><span class="p">(</span><span class="n">path_to_params</span><span class="p">,</span> <span class="s1">&#39;./population_params.ini&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+&#39;./population_params.ini&#39;
+</pre></div></div>
+</div>
+</section>
+<section id="Running-the-Population-Synthesis-Model">
+<h2>Running the Population Synthesis Model<a class="headerlink" href="#Running-the-Population-Synthesis-Model" title="Link to this heading"></a></h2>
+<p>SyntheticPopulation() samples the given initial distributions given in the <code class="docutils literal notranslate"><span class="pre">population_params.ini</span></code> file and generates the initial conditions for our 10 binaries.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">posydon.popsyn.synthetic_population</span> <span class="kn">import</span> <span class="n">SyntheticPopulation</span>
+
+<span class="n">synth_pop</span> <span class="o">=</span> <span class="n">SyntheticPopulation</span><span class="p">(</span><span class="s1">&#39;./population_params.ini&#39;</span><span class="p">)</span>
+<span class="n">synth_pop</span><span class="o">.</span><span class="n">evolve</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Z=1.00e-04 Z_sun
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+/Users/simone/Google Drive/github/POSYDON-public/posydon/popsyn/binarypopulation.py:571: FutureWarning: The behavior of DataFrame concatenation with empty or all-NA entries is deprecated. In a future version, this will no longer exclude empty or all-NA columns when determining the result dtypes. To retain the old behavior, exclude the relevant entries before the concat operation.
+  return pd.concat(holder, axis=0, ignore_index=False)
+</pre></div></div>
+</div>
+<p>In the previous step, a synthetic binary population is created with the POSYDON default initial parameters and stored in <code class="docutils literal notranslate"><span class="pre">synth_pop</span></code>. With the last line of code the synthetic population will be evolved.</p>
+<p>Congratulations! You run your first population synthesis model with POSYDON! 🎉</p>
+</section>
+<section id="Exploring-the-Simulation-Output">
+<h2>Exploring the Simulation Output<a class="headerlink" href="#Exploring-the-Simulation-Output" title="Link to this heading"></a></h2>
+<p>Here are the population synthesis files you just created, in this example we only visualize the first ten lines of the output table:</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_hdf</span><span class="p">(</span><span class="s1">&#39;./1.00e-04_Zsun_population.h5&#39;</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="s1">&#39;history&#39;</span><span class="p">)</span>
+<span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>state</th>
+      <th>event</th>
+      <th>time</th>
+      <th>orbital_period</th>
+      <th>eccentricity</th>
+      <th>lg_mtransfer_rate</th>
+      <th>step_names</th>
+      <th>step_times</th>
+      <th>S1_state</th>
+      <th>S1_mass</th>
+      <th>...</th>
+      <th>S2_he_core_mass</th>
+      <th>S2_he_core_radius</th>
+      <th>S2_co_core_mass</th>
+      <th>S2_co_core_radius</th>
+      <th>S2_center_h1</th>
+      <th>S2_center_he4</th>
+      <th>S2_surface_h1</th>
+      <th>S2_surface_he4</th>
+      <th>S2_surf_avg_omega_div_omega_crit</th>
+      <th>S2_spin</th>
+    </tr>
+    <tr>
+      <th>binary_index</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>detached</td>
+      <td>ZAMS</td>
+      <td>1.511066e+09</td>
+      <td>479.288083</td>
+      <td>0.0</td>
+      <td>NaN</td>
+      <td>initial_cond</td>
+      <td>0.000000</td>
+      <td>H-rich_Core_H_burning</td>
+      <td>10.635159</td>
+      <td>...</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>0.750999</td>
+      <td>2.490000e-01</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>0</th>
+      <td>RLO1</td>
+      <td>CC1</td>
+      <td>1.535382e+09</td>
+      <td>1220.670243</td>
+      <td>0.0</td>
+      <td>-4.442681</td>
+      <td>step_HMS_HMS</td>
+      <td>2.176263</td>
+      <td>H-rich_Central_C_depletion</td>
+      <td>4.387056</td>
+      <td>...</td>
+      <td>1.411542e-14</td>
+      <td>2.053381e-16</td>
+      <td>1.365520e-14</td>
+      <td>1.239204e-16</td>
+      <td>0.423320</td>
+      <td>5.766784e-01</td>
+      <td>0.388622</td>
+      <td>0.611377</td>
+      <td>0.907345</td>
+      <td>15.586620</td>
+    </tr>
+    <tr>
+      <th>0</th>
+      <td>disrupted</td>
+      <td>NaN</td>
+      <td>1.535382e+09</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>step_SN</td>
+      <td>0.001554</td>
+      <td>NS</td>
+      <td>1.346469</td>
+      <td>...</td>
+      <td>1.411542e-14</td>
+      <td>2.053381e-16</td>
+      <td>1.365520e-14</td>
+      <td>1.239204e-16</td>
+      <td>0.423320</td>
+      <td>5.766784e-01</td>
+      <td>0.388622</td>
+      <td>0.611377</td>
+      <td>0.907345</td>
+      <td>15.586620</td>
+    </tr>
+    <tr>
+      <th>0</th>
+      <td>disrupted</td>
+      <td>CC2</td>
+      <td>1.548703e+09</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>step_disrupted</td>
+      <td>5.963153</td>
+      <td>NS</td>
+      <td>1.346469</td>
+      <td>...</td>
+      <td>2.970098e+00</td>
+      <td>NaN</td>
+      <td>2.062403e+00</td>
+      <td>5.067320e-02</td>
+      <td>0.000000</td>
+      <td>7.232097e-14</td>
+      <td>0.719862</td>
+      <td>0.280118</td>
+      <td>0.024038</td>
+      <td>13.729559</td>
+    </tr>
+    <tr>
+      <th>0</th>
+      <td>disrupted</td>
+      <td>NaN</td>
+      <td>1.548703e+09</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>step_SN</td>
+      <td>0.001684</td>
+      <td>NS</td>
+      <td>1.346469</td>
+      <td>...</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>0.000000</td>
+    </tr>
+    <tr>
+      <th>0</th>
+      <td>disrupted</td>
+      <td>END</td>
+      <td>1.548703e+09</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>step_end</td>
+      <td>0.000107</td>
+      <td>NS</td>
+      <td>1.346469</td>
+      <td>...</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>0.000000</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>detached</td>
+      <td>ZAMS</td>
+      <td>3.316347e+09</td>
+      <td>0.911049</td>
+      <td>0.0</td>
+      <td>NaN</td>
+      <td>initial_cond</td>
+      <td>0.000000</td>
+      <td>H-rich_Core_H_burning</td>
+      <td>15.575811</td>
+      <td>...</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>0.750999</td>
+      <td>2.490000e-01</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>contact</td>
+      <td>oCE1</td>
+      <td>3.327664e+09</td>
+      <td>0.506718</td>
+      <td>0.0</td>
+      <td>-1.876899</td>
+      <td>step_HMS_HMS</td>
+      <td>0.347768</td>
+      <td>H-rich_Core_H_burning</td>
+      <td>14.908113</td>
+      <td>...</td>
+      <td>1.411542e-14</td>
+      <td>2.053381e-16</td>
+      <td>1.365520e-14</td>
+      <td>1.239204e-16</td>
+      <td>0.722955</td>
+      <td>2.770430e-01</td>
+      <td>0.750621</td>
+      <td>0.249361</td>
+      <td>0.988417</td>
+      <td>10.460393</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>merged</td>
+      <td>oMerging1</td>
+      <td>3.327664e+09</td>
+      <td>0.506718</td>
+      <td>0.0</td>
+      <td>-1.876899</td>
+      <td>step_CE</td>
+      <td>0.000091</td>
+      <td>H-rich_Core_H_burning</td>
+      <td>14.908113</td>
+      <td>...</td>
+      <td>1.411542e-14</td>
+      <td>2.053381e-16</td>
+      <td>1.365520e-14</td>
+      <td>1.239204e-16</td>
+      <td>0.722955</td>
+      <td>2.770430e-01</td>
+      <td>0.750621</td>
+      <td>0.249361</td>
+      <td>0.988417</td>
+      <td>10.460393</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>merged</td>
+      <td>CC1</td>
+      <td>3.331178e+09</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>step_merged</td>
+      <td>6.616714</td>
+      <td>H-rich_Central_C_depletion</td>
+      <td>16.152142</td>
+      <td>...</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+  </tbody>
+</table>
+<p>10 rows × 38 columns</p>
+</div></div>
+</div>
+<p>It is also possible to collapse the evolution output on a single row per binary system as shown in the next example.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df_oneline</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_hdf</span><span class="p">(</span><span class="s1">&#39;./1.00e-04_Zsun_population.h5&#39;</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="s1">&#39;oneline&#39;</span><span class="p">)</span>
+<span class="n">df_oneline</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>state_i</th>
+      <th>event_i</th>
+      <th>time_i</th>
+      <th>orbital_period_i</th>
+      <th>eccentricity_i</th>
+      <th>lg_mtransfer_rate_i</th>
+      <th>step_names_i</th>
+      <th>step_times_i</th>
+      <th>state_f</th>
+      <th>event_f</th>
+      <th>...</th>
+      <th>interp_class_HMS_HMS</th>
+      <th>interp_class_CO_HMS_RLO</th>
+      <th>interp_class_CO_HeMS</th>
+      <th>interp_class_CO_HeMS_RLO</th>
+      <th>mt_history_HMS_HMS</th>
+      <th>mt_history_CO_HMS_RLO</th>
+      <th>mt_history_CO_HeMS</th>
+      <th>mt_history_CO_HeMS_RLO</th>
+      <th>FAILED</th>
+      <th>WARNING</th>
+    </tr>
+    <tr>
+      <th>binary_index</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>detached</td>
+      <td>ZAMS</td>
+      <td>1.511066e+09</td>
+      <td>479.288083</td>
+      <td>0.0</td>
+      <td>NaN</td>
+      <td>initial_cond</td>
+      <td>0.0</td>
+      <td>disrupted</td>
+      <td>END</td>
+      <td>...</td>
+      <td>stable_MT</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>Stable RLOF during postMS</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>0</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>detached</td>
+      <td>ZAMS</td>
+      <td>3.316347e+09</td>
+      <td>0.911049</td>
+      <td>0.0</td>
+      <td>NaN</td>
+      <td>initial_cond</td>
+      <td>0.0</td>
+      <td>merged</td>
+      <td>END</td>
+      <td>...</td>
+      <td>unstable_MT</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>Unstable contact phase</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>0</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>detached</td>
+      <td>ZAMS</td>
+      <td>7.997196e+08</td>
+      <td>0.964342</td>
+      <td>0.0</td>
+      <td>NaN</td>
+      <td>initial_cond</td>
+      <td>0.0</td>
+      <td>merged</td>
+      <td>END</td>
+      <td>...</td>
+      <td>unstable_MT</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>Unstable contact phase</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>0</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>detached</td>
+      <td>ZAMS</td>
+      <td>6.368205e+08</td>
+      <td>1.807444</td>
+      <td>0.0</td>
+      <td>NaN</td>
+      <td>initial_cond</td>
+      <td>0.0</td>
+      <td>disrupted</td>
+      <td>END</td>
+      <td>...</td>
+      <td>stable_MT</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>Stable RLOF during postMS</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>0</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>detached</td>
+      <td>ZAMS</td>
+      <td>5.028601e+09</td>
+      <td>1.688541</td>
+      <td>0.0</td>
+      <td>NaN</td>
+      <td>initial_cond</td>
+      <td>0.0</td>
+      <td>initial_RLOF</td>
+      <td>END</td>
+      <td>...</td>
+      <td>stable_MT</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>Stable RLOF during postMS</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>detached</td>
+      <td>ZAMS</td>
+      <td>5.384771e+09</td>
+      <td>59.604185</td>
+      <td>0.0</td>
+      <td>NaN</td>
+      <td>initial_cond</td>
+      <td>0.0</td>
+      <td>disrupted</td>
+      <td>END</td>
+      <td>...</td>
+      <td>stable_MT</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>Stable RLOF during postMS</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>0</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>detached</td>
+      <td>ZAMS</td>
+      <td>1.242091e+10</td>
+      <td>3622.599836</td>
+      <td>0.0</td>
+      <td>NaN</td>
+      <td>initial_cond</td>
+      <td>0.0</td>
+      <td>disrupted</td>
+      <td>END</td>
+      <td>...</td>
+      <td>no_MT</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>no RLOF</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>0</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>detached</td>
+      <td>ZAMS</td>
+      <td>1.278701e+10</td>
+      <td>2.785114</td>
+      <td>0.0</td>
+      <td>NaN</td>
+      <td>initial_cond</td>
+      <td>0.0</td>
+      <td>merged</td>
+      <td>END</td>
+      <td>...</td>
+      <td>unstable_MT</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>Unstable RLOF during postMS</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>0</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>detached</td>
+      <td>ZAMS</td>
+      <td>3.362532e+09</td>
+      <td>2.522910</td>
+      <td>0.0</td>
+      <td>NaN</td>
+      <td>initial_cond</td>
+      <td>0.0</td>
+      <td>detached</td>
+      <td>END</td>
+      <td>...</td>
+      <td>stable_MT</td>
+      <td>stable_MT</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>Stable contact phase</td>
+      <td>Stable RLOF during postMS</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>0</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>detached</td>
+      <td>ZAMS</td>
+      <td>7.402367e+09</td>
+      <td>4518.548242</td>
+      <td>0.0</td>
+      <td>NaN</td>
+      <td>initial_cond</td>
+      <td>0.0</td>
+      <td>disrupted</td>
+      <td>END</td>
+      <td>...</td>
+      <td>no_MT</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>no RLOF</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>0</td>
+      <td>1</td>
+    </tr>
+  </tbody>
+</table>
+<p>10 rows × 100 columns</p>
+</div></div>
+</div>
+<p>For the last example, only a selection of columns will be selected to visualize the evolution of the ninth binary (with a corresponding index value of eight) in the population:</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># let&#39;s check the BBH system at index 8</span>
+<span class="n">cols</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="s1">&#39;step_names&#39;</span><span class="p">,</span> <span class="s1">&#39;state&#39;</span><span class="p">,</span> <span class="s1">&#39;event&#39;</span><span class="p">,</span> <span class="s1">&#39;orbital_period&#39;</span><span class="p">,</span> <span class="s1">&#39;eccentricity&#39;</span><span class="p">,</span> <span class="s1">&#39;S1_state&#39;</span><span class="p">,</span> <span class="s1">&#39;S2_state&#39;</span><span class="p">,</span> <span class="s1">&#39;S1_mass&#39;</span><span class="p">,</span> <span class="s1">&#39;S2_mass&#39;</span><span class="p">]</span>
+<span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="mi">8</span><span class="p">,</span> <span class="n">cols</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>time</th>
+      <th>step_names</th>
+      <th>state</th>
+      <th>event</th>
+      <th>orbital_period</th>
+      <th>eccentricity</th>
+      <th>S1_state</th>
+      <th>S2_state</th>
+      <th>S1_mass</th>
+      <th>S2_mass</th>
+    </tr>
+    <tr>
+      <th>binary_index</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>8</th>
+      <td>3.362532e+09</td>
+      <td>initial_cond</td>
+      <td>detached</td>
+      <td>ZAMS</td>
+      <td>2.522910</td>
+      <td>0.000000</td>
+      <td>H-rich_Core_H_burning</td>
+      <td>H-rich_Core_H_burning</td>
+      <td>93.546567</td>
+      <td>93.023072</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>3.366016e+09</td>
+      <td>step_HMS_HMS</td>
+      <td>detached</td>
+      <td>CC1</td>
+      <td>3.909472</td>
+      <td>0.000000</td>
+      <td>H-rich_Central_C_depletion</td>
+      <td>H-rich_Core_H_burning</td>
+      <td>58.365944</td>
+      <td>119.598219</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>3.366016e+09</td>
+      <td>step_SN</td>
+      <td>detached</td>
+      <td>NaN</td>
+      <td>4.648114</td>
+      <td>0.083735</td>
+      <td>BH</td>
+      <td>H-rich_Core_H_burning</td>
+      <td>43.861220</td>
+      <td>119.598219</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>3.366233e+09</td>
+      <td>step_detached</td>
+      <td>RLO2</td>
+      <td>oRLO2</td>
+      <td>4.902223</td>
+      <td>0.000000</td>
+      <td>BH</td>
+      <td>H-rich_Core_H_burning</td>
+      <td>43.861220</td>
+      <td>101.734326</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>3.366846e+09</td>
+      <td>step_CO_HMS_RLO</td>
+      <td>detached</td>
+      <td>CC2</td>
+      <td>2.846054</td>
+      <td>0.000000</td>
+      <td>BH</td>
+      <td>H-rich_Central_C_depletion</td>
+      <td>45.175531</td>
+      <td>67.246779</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>3.366846e+09</td>
+      <td>step_SN</td>
+      <td>detached</td>
+      <td>NaN</td>
+      <td>8.712412</td>
+      <td>0.458613</td>
+      <td>BH</td>
+      <td>BH</td>
+      <td>45.175531</td>
+      <td>30.278034</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>1.380000e+10</td>
+      <td>step_dco</td>
+      <td>detached</td>
+      <td>maxtime</td>
+      <td>5.781819</td>
+      <td>0.355638</td>
+      <td>BH</td>
+      <td>BH</td>
+      <td>45.175531</td>
+      <td>30.278034</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>1.380000e+10</td>
+      <td>step_end</td>
+      <td>detached</td>
+      <td>END</td>
+      <td>5.781819</td>
+      <td>0.355638</td>
+      <td>BH</td>
+      <td>BH</td>
+      <td>45.175531</td>
+      <td>30.278034</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+<p>Feel free to explore the dataset!</p>
+<p>If you want to learn more about population synthesis and how to build more complex models it is advised to continue with the remaining tutorials and consult the POSYDON documentation.</p>
+<section id="Local-MPI-runs">
+<h3>Local MPI runs<a class="headerlink" href="#Local-MPI-runs" title="Link to this heading"></a></h3>
+<p>To speed up population synthesis runs, you can run on a computing cluster, as described in <a class="reference external" href="pop_syn">HPC Facilities</a>, or you can distribute the population synthesis across multiple cores on your local machine using MPI.</p>
+<p>To enable local MPI runs, go into the <code class="docutils literal notranslate"><span class="pre">population_params_detault.ini</span></code> and change <code class="docutils literal notranslate"><span class="pre">use_MPI</span></code> to <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p>
+<p>It’s important to note that you cannot run have this option enabled for cluster runs!</p>
+<p>We create a binary population simulation script to run the population:</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%%writefile</span> script.py
+<span class="kn">from</span> <span class="nn">posydon.popsyn.synthetic_population</span> <span class="kn">import</span> <span class="n">SyntheticPopulation</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">synth_pop</span> <span class="o">=</span> <span class="n">SyntheticPopulation</span><span class="p">(</span><span class="s2">&quot;./population_params.ini&quot;</span><span class="p">)</span>
+    <span class="n">synth_pop</span><span class="o">.</span><span class="n">evolve</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<p>This script can be initiated using a local where NR_processors is the number of processors you would like to us.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">mpiexec</span> <span class="o">-</span><span class="n">n</span> <span class="err">$</span><span class="p">{</span><span class="n">NR_processors</span><span class="p">}</span> <span class="n">python</span> <span class="n">script</span><span class="o">.</span><span class="n">py</span>
+</pre></div>
+</div>
+</div>
+<p>This will create a folder for each metallicity in the population and store output of the parallel runs in it. You will have to concatenate these runs into a single population file per metallicity, which can be achieved using the following code:</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">posydon.popsyn.synthetic_population</span> <span class="kn">import</span> <span class="n">SyntheticPopulation</span>
+<span class="kn">from</span> <span class="nn">posydon.config</span> <span class="kn">import</span> <span class="n">PATH_TO_POSYDON_DATA</span>
+<span class="kn">import</span> <span class="nn">os</span>
+
+
+<span class="n">synth_pop</span> <span class="o">=</span> <span class="n">SyntheticPopulation</span><span class="p">(</span><span class="s2">&quot;./population_params.ini&quot;</span><span class="p">)</span>
+<span class="c1"># Get the path to the batches in the current folder</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)</span>
+<span class="n">path_to_batches</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">x</span> <span class="k">if</span> <span class="n">i</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;_batches&#39;</span><span class="p">)]</span>
+<span class="n">synth_pop</span><span class="o">.</span><span class="n">merge_parallel_runs</span><span class="p">(</span><span class="n">path_to_batches</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>
+</pre></div>
+</div>
+</div>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="binary-pop-syn.html" class="btn btn-neutral float-left" title="Binary-Star Population Synthesis with POSYDON" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="pop_syn.html" class="btn btn-neutral float-right" title="Large-Scale Population Synthesis on HPC Facilities 🚀" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Tassos Fragos.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

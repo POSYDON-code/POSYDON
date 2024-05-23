@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Large-Scale Population Synthesis on HPC Facilities 🚀 &mdash; POSYDON v2.0.0-dev documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/nbsphinx-code-cells.css" />
+      <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=8ace0c28" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../_static/documentation_options.js?v=f4b7fd8b"></script>
+        <script src="../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+        <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Analyzing Merging BBH Populations: Rates &amp; Observations 🔍" href="bbh_analysis.html" />
+    <link rel="prev" title="Your First Binary Simulations with POSYDON 🌠" href="10_binaries_pop_syn.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html">
+            
+              <img src="../../_static/posydon_logo.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                v2.0.0-dev
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../introduction-acknowledgements/intro.html">Introduction, Objectives, and Scope</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../introduction-acknowledgements/collaborative-team.html">Collaborative Team</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://posydon.org/papers.html">Publications</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started/prerequisites.html">Prerequisites</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started/installation-guide.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started/verification.html">Verification</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">User Guides</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../user-guides/user-roadmap.html">Roadmap to Becoming an Expert POSYDON User</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user-guides/web-application.html">Web Application: POSYDON Interactive Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user-guides/database-query-system.html">Database and Query System</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials and Examples</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="binary-pop-syn.html">Binary-Star Population Synthesis with POSYDON</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="10_binaries_pop_syn.html">Your First Binary Simulations with POSYDON 🌠</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Large-Scale Population Synthesis on HPC Facilities 🚀</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#Combining-runs-into-single-metallicity-files">Combining runs into single metallicity files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bbh_analysis.html">Analyzing Merging BBH Populations: Rates &amp; Observations 🔍</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lgrb_pop_syn.html">Computing Long-Duration Gamma-Ray Bursts from Double Compact Object Populations 🌌</a></li>
+<li class="toctree-l2"><a class="reference internal" href="one_met_pop_syn.html">Explore the assumption of star-formation history and DCO compute rates at one single metallicity 📖</a></li>
+<li class="toctree-l2"><a class="reference internal" href="debug_pop.html">Debugging POSYDON Binary Population Synthesis 🐞</a></li>
+<li class="toctree-l2"><a class="reference internal" href="VHD.html">Van den Heuvel Diagrams</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../generating-datasets/generating-datasets.html">Crafting the Core Datasets for POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../MESA-grids/running-grids.html">Architecting MESA Simulation Grids with POSYDON</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">In-Depth Components Overview</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../components-overview/mesa-grids.html">MESA Grids API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../components-overview/processing-pipeline.html">Processing Pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../components-overview/machine-learning-components.html">Machine Learning Components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../components-overview/stellar-binary-simulation.html">Stellar &amp; Binary-star Simulation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../api_reference/posydon.html">posydon</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api_reference/bin.html">executables</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Troubleshooting and FAQs</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../troubleshooting-faqs/installation-issues.html">Installation Issues</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../troubleshooting-faqs/code-questions.html">Code Usage Questions</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contributing to POSYDON</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing/how-to-contribute.html">How To Contribute</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing/code-style-guidelines.html">Code Style Guidelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing/reporting-issues.html">Reporting issues</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Release Notes and Changelog</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../release-notes/version-history.html">Version History of POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../release-notes/major-updates.html">Major Updates</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contact and Support</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../contact-support/contact-information.html">Contact Information</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">POSYDON</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="binary-pop-syn.html">Binary-Star Population Synthesis with POSYDON</a></li>
+      <li class="breadcrumb-item active">Large-Scale Population Synthesis on HPC Facilities 🚀</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/tutorials-examples/population-synthesis/pop_syn.ipynb.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="Large-Scale-Population-Synthesis-on-HPC-Facilities-🚀">
+<h1>Large-Scale Population Synthesis on HPC Facilities 🚀<a class="headerlink" href="#Large-Scale-Population-Synthesis-on-HPC-Facilities-🚀" title="Link to this heading"></a></h1>
+<p>If you haven’t done so yet, export the path POSYDON environment variables. For example:</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%</span><span class="k">env</span> PATH_TO_POSYDON=/Users/simone/Google Drive/github/POSYDON-public/
+<span class="o">%</span><span class="k">env</span> PATH_TO_POSYDON_DATA=/Volumes/T7/
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+env: PATH_TO_POSYDON=/Users/simone/Google Drive/github/POSYDON-public/
+env: PATH_TO_POSYDON_DATA=/Volumes/T7/
+</pre></div></div>
+</div>
+<section id="Creating-the-Initialization-File-to-Rub-the-Binary-Population-Synthesis-Model">
+<h2>Creating the Initialization File to Rub the Binary Population Synthesis Model<a class="headerlink" href="#Creating-the-Initialization-File-to-Rub-the-Binary-Population-Synthesis-Model" title="Link to this heading"></a></h2>
+<p>Let’s copy the default populatio synthesis modle to your working directory.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">shutil</span>
+<span class="kn">from</span> <span class="nn">posydon.config</span> <span class="kn">import</span> <span class="n">PATH_TO_POSYDON</span>
+
+<span class="n">path_to_params</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">PATH_TO_POSYDON</span><span class="p">,</span> <span class="s2">&quot;posydon/popsyn/population_params_default.ini&quot;</span><span class="p">)</span>
+<span class="n">shutil</span><span class="o">.</span><span class="n">copyfile</span><span class="p">(</span><span class="n">path_to_params</span><span class="p">,</span> <span class="s1">&#39;./population_params.ini&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>Open the <code class="docutils literal notranslate"><span class="pre">population_params.ini</span></code> file and do the following edits to run a large model at 8 differet metallicities:</p>
+<ul class="simple">
+<li><p>set <code class="docutils literal notranslate"><span class="pre">metallicity</span> <span class="pre">=</span> <span class="pre">[2.,</span> <span class="pre">1.,</span> <span class="pre">0.45,</span> <span class="pre">0.2,</span> <span class="pre">0.1,</span> <span class="pre">0.01,</span> <span class="pre">0.001,</span> <span class="pre">0.0001]</span></code></p></li>
+<li><p>set <code class="docutils literal notranslate"><span class="pre">number_of_binaries</span> <span class="pre">=</span> <span class="pre">1000000</span></code></p></li>
+</ul>
+</section>
+<section id="Running-the-Population-Synthesis-Model">
+<h2>Running the Population Synthesis Model<a class="headerlink" href="#Running-the-Population-Synthesis-Model" title="Link to this heading"></a></h2>
+<p>Write the binary population simulation script to a file to run the population synthesis model with slurm on the HPC facility.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%%writefile</span> script.py
+<span class="kn">from</span> <span class="nn">posydon.popsyn.synthetic_population</span> <span class="kn">import</span> <span class="n">SyntheticPopulation</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">synth_pop</span> <span class="o">=</span> <span class="n">SyntheticPopulation</span><span class="p">(</span><span class="s2">&quot;./population_params.ini&quot;</span><span class="p">)</span>
+    <span class="n">synth_pop</span><span class="o">.</span><span class="n">evolve</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Writing script.py
+</pre></div></div>
+</div>
+<p>Run the simulation on the HPC facility using the slurm magic command.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Note: if you do not have the slurm magic commads installed, you can install it with the following line</span>
+<span class="c1"># !pip install git+https://github.com/NERSC/slurm-magic.git</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%</span><span class="k">load_ext</span> slurm_magic
+</pre></div>
+</div>
+</div>
+<p>The following slurm file works on UNIGE HPC facility.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%%</span><span class="k">sbatch</span>
+#!/bin/bash
+#SBATCH --array=0-34
+#SBATCH --partition=private-astro-cpu
+#SBATCH --job-name=pop_syn
+#SBATCH --output=./pop_synth_%A_%a.out
+#SBATCH --mail-type=FAIL
+#SBATCH --mail-user=user@email.ch
+#SBATCH --time=24:00:00
+#SBATCH --mem-per-cpu=4G
+
+export PATH_TO_POSYDON=/srv/beegfs/scratch/shares/astro/posydon/simone/POSYDON-public/
+export PATH_TO_POSYDON_DATA=/srv/beegfs/scratch/shares/astro/posydon/POSYDON_GRIDS_v2/POSYDON_data/230914/
+python ./script.py
+</pre></div>
+</div>
+</div>
+<p>The following slurm file works on Northwestern HPC facility.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%%</span><span class="k">sbatch</span>
+#!/bin/bash
+#SBATCH --account=b1119
+#SBATCH --partition=posydon-priority
+#SBATCH --array=0-34
+#SBATCH --job-name=pop_syn
+#SBATCH --output=./pop_syn.out
+#SBATCH --mail-type=FAIL
+#SBATCH --mail-user=user@email.ch
+#SBATCH --time=24:00:00
+#SBATCH --mem-per-cpu=4G
+
+export PATH_TO_POSYDON=/projects/b1119/ssb7065/POSYDON-public/
+export PATH_TO_POSYDON_DATA=/projects/b1119/POSYDON_GRIDS/POSYDON_popsynth_data/v2/230816/
+python ./script.py
+</pre></div>
+</div>
+</div>
+</section>
+</section>
+<section id="Combining-runs-into-single-metallicity-files">
+<h1>Combining runs into single metallicity files<a class="headerlink" href="#Combining-runs-into-single-metallicity-files" title="Link to this heading"></a></h1>
+<p>The above process creates a temporary batch folder per metallicity in which the sub-processes deposit their output. After the processes are done, the files have to be combined into a population file per metallicity. The follow code allows you to perform this concatenation, which is similar to the code shown in <a class="reference external" href="10_binaries_pop_syn">the first tutorial</a>.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%%writefile</span> concat_runs.py
+<span class="kn">from</span> <span class="nn">posydon.popsyn.synthetic_population</span> <span class="kn">import</span> <span class="n">SyntheticPopulation</span>
+<span class="kn">from</span> <span class="nn">posydon.config</span> <span class="kn">import</span> <span class="n">PATH_TO_POSYDON_DATA</span>
+<span class="kn">import</span> <span class="nn">os</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">synth_pop</span> <span class="o">=</span> <span class="n">SyntheticPopulation</span><span class="p">(</span><span class="s2">&quot;./population_params.ini&quot;</span><span class="p">)</span>
+    <span class="c1"># Get the path to the batches in the current folder</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)</span>
+    <span class="n">path_to_batches</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">x</span> <span class="k">if</span> <span class="n">i</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;_batches&#39;</span><span class="p">)]</span>
+    <span class="n">synth_pop</span><span class="o">.</span><span class="n">merge_parallel_runs</span><span class="p">(</span><span class="n">path_to_batches</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>This script can be manually ran after the job array has finished or we can submit another SLURM job, which only starts once the job array has finished.</p>
+<p>For this job to start once the job array has finished, the <code class="docutils literal notranslate"><span class="pre">job-name</span></code> has to be the same as the job array and <code class="docutils literal notranslate"><span class="pre">dependency=singleton</span></code> has to be set. If the job array does not finish correctly, this job will never run!</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%%</span><span class="k">sbatch</span>
+#!/bin/bash
+#SBATCH --job-name=pop_syn
+#SBATCH --partition=private-astro-cpu
+#SBATCH --output=population_concat.out
+#SBATCH --mail-type=FAIL
+#SBATCH --mail-user=user@email.ch
+#SBATCH --time=01:00:00
+#SBATCH --mem=4GB
+#SBATCH --dependency=singleton
+
+export PATH_TO_POSYDON=/srv/beegfs/scratch/shares/astro/posydon/simone/POSYDON-public/
+export PATH_TO_POSYDON_DATA=/srv/beegfs/scratch/shares/astro/posydon/POSYDON_GRIDS_v2/POSYDON_data/230914/
+python concat_runs.py
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%%</span><span class="k">sbatch</span>
+#!/bin/bash
+#SBATCH --job-name=pop_syn
+#SBATCH --account=b1119
+#SBATCH --partition=posydon-priority
+#SBATCH --output=population_concat.out
+#SBATCH --mail-type=FAIL
+#SBATCH --mail-user=user@email.ch
+#SBATCH --time=01:00:00
+#SBATCH --mem=4G
+#SBATCH --dependency=singleton
+
+export PATH_TO_POSYDON=/projects/b1119/ssb7065/POSYDON-public/
+export PATH_TO_POSYDON_DATA=/projects/b1119/POSYDON_GRIDS/POSYDON_popsynth_data/v2/230816/
+python concat_runs.py
+</pre></div>
+</div>
+</div>
+<section id="Parsing-the-Population-Synthesis-Model-Output">
+<h2>Parsing the Population Synthesis Model Output<a class="headerlink" href="#Parsing-the-Population-Synthesis-Model-Output" title="Link to this heading"></a></h2>
+<p>If everything is set up correctly, the simulation will generate 8 different population synthesis models, one for each metallicity containig 1 million binaries each. The simulation will take a few hours to complete. For convinience, we have already run the simulation and the results are available in the <code class="docutils literal notranslate"><span class="pre">.../POSYDON_data/tutorials/population-synthesis/example/</span></code> folder.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">posydon.config</span> <span class="kn">import</span> <span class="n">PATH_TO_POSYDON_DATA</span>
+
+<span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">PATH_TO_POSYDON_DATA</span><span class="p">,</span> <span class="s2">&quot;POSYDON_data/tutorials/population-synthesis/example/&quot;</span><span class="p">)</span>
+<span class="n">files</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">([</span><span class="n">f</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="k">if</span> <span class="n">f</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;Zsun_population.h5&#39;</span><span class="p">)])</span>
+<span class="n">path_to_data</span> <span class="o">=</span> <span class="p">[</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">file</span><span class="p">)</span> <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">files</span><span class="p">]</span>
+<span class="n">path_to_data</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+[&#39;/Volumes/T7/POSYDON_data/tutorials/population-synthesis/example/1.00e+00_Zsun_population.h5&#39;,
+ &#39;/Volumes/T7/POSYDON_data/tutorials/population-synthesis/example/1.00e-01_Zsun_population.h5&#39;,
+ &#39;/Volumes/T7/POSYDON_data/tutorials/population-synthesis/example/1.00e-02_Zsun_population.h5&#39;,
+ &#39;/Volumes/T7/POSYDON_data/tutorials/population-synthesis/example/1.00e-03_Zsun_population.h5&#39;,
+ &#39;/Volumes/T7/POSYDON_data/tutorials/population-synthesis/example/1.00e-04_Zsun_population.h5&#39;,
+ &#39;/Volumes/T7/POSYDON_data/tutorials/population-synthesis/example/2.00e+00_Zsun_population.h5&#39;,
+ &#39;/Volumes/T7/POSYDON_data/tutorials/population-synthesis/example/2.00e-01_Zsun_population.h5&#39;,
+ &#39;/Volumes/T7/POSYDON_data/tutorials/population-synthesis/example/4.50e-01_Zsun_population.h5&#39;]
+</pre></div></div>
+</div>
+<p>Here we show how you can parse the simulation results and save the subpopulation of merging binary black holes (BBH).</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">posydon.popsyn.synthetic_population</span> <span class="kn">import</span> <span class="n">SyntheticPopulation</span>
+
+<span class="n">pop</span> <span class="o">=</span> <span class="n">SyntheticPopulation</span><span class="p">(</span><span class="n">path_to_ini</span><span class="o">=</span><span class="s1">&#39;./population_params.ini&#39;</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="n">pop</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">path_to_data</span><span class="o">=</span><span class="n">path_to_data</span><span class="p">,</span> <span class="n">S1_state</span><span class="o">=</span><span class="s1">&#39;BH&#39;</span><span class="p">,</span> <span class="n">S2_state</span><span class="o">=</span><span class="s1">&#39;BH&#39;</span><span class="p">,</span> <span class="n">binary_state</span><span class="o">=</span><span class="s1">&#39;contact&#39;</span><span class="p">,</span> <span class="n">invert_S1S2</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">pop</span><span class="o">.</span><span class="n">save_pop</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span><span class="s1">&#39;BBH_population.h5&#39;</span><span class="p">))</span>
+
+<span class="n">pop</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Binary count with (S1_state, S2_state, binary_state, binary_event) equal
+to (BH, BH, contact, None)
+in /Volumes/T7/POSYDON_data/tutorials/population-synthesis/example/1.00e+00_Zsun_population.h5 are 233
+in /Volumes/T7/POSYDON_data/tutorials/population-synthesis/example/1.00e-01_Zsun_population.h5 are 2643
+in /Volumes/T7/POSYDON_data/tutorials/population-synthesis/example/1.00e-02_Zsun_population.h5 are 5974
+in /Volumes/T7/POSYDON_data/tutorials/population-synthesis/example/1.00e-03_Zsun_population.h5 are 8320
+in /Volumes/T7/POSYDON_data/tutorials/population-synthesis/example/1.00e-04_Zsun_population.h5 are 9683
+in /Volumes/T7/POSYDON_data/tutorials/population-synthesis/example/2.00e+00_Zsun_population.h5 are 121
+in /Volumes/T7/POSYDON_data/tutorials/population-synthesis/example/2.00e-01_Zsun_population.h5 are 3021
+in /Volumes/T7/POSYDON_data/tutorials/population-synthesis/example/4.50e-01_Zsun_population.h5 are 761
+Total binaries found are 30756
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+/Users/simone/Google Drive/github/POSYDON-public/posydon/popsyn/synthetic_population.py:300: PerformanceWarning:
+your performance may suffer as PyTables will pickle object types that it cannot
+map directly to c-types [inferred_type-&gt;mixed,key-&gt;block1_values] [items-&gt;Index([&#39;state&#39;, &#39;event&#39;, &#39;step_names&#39;, &#39;S1_state&#39;, &#39;S2_state&#39;], dtype=&#39;object&#39;)]
+
+  self.df.to_hdf(path, key=&#39;history&#39;)
+/Users/simone/Google Drive/github/POSYDON-public/posydon/popsyn/synthetic_population.py:301: PerformanceWarning:
+your performance may suffer as PyTables will pickle object types that it cannot
+map directly to c-types [inferred_type-&gt;mixed,key-&gt;block2_values] [items-&gt;Index([&#39;state_i&#39;, &#39;event_i&#39;, &#39;step_names_i&#39;, &#39;state_f&#39;, &#39;event_f&#39;,
+       &#39;step_names_f&#39;, &#39;S1_state_i&#39;, &#39;S1_state_f&#39;, &#39;S1_SN_type&#39;, &#39;S2_state_i&#39;,
+       &#39;S2_state_f&#39;, &#39;S2_SN_type&#39;, &#39;interp_class_HMS_HMS&#39;,
+       &#39;interp_class_CO_HMS_RLO&#39;, &#39;interp_class_CO_HeMS&#39;,
+       &#39;interp_class_CO_HeMS_RLO&#39;, &#39;mt_history_HMS_HMS&#39;,
+       &#39;mt_history_CO_HMS_RLO&#39;, &#39;mt_history_CO_HeMS&#39;,
+       &#39;mt_history_CO_HeMS_RLO&#39;],
+      dtype=&#39;object&#39;)]
+
+  self.df_oneline.to_hdf(path, key=&#39;oneline&#39;)
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Population successfully saved!
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>state</th>
+      <th>event</th>
+      <th>time</th>
+      <th>orbital_period</th>
+      <th>eccentricity</th>
+      <th>lg_mtransfer_rate</th>
+      <th>step_names</th>
+      <th>step_times</th>
+      <th>S1_state</th>
+      <th>S1_mass</th>
+      <th>...</th>
+      <th>S2_co_core_radius</th>
+      <th>S2_center_h1</th>
+      <th>S2_center_he4</th>
+      <th>S2_surface_h1</th>
+      <th>S2_surface_he4</th>
+      <th>S2_surf_avg_omega_div_omega_crit</th>
+      <th>S2_spin</th>
+      <th>metallicity</th>
+      <th>simulated_mass_for_met</th>
+      <th>underlying_mass_for_met</th>
+    </tr>
+    <tr>
+      <th>binary_index</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>3587</th>
+      <td>detached</td>
+      <td>ZAMS</td>
+      <td>0.000000e+00</td>
+      <td>2.493602e+01</td>
+      <td>0.000000</td>
+      <td>NaN</td>
+      <td>initial_cond</td>
+      <td>0.000000</td>
+      <td>H-rich_Core_H_burning</td>
+      <td>70.069756</td>
+      <td>...</td>
+      <td>NaN</td>
+      <td>7.155000e-01</td>
+      <td>2.703000e-01</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>0.0142</td>
+      <td>2.913438e+07</td>
+      <td>1.447893e+08</td>
+    </tr>
+    <tr>
+      <th>3587</th>
+      <td>contact</td>
+      <td>oDoubleCE1</td>
+      <td>3.631450e+06</td>
+      <td>6.304073e+01</td>
+      <td>0.000000</td>
+      <td>-2.989131</td>
+      <td>step_HMS_HMS</td>
+      <td>0.037464</td>
+      <td>H-rich_Core_He_burning</td>
+      <td>44.118926</td>
+      <td>...</td>
+      <td>0.000000</td>
+      <td>0.000000e+00</td>
+      <td>9.828315e-01</td>
+      <td>4.246537e-01</td>
+      <td>0.561493</td>
+      <td>0.577444</td>
+      <td>0.760854</td>
+      <td>0.0142</td>
+      <td>2.913438e+07</td>
+      <td>1.447893e+08</td>
+    </tr>
+    <tr>
+      <th>3587</th>
+      <td>detached</td>
+      <td>NaN</td>
+      <td>3.631450e+06</td>
+      <td>2.371597e-01</td>
+      <td>0.000000</td>
+      <td>NaN</td>
+      <td>step_CE</td>
+      <td>0.000137</td>
+      <td>stripped_He_Core_He_burning</td>
+      <td>35.566786</td>
+      <td>...</td>
+      <td>0.000000</td>
+      <td>0.000000e+00</td>
+      <td>9.828315e-01</td>
+      <td>1.000000e-02</td>
+      <td>0.975800</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>0.0142</td>
+      <td>2.913438e+07</td>
+      <td>1.447893e+08</td>
+    </tr>
+    <tr>
+      <th>3587</th>
+      <td>detached</td>
+      <td>CC1</td>
+      <td>4.007490e+06</td>
+      <td>1.226986e+00</td>
+      <td>0.000000</td>
+      <td>NaN</td>
+      <td>step_detached</td>
+      <td>0.777758</td>
+      <td>stripped_He_Central_C_depletion</td>
+      <td>13.620462</td>
+      <td>...</td>
+      <td>0.401483</td>
+      <td>1.917729e-34</td>
+      <td>1.605147e-02</td>
+      <td>9.893273e-100</td>
+      <td>0.247607</td>
+      <td>0.006843</td>
+      <td>0.077976</td>
+      <td>0.0142</td>
+      <td>2.913438e+07</td>
+      <td>1.447893e+08</td>
+    </tr>
+    <tr>
+      <th>3587</th>
+      <td>detached</td>
+      <td>NaN</td>
+      <td>4.007490e+06</td>
+      <td>1.358968e+00</td>
+      <td>0.101109</td>
+      <td>NaN</td>
+      <td>step_SN</td>
+      <td>0.152370</td>
+      <td>BH</td>
+      <td>13.120462</td>
+      <td>...</td>
+      <td>0.401483</td>
+      <td>1.917729e-34</td>
+      <td>1.605147e-02</td>
+      <td>9.893273e-100</td>
+      <td>0.247607</td>
+      <td>0.006843</td>
+      <td>0.077976</td>
+      <td>0.0142</td>
+      <td>2.913438e+07</td>
+      <td>1.447893e+08</td>
+    </tr>
+    <tr>
+      <th>3587</th>
+      <td>detached</td>
+      <td>redirect</td>
+      <td>4.007490e+06</td>
+      <td>1.358968e+00</td>
+      <td>0.101109</td>
+      <td>NaN</td>
+      <td>step_CO_HeMS</td>
+      <td>0.000102</td>
+      <td>BH</td>
+      <td>13.120462</td>
+      <td>...</td>
+      <td>0.401483</td>
+      <td>1.917729e-34</td>
+      <td>1.605147e-02</td>
+      <td>9.893273e-100</td>
+      <td>0.247607</td>
+      <td>0.006843</td>
+      <td>0.077976</td>
+      <td>0.0142</td>
+      <td>2.913438e+07</td>
+      <td>1.447893e+08</td>
+    </tr>
+    <tr>
+      <th>3587</th>
+      <td>detached</td>
+      <td>CC2</td>
+      <td>4.027170e+06</td>
+      <td>1.377894e+00</td>
+      <td>0.101108</td>
+      <td>NaN</td>
+      <td>step_detached</td>
+      <td>0.452186</td>
+      <td>BH</td>
+      <td>13.120462</td>
+      <td>...</td>
+      <td>0.130995</td>
+      <td>0.000000e+00</td>
+      <td>7.706932e-13</td>
+      <td>1.000000e-99</td>
+      <td>0.226684</td>
+      <td>0.015362</td>
+      <td>0.060340</td>
+      <td>0.0142</td>
+      <td>2.913438e+07</td>
+      <td>1.447893e+08</td>
+    </tr>
+    <tr>
+      <th>3587</th>
+      <td>detached</td>
+      <td>NaN</td>
+      <td>4.027170e+06</td>
+      <td>1.611464e+00</td>
+      <td>0.048133</td>
+      <td>NaN</td>
+      <td>step_SN</td>
+      <td>0.149304</td>
+      <td>BH</td>
+      <td>13.120462</td>
+      <td>...</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>0.064849</td>
+      <td>0.0142</td>
+      <td>2.913438e+07</td>
+      <td>1.447893e+08</td>
+    </tr>
+    <tr>
+      <th>3587</th>
+      <td>contact</td>
+      <td>CO_contact</td>
+      <td>2.917891e+09</td>
+      <td>2.638756e-08</td>
+      <td>0.000000</td>
+      <td>NaN</td>
+      <td>step_dco</td>
+      <td>1.252216</td>
+      <td>BH</td>
+      <td>13.120462</td>
+      <td>...</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>0.064849</td>
+      <td>0.0142</td>
+      <td>2.913438e+07</td>
+      <td>1.447893e+08</td>
+    </tr>
+    <tr>
+      <th>3587</th>
+      <td>contact</td>
+      <td>END</td>
+      <td>2.917891e+09</td>
+      <td>2.638756e-08</td>
+      <td>0.000000</td>
+      <td>NaN</td>
+      <td>step_end</td>
+      <td>0.000048</td>
+      <td>BH</td>
+      <td>13.120462</td>
+      <td>...</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>0.064849</td>
+      <td>0.0142</td>
+      <td>2.913438e+07</td>
+      <td>1.447893e+08</td>
+    </tr>
+  </tbody>
+</table>
+<p>10 rows × 41 columns</p>
+</div></div>
+</div>
+<p>You can now do the same for the other subpopulations of interest. Try sorting black hole-neutron star systems (BHNS; remember to set <code class="docutils literal notranslate"><span class="pre">invert_S1S2</span> <span class="pre">=</span> <span class="pre">True</span></code> to find BHNS systems where the NS is formed first) and binary neutron star systems (BNS).</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>
+</pre></div>
+</div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="10_binaries_pop_syn.html" class="btn btn-neutral float-left" title="Your First Binary Simulations with POSYDON 🌠" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="bbh_analysis.html" class="btn btn-neutral float-right" title="Analyzing Merging BBH Populations: Rates &amp; Observations 🔍" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Tassos Fragos.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,1160 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>posydon.popsyn.rate_calculation &mdash; POSYDON v2.0.0-dev documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=8ace0c28" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=f4b7fd8b"></script>
+        <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html">
+            
+              <img src="../../../_static/posydon_logo.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                v2.0.0-dev
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction-acknowledgements/intro.html">Introduction, Objectives, and Scope</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction-acknowledgements/collaborative-team.html">Collaborative Team</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://posydon.org/papers.html">Publications</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting-started/prerequisites.html">Prerequisites</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting-started/installation-guide.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting-started/verification.html">Verification</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">User Guides</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../user-guides/user-roadmap.html">Roadmap to Becoming an Expert POSYDON User</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user-guides/web-application.html">Web Application: POSYDON Interactive Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user-guides/database-query-system.html">Database and Query System</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials and Examples</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials-examples/population-synthesis/binary-pop-syn.html">Binary-Star Population Synthesis with POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials-examples/generating-datasets/generating-datasets.html">Crafting the Core Datasets for POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials-examples/MESA-grids/running-grids.html">Architecting MESA Simulation Grids with POSYDON</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">In-Depth Components Overview</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../components-overview/mesa-grids.html">MESA Grids API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../components-overview/processing-pipeline.html">Processing Pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../components-overview/machine-learning-components.html">Machine Learning Components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../components-overview/stellar-binary-simulation.html">Stellar &amp; Binary-star Simulation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../api_reference/posydon.html">posydon</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api_reference/bin.html">executables</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Troubleshooting and FAQs</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../troubleshooting-faqs/installation-issues.html">Installation Issues</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../troubleshooting-faqs/code-questions.html">Code Usage Questions</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contributing to POSYDON</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing/how-to-contribute.html">How To Contribute</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing/code-style-guidelines.html">Code Style Guidelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing/reporting-issues.html">Reporting issues</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Release Notes and Changelog</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../release-notes/version-history.html">Version History of POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../release-notes/major-updates.html">Major Updates</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contact and Support</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../contact-support/contact-information.html">Contact Information</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">POSYDON</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">posydon.popsyn.rate_calculation</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for posydon.popsyn.rate_calculation</h1><div class="highlight"><pre>
+<span></span>
+<span class="n">__author__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Simone Bavera &lt;Simone.Bavera@unige.ch&gt;&#39;</span><span class="p">]</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
+<span class="kn">import</span> <span class="nn">scipy</span> <span class="k">as</span> <span class="nn">sp</span>
+<span class="kn">from</span> <span class="nn">scipy.interpolate</span> <span class="kn">import</span> <span class="n">interp1d</span>
+<span class="kn">from</span> <span class="nn">astropy</span> <span class="kn">import</span> <span class="n">units</span> <span class="k">as</span> <span class="n">u</span>
+<span class="kn">from</span> <span class="nn">astropy</span> <span class="kn">import</span> <span class="n">constants</span> <span class="k">as</span> <span class="n">const</span> <span class="c1"># TODO: replace this in favour of POSYDON constats module</span>
+<span class="kn">from</span> <span class="nn">astropy.cosmology</span> <span class="kn">import</span> <span class="n">Planck15</span> <span class="k">as</span> <span class="n">cosmology</span> <span class="c1"># TODO: update to Planck18 once we update astropy module</span>
+<span class="kn">from</span> <span class="nn">astropy.cosmology</span> <span class="kn">import</span> <span class="n">z_at_value</span>
+<span class="kn">import</span> <span class="nn">posydon.popsyn.selection_effects</span> <span class="k">as</span> <span class="nn">selection_effects</span>
+<span class="kn">from</span> <span class="nn">posydon.utils.constants</span> <span class="kn">import</span> <span class="n">Zsun</span>
+<span class="kn">from</span> <span class="nn">posydon.popsyn.star_formation_history</span> <span class="kn">import</span> <span class="p">(</span><span class="n">star_formation_rate</span><span class="p">,</span>
+                                                   <span class="n">mean_metallicity</span><span class="p">,</span>
+                                                   <span class="n">std_log_metallicity_dist</span><span class="p">,</span>
+                                                   <span class="n">get_illustrisTNG_data</span><span class="p">,</span>
+                                                   <span class="n">fractional_SFR_at_given_redshift</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">posydon.utils.data_download</span> <span class="kn">import</span> <span class="n">PATH_TO_POSYDON_DATA</span>
+<span class="kn">from</span> <span class="nn">posydon.popsyn.GRB</span> <span class="kn">import</span> <span class="n">GRB_PROPERTIES</span><span class="p">,</span> <span class="n">get_GRB_properties</span>
+
+<span class="n">PATH_TO_PDET_GRID</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">PATH_TO_POSYDON_DATA</span><span class="p">,</span> <span class="s1">&#39;selection_effects/pdet_grid.hdf5&#39;</span><span class="p">)</span>
+
+
+<span class="n">DEFAULT_MODEL</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;delta_t&#39;</span> <span class="p">:</span> <span class="mi">100</span><span class="p">,</span> <span class="c1"># Myr</span>
+    <span class="s1">&#39;SFR&#39;</span> <span class="p">:</span> <span class="s1">&#39;IllustrisTNG&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;sigma_SFR&#39;</span> <span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="s1">&#39;Z_max&#39;</span> <span class="p">:</span> <span class="mf">1.</span><span class="p">,</span>
+    <span class="s1">&#39;select_one_met&#39;</span> <span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="s1">&#39;dlogZ&#39;</span> <span class="p">:</span> <span class="kc">None</span><span class="p">,</span> <span class="c1"># e.g, [np.log10(0.0142/2),np.log10(0.0142*2)]</span>
+    <span class="s1">&#39;Zsun&#39;</span> <span class="p">:</span> <span class="n">Zsun</span><span class="p">,</span>
+    <span class="s1">&#39;compute_GRB_properties&#39;</span> <span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="s1">&#39;GRB_beaming&#39;</span> <span class="p">:</span> <span class="mf">1.</span><span class="p">,</span> <span class="c1"># e.g., 0.5, &#39;Goldstein+15&#39;</span>
+    <span class="s1">&#39;GRB_efficiency&#39;</span> <span class="p">:</span> <span class="mf">0.</span><span class="p">,</span> <span class="c1"># e.g., 0.01</span>
+    <span class="s1">&#39;E_GRB_iso_min&#39;</span> <span class="p">:</span> <span class="mf">0.</span><span class="p">,</span> <span class="c1"># e.g., 1e51 erg </span>
+<span class="p">}</span>
+
+
+<div class="viewcode-block" id="Rates">
+<a class="viewcode-back" href="../../../api_reference/posydon.popsyn.html#posydon.popsyn.rate_calculation.Rates">[docs]</a>
+<span class="k">class</span> <span class="nc">Rates</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute DCO rates.&quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute DCO rates.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        df : object</span>
+<span class="sd">            Pandas dataframe containing the synthetic binary population.</span>
+<span class="sd">        delta_t : float</span>
+<span class="sd">            Cosmic time bin size used to bin distribute the synthetc binary</span>
+<span class="sd">            population.</span>
+<span class="sd">        SFR : string</span>
+<span class="sd">            Star-formation-rate history you want to use:</span>
+<span class="sd">            &#39;Madau+Dickinson14&#39;, &#39;Madau+Fragos17&#39;, &#39;Neijssel+19&#39;, &#39;IllustrisTNG&#39;</span>
+<span class="sd">        sigma_SFR : string</span>
+<span class="sd">            Standard deviation of the trucated log-normal metallicity distribution</span>
+<span class="sd">            assumed for the star-formation rate history in the case you select</span>
+<span class="sd">            &#39;Madau+Dickinson14&#39;, &#39;Madau+Fragos17&#39;, &#39;Neijssel+19&#39;,</span>
+<span class="sd">        Z_max : float</span>
+<span class="sd">            The absolute maximum metallicity of the star formation rate history.</span>
+<span class="sd">            NOTE: This should be used when assuming a truncated log-normal</span>
+<span class="sd">            distribution of metallcities to not overpredict 1, also it can be</span>
+<span class="sd">            used with the IllustrisTNG SFR to prevent unphysically high</span>
+<span class="sd">            metallicities.</span>
+<span class="sd">        select_one_met : bool</span>
+<span class="sd">            If `True` your synthetic binary population should contain only one</span>
+<span class="sd">            descrete metallicity.</span>
+<span class="sd">        dlogZ : float or range</span>
+<span class="sd">            Used when `select_one_met=True` to select the metallicity range</span>
+<span class="sd">            around which you want to integrate the SFR history. If float value</span>
+<span class="sd">            value is provided we assume a symmetric range dlogZ/2 around the</span>
+<span class="sd">            provided metallcity else we consider the range provided</span>
+<span class="sd">            [Z_min, Z_max] which could also be asymmetric.</span>
+<span class="sd">        verbose : bool</span>
+<span class="sd">            `True` if you want the print statements.</span>
+
+
+<span class="sd">        TODO: add the definitios of the variables used by this class.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">df</span> <span class="o">=</span> <span class="n">df</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span> <span class="o">=</span> <span class="n">verbose</span>
+
+        <span class="k">if</span> <span class="n">kwargs</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">DEFAULT_MODEL</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">key</span> <span class="o">+</span> <span class="s2">&quot; is not a valid parameter name!&quot;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">varname</span> <span class="ow">in</span> <span class="n">DEFAULT_MODEL</span><span class="p">:</span>
+                <span class="n">default_value</span> <span class="o">=</span> <span class="n">DEFAULT_MODEL</span><span class="p">[</span><span class="n">varname</span><span class="p">]</span>
+                <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">varname</span><span class="p">,</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">varname</span><span class="p">,</span> <span class="n">default_value</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">varname</span> <span class="ow">in</span> <span class="n">DEFAULT_MODEL</span><span class="p">:</span>
+                <span class="n">default_value</span> <span class="o">=</span> <span class="n">DEFAULT_MODEL</span><span class="p">[</span><span class="n">varname</span><span class="p">]</span>
+                <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">varname</span><span class="p">,</span> <span class="n">default_value</span><span class="p">)</span>
+                
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">compute_GRB_properties</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">GRB_PROPERTIES</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">:</span>
+                    <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;GRB properties not in the dataset, &quot;</span>
+                                  <span class="s2">&quot;computing them right now!&quot;</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">df</span> <span class="o">=</span> <span class="n">get_GRB_properties</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">,</span> 
+                                                 <span class="bp">self</span><span class="o">.</span><span class="n">GRB_efficiency</span><span class="p">,</span> 
+                                                 <span class="bp">self</span><span class="o">.</span><span class="n">GRB_beaming</span><span class="p">,</span>
+                                                 <span class="bp">self</span><span class="o">.</span><span class="n">E_GRB_iso_min</span><span class="p">)</span>
+
+    <span class="c1">######################################################</span>
+    <span class="c1">###   DCO detection rate and merger rate density   ###</span>
+    <span class="c1">###    see arXiv:1906.12257, arXiv:2010.16333,     ###</span>
+    <span class="c1">###        arXiv:2106.15841, arXiv:221210924,      ###</span>
+    <span class="c1">###        arXiv:2204.02619, arXiv:2011.10057      ###</span>
+    <span class="c1">###              arXiv:2012.02274                  ###</span>
+    <span class="c1">######################################################</span>
+
+<div class="viewcode-block" id="Rates.chi_eff">
+<a class="viewcode-back" href="../../../api_reference/posydon.popsyn.html#posydon.popsyn.rate_calculation.Rates.chi_eff">[docs]</a>
+    <span class="k">def</span> <span class="nf">chi_eff</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">m_1</span><span class="p">,</span> <span class="n">m_2</span><span class="p">,</span> <span class="n">a_1</span><span class="p">,</span> <span class="n">a_2</span><span class="p">,</span> <span class="n">tilt_1</span><span class="p">,</span> <span class="n">tilt_2</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">m_1</span><span class="o">*</span><span class="n">a_1</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">tilt_1</span><span class="p">)</span><span class="o">+</span><span class="n">m_2</span><span class="o">*</span><span class="n">a_2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">tilt_2</span><span class="p">))</span><span class="o">/</span><span class="p">(</span><span class="n">m_1</span><span class="o">+</span><span class="n">m_2</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Rates.m_chirp">
+<a class="viewcode-back" href="../../../api_reference/posydon.popsyn.html#posydon.popsyn.rate_calculation.Rates.m_chirp">[docs]</a>
+    <span class="k">def</span> <span class="nf">m_chirp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">m_1</span><span class="p">,</span> <span class="n">m_2</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">m_1</span><span class="o">*</span><span class="n">m_2</span><span class="p">)</span><span class="o">**</span><span class="p">(</span><span class="mf">3.</span><span class="o">/</span><span class="mi">5</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">m_1</span><span class="o">+</span><span class="n">m_2</span><span class="p">)</span><span class="o">**</span><span class="p">(</span><span class="mf">1.</span><span class="o">/</span><span class="mi">5</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Rates.mass_ratio">
+<a class="viewcode-back" href="../../../api_reference/posydon.popsyn.html#posydon.popsyn.rate_calculation.Rates.mass_ratio">[docs]</a>
+    <span class="k">def</span> <span class="nf">mass_ratio</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">m_1</span><span class="p">,</span> <span class="n">m_2</span><span class="p">):</span>
+        <span class="n">q</span> <span class="o">=</span> <span class="n">m_2</span><span class="o">/</span><span class="n">m_1</span>
+        <span class="n">q</span><span class="p">[</span><span class="n">q</span><span class="o">&gt;</span><span class="mf">1.</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.</span><span class="o">/</span><span class="n">q</span><span class="p">[</span><span class="n">q</span><span class="o">&gt;</span><span class="mf">1.</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">q</span></div>
+
+
+<div class="viewcode-block" id="Rates.get_data">
+<a class="viewcode-back" href="../../../api_reference/posydon.popsyn.html#posydon.popsyn.rate_calculation.Rates.get_data">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">var</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Resample class elements.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        var : string</span>
+<span class="sd">            Key of self.df. This method support a list of custom definitios for</span>
+<span class="sd">            DCO studies like q, m_tot, m_chirp, chi_eff.</span>
+<span class="sd">        index : list of int</span>
+<span class="sd">            List of indicies of the binaries of interest.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        array</span>
+<span class="sd">            Array containing the self.df[var][index].</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">var</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">:</span>
+            <span class="c1"># compute some useful quantities that are not defined in df_synthetic</span>
+            <span class="k">if</span> <span class="n">var</span> <span class="o">==</span> <span class="s1">&#39;q&#39;</span><span class="p">:</span>
+                <span class="n">values</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mass_ratio</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;S1_mass&quot;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;S2_mass&quot;</span><span class="p">])</span>
+            <span class="k">elif</span> <span class="n">var</span> <span class="o">==</span> <span class="s1">&#39;m_tot&#39;</span><span class="p">:</span>
+                <span class="n">values</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;S1_mass&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;S2_mass&quot;</span><span class="p">]</span>
+            <span class="k">elif</span> <span class="n">var</span> <span class="o">==</span> <span class="s1">&#39;m_chirp&#39;</span><span class="p">:</span>
+                <span class="n">values</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">m_chirp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;S1_mass&quot;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;S2_mass&quot;</span><span class="p">])</span>
+            <span class="k">elif</span> <span class="n">var</span> <span class="o">==</span> <span class="s1">&#39;chi_eff&#39;</span><span class="p">:</span>
+                <span class="c1"># check if tilts are provided</span>
+                <span class="k">if</span> <span class="p">(</span><span class="s2">&quot;S1_spin_orbit_tilt_second_SN&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span> <span class="ow">or</span> 
+                    <span class="s2">&quot;S2_spin_orbit_tilt_second_SN&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">):</span>
+                    <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s1">&#39;Spin tilts not in dataset! Assuming spins &#39;</span>
+                                   <span class="s1">&#39;are aligned to orbital angular momentum &#39;</span>
+                                   <span class="s1">&#39;to compute chi_eff!&#39;</span><span class="p">)</span>
+                    <span class="n">tilt_BH1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;S1_spin&quot;</span><span class="p">]))</span>
+                    <span class="n">tilt_BH2</span> <span class="o">=</span> <span class="n">tilt_BH1</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">tilt_BH1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;S1_spin_orbit_tilt_second_SN&quot;</span><span class="p">]</span>
+                    <span class="n">tilt_BH2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;S2_spin_orbit_tilt_second_SN&quot;</span><span class="p">]</span>
+                <span class="n">values</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">chi_eff</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;S1_mass&quot;</span><span class="p">],</span>
+                                      <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;S2_mass&quot;</span><span class="p">],</span>
+                                      <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;S1_spin&quot;</span><span class="p">],</span>
+                                      <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;S2_spin&quot;</span><span class="p">],</span>
+                                      <span class="n">tilt_BH1</span><span class="p">,</span>
+                                      <span class="n">tilt_BH2</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Definition for </span><span class="si">{</span><span class="n">var</span><span class="si">}</span><span class="s1"> not available!&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">values</span> <span class="o">=</span>  <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="n">var</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">index</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">values</span><span class="p">[</span><span class="n">index</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">values</span><span class="o">.</span><span class="n">values</span></div>
+
+
+<div class="viewcode-block" id="Rates.get_redshift_from_cosmic_time_interpolator">
+<a class="viewcode-back" href="../../../api_reference/posydon.popsyn.html#posydon.popsyn.rate_calculation.Rates.get_redshift_from_cosmic_time_interpolator">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_redshift_from_cosmic_time_interpolator</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Interpolator to compute the cosmological redshift given the cosmic time.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        object</span>
+<span class="sd">            Returns the trained interpolator object.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># astropy z_at_value method is too slow to compute z_mergers efficinty</span>
+        <span class="c1"># we must implment interpolation</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">1e-2</span><span class="p">,</span> <span class="n">cosmology</span><span class="o">.</span><span class="n">age</span><span class="p">(</span><span class="mf">1e-08</span><span class="p">)</span><span class="o">.</span><span class="n">value</span><span class="o">*</span><span class="mf">0.9999999</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>
+        <span class="n">z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">1000</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1000</span><span class="p">):</span>
+            <span class="n">z</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">z_at_value</span><span class="p">(</span><span class="n">cosmology</span><span class="o">.</span><span class="n">age</span><span class="p">,</span> <span class="n">t</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">Gyr</span><span class="p">)</span>
+        <span class="n">f_z_m</span> <span class="o">=</span> <span class="n">interp1d</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="s1">&#39;cubic&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">f_z_m</span></div>
+
+
+<div class="viewcode-block" id="Rates.get_redshift_from_cosmic_time">
+<a class="viewcode-back" href="../../../api_reference/posydon.popsyn.html#posydon.popsyn.rate_calculation.Rates.get_redshift_from_cosmic_time">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_redshift_from_cosmic_time</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t_cosm</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute the cosmological redshift given the cosmic time..</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        t_cosm : array doubles</span>
+<span class="sd">            Cosmic time to which you want to know the redhisft.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        array doubles</span>
+<span class="sd">            Cosmolgocial redshift corresponding to the cosmic time.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">interpolator</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_redshift_from_cosmic_time_interpolator</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">interpolator</span><span class="p">(</span><span class="n">t_cosm</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Rates.get_cosmic_time_from_redshift">
+<a class="viewcode-back" href="../../../api_reference/posydon.popsyn.html#posydon.popsyn.rate_calculation.Rates.get_cosmic_time_from_redshift">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_cosmic_time_from_redshift</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">z</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute the cosmic time from redshift.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        z : double</span>
+<span class="sd">            Cosmological redshift.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        double</span>
+<span class="sd">            Return age of the cosmic time in Gyr given the redshift z.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">cosmology</span><span class="o">.</span><span class="n">age</span><span class="p">(</span><span class="n">z</span><span class="p">)</span><span class="o">.</span><span class="n">value</span>  <span class="c1"># Gyr</span></div>
+
+
+<div class="viewcode-block" id="Rates.get_comoving_disntance_from_redshift">
+<a class="viewcode-back" href="../../../api_reference/posydon.popsyn.html#posydon.popsyn.rate_calculation.Rates.get_comoving_disntance_from_redshift">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_comoving_disntance_from_redshift</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">z</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute the comoving distance from redshift.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        z : double</span>
+<span class="sd">            Cosmological redshift.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        double</span>
+<span class="sd">            Comoving distance in Mpc corresponding to the redhisft z.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">cosmology</span><span class="o">.</span><span class="n">comoving_distance</span><span class="p">(</span><span class="n">z</span><span class="p">)</span><span class="o">.</span><span class="n">value</span>  <span class="c1"># Mpc</span></div>
+
+
+<div class="viewcode-block" id="Rates.get_cosmic_time_at_dco_merger">
+<a class="viewcode-back" href="../../../api_reference/posydon.popsyn.html#posydon.popsyn.rate_calculation.Rates.get_cosmic_time_at_dco_merger">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_cosmic_time_at_dco_merger</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">z_birth</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get cosmic time at DCO merger.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        z_birth : double</span>
+<span class="sd">            Cosmological redshift of formation of the DCO system</span>
+<span class="sd">            (must be the same for every binary).</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        double</span>
+<span class="sd">            Cosmic time in Gyr at DCO merger for all binaries born at z_birth.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">t_birth</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_cosmic_time_from_redshift</span><span class="p">(</span><span class="n">z_birth</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="c1"># Gyr</span>
+        <span class="k">return</span> <span class="n">t_birth</span> <span class="o">+</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;time&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;t_delay&quot;</span><span class="p">])</span> <span class="o">*</span> <span class="mi">10</span> <span class="o">**</span> <span class="p">(</span><span class="o">-</span><span class="mi">3</span><span class="p">)</span>  <span class="c1">#Gyr</span></div>
+
+
+<div class="viewcode-block" id="Rates.get_redshift_at_dco_merger">
+<a class="viewcode-back" href="../../../api_reference/posydon.popsyn.html#posydon.popsyn.rate_calculation.Rates.get_redshift_at_dco_merger">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_redshift_at_dco_merger</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">z_birth</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get redshift of merger of DCOs.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        z_birth : double</span>
+<span class="sd">            Redshift of formation of the DCO system (must be the same for every</span>
+<span class="sd">            binary).</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        double</span>
+<span class="sd">            Redshift of merger of DCOs born at z_birth.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">t_merger</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_cosmic_time_at_dco_merger</span><span class="p">(</span><span class="n">z_birth</span><span class="p">)</span>
+        <span class="n">z_merger</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+        <span class="n">bool_merger</span> <span class="o">=</span> <span class="n">t_merger</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_cosmic_time_from_redshift</span><span class="p">(</span><span class="mf">0.</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>  <span class="c1"># check if the binary merges</span>
+        <span class="n">z_merger</span><span class="p">[</span><span class="n">bool_merger</span><span class="p">]</span> <span class="o">=</span> <span class="n">z_at_value</span><span class="p">(</span><span class="n">cosmology</span><span class="o">.</span><span class="n">age</span><span class="p">,</span> <span class="n">t_merger</span><span class="p">[</span><span class="n">bool_merger</span><span class="p">]</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">Gyr</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">z_merger</span></div>
+
+
+<div class="viewcode-block" id="Rates.get_centers_metallicity_bins">
+<a class="viewcode-back" href="../../../api_reference/posydon.popsyn.html#posydon.popsyn.rate_calculation.Rates.get_centers_metallicity_bins">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_centers_metallicity_bins</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the centers of the metallicity bins.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        array double</span>
+<span class="sd">            Returns sampled metallicities of the populattion. This correponds</span>
+<span class="sd">            to the center of each metallicity bin.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;metallicity&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Rates.get_edges_metallicity_bins">
+<a class="viewcode-back" href="../../../api_reference/posydon.popsyn.html#posydon.popsyn.rate_calculation.Rates.get_edges_metallicity_bins">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_edges_metallicity_bins</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the edges of the metallicity bins.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        array double</span>
+<span class="sd">            Returns the edges of all metallicity bins. We assume metallicities</span>
+<span class="sd">            were binned in log-space.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">met_val</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_centers_metallicity_bins</span><span class="p">())</span>
+        <span class="n">bin_met</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">met_val</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+        <span class="c1"># if more than one metallicty bin</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">met_val</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="p">:</span>
+            <span class="n">bin_met</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">met_val</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="p">(</span><span class="n">met_val</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">met_val</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">/</span> <span class="mf">2.</span>
+            <span class="n">bin_met</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">met_val</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="p">(</span><span class="n">met_val</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">met_val</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">])</span> <span class="o">/</span> <span class="mf">2.</span>
+            <span class="n">bin_met</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">met_val</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="p">(</span><span class="n">met_val</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="o">-</span> <span class="n">met_val</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="o">/</span> <span class="mf">2.</span>
+        <span class="c1"># one metallicty bin</span>
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">met_val</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dlogZ</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
+                <span class="n">bin_met</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">met_val</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">dlogZ</span> <span class="o">/</span> <span class="mf">2.</span>
+                <span class="n">bin_met</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">met_val</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">dlogZ</span> <span class="o">/</span> <span class="mf">2.</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dlogZ</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dlogZ</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">):</span>
+                <span class="n">bin_met</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dlogZ</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">bin_met</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dlogZ</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="mi">10</span><span class="o">**</span><span class="n">bin_met</span></div>
+
+
+
+<div class="viewcode-block" id="Rates.get_centers_redshift_bins">
+<a class="viewcode-back" href="../../../api_reference/posydon.popsyn.html#posydon.popsyn.rate_calculation.Rates.get_centers_redshift_bins">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_centers_redshift_bins</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute redshift bin centers.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        array doubles</span>
+<span class="sd">            We devide the cosmic time history of the Universe in equally spaced</span>
+<span class="sd">            bins of cosmic time of self.delta_t (100 Myr default) an compute the</span>
+<span class="sd">            redshift corresponding to center of these bins.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># generate t_birth at the middle of each self.delta_t bin</span>
+        <span class="n">t_birth_bin</span> <span class="o">=</span> <span class="p">[</span><span class="n">cosmology</span><span class="o">.</span><span class="n">age</span><span class="p">(</span><span class="mf">0.</span><span class="p">)</span><span class="o">.</span><span class="n">value</span><span class="p">]</span>
+        <span class="n">t_birth</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="c1"># devide the</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_redshift_bin_centers</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">cosmology</span><span class="o">.</span><span class="n">age</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;Myr&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">value</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">delta_t</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_redshift_bin_centers</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span>
+            <span class="n">t_birth</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">t_birth_bin</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">delta_t</span><span class="o">*</span><span class="mf">1e-3</span><span class="o">/</span><span class="mf">2.</span><span class="p">)</span> <span class="c1"># Gyr</span>
+            <span class="n">t_birth_bin</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">t_birth_bin</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">delta_t</span><span class="o">*</span><span class="mf">1e-3</span><span class="p">)</span> <span class="c1"># Gyr</span>
+        <span class="n">t_birth</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">t_birth</span><span class="p">)</span>
+        <span class="c1"># compute the redshift</span>
+        <span class="n">z_birth</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_redshift_bin_centers</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span>
+            <span class="n">z_birth</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">z_at_value</span><span class="p">(</span><span class="n">cosmology</span><span class="o">.</span><span class="n">age</span><span class="p">,</span> <span class="n">t_birth</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">Gyr</span><span class="p">))</span>
+        <span class="n">z_birth</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">z_birth</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">z_birth</span></div>
+
+
+<div class="viewcode-block" id="Rates.get_edges_redshift_bins">
+<a class="viewcode-back" href="../../../api_reference/posydon.popsyn.html#posydon.popsyn.rate_calculation.Rates.get_edges_redshift_bins">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_edges_redshift_bins</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute redshift bin edges.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        array doubles</span>
+<span class="sd">            We devide the cosmic time history of the Universe in equally spaced</span>
+<span class="sd">            bins of cosmic time of self.delta_t (100 Myr default) an compute the</span>
+<span class="sd">            redshift corresponding to edges of these bins.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># generate t_birth at the middle of each self.delta_t bin</span>
+        <span class="n">t_birth_bin</span> <span class="o">=</span> <span class="p">[</span><span class="n">cosmology</span><span class="o">.</span><span class="n">age</span><span class="p">(</span><span class="mf">0.</span><span class="p">)</span><span class="o">.</span><span class="n">value</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_redshift_bin_centers</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span>
+            <span class="n">t_birth_bin</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">t_birth_bin</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">delta_t</span><span class="o">*</span><span class="mf">1e-3</span><span class="p">)</span> <span class="c1"># Gyr</span>
+        <span class="c1"># compute the redshift</span>
+        <span class="n">z_birth_bin</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_redshift_bin_centers</span><span class="p">):</span>
+            <span class="c1"># do not count first edge, we add z=0. later</span>
+            <span class="n">z_birth_bin</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">z_at_value</span><span class="p">(</span><span class="n">cosmology</span><span class="o">.</span><span class="n">age</span><span class="p">,</span> <span class="n">t_birth_bin</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">Gyr</span><span class="p">))</span>
+        <span class="c1"># add the first and last bin edge at z=0. and z=inf.=100</span>
+        <span class="n">z_birth_bin</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.</span><span class="p">]</span><span class="o">+</span><span class="n">z_birth_bin</span><span class="o">+</span><span class="p">[</span><span class="mf">100.</span><span class="p">])</span>
+
+        <span class="k">return</span> <span class="n">z_birth_bin</span></div>
+
+
+<div class="viewcode-block" id="Rates.merger_rate_weight">
+<a class="viewcode-back" href="../../../api_reference/posydon.popsyn.html#posydon.popsyn.rate_calculation.Rates.merger_rate_weight">[docs]</a>
+    <span class="k">def</span> <span class="nf">merger_rate_weight</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">z_birth</span><span class="p">,</span> <span class="n">z_merger</span><span class="p">,</span> <span class="n">p_det</span><span class="p">,</span> <span class="n">i</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute the merger rate weight (w_ijk) in yr^-1 units.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        z_birth : array doubles</span>
+<span class="sd">            Cosmological redshift of formation of the binary systems. This MUST</span>
+<span class="sd">            be the same for all binaries.</span>
+<span class="sd">        z_merger : array doubles</span>
+<span class="sd">            Cosmological redshift of merger of the binary systems.</span>
+<span class="sd">        p_det : array doubles</span>
+<span class="sd">            Detection probability of the binary.</span>
+<span class="sd">        i : array integers</span>
+<span class="sd">            Indicies correponding to the binaries you want to select out of the</span>
+<span class="sd">            population.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        array doubles</span>
+<span class="sd">            Return the cosmological weights w_ijk (detection rate contibution)</span>
+<span class="sd">            of the binary k in the metallicity bin j born at redshift birth i</span>
+<span class="sd">            as in Eq. (B.8) of Bavera et al. (2020).</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># get SFR at a given population birth redshift</span>
+        <span class="n">SFR_at_z_birth</span> <span class="o">=</span> <span class="n">star_formation_rate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">SFR</span><span class="p">,</span> <span class="n">z_birth</span><span class="p">)</span>
+
+        <span class="c1"># get metallicity bin edges</span>
+        <span class="n">met_bins</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_edges_metallicity_bins</span><span class="p">()</span>
+
+        <span class="c1"># distribute the DCO to the corresponding bin</span>
+        <span class="n">binplace</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">digitize</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_data</span><span class="p">(</span><span class="s2">&quot;metallicity&quot;</span><span class="p">,</span> <span class="n">i</span><span class="p">),</span> <span class="n">met_bins</span><span class="p">)</span>
+
+        <span class="c1"># compute fSFR assuming log-normal distributed metallicities</span>
+        <span class="n">fSFR</span> <span class="o">=</span> <span class="n">fractional_SFR_at_given_redshift</span><span class="p">(</span><span class="n">z_birth</span><span class="p">,</span> <span class="n">SFR_at_z_birth</span><span class="p">,</span>
+                                                <span class="bp">self</span><span class="o">.</span><span class="n">SFR</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sigma_SFR</span><span class="p">,</span>
+                                                <span class="n">met_bins</span><span class="p">,</span> <span class="n">binplace</span><span class="p">,</span>
+                                                <span class="bp">self</span><span class="o">.</span><span class="n">Z_max</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">select_one_met</span><span class="p">)</span>
+
+        <span class="c1"># simulated mass per given metallicity corrected for the unmodeled</span>
+        <span class="c1"># single and binary stellar mass</span>
+        <span class="n">M_model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_data</span><span class="p">(</span><span class="s2">&quot;underlying_mass_for_met&quot;</span><span class="p">,</span><span class="n">i</span><span class="p">)</span>
+
+        <span class="c1"># speed of light</span>
+        <span class="n">c</span> <span class="o">=</span> <span class="n">const</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;Mpc/yr&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">value</span>  <span class="c1"># Mpc/yr</span>
+
+        <span class="c1"># delta cosmic time bin</span>
+        <span class="n">deltaT</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">delta_t</span> <span class="o">*</span> <span class="mi">10</span> <span class="o">**</span> <span class="mi">6</span>  <span class="c1"># yr</span>
+
+        <span class="c1"># comoving distance corresponding to the DCO merger redshift</span>
+        <span class="n">D_c</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_comoving_disntance_from_redshift</span><span class="p">(</span><span class="n">z_merger</span><span class="p">)</span>
+
+        <span class="c1"># DCO cosmological weights B.8 in Bavera et al. (2020)</span>
+        <span class="k">return</span> <span class="mf">4.</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">c</span> <span class="o">*</span> <span class="n">D_c</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">p_det</span> <span class="o">*</span> <span class="n">deltaT</span> <span class="o">*</span> <span class="n">fSFR</span> <span class="o">/</span> <span class="n">M_model</span> <span class="c1"># yr^-1</span></div>
+
+
+
+<div class="viewcode-block" id="Rates.compute_merger_rate_weights">
+<a class="viewcode-back" href="../../../api_reference/posydon.popsyn.html#posydon.popsyn.rate_calculation.Rates.compute_merger_rate_weights">[docs]</a>
+    <span class="k">def</span> <span class="nf">compute_merger_rate_weights</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sensitivity</span><span class="p">,</span> <span class="n">flag_pdet</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">path_to_dir</span><span class="o">=</span><span class="s1">&#39;./&#39;</span><span class="p">,</span> <span class="n">extention</span><span class="o">=</span><span class="s1">&#39;npz&#39;</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute the cosmological weights of the DCO population.</span>
+
+<span class="sd">        This function will create a directory path_to_dir/DCOs/sensitivity where</span>
+<span class="sd">        it will save the weigths, binary indicies k, z_formation, z_merger.</span>
+<span class="sd">        This is needed for scalability as a ~100k DCO population generates ~10M</span>
+<span class="sd">        non-zero weights assuming a delta_t=100Myr.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        sensitivity : string</span>
+<span class="sd">            GW detector sensitivity and network configuration you want to use, see arXiv:1304.0670v3</span>
+<span class="sd">            detector sensitivities are taken from: https://dcc.ligo.org/LIGO-T2000012-v2/public</span>
+<span class="sd">            available sensitivity keys (for Hanford, Livingston, Virgo network):</span>
+<span class="sd">                &#39;O3actual_H1L1V1&#39; : aligo_O3actual_H1.txt, aligo_O3actual_L1.txt, avirgo_O3actual.txt</span>
+<span class="sd">                &#39;O4low_H1L1V1&#39; : aligo_O4low.txt, aligo_O4low.txt, avirgo_O4high_NEW.txt</span>
+<span class="sd">                &#39;O4high_H1L1V1&#39; : aligo_O4high.txt, aligo_O4high.txt, avirgo_O4high_NEW.txt</span>
+<span class="sd">                &#39;design_H1L1V1&#39; : AplusDesign.txt, AplusDesign.txt, avirgo_O5high_NEW.txt</span>
+<span class="sd">                &#39;infinite&#39;: intrinsic merging DCO population, i.e. p_det = 1</span>
+<span class="sd">        flag_pdet : bool</span>
+<span class="sd">            This is a control variable. In order to be sure you want to run</span>
+<span class="sd">            infinite sensitivity set `p_det=False`.</span>
+<span class="sd">        path_to_dir : string</span>
+<span class="sd">            Path to the workingn directory where you want to store the</span>
+<span class="sd">            cosmological weights.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># check if the folder three exists, otherwise create it</span>
+        <span class="n">DCO_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path_to_dir</span><span class="p">,</span><span class="s1">&#39;DCOs&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s1">&#39;DCOs&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">path_to_dir</span><span class="p">):</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">DCO_dir</span><span class="p">)</span>
+
+        <span class="n">sensitivity_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">DCO_dir</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">sensitivity</span><span class="si">}</span><span class="s1">_sensitivity&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">sensitivity</span><span class="si">}</span><span class="s1">_sensitivity&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">DCO_dir</span><span class="p">):</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">sensitivity_dir</span><span class="p">)</span>
+
+        <span class="c1"># index of all DCOs</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">index</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+
+        <span class="c1"># redshif of each time bin</span>
+        <span class="n">z_birth</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_centers_redshift_bins</span><span class="p">()</span>
+
+        <span class="c1"># define interpolator</span>
+        <span class="n">get_redshift_from_time</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_redshift_from_cosmic_time_interpolator</span><span class="p">()</span>
+
+        <span class="c1"># hashmap to store everythig</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;index&#39;</span><span class="p">:</span> <span class="p">{},</span> <span class="s1">&#39;z_merger&#39;</span><span class="p">:</span> <span class="p">{},</span> <span class="s1">&#39;weights&#39;</span><span class="p">:</span> <span class="p">{}}</span>
+        
+        <span class="c1"># load and store detector selection effects interpolator</span>
+        <span class="k">if</span> <span class="n">sensitivity</span> <span class="o">!=</span> <span class="s1">&#39;infinite&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sel_eff</span> <span class="o">=</span> <span class="n">selection_effects</span><span class="o">.</span><span class="n">KNNmodel</span><span class="p">(</span><span class="n">grid_path</span><span class="o">=</span><span class="n">PATH_TO_PDET_GRID</span><span class="p">,</span>
+                                                      <span class="n">sensitivity_key</span><span class="o">=</span><span class="n">sensitivity</span><span class="p">)</span>
+
+        <span class="c1"># loop over all redshift bins</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">z_birth</span><span class="p">))):</span>
+
+            <span class="c1"># compute the merger time of each DCOs</span>
+            <span class="n">t_merger</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_cosmic_time_at_dco_merger</span><span class="p">(</span><span class="n">z_birth</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+
+            <span class="c1"># detectable population</span>
+            <span class="k">if</span> <span class="n">flag_pdet</span> <span class="o">==</span> <span class="kc">True</span> <span class="ow">and</span> <span class="n">sensitivity</span> <span class="o">!=</span> <span class="s1">&#39;infinite&#39;</span><span class="p">:</span>
+
+                <span class="c1"># sort out systems not merging within the Hubble time</span>
+                <span class="n">bool_merger</span> <span class="o">=</span> <span class="n">t_merger</span> <span class="o">&lt;</span> <span class="n">cosmology</span><span class="o">.</span><span class="n">age</span><span class="p">(</span><span class="mf">1e-08</span><span class="p">)</span><span class="o">.</span><span class="n">value</span><span class="o">*</span><span class="mf">0.9999999</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+
+                <span class="c1"># if there are no merging DCO, continue</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">index</span><span class="p">[</span><span class="n">bool_merger</span><span class="p">])</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">data</span><span class="p">[</span><span class="s1">&#39;index&#39;</span><span class="p">][</span><span class="nb">str</span><span class="p">(</span><span class="n">z_birth</span><span class="p">[</span><span class="n">i</span><span class="p">])]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([])</span>
+                    <span class="n">data</span><span class="p">[</span><span class="s1">&#39;z_merger&#39;</span><span class="p">][</span><span class="nb">str</span><span class="p">(</span><span class="n">z_birth</span><span class="p">[</span><span class="n">i</span><span class="p">])]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([])</span>
+                    <span class="n">data</span><span class="p">[</span><span class="s1">&#39;weights&#39;</span><span class="p">][</span><span class="nb">str</span><span class="p">(</span><span class="n">z_birth</span><span class="p">[</span><span class="n">i</span><span class="p">])]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([])</span>
+                    <span class="k">continue</span>
+
+                <span class="c1"># get some quantities to compute detection probabilities</span>
+                <span class="n">data_slice</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
+                <span class="n">data_slice</span><span class="p">[</span><span class="s1">&#39;m1&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_data</span><span class="p">(</span><span class="s1">&#39;S1_mass&#39;</span><span class="p">,</span> <span class="n">index</span><span class="p">[</span><span class="n">bool_merger</span><span class="p">])</span>
+                <span class="n">data_slice</span><span class="p">[</span><span class="s1">&#39;q&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_data</span><span class="p">(</span><span class="s1">&#39;q&#39;</span><span class="p">,</span> <span class="n">index</span><span class="p">[</span><span class="n">bool_merger</span><span class="p">])</span>
+                <span class="n">z_m</span> <span class="o">=</span> <span class="n">get_redshift_from_time</span><span class="p">(</span><span class="n">t_merger</span><span class="p">[</span><span class="n">bool_merger</span><span class="p">])</span>
+                <span class="n">data_slice</span><span class="p">[</span><span class="s1">&#39;z&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">z_m</span>
+                <span class="n">data_slice</span><span class="p">[</span><span class="s1">&#39;chieff&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_data</span><span class="p">(</span><span class="s1">&#39;chi_eff&#39;</span><span class="p">,</span> <span class="n">index</span><span class="p">[</span><span class="n">bool_merger</span><span class="p">])</span>
+
+                <span class="c1"># compute detection probabilities</span>
+                <span class="n">p_det</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sel_eff</span><span class="o">.</span><span class="n">predict_pdet</span><span class="p">(</span><span class="n">data_slice</span><span class="p">)</span>
+
+                <span class="c1"># sort out undetectable sources</span>
+                <span class="n">bool_detect</span> <span class="o">=</span> <span class="n">p_det</span> <span class="o">&gt;</span> <span class="mf">0.</span>
+
+                <span class="c1"># if there are no detectable DCO, continue</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">index</span><span class="p">[</span><span class="n">bool_merger</span><span class="p">][</span><span class="n">bool_detect</span><span class="p">])</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">data</span><span class="p">[</span><span class="s1">&#39;index&#39;</span><span class="p">][</span><span class="nb">str</span><span class="p">(</span><span class="n">z_birth</span><span class="p">[</span><span class="n">i</span><span class="p">])]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([])</span>
+                    <span class="n">data</span><span class="p">[</span><span class="s1">&#39;z_merger&#39;</span><span class="p">][</span><span class="nb">str</span><span class="p">(</span><span class="n">z_birth</span><span class="p">[</span><span class="n">i</span><span class="p">])]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([])</span>
+                    <span class="n">data</span><span class="p">[</span><span class="s1">&#39;weights&#39;</span><span class="p">][</span><span class="nb">str</span><span class="p">(</span><span class="n">z_birth</span><span class="p">[</span><span class="n">i</span><span class="p">])]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([])</span>
+                    <span class="k">continue</span>
+
+                <span class="c1"># store index and redshift of merger</span>
+                <span class="n">data</span><span class="p">[</span><span class="s1">&#39;index&#39;</span><span class="p">][</span><span class="nb">str</span><span class="p">(</span><span class="n">z_birth</span><span class="p">[</span><span class="n">i</span><span class="p">])]</span> <span class="o">=</span> <span class="n">index</span><span class="p">[</span><span class="n">bool_merger</span><span class="p">][</span><span class="n">bool_detect</span><span class="p">]</span>
+                <span class="n">data</span><span class="p">[</span><span class="s1">&#39;z_merger&#39;</span><span class="p">][</span><span class="nb">str</span><span class="p">(</span><span class="n">z_birth</span><span class="p">[</span><span class="n">i</span><span class="p">])]</span> <span class="o">=</span> <span class="n">z_m</span><span class="p">[</span><span class="n">bool_detect</span><span class="p">]</span>
+
+                <span class="c1"># compute and store marger rate weights as in eq. B.8 in Bavera et al. (2020)</span>
+                <span class="n">z_b</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">index</span><span class="p">[</span><span class="n">bool_merger</span><span class="p">][</span><span class="n">bool_detect</span><span class="p">]))</span><span class="o">*</span><span class="n">z_birth</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                <span class="n">w_ijk</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">merger_rate_weight</span><span class="p">(</span><span class="n">z_b</span><span class="p">,</span> <span class="n">z_m</span><span class="p">[</span><span class="n">bool_detect</span><span class="p">],</span>
+                                                <span class="n">p_det</span><span class="p">[</span><span class="n">bool_detect</span><span class="p">],</span>
+                                                <span class="n">index</span><span class="p">[</span><span class="n">bool_merger</span><span class="p">][</span><span class="n">bool_detect</span><span class="p">])</span>
+                <span class="n">data</span><span class="p">[</span><span class="s1">&#39;weights&#39;</span><span class="p">][</span><span class="nb">str</span><span class="p">(</span><span class="n">z_birth</span><span class="p">[</span><span class="n">i</span><span class="p">])]</span> <span class="o">=</span> <span class="n">w_ijk</span>
+
+            <span class="c1"># intrinsic population</span>
+            <span class="k">elif</span> <span class="n">flag_pdet</span> <span class="o">==</span> <span class="kc">False</span> <span class="ow">and</span> <span class="n">sensitivity</span> <span class="o">==</span> <span class="s1">&#39;infinite&#39;</span><span class="p">:</span>
+
+                <span class="c1"># sort out systems not merging within the Hubble time</span>
+                <span class="n">bool_merger</span> <span class="o">=</span> <span class="n">t_merger</span> <span class="o">&lt;</span> <span class="n">cosmology</span><span class="o">.</span><span class="n">age</span><span class="p">(</span><span class="mf">1e-08</span><span class="p">)</span><span class="o">.</span><span class="n">value</span><span class="o">*</span><span class="mf">0.9999999</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+
+                <span class="c1"># if there are no merging DCO, continue</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">index</span><span class="p">[</span><span class="n">bool_merger</span><span class="p">])</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">data</span><span class="p">[</span><span class="s1">&#39;index&#39;</span><span class="p">][</span><span class="nb">str</span><span class="p">(</span><span class="n">z_birth</span><span class="p">[</span><span class="n">i</span><span class="p">])]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([])</span>
+                    <span class="n">data</span><span class="p">[</span><span class="s1">&#39;z_merger&#39;</span><span class="p">][</span><span class="nb">str</span><span class="p">(</span><span class="n">z_birth</span><span class="p">[</span><span class="n">i</span><span class="p">])]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([])</span>
+                    <span class="n">data</span><span class="p">[</span><span class="s1">&#39;weights&#39;</span><span class="p">][</span><span class="nb">str</span><span class="p">(</span><span class="n">z_birth</span><span class="p">[</span><span class="n">i</span><span class="p">])]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([])</span>
+                    <span class="k">continue</span>
+
+                <span class="c1"># get merger redshifts</span>
+                <span class="n">z_m</span> <span class="o">=</span> <span class="n">get_redshift_from_time</span><span class="p">(</span><span class="n">t_merger</span><span class="p">[</span><span class="n">bool_merger</span><span class="p">])</span>
+
+                <span class="c1"># set detection probabilities to 1</span>
+                <span class="n">p_det</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">index</span><span class="p">[</span><span class="n">bool_merger</span><span class="p">]))</span>
+
+                <span class="c1"># store index and redshift of merger</span>
+                <span class="n">data</span><span class="p">[</span><span class="s1">&#39;index&#39;</span><span class="p">][</span><span class="nb">str</span><span class="p">(</span><span class="n">z_birth</span><span class="p">[</span><span class="n">i</span><span class="p">])]</span> <span class="o">=</span> <span class="n">index</span><span class="p">[</span><span class="n">bool_merger</span><span class="p">]</span>
+                <span class="n">data</span><span class="p">[</span><span class="s1">&#39;z_merger&#39;</span><span class="p">][</span><span class="nb">str</span><span class="p">(</span><span class="n">z_birth</span><span class="p">[</span><span class="n">i</span><span class="p">])]</span> <span class="o">=</span> <span class="n">z_m</span>
+
+                <span class="c1"># compute and store marger rate weights as in eq. B.8 in Bavera et al. (2020)</span>
+                <span class="n">z_b</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">index</span><span class="p">[</span><span class="n">bool_merger</span><span class="p">]))</span><span class="o">*</span><span class="n">z_birth</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                <span class="n">w_ijk</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">merger_rate_weight</span><span class="p">(</span><span class="n">z_b</span><span class="p">,</span> <span class="n">z_m</span><span class="p">,</span> <span class="n">p_det</span><span class="p">,</span> <span class="n">index</span><span class="p">[</span><span class="n">bool_merger</span><span class="p">])</span>
+                <span class="n">data</span><span class="p">[</span><span class="s1">&#39;weights&#39;</span><span class="p">][</span><span class="nb">str</span><span class="p">(</span><span class="n">z_birth</span><span class="p">[</span><span class="n">i</span><span class="p">])]</span> <span class="o">=</span> <span class="n">w_ijk</span>
+
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Missmatch between sensitivity and flag_pdet!&#39;</span><span class="p">)</span>
+
+        <span class="c1"># TODO: implemet the saving to h5 files</span>
+        <span class="k">if</span> <span class="n">extention</span> <span class="o">==</span> <span class="s1">&#39;npz&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Formatting the data ....&#39;</span><span class="p">)</span>
+            <span class="n">data_to_save</span> <span class="o">=</span> <span class="p">[[],[],[],[]]</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="nb">dict</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">([</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">()]):</span>
+                <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="nb">dict</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                    <span class="n">data_to_save</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="nb">dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
+                    <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                        <span class="n">data_to_save</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="nb">dict</span><span class="p">[</span><span class="n">key</span><span class="p">]))</span><span class="o">*</span><span class="nb">float</span><span class="p">(</span><span class="n">key</span><span class="p">))</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Saving the data ....&#39;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">key</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+                <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="s1">&#39;index&#39;</span><span class="p">:</span>
+                    <span class="n">fmt_str</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">%i</span><span class="s1">&#39;</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">fmt_str</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">%.8E</span><span class="s1">&#39;</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">savez</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">sensitivity_dir</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">.npz&quot;</span><span class="p">),</span>
+                         <span class="n">key</span><span class="o">=</span><span class="n">data_to_save</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">fmt</span><span class="o">=</span><span class="n">fmt_str</span><span class="p">)</span>
+
+            <span class="n">np</span><span class="o">.</span><span class="n">savez</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">sensitivity_dir</span><span class="p">,</span><span class="s2">&quot;z_formation.npz&quot;</span><span class="p">),</span>
+                     <span class="n">key</span><span class="o">=</span><span class="n">data_to_save</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">fmt</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">%.8E</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Extension not supported!&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Rates.load_merger_rate_weights">
+<a class="viewcode-back" href="../../../api_reference/posydon.popsyn.html#posydon.popsyn.rate_calculation.Rates.load_merger_rate_weights">[docs]</a>
+    <span class="k">def</span> <span class="nf">load_merger_rate_weights</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sensitivity</span><span class="p">,</span> <span class="n">path_to_dir</span><span class="o">=</span><span class="s1">&#39;./&#39;</span><span class="p">,</span> <span class="n">extention</span><span class="o">=</span><span class="s1">&#39;npz&#39;</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Load the cosmological weights of the DCO populatio.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        sensitivity : string</span>
+<span class="sd">            GW detector sensitivity and network configuration you want to use, see arXiv:1304.0670v3</span>
+<span class="sd">            detector sensitivities are taken from: https://dcc.ligo.org/LIGO-T2000012-v2/public</span>
+<span class="sd">            available sensitivity keys (for Hanford, Livingston, Virgo network):</span>
+<span class="sd">                &#39;O3actual_H1L1V1&#39; : aligo_O3actual_H1.txt, aligo_O3actual_L1.txt, avirgo_O3actual.txt</span>
+<span class="sd">                &#39;O4low_H1L1V1&#39; : aligo_O4low.txt, aligo_O4low.txt, avirgo_O4high_NEW.txt</span>
+<span class="sd">                &#39;O4high_H1L1V1&#39; : aligo_O4high.txt, aligo_O4high.txt, avirgo_O4high_NEW.txt</span>
+<span class="sd">                &#39;design_H1L1V1&#39; : AplusDesign.txt, AplusDesign.txt, avirgo_O5high_NEW.txt</span>
+<span class="sd">                &#39;infinite&#39;: intrinsic merging DCO population, i.e. p_det = 1</span>
+<span class="sd">        path_to_dir : string</span>
+<span class="sd">            Path to the directory where you the cosmological weights are stored.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        array doubles</span>
+<span class="sd">            Return the cosmological weights, z_formation, z_merger and binary</span>
+<span class="sd">            index k associated to each weighted binary.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">dir_</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path_to_dir</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;DCOs/</span><span class="si">{</span><span class="n">sensitivity</span><span class="si">}</span><span class="s1">_sensitivity&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">extention</span> <span class="o">==</span> <span class="s1">&#39;npz&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Loading the data ...&#39;</span><span class="p">)</span>
+            <span class="n">index</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dir_</span><span class="p">,</span> <span class="s1">&#39;index.npz&#39;</span><span class="p">),</span> <span class="n">allow_pickle</span><span class="o">=</span><span class="kc">True</span><span class="p">)[</span><span class="s1">&#39;key&#39;</span><span class="p">]</span>
+            <span class="n">z_formation</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dir_</span><span class="p">,</span> <span class="s1">&#39;z_formation.npz&#39;</span><span class="p">),</span> <span class="n">allow_pickle</span><span class="o">=</span><span class="kc">True</span><span class="p">)[</span><span class="s1">&#39;key&#39;</span><span class="p">]</span>
+            <span class="n">z_merger</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dir_</span><span class="p">,</span> <span class="s1">&#39;z_merger.npz&#39;</span><span class="p">),</span> <span class="n">allow_pickle</span><span class="o">=</span><span class="kc">True</span><span class="p">)[</span><span class="s1">&#39;key&#39;</span><span class="p">]</span>
+            <span class="n">weights</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dir_</span><span class="p">,</span> <span class="s1">&#39;weights.npz&#39;</span><span class="p">),</span> <span class="n">allow_pickle</span><span class="o">=</span><span class="kc">True</span><span class="p">)[</span><span class="s1">&#39;key&#39;</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Extension not supported!&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">index</span><span class="p">,</span> <span class="n">z_formation</span><span class="p">,</span> <span class="n">z_merger</span><span class="p">,</span> <span class="n">weights</span></div>
+
+
+
+<div class="viewcode-block" id="Rates.get_shell_comovig_volume">
+<a class="viewcode-back" href="../../../api_reference/posydon.popsyn.html#posydon.popsyn.rate_calculation.Rates.get_shell_comovig_volume">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_shell_comovig_volume</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">z_hor_i</span><span class="p">,</span> <span class="n">z_hor_f</span><span class="p">,</span> <span class="n">sensitivity</span><span class="o">=</span><span class="s1">&#39;infinite&#39;</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute comoving volume corresponding to a redshift shell.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        z_hor_i : double</span>
+<span class="sd">            Cosmological redshift. Lower bound of the integration.</span>
+<span class="sd">        z_hor_f : double</span>
+<span class="sd">            Cosmological redshift. Upper bound of the integration.</span>
+<span class="sd">        sensitivity : string</span>
+<span class="sd">            hoose which GW detector sensitivity you want to use. At the moment</span>
+<span class="sd">            only &#39;infinite&#39; is available, i.e. p_det = 1.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        double</span>
+<span class="sd">            Retruns the comoving volume between the two shells z_hor_i</span>
+<span class="sd">            and z_hor_f in Gpc^3.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">c</span> <span class="o">=</span> <span class="n">const</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;Gpc/yr&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">value</span>  <span class="c1"># Gpc/yr</span>
+        <span class="n">H_0</span> <span class="o">=</span> <span class="n">cosmology</span><span class="o">.</span><span class="n">H</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;1/yr&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">value</span> <span class="c1"># km/Gpc*s</span>
+        <span class="k">def</span> <span class="nf">E</span><span class="p">(</span><span class="n">z</span><span class="p">):</span>
+            <span class="n">Omega_m</span> <span class="o">=</span> <span class="n">cosmology</span><span class="o">.</span><span class="n">Om0</span>
+            <span class="n">Omega_L</span> <span class="o">=</span> <span class="mi">1</span><span class="o">-</span><span class="n">cosmology</span><span class="o">.</span><span class="n">Om0</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">Omega_m</span><span class="o">*</span><span class="p">(</span><span class="mf">1.</span><span class="o">+</span><span class="n">z</span><span class="p">)</span><span class="o">**</span><span class="mi">3</span><span class="o">+</span><span class="n">Omega_L</span><span class="p">)</span>
+        <span class="k">def</span> <span class="nf">f</span><span class="p">(</span><span class="n">z</span><span class="p">,</span><span class="n">sensitivity</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">sensitivity</span><span class="o">==</span><span class="s1">&#39;infinite&#39;</span><span class="p">:</span>
+                <span class="k">return</span> <span class="p">(</span><span class="mf">1.</span><span class="o">/</span><span class="p">(</span><span class="mf">1.</span><span class="o">+</span><span class="n">z</span><span class="p">)</span> <span class="o">*</span> <span class="mi">4</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">*</span><span class="n">c</span> <span class="o">/</span> <span class="n">H_0</span>
+                        <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_comoving_disntance_from_redshift</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
+                        <span class="o">*</span> <span class="mi">10</span><span class="o">**</span><span class="p">(</span><span class="o">-</span><span class="mf">3.</span><span class="p">))</span><span class="o">**</span><span class="mf">2.</span> <span class="o">/</span> <span class="n">E</span><span class="p">(</span><span class="n">z</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># TODO: peanut-shaped antenna patter comoving volume calculation</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Sensitivity not supported!&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">sp</span><span class="o">.</span><span class="n">integrate</span><span class="o">.</span><span class="n">quad</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">z_hor_i</span><span class="p">,</span> <span class="n">z_hor_f</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">sensitivity</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span> <span class="c1"># Gpc^3</span></div>
+
+
+
+<div class="viewcode-block" id="Rates.compute_rate_density">
+<a class="viewcode-back" href="../../../api_reference/posydon.popsyn.html#posydon.popsyn.rate_calculation.Rates.compute_rate_density">[docs]</a>
+    <span class="k">def</span> <span class="nf">compute_rate_density</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">w_ijk</span><span class="p">,</span> <span class="n">z_event</span><span class="p">,</span> <span class="n">observable</span><span class="o">=</span><span class="s1">&#39;DCO&#39;</span><span class="p">,</span> <span class="n">sensitivity</span><span class="o">=</span><span class="s1">&#39;infinite&#39;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute the GRB/DCO rate density.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        w_ijk : array doubles</span>
+<span class="sd">            Cosmological weights computed with Eq. B.8 of Bavera et at. (2020).</span>
+<span class="sd">        z_event : array doubles</span>
+<span class="sd">            Cosmolgocial redshift of the event you are tracking.</span>
+<span class="sd">        observable : string</span>
+<span class="sd">            Event you are tracking, available:</span>
+<span class="sd">            &#39;DCOs&#39;: merger event of a DCO system</span>
+<span class="sd">            &#39;GRB1&#39;: gamma ray bursts of star 1</span>
+<span class="sd">            &#39;GRB2&#39;: gamma ray bursts of star 2</span>
+<span class="sd">        sensitivity : string</span>
+<span class="sd">            This takes into account the detector sensitivity, available:</span>
+<span class="sd">            &#39;infinite&#39;: p_det = 1</span>
+<span class="sd">            &#39;beamed&#39;: TODO for GRBs</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        array doubles</span>
+<span class="sd">            Return the DCOs merger rate density (Gpc^-3 yr^-1) as a function of</span>
+<span class="sd">            cosmolgocial redshift as in Eq. (D.1) in Bavera et al. (2022)</span>
+<span class="sd">            arXiv:2106.15841</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">z_hor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_edges_redshift_bins</span><span class="p">()</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">z_hor</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">observable</span><span class="o">==</span><span class="s1">&#39;DCO&#39;</span><span class="p">:</span>
+            <span class="n">z_merger_DCO</span> <span class="o">=</span> <span class="n">z_event</span>
+            <span class="n">Rate_DCO</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">sensitivity</span><span class="o">==</span><span class="s1">&#39;infinite&#39;</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">n</span><span class="p">):</span>
+                    <span class="c1"># compute Eq. (D.1) in Bavera et al. (2022) arXiv:2106.15841</span>
+                    <span class="n">cond_DCO</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">z_merger_DCO</span><span class="o">&gt;</span><span class="n">z_hor</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+                                                    <span class="n">z_merger_DCO</span><span class="o">&lt;=</span><span class="n">z_hor</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+                    <span class="n">Rate_DCO</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="n">w_ijk</span><span class="p">[</span><span class="n">cond_DCO</span><span class="p">])</span>
+                                     <span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">get_shell_comovig_volume</span><span class="p">(</span><span class="n">z_hor</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+                                                                    <span class="n">z_hor</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
+                                                                    <span class="n">sensitivity</span><span class="p">))</span>
+                <span class="k">return</span> <span class="n">Rate_DCO</span> <span class="c1"># Gpc^-3 yr^-1</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Unsupported sensitivity!&#39;</span><span class="p">)</span>
+        
+        <span class="k">elif</span> <span class="n">observable</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;GRB1&#39;</span><span class="p">,</span><span class="s1">&#39;GRB2&#39;</span><span class="p">]:</span>
+            <span class="n">s</span> <span class="o">=</span> <span class="n">observable</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">z_GRB</span> <span class="o">=</span> <span class="n">z_event</span>
+            <span class="k">if</span> <span class="n">sensitivity</span><span class="o">==</span><span class="s1">&#39;beamed&#39;</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">index</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">f_beaming</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_data</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;S</span><span class="si">{</span><span class="n">s</span><span class="si">}</span><span class="s2">_f_beaming&quot;</span><span class="p">,</span><span class="n">index</span><span class="p">)</span>
+                    <span class="n">flag_GRB</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_data</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;GRB</span><span class="si">{</span><span class="n">s</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span><span class="n">index</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Missing f_beaming parameter!&#39;</span><span class="p">)</span>
+                <span class="n">Rate_GRB</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">n</span><span class="p">):</span>
+                    <span class="n">cond_GRB</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">z_GRB</span><span class="o">&gt;</span><span class="n">z_hor</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">z_GRB</span><span class="o">&lt;=</span><span class="n">z_hor</span><span class="p">[</span><span class="n">i</span><span class="p">]),</span>
+                                              <span class="n">flag_GRB</span><span class="p">)</span>
+                    <span class="n">f_fb</span> <span class="o">=</span> <span class="n">f_beaming</span><span class="p">[</span><span class="n">cond_GRB</span><span class="p">]</span>
+                    <span class="n">Rate_GRB</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="n">w_ijk</span><span class="p">[</span><span class="n">cond_GRB</span><span class="p">]</span><span class="o">*</span><span class="n">f_fb</span><span class="p">)</span>
+                                      <span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">get_shell_comovig_volume</span><span class="p">(</span><span class="n">z_hor</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+                                                                     <span class="n">z_hor</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
+                                                                     <span class="n">sensitivity</span><span class="o">=</span><span class="s1">&#39;infinite&#39;</span><span class="p">))</span>
+                <span class="k">return</span> <span class="n">Rate_GRB</span>
+
+            <span class="k">elif</span> <span class="n">sensitivity</span><span class="o">==</span><span class="s1">&#39;infinite&#39;</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">index</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">flag_GRB</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_data</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;GRB</span><span class="si">{</span><span class="n">s</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span><span class="n">index</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Missing f_beaming parameter!&#39;</span><span class="p">)</span>
+                <span class="n">Rate_GRB</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">n</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="n">index</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Provide index comlumn to identify GRB systems.&#39;</span><span class="p">)</span>
+                    <span class="n">cond_GRB</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">z_GRB</span><span class="o">&gt;</span><span class="n">z_hor</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">z_GRB</span><span class="o">&lt;=</span><span class="n">z_hor</span><span class="p">[</span><span class="n">i</span><span class="p">]),</span>
+                                              <span class="n">flag_GRB</span><span class="p">)</span>
+                    <span class="n">Rate_GRB</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="n">w_ijk</span><span class="p">[</span><span class="n">cond_GRB</span><span class="p">])</span>
+                                      <span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">get_shell_comovig_volume</span><span class="p">(</span><span class="n">z_hor</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+                                                                     <span class="n">z_hor</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
+                                                                     <span class="n">sensitivity</span><span class="p">))</span>
+                <span class="k">return</span> <span class="n">Rate_GRB</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Unknown sensitivity!&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Unknown observable!&#39;</span><span class="p">)</span></div>
+
+
+    <span class="c1">##############################</span>
+    <span class="c1">#####  GRB class methods #####</span>
+    <span class="c1">##############################</span>
+    
+<div class="viewcode-block" id="Rates.get_time_GRB">
+<a class="viewcode-back" href="../../../api_reference/posydon.popsyn.html#posydon.popsyn.rate_calculation.Rates.get_time_GRB">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_time_GRB</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">z_birth</span><span class="p">,</span> <span class="n">event</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the time of the GRB.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        z_brith : double</span>
+<span class="sd">            Redshif of birth.</span>
+<span class="sd">        event : string</span>
+<span class="sd">            Event you are tracking, either first or second core collpase:</span>
+<span class="sd">            &#39;CC1&#39;, &#39;CC2&#39;.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        t_BRB : double</span>
+<span class="sd">            Cosmic time of the GRB event in Gyr.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">event</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;CC1&#39;</span><span class="p">,</span> <span class="s1">&#39;CC2&#39;</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Unknown event </span><span class="si">{</span><span class="n">event</span><span class="si">}</span><span class="s1">!&#39;</span><span class="p">)</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">t_birth</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_cosmic_time_from_redshift</span><span class="p">(</span><span class="n">z_birth</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>  <span class="c1"># Gyr</span>
+        <span class="n">t_GRB</span> <span class="o">=</span> <span class="n">t_birth</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;time_</span><span class="si">{</span><span class="n">event</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">10</span> <span class="o">**</span> <span class="p">(</span><span class="o">-</span><span class="mi">3</span><span class="p">)</span> <span class="c1"># Gyr</span>
+        <span class="k">return</span> <span class="n">t_GRB</span></div>
+
+
+            
+<div class="viewcode-block" id="Rates.compute_GRB_rate_weights">
+<a class="viewcode-back" href="../../../api_reference/posydon.popsyn.html#posydon.popsyn.rate_calculation.Rates.compute_GRB_rate_weights">[docs]</a>
+    <span class="k">def</span> <span class="nf">compute_GRB_rate_weights</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sensitivity</span><span class="o">=</span><span class="s1">&#39;infinity&#39;</span><span class="p">,</span> <span class="n">path_to_dir</span><span class="o">=</span><span class="s1">&#39;./&#39;</span><span class="p">,</span> <span class="n">extention</span><span class="o">=</span><span class="s1">&#39;npz&#39;</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute the cosmological weights of the transient events associated to the population.</span>
+
+<span class="sd">        This function will create a directory path_to_dir/GRBs/sensitivity where</span>
+<span class="sd">        it will save the weigths, binary indicies k, z_formation, z_grb.</span>
+<span class="sd">        This is needed for scalability as a ~100k DCO population generates ~10M</span>
+<span class="sd">        non-zero weights assuming a delta_t=100Myr.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        sensitivity : string</span>
+<span class="sd">            Assume there are no selection effects. Available:</span>
+<span class="sd">            &#39;infinite&#39;: whole GRB population, i.e. p_det = 1</span>
+<span class="sd">        path_to_dir : string</span>
+<span class="sd">            Path to the workingn directory where you want to store the</span>
+<span class="sd">            cosmological weights.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="c1"># check if the folder three exists, otherwise create it</span>
+        <span class="n">GRB_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path_to_dir</span><span class="p">,</span><span class="s1">&#39;GRBs&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s1">&#39;GRBs&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">path_to_dir</span><span class="p">):</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">GRB_dir</span><span class="p">)</span>
+
+        <span class="n">sensitivity_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">GRB_dir</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">sensitivity</span><span class="si">}</span><span class="s1">_sensitivity&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">sensitivity</span><span class="si">}</span><span class="s1">_sensitivity&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">GRB_dir</span><span class="p">):</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">sensitivity_dir</span><span class="p">)</span>
+
+        <span class="c1"># index of all DCOs</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">index</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+
+        <span class="c1"># redshif of each time bin</span>
+        <span class="n">z_birth</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_centers_redshift_bins</span><span class="p">()</span>
+
+        <span class="c1"># define interpolator</span>
+        <span class="n">get_redshift_from_time</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_redshift_from_cosmic_time_interpolator</span><span class="p">()</span>
+
+        <span class="c1"># hashmap to store everythig</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;index_1&#39;</span><span class="p">:</span> <span class="p">{},</span> <span class="s1">&#39;z_grb_1&#39;</span><span class="p">:</span> <span class="p">{},</span> <span class="s1">&#39;weights_1&#39;</span><span class="p">:</span> <span class="p">{},</span>
+                <span class="s1">&#39;index_2&#39;</span><span class="p">:</span> <span class="p">{},</span> <span class="s1">&#39;z_grb_2&#39;</span><span class="p">:</span> <span class="p">{},</span> <span class="s1">&#39;weights_2&#39;</span><span class="p">:</span> <span class="p">{}}</span>
+
+        <span class="c1"># loop over all redshift bins</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">z_birth</span><span class="p">))):</span>
+            
+            <span class="k">for</span> <span class="n">s</span><span class="p">,</span> <span class="n">event</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">([</span><span class="s1">&#39;CC1&#39;</span><span class="p">,</span> <span class="s1">&#39;CC2&#39;</span><span class="p">]):</span>
+                <span class="c1"># compute the CC time of each compact object</span>
+                <span class="n">t_CC</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_time_GRB</span><span class="p">(</span><span class="n">z_birth</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">event</span><span class="p">)</span>
+
+                <span class="c1"># intrinsic population</span>
+                <span class="k">if</span> <span class="n">sensitivity</span> <span class="o">==</span> <span class="s1">&#39;infinite&#39;</span><span class="p">:</span>
+                    
+                    <span class="c1"># sort out system not emitting GRBs</span>
+                    <span class="n">bool_GRB</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">t_CC</span> <span class="o">&lt;</span> <span class="n">cosmology</span><span class="o">.</span><span class="n">age</span><span class="p">(</span><span class="mf">1e-08</span><span class="p">)</span><span class="o">.</span><span class="n">value</span><span class="o">*</span><span class="mf">0.9999999</span> <span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;GRB</span><span class="si">{</span><span class="n">s</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">])</span>
+                    
+                    <span class="c1"># if there are no system emitting any GRB, continue</span>
+                    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">index</span><span class="p">[</span><span class="n">bool_GRB</span><span class="p">])</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                        <span class="n">data</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;index_</span><span class="si">{</span><span class="n">s</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">][</span><span class="nb">str</span><span class="p">(</span><span class="n">z_birth</span><span class="p">[</span><span class="n">i</span><span class="p">])]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([])</span>
+                        <span class="n">data</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;z_grb_</span><span class="si">{</span><span class="n">s</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">][</span><span class="nb">str</span><span class="p">(</span><span class="n">z_birth</span><span class="p">[</span><span class="n">i</span><span class="p">])]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([])</span>
+                        <span class="n">data</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;weights_</span><span class="si">{</span><span class="n">s</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">][</span><span class="nb">str</span><span class="p">(</span><span class="n">z_birth</span><span class="p">[</span><span class="n">i</span><span class="p">])]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([])</span>
+                        <span class="k">continue</span>
+                
+                    <span class="c1"># get GRB redshifts</span>
+                    <span class="n">z_GRB</span> <span class="o">=</span> <span class="n">get_redshift_from_time</span><span class="p">(</span><span class="n">t_CC</span><span class="p">[</span><span class="n">bool_GRB</span><span class="p">])</span>
+
+                    <span class="c1"># set detection probabilities to 1</span>
+                    <span class="n">p_det</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">index</span><span class="p">[</span><span class="n">bool_GRB</span><span class="p">]))</span>
+
+                    <span class="c1"># store index and redshift of merger</span>
+                    <span class="n">data</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;index_</span><span class="si">{</span><span class="n">s</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">][</span><span class="nb">str</span><span class="p">(</span><span class="n">z_birth</span><span class="p">[</span><span class="n">i</span><span class="p">])]</span> <span class="o">=</span> <span class="n">index</span><span class="p">[</span><span class="n">bool_GRB</span><span class="p">]</span>
+                    <span class="n">data</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;z_grb_</span><span class="si">{</span><span class="n">s</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">][</span><span class="nb">str</span><span class="p">(</span><span class="n">z_birth</span><span class="p">[</span><span class="n">i</span><span class="p">])]</span> <span class="o">=</span> <span class="n">z_GRB</span>
+
+                    <span class="c1"># compute and store cosmological rate weights as in eq. B.8 in Bavera et al. (2020)</span>
+                    <span class="n">z_b</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">index</span><span class="p">[</span><span class="n">bool_GRB</span><span class="p">]))</span><span class="o">*</span><span class="n">z_birth</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                    <span class="n">w_ijk</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">merger_rate_weight</span><span class="p">(</span><span class="n">z_b</span><span class="p">,</span> <span class="n">z_GRB</span><span class="p">,</span> <span class="n">p_det</span><span class="p">,</span> <span class="n">index</span><span class="p">[</span><span class="n">bool_GRB</span><span class="p">])</span>
+                    <span class="n">data</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;weights_</span><span class="si">{</span><span class="n">s</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">][</span><span class="nb">str</span><span class="p">(</span><span class="n">z_birth</span><span class="p">[</span><span class="n">i</span><span class="p">])]</span> <span class="o">=</span> <span class="n">w_ijk</span>
+
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Unknown sensitivity!&#39;</span><span class="p">)</span>
+
+        <span class="c1"># TODO: implemet the saving to h5 files</span>
+        <span class="k">if</span> <span class="n">extention</span> <span class="o">==</span> <span class="s1">&#39;npz&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Formatting the data ....&#39;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">]:</span>
+                <span class="n">data_to_save</span> <span class="o">=</span> <span class="p">[[],[],[],[]]</span>
+                <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="nb">dict</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">([</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="k">if</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">s</span><span class="si">}</span><span class="s1">&#39;</span> <span class="ow">in</span> <span class="n">key</span><span class="p">]):</span>
+                    <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="nb">dict</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                        <span class="n">data_to_save</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="nb">dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
+                        <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                            <span class="n">data_to_save</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="nb">dict</span><span class="p">[</span><span class="n">key</span><span class="p">]))</span><span class="o">*</span><span class="nb">float</span><span class="p">(</span><span class="n">key</span><span class="p">))</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Saving the data ....&#39;</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">key</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">([</span><span class="n">key</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="k">if</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">s</span><span class="si">}</span><span class="s1">&#39;</span> <span class="ow">in</span> <span class="n">key</span><span class="p">]):</span>
+                    <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="s1">&#39;index&#39;</span><span class="p">:</span>
+                        <span class="n">fmt_str</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">%i</span><span class="s1">&#39;</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">fmt_str</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">%.8E</span><span class="s1">&#39;</span>
+                    <span class="n">np</span><span class="o">.</span><span class="n">savez</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">sensitivity_dir</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">.npz&quot;</span><span class="p">),</span>
+                            <span class="n">key</span><span class="o">=</span><span class="n">data_to_save</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">fmt</span><span class="o">=</span><span class="n">fmt_str</span><span class="p">)</span>
+
+                <span class="n">np</span><span class="o">.</span><span class="n">savez</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">sensitivity_dir</span><span class="p">,</span><span class="sa">f</span><span class="s2">&quot;z_formation_</span><span class="si">{</span><span class="n">s</span><span class="si">}</span><span class="s2">.npz&quot;</span><span class="p">),</span>
+                        <span class="n">key</span><span class="o">=</span><span class="n">data_to_save</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">fmt</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">%.8E</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Extension not supported!&#39;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="Rates.load_grb_rate_weights">
+<a class="viewcode-back" href="../../../api_reference/posydon.popsyn.html#posydon.popsyn.rate_calculation.Rates.load_grb_rate_weights">[docs]</a>
+    <span class="k">def</span> <span class="nf">load_grb_rate_weights</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sensitivity</span><span class="p">,</span> <span class="n">path_to_dir</span><span class="o">=</span><span class="s1">&#39;./&#39;</span><span class="p">,</span> <span class="n">extention</span><span class="o">=</span><span class="s1">&#39;npz&#39;</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Load the cosmological weights of the transient events associated to the population.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        sensitivity : string</span>
+<span class="sd">            Assume there are no selection effects. Available:</span>
+<span class="sd">            &#39;infinite&#39;: whole GRB population, i.e. p_det = 1</span>
+<span class="sd">        path_to_dir : string</span>
+<span class="sd">            Path to the directory where you the cosmological weights are stored.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        array doubles</span>
+<span class="sd">            Return the cosmological weights, z_formation, z_GRB and binary</span>
+<span class="sd">            index k associated to each weighted binary.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">dir_</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path_to_dir</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;GRBs/</span><span class="si">{</span><span class="n">sensitivity</span><span class="si">}</span><span class="s1">_sensitivity&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">extention</span> <span class="o">==</span> <span class="s1">&#39;npz&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Loading the data ...&#39;</span><span class="p">)</span>
+            <span class="n">index_1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dir_</span><span class="p">,</span> <span class="s1">&#39;index_1.npz&#39;</span><span class="p">),</span> <span class="n">allow_pickle</span><span class="o">=</span><span class="kc">True</span><span class="p">)[</span><span class="s1">&#39;key&#39;</span><span class="p">]</span>
+            <span class="n">z_formation_1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dir_</span><span class="p">,</span> <span class="s1">&#39;z_formation_1.npz&#39;</span><span class="p">),</span> <span class="n">allow_pickle</span><span class="o">=</span><span class="kc">True</span><span class="p">)[</span><span class="s1">&#39;key&#39;</span><span class="p">]</span>
+            <span class="n">z_grb_1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dir_</span><span class="p">,</span> <span class="s1">&#39;z_grb_1.npz&#39;</span><span class="p">),</span> <span class="n">allow_pickle</span><span class="o">=</span><span class="kc">True</span><span class="p">)[</span><span class="s1">&#39;key&#39;</span><span class="p">]</span>
+            <span class="n">weights_1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dir_</span><span class="p">,</span> <span class="s1">&#39;weights_1.npz&#39;</span><span class="p">),</span> <span class="n">allow_pickle</span><span class="o">=</span><span class="kc">True</span><span class="p">)[</span><span class="s1">&#39;key&#39;</span><span class="p">]</span>
+            <span class="n">index_2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dir_</span><span class="p">,</span> <span class="s1">&#39;index_2.npz&#39;</span><span class="p">),</span> <span class="n">allow_pickle</span><span class="o">=</span><span class="kc">True</span><span class="p">)[</span><span class="s1">&#39;key&#39;</span><span class="p">]</span>
+            <span class="n">z_formation_2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dir_</span><span class="p">,</span> <span class="s1">&#39;z_formation_2.npz&#39;</span><span class="p">),</span> <span class="n">allow_pickle</span><span class="o">=</span><span class="kc">True</span><span class="p">)[</span><span class="s1">&#39;key&#39;</span><span class="p">]</span>
+            <span class="n">z_grb_2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dir_</span><span class="p">,</span> <span class="s1">&#39;z_grb_2.npz&#39;</span><span class="p">),</span> <span class="n">allow_pickle</span><span class="o">=</span><span class="kc">True</span><span class="p">)[</span><span class="s1">&#39;key&#39;</span><span class="p">]</span>
+            <span class="n">weights_2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dir_</span><span class="p">,</span> <span class="s1">&#39;weights_2.npz&#39;</span><span class="p">),</span> <span class="n">allow_pickle</span><span class="o">=</span><span class="kc">True</span><span class="p">)[</span><span class="s1">&#39;key&#39;</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Extension not supported!&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">index_1</span><span class="p">,</span> <span class="n">z_formation_1</span><span class="p">,</span> <span class="n">z_grb_1</span><span class="p">,</span> <span class="n">weights_1</span><span class="p">,</span> <span class="n">index_2</span><span class="p">,</span> <span class="n">z_formation_2</span><span class="p">,</span> <span class="n">z_grb_2</span><span class="p">,</span> <span class="n">weights_2</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Tassos Fragos.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,949 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>posydon.interpolation.profile_interpolation &mdash; POSYDON v2.0.0-dev documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=8ace0c28" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=f4b7fd8b"></script>
+        <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html">
+            
+              <img src="../../../_static/posydon_logo.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                v2.0.0-dev
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction-acknowledgements/intro.html">Introduction, Objectives, and Scope</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction-acknowledgements/collaborative-team.html">Collaborative Team</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://posydon.org/papers.html">Publications</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting-started/prerequisites.html">Prerequisites</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting-started/installation-guide.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting-started/verification.html">Verification</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">User Guides</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../user-guides/user-roadmap.html">Roadmap to Becoming an Expert POSYDON User</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user-guides/web-application.html">Web Application: POSYDON Interactive Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user-guides/database-query-system.html">Database and Query System</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials and Examples</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials-examples/population-synthesis/binary-pop-syn.html">Binary-Star Population Synthesis with POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials-examples/generating-datasets/generating-datasets.html">Crafting the Core Datasets for POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials-examples/MESA-grids/running-grids.html">Architecting MESA Simulation Grids with POSYDON</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">In-Depth Components Overview</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../components-overview/mesa-grids.html">MESA Grids API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../components-overview/processing-pipeline.html">Processing Pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../components-overview/machine-learning-components.html">Machine Learning Components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../components-overview/stellar-binary-simulation.html">Stellar &amp; Binary-star Simulation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../api_reference/posydon.html">posydon</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api_reference/bin.html">executables</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Troubleshooting and FAQs</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../troubleshooting-faqs/installation-issues.html">Installation Issues</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../troubleshooting-faqs/code-questions.html">Code Usage Questions</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contributing to POSYDON</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing/how-to-contribute.html">How To Contribute</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing/code-style-guidelines.html">Code Style Guidelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing/reporting-issues.html">Reporting issues</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Release Notes and Changelog</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../release-notes/version-history.html">Version History of POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../release-notes/major-updates.html">Major Updates</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contact and Support</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../contact-support/contact-information.html">Contact Information</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">POSYDON</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">posydon.interpolation.profile_interpolation</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for posydon.interpolation.profile_interpolation</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Module for performing initial-final profile interpolation</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="n">__authors__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;Elizabeth Teng &lt;elizabethteng@u.northwestern.edu&gt;&quot;</span>
+<span class="p">]</span>
+
+<span class="kn">import</span> <span class="nn">pickle</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+
+<span class="c1"># POSYDON</span>
+<span class="kn">from</span> <span class="nn">posydon.grids.psygrid</span> <span class="kn">import</span> <span class="n">PSyGrid</span>
+<span class="kn">from</span> <span class="nn">posydon.interpolation.IF_interpolation</span> <span class="kn">import</span> <span class="n">IFInterpolator</span>
+
+<span class="c1"># Math and ML</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">tensorflow</span> <span class="k">as</span> <span class="nn">tf</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span><span class="s1">&#39;tensorflow is not installed. Please run `pip install .[ml]` in the POSYDON base directory&#39;</span><span class="p">)</span>
+<span class="n">tf</span><span class="o">.</span><span class="n">get_logger</span><span class="p">()</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="s1">&#39;ERROR&#39;</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">tensorflow.keras</span> <span class="kn">import</span> <span class="n">layers</span><span class="p">,</span> <span class="n">losses</span><span class="p">,</span> <span class="n">models</span><span class="p">,</span> <span class="n">optimizers</span>
+<span class="kn">from</span> <span class="nn">sklearn.decomposition</span> <span class="kn">import</span> <span class="n">PCA</span>
+<span class="kn">from</span> <span class="nn">scipy.interpolate</span> <span class="kn">import</span> <span class="n">interp1d</span>
+
+
+<div class="viewcode-block" id="CompileData">
+<a class="viewcode-back" href="../../../api_reference/posydon.interpolation.html#posydon.interpolation.profile_interpolation.CompileData">[docs]</a>
+<span class="k">class</span> <span class="nc">CompileData</span><span class="p">:</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">train_path</span><span class="p">,</span> <span class="n">test_path</span><span class="p">,</span> <span class="n">hms_s2</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                 <span class="n">profile_names</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;radius&#39;</span><span class="p">,</span><span class="s1">&#39;logRho&#39;</span><span class="p">,</span> <span class="s1">&#39;x_mass_fraction_H&#39;</span><span class="p">,</span>
+                                <span class="s1">&#39;y_mass_fraction_He&#39;</span><span class="p">,</span><span class="s1">&#39;z_mass_fraction_metals&#39;</span><span class="p">,</span>
+                                <span class="s1">&#39;omega&#39;</span><span class="p">,</span><span class="s1">&#39;energy&#39;</span><span class="p">]):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Extracts profile data from &#39;.h5&#39; grid files and saves to file.</span>
+<span class="sd">        Args:</span>
+<span class="sd">            train_path (str) : path/name of &#39;.h5&#39; file for training data.</span>
+<span class="sd">            test_path (str) : path/name of &#39;.h5&#39; file for testing data.</span>
+<span class="sd">            hms_s2 (Boolean) : option to get profiles of star 2 in HMS-HMS grid</span>
+<span class="sd">            profile_names (array-like) : list of profile quantities to extract.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">names</span> <span class="o">=</span> <span class="n">profile_names</span>
+        
+        <span class="c1"># extract testing data</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;extracting testing data&quot;</span><span class="p">)</span>
+        <span class="n">test</span> <span class="o">=</span> <span class="n">PSyGrid</span><span class="p">(</span><span class="n">test_path</span><span class="p">)</span>  <span class="c1"># load PSyGrid object for testing grid</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">test_scalars</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">test_profiles</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">testing_failed</span> <span class="o">=</span> <span class="p">[]</span>
+        
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">test</span><span class="p">)):</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">scalars</span><span class="p">,</span><span class="n">profiles</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">scrape</span><span class="p">(</span><span class="n">test</span><span class="p">,</span><span class="n">i</span><span class="p">,</span><span class="n">hms_s2</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">test_scalars</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">test_scalars</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">scalars</span><span class="p">,</span><span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">test_profiles</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">profiles</span><span class="p">)</span>
+            <span class="k">except</span><span class="p">:</span>
+                <span class="n">testing_failed</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+                <span class="k">pass</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">testing_failed</span><span class="p">)</span><span class="si">}</span><span class="s2"> binaries failed&quot;</span><span class="p">)</span>
+
+        <span class="c1"># extract training data</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;extracting training data&quot;</span><span class="p">)</span>
+        <span class="n">train</span> <span class="o">=</span> <span class="n">PSyGrid</span><span class="p">(</span><span class="n">train_path</span><span class="p">)</span>  <span class="c1"># load PSyGrid object for training grid</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">scalars</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">profiles</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">training_failed</span> <span class="o">=</span> <span class="p">[]</span>
+        
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">train</span><span class="p">)):</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">scalars</span><span class="p">,</span><span class="n">profiles</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">scrape</span><span class="p">(</span><span class="n">train</span><span class="p">,</span><span class="n">i</span><span class="p">,</span><span class="n">hms_s2</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">scalars</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">scalars</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">scalars</span><span class="p">,</span><span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">profiles</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">profiles</span><span class="p">)</span>
+            <span class="k">except</span><span class="p">:</span>
+                <span class="n">training_failed</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+                <span class="k">pass</span>       
+            
+        <span class="k">if</span> <span class="s1">&#39;omega&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">names</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;norm_omega&#39;</span><span class="p">)</span>
+            
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">training_failed</span><span class="p">)</span><span class="si">}</span><span class="s2"> training binaries failed&quot;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="CompileData.scrape">
+<a class="viewcode-back" href="../../../api_reference/posydon.interpolation.html#posydon.interpolation.profile_interpolation.CompileData.scrape">[docs]</a>
+    <span class="k">def</span> <span class="nf">scrape</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">grid</span><span class="p">,</span><span class="n">ind</span><span class="p">,</span><span class="n">hms_s2</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Extracts profile data from one MESA run.</span>
+<span class="sd">        Args:</span>
+<span class="sd">            grid (obj) : PSyGrid object.</span>
+<span class="sd">            ind (int) : index of run to be scraped.</span>
+<span class="sd">            hms_s2 (Boolean) : option to get profiles of star 2 in HMS-HMS grid</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            scalars (array-like) : dictionary containing initial </span>
+<span class="sd">                                   m1, m2, p, mass transfer class, </span>
+<span class="sd">                                   final star_state, final total_mass.</span>
+<span class="sd">            profiles (array-like) : all N specified profiles, shape (N,200).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># open individual run as a DataFrame</span>
+        
+        <span class="k">if</span> <span class="n">hms_s2</span><span class="o">==</span><span class="kc">False</span><span class="p">:</span> <span class="c1"># default star 1 profile information</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">grid</span><span class="p">[</span><span class="n">ind</span><span class="p">][</span><span class="s1">&#39;final_profile1&#39;</span><span class="p">])</span>
+            <span class="n">mass_key</span> <span class="o">=</span> <span class="s2">&quot;star_1_mass&quot;</span>
+            <span class="n">state_key</span> <span class="o">=</span> <span class="s2">&quot;S1_state&quot;</span>
+        <span class="k">else</span><span class="p">:</span> <span class="c1"># requesting star 2 information for HMS-HMS grid</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">grid</span><span class="p">[</span><span class="n">ind</span><span class="p">][</span><span class="s1">&#39;final_profile2&#39;</span><span class="p">])</span>
+            <span class="n">mass_key</span> <span class="o">=</span> <span class="s2">&quot;star_2_mass&quot;</span>
+            <span class="n">state_key</span> <span class="o">=</span> <span class="s2">&quot;S2_state&quot;</span>
+            
+        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="s2">&quot;mass&quot;</span><span class="p">)</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="c1"># grab input values, final star 1 state, final star 1 mass</span>
+        <span class="n">total_mass</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">final_values</span><span class="p">[</span><span class="n">mass_key</span><span class="p">][</span><span class="n">ind</span><span class="p">]</span>
+        
+        <span class="n">scalars</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;m1&quot;</span><span class="p">:</span><span class="n">grid</span><span class="o">.</span><span class="n">initial_values</span><span class="p">[</span><span class="s2">&quot;star_1_mass&quot;</span><span class="p">][</span><span class="n">ind</span><span class="p">],</span>
+                   <span class="s2">&quot;m2&quot;</span><span class="p">:</span><span class="n">grid</span><span class="o">.</span><span class="n">initial_values</span><span class="p">[</span><span class="s2">&quot;star_2_mass&quot;</span><span class="p">][</span><span class="n">ind</span><span class="p">],</span>
+                   <span class="s2">&quot;p&quot;</span><span class="p">:</span><span class="n">grid</span><span class="o">.</span><span class="n">initial_values</span><span class="p">[</span><span class="s2">&quot;period_days&quot;</span><span class="p">][</span><span class="n">ind</span><span class="p">],</span>
+                   <span class="s2">&quot;MT_class&quot;</span><span class="p">:</span><span class="n">grid</span><span class="o">.</span><span class="n">final_values</span><span class="p">[</span><span class="s2">&quot;interpolation_class&quot;</span><span class="p">][</span><span class="n">ind</span><span class="p">],</span>
+                   <span class="s2">&quot;star_state&quot;</span><span class="p">:</span><span class="n">grid</span><span class="o">.</span><span class="n">final_values</span><span class="p">[</span><span class="n">state_key</span><span class="p">][</span><span class="n">ind</span><span class="p">],</span>
+                   <span class="s2">&quot;total_mass&quot;</span><span class="p">:</span><span class="n">total_mass</span><span class="p">}</span>
+
+        <span class="c1"># grab output vectors, interpolate to normalize</span>
+        <span class="n">profiles</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="mi">1</span><span class="o">+</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">names</span><span class="p">),</span><span class="mi">200</span><span class="p">])</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">prof</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">names</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">prof</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+            
+                <span class="n">f</span> <span class="o">=</span> <span class="n">interp1d</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;mass&#39;</span><span class="p">]</span><span class="o">/</span><span class="n">total_mass</span><span class="p">,</span><span class="n">df</span><span class="p">[</span><span class="n">prof</span><span class="p">],</span>
+                             <span class="n">fill_value</span><span class="o">=</span><span class="s2">&quot;extrapolate&quot;</span><span class="p">)</span>
+                <span class="n">profile_new</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">200</span><span class="p">))</span>
+                <span class="n">profiles</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">profile_new</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">prof</span><span class="si">}</span><span class="s2"> profile not saved in grid, will not be included in file&quot;</span><span class="p">)</span>
+        
+        <span class="k">if</span> <span class="s1">&#39;omega&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">names</span><span class="p">:</span>
+            <span class="n">profiles</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">=</span> <span class="n">profiles</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">names</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s1">&#39;omega&#39;</span><span class="p">)]</span><span class="o">/</span>  \
+                          <span class="n">grid</span><span class="o">.</span><span class="n">final_values</span><span class="p">[</span><span class="s1">&#39;S1_surf_avg_omega_div_omega_crit&#39;</span><span class="p">][</span><span class="n">ind</span><span class="p">]</span>
+        
+        <span class="k">return</span> <span class="n">scalars</span><span class="p">,</span> <span class="n">profiles</span></div>
+
+
+<div class="viewcode-block" id="CompileData.save">
+<a class="viewcode-back" href="../../../api_reference/posydon.interpolation.html#posydon.interpolation.profile_interpolation.CompileData.save">[docs]</a>
+    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Save extracted profile data.</span>
+<span class="sd">        Args:</span>
+<span class="sd">            filename (str) : path/name of &#39;.pkl&#39; file where the data will be saved.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">SAVE_ATTRS</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span>
+        <span class="n">DONT_SAVE</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">myattrs</span> <span class="o">=</span> <span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="n">SAVE_ATTRS</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+                   <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">SAVE_ATTRS</span> <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">DONT_SAVE</span><span class="p">}</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">myattrs</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span></div>
+</div>
+
+            
+            
+<div class="viewcode-block" id="ProfileInterpolator">
+<a class="viewcode-back" href="../../../api_reference/posydon.interpolation.html#posydon.interpolation.profile_interpolation.ProfileInterpolator">[docs]</a>
+<span class="k">class</span> <span class="nc">ProfileInterpolator</span><span class="p">:</span>
+    
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Interfaces with other classes, trains models and predicts profiles.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="ProfileInterpolator.load_profiles">
+<a class="viewcode-back" href="../../../api_reference/posydon.interpolation.html#posydon.interpolation.profile_interpolation.ProfileInterpolator.load_profiles">[docs]</a>
+    <span class="k">def</span> <span class="nf">load_profiles</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">filename</span><span class="p">,</span><span class="n">valid_split</span><span class="o">=</span><span class="mf">0.2</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Load and process extracted profile data.</span>
+<span class="sd">        Args:</span>
+<span class="sd">            filename (str) : path/name of &#39;.pkl&#39; file to be loaded.</span>
+<span class="sd">            valid_split (float) : percentage of training data used for validation set</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">myattrs</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_pickle</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">myattrs</span><span class="p">:</span>
+                <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">myattrs</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
+                
+        <span class="c1"># processing</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">test_profiles</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">test_profiles</span><span class="p">)</span>
+        <span class="n">test_linear_initial</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">test_scalars</span><span class="p">[</span><span class="s2">&quot;m1&quot;</span><span class="p">],</span>
+                                             <span class="bp">self</span><span class="o">.</span><span class="n">test_scalars</span><span class="p">[</span><span class="s2">&quot;m2&quot;</span><span class="p">],</span>
+                                             <span class="bp">self</span><span class="o">.</span><span class="n">test_scalars</span><span class="p">[</span><span class="s2">&quot;p&quot;</span><span class="p">]])</span> 
+        <span class="bp">self</span><span class="o">.</span><span class="n">test_initial</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">test_linear_initial</span><span class="p">))</span>
+        
+        <span class="n">linear_initial</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">scalars</span><span class="p">[</span><span class="s2">&quot;m1&quot;</span><span class="p">],</span>
+                                       <span class="bp">self</span><span class="o">.</span><span class="n">scalars</span><span class="p">[</span><span class="s2">&quot;m2&quot;</span><span class="p">],</span>
+                                       <span class="bp">self</span><span class="o">.</span><span class="n">scalars</span><span class="p">[</span><span class="s2">&quot;p&quot;</span><span class="p">]])</span>
+        
+        <span class="c1"># random split for training and validation data (default 80/20)</span>
+        <span class="n">binaries</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">profiles</span><span class="p">))</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="n">binaries</span><span class="p">)</span>    
+        <span class="n">split</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">profiles</span><span class="p">)</span><span class="o">*</span><span class="n">valid_split</span><span class="p">)</span> <span class="c1"># index at which to split data</span>
+    
+        <span class="bp">self</span><span class="o">.</span><span class="n">valid_profiles</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">profiles</span><span class="p">)[</span><span class="n">binaries</span><span class="p">[:</span><span class="n">split</span><span class="p">]]</span>      
+        <span class="bp">self</span><span class="o">.</span><span class="n">valid_initial</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">linear_initial</span><span class="p">)[</span><span class="n">binaries</span><span class="p">[:</span><span class="n">split</span><span class="p">]]</span>  
+        <span class="bp">self</span><span class="o">.</span><span class="n">valid_scalars</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">scalars</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">binaries</span><span class="p">[:</span><span class="n">split</span><span class="p">]]</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">profiles</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">profiles</span><span class="p">)[</span><span class="n">binaries</span><span class="p">[</span><span class="n">split</span><span class="p">:]]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">initial</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">linear_initial</span><span class="p">)[</span><span class="n">binaries</span><span class="p">[</span><span class="n">split</span><span class="p">:]]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">scalars</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">scalars</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">binaries</span><span class="p">[</span><span class="n">split</span><span class="p">:]]</span></div>
+
+
+<div class="viewcode-block" id="ProfileInterpolator.train">
+<a class="viewcode-back" href="../../../api_reference/posydon.interpolation.html#posydon.interpolation.profile_interpolation.ProfileInterpolator.train">[docs]</a>
+    <span class="k">def</span> <span class="nf">train</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">IF_interpolator</span><span class="p">,</span><span class="n">density_epochs</span><span class="o">=</span><span class="mi">3000</span><span class="p">,</span><span class="n">density_patience</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span>
+             <span class="n">comp_bounds_epochs</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span><span class="n">comp_bounds_patience</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span><span class="n">loss_history</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">hms_s2</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Trains models for density, H mass fraction, and He mass fraction profile models. </span>
+<span class="sd">        Args:</span>
+<span class="sd">            IF_interpolator (str) : path to &#39;.pkl&#39; file for IF interpolator.</span>
+<span class="sd">            density_epochs (int) : number of epochs used to train density profile model</span>
+<span class="sd">            density_patience (int) : patience parameter for NN callback in density profile model</span>
+<span class="sd">            comp_bounds_epochs (int) : number of epochs used to train composition profiles model</span>
+<span class="sd">            comp_bounds_patience (int) : patience parameter for NN callback in composition profiles model</span>
+<span class="sd">            loss_history (Boolean) : option to return training and validation loss histories</span>
+<span class="sd">            hms_s2 (Boolean) : option to do profiles of star 2 in HMS-HMS grid</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            self.comp.loss_history (array-like) : training and validation loss history for composition profiles</span>
+<span class="sd">            self.dens.loss_history (array-like) : training and validation loss history for density profiles</span>
+<span class="sd">            </span>
+<span class="sd">        &quot;&quot;&quot;</span>        
+        <span class="c1"># instantiate and train composition (H and He mass fraction) profiles model</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">comp</span> <span class="o">=</span> <span class="n">Composition</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">initial</span><span class="p">,</span> 
+                                <span class="bp">self</span><span class="o">.</span><span class="n">profiles</span><span class="p">[:,</span><span class="bp">self</span><span class="o">.</span><span class="n">names</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">&quot;x_mass_fraction_H&quot;</span><span class="p">)],</span> 
+                                <span class="bp">self</span><span class="o">.</span><span class="n">profiles</span><span class="p">[:,</span><span class="bp">self</span><span class="o">.</span><span class="n">names</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">&quot;y_mass_fraction_He&quot;</span><span class="p">)],</span> 
+                                <span class="bp">self</span><span class="o">.</span><span class="n">scalars</span><span class="p">[</span><span class="s2">&quot;star_state&quot;</span><span class="p">],</span> 
+                                <span class="bp">self</span><span class="o">.</span><span class="n">valid_initial</span><span class="p">,</span> 
+                                <span class="bp">self</span><span class="o">.</span><span class="n">valid_profiles</span><span class="p">[:,</span><span class="bp">self</span><span class="o">.</span><span class="n">names</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">&quot;x_mass_fraction_H&quot;</span><span class="p">)],</span> 
+                                <span class="bp">self</span><span class="o">.</span><span class="n">valid_profiles</span><span class="p">[:,</span><span class="bp">self</span><span class="o">.</span><span class="n">names</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">&quot;y_mass_fraction_He&quot;</span><span class="p">)],</span> 
+                                <span class="bp">self</span><span class="o">.</span><span class="n">valid_scalars</span><span class="p">[</span><span class="s2">&quot;star_state&quot;</span><span class="p">],</span> 
+                                <span class="n">IF_interpolator</span><span class="p">,</span>
+                                <span class="n">comp_bounds_epochs</span><span class="p">,</span><span class="n">comp_bounds_patience</span><span class="p">,</span><span class="n">hms_s2</span><span class="p">)</span>
+
+        <span class="c1"># instantiate and train density profile model</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dens</span> <span class="o">=</span> <span class="n">Density</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">initial</span><span class="p">,</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">profiles</span><span class="p">[:,</span><span class="bp">self</span><span class="o">.</span><span class="n">names</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">&quot;logRho&quot;</span><span class="p">)],</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">valid_initial</span><span class="p">,</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">valid_profiles</span><span class="p">[:,</span><span class="bp">self</span><span class="o">.</span><span class="n">names</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">&quot;logRho&quot;</span><span class="p">)],</span>
+                            <span class="n">IF_interpolator</span><span class="p">,</span><span class="n">hms_s2</span><span class="o">=</span><span class="n">hms_s2</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dens</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="n">prof_epochs</span><span class="o">=</span><span class="n">density_epochs</span><span class="p">,</span><span class="n">prof_patience</span><span class="o">=</span><span class="n">density_patience</span><span class="p">)</span>
+        
+        <span class="k">if</span> <span class="n">loss_history</span><span class="o">==</span><span class="kc">True</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">comp</span><span class="o">.</span><span class="n">loss_history</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dens</span><span class="o">.</span><span class="n">loss_history</span></div>
+
+
+<div class="viewcode-block" id="ProfileInterpolator.predict">
+<a class="viewcode-back" href="../../../api_reference/posydon.interpolation.html#posydon.interpolation.profile_interpolation.ProfileInterpolator.predict">[docs]</a>
+    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">inputs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Predict density, H mass fraction, and He mass fraction profiles from inputs.</span>
+<span class="sd">        Args:</span>
+<span class="sd">            inputs (array-like) : log-space initial conditions of N binaries to predict, shape (N,3).</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            mass_coords (array-like) : linear-scale mass enclosed profile coordinates.</span>
+<span class="sd">            density_profiles (array-like) : log-scale density profile coordinates.</span>
+<span class="sd">            h_profiles (array-like) : H mass fraction profile coordinates</span>
+<span class="sd">            he_profiles (array-like) : He mass fraction profile coordinates</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">mass_coords</span><span class="p">,</span> <span class="n">density_profiles</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dens</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">inputs</span><span class="p">)</span>
+        <span class="n">mass_coords</span><span class="p">,</span> <span class="n">h_profiles</span><span class="p">,</span> <span class="n">he_profiles</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">comp</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">inputs</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="n">mass_coords</span><span class="p">,</span> <span class="n">density_profiles</span><span class="p">,</span> <span class="n">h_profiles</span><span class="p">,</span> <span class="n">he_profiles</span></div>
+
+        
+                    
+<div class="viewcode-block" id="ProfileInterpolator.save">
+<a class="viewcode-back" href="../../../api_reference/posydon.interpolation.html#posydon.interpolation.profile_interpolation.ProfileInterpolator.save">[docs]</a>
+    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Save complete profiles interpolation model.</span>
+<span class="sd">        Args:</span>
+<span class="sd">            filename (str) : path/name of &#39;.pkl&#39; file where the model will be saved.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">SAVE_ATTRS</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span>
+        <span class="n">DONT_SAVE</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">myattrs</span> <span class="o">=</span> <span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="n">SAVE_ATTRS</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+                   <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">SAVE_ATTRS</span> <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">DONT_SAVE</span><span class="p">}</span>
+
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">myattrs</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ProfileInterpolator.load">
+<a class="viewcode-back" href="../../../api_reference/posydon.interpolation.html#posydon.interpolation.profile_interpolation.ProfileInterpolator.load">[docs]</a>
+    <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Load interpolation model, which can be used for predictions.</span>
+<span class="sd">        Args:</span>
+<span class="sd">            filename (str) : path/name of &#39;.pkl&#39; file to be loaded.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">myattrs</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">myattrs</span><span class="p">:</span>
+                <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">myattrs</span><span class="p">[</span><span class="n">key</span><span class="p">])</span></div>
+
+    
+<div class="viewcode-block" id="ProfileInterpolator.mono_decrease">
+<a class="viewcode-back" href="../../../api_reference/posydon.interpolation.html#posydon.interpolation.profile_interpolation.ProfileInterpolator.mono_decrease">[docs]</a>
+    <span class="k">def</span> <span class="nf">mono_decrease</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">profiles</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Enforce monotonicity in profiles such as density that must monotonically decrease</span>
+<span class="sd">        Args:</span>
+<span class="sd">            profiles (array-like) : N profiles to be post-processed for monotonicity</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            profiles_mono (array-like) : post-processed profiles</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="k">def</span> <span class="nf">mono_renorm</span><span class="p">(</span><span class="n">arr</span><span class="p">):</span>
+            <span class="n">arr_copy</span> <span class="o">=</span> <span class="n">arr</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+            <span class="c1"># starting from surface, force dropping points up</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">arr_copy</span><span class="p">)):</span>
+                <span class="k">if</span> <span class="n">arr_copy</span><span class="p">[</span><span class="o">-</span><span class="n">i</span><span class="p">]</span><span class="o">&gt;</span><span class="n">arr_copy</span><span class="p">[</span><span class="o">-</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
+                    <span class="n">arr_copy</span><span class="p">[</span><span class="o">-</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">=</span><span class="n">arr_copy</span><span class="p">[</span><span class="o">-</span><span class="n">i</span><span class="p">]</span>
+            <span class="c1"># cut off points above center value</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">arr_copy</span><span class="o">&gt;</span><span class="n">arr</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">arr</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">arr_copy</span><span class="p">)</span>
+
+        <span class="n">profiles_mono</span><span class="o">=</span><span class="n">profiles</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">profiles</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">profiles</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">:]</span><span class="o">-</span><span class="n">profiles</span><span class="p">[</span><span class="n">i</span><span class="p">][:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">):</span>
+                <span class="n">profiles_mono</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">mono_renorm</span><span class="p">(</span><span class="n">profiles</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+
+        <span class="k">return</span> <span class="n">profiles_mono</span></div>
+</div>
+
+
+    
+    
+    
+<div class="viewcode-block" id="Density">
+<a class="viewcode-back" href="../../../api_reference/posydon.interpolation.html#posydon.interpolation.profile_interpolation.Density">[docs]</a>
+<span class="k">class</span> <span class="nc">Density</span><span class="p">:</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">initial</span><span class="p">,</span><span class="n">profiles</span><span class="p">,</span><span class="n">valid_initial</span><span class="p">,</span>
+                 <span class="n">valid_profiles</span><span class="p">,</span><span class="n">IF_interpolator</span><span class="p">,</span><span class="n">n_comp</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">hms_s2</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Creates and trains density profile model.</span>
+<span class="sd">        Args:</span>
+<span class="sd">            initial (array-like) : log-space initial conditions for training data.</span>
+<span class="sd">            profiles (array-like) : final density profiles for training data. </span>
+<span class="sd">            valid_initial (array-like) : log-space initial conditions for validation data.</span>
+<span class="sd">            valid_profiles (array-like) : final density profiles for validation data.</span>
+<span class="sd">            IF_interpolator (string) : path to .pkl file for IF interpolator for central density, final mass values</span>
+<span class="sd">            n_comp (int) : number of PCA components. </span>
+<span class="sd">            hms_s2 (Boolean) : option to do profiles of star 2 in HMS-HMS grid</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_comp</span> <span class="o">=</span> <span class="n">n_comp</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hms_s2</span> <span class="o">=</span> <span class="n">hms_s2</span>
+        
+        <span class="c1"># process training data </span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">initial</span> <span class="o">=</span> <span class="n">initial</span>  <span class="c1"># initial conditions in log space</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rho_min</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">profiles</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> 
+        <span class="n">rho_max</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">profiles</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">profiles_norm</span> <span class="o">=</span> <span class="p">(</span><span class="n">profiles</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">rho_min</span><span class="p">[:,</span><span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">])</span>\
+                            <span class="o">/</span><span class="p">(</span><span class="n">rho_max</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">rho_min</span><span class="p">)[:,</span><span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span>  <span class="c1"># minmax normalized profiles</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pca</span> <span class="o">=</span> <span class="n">PCA</span><span class="p">(</span><span class="n">n_components</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">n_comp</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">profiles_norm</span><span class="p">)</span> <span class="c1"># perform principal component analysis</span>
+        <span class="n">pca_weights_unscaled</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pca</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">profiles_norm</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">scaling</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">pca_weights_unscaled</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pca_weights</span> <span class="o">=</span> <span class="n">pca_weights_unscaled</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">scaling</span>  <span class="c1"># scaled PCA weights</span>
+        
+        <span class="c1"># process validation data</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">valid_initial</span> <span class="o">=</span> <span class="n">valid_initial</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">valid_rho_min</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">valid_profiles</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">valid_rho_max</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">valid_profiles</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">valid_profiles_norm</span> <span class="o">=</span> <span class="p">(</span><span class="n">valid_profiles</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">valid_rho_min</span><span class="p">[:,</span><span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">])</span>\
+                            <span class="o">/</span><span class="p">(</span><span class="n">valid_rho_max</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">valid_rho_min</span><span class="p">)[:,</span><span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span>
+        <span class="n">valid_pca_weights_unscaled</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pca</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">valid_profiles_norm</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">valid_pca_weights</span> <span class="o">=</span> <span class="n">valid_pca_weights_unscaled</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">scaling</span>
+        
+        <span class="c1"># instantiate models</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model_prof</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">Sequential</span><span class="p">([</span>
+            <span class="n">layers</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span><span class="n">input_dim</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span><span class="n">activation</span><span class="o">=</span><span class="kc">None</span><span class="p">),</span>
+            <span class="n">layers</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span><span class="n">input_dim</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span><span class="n">activation</span><span class="o">=</span><span class="s2">&quot;relu&quot;</span><span class="p">),</span>
+            <span class="n">layers</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span><span class="n">input_dim</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span><span class="n">activation</span><span class="o">=</span><span class="s2">&quot;relu&quot;</span><span class="p">),</span>
+            <span class="n">layers</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span><span class="n">input_dim</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span><span class="n">activation</span><span class="o">=</span><span class="s2">&quot;tanh&quot;</span><span class="p">),</span>
+            <span class="n">layers</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span><span class="n">input_dim</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span><span class="n">activation</span><span class="o">=</span><span class="s2">&quot;tanh&quot;</span><span class="p">),</span>
+            <span class="n">layers</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="n">input_dim</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span><span class="n">activation</span><span class="o">=</span><span class="s2">&quot;tanh&quot;</span><span class="p">),</span>
+            <span class="n">layers</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="n">input_dim</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span><span class="n">activation</span><span class="o">=</span><span class="s2">&quot;tanh&quot;</span><span class="p">),</span>
+            <span class="n">layers</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="n">n_comp</span><span class="p">,</span><span class="n">input_dim</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span><span class="n">activation</span><span class="o">=</span><span class="kc">None</span><span class="p">)])</span>
+                
+        <span class="bp">self</span><span class="o">.</span><span class="n">model_rho</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">Sequential</span><span class="p">([</span>
+            <span class="n">layers</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="n">input_dim</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span><span class="n">activation</span><span class="o">=</span><span class="s1">&#39;relu&#39;</span><span class="p">),</span>
+            <span class="n">layers</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="n">input_dim</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span><span class="n">activation</span><span class="o">=</span><span class="s1">&#39;relu&#39;</span><span class="p">),</span>
+            <span class="n">layers</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="n">input_dim</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span><span class="n">activation</span><span class="o">=</span><span class="s1">&#39;tanh&#39;</span><span class="p">),</span>
+            <span class="n">layers</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="n">input_dim</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span><span class="n">activation</span><span class="o">=</span><span class="s1">&#39;tanh&#39;</span><span class="p">),</span>
+            <span class="n">layers</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="n">input_dim</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span><span class="n">activation</span><span class="o">=</span><span class="s1">&#39;tanh&#39;</span><span class="p">),</span>
+            <span class="n">layers</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="n">input_dim</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span><span class="n">activation</span><span class="o">=</span><span class="s1">&#39;tanh&#39;</span><span class="p">),</span>
+            <span class="n">layers</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">activation</span><span class="o">=</span><span class="kc">None</span><span class="p">)])</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">model_IF</span> <span class="o">=</span> <span class="n">IFInterpolator</span><span class="p">()</span>  <span class="c1"># instantiate POSYDON initial-final interpolator object</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model_IF</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">IF_interpolator</span><span class="p">)</span>
+                
+<div class="viewcode-block" id="Density.train">
+<a class="viewcode-back" href="../../../api_reference/posydon.interpolation.html#posydon.interpolation.profile_interpolation.Density.train">[docs]</a>
+    <span class="k">def</span> <span class="nf">train</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">loss</span><span class="o">=</span><span class="n">losses</span><span class="o">.</span><span class="n">MeanSquaredError</span><span class="p">(),</span><span class="n">prof_epochs</span><span class="o">=</span><span class="mi">3000</span><span class="p">,</span><span class="n">prof_patience</span><span class="o">=</span><span class="mi">200</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Trains NN models. </span>
+<span class="sd">        Args: </span>
+<span class="sd">            loss (object) : loss function for training.</span>
+<span class="sd">            prof_epochs (int) : number of epochs used to train neural network</span>
+<span class="sd">            prof_patience (int) : patience parameter for callback in neural network</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;training on PCA weights...&quot;</span><span class="p">)</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">model_prof</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">optimizers</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span><span class="n">clipnorm</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span><span class="n">loss</span><span class="o">=</span><span class="n">loss</span><span class="p">)</span>
+        <span class="n">callback</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">callbacks</span><span class="o">.</span><span class="n">EarlyStopping</span><span class="p">(</span><span class="n">monitor</span><span class="o">=</span><span class="s2">&quot;loss&quot;</span><span class="p">,</span><span class="n">patience</span><span class="o">=</span><span class="n">prof_patience</span><span class="p">)</span>
+        <span class="n">history</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_prof</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">initial</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">pca_weights</span><span class="p">,</span>
+                                      <span class="n">epochs</span><span class="o">=</span><span class="n">prof_epochs</span><span class="p">,</span><span class="n">callbacks</span><span class="o">=</span><span class="p">[</span><span class="n">callback</span><span class="p">],</span><span class="n">verbose</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                                      <span class="n">validation_data</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">valid_initial</span><span class="p">,</span>
+                                                       <span class="bp">self</span><span class="o">.</span><span class="n">valid_pca_weights</span><span class="p">))</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">model_rho</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">optimizers</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span><span class="n">clipnorm</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span><span class="n">loss</span><span class="o">=</span><span class="n">loss</span><span class="p">)</span>
+        <span class="n">callback</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">callbacks</span><span class="o">.</span><span class="n">EarlyStopping</span><span class="p">(</span><span class="n">monitor</span><span class="o">=</span><span class="s2">&quot;loss&quot;</span><span class="p">,</span><span class="n">patience</span><span class="o">=</span><span class="mi">40</span><span class="p">)</span>
+        <span class="n">history</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_rho</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">initial</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">rho_min</span><span class="p">,</span>
+                                     <span class="n">epochs</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">callbacks</span><span class="o">=</span><span class="p">[</span><span class="n">callback</span><span class="p">],</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                                     <span class="n">validation_data</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">valid_initial</span><span class="p">,</span>
+                                                      <span class="bp">self</span><span class="o">.</span><span class="n">valid_rho_min</span><span class="p">))</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">loss_history</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">history</span><span class="o">.</span><span class="n">history</span><span class="p">[</span><span class="s1">&#39;loss&#39;</span><span class="p">],</span><span class="n">history</span><span class="o">.</span><span class="n">history</span><span class="p">[</span><span class="s1">&#39;val_loss&#39;</span><span class="p">]])</span>
+                                     
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;done training&quot;</span><span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="Density.predict">
+<a class="viewcode-back" href="../../../api_reference/posydon.interpolation.html#posydon.interpolation.profile_interpolation.Density.predict">[docs]</a>
+    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">inputs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Predicts profile for n sets of given inputs, in array of shape (n,3).</span>
+<span class="sd">        Args: </span>
+<span class="sd">            inputs (array-like) : log-space initial conditions of N binaries to predict, shape (N,3).</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            mass_coords (array-like) : linear-scale mass enclosed profile coordinates.</span>
+<span class="sd">            density_profiles (array_like) : log-scale density profile coordinates.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># predict PCA weights</span>
+        <span class="n">regress_prof</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_prof</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">pca_weights_pred</span> <span class="o">=</span> <span class="n">regress_prof</span><span class="p">(</span><span class="n">inputs</span><span class="p">)</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
+                
+        <span class="c1"># predict surface density</span>
+        <span class="n">regress_rho</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_rho</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">min_rho</span> <span class="o">=</span> <span class="n">regress_rho</span><span class="p">(</span><span class="n">inputs</span><span class="p">)</span><span class="o">.</span><span class="n">numpy</span><span class="p">()[:,</span><span class="mi">0</span><span class="p">]</span>
+        
+        <span class="c1"># IF interpolate final mass, center density </span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">hms_s2</span><span class="o">==</span><span class="kc">False</span><span class="p">:</span>
+            <span class="n">m_ind</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_IF</span><span class="o">.</span><span class="n">interpolators</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">out_keys</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">&quot;star_1_mass&quot;</span><span class="p">)</span>
+            <span class="n">center_ind</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_IF</span><span class="o">.</span><span class="n">interpolators</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">out_keys</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s1">&#39;S1_log_center_Rho&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">m_ind</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_IF</span><span class="o">.</span><span class="n">interpolators</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">out_keys</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">&quot;star_2_mass&quot;</span><span class="p">)</span>
+            <span class="n">center_ind</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_IF</span><span class="o">.</span><span class="n">interpolators</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">out_keys</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s1">&#39;S2_log_center_Rho&#39;</span><span class="p">)</span>
+        <span class="n">max_rho</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_IF</span><span class="o">.</span><span class="n">interpolators</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">test_interpolator</span><span class="p">(</span><span class="mi">10</span><span class="o">**</span><span class="n">inputs</span><span class="p">)[:,</span><span class="n">center_ind</span><span class="p">]</span>                    
+        <span class="n">pred_mass</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_IF</span><span class="o">.</span><span class="n">interpolators</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">test_interpolator</span><span class="p">(</span><span class="mi">10</span><span class="o">**</span><span class="n">inputs</span><span class="p">)[:,</span><span class="n">m_ind</span><span class="p">]</span>
+            
+        <span class="c1"># reconstruct profile</span>
+        <span class="n">norm_prof</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pca</span><span class="o">.</span><span class="n">inverse_transform</span><span class="p">(</span><span class="n">pca_weights_pred</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">scaling</span><span class="p">)</span>
+        <span class="n">density_profiles</span> <span class="o">=</span> <span class="n">norm_prof</span><span class="o">*</span><span class="p">(</span><span class="n">max_rho</span><span class="p">[:,</span><span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span><span class="o">-</span><span class="n">min_rho</span><span class="p">[:,</span><span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">])</span> \
+                           <span class="o">+</span> <span class="n">min_rho</span><span class="p">[:,</span><span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span>
+        
+        <span class="c1"># construct mass enclosed profile coordinates</span>
+        <span class="n">mass_coords</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">200</span><span class="p">)</span><span class="o">*</span><span class="n">pred_mass</span><span class="p">[:,</span><span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span> 
+        
+        <span class="k">return</span> <span class="n">mass_coords</span><span class="p">,</span><span class="n">density_profiles</span></div>
+</div>
+
+
+    
+<div class="viewcode-block" id="Composition">
+<a class="viewcode-back" href="../../../api_reference/posydon.interpolation.html#posydon.interpolation.profile_interpolation.Composition">[docs]</a>
+<span class="k">class</span> <span class="nc">Composition</span><span class="p">:</span>
+    
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">initial</span><span class="p">,</span><span class="n">h_profiles</span><span class="p">,</span><span class="n">he_profiles</span><span class="p">,</span><span class="n">star_state</span><span class="p">,</span>
+                 <span class="n">valid_initial</span><span class="p">,</span><span class="n">valid_h_profiles</span><span class="p">,</span><span class="n">valid_he_profiles</span><span class="p">,</span><span class="n">valid_star_state</span><span class="p">,</span>
+                 <span class="n">IF_interpolator</span><span class="p">,</span><span class="n">training_epochs</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">training_patience</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span><span class="n">hms_s2</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Creates and trains H mass fraction and He mass fraction profiles model.</span>
+<span class="sd">        Args:</span>
+<span class="sd">            initial (array-like) : log-space initial conditions for training data.</span>
+<span class="sd">            h_profiles (array-like) : final H mass fraction profiles for training data. </span>
+<span class="sd">            he_profiles (array-like) : final He mass fraction profiles for training data. </span>
+<span class="sd">            star_state (array-like) : final star 1 state for training data.</span>
+<span class="sd">            valid_initial (array-like) : log-space initial conditions for validation data.</span>
+<span class="sd">            valid_h_profiles (array-like) : final H mass fraction profiles for validation data.</span>
+<span class="sd">            valid_he_profiles (array-like) : final He mass fraction profiles for validation data.</span>
+<span class="sd">            valid_star_state (array-like) : final star 1 state for testing data.</span>
+<span class="sd">            IF_interpolator (string) : path to .pkl file for IF interpolator</span>
+<span class="sd">            training_epochs (int) : number of epochs used to train neural networks</span>
+<span class="sd">            training_patience (int) : patience parameter for callback in neural networks</span>
+<span class="sd">            hms_s2 (Boolean) : option to do profiles of star 2 in HMS-HMS grid</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hms_s2</span> <span class="o">=</span> <span class="n">hms_s2</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">initial</span> <span class="o">=</span> <span class="n">initial</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">h_profiles</span> <span class="o">=</span> <span class="n">h_profiles</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">he_profiles</span> <span class="o">=</span> <span class="n">he_profiles</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">star_state</span> <span class="o">=</span> <span class="n">star_state</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">valid_initial</span> <span class="o">=</span> <span class="n">valid_initial</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">valid_h_profiles</span> <span class="o">=</span> <span class="n">valid_h_profiles</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">valid_he_profiles</span> <span class="o">=</span> <span class="n">valid_he_profiles</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">valid_star_state</span> <span class="o">=</span> <span class="n">valid_star_state</span>
+
+        <span class="c1"># load IF interpolator</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model_IF</span> <span class="o">=</span> <span class="n">IFInterpolator</span><span class="p">()</span>  <span class="c1"># instantiate POSYDON initial-final interpolator object</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model_IF</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">IF_interpolator</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">interp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_IF</span><span class="o">.</span><span class="n">interpolators</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">hms_s2</span><span class="o">==</span><span class="kc">False</span><span class="p">:</span> <span class="c1"># default to star 1</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">c_h_ind</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">interp</span><span class="o">.</span><span class="n">out_keys</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">&quot;S1_center_h1&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">s_h_ind</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">interp</span><span class="o">.</span><span class="n">out_keys</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">&quot;S1_surface_h1&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">c_he_ind</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">interp</span><span class="o">.</span><span class="n">out_keys</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">&quot;S1_center_he4&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">s_he_ind</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">interp</span><span class="o">.</span><span class="n">out_keys</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">&quot;S1_surface_he4&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span> <span class="c1"># if interpolating star 2 profiles in HMS-HMS grid</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">c_h_ind</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">interp</span><span class="o">.</span><span class="n">out_keys</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">&quot;S2_center_h1&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">s_h_ind</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">interp</span><span class="o">.</span><span class="n">out_keys</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">&quot;S2_surface_h1&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">c_he_ind</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">interp</span><span class="o">.</span><span class="n">out_keys</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">&quot;S2_center_he4&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">s_he_ind</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">interp</span><span class="o">.</span><span class="n">out_keys</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">&quot;S2_surface_he4&quot;</span><span class="p">)</span>
+            
+        <span class="c1"># final star states</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">star_states</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;None&#39;</span><span class="p">,</span><span class="s1">&#39;WD&#39;</span><span class="p">,</span><span class="s1">&#39;NS&#39;</span><span class="p">,</span><span class="s1">&#39;BH&#39;</span><span class="p">,</span>
+                             <span class="s1">&#39;stripped_He_non_burning&#39;</span><span class="p">,</span>
+                             <span class="s1">&#39;stripped_He_Core_He_burning&#39;</span><span class="p">,</span>
+                             <span class="s1">&#39;stripped_He_Core_C_burning&#39;</span><span class="p">,</span>
+                             <span class="s1">&#39;stripped_He_Central_He_depleted&#39;</span><span class="p">,</span>
+                             <span class="s1">&#39;stripped_He_Central_C_depletion&#39;</span><span class="p">,</span>
+                             <span class="s1">&#39;H-rich_non_burning&#39;</span><span class="p">,</span>
+                             <span class="s1">&#39;H-rich_Central_He_depleted&#39;</span><span class="p">,</span>
+                             <span class="s1">&#39;H-rich_Central_C_depletion&#39;</span><span class="p">,</span>
+                             <span class="s1">&#39;H-rich_Shell_H_burning&#39;</span><span class="p">,</span>
+                             <span class="s1">&#39;H-rich_Core_H_burning&#39;</span><span class="p">,</span>
+                             <span class="s1">&#39;H-rich_Core_He_burning&#39;</span><span class="p">,</span>
+                             <span class="s1">&#39;H-rich_Core_C_burning&#39;</span><span class="p">]</span>
+        
+        <span class="c1"># sort training data into classes by final star state</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sort_ind</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">valid_sort_ind</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">star_states</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sort_ind</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">star_state</span><span class="o">==</span><span class="n">name</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">valid_sort_ind</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">valid_star_state</span><span class="o">==</span><span class="n">name</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        
+        <span class="c1"># create and train models for profile boundaries</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bounds_models</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">loss_history</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">learn_bounds</span><span class="p">(</span><span class="n">training_epochs</span><span class="p">,</span><span class="n">training_patience</span><span class="p">)</span>
+        
+<div class="viewcode-block" id="Composition.learn_bounds">
+<a class="viewcode-back" href="../../../api_reference/posydon.interpolation.html#posydon.interpolation.profile_interpolation.Composition.learn_bounds">[docs]</a>
+    <span class="k">def</span> <span class="nf">learn_bounds</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">training_epochs</span><span class="p">,</span><span class="n">training_patience</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Creates and trains NNs to predict boundary points for each star 1 state.</span>
+<span class="sd">        Args:</span>
+<span class="sd">            training_epochs (int) : number of epochs used to train neural networks</span>
+<span class="sd">            training_patience (int) : patience parameter for callback in neural networks</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            b_models (array-like) : dictionary containing boundary models.</span>
+<span class="sd">            loss_history (array-like) : training and validation loss histories</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">b_models</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">loss_history</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">empty</span> <span class="o">=</span> <span class="p">[]</span> <span class="c1"># keep track of which star states have no data</span>
+        <span class="k">for</span> <span class="n">state</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;stripped_He_Core_He_burning&#39;</span><span class="p">,</span>
+                      <span class="s1">&#39;stripped_He_Core_C_burning&#39;</span><span class="p">,</span>
+                      <span class="s1">&#39;stripped_He_Central_He_depleted&#39;</span><span class="p">,</span>
+                      <span class="s1">&#39;stripped_He_Central_C_depletion&#39;</span><span class="p">,</span>
+                      <span class="s1">&#39;H-rich_Central_He_depleted&#39;</span><span class="p">,</span>
+                      <span class="s1">&#39;H-rich_Central_C_depletion&#39;</span><span class="p">,</span>
+                      <span class="s1">&#39;H-rich_Shell_H_burning&#39;</span><span class="p">,</span>
+                      <span class="s1">&#39;H-rich_Core_H_burning&#39;</span><span class="p">,</span>
+                      <span class="s1">&#39;H-rich_Core_He_burning&#39;</span><span class="p">,</span>
+                      <span class="s1">&#39;H-rich_Core_C_burning&#39;</span><span class="p">]:</span>
+            
+            <span class="c1"># identify input/output training data for class</span>
+            <span class="n">indices</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sort_ind</span><span class="p">[</span><span class="n">state</span><span class="p">]</span>
+            <span class="n">inputs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">initial</span><span class="p">[</span><span class="n">indices</span><span class="p">]</span>
+            <span class="n">h_prof</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">h_profiles</span><span class="p">[</span><span class="n">indices</span><span class="p">]</span>
+            <span class="n">he_prof</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">he_profiles</span><span class="p">[</span><span class="n">indices</span><span class="p">]</span>
+
+            <span class="c1"># identify input/output testing data for class</span>
+            <span class="n">valid_indices</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">valid_sort_ind</span><span class="p">[</span><span class="n">state</span><span class="p">]</span>
+            <span class="n">valid_inputs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">valid_initial</span><span class="p">[</span><span class="n">valid_indices</span><span class="p">]</span>
+            <span class="n">valid_h_prof</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">valid_h_profiles</span><span class="p">[</span><span class="n">valid_indices</span><span class="p">]</span>
+            <span class="n">valid_he_prof</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">valid_he_profiles</span><span class="p">[</span><span class="n">valid_indices</span><span class="p">]</span>
+            
+            <span class="c1"># calculate boundary points for training and testing data </span>
+            <span class="k">if</span> <span class="n">state</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;H-rich_Shell_H_burning&#39;</span><span class="p">,</span>
+                         <span class="s1">&#39;H-rich_Core_H_burning&#39;</span><span class="p">,</span>
+                         <span class="s1">&#39;H-rich_Core_He_burning&#39;</span><span class="p">,</span>
+                         <span class="s1">&#39;H-rich_Core_C_burning&#39;</span><span class="p">]:</span>  <span class="c1"># profiles with 2 boundary points</span>
+                <span class="n">outs</span> <span class="o">=</span> <span class="mi">2</span>
+                <span class="n">bounds</span> <span class="o">=</span> <span class="p">[]</span>   <span class="c1"># collect information on parameters for given H and He profile shapes</span>
+                <span class="n">nonflat</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># ensures that training data only has the correct &quot;non-flat&quot; shape</span>
+                              <span class="c1"># to avoid issues with calculating the boundary points</span>
+                <span class="n">valid_bounds</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="n">valid_nonflat</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="c1"># calculate first and last points in each H profile with large increases</span>
+                <span class="c1"># (He profiles have the same boundary points)</span>
+                <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">indices</span><span class="p">)):</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="n">diff</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">h_prof</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">:]</span><span class="o">-</span><span class="n">h_prof</span><span class="p">[</span><span class="n">i</span><span class="p">][:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">&gt;</span><span class="mf">0.002</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+                        <span class="n">bounds</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">diff</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="n">diff</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="mi">1</span><span class="p">])</span><span class="o">/</span><span class="mi">200</span><span class="p">)</span>
+                        <span class="n">nonflat</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+                    <span class="k">except</span><span class="p">:</span>
+                        <span class="n">bounds</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">])</span>
+                <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">valid_indices</span><span class="p">)):</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="n">diff</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">valid_h_prof</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">:]</span><span class="o">-</span><span class="n">valid_h_prof</span><span class="p">[</span><span class="n">i</span><span class="p">][:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">&gt;</span><span class="mf">0.002</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+                        <span class="n">valid_bounds</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">diff</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="n">diff</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="mi">1</span><span class="p">])</span><span class="o">/</span><span class="mi">200</span><span class="p">)</span>
+                        <span class="n">valid_nonflat</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+                    <span class="k">except</span><span class="p">:</span>
+                        <span class="n">valid_bounds</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">])</span>
+                        
+            <span class="k">elif</span> <span class="n">state</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;H-rich_Central_He_depleted&#39;</span><span class="p">,</span>
+                           <span class="s1">&#39;H-rich_Central_C_depletion&#39;</span><span class="p">]:</span> <span class="c1"># H profiles with 1 boundary point</span>
+                <span class="n">outs</span> <span class="o">=</span> <span class="mi">3</span>
+                <span class="c1"># calculate the point in each H profile with the largest increase</span>
+                <span class="n">hbound</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">h_prof</span><span class="p">[:,</span><span class="mi">1</span><span class="p">:]</span><span class="o">-</span><span class="n">h_prof</span><span class="p">[:,:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="mi">200</span>
+                <span class="n">valid_hbound</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">valid_h_prof</span><span class="p">[:,</span><span class="mi">1</span><span class="p">:]</span><span class="o">-</span><span class="n">valid_h_prof</span><span class="p">[:,:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="mi">200</span>
+                <span class="n">max_He</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">he_prof</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="c1"># maximum He mass fraction</span>
+                <span class="n">valid_max_He</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">valid_he_prof</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+                <span class="n">dep_He</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">he_prof</span><span class="p">[:,</span><span class="mi">1</span><span class="p">:]</span><span class="o">-</span><span class="n">he_prof</span><span class="p">[:,:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="mi">200</span> <span class="c1"># location of Helium depletion zone</span>
+                <span class="n">valid_dep_He</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">valid_he_prof</span><span class="p">[:,</span><span class="mi">1</span><span class="p">:]</span><span class="o">-</span><span class="n">valid_he_prof</span><span class="p">[:,:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="mi">200</span>
+                <span class="n">bounds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">([</span><span class="n">hbound</span><span class="p">,</span><span class="n">dep_He</span><span class="p">,</span><span class="n">max_He</span><span class="p">])</span>
+                <span class="n">valid_bounds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">([</span><span class="n">valid_hbound</span><span class="p">,</span><span class="n">valid_dep_He</span><span class="p">,</span><span class="n">valid_max_He</span><span class="p">])</span>
+            
+            <span class="k">elif</span> <span class="n">state</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;stripped_He_Core_He_burning&#39;</span><span class="p">,</span>
+                         <span class="s1">&#39;stripped_He_Core_C_burning&#39;</span><span class="p">,</span>
+                         <span class="s1">&#39;stripped_He_Central_He_depleted&#39;</span><span class="p">,</span>
+                         <span class="s1">&#39;stripped_He_Central_C_depletion&#39;</span><span class="p">]:</span>
+                <span class="n">outs</span> <span class="o">=</span> <span class="mi">2</span>
+                <span class="n">bounds</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="n">nonflat</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># ensures that training data only has the correct &quot;non-flat&quot; shape</span>
+                              <span class="c1"># to avoid issues with calculating the boundary points</span>
+                <span class="n">valid_bounds</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="n">valid_nonflat</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="c1"># calculate first and points in each profile with large increases</span>
+                <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">indices</span><span class="p">)):</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="n">diff</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">he_prof</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">:]</span><span class="o">-</span><span class="n">he_prof</span><span class="p">[</span><span class="n">i</span><span class="p">][:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">&gt;</span><span class="mf">0.002</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+                        <span class="n">bounds</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">diff</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="n">diff</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="mi">1</span><span class="p">])</span><span class="o">/</span><span class="mi">200</span><span class="p">)</span>
+                        <span class="n">nonflat</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+                    <span class="k">except</span><span class="p">:</span>
+                        <span class="n">bounds</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">])</span>
+                <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">valid_indices</span><span class="p">)):</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="n">diff</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">valid_he_prof</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">:]</span><span class="o">-</span><span class="n">valid_he_prof</span><span class="p">[</span><span class="n">i</span><span class="p">][:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">&gt;</span><span class="mf">0.002</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+                        <span class="n">valid_bounds</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">diff</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="n">diff</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="mi">1</span><span class="p">])</span><span class="o">/</span><span class="mi">200</span><span class="p">)</span>
+                        <span class="n">valid_nonflat</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+                    <span class="k">except</span><span class="p">:</span>
+                        <span class="n">valid_bounds</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">])</span>
+                
+            <span class="c1"># instantiate and train model on bounds</span>
+            <span class="n">model</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">Sequential</span><span class="p">([</span>
+                    <span class="n">layers</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="n">input_dim</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span><span class="n">activation</span><span class="o">=</span><span class="kc">None</span><span class="p">),</span>
+                    <span class="n">layers</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="n">input_dim</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span><span class="n">activation</span><span class="o">=</span><span class="s1">&#39;relu&#39;</span><span class="p">),</span>
+                    <span class="n">layers</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="n">input_dim</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span><span class="n">activation</span><span class="o">=</span><span class="s1">&#39;relu&#39;</span><span class="p">),</span>
+                    <span class="n">layers</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="n">input_dim</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span><span class="n">activation</span><span class="o">=</span><span class="s1">&#39;tanh&#39;</span><span class="p">),</span>
+                    <span class="n">layers</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="n">input_dim</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span><span class="n">activation</span><span class="o">=</span><span class="s1">&#39;tanh&#39;</span><span class="p">),</span>
+                    <span class="n">layers</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="n">input_dim</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span><span class="n">activation</span><span class="o">=</span><span class="s1">&#39;tanh&#39;</span><span class="p">),</span>
+                    <span class="n">layers</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="n">outs</span><span class="p">,</span><span class="n">input_dim</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span><span class="n">activation</span><span class="o">=</span><span class="s2">&quot;sigmoid&quot;</span><span class="p">)])</span>
+
+            <span class="n">model</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">optimizers</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span><span class="n">clipnorm</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span><span class="n">loss</span><span class="o">=</span><span class="n">losses</span><span class="o">.</span><span class="n">MeanSquaredError</span><span class="p">())</span>
+            <span class="n">callback</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">callbacks</span><span class="o">.</span><span class="n">EarlyStopping</span><span class="p">(</span><span class="n">monitor</span><span class="o">=</span><span class="s1">&#39;loss&#39;</span><span class="p">,</span> <span class="n">patience</span><span class="o">=</span><span class="n">training_patience</span><span class="p">)</span>
+            
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">indices</span><span class="p">)</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
+                <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;no training data available for </span><span class="si">{</span><span class="n">state</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="n">loss_history</span><span class="p">[</span><span class="n">state</span><span class="p">]</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">empty</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+            
+            <span class="k">elif</span> <span class="n">state</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;H-rich_Central_He_depleted&#39;</span><span class="p">,</span>
+                         <span class="s1">&#39;H-rich_Central_C_depletion&#39;</span><span class="p">]:</span>
+                <span class="n">history</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">bounds</span><span class="p">),</span>
+                                    <span class="n">epochs</span><span class="o">=</span><span class="n">training_epochs</span><span class="p">,</span><span class="n">verbose</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="n">callbacks</span><span class="o">=</span><span class="p">[</span><span class="n">callback</span><span class="p">],</span>
+                                    <span class="n">validation_data</span><span class="o">=</span><span class="p">(</span><span class="n">valid_inputs</span><span class="p">,</span>
+                                                     <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">valid_bounds</span><span class="p">)))</span>
+                <span class="n">loss_history</span><span class="p">[</span><span class="n">state</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">history</span><span class="o">.</span><span class="n">history</span><span class="p">[</span><span class="s1">&#39;loss&#39;</span><span class="p">],</span><span class="n">history</span><span class="o">.</span><span class="n">history</span><span class="p">[</span><span class="s1">&#39;val_loss&#39;</span><span class="p">]])</span>
+
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">history</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">inputs</span><span class="p">[</span><span class="n">nonflat</span><span class="p">],</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">bounds</span><span class="p">)[</span><span class="n">nonflat</span><span class="p">],</span>
+                                    <span class="n">epochs</span><span class="o">=</span><span class="n">training_epochs</span><span class="p">,</span><span class="n">verbose</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="n">callbacks</span><span class="o">=</span><span class="p">[</span><span class="n">callback</span><span class="p">],</span>
+                                    <span class="n">validation_data</span><span class="o">=</span><span class="p">(</span><span class="n">valid_inputs</span><span class="p">[</span><span class="n">valid_nonflat</span><span class="p">],</span>
+                                                     <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">valid_bounds</span><span class="p">)[</span><span class="n">valid_nonflat</span><span class="p">]))</span>
+                <span class="n">loss_history</span><span class="p">[</span><span class="n">state</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">history</span><span class="o">.</span><span class="n">history</span><span class="p">[</span><span class="s1">&#39;loss&#39;</span><span class="p">],</span><span class="n">history</span><span class="o">.</span><span class="n">history</span><span class="p">[</span><span class="s1">&#39;val_loss&#39;</span><span class="p">]])</span>
+                        
+            <span class="n">b_models</span><span class="p">[</span><span class="n">state</span><span class="p">]</span> <span class="o">=</span> <span class="n">model</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;finished </span><span class="si">{</span><span class="n">state</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">b_models</span><span class="p">,</span> <span class="n">loss_history</span></div>
+
+            
+<div class="viewcode-block" id="Composition.predict_single">
+<a class="viewcode-back" href="../../../api_reference/posydon.interpolation.html#posydon.interpolation.profile_interpolation.Composition.predict_single">[docs]</a>
+    <span class="k">def</span> <span class="nf">predict_single</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">initial</span><span class="p">,</span><span class="n">center_H</span><span class="p">,</span><span class="n">surface_H</span><span class="p">,</span><span class="n">center_He</span><span class="p">,</span><span class="n">surface_He</span><span class="p">,</span><span class="n">star_state</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Predict a profile for a single binary</span>
+<span class="sd">        Args:</span>
+<span class="sd">            initial (array-like) : initial position of binary</span>
+<span class="sd">            center_H (float) : center H mass fraction </span>
+<span class="sd">            surface_H (float) : surface H mass fraction</span>
+<span class="sd">            center_He (float) : center He mass fraction </span>
+<span class="sd">            surface_He (float) : surface He mass fraction</span>
+<span class="sd">            star_state (str) : final star state</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            H (array-like) : predicted H mass fraction profile </span>
+<span class="sd">            He (array-like) : predicted He mass fraction profile</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="s2">&quot;stripped_He&quot;</span> <span class="ow">in</span> <span class="n">star_state</span><span class="p">:</span>
+            <span class="n">H</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">200</span><span class="p">)</span> <span class="c1"># stripped Helium stars have no Hydrogen</span>
+        
+        <span class="k">if</span> <span class="n">star_state</span> <span class="o">==</span> <span class="s2">&quot;stripped_He_non_burning&quot;</span><span class="p">:</span>
+            <span class="n">He</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="mi">200</span><span class="p">)</span><span class="o">*</span><span class="n">surface_He</span> <span class="c1"># non-burning stars have a flat He profile</span>
+        
+        <span class="k">if</span> <span class="n">star_state</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;stripped_He_Core_He_burning&#39;</span><span class="p">,</span>
+                 <span class="s1">&#39;stripped_He_Core_C_burning&#39;</span><span class="p">,</span>
+                 <span class="s1">&#39;stripped_He_Central_He_depleted&#39;</span><span class="p">,</span>
+                 <span class="s1">&#39;stripped_He_Central_C_depletion&#39;</span><span class="p">]:</span>
+            <span class="c1"># predicting profile shape parameters </span>
+            <span class="n">b</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bounds_models</span><span class="p">[</span><span class="n">star_state</span><span class="p">](</span><span class="n">tf</span><span class="o">.</span><span class="n">convert_to_tensor</span><span class="p">([</span><span class="n">initial</span><span class="p">]))</span><span class="o">.</span><span class="n">numpy</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>                        
+            <span class="n">He</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="mi">200</span><span class="p">)</span> <span class="o">*</span> <span class="n">center_He</span>
+            <span class="n">He</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">b</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="mi">200</span><span class="p">):]</span> <span class="o">=</span> <span class="n">surface_He</span>
+            <span class="n">f_He</span> <span class="o">=</span> <span class="n">interp1d</span><span class="p">(</span><span class="n">b</span><span class="p">,[</span><span class="n">center_He</span><span class="p">,</span><span class="n">surface_He</span><span class="p">],</span><span class="n">fill_value</span><span class="o">=</span><span class="s2">&quot;extrapolate&quot;</span><span class="p">)</span>
+            <span class="c1"># use f to construct the profile points in the shell burning region</span>
+            <span class="n">He</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">b</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="mi">200</span><span class="p">):</span><span class="nb">int</span><span class="p">(</span><span class="n">b</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="mi">200</span><span class="p">)]</span> <span class="o">=</span> <span class="n">f_He</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">200</span><span class="p">)[</span><span class="nb">int</span><span class="p">(</span><span class="n">b</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="mi">200</span><span class="p">):</span><span class="nb">int</span><span class="p">(</span><span class="n">b</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="mi">200</span><span class="p">)])</span>
+            
+        <span class="k">if</span> <span class="n">star_state</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;H-rich_non_burning&quot;</span><span class="p">,</span><span class="s2">&quot;None&quot;</span><span class="p">]:</span> <span class="c1"># these states have flat H and He profiles</span>
+            <span class="n">H</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="mi">200</span><span class="p">)</span><span class="o">*</span><span class="n">surface_H</span>
+            <span class="n">He</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="mi">200</span><span class="p">)</span><span class="o">*</span><span class="n">surface_He</span>
+            
+        <span class="k">if</span> <span class="n">star_state</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;WD&quot;</span><span class="p">,</span><span class="s2">&quot;NS&quot;</span><span class="p">,</span><span class="s2">&quot;BH&quot;</span><span class="p">]:</span> <span class="c1"># profiles for compact objects are arbitrary -- return nans</span>
+            <span class="n">H</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="mi">200</span><span class="p">)</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+            <span class="n">He</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="mi">200</span><span class="p">)</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+        
+        <span class="c1"># construct step-shaped profile - H and He profiles have symmetrical shapes</span>
+        <span class="k">if</span> <span class="n">star_state</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;H-rich_Central_He_depleted&quot;</span><span class="p">,</span>
+                  <span class="s2">&quot;H-rich_Central_C_depletion&quot;</span><span class="p">]:</span>
+            <span class="c1"># predicting profile shape parameters </span>
+            <span class="n">b</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bounds_models</span><span class="p">[</span><span class="n">star_state</span><span class="p">](</span><span class="n">tf</span><span class="o">.</span><span class="n">convert_to_tensor</span><span class="p">([</span><span class="n">initial</span><span class="p">]))</span><span class="o">.</span><span class="n">numpy</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>            
+            <span class="n">H</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="mi">200</span><span class="p">)</span><span class="o">*</span><span class="n">center_H</span>
+            <span class="n">H</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">b</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="mi">200</span><span class="p">):]</span> <span class="o">=</span> <span class="n">surface_H</span>
+            <span class="n">He</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="mi">200</span><span class="p">)</span> <span class="o">*</span> <span class="n">center_He</span>
+            <span class="n">He</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">b</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="mi">200</span><span class="p">):]</span> <span class="o">=</span> <span class="n">b</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+            <span class="n">He</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">b</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="mi">200</span><span class="p">):]</span> <span class="o">=</span> <span class="n">surface_He</span>
+        
+        <span class="c1"># construct shell-shaped profile - H and He profiles have symmetrical shapes</span>
+        <span class="k">if</span> <span class="n">star_state</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;H-rich_Shell_H_burning&quot;</span><span class="p">,</span>
+                  <span class="s2">&quot;H-rich_Core_H_burning&quot;</span><span class="p">,</span>
+                  <span class="s2">&quot;H-rich_Core_He_burning&quot;</span><span class="p">,</span>
+                  <span class="s2">&quot;H-rich_Core_C_burning&quot;</span><span class="p">]:</span>
+            <span class="c1"># predicting profile shape parameters </span>
+            <span class="n">b</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bounds_models</span><span class="p">[</span><span class="n">star_state</span><span class="p">](</span><span class="n">tf</span><span class="o">.</span><span class="n">convert_to_tensor</span><span class="p">([</span><span class="n">initial</span><span class="p">]))</span><span class="o">.</span><span class="n">numpy</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>                        
+            <span class="n">new</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span><span class="mi">200</span><span class="p">])</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">center_H</span><span class="p">,</span><span class="n">center_He</span><span class="p">])[:,</span><span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span>
+            <span class="n">new</span><span class="p">[:,</span><span class="nb">int</span><span class="p">(</span><span class="n">b</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="mi">200</span><span class="p">):]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">surface_H</span><span class="p">,</span><span class="n">surface_He</span><span class="p">])[:,</span><span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span>
+            <span class="n">f_H</span> <span class="o">=</span> <span class="n">interp1d</span><span class="p">(</span><span class="n">b</span><span class="p">,[</span><span class="n">center_H</span><span class="p">,</span><span class="n">surface_H</span><span class="p">],</span><span class="n">fill_value</span><span class="o">=</span><span class="s2">&quot;extrapolate&quot;</span><span class="p">)</span>
+            <span class="n">f_He</span> <span class="o">=</span> <span class="n">interp1d</span><span class="p">(</span><span class="n">b</span><span class="p">,[</span><span class="n">center_He</span><span class="p">,</span><span class="n">surface_He</span><span class="p">],</span><span class="n">fill_value</span><span class="o">=</span><span class="s2">&quot;extrapolate&quot;</span><span class="p">)</span>
+            <span class="c1"># use f to construct the profile points in the shell burning region</span>
+            <span class="n">new</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="nb">int</span><span class="p">(</span><span class="n">b</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="mi">200</span><span class="p">):</span><span class="nb">int</span><span class="p">(</span><span class="n">b</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="mi">200</span><span class="p">)]</span> <span class="o">=</span> <span class="n">f_H</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">200</span><span class="p">)[</span><span class="nb">int</span><span class="p">(</span><span class="n">b</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="mi">200</span><span class="p">):</span><span class="nb">int</span><span class="p">(</span><span class="n">b</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="mi">200</span><span class="p">)])</span>
+            <span class="n">new</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="nb">int</span><span class="p">(</span><span class="n">b</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="mi">200</span><span class="p">):</span><span class="nb">int</span><span class="p">(</span><span class="n">b</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="mi">200</span><span class="p">)]</span> <span class="o">=</span> <span class="n">f_He</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">200</span><span class="p">)[</span><span class="nb">int</span><span class="p">(</span><span class="n">b</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="mi">200</span><span class="p">):</span><span class="nb">int</span><span class="p">(</span><span class="n">b</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="mi">200</span><span class="p">)])</span>
+            <span class="n">H</span> <span class="o">=</span> <span class="n">new</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">He</span> <span class="o">=</span> <span class="n">new</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        
+        <span class="c1"># if there is no training data in the state, return nans</span>
+        <span class="k">if</span> <span class="n">star_state</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
+            <span class="n">H</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="mi">200</span><span class="p">)</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+            <span class="n">He</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="mi">200</span><span class="p">)</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+            
+        <span class="k">return</span> <span class="n">H</span><span class="p">,</span> <span class="n">He</span></div>
+
+        
+<div class="viewcode-block" id="Composition.predict">
+<a class="viewcode-back" href="../../../api_reference/posydon.interpolation.html#posydon.interpolation.profile_interpolation.Composition.predict">[docs]</a>
+    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">inputs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Predict H mass fraction profiles from inputs.</span>
+<span class="sd">        Args:</span>
+<span class="sd">            inputs (array-like) : log-space initial conditions of N binaries to predict, shape (N,3).</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            mass_coords (array-like) : linear-scale mass enclosed profile coordinates.</span>
+<span class="sd">            h_profiles (array_like) : H mass fraction profile coordinates.</span>
+<span class="sd">            he_profiles (array_like) : He mass fraction profile coordinates.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># IF interpolate H mass fraction values at center, surface; final star state</span>
+        <span class="n">center_h_vals</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">interp</span><span class="o">.</span><span class="n">test_interpolator</span><span class="p">(</span><span class="mi">10</span><span class="o">**</span><span class="n">inputs</span><span class="p">)[:,</span><span class="bp">self</span><span class="o">.</span><span class="n">c_h_ind</span><span class="p">]</span>
+        <span class="n">surface_h_vals</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">interp</span><span class="o">.</span><span class="n">test_interpolator</span><span class="p">(</span><span class="mi">10</span><span class="o">**</span><span class="n">inputs</span><span class="p">)[:,</span><span class="bp">self</span><span class="o">.</span><span class="n">s_h_ind</span><span class="p">]</span>
+        <span class="n">center_he_vals</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">interp</span><span class="o">.</span><span class="n">test_interpolator</span><span class="p">(</span><span class="mi">10</span><span class="o">**</span><span class="n">inputs</span><span class="p">)[:,</span><span class="bp">self</span><span class="o">.</span><span class="n">c_he_ind</span><span class="p">]</span>
+        <span class="n">surface_he_vals</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">interp</span><span class="o">.</span><span class="n">test_interpolator</span><span class="p">(</span><span class="mi">10</span><span class="o">**</span><span class="n">inputs</span><span class="p">)[:,</span><span class="bp">self</span><span class="o">.</span><span class="n">s_he_ind</span><span class="p">]</span>
+        
+        <span class="c1"># IF interpolate final masses, final star states </span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">hms_s2</span><span class="o">==</span><span class="kc">False</span><span class="p">:</span>
+            <span class="n">m_ind</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_IF</span><span class="o">.</span><span class="n">interpolators</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">out_keys</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">&quot;star_1_mass&quot;</span><span class="p">)</span>
+            <span class="n">star_state_vals</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">interp</span><span class="o">.</span><span class="n">test_classifiers</span><span class="p">(</span><span class="mi">10</span><span class="o">**</span><span class="n">inputs</span><span class="p">)[</span><span class="s1">&#39;S1_state&#39;</span><span class="p">]</span>   
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">m_ind</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_IF</span><span class="o">.</span><span class="n">interpolators</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">out_keys</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">&quot;star_2_mass&quot;</span><span class="p">)</span>
+            <span class="n">star_state_vals</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">interp</span><span class="o">.</span><span class="n">test_classifiers</span><span class="p">(</span><span class="mi">10</span><span class="o">**</span><span class="n">inputs</span><span class="p">)[</span><span class="s1">&#39;S2_state&#39;</span><span class="p">]</span>   
+        <span class="n">pred_mass</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">interp</span><span class="o">.</span><span class="n">test_interpolator</span><span class="p">(</span><span class="mi">10</span><span class="o">**</span><span class="n">inputs</span><span class="p">)[:,</span><span class="n">m_ind</span><span class="p">]</span>
+        
+        <span class="c1"># generate predicted profiles</span>
+        <span class="n">pred_profiles</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">inputs</span><span class="p">)):</span>
+            <span class="n">pred_H</span><span class="p">,</span><span class="n">pred_He</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">predict_single</span><span class="p">(</span><span class="n">inputs</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="n">center_h_vals</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="n">surface_h_vals</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
+                                                 <span class="n">center_he_vals</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="n">surface_he_vals</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="n">star_state_vals</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+            <span class="n">pred_profiles</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">pred_H</span><span class="p">,</span><span class="n">pred_He</span><span class="p">])</span>
+
+        <span class="c1"># generate mass enclosed profile coordinates</span>
+        <span class="n">mass_coords</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">200</span><span class="p">)</span><span class="o">*</span><span class="n">pred_mass</span><span class="p">[:,</span><span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span> 
+        <span class="n">h_profiles</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">pred_profiles</span><span class="p">)[:,</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">he_profiles</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">pred_profiles</span><span class="p">)[:,</span><span class="mi">1</span><span class="p">]</span>
+            
+        <span class="k">return</span> <span class="n">mass_coords</span><span class="p">,</span> <span class="n">h_profiles</span><span class="p">,</span> <span class="n">he_profiles</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Tassos Fragos.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>POSDYON Population Synthesis Configuration Guide &mdash; POSYDON v2.0.0-dev documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=8ace0c28" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../_static/documentation_options.js?v=f4b7fd8b"></script>
+        <script src="../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="The Flow Chart Object" href="flow_chart.html" />
+    <link rel="prev" title="The Binary Population Object" href="binary_population.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html">
+            
+              <img src="../../_static/posydon_logo.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                v2.0.0-dev
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../introduction-acknowledgements/intro.html">Introduction, Objectives, and Scope</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../introduction-acknowledgements/collaborative-team.html">Collaborative Team</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://posydon.org/papers.html">Publications</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started/prerequisites.html">Prerequisites</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started/installation-guide.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started/verification.html">Verification</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">User Guides</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../user-guides/user-roadmap.html">Roadmap to Becoming an Expert POSYDON User</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user-guides/web-application.html">Web Application: POSYDON Interactive Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user-guides/database-query-system.html">Database and Query System</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials and Examples</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials-examples/population-synthesis/binary-pop-syn.html">Binary-Star Population Synthesis with POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials-examples/generating-datasets/generating-datasets.html">Crafting the Core Datasets for POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials-examples/MESA-grids/running-grids.html">Architecting MESA Simulation Grids with POSYDON</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">In-Depth Components Overview</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../mesa-grids.html">MESA Grids API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../processing-pipeline.html">Processing Pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../machine-learning-components.html">Machine Learning Components</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../stellar-binary-simulation.html">Stellar &amp; Binary-star Simulation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="single_star.html">The SingleStar object</a></li>
+<li class="toctree-l2"><a class="reference internal" href="binary_star.html">The BinaryStar object</a></li>
+<li class="toctree-l2"><a class="reference internal" href="binary_population.html">The Binary Population Object</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">POSDYON Population Synthesis Configuration Guide</a></li>
+<li class="toctree-l2"><a class="reference internal" href="flow_chart.html">The Flow Chart Object</a></li>
+<li class="toctree-l2"><a class="reference internal" href="custom_hooks.html">Evolutionary Hooks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="synthetic_population.html">The Synthetic Population Object</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pop_syn_debug.html">Debugging POSYDON population synthesis models</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../api_reference/posydon.html">posydon</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api_reference/bin.html">executables</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Troubleshooting and FAQs</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../troubleshooting-faqs/installation-issues.html">Installation Issues</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../troubleshooting-faqs/code-questions.html">Code Usage Questions</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contributing to POSYDON</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing/how-to-contribute.html">How To Contribute</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing/code-style-guidelines.html">Code Style Guidelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing/reporting-issues.html">Reporting issues</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Release Notes and Changelog</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../release-notes/version-history.html">Version History of POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../release-notes/major-updates.html">Major Updates</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contact and Support</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../contact-support/contact-information.html">Contact Information</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">POSYDON</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../stellar-binary-simulation.html">Stellar &amp; Binary-star Simulation</a></li>
+      <li class="breadcrumb-item active">POSDYON Population Synthesis Configuration Guide</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/components-overview/pop_syn/population_params.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="posdyon-population-synthesis-configuration-guide">
+<span id="pop-params-guide"></span><h1>POSDYON Population Synthesis Configuration Guide<a class="headerlink" href="#posdyon-population-synthesis-configuration-guide" title="Link to this heading"></a></h1>
+<p>This documentation provides a detailed overview of the configuration options available in the Posydon software package.</p>
+<p>TODO: fill each table cell with a description of the parameter and the options</p>
+<section id="environment-variables">
+<h2>Environment Variables<a class="headerlink" href="#environment-variables" title="Link to this heading"></a></h2>
+<p>The environment variable <cite>PATH_TO_POSYDON</cite> will be read from your shell session.</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 50.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Description/Value</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><cite>PATH_TO_POSYDON</cite></p></td>
+<td><p><cite>&lt;PATH_TO_POSYDON&gt;</cite></p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="simulationproperties">
+<h2>SimulationProperties<a class="headerlink" href="#simulationproperties" title="Link to this heading"></a></h2>
+<p>TODO: add description</p>
+<section id="flow-chart">
+<h3>Flow Chart<a class="headerlink" href="#flow-chart" title="Link to this heading"></a></h3>
+<p>The flow chart is the core of POSYDON. It controls the mapping between a POSYDON binary object and its step evolution, see the <a class="reference internal" href="flow_chart.html#flow-chart"><span class="std std-ref">Flow Chart Object</span></a> page for more details.</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 50.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Description/Value</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><cite>import</cite></p></td>
+<td><p>[‘posydon.binary_evol.flow_chart’, ‘flow_chart’]</p></td>
+</tr>
+<tr class="row-odd"><td><p>absolute_import = None</p></td>
+<td><p>‘package’ (kwarg for importlib.import_module)</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="step-mesa-hms-hms-co-hms-rlo-co-hems-co-hems-rlo">
+<h3>Step MESA (HMS-HMS, CO-HMS_RLO, CO-HeMS, CO-HeMS_RLO)<a class="headerlink" href="#step-mesa-hms-hms-co-hms-rlo-co-hems-co-hems-rlo" title="Link to this heading"></a></h3>
+<p>The MESA step is the most important step of POSYDON as it leverages the POSYDON MESA grids to evolve the binary object according to one of the supported MESA binary-star grids.</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 50.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Description/Value</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><cite>import</cite></p></td>
+<td><p>[‘posydon.binary_evol.MESA.step_mesa’, ‘MS_MS_step’]</p></td>
+</tr>
+<tr class="row-odd"><td><p>absolute_import = None</p></td>
+<td><p>‘package’ (kwarg for importlib.import_module)</p></td>
+</tr>
+<tr class="row-even"><td><p><cite>interpolation_path</cite></p></td>
+<td><p>None (found by default)</p></td>
+</tr>
+<tr class="row-odd"><td><p><cite>interpolation_filename</cite></p></td>
+<td><p>None (found by default)</p></td>
+</tr>
+<tr class="row-even"><td><p><cite>interpolation_method</cite></p></td>
+<td><p>‘1NN_1NN’ (‘nearest_neighbour’, ‘linear3c_kNN’, ‘1NN_1NN’ are options)</p></td>
+</tr>
+<tr class="row-odd"><td><p><cite>save_initial_conditions</cite></p></td>
+<td><p>True (only for interpolation_method=’nearest_neighbour’)</p></td>
+</tr>
+<tr class="row-even"><td><p><cite>track_interpolation</cite></p></td>
+<td><p>False</p></td>
+</tr>
+<tr class="row-odd"><td><p><cite>stop_method</cite></p></td>
+<td><p>‘stop_at_max_time’ (‘stop_at_end’, ‘stop_at_max_time’, ‘stop_at_condition’ are options)</p></td>
+</tr>
+<tr class="row-even"><td><p><cite>stop_star</cite></p></td>
+<td><p>‘star_1’ (only for stop_method=’stop_at_condition’, ‘star_1’ and ‘star_2’ are options)</p></td>
+</tr>
+<tr class="row-odd"><td><p><cite>stop_var_name</cite></p></td>
+<td><p>None (only for stop_method=’stop_at_condition’, string)</p></td>
+</tr>
+<tr class="row-even"><td><p><cite>stop_value</cite></p></td>
+<td><p>None (only for stop_method=’stop_at_condition’, float)</p></td>
+</tr>
+<tr class="row-odd"><td><p><cite>stop_interpolate</cite></p></td>
+<td><p>True</p></td>
+</tr>
+<tr class="row-even"><td><p><cite>verbose</cite></p></td>
+<td><p>False</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="step-detached">
+<h3>Step Detached<a class="headerlink" href="#step-detached" title="Link to this heading"></a></h3>
+<p>TODO: add description</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 50.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Description/Value</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><cite>import</cite></p></td>
+<td><p>[‘posydon.binary_evol.DT.step_detached’, ‘detached_step’]</p></td>
+</tr>
+<tr class="row-odd"><td><p><cite>absolute_import</cite></p></td>
+<td><p>None (‘package’ kwarg for importlib.import_module)</p></td>
+</tr>
+<tr class="row-even"><td><p><cite>matching_method</cite></p></td>
+<td><p>‘minimize’ (options ‘minimize’ ‘root’)</p></td>
+</tr>
+<tr class="row-odd"><td><p><cite>do_wind_loss</cite></p></td>
+<td><p>True</p></td>
+</tr>
+<tr class="row-even"><td><p><cite>do_tides</cite></p></td>
+<td><p>True</p></td>
+</tr>
+<tr class="row-odd"><td><p><cite>do_gravitational_radiation</cite></p></td>
+<td><p>True</p></td>
+</tr>
+<tr class="row-even"><td><p><cite>do_magnetic_braking</cite></p></td>
+<td><p>True</p></td>
+</tr>
+<tr class="row-odd"><td><p><cite>do_stellar_evolution_and_spin_from_winds</cite></p></td>
+<td><p>True</p></td>
+</tr>
+<tr class="row-even"><td><p><cite>RLO_orbit_at_orbit_with_same_am</cite></p></td>
+<td><p>False</p></td>
+</tr>
+<tr class="row-odd"><td><p><cite>verbose</cite></p></td>
+<td><p>False</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="step-disrupted">
+<h3>Step Disrupted<a class="headerlink" href="#step-disrupted" title="Link to this heading"></a></h3>
+<p>TODO: add description</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 50.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Description/Value</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><cite>import</cite></p></td>
+<td><p>[‘posydon.binary_evol.DT.step_disrupted’,’DisruptedStep’]</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="step-merged">
+<h3>Step Merged<a class="headerlink" href="#step-merged" title="Link to this heading"></a></h3>
+<p>TODO: add description</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 50.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Description/Value</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><cite>import</cite></p></td>
+<td><p>[‘posydon.binary_evol.DT.step_merged’,’MergedStep’]</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="step-initially-single">
+<h3>Step Initially Single<a class="headerlink" href="#step-initially-single" title="Link to this heading"></a></h3>
+<p>TODO: add description</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 50.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Description/Value</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><cite>import</cite></p></td>
+<td><p>[‘posydon.binary_evol.DT.step_initially_single’,’InitiallySingleStep’]</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="step-common-envelope">
+<h3>Step Common Envelope<a class="headerlink" href="#step-common-envelope" title="Link to this heading"></a></h3>
+<p>TODO: add description</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 50.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Description/Value</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><cite>import</cite></p></td>
+<td><p>[‘posydon.binary_evol.CE.step_CEE’, ‘StepCEE’]</p></td>
+</tr>
+<tr class="row-odd"><td><p><cite>absolute_import</cite></p></td>
+<td><p>None(‘package’ kwarg for importlib.import_module)</p></td>
+</tr>
+<tr class="row-even"><td><p><cite>prescription</cite></p></td>
+<td><p>‘alpha-lambda’</p></td>
+</tr>
+<tr class="row-odd"><td><p><cite>common_envelope_efficiency</cite></p></td>
+<td><p>1.0 (float in [0, inf])</p></td>
+</tr>
+<tr class="row-even"><td><p><cite>common_envelope_option_for_lambda</cite></p></td>
+<td><p>‘lambda_from_grid_final_values’ (options are: (1) ‘default_lambda’, (2) ‘lambda_from_grid_final_values’, (3) ‘lambda_from_profile_gravitational’, (4) ‘lambda_from_profile_gravitational_plus_internal’, (5) ‘lambda_from_profile_gravitational_plus_internal_minus_recombination’)</p></td>
+</tr>
+<tr class="row-odd"><td><p><cite>common_envelope_lambda_default</cite></p></td>
+<td><p>0.5 (float in [0, inf] used only for option (1))</p></td>
+</tr>
+<tr class="row-even"><td><p><cite>common_envelope_option_for_HG_star</cite></p></td>
+<td><p>‘optimistic’ (options are ‘optimistic’, ‘pessimistic’)</p></td>
+</tr>
+<tr class="row-odd"><td><p><cite>common_envelope_alpha_thermal</cite></p></td>
+<td><p>1.0 (float in [0, inf] used only for option for (4), (5))</p></td>
+</tr>
+<tr class="row-even"><td><p><cite>core_definition_H_fraction</cite></p></td>
+<td><p>0.1 (options are 0.01, 0.1, 0.3)</p></td>
+</tr>
+<tr class="row-odd"><td><p><cite>core_definition_He_fraction</cite></p></td>
+<td><p>0.1</p></td>
+</tr>
+<tr class="row-even"><td><p><cite>CEE_tolerance_err</cite></p></td>
+<td><p>0.001 (float in [0, inf])</p></td>
+</tr>
+<tr class="row-odd"><td><p><cite>common_envelope_option_after_succ_CEE</cite></p></td>
+<td><p>‘core_not_replaced_noMT’ (options are ‘core_not_replaced_noMT’ ‘core_replaced_noMT’, ‘core_not_replaced_stableMT’ ‘core_not_replaced_windloss’)</p></td>
+</tr>
+<tr class="row-even"><td><p><cite>verbose</cite></p></td>
+<td><p>False</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="step-supernova">
+<h3>Step Supernova<a class="headerlink" href="#step-supernova" title="Link to this heading"></a></h3>
+<p>TODO: add description</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 50.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Description/Value</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><cite>import</cite></p></td>
+<td><p>[‘posydon.binary_evol.SN.step_SN’, ‘StepSN’]</p></td>
+</tr>
+<tr class="row-odd"><td><p><cite>absolute_import</cite></p></td>
+<td><p>None (‘package’ kwarg for importlib.import_module)</p></td>
+</tr>
+<tr class="row-even"><td><p><cite>mechanism</cite></p></td>
+<td><p>‘Patton&amp;Sukhbold20-engine’ (options are: ‘direct’, Fryer+12-rapid’, ‘Fryer+12-delayed’, ‘Sukhbold+16-engine’, ‘Patton&amp;Sukhbold20-engine’)</p></td>
+</tr>
+<tr class="row-odd"><td><p><cite>engine</cite></p></td>
+<td><p>‘N20’ (options are ‘N20’ for ‘Sukhbold+16-engine’, ‘Patton&amp;Sukhbold20-engine’ or None for the others)</p></td>
+</tr>
+<tr class="row-even"><td><p><cite>PISN</cite></p></td>
+<td><p>‘Marchant+19’ (options are None, “Marchant+19”)</p></td>
+</tr>
+<tr class="row-odd"><td><p><cite>ECSN</cite></p></td>
+<td><p>“Podsiadlowksi+04” (options are “Tauris+15”, “Podsiadlowksi+04”)</p></td>
+</tr>
+<tr class="row-even"><td><p><cite>conserve_hydrogen_envelope</cite></p></td>
+<td><p>True</p></td>
+</tr>
+<tr class="row-odd"><td><p><cite>max_neutrino_mass_loss</cite></p></td>
+<td><p>0.5 (float in [0,inf])</p></td>
+</tr>
+<tr class="row-even"><td><p><cite>max_NS_mass</cite></p></td>
+<td><p>2.5 (float in [0,inf])</p></td>
+</tr>
+<tr class="row-odd"><td><p><cite>use_interp_values</cite></p></td>
+<td><p>True</p></td>
+</tr>
+<tr class="row-even"><td><p><cite>use_profiles</cite></p></td>
+<td><p>True</p></td>
+</tr>
+<tr class="row-odd"><td><p><cite>use_core_masses</cite></p></td>
+<td><p>True</p></td>
+</tr>
+<tr class="row-even"><td><p><cite>approx_at_he_depletion</cite></p></td>
+<td><p>False</p></td>
+</tr>
+<tr class="row-odd"><td><p><cite>kick</cite></p></td>
+<td><p>True</p></td>
+</tr>
+<tr class="row-even"><td><p><cite>kick_normalisation</cite></p></td>
+<td><p>‘one_over_mass’ (options are “one_minus_fallback”, “one_over_mass”, “NS_one_minus_fallback_BH_one”, “one”, “zero”)</p></td>
+</tr>
+<tr class="row-odd"><td><p><cite>sigma_kick_CCSN_NS</cite></p></td>
+<td><p>265.0 (float in [0,inf])</p></td>
+</tr>
+<tr class="row-even"><td><p><cite>sigma_kick_CCSN_BH</cite></p></td>
+<td><p>265.0 (float in [0,inf])</p></td>
+</tr>
+<tr class="row-odd"><td><p><cite>sigma_kick_ECSN</cite></p></td>
+<td><p>20.0 (float in [0,inf])</p></td>
+</tr>
+<tr class="row-even"><td><p><cite>verbose</cite></p></td>
+<td><p>False</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="step-double-compact-object">
+<h3>Step Double Compact Object<a class="headerlink" href="#step-double-compact-object" title="Link to this heading"></a></h3>
+<p>TODO: add description</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 50.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Description/Value</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><cite>import</cite></p></td>
+<td><p>[‘posydon.binary_evol.DT.double_CO’, ‘DoubleCO’]</p></td>
+</tr>
+<tr class="row-odd"><td><p><cite>absolute_import</cite></p></td>
+<td><p>None (‘package’ kwarg for importlib.import_module)</p></td>
+</tr>
+<tr class="row-even"><td><p><cite>n_o_steps_interval</cite></p></td>
+<td><p>None</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="step-end">
+<h3>Step End<a class="headerlink" href="#step-end" title="Link to this heading"></a></h3>
+<p>TODO: add description</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 50.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Description/Value</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><cite>import</cite></p></td>
+<td><p>[‘posydon.binary_evol.step_end’, ‘step_end’]</p></td>
+</tr>
+<tr class="row-odd"><td><p><cite>absolute_import</cite></p></td>
+<td><p>None (‘package’ kwarg for importlib.import_module)</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="extra-hooks">
+<h3>Extra Hooks<a class="headerlink" href="#extra-hooks" title="Link to this heading"></a></h3>
+<p>TODO: add description</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 50.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Description/Value</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><cite>import</cite></p></td>
+<td><p>[‘posydon.binary_evol.simulationproperties’, ‘TimingHooks’]</p></td>
+</tr>
+<tr class="row-odd"><td><p><cite>absolute_import_1</cite></p></td>
+<td><p>None</p></td>
+</tr>
+<tr class="row-even"><td><p><cite>kwargs_1</cite></p></td>
+<td><p>{}</p></td>
+</tr>
+<tr class="row-odd"><td><p><cite>import</cite></p></td>
+<td><p>[‘posydon.binary_evol.simulationproperties’, ‘StepNamesHooks’]</p></td>
+</tr>
+<tr class="row-even"><td><p><cite>absolute_import_2</cite></p></td>
+<td><p>None</p></td>
+</tr>
+<tr class="row-odd"><td><p><cite>kwargs_2</cite></p></td>
+<td><p>{}</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="binarypopulation">
+<h2>BinaryPopulation<a class="headerlink" href="#binarypopulation" title="Link to this heading"></a></h2>
+<p>TODO: add description</p>
+<section id="binarypopulation-options">
+<h3>BinaryPopulation Options<a class="headerlink" href="#binarypopulation-options" title="Link to this heading"></a></h3>
+<p>TODO: add description</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 50.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Description/Value</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><cite>optimize_ram</cite></p></td>
+<td><p>True (save population in batches)</p></td>
+</tr>
+<tr class="row-odd"><td><p><cite>ram_per_cpu</cite></p></td>
+<td><p>None (set maximum ram per cpu before batch saving in GB)</p></td>
+</tr>
+<tr class="row-even"><td><p><cite>dump_rate</cite></p></td>
+<td><p>1000 (batch save after evolving N binaries)</p></td>
+</tr>
+<tr class="row-odd"><td><p><cite>temp_directory</cite></p></td>
+<td><p>‘batches’ (folder for keeping batch files)</p></td>
+</tr>
+<tr class="row-even"><td><p><cite>tqdm</cite></p></td>
+<td><p>False (progress bar)</p></td>
+</tr>
+<tr class="row-odd"><td><p><cite>breakdown_to_df</cite></p></td>
+<td><p>True (convert BinaryStars into DataFrames after evolution)</p></td>
+</tr>
+<tr class="row-even"><td><p><cite>use_MPI</cite></p></td>
+<td><p>True ( if True evolve with MPI, equivalent to the following: from mpi4py import MPI, comm = MPI.COMM_WORLD)</p></td>
+</tr>
+<tr class="row-odd"><td><p><cite>metallicity</cite></p></td>
+<td><p>[2., 1., 0.45, 0.2, 0.1, 0.01, 0.001, 0.0001] (In units of solar metallicity)</p></td>
+</tr>
+<tr class="row-even"><td><p><cite>entropy</cite></p></td>
+<td><p><cite>None</cite> (Random Number Generation: uses system entropy (recommended))</p></td>
+</tr>
+<tr class="row-odd"><td><p><cite>number_of_binaries</cite></p></td>
+<td><p>1000000 (int)</p></td>
+</tr>
+<tr class="row-even"><td><p><cite>star_formation</cite></p></td>
+<td><p>‘burst’ (options are ‘constant’ ‘burst’ ‘custom_linear’ ‘custom_log10’ ‘custom_linear_histogram’ ‘custom_log10_histogram’)</p></td>
+</tr>
+<tr class="row-odd"><td><p><cite>max_simulation_time</cite></p></td>
+<td><p>13.8e9 (float in [0,inf])</p></td>
+</tr>
+<tr class="row-even"><td><p><cite>binary_fraction</cite></p></td>
+<td><p>1 (float 0&lt; fraction &lt;=1)</p></td>
+</tr>
+<tr class="row-odd"><td><p><cite>primary_mass_scheme</cite></p></td>
+<td><p>‘Kroupa2001’ (options are ‘Salpeter’, ‘Kroupa1993’, ‘Kroupa2001’)</p></td>
+</tr>
+<tr class="row-even"><td><p><cite>primary_mass_min</cite></p></td>
+<td><p>6.5 (float in [0,300])</p></td>
+</tr>
+<tr class="row-odd"><td><p><cite>primary_mass_max</cite></p></td>
+<td><p>250.0 (float in [0,300])</p></td>
+</tr>
+<tr class="row-even"><td><p><cite>secondary_mass_scheme</cite></p></td>
+<td><p>‘flat_mass_ratio’ (options are ‘flat_mass_ratio’, ‘q=1’)</p></td>
+</tr>
+<tr class="row-odd"><td><p><cite>secondary_mass_min</cite></p></td>
+<td><p>0.35 (float in [0,300])</p></td>
+</tr>
+<tr class="row-even"><td><p><cite>secondary_mass_max</cite></p></td>
+<td><p>250.0 (float in [0,300])</p></td>
+</tr>
+<tr class="row-odd"><td><p><cite>orbital_scheme`</cite></p></td>
+<td><p>‘period’ (options are ‘separation’, ‘period’)</p></td>
+</tr>
+<tr class="row-even"><td><p><cite>orbital_period_scheme</cite></p></td>
+<td><p>‘Sana+12_period_extended’ (used only for orbital_scheme = ‘period’)</p></td>
+</tr>
+<tr class="row-odd"><td><p><cite>orbital_period_min</cite></p></td>
+<td><p>0.75 (float i [0,inf])</p></td>
+</tr>
+<tr class="row-even"><td><p><cite>orbital_period_max</cite></p></td>
+<td><p>6000.0 (float i [0,inf])</p></td>
+</tr>
+<tr class="row-odd"><td><p><cite>#orbital_separation_scheme</cite></p></td>
+<td><p>‘log_uniform’ (used only for orbital_scheme = ‘separation’, ‘log_uniform’, ‘log_normal’)</p></td>
+</tr>
+<tr class="row-even"><td><p><cite>#orbital_separation_min</cite></p></td>
+<td><p>5.0 (float i [0,inf])</p></td>
+</tr>
+<tr class="row-odd"><td><p><cite>#orbital_separation_max</cite></p></td>
+<td><p>1e5 (float i [0,inf])</p></td>
+</tr>
+<tr class="row-even"><td><p><cite>#log_orbital_separation_mean</cite></p></td>
+<td><p>None (float i [0,inf] used only for orbital_separation_scheme =’log_normal’)</p></td>
+</tr>
+<tr class="row-odd"><td><p><cite>#log_orbital_separation_sigma</cite></p></td>
+<td><p>None (float i [0,inf] used only for orbital_separation_scheme =’log_normal’)</p></td>
+</tr>
+<tr class="row-even"><td><p><cite>eccentricity_scheme</cite></p></td>
+<td><p>‘zero’ (options are ‘zero’, ‘thermal’, ‘uniform’)</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="saving-output">
+<h2>Saving Output<a class="headerlink" href="#saving-output" title="Link to this heading"></a></h2>
+<p>TODO: add description</p>
+<section id="binarystar-output">
+<h3>BinaryStar Output<a class="headerlink" href="#binarystar-output" title="Link to this heading"></a></h3>
+<p>TODO: add description</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 50.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Description/Value</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><cite>extra_columns</cite></p></td>
+<td><p>{‘step_names’:’string’, ‘step_times’:’float64’} (‘step_times’ with from posydon.binary_evol.simulationproperties import TimingHooks)</p></td>
+</tr>
+<tr class="row-odd"><td><p><cite>only_select_columns</cite></p></td>
+<td><p>[‘state’, ‘event’, ‘time’, ‘orbital_period’, ‘eccentricity’, ‘lg_mtransfer_rate’] (all options: ‘state’, ‘event’, ‘time’, ‘separation’, ‘orbital_period’, ‘eccentricity’, ‘V_sys’, ‘rl_relative_overflow_1’, ‘rl_relative_overflow_2’, ‘lg_mtransfer_rate’, ‘mass_transfer_case’, ‘trap_radius’, ‘acc_radius’, ‘t_sync_rad_1’, ‘t_sync_conv_1’, ‘t_sync_rad_2’, ‘t_sync_conv_2’, ‘nearest_neighbour_distance’)</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="singlestar-1-and-2-output">
+<h3>SingleStar 1 and 2 Output<a class="headerlink" href="#singlestar-1-and-2-output" title="Link to this heading"></a></h3>
+<p>TODO: add description</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 50.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Description/Value</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><cite>include_S1</cite></p></td>
+<td><p>True</p></td>
+</tr>
+<tr class="row-odd"><td><p><cite>only_select_columns</cite></p></td>
+<td><p>[‘state’, ‘mass’, ‘log_R’, ‘log_L’, ‘lg_mdot’, ‘he_core_mass’, ‘he_core_radius’, ‘co_core_mass’, ‘co_core_radius’, ‘center_h1’, ‘center_he4’, ‘surface_h1’, ‘surface_he4’, ‘surf_avg_omega_div_omega_crit’, ‘spin’,] (options are: ‘state’, ‘metallicity’, ‘mass’, ‘log_R’, ‘log_L’, ‘lg_mdot’, ‘lg_system_mdot’, ‘lg_wind_mdot’, ‘he_core_mass’, ‘he_core_radius’, ‘c_core_mass’, ‘c_core_radius’, ‘o_core_mass’, ‘o_core_radius’, ‘co_core_mass’, ‘co_core_radius’, ‘center_h1’, ‘center_he4’, ‘center_c12’, ‘center_n14’, ‘center_o16’, ‘surface_h1’, ‘surface_he4’, ‘surface_c12’, ‘surface_n14’, ‘surface_o16’, ‘log_LH’, ‘log_LHe’, ‘log_LZ’, ‘log_Lnuc’, ‘c12_c12’, ‘center_gamma’, ‘avg_c_in_c_core’, ‘surf_avg_omega’, ‘surf_avg_omega_div_omega_crit’, ‘total_moment_of_inertia’, ‘log_total_angular_momentum’, ‘spin’, ‘conv_env_top_mass’, ‘conv_env_bot_mass’, ‘conv_env_top_radius’, ‘conv_env_bot_radius’, ‘conv_env_turnover_time_g’, ‘conv_env_turnover_time_l_b’, ‘conv_env_turnover_time_l_t’, ‘envelope_binding_energy’, ‘mass_conv_reg_fortides’, ‘thickness_conv_reg_fortides’, ‘radius_conv_reg_fortides’, ‘lambda_CE_1cent’, ‘lambda_CE_10cent’, ‘lambda_CE_30cent’, ‘lambda_CE_pure_He_star_10cent’, ‘profile’)</p></td>
+</tr>
+<tr class="row-even"><td><p><cite>scalar_names</cite></p></td>
+<td><p>[ ‘natal_kick_array’, ‘SN_type’, ‘f_fb’, ‘spin_orbit_tilt’, ‘m_disk_accreted’, ‘m_disk_radiated’]</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="binary_population.html" class="btn btn-neutral float-left" title="The Binary Population Object" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="flow_chart.html" class="btn btn-neutral float-right" title="The Flow Chart Object" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Tassos Fragos.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,1082 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Explore the assumption of star-formation history and DCO compute rates at one single metallicity 📖 &mdash; POSYDON v2.0.0-dev documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/nbsphinx-code-cells.css" />
+      <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=8ace0c28" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../_static/documentation_options.js?v=f4b7fd8b"></script>
+        <script src="../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+        <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Debugging POSYDON Binary Population Synthesis 🐞" href="debug_pop.html" />
+    <link rel="prev" title="Computing Long-Duration Gamma-Ray Bursts from Double Compact Object Populations 🌌" href="lgrb_pop_syn.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html">
+            
+              <img src="../../_static/posydon_logo.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                v2.0.0-dev
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../introduction-acknowledgements/intro.html">Introduction, Objectives, and Scope</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../introduction-acknowledgements/collaborative-team.html">Collaborative Team</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://posydon.org/papers.html">Publications</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started/prerequisites.html">Prerequisites</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started/installation-guide.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started/verification.html">Verification</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">User Guides</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../user-guides/user-roadmap.html">Roadmap to Becoming an Expert POSYDON User</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user-guides/web-application.html">Web Application: POSYDON Interactive Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user-guides/database-query-system.html">Database and Query System</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials and Examples</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="binary-pop-syn.html">Binary-Star Population Synthesis with POSYDON</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="10_binaries_pop_syn.html">Your First Binary Simulations with POSYDON 🌠</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pop_syn.html">Large-Scale Population Synthesis on HPC Facilities 🚀</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pop_syn.html#Combining-runs-into-single-metallicity-files">Combining runs into single metallicity files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bbh_analysis.html">Analyzing Merging BBH Populations: Rates &amp; Observations 🔍</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lgrb_pop_syn.html">Computing Long-Duration Gamma-Ray Bursts from Double Compact Object Populations 🌌</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Explore the assumption of star-formation history and DCO compute rates at one single metallicity 📖</a></li>
+<li class="toctree-l2"><a class="reference internal" href="debug_pop.html">Debugging POSYDON Binary Population Synthesis 🐞</a></li>
+<li class="toctree-l2"><a class="reference internal" href="VHD.html">Van den Heuvel Diagrams</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../generating-datasets/generating-datasets.html">Crafting the Core Datasets for POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../MESA-grids/running-grids.html">Architecting MESA Simulation Grids with POSYDON</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">In-Depth Components Overview</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../components-overview/mesa-grids.html">MESA Grids API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../components-overview/processing-pipeline.html">Processing Pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../components-overview/machine-learning-components.html">Machine Learning Components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../components-overview/stellar-binary-simulation.html">Stellar &amp; Binary-star Simulation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../api_reference/posydon.html">posydon</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api_reference/bin.html">executables</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Troubleshooting and FAQs</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../troubleshooting-faqs/installation-issues.html">Installation Issues</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../troubleshooting-faqs/code-questions.html">Code Usage Questions</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contributing to POSYDON</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing/how-to-contribute.html">How To Contribute</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing/code-style-guidelines.html">Code Style Guidelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing/reporting-issues.html">Reporting issues</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Release Notes and Changelog</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../release-notes/version-history.html">Version History of POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../release-notes/major-updates.html">Major Updates</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contact and Support</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../contact-support/contact-information.html">Contact Information</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">POSYDON</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="binary-pop-syn.html">Binary-Star Population Synthesis with POSYDON</a></li>
+      <li class="breadcrumb-item active">Explore the assumption of star-formation history and DCO compute rates at one single metallicity 📖</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/tutorials-examples/population-synthesis/one_met_pop_syn.ipynb.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="Explore-the-assumption-of-star-formation-history-and-DCO-compute-rates-at-one-single-metallicity-📖">
+<h1>Explore the assumption of star-formation history and DCO compute rates at one single metallicity 📖<a class="headerlink" href="#Explore-the-assumption-of-star-formation-history-and-DCO-compute-rates-at-one-single-metallicity-📖" title="Link to this heading"></a></h1>
+<p>If you haven’t done so yet, export the path POSYDON environment variables. For example:</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%</span><span class="k">env</span> PATH_TO_POSYDON=/Users/simone/Google Drive/github/POSYDON-public/
+<span class="o">%</span><span class="k">env</span> PATH_TO_POSYDON_DATA=/Volumes/T7/
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+env: PATH_TO_POSYDON=/Users/simone/Google Drive/github/POSYDON-public/
+env: PATH_TO_POSYDON_DATA=/Volumes/T7/
+</pre></div></div>
+</div>
+<section id="Creating-the-Synthetic-Poupulation-DataFrame">
+<h2>Creating the Synthetic Poupulation DataFrame<a class="headerlink" href="#Creating-the-Synthetic-Poupulation-DataFrame" title="Link to this heading"></a></h2>
+<p>We will use the same BBH population as in the <code class="docutils literal notranslate"><span class="pre">Analyzing</span> <span class="pre">Merging</span> <span class="pre">BBH</span> <span class="pre">Populations:</span> <span class="pre">Rates</span> <span class="pre">&amp;</span> <span class="pre">Observations</span></code> tutorial. Instead of computing the distributions and rates at all metallicities, we will just focus on one metallicity, <span class="math notranslate nohighlight">\(Z_\odot\)</span>, and integrate the star formation history around solar metallicity, say <span class="math notranslate nohighlight">\([0.5Z_\odot,2Z_\odot]\)</span>. Let’s extract the merging BBH population from the <span class="math notranslate nohighlight">\(Z_\odot\)</span> population synthesis model. In this sample there are only ~200 systems, to increase the
+statistics we suggest you run a population containing x50 more binaries.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">posydon.popsyn.synthetic_population</span> <span class="kn">import</span> <span class="n">SyntheticPopulation</span>
+<span class="kn">from</span> <span class="nn">posydon.config</span> <span class="kn">import</span> <span class="n">PATH_TO_POSYDON_DATA</span>
+
+<span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">PATH_TO_POSYDON_DATA</span><span class="p">,</span> <span class="s2">&quot;POSYDON_data/tutorials/population-synthesis/example/&quot;</span><span class="p">)</span>
+<span class="n">files</span> <span class="o">=</span> <span class="p">[</span><span class="n">f</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="k">if</span> <span class="s1">&#39;1.00e+00_Zsun_population&#39;</span> <span class="ow">in</span> <span class="n">f</span><span class="p">]</span>
+<span class="n">path_to_data</span> <span class="o">=</span> <span class="p">[</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">file</span><span class="p">)</span> <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">files</span><span class="p">]</span>
+
+<span class="n">pop</span> <span class="o">=</span> <span class="n">SyntheticPopulation</span><span class="p">(</span><span class="n">path_to_ini</span><span class="o">=</span><span class="s1">&#39;./population_params.ini&#39;</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="n">pop</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span> <span class="n">path_to_data</span><span class="o">=</span><span class="n">path_to_data</span><span class="p">,</span> <span class="n">S1_state</span><span class="o">=</span><span class="s1">&#39;BH&#39;</span><span class="p">,</span> <span class="n">S2_state</span><span class="o">=</span><span class="s1">&#39;BH&#39;</span><span class="p">,</span> <span class="n">binary_state</span><span class="o">=</span><span class="s1">&#39;contact&#39;</span><span class="p">,</span> <span class="n">invert_S1S2</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">pop</span><span class="o">.</span><span class="n">save_pop</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span><span class="s1">&#39;BBH_population_1e+00_Zsun.h5&#39;</span><span class="p">))</span>
+
+<span class="n">pop</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+<span class="k">del</span> <span class="n">pop</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Binary count with (S1_state, S2_state, binary_state, binary_event) equal
+to (BH, BH, contact, None)
+in /Volumes/T7/POSYDON_data/tutorials/population-synthesis/example/1.00e+00_Zsun_population.h5 are 233
+Total binaries found are 233
+Population successfully saved!
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+/Users/simone/Google Drive/github/POSYDON-public/posydon/popsyn/synthetic_population.py:300: PerformanceWarning:
+your performance may suffer as PyTables will pickle object types that it cannot
+map directly to c-types [inferred_type-&gt;mixed,key-&gt;block1_values] [items-&gt;Index([&#39;state&#39;, &#39;event&#39;, &#39;step_names&#39;, &#39;S1_state&#39;, &#39;S2_state&#39;], dtype=&#39;object&#39;)]
+
+  self.df.to_hdf(path, key=&#39;history&#39;)
+/Users/simone/Google Drive/github/POSYDON-public/posydon/popsyn/synthetic_population.py:301: PerformanceWarning:
+your performance may suffer as PyTables will pickle object types that it cannot
+map directly to c-types [inferred_type-&gt;mixed,key-&gt;block2_values] [items-&gt;Index([&#39;state_i&#39;, &#39;event_i&#39;, &#39;step_names_i&#39;, &#39;state_f&#39;, &#39;event_f&#39;,
+       &#39;step_names_f&#39;, &#39;S1_state_i&#39;, &#39;S1_state_f&#39;, &#39;S1_SN_type&#39;, &#39;S2_state_i&#39;,
+       &#39;S2_state_f&#39;, &#39;S2_SN_type&#39;, &#39;interp_class_HMS_HMS&#39;,
+       &#39;interp_class_CO_HMS_RLO&#39;, &#39;interp_class_CO_HeMS&#39;,
+       &#39;interp_class_CO_HeMS_RLO&#39;, &#39;mt_history_HMS_HMS&#39;,
+       &#39;mt_history_CO_HMS_RLO&#39;, &#39;mt_history_CO_HeMS&#39;,
+       &#39;mt_history_CO_HeMS_RLO&#39;],
+      dtype=&#39;object&#39;)]
+
+  self.df_oneline.to_hdf(path, key=&#39;oneline&#39;)
+</pre></div></div>
+</div>
+<p>POSYDON supports different assumptions for the star formation history, e.g. instead of using the IllustrisTNG SFH, we can use the star formation rate from Madau &amp; Fragos (2018) (see Andrews et al. in prep.) and assume a log-normal metallicity distribution around the empirically measured mean metallicity at each redshift from Madau &amp; Fragos (2018), taking a dispersion of 0.5 dex (see Bavera et al. 2020). The IllustrisTNG star formation rate and metallicity evolution (solid line) is compared to
+the Madau &amp; Fragos (2018) metallicity evolution (dashed line) in Fig. X of (see Andrews et al. in prep.), which figure is reproduced below. The dotted line corresponds to the metallicity distribution of Neijssel et al. (2019).</p>
+<p><img alt="Star Fromation Rate" src="../../_images/SFR.png" /></p>
+<p><img alt="Metallicity Distribution" src="../../_images/met_dist.png" /></p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">posydon.config</span> <span class="kn">import</span> <span class="n">PATH_TO_POSYDON_DATA</span>
+<span class="kn">from</span> <span class="nn">posydon.popsyn.synthetic_population</span> <span class="kn">import</span> <span class="n">SyntheticPopulation</span>
+
+<span class="c1"># cosmological model parameters for the rate calculation</span>
+<span class="n">MODEL</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;delta_t&#39;</span> <span class="p">:</span> <span class="mi">100</span><span class="p">,</span> <span class="c1"># Myr</span>
+    <span class="s1">&#39;SFR&#39;</span> <span class="p">:</span> <span class="s1">&#39;Madau+Fragos17&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;sigma_SFR&#39;</span> <span class="p">:</span> <span class="s1">&#39;Bavera+20&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;Z_max&#39;</span> <span class="p">:</span> <span class="mf">1.</span><span class="p">,</span>
+    <span class="s1">&#39;Zsun&#39;</span> <span class="p">:</span> <span class="mf">0.0142</span><span class="p">,</span>
+    <span class="s1">&#39;select_one_met&#39;</span> <span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="s1">&#39;dlogZ&#39;</span> <span class="p">:</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="mf">0.0142</span><span class="o">/</span><span class="mi">2</span><span class="p">),</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="mf">0.0142</span><span class="o">*</span><span class="mi">2</span><span class="p">)],</span>
+<span class="p">}</span>
+
+<span class="n">pop</span> <span class="o">=</span> <span class="n">SyntheticPopulation</span><span class="p">(</span><span class="s1">&#39;./population_params.ini&#39;</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">MODEL</span><span class="o">=</span><span class="n">MODEL</span><span class="p">)</span>
+<span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">PATH_TO_POSYDON_DATA</span><span class="p">,</span> <span class="s2">&quot;POSYDON_data/tutorials/population-synthesis/example/&quot;</span><span class="p">)</span>
+<span class="n">pop</span><span class="o">.</span><span class="n">load_pop</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span><span class="s1">&#39;BBH_population_1e+00_Zsun.h5&#39;</span><span class="p">))</span>
+
+<span class="c1"># generate the BBH synthetic population</span>
+<span class="n">pop</span><span class="o">.</span><span class="n">get_dco_at_formation</span><span class="p">(</span><span class="n">S1_state</span><span class="o">=</span><span class="s1">&#39;BH&#39;</span><span class="p">,</span> <span class="n">S2_state</span><span class="o">=</span><span class="s1">&#39;BH&#39;</span><span class="p">,</span>
+                         <span class="n">oneline_cols</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;S1_natal_kick_array_0&#39;</span><span class="p">,</span> <span class="s1">&#39;S2_natal_kick_array_0&#39;</span><span class="p">],</span>
+                         <span class="n">formation_channels</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="c1"># we can save the synthetic population</span>
+<span class="c1"># pop.save_synthetic_pop(os.path.join(path,&#39;BBH_synthetic_population.h5&#39;))</span>
+<span class="c1"># pop.load_synthetic_pop(os.path.join(path,&#39;BBH_synthetic_population.h5&#39;))</span>
+
+<span class="n">cols</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;metallicity&#39;</span><span class="p">,</span><span class="s1">&#39;time&#39;</span><span class="p">,</span><span class="s1">&#39;t_delay&#39;</span><span class="p">,</span><span class="s1">&#39;S1_state&#39;</span><span class="p">,</span><span class="s1">&#39;S2_state&#39;</span><span class="p">,</span><span class="s1">&#39;S1_mass&#39;</span><span class="p">,</span><span class="s1">&#39;S2_mass&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;S1_spin&#39;</span><span class="p">,</span><span class="s1">&#39;S2_spin&#39;</span><span class="p">,</span> <span class="s1">&#39;orbital_period&#39;</span><span class="p">,</span><span class="s1">&#39;eccentricity&#39;</span><span class="p">,</span> <span class="s1">&#39;channel&#39;</span><span class="p">]</span>
+<span class="n">pop</span><span class="o">.</span><span class="n">df_synthetic</span><span class="p">[</span><span class="n">cols</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Population successfully loaded!
+Computing formation channels...
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+/Users/simone/Google Drive/github/POSYDON-public/posydon/popsyn/synthetic_population.py:804: FutureWarning: Setting an item of incompatible dtype is deprecated and will raise in a future error of pandas. Value &#39;ZAMS_oDoubleCE1_CC1_redirect_CC2_CO_contact_END&#39; has dtype incompatible with float64, please explicitly cast to a compatible dtype first.
+  self.df_oneline.loc[index,&#39;channel_debug&#39;] = formation_channel
+/Users/simone/Google Drive/github/POSYDON-public/posydon/popsyn/synthetic_population.py:808: FutureWarning: Setting an item of incompatible dtype is deprecated and will raise in a future error of pandas. Value &#39;ZAMS_oDoubleCE1_CC1_CC2_END&#39; has dtype incompatible with float64, please explicitly cast to a compatible dtype first.
+  self.df_oneline.loc[index,&#39;channel&#39;] = formation_channel
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>metallicity</th>
+      <th>time</th>
+      <th>t_delay</th>
+      <th>S1_state</th>
+      <th>S2_state</th>
+      <th>S1_mass</th>
+      <th>S2_mass</th>
+      <th>S1_spin</th>
+      <th>S2_spin</th>
+      <th>orbital_period</th>
+      <th>eccentricity</th>
+      <th>channel</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>0.0142</td>
+      <td>4.027170</td>
+      <td>2913.863804</td>
+      <td>BH</td>
+      <td>BH</td>
+      <td>13.120462</td>
+      <td>12.911080</td>
+      <td>0.079649</td>
+      <td>0.064849</td>
+      <td>1.611464</td>
+      <td>0.048133</td>
+      <td>ZAMS_oDoubleCE1_CC1_CC2_END</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>0.0142</td>
+      <td>4.027170</td>
+      <td>1500.583774</td>
+      <td>BH</td>
+      <td>BH</td>
+      <td>13.120462</td>
+      <td>12.911080</td>
+      <td>0.079649</td>
+      <td>0.063991</td>
+      <td>1.279098</td>
+      <td>0.123592</td>
+      <td>ZAMS_oDoubleCE1_CC1_CC2_END</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>0.0142</td>
+      <td>4.849573</td>
+      <td>662.821800</td>
+      <td>BH</td>
+      <td>BH</td>
+      <td>10.330899</td>
+      <td>9.888130</td>
+      <td>0.286911</td>
+      <td>0.249267</td>
+      <td>0.817643</td>
+      <td>0.165775</td>
+      <td>ZAMS_oDoubleCE1_CC1_CC2_END</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>0.0142</td>
+      <td>4.544886</td>
+      <td>845.424610</td>
+      <td>BH</td>
+      <td>BH</td>
+      <td>11.355246</td>
+      <td>10.251920</td>
+      <td>0.320931</td>
+      <td>0.298164</td>
+      <td>1.108194</td>
+      <td>0.379450</td>
+      <td>ZAMS_oDoubleCE1_CC1_CC2_END</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>0.0142</td>
+      <td>4.530889</td>
+      <td>620.499837</td>
+      <td>BH</td>
+      <td>BH</td>
+      <td>11.436823</td>
+      <td>10.900538</td>
+      <td>0.190982</td>
+      <td>0.167996</td>
+      <td>0.830194</td>
+      <td>0.107165</td>
+      <td>ZAMS_oDoubleCE1_CC1_CC2_END</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>228</th>
+      <td>0.0142</td>
+      <td>7.928745</td>
+      <td>426.765027</td>
+      <td>BH</td>
+      <td>BH</td>
+      <td>17.564588</td>
+      <td>8.155695</td>
+      <td>0.040933</td>
+      <td>0.015301</td>
+      <td>17.694336</td>
+      <td>0.957889</td>
+      <td>ZAMS_oRLO1_CC1_oRLO2_CC2_END</td>
+    </tr>
+    <tr>
+      <th>229</th>
+      <td>0.0142</td>
+      <td>4.530889</td>
+      <td>787.032676</td>
+      <td>BH</td>
+      <td>BH</td>
+      <td>11.436823</td>
+      <td>10.900538</td>
+      <td>0.190982</td>
+      <td>0.168671</td>
+      <td>0.894027</td>
+      <td>0.022964</td>
+      <td>ZAMS_oDoubleCE1_CC1_CC2_END</td>
+    </tr>
+    <tr>
+      <th>230</th>
+      <td>0.0142</td>
+      <td>4.848528</td>
+      <td>943.501358</td>
+      <td>BH</td>
+      <td>BH</td>
+      <td>10.331316</td>
+      <td>9.972710</td>
+      <td>0.312185</td>
+      <td>0.277781</td>
+      <td>0.911809</td>
+      <td>0.093335</td>
+      <td>ZAMS_oDoubleCE1_CC1_CC2_END</td>
+    </tr>
+    <tr>
+      <th>231</th>
+      <td>0.0142</td>
+      <td>4.256912</td>
+      <td>1266.769326</td>
+      <td>BH</td>
+      <td>BH</td>
+      <td>12.239574</td>
+      <td>11.551092</td>
+      <td>0.179405</td>
+      <td>0.165071</td>
+      <td>1.159215</td>
+      <td>0.175475</td>
+      <td>ZAMS_oDoubleCE1_CC1_CC2_END</td>
+    </tr>
+    <tr>
+      <th>232</th>
+      <td>0.0142</td>
+      <td>4.537286</td>
+      <td>658.997955</td>
+      <td>BH</td>
+      <td>BH</td>
+      <td>11.338870</td>
+      <td>10.753148</td>
+      <td>0.269757</td>
+      <td>0.242801</td>
+      <td>0.851837</td>
+      <td>0.137036</td>
+      <td>ZAMS_oDoubleCE1_CC1_CC2_END</td>
+    </tr>
+  </tbody>
+</table>
+<p>233 rows × 12 columns</p>
+</div></div>
+</div>
+</section>
+<section id="Compute-the-BBH-Merger-Rates-for-Z\in-[0.5Z_\odot,2Z_\odot]">
+<h2>Compute the BBH Merger Rates for <span class="math notranslate nohighlight">\(Z\in [0.5Z_\odot,2Z_\odot]\)</span><a class="headerlink" href="#Compute-the-BBH-Merger-Rates-for-Z\in-[0.5Z_\odot,2Z_\odot]" title="Link to this heading"></a></h2>
+<p>Similar to the <code class="docutils literal notranslate"><span class="pre">Analyzing</span> <span class="pre">Merging</span> <span class="pre">BBH</span> <span class="pre">Populations:</span> <span class="pre">Rates</span> <span class="pre">&amp;</span> <span class="pre">Observations</span></code> we compute the BBH merger rate density to obtain the BBH intrinsic population.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pop</span><span class="o">.</span><span class="n">get_dco_merger_rate_density</span><span class="p">()</span>
+<span class="c1"># pop.save_intrinsic_pop(os.path.join(path,&#39;BBH_intrinsic_population.h5&#39;))</span>
+<span class="c1"># pop.load_intrinsic_pop(os.path.join(path,&#39;BBH_intrinsic_population.h5&#39;))</span>
+<span class="n">pop</span><span class="o">.</span><span class="n">df_dco_intrinsic</span><span class="p">[</span><span class="n">cols</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+100%|██████████| 138/138 [00:00&lt;00:00, 162.70it/s]
+100%|██████████| 7/7 [00:09&lt;00:00,  1.30s/it]
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+DCO merger rate density in the local Universe (z=0.00): 10.74 Gpc^-3 yr^-1
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>metallicity</th>
+      <th>time</th>
+      <th>t_delay</th>
+      <th>S1_state</th>
+      <th>S2_state</th>
+      <th>S1_mass</th>
+      <th>S2_mass</th>
+      <th>S1_spin</th>
+      <th>S2_spin</th>
+      <th>orbital_period</th>
+      <th>eccentricity</th>
+      <th>channel</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>0.0142</td>
+      <td>6.205715</td>
+      <td>4.287125e-08</td>
+      <td>BH</td>
+      <td>BH</td>
+      <td>12.260188</td>
+      <td>12.183039</td>
+      <td>0.050168</td>
+      <td>8.244612e-04</td>
+      <td>326.580311</td>
+      <td>0.999994</td>
+      <td>ZAMS_CC1_oRLO2_CC2_END</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>0.0142</td>
+      <td>4.705799</td>
+      <td>9.754266e-01</td>
+      <td>BH</td>
+      <td>BH</td>
+      <td>12.850735</td>
+      <td>20.143346</td>
+      <td>0.027546</td>
+      <td>5.791334e-17</td>
+      <td>2377.230212</td>
+      <td>0.999817</td>
+      <td>ZAMS_CC1_CC2_END</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>0.0142</td>
+      <td>8.187239</td>
+      <td>2.075700e+00</td>
+      <td>BH</td>
+      <td>BH</td>
+      <td>8.314851</td>
+      <td>8.315119</td>
+      <td>0.100591</td>
+      <td>6.554160e-03</td>
+      <td>38.651550</td>
+      <td>0.996045</td>
+      <td>ZAMS_oRLO1-reverse_CC1_CC2_END</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>0.0142</td>
+      <td>6.647572</td>
+      <td>2.472628e+01</td>
+      <td>BH</td>
+      <td>BH</td>
+      <td>9.826765</td>
+      <td>9.853595</td>
+      <td>0.032525</td>
+      <td>2.400078e-02</td>
+      <td>14.240625</td>
+      <td>0.980550</td>
+      <td>ZAMS_oRLO1-contact_CC1_CC2_END</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>0.0142</td>
+      <td>6.676527</td>
+      <td>1.680554e+01</td>
+      <td>BH</td>
+      <td>BH</td>
+      <td>20.974131</td>
+      <td>12.500642</td>
+      <td>0.000531</td>
+      <td>4.772162e-04</td>
+      <td>696.487802</td>
+      <td>0.998932</td>
+      <td>ZAMS_CC1_oRLO2_CC2_END</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>26870</th>
+      <td>0.0142</td>
+      <td>7.928745</td>
+      <td>4.267650e+02</td>
+      <td>BH</td>
+      <td>BH</td>
+      <td>17.564588</td>
+      <td>8.155695</td>
+      <td>0.040933</td>
+      <td>1.530132e-02</td>
+      <td>17.694336</td>
+      <td>0.957889</td>
+      <td>ZAMS_oRLO1_CC1_oRLO2_CC2_END</td>
+    </tr>
+    <tr>
+      <th>26871</th>
+      <td>0.0142</td>
+      <td>4.530889</td>
+      <td>7.870327e+02</td>
+      <td>BH</td>
+      <td>BH</td>
+      <td>11.436823</td>
+      <td>10.900538</td>
+      <td>0.190982</td>
+      <td>1.686708e-01</td>
+      <td>0.894027</td>
+      <td>0.022964</td>
+      <td>ZAMS_oDoubleCE1_CC1_CC2_END</td>
+    </tr>
+    <tr>
+      <th>26872</th>
+      <td>0.0142</td>
+      <td>4.848528</td>
+      <td>9.435014e+02</td>
+      <td>BH</td>
+      <td>BH</td>
+      <td>10.331316</td>
+      <td>9.972710</td>
+      <td>0.312185</td>
+      <td>2.777810e-01</td>
+      <td>0.911809</td>
+      <td>0.093335</td>
+      <td>ZAMS_oDoubleCE1_CC1_CC2_END</td>
+    </tr>
+    <tr>
+      <th>26873</th>
+      <td>0.0142</td>
+      <td>4.256912</td>
+      <td>1.266769e+03</td>
+      <td>BH</td>
+      <td>BH</td>
+      <td>12.239574</td>
+      <td>11.551092</td>
+      <td>0.179405</td>
+      <td>1.650709e-01</td>
+      <td>1.159215</td>
+      <td>0.175475</td>
+      <td>ZAMS_oDoubleCE1_CC1_CC2_END</td>
+    </tr>
+    <tr>
+      <th>26874</th>
+      <td>0.0142</td>
+      <td>4.537286</td>
+      <td>6.589980e+02</td>
+      <td>BH</td>
+      <td>BH</td>
+      <td>11.338870</td>
+      <td>10.753148</td>
+      <td>0.269757</td>
+      <td>2.428005e-01</td>
+      <td>0.851837</td>
+      <td>0.137036</td>
+      <td>ZAMS_oDoubleCE1_CC1_CC2_END</td>
+    </tr>
+  </tbody>
+</table>
+<p>26875 rows × 12 columns</p>
+</div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pop</span><span class="o">.</span><span class="n">plot_rate_density</span><span class="p">(</span><span class="n">DCO</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">channels</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="p">{</span><span class="s1">&#39;ylim&#39;</span> <span class="p">:</span> <span class="p">[</span><span class="mf">0.01</span><span class="p">,</span> <span class="mi">100</span><span class="p">]})</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../../_images/tutorials-examples_population-synthesis_one_met_pop_syn_11_0.png" src="../../_images/tutorials-examples_population-synthesis_one_met_pop_syn_11_0.png" />
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pop</span><span class="o">.</span><span class="n">get_dco_detection_rate</span><span class="p">(</span><span class="n">sensitivity</span><span class="o">=</span><span class="s1">&#39;design_H1L1V1&#39;</span><span class="p">)</span> <span class="c1"># if already computed use load_data=True</span>
+<span class="c1"># pop.save_observable_pop(os.path.join(path,&#39;BBH_observable_population.h5&#39;))</span>
+<span class="c1"># pop.load_observable_pop(os.path.join(path,&#39;BBH_observable_population.h5&#39;))</span>
+<span class="n">pop</span><span class="o">.</span><span class="n">df_dco_observable</span><span class="p">[</span><span class="n">cols</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+100%|██████████| 138/138 [00:13&lt;00:00, 10.45it/s]
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+DCO detection rate at design_H1L1V1 sensitivity: 590.18 yr^-1
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>metallicity</th>
+      <th>time</th>
+      <th>t_delay</th>
+      <th>S1_state</th>
+      <th>S2_state</th>
+      <th>S1_mass</th>
+      <th>S2_mass</th>
+      <th>S1_spin</th>
+      <th>S2_spin</th>
+      <th>orbital_period</th>
+      <th>eccentricity</th>
+      <th>channel</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>0.0142</td>
+      <td>6.205715</td>
+      <td>4.287125e-08</td>
+      <td>BH</td>
+      <td>BH</td>
+      <td>12.260188</td>
+      <td>12.183039</td>
+      <td>0.050168</td>
+      <td>8.244612e-04</td>
+      <td>326.580311</td>
+      <td>0.999994</td>
+      <td>ZAMS_CC1_oRLO2_CC2_END</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>0.0142</td>
+      <td>4.705799</td>
+      <td>9.754266e-01</td>
+      <td>BH</td>
+      <td>BH</td>
+      <td>12.850735</td>
+      <td>20.143346</td>
+      <td>0.027546</td>
+      <td>5.791334e-17</td>
+      <td>2377.230212</td>
+      <td>0.999817</td>
+      <td>ZAMS_CC1_CC2_END</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>0.0142</td>
+      <td>8.187239</td>
+      <td>2.075700e+00</td>
+      <td>BH</td>
+      <td>BH</td>
+      <td>8.314851</td>
+      <td>8.315119</td>
+      <td>0.100591</td>
+      <td>6.554160e-03</td>
+      <td>38.651550</td>
+      <td>0.996045</td>
+      <td>ZAMS_oRLO1-reverse_CC1_CC2_END</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>0.0142</td>
+      <td>6.647572</td>
+      <td>2.472628e+01</td>
+      <td>BH</td>
+      <td>BH</td>
+      <td>9.826765</td>
+      <td>9.853595</td>
+      <td>0.032525</td>
+      <td>2.400078e-02</td>
+      <td>14.240625</td>
+      <td>0.980550</td>
+      <td>ZAMS_oRLO1-contact_CC1_CC2_END</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>0.0142</td>
+      <td>6.676527</td>
+      <td>1.680554e+01</td>
+      <td>BH</td>
+      <td>BH</td>
+      <td>20.974131</td>
+      <td>12.500642</td>
+      <td>0.000531</td>
+      <td>4.772162e-04</td>
+      <td>696.487802</td>
+      <td>0.998932</td>
+      <td>ZAMS_CC1_oRLO2_CC2_END</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>19536</th>
+      <td>0.0142</td>
+      <td>7.214096</td>
+      <td>1.052488e+04</td>
+      <td>BH</td>
+      <td>BH</td>
+      <td>12.340761</td>
+      <td>8.201690</td>
+      <td>0.185531</td>
+      <td>1.411149e-01</td>
+      <td>2.783007</td>
+      <td>0.396922</td>
+      <td>ZAMS_CC1_oRLO2_CC2_END</td>
+    </tr>
+    <tr>
+      <th>19537</th>
+      <td>0.0142</td>
+      <td>3.443633</td>
+      <td>6.236191e+03</td>
+      <td>BH</td>
+      <td>BH</td>
+      <td>12.585380</td>
+      <td>12.508058</td>
+      <td>0.090103</td>
+      <td>2.004811e-03</td>
+      <td>250.806290</td>
+      <td>0.988294</td>
+      <td>ZAMS_CC1_CC2_END</td>
+    </tr>
+    <tr>
+      <th>19538</th>
+      <td>0.0142</td>
+      <td>4.900714</td>
+      <td>4.178555e+03</td>
+      <td>BH</td>
+      <td>BH</td>
+      <td>17.470438</td>
+      <td>16.106886</td>
+      <td>0.202329</td>
+      <td>4.508136e-04</td>
+      <td>1580.389855</td>
+      <td>0.997143</td>
+      <td>ZAMS_oRLO1-reverse_CC1_CC2_END</td>
+    </tr>
+    <tr>
+      <th>19539</th>
+      <td>0.0142</td>
+      <td>7.154675</td>
+      <td>8.766378e+03</td>
+      <td>BH</td>
+      <td>BH</td>
+      <td>10.272165</td>
+      <td>9.248458</td>
+      <td>0.090886</td>
+      <td>1.197166e-01</td>
+      <td>3.129920</td>
+      <td>0.527011</td>
+      <td>ZAMS_oRLO1_CC1_oRLO2_CC2_END</td>
+    </tr>
+    <tr>
+      <th>19540</th>
+      <td>0.0142</td>
+      <td>3.781907</td>
+      <td>7.804838e+03</td>
+      <td>BH</td>
+      <td>BH</td>
+      <td>10.729561</td>
+      <td>11.898371</td>
+      <td>0.179142</td>
+      <td>6.654702e-02</td>
+      <td>81.451235</td>
+      <td>0.971019</td>
+      <td>ZAMS_CC1_CC2_END</td>
+    </tr>
+  </tbody>
+</table>
+<p>19541 rows × 12 columns</p>
+</div></div>
+</div>
+</section>
+<section id="Visaulize-the-BBH-Population-Properties">
+<h2>Visaulize the BBH Population Properties<a class="headerlink" href="#Visaulize-the-BBH-Population-Properties" title="Link to this heading"></a></h2>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">bins</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">xlog</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">pop</span><span class="o">.</span><span class="n">plot_hist_properties</span><span class="p">(</span><span class="s1">&#39;m_chirp&#39;</span><span class="p">,</span> <span class="n">intrinsic</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">observable</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">pop</span><span class="o">=</span><span class="s1">&#39;DCO&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+<span class="n">pop</span><span class="o">.</span><span class="n">plot_hist_properties</span><span class="p">(</span><span class="s1">&#39;chi_eff&#39;</span><span class="p">,</span> <span class="n">intrinsic</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">observable</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">pop</span><span class="o">=</span><span class="s1">&#39;DCO&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+<span class="n">pop</span><span class="o">.</span><span class="n">plot_hist_properties</span><span class="p">([</span><span class="s1">&#39;S1_mass&#39;</span><span class="p">,</span><span class="s1">&#39;S2_mass&#39;</span><span class="p">],</span> <span class="n">intrinsic</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">observable</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">pop</span><span class="o">=</span><span class="s1">&#39;DCO&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+<span class="n">pop</span><span class="o">.</span><span class="n">plot_hist_properties</span><span class="p">([</span><span class="s1">&#39;S1_spin&#39;</span><span class="p">,</span><span class="s1">&#39;S2_spin&#39;</span><span class="p">],</span> <span class="n">intrinsic</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">observable</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">pop</span><span class="o">=</span><span class="s1">&#39;DCO&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../../_images/tutorials-examples_population-synthesis_one_met_pop_syn_14_0.png" src="../../_images/tutorials-examples_population-synthesis_one_met_pop_syn_14_0.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../../_images/tutorials-examples_population-synthesis_one_met_pop_syn_14_1.png" src="../../_images/tutorials-examples_population-synthesis_one_met_pop_syn_14_1.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../../_images/tutorials-examples_population-synthesis_one_met_pop_syn_14_2.png" src="../../_images/tutorials-examples_population-synthesis_one_met_pop_syn_14_2.png" />
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../../_images/tutorials-examples_population-synthesis_one_met_pop_syn_14_3.png" src="../../_images/tutorials-examples_population-synthesis_one_met_pop_syn_14_3.png" />
+</div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="lgrb_pop_syn.html" class="btn btn-neutral float-left" title="Computing Long-Duration Gamma-Ray Bursts from Double Compact Object Populations 🌌" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="debug_pop.html" class="btn btn-neutral float-right" title="Debugging POSYDON Binary Population Synthesis 🐞" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Tassos Fragos.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
