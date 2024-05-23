@@ -25,18 +25,16 @@ from posydon.utils import constants as const
 import copy
 import warnings
 from scipy.interpolate import PchipInterpolator
+from posydon.utils.limits_thresholds import (THRESHOLD_CENTRAL_ABUNDANCE,
+    THRESHOLD_HE_NAKED_ABUNDANCE, REL_LOG10_BURNING_THRESHOLD,
+    LOG10_BURNING_THRESHOLD, STATE_NS_STARMASS_UPPER_LIMIT,
+    RL_RELATIVE_OVERFLOW_THRESHOLD, LG_MTRANSFER_RATE_THRESHOLD
+)
 
 PATH_TO_POSYDON = os.environ.get("PATH_TO_POSYDON")
 
 
 # Constants related to inferring star states
-THRESHOLD_CENTRAL_ABUNDANCE = 0.01   # central abundance for flagging depletion
-THRESHOLD_HE_NAKED_ABUNDANCE = 0.01  # for surface abundance for stripped_He
-THRESHOLD_NUCLEAR_LUMINOSITY = 0.97  # for element fraction in nuclear burning
-# relative burning threshold with respect to nuclear luminosity
-REL_LOG10_BURNING_THRESHOLD = np.log10(1.0 - THRESHOLD_NUCLEAR_LUMINOSITY)
-LOG10_BURNING_THRESHOLD = -10.0      # burning luminosity threshold (in Lsol)
-STATE_NS_STARMASS_UPPER_LIMIT = 2.5
 STATE_UNDETERMINED = "undetermined_evolutionary_state"
 
 # ALL POSSIBLE STAR STATES
@@ -90,11 +88,6 @@ MT_CASE_TO_STR = {
 # Conversion of strings to integer mass-transfer flags
 MT_STR_TO_CASE = {string: integer for integer, string
                   in MT_CASE_TO_STR.items()}
-
-# Threshold used for inferring mass-transfer, and RLO
-RL_RELATIVE_OVERFLOW_THRESHOLD = -0.05
-LG_MTRANSFER_RATE_THRESHOLD = -12
-
 
 DEFAULT_CE_OPTION_FOR_LAMBDA = \
     "lambda_from_profile_gravitational_plus_internal_minus_recombination"
@@ -1557,6 +1550,41 @@ def cumulative_mass_transfer_flag(MT_cases, shift_cases=False):
     )
 
 
+def get_i_He_depl(history):
+    """Get the index of He depletion in the history
+    
+    Arguments
+    ---------
+    history: numpy-array
+        Stellar history from MESA
+    
+    Return
+    ------
+    int
+        index of He depletion (-1 if no He depletion is found)
+    """
+    if (('surface_h1' in history.dtype.names) and
+        ('center_h1' in history.dtype.names) and
+        ('center_he4' in history.dtype.names) and
+        ('center_c12' in history.dtype.names) and
+        ('log_LH' in history.dtype.names) and
+        ('log_LHe' in history.dtype.names) and
+        ('log_Lnuc' in history.dtype.names)):
+        n_history = len(history['center_he4'])
+        for i in range(n_history):
+            state = infer_star_state(surface_h1=history['surface_h1'][i],
+                                     center_h1=history['center_h1'][i],
+                                     center_he4=history['center_he4'][i],
+                                     center_c12=history['center_c12'][i],
+                                     log_LH=history['log_LH'][i],
+                                     log_LHe=history['log_LHe'][i],
+                                     log_Lnuc=history['log_Lnuc'][i],
+                                     star_CO=False)
+            if "Central_He_depleted" in state:
+                return i 
+    return -1
+
+
 def calculate_Patton20_values_at_He_depl(star):
     """Calculate the carbon core mass and abundance very close to ignition.
 
@@ -1618,12 +1646,30 @@ def CEE_parameters_from_core_abundance_thresholds(star, verbose=False):
     None
 
     It updates the following values in the star object
-    co_core_mass_at_He_depletion: float
-        co_core_mass at He core depletion
-        (almost at the same time as carbon core ignition).
-    avg_c_in_c_core_at_He_depletion : float
-        avg carbon abundance inside CO_core_mass at He core depletion
-        (almost at the same time as carbon core ignition).
+    m_core_CE_1cent: float
+        core mass (using an element abundance of 1%)
+    m_core_CE_10cent: float
+        core mass (using an element abundance of 10%)
+    m_core_CE_30cent: float
+        core mass (using an element abundance of 30%)
+    m_core_CE_pure_He_star_10cent: float
+        core mass (using an element abundance of 10% in He)
+    r_core_CE_1cent: float
+        core radius (using an element abundance of 1%)
+    r_core_CE_10cent: float
+        core radius (using an element abundance of 10%)
+    r_core_CE_30cent: float
+        core radius (using an element abundance of 30%)
+    r_core_CE_pure_He_star_10cent: float
+        core radius (using an element abundance of 10% in He)
+    lambda_CE_1cent: float
+        lambda value (using an element abundance of 1%)
+    lambda_CE_10cent: float
+        lambda value (using an element abundance of 10%)
+    lambda_CE_30cent: float
+        lambda value (using an element abundance of 30%)
+    lambda_CE_pure_He_star_10cent: float
+        lambda value (using an element abundance of 10% in He)
 
     """
     mass = star.mass
@@ -1704,11 +1750,9 @@ def CEE_parameters_from_core_abundance_thresholds(star, verbose=False):
                 r_core_CE_10cent = radius
                 r_core_CE_30cent = radius
                 lambda_CE_pure_He_star_10cent = lambda_CE
-                lambda_CE_1cent = 1e99
-                lambda_CE_10cent = 1e99
-                # TODO: decide whether this should be None
-                #       for interpolation reasons
-                lambda_CE_30cent = 1e99
+                lambda_CE_1cent = np.nan
+                lambda_CE_10cent = np.nan
+                lambda_CE_30cent = np.nan
         else:   # CO-object or undetermined_evolutionary_state?
             m_core_CE_pure_He_star_10cent = np.nan
             m_core_CE_1cent = np.nan
@@ -2137,8 +2181,7 @@ def calculate_lambda_from_profile(
                                            CO_core_in_Hrich_star)
     if ind_core == 0:       # all star is a core, immediate successful ejection
         Ebind_i = 0.0
-        # TODO: decide whether this should be None for interpolation reasons
-        lambda_CE = 1.0e99
+        lambda_CE = np.nan
         mc1_i = m1_i
         rc1_i = radius1
     else:
@@ -2191,7 +2234,7 @@ def calculate_lambda_from_profile(
         print("Ebind_i from profile ", Ebind_i)
         print("lambda_CE ", lambda_CE)
     if not (lambda_CE > -tolerance):
-        raise ValueError("lamda_CE has a negative value")
+        raise ValueError("lambda_CE has a negative value")
     return lambda_CE, mc1_i, rc1_i
 
 
@@ -2539,7 +2582,7 @@ def calculate_binding_energy(donor_mass, donor_radius, donor_dm,
     # binding energy of the enevelope equals its gravitational energy +
     # an a_th fraction of its internal energy
     Ebind_i = Grav_energy + factor_internal_energy * U_i
-    if Ebind_i > -tolerance:
+    if not (Ebind_i < tolerance):
         warnings.warn("Ebind_i of the envelope is found positive")
     if verbose:
         print("integration of gravitational energy surface to core "

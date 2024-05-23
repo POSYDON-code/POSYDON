@@ -27,11 +27,14 @@ import warnings
 import numpy as np
 
 from posydon.utils.common_functions import (
-    infer_star_state, cumulative_mass_transfer_flag, infer_mass_transfer_case,
-    RL_RELATIVE_OVERFLOW_THRESHOLD, LG_MTRANSFER_RATE_THRESHOLD)
+    infer_star_state, cumulative_mass_transfer_flag, infer_mass_transfer_case
+)
+from posydon.utils.limits_thresholds import (
+    RL_RELATIVE_OVERFLOW_THRESHOLD, LG_MTRANSFER_RATE_THRESHOLD
+)
 from posydon.visualization.combine_TF import (
-    TF1_POOL_STABLE, TF1_POOL_UNSTABLE,
-    TF1_POOL_INITIAL_RLO, TF1_POOL_ERROR, TF2_POOL_NO_RLO
+    TF1_POOL_STABLE, TF1_POOL_UNSTABLE, TF1_POOL_INITIAL_RLO, TF1_POOL_ERROR,
+    TF2_POOL_NO_RLO, TF2_POOL_INITIAL_RLO
 )
 
 
@@ -55,6 +58,7 @@ def get_flag_from_MESA_output(MESA_log_path):
         `min_timestep_limit`, or `termination code:`, or `Terminate:`.
 
     """
+    termination_code = ''
     if MESA_log_path is not None and os.path.isfile(MESA_log_path):
         if MESA_log_path.endswith(".gz"):
             with gzip.open(MESA_log_path, "rt", errors='ignore') as log_file:
@@ -75,8 +79,15 @@ def get_flag_from_MESA_output(MESA_log_path):
             else:
                 truncate_at = len(
                     "termination code: " if has_term_code else "Terminate: ")
-                return line[truncate_at:].strip()
+                if min_timestep:
+                    # in case of "min_timestep_limit" allow to find another
+                    # termination code to overrule "min_timestep_limit"
+                    termination_code = line[truncate_at:].strip()
+                else:
+                    return line[truncate_at:].strip()
 
+    if len(termination_code)>0:
+        return termination_code
     return "reach cluster timelimit"
 
 
@@ -238,7 +249,7 @@ def get_flags_from_MESA_run(MESA_log_path, binary_history=None,
 
 def infer_interpolation_class(tf1, tf2):
     """Use the first two termination flags to infer the interpolation class."""
-    if tf1 in TF1_POOL_INITIAL_RLO:
+    if ((tf1 in TF1_POOL_INITIAL_RLO) or (tf2 in TF2_POOL_INITIAL_RLO)):
         return "initial_MT"
     if tf1 in TF1_POOL_ERROR:
         return "not_converged"

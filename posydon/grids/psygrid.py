@@ -202,7 +202,10 @@ from posydon.utils.configfile import ConfigFile
 from posydon.utils.common_functions import (orbital_separation_from_period,
                                             initialize_empty_array,
                                             infer_star_state,
-                                            THRESHOLD_CENTRAL_ABUNDANCE)
+                                            get_i_He_depl)
+from posydon.utils.limits_thresholds import (THRESHOLD_CENTRAL_ABUNDANCE,
+    THRESHOLD_CENTRAL_ABUNDANCE_LOOSE_C
+)
 from posydon.utils.gridutils import (read_MESA_data_file, read_EEP_data_file,
                                      add_field, join_lists, fix_He_core)
 from posydon.visualization.plot2D import plot2D
@@ -283,6 +286,10 @@ DEFAULT_PROFILE_COLS = [
     "neutral_fraction_H",
     "neutral_fraction_He",
     "avg_charge_He",
+]
+
+EXTRA_STAR_COLS_AT_HE_DEPLETION = [
+    "avg_c_in_c_core", "co_core_mass"
 ]
 
 # Default columns to exclude from computing history/profile downsampling
@@ -612,11 +619,21 @@ class PSyGrid:
             [(col, 'f8') for col in initial_value_columns]
             + [(col, 'f8') for col in ["X", "Y", "Z"]]
         )
+        # get extra columns at He depletion for final values
+        extra_final_values_cols = []
+        for starID in ["S1_", "S2_"]:
+            for col in all_history_columns:
+                if starID in col:
+                    for extra_col in EXTRA_STAR_COLS_AT_HE_DEPLETION:
+                        colname = starID + extra_col + "_at_He_depletion"
+                        extra_final_values_cols.append((colname, 'f8'))
+                    break
         dtype_final_values = (
             [(col, 'f8') for col in all_history_columns]
             + [(col, H5_UNICODE_DTYPE) for col in termination_flag_columns]
             + ([("interpolation_class", H5_UNICODE_DTYPE)]
                if binary_grid else [])
+            + extra_final_values_cols
         )
         self.initial_values = initialize_empty_array(
             np.empty(N_runs, dtype=dtype_initial_values))
@@ -683,6 +700,26 @@ class PSyGrid:
                 history2 = read_MESA_data_file(run.history2_path, H2_columns)
             if self.config["He_core_fix"]:
                 history2 = fix_He_core(history2)
+
+            # get values at He depletion and add them to the final values
+            for starID in ["S1_", "S2_"]:
+                if starID == "S1_":
+                    h = history1
+                elif starID == "S2_":
+                    h = history2
+                else:
+                    h = None
+                i_He_depl = -1
+                for col in EXTRA_STAR_COLS_AT_HE_DEPLETION:
+                    fvcol = starID + col + "_at_He_depletion"
+                    if fvcol in dtype_final_values.names:
+                        if ((i_He_depl==-1) and (h is not None)):
+                            i_He_depl = get_i_He_depl(h)
+                        if ((h is not None) and (col in h.dtype.names) and
+                            (i_He_depl>=0)):
+                            self.final_values[i][fvcol] = h[col][i_He_depl]
+                        else:
+                            self.final_values[i][fvcol] = np.nan
 
             # scrub histories (unless EEPs are selected or run is ignored)
             if not ignore and self.eeps is None:
@@ -854,8 +891,9 @@ class PSyGrid:
                     init_mass_1 = float(params_from_path[0])
                 # check whether stop at He depletion is requested
                 if stop_before_carbon_depletion and init_mass_1>=100.0:
-                    kept = keep_till_central_abundance_He_C(binary_history, history1,
-                                  history2, THRESHOLD_CENTRAL_ABUNDANCE, 0.1)
+                    kept = keep_till_central_abundance_He_C(binary_history,
+                               history1, history2, THRESHOLD_CENTRAL_ABUNDANCE,
+                               THRESHOLD_CENTRAL_ABUNDANCE_LOOSE_C)
                     binary_history, history1, history2, newTF1 = kept
 
                 # check whether start at RLO is requested, and chop the history

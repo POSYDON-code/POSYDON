@@ -104,7 +104,8 @@ PLOT_PROPERTIES = {
         'va': 'bottom',
         'x': 0.95,
         'y': 0.05
-    }
+    },
+    'PdfPages': None
 }
 
 list_of_colors = ['#a6611a',
