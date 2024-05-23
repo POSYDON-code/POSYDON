@@ -414,13 +414,27 @@ def simprop_kwargs_from_ini(path, verbose=False):
             # from posydon.... import ....
             #      ^ import      as   ^ name
             import_and_name = sect_dict.pop('import')
-            package = sect_dict.pop('absolute_import', None)
+            absolute_import_and_name = sect_dict.pop('absolute_import', None)
 
-            # import module
-            module = importlib.import_module(import_and_name[0],
-                                             package=package)
+            # Use absolute import if provided
+            if absolute_import_and_name is not None:
+                # unpack user specified py file, and class name to import
+                import_location, class_name = absolute_import_and_name
+                absolute_import_location = os.path.abspath(import_location)
+                # Format: remove leading / in abs path, replace / with dots, remove '.py'
+                location_as_module_name = absolute_import_location[1:].replace('/', '.').replace('.py', '')
+                
+                # create spec and load module
+                spec = importlib.util.spec_from_file_location( location_as_module_name, location=absolute_import_location)
+                module = importlib.util.module_from_spec(spec)
+                spec.loader.exec_module(module)
+            else:
+                # Use builtin posydon classes
+                import_location, class_name = import_and_name
+                # import module
+                module = importlib.import_module(import_location)
             # extract class or function
-            cls = getattr(module, import_and_name[1])
+            cls = getattr(module, class_name)
             # match the form SimulationProperties expects
             parser_dict[section] = (cls, sect_dict)
 
