@@ -482,7 +482,7 @@ def copy_ini_file(grid_type, rerun_metallicity, rerun_type, destination, cluster
     elif rerun_type == 'initial_He':
         replace_text = "fix_iniHe_pre_rerun5-0e736a853c3c2e522b76299a54aea8f5eea15d08"
     elif rerun_type == "dedt_energy_eqn":
-        replace_text = "seth_dedt_energy_eqn-2200e1863a5e33ee825620940ec8b3108b39b5ad"
+        replace_text = "seth_dedt_energy_eqn-deac5c26392b36cb7a8ff337e0d53c26568a3971"
     elif rerun_type == 'other': # e.g. 'envelope_mass_limit', 'fe_core_infall_limit'
         # this rerun uses the default inlist commit
         return
