@@ -155,6 +155,7 @@ class BinaryStar:
             else:
                 setattr(self, item, binary_kwargs.pop(item, None))
             setattr(self, item + '_history', [getattr(self, item)])
+
         for key, val in binary_kwargs.items():
             setattr(self, key, val)
         if not hasattr(self, 'inspiral_time'):
@@ -185,6 +186,7 @@ class BinaryStar:
             self.properties = properties
         else:
             self.properties = SimulationProperties()
+        
 
     def evolve(self):
         """Evolve a binary from start to finish."""
@@ -254,8 +256,8 @@ class BinaryStar:
         """Switch stars."""
         self.star_1, self.star_2 = self.star_2, self.star_1
 
-    def restore(self, i=0, delete_history=True):
-        """Restore the object to the i-th state.
+    def restore(self, i=0):
+        """Restore the BinaryStar() object to its i-th state, keeping the binary history before the i-th state.
 
         Parameters
         ----------
@@ -265,16 +267,24 @@ class BinaryStar:
 
         """
         # Move current binary properties to the ith step, using its history
-        for p in BINARYPROPERTIES:
+        for p in BINARYPROPERTIES:            
             setattr(self, p, getattr(self, '{}_history'.format(p))[i])
-        for star in (self.star_1, self.star_2):
-            star.restore(i)
 
-        # Remove the obsolete history data
-        if delete_history:
-            for p in BINARYPROPERTIES:
-                setattr(self, p + '_history',
-                        getattr(self, p + '_history')[0:i + 1])
+            ## delete the binary history after the i-th index
+            setattr(self, p + '_history', getattr(self, p + '_history')[0:i+1])
+                       
+        ## if running with extra hooks, restore any extra hook columns
+        for hook in self.properties.all_hooks_classes:
+            
+            if hasattr(hook, 'extra_binary_col_names'):
+                extra_columns = getattr(hook, 'extra_binary_col_names')
+
+                for col in extra_columns:
+                    setattr(self, col, getattr(self, col)[0:i+1])                    
+        
+        for star in (self.star_1, self.star_2):
+            star.restore(i, hooks=self.properties.all_hooks_classes)
+                             
 
     def reset(self, properties=None):
         """Reset the binary to its ZAMS state.
@@ -859,6 +869,22 @@ class BinaryStar:
                 setattr(star, attr, final_value)
                 setattr(star, attr + "_history", col_history)
 
+        # add values at He depletion
+        for colname in run.final_values.dtype.names:
+            if "at_He_depletion" in colname:
+                if colname[0:3]=="S1_":
+                    attr = colname[3:]
+                    final_value = run.final_values[colname]
+                    setattr(binary.star_1, attr, final_value)
+                elif colname[0:3]=="S2_":
+                    attr = colname[3:]
+                    final_value = run.final_values[colname]
+                    setattr(binary.star_2, attr, final_value)
+                else:
+                    attr = colname
+                    final_value = run.final_values[colname]
+                    setattr(binary, attr, final_value)
+        
         # update eccentricity
         binary.eccentricity = 0.0
         binary.eccentricity_history = [0.0] * n_steps

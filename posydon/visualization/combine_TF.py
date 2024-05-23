@@ -150,6 +150,8 @@ def combine_TF12(IC, TF2, verbose=False):
             TF12[i] = 'Not converged'
         elif IC[i] == 'no_MT':
             TF12[i] = 'no_RLOF'
+        elif IC[i] == 'stable_reverse_MT':
+            TF12[i] = 'Reverse stable MT'
         elif IC[i] == 'stable_MT':
             if '1' in TF2[i] and '2' in TF2[i]:
                 TF12[i] = 'Reverse stable MT'

@@ -264,7 +264,7 @@ def plot_popsyn_over_grid_slice(pop, grid_type, met_Zsun, slices=None, channel=N
                                 plot_dir='./', prop=None, prop_range=None, 
                                 log_prop=False, alpha=0.3, s=5., 
                                 show_fig=True, save_fig=True, close_fig=True,
-                                verbose=False):
+                                plot_extension='png', verbose=False):
 
     # load grid
     met = convert_metallicity_to_string(met_Zsun)
@@ -284,7 +284,7 @@ def plot_popsyn_over_grid_slice(pop, grid_type, met_Zsun, slices=None, channel=N
         m_COs_edges = 10**((np.log10(np.array(m_COs)[1:])+np.log10(np.array(m_COs)[:-1]))*0.5)
         m2 = [0.]+m_COs_edges.tolist()+[2*m_COs_edges[-1]]
         vars = m_COs
-        fname = 'grid_m_%1.2f.png'
+        fname = 'grid_m_%1.2f.' + plot_extension
         title = '$m_\mathrm{CO}=%1.2f\,M_\odot$'
         slice_3D_var_str='star_2_mass'
     elif 'HMS-HMS' in grid_path:
@@ -294,7 +294,7 @@ def plot_popsyn_over_grid_slice(pop, grid_type, met_Zsun, slices=None, channel=N
         dq_edges = (qs[:-1]+dq).tolist()
         dq_edges = [0.]+dq_edges+[1.]
         vars = qs.tolist()
-        fname = 'grid_q_%1.2f.png'
+        fname = 'grid_q_%1.2f.' + plot_extension
         title = '$q=%1.2f$'
         slice_3D_var_str='mass_ratio'
     else:
