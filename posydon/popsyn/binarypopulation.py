@@ -634,7 +634,7 @@ class PopulationManager:
         self.append(binary)
         return binary
 
-    def from_hdf(self, indices, where=None, restore=False):
+    def from_hdf(self, indices=None, where=None, restore=False):
         """Load a BinaryStar instance from an hdf file of a saved population.
 
         Parameters
@@ -644,11 +644,15 @@ class PopulationManager:
         where : str
             Query performed on disk to select history and oneline DataFrames.
         restore : bool
-            Restore binaries back to initial conditions.
+            If true, restore binaries back to initial conditions.
 
         """
         if where is None:
-            query_str = 'index==indices'
+            if indices is None:
+                raise ValueError("You must specify either the binary indices or a query string "
+                                 "to read from file.")               
+            else:
+                query_str = 'index==indices'                
         else:
             query_str = str(where)
 
