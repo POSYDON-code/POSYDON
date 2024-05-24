@@ -387,7 +387,8 @@ class detached_step:
                 "surface_he4",
                 "surface_h1",
                 "log_R",
-                "center_c12"
+                "center_c12",
+                "co_core_mass"
             ]
         )
 
@@ -899,14 +900,15 @@ class detached_step:
                 f'{initials[0]:.3f}  [Msun],',
                 f'{initials[1]/1e6:.3f} [Myrs]', "\n",
                 "with m(t0), log10(R(t0), center_he(t0), surface_he4(t0), "
-                "surface_h1(t0), he_core_mass(t0), center_c12(t0) = \n",
+                "surface_h1(t0), he_core_mass(t0), center_c12(t0), co_core_mass(t0) = \n",
                 f'{self.get_track_val("mass", htrack, *sol.x):.3f}',
                 f'{self.get_track_val("log_R", htrack, *sol.x):.3f}',
                 f'{self.get_track_val("center_he4", htrack, *sol.x):.4f}',
                 f'{self.get_track_val("surface_he4", htrack, *sol.x):.4f}',
                 f'{self.get_track_val("surface_h1", htrack, *sol.x):.4f}',
                 f'{self.get_track_val("he_core_mass", htrack, *sol.x):.3f}',
-                f'{self.get_track_val("center_c12", htrack, *sol.x):.4f}\n',
+                f'{self.get_track_val("center_c12", htrack, *sol.x):.4f}',
+                f'{self.get_track_val("co_core_mass", htrack, *sol.x):.3f}\n',
                 "The same values of the secondary at the end of the previous "
                 "step was = \n",
                 f'{star.mass:.3f}',
@@ -915,7 +917,8 @@ class detached_step:
                 f'{star.surface_he4:.4f}',
                 f'{star.surface_h1:.4f}',
                 f'{star.he_core_mass:.3f}',
-                f'{star.center_c12:.4f}'
+                f'{star.center_c12:.4f}',
+                f'{star.co_core_mass:.4f}'
             )
         return initials[0], initials[1], htrack
 
@@ -1082,15 +1085,15 @@ class detached_step:
                     if self.verbose or self.verbose == 1:
                         print("Matching duration: "
                               f"{t_after_matching-t_before_matching:.6g}")
-            
+
             if pd.isna(m0) or pd.isna(t0):
                 return None, None, None
-            
+
             if htrack:
                 self.grid = self.grid_Hrich
             else:
                 self.grid = self.grid_strippedHe
-            
+
             # check if m0 is in the grid
             if m0 < self.grid.grid_mass.min() or m0 > self.grid.grid_mass.max():
                 set_binary_to_failed(binary)
