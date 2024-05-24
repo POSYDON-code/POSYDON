@@ -1138,8 +1138,7 @@ class LinInterpolator(Interpolator):
         if np.any(wnan):
             Ypred[wnan, :] = self.interpolator[1].predict(Xt[wnan, :])
         if np.any(wnan):
-            warnings.warn(f"1NN interpolation used for {np.sum(wnan)} "
-                          "binaries out of hull.", InterpolationWarning)
+            warnings.warn(f"1NN interpolation used for {np.sum(wnan)} binaries out of hull.", InterpolationWarning)
         return Ypred
 
 

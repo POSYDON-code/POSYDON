@@ -2,9 +2,9 @@
 
 
 __authors__ = [
-    "Matthias Kruckow <Matthias.Kruckow@unige.ch>",
     "Monica Gallegos-Garcia <monicagallegosgarcia@u.northwestern.edu>",
     "Camille Liotine <cliotine@u.northwestern.edu>"
+    "Matthias Kruckow <Matthias.Kruckow@unige.ch>",   
 ]
 
 
@@ -13,42 +13,54 @@ import warnings
 
 class POSYDONWarning(Warning):
     """General POSYDON warning class."""
+    def __init__(self, message):
+        self.message = message
+    
+    def __str__(self):
+        return repr(self.message)
 
 class ApproximationWarning(POSYDONWarning):
     """Warning that a physical approximation was used during binary evolution."""
-    def __init__(self):
+    def __init__(self, message):
         warnings.filterwarnings("default", category=ApproximationWarning)
+        super().__init__(message)
 
 class BinaryParsingWarning(POSYDONWarning):
     """Warnings related to parsing of binaries."""
-    def __init__(self):
+    def __init__(self, message):
         warnings.filterwarnings("default", category=BinaryParsingWarning)
+        super().__init__(message)
 
 class ClassificationWarning(POSYDONWarning):
     """Warnings related to classification during binary evolution."""
-    def __init__(self):
+    def __init__(self, message):
         warnings.filterwarnings("default", category=ClassificationWarning)
+        super().__init__(message)
 
 class EvolutionWarning(POSYDONWarning):
     """Warning that something unexpeted occurred during the binary evolution, but
     the evolution is able to continue (binary did not fail)."""
-    def __init__(self):
+    def __init__(self, message):
         warnings.filterwarnings("default", category=EvolutionWarning)
+        super().__init__(message)
 
 class InterpolationWarning(POSYDONWarning):
     """Warnings related to interpolation during binary evolution."""
-    def __init__(self):
+    def __init__(self, message):
         warnings.filterwarnings("default", category=InterpolationWarning)
+        super().__init__(message)
 
 class ReplaceValueWarning(POSYDONWarning):
     """Warning that a value got replaced."""
-    def __init__(self):
+    def __init__(self, message):
         warnings.filterwarnings("default", category=ReplaceValueWarning)
+        super().__init__(message)
 
 class UnsupportedModelWarning(POSYDONWarning):
     """Warnings related to selecting a model that is not supported."""
-    def __init__(self):
+    def __init__(self, message):
         warnings.filterwarnings("default", category=UnsupportedModelWarning)
+        super().__init__(message)
 
 # The base class of all warnings is "Warning", which is derived from Exception
 #

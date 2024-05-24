@@ -289,21 +289,21 @@ class BinaryPopulation:
                 binary = self.manager.generate(index=index, **self.kwargs)
             binary.properties = self.population_properties
 
-            with warnings.catch_warnings(record=True) as w:
-                try:
-                    binary.evolve()
-                except POSYDONError as posydon_error:
-                    set_binary_to_failed(binary)
-                    if self.kwargs.get("error_checking_verbose", False):
-                        posydon_error.add_note(initial_condition_message(binary))
-                        traceback.print_exception(posydon_error)
-                except Exception as e:
-                    set_binary_to_failed(binary)
-                    e.add_note(initial_condition_message(binary))
-                    traceback.print_exception(e)
-                if len(w) > 0:
-                    warnings.simplefilter("always")
-                    binary.warning_message = [x.message for x in w]
+            #with warnings.catch_warnings(record=True) as w:
+            try:
+                binary.evolve()
+            except POSYDONError as posydon_error:
+                set_binary_to_failed(binary)
+                if self.kwargs.get("error_checking_verbose", False):
+                    posydon_error.add_note(initial_condition_message(binary))
+                    traceback.print_exception(posydon_error)
+            except Exception as e:
+                set_binary_to_failed(binary)
+                e.add_note(initial_condition_message(binary))
+                traceback.print_exception(e)
+            #if len(w) > 0:
+            #warnings.simplefilter("always")
+            #binary.warning_message = [x.message for x in w]
 
             if breakdown_to_df:
                 self.manager.breakdown_to_df(binary, **self.kwargs)
