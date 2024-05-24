@@ -25,7 +25,6 @@ __authors__ = [
     "Scott Coughlin <scottcoughlin2014@u.northwestern.edu>",
 ]
 
-
 import signal
 import warnings
 import copy
@@ -238,7 +237,7 @@ class BinaryStar:
                     "SimulationProperties.".format(next_step_name))
 
             self.properties.pre_step(self, next_step_name)
-            next_step(self)
+            next_step(self)    
         finally:
             self.append_state()
             self.properties.post_step(self, next_step_name)
