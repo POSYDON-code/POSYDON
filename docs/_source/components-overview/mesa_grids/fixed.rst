@@ -17,6 +17,7 @@ edited for your own installation.
 .. code-block::
 
     export MESA_DIR="/projects/b1119/mesa_sdk/mesa-r11701"
+    export OMP_NUM_THREADS=4
     export MESASDK_ROOT="/projects/b1119/mesa_sdk/mesasdk"
     source $MESASDK_ROOT/bin/mesasdk_init.sh
 
@@ -87,7 +88,20 @@ Finally, we are ready to submit our jobs with:
 
 .. code-block::
 
-    sbatch slurm_job_array_grid_submit.sh
+    ./run_grid.sh
+
+This shell script will submit the two slurm jobs
+:samp:`slurm_job_array_grid_submit.sh` and :samp:`cleanup.sh`. The first one
+will run the MESA simulations, where several runs will go in paralell. The
+second job, will run after all MESA runs are completed. It is doing some
+cleanup:
+
+- removing files no longer needed (e.g. memory copies created as backups)
+- compressing files containing a lot of text (those files are individually
+  compressed and will keep in place, hence getting a file extension `.gz`
+  added)
+- changing the owning group and permissions (this will only be done if a new
+  group was specified in the .ini file for the setup)
 
 Once the grid of runs is completed, we recommend you use our provided PSyGrid
 functionality to interpret and collate the individual binary runs
