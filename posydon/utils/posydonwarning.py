@@ -19,6 +19,11 @@ class ApproximationWarning(POSYDONWarning):
     def __init__(self):
         warnings.filterwarnings("default", category=ApproximationWarning)
 
+class BinaryParsingWarning(POSYDONWarning):
+    """Warnings related to parsing of binaries."""
+    def __init__(self):
+        warnings.filterwarnings("default", category=BinaryParsingWarning)
+
 class ClassificationWarning(POSYDONWarning):
     """Warnings related to classification during binary evolution."""
     def __init__(self):
@@ -28,7 +33,7 @@ class EvolutionWarning(POSYDONWarning):
     """Warning that something unexpeted occurred during the binary evolution, but
     the evolution is able to continue (binary did not fail)."""
     def __init__(self):
-        warnings.filterwarnings("default", category=ClassificationWarning)
+        warnings.filterwarnings("default", category=EvolutionWarning)
 
 class InterpolationWarning(POSYDONWarning):
     """Warnings related to interpolation during binary evolution."""
@@ -44,16 +49,6 @@ class UnsupportedModelWarning(POSYDONWarning):
     """Warnings related to selecting a model that is not supported."""
     def __init__(self):
         warnings.filterwarnings("default", category=UnsupportedModelWarning)
-
-class BinaryParsingWarning(POSYDONWarning):
-    """Warnings related to parsing of binaries."""
-    def __init__(self):
-        warnings.filterwarnings("default", category=BinaryParsingWarning)
-
-class WritingWarning(POSYDONWarning):
-    """Warnings related to writing and saving of file."""
-    def __init__(self):
-        warnings.filterwarnings("default", category=WritingWarning)
 
 # The base class of all warnings is "Warning", which is derived from Exception
 #
