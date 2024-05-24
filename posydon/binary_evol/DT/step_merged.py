@@ -149,12 +149,18 @@ class MergedStep(IsolatedStep):
             else:
                 M2 = getattr(star2, mass_weight2)
 
+            try:
+                mass_weighted_avg_value  = (A1*M1 + A2*M2 ) / (M1+M2)
+            except TypeError:
+                mass_weighted_avg_value = np.nan
+
             if self.verbose:
                 print(abundance_name, mass_weight1,mass_weight2)
                 print("A_base, M_base_abundance, A_comp, M_comp_abundance", A1, M1, A2, M2)
-                print("mass_weighted_avg = ", (A1*M1 + A2*M2 ) / (M1+M2))
+                print("mass_weighted_avg = ", mass_weighted_avg_value)
 
-            return (A1*M1 + A2*M2 ) / (M1+M2)
+
+            return mass_weighted_avg_value
 
         # MS + MS
         if ( s1 in LIST_ACCEPTABLE_STATES_FOR_HMS
