@@ -667,6 +667,8 @@ def copy_ini_file(grid_type, rerun_metallicity, rerun_type, destination,
         replace_text = "fix_iniHe_pre_rerun5-0e736a853c3c2e522b76299a54aea8f5eea15d08"
     elif rerun_type == "dedt_energy_eqn":
         replace_text = "seth_dedt_energy_eqn-deac5c26392b36cb7a8ff337e0d53c26568a3971"
+    elif rerun_type == "dedt_forcemltpp":
+        replace_text = "seth_dedt_force_mltpp-397d1379935fc5580e134237a46fddfeae4ca73b"
     elif rerun_type == 'other': # e.g. 'envelope_mass_limit', 'fe_core_infall_limit'
         # this rerun uses the default inlist commit
         return
@@ -835,6 +837,8 @@ def logic_rerun(grid, rerun_type):
                 runs_to_rerun += [i]
         runs_to_rerun = np.array(runs_to_rerun)
     elif rerun_type == 'dedt_energy_eqn':
+        termination_flags = TF1_POOL_ERROR
+    elif rerun_type == 'dedt_force_mltpp':
         termination_flags = TF1_POOL_ERROR
     elif rerun_type == 'envelope_mass_limit': # maybe 'fe_core_infall_limit' as well?
         runs_to_rerun = None # implement logic
