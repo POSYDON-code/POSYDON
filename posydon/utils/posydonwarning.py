@@ -3,7 +3,7 @@
 
 __authors__ = [
     "Monica Gallegos-Garcia <monicagallegosgarcia@u.northwestern.edu>",
-    "Camille Liotine <cliotine@u.northwestern.edu>"
+    "Camille Liotine <cliotine@u.northwestern.edu>",
     "Matthias Kruckow <Matthias.Kruckow@unige.ch>",   
 ]
 
