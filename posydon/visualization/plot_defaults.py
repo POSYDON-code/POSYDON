@@ -104,7 +104,8 @@ PLOT_PROPERTIES = {
         'va': 'bottom',
         'x': 0.95,
         'y': 0.05
-    }
+    },
+    'PdfPages': None
 }
 
 list_of_colors = ['#a6611a',
@@ -180,6 +181,12 @@ DEFAULT_MARKERS_COLORS_LEGENDS = {
         'Reached TPAGB':
             ['s', 2, None, TF1_label_initial],
         'Both stars fill their Roche Lobe and at least one of them is off MS':
+            ['D', 1, color_unstable, TF1_label_unstable],
+        'Both stars fill their Roche Lobe and t_kh > t_acc':
+            ['D', 1, color_unstable, TF1_label_unstable],
+        'overflow from L2, t_kh > t_acc and w > w_crit_lim, donor is star 1':
+            ['D', 1, color_unstable, TF1_label_unstable],
+        'overflow from L2, t_kh > t_acc and w > w_crit_lim, donor is star 2':
             ['D', 1, color_unstable, TF1_label_unstable],
         'Terminate due to L2 overflow during case A':
             ['D', 1, color_unstable, TF1_label_unstable],
@@ -637,6 +644,12 @@ DEFAULT_MARKERS_COLORS_LEGENDS = {
         'Reached TPAGB':
             ['s', 2, None, TF1_label_initial],
         'Both stars fill their Roche Lobe and at least one of them is off MS':
+            ['D', 1, None, TF1_label_unstable],
+        'Both stars fill their Roche Lobe and t_kh > t_acc':
+            ['D', 1, None, TF1_label_unstable],
+        'overflow from L2, t_kh > t_acc and w > w_crit_lim, donor is star 1':
+            ['D', 1, None, TF1_label_unstable],
+        'overflow from L2, t_kh > t_acc and w > w_crit_lim, donor is star 2':
             ['D', 1, None, TF1_label_unstable],
         'Terminate due to L2 overflow during case A':
             ['D', 1, None, TF1_label_unstable],

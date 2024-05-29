@@ -9,6 +9,7 @@ from scipy import integrate
 import posydon.utils.constants as const
 
 from posydon.utils.gridutils import find_index_nearest_neighbour
+from posydon.utils.limits_thresholds import NEUTRINO_MASS_LOSS_UPPER_LIMIT
 
 __authors__ = [
     "Simone Bavera <Simone.Bavera@unige.ch>",
@@ -250,7 +251,7 @@ def do_core_collapse_BH(star,
                         mass_collapsing,
                         mass_central_BH=2.51,
                         neutrino_mass_loss=None,
-                        max_neutrino_mass_loss=0.5,
+                        max_neutrino_mass_loss=NEUTRINO_MASS_LOSS_UPPER_LIMIT,
                         verbose=False):
     """Do the core collapse of a star object with MESA profile provided.
 
