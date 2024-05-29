@@ -80,7 +80,6 @@ class MergedStep(IsolatedStep):
         list_for_matching_HMS = list_for_matching_HMS,
         list_for_matching_postMS = list_for_matching_postMS,
         list_for_matching_HeStar = list_for_matching_HeStar,
-        verbose = 1,
         *args,
         **kwargs)
 
@@ -104,12 +103,9 @@ class MergedStep(IsolatedStep):
         binary.event = None
         if self.verbose:
             print("After Merger", binary.star_1.state,binary.star_2.state,binary.state, binary.event)
-            if binary.star_2.state == "massless_remnant":
-                print("M_merged , he_core_mass merged: ", binary.star_1.mass, binary.star_1.he_core_mass)
-                print("star_1.center_he4, star_1.surface_he4: ",  binary.star_1.center_he4, binary.star_1.surface_he4)
-            else:
-                print("M_merged , he_core_mass merged: ", binary.star_2.mass, binary.star_2.he_core_mass)
-                print("star_1.center_he4, star_1.surface_he4: ",  binary.star_2.center_he4, binary.star_2.surface_he4)
+            print("M_merged , he_core_mass merged: ", binary.star_1.mass, binary.star_1.he_core_mass)
+            print("star_1.center_he4, star_1.surface_he4: ",  binary.star_1.center_he4, binary.star_1.surface_he4)
+
 
         super().__call__(binary)
 
