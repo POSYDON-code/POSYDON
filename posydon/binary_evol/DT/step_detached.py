@@ -37,8 +37,9 @@ from posydon.utils.common_functions import (
 )
 from posydon.binary_evol.flow_chart import (STAR_STATES_CC, STAR_STATES_CO)
 import posydon.utils.constants as const
-from posydon.utils.posydonerror import NumericalError,MatchingError, POSYDONError
-from posydon.utils.posydonwarning import UnsupportedModelWarning
+from posydon.utils.posydonerror import NumericalError, MatchingError, POSYDONError
+from posydon.utils.posydonwarning import UnsupportedModelWarning, EvolutionWarning
+import warnings
 
 LIST_ACCEPTABLE_STATES_FOR_HMS = ["H-rich_Core_H_burning"]
 
@@ -1169,7 +1170,8 @@ class detached_step:
             interp1d_pri = get_star_data(
                 binary, primary, secondary, primary.htrack, False)[0]
         else:
-            raise MatchingError("During matching primary is either should be either normal or not normal. `non_existent_companion` should be zero.")
+            raise MatchingError("During matching, the primary should either be normal or not normal."
+                                "`non_existent_companion` should be zero.")
 
 
         if interp1d_sec is None or interp1d_pri is None:
@@ -1212,9 +1214,14 @@ class detached_step:
             """
             sep = y[0]
             ecc = y[1]
-            RL = roche_lobe_radius(interp1d_sec["mass"](t - t_offset_sec)
-                                   / interp1d_pri["mass"](t - t_offset_pri),
-                                   (1 - ecc) * sep)
+            if (interp1d_sec["mass"](t - t_offset_sec) == 0) or (interp1d_pri["mass"](t - t_offset_sec) == 0):
+                warnings.warn("Trying to compute difference between stellar radii for non-existent companion",
+                            EvolutionWarning)
+                RL = np.nan
+            else:
+                RL = roche_lobe_radius(interp1d_sec["mass"](t - t_offset_sec)
+                                    / interp1d_pri["mass"](t - t_offset_pri),
+                                    (1 - ecc) * sep)
             # 95% filling of the RL is enough to assume beginning of RLO,
             # as we do in CO-HMS_RLO grid
             return interp1d_sec["R"](t - t_offset_sec) - 0.95*RL
@@ -1243,9 +1250,14 @@ class detached_step:
             """
             sep = y[0]
             ecc = y[1]
-            RL = roche_lobe_radius(interp1d_pri["mass"](t - t_offset_pri)
-                                   / interp1d_sec["mass"](t - t_offset_sec),
-                                   (1 - ecc) * sep)
+            if (interp1d_sec["mass"](t - t_offset_sec) == 0) or (interp1d_pri["mass"](t - t_offset_sec) == 0):
+                warnings.warn("Trying to compute difference between stellar radii for non-existent companion",
+                            EvolutionWarning)
+                RL = np.nan
+            else:
+                RL = roche_lobe_radius(interp1d_pri["mass"](t - t_offset_pri)
+                                    / interp1d_sec["mass"](t - t_offset_sec),
+                                    (1 - ecc) * sep)
             return interp1d_pri["R"](t - t_offset_pri) - 0.95*RL
 
         @event(True, 1)
@@ -1272,9 +1284,14 @@ class detached_step:
             """
             sep = y[0]
             ecc = y[1]
-            RL = roche_lobe_radius(interp1d_sec["mass"](t - t_offset_sec)
-                                   / interp1d_pri["mass"](t - t_offset_pri),
-                                   (1 - ecc) * sep)
+            if (interp1d_sec["mass"](t - t_offset_sec) == 0) or (interp1d_pri["mass"](t - t_offset_sec) == 0):
+                warnings.warn("Trying to compute relative difference between stellar radii for non-existent companion",
+                            EvolutionWarning)
+                RL = np.nan
+            else:
+                RL = roche_lobe_radius(interp1d_sec["mass"](t - t_offset_sec)
+                                    / interp1d_pri["mass"](t - t_offset_pri),
+                                    (1 - ecc) * sep)
             return (interp1d_sec["R"](t - t_offset_sec) - RL) / RL
 
         @event(True, 1)
@@ -1301,9 +1318,14 @@ class detached_step:
             """
             sep = y[0]
             ecc = y[1]
-            RL = roche_lobe_radius(interp1d_pri["mass"](t - t_offset_pri)
-                                   / interp1d_sec["mass"](t - t_offset_sec),
-                                   (1 - ecc) * sep)
+            if (interp1d_sec["mass"](t - t_offset_sec) == 0) or (interp1d_pri["mass"](t - t_offset_sec) == 0):
+                warnings.warn("Trying to compute relative difference between stellar radii for non-existent companion",
+                            EvolutionWarning)
+                RL = np.nan
+            else:
+                RL = roche_lobe_radius(interp1d_pri["mass"](t - t_offset_pri)
+                                    / interp1d_sec["mass"](t - t_offset_sec),
+                                    (1 - ecc) * sep)
             return (interp1d_pri["R"](t - t_offset_pri) - RL) / RL
 
         @event(True, -1)
@@ -1378,9 +1400,7 @@ class detached_step:
             return omega_in_rad_per_year
 
         if (ev_rlo1(binary.time, [binary.separation, binary.eccentricity]) >= 0
-                or ev_rlo2(binary.time,
-                           [binary.separation, binary.eccentricity])
-                >= 0):
+                or ev_rlo2(binary.time, [binary.separation, binary.eccentricity]) >= 0):
             binary.state = "initial_RLOF"
             return
             # binary.event = "END"
