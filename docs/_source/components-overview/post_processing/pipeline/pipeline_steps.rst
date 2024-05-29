@@ -205,6 +205,6 @@ type of the rerun specifying the logic and changes, and the cluster name.
     more_mesh              workaround      it modifies the remeshing and allows for more cells in MESA
     conv_bdy_weight        caution         it disabled the convective_bdy_weight where this caused segmentation faults (this avoids a bug in the old MESA version r11701)
     dedt_energy_eqn        caution         it enables MESA's dedt-form of the energy equation for numerical stability during superthermal mass transfer
-    dedt_hepulse           caution         it enables MESA's dedt-form of the energy equation and sets lnPgas_flag = .true. for numerical stability. Several MLT++ changes, v_flag set to .true., and convecitve_bdy_weight disabled and to help with stripped He star pulsations and WD cooling. 
+    dedt_hepulse           caution         it enables MESA's dedt-form of the energy equation. Several MLT++ changes, v_flag and lnPgas_flag set to .true., and convecitve_bdy_weight disabled to help with stripped He star pulsations and WD cooling. 
     =====================  ==============  ===========
 
