@@ -1217,6 +1217,12 @@ class StepSN(object):
         
         # Based on different recipes of convective mixing.
         elif self.mechanism == self.Fryer22:
+            f_mix = 1
+            m_crit =  5.75
+            m_rembar = 1.2 + 0.05*f_mix + 0.01 (m_core/f_mix )**2 + np.exp(f_mix*(m_core-m_crit))
+            m_rembar = min(m_rembar,m_star)
+            state = None
+            f_fb = (m_core - m_rembar)/m_star
             if star.SN_type == "ECSN":
                 if self.ECSN == 'Podsiadlowksi+04':
                     m_proto = 1.38
@@ -1224,13 +1230,8 @@ class StepSN(object):
                     m_proto = m_core
                 m_fb = 0.0  # as in Giacobbo & Mapelli 2020 for ECSN
                 f_fb = 0.0
-            elif:
-                f_mix = 1
-                m_crit =  5.75
-                m_rembar = 1.2 + 0.05*f_mix + 0.01 (m_core/f_mix )**2 + np.exp(f_mix*(m_core-m_crit))
-                m_rembar = min(m_rembar,m_star)
-                state = None
-
+                m_rembar = m_proto + m_fb
+                state = 'NS'
         # direct collapse and f_fb = 1. (no kicks)
         elif self.mechanism == self.direct_collapse:
             m_rembar = m_collapsing
