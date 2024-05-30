@@ -665,6 +665,8 @@ def copy_ini_file(grid_type, rerun_metallicity, rerun_type, destination,
         replace_text = "development-435d16c9158e4608530f21b8169ce6f31160e23e"
     elif rerun_type == 'initial_He':
         replace_text = "fix_iniHe_pre_rerun5-0e736a853c3c2e522b76299a54aea8f5eea15d08"
+    elif rerun_type == "dedt_energy_eqn":
+        replace_text = "seth_dedt_energy_eqn-deac5c26392b36cb7a8ff337e0d53c26568a3971"
     elif rerun_type == "dedt_hepulse":
         replace_text = "seth_dedt_hepulse-70bf87736e45dbbd60eb9d3707797e15918eea60"
     elif rerun_type == 'other': # e.g. 'envelope_mass_limit', 'fe_core_infall_limit'
@@ -834,6 +836,8 @@ def logic_rerun(grid, rerun_type):
             if np.isnan(iniY) or iniY<0.96:
                 runs_to_rerun += [i]
         runs_to_rerun = np.array(runs_to_rerun)
+    elif rerun_type == 'dedt_energy_eqn':
+        termination_flags = TF1_POOL_ERROR    
     elif rerun_type == 'dedt_hepulse':
         termination_flags = TF1_POOL_ERROR
     elif rerun_type == 'envelope_mass_limit': # maybe 'fe_core_infall_limit' as well?
