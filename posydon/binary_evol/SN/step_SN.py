@@ -269,6 +269,7 @@ class StepSN(object):
         self.Sukhbold16_engines = "Sukhbold+16-engine"
         self.Patton20_engines = "Patton&Sukhbold20-engine"
         self.Couch20_engines = "Couch+20-engine"
+        self.Fryer22 = "Fryer22-engine"
 
         self.mechanisms = [
             self.Fryer12_rapid,
@@ -277,7 +278,8 @@ class StepSN(object):
             self.direct_collapse_hecore,
             self.Sukhbold16_engines,
             self.Patton20_engines,
-            self.Couch20_engines
+            self.Couch20_engines,
+            self.Fryer22
         ]
 
         if self.mechanism in self.mechanisms:
@@ -287,6 +289,7 @@ class StepSN(object):
                 self.Fryer12_delayed,
                 self.direct_collapse,
                 self.direct_collapse_hecore,
+                self.Fryer22
             ]:
                 self.Sukhbold_corecollapse_engine = None
 
@@ -622,6 +625,7 @@ class StepSN(object):
                 self.Fryer12_delayed,
                 self.direct_collapse,
                 self.direct_collapse_hecore,
+                self.Fryer22
             ]:
                 # m_core = star.co_core_mass
 
@@ -1177,6 +1181,7 @@ class StepSN(object):
         # Eq. 17-20, from Fryer, C. L., Belczynski, K., Wiktorowicz,
         # G., Dominik, M., Kalogera, V., & Holz, D. E. (2012), ApJ, 749(1), 91.
         elif self.mechanism == self.Fryer12_delayed:
+            
             if m_core < 3.5:
                 m_proto = 1.2
             elif m_core >= 3.5 and m_core < 6.0:
@@ -1209,6 +1214,22 @@ class StepSN(object):
                 m_fb = f_fb * (m_collapsing - m_proto)
             m_rembar = m_proto + m_fb
             state = None
+        
+        # Based on different recipes of convective mixing.
+        elif self.mechanism == self.Fryer22:
+            if star.SN_type == "ECSN":
+                if self.ECSN == 'Podsiadlowksi+04':
+                    m_proto = 1.38
+                else:
+                    m_proto = m_core
+                m_fb = 0.0  # as in Giacobbo & Mapelli 2020 for ECSN
+                f_fb = 0.0
+            elif:
+                f_mix = 1
+                m_crit =  5.75
+                m_rembar = 1.2 + 0.05*f_mix + 0.01 (m_core/f_mix )**2 + np.exp(f_mix*(m_core-m_crit))
+                m_rembar = min(m_rembar,m_star)
+                state = None
 
         # direct collapse and f_fb = 1. (no kicks)
         elif self.mechanism == self.direct_collapse:

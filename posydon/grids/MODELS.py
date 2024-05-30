@@ -145,5 +145,17 @@ MODELS = {
         "use_core_masses": False,
         "approx_at_he_depletion": False,
     },
-
+        "MODEL11": {
+        "mechanism": "Fryer22-engine",
+        "engine": "f_mix",
+        "PISN": "Marchant+19",
+        "ECSN": "Podsiadlowksi+04",
+        "conserve_hydrogen_envelope" : True,
+        "max_neutrino_mass_loss": NEUTRINO_MASS_LOSS_UPPER_LIMIT,
+        "max_NS_mass": STATE_NS_STARMASS_UPPER_LIMIT,
+        "use_interp_values": False,
+        "use_profiles": True,
+        "use_core_masses": False,
+        "approx_at_he_depletion": False,
+    },
 }
