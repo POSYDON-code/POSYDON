@@ -1105,7 +1105,7 @@ class Population(PopulationIO):
         self.number_of_systems = self.oneline.number_of_systems
         self.indices = self.history.indices
 
-    def export_selection(self, selection, filename, overwrite=True, history_chunksize=1):
+    def export_selection(self, selection, filename, overwrite=False, append=False, history_chunksize=1000000):
         """Export a selection of the population to a new file
 
         This method exports a selection of systems from the population to a new file.
@@ -1124,7 +1124,7 @@ class Population(PopulationIO):
         filename : str
             The name of the export file to create or append to.
         chunksize : int, optional
-            The number of systems to export at a time. Default is 1.
+            The number of systems to export at a time. Default is 1000000.
 
         Raises
         ------
@@ -1161,6 +1161,21 @@ class Population(PopulationIO):
             raise ValueError(
                 f"{filename} does not contain .h5 in the se.\n Is this a valid population file?"
             )
+        
+        # overwrite and append cannot both be True
+        if append and overwrite:
+            raise ValueError("Both overwrite and append cannot be True!")
+        
+        # check for file existence
+        if os.path.exists(filename) and not overwrite and not append:
+            raise FileExistsError(f"{filename} already exists! Set overwrite or append to True to continue!")
+        
+        if overwrite:
+            mode = 'w'
+        elif append:
+            mode = 'a'
+        else:
+            mode = 'w'
 
         history_cols = self.history.columns
         oneline_cols = self.oneline.columns
@@ -1171,10 +1186,7 @@ class Population(PopulationIO):
         oneline_min_itemsize = {
             key: val for key, val in ONELINE_MIN_ITEMSIZE.items() if key in oneline_cols
         }
-        if overwrite:
-            mode = 'w'
-        else:
-            mode = 'a'
+
         with pd.HDFStore(filename, mode=mode) as store:
             # shift all new indices by the current length of data in the file
             last_index_in_file = 0
