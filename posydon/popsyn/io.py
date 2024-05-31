@@ -128,11 +128,14 @@ STARPROPERTIES_DTYPES = {
 
 EXTRA_BINARY_COLUMNS_DTYPES = {
     'step_names' : 'string',
-    'step_times' : 'float64', 
+    'step_times' : 'float64',
 }
 
 # no default extras for history attributes
-EXTRA_STAR_COLUMNS_DTYPES = {}
+EXTRA_STAR_COLUMNS_DTYPES = {
+    'm_disk_radiated': 'float64',
+    'm_disk_accreted': 'float64',
+}
 
 SCALAR_NAMES_DTYPES = {
     'natal_kick_array_0': 'float64',
@@ -143,7 +146,6 @@ SCALAR_NAMES_DTYPES = {
     'f_fb': 'float64',
     'spin_orbit_tilt_first_SN': 'float64',
     'spin_orbit_tilt_second_SN': 'float64',
-    
 }
 
 
