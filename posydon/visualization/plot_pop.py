@@ -1,8 +1,8 @@
 __authors__ = ["Simone Bavera <Simone.Bavera@unige.ch>"]
-    
+
 import os
 import numpy as np
-import matplotlib.pyplot as plt
+import matplotlib as mpl
 from posydon.utils.common_functions import PATH_TO_POSYDON
 from posydon.visualization.plot_defaults import DEFAULT_LABELS
 from posydon.utils.constants import Zsun
@@ -16,10 +16,10 @@ PATH_TO_POSYDON_DATA = os.environ.get("PATH_TO_POSYDON_DATA",'./')
 
 plt.style.use(os.path.join(PATH_TO_POSYDON, "posydon/visualization/posydon.mplstyle"))
 
-cm = plt.cm.get_cmap('tab20')
+cm = mplstyle.colormaps.get_cmap('tab20')
 COLORS = [cm.colors[i] for i in range(len(cm.colors)) if i%2==0] + [cm.colors[i] for i in range(len(cm.colors)) if i%2==1]
 
-def plot_merger_rate_density(z, rate_density, zmax=10., channels=False, 
+def plot_merger_rate_density(z, rate_density, zmax=10., channels=False,
                              GWTC3=False, label='DCO', **kwargs):
 
     plt.plot(z[z<zmax], rate_density['total'][z<zmax], label=f'{label} total', color='black')
@@ -27,13 +27,13 @@ def plot_merger_rate_density(z, rate_density, zmax=10., channels=False,
         for i, ch in enumerate([key for key in rate_density.keys() if key != 'total']):
             if ch != 'total':
                 plt.plot(z[z<zmax], rate_density[ch][z<zmax], label=ch, color=COLORS[i])
-    
+
     if GWTC3:
         plt.errorbar(0.2,17.9, yerr=[[0],[26.1]], fmt='',color='black', label='$\mathcal{R}_\mathrm{BBH}$ GWTC-3')
-        
+
 def plot_grb_rate_density(z, rate_density, zmax=10., channels=False,
                           grb_components=False, Perley16=False, **kwargs):
-    
+
     plt.plot(z[z<zmax], rate_density['total'][z<zmax], label='GRB total', color='black', linestyle='--')
     if grb_components:
         plt.plot(z[z<zmax], rate_density['total_GRB1'][z<zmax], label='total_GRB1', color='black', linestyle=':')
@@ -68,18 +68,18 @@ def plot_grb_rate_density(z, rate_density, zmax=10., channels=False,
         rate_P16_left = z_P16-np.array([0.1,0.5,1,1.5,2.,2.6,3.5,4.5,6])
         rate_P16_right = np.array([0.5,1,1.5,2.,2.6,3.5,4.5,6,8])-z_P16
         rate_P16_error_x =np.array([rate_P16_left.tolist(),rate_P16_right.tolist()])
-        plt.errorbar(z_P16,rate_P16,xerr=rate_P16_error_x,yerr=rate_P16_error_y, fmt='.', color='black', 
-                    label=r'$\mathcal{R}_\mathrm{LGRB}(E_\mathrm{iso}^{45-450\,\mathrm{keV}} > 10^{51} \, \mathrm{erg})$ SHOALS survey') 
-        
+        plt.errorbar(z_P16,rate_P16,xerr=rate_P16_error_x,yerr=rate_P16_error_y, fmt='.', color='black',
+                    label=r'$\mathcal{R}_\mathrm{LGRB}(E_\mathrm{iso}^{45-450\,\mathrm{keV}} > 10^{51} \, \mathrm{erg})$ SHOALS survey')
+
 def plot_rate_density(z_dco=None, R_dco=None, z_grb=None, R_grb=None, **kwargs):
-    plt.figure()   
+    plt.figure()
     title1 = ''
-    title2 = '' 
+    title2 = ''
     if z_dco is not None and R_dco is not None:
         title1 += 'DCO merger'
         plot_merger_rate_density(z_dco, R_dco, **kwargs)
         # do not display twice the channel labels
-        kwargs['label_channels'] = False 
+        kwargs['label_channels'] = False
     if z_grb is not None and R_grb is not None:
         title2 += 'GRB beamed'
         plot_grb_rate_density(z_grb, R_grb, **kwargs)
@@ -118,7 +118,7 @@ def plot_merger_efficiency(met, merger_efficiency, show=True, path=None, channel
     if show:
         plt.show()
 
-        
+
 def plot_hist_properties(x, df_intrinsic=None, df_observable=None,
                         channel=None,
                         show=True, path=None, alpha=0.5,
@@ -126,7 +126,7 @@ def plot_hist_properties(x, df_intrinsic=None, df_observable=None,
                         pop=None, **kwargs):
     if pop is None:
         raise ValueError('Population type not specified.')
-    
+
     if df_intrinsic is not None and df_observable is not None:
         title = r'Intrinsic vs. observable (dashed) population'
     elif df_intrinsic is not None:
@@ -165,11 +165,11 @@ def plot_hist_properties(x, df_intrinsic=None, df_observable=None,
                     s = 1
                 elif "S2" in x_i:
                     label = 'S2'
-                    s = 2 
+                    s = 2
                 else:
                     label = x_i
                 if pop == 'GRB':
-                    sel_tmp = sel & ~df_intrinsic[x_i].isna() & df_intrinsic[f'GRB{s}'] 
+                    sel_tmp = sel & ~df_intrinsic[x_i].isna() & df_intrinsic[f'GRB{s}']
                 else:
                     sel_tmp = sel
                 values, weights = df_intrinsic.loc[sel_tmp,[x_i,'weight']].values.T
@@ -258,11 +258,11 @@ def plot_hist_properties(x, df_intrinsic=None, df_observable=None,
         plt.savefig(path)
     if show:
         plt.show()
-        
-        
-def plot_popsyn_over_grid_slice(pop, grid_type, met_Zsun, slices=None, channel=None, 
-                                plot_dir='./', prop=None, prop_range=None, 
-                                log_prop=False, alpha=0.3, s=5., 
+
+
+def plot_popsyn_over_grid_slice(pop, grid_type, met_Zsun, slices=None, channel=None,
+                                plot_dir='./', prop=None, prop_range=None,
+                                log_prop=False, alpha=0.3, s=5.,
                                 show_fig=True, save_fig=True, close_fig=True,
                                 plot_extension='png', verbose=False):
 
@@ -277,7 +277,7 @@ def plot_popsyn_over_grid_slice(pop, grid_type, met_Zsun, slices=None, channel=N
         if verbose:
             print('Computing formation channels...')
         pop.get_formation_channels()
-        
+
     if 'CO' in grid_path:
         # compact object mass slices
         m_COs = np.unique(np.around(grid.initial_values['star_2_mass'],1))
@@ -378,7 +378,7 @@ def plot_popsyn_over_grid_slice(pop, grid_type, met_Zsun, slices=None, channel=N
                 plt.colorbar(label=label, orientation='horizontal')
             else:
                 plt.scatter(log10_m1, log10_p, s=s, marker='v', color='black', alpha=alpha, zorder=0.5)
-            
+
             if save_fig:
                 plt.savefig(os.path.join(plot_dir, fname%var), bbox_inches='tight')
             if show_fig:
