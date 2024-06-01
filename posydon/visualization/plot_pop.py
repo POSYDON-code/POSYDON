@@ -16,7 +16,7 @@ PATH_TO_POSYDON_DATA = os.environ.get("PATH_TO_POSYDON_DATA",'./')
 
 plt.style.use(os.path.join(PATH_TO_POSYDON, "posydon/visualization/posydon.mplstyle"))
 
-cm = mplstyle.colormaps.get_cmap('tab20')
+cm = mpl.colormaps.get_cmap('tab20')
 COLORS = [cm.colors[i] for i in range(len(cm.colors)) if i%2==0] + [cm.colors[i] for i in range(len(cm.colors)) if i%2==1]
 
 def plot_merger_rate_density(z, rate_density, zmax=10., channels=False,
