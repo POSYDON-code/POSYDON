@@ -154,6 +154,9 @@ class PopulationRunner:
             self.binary_populations = []
             for MET in self.solar_metallicities:
                 ini_kw = binarypop_kwargs_from_ini(path_to_ini)
+                # overwrite the ini_kw verbose parameter
+                ini_kw["verbose"] = self.verbose
+                ini_kw['tqdm'] = self.verbose
                 ini_kw["metallicity"] = MET
                 ini_kw["temp_directory"] = (
                     convert_metallicity_to_string(MET)
@@ -174,6 +177,9 @@ class PopulationRunner:
 
         """
         for pop in self.binary_populations:
+            # check if the temp directory exists
+            if os.path.exists(pop.kwargs["temp_directory"]):
+                raise FileExistsError(f"The {pop.kwargs['temp_directory']} directory already exists! Please remove it or rename it before running the population.") 
             pop.evolve()
             if pop.comm is None:
                 self.merge_parallel_runs(pop)
@@ -194,101 +200,26 @@ class PopulationRunner:
             )
                 
         path_to_batch = pop.kwargs["temp_directory"]
+        
         tmp_files = [
             os.path.join(path_to_batch, f)
             for f in os.listdir(path_to_batch)
             if os.path.isfile(os.path.join(path_to_batch, f))
         ]
+        if self.verbose:
+            print(f"Merging {len(tmp_files)} files...")
+        
         pop.combine_saved_files(
             convert_metallicity_to_string(pop.metallicity) + "_Zsun_population.h5",
             tmp_files,
         )
+        if self.verbose:
+            print("Files merged!")
+            print(f"Removing files in {path_to_batch}...")
         # remove files
         if len(os.listdir(path_to_batch)) == 0:
             os.rmdir(path_to_batch)
 
-
-# TODO: I don't know if the merge_populations function is still needed
-def merge_populations(populations, filename, verbose=False):
-    """merges multiple populations into a single population file
-
-    Parameters
-    ----------
-    populations : list of Population
-        The populations to merge together
-    filename : str
-        The name of the population file to create
-    verbose : bool
-        If `True`, print additional information.
-
-    Notes
-    -----
-    This function merges multiple populations into a single population file. It iterates over each population
-    in the `populations` list and calls the `merge_parallel_runs` method on each population.
-    It writes the history and oneline dataframes from the input files to the given output file.
-
-    """
-
-    history_cols = populations[0].history.columns
-    oneline_cols = populations[0].oneline.columns
-
-    history_min_itemsize = {
-        key: val for key, val in HISTORY_MIN_ITEMSIZE.items() if key in history_cols
-    }
-    oneline_min_itemsize = {
-        key: val for key, val in ONELINE_MIN_ITEMSIZE.items() if key in oneline_cols
-    }
-
-    # open new file
-    with pd.HDFStore(filename, mode="a") as store:
-        prev = 0
-        for pop in populations:
-            # write history
-            for i in tqdm(
-                range(0, len(pop), 10000), total=len(pop) // 10000, disable=not verbose
-            ):
-                tmp_df = pop.history[i : i + 10000]
-                tmp_df.index = tmp_df.index + prev
-                store.append(
-                    "history",
-                    tmp_df,
-                    format="table",
-                    data_columns=True,
-                    min_itemsize=history_min_itemsize,
-                )
-
-            if verbose:
-                print(f"History for {pop.filename} written to population file!")
-
-            # write oneline
-            for i in tqdm(
-                range(0, len(pop), 10000), total=len(pop) // 10000, disable=not verbose
-            ):
-                tmp_df = pop.oneline[i : i + 10000]
-                tmp_df.index = tmp_df.index + prev
-                store.append(
-                    "oneline",
-                    tmp_df,
-                    format="table",
-                    data_columns=True,
-                    min_itemsize=oneline_min_itemsize,
-                )
-
-            if verbose:
-                print(f"Oneline for {pop.filename} written to population file!")
-
-            prev += len(pop)
-
-        # merge mass_per_metallicity
-        tmp_df = pd.concat([pop.mass_per_metallicity for pop in populations])
-        mass_per_metallicity = tmp_df.groupby(tmp_df.index).sum()
-
-        store.put("mass_per_metallicity", mass_per_metallicity)
-
-    # add ini parameters from the first population
-    populations[0]._save_ini_params(filename)
-
-    print(f"Populations merged into {filename}!")
 
 
 ##################
