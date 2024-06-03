@@ -157,7 +157,6 @@ class population_spectra():
             labels_S2: string
             file_path: string. Defaults to None.
         """
-        file_path = self.output_file
 
         if type(pop_spectrum)== list:
             pop_data['S1_grid_status'] = np.hstack(labels)[:,0]
@@ -177,9 +176,8 @@ class population_spectra():
 
         spectrum_data.insert(loc = 0, column='wavelength',value =self.grids.lam_c )
 
-        if file_path is None:
-            file_path = "./"
-        h5file =file_path + self.output_file
+    
+        h5file =self.output_path + self.output_file
         pop_data.to_hdf(h5file,key = 'data',format = 'table')
         spectrum_data.to_hdf(h5file,key = 'flux',format = 'table')
 
