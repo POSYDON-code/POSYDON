@@ -478,8 +478,7 @@ class BinaryPopulation:
                 # which may not be largest string
                 try:
                     store.append('history', pd.read_hdf(f, key='history'),
-                                 min_itemsize=history_min_itemsize,
-                                 data_columns=True)
+                                 min_itemsize=history_min_itemsize)
                     
                     oneline = pd.read_hdf(f, key='oneline')
                     simulated_mass += oneline['S1_mass_i'].sum() + oneline['S2_mass_i'].sum()
@@ -490,8 +489,7 @@ class BinaryPopulation:
                     number_of_systems += len(oneline)
                     
                     store.append('oneline', oneline,
-                                 min_itemsize=oneline_min_itemsize,
-                                 data_columns=True)
+                                 min_itemsize=oneline_min_itemsize)
                     
                 except Exception:
                     print(traceback.format_exc(), flush=True)
@@ -765,10 +763,10 @@ class PopulationManager:
 
         with pd.HDFStore(fname, mode=mode, complevel=complevel, complib=complib) as store:
             history_df = self.to_df(**kwargs)
-            store.append('history', history_df, data_columns=True)
+            store.append('history', history_df)
 
             online_df = self.to_oneline_df(**kwargs)
-            store.append('oneline', online_df, data_columns=True)
+            store.append('oneline', online_df)
         
         return
 
