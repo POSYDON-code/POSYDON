@@ -128,7 +128,7 @@ def plot_merger_efficiency(met, merger_efficiency, show=True, path=None, channel
 def plot_hist_properties(df, ax=None, df_intrinsic=None, df_observable=None,
                         channel=None,
                         show=True, path=None, alpha=0.5,
-                        range=None, bins=20, normalise=False,color=COLORS[0],label='', **kwargs):
+                        range=None, bins=20, normalise=False,color=COLORS[0], label='', **kwargs):
     if ax is None:
         fig, ax = plt.subplots(1,1, figsize=(5,5))
         
@@ -171,8 +171,20 @@ def plot_hist_properties(df, ax=None, df_intrinsic=None, df_observable=None,
                  bins=bins,
                  label=label+' observable')
         
-    ax.set_title(title)    
-
+    ax.set_title(title)
+    
+    if 'xlabel' in kwargs:
+        ax.set_xlabel(kwargs['xlabel'])
+    if normalise:
+        ax.set_ylabel(r'PDF')
+    else:
+        ax.set_ylabel(r'\#events in bin')
+    
+    if path:
+        plt.savefig(path)
+    if show:
+        plt.show()
+        
         
         
         

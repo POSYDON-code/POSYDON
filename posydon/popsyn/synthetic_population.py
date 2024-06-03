@@ -298,7 +298,7 @@ class History:
                 store.put("history_lengths", pd.DataFrame(self.lengths), format="table")
                 del history_events
 
-            self.columns = store.select("history", start=0, stop=0).columns
+            self.columns = store.select("history", start=0, stop=0).columns.to_list()
 
         self.indices = self.lengths.index.to_numpy()
         self.number_of_systems = len(self.lengths)
@@ -569,7 +569,7 @@ class Oneline:
 
         with pd.HDFStore(filename, mode="r") as store:
             self.indices = store.select_column("oneline", "index").to_numpy()
-            self.columns = store.select("oneline", start=0, stop=0).columns
+            self.columns = store.select("oneline", start=0, stop=0).columns.to_list()
 
         self.number_of_systems = len(self.indices)
 
@@ -1207,7 +1207,6 @@ class Population(PopulationIO):
                     "oneline",
                     tmp_df,
                     format="table",
-                    data_columns=True,
                     min_itemsize=oneline_min_itemsize,
                     index=False,
                 )
@@ -1227,7 +1226,6 @@ class Population(PopulationIO):
                     "history",
                     tmp_df,
                     format="table",
-                    data_columns=True,
                     min_itemsize=history_min_itemsize,
                     index=False,
                 )
@@ -1248,7 +1246,6 @@ class Population(PopulationIO):
                         "formation_channels",
                         tmp_df,
                         format="table",
-                        data_columns=True,
                         min_itemsize={"channel_debug": 100, "channel": 100},
                         index=False,
                     )
@@ -1465,7 +1462,6 @@ class Population(PopulationIO):
                 "formation_channels",
                 df,
                 format="table",
-                data_columns=True,
                 min_itemsize={"channel_debug": str_length, "channel": str_length},
             )
 
@@ -1614,7 +1610,6 @@ class Population(PopulationIO):
                     "transients/" + transient_name,
                     syn_df,
                     format="table",
-                    data_columns=True,
                     min_itemsize=min_itemsize,
                 )
 
@@ -2618,6 +2613,7 @@ class Rates(TransientPopulation):
         # get the property and its associated weights in the population.
 
         df = self.select(columns=[prop])
+        kwargs['xlabel'] = prop
         df["property"] = df[prop]
         del df[prop]
         if intrinsic:
