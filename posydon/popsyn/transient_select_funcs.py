@@ -86,8 +86,7 @@ def GRB_selection(history_chunk, oneline_chunk, formation_channels_chunk=None, S
     GRB_df_synthetic = pd.DataFrame(index=indices_selection)
     # Pre and post SN data
     post_SN_hist = selection[S_mask]
-    pre_mask = S_mask.shift(-1)
-    pre_mask.iloc[-1] = False
+    pre_mask = S_mask.shift(-1, fill_value=False)
     pre_SN_hist = selection[pre_mask]
     
     if S1_S2 == 'S1':
