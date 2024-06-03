@@ -40,7 +40,10 @@ TF1_POOL_UNSTABLE = [
     'Reached maximum mass transfer rate: 1d-1',
     'Reached maximum mass transfer rate: Exceeded photon trapping radius',
     'Both stars fill their Roche Lobe and at least one of them is off MS',
-    'Terminate due to L2 overflow during case A'
+    'Terminate due to L2 overflow during case A',
+    'Both stars fill their Roche Lobe and t_kh > t_acc',
+    'overflow from L2, t_kh > t_acc and w > w_crit_lim, donor is star 1',
+    'overflow from L2, t_kh > t_acc and w > w_crit_lim, donor is star 2'
     ]
 
 TF1_POOL_INITIAL_RLO = [
@@ -150,6 +153,8 @@ def combine_TF12(IC, TF2, verbose=False):
             TF12[i] = 'Not converged'
         elif IC[i] == 'no_MT':
             TF12[i] = 'no_RLOF'
+        elif IC[i] == 'stable_reverse_MT':
+            TF12[i] = 'Reverse stable MT'
         elif IC[i] == 'stable_MT':
             if '1' in TF2[i] and '2' in TF2[i]:
                 TF12[i] = 'Reverse stable MT'

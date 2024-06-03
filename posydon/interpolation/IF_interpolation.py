@@ -44,7 +44,9 @@ for all classes.
 
 2. interp_classes: a list of classes that the simulation tracks can
 fall into. Usually specified as the mass transfer type. This only needs
-be specified if interp_method is a list.
+be specified if interp_method is a list. Note that when using class-wise normalization 
+only classes in interp_classes are normalized. This is the behavior for interpolation normalization
+but not classification normalization.
 
 3. class_method: the classification method to be used, either kNN or
 1NN.
@@ -76,8 +78,8 @@ For most applications specifying only the first four parameters is recommended.
 
     interp = IFInterpolator(grid = grid, interpolators = [
         {
-            "interp_method": ["linear", "linear", "linear"],
-            "interp_classes": ["no_MT", "stable_MT", "unstable_MT"],
+            "interp_method": ["linear", "linear", "linear", "linear"],
+            "interp_classes": ["no_MT", "stable_MT", "unstable_MT", "stable_reverse_MT"], # classes not in this array will not be normalized in class-wise normalization
             "out_keys": first,
             "class_method": "kNN",
             "c_keys": ["interpolation_class"],
@@ -85,7 +87,7 @@ For most applications specifying only the first four parameters is recommended.
         },
         {
             "interp_method": ["linear", "linear", "linear", "linear"],
-            "interp_classes": ["None", "BH", "WD", "NS"],
+            "interp_classes": ["None", "BH", "WD", "NS"], # classes not in this array will not be normalized in class-wise normalization
             "out_keys": second,
             "class_method": "kNN",
             "c_keys": ['S1_direct_state'],
@@ -93,7 +95,7 @@ For most applications specifying only the first four parameters is recommended.
         },
         {
             "interp_method": ["linear", "linear", "linear", "linear"],
-            "interp_classes": ["None", "BH", "WD", "NS"],
+            "interp_classes": ["None", "BH", "WD", "NS"], # classes not in this array will not be normalized in class-wise normalization
             "out_keys": third,
             "class_method": "kNN",
             "c_keys": ['S1_Fryer+12-rapid_state'],
@@ -101,7 +103,7 @@ For most applications specifying only the first four parameters is recommended.
         },
         {
             "interp_method": ["linear", "linear", "linear", "linear"],
-            "interp_classes": ["None", "BH", "WD", "NS"],
+            "interp_classes": ["None", "BH", "WD", "NS"], # classes not in this array will not be normalized in class-wise normalization
             "out_keys": fourth,
             "class_method": "kNN",
             "c_keys": ['S1_Fryer+12-delayed_state'],
@@ -109,7 +111,7 @@ For most applications specifying only the first four parameters is recommended.
         },
         {
             "interp_method": ["linear", "linear", "linear", "linear"],
-            "interp_classes": ["None", "BH", "WD", "NS"],
+            "interp_classes": ["None", "BH", "WD", "NS"], # classes not in this array will not be normalized in class-wise normalization
             "out_keys": fifth,
             "class_method": "kNN",
             "c_keys": ['S1_Sukhbold+16-engineN20_state'],
@@ -117,7 +119,7 @@ For most applications specifying only the first four parameters is recommended.
         },
         {
             "interp_method": ["linear", "linear", "linear", "linear"],
-            "interp_classes": ["None", "BH", "WD", "NS"],
+            "interp_classes": ["None", "BH", "WD", "NS"], # classes not in this array will not be normalized in class-wise normalization
             "out_keys": sixth,
             "class_method": "kNN",
             "c_keys": ['S1_Patton&Sukhbold20-engineN20_state'],
@@ -224,20 +226,20 @@ class IFInterpolator:
 
                 if ("out_keys" not in params
                         and len(self.interpolator_parameters) > 1):
-                    raise Exception("Overlapping out keys between different "
+                    raise ValueError("Overlapping out keys between different "
                                     "interpolators are not permited!")
                 elif "out_keys" not in params:
                     continue
 
                 for key in params["out_keys"]:
                     if(key in out_keys):
-                        raise Exception(
+                        raise ValueError(
                             f"Overlapping out keys between different "
                             f"interpolators are not permited! ({key} in more "
                             f"than one set of out_keys)")
                     else:
                         out_keys.append(key)
-        
+
 
     def train(self):
         """Train the interpolator(s) on the PSyGrid used for construction."""
@@ -282,7 +284,7 @@ class IFInterpolator:
         Parameters
         ----------
         initial_values : numpy array
-            A numpy array containing the in-key values of the binaries to be evolved 
+            A numpy array containing the in-key values of the binaries to be evolved
 
         Return
         ------
@@ -306,7 +308,7 @@ class IFInterpolator:
         Parameters
         ----------
         initial_values : numpy array
-            A numpy array containing the in-key values of the binaries to be classified 
+            A numpy array containing the in-key values of the binaries to be classified
 
         Return
         ------
@@ -322,7 +324,7 @@ class IFInterpolator:
         for interpolator in self.interpolators:
 
             classes = {**classes, **interpolator.test_classifiers(new_values)}
-            
+
         return classes
 
 
@@ -418,12 +420,12 @@ class BaseIFInterpolator:
         self.interpolator = None
         if interp_classes is not None:
             if not isinstance(interp_classes, list):
-                raise Exception("interp_classes must be a list of "
+                raise ValueError("interp_classes must be a list of "
                                 "valid interpolation methods.")
             if isinstance(self.interp_method, list):
                 if len(self.interp_method) != len(interp_classes):
-                    raise Exception("No. of interpolation methods must "
-                                    "match no. of interpolation classes.")
+                    raise ValueError("Number of interpolation methods must "
+                                    "match number of interpolation classes.")
             else:
                 self.interp_method = [self.interp_method] * len(interp_classes)
             self.interp_classes = interp_classes
@@ -435,7 +437,7 @@ class BaseIFInterpolator:
 
         else:
             if grid is None:
-                raise Exception(
+                raise RuntimeError(
                     "grid must be specified to create an IF interpolator."
                     " Conversely, load an existing model specifying filename.")
 
@@ -586,7 +588,8 @@ class BaseIFInterpolator:
         """Set binary tracks as (in)valid depending on termination flags."""
         valid = np.zeros(len(ic), dtype=int)
 
-        for flag in ['not_converged', 'ignored_no_BH', 'ignored_no_RLO']:
+        for flag in ['not_converged', 'ignored_no_RLO',
+                     'ignored_no_binary_history']:
             which = (ic == flag)
             valid[which] = -1
             print(f"Discarded {np.sum(which)} binaries with "
@@ -648,11 +651,13 @@ class BaseIFInterpolator:
 
         """
         classes = self.test_classifier(self.c_key, Xt)
-        Xtn = self.X_scaler.normalize(Xt)
+
+
         if isinstance(self.interp_method, list):
             Xtn = self.X_scaler.normalize(Xt, classes)
-            Ypredn = self.interpolator.predict(Xtn, classes)
+            Ypredn = self.interpolator.predict(Xtn, classes, self.X_scaler)
         else:
+            Xtn = self.X_scaler.normalize(Xt)
             Ypredn = self.interpolator.predict(Xtn)
 
         Ypredn = np.array([
@@ -785,7 +790,7 @@ class BaseIFInterpolator:
         if len(Xt.shape) == 1:
             Xt = Xt.reshape((1, -1))
         if Xt.shape[1] != self.n_in:
-            raise Exception("Wrong dimensions. Xt should have as many "
+            raise ValueError("Wrong dimensions. Xt should have as many "
                             "columns as it was trained with.")
         # if binary classified as 'initial_MT', set numerical quantities to nan
         ynum, ycat = self.test_interpolator(Xt), self.test_classifiers(Xt)
@@ -959,15 +964,15 @@ class BaseIFInterpolator:
                             np.abs(ypred_i[:, which_abs] - Y_t[:, which_abs]), 90,
                             axis=0)
 
-            try:
-                where_min = np.nanargmin(np.nanmean(err, axis=2), axis=0)
-            except:
-                # replace nans by a large number before looking for minimum
-                where_min = np.nanargmin(np.nan_to_num(np.nanmean(err, axis=2), nan=1e99), axis=0)
+
+            no_nan_slices = np.isfinite(np.nanmean(err, axis = 2)).all(axis = 0)
+
+            where_min = np.full(shape = (self.n_out, ), fill_value = np.nan)
+            where_min[no_nan_slices] = np.nanargmin(np.nanmean(err, axis=2)[:, no_nan_slices], axis=0)
 
             out_scaling = []
             for i in range(self.n_out):
-                if where_min[i] < r:
+                if where_min[i] < r or np.isnan(where_min[i]):
                     out_scaling.append(out_scalings[0][i])
                 else:
                     out_scaling.append(out_scalings[1][i])
@@ -1039,9 +1044,9 @@ class Interpolator:
 
         """
         if self.interpolator is None:
-            raise Exception("Train Interpolator first.")
+            raise RuntimeError("Train Interpolator first.")
         if Xt.shape[1] != self.D:
-            raise Exception("Wrong input dimension.")
+            raise ValueError("Wrong input dimension.")
 
     def train_error(self, XT, YT):
         """Calculate approximation error given testing data.
@@ -1078,13 +1083,15 @@ class NNInterpolator(Interpolator):
         self.interpolator.fit(XT, YT)
         # self.train_error(XT, YT)
 
-    def predict(self, Xt):
+    def predict(self, Xt, scaler = None, klass = None):
         """Interpolate and approximate output vectors given input vectors.
 
         Parameters
         ----------
         XT : numpy array
             List of input vectors
+        scaler : #TODO
+        klass : #TODO
 
         Returns
         -------
@@ -1116,13 +1123,15 @@ class LinInterpolator(Interpolator):
         self.interpolator.append(OoH)
         # self.train_error(XT, YT)
 
-    def predict(self, Xt):
+    def predict(self, Xt, scaler = None, klass = None):
         """Interpolate and approximate output vectors given input vectors.
 
         Parameters
         ----------
         XT : numpy array
             List of input vectors
+        scaler : #TODO
+        klass : #TODO
 
         Returns
         -------
@@ -1130,14 +1139,24 @@ class LinInterpolator(Interpolator):
 
         """
         super().predict(Xt)
+
         Ypred = self.interpolator[0](Xt)
         wnan = np.isnan(Ypred[:, 0])
         # 1NN interpolation for binaries out of hull
         if np.any(wnan):
             Ypred[wnan, :] = self.interpolator[1].predict(Xt[wnan, :])
-        if np.any(wnan):
+
+            dists, _ = self.interpolator[1].kneighbors(Xt[wnan, :])
+            max_distance = dists.argmax() # only finding information for furthest nearest neighbor
+
+            neighbors = scaler.denormalize(self.interpolator[1]._tree.data.base) # unnormalizing 
+            max_distance_point = scaler.denormalize(Xt[[max_distance]])
+
+            nearest_neighbor = np.sum(np.square(neighbors - max_distance_point), axis = 1)
+            nearest_neighbor = nearest_neighbor.argsort()[0]
+
             warnings.warn(f"1NN interpolation used for {np.sum(wnan)} "
-                          "binaries out of hull.")
+                          f"binaries out of hull. Parameter-wise distance (Unnormalized) for point with maximum out-of-hull euclidian distance (Normalized): {np.abs(neighbors[nearest_neighbor] - max_distance_point[0])}")
         return Ypred
 
 
@@ -1168,8 +1187,8 @@ class MC_Interpolator:
             self.methods = [methods] * len(self.classes)
         else:
             if len(methods) != len(self.classes):
-                raise Exception("No. of interpolators must match "
-                                "no. of classes.")
+                raise ValueError("Number of interpolators must match "
+                                "number of classes.")
             self.methods = methods
         for i, method in enumerate(self.methods):
             if method == "linear":
@@ -1189,6 +1208,7 @@ class MC_Interpolator:
             List of input vectors
         YT : numpy array
             List of corresponding output vectors
+        z : #TODO
 
         """
         self.M = YT.shape[1]
@@ -1202,26 +1222,29 @@ class MC_Interpolator:
 
         return self.classifier.predict(Xt)
 
-    def predict(self, Xt, zpred):
+    def predict(self, Xt, zpred, scaler = None):
         """Interpolate and approximate output vectors given input vectors.
 
         Parameters
         ----------
         XT : numpy array
             List of input vectors
+        zpred : #TODO
+        scaler : #TODO
 
         Returns
         -------
         Output space approximation as numpy array
 
         """
+
         Ypred = np.ones((Xt.shape[0], self.M)) * np.nan
         for i in range(len(self.classes)):
             which = np.zeros_like(zpred, dtype=bool)
             for j in range(len(self.classes[i])):
                 which += zpred == self.classes[i][j]
             if which.any():
-                Ypred[which, :] = self.interpolators[i].predict(Xt[which, :])
+                Ypred[which, :] = self.interpolators[i].predict(Xt[which, :], scaler = scaler, klass = self.classes[i])
         return Ypred
 
 
@@ -1266,9 +1289,9 @@ class Classifier:
 
         """
         if self.classifier is None:
-            raise Exception("Train Classifier first.")
+            raise RuntimeError("Train Classifier first.")
         if Xt.shape[1] != self.D:
-            raise Exception("Wrong input dimension.")
+            raise ValueError("Wrong input dimension.")
 
     def predict_prob(self, Xt):
         """Classify and get probability of input vector belonging to any class.
@@ -1284,9 +1307,9 @@ class Classifier:
 
         """
         if self.classifier is None:
-            raise Exception("Train Classifier first.")
+            raise RuntimeError("Train Classifier first.")
         if Xt.shape[1] != self.D:
-            raise Exception("Wrong input dimension.")
+            raise ValueError("Wrong input dimension.")
 
     def train_error(self, XT, yT):
         """Calculate approximation error given testing data.
@@ -1316,6 +1339,7 @@ class KNNClassifier(Classifier):
             List of input vectors
         YT : numpy array
             List of corresponding classes
+        K : #TODO
 
         """
         super().train(XT, yT)
@@ -1379,7 +1403,7 @@ class KNNClassifier(Classifier):
         else:
             acc = np.zeros(nmax)
             for n in range(1, nmax + 1):
-                # print(f"  - xval for k = {n}")
+
                 for i in range(nfolds):
                     iTrain, itest = xval_indices(
                         XT.shape[0], percent_test=p_test, labels=yT)
@@ -1399,7 +1423,7 @@ class KNNClassifier(Classifier):
 class Scaler:
 
     def __init__(self, norms, XT, ic):
-        
+
         if norms[0] == norms[1]:
             self.scaler = {
                 None:  MatrixScaler(norms[0], XT)
@@ -1416,7 +1440,7 @@ class Scaler:
 
         if klass is None:
             return self.scaler[klass].normalize(X)
-        
+
         else:
 
             normalized = X.copy()
@@ -1427,9 +1451,9 @@ class Scaler:
                 inds = np.where(klass == c)[0]
                 c = None if c == "None" else c
 
-                if c not in self.scaler.keys():
-                    warnings.warn(f"skip normalize: c={c}, inds={inds}")
+                if c not in self.scaler.keys(): # if class not in classes to interpolate we ignore
                     continue
+
                 normalized[inds] = self.scaler[c].normalize(X[inds])
 
             return normalized
@@ -1437,7 +1461,7 @@ class Scaler:
     def denormalize(self, Xn, klass = None):
 
         if klass is None:
-            return self.scaler[klass].denormalize(X)
+            return self.scaler[klass].denormalize(Xn)
         
         else:
 
@@ -1449,8 +1473,7 @@ class Scaler:
                 inds = np.where(klass == c)[0]
                 c = None if c == "None" else c
 
-                if c not in self.scaler.keys():
-                    warnings.warn(f"skip denormalize: c={c}, inds={inds}")
+                if c not in self.scaler.keys(): # if class not in classes to interpolate we ignore
                     continue
                 normalized[inds] = self.scaler[c].denormalize(Xn[inds])
 
@@ -1463,8 +1486,9 @@ class MatrixScaler:
     def __init__(self, norms, XT):
         """Initialize the Scaler with desired scalings."""
         if len(norms) != XT.shape[1]:
-            raise Exception("The no. of columns in XT must be equal "
+            raise ValueError("The number of columns in XT must be equal "
                             "to the length of norms.")
+
         self.N = XT.shape[1]
         self.scalers = []
         for i in range(self.N):
@@ -1483,6 +1507,7 @@ class MatrixScaler:
 
     def denormalize(self, Xn):
         """Unscale input X."""
+
         assert Xn.shape[1] == self.N
         X = np.empty_like(Xn)
         for i in range(self.N):
@@ -1502,6 +1527,7 @@ def xval_indices(N, percent_test=0.15, labels=None):
         number of samples in the data set.
     percent_test : float
         Percentage of samples to be in the test sets. (0 < percent_test < 0.5)
+    labels : #TODO
 
     Returns
     -------
@@ -1588,7 +1614,7 @@ def train_and_assess(grid_train, grid_test, ux2, path, classes):
     m1NN.save(os.path.join(path2obj, name))
 
     interp_method, class_method = "linear", "kNN"
-    # classes = ['no_MT', 'stable_MT', 'unstable_MT']
+    # classes = ['no_MT', 'stable_MT', 'unstable_MT', 'stable_reverse_MT']
     mMC = IFInterpolator(grid=grid_T, interp_method=interp_method,
                          class_method=class_method, interp_classes=classes)
     interp_method = "linear3c"
@@ -1611,6 +1637,8 @@ def assess_models(models, grid_T, grid_t, ux2, path='./'):
         Train grid
     grid_t : psg.PSyGrid
         Test grid
+    ux2 : #TODO
+    path : #TODO
 
     """
     if not isinstance(models, list):
@@ -1714,6 +1742,7 @@ def assess_models(models, grid_T, grid_t, ux2, path='./'):
             w_sMT.append(((ic_gt == 'stable_MT') & (ic_t == 'stable_MT')))
             w_uMT.append(((ic_gt == 'unstable_MT') & (ic_t == 'unstable_MT')))
             w_nMT.append(((ic_gt == 'no_MT') & (ic_t == 'no_MT')))
+            #TODO: add interpolation class "stable_reverse_MT"
 
             w = [w_sMT, w_uMT, w_nMT, correct]
             percent = [50, 90]
@@ -2011,6 +2040,10 @@ def plot_interpolation(m, keys, v2, ux2, scales=None, path=None, **pltargs):
         A trained instance of the IFInterpolator
     keys : List of strings
         Variables for which interpolation errors will be plotted
+    v2 : #TODO
+    ux2 : #TODO
+    scales : #TODO
+    path : #TODO
 
     """
     N = pltargs.pop('N', PLT_INTERP_KWARGS['N'])
@@ -2064,7 +2097,7 @@ def plot_interpolation(m, keys, v2, ux2, scales=None, path=None, **pltargs):
                 name = (key + '_' + m.classifiers['interpolation_class'].method
                         + '_' + method + '_' + str(round(v, 2)) + '.png')
                 name = os.path.join(path, name)
-                print(name)
+
                 fig.savefig(name)
             plt.close(fig)
 
@@ -2078,10 +2111,12 @@ def plot_interp_error(Ygt, Ys, ind_MT, methods, keys, path='.'):
         Ground truth of the final values of testing tracks
     Ys : numpy array
         Model's approximation of the final values of testing tracks
+    ind_MT : #TODO
     methods : List of strings
         List that indicates the interpolation methods
     keys : List of strings
         List indicating for which variables error distributions will be plotted
+    path : #TODO
 
     """
     labels = ['stable MT', 'unstable MT', 'no MT']
