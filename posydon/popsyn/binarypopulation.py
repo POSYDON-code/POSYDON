@@ -507,6 +507,7 @@ class BinaryPopulation:
                 data={'simulated_mass': simulated_mass,
                       'underlying_mass': initial_total_underlying_mass(df=simulated_mass, **self.kwargs)[0], 
                       'number_of_systems': number_of_systems})
+            tmp_df.index.name = 'metallicity'
             store.append('mass_per_metallicity', tmp_df)
         
         # only remove the files once they've been written to the new file

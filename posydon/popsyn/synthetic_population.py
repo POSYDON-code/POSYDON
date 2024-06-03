@@ -894,7 +894,7 @@ class Population(PopulationIO):
     """
 
     def __init__(
-        self, filename, metallicity=None, ini_file=None, verbose=False, chunksize=1000
+        self, filename, metallicity=None, ini_file=None, verbose=False, chunksize=100000
     ):
         """Initialize the Population object.
 
