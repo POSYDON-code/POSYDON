@@ -287,9 +287,12 @@ class History:
                         "history_lengths not found in population file. Calculating history lengths..."
                     )
                 history_events = store.select_column("history", "index")
-                self.lengths = pd.DataFrame(
-                    history_events.groupby(history_events).count()
+                tmp_df = pd.DataFrame(
+                    history_events.groupby(history_events).count(),
                 )
+                tmp_df.rename(columns={"index": "length"}, inplace=True)
+                self.lengths = tmp_df
+                del tmp_df
                 if self.verbose:
                     print("Storing history lengths in population file!")
                 store.put("history_lengths", pd.DataFrame(self.lengths), format="table")
