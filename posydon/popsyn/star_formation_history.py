@@ -203,9 +203,8 @@ def SFR_Z_fraction_at_given_redshift(
 
     Parameters
     ----------
-    z : double
+    z : np.array
         Cosmological redshift.
-
     SFR : string
         Star formation rate assumption:
         - Madau+Fragos17 see arXiv:1606.07887
