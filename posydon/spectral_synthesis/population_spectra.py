@@ -159,8 +159,8 @@ class population_spectra():
         """
 
         if type(pop_spectrum)== list:
-            pop_data['S1_grid_status'] = np.hstack(labels)[:,0]
-            pop_data['S2_grid_status'] = np.hstack(labels)[:,1]
+            pop_data['S1_grid_status'] = np.hstack(labels[:,0])
+            pop_data['S2_grid_status'] = np.hstack(labels[:,1])
             combined_spectrum = Counter(pop_spectrum[0])
             if len(pop_spectrum) > 0: 
                 for i in range(1,len(pop_spectrum)):
