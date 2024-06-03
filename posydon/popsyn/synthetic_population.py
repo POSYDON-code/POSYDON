@@ -359,14 +359,29 @@ class History:
         
         elif isinstance(key, int):
             return pd.read_hdf(self.filename, where="index == key", key="history")
+        
+        # list of indices
         elif isinstance(key, list) and all(isinstance(x, int) for x in key):
-            with pd.HDFStore(self.filename, mode="r") as store:
-                return store.select("history", where="index in key")
+            if len(key) == 0:
+                return pd.DataFrame()
+            else:
+                with pd.HDFStore(self.filename, mode="r") as store:
+                    return store.select("history", where="index in key")
+        # numpy array
         elif isinstance(key, np.ndarray) and (key.dtype == int):
-            indices = key.tolist()
-            with pd.HDFStore(self.filename, mode="r") as store:
-                return store.select("history", where="index in indices")
+            if len(key) == 0:
+                return pd.DataFrame()
+            else:
+                indices = key.tolist()
+                with pd.HDFStore(self.filename, mode="r") as store:
+                    return store.select("history", where="index in indices")
+                
+        # boolean mask
         elif (isinstance(key, np.ndarray) and key.dtype == bool) or (isinstance(key, pd.DataFrame) and all(key.dtypes == bool)):
+            # return empty if no values
+            if len(key) == 0:
+                return pd.DataFrame()
+            
             out_df = pd.DataFrame()
             for i in range(0, len(key), self.chunksize):
                 tmp_df = pd.read_hdf(
@@ -374,11 +389,15 @@ class History:
                 )[key[i : i + self.chunksize]]
                 out_df = pd.concat([out_df, tmp_df])
             return out_df
+        
+        # single column
         elif isinstance(key, str):
             if key in self.columns:
                 return pd.read_hdf(self.filename, key="history", columns=[key])
             else:
                 raise ValueError(f"{key} is not a valid column name!")
+            
+        # multiple columns
         elif isinstance(key, list) and all(isinstance(x, str) for x in key):
             if all(x in self.columns for x in key):
                 return pd.read_hdf(self.filename, key="history", columns=key)
@@ -896,7 +915,7 @@ class Population(PopulationIO):
     """
 
     def __init__(
-        self, filename, metallicity=None, ini_file=None, verbose=False, chunksize=100000
+        self, filename, metallicity=None, ini_file=None, verbose=False, chunksize=1000000
     ):
         """Initialize the Population object.
 
