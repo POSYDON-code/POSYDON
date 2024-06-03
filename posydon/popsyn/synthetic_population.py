@@ -296,7 +296,6 @@ class History:
                 if self.verbose:
                     print("Storing history lengths in population file!")
                 store.put("history_lengths", pd.DataFrame(self.lengths), format="table")
-
                 del history_events
 
             self.columns = store.select("history", start=0, stop=0).columns
