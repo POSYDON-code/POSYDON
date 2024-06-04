@@ -233,20 +233,20 @@ def plot_popsyn_over_grid_slice(pop, grid_type, met_Zsun, slices=None, channel=N
 
     
     if channel is not None:
-        channel_sel = ' & channel == '+str(channel)
+        channel_sel = 'channel == '+str(channel)
     else:
-        channel_sel = ''            
-
+        channel_sel = ''
+        
     for i, var in enumerate(vars):
         if slices is not None and round(var,2) not in np.around(slices,2):
             if verbose:
                 print(f'Skipping {round(var,2)}')
             continue
+        
+        met_indices = np.where(pop.select(where=channel_sel, columns=['metallicity']) == met_Zsun)[0].tolist()
         if 'HMS-HMS' in grid_path:
             slice_3D_var_range = (dq_edges[i],dq_edges[i+1])
             
-            # select popsynth binaries in the given mass ratio range
-            met_indices = pop.select(where='metallicity == '+str(met_Zsun)+channel_sel, columns=[]).index.to_list()
             sel = 'index in '+str(met_indices)+' & event == "ZAMS"'
             data = pop.history.select(where=sel, columns=['S1_mass','S2_mass' ,'orbital_period'])
             
@@ -260,15 +260,13 @@ def plot_popsyn_over_grid_slice(pop, grid_type, met_Zsun, slices=None, channel=N
             # select popsynth binaries in the given compact object mass
             # TODO: implement the case of reversal mass ratio
             if 'CO-HMS_RLO' in grid_path:
-                met_indices = pop.select(where='metallicity == '+str(met_Zsun)+channel_sel, columns=[]).index.to_list()
+                
                 sel = 'index in '+str(met_indices)+' & event == "oRLO2"'
                 data = pop.history.select(where=sel, columns=['S1_mass','S2_mass' ,'orbital_period'])
-                
                 m_CO = data['S1_mass'].values
                 mask = (m_CO>=slice_3D_var_range[0]) & (m_CO<=slice_3D_var_range[1])
                 
             elif 'CO-HeMS' in grid_path:
-                met_indices = pop.select(where='metallicity == '+str(met_Zsun)+channel_sel, columns=[]).index.to_list()
                 sel = 'index in '+str(met_indices)+' & step_names == "step_CE"'
                 data = pop.history.select(where=sel, columns=['S1_mass','S2_mass' ,'orbital_period'])
                 m_CO = data['S1_mass'].values
