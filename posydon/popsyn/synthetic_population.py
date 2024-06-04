@@ -1146,7 +1146,7 @@ class Population(PopulationIO):
 
         with pd.HDFStore(filename, mode=mode) as store:
             # shift all new indices by the current length of data in the file
-            last_index_in_file = 0
+            last_index_in_file = -1
 
             if "/oneline" in store.keys():
                 last_index_in_file = np.sort(store["oneline"].index)[-1]
@@ -1168,7 +1168,8 @@ class Population(PopulationIO):
             # TODO: I need to shift the indices of the binaries or should I reindex them?
             # since I'm storing the information, reindexing them should be fine.
 
-            if last_index_in_file == 0:
+            if last_index_in_file == -1:
+                last_index_in_file = 0
                 reindex = {
                     i: j
                     for i, j in zip(selection,
