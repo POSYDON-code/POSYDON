@@ -122,7 +122,6 @@ class BinaryPopulation:
         for key, arg in kwargs.items():
             self.kwargs[key] = arg
         self.number_of_binaries = self.kwargs.get('number_of_binaries')
-
         self.population_properties = self.kwargs.get('population_properties',
                                                      SimulationProperties())
         atexit.register(lambda: BinaryPopulation.close(self))
@@ -130,6 +129,12 @@ class BinaryPopulation:
 
         # grab all metallicities in population or use single metallicity
         self.metallicities = self.kwargs.get('metallicities', [self.metallicity])
+
+        # force the metallicity on to the simulation properties
+        for key in STEP_NAMES_LOADING_GRIDS:
+            if key in self.population_properties.kwargs:
+                self.population_properties.kwargs[key][1].update({'metallicity': self.metallicity})
+                        
 
         self.population_properties.max_simulation_time = self.kwargs.get(
             'max_simulation_time')  # years
