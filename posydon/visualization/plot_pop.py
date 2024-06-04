@@ -111,7 +111,7 @@ def plot_merger_efficiency(met, merger_efficiency, show=True, path=None, channel
     plt.yscale('log')
     plt.xscale('log')
     plt.xlabel(r'$Z/Z_\odot$')
-    plt.ylabel(r'#events[$M_\odot^{-1}$]')
+    plt.ylabel('\#events [$M_\odot^{-1}$]')
     plt.legend(loc='center left', bbox_to_anchor=(1, 0.5))
     if path:
         plt.savefig(path)
