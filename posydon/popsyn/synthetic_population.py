@@ -165,7 +165,7 @@ class PopulationRunner:
                 )
                 self.binary_populations.append(BinaryPopulation(**ini_kw))
 
-    def evolve(self):
+    def evolve(self, overwrite=False):
         """Evolve the binary populations.
 
         This method is responsible for evolving the binary populations. It iterates over each population
@@ -178,8 +178,13 @@ class PopulationRunner:
         """
         for pop in self.binary_populations:
             # check if the temp directory exists
-            if os.path.exists(pop.kwargs["temp_directory"]):
+            if os.path.exists(pop.kwargs["temp_directory"]) and not overwrite:
                 raise FileExistsError(f"The {pop.kwargs['temp_directory']} directory already exists! Please remove it or rename it before running the population.") 
+            elif os.path.exists(pop.kwargs["temp_directory"]) and overwrite:
+                if self.verbose:
+                    print(f"Removing {pop.kwargs['temp_directory']} directory...")
+                os.removedirs(pop.kwargs["temp_directory"])    
+                
             pop.evolve()
             if pop.comm is None:
                 self.merge_parallel_runs(pop)
