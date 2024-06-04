@@ -274,8 +274,8 @@ def SFR_Z_fraction_at_given_redshift(
         Z_max_mask = Z <= Z_max
         redshift_indices = np.array([np.where(redshifts <= i)[0][0] for i in z])
         Z_dist = M[:, Z_max_mask][redshift_indices]
-
         fSFR = np.zeros((len(z), len(metallicity_bins) - 1))
+        
         for i in range(len(z)):
             if Z_dist[i].sum() == 0.0:
                 continue
@@ -291,8 +291,13 @@ def SFR_Z_fraction_at_given_redshift(
 
                 if not select_one_met:
                     # add the fraction of the SFR in the first and last bin
-                    fSFR[i, 0] = Z_dist_cdf_interp(np.log10(metallicity_bins[1]))
-                    fSFR[i, -1] = 1 - Z_dist_cdf_interp(np.log10(metallicity_bins[-1]))
+                    # or the only bin without selecting one metallicity
+                    if len(metallicity_bins) == 2:
+                        fSFR[i, 0] = 1
+                    else:
+                        
+                        fSFR[i, 0] = Z_dist_cdf_interp(np.log10(metallicity_bins[1]))
+                        fSFR[i, -1] = 1 - Z_dist_cdf_interp(np.log10(metallicity_bins[-1]))
     else:
         raise ValueError("Invalid SFR!")
 

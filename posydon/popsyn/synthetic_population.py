@@ -1959,7 +1959,7 @@ class TransientPopulation(Population):
         indices = self.indices
 
         # sample the SFH for only the events that are within the Hubble time
-        # I only need to sample the SFH at each metallicity and z_birth
+        # only need to sample the SFH at each metallicity and z_birth
         # Not for every event!
         SFR_at_z_birth = star_formation_rate(rates.MODEL["SFR"], z_birth)
         # get metallicity bin edges
@@ -2026,7 +2026,7 @@ class TransientPopulation(Population):
                 .flatten()
                 * Zsun
             )
-
+            
             weights = np.zeros((len(met_events), nr_of_birth_bins))
             for i, met in enumerate(rates.centers_metallicity_bins):
                 mask = met_events == met
@@ -2668,7 +2668,10 @@ class Rates(TransientPopulation):
             bin_met[1:-1] = met_val[:-1] + (met_val[1:] - met_val[:-1]) / 2.0
         # one metallicty bin
         elif len(met_val) == 1:
-            if isinstance(self.MODEL["dlogZ"], float):
+            if self.MODEL["dlogZ"] is None:
+                bin_met[0] = -9
+                bin_met[-1] = 0
+            elif isinstance(self.MODEL["dlogZ"], float):
                 bin_met[0] = met_val[0] - self.MODEL["dlogZ"] / 2.0
                 bin_met[-1] = met_val[0] + self.MODEL["dlogZ"] / 2.0
             elif isinstance(self.MODEL["dlogZ"], list) or isinstance(

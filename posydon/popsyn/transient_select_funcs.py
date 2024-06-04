@@ -136,7 +136,7 @@ def mass_ratio(m_1, m_2):
     q[q>1.] = 1./q[q>1.]
     return q
 
-def BBH_selection_function(history_chunk, oneline_chunk, formation_channels_chunk):
+def BBH_selection_function(history_chunk, oneline_chunk, formation_channels_chunk=None):
     '''A BBH selection function to create a transient population of BBHs mergers.
     
     This is an example function for selecting BBH mergers and some of their properties.
@@ -187,7 +187,8 @@ def BBH_selection_function(history_chunk, oneline_chunk, formation_channels_chun
     df_transients['chi_eff'] = chi_eff(history_chunk[mask]['S1_mass'], history_chunk[mask]['S2_mass'], history_chunk[mask]['S1_spin'], history_chunk[mask]['S2_spin'], oneline_chunk['S1_spin_orbit_tilt'], oneline_chunk['S2_spin_orbit_tilt'])
     df_transients['eccentricity'] = history_chunk[mask]['eccentricity']
 
-    df_transients = pd.concat([df_transients, formation_channels_chunk[['channel']]], axis=1)
+    if formation_channels_chunk is not None:
+        df_transients = pd.concat([df_transients, formation_channels_chunk[['channel']]], axis=1)
     
     return df_transients
     
