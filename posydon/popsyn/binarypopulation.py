@@ -572,7 +572,7 @@ class PopulationManager:
         self.oneline_dfs = []
 
         if (('read_samples_from_file' in self.kwargs) and
-            (self.kwargs['read_samples_from_file']!='')):
+            (self.kwargs['read_samples_from_file'] != '')):
             self.binary_generator = BinaryGenerator(\
                                      sampler=get_samples_from_file, **kwargs)
         else:
@@ -878,7 +878,7 @@ class BinaryGenerator:
         indices = np.arange(self._num_gen, self._num_gen+N_binaries, 1)
         
         # kicks
-        if 'read_samples_from_file' in kwargs:
+        if (('read_samples_from_file' in kwargs) and (kwargs['read_samples_from_file'] != '')):
             kick1, kick2 = get_kick_samples_from_file(**kwargs)
         else:
             if 'number_of_binaries' in kwargs:
