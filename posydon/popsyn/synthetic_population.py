@@ -2115,9 +2115,8 @@ class TransientPopulation(Population):
             if not any(np.isclose(metallicity, self.solar_metallicities)):
                 raise ValueError("The metallicity is not present in the population!")
 
-            time = self.select(
-                where="metallicity == {}".format(metallicity), columns=["time"]
-            ).values
+            time = self.select(columns=['metallicity', 'time'])
+            time = time[time['metallicity'] == metallicity].drop(columns=['metallicity']).values
             time = time * 1e6  # yr
             h, bin_edges = np.histogram(time, bins=bins)
             h = (
