@@ -534,9 +534,11 @@ class StepSN(object):
                 else:                    
                     MODEL_properties = getattr(star, MODEL_NAME_SEL)
                     
-                    # Check if SN_type matches the CO_type in used MODEL
-                    if check_SN_CO_match(MODEL_properties['SN_type'],
-                                             MODEL_properties['state']):
+                    ## Check if SN_type mismatches the CO_type in MODEL or if interpolated MODEL properties are NaN
+                    ## If either are true, interpolated values cannot be used for this SN
+                    if (check_SN_CO_match(MODEL_properties['SN_type'], MODEL_properties['state']) and
+                        ~np.isnan(MODEL_properties['mass'])):
+
                         for key, value in MODEL_properties.items():
                             setattr(star, key, value)
                     
@@ -576,11 +578,10 @@ class StepSN(object):
                         return
                     
                     else:
-                         # raise a warning
                         warnings.warn(f'{MODEL_NAME_SEL}: The SN_type '
-                                      'does not match the predicted CO! '
-                                       'If use_profiles '
-                                       'or use_core_masses is set to True, '
+                                      'does not match the predicted CO, or the interpolated '
+                                      'values for the SN remnant are NaN. '
+                                       'If use_profiles or use_core_masses is set to True, '
                                        'continue with the collapse.')
                     
             # Verifies the selection of core-collapse mechnism to perform
