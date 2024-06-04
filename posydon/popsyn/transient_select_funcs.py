@@ -240,7 +240,10 @@ def DCO_detactability(sensitivity, transient_pop_chunk, z_events_chunk, z_weight
     for i in tqdm(range(z_events_chunk.shape[1]), total=z_events_chunk.shape[1], disable= not verbose):
         data_slice['z'] = z_events_chunk.iloc[:,i]
         mask = ~np.isnan(data_slice['z']).to_numpy()
-        detectable_weights[mask, i] = detectable_weights[mask, i] * sel_eff.predict_pdet(data_slice[mask])
+        if np.sum(mask) == 0:
+            detectable_weights[mask, i] = 0.0
+        else:
+            detectable_weights[mask, i] = detectable_weights[mask, i] * sel_eff.predict_pdet(data_slice[mask])
         
     return pd.DataFrame(detectable_weights, index=z_events_chunk.index, columns=z_events_chunk.columns)
     
