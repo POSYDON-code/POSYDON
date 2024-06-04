@@ -74,31 +74,25 @@ def plot_grb_rate_density(z, rate_density, zmax=10., channels=False,
         plt.errorbar(z_P16,rate_P16,xerr=rate_P16_error_x,yerr=rate_P16_error_y, fmt='.', color='black', 
                     label=r'$\mathcal{R}_\mathrm{LGRB}(E_\mathrm{iso}^{45-450\,\mathrm{keV}} > 10^{51} \, \mathrm{erg})$ SHOALS survey') 
         
-def plot_rate_density(z_dco=None, R_dco=None, z_grb=None, R_grb=None, **kwargs):
+def plot_rate_density(intrinsic_rates, channels=False, **kwargs):
     plt.figure()   
-    title1 = ''
-    title2 = '' 
-    if z_dco is not None and R_dco is not None:
-        title1 += 'DCO merger'
-        plot_merger_rate_density(z_dco, R_dco, **kwargs)
-        # do not display twice the channel labels
-        kwargs['label_channels'] = False 
-    if z_grb is not None and R_grb is not None:
-        title2 += 'GRB beamed'
-        plot_grb_rate_density(z_grb, R_grb, **kwargs)
-    if title1 and title2:
-        title = title1 + ' \& ' + title2 + ' rate densities'
-    else:
-        title = title1 + title2 + ' rate density'
-    plt.title(title)
+    
+    plt.plot(intrinsic_rates.index, intrinsic_rates['total'], label='total', color='black')
+    
+    if channels:
+        for i, ch in enumerate([key for key in intrinsic_rates.keys() if key != 'total']):
+            if ch != 'total':
+                plt.plot(intrinsic_rates.index, intrinsic_rates[ch], label=ch, color=COLORS[i])
     plt.yscale('log')
     plt.ylabel(r'$\mathcal{R} \,[\mathrm{Gpc}^{-3}\,\mathrm{yr}^{-1}]$')
     plt.xlabel(r'$z$')
     plt.legend(loc='center left', bbox_to_anchor=(1, 0.5))
     if 'ylim' in kwargs:
         plt.ylim(kwargs['ylim'])
+    if 'xlim' in kwargs:
+        plt.xlim(kwargs['xlim'])
     if 'path' in kwargs and isinstance(kwargs['path'],str):
-        plt.savefig(path)
+        plt.savefig(kwargs['path'])
     if 'show' in kwargs and kwargs['show']:
         plt.show()
 
@@ -179,6 +173,11 @@ def plot_hist_properties(df, ax=None, df_intrinsic=None, df_observable=None,
         ax.set_ylabel(r'PDF')
     else:
         ax.set_ylabel(r'\#events in bin')
+    
+    if 'yscale' in kwargs:
+        ax.set_yscale(kwargs['yscale'])
+    if 'xscale' in kwargs:
+        ax.set_xscale(kwargs['xscale'])
     
     if path:
         plt.savefig(path)

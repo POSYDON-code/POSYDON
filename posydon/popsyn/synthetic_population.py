@@ -2643,6 +2643,11 @@ class Rates(TransientPopulation):
             # plot the histogram using plot_pop.plot_hist_properties
             plot_pop.plot_hist_properties(df, bins=bins, **kwargs)
 
+    def plot_intrinsic_rate(self, channels=False, **kwargs):
+        """Plot the intrinsic rate density of the transient population."""
+
+        plot_pop.plot_rate_density(self.intrinsic_rate_density, channels=channels, **kwargs)
+
     @property
     def edges_metallicity_bins(self):
         """Return the edges of the metallicity bins.
