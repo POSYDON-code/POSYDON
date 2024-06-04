@@ -1838,46 +1838,31 @@ class TransientPopulation(Population):
                     del store["transients/" + self.transient_name + "/efficiencies"]
 
         metallicities = self.mass_per_metallicity.index.to_numpy()
-        efficiencies = []
-        for met in metallicities:
-            count = self.select(where="metallicity == {}".format(met)).shape[0]
+        
+        met_columns = self.select(columns=["metallicity"]).value_counts()
+        
+        met_columns.index = [i[0] for i in met_columns.index.to_numpy().flatten()]
 
-            # just sums the number of events
-            underlying_stellar_mass = self.mass_per_metallicity["underlying_mass"][met]
-
-            eff = count / underlying_stellar_mass
-            efficiencies.append(eff)
-            print(f"Efficiency at Z={met:1.2E}: {eff:1.2E} Msun^-1")
-
+        combined_df = pd.concat([met_columns, self.mass_per_metallicity], axis=1)
+        combined_df.fillna(0, inplace=True)
+        combined_df.sort_index(inplace=True)
+        
+        efficiencies = combined_df['count']/combined_df['underlying_mass']
+        for MET, value in efficiencies.sort_index().items():
+            print(f"Efficiency at Z={MET:1.2E}: {value:1.2E} Msun^-1")
+            
         self.efficiency = pd.DataFrame(
-            index=metallicities, data={"total": np.array(efficiencies)}
+            efficiencies, columns=["total"]
         )
-
+        self.efficiency.index.name = "metallicity"
         # if the channel column is present compute the merger efficiency per channel
         if "channel" in self.columns:
-            channels = np.unique(self.select(columns=["channel"]).values)
+            
+            data = self.select(columns=["channel", "metallicity"]).value_counts()
+            channels = np.unique(data.index.get_level_values(0))
+            
             for ch in channels:
-                efficiencies = []
-                for met in metallicities:
-                    count = np.sum(
-                        (
-                            self.select(
-                                where="(metallicity == {})".format(met),
-                                columns=["channel"],
-                            )
-                            == ch
-                        ).values
-                    )
-                    if count > 0:
-                        underlying_stellar_mass = self.mass_per_metallicity["underlying_mass"][
-                            met
-                        ]
-                        eff = count / underlying_stellar_mass
-                    else:
-                        eff = 0
-                    efficiencies.append(eff)
-                self.efficiency[ch] = np.array(efficiencies)
-
+                self.efficiency[ch] = (data[ch] / self.mass_per_metallicity["underlying_mass"]).fillna(0)
         # save the efficiency
         self._save_efficiency(self.filename)
 
