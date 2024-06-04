@@ -531,11 +531,7 @@ class StepSN(object):
                                      'or use_core_masses is set to True, '
                                      'continue with the collapse.')       
                               
-                else:
-                    # store some properties of the star object
-                    # to be used for collapse verification
-                    pre_SN_star = copy.deepcopy(star)
-                    
+                else:                    
                     MODEL_properties = getattr(star, MODEL_NAME_SEL)
                     
                     # Check if SN_type matches the CO_type in used MODEL
