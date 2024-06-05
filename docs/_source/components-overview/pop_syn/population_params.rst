@@ -404,7 +404,9 @@ TODO: add description
 SingleStar 1 and 2 Output
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
-TODO: add description
+This dictionary contains the parameters that will be saved in the output of the SingleStar objects in the system.
+`only_select_columns` will be stored in the history table,  and the initial and final step will be stored in the oneline table with the prefix :code:`S1` or :code:`S2` depending on the star,
+`scalar_names` will only be stored in the oneline table.
 
 .. list-table::
    :widths: 50 50
@@ -417,4 +419,4 @@ TODO: add description
    * - `only_select_columns`
      - ['state', 'mass', 'log_R', 'log_L', 'lg_mdot', 'he_core_mass', 'he_core_radius', 'co_core_mass', 'co_core_radius', 'center_h1', 'center_he4', 'surface_h1', 'surface_he4', 'surf_avg_omega_div_omega_crit', 'spin',] (options are: 'state', 'metallicity', 'mass', 'log_R', 'log_L', 'lg_mdot', 'lg_system_mdot', 'lg_wind_mdot', 'he_core_mass', 'he_core_radius', 'c_core_mass', 'c_core_radius', 'o_core_mass', 'o_core_radius', 'co_core_mass', 'co_core_radius', 'center_h1', 'center_he4', 'center_c12', 'center_n14', 'center_o16', 'surface_h1', 'surface_he4', 'surface_c12', 'surface_n14', 'surface_o16', 'log_LH', 'log_LHe', 'log_LZ', 'log_Lnuc', 'c12_c12', 'center_gamma', 'avg_c_in_c_core', 'surf_avg_omega', 'surf_avg_omega_div_omega_crit', 'total_moment_of_inertia', 'log_total_angular_momentum', 'spin', 'conv_env_top_mass', 'conv_env_bot_mass', 'conv_env_top_radius', 'conv_env_bot_radius', 'conv_env_turnover_time_g', 'conv_env_turnover_time_l_b', 'conv_env_turnover_time_l_t', 'envelope_binding_energy', 'mass_conv_reg_fortides', 'thickness_conv_reg_fortides', 'radius_conv_reg_fortides', 'lambda_CE_1cent', 'lambda_CE_10cent', 'lambda_CE_30cent', 'lambda_CE_pure_He_star_10cent', 'profile')           
    * - `scalar_names`
-     - [ 'natal_kick_array', 'SN_type', 'f_fb', 'spin_orbit_tilt', 'm_disk_accreted', 'm_disk_radiated']
+     - [ 'natal_kick_array', 'SN_type', 'f_fb', 'spin_orbit_tilt_first_SN','spin_orbit_tilt_second_SN', 'm_disk_accreted', 'm_disk_radiated']
