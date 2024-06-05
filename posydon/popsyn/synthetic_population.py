@@ -250,7 +250,7 @@ class History:
         The binary indices of the history dataframe.
     """
 
-    def __init__(self, filename, verbose=False, chunksize=10000):
+    def __init__(self, filename, verbose=False, chunksize=100000):
         """Initialise the history dataframe.
 
         This class is used to handle the history dataframe of a population file.
@@ -263,7 +263,7 @@ class History:
             The path to the population file.
         verbose : bool
             If `True`, print additional information.
-        chunksize : int (default=10000)
+        chunksize : int (default=100000)
             The chunksize to use when reading the history file.
         """
         self.filename = filename
@@ -523,7 +523,7 @@ class Oneline:
 
     """
 
-    def __init__(self, filename, verbose=False, chunksize=10000):
+    def __init__(self, filename, verbose=False, chunksize=100000):
         """Initialize a Oneline class instance.
 
         Parameters
@@ -1613,7 +1613,7 @@ class TransientPopulation(Population):
 
     """
 
-    def __init__(self, filename, transient_name, verbose=False, chunksize=10000):
+    def __init__(self, filename, transient_name, verbose=False, chunksize=100000):
         """Initialise the TransientPopulation object.
 
         This method initializes the TransientPopulation object by linking it to the population file.
@@ -1628,6 +1628,8 @@ class TransientPopulation(Population):
             The name of the transient population within the file.
         verbose : bool, optional
             If `True`, additional information will be printed during the initialization process.
+        chunksize : int, optional
+            The chunksize to use when reading the population file (default is 100000).
 
         Raises
         ------
@@ -2150,7 +2152,7 @@ class Rates(TransientPopulation):
 
     """
 
-    def __init__(self, filename, transient_name, SFH_identifier, verbose=False, chunksize=1000):
+    def __init__(self, filename, transient_name, SFH_identifier, verbose=False, chunksize=100000):
         """
         Initialize the Rates object.
 
@@ -2168,6 +2170,8 @@ class Rates(TransientPopulation):
             The identifier for the star formation history.
         verbose : bool, optional
             Whether to print verbose output. Default is False.
+        chunksize : int, optional
+            The chunksize to use when reading the population file (Default is 100000).
         """
 
         super().__init__(filename, transient_name, verbose=verbose, chunksize=chunksize)
