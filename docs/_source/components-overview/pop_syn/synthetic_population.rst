@@ -31,6 +31,15 @@ The :code:`formation_channels` is not immediately available, but can be created 
 :func:`~posydon.popsyn.synthetic_population.Population.calculate_formation_channels` function of the :class:`~posydon.popsyn.synthetic_population.Population` object.
 
 
+Additionally, :meth:`Population.mass_per_metallicity<posydon.popsyn.synthetic_population.Population.mass_per_metallicity>` contains some essential metadata calculated from the populaiton synthesis run.
+It is a pandas.DataFrame with the metallicity (in solar units) as the index and 3 columns:
+
+1. :code:`count`, the number of systems at that metallicity in the file.
+2. :code:`simulated_mass`, the total ZAMS mass of the population run at that metallicity.
+3. :code:`underlying_mass`, the total mass of the population run at that metallicity, assuming a binary fraction of 1. This is calculated in :func:`~posydon.popsyn.normalized_pop_mass.initial_total_underlying_mass`.
+
+
+
 history
 --------
 
@@ -157,8 +166,6 @@ The length and indices of the oneline table can be found with :attr:`Population.
     print(pop.oneline.indices)
   
 
-
-
 formation_channels
 ------------------
 
@@ -174,23 +181,273 @@ Two columns are available in the formation channels table:
 - `channel` : A cleaned-up version of the history events, where events are separated by a `-`. 
 
 
-# Exporting part of the population
+Additional Attributes
+---------------------
 
 
-# Transient population creation functions
+- :attr:`~posydon.popsyn.synthetic_population.Population.ini_parameters`: The parameters for the initial sampling conditions of the population synthesis run.
 
 
-# Star Foramtion Rate functions
+- :attr:`~posydon.popsyn.synthetic_population.Population.mass_per_metallicity`: The mass per metallicity bin for the population synthesis run. 
+  The `underlying_mass` is calculated with the assumption that binary fraction == 1.
 
-
-# Observability functions
-
-
-
-
+- :attr:`~posydon.popsyn.synthetic_population.Population.history_lengths`: The length of the history of each system in the population. 
+        This is created the first time the file is opened with the :class:`~posydon.popsyn.synthetic_population.Population` object.
 
 
 
+Exporting part of the population
+--------------------------------
+
+The class function :func:`Population.export_selection<posydon.popsyn.synthetic_population.Population.export_selection>` allows you to export part of the population to a new HDF5 file.
+It takes a list of indices of the systems you want to export, and the path to the new file.
+This will copy the systems with the given indices to the new file, which includes their history, oneline data, and formation channels (if presen).
+
+.. code-block:: python
+
+    pop.export_selection([0, 1, 2], 'path/to/new_population.h5')
+
+
+If the file already exists, the function will raise an error. If you want to overwrite or append to the file, you can use the :code:`overwrite` argument or :code:`append` argument.
+
+.. code-block:: python
+
+    pop.export_selection([0, 1, 2], 'path/to/new_population.h5', overwrite=True)
+    pop.export_selection([0, 1, 2], 'path/to/new_population.h5', append=True)
+
+
+TransientPopulation
+===================
+
+The :class:`~posydon.popsyn.synthetic_population.TransientPopulation` object is an interface for the transient data of the population.
+It inherits from the :class:`~posydon.popsyn.synthetic_population.Population` object, but also allows access to the transient populations in the population file.
+
+A transient population consists of instantaneous events in the population, such as supernovae, kilonovae, or gamma-ray bursts.
+These have a single "moment" in time, and are not part of the evolution of the system.
+The :class:`~posydon.popsyn.synthetic_population.TransientPopulation` class has been designed to handle these events, but future versions of the code may include more complex populations.
+
+.. code-block:: python
+
+    from posydon.popsyn.synthetic_population import TransientPopulation
+
+    # where transient_name is the name of the transient population in the file
+    trans_pop = TransientPopulation('path/to/population.h5', 'transient_name')
+
+
+# Creating a TransientPopulation
+
+The transient population is created using the :func:`posydon.popsyn.synthetic_population.Population.create_transient_population` function of the :class:`~posydon.popsyn.synthetic_population.Population` object.
+This function creates a separate table with each transient in the population file.
+It loops over all the systems in the population in chunks and applies the given function to them.
+
+The :func:`posydon.popsyn.synthetic_population.Population.create_transient_population` function takes a function as an argument: :code:`selection_function`.
+
+The :code:`selection_function` takes 3 arguments: :code:`history_chunk`, :code:`oneline_chunk`, and :code:`formation_channels_chunk` (optional).
+These chunks are cut based on a given chunksize, which is set to 1000000 by default, and are cut on system. 
+This means that always a complete history of a system is passed to the function by :func:`posydon.popsyn.synthetic_population.Population.create_transient_population`.
+
+:code:`selection_function` is a function you can adapt to your own needs, and examples of building one are given in the :ref:`tutorial-examples.population-synthesis.bbh-analysis` or :ref:`tutorial-examples.population-synthesis.lgrb_pop_syn`.
+
+.. note::
+
+    The :code:`selection_function` should return a pandas DataFrame with at least a :code:`metallicity` and :code:`time` column of each event.
+    Moreover, every row should only contain a single event.
+
+
+We provide a few standard selection functions for the most common transient populations, such as binary black holes and long gamma-ray bursts.
+These functions are available in the :mod:`posydon.popsyn.transient_select_funcs` module.
+
+
+# Accessing TransientPopulation
+
+After loading a transient population, you keep access to the history and oneline data of the population.
+Now, you can access the transient data of the population using :attr:`TrannsientPopulation.population<posydon.popsyn.synthetic_population.TransientPopulation>`.
+
+
+.. code-block:: python
+  
+    print(trans_pop.population)
+
+
+# Calculating Efficiencies
+
+With this population, you can calculate additional information, such as the efficiency over metallicity.
+
+.. code-block:: python
+  
+    trans_pop.calculate_efficiency_over_metallicity(channels=True)
+
+:code:`channels=True` includes the formation channels in the efficiency calculation.
+
+# Plotting
+
+The :class:`~posydon.popsyn.synthetic_population.TransientPopulation` contains a few plotting functions for ease.
+    
+.. code-block:: python
+    # plots the efficiency over metallicity per channel
+    trans_pop.plot_efficiency_over_metallicity(channel=True)
+
+
+.. code-block:: python
+
+    log_bins = np.logspace(6.5, 10.5, 51)
+    trans_pop.plot_delay_time_distribution(metallicity=0.1, bins=log_bins)
+
+
+The most useful function is :func:`plot_popsyn_over_grid_slice<posydon.popsyn.synthetic_population.TransientPopulation.plot_popsyn_over_grid_slice>`.
+It allows you to overplot properties of your TransienPopulation onto the grids.
+
+.. note::
+
+  Make sure that you've set your :code:`PATH_TO_POSYDON` and :code:`PATH_TO_POSYDON_DATA` environment variables correctly.
+  These are required to plot over the grid slices.
+
+
+If you like to write to a folder, you can use :code:`plot_dir='path/to/dir'` and use :code:`save_fig=True`.
+
+.. code-block:: python
+  
+    # plot the HMS-HMS grid at 1e-4 with S1_spin and q=0.7
+    plot_popsyn_over_grid_slice('HMS-HMS', 1e-4, slices=[0.7], prop='S1_spin', prop_range=[0,0.3], save_fig=False, channel='ZAMS_oRLO1_CC1_oRLO2_CC2_END')
+
+
+Rates
+=====
+
+The :class:`~posydon.popsyn.synthetic_population.Rates` object inherits from the :class:`~posydon.popsyn.synthetic_population.TransientPopulation` object 
+and is used to access the cosmic rate data of the transient population.
+
+It also allows the user to calculate the intrinsic rate density of the events in the population, and apply observational effects to the population.
+
+.. code-block:: python
+
+    from posydon.popsyn.synthetic_population import Rates
+
+    rates = Rates('path/to/population.h5', 'transient_name', 'SFH_identifier')
+
+
+# Creating a Rates object
+
+Cosmic weights are added to the population file using the :func:`posydon.popsyn.synthetic_population.TransientPopulation.calculate_cosmic_weights` function.
+This function calculates the cosmic weights of the events in the population based on the birth redshifts and the population weight.
+The function takes an ``SFH_identifier``, which is where the cosmic weights are stored in the population file.
+The ``MODEL_in`` argument is used to specify the model parameters for the rate calculation.
+
+The table below shows the Default values and the supported values.
+
+.. csv-table:: MODEL
+  :header: "Parameter", "Value", "Description"
+  :widths: 30, 30, 150
+
+  "delta_t", 100, "The time interval to split the birth times into"
+  "SFR", "IllustrisTNG", 'The star formation history identifier [IllustrisTNG/Madau+Fragos17/Madau+Dickinson14/Neijssel+19]""
+  "sigma_SFR", None, "The uncertainty in the SFR (float) or the identifier of the SFR uncertainty [Bavera+20/Neijssel+19](str)"
+  "Z_max", 1.0, "The maximum metallicity to consider [0.0-1.0]"
+  "select_one_met", False, "Select one metallicity. Requires only one metallicity in the population"
+  "dlogZ", None, "The metallicity bin width when selecting a single bin (float), the bin edges (tuple(float, float)), or if ``None`` with select_one_met=True, then all metallicities is used."
+  "Zsun", Zsun, "The solar metallicity"
+
+
+# Accessing rates data
+
+The cosmic rate data is stored in 3 different tables in the population file:
+
+1. :code:`birth` : A table containing the birth redshifts and lookback times used in the rate calculation.
+2. :code:`z_events` : The redshifts of the events in the population and the birth redshifts of the events.
+3. :code:`weights` : The weights of each event based on their birth redshifts and their population weight.
+
+
+You can calculate the intrinsic rate density of the events in the population using :func:`posydon.popsyn.synthetic_population.Rates.calculate_intrinsic_rate_density`.
+This populates the :code:`intrinsic_rate_density` table in the population file.
+
+.. code-block:: python
+
+    # calculate the intrinsic rate density per formation channel
+    rates.calculate_intrinsic_rate_density(mt_channels=True)
+
+    rates.plot_intrinsic_rate_density()
+
+The :class:`~posydon.popsyn.synthetic_population.Rates` object also contains information about the metallicity and redshift bins and edges.
+
+.. code-block:: python
+
+    print(rates.centers_metallicity_bins)
+    print(rates.edges_metallicity_bins)
+    print(rates.centers_redshift_bins)
+    print(rates.edges_redshift_bins)
+
+# Plotting Rates
+
+Besides plotting the intrinsic rate, you can plot the distribution of properties of the population.
+You can use any property in the TransientPopulation table.
+
+.. code-block:: python
+
+    rates.plot_hist_properties('S1_mass', intrinsice=True, label='S1', show=True)
+
+
+# Applying observational effects
+
+Although the intrinsic rate density is a useful quantity, it is not directly observable, especially for binary black holes.
+
+As such, we also include the possibility to apply observational effects to the population.
+This is done using the :func:`posydon.popsyn.synthetic_population.Rates.calculate_observable_population` function.
+It reweights the event weights based on the detection efficiency of the event.
+The function takes a function as an argument: :code:`observable_func` and a ``observable_identifier``.
+
+The ``observable_func`` you give the function should take 3 arguments:
+1. transient_chunk : The transient data of the population.
+2. z_events_chunk : The redshifts of the events in the population.
+3. weights_chunk : The weights of each event based on their birth redshifts and their population weight.
+
+The ``observable_func`` should take these arguments and use them to determine the detection efficiency of the event.
+We have included an example in the :func:`posydon.popsyn.transient_select_funcs.DCO_detactability`.
+
+However, since that function requires a detection argument, it requires a wrapper to work with our function here. 
+
+.. code-block:: python
+
+    from posydon.popsyn.transient_select_funcs import DCO_detactability
+    def DCO_wrapper(transient_chunk, z_events_chunk, weights_chunk):
+      sensitivity = 'design_H1L1V1'
+      return DCO_detactability(sensitivity, transient_chunk, z_events_chunk, weights_chunk, verbose=False)
+
+    # We also give it a name, which is used as an identifier in the file
+    rates.calculate_observable_population(DCO_wrapper, 'design_H1L1V1')
+
+
+# Accessing Observable Population data
+
+The observable population is accesed through the :code:`observable_population` attribute of the :class:`~posydon.popsyn.synthetic_population.Rates` object.
+You require to know the observable_identifier to access the data, which can be accessed with :attr:`Rates.observable_population_names<posydon.popsyn.synthetic_population.Rates.observable_population_names>`
+
+.. code-block:: python
+
+    print(rates.observable_population_names)
+    print(rates.observable_population('design_H1L1V1'))
+
+# Plotting the observable population
+
+The observable population can be plotted in the same way as the intrinsic rate density.
+However, you require to define which observable population you want to plot.
+
+.. code-block:: python
+
+    rates.plot_hist_properties('S1_mass', intrinsic=False, observable='design_H1L1V1', label='S1', show=True)
+
+If you like to overplot multiple properties, you can set ``show=False`` and manually provide an axis.
+
+.. code-block:: python
+
+    import matplotlib.pyplot as plt
+    import numpy as np
+    bins = np.linspace(0,100,101)
+    fig, ax = plt.subplots(1,1)
+
+    rates.plot_hist_properties('S1_mass', intrinsice=True, observable='design_H1L1V1', bins=bins, ax = ax, label='S1', show=False)
+    rates.plot_hist_properties('S2_mass', intrinsice=True, observable='design_H1L1V1', bins=bins, ax = ax, label='S1', show=False)
+
+    
 
 .. _population-file-structure:
 
