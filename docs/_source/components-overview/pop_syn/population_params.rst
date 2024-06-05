@@ -25,7 +25,13 @@ The environment variable `PATH_TO_POSYDON` will be read from your shell session.
 SimulationProperties
 --------------------
 
-TODO: add description
+After the environment variables, the next part of the ``population_params.ini`` file\
+contains the 
+
+The SimulationProperties are properties relevant to setting up the population synthesis simulation.
+It determines how binaries are evolved and set the parameters required for called step.
+
+
 
 Flow Chart
 ~~~~~~~~~~

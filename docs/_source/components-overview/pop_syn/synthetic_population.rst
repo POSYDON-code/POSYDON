@@ -234,7 +234,9 @@ The :class:`~posydon.popsyn.synthetic_population.TransientPopulation` class has 
     trans_pop = TransientPopulation('path/to/population.h5', 'transient_name')
 
 
-# Creating a TransientPopulation
+Creating a TransientPopulation
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 
 The transient population is created using the :func:`posydon.popsyn.synthetic_population.Population.create_transient_population` function of the :class:`~posydon.popsyn.synthetic_population.Population` object.
 This function creates a separate table with each transient in the population file.
@@ -258,7 +260,8 @@ We provide a few standard selection functions for the most common transient popu
 These functions are available in the :mod:`posydon.popsyn.transient_select_funcs` module.
 
 
-# Accessing TransientPopulation
+Accessing TransientPopulation
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 After loading a transient population, you keep access to the history and oneline data of the population.
 Now, you can access the transient data of the population using :attr:`TrannsientPopulation.population<posydon.popsyn.synthetic_population.TransientPopulation>`.
@@ -269,7 +272,8 @@ Now, you can access the transient data of the population using :attr:`Trannsient
     print(trans_pop.population)
 
 
-# Calculating Efficiencies
+Calculating Efficiencies
+~~~~~~~~~~~~~~~~~~~~~~~~~
 
 With this population, you can calculate additional information, such as the efficiency over metallicity.
 
@@ -279,7 +283,8 @@ With this population, you can calculate additional information, such as the effi
 
 :code:`channels=True` includes the formation channels in the efficiency calculation.
 
-# Plotting
+Plotting
+~~~~~~~~~~
 
 The :class:`~posydon.popsyn.synthetic_population.TransientPopulation` contains a few plotting functions for ease.
     
@@ -326,16 +331,17 @@ It also allows the user to calculate the intrinsic rate density of the events in
     rates = Rates('path/to/population.h5', 'transient_name', 'SFH_identifier')
 
 
-# Creating a Rates object
+Creating a Rates object
+~~~~~~~~~~~~~~~~~~~~~~~
 
-Cosmic weights are added to the population file using the :func:`posydon.popsyn.synthetic_population.TransientPopulation.calculate_cosmic_weights` function.
+Cosmic weights are added to the population file using the :func:`~posydon.popsyn.synthetic_population.TransientPopulation.calculate_cosmic_weights` function.
 This function calculates the cosmic weights of the events in the population based on the birth redshifts and the population weight.
 The function takes an ``SFH_identifier``, which is where the cosmic weights are stored in the population file.
 The ``MODEL_in`` argument is used to specify the model parameters for the rate calculation.
 
 The table below shows the Default values and the supported values.
 
-.. csv-table:: MODEL
+.. csv-table:: MODEL_in
   :header: "Parameter", "Value", "Description"
   :widths: 30, 30, 150
 
@@ -348,7 +354,8 @@ The table below shows the Default values and the supported values.
   "Zsun", Zsun, "The solar metallicity"
 
 
-# Accessing rates data
+Accessing rates data
+~~~~~~~~~~~~~~~~~~~~~~
 
 The cosmic rate data is stored in 3 different tables in the population file:
 
@@ -376,7 +383,8 @@ The :class:`~posydon.popsyn.synthetic_population.Rates` object also contains inf
     print(rates.centers_redshift_bins)
     print(rates.edges_redshift_bins)
 
-# Plotting Rates
+Plotting Rates
+~~~~~~~~~~~~~~~~~~~~~~
 
 Besides plotting the intrinsic rate, you can plot the distribution of properties of the population.
 You can use any property in the TransientPopulation table.
@@ -386,7 +394,8 @@ You can use any property in the TransientPopulation table.
     rates.plot_hist_properties('S1_mass', intrinsice=True, label='S1', show=True)
 
 
-# Applying observational effects
+Applying observational effects
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Although the intrinsic rate density is a useful quantity, it is not directly observable, especially for binary black holes.
 
@@ -416,7 +425,8 @@ However, since that function requires a detection argument, it requires a wrappe
     rates.calculate_observable_population(DCO_wrapper, 'design_H1L1V1')
 
 
-# Accessing Observable Population data
+Accessing Observable Population data
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The observable population is accesed through the :code:`observable_population` attribute of the :class:`~posydon.popsyn.synthetic_population.Rates` object.
 You require to know the observable_identifier to access the data, which can be accessed with :attr:`Rates.observable_population_names<posydon.popsyn.synthetic_population.Rates.observable_population_names>`
@@ -426,7 +436,8 @@ You require to know the observable_identifier to access the data, which can be a
     print(rates.observable_population_names)
     print(rates.observable_population('design_H1L1V1'))
 
-# Plotting the observable population
+Plotting the observable population
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The observable population can be plotted in the same way as the intrinsic rate density.
 However, you require to define which observable population you want to plot.
