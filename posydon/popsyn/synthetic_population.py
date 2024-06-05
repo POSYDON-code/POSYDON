@@ -106,12 +106,6 @@ class PopulationRunner:
     verbose : bool
         If `True`, print additional information.
 
-    Methods
-    -------
-    evolve()
-        Evolve the binary populations.
-    merge_parallel_runs(pop)
-        Merge the parallel runs of the population.
     """
 
     def __init__(self, path_to_ini, verbose=False):
@@ -527,29 +521,6 @@ class Oneline:
         The binary indices of the oneline dataframe.
     columns : list of str
 
-    Methods
-    -------
-    head(self, n=10)
-        Get the first n rows of the oneline table.
-    tail(self, n=10)
-        Get the last n rows of the oneline table.
-    select(self, where=None, start=None, stop=None, columns=None)
-        Select a subset of the oneline table based on the given conditions.
-    __init__(self, filename, verbose=False, chunksize=10000)
-        Initialize the Oneline object.
-    __getitem__(self, key)
-        Return the oneline table based on the provided key.
-    __len__(self)
-        Return the number of systems in the oneline table.
-    __repr__(self)
-        Get a string representation of the oneline table.
-    _repr_html_(self)
-        Get an HTML representation of the oneline table.
-    iterator(self)
-        Get an iterator over the oneline table.
-    iterbinaries(self)
-        Get an iterator over the binary systems in the oneline table.
-
     """
 
     def __init__(self, filename, verbose=False, chunksize=10000):
@@ -905,18 +876,6 @@ class Population(PopulationIO):
     history_lengths : pd.DataFrame
         The number of rows of each binary in the history dataframe. The index is the binary index.
 
-    Methods
-    -------
-    export_selection(selection, filename, chunksize)
-        Export a selection of the population to a new file.
-    calculate_formation_channels(mt_history=False)
-        Calculate the formation channels of the population.
-    __len__()
-        Get the number of systems in the population.
-    columns()
-        Get the columns of the population.
-    create_transient_population(func, transient_name, oneline_cols=None, hist_cols=None)
-        Create a transient population using a given function.
     """
 
     def __init__(
@@ -1652,21 +1611,6 @@ class TransientPopulation(Population):
     columns : list
         List of columns in the transient population.
 
-
-    Methods
-    -------
-    select(where=None, start=None, stop=None, columns=None)
-        Select a subset of the transient population.
-    get_efficiency_over_metallicity()
-        Compute the efficiency of events per Msun for each solar metallicity.
-    calculate_cosmic_weights(SFH_identifier, MODEL_in=None)
-        Calculate the cosmic weights of the transient population.
-    plot_efficiency_over_metallicity()
-        Plot the efficiency of events per Msun for each solar metallicity.
-    plot_delay_time_distribution()
-        Plot the delay time distribution of the transient population.
-    plot_popsyn_pver_grid_slice()
-        Plot the transient population over the parameter space of a grid slice
     """
 
     def __init__(self, filename, transient_name, verbose=False, chunksize=10000):
@@ -2204,18 +2148,6 @@ class Rates(TransientPopulation):
     centers_redshift_bins : np.ndarray
         The centers of the redshift bins of the star formation history.
 
-    Methods
-    -------
-    select_rate_slice(key, start=None, stop=None)
-        Selects a slice of a rates dataframe at key.
-    calculate_intrinsic_rate_density(mt_channels=False)
-        Compute the intrinsic rate density of the transient population.
-    calculate_observable_population(observable_func, observable_name)
-        Calculate the observable population based on the provided function.
-    observable_population(observable_name)
-        Return the observable population based on the provided name.
-    plot_hist_properties(prop, intrinsic=True, observable=None, bins=50, channel=None, **kwargs)
-        Plot a histogram of a given property available in the transient population.
     """
 
     def __init__(self, filename, transient_name, SFH_identifier, verbose=False, chunksize=1000):
