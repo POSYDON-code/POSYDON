@@ -22,21 +22,40 @@ The environment variable `PATH_TO_POSYDON` will be read from your shell session.
    * - `PATH_TO_POSYDON`
      - `<PATH_TO_POSYDON>`
 
+
+--------------------
 SimulationProperties
 --------------------
 
-After the environment variables, the next part of the ``population_params.ini`` file\
-contains the 
+After the environment variables, the next part of the ``population_params.ini`` file
+contains how systems will move through the simulation steps (Flow Chart) and the parameters for each step.
 
-The SimulationProperties are properties relevant to setting up the population synthesis simulation.
-It determines how binaries are evolved and set the parameters required for called step.
+These parameters are read in and used to create a :class:`~posydon.binary_evol.simulationproperties.SimulationProperties`` object.
 
+It allows for the addition of hooks before and after each step, and the evolution of a system (see :ref:`Custom Hooks <custom-hooks>`).
+The ``SimulationProperties`` can be manually read and loaded in.
+Note that the loading of the simulation steps is separate from creating the object.
+
+.. code-block:: python
+
+    from posydon.binary_evol.simulationproperties import SimulationProperties
+    from posydon.popsyn.io import simprop_kwargs_from_ini
+
+    # read from file
+    sim_props = simprop_kwargs_from_ini('population_params.ini', vebose=False)
+    
+    # create SimulationProperties object
+    sim = SimulationProperties(**sim_props)
+
+    # load the steps
+    sim.load_steps()
 
 
 Flow Chart
 ~~~~~~~~~~
 
-The flow chart is the core of POSYDON. It controls the mapping between a POSYDON binary object and its step evolution, see the :ref:`Flow Chart Object <flow-chart>` page for more details.
+The flow chart is the core of POSYDON.
+It controls the mapping between a POSYDON binary object and its step evolution, see the :ref:`Flow Chart Object <flow-chart>` page for more details.
 
 .. list-table::
    :widths: 50 50
@@ -91,7 +110,8 @@ The MESA step is the most important step of POSYDON as it leverages the POSYDON 
 Step Detached
 ~~~~~~~~~~~~~
 
-TODO: add description
+The detached step uses analytical expressions and MESA single star grids to evolve the binary object when it is not interacting.
+
 
 .. list-table::
    :widths: 50 50
@@ -123,7 +143,8 @@ TODO: add description
 Step Disrupted
 ~~~~~~~~~~~~~~
 
-TODO: add description
+The dirtupted step evolves a system when a supernova has unbound the binary components.
+This class inherits from the detached step, but only evolves the remaining star in isolation.
 
 .. list-table::
    :widths: 50 50
@@ -137,7 +158,9 @@ TODO: add description
 Step Merged
 ~~~~~~~~~~~
 
-TODO: add description
+In this step, the system has undergone a merger and is now a single star.
+This class inherits from the detached step, but only evolves the remaining star in isolation.
+
 
 .. list-table::
    :widths: 50 50
@@ -151,7 +174,8 @@ TODO: add description
 Step Initially Single
 ~~~~~~~~~~~~~~~~~~~~~
 
-TODO: add description
+This step is used to evolve a single star system.
+This class inherits from the detached step and evolves the star in isolation.
 
 .. list-table::
    :widths: 50 50
@@ -165,7 +189,10 @@ TODO: add description
 Step Common Envelope
 ~~~~~~~~~~~~~~~~~~~~
 
-TODO: add description
+The common envelope step is used to evolve a binary system when the primary or secondary star has initiated a common envelope phase.
+It calculates the binding energy of the envelope and the energy available to eject it.
+If the energy budget is greater than the binding energy, the envelope is ejected and the system is evolved to the next step.
+If the energy budget is less than the binding energy, the system is merged.
 
 .. list-table::
    :widths: 50 50
@@ -203,7 +230,10 @@ TODO: add description
 Step Supernova
 ~~~~~~~~~~~~~~
 
-TODO: add description
+This steps performs the core-collapse supernova evolution of the star.
+Multiple prescriptions are implemented and can be selected.
+If a standard prescription is used, interpolators are available to speed up the calculation and predict additional properties of the collapse, such as the spin.
+
 
 .. list-table::
    :widths: 50 50
@@ -230,7 +260,7 @@ TODO: add description
    * - `max_NS_mass`
      - 2.5 (float in [0,inf])
    * - `use_interp_values`
-     - True
+     - True (if True, use interpolation values for the SN properties, which are calculated during ``step_MESA``)
    * - `use_profiles`
      - True
    * - `use_core_masses`
@@ -253,7 +283,8 @@ TODO: add description
 Step Double Compact Object
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-TODO: add description
+In this step, the system has evolved to a double compact object system.
+The merger time due to gravitational wave emission is calculated.
 
 .. list-table::
    :widths: 50 50
@@ -271,7 +302,8 @@ TODO: add description
 Step End
 ~~~~~~~~
 
-TODO: add description
+The final step of the simulation.
+All succesfull systems should reach this step.
 
 .. list-table::
    :widths: 50 50
@@ -287,7 +319,8 @@ TODO: add description
 Extra Hooks
 ~~~~~~~~~~~
 
-TODO: add description
+It's possible to add custom hooks to the simulation steps.
+A few example hooks are provides: ``TimingHooks`` and ``StepNamesHooks`` (See :ref:`Custom Hooks <custom-hooks>` for more details)
 
 .. list-table::
    :widths: 50 50
@@ -308,15 +341,40 @@ TODO: add description
    * - `kwargs_2`
      - {}
 
+
+
 BinaryPopulation
 ----------------
 
-TODO: add description
+A :class:`~posydon.popsyn.binarypopulation.BinaryPopulation` is created to evolve the population using a given :class:`~posydon.binary_evol.simulationproperties.SimulationProperties` object.
+
+This class requires additional parameters, because it will require initial distributions 
+for to sample :class:`~posydon.binary_evol.binarystar.BinaryStar` objects from,
+such as the masses and orbital parameters.
+Moreover, it contains the parameters for metallicity and the practicality of running populations.
+This includes, the number of binaries, the metallicity, how often to save the population to file. 
+
+When reading the binary population arguments from a ``population_params.ini`` file, the
+ :class:`~posydon.binary_evol.simulationproperties.SimulationProperties` are read in automatically.
+
+.. code-block:: python
+
+    from posydon.popsyn.binarypopulation import BinaryPopulation
+    from posydon.popsyn.io import binarypop_kwargs_from_ini
+
+    # read from file
+    pop_params = binarypop_kwargs_from_ini('population_params.ini', vebose=False)
+    
+    # create BinaryPopulation object
+    pop = BinaryPopulation(**pop_params)
+
+
 
 BinaryPopulation Options
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
-TODO: add description
+These parameters contain options on how the population is evolved, in practical terms, ie. the number of binaries.
+It also contains which sampling distributions to use for the initial conditions of the binaries.
 
 .. list-table::
    :widths: 50 50
@@ -384,16 +442,21 @@ TODO: add description
      - 'zero' (options are 'zero', 'thermal', 'uniform')
 
 
-
 Saving Output
 -------------
 
-TODO: add description
+You can decide on your own output parameters for the population file.
+The data is split in two different tables: the ``history`` table and the ``oneline`` table.
+
+The ``history`` table contains values that change throughout the evolution of the system, 
+while the ``oneline`` table contains values that are constant throughout the evolution of the system or only occur once.
+
 
 BinaryStar Output
 ~~~~~~~~~~~~~~~~~
 
-TODO: add description
+The :class:`~posydon.binary_evol.binarystar` class contains the binary systems and
+the parameters here determine what output of that class will be outputted into the final population file.
 
 .. list-table::
    :widths: 50 50
@@ -423,6 +486,10 @@ This dictionary contains the parameters that will be saved in the output of the 
    * - `include_S1`
      - True
    * - `only_select_columns`
-     - ['state', 'mass', 'log_R', 'log_L', 'lg_mdot', 'he_core_mass', 'he_core_radius', 'co_core_mass', 'co_core_radius', 'center_h1', 'center_he4', 'surface_h1', 'surface_he4', 'surf_avg_omega_div_omega_crit', 'spin',] (options are: 'state', 'metallicity', 'mass', 'log_R', 'log_L', 'lg_mdot', 'lg_system_mdot', 'lg_wind_mdot', 'he_core_mass', 'he_core_radius', 'c_core_mass', 'c_core_radius', 'o_core_mass', 'o_core_radius', 'co_core_mass', 'co_core_radius', 'center_h1', 'center_he4', 'center_c12', 'center_n14', 'center_o16', 'surface_h1', 'surface_he4', 'surface_c12', 'surface_n14', 'surface_o16', 'log_LH', 'log_LHe', 'log_LZ', 'log_Lnuc', 'c12_c12', 'center_gamma', 'avg_c_in_c_core', 'surf_avg_omega', 'surf_avg_omega_div_omega_crit', 'total_moment_of_inertia', 'log_total_angular_momentum', 'spin', 'conv_env_top_mass', 'conv_env_bot_mass', 'conv_env_top_radius', 'conv_env_bot_radius', 'conv_env_turnover_time_g', 'conv_env_turnover_time_l_b', 'conv_env_turnover_time_l_t', 'envelope_binding_energy', 'mass_conv_reg_fortides', 'thickness_conv_reg_fortides', 'radius_conv_reg_fortides', 'lambda_CE_1cent', 'lambda_CE_10cent', 'lambda_CE_30cent', 'lambda_CE_pure_He_star_10cent', 'profile')           
+     - ['state', 'mass', 'log_R', 'log_L', 'lg_mdot', 'he_core_mass', 'he_core_radius', 'co_core_mass', 'co_core_radius', 'center_h1', 'center_he4', 'surface_h1', 'surface_he4', 'surf_avg_omega_div_omega_crit', 'spin',] (options are: 'state', 'metallicity', 'mass', 'log_R', 'log_L', 'lg_mdot', 'lg_system_mdot', 'lg_wind_mdot', 'he_core_mass', 'he_core_radius', 'c_core_mass', 'c_core_radius', 'o_core_mass', 'o_core_radius', 'co_core_mass', 'co_core_radius', 'center_h1', 'center_he4', 'center_c12', 'center_n14', 'center_o16', 'surface_h1', 'surface_he4', 'surface_c12', 'surface_n14', 'surface_o16', 'log_LH', 'log_LHe', 'log_LZ', 'log_Lnuc', 'c12_c12', 'center_gamma', 'avg_c_in_c_core', 'surf_avg_omega', 'surf_avg_omega_div_omega_crit', 'total_moment_of_inertia', 'log_total_angular_momentum', 'spin', 'conv_env_top_mass', 'conv_env_bot_mass', 'conv_env_top_radius', 'conv_env_bot_radius', 'conv_env_turnover_time_g', 'conv_env_turnover_time_l_b', 'conv_env_turnover_time_l_t', 'envelope_binding_energy', 'mass_conv_reg_fortides', 'thickness_conv_reg_fortides', 'radius_conv_reg_fortides', 'lambda_CE_1cent', 'lambda_CE_10cent', 'lambda_CE_30cent', 'lambda_CE_pure_He_star_10cent', 'profile [not currently supported]')           
    * - `scalar_names`
      - [ 'natal_kick_array', 'SN_type', 'f_fb', 'spin_orbit_tilt_first_SN','spin_orbit_tilt_second_SN', 'm_disk_accreted', 'm_disk_radiated']
+
+
+
+
