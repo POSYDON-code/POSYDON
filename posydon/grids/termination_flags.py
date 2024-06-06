@@ -131,8 +131,8 @@ def get_mass_transfer_flag(binary_history, history1, history2,
         return "contact_during_MS"
 
     where_transfer = rate > LG_MTRANSFER_RATE_THRESHOLD
-    where_rlof_1 = where_rl_rel_1 & where_transfer
-    where_rlof_2 = where_rl_rel_2 & where_transfer
+    where_rlof_1 = where_rl_rel_1 | where_transfer
+    where_rlof_2 = where_rl_rel_2 | where_transfer
 
     if not np.any(where_rlof_1) and not np.any(where_rlof_2):
         return "no_RLOF"
