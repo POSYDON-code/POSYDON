@@ -97,9 +97,9 @@ class MergedStep(IsolatedStep):
             elif binary.event == 'oMerging2':
                 binary.star_2,binary.star_1 = merged_star_properties(binary.star_2,binary.star_1)
             else:
-                raise ValueError("binary.state='merged' but binary.event != 'oMerging1/2'")
+                raise FlowError("binary.state='merged' but binary.event != 'oMerging1/2'")
         else:
-            raise ValueError("step_merging initiated but binary.state != 'merged'")
+            raise FlowError("step_merging initiated but binary.state != 'merged'")
 
         if self.verbose:
             print("After Merger", binary.star_1.state,binary.star_2.state,binary.state, binary.event)
