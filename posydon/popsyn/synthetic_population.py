@@ -1317,7 +1317,7 @@ class Population(PopulationIO):
                 combined_events = "_".join(group["event"])
             return pd.Series({"channel_debug": combined_events})
 
-        def mt_history(row):
+        def get_mt_history(row):
             if (
                 pd.notna(row["mt_history_HMS_HMS"])
                 and row["mt_history_HMS_HMS"] == "Stable contact phase"
@@ -1395,7 +1395,7 @@ class Population(PopulationIO):
                         start=i, stop=i + self.chunksize, columns=["mt_history_HMS_HMS"]
                     )
                     tmp_df["mt_history_HMS_HMS"] = x
-                    df["channel"] = tmp_df.apply(mt_history, axis=1)
+                    df["channel"] = tmp_df.apply(get_mt_history, axis=1)
                     del tmp_df
                     del x
 
