@@ -421,7 +421,9 @@ def train_interpolators(i, path_to_csv_file, verbose=False):
                     "interp_classes": interp_classes,
                     "out_keys": out_keys,
                     "class_method": "kNN",
-                    "c_keys": [f'S{i}_{MODEL_NAME}_CO_interpolation_class'],
+                    "c_keys": [f'S{i}_{MODEL_NAME}_CO_interpolation_class', 
+                               f'S{i}_{MODEL_NAME}_CO_type',
+                               f'S{i}_{MODEL_NAME}_SN_type'],
                     "c_key": f'S{i}_{MODEL_NAME}_CO_interpolation_class'
                 },   
             )
