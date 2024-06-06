@@ -1653,7 +1653,7 @@ class CO_HeMS_step(MesaGridStep):
             set_binary_to_failed(self.binary)
             raise GridError(f'The mass of m2 ({m2}) is outside the grid,'
                              ' while the period is inside the grid.')
-        
+
         else:
             self.binary.state = 'detached'
             self.binary.event = 'redirect_from_CO_HeMS'
