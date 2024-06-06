@@ -467,7 +467,7 @@ class BaseIFInterpolator:
             self.interp_in_q = self._interpIn_q(grid)
             self.XT, self.YT = self._grid2array(grid)
             self.valid = self._setValid(
-                grid.final_values[self.c_key], self.XT)
+                grid.final_values["interpolation_class"], self.XT)
             self.N = np.sum(self.valid >= 0)
 
             analize_nans(self.out_keys, self.YT, self.valid)
@@ -598,8 +598,8 @@ class BaseIFInterpolator:
         which = np.isnan(np.sum(X, axis=1))
         valid[which] = -1
         print(f"Discarded {np.sum(which)} binaries with nans in input values.")
-
-        for i, flag in enumerate(self.interp_classes):
+        interpolation_classes = ['stable_MT', 'unstable_MT', 'no_MT', 'stable_reverse_MT']
+        for i, flag in enumerate(interpolation_classes):
             valid[ic == flag] = i + 1
 
         if(self.interp_in_q):   # if HMS-HMS grid, take out q = 1
