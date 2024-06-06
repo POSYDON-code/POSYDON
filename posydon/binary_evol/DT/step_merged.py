@@ -126,7 +126,6 @@ class MergedStep(IsolatedStep):
         """
         #by default the stellar attributes that keep the same value from the
         merged_star = copy.deepcopy(star_base)
-        #merged_star = star_base
 
         s1 = star_base.state
         s2 = comp.state
