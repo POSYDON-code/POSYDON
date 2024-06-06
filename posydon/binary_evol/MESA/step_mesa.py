@@ -1398,23 +1398,36 @@ class CO_HMS_RLO_step(MesaGridStep):
         # period inside the grid, but m1 outside the grid
         elif ((not self.flip_stars_before_step and
                self.p_min <= p <= self.p_max and
-               (m1 < self.m1_min or m1 > self.m1_max)
-               )):
+               (m1 < self.m1_min or m1 > self.m1_max))):
             set_binary_to_failed(self.binary)
             raise GridError(f'The mass of m1 ({m1}) is outside the grid,'
-                                'while the period is inside the grid.')
+                                ' while the period is inside the grid.')
 
         # period inside the grid, but m2 outside the grid
         elif ((not self.flip_stars_before_step and
                self.p_min <= p <= self.p_max and
-               (m2 < self.m2_min or m2 > self.m2_max)
-               )):
+               (m2 < self.m2_min or m2 > self.m2_max))):
             set_binary_to_failed(self.binary)
             raise GridError(f'The mass of m2 ({m2}) is outside the grid,'
-                                'while the period is inside the grid.')
+                                ' while the period is inside the grid.')
 
+        # period inside the grid, but m1 outside the grid (flipped stars)
+        elif ((self.flip_stars_before_step and
+                self.p_min <= p <= self.p_max and
+                (m2 < self.m1_min or m2 > self.m1_max))):
+            set_binary_to_failed(self.binary)
+            raise GridError(f'The mass of m1 ({m2}) is outside the grid,'
+                                ' while the period is inside the grid.')
+        
+        # period inside the grid, but m2 outside the grid (flipped stars)
+        elif ((self.flip_stars_before_step and
+                self.p_min <= p <= self.p_max and
+                (m1 < self.m2_min or m1 > self.m2_max))):
+            set_binary_to_failed(self.binary)
+            raise GridError(f'The mass of m2 ({m1}) is outside the grid,'
+                            ' while the period is inside the grid.')
+        
         else:
-
             self.binary.state = "detached"
             self.binary.event = "redirect_from_CO_HMS_RLO"
             return
@@ -1510,19 +1523,34 @@ class CO_HeMS_RLO_step(MesaGridStep):
         # period inside the grid, but m1 outside the grid
         elif ((not self.flip_stars_before_step and
                self.p_min <= p <= self.p_max and
-                (m1 < self.m1_min or m1 > self.m1_max)
-                )):
+                (m1 < self.m1_min or m1 > self.m1_max))):
             set_binary_to_failed(self.binary)
             raise GridError(f'The mass of m1 ({m1}) is outside the grid,'
-                                'while the period is inside the grid.')
+                                ' while the period is inside the grid.')
+        
         # period inside the grid, but m2 outside the grid
         elif ((not self.flip_stars_before_step and
                self.p_min <= p <= self.p_max and
-               (m2 < self.m2_min or m2 > self.m2_max)
-               )):
+               (m2 < self.m2_min or m2 > self.m2_max))):
             set_binary_to_failed(self.binary)
             raise GridError(f'The mass of m2 ({m2}) is outside the grid,'
-                                'while the period is inside the grid.')
+                                ' while the period is inside the grid.')
+        
+        # period inside the grid, but m1 outside the grid with flipped stars
+        elif ((self.flip_stars_before_step and 
+               self.p_min <= p <= self.p_max and
+               m1 < self.m2_min or m1 > self.m2_max)):
+            set_binary_to_failed(self.binary)
+            raise GridError(f'The mass of m2 ({m1}) is outside the grid,'
+                                ' while the period is inside the grid.')
+
+        # period inside the grid, but m2 outside the grid with flipped stars
+        elif ((self.flip_stars_before_step and
+                self.p_min <= p <= self.p_max and
+                m2 < self.m1_min or m2 > self.m1_max)):
+            set_binary_to_failed(self.binary)
+            raise GridError(f'The mass of m1 ({m2}) is outside the grid,'
+                                ' while the period is inside the grid.')
 
         else:
             self.binary.state = "detached"
@@ -1613,16 +1641,19 @@ class CO_HeMS_step(MesaGridStep):
             self.p_min <= p <= self.p_max and
             ecc == 0.)):
             super().__call__(binary)
+
         # period inside the grid, but m1 outside the grid
         elif (self.p_min <= p <= self.p_max) and (m1 < self.m1_min or m1 > self.m1_max):
             set_binary_to_failed(self.binary)
             raise GridError(f'The mass of m1 ({m1}) is outside the grid,'
-                             'while the period is inside the grid.')
+                             ' while the period is inside the grid.')
+        
         # period inside the grid, but m2 outside the grid
         elif (self.p_min <= p <= self.p_max) and (m2 < self.m2_min or m2 > self.m2_max):
             set_binary_to_failed(self.binary)
             raise GridError(f'The mass of m2 ({m2}) is outside the grid,'
                              ' while the period is inside the grid.')
+
         else:
             self.binary.state = 'detached'
             self.binary.event = 'redirect_from_CO_HeMS'

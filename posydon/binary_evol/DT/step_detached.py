@@ -842,7 +842,7 @@ class detached_step:
                         sol = minimize(sq_diff_function, x0,
                                    method="TNC", bounds=bnds)
                     except:
-                        raise NumericalError("SciPy numerical differentiation occured outside boundary ",
+                        raise NumericalError("SciPy numerical differentiation occured outside boundary "
                                              "while matching to single star track")
 
             # if still not acceptable matching, we fail the system:
