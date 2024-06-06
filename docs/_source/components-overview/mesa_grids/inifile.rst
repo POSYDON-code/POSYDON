@@ -23,26 +23,24 @@ quantities that need to be adjusted for your specific case.
 
 Here is a link to the most recent stable release version of the default inifile
 for POSYDON:
-`Stable Version INIFILE <https://github.com/POSYDON-code/POSYDON/blob/development/grid_params/grid_params.ini>`_
+`Stable Version INIFILE <https://github.com/POSYDON-code/POSYDON/blob/main/grid_params/grid_params.ini>`_
 
 Here is a link to the unstable development version of the default inifile for
 POSYDON:
-`Development Version INIFILE <https://github.com/POSYDON-code/POSYDON/blob/main/grid_params/grid_params.ini>`_
+`Development Version INIFILE <https://github.com/POSYDON-code/POSYDON/blob/development/grid_params/grid_params.ini>`_
 
 .. _inifile_slurm:
+
 
 [slurm]
 -------
 
 This section designates all the SLURM-related parameters.
 
-=======================  ===============================================================
-
-=======================  ===============================================================
-
 .. code-block:: ini
 
     [slurm]
+
     ; Number of nodes you would like to request
     number_of_nodes=1
 
@@ -69,17 +67,41 @@ This section designates all the SLURM-related parameters.
     ; wall-time
     walltime='2-00:00:00'
 
+    ; work-directory: place, where MESA writes during runtime
+    work_dir={WORK_DIRECTORY}
+
     ;email
     email={YOUR_EMAIL_ADDRESS}
+
+    ; new group to be set with write permission
+    ; if empty string no changes on group and permission
+    ; group on yggdrasil: GL_S_Astro_POSYDON
+    ; group on Quest: b1119
+    newgroup=''
+
+.. table:: general settings
+
+    =======================  ===========
+    Setting name             Description
+    =======================  ===========
+    number_of_nodes          The number of nodes each job will request
+    number_of_mpi_tasks      (outdated) The number of parallel processes ganerates by MPI (recommended to not change)
+    number_of_cpus_per_task  The number of CPUs each job will request (in best this should align with the number of threads set for MESA)
+    job_array                Set to `True` to run a SLURM job array
+    user                     User name
+    partition                SLURM partition to run the jobs on
+    account                  SLURM account to run the jobs on
+    walltime                 Maximum time for each run, otherwise it will get cancelled by SLURM to avoid never ending MESA runs going on too short time steps
+    work_dir                 The path to the place, where the data will be writting during runtime (it is recommended to use fast local node storage here), afterwards the data will be copied/moved to the current directory (uncommend this line to write always to the final location)
+    email                    Your email address to receive notifications from SLURM
+    newgroup                 The name of the owning group all the files should get (leave empty if no changes are needed here)
+    =======================  ===========
+
 
 [mesa_inlists]
 --------------
 
 This section designates all the basic MESA-specific parameters.
-
-=======================  ===================================================================================
-
-=======================  ===================================================================================
 
 .. code-block:: ini
 
@@ -195,15 +217,63 @@ This section designates all the basic MESA-specific parameters.
     ; save final model of star2
     final_model_star2 = False
 
+.. table:: settings for the MESA inlist
+
+    =========================================  ===========
+    Setting name                               Description
+    =========================================  ===========
+    posydon_github_root                        The path to your used POSYDON version
+    scenario                                   List containing multiple information: 1) the source ('posydon' or 'user'(for future use)), 2) the git commit (the branch and full git hash for the inlist submodule separated by a dash), 3) the systems type ('HMS-HMS', 'CO-H_star', 'CO-He_star')
+    zams_filename                              The location of the file containing the ZAMS models
+    single_star_grid                           Flag to indicate single star or binary evolution
+    star1_formation_job_mesa_defaults          (outdated) Path to the MESA job section defaults to form star 1
+    star1_formation_job_posydon_defaults       (outdated) Path to the MESA job section inlist of POSYDON to form star 1
+    star1_formation_job_user                   (outdated) Path to the MESA job section inlist of the user to form star 1
+    star2_formation_job_mesa_defaults          (outdated) Path to the MESA job section defaults to form star 2
+    star2_formation_job_posydon_defaults       (outdated) Path to the MESA job section inlist of POSYDON to form star 2
+    star2_formation_job_user                   (outdated) Path to the MESA job section inlist of the user to form star 2
+    star1_formation_controls_mesa_defaults     (outdated) Path to the MESA controls section defaults to form star 1
+    star1_formation_controls_posydon_defaults  (outdated) Path to the MESA controls section inlist of POSYDON to form star 1
+    star1_formation_controls_user              (outdated) Path to the MESA controls section inlist of the user to form star 1
+    star2_formation_controls_mesa_defaults     (outdated) Path to the MESA controls section defaults to form star 2
+    star2_formation_controls_posydon_defaults  (outdated) Path to the MESA controls section inlist of POSYDON to form star 2
+    star2_formation_controls_user              (outdated) Path to the MESA controls section inlist of the user to form star 2
+    binary_controls_mesa_defaults              (outdated) Path to the MESA controls section defaults to evolve the binary
+    binary_controls_posydon_defaults           (outdated) Path to the MESA controls section inlist of POSYDON to evolve the binary
+    binary_controls_user                       (outdated) Path to the MESA controls section inlist of the user to evolve the binary
+    binary_job_mesa_defaults                   (outdated) Path to the MESA job section defaults to evolve the binary
+    binary_job_posydon_defaults                (outdated) Path to the MESA job section inlist of POSYDON to evolve the binary
+    binary_job_user                            (outdated) Path to the MESA job section inlist of the user to evolve the binary
+    star1_job_mesa_defaults                    (outdated) Path to the MESA job section defaults to evolve star 1
+    star1_job_posydon_defaults                 (outdated) Path to the MESA job section inlist of POSYDON to evolve star 1
+    star1_job_user                             (outdated) Path to the MESA job section inlist of the user to evolve star 1
+    star1_controls_mesa_defaults               (outdated) Path to the MESA controls section defaults to evolve star 1
+    star1_controls_posydon_defaults            (outdated) Path to the MESA controls section inlist of POSYDON to evolve star 1
+    star1_controls_user                        (outdated) Path to the MESA controls section inlist of the user to evolve star 1
+    star2_job_mesa_defaults                    (outdated) Path to the MESA job section defaults to evolve star 2
+    star2_job_posydon_defaults                 (outdated) Path to the MESA job section inlist of POSYDON to evolve star 2
+    star2_job_user                             (outdated) Path to the MESA job section inlist of the user to evolve star 2
+    star2_controls_mesa_defaults               (outdated) Path to the MESA controls section defaults to evolve star 2
+    star2_controls_posydon_defaults            (outdated) Path to the MESA controls section inlist of POSYDON to evolve star 2
+    star2_controls_user                        (outdated) Path to the MESA controls section inlist of the user to evolve star 2
+    star_history_columns                       (outdated) Path to the history columns list of the stars
+    binary_history_columns                     (outdated) Path to the history columns list of the binary
+    profile_columns                            (outdated) Path to the profile columns list to write the final stellar profile
+    history_interval                           Interval how often MESA will add a model to the star's histories
+    binary_history                             Interval how often MESA will add a model to the binary history
+    history_star1                              Flag, whether the history of star 1 should be saved
+    final_profile_star1                        (outdated, done in :samp:`run_star_extras.f`) Flag, whether the final profil of star 1 should be saved
+    final_model_star1                          Flag, whether the final model of star 1 should be saved
+    history_star2                              Flag, whether the history of star 2 should be saved
+    final_profile_star2                        (outdated, done in :samp:`run_star_extras.f`) Flag, whether the final profil of star 2 should be saved
+    final_model_star2                          Flag, whether the final model of star 2 should be saved
+    =========================================  ===========
+
 
 [mesa_extras]
 -------------
 
 This section designates all the parameters for MESA makefiles and fortran files.
-
-===========================  ===================================================================================
-
-===========================  ===================================================================================
 
 .. code-block:: ini
 
@@ -238,13 +308,30 @@ This section designates all the parameters for MESA makefiles and fortran files.
     ; star_run.f
     star_run = ${MESA_DIR}/star/work/src/run.f
 
+.. table:: settings for the MESA extras
+
+    =======================  ===========
+    Setting name             Description
+    =======================  ===========
+    makefile_binary          Path to the make file of MESA's binary module
+    makefile_star            Path to the make file of MESA's star module
+    mesa_binary_extras       Path to MESA's binary module default :samp:`run_binary_extras.f`
+    user_binary_extras       Path to the users/POSYDON :samp:`run_binary_extras.f`
+    mesa_star_binary_extras  Path to MESA's binary module default :samp:`run_star_extras.f`
+    user_star_binary_extras  Path to the users/POSYDON :samp:`run_star_extras.f`
+    mesa_star1_extras        Path to MESA's star module default :samp:`run_star_extras.f`
+    user_star1_extras        Path to the users/POSYDON :samp:`run_star_extras.f`
+    mesa_star2_extras        Path to MESA's star module default :samp:`run_star_extras.f`
+    user_star2_extras        Path to the users/POSYDON :samp:`run_star_extras.f`
+    binary_run               Path to MESA's binary module :samp:`binary_run.f`
+    star_run                 Path to MESA's star module :samp:`run.f`
+    =======================  ===========
+
+
 [run_parameters]
 ----------------
 
 This section designates the run parameters for a grid.
-
-==================== ========================================================
-==================== ========================================================
 
 .. code-block:: ini
 
@@ -257,3 +344,5 @@ This section designates the run parameters for a grid.
     ; run MESA on (i.e. generate grid points on the fly).
 
     grid = {PATH_TO_GRID}
+
+The :samp:`grid` specifies where to find the csv file to read the runs from.
