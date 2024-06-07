@@ -397,6 +397,10 @@ class BaseIFInterpolator:
             A list of classes that the simulation tracks can
             fall into. Usually specified as the mass transfer type. This only
             needs be specified if interp_method is a list.
+        valid_classes : list of strings
+            A list of mass-transfer classes that are kept for interpolations 
+            (exclude e.g. 'not_converged' class).
+            valid_classes = ['stable_MT', 'unstable_MT', 'no_MT', 'stable_reverse_MT']
         class_method : string or list of strings
             The classification method to be used, either kNN or
             1NN.
@@ -598,8 +602,8 @@ class BaseIFInterpolator:
         which = np.isnan(np.sum(X, axis=1))
         valid[which] = -1
         print(f"Discarded {np.sum(which)} binaries with nans in input values.")
-        interpolation_classes = ['stable_MT', 'unstable_MT', 'no_MT', 'stable_reverse_MT']
-        for i, flag in enumerate(interpolation_classes):
+        valid_classes = ['stable_MT', 'unstable_MT', 'no_MT', 'stable_reverse_MT']
+        for i, flag in enumerate(valid_classes):
             valid[ic == flag] = i + 1
 
         if(self.interp_in_q):   # if HMS-HMS grid, take out q = 1
