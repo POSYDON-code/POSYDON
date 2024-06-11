@@ -153,7 +153,7 @@ if __name__ == '__main__':
         file.write('#!/bin/bash\n')
         for MET in metallicities:
             str_met = convert_metallicity_to_string(MET)
-            file.write(f'array=$(sbatch --parsable slurm_array_{str_met}_Zsun.slurm)\n')
+            file.write(f'array=$(sbatch --parsable {str_met}_Zsun_slurm_array.slurm)\n')
             file.write("echo '"+str_met+" job array submitted as '${array}\n")
-            file.write('merge=$(sbatch --parsable --dependency=afterok:${array} --kill-on-invalid-dep=yes '+f'slurm_merge_{str_met}_Zsun.slurm)\n')
+            file.write('merge=$(sbatch --parsable --dependency=afterok:${array} --kill-on-invalid-dep=yes '+f'{str_met}_Zsun_merge_popsyn.slurm)\n')
             file.write("echo '"+str_met+" merge job submitted as '${merge}\n") 
