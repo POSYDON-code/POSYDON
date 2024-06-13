@@ -583,8 +583,8 @@ class StepSN(object):
                         warnings.warn(f'{MODEL_NAME_SEL}: The SN_type '
                                       'does not match the predicted CO, or the interpolated '
                                       'values for the SN remnant are NaN. '
-                                       'If use_profiles or use_core_masses is set to True, '
-                                       'continue with the collapse.')
+                                      'If use_profiles or use_core_masses is set to True, '
+                                      'continue with the collapse.')
                     
             # Verifies the selection of core-collapse mechnism to perform
             # the collapse
