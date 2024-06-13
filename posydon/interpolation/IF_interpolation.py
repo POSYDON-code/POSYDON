@@ -418,6 +418,13 @@ class BaseIFInterpolator:
 
         self.interp_method = interp_method
         self.interpolator = None
+        ignored_classes = ['not_converged', 'ignored_no_BH', 'ignored_no_RLO', 'initial_MT']
+        self.valid_classes = np.unique(grid.final_values["interpolation_class"]).tolist()
+        # A list of mass-transfer classes that are kept for interpolations (exclude e.g. 'not_converged' class).
+        for i in ignored_classes:
+            while(i in self.valid_classes):
+                self.valid_classes.remove(i)
+        
         if interp_classes is not None:
             if not isinstance(interp_classes, list):
                 raise ValueError("interp_classes must be a list of "
@@ -598,9 +605,7 @@ class BaseIFInterpolator:
         which = np.isnan(np.sum(X, axis=1))
         valid[which] = -1
         print(f"Discarded {np.sum(which)} binaries with nans in input values.")
-        valid_classes = ['stable_MT', 'unstable_MT', 'no_MT', 'stable_reverse_MT']
-        # A list of mass-transfer classes that are kept for interpolations (exclude e.g. 'not_converged' class).
-        for i, flag in enumerate(valid_classes):
+        for i, flag in enumerate(self.valid_classes):
             valid[ic == flag] = i + 1
 
         if(self.interp_in_q):   # if HMS-HMS grid, take out q = 1
