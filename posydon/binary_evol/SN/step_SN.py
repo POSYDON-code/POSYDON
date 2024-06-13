@@ -1725,11 +1725,11 @@ class StepSN(object):
                 # (see, e.g., Kalogera, V. & Lorimer, D.R. 2000, ApJ, 530, 890)
                 # The derivation in the papers above assume a circular pre SN
                 # orbit. Hence, need a correction for eccentric pre SN orbits:
-                eccentirc_orbit_correction = Vr**2 * rpre / (G * Mtot_pre)
+                eccentric_orbit_correction = Vr**2 * rpre / (G * Mtot_pre)
                 tmp1 = 2 - Mtot_pre / Mtot_post * (Vkick / Vr - 1) ** 2\
-                           * eccentirc_orbit_correction
+                           * eccentric_orbit_correction
                 tmp2 = 2 - Mtot_pre / Mtot_post * (Vkick / Vr + 1) ** 2\
-                           * eccentirc_orbit_correction
+                           * eccentric_orbit_correction
                 SNflag2 = ((rpre / Apost - tmp1 < err)
                            and (err > tmp2 - rpre / Apost))
 
