@@ -2233,7 +2233,7 @@ def calculate_lambda_from_profile(
               m1_i, radius1, len(donor_mass), " vs ", ind_core, mc1_i, rc1_i)
         print("Ebind_i from profile ", Ebind_i)
         print("lambda_CE ", lambda_CE)
-    if not (lambda_CE > -tolerance):
+    if not (lambda_CE > -tolerance) and not np.isnan(lambda_CE):
         raise ValueError("lambda_CE has a negative value")
     return lambda_CE, mc1_i, rc1_i
 
