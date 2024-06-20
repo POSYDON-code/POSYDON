@@ -242,6 +242,8 @@ class Pulsar:
         B_f = B_i/(1 + delta_M/delta_Md) * np.exp(-delta_t/tau_d)
         self.Bfield = B_f
 
+        if B_f < 5e7: B_f = 5e7
+
         ## check if pulsar has crossed the death line
         self.alive_state = self.is_alive()
     
