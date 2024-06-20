@@ -22,10 +22,6 @@ DEFAULT_MODEL = {
     "select_one_met": False,
     "dlogZ": None,  # e.g, [np.log10(0.0142/2),np.log10(0.0142*2)]
     "Zsun": Zsun,
-    "compute_GRB_properties": False,
-    "GRB_beaming": 1.0,  # e.g., 0.5, 'Goldstein+15'
-    "GRB_efficiency": 0.0,  # e.g., 0.01
-    "E_GRB_iso_min": 0.0,  # e.g., 1e51 erg
 }
 
 

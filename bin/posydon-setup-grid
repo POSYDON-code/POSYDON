@@ -1065,7 +1065,8 @@ if __name__ == '__main__':
                 grid = pandas.read_csv(run_parameters['grid'])
             else:
                 raise ValueError('Grid format not recognized, please feed in an acceptable format: csv')
-            with open('slurm_job_array_grid_submit.sh', 'w') as f:
+            grid_script = 'job_array_grid_submit.slurm'
+            with open(grid_script, 'w') as f:
                 f.write('#!/bin/bash\n')
 
                 f.write('#SBATCH --account={0}\n'.format(slurm['account']))
@@ -1088,7 +1089,8 @@ if __name__ == '__main__':
                 f.write('export MESA_DIR={0}\n\n\n'.format(os.environ['MESA_DIR']))
                 f.write(command_line)
         else:
-            with open('slurm_mpi_grid_submit.sh', 'w') as f:
+            grid_script = 'mpi_grid_submit.slurm'
+            with open(grid_script, 'w') as f:
                 f.write('#!/bin/bash\n')
 
                 f.write('#SBATCH --account={0}\n'.format(slurm['account']))
@@ -1108,3 +1110,36 @@ if __name__ == '__main__':
                 f.write('source $MESASDK_ROOT/bin/mesasdk_init.sh\n')
                 f.write('export MESA_DIR={0}\n\n\n'.format(os.environ['MESA_DIR']))
                 f.write(command_line)
+        # create a cleanup script
+        with open('cleanup.slurm', 'w') as f:
+            f.write('#!/bin/bash\n')
+            
+            f.write('#SBATCH --account={0}\n'.format(slurm['account']))
+            f.write('#SBATCH --partition={0}\n'.format(slurm['partition']))
+            f.write('#SBATCH -N 1\n')
+            f.write('#SBATCH --cpus-per-task {0}\n'.format(slurm['number_of_cpus_per_task']))
+            f.write('#SBATCH --ntasks-per-node 1\n')
+            f.write('#SBATCH --time={0}\n'.format(slurm['walltime']))
+            f.write('#SBATCH --job-name=\"mesa_grid_cleanup\"\n')
+            f.write('#SBATCH --output=mesa_cleanup.out\n')
+            f.write('#SBATCH --mail-type=ALL\n')
+            f.write('#SBATCH --mail-user={0}\n'.format(slurm['email']))
+            f.write('#SBATCH --mem-per-cpu=4G\n\n')
+            
+            f.write('compress-mesa .\n')
+            if 'newgroup' in slurm.keys():
+                f.write('echo \"Change group to {0}\"\n'.format(slurm['newgroup']))
+                f.write('chgrp -fR {0} .\n'.format(slurm['newgroup']))
+                f.write('echo \"Change group permission to rwX at least\"\n')
+                f.write('chmod -fR g+rwX .\n')
+            f.write('\necho \"Done.\"')
+        # create a runfile script
+        with open('run_grid.sh', 'w') as f:
+            f.write('#!/bin/bash\n')
+            f.write('ID_GRID=$(sbatch --parsable {0})\n'.format(grid_script))
+            f.write('echo \"{0}'.format(grid_script)+' submitted as \"${ID_GRID}\n')
+            f.write('ID_cleanup=$(sbatch --parsable --dependency=afterany:${ID_GRID} '
+                    '--kill-on-invalid-dep=yes cleanup.slurm)\n')
+            f.write('echo \"cleanup.slurm submitted as \"${ID_cleanup}\n')
+        # make the runfile script executable
+        os.system("chmod 755 run_grid.sh")

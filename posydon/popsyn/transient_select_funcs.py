@@ -86,8 +86,7 @@ def GRB_selection(history_chunk, oneline_chunk, formation_channels_chunk=None, S
     GRB_df_synthetic = pd.DataFrame(index=indices_selection)
     # Pre and post SN data
     post_SN_hist = selection[S_mask]
-    pre_mask = S_mask.shift(-1)
-    pre_mask.iloc[-1] = False
+    pre_mask = S_mask.shift(-1, fill_value=False)
     pre_SN_hist = selection[pre_mask]
     
     if S1_S2 == 'S1':
@@ -137,7 +136,7 @@ def mass_ratio(m_1, m_2):
     q[q>1.] = 1./q[q>1.]
     return q
 
-def BBH_selection_function(history_chunk, oneline_chunk, formation_channels_chunk):
+def BBH_selection_function(history_chunk, oneline_chunk, formation_channels_chunk=None):
     '''A BBH selection function to create a transient population of BBHs mergers.
     
     This is an example function for selecting BBH mergers and some of their properties.
@@ -188,7 +187,8 @@ def BBH_selection_function(history_chunk, oneline_chunk, formation_channels_chun
     df_transients['chi_eff'] = chi_eff(history_chunk[mask]['S1_mass'], history_chunk[mask]['S2_mass'], history_chunk[mask]['S1_spin'], history_chunk[mask]['S2_spin'], oneline_chunk['S1_spin_orbit_tilt'], oneline_chunk['S2_spin_orbit_tilt'])
     df_transients['eccentricity'] = history_chunk[mask]['eccentricity']
 
-    df_transients = pd.concat([df_transients, formation_channels_chunk[['channel']]], axis=1)
+    if formation_channels_chunk is not None:
+        df_transients = pd.concat([df_transients, formation_channels_chunk[['channel']]], axis=1)
     
     return df_transients
     
@@ -240,7 +240,10 @@ def DCO_detactability(sensitivity, transient_pop_chunk, z_events_chunk, z_weight
     for i in tqdm(range(z_events_chunk.shape[1]), total=z_events_chunk.shape[1], disable= not verbose):
         data_slice['z'] = z_events_chunk.iloc[:,i]
         mask = ~np.isnan(data_slice['z']).to_numpy()
-        detectable_weights[mask, i] = detectable_weights[mask, i] * sel_eff.predict_pdet(data_slice[mask])
+        if np.sum(mask) == 0:
+            detectable_weights[mask, i] = 0.0
+        else:
+            detectable_weights[mask, i] = detectable_weights[mask, i] * sel_eff.predict_pdet(data_slice[mask])
         
     return pd.DataFrame(detectable_weights, index=z_events_chunk.index, columns=z_events_chunk.columns)
     

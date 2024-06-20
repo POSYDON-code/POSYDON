@@ -20,7 +20,8 @@ __authors__ = [
     "Konstantinos Kovlakas <Konstantinos.Kovlakas@unige.ch>",
     "Devina Misra <devina.misra@unige.ch>",
     "Simone Bavera <Simone.Bavera@unige.ch>",
-    "Max Briel <max.briel@unige.ch>"
+    "Max Briel <max.briel@unige.ch>",
+    "Matthias Kruckow <Matthias.Kruckow@unige.ch>",
 ]
 
 
@@ -45,6 +46,8 @@ from posydon.popsyn.star_formation_history import get_formation_times
 
 from posydon.popsyn.independent_sample import (generate_independent_samples,
                                                binary_fraction_value)
+from posydon.popsyn.sample_from_file import (get_samples_from_file,
+                                             get_kick_samples_from_file)
 from posydon.utils.common_functions import (orbital_period_from_separation,
                                             orbital_separation_from_period)
 from posydon.popsyn.normalized_pop_mass import initial_total_underlying_mass
@@ -52,6 +55,26 @@ from posydon.popsyn.normalized_pop_mass import initial_total_underlying_mass
 from posydon.popsyn.defaults import default_kwargs
 from posydon.popsyn.io import binarypop_kwargs_from_ini
 from posydon.utils.constants import Zsun
+from posydon.utils.posydonerror import POSYDONError,initial_condition_message
+from posydon.utils.common_functions import set_binary_to_failed
+
+saved_ini_parameters = ['metallicity',
+                        "number_of_binaries",
+                   'binary_fraction_scheme',
+                   'binary_fraction_const',
+                   'star_formation',
+                   'max_simulation_time',
+                   'primary_mass_scheme',
+                   'primary_mass_min',                              
+                   'primary_mass_max',                                  
+                   'secondary_mass_scheme',
+                   'secondary_mass_min',
+                   'secondary_mass_max',
+                   'orbital_scheme',
+                   'orbital_period_scheme',
+                   'orbital_period_min',
+                   'orbital_period_max',
+                   'eccentricity_scheme']
 
 saved_ini_parameters = ['metallicity',
                         "number_of_binaries",
@@ -75,7 +98,7 @@ saved_ini_parameters = ['metallicity',
 # 'event' usually 10 but 'detached (Integration failure)' can occur
 HISTORY_MIN_ITEMSIZE = {'state': 30, 'event': 25, 'step_names': 21,
                         'S1_state': 31, 'S2_state': 31,
-                        'mass_transfer_case': 10,
+                        'mass_transfer_case': 16,
                         'S1_SN_type': 5, 'S2_SN_type': 5}
 ONELINE_MIN_ITEMSIZE = {'state_i': 30, 'state_f': 30,
                         'event_i': 10, 'event_f': 31,
@@ -117,21 +140,26 @@ class BinaryPopulation:
         for key, arg in kwargs.items():
             self.kwargs[key] = arg
         self.number_of_binaries = self.kwargs.get('number_of_binaries')
-
         self.population_properties = self.kwargs.get('population_properties',
                                                      SimulationProperties())
         atexit.register(lambda: BinaryPopulation.close(self))
         self.metallicity = self.kwargs.get('metallicity', 1)
-        
+
         # grab all metallicities in population or use single metallicity
         self.metallicities = self.kwargs.get('metallicities', [self.metallicity])
-        
+
+        # force the metallicity on to the simulation properties
+        for key in STEP_NAMES_LOADING_GRIDS:
+            if key in self.population_properties.kwargs:
+                self.population_properties.kwargs[key][1].update({'metallicity': self.metallicity})
+                        
+
         self.population_properties.max_simulation_time = self.kwargs.get(
             'max_simulation_time')  # years
 
         self.entropy = self.kwargs.get('entropy', None)
         seq = np.random.SeedSequence(entropy=self.entropy)
-        
+
         self.comm = self.kwargs.pop('comm', None)
         self.JOB_ID = self.kwargs.pop('JOB_ID', None)
         if self.comm is not None and self.JOB_ID is not None:
@@ -142,18 +170,18 @@ class BinaryPopulation:
             # to be the same across all processes.
             if self.entropy is None:
                 raise ValueError('A local MPI run requires an entropy value to be set.')
-            
+
             self.rank = self.comm.Get_rank()
             self.size = self.comm.Get_size()
             # Make seed sequence unique per metallicity
             met_shift = self.metallicities.index(self.metallicity)
-            seq = np.random.SeedSequence(entropy=self.entropy + met_shift)   
+            seq = np.random.SeedSequence(entropy=self.entropy + met_shift)
             seed_seq = [i for i in seq.spawn(self.size)][self.rank]
-            
+
         # Job array runs
         elif self.JOB_ID is not None:
             self.rank = self.kwargs.pop('RANK', None)
-            self.size = self.kwargs.pop('size', None)       
+            self.size = self.kwargs.pop('size', None)
             # Make sure each of the processes has the same entropy
             # But unique per metallicity
             if self.entropy is None:
@@ -291,7 +319,7 @@ class BinaryPopulation:
         else:
             # Create a directory for parallel runs
             if not os.path.exists(temp_directory):
-                try: 
+                try:
                     os.makedirs(temp_directory)
                 except FileExistsError:
                     pass
@@ -310,9 +338,22 @@ class BinaryPopulation:
             with warnings.catch_warnings(record=True) as w:
                 try:
                     binary.evolve()
-                except Exception:
-                    binary.event = 'FAILED'
+
+                except POSYDONError as posydon_error:
+                    set_binary_to_failed(binary)
                     binary.traceback = traceback.format_exc()
+
+                    if self.kwargs.get("error_checking_verbose", False):
+                        posydon_error.add_note(initial_condition_message(binary))
+                        traceback.print_exception(posydon_error)
+
+                except Exception as e:
+                    set_binary_to_failed(binary)
+                    binary.traceback = traceback.format_exc()
+
+                    e.add_note(initial_condition_message(binary))
+                    traceback.print_exception(e)
+
                 if len(w) > 0:
                     warnings.simplefilter("always")
                     binary.warning_message = [x.message for x in w]
@@ -425,14 +466,14 @@ class BinaryPopulation:
             # get the temporary files in the directory
             tmp_files = [os.path.join(temp_directory, f)     \
                          for f in os.listdir(temp_directory) \
-                            if os.path.isfile(os.path.join(temp_directory, f))]            
-            
+                            if os.path.isfile(os.path.join(temp_directory, f))]
+
             if os.path.isdir(absolute_filepath):
                 file_name = 'backup_save_pop_data.h5'
                 file_path = os.path.join(dir_name, file_name)
                 warnings.warn('The provided path is a directory - saving '
                               'to {0} instead.'.format(file_path), Warning)
-                
+
             self.combine_saved_files(absolute_filepath, tmp_files, **kwargs)
 
     def make_temp_fname(self):
@@ -443,14 +484,14 @@ class BinaryPopulation:
 
     def combine_saved_files(self, absolute_filepath, file_names, **kwargs):
         """Combine various temporary files in a given folder.
-        
+
         Parameters
         ----------
         absolute_filepath : str
             Absolute path to the file to be saved.
         file_names : list
-            List of absolute paths to the temporary files.  
-    
+            List of absolute paths to the temporary files.
+
         """
         dir_name = os.path.dirname(absolute_filepath)
 
@@ -478,8 +519,7 @@ class BinaryPopulation:
                 # which may not be largest string
                 try:
                     store.append('history', pd.read_hdf(f, key='history'),
-                                 min_itemsize=history_min_itemsize,
-                                 data_columns=True)
+                                 min_itemsize=history_min_itemsize)
                     
                     oneline = pd.read_hdf(f, key='oneline')
                     simulated_mass += oneline['S1_mass_i'].sum() + oneline['S2_mass_i'].sum()
@@ -490,8 +530,7 @@ class BinaryPopulation:
                     number_of_systems += len(oneline)
                     
                     store.append('oneline', oneline,
-                                 min_itemsize=oneline_min_itemsize,
-                                 data_columns=True)
+                                 min_itemsize=oneline_min_itemsize)
                     
                 except Exception:
                     print(traceback.format_exc(), flush=True)
@@ -507,6 +546,7 @@ class BinaryPopulation:
                 data={'simulated_mass': simulated_mass,
                       'underlying_mass': initial_total_underlying_mass(df=simulated_mass, **self.kwargs)[0], 
                       'number_of_systems': number_of_systems})
+            tmp_df.index.name = 'metallicity'
             store.append('mass_per_metallicity', tmp_df)
         
         # only remove the files once they've been written to the new file
@@ -561,7 +601,14 @@ class PopulationManager:
         self.history_dfs = []
         self.oneline_dfs = []
 
-        self.binary_generator = BinaryGenerator(**kwargs)
+        if (('read_samples_from_file' in self.kwargs) and
+            (self.kwargs['read_samples_from_file'] != '')):
+            self.binary_generator = BinaryGenerator(\
+                                     sampler=get_samples_from_file, **kwargs)
+        else:
+            self.binary_generator = BinaryGenerator(\
+                                     sampler=generate_independent_samples,\
+                                     **kwargs)
         self.entropy = self.binary_generator.entropy
 
         if file_name:
@@ -669,7 +716,7 @@ class PopulationManager:
         self.append(binary)
         return binary
 
-    def from_hdf(self, indices, where=None, restore=False):
+    def from_hdf(self, indices=None, where=None, restore=False):
         """Load a BinaryStar instance from an hdf file of a saved population.
 
         Parameters
@@ -679,7 +726,7 @@ class PopulationManager:
         where : str
             Query performed on disk to select history and oneline DataFrames.
         restore : bool
-            Restore binaries back to initial conditions.
+            If true, restore binaries back to initial conditions.
 
         """
         # check if numpy64, since where does not support this
@@ -687,7 +734,11 @@ class PopulationManager:
             indices = int(indices)
 
         if where is None:
-            query_str = 'index==indices'
+            if indices is None:
+                raise ValueError("You must specify either the binary indices or a query string "
+                                 "to read from file.")               
+            else:
+                query_str = 'index==indices'                
         else:
             query_str = str(where)
 
@@ -764,10 +815,10 @@ class PopulationManager:
 
         with pd.HDFStore(fname, mode=mode, complevel=complevel, complib=complib) as store:
             history_df = self.to_df(**kwargs)
-            store.append('history', history_df, data_columns=True)
+            store.append('history', history_df)
 
             online_df = self.to_oneline_df(**kwargs)
-            store.append('oneline', online_df, data_columns=True)
+            store.append('oneline', online_df)
         
         return
 
@@ -855,15 +906,30 @@ class BinaryGenerator:
 
         # indices
         indices = np.arange(self._num_gen, self._num_gen+N_binaries, 1)
+        
+        # kicks
+        if (('read_samples_from_file' in kwargs) and (kwargs['read_samples_from_file'] != '')):
+            kick1, kick2 = get_kick_samples_from_file(**kwargs)
+        else:
+            if 'number_of_binaries' in kwargs:
+                number_of_binaries = kwargs['number_of_binaries']
+            else:
+                number_of_binaries = 1
+            kick1 = np.array(number_of_binaries*[[None, None, None, None]])
+            kick2 = np.array(number_of_binaries*[[None, None, None, None]])
+        
+        # output
         output_dict = {
             'binary_index': indices,
-            'binary_fraction':binary_fraction,
+            'binary_fraction': binary_fraction,
             'time': formation_times,
             'separation': separation,
             'eccentricity': eccentricity,
             'orbital_period': orbital_period,
             'S1_mass': m1,
             'S2_mass': m2,
+            'S1_natal_kick_array': kick1,
+            'S2_natal_kick_array': kick2,
         }
         self._num_gen += N_binaries
         return output_dict
@@ -890,25 +956,31 @@ class BinaryGenerator:
         default_index = output['binary_index'].item()
         binary_fraction = output['binary_fraction']
 
+        formation_time = output['time'].item()
+        m1 = output['S1_mass'].item()
+        Z_div_Zsun = kwargs.get('metallicity', 1.)
+        zams_table = {2.: 2.915e-01,
+                      1.: 2.703e-01,
+                      0.45: 2.586e-01,
+                      0.2: 2.533e-01,
+                      0.1: 2.511e-01,
+                      0.01: 2.492e-01,
+                      0.001: 2.49e-01,
+                      0.0001: 2.49e-01}
+        Z = Z_div_Zsun*Zsun
+        if Z_div_Zsun in zams_table.keys():
+            Y = zams_table[Z_div_Zsun]
+        else:
+            raise KeyError(f"{Z_div_Zsun} is a not defined metallicity")
+        X = 1. - Z - Y
+        kick1 = output['S1_natal_kick_array'][0]
+
         if self.RNG.uniform() < binary_fraction:
-            formation_time = output['time'].item()
             separation = output['separation'].item()
             orbital_period = output['orbital_period'].item()
             eccentricity = output['eccentricity'].item()
-            m1 = output['S1_mass'].item()
             m2 = output['S2_mass'].item()
-            Z_div_Zsun = kwargs.get('metallicity', 1.)
-            zams_table = {2.: 2.915e-01,
-                          1.: 2.703e-01,
-                          0.45: 2.586e-01,
-                          0.2: 2.533e-01,
-                          0.1: 2.511e-01,
-                          0.01: 2.492e-01,
-                          0.001: 2.49e-01,
-                          0.0001: 2.49e-01}
-            Y = zams_table[Z_div_Zsun]
-            Z = Z_div_Zsun*Zsun
-            X = 1. - Z - Y
+            kick2 = output['S2_natal_kick_array'][0]
 
             binary_params = dict(
                 index=kwargs.get('index', default_index),
@@ -925,6 +997,7 @@ class BinaryGenerator:
                 metallicity=Z,
                 center_h1=X,
                 center_he4=Y,
+                natal_kick_array=kick1,
             )
             star2_params = dict(
                 mass=m2,
@@ -932,26 +1005,13 @@ class BinaryGenerator:
                 metallicity=Z,
                 center_h1=X,
                 center_he4=Y,
+                natal_kick_array=kick2,
             )
         #If binary_fraction not default a initially single star binary is created.
         else:
-            formation_time = output['time'].item()
             separation = np.nan
             orbital_period = np.nan
             eccentricity = np.nan
-            m1 = output['S1_mass'].item()
-            Z_div_Zsun = kwargs.get('metallicity', 1.)
-            zams_table = {2.: 2.915e-01,
-                          1.: 2.703e-01,
-                          0.45: 2.586e-01,
-                          0.2: 2.533e-01,
-                          0.1: 2.511e-01,
-                          0.01: 2.492e-01,
-                          0.001: 2.49e-01,
-                          0.0001: 2.49e-01}
-            Y = zams_table[Z_div_Zsun]
-            Z = Z_div_Zsun*Zsun
-            X = 1. - Z - Y
 
             binary_params = dict(
                 index=kwargs.get('index', default_index),
@@ -968,6 +1028,7 @@ class BinaryGenerator:
                 metallicity=Z,
                 center_h1=X,
                 center_he4=Y,
+                natal_kick_array=kick1,
             )
             star2_params = properties_massless_remnant()
 
