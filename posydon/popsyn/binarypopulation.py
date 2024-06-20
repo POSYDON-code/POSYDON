@@ -76,24 +76,6 @@ saved_ini_parameters = ['metallicity',
                    'orbital_period_max',
                    'eccentricity_scheme']
 
-saved_ini_parameters = ['metallicity',
-                        "number_of_binaries",
-                   'binary_fraction_scheme',
-                   'binary_fraction_const',
-                   'star_formation',
-                   'max_simulation_time',
-                   'primary_mass_scheme',
-                   'primary_mass_min',                              
-                   'primary_mass_max',                                  
-                   'secondary_mass_scheme',
-                   'secondary_mass_min',
-                   'secondary_mass_max',
-                   'orbital_scheme',
-                   'orbital_period_scheme',
-                   'orbital_period_min',
-                   'orbital_period_max',
-                   'eccentricity_scheme']
-
 
 # 'event' usually 10 but 'detached (Integration failure)' can occur
 HISTORY_MIN_ITEMSIZE = {'state': 30, 'event': 25, 'step_names': 21,
