@@ -1692,7 +1692,7 @@ class HMS_HMS_RLO_step(MesaGridStep):
         self.p_max = np.max(self._psyTrackInterp.grid.initial_values['period_days'])
         self.q_min = np.min(m2_initial_values/m1_initial_values)
         self.q_max = np.max(m2_initial_values/m1_initial_values)
-        self.minimum_star_mass = self.m2_min
+        self.minimum_star_mass = self.m2_min # 0.5 (M_sun)
 
     def __call__(self, binary):
         """Evolve a binary using the MESA step."""
@@ -1733,7 +1733,7 @@ class HMS_HMS_RLO_step(MesaGridStep):
         # TODO: import states from flow_chart.py
         elif (state_1 in FOR_RLO_STATES and (state_2 in FOR_RLO_STATES)
                 and event == "oRLO2"):
-            self.flip_stars_before_step = True
+            self.flip_stars_before_step = False
             # catch and redirect double core collapse, this happens if q=1:
             if state_2 == 'H-rich_Central_C_depletion':
                 self.binary.event = 'CC2'
