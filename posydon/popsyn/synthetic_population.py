@@ -106,12 +106,6 @@ class PopulationRunner:
     verbose : bool
         If `True`, print additional information.
 
-    Methods
-    -------
-    evolve()
-        Evolve the binary populations.
-    merge_parallel_runs(pop)
-        Merge the parallel runs of the population.
     """
 
     def __init__(self, path_to_ini, verbose=False):
@@ -154,6 +148,9 @@ class PopulationRunner:
             self.binary_populations = []
             for MET in self.solar_metallicities:
                 ini_kw = binarypop_kwargs_from_ini(path_to_ini)
+                # overwrite the ini_kw verbose parameter
+                ini_kw["verbose"] = self.verbose
+                ini_kw['tqdm'] = self.verbose
                 ini_kw["metallicity"] = MET
                 ini_kw["temp_directory"] = (
                     convert_metallicity_to_string(MET)
@@ -162,7 +159,7 @@ class PopulationRunner:
                 )
                 self.binary_populations.append(BinaryPopulation(**ini_kw))
 
-    def evolve(self):
+    def evolve(self, overwrite=False):
         """Evolve the binary populations.
 
         This method is responsible for evolving the binary populations. It iterates over each population
@@ -174,6 +171,14 @@ class PopulationRunner:
 
         """
         for pop in self.binary_populations:
+            # check if the temp directory exists
+            if os.path.exists(pop.kwargs["temp_directory"]) and not overwrite:
+                raise FileExistsError(f"The {pop.kwargs['temp_directory']} directory already exists! Please remove it or rename it before running the population.") 
+            elif os.path.exists(pop.kwargs["temp_directory"]) and overwrite:
+                if self.verbose:
+                    print(f"Removing {pop.kwargs['temp_directory']} directory...")
+                os.removedirs(pop.kwargs["temp_directory"])    
+                
             pop.evolve()
             if pop.comm is None:
                 self.merge_parallel_runs(pop)
@@ -194,101 +199,26 @@ class PopulationRunner:
             )
                 
         path_to_batch = pop.kwargs["temp_directory"]
+        
         tmp_files = [
             os.path.join(path_to_batch, f)
             for f in os.listdir(path_to_batch)
             if os.path.isfile(os.path.join(path_to_batch, f))
         ]
+        if self.verbose:
+            print(f"Merging {len(tmp_files)} files...")
+        
         pop.combine_saved_files(
             convert_metallicity_to_string(pop.metallicity) + "_Zsun_population.h5",
             tmp_files,
         )
+        if self.verbose:
+            print("Files merged!")
+            print(f"Removing files in {path_to_batch}...")
         # remove files
         if len(os.listdir(path_to_batch)) == 0:
             os.rmdir(path_to_batch)
 
-
-# TODO: I don't know if the merge_populations function is still needed
-def merge_populations(populations, filename, verbose=False):
-    """merges multiple populations into a single population file
-
-    Parameters
-    ----------
-    populations : list of Population
-        The populations to merge together
-    filename : str
-        The name of the population file to create
-    verbose : bool
-        If `True`, print additional information.
-
-    Notes
-    -----
-    This function merges multiple populations into a single population file. It iterates over each population
-    in the `populations` list and calls the `merge_parallel_runs` method on each population.
-    It writes the history and oneline dataframes from the input files to the given output file.
-
-    """
-
-    history_cols = populations[0].history.columns
-    oneline_cols = populations[0].oneline.columns
-
-    history_min_itemsize = {
-        key: val for key, val in HISTORY_MIN_ITEMSIZE.items() if key in history_cols
-    }
-    oneline_min_itemsize = {
-        key: val for key, val in ONELINE_MIN_ITEMSIZE.items() if key in oneline_cols
-    }
-
-    # open new file
-    with pd.HDFStore(filename, mode="a") as store:
-        prev = 0
-        for pop in populations:
-            # write history
-            for i in tqdm(
-                range(0, len(pop), 10000), total=len(pop) // 10000, disable=not verbose
-            ):
-                tmp_df = pop.history[i : i + 10000]
-                tmp_df.index = tmp_df.index + prev
-                store.append(
-                    "history",
-                    tmp_df,
-                    format="table",
-                    data_columns=True,
-                    min_itemsize=history_min_itemsize,
-                )
-
-            if verbose:
-                print(f"History for {pop.filename} written to population file!")
-
-            # write oneline
-            for i in tqdm(
-                range(0, len(pop), 10000), total=len(pop) // 10000, disable=not verbose
-            ):
-                tmp_df = pop.oneline[i : i + 10000]
-                tmp_df.index = tmp_df.index + prev
-                store.append(
-                    "oneline",
-                    tmp_df,
-                    format="table",
-                    data_columns=True,
-                    min_itemsize=oneline_min_itemsize,
-                )
-
-            if verbose:
-                print(f"Oneline for {pop.filename} written to population file!")
-
-            prev += len(pop)
-
-        # merge mass_per_metallicity
-        tmp_df = pd.concat([pop.mass_per_metallicity for pop in populations])
-        mass_per_metallicity = tmp_df.groupby(tmp_df.index).sum()
-
-        store.put("mass_per_metallicity", mass_per_metallicity)
-
-    # add ini parameters from the first population
-    populations[0]._save_ini_params(filename)
-
-    print(f"Populations merged into {filename}!")
 
 
 ##################
@@ -320,7 +250,7 @@ class History:
         The binary indices of the history dataframe.
     """
 
-    def __init__(self, filename, verbose=False, chunksize=10000):
+    def __init__(self, filename, verbose=False, chunksize=100000):
         """Initialise the history dataframe.
 
         This class is used to handle the history dataframe of a population file.
@@ -333,7 +263,7 @@ class History:
             The path to the population file.
         verbose : bool
             If `True`, print additional information.
-        chunksize : int (default=10000)
+        chunksize : int (default=100000)
             The chunksize to use when reading the history file.
         """
         self.filename = filename
@@ -356,16 +286,18 @@ class History:
                         "history_lengths not found in population file. Calculating history lengths..."
                     )
                 history_events = store.select_column("history", "index")
-                self.lengths = pd.DataFrame(
-                    history_events.groupby(history_events).count()
+                tmp_df = pd.DataFrame(
+                    history_events.groupby(history_events).count(),
                 )
+                tmp_df.rename(columns={"index": "length"}, inplace=True)
+                self.lengths = tmp_df
+                del tmp_df
                 if self.verbose:
                     print("Storing history lengths in population file!")
                 store.put("history_lengths", pd.DataFrame(self.lengths), format="table")
-
                 del history_events
 
-            self.columns = store.select("history", start=0, stop=0).columns
+            self.columns = store.select("history", start=0, stop=0).columns.to_list()
 
         self.indices = self.lengths.index.to_numpy()
         self.number_of_systems = len(self.lengths)
@@ -426,14 +358,29 @@ class History:
         
         elif isinstance(key, int):
             return pd.read_hdf(self.filename, where="index == key", key="history")
+        
+        # list of indices
         elif isinstance(key, list) and all(isinstance(x, int) for x in key):
-            with pd.HDFStore(self.filename, mode="r") as store:
-                return store.select("history", where="index in key")
+            if len(key) == 0:
+                return pd.DataFrame()
+            else:
+                with pd.HDFStore(self.filename, mode="r") as store:
+                    return store.select("history", where="index in key")
+        # numpy array
         elif isinstance(key, np.ndarray) and (key.dtype == int):
-            indices = key.tolist()
-            with pd.HDFStore(self.filename, mode="r") as store:
-                return store.select("history", where="index in indices")
+            if len(key) == 0:
+                return pd.DataFrame()
+            else:
+                indices = key.tolist()
+                with pd.HDFStore(self.filename, mode="r") as store:
+                    return store.select("history", where="index in indices")
+                
+        # boolean mask
         elif (isinstance(key, np.ndarray) and key.dtype == bool) or (isinstance(key, pd.DataFrame) and all(key.dtypes == bool)):
+            # return empty if no values
+            if len(key) == 0:
+                return pd.DataFrame()
+            
             out_df = pd.DataFrame()
             for i in range(0, len(key), self.chunksize):
                 tmp_df = pd.read_hdf(
@@ -441,11 +388,15 @@ class History:
                 )[key[i : i + self.chunksize]]
                 out_df = pd.concat([out_df, tmp_df])
             return out_df
+        
+        # single column
         elif isinstance(key, str):
             if key in self.columns:
                 return pd.read_hdf(self.filename, key="history", columns=[key])
             else:
                 raise ValueError(f"{key} is not a valid column name!")
+            
+        # multiple columns
         elif isinstance(key, list) and all(isinstance(x, str) for x in key):
             if all(x in self.columns for x in key):
                 return pd.read_hdf(self.filename, key="history", columns=key)
@@ -570,32 +521,9 @@ class Oneline:
         The binary indices of the oneline dataframe.
     columns : list of str
 
-    Methods
-    -------
-    head(self, n=10)
-        Get the first n rows of the oneline table.
-    tail(self, n=10)
-        Get the last n rows of the oneline table.
-    select(self, where=None, start=None, stop=None, columns=None)
-        Select a subset of the oneline table based on the given conditions.
-    __init__(self, filename, verbose=False, chunksize=10000)
-        Initialize the Oneline object.
-    __getitem__(self, key)
-        Return the oneline table based on the provided key.
-    __len__(self)
-        Return the number of systems in the oneline table.
-    __repr__(self)
-        Get a string representation of the oneline table.
-    _repr_html_(self)
-        Get an HTML representation of the oneline table.
-    iterator(self)
-        Get an iterator over the oneline table.
-    iterbinaries(self)
-        Get an iterator over the binary systems in the oneline table.
-
     """
 
-    def __init__(self, filename, verbose=False, chunksize=10000):
+    def __init__(self, filename, verbose=False, chunksize=100000):
         """Initialize a Oneline class instance.
 
         Parameters
@@ -617,7 +545,7 @@ class Oneline:
 
         with pd.HDFStore(filename, mode="r") as store:
             self.indices = store.select_column("oneline", "index").to_numpy()
-            self.columns = store.select("oneline", start=0, stop=0).columns
+            self.columns = store.select("oneline", start=0, stop=0).columns.to_list()
 
         self.number_of_systems = len(self.indices)
 
@@ -948,22 +876,10 @@ class Population(PopulationIO):
     history_lengths : pd.DataFrame
         The number of rows of each binary in the history dataframe. The index is the binary index.
 
-    Methods
-    -------
-    export_selection(selection, filename, chunksize)
-        Export a selection of the population to a new file.
-    calculate_formation_channels(mt_history=False)
-        Calculate the formation channels of the population.
-    __len__()
-        Get the number of systems in the population.
-    columns()
-        Get the columns of the population.
-    create_transient_population(func, transient_name, oneline_cols=None, hist_cols=None)
-        Create a transient population using a given function.
     """
 
     def __init__(
-        self, filename, metallicity=None, ini_file=None, verbose=False, chunksize=1000
+        self, filename, metallicity=None, ini_file=None, verbose=False, chunksize=1000000
     ):
         """Initialize the Population object.
 
@@ -1105,7 +1021,7 @@ class Population(PopulationIO):
         self.number_of_systems = self.oneline.number_of_systems
         self.indices = self.history.indices
 
-    def export_selection(self, selection, filename, overwrite=True, history_chunksize=1):
+    def export_selection(self, selection, filename, overwrite=False, append=False, history_chunksize=1000000):
         """Export a selection of the population to a new file
 
         This method exports a selection of systems from the population to a new file.
@@ -1124,7 +1040,7 @@ class Population(PopulationIO):
         filename : str
             The name of the export file to create or append to.
         chunksize : int, optional
-            The number of systems to export at a time. Default is 1.
+            The number of systems to export at a time. Default is 1000000.
 
         Raises
         ------
@@ -1161,6 +1077,21 @@ class Population(PopulationIO):
             raise ValueError(
                 f"{filename} does not contain .h5 in the se.\n Is this a valid population file?"
             )
+        
+        # overwrite and append cannot both be True
+        if append and overwrite:
+            raise ValueError("Both overwrite and append cannot be True!")
+        
+        # check for file existence
+        if os.path.exists(filename) and not overwrite and not append:
+            raise FileExistsError(f"{filename} already exists! Set overwrite or append to True to continue!")
+        
+        if overwrite:
+            mode = 'w'
+        elif append:
+            mode = 'a'
+        else:
+            mode = 'w'
 
         history_cols = self.history.columns
         oneline_cols = self.oneline.columns
@@ -1171,13 +1102,10 @@ class Population(PopulationIO):
         oneline_min_itemsize = {
             key: val for key, val in ONELINE_MIN_ITEMSIZE.items() if key in oneline_cols
         }
-        if overwrite:
-            mode = 'w'
-        else:
-            mode = 'a'
+
         with pd.HDFStore(filename, mode=mode) as store:
             # shift all new indices by the current length of data in the file
-            last_index_in_file = 0
+            last_index_in_file = -1
 
             if "/oneline" in store.keys():
                 last_index_in_file = np.sort(store["oneline"].index)[-1]
@@ -1199,7 +1127,8 @@ class Population(PopulationIO):
             # TODO: I need to shift the indices of the binaries or should I reindex them?
             # since I'm storing the information, reindexing them should be fine.
 
-            if last_index_in_file == 0:
+            if last_index_in_file == -1:
+                last_index_in_file = 0
                 reindex = {
                     i: j
                     for i, j in zip(selection,
@@ -1243,7 +1172,6 @@ class Population(PopulationIO):
                     "oneline",
                     tmp_df,
                     format="table",
-                    data_columns=True,
                     min_itemsize=oneline_min_itemsize,
                     index=False,
                 )
@@ -1263,7 +1191,6 @@ class Population(PopulationIO):
                     "history",
                     tmp_df,
                     format="table",
-                    data_columns=True,
                     min_itemsize=history_min_itemsize,
                     index=False,
                 )
@@ -1284,7 +1211,6 @@ class Population(PopulationIO):
                         "formation_channels",
                         tmp_df,
                         format="table",
-                        data_columns=True,
                         min_itemsize={"channel_debug": 100, "channel": 100},
                         index=False,
                     )
@@ -1391,7 +1317,7 @@ class Population(PopulationIO):
                 combined_events = "_".join(group["event"])
             return pd.Series({"channel_debug": combined_events})
 
-        def mt_history(row):
+        def get_mt_history(row):
             if (
                 pd.notna(row["mt_history_HMS_HMS"])
                 and row["mt_history_HMS_HMS"] == "Stable contact phase"
@@ -1469,7 +1395,7 @@ class Population(PopulationIO):
                         start=i, stop=i + self.chunksize, columns=["mt_history_HMS_HMS"]
                     )
                     tmp_df["mt_history_HMS_HMS"] = x
-                    df["channel"] = tmp_df.apply(mt_history, axis=1)
+                    df["channel"] = tmp_df.apply(get_mt_history, axis=1)
                     del tmp_df
                     del x
 
@@ -1501,7 +1427,6 @@ class Population(PopulationIO):
                 "formation_channels",
                 df,
                 format="table",
-                data_columns=True,
                 min_itemsize={"channel_debug": str_length, "channel": str_length},
             )
 
@@ -1650,7 +1575,6 @@ class Population(PopulationIO):
                     "transients/" + transient_name,
                     syn_df,
                     format="table",
-                    data_columns=True,
                     min_itemsize=min_itemsize,
                 )
 
@@ -1687,24 +1611,9 @@ class TransientPopulation(Population):
     columns : list
         List of columns in the transient population.
 
-
-    Methods
-    -------
-    select(where=None, start=None, stop=None, columns=None)
-        Select a subset of the transient population.
-    get_efficiency_over_metallicity()
-        Compute the efficiency of events per Msun for each solar metallicity.
-    calculate_cosmic_weights(SFH_identifier, MODEL_in=None)
-        Calculate the cosmic weights of the transient population.
-    plot_efficiency_over_metallicity()
-        Plot the efficiency of events per Msun for each solar metallicity.
-    plot_delay_time_distribution()
-        Plot the delay time distribution of the transient population.
-    plot_popsyn_pver_grid_slice()
-        Plot the transient population over the parameter space of a grid slice
     """
 
-    def __init__(self, filename, transient_name, verbose=False, chunksize=10000):
+    def __init__(self, filename, transient_name, verbose=False, chunksize=100000):
         """Initialise the TransientPopulation object.
 
         This method initializes the TransientPopulation object by linking it to the population file.
@@ -1719,6 +1628,8 @@ class TransientPopulation(Population):
             The name of the transient population within the file.
         verbose : bool, optional
             If `True`, additional information will be printed during the initialization process.
+        chunksize : int, optional
+            The chunksize to use when reading the population file (default is 100000).
 
         Raises
         ------
@@ -1874,46 +1785,31 @@ class TransientPopulation(Population):
                     del store["transients/" + self.transient_name + "/efficiencies"]
 
         metallicities = self.mass_per_metallicity.index.to_numpy()
-        efficiencies = []
-        for met in metallicities:
-            count = self.select(where="metallicity == {}".format(met)).shape[0]
+        
+        met_columns = self.select(columns=["metallicity"]).value_counts()
+        
+        met_columns.index = [i[0] for i in met_columns.index.to_numpy().flatten()]
 
-            # just sums the number of events
-            underlying_stellar_mass = self.mass_per_metallicity["underlying_mass"][met]
-
-            eff = count / underlying_stellar_mass
-            efficiencies.append(eff)
-            print(f"Efficiency at Z={met:1.2E}: {eff:1.2E} Msun^-1")
-
+        combined_df = pd.concat([met_columns, self.mass_per_metallicity], axis=1)
+        combined_df.fillna(0, inplace=True)
+        combined_df.sort_index(inplace=True)
+        
+        efficiencies = combined_df['count']/combined_df['underlying_mass']
+        for MET, value in efficiencies.sort_index().items():
+            print(f"Efficiency at Z={MET:1.2E}: {value:1.2E} Msun^-1")
+            
         self.efficiency = pd.DataFrame(
-            index=metallicities, data={"total": np.array(efficiencies)}
+            efficiencies, columns=["total"]
         )
-
+        self.efficiency.index.name = "metallicity"
         # if the channel column is present compute the merger efficiency per channel
         if "channel" in self.columns:
-            channels = np.unique(self.select(columns=["channel"]).values)
+            
+            data = self.select(columns=["channel", "metallicity"]).value_counts()
+            channels = np.unique(data.index.get_level_values(0))
+            
             for ch in channels:
-                efficiencies = []
-                for met in metallicities:
-                    count = np.sum(
-                        (
-                            self.select(
-                                where="(metallicity == {})".format(met),
-                                columns=["channel"],
-                            )
-                            == ch
-                        ).values
-                    )
-                    if count > 0:
-                        underlying_stellar_mass = self.mass_per_metallicity["underlying_mass"][
-                            met
-                        ]
-                        eff = count / underlying_stellar_mass
-                    else:
-                        eff = 0
-                    efficiencies.append(eff)
-                self.efficiency[ch] = np.array(efficiencies)
-
+                self.efficiency[ch] = (data[ch] / self.mass_per_metallicity["underlying_mass"]).fillna(0)
         # save the efficiency
         self._save_efficiency(self.filename)
 
@@ -2010,7 +1906,7 @@ class TransientPopulation(Population):
         indices = self.indices
 
         # sample the SFH for only the events that are within the Hubble time
-        # I only need to sample the SFH at each metallicity and z_birth
+        # only need to sample the SFH at each metallicity and z_birth
         # Not for every event!
         SFR_at_z_birth = star_formation_rate(rates.MODEL["SFR"], z_birth)
         # get metallicity bin edges
@@ -2077,7 +1973,7 @@ class TransientPopulation(Population):
                 .flatten()
                 * Zsun
             )
-
+            
             weights = np.zeros((len(met_events), nr_of_birth_bins))
             for i, met in enumerate(rates.centers_metallicity_bins):
                 mask = met_events == met
@@ -2166,9 +2062,8 @@ class TransientPopulation(Population):
             if not any(np.isclose(metallicity, self.solar_metallicities)):
                 raise ValueError("The metallicity is not present in the population!")
 
-            time = self.select(
-                where="metallicity == {}".format(metallicity), columns=["time"]
-            ).values
+            time = self.select(columns=['metallicity', 'time'])
+            time = time[time['metallicity'] == metallicity].drop(columns=['metallicity']).values
             time = time * 1e6  # yr
             h, bin_edges = np.histogram(time, bins=bins)
             h = (
@@ -2255,21 +2150,9 @@ class Rates(TransientPopulation):
     centers_redshift_bins : np.ndarray
         The centers of the redshift bins of the star formation history.
 
-    Methods
-    -------
-    select_rate_slice(key, start=None, stop=None)
-        Selects a slice of a rates dataframe at key.
-    calculate_intrinsic_rate_density(mt_channels=False)
-        Compute the intrinsic rate density of the transient population.
-    calculate_observable_population(observable_func, observable_name)
-        Calculate the observable population based on the provided function.
-    observable_population(observable_name)
-        Return the observable population based on the provided name.
-    plot_hist_properties(prop, intrinsic=True, observable=None, bins=50, channel=None, **kwargs)
-        Plot a histogram of a given property available in the transient population.
     """
 
-    def __init__(self, filename, transient_name, SFH_identifier, verbose=False, chunksize=1000):
+    def __init__(self, filename, transient_name, SFH_identifier, verbose=False, chunksize=100000):
         """
         Initialize the Rates object.
 
@@ -2287,6 +2170,8 @@ class Rates(TransientPopulation):
             The identifier for the star formation history.
         verbose : bool, optional
             Whether to print verbose output. Default is False.
+        chunksize : int, optional
+            The chunksize to use when reading the population file (Default is 100000).
         """
 
         super().__init__(filename, transient_name, verbose=verbose, chunksize=chunksize)
@@ -2654,6 +2539,7 @@ class Rates(TransientPopulation):
         # get the property and its associated weights in the population.
 
         df = self.select(columns=[prop])
+        kwargs['xlabel'] = prop
         df["property"] = df[prop]
         del df[prop]
         if intrinsic:
@@ -2694,6 +2580,11 @@ class Rates(TransientPopulation):
             # plot the histogram using plot_pop.plot_hist_properties
             plot_pop.plot_hist_properties(df, bins=bins, **kwargs)
 
+    def plot_intrinsic_rate(self, channels=False, **kwargs):
+        """Plot the intrinsic rate density of the transient population."""
+
+        plot_pop.plot_rate_density(self.intrinsic_rate_density, channels=channels, **kwargs)
+
     @property
     def edges_metallicity_bins(self):
         """Return the edges of the metallicity bins.
@@ -2714,7 +2605,10 @@ class Rates(TransientPopulation):
             bin_met[1:-1] = met_val[:-1] + (met_val[1:] - met_val[:-1]) / 2.0
         # one metallicty bin
         elif len(met_val) == 1:
-            if isinstance(self.MODEL["dlogZ"], float):
+            if self.MODEL["dlogZ"] is None:
+                bin_met[0] = -9
+                bin_met[-1] = 0
+            elif isinstance(self.MODEL["dlogZ"], float):
                 bin_met[0] = met_val[0] - self.MODEL["dlogZ"] / 2.0
                 bin_met[-1] = met_val[0] + self.MODEL["dlogZ"] / 2.0
             elif isinstance(self.MODEL["dlogZ"], list) or isinstance(

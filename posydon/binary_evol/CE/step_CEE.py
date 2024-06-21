@@ -30,10 +30,12 @@ __authors__ = [
     "Konstantinos Kovlakas <Konstantinos.Kovlakas@unige.ch>",
     "Jeffrey Andrews <jeffrey.andrews@northwestern.edu>",
     "Tassos Fragos <Anastasios.Fragkos@unige.ch>",
+    "Matthias Kruckow <Matthias.Kruckow@unige.ch>",
 ]
 
 
 import numpy as np
+import pandas as pd
 from posydon.utils import common_functions as cf
 from posydon.utils import constants as const
 import warnings
@@ -42,6 +44,7 @@ from posydon.binary_evol.singlestar import STARPROPERTIES
 from posydon.utils.common_functions import PATH_TO_POSYDON
 from posydon.utils.common_functions import check_state_of_star
 from posydon.utils.common_functions import calculate_lambda_from_profile, calculate_Mejected_for_integrated_binding_energy
+from posydon.utils.posydonerror import FlowError
 
 
 warnings.simplefilter('always', UserWarning)
@@ -234,7 +237,7 @@ class StepCEE(object):
                 lambda2_CE, mc2_i, rc2_i, comp_type = self.calculate_lambda_CE(
                     comp_star, verbose=self.verbose)
             else:
-                lambda2_CE = None
+                lambda2_CE = np.nan
                 mc2_i = comp_star.mass
                 rc2_i = 10**comp_star.log_R
                 comp_type = "not_giant_companion"
@@ -504,10 +507,13 @@ class StepCEE(object):
         alpha_CE = self.common_envelope_efficiency
 
         # calculate evolution of the orbit
-        ebind_i = (-const.standard_cgrav / lambda1_CE
-                   * (m1_i * const.Msun * (m1_i - mc1_i) * const.Msun)
-                   / (radius1 * const.Rsun))
-        if double_CE:
+        if pd.isna(lambda1_CE):
+            ebind_i = 0.0
+        else:
+            ebind_i = (-const.standard_cgrav / lambda1_CE
+                       * (m1_i * const.Msun * (m1_i - mc1_i) * const.Msun)
+                       / (radius1 * const.Rsun))
+        if (double_CE and (not pd.isna(lambda2_CE))):
             ebind_i += (-const.standard_cgrav / lambda2_CE
                         * (m2_i * const.Msun * (m2_i - mc2_i) * const.Msun)
                         / (radius2 * const.Rsun))
@@ -525,7 +531,7 @@ class StepCEE(object):
 
         # Check to make sure final orbital separation is positive
         if not (separation_postCEE > -self.CEE_tolerance_err):
-            raise Exception("CEE problem, negative postCEE separation")
+            raise ValueError("CEE problem, negative postCEE separation")
 
         if verbose:
             print("CEE alpha-lambda prescription")

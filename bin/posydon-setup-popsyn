@@ -8,114 +8,92 @@
 # 6. Including the dependencies
 # Author: Max Briel
 import os
-from posydon.popsyn.io import binarypop_kwargs_from_ini
+from posydon.popsyn.io import (binarypop_kwargs_from_ini, 
+                               create_run_script_text,
+                               create_merge_script_text)
 from posydon.utils.common_functions import convert_metallicity_to_string
 from posydon.config import PATH_TO_POSYDON, PATH_TO_POSYDON_DATA
 import argparse
 
-def create_run_script(ini_file):
-    '''creates a run script for a specific metallicity'''
-   
-    text=f'''from posydon.popsyn.binarypopulation import BinaryPopulation
+from posydon.popsyn.binarypopulation import BinaryPopulation
 from posydon.popsyn.io import binarypop_kwargs_from_ini
 from posydon.utils.common_functions import convert_metallicity_to_string
 import argparse
 
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-    parser.add_argument('metallicity', type=float)
-    args = parser.parse_args()
-    ini_kw = binarypop_kwargs_from_ini("{ini_file}")
-    ini_kw["metallicity"] = args.metallicity
-    str_met = convert_metallicity_to_string(args.metallicity)
-    ini_kw["temp_directory"] = str_met+"_Zsun_" + ini_kw["temp_directory"]
-    synpop = BinaryPopulation(**ini_kw)
-    synpop.evolve()\n'''
+
+def create_run_script(ini_file):
+    '''creates a run script for the population synthesis run'''
+   
     filename =f'run_metallicity.py'
     with open(filename, mode='w') as file:
-        file.write(text)
+        file.write(create_run_script_text(ini_file))
 
 def create_merge_script(ini_file):
+    '''creates a merge script for the population synthesis run'''
     
     filename='merge_metallicity.py'
     with open(filename, mode='w') as file:
-        file.write(f'''from posydon.popsyn.binarypopulation import BinaryPopulation
-from posydon.popsyn.io import binarypop_kwargs_from_ini
-from posydon.utils.common_functions import convert_metallicity_to_string
-import argparse
-import os
+        file.write(create_merge_script_text(ini_file))
 
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser()
-    parser.add_argument('metallicity', type=float)
-    args = parser.parse_args()
-    ini_kw = binarypop_kwargs_from_ini("{ini_file}")
-    ini_kw['metallicity'] = args.metallicity
-    str_met = convert_metallicity_to_string(args.metallicity)
-    ini_kw['temp_directory'] = str_met+"_Zsun_" + ini_kw["temp_directory"]
-    synpop = BinaryPopulation(**ini_kw)
-    path_to_batch = ini_kw['temp_directory']
-    tmp_files = [os.path.join(path_to_batch, f)    \\
-                         for f in os.listdir(path_to_batch) \\
-                            if os.path.isfile(os.path.join(path_to_batch, f))]
-    tmp_files = sorted(tmp_files, key=lambda x: int(x.split(".")[-1]))
-    synpop.combine_saved_files(str_met+ '_Zsun_population.h5', tmp_files)
-    print('done')
-
-    if len(os.listdir(path_to_batch)) == 0:
-        os.rmdir(path_to_batch)
-
-''')
-
-def create_slurm_submit(metallicity, job_array_length, partition, email, walltime, account, path_to_posydon, path_to_posydon_data):
+def create_slurm_submit(metallicity, job_array_length, partition, email, walltime, account, mem_per_cpu, path_to_posydon, path_to_posydon_data):
     '''creates the slurm submit script'''
 
     str_met = convert_metallicity_to_string(metallicity)
+    # 0 already included in job_array_length
     job_array_length = job_array_length-1
 
     text = f'''#!/bin/bash
 #SBATCH --array=0-{job_array_length}
-#SBATCH --job-name=pop_syn_{str_met}
-#SBATCH --output=./{str_met}_logs/popsyn_{str_met}_%A_%a.out
+#SBATCH --job-name={str_met}_popsyn
+#SBATCH --output=./{str_met}_logs/popsyn_%A_%a.out
 #SBATCH --time={walltime}
-#SBATCH --mem-per-cpu=4G
+#SBATCH --mem-per-cpu={mem_per_cpu}
 '''
     if account != None:
         text += f'#SBATCH --account={account}\n'
     if partition!=None:
         text += f'#SBATCH --partition={partition}\n'
+        
     if email != None:
         text = text + \
-    f'''#SBATCH --mail-type=FAIL
+        f'''#SBATCH --mail-type=FAIL
 #SBATCH --mail-user={email}
 '''
 
     text = text + \
     f'''export PATH_TO_POSYDON={path_to_posydon}
 export PATH_TO_POSYDON_DATA={path_to_posydon_data}
-python ./run_metallicity.py {metallicity}
+srun python ./run_metallicity.py {metallicity}
 '''
-    filename = f"slurm_array_{str_met}_Zsun.sl"
+    filename = f"{str_met}_Zsun_slurm_array.slurm"
     with open(filename, mode='w') as file:
         file.write(text)
 
-def create_slurm_merge(metallicity, partition, email, merge_walltime, account, path_to_posydon, path_to_posydon_data):
+def create_slurm_merge(metallicity, partition, email, merge_walltime, account, mem_per_cpu, path_to_posydon, path_to_posydon_data):
 
     str_met = convert_metallicity_to_string(metallicity)
+    
+    # set walltime for merge script on debug-cpu
     if partition=='debug-cpu':
         merge_walltime='00:14:00'
 
+    # add required parameters
     text = f'''#!/bin/bash
-#SBATCH --job-name=merge_pop_syn_{str_met}
-#SBATCH --output=./{str_met}_logs/popsyn_merge_{str_met}.out
-#SBATCH --mem-per-cpu=4G
+#SBATCH --job-name={str_met}_Zsun_merge
+#SBATCH --output=./{str_met}_logs/popsyn_merge.out
+#SBATCH --mem-per-cpu={mem_per_cpu}
 #SBATCH --time={merge_walltime}
 '''
+
+    # add account if provided
     if account != None:
         text += f'#SBATCH --account={account}\n'
 
+    # add partition if provided
     if partition != None:
         text += f'#SBATCH --partition={partition}\n'
+        
+    # add email if provided
     if email != None:
         text = text + \
         f'''#SBATCH --mail-type=FAIL
@@ -124,9 +102,9 @@ def create_slurm_merge(metallicity, partition, email, merge_walltime, account, p
     text = text + \
         f'''export PATH_TO_POSYDON={path_to_posydon}
 export PATH_TO_POSYDON_DATA={path_to_posydon_data}
-python ./merge_metallicity.py {metallicity}
+srun python ./merge_metallicity.py {metallicity}
 '''
-    filename = f'slurm_merge_{str_met}_Zsun.sl'
+    filename = f'{str_met}_Zsun_merge_popsyn.slurm'
     with open(filename, mode='w') as file:
         file.write(text)
 
@@ -144,6 +122,7 @@ if __name__ == '__main__':
     parser.add_argument('--partition', help='what cluster partition you want to run the script on', default=None)
     parser.add_argument('--walltime', help='the walltime you would like to use in SLURM format', default='23:00:00')
     parser.add_argument('--merge_walltime', help='the walltime you would like to use for the merge script in SLURM format', default='12:00:00')
+    parser.add_argument('--mem_per_cpu', help='the memory per cpu you would like to use in SLURM format', default='4G')
     parser.add_argument('--account', help='the account you would like to use', default=None)
     args = parser.parse_args()
 
@@ -163,9 +142,9 @@ if __name__ == '__main__':
             os.mkdir(f'{str_met}_logs')
         except:
             pass
-        create_slurm_submit(MET, args.job_array, args.partition, args.email, args.walltime, args.account, PATH_TO_POSYDON, PATH_TO_POSYDON_DATA)
+        create_slurm_submit(MET, args.job_array, args.partition, args.email, args.walltime, args.account, args.mem_per_cpu, PATH_TO_POSYDON, PATH_TO_POSYDON_DATA)
         print("SLURM script created")
-        create_slurm_merge(MET, args.partition, args.email, args.merge_walltime, args.account, PATH_TO_POSYDON, PATH_TO_POSYDON_DATA)
+        create_slurm_merge(MET, args.partition, args.email, args.merge_walltime, args.account, args.mem_per_cpu, PATH_TO_POSYDON, PATH_TO_POSYDON_DATA)
 
     # create submission script for all SLURM 
     filename = 'slurm_submit.sh'
@@ -174,7 +153,7 @@ if __name__ == '__main__':
         file.write('#!/bin/bash\n')
         for MET in metallicities:
             str_met = convert_metallicity_to_string(MET)
-            file.write(f'array=$(sbatch --parsable slurm_array_{str_met}_Zsun.sl)\n')
+            file.write(f'array=$(sbatch --parsable {str_met}_Zsun_slurm_array.slurm)\n')
             file.write("echo '"+str_met+" job array submitted as '${array}\n")
-            file.write('merge=$(sbatch --parsable --dependency=afterok:${array} --kill-on-invalid-dep=yes '+f'slurm_merge_{str_met}_Zsun.sl)\n')
+            file.write('merge=$(sbatch --parsable --dependency=afterok:${array} --kill-on-invalid-dep=yes '+f'{str_met}_Zsun_merge_popsyn.slurm)\n')
             file.write("echo '"+str_met+" merge job submitted as '${merge}\n") 

@@ -184,25 +184,27 @@ confusion with other steps. It clearly has to run after a step, but it is no
 usual step itself. It requires a path to a :samp:`PSyGrid` object to get the
 models from, a path, where the rerun should be stored (it creates in there the
 :samp:`grid.csv` and the ini file needed to
-:ref:`setup a new run <mesa-grids-api>`), the grid type, the metallicity, and
-the type of the rerun specifying the logic and changes.
+:ref:`setup a new run <mesa-grids-api>`), the grid type, the metallicity, the
+type of the rerun specifying the logic and changes, and the cluster name.
 
 .. code-block::
 
-    path_to_grid,rerun_path,grid_type,rerun_metallicity,rerun_type
+    path_to_grid,rerun_path,grid_type,rerun_metallicity,rerun_type,cluster
 
 .. table:: Currently supported rerun types
 
-    ===================  ==============  ===========
-    :samp:`rerun_type`   Future version  Description
-    ===================  ==============  ===========
-    PISN                 default in v3+  it enables the MESA inlist commit, which stops MESA before getting dynamical to save a final profile there
-    reverse_MT           default in v3+  it uses a MESA version with a bug fix, that the role of donor and accretor can switch during the simulation
-    opacity_max          caution         it uses a fixed maximum opacity of 0.5 (this is only a last option change to get more stability)
-    TPAGBwind            default in v3+  it enables the MESA inlist commit, which changes the wind during the TPAGB phase
-    thermohaline_mixing  default in v3+  it uses thermohaline mixing in the inlist
-    HeMB_MLTp_mesh       workaround      it turns off magnetic braking for He stars; it uses less extreme parameters of the MLT++; it changes some more input values to change the resulation close to the surface
-    more_mesh            workaround      it modifies the remeshing and allows for more cells in MESA
-    conv_bdy_weight      caution         it disabled the convective_bdy_weight where this caused segmentation faults (this avoids a bug in the old MESA version r11701)
-    ===================  ==============  ===========
+    =====================  ==============  ===========
+    :samp:`rerun_type`     Future version  Description
+    =====================  ==============  ===========
+    PISN                   default in v3+  it enables the MESA inlist commit, which stops MESA before getting dynamical to save a final profile there
+    reverse_MT             default in v3+  it uses a MESA version with a bug fix, that the role of donor and accretor can switch during the simulation
+    opacity_max            caution         it uses a fixed maximum opacity of 0.5 (this is only a last option change to get more stability)
+    TPAGBwind              default in v3+  it enables the MESA inlist commit, which changes the wind during the TPAGB phase
+    thermohaline_mixing    default in v3+  it uses thermohaline mixing in the inlist
+    HeMB_MLTp_mesh         workaround      it turns off magnetic braking for He stars; it uses less extreme parameters of the MLT++; it changes some more input values to change the resulation close to the surface
+    more_mesh              workaround      it modifies the remeshing and allows for more cells in MESA
+    conv_bdy_weight        caution         it disabled the convective_bdy_weight where this caused segmentation faults (this avoids a bug in the old MESA version r11701)
+    dedt_energy_eqn        caution         it enables MESA's dedt-form of the energy equation for numerical stability during rapid (superthermal) mass transfer
+    dedt_hepulse           caution         it enables MESA's dedt-form of the energy equation for rapid mass transfer. At stripped HeZAMS, several MLT++ changes, v_flag and lnPgas_flag set to .true., and convective_bdy_weight disabled to help with stripped He star superadiabatic envelopes, pulsations, and WD cooling. 
+    =====================  ==============  ===========
 
