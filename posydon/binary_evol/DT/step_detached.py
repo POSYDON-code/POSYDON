@@ -413,9 +413,9 @@ class detached_step:
 
         # keys for the star profile interpolation
         self.profile_keys = DEFAULT_PROFILE_KEYS
-        #Getting the available rotations 
-        self.default_rotations = kwargs.get('default_rotations',[0.9,0.7,0.4]) 
-        #TODO have the option for rotation for the He stars 
+        #Getting the available rotations
+        self.default_rotations = kwargs.get('default_rotations',[0.9,0.7,0.4])
+        #TODO have the option for rotation for the He stars
         if grid_name_strippedHe is None:
             grid_name_strippedHe = os.path.join(
                 'single_HeMS', self.metallicity+'_Zsun.h5')
@@ -426,7 +426,8 @@ class detached_step:
             if grid_name_Hrich is None:
                 grid_name_Hrich = os.path.join(
                     'single_HMS', self.metallicity+'_Zsun.h5')
-            self.grid_Hrich = GRIDInterpolator(os.path.join(path, grid_name_Hrich))
+            grid_Hrich[0.] = GRIDInterpolator(os.path.join(path, grid_name_Hrich))
+            self.grid_Hrich = grid_Hrich
 
             # Initialize the matching lists:
             m_min_H = np.min(self.grid_Hrich.grid_mass)
@@ -441,7 +442,7 @@ class detached_step:
                     rot_grid_name_Hrich = os.path.join('single_HMS', self.metallicity+f'_Zsun_omega_crit_{rotation}.h5')
                     grid_Hrich[rotation] = GRIDInterpolator(os.path.join(path, rot_grid_name_Hrich))
 
-                    grid_Hrich[0.] = GRIDInterpolator(os.path.join(path, os.path.join('single_HMS', self.metallicity+'_Zsun.h5')))
+                grid_Hrich[0.] = GRIDInterpolator(os.path.join(path, os.path.join('single_HMS', self.metallicity+'_Zsun.h5')))
             self.grid_Hrich = grid_Hrich
 
             #grid_strippedHe = []
@@ -452,63 +453,59 @@ class detached_step:
 
 
             # Initialize the matching lists:
-            m_min_H = []
-            m_max_H = []
-            m_min_He = []
-            m_max_He = []
-            for grid in self.grid_Hrich:
-                print(type(grid),grid)
-                m_min_H.append(np.min(self.grid_Hrich[grid].grid_mass))
-                m_max_H.append(np.max(self.grid_Hrich[grid].grid_mass))
+        m_min_H = []
+        m_max_H = []
+        m_min_He = []
+        m_max_He = []
+        for grid in self.grid_Hrich:
+            print(type(grid),grid)
+            m_min_H.append(np.min(self.grid_Hrich[grid].grid_mass))
+            m_max_H.append(np.max(self.grid_Hrich[grid].grid_mass))
             #for grid in self.grid_strippedHe:
             #    m_min_He.append(np.min(self.grid_Hrich[grid].grid_mass))
             #    m_max_He.append(np.max(self.grid_Hrich[grid].grid_mass))
 
-        if self.list_for_matching_HMS is None:
-            self.list_for_matching_HMS = [
-                ["mass", "center_h1", "log_R", "he_core_mass"],
-                [20.0, 1.0, 2.0, 10.0],
-                ["log_min_max", "min_max", "min_max", "min_max"],
-                [m_min_H, m_max_H], [0, None]
-            ]
-        if self.list_for_matching_postMS is None:
-            self.list_for_matching_postMS = [
-                ["mass", "center_he4", "log_R", "he_core_mass"],
-                [20.0, 1.0, 2.0, 10.0],
-                ["log_min_max", "min_max", "min_max", "min_max"],
-                [m_min_H, m_max_H], [0, None]
-            ]
-        if self.list_for_matching_HeStar is None:
-            self.list_for_matching_HeStar = [
-                ["he_core_mass", "center_he4", "log_R"],
-                [10.0, 1.0, 2.0],
-                ["min_max", "min_max", "min_max"],
-                [m_min_He, m_max_He], [0, None]
-            ]
+        if self.dict_for_matching_HMS is None:
+            self.dict_for_matching_HMS = {
+                "mass": [20.0, "log_min_max", [m_min_H, m_max_H]],
+                "center_h1": [1.0, "min_max", [0, None]],
+                "log_R": [2.0, "min_max", [0, None]],
+                "he_core_mass": [10.0, "min_max", [0, None]]
+            }
 
+        if self.dict_for_matching_postMS is None:
+            self.dict_for_matching_postMS = {
+                "mass": [20.0, "log_min_max", [m_min_H, m_max_H]],
+                "center_he4": [1.0, "min_max", [0, None]],
+                "log_R": [2.0, "min_max", [0, None]],
+                "he_core_mass": [10.0, "min_max", [0, None]]
+            }
+        if self.dict_for_matching_HeStar is None:
+            self.dict_for_matching_HeStar = {
+                "he_core_mass": [10.0, "min_max", [m_min_He, m_max_He]],
+                "center_he4": [1.0, "min_max", [0, None]],
+                "log_R": [2.0, "min_max", [0, None]]
+            }
         # lists of alternative matching
 
         # e.g., stars after mass transfer could swell up so that log_R
         # is not appropriate for matching
 
-        self.list_for_matching_HMS_alternative = [
-            ["mass", "center_h1", "he_core_mass"],
-            [20.0, 1.0, 10.0],
-            ["log_min_max", "min_max", "min_max"],
-            [m_min_H, m_max_H], [0, None]
-        ]
-        self.list_for_matching_postMS_alternative = [
-            ["mass", "center_h1", "he_core_mass"],
-            [20.0, 1.0, 10.0],
-            ["log_min_max", "min_max", "min_max"],
-            [m_min_H, m_max_H], [0, None]
-        ]
-        self.list_for_matching_HeStar_alternative = [
-            ["he_core_mass", "center_he4", "log_R"],
-            [10.0, 1.0, 2.0],
-            ["min_max", "min_max", "min_max"],
-            [m_min_He, m_max_He], [0, None]
-        ]
+        self.dict_for_matching_HMS_alternative = {
+            "mass": [20.0, "log_min_max", [m_min_H, m_max_H]],
+            "center_h1": [1.0, "min_max", [0, None]],
+            "he_core_mass": [10.0, "min_max", [0, None]]
+        }
+        self.dict_for_matching_postMS_alternative = {
+            "mass": [20.0, "log_min_max", [m_min_H, m_max_H]],
+            "center_h1": [1.0, "min_max", [0, None]],
+            "he_core_mass": [10.0, "min_max", [0, None]]
+        }
+        self.dict_for_matching_HeStar_alternative = {
+            "he_core_mass": [10.0, "min_max", [m_min_He, m_max_He]],
+            "center_he4": [1.0, "min_max", [0, None]],
+            "log_R": [2.0, "min_max", [0, None]]
+        }
 
     def square_difference(self, x, htrack,
                           mesa_labels, posydon_attributes, colscalers, scales):
@@ -684,7 +681,7 @@ class detached_step:
             the properties of the secondary.
 
         """
-        
+
         get_root0 = self.get_root0
         get_track_val = self.get_track_val
         matching_method = self.matching_method
@@ -739,12 +736,12 @@ class detached_step:
                 return list_of_attributes
 
             if star.state in LIST_ACCEPTABLE_STATES_FOR_HMS:
-                list_for_matching = self.list_for_matching_HMS
+                list_for_matching = self.dict_for_matching_HMS
             elif star.state in LIST_ACCEPTABLE_STATES_FOR_postMS:
-                list_for_matching = self.list_for_matching_postMS
+                list_for_matching = self.dict_for_matching_postMS
 
             elif star.state in LIST_ACCEPTABLE_STATES_FOR_HeStar:
-                list_for_matching = self.list_for_matching_HeStar
+                list_for_matching = self.dict_for_matching_HeStar
 
             MESA_labels = list_for_matching[0]
             posydon_attributes = posydon_attribute(MESA_labels, star)
