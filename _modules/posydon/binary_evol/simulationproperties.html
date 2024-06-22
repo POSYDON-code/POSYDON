@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>posydon.binary_evol.simulationproperties &mdash; POSYDON v2.0.0-dev documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=8ace0c28" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=f4b7fd8b"></script>
+        <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html">
+            
+              <img src="../../../_static/posydon_logo.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                v2.0.0-dev
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction-acknowledgements/intro.html">Introduction, Objectives, and Scope</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction-acknowledgements/collaborative-team.html">Collaborative Team</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://posydon.org/papers.html">Publications</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting-started/prerequisites.html">Prerequisites</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting-started/installation-guide.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting-started/verification.html">Verification</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">User Guides</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../user-guides/user-roadmap.html">Roadmap to Becoming an Expert POSYDON User</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user-guides/web-application.html">Web Application: POSYDON Interactive Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user-guides/database-query-system.html">Database and Query System</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials and Examples</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials-examples/population-synthesis/binary-pop-syn.html">Binary-Star Population Synthesis with POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials-examples/generating-datasets/generating-datasets.html">Crafting the Core Datasets for POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials-examples/MESA-grids/running-grids.html">Architecting MESA Simulation Grids with POSYDON</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">In-Depth Components Overview</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../components-overview/mesa-grids.html">MESA Grids API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../components-overview/processing-pipeline.html">Processing Pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../components-overview/machine-learning-components.html">Machine Learning Components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../components-overview/stellar-binary-simulation.html">Stellar &amp; Binary-star Simulation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../api_reference/posydon.html">posydon</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api_reference/bin.html">executables</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Troubleshooting and FAQs</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../troubleshooting-faqs/installation-issues.html">Installation Issues</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../troubleshooting-faqs/code-questions.html">Code Usage Questions</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contributing to POSYDON</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing/how-to-contribute.html">How To Contribute</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing/code-style-guidelines.html">Code Style Guidelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing/reporting-issues.html">Reporting issues</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Release Notes and Changelog</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../release-notes/version-history.html">Version History of POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../release-notes/major-updates.html">Major Updates</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contact and Support</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../contact-support/contact-information.html">Contact Information</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">POSYDON</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">posydon.binary_evol.simulationproperties</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for posydon.binary_evol.simulationproperties</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Simulation properties for the population class.</span>
+
+<span class="sd">This class contains the simulation properties, e.g. flow, steps and `max_time`.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+<span class="n">__authors__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;Kyle Akira Rocha &lt;kylerocha2024@u.northwestern.edu&gt;&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Konstantinos Kovlakas &lt;Konstantinos.Kovlakas@unige.ch&gt;&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Jeffrey Andrews &lt;jeffrey.andrews@northwestern.edu&gt;&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Simone Bavera &lt;Simone.Bavera@unige.ch&gt;&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Nam Tran &lt;tranhn03@gmail.com&gt;&quot;</span><span class="p">,</span>
+<span class="p">]</span>
+
+
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">from</span> <span class="nn">posydon.utils.constants</span> <span class="kn">import</span> <span class="n">age_of_universe</span>
+
+<div class="viewcode-block" id="SimulationProperties">
+<a class="viewcode-back" href="../../../api_reference/posydon.binary_evol.html#posydon.binary_evol.simulationproperties.SimulationProperties">[docs]</a>
+<span class="k">class</span> <span class="nc">SimulationProperties</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Class describing the properties of a population synthesis simulation.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">properties</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Construct the simulation properties object.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        properties : object</span>
+<span class="sd">            Simulation Properties class containing, e.g. flow, steps.</span>
+<span class="sd">        extra_hooks : list of tuples</span>
+<span class="sd">            Each tuple contains a hooks class and kwargs or the extra step name</span>
+<span class="sd">            (&#39;extra_pre_evolve&#39;, &#39;extra_pre_step&#39;, &#39;extra_post_step&#39;,</span>
+<span class="sd">            &#39;extra_post_evolve&#39;) and the corresponding function.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="c1"># Check if binary_properties is passed</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">default_hooks</span> <span class="o">=</span> <span class="n">EvolveHooks</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">all_hooks_classes</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">default_hooks</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;extra_hooks&#39;</span><span class="p">,</span> <span class="p">[]):</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">type</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="nb">dict</span><span class="p">):</span>
+                    <span class="bp">cls</span><span class="p">,</span> <span class="n">params</span> <span class="o">=</span> <span class="n">item</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">all_hooks_classes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">cls</span><span class="p">(</span><span class="o">**</span><span class="n">params</span><span class="p">))</span>
+                <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">str</span><span class="p">):</span>
+                    <span class="c1"># setting extra_pre/post_step/evolve methods</span>
+                    <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">item</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="s2">&quot;`extra_hooks` must be list of tuples with either &quot;</span>
+                    <span class="s2">&quot;(i) a class deriving from EvolveHooks and a kwargs dict, &quot;</span>
+                    <span class="s2">&quot;or (ii) the name of the extra function and the callable.&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Binary parameters and parameterizations</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">initial_rotation</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mass_transfer_efficiency</span> <span class="o">=</span> <span class="mf">1.0</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">common_envelope_efficiency</span> <span class="o">=</span> <span class="mf">1.0</span>
+
+        <span class="c1"># Limits on simulation</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;max_simulation_time&#39;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">max_simulation_time</span> <span class="o">=</span> <span class="n">age_of_universe</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;end_events&#39;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">end_events</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;end_states&#39;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">end_states</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="c1"># for debugging purposes</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;max_n_steps_per_binary&#39;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">max_n_steps_per_binary</span> <span class="o">=</span> <span class="mi">100</span>
+        <span class="c1">#if not hasattr(self, &quot;verbose_binary_errors&quot;):</span>
+        <span class="c1">#    self.verbose_binary_errors = False</span>
+
+        <span class="c1"># Set functions for evolution</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="s2">&quot;step&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">key</span><span class="p">:</span>   <span class="c1"># skip loading steps</span>
+                <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">steps_loaded</span> <span class="o">=</span> <span class="kc">False</span>
+
+<div class="viewcode-block" id="SimulationProperties.load_steps">
+<a class="viewcode-back" href="../../../api_reference/posydon.binary_evol.html#posydon.binary_evol.simulationproperties.SimulationProperties.load_steps">[docs]</a>
+    <span class="k">def</span> <span class="nf">load_steps</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Instantiate step classes and set as instance attributes.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        verbose: bool</span>
+<span class="sd">            Print extra information.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;STEP NAME&#39;</span><span class="o">.</span><span class="n">ljust</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;STEP FUNCTION&#39;</span><span class="o">.</span><span class="n">ljust</span><span class="p">(</span><span class="mi">25</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;KWARGS&#39;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">tup</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tup</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">tup</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+                <span class="n">step_func</span><span class="p">,</span> <span class="n">kwargs</span> <span class="o">=</span> <span class="n">tup</span>
+                <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">step_func</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">steps_loaded</span> <span class="o">=</span> <span class="kc">True</span></div>
+
+
+<div class="viewcode-block" id="SimulationProperties.close">
+<a class="viewcode-back" href="../../../api_reference/posydon.binary_evol.html#posydon.binary_evol.simulationproperties.SimulationProperties.close">[docs]</a>
+    <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Close hdf5 files before exiting.&quot;&quot;&quot;</span>
+        <span class="kn">from</span> <span class="nn">posydon.binary_evol.MESA.step_mesa</span> <span class="kn">import</span> <span class="n">MesaGridStep</span>
+        <span class="kn">from</span> <span class="nn">posydon.binary_evol.DT.step_detached</span> <span class="kn">import</span> <span class="n">detached_step</span>
+        <span class="n">all_step_funcs</span> <span class="o">=</span> <span class="p">[</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span>
+                          <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="s1">&#39;step_&#39;</span> <span class="ow">in</span> <span class="n">key</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">step_func</span> <span class="ow">in</span> <span class="n">all_step_funcs</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">step_func</span><span class="p">,</span> <span class="n">MesaGridStep</span><span class="p">):</span>
+                <span class="n">step_func</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">step_func</span><span class="p">,</span> <span class="n">detached_step</span><span class="p">):</span>
+                <span class="k">for</span> <span class="n">grid_interpolator</span> <span class="ow">in</span> <span class="p">[</span><span class="n">step_func</span><span class="o">.</span><span class="n">grid_Hrich</span><span class="p">,</span> <span class="n">step_func</span><span class="o">.</span><span class="n">grid_strippedHe</span><span class="p">]:</span>
+                    <span class="n">grid_interpolator</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="SimulationProperties.pre_evolve">
+<a class="viewcode-back" href="../../../api_reference/posydon.binary_evol.html#posydon.binary_evol.simulationproperties.SimulationProperties.pre_evolve">[docs]</a>
+    <span class="k">def</span> <span class="nf">pre_evolve</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">binary</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Functions called before a binary evolves.</span>
+
+<span class="sd">        Uses all extra hooks classes or extra functions.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        binary : instance of &lt;class, BinaryStar&gt;</span>
+<span class="sd">            The binary before evolution starts.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        binary : instance of &lt;class, BinaryStar&gt;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">hooks</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">all_hooks_classes</span><span class="p">:</span>
+            <span class="n">hooks</span><span class="o">.</span><span class="n">pre_evolve</span><span class="p">(</span><span class="n">binary</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;extra_pre_evolve&#39;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">extra_pre_evolve</span><span class="p">(</span><span class="n">binary</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">binary</span></div>
+
+
+<div class="viewcode-block" id="SimulationProperties.pre_step">
+<a class="viewcode-back" href="../../../api_reference/posydon.binary_evol.html#posydon.binary_evol.simulationproperties.SimulationProperties.pre_step">[docs]</a>
+    <span class="k">def</span> <span class="nf">pre_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">binary</span><span class="p">,</span> <span class="n">step_name</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Prepare for step.</span>
+
+<span class="sd">        The method is called before every evolution step; uses all extra hooks</span>
+<span class="sd">        classes or extra functions (except for undefined next step errors).</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        binary : instance of &lt;class, BinaryStar&gt;</span>
+<span class="sd">            The binary before evolution starts.</span>
+<span class="sd">        step_name : str</span>
+<span class="sd">            The name of the step about to be called (as defined in the flow).</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        binary : instance of &lt;class, BinaryStar&gt;</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">hooks</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">all_hooks_classes</span><span class="p">:</span>
+            <span class="n">hooks</span><span class="o">.</span><span class="n">pre_step</span><span class="p">(</span><span class="n">binary</span><span class="p">,</span> <span class="n">step_name</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;extra_pre_step&#39;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">extra_pre_step</span><span class="p">(</span><span class="n">binary</span><span class="p">,</span> <span class="n">step_name</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">binary</span></div>
+
+
+<div class="viewcode-block" id="SimulationProperties.post_step">
+<a class="viewcode-back" href="../../../api_reference/posydon.binary_evol.html#posydon.binary_evol.simulationproperties.SimulationProperties.post_step">[docs]</a>
+    <span class="k">def</span> <span class="nf">post_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">binary</span><span class="p">,</span> <span class="n">step_name</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Finalize step.</span>
+
+<span class="sd">        The method is called after every evolution step; uses all extra hooks</span>
+<span class="sd">        classes or extra functions (except for undefined next step errors).</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        binary : instance of &lt;class, BinaryStar&gt;</span>
+<span class="sd">            The binary before evolution starts.</span>
+<span class="sd">        step_name : str</span>
+<span class="sd">            The name of the step about to be called (as defined in the flow).</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        binary : instance of &lt;class, BinaryStar&gt;</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">hooks</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">all_hooks_classes</span><span class="p">:</span>
+            <span class="n">hooks</span><span class="o">.</span><span class="n">post_step</span><span class="p">(</span><span class="n">binary</span><span class="p">,</span> <span class="n">step_name</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;extra_post_step&#39;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">extra_post_step</span><span class="p">(</span><span class="n">binary</span><span class="p">,</span> <span class="n">step_name</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">binary</span></div>
+
+
+<div class="viewcode-block" id="SimulationProperties.post_evolve">
+<a class="viewcode-back" href="../../../api_reference/posydon.binary_evol.html#posydon.binary_evol.simulationproperties.SimulationProperties.post_evolve">[docs]</a>
+    <span class="k">def</span> <span class="nf">post_evolve</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">binary</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Finalize the evolution of the binary.</span>
+
+<span class="sd">        The method is called after a binary exits the evolution loop.</span>
+<span class="sd">        Uses all extra hooks classes or extra functions.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        binary : instance of &lt;class, BinaryStar&gt;</span>
+<span class="sd">            The binary after evolution is ended.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        binary : instance of &lt;class, BinaryStar&gt;</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">hooks</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">all_hooks_classes</span><span class="p">:</span>
+            <span class="n">hooks</span><span class="o">.</span><span class="n">post_evolve</span><span class="p">(</span><span class="n">binary</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;extra_post_evolve&#39;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">extra_post_evolve</span><span class="p">(</span><span class="n">binary</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">binary</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="EvolveHooks">
+<a class="viewcode-back" href="../../../api_reference/posydon.binary_evol.html#posydon.binary_evol.simulationproperties.EvolveHooks">[docs]</a>
+<span class="k">class</span> <span class="nc">EvolveHooks</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Base class for hooking into binary evolution.&quot;&quot;&quot;</span>
+    
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add any new output columns to the hooks constructor.</span>
+<span class="sd">        Example for extra binary columns: </span>
+<span class="sd">            self.extra_binary_col_names = [&quot;column_name_1&quot;, &quot;column_name_2&quot;]</span>
+<span class="sd">        Example for extra star columns: </span>
+<span class="sd">            self.extra_star_col_names = [&quot;column_name_1&quot;, &quot;column_name_2&quot;]           </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span>
+
+<div class="viewcode-block" id="EvolveHooks.pre_evolve">
+<a class="viewcode-back" href="../../../api_reference/posydon.binary_evol.html#posydon.binary_evol.simulationproperties.EvolveHooks.pre_evolve">[docs]</a>
+    <span class="k">def</span> <span class="nf">pre_evolve</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">binary</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Perform actions before a binary evolves.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">binary</span></div>
+
+
+<div class="viewcode-block" id="EvolveHooks.pre_step">
+<a class="viewcode-back" href="../../../api_reference/posydon.binary_evol.html#posydon.binary_evol.simulationproperties.EvolveHooks.pre_step">[docs]</a>
+    <span class="k">def</span> <span class="nf">pre_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">binary</span><span class="p">,</span> <span class="n">step_name</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Perform actions before every evolution step.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">binary</span></div>
+
+
+<div class="viewcode-block" id="EvolveHooks.post_step">
+<a class="viewcode-back" href="../../../api_reference/posydon.binary_evol.html#posydon.binary_evol.simulationproperties.EvolveHooks.post_step">[docs]</a>
+    <span class="k">def</span> <span class="nf">post_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">binary</span><span class="p">,</span> <span class="n">step_name</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Perform acctions after every evolution step.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">binary</span></div>
+
+
+<div class="viewcode-block" id="EvolveHooks.post_evolve">
+<a class="viewcode-back" href="../../../api_reference/posydon.binary_evol.html#posydon.binary_evol.simulationproperties.EvolveHooks.post_evolve">[docs]</a>
+    <span class="k">def</span> <span class="nf">post_evolve</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">binary</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Perform actions after a binary exits the evolution loop.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">binary</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="TimingHooks">
+<a class="viewcode-back" href="../../../api_reference/posydon.binary_evol.html#posydon.binary_evol.simulationproperties.TimingHooks">[docs]</a>
+<span class="k">class</span> <span class="nc">TimingHooks</span><span class="p">(</span><span class="n">EvolveHooks</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Add history column &#39;step_times&#39; (time taken by step) to each binary.</span>
+
+<span class="sd">    Example</span>
+<span class="sd">    -------</span>
+<span class="sd">    &gt;&gt;&gt; pop.to_df(extra_columns={&#39;step_times&#39;: float})</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">extra_binary_col_names</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;step_times&quot;</span><span class="p">]</span>
+
+<div class="viewcode-block" id="TimingHooks.pre_evolve">
+<a class="viewcode-back" href="../../../api_reference/posydon.binary_evol.html#posydon.binary_evol.simulationproperties.TimingHooks.pre_evolve">[docs]</a>
+    <span class="k">def</span> <span class="nf">pre_evolve</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">binary</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the step time to match history.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">binary</span><span class="p">,</span> <span class="s1">&#39;step_times&#39;</span><span class="p">):</span>
+            <span class="n">binary</span><span class="o">.</span><span class="n">step_times</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">binary</span></div>
+
+
+<div class="viewcode-block" id="TimingHooks.pre_step">
+<a class="viewcode-back" href="../../../api_reference/posydon.binary_evol.html#posydon.binary_evol.simulationproperties.TimingHooks.pre_step">[docs]</a>
+    <span class="k">def</span> <span class="nf">pre_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">binary</span><span class="p">,</span> <span class="n">step_name</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Record the wall time before taking the step.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">step_start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">binary</span></div>
+
+
+<div class="viewcode-block" id="TimingHooks.post_step">
+<a class="viewcode-back" href="../../../api_reference/posydon.binary_evol.html#posydon.binary_evol.simulationproperties.TimingHooks.post_step">[docs]</a>
+    <span class="k">def</span> <span class="nf">post_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">binary</span><span class="p">,</span> <span class="n">step_name</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Record the duration of the step.&quot;&quot;&quot;</span>
+        <span class="n">binary</span><span class="o">.</span><span class="n">step_times</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">step_start_time</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">binary</span><span class="o">.</span><span class="n">event_history</span><span class="p">)</span> <span class="o">&gt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">binary</span><span class="o">.</span><span class="n">step_times</span><span class="p">):</span>
+            <span class="n">diff</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">binary</span><span class="o">.</span><span class="n">event_history</span><span class="p">)</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">binary</span><span class="o">.</span><span class="n">step_times</span><span class="p">)</span>
+            <span class="n">binary</span><span class="o">.</span><span class="n">step_times</span> <span class="o">+=</span> <span class="p">[</span><span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="n">diff</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">binary</span><span class="o">.</span><span class="n">event_history</span><span class="p">)</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">binary</span><span class="o">.</span><span class="n">step_times</span><span class="p">):</span>
+            <span class="n">last_items</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">binary</span><span class="o">.</span><span class="n">event_history</span><span class="p">)</span>
+            <span class="n">binary</span><span class="o">.</span><span class="n">step_times</span> <span class="o">=</span> <span class="n">binary</span><span class="o">.</span><span class="n">step_times</span><span class="p">[</span><span class="o">-</span><span class="p">(</span><span class="n">last_items</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):]</span>
+        <span class="k">return</span> <span class="n">binary</span></div>
+
+
+<div class="viewcode-block" id="TimingHooks.post_evolve">
+<a class="viewcode-back" href="../../../api_reference/posydon.binary_evol.html#posydon.binary_evol.simulationproperties.TimingHooks.post_evolve">[docs]</a>
+    <span class="k">def</span> <span class="nf">post_evolve</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">binary</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add None&#39;s to step_times to match history rows.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">binary</span><span class="o">.</span><span class="n">event</span> <span class="o">==</span> <span class="s1">&#39;END&#39;</span> <span class="ow">or</span> <span class="n">binary</span><span class="o">.</span><span class="n">event</span> <span class="o">==</span> <span class="s1">&#39;FAILED&#39;</span><span class="p">:</span>
+            <span class="n">diff</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">binary</span><span class="o">.</span><span class="n">event_history</span><span class="p">)</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">binary</span><span class="o">.</span><span class="n">step_times</span><span class="p">))</span>
+            <span class="n">binary</span><span class="o">.</span><span class="n">step_times</span> <span class="o">+=</span> <span class="p">[</span><span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="n">diff</span>
+        <span class="k">return</span> <span class="n">binary</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="StepNamesHooks">
+<a class="viewcode-back" href="../../../api_reference/posydon.binary_evol.html#posydon.binary_evol.simulationproperties.StepNamesHooks">[docs]</a>
+<span class="k">class</span> <span class="nc">StepNamesHooks</span><span class="p">(</span><span class="n">EvolveHooks</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Add history column &#39;step_name&#39; to each binary.</span>
+
+<span class="sd">    Name of evolutionary step as defined in SimulationProperties.</span>
+
+<span class="sd">    &gt;&gt;&gt; pop.to_df(extra_columns={&#39;step_names&#39;: str})</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">extra_binary_col_names</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;step_names&quot;</span><span class="p">]</span>
+
+<div class="viewcode-block" id="StepNamesHooks.pre_evolve">
+<a class="viewcode-back" href="../../../api_reference/posydon.binary_evol.html#posydon.binary_evol.simulationproperties.StepNamesHooks.pre_evolve">[docs]</a>
+    <span class="k">def</span> <span class="nf">pre_evolve</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">binary</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the step name to match history.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">binary</span><span class="p">,</span> <span class="s1">&#39;step_names&#39;</span><span class="p">):</span>
+            <span class="n">binary</span><span class="o">.</span><span class="n">step_names</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;initial_cond&#39;</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">binary</span></div>
+
+
+<div class="viewcode-block" id="StepNamesHooks.pre_step">
+<a class="viewcode-back" href="../../../api_reference/posydon.binary_evol.html#posydon.binary_evol.simulationproperties.StepNamesHooks.pre_step">[docs]</a>
+    <span class="k">def</span> <span class="nf">pre_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">binary</span><span class="p">,</span> <span class="n">step_name</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Do not do anything before the step.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">binary</span></div>
+
+
+<div class="viewcode-block" id="StepNamesHooks.post_step">
+<a class="viewcode-back" href="../../../api_reference/posydon.binary_evol.html#posydon.binary_evol.simulationproperties.StepNamesHooks.post_step">[docs]</a>
+    <span class="k">def</span> <span class="nf">post_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">binary</span><span class="p">,</span> <span class="n">step_name</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Record the step name.&quot;&quot;&quot;</span>
+        <span class="n">binary</span><span class="o">.</span><span class="n">step_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">step_name</span><span class="p">)</span>
+        <span class="n">len_binary_hist</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">binary</span><span class="o">.</span><span class="n">event_history</span><span class="p">)</span>
+        <span class="n">len_step_names</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">binary</span><span class="o">.</span><span class="n">step_names</span><span class="p">)</span>
+        <span class="n">diff</span> <span class="o">=</span> <span class="n">len_binary_hist</span> <span class="o">-</span> <span class="n">len_step_names</span>
+        <span class="k">if</span> <span class="n">len_binary_hist</span> <span class="o">&gt;</span> <span class="n">len_step_names</span><span class="p">:</span>
+            <span class="n">binary</span><span class="o">.</span><span class="n">step_names</span> <span class="o">+=</span> <span class="p">[</span><span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="n">diff</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">len_binary_hist</span> <span class="o">&lt;</span> <span class="n">len_step_names</span><span class="p">:</span>
+            <span class="n">binary</span><span class="o">.</span><span class="n">step_names</span> <span class="o">=</span> <span class="n">binary</span><span class="o">.</span><span class="n">step_names</span><span class="p">[</span><span class="o">-</span><span class="p">(</span><span class="n">len_binary_hist</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):]</span>
+        <span class="k">return</span> <span class="n">binary</span></div>
+
+
+<div class="viewcode-block" id="StepNamesHooks.post_evolve">
+<a class="viewcode-back" href="../../../api_reference/posydon.binary_evol.html#posydon.binary_evol.simulationproperties.StepNamesHooks.post_evolve">[docs]</a>
+    <span class="k">def</span> <span class="nf">post_evolve</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">binary</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Ensure None&#39;s are append to step_names to match rows in history.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">binary</span><span class="o">.</span><span class="n">event</span> <span class="o">==</span> <span class="s1">&#39;END&#39;</span> <span class="ow">or</span> <span class="n">binary</span><span class="o">.</span><span class="n">event</span> <span class="o">==</span> <span class="s1">&#39;FAILED&#39;</span><span class="p">:</span>
+            <span class="n">diff</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">binary</span><span class="o">.</span><span class="n">event_history</span><span class="p">)</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">binary</span><span class="o">.</span><span class="n">step_names</span><span class="p">))</span>
+            <span class="n">binary</span><span class="o">.</span><span class="n">step_names</span> <span class="o">+=</span> <span class="p">[</span><span class="kc">None</span><span class="p">]</span><span class="o">*</span><span class="n">diff</span>
+        <span class="k">return</span> <span class="n">binary</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="PrintStepInfoHooks">
+<a class="viewcode-back" href="../../../api_reference/posydon.binary_evol.html#posydon.binary_evol.simulationproperties.PrintStepInfoHooks">[docs]</a>
+<span class="k">class</span> <span class="nc">PrintStepInfoHooks</span><span class="p">(</span><span class="n">EvolveHooks</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Simple example for adding extra print info.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="PrintStepInfoHooks.pre_step">
+<a class="viewcode-back" href="../../../api_reference/posydon.binary_evol.html#posydon.binary_evol.simulationproperties.PrintStepInfoHooks.pre_step">[docs]</a>
+    <span class="k">def</span> <span class="nf">pre_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">binary</span><span class="p">,</span> <span class="n">step_name</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Print the step name for each binary, before taking it.&quot;&quot;&quot;</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">binary</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">step_name</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">binary</span></div>
+
+
+<div class="viewcode-block" id="PrintStepInfoHooks.post_evolve">
+<a class="viewcode-back" href="../../../api_reference/posydon.binary_evol.html#posydon.binary_evol.simulationproperties.PrintStepInfoHooks.post_evolve">[docs]</a>
+    <span class="k">def</span> <span class="nf">post_evolve</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">binary</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Report at the end of the evolution of each binary.&quot;&quot;&quot;</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;End evol for binary </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">binary</span><span class="o">.</span><span class="n">index</span><span class="p">),</span> <span class="n">end</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">*</span><span class="mi">2</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">binary</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Tassos Fragos.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

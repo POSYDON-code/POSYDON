@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Export Rerun Grids with POSYDON Post Processing Pipeline &mdash; POSYDON v2.0.0-dev documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/nbsphinx-code-cells.css" />
+      <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=8ace0c28" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../_static/documentation_options.js?v=f4b7fd8b"></script>
+        <script src="../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+        <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Processing Single Stars with POSYDON" href="processing_single_hms.html" />
+    <link rel="prev" title="2D Plotting Functionalities for POSYDON PSyGrids" href="plot_2D.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html">
+            
+              <img src="../../_static/posydon_logo.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                v2.0.0-dev
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../introduction-acknowledgements/intro.html">Introduction, Objectives, and Scope</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../introduction-acknowledgements/collaborative-team.html">Collaborative Team</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://posydon.org/papers.html">Publications</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started/prerequisites.html">Prerequisites</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started/installation-guide.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started/verification.html">Verification</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">User Guides</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../user-guides/user-roadmap.html">Roadmap to Becoming an Expert POSYDON User</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user-guides/web-application.html">Web Application: POSYDON Interactive Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user-guides/database-query-system.html">Database and Query System</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials and Examples</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../population-synthesis/binary-pop-syn.html">Binary-Star Population Synthesis with POSYDON</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="generating-datasets.html">Crafting the Core Datasets for POSYDON</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="just_step_1.html">Processing MESA grids with the POSYDON pipeline API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="run_full_piepeline.html">The fullt POSYDON Processing Pipeline experince</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plot_1D.html">1D Plotting Functionalities for POSYDON PSyGrids</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plot_2D.html">2D Plotting Functionalities for POSYDON PSyGrids</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Export Rerun Grids with POSYDON Post Processing Pipeline</a></li>
+<li class="toctree-l2"><a class="reference internal" href="processing_single_hms.html">Processing Single Stars with POSYDON</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../MESA-grids/running-grids.html">Architecting MESA Simulation Grids with POSYDON</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">In-Depth Components Overview</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../components-overview/mesa-grids.html">MESA Grids API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../components-overview/processing-pipeline.html">Processing Pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../components-overview/machine-learning-components.html">Machine Learning Components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../components-overview/stellar-binary-simulation.html">Stellar &amp; Binary-star Simulation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../api_reference/posydon.html">posydon</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api_reference/bin.html">executables</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Troubleshooting and FAQs</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../troubleshooting-faqs/installation-issues.html">Installation Issues</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../troubleshooting-faqs/code-questions.html">Code Usage Questions</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contributing to POSYDON</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing/how-to-contribute.html">How To Contribute</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing/code-style-guidelines.html">Code Style Guidelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing/reporting-issues.html">Reporting issues</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Release Notes and Changelog</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../release-notes/version-history.html">Version History of POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../release-notes/major-updates.html">Major Updates</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contact and Support</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../contact-support/contact-information.html">Contact Information</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">POSYDON</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="generating-datasets.html">Crafting the Core Datasets for POSYDON</a></li>
+      <li class="breadcrumb-item active">Export Rerun Grids with POSYDON Post Processing Pipeline</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/tutorials-examples/generating-datasets/step_rerun.ipynb.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="Export-Rerun-Grids-with-POSYDON-Post-Processing-Pipeline">
+<h1>Export Rerun Grids with POSYDON Post Processing Pipeline<a class="headerlink" href="#Export-Rerun-Grids-with-POSYDON-Post-Processing-Pipeline" title="Link to this heading"></a></h1>
+<p>Sometimes the POSYDON MESA engineer pratitioner might be challenged with exporting grid points to be rerun systematically for multiple MESA grids with the aim of fixing the “islands of unhappines” (cit. Aaron Dotter). These islands are portions of the parameter space where the MESA simulations did not converge to a solution. The POSYDON post processing pipeline can be used to export the grid points to be rerun <code class="docutils literal notranslate"><span class="pre">grid.csv</span></code> (give any predefined logic) and the <code class="docutils literal notranslate"><span class="pre">pipeline.ini</span></code> file already
+preconfigured with the correct <code class="docutils literal notranslate"><span class="pre">MESA-INLIST</span></code> submodule branch and commit. The <code class="docutils literal notranslate"><span class="pre">params.ini</span></code> file can be used to run the grid points with the <code class="docutils literal notranslate"><span class="pre">mesa</span></code> command line tool.</p>
+<p>POSYDON MESA grids associated with v2.0.0 made use of the following predefined rerun options in the post processing pipeline: - ‘PISN’: “matthias_PISN-d68228338b91fd487ef5d55c9b6ebb8cc5f0e668” - ‘reverse_MT’: “zepei_fix_implicit-afa1860ddf9894aa1d82742ee2a73e8e92acd4a9” - ‘opacity_max’: “matthias_PISN-d68228338b91fd487ef5d55c9b6ebb8cc5f0e668” - ‘opacity_max_hms-hms’: “zepei_fix_implicit-afa1860ddf9894aa1d82742ee2a73e8e92acd4a9” - ‘TPAGBwind’:
+“development-22c1bb9e730343558c3e70984a99b3fc1f3c346e” - ‘thermohaline_mixing’: “development-22c1bb9e730343558c3e70984a99b3fc1f3c346e” Please refer to the POSYDON v2.0.0 paper for more details.</p>
+<p>Here we show how to export the <code class="docutils literal notranslate"><span class="pre">opacity_max</span></code> reruns associated with the “getting started” tutorial using the post-processing pipeline.</p>
+<p>If you haven’t done it already, export the environemnt variables.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%</span><span class="k">env</span> PATH_TO_POSYDON=/srv/beegfs/scratch/shares/astro/posydon/simone/documentation/POSYDON/
+<span class="o">%</span><span class="k">env</span> PATH_TO_POSYDON_DATA=/srv/beegfs/scratch/shares/astro/posydon/POSYDON_GRIDS_v2/POSYDON_data/230914/
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+env: PATH_TO_POSYDON=/srv/beegfs/scratch/shares/astro/posydon/simone/documentation/POSYDON/
+env: PATH_TO_POSYDON_DATA=/srv/beegfs/scratch/shares/astro/posydon/POSYDON_GRIDS_v2/POSYDON_data/230914/
+</pre></div></div>
+</div>
+<section id="Preparing-the-Pipeline-initialization-file">
+<h2>Preparing the Pipeline initialization file<a class="headerlink" href="#Preparing-the-Pipeline-initialization-file" title="Link to this heading"></a></h2>
+<p>Let’s copy the pipeline ini file template for the UNIGE HPC cluster.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">shutil</span>
+<span class="kn">from</span> <span class="nn">posydon.config</span> <span class="kn">import</span> <span class="n">PATH_TO_POSYDON</span>
+
+<span class="n">path_to_ini</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">PATH_TO_POSYDON</span><span class="p">,</span> <span class="s1">&#39;grid_params/pipeline_yggdrasil.ini&#39;</span><span class="p">)</span>
+<span class="n">shutil</span><span class="o">.</span><span class="n">copyfile</span><span class="p">(</span><span class="n">path_to_ini</span><span class="p">,</span> <span class="s1">&#39;./pipeline.ini&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+&#39;./pipeline.ini&#39;
+</pre></div></div>
+</div>
+<p>We now edit the pipeline ini file to point to the MESA grid directory <code class="docutils literal notranslate"><span class="pre">test_grid/</span></code> containing a set of 100 MESA models of the HMS-HMS grid at 0.1Zsun for the mass ratio q=0.7, see the running MESa grid getting started tutorial.</p>
+<p>In order for the pipeline to be able to process the data we need to follow the following directory naming convention: <code class="docutils literal notranslate"><span class="pre">/HMS-HMS/1e-01_Zsun/test_grid/</span></code>.</p>
+<p>Here we just want to run the rerun step of the pipeline, in order to create the <code class="docutils literal notranslate"><span class="pre">grid.csv</span></code> file and the <code class="docutils literal notranslate"><span class="pre">pipeline.ini</span></code> file to be used to run the subsample of MESA simulations with the new configuration. Notice that the rerun step can be also used after the second step to export reruns of concatenate MESA grid (PSyGrid object <code class="docutils literal notranslate"><span class="pre">h5</span></code> file).</p>
+<p>After setting up the HPC account options and <code class="docutils literal notranslate"><span class="pre">PATH_TO_GRIDS</span></code> the value</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">posydon.config</span> <span class="kn">import</span> <span class="n">PATH_TO_POSYDON_DATA</span>
+
+<span class="n">PATH_TO_GRIDS</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">PATH_TO_POSYDON_DATA</span><span class="p">,</span> <span class="s1">&#39;POSYDON_data/tutorials/processing-pipeline&#39;</span><span class="p">)</span>
+<span class="n">PATH_TO_GRIDS</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+&#39;/srv/beegfs/scratch/shares/astro/posydon/POSYDON_GRIDS_v2/POSYDON_data/230914/POSYDON_data/tutorials/processing-pipeline&#39;
+</pre></div></div>
+</div>
+<p>We set:</p>
+<div class="highlight-ini notranslate"><div class="highlight"><pre><span></span><span class="na">CREATE_GRID_SLICES</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">False</span>
+<span class="na">COMBINE_GRID_SLICES</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">False</span>
+<span class="na">CALCULATE_EXTRA_VALUES</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">False</span>
+<span class="na">TRAIN_INTERPOLATORS</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">False</span>
+<span class="na">EXPORT_DATASET</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">False</span>
+<span class="na">RERUN</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">True</span>
+</pre></div>
+</div>
+<p>And edit the <code class="docutils literal notranslate"><span class="pre">[rerun]</span></code> section of the file to</p>
+<div class="highlight-ini notranslate"><div class="highlight"><pre><span></span><span class="na">GRID_TYPES</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">[&#39;HMS-HMS&#39;]</span>
+<span class="na">METALLICITIES</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">[[&#39;1e-01_Zsun&#39;]</span>
+<span class="w">                </span><span class="na">]</span>
+<span class="na">GRID_SLICES</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">[[&#39;test_grid&#39;]]</span>
+<span class="na">COMPRESSIONS</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">[[&#39;LITE&#39;]]</span>
+<span class="na">DROP_MISSING_FILES</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">True</span>
+<span class="na">RERUN_TYPE</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&#39;opacity_max&#39;</span>
+</pre></div>
+</div>
+<p>Also remember to set</p>
+<div class="highlight-ini notranslate"><div class="highlight"><pre><span></span><span class="na">CREATE_PLOTS</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">[]</span>
+<span class="na">DO_CHECKS</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">[]</span>
+</pre></div>
+</div>
+<p>for all other steps, otherwise the pipeline will try to create plots and do checks on the data, which is not possible since we are not running the full pipeline.</p>
+</section>
+<section id="Setting-up-and-Running-the-Post-Processing-Pipeline">
+<h2>Setting-up and Running the Post Processing Pipeline<a class="headerlink" href="#Setting-up-and-Running-the-Post-Processing-Pipeline" title="Link to this heading"></a></h2>
+<p>We are now rady to setup the grid pipeline with the <code class="docutils literal notranslate"><span class="pre">posydon-setup-pipeline</span></code> command, as follows:</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">!</span>posydon-setup-pipeline<span class="w"> </span>pipeline.ini
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+/home/bavera/.conda/envs/posydon_env/bin/posydon-setup-pipeline:4: DeprecationWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html
+  __import__(&#39;pkg_resources&#39;).require(&#39;posydon==1.0.0+194.g3953a14&#39;)
+
++++++++++++++++++++ACCOUNT+++++++++++++++++++
+{ &#39;ACCOUNT&#39;: &#39;meynet&#39;,
+  &#39;EMAIL&#39;: &#39;simone.bavera@unige.ch&#39;,
+  &#39;MAILTYPE&#39;: &#39;ALL&#39;,
+  &#39;PARTITION&#39;: &#39;public-cpu&#39;,
+  &#39;WALLTIME&#39;: &#39;24:00:00&#39;}
+
+++++++++++++++++++++SETUP++++++++++++++++++++
+{ &#39;CALCULATE_EXTRA_VALUES&#39;: False,
+  &#39;COMBINE_GRID_SLICES&#39;: False,
+  &#39;CREATE_GRID_SLICES&#39;: False,
+  &#39;EXPORT_DATASET&#39;: False,
+  &#39;PATH&#39;: &#39;.&#39;,
+  &#39;PATH_TO_GRIDS&#39;: &#39;/srv/beegfs/scratch/shares/astro/posydon/POSYDON_GRIDS_v2/POSYDON_data/230914/POSYDON_data/tutorials/processing-pipeline/&#39;,
+  &#39;RERUN&#39;: True,
+  &#39;TRAIN_INTERPOLATORS&#39;: False,
+  &#39;VERBOSE&#39;: True,
+  &#39;VERSION&#39;: &#39;&#39;}
+
+
+-------------CREATE_GRID_SLICES--------------  step_1 :False
+
+
+-------------COMBINE_GRID_SLICES-------------  step_2 :False
+
+
+-----------CALCULATE_EXTRA_VALUES------------  step_3 :False
+
+
+-------------TRAIN_INTERPOLATORS-------------  step_4 :False
+
+
+---------------EXPORT_DATASET----------------  step_9 :False
+
+
+--------------------RERUN--------------------  rerun  : True
+{ &#39;COMPRESSIONS&#39;: [[&#39;LITE&#39;]],
+  &#39;DROP_MISSING_FILES&#39;: True,
+  &#39;GRID_SLICES&#39;: [[&#39;test_grid&#39;]],
+  &#39;GRID_TYPES&#39;: [&#39;HMS-HMS&#39;],
+  &#39;METALLICITIES&#39;: [[&#39;1e-01_Zsun&#39;]],
+  &#39;RERUN_TYPE&#39;: &#39;opacity_max&#39;}
+</pre></div></div>
+</div>
+<p>Great let’s run the pipepline with the shell command.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">!</span>./run_pipeline.sh
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+rerun.slurm submitted as 28473947
+</pre></div></div>
+</div>
+<p>Once the job is done, you can check that the files were created in the <code class="docutils literal notranslate"><span class="pre">PATH_TO_GRIDS/HMS-HMS/1e-01_Zsun/</span></code> directory.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">!</span>ls<span class="w"> </span>/srv/beegfs/scratch/shares/astro/posydon/POSYDON_GRIDS_v2/POSYDON_data/230914/POSYDON_data/tutorials/processing-pipeline/HMS-HMS/1e-01_Zsun/rerun_opacity_max_test_grid
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+grid.csv  HMS-HMS_yggdrasil.ini
+</pre></div></div>
+</div>
+<p>Great! You can now submit the simulation. See the tutorial on how to run the grid with the POSYDON MESA submission API tool.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="plot_2D.html" class="btn btn-neutral float-left" title="2D Plotting Functionalities for POSYDON PSyGrids" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="processing_single_hms.html" class="btn btn-neutral float-right" title="Processing Single Stars with POSYDON" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Tassos Fragos.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

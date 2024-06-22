@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Profile Interpolation &mdash; POSYDON v2.0.0-dev documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=8ace0c28" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../_static/documentation_options.js?v=f4b7fd8b"></script>
+        <script src="../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Stellar &amp; Binary-star Simulation" href="../stellar-binary-simulation.html" />
+    <link rel="prev" title="Intial Final Classification &amp; Interpolation" href="initial_final_interp.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html">
+            
+              <img src="../../_static/posydon_logo.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                v2.0.0-dev
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../introduction-acknowledgements/intro.html">Introduction, Objectives, and Scope</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../introduction-acknowledgements/collaborative-team.html">Collaborative Team</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://posydon.org/papers.html">Publications</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started/prerequisites.html">Prerequisites</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started/installation-guide.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started/verification.html">Verification</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">User Guides</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../user-guides/user-roadmap.html">Roadmap to Becoming an Expert POSYDON User</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user-guides/web-application.html">Web Application: POSYDON Interactive Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user-guides/database-query-system.html">Database and Query System</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials and Examples</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials-examples/population-synthesis/binary-pop-syn.html">Binary-Star Population Synthesis with POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials-examples/generating-datasets/generating-datasets.html">Crafting the Core Datasets for POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials-examples/MESA-grids/running-grids.html">Architecting MESA Simulation Grids with POSYDON</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">In-Depth Components Overview</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../mesa-grids.html">MESA Grids API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../processing-pipeline.html">Processing Pipeline</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../machine-learning-components.html">Machine Learning Components</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="initial_final_interp.html">Intial Final Classification &amp; Interpolation</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Profile Interpolation</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../stellar-binary-simulation.html">Stellar &amp; Binary-star Simulation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../api_reference/posydon.html">posydon</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api_reference/bin.html">executables</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Troubleshooting and FAQs</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../troubleshooting-faqs/installation-issues.html">Installation Issues</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../troubleshooting-faqs/code-questions.html">Code Usage Questions</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contributing to POSYDON</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing/how-to-contribute.html">How To Contribute</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing/code-style-guidelines.html">Code Style Guidelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing/reporting-issues.html">Reporting issues</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Release Notes and Changelog</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../release-notes/version-history.html">Version History of POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../release-notes/major-updates.html">Major Updates</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contact and Support</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../contact-support/contact-information.html">Contact Information</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">POSYDON</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../machine-learning-components.html">Machine Learning Components</a></li>
+      <li class="breadcrumb-item active">Profile Interpolation</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/components-overview/machine_learning/ProfileInterpolator.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="profile-interpolation">
+<span id="id1"></span><h1>Profile Interpolation<a class="headerlink" href="#profile-interpolation" title="Link to this heading"></a></h1>
+<p>We demonstrate the profile interpolator which delivers predictions on internal stellar structure at the end of MESA evolution.</p>
+<p>To use the profile interpolator we first import the <code class="docutils literal notranslate"><span class="pre">ProfileInterpolator</span></code> and <code class="docutils literal notranslate"><span class="pre">CompileData</span></code> objects from the POSYDON library.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">posydon.interpolation.profile_interpolation</span> <span class="kn">import</span> <span class="n">ProfileInterpolator</span><span class="p">,</span> <span class="n">CompileData</span>
+</pre></div>
+</div>
+<section id="extracting-profile-data-from-h5-files-for-training-interpolators">
+<h2>Extracting Profile Data from .h5 Files for Training Interpolators<a class="headerlink" href="#extracting-profile-data-from-h5-files-for-training-interpolators" title="Link to this heading"></a></h2>
+<p>To extract profile data from existing grids, we pass arguments <code class="docutils literal notranslate"><span class="pre">train_path</span></code> and <code class="docutils literal notranslate"><span class="pre">test_path</span></code> pointing to .h5 files containing instances of the <code class="docutils literal notranslate"><span class="pre">PSyGrid</span></code> class from which the training and testing grids can be loaded. These can be constructed by running one’s own simulations or by loading a precomputed simulation stored in the data directory of the POSYDON repository. The <code class="docutils literal notranslate"><span class="pre">profile_names</span></code> argument denotes which profiles will be extracted from the grid and saved to <code class="docutils literal notranslate"><span class="pre">filename</span></code> using the function <code class="docutils literal notranslate"><span class="pre">save</span></code>. The Boolean argument <code class="docutils literal notranslate"><span class="pre">hms_s2</span></code> should be set to True only to extract star 2 profiles from the HMS-HMS grid.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">compiler</span> <span class="o">=</span> <span class="n">CompileData</span><span class="p">(</span><span class="n">train_path</span> <span class="o">=</span> <span class="s1">&#39;/path/to/training/grid.h5&#39;</span><span class="p">,</span>
+                       <span class="n">test_path</span> <span class="o">=</span> <span class="s1">&#39;/path/to/testing/grid.h5&#39;</span><span class="p">,</span>
+                       <span class="n">hms_s2</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+                       <span class="n">profile_names</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;radius&#39;</span><span class="p">,</span><span class="s1">&#39;logRho&#39;</span><span class="p">,</span>
+                       <span class="s1">&#39;x_mass_fraction_H&#39;</span><span class="p">,</span><span class="s1">&#39;y_mass_fraction_He&#39;</span><span class="p">,</span>
+                       <span class="s1">&#39;z_mass_fraction_metals&#39;</span><span class="p">,</span><span class="s1">&#39;omega&#39;</span><span class="p">,</span><span class="s1">&#39;energy&#39;</span><span class="p">])</span>
+<span class="n">compiler</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">filename</span> <span class="o">=</span> <span class="s1">&#39;/path/for/profiles/datafile.pkl&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="loading-a-pretrained-interpolator">
+<h2>Loading a Pretrained Interpolator<a class="headerlink" href="#loading-a-pretrained-interpolator" title="Link to this heading"></a></h2>
+<p>To load a pretrained interpolator we instantiate a <code class="docutils literal notranslate"><span class="pre">ProfileInterpolator</span></code> object instance and then use the <code class="docutils literal notranslate"><span class="pre">load</span></code> function which specifies the path to a .pkl file from which the pretrained interpolator can be loaded.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">model</span> <span class="o">=</span> <span class="n">ProfileInterpolator</span><span class="p">()</span>
+<span class="n">model</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">filename</span> <span class="o">=</span> <span class="s2">&quot;/path/to/profile/interpolator.pkl&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="training-the-interpolator">
+<h2>Training the Interpolator<a class="headerlink" href="#training-the-interpolator" title="Link to this heading"></a></h2>
+<p>The interpolator is trained on profiles stored in a .pkl file (passed with argument <code class="docutils literal notranslate"><span class="pre">filename</span></code>) generated with the <code class="docutils literal notranslate"><span class="pre">CompileData</span></code> class. The function <code class="docutils literal notranslate"><span class="pre">load_profiles</span></code> also randomly splits the training data into a training set and validation set based on the argument <code class="docutils literal notranslate"><span class="pre">valid_split</span></code>, which specifies the percentage of the training data that should be used for validation. The profile interpolation is anchored to POSYDON’s IF interpolation, and so we pass the name of the interpolator file to the <code class="docutils literal notranslate"><span class="pre">train</span></code> function using the <code class="docutils literal notranslate"><span class="pre">IF_interpolator</span></code> argument. The four following arguments specify the numbers of epochs and level of patience for callback that will be used for training the neural networks in the density and composition models. The <code class="docutils literal notranslate"><span class="pre">loss_history</span></code> argument provides an option to return the loss histories for the composition and density model training. Once again, the Boolean argument <code class="docutils literal notranslate"><span class="pre">hms_s2</span></code> should be set to True to build an interpolator for star 2 profiles from the HMS-HMS grid.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">model</span> <span class="o">=</span> <span class="n">ProfileInterpolator</span><span class="p">()</span>
+<span class="n">model</span><span class="o">.</span><span class="n">load_profiles</span><span class="p">(</span><span class="n">filename</span> <span class="o">=</span> <span class="s2">&quot;/path/to/profiles/datafile.pkl&quot;</span><span class="p">,</span>
+                    <span class="n">valid_split</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span>
+<span class="n">model</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="n">IF_interpolator</span> <span class="o">=</span> <span class="s2">&quot;/path/to/IFinterpolator.pkl&quot;</span><span class="p">,</span>
+            <span class="n">density_epochs</span><span class="o">=</span><span class="mi">3000</span><span class="p">,</span>
+            <span class="n">density_patience</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span>
+            <span class="n">comp_bounds_epochs</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span>
+            <span class="n">comp_bounds_patience</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span>
+            <span class="n">loss_history</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">hms_s2</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="using-the-interpolator">
+<h2>Using the Interpolator<a class="headerlink" href="#using-the-interpolator" title="Link to this heading"></a></h2>
+<p>Once the interpolator has been trained or loaded from a .pkl file it can be used to predict profiles for sets of initial conditions passed through argument <code class="docutils literal notranslate"><span class="pre">inputs</span></code>. These initial conditions must be in log space and in shape (N,3) for N binaries. The order of the coordinates is star 1 mass, star 2 mass, period. The prediction function returns four arrays containing the profiles’ coordinates along mass enclosed, log density, Hydrogen mass fraction, and Helium mass fraction. All profiles share the same coordinates.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">mass_coords</span><span class="p">,</span> <span class="n">density_profiles</span><span class="p">,</span> <span class="n">h_profiles</span><span class="p">,</span> <span class="n">he_profiles</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">inputs</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Finally a trained interpolator can be easily saved by specifying a path to a .pkl file where the interpolator will be saved to.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">model</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">filename</span> <span class="o">=</span> <span class="s2">&quot;path/for/profile/interpolator.pkl&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="evaluating-on-testing-data">
+<h2>Evaluating on Testing Data<a class="headerlink" href="#evaluating-on-testing-data" title="Link to this heading"></a></h2>
+<p>To evaluate the interpolator on the testing grid, we can pull the testing data out of the <code class="docutils literal notranslate"><span class="pre">ProfileInterpolator</span></code> class as follows:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">test_initial</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">test_initial</span>
+<span class="n">test_mass_coords</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">test_scalars</span><span class="p">[</span><span class="s2">&quot;total_mass&quot;</span><span class="p">])</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">200</span><span class="p">)[:,</span><span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">])</span>
+<span class="n">test_density_profiles</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">test_profiles</span><span class="p">[:,</span><span class="n">model</span><span class="o">.</span><span class="n">names</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">&quot;logRho&quot;</span><span class="p">)]</span>
+<span class="n">test_H_profiles</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">test_profiles</span><span class="p">[:,</span><span class="n">model</span><span class="o">.</span><span class="n">names</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">&quot;x_mass_fraction_H&quot;</span><span class="p">)]</span>
+<span class="n">test_He_profiles</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">test_profiles</span><span class="p">[:,</span><span class="n">model</span><span class="o">.</span><span class="n">names</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">&quot;y_mass_fraction_He&quot;</span><span class="p">)]</span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="initial_final_interp.html" class="btn btn-neutral float-left" title="Intial Final Classification &amp; Interpolation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../stellar-binary-simulation.html" class="btn btn-neutral float-right" title="Stellar &amp; Binary-star Simulation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Tassos Fragos.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
