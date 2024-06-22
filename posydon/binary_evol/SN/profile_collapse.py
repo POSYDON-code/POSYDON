@@ -25,8 +25,31 @@ __credits__ = [
 ]
 
 def get_ejecta_element_mass_at_collapse(star, compact_object_mass, verbose):
+    """Calculate the masses of H1, He4, and O16 in the ejecta.
+    Parameters
+    ----------
+    star : object
+        Star object of a collapsing star containing the MESA profile.
+
+    compact_object_mass : float
+        The mass of the compact object (in Msun), hence all above this mass will be ejected.
+
+    verbose : bool
+        If `True`, it prints some informations.
+
+    Returns
+    -------
+    h1_mass_ej : float
+        Hydrogen mass in the ejecta. (in Msun)
+    he4_mass_ej : float
+        Helium mass in the ejecta. (in Msun)
+    o16_mass_ej : float
+        Oxygen mass in the ejecta. (in Msun)
+    """
+
+
     # read star quantities
-    enclosed_mass_all = star.profile['mass'][::-1]*Mo  # cell outer total mass
+    enclosed_mass_all = star.profile['mass'][::-1]  # cell outer total mass in Msun
     # shell's mass
     dm_all = enclosed_mass[1:] - enclosed_mass[:-1]
 
@@ -35,9 +58,9 @@ def get_ejecta_element_mass_at_collapse(star, compact_object_mass, verbose):
     if 'he4' in star.profile.dtype.names:
         he4_all = star.profile['he4'][::-1]  # he4 mass fraction
     if 'o16' in star.profile.dtype.names:
-        o16_all = star.profile['o16'][::-1]  # he4 mass fraction
+        o16_all = star.profile['o16'][::-1]  # ο16 mass fraction
 
-    if enclosed_mass_all[-1] / const.Msun <= compact_object_mass:
+    if enclosed_mass_all[-1] <= compact_object_mass:
         # This catches the case that all the star's profile is callapsed.
         # Note that the 'mass' of the MESA profile is the enclosed mass of that
         # shell; the mass of the whole star is then
@@ -45,7 +68,7 @@ def get_ejecta_element_mass_at_collapse(star, compact_object_mass, verbose):
         # where dm is the mass of the last shell.
         i_rem = len(enclosed_mass_all)
     else:
-        i_rem = np.argmax(enclosed_mass_all/const.Msun > compact_object_mass) + 1
+        i_rem = np.argmax(enclosed_mass_all > compact_object_mass) + 1
     enclosed_mass = enclosed_mass_all[:i_rem]
     dm = dm_all[:i_rem]
     h1 = h1_all[:i_rem]
