@@ -71,7 +71,7 @@ install_requires = [
     'astropy >= 5.2.2',
     'pandas >= 2.0.0',
     'scikit-learn < 1.3.0', # 1.2.2
-    'matplotlib >=  3.7.1',
+    'matplotlib >=  3.7.1, <= 3.8.0',
     'matplotlib-label-lines >= 0.5.2',
     'h5py >= 3.8.0',
     'psutil >= 5.9.4',

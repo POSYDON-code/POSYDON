@@ -128,11 +128,14 @@ STARPROPERTIES_DTYPES = {
 
 EXTRA_BINARY_COLUMNS_DTYPES = {
     'step_names' : 'string',
-    'step_times' : 'float64', 
+    'step_times' : 'float64',
 }
 
 # no default extras for history attributes
-EXTRA_STAR_COLUMNS_DTYPES = {}
+EXTRA_STAR_COLUMNS_DTYPES = {
+    'm_disk_radiated': 'float64',
+    'm_disk_accreted': 'float64',
+}
 
 SCALAR_NAMES_DTYPES = {
     'natal_kick_array_0': 'float64',
@@ -141,7 +144,8 @@ SCALAR_NAMES_DTYPES = {
     'natal_kick_array_3': 'float64',
     'SN_type':'string',
     'f_fb': 'float64',
-    'spin_orbit_tilt': 'float64',
+    'spin_orbit_tilt_first_SN': 'float64',
+    'spin_orbit_tilt_second_SN': 'float64',
 }
 
 
@@ -414,13 +418,27 @@ def simprop_kwargs_from_ini(path, verbose=False):
             # from posydon.... import ....
             #      ^ import      as   ^ name
             import_and_name = sect_dict.pop('import')
-            package = sect_dict.pop('absolute_import', None)
+            absolute_import_and_name = sect_dict.pop('absolute_import', None)
 
-            # import module
-            module = importlib.import_module(import_and_name[0],
-                                             package=package)
+            # Use absolute import if provided
+            if absolute_import_and_name is not None:
+                # unpack user specified py file, and class name to import
+                import_location, class_name = absolute_import_and_name
+                absolute_import_location = os.path.abspath(import_location)
+                # Format: remove leading / in abs path, replace / with dots, remove '.py'
+                location_as_module_name = absolute_import_location[1:].replace('/', '.').replace('.py', '')
+                
+                # create spec and load module
+                spec = importlib.util.spec_from_file_location( location_as_module_name, location=absolute_import_location)
+                module = importlib.util.module_from_spec(spec)
+                spec.loader.exec_module(module)
+            else:
+                # Use builtin posydon classes
+                import_location, class_name = import_and_name
+                # import module
+                module = importlib.import_module(import_location)
             # extract class or function
-            cls = getattr(module, import_and_name[1])
+            cls = getattr(module, class_name)
             # match the form SimulationProperties expects
             parser_dict[section] = (cls, sect_dict)
 
@@ -543,3 +561,55 @@ def binarypop_kwargs_from_ini(path, verbose=False):
         **sim_prop_kwargs)
 
     return pop_kwargs
+
+
+def create_run_script_text(ini_file):
+    
+    
+    text=["from posydon.popsyn.binarypopulation import BinaryPopulation",
+         "from posydon.popsyn.io import binarypop_kwargs_from_ini",
+         "from posydon.utils.common_functions import convert_metallicity_to_string",
+         "import argparse",
+
+         'if __name__ == "__main__":',
+         "    parser = argparse.ArgumentParser()",
+         "    parser.add_argument('metallicity', type=float)",
+         "    args = parser.parse_args()",
+        f"    ini_kw = binarypop_kwargs_from_ini('{ini_file}')",
+         "    ini_kw['metallicity'] = args.metallicity",
+         "    str_met = convert_metallicity_to_string(args.metallicity)",
+         "    ini_kw['temp_directory'] = str_met+'_Zsun_' + ini_kw['temp_directory']",
+         "    synpop = BinaryPopulation(**ini_kw)",
+         "    synpop.evolve()"]
+    
+    text = '\n'.join(text)
+    return text
+
+
+def create_merge_script_text(ini_file):
+    
+
+    text = ['from posydon.popsyn.binarypopulation import BinaryPopulation',
+            'from posydon.popsyn.io import binarypop_kwargs_from_ini',
+            'from posydon.utils.common_functions import convert_metallicity_to_string',
+            'import argparse',
+            'import os',
+            'if __name__ == "__main__":',
+            '    parser = argparse.ArgumentParser()',
+            '    parser.add_argument("metallicity", type=float)',
+            '    args = parser.parse_args()',
+           f'    ini_kw = binarypop_kwargs_from_ini("{ini_file}")',
+            '    ini_kw["metallicity"] = args.metallicity',
+            '    str_met = convert_metallicity_to_string(args.metallicity)',
+            '    ini_kw["temp_directory"] = str_met+"_Zsun_" + ini_kw["temp_directory"]',
+            '    synpop = BinaryPopulation(**ini_kw)',
+            '    path_to_batch = ini_kw["temp_directory"]',
+            '    tmp_files = [os.path.join(path_to_batch, f) for f in os.listdir(path_to_batch) if os.path.isfile(os.path.join(path_to_batch, f))]',
+            '    tmp_files = sorted(tmp_files, key=lambda x: int(x.split(".")[-1]))',
+            '    synpop.combine_saved_files(str_met+ "_Zsun_population.h5", tmp_files)',
+            '    print("done")',
+            '    if len(os.listdir(path_to_batch)) == 0:',
+            '        os.rmdir(path_to_batch)']
+    
+    text = '\n'.join(text)
+    return text

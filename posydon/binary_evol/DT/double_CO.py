@@ -105,7 +105,7 @@ class DoubleCO:
 
         if s.status == -1:
             binary.state += ' (Integration failure)'
-            raise NumericalError("Integrations failed", s.message)
+            raise NumericalError("Integrations failed: " + s.message)
 
         elif s.status == 1:
 
