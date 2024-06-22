@@ -1781,15 +1781,6 @@ class HMS_HMS_RLO_step(MesaGridStep):
             raise GridError(f'The mass ratio ({mass_ratio}) is outside the grid,'
                                 ' while the period is inside the grid.')
 
-        
-        # period inside the grid, but m2 outside the grid
-        elif ((not self.flip_stars_before_step and
-               self.p_min <= p <= self.p_max and
-               (m2 < self.m2_min or m2 > self.m2_max))):
-            set_binary_to_failed(self.binary)
-            raise GridError(f'The mass of m2 ({m2}) is outside the grid,'
-                                ' while the period is inside the grid.')
-
 
         # period inside the grid, but m1 outside the grid (flipped stars)
         elif ((self.flip_stars_before_step and

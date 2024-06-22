@@ -302,7 +302,7 @@ for b in BINARY_STATES_ALL:
 
 
 
-def flow_chart(FLOW_CHART=POSYDON_FLOW_CHART, CHANGE_FLOW_CHART=None):
+def flow_chart(FLOW_CHART=None, CHANGE_FLOW_CHART=None):
     """Generate the flow chart.
 
     Default step nomenclature:
@@ -332,6 +332,9 @@ def flow_chart(FLOW_CHART=POSYDON_FLOW_CHART, CHANGE_FLOW_CHART=None):
         Flow chart.
 
     """
+    if FLOW_CHART is None:
+        FLOW_CHART = POSYDON_FLOW_CHART.copy()
+    
     if CHANGE_FLOW_CHART is not None:
         for key in CHANGE_FLOW_CHART.keys():
             if key in FLOW_CHART.keys():
@@ -340,8 +343,11 @@ def flow_chart(FLOW_CHART=POSYDON_FLOW_CHART, CHANGE_FLOW_CHART=None):
 
     return FLOW_CHART
 
+
 def initial_eccentricity_flow_chart(FLOW_CHART=None, CHANGE_FLOW_CHART=None):
-    """Modify POSYDON's default one and modify it.
+    """Modify POSYDON's default flow to:
+        ZAMS binaries -> detached
+        oRLO1/oRLO2 -> HMS-HMS RLO grid
 
     Parameters
     ----------
@@ -357,31 +363,33 @@ def initial_eccentricity_flow_chart(FLOW_CHART=None, CHANGE_FLOW_CHART=None):
     # get POSYDON's default flow chart
     if FLOW_CHART is None:
         if CHANGE_FLOW_CHART is None:
-            MY_FLOW_CHART = fc.flow_chart()
+            MY_FLOW_CHART = flow_chart()
         else:
-            MY_FLOW_CHART = fc.flow_chart(CHANGE_FLOW_CHART=CHANGE_FLOW_CHART)
+            MY_FLOW_CHART = flow_chart(CHANGE_FLOW_CHART=CHANGE_FLOW_CHART)
     else:
         if CHANGE_FLOW_CHART is None:
-            MY_FLOW_CHART = fc.flow_chart(FLOW_CHART=FLOW_CHART)
+            MY_FLOW_CHART = flow_chart(FLOW_CHART=FLOW_CHART)
         else:
-            MY_FLOW_CHART = fc.flow_chart(FLOW_CHART=FLOW_CHART,
-                                          CHANGE_FLOW_CHART=CHANGE_FLOW_CHART)
-    # modify the flow chart
+            MY_FLOW_CHART = flow_chart(FLOW_CHART=FLOW_CHART,
+                                       CHANGE_FLOW_CHART=CHANGE_FLOW_CHART)
+    
+    # modify the default flow chart
     for key in MY_FLOW_CHART.keys():
-        # here changing to go always from ZAMS to step_detached
-        if ((len(key)>3) and (key[3]=='ZAMS') and
-            (key[2] in fc.BINARY_STATES_ZAMS)): # check for event
+        s1_state, s2_state, state, event = key
+        # always take ZAMS binaries to step_detached
+        if event == 'ZAMS' and state in BINARY_STATES_ZAMS: # check for event
             MY_FLOW_CHART[key] = 'step_detached'
-        # here changing all starting RLO to end instead
-        if ((len(key)>2) and ('RLO' in key[2])): # check for state
-            MY_FLOW_CHART[key] = 'step_end'
-    # adding new entries to the flow to send RLO to end which would otherwise
-    # be jumped over in the HMS-HMS step
-    for s1 in STAR_STATES_NORMALSTAR:
-        for s2 in STAR_STATES_NORMALSTAR:
-            MY_FLOW_CHART[(s1, s2, 'RLO1', 'oRLO1')] = 'step_end'
-            MY_FLOW_CHART[(s2, s1, 'RLO1', 'oRLO1')] = 'step_end'
-            MY_FLOW_CHART[(s1, s2, 'RLO2', 'oRLO2')] = 'step_end'
-            MY_FLOW_CHART[(s2, s1, 'RLO2', 'oRLO2')] = 'step_end'
+
+    # Add two stars initating RLO (now coming from detached) into flow chart
+    for _s1 in STAR_STATES_H_RICH_EVOLVABLE:
+        for _s2 in STAR_STATES_H_RICH_EVOLVABLE:
+            MY_FLOW_CHART[(_s1, _s2, 'RLO1', 'oRLO1')] = 'step_HMS_HMS_RLO'
+            MY_FLOW_CHART[(_s1, _s2, 'RLO2', 'oRLO2')] = 'step_HMS_HMS_RLO'
+    
+    # Add stripped stars (from winds) initating RLO
+    for _s1 in STAR_STATES_HE_RICH_EVOLVABLE:
+        for _s2 in STAR_STATES_HE_RICH_EVOLVABLE:
+            MY_FLOW_CHART[(_s1, _s2, 'RLO1', 'oRLO1')] = 'step_HMS_HMS_RLO'
+            MY_FLOW_CHART[(_s1, _s2, 'RLO2', 'oRLO2')] = 'step_HMS_HMS_RLO'
 
     return MY_FLOW_CHART
