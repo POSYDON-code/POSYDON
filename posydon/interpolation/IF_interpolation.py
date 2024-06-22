@@ -1011,7 +1011,7 @@ class BaseIFInterpolator:
                 wT = (~wnan) & (self.valid > 0)
                 if wT.any():
                     xs = MatrixScaler(self._bestInScaling(ic)[1],
-                                    self.XT[self.valid >= 0, :])
+                                      self.XT[self.valid >= 0, :])
                     k1r.fit(xs.normalize(self.XT[wT, :]), self.YT[wT, i])
                     wt = wnan & (self.valid > 0)
                     self.YT[wt, i] = k1r.predict(xs.normalize(self.XT[wt, :]))
