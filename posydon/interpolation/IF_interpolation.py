@@ -1009,12 +1009,16 @@ class BaseIFInterpolator:
             if any(wnan[self.valid > 0]):
                 k1r = KNeighborsRegressor(n_neighbors=1)
                 wT = (~wnan) & (self.valid > 0)
-                xs = MatrixScaler(self._bestInScaling(ic)[1],
-                                  self.XT[self.valid >= 0, :])
-                k1r.fit(xs.normalize(self.XT[wT, :]), self.YT[wT, i])
-                wt = wnan & (self.valid > 0)
-                self.YT[wt, i] = k1r.predict(xs.normalize(self.XT[wt, :]))
-
+                if wT.any():
+                    xs = MatrixScaler(self._bestInScaling(ic)[1],
+                                    self.XT[self.valid >= 0, :])
+                    k1r.fit(xs.normalize(self.XT[wT, :]), self.YT[wT, i])
+                    wt = wnan & (self.valid > 0)
+                    self.YT[wt, i] = k1r.predict(xs.normalize(self.XT[wt, :]))
+                else:
+                    wt = wnan & (self.valid > 0)
+                    self.YT[wt, i] = 0.0
+                    self.out_nan_keys.append(self.out_keys[i])
 
 # BASE INTERPOLATORS
 
