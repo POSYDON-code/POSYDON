@@ -381,15 +381,10 @@ def initial_eccentricity_flow_chart(FLOW_CHART=None, CHANGE_FLOW_CHART=None):
             MY_FLOW_CHART[key] = 'step_detached'
 
     # Add two stars initating RLO (now coming from detached) into flow chart
-    for _s1 in STAR_STATES_H_RICH_EVOLVABLE:
-        for _s2 in STAR_STATES_H_RICH_EVOLVABLE:
-            MY_FLOW_CHART[(_s1, _s2, 'RLO1', 'oRLO1')] = 'step_HMS_HMS_RLO'
-            MY_FLOW_CHART[(_s1, _s2, 'RLO2', 'oRLO2')] = 'step_HMS_HMS_RLO'
-    
     # Add stripped stars (from winds) initating RLO
-    for _s1 in STAR_STATES_HE_RICH_EVOLVABLE:
-        for _s2 in STAR_STATES_HE_RICH_EVOLVABLE:
-            MY_FLOW_CHART[(_s1, _s2, 'RLO1', 'oRLO1')] = 'step_HMS_HMS_RLO'
-            MY_FLOW_CHART[(_s1, _s2, 'RLO2', 'oRLO2')] = 'step_HMS_HMS_RLO'
-
+    for s1 in STAR_STATES_H_RICH_EVOLVABLE + STAR_STATES_HE_RICH_EVOLVABLE:
+        for s2 in STAR_STATES_H_RICH_EVOLVABLE + STAR_STATES_HE_RICH_EVOLVABLE:
+            MY_FLOW_CHART[(s1, s2, 'RLO1', 'oRLO1')] = 'step_HMS_HMS_RLO'
+            MY_FLOW_CHART[(s1, s2, 'RLO2', 'oRLO2')] = 'step_HMS_HMS_RLO'
+    
     return MY_FLOW_CHART
