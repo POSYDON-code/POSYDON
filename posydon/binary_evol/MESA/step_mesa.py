@@ -1660,8 +1660,6 @@ class CO_HeMS_step(MesaGridStep):
             return
 
 
-
-
 class HMS_HMS_RLO_step(MesaGridStep):
     """Class for performing the MESA step for a HMS-HMS RLO binary.
     For binaries with an initial eccentricity at ZAMS,
