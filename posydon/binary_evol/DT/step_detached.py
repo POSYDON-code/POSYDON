@@ -330,7 +330,7 @@ class detached_step:
             list_for_matching_HMS=None,
             list_for_matching_postMS=None,
             list_for_matching_HeStar=None,
-            rotating_grids=False
+            rotating_grids=False,**kwargs
     ):
         """Initialize the step. See class documentation for details."""
         self.metallicity = convert_metallicity_to_string(metallicity)
@@ -413,6 +413,14 @@ class detached_step:
 
         # keys for the star profile interpolation
         self.profile_keys = DEFAULT_PROFILE_KEYS
+        #Getting the available rotations 
+        self.default_rotations = kwargs.get('default_rotations',[0.9,0.7,0.4]) 
+        #TODO have the option for rotation for the He stars 
+        if grid_name_strippedHe is None:
+            grid_name_strippedHe = os.path.join(
+                'single_HeMS', self.metallicity+'_Zsun.h5')
+        self.grid_strippedHe = GRIDInterpolator(
+            os.path.join(path, grid_name_strippedHe))
 
         if self.rotating_grids == False:
             if grid_name_Hrich is None:
@@ -420,41 +428,41 @@ class detached_step:
                     'single_HMS', self.metallicity+'_Zsun.h5')
             self.grid_Hrich = GRIDInterpolator(os.path.join(path, grid_name_Hrich))
 
-            if grid_name_strippedHe is None:
-                grid_name_strippedHe = os.path.join(
-                    'single_HeMS', self.metallicity+'_Zsun.h5')
-            self.grid_strippedHe = GRIDInterpolator(
-                os.path.join(path, grid_name_strippedHe))
-
             # Initialize the matching lists:
             m_min_H = np.min(self.grid_Hrich.grid_mass)
             m_max_H = np.max(self.grid_Hrich.grid_mass)
             m_min_He = np.min(self.grid_strippedHe.grid_mass)
             m_max_He = np.max(self.grid_strippedHe.grid_mass)
         else: #now grid_Hrich and grid_strippedHe will be an array
-            grid_Hrich = []
-            if grid_name_Hrich is None:
-                for rot_grid_name_Hrich in glob.glob(os.path.join('single_HMS', self.metallicity+'_Zsun_omegacrit??.h5')):
-                    grid_Hrich.append(GRIDInterpolator(os.path.join(path, rot_grid_name_Hrich)))
+            grid_Hrich = {}
+            if grid_name_Hrich is None and type(grid_name_Hrich) != dict:
+                for rotation in self.default_rotations:
+                    #for rot_grid_name_Hrich in glob.glob(os.path.join('single_HMS', self.metallicity+'_Zsun_omega_crit_{rotation}.h5')):
+                    rot_grid_name_Hrich = os.path.join('single_HMS', self.metallicity+f'_Zsun_omega_crit_{rotation}.h5')
+                    grid_Hrich[rotation] = GRIDInterpolator(os.path.join(path, rot_grid_name_Hrich))
+
+                    grid_Hrich[0.] = GRIDInterpolator(os.path.join(path, os.path.join('single_HMS', self.metallicity+'_Zsun.h5')))
             self.grid_Hrich = grid_Hrich
 
-            grid_strippedHe = []
-            if grid_name_strippedHe is None:
-                for rot_grid_name_strippedHe in glob.glob(os.path.join('single_HeMS', self.metallicity+'_Zsun_omegacrit??.h5')):
-                    grid_strippedHe.append(GRIDInterpolator(os.path.join(path, rot_grid_name_strippedHe)))
-            self.grid_strippedHe = grid_strippedHe
+            #grid_strippedHe = []
+            #if grid_name_strippedHe is None:
+            #    for rot_grid_name_strippedHe in glob.glob(os.path.join('single_HeMS', self.metallicity+'_Zsun_omegacrit??.h5')):
+            #        grid_strippedHe.append(GRIDInterpolator(os.path.join(path, rot_grid_name_strippedHe)))
+            #self.grid_strippedHe = grid_strippedHe
+
 
             # Initialize the matching lists:
             m_min_H = []
-            m_min_H = []
+            m_max_H = []
             m_min_He = []
             m_max_He = []
             for grid in self.grid_Hrich:
-                m_min_H.append(np.min(grid.grid_mass))
-                m_max_H.append(np.max(grid.grid_mass))
-            for grid in self.grid_strippedHe:
-                m_min_He.append(np.min(grid.grid_mass))
-                m_max_He.append(np.max(grid.grid_mass))
+                print(type(grid),grid)
+                m_min_H.append(np.min(self.grid_Hrich[grid].grid_mass))
+                m_max_H.append(np.max(self.grid_Hrich[grid].grid_mass))
+            #for grid in self.grid_strippedHe:
+            #    m_min_He.append(np.min(self.grid_Hrich[grid].grid_mass))
+            #    m_max_He.append(np.max(self.grid_Hrich[grid].grid_mass))
 
         if self.list_for_matching_HMS is None:
             self.list_for_matching_HMS = [
@@ -538,10 +546,7 @@ class detached_step:
 
         """
         # htrack as a boolean determines whether H or He grid is used
-        if htrack:
-            grid = self.grid_Hrich
-        else:
-            grid = self.grid_strippedHe
+        grid = self.grid
         try:
             x = grid.get("age", m0)
             y = grid.get(key, m0)
@@ -586,7 +591,7 @@ class detached_step:
             return scaler
 
         # ... if not, fit a new scaler, and store it for later use
-        grid = self.grid_Hrich if htrack else self.grid_strippedHe
+        grid = self.grid
         self.initial_mass = grid.grid_mass
         all_attributes = []
         for mass in self.initial_mass:
@@ -623,7 +628,7 @@ class detached_step:
             If there is no match then NaNs will be returned instead.
 
         """
-        grid = self.grid_Hrich if htrack else self.grid_strippedHe
+        grid = self.grid
         self.initial_mass = grid.grid_mass
         n = 0
         for mass in grid.grid_mass:
@@ -646,6 +651,15 @@ class detached_step:
         t = self.rootm[idx][np.argmax("age" == self.root_keys)]
         m0 = grid.grid_mass[idx[0]]
         return m0, t
+
+    def find_rotation(self,star):
+        omega_div_omega_crit_pre_star = star.surf_avg_omega_div_omega_crit
+        idx = (np.abs( self.default_rotations- omega_div_omega_crit_pre_star)).argmin()
+        omega_div_omega_crit = self.default_rotations[idx]
+        print(omega_div_omega_crit_pre_star,omega_div_omega_crit)
+        if self.verbose:
+            print('The rotation that was matched is:',omega_div_omega_crit_pre_star,omega_div_omega_crit)
+        return omega_div_omega_crit
 
     def match_to_single_star(self, star, htrack):
         """Get the track in the grid that matches the time and mass of a star.
@@ -670,13 +684,7 @@ class detached_step:
             the properties of the secondary.
 
         """
-        if self.rotating_grids == False:
-            if htrack:
-                self.grid = self.grid_Hrich
-            else:
-                self.grid = self.grid_strippedHe
-        else:
-
+        
         get_root0 = self.get_root0
         get_track_val = self.get_track_val
         matching_method = self.matching_method
@@ -1103,6 +1111,20 @@ class detached_step:
 
             """
 
+            if self.rotating_grids == False:
+                if htrack:
+                    self.grid = self.grid_Hrich
+                else:
+                    self.grid = self.grid_strippedHe
+            #Finding the appropriate rotation grid based on the star's spin
+            else:
+                omega_div_omega_crit = self.find_rotation(star1)
+                if htrack:
+                    self.grid = self.grid_Hrich[float(omega_div_omega_crit)]
+                else:
+                    self.grid = self.grid_strippedHe
+                    #self.grid = self.grid_strippedHe[omega]
+
             with np.errstate(all="ignore"):
                 # get the initial m0, t0 track
                 if binary.event == 'ZAMS' or binary.event == 'redirect_from_ZAMS':
@@ -1122,10 +1144,7 @@ class detached_step:
             if pd.isna(m0) or pd.isna(t0):
                 return None, None, None
 
-            if htrack:
-                self.grid = self.grid_Hrich
-            else:
-                self.grid = self.grid_strippedHe
+
 
             # check if m0 is in the grid
             if m0 < self.grid.grid_mass.min() or m0 > self.grid.grid_mass.max():
