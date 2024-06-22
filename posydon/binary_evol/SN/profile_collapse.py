@@ -24,6 +24,40 @@ __credits__ = [
     'Aldo Batta <aldobatta@gmail.com>',
 ]
 
+def get_ejecta_element_mass_at_collapse(star, compact_object_mass, verbose):
+    # read star quantities
+    enclosed_mass_all = star.profile['mass'][::-1]*Mo  # cell outer total mass
+    # shell's mass
+    dm_all = enclosed_mass[1:] - enclosed_mass[:-1]
+
+    if 'h1' in star.profile.dtype.names:
+        h1_all = star.profile['h1'][::-1]  # h1 mass fraction
+    if 'he4' in star.profile.dtype.names:
+        he4_all = star.profile['he4'][::-1]  # he4 mass fraction
+    if 'o16' in star.profile.dtype.names:
+        o16_all = star.profile['o16'][::-1]  # he4 mass fraction
+
+    if enclosed_mass_all[-1] / const.Msun <= compact_object_mass:
+        # This catches the case that all the star's profile is callapsed.
+        # Note that the 'mass' of the MESA profile is the enclosed mass of that
+        # shell; the mass of the whole star is then
+        #     star.profile['mass'][::-1][-1] + dm,
+        # where dm is the mass of the last shell.
+        i_rem = len(enclosed_mass_all)
+    else:
+        i_rem = np.argmax(enclosed_mass_all/const.Msun > compact_object_mass) + 1
+    enclosed_mass = enclosed_mass_all[:i_rem]
+    dm = dm_all[:i_rem]
+    h1 = h1_all[:i_rem]
+    he4 = he4_all[:i_rem]
+    o16 = o16_all[:i_rem]
+
+    h1_mass_ej = np.sum(dm*h1)
+    he4_mass_ej = np.sum(dm*he4)
+    o16_mass_ej = np.sum(dm*o16)
+
+    return h1_mass_ej, he4_mass_ej, o16_mass_ej
+
 
 def get_initial_BH_properties(star, mass_collapsing, mass_central_BH,
                               neutrino_mass_loss, max_neutrino_mass_loss,
@@ -555,7 +589,7 @@ def do_core_collapse_BH(star,
     return [
         M_BH_total,
         a_BH_total,
-        m_disk_accreted, 
+        m_disk_accreted,
         m_disk_radiated,
         # np.array(M_BH_array),
         # np.array(a_BH_array),
