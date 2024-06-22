@@ -39,6 +39,8 @@ from posydon.binary_evol.flow_chart import (STAR_STATES_CC, STAR_STATES_CO)
 import posydon.utils.constants as const
 from posydon.utils.posydonerror import NumericalError
 from posydon.utils.posydonerror import MatchingError,POSYDONError
+import glob
+
 
 LIST_ACCEPTABLE_STATES_FOR_HMS = ["H-rich_Core_H_burning"]
 
@@ -327,7 +329,8 @@ class detached_step:
             RLO_orbit_at_orbit_with_same_am=False,
             list_for_matching_HMS=None,
             list_for_matching_postMS=None,
-            list_for_matching_HeStar=None
+            list_for_matching_HeStar=None,
+            rotating_grids=False
     ):
         """Initialize the step. See class documentation for details."""
         self.metallicity = convert_metallicity_to_string(metallicity)
@@ -349,6 +352,7 @@ class detached_step:
         self.list_for_matching_HMS = list_for_matching_HMS
         self.list_for_matching_postMS = list_for_matching_postMS
         self.list_for_matching_HeStar = list_for_matching_HeStar
+        self.rotating_grids = rotating_grids
 
         # mapping a combination of (key, htrack, method) to a pre-trained
         # DataScaler instance, created the first time it is requested
@@ -364,7 +368,9 @@ class detached_step:
                 do_gravitational_radiation,
                 do_magnetic_braking,
                 magnetic_braking_mode,
-                do_stellar_evolution_and_spin_from_winds)
+                do_stellar_evolution_and_spin_from_winds,
+                grid_name_Hrich,
+                grid_name_strippedHe)
 
         self.translate = DEFAULT_TRANSLATION
 
@@ -408,22 +414,48 @@ class detached_step:
         # keys for the star profile interpolation
         self.profile_keys = DEFAULT_PROFILE_KEYS
 
-        if grid_name_Hrich is None:
-            grid_name_Hrich = os.path.join(
-                'single_HMS', self.metallicity+'_Zsun.h5')
-        self.grid_Hrich = GRIDInterpolator(os.path.join(path, grid_name_Hrich))
+        if self.rotating_grids == False:
+            if grid_name_Hrich is None:
+                grid_name_Hrich = os.path.join(
+                    'single_HMS', self.metallicity+'_Zsun.h5')
+            self.grid_Hrich = GRIDInterpolator(os.path.join(path, grid_name_Hrich))
 
-        if grid_name_strippedHe is None:
-            grid_name_strippedHe = os.path.join(
-                'single_HeMS', self.metallicity+'_Zsun.h5')
-        self.grid_strippedHe = GRIDInterpolator(
-            os.path.join(path, grid_name_strippedHe))
+            if grid_name_strippedHe is None:
+                grid_name_strippedHe = os.path.join(
+                    'single_HeMS', self.metallicity+'_Zsun.h5')
+            self.grid_strippedHe = GRIDInterpolator(
+                os.path.join(path, grid_name_strippedHe))
 
-        # Initialize the matching lists:
-        m_min_H = np.min(self.grid_Hrich.grid_mass)
-        m_max_H = np.max(self.grid_Hrich.grid_mass)
-        m_min_He = np.min(self.grid_strippedHe.grid_mass)
-        m_max_He = np.max(self.grid_strippedHe.grid_mass)
+            # Initialize the matching lists:
+            m_min_H = np.min(self.grid_Hrich.grid_mass)
+            m_max_H = np.max(self.grid_Hrich.grid_mass)
+            m_min_He = np.min(self.grid_strippedHe.grid_mass)
+            m_max_He = np.max(self.grid_strippedHe.grid_mass)
+        else: #now grid_Hrich and grid_strippedHe will be an array
+            grid_Hrich = []
+            if grid_name_Hrich is None:
+                for rot_grid_name_Hrich in glob.glob(os.path.join('single_HMS', self.metallicity+'_Zsun_omegacrit??.h5')):
+                    grid_Hrich.append(GRIDInterpolator(os.path.join(path, rot_grid_name_Hrich)))
+            self.grid_Hrich = grid_Hrich
+
+            grid_strippedHe = []
+            if grid_name_strippedHe is None:
+                for rot_grid_name_strippedHe in glob.glob(os.path.join('single_HeMS', self.metallicity+'_Zsun_omegacrit??.h5')):
+                    grid_strippedHe.append(GRIDInterpolator(os.path.join(path, rot_grid_name_strippedHe)))
+            self.grid_strippedHe = grid_strippedHe
+
+            # Initialize the matching lists:
+            m_min_H = []
+            m_min_H = []
+            m_min_He = []
+            m_max_He = []
+            for grid in self.grid_Hrich:
+                m_min_H.append(np.min(grid.grid_mass))
+                m_max_H.append(np.max(grid.grid_mass))
+            for grid in self.grid_strippedHe:
+                m_min_He.append(np.min(grid.grid_mass))
+                m_max_He.append(np.max(grid.grid_mass))
+
         if self.list_for_matching_HMS is None:
             self.list_for_matching_HMS = [
                 ["mass", "center_h1", "log_R", "he_core_mass"],
@@ -638,10 +670,12 @@ class detached_step:
             the properties of the secondary.
 
         """
-        if htrack:
-            self.grid = self.grid_Hrich
+        if self.rotating_grids == False:
+            if htrack:
+                self.grid = self.grid_Hrich
+            else:
+                self.grid = self.grid_strippedHe
         else:
-            self.grid = self.grid_strippedHe
 
         get_root0 = self.get_root0
         get_track_val = self.get_track_val
@@ -951,8 +985,10 @@ class detached_step:
                 primary = binary.star_1
                 secondary = binary.star_2
                 secondary.htrack = True
+                secondary.omegacrit_for_grid_sel = secondary.surf_avg_omega_div_omega_crit
                 primary.htrack = secondary.htrack
                 primary.co = True
+                secondary.omegacrit_for_grid_sel = secondary.surf_avg_omega_div_omega_crit
 
             elif (binary.star_1.state in STAR_STATES_CO
                     and binary.star_2.state in LIST_ACCEPTABLE_STATES_FOR_HeStar):
@@ -1082,15 +1118,15 @@ class detached_step:
                     if self.verbose or self.verbose == 1:
                         print("Matching duration: "
                               f"{t_after_matching-t_before_matching:.6g}")
-            
+
             if pd.isna(m0) or pd.isna(t0):
                 return None, None, None
-            
+
             if htrack:
                 self.grid = self.grid_Hrich
             else:
                 self.grid = self.grid_strippedHe
-            
+
             # check if m0 is in the grid
             if m0 < self.grid.grid_mass.min() or m0 > self.grid.grid_mass.max():
                 set_binary_to_failed(binary)
