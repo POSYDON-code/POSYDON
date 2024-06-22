@@ -442,6 +442,7 @@ class detached_step:
                     grid_Hrich[rotation] = GRIDInterpolator(os.path.join(path, rot_grid_name_Hrich))
 
                     grid_Hrich[0.] = GRIDInterpolator(os.path.join(path, os.path.join('single_HMS', self.metallicity+'_Zsun.h5')))
+                    self.default_rotations.append(0.)
             self.grid_Hrich = grid_Hrich
 
             #grid_strippedHe = []
