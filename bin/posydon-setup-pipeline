@@ -543,39 +543,6 @@ class PostProcessingPipeline:
              os.makedirs(step_log_path)
 
 
-    def create_export_dirs(self):
-        """Create directories for the finally exported data."""
-
-        if 'pipeline setup' not in self.pipeline_kwargs.keys():
-            raise KeyError('pipeline setup not in pipeline_kwargs!')
-        setup_kwargs = self.pipeline_kwargs['pipeline setup']
-        
-        # create data dir tree to export the datasets
-        if (('EXPORT_DATASET' in setup_kwargs.keys()) and
-            setup_kwargs['EXPORT_DATASET']):
-            if 'PATH' in setup_kwargs.keys():
-                data_path = os.path.join(setup_kwargs['PATH'], 'POSYDON_data')
-            else:
-                data_path = os.path.join('.', 'POSYDON_data')
-            # create main directory for the POSYDON data
-            if not os.path.isdir(data_path):
-                os.makedirs(data_path)
-            # determine sub directories
-            dirs = []
-            grid_dirs = ['HMS-HMS', 'CO-HMS_RLO', 'CO-HeMS', 'CO-HeMS_RLO',
-                         'single_HMS', 'single_HeMS']
-            interp_dirs = ['interpolators', 'interpolators/1NN_1NN',
-                           'interpolators/linear3c_kNN']
-            for name1 in grid_dirs:
-                dirs.append(os.path.join(data_path, name1))
-                for name2 in interp_dirs:
-                    dirs.append(os.path.join(data_path, name1, name2))
-            # create sub directories
-            for dir_ in dirs:
-                if not os.path.isdir(dir_):
-                    os.makedirs(dir_)
-
-
 def slurm_job(job_name,
               step_name,
               PATH_TO_GRIDS=None,
@@ -1000,17 +967,24 @@ def create_csv(GRID_TYPES=[],
                         grids.append(os.path.join(PATH_TO_GRIDS,
                                       grid_type, VERSION, metallicity,
                                       compression, grid_slice+'.h5'))
-                        export_path.append(os.path.join(PATH, 'POSYDON_data',
-                                            export_dir, metallicity+'.h5'))
+                        full_export_dir = os.path.join(PATH, 'POSYDON_data',
+                                                       export_dir)
+                        if not os.path.isdir(full_export_dir):
+                            os.makedirs(full_export_dir)
+                        export_path.append(os.path.join(full_export_dir,
+                                                        metallicity+'.h5'))
                         for method in [['linear','linear3c_kNN'],
                                         ['1NN','1NN_1NN']]:
                             grids.append(os.path.join(PATH_TO_GRIDS, grid_type,
                                           VERSION, metallicity,
                                           'interpolation_objects',
                                           'IF_'+method[0]+RLO+'.pkl'))
-                            export_path.append(os.path.join(PATH,
-                                                'POSYDON_data', export_dir,
-                                                'interpolators', method[1],
+                            full_export_dir = os.path.join(PATH,
+                                               'POSYDON_data', export_dir,
+                                               'interpolators', method[1])
+                            if not os.path.isdir(full_export_dir):
+                                os.makedirs(full_export_dir)
+                            export_path.append(os.path.join(full_export_dir,
                                                 metallicity+'.pkl'))
                     elif step_name == 'rerun': # RERUN
                         # This step needs the grid to get the runs from, the
@@ -1450,6 +1424,5 @@ if __name__ == '__main__':
     pipeline = PostProcessingPipeline(ini_file_path)
     pipeline.create_csv_and_slurm_job_files()
     pipeline.create_log_dirs()
-    pipeline.create_export_dirs()
 
 
