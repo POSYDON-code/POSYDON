@@ -1774,7 +1774,7 @@ class HMS_HMS_RLO_step(MesaGridStep):
         # period inside the grid, but q outside the grid
         elif (not self.flip_stars_before_step and
                self.p_min <= p <= self.p_max and
-               np.max([self.q_min, self.minimum_star_mass/m1]) <= mass_ratio <= self.q_max ):
+               (np.max([self.q_min, self.minimum_star_mass/m1]) > mass_ratio or mass_ratio > self.q_max) ):
             set_binary_to_failed(self.binary)
             raise GridError(f'The mass ratio ({mass_ratio}) is outside the grid,'
                                 ' while the period is inside the grid.')
@@ -1799,7 +1799,7 @@ class HMS_HMS_RLO_step(MesaGridStep):
         # period inside the grid, but q outside the grid (flipped stars)
         elif (self.flip_stars_before_step and
                self.p_min <= p <= self.p_max and
-               np.max([self.q_min, self.minimum_star_mass/m2]) <= 1/mass_ratio <= self.q_max ):
+               (np.max([self.q_min, self.minimum_star_mass/m2]) > 1/mass_ratio or 1/mass_ratio > self.q_max) ):
             set_binary_to_failed(self.binary)
             raise GridError(f'The mass ratio ({1/mass_ratio}) is outside the grid,'
                                 ' while the period is inside the grid.')
