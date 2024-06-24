@@ -45,7 +45,7 @@ from posydon.binary_evol.simulationproperties import SimulationProperties
 from posydon.popsyn.star_formation_history import get_formation_times
 
 from posydon.popsyn.independent_sample import (generate_independent_samples,
-                                               binary_fraction_value)
+                                               binary_fraction_value,generate_initial_rotations)
 from posydon.popsyn.sample_from_file import (get_samples_from_file,
                                              get_kick_samples_from_file)
 from posydon.utils.common_functions import (orbital_period_from_separation,
@@ -994,7 +994,7 @@ class BinaryGenerator:
             separation = np.nan
             orbital_period = np.nan
             eccentricity = np.nan
-
+            surf_avg_omega_div_omega_crit = generate_initial_rotations(**sampler_kwargs)[0]
             binary_params = dict(
                 index=kwargs.get('index', default_index),
                 time=formation_time,
@@ -1011,6 +1011,7 @@ class BinaryGenerator:
                 center_h1=X,
                 center_he4=Y,
                 natal_kick_array=kick1,
+                surf_avg_omega_div_omega_crit = surf_avg_omega_div_omega_crit,
             )
             star2_params = properties_massless_remnant()
 

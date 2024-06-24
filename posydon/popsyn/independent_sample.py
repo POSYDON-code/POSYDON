@@ -197,6 +197,7 @@ def generate_orbital_separations(number_of_binaries=1,
     return orbital_separations
 
 
+
 def generate_eccentricities(number_of_binaries=1,
                             eccentricity_scheme='thermal',
                             **kwargs):
@@ -407,4 +408,22 @@ def binary_fraction_value(binary_fraction_const=1,binary_fraction_scheme = 'cons
         pass
     return binary_fraction
 
-    
+def generate_initial_rotations(number_of_binaries=1,omega_crit_min=0.0,
+                            omega_crit_max=0.4,
+                            rotation_scheme='uniform',
+                            **kwargs):
+    RNG = kwargs.get('RNG', np.random.default_rng())
+
+    rotation_scheme_options = ['uniform']
+
+    if rotation_scheme not in rotation_scheme_options:
+        raise ValueError("You must provide an allowed rotation scheme.")
+
+    if rotation_scheme == 'uniform':
+        rotations = RNG.uniform(size=number_of_binaries)*(omega_crit_max - omega_crit_min) + omega_crit_min
+    else:
+        # This should never be reached
+        pass
+
+    return rotations
+
