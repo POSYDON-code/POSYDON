@@ -1669,7 +1669,7 @@ class HMS_HMS_RLO_step(MesaGridStep):
     def __init__(self, metallicity=1., grid_name=None, *args, **kwargs):
         """Initialize a HMS_HMS_RLO_step instance."""
         self.grid_type = 'HMS_HMS_RLO'
-        self.interp_in_q = False
+        self.interp_in_q = True
         if grid_name is None:
             metallicity = convert_metallicity_to_string(metallicity)
             grid_name = 'HMS-HMS_RLO/' + metallicity + '_Zsun.h5'
