@@ -125,14 +125,17 @@ def get_mass_transfer_flag(binary_history, history1, history2,
     rel2 = binary_history["rl_relative_overflow_2"]
     rate = binary_history["lg_mtransfer_rate"]
 
+    # warning: all changes in the following lines need to be aligned with the
+    # function posydon.utils.common_functions.infer_mass_transfer_case
     where_rl_rel_1 = rel1 > RL_RELATIVE_OVERFLOW_THRESHOLD
     where_rl_rel_2 = rel2 > RL_RELATIVE_OVERFLOW_THRESHOLD
+    where_rl_rel_1_dominates = rel1 >= rel2
+    where_rl_rel_2_dominates = rel1 < rel2
     if np.any(where_rl_rel_1 & where_rl_rel_2):
         return "contact_during_MS"
-
     where_transfer = rate > LG_MTRANSFER_RATE_THRESHOLD
-    where_rlof_1 = where_rl_rel_1 | where_transfer
-    where_rlof_2 = where_rl_rel_2 | where_transfer
+    where_rlof_1 = (where_rl_rel_1 | where_transfer) & where_rl_rel_1_dominates
+    where_rlof_2 = (where_rl_rel_2 | where_transfer) & where_rl_rel_2_dominates
 
     if not np.any(where_rlof_1) and not np.any(where_rlof_2):
         return "no_RLOF"

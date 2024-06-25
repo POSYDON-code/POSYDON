@@ -532,16 +532,15 @@ class StepSN(object):
                                      'or use_core_masses is set to True, '
                                      'continue with the collapse.')       
                               
-                else:
-                    # store some properties of the star object
-                    # to be used for collapse verification
-                    pre_SN_star = copy.deepcopy(star)
-                    
+                else:                    
                     MODEL_properties = getattr(star, MODEL_NAME_SEL)
                     
-                    # Check if SN_type matches the CO_type in used MODEL
-                    if check_SN_CO_match(MODEL_properties['SN_type'],
-                                             MODEL_properties['state']):
+                    ## Check if SN_type mismatches the CO_type in MODEL or if interpolated MODEL properties are NaN
+                    ## If either are true, interpolated values cannot be used for this SN
+                    if (check_SN_CO_match(MODEL_properties['SN_type'], MODEL_properties['state']) and
+                        ~np.isnan(MODEL_properties['mass'])):
+
+
                         for key, value in MODEL_properties.items():
                             setattr(star, key, value)
                     
@@ -581,12 +580,11 @@ class StepSN(object):
                         return
                     
                     else:
-                         # raise a warning
                         warnings.warn(f'{MODEL_NAME_SEL}: The SN_type '
-                                      'does not match the predicted CO! '
-                                       'If use_profiles '
-                                       'or use_core_masses is set to True, '
-                                       'continue with the collapse.')
+                                      'does not match the predicted CO, or the interpolated '
+                                      'values for the SN remnant are NaN. '
+                                      'If use_profiles or use_core_masses is set to True, '
+                                      'continue with the collapse.')
                     
             # Verifies the selection of core-collapse mechnism to perform
             # the collapse
@@ -1696,8 +1694,13 @@ class StepSN(object):
 
                 # SNflag2: Equations 22-23, Willems, B., Henninger, M., Levin, T., et al. 2005, ApJ, 625, 324
                 # (see, e.g., Kalogera, V. & Lorimer, D.R. 2000, ApJ, 530, 890)
-                tmp1 = 2 - Mtot_pre / Mtot_post * (Vkick / Vr - 1) ** 2
-                tmp2 = 2 - Mtot_pre / Mtot_post * (Vkick / Vr + 1) ** 2
+                # The derivation in the papers above assume a circular pre SN
+                # orbit. Hence, need a correction for eccentric pre SN orbits:
+                eccentric_orbit_correction = Vr**2 * rpre / (G * Mtot_pre)
+                tmp1 = 2 - Mtot_pre / Mtot_post * (Vkick / Vr - 1) ** 2\
+                           * eccentric_orbit_correction
+                tmp2 = 2 - Mtot_pre / Mtot_post * (Vkick / Vr + 1) ** 2\
+                           * eccentric_orbit_correction
                 SNflag2 = ((rpre / Apost - tmp1 < err)
                            and (err > tmp2 - rpre / Apost))
 

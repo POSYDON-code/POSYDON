@@ -434,7 +434,9 @@ def train_interpolators(i, path_to_csv_file, verbose=False):
                     "out_keys": out_keys,
                     "out_nan_keys": out_nan_keys,
                     "class_method": "kNN",
-                    "c_keys": [f'S{i}_{MODEL_NAME}_CO_interpolation_class'],
+                    "c_keys": [f'S{i}_{MODEL_NAME}_CO_interpolation_class', 
+                               f'S{i}_{MODEL_NAME}_CO_type',
+                               f'S{i}_{MODEL_NAME}_SN_type'],
                     "c_key": f'S{i}_{MODEL_NAME}_CO_interpolation_class'
                 },   
             )
@@ -1372,7 +1374,7 @@ if __name__ == '__main__':
     # NOTE: this prevents job arrays starting at the same time to read
     # the same files at the same time (e.g. when creatign LITE/ORIGINAL grid,
     # or when creating a directory that does not exist yet)
-    time.sleep(random.uniform(0.,30.))
+    time.sleep(SLURM_I)
 
     STEP = os.path.splitext(os.path.basename(PATH_TO_CSV_FILE))[0]
     if STEP=='step_1': # grid slices creation
