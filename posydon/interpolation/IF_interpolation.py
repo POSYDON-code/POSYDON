@@ -359,7 +359,7 @@ class IFInterpolator:
 class BaseIFInterpolator:
     """Class handling the initial-final interpolation for POSYDON."""
 
-    def __init__(self, grid=None, in_keys=None, out_keys=None, in_scaling=None,
+    def __init__(self, grid=None, in_keys=None, out_keys=None, out_nan_keys=None, in_scaling=None,
                  out_scaling=None, filename=None, interp_method="linear",
                  interp_classes=None, class_method="kNN",
                  c_keys=None, c_key=None):
@@ -379,6 +379,9 @@ class BaseIFInterpolator:
         out_keys : list of strings
             The keys for which the interpolator is supposed to provide values,
             by default all keys are used.
+        out_nan_keys : list of strings
+            The keys for which the interpolator is supposed to provide values,
+            but are all nan in the grid.
         in_scaling : list of strings
             The scalings for the input keys, by default these scalings are
             optimized through Monte Carlo Cross Validation.
@@ -407,7 +410,7 @@ class BaseIFInterpolator:
 
         """
         self.in_keys, self.out_keys = in_keys, out_keys
-        self.out_nan_keys = []
+        self.out_nan_keys = out_nan_keys
         self.in_scaling, self.out_scaling = in_scaling, out_scaling
         self.n_in, self.n_out = 0, 0
         self.in_scalers, self.out_scalers = [], []
@@ -457,6 +460,7 @@ class BaseIFInterpolator:
                     and (type(grid.final_values[key][0]) != np.str_)
                     and any(~np.isnan(grid.final_values[key]))
                 ]
+            if self.out_nan_keys is None:
                 self.out_nan_keys = [
                     key for key in grid.final_values.dtype.names
                     if type(grid.final_values[key][0]) != np.str_
