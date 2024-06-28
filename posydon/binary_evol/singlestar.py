@@ -159,6 +159,10 @@ class SingleStar:
             self.he4_mass_ej = None
         if not hasattr(self, 'o16_mass_ej'):
             self.o16_mass_ej = None
+        if not hasattr(self, 'M4'):
+            self.M4 = None
+        if not hasattr(self, 'mu4'):
+            self.mu4 = None
 
 
         # the following quantities are updated in mesa_step.py

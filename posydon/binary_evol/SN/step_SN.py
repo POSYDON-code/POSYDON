@@ -2023,6 +2023,8 @@ class StepSN(object):
             M4, mu4 = self.get_M4_mu4_Patton20(CO_core_mass, C_core_abundance)
             M4 = M4[0]
             mu4 = mu4[0]
+            star.M4 = M4
+            star.mu4 = mu4
 
             k1 = Ertl16_k_parameters[engine][0]
             k2 = Ertl16_k_parameters[engine][1]

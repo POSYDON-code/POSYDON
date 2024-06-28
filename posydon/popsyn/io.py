@@ -149,6 +149,9 @@ SCALAR_NAMES_DTYPES = {
     'h1_mass_ej': 'float64',
     'he4_mass_ej': 'float64',
     'o16_mass_ej': 'float64',
+    'M4': 'float64',
+    'mu4': 'float64',
+
 }
 
 

@@ -31,7 +31,7 @@ __credits__ = [
 
 CC_quantities = ['state', 'SN_type', 'f_fb', 'mass', 'spin',
                  'm_disk_accreted', 'm_disk_radiated', 'CO_interpolation_class',
-                 'h1_mass_ej', 'he4_mass_ej', 'o16_mass_ej']
+                 'h1_mass_ej', 'he4_mass_ej', 'o16_mass_ej', 'M4', 'mu4']
 
 def assign_core_collapse_quantities_none(EXTRA_COLUMNS, star_i, MODEL_NAME=None):
     """"Assign None values to all core collapse properties."""
