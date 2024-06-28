@@ -541,7 +541,7 @@ DEFAULT_MARKERS_COLORS_LEGENDS = {
         'Unstable case Bn':
             ['D', 1, list_of_colors[1], 'Unstable RLOF during postMS'],
         'Unstable case BBA':
-            ['D', 2, list_of_colors[0], 
+            ['D', 2, list_of_colors[0],
              'Unstable RLOF during stripped He star'],
         'Unstable case BBB':
             ['D', 2, list_of_colors[0],
@@ -549,7 +549,7 @@ DEFAULT_MARKERS_COLORS_LEGENDS = {
         'Unstable case Cn':
             ['D', 1, list_of_colors[1], 'Unstable RLOF during postMS'],
         'Unstable case CBA':
-            ['D', 2, list_of_colors[0], 
+            ['D', 2, list_of_colors[0],
              'Unstable RLOF during stripped He star'],
         'Unstable case CBB':
             ['D', 2, list_of_colors[0],
@@ -742,7 +742,7 @@ DEFAULT_MARKERS_COLORS_LEGENDS = {
 
 def add_flag_to_MARKERS_COLORS_LEGENDS(MARKERS_COLORS_LEGENDS, flag):
     """Add not pre defined stuff to DEFAULT_MARKERS_COLORS_LEGENDS.
-    
+
     Parameters
     ----------
     MARKERS_COLORS_LEGENDS : dict of lists
@@ -750,7 +750,7 @@ def add_flag_to_MARKERS_COLORS_LEGENDS(MARKERS_COLORS_LEGENDS, flag):
         and legend text for each flag.
     flag : str
         The flag itself.
-            
+
     """
     if flag not in MARKERS_COLORS_LEGENDS.keys():
         if ('case_' in flag): # unknown MT flag
