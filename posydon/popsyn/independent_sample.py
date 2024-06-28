@@ -305,7 +305,8 @@ def generate_primary_masses(number_of_binaries=1,
 
 
 def generate_secondary_masses(primary_masses,
-                              number_of_binaries=1,
+                              q_min = 0.05,
+                              q_max = 1.0,
                               secondary_mass_min=0.35,
                               secondary_mass_max=120,
                               secondary_mass_scheme='flat_mass_ratio',
@@ -318,8 +319,10 @@ def generate_secondary_masses(primary_masses,
     ----------
     primary_masses : ndarray of floats
         Previously drawn primary masses
-    number_of_binaries : int
-        Number of binaries that require randomly sampled orbital separations
+    q_min : float
+        Minimum secondary mass ratio
+    q_max : float
+        Maximum secondary mass ratio
     secondary_mass_min : float
         Minimum secondary mass
     secondary_mass_max : float
@@ -344,12 +347,18 @@ def generate_secondary_masses(primary_masses,
     if np.min(primary_masses) < secondary_mass_min:
         raise ValueError("`secondary_mass_min` is "
                          "larger than some primary masses")
+    
+    # Get the number of binaries
+    number_of_binaries = len(primary_masses)
 
     # Generate secondary masses
     if secondary_mass_scheme == 'flat_mass_ratio':
-        mass_ratio_min = np.max([secondary_mass_min / primary_masses,np.ones(len(primary_masses))*0.05], axis=0)
-        mass_ratio_max = np.min([secondary_mass_max / primary_masses,
-                                 np.ones(len(primary_masses))], axis=0)
+
+        mass_ratio_min = np.max([secondary_mass_min / primary_masses, np.ones(number_of_binaries)*q_min], 
+                                axis=0)
+        mass_ratio_max = np.min([secondary_mass_max / primary_masses, np.ones(number_of_binaries)*q_max], 
+                                axis=0)
+
         secondary_masses = (
             (mass_ratio_max - mass_ratio_min) * RNG.uniform(
                 size=number_of_binaries) + mass_ratio_min) * primary_masses
