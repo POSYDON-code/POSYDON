@@ -874,7 +874,8 @@ if __name__ == '__main__':
             run_mesa(args.mesa_star1_executable, work_dir, final_dir,
                      outfile_name='out_star1_formation_step{0}.txt'.format(index),
                      keep_profiles=args.keep_profiles, keep_photos=args.keep_photos,
-                     job_start=args.job_start, job_end=args.job_end)
+                     job_start=args.job_start, job_end=args.job_end,
+                     keep_work_dir=index<last_step)
 
         sys.exit(0)
 
