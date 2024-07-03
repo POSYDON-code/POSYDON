@@ -1145,7 +1145,7 @@ class detached_step:
         interp1d_sec, m0, t0 = get_star_data(
             binary, secondary, primary, secondary.htrack, co=False)
         if self.verbose == 2:
-            setattr(secondary,'binary_state_for_diff_matching', getattr(binary,state))
+            setattr(secondary,'binary_state_for_diff_matching', binary.state)
 
         primary_not_normal = (primary.co) or (self.non_existent_companion in [1,2])
         primary_normal = (not primary.co) and self.non_existent_companion == 0
@@ -1160,7 +1160,7 @@ class detached_step:
             interp1d_pri = get_star_data(
                 binary, primary, secondary, primary.htrack, False)[0]
             if self.verbose == 2:
-                setattr(primary,'binary_state_for_diff_matching', getattr(binary,state))
+                setattr(primary,'binary_state_for_diff_matching', binary.state)
         else:
             raise MatchingError("During matching primary is either should be either normal or not normal. `non_existent_companion` should be zero.")
 
