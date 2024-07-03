@@ -11,6 +11,7 @@ import random
 import string
 import itertools
 import stat
+import time
 
 import numpy as np
 import pandas
@@ -123,10 +124,16 @@ def parse_commandline():
     parser.add_argument("--keep_photos", action="store_true", default=False,
                         help="Do not delete photos at run completion")
 
+    parser.add_argument("--job_start", type=int, default=0,
+                        help="Start time of the job (in seconds)")
+
+    parser.add_argument("--job_end", type=int, default=600,
+                        help="End time of the job (in seconds)")
+
     args = parser.parse_args()
 
     if args.grid_type not in ['fixed', 'dynamic']:
-        raise parser.error("--run-type must be either grid or sample")
+        raise parser.error("--run-type must be either fixed or dynamic")
 
     # if we are running a dynamic grid then these arguments are required otherwise
     # they are not
@@ -397,6 +404,31 @@ def create_star_formation(mass, work_dir, star_inlist_project, initial_z=None, n
 
     return
 
+def move_mesa_output(work_dir, final_dir, copyinstead=False):
+    """Moves the data from the working directory to the final directory.
+    Parameters:
+        work_dir:
+            Working directory (i.e. where the mesa exectuable should run)
+        final_dir:
+            When completed where would you like the output to go
+        copyinstead:
+            Indicates that the files should be copied instead of moved
+    """
+    if not work_dir == final_dir:
+        if os.path.isdir(final_dir):
+            print ("folder "+ final_dir +" exists, replacing with new data")
+            sys.stdout.flush()
+            shutil.rmtree(final_dir)
+        if copyinstead:
+            print ("copy data from " + work_dir+ " to "+ final_dir)
+            shutil.copytree(work_dir, final_dir)
+        else:
+            print ("move data from " + work_dir+ " to "+ final_dir)
+            shutil.move(work_dir, final_dir)
+        sys.stdout.flush()
+
+    return
+
 def run_mesa(mesa_executable, work_dir, final_dir, **kwargs):
     """Provides minor utility for actually spawning the mesa job for each grid
 
@@ -411,32 +443,48 @@ def run_mesa(mesa_executable, work_dir, final_dir, **kwargs):
     outfile_name = kwargs.pop('outfile_name', 'out.txt')
     keep_profiles = kwargs.pop('keep_profiles', False)
     keep_photos = kwargs.pop('keep_photos', False)
+    keep_work_dir = kwargs.pop('keep_work_dir', False)
+    job_time = kwargs.pop('job_end', 600) - kwargs.pop('job_start', 0)
 
     os.chdir(work_dir)
-    os.system("{0} &> {1}".format(mesa_executable, os.path.join(work_dir, outfile_name)))
-
-    if not keep_profiles:
-        if os.path.exists(os.path.join(work_dir, 'LOGS')):
-            os.chmod(os.path.join(work_dir, 'LOGS'), stat.S_IRWXU  | stat.S_IRGRP | stat.S_IXGRP | stat.S_IROTH | stat.S_IXOTH )
-            os.system("rm LOGS/profile*")
-        if os.path.exists(os.path.join(work_dir, 'LOGS1')):
-            os.chmod(os.path.join(work_dir, 'LOGS1'), stat.S_IRWXU  | stat.S_IRGRP | stat.S_IXGRP | stat.S_IROTH | stat.S_IXOTH )
-            os.system("rm LOGS1/profile*")
-        if os.path.exists(os.path.join(work_dir, 'LOGS2')):
-            os.chmod(os.path.join(work_dir, 'LOGS2'), stat.S_IRWXU  | stat.S_IRGRP | stat.S_IXGRP | stat.S_IROTH | stat.S_IXOTH )
-            os.system("rm LOGS2/profile*")
-    if os.path.exists(os.path.join(work_dir, '.mesa_temp_cache')): os.system("rm -rf .mesa_temp_cache")
-
-    if not keep_photos:
-        os.system("rm -rf photos*")
-
     if not work_dir == final_dir:
-        if os.path.isdir(final_dir):
-            print ("folder "+ final_dir +" exists, replacing with new data")
-            sys.stdout.flush()
-            shutil.rmtree(final_dir)
+        child_ID = os.fork()
+    else:
+        child_ID = 0.1
+    if child_ID>0:
+        #parent process: run MESA and do the clean up in the working directory
+        os.system("{0} &> {1}".format(mesa_executable, os.path.join(work_dir, outfile_name)))
 
-        shutil.move(work_dir, final_dir)
+        if not keep_profiles:
+            if os.path.exists(os.path.join(work_dir, 'LOGS')):
+                os.chmod(os.path.join(work_dir, 'LOGS'), stat.S_IRWXU  | stat.S_IRGRP | stat.S_IXGRP | stat.S_IROTH | stat.S_IXOTH )
+                os.system("rm LOGS/profile*")
+            if os.path.exists(os.path.join(work_dir, 'LOGS1')):
+                os.chmod(os.path.join(work_dir, 'LOGS1'), stat.S_IRWXU  | stat.S_IRGRP | stat.S_IXGRP | stat.S_IROTH | stat.S_IXOTH )
+                os.system("rm LOGS1/profile*")
+            if os.path.exists(os.path.join(work_dir, 'LOGS2')):
+                os.chmod(os.path.join(work_dir, 'LOGS2'), stat.S_IRWXU  | stat.S_IRGRP | stat.S_IXGRP | stat.S_IROTH | stat.S_IXOTH )
+                os.system("rm LOGS2/profile*")
+        if os.path.exists(os.path.join(work_dir, '.mesa_temp_cache')): os.system("rm -rf .mesa_temp_cache")
+
+        if not keep_photos:
+            os.system("rm -rf photos*")
+
+        if child_ID>=1:
+            #kill child process, because it is no longer needed
+            os.kill(child_ID, 9)
+        move_mesa_output(work_dir, final_dir, keep_work_dir)
+    elif child_ID==0:
+        #child process: waits till short before the job will get killed by slurm to copy the data beforehand and exit this process after the copy finished
+        if job_time>300:
+            #if job last longer than 5 minutes (300 seconds) get remaining time till 5 minutes before its end
+            wait_time = job_time-300
+        else:
+            #otherwise wait 1 minute
+            wait_time = 60
+        time.sleep(wait_time)
+        move_mesa_output(work_dir, final_dir, copyinstead=True)
+        sys.exit(0)
 
     os.chdir(final_dir)
     print("Done")
@@ -663,7 +711,7 @@ def run_grid_point(grid, star1_formation, star2_formation,
                 create_star_formation(grid_param_dict['m1'], work_dir, inlist_step)
             elif index == 1:
                 create_star_formation(grid_param_dict['m1'], work_dir, inlist_step, grid_param_dict['initial_z'], True)
-            run_mesa(args.mesa_star1_executable, work_dir, final_dir,
+            run_mesa(args.mesa_star1_executable, work_dir, final_dir, keep_work_dir=True,
                      outfile_name='out_star1_formation_step{0}.txt'.format(index))
 
     # are we first generating a model before running binary for the second star?
@@ -677,7 +725,7 @@ def run_grid_point(grid, star1_formation, star2_formation,
                 create_star_formation(grid_param_dict['m2'], work_dir, inlist_step)
             elif index == 1:
                 create_star_formation(grid_param_dict['m2'], work_dir, inlist_step, grid_param_dict['initial_z'], True)
-            run_mesa(args.mesa_star2_executable, work_dir, final_dir,
+            run_mesa(args.mesa_star2_executable, work_dir, final_dir, keep_work_dir=True,
                      outfile_name='out_star2_formation_step{0}.txt'.format(index))
 
     # now we can create the grid specific binary inlists and run the binary executable
@@ -688,8 +736,8 @@ def run_grid_point(grid, star1_formation, star2_formation,
 
     # run the binary exectuable
     run_mesa(args.mesa_binary_executable, work_dir, final_dir,
-             keep_profiles=args.keep_profiles,
-             keep_photos=args.keep_photos)
+             keep_profiles=args.keep_profiles, keep_photos=args.keep_photos,
+             job_start=args.job_start, job_end=args.job_end)
 
     # find out what happened
     mesa_result = extract_mesa_results(final_dir)
@@ -825,8 +873,9 @@ if __name__ == '__main__':
                 create_star_formation(grid_param_dict['initial_mass'], work_dir, inlist_step)
             run_mesa(args.mesa_star1_executable, work_dir, final_dir,
                      outfile_name='out_star1_formation_step{0}.txt'.format(index),
-                     keep_profiles=args.keep_profiles,
-                     keep_photos=args.keep_photos)
+                     keep_profiles=args.keep_profiles, keep_photos=args.keep_photos,
+                     job_start=args.job_start, job_end=args.job_end,
+                     keep_work_dir=index<last_step)
 
         sys.exit(0)
 

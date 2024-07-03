@@ -60,42 +60,52 @@ else:
 # These pretty common requirement are commented out. Various syntax types
 # are all used in the example below for specifying specific version of the
 # packages that are compatbile with your software.
+# TODO NOTE: before the v2.0.0 code release, we should froze the versions
+# the correct way to do this is to make sure that they are available on
+# conda and pip for all platforms we support (see prerequisites doc page).
 install_requires = [
-    'numpy == 1.24.2',
-    'scipy == 1.10.1',
-    'iminuit == 2.21.3',
-    'configparser == 5.3.0',
-    'astropy == 5.2.2',
-    'pandas == 2.0.0',
-    'scikit-learn == 1.2.2',
-    'matplotlib ==  3.7.1',
-    'matplotlib-label-lines == 0.5.2',
-    'PyQt5 == 5.15.9',
-    'h5py == 3.8.0',
-    'psutil == 5.9.4',
-    'tqdm == 4.65.0',
-    'tables == 3.8.0',
-    'progressbar2 == 4.2.0',
-    'hurry.filesize == 0.9',
+    'numpy >= 1.24.2',
+    'scipy >= 1.10.1',
+    'iminuit >= 2.21.3',
+    'configparser >= 5.3.0',
+    'astropy >= 5.2.2',
+    'pandas >= 2.0.0',
+    'scikit-learn < 1.3.0', # 1.2.2
+    'matplotlib >=  3.7.1, <= 3.8.0',
+    'matplotlib-label-lines >= 0.5.2',
+    'h5py >= 3.8.0',
+    'psutil >= 5.9.4',
+    'tqdm >= 4.65.0',
+    'tables >= 3.8.0',
+    'progressbar2 >= 4.2.0', # for downloading data
+    'hurry.filesize >= 0.9',
+    'python-dotenv >= 1.0.0',
 ]
 
 tests_require = [
-    "pytest == 7.3.1",
+    "pytest >= 7.3.1",
     "pytest-cov >= 4.0.0",
 ]
 
 # For documentation
 extras_require = {
+    # to build documentation
     "doc": [
         "ipython",
-        "sphinx == 6.1.3",
+        "sphinx >= 6.1.3",
         "numpydoc",
         "sphinx_rtd_theme",
         "sphinxcontrib_programoutput",
         "PSphinxTheme",
+        "nbsphinx",
+        "pandoc",
     ],
-    "profile": ["tensorflow == 2.12.0"], # for profile interpolation
-    "hpc": ["mpi4py == 3.0.3"],
+    # for experimental visualization features, e.g. VDH diagrams
+    "vis": ["PyQt5 >= 5.15.9"],
+    # for profile macjhine learning features, e.g. profile interpolation
+    "ml": ["tensorflow >= 2.13.0"], 
+    # for running population synthesis on HPC facilities
+    "hpc": ["mpi4py >= 3.0.3"],
 }
 
 # RUN SETUP

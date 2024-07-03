@@ -124,6 +124,7 @@ def find_inlist_from_scenario(source, gitcommit, system_type):
                                  stdout = subprocess.PIPE,
                                  stderr = subprocess.PIPE
                              )
+    proc.wait()
 
     print("For posterity we are pulling (specifically needed if you already have the repo clone)")
     proc = subprocess.call(['git', 'pull'],
@@ -131,7 +132,7 @@ def find_inlist_from_scenario(source, gitcommit, system_type):
                                  stdout = subprocess.PIPE,
                                  stderr = subprocess.PIPE
                              )
-
+    
 
     print("checking out commit/tag: {0}".format(githash))
 
@@ -140,6 +141,7 @@ def find_inlist_from_scenario(source, gitcommit, system_type):
                                  stdout = subprocess.PIPE,
                                  stderr = subprocess.PIPE
                              )
+    proc.wait()
 
     # if this is looking at posydon defaults, all posydon defaults build from default common inlists
     if source == 'posydon':
@@ -156,7 +158,7 @@ def find_inlist_from_scenario(source, gitcommit, system_type):
                 for line in f.readlines():
                     if 'zams_filename' in line:
                         print("ZAMS_FILENAME detected, setting mesa_inlists['zams_filename']")
-                        zams_filename = line.split("'")[1].split("/")[1]
+                        zams_filename = os.path.split(line.split("'")[1])[1]
                         zams_file_path = os.path.join(inlists_dir, 'r11701', "ZAMS_models", zams_filename)
                         if os.path.isfile(zams_file_path):
                             print("Verified locations of ZAMS data file, {0}".format(zams_file_path))
@@ -984,6 +986,20 @@ if __name__ == '__main__':
                                                           grid_parameters=grid_df.columns,
                                                           working_directory=args.run_directory)
 
+    # handle column lists
+    # first, creating a directory
+    column_lists_folder = os.path.join(args.run_directory, 'column_lists')
+    if os.path.exists(column_lists_folder):  shutil.rmtree(column_lists_folder)
+    os.makedirs(column_lists_folder)    
+    # second, getting new location
+    star_history_columns = os.path.join(column_lists_folder, 'history_columns.list')
+    binary_history_columns = os.path.join(column_lists_folder, 'binary_history_columns.list')
+    profile_columns = os.path.join(column_lists_folder, 'profile_columns.list')
+    # third, copy lists
+    shutil.copy(mesa_inlists['star_history_columns'], star_history_columns)
+    shutil.copy(mesa_inlists['binary_history_columns'], binary_history_columns)
+    shutil.copy(mesa_inlists['profile_columns'], profile_columns)
+
     # now we can write the mpi command line
     if slurm['job_array']:
         command_line = construct_command_line(1,
@@ -996,9 +1012,9 @@ if __name__ == '__main__':
                                               inlist_star2_binary,
                                               inlist_star1_formation,
                                               inlist_star2_formation,
-                                              mesa_inlists['star_history_columns'],
-                                              mesa_inlists['binary_history_columns'],
-                                              mesa_inlists['profile_columns'],
+                                              star_history_columns,
+                                              binary_history_columns,
+                                              profile_columns,
                                               args.run_directory,
                                               'fixed',
                                               path_to_run_grid_exec,
@@ -1016,15 +1032,19 @@ if __name__ == '__main__':
                                               inlist_star2_binary,
                                               inlist_star1_formation,
                                               inlist_star2_formation,
-                                              mesa_inlists['star_history_columns'],
-                                              mesa_inlists['binary_history_columns'],
-                                              mesa_inlists['profile_columns'],
+                                              star_history_columns,
+                                              binary_history_columns,
+                                              profile_columns,
                                               args.run_directory,
                                               args.grid_type,
                                               path_to_run_grid_exec,
                                               psycris_inifile = run_parameters["psycris_inifile"],
                                               keep_profiles=run_parameters['keep_profiles'],
                                               keep_photos=run_parameters['keep_photos'])
+    if args.submission_type == 'slurm':
+        command_line += ' --job_start $SLURM_JOB_START_TIME --job_end $SLURM_JOB_END_TIME'
+    if 'work_dir' in slurm.keys() and not(slurm['work_dir'] == ''):
+        command_line += ' --temporary-directory '+slurm['work_dir']
 
     # now we need to know how this person plans to run the above created
     # command. As a shell script? As a SLURM submission? In some other way?
@@ -1045,7 +1065,8 @@ if __name__ == '__main__':
                 grid = pandas.read_csv(run_parameters['grid'])
             else:
                 raise ValueError('Grid format not recognized, please feed in an acceptable format: csv')
-            with open('slurm_job_array_grid_submit.sh', 'w') as f:
+            grid_script = 'job_array_grid_submit.slurm'
+            with open(grid_script, 'w') as f:
                 f.write('#!/bin/bash\n')
 
                 f.write('#SBATCH --account={0}\n'.format(slurm['account']))
@@ -1068,7 +1089,8 @@ if __name__ == '__main__':
                 f.write('export MESA_DIR={0}\n\n\n'.format(os.environ['MESA_DIR']))
                 f.write(command_line)
         else:
-            with open('slurm_mpi_grid_submit.sh', 'w') as f:
+            grid_script = 'mpi_grid_submit.slurm'
+            with open(grid_script, 'w') as f:
                 f.write('#!/bin/bash\n')
 
                 f.write('#SBATCH --account={0}\n'.format(slurm['account']))
@@ -1088,3 +1110,36 @@ if __name__ == '__main__':
                 f.write('source $MESASDK_ROOT/bin/mesasdk_init.sh\n')
                 f.write('export MESA_DIR={0}\n\n\n'.format(os.environ['MESA_DIR']))
                 f.write(command_line)
+        # create a cleanup script
+        with open('cleanup.slurm', 'w') as f:
+            f.write('#!/bin/bash\n')
+            
+            f.write('#SBATCH --account={0}\n'.format(slurm['account']))
+            f.write('#SBATCH --partition={0}\n'.format(slurm['partition']))
+            f.write('#SBATCH -N 1\n')
+            f.write('#SBATCH --cpus-per-task {0}\n'.format(slurm['number_of_cpus_per_task']))
+            f.write('#SBATCH --ntasks-per-node 1\n')
+            f.write('#SBATCH --time={0}\n'.format(slurm['walltime']))
+            f.write('#SBATCH --job-name=\"mesa_grid_cleanup\"\n')
+            f.write('#SBATCH --output=mesa_cleanup.out\n')
+            f.write('#SBATCH --mail-type=ALL\n')
+            f.write('#SBATCH --mail-user={0}\n'.format(slurm['email']))
+            f.write('#SBATCH --mem-per-cpu=4G\n\n')
+            
+            f.write('compress-mesa .\n')
+            if 'newgroup' in slurm.keys():
+                f.write('echo \"Change group to {0}\"\n'.format(slurm['newgroup']))
+                f.write('chgrp -fR {0} .\n'.format(slurm['newgroup']))
+                f.write('echo \"Change group permission to rwX at least\"\n')
+                f.write('chmod -fR g+rwX .\n')
+            f.write('\necho \"Done.\"')
+        # create a runfile script
+        with open('run_grid.sh', 'w') as f:
+            f.write('#!/bin/bash\n')
+            f.write('ID_GRID=$(sbatch --parsable {0})\n'.format(grid_script))
+            f.write('echo \"{0}'.format(grid_script)+' submitted as \"${ID_GRID}\n')
+            f.write('ID_cleanup=$(sbatch --parsable --dependency=afterany:${ID_GRID} '
+                    '--kill-on-invalid-dep=yes cleanup.slurm)\n')
+            f.write('echo \"cleanup.slurm submitted as \"${ID_cleanup}\n')
+        # make the runfile script executable
+        os.system("chmod 755 run_grid.sh")

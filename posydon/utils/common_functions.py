@@ -12,6 +12,7 @@ __authors__ = [
     "Tassos Fragos <Anastasios.Fragkos@unige.ch>",
     "Scott Coughlin <scottcoughlin2014@u.northwestern.edu>",
     "Kyle Akira Rocha <kylerocha2024@u.northwestern.edu>",
+    "Matthias Kruckow <Matthias.Kruckow@unige.ch>",
 ]
 
 
@@ -24,19 +25,16 @@ from posydon.utils import constants as const
 import copy
 import warnings
 from scipy.interpolate import PchipInterpolator
-
+from posydon.utils.limits_thresholds import (THRESHOLD_CENTRAL_ABUNDANCE,
+    THRESHOLD_HE_NAKED_ABUNDANCE, REL_LOG10_BURNING_THRESHOLD,
+    LOG10_BURNING_THRESHOLD, STATE_NS_STARMASS_UPPER_LIMIT,
+    RL_RELATIVE_OVERFLOW_THRESHOLD, LG_MTRANSFER_RATE_THRESHOLD
+)
 
 PATH_TO_POSYDON = os.environ.get("PATH_TO_POSYDON")
 
 
 # Constants related to inferring star states
-THRESHOLD_CENTRAL_ABUNDANCE = 0.01   # central abundance for flagging depletion
-THRESHOLD_HE_NAKED_ABUNDANCE = 0.01  # for surface abundance for stripped_He
-THRESHOLD_NUCLEAR_LUMINOSITY = 0.97  # for element fraction in nuclear burning
-# relative burning threshold with respect to nuclear luminosity
-REL_LOG10_BURNING_THRESHOLD = np.log10(1.0 - THRESHOLD_NUCLEAR_LUMINOSITY)
-LOG10_BURNING_THRESHOLD = -10.0      # burning luminosity threshold (in Lsol)
-STATE_NS_STARMASS_UPPER_LIMIT = 2.5
 STATE_UNDETERMINED = "undetermined_evolutionary_state"
 
 # ALL POSSIBLE STAR STATES
@@ -66,11 +64,13 @@ MT_CASE_C = 3
 MT_CASE_BA = 4
 MT_CASE_BB = 5
 MT_CASE_BC = 6
+MT_CASE_NONBURNING = 8
 MT_CASE_UNDETERMINED = 9
 
 # All cases meaning RLO is happening
 ALL_RLO_CASES = set([MT_CASE_A, MT_CASE_B, MT_CASE_C,
-                     MT_CASE_BA, MT_CASE_BB, MT_CASE_BC])
+                     MT_CASE_BA, MT_CASE_BB, MT_CASE_BC,
+                     MT_CASE_NONBURNING])
 
 # Conversion of integer mass-transfer flags to strings
 MT_CASE_TO_STR = {
@@ -81,17 +81,13 @@ MT_CASE_TO_STR = {
     MT_CASE_BA: "BA",
     MT_CASE_BB: "BB",
     MT_CASE_BC: "BC",
+    MT_CASE_NONBURNING: "nonburning",
     MT_CASE_UNDETERMINED: "undetermined_MT"
 }
 
 # Conversion of strings to integer mass-transfer flags
 MT_STR_TO_CASE = {string: integer for integer, string
                   in MT_CASE_TO_STR.items()}
-
-# Threshold used for inferring mass-transfer, and RLO
-RL_RELATIVE_OVERFLOW_THRESHOLD = -0.05
-LG_MTRANSFER_RATE_THRESHOLD = -12
-
 
 DEFAULT_CE_OPTION_FOR_LAMBDA = \
     "lambda_from_profile_gravitational_plus_internal_minus_recombination"
@@ -113,7 +109,7 @@ def stefan_boltzmann_law(L, R):
 
 
 def rzams(m, z=0.02, Zsun=0.02):
-    """Evaluate the zero age main sequence radius.
+    """Evaluate the zero age main sequence radius [1]_.
 
     Parameters
     ----------
@@ -129,8 +125,8 @@ def rzams(m, z=0.02, Zsun=0.02):
 
     References
     ----------
-    .. [1] Tout C. A., Pols O. R., Eggleton P. P., Han Z., 1996,
-           MNRAS, 281, 257
+    .. [1] Tout C. A., Pols O. R., Eggleton P. P., Han Z., 1996, MNRAS, 281,
+        257
 
 
     """
@@ -212,7 +208,7 @@ RL -> Roche lobe radius in similar units as a_orb
 
 
 def roche_lobe_radius(q, a_orb=1):
-    """Approximate the Roche lobe radius from Eggleton (1983).
+    """Approximate the Roche lobe radius from [1]_.
 
     Parameters
     ----------
@@ -256,6 +252,11 @@ def orbital_separation_from_period(period_days, m1_solar, m2_solar):
         The separation of the binary in solar radii.
 
     """
+    # cast to float64 to avoid overflow
+    m1_solar = np.asarray(m1_solar, dtype="float64")
+    m2_solar = np.asarray(m2_solar, dtype="float64")
+    period_days = np.asarray(period_days, dtype="float64")
+
     separation_cm = (const.standard_cgrav
                      * (m1_solar * const.Msun + m2_solar * const.Msun)
                      / (4.0 * const.pi**2.0)
@@ -285,75 +286,6 @@ def orbital_period_from_separation(separation, m1, m2):
     return const.dayyer * ((separation / const.aursun)**3.0 / (m1 + m2)) ** 0.5
 
 
-def BSE_to_POSYDON(ktype):
-    """Convert BSE numerical type to POSYDON string.
-
-    Parameters
-    ----------
-    ktype : int
-        The BSE numerical type.
-    core_mass : float
-        Core mass of the star.
-
-    Returns
-    -------
-    str
-        The corresponding POSYDON string.
-
-    """
-    if ktype in (0, 1):
-        state = 'H-rich_Core_H_burning'
-    elif ktype in (2, 3):   # Hertzprung Gap and Giant Branch star
-        state = 'H-rich_Shell_H_burning'
-    elif ktype == 4:        # Core Helium Burning
-        state = 'H-rich_Core_He_burning'
-    elif ktype in (5, 6):   # Early AGB and TPAGB
-        state = 'H-rich_Central_He_depleted'
-    elif ktype == 7:        # Naked Helium Star MS
-        state = 'stripped_He_Core_He_burning'
-    elif ktype in (8, 9):   # Naked Helium star (HG and GB)
-        state = 'stripped_He_Central_He_depleted'
-    elif ktype in (10, 11, 12):
-        state = 'WD'
-    elif ktype == 13:
-        state = 'NS'
-    elif ktype == 14:
-        state = 'BH'
-    elif ktype == 15:
-        state = 'Massless remnant'
-    else:
-        raise ValueError('Conversion of the ktype {} is not supported.'.
-                         format(ktype))
-    return state
-
-
-def POSYDON_to_BSE(star):
-    """Convert POSYDON state to BSE numerical type.
-
-    Parameters
-    ----------
-    star : SingleStar
-        The star which state requires conversion.
-
-    Returns
-    -------
-    int
-        The corresponding BSE numerical type.
-    """
-    if star.state == 'H-rich_Core_H_burning':
-        if star.mass < 0.7:
-            ktype = 0
-        else:
-            ktype = 1
-    elif star.state == 'NS':
-        ktype = 13
-    elif star.state == 'BH':
-        ktype = 14
-    else:
-        raise ValueError(
-            'Conversion of the state {} is currently not supported.'.format(
-                star.state))
-    return ktype
 
 
 def eddington_limit(binary, idx=-1):
@@ -378,7 +310,7 @@ def eddington_limit(binary, idx=-1):
         accretor = binary.star_2
         donor = binary.star_1
     else:
-        raise Exception("Eddington-limit to be calculated for non-CO?")
+        raise ValueError("Eddington limit is being calculated for a non-CO")
 
     state_acc = np.atleast_1d(
         np.asanyarray([*accretor.state_history, accretor.state])[idx])
@@ -421,7 +353,8 @@ def eddington_limit(binary, idx=-1):
 
 
 def beaming(binary):
-    """Calculate the geometrical beaming of a super-Eddington accreting source.
+    """Calculate the geometrical beaming of a super-Eddington accreting source
+    [1]_, [2]_.
 
     Compute the super-Eddington isotropic-equivalent accretion rate and the
     beaming factor of a star. This does not change the intrinsic accretion onto
@@ -469,7 +402,7 @@ def beaming(binary):
 
 def bondi_hoyle(binary, accretor, donor, idx=-1, wind_disk_criteria=True,
                 scheme='Hurley+2002'):
-    """Calculate the Bondi-Hoyle accretion rate of a binary.
+    """Calculate the Bondi-Hoyle accretion rate of a binary [1]_.
 
     Parameters
     ----------
@@ -479,6 +412,15 @@ def bondi_hoyle(binary, accretor, donor, idx=-1, wind_disk_criteria=True,
         The accretor in the binary.
     donor : SingleStar
         The donor in the binary.
+    idx : int
+        default: -1
+    wind_disk_criteria : bool
+        default: True, see [5]_
+    scheme : str
+        There are different options:
+
+        - 'Hurley+2002' : following [3]_
+        - 'Kudritzki+2000' : following [7]_
 
     Returns
     -------
@@ -487,18 +429,18 @@ def bondi_hoyle(binary, accretor, donor, idx=-1, wind_disk_criteria=True,
 
     Notes
     -----
-    A approximation is used for the accretion rate[2_]
-    and the wind velocity of the donor is moddeled as in [3_].
+    An approximation is used for the accretion rate [2]_ and the wind velocity
+    of the donor is moddeled as in [3]_, [6]_. Also see [4]_.
 
     References
     ----------
     .. [1] Bondi, H., & Hoyle, F. 1944, MNRAS, 104, 273
     .. [2] Boffin, H. M. J., & Jorissen, A. 1988, A&A, 205, 155
     .. [3] Hurley, J. R., Tout, C. A., & Pols, O. R. 2002, MNRAS, 329, 897
-    .. [4] Belczynski, K., Kalogera, V., Rasio, F. A., et al. 2008,
-           ApJS, 174, 223
+    .. [4] Belczynski, K., Kalogera, V., Rasio, F. A., et al. 2008, ApJS, 174,
+        223
     .. [5] Sen, K. ,Xu, X. -T., Langer, N., El Mellah, I. , Schurmann, C., &
-           Quast, M., 2021, A&A
+        Quast, M., 2021, A&A
     .. [6] Sander A. A. C., Vink J. S., 2020, MNRAS, 499, 873
     .. [7] Kudritzki, R.-P., & Puls, J. 2000, ARA&A, 38, 613
 
@@ -804,7 +746,7 @@ def read_histogram_from_file(path):
                 continue
             arrays.append(np.fromstring(line.strip(), dtype=float, sep=","))
             if len(arrays) > 2:
-                raise Exception("More than two lines found in the document.")
+                raise RuntimeError("More than two lines found in the histogram document.")
 
     return arrays
 
@@ -813,7 +755,7 @@ def inspiral_timescale_from_separation(star1_mass, star2_mass,
                                        separation, eccentricity):
     """Compute the timescale of GW inspiral using the orbital separation.
 
-    Based on Peters 1964:
+    Based on [1]_:
         https://journals.aps.org/pr/abstract/10.1103/PhysRev.136.B1224
 
     Parameters
@@ -850,24 +792,15 @@ def inspiral_timescale_from_separation(star1_mass, star2_mass,
     ecc = eccentricity
 
     if m1 <= 0:
-        raise ValueError(
-            "Mass of star 1 is <= 0, which is not a physical value."
-        )
+        raise ValueError("Mass of star 1 is <= 0, which is not a physical value.")
     if m2 <= 0:
-        raise ValueError(
-            "Mass of star 2 is <= 0, which is not a physical value."
-        )
+        raise ValueError("Mass of star 2 is <= 0, which is not a physical value.")
     if a <= 0:
-        raise ValueError(
-            "Separation is <= 0, which is not a physical value.")
-
+        raise ValueError("Separation is <= 0, which is not a physical value.")
     if ecc < 0:
-        raise ValueError(
-            "Eccentricity is < 0, which is not a physical value.")
+        raise ValueError("Eccentricity is < 0, which is not a physical value.")
     if ecc >= 1:
-        raise ValueError(
-            "Eccentricity is >= 1, which is not a physical value."
-        )
+        raise ValueError("Eccentricity is >= 1, which is not a physical value.")
 
     # Eq. (5.9) in Peters 1964 Phys. Rev. 136, B1224
     beta = (64.0 / 5) * (G**3) * m1 * m2 * (m1 + m2) / (c**5)
@@ -901,7 +834,7 @@ def inspiral_timescale_from_orbital_period(star1_mass, star2_mass,
                                            orbital_period, eccentricity):
     """Compute the timescale of GW inspiral using the orbital period.
 
-    Based on Peters 1964:
+    Based on [1]_:
         https://journals.aps.org/pr/abstract/10.1103/PhysRev.136.B1224
 
     Parameters
@@ -1098,8 +1031,6 @@ def get_binary_state_and_event_and_mt_case(binary, interpolation_class=None,
             gamma2 = binary.star_2.center_gamma_history[i]
         except IndexError:  # this happens if compact object
             gamma2 = None
-        # prev_state currently unused, causing errors
-        # prev_state = binary.state_history[i-1] if i != 0 else MT_CASE_NO_RLO
 
     # get numerical MT cases
     mt_flag_1 = infer_mass_transfer_case(rl_overflow1, lg_mtransfer, state1,
@@ -1231,8 +1162,7 @@ def CO_radius(M, COtype):
         #   Stellar Interiors. Springer New York
         R = 2.9e8*(M)**(-1./3.)/const.Rsun
     else:
-        raise ValueError(
-            'COtype not in the list of valid options: "BH", "NS", "WD"')
+        raise ValueError('COtype not in the list of valid options: "BH", "NS", "WD"')
 
     return R
 
@@ -1359,6 +1289,18 @@ def flip_stars(binary):
         setattr(binary, i+'2_history', value1_history)
 
 
+def set_binary_to_failed(binary):
+    '''Set the properties of the binary to indicate that it has failed.
+
+    Parameters
+    ----------
+    binary : BinaryStar
+        The binary to set to failed.
+    '''
+    binary.state = "ERR"
+    binary.event = "FAILED"
+
+
 def infer_star_state(star_mass=None, surface_h1=None,
                      center_h1=None, center_he4=None, center_c12=None,
                      log_LH=None, log_LHe=None, log_Lnuc=None, star_CO=False):
@@ -1424,15 +1366,17 @@ def infer_mass_transfer_case(rl_relative_overflow,
     if rl_relative_overflow is None or lg_mtransfer_rate is None:
         return MT_CASE_NO_RLO
 
-    if (rl_relative_overflow <= RL_RELATIVE_OVERFLOW_THRESHOLD
-            or (lg_mtransfer_rate <= LG_MTRANSFER_RATE_THRESHOLD
-                and rl_relative_overflow < 0.0)):
+    if ((rl_relative_overflow <= RL_RELATIVE_OVERFLOW_THRESHOLD) and
+        ((lg_mtransfer_rate <= LG_MTRANSFER_RATE_THRESHOLD) and
+         (rl_relative_overflow < 0.0))):
         if verbose:
             print("checking rl_relative_overflow / lg_mtransfer_rate,",
                   rl_relative_overflow, lg_mtransfer_rate)
         return MT_CASE_NO_RLO
 
-    if "H-rich" in donor_state:
+    if "non_burning" in donor_state:
+        return MT_CASE_NONBURNING
+    elif "H-rich" in donor_state:
         if "Core_H_burning" in donor_state:
             return MT_CASE_A
         if ("Core_He_burning" in donor_state
@@ -1545,19 +1489,100 @@ def cumulative_mass_transfer_string(cumulative_integers):
             result += "no_RLO"
         else:
             if not added_case_word:
-                result += "case"
+                result += "case_"
                 added_case_word = True
             else:
                 result += "/"
-            result += MT_CASE_TO_STR[integer]
+            if integer in MT_CASE_TO_STR:
+                result += MT_CASE_TO_STR[integer] + '1' # from star 1
+            else:
+                result += MT_CASE_TO_STR[integer-10] + '2' # from star 2
     return result
 
 
-def cumulative_mass_transfer_flag(MT_cases):
-    """Get the cumulative MT string from a list of integer MT casses."""
+def cumulative_mass_transfer_flag(MT_cases, shift_cases=False):
+    """Get the cumulative MT string from a list of integer MT casses.
+    
+    Arguments
+    ----------
+    MT_cases: list of integers
+        A list of MT cases.
+    shift_cases: bool
+        Flag to shift non-physical cases like A1 after B1 will turn into B1.
+
+    Returns
+    -------
+    str
+        A string summarizing the mass transfer cases.
+    
+    """
+    if shift_cases:
+        case_1_min = MT_CASE_NO_RLO
+        case_1_max = MT_CASE_UNDETERMINED
+        case_2_min = case_1_min+10
+        case_2_max = case_1_max+10
+        corrected_MT_cases = []
+        for MT in MT_cases:
+            if (MT<=case_1_max):
+                # star 1 is donor
+                if (MT<case_1_min): # replace MT case
+                    corrected_MT_cases.append(case_1_min)
+                else:
+                    corrected_MT_cases.append(MT)
+                if (MT>case_1_min): # update earliest possible MT case
+                    case_1_min = MT
+            elif (MT<=case_2_max):
+                # star 2 is donor
+                if (MT<case_2_min): # replace MT case
+                    corrected_MT_cases.append(case_2_min)
+                else:
+                    corrected_MT_cases.append(MT)
+                if (MT>case_2_min): # update earliest possible MT case
+                    case_2_min = MT
+            else:
+                # unknown donor
+                warnings.warn("MT case with unknown donor: {}".format(MT))
+                corrected_MT_cases.append(MT)
+    else:
+        corrected_MT_cases = MT_cases.copy()
     return cumulative_mass_transfer_string(
         cumulative_mass_transfer_numeric(MT_cases)
     )
+
+
+def get_i_He_depl(history):
+    """Get the index of He depletion in the history
+    
+    Arguments
+    ---------
+    history: numpy-array
+        Stellar history from MESA
+    
+    Return
+    ------
+    int
+        index of He depletion (-1 if no He depletion is found)
+    """
+    if (('surface_h1' in history.dtype.names) and
+        ('center_h1' in history.dtype.names) and
+        ('center_he4' in history.dtype.names) and
+        ('center_c12' in history.dtype.names) and
+        ('log_LH' in history.dtype.names) and
+        ('log_LHe' in history.dtype.names) and
+        ('log_Lnuc' in history.dtype.names)):
+        n_history = len(history['center_he4'])
+        for i in range(n_history):
+            state = infer_star_state(surface_h1=history['surface_h1'][i],
+                                     center_h1=history['center_h1'][i],
+                                     center_he4=history['center_he4'][i],
+                                     center_c12=history['center_c12'][i],
+                                     log_LH=history['log_LH'][i],
+                                     log_LHe=history['log_LHe'][i],
+                                     log_Lnuc=history['log_Lnuc'][i],
+                                     star_CO=False)
+            if "Central_He_depleted" in state:
+                return i 
+    return -1
 
 
 def calculate_Patton20_values_at_He_depl(star):
@@ -1621,12 +1646,30 @@ def CEE_parameters_from_core_abundance_thresholds(star, verbose=False):
     None
 
     It updates the following values in the star object
-    co_core_mass_at_He_depletion: float
-        co_core_mass at He core depletion
-        (almost at the same time as carbon core ignition).
-    avg_c_in_c_core_at_He_depletion : float
-        avg carbon abundance inside CO_core_mass at He core depletion
-        (almost at the same time as carbon core ignition).
+    m_core_CE_1cent: float
+        core mass (using an element abundance of 1%)
+    m_core_CE_10cent: float
+        core mass (using an element abundance of 10%)
+    m_core_CE_30cent: float
+        core mass (using an element abundance of 30%)
+    m_core_CE_pure_He_star_10cent: float
+        core mass (using an element abundance of 10% in He)
+    r_core_CE_1cent: float
+        core radius (using an element abundance of 1%)
+    r_core_CE_10cent: float
+        core radius (using an element abundance of 10%)
+    r_core_CE_30cent: float
+        core radius (using an element abundance of 30%)
+    r_core_CE_pure_He_star_10cent: float
+        core radius (using an element abundance of 10% in He)
+    lambda_CE_1cent: float
+        lambda value (using an element abundance of 1%)
+    lambda_CE_10cent: float
+        lambda value (using an element abundance of 10%)
+    lambda_CE_30cent: float
+        lambda value (using an element abundance of 30%)
+    lambda_CE_pure_He_star_10cent: float
+        lambda value (using an element abundance of 10% in He)
 
     """
     mass = star.mass
@@ -1707,11 +1750,9 @@ def CEE_parameters_from_core_abundance_thresholds(star, verbose=False):
                 r_core_CE_10cent = radius
                 r_core_CE_30cent = radius
                 lambda_CE_pure_He_star_10cent = lambda_CE
-                lambda_CE_1cent = 1e99
-                lambda_CE_10cent = 1e99
-                # TODO: decide whether this should be None
-                #       for interpolation reasons
-                lambda_CE_30cent = 1e99
+                lambda_CE_1cent = np.nan
+                lambda_CE_10cent = np.nan
+                lambda_CE_30cent = np.nan
         else:   # CO-object or undetermined_evolutionary_state?
             m_core_CE_pure_He_star_10cent = np.nan
             m_core_CE_1cent = np.nan
@@ -1893,13 +1934,13 @@ def calculate_core_boundary(donor_mass,
         # lowest value) for your MESA profile, so starting from the surface.
         ind_core = np.argmin(donor_mass >= mc1_i)
     else:
-        raise ValueError(
-            "Not possible to calculate the core boundary of the donor in CE")
+        raise ValueError("Not possible to calculate the core boundary of the donor in CE")
+    
     return ind_core
 
 
 def period_evol_wind_loss(M_current, M_init, Mcomp, P_init):
-    """Calculate analytically the period widening due to wind mass loss.
+    """Calculate analytically the period widening due to wind mass loss [1]_.
 
     Parameters
     ----------
@@ -1919,7 +1960,7 @@ def period_evol_wind_loss(M_current, M_init, Mcomp, P_init):
     References
     ----------
     .. [1] Tauris, T. M., & van den Heuvel, E. 2006, Compact stellar X-ray
-           sources, 1, 623
+        sources, 1, 623
 
     """
     log10P = (-2.*np.log10(M_current+Mcomp)
@@ -1928,7 +1969,7 @@ def period_evol_wind_loss(M_current, M_init, Mcomp, P_init):
 
 
 def separation_evol_wind_loss(M_current, M_init, Mcomp, A_init):
-    """Calculate analytically the separation widening due to wind mass loss.
+    """Calculate analytically the separation widening due to wind mass loss [1]_.
 
     Parameters
     ----------
@@ -1948,7 +1989,7 @@ def separation_evol_wind_loss(M_current, M_init, Mcomp, A_init):
     References
     ----------
     .. [1] Tauris, T. M., & van den Heuvel, E. 2006, Compact stellar X-ray
-           sources, 1, 623.
+        sources, 1, 623.
 
     """
     log10A = (-np.log10(M_current+Mcomp)
@@ -2068,7 +2109,7 @@ def calculate_lambda_from_profile(
     profile : numpy.array
         Donor's star profile from MESA
     donor_star_state : string
-        The POSYDON evolutionary state of the donor star !!!!
+        The POSYDON evolutionary state of the donor star
     common_envelope_option_for_lambda : str
         Available options:
         * 'default_lambda': using for lambda the constant value of
@@ -2140,8 +2181,7 @@ def calculate_lambda_from_profile(
                                            CO_core_in_Hrich_star)
     if ind_core == 0:       # all star is a core, immediate successful ejection
         Ebind_i = 0.0
-        # TODO: decide whether this should be None for interpolation reasons
-        lambda_CE = 1.0e99
+        lambda_CE = np.nan
         mc1_i = m1_i
         rc1_i = radius1
     else:
@@ -2193,8 +2233,8 @@ def calculate_lambda_from_profile(
               m1_i, radius1, len(donor_mass), " vs ", ind_core, mc1_i, rc1_i)
         print("Ebind_i from profile ", Ebind_i)
         print("lambda_CE ", lambda_CE)
-    if not (lambda_CE > -tolerance):
-        raise Exception("CEE problem, lamda_CE has negative value.")
+    if not (lambda_CE > -tolerance) and not np.isnan(lambda_CE):
+        raise ValueError("lambda_CE has a negative value")
     return lambda_CE, mc1_i, rc1_i
 
 
@@ -2316,11 +2356,8 @@ def get_internal_energy_from_profile(common_envelope_option_for_lambda,
         # specific internal energy - if we would have used the "total_energy"
         # it would include (internal+potential+kinetic+rotation)
         specific_donor_internal_energy = profile["energy"]
-        # if (np.any(specific_donor_internal_energy < -tolerance)):#if negative
-        # raise ValueError("CEE problem calculating internal energy, "
-        #                  "giving negative values")
         if not (np.any(specific_donor_internal_energy > -tolerance)):
-            raise Exception("CEE problem calculating internal energy, "
+            raise ValueError("CEE problem calculating internal energy, "
                             "giving negative values.")
 
         specific_donor_H2recomb_energy = calculate_H2recombination_energy(
@@ -2331,7 +2368,7 @@ def get_internal_energy_from_profile(common_envelope_option_for_lambda,
         specific_donor_internal_energy = (
             specific_donor_internal_energy - specific_donor_H2recomb_energy)
         if not (np.any(specific_donor_internal_energy > -tolerance)):
-            raise Exception(
+            raise ValueError(
                 "CEE problem calculating recombination (and H2 recombination) "
                 "energy, remaining internal energy giving negative values.")
     elif ((common_envelope_option_for_lambda == "lambda_from_profile_"
@@ -2341,7 +2378,7 @@ def get_internal_energy_from_profile(common_envelope_option_for_lambda,
         # include (internal+potential+kinetic+rotation)
         specific_donor_internal_energy = profile["energy"]
         if not (np.any(specific_donor_internal_energy > -tolerance)):
-            raise Exception("CEE problem calculating internal energy, "
+            raise ValueError("CEE problem calculating internal energy, "
                             "giving negative values.")
 
         # we still need to subtract the H2 recombination energy which is
@@ -2356,12 +2393,8 @@ def get_internal_energy_from_profile(common_envelope_option_for_lambda,
             specific_donor_internal_energy
             - specific_donor_recomb_energy
             - specific_donor_H2recomb_energy)
-        # if (np.any(specific_donor_internal_energy < -tolerance)):#if negative
-        #     raise ValueError("CEE problem calculating recombination (and H2 "
-        #     "recombination) energy, remaining internal energy "
-        #     "giving negative values")
         if not (np.any(specific_donor_internal_energy > -tolerance)):
-            raise Exception(
+            raise ValueError(
                 "CEE problem calculating recombination (and H2 recombination) "
                 "energy, remaining internal energy giving negative values.")
     return specific_donor_internal_energy
@@ -2396,11 +2429,8 @@ def calculate_H2recombination_energy(profile, tolerance=0.001):
             35999.582894 * const.inversecm2erg / (2.0 * const.H_weight)
             * profile['x_mass_fraction_H'] * const.avo)
         # http://www.nat.vu.nl/~griessen/STofHinM/ChapIIHatomMoleculeGas.pdf
-        # if np.any(specific_donor_H2recomb_energy < -tolerance): # if negative
-        #     raise ValueError("CEE problem calculating H2 recombination "
-        #     "energy, giving negative values")
         if not (np.any(specific_donor_H2recomb_energy > -tolerance)):
-            raise Exception("CEE problem calculating H2 recombination energy, "
+            raise ValueError("CEE problem calculating H2 recombination energy, "
                             "giving negative values")
     # return specific_donor_H2recomb_energy * const.ev2erg
     return specific_donor_H2recomb_energy
@@ -2454,12 +2484,8 @@ def calculate_recombination_energy(profile, tolerance=0.001):
         specific_donor_recomb_energy = profile_recomb_energy(
             profile['x_mass_fraction_H'], profile['y_mass_fraction_He'],
             frac_HII, frac_HeII, frac_HeIII)
-        # if (np.any(specific_donor_recomb_energy < -tolerance)): # if negative
-        #     print(specific_donor_recomb_energy)
-        #     raise ValueError("CEE problem calculating recombination energy,"
-        #     " giving negative values")
         if not (np.any(specific_donor_recomb_energy > -tolerance)):
-            raise Exception("CEE problem calculating recombination energy, "
+            raise ValueError("CEE problem calculating recombination energy, "
                             "giving negative values.")
     return specific_donor_recomb_energy
 
@@ -2551,12 +2577,12 @@ def calculate_binding_energy(donor_mass, donor_radius, donor_dm,
         print("Grav_energy, donor_mass, donor_dm, donor_radius",
               Grav_energy, donor_mass, donor_dm, donor_radius)
         if not (Grav_energy < tolerance):
-            raise Exception("CEE problem calculating gravitational energy, "
+            raise ValueError("CEE problem calculating gravitational energy, "
                             "giving positive values.")
     # binding energy of the enevelope equals its gravitational energy +
     # an a_th fraction of its internal energy
     Ebind_i = Grav_energy + factor_internal_energy * U_i
-    if Ebind_i > -tolerance:
+    if not (Ebind_i < tolerance):
         warnings.warn("Ebind_i of the envelope is found positive")
     if verbose:
         print("integration of gravitational energy surface to core "
@@ -2564,6 +2590,68 @@ def calculate_binding_energy(donor_mass, donor_radius, donor_dm,
               "core [U_i] (0 if not taken into account) ", Grav_energy, U_i)
         print("Ebind = Grav_energy + factor_internal_energy*U_i  :  ", Ebind_i)
     return Ebind_i
+
+def calculate_Mejected_for_integrated_binding_energy(profile, Ebind_threshold,
+                             mc1_i, rc1_i,
+                             m1_i = 0.0, radius1 = 0.0,
+                             factor_internal_energy=1.0,tolerance=0.001
+                             ):
+    """Calculate the mass lost from the envelope for an energy budget of Ebind_threshold
+
+    Parameters
+    ----------
+    profile : numpy.array
+        Donor's star profile from MESA
+    Ebind_threshold : float
+        Orbital energy used from the spiral in to partial unbind the envelope. Positive
+        We integrate from surface to calcualte the partial loss of mass during CE that merges.
+    factor_internal_energy : float
+        The factor to multiply with internal energy to be taken into
+        account when we calculate the  binding energy of the enevelope
+    verbose : bool
+        In case we want information about the CEE  (the default is False).
+
+    Returns
+    -------
+    Ebind_i : float
+        The total binding energy of the envelope of the star
+
+    """
+
+    donor_mass, donor_radius, donor_dm = get_mass_radius_dm_from_profile(
+        profile, m1_i, radius1, tolerance)
+    specific_internal_energy = get_internal_energy_from_profile(
+        common_envelope_option_for_lambda = "lambda_from_profile_gravitational_plus_internal_minus_recombination",
+        profile = profile, tolerance = tolerance)
+
+    # Sum of gravitational energy from surface towards inside
+    Grav_energy = 0.0
+    # Sum of internal energy from surface towards.
+    U_energy = 0.0
+    # sum from surface to the core. Your threshold is in element [ind_threshold]
+    # in a normal MESA (and POSYDON) profile
+    i = 0
+    Ebind_so_far = 0.0 # the integration from surface going inwards of the binding energy (negative in principle)
+
+    while (abs(Ebind_so_far) < Ebind_threshold) and (i<len(donor_mass)):
+        Grav_energy_of_cell = (-const.standard_cgrav * donor_mass[i]
+                               * const.Msun * donor_dm[i]*const.Msun
+                               / (donor_radius[i]*const.Rsun))
+        # integral of gravitational energy as we go deeper into the star
+        Grav_energy = Grav_energy + Grav_energy_of_cell
+        U_energy = U_energy + specific_internal_energy[i]*donor_dm[i]*const.Msun
+        Ebind_so_far = Grav_energy + factor_internal_energy * U_energy
+        i=i+1
+    ind_threshold = i-1
+
+    if donor_mass[ind_threshold]< mc1_i or  donor_radius[ind_threshold]<rc1_i:
+        warnings.warn("partial mass ejected found more than the envelope mass")
+        print("M_ejected, M_envelope = ", donor_mass[0] - donor_mass[ind_threshold], donor_mass[0] - mc1_i)
+        donor_mass[ind_threshold] = mc1_i
+
+    M_ejected = donor_mass[0] - donor_mass[ind_threshold]
+
+    return M_ejected
 
 
 class PchipInterpolator2:
@@ -2588,3 +2676,47 @@ def convert_metallicity_to_string(Z):
     if not Z in valid_Z:
         raise ValueError(f'Metallicity {Z} not supported! Available metallicities in POSYDON v2 are {valid_Z}.')
     return f'{Z:1.1e}'.replace('.0','')
+
+def rotate(axis, angle):
+
+        """Generate rotation matrix to rotate a vector about an arbitrary axis 
+            by a given angle
+
+        Parameters
+        ----------
+        axis : array of length 3
+            Axis to rotate about
+        angle : float
+            Angle, in radians, through which to rotate about axis
+
+        Returns
+        -------
+        rotation_matrix : 3x3 array
+            Array such that rotation_matrix.dot(vector) rotates vector
+            about the given axis by the given angle
+
+        """
+
+        # normalize the axis vector
+        axis = axis / np.linalg.norm(axis)
+        
+
+        # calculate the cosine and sine of the angle
+        cos_theta = np.cos(angle)
+        sin_theta = np.sin(angle)
+        
+        # construct the rotation matrix
+        rotation_matrix = np.array([
+            [cos_theta + axis[0]**2 * (1 - cos_theta),
+            axis[0] * axis[1] * (1 - cos_theta) - axis[2] * sin_theta,
+            axis[0] * axis[2] * (1 - cos_theta) + axis[1] * sin_theta],
+            [axis[1] * axis[0] * (1 - cos_theta) + axis[2] * sin_theta,
+            cos_theta + axis[1]**2 * (1 - cos_theta),
+            axis[1] * axis[2] * (1 - cos_theta) - axis[0] * sin_theta],
+            [axis[2] * axis[0] * (1 - cos_theta) - axis[1] * sin_theta,
+            axis[2] * axis[1] * (1 - cos_theta) + axis[0] * sin_theta,
+            cos_theta + axis[2]**2 * (1 - cos_theta)]
+        ])
+        
+        
+        return rotation_matrix

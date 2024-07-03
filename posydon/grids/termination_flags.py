@@ -27,11 +27,14 @@ import warnings
 import numpy as np
 
 from posydon.utils.common_functions import (
-    infer_star_state, cumulative_mass_transfer_flag, infer_mass_transfer_case,
-    RL_RELATIVE_OVERFLOW_THRESHOLD, LG_MTRANSFER_RATE_THRESHOLD)
+    infer_star_state, cumulative_mass_transfer_flag, infer_mass_transfer_case
+)
+from posydon.utils.limits_thresholds import (
+    RL_RELATIVE_OVERFLOW_THRESHOLD, LG_MTRANSFER_RATE_THRESHOLD
+)
 from posydon.visualization.combine_TF import (
-    TF1_POOL_STABLE, TF1_POOL_UNSTABLE,
-    TF1_POOL_INITIAL_RLO, TF1_POOL_ERROR, TF2_POOL_NO_RLO
+    TF1_POOL_STABLE, TF1_POOL_UNSTABLE, TF1_POOL_INITIAL_RLO, TF1_POOL_ERROR,
+    TF2_POOL_NO_RLO, TF2_POOL_INITIAL_RLO
 )
 
 
@@ -55,6 +58,7 @@ def get_flag_from_MESA_output(MESA_log_path):
         `min_timestep_limit`, or `termination code:`, or `Terminate:`.
 
     """
+    termination_code = ''
     if MESA_log_path is not None and os.path.isfile(MESA_log_path):
         if MESA_log_path.endswith(".gz"):
             with gzip.open(MESA_log_path, "rt", errors='ignore') as log_file:
@@ -75,8 +79,15 @@ def get_flag_from_MESA_output(MESA_log_path):
             else:
                 truncate_at = len(
                     "termination code: " if has_term_code else "Terminate: ")
-                return line[truncate_at:].strip()
+                if min_timestep:
+                    # in case of "min_timestep_limit" allow to find another
+                    # termination code to overrule "min_timestep_limit"
+                    termination_code = line[truncate_at:].strip()
+                else:
+                    return line[truncate_at:].strip()
 
+    if len(termination_code)>0:
+        return termination_code
     return "reach cluster timelimit"
 
 
@@ -99,65 +110,76 @@ def get_mass_transfer_flag(binary_history, history1, history2,
     Returns
     -------
     flag_system_evolution_history : string
-        Possible flags are: "contact during MS", "no_RLOF", a cumulative MT
-        flag + "_from_star1/2", or in case of missing binary history data,
-        "undetermined_flag_mass_transfer_with_no_binary_history".
+        Possible flags are: "None", "initial_RLOF", "contact_during_MS", 
+        "no_RLOF", a cumulative MT flag, e.g, "case_A1/B1/A2" where the
+        index indicates the donor star.
 
     """
-    if mesa_flag is not None:
-        if "overflow from L2" in mesa_flag:
-            if "at ZAMS" in mesa_flag:
-                return "initial_RLOF"
-            else:
-                return "L2_RLOF"
-
-    if binary_history is None:
-        return "undetermined_flag_mass_transfer_with_no_binary_history"
+    if mesa_flag in TF1_POOL_ERROR:
+        return "None"
+        
+    if mesa_flag in TF1_POOL_INITIAL_RLO:
+        return "initial_RLOF"
 
     rel1 = binary_history["rl_relative_overflow_1"]
     rel2 = binary_history["rl_relative_overflow_2"]
     rate = binary_history["lg_mtransfer_rate"]
 
+    # warning: all changes in the following lines need to be aligned with the
+    # function posydon.utils.common_functions.infer_mass_transfer_case
     where_rl_rel_1 = rel1 > RL_RELATIVE_OVERFLOW_THRESHOLD
     where_rl_rel_2 = rel2 > RL_RELATIVE_OVERFLOW_THRESHOLD
+    where_rl_rel_1_dominates = rel1 >= rel2
+    where_rl_rel_2_dominates = rel1 < rel2
     if np.any(where_rl_rel_1 & where_rl_rel_2):
         return "contact_during_MS"
-
     where_transfer = rate > LG_MTRANSFER_RATE_THRESHOLD
-    where_rlof_1 = where_rl_rel_1 & where_transfer
-    where_rlof_2 = where_rl_rel_2 & where_transfer
+    where_rlof_1 = (where_rl_rel_1 | where_transfer) & where_rl_rel_1_dominates
+    where_rlof_2 = (where_rl_rel_2 | where_transfer) & where_rl_rel_2_dominates
 
+    if not np.any(where_rlof_1) and not np.any(where_rlof_2):
+        return "no_RLOF"
+    
+    MT = np.array([None]*len(where_rlof_1))
+    
     if np.any(where_rlof_1):
-        star = 1
         star_history = history1
         star_mass = binary_history["star_1_mass"]
         where_rlof = where_rlof_1
         rel_overflow = rel1
-    elif np.any(where_rlof_2):
-        star = 2
+        indices_with_rlo = np.arange(len(where_rlof))[where_rlof]
+        if not start_at_RLO and indices_with_rlo[0] == 0:
+            return "initial_RLOF"
+        mass_transfer_cases = []
+        for index in indices_with_rlo:
+            star_state = check_state_from_history(
+                history=star_history, mass=star_mass, model_index=index)
+            mt_case = infer_mass_transfer_case(
+                rl_relative_overflow=rel_overflow[index],
+                lg_mtransfer_rate=rate[index], donor_state=star_state)
+            mass_transfer_cases.append(mt_case)
+        MT[where_rlof] = mass_transfer_cases
+        
+    if np.any(where_rlof_2):
         star_history = history2
         star_mass = binary_history["star_2_mass"]
         where_rlof = where_rlof_2
         rel_overflow = rel2
-    else:
-        return "no_RLOF"
+        indices_with_rlo = np.arange(len(where_rlof))[where_rlof]
+        if not start_at_RLO and indices_with_rlo[0] == 0:
+            return "initial_RLOF"        
+        mass_transfer_cases = []
+        for index in indices_with_rlo:
+            star_state = check_state_from_history(
+                history=star_history, mass=star_mass, model_index=index)
+            mt_case = infer_mass_transfer_case(
+                rl_relative_overflow=rel_overflow[index],
+                lg_mtransfer_rate=rate[index], donor_state=star_state)
+            mass_transfer_cases.append(mt_case)
+        MT[where_rlof] = [t+10 for t in mass_transfer_cases] # shift by 10
 
-    indices_with_rlo = np.arange(len(where_rlof))[where_rlof]
-
-    if not start_at_RLO and indices_with_rlo[0] == 0:
-        return "initial_RLOF"
-
-    mass_transfer_cases = []
-    for index in indices_with_rlo:
-        star_state = check_state_from_history(
-            history=star_history, mass=star_mass, model_index=index)
-        mt_case = infer_mass_transfer_case(
-            rl_relative_overflow=rel_overflow[index],
-            lg_mtransfer_rate=rate[index], donor_state=star_state)
-        mass_transfer_cases.append(mt_case)
-
-    flag = cumulative_mass_transfer_flag(mass_transfer_cases)
-    return flag + "_from_star{}".format(star)
+    flag = cumulative_mass_transfer_flag([t for t in MT if t is not None], shift_cases=True)
+    return flag
 
 
 def check_state_from_history(history, mass, model_index=-1):
@@ -230,14 +252,17 @@ def get_flags_from_MESA_run(MESA_log_path, binary_history=None,
 
 def infer_interpolation_class(tf1, tf2):
     """Use the first two termination flags to infer the interpolation class."""
-    if tf1 in TF1_POOL_INITIAL_RLO:
+    if ((tf1 in TF1_POOL_INITIAL_RLO) or (tf2 in TF2_POOL_INITIAL_RLO)):
         return "initial_MT"
     if tf1 in TF1_POOL_ERROR:
         return "not_converged"
     if tf2 in TF2_POOL_NO_RLO:
         return "no_MT"
     if tf1 in TF1_POOL_STABLE:
-        return "stable_MT"
+        if 'case' in tf2 and '1' in tf2 and '2' in tf2:
+            return "stable_reverse_MT"
+        else:
+            return "stable_MT"
     if tf1 in TF1_POOL_UNSTABLE:
         return "unstable_MT"
     return "unknown"

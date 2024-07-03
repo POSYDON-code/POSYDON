@@ -9,12 +9,14 @@ from scipy import integrate
 import posydon.utils.constants as const
 
 from posydon.utils.gridutils import find_index_nearest_neighbour
+from posydon.utils.limits_thresholds import NEUTRINO_MASS_LOSS_UPPER_LIMIT
 
 __authors__ = [
     "Simone Bavera <Simone.Bavera@unige.ch>",
     "Emmanouil Zapartas <ezapartas@gmail.com>",
     "Scott Coughlin <scottcoughlin2014@u.northwestern.edu>",
     "Devina Misra <devina.misra@unige.ch>",
+    "Matthias Kruckow <Matthias.Kruckow@unige.ch>",
 ]
 
 
@@ -249,7 +251,7 @@ def do_core_collapse_BH(star,
                         mass_collapsing,
                         mass_central_BH=2.51,
                         neutrino_mass_loss=None,
-                        max_neutrino_mass_loss=0.5,
+                        max_neutrino_mass_loss=NEUTRINO_MASS_LOSS_UPPER_LIMIT,
                         verbose=False):
     """Do the core collapse of a star object with MESA profile provided.
 
@@ -335,9 +337,10 @@ def do_core_collapse_BH(star,
     if len(enclosed_mass) == 0:
         arr = np.array([np.nan])
         return [
-            M_BH / Mo, a_BH, arr, arr, arr, arr, arr, arr,
-            arr, arr, arr, np.array([0.]), arr, arr, arr, arr,
-            arr, arr
+            M_BH / Mo, a_BH, np.nan, np.nan
+            #M_BH / Mo, a_BH, arr, arr, arr, arr, arr, arr,
+            #arr, arr, arr, np.array([0.]), arr, arr, arr, arr,
+            #arr, arr
         ]
 
     # shell's specific angular momentum at equator

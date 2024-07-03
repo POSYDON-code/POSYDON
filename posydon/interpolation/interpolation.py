@@ -122,7 +122,9 @@ class psyTrackInterp:
             distance, index = self.model.kneighbors(Xtn)
             closest_run = self.grid[self.valid_ind[index[0, 0]]]
             tflags = [closest_run.final_values['interpolation_class'],
-                      closest_run.final_values['termination_flag_2']]
+                      closest_run.final_values['termination_flag_2'],
+                      closest_run.final_values['mt_history'],
+                      ]
             dist = np.array([binary.star_1.mass
                              - closest_run.initial_values['star_1_mass'],
                              binary.star_2.mass
@@ -195,8 +197,7 @@ class psyTrackInterp:
 
         """
         if not (X.shape[1] == self.n_in) or not (len(norms) == self.n_in):
-            raise ValueError(
-                "The number of columns in X must match the length of norms.")
+            raise ValueError("The number of columns in X must match the length of norms.")
 
         self.scalers = []
         Xn = np.empty_like(X)

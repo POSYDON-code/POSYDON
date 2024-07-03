@@ -9,6 +9,10 @@ __authors__ = [
 
 import numpy as np
 import warnings
+from posydon.utils.limits_thresholds import (
+    RL_RELATIVE_OVERFLOW_THRESHOLD, LG_MTRANSFER_RATE_THRESHOLD,
+    THRESHOLD_CENTRAL_ABUNDANCE, THRESHOLD_CENTRAL_ABUNDANCE_LOOSE_C
+)
 
 
 def scrub(tables, models, ages):
@@ -98,14 +102,14 @@ def keep_after_RLO(bh, h1, h2):
     bh_colnames = bh.dtype.names
 
     if "lg_mtransfer_rate" in bh_colnames:
-        rate = bh["lg_mtransfer_rate"] >= -12
+        rate = bh["lg_mtransfer_rate"] >= LG_MTRANSFER_RATE_THRESHOLD
     else:
         raise ValueError("No `lg_mtransfer_rate` in binary history.")
 
-    rlo1 = (bh["rl_relative_overflow_1"] >= -0.05
+    rlo1 = (bh["rl_relative_overflow_1"] >= RL_RELATIVE_OVERFLOW_THRESHOLD
             if "rl_relative_overflow_1" in bh_colnames else None)
 
-    rlo2 = (bh["rl_relative_overflow_2"] >= -0.05
+    rlo2 = (bh["rl_relative_overflow_2"] >= RL_RELATIVE_OVERFLOW_THRESHOLD
             if "rl_relative_overflow_2" in bh_colnames else None)
 
     if rlo1 is None:
@@ -118,11 +122,12 @@ def keep_after_RLO(bh, h1, h2):
     if rlo_1_or_2 is None:
         raise ValueError("No `rl_relative_overflow` in any star history.")
 
+    # This needs to be aligned with run_binary_extras.f, there it is less
+    # restrictive, which is fine
     conditions_met = rlo_1_or_2 & rate
     where_conditions_met = np.where(conditions_met)[0]
 
     if len(where_conditions_met) == 0:
-        warnings.warn("No RLO overflow for this binary.")
         return None
 
     first_index = where_conditions_met[0]
@@ -138,6 +143,8 @@ def keep_after_RLO(bh, h1, h2):
     if len(new_ages) > 1 and min(np.diff(new_ages)) == 0.0:
         min_dt = min(np.diff(new_bh["age"]))
         new_age_to_remove = (age_to_remove // min_dt) * min_dt
+        if new_age_to_remove==age_to_remove:
+            new_age_to_remove -= min_dt
         relative_error = abs(new_age_to_remove - age_to_remove) / age_to_remove
         if relative_error > 0.01:
             raise Exception("Numerical precision fix too aggressive.")
@@ -155,7 +162,9 @@ def keep_after_RLO(bh, h1, h2):
     return new_bh, new_h1, new_h2
 
 
-def keep_till_central_abundance_He_C(bh, h1, h2, Ystop=1.0e-5, XCstop=1.0):
+def keep_till_central_abundance_He_C(bh, h1, h2,
+    Ystop=THRESHOLD_CENTRAL_ABUNDANCE,
+    XCstop=THRESHOLD_CENTRAL_ABUNDANCE_LOOSE_C):
     """Scrub histories to stop when central helium and carbon abundance are
     below the stopping criteria.
 
@@ -196,7 +205,7 @@ def keep_till_central_abundance_He_C(bh, h1, h2, Ystop=1.0e-5, XCstop=1.0):
     else:
         depleted1 = False
     h2_colnames = h2.dtype.names
-    if ("center_he4" in h1_colnames) and ("center_c12" in h1_colnames):
+    if ("center_he4" in h2_colnames) and ("center_c12" in h2_colnames):
         if (len(h2["center_he4"])>0) and (len(h2["center_c12"])>0):
             depleted2 = ((h2["center_he4"][-1]<Ystop) and (h2["center_c12"][-1]<XCstop))
         else:
@@ -247,6 +256,14 @@ def keep_till_central_abundance_He_C(bh, h1, h2, Ystop=1.0e-5, XCstop=1.0):
             last_index = where_conditions_met2[0]
             newTF1 = 'Secondary got stopped before central carbon depletion'
     
+    # include the point above the stopping criteria so that the last inferred
+    # stellar state will be XXX_Central_He_depleted. This is essential to find
+    # the core mass at He depletion with the calculate_Patton20_values_at_He_depl
+    # method used to calculate the core collapse properties with the 
+    # Patton&Sukhbold mechanism.
+    if len(bh) >= last_index+2:
+        last_index += 1
+        
     new_bh = bh[:last_index]
     new_h1 = h1[:last_index]
     new_h2 = h2[:last_index]

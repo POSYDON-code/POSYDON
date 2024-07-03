@@ -12,9 +12,9 @@ __authors__ = [
     "Jeffrey Andrews <jeffrey.andrews@northwestern.edu>",
 ]
 
-
 import os
 import numpy as np
+import pandas as pd
 import time
 from scipy.integrate import solve_ivp
 from scipy.interpolate import PchipInterpolator
@@ -24,7 +24,7 @@ from scipy.optimize import root
 from posydon.utils.data_download import PATH_TO_POSYDON_DATA
 from posydon.binary_evol.binarystar import BINARYPROPERTIES
 from posydon.binary_evol.singlestar import STARPROPERTIES
-from posydon.interpolation import GRIDInterpolator
+from posydon.interpolation.interpolation import GRIDInterpolator
 from posydon.interpolation.data_scaling import DataScaler
 from posydon.utils.common_functions import (
     bondi_hoyle,
@@ -32,11 +32,13 @@ from posydon.utils.common_functions import (
     roche_lobe_radius,
     check_state_of_star,
     PchipInterpolator2,
-    convert_metallicity_to_string
+    convert_metallicity_to_string,
+    set_binary_to_failed,
 )
 from posydon.binary_evol.flow_chart import (STAR_STATES_CC, STAR_STATES_CO)
 import posydon.utils.constants as const
-
+from posydon.utils.posydonerror import NumericalError
+from posydon.utils.posydonerror import MatchingError,POSYDONError
 
 LIST_ACCEPTABLE_STATES_FOR_HMS = ["H-rich_Core_H_burning"]
 
@@ -122,7 +124,6 @@ DEFAULT_TRANSLATION = {
     "profile": None,
     "metallicity": None,
     "spin": "spin_parameter",
-    "log_total_angular_momentum": "log_total_angular_momentum",
     "conv_env_top_mass": "conv_env_top_mass",
     "conv_env_bot_mass": "conv_env_bot_mass",
     "conv_env_top_radius": "conv_env_top_radius",
@@ -716,7 +717,7 @@ class detached_step:
                       MESA_labels, rs)
             for i in MESA_labels:
                 if i not in self.root_keys:
-                    raise Exception("Expected matching parameter not "
+                    raise AttributeError("Expected matching parameter not "
                                     "added in the single star grid options.")
 
             scales = []
@@ -819,7 +820,7 @@ class detached_step:
                               MESA_labels, rs)
                     for i in MESA_labels:
                         if i not in self.root_keys:
-                            raise Exception("Expected matching parameter not "
+                            raise AttributeError("Expected matching parameter not "
                                             "added in the single star grid options.")
 
                     scales = []
@@ -834,11 +835,15 @@ class detached_step:
                             colscalers=colscalers, scales=scales)
 
                     x0 = get_root0(
-                        MESA_label, posydon_attribute, htrack, rs=rs)
+                        MESA_labels, posydon_attributes, htrack, rs=rs)
 
                     # bnds = ([m_min_H, m_max_H], [0, None])
-                    sol = minimize(sq_diff_function, x0,
+                    try:
+                        sol = minimize(sq_diff_function, x0,
                                    method="TNC", bounds=bnds)
+                    except:
+                        raise NumericalError("SciPy numerical differentiation occured outside boundary "
+                                             "while matching to single star track")
 
             # if still not acceptable matching, we fail the system:
             if (np.abs(sol.fun) > tolerance_matching_integration_hard
@@ -889,7 +894,9 @@ class detached_step:
                 f'{star.he_core_mass:.3f}',
                 f'{star.center_c12:.4f}'
             )
+        if self.verbose == 2:
             for rel_diff_parameter in ["mass", "log_R", "center_he4", "surface_he4", "surface_h1", "he_core_mass", "center_c12"]:
+                #setattr(star,'star_state_for_diff_matching',  = 
                 if np.abs(sol.fun) is not None and np.abs(sol.fun) < tolerance_matching_integration_hard \
                     and getattr(star, rel_diff_parameter) is not None and ~np.isnan(getattr(star, rel_diff_parameter)):
                     rel_diff = self.get_track_val(rel_diff_parameter, htrack, *sol.x) - getattr(star, rel_diff_parameter)
@@ -910,13 +917,21 @@ class detached_step:
         KEYS = self.KEYS
         KEYS_POSITIVE = self.KEYS_POSITIVE
 
-        if binary.star_1 is None or binary.star_1.state == "massless_remnant":
-            self.non_existent_companion = 1
-        if binary.star_2 is None or binary.star_2.state == "massless_remnant":
-            self.non_existent_companion = 2
+        companion_1_exists = (binary.star_1 is not None
+                              and binary.star_1.state != "massless_remnant")
+        companion_2_exists = (binary.star_2 is not None
+                              and binary.star_2.state != "massless_remnant")
+
+        if companion_1_exists:
+            if companion_2_exists:                  # to evolve a binary star
+                self.non_existent_companion = 0
+            else:                                   # star1 is a single star
+                self.non_existent_companion = 2
         else:
-            # detached step of an actual binary
-            self.non_existent_companion = 0
+            if companion_2_exists:                  # star2 is a single star
+                self.non_existent_companion = 1
+            else:                                   # no star in the system
+                raise POSYDONError("There is no star to evolve. Who summoned me?")
 
         if self.non_existent_companion == 0: #no isolated evolution, detached step of an actual binary
             # the primary in a real binary is potential compact object, or the more evolved star
@@ -980,24 +995,10 @@ class detached_step:
                 secondary.htrack = False
                 primary.htrack = False
                 primary.co = False
-            elif (binary.star_1.state in STAR_STATES_CO
-                    and binary.star_2.state
-                    in 'massless_remnant'):
-                binary.state += " Thorne–Żytkow object"
-                if self.verbose or self.verbose == 1:
-                    print("Formation of Thorne–Żytkow object, nothing to do further")
-                return
-            elif (binary.star_2.state in STAR_STATES_CO
-                    and binary.star_1.state
-                    in 'massless_remnant'):
-                binary.state += " Thorne–Żytkow object"
-                if self.verbose or self.verbose == 1:
-                    print("Formation of Thorne–Żytkow object, nothing to do further")
-                return
             else:
-                raise Exception("States not recognized!")
+                raise ValueError("States not recognized!")
 
-        # non-existent, far away, star
+        # star 1 is a massless remnant, only star 2 exists
         elif self.non_existent_companion == 1:
             # we force primary.co=True for all isolated evolution,
             # where the secondary is the one evolving one
@@ -1009,9 +1010,13 @@ class detached_step:
                 secondary.htrack = True
             elif (binary.star_2.state in LIST_ACCEPTABLE_STATES_FOR_HeStar):
                 secondary.htrack = False
+            elif (binary.star_2.state in STAR_STATES_CO):
+                # only a compact object left
+                return
             else:
-                raise Exception("State not recognized!")
+                raise ValueError("State not recognized!")
 
+        # star 2 is a massless remnant, only star 1 exists
         elif self.non_existent_companion == 2:
             primary = binary.star_2
             primary.co = True
@@ -1021,10 +1026,12 @@ class detached_step:
                 secondary.htrack = True
             elif (binary.star_1.state in LIST_ACCEPTABLE_STATES_FOR_HeStar):
                 secondary.htrack = False
+            elif (binary.star_1.state in STAR_STATES_CO):
+                return
             else:
-                raise Exception("State not recognized!")
+                raise ValueError("State not recognized!")
         else:
-            raise Exception("Non existent companion has not a recognized value!")
+            raise POSYDONError("Non existent companion has not a recognized value!")
 
         def get_star_data(binary, star1, star2, htrack,
                           co, copy_prev_m0=None, copy_prev_t0=None):
@@ -1051,7 +1058,7 @@ class detached_step:
 
             with np.errstate(all="ignore"):
                 # get the initial m0, t0 track
-                if binary.event == 'ZAMS':
+                if binary.event == 'ZAMS' or binary.event == 'redirect_from_ZAMS':
                     # ZAMS stars in wide (non-mass exchaging binaries) that are
                     # directed to detached step at birth
                     m0, t0 = star1.mass, 0
@@ -1065,19 +1072,20 @@ class detached_step:
                         print("Matching duration: "
                               f"{t_after_matching-t_before_matching:.6g}")
 
+            if pd.isna(m0) or pd.isna(t0):
+                return None, None, None
+
             if htrack:
                 self.grid = self.grid_Hrich
-            elif not htrack:
+            else:
                 self.grid = self.grid_strippedHe
 
-            get_track = self.grid.get
+            # check if m0 is in the grid
+            if m0 < self.grid.grid_mass.min() or m0 > self.grid.grid_mass.max():
+                set_binary_to_failed(binary)
+                raise MatchingError(f"The mass {m0} is out of the single star grid range and cannot be matched to a track.")
 
-            if np.isnan(m0) or np.isnan(t0):
-                #    binary.event = "END"
-                #    binary.state += " (GridMatchingFailed)"
-                #    if self.verbose:
-                #        print("Failed matching")
-                return None, None, None
+            get_track = self.grid.get
 
             max_time = binary.properties.max_simulation_time
             assert max_time > 0.0, "max_time is non-positive"
@@ -1150,7 +1158,7 @@ class detached_step:
             interp1d_pri = get_star_data(
                 binary, primary, secondary, primary.htrack, False)[0]
         else:
-            raise Exception("During matching primary is either should be either normal or not normal. `non_existent_companion` should be zero.")
+            raise MatchingError("During matching primary is either should be either normal or not normal. `non_existent_companion` should be zero.")
 
 
         if interp1d_sec is None or interp1d_pri is None:
@@ -1333,7 +1341,7 @@ class detached_step:
                         # EDIT: We assume POSYDON surf_avg_omega is provided in
                         # rad/yr already.
                     else:
-                        if is_secondary == True:
+                        if is_secondary:
                             radius_to_be_used = interp1d_sec["R"](interp1d_sec["t0"])
                             mass_to_be_used = interp1d_sec["mass"](interp1d_sec["t0"])
                         else:
@@ -1368,7 +1376,7 @@ class detached_step:
             # TODO: put it out of its misery here!
         else:
             if not (max_time - binary.time > 0.0):
-                raise Exception("max_time is lower than the current time. "
+                raise ValueError("max_time is lower than the current time. "
                                 "Evolution of the detached binary will go to "
                                 "lower times.")
             with np.errstate(all="ignore"):
@@ -1901,7 +1909,7 @@ class detached_step:
                         get_star_final_values(primary, primary.htrack, m02)
                         get_star_profile(primary, primary.htrack, m02)
                     if primary.mass != secondary.mass:
-                        raise ValueError(
+                        raise POSYDONError(
                             "Both stars are found to be ready for collapse "
                             "(i.e. end of their life) during the detached "
                             "step, but do not have the same mass")
@@ -1980,14 +1988,14 @@ def diffeq(
 ):
     """Diff. equation describing the orbital evolution of a detached binary.
 
-    The equation handles wind mass-loss [1_], tidal [2_], gravational [3_]
-    effects and magnetic braking [4_]. It also handles the change of the
-    secondary's stellar spin due to its change of moment of intertia and due to
-    mass-loss from its spinning surface. It is assumed that the mass loss is
-    fully non-conservative. Magnetic braking is fully applied to secondary
-    stars with mass less than 1.3 Msun and fully off for stars with mass larger
-    then 1.5 Msun. The effect of magnetic braking falls linearly for stars with
-    mass between 1.3 Msun and 1.5 Msun.
+    The equation handles wind mass-loss [1]_, tidal [2]_, gravational [3]_
+    effects and magnetic braking [4]_, [5]_, [6]_, [7]_, [8]_. It also handles
+    the change of the secondary's stellar spin due to its change of moment of
+    intertia and due to mass-loss from its spinning surface. It is assumed that
+    the mass loss is fully non-conservative. Magnetic braking is fully applied
+    to secondary stars with mass less than 1.3 Msun and fully off for stars
+    with mass larger then 1.5 Msun. The effect of magnetic braking falls
+    linearly for stars with mass between 1.3 Msun and 1.5 Msun.
 
     TODO: exaplin new features (e.g., double COs)
 
@@ -2051,10 +2059,10 @@ def diffeq(
         Default: True.
     magnetic_braking_mode: String
         A string corresponding to the desired magnetic braking prescription.
-            -- RVJ83: Rappaport, Verbunt, & Joss 1983
-            -- M15: Matt et al. 2015
-            -- G18: Garraffo et al. 2018
-            -- CARB: Van & Ivanova 2019
+            - RVJ83 : Rappaport, Verbunt, & Joss 1983 [4]_
+            - M15 : Matt et al. 2015 [5]_
+            - G18 : Garraffo et al. 2018 [6]_
+            - CARB : Van & Ivanova 2019 [7]_
     do_stellar_evolution_and_spin_from_winds: Boolean
         If True, take into account change of star spin due to change of its
         moment of inertia during its evolution and due to spin angular momentum
@@ -2432,7 +2440,7 @@ def diffeq(
             # parameters are given in units of [Msol], [Rsol], [yr] and so that
             # dOmega_mb/dt is in units of [yr^-2].
             dOmega_mb_sec = (
-                -3.8e30 * (const.rsol**2 / const.secyer)
+                -3.8e-30 * (const.rsol**2 / const.secyer)
                 * M_sec
                 * R_sec**4
                 * Omega_sec**3
@@ -2440,7 +2448,7 @@ def diffeq(
                 * np.clip((1.5 - M_sec) / (1.5 - 1.3), 0, 1)
             )
             dOmega_mb_pri = (
-                -3.8e30 * (const.rsol**2 / const.secyer)
+                -3.8e-30 * (const.rsol**2 / const.secyer)
                 * M_pri
                 * R_pri**4
                 * Omega_pri**3
