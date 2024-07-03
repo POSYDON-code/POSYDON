@@ -151,7 +151,8 @@ class SingleStar:
             self.SN_type = None
         if not hasattr(self, 'm_disk_accreted'):
             self.m_disk_accreted = None
-
+        if not hasattr(self, 'm_disk_radiated'):
+            self.m_disk_radiated = None
         if not hasattr(self, 'diff_mass'):
             self.diff_mass = None
         if not hasattr(self, 'diff_log_R'):
