@@ -896,7 +896,7 @@ class detached_step:
             )
         if self.verbose == 2:
             for rel_diff_parameter in ["mass", "log_R", "center_he4", "surface_he4", "surface_h1", "he_core_mass", "center_c12"]:
-                #setattr(star,'star_state_for_diff_matching',  = 
+                setattr(star,'star_state_for_diff_matching', getattr(star,state))
                 if np.abs(sol.fun) is not None and np.abs(sol.fun) < tolerance_matching_integration_hard \
                     and getattr(star, rel_diff_parameter) is not None and ~np.isnan(getattr(star, rel_diff_parameter)):
                     rel_diff = self.get_track_val(rel_diff_parameter, htrack, *sol.x) - getattr(star, rel_diff_parameter)
@@ -1144,6 +1144,8 @@ class detached_step:
         # get the matched data of two stars, respectively
         interp1d_sec, m0, t0 = get_star_data(
             binary, secondary, primary, secondary.htrack, co=False)
+        if self.verbose == 2:
+            setattr(secondary,'binary_state_for_diff_matching', getattr(binary,state))
 
         primary_not_normal = (primary.co) or (self.non_existent_companion in [1,2])
         primary_normal = (not primary.co) and self.non_existent_companion == 0
@@ -1157,6 +1159,8 @@ class detached_step:
         elif primary_normal:
             interp1d_pri = get_star_data(
                 binary, primary, secondary, primary.htrack, False)[0]
+            if self.verbose == 2:
+                setattr(primary,'binary_state_for_diff_matching', getattr(binary,state))
         else:
             raise MatchingError("During matching primary is either should be either normal or not normal. `non_existent_companion` should be zero.")
 

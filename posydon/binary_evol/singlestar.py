@@ -166,6 +166,12 @@ class SingleStar:
             self.diff_he_core_mass = None
         if not hasattr(self, 'diff_center_c12'):
             self.diff_center_c12 = None
+        if not hasattr(self, 'star_state_for_diff_matching'):
+            self.star_state_for_diff_matching = None
+        if not hasattr(self, 'binary_state_for_diff_matching'):
+            self.binary_state_for_diff_matching = None
+
+
 
 
         # the following quantities are updated in mesa_step.py
