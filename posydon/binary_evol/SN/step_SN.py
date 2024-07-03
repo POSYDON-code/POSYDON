@@ -76,7 +76,7 @@ MODEL = {
     "mechanism": 'Patton&Sukhbold20-engine',
     "engine": 'N20',
     "PISN": "Marchant+19",
-    "ECSN": "Podsiadlowksi+04",
+    "ECSN": "Podsiadlowski+04",
     "conserve_hydrogen_envelope" : False,
     "max_neutrino_mass_loss": NEUTRINO_MASS_LOSS_UPPER_LIMIT,
     "max_NS_mass": STATE_NS_STARMASS_UPPER_LIMIT,
@@ -162,6 +162,8 @@ class StepSN(object):
         supernova.
         Avialable options:
 
+        - 'Podsiadlowski+04': Determines the electron capture supernova in
+        terms of the He core mass at pre-supernova, taking limits from [7]_.
         - 'Tauris+15': Determines the electron capture supernova in terms
         of the CO core mass at pre-supernova, taking the limits from [4]_.
 
@@ -239,6 +241,10 @@ class StepSN(object):
     .. [6] Couch, S. M., Warren, M. L., & O’Connor, E. P. 2020, ApJ, 890, 127.
         Simulating Turbulence-aided Neutrino-driven Core-collapse Supernova
         Explosions in One Dimension
+
+    .. [7] Podsiadlowski, P., Langer, N., Poelarends, A. J. T., Rappaport, S.,
+        Heger, A., and Pfahl, E. 2004, ApJ, 612, 1044. The Effects of Binary
+        Evolution on the Dynamics of Core Collapse and Neutron Star Kicks
 
     """
 
@@ -975,10 +981,10 @@ class StepSN(object):
                     "domain of electron-capture SN and Fe core-collapse SN."
                 )
 
-        elif self.ECSN == 'Podsiadlowksi+04':
+        elif self.ECSN == 'Podsiadlowski+04':
             # Limits on He core mass progenitors of ECSN, default on cosmic
-            min_M_He_ECSN = 1.4  # Msun from Podsiadlowksi+2004
-            max_M_He_ECSN = 2.5  # Msun from Podsiadlowksi+2004
+            min_M_He_ECSN = 1.4  # Msun from Podsiadlowski+2004
+            max_M_He_ECSN = 2.5  # Msun from Podsiadlowski+2004
 
             if m_He_core < min_M_He_ECSN:
                 # The birth of a white dwarf is assumed
@@ -1119,7 +1125,7 @@ class StepSN(object):
             m_proto = 1.1
 
             if star.SN_type == "ECSN":
-                if self.ECSN == 'Podsiadlowksi+04':
+                if self.ECSN == 'Podsiadlowski+04':
                     m_proto = 1.38
                 else:
                     m_proto = m_core
@@ -1158,7 +1164,7 @@ class StepSN(object):
                 m_proto = 1.6
 
             if star.SN_type == "ECSN":
-                if self.ECSN == 'Podsiadlowksi+04':
+                if self.ECSN == 'Podsiadlowski+04':
                     m_proto = 1.38
                 else:
                     m_proto = m_core
@@ -1192,7 +1198,7 @@ class StepSN(object):
         elif self.mechanism == self.Sukhbold16_engines:
 
             if star.SN_type == "ECSN":
-                if self.ECSN == 'Podsiadlowksi+04':
+                if self.ECSN == 'Podsiadlowski+04':
                     m_proto = 1.38
                 else:
                     m_proto = m_core
@@ -1209,7 +1215,7 @@ class StepSN(object):
         elif self.mechanism == self.Couch20_engines:
 
             if star.SN_type == "ECSN":
-                if self.ECSN == 'Podsiadlowksi+04':
+                if self.ECSN == 'Podsiadlowski+04':
                     m_proto = 1.38
                 else:
                     m_proto = m_core
@@ -1223,7 +1229,7 @@ class StepSN(object):
 
         elif self.mechanism == self.Patton20_engines:
             if star.SN_type == "ECSN":
-                if self.ECSN == 'Podsiadlowksi+04':
+                if self.ECSN == 'Podsiadlowski+04':
                     m_proto = 1.38
                 else:
                     m_proto = m_core
