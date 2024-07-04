@@ -148,6 +148,8 @@ SCALAR_NAMES_DTYPES = {
     'spin_orbit_tilt_second_SN': 'float64',
     'M4': 'float64',
     'mu4': 'float64',
+    'avg_c_in_c_core_at_He_depletion' : 'float64',
+    'co_core_mass_at_He_depletion' : 'float64',
 }
 
 
