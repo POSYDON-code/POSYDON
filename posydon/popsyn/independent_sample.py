@@ -112,6 +112,11 @@ def generate_orbital_periods(primary_masses,
         orbital_periods = np.where(primary_masses <= 15.0,
                                    orbital_periods_M_lt_15,
                                    orbital_periods_M_gt_15)
+        #TODO orbital for primary mass< current limit set orbital period = 1e8
+        orbital_periods = np.where(primary_masses <= 5.55,
+                                   1e8,
+                                   orbital_periods)
+        
     else:
         raise ValueError("You must provide an allowed orbital period scheme.")
 
@@ -387,11 +392,13 @@ def binary_fraction_value(binary_fraction_const=1,binary_fraction_scheme = 'cons
         binary_fraction = binary_fraction_const
     
     elif binary_fraction_scheme == 'Moe_17':
+        binary_fraction = 0.09 + 0.63*np.log10(m1)
+        """
         if m1 is None: 
             raise ValueError("There was not a primary mass provided in the inputs. Unable to return a binary fraction")
-        elif m1 < 0.8:
-            raise ValueError("The scheme doesn't support values of m1 less than 0.8")
-        elif m1 <= 2  and m1 >= 0.8:
+        #elif m1 < 0.8:
+         #   raise ValueError("The scheme doesn't support values of m1 less than 0.8")
+        elif m1 <= 2:#  and m1 >= 0.8:
             binary_fraction = 0.4
         elif m1 <= 5 and m1 > 2:
             binary_fraction = 0.59
@@ -403,6 +410,7 @@ def binary_fraction_value(binary_fraction_const=1,binary_fraction_scheme = 'cons
             binary_fraction = 0.94
         else: 
             raise ValueError(f'There primary mass provided {m1} is not supported by the Moe_17 scheme.')
+            """
     else: 
         pass
     return binary_fraction

@@ -186,7 +186,7 @@ for s1 in STAR_STATES_HE_RICH:
 
 for s1 in STAR_STATES_ZAMS:
     for s2 in STAR_STATES_ZAMS:
-        POSYDON_FLOW_CHART[(s1, s2, 'low_mass_binaries', 'ZAMS')] = 'step_detached'#low_mass_binaries
+        POSYDON_FLOW_CHART[(s1, s2, 'low_mass_binary', 'ZAMS')] = 'step_low_mass_binary'#low_mass_binaries
 
 # Binaries that go to common envelope
 

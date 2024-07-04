@@ -42,10 +42,10 @@ class LowMassBinaryStep(detached_step):
         path=PATH_TO_POSYDON_DATA,
         #dt=None,
         #n_o_steps_history=None,
-        do_wind_loss=True,
-        do_tides=True,
-        do_gravitational_radiation=True,
-        do_magnetic_braking=True,
+        do_wind_loss=False,
+        do_tides=False,
+        do_gravitational_radiation=False,
+        do_magnetic_braking=False,
         *args, **kwargs):
         super().__init__(
         grid_name_Hrich=grid_name_Hrich,
@@ -59,6 +59,7 @@ class LowMassBinaryStep(detached_step):
         do_magnetic_braking=do_magnetic_braking,
         *args,
         **kwargs)
+        print('Inside init!')
 
 
 
@@ -70,9 +71,7 @@ class LowMassBinaryStep(detached_step):
 
         """
 
-        self.initialize_low_mass_binary_orbit(binary)
-
-        if binary.state == 'detached':
+        if binary.state == 'low_mass_binary':
             pass
         else:
             raise ValueError("System should be in a detached state!")
@@ -80,10 +79,6 @@ class LowMassBinaryStep(detached_step):
         super().__call__(binary)
 
 
-    def initialize_isolated_binary_orbit(self,binary):
-        # I give values to the orbital parameters so that the detached step will not complain
-        binary.orbital_period = 10.**99
-        binary.eccentricity = 0.0
-        binary.separation = orbital_separation_from_period(binary.orbital_period, binary.star_1.mass, binary.star_2.mass)
+  
 
 

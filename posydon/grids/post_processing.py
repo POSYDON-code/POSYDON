@@ -184,7 +184,9 @@ def post_process_grid(grid, index=None, star_2_CO=True, MODELS=MODELS,
                     star, star_CO=False))
                 # core masses at he depletion
                 with warnings.catch_warnings(record=True) as w:
-                    calculate_Patton20_values_at_He_depl(star)
+                    if ((star.avg_c_in_c_core_at_He_depletion is None) or
+                        (star.co_core_mass_at_He_depletion is None)):
+                        calculate_Patton20_values_at_He_depl(star)
                     if len(w) > 0:
                         print(w[0].message)
                         print(f'The warning was raised by {grid.MESA_dirs[i]} '
@@ -288,7 +290,7 @@ def post_process_grid(grid, index=None, star_2_CO=True, MODELS=MODELS,
                                 'appending NONE compact object '
                                 'properties!')
                     continue
-
+                    
                 if star.state in STAR_STATES_CC:
                     if verbose:
                         print_CC_quantities(EXTRA_COLUMNS, star)
