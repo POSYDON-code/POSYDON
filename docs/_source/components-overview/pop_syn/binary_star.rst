@@ -34,8 +34,37 @@ The binary properties are defined as follows
    `eccentricity`, "Orbital eccentricity."
    `V_sys`, "Velocity of the centre of mass of the binary [Vx, Vy, Vz] in km/s."
    `mass_transfer_case`, "Mass transfer case, see MT case options."
+   `lg_mtransfer_rate`, "the logarithm of the mass transfer rate in Msun/yr."
+   `step_names`, "Names of the steps in the evolution."
+   `step_times`, 'Time spend in the steps in the evolution.'
+   `rl_relative_overflow_1`, "The relative overflow of the Roche Lobe of star 1."
+   `rl_relative_overflow_2`, "The relative overflow of the Roche Lobe of star 2."
+   `trap_radius`, "The trapping radius of the binary in R_sun."
+   `acc_radius`, "The accretion radius of the binary in R_sun."
+   `t_sync_rad_1`, "?"
+   `t_sync_conv_1`, "?"
+   `t_sync_rad_2`, "?"
+   `t_sync_conv_2`, "?"
+   `nearest_neighbour_distance`, "The distance to the nearest neighbour for NN interpolation."
 
-TODO: add missing properties
+
+Additional scalar properties can be added during the evolution.
+
+Since they do not change over time, they are not stored in the history.
+These can requested and will be stored in the output oneline (See the :ref:`Synthetic Populatiohn<synthetic-population>` and :ref:`Population Parameter Guide<pop-params-guide>` for more information).
+
+.. csv-table:: Additional columns
+  :header:  "Properties", "Descriptions"
+  :widths: 50, 150
+  'interp_class_HMS_HMS', "Description of interp_class_HMS_HMS."
+  'interp_class_CO_HMS_RLO', "Description of interp_class_CO_HMS_RLO."
+  'interp_class_CO_HeMS', "Description of interp_class_CO_HeMS."
+  'interp_class_CO_HeMS_RLO', "Description of interp_class_CO_HeMS_RLO."
+  'mt_history_HMS_HMS', "Description of mt_history_HMS_HMS."
+  'mt_history_CO_HMS_RLO', "Description of mt_history_CO_HMS_RLO."
+  'mt_history_CO_HeMS', "Description of mt_history_CO_HeMS."
+  'mt_history_CO_HeMS_RLO', "Description of mt_history_CO_HeMS_RLO."
+
 
 State options
 ~~~~~~~~~~~~~
