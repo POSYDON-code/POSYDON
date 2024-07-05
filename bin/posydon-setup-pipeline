@@ -14,10 +14,13 @@ import ast
 import shutil
 import pandas as pd
 import numpy as np
+import warnings
 from pprint import pformat
 from posydon.popsyn.io import parse_inifile
 from posydon.utils.common_functions import PATH_TO_POSYDON
 from posydon.utils.gridutils import get_new_grid_name
+from posydon.utils.posydonwarning import (OverwriteWarning,
+                                          ReplaceValueWarning)
 
 # this data processing pipeline was designed assuming POSYDON v2 data structure
 '''
@@ -286,8 +289,9 @@ class PostProcessingPipeline:
                             and attribute in\
                             self.pipeline_kwargs[last_step].keys()):
                             # infer missing attribute from last step
-                            print(f"Copy {attribute} from {last_step} to "
-                                  f"{step_number}")
+                            warnings.warn(f"Copy {attribute} from {last_step} "
+                                          f"to {step_number}",
+                                          ReplaceValueWarning)
                             self.pipeline_kwargs[step_number][attribute] = \
                                     self.pipeline_kwargs[last_step][attribute]
                         else:
@@ -372,6 +376,7 @@ class PostProcessingPipeline:
         if 'VERBOSE' in setup_kwargs.keys():
             VERBOSE = setup_kwargs['VERBOSE']
         else:
+            warnings.warn("VERBOSE not given, use False", ReplaceValueWarning)
             VERBOSE = False
 
         if VERBOSE:
@@ -384,6 +389,8 @@ class PostProcessingPipeline:
         plot_dirs = []
         pipeline_steps = []
         
+        if os.path.exists('run_pipeline.sh'):
+            warnings.warn('Replace run_pipeline.sh', OverwriteWarning)
         # create a runfile script
         with open('run_pipeline.sh', 'w') as runfile:
             if runfile.writable():
@@ -488,6 +495,8 @@ class PostProcessingPipeline:
                 if 'PATH' in setup_kwargs.keys():
                     PATH = setup_kwargs['PATH']
                 else:
+                    warnings.warn("PATH not given, use current directory",
+                                  ReplaceValueWarning)
                     PATH = '.'
                 df['pipeline_files'] = previously_created_files +\
                                        list(set(plot_dirs))
@@ -527,6 +536,8 @@ class PostProcessingPipeline:
         if 'PATH' in setup_kwargs.keys():
             logs_path = os.path.join(setup_kwargs['PATH'], 'logs')
         else:
+            warnings.warn("PATH not given, use current directory",
+                          ReplaceValueWarning)
             logs_path = os.path.join('.', 'logs')
         # create logs in working dir to store all slurm outputs
         if not os.path.isdir(logs_path):
@@ -556,6 +567,8 @@ class PostProcessingPipeline:
             if 'PATH' in setup_kwargs.keys():
                 data_path = os.path.join(setup_kwargs['PATH'], 'POSYDON_data')
             else:
+                warnings.warn("PATH not given, use current directory",
+                              ReplaceValueWarning)
                 data_path = os.path.join('.', 'POSYDON_data')
             # create main directory for the POSYDON data
             if not os.path.isdir(data_path):
@@ -627,6 +640,8 @@ def slurm_job(job_name,
     if not os.path.isfile(path_to_csv_file):
         raise FileNotFoundError(f"Missing csv file: {path_to_csv_file}")
     
+    if os.path.exists(f'{job_name}.slurm'):
+        warnings.warn(f'Replace {job_name}.slurm', OverwriteWarning)
     # create slurm file
     with open(f'{job_name}.slurm', 'w') as f:
         # get STEPID
@@ -637,6 +652,8 @@ def slurm_job(job_name,
         elif job_name == 'rerun':
             STEPID = 'R'
         else:
+            warnings.warn("No step ID detected, leave it empty",
+                          ReplaceValueWarning)
             STEPID = ''
         # write slurm file content
         f.write("#!/bin/bash\n")
@@ -1333,6 +1350,9 @@ def create_cleanup_slurm_job(job_name,
         ((job_name == 'pipeline') and (GROUP is not None))):
         if not os.path.isdir(PATH):
             raise NotADirectoryError(f"PATH={PATH} not found.")
+        if os.path.exists(f'{job_name}_cleanup.slurm'):
+            warnings.warn(f'Replace {job_name}_cleanup.slurm',
+                          OverwriteWarning)
         with open(f'{job_name}_cleanup.slurm', 'w') as f:
             # write slurm file content
             f.write("#!/bin/bash\n")
