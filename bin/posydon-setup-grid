@@ -8,9 +8,12 @@ import shutil
 import pandas
 import subprocess
 import glob
+import warnings
 
 from posydon.utils import configfile
 from posydon.utils import gridutils as utils
+from posydon.utils.posydonwarning import (OverwriteWarning,
+                                          ReplaceValueWarning)
 from posydon.grids.psygrid import PSyGrid
 from posydon.active_learning.psy_cris.utils import parse_inifile
 
@@ -78,8 +81,8 @@ def find_inlist_from_scenario(source, gitcommit, system_type):
                                      )
             (clone, err) = proc.communicate()
         else:
-            print("git repository is already there, using that")
-
+            warnings.warn("git repository is already there, using that",
+                          OverwriteWarning)
 
         inlists_dir = '{0}/.posydon_mesa_inlists'.format(os.environ['HOME'])
         branch = gitcommit.split('-')[0]
@@ -107,7 +110,8 @@ def find_inlist_from_scenario(source, gitcommit, system_type):
                                      )
             (clone, err) = proc.communicate()
         else:
-            print("git repository is already there, using that")
+            warnings.warn("git repository is already there, using that",
+                          OverwriteWarning)
 
         inlists_dir = '{0}/.user_mesa_inlists'.format(os.environ['HOME'])
         branch = gitcommit.split('-')[0]
@@ -967,7 +971,8 @@ if __name__ == '__main__':
     print("WE ARE USING THE EXTRA FILE FROM TYPE {0}".format(extras_files_types[-1]))
     for k in mesa_extras.keys():
         if ('binary_extras' in k) and (extras_files_types[-1] not in k):
-            print("Section mesa_extras value {0} is being set to None".format(k))
+            warnings.warn("Section mesa_extras value {0} is being".format(k)+\
+                          " set to None", ReplaceValueWarning)
             mesa_extras[k] = None
 
     binary_exe, star1_exe, star2_exe = make_executables(mesa_extras=mesa_extras,
