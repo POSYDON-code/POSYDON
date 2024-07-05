@@ -34,8 +34,8 @@ def textsize(filesize, floatfmt=".3g", base=1024, threshold=1000):
     unit_values = [base**i for i in range(len(units))]
 
     if filesize < 0:
-        return "-" + textsize(
-            -filesize, floatfmt=floatfmt, base=base)
+        return "-" + textsize(-filesize, floatfmt=floatfmt, base=base,
+                              threshold=threshold)
 
     for unit, unit_value in zip(units, unit_values):
         if filesize < unit_value * threshold:
