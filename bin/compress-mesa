@@ -5,6 +5,9 @@ import shutil
 import random
 import argparse
 from tqdm import tqdm
+from posydon.utils.posydonwarning import IncompletnessWarning
+import warnings
+
 
 
 def textsize(filesize, floatfmt=".3g", base=1024, threshold=1000):
@@ -192,9 +195,11 @@ def compress_dir(args):
         print(f"Original size {textsize(og_size)} | "\
               f"Compressed size {textsize(new_size)}")
     if len(to_remove)>0:
-        print("Warning: still files to remove:", to_remove)
+    	warnings.warn("Still files to remove: {}".format(to_remove),
+    	              IncompletnessWarning)
     if len(to_compress)>0:
-        print("Warning: still files to compress:", to_compress)
+    	warnings.warn("Still files to compress: {}".format(to_compress),
+    	              IncompletnessWarning)
 
 
 if __name__ == "__main__":
