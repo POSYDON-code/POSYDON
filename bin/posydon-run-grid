@@ -17,6 +17,7 @@ import numpy as np
 import pandas
 
 from posydon.utils import gridutils as utils
+from posydon.utils.posydonwarning import OverwriteWarning
 from posydon.grids.psygrid import PSyGrid
 from posydon.active_learning.psy_cris.utils import parse_inifile
 from collections import ChainMap
@@ -205,8 +206,8 @@ def create_working_directory(grid_param_dict, args):
 
     ############# check for existance of precomputed model
     if os.path.isdir(work_dir):
-        print ("folder "+ work_dir +" exists, removing and rerunning")
-        sys.stdout.flush()
+        warnings.warn("Directory {} exists, removing".format(work_dir) +\
+                      " and rerunning", OverwriteWarning)
         shutil.rmtree(work_dir)
 
     ############# create work directory and change into it
@@ -416,8 +417,8 @@ def move_mesa_output(work_dir, final_dir, copyinstead=False):
     """
     if not work_dir == final_dir:
         if os.path.isdir(final_dir):
-            print ("folder "+ final_dir +" exists, replacing with new data")
-            sys.stdout.flush()
+            warnings.warn("Directory {} exists,".format(work_dir) +\
+                          " replacing with new data", OverwriteWarning)
             shutil.rmtree(final_dir)
         if copyinstead:
             print ("copy data from " + work_dir+ " to "+ final_dir)

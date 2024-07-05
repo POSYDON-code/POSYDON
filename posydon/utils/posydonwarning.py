@@ -50,6 +50,11 @@ class InterpolationWarning(POSYDONWarning):
     def __init__(self, message):
         super().__init__(message)
 
+class OverwriteWarning(POSYDONWarning):
+    """Warning that a data will get overwritten."""
+    def __init__(self, message):
+        super().__init__(message)
+
 class ReplaceValueWarning(POSYDONWarning):
     """Warning that a value got replaced."""
     def __init__(self, message):
