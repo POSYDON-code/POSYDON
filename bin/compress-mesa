@@ -5,9 +5,8 @@ import shutil
 import random
 import argparse
 from tqdm import tqdm
-from posydon.utils.posydonwarning import IncompletnessWarning
+from posydon.utils.posydonwarning import IncompletenessWarning
 import warnings
-
 
 
 def textsize(filesize, floatfmt=".3g", base=1024, threshold=1000):

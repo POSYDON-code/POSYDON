@@ -40,8 +40,8 @@ class EvolutionWarning(POSYDONWarning):
     def __init__(self, message):
         super().__init__(message)
 
-class IncompletnessWarning(POSYDONWarning):
-    """Warnings when not all tasked could be done."""
+class IncompletenessWarning(POSYDONWarning):
+    """Warnings when not all tasks could be done."""
     def __init__(self, message):
         super().__init__(message)
 
