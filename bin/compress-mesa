@@ -195,10 +195,10 @@ def compress_dir(args):
               f"Compressed size {textsize(new_size)}")
     if len(to_remove)>0:
     	warnings.warn("Still files to remove: {}".format(to_remove),
-    	              IncompletnessWarning)
+    	              IncompletenessWarning)
     if len(to_compress)>0:
     	warnings.warn("Still files to compress: {}".format(to_compress),
-    	              IncompletnessWarning)
+    	              IncompletenessWarning)
 
 
 if __name__ == "__main__":
