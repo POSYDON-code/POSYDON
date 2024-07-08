@@ -541,7 +541,7 @@ DEFAULT_MARKERS_COLORS_LEGENDS = {
         'Unstable case Bn':
             ['D', 1, list_of_colors[1], 'Unstable RLOF during postMS'],
         'Unstable case BBA':
-            ['D', 2, list_of_colors[0], 
+            ['D', 2, list_of_colors[0],
              'Unstable RLOF during stripped He star'],
         'Unstable case BBB':
             ['D', 2, list_of_colors[0],
@@ -549,7 +549,7 @@ DEFAULT_MARKERS_COLORS_LEGENDS = {
         'Unstable case Cn':
             ['D', 1, list_of_colors[1], 'Unstable RLOF during postMS'],
         'Unstable case CBA':
-            ['D', 2, list_of_colors[0], 
+            ['D', 2, list_of_colors[0],
              'Unstable RLOF during stripped He star'],
         'Unstable case CBB':
             ['D', 2, list_of_colors[0],
@@ -742,7 +742,7 @@ DEFAULT_MARKERS_COLORS_LEGENDS = {
 
 def add_flag_to_MARKERS_COLORS_LEGENDS(MARKERS_COLORS_LEGENDS, flag):
     """Add not pre defined stuff to DEFAULT_MARKERS_COLORS_LEGENDS.
-    
+
     Parameters
     ----------
     MARKERS_COLORS_LEGENDS : dict of lists
@@ -750,7 +750,7 @@ def add_flag_to_MARKERS_COLORS_LEGENDS(MARKERS_COLORS_LEGENDS, flag):
         and legend text for each flag.
     flag : str
         The flag itself.
-            
+
     """
     if flag not in MARKERS_COLORS_LEGENDS.keys():
         if ('case_' in flag): # unknown MT flag
@@ -1048,6 +1048,10 @@ for i in range(1, 11):
                                               r'$\log_{10}(M_\mathrm{disk, acc} / M_\odot)$']
     DEFAULT_LABELS[f'MODEL{i:02d}_m_disk_radiated'] = [r'$M_\mathrm{disk, rad} \, [M_\odot]$',
                                               r'$\log_{10}(M_\mathrm{disk, rad} / M_\odot)$']
+    DEFAULT_LABELS[f'MODEL{i:02d}_M4'] = [r'$M_4 [= m/M_\odot]_{s=4}$',
+                                              r'$\log_{10}(M_4)$']
+    DEFAULT_LABELS[f'MODEL{i:02d}_mu4'] = [r'$\mu_4 \, [(dm/M_\odot)/(dr/1000\mathrm{km/s})]_{s=4}$',
+                                              r'$\log_{10}(\mu_4)$']
 
 
 # pre defined plottings
@@ -1116,6 +1120,14 @@ PRE_SET_PLOTS = {
     'S1_MODEL_DEFAULT_m_disk_radiated' : {
         'zmin' : 0.,
         'zmax' : 3.
+    },
+    'S1_MODEL_DEFAULT_M4' : {
+        'zmin' : 1.,
+        'zmax' : 3.
+    },
+    'S1_MODEL_DEFAULT_mu4' : {
+        'zmin' : 0.0,
+        'zmax' : .25
     },
     # interpolator stuff
     'INTERP_ERROR_DEFAULT' : {
