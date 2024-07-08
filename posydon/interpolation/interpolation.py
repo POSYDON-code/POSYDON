@@ -465,12 +465,12 @@ class GRIDInterpolator():
             'S1_r_core_CE_30cent',
             'S1_r_core_CE_pure_He_star_10cent'
         )
-        
+
         # core collapse keys
         keys = []
         for MODEL_NAME in MODELS.keys():
             for key in ['CO_type', 'SN_type', 'f_fb', 'mass', 'spin',
-                        'm_disk_accreted', 'm_disk_radiated']:
+                        'm_disk_accreted', 'm_disk_radiated', 'M4', 'mu4']:
                 keys.append('S1_' + MODEL_NAME + '_' + key )
         self.final_keys += tuple(keys)
 

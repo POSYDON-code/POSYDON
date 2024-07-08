@@ -44,20 +44,20 @@ def assign_core_collapse_quantities_none(EXTRA_COLUMNS, star_i, MODEL_NAME=None)
             EXTRA_COLUMNS[f'S{star_i}_{MODEL_NAME}_{quantity}'].append(None)
 
 def print_CC_quantities(EXTRA_COLUMNS, star, MODEL_NAME=None):
-    format_string = "{:<50} {:<33} {:12} {:10} {:15} {:10} {:25} {:25}"
-    format_val_preSN = "{:<50} {:<33} {:12} {:10} {:7.2f} {:12.2f} {:25} {:25}"
-    format_val = "{:<50} {:<33} {:12} {:1.2f} {:13.2f} {:12.2f} {:20.2f} {:20.2f}"
+    format_string = "{:<50} {:<33} {:12} {:10} {:15} {:10} {:25} {:25} {:25} {:25}"
+    format_val_preSN = "{:<50} {:<33} {:12} {:10} {:7.2f} {:12.2f} {:25} {:25}  {:25} {:25}"
+    format_val = "{:<50} {:<33} {:12} {:1.2f} {:13.2f} {:12.2f} {:20.2f} {:20.2f}  {:20.2f} {:20.2f}"
     if MODEL_NAME is None:
         print('')
         print(format_string.format(
             "mechanism", "state", "SN type", "f_fb",
             "mass [Msun]", "spin", "m_disk_accreted [Msun]",
-            "m_disk_radiated [Msun]"))
+            "m_disk_radiated [Msun]", "M4 [m/Msun]", "mu4 [(dm/Msun)/(dr/1000km)]"))
         print('')
         try:
             print(format_val_preSN.format(
                 'PRE SN STAR', star.state, '',
-                '', star.mass, star.spin, '', ''))
+                '', star.mass, star.spin, '', '', '', ''))
         except Exception as e:
             warnings.warn('Failed to print star values!')
             print('Warning in preSN: ', e)
@@ -71,7 +71,7 @@ def print_CC_quantities(EXTRA_COLUMNS, star, MODEL_NAME=None):
             print(format_val.format(MODEL_NAME,
                     star.state, star.SN_type, star.f_fb,
                     star.mass, spin, star.m_disk_accreted,
-                    star.m_disk_radiated))
+                    star.m_disk_radiated, star.M4, star.mu4))
         except Exception as e:
             warnings.warn('Failed to print star values!')
             print('Warning in', MODEL_NAME, ': ', e)
