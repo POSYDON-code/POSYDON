@@ -68,10 +68,18 @@ def print_CC_quantities(EXTRA_COLUMNS, star, MODEL_NAME=None):
                 spin = np.nan
             else:
                 spin = star.spin
+            if star.M4==None:
+                M4 = np.nan
+            else:
+                M4 = star.M4
+            if star.mu4==None:
+                mu4 = np.nan
+            else:
+                mu4 = star.mu4
             print(format_val.format(MODEL_NAME,
                     star.state, star.SN_type, star.f_fb,
                     star.mass, spin, star.m_disk_accreted,
-                    star.m_disk_radiated, star.M4, star.mu4))
+                    star.m_disk_radiated, M4, mu4))
         except Exception as e:
             warnings.warn('Failed to print star values!')
             print('Warning in', MODEL_NAME, ': ', e)

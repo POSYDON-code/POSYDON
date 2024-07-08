@@ -135,6 +135,8 @@ EXTRA_BINARY_COLUMNS_DTYPES = {
 EXTRA_STAR_COLUMNS_DTYPES = {
     'm_disk_radiated': 'float64',
     'm_disk_accreted': 'float64',
+    'avg_c_in_c_core_at_He_depletion' : 'float64',
+    'co_core_mass_at_He_depletion' : 'float64',
 }
 
 SCALAR_NAMES_DTYPES = {
@@ -148,8 +150,6 @@ SCALAR_NAMES_DTYPES = {
     'spin_orbit_tilt_second_SN': 'float64',
     'M4': 'float64',
     'mu4': 'float64',
-    'avg_c_in_c_core_at_He_depletion' : 'float64',
-    'co_core_mass_at_He_depletion' : 'float64',
 }
 
 
