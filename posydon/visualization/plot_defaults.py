@@ -1048,6 +1048,13 @@ for i in range(1, 11):
                                               r'$\log_{10}(M_\mathrm{disk, acc} / M_\odot)$']
     DEFAULT_LABELS[f'MODEL{i:02d}_m_disk_radiated'] = [r'$M_\mathrm{disk, rad} \, [M_\odot]$',
                                               r'$\log_{10}(M_\mathrm{disk, rad} / M_\odot)$']
+    DEFAULT_LABELS[f'MODEL{i:02d}_h1_mass_ej'] = [r'$M_\mathrm{H,ej} \, [M_\odot]$',
+                                              r'$\log_{10}(M_\mathrm{H,ej} / M_\odot)$']
+    DEFAULT_LABELS[f'MODEL{i:02d}_he4_mass_ej'] = [r'$M_\mathrm{He,ej} \, [M_\odot]$',
+                                              r'$\log_{10}(M_\mathrm{He,ej} / M_\odot)$']
+    DEFAULT_LABELS[f'MODEL{i:02d}_o16_mass_ej'] = [r'$M_\mathrm{O,ej} \, [M_\odot]$',
+                                              r'$\log_{10}(M_\mathrm{O,ej} / M_\odot)$']
+
 
 
 # pre defined plottings
@@ -1116,6 +1123,18 @@ PRE_SET_PLOTS = {
     'S1_MODEL_DEFAULT_m_disk_radiated' : {
         'zmin' : 0.,
         'zmax' : 3.
+    },
+    'S1_MODEL_DEFAULT_h1_mass_ej' : {
+        'zmin' : 0.,
+        'zmax' : 20
+    },
+    'S1_MODEL_DEFAULT_he4_mass_ej' : {
+        'zmin' : 0.,
+        'zmax' : 10
+    },
+    'S1_MODEL_DEFAULT_o16_mass_ej' : {
+        'zmin' : 0.,
+        'zmax' : 5.
     },
     # interpolator stuff
     'INTERP_ERROR_DEFAULT' : {
