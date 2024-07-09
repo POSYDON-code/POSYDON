@@ -588,7 +588,7 @@ class StepSN(object):
                     # ie WD is no SN
                     # 1. Check if SN_type and star state match                    
                     # Non-matching SN_type and star state
-                    if not check_SN_CO_match(star):
+                    if not check_SN_CO_match(star.SN_type, star.state):
                         warnings.warn(f'{MODEL_NAME_SEL}: The SN_type '
                                       'does not match the predicted CO! '
                                       'Recalculating the SN_type and CO.', ClassificationWarning)
@@ -606,7 +606,7 @@ class StepSN(object):
                                                             pre_SN_star.mass)[-1]
 
                         # check if the new SN_type matches new SN_type
-                        if not check_SN_CO_match(star):
+                        if not check_SN_CO_match(star.SN_type, star.state):
                             # still doesn't match
                             warnings.warn('The SN_type still does not match the predicted CO. '
                                           'Now forcing the SN_type and CO to match.', ClassificationWarning)
