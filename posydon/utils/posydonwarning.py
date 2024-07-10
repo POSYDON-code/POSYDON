@@ -39,6 +39,11 @@ class EvolutionWarning(POSYDONWarning):
     the evolution is able to continue (binary did not fail)."""
     def __init__(self, message):
         super().__init__(message)
+        
+class InappropriateValueWarning(POSYDONWarning):
+    """Warnings that a strange value is used."""
+    def __init__(self, message):
+        super().__init__(message)
 
 class IncompletenessWarning(POSYDONWarning):
     """Warnings when not all tasks could be done."""

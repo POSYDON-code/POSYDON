@@ -44,6 +44,7 @@ __authors__ = [
 import numpy as np
 import warnings
 import sys
+from posydon.utils.posydonwarning import InappropriateValueWarning
 
 
 sys.setrecursionlimit(100000)
@@ -101,7 +102,7 @@ class TrackDownsampler:
         self.rescale()
 
     def say(self, message):
-        """Speak to the standard output, only if `.verbose` is False."""
+        """Speak to the standard output, only if `.verbose` is True."""
         if self.verbose:
             print(message)
 
@@ -133,7 +134,8 @@ class TrackDownsampler:
         if max_err < 0.0 or not np.isfinite(max_err):
             raise ValueError("`max_err` must be a non-negative finite number.")
         if max_err >= 1.0:
-            warnings.warn("`max_err` >= 1.0 is like disabling downsampling.")
+            warnings.warn("`max_err` >= 1.0 is like disabling downsampling.",
+                          InappropriateValueWarning)
 
         keep = np.zeros_like(t, dtype=bool)  # initially keep no row
 
