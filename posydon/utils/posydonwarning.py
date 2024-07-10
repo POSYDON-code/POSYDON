@@ -55,6 +55,11 @@ class InterpolationWarning(POSYDONWarning):
     def __init__(self, message):
         super().__init__(message)
 
+class MissingFilesWarning(POSYDONWarning):
+    """Warnings related to missing files."""
+    def __init__(self, message):
+        super().__init__(message)
+
 class OverwriteWarning(POSYDONWarning):
     """Warning that a data will get overwritten."""
     def __init__(self, message):
