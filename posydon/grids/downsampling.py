@@ -42,9 +42,8 @@ __authors__ = [
 
 
 import numpy as np
-import warnings
 import sys
-from posydon.utils.posydonwarning import InappropriateValueWarning
+from posydon.utils.posydonwarning import Pwarn
 
 
 sys.setrecursionlimit(100000)
@@ -134,8 +133,8 @@ class TrackDownsampler:
         if max_err < 0.0 or not np.isfinite(max_err):
             raise ValueError("`max_err` must be a non-negative finite number.")
         if max_err >= 1.0:
-            warnings.warn("`max_err` >= 1.0 is like disabling downsampling.",
-                          InappropriateValueWarning)
+            Pwarn("`max_err` >= 1.0 is like disabling downsampling.",
+                  "InappropriateValueWarning")
 
         keep = np.zeros_like(t, dtype=bool)  # initially keep no row
 

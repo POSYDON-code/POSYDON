@@ -13,7 +13,7 @@ import warnings
 
 class POSYDONWarning(Warning):
     """General POSYDON warning class."""
-    def __init__(self, message):
+    def __init__(self, message=''):
         self.message = message
     
     def __str__(self):
@@ -21,59 +21,87 @@ class POSYDONWarning(Warning):
 
 class ApproximationWarning(POSYDONWarning):
     """Warning that a physical approximation was used during binary evolution."""
-    def __init__(self, message):
+    def __init__(self, message=''):
         super().__init__(message)
 
 class BinaryParsingWarning(POSYDONWarning):
     """Warnings related to parsing of binaries."""
-    def __init__(self, message):
+    def __init__(self, message=''):
         super().__init__(message)
 
 class ClassificationWarning(POSYDONWarning):
     """Warnings related to classification during binary evolution."""
-    def __init__(self, message):
+    def __init__(self, message=''):
         super().__init__(message)
 
 class EvolutionWarning(POSYDONWarning):
     """Warning that something unexpeted occurred during the binary evolution, but
     the evolution is able to continue (binary did not fail)."""
-    def __init__(self, message):
+    def __init__(self, message=''):
         super().__init__(message)
         
 class InappropriateValueWarning(POSYDONWarning):
     """Warnings that a strange value is used."""
-    def __init__(self, message):
+    def __init__(self, message=''):
         super().__init__(message)
 
 class IncompletenessWarning(POSYDONWarning):
     """Warnings when not all tasks could be done."""
-    def __init__(self, message):
+    def __init__(self, message=''):
         super().__init__(message)
 
 class InterpolationWarning(POSYDONWarning):
     """Warnings related to interpolation during binary evolution."""
-    def __init__(self, message):
+    def __init__(self, message=''):
         super().__init__(message)
 
 class MissingFilesWarning(POSYDONWarning):
     """Warnings related to missing files."""
-    def __init__(self, message):
+    def __init__(self, message=''):
         super().__init__(message)
 
 class OverwriteWarning(POSYDONWarning):
     """Warning that a data will get overwritten."""
-    def __init__(self, message):
+    def __init__(self, message=''):
         super().__init__(message)
 
 class ReplaceValueWarning(POSYDONWarning):
     """Warning that a value got replaced."""
-    def __init__(self, message):
+    def __init__(self, message=''):
         super().__init__(message)
 
 class UnsupportedModelWarning(POSYDONWarning):
     """Warnings related to selecting a model that is not supported."""
-    def __init__(self, message):
+    def __init__(self, message=''):
         super().__init__(message)
+
+
+def Pwarn(message, category=None, stacklevel=2, **kwargs):
+    """Issueing a warning via warnings.warn.
+
+        Parameters
+        ----------
+        message : str
+            The message printed in the warning.
+        category : str or a warnings category class (optional)
+            A string, which will be converted into a POSYDONWarning class.
+        stacklevel : int (optional)
+            The stack level passed to warnings.warn, defaults to 2.
+        **kwargs : dict (optional)
+            Dictionary containing extra options passed to warnings.warn.
+    """
+    if isinstance(category,str):
+        g = globals()
+        if category in g.keys():
+            category = g[category]
+        else:
+            category = POSYDONWarning
+    if ((category is not None) and
+        (not isinstance(category(), POSYDONWarning))):
+        category = None
+    warnings.warn(message=message, category=category, stacklevel=stacklevel,
+                  **kwargs)
+
 
 # The base class of all warnings is "Warning", which is derived from Exception
 #

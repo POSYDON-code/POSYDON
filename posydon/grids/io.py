@@ -47,12 +47,9 @@ __authors__ = [
 import os
 import glob
 import gzip
-import warnings
 
 from posydon.utils.gridutils import read_MESA_data_file
-from posydon.utils.posydonwarning import (InappropriateValueWarning,
-                                          MissingFilesWarning,
-                                          ReplaceValueWarning)
+from posydon.utils.posydonwarning import Pwarn
 
 
 POSYDON_FORMAT_OPTIONS = {
@@ -184,8 +181,8 @@ class RunReader:
             (self.initial_profile2_path is None) and
             (self.final_star1_path is None) and (self.final_star2_path is None)
             and (self.out_txt_path is None) and (len(self.metadata_files)==0)):
-            warnings.warn("No relevant files found in {}".format(self.path),
-                          MissingFilesWarning)
+            Pwarn("No relevant files found in {}".format(self.path),
+                  "MissingFilesWarning")
 
         if self.verbose:
             self.report()
@@ -280,9 +277,8 @@ class GridReader:
                 fullpath = os.path.dirname(os.path.abspath(out_file))
                 params_part = initial_values_from_dirname(fullpath)
                 if params_part in folders:
-                    warnings.warn("Run in {} substitutes run in {}".
-                                  format(fullpath, folders[params_part]),
-                                  ReplaceValueWarning)
+                    Pwarn("Run in {} substitutes run in {}".format(fullpath,
+                              folders[params_part]), "ReplaceValueWarning")
                 folders[params_part] = fullpath
 
             # discover metadata files
@@ -312,8 +308,8 @@ class GridReader:
                 new_run = RunReader(fullpath, fmt=self.fmt,
                                     binary=self.binary, verbose=False)
                 if new_run.out_txt_path is None:
-                    warnings.warn("Folder "+fullpath+" has no stdout file.",
-                                  MissingFilesWarning)
+                    Pwarn("Folder "+fullpath+" has no stdout file.",
+                          "MissingFilesWarning")
                 self.runs.append(new_run)
 
     def infer_history_columns(self, BH_cols, H1_cols, H2_cols):
@@ -412,8 +408,8 @@ def read_initial_values(mesa_dir):
             continue
         fields = line.strip().split("=")
         if len(fields) != 2:
-            warnings.warn("Multiple `=`, skipping line in {}.".format(path),
-                          InappropriateValueWarning)
+            Pwarn("Multiple `=`, skipping line in {}.".format(path),
+                  "InappropriateValueWarning")
             continue
         varname = fields[0].strip()
         valueparts = fields[1].split("d")
