@@ -887,7 +887,7 @@ class StepSN(object):
                     # this is the 8th-order polynomial fit of table 1
                     # value, see COSMIC paper (Breivik et al. 2020)
                     polyfit = (
-                        -6.29429263e5
+                        - 6.29429263e5
                         + 1.15957797e5 * m_He_core
                         - 9.28332577e3 * m_He_core ** 2.0
                         + 4.21856189e2 * m_He_core ** 3.0
@@ -899,7 +899,12 @@ class StepSN(object):
                     )
                     m_PISN = polyfit
 
-                elif m_He_core > 61.10 and m_He_core < 113.29:
+                elif m_He_core > 61.10 and m_He_core < 124.12:
+                    # in Breivik et al. (2020) they qoute the CO core mass
+                    # range as 54.48<M_CO-core/Msun<113.29 here, but this 
+                    # might cause gaps, when switching between core masses,
+                    # hence take the He-core masses from table 1 of Marchant
+                    # et al. (2019)
                     m_PISN = np.nan
 
                 else:
