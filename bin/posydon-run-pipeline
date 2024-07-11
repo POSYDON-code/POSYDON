@@ -376,6 +376,13 @@ def train_interpolators(i, path_to_csv_file, verbose=False):
                                    and any(~np.isnan(grid.final_values[key]))
                                    and "MODEL" not in key)]
     
+
+    out_nan_keys = [key for key in grid.final_values.dtype.names if (
+                             key != "model_number" and
+                            (type(grid.final_values[key][0]) != np.str_)
+                            and all(np.isnan(grid.final_values[key]))
+                            and "MODEL" not in key)]
+    
     # define all string keys in final values
     c_keys = ['interpolation_class', 'S1_state', 'S2_state', 'mt_history']
     for MODEL_NAME in MODELS.keys():
@@ -389,6 +396,7 @@ def train_interpolators(i, path_to_csv_file, verbose=False):
             "interp_method": interp_method,
             "interp_classes": interp_classes,
             "out_keys": out_keys,
+            "out_nan_keys": out_nan_keys,
             "class_method": "kNN",
             "c_keys": c_keys,
             "c_key": "interpolation_class"
@@ -407,6 +415,13 @@ def train_interpolators(i, path_to_csv_file, verbose=False):
                                    (type(grid.final_values[key][0]) != np.str_)
                                    and any(~np.isnan(grid.final_values[key]))
                                    and f"S{i}_{MODEL_NAME}" in key)]
+            
+            out_nan_keys = [key for key in grid.final_values.dtype.names if (
+                                key != "model_number" 
+                                and (type(grid.final_values[key][0]) != np.str_)
+                                and all(np.isnan(grid.final_values[key]))
+                                and f"S{i}_{MODEL_NAME}" in key)]
+            
             # get interpolations classes dynamically
             interp_method = []
             interp_classes = []
@@ -420,6 +435,7 @@ def train_interpolators(i, path_to_csv_file, verbose=False):
                     "interp_method": interp_method,
                     "interp_classes": interp_classes,
                     "out_keys": out_keys,
+                    "out_nan_keys": out_nan_keys,
                     "class_method": "kNN",
                     "c_keys": [f'S{i}_{MODEL_NAME}_CO_interpolation_class', 
                                f'S{i}_{MODEL_NAME}_CO_type',
