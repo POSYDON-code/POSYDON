@@ -1279,7 +1279,7 @@ class PSyGrid:
             if run_included_at[i]>=0:
                 #check for index range
                 if run_included_at[i]>=run_index:
-                    P.warn("run {} has a run_index out of ".format(i) +
+                    Pwarn("run {} has a run_index out of ".format(i) +
                         "range: {}>={}".format(run_included_at[i], run_index),
                            "InappropriateValueWarning")
                     continue
