@@ -8,12 +8,10 @@ import shutil
 import pandas
 import subprocess
 import glob
-import warnings
 
 from posydon.utils import configfile
 from posydon.utils import gridutils as utils
-from posydon.utils.posydonwarning import (OverwriteWarning,
-                                          ReplaceValueWarning)
+from posydon.utils.posydonwarning import Pwarn
 from posydon.grids.psygrid import PSyGrid
 from posydon.active_learning.psy_cris.utils import parse_inifile
 
@@ -81,8 +79,8 @@ def find_inlist_from_scenario(source, gitcommit, system_type):
                                      )
             (clone, err) = proc.communicate()
         else:
-            warnings.warn("git repository is already there, using that",
-                          OverwriteWarning)
+            Pwarn("git repository is already there, using that",
+                  "OverwriteWarning")
 
         inlists_dir = '{0}/.posydon_mesa_inlists'.format(os.environ['HOME'])
         branch = gitcommit.split('-')[0]
@@ -110,8 +108,8 @@ def find_inlist_from_scenario(source, gitcommit, system_type):
                                      )
             (clone, err) = proc.communicate()
         else:
-            warnings.warn("git repository is already there, using that",
-                          OverwriteWarning)
+            Pwarn("git repository is already there, using that",
+                  "OverwriteWarning")
 
         inlists_dir = '{0}/.user_mesa_inlists'.format(os.environ['HOME'])
         branch = gitcommit.split('-')[0]
@@ -268,8 +266,8 @@ def find_inlist_from_scenario(source, gitcommit, system_type):
             # write star1 formation step to file
             special_single_star_user_inlist = os.path.join(os.getcwd(), "special_single_star_user_inlist")
             if os.path.exists(special_single_star_user_inlist):
-                warnings.warn('Replace '+special_single_star_user_inlist,
-                              OverwriteWarning)
+                Pwarn('Replace '+special_single_star_user_inlist,
+                      "OverwriteWarning")
             with open(special_single_star_user_inlist, 'wb') as f:
                 f.write(b'&controls\n\n')
                 f.write('\t{0} = {1}\n'.format("x_logical_ctrl(1)", ".true.").encode('utf-8'))
@@ -303,8 +301,8 @@ def find_inlist_from_scenario(source, gitcommit, system_type):
             # write star1 formation step to file
             special_single_star_user_inlist = os.path.join(os.getcwd(), "special_single_star_user_inlist")
             if os.path.exists(special_single_star_user_inlist):
-                warnings.warn('Replace '+special_single_star_user_inlist,
-                              OverwriteWarning)
+                Pwarn('Replace '+special_single_star_user_inlist,
+                      "OverwriteWarning")
             with open(special_single_star_user_inlist, 'wb') as f:
                 f.write(b'&controls\n\n')
                 f.write('\t{0} = {1}\n'.format("x_logical_ctrl(1)", ".true.").encode('utf-8'))
@@ -552,8 +550,8 @@ def construct_static_inlist(mesa_inlists, grid_parameters, working_directory=os.
 
             # write star1 formation step to file
             if os.path.exists(step_inlists['inlist_file']):
-                warnings.warn('Replace '+step_inlists['inlist_file'],
-                              OverwriteWarning)
+                Pwarn('Replace '+step_inlists['inlist_file'],
+                      "OverwriteWarning")
             with open(step_inlists['inlist_file'], 'wb') as f:
                 f.write(b'&controls\n\n')
                 for k,v in final_star1_formation_controls.items():
@@ -657,8 +655,8 @@ def construct_static_inlist(mesa_inlists, grid_parameters, working_directory=os.
                 final_star2_formation_job['save_model_filename'] = "'initial_star2_step{0}.mod'".format(step)
 
             if os.path.exists(step_inlists['inlist_file']):
-                warnings.warn('Replace '+step_inlists['inlist_file'],
-                              OverwriteWarning)
+                Pwarn('Replace '+step_inlists['inlist_file'],
+                      "OverwriteWarning")
             with open(step_inlists['inlist_file'], 'wb') as f:
                 f.write(b'&controls\n\n')
                 for k,v in final_star2_formation_controls.items():
@@ -739,8 +737,7 @@ def construct_static_inlist(mesa_inlists, grid_parameters, working_directory=os.
     # now that we have all the parameters and their correct values
     # we now write our own inlist_project, inlist1 and inlist2 for the binary
     if os.path.exists(inlist_binary_project):
-        warnings.warn('Replace '+inlist_binary_project,
-                      OverwriteWarning)
+        Pwarn('Replace '+inlist_binary_project, "OverwriteWarning")
     with open(inlist_binary_project, 'wb') as f:
         f.write(b'&binary_controls\n\n')
         for k,v in final_binary_controls.items():
@@ -759,8 +756,7 @@ def construct_static_inlist(mesa_inlists, grid_parameters, working_directory=os.
                 """)
 
     if os.path.exists(inlist_star1_binary):
-        warnings.warn('Replace '+inlist_star1_binary,
-                      OverwriteWarning)
+        Pwarn('Replace '+inlist_star1_binary, "OverwriteWarning")
     with open(inlist_star1_binary, 'wb') as f:
         f.write(b'&controls\n\n')
         for k,v in final_star1_binary_controls.items():
@@ -783,8 +779,7 @@ def construct_static_inlist(mesa_inlists, grid_parameters, working_directory=os.
 """)
 
     if os.path.exists(inlist_star2_binary):
-        warnings.warn('Replace '+inlist_star2_binary,
-                      OverwriteWarning)
+        Pwarn('Replace '+inlist_star2_binary, "OverwriteWarning")
     with open(inlist_star2_binary, 'wb') as f:
         f.write(b'&controls\n\n')
         for k,v in final_star2_binary_controls.items():
@@ -839,7 +834,7 @@ def make_executables(mesa_extras, working_directory=os.getcwd()):
     os.makedirs(binary_make_folder)
 
     if os.path.exists('mk'):
-        warnings.warn('Replace mk', OverwriteWarning)
+        Pwarn('Replace mk', "OverwriteWarning")
     with open('mk', "w") as f:
         # first we need to cd into the make folder
         for k, v in mesa_extras.items():
@@ -994,8 +989,8 @@ if __name__ == '__main__':
     print("WE ARE USING THE EXTRA FILE FROM TYPE {0}".format(extras_files_types[-1]))
     for k in mesa_extras.keys():
         if ('binary_extras' in k) and (extras_files_types[-1] not in k):
-            warnings.warn("Section mesa_extras value {0} is being".format(k)+\
-                          " set to None", ReplaceValueWarning)
+            Pwarn("Section mesa_extras value {0} is being set to".format(k)+\
+                  " None", "ReplaceValueWarning")
             mesa_extras[k] = None
 
     binary_exe, star1_exe, star2_exe = make_executables(mesa_extras=mesa_extras,
@@ -1078,7 +1073,7 @@ if __name__ == '__main__':
     # command. As a shell script? As a SLURM submission? In some other way?
     if args.submission_type == 'shell':
         if os.path.exists('grid_command.sh'):
-            warnings.warn('Replace grid_command.sh', OverwriteWarning)
+            Pwarn('Replace grid_command.sh', "OverwriteWarning")
         with open('grid_command.sh', 'w') as f:
             f.write('#!/bin/bash\n\n')
             f.write('export OMP_NUM_THREADS={0}\n\n'.format(slurm['number_of_cpus_per_task']))
@@ -1097,7 +1092,7 @@ if __name__ == '__main__':
                 raise ValueError('Grid format not recognized, please feed in an acceptable format: csv')
             grid_script = 'job_array_grid_submit.slurm'
             if os.path.exists(grid_script):
-                warnings.warn('Replace '+grid_script, OverwriteWarning)
+                Pwarn('Replace '+grid_script, "OverwriteWarning")
             with open(grid_script, 'w') as f:
                 f.write('#!/bin/bash\n')
 
@@ -1123,7 +1118,7 @@ if __name__ == '__main__':
         else:
             grid_script = 'mpi_grid_submit.slurm'
             if os.path.exists(grid_script):
-                warnings.warn('Replace '+grid_script, OverwriteWarning)
+                Pwarn('Replace '+grid_script, "OverwriteWarning")
             with open(grid_script, 'w') as f:
                 f.write('#!/bin/bash\n')
 
@@ -1146,7 +1141,7 @@ if __name__ == '__main__':
                 f.write(command_line)
         # create a cleanup script
         if os.path.exists('cleanup.slurm'):
-            warnings.warn('Replace cleanup.slurm', OverwriteWarning)
+            Pwarn('Replace cleanup.slurm', "OverwriteWarning")
         with open('cleanup.slurm', 'w') as f:
             f.write('#!/bin/bash\n')
             
@@ -1171,7 +1166,7 @@ if __name__ == '__main__':
             f.write('\necho \"Done.\"')
         # create a runfile script
         if os.path.exists('run_grid.sh'):
-            warnings.warn('Replace run_grid.sh', OverwriteWarning)
+            Pwarn('Replace run_grid.sh', "OverwriteWarning")
         with open('run_grid.sh', 'w') as f:
             f.write('#!/bin/bash\n')
             f.write('ID_GRID=$(sbatch --parsable {0})\n'.format(grid_script))

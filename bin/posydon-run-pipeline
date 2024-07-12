@@ -70,7 +70,6 @@ import pickle
 import random
 import numpy as np
 import pandas as pd
-import warnings
 from collections import Counter
 from matplotlib.backends.backend_pdf import PdfPages
 from posydon.grids.psygrid import (PSyGrid,
@@ -83,9 +82,7 @@ from posydon.grids.post_processing import (post_process_grid,
 from posydon.grids.MODELS import MODELS
 from posydon.utils.common_functions import PATH_TO_POSYDON
 from posydon.utils.gridutils import get_new_grid_name
-from posydon.utils.posydonwarning import (OverwriteWarning,
-                                          ReplaceValueWarning,
-                                          UnsupportedModelWarning)
+from posydon.utils.posydonwarning import Pwarn
 from posydon.interpolation.IF_interpolation import IFInterpolator
 from posydon.visualization.plot_defaults import PRE_SET_PLOTS
 from posydon.visualization.interpolation import EvaluateIFInterpolator
@@ -152,9 +149,8 @@ def create_grid_slice(i, path_to_csv_file, verbose=False, overwrite_psygrid=True
         stop_before_carbon_depletion = df.loc[i,'stop_before_carbon_depletion']
         if 'HMS' not in grid_type:
             stop_before_carbon_depletion = False
-            warnings.warn('stop_before_carbon_depletion set to False for non'+\
-                          f' HMS gird: {grid_type} in {grid_path}',
-                          ReplaceValueWarning)
+            Pwarn('stop_before_carbon_depletion set to False for non HMS'+\
+                  f' gird: {grid_type} in {grid_path}', "ReplaceValueWarning")
     else:
         stop_before_carbon_depletion = False
     
@@ -182,8 +178,7 @@ def create_grid_slice(i, path_to_csv_file, verbose=False, overwrite_psygrid=True
         print(f'processing: {grid_path} with compression: {compression}')
         if os.path.isfile(grid_output):
             if overwrite_psygrid:
-                warnings.warn(f'replacing file: {grid_output}',
-                              OverwriteWarning)
+                Pwarn(f'replacing file: {grid_output}', "OverwriteWarning")
             else:
                 raise FileExistsError(f'file {grid_output} already exists!')
         else:
@@ -294,8 +289,8 @@ def calculate_extra_values(i, path_to_csv_file, verbose=False):
     # post processed quantities are appended to the grid object, hence
     # we create a copy of it and append back to it
     if os.path.exists(processed_grid_path):
-        warnings.warn('Post processed grid file alredy exist, removing it.',
-                      OverwriteWarning)
+        Pwarn('Post processed grid file alredy exist, removing it.',
+              "OverwriteWarning")
         os.remove(processed_grid_path)
     shutil.copyfile(grid_path, processed_grid_path)
     
@@ -559,7 +554,7 @@ def export_dataset(i, path_to_csv_file, verbose=False):
         raise KeyError(f'No export_path in {path_to_csv_file}')
     
     if os.path.exists(export_path):
-        warnings.warn(f'Repalce {export_path}', OverwriteWarning)
+        Pwarn(f'Repalce {export_path}', "OverwriteWarning")
     if verbose:
         print(f'copying {grid_path} to {export_path}')
     # copy the file
@@ -909,8 +904,8 @@ def rerun(i, path_to_csv_file, verbose=False):
     if 'cluster' in df.keys():
         cluster = df.loc[i,'cluster']
     else:
-        warnings.warn('Cluster not specified, use quest as cluster',
-                      ReplaceValueWarning)
+        Pwarn('Cluster not specified, use quest as cluster',
+              "ReplaceValueWarning")
         cluster = 'quest'
     
     # load grid
@@ -1029,7 +1024,7 @@ def plot_grid(i, path_to_csv_file, verbose=False):
             multipage = True
             plot_extension = 'pdf'
     else:
-        warnings.warn('No plot extension, use pdf', ReplaceValueWarning)
+        Pwarn('No plot extension, use pdf', "ReplaceValueWarning")
         plot_extension = 'pdf'
     if 'path_to_interpolator' in df.keys():
         path_to_interpolator = df.loc[i,'path_to_interpolator']
@@ -1085,8 +1080,8 @@ def plot_grid(i, path_to_csv_file, verbose=False):
                     for attr in PRE_SET_PLOTS[set_name].keys():
                         plot_attributes[attr] = PRE_SET_PLOTS[set_name][attr]
                 else:
-                    warnings.warn('{set_name} not in PRE_SET_PLOTS',
-                                  UnsupportedModelWarning)
+                    Pwarn(f'{set_name} not in PRE_SET_PLOTS',
+                          "UnsupportedModelWarning")
             elif '_MODEL' in quantity_to_plot:
                 short_quantity = quantity_to_plot.split('_MODEL')[-1]
                 short_quantity = short_quantity[short_quantity.find('_')+1:]
@@ -1100,8 +1095,8 @@ def plot_grid(i, path_to_csv_file, verbose=False):
                     for attr in PRE_SET_PLOTS[set_name].keys():
                         plot_attributes[attr] = PRE_SET_PLOTS[set_name][attr]
                 else:
-                    warnings.warn('{set_name} not in PRE_SET_PLOTS',
-                                  UnsupportedModelWarning)
+                    Pwarn(f'{set_name} not in PRE_SET_PLOTS',
+                          "UnsupportedModelWarning")
             elif quantity_to_plot[:6]=='LOG10_':
                 short_quantity = quantity_to_plot[6:]
                 plot_attributes['plot_dir_name'] = short_quantity
@@ -1241,10 +1236,9 @@ def plot_grid(i, path_to_csv_file, verbose=False):
                 if multipage:
                     # close and reopen handler
                     # (WARNING: this will overwrite the pdf file)
-                    warnings.warn('delete and reopen: '+\
-                                  f'{os.path.join(plot_dir, name)}'+\
-                                  f'_all.{plot_extension}',
-                                  OverwriteWarning)
+                    Pwarn('delete and reopen: '+\
+                          f'{os.path.join(plot_dir, name)}'+\
+                          f'_all.{plot_extension}', "OverwriteWarning")
                     del pdf_handler
                     pdf_handler = PdfPages(os.path.join(plot_dir, name) +\
                                            '_all_slices.' +plot_extension,
@@ -1322,8 +1316,8 @@ def do_check(i, path_to_csv_file, verbose=False):
                     print(f'{quantity}: {count} in {grid_path}')
             #TODO: add more checks
         else:
-            warnings.warn(f'Do not know how to do {check_to_do} for'+\
-                          f' {grid_path}!', UnsupportedModelWarning)
+            Pwarn(f'Do not know how to do {check_to_do} for'+\
+                  f' {grid_path}!', "UnsupportedModelWarning")
 
 
 if __name__ == '__main__':
@@ -1366,13 +1360,13 @@ if __name__ == '__main__':
         if SLURM_I<0: # check value
             raise ValueError(f'The slurm index cannot be negative: {SLURM_I}')
     else:
-        warnings.warn('No slurm index given, use 0', ReplaceValueWarning)
+        Pwarn('No slurm index given, use 0', "ReplaceValueWarning")
         SLURM_I = 0
     
     if n_args > 4: # verbose flag
         VERBOSE = bool(int(sys.argv[4]))
     else:
-        warnings.warn('No verbose flag given, use True', ReplaceValueWarning)
+        Pwarn('No verbose flag given, use True', "ReplaceValueWarning")
         VERBOSE = True
 
     # chose grid slice given the slurm jobarray index

@@ -9,7 +9,6 @@
 # Author: Max Briel
 import os
 import argparse
-import warnings
 from posydon.popsyn.io import (binarypop_kwargs_from_ini, 
                                create_run_script_text,
                                create_merge_script_text)
@@ -17,7 +16,7 @@ from posydon.config import PATH_TO_POSYDON, PATH_TO_POSYDON_DATA
 from posydon.popsyn.binarypopulation import BinaryPopulation
 from posydon.popsyn.io import binarypop_kwargs_from_ini
 from posydon.utils.common_functions import convert_metallicity_to_string
-from posydon.utils.posydonwarning import OverwriteWarning
+from posydon.utils.posydonwarning import Pwarn
 
 
 def create_run_script(ini_file):
@@ -25,7 +24,7 @@ def create_run_script(ini_file):
    
     filename =f'run_metallicity.py'
     if os.path.exists(filename):
-        warnings.warn('Replace '+filename, OverwriteWarning)
+        Pwarn('Replace '+filename, "OverwriteWarning")
     with open(filename, mode='w') as file:
         file.write(create_run_script_text(ini_file))
 
@@ -34,7 +33,7 @@ def create_merge_script(ini_file):
     
     filename='merge_metallicity.py'
     if os.path.exists(filename):
-        warnings.warn('Replace '+filename, OverwriteWarning)
+        Pwarn('Replace '+filename, "OverwriteWarning")
     with open(filename, mode='w') as file:
         file.write(create_merge_script_text(ini_file))
 
@@ -70,7 +69,7 @@ srun python ./run_metallicity.py {metallicity}
 '''
     filename = f"{str_met}_Zsun_slurm_array.slurm"
     if os.path.exists(filename):
-        warnings.warn('Replace '+filename, OverwriteWarning)
+        Pwarn('Replace '+filename, "OverwriteWarning")
     with open(filename, mode='w') as file:
         file.write(text)
 
@@ -111,7 +110,7 @@ srun python ./merge_metallicity.py {metallicity}
 '''
     filename = f'{str_met}_Zsun_merge_popsyn.slurm'
     if os.path.exists(filename):
-        warnings.warn('Replace '+filename, OverwriteWarning)
+        Pwarn('Replace '+filename, "OverwriteWarning")
     with open(filename, mode='w') as file:
         file.write(text)
 
@@ -158,7 +157,7 @@ if __name__ == '__main__':
     filename = 'slurm_submit.sh'
     
     if os.path.exists(filename):
-        warnings.warn('Replace '+filename, OverwriteWarning)
+        Pwarn('Replace '+filename, "OverwriteWarning")
     with open(filename, mode='w') as file:
         file.write('#!/bin/bash\n')
         for MET in metallicities:
