@@ -76,6 +76,10 @@ class UnsupportedModelWarning(POSYDONWarning):
         super().__init__(message)
 
 
+# all POSYDON warnings subclasses should be defined beforehand
+POSYDONWarning_subclasses = {cls.__name__: cls for cls in\
+                             POSYDONWarning.__subclasses__()}
+
 def Pwarn(message, category=None, stacklevel=2, **kwargs):
     """Issueing a warning via warnings.warn.
 
@@ -91,9 +95,8 @@ def Pwarn(message, category=None, stacklevel=2, **kwargs):
             Dictionary containing extra options passed to warnings.warn.
     """
     if isinstance(category,str):
-        g = globals()
-        if category in g.keys():
-            category = g[category]
+        if category in POSYDONWarning_subclasses.keys():
+            category = POSYDONWarning_subclasses[category]
         else:
             category = POSYDONWarning
     if ((category is not None) and
