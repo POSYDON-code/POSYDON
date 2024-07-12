@@ -234,7 +234,7 @@ class SingleStar:
             Include the star's profile in the dataframe (NOT RECOMMENDED)
         null_value : float, optional
             Replace all None values with something else (for saving).
-            Default is np.NAN.
+            Default is np.nan.
         prefix : str, optional
             Prefix to all column names. (e.g. 'star_1', 'S1')
             Default has no prefix.
@@ -293,8 +293,8 @@ class SingleStar:
 
         # casting into object array keeps things general
         star_data = np.array(data_to_save, dtype=object)
-        # Convert None to np.NAN by default
-        star_data[where_none] = kwargs.get('null_value', np.NAN)
+        # Convert None to np.nan by default
+        star_data[where_none] = kwargs.get('null_value', np.nan)
         # sets rows as time steps, columns as history output
         star_data = np.transpose(star_data)
 
