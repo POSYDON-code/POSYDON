@@ -80,6 +80,30 @@ class UnsupportedModelWarning(POSYDONWarning):
 POSYDONWarning_subclasses = {cls.__name__: cls for cls in\
                              POSYDONWarning.__subclasses__()}
 
+def _get_POSYDONWarning_class(category):
+    """Inferring the POSYDONWarning class.
+
+        Parameters
+        ----------
+        category : str or a warnings category class
+            A string, which will be converted into a POSYDONWarning class.
+
+        Returns
+        -------
+        POSYDONWarning or None
+            A POSYDONWarning class or None if the input is neither a
+            POSYDONWarning class nor convertable to one.
+    """
+    if isinstance(category,str):
+        if category in POSYDONWarning_subclasses.keys():
+            category = POSYDONWarning_subclasses[category]
+        else:
+            category = POSYDONWarning
+    if isinstance(category(), POSYDONWarning):
+        return category
+    else:
+        return None
+
 def Pwarn(message, category=None, stacklevel=2, **kwargs):
     """Issueing a warning via warnings.warn.
 
@@ -87,23 +111,54 @@ def Pwarn(message, category=None, stacklevel=2, **kwargs):
         ----------
         message : str
             The message printed in the warning.
-        category : str or a warnings category class (optional)
+        category : str or a warnings category class (default: None)
             A string, which will be converted into a POSYDONWarning class.
-        stacklevel : int (optional)
+        stacklevel : int (default: 2)
             The stack level passed to warnings.warn, defaults to 2.
         **kwargs : dict (optional)
             Dictionary containing extra options passed to warnings.warn.
     """
-    if isinstance(category,str):
-        if category in POSYDONWarning_subclasses.keys():
-            category = POSYDONWarning_subclasses[category]
-        else:
-            category = POSYDONWarning
-    if ((category is not None) and
-        (not isinstance(category(), POSYDONWarning))):
-        category = None
+    category = _get_POSYDONWarning_class(category)
     warnings.warn(message=message, category=category, stacklevel=stacklevel,
                   **kwargs)
+
+def SetPOSYDONWarnings(action="default", category=POSYDONWarning, **kwargs):
+    """Add the warnings filter for POSYDON warnings.
+
+        Parameters
+        ----------
+        action : str (default: "default")
+            The behaviour for those warnings. Should be one out of
+            "default", "error", "ignore", "always", "module", or "once"
+        category : str or a warnings category class (default: POSYDONWarning)
+            A string, which will be converted into a POSYDONWarning class.
+        **kwargs : dict (optional)
+            Dictionary containing extra options passed to
+            warnings.filterwarnings.
+    """
+    category = _get_POSYDONWarning_class(category)
+    if isinstance(category(), POSYDONWarning):
+        warnings.filterwarnings(action=action, category=category, **kwargs)
+
+def NoPOSYDONWarnings(category=POSYDONWarning):
+    """Switch the warnings filter to ignore for POSYDON warnings.
+
+        Parameters
+        ----------
+        category : str or a warnings category class (default: POSYDONWarning)
+            A string, which will be converted into a POSYDONWarning class.
+    """
+    SetPOSYDONWarnings(action="ignore", category=category)
+
+def AllPOSYDONWarnings(category=POSYDONWarning):
+    """Switch the warnings filter to always for POSYDON warnings.
+
+        Parameters
+        ----------
+        category : str or a warnings category class (default: POSYDONWarning)
+            A string, which will be converted into a POSYDONWarning class.
+    """
+    SetPOSYDONWarnings(action="always", category=category)
 
 
 # The base class of all warnings is "Warning", which is derived from Exception
