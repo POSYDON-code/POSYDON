@@ -232,7 +232,7 @@ def get_initial_BH_properties(star, mass_collapsing, mass_central_BH,
     f_temp2 = (f_nu_AM*density[:index_initial_BH+1]
                * angular_frequency[:index_initial_BH+1]
                * radius[:index_initial_BH+1]**4)
-    temp2 = integrate.simps(f_temp2, x=radius[:index_initial_BH + 1])
+    temp2 = integrate.simpson(f_temp2, x=radius[:index_initial_BH + 1])
 
     J_initial_BH = 2 * np.pi * temp1 * temp2
 

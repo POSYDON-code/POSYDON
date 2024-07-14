@@ -89,6 +89,17 @@ The evolutionary hooks allows the use to execute code between POSYDON steps. The
 
     pop_syn/custom_hooks
 
+
+User Functions and Modules
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+To allow users to easier add functions for their own needs without changing the main code, we have a dedicated directory for :samp:`user_modules`.
+
+.. toctree::
+    :maxdepth: 1
+
+    pop_syn/user_modules
+
 ----
 
 

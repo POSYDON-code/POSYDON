@@ -159,6 +159,10 @@ class SingleStar:
             self.he4_mass_ej = None
         if not hasattr(self, 'o16_mass_ej'):
             self.o16_mass_ej = None
+        if not hasattr(self, 'M4'):
+            self.M4 = None
+        if not hasattr(self, 'mu4'):
+            self.mu4 = None
 
 
         # the following quantities are updated in mesa_step.py
@@ -172,7 +176,8 @@ class SingleStar:
         # core masses at He depletion
         for quantity in ['avg_c_in_c_core_at_He_depletion',
                          'co_core_mass_at_He_depletion']:
-            setattr(self, quantity, None)
+            if not hasattr(self, quantity):
+                setattr(self, quantity, None)
 
         # core collapse quantities
         for MODEL_NAME in MODELS.keys():

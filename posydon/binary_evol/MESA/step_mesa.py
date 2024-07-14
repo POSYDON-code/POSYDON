@@ -805,7 +805,7 @@ class MesaGridStep:
                         cb.final_values[f'S{i+1}_{MODEL_NAME}_CO_type'] != 'None'):
                         values = {}
                         for key in ['state', 'SN_type', 'f_fb', 'mass', 'spin',
-                                    'm_disk_accreted', 'm_disk_radiated',
+                                    'm_disk_accreted', 'm_disk_radiated', 'M4', 'mu4',
                                     'h1_mass_ej', 'he4_mass_ej', 'o16_mass_ej']:
                             if key == "state":
                                 state = cb.final_values[f'S{i+1}_{MODEL_NAME}_CO_type']
@@ -970,7 +970,7 @@ class MesaGridStep:
                         self.classes[f'S{i+1}_{MODEL_NAME}_CO_type'] != 'None'):
                         values = {}
                         for key in ['state', 'SN_type', 'f_fb', 'mass', 'spin',
-                                    'm_disk_accreted', 'm_disk_radiated',
+                                    'm_disk_accreted', 'm_disk_radiated', 'M4', 'mu4',
                                     'h1_mass_ej', 'he4_mass_ej', 'o16_mass_ej']:
                             if key == "state":
                                 state = self.classes[f'S{i+1}_{MODEL_NAME}_CO_type']
