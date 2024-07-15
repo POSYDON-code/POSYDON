@@ -15,7 +15,8 @@ import numpy as np
 from tqdm import tqdm
 import copy
 import warnings
-from posydon.utils.posydonwarning import Pwarn
+from posydon.utils.posydonwarning import (Pwarn, SetPOSYDONWarnings,
+                                          NoPOSYDONWarnings)
 
 
 __authors__ = [
@@ -185,10 +186,10 @@ def post_process_grid(grid, index=None, star_2_CO=True, MODELS=MODELS,
                     star, star_CO=False))
                 # core masses at he depletion
                 with warnings.catch_warnings(record=False):
-                    if self.kwargs.get("warnings_verbose", False):   
-                        warnings.simplefilter("default", POSYDONWarning)                                
+                    if self.kwargs.get("warnings_verbose", False):
+                        SetPOSYDONWarnings("default", "POSYDONWarning")
                     else:
-                        warnings.simplefilter("ignore", POSYDONWarning)
+                        NoPOSYDONWarnings("POSYDONWarning")
                     
                     if ((star.avg_c_in_c_core_at_He_depletion is None) or
                         (star.co_core_mass_at_He_depletion is None)):
@@ -203,10 +204,10 @@ def post_process_grid(grid, index=None, star_2_CO=True, MODELS=MODELS,
                                                     star.co_core_mass_at_He_depletion)
                 # CE quantities
                 with warnings.catch_warnings(record=False):
-                    if self.kwargs.get("warnings_verbose", False):   
-                        warnings.simplefilter("default", POSYDONWarning)                                
+                    if self.kwargs.get("warnings_verbose", False):
+                        SetPOSYDONWarnings("default", "POSYDONWarning")
                     else:
-                        warnings.simplefilter("ignore", POSYDONWarning)
+                        NoPOSYDONWarnings("POSYDONWarning")
                     
                     try:
                         CEE_parameters_from_core_abundance_thresholds(star)
