@@ -175,7 +175,7 @@ def generate_spectrum(grids,star,i,**kwargs):
             elif label == 'WR_grid':
                 Flux = grids.grid_flux(label,**x)*4*np.pi*1e4/Lo *(L/10**5.3)
                 #Replace the negative values for WR
-                Flux[Flux < 0] = 1e-50
+                Flux.value[Flux.value < 0] = 1e-50
             else:
                 Flux = grids.grid_flux(label,**x)*R**2*4*np.pi*1e4/Lo
             if np.min(Flux) < 0: 
