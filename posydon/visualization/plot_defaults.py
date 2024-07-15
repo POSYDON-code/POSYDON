@@ -723,8 +723,12 @@ DEFAULT_MARKERS_COLORS_LEGENDS = {
             ['o', 2, 'tab:red', 'PISN'],
         'WD':
             ['o', 2, 'tab:purple', 'WD'],
+        'not_converged':
+            ['x', 1, 'tab:red', 'Not converged'],
+        'unstable_MT':
+            ['+', 2, 'tab:red', 'unstable MT'],
         'None':
-            ['o', 2, 'black', 'intial MT / unstable MT / not converged'],
+            ['o', 2, 'black', 'initial MT'],
     },
     'state': {
         'BH':
@@ -735,8 +739,12 @@ DEFAULT_MARKERS_COLORS_LEGENDS = {
             ['o', 2, 'tab:purple', 'WD'],
         'PISN':
             ['o', 2, 'tab:red', 'PISN'],
+        'not_converged':
+            ['x', 1, 'tab:red', 'Not converged'],
+        'unstable_MT':
+            ['+', 2, 'tab:red', 'unstable MT'],
         'None':
-            ['o', 2, 'black', 'intial MT / unstable MT / not converged'],
+            ['o', 2, 'black', 'initial MT'],
     }
 }
 

@@ -691,6 +691,16 @@ class plot2D(object):
             self.MARKERS_COLORS_LEGENDS = MARKERS_COLORS_LEGENDS[
                 termination_flag]
 
+    def overwrite_values_for_non_converging_unstable_MT(self):
+        """Update values when non-converging or unstable MT."""        
+        # Overwrite non-converging
+        idx = np.where(self.final_values['interpolation_class'] == 'not_converged')[0]
+        self.termination_flag[idx] = 'not_converged'
+
+        # Overwrite unstable MT
+        idx = np.where(self.final_values['interpolation_class'] == 'unstable_MT')[0]
+        self.termination_flag[idx] = 'unstable_MT'
+
     def update_values_to_plot(self, termination_flag):
         """Update all values to plot.
 
@@ -703,6 +713,11 @@ class plot2D(object):
         """
         # get termination flags
         self.termination_flag = self.final_values[termination_flag]
+
+        # Overwrite non-converging and unstable_MT when termination flag is
+        # of SN_type or CO_type
+        if 'SN_type' in termination_flag or 'CO_type' in termination_flag:
+            self.overwrite_values_for_non_converging_unstable_MT()
 
         # save values to plot
         self.get_x_var()
