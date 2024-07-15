@@ -15,6 +15,7 @@ __authors__ = [
 
 import warnings
 import numpy as np
+import matplotlib as mpl
 import matplotlib.pyplot as plt
 from posydon.utils.gridutils import add_field
 from posydon.utils.constants import Zsun
