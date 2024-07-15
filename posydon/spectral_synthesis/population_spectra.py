@@ -66,7 +66,7 @@ class population_spectra():
         # Initialize the spectral_grids object and parameters used.
         self.grids = spectral_grids(**self.kwargs)
         self.population = None
-
+        
     def load_population(self):
         """Function to load up a POSYDON population."""
         self.population = load_posydon_population(self.file)
