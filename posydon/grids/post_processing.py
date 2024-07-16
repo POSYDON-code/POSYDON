@@ -66,23 +66,18 @@ def print_CC_quantities(EXTRA_COLUMNS, star, MODEL_NAME=None):
         print('')
     else:
         try:
-            if star.spin==None:
-                spin = np.nan
-            else:
-                spin = star.spin
-            if star.M4==None:
-                M4 = np.nan
-            else:
-                M4 = star.M4
-            if star.mu4==None:
-                mu4 = np.nan
-            else:
-                mu4 = star.mu4
+            checked_quantities_for_None = {}
+            for quantity in ["spin", "M4", "mu4", "h1_mass_ej", "he4_mass_ej", "o16_mass_ej"]
+                if getattr(star, quantity)==None:
+                    checked_quantities_for_None[quantity] =  np.nan
+                else:
+                    checked_quantities_for_None[quantity] =  getattr(star, quantity)
             print(format_val.format(MODEL_NAME,
                     star.state, star.SN_type, star.f_fb,
-                    star.mass, spin, star.m_disk_accreted,
-                    star.m_disk_radiated, M4, mu4, star.h1_mass_ej, star.he4_mass_ej,
-                    star.o16_mass_ej))
+                    star.mass, checked_quantities_for_None["spin"], star.m_disk_accreted,
+                    star.m_disk_radiated, checked_quantities_for_None["M4"], checked_quantities_for_None["mu4"],
+                    checked_quantities_for_None["h1_mass_ej"], checked_quantities_for_None["he4_mass_ej"],
+                    checked_quantities_for_None["o16_mass_ej"]))
         except Exception as e:
             warnings.warn('Failed to print star values!')
             print('Warning in', MODEL_NAME, ': ', e)
@@ -320,7 +315,7 @@ def post_process_grid(grid, index=None, star_2_CO=True, MODELS=MODELS,
                                         flush = True
                                         warnings.warn(f'{MODEL_NAME} {mechanism} {quantity} is not a string!')
                                 elif quantity != 'CO_interpolation_class':
-                                    if quantity in ['spin', 'M4', 'mu4']:
+                                    if quantity in ['spin', 'M4', 'mu4', "h1_mass_ej", "he4_mass_ej", "o16_mass_ej"]:
                                         if ((not isinstance(getattr(star_copy, quantity), float))
                                             and (getattr(star_copy, quantity) != None)):
                                             flush = True
@@ -381,7 +376,7 @@ def post_process_grid(grid, index=None, star_2_CO=True, MODELS=MODELS,
                                     flush = True
                                     warnings.warn(f'{MODEL_NAME} {mechanism} {quantity} is not a string!')
                             elif quantity != 'CO_interpolation_class':
-                                if quantity in ['spin', 'M4', 'mu4']:
+                                if quantity in ['spin', 'M4', 'mu4', "h1_mass_ej", "he4_mass_ej", "o16_mass_ej"]:
                                     if ((not isinstance(getattr(star_copy, quantity), float))
                                         and (getattr(star_copy, quantity) != None)):
                                         flush = True
