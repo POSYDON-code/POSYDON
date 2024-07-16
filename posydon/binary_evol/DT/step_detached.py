@@ -1214,14 +1214,11 @@ class detached_step:
             """
             sep = y[0]
             ecc = y[1]
-            if (interp1d_sec["mass"](t - t_offset_sec) == 0) or (interp1d_pri["mass"](t - t_offset_sec) == 0):
-                warnings.warn("Trying to compute difference between stellar radii for non-existent companion",
-                            EvolutionWarning)
-                RL = np.ones_like(interp1d_sec["mass"](t - t_offset_sec))*np.nan
-            else:
-                RL = roche_lobe_radius(interp1d_sec["mass"](t - t_offset_sec)
-                                    / interp1d_pri["mass"](t - t_offset_pri),
-                                    (1 - ecc) * sep)
+           
+            RL = roche_lobe_radius(interp1d_sec["mass"](t - t_offset_sec)
+                            / interp1d_pri["mass"](t - t_offset_pri),
+                            (1 - ecc) * sep)
+            
             # 95% filling of the RL is enough to assume beginning of RLO,
             # as we do in CO-HMS_RLO grid
             return interp1d_sec["R"](t - t_offset_sec) - 0.95*RL
@@ -1250,14 +1247,11 @@ class detached_step:
             """
             sep = y[0]
             ecc = y[1]
-            if (interp1d_sec["mass"](t - t_offset_sec) == 0) or (interp1d_pri["mass"](t - t_offset_sec) == 0):
-                warnings.warn("Trying to compute difference between stellar radii for non-existent companion",
-                            EvolutionWarning)
-                RL = np.ones_like(interp1d_sec["mass"](t - t_offset_sec))*np.nan
-            else:
-                RL = roche_lobe_radius(interp1d_pri["mass"](t - t_offset_pri)
-                                    / interp1d_sec["mass"](t - t_offset_sec),
-                                    (1 - ecc) * sep)
+            
+            RL = roche_lobe_radius(interp1d_pri["mass"](t - t_offset_pri)
+                                / interp1d_sec["mass"](t - t_offset_sec),
+                                (1 - ecc) * sep)
+
             return interp1d_pri["R"](t - t_offset_pri) - 0.95*RL
 
         @event(True, 1)
@@ -1284,14 +1278,11 @@ class detached_step:
             """
             sep = y[0]
             ecc = y[1]
-            if (interp1d_sec["mass"](t - t_offset_sec) == 0) or (interp1d_pri["mass"](t - t_offset_sec) == 0):
-                warnings.warn("Trying to compute relative difference between stellar radii for non-existent companion",
-                            EvolutionWarning)
-                RL = np.ones_like(interp1d_sec["mass"](t - t_offset_sec))*np.nan
-            else:
-                RL = roche_lobe_radius(interp1d_sec["mass"](t - t_offset_sec)
-                                    / interp1d_pri["mass"](t - t_offset_pri),
-                                    (1 - ecc) * sep)
+        
+            RL = roche_lobe_radius(interp1d_sec["mass"](t - t_offset_sec)
+                                / interp1d_pri["mass"](t - t_offset_pri),
+                                (1 - ecc) * sep)
+
             return (interp1d_sec["R"](t - t_offset_sec) - RL) / RL
 
         @event(True, 1)
@@ -1318,14 +1309,11 @@ class detached_step:
             """
             sep = y[0]
             ecc = y[1]
-            if (interp1d_sec["mass"](t - t_offset_sec) == 0) or (interp1d_pri["mass"](t - t_offset_sec) == 0):
-                warnings.warn("Trying to compute relative difference between stellar radii for non-existent companion",
-                            EvolutionWarning)
-                RL = np.ones_like(interp1d_sec["mass"](t - t_offset_sec))*np.nan
-            else:
-                RL = roche_lobe_radius(interp1d_pri["mass"](t - t_offset_pri)
-                                    / interp1d_sec["mass"](t - t_offset_sec),
-                                    (1 - ecc) * sep)
+            
+            RL = roche_lobe_radius(interp1d_pri["mass"](t - t_offset_pri)
+                                / interp1d_sec["mass"](t - t_offset_sec),
+                                (1 - ecc) * sep)
+
             return (interp1d_pri["R"](t - t_offset_pri) - RL) / RL
 
         @event(True, -1)
