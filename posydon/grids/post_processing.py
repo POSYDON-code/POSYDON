@@ -67,7 +67,7 @@ def print_CC_quantities(EXTRA_COLUMNS, star, MODEL_NAME=None):
     else:
         try:
             checked_quantities_for_None = {}
-            for quantity in ["spin", "M4", "mu4", "h1_mass_ej", "he4_mass_ej", "o16_mass_ej"]
+            for quantity in ["spin", "M4", "mu4", "h1_mass_ej", "he4_mass_ej", "o16_mass_ej"]:
                 if getattr(star, quantity)==None:
                     checked_quantities_for_None[quantity] =  np.nan
                 else:
