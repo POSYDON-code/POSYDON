@@ -61,13 +61,28 @@ def get_ejecta_element_mass_at_collapse(star, compact_object_mass, verbose):
         h1_mass_ej = 0.0
         he4_mass_ej = 0.0
     else:
+            # Find the index where the profile mass exceeds the compact object mass
         i_rem = np.argmax(profile_mass_all > compact_object_mass)
-        dm = dm_all[i_rem:]
-        XH = XH_all[i_rem:]
-        YHe = YHe_all[i_rem:]
 
-        h1_mass_ej = np.sum(dm*XH)
-        he4_mass_ej = np.sum(dm*YHe)
+        # Ensure the index is within bounds
+        if i_rem < len(dm_all):
+            # Calculate the ejected mass of H1 and He4
+            dm_ejected = dm_all[i_rem:]
+            XH_ejected = XH_all[i_rem + 1:]  # +1 because dm_all has one less element than profile_mass_all
+            YHe_ejected = YHe_all[i_rem + 1:]
+
+            # Calculate the ejected masses only if the lengths match
+            if len(dm_ejected) == len(XH_ejected) == len(YHe_ejected):
+                h1_mass_ej = np.sum(dm_ejected * XH_ejected)
+                he4_mass_ej = np.sum(dm_ejected * YHe_ejected)
+            else:
+                h1_mass_ej = 0.0
+                he4_mass_ej = 0.0
+                print("Warning: Mismatch in array lengths, cannot calculate ejected masses accurately.")
+        else:
+            h1_mass_ej = 0.0
+            he4_mass_ej = 0.0
+            print("Warning: Index out of bounds, cannot calculate ejected masses.")
 
     return h1_mass_ej, he4_mass_ej
 
