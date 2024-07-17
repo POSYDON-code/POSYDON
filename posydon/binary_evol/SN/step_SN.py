@@ -675,7 +675,7 @@ class StepSN(object):
                         star.m_disk_accreted = 0.
                         star.m_disk_radiated = 0.
                         star.state = 'NS'
-                    star.h1_mass_ej, star.he4_mass_ej, star.o16_mass_ej = \
+                    star.h1_mass_ej, star.he4_mass_ej = \
                         get_ejecta_element_mass_at_collapse(star,star.mass,verbose=self.verbose)
 
                 elif self.use_core_masses:
@@ -705,8 +705,8 @@ class StepSN(object):
                         star.m_disk_accreted = 0.0
                         star.m_disk_radiated = 0.0
                         star.state = "NS"
-                    star.h1_mass_ej, star.he4_mass_ej, star.o16_mass_ej = \
-                        np.nan, np.nan, np.nan
+                    star.h1_mass_ej, star.he4_mass_ej = \
+                        np.nan, np.nan
 
                 elif self.allow_spin_None:
                     # If the profile is not available and spin can stay
@@ -719,8 +719,8 @@ class StepSN(object):
                         star.state = "BH"
                     else:
                         star.state = "NS"
-                    star.h1_mass_ej, star.he4_mass_ej, star.o16_mass_ej = \
-                        np.nan, np.nan, np.nan
+                    star.h1_mass_ej, star.he4_mass_ej = \
+                        np.nan, np.nan
 
                 else:
                     for key in STARPROPERTIES:
@@ -808,7 +808,7 @@ class StepSN(object):
                             setattr(star, key, None)
                         set_binary_to_failed(self.binary)
                         raise ModelError("Invalid core state: " + str(state))
-                    star.h1_mass_ej, star.he4_mass_ej, star.o16_mass_ej = \
+                    star.h1_mass_ej, star.he4_mass_ej = \
                         get_ejecta_element_mass_at_collapse(star,star.mass,verbose=self.verbose)
 
                 elif self.use_core_masses:
@@ -836,8 +836,8 @@ class StepSN(object):
                         star.m_disk_accreted = 0.0
                         star.m_disk_radiated = 0.0
                         star.state = "NS"
-                    star.h1_mass_ej, star.he4_mass_ej, star.o16_mass_ej = \
-                        np.nan, np.nan, np.nan
+                    star.h1_mass_ej, star.he4_mass_ej = \
+                        np.nan, np.nan
 
                 elif self.allow_spin_None:
                     # If the profile is not available and spin can stay
@@ -850,8 +850,8 @@ class StepSN(object):
                         star.state = "BH"
                     else:
                         star.state = "NS"
-                    star.h1_mass_ej, star.he4_mass_ej, star.o16_mass_ej = \
-                        np.nan, np.nan, np.nan
+                    star.h1_mass_ej, star.he4_mass_ej = \
+                        np.nan, np.nan
 
                 else:
                     for key in STARPROPERTIES:

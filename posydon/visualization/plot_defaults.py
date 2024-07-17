@@ -1056,8 +1056,6 @@ for i in range(1, 11):
                                               r'$\log_{10}(M_\mathrm{H,ej} / M_\odot)$']
     DEFAULT_LABELS[f'MODEL{i:02d}_he4_mass_ej'] = [r'$M_\mathrm{He,ej} \, [M_\odot]$',
                                               r'$\log_{10}(M_\mathrm{He,ej} / M_\odot)$']
-    DEFAULT_LABELS[f'MODEL{i:02d}_o16_mass_ej'] = [r'$M_\mathrm{O,ej} \, [M_\odot]$',
-                                              r'$\log_{10}(M_\mathrm{O,ej} / M_\odot)$']
 
 
 
@@ -1130,11 +1128,11 @@ PRE_SET_PLOTS = {
     },
     'S1_MODEL_DEFAULT_M4' : {
         'zmin' : 1.,
-        'zmax' : 3.
+        'zmax' : 4.
     },
     'S1_MODEL_DEFAULT_mu4' : {
         'zmin' : 0.0,
-        'zmax' : .25
+        'zmax' : .5
     },
     'S1_MODEL_DEFAULT_h1_mass_ej' : {
         'zmin' : 0.,
@@ -1142,11 +1140,7 @@ PRE_SET_PLOTS = {
     },
     'S1_MODEL_DEFAULT_he4_mass_ej' : {
         'zmin' : 0.,
-        'zmax' : 10
-    },
-    'S1_MODEL_DEFAULT_o16_mass_ej' : {
-        'zmin' : 0.,
-        'zmax' : 5.
+        'zmax' : 20
     },
     # interpolator stuff
     'INTERP_ERROR_DEFAULT' : {

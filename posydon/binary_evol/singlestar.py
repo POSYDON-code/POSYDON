@@ -157,8 +157,6 @@ class SingleStar:
             self.h1_mass_ej = None
         if not hasattr(self, 'he4_mass_ej'):
             self.he4_mass_ej = None
-        if not hasattr(self, 'o16_mass_ej'):
-            self.o16_mass_ej = None
         if not hasattr(self, 'M4'):
             self.M4 = None
         if not hasattr(self, 'mu4'):

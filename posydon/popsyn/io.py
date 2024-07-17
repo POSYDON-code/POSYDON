@@ -152,7 +152,6 @@ SCALAR_NAMES_DTYPES = {
     'co_core_mass_at_He_depletion' : 'float64',
     'h1_mass_ej': 'float64',
     'he4_mass_ej': 'float64',
-    'o16_mass_ej': 'float64',
 }
 
 

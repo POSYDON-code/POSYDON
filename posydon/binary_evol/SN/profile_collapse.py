@@ -43,8 +43,6 @@ def get_ejecta_element_mass_at_collapse(star, compact_object_mass, verbose):
         Hydrogen mass in the ejecta. (in Msun)
     he4_mass_ej : float
         Helium mass in the ejecta. (in Msun)
-    o16_mass_ej : float
-        Oxygen mass in the ejecta. (in Msun)
     """
 
 
@@ -53,16 +51,10 @@ def get_ejecta_element_mass_at_collapse(star, compact_object_mass, verbose):
     # shell's mass
     dm_all = enclosed_mass_all[1:] - enclosed_mass_all[:-1]
 
-    print(star.profile)
-    print(star.profile.dtype)
-    print(star.profile['h1'])
-
-    if 'h1' in star.profile.dtype.names:
-        h1_all = star.profile['h1'][::-1]  # h1 mass fraction
-    if 'he4' in star.profile.dtype.names:
-        he4_all = star.profile['he4'][::-1]  # he4 mass fraction
-    if 'o16' in star.profile.dtype.names:
-        o16_all = star.profile['o16'][::-1]  # ο16 mass fraction
+    if 'x_mass_fraction_H' in star.profile.dtype.names:
+        XH_all = star.profile['x_mass_fraction_H'][::-1]  # h1 mass fraction
+    if 'y_mass_fraction_He' in star.profile.dtype.names:
+        YHe_all = star.profile['y_mass_fraction_He'][::-1]  # he4 mass fraction
 
     if enclosed_mass_all[-1] <= compact_object_mass:
         # This catches the case that all the star's profile is callapsed.
@@ -75,15 +67,13 @@ def get_ejecta_element_mass_at_collapse(star, compact_object_mass, verbose):
         i_rem = np.argmax(enclosed_mass_all > compact_object_mass) + 1
     enclosed_mass = enclosed_mass_all[:i_rem]
     dm = dm_all[:i_rem]
-    h1 = h1_all[:i_rem]
-    he4 = he4_all[:i_rem]
-    o16 = o16_all[:i_rem]
+    XH = XH_all[:i_rem]
+    YHe = YHe_all[:i_rem]
 
-    h1_mass_ej = np.sum(dm*h1)
-    he4_mass_ej = np.sum(dm*he4)
-    o16_mass_ej = np.sum(dm*o16)
+    h1_mass_ej = np.sum(dm*XH)
+    he4_mass_ej = np.sum(dm*YHe)
 
-    return h1_mass_ej, he4_mass_ej, o16_mass_ej
+    return h1_mass_ej, he4_mass_ej
 
 
 def get_initial_BH_properties(star, mass_collapsing, mass_central_BH,
