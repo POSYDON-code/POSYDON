@@ -56,7 +56,7 @@ def get_ejecta_element_mass_at_collapse(star, compact_object_mass, verbose):
     if 'y_mass_fraction_He' in star.profile.dtype.names:
         YHe_all = star.profile['y_mass_fraction_He'][::-1]  # he4 mass fraction
 
-    print("profile_mass_all[-1], compact_object_mass", profile_mass_all[-1], compact_object_mass)
+    #print("profile_mass_all[-1], compact_object_mass", profile_mass_all[-1], compact_object_mass)
     if profile_mass_all[-1] <= compact_object_mass:
         # This catches the case that all the star's profile is collapsed.
         h1_mass_ej = 0.0
@@ -64,8 +64,8 @@ def get_ejecta_element_mass_at_collapse(star, compact_object_mass, verbose):
     else:
         # Find the index where the profile mass exceeds the compact object mass
         i_rem = np.argmax(profile_mass_all > compact_object_mass)
-        print("i_rem, len(dm_all)", i_rem, len(dm_all))
-        print("mass coordinate above which it is ejected", profile_mass_all[i_rem])
+        #print("i_rem, len(dm_all)", i_rem, len(dm_all))
+        #print("mass coordinate above which it is ejected", profile_mass_all[i_rem])
 
         # Ensure the index is within bounds
         if i_rem < len(dm_all):
@@ -86,7 +86,7 @@ def get_ejecta_element_mass_at_collapse(star, compact_object_mass, verbose):
             h1_mass_ej = 0.0
             he4_mass_ej = 0.0
             print("Warning: Index out of bounds, cannot calculate ejected masses.")
-        print(h1_mass_ej, he4_mass_ej, np.sum(dm_ejected))
+        #print(h1_mass_ej, he4_mass_ej, np.sum(dm_ejected))
     return h1_mass_ej, he4_mass_ej
 
 
