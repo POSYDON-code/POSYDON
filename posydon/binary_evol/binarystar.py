@@ -191,6 +191,7 @@ class BinaryStar:
 
     def evolve(self):
         """Evolve a binary from start to finish."""
+
         self.properties.pre_evolve(self)
 
         # Code to make sure start time is less than max_simulation_time
@@ -204,8 +205,8 @@ class BinaryStar:
         n_steps = 0
         try:
             while (self.event != 'END' and self.event != 'FAILED'
-                   and self.event not in self.properties.end_events
-                   and self.state not in self.properties.end_states):
+                and self.event not in self.properties.end_events
+                and self.state not in self.properties.end_states):
                 signal.alarm(MAXIMUM_STEP_TIME)
                 self.run_step()
 

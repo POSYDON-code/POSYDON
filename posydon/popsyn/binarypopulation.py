@@ -56,7 +56,7 @@ from posydon.popsyn.defaults import default_kwargs
 from posydon.popsyn.io import binarypop_kwargs_from_ini
 from posydon.utils.constants import Zsun
 from posydon.utils.posydonerror import POSYDONError,initial_condition_message
-from posydon.utils.posydonwarning import POSYDONWarning, Pwarn
+from posydon.utils.posydonwarning import Pwarn, SetPOSYDONWarnings
 from posydon.utils.common_functions import set_binary_to_failed
 
 saved_ini_parameters = ['metallicity',
@@ -318,12 +318,12 @@ class BinaryPopulation:
                 binary = self.manager.generate(index=index, **self.kwargs)
             binary.properties = self.population_properties
 
-            with warnings.catch_warnings(record=False):
-        
+            with warnings.catch_warnings(record=True) as w:
+                       
                 if self.kwargs.get("warnings_verbose", False):   
-                    warnings.simplefilter("default", POSYDONWarning)                                
+                    SetPOSYDONWarnings("default", "POSYDONWarning")                         
                 else:
-                    warnings.simplefilter("ignore", POSYDONWarning)
+                    SetPOSYDONWarnings("ignore", "POSYDONWarning")
 
                 try:
                     binary.evolve()
@@ -343,9 +343,13 @@ class BinaryPopulation:
                     e.add_note(initial_condition_message(binary))
                     traceback.print_exception(e)
 
-            #if len(w) > 0:
-            #    binary.warning_message = [x.message for x in w]
-
+            binary.warnings = []
+            if len(w) > 0:
+                for x in w: 
+                    warning_formatted = warnings.formatwarning(x.message, x.category, x.filename, x.lineno, line=None)
+                    print(warning_formatted, file=sys.stderr)
+                    binary.warnings.append(warning_formatted)
+        
             if breakdown_to_df:
                 self.manager.breakdown_to_df(binary, **self.kwargs)
 
