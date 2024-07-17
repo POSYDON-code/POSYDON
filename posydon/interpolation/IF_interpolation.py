@@ -194,7 +194,7 @@ from matplotlib.colors import ListedColormap
 from posydon.visualization.plot_defaults import DEFAULT_LABELS
 from posydon.interpolation.constraints import (
     find_constraints_to_apply, sanitize_interpolated_quantities)
-from posydon.utils.posydonwarning import InterpolationWarning
+from posydon.utils.posydonwarning import Pwarn
 
 
 # INITIAL-FINAL INTERPOLATOR
@@ -1170,8 +1170,9 @@ class LinInterpolator(Interpolator):
             nearest_neighbor = np.sum(np.square(neighbors - max_distance_point), axis = 1)
             nearest_neighbor = nearest_neighbor.argsort()[0]
 
-            warnings.warn(f"1NN interpolation used for {np.sum(wnan)} "
-                          f"binaries out of hull. Parameter-wise distance (Unnormalized) for point with maximum out-of-hull euclidian distance (Normalized): {np.abs(neighbors[nearest_neighbor] - max_distance_point[0])}", InterpolationWarning)
+            Pwarn(f"1NN interpolation used for {np.sum(wnan)} "
+                f"binaries out of hull. Parameter-wise distance (Unnormalized) for point with"
+                " maximum out-of-hull euclidian distance (Normalized): {np.abs(neighbors[nearest_neighbor] - max_distance_point[0])}", "InterpolationWarning")
         return Ypred
 
 
@@ -1467,8 +1468,8 @@ class Scaler:
                 c = None if c == "None" else c
 
                 if c not in self.scaler.keys():
-                    warnings.warn(f"normalization was skipped during interpolation: c={c}, inds={inds}", 
-                                  InterpolationWarning)
+                    Pwarn(f"normalization was skipped during interpolation: c={c}, inds={inds}", 
+                                  "InterpolationWarning")
                     continue
 
                 normalized[inds] = self.scaler[c].normalize(X[inds])
@@ -1491,8 +1492,8 @@ class Scaler:
                 c = None if c == "None" else c
 
                 if c not in self.scaler.keys():
-                    warnings.warn(f"de-normalization was skipped during interpolation: c={c}, inds={inds}",
-                                  InterpolationWarning)
+                    Pwarn(f"de-normalization was skipped during interpolation: c={c}, inds={inds}",
+                                  "InterpolationWarning")
                     continue
                 normalized[inds] = self.scaler[c].denormalize(Xn[inds])
 

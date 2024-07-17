@@ -56,7 +56,7 @@ from posydon.popsyn.defaults import default_kwargs
 from posydon.popsyn.io import binarypop_kwargs_from_ini
 from posydon.utils.constants import Zsun
 from posydon.utils.posydonerror import POSYDONError,initial_condition_message
-from posydon.utils.posydonwarning import POSYDONWarning, ReplaceValueWarning, EvolutionWarning
+from posydon.utils.posydonwarning import POSYDONWarning, Pwarn
 from posydon.utils.common_functions import set_binary_to_failed
 
 saved_ini_parameters = ['metallicity',
@@ -459,8 +459,8 @@ class BinaryPopulation:
             if os.path.isdir(absolute_filepath):
                 file_name = 'backup_save_pop_data.h5'
                 file_path = os.path.join(dir_name, file_name)
-                warnings.warn('The provided path is a directory - saving '
-                              'to {0} instead.'.format(file_path), ReplaceValueWarning)
+                Pwarn('The provided path is a directory - saving '
+                              'to {0} instead.'.format(file_path), "ReplaceValueWarning")
 
             self.combine_saved_files(absolute_filepath, tmp_files, **kwargs)
 

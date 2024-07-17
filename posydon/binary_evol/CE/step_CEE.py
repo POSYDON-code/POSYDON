@@ -44,7 +44,7 @@ from posydon.binary_evol.singlestar import STARPROPERTIES
 from posydon.utils.common_functions import PATH_TO_POSYDON
 from posydon.utils.common_functions import check_state_of_star
 from posydon.utils.common_functions import calculate_lambda_from_profile, calculate_Mejected_for_integrated_binding_energy
-from posydon.utils.posydonwarning import ApproximationWarning
+from posydon.utils.posydonwarning import Pwarn
 
 
 #warnings.simplefilter('always', UserWarning)
@@ -357,8 +357,8 @@ class StepCEE(object):
                       donor.he_core_mass, donor.co_core_mass)
 
         elif donor.profile is None:
-            warnings.warn("Donor profile does not exist -- proceeding with "
-                          "default_lambda alpha-CE prescription", ApproximationWarning)
+            Pwarn("Donor profile does not exist -- proceeding with "
+                          "default_lambda alpha-CE prescription", "ApproximationWarning")
             # like in the "default_lambda" option
             lambda_CE = self.common_envelope_lambda_default
             if donor_type == 'He_core':

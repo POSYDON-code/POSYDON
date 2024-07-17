@@ -31,7 +31,7 @@ from posydon.utils.common_functions import (flip_stars,
 from posydon.utils.data_download import data_download, PATH_TO_POSYDON_DATA
 from posydon.grids.MODELS import MODELS
 from posydon.utils.posydonerror import FlowError, GridError
-from posydon.utils.posydonwarning import ReplaceValueWarning
+from posydon.utils.posydonwarning import Pwarn
 
 # left POSYDON, right MESA
 POSYDON_TO_MESA = {
@@ -454,14 +454,14 @@ class MesaGridStep:
             MESA_history_bug_fix = False
             if length_binary_hist != length_star_hist:
                 MESA_history_bug_fix = True
-                warnings.warn(
+                Pwarn(
                     'The MESA star_history and binary_history do not match: '
                     'lenght %i != %i. This will cause errors, e.g. '
                     'get_binary_state_and_event_and_mt_case take '
                     'star.mdot_history - star.lg_wind_mdot. To '
                     'avoid the code breaking, we append np.nan '
                     'to the missing values.' %
-                    (length_binary_hist, length_star_hist), ReplaceValueWarning)
+                    (length_binary_hist, length_star_hist), "ReplaceValueWarning")
 
         # update properties
         for key in BINARYPROPERTIES:

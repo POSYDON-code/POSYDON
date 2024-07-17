@@ -38,8 +38,7 @@ from posydon.utils.common_functions import (
 from posydon.binary_evol.flow_chart import (STAR_STATES_CC, STAR_STATES_CO)
 import posydon.utils.constants as const
 from posydon.utils.posydonerror import NumericalError, MatchingError, POSYDONError
-from posydon.utils.posydonwarning import UnsupportedModelWarning, EvolutionWarning
-import warnings
+from posydon.utils.posydonwarning import Pwarn
 
 LIST_ACCEPTABLE_STATES_FOR_HMS = ["H-rich_Core_H_burning"]
 
@@ -1685,7 +1684,7 @@ class detached_step:
                     elif (key in ["log_total_angular_momentum"] and obj == secondary):
                         
                         if (interp1d_sec["omega"][-1] < 0):
-                            warnings.warn("Star omega has negative value", EvolutionWarning)
+                            Pwarn("Star omega has negative value", "EvolutionWarning")
                             current = np.ones_like(interp1d_sec["omega"][-1])*np.nan
                         else:
                             current = np.log10(
@@ -2654,7 +2653,7 @@ def diffeq(
             )
 
         else:
-            warnings.warn("WARNING: Magnetic braking is not being calculated in the "
+            Pwarn("WARNING: Magnetic braking is not being calculated in the "
                   "detached step. The given magnetic_braking_mode string \"",
                   magnetic_braking_mode, "\" does not match the available "
                   "built-in cases. To enable magnetic braking, please set "
@@ -2662,7 +2661,7 @@ def diffeq(
                   "\"RVJ83\" for Rappaport, Verbunt, & Joss 1983"
                   "\"G18\" for Garraffo et al. 2018"
                   "\"M15\" for Matt et al. 2015"
-                  "\"CARB\" for Van & Ivanova 2019", UnsupportedModelWarning)
+                  "\"CARB\" for Van & Ivanova 2019", "UnsupportedModelWarning")
 
         if verbose and verbose != 1:
             print("magnetic_braking_mode = ", magnetic_braking_mode)

@@ -17,7 +17,7 @@ from posydon.binary_evol.DT.step_isolated import IsolatedStep
 from posydon.utils.posydonerror import FlowError
 
 import warnings
-from posydon.utils.posydonwarning import EvolutionWarning
+from posydon.utils.posydonwarning import Pwarn
 
 from posydon.binary_evol.flow_chart import (
     STAR_STATES_H_RICH,
@@ -264,7 +264,7 @@ class MergedStep(IsolatedStep):
                     merged_star.center_n14 = mass_weighted_avg(abundance_name = "center_n14", mass_weight1="co_core_mass")
                     merged_star.center_o16 = mass_weighted_avg(abundance_name = "center_o16", mass_weight1="co_core_mass")
                 else:
-                    warnings.warn("weird compbination of CO core masses during merging", EvolutionWarning)
+                    Pwarn("weird compbination of CO core masses during merging", "EvolutionWarning")
 
                 # weigheted mixing on the surface abundances based on the envelopes of the two stars
                 merged_star.surface_h1 = mass_weighted_avg(abundance_name = "surface_h1", mass_weight1="H-rich_envelope_mass", mass_weight2="H-rich_envelope_mass")
