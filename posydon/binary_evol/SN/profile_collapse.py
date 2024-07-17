@@ -61,7 +61,7 @@ def get_ejecta_element_mass_at_collapse(star, compact_object_mass, verbose):
         h1_mass_ej = 0.0
         he4_mass_ej = 0.0
     else:
-        i_rem = np.argmax(profile_mass_all > compact_object_mass) + 1
+        i_rem = np.argmax(profile_mass_all > compact_object_mass)
         dm = dm_all[i_rem:]
         XH = XH_all[i_rem:]
         YHe = YHe_all[i_rem:]
