@@ -304,7 +304,7 @@ class MergedStep(IsolatedStep):
                 elif (star_base.co_core_mass > 0 and comp.co_core_mass == 0): # star_base with CO core and the comp has just a He core (is a HeMS star)
                     pass # the central abundances are kept as the ones of star_base
                 else:
-                    warnings.warn("weird compbination of CO core masses during merging", EvolutionWarning)
+                    Pwarn("weird compbination of CO core masses during merging", "EvolutionWarning")
 
                 for key in STARPROPERTIES:
                     # these stellar attributes become np.nan
@@ -338,7 +338,7 @@ class MergedStep(IsolatedStep):
                 elif (star_base.co_core_mass == 0 and comp.co_core_mass > 0): # star_base is the HeMS Star and comp has a CO core
                     pass # the central abundances are kept as the ones of star_base
                 else:
-                    warnings.warn("weird compbination of CO core masses during merging", EvolutionWarning)
+                    Pwarn("weird compbination of CO core masses during merging", "EvolutionWarning")
 
                 for key in STARPROPERTIES:
                     # these stellar attributes become np.nan
@@ -382,7 +382,7 @@ class MergedStep(IsolatedStep):
                     merged_star.center_n14 = mass_weighted_avg(abundance_name = "center_n14", mass_weight1="co_core_mass")
                     merged_star.center_o16 = mass_weighted_avg(abundance_name = "center_o16", mass_weight1="co_core_mass")
                 else:
-                    warnings.warn("weird compbination of CO core masses during merging", EvolutionWarning)
+                    Pwarn("weird compbination of CO core masses during merging", "EvolutionWarning")
 
                 for key in STARPROPERTIES:
                     # these stellar attributes become np.nan
@@ -426,7 +426,7 @@ class MergedStep(IsolatedStep):
                     merged_star.center_n14 = mass_weighted_avg(abundance_name = "center_n14", mass_weight1="co_core_mass")
                     merged_star.center_o16 = mass_weighted_avg(abundance_name = "center_o16", mass_weight1="co_core_mass")
                 else:
-                    warnings.warn("weird compbination of CO core masses during merging", EvolutionWarning)
+                    Pwarn("weird compbination of CO core masses during merging", "EvolutionWarning")
 
                 for key in STARPROPERTIES:
                     # these stellar attributes become np.nan
@@ -470,7 +470,7 @@ class MergedStep(IsolatedStep):
                     merged_star.center_n14 = mass_weighted_avg(abundance_name = "center_n14", mass_weight1="co_core_mass")
                     merged_star.center_o16 = mass_weighted_avg(abundance_name = "center_o16", mass_weight1="co_core_mass")
                 else:
-                    warnings.warn("weird compbination of CO core masses during merging", EvolutionWarning)
+                    Pwarn("weird compbination of CO core masses during merging", "EvolutionWarning")
 
                 # weigheted mixing on the surface abundances based on the He-rich envelopes of the two stars
                 merged_star.surface_h1 = mass_weighted_avg(abundance_name = "surface_h1", mass_weight1="He-rich_envelope_mass", mass_weight2="He-rich_envelope_mass")
@@ -513,7 +513,7 @@ class MergedStep(IsolatedStep):
                     merged_star.center_n14 = mass_weighted_avg(abundance_name = "center_n14", mass_weight1="co_core_mass")
                     merged_star.center_o16 = mass_weighted_avg(abundance_name = "center_o16", mass_weight1="co_core_mass")
                 else:
-                    warnings.warn("weird compbination of CO core masses during merging", EvolutionWarning)
+                    Pwarn("weird compbination of CO core masses during merging", "EvolutionWarning")
 
                 for key in STARPROPERTIES:
                     # these stellar attributes become np.nan
