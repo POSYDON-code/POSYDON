@@ -51,7 +51,7 @@ def get_ejecta_element_mass_at_collapse(star, compact_object_mass, verbose):
     # read star quantities
     enclosed_mass_all = star.profile['mass'][::-1]  # cell outer total mass in Msun
     # shell's mass
-    dm_all = enclosed_mass[1:] - enclosed_mass[:-1]
+    dm_all = enclosed_mass_all[1:] - enclosed_mass_all[:-1]
 
     if 'h1' in star.profile.dtype.names:
         h1_all = star.profile['h1'][::-1]  # h1 mass fraction
