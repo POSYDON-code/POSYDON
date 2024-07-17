@@ -539,10 +539,6 @@ class StepSN(object):
                                      'or use_core_masses is set to True, '
                                      'continue with the collapse.', "InterpolationWarning")
                 else:
-                    # store some properties of the star object
-                    # to be used for collapse verification
-                    pre_SN_star = copy.deepcopy(star)
-
                     MODEL_properties = getattr(star, MODEL_NAME_SEL)
                     
                     ## Check if SN_type mismatches the CO_type in MODEL or if interpolated MODEL properties are NaN
@@ -589,42 +585,13 @@ class StepSN(object):
                             star.log_R = np.log10(CO_radius(star.mass, star.state))
                         return
                     
-                    # check if SN_type matches the predicted CO
-                    # and force the SN_type to match the predicted CO.
-                    # ie WD is no SN
-                    # 1. Check if SN_type and star state match                    
-                    # Non-matching SN_type and star state
-                    if not check_SN_CO_match(star.SN_type, star.state):
+                    else:
                         Pwarn(f'{MODEL_NAME_SEL}: The SN_type '
-                                      'does not match the predicted CO! '
-                                      'Recalculating the SN_type and CO.', "ClassificationWarning")
-                        # recalculate the SN_type and CO
-                        # change some star properties back 
-                        m_PISN = self.PISN_prescription(pre_SN_star)
-                        # no remnant if a PISN happens
-                        if pd.isna(m_PISN):
-                            star.SN_type = 'PISN'
-                            star.state = 'massless_remnant'
-                        else:
-                            _, _, star.state = self.compute_m_rembar(pre_SN_star, m_PISN)
-                            star.SN_type = self.check_SN_type(pre_SN_star.c_core_mass,
-                                                            pre_SN_star.he_core_mass,
-                                                            pre_SN_star.mass)[-1]
-
-                        # check if the new SN_type matches new SN_type
-                        if not check_SN_CO_match(star.SN_type, star.state):
-                            # still doesn't match
-                            Pwarn('The SN_type still does not match the predicted CO. '
-                                          'Now forcing the SN_type and CO to match.', "ClassificationWarning")
-                            if star.state == 'WD':
-                                star.SN_type = 'WD'
-                            elif star.state == 'NS' or star.state == 'BH':
-                                star.SN_type = 'CCSN'
-                            elif star.state == 'massless_remnant':
-                                star.SN_type = 'PISN'
-                            else:
-                                raise ValueError('Star state not recognized.')
-                    
+                                      'does not match the predicted CO, or the interpolated '
+                                      'values for the SN remnant are NaN. '
+                                      'If use_profiles or use_core_masses is set to True, '
+                                      'continue with the collapse.', "ApproximationWarning")
+                        
             # Verifies the selection of core-collapse mechnism to perform
             # the collapse
             if self.mechanism in [
