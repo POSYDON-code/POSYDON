@@ -47,31 +47,27 @@ def get_ejecta_element_mass_at_collapse(star, compact_object_mass, verbose):
 
 
     # read star quantities
-    enclosed_mass_all = star.profile['mass'][::-1]  # cell outer total mass in Msun
+    profile_mass_all = star.profile['mass'][::-1]  # cell outer total mass in Msun
     # shell's mass
-    dm_all = enclosed_mass_all[1:] - enclosed_mass_all[:-1]
+    dm_all = profile_mass_all[1:] - profile_mass_all[:-1]
 
     if 'x_mass_fraction_H' in star.profile.dtype.names:
         XH_all = star.profile['x_mass_fraction_H'][::-1]  # h1 mass fraction
     if 'y_mass_fraction_He' in star.profile.dtype.names:
         YHe_all = star.profile['y_mass_fraction_He'][::-1]  # he4 mass fraction
 
-    if enclosed_mass_all[-1] <= compact_object_mass:
-        # This catches the case that all the star's profile is callapsed.
-        # Note that the 'mass' of the MESA profile is the enclosed mass of that
-        # shell; the mass of the whole star is then
-        #     star.profile['mass'][::-1][-1] + dm,
-        # where dm is the mass of the last shell.
-        i_rem = len(enclosed_mass_all)
+    if profile_mass_all[-1] <= compact_object_mass:
+        # This catches the case that all the star's profile is collapsed.
+        h1_mass_ej = 0.0
+        he4_mass_ej = 0.0
     else:
-        i_rem = np.argmax(enclosed_mass_all > compact_object_mass) + 1
-    enclosed_mass = enclosed_mass_all[:i_rem]
-    dm = dm_all[:i_rem]
-    XH = XH_all[:i_rem]
-    YHe = YHe_all[:i_rem]
+        i_rem = np.argmax(profile_mass_all > compact_object_mass) + 1
+        dm = dm_all[i_rem:]
+        XH = XH_all[i_rem:]
+        YHe = YHe_all[i_rem:]
 
-    h1_mass_ej = np.sum(dm*XH)
-    he4_mass_ej = np.sum(dm*YHe)
+        h1_mass_ej = np.sum(dm*XH)
+        he4_mass_ej = np.sum(dm*YHe)
 
     return h1_mass_ej, he4_mass_ej
 
