@@ -53,6 +53,10 @@ def get_ejecta_element_mass_at_collapse(star, compact_object_mass, verbose):
     # shell's mass
     dm_all = enclosed_mass_all[1:] - enclosed_mass_all[:-1]
 
+    print(star.profile)
+    print(star.profile.dtype)
+    print(star.profile['h1'])
+
     if 'h1' in star.profile.dtype.names:
         h1_all = star.profile['h1'][::-1]  # h1 mass fraction
     if 'he4' in star.profile.dtype.names:
