@@ -1682,13 +1682,9 @@ class detached_step:
                                     const.msol * const.rsol ** 2)
                             
                     elif (key in ["log_total_angular_momentum"] and obj == secondary):
-                        
-                        if (interp1d_sec["omega"][-1] < 0):
-                            Pwarn("Star omega has negative value", "EvolutionWarning")
-                            current = np.ones_like(interp1d_sec["omega"][-1])*np.nan
-                        else:
-                            current = np.log10(
-                                (interp1d_sec["omega"][-1] / const.secyer)
+                                               
+                        current = np.log10(
+                            (interp1d_sec["omega"][-1] / const.secyer)
                                 * (interp1d_sec[
                                     self.translate["total_moment_of_inertia"]](t[-1] - t_offset_sec).item() * 
                                     (const.msol * const.rsol ** 2)))                     
