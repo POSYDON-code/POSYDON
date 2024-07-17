@@ -343,12 +343,15 @@ class BinaryPopulation:
                     e.add_note(initial_condition_message(binary))
                     traceback.print_exception(e)
 
-            binary.warnings = []
-            if len(w) > 0:
-                for x in w: 
-                    warning_formatted = warnings.formatwarning(x.message, x.category, x.filename, x.lineno, line=None)
-                    print(warning_formatted, file=sys.stderr)
-                    binary.warnings.append(warning_formatted)
+                ## catching warnings with record=True automatically suppresses them being written standard error,
+                ## but we need record=True to save all warnings as a binary attribute (binary.warnings)
+                ## so, we manually reformat them and print to stderr
+                binary.warnings = []
+                if len(w) > 0:
+                    for x in w: 
+                        warning_formatted = warnings.formatwarning(x.message, x.category, x.filename, x.lineno, line=None)
+                        print(warning_formatted, file=sys.stderr)
+                        binary.warnings.append(warning_formatted)
         
             if breakdown_to_df:
                 self.manager.breakdown_to_df(binary, **self.kwargs)
