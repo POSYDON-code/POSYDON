@@ -1231,12 +1231,12 @@ def create_csv(GRID_TYPES=[],
                     print(f'In {column} the following grids are skipped!')
                     for row in drop_rows:
                         print(df.at[row,column])
-                        df.at[row,column] = np.NaN
+                        df.at[row,column] = np.nan
                     print('')
                     newcol = df[column].dropna().to_list()
                     if len(newcol)==0:
                         drop_columns.append(column)
-                    newcol.extend((df.shape[0]-len(newcol))*[np.NaN])
+                    newcol.extend((df.shape[0]-len(newcol))*[np.nan])
                     df[column] = newcol
             # report about empty tasks and remove them
             if len(drop_columns)>0:
