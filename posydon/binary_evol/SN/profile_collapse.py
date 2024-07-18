@@ -24,6 +24,71 @@ __credits__ = [
     'Aldo Batta <aldobatta@gmail.com>',
 ]
 
+def get_ejecta_element_mass_at_collapse(star, compact_object_mass, verbose):
+    """Calculate the masses of H1, He4, and O16 in the ejecta.
+    Parameters
+    ----------
+    star : object
+        Star object of a collapsing star containing the MESA profile.
+
+    compact_object_mass : float
+        The mass of the compact object (in Msun), hence all above this mass will be ejected.
+
+    verbose : bool
+        If `True`, it prints some informations.
+
+    Returns
+    -------
+    h1_mass_ej : float
+        Hydrogen mass in the ejecta. (in Msun)
+    he4_mass_ej : float
+        Helium mass in the ejecta. (in Msun)
+    """
+
+
+    # read star quantities
+    profile_mass_all = star.profile['mass'][::-1]  # cell outer total mass in Msun
+    # shell's mass
+    dm_all = profile_mass_all[1:] - profile_mass_all[:-1]
+
+    if 'x_mass_fraction_H' in star.profile.dtype.names:
+        XH_all = star.profile['x_mass_fraction_H'][::-1]  # h1 mass fraction
+    if 'y_mass_fraction_He' in star.profile.dtype.names:
+        YHe_all = star.profile['y_mass_fraction_He'][::-1]  # he4 mass fraction
+
+    #print("profile_mass_all[-1], compact_object_mass", profile_mass_all[-1], compact_object_mass)
+    if profile_mass_all[-1] <= compact_object_mass:
+        # This catches the case that all the star's profile is collapsed.
+        h1_mass_ej = 0.0
+        he4_mass_ej = 0.0
+    else:
+        # Find the index where the profile mass exceeds the compact object mass
+        i_rem = np.argmax(profile_mass_all > compact_object_mass)
+        #print("i_rem, len(dm_all)", i_rem, len(dm_all))
+        #print("mass coordinate above which it is ejected", profile_mass_all[i_rem])
+
+        # Ensure the index is within bounds
+        if i_rem < len(dm_all):
+            # Calculate the ejected mass of H1 and He4
+            dm_ejected = dm_all[i_rem:]
+            XH_ejected = XH_all[i_rem + 1:]  # +1 because dm_all has one less element than profile_mass_all
+            YHe_ejected = YHe_all[i_rem + 1:]
+
+            # Calculate the ejected masses only if the lengths match
+            if len(dm_ejected) == len(XH_ejected) == len(YHe_ejected):
+                h1_mass_ej = np.sum(dm_ejected * XH_ejected)
+                he4_mass_ej = np.sum(dm_ejected * YHe_ejected)
+            else:
+                h1_mass_ej = 0.0
+                he4_mass_ej = 0.0
+                print("Warning: Mismatch in array lengths, cannot calculate ejected masses accurately.")
+        else:
+            h1_mass_ej = 0.0
+            he4_mass_ej = 0.0
+            print("Warning: Index out of bounds, cannot calculate ejected masses.")
+        #print(h1_mass_ej, he4_mass_ej, np.sum(dm_ejected))
+    return h1_mass_ej, he4_mass_ej
+
 
 def get_initial_BH_properties(star, mass_collapsing, mass_central_BH,
                               neutrino_mass_loss, max_neutrino_mass_loss,
@@ -555,7 +620,7 @@ def do_core_collapse_BH(star,
     return [
         M_BH_total,
         a_BH_total,
-        m_disk_accreted, 
+        m_disk_accreted,
         m_disk_radiated,
         # np.array(M_BH_array),
         # np.array(a_BH_array),

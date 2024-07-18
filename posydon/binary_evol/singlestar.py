@@ -153,6 +153,15 @@ class SingleStar:
             self.m_disk_accreted = None
         if not hasattr(self, 'm_disk_radiated'):
             self.m_disk_radiated = None
+        if not hasattr(self, 'h1_mass_ej'):
+            self.h1_mass_ej = None
+        if not hasattr(self, 'he4_mass_ej'):
+            self.he4_mass_ej = None
+        if not hasattr(self, 'M4'):
+            self.M4 = None
+        if not hasattr(self, 'mu4'):
+            self.mu4 = None
+
 
         # the following quantities are updated in mesa_step.py
 
@@ -165,7 +174,8 @@ class SingleStar:
         # core masses at He depletion
         for quantity in ['avg_c_in_c_core_at_He_depletion',
                          'co_core_mass_at_He_depletion']:
-            setattr(self, quantity, None)
+            if not hasattr(self, quantity):
+                setattr(self, quantity, None)
 
         # core collapse quantities
         for MODEL_NAME in MODELS.keys():
@@ -187,28 +197,28 @@ class SingleStar:
             i == 0, i.e. the star will be restored to its initial state.
         hooks : list
             List of extra hooks associated with the SimulationProperties() of the BinaryStar()
-            object containing this SingleStar(), if applicable. This parameter is 
-            automatically set when restoring a BinaryStar() object. 
+            object containing this SingleStar(), if applicable. This parameter is
+            automatically set when restoring a BinaryStar() object.
         """
         if hooks is None:
             hooks = []
-            
+
         # Move current star properties to the ith step, using its history
         for p in STARPROPERTIES:
             setattr(self, p, getattr(self, '{}_history'.format(p))[i])
 
             ## delete the star history after the i-th index
             setattr(self, p + '_history', getattr(self, p + '_history')[0:i+1])
-        
+
         ## if running with extra hooks, restore any extra hook columns
         for hook in hooks:
 
             if hasattr(hook, 'extra_star_col_names'):
                 extra_columns = getattr(hook, 'extra_star_col_names')
-                
+
                 for col in extra_columns:
-                    setattr(self, col, getattr(self, col)[0:i+1])  
-           
+                    setattr(self, col, getattr(self, col)[0:i+1])
+
 
     def to_df(self, **kwargs):
         """Return history parameters from the star in a DataFrame.
@@ -269,7 +279,7 @@ class SingleStar:
             # shape of data_to_save (history columns , time steps)
             data_to_save = [getattr(self, key) for key in keys_to_save]
 
-            
+
             col_lengths = [len(x) for x in data_to_save]
             max_col_length = np.max(col_lengths)
 
@@ -406,7 +416,7 @@ class SingleStar:
                     attr = colname[3:]
                     final_value = run.final_values[colname]
                     setattr(star, attr, final_value)
-        
+
         star.state_history = [check_state_of_star(star, i=i, star_CO=False)
                               for i in range(n_steps)]
         star.state = star.state_history[-1]
