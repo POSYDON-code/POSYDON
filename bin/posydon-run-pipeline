@@ -688,18 +688,18 @@ def copy_ini_file(grid_type, rerun_metallicity, rerun_type, destination,
     elif rerun_type == "dedt_hepulse":
         replace_text = "seth_dedt_hepulse-0274be9895480cae3aa2a4d14b056a2447d5921b"
     elif rerun_type == 'LBV_wind':
-        replace_text = "matthias_LBV_wind-95c817ef9512b6b3a69962b748e5008e5f9fc0da"
+        replace_text = "matthias_LBV_wind-e7db85fe578587383c335f168e3054c1eaaca895"
     elif rerun_type == 'LBV_wind+thermohaline_mixing':
-        replace_text = "matthias_LBV_wind-95c817ef9512b6b3a69962b748e5008e5f9fc0da"
+        replace_text = "matthias_LBV_wind-e7db85fe578587383c335f168e3054c1eaaca895"
     elif rerun_type == 'LBV_wind+HeMB_MLTp_mesh':
         raise ValueError(f'Not yet supported rerun type {rerun_type}!')
-        replace_text = "matthias_LBV_wind-95c817ef9512b6b3a69962b748e5008e5f9fc0da" #TODO: update to new MESA-INLIST branch/commit
+        replace_text = "matthias_LBV_wind-e7db85fe578587383c335f168e3054c1eaaca895" #TODO: update to new MESA-INLIST branch/commit
     elif rerun_type == 'LBV_wind+dedt_energy_eqn':
         raise ValueError(f'Not yet supported rerun type {rerun_type}!')
-        replace_text = "matthias_LBV_wind-95c817ef9512b6b3a69962b748e5008e5f9fc0da" #TODO: update to new MESA-INLIST branch/commit
+        replace_text = "matthias_LBV_wind-e7db85fe578587383c335f168e3054c1eaaca895" #TODO: update to new MESA-INLIST branch/commit
     elif rerun_type == 'LBV_wind+dedt_hepulse':
         raise ValueError(f'Not yet supported rerun type {rerun_type}!')
-        replace_text = "matthias_LBV_wind-95c817ef9512b6b3a69962b748e5008e5f9fc0da" #TODO: update to new MESA-INLIST branch/commit
+        replace_text = "matthias_LBV_wind-e7db85fe578587383c335f168e3054c1eaaca895" #TODO: update to new MESA-INLIST branch/commit
     elif rerun_type == 'other': # e.g. 'envelope_mass_limit', 'fe_core_infall_limit'
         # this rerun uses the default inlist commit
         return
