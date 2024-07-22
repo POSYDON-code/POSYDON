@@ -688,18 +688,18 @@ def copy_ini_file(grid_type, rerun_metallicity, rerun_type, destination,
     elif rerun_type == "dedt_hepulse":
         replace_text = "seth_dedt_hepulse-0274be9895480cae3aa2a4d14b056a2447d5921b"
     elif rerun_type == 'LBV_wind':
-        replace_text = "matthias_LBV_wind-e7db85fe578587383c335f168e3054c1eaaca895"
+        replace_text = "matthias_LBV_wind-0cebead888f29eb56800516900f5ceb24e523d82"
     elif rerun_type == 'LBV_wind+thermohaline_mixing':
-        replace_text = "matthias_LBV_wind-e7db85fe578587383c335f168e3054c1eaaca895"
+        replace_text = "matthias_LBV_wind-0cebead888f29eb56800516900f5ceb24e523d82"
     elif rerun_type == 'LBV_wind+HeMB_MLTp_mesh':
         raise ValueError(f'Not yet supported rerun type {rerun_type}!')
-        replace_text = "matthias_LBV_wind-e7db85fe578587383c335f168e3054c1eaaca895" #TODO: update to new MESA-INLIST branch/commit
+        replace_text = "matthias_LBV_wind-0cebead888f29eb56800516900f5ceb24e523d82" #TODO: update to new MESA-INLIST branch/commit
     elif rerun_type == 'LBV_wind+dedt_energy_eqn':
         raise ValueError(f'Not yet supported rerun type {rerun_type}!')
-        replace_text = "matthias_LBV_wind-e7db85fe578587383c335f168e3054c1eaaca895" #TODO: update to new MESA-INLIST branch/commit
+        replace_text = "matthias_LBV_wind-0cebead888f29eb56800516900f5ceb24e523d82" #TODO: update to new MESA-INLIST branch/commit
     elif rerun_type == 'LBV_wind+dedt_hepulse':
         raise ValueError(f'Not yet supported rerun type {rerun_type}!')
-        replace_text = "matthias_LBV_wind-e7db85fe578587383c335f168e3054c1eaaca895" #TODO: update to new MESA-INLIST branch/commit
+        replace_text = "matthias_LBV_wind-0cebead888f29eb56800516900f5ceb24e523d82" #TODO: update to new MESA-INLIST branch/commit
     elif rerun_type == 'other': # e.g. 'envelope_mass_limit', 'fe_core_infall_limit'
         # this rerun uses the default inlist commit
         return
@@ -878,23 +878,41 @@ def logic_rerun(grid, rerun_type):
     elif rerun_type == 'LBV_wind':
         N_runs = len(grid)
         runs_to_rerun = []
+        hot_wind_full_on_T = 1.2e4 # inlist value
         for i in range(N_runs):
             if grid[i].history1 is not None:
                 s1_L = 10**grid[i].history1['log_L']
                 s1_R = 10**grid[i].history1['log_R']
                 s1_HD_limit = (1.0e-5 * s1_R * np.sqrt(s1_L))
                 lbv_1 = np.logical_and(s1_L > 6.0e5, s1_HD_limit > 1.0)
+                s1_Teff = 10**grid[i].history1['log_Teff']
+                s1_Yc = grid[i].history1['center_he4']
+                s1_he_shell_mass = grid[i].history1['he_core_mass'] -\
+                                   grid[i].history1['co_core_mass']
+                tpagb_1 = np.logical_and(s1_Teff <= hot_wind_full_on_T,\
+                                         s1_Yc <= 1e-6)
+                tpagb_1 = np.logical_and(tpagb_1, s1_he_shell_mass <= 1e-1)
             else:
                 lbv_1 = np.array([False])
+                tpagb_1 = np.array([False])
             if grid[i].history2 is not None:
                 s2_L = 10**grid[i].history2['log_L']
                 s2_R = 10**grid[i].history2['log_R']
                 s2_HD_limit = (1.0e-5 * s2_R * np.sqrt(s2_L))
                 lbv_2 = np.logical_and(s2_L > 6.0e5, s2_HD_limit > 1.0)
+                s2_Teff = 10**grid[i].history2['log_Teff']
+                s2_Yc = grid[i].history2['center_he4']
+                s2_he_shell_mass = grid[i].history2['he_core_mass'] -\
+                                   grid[i].history2['co_core_mass']
+                tpagb_2 = np.logical_and(s2_Teff <= hot_wind_full_on_T,\
+                                         s2_Yc <= 1e-6)
+                tpagb_2 = np.logical_and(tpagb_2, s2_he_shell_mass <= 1e-1)
             else:
                 lbv_2 = np.array([False])
+                tpagb_2 = np.array([False])
             if np.max(np.logical_or(lbv_1, lbv_2)) == True:
-                runs_to_rerun += [i]
+                if np.max(np.logical_or(tpagb_1, tpagb_2)) == False:
+                    runs_to_rerun += [i]
         runs_to_rerun = np.array(runs_to_rerun)
     elif rerun_type == 'envelope_mass_limit': # maybe 'fe_core_infall_limit' as well?
         runs_to_rerun = None # implement logic
