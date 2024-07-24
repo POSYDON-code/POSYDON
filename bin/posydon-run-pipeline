@@ -688,18 +688,18 @@ def copy_ini_file(grid_type, rerun_metallicity, rerun_type, destination,
     elif rerun_type == "dedt_hepulse":
         replace_text = "seth_dedt_hepulse-0274be9895480cae3aa2a4d14b056a2447d5921b"
     elif rerun_type == 'LBV_wind':
-        replace_text = "matthias_LBV_wind-112a8dcb96c11373e0e08c544ea8b71fb35aebf6"
+        replace_text = "matthias_LBV_wind-051343856f50dc5518abdf28904d62df4caacaff"
     elif rerun_type == 'LBV_wind+thermohaline_mixing':
-        replace_text = "matthias_LBV_wind-112a8dcb96c11373e0e08c544ea8b71fb35aebf6"
+        replace_text = "matthias_LBV_wind-051343856f50dc5518abdf28904d62df4caacaff"
     elif rerun_type == 'LBV_wind+HeMB_MLTp_mesh':
         raise ValueError(f'Not yet supported rerun type {rerun_type}!')
-        replace_text = "matthias_LBV_wind-112a8dcb96c11373e0e08c544ea8b71fb35aebf6" #TODO: update to new MESA-INLIST branch/commit
+        replace_text = "matthias_LBV_wind-051343856f50dc5518abdf28904d62df4caacaff" #TODO: update to new MESA-INLIST branch/commit
     elif rerun_type == 'LBV_wind+dedt_energy_eqn':
         raise ValueError(f'Not yet supported rerun type {rerun_type}!')
-        replace_text = "matthias_LBV_wind-112a8dcb96c11373e0e08c544ea8b71fb35aebf6" #TODO: update to new MESA-INLIST branch/commit
+        replace_text = "matthias_LBV_wind-051343856f50dc5518abdf28904d62df4caacaff" #TODO: update to new MESA-INLIST branch/commit
     elif rerun_type == 'LBV_wind+dedt_hepulse':
         raise ValueError(f'Not yet supported rerun type {rerun_type}!')
-        replace_text = "matthias_LBV_wind-112a8dcb96c11373e0e08c544ea8b71fb35aebf6" #TODO: update to new MESA-INLIST branch/commit
+        replace_text = "matthias_LBV_wind-051343856f50dc5518abdf28904d62df4caacaff" #TODO: update to new MESA-INLIST branch/commit
     elif rerun_type == 'other': # e.g. 'envelope_mass_limit', 'fe_core_infall_limit'
         # this rerun uses the default inlist commit
         return
@@ -887,7 +887,7 @@ def logic_rerun(grid, rerun_type):
                 lbv_1 = np.logical_and(s1_L > 6.0e5, s1_HD_limit > 1.0)
                 # exclude (stripped) He stars
                 s1_X_surf = grid[i].history1['surface_h1']
-                lbv_1 = np.logical_and(lbv_1, s1_X_surf >= 0.4)
+                lbv_1 = np.logical_and(lbv_1, s1_X_surf >= 0.1)
                 # exclude stars going through TPAGB
                 s1_Teff = 10**grid[i].history1['log_Teff']
                 s1_Yc = grid[i].history1['center_he4']
@@ -906,7 +906,7 @@ def logic_rerun(grid, rerun_type):
                 lbv_2 = np.logical_and(s2_L > 6.0e5, s2_HD_limit > 1.0)
                 # exclude (stripped) He stars
                 s2_X_surf = grid[i].history2['surface_h1']
-                lbv_2 = np.logical_and(lbv_2, s2_X_surf >= 0.4)
+                lbv_2 = np.logical_and(lbv_2, s2_X_surf >= 0.1)
                 # exclude stars going through TPAGB
                 s2_Teff = 10**grid[i].history2['log_Teff']
                 s2_Yc = grid[i].history2['center_he4']
