@@ -376,6 +376,13 @@ def train_interpolators(i, path_to_csv_file, verbose=False):
                                    and any(~np.isnan(grid.final_values[key]))
                                    and "MODEL" not in key)]
     
+
+    out_nan_keys = [key for key in grid.final_values.dtype.names if (
+                             key != "model_number" and
+                            (type(grid.final_values[key][0]) != np.str_)
+                            and all(np.isnan(grid.final_values[key]))
+                            and "MODEL" not in key)]
+    
     # define all string keys in final values
     c_keys = ['interpolation_class', 'S1_state', 'S2_state', 'mt_history']
     for MODEL_NAME in MODELS.keys():
@@ -389,6 +396,7 @@ def train_interpolators(i, path_to_csv_file, verbose=False):
             "interp_method": interp_method,
             "interp_classes": interp_classes,
             "out_keys": out_keys,
+            "out_nan_keys": out_nan_keys,
             "class_method": "kNN",
             "c_keys": c_keys,
             "c_key": "interpolation_class"
@@ -407,6 +415,13 @@ def train_interpolators(i, path_to_csv_file, verbose=False):
                                    (type(grid.final_values[key][0]) != np.str_)
                                    and any(~np.isnan(grid.final_values[key]))
                                    and f"S{i}_{MODEL_NAME}" in key)]
+            
+            out_nan_keys = [key for key in grid.final_values.dtype.names if (
+                                key != "model_number" 
+                                and (type(grid.final_values[key][0]) != np.str_)
+                                and all(np.isnan(grid.final_values[key]))
+                                and f"S{i}_{MODEL_NAME}" in key)]
+            
             # get interpolations classes dynamically
             interp_method = []
             interp_classes = []
@@ -420,8 +435,11 @@ def train_interpolators(i, path_to_csv_file, verbose=False):
                     "interp_method": interp_method,
                     "interp_classes": interp_classes,
                     "out_keys": out_keys,
+                    "out_nan_keys": out_nan_keys,
                     "class_method": "kNN",
-                    "c_keys": [f'S{i}_{MODEL_NAME}_CO_interpolation_class'],
+                    "c_keys": [f'S{i}_{MODEL_NAME}_CO_interpolation_class', 
+                               f'S{i}_{MODEL_NAME}_CO_type',
+                               f'S{i}_{MODEL_NAME}_SN_type'],
                     "c_key": f'S{i}_{MODEL_NAME}_CO_interpolation_class'
                 },   
             )
@@ -665,6 +683,10 @@ def copy_ini_file(grid_type, rerun_metallicity, rerun_type, destination,
         replace_text = "development-435d16c9158e4608530f21b8169ce6f31160e23e"
     elif rerun_type == 'initial_He':
         replace_text = "fix_iniHe_pre_rerun5-0e736a853c3c2e522b76299a54aea8f5eea15d08"
+    elif rerun_type == "dedt_energy_eqn":
+        replace_text = "seth_dedt_energy_eqn-f1803afe400ed16a4fad47b0bad6abbf0965cae1"
+    elif rerun_type == "dedt_hepulse":
+        replace_text = "seth_dedt_hepulse-0274be9895480cae3aa2a4d14b056a2447d5921b"
     elif rerun_type == 'other': # e.g. 'envelope_mass_limit', 'fe_core_infall_limit'
         # this rerun uses the default inlist commit
         return
@@ -832,6 +854,10 @@ def logic_rerun(grid, rerun_type):
             if np.isnan(iniY) or iniY<0.96:
                 runs_to_rerun += [i]
         runs_to_rerun = np.array(runs_to_rerun)
+    elif rerun_type == 'dedt_energy_eqn':
+        termination_flags = TF1_POOL_ERROR    
+    elif rerun_type == 'dedt_hepulse':
+        termination_flags = TF1_POOL_ERROR
     elif rerun_type == 'envelope_mass_limit': # maybe 'fe_core_infall_limit' as well?
         runs_to_rerun = None # implement logic
     else:
@@ -1351,7 +1377,7 @@ if __name__ == '__main__':
     # NOTE: this prevents job arrays starting at the same time to read
     # the same files at the same time (e.g. when creatign LITE/ORIGINAL grid,
     # or when creating a directory that does not exist yet)
-    time.sleep(random.uniform(0.,30.))
+    time.sleep(SLURM_I)
 
     STEP = os.path.splitext(os.path.basename(PATH_TO_CSV_FILE))[0]
     if STEP=='step_1': # grid slices creation
