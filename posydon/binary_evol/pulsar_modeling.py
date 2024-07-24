@@ -219,30 +219,34 @@ class Pulsar:
         B_i = self.Bfield            ## B-field of the NS before accretion [G]
         R = self.radius              ## radius of the NS [cm]
         I = self.moment_inertia      ## Moment of inertia [CGS]
+        K_const = 3.1126032e-40      ## [s*G^-2]
 
-        R_alfven = (2*np.pi**2/(G*mu_0**2))**(1/7) * (R**6/(self.Mdot_edd*M_i**(1/2)))**(2/7) * B_i**(4/7) ## Alfven radius
-        R_mag = R_alfven/2   ## magnetic radius
 
         ## evolve the NS spin
-        #J_i = 2/5*M_i*R**2*self.spin     ## spin angular momentum (J) of the NS before accretion
-        J_i = I*self.spin
-        
-        omega_k = np.sqrt(G*M_i/R**3)
-        delta_J = 2/5*delta_M*R_mag**2*omega_k    ## change in J due to accretion
-
-        J_f = J_i + delta_J
+        J_i = 2/5*M_i*R**2*self.spin     ## spin angular momentum (J) of the NS before accretion
+        #J_i = I*self.spin
         M_f = M_i + delta_M
+        
+        ## spin-up from accretion
+        omega_k = np.sqrt(G*M_i/R**3)
+        delta_J_acc = 2/5*delta_M*R**2*omega_k 
+
+        ## spin down from dipole radiation
+        delta_omega = K_const*B_i**2*self.spin**3  
+        delta_J_rad = 2/5*M_f*R**2*delta_omega    
+                
+        J_f = J_i + delta_J_acc - delta_J_rad
+        
         self.mass = M_f
 
-        #omega_f = J_f/(2/5*M_f*R**2)
-        omega_f = J_f/I
+        omega_f = J_f/(2/5*M_f*R**2)
+        #omega_f = J_f/I
         self.spin = omega_f
 
         ## evolve the NS B-field
-        B_f = B_i/(1 + delta_M/delta_Md) * np.exp(-delta_t/tau_d)
+        B_min = 5e7
+        B_f = B_i/(1 + delta_M/delta_Md) * np.exp(-delta_t/tau_d) + B_min
         self.Bfield = B_f
-
-        if B_f < 5e7: B_f = 5e7
 
         ## check if pulsar has crossed the death line
         self.alive_state = self.is_alive()
