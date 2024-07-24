@@ -234,7 +234,7 @@ def rename_star_state(star,i):
     k_e = 0.2*(1 + xH_surf)
     logg = copy(star[f'{i}_log_g'])
     Gamma = k_e * con.sigma_sb*T**4/(con.c * 10**logg)
-    if xH_surf < 0.4:
+    if xH_surf < 0.6:
         if lg_M_dot < -6:
             star[f'{i}_state'] = 'stripped_He_star'
             print('here!')
