@@ -602,7 +602,7 @@ class BinaryStar:
             oneline_df['FAILED'] = [1]
         else:
             oneline_df['FAILED'] = [0]
-        if hasattr(self, 'warning_message'):
+        if hasattr(self, 'warnings'):
             oneline_df['WARNING'] = [1]
         else:
             oneline_df['WARNING'] = [0]

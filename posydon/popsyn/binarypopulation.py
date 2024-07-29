@@ -318,7 +318,7 @@ class BinaryPopulation:
                 binary = self.manager.generate(index=index, **self.kwargs)
             binary.properties = self.population_properties
 
-            with warnings.catch_warnings(record=True) as w:
+            with warnings.catch_warnings(record=True) as warning_list:
                        
                 if self.kwargs.get("warnings_verbose", False):   
                     SetPOSYDONWarnings("default", "POSYDONWarning")                         
@@ -344,14 +344,15 @@ class BinaryPopulation:
                     traceback.print_exception(e)
 
                 ## catching warnings with record=True automatically suppresses them being written standard error,
-                ## but we need record=True to save all warnings as a binary attribute (binary.warnings)
-                ## so, we manually reformat them and print to stderr
-                binary.warnings = []
-                if len(w) > 0:
-                    for x in w: 
-                        warning_formatted = warnings.formatwarning(x.message, x.category, x.filename, x.lineno, line=None)
+                ## but we need record=True to check if warning occurred for the binary (binary.warnings)
+                ## so, we manually reformat them and print to stderr           
+                if len(warning_list) > 0:
+                    binary.warnings = True
+                    for warning in warning_list: 
+                        warning_formatted = warnings.formatwarning(warning.message, warning.category, warning.filename, 
+                                                                   warning.lineno, line=None)
                         print(warning_formatted, file=sys.stderr)
-                        binary.warnings.append(warning_formatted)
+                        
         
             if breakdown_to_df:
                 self.manager.breakdown_to_df(binary, **self.kwargs)

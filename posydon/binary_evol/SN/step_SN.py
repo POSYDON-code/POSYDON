@@ -2060,10 +2060,10 @@ class StepSN(object):
 class Sukhbold16_corecollapse(object):
     """Compute supernova final remnant mass, fallback fraction and CO type.
 
-    This consider the nearest neighboor of the He core mass of the star,
-    previous to the collapse. Considering a set of data for which the He core
-    mass of the compact object projenitos previous the collapse, the final
-    remnant mass and final stellar state of the compact object is known.
+    This considers the He core mass of the nearest neighbor of the star
+    prior to the collapse. Using a set of data for the He core
+    mass of the compact object progenitors prior the collapse, the final
+    remnant mass and stellar state of the compact object are known.
 
     Parameters
     ----------
