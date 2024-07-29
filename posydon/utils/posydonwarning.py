@@ -94,6 +94,8 @@ def _get_POSYDONWarning_class(category):
             A POSYDONWarning class or None if the input is neither a
             POSYDONWarning class nor convertable to one.
     """
+    if category is None:
+        return category
     if isinstance(category,str):
         if category in POSYDONWarning_subclasses.keys():
             category = POSYDONWarning_subclasses[category]
