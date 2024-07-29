@@ -16,7 +16,6 @@ from posydon.utils.common_functions import check_state_of_star
 from posydon.binary_evol.DT.step_isolated import IsolatedStep
 from posydon.utils.posydonerror import FlowError
 
-import warnings
 from posydon.utils.posydonwarning import Pwarn
 
 from posydon.binary_evol.flow_chart import (

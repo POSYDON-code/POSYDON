@@ -1172,7 +1172,8 @@ class LinInterpolator(Interpolator):
 
             Pwarn(f"1NN interpolation used for {np.sum(wnan)} "
                 f"binaries out of hull. Parameter-wise distance (Unnormalized) for point with"
-                " maximum out-of-hull euclidian distance (Normalized): {np.abs(neighbors[nearest_neighbor] - max_distance_point[0])}", "InterpolationWarning")
+                f" maximum out-of-hull euclidian distance (Normalized): {np.abs(neighbors[nearest_neighbor] - max_distance_point[0])}", 
+                "InterpolationWarning")
         return Ypred
 
 
