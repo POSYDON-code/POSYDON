@@ -387,7 +387,8 @@ class detached_step:
                 "surface_he4",
                 "surface_h1",
                 "log_R",
-                "center_c12"
+                "center_c12",
+                "co_core_mass"
             ]
         )
 
