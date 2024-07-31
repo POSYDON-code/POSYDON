@@ -82,7 +82,7 @@ from posydon.grids.post_processing import (post_process_grid,
 from posydon.grids.MODELS import MODELS
 from posydon.utils.common_functions import PATH_TO_POSYDON
 from posydon.utils.gridutils import get_new_grid_name
-from posydon.utils.posydonwarning import Pwarn
+from posydon.utils.posydonwarning import (Pwarn,print_stats)
 from posydon.interpolation.IF_interpolation import IFInterpolator
 from posydon.visualization.plot_defaults import PRE_SET_PLOTS
 from posydon.visualization.interpolation import EvaluateIFInterpolator
@@ -1421,4 +1421,4 @@ if __name__ == '__main__':
     if 'check' in STEP: # do checks, e.g. failure rate
         do_check(SLURM_I, PATH_TO_CSV_FILE, verbose=VERBOSE)
 
-
+    print_stats()
