@@ -56,7 +56,7 @@ from posydon.popsyn.defaults import default_kwargs
 from posydon.popsyn.io import binarypop_kwargs_from_ini
 from posydon.utils.constants import Zsun
 from posydon.utils.posydonerror import POSYDONError,initial_condition_message
-from posydon.utils.posydonwarning import Pwarn, SetPOSYDONWarnings
+from posydon.utils.posydonwarning import (Pwarn, Catch_POSYDON_Warnings)
 from posydon.utils.common_functions import set_binary_to_failed
 
 saved_ini_parameters = ['metallicity',
@@ -318,13 +318,8 @@ class BinaryPopulation:
                 binary = self.manager.generate(index=index, **self.kwargs)
             binary.properties = self.population_properties
 
-            with warnings.catch_warnings(record=True) as warning_list:
+            with Catch_POSYDON_Warnings(record=True) as cpw:
                        
-                if self.kwargs.get("warnings_verbose", False):   
-                    SetPOSYDONWarnings("default", "POSYDONWarning")                         
-                else:
-                    SetPOSYDONWarnings("ignore", "POSYDONWarning")
-
                 try:
                     binary.evolve()
 
@@ -343,16 +338,13 @@ class BinaryPopulation:
                     e.add_note(initial_condition_message(binary))
                     traceback.print_exception(e)
 
-                ## catching warnings with record=True automatically suppresses them being written standard error,
-                ## but we need record=True to check if warning occurred for the binary (binary.warnings)
-                ## so, we manually reformat them and print to stderr           
-                if len(warning_list) > 0:
+                # keep information about catched warnings           
+                if cpw.got_called():
                     binary.warnings = True
-                    for warning in warning_list: 
-                        warning_formatted = warnings.formatwarning(warning.message, warning.category, warning.filename, 
-                                                                   warning.lineno, line=None)
-                        print(warning_formatted, file=sys.stderr)
-                        
+                
+                if not self.kwargs.get("warnings_verbose", False):
+                    cpw.reset_cache()
+
         
             if breakdown_to_df:
                 self.manager.breakdown_to_df(binary, **self.kwargs)

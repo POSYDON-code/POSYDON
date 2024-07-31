@@ -258,6 +258,7 @@ class _Catched_POSYDON_Warnings:
         self.catched_warnings = []
         self.record = record
         self.filter_first = filter_first
+        self._got_called = False
         if not isinstance(catch_warnings, bool):
             raise TypeError("catch_warnings must be a boolean.")
         if not isinstance(record, bool):
@@ -298,6 +299,7 @@ class _Catched_POSYDON_Warnings:
             there are recorded warnings, the statistics may count warnings
             twice or not at all.)
         """
+        self._got_called = True
         # Check if there is anything to do
         if not empty_cache and new_warning is None and change_settings is None:
             raise ValueError("Nothing to do: either empty_cache has to be True"
@@ -318,7 +320,7 @@ class _Catched_POSYDON_Warnings:
                         setattr(self, attr, val)
                     else:
                         raise TypeError(f"{attr} has to be a "
-                                        f"{type(self.getattr(attr))}.")
+                                        f"{type(getattr(self, attr))}.")
                 else:
                     raise AttributeError(f"{attr} unknown to "
                                          "_Catched_POSYDON_Warnings.")
@@ -360,6 +362,19 @@ class _Catched_POSYDON_Warnings:
                 else:
                     _issue_warn(w)
     
+    def got_called(self):
+        """Returns, whether the object got called."""
+        return self._got_called
+    
+    def has_records(self):
+        """Checks whether there are records of catched warnings.
+
+        Returns
+        -------
+        True if there are recorded warnings otherwise False.
+        """
+        return len(self.catched_warnings)>0
+    
     def get_cache(self, empty_cache=False):
         """Get catched warnings.
 
@@ -372,16 +387,14 @@ class _Catched_POSYDON_Warnings:
         -------
         List of recorded warnings.
         """
-        global _CATCHED_POSYDON_WARNINGS
-        cache = copy.copy(_CATCHED_POSYDON_WARNINGS.catched_warnings)
+        cache = copy.copy(self.catched_warnings)
         if empty_cache:
             self.reset_cache()
         return cache
     
     def reset_cache(self):
         """Resets the catched warnings."""
-        global _CATCHED_POSYDON_WARNINGS
-        _CATCHED_POSYDON_WARNINGS.catched_warnings = []
+        self.catched_warnings = []
 
 _CATCHED_POSYDON_WARNINGS = _Catched_POSYDON_Warnings()
 
@@ -411,7 +424,8 @@ class Catch_POSYDON_Warnings:
         _CATCHED_POSYDON_WARNINGS(change_settings={
                                       'catch_warnings': self.catch_warnings,
                                       'record': self.record,
-                                      'filter_first': self.filter_first})
+                                      'filter_first': self.filter_first,
+                                      '_got_called': False})
         return _CATCHED_POSYDON_WARNINGS
     
     def __exit__(self, exc_type, exc_value, exc_traceback):

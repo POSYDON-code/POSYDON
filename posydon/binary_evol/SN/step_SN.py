@@ -539,7 +539,6 @@ class StepSN(object):
                                      'was not interpolated! If use_profiles '
                                      'or use_core_masses is set to True, '
                                      'continue with the collapse.', "InterpolationWarning")
-
                 else:
                     MODEL_properties = getattr(star, MODEL_NAME_SEL)
 

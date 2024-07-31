@@ -183,7 +183,6 @@ import os
 import glob
 import json
 import ast
-import warnings
 import h5py
 import numpy as np
 import pandas as pd
@@ -213,7 +212,7 @@ from posydon.visualization.plot1D import plot1D
 from posydon.grids.downsampling import TrackDownsampler
 from posydon.grids.scrubbing import scrub, keep_after_RLO, keep_till_central_abundance_He_C
 from posydon.utils.ignorereason import IgnoreReason
-from posydon.utils.posydonwarning import Pwarn
+from posydon.utils.posydonwarning import (Pwarn, Catch_POSYDON_Warnings)
 
 
 HDF5_MEMBER_SIZE = 2**31 - 1            # maximum HDF5 file size when splitting
@@ -511,22 +510,15 @@ class PSyGrid:
                 self._create_psygrid(MESA_grid_path,
                                      hdf5=hdf5, slim=slim, fmt=fmt)
             else:
-                collected_warnings = []
-                with warnings.catch_warnings(record=True) as caught_warnings:
+                with Catch_POSYDON_Warnings(record=True) as caught_warnings:
                     self._create_psygrid(MESA_grid_path,
                                          hdf5=hdf5, slim=slim, fmt=fmt)
-                    collected_warnings = caught_warnings
-
-                if warn == "end":
-                    for warning_message in collected_warnings:
-                        warnings.showwarning(warning_message.message,
-                                             warning_message.category,
-                                             warning_message.filename,
-                                             warning_message.lineno,
-                                             line="")
-                else:
-                    # for consistency
-                    assert warn == "suppress"
+                    if warn == "suppress":
+                        caught_warnings.reset_cache()
+                    else:
+                        # for consistency
+                        assert warn == "end"
+                    
 
         self.load()
 
