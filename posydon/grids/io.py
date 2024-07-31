@@ -145,7 +145,7 @@ class RunReader:
             elif file in ["final_star1.mod", "final_star1.mod.gz"]:
                 self.final_star1_path = fullpath
             elif file in ["final_star2.mod", "final_star2.mod.gz"]:
-                self.final_star1_path = fullpath
+                self.final_star2_path = fullpath
             elif ((file in [BINARY_OUTPUT_FILE, BINARY_OUTPUT_FILE+".gz"]) and
                   (self.binary)):
                 self.out_txt_path = fullpath
