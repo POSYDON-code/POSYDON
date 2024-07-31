@@ -150,13 +150,17 @@ def print_stats():
     else:
         print("There have been warnings:\n", _POSYDON_WARNINGS_REGISTRY)
 
-def _issue_warn(warning=dict(message="No warning")):
-    """Issue a warning.
+def _apply_POSYDON_filter(warning=dict(message="No warning")):
+    """Filter a warning.
 
         Parameters
         ----------
         warning : dict (default: {message="No warning"})
             Dictionary containing all options passed to warnings.warn.
+
+        Returns
+        -------
+        warning or None in case it got filtered out.
     """
     global _POSYDON_WARNINGS_REGISTRY
     if not isinstance(warning, dict):
@@ -210,32 +214,56 @@ def _issue_warn(warning=dict(message="No warning")):
         action = "default"
     # apply action
     if action == "ignore":
-        return
+        return None
     elif action in ["always", "default", "module", "once"]:
         if key in _POSYDON_WARNINGS_REGISTRY:
             _POSYDON_WARNINGS_REGISTRY[key] += 1
             if action == "default":
-                return
+                return None
         else:
             _POSYDON_WARNINGS_REGISTRY[key] = 1
-    warnings.warn(**warning)
+    return warning
+
+def _issue_warn(warning=dict(message="No warning")):
+    """Issue a warning.
+
+        Parameters
+        ----------
+        warning : dict (default: {message="No warning"})
+            Dictionary containing all options passed to warnings.warn.
+    """
+    filtered_warning = _apply_POSYDON_filter(warning)
+    if filtered_warning is None:
+        return
+    else:
+        warnings.warn(**filtered_warning)
 
 
 class _Catched_POSYDON_Warnings:
     """Class which stores catched warnings."""
-    def __init__(self, catch_warnings=False, no_record=False):
+    def __init__(self, catch_warnings=False, record=True, filter_first=True):
         """Constructor of the object.
 
         Parameters
         ----------
         catch_warnings : bool (default: False)
             Determines, whether warnings are catched.
-        no_record : bool (default: False)
+        record : bool (default: True)
             Determines, whether warnings are recorded.
+        filter_first : bool (default: True)
+            Determines, whether warnings are filtered before recorded or
+            discarded.
         """
         self.catch_warnings = catch_warnings
         self.catched_warnings = []
-        self.record = not no_record
+        self.record = record
+        self.filter_first = filter_first
+        if not isinstance(catch_warnings, bool):
+            raise TypeError("catch_warnings must be a boolean.")
+        if not isinstance(record, bool):
+            raise TypeError("record must be a boolean.")
+        if not isinstance(filter_first, bool):
+            raise TypeError("filter_first must be a boolean.")
     
     def __str__(self):
         """Return the status of the object as a string."""
@@ -254,43 +282,64 @@ class _Catched_POSYDON_Warnings:
                 ret += "\nThere are {} warnings recorded.".format(ncatched)
         return ret
 
-    def __call__(self, change_catch=None, new_warning=None, empty_cache=False):
+    def __call__(self, new_warning=None, empty_cache=False,
+                 change_settings=None):
         """Deal with changes and new warnings
 
         Parameters
         ----------
-        change_catch : bool or None (default: None)
-            The value the flag for catching warning should be set to, or None
-            if it should not be changed. If changed to False, recorded warnings
-            will get issued.
         new_warning : dict or None (default: None)
             Dictionary containing all options passed to warnings.warn.
         empty_cache : bool (default: False)
             If True, the catched warnings will be reset first.
+        change_settings : dict or None (default: None)
+            The dictionary can contain any attribute this class has. The
+            attributes get the new values. (Changing the filter_first, while
+            there are recorded warnings, the statistics may count warnings
+            twice or not at all.)
         """
-        # check if there is anything to do
-        if change_catch is None and new_warning is None and not empty_cache:
-            raise ValueError("change_catch or new_warning needs to be set.")
+        # Check if there is anything to do
+        if not empty_cache and new_warning is None and change_settings is None:
+            raise ValueError("Nothing to do: either empty_cache has to be True"
+                            " or new_warning/change_settings needs to be set.")
         if empty_cache:
-            # clear the cache
+            # Clear the cache
             self.reset_cache()
-        if change_catch is not None:
-            if not isinstance(change_catch, bool):
-                raise TypeError("change_catch has to be a boolean or None.")
-            # Change the catching behavior
-            self.catch_warnings = change_catch
+        if change_settings is not None:
+            if not isinstance(change_settings, dict):
+                raise TypeError("change_settings has to be a dict or None.")
+            # Change attributes
+            for attr,val in change_settings.items():
+                if attr=="catched_warnings":
+                    # Protect the list of warnings from changes
+                    continue
+                if hasattr(self, attr):
+                    if isinstance(val,type(getattr(self, attr))):
+                        setattr(self, attr, val)
+                    else:
+                        raise TypeError(f"{attr} has to be a "
+                                        f"{type(self.getattr(attr))}.")
+                else:
+                    raise AttributeError(f"{attr} unknown to "
+                                         "_Catched_POSYDON_Warnings.")
             if ((self.catch_warnings==False) and
                 (len(self.catched_warnings)>0)):
-                # If there are recorded warnings issue them
+                # If there are recorded warnings issue them and empty the list
                 for w in self.catched_warnings:
                     w["stacklevel"] += 2
-                    _issue_warn(w)
+                    if self.filter_first:
+                        warnings.warn(**w)
+                    else:
+                        _issue_warn(w)
                 self.catched_warnings = []
         if new_warning is not None:
             # Process new warning
             if self.catch_warnings:
                 # Catch warning
-                if self.record:
+                if self.filter_first:
+                    # Apply POSYDON filtering/stats
+                    new_warning = _apply_POSYDON_filter(new_warning)
+                if self.record and new_warning is not None:
                     # Add warning to catched ones
                     self.catched_warnings.append(new_warning)
             else:
@@ -306,7 +355,10 @@ class _Catched_POSYDON_Warnings:
             print("There are still recorded warnings:")
             for w in self.catched_warnings:
                 w["stacklevel"] = 2
-                _issue_warn(w)
+                if self.filter_first:
+                    warnings.warn(**w)
+                else:
+                    _issue_warn(w)
     
     def get_cache(self, empty_cache=False):
         """Get catched warnings.
@@ -336,30 +388,36 @@ _CATCHED_POSYDON_WARNINGS = _Catched_POSYDON_Warnings()
 
 class Catch_POSYDON_Warnings:
     """Context manager class to catch POSYDON warnings."""
-    def __init__(self, catch_warnings=True, no_record=False):
+    def __init__(self, catch_warnings=True, record=True, filter_first=True):
         """Constructor of the object.
 
         Parameters
         ----------
         catch_warnings : bool (default: False)
             Determines, whether warnings are catched.
-        no_record : bool (default: False)
+        record : bool (default: True)
             Determines, whether warnings are recorded.
+        filter_first : bool (default: True)
+            Determines, whether warnings are filtered before recorded or
+            discarded.
         """
         self.catch_warnings = catch_warnings
-        self.no_record = no_record
+        self.record = record
+        self.filter_first = filter_first
 
     def __enter__(self):
         """Enable catching."""
         global _CATCHED_POSYDON_WARNINGS
-        _CATCHED_POSYDON_WARNINGS.record = not self.no_record
-        _CATCHED_POSYDON_WARNINGS(change_catch=self.catch_warnings)
+        _CATCHED_POSYDON_WARNINGS(change_settings={
+                                      'catch_warnings': self.catch_warnings,
+                                      'record': self.record,
+                                      'filter_first': self.filter_first})
         return _CATCHED_POSYDON_WARNINGS
     
     def __exit__(self, exc_type, exc_value, exc_traceback):
         """Disable catching."""
         global _CATCHED_POSYDON_WARNINGS
-        _CATCHED_POSYDON_WARNINGS(change_catch=False)
+        _CATCHED_POSYDON_WARNINGS(change_settings={'catch_warnings': False})
         return False
 
 
