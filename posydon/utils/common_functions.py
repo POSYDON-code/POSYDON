@@ -1366,9 +1366,9 @@ def infer_mass_transfer_case(rl_relative_overflow,
     if rl_relative_overflow is None or lg_mtransfer_rate is None:
         return MT_CASE_NO_RLO
 
-    if (rl_relative_overflow <= RL_RELATIVE_OVERFLOW_THRESHOLD
-            or (lg_mtransfer_rate <= LG_MTRANSFER_RATE_THRESHOLD
-                and rl_relative_overflow < 0.0)):
+    if ((rl_relative_overflow <= RL_RELATIVE_OVERFLOW_THRESHOLD) and
+        ((lg_mtransfer_rate <= LG_MTRANSFER_RATE_THRESHOLD) and
+         (rl_relative_overflow < 0.0))):
         if verbose:
             print("checking rl_relative_overflow / lg_mtransfer_rate,",
                   rl_relative_overflow, lg_mtransfer_rate)
@@ -2233,7 +2233,7 @@ def calculate_lambda_from_profile(
               m1_i, radius1, len(donor_mass), " vs ", ind_core, mc1_i, rc1_i)
         print("Ebind_i from profile ", Ebind_i)
         print("lambda_CE ", lambda_CE)
-    if not (lambda_CE > -tolerance):
+    if not (lambda_CE > -tolerance) and not np.isnan(lambda_CE):
         raise ValueError("lambda_CE has a negative value")
     return lambda_CE, mc1_i, rc1_i
 

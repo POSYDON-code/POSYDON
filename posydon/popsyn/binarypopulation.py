@@ -20,7 +20,7 @@ __authors__ = [
     "Konstantinos Kovlakas <Konstantinos.Kovlakas@unige.ch>",
     "Devina Misra <devina.misra@unige.ch>",
     "Simone Bavera <Simone.Bavera@unige.ch>",
-    "Max Briel <max.briel@gmail.com>",
+    "Max Briel <max.briel@unige.ch>",
     "Matthias Kruckow <Matthias.Kruckow@unige.ch>",
 ]
 
@@ -320,15 +320,22 @@ class BinaryPopulation:
             with warnings.catch_warnings(record=True) as w:
                 try:
                     binary.evolve()
+
                 except POSYDONError as posydon_error:
                     set_binary_to_failed(binary)
+                    binary.traceback = traceback.format_exc()
+
                     if self.kwargs.get("error_checking_verbose", False):
                         posydon_error.add_note(initial_condition_message(binary))
                         traceback.print_exception(posydon_error)
+
                 except Exception as e:
                     set_binary_to_failed(binary)
+                    binary.traceback = traceback.format_exc()
+
                     e.add_note(initial_condition_message(binary))
                     traceback.print_exception(e)
+
                 if len(w) > 0:
                     warnings.simplefilter("always")
                     binary.warning_message = [x.message for x in w]
