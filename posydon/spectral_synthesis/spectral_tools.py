@@ -70,7 +70,7 @@ def find_max_time(history):
     times = history[history.event == 'maxtime'].time
     return np.max(times)
 
-def load_posydon_population(population_file):
+def load_posydon_population(population_file,metallicity):
     """Loads the data of a POSYDON population h5 file saves 
         and add all the data used for spectral synthesis.
 
@@ -105,7 +105,7 @@ def load_posydon_population(population_file):
     """
     pop = copy(final_stars.reset_index())
     #Get the metallicity values from ZAMS
-    pop['Z/Zo'] = np.ones(len(pop))*zams_stars['S1_metallicity'].iloc[0]/Zo
+    pop['Z/Zo'] = np.ones(len(pop))*metallicity#zams_stars['S1_metallicity'].iloc[0]/Zo
     #Add two extra columns in the pop data
     for star in ['S1','S2']:
         M = np.asarray(pop[f'{star}_mass'])*con.M_sun

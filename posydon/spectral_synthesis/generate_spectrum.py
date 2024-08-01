@@ -87,13 +87,18 @@ def point_the_grid(grids,x,label,**kwargs):
     # higher than the Teff of the Ostar grid limit
     if "stripped" in x['state']:
         if label is not None:
-            return 'failed_grid'
+            return 'failed_attempt_1'
+        
+        if (x['log(g)'] < 4.0 ) & ((abs(x['log(g)'] - 4.0)/4.0) < 0.1 ):
+            x['log(g)'] = 4.0
+        elif ((abs(x['log(g)'] - 5.5)/5.5) < 0.05 ):
+            x['log(g)'] = 5.5
         return check_boundaries(grids,'stripped_grid',**x)
     
     if x['state'] == "WR_star":
         if label is not None:
             return 'failed_grid'
-        if ((x['Teff'] -100000)/100000) < 0.1:
+        if (x['Teff'] > 100000) & (((x['Teff'] -100000)/100000) < 0.1):
             x['Teff'] = 100000
         return check_boundaries(grids,'WR_grid',**x)
 
@@ -103,6 +108,8 @@ def point_the_grid(grids,x,label,**kwargs):
     #Second check for ostar stars.
     if x['Teff'] > ostar_temp_cut_off:
         if label is not None:
+            if (label == 'failed_attempt_1') & ("stripped" in x['state']):
+                return check_boundaries(grids,'ostar_grid',**x)
             return 'failed_grid'
         return check_boundaries(grids,'ostar_grid',**x)
     if x['Teff'] > bstar_temp_cut_off:
@@ -141,7 +148,7 @@ def generate_spectrum(grids,star,i,**kwargs):
     #First we check if the star is a CO. (for future we can add WD spectra)\
     if star[f'{i}_state'] in ['massless_remnant','BH','WD','NS']:
         return None,star[f'{i}_state'],None
-    if star[f'{i}_Teff'] >= 40000:
+    if star[f'{i}_surface_h1'] <= 0.6:
         #Check if the stars is false labeled as H_rich 
         rename_star_state(star,i)
     
@@ -171,7 +178,9 @@ def generate_spectrum(grids,star,i,**kwargs):
     while count <3:
         try:
             if label == "stripped_grid":
+                print(x,star[f'{i}_surface_h1'])
                 Flux = grids.grid_flux(label,**x)*4*np.pi*1e4/Lo
+                print('TRIED')
             elif label == 'WR_grid':
                 Flux = grids.grid_flux(label,**x)*4*np.pi*1e4/Lo *(L/10**5.3)
                 #Replace the negative values for WR
@@ -234,14 +243,13 @@ def rename_star_state(star,i):
     k_e = 0.2*(1 + xH_surf)
     logg = copy(star[f'{i}_log_g'])
     Gamma = k_e * con.sigma_sb*T**4/(con.c * 10**logg)
-    if xH_surf < 0.6:
-        if lg_M_dot < -6:
-            star[f'{i}_state'] = 'stripped_He_star'
-            print('here!')
-        else:
-            star[f'{i}_state'] = 'WR_star'
-            star[f'{i}_Rt'] = calculated_Rt(star,i)
-            print('WR star!')
+    if lg_M_dot < -6:
+        star[f'{i}_state'] = 'stripped_He_star'
+        print('here!')
+    else:
+        star[f'{i}_state'] = 'WR_star'
+        star[f'{i}_Rt'] = calculated_Rt(star,i)
+        print('WR star!')
 
 def calculated_Rt(star,i):
     M_dot = 10**copy(star[f'{i}_lg_mdot'])
@@ -302,6 +310,7 @@ def generate_photgrid_flux(grids,star,i,**kwargs):
     while count <3:
         try:
             if label == "stripped_grid":
+                print(x)
                 Flux = grids.photogrid_flux(label,**x)
             elif label == 'WR_grid':
                 Flux = grids.grid_flux(label,**x)(L/10**5.3)
