@@ -69,7 +69,8 @@ class population_spectra():
         
     def load_population(self):
         """Function to load up a POSYDON population."""
-        self.population = load_posydon_population(self.file)
+        metallicity = self.kwargs.get('metallicity')
+        self.population = load_posydon_population(self.file,metallicity)
 
     def create_spectrum(self):
         """ It splits up the population and combines the data to be saved.
