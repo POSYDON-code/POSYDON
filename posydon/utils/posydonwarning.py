@@ -138,17 +138,17 @@ def _get_POSYDONWarning_class(category):
 _POSYDON_WARNINGS_REGISTRY = {}
 
 def get_stats():
-    """Return the statistics of the warnings."""
+    """Return the statistics of the POSYDON warnings."""
     global _POSYDON_WARNINGS_REGISTRY
     return _POSYDON_WARNINGS_REGISTRY
 
 def print_stats():
-    """Prints the statistics of the warnings."""
+    """Prints the statistics of the POSYDON warnings."""
     global _POSYDON_WARNINGS_REGISTRY
     if len(_POSYDON_WARNINGS_REGISTRY)==0:
-        print("No warnings occured.")
+        print("No POSYDON warnings occured.")
     else:
-        print("There have been warnings:\n", _POSYDON_WARNINGS_REGISTRY)
+        print("There have been POSYDON warnings:\n", _POSYDON_WARNINGS_REGISTRY)
 
 def _apply_POSYDON_filter(warning=dict(message="No warning")):
     """Filter a warning.
