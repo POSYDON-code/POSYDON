@@ -30,7 +30,6 @@ __credits__ = [
 
 
 import os
-import warnings
 import numpy as np
 import scipy as sp
 import copy

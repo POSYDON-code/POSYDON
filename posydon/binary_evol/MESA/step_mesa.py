@@ -15,7 +15,6 @@ __authors__ = [
 
 
 import os
-import warnings
 import numpy as np
 
 from posydon.interpolation.interpolation import psyTrackInterp

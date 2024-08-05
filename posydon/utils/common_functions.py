@@ -24,7 +24,6 @@ from scipy.integrate import quad
 from posydon.utils import constants as const
 from posydon.utils.posydonwarning import Pwarn
 import copy
-import warnings
 from scipy.interpolate import PchipInterpolator
 from posydon.utils.limits_thresholds import (THRESHOLD_CENTRAL_ABUNDANCE,
     THRESHOLD_HE_NAKED_ABUNDANCE, REL_LOG10_BURNING_THRESHOLD,

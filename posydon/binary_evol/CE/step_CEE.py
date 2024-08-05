@@ -38,7 +38,6 @@ import numpy as np
 import pandas as pd
 from posydon.utils import common_functions as cf
 from posydon.utils import constants as const
-import warnings
 from posydon.binary_evol.binarystar import BINARYPROPERTIES
 from posydon.binary_evol.singlestar import STARPROPERTIES
 from posydon.utils.common_functions import PATH_TO_POSYDON

@@ -27,7 +27,6 @@ __authors__ = [
 
 
 import signal
-import warnings
 import copy
 import numpy as np
 import pandas as pd

@@ -173,11 +173,11 @@ __authors__ = [
 
 import os
 import pickle
-import warnings
 from datetime import date
 # POSYDON
 from posydon.grids.psygrid import PSyGrid
 from posydon.interpolation.data_scaling import DataScaler
+from posydon.utils.posydonwarning import Pwarn
 # Maths
 import numpy as np
 # Machine Learning
@@ -194,7 +194,6 @@ from matplotlib.colors import ListedColormap
 from posydon.visualization.plot_defaults import DEFAULT_LABELS
 from posydon.interpolation.constraints import (
     find_constraints_to_apply, sanitize_interpolated_quantities)
-from posydon.utils.posydonwarning import Pwarn
 
 
 # INITIAL-FINAL INTERPOLATOR
