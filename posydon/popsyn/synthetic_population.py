@@ -32,7 +32,6 @@ __authors__ = [
     "Max Briel <max.briel@unige.ch>",
 ]
 
-import warnings
 import numpy as np
 import pandas as pd
 from tqdm import tqdm
@@ -44,8 +43,7 @@ from posydon.popsyn.io import binarypop_kwargs_from_ini
 from posydon.popsyn.normalized_pop_mass import initial_total_underlying_mass
 import posydon.visualization.plot_pop as plot_pop
 from posydon.utils.common_functions import convert_metallicity_to_string
-
-from posydon.utils.posydonwarning import BinaryParsingWarning
+from posydon.utils.posydonwarning import Pwarn
 from astropy.cosmology import Planck15 as cosmology
 from astropy import constants as const
 
@@ -958,7 +956,7 @@ class Population(PopulationIO):
         # check if formation channels are present
         if "/formation_channels" not in keys:
             if self.verbose:
-                warnings.warn(f"{filename} does not contain formation channels!")
+                print(f"{filename} does not contain formation channels!")
             self._formation_channels = None
         else:
             self._formation_channels = pd.read_hdf(
@@ -991,9 +989,8 @@ class Population(PopulationIO):
         # calculate the metallicity information. This assumes the metallicity is for the whole file!
         if metallicity is not None and ini_file is not None:
             if "/mass_per_metallicity" in keys:
-                warnings.warn(
-                    f"{filename} already contains a mass_per_metallicity table. Overwriting the table!"
-                )
+                Pwarn(f"{filename} already contains a mass_per_metallicity "
+                      "table. Overwriting the table!", "OverwriteWarning")
 
             simulated_mass = np.sum(self.oneline[["S1_mass_i", "S2_mass_i"]].to_numpy())
             underlying_mass = initial_total_underlying_mass(
@@ -1050,7 +1047,7 @@ class Population(PopulationIO):
 
         Warnings
         --------
-        UserWarning
+        ReplaceValueWarning
             If there is no "metallicity" column in the oneline dataframe and the population file contains multiple metallicities.
 
         Notes
@@ -1145,9 +1142,9 @@ class Population(PopulationIO):
                 }
 
             if "metallicity" not in self.oneline.columns:
-                warnings.warn(
-                    "No metallicity column in oneline dataframe! Using the metallicity of the population file and adding it to the oneline."
-                )
+                Pwarn("No metallicity column in oneline dataframe! Using the "
+                      "metallicity of the population file and adding it to the"
+                      " oneline.", "ReplaceValueWarning")
                 if len(self.metallicities) > 1:
                     raise ValueError(
                         "The population file contains multiple metallicities. Please add a metallicity column to the oneline dataframe!"
@@ -1261,7 +1258,7 @@ class Population(PopulationIO):
                 )
             else:
                 if self.verbose:
-                    warnings.warn("No formation channels in the population file!")
+                    print("No formation channels in the population file!")
                 self._formation_channels = None
 
         return self._formation_channels

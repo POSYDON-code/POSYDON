@@ -10,7 +10,7 @@ __authors__ = [
 
 
 import numpy as np
-import warnings
+from posydon.utils.posydonwarning import Pwarn
 from posydon.popsyn import independent_sample
 from scipy.integrate import quad
 
@@ -107,9 +107,9 @@ def initial_total_underlying_mass(df=None, **kwargs):
         alpha2 = 2.35
         alpha3 = 2.35
     else:
-        warnings.warn("Scheme not included yet: primary_mass_scheme="
-                      f"{kwargs['primary_mass_scheme']}, secondary_mass_scheme"
-                      f"={kwargs['secondary_mass_scheme']}")
+        Pwarn("Scheme not included yet: primary_mass_scheme="
+              f"{kwargs['primary_mass_scheme']}, secondary_mass_scheme"
+              f"={kwargs['secondary_mass_scheme']}", "UnsupportedModelWarning")
         return np.nan, np.nan, np.nan
 #        raise ValueError("Scheme not included yet")
 
