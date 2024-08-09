@@ -104,7 +104,7 @@ class UnsupportedModelWarning(POSYDONWarning):
         super().__init__(message)
 
 
-# all POSYDON warnings subclasses should be defined beforehand
+# All POSYDON warnings subclasses should be defined beforehand
 _POSYDONWarning_subclasses = {cls.__name__: cls for cls in\
                               POSYDONWarning.__subclasses__()}
 
@@ -135,6 +135,9 @@ def _get_POSYDONWarning_class(category):
         return None
 
 
+# Defining an own resistry for the warnings, which will additionally save how
+# often a warning occured. This is simply a dictionary with the warning
+# characteristics as key pointing to an integer given the count.
 _POSYDON_WARNINGS_REGISTRY = {}
 
 def get_stats():
@@ -151,6 +154,14 @@ def print_stats():
         print("There have been POSYDON warnings:\n", _POSYDON_WARNINGS_REGISTRY)
 
 def _apply_POSYDON_filter(warning=dict(message="No warning")):
+    # In python warnings, this functionality is spead over two functions. It
+    # compares the characteristics of a warning with the ones in the registry.
+    # We use the warnings class and the code position (filename + line number)
+    # as characteristics, while python's standard omits the code filename but
+    # therefore adds the full warnings text, which causes different keys for
+    # "i is negative, i=-1" and "i is negative, i=-3" to be different warnings
+    # in python, but considered to have the same warning characteristics for
+    # POSYDON.
     """Filter a warning.
 
         Parameters
@@ -165,17 +176,18 @@ def _apply_POSYDON_filter(warning=dict(message="No warning")):
     global _POSYDON_WARNINGS_REGISTRY
     if not isinstance(warning, dict):
         raise TypeError("warning must be a dictionary.")
-    # get stack level
+    # Get stack level
     stacklevel = warning.get('stacklevel', 0)
     if not isinstance(stacklevel, int):
         raise TypeError("stacklevel must be an integer.")
-    # get category
+    # Get category
     category = warning.get('category', None)
     if not(isinstance(category, type) and issubclass(category, Warning)):
         category = _get_POSYDONWarning_class(category)
     if not isinstance(category, type):
+        # A non valid category will default to a Userwarning
         category = UserWarning
-    # get filename and lineno from frame at stacklevel
+    # Get filename and lineno from frame at stacklevel
     try:
         frame = sys._getframe(stacklevel)
     except:
@@ -186,23 +198,26 @@ def _apply_POSYDON_filter(warning=dict(message="No warning")):
         g = frame.f_globals
         filename = frame.f_code.co_filename
         lineno = frame.f_lineno
-    # get module
+    # Get module
     if isinstance(g, dict):
         module = g.get('__name__', "posydonwarnings")
     else:
         module = "posydonwarnings"
-    # check registry
+    # Check registry
     if not isinstance(_POSYDON_WARNINGS_REGISTRY, dict):
         print("Reset _POSYDON_WARNINGS_REGISTRY, old was:",
               _POSYDON_WARNINGS_REGISTRY)
         _POSYDON_WARNINGS_REGISTRY = {}
-    # set key for registry
+    # Set key for registry:
+    # We do not use the warnings text, to allow it to contain detailed
+    # information, while still identifying warnings with same origin
     key = (category, filename, lineno)
-    # get message text
+    # Get message text
     text = warning.get('message', "")
     if not isinstance(text, str):
-        raise TypeError("message must be an integer.")
-    # search the filters
+        raise TypeError("message must be a string.")
+    # Search the filters:
+    # Here we still uses the python filters
     for item in warnings.filters:
         action, msg, cat, mod, ln = item
         if ((msg is None or msg.match(text)) and
@@ -212,13 +227,14 @@ def _apply_POSYDON_filter(warning=dict(message="No warning")):
             break
     else:
         action = "default"
-    # apply action
+    # Apply action
     if action == "ignore":
         return None
     elif action in ["always", "default", "module", "once"]:
+        # Compared to standard python not only save a occurence but count them
         if key in _POSYDON_WARNINGS_REGISTRY:
             _POSYDON_WARNINGS_REGISTRY[key] += 1
-            if action == "default":
+            if action in ["default", "module", "once"]:
                 return None
         else:
             _POSYDON_WARNINGS_REGISTRY[key] = 1
@@ -396,10 +412,13 @@ class _Catched_POSYDON_Warnings:
         """Resets the catched warnings."""
         self.catched_warnings = []
 
+# Here we store all our caught POSYDON warnings
 _CATCHED_POSYDON_WARNINGS = _Catched_POSYDON_Warnings()
 
 
 class Catch_POSYDON_Warnings:
+    # We use our own context manager, which does not overwrite functions.
+    # Instead it can only catch POSYDON warnings issued via the Pwarn function.
     """Context manager class to catch POSYDON warnings."""
     def __init__(self, catch_warnings=True, record=True, filter_first=True):
         """Constructor of the object.
@@ -431,6 +450,8 @@ class Catch_POSYDON_Warnings:
     def __exit__(self, exc_type, exc_value, exc_traceback):
         """Disable catching."""
         global _CATCHED_POSYDON_WARNINGS
+        # If the cache is not cleared before, it will issue all recorded
+        # warnings.
         _CATCHED_POSYDON_WARNINGS(change_settings={'catch_warnings': False})
         return False
 
