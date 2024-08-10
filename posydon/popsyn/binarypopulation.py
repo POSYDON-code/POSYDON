@@ -317,7 +317,7 @@ class BinaryPopulation:
                 binary = self.manager.generate(index=index, **self.kwargs)
             binary.properties = self.population_properties
 
-            with Catch_POSYDON_Warnings(record=True) as cpw:
+            with Catch_POSYDON_Warnings(record=True, own_registry=True) as cpw:
                        
                 try:
                     binary.evolve()

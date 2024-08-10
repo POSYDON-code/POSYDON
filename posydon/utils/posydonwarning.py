@@ -16,9 +16,9 @@ To catch warnings we have the context manager class `Catch_POSYDON_Warnings`.
 It will record the warnings and issue them at the end of the context. To not
 issue the recorded warnings, simply use the `reset_cache` function of
 `Catch_POSYDON_Warnings` before the end of the context. You can get the list of
-the catched warnings via `get_cache`.
+the caught warnings via `get_cache`.
 Here an example, where the argument True of get_cache, will empty the list of
-catched warnings after it is copy to be returned:
+caught warnings after it is copy to be returned:
     with Catch_POSYDON_Warnings() as cpw:
         ...
         Pwarn("Test", "POSYDONWarning")
@@ -151,9 +151,10 @@ def print_stats():
     if len(_POSYDON_WARNINGS_REGISTRY)==0:
         print("No POSYDON warnings occured.")
     else:
-        print("There have been POSYDON warnings:\n", _POSYDON_WARNINGS_REGISTRY)
+        print("There have been POSYDON warnings in the global registry:\n",
+              _POSYDON_WARNINGS_REGISTRY)
 
-def _apply_POSYDON_filter(warning=dict(message="No warning")):
+def _apply_POSYDON_filter(warning=dict(message="No warning"), registry=None):
     # In python warnings, this functionality is spead over two functions. It
     # compares the characteristics of a warning with the ones in the registry.
     # We use the warnings class and the code position (filename + line number)
@@ -168,12 +169,16 @@ def _apply_POSYDON_filter(warning=dict(message="No warning")):
         ----------
         warning : dict (default: {message="No warning"})
             Dictionary containing all options passed to warnings.warn.
+        registry : dict or None (default: None)
+            Warnings registry. If None, use the global one.
 
         Returns
         -------
         warning or None in case it got filtered out.
     """
-    global _POSYDON_WARNINGS_REGISTRY
+    if registry is None:
+        global _POSYDON_WARNINGS_REGISTRY
+        registry = _POSYDON_WARNINGS_REGISTRY
     if not isinstance(warning, dict):
         raise TypeError("warning must be a dictionary.")
     # Get stack level
@@ -204,10 +209,9 @@ def _apply_POSYDON_filter(warning=dict(message="No warning")):
     else:
         module = "posydonwarnings"
     # Check registry
-    if not isinstance(_POSYDON_WARNINGS_REGISTRY, dict):
-        print("Reset _POSYDON_WARNINGS_REGISTRY, old was:",
-              _POSYDON_WARNINGS_REGISTRY)
-        _POSYDON_WARNINGS_REGISTRY = {}
+    if not isinstance(registry, dict):
+        print("Reset registry, old was:", registry)
+        registry = {}
     # Set key for registry:
     # We do not use the warnings text, to allow it to contain detailed
     # information, while still identifying warnings with same origin
@@ -232,71 +236,89 @@ def _apply_POSYDON_filter(warning=dict(message="No warning")):
         return None
     elif action in ["always", "default", "module", "once"]:
         # Compared to standard python not only save a occurence but count them
-        if key in _POSYDON_WARNINGS_REGISTRY:
-            _POSYDON_WARNINGS_REGISTRY[key] += 1
+        if key in registry:
+            registry[key] += 1
             if action in ["default", "module", "once"]:
                 return None
         else:
-            _POSYDON_WARNINGS_REGISTRY[key] = 1
+            registry[key] = 1
     return warning
 
-def _issue_warn(warning=dict(message="No warning")):
+def _issue_warn(warning=dict(message="No warning"), registry=None):
     """Issue a warning.
 
         Parameters
         ----------
         warning : dict (default: {message="No warning"})
             Dictionary containing all options passed to warnings.warn.
+        registry : dict or None (default: None)
+            Warnings registry. If None, use the global one.
     """
-    filtered_warning = _apply_POSYDON_filter(warning)
+    filtered_warning = _apply_POSYDON_filter(warning, registry)
     if filtered_warning is None:
         return
     else:
         warnings.warn(**filtered_warning)
 
 
-class _Catched_POSYDON_Warnings:
-    """Class which stores catched warnings."""
-    def __init__(self, catch_warnings=False, record=True, filter_first=True):
+class _Caught_POSYDON_Warnings:
+    """Class which stores caught warnings."""
+    def __init__(self, catch_warnings=False, record=True, filter_first=True,
+                 registry=None):
         """Constructor of the object.
 
         Parameters
         ----------
         catch_warnings : bool (default: False)
-            Determines, whether warnings are catched.
+            Determines, whether warnings are caught.
         record : bool (default: True)
             Determines, whether warnings are recorded.
         filter_first : bool (default: True)
             Determines, whether warnings are filtered before recorded or
             discarded.
+        registry : dict or None (default: None)
+            Warnings registry. If None, use the global one.
         """
         self.catch_warnings = catch_warnings
-        self.catched_warnings = []
+        self.caught_warnings = []
         self.record = record
         self.filter_first = filter_first
         self._got_called = False
+        if registry is None:
+            global _POSYDON_WARNINGS_REGISTRY
+            self.registry = _POSYDON_WARNINGS_REGISTRY
+        else:
+            self.registry = registry
         if not isinstance(catch_warnings, bool):
             raise TypeError("catch_warnings must be a boolean.")
         if not isinstance(record, bool):
             raise TypeError("record must be a boolean.")
         if not isinstance(filter_first, bool):
             raise TypeError("filter_first must be a boolean.")
+        if not isinstance(self.registry, dict):
+            raise TypeError("registry must be a dictionary.")
     
     def __str__(self):
         """Return the status of the object as a string."""
         if self.catch_warnings:
             if self.record:
-                ret = "POSYDON warnings will be catched and recorded."
+                ret = "POSYDON warnings will be caught and recorded."
+                if self.filter_first:
+                    ret += " Filters are applied before recording."
             else:
-                ret = "POSYDON warnings will be catched and discarded."
+                ret = "POSYDON warnings will be caught and discarded."
         else:
             ret = "POSYDON warnings are shown."
-        ncatched = len(self.catched_warnings)
-        if ncatched>0:
-            if ncatched==1:
+        ncaught = len(self.caught_warnings)
+        if ncaught>0:
+            if ncaught==1:
                 ret += "\nThere is 1 warning recorded."
             else:
-                ret += "\nThere are {} warnings recorded.".format(ncatched)
+                ret += "\nThere are {} warnings recorded.".format(ncaught)
+        global _POSYDON_WARNINGS_REGISTRY
+        if self.registry!=_POSYDON_WARNINGS_REGISTRY:
+            ret += " Currently a private registry is used, it contains:\n"
+            ret += "{}".format(self.registry)
         return ret
 
     def __call__(self, new_warning=None, empty_cache=False,
@@ -308,7 +330,7 @@ class _Catched_POSYDON_Warnings:
         new_warning : dict or None (default: None)
             Dictionary containing all options passed to warnings.warn.
         empty_cache : bool (default: False)
-            If True, the catched warnings will be reset first.
+            If True, the caught warnings will be reset first.
         change_settings : dict or None (default: None)
             The dictionary can contain any attribute this class has. The
             attributes get the new values. (Changing the filter_first, while
@@ -328,8 +350,16 @@ class _Catched_POSYDON_Warnings:
                 raise TypeError("change_settings has to be a dict or None.")
             # Change attributes
             for attr,val in change_settings.items():
-                if attr=="catched_warnings":
+                if attr=="caught_warnings":
                     # Protect the list of warnings from changes
+                    continue
+                if attr=="registry":
+                    # special treatment of registry
+                    if val is None:
+                        global _POSYDON_WARNINGS_REGISTRY
+                        self.registry = _POSYDON_WARNINGS_REGISTRY
+                    else:
+                        self.registry = change_settings[attr]
                     continue
                 if hasattr(self, attr):
                     if isinstance(val,type(getattr(self, attr))):
@@ -339,120 +369,151 @@ class _Catched_POSYDON_Warnings:
                                         f"{type(getattr(self, attr))}.")
                 else:
                     raise AttributeError(f"{attr} unknown to "
-                                         "_Catched_POSYDON_Warnings.")
+                                         "_Caught_POSYDON_Warnings.")
             if ((self.catch_warnings==False) and
-                (len(self.catched_warnings)>0)):
+                (len(self.caught_warnings)>0)):
                 # If there are recorded warnings issue them and empty the list
-                for w in self.catched_warnings:
+                for w in self.caught_warnings:
                     w["stacklevel"] += 2
                     if self.filter_first:
                         warnings.warn(**w)
                     else:
-                        _issue_warn(w)
-                self.catched_warnings = []
+                        _issue_warn(w, self.registry)
+                self.caught_warnings = []
         if new_warning is not None:
             # Process new warning
             if self.catch_warnings:
                 # Catch warning
                 if self.filter_first:
                     # Apply POSYDON filtering/stats
-                    new_warning = _apply_POSYDON_filter(new_warning)
+                    new_warning = _apply_POSYDON_filter(new_warning,
+                                                        self.registry)
                 if self.record and new_warning is not None:
-                    # Add warning to catched ones
-                    self.catched_warnings.append(new_warning)
+                    # Add warning to caught ones
+                    self.caught_warnings.append(new_warning)
             else:
                 # Issue warning
                 new_warning["stacklevel"] += 2
-                _issue_warn(new_warning)
+                _issue_warn(new_warning, self.registry)
     
     def __del__(self):
         """Destructor of the object. It will issue still recorded warnings."""
-        if len(self.catched_warnings)>0:
+        if len(self.caught_warnings)>0:
             # If there are recorded warnings issue them.
             self.catch_warnings = False
             print("There are still recorded warnings:")
-            for w in self.catched_warnings:
+            for w in self.caught_warnings:
                 w["stacklevel"] = 2
                 if self.filter_first:
                     warnings.warn(**w)
                 else:
-                    _issue_warn(w)
+                    _issue_warn(w, self.registry)
     
     def got_called(self):
         """Returns, whether the object got called."""
         return self._got_called
     
     def has_records(self):
-        """Checks whether there are records of catched warnings.
+        """Checks whether there are records of caught warnings.
 
         Returns
         -------
         True if there are recorded warnings otherwise False.
         """
-        return len(self.catched_warnings)>0
+        return len(self.caught_warnings)>0
     
     def get_cache(self, empty_cache=False):
-        """Get catched warnings.
+        """Get caught warnings.
 
         Parameters
         ----------
         empty_cache : bool (default: False)
-            If True, the catched warnings will be reset.
+            If True, the caught warnings will be reset.
 
         Returns
         -------
         List of recorded warnings.
         """
-        cache = copy.copy(self.catched_warnings)
+        cache = copy.copy(self.caught_warnings)
         if empty_cache:
             self.reset_cache()
         return cache
     
     def reset_cache(self):
-        """Resets the catched warnings."""
-        self.catched_warnings = []
+        """Resets the caught warnings."""
+        self.caught_warnings = []
 
 # Here we store all our caught POSYDON warnings
-_CATCHED_POSYDON_WARNINGS = _Catched_POSYDON_Warnings()
+_CAUGHT_POSYDON_WARNINGS = _Caught_POSYDON_Warnings()
 
 
 class Catch_POSYDON_Warnings:
     # We use our own context manager, which does not overwrite functions.
     # Instead it can only catch POSYDON warnings issued via the Pwarn function.
     """Context manager class to catch POSYDON warnings."""
-    def __init__(self, catch_warnings=True, record=True, filter_first=True):
+    def __init__(self, catch_warnings=True, record=True, filter_first=True,
+                 own_registry=False, use_python_catch=False):
         """Constructor of the object.
 
         Parameters
         ----------
         catch_warnings : bool (default: False)
-            Determines, whether warnings are catched.
+            Determines, whether warnings are caught.
         record : bool (default: True)
             Determines, whether warnings are recorded.
         filter_first : bool (default: True)
             Determines, whether warnings are filtered before recorded or
             discarded.
+        own_registry : bool (default: False)
+            Determines, whether the global POSYDON warnings registry should be
+            used or an own one only valid within the context.
+        use_python_catch : bool (default: False)
+            If enabled, it put the python catch_warnings on top of the POSYDON
+            catches. This brings all the drawbacks of the standard catching,
+            hence it is strongly recommended to be not used (properly written
+            code will not contain any use case for this option, hence it is
+            only for backward compatibility.).
         """
         self.catch_warnings = catch_warnings
         self.record = record
         self.filter_first = filter_first
+        if own_registry:
+            self.context_registry = {}
+        else:
+            # no own registry will use the global _POSYDON_WARNINGS_REGISTRY
+            self.context_registry = None
+        if use_python_catch:
+            self.python_catch = warnings.catch_warnings(record=self.record)
+        else:
+            self.python_catch = None
 
     def __enter__(self):
         """Enable catching."""
-        global _CATCHED_POSYDON_WARNINGS
-        _CATCHED_POSYDON_WARNINGS(change_settings={
-                                      'catch_warnings': self.catch_warnings,
-                                      'record': self.record,
-                                      'filter_first': self.filter_first,
-                                      '_got_called': False})
-        return _CATCHED_POSYDON_WARNINGS
+        global _CAUGHT_POSYDON_WARNINGS
+        _CAUGHT_POSYDON_WARNINGS(change_settings={
+                                     'catch_warnings': self.catch_warnings,
+                                     'record': self.record,
+                                     'filter_first': self.filter_first,
+                                     '_got_called': False,
+                                     'registry': self.context_registry})
+        if isinstance(self.python_catch, warnings.catch_warnings):
+            # enter catch of python as well (should be done last)
+            self.python_catch.__enter__()
+        return _CAUGHT_POSYDON_WARNINGS
     
     def __exit__(self, exc_type, exc_value, exc_traceback):
         """Disable catching."""
-        global _CATCHED_POSYDON_WARNINGS
+        if isinstance(self.python_catch, warnings.catch_warnings):
+            # exit catch of python as well (should be done first)
+            self.python_catch.__exit__()
+            # reset it (needed because it cannot enter the context for the same
+            # object twice)
+            self.python_catch = None
+        global _CAUGHT_POSYDON_WARNINGS
         # If the cache is not cleared before, it will issue all recorded
         # warnings.
-        _CATCHED_POSYDON_WARNINGS(change_settings={'catch_warnings': False})
+        _CAUGHT_POSYDON_WARNINGS(change_settings={'catch_warnings': False,
+                                                  'registry': None})
         return False
 
 
@@ -470,7 +531,7 @@ def Pwarn(message, category=None, stacklevel=2, **kwargs):
         **kwargs : dict (optional)
             Dictionary containing extra options passed to warnings.warn.
     """
-    global _CATCHED_POSYDON_WARNINGS
+    global _CAUGHT_POSYDON_WARNINGS
     if not isinstance(message, str):
         raise TypeError("message must be a string.")
     if not isinstance(stacklevel, int):
@@ -479,7 +540,7 @@ def Pwarn(message, category=None, stacklevel=2, **kwargs):
         category = _get_POSYDONWarning_class(category)
     if (isinstance(category, type) and issubclass(category, POSYDONWarning)):
         # deal with POSYDON warnings
-        _CATCHED_POSYDON_WARNINGS(new_warning=dict({"message": message,
+        _CAUGHT_POSYDON_WARNINGS(new_warning=dict({"message": message,
                                                    "category": category,
                                                    "stacklevel": stacklevel},
                                                   **kwargs))
