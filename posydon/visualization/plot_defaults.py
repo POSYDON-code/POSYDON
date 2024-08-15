@@ -182,6 +182,12 @@ DEFAULT_MARKERS_COLORS_LEGENDS = {
             ['s', 2, None, TF1_label_initial],
         'Both stars fill their Roche Lobe and at least one of them is off MS':
             ['D', 1, color_unstable, TF1_label_unstable],
+        'Both stars fill their Roche Lobe and t_kh > t_acc':
+            ['D', 1, color_unstable, TF1_label_unstable],
+        'overflow from L2, t_kh > t_acc and w > w_crit_lim, donor is star 1':
+            ['D', 1, color_unstable, TF1_label_unstable],
+        'overflow from L2, t_kh > t_acc and w > w_crit_lim, donor is star 2':
+            ['D', 1, color_unstable, TF1_label_unstable],
         'Terminate due to L2 overflow during case A':
             ['D', 1, color_unstable, TF1_label_unstable],
         'Reached maximum mass transfer rate: Exceeded photon trapping radius':
@@ -535,7 +541,7 @@ DEFAULT_MARKERS_COLORS_LEGENDS = {
         'Unstable case Bn':
             ['D', 1, list_of_colors[1], 'Unstable RLOF during postMS'],
         'Unstable case BBA':
-            ['D', 2, list_of_colors[0], 
+            ['D', 2, list_of_colors[0],
              'Unstable RLOF during stripped He star'],
         'Unstable case BBB':
             ['D', 2, list_of_colors[0],
@@ -543,7 +549,7 @@ DEFAULT_MARKERS_COLORS_LEGENDS = {
         'Unstable case Cn':
             ['D', 1, list_of_colors[1], 'Unstable RLOF during postMS'],
         'Unstable case CBA':
-            ['D', 2, list_of_colors[0], 
+            ['D', 2, list_of_colors[0],
              'Unstable RLOF during stripped He star'],
         'Unstable case CBB':
             ['D', 2, list_of_colors[0],
@@ -639,6 +645,12 @@ DEFAULT_MARKERS_COLORS_LEGENDS = {
             ['s', 2, None, TF1_label_initial],
         'Both stars fill their Roche Lobe and at least one of them is off MS':
             ['D', 1, None, TF1_label_unstable],
+        'Both stars fill their Roche Lobe and t_kh > t_acc':
+            ['D', 1, None, TF1_label_unstable],
+        'overflow from L2, t_kh > t_acc and w > w_crit_lim, donor is star 1':
+            ['D', 1, None, TF1_label_unstable],
+        'overflow from L2, t_kh > t_acc and w > w_crit_lim, donor is star 2':
+            ['D', 1, None, TF1_label_unstable],
         'Terminate due to L2 overflow during case A':
             ['D', 1, None, TF1_label_unstable],
         'Reached maximum mass transfer rate: Exceeded photon trapping radius':
@@ -730,7 +742,7 @@ DEFAULT_MARKERS_COLORS_LEGENDS = {
 
 def add_flag_to_MARKERS_COLORS_LEGENDS(MARKERS_COLORS_LEGENDS, flag):
     """Add not pre defined stuff to DEFAULT_MARKERS_COLORS_LEGENDS.
-    
+
     Parameters
     ----------
     MARKERS_COLORS_LEGENDS : dict of lists
@@ -738,7 +750,7 @@ def add_flag_to_MARKERS_COLORS_LEGENDS(MARKERS_COLORS_LEGENDS, flag):
         and legend text for each flag.
     flag : str
         The flag itself.
-            
+
     """
     if flag not in MARKERS_COLORS_LEGENDS.keys():
         if ('case_' in flag): # unknown MT flag
@@ -1036,6 +1048,15 @@ for i in range(1, 11):
                                               r'$\log_{10}(M_\mathrm{disk, acc} / M_\odot)$']
     DEFAULT_LABELS[f'MODEL{i:02d}_m_disk_radiated'] = [r'$M_\mathrm{disk, rad} \, [M_\odot]$',
                                               r'$\log_{10}(M_\mathrm{disk, rad} / M_\odot)$']
+    DEFAULT_LABELS[f'MODEL{i:02d}_M4'] = [r'$M_4 [= m/M_\odot]_{s=4}$',
+                                              r'$\log_{10}(M_4)$']
+    DEFAULT_LABELS[f'MODEL{i:02d}_mu4'] = [r'$\mu_4 \, [(dm/M_\odot)/(dr/1000\mathrm{km/s})]_{s=4}$',
+                                              r'$\log_{10}(\mu_4)$']
+    DEFAULT_LABELS[f'MODEL{i:02d}_h1_mass_ej'] = [r'$M_\mathrm{H,ej} \, [M_\odot]$',
+                                              r'$\log_{10}(M_\mathrm{H,ej} / M_\odot)$']
+    DEFAULT_LABELS[f'MODEL{i:02d}_he4_mass_ej'] = [r'$M_\mathrm{He,ej} \, [M_\odot]$',
+                                              r'$\log_{10}(M_\mathrm{He,ej} / M_\odot)$']
+
 
 
 # pre defined plottings
@@ -1104,6 +1125,22 @@ PRE_SET_PLOTS = {
     'S1_MODEL_DEFAULT_m_disk_radiated' : {
         'zmin' : 0.,
         'zmax' : 3.
+    },
+    'S1_MODEL_DEFAULT_M4' : {
+        'zmin' : 1.,
+        'zmax' : 4.
+    },
+    'S1_MODEL_DEFAULT_mu4' : {
+        'zmin' : 0.0,
+        'zmax' : .5
+    },
+    'S1_MODEL_DEFAULT_h1_mass_ej' : {
+        'zmin' : 0.,
+        'zmax' : 20
+    },
+    'S1_MODEL_DEFAULT_he4_mass_ej' : {
+        'zmin' : 0.,
+        'zmax' : 20
     },
     # interpolator stuff
     'INTERP_ERROR_DEFAULT' : {

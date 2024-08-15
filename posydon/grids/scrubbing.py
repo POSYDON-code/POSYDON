@@ -122,9 +122,8 @@ def keep_after_RLO(bh, h1, h2):
     if rlo_1_or_2 is None:
         raise ValueError("No `rl_relative_overflow` in any star history.")
 
-    # This needs to be aligned with run_binary_extras.f, there it is less
-    # restrictive, which is fine
-    conditions_met = rlo_1_or_2 & rate
+    # This needs to be aligned with run_binary_extras.f
+    conditions_met = rlo_1_or_2 | rate
     where_conditions_met = np.where(conditions_met)[0]
 
     if len(where_conditions_met) == 0:
