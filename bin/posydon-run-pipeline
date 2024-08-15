@@ -150,7 +150,7 @@ def create_grid_slice(i, path_to_csv_file, verbose=False, overwrite_psygrid=True
         if 'HMS' not in grid_type:
             stop_before_carbon_depletion = False
             Pwarn('stop_before_carbon_depletion set to False for non HMS'+\
-                  f' gird: {grid_type} in {grid_path}', "ReplaceValueWarning")
+                  f' grid: {grid_type} in {grid_path}', "ReplaceValueWarning")
     else:
         stop_before_carbon_depletion = False
     
