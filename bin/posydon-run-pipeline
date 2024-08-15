@@ -570,7 +570,7 @@ def export_dataset(i, path_to_csv_file, verbose=False):
         raise KeyError(f'No export_path in {path_to_csv_file}')
     
     if os.path.exists(export_path):
-        Pwarn(f'Repalce {export_path}', "OverwriteWarning")
+        Pwarn(f'Replace {export_path}', "OverwriteWarning")
     if verbose:
         print(f'copying {grid_path} to {export_path}')
     # copy the file
