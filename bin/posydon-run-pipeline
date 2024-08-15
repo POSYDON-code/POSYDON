@@ -289,7 +289,7 @@ def calculate_extra_values(i, path_to_csv_file, verbose=False):
     # post processed quantities are appended to the grid object, hence
     # we create a copy of it and append back to it
     if os.path.exists(processed_grid_path):
-        Pwarn('Post processed grid file alredy exist, removing it.',
+        Pwarn('Post processed grid file already exists, removing it.',
               "OverwriteWarning")
         os.remove(processed_grid_path)
     shutil.copyfile(grid_path, processed_grid_path)
