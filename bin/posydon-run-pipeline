@@ -691,15 +691,14 @@ def copy_ini_file(grid_type, rerun_metallicity, rerun_type, destination,
         replace_text = "matthias_LBV_wind-051343856f50dc5518abdf28904d62df4caacaff"
     elif rerun_type == 'LBV_wind+thermohaline_mixing':
         replace_text = "matthias_LBV_wind-051343856f50dc5518abdf28904d62df4caacaff"
-    elif rerun_type == 'LBV_wind+HeMB_MLTp_mesh':
-        raise ValueError(f'Not yet supported rerun type {rerun_type}!')
-        replace_text = "matthias_LBV_wind-051343856f50dc5518abdf28904d62df4caacaff" #TODO: update to new MESA-INLIST branch/commit
+#    elif rerun_type == 'LBV_wind+HeMB_MLTp_mesh':
+#        raise ValueError(f'Not yet supported rerun type {rerun_type}!')
+#        replace_text = "matthias_LBV_wind-051343856f50dc5518abdf28904d62df4caacaff" #TODO: update to new MESA-INLIST branch/commit
     elif rerun_type == 'LBV_wind+dedt_energy_eqn':
-        raise ValueError(f'Not yet supported rerun type {rerun_type}!')
-        replace_text = "matthias_LBV_wind-051343856f50dc5518abdf28904d62df4caacaff" #TODO: update to new MESA-INLIST branch/commit
-    elif rerun_type == 'LBV_wind+dedt_hepulse':
-        raise ValueError(f'Not yet supported rerun type {rerun_type}!')
-        replace_text = "matthias_LBV_wind-051343856f50dc5518abdf28904d62df4caacaff" #TODO: update to new MESA-INLIST branch/commit
+        replace_text = "seth_lbv_thermo_dedt-936f76f82d44b16139ff89e41e5b0f2232fd9b30"
+#    elif rerun_type == 'LBV_wind+dedt_hepulse':
+#        raise ValueError(f'Not yet supported rerun type {rerun_type}!')
+#        replace_text = "matthias_LBV_wind-051343856f50dc5518abdf28904d62df4caacaff" #TODO: update to new MESA-INLIST branch/commit
     elif rerun_type == 'other': # e.g. 'envelope_mass_limit', 'fe_core_infall_limit'
         # this rerun uses the default inlist commit
         return
@@ -823,8 +822,9 @@ def logic_rerun(grid, rerun_type):
           (rerun_type == 'LBV_wind+thermohaline_mixing')):
         termination_flags = TF1_POOL_ERROR
         new_mesa_flag = {'thermohaline_coeff' : 17.5}
-    elif ((rerun_type == 'HeMB_MLTp_mesh') or
-          (rerun_type == 'LBV_wind+HeMB_MLTp_mesh')):
+    elif ((rerun_type == 'HeMB_MLTp_mesh')
+#          or (rerun_type == 'LBV_wind+HeMB_MLTp_mesh')
+         ):
         termination_flags = TF1_POOL_ERROR
     elif rerun_type == 'more_mesh':
         termination_flags = TF1_POOL_ERROR
@@ -872,8 +872,9 @@ def logic_rerun(grid, rerun_type):
     elif ((rerun_type == 'dedt_energy_eqn') or
           (rerun_type == 'LBV_wind+dedt_energy_eqn')):
         termination_flags = TF1_POOL_ERROR    
-    elif ((rerun_type == 'dedt_hepulse') or
-          (rerun_type == 'LBV_wind+dedt_hepulse')):
+    elif ((rerun_type == 'dedt_hepulse')
+#          or (rerun_type == 'LBV_wind+dedt_hepulse')
+         ):
         termination_flags = TF1_POOL_ERROR
     elif rerun_type == 'LBV_wind':
         N_runs = len(grid)
