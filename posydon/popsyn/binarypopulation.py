@@ -337,10 +337,15 @@ class BinaryPopulation:
                     e.add_note(initial_condition_message(binary))
                     traceback.print_exception(e)
 
-                # keep information about catched warnings           
+                ## record if there were warnings caught during the binary evolution 
+                ## this is needed to update the WARNINGS column in the oneline dataframe
+                ## this will only be updated if POSYDON warnings occur, NOT general python warnings      
                 if cpw.got_called():
                     binary.warnings = True
                 
+                ## if the user wants to print all POSYDON warnings to stderr (warnings_verbose=True),
+                ## clear the warnings registry after each binary's evolution so that
+                ## POSYDON warnings will be printed again for each binary
                 if not self.kwargs.get("warnings_verbose", False):
                     cpw.reset_cache()
 
