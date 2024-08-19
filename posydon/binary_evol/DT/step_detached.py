@@ -1215,7 +1215,7 @@ class detached_step:
             sec_mass = interp1d_sec["mass"](t - t_offset_sec)
 
             if isinstance(y[0], np.ndarray):
-                warnings.warn("Trying to compute RL radius for binary with zero separation", "EvolutionWarning")
+                warnings.warn("Trying to compute RL radius for binary with zero separation")
                 sep = np.nan
                 ecc = np.nan                
             else:
@@ -1223,11 +1223,11 @@ class detached_step:
                 ecc = y[1]
 
             if pri_mass <=0:
-                warnings.warn("Trying to compute RL radius for binary with nonexistent companion", "EvolutionWarning")
+                warnings.warn("Trying to compute RL radius for binary with nonexistent companion")
                 pri_mass = np.nan
 
             if sec_mass <=0:
-                warnings.warn("Trying to compute RL radius for binary with nonexistent companion", "EvolutionWarning")
+                warnings.warn("Trying to compute RL radius for binary with nonexistent companion")
                 sec_mass = np.nan
            
             RL = roche_lobe_radius(sec_mass/pri_mass, (1 - ecc) * sep)
@@ -1262,7 +1262,7 @@ class detached_step:
             sec_mass = interp1d_sec["mass"](t - t_offset_sec)
 
             if isinstance(y[0], np.ndarray):
-                warnings.warn("Trying to compute RL radius for binary with zero separation", "EvolutionWarning")
+                warnings.warn("Trying to compute RL radius for binary with zero separation")
                 sep = np.nan
                 ecc = np.nan                
             else:
@@ -1270,11 +1270,11 @@ class detached_step:
                 ecc = y[1]
 
             if pri_mass <=0:
-                warnings.warn("Trying to compute RL radius for binary with nonexistent companion", "EvolutionWarning")
+                warnings.warn("Trying to compute RL radius for binary with nonexistent companion")
                 pri_mass = np.nan
 
             if sec_mass <=0:
-                warnings.warn("Trying to compute RL radius for binary with nonexistent companion", "EvolutionWarning")
+                warnings.warn("Trying to compute RL radius for binary with nonexistent companion")
                 sec_mass = np.nan
            
             RL = roche_lobe_radius(pri_mass/sec_mass, (1 - ecc) * sep)
@@ -1307,7 +1307,7 @@ class detached_step:
             sec_mass = interp1d_sec["mass"](t - t_offset_sec)
 
             if isinstance(y[0], np.ndarray):
-                warnings.warn("Trying to compute RL radius for binary with zero separation", "EvolutionWarning")
+                warnings.warn("Trying to compute RL radius for binary with zero separation")
                 sep = np.nan
                 ecc = np.nan                
             else:
@@ -1315,11 +1315,11 @@ class detached_step:
                 ecc = y[1]
 
             if pri_mass <=0:
-                warnings.warn("Trying to compute RL radius for binary with nonexistent companion", "EvolutionWarning")
+                warnings.warn("Trying to compute RL radius for binary with nonexistent companion")
                 pri_mass = np.nan
 
             if sec_mass <=0:
-                warnings.warn("Trying to compute RL radius for binary with nonexistent companion", "EvolutionWarning")
+                warnings.warn("Trying to compute RL radius for binary with nonexistent companion")
                 sec_mass = np.nan
            
             RL = roche_lobe_radius(sec_mass/pri_mass, (1 - ecc) * sep)
@@ -1352,7 +1352,7 @@ class detached_step:
             sec_mass = interp1d_sec["mass"](t - t_offset_sec)
 
             if isinstance(y[0], np.ndarray):
-                warnings.warn("Trying to compute RL radius for binary with zero separation", "EvolutionWarning")
+                warnings.warn("Trying to compute RL radius for binary with zero separation")
                 sep = np.nan
                 ecc = np.nan                
             else:
@@ -1360,11 +1360,11 @@ class detached_step:
                 ecc = y[1]
 
             if pri_mass <=0:
-                warnings.warn("Trying to compute RL radius for binary with nonexistent companion", "EvolutionWarning")
+                warnings.warn("Trying to compute RL radius for binary with nonexistent companion")
                 pri_mass = np.nan
 
             if sec_mass <=0:
-                warnings.warn("Trying to compute RL radius for binary with nonexistent companion", "EvolutionWarning")
+                warnings.warn("Trying to compute RL radius for binary with nonexistent companion")
                 sec_mass = np.nan
            
             RL = roche_lobe_radius(pri_mass/sec_mass, (1 - ecc) * sep)
