@@ -317,6 +317,9 @@ class BinaryPopulation:
                 binary = self.manager.generate(index=index, **self.kwargs)
             binary.properties = self.population_properties
 
+            # catch POSYDON warnings: record them to be possibly printed at
+            # then and of the "with" context; use a new registry for this
+            # context instead of the global one
             with Catch_POSYDON_Warnings(record=True, own_registry=True) as cpw:
                        
                 try:
@@ -337,15 +340,18 @@ class BinaryPopulation:
                     e.add_note(initial_condition_message(binary))
                     traceback.print_exception(e)
 
-                ## record if there were warnings caught during the binary evolution 
-                ## this is needed to update the WARNINGS column in the oneline dataframe
-                ## this will only be updated if POSYDON warnings occur, NOT general python warnings      
+                # record if there were warnings caught during the binary
+                # evolution, this is needed to update the WARNINGS column in
+                # the oneline dataframe; this will only be updated if POSYDON
+                # warnings occur, NOT general python warnings      
                 if cpw.got_called():
                     binary.warnings = True
                 
-                ## if the user wants to print all POSYDON warnings to stderr (warnings_verbose=True),
-                ## clear the warnings registry after each binary's evolution so that
-                ## POSYDON warnings will be printed again for each binary
+                # if the user wants to print all POSYDON warnings to stderr
+                # (warnings_verbose=True), no action is needed, because it will
+                # be printed at the end of the "with" context; to avoid the
+                # printing clear the warnings cache before the end of the
+                # context
                 if not self.kwargs.get("warnings_verbose", False):
                     cpw.reset_cache()
 
