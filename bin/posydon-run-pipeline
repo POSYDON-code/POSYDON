@@ -687,6 +687,8 @@ def copy_ini_file(grid_type, rerun_metallicity, rerun_type, destination,
         replace_text = "seth_dedt_energy_eqn-f1803afe400ed16a4fad47b0bad6abbf0965cae1"
     elif rerun_type == "dedt_hepulse":
         replace_text = "seth_dedt_hepulse-0274be9895480cae3aa2a4d14b056a2447d5921b"
+    elif rerun_type == "no_age_limit":
+        replace_text = "matthias_no_age_limit-a119ea9548cca9b6b7ddfe31309ced1ae40c271e"
     elif rerun_type == 'other': # e.g. 'envelope_mass_limit', 'fe_core_infall_limit'
         # this rerun uses the default inlist commit
         return
@@ -858,6 +860,8 @@ def logic_rerun(grid, rerun_type):
         termination_flags = TF1_POOL_ERROR    
     elif rerun_type == 'dedt_hepulse':
         termination_flags = TF1_POOL_ERROR
+    elif rerun_type == 'no_age_limit':
+        termination_flags = ['max_age']
     elif rerun_type == 'envelope_mass_limit': # maybe 'fe_core_infall_limit' as well?
         runs_to_rerun = None # implement logic
     else:
