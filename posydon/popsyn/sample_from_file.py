@@ -9,12 +9,12 @@ __authors__ = [
 import os
 import numpy as np
 import pandas as pd
-import warnings
 from posydon.popsyn.independent_sample import (generate_orbital_periods,
                                                generate_orbital_separations,
                                                generate_eccentricities,
                                                generate_primary_masses,
                                                generate_secondary_masses)
+from posydon.utils.posydonwarning import Pwarn
 
 PRIMARY_MASS_NAMES = ['s1_mass', 'primary_mass', 'mass_1', 'm_1', 'm1']
 SECONDARY_MASS_NAMES = ['s2_mass', 'secondary_mass', 'mass_2', 'm_2', 'm2']
@@ -104,8 +104,8 @@ def get_samples_from_file(orbital_scheme='', **kwargs):
     # Get eccentricities
     key = infer_key(available_keys=df.keys(), allowed_keys=ECCENTRICITY_NAMES)
     if key=='':
-        warnings.warn(f'No eccentricity column found in {filename}, hence get'
-                      ' independent random ones.')
+        Pwarn(f'No eccentricity column found in {filename}, hence get'
+              ' independent random ones.', "ReplaceValueWarning")
         kwargs['number_of_binaries'] = set_n
         eccentricity_set = generate_eccentricities(**kwargs)
     else:
@@ -114,8 +114,8 @@ def get_samples_from_file(orbital_scheme='', **kwargs):
     # Get primary masses
     key = infer_key(available_keys=df.keys(), allowed_keys=PRIMARY_MASS_NAMES)
     if key=='':
-        warnings.warn(f'No primary mass column found in {filename}, hence get'
-                      ' independent random ones.')
+        Pwarn(f'No primary mass column found in {filename}, hence get'
+              ' independent random ones.', "ReplaceValueWarning")
         kwargs['number_of_binaries'] = set_n
         m1_set = generate_primary_masses(**kwargs)
     else:
@@ -125,8 +125,8 @@ def get_samples_from_file(orbital_scheme='', **kwargs):
     key = infer_key(available_keys=df.keys(),
                     allowed_keys=SECONDARY_MASS_NAMES)
     if key=='':
-        warnings.warn(f'No secondary mass column found in {filename}, hence'
-                      ' get independent random ones.')
+        Pwarn(f'No secondary mass column found in {filename}, hence get'
+              ' independent random ones.', "ReplaceValueWarning")
         kwargs['number_of_binaries'] = set_n
         m2_set = generate_secondary_masses(m1_set, **kwargs)
     else:
@@ -137,8 +137,8 @@ def get_samples_from_file(orbital_scheme='', **kwargs):
         key = infer_key(available_keys=df.keys(),
                         allowed_keys=SEPARATION_NAMES)
         if key=='':
-            warnings.warn(f'No separation column found in {filename}, hence'
-                          ' get independent random ones.')
+            Pwarn(f'No separation column found in {filename}, hence get'
+                  ' independent random ones.', "ReplaceValueWarning")
             kwargs['number_of_binaries'] = set_n
             orbital_scheme_set = generate_orbital_separations(**kwargs)
         else:
@@ -147,8 +147,8 @@ def get_samples_from_file(orbital_scheme='', **kwargs):
         # Get orbital periods
         key = infer_key(available_keys=df.keys(), allowed_keys=PERIOD_NAMES)
         if key=='':
-            warnings.warn(f'No period column found in {filename}, hence get'
-                          ' independent random ones.')
+            Pwarn(f'No period column found in {filename}, hence get'
+                  ' independent random ones.', "ReplaceValueWarning")
             kwargs['number_of_binaries'] = set_n
             orbital_scheme_set = generate_orbital_periods(m1_set, **kwargs)
         else:
@@ -216,8 +216,8 @@ def get_kick_samples_from_file(**kwargs):
     key = infer_key(available_keys=df.keys(),\
                     allowed_keys=PRIMARY_KICK_VELOCITY_NAMES)
     if key=='':
-        warnings.warn('No kick velocity column of primary found in '
-                      f'{filename}, hence do not set them.')
+        Pwarn(f'No kick velocity column of primary found in {filename},'
+              ' hence do not set them.', "ReplaceValueWarning")
         w_set = np.array(set_n*[None])
     else:
         w_set = np.array(df[key])
@@ -225,8 +225,8 @@ def get_kick_samples_from_file(**kwargs):
     key = infer_key(available_keys=df.keys(),\
                     allowed_keys=PRIMARY_KICK_AZIMUTHAL_ANGLE_NAMES)
     if key=='':
-        warnings.warn('No azimuthal angle column of primary found in '
-                      f'{filename}, hence do not set them.')
+        Pwarn(f'No azimuthal angle column of primary found in {filename},'
+              ' hence do not set them.', "ReplaceValueWarning")
         phi_set = np.array(set_n*[None])
     else:
         phi_set = np.array(df[key])
@@ -234,8 +234,8 @@ def get_kick_samples_from_file(**kwargs):
     key = infer_key(available_keys=df.keys(),\
                     allowed_keys=PRIMARY_KICK_POLAR_ANGLE_NAMES)
     if key=='':
-        warnings.warn('No polar angle column of primary found in '
-                      f'{filename}, hence do not set them.')
+        Pwarn(f'No polar angle column of primary found in {filename},'
+              ' hence do not set them.', "ReplaceValueWarning")
         theta_set = np.array(set_n*[None])
     else:
         theta_set = np.array(df[key])
@@ -243,8 +243,8 @@ def get_kick_samples_from_file(**kwargs):
     key = infer_key(available_keys=df.keys(),\
                     allowed_keys=PRIMARY_KICK_MEAN_ANOMALY_NAMES)
     if key=='':
-        warnings.warn('No mean anomaly column of primary found in '
-                      f'{filename}, hence do not set them.')
+        Pwarn(f'No mean anomaly column of primary found in {filename},'
+              ' hence do not set them.', "ReplaceValueWarning")
         mean_anomaly_set = np.array(set_n*[None])
     else:
         mean_anomaly_set = np.array(df[key])
@@ -256,8 +256,8 @@ def get_kick_samples_from_file(**kwargs):
     key = infer_key(available_keys=df.keys(),\
                     allowed_keys=SECONDARY_KICK_VELOCITY_NAMES)
     if key=='':
-        warnings.warn('No kick velocity column of secondary found in '
-                      f'{filename}, hence do not set them.')
+        Pwarn(f'No kick velocity column of secondary found in {filename},'
+              ' hence do not set them.', "ReplaceValueWarning")
         w_set = np.array(set_n*[None])
     else:
         w_set = np.array(df[key])
@@ -265,8 +265,8 @@ def get_kick_samples_from_file(**kwargs):
     key = infer_key(available_keys=df.keys(),\
                     allowed_keys=SECONDARY_KICK_AZIMUTHAL_ANGLE_NAMES)
     if key=='':
-        warnings.warn('No azimuthal angle column of secondary found in '
-                      f'{filename}, hence do not set them.')
+        Pwarn(f'No azimuthal angle column of secondary found in {filename},'
+              ' hence do not set them.', "ReplaceValueWarning")
         phi_set = np.array(set_n*[None])
     else:
         phi_set = np.array(df[key])
@@ -274,8 +274,8 @@ def get_kick_samples_from_file(**kwargs):
     key = infer_key(available_keys=df.keys(),\
                     allowed_keys=SECONDARY_KICK_POLAR_ANGLE_NAMES)
     if key=='':
-        warnings.warn('No polar angle column of secondary found in '
-                      f'{filename}, hence do not set them.')
+        Pwarn(f'No polar angle column of secondary found in {filename},'
+              ' hence do not set them.', "ReplaceValueWarning")
         theta_set = np.array(set_n*[None])
     else:
         theta_set = np.array(df[key])
@@ -283,8 +283,8 @@ def get_kick_samples_from_file(**kwargs):
     key = infer_key(available_keys=df.keys(),\
                     allowed_keys=SECONDARY_KICK_MEAN_ANOMALY_NAMES)
     if key=='':
-        warnings.warn('No mean anomaly column of secondary found in '
-                      f'{filename}, hence do not set them.')
+        Pwarn(f'No mean anomaly column of secondary found in {filename},'
+              ' hence do not set them.', "ReplaceValueWarning")
         mean_anomaly_set = np.array(set_n*[None])
     else:
         mean_anomaly_set = np.array(df[key])

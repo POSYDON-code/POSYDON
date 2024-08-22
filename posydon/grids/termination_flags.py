@@ -23,7 +23,6 @@ __authors__ = [
 
 import os
 import gzip
-import warnings
 import numpy as np
 
 from posydon.utils.common_functions import (
@@ -204,9 +203,9 @@ def check_state_from_history(history, mass, model_index=-1):
 
     for col in STAR_HISTORY_VARIABLES:
         if col not in history.dtype.names:
-            warnings.warn(
-                "The data column {} is not in the history file. It is needed "
-                "for the determination of the star state.".format(col))
+            raise KeyError("The data column {} is not in the ".format(col)+\
+                           "history file. It is needed for the determination"+\
+                           " of the star state.")
 
     variables_to_pass = {varname: history[varname][model_index]
                          for varname in STAR_HISTORY_VARIABLES}

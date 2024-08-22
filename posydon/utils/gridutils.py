@@ -2,7 +2,6 @@
 
 import os
 import gzip
-import warnings
 
 import numpy as np
 import pandas as pd
@@ -11,6 +10,7 @@ from posydon.utils.constants import clight, Msun, Rsun
 from posydon.utils.constants import standard_cgrav as cgrav
 from posydon.utils.constants import secyer as secyear
 from posydon.utils.limits_thresholds import LG_MTRANSFER_RATE_THRESHOLD
+from posydon.utils.posydonwarning import Pwarn
 
 
 __authors__ = [
@@ -76,7 +76,7 @@ def read_MESA_data_file(path, columns):
                                                usecols=columns,
                                                invalid_raise=False))
         except:
-            warnings.warn("Problems with reading file "+path)
+            Pwarn("Problems with reading file "+path, "MissingFilesWarning")
             return None
     else:
         return None
@@ -88,7 +88,7 @@ def read_EEP_data_file(path, columns):
         return np.atleast_1d(np.genfromtxt(path, skip_header=11, names=True,
                                            usecols=columns, invalid_raise=False))
     except:
-        warnings.warn("Problems with reading file "+path)
+        Pwarn("Problems with reading file "+path, "MissingFilesWarning")
         return None
 
 
@@ -366,24 +366,25 @@ def convert_output_to_table(
         binary_history = pd.DataFrame(np.genfromtxt(binary_history_file,
                                                     skip_header=5, names=True))
     else:
-        warnings.warn(
-            "You have not supplied a binary history file to parse. "
-            "This will cause all binary history columns to be dashes.")
+        Pwarn("You have not supplied a binary history file to parse. "
+              "This will cause all binary history columns to be dashes.",
+              "MissingFilesWarning")
 
     if star1_history_file is not None:
         star1_history = pd.DataFrame(np.genfromtxt(star1_history_file,
                                                    skip_header=5, names=True))
     else:
-        warnings.warn(
-            "You have not supplied a star1 history file to parse. "
-            "This will cause all star1 history columns to be dashes.")
+        Pwarn("You have not supplied a star1 history file to parse. "
+              "This will cause all star1 history columns to be dashes.",
+              "MissingFilesWarning")
 
     if star2_history_file is not None:
         star2_history = pd.DataFrame(np.genfromtxt(star2_history_file,
                                                    skip_header=5, names=True))
     else:
-        warnings.warn("You have not supplied a star2 history file to parse. "
-                      "This will cause all star2 history columns to be dashes")
+        Pwarn("You have not supplied a star2 history file to parse. "
+              "This will cause all star2 history columns to be dashes.",
+              "MissingFilesWarning")
 
     # TODO: is this necessary to be done with `popen`?
     # outdata = os.popen('cat ' + output_file).read()

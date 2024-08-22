@@ -6,11 +6,11 @@ __authors__ = [
 ]
 
 import pickle
-import warnings
 
 # POSYDON
 from posydon.grids.psygrid import PSyGrid
 from posydon.interpolation.IF_interpolation import IFInterpolator
+from posydon.utils.posydonwarning import Pwarn
 
 # Math and ML
 import numpy as np
@@ -55,7 +55,10 @@ class CompileData:
             except:
                 testing_failed.append(i)
                 pass
-        warnings.warn(f"{len(testing_failed)} binaries failed")
+                
+        if len(testing_failed)>0:
+            Pwarn(f"{len(testing_failed)} binaries failed",
+                  "IncompletenessWarning")
 
         # extract training data
         print("extracting training data")
@@ -76,7 +79,9 @@ class CompileData:
         if 'omega' in self.names:
             self.names.append('norm_omega')
             
-        warnings.warn(f"{len(training_failed)} training binaries failed")
+        if len(training_failed)>0:
+            Pwarn(f"{len(training_failed)} training binaries failed",
+                  "IncompletenessWarning")
 
     def scrape(self,grid,ind,hms_s2):
         """Extracts profile data from one MESA run.
@@ -124,7 +129,8 @@ class CompileData:
                 profile_new = f(np.linspace(0,1,200))
                 profiles[i] = profile_new
             else:
-                warnings.warn(f"{prof} profile not saved in grid, will not be included in file")
+                Pwarn(f"{prof} profile not saved in grid, will not be "
+                      "included in file", "InappropriateValueWarning")
         
         if 'omega' in self.names:
             profiles[-1]= profiles[self.names.index('omega')]/  \
@@ -604,7 +610,8 @@ class Composition:
             callback = tf.keras.callbacks.EarlyStopping(monitor='loss', patience=training_patience)
             
             if len(indices)==0:
-                warnings.warn(f"no training data available for {state}")
+                Pwarn(f"no training data available for {state}",
+                      "InappropriateValueWarning")
                 loss_history[state]=np.nan
                 self.empty.append(state)
             

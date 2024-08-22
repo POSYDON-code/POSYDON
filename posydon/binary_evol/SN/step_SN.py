@@ -30,7 +30,6 @@ __credits__ = [
 
 
 import os
-import warnings
 import numpy as np
 import scipy as sp
 import copy
@@ -55,6 +54,7 @@ from posydon.binary_evol.flow_chart import (STAR_STATES_CO, STAR_STATES_CC,
 
 from posydon.grids.MODELS import MODELS
 from posydon.utils.posydonerror import ModelError
+from posydon.utils.posydonwarning import Pwarn
 from posydon.utils.common_functions import set_binary_to_failed
 
 from pandas import read_csv
@@ -534,11 +534,10 @@ class StepSN(object):
                     # step_disrupted.
                     # allow to continue with the collapse with profile
                     # or core masses
-                    warnings.warn(f'{MODEL_NAME_SEL}: The collapsed star '
+                    Pwarn(f'{MODEL_NAME_SEL}: The collapsed star '
                                      'was not interpolated! If use_profiles '
                                      'or use_core_masses is set to True, '
-                                     'continue with the collapse.')
-
+                                     'continue with the collapse.', "InterpolationWarning")
                 else:
                     MODEL_properties = getattr(star, MODEL_NAME_SEL)
 
@@ -587,12 +586,12 @@ class StepSN(object):
                         return
 
                     else:
-                        warnings.warn(f'{MODEL_NAME_SEL}: The SN_type '
+                        Pwarn(f'{MODEL_NAME_SEL}: The SN_type '
                                       'does not match the predicted CO, or the interpolated '
                                       'values for the SN remnant are NaN. '
                                       'If use_profiles or use_core_masses is set to True, '
-                                      'continue with the collapse.')
-
+                                      'continue with the collapse.', "ApproximationWarning")
+                        
             # Verifies the selection of core-collapse mechnism to perform
             # the collapse
             if self.mechanism in [
@@ -977,13 +976,13 @@ class StepSN(object):
                     if m_star < 0.5:
                         m_rembar = m_star
                         if ((m_core < 0.)or(m_He_core < 0.)):
-                            warnings.warn('Invalid co/He core masses! '
-                                          'Setting m_WD=m_star!')
+                            Pwarn('Invalid co/He core masses! '
+                                          'Setting m_WD=m_star!', "ApproximationWarning")
                         else:
-                            warnings.warn('co/He core masses are zero! '
-                                          'Setting m_WD=m_star!')
+                            Pwarn('co/He core masses are zero! '
+                                          'Setting m_WD=m_star!', "ApproximationWarning")
                     else:
-                        raise ModelError('Invalid co/He core masses!')
+                        raise ModelError('Invalid co/He core masses! Cannot complete SN.')
                 f_fb = 1.0  # no SN the no kick is assumed
                 state = "WD"
 
@@ -1018,13 +1017,13 @@ class StepSN(object):
                     if m_star < 0.5:
                         m_rembar = m_star
                         if ((m_core < 0.)or(m_He_core < 0.)):
-                            warnings.warn('Invalid co/He core masses! '
-                                          'Setting m_WD=m_star!')
+                            Pwarn('Invalid co/He core masses! '
+                                          'Setting m_WD=m_star!', "ApproximationWarning")
                         else:
-                            warnings.warn('co/He core masses are zero! '
-                                          'Setting m_WD=m_star!')
+                            Pwarn('co/He core masses are zero! '
+                                          'Setting m_WD=m_star!', "ApproximationWarning")
                     else:
-                        raise ModelError('Invalid co/He core masses!')
+                        raise ModelError('Invalid co/He core masses! Cannot complete SN.')
                 f_fb = 1.0  # no SN the no kick is assumed
                 state = "WD"
 
@@ -1058,13 +1057,13 @@ class StepSN(object):
                     if m_star < 0.5:
                         m_rembar = m_star
                         if ((m_core < 0.)or(m_He_core < 0.)):
-                            warnings.warn('Invalid co/He core masses! '
-                                          'Setting m_WD=m_star!')
+                            Pwarn('Invalid co/He core masses! '
+                                          'Setting m_WD=m_star!', "ApproximationWarning")
                         else:
-                            warnings.warn('co/He core masses are zero! '
-                                          'Setting m_WD=m_star!')
+                            Pwarn('co/He core masses are zero! '
+                                          'Setting m_WD=m_star!', "ApproximationWarning")
                     else:
-                        raise ModelError('Invalid co/He core masses!')
+                        raise ModelError('Invalid co/He core masses! Cannot complete SN.')
                 f_fb = 1.0  # no SN the no kick is assumed
                 state = "WD"
 
@@ -2075,10 +2074,10 @@ class StepSN(object):
 class Sukhbold16_corecollapse(object):
     """Compute supernova final remnant mass, fallback fraction and CO type.
 
-    This consider the nearest neighboor of the He core mass of the star,
-    previous to the collapse. Considering a set of data for which the He core
-    mass of the compact object projenitos previous the collapse, the final
-    remnant mass and final stellar state of the compact object is known.
+    This considers the He core mass of the nearest neighbor of the star
+    prior to the collapse. Using a set of data for the He core
+    mass of the compact object progenitors prior the collapse, the final
+    remnant mass and stellar state of the compact object are known.
 
     Parameters
     ----------

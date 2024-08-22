@@ -45,7 +45,7 @@ class DoubleCO:
         max_time = binary.properties.max_simulation_time
         assert (
                 max_time - binary.time > 0.0
-        ), "max_time is lower than the current time."
+        ), "max_time is loXer than the current time."
         r1 = CO_radius(self.m1, self.state1) * constants.Rsun / 100000  # in km
         r2 = CO_radius(self.m2, self.state2) * constants.Rsun / 100000  # in km
 

@@ -8,11 +8,11 @@ __authors__ = [
 
 
 import numpy as np
-import warnings
 from posydon.utils.limits_thresholds import (
     RL_RELATIVE_OVERFLOW_THRESHOLD, LG_MTRANSFER_RATE_THRESHOLD,
     THRESHOLD_CENTRAL_ABUNDANCE, THRESHOLD_CENTRAL_ABUNDANCE_LOOSE_C
 )
+from posydon.utils.posydonwarning import Pwarn
 
 
 def scrub(tables, models, ages):
@@ -223,7 +223,8 @@ def keep_till_central_abundance_He_C(bh, h1, h2,
             if (h1["center_he4"][i]<Ystop) and (h1["center_c12"][i]<XCstop):
                 where_conditions_met1 += [i]
         if len(where_conditions_met1) == 0:
-            warnings.warn("No He depletion found in h1, while expected.")
+            Pwarn("No He depletion found in h1, while expected.",
+                  "InappropriateValueWarning")
             return bh, h1, h2, ''
         last_index = where_conditions_met1[0]
         newTF1 = 'Primary got stopped before central carbon depletion'
@@ -234,7 +235,8 @@ def keep_till_central_abundance_He_C(bh, h1, h2,
             if (h2["center_he4"][i]<Ystop) and (h2["center_c12"][i]<XCstop):
                 where_conditions_met2 += [i]
         if len(where_conditions_met2) == 0:
-            warnings.warn("No He depletion found in h2, while expected.")
+            Pwarn("No He depletion found in h2, while expected.",
+                  "InappropriateValueWarning")
             return bh, h1, h2, ''
         if depleted1:
             #both stars went beyond He depletion
