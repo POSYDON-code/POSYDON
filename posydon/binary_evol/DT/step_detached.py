@@ -37,8 +37,8 @@ from posydon.utils.common_functions import (
 )
 from posydon.binary_evol.flow_chart import (STAR_STATES_CC, STAR_STATES_CO)
 import posydon.utils.constants as const
-from posydon.utils.posydonerror import NumericalError
-from posydon.utils.posydonerror import MatchingError,POSYDONError
+from posydon.utils.posydonerror import NumericalError, MatchingError, POSYDONError
+from posydon.utils.posydonwarning import Pwarn
 
 LIST_ACCEPTABLE_STATES_FOR_HMS = ["H-rich_Core_H_burning"]
 
@@ -1169,7 +1169,8 @@ class detached_step:
             interp1d_pri = get_star_data(
                 binary, primary, secondary, primary.htrack, False)[0]
         else:
-            raise MatchingError("During matching primary is either should be either normal or not normal. `non_existent_companion` should be zero.")
+            raise MatchingError("During matching, the primary should either be normal or not normal."
+                                "`non_existent_companion` should be zero.")
 
 
         if interp1d_sec is None or interp1d_pri is None:
@@ -1212,9 +1213,11 @@ class detached_step:
             """
             sep = y[0]
             ecc = y[1]
+           
             RL = roche_lobe_radius(interp1d_sec["mass"](t - t_offset_sec)
-                                   / interp1d_pri["mass"](t - t_offset_pri),
-                                   (1 - ecc) * sep)
+                            / interp1d_pri["mass"](t - t_offset_pri),
+                            (1 - ecc) * sep)
+            
             # 95% filling of the RL is enough to assume beginning of RLO,
             # as we do in CO-HMS_RLO grid
             return interp1d_sec["R"](t - t_offset_sec) - 0.95*RL
@@ -1243,9 +1246,11 @@ class detached_step:
             """
             sep = y[0]
             ecc = y[1]
+            
             RL = roche_lobe_radius(interp1d_pri["mass"](t - t_offset_pri)
-                                   / interp1d_sec["mass"](t - t_offset_sec),
-                                   (1 - ecc) * sep)
+                                / interp1d_sec["mass"](t - t_offset_sec),
+                                (1 - ecc) * sep)
+
             return interp1d_pri["R"](t - t_offset_pri) - 0.95*RL
 
         @event(True, 1)
@@ -1272,9 +1277,11 @@ class detached_step:
             """
             sep = y[0]
             ecc = y[1]
+        
             RL = roche_lobe_radius(interp1d_sec["mass"](t - t_offset_sec)
-                                   / interp1d_pri["mass"](t - t_offset_pri),
-                                   (1 - ecc) * sep)
+                                / interp1d_pri["mass"](t - t_offset_pri),
+                                (1 - ecc) * sep)
+
             return (interp1d_sec["R"](t - t_offset_sec) - RL) / RL
 
         @event(True, 1)
@@ -1301,9 +1308,11 @@ class detached_step:
             """
             sep = y[0]
             ecc = y[1]
+            
             RL = roche_lobe_radius(interp1d_pri["mass"](t - t_offset_pri)
-                                   / interp1d_sec["mass"](t - t_offset_sec),
-                                   (1 - ecc) * sep)
+                                / interp1d_sec["mass"](t - t_offset_sec),
+                                (1 - ecc) * sep)
+
             return (interp1d_pri["R"](t - t_offset_pri) - RL) / RL
 
         @event(True, -1)
@@ -1327,7 +1336,6 @@ class detached_step:
                 if self.verbose and self.verbose != 1:
                     print("calculating initial omega from angular momentum and"
                           " moment of inertia", omega_in_rad_per_year)
-            # except TypeError:
             else:
                 # we equate secondary's initial omega to surf_avg_omega
                 # (although the critical rotation should be improved to
@@ -1378,13 +1386,10 @@ class detached_step:
             return omega_in_rad_per_year
 
         if (ev_rlo1(binary.time, [binary.separation, binary.eccentricity]) >= 0
-                or ev_rlo2(binary.time,
-                           [binary.separation, binary.eccentricity])
-                >= 0):
+                or ev_rlo2(binary.time, [binary.separation, binary.eccentricity]) >= 0):
             binary.state = "initial_RLOF"
             return
-            # binary.event = "END"
-            # TODO: put it out of its misery here!
+            
         else:
             if not (max_time - binary.time > 0.0):
                 raise ValueError("max_time is lower than the current time. "
@@ -1512,23 +1517,14 @@ class detached_step:
             else:  # self.dt is None and self.n_o_steps_history is None
                 t = np.array([s.t[-1]])
 
-            # TODO: this variable is not used. What is happening?
-            orb_params = s.sol(t)
-
-            sep_interp, ecc_interp, omega_interp_sec, omega_interp_pri = s.sol(
-                t)
+            sep_interp, ecc_interp, omega_interp_sec, omega_interp_pri = s.sol(t)
             mass_interp_sec = interp1d_sec[self.translate["mass"]]
             mass_interp_pri = interp1d_pri[self.translate["mass"]]
 
-            # s.sol(t)[0]
-            # interp1d = dict()
-            interp1d_sec["sep"] = s.sol(t)[0]
-            # lambda x: orb_params[0][np.argmax(x == t[:, None], 0)]
-            interp1d_sec["ecc"] = s.sol(t)[1]
-            # lambda x: orb_params[1][np.argmax(x == t[:, None], 0)]
-            interp1d_sec["omega"] = s.sol(t)[2]
-            # lambda x: orb_params[2][np.argmax(x == t[:, None], 0)]
-            interp1d_pri["omega"] = s.sol(t)[3]
+            interp1d_sec["sep"] = sep_interp
+            interp1d_sec["ecc"] = ecc_interp    
+            interp1d_sec["omega"] = omega_interp_sec
+            interp1d_pri["omega"] = omega_interp_pri
 
             interp1d_sec["porb"] = orbital_period_from_separation(
                 sep_interp, mass_interp_sec(t - t_offset_sec),
@@ -1537,7 +1533,7 @@ class detached_step:
                 sep_interp, mass_interp_pri(t - t_offset_pri),
                 mass_interp_sec(t - t_offset_sec))
 
-            interp1d_sec["time"] = t  # binary.time + x - t0
+            interp1d_sec["time"] = t
             # time_interp = binary.time + t - t0
 
             for obj, prop in zip(
@@ -1553,13 +1549,11 @@ class detached_step:
                         # For star objects, the state is calculated
                         # further below
                         history = [current] * len(t[:-1])
-                    # elif key in ("state") and obj == secondary:
-                    #    current = check_state_of_star(obj, star_CO=False)
-                    #    history = [current] * len(t[:-1])
+
                     elif (key in ["surf_avg_omega_div_omega_crit"]
                             and obj == secondary):
-                        # In fact I replace the actual surf_avg_w with the ef-
-                        # fective omega which takes into account the whole star
+                        # replace the actual surf_avg_w with the effective
+                        # omega, which takes into account the whole star
                         # key  = 'effective_omega' # in rad/sec
                         # current = s.y[2][-1] / 3.1558149984e7
                         # history_of_attribute = s.y[2][:-1] / 3.1558149984e7
@@ -1582,6 +1576,7 @@ class detached_step:
                                    / omega_crit_current_sec)
                         history = (interp1d_sec["omega"][:-1] / const.secyer
                                    / omega_crit_hist_sec)
+                        
                     elif (key in ["surf_avg_omega_div_omega_crit"]
                             and obj == primary):
                         if primary.co:
@@ -1608,10 +1603,12 @@ class detached_step:
                                        / const.secyer / omega_crit_current_pri)
                             history = (interp1d_pri["omega"][:-1]
                                        / const.secyer / omega_crit_hist_pri)
+                            
                     elif key in ["surf_avg_omega"] and obj == secondary:
                         # current = interp1d["omega"](t[-1]) / const.secyer
                         current = interp1d_sec["omega"][-1] / const.secyer
                         history = interp1d_sec["omega"][:-1] / const.secyer
+
                     elif key in ["surf_avg_omega"] and obj == primary:
                         if primary.co:
                             current = None
@@ -1619,6 +1616,7 @@ class detached_step:
                         else:
                             current = interp1d_pri["omega"][-1] / const.secyer
                             history = interp1d_pri["omega"][:-1] / const.secyer
+
                     elif key in ["rl_relative_overflow_1"] and obj == binary:
                         if binary.star_1.state in ("BH", "NS", "WD","massless_remnant"):
                             current = None
@@ -1637,6 +1635,7 @@ class detached_step:
                             history = ev_rel_rlo2(t[:-1],
                                                   [interp1d_sec["sep"][:-1],
                                                    interp1d_sec["ecc"][:-1]])
+                            
                     elif key in ["rl_relative_overflow_2"] and obj == binary:
                         if binary.star_2.state in ("BH", "NS", "WD","massless_remnant"):
                             current = None
@@ -1655,10 +1654,12 @@ class detached_step:
                             history = ev_rel_rlo2(t[:-1],
                                                   [interp1d_sec["sep"][:-1],
                                                    interp1d_sec["ecc"][:-1]])
+                            
                     elif key in ["separation", "orbital_period",
                                  "eccentricity", "time"]:
                         current = interp1d_sec[self.translate[key]][-1].item()
                         history = interp1d_sec[self.translate[key]][:-1]
+
                     elif (key in ["total_moment_of_inertia"]
                             and obj == secondary):
                         current = interp1d_sec[self.translate[key]](
@@ -1667,6 +1668,7 @@ class detached_step:
                         history = interp1d_sec[self.translate[key]](
                             t[:-1] - t_offset_sec) * (
                                 const.msol * const.rsol ** 2)
+                        
                     elif key in ["total_moment_of_inertia"] and obj == primary:
                         if primary.co:
                             current = getattr(obj, key)
@@ -1678,20 +1680,22 @@ class detached_step:
                             history = interp1d_pri[self.translate[key]](
                                 t[:-1] - t_offset_pri) * (
                                     const.msol * const.rsol ** 2)
-                    elif (key in ["log_total_angular_momentum"]
-                            and obj == secondary):
+                            
+                    elif (key in ["log_total_angular_momentum"] and obj == secondary):
+                                               
                         current = np.log10(
                             (interp1d_sec["omega"][-1] / const.secyer)
-                            * (interp1d_sec[
-                                self.translate["total_moment_of_inertia"]](
-                                    t[-1] - t_offset_sec).item() * (
-                                        const.msol * const.rsol ** 2)))
+                                * (interp1d_sec[
+                                    self.translate["total_moment_of_inertia"]](t[-1] - t_offset_sec).item() * 
+                                    (const.msol * const.rsol ** 2)))                     
+                        
                         history = np.log10(
                             (interp1d_sec["omega"][:-1] / const.secyer)
                             * (interp1d_sec[
                                 self.translate["total_moment_of_inertia"]](
                                     t[:-1] - t_offset_sec) * (
                                         const.msol * const.rsol ** 2)))
+                        
                     elif (key in ["log_total_angular_momentum"]
                             and obj == primary):
                         if primary.co:
@@ -1710,6 +1714,7 @@ class detached_step:
                                     self.translate["total_moment_of_inertia"]](
                                         t[:-1] - t_offset_pri) * (
                                             const.msol * const.rsol ** 2)))
+                            
                     elif key in ["spin"] and obj == secondary:
                         current = (
                             const.clight
@@ -1732,6 +1737,7 @@ class detached_step:
                             / (const.standard_cgrav * (
                                 interp1d_sec[self.translate["mass"]](
                                     t[:-1] - t_offset_sec) * const.msol)**2))
+                        
                     elif key in ["spin"] and obj == primary:
                         if primary.co:
                             current = getattr(obj, key)
@@ -1759,6 +1765,7 @@ class detached_step:
                                     self.translate["mass"]](
                                         t[:-1] - t_offset_pri)
                                     * const.msol)**2))
+                            
                     elif (key in ["lg_mdot", "lg_wind_mdot"]
                             and obj == secondary):
                         # in detached step, lg_mdot = lg_wind_mdot
@@ -1800,12 +1807,14 @@ class detached_step:
                                     history[i] = np.log10(np.abs(
                                         interp1d_sec[self.translate[key]](
                                             t[i] - t_offset_sec)))
+                                    
                     elif (self.translate[key] in interp1d_sec
                             and obj == secondary):
                         current = interp1d_sec[self.translate[key]](
                             t[-1] - t_offset_sec).item()
                         history = interp1d_sec[self.translate[key]](
                             t[:-1] - t_offset_sec)
+                        
                     elif (self.translate[key] in interp1d_pri
                             and obj == primary):
                         if primary.co:
@@ -1816,9 +1825,11 @@ class detached_step:
                                 t[-1] - t_offset_pri).item()
                             history = interp1d_pri[self.translate[key]](
                                 t[:-1] - t_offset_pri)
+                            
                     elif key in ["profile"]:
                         current = None
                         history = [current] * len(t[:-1])
+
                     else:
                         current = np.nan
                         history = np.ones_like(t[:-1]) * current
@@ -1853,8 +1864,7 @@ class detached_step:
             def get_star_final_values(star, htrack, m0):
                 grid = self.grid_Hrich if htrack else self.grid_strippedHe
                 get_final_values = grid.get_final_values
-                # TODO: this variable is never used!
-                get_final_state = grid.get_final_state
+        
                 for key in self.final_keys:
                     setattr(star, key, get_final_values('S1_%s' % (key), m0))
 
@@ -1862,6 +1872,7 @@ class detached_step:
                 grid = self.grid_Hrich if htrack else self.grid_strippedHe
                 get_profile = grid.get_profile
                 profile_new = np.array(get_profile('mass', m0)[1])
+
                 for i in self.profile_keys:
                     profile_new[i] = get_profile(i, m0)[0]
                 profile_new['omega'] = star.surf_avg_omega
@@ -2638,15 +2649,15 @@ def diffeq(
             )
 
         else:
-            print("WARNING: Magnetic braking is not being calculated in the "
+            Pwarn("WARNING: Magnetic braking is not being calculated in the "
                   "detached step. The given magnetic_braking_mode string \"",
                   magnetic_braking_mode, "\" does not match the available "
                   "built-in cases. To enable magnetic braking, please set "
-                  "magnetc_braking_mode to one of the following strings:")
-            print("\"RVJ83\" for Rappaport, Verbunt, & Joss 1983")
-            print("\"G18\" for Garraffo et al. 2018")
-            print("\"M15\" for Matt et al. 2015")
-            print("\"CARB\" for Van & Ivanova 2019")
+                  "magnetc_braking_mode to one of the following strings: "
+                  "\"RVJ83\" for Rappaport, Verbunt, & Joss 1983"
+                  "\"G18\" for Garraffo et al. 2018"
+                  "\"M15\" for Matt et al. 2015"
+                  "\"CARB\" for Van & Ivanova 2019", "UnsupportedModelWarning")
 
         if verbose and verbose != 1:
             print("magnetic_braking_mode = ", magnetic_braking_mode)
