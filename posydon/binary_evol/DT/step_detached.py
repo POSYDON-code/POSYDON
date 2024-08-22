@@ -20,7 +20,6 @@ from scipy.integrate import solve_ivp
 from scipy.interpolate import PchipInterpolator
 from scipy.optimize import minimize
 from scipy.optimize import root
-import warnings
 
 from posydon.utils.data_download import PATH_TO_POSYDON_DATA
 from posydon.binary_evol.binarystar import BINARYPROPERTIES
@@ -1215,23 +1214,10 @@ class detached_step:
             pri_mass = interp1d_pri["mass"](t - t_offset_pri)
             sec_mass = interp1d_sec["mass"](t - t_offset_sec)
 
-            if isinstance(y[0], np.ndarray):
-                warnings.warn("Trying to compute RL radius for binary with zero separation")
-                sep = np.nan
-                ecc = np.nan                
-            else:
-                sep = y[0]
-                ecc = y[1]
-
-            if pri_mass <=0:
-                warnings.warn("Trying to compute RL radius for binary with nonexistent companion")
-                pri_mass = np.nan
-
-            if sec_mass <=0:
-                warnings.warn("Trying to compute RL radius for binary with nonexistent companion")
-                sec_mass = np.nan
+            sep = y[0]
+            ecc = y[1]
            
-            RL = roche_lobe_radius(sec_mass/pri_mass, (1 - ecc) * sep)
+            RL = roche_lobe_radius(sec_mass, pri_mass, (1 - ecc) * sep)
             
             # 95% filling of the RL is enough to assume beginning of RLO,
             # as we do in CO-HMS_RLO grid
@@ -1261,24 +1247,11 @@ class detached_step:
             """
             pri_mass = interp1d_pri["mass"](t - t_offset_pri)
             sec_mass = interp1d_sec["mass"](t - t_offset_sec)
-
-            if isinstance(y[0], np.ndarray):
-                warnings.warn("Trying to compute RL radius for binary with zero separation")
-                sep = np.nan
-                ecc = np.nan                
-            else:
-                sep = y[0]
-                ecc = y[1]
-
-            if pri_mass <=0:
-                warnings.warn("Trying to compute RL radius for binary with nonexistent companion")
-                pri_mass = np.nan
-
-            if sec_mass <=0:
-                warnings.warn("Trying to compute RL radius for binary with nonexistent companion")
-                sec_mass = np.nan
+            
+            sep = y[0]
+            ecc = y[1]
            
-            RL = roche_lobe_radius(pri_mass/sec_mass, (1 - ecc) * sep)
+            RL = roche_lobe_radius(pri_mass, sec_mass, (1 - ecc) * sep)
             
             return interp1d_pri["R"](t - t_offset_pri) - 0.95*RL
 
@@ -1306,24 +1279,11 @@ class detached_step:
             """
             pri_mass = interp1d_pri["mass"](t - t_offset_pri)
             sec_mass = interp1d_sec["mass"](t - t_offset_sec)
-
-            if isinstance(y[0], np.ndarray):
-                warnings.warn("Trying to compute RL radius for binary with zero separation")
-                sep = np.nan
-                ecc = np.nan                
-            else:
-                sep = y[0]
-                ecc = y[1]
-
-            if pri_mass <=0:
-                warnings.warn("Trying to compute RL radius for binary with nonexistent companion")
-                pri_mass = np.nan
-
-            if sec_mass <=0:
-                warnings.warn("Trying to compute RL radius for binary with nonexistent companion")
-                sec_mass = np.nan
+            
+            sep = y[0]
+            ecc = y[1]
            
-            RL = roche_lobe_radius(sec_mass/pri_mass, (1 - ecc) * sep)
+            RL = roche_lobe_radius(sec_mass, pri_mass, (1 - ecc) * sep)
 
             return (interp1d_sec["R"](t - t_offset_sec) - RL) / RL
 
@@ -1352,23 +1312,10 @@ class detached_step:
             pri_mass = interp1d_pri["mass"](t - t_offset_pri)
             sec_mass = interp1d_sec["mass"](t - t_offset_sec)
 
-            if isinstance(y[0], np.ndarray):
-                warnings.warn("Trying to compute RL radius for binary with zero separation")
-                sep = np.nan
-                ecc = np.nan                
-            else:
-                sep = y[0]
-                ecc = y[1]
-
-            if pri_mass <=0:
-                warnings.warn("Trying to compute RL radius for binary with nonexistent companion")
-                pri_mass = np.nan
-
-            if sec_mass <=0:
-                warnings.warn("Trying to compute RL radius for binary with nonexistent companion")
-                sec_mass = np.nan
+            sep = y[0]
+            ecc = y[1]
            
-            RL = roche_lobe_radius(pri_mass/sec_mass, (1 - ecc) * sep)
+            RL = roche_lobe_radius(pri_mass, sec_mass, (1 - ecc) * sep)
 
             return (interp1d_pri["R"](t - t_offset_pri) - RL) / RL
 

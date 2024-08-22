@@ -207,15 +207,15 @@ RL -> Roche lobe radius in similar units as a_orb
 '''
 
 
-def roche_lobe_radius(q, a_orb=1):
+def roche_lobe_radius(m1, m2, a_orb=1):
     """Approximate the Roche lobe radius from [1]_.
 
     Parameters
     ----------
-    q : float
-        Dimensionless mass ratio = MRL/Mcomp, where
-        MRL is the mass of the star we calculate the RL and
-        Mcomp is the mass of its companion star.
+    m1 : float
+        the mass of the star for which we calculate the Roche lobe
+    m2: float
+        the mass of the companion star
     a_orb : float
         Orbital separation. The return value will have the same unit.
 
@@ -228,6 +228,20 @@ def roche_lobe_radius(q, a_orb=1):
     .. [1] Eggleton, P. P. 1983, ApJ, 268, 368
 
     """
+
+    if isinstance(a_orb, np.ndarray):
+        Pwarn("Trying to compute RL radius for binary with no separation", "EvolutionWarning")
+        a_orb = np.nan
+                          
+    if m1 <=0:
+        Pwarn("Trying to compute RL radius for binary with nonexistent companion", "EvolutionWarning")
+        m1 = np.nan
+
+    if m2 <=0:
+        Pwarn("Trying to compute RL radius for binary with nonexistent companion", "EvolutionWarning")
+        m2 = np.nan
+
+    q = m1/m2
     RL = a_orb * (0.49 * q**(2. / 3.)) / (
         0.6 * q**(2. / 3.) + np.log(1 + q**(1. / 3))
     )
