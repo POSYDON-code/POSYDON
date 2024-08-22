@@ -692,6 +692,18 @@ def copy_ini_file(grid_type, rerun_metallicity, rerun_type, destination,
         replace_text = "seth_dedt_energy_eqn-f1803afe400ed16a4fad47b0bad6abbf0965cae1"
     elif rerun_type == "dedt_hepulse":
         replace_text = "seth_dedt_hepulse-0274be9895480cae3aa2a4d14b056a2447d5921b"
+    elif rerun_type == 'LBV_wind':
+        replace_text = "matthias_LBV_wind-051343856f50dc5518abdf28904d62df4caacaff"
+    elif rerun_type == 'LBV_wind+thermohaline_mixing':
+        replace_text = "matthias_LBV_wind-051343856f50dc5518abdf28904d62df4caacaff"
+#    elif rerun_type == 'LBV_wind+HeMB_MLTp_mesh':
+#        raise ValueError(f'Not yet supported rerun type {rerun_type}!')
+#        replace_text = "matthias_LBV_wind-051343856f50dc5518abdf28904d62df4caacaff" #TODO: update to new MESA-INLIST branch/commit
+    elif rerun_type == 'LBV_wind+dedt_energy_eqn':
+        replace_text = "seth_lbv_thermo_dedt-936f76f82d44b16139ff89e41e5b0f2232fd9b30"
+#    elif rerun_type == 'LBV_wind+dedt_hepulse':
+#        raise ValueError(f'Not yet supported rerun type {rerun_type}!')
+#        replace_text = "matthias_LBV_wind-051343856f50dc5518abdf28904d62df4caacaff" #TODO: update to new MESA-INLIST branch/commit
     elif rerun_type == 'other': # e.g. 'envelope_mass_limit', 'fe_core_infall_limit'
         # this rerun uses the default inlist commit
         return
@@ -811,10 +823,13 @@ def logic_rerun(grid, rerun_type):
             if np.max(np.logical_or(tpagb_1, tpagb_2)) == True:
                 runs_to_rerun += [i]
         runs_to_rerun = np.array(runs_to_rerun)
-    elif rerun_type == 'thermohaline_mixing':
+    elif ((rerun_type == 'thermohaline_mixing') or
+          (rerun_type == 'LBV_wind+thermohaline_mixing')):
         termination_flags = TF1_POOL_ERROR
         new_mesa_flag = {'thermohaline_coeff' : 17.5}
-    elif rerun_type == 'HeMB_MLTp_mesh':
+    elif ((rerun_type == 'HeMB_MLTp_mesh')
+#          or (rerun_type == 'LBV_wind+HeMB_MLTp_mesh')
+         ):
         termination_flags = TF1_POOL_ERROR
     elif rerun_type == 'more_mesh':
         termination_flags = TF1_POOL_ERROR
@@ -859,10 +874,60 @@ def logic_rerun(grid, rerun_type):
             if np.isnan(iniY) or iniY<0.96:
                 runs_to_rerun += [i]
         runs_to_rerun = np.array(runs_to_rerun)
-    elif rerun_type == 'dedt_energy_eqn':
+    elif ((rerun_type == 'dedt_energy_eqn') or
+          (rerun_type == 'LBV_wind+dedt_energy_eqn')):
         termination_flags = TF1_POOL_ERROR    
-    elif rerun_type == 'dedt_hepulse':
+    elif ((rerun_type == 'dedt_hepulse')
+#          or (rerun_type == 'LBV_wind+dedt_hepulse')
+         ):
         termination_flags = TF1_POOL_ERROR
+    elif rerun_type == 'LBV_wind':
+        N_runs = len(grid)
+        runs_to_rerun = []
+        hot_wind_full_on_T = 1.2e4 # inlist value
+        for i in range(N_runs):
+            if grid[i].history1 is not None:
+                s1_L = 10**grid[i].history1['log_L']
+                s1_R = 10**grid[i].history1['log_R']
+                s1_HD_limit = (1.0e-5 * s1_R * np.sqrt(s1_L))
+                lbv_1 = np.logical_and(s1_L > 6.0e5, s1_HD_limit > 1.0)
+                # exclude (stripped) He stars
+                s1_X_surf = grid[i].history1['surface_h1']
+                lbv_1 = np.logical_and(lbv_1, s1_X_surf >= 0.1)
+                # exclude stars going through TPAGB
+                s1_Teff = 10**grid[i].history1['log_Teff']
+                s1_Yc = grid[i].history1['center_he4']
+                s1_he_shell_mass = grid[i].history1['he_core_mass'] -\
+                                   grid[i].history1['co_core_mass']
+                tpagb_1 = np.logical_and(s1_Teff <= hot_wind_full_on_T,\
+                                         s1_Yc <= 1e-6)
+                tpagb_1 = np.logical_and(tpagb_1, s1_he_shell_mass <= 1e-1)
+            else:
+                lbv_1 = np.array([False])
+                tpagb_1 = np.array([False])
+            if grid[i].history2 is not None:
+                s2_L = 10**grid[i].history2['log_L']
+                s2_R = 10**grid[i].history2['log_R']
+                s2_HD_limit = (1.0e-5 * s2_R * np.sqrt(s2_L))
+                lbv_2 = np.logical_and(s2_L > 6.0e5, s2_HD_limit > 1.0)
+                # exclude (stripped) He stars
+                s2_X_surf = grid[i].history2['surface_h1']
+                lbv_2 = np.logical_and(lbv_2, s2_X_surf >= 0.1)
+                # exclude stars going through TPAGB
+                s2_Teff = 10**grid[i].history2['log_Teff']
+                s2_Yc = grid[i].history2['center_he4']
+                s2_he_shell_mass = grid[i].history2['he_core_mass'] -\
+                                   grid[i].history2['co_core_mass']
+                tpagb_2 = np.logical_and(s2_Teff <= hot_wind_full_on_T,\
+                                         s2_Yc <= 1e-6)
+                tpagb_2 = np.logical_and(tpagb_2, s2_he_shell_mass <= 1e-1)
+            else:
+                lbv_2 = np.array([False])
+                tpagb_2 = np.array([False])
+            if np.max(np.logical_or(lbv_1, lbv_2)) == True:
+                if np.max(np.logical_or(tpagb_1, tpagb_2)) == False:
+                    runs_to_rerun += [i]
+        runs_to_rerun = np.array(runs_to_rerun)
     elif rerun_type == 'envelope_mass_limit': # maybe 'fe_core_infall_limit' as well?
         runs_to_rerun = None # implement logic
     else:
