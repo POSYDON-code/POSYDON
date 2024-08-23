@@ -82,6 +82,7 @@ from posydon.grids.post_processing import (post_process_grid,
 from posydon.grids.MODELS import MODELS
 from posydon.utils.common_functions import PATH_TO_POSYDON
 from posydon.utils.gridutils import get_new_grid_name
+from posydon.utils.posydonwarning import (Pwarn,print_stats)
 from posydon.interpolation.IF_interpolation import IFInterpolator
 from posydon.visualization.plot_defaults import PRE_SET_PLOTS
 from posydon.visualization.interpolation import EvaluateIFInterpolator
@@ -148,9 +149,8 @@ def create_grid_slice(i, path_to_csv_file, verbose=False, overwrite_psygrid=True
         stop_before_carbon_depletion = df.loc[i,'stop_before_carbon_depletion']
         if 'HMS' not in grid_type:
             stop_before_carbon_depletion = False
-            if verbose:
-                print('stop_before_carbon_depletion set to False for non HMS'\
-                      f' gird: {grid_type} in {grid_path}')
+            Pwarn('stop_before_carbon_depletion set to False for non HMS'+\
+                  f' grid: {grid_type} in {grid_path}', "ReplaceValueWarning")
     else:
         stop_before_carbon_depletion = False
     
@@ -178,9 +178,9 @@ def create_grid_slice(i, path_to_csv_file, verbose=False, overwrite_psygrid=True
         print(f'processing: {grid_path} with compression: {compression}')
         if os.path.isfile(grid_output):
             if overwrite_psygrid:
-                print(f'replacing file: {grid_output}')
+                Pwarn(f'replacing file: {grid_output}', "OverwriteWarning")
             else:
-                print(f'file {grid_output} already exists!')
+                raise FileExistsError(f'file {grid_output} already exists!')
         else:
             print(f'saving to file: {grid_output}')
     
@@ -289,8 +289,8 @@ def calculate_extra_values(i, path_to_csv_file, verbose=False):
     # post processed quantities are appended to the grid object, hence
     # we create a copy of it and append back to it
     if os.path.exists(processed_grid_path):
-        if verbose:
-            print('Post processed grid file alredy exist, removing it.')
+        Pwarn('Post processed grid file already exists, removing it.',
+              "OverwriteWarning")
         os.remove(processed_grid_path)
     shutil.copyfile(grid_path, processed_grid_path)
     
@@ -569,6 +569,8 @@ def export_dataset(i, path_to_csv_file, verbose=False):
     else:
         raise KeyError(f'No export_path in {path_to_csv_file}')
     
+    if os.path.exists(export_path):
+        Pwarn(f'Replace {export_path}', "OverwriteWarning")
     if verbose:
         print(f'copying {grid_path} to {export_path}')
     # copy the file
@@ -592,7 +594,7 @@ def zams_file_name(metallicity):
     if '2e+00_Zsun' in metallicity:
         zams_filename = 'zams_z2.84m2_y0.2915.data'
     elif (('1e+00_Zsun' in metallicity)or(pd.isna(metallicity))):
-        # in v1 there is no metallicity, hence am empty string
+        # in v1 there is no metallicity, hence an empty string
         zams_filename = 'zams_z1.42m2_y0.2703.data'
     elif '4.5e-01_Zsun' in metallicity:
         zams_filename = 'zams_z6.39m3_y0.2586.data'
@@ -629,6 +631,9 @@ def copy_ini_file(grid_type, rerun_metallicity, rerun_type, destination,
         Cluster name (e.g. yggdrasil or quest).
     """
 
+    # check that the 'destination' exists
+    if not os.path.exists(destination):
+        os.makedirs(destination)
     # copy the default ini file to directory
     if cluster in ['quest','yggdrasil']:
         if os.path.isdir(PATH_TO_POSYDON):
@@ -687,6 +692,18 @@ def copy_ini_file(grid_type, rerun_metallicity, rerun_type, destination,
         replace_text = "seth_dedt_energy_eqn-f1803afe400ed16a4fad47b0bad6abbf0965cae1"
     elif rerun_type == "dedt_hepulse":
         replace_text = "seth_dedt_hepulse-0274be9895480cae3aa2a4d14b056a2447d5921b"
+    elif rerun_type == 'LBV_wind':
+        replace_text = "matthias_LBV_wind-051343856f50dc5518abdf28904d62df4caacaff"
+    elif rerun_type == 'LBV_wind+thermohaline_mixing':
+        replace_text = "matthias_LBV_wind-051343856f50dc5518abdf28904d62df4caacaff"
+#    elif rerun_type == 'LBV_wind+HeMB_MLTp_mesh':
+#        raise ValueError(f'Not yet supported rerun type {rerun_type}!')
+#        replace_text = "matthias_LBV_wind-051343856f50dc5518abdf28904d62df4caacaff" #TODO: update to new MESA-INLIST branch/commit
+    elif rerun_type == 'LBV_wind+dedt_energy_eqn':
+        replace_text = "seth_lbv_thermo_dedt-936f76f82d44b16139ff89e41e5b0f2232fd9b30"
+#    elif rerun_type == 'LBV_wind+dedt_hepulse':
+#        raise ValueError(f'Not yet supported rerun type {rerun_type}!')
+#        replace_text = "matthias_LBV_wind-051343856f50dc5518abdf28904d62df4caacaff" #TODO: update to new MESA-INLIST branch/commit
     elif rerun_type == "no_age_limit":
         replace_text = "matthias_no_age_limit-a119ea9548cca9b6b7ddfe31309ced1ae40c271e"
     elif rerun_type == 'other': # e.g. 'envelope_mass_limit', 'fe_core_infall_limit'
@@ -808,10 +825,13 @@ def logic_rerun(grid, rerun_type):
             if np.max(np.logical_or(tpagb_1, tpagb_2)) == True:
                 runs_to_rerun += [i]
         runs_to_rerun = np.array(runs_to_rerun)
-    elif rerun_type == 'thermohaline_mixing':
+    elif ((rerun_type == 'thermohaline_mixing') or
+          (rerun_type == 'LBV_wind+thermohaline_mixing')):
         termination_flags = TF1_POOL_ERROR
         new_mesa_flag = {'thermohaline_coeff' : 17.5}
-    elif rerun_type == 'HeMB_MLTp_mesh':
+    elif ((rerun_type == 'HeMB_MLTp_mesh')
+#          or (rerun_type == 'LBV_wind+HeMB_MLTp_mesh')
+         ):
         termination_flags = TF1_POOL_ERROR
     elif rerun_type == 'more_mesh':
         termination_flags = TF1_POOL_ERROR
@@ -856,10 +876,60 @@ def logic_rerun(grid, rerun_type):
             if np.isnan(iniY) or iniY<0.96:
                 runs_to_rerun += [i]
         runs_to_rerun = np.array(runs_to_rerun)
-    elif rerun_type == 'dedt_energy_eqn':
+    elif ((rerun_type == 'dedt_energy_eqn') or
+          (rerun_type == 'LBV_wind+dedt_energy_eqn')):
         termination_flags = TF1_POOL_ERROR    
-    elif rerun_type == 'dedt_hepulse':
+    elif ((rerun_type == 'dedt_hepulse')
+#          or (rerun_type == 'LBV_wind+dedt_hepulse')
+         ):
         termination_flags = TF1_POOL_ERROR
+    elif rerun_type == 'LBV_wind':
+        N_runs = len(grid)
+        runs_to_rerun = []
+        hot_wind_full_on_T = 1.2e4 # inlist value
+        for i in range(N_runs):
+            if grid[i].history1 is not None:
+                s1_L = 10**grid[i].history1['log_L']
+                s1_R = 10**grid[i].history1['log_R']
+                s1_HD_limit = (1.0e-5 * s1_R * np.sqrt(s1_L))
+                lbv_1 = np.logical_and(s1_L > 6.0e5, s1_HD_limit > 1.0)
+                # exclude (stripped) He stars
+                s1_X_surf = grid[i].history1['surface_h1']
+                lbv_1 = np.logical_and(lbv_1, s1_X_surf >= 0.1)
+                # exclude stars going through TPAGB
+                s1_Teff = 10**grid[i].history1['log_Teff']
+                s1_Yc = grid[i].history1['center_he4']
+                s1_he_shell_mass = grid[i].history1['he_core_mass'] -\
+                                   grid[i].history1['co_core_mass']
+                tpagb_1 = np.logical_and(s1_Teff <= hot_wind_full_on_T,\
+                                         s1_Yc <= 1e-6)
+                tpagb_1 = np.logical_and(tpagb_1, s1_he_shell_mass <= 1e-1)
+            else:
+                lbv_1 = np.array([False])
+                tpagb_1 = np.array([False])
+            if grid[i].history2 is not None:
+                s2_L = 10**grid[i].history2['log_L']
+                s2_R = 10**grid[i].history2['log_R']
+                s2_HD_limit = (1.0e-5 * s2_R * np.sqrt(s2_L))
+                lbv_2 = np.logical_and(s2_L > 6.0e5, s2_HD_limit > 1.0)
+                # exclude (stripped) He stars
+                s2_X_surf = grid[i].history2['surface_h1']
+                lbv_2 = np.logical_and(lbv_2, s2_X_surf >= 0.1)
+                # exclude stars going through TPAGB
+                s2_Teff = 10**grid[i].history2['log_Teff']
+                s2_Yc = grid[i].history2['center_he4']
+                s2_he_shell_mass = grid[i].history2['he_core_mass'] -\
+                                   grid[i].history2['co_core_mass']
+                tpagb_2 = np.logical_and(s2_Teff <= hot_wind_full_on_T,\
+                                         s2_Yc <= 1e-6)
+                tpagb_2 = np.logical_and(tpagb_2, s2_he_shell_mass <= 1e-1)
+            else:
+                lbv_2 = np.array([False])
+                tpagb_2 = np.array([False])
+            if np.max(np.logical_or(lbv_1, lbv_2)) == True:
+                if np.max(np.logical_or(tpagb_1, tpagb_2)) == False:
+                    runs_to_rerun += [i]
+        runs_to_rerun = np.array(runs_to_rerun)
     elif rerun_type == 'no_age_limit':
         termination_flags = ['max_age']
     elif rerun_type == 'envelope_mass_limit': # maybe 'fe_core_infall_limit' as well?
@@ -919,6 +989,8 @@ def rerun(i, path_to_csv_file, verbose=False):
     if 'cluster' in df.keys():
         cluster = df.loc[i,'cluster']
     else:
+        Pwarn('Cluster not specified, use quest as cluster',
+              "ReplaceValueWarning")
         cluster = 'quest'
     
     # load grid
@@ -1037,6 +1109,7 @@ def plot_grid(i, path_to_csv_file, verbose=False):
             multipage = True
             plot_extension = 'pdf'
     else:
+        Pwarn('No plot extension, use pdf', "ReplaceValueWarning")
         plot_extension = 'pdf'
     if 'path_to_interpolator' in df.keys():
         path_to_interpolator = df.loc[i,'path_to_interpolator']
@@ -1092,7 +1165,8 @@ def plot_grid(i, path_to_csv_file, verbose=False):
                     for attr in PRE_SET_PLOTS[set_name].keys():
                         plot_attributes[attr] = PRE_SET_PLOTS[set_name][attr]
                 else:
-                    print(f'Warning: {set_name} not in PRE_SET_PLOTS.')
+                    Pwarn(f'{set_name} not in PRE_SET_PLOTS',
+                          "UnsupportedModelWarning")
             elif '_MODEL' in quantity_to_plot:
                 short_quantity = quantity_to_plot.split('_MODEL')[-1]
                 short_quantity = short_quantity[short_quantity.find('_')+1:]
@@ -1106,7 +1180,8 @@ def plot_grid(i, path_to_csv_file, verbose=False):
                     for attr in PRE_SET_PLOTS[set_name].keys():
                         plot_attributes[attr] = PRE_SET_PLOTS[set_name][attr]
                 else:
-                    print(f'Warning: {set_name} not in PRE_SET_PLOTS.')
+                    Pwarn(f'{set_name} not in PRE_SET_PLOTS',
+                          "UnsupportedModelWarning")
             elif quantity_to_plot[:6]=='LOG10_':
                 short_quantity = quantity_to_plot[6:]
                 plot_attributes['plot_dir_name'] = short_quantity
@@ -1246,8 +1321,9 @@ def plot_grid(i, path_to_csv_file, verbose=False):
                 if multipage:
                     # close and reopen handler
                     # (WARNING: this will overwrite the pdf file)
-                    print(f'delete and reopen: {os.path.join(plot_dir, name)}'
-                          f'_all.{plot_extension}')
+                    Pwarn('delete and reopen: '+\
+                          f'{os.path.join(plot_dir, name)}'+\
+                          f'_all.{plot_extension}', "OverwriteWarning")
                     del pdf_handler
                     pdf_handler = PdfPages(os.path.join(plot_dir, name) +\
                                            '_all_slices.' +plot_extension,
@@ -1325,7 +1401,8 @@ def do_check(i, path_to_csv_file, verbose=False):
                     print(f'{quantity}: {count} in {grid_path}')
             #TODO: add more checks
         else:
-            print(f'Do not know how to do {check_to_do} for {grid_path}!')
+            Pwarn(f'Do not know how to do {check_to_do} for'+\
+                  f' {grid_path}!', "UnsupportedModelWarning")
 
 
 if __name__ == '__main__':
@@ -1368,11 +1445,13 @@ if __name__ == '__main__':
         if SLURM_I<0: # check value
             raise ValueError(f'The slurm index cannot be negative: {SLURM_I}')
     else:
+        Pwarn('No slurm index given, use 0', "ReplaceValueWarning")
         SLURM_I = 0
     
     if n_args > 4: # verbose flag
         VERBOSE = bool(int(sys.argv[4]))
     else:
+        Pwarn('No verbose flag given, use True', "ReplaceValueWarning")
         VERBOSE = True
 
     # chose grid slice given the slurm jobarray index
@@ -1411,4 +1490,4 @@ if __name__ == '__main__':
     if 'check' in STEP: # do checks, e.g. failure rate
         do_check(SLURM_I, PATH_TO_CSV_FILE, verbose=VERBOSE)
 
-
+    print_stats()

@@ -13,7 +13,6 @@ __authors__ = [
     "Matthias Kruckow <Matthias.Kruckow@unige.ch>",
 ]
 
-import warnings
 import numpy as np
 import matplotlib.pyplot as plt
 from posydon.utils.gridutils import add_field
@@ -23,6 +22,7 @@ from posydon.visualization.plot_defaults import (
     PLOT_PROPERTIES, DEFAULT_LABELS)
 from posydon.visualization.combine_TF import combine_TF12
 import copy
+from posydon.utils.posydonwarning import Pwarn
 
 
 class plot2D(object):
@@ -608,8 +608,9 @@ class plot2D(object):
                                 vmax=self.zmax,
                             )
                         except:
-                            warnings.warn(f'Failed to plot values for flag {flag}, '
-                                          'likely all values are NaN.')
+                            Pwarn(f'Failed to plot values for flag {flag}, '
+                                  'likely all values are NaN.',
+                                  "InappropriateValueWarning")
                     sc_last = sc
             # collect scatters for legend
             if self.MARKERS_COLORS_LEGENDS[flag][3] not in scatters_legend:

@@ -2,7 +2,6 @@
 ##############################################################################
 #  IMPORT ALL NECESSARY PYTHON PACKAGES
 ##############################################################################
-import warnings
 import argparse
 import os
 import shutil
@@ -17,6 +16,7 @@ import numpy as np
 import pandas
 
 from posydon.utils import gridutils as utils
+from posydon.utils.posydonwarning import Pwarn
 from posydon.grids.psygrid import PSyGrid
 from posydon.active_learning.psy_cris.utils import parse_inifile
 from collections import ChainMap
@@ -205,8 +205,8 @@ def create_working_directory(grid_param_dict, args):
 
     ############# check for existance of precomputed model
     if os.path.isdir(work_dir):
-        print ("folder "+ work_dir +" exists, removing and rerunning")
-        sys.stdout.flush()
+        Pwarn("Directory {} exists, removing and rerunning".format(work_dir),
+              "OverwriteWarning")
         shutil.rmtree(work_dir)
 
     ############# create work directory and change into it
@@ -244,12 +244,18 @@ def create_binary_inlists(binary_controls, binary_job,
 / ! end of job namelist
                         """.format(binary_inlist_project)
 
-    with open(os.path.join(work_dir, 'inlist'), 'w') as f:
+    filename = os.path.join(work_dir, 'inlist')
+    if os.path.exists(filename):
+        Pwarn('Replace '+filename, "OverwriteWarning")
+    with open(filename, 'w') as f:
         f.write(binary_controls_str)
         f.write('\n')
         f.write(binary_job_str)
 
-    with open(os.path.join(work_dir, 'inlist_grid_points'), 'w') as inlist_grid_points:
+    filename = os.path.join(work_dir, 'inlist_grid_points')
+    if os.path.exists(filename):
+        Pwarn('Replace '+filename, "OverwriteWarning")
+    with open(filename, 'w') as inlist_grid_points:
         if binary_controls:
             # Write the binary controls for this grid point
             inlist_grid_points.write("&binary_controls\n")
@@ -285,7 +291,10 @@ def create_binary_inlists(binary_controls, binary_job,
             inlist_grid_points.write("/ ! end of binary_job namelist\n")
 
     if star1_binary_controls:
-        with open(os.path.join(work_dir, 'inlist_grid_star1_binary_controls'), 'w') as inlist_grid_points:
+        filename = os.path.join(work_dir, 'inlist_grid_star1_binary_controls')
+        if os.path.exists(filename):
+            Pwarn('Replace '+filename, "OverwriteWarning")
+        with open(filename, 'w') as inlist_grid_points:
             # Write the star1 controls for this grid point
             inlist_grid_points.write("&controls\n")
             for k, v in star1_binary_controls.items():
@@ -303,7 +312,10 @@ def create_binary_inlists(binary_controls, binary_job,
             inlist_grid_points.write("/ ! end of controls namelist\n")
 
     if star2_binary_controls:
-        with open(os.path.join(work_dir, 'inlist_grid_star2_binary_controls'), 'w') as inlist_grid_points:
+        filename = os.path.join(work_dir, 'inlist_grid_star2_binary_controls')
+        if os.path.exists(filename):
+            Pwarn('Replace '+filename, "OverwriteWarning")
+        with open(filename, 'w') as inlist_grid_points:
             # Write the star2 controls for this grid point
             inlist_grid_points.write("&controls\n")
             for k, v in star2_binary_controls.items():
@@ -321,7 +333,10 @@ def create_binary_inlists(binary_controls, binary_job,
             inlist_grid_points.write("/ ! end of controls namelist\n")
 
     if star1_binary_job:
-        with open(os.path.join(work_dir, 'inlist_grid_star1_binary_job'), 'w') as inlist_grid_points:
+        filename = os.path.join(work_dir, 'inlist_grid_star1_binary_job')
+        if os.path.exists(filename):
+            Pwarn('Replace '+filename, "OverwriteWarning")
+        with open(filename, 'w') as inlist_grid_points:
             # Write the star1 job for this grid point
             inlist_grid_points.write("&star_job\n")
             for k, v in star1_binary_job.items():
@@ -339,7 +354,10 @@ def create_binary_inlists(binary_controls, binary_job,
             inlist_grid_points.write("/ ! end of star_job namelist\n")
 
     if star2_binary_job:
-        with open(os.path.join(work_dir, 'inlist_grid_star2_binary_job'), 'w') as inlist_grid_points:
+        filename = os.path.join(work_dir, 'inlist_grid_star2_binary_job')
+        if os.path.exists(filename):
+            Pwarn('Replace '+filename, "OverwriteWarning")
+        with open(filename, 'w') as inlist_grid_points:
             # Write the star2 job for this grid point
             inlist_grid_points.write("&star_job\n")
             for k, v in star2_binary_job.items():
@@ -384,12 +402,18 @@ def create_star_formation(mass, work_dir, star_inlist_project, initial_z=None, n
 / ! end of job namelist
                         """.format(star_inlist_project)
 
-    with open(os.path.join(work_dir, 'inlist'), 'w') as f:
+    filename = os.path.join(work_dir, 'inlist')
+    if os.path.exists(filename):
+        Pwarn('Replace '+filename, "OverwriteWarning")
+    with open(filename, 'w') as f:
         f.write(binary_controls_str)
         f.write('\n')
         f.write(binary_job_str)
 
-    with open(os.path.join(work_dir, 'inlist_grid_points'), 'w') as inlist_grid_points:
+    filename = os.path.join(work_dir, 'inlist_grid_points')
+    if os.path.exists(filename):
+        Pwarn('Replace '+filename, "OverwriteWarning")
+    with open(filename, 'w') as inlist_grid_points:
         inlist_grid_points.write("&controls\n")
         inlist_grid_points.write("initial_mass = {0:.10f}d0\n".format(mass))
         if initial_z is not None:
@@ -416,8 +440,8 @@ def move_mesa_output(work_dir, final_dir, copyinstead=False):
     """
     if not work_dir == final_dir:
         if os.path.isdir(final_dir):
-            print ("folder "+ final_dir +" exists, replacing with new data")
-            sys.stdout.flush()
+            Pwarn("Directory {} exists,".format(work_dir) +\
+                  " replacing with new data", "OverwriteWarning")
             shutil.rmtree(final_dir)
         if copyinstead:
             print ("copy data from " + work_dir+ " to "+ final_dir)
@@ -629,7 +653,10 @@ def do_root_process_logic(comm, grid, args, grid_params_binary_controls, grid_pa
         print('Process number {0} finished their run'.format(child))
         print('Saving grid data and sampling a new grid point...')
         sys.stdout.flush()
-        with open(os.path.join(args.output_directory, 'grid_results.csv'), 'w') as f:
+        filename = os.path.join(args.output_directory, 'grid_results.csv')
+        if os.path.exists(filename):
+            Pwarn('Replace '+filename, "OverwriteWarning")
+        with open(filename, 'w') as f:
             grid.to_csv(f, index=False,)
 
         print('Sampling next grid point for process {0}'.format(child))
