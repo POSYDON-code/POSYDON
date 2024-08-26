@@ -182,6 +182,7 @@ def generate_spectrum(grids,star,i,**kwargs):
                 Flux = grids.grid_flux(label,**x)*4*np.pi*1e4/Lo
                 print('TRIED')
             elif label == 'WR_grid':
+                
                 Flux = grids.grid_flux(label,**x)*4*np.pi*1e4/Lo *(L/10**5.3)
                 #Replace the negative values for WR
                 Flux.value[Flux.value < 0] = 1e-50
@@ -214,6 +215,7 @@ def regenerate_spectrum(grids,star,i,**kwargs):
     R = 10**copy(star[f'{i}_log_R'])*con.R_sun
     L = 10**copy(star[f'{i}_log_L'])
     surface_h1 = max(copy(star[f'{i}_surface_h1']),0.01)
+  
     x = {'Teff':Teff ,
          'log(g)': logg,
          '[Fe/H]': Fe_H,
@@ -221,9 +223,16 @@ def regenerate_spectrum(grids,star,i,**kwargs):
          'state':state,
          'surface_h1' : surface_h1,
          '[alpha/Fe]':0.0}
+    #If the star is WR we need to add R_t quantity in x 
+
     if label == "stripped_grid":
         Flux = grids.grid_flux(label,**x)*4*np.pi*1e4/Lo
     elif label == 'WR_grid':
+        if (x['Teff'] > 100000) & (((x['Teff'] -100000)/100000) < 0.1):
+            x['Teff'] = 100000
+        elif (x['Teff'] > 100000)  & (((x['Teff'] -100000)/100000) > 0.1): 
+            return None,star[f'{i}_state'],label
+        x['R_t'] = calculated_Rt(star,i)
         Flux = grids.grid_flux(label,**x)*4*np.pi*1e4/Lo *(L/10**5.3)
     else:
         Flux = grids.grid_flux(label,**x)*R**2*4*np.pi*1e4/Lo
