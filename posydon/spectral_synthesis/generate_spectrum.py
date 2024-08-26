@@ -177,21 +177,22 @@ def generate_spectrum(grids,star,i,**kwargs):
         return None,state,label
     while count <3:
         try:
-            if label == "stripped_grid":
-                print(x,star[f'{i}_surface_h1'])
-                Flux = grids.grid_flux(label,**x)*4*np.pi*1e4/Lo
-                print('TRIED')
-            elif label == 'WR_grid':
-                
-                Flux = grids.grid_flux(label,**x)*4*np.pi*1e4/Lo *(L/10**5.3)
-                #Replace the negative values for WR
-                Flux.value[Flux.value < 0] = 1e-50
-            else:
-                Flux = grids.grid_flux(label,**x)*R**2*4*np.pi*1e4/Lo
-            if np.min(Flux) < 0: 
-                Flux = smooth_flux_negatives(grids.lam_c,Flux.value)
-                return Flux,star['state'],label
-            return Flux.value,star['state'],label
+            if 'failed_attempt' not in label:
+                if label == "stripped_grid":
+                    print(x,star[f'{i}_surface_h1'])
+                    Flux = grids.grid_flux(label,**x)*4*np.pi*1e4/Lo
+                    print('TRIED')
+                elif label == 'WR_grid':
+                    
+                    Flux = grids.grid_flux(label,**x)*4*np.pi*1e4/Lo *(L/10**5.3)
+                    #Replace the negative values for WR
+                    Flux.value[Flux.value < 0] = 1e-50
+                else:
+                    Flux = grids.grid_flux(label,**x)*R**2*4*np.pi*1e4/Lo
+                if np.min(Flux) < 0: 
+                    Flux = smooth_flux_negatives(grids.lam_c,Flux.value)
+                    return Flux,star['state'],label
+                return Flux.value,star['state'],label
         except LookupError:
             label = f'failed_attempt_{count}'
         label = point_the_grid(grids,x,label,**kwargs)
