@@ -6,6 +6,7 @@ __authors__ = [
 import os
 import numpy as np
 import matplotlib as mpl
+import pandas as pd
 from posydon.utils.common_functions import PATH_TO_POSYDON
 from posydon.visualization.plot_defaults import DEFAULT_LABELS
 from posydon.utils.constants import Zsun
@@ -245,9 +246,11 @@ def plot_popsyn_over_grid_slice(pop, grid_type, met_Zsun, slices=None, channel=N
         met_indices = np.where(pop.select(where=channel_sel, columns=['metallicity']) == met_Zsun)[0].tolist()
         if 'HMS-HMS' in grid_path:
             slice_3D_var_range = (dq_edges[i],dq_edges[i+1])
-
-            sel = 'index in '+str(met_indices)+' & event == "ZAMS"'
-            data = pop.history.select(where=sel, columns=['S1_mass','S2_mass' ,'orbital_period'])
+            if len(met_indices) == 0:
+                data = pd.DataFrame(columns=['S1_mass','S2_mass' ,'orbital_period'])
+            else:
+                sel = 'index in '+str(met_indices)+' & event == "ZAMS"'
+                data = pop.history.select(where=sel, columns=['S1_mass','S2_mass' ,'orbital_period'])
 
             q = data['S2_mass'].values/data['S1_mass'].values
             q[q>1] = 1./q[q>1]
@@ -259,15 +262,22 @@ def plot_popsyn_over_grid_slice(pop, grid_type, met_Zsun, slices=None, channel=N
             # select popsynth binaries in the given compact object mass
             # TODO: implement the case of reversal mass ratio
             if 'CO-HMS_RLO' in grid_path:
-
-                sel = 'index in '+str(met_indices)+' & event == "oRLO2"'
-                data = pop.history.select(where=sel, columns=['S1_mass','S2_mass' ,'orbital_period'])
+                if len(met_indices) == 0:
+                    data = pd.DataFrame(columns=['S1_mass','S2_mass' ,'orbital_period'])
+                else:
+                    sel = 'index in '+str(met_indices)+' & event == "oRLO2"'
+                    data = pop.history.select(where=sel, columns=['S1_mass','S2_mass' ,'orbital_period'])
+                
                 m_CO = data['S1_mass'].values
                 mask = (m_CO>=slice_3D_var_range[0]) & (m_CO<=slice_3D_var_range[1])
 
             elif 'CO-HeMS' in grid_path:
-                sel = 'index in '+str(met_indices)+' & step_names == "step_CE"'
-                data = pop.history.select(where=sel, columns=['S1_mass','S2_mass' ,'orbital_period'])
+                if len(met_indices) == 0:
+                    data = pd.DataFrame(columns=['S1_mass','S2_mass' ,'orbital_period'])
+                else:
+                    sel = 'index in '+str(met_indices)+' & step_names == "step_CE"'
+                    data = pop.history.select(where=sel, columns=['S1_mass','S2_mass' ,'orbital_period'])
+                    
                 m_CO = data['S1_mass'].values
                 mask = (m_CO>=slice_3D_var_range[0]) & (m_CO<=slice_3D_var_range[1])
             else:
