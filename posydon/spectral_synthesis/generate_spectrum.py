@@ -39,6 +39,8 @@ def check_boundaries(grids,grid_name,**kwargs):
     grid = grids.spectral_grids[grid_name]
     if grid_name == 'stripped_grid':
         if x['Teff'] < grid.axis_x_min['Teff'] or x['Teff'] > grid.axis_x_max['Teff']:
+            if (x['Teff'] < grid.axis_x_min['Teff']) & (x['Teff'] < grids.spectral_grids.axis_x_max['ostar_grid']):
+                return 'ostar_grid'
             return 'failed_grid'
         elif x['log(g)'] < grid.axis_x_min['log(g)'] or x['log(g)'] > grid.axis_x_max['log(g)']:
             return 'failed_grid'
@@ -86,7 +88,7 @@ def point_the_grid(grids,x,label,**kwargs):
     #First check for stripped stars because their temp can be a lot
     # higher than the Teff of the Ostar grid limit
     if "stripped" in x['state']:
-        if label is not None:
+        if (label is not None) & (label != 'failed_attempt_1'):
             return 'failed_attempt_1'
         
         if (x['log(g)'] < 4.0 ) & ((abs(x['log(g)'] - 4.0)/4.0) < 0.1 ):
@@ -113,7 +115,7 @@ def point_the_grid(grids,x,label,**kwargs):
             return 'failed_grid'
         return check_boundaries(grids,'ostar_grid',**x)
     if x['Teff'] > bstar_temp_cut_off:
-        if label is not None:
+        if label is not None or ((label == 'failed_attempt_1') & ("stripped" in x['state'])):
             return 'failed_grid'
         return check_boundaries(grids,'bstar_grid',**x)
     #Now we are checking at the normal grid and the number of failed trails.
@@ -193,10 +195,13 @@ def generate_spectrum(grids,star,i,**kwargs):
                     Flux = smooth_flux_negatives(grids.lam_c,Flux.value)
                     return Flux,star['state'],label
                 return Flux.value,star['state'],label
+            else:
+                label = point_the_grid(grids,x,label,**kwargs)
         except LookupError:
-            label = f'failed_attempt_{count}'
-        label = point_the_grid(grids,x,label,**kwargs)
+            label = f'failed_attempt_{count}'  
+            label = point_the_grid(grids,x,label,**kwargs)
         count += 1
+        
         if label == 'failed_grid':
             return None,state,label
     raise ValueError(f'The label:{label} is not "failed_grid" after all the possible checks')
