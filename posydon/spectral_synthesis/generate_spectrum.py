@@ -39,9 +39,12 @@ def check_boundaries(grids,grid_name,**kwargs):
     grid = grids.spectral_grids[grid_name]
     if grid_name == 'stripped_grid':
         if x['Teff'] < grid.axis_x_min['Teff'] or x['Teff'] > grid.axis_x_max['Teff']:
-            if (x['Teff'] < grid.axis_x_min['Teff']) & (x['Teff'] < grids.spectral_grids.axis_x_max['ostar_grid']):
+            if (x['Teff'] < grid.axis_x_min['Teff']) & (x['Teff'] < grids.spectral_grids['ostar_grid'].axis_x_max['Teff'] and x['Teff'] > grids.spectral_grids['ostar_grid'].axis_x_min['Teff']):
+                if (x['log(g)'] <  grids.spectral_grids['ostar_grid'].axis_x_min['log(g)'] or x['log(g)'] >  grids.spectral_grids['ostar_grid'].axis_x_max['log(g)']):
+                    return 'failed_grid'
                 return 'ostar_grid'
-            return 'failed_grid'
+            else:
+                return 'failed_grid'
         elif x['log(g)'] < grid.axis_x_min['log(g)'] or x['log(g)'] > grid.axis_x_max['log(g)']:
             return 'failed_grid'
         else:
@@ -88,15 +91,14 @@ def point_the_grid(grids,x,label,**kwargs):
     #First check for stripped stars because their temp can be a lot
     # higher than the Teff of the Ostar grid limit
     if "stripped" in x['state']:
-        if (label is not None) & (label != 'failed_attempt_1'):
-            return 'failed_attempt_1'
-        
-        if (x['log(g)'] < 4.0 ) & ((abs(x['log(g)'] - 4.0)/4.0) < 0.1 ):
-            x['log(g)'] = 4.0
-        elif ((abs(x['log(g)'] - 5.5)/5.5) < 0.05 ):
-            x['log(g)'] = 5.5
-        return check_boundaries(grids,'stripped_grid',**x)
-    
+        if (label is None):
+            if (x['log(g)'] < 4.0 ) & ((abs(x['log(g)'] - 4.0)/4.0) < 0.1 ):
+                x['log(g)'] = 4.0
+            elif ((abs(x['log(g)'] - 5.5)/5.5) < 0.05 ):
+                x['log(g)'] = 5.5
+            return check_boundaries(grids,'stripped_grid',**x)
+
+
     if x['state'] == "WR_star":
         if label is not None:
             return 'failed_grid'
@@ -204,7 +206,7 @@ def generate_spectrum(grids,star,i,**kwargs):
         
         if label == 'failed_grid':
             return None,state,label
-    raise ValueError(f'The label:{label} is not "failed_grid" after all the possible checks')
+    raise ValueError(f'The label:{label} is not "failed_grid" after all the possible checks. The star is {x}')
 
 def regenerate_spectrum(grids,star,i,**kwargs):
     label = star[f'{i}_grid_status']
