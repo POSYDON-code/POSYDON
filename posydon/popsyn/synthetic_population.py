@@ -992,7 +992,7 @@ class Population(PopulationIO):
                 Pwarn(f"{filename} already contains a mass_per_metallicity "
                       "table. Overwriting the table!", "OverwriteWarning")
 
-           try:
+            try:
         # Filter the data based on the condition
                 filtered_data = self.oneline[self.oneline["state_i"] == "initially_single_star"]
                 filtered_data1 = self.oneline[self.oneline["state_i"] != "initially_single_star"]
