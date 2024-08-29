@@ -1003,7 +1003,7 @@ class Population(PopulationIO):
                 simulated_mass = np.sum(self.oneline[["S1_mass_i", "S2_mass_i"]].to_numpy())
     
             except TypeError as e:
-                print(f"KeyError: {e}. Check if the specified columns exist in the DataFrame.")
+                #print(f"KeyError: {e}. Check if the specified columns exist in the DataFrame.")
                 
                 filtered_data = None
                 filtered_data1 = self.oneline[(self.oneline["state_i"] != "initially_single_star")]
