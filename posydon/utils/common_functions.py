@@ -195,52 +195,54 @@ def rzams(m, z=0.02, Zsun=0.02):
     return r
 
 
-'''
-
-
-Receives:
-q ->
-a_orb ->
-
-Returns:
-RL -> Roche lobe radius in similar units as a_orb
-'''
-
-
 def roche_lobe_radius(m1, m2, a_orb=1):
     """Approximate the Roche lobe radius from [1]_.
 
     Parameters
     ----------
-    m1 : float
+    m1 : float, array of floats
         the mass of the star for which we calculate the Roche lobe
-    m2: float
+    m2 : float, array of floats
         the mass of the companion star
-    a_orb : float
+    a_orb : float, array of floats
         Orbital separation. The return value will have the same unit.
 
     Returns
     -------
-    float
+    float, array of floats
         Roche lobe radius in similar units as a_orb
     References
     ----------
     .. [1] Eggleton, P. P. 1983, ApJ, 268, 368
 
     """
-
-    if isinstance(a_orb, np.ndarray):
+    
+    ## catching if a_orb is an empty array or is an array with invalid separation values
+    if isinstance(a_orb, np.ndarray) and (not np.any(a_orb) or np.any(a_orb <=0)):
+        Pwarn("Trying to compute RL radius for binary with no separation", "EvolutionWarning")
+        a_orb = np.full_like(a_orb, np.nan)
+    ## catching if a_orb is a float with invalid separation value
+    elif a_orb <=0: 
         Pwarn("Trying to compute RL radius for binary with no separation", "EvolutionWarning")
         a_orb = np.nan
-                          
-    if m1 <=0:
-        Pwarn("Trying to compute RL radius for binary with nonexistent companion", "EvolutionWarning")
-        m1 = np.nan
 
-    if m2 <=0:
-        Pwarn("Trying to compute RL radius for binary with nonexistent companion", "EvolutionWarning")
+
+    if isinstance(m1, np.ndarray) and (not np.any(m1) or np.any(m1 <=0)):                    
+        Pwarn("Trying to compute RL radius for nonexistent object", "EvolutionWarning")
+        m1 = np.full_like(m1, np.nan)
+    elif m1 <=0:
+        Pwarn("Trying to compute RL radius for nonexistent object", "EvolutionWarning")
+        m1 = np.nan
+    
+
+    if isinstance(m2, np.ndarray) and (not np.any(m2) or np.any(m2 <=0)):                    
+        Pwarn("Trying to compute RL radius for nonexistent companion", "EvolutionWarning")
+        m2 = np.full_like(m2, np.nan)
+    elif m2 <=0:
+        Pwarn("Trying to compute RL radius for nonexistent companion", "EvolutionWarning")
         m2 = np.nan
 
+    
     q = m1/m2
     RL = a_orb * (0.49 * q**(2. / 3.)) / (
         0.6 * q**(2. / 3.) + np.log(1 + q**(1. / 3))
