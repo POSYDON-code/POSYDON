@@ -5,6 +5,8 @@ __authors__ = [
     "Devina Misra <devina.misra@unige.ch>",
     "Simone Bavera <Simone.Bavera@unige.ch>",
     "Konstantinos Kovlakas <Konstantinos.Kovlakas@unige.ch>",
+    "Matthias Kruckow <Matthias.Kruckow@unige.ch>",
+    "Dimitris Souropanis <dsouropanis@ia.forth.gr>",
 ]
 
 
