@@ -219,7 +219,7 @@ def roche_lobe_radius(m1, m2, a_orb=1):
     
     ## catching if a_orb is an empty array or is an array with invalid separation values
     if isinstance(a_orb, np.ndarray):
-        ## if array is empty (or all zeros), fill with NaN values
+        ## if array is empty, fill with NaN values
         if a_orb.size == 0:
             Pwarn("Trying to compute RL radius for binary with invalid separation", "EvolutionWarning")
             a_orb = np.full_like(a_orb, np.nan, dtype=np.float64)
@@ -228,7 +228,7 @@ def roche_lobe_radius(m1, m2, a_orb=1):
             Pwarn("Trying to compute RL radius for binary with invalid separation", "EvolutionWarning")
             a_orb[a_orb < 0] = np.nan
     ## catching if a_orb is a float with invalid separation value
-    elif a_orb <=0: 
+    elif a_orb < 0: 
         Pwarn("Trying to compute RL radius for binary with invalid separation", "EvolutionWarning")
         a_orb = np.nan
 
