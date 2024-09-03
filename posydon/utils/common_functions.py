@@ -200,16 +200,16 @@ def roche_lobe_radius(m1, m2, a_orb=1):
 
     Parameters
     ----------
-    m1 : float, array of floats
+    m1 : float, ndarray of floats
         the mass of the star for which we calculate the Roche lobe
-    m2 : float, array of floats
+    m2 : float, ndarray of floats
         the mass of the companion star
-    a_orb : float, array of floats
+    a_orb : float, ndarray of floats
         Orbital separation. The return value will have the same unit.
 
     Returns
     -------
-    float, array of floats
+    float, ndarray of floats
         Roche lobe radius in similar units as a_orb
     References
     ----------
@@ -218,26 +218,40 @@ def roche_lobe_radius(m1, m2, a_orb=1):
     """
     
     ## catching if a_orb is an empty array or is an array with invalid separation values
-    if isinstance(a_orb, np.ndarray) and (not np.any(a_orb) or np.any(a_orb <=0)):
-        Pwarn("Trying to compute RL radius for binary with no separation", "EvolutionWarning")
-        a_orb = np.full_like(a_orb, np.nan)
+    if isinstance(a_orb, np.ndarray):
+        ## if array is empty (or all zeros), fill with NaN values
+        if a_orb.size == 0:
+            Pwarn("Trying to compute RL radius for binary with invalid separation", "EvolutionWarning")
+            a_orb = np.full_like(a_orb, np.nan, dtype=np.float64)
+        ## if array contains invalid values, replace with NaN 
+        elif np.any(a_orb < 0):
+            Pwarn("Trying to compute RL radius for binary with invalid separation", "EvolutionWarning")
+            a_orb[a_orb < 0] = np.nan
     ## catching if a_orb is a float with invalid separation value
     elif a_orb <=0: 
-        Pwarn("Trying to compute RL radius for binary with no separation", "EvolutionWarning")
+        Pwarn("Trying to compute RL radius for binary with invalid separation", "EvolutionWarning")
         a_orb = np.nan
 
 
-    if isinstance(m1, np.ndarray) and (not np.any(m1) or np.any(m1 <=0)):                    
-        Pwarn("Trying to compute RL radius for nonexistent object", "EvolutionWarning")
-        m1 = np.full_like(m1, np.nan)
+    if isinstance(m1, np.ndarray):
+        if m1.size == 0:                  
+            Pwarn("Trying to compute RL radius for nonexistent object", "EvolutionWarning")
+            m1 = np.full_like(m1, np.nan, dtype=np.float64)
+        elif np.any(m1 <= 0):
+            Pwarn("Trying to compute RL radius for nonexistent object", "EvolutionWarning")
+            m1[m1 <= 0] = np.nan
     elif m1 <=0:
         Pwarn("Trying to compute RL radius for nonexistent object", "EvolutionWarning")
         m1 = np.nan
     
 
-    if isinstance(m2, np.ndarray) and (not np.any(m2) or np.any(m2 <=0)):                    
-        Pwarn("Trying to compute RL radius for nonexistent companion", "EvolutionWarning")
-        m2 = np.full_like(m2, np.nan)
+    if isinstance(m2, np.ndarray):
+        if m2.size == 0:                  
+            Pwarn("Trying to compute RL radius for nonexistent companion", "EvolutionWarning")
+            m2 = np.full_like(m2, np.nan, dtype=np.float64)
+        elif np.any(m2 <= 0):
+            Pwarn("Trying to compute RL radius for nonexistent companion", "EvolutionWarning")
+            m2[m2 <= 0] = np.nan
     elif m2 <=0:
         Pwarn("Trying to compute RL radius for nonexistent companion", "EvolutionWarning")
         m2 = np.nan
