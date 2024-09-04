@@ -13,6 +13,7 @@ __authors__ = [
     "Scott Coughlin <scottcoughlin2014@u.northwestern.edu>",
     "Kyle Akira Rocha <kylerocha2024@u.northwestern.edu>",
     "Matthias Kruckow <Matthias.Kruckow@unige.ch>",
+    "Camille Liotine <cliotine@u.northwestern.edu>",
 ]
 
 
@@ -222,7 +223,7 @@ def roche_lobe_radius(m1, m2, a_orb=1):
         ## if array is empty, fill with NaN values
         if a_orb.size == 0:
             Pwarn("Trying to compute RL radius for binary with invalid separation", "EvolutionWarning")
-            a_orb = np.full_like(a_orb, np.nan, dtype=np.float64)
+            a_orb = np.full_like(a_orb.shape, np.nan, dtype=np.float64)
         ## if array contains invalid values, replace with NaN 
         elif np.any(a_orb < 0):
             Pwarn("Trying to compute RL radius for binary with invalid separation", "EvolutionWarning")
@@ -236,7 +237,7 @@ def roche_lobe_radius(m1, m2, a_orb=1):
     if isinstance(m1, np.ndarray):
         if m1.size == 0:                  
             Pwarn("Trying to compute RL radius for nonexistent object", "EvolutionWarning")
-            m1 = np.full_like(m1, np.nan, dtype=np.float64)
+            m1 = np.full_like(m1.shape, np.nan, dtype=np.float64)
         elif np.any(m1 <= 0):
             Pwarn("Trying to compute RL radius for nonexistent object", "EvolutionWarning")
             m1[m1 <= 0] = np.nan
@@ -248,7 +249,7 @@ def roche_lobe_radius(m1, m2, a_orb=1):
     if isinstance(m2, np.ndarray):
         if m2.size == 0:                  
             Pwarn("Trying to compute RL radius for nonexistent companion", "EvolutionWarning")
-            m2 = np.full_like(m2, np.nan, dtype=np.float64)
+            m2 = np.full_like(m2.shape, np.nan, dtype=np.float64)
         elif np.any(m2 <= 0):
             Pwarn("Trying to compute RL radius for nonexistent companion", "EvolutionWarning")
             m2[m2 <= 0] = np.nan
