@@ -992,25 +992,18 @@ class Population(PopulationIO):
                 Pwarn(f"{filename} already contains a mass_per_metallicity "
                       "table. Overwriting the table!", "OverwriteWarning")
 
-            try:
-        # Filter the data based on the condition
-                filtered_data = self.oneline[self.oneline["state_i"] == "initially_single_star"]
-                filtered_data1 = self.oneline[self.oneline["state_i"] != "initially_single_star"]
+            if "initially_single_star" in self.oneline["state_i"].values:
+                mask=self.oneline["state_i"]=="initially_single_star"
+                filtered_data_single = self.oneline[mask]
+                filtered_data_binaries = self.oneline[~mask]
     
-        # Calculate the simulated masses
-                simulated_mass_binaries = np.sum(filtered_data1[["S1_mass_i", "S2_mass_i"]].to_numpy())
-                simulated_mass_single = np.sum(filtered_data[["S1_mass_i", "S2_mass_i"]].to_numpy())
-                simulated_mass = np.sum(self.oneline[["S1_mass_i", "S2_mass_i"]].to_numpy())
-    
-            except TypeError as e:
-                #print(f"KeyError: {e}. Check if the specified columns exist in the DataFrame.")
-                
-                filtered_data = None
-                filtered_data1 = self.oneline[(self.oneline["state_i"] != "initially_single_star")]
-                simulated_mass_binaries = np.sum(filtered_data1[["S1_mass_i", "S2_mass_i"]].to_numpy())
+                simulated_mass_binaries = np.sum(filtered_data_binaries[["S1_mass_i", "S2_mass_i"]].to_numpy())
+                simulated_mass_single = np.sum(filtered_data_single[["S1_mass_i"]].to_numpy())
+                simulated_mass = simulated_mass_binaries + simulated_mass_single
+            else:
+                simulated_mass_binaries = np.sum(self.oneline[["S1_mass_i", "S2_mass_i"]].to_numpy())
                 simulated_mass_single = None
-                simulated_mass = np.sum(self.oneline[["S1_mass_i", "S2_mass_i"]].to_numpy())
-                print(1)
+                simulated_mass = simulated_mass_binaries   
             
             underlying_mass = initial_total_underlying_mass(
             df=simulated_mass, df1=simulated_mass_single, df2= simulated_mass_binaries, **self.ini_params
