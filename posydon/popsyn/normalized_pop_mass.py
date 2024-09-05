@@ -9,10 +9,10 @@ __authors__ = [
     "Dimitris Souropanis <dsouropanis@ia.forth.gr>",
 ]
 
-
+import numpy as np
 from posydon.popsyn import independent_sample
 from scipy.integrate import quad
-
+from posydon.utils.posydonwarning import Pwarn
 
 def initial_total_underlying_mass(df=None, df1=None, df2=None, **kwargs):
     """Compute the initial total mass of the population.
@@ -108,7 +108,10 @@ def initial_total_underlying_mass(df=None, df1=None, df2=None, **kwargs):
         alpha2 = 2.35
         alpha3 = 2.35
     else:
-        raise ValueError("Scheme not included yet")
+        Pwarn("Scheme not included yet: primary_mass_scheme="
+              f"{kwargs['primary_mass_scheme']}, secondary_mass_scheme"
+              f"={kwargs['secondary_mass_scheme']}", "UnsupportedModelWarning")
+        return np.nan, np.nan, np.nan
 
     f_bin_nature = 0.7 #This parameter represents the preferred fraction of binary systems within your population, allowing users to input any value ranging from 0.1 to 1.
     f_bin_simulated = kwargs['binary_fraction_const']
