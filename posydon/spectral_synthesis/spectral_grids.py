@@ -80,7 +80,10 @@ class spectral_grids():
         for key, arg in kwargs.items():
             print(key,arg)
             if key in GRID_KEYS:
+
                 grids[key] = spec_grid(str(arg))
+                #TODO
+                #grids[key].points = find_grid_points(**kwargs)
         return grids
 
     def wavelength_range(self,**kwargs):

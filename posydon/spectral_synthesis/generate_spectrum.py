@@ -16,7 +16,7 @@ import numpy as np
 from astropy import constants as con
 import pandas as pd
 from posydon.spectral_synthesis.spectral_tools import smooth_flux_negatives
-
+from posydon.spectral_synthesis.spectral_grids import GRID_KEYS 
 #Constants
 Lo = 3.828e33 #Solar Luminosity erg/s
 Zo = 0.0142 #Solar metallicity
@@ -31,39 +31,26 @@ def check_boundaries(grids,grid_name,**kwargs):
     #First we check the global limits
     if grid_name == "global":
         if x['Teff'] < grids.T_min or x['Teff'] > grids.T_max:
-            return 'failed_grid'
+            return 'failed_grid',x
         elif x['log(g)'] < grids.logg_min or x['log(g)'] > grids.logg_max:
-            return 'failed_grid'
+            return 'failed_grid',x
         else:
             return True
     grid = grids.spectral_grids[grid_name]
-    if grid_name == 'stripped_grid':
-        if x['Teff'] < grid.axis_x_min['Teff'] or x['Teff'] > grid.axis_x_max['Teff']:
-            if (x['Teff'] < grid.axis_x_min['Teff']) & (x['Teff'] < grids.spectral_grids['ostar_grid'].axis_x_max['Teff'] and x['Teff'] > grids.spectral_grids['ostar_grid'].axis_x_min['Teff']):
-                if (x['log(g)'] <  grids.spectral_grids['ostar_grid'].axis_x_min['log(g)'] or x['log(g)'] >  grids.spectral_grids['ostar_grid'].axis_x_max['log(g)']):
-                    return 'failed_grid'
-                return 'ostar_grid'
+    axis_labels = grid.axis_labels
+    for axis_label in axis_labels:
+        if x[axis_label] < grid.axis_x_min[axis_label]:
+            if abs(x[axis_label] - grid.axis_x_min[axis_label])/(grid.axis_x_min[axis_label]) < 0.1:
+                x[axis_label] = grid.axis_x_min[axis_label]
             else:
-                return 'failed_grid'
-        elif x['log(g)'] < grid.axis_x_min['log(g)'] or x['log(g)'] > grid.axis_x_max['log(g)']:
-            return 'failed_grid'
-        else:
-            return 'stripped_grid'
-    if grid_name =='WR_grid':
-        if x['Teff'] < grid.axis_x_min['Teff'] or x['Teff'] > grid.axis_x_max['Teff']:
-            return 'failed_grid'
-        elif x['R_t'] < grid.axis_x_min['R_t'] or x['R_t'] > grid.axis_x_max['R_t']:
-            return 'failed_grid'
-        else: 
-            return 'WR_grid'
-    else:
-        if x['Teff'] < grid.axis_x_min['Teff'] or x['Teff'] > grid.axis_x_max['Teff']:
-            return 'failed_grid'
-        elif x['log(g)'] < grid.axis_x_min['log(g)'] or x['log(g)'] > grid.axis_x_max['log(g)']:
-            return 'failed_grid'
-        else:
-            return grid_name
-    
+                return 'failed_grid',x 
+        elif x[axis_label] > grid.axis_x_max[axis_label]:
+            if abs(x[axis_label] - grid.axis_x_max[axis_label])/(grid.axis_x_max[axis_label]) < 0.1:
+                x[axis_label] = grid.axis_x_max[axis_label]
+            else: 
+                return 'failed_grid',x 
+    #The star is within the grid limits.
+    return grid_name,x 
 
 def point_the_grid(grids,x,label,**kwargs):
     """Assigning the write label that would point to the spectra grid needed to used
@@ -92,44 +79,56 @@ def point_the_grid(grids,x,label,**kwargs):
     # higher than the Teff of the Ostar grid limit
     if "stripped" in x['state']:
         if (label is None):
-            if (x['log(g)'] < 4.0 ) & ((abs(x['log(g)'] - 4.0)/4.0) < 0.1 ):
-                x['log(g)'] = 4.0
-            elif ((abs(x['log(g)'] - 5.5)/5.5) < 0.05 ):
-                x['log(g)'] = 5.5
+            new_label,x = check_boundaries(grids,'stripped_grid',**x)
+            if new_label == 'failed_grid':
+                if x['Teff'] > ostar_temp_cut_off:
+                    return check_boundaries(grids,'ostar_grid',**x)
+                elif x['Teff'] > bstar_temp_cut_off:
+                    return check_boundaries(grids,'bstar_grid',**x)
+            else:
+                return new_label,x
+        if label ==  'failed_attempt_1':
             return check_boundaries(grids,'stripped_grid',**x)
 
-
     if x['state'] == "WR_star":
-        if label is not None:
-            return 'failed_grid'
-        if (x['Teff'] > 100000) & (((x['Teff'] -100000)/100000) < 0.1):
-            x['Teff'] = 100000
-        return check_boundaries(grids,'WR_grid',**x)
-
-    if isinstance(check_boundaries(grids,'global',**x),str):
-        return check_boundaries(grids,'global',**x)
+        if label is None or label == 'failed_attempt_1':
+            new_label,x = check_boundaries(grids,'WR_grid',**x)
+            if new_label == 'failed_grid':
+                new_label,x =  check_boundaries(grids,'stripped_grid',**x)
+                if new_label == 'failed_grid':
+                    if x['Teff'] > ostar_temp_cut_off:
+                        return check_boundaries(grids,'ostar_grid',**x)
+                    elif x['Teff'] > bstar_temp_cut_off:
+                        return check_boundaries(grids,'bstar_grid',**x)
+                    else:
+                        return new_label,x
+                else:
+                    return new_label,x
+            else:
+                return new_label,x
+    #if isinstance(check_boundaries(grids,'global',**x),str):
+    #    return check_boundaries(grids,'global',**x)
 
     #Second check for ostar stars.
     if x['Teff'] > ostar_temp_cut_off:
         if label is not None:
-            if (label == 'failed_attempt_1') & ("stripped" in x['state']):
+            if (label == 'failed_attempt_1'):
                 return check_boundaries(grids,'ostar_grid',**x)
-            return 'failed_grid'
+            return 'failed_grid',x
         return check_boundaries(grids,'ostar_grid',**x)
     if x['Teff'] > bstar_temp_cut_off:
-        if label is not None or ((label == 'failed_attempt_1') & ("stripped" in x['state'])):
-            return 'failed_grid'
+        if label is not None or (label == 'failed_attempt_1') :
+            return 'failed_grid',x
         return check_boundaries(grids,'bstar_grid',**x)
     #Now we are checking at the normal grid and the number of failed trails.
-    if label is None:
-        check = check_boundaries(grids,'main_grid',**x)
-        return check
+    if label is None or label == 'failed_grid':
+        return check_boundaries(grids,'main_grid',**x)
     elif label == 'failed_attempt_1':
         return check_boundaries(grids,'secondary_grid',**x)
     elif label == 'failed_attempt_2':
-        return 'failed_grid'
+        return 'failed_grid',x
     else:
-        raise ValueError(f'The label {label} is not recognized!')
+        raise ValueError(f'The label {label} is not recognized!. The state of the star is {x}')
 
 def generate_spectrum(grids,star,i,**kwargs):
     """Generates the spectrum of star. 
@@ -175,19 +174,16 @@ def generate_spectrum(grids,star,i,**kwargs):
     if state == 'WR_star':
         x['R_t'] = star[f'{i}_Rt']
     label = None
-    label = point_the_grid(grids,x,label,**kwargs)
+    label,x = point_the_grid(grids,x,label,**kwargs)
     count = 1
     if label == 'failed_grid':
         return None,state,label
     while count <3:
-        try:
-            if 'failed_attempt' not in label:
+        if 'failed_attempt' not in label:
+            try:
                 if label == "stripped_grid":
-                    print(x,star[f'{i}_surface_h1'])
                     Flux = grids.grid_flux(label,**x)*4*np.pi*1e4/Lo
-                    print('TRIED')
                 elif label == 'WR_grid':
-                    
                     Flux = grids.grid_flux(label,**x)*4*np.pi*1e4/Lo *(L/10**5.3)
                     #Replace the negative values for WR
                     Flux.value[Flux.value < 0] = 1e-50
@@ -197,13 +193,14 @@ def generate_spectrum(grids,star,i,**kwargs):
                     Flux = smooth_flux_negatives(grids.lam_c,Flux.value)
                     return Flux,star['state'],label
                 return Flux.value,star['state'],label
-            else:
-                label = point_the_grid(grids,x,label,**kwargs)
-        except LookupError:
-            label = f'failed_attempt_{count}'  
-            label = point_the_grid(grids,x,label,**kwargs)
+            except LookupError:
+                try:
+                    x = rescale_log_g(grids,label,**x)
+                except Exception as e:
+                    print('Under the exception',e)
+                label = f'failed_attempt_{count}'
+        label,x = point_the_grid(grids,x,label,**kwargs)
         count += 1
-        
         if label == 'failed_grid':
             return None,state,label
     raise ValueError(f'The label:{label} is not "failed_grid" after all the possible checks. The star is {x}')
@@ -262,11 +259,9 @@ def rename_star_state(star,i):
     Gamma = k_e * con.sigma_sb*T**4/(con.c * 10**logg)
     if lg_M_dot < -6:
         star[f'{i}_state'] = 'stripped_He_star'
-        print('here!')
     else:
         star[f'{i}_state'] = 'WR_star'
         star[f'{i}_Rt'] = calculated_Rt(star,i)
-        print('WR star!')
 
 def calculated_Rt(star,i):
     M_dot = 10**copy(star[f'{i}_lg_mdot'])
@@ -275,6 +270,45 @@ def calculated_Rt(star,i):
     R  = 10**copy(star[f'{i}_log_R'])
     Rt = R*((v_terminal/2500)/(np.sqrt(D_max)*M_dot/1e-4))**(2/3)
     return Rt
+
+def find_nearest_neighbor_stripped(**x):
+    #We want a function that will find the nearest neighbor in case of a star falling
+    #in the grey arays of the grids. We only do nn only in when the star has a temperature that is within the 
+    #range of the grid.
+    possible_loggs = np.array([4.0,4.3,4.5,4.8,5.0,5.2,5.5,5.7,6.0])  
+    logg = copy(x['log(g)'])
+    new_logg = possible_loggs[possible_loggs > logg][0]
+    x['log(g)'] = new_logg
+    return x
+
+def rescale_log_g(grids,label,**x):
+    dx = {}
+    old_x = copy(x)
+    if label not in GRID_KEYS:
+        raise ValueError(f"The label {label} doesn't correspond to any grid")
+    grid = grids.spectral_grids[label]
+
+    for key in x:
+        if key not in grid.axis_labels:
+            old_x.pop(key)
+
+    for axis_label in grid.axis_labels:
+        dx[axis_label] = 0.0
+    if label == 'WR_grid':
+        dx['R_t'] =  grid.axis_x_max['R_t']
+        new_x = grid.adjust_x(old_x, dx)
+        x['R_t'] = new_x['R_t']
+    else:
+        dx['log(g)'] = grid.axis_x_max['log(g)']
+        new_x = grid.adjust_x(old_x, dx)
+        x['log(g)'] = new_x['log(g)']
+    return x 
+
+def close_to_boundaries(label,values,**x):
+    for value in values:   
+        if abs(x[label] - value)/(value) < 0.1:
+            x[label] = value
+    return x[label]
 
 def generate_photgrid_flux(grids,star,i,**kwargs):
     """Generates the spectrum of star. 
@@ -324,10 +358,9 @@ def generate_photgrid_flux(grids,star,i,**kwargs):
     count = 1
     if label == 'failed_grid':
         return None,state,label
-    while count <3:
+    while count <= 4:
         try:
             if label == "stripped_grid":
-                print(x)
                 Flux = grids.photogrid_flux(label,**x)
             elif label == 'WR_grid':
                 Flux = grids.grid_flux(label,**x)(L/10**5.3)
