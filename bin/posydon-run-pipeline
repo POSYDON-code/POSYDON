@@ -704,11 +704,11 @@ def copy_ini_file(grid_type, rerun_metallicity, rerun_type, destination,
 #    elif rerun_type == 'LBV_wind+dedt_hepulse':
 #        raise ValueError(f'Not yet supported rerun type {rerun_type}!')
 #        replace_text = "matthias_LBV_wind-051343856f50dc5518abdf28904d62df4caacaff" #TODO: update to new MESA-INLIST branch/commit
-    elif rerun_type == "no_age_limit":
+    elif rerun_type == 'no_age_limit':
         replace_text = "matthias_no_age_limit-a119ea9548cca9b6b7ddfe31309ced1ae40c271e"
-    elif rerun_type == "no_age_limit+thermohaline_mixing":
+    elif rerun_type == 'no_age_limit+thermohaline_mixing':
         replace_text = "matthias_no_age_limit-a119ea9548cca9b6b7ddfe31309ced1ae40c271e"
-    elif rerun_type == "no_age_limit+dedt_energy_eqn":
+    elif rerun_type == 'no_age_limit+dedt_energy_eqn':
         replace_text = "matthias_lbv_thermo_dedt_noAgeLimit-dcc42e1d6d89fc267826970643e7f4f1bf463171"
     elif rerun_type == 'other': # e.g. 'envelope_mass_limit', 'fe_core_infall_limit'
         # this rerun uses the default inlist commit
