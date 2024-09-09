@@ -41,6 +41,7 @@ spectral_types = [
     'bstar_grid', 
     'failed_grid',
     np.nan,
+    'secondary_grid',
     'stripped_grid',
     'WR_grid',
     'ostar_grid']
