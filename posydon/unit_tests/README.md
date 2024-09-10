@@ -4,7 +4,7 @@ Here we collect our unit tests for the POSYDON code. We are using the [python `u
 
 The tests in each `TESTFILE` can be run via
 
-	python -m unittest TESTFILE
+    python -m unittest TESTFILE
 
 If you like to run all unit tests you can use
 
