@@ -1148,7 +1148,7 @@ if __name__ == '__main__':
             f.write('#SBATCH --account={0}\n'.format(slurm['account']))
             f.write('#SBATCH --partition={0}\n'.format(slurm['partition']))
             f.write('#SBATCH -N 1\n')
-            f.write('#SBATCH --cpus-per-task {0}\n'.format(slurm['number_of_cpus_per_task']))
+            f.write('#SBATCH --cpus-per-task 1\n')
             f.write('#SBATCH --ntasks-per-node 1\n')
             f.write('#SBATCH --time={0}\n'.format(slurm['walltime']))
             f.write('#SBATCH --job-name=\"mesa_grid_cleanup\"\n')
