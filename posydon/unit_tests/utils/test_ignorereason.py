@@ -24,8 +24,7 @@ class TestElements(unittest.TestCase):
                                  "without an update on the unit test.")
 
     def test_instance_IGNORE_REASONS_PRIORITY(self):
-        self.assertIsInstance(totest.IGNORE_REASONS_PRIORITY,
-                              (list))
+        self.assertIsInstance(totest.IGNORE_REASONS_PRIORITY, (list))
 
     def test_instance_IgnoreReason(self):
         self.assertTrue(isclass(totest.IgnoreReason))

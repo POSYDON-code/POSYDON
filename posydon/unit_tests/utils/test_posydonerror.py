@@ -50,7 +50,7 @@ class TestElements(unittest.TestCase):
         self.assertTrue(isclass(totest.NumericalError))
         self.assertTrue(issubclass(totest.NumericalError, totest.POSYDONError))
 
-    def test_initial_condition_message(self):
+    def test_instance_initial_condition_message(self):
         self.assertTrue(isroutine(totest.initial_condition_message))
 
 

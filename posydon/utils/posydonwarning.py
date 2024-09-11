@@ -401,7 +401,7 @@ class _Caught_POSYDON_Warnings:
         if len(self.caught_warnings)>0:
             # If there are recorded warnings issue them.
             self.catch_warnings = False
-            print("There are still recorded warnings:")
+            print("There are still recorded warnings:", file=sys.stderr)
             for w in self.caught_warnings:
                 w["stacklevel"] = 2
                 if self.filter_first:
