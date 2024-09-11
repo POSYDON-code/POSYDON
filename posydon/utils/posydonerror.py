@@ -85,6 +85,11 @@ def initial_condition_message(binary, ini_params=None):
             If None take the initial conditions from the binary, otherwise add
             each item of it to the message.
 
+        Returns
+        -------
+        string
+            The message with the initial conditions.
+
     """
     if not isinstance(binary, BinaryStar):
         raise TypeError("The binary must be a BinaryStar object.")
