@@ -10,7 +10,7 @@ import unittest
 import posydon.utils.ignorereason as totest
 
 # import other needed code for the tests
-# not needed
+from inspect import isclass, isroutine
 
 # define test classes
 class TestElements(unittest.TestCase):
@@ -26,6 +26,9 @@ class TestElements(unittest.TestCase):
     def test_instance_IGNORE_REASONS_PRIORITY(self):
         self.assertIsInstance(totest.IGNORE_REASONS_PRIORITY,
                               (list))
+
+    def test_instance_IgnoreReason(self):
+        self.assertTrue(isclass(totest.IgnoreReason))
 
 
 class TestValues(unittest.TestCase):
@@ -52,18 +55,21 @@ class TestIgnoreReason(unittest.TestCase):
         self.IgnoreReason = totest.IgnoreReason()
 
     def test_init(self):
+        self.assertTrue(isroutine(self.IgnoreReason.__init__))
         # check that the instance is of correct type and all code in the
-        # __init__ got exequted: the elements are created and initialized
+        # __init__ got executed: the elements are created and initialized
         self.assertIsInstance(self.IgnoreReason, totest.IgnoreReason)
         self.assertIsNone(self.IgnoreReason.reason)
         self.assertIsNone(self.IgnoreReason.order)
 
     def test_bool(self):
+        self.assertTrue(isroutine(self.IgnoreReason.__bool__))
         self.assertFalse(self.IgnoreReason)
         self.IgnoreReason.reason = totest.IGNORE_REASONS_PRIORITY[0]
         self.assertTrue(self.IgnoreReason)
 
     def test_setattr(self):
+        self.assertTrue(isroutine(self.IgnoreReason.__setattr__))
         # try to set order: shouldn't change anything
         self.IgnoreReason.order = 0
         self.assertIsNone(self.IgnoreReason.reason)
@@ -84,6 +90,7 @@ class TestIgnoreReason(unittest.TestCase):
         self.assertIsNone(self.IgnoreReason.reason)
         self.assertIsNone(self.IgnoreReason.order)
         # try error on non existing reason
+        self.assertNotIn('', totest.IGNORE_REASONS_PRIORITY)
         with self.assertRaises(ValueError):
             self.IgnoreReason.reason = ''
 
