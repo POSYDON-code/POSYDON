@@ -51,9 +51,8 @@ class TestCommonEnvelope(unittest.TestCase):
         giantstar = SingleStar(**PROPERTIES_STAR1)
         compstar = SingleStar(**PROPERTIES_STAR2)
 
-        q = giantstar.mass / compstar.mass
         orbital_separation_for_RLOF = 10**giantstar.log_R / cf.roche_lobe_radius(
-            q, a_orb=1)
+            giantstar.mass, compstar.mass, a_orb=1)
         orbital_period_for_RLOF = cf.orbital_period_from_separation(
             orbital_separation_for_RLOF, giantstar.mass, compstar.mass)
         PROPERTIES_BINARY = {
@@ -113,9 +112,8 @@ class TestCommonEnvelope(unittest.TestCase):
         }
         compstar = SingleStar(**PROPERTIES_STAR2)
 
-        q = giantstar_withprofile.mass / compstar.mass
         orbital_separation_for_RLOF = 10**giantstar_withprofile.log_R / cf.roche_lobe_radius(
-            q, a_orb=1)
+            giantstar_withprofile.mass, compstar.mass, a_orb=1)
         orbital_period_for_RLOF = cf.orbital_period_from_separation(
             orbital_separation_for_RLOF, giantstar_withprofile.mass,
             compstar.mass)
@@ -180,9 +178,8 @@ class TestCommonEnvelope(unittest.TestCase):
         }
         compstar = SingleStar(**PROPERTIES_STAR2)
 
-        q = giantstar_withprofile.mass / compstar.mass
         orbital_separation_for_RLOF = 10**giantstar_withprofile.log_R / cf.roche_lobe_radius(
-            q, a_orb=1)
+            giantstar_withprofile.mass, compstar.mass, a_orb=1)
         orbital_period_for_RLOF = cf.orbital_period_from_separation(
             orbital_separation_for_RLOF, giantstar_withprofile.mass,
             compstar.mass)
@@ -243,9 +240,8 @@ class TestCommonEnvelope(unittest.TestCase):
         }
         compstar = SingleStar(**PROPERTIES_STAR2)
 
-        q = giantstar_withprofile.mass / compstar.mass
         orbital_separation_for_RLOF = 10**giantstar_withprofile.log_R / cf.roche_lobe_radius(
-            q, a_orb=1)
+            giantstar_withprofile.mass, compstar.mass, a_orb=1)
         orbital_period_for_RLOF = cf.orbital_period_from_separation(
             orbital_separation_for_RLOF, giantstar_withprofile.mass,
             compstar.mass)
@@ -309,9 +305,8 @@ class TestCommonEnvelope(unittest.TestCase):
         }
         compstar = SingleStar(**PROPERTIES_STAR2)
 
-        q = giantstar_withprofile.mass / compstar.mass
         orbital_separation_for_RLOF = 10**giantstar_withprofile.log_R / cf.roche_lobe_radius(
-            q, a_orb=1)
+            giantstar_withprofile.mass, compstar.mass, a_orb=1)
         orbital_period_for_RLOF = cf.orbital_period_from_separation(
             orbital_separation_for_RLOF, giantstar_withprofile.mass,
             compstar.mass)
@@ -367,9 +362,8 @@ class TestCommonEnvelope(unittest.TestCase):
         }
         compstar = SingleStar(**PROPERTIES_STAR2)
 
-        q = giantstar_withprofile.mass / compstar.mass
         orbital_separation_for_RLOF = 10**giantstar_withprofile.log_R / cf.roche_lobe_radius(
-            q, a_orb=1)
+            giantstar_withprofile.mass, compstar.mass, a_orb=1)
         orbital_period_for_RLOF = cf.orbital_period_from_separation(
             orbital_separation_for_RLOF, giantstar_withprofile.mass,
             compstar.mass)
@@ -390,7 +384,7 @@ class TestCommonEnvelope(unittest.TestCase):
         #self.assertTrue(binary_withprofile.event == 'redirect',
         #                "CEE test 6 failed")
         self.assertTrue((10**giantstar_withprofile.log_R - cf.roche_lobe_radius(
-            giantstar_withprofile.mass / compstar.mass,
+            giantstar_withprofile.mass, compstar.mass,
             a_orb=cf.orbital_separation_from_period(
                 binary_withprofile.orbital_period, giantstar_withprofile.mass,
                 compstar.mass))), "CEE test 6 failed")
@@ -437,9 +431,8 @@ class TestCommonEnvelope(unittest.TestCase):
         }
         compstar = SingleStar(**PROPERTIES_STAR2)
 
-        q = giantstar_withprofile.mass / compstar.mass
         orbital_separation_for_RLOF = 10**giantstar_withprofile.log_R / cf.roche_lobe_radius(
-            q, a_orb=1)
+            giantstar_withprofile.mass, compstar.mass, a_orb=1)
         orbital_period_for_RLOF = cf.orbital_period_from_separation(
             orbital_separation_for_RLOF, giantstar_withprofile.mass,
             compstar.mass)
@@ -461,7 +454,7 @@ class TestCommonEnvelope(unittest.TestCase):
         #self.assertTrue(binary_withprofile.event == 'redirect',
         #                "CEE test 7 failed")
         self.assertTrue((10**giantstar_withprofile.log_R - cf.roche_lobe_radius(
-            giantstar_withprofile.mass / compstar.mass,
+            giantstar_withprofile.mass, compstar.mass,
             a_orb=cf.orbital_separation_from_period(
                 binary_withprofile.orbital_period, giantstar_withprofile.mass,
                 compstar.mass))), "CEE test 7 failed")
@@ -504,9 +497,8 @@ class TestCommonEnvelope(unittest.TestCase):
         }  #radius = 10km
         compstar = SingleStar(**PROPERTIES_STAR2)
 
-        q = giantstar_withprofile.mass / compstar.mass
         orbital_separation_for_RLOF = 10**giantstar_withprofile.log_R / cf.roche_lobe_radius(
-            q, a_orb=1)
+            giantstar_withprofile.mass, compstar.mass, a_orb=1)
         orbital_period_for_RLOF = cf.orbital_period_from_separation(
             orbital_separation_for_RLOF, giantstar_withprofile.mass,
             compstar.mass)
@@ -569,9 +561,8 @@ class TestCommonEnvelope(unittest.TestCase):
         }  #radius = 10km
         compstar = SingleStar(**PROPERTIES_STAR2)
 
-        q = giantstar_withprofile.mass / compstar.mass
         orbital_separation_for_RLOF = 10**giantstar_withprofile.log_R / cf.roche_lobe_radius(
-            q, a_orb=1)
+            giantstar_withprofile.mass, compstar.mass, a_orb=1)
         orbital_period_for_RLOF = cf.orbital_period_from_separation(
             orbital_separation_for_RLOF, giantstar_withprofile.mass,
             compstar.mass)
@@ -638,9 +629,8 @@ class TestCommonEnvelope(unittest.TestCase):
         }  #radius = 10km
         compstar = SingleStar(**PROPERTIES_STAR2)
 
-        q = giantstar_withprofile.mass / compstar.mass
         orbital_separation_for_RLOF = 10**giantstar_withprofile.log_R / cf.roche_lobe_radius(
-            q, a_orb=1)
+            giantstar_withprofile.mass, compstar.mass, a_orb=1)
         orbital_period_for_RLOF = cf.orbital_period_from_separation(
             orbital_separation_for_RLOF, giantstar_withprofile.mass,
             compstar.mass)

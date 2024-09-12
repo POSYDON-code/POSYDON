@@ -540,8 +540,8 @@ class StepCEE(object):
 
         # now we check if the roche Lobe of any of the cores that spiralled-in
         # will be filled if reached this final separation
-        RL1 = cf.roche_lobe_radius(mc1_i/mc2_i, separation_postCEE/const.Rsun)
-        RL2 = cf.roche_lobe_radius(mc2_i/mc1_i, separation_postCEE/const.Rsun)
+        RL1 = cf.roche_lobe_radius(mc1_i, mc2_i, separation_postCEE/const.Rsun)
+        RL2 = cf.roche_lobe_radius(mc2_i, mc1_i, separation_postCEE/const.Rsun)
 
         if verbose:
             print("donor radius / core radius / RL1:", radius1, rc1_i, RL1)
@@ -836,8 +836,8 @@ class StepCEE(object):
 
                 else:
 
-                    separation_for_inner_RLO1 = rc1_i / cf.roche_lobe_radius(mc1_i/mc2_i, a_orb=1)
-                    separation_for_inner_RLO2 = rc2_i / cf.roche_lobe_radius(mc2_i/mc1_i, a_orb=1)
+                    separation_for_inner_RLO1 = rc1_i / cf.roche_lobe_radius(mc1_i, mc2_i, a_orb=1)
+                    separation_for_inner_RLO2 = rc2_i / cf.roche_lobe_radius(mc2_i, mc1_i, a_orb=1)
 
                     separation_before_merger = max( separation_for_inner_RLO1, separation_for_inner_RLO2 ) * const.Rsun
 
