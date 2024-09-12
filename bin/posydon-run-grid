@@ -124,11 +124,12 @@ def parse_commandline():
     parser.add_argument("--keep_photos", action="store_true", default=False,
                         help="Do not delete photos at run completion")
 
-    parser.add_argument("--job_start", type=int, default=0,
-                        help="Start time of the job (in seconds)")
-
-    parser.add_argument("--job_end", type=int, default=600,
+    now = int(time.time())
+    parser.add_argument("--job_end", type=int, default=now+60*60*24*365,
                         help="End time of the job (in seconds)")
+
+    parser.add_argument("--job_before_end", type=int, default=300,
+                        help="Time span till end of job (in seconds)")
 
     args = parser.parse_args()
 
@@ -468,7 +469,6 @@ def run_mesa(mesa_executable, work_dir, final_dir, **kwargs):
     keep_profiles = kwargs.pop('keep_profiles', False)
     keep_photos = kwargs.pop('keep_photos', False)
     keep_work_dir = kwargs.pop('keep_work_dir', False)
-    job_time = kwargs.pop('job_end', 600) - kwargs.pop('job_start', 0)
 
     os.chdir(work_dir)
     if not work_dir == final_dir:
@@ -499,10 +499,12 @@ def run_mesa(mesa_executable, work_dir, final_dir, **kwargs):
             os.kill(child_ID, 9)
         move_mesa_output(work_dir, final_dir, keep_work_dir)
     elif child_ID==0:
+        now = int(time.time())
+        child_end = kwargs.pop('job_end', now+60*60*24*365) - kwargs.pop('job_before_end', 300)
         #child process: waits till short before the job will get killed by slurm to copy the data beforehand and exit this process after the copy finished
-        if job_time>300:
-            #if job last longer than 5 minutes (300 seconds) get remaining time till 5 minutes before its end
-            wait_time = job_time-300
+        if child_end>now:
+            #if the child job still needs to wait, get time to wait
+            wait_time = child_end - now
         else:
             #otherwise wait 1 minute
             wait_time = 60
@@ -764,7 +766,7 @@ def run_grid_point(grid, star1_formation, star2_formation,
     # run the binary exectuable
     run_mesa(args.mesa_binary_executable, work_dir, final_dir,
              keep_profiles=args.keep_profiles, keep_photos=args.keep_photos,
-             job_start=args.job_start, job_end=args.job_end)
+             job_end=args.job_end, job_before_end=args.job_before_end)
 
     # find out what happened
     mesa_result = extract_mesa_results(final_dir)
@@ -901,7 +903,7 @@ if __name__ == '__main__':
             run_mesa(args.mesa_star1_executable, work_dir, final_dir,
                      outfile_name='out_star1_formation_step{0}.txt'.format(index),
                      keep_profiles=args.keep_profiles, keep_photos=args.keep_photos,
-                     job_start=args.job_start, job_end=args.job_end,
+                     job_end=args.job_end, job_before_end=args.job_before_end,
                      keep_work_dir=index<last_step)
 
         sys.exit(0)
