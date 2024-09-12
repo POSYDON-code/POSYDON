@@ -704,6 +704,12 @@ def copy_ini_file(grid_type, rerun_metallicity, rerun_type, destination,
 #    elif rerun_type == 'LBV_wind+dedt_hepulse':
 #        raise ValueError(f'Not yet supported rerun type {rerun_type}!')
 #        replace_text = "matthias_LBV_wind-051343856f50dc5518abdf28904d62df4caacaff" #TODO: update to new MESA-INLIST branch/commit
+    elif rerun_type == 'no_age_limit':
+        replace_text = "matthias_no_age_limit-a119ea9548cca9b6b7ddfe31309ced1ae40c271e"
+    elif rerun_type == 'no_age_limit+thermohaline_mixing':
+        replace_text = "matthias_no_age_limit-a119ea9548cca9b6b7ddfe31309ced1ae40c271e"
+    elif rerun_type == 'no_age_limit+dedt_energy_eqn':
+        replace_text = "matthias_lbv_thermo_dedt_noAgeLimit-dcc42e1d6d89fc267826970643e7f4f1bf463171"
     elif rerun_type == 'other': # e.g. 'envelope_mass_limit', 'fe_core_infall_limit'
         # this rerun uses the default inlist commit
         return
@@ -824,7 +830,8 @@ def logic_rerun(grid, rerun_type):
                 runs_to_rerun += [i]
         runs_to_rerun = np.array(runs_to_rerun)
     elif ((rerun_type == 'thermohaline_mixing') or
-          (rerun_type == 'LBV_wind+thermohaline_mixing')):
+          (rerun_type == 'LBV_wind+thermohaline_mixing') or
+          (rerun_type == 'no_age_limit+thermohaline_mixing')):
         termination_flags = TF1_POOL_ERROR
         new_mesa_flag = {'thermohaline_coeff' : 17.5}
     elif ((rerun_type == 'HeMB_MLTp_mesh')
@@ -875,7 +882,8 @@ def logic_rerun(grid, rerun_type):
                 runs_to_rerun += [i]
         runs_to_rerun = np.array(runs_to_rerun)
     elif ((rerun_type == 'dedt_energy_eqn') or
-          (rerun_type == 'LBV_wind+dedt_energy_eqn')):
+          (rerun_type == 'LBV_wind+dedt_energy_eqn') or
+          (rerun_type == 'no_age_limit+dedt_energy_eqn')):
         termination_flags = TF1_POOL_ERROR    
     elif ((rerun_type == 'dedt_hepulse')
 #          or (rerun_type == 'LBV_wind+dedt_hepulse')
@@ -928,6 +936,8 @@ def logic_rerun(grid, rerun_type):
                 if np.max(np.logical_or(tpagb_1, tpagb_2)) == False:
                     runs_to_rerun += [i]
         runs_to_rerun = np.array(runs_to_rerun)
+    elif rerun_type == 'no_age_limit':
+        termination_flags = ['max_age']
     elif rerun_type == 'envelope_mass_limit': # maybe 'fe_core_infall_limit' as well?
         runs_to_rerun = None # implement logic
     else:
