@@ -1211,12 +1211,13 @@ class detached_step:
                 solar radii.
 
             """
+            pri_mass = interp1d_pri["mass"](t - t_offset_pri)
+            sec_mass = interp1d_sec["mass"](t - t_offset_sec)
+
             sep = y[0]
             ecc = y[1]
            
-            RL = roche_lobe_radius(interp1d_sec["mass"](t - t_offset_sec)
-                            / interp1d_pri["mass"](t - t_offset_pri),
-                            (1 - ecc) * sep)
+            RL = roche_lobe_radius(sec_mass, pri_mass, (1 - ecc) * sep)
             
             # 95% filling of the RL is enough to assume beginning of RLO,
             # as we do in CO-HMS_RLO grid
@@ -1244,13 +1245,14 @@ class detached_step:
                 solar radii.
 
             """
+            pri_mass = interp1d_pri["mass"](t - t_offset_pri)
+            sec_mass = interp1d_sec["mass"](t - t_offset_sec)
+            
             sep = y[0]
             ecc = y[1]
+           
+            RL = roche_lobe_radius(pri_mass, sec_mass, (1 - ecc) * sep)
             
-            RL = roche_lobe_radius(interp1d_pri["mass"](t - t_offset_pri)
-                                / interp1d_sec["mass"](t - t_offset_sec),
-                                (1 - ecc) * sep)
-
             return interp1d_pri["R"](t - t_offset_pri) - 0.95*RL
 
         @event(True, 1)
@@ -1275,12 +1277,13 @@ class detached_step:
                 radius.
 
             """
+            pri_mass = interp1d_pri["mass"](t - t_offset_pri)
+            sec_mass = interp1d_sec["mass"](t - t_offset_sec)
+            
             sep = y[0]
             ecc = y[1]
-        
-            RL = roche_lobe_radius(interp1d_sec["mass"](t - t_offset_sec)
-                                / interp1d_pri["mass"](t - t_offset_pri),
-                                (1 - ecc) * sep)
+           
+            RL = roche_lobe_radius(sec_mass, pri_mass, (1 - ecc) * sep)
 
             return (interp1d_sec["R"](t - t_offset_sec) - RL) / RL
 
@@ -1306,12 +1309,13 @@ class detached_step:
                 radius.
 
             """
+            pri_mass = interp1d_pri["mass"](t - t_offset_pri)
+            sec_mass = interp1d_sec["mass"](t - t_offset_sec)
+
             sep = y[0]
             ecc = y[1]
-            
-            RL = roche_lobe_radius(interp1d_pri["mass"](t - t_offset_pri)
-                                / interp1d_sec["mass"](t - t_offset_sec),
-                                (1 - ecc) * sep)
+           
+            RL = roche_lobe_radius(pri_mass, sec_mass, (1 - ecc) * sep)
 
             return (interp1d_pri["R"](t - t_offset_pri) - RL) / RL
 

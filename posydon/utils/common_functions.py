@@ -13,6 +13,7 @@ __authors__ = [
     "Scott Coughlin <scottcoughlin2014@u.northwestern.edu>",
     "Kyle Akira Rocha <kylerocha2024@u.northwestern.edu>",
     "Matthias Kruckow <Matthias.Kruckow@unige.ch>",
+    "Camille Liotine <cliotine@u.northwestern.edu>",
 ]
 
 
@@ -195,39 +196,67 @@ def rzams(m, z=0.02, Zsun=0.02):
     return r
 
 
-'''
-
-
-Receives:
-q ->
-a_orb ->
-
-Returns:
-RL -> Roche lobe radius in similar units as a_orb
-'''
-
-
-def roche_lobe_radius(q, a_orb=1):
+def roche_lobe_radius(m1, m2, a_orb=1):
     """Approximate the Roche lobe radius from [1]_.
 
     Parameters
     ----------
-    q : float
-        Dimensionless mass ratio = MRL/Mcomp, where
-        MRL is the mass of the star we calculate the RL and
-        Mcomp is the mass of its companion star.
-    a_orb : float
+    m1 : float, ndarray of floats
+        the mass of the star for which we calculate the Roche lobe
+    m2 : float, ndarray of floats
+        the mass of the companion star
+    a_orb : float, ndarray of floats
         Orbital separation. The return value will have the same unit.
 
     Returns
     -------
-    float
+    float, ndarray of floats
         Roche lobe radius in similar units as a_orb
     References
     ----------
     .. [1] Eggleton, P. P. 1983, ApJ, 268, 368
 
     """
+    ## catching if a_orb is an empty array or is an array with invalid separation values
+    if isinstance(a_orb, np.ndarray):
+        ## if array is empty, fill with NaN values
+        if a_orb.size == 0:
+            Pwarn("Trying to compute RL radius for binary with invalid separation", "EvolutionWarning")
+            a_orb = np.full([1 if s==0 else s for s in a_orb.shape], np.nan, dtype=np.float64)
+        ## if array contains invalid values, replace with NaN 
+        elif np.any(a_orb < 0):
+            Pwarn("Trying to compute RL radius for binary with invalid separation", "EvolutionWarning")
+            a_orb[a_orb < 0] = np.nan
+    ## catching if a_orb is a float with invalid separation value
+    elif a_orb < 0: 
+        Pwarn("Trying to compute RL radius for binary with invalid separation", "EvolutionWarning")
+        a_orb = np.nan
+
+
+    if isinstance(m1, np.ndarray):
+        if m1.size == 0:                  
+            Pwarn("Trying to compute RL radius for nonexistent object", "EvolutionWarning")
+            m1 = np.full([1 if s==0 else s for s in m1.shape], np.nan, dtype=np.float64)
+        elif np.any(m1 <= 0):
+            Pwarn("Trying to compute RL radius for nonexistent object", "EvolutionWarning")
+            m1[m1 <= 0] = np.nan
+    elif m1 <=0:
+        Pwarn("Trying to compute RL radius for nonexistent object", "EvolutionWarning")
+        m1 = np.nan
+    
+
+    if isinstance(m2, np.ndarray):
+        if m2.size == 0:                  
+            Pwarn("Trying to compute RL radius for nonexistent companion", "EvolutionWarning")
+            m2 = np.full([1 if s==0 else s for s in m2.shape], np.nan, dtype=np.float64)
+        elif np.any(m2 <= 0):
+            Pwarn("Trying to compute RL radius for nonexistent companion", "EvolutionWarning")
+            m2[m2 <= 0] = np.nan
+    elif m2 <=0:
+        Pwarn("Trying to compute RL radius for nonexistent companion", "EvolutionWarning")
+        m2 = np.nan
+   
+    q = m1/m2
     RL = a_orb * (0.49 * q**(2. / 3.)) / (
         0.6 * q**(2. / 3.) + np.log(1 + q**(1. / 3))
     )
