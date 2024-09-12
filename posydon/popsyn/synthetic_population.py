@@ -1002,7 +1002,7 @@ class Population(PopulationIO):
                 simulated_mass = simulated_mass_binaries + simulated_mass_single
             else:
                 simulated_mass_binaries = np.sum(self.oneline[["S1_mass_i", "S2_mass_i"]].to_numpy())
-                simulated_mass_single = None
+                simulated_mass_single = 0.0
                 simulated_mass = simulated_mass_binaries   
             
             underlying_mass = initial_total_underlying_mass(
