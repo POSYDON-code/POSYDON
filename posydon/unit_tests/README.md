@@ -52,6 +52,15 @@ Beside the existence and the type of a variable, should verify the integrity of 
 
 Function in the module need checks according to their functionality. This should coincide with the doc-string of each function. *I suggest to have one class with all the function tests and a test function for each function in the module, which gets tested.* If the functions change variables, please create a `setUp` and/or `tearDown` function.
 
+Functions may include prints statements. In such cases it is useful to redirect the data stream going there into a variable to be able to validate the output (there is a similar context manager to redirect `stderr`). Here an example code:
+
+    from io import StringIO
+    from contextlib import redirect_stdout
+    ...
+    with redirect_stdout(StringIO()) as print_out:
+        totest.function_with_print_statements()
+    self.assertEqual("Text of first print statement.\nText of second print statement.\n", print_out.getvalue())
+
 #### Check classes
 
 Each class inside a module should be get its components checked like a module itself. *I suggest to have a test class for each class in the tested module and the test of each class function should get an own test function.* Again, `setUp` and/or `tearDown` functions should be used to ensure that all tests run under the same conditions.
