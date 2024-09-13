@@ -224,8 +224,84 @@ class PopulationRunner:
 # Helper classes #
 ##################
 
+class DFInterface:
+    """A class to handle the interface between the population file and the History and Oneline classes."""
+    
+    def __init__():
+        pass
 
-class History:
+    def head(self, key, n=10):
+        """Return the first n rows of the key table
+
+        Parameters
+        ----------
+        key: str
+            The key of the table
+        n : int, optional
+            The number of rows to return. Default is 10.
+
+        Returns
+        -------
+        pandas.DataFrame
+            The first n rows of the key table.
+
+        """
+        with pd.HDFStore(self.filename, mode="r") as store:
+            return store.select(key, start=0, stop=n)
+        
+    def tail(self, key, n=10):
+        """
+        Get the last n rows of the key table.
+
+        Parameters
+        ----------
+        key : str
+            The key of the table.
+        n : int, optional
+            The number of rows to return. Default is 10.
+
+        Returns
+        -------
+        pd.DataFrame
+            The last n rows of the key table.
+        """
+        with pd.HDFStore(self.filename, mode="r") as store:
+            return store.select(key, start=-n)
+        
+    
+    def select(self, key, where=None, start=None, stop=None, columns=None):
+        '''Select a subset of the key table based on the given conditions.
+        
+        Parameters
+        ----------
+        key : str
+            The key of the table to select from.
+        where : str, optional
+            A string representing the query condition to apply to the data.
+        start : int, optional
+            The starting index of the data to select.
+        stop : int, optional
+            The ending index of the data to select.
+        columns : list, optional
+            A list of column names to select.
+        
+        Returns
+        -------
+        pandas.DataFrame
+            The selected data as a DataFrame.
+        '''
+        # we have to chunk the read because of memory issues
+        with pd.HDFStore(self.filename, mode="r") as store:
+            iterator = store.select("history", where=where, start=start, stop=stop, columns=columns, chunksize=self.chunksize)
+            # read the data in chunks and concatenate once (faster than concat every chunk!)
+            out = []
+            for chunk in iterator:
+                out.append(chunk)
+            out = pd.concat(out, axis=0)
+        return out
+
+
+class History(DFInterface):
     """A class to handle the history dataframe of a population file.
 
     This class provides methods to handle the history dataframe of a population file.
@@ -353,52 +429,52 @@ class History:
             else:
                 chunk = key.stop - pre
             indices = list(range(pre, pre + chunk))
-            return pd.read_hdf(self.filename, key="history", where='index in indices')       
-        
+            return self.select(where=f'index in {indices}')
+            
+        # single index
         elif isinstance(key, int):
-            return pd.read_hdf(self.filename, where="index == key", key="history")
-        
+            return self.select(where=f"index == {key}")
+                
         # list of indices
         elif isinstance(key, list) and all(isinstance(x, int) for x in key):
             if len(key) == 0:
                 return pd.DataFrame()
             else:
-                with pd.HDFStore(self.filename, mode="r") as store:
-                    return store.select("history", where="index in key")
+                return self.select(where=f"index in {key}")
+                
         # numpy array
         elif isinstance(key, np.ndarray) and (key.dtype == int):
             if len(key) == 0:
                 return pd.DataFrame()
             else:
                 indices = key.tolist()
-                with pd.HDFStore(self.filename, mode="r") as store:
-                    return store.select("history", where="index in indices")
+                return self.select(where=f"index in {indices}")
                 
         # boolean mask
         elif (isinstance(key, np.ndarray) and key.dtype == bool) or (isinstance(key, pd.DataFrame) and all(key.dtypes == bool)):
             # return empty if no values
             if len(key) == 0:
                 return pd.DataFrame()
-            
-            out_df = pd.DataFrame()
-            for i in range(0, len(key), self.chunksize):
-                tmp_df = pd.read_hdf(
-                    self.filename, key="history", start=i, stop=i + self.chunksize
-                )[key[i : i + self.chunksize]]
-                out_df = pd.concat([out_df, tmp_df])
-            return out_df
+            # We cannot use self.select because we're using a boolean mask across the entire table
+            # This can be optimized by only selecting indices that are True instead of the entire table
+            with pd.HDFStore(self.filename, mode="r") as store:
+                iterator = store.select("history", chunksize=self.chunksize)
+                out = []
+                for i, chunk in enumerate(iterator):
+                    out.append(chunk[key[i : i + self.chunksize]])
+                return pd.concat(out, axis=0)
         
         # single column
         elif isinstance(key, str):
             if key in self.columns:
-                return pd.read_hdf(self.filename, key="history", columns=[key])
+                return self.select(columns=[key])
             else:
                 raise ValueError(f"{key} is not a valid column name!")
             
         # multiple columns
         elif isinstance(key, list) and all(isinstance(x, str) for x in key):
             if all(x in self.columns for x in key):
-                return pd.read_hdf(self.filename, key="history", columns=key)
+                return self.select(columns=key)
             else:
                 raise ValueError(f"Not all columns in {key} are valid column names!")
         else:
@@ -428,7 +504,7 @@ class History:
             The first n rows of the history table.
 
         """
-        return pd.read_hdf(self.filename, key="history", start=0, stop=n)
+        return super().head("history", n)
 
     def tail(self, n=10):
         """Return the last n rows of the history table.
@@ -444,7 +520,7 @@ class History:
             The last n rows of the history table.
 
         """
-        return pd.read_hdf(self.filename, key="history", start=-n)
+        return super().tail("history", n)
 
     def __repr__(self):
         """Return a string representation of the object.
@@ -452,8 +528,9 @@ class History:
         Returns:
             str: A string representation of the object.
         """
-        return pd.read_hdf(self.filename, key="history").__repr__()
-
+        with pd.HDFStore(self.filename, mode="r") as store:
+            return store.select("history", start=0, stop=10).__repr__()
+        
     def _repr_html_(self):
         """Return the HTML representation of the history dataframe.
 
@@ -466,8 +543,8 @@ class History:
         str
             The HTML representation of the history dataframe.
         """
-        return pd.read_hdf(self.filename, key="history")._repr_html_()
-
+        with pd.HDFStore(self.filename, mode="r") as store:
+            return store.select("history", start=0, stop=10)._repr_html_()
 
     def select(self, where=None, start=None, stop=None, columns=None):
         """Select a subset of the history table based on the given conditions.
@@ -495,13 +572,14 @@ class History:
         pandas.DataFrame
             The selected data as a DataFrame.
         """
-        with pd.HDFStore(self.filename, mode="r") as store:
-            return store.select(
-                "history", where=where, start=start, stop=stop, columns=columns
-            )
+        return super().select(key='history',
+                              where=where,
+                              start=start,
+                              stop=stop,
+                              columns=columns)
 
 
-class Oneline:
+class Oneline(DFInterface):
     """A class to handle the oneline dataframe of a population file.
 
     The `Oneline` class provides methods to manipulate and retrieve data from the oneline dataframe of a population file.
@@ -600,28 +678,28 @@ class Oneline:
                 self.filename, key="oneline", start=pre, stop=pre + chunk
             )            
         elif isinstance(key, int):
-            return pd.read_hdf(self.filename, where="index == key", key="oneline")
+            return self.select(where=f"index == {key}")
         elif isinstance(key, list) and all(isinstance(x, int) for x in key):
-            return pd.read_hdf(self.filename, where="index in key", key="oneline")
+            return self.select(where=f"index in {key}")
         elif isinstance(key, np.ndarray) and (key.dtype == int):
             indices = key.tolist()
-            return pd.read_hdf(self.filename, where="index in indices", key="oneline")
+            return self.select(where=f"index in {indices}")
         elif isinstance(key, list) and all(isinstance(x, float) for x in key):
             raise ValueError("elements in list are not integers! Try casting to int.")
         elif isinstance(key, pd.DataFrame) and all(key.dtypes == bool):
             indices = self.indices[key.to_numpy().flatten()].tolist()
-            return pd.read_hdf(self.filename, where="index in indices", key="oneline")
+            return self.select(where=f"index in {indices}")
         elif isinstance(key, np.ndarray) and key.dtype == bool:
             indices = self.indices[key].tolist()
-            return pd.read_hdf(self.filename, where="index in indices", key="oneline")
+            return self.select(where=f"index in {indices}")
         elif isinstance(key, str):
             if key in self.columns:
-                return pd.read_hdf(self.filename, key="oneline", columns=[key])
+                return self.select(columns=[key])
             else:
                 raise ValueError(f"{key} is not a valid column!")
         elif isinstance(key, list) and all(isinstance(x, str) for x in key):
             if all(x in self.columns for x in key):
-                return pd.read_hdf(self.filename, key="oneline", columns=key)
+                self.select(columns=key)
             else:
                 raise ValueError(f"Not all columns in {key} are valid column names!")
         else:
@@ -651,7 +729,7 @@ class Oneline:
         pd.DataFrame
             The first n rows of the oneline table.
         """
-        return pd.read_hdf(self.filename, key="oneline", start=0, stop=n)
+        return super().head("oneline", n)
 
     def tail(self, n=10):
         """
@@ -667,7 +745,7 @@ class Oneline:
         pd.DataFrame
             The last n rows of the oneline table.
         """
-        return pd.read_hdf(self.filename, key="oneline", start=-n)
+        return super().tail("oneline", n)
 
     def __repr__(self):
         """
@@ -678,7 +756,8 @@ class Oneline:
         str
             The string representation of the oneline table.
         """
-        return pd.read_hdf(self.filename, key="oneline").__repr__()
+        with pd.HDFStore(self.filename, mode="r") as store:
+            return store.select("oneline", start=0, stop=10).__repr__()
 
     def _repr_html_(self):
         """
@@ -689,8 +768,8 @@ class Oneline:
         str
             The HTML representation of the oneline table.
         """
-        return pd.read_hdf(self.filename, key="oneline")._repr_html_()
-
+        with pd.HDFStore(self.filename, mode="r") as store:
+            return store.select("oneline", start=0, stop=10)._repr_html_()
 
     def select(self, where=None, start=None, stop=None, columns=None):
         """Select a subset of the oneline table based on the given conditions.
@@ -725,10 +804,11 @@ class Oneline:
         # Select specific columns
         >>> df = Oneline.select(columns=['S1_mass_i', 'S1_mass_f'])
         """
-        with pd.HDFStore(self.filename, mode="r") as store:
-            return store.select(
-                "oneline", where=where, start=start, stop=stop, columns=columns
-            )
+        return super().select(key='oneline',
+                              where=where,
+                              start=start,
+                              stop=stop,
+                              columns=columns)
 
 
 class PopulationIO:
