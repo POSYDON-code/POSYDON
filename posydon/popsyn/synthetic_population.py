@@ -992,31 +992,23 @@ class Population(PopulationIO):
                 Pwarn(f"{filename} already contains a mass_per_metallicity "
                       "table. Overwriting the table!", "OverwriteWarning")
 
-            if "initially_single_star" in self.oneline["state_i"].values:
-                mask=self.oneline["state_i"]=="initially_single_star"
-                filtered_data_single = self.oneline[mask]
-                filtered_data_binaries = self.oneline[~mask]
-    
-                simulated_mass_binaries = np.sum(filtered_data_binaries[["S1_mass_i", "S2_mass_i"]].to_numpy())
-                simulated_mass_single = np.sum(filtered_data_single[["S1_mass_i"]].to_numpy())
-                simulated_mass = simulated_mass_binaries + simulated_mass_single
-            else:
-                simulated_mass_binaries = np.sum(self.oneline[["S1_mass_i", "S2_mass_i"]].to_numpy())
-                simulated_mass_single = 0.0
-                simulated_mass = simulated_mass_binaries   
+            # only load in required columns
+            tmp_data = self.oneline[['state_i', 'S1_mass_i', 'S2_mass_i']]
+            mask = tmp_data["state_i"] == "initially_single_star"
+            filtered_data_single = tmp_data[mask]
+            filtered_data_binaries = tmp_data[~mask]
             
-            underlying_mass = initial_total_underlying_mass(
-            df=simulated_mass, df1=simulated_mass_single, df2= simulated_mass_binaries, **self.ini_params
-                )[0]
-  
+            simulated_mass_single = np.sum(filtered_data_single[["S1_mass_i"]].to_numpy())
+            simulated_mass_binaries = np.sum(filtered_data_binaries[["S1_mass_i", "S2_mass_i"]].to_numpy())
+            simulated_mass = simulated_mass_single + simulated_mass_binaries
+            del tmp_data, filtered_data_single, filtered_data_binaries
             
-                #df=simulated_mass, **self.ini_params)[0]
             self.mass_per_metallicity = pd.DataFrame(
                     index=[metallicity],
-                    data={
-                        "simulated_mass_total": simulated_mass,
-                        "underlying_mass": underlying_mass,
-                        "number_of_systems": len(self.oneline),
+                    data={"simulated_mass": simulated_mass,
+                          "simulated_mass_single": simulated_mass_single,
+                          "simulated_mass_binaries": simulated_mass_binaries,
+                          "number_of_systems": len(self.oneline),
                 },
             )
 
@@ -1033,6 +1025,48 @@ class Population(PopulationIO):
         self.history_lengths = self.history.lengths
         self.number_of_systems = self.oneline.number_of_systems
         self.indices = self.history.indices
+        
+    def calculate_underlying_mass(self, f_bin=0.7, overwrite=False):
+        """Calculate the underlying mass of the population.
+        
+        Adds the underlying mass of the population to the mass_per_metallicity table.
+        
+        This method calculates the underlying mass of the population based on the simulated mass
+        of the population and the boundaries of the sampled mass distribution.
+        You can specify the fraction of binaries in the population using the `f_bin` parameter.
+        
+        Parameters
+        ----------
+        f_bin : float, optional
+            The fraction of binaries in the population. Default is 0.7.
+        overwrite : bool, optional
+            If `True`, overwrite the underlying mass values if they already exist. Default is `False`.
+            
+        Returns
+        -------
+        np.ndarray
+            The underlying mass of the population.
+        """
+        
+        if 'underlying_mass' in self.mass_per_metallicity.columns:
+            Pwarn("underlying_mass already exists in the mass_per_metallicity table.")
+            if overwrite:
+                Pwarn("Overwriting the underlying_mass values.")
+            else:
+                Pwarn("Not overwriting the underlying_mass values.")
+                return
+        
+        underlying_mass = np.zeros(len(self.mass_per_metallicity))
+        for i in range(len(self.mass_per_metallicity)):
+            underlying_mass[i] = initial_total_underlying_mass(
+                df=self.mass_per_metallicity['simulated_mass'].iloc[i],
+                df1=self.mass_per_metallicity['simulated_mass_single'].iloc[i],
+                df2=self.mass_per_metallicity['simulated_mass_binaries'].iloc[i],
+                **self.ini_params)[0]
+        
+        self.mass_per_metallicity['underlying_mass'] = underlying_mass
+        
+        return underlying_mass
 
     def export_selection(self, selection, filename, overwrite=False, append=False, history_chunksize=1000000):
         """Export a selection of the population to a new file

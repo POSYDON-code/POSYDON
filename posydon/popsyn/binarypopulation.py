@@ -510,9 +510,10 @@ class BinaryPopulation:
         
         
         with pd.HDFStore(absolute_filepath, mode=mode, complevel=complevel, complib=complib) as store:
+            simulated_mass = 0.0
+            simulated_mass_single = 0.0
+            simulated_mass_binaries = 0.0
             number_of_systems=0
-            
-            
             
             for f in file_names:
                 # strings itemsize set by first append max value,
@@ -522,18 +523,15 @@ class BinaryPopulation:
                                  min_itemsize=history_min_itemsize)
                     
                     oneline = pd.read_hdf(f, key='oneline')
-                    if "initially_single_star" in oneline["state_i"].values:
-                        mask= oneline["state_i"]=="initially_single_star"
-                        filtered_data_single = oneline[mask]
-                        filtered_data_binaries = oneline[~mask]
-    
-                        simulated_mass_binaries = np.sum(filtered_data_binaries[["S1_mass_i", "S2_mass_i"]].to_numpy())
-                        simulated_mass_single = np.sum(filtered_data_single[["S1_mass_i"]].to_numpy())
-                        simulated_mass = simulated_mass_binaries + simulated_mass_single
-                    else:
-                        simulated_mass_binaries = np.sum(oneline[["S1_mass_i", "S2_mass_i"]].to_numpy())
-                        simulated_mass_single = 0.0
-                        simulated_mass = simulated_mass_binaries
+                    
+                    # split weight between single and binary stars
+                    mask = oneline["state_i"] == "initially_single_star"
+                    filtered_data_single = oneline[mask]
+                    filtered_data_binaries = oneline[~mask]
+                    
+                    simulated_mass_binaries += np.nansum(filtered_data_binaries[["S1_mass_i", "S2_mass_i"]].to_numpy())
+                    simulated_mass_single += np.nansum(filtered_data_single[["S1_mass_i"]].to_numpy())
+                    simulated_mass += simulated_mass_single + simulated_mass_binaries
                        
                     if 'metallicity' not in oneline.columns:
                         met_df = pd.DataFrame(data={'metallicity': [self.metallicity] * len(oneline)}, index=oneline.index)
@@ -556,7 +554,8 @@ class BinaryPopulation:
             tmp_df = pd.DataFrame(
                 index=[self.metallicity],
                 data={'simulated_mass': simulated_mass,
-                      'underlying_mass': initial_total_underlying_mass(df=simulated_mass,df1=simulated_mass_single, df2= simulated_mass_binaries, **self.kwargs)[0], 
+                      'simulated_mass_single': simulated_mass_single,
+                      'simulated_mass_binaries': simulated_mass_binaries,
                       'number_of_systems': number_of_systems})
             tmp_df.index.name = 'metallicity'
             store.append('mass_per_metallicity', tmp_df)
