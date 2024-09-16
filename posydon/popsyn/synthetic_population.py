@@ -1833,6 +1833,9 @@ class TransientPopulation(Population):
 
         metallicities = self.mass_per_metallicity.index.to_numpy()
         
+        if 'underlying_mass' not in self.mass_per_metallicity.columns:
+            raise ValueError("Underlying mass not calculated! Please calculate the underlying mass first!")
+        
         met_columns = self.select(columns=["metallicity"]).value_counts()
         
         met_columns.index = [i[0] for i in met_columns.index.to_numpy().flatten()]
@@ -1921,6 +1924,9 @@ class TransientPopulation(Population):
         path_in_file = (
             "/transients/" + self.transient_name + "/rates/" + SFH_identifier + "/"
         )
+        
+        if 'underlying_mass' not in self.mass_per_metallicity.columns:
+            raise ValueError("Underlying mass not calculated! Please calculate the underlying mass first!")
 
         with pd.HDFStore(self.filename, mode="a") as store:
             if path_in_file + "MODEL" in store.keys():
@@ -2096,6 +2102,9 @@ class TransientPopulation(Population):
         Otherwise, it is normalized by the mass of the population at the specified metallicity.
 
         """
+        if 'underlying_mass' not in self.mass_per_metallicity.columns:
+            raise ValueError("Underlying mass not calculated! Please calculate the underlying mass first!")
+        
         if ax is None:
             fig, ax = plt.subplots()
 
