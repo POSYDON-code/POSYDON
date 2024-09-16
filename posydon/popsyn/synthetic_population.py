@@ -227,8 +227,9 @@ class PopulationRunner:
 class DFInterface:
     """A class to handle the interface between the population file and the History and Oneline classes."""
     
-    def __init__():
-        pass
+    def __init__(self):
+        self.filename = None
+        self.chunksize = None
 
     def head(self, key, n=10):
         """Return the first n rows of the key table
@@ -292,13 +293,46 @@ class DFInterface:
         '''
         # we have to chunk the read because of memory issues
         with pd.HDFStore(self.filename, mode="r") as store:
-            iterator = store.select("history", where=where, start=start, stop=stop, columns=columns, chunksize=self.chunksize)
+            iterator = store.select(key, where=where, start=start, stop=stop, columns=columns, chunksize=self.chunksize)
             # read the data in chunks and concatenate once (faster than concat every chunk!)
             out = []
             for chunk in iterator:
                 out.append(chunk)
             out = pd.concat(out, axis=0)
         return out
+    
+    def get_repr(self, key):
+        '''Return a string representation of the key table.
+        
+        Parameters
+        ----------
+        key : str
+            The key of the table to return the string representation of.
+            
+        Returns
+        -------
+        str
+            The string representation of the key table.
+        
+        '''
+        with pd.HDFStore(self.filename, mode="r") as store:
+            return store.select(key, start=0, stop=10).__repr__()
+        
+    def get_html_repr(self, key):
+        """Return the HTML representation of the key table.
+        
+        Parameters
+        ----------
+        key : str
+            The key of the table to return the HTML representation of.
+            
+        Returns
+        -------
+        str
+            The HTML representation of the key table.
+        """
+        with pd.HDFStore(self.filename, mode="r") as store:
+            return store.select(key, start=0, stop=10)._repr_html_()
 
 
 class History(DFInterface):
@@ -528,8 +562,7 @@ class History(DFInterface):
         Returns:
             str: A string representation of the object.
         """
-        with pd.HDFStore(self.filename, mode="r") as store:
-            return store.select("history", start=0, stop=10).__repr__()
+        return super().get_repr("history")
         
     def _repr_html_(self):
         """Return the HTML representation of the history dataframe.
@@ -543,8 +576,7 @@ class History(DFInterface):
         str
             The HTML representation of the history dataframe.
         """
-        with pd.HDFStore(self.filename, mode="r") as store:
-            return store.select("history", start=0, stop=10)._repr_html_()
+        return super().get_html_repr("history")
 
     def select(self, where=None, start=None, stop=None, columns=None):
         """Select a subset of the history table based on the given conditions.
@@ -756,8 +788,7 @@ class Oneline(DFInterface):
         str
             The string representation of the oneline table.
         """
-        with pd.HDFStore(self.filename, mode="r") as store:
-            return store.select("oneline", start=0, stop=10).__repr__()
+        return super().get_repr("oneline")
 
     def _repr_html_(self):
         """
@@ -768,8 +799,7 @@ class Oneline(DFInterface):
         str
             The HTML representation of the oneline table.
         """
-        with pd.HDFStore(self.filename, mode="r") as store:
-            return store.select("oneline", start=0, stop=10)._repr_html_()
+        return super().get_html_repr("oneline")
 
     def select(self, where=None, start=None, stop=None, columns=None):
         """Select a subset of the oneline table based on the given conditions.
