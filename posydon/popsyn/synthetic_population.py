@@ -998,8 +998,8 @@ class Population(PopulationIO):
             filtered_data_single = tmp_data[mask]
             filtered_data_binaries = tmp_data[~mask]
             
-            simulated_mass_single = np.sum(filtered_data_single[["S1_mass_i"]].to_numpy())
-            simulated_mass_binaries = np.sum(filtered_data_binaries[["S1_mass_i", "S2_mass_i"]].to_numpy())
+            simulated_mass_single = np.nansum(filtered_data_single[["S1_mass_i"]].to_numpy())
+            simulated_mass_binaries = np.nansum(filtered_data_binaries[["S1_mass_i", "S2_mass_i"]].to_numpy())
             simulated_mass = simulated_mass_single + simulated_mass_binaries
             del tmp_data, filtered_data_single, filtered_data_binaries
             
