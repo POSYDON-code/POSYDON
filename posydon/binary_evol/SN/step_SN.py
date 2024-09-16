@@ -77,6 +77,8 @@ MODEL = {
     "mechanism": 'Patton&Sukhbold20-engine',
     "engine": 'N20',
     "PISN": "Marchant+19",
+    "PISN_CO_shift": 0.0,
+    "PPI_extra_mass_loss": 0.0,
     "ECSN": "Podsiadlowski+04",
     "conserve_hydrogen_envelope" : False,
     "max_neutrino_mass_loss": NEUTRINO_MASS_LOSS_UPPER_LIMIT,
@@ -893,6 +895,7 @@ class StepSN(object):
             # perform the PISN prescription in terms of the
             # He core mass at pre-supernova
             m_He_core = star.he_core_mass
+            m_CO_core = star.co_core_mass
             m_star = star.mass
             if self.PISN == "Marchant+19":
                 if m_He_core >= 31.99 and m_He_core <= 61.10:
@@ -925,6 +928,55 @@ class StepSN(object):
                         m_PISN = m_star
                     else:
                         m_PISN = m_He_core
+            
+            elif self.PISN == 'Hendriks+23':
+                # Hendriks et al. 2023 PISN prescription
+                # Shifting PPI and PISN gap
+                # works by removing delta_M_PPI from the star
+                # and then applying any remnant mass prescription
+                
+                delta_M_CO_shift = self.PISN_CO_shift if self.PISN_CO_shift is not None else 0.0
+                delta_M_PPI_extra_ML = self.PPI_extra_mass_loss if self.PPI_extra_mass_loss is not None else 0.0
+                if ((m_CO_core >= 38 + delta_M_CO_shift) 
+                    and m_CO_core <= 114 + delta_M_CO_shift):
+
+                    delta_M_PPI = (
+                        (0.0006 * np.log10(star.metallicity * const.Zsun) + 0.0054)
+                        * (m_CO_core - delta_M_CO_shift - 34.8)**3
+                        - 0.0013 * (m_CO_core - delta_M_CO_shift - 34.8)**2
+                        + delta_M_PPI_extra_ML
+                    )
+                    if self.verbose:
+                        print(f"delta_M_PPI: {delta_M_PPI} Msun")
+                else:
+                    delta_M_PPI = 0.0
+                    
+                if delta_M_PPI <= 0.0:
+                    if self.conserve_hydrogen_envelope:
+                        m_PISN = m_star
+                    else:
+                        m_PISN = m_He_core
+                else:
+                    if self.conserve_hydrogen_envelope:
+                        m_PISN = m_star - delta_M_PPI
+                    else:
+                        m_PISN = m_He_core - delta_M_PPI
+                    
+                    if m_PISN < 0.0:
+                        m_PISN = np.nan
+                        
+                    PISN_star = copy.deepcopy(star)
+                    PISN_star.mass = m_PISN
+                    if PISN_star.he_core_mass > m_PISN:
+                        PISN_star.he_core_mass = m_PISN
+                    if PISN_star.co_core_mass > m_PISN:
+                        PISN_star.co_core_mass = m_PISN
+                    m_rembar, _, _ = self.compute_m_rembar(PISN_star, m_PISN)
+                    
+                    if m_rembar < 10:
+                        m_PISN = np.nan
+                    else:
+                        m_PISN = m_rembar
 
             elif is_number(self.PISN) and m_He_core > self.PISN:
                 m_PISN = self.PISN
