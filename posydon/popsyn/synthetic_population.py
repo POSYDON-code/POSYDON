@@ -706,9 +706,9 @@ class Oneline(DFInterface):
                 chunk = self.number_of_systems
             else:
                 chunk = key.stop - pre
-            return pd.read_hdf(
-                self.filename, key="oneline", start=pre, stop=pre + chunk
-            )            
+            indices = list(range(pre, pre + chunk))
+            return self.select(where=f'index in {indices}')
+        
         elif isinstance(key, int):
             return self.select(where=f"index == {key}")
         elif isinstance(key, list) and all(isinstance(x, int) for x in key):
