@@ -731,7 +731,7 @@ class Oneline(DFInterface):
                 raise ValueError(f"{key} is not a valid column!")
         elif isinstance(key, list) and all(isinstance(x, str) for x in key):
             if all(x in self.columns for x in key):
-                self.select(columns=key)
+                return self.select(columns=key)
             else:
                 raise ValueError(f"Not all columns in {key} are valid column names!")
         else:
