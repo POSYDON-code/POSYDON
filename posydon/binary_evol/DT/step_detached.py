@@ -1692,7 +1692,7 @@ class detached_step:
                         ## add a warning catch if the current omega has an invalid value
                         ## (otherwise python will throw an insuppressible warning when taking the log)
                         if interp1d_sec["omega"][-1] <=0:
-                            Pwarn("Trying to compute log angular momentum for object with no spin", "EvolutionWarning")
+                            Pwarn("Trying to compute log angular momentum for object with no spin", "InappropriateValueWarning")
                             current_omega = np.nan
                                                
                         current = np.log10(
