@@ -36,6 +36,7 @@ from posydon.visualization.combine_TF import (
     TF1_POOL_STABLE, TF1_POOL_UNSTABLE, TF1_POOL_INITIAL_RLO, TF1_POOL_ERROR,
     TF2_POOL_NO_RLO, TF2_POOL_INITIAL_RLO
 )
+from posydon.utils.posydonwarning import Pwarn
 
 
 # variables needed for inferring star states
@@ -349,6 +350,8 @@ def get_nearest_known_initial_RLO(mass1, mass2, known_initial_RLO):
                "period_days": 0.0,
               }
     if len(known_initial_RLO)<MIN_COUNT_INITIAL_RLO_BOUNDARY:
+        Pwarn("Don't apply initial RLO boundary because of too few data points"
+              " in there.","InappropriateValueWarning")
         return nearest
     for sys in known_initial_RLO:
         #search for a known system with closest mass combination
