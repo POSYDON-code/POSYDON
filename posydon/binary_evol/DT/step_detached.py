@@ -1174,11 +1174,16 @@ class detached_step:
 
 
         if interp1d_sec is None or interp1d_pri is None:
-            # binary.event = "END"
-            binary.state += " (GridMatchingFailed)"
-            if self.verbose or self.verbose == 1:
-                print("Failed matching")
-            return
+
+            if binary.state in ['detached', 'disrupted', 'merged']:
+                binary.state += " (GridMatchingFailed)"
+                if self.verbose or self.verbose == 1:
+                    print("Failed matching")
+                return       
+            else:
+                raise ValueError("need to add new binary state to flow chart for evolution to end correctly ",
+                                "when grid matching fails: ", binary.state," (GridMatchingFailed)")           
+                   
         t0_sec = interp1d_sec["t0"]
         t0_pri = interp1d_pri["t0"]
         m01 = interp1d_sec["m0"]
@@ -1503,10 +1508,13 @@ class detached_step:
                 print("solution of ODE", s)
             if s.status == -1:
                 print("Integration failed", s.message)
-                binary.state += ' (Integration failure)'
-                # binary.event = "END"
+
+                if binary.state in ['detached']:
+                    binary.state += ' (Integration failure)'
+                else:
+                    raise ValueError("need to add new binary state to flow chart for evolution to end correctly ",
+                                "when detached integration fails: ", binary.state, " (Integration failure)")
                 return
-                # raise RuntimeError("Integration failed", s.message)
 
             if self.dt is not None and self.dt > 0:
                 t = np.arange(binary.time, s.t[-1] + self.dt/2.0, self.dt)[1:]

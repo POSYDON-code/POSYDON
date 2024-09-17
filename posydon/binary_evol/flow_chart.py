@@ -229,9 +229,9 @@ for s1 in STAR_STATES_CO:
 
 
 # catch states to be ended
-for b in ['initial_RLOF',
+for b in ['initial_RLOF', 'RLO2 (OutsideGrid)'
           'detached (Integration failure)',
-          'detached (GridMatchingFailed)', 'RLO2 (OutsideGrid)']:
+          'detached (GridMatchingFailed)', 'disrupted (GridMatchingFailed)', 'merged (GridMatchingFailed)']:    
     for s1 in STAR_STATES_ALL:
         for s2 in STAR_STATES_ALL:
             for e in BINARY_EVENTS_ALL:
