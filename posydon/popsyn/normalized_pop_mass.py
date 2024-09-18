@@ -14,12 +14,12 @@ from posydon.popsyn import independent_sample
 from scipy.integrate import quad
 from posydon.utils.posydonwarning import Pwarn
 
-def initial_total_underlying_mass(df=None, df1=None, df2=None, **kwargs):
+def initial_total_underlying_mass(simulated_mass=None, simulated_mass_single=None, simulated_mass_binaries=None, f_bin=0.7,  **kwargs):
     """Compute the initial total mass of the population.
 
     Parameters
     ----------
-    df,df1,df2 : float
+    simulated_mass, simulated_mass_single, simulated_mass_binaries : float
         Total simulated mass, simulated mass of binary systems and simulated mass of single stars, respectively.
     primary_mass_min : type
         Description of parameter `primary_mass_min`.
@@ -41,7 +41,7 @@ def initial_total_underlying_mass(df=None, df1=None, df2=None, **kwargs):
     # ENHANCEMENT: the code should assume default values of the POSYDON sampler
     # if not provided in kwargs.
 
-    if df is None:
+    if simulated_mass is None:
         initial_ZAMS_mass = independent_sample.generate_independent_samples(
             **kwargs)
         initial_ZAMS_mass_1 = initial_ZAMS_mass[2]
@@ -49,9 +49,9 @@ def initial_total_underlying_mass(df=None, df1=None, df2=None, **kwargs):
         initial_ZAMS_TOTAL_mass = (sum(initial_ZAMS_mass_1)
                                    + sum(initial_ZAMS_mass_2))
     else:
-        initial_ZAMS_TOTAL_mass = df
-        initial_ZAMS_TOTAL_single= df1
-        initial_ZAMS_TOTAL_binaries= df2
+        initial_ZAMS_TOTAL_mass = simulated_mass
+        initial_ZAMS_TOTAL_single= simulated_mass_single
+        initial_ZAMS_TOTAL_binaries= simulated_mass_binaries
     
 
     def imf_part_1(m, m_min, alpha1):
@@ -110,7 +110,7 @@ def initial_total_underlying_mass(df=None, df1=None, df2=None, **kwargs):
               f"={kwargs['secondary_mass_scheme']}", "UnsupportedModelWarning")
         return np.nan, np.nan, np.nan
 
-    f_bin_nature = 0.7 #This parameter represents the preferred fraction of binary systems within your population, allowing users to input any value ranging from 0.1 to 1.
+    f_bin_nature = f_bin #This parameter represents the preferred fraction of binary systems within your population, allowing users to input any value ranging from 0.1 to 1.
     f_bin_simulated = kwargs['binary_fraction_const']
     
     m_min = 0.01
