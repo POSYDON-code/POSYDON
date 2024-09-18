@@ -201,10 +201,12 @@ type of the rerun specifying the logic and changes, and the cluster name.
     opacity_max            caution         it uses a fixed maximum opacity of 0.5 (this is only a last option change to get more stability)
     TPAGBwind              default in v3+  it enables the MESA inlist commit, which changes the wind during the TPAGB phase
     thermohaline_mixing    default in v3+  it uses thermohaline mixing in the inlist
-    HeMB_MLTp_mesh         workaround      it turns off magnetic braking for He stars; it uses less extreme parameters of the MLT++; it changes some more input values to change the resulation close to the surface
+    HeMB_MLTp_mesh         caution         it turns off magnetic braking for He stars; it uses less extreme parameters of the MLT++ (this can cause significant changes in the radius evolution of stars); it changes some more input values to change the resulation close to the surface
     more_mesh              workaround      it modifies the remeshing and allows for more cells in MESA
     conv_bdy_weight        caution         it disabled the convective_bdy_weight where this caused segmentation faults (this avoids a bug in the old MESA version r11701)
     dedt_energy_eqn        caution         it enables MESA's dedt-form of the energy equation for numerical stability during rapid (superthermal) mass transfer
-    dedt_hepulse           caution         it enables MESA's dedt-form of the energy equation for rapid mass transfer. At stripped HeZAMS, several MLT++ changes, v_flag and lnPgas_flag set to .true., and convective_bdy_weight disabled to help with stripped He star superadiabatic envelopes, pulsations, and WD cooling. 
+    dedt_hepulse           caution         it enables MESA's dedt-form of the energy equation for rapid mass transfer; at stripped HeZAMS, several MLT++ changes, v_flag and lnPgas_flag set to .true., and convective_bdy_weight disabled to help with stripped He star superadiabatic envelopes, pulsations, and WD cooling
+    LBV_wind               default in v3+  it turns on LBV winds when crossing the Humphreys-Davidson limit as intended (due to a bug this was only applied after a retry); additionally, there are reruns `LBV_wind+thermohaline_mixing`, `LBV_wind+dedt_energy_eqn`, which combine the two rerun types
+    no_age_limit           default in v3+  it allows low mass stars to evolve beyond the age of the universe, which is needed for grids where we jump on past ZAMS; additionally, there are reruns `no_age_limit+thermohaline_mixing` and `no_age_limit+dedt_energy_eqn`, which combine the two rerun types
     =====================  ==============  ===========
 

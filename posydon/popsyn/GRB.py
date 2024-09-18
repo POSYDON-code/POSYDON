@@ -1,7 +1,7 @@
 __author__ = ['Simone Bavera <Simone.Bavera@unige.ch>']
 
-import warnings
 import numpy as np
+from posydon.utils.posydonwarning import Pwarn
 from posydon.utils.constants import Msun, clight
 
 GRB_PROPERTIES = ['GRB1', 'S1_eta', 'S1_f_beaming', 'S1_E_GRB', 'S1_E_GRB_iso', 'S1_L_GRB_iso',
@@ -17,8 +17,8 @@ def get_GRB_properties(df, GRB_efficiency, GRB_beaming, E_GRB_iso_min=0.):
     
     # reminder the user about the threshold cut
     if E_GRB_iso_min != 0.:
-        warnings.warn("We only consider GRBs with isotropic equivalent "
-                        f"energy larger than {E_GRB_iso_min} erg!")
+        Pwarn("We only consider GRBs with isotropic equivalent energy larger "
+              f"than {E_GRB_iso_min} erg!", "ApproximationWarning")
         
     # define some methods
     
