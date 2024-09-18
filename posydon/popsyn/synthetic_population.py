@@ -1483,8 +1483,8 @@ class Population(PopulationIO):
 
         Returns
         -------
-        TransientPopulation
-            A TransientPopulation object for interfacing with the transient population
+        TransientPopulation or None
+            A TransientPopulation object for interfacing with the transient population or None if no systems are present in the TransientPopulation.
 
         Raises
         ------
@@ -1581,7 +1581,7 @@ class Population(PopulationIO):
         # it can happen that no systems are selected, in which case nothing has been appended to the file in the loop
         with pd.HDFStore(self.filename, mode="r") as store:
             if '/transients/'+transient_name not in store.keys():
-                Pwarn("No systems selected for the transient population!", "NoSystemsSelectedWarning")
+                Pwarn("No systems selected for the transient population!", "POSYDONWarning")
                 return None
 
         synth_pop = TransientPopulation(
