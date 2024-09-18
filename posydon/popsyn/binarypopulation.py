@@ -531,7 +531,7 @@ class BinaryPopulation:
                     
                     simulated_mass_binaries += np.nansum(filtered_data_binaries[["S1_mass_i", "S2_mass_i"]].to_numpy())
                     simulated_mass_single += np.nansum(filtered_data_single[["S1_mass_i"]].to_numpy())
-                    simulated_mass += simulated_mass_single + simulated_mass_binaries
+                    simulated_mass = simulated_mass_single + simulated_mass_binaries
                        
                     if 'metallicity' not in oneline.columns:
                         met_df = pd.DataFrame(data={'metallicity': [self.metallicity] * len(oneline)}, index=oneline.index)
