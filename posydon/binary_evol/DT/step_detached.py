@@ -1506,15 +1506,17 @@ class detached_step:
                 print("ODE solver duration: "
                       f"{t_after_ODEsolution-t_before_ODEsolution:.6g}")
                 print("solution of ODE", s)
-            if s.status == -1:
-                print("Integration failed", s.message)
 
+            if s.status == -1:
+                if self.verbose:
+                    print("Integration failed", s.message)
+                    
                 if binary.state in ['detached']:
-                    binary.state += ' (Integration failure)'
+                    binary.state += ' (Integration failure)'                   
+                    return
                 else:
                     raise ValueError("need to add new binary state to flow chart for evolution to end correctly ",
-                                "when detached integration fails: ", binary.state, " (Integration failure)")
-                return
+                                "when detached integration fails: ", binary.state, " (Integration failure)")                
 
             if self.dt is not None and self.dt > 0:
                 t = np.arange(binary.time, s.t[-1] + self.dt/2.0, self.dt)[1:]
