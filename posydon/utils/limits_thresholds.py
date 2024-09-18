@@ -20,7 +20,7 @@ LG_MTRANSFER_RATE_THRESHOLD = -10      # mass-transfer rate threshold (in Lsol)
 # Numerical limit from the number of datapoints the automatically detected
 # boundary for initial RLO: the value should be ≳3 (geometrical arguments) and
 # <<1000 (well below grid size).
-MIN_COUNT_INITIAL_RLO_BOUNDARY = 5
+MIN_COUNT_INITIAL_RLO_BOUNDARY = 20
 
 
 # CONSTANTS RELATED TO INFERRING STAR STATES
