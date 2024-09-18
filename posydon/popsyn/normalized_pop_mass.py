@@ -46,8 +46,11 @@ def initial_total_underlying_mass(simulated_mass=None, simulated_mass_single=Non
             **kwargs)
         initial_ZAMS_mass_1 = initial_ZAMS_mass[2]
         initial_ZAMS_mass_2 = initial_ZAMS_mass[3]
-        initial_ZAMS_TOTAL_mass = (sum(initial_ZAMS_mass_1)
-                                   + sum(initial_ZAMS_mass_2))
+        n_binaries = int(f_bin * len(initial_ZAMS_mass_1))
+        initial_ZAMS_TOTAL_binaries = (sum(initial_ZAMS_mass_1[:n_binaries]) +  sum(initial_ZAMS_mass_2[:n_binaries]))
+        initial_ZAMS_TOTAL_single = sum(initial_ZAMS_mass_1[n_binaries:len(initial_ZAMS_mass_1)])
+        initial_ZAMS_TOTAL_mass = initial_ZAMS_TOTAL_binaries + initial_ZAMS_TOTAL_single
+
     else:
         initial_ZAMS_TOTAL_mass = simulated_mass
         initial_ZAMS_TOTAL_single= simulated_mass_single
