@@ -90,9 +90,26 @@ def point_the_grid(grids,x,label,**kwargs):
         if label ==  'failed_attempt_1':
             return check_boundaries(grids,'stripped_grid',**x)
 
-    if x['state'] == "WR_star":
+    if x['state'] == "WNE_star":
         if label is None or label == 'failed_attempt_1':
-            new_label,x = check_boundaries(grids,'WR_grid',**x)
+            new_label,x = check_boundaries(grids,'WNE_grid',**x)
+            if new_label == 'failed_grid':
+                new_label,x =  check_boundaries(grids,'stripped_grid',**x)
+                if new_label == 'failed_grid':
+                    if x['Teff'] > ostar_temp_cut_off:
+                        return check_boundaries(grids,'ostar_grid',**x)
+                    elif x['Teff'] > bstar_temp_cut_off:
+                        return check_boundaries(grids,'bstar_grid',**x)
+                    else:
+                        return new_label,x
+                else:
+                    return new_label,x
+            else:
+                return new_label,x
+    
+    if x['state'] == "WNL_star":
+        if label is None or label == 'failed_attempt_1':
+            new_label,x = check_boundaries(grids,'WNL_grid',**x)
             if new_label == 'failed_grid':
                 new_label,x =  check_boundaries(grids,'stripped_grid',**x)
                 if new_label == 'failed_grid':
@@ -171,7 +188,7 @@ def generate_spectrum(grids,star,i,**kwargs):
          'state':state,
          'surface_h1' : surface_h1,
          '[alpha/Fe]':0.0}
-    if state == 'WR_star':
+    if state in ['WR_star','WNE_star','WNL_star']:
         x['R_t'] = star[f'{i}_Rt']
     label = None
     label,x = point_the_grid(grids,x,label,**kwargs)
@@ -260,8 +277,12 @@ def rename_star_state(star,i):
     if lg_M_dot < -6:
         star[f'{i}_state'] = 'stripped_He_star'
     else:
-        star[f'{i}_state'] = 'WR_star'
         star[f'{i}_Rt'] = calculated_Rt(star,i)
+        if xH_surf < 0.1: 
+            star[f'{i}_state'] = 'WNE_star'
+        else:
+            star[f'{i}_state'] = 'WNL_star' 
+        
 
 def calculated_Rt(star,i):
     M_dot = 10**copy(star[f'{i}_lg_mdot'])

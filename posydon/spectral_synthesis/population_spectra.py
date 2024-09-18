@@ -44,7 +44,9 @@ spectral_types = [
     'secondary_grid',
     'stripped_grid',
     'WR_grid',
-    'ostar_grid']
+    'ostar_grid',
+    'WNL_grid',
+    'WNE_grid' ]
 
 class population_spectra():
     """Creates and saves the output flux of a POSYDON population"""
