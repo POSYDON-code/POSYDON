@@ -1062,6 +1062,7 @@ class Population(PopulationIO):
                 df=self.mass_per_metallicity['simulated_mass'].iloc[i],
                 df1=self.mass_per_metallicity['simulated_mass_single'].iloc[i],
                 df2=self.mass_per_metallicity['simulated_mass_binaries'].iloc[i],
+                f_bin=f_bin, 
                 **self.ini_params)[0]
         
         self.mass_per_metallicity['underlying_mass'] = underlying_mass
