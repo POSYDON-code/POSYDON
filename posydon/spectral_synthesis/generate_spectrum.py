@@ -200,7 +200,7 @@ def generate_spectrum(grids,star,i,**kwargs):
             try:
                 if label == "stripped_grid":
                     Flux = grids.grid_flux(label,**x)*4*np.pi*1e4/Lo
-                elif label in ['WR_star','WNE_star','WNL_star']:
+                elif label in ['WR_grid','WNE_grid','WNL_grid']:
                     Flux = grids.grid_flux(label,**x)*4*np.pi*1e4/Lo *(L/10**5.3)
                     #Replace the negative values for WR
                     Flux.value[Flux.value < 0] = 1e-50
