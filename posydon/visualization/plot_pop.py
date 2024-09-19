@@ -233,7 +233,7 @@ def plot_popsyn_over_grid_slice(pop, grid_type, met_Zsun, slices=None, channel=N
 
 
     if channel is not None:
-        channel_sel = 'channel == '+str(channel)
+        channel_sel = 'channel == "'+str(channel)+'"'
     else:
         channel_sel = ''
 
