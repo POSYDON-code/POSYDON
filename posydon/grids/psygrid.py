@@ -2241,8 +2241,6 @@ def join_grids(input_paths, output_path,
     if (newconfig["initial_RLO_fix"]):
         say("Determine initial RLO boundary from all grids")
         detected_initial_RLO = []
-        colnames = ["termination_flag_1", "termination_flag_2", "interpolation_class"]
-        valtoset = ["forced_initial_RLO", "forced_initial_RLO", "initial_MT"]
         for grid in grids:
             new_detected_initial_RLO = get_detected_initial_RLO(grid)
             for new_sys in new_detected_initial_RLO:
@@ -2296,15 +2294,30 @@ def join_grids(input_paths, output_path,
             new_final_values.append(grid.final_values[run_index])
 
             if (newconfig["initial_RLO_fix"]):
+                colnames = ["termination_flag_1", "termination_flag_2",
+                            "interpolation_class"]
+                valtoset = ["forced_initial_RLO", "forced_initial_RLO",
+                            "initial_MT"]
+                valtounset = ["reach cluster timelimit", "None",
+                              "not_converged"]
                 flag1 = new_final_values[-1]["termination_flag_1"]
-                if (flag1 != "Terminate because of overflowing initial model"
-                        and flag1 != "forced_initial_RLO"):
+                if flag1 != "Terminate because of overflowing initial model":
                     mass1 = new_initial_values[-1]["star_1_mass"]
                     mass2 = new_initial_values[-1]["star_2_mass"]
                     period = new_initial_values[-1]["period_days"]
                     nearest = get_nearest_known_initial_RLO(mass1, mass2,
                                                         detected_initial_RLO)
-                    if period < nearest["period_days"]:
+                    if ((flag1 == "forced_initial_RLO") and
+                        (period >= nearest["period_days"])):
+                        # unset values of previously forced initial RLO
+                        for colname, value in zip(colnames, valtounset):
+                            new_final_values[-1][colname] = value
+                        for colname in ["termination_flag_3",
+                                        "termination_flag_4"]:
+                            new_final_values[-1][colname]=\
+                                            "undetermined_evolutionary_state"
+                    elif ((flag1 != "forced_initial_RLO") and
+                          (period < nearest["period_days"])):
                         # set values
                         for colname, value in zip(colnames, valtoset):
                             new_final_values[-1][colname] = value
