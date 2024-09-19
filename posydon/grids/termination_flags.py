@@ -324,6 +324,23 @@ def get_detected_initial_RLO(grid):
 
 
 def get_nearest_known_initial_RLO(mass1, mass2, known_initial_RLO):
+    """Find the nearest system of initial RLO in the known ones
+    
+    Parameters
+    ----------
+    mass1 : float
+        star_1_mass of the run to check.
+    mass2 : float
+        star_2_mass of the run to check.
+    known_initial_RLO : list of dict
+        Boundary to apply.
+    
+    Retruns
+    -------
+    dict
+        Containing the key parameters (e.g. initial masses, period) of the
+        nearest initial RLO run.
+    """
     #default values
     d2min = 1.0e+99
     nearest = {"star_1_mass": 0.0,
