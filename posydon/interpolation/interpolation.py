@@ -603,6 +603,9 @@ class GRIDInterpolator():
                 kvalue_low = self.grid_final_values[mass_low][key]
 
             while (kvalue_low is None or np.isnan(kvalue_low)):
+                # escape if no lower mass is available
+                if np.sum(mass_low > self.grid_mass) == 0:
+                    break
                 mass_low = np.max(self.grid_mass[mass_low > self.grid_mass])
                 try:
                     kvalue_low = self.grid_final_values[mass_low][key]
@@ -617,6 +620,9 @@ class GRIDInterpolator():
                 kvalue_high = self.grid_final_values[mass_high][key]
 
             while (kvalue_high is None or np.isnan(kvalue_high)):
+                # escape if no higher mass is available
+                if np.sum(mass_high < self.grid_mass) == 0:
+                    break
                 mass_high = np.min(self.grid_mass[mass_high < self.grid_mass])
                 try:
                     kvalue_high = self.grid_final_values[mass_high][key]
