@@ -592,6 +592,7 @@ class History(DFInterface):
         ----------
         where : str, optional
             A string representing the query condition to apply to the data.
+            It is only possible to query on the index or string columns. 
         start : int, optional
             The starting index of the data to select.
         stop : int, optional
@@ -810,7 +811,8 @@ class Oneline(DFInterface):
         Parameters
         ----------
         where : str, optional
-            A condition to filter the rows of the oneline table. Default is None.
+            A condition to filter the rows of the oneline table. Default is None. 
+            It is only possible to query on the index or string columns. 
         start : int, optional
             The starting index of the subset. Default is None.
         stop : int, optional
@@ -826,7 +828,7 @@ class Oneline(DFInterface):
         Examples
         --------
         # Select rows based on a condition
-        >>> df = Oneline.select(where="S2_mass_i > 30")
+        >>> df = Oneline.select(where="event == 'ZAMS'")
 
         # Select rows from index 10 to 20
         >>> df = Oneline.select(start=10, stop=20)
@@ -1834,13 +1836,14 @@ class TransientPopulation(Population):
         """
         Select a subset of the transient population.
 
-        This method allows you to filter and extract a subset of rows from the oneline table stored in an HDF file.
+        This method allows you to filter and extract a subset of rows from the transient table stored in an HDF file.
         You can specify conditions to filter the rows, define the range of rows to select, and choose specific columns to include in the subset.
 
         Parameters
         ----------
         where : str, optional
-            A condition to filter the rows of the oneline table. Default is None.
+            A condition to filter the rows of the transient table. Default is None.
+            It is only possible to search on the index or string columns.
         start : int, optional
             The starting index of the subset. Default is None.
         stop : int, optional
@@ -1851,12 +1854,12 @@ class TransientPopulation(Population):
         Returns
         -------
         pd.DataFrame
-            The selected subset of the oneline table.
+            The selected subset of the transient table.
 
         Examples
         --------
         # Select rows based on a condition
-        >>> df = transpop.select(where="S2_mass_i > 30")
+        >>> df = transpop.select(where="S1_state == 'BH'")
 
         # Select rows from index 10 to 20
         >>> df = transpop.select(start=10, stop=20)
