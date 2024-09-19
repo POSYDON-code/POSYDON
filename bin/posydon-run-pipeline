@@ -702,7 +702,7 @@ def copy_ini_file(grid_type, rerun_metallicity, rerun_type, destination,
     elif rerun_type == 'LBV_wind+dedt_energy_eqn':
         replace_text = "seth_lbv_thermo_dedt-936f76f82d44b16139ff89e41e5b0f2232fd9b30"
     elif rerun_type == 'LBV_wind+dedt_hepulse':
-        replace_text = "seth_lbv_thermo_dedt_hepulse-ecf850adea194249a4d31426dab857cee07694ce"
+        replace_text = "seth_lbv_thermo_dedt_hepulse-3c7a9134c3d23b0b0376cdcb5bfee736dd7a32a0"
     elif rerun_type == 'no_age_limit':
         replace_text = "matthias_no_age_limit-a119ea9548cca9b6b7ddfe31309ced1ae40c271e"
     elif rerun_type == 'no_age_limit+thermohaline_mixing':
