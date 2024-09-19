@@ -1689,9 +1689,17 @@ class detached_step:
                                     const.msol * const.rsol ** 2)
                             
                     elif (key in ["log_total_angular_momentum"] and obj == secondary):
+
+                        current_omega = interp1d_sec["omega"][-1]
+
+                        ## add a warning catch if the current omega has an invalid value
+                        ## (otherwise python will throw an insuppressible warning when taking the log)
+                        if interp1d_sec["omega"][-1] <=0:
+                            Pwarn("Trying to compute log angular momentum for object with no spin", "InappropriateValueWarning")
+                            current_omega = np.nan
                                                
                         current = np.log10(
-                            (interp1d_sec["omega"][-1] / const.secyer)
+                            (current_omega / const.secyer)
                                 * (interp1d_sec[
                                     self.translate["total_moment_of_inertia"]](t[-1] - t_offset_sec).item() * 
                                     (const.msol * const.rsol ** 2)))                     
