@@ -2241,6 +2241,10 @@ def join_grids(input_paths, output_path,
     if (newconfig["initial_RLO_fix"]):
         say("Determine initial RLO boundary from all grids")
         detected_initial_RLO = []
+        colnames = ["termination_flag_1", "termination_flag_2",
+                    "interpolation_class"]
+        valtoset = ["forced_initial_RLO", "forced_initial_RLO", "initial_MT"]
+        valtounset = ["reach cluster timelimit", "None", "not_converged"]
         for grid in grids:
             new_detected_initial_RLO = get_detected_initial_RLO(grid)
             for new_sys in new_detected_initial_RLO:
@@ -2294,12 +2298,6 @@ def join_grids(input_paths, output_path,
             new_final_values.append(grid.final_values[run_index])
 
             if (newconfig["initial_RLO_fix"]):
-                colnames = ["termination_flag_1", "termination_flag_2",
-                            "interpolation_class"]
-                valtoset = ["forced_initial_RLO", "forced_initial_RLO",
-                            "initial_MT"]
-                valtounset = ["reach cluster timelimit", "None",
-                              "not_converged"]
                 flag1 = new_final_values[-1]["termination_flag_1"]
                 if flag1 != "Terminate because of overflowing initial model":
                     mass1 = new_initial_values[-1]["star_1_mass"]
