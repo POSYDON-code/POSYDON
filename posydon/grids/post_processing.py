@@ -14,7 +14,7 @@ from posydon.visualization.plot_defaults import DEFAULT_MARKERS_COLORS_LEGENDS
 import numpy as np
 from tqdm import tqdm
 import copy
-import warnings
+from posydon.utils.posydonwarning import (Pwarn, Catch_POSYDON_Warnings)
 
 
 __authors__ = [
@@ -61,8 +61,8 @@ def print_CC_quantities(EXTRA_COLUMNS, star, MODEL_NAME=None):
                 'PRE SN STAR', star.state, '',
                 '', star.mass, star.spin, '', '', '', '', '', ''))
         except Exception as e:
-            warnings.warn('Failed to print star values!')
-            print('Warning in preSN: ', e)
+            Pwarn("Failed to print star values!\nWarning in preSN: "+\
+                  "{}".format(e), "InappropriateValueWarning")
         print('')
     else:
         try:
@@ -78,11 +78,11 @@ def print_CC_quantities(EXTRA_COLUMNS, star, MODEL_NAME=None):
                     star.m_disk_radiated, checked_quantities_for_None["M4"], checked_quantities_for_None["mu4"],
                     checked_quantities_for_None["h1_mass_ej"], checked_quantities_for_None["he4_mass_ej"]))
         except Exception as e:
-            warnings.warn('Failed to print star values!')
-            print('Warning in', MODEL_NAME, ': ', e)
-
-
-
+            Pwarn("Failed to print star values!\nWarning in "+\
+                  "{}: {}".format(MODEL_NAME, e), "InappropriateValueWarning")
+        
+    
+                    
 def post_process_grid(grid, index=None, star_2_CO=True, MODELS=MODELS,
                       single_star=False, verbose=False):
     """Compute post processed quantity of any grid.
@@ -189,30 +189,22 @@ def post_process_grid(grid, index=None, star_2_CO=True, MODELS=MODELS,
                 EXTRA_COLUMNS['S%s_state' % (j+1)].append(check_state_of_star(
                     star, star_CO=False))
                 # core masses at he depletion
-                with warnings.catch_warnings(record=True) as w:
+                with Catch_POSYDON_Warnings(record=True) as cpw:
                     if ((star.avg_c_in_c_core_at_He_depletion is None) or
                         (star.co_core_mass_at_He_depletion is None)):
                         calculate_Patton20_values_at_He_depl(star)
-                    if len(w) > 0:
-                        print(w[0].message)
-                        print(f'The warning was raised by {grid.MESA_dirs[i]} '
-                               f'in calculate_Patton20_values_at_He_depl(star_{j+1}).')
                 EXTRA_COLUMNS[f'S{j+1}_avg_c_in_c_core_at_He_depletion'].append(
                                                 star.avg_c_in_c_core_at_He_depletion)
                 EXTRA_COLUMNS[f'S{j+1}_co_core_mass_at_He_depletion'].append(
                                                     star.co_core_mass_at_He_depletion)
                 # CE quantities
-                with warnings.catch_warnings(record=True) as w:
+                with Catch_POSYDON_Warnings(record=True) as cpw:
                     try:
                         CEE_parameters_from_core_abundance_thresholds(star)
                     except Exception as ex:
                         print(ex)
                         print(f'The exception was raised by {grid.MESA_dirs[i]} '
-                               f'in CEE_parameters_from_core_abundance_thresholds(star_{j+1}).')
-                    if len(w) > 0:
-                        print(w[0].message)
-                        print(f'The warning was raised by {grid.MESA_dirs[i]} '
-                               f'in CEE_parameters_from_core_abundance_thresholds(star_{j+1}).')
+                              f'in CEE_parameters_from_core_abundance_thresholds(star_{j+1}).')
                 for quantity in ['lambda_CE', 'm_core_CE', 'r_core_CE']:
                     for val in [1, 10, 30, 'pure_He_star_10']:
                         EXTRA_COLUMNS[f'S{j+1}_{quantity}_{val}cent'].append(
@@ -280,21 +272,19 @@ def post_process_grid(grid, index=None, star_2_CO=True, MODELS=MODELS,
                     else:
                         assign_core_collapse_quantities_none(EXTRA_COLUMNS, 1)
                         assign_core_collapse_quantities_none(EXTRA_COLUMNS, 2)
-                        warnings.warn(f'{grid.MESA_dirs[i]} ended with '
-                                    'TF1=gamma_center_limit however '
-                                    'the star has center_gamma < 10. '
-                                    'This star cannot go through step_SN '
-                                    'appending NONE compact object '
-                                    'properties!')
+                        Pwarn(f'{grid.MESA_dirs[i]} ended with '
+                              'TF1=gamma_center_limit however the star has '
+                              'center_gamma < 10. This star cannot go through '
+                              'step_SN appending NONE compact object '
+                              'properties!', "InappropriateValueWarning")
                         continue
                 else:
                     assign_core_collapse_quantities_none(EXTRA_COLUMNS, 1)
                     assign_core_collapse_quantities_none(EXTRA_COLUMNS, 2)
-                    warnings.warn(f'{grid.MESA_dirs[i]} ended with '
-                                f'TF={TF1} and IC={interpolation_class}. '
-                                'This star cannot go through step_SN '
-                                'appending NONE compact object '
-                                'properties!')
+                    Pwarn(f'{grid.MESA_dirs[i]} ended with TF={TF1} and '
+                          f'IC={interpolation_class}. This star cannot go '
+                          'through step_SN appending NONE compact object '
+                          'properties!', "InappropriateValueWarning")
                     continue
 
                 if star.state in STAR_STATES_CC:
@@ -312,16 +302,16 @@ def post_process_grid(grid, index=None, star_2_CO=True, MODELS=MODELS,
                                 if quantity in ['state', 'SN_type']:
                                     if not isinstance(getattr(star_copy, quantity), str):
                                         flush = True
-                                        warnings.warn(f'{MODEL_NAME} {mechanism} {quantity} is not a string!')
+                                        Pwarn(f'{MODEL_NAME} {mechanism} {quantity} is not a string!', "InappropriateValueWarning")
                                 elif quantity != 'CO_interpolation_class':
                                     if quantity in ['spin', 'M4', 'mu4', "h1_mass_ej", "he4_mass_ej"]:
                                         if ((not isinstance(getattr(star_copy, quantity), float))
                                             and (getattr(star_copy, quantity) != None)):
                                             flush = True
-                                            warnings.warn(f'{MODEL_NAME} {mechanism} {quantity} is not a float nor None!')
+                                            Pwarn(f'{MODEL_NAME} {mechanism} {quantity} is not a float nor None!', "InappropriateValueWarning")
                                     elif not isinstance(getattr(star_copy, quantity), float):
                                         flush = True
-                                        warnings.warn(f'{MODEL_NAME} {mechanism} {quantity} is not a float!')
+                                        Pwarn(f'{MODEL_NAME} {mechanism} {quantity} is not a float!', "InappropriateValueWarning")
                         except Exception as e:
                             flush = True
                             if verbose:
@@ -373,16 +363,16 @@ def post_process_grid(grid, index=None, star_2_CO=True, MODELS=MODELS,
                             if quantity in ['state', 'SN_type']:
                                 if not isinstance(getattr(star_copy, quantity), str):
                                     flush = True
-                                    warnings.warn(f'{MODEL_NAME} {mechanism} {quantity} is not a string!')
+                                    Pwarn(f'{MODEL_NAME} {mechanism} {quantity} is not a string!', "InappropriateValueWarning")
                             elif quantity != 'CO_interpolation_class':
                                 if quantity in ['spin', 'M4', 'mu4', "h1_mass_ej", "he4_mass_ej"]:
                                     if ((not isinstance(getattr(star_copy, quantity), float))
                                         and (getattr(star_copy, quantity) != None)):
                                         flush = True
-                                        warnings.warn(f'{MODEL_NAME} {mechanism} {quantity} is not a float nor None!')
+                                        Pwarn(f'{MODEL_NAME} {mechanism} {quantity} is not a float nor None!', "InappropriateValueWarning")
                                 elif not isinstance(getattr(star_copy, quantity), float):
                                     flush = True
-                                    warnings.warn(f'{MODEL_NAME} {mechanism} {quantity} is not a float!')
+                                    Pwarn(f'{MODEL_NAME} {mechanism} {quantity} is not a float!', "InappropriateValueWarning")
                     except Exception as e:
                         flush = True
                         if verbose:

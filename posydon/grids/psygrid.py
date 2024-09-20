@@ -183,7 +183,6 @@ import os
 import glob
 import json
 import ast
-import warnings
 import h5py
 import numpy as np
 import pandas as pd
@@ -213,6 +212,7 @@ from posydon.visualization.plot1D import plot1D
 from posydon.grids.downsampling import TrackDownsampler
 from posydon.grids.scrubbing import scrub, keep_after_RLO, keep_till_central_abundance_He_C
 from posydon.utils.ignorereason import IgnoreReason
+from posydon.utils.posydonwarning import (Pwarn, Catch_POSYDON_Warnings)
 
 
 HDF5_MEMBER_SIZE = 2**31 - 1            # maximum HDF5 file size when splitting
@@ -510,22 +510,15 @@ class PSyGrid:
                 self._create_psygrid(MESA_grid_path,
                                      hdf5=hdf5, slim=slim, fmt=fmt)
             else:
-                collected_warnings = []
-                with warnings.catch_warnings(record=True) as caught_warnings:
+                with Catch_POSYDON_Warnings(record=True) as caught_warnings:
                     self._create_psygrid(MESA_grid_path,
                                          hdf5=hdf5, slim=slim, fmt=fmt)
-                    collected_warnings = caught_warnings
-
-                if warn == "end":
-                    for warning_message in collected_warnings:
-                        warnings.showwarning(warning_message.message,
-                                             warning_message.category,
-                                             warning_message.filename,
-                                             warning_message.lineno,
-                                             line="")
-                else:
-                    # for consistency
-                    assert warn == "suppress"
+                    if warn == "suppress":
+                        caught_warnings.reset_cache()
+                    else:
+                        # for consistency
+                        assert warn == "end"
+                    
 
         self.load()
 
@@ -553,7 +546,8 @@ class PSyGrid:
 
         if eep is not None:
             if binary_grid:
-                warnings.warn("Selected EEPs, switching to single-star grid.")
+                Pwarn("Selected EEPs, switching to single-star grid.",
+                      "ReplaceValueWarning")
                 self.config["binary"] = True
                 binary_grid = True
             self._discover_eeps(eep)
@@ -668,8 +662,8 @@ class PSyGrid:
             # if no binary history, ignore this run
             if binary_grid and binary_history is None:
                 ignore.reason = "ignored_no_binary_history"
-                warnings.warn("Ignored MESA run because of missing binary "
-                              "history in: {}\n".format(run.path))
+                Pwarn("Ignored MESA run because of missing binary history in:"
+                      " {}\n".format(run.path), "MissingFilesWarning")
                 if not initial_RLO_fix:
                     continue
 
@@ -681,16 +675,16 @@ class PSyGrid:
                 try:
                     eep_path = self.eeps[os.path.basename(run.path)]
                 except KeyError:
-                    warnings.warn("No matching EEP file for `" + run.path
-                                  + "`. Ignoring run.")
+                    Pwarn("No matching EEP file for `" + run.path +\
+                          "`. Ignoring run.", "MissingFilesWarning")
                     continue
                 history1 = read_EEP_data_file(eep_path, H1_columns)
             if self.config["He_core_fix"]:
                 history1 = fix_He_core(history1)
 
             if not binary_grid and history1 is None:
-                warnings.warn("Ignored MESA run because of missing "
-                              "history in: {}\n".format(run.path))
+                Pwarn("Ignored MESA run because of missing history in:"
+                      " {}\n".format(run.path), "MissingFilesWarning")
                 ignore.reason = "ignored_no_history1"
                 continue
 
@@ -737,11 +731,13 @@ class PSyGrid:
                         len_diff = len(history1)-len(history1_mod)
                         if len_diff<0: #shorten history1_mod
                             history1_mod = history1_mod[:len_diff]
-                            warnings.warn("Reduce mod in {}\n".format(run.history1_path))
+                            Pwarn("Reduce mod in {}\n".format(run.history1_path),
+                                  "ReplaceValueWarning")
                         elif len_diff>0: #entend history1_mod
                             add_mod = np.full(len_diff,history1_mod[-1])
                             history1_mod = np.concatenate((history1_mod, add_mod))
-                            warnings.warn("Expand mod in {}\n".format(run.history1_path))
+                            Pwarn("Expand mod in {}\n".format(run.history1_path),
+                                  "ReplaceValueWarning")
                     else:
                         ignore.reason = "corrupted_history1"
                     if "star_age" in H1_columns:
@@ -755,11 +751,13 @@ class PSyGrid:
                         len_diff = len(history1)-len(history1_age)
                         if len_diff<0: #shorten history1_age
                             history1_age = history1_age[:len_diff]
-                            warnings.warn("Reduce age in {}\n".format(run.history1_path))
+                            Pwarn("Reduce age in {}\n".format(run.history1_path),
+                                  "ReplaceValueWarning")
                         elif len_diff>0: #entend history1_age
                             add_age = np.full(len_diff,history1_age[-1])
                             history1_age = np.concatenate((history1_age, add_age))
-                            warnings.warn("Expand age in {}\n".format(run.history1_path))
+                            Pwarn("Expand age in {}\n".format(run.history1_path),
+                                  "ReplaceValueWarning")
                     else:
                         ignore.reason = "corrupted_history1"
                 else:
@@ -778,11 +776,13 @@ class PSyGrid:
                         len_diff = len(history2)-len(history2_mod)
                         if len_diff<0: #shorten history2_mod
                             history2_mod = history2_mod[:len_diff]
-                            warnings.warn("Reduce mod in {}\n".format(run.history2_path))
+                            Pwarn("Reduce mod in {}\n".format(run.history2_path),
+                                  "ReplaceValueWarning")
                         elif len_diff>0: #entend history2_mod
                             add_mod = np.full(len_diff,history2_mod[-1])
                             history2_mod = np.concatenate((history2_mod, add_mod))
-                            warnings.warn("Expand mod in {}\n".format(run.history2_path))
+                            Pwarn("Expand mod in {}\n".format(run.history2_path),
+                                  "ReplaceValueWarning")
                     else:
                         ignore.reason = "corrupted_history2"
                     if "star_age" in H2_columns:
@@ -796,11 +796,13 @@ class PSyGrid:
                         len_diff = len(history2)-len(history2_age)
                         if len_diff<0: #shorten history2_age
                             history2_age = history2_age[:len_diff]
-                            warnings.warn("Reduce age in {}\n".format(run.history2_path))
+                            Pwarn("Reduce age in {}\n".format(run.history2_path),
+                                  "ReplaceValueWarning")
                         elif len_diff>0: #entend history2_age
                             add_age = np.full(len_diff,history2_age[-1])
                             history2_age = np.concatenate((history2_age, add_age))
-                            warnings.warn("Expand age in {}\n".format(run.history2_path))
+                            Pwarn("Expand age in {}\n".format(run.history2_path),
+                                  "ReplaceValueWarning")
                     else:
                         ignore.reason = "corrupted_history2"
                 else:
@@ -819,11 +821,13 @@ class PSyGrid:
                         len_diff = len(binary_history)-len(binary_history_mod)
                         if len_diff<0: #shorten binary_history_mod
                             binary_history_mod = binary_history_mod[:len_diff]
-                            warnings.warn("Reduce mod in {}\n".format(run.binary_history_path))
+                            Pwarn("Reduce mod in {}\n".format(run.binary_history_path),
+                                  "ReplaceValueWarning")
                         elif len_diff>0: #entend binary_history_mod
                             add_mod = np.full(len_diff,binary_history_mod[-1])
                             binary_history_mod = np.concatenate((binary_history_mod, add_mod))
-                            warnings.warn("Expand mod in {}\n".format(run.binary_history_path))
+                            Pwarn("Expand mod in {}\n".format(run.binary_history_path),
+                                  "ReplaceValueWarning")
                     else:
                         ignore.reason = "corrupted_binary_history"
                     if "age" in BH_columns:
@@ -837,11 +841,13 @@ class PSyGrid:
                         len_diff = len(binary_history)-len(binary_history_age)
                         if len_diff<0: #shorten binary_history_age
                             binary_history_age = binary_history_age[:len_diff]
-                            warnings.warn("Reduce age in {}\n".format(run.binary_history_path))
+                            Pwarn("Reduce age in {}\n".format(run.binary_history_path),
+                                  "ReplaceValueWarning")
                         elif len_diff>0: #entend binary_history_age
                             add_age = np.full(len_diff,binary_history_age[-1])
                             binary_history_age = np.concatenate((binary_history_age, add_age))
-                            warnings.warn("Expand age in {}\n".format(run.binary_history_path))
+                            Pwarn("Expand age in {}\n".format(run.binary_history_path),
+                                  "ReplaceValueWarning")
                     else:
                         ignore.reason = "corrupted_binary_history"
                 else:
@@ -870,8 +876,9 @@ class PSyGrid:
                     binary_history_len = 0
                 if binary_grid and binary_history_len == 0:
                     ignore.reason = "ignored_scrubbed_history"
-                    warnings.warn("Ignored MESA run because of scrubbed binary"
-                                  " history in: {}\n".format(run.path))
+                    Pwarn("Ignored MESA run because of scrubbed binary"
+                          " history in: {}\n".format(run.path),
+                          "InappropriateValueWarning")
                     if not initial_RLO_fix:
                         continue
                 if history1 is not None:
@@ -880,8 +887,9 @@ class PSyGrid:
                     history1_len = 0
                 if not binary_grid and history1_len == 0:
                     ignore.reason = "ignored_scrubbed_history"
-                    warnings.warn("Ignored MESA run because of scrubbed"
-                                  " history in: {}\n".format(run.path))
+                    Pwarn("Ignored MESA run because of scrubbed"
+                          " history in: {}\n".format(run.path),
+                          "InappropriateValueWarning")
                     continue
 
                 try: #get mass from binary history
@@ -923,11 +931,12 @@ class PSyGrid:
                     run.final_profile2_path, P2_columns)
                 if not binary_grid and final_profile1 is None:
                     if self.config["accept_missing_profile"]:
-                        warnings.warn("Including MESA run despite the missing "
-                                      "profile in {}\n".format(run.path))
+                        Pwarn("Including MESA run despite the missing profile"
+                              " in: {}\n".format(run.path),
+                              "MissingFilesWarning")
                     else:
-                        warnings.warn("Ignored MESA run because of missing "
-                                      "profile in: {}\n".format(run.path))
+                        Pwarn("Ignored MESA run because of missing profile in:"
+                              " {}\n".format(run.path), "MissingFilesWarning")
                         ignore.reason = "ignored_no_final_profile"
                         continue
 
@@ -1181,9 +1190,10 @@ class PSyGrid:
             # check that new MESA path is added at run_index
             lenMESA_dirs = len(self.MESA_dirs)
             if lenMESA_dirs!=run_index:
-                warnings.warn("Non synchronous indexing: " +
-                          "run_index={} != ".format(run_index) +
-                          "length(MESA_dirs)={}".format(lenMESA_dirs))
+                Pwarn("Non synchronous indexing: " +\
+                      "run_index={} != ".format(run_index) +\
+                      "length(MESA_dirs)={}".format(lenMESA_dirs),
+                      "InappropriateValueWarning")
 
         #general fix for termination_flag in case of initial RLO in binaries
         if binary_grid and initial_RLO_fix:
@@ -1202,17 +1212,20 @@ class PSyGrid:
                         mass1 = grid_point["star_1_mass"]
                     else:
                         mass1 = self.initial_values[i]["star_1_mass"]
-                        warnings.warn("No star_1_mass in "+grid.runs[i].path)
+                        Pwarn("No star_1_mass in "+grid.runs[i].path,
+                              "ReplaceValueWarning")
                     if "star_2_mass" in grid_point:
                         mass2 = grid_point["star_2_mass"]
                     else:
                         mass2 = self.initial_values[i]["star_2_mass"]
-                        warnings.warn("No star_2_mass in "+grid.runs[i].path)
+                        Pwarn("No star_2_mass in "+grid.runs[i].path,
+                              "ReplaceValueWarning")
                     if "period_days" in grid_point:
                         period = grid_point["period_days"]
                     else:
                         period = self.initial_values[i]["period_days"]
-                        warnings.warn("No period_days in "+grid.runs[i].path)
+                        Pwarn("No period_days in "+grid.runs[i].path,
+                              "ReplaceValueWarning")
                     nearest = get_nearest_known_initial_RLO(mass1, mass2,
                                                         detected_initial_RLO)
                     if period<nearest["period_days"]:
@@ -1240,9 +1253,10 @@ class PSyGrid:
                             #check that new MESA path is added at run_index
                             lenMESA_dirs = len(self.MESA_dirs)
                             if lenMESA_dirs!=run_index:
-                                warnings.warn("Non synchronous indexing: " +
-                                  "run_index={} != ".format(run_index) +
-                                  "length(MESA_dirs)={}".format(lenMESA_dirs))
+                                Pwarn("Non synchronous indexing: " +\
+                                      "run_index={} != ".format(run_index) +\
+                                  "length(MESA_dirs)={}".format(lenMESA_dirs),
+                                      "InappropriateValueWarning")
 
 
         self._say("Storing initial/final values and metadata to HDF5...")
@@ -1257,8 +1271,9 @@ class PSyGrid:
             if run_included_at[i]>=0:
                 #check for index range
                 if run_included_at[i]>=run_index:
-                    warnings.warn("run {} has a run_index out of ".format(i) +
-                        "range: {}>={}".format(run_included_at[i], run_index))
+                    Pwarn("run {} has a run_index out of ".format(i) +
+                        "range: {}>={}".format(run_included_at[i], run_index),
+                           "InappropriateValueWarning")
                     continue
                 #copy initial values or fill with nan if not existing in original
                 for colname in dtype_initial_values.names:
