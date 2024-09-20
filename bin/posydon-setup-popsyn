@@ -1,0 +1,168 @@
+#!/usr/bin/env python
+# script to setup a population run with one or multiple metallicities
+# 1. Reads the args input file
+# 2. Determine the number of metallicities
+# 3. Create a submit file for each metallicity
+# 4. Create script to merge job array runs into a single population file 
+# 5. Create a file to submit all the metallicities
+# 6. Including the dependencies
+# Author: Max Briel
+import os
+import argparse
+from posydon.popsyn.io import (binarypop_kwargs_from_ini, 
+                               create_run_script_text,
+                               create_merge_script_text)
+from posydon.config import PATH_TO_POSYDON, PATH_TO_POSYDON_DATA
+from posydon.popsyn.binarypopulation import BinaryPopulation
+from posydon.popsyn.io import binarypop_kwargs_from_ini
+from posydon.utils.common_functions import convert_metallicity_to_string
+from posydon.utils.posydonwarning import Pwarn
+
+
+def create_run_script(ini_file):
+    '''creates a run script for the population synthesis run'''
+   
+    filename =f'run_metallicity.py'
+    if os.path.exists(filename):
+        Pwarn('Replace '+filename, "OverwriteWarning")
+    with open(filename, mode='w') as file:
+        file.write(create_run_script_text(ini_file))
+
+def create_merge_script(ini_file):
+    '''creates a merge script for the population synthesis run'''
+    
+    filename='merge_metallicity.py'
+    if os.path.exists(filename):
+        Pwarn('Replace '+filename, "OverwriteWarning")
+    with open(filename, mode='w') as file:
+        file.write(create_merge_script_text(ini_file))
+
+def create_slurm_submit(metallicity, job_array_length, partition, email, walltime, account, mem_per_cpu, path_to_posydon, path_to_posydon_data):
+    '''creates the slurm submit script'''
+
+    str_met = convert_metallicity_to_string(metallicity)
+    # 0 already included in job_array_length
+    job_array_length = job_array_length-1
+
+    text = f'''#!/bin/bash
+#SBATCH --array=0-{job_array_length}
+#SBATCH --job-name={str_met}_popsyn
+#SBATCH --output=./{str_met}_logs/popsyn_%A_%a.out
+#SBATCH --time={walltime}
+#SBATCH --mem-per-cpu={mem_per_cpu}
+'''
+    if account != None:
+        text += f'#SBATCH --account={account}\n'
+    if partition!=None:
+        text += f'#SBATCH --partition={partition}\n'
+        
+    if email != None:
+        text = text + \
+        f'''#SBATCH --mail-type=FAIL
+#SBATCH --mail-user={email}
+'''
+
+    text = text + \
+    f'''export PATH_TO_POSYDON={path_to_posydon}
+export PATH_TO_POSYDON_DATA={path_to_posydon_data}
+srun python ./run_metallicity.py {metallicity}
+'''
+    filename = f"{str_met}_Zsun_slurm_array.slurm"
+    if os.path.exists(filename):
+        Pwarn('Replace '+filename, "OverwriteWarning")
+    with open(filename, mode='w') as file:
+        file.write(text)
+
+def create_slurm_merge(metallicity, partition, email, merge_walltime, account, mem_per_cpu, path_to_posydon, path_to_posydon_data):
+
+    str_met = convert_metallicity_to_string(metallicity)
+    
+    # set walltime for merge script on debug-cpu
+    if partition=='debug-cpu':
+        merge_walltime='00:14:00'
+
+    # add required parameters
+    text = f'''#!/bin/bash
+#SBATCH --job-name={str_met}_Zsun_merge
+#SBATCH --output=./{str_met}_logs/popsyn_merge.out
+#SBATCH --mem-per-cpu={mem_per_cpu}
+#SBATCH --time={merge_walltime}
+'''
+
+    # add account if provided
+    if account != None:
+        text += f'#SBATCH --account={account}\n'
+
+    # add partition if provided
+    if partition != None:
+        text += f'#SBATCH --partition={partition}\n'
+        
+    # add email if provided
+    if email != None:
+        text = text + \
+        f'''#SBATCH --mail-type=FAIL
+#SBATCH --mail-user={email}
+'''
+    text = text + \
+        f'''export PATH_TO_POSYDON={path_to_posydon}
+export PATH_TO_POSYDON_DATA={path_to_posydon_data}
+srun python ./merge_metallicity.py {metallicity}
+'''
+    filename = f'{str_met}_Zsun_merge_popsyn.slurm'
+    if os.path.exists(filename):
+        Pwarn('Replace '+filename, "OverwriteWarning")
+    with open(filename, mode='w') as file:
+        file.write(text)
+
+
+#################
+# MAIN FUNCTION
+#################
+
+if __name__ == '__main__':
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument('ini_file', help='a population ini file for which you want to setup a population run', type=str)
+    parser.add_argument('-j','--job_array', help='the number of job in the job array you want to run', type=int, default=100)
+    parser.add_argument('--email', help='an email for the slurm scripts', default=None)
+    parser.add_argument('--partition', help='what cluster partition you want to run the script on', default=None)
+    parser.add_argument('--walltime', help='the walltime you would like to use in SLURM format', default='23:00:00')
+    parser.add_argument('--merge_walltime', help='the walltime you would like to use for the merge script in SLURM format', default='12:00:00')
+    parser.add_argument('--mem_per_cpu', help='the memory per cpu you would like to use in SLURM format', default='4G')
+    parser.add_argument('--account', help='the account you would like to use', default=None)
+    args = parser.parse_args()
+
+    synpop_params = binarypop_kwargs_from_ini(args.ini_file)    
+    metallicities = synpop_params['metallicity']
+    if synpop_params['number_of_binaries'] / args.job_array < 1:
+        raise ValueError("The number of binaries is less than the job array"
+                         " length. Please increase the number of binaries or"
+                         " decrease the job array length")
+
+    create_run_script(args.ini_file)
+    create_merge_script(args.ini_file)
+    
+    print("Created run script") 
+    for MET in metallicities:
+        str_met = convert_metallicity_to_string(MET)
+        try:
+            os.mkdir(f'{str_met}_logs')
+        except:
+            pass
+        create_slurm_submit(MET, args.job_array, args.partition, args.email, args.walltime, args.account, args.mem_per_cpu, PATH_TO_POSYDON, PATH_TO_POSYDON_DATA)
+        print("SLURM script created")
+        create_slurm_merge(MET, args.partition, args.email, args.merge_walltime, args.account, args.mem_per_cpu, PATH_TO_POSYDON, PATH_TO_POSYDON_DATA)
+
+    # create submission script for all SLURM 
+    filename = 'slurm_submit.sh'
+    
+    if os.path.exists(filename):
+        Pwarn('Replace '+filename, "OverwriteWarning")
+    with open(filename, mode='w') as file:
+        file.write('#!/bin/bash\n')
+        for MET in metallicities:
+            str_met = convert_metallicity_to_string(MET)
+            file.write(f'array=$(sbatch --parsable {str_met}_Zsun_slurm_array.slurm)\n')
+            file.write("echo '"+str_met+" job array submitted as '${array}\n")
+            file.write('merge=$(sbatch --parsable --dependency=afterok:${array} --kill-on-invalid-dep=yes '+f'{str_met}_Zsun_merge_popsyn.slurm)\n')
+            file.write("echo '"+str_met+" merge job submitted as '${merge}\n") 

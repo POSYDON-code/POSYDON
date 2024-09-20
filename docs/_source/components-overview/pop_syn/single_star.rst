@@ -57,7 +57,26 @@ The star properties are defined as follows
    `total_moment_of_inertia`, "Total moment of inertia in g*cm^2."
    `log_total_angular_momentum`, "log10 total angular momentum of the star g*cm^2*s^-1"
    `spin`, "Angular momentum of the star in g*cm^2*s^-1 or dimensionless BH spin."
-   `profile`, "Stellar profile from MESA."
+   `profile`, "Stellar profile from MESA. [not current supported for the initial-final interpolator]"
+
+Additional scalar properties are added during the evolution depending on which steps the star has undergone. These properties are not stored in the history.
+
+.. csv-table:: Additional output
+   :header: "Properties", "Descriptions"
+   :widths: 50, 150
+  * - `natal_kick_array`
+    - The natal kick array for the star if it has undergone a SN.
+      [velocity, theta, phi, ?]
+  * - `SN_type`
+    - The supernova type of the star.
+  * - `f_fb`
+    - The fraction of fallback mass.
+  * - `spin_orbit_tilt_first_SN`
+    - The spin-orbit tilt after the first SN, if the star has undergone a SN.
+  * - `spin_orbit_tilt_second_SN`
+    - The spin-orbit tilt after the second SN, if a second SN has occurred.
+  * - `m_disk_radiated`
+    - The mass of the disk radiated in the collapse of the star.
 
 
 TODO: add missing properties

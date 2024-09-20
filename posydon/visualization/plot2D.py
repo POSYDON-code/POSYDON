@@ -13,16 +13,16 @@ __authors__ = [
     "Matthias Kruckow <Matthias.Kruckow@unige.ch>",
 ]
 
-import warnings
 import numpy as np
 import matplotlib.pyplot as plt
 from posydon.utils.gridutils import add_field
 from posydon.utils.constants import Zsun
-from posydon.visualization.plot_defaults import DEFAULT_MARKERS_COLORS_LEGENDS
-from posydon.visualization.plot_defaults import PLOT_PROPERTIES
-from posydon.visualization.plot_defaults import DEFAULT_LABELS
+from posydon.visualization.plot_defaults import (
+    DEFAULT_MARKERS_COLORS_LEGENDS, add_flag_to_MARKERS_COLORS_LEGENDS,
+    PLOT_PROPERTIES, DEFAULT_LABELS)
 from posydon.visualization.combine_TF import combine_TF12
 import copy
+from posydon.utils.posydonwarning import Pwarn
 
 
 class plot2D(object):
@@ -205,10 +205,14 @@ class plot2D(object):
 
         # store the initial/final values
         self.initial_values = self.psygrid.initial_values
+        if self.initial_values is None:
+            raise ValueError("No initial values in PSyGrid")
         # add extra properties to initial_values
         self.add_properties_to_initial_values()
         self.initial_values_str = self.initial_values.dtype.names
         self.final_values = self.psygrid.final_values
+        if self.final_values is None:
+            raise ValueError("No final values in PSyGrid")
         # add extra properties to final_values
         if termination_flag in ["combined_TF12", "debug", "interpolation_class_errors"]:
             self.add_properties_to_final_values(termination_flag)
@@ -219,20 +223,24 @@ class plot2D(object):
             self.final_values['termination_flag_2'] = TF2_clean
         self.final_values_str = self.final_values.dtype.names
 
-        idx_with_histories=0
+        H1_names = ()
+        H2_names = ()
+        BH_names = ()
         for i in range(len(psygrid)):
-            if psygrid[i].history1 is not None and\
-                psygrid[i].history2 is not None and\
-                psygrid[i].binary_history is not None:
-                idx_with_histories = i
+            if len(H1_names)==0 and self.psygrid[i].history1 is not None:
+                H1_names = self.psygrid[i].history1.dtype.names
+            if len(H2_names)==0 and self.psygrid[i].history2 is not None:
+                H2_names = self.psygrid[i].history2.dtype.names
+            if len(BH_names)==0 and self.psygrid[i].binary_history is not None:
+                BH_names = self.psygrid[i].binary_history.dtype.names
+            if len(H1_names)>0 and len(H2_names)>0 and len(BH_names)>0:
                 break
         # x, y and z variables must exist
         if x_var_str not in self.initial_values_str and not self.slice_at_RLO:
             raise ValueError(
                 "x_var_str = {} is not available in psygrid.initial_values".
                 format(x_var_str))
-        elif (x_var_str not in self.psygrid[idx_with_histories].\
-              binary_history.dtype.names and self.slice_at_RLO):
+        elif (x_var_str not in BH_names and self.slice_at_RLO):
             raise ValueError("x_var_str = {} is not available in "
                              "psygrid.binary_history".format(x_var_str))
         else:
@@ -240,8 +248,7 @@ class plot2D(object):
         if y_var_str not in self.initial_values_str and not self.slice_at_RLO:
             raise ValueError("y_var_str = {} is not available in "
                              "psygrid.initial_values".format(y_var_str))
-        elif (y_var_str not in self.psygrid[idx_with_histories].\
-              binary_history.dtype.names and self.slice_at_RLO):
+        elif (y_var_str not in BH_names and self.slice_at_RLO):
             raise ValueError("y_var_str = {} is not available in "
                              "psygrid.binary_history".format(y_var_str))
         else:
@@ -271,19 +278,16 @@ class plot2D(object):
                     self.binary_history = False
                     self.add_properties_to_final_values(None)
                 elif (self.selected_star_history_for_z_var == 1
-                      and z_var_str in self.psygrid[idx_with_histories].\
-                      history1.dtype.names):
+                      and z_var_str in H1_names):
                     self.z_var_str = z_var_str
                     self.history = True
                     self.binary_history = False
                 elif (self.selected_star_history_for_z_var == 2
-                      and z_var_str in self.psygrid[idx_with_histories].\
-                      history2.dtype.names):
+                      and z_var_str in H2_names):
                     self.z_var_str = z_var_str
                     self.history = True
                     self.binary_history = False
-                elif z_var_str in self.psygrid[idx_with_histories].\
-                     binary_history.dtype.names:
+                elif z_var_str in BH_names:
                     self.z_var_str = z_var_str
                     self.history = False
                     self.binary_history = True
@@ -295,20 +299,17 @@ class plot2D(object):
                     )
 
             else:
-                if self.selected_star_history_for_z_var == 1 and \
-                  z_var_str in self.psygrid[idx_with_histories].history1.\
-                  dtype.names:
+                if (self.selected_star_history_for_z_var == 1 and
+                    z_var_str in H1_names):
                     self.z_var_str = z_var_str
                     self.history = True
                     self.binary_history = False
                 elif (self.selected_star_history_for_z_var == 2
-                      and z_var_str in self.psygrid[idx_with_histories].\
-                      history2.dtype.names):
+                      and z_var_str in H2_names):
                     self.z_var_str = z_var_str
                     self.history = True
                     self.binary_history = False
-                elif z_var_str in self.psygrid[idx_with_histories].\
-                     binary_history.dtype.names:
+                elif z_var_str in BH_names:
                     self.z_var_str = z_var_str
                     self.history = False
                     self.binary_history = True
@@ -410,7 +411,10 @@ class plot2D(object):
             plt.subplots_adjust(wspace=self.wspace, hspace=self.hspace)
 
             # save figure
-            if self.fname is not None:
+            if self.PdfPages is not None:
+                self.PdfPages.savefig(figure=fig, dpi=self.dpi,
+                                      bbox_inches=self.bbox_inches)
+            elif self.fname is not None:
                 fig.savefig(self.path_to_file + self.fname,
                             dpi=self.dpi, bbox_inches=self.bbox_inches)
 
@@ -444,7 +448,10 @@ class plot2D(object):
         self.set_title(fig)
 
         # save figure
-        if self.fname is not None:
+        if self.PdfPages is not None:
+            self.PdfPages.savefig(figure=fig, dpi=self.dpi,
+                                  bbox_inches=self.bbox_inches)
+        elif self.fname is not None:
             fig.savefig(self.path_to_file + self.fname,
                         dpi=self.dpi, bbox_inches=self.bbox_inches)
 
@@ -476,6 +483,9 @@ class plot2D(object):
         sc_last = None
         for flag in self.termination_flag_str:
             selection = self.termination_flag == flag
+            if flag not in self.MARKERS_COLORS_LEGENDS.keys():
+                add_flag_to_MARKERS_COLORS_LEGENDS(self.MARKERS_COLORS_LEGENDS,
+                                                   flag)
             if self.MARKERS_COLORS_LEGENDS[flag][2] is not None:
                 if self.slice_at_RLO:
                     for i in range(len(self.x_var[selection])):
@@ -598,8 +608,9 @@ class plot2D(object):
                                 vmax=self.zmax,
                             )
                         except:
-                            warnings.warn(f'Failed to plot values for flag {flag}, '
-                                          'likely all values are NaN.')
+                            Pwarn(f'Failed to plot values for flag {flag}, '
+                                  'likely all values are NaN.',
+                                  "InappropriateValueWarning")
                     sc_last = sc
             # collect scatters for legend
             if self.MARKERS_COLORS_LEGENDS[flag][3] not in scatters_legend:
@@ -1209,6 +1220,9 @@ class plot2D(object):
                 ax = axs[row, col]
                 for flag in self.termination_flag_str:
                     selection = self.termination_flag == flag
+                    if flag not in self.MARKERS_COLORS_LEGENDS.keys():
+                        add_flag_to_MARKERS_COLORS_LEGENDS(
+                            self.MARKERS_COLORS_LEGENDS, flag)
                     if self.MARKERS_COLORS_LEGENDS[flag][2] is not None:
                         if self.slice_at_RLO:
                             for i in range(len(self.x_var[selection])):

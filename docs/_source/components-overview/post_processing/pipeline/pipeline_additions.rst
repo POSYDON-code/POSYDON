@@ -20,13 +20,17 @@ structure:
 
 .. code-block::
 
-    path_to_grid,quantities_to_plot,path_to_plot
+    path_to_grid,grid_type,quantities_to_plot,path_to_plot,plot_extension
 
-Beside the grid, it takes a list of quantities to plot and finally the path to
-the directory, where the plots should get stored. All final quantities
-supported for a :ref:`2D plot <plot_2d>`, as third dimension can be specified.
-Additionally, you can put a :samp:`LOG10_` in front of each of them to switch
-on plotting in log-scale. Beside that there are predefined plots.
+Beside the grid, it states the type and takes a list of quantities to plot. All
+final quantities supported for a :ref:`2D plot <plot_2d>`, as third dimension
+can be specified. Additionally, you can put a :samp:`LOG10_` in front of each
+of them to switch on plotting in log-scale. Beside that there are predefined
+plots. Finally, the path to the directory, where the plots should get stored,
+and the extension of the image files (those need to be valid extension for
+`mathplotlib <https://matplotlib.org/>`_) are given. There is one additional
+extension :samp:`multipage-pdf`, which will create a PDF, where several plots
+are stored as pages in a single PDF.
 
 .. table:: Basic predefined plots
 

@@ -7,29 +7,12 @@ __authors__ = [
     "Konstantinos Kovlakas <Konstantinos.Kovlakas@unige.ch>"
 ]
 
-
-import os
 import numpy as np
-from scipy.integrate import solve_ivp
-from scipy.interpolate import PchipInterpolator
-from scipy.optimize import minimize
-from scipy.optimize import root
 
 from posydon.utils.data_download import PATH_TO_POSYDON_DATA
-from posydon.binary_evol.binarystar import BINARYPROPERTIES
-from posydon.binary_evol.singlestar import STARPROPERTIES
-from posydon.interpolation.data_scaling import DataScaler
-from posydon.utils.common_functions import (
-    bondi_hoyle,
-    orbital_period_from_separation,
-    orbital_separation_from_period,
-    roche_lobe_radius,
-    check_state_of_star,
-    PchipInterpolator2
-)
-from posydon.binary_evol.flow_chart import (STAR_STATES_CC)
-import posydon.utils.constants as const
+from posydon.utils.common_functions import orbital_separation_from_period
 from posydon.binary_evol.DT.step_detached import detached_step
+from posydon.utils.posydonerror import FlowError
 
 
 class IsolatedStep(detached_step):
@@ -83,12 +66,12 @@ class IsolatedStep(detached_step):
             if binary.star_1.state.state == 'massless_remnant' or binary.star_2.state == 'massless_remnant':
                 pass
             else:
-                raise ValueError("In merged or initially single stars, step one of the two stars should be 'massless_remnant' ")
+                raise FlowError("In merged or initially single stars, step one of the two stars should be 'massless_remnant' ")
             '''
         elif binary.state == "disrupted":
             pass
         else:
-            raise ValueError("In isolated step binary.state=='disrupted' or 'initially_single_star' or 'merged' ")
+            raise FlowError("In isolated step binary.state=='disrupted' or 'initially_single_star' or 'merged' ")
 
         super().__call__(binary)
 

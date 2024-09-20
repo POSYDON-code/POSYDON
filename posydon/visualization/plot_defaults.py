@@ -104,7 +104,8 @@ PLOT_PROPERTIES = {
         'va': 'bottom',
         'x': 0.95,
         'y': 0.05
-    }
+    },
+    'PdfPages': None
 }
 
 list_of_colors = ['#a6611a',
@@ -181,6 +182,12 @@ DEFAULT_MARKERS_COLORS_LEGENDS = {
             ['s', 2, None, TF1_label_initial],
         'Both stars fill their Roche Lobe and at least one of them is off MS':
             ['D', 1, color_unstable, TF1_label_unstable],
+        'Both stars fill their Roche Lobe and t_kh > t_acc':
+            ['D', 1, color_unstable, TF1_label_unstable],
+        'overflow from L2, t_kh > t_acc and w > w_crit_lim, donor is star 1':
+            ['D', 1, color_unstable, TF1_label_unstable],
+        'overflow from L2, t_kh > t_acc and w > w_crit_lim, donor is star 2':
+            ['D', 1, color_unstable, TF1_label_unstable],
         'Terminate due to L2 overflow during case A':
             ['D', 1, color_unstable, TF1_label_unstable],
         'Reached maximum mass transfer rate: Exceeded photon trapping radius':
@@ -209,7 +216,7 @@ DEFAULT_MARKERS_COLORS_LEGENDS = {
             ['x', 1, 'red', 'Not converged'],
         'fe_core_infall_limit':
             ['x', 1, 'tab:purple', 'fe_core_infall_limit'],
-        'ignored_no_BH':
+        'ignored_no_binary_history':
             ['.', 1, color_unstable, TF1_label_initial],
         'ignored_no_RLO':
             ['.', 1, color_unstable, TF1_label_initial],
@@ -224,7 +231,7 @@ DEFAULT_MARKERS_COLORS_LEGENDS = {
             ['+', 1, 'black', 'initial RLOF'],
         'forced_initial_RLO':
             ['+', 1, 'black', 'initial RLOF'],
-        'ignored_no_BH':
+        'ignored_no_binary_history':
             ['+', 1, 'black', 'initial RLOF'],
         'ignored_no_RLO':
             ['+', 1, 'black', 'initial RLOF'],
@@ -267,7 +274,7 @@ DEFAULT_MARKERS_COLORS_LEGENDS = {
             ['s', 2, 'tab:green', 'case BB1'],
         'case_BA1/BB1':
             ['s', 2, 'tab:red', 'case BA1/BB1'],
-            
+
         'case_A2':
             ['o', 2, 'tab:blue', 'case A2'],
         'case_A2/B2':
@@ -293,14 +300,14 @@ DEFAULT_MARKERS_COLORS_LEGENDS = {
         'case_C2':
             ['o', 2, 'black', 'case C2'],
         'case_C2/BB2':
-            ['o', 2, 'brown', 'case C2/BB2'],            
+            ['o', 2, 'brown', 'case C2/BB2'],
         'case_BA2':
             ['o', 2, 'tab:blue', 'case BA2'],
         'case_BB2':
             ['o', 2, 'tab:green', 'case BB2'],
         'case_BA2/BB2':
             ['o', 2, 'tab:red', 'case BA1/BB2'],
-            
+
         'case_A1/A2':
             ['>', 2, 'tab:blue', 'case A1/A2'],
         'case_A1/A2/A1':
@@ -367,7 +374,7 @@ DEFAULT_MARKERS_COLORS_LEGENDS = {
             ['v', 2, 'black', 'case A1/A2/B2/C1'],
         'case_A2/A1':
             ['v', 2, 'tab:gray', 'case A2/A1'],
-            
+
         'None':
             ['x', 1, 'tab:red', 'failed'],
     },
@@ -407,7 +414,7 @@ DEFAULT_MARKERS_COLORS_LEGENDS = {
             ['*', 1, 'black', 'BH'],
         'NS':
             ['*', 1, 'tab:gray', 'NS'],
-        'ignored_no_BH':
+        'ignored_no_binary_history':
             ['s', 2, 'tab:olive', 'H-rich core H buring'],
         'ignored_no_RLO':
             ['s', 2, 'tab:olive', 'H-rich core H buring'],
@@ -449,7 +456,7 @@ DEFAULT_MARKERS_COLORS_LEGENDS = {
             ['*', 1, 'black', 'BH'],
         'NS':
             ['*', 1, 'tab:gray', 'NS'],
-        'ignored_no_BH':
+        'ignored_no_binary_history':
             ['s', 2, 'tab:olive', 'H-rich core H buring'],
         'ignored_no_RLO':
             ['s', 2, 'tab:olive', 'H-rich core H buring'],
@@ -460,12 +467,6 @@ DEFAULT_MARKERS_COLORS_LEGENDS = {
             ['s', 2, list_of_colors[3], 'Stable contact phase'],
         'Stable case A':
             ['s', 2, list_of_colors[2], 'Stable RLOF during MS'],
-        'Stable case AB':
-            ['s', 2, list_of_colors[1], 'Stable RLOF during postMS'],
-        'Stable case AC':
-            ['s', 2, list_of_colors[1], 'Stable RLOF during postMS'],
-        'Stable case ABB':
-            ['s', 2, list_of_colors[0], 'Stable RLOF during stripped He star'],
         'Stable case B':
             ['s', 2, list_of_colors[1], 'Stable RLOF during postMS'],
         'Stable case C':
@@ -474,19 +475,45 @@ DEFAULT_MARKERS_COLORS_LEGENDS = {
             ['s', 2, list_of_colors[0], 'Stable RLOF during stripped He star'],
         'Stable case BB':
             ['s', 2, list_of_colors[0], 'Stable RLOF during stripped He star'],
+        # hot fix for case AA should be removed later:
+        'Stable case AA':
+            ['s', 2, list_of_colors[2], 'Stable RLOF during MS'],
+        'Stable case AB':
+            ['s', 2, list_of_colors[1], 'Stable RLOF during postMS'],
+        'Stable case AC':
+            ['s', 2, list_of_colors[1], 'Stable RLOF during postMS'],
+        'Stable case An':
+            ['s', 2, list_of_colors[1], 'Stable RLOF during postMS'],
+        'Stable case ABA':
+            ['s', 2, list_of_colors[0], 'Stable RLOF during stripped He star'],
+        'Stable case ABB':
+            ['s', 2, list_of_colors[0], 'Stable RLOF during stripped He star'],
         'Stable case BC':
             ['s', 2, list_of_colors[1], 'Stable RLOF during postMS'],
+        'Stable case Bn':
+            ['s', 2, list_of_colors[1], 'Stable RLOF during postMS'],
+        'Stable case BBA':
+            ['s', 2, list_of_colors[0], 'Stable RLOF during stripped He star'],
+        'Stable case BBB':
+            ['s', 2, list_of_colors[0], 'Stable RLOF during stripped He star'],
+        'Stable case Cn':
+            ['s', 2, list_of_colors[1], 'Stable RLOF during postMS'],
+        'Stable case CBA':
+            ['s', 2, list_of_colors[0], 'Stable RLOF during stripped He star'],
+        'Stable case CBB':
+            ['s', 2, list_of_colors[0], 'Stable RLOF during stripped He star'],
+        'Stable case BABB':
+            ['s', 2, list_of_colors[0], 'Stable RLOF during stripped He star'],
+        'Stable case BAn':
+            ['s', 2, list_of_colors[0], 'Stable RLOF during stripped He star'],
+        'Stable case BBn':
+            ['s', 2, list_of_colors[0], 'Stable RLOF during stripped He star'],
+        'Stable case n':
+            ['s', 2, list_of_colors[1], 'Stable RLOF while non burning'],
         'Unstable contact':
             ['D', 1, list_of_colors[3], 'Unstable contact phase'],
         'Unstable case A':
             ['D', 1, list_of_colors[2], 'Unstable RLOF during MS'],
-        'Unstable case AB':
-            ['D', 1, list_of_colors[1], 'Unstable RLOF during postMS'],
-        'Unstable case AC':
-            ['D', 1, list_of_colors[1], 'Unstable RLOF during postMS'],
-        'Unstable case ABB':
-            ['D', 1, list_of_colors[0],
-             'Unstable RLOF during stripped He star'],
         'Unstable case B':
             ['D', 1, list_of_colors[1], 'Unstable RLOF during postMS'],
         'Unstable case C':
@@ -497,8 +524,48 @@ DEFAULT_MARKERS_COLORS_LEGENDS = {
         'Unstable case BB':
             ['D', 1, list_of_colors[0],
              'Unstable RLOF during stripped He star'],
+        'Unstable case AB':
+            ['D', 1, list_of_colors[1], 'Unstable RLOF during postMS'],
+        'Unstable case AC':
+            ['D', 1, list_of_colors[1], 'Unstable RLOF during postMS'],
+        'Unstable case An':
+            ['D', 1, list_of_colors[1], 'Unstable RLOF during postMS'],
+        'Unstable case ABA':
+            ['D', 1, list_of_colors[0],
+             'Unstable RLOF during stripped He star'],
+        'Unstable case ABB':
+            ['D', 1, list_of_colors[0],
+             'Unstable RLOF during stripped He star'],
         'Unstable case BC':
             ['D', 1, list_of_colors[1], 'Unstable RLOF during postMS'],
+        'Unstable case Bn':
+            ['D', 1, list_of_colors[1], 'Unstable RLOF during postMS'],
+        'Unstable case BBA':
+            ['D', 2, list_of_colors[0],
+             'Unstable RLOF during stripped He star'],
+        'Unstable case BBB':
+            ['D', 2, list_of_colors[0],
+             'Unstable RLOF during stripped He star'],
+        'Unstable case Cn':
+            ['D', 1, list_of_colors[1], 'Unstable RLOF during postMS'],
+        'Unstable case CBA':
+            ['D', 2, list_of_colors[0],
+             'Unstable RLOF during stripped He star'],
+        'Unstable case CBB':
+            ['D', 2, list_of_colors[0],
+             'Unstable RLOF during stripped He star'],
+        'Unstable case BABB':
+            ['D', 2, list_of_colors[0],
+             'Unstable RLOF during stripped He star'],
+        'Unstable case BAn':
+            ['D', 2, list_of_colors[0],
+             'Unstable RLOF during stripped He star'],
+        'Unstable case BBn':
+            ['D', 2, list_of_colors[0],
+             'Unstable RLOF during stripped He star'],
+        'Unstable case n':
+            ['D', 2, list_of_colors[1],
+             'Unstable RLOF while non burning'],
         'Unstable L2 RLOF':
             ['D', 1, list_of_colors[0],
              'Unstable RLOF during stripped He star'],
@@ -510,9 +577,9 @@ DEFAULT_MARKERS_COLORS_LEGENDS = {
             ['x', 1, 'red', 'Not converged'],
         'unknown':
             ['+', 1, 'green', 'unknown'],
-        'Reverse stable MT':    
+        'Reverse stable MT':
             ['s', 2, 'tab:olive', 'Stable reverse mass-transfer phase'],
-        'Reverse unstable MT':    
+        'Reverse unstable MT':
             ['D', 1, 'tab:olive', 'Unstable reverse mass-transfer phase'],
         },
     'debug': {
@@ -578,6 +645,12 @@ DEFAULT_MARKERS_COLORS_LEGENDS = {
             ['s', 2, None, TF1_label_initial],
         'Both stars fill their Roche Lobe and at least one of them is off MS':
             ['D', 1, None, TF1_label_unstable],
+        'Both stars fill their Roche Lobe and t_kh > t_acc':
+            ['D', 1, None, TF1_label_unstable],
+        'overflow from L2, t_kh > t_acc and w > w_crit_lim, donor is star 1':
+            ['D', 1, None, TF1_label_unstable],
+        'overflow from L2, t_kh > t_acc and w > w_crit_lim, donor is star 2':
+            ['D', 1, None, TF1_label_unstable],
         'Terminate due to L2 overflow during case A':
             ['D', 1, None, TF1_label_unstable],
         'Reached maximum mass transfer rate: Exceeded photon trapping radius':
@@ -604,7 +677,7 @@ DEFAULT_MARKERS_COLORS_LEGENDS = {
             ['.', 1.5, 'black', TF1_label_initial],
         'Not converged':
             ['x', 1, None, 'Not converged'],
-        'ignored_no_BH':
+        'ignored_no_binary_history':
             ['.', 1.5, color_unstable, TF1_label_initial],
         'ignored_no_RLO':
             ['.', 1.5, color_unstable, TF1_label_initial],
@@ -667,6 +740,60 @@ DEFAULT_MARKERS_COLORS_LEGENDS = {
     }
 }
 
+def add_flag_to_MARKERS_COLORS_LEGENDS(MARKERS_COLORS_LEGENDS, flag):
+    """Add not pre defined stuff to DEFAULT_MARKERS_COLORS_LEGENDS.
+
+    Parameters
+    ----------
+    MARKERS_COLORS_LEGENDS : dict of lists
+        Dictionary with flags as keys given a list with marker, size, color,
+        and legend text for each flag.
+    flag : str
+        The flag itself.
+
+    """
+    if flag not in MARKERS_COLORS_LEGENDS.keys():
+        if ('case_' in flag): # unknown MT flag
+            if '1' not in flag: # only star 1 is donor
+                s = 'o'
+            elif '2' not in flag: # only star 2 is donor
+                s = 's'
+            elif flag[-1]=='1': # star 1 is last donor
+                s = '>'
+            elif flag[-1]=='2': # star 2 is last donor
+                s = '<'
+            else:
+                s = 'v'
+            if '/' in flag: # multiple mass transfers
+                if (('case_A' in flag) or ('case_BA' in flag)):
+                    # first MT is case A or case BA
+                    c = 'tab:cyan'
+                elif (('case_C' in flag) or ('case_BC' in flag)):
+                    # first MT is case C or case BC
+                    c = 'tab:orange'
+                elif (('case_B' in flag) or ('case_BB' in flag)):
+                    # first MT is case B or case BB
+                    # (needs to be behind case BA and BC)
+                    c = 'tab:pink'
+                else:
+                    c = 'lightgrey'
+            elif 'BA' in flag: # only case BA
+                c = 'tab:red'
+            elif 'BB' in flag: # only case BB
+                c = 'brown'
+            elif 'BC' in flag: # only case BC
+                c = 'tab:gray'
+            elif 'A' in flag: # only case A
+                c = 'tab:blue'
+            elif 'B' in flag: # only case B
+                c = 'tab:green'
+            elif 'C' in flag: # only case C
+                c = 'tab:purple'
+            else:
+                c = 'black'
+            MARKERS_COLORS_LEGENDS[flag] = [s, 2, c, flag.replace('_',' ')]
+        else:
+            MARKERS_COLORS_LEGENDS[flag] = ['+', 1, 'black', flag.replace('_',' ')]
 
 DEFAULT_LABELS = {
     # extra
@@ -882,13 +1009,13 @@ DEFAULT_LABELS = {
     # POSYDON population synthesis
     'z_formation': [r'$z_\mathrm{formation}$', r'$\log_{10}(z_\mathrm{formation})$'],
     'z_merger': [r'$z_\mathrm{merger}$', r'$\log_{10}(z_\mathrm{merger})$'],
-    'm_tot': [r'$m_\mathrm{tot}\,[M_\odot]$', 
+    'm_tot': [r'$m_\mathrm{tot}\,[M_\odot]$',
               r'$\log_{10}(m_\mathrm{tot}/M_\odot)$'],
     'm_chirp': [r'$m_\mathrm{chirp}\,[M_\odot]$',
                 r'$\log_{10}(m_\mathrm{chirp}/M_\odot)$',],
     'q': [r'$q$', r'$\log_{10}(q)$'],
     'chi_eff': [r'$\chi_\mathrm{eff}$', r'$\log_{10}(\chi_\mathrm{eff})$'],
-    'S1_mass': [r'$m_\mathrm{CO}\,[M_\odot]$', 
+    'S1_mass': [r'$m_\mathrm{CO}\,[M_\odot]$',
                 r'$\log_{10}(m_\mathrm{CO}/M_\odot)$'],
     'S2_mass': [r'$m_\mathrm{CO}\,[M_\odot]$'
                 r'$\log_{10}(m_\mathrm{CO}/M_\odot)$'],
@@ -921,7 +1048,16 @@ for i in range(1, 11):
                                               r'$\log_{10}(M_\mathrm{disk, acc} / M_\odot)$']
     DEFAULT_LABELS[f'MODEL{i:02d}_m_disk_radiated'] = [r'$M_\mathrm{disk, rad} \, [M_\odot]$',
                                               r'$\log_{10}(M_\mathrm{disk, rad} / M_\odot)$']
-    
+    DEFAULT_LABELS[f'MODEL{i:02d}_M4'] = [r'$M_4 [= m/M_\odot]_{s=4}$',
+                                              r'$\log_{10}(M_4)$']
+    DEFAULT_LABELS[f'MODEL{i:02d}_mu4'] = [r'$\mu_4 \, [(dm/M_\odot)/(dr/1000\mathrm{km/s})]_{s=4}$',
+                                              r'$\log_{10}(\mu_4)$']
+    DEFAULT_LABELS[f'MODEL{i:02d}_h1_mass_ej'] = [r'$M_\mathrm{H,ej} \, [M_\odot]$',
+                                              r'$\log_{10}(M_\mathrm{H,ej} / M_\odot)$']
+    DEFAULT_LABELS[f'MODEL{i:02d}_he4_mass_ej'] = [r'$M_\mathrm{He,ej} \, [M_\odot]$',
+                                              r'$\log_{10}(M_\mathrm{He,ej} / M_\odot)$']
+
+
 
 # pre defined plottings
 PRE_SET_PLOTS = {
@@ -989,6 +1125,22 @@ PRE_SET_PLOTS = {
     'S1_MODEL_DEFAULT_m_disk_radiated' : {
         'zmin' : 0.,
         'zmax' : 3.
+    },
+    'S1_MODEL_DEFAULT_M4' : {
+        'zmin' : 1.,
+        'zmax' : 4.
+    },
+    'S1_MODEL_DEFAULT_mu4' : {
+        'zmin' : 0.0,
+        'zmax' : .5
+    },
+    'S1_MODEL_DEFAULT_h1_mass_ej' : {
+        'zmin' : 0.,
+        'zmax' : 20
+    },
+    'S1_MODEL_DEFAULT_he4_mass_ej' : {
+        'zmin' : 0.,
+        'zmax' : 20
     },
     # interpolator stuff
     'INTERP_ERROR_DEFAULT' : {

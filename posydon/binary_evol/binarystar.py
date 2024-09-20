@@ -27,7 +27,6 @@ __authors__ = [
 
 
 import signal
-import warnings
 import copy
 import numpy as np
 import pandas as pd
@@ -111,7 +110,7 @@ MAXIMUM_STEP_TIME = 120
 
 def signal_handler(signum, frame):
     """React to a maximum time signal."""
-    raise Exception("Binary Step Exceeded Alloted Time: {}".
+    raise RuntimeError("Binary Step Exceeded Alloted Time: {}".
                     format(MAXIMUM_STEP_TIME))
 
 
@@ -156,6 +155,7 @@ class BinaryStar:
             else:
                 setattr(self, item, binary_kwargs.pop(item, None))
             setattr(self, item + '_history', [getattr(self, item)])
+
         for key, val in binary_kwargs.items():
             setattr(self, key, val)
         if not hasattr(self, 'inspiral_time'):
@@ -180,14 +180,17 @@ class BinaryStar:
                 setattr(self, f'mt_history_{grid_type}', None)
             if not hasattr(self, f'culmulative_mt_case_{grid_type}'):
                 setattr(self, f'culmulative_mt_case_{grid_type}', None)
+        
         # SimulationProperties object - parameters & parameterizations
         if isinstance(properties, SimulationProperties):
             self.properties = properties
         else:
             self.properties = SimulationProperties()
+        
 
     def evolve(self):
         """Evolve a binary from start to finish."""
+
         self.properties.pre_evolve(self)
 
         # Code to make sure start time is less than max_simulation_time
@@ -201,15 +204,15 @@ class BinaryStar:
         n_steps = 0
         try:
             while (self.event != 'END' and self.event != 'FAILED'
-                   and self.event not in self.properties.end_events
-                   and self.state not in self.properties.end_states):
+                and self.event not in self.properties.end_events
+                and self.state not in self.properties.end_states):
                 signal.alarm(MAXIMUM_STEP_TIME)
                 self.run_step()
 
                 n_steps += 1
                 if max_n_steps is not None:
                     if n_steps > max_n_steps:
-                        raise Exception("Exceeded maximum number of steps ({})"
+                        raise RuntimeError("Exceeded maximum number of steps ({})"
                                         .format(max_n_steps))
         finally:
             signal.alarm(0)     # turning off alarm
@@ -223,10 +226,8 @@ class BinaryStar:
             next_step_name = self.properties.flow.get(total_state)
 
             if next_step_name is None:
-                warnings.warn("Undefined next step given stars/binary states "
-                              "{}.".format(total_state))
+                raise ValueError("Undefined next step given stars/binary states {}.".format(total_state))
                 self.event = 'END'
-                return
 
             next_step = getattr(self.properties, next_step_name, None)
             if next_step is None:
@@ -254,8 +255,8 @@ class BinaryStar:
         """Switch stars."""
         self.star_1, self.star_2 = self.star_2, self.star_1
 
-    def restore(self, i=0, delete_history=True):
-        """Restore the object to the i-th state.
+    def restore(self, i=0):
+        """Restore the BinaryStar() object to its i-th state, keeping the binary history before the i-th state.
 
         Parameters
         ----------
@@ -265,16 +266,24 @@ class BinaryStar:
 
         """
         # Move current binary properties to the ith step, using its history
-        for p in BINARYPROPERTIES:
+        for p in BINARYPROPERTIES:            
             setattr(self, p, getattr(self, '{}_history'.format(p))[i])
-        for star in (self.star_1, self.star_2):
-            star.restore(i)
 
-        # Remove the obsolete history data
-        if delete_history:
-            for p in BINARYPROPERTIES:
-                setattr(self, p + '_history',
-                        getattr(self, p + '_history')[0:i + 1])
+            ## delete the binary history after the i-th index
+            setattr(self, p + '_history', getattr(self, p + '_history')[0:i+1])
+                       
+        ## if running with extra hooks, restore any extra hook columns
+        for hook in self.properties.all_hooks_classes:
+            
+            if hasattr(hook, 'extra_binary_col_names'):
+                extra_columns = getattr(hook, 'extra_binary_col_names')
+
+                for col in extra_columns:
+                    setattr(self, col, getattr(self, col)[0:i+1])                    
+        
+        for star in (self.star_1, self.star_2):
+            star.restore(i, hooks=self.properties.all_hooks_classes)
+                             
 
     def reset(self, properties=None):
         """Reset the binary to its ZAMS state.
@@ -323,7 +332,7 @@ class BinaryStar:
             Can be used in combination with `extra_columns`.
         null_value : float
             Replace all None values with something else (for saving).
-            Default is np.NAN.
+            Default is np.nan.
         include_S1, include_S2 : bool
             Choose to include star 1 or 2 data to the DataFrame.
             The default is to include both.
@@ -378,9 +387,9 @@ class BinaryStar:
                 str(err) + "\n\nAvailable attributes in BinaryStar: \n{}".
                 format(self.__dict__.keys()))
 
-        # Convert None to np.NAN by default
+        # Convert None to np.nan by default
         bin_data = np.array(data_to_save, dtype=object)
-        bin_data[where_none] = kwargs.get('null_value', np.NAN)
+        bin_data[where_none] = kwargs.get('null_value', np.nan)
 
         bin_data = np.transpose(bin_data)
 
@@ -409,11 +418,11 @@ class BinaryStar:
         if kwargs.get('include_S1', True):
             # we are hard coding the prefix
             frames.append(self.star_1.to_df(
-                prefix='S1_', null_value=kwargs.get('null_value', np.NAN),
+                prefix='S1_', null_value=kwargs.get('null_value', np.nan),
                 **kwargs.get('S1_kwargs', {})))
         if kwargs.get('include_S2', True):
             frames.append(self.star_2.to_df(
-                prefix='S2_', null_value=kwargs.get('null_value', np.NAN),
+                prefix='S2_', null_value=kwargs.get('null_value', np.nan),
                 **kwargs.get('S2_kwargs', {})))
         binary_df = pd.concat(frames, axis=1)
 
@@ -592,7 +601,7 @@ class BinaryStar:
             oneline_df['FAILED'] = [1]
         else:
             oneline_df['FAILED'] = [0]
-        if hasattr(self, 'warning_message'):
+        if hasattr(self, 'warnings'):
             oneline_df['WARNING'] = [1]
         else:
             oneline_df['WARNING'] = [0]
@@ -859,6 +868,22 @@ class BinaryStar:
                 setattr(star, attr, final_value)
                 setattr(star, attr + "_history", col_history)
 
+        # add values at He depletion
+        for colname in run.final_values.dtype.names:
+            if "at_He_depletion" in colname:
+                if colname[0:3]=="S1_":
+                    attr = colname[3:]
+                    final_value = run.final_values[colname]
+                    setattr(binary.star_1, attr, final_value)
+                elif colname[0:3]=="S2_":
+                    attr = colname[3:]
+                    final_value = run.final_values[colname]
+                    setattr(binary.star_2, attr, final_value)
+                else:
+                    attr = colname
+                    final_value = run.final_values[colname]
+                    setattr(binary, attr, final_value)
+        
         # update eccentricity
         binary.eccentricity = 0.0
         binary.eccentricity_history = [0.0] * n_steps

@@ -9,18 +9,85 @@ from scipy import integrate
 import posydon.utils.constants as const
 
 from posydon.utils.gridutils import find_index_nearest_neighbour
+from posydon.utils.limits_thresholds import NEUTRINO_MASS_LOSS_UPPER_LIMIT
 
 __authors__ = [
     "Simone Bavera <Simone.Bavera@unige.ch>",
     "Emmanouil Zapartas <ezapartas@gmail.com>",
     "Scott Coughlin <scottcoughlin2014@u.northwestern.edu>",
     "Devina Misra <devina.misra@unige.ch>",
+    "Matthias Kruckow <Matthias.Kruckow@unige.ch>",
 ]
 
 
 __credits__ = [
     'Aldo Batta <aldobatta@gmail.com>',
 ]
+
+def get_ejecta_element_mass_at_collapse(star, compact_object_mass, verbose):
+    """Calculate the masses of H1, He4, and O16 in the ejecta.
+    Parameters
+    ----------
+    star : object
+        Star object of a collapsing star containing the MESA profile.
+
+    compact_object_mass : float
+        The mass of the compact object (in Msun), hence all above this mass will be ejected.
+
+    verbose : bool
+        If `True`, it prints some informations.
+
+    Returns
+    -------
+    h1_mass_ej : float
+        Hydrogen mass in the ejecta. (in Msun)
+    he4_mass_ej : float
+        Helium mass in the ejecta. (in Msun)
+    """
+
+
+    # read star quantities
+    profile_mass_all = star.profile['mass'][::-1]  # cell outer total mass in Msun
+    # shell's mass
+    dm_all = profile_mass_all[1:] - profile_mass_all[:-1]
+
+    if 'x_mass_fraction_H' in star.profile.dtype.names:
+        XH_all = star.profile['x_mass_fraction_H'][::-1]  # h1 mass fraction
+    if 'y_mass_fraction_He' in star.profile.dtype.names:
+        YHe_all = star.profile['y_mass_fraction_He'][::-1]  # he4 mass fraction
+
+    #print("profile_mass_all[-1], compact_object_mass", profile_mass_all[-1], compact_object_mass)
+    if profile_mass_all[-1] <= compact_object_mass:
+        # This catches the case that all the star's profile is collapsed.
+        h1_mass_ej = 0.0
+        he4_mass_ej = 0.0
+    else:
+        # Find the index where the profile mass exceeds the compact object mass
+        i_rem = np.argmax(profile_mass_all > compact_object_mass)
+        #print("i_rem, len(dm_all)", i_rem, len(dm_all))
+        #print("mass coordinate above which it is ejected", profile_mass_all[i_rem])
+
+        # Ensure the index is within bounds
+        if i_rem < len(dm_all):
+            # Calculate the ejected mass of H1 and He4
+            dm_ejected = dm_all[i_rem:]
+            XH_ejected = XH_all[i_rem + 1:]  # +1 because dm_all has one less element than profile_mass_all
+            YHe_ejected = YHe_all[i_rem + 1:]
+
+            # Calculate the ejected masses only if the lengths match
+            if len(dm_ejected) == len(XH_ejected) == len(YHe_ejected):
+                h1_mass_ej = np.sum(dm_ejected * XH_ejected)
+                he4_mass_ej = np.sum(dm_ejected * YHe_ejected)
+            else:
+                h1_mass_ej = 0.0
+                he4_mass_ej = 0.0
+                print("Warning: Mismatch in array lengths, cannot calculate ejected masses accurately.")
+        else:
+            h1_mass_ej = 0.0
+            he4_mass_ej = 0.0
+            print("Warning: Index out of bounds, cannot calculate ejected masses.")
+        #print(h1_mass_ej, he4_mass_ej, np.sum(dm_ejected))
+    return h1_mass_ej, he4_mass_ej
 
 
 def get_initial_BH_properties(star, mass_collapsing, mass_central_BH,
@@ -173,7 +240,7 @@ def get_initial_BH_properties(star, mass_collapsing, mass_central_BH,
     f_temp2 = (f_nu_AM*density[:index_initial_BH+1]
                * angular_frequency[:index_initial_BH+1]
                * radius[:index_initial_BH+1]**4)
-    temp2 = integrate.simps(f_temp2, x=radius[:index_initial_BH + 1])
+    temp2 = integrate.simpson(f_temp2, x=radius[:index_initial_BH + 1])
 
     J_initial_BH = 2 * np.pi * temp1 * temp2
 
@@ -249,7 +316,7 @@ def do_core_collapse_BH(star,
                         mass_collapsing,
                         mass_central_BH=2.51,
                         neutrino_mass_loss=None,
-                        max_neutrino_mass_loss=0.5,
+                        max_neutrino_mass_loss=NEUTRINO_MASS_LOSS_UPPER_LIMIT,
                         verbose=False):
     """Do the core collapse of a star object with MESA profile provided.
 
@@ -335,9 +402,10 @@ def do_core_collapse_BH(star,
     if len(enclosed_mass) == 0:
         arr = np.array([np.nan])
         return [
-            M_BH / Mo, a_BH, arr, arr, arr, arr, arr, arr,
-            arr, arr, arr, np.array([0.]), arr, arr, arr, arr,
-            arr, arr
+            M_BH / Mo, a_BH, np.nan, np.nan
+            #M_BH / Mo, a_BH, arr, arr, arr, arr, arr, arr,
+            #arr, arr, arr, np.array([0.]), arr, arr, arr, arr,
+            #arr, arr
         ]
 
     # shell's specific angular momentum at equator
@@ -552,7 +620,7 @@ def do_core_collapse_BH(star,
     return [
         M_BH_total,
         a_BH_total,
-        m_disk_accreted, 
+        m_disk_accreted,
         m_disk_radiated,
         # np.array(M_BH_array),
         # np.array(a_BH_array),
