@@ -77,7 +77,6 @@ saved_ini_parameters = ['metallicity',
                    'eccentricity_scheme']
 
 
-# 'event' usually 10 but 'detached (Integration failure)' can occur
 HISTORY_MIN_ITEMSIZE = {'state': 30, 'event': 25, 'step_names': 21,
                         'S1_state': 31, 'S2_state': 31,
                         'mass_transfer_case': 16,
