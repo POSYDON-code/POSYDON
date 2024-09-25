@@ -106,7 +106,7 @@ class DoubleCO:
         if s.status == -1:
             failed_state = binary.state
             set_binary_to_failed(binary)
-            raise NumericalError(f"Integration failed for {failed_state} DCO!")
+            raise NumericalError(f"Integration failed for {failed_state} DCO ({self.state1}, {self.state2}): ", s.message)
 
         elif s.status == 1:
 
