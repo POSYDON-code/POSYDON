@@ -13,6 +13,8 @@ from posydon.interpolation.IF_interpolation import IFInterpolator
 from posydon.utils.posydonwarning import Pwarn
 
 # Math and ML
+import os
+import random
 import numpy as np
 import pandas as pd
 try:
@@ -20,10 +22,9 @@ try:
 except ImportError:
     raise ImportError('tensorflow is not installed. Please run `pip install .[ml]` in the POSYDON base directory')
 tf.get_logger().setLevel('ERROR')
-from tensorflow.keras import layers, losses, models, optimizers
+from tensorflow.keras import layers, losses, models, optimizers, backend, utils
 from sklearn.decomposition import PCA
 from scipy.interpolate import interp1d
-
 
 class CompileData:
 
@@ -50,7 +51,8 @@ class CompileData:
         for i in range(len(test)):
             try:
                 scalars,profiles = self.scrape(test,i,hms_s2)
-                self.test_scalars = self.test_scalars.append(scalars,ignore_index=True)
+                self.test_scalars = pd.concat([self.test_scalars,
+                                              pd.DataFrame(scalars)],ignore_index=True)
                 self.test_profiles.append(profiles)
             except:
                 testing_failed.append(i)
@@ -70,7 +72,8 @@ class CompileData:
         for i in range(len(train)):
             try:
                 scalars,profiles = self.scrape(train,i,hms_s2)
-                self.scalars = self.scalars.append(scalars,ignore_index=True)
+                self.scalars = pd.concat([self.scalars,
+                                         pd.DataFrame(scalars)],ignore_index=True)
                 self.profiles.append(profiles)
             except:
                 training_failed.append(i)
@@ -110,7 +113,7 @@ class CompileData:
         df = df.reset_index(drop=True)
 
         # grab input values, final star 1 state, final star 1 mass
-        total_mass = grid.final_values[mass_key][ind]
+        total_mass = df["mass"].iloc[-1]
         
         scalars = {"m1":grid.initial_values["star_1_mass"][ind],
                    "m2":grid.initial_values["star_2_mass"][ind],
@@ -134,9 +137,13 @@ class CompileData:
         
         if 'omega' in self.names:
             profiles[-1]= profiles[self.names.index('omega')]/  \
-                          grid.final_values['S1_surf_avg_omega_div_omega_crit'][ind]
+                          (grid.final_values['S1_surf_avg_omega'][ind]/ \
+                           grid.final_values['S1_surf_avg_omega_div_omega_crit'][ind])
         
-        return scalars, profiles
+        if not np.isnan(grid.final_values['S1_surf_avg_omega_div_omega_crit'][ind]):
+            return scalars, profiles
+        else:
+            Pwarn("nan in final values","InappropriateValueWarning")
 
     def save(self, filename):
         """Save extracted profile data.
@@ -149,13 +156,21 @@ class CompileData:
                    for key in SAVE_ATTRS if key not in DONT_SAVE}
         with open(filename, 'wb') as f:
             pickle.dump(myattrs, f)
-            
+
             
 class ProfileInterpolator:
     
-    def __init__(self):
+    def __init__(self,seed_value):
         """Interfaces with other classes, trains models and predicts profiles.
+        Args:
+            seed_value (int) : random seed to ensure consistent results
         """
+        if seed_value is not None:
+            os.environ['PYTHONHASHSEED']=str(seed_value)
+            random.seed(seed_value)
+            np.random.seed(seed_value)
+            tf.random.set_seed(seed_value)
+            utils.set_random_seed(seed_value)
 
     def load_profiles(self,filename,valid_split=0.2):
         """Load and process extracted profile data.
@@ -192,8 +207,9 @@ class ProfileInterpolator:
         self.initial = np.log10(linear_initial)[binaries[split:]]
         self.scalars = self.scalars.iloc[binaries[split:]]
 
-    def train(self,IF_interpolator,density_epochs=3000,density_patience=200,
-             comp_bounds_epochs=500,comp_bounds_patience=50,loss_history=False,hms_s2=False):
+    def train(self,IF_interpolator,density_epochs=1000,density_patience=200,
+             comp_bounds_epochs=500,comp_bounds_patience=50,loss_history=False,hms_s2=False,
+             depth=12,width=256,depthn=12,widthn=256,lr=0.0001):
         """Trains models for density, H mass fraction, and He mass fraction profile models. 
         Args:
             IF_interpolator (str) : path to '.pkl' file for IF interpolator.
@@ -203,6 +219,11 @@ class ProfileInterpolator:
             comp_bounds_patience (int) : patience parameter for NN callback in composition profiles model
             loss_history (Boolean) : option to return training and validation loss histories
             hms_s2 (Boolean) : option to do profiles of star 2 in HMS-HMS grid
+            depth (int) : depth of neural network for principal component weights
+            width (int) : width of neural network for principal component weights
+            depthn (int) : depth of neural network for normalizing value
+            widthn (int) : width of neural network for normalizing value
+            lr (float) : learning rate
         Returns:
             self.comp.loss_history (array-like) : training and validation loss history for composition profiles
             self.dens.loss_history (array-like) : training and validation loss history for density profiles
@@ -223,10 +244,14 @@ class ProfileInterpolator:
         # instantiate and train density profile model
         self.dens = Density(self.initial,
                             self.profiles[:,self.names.index("logRho")],
+                            self.scalars["MT_class"],
                             self.valid_initial,
                             self.valid_profiles[:,self.names.index("logRho")],
-                            IF_interpolator,hms_s2=hms_s2)
-        self.dens.train(prof_epochs=density_epochs,prof_patience=density_patience)
+                            self.valid_scalars["MT_class"],
+                            IF_interpolator,hms_s2=hms_s2,
+                            depth=depth, width=width,
+                            depthn=depthn, widthn=widthn)
+        self.dens.train(prof_epochs=density_epochs,prof_patience=density_patience,lr=lr)
         
         if loss_history==True:
             return self.comp.loss_history, self.dens.loss_history
@@ -296,12 +321,11 @@ class ProfileInterpolator:
         return profiles_mono
 
     
-    
-    
 class Density:
 
-    def __init__(self,initial,profiles,valid_initial,
-                 valid_profiles,IF_interpolator,n_comp=8, hms_s2=False):
+    def __init__(self,initial,profiles,mt,valid_initial,
+                 valid_profiles,valid_mt,IF_interpolator,n_comp=8, hms_s2=False,
+                 depth=12,width=256,depthn=12,widthn=256):
         """Creates and trains density profile model.
         Args:
             initial (array-like) : log-space initial conditions for training data.
@@ -317,48 +341,46 @@ class Density:
         
         # process training data 
         self.initial = initial  # initial conditions in log space
-        self.rho_min = np.min(profiles,axis=1) 
-        rho_max = np.max(profiles,axis=1)
-        profiles_norm = (profiles-self.rho_min[:,np.newaxis])\
-                            /(rho_max-self.rho_min)[:,np.newaxis]  # minmax normalized profiles
-        self.pca = PCA(n_components=self.n_comp).fit(profiles_norm) # perform principal component analysis
-        pca_weights_unscaled = self.pca.transform(profiles_norm)
-        self.scaling = np.std(pca_weights_unscaled,axis=0)
-        self.pca_weights = pca_weights_unscaled/self.scaling  # scaled PCA weights
+        self.mt = mt
+        self.surf_val = profiles[:,-1] 
+        self.center_val = profiles[:,0]
         
         # process validation data
         self.valid_initial = valid_initial
-        self.valid_rho_min = np.min(valid_profiles,axis=1)
-        valid_rho_max = np.max(valid_profiles,axis=1)
-        valid_profiles_norm = (valid_profiles-self.valid_rho_min[:,np.newaxis])\
-                            /(valid_rho_max-self.valid_rho_min)[:,np.newaxis]
-        valid_pca_weights_unscaled = self.pca.transform(valid_profiles_norm)
-        self.valid_pca_weights = valid_pca_weights_unscaled/self.scaling
+        self.valid_mt = valid_mt
+        self.valid_surf_val = valid_profiles[:,-1] 
+        self.valid_center_val = valid_profiles[:,0]
+
+        # process profiles for modeling
+        profiles_norm = (profiles-self.surf_val[:,np.newaxis])\
+                            /(self.center_val-self.surf_val)[:,np.newaxis]  # minmax normalized profiles
+        valid_profiles_norm = (valid_profiles-self.valid_surf_val[:,np.newaxis])\
+                            /(self.valid_center_val-self.valid_surf_val)[:,np.newaxis]
+           
+        self.pca = PCA(n_components=self.n_comp).fit(profiles_norm) # perform PCA
+        self.pca_weights = self.pca.transform(profiles_norm)
+        self.valid_pca_weights = self.pca.transform(valid_profiles_norm)
         
-        # instantiate models
-        self.model_prof = models.Sequential([
-            layers.Dense(15,input_dim=3,activation=None),
-            layers.Dense(15,input_dim=15,activation="relu"),
-            layers.Dense(15,input_dim=15,activation="relu"),
-            layers.Dense(15,input_dim=15,activation="tanh"),
-            layers.Dense(15,input_dim=15,activation="tanh"),
-            layers.Dense(10,input_dim=10,activation="tanh"),
-            layers.Dense(10,input_dim=10,activation="tanh"),
-            layers.Dense(n_comp,input_dim=10,activation=None)])
+        # instantiate model
+        self.prof_models = {}
+        for mt in self.mt.unique():
+            model = models.Sequential()
+            model.add(layers.Dense(width,input_dim=3,activation='relu'))
+            for i in range(depth-1):
+                model.add(layers.Dense(width,input_dim=width,activation='relu'))           
+            model.add(layers.Dense(n_comp,input_dim=width,activation=None))
+            self.prof_models[mt] = model
                 
-        self.model_rho = models.Sequential([
-            layers.Dense(10,input_dim=3,activation='relu'),
-            layers.Dense(10,input_dim=10,activation='relu'),
-            layers.Dense(10,input_dim=10,activation='tanh'),
-            layers.Dense(10,input_dim=10,activation='tanh'),
-            layers.Dense(10,input_dim=10,activation='tanh'),
-            layers.Dense(10,input_dim=10,activation='tanh'),
-            layers.Dense(1,activation=None)])
+        self.model_norm = models.Sequential()
+        self.model_norm.add(layers.Dense(widthn,input_dim=3,activation="relu"))
+        for i in range(depthn-1):
+            self.model_norm.add(layers.Dense(widthn,input_dim=widthn,activation='relu'))
+        self.model_norm.add(layers.Dense(1,input_dim=widthn,activation=None))
         
         self.model_IF = IFInterpolator()  # instantiate POSYDON initial-final interpolator object
         self.model_IF.load(filename=IF_interpolator)
-                
-    def train(self,loss=losses.MeanSquaredError(),prof_epochs=3000,prof_patience=200):
+
+    def train(self,loss=losses.MeanSquaredError(),prof_epochs=1000,prof_patience=200):
         """Trains NN models. 
         Args: 
             loss (object) : loss function for training.
@@ -367,21 +389,26 @@ class Density:
         """
         print("training on PCA weights...")
         
-        self.model_prof.compile(optimizers.Adam(clipnorm=1),loss=loss)
-        callback = tf.keras.callbacks.EarlyStopping(monitor="loss",patience=prof_patience)
-        history = self.model_prof.fit(self.initial,self.pca_weights,
-                                      epochs=prof_epochs,callbacks=[callback],verbose=0,
-                                      validation_data=(self.valid_initial,
-                                                       self.valid_pca_weights))
+        self.loss_history = {}
+        for mt in self.mt.unique():
+            if mt=="not_converged" or mt=="initial_MT":
+                pass
+            else:
+                print(mt)
+                inds = np.where(self.mt==mt)[0]
+                valid_inds = np.where(self.valid_mt==mt)[0]
+                self.prof_models[mt].compile(optimizers.Adam(clipnorm=1,learning_rate=lr),loss=loss)
+                callback = tf.keras.callbacks.EarlyStopping(monitor="loss",patience=prof_patience)
+                history = self.prof_models[mt].fit(self.initial[inds],self.pca_weights[inds],
+                                              epochs=prof_epochs,callbacks=[callback],verbose=0,
+                                              validation_data=(self.valid_initial[valid_inds],
+                                                               self.valid_pca_weights[valid_inds]))
+                self.loss_history[mt] = np.array([history.history['loss'],history.history['val_loss']])
         
-        self.model_rho.compile(optimizers.Adam(clipnorm=1),loss=loss)
+        self.model_norm.compile(optimizers.Adam(clipnorm=1,learning_rate=lr),loss=loss)
         callback = tf.keras.callbacks.EarlyStopping(monitor="loss",patience=40)
-        history = self.model_rho.fit(self.initial,self.rho_min,
-                                     epochs=500, callbacks=[callback], verbose=0,
-                                     validation_data=(self.valid_initial,
-                                                      self.valid_rho_min))
-        
-        self.loss_history = np.array([history.history['loss'],history.history['val_loss']])
+        self.model_norm.fit(self.initial,self.surf_val,epochs=300,callbacks=[callback],
+                            validation_data = (self.valid_initial,self.valid_surf_val))
                                      
         print("done training")
     
