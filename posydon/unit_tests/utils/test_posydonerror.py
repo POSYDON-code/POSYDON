@@ -5,15 +5,32 @@ __authors__ = [
     "Matthias Kruckow <Matthias.Kruckow@unige.ch>"
 ]
 
-# import the unittest module and the module which will be tested
+# import the module which will be tested
 import unittest
 import posydon.utils.posydonerror as totest
 
-# import other needed code for the tests
+# import other needed code for the tests, which is not already imported in the
+# module you like to test
+from pytest import fixture, raises
 from inspect import isclass, isroutine
 
-# define test classes
-class TestElements(unittest.TestCase):
+@fixture
+def artificial_object():
+    # create a dict as test object
+    return {'Test': 'object'}
+
+@fixture
+def BinaryStar():
+    # initialize a BinaryStar instance, which is a required argument
+    return totest.BinaryStar()
+
+@fixture
+def SingleStar():
+    # initialize a SingleStar instance, which is a required argument
+    return totest.SingleStar()
+
+# define test classes collecting several test functions
+class TestElements:
     # check for objects, which should be an element of the tested module
     def test_dir(self):
         elements = ['BinaryStar', 'FlowError', 'GridError', 'MatchingError',
@@ -22,113 +39,144 @@ class TestElements(unittest.TestCase):
                     '__doc__', '__file__', '__loader__', '__name__',
                     '__package__', '__spec__', 'copy',
                     'initial_condition_message']
-        self.assertListEqual(dir(totest), elements,
-                             msg="There might be added or removed objects "
-                                 "without an update on the unit test.")
+        assert dir(totest) == elements, "There might be added or removed "\
+            "objects without an update on the unit test."
 
     def test_instance_POSYDONError(self):
-        self.assertTrue(isclass(totest.POSYDONError))
-        self.assertTrue(issubclass(totest.POSYDONError, Exception))
+        assert isclass(totest.POSYDONError)
+        assert issubclass(totest.POSYDONError, Exception)
+        with raises(totest.POSYDONError, match="Test"):
+            raise totest.POSYDONError("Test")
 
     def test_instance_FlowError(self):
-        self.assertTrue(isclass(totest.FlowError))
-        self.assertTrue(issubclass(totest.FlowError, totest.POSYDONError))
+        assert isclass(totest.FlowError)
+        assert issubclass(totest.FlowError, totest.POSYDONError)
+        with raises(totest.FlowError, match="Test"):
+            raise totest.FlowError("Test")
 
     def test_instance_GridError(self):
-        self.assertTrue(isclass(totest.GridError))
-        self.assertTrue(issubclass(totest.GridError, totest.POSYDONError))
+        assert isclass(totest.GridError)
+        assert issubclass(totest.GridError, totest.POSYDONError)
+        with raises(totest.GridError, match="Test"):
+            raise totest.GridError("Test")
 
     def test_instance_MatchingError(self):
-        self.assertTrue(isclass(totest.MatchingError))
-        self.assertTrue(issubclass(totest.MatchingError, totest.POSYDONError))
+        assert isclass(totest.MatchingError)
+        assert issubclass(totest.MatchingError, totest.POSYDONError)
+        with raises(totest.MatchingError, match="Test"):
+            raise totest.MatchingError("Test")
 
     def test_instance_ModelError(self):
-        self.assertTrue(isclass(totest.ModelError))
-        self.assertTrue(issubclass(totest.ModelError, totest.POSYDONError))
+        assert isclass(totest.ModelError)
+        assert issubclass(totest.ModelError, totest.POSYDONError)
+        with raises(totest.ModelError, match="Test"):
+            raise totest.ModelError("Test")
 
     def test_instance_NumericalError(self):
-        self.assertTrue(isclass(totest.NumericalError))
-        self.assertTrue(issubclass(totest.NumericalError, totest.POSYDONError))
+        assert isclass(totest.NumericalError)
+        assert issubclass(totest.NumericalError, totest.POSYDONError)
+        with raises(totest.NumericalError, match="Test"):
+            raise totest.NumericalError("Test")
 
     def test_instance_initial_condition_message(self):
-        self.assertTrue(isroutine(totest.initial_condition_message))
+        assert isroutine(totest.initial_condition_message)
 
 
-class TestFunctions(unittest.TestCase):
+class TestFunctions:
     # test functions
-    def setUp(self):
-        # initialize a BinaryStar instance, which is a required argument
-        self.BinaryStar = totest.BinaryStar()
-
-    def test_initial_condition_message(self):
-        test_object = {'Test': 'object'}
-        with self.assertRaises(TypeError):
-            message = totest.initial_condition_message(binary=test_object)
-        self.assertIn("Failed Binary Initial Conditions",
-            totest.initial_condition_message(binary=self.BinaryStar))
-        with self.assertRaises(TypeError):
-            message = totest.initial_condition_message(binary=test_object,
+    def test_initial_condition_message(self, BinaryStar, artificial_object):
+        with raises(TypeError, match="The binary must be a BinaryStar object"):
+            message = totest.initial_condition_message(binary=\
+                                                       artificial_object)
+        assert "Failed Binary Initial Conditions" in\
+               totest.initial_condition_message(binary=BinaryStar)
+        with raises(TypeError, match="is not iterable"):
+            message = totest.initial_condition_message(binary=BinaryStar,
                                                        ini_params=1)
-        with self.assertRaises(TypeError):
-            message = totest.initial_condition_message(binary=test_object,
+        with raises(TypeError, match="can only concatenate str"):
+            message = totest.initial_condition_message(binary=BinaryStar,
                                                        ini_params=[1,2])
-        self.assertEqual("a: 1\nb: 2\n",
-            totest.initial_condition_message(binary=self.BinaryStar,
-                                             ini_params=["a: 1\n", "b: 2\n"]))
+        assert "a: 1\nb: 2\n" == totest.initial_condition_message(\
+               binary=BinaryStar, ini_params=["a: 1\n", "b: 2\n"])
 
 
-class TestPOSYDONError(unittest.TestCase):
+class TestPOSYDONError:
     # test the POSYDONError class
-    def setUp(self):
-        # initialize an instance of the class for each test
-        self.POSYDONError = totest.POSYDONError("test message on posittion")
+    @fixture
+    def POSYDONError(self):
+        # initialize an instance of the class with defaults
+        return totest.POSYDONError()
 
-    def test_init(self):
-        self.assertTrue(isroutine(self.POSYDONError.__init__))
+    @fixture
+    def POSYDONError_position(self):
+        # initialize an instance of the class with a positional argument
+        return totest.POSYDONError("test message on position")
+
+    @fixture
+    def POSYDONError_key(self):
+        # initialize an instance of the class with a message via key
+        return totest.POSYDONError(message="test message with key")
+
+    @fixture
+    def POSYDONError_object(self, artificial_object):
+        # initialize an instance of the class with an artifical object in a
+        # list via key
+        return totest.POSYDONError(objects=[artificial_object])
+
+    @fixture
+    def POSYDONError_SingleStar(self, SingleStar):
+        # initialize an instance of the class with a SingleStar object
+        return totest.POSYDONError(objects=SingleStar)
+
+    @fixture
+    def POSYDONError_BinaryStar(self, BinaryStar):
+        # initialize an instance of the class with a BinaryStar object
+        return totest.POSYDONError(objects=BinaryStar)
+
+    @fixture
+    def POSYDONError_List(self, artificial_object, SingleStar, BinaryStar):
+        # initialize an instance of the class with a list of objects
+        return totest.POSYDONError(objects=[artificial_object, SingleStar,\
+                                            BinaryStar])
+
+    def test_init(self, POSYDONError, POSYDONError_position, POSYDONError_key,\
+                  POSYDONError_object, artificial_object):
+        assert isroutine(POSYDONError.__init__)
         # check that the instance is of correct type and all code in the
         # __init__ got executed: the elements are created and initialized
-        self.assertIsInstance(self.POSYDONError, totest.POSYDONError)
-        self.assertEqual(self.POSYDONError.message,
-                         "test message on posittion")
-        self.assertIsNone(self.POSYDONError.objects)
+        assert isinstance(POSYDONError, totest.POSYDONError)
         # check defaults
-        error_object = totest.POSYDONError()
-        self.assertEqual(error_object.message, "")
-        self.assertIsNone(error_object.objects)
-        # test a passed message
+        assert POSYDONError.message == ""
+        assert POSYDONError.objects is None
+        # test a passed message via positional argument
+        assert POSYDONError_position.message == "test message on position"
+        assert POSYDONError_position.objects is None
+        # test a passed message via key
         error_object = totest.POSYDONError(message="test message with key")
-        self.assertEqual(error_object.message, "test message with key")
-        self.assertIsNone(error_object.objects)
+        assert POSYDONError_key.message == "test message with key"
+        assert POSYDONError_key.objects is None
         # test a passed object
-        test_object = {'Test': 'object'}
-        error_object = totest.POSYDONError(objects=[test_object])
-        self.assertEqual(error_object.message, "")
-        self.assertListEqual(error_object.objects, [test_object])
+        assert POSYDONError_object.message == ""
+        assert POSYDONError_object.objects == [artificial_object]
         # test requests on input parameters
-        with self.assertRaises(TypeError):
-            error_object = totest.POSYDONError(message=test_object)
-        with self.assertRaises(TypeError):
-            error_object = totest.POSYDONError(objects=test_object)
+        with raises(TypeError, match="message must be a string"):
+            error_object = totest.POSYDONError(message=artificial_object)
+        with raises(TypeError, match="objects must be None, a list, a "+\
+                    "SingleStar object, or a BinaryStar object"):
+            error_object = totest.POSYDONError(objects=artificial_object)
 
 
-    def test_str(self):
-        self.assertTrue(isroutine(self.POSYDONError.__str__))
-        self.assertEqual(str(self.POSYDONError), "\ntest message on posittion")
+    def test_str(self, POSYDONError_position, POSYDONError_object, POSYDONError_SingleStar, POSYDONError_BinaryStar, POSYDONError_List):
+        assert isroutine(POSYDONError_position.__str__)
+        assert str(POSYDONError_position) == "\ntest message on position"
         # test passed objects
-        test_object1 = {'Test': 'object'}
-        error_object = totest.POSYDONError(objects=[test_object1])
-        self.assertEqual(str(error_object), "\n")
-        test_object2 = totest.SingleStar()
-        error_object = totest.POSYDONError(objects=test_object2)
-        self.assertIn("OBJECT #(<class 'posydon.binary_evol.singlestar.SingleStar'>)", str(error_object))
-        test_object3 = totest.BinaryStar()
-        error_object = totest.POSYDONError(objects=test_object3)
-        self.assertIn("OBJECT #(<class 'posydon.binary_evol.binarystar.BinaryStar'>)", str(error_object))
-        error_object = totest.POSYDONError(objects=[test_object1, test_object2, test_object3])
-        self.assertNotIn("OBJECT #1", str(error_object))
-        self.assertIn("OBJECT #2 (<class 'posydon.binary_evol.singlestar.SingleStar'>)", str(error_object))
-        self.assertIn("OBJECT #3 (<class 'posydon.binary_evol.binarystar.BinaryStar'>)", str(error_object))
-
-
-if __name__ == "__main__":
-    unittest.main()
+        assert str(POSYDONError_object) == "\n"
+        assert "OBJECT #(<class 'posydon.binary_evol.singlestar.SingleStar'>)"\
+               in str(POSYDONError_SingleStar)
+        assert "OBJECT #(<class 'posydon.binary_evol.binarystar.BinaryStar'>)"\
+               in str(POSYDONError_BinaryStar)
+        assert "OBJECT #1" not in str(POSYDONError_List)
+        assert "OBJECT #2 (<class 'posydon.binary_evol.singlestar.SingleStar"+\
+               "'>)" in str(POSYDONError_List)
+        assert "OBJECT #3 (<class 'posydon.binary_evol.binarystar.BinaryStar"+\
+               "'>)" in str(POSYDONError_List)

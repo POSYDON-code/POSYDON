@@ -34,7 +34,7 @@ class POSYDONError(Exception):
             raise TypeError("The error message must be a string.")
         if ((objects is not None) and
             (not isinstance(objects, (list, SingleStar, BinaryStar)))):
-            raise TypeError("The error message must be None, a list, a "
+            raise TypeError("The error objects must be None, a list, a "
                             "SingleStar object, or a BinaryStar object.")
         self.message = message
         # copy the objects: we must know their state at the moment of the error
@@ -51,7 +51,7 @@ class POSYDONError(Exception):
                         result += f"\n\nOBJECT #{i+1} ({type(obj)}):\n{str(obj)}"
             elif isinstance(self.objects, (BinaryStar, SingleStar)):
                 result += f"\n\nOBJECT #({type(self.objects)}):\n{str(self.objects)}"
-            else:
+            else: # pragma: no cover
                 pass
         return result + '\n'+ super().__str__()
 

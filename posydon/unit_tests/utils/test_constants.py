@@ -5,15 +5,15 @@ __authors__ = [
     "Matthias Kruckow <Matthias.Kruckow@unige.ch>"
 ]
 
-# import the unittest module and the module which will be tested
-import unittest
+# import the module which will be tested
 import posydon.utils.constants as totest
 
-# import other needed code for the tests
-# not needed
+# import other needed code for the tests, which is not already imported in the
+# module you like to test
+from pytest import approx
 
-# define test classes
-class TestElements(unittest.TestCase):
+# define test classes collecting several test functions
+class TestElements:
     # check for objects, which should be an element of the tested module
     def test_dir(self):
         elements = ['H_weight', 'He_weight', 'Lsun', 'Lsun33', 'Msun',
@@ -30,462 +30,461 @@ class TestElements(unittest.TestCase):
                     'planck_h', 'qe', 'r_earth', 'r_jupiter', 'rad2a', 'rbohr',
                     'rhonuc', 'rsol', 'secyer', 'semimajor_axis_jupiter',
                     'ssol', 'standard_cgrav', 'weinfre', 'weinlam']
-        self.assertListEqual(dir(totest), elements,
-                             msg="There might be added or removed objects "
-                                 "without an update on the unit test.")
+        assert dir(totest) == elements, "There might be added or removed "\
+            "objects without an update on the unit test."
 
     def test_instance_pi(self):
-        self.assertIsInstance(totest.pi, (float, int))
+        assert isinstance(totest.pi, (float,int)),\
+               "pi is of type: "+str(type(totest.pi))
 
     def test_instance_a2rad(self):
-        self.assertIsInstance(totest.a2rad, (float, int))
+        assert isinstance(totest.a2rad, (float,int)),\
+               "a2rad is of type: "+str(type(totest.a2rad))
 
     def test_instance_rad2a(self):
-        self.assertIsInstance(totest.rad2a, (float, int))
+        assert isinstance(totest.rad2a, (float,int)),\
+               "rad2a is of type: "+str(type(totest.rad2a))
 
     def test_instance_standard_cgrav(self):
-        self.assertIsInstance(totest.standard_cgrav, (float, int))
+        assert isinstance(totest.standard_cgrav, (float,int)),\
+               "standard_cgrav is of type: "+\
+               str(type(totest.standard_cgrav))
 
     def test_instance_planck_h(self):
-        self.assertIsInstance(totest.planck_h, (float, int))
+        assert isinstance(totest.planck_h, (float,int)),\
+               "planck_h is of type: "+str(type(totest.planck_h))
 
     def test_instance_hbar(self):
-        self.assertIsInstance(totest.hbar, (float, int))
+        assert isinstance(totest.hbar, (float,int)),\
+               "hbar is of type: "+str(type(totest.hbar))
 
     def test_instance_qe(self):
-        self.assertIsInstance(totest.qe, (float, int))
+        assert isinstance(totest.qe, (float,int)),\
+               "qe is of type: "+str(type(totest.qe))
 
     def test_instance_avo(self):
-        self.assertIsInstance(totest.avo, (float, int))
+        assert isinstance(totest.avo, (float,int)),\
+               "avo is of type: "+str(type(totest.avo))
 
     def test_instance_clight(self):
-        self.assertIsInstance(totest.clight, (float, int))
+        assert isinstance(totest.clight, (float,int)),\
+               "clight is of type: "+str(type(totest.clight))
 
     def test_instance_kerg(self):
-        self.assertIsInstance(totest.kerg, (float, int))
+        assert isinstance(totest.kerg, (float,int)),\
+               "kerg is of type: "+str(type(totest.kerg))
 
     def test_instance_boltzm(self):
-        self.assertIsInstance(totest.boltzm, (float, int))
+        assert isinstance(totest.boltzm, (float,int)),\
+               "boltzm is of type: "+str(type(totest.boltzm))
 
     def test_instance_cgas(self):
-        self.assertIsInstance(totest.cgas, (float, int))
+        assert isinstance(totest.cgas, (float,int)),\
+               "cgas is of type: "+str(type(totest.cgas))
 
     def test_instance_kev(self):
-        self.assertIsInstance(totest.kev, (float, int))
+        assert isinstance(totest.kev, (float,int)),\
+               "kev is of type: "+str(type(totest.kev))
 
     def test_instance_amu(self):
-        self.assertIsInstance(totest.amu, (float, int))
+        assert isinstance(totest.amu, (float,int)),\
+               "amu is of type: "+str(type(totest.amu))
 
     def test_instance_mn(self):
-        self.assertIsInstance(totest.mn, (float, int))
+        assert isinstance(totest.mn, (float,int)),\
+               "mn is of type: "+str(type(totest.mn))
 
     def test_instance_mp(self):
-        self.assertIsInstance(totest.mp, (float, int))
+        assert isinstance(totest.mp, (float,int)),\
+               "mp is of type: "+str(type(totest.mp))
 
     def test_instance_me(self):
-        self.assertIsInstance(totest.me, (float, int))
+        assert isinstance(totest.me, (float,int)),\
+               "me is of type: "+str(type(totest.me))
 
     def test_instance_rbohr(self):
-        self.assertIsInstance(totest.rbohr, (float, int))
+        assert isinstance(totest.rbohr, (float,int)),\
+               "rbohr is of type: "+str(type(totest.rbohr))
 
     def test_instance_fine(self):
-        self.assertIsInstance(totest.fine, (float, int))
+        assert isinstance(totest.fine, (float,int)),\
+               "fine is of type: "+str(type(totest.fine))
 
     def test_instance_hion(self):
-        self.assertIsInstance(totest.hion, (float, int))
+        assert isinstance(totest.hion, (float,int)),\
+               "hion is of type: "+str(type(totest.hion))
 
     def test_instance_ev2erg(self):
-        self.assertIsInstance(totest.ev2erg, (float, int))
+        assert isinstance(totest.ev2erg, (float,int)),\
+               "ev2erg is of type: "+str(type(totest.ev2erg))
 
     def test_instance_inversecm2erg(self):
-        self.assertIsInstance(totest.inversecm2erg, (float, int))
+        assert isinstance(totest.inversecm2erg, (float,int)),\
+               "inversecm2erg is of type: "+str(type(totest.inversecm2erg))
 
     def test_instance_mev_to_ergs(self):
-        self.assertIsInstance(totest.mev_to_ergs, (float, int))
+        assert isinstance(totest.mev_to_ergs, (float,int)),\
+               "mev_to_ergs is of type: "+str(type(totest.mev_to_ergs))
 
     def test_instance_mev_amu(self):
-        self.assertIsInstance(totest.mev_amu, (float, int))
+        assert isinstance(totest.mev_amu, (float,int)),\
+               "mev_amu is of type: "+str(type(totest.mev_amu))
 
     def test_instance_Qconv(self):
-        self.assertIsInstance(totest.Qconv, (float, int))
+        assert isinstance(totest.Qconv, (float,int)),\
+               "Qconv is of type: "+str(type(totest.Qconv))
 
     def test_instance_boltz_sigma(self):
-        self.assertIsInstance(totest.boltz_sigma, (float, int))
+        assert isinstance(totest.boltz_sigma, (float,int)),\
+               "boltz_sigma is of type: "+str(type(totest.boltz_sigma))
 
     def test_instance_crad(self):
-        self.assertIsInstance(totest.crad, (float, int))
+        assert isinstance(totest.crad, (float,int)),\
+               "crad is of type: "+str(type(totest.crad))
 
     def test_instance_ssol(self):
-        self.assertIsInstance(totest.ssol, (float, int))
+        assert isinstance(totest.ssol, (float,int)),\
+               "ssol is of type: "+str(type(totest.ssol))
 
     def test_instance_asol(self):
-        self.assertIsInstance(totest.asol, (float, int))
+        assert isinstance(totest.asol, (float,int)),\
+               "asol is of type: "+str(type(totest.asol))
 
     def test_instance_weinlam(self):
-        self.assertIsInstance(totest.weinlam, (float, int))
+        assert isinstance(totest.weinlam, (float,int)),\
+               "weinlam is of type: "+str(type(totest.weinlam))
 
     def test_instance_weinfre(self):
-        self.assertIsInstance(totest.weinfre, (float, int))
+        assert isinstance(totest.weinfre, (float,int)),\
+               "weinfre is of type: "+str(type(totest.weinfre))
 
     def test_instance_rhonuc(self):
-        self.assertIsInstance(totest.rhonuc, (float, int))
+        assert isinstance(totest.rhonuc, (float,int)),\
+               "rhonuc is of type: "+str(type(totest.rhonuc))
 
     def test_instance_Zsun(self):
-        self.assertIsInstance(totest.Zsun, (float, int))
+        assert isinstance(totest.Zsun, (float,int)),\
+               "Zsun is of type: "+str(type(totest.Zsun))
 
     def test_instance_msol(self):
-        self.assertIsInstance(totest.msol, (float, int))
+        assert isinstance(totest.msol, (float,int)),\
+               "msol is of type: "+str(type(totest.msol))
 
     def test_instance_rsol(self):
-        self.assertIsInstance(totest.rsol, (float, int))
+        assert isinstance(totest.rsol, (float,int)),\
+               "rsol is of type: "+str(type(totest.rsol))
 
     def test_instance_lsol(self):
-        self.assertIsInstance(totest.lsol, (float, int))
+        assert isinstance(totest.lsol, (float,int)),\
+               "lsol is of type: "+str(type(totest.lsol))
 
     def test_instance_agesol(self):
-        self.assertIsInstance(totest.agesol, (float, int))
+        assert isinstance(totest.agesol, (float,int)),\
+               "agesol is of type: "+str(type(totest.agesol))
 
     def test_instance_Msun(self):
-        self.assertIsInstance(totest.Msun, (float, int))
+        assert isinstance(totest.Msun, (float,int)),\
+               "Msun is of type: "+str(type(totest.Msun))
 
     def test_instance_Rsun(self):
-        self.assertIsInstance(totest.Rsun, (float, int))
+        assert isinstance(totest.Rsun, (float,int)),\
+               "Rsun is of type: "+str(type(totest.Rsun))
 
     def test_instance_Lsun(self):
-        self.assertIsInstance(totest.Lsun, (float, int))
+        assert isinstance(totest.Lsun, (float,int)),\
+               "Lsun is of type: "+str(type(totest.Lsun))
 
     def test_instance_Msun33(self):
-        self.assertIsInstance(totest.Msun33, (float, int))
+        assert isinstance(totest.Msun33, (float,int)),\
+               "Msun33 is of type: "+str(type(totest.Msun33))
 
     def test_instance_Rsun11(self):
-        self.assertIsInstance(totest.Rsun11, (float, int))
+        assert isinstance(totest.Rsun11, (float,int)),\
+               "Rsun11 is of type: "+str(type(totest.Rsun11))
 
     def test_instance_Lsun33(self):
-        self.assertIsInstance(totest.Lsun33, (float, int))
+        assert isinstance(totest.Lsun33, (float,int)),\
+               "Lsun33 is of type: "+str(type(totest.Lsun33))
 
     def test_instance_ly(self):
-        self.assertIsInstance(totest.ly, (float, int))
+        assert isinstance(totest.ly, (float,int)),\
+               "ly is of type: "+str(type(totest.ly))
 
     def test_instance_pc(self):
-        self.assertIsInstance(totest.pc, (float, int))
+        assert isinstance(totest.pc, (float,int)),\
+               "pc is of type: "+str(type(totest.pc))
 
     def test_instance_secyer(self):
-        self.assertIsInstance(totest.secyer, (float, int))
+        assert isinstance(totest.secyer, (float,int)),\
+               "secyer is of type: "+str(type(totest.secyer))
 
     def test_instance_dayyer(self):
-        self.assertIsInstance(totest.dayyer, (float, int))
+        assert isinstance(totest.dayyer, (float,int)),\
+               "dayyer is of type: "+str(type(totest.dayyer))
 
     def test_instance_age_of_universe(self):
-        self.assertIsInstance(totest.age_of_universe, (float, int))
+        assert isinstance(totest.age_of_universe, (float,int)),\
+               "age_of_universe is of type: "+str(type(totest.age_of_universe))
 
     def test_instance_Teffsol(self):
-        self.assertIsInstance(totest.Teffsol, (float, int))
+        assert isinstance(totest.Teffsol, (float,int)),\
+               "Teffsol is of type: "+str(type(totest.Teffsol))
 
     def test_instance_loggsol(self):
-        self.assertIsInstance(totest.loggsol, (float, int))
+        assert isinstance(totest.loggsol, (float,int)),\
+               "loggsol is of type: "+str(type(totest.loggsol))
 
     def test_instance_mbolsun(self):
-        self.assertIsInstance(totest.mbolsun, (float, int))
+        assert isinstance(totest.mbolsun, (float,int)),\
+               "mbolsun is of type: "+str(type(totest.mbolsun))
 
     def test_instance_mbolsol(self):
-        self.assertIsInstance(totest.mbolsol, (float, int))
+        assert isinstance(totest.mbolsol, (float,int)),\
+               "mbolsol is of type: "+str(type(totest.mbolsol))
 
     def test_instance_m_earth(self):
-        self.assertIsInstance(totest.m_earth, (float, int))
+        assert isinstance(totest.m_earth, (float,int)),\
+               "m_earth is of type: "+str(type(totest.m_earth))
 
     def test_instance_r_earth(self):
-        self.assertIsInstance(totest.r_earth, (float, int))
+        assert isinstance(totest.r_earth, (float,int)),\
+               "r_earth is of type: "+str(type(totest.r_earth))
 
     def test_instance_au(self):
-        self.assertIsInstance(totest.au, (float, int))
+        assert isinstance(totest.au, (float,int)),\
+               "au is of type: "+str(type(totest.au))
 
     def test_instance_aursun(self):
-        self.assertIsInstance(totest.aursun, (float, int))
+        assert isinstance(totest.aursun, (float,int)),\
+               "aursun is of type: "+str(type(totest.aursun))
 
     def test_instance_m_jupiter(self):
-        self.assertIsInstance(totest.m_jupiter, (float, int))
+        assert isinstance(totest.m_jupiter, (float,int)),\
+               "m_jupiter is of type: "+str(type(totest.m_jupiter))
 
     def test_instance_r_jupiter(self):
-        self.assertIsInstance(totest.r_jupiter, (float, int))
+        assert isinstance(totest.r_jupiter, (float,int)),\
+               "r_jupiter is of type: "+str(type(totest.r_jupiter))
 
     def test_instance_semimajor_axis_jupiter(self):
-        self.assertIsInstance(totest.semimajor_axis_jupiter, (float, int))
+        assert isinstance(totest.semimajor_axis_jupiter, (float,int)),\
+               "semimajor_axis_jupiter is of type: "+\
+               str(type(totest.semimajor_axis_jupiter))
 
     def test_instance_km2cm(self):
-        self.assertIsInstance(totest.km2cm, (float, int))
+        assert isinstance(totest.km2cm, (float,int)),\
+               "km2cm is of type: "+str(type(totest.km2cm))
 
     def test_instance_day2sec(self):
-        self.assertIsInstance(totest.day2sec, (float, int))
+        assert isinstance(totest.day2sec, (float,int)),\
+               "day2sec is of type: "+str(type(totest.day2sec))
 
     def test_instance_H_weight(self):
-        self.assertIsInstance(totest.H_weight, (float, int))
+        assert isinstance(totest.H_weight, (float,int)),\
+               "H_weight is of type: "+str(type(totest.H_weight))
 
     def test_instance_He_weight(self):
-        self.assertIsInstance(totest.He_weight, (float, int))
+        assert isinstance(totest.He_weight, (float,int)),\
+               "He_weight is of type: "+str(type(totest.He_weight))
 
     def test_instance_SNcheck_ERR(self):
-        self.assertIsInstance(totest.SNcheck_ERR, (float, int))
+        assert isinstance(totest.SNcheck_ERR, (float,int)),\
+               "SNcheck_ERR is of type: "+str(type(totest.SNcheck_ERR))
 
 
-class TestValues(unittest.TestCase):
+class TestValues:
     # check that the values fit
     # use delta of last digit times 0.6
     def test_value_pi(self):
-        value = 3.1415926535897932384626433832795028841971693993751
-        self.assertAlmostEqual(totest.pi, value, delta=6e-50)
+        assert 3.1415926535897932384626433832795028841971693993751 ==\
+               approx(totest.pi, abs=6e-50)
 
     def test_value_a2rad(self):
-        value = 1.7453292519943295e-2
-        self.assertAlmostEqual(totest.a2rad, value, delta=6e-19)
+        assert 1.7453292519943295e-2 == approx(totest.a2rad, abs=6e-19)
 
     def test_value_rad2a(self):
-        value = 5.729577951308232e+1
-        self.assertAlmostEqual(totest.rad2a, value, delta=6e-15)
+        assert 5.729577951308232e+1 == approx(totest.rad2a, abs=6e-15)
 
     def test_value_standard_cgrav(self):
-        value = 6.67428e-8
-        self.assertAlmostEqual(totest.standard_cgrav, value, delta=6e-14)
+        assert 6.67428e-8 == approx(totest.standard_cgrav, abs=6e-14)
 
     def test_value_planck_h(self):
-        value = 6.62606896e-27
-        self.assertAlmostEqual(totest.planck_h, value, delta=6e-36)
+        assert 6.62606896e-27 == approx(totest.planck_h, abs=6e-36)
 
     def test_value_hbar(self):
-        value = 1.05457163e-27
-        self.assertAlmostEqual(totest.hbar, value, delta=6e-36)
+        assert 1.05457163e-27 == approx(totest.hbar, abs=6e-36)
 
     def test_value_qe(self):
-        value = 4.80320440e-10
-        self.assertAlmostEqual(totest.qe, value, delta=6e-19)
+        assert 4.80320440e-10 == approx(totest.qe, abs=6e-19)
 
     def test_value_avo(self):
-        value = 6.02214129e+23
-        self.assertAlmostEqual(totest.avo, value, delta=6e+14)
+        assert 6.02214129e+23 == approx(totest.avo, abs=6e+14)
 
     def test_value_clight(self):
-        value = 2.99792458e+10
-        self.assertAlmostEqual(totest.clight, value, delta=6e+1)
+        assert 2.99792458e+10 == approx(totest.clight, abs=6e+1)
 
     def test_value_kerg(self):
-        value = 1.3806504e-16
-        self.assertAlmostEqual(totest.kerg, value, delta=6e-24)
+        assert 1.3806504e-16 == approx(totest.kerg, abs=6e-24)
 
     def test_value_boltzm(self):
-        value = 1.3806504e-16
-        self.assertAlmostEqual(totest.kerg, value, delta=6e-24)
+        assert 1.3806504e-16 == approx(totest.kerg, abs=6e-24)
 
     def test_value_cgas(self):
-        value = 8.314471780895016e+7
-        self.assertAlmostEqual(totest.cgas, value, delta=6e-1)
+        assert 8.314471780895016e+7 == approx(totest.cgas, abs=6e-1)
 
     def test_value_kev(self):
-        value = 8.617385e-5
-        self.assertAlmostEqual(totest.kev, value, delta=6e-12)
+        assert 8.617385e-5 == approx(totest.kev, abs=6e-12)
 
     def test_value_amu(self):
-        value = 1.6605389210321898e-24
-        self.assertAlmostEqual(totest.amu, value, delta=6e-33)
+        assert 1.6605389210321898e-24 == approx(totest.amu, abs=6e-33)
 
     def test_value_mn(self):
-        value = 1.6749286e-24
-        self.assertAlmostEqual(totest.mn, value, delta=6e-32)
+        assert 1.6749286e-24 == approx(totest.mn, abs=6e-32)
 
     def test_value_mp(self):
-        value = 1.6726231e-24
-        self.assertAlmostEqual(totest.mp, value, delta=6e-32)
+        assert 1.6726231e-24 == approx(totest.mp, abs=6e-32)
 
     def test_value_me(self):
-        value = 9.1093826e-28
-        self.assertAlmostEqual(totest.me, value, delta=6e-36)
+        assert 9.1093826e-28 == approx(totest.me, abs=6e-36)
 
     def test_value_rbohr(self):
-        value = 5.291771539809704e-9
-        self.assertAlmostEqual(totest.rbohr, value, delta=6e-18)
+        assert 5.291771539809704e-9 == approx(totest.rbohr, abs=6e-18)
 
     def test_value_fine(self):
-        value = 7.297352926107705e-3
-        self.assertAlmostEqual(totest.fine, value, delta=6e-11)
+        assert 7.297352926107705e-3 == approx(totest.fine, abs=6e-11)
 
     def test_value_hion(self):
-        value = 1.3605698140e+1
-        self.assertAlmostEqual(totest.hion, value, delta=6e-10)
+        assert 1.3605698140e+1 == approx(totest.hion, abs=6e-10)
 
     def test_value_ev2erg(self):
-        value = 1.602176565e-12
-        self.assertAlmostEqual(totest.ev2erg, value, delta=6e-22)
+        assert 1.602176565e-12 == approx(totest.ev2erg, abs=6e-22)
 
     def test_value_inversecm2erg(self):
-        value = 1.9864455003959037e-16
-        self.assertAlmostEqual(totest.inversecm2erg, value, delta=6e-25)
+        assert 1.9864455003959037e-16 ==\
+               approx(totest.inversecm2erg, abs=6e-25)
 
     def test_value_mev_to_ergs(self):
-        value = 1.6021765649999999e-6
-        self.assertAlmostEqual(totest.mev_to_ergs, value, delta=6e-16)
+        assert 1.6021765649999999e-6 == approx(totest.mev_to_ergs, abs=6e-16)
 
     def test_value_mev_amu(self):
-        value = 9.648533645956869e+17
-        self.assertAlmostEqual(totest.mev_amu, value, delta=6e+8)
+        assert 9.648533645956869e+17 == approx(totest.mev_amu, abs=6e+8)
 
     def test_value_Qconv(self):
-        value = 9.648533645956868e+17
-        self.assertAlmostEqual(totest.Qconv, value, delta=6e+8)
+        assert 9.648533645956868e+17 == approx(totest.Qconv, abs=6e+8)
 
     def test_value_boltz_sigma(self):
-        value = 5.670373e-5
-        self.assertAlmostEqual(totest.boltz_sigma, value, delta=6e-12)
+        assert 5.670373e-5 == approx(totest.boltz_sigma, abs=6e-12)
 
     def test_value_crad(self):
-        value = 7.565731356724124e-15
-        self.assertAlmostEqual(totest.crad, value, delta=6e-22)
+        assert 7.565731356724124e-15 == approx(totest.crad, abs=6e-22)
 
     def test_value_ssol(self):
-        value = 5.670373e-5
-        self.assertAlmostEqual(totest.ssol, value, delta=6e-12)
+        assert 5.670373e-5 == approx(totest.ssol, abs=6e-12)
 
     def test_value_asol(self):
-        value = 7.565731356724124e-15
-        self.assertAlmostEqual(totest.asol, value, delta=6e-22)
+        assert 7.565731356724124e-15 == approx(totest.asol, abs=6e-22)
 
     def test_value_weinlam(self):
-        value = 2.897768496231288e-1
-        self.assertAlmostEqual(totest.weinlam, value, delta=6e-9)
+        assert 2.897768496231288e-1 == approx(totest.weinlam, abs=6e-9)
 
     def test_value_weinfre(self):
-        value = 5.878932774535368e+10
-        self.assertAlmostEqual(totest.weinfre, value, delta=6e+2)
+        assert 5.878932774535368e+10 == approx(totest.weinfre, abs=6e+2)
 
     def test_value_rhonuc(self):
-        value = 2.342e+14
-        self.assertAlmostEqual(totest.rhonuc, value, delta=6e+10)
+        assert 2.342e+14 == approx(totest.rhonuc, abs=6e+10)
 
     def test_value_Zsun(self):
-        value = 1.42e-2
-        self.assertAlmostEqual(totest.Zsun, value, delta=6e-5)
+        assert 1.42e-2 == approx(totest.Zsun, abs=6e-5)
 
     def test_value_msol(self):
-        value = 1.9892e+33
-        self.assertAlmostEqual(totest.msol, value, delta=6e+28)
+        assert 1.9892e+33 == approx(totest.msol, abs=6e+28)
 
     def test_value_rsol(self):
-        value = 6.9598e+10
-        self.assertAlmostEqual(totest.rsol, value, delta=6e+5)
+        assert 6.9598e+10 == approx(totest.rsol, abs=6e+5)
 
     def test_value_lsol(self):
-        value = 3.8418e+33
-        self.assertAlmostEqual(totest.lsol, value, delta=6e+28)
+        assert 3.8418e+33 == approx(totest.lsol, abs=6e+28)
 
     def test_value_agesol(self):
-        value = 4.57e+9
-        self.assertAlmostEqual(totest.agesol, value, delta=6e+6)
+        assert 4.57e+9 == approx(totest.agesol, abs=6e+6)
 
     def test_value_Msun(self):
-        value = 1.9892e+33
-        self.assertAlmostEqual(totest.Msun, value, delta=6e+28)
+        assert 1.9892e+33 == approx(totest.Msun, abs=6e+28)
 
     def test_value_Rsun(self):
-        value = 6.9598e+10
-        self.assertAlmostEqual(totest.Rsun, value, delta=6e+5)
+        assert 6.9598e+10 == approx(totest.Rsun, abs=6e+5)
 
     def test_value_Lsun(self):
-        value = 3.8418e+33
-        self.assertAlmostEqual(totest.Lsun, value, delta=6e+28)
+        assert 3.8418e+33 == approx(totest.Lsun, abs=6e+28)
 
     def test_value_Msun33(self):
-        value = 1.9892
-        self.assertAlmostEqual(totest.Msun33, value, delta=6e-5)
+        assert 1.9892 == approx(totest.Msun33, abs=6e-5)
 
     def test_value_Rsun11(self):
-        value = 6.9598e-1
-        self.assertAlmostEqual(totest.Rsun11, value, delta=6e-6)
+        assert 6.9598e-1 == approx(totest.Rsun11, abs=6e-6)
 
     def test_value_Lsun33(self):
-        value = 3.8418
-        self.assertAlmostEqual(totest.Lsun33, value, delta=6e-5)
+        assert 3.8418 == approx(totest.Lsun33, abs=6e-5)
 
     def test_value_ly(self):
-        value = 9.460528e+17
-        self.assertAlmostEqual(totest.ly, value, delta=6e+10)
+        assert 9.460528e+17 == approx(totest.ly, abs=6e+10)
 
     def test_value_pc(self):
-        value = 3.0856770322224e+18
-        self.assertAlmostEqual(totest.pc, value, delta=6e+11)
+        assert 3.0856770322224e+18 == approx(totest.pc, abs=6e+11)
 
     def test_value_secyer(self):
-        value = 3.1558149984e+7
-        self.assertAlmostEqual(totest.secyer, value, delta=6e-4)
+        assert 3.1558149984e+7 == approx(totest.secyer, abs=6e-4)
 
     def test_value_dayyer(self):
-        value = 3.6525e+2
-        self.assertAlmostEqual(totest.dayyer, value, delta=6e-3)
+        assert 3.6525e+2 == approx(totest.dayyer, abs=6e-3)
 
     def test_value_age_of_universe(self):
-        value = 1.38e+10
-        self.assertAlmostEqual(totest.age_of_universe, value, delta=6e+7)
+        assert 1.38e+10 == approx(totest.age_of_universe, abs=6e+7)
 
     def test_value_Teffsol(self):
-        value = 5.7770e+3
-        self.assertAlmostEqual(totest.Teffsol, value, delta=6e-2)
+        assert 5.7770e+3 == approx(totest.Teffsol, abs=6e-2)
 
     def test_value_loggsol(self):
-        value = 4.4378893534131256
-        self.assertAlmostEqual(totest.loggsol, value, delta=6e-17)
+        assert 4.4378893534131256 == approx(totest.loggsol, abs=6e-17)
 
     def test_value_mbolsun(self):
-        value = 4.746
-        self.assertAlmostEqual(totest.mbolsun, value, delta=6e-4)
+        assert 4.746 == approx(totest.mbolsun, abs=6e-4)
 
     def test_value_mbolsol(self):
-        value = 4.746
-        self.assertAlmostEqual(totest.mbolsol, value, delta=6e-4)
+        assert 4.746 == approx(totest.mbolsol, abs=6e-4)
 
     def test_value_m_earth(self):
-        value = 5.9764e+27
-        self.assertAlmostEqual(totest.m_earth, value, delta=6e+22)
+        assert 5.9764e+27 == approx(totest.m_earth, abs=6e+22)
 
     def test_value_r_earth(self):
-        value = 6.37e+8
-        self.assertAlmostEqual(totest.r_earth, value, delta=6e+5)
+        assert 6.37e+8 == approx(totest.r_earth, abs=6e+5)
 
     def test_value_au(self):
-        value = 1.495978921e+13
-        self.assertAlmostEqual(totest.au, value, delta=6e+3)
+        assert 1.495978921e+13 == approx(totest.au, abs=6e+3)
 
     def test_value_aursun(self):
-        value = 2.1495e+2
-        self.assertAlmostEqual(totest.aursun, value, delta=6e-3)
+        assert 2.1495e+2 == approx(totest.aursun, abs=6e-3)
 
     def test_value_m_jupiter(self):
-        value = 1.8986e+30
-        self.assertAlmostEqual(totest.m_jupiter, value, delta=6e+25)
+        assert 1.8986e+30 == approx(totest.m_jupiter, abs=6e+25)
 
     def test_value_r_jupiter(self):
-        value = 6.9911e+9
-        self.assertAlmostEqual(totest.r_jupiter, value, delta=6e+4)
+        assert 6.9911e+9 == approx(totest.r_jupiter, abs=6e+4)
 
     def test_value_semimajor_axis_jupiter(self):
-        value = 7.7857e+13
-        self.assertAlmostEqual(totest.semimajor_axis_jupiter, value, delta=6e+8)
+        assert 7.7857e+13 == approx(totest.semimajor_axis_jupiter, abs=6e+8)
 
     def test_value_km2cm(self):
-        value = 1.0e5
-        self.assertAlmostEqual(totest.km2cm, value, delta=6e-16)
+        assert 1.0e5 == approx(totest.km2cm, abs=6e-16)
 
     def test_value_day2sec(self):
-        value = 8.64000e+4
-        self.assertAlmostEqual(totest.day2sec, value, delta=6e-2)
+        assert 8.64000e+4 == approx(totest.day2sec, abs=6e-2)
 
     def test_value_H_weight(self):
-        value = 1.00782503207
-        self.assertAlmostEqual(totest.H_weight, value, delta=6e-12)
+        assert 1.00782503207 == approx(totest.H_weight, abs=6e-12)
 
     def test_value_He_weight(self):
-        value = 4.002603254131
-        self.assertAlmostEqual(totest.He_weight, value, delta=6e-13)
+        assert 4.002603254131 == approx(totest.He_weight, abs=6e-13)
 
     def test_value_SNcheck_ERR(self):
-        value = 1e-10
-        self.assertAlmostEqual(totest.SNcheck_ERR, value, delta=6e-25)
-
-
-if __name__ == "__main__":
-    unittest.main()
+        assert 1e-10 == approx(totest.SNcheck_ERR, abs=6e-31)
