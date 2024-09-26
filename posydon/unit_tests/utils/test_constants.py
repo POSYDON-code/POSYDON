@@ -30,8 +30,8 @@ class TestElements:
                     'planck_h', 'qe', 'r_earth', 'r_jupiter', 'rad2a', 'rbohr',
                     'rhonuc', 'rsol', 'secyer', 'semimajor_axis_jupiter',
                     'ssol', 'standard_cgrav', 'weinfre', 'weinlam']
-        assert dir(totest) == elements, "There might be added or removed "\
-            "objects without an update on the unit test."
+        assert dir(totest) == elements, "There might be added or removed "+\
+               "objects without an update on the unit test."
 
     def test_instance_pi(self):
         assert isinstance(totest.pi, (float,int)),\

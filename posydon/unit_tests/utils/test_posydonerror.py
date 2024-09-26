@@ -39,8 +39,8 @@ class TestElements:
                     '__doc__', '__file__', '__loader__', '__name__',
                     '__package__', '__spec__', 'copy',
                     'initial_condition_message']
-        assert dir(totest) == elements, "There might be added or removed "\
-            "objects without an update on the unit test."
+        assert dir(totest) == elements, "There might be added or removed "+\
+               "objects without an update on the unit test."
 
     def test_instance_POSYDONError(self):
         assert isclass(totest.POSYDONError)

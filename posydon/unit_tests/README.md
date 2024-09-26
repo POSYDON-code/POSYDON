@@ -58,7 +58,7 @@ Beside the existence and the type of a variable, we should verify the integrity 
 
 ##### Check functions
 
-Function in the module need checks according to their functionality. This should coincide with the doc-string of each function. *I suggest to have one class with all the function tests and a test function for each function in the module, which gets tested.* If the functions need variables may [use fixtures](#using-fixtures).
+Function in the module need checks according to their functionality. This should coincide with the doc-string of each function. *I suggest to have one class with all the function tests and a test function for each function in the module, which gets tested.* If the functions need variables, you may [use fixtures](#using-fixtures).
 
 Functions may include prints statements. In such cases it is useful to redirect the data stream going there into a variable to be able to validate the output (there is a similar context manager to redirect `stderr`). Here an example code:
 
@@ -85,7 +85,7 @@ Pytest has the [context manager `pytest.raises`](https://docs.pytest.org/en/stab
 
 ### Check that it can fail
 
-Whenever you wrote a test, it should succeed on existing code. But at the other hand you should make a test that it can fail, otherwise the test won't do its work.
+Whenever you write a test, it should succeed on the existing code. On the other hand, you should also make a test where you expect it to fail, otherwise, the test won't do its job.
 
 ## How to update a unit test
 

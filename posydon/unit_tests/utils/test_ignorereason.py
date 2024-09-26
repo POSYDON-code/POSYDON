@@ -20,8 +20,8 @@ class TestElements:
         elements = ['IGNORE_REASONS_PRIORITY', 'IgnoreReason', '__authors__',
                     '__builtins__', '__cached__', '__doc__', '__file__',
                     '__loader__', '__name__', '__package__', '__spec__']
-        assert dir(totest) == elements, "There might be added or removed "\
-            "objects without an update on the unit test."
+        assert dir(totest) == elements, "There might be added or removed "+\
+               "objects without an update on the unit test."
 
     def test_instance_IGNORE_REASONS_PRIORITY(self):
         assert isinstance(totest.IGNORE_REASONS_PRIORITY, (list)),\
@@ -41,11 +41,12 @@ class TestValues:
                   'corrupted_history2', 'ignored_scrubbed_history',
                   'ignored_no_final_profile', 'ignored_no_RLO']:
             # check required values
-            assert v in totest.IGNORE_REASONS_PRIORITY
+            assert v in totest.IGNORE_REASONS_PRIORITY, "missing entry"
             # check required order
             if v_last is not None:
                 assert totest.IGNORE_REASONS_PRIORITY.index(v_last) <\
-                       totest.IGNORE_REASONS_PRIORITY.index(v)
+                       totest.IGNORE_REASONS_PRIORITY.index(v),\
+                       f"the priority order has changed for: {v_last} or {v}"
             v_last = v
 
 
