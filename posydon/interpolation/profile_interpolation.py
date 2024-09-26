@@ -143,7 +143,8 @@ class CompileData:
         if not np.isnan(grid.final_values['S1_surf_avg_omega_div_omega_crit'][ind]):
             return scalars, profiles
         else:
-            Pwarn("nan in final values","InappropriateValueWarning")
+            Pwarn("nan in final values, binary will not be"
+                  "included in file","InappropriateValueWarning")
 
     def save(self, filename):
         """Save extracted profile data.
@@ -223,7 +224,7 @@ class ProfileInterpolator:
             width (int) : width of neural network for principal component weights
             depthn (int) : depth of neural network for normalizing value
             widthn (int) : width of neural network for normalizing value
-            lr (float) : learning rate
+            lr (float) : learning rate for neural network training
         Returns:
             self.comp.loss_history (array-like) : training and validation loss history for composition profiles
             self.dens.loss_history (array-like) : training and validation loss history for density profiles
