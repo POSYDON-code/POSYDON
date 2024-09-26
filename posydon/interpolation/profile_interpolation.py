@@ -564,7 +564,6 @@ class Composition:
                     bounds.append([np.nan,np.nan])
             return np.array(bounds), nonflat
         
-        self.empty = [] # keep track of which star states have no data
         for state in ['stripped_He_Core_He_burning',
                       'stripped_He_Core_C_burning',
                       'stripped_He_Central_He_depleted',
@@ -581,116 +580,87 @@ class Composition:
             inputs = self.initial[indices]
             h_prof = self.h_profiles[indices]
             he_prof = self.he_profiles[indices]
+            plus_prof = h_prof + he_prof
 
             # identify input/output testing data for class
             valid_indices = self.valid_sort_ind[state]
             valid_inputs = self.valid_initial[valid_indices]
             valid_h_prof = self.valid_h_profiles[valid_indices]
             valid_he_prof = self.valid_he_profiles[valid_indices]
-            
-            # calculate boundary points for training and testing data 
-            if state in ['H-rich_Shell_H_burning',
-                         'H-rich_Core_H_burning',
-                         'H-rich_Core_He_burning',
-                         'H-rich_Core_C_burning']:  # profiles with 2 boundary points
-                outs = 2
-                bounds = []   # collect information on parameters for given H and He profile shapes
-                nonflat = []  # ensures that training data only has the correct "non-flat" shape
-                              # to avoid issues with calculating the boundary points
-                valid_bounds = []
-                valid_nonflat = []
-                # calculate first and last points in each H profile with large increases
-                # (He profiles have the same boundary points)
-                for i in range(len(indices)):
-                    try:
-                        diff = np.where(h_prof[i][1:]-h_prof[i][:-1]>0.002)[0]
-                        bounds.append(np.array([diff[0]+1,diff[-1]+1])/200)
-                        nonflat.append(i)
-                    except:
-                        bounds.append([np.nan,np.nan])
-                for i in range(len(valid_indices)):
-                    try:
-                        diff = np.where(valid_h_prof[i][1:]-valid_h_prof[i][:-1]>0.002)[0]
-                        valid_bounds.append(np.array([diff[0]+1,diff[-1]+1])/200)
-                        valid_nonflat.append(i)
-                    except:
-                        valid_bounds.append([np.nan,np.nan])
-                        
-            elif state in ['H-rich_Central_He_depleted',
-                           'H-rich_Central_C_depletion']: # H profiles with 1 boundary point
-                outs = 3
-                # calculate the point in each H profile with the largest increase
-                hbound = (np.argmax(h_prof[:,1:]-h_prof[:,:-1],axis=1)+1)/200
-                valid_hbound = (np.argmax(valid_h_prof[:,1:]-valid_h_prof[:,:-1],axis=1)+1)/200
-                max_He = np.max(he_prof,axis=1) # maximum He mass fraction
-                valid_max_He = np.max(valid_he_prof,axis=1)
-                dep_He = (np.argmax(he_prof[:,1:]-he_prof[:,:-1],axis=1)+1)/200 # location of Helium depletion zone
-                valid_dep_He = (np.argmax(valid_he_prof[:,1:]-valid_he_prof[:,:-1],axis=1)+1)/200
-                bounds = np.transpose([hbound,dep_He,max_He])
-                valid_bounds = np.transpose([valid_hbound,valid_dep_He,valid_max_He])
-            
-            elif state in ['stripped_He_Core_He_burning',
-                         'stripped_He_Core_C_burning',
-                         'stripped_He_Central_He_depleted',
-                         'stripped_He_Central_C_depletion']:
-                outs = 2
-                bounds = []
-                nonflat = []  # ensures that training data only has the correct "non-flat" shape
-                              # to avoid issues with calculating the boundary points
-                valid_bounds = []
-                valid_nonflat = []
-                # calculate first and points in each profile with large increases
-                for i in range(len(indices)):
-                    try:
-                        diff = np.where(he_prof[i][1:]-he_prof[i][:-1]>0.002)[0]
-                        bounds.append(np.array([diff[0]+1,diff[-1]+1])/200)
-                        nonflat.append(i)
-                    except:
-                        bounds.append([np.nan,np.nan])
-                for i in range(len(valid_indices)):
-                    try:
-                        diff = np.where(valid_he_prof[i][1:]-valid_he_prof[i][:-1]>0.002)[0]
-                        valid_bounds.append(np.array([diff[0]+1,diff[-1]+1])/200)
-                        valid_nonflat.append(i)
-                    except:
-                        valid_bounds.append([np.nan,np.nan])
-                
-            # instantiate and train model on bounds
-            model = models.Sequential([
-                    layers.Dense(10,input_dim=3,activation=None),
-                    layers.Dense(10,input_dim=10,activation='relu'),
-                    layers.Dense(10,input_dim=10,activation='relu'),
-                    layers.Dense(10,input_dim=10,activation='tanh'),
-                    layers.Dense(10,input_dim=10,activation='tanh'),
-                    layers.Dense(10,input_dim=10,activation='tanh'),
-                    layers.Dense(outs,input_dim=10,activation="sigmoid")])
-
-            model.compile(optimizers.Adam(clipnorm=1),loss=losses.MeanSquaredError())
-            callback = tf.keras.callbacks.EarlyStopping(monitor='loss', patience=training_patience)
+            valid_plus_prof = valid_h_prof + valid_he_prof
             
             if len(indices)==0:
                 Pwarn(f"no training data available for {state}",
                       "InappropriateValueWarning")
                 loss_history[state]=np.nan
-                self.empty.append(state)
-            
-            elif state in ['H-rich_Central_He_depleted',
-                         'H-rich_Central_C_depletion']:
-                history = model.fit(inputs,np.array(bounds),
-                                    epochs=training_epochs,verbose=0,callbacks=[callback],
-                                    validation_data=(valid_inputs,
-                                                     np.array(valid_bounds)))
-                loss_history[state] = np.array([history.history['loss'],history.history['val_loss']])
-
+                
             else:
-                history = model.fit(inputs[nonflat],np.array(bounds)[nonflat],
+                
+                # calculate boundary points for training and testing data 
+                if state in ['H-rich_Shell_H_burning',
+                             'H-rich_Core_H_burning']:  # profiles with 2 boundary points
+                    outs=2
+                    # calculate first and last points in each H profile with large increases
+                    # (He profiles have the same boundary points)
+                    bounds,nonflat = calc_bevel_bounds(h_prof)
+                    valid_bounds, valid_nonflat = calc_bevel_bounds(valid_h_prof)
+                
+                if state in ['H-rich_Core_He_burning',
+                             'H-rich_Core_C_burning']:  # profiles with 2 boundary points
+                    outs=4
+                    # calculate first and last points in each H profile with large increases
+                    # (He profiles have the same boundary points)
+                    hbounds,nonflat_a = calc_bevel_bounds(h_prof)
+                    valid_hbounds,valid_nonflat_a = calc_bevel_bounds(valid_h_prof)
+                    pbounds,nonflat_p = calc_bevel_bounds(plus_prof)
+                    print(pbounds)
+                    valid_pbounds,valid_nonflat_p = calc_bevel_bounds(valid_plus_prof)
+                    nonflat = np.intersect1d(nonflat_a,nonflat_p)
+                    valid_nonflat = np.intersect1d(valid_nonflat_a,valid_nonflat_p)
+                    bounds = np.transpose([hbounds[:,0],hbounds[:,1],pbounds[:,0],pbounds[:,1]])
+                    valid_bounds = np.transpose([valid_hbounds[:,0],valid_hbounds[:,1],
+                                                 valid_pbounds[:,0],valid_pbounds[:,1]])
+                
+                        
+                elif state in ['H-rich_Central_He_depleted',
+                               'H-rich_Central_C_depletion']: # H profiles with 1 boundary point
+                    outs=3
+                    # calculate the point in each H profile with the largest increase
+                    hbound = (np.argmax(h_prof[:,1:]-h_prof[:,:-1],axis=1)+1)/200
+                    valid_hbound = (np.argmax(valid_h_prof[:,1:]-valid_h_prof[:,:-1],axis=1)+1)/200
+                    # calculate first and points in each "H + He" profile with large increases
+                    bounds,nonflat = calc_bevel_bounds(plus_prof)
+                    valid_bounds, valid_nonflat = calc_bevel_bounds(valid_plus_prof)
+                    bounds = np.insert(bounds,0,hbound,axis=1)
+                    valid_bounds = np.insert(valid_bounds,0,valid_hbound,axis=1)
+            
+                elif state in ['stripped_He_Core_He_burning',
+                             'stripped_He_Core_C_burning',
+                             'stripped_He_Central_He_depleted',
+                             'stripped_He_Central_C_depletion']:
+                    outs=2
+                    # calculate first and points in each profile with large increases
+                    bounds,nonflat = calc_bevel_bounds(he_prof)
+                    valid_bounds, valid_nonflat = calc_bevel_bounds(valid_he_prof)
+                
+                # instantiate and train model on bounds
+                model = models.Sequential()
+                model.add(layers.Dense(width,input_dim=3,activation="relu"))
+                for i in range(depth-1):
+                    model.add(layers.Dense(width,input_dim=width,activation="relu"))
+                model.add(layers.Dense(outs,input_dim=10,activation="sigmoid"))
+
+                model.compile(optimizers.Adam(clipnorm=1),loss=losses.MeanSquaredError())
+                callback = tf.keras.callbacks.EarlyStopping(monitor='loss', patience=training_patience)
+                        
+                history = model.fit(inputs[nonflat],bounds[nonflat],
                                     epochs=training_epochs,verbose=0,callbacks=[callback],
                                     validation_data=(valid_inputs[valid_nonflat],
-                                                     np.array(valid_bounds)[valid_nonflat]))
+                                                     valid_bounds[valid_nonflat]))
                 loss_history[state] = np.array([history.history['loss'],history.history['val_loss']])
                         
-            b_models[state] = model
-            print(f"finished {state}")
+                b_models[state] = model
+                print(f"finished {state}")
         return b_models, loss_history
             
     def predict_single(self,initial,center_H,surface_H,center_He,surface_He,star_state):
