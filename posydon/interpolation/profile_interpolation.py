@@ -679,62 +679,80 @@ class Composition:
         if "stripped_He" in star_state:
             H = np.zeros(200) # stripped Helium stars have no Hydrogen
         
-        if star_state == "stripped_He_non_burning":
+        # if there is no training data in the state, return nans
+        if len(self.sort_ind[star_state])==0: 
+            H = np.ones(200)*np.nan
+            He = np.ones(200)*np.nan
+            
+        elif star_state == "stripped_He_non_burning":
             He = np.ones(200)*surface_He # non-burning stars have a flat He profile
         
-        if star_state in ['stripped_He_Core_He_burning',
-                 'stripped_He_Core_C_burning',
-                 'stripped_He_Central_He_depleted',
-                 'stripped_He_Central_C_depletion']:
+        elif 'stripped_He_C' in star_state:
             # predicting profile shape parameters 
-            b = self.bounds_models[star_state](tf.convert_to_tensor([initial])).numpy()[0]                        
+            b = self.bounds_models[star_state](tf.convert_to_tensor([initial])).numpy()[0]
             He = np.ones(200) * center_He
             He[int(b[1]*200):] = surface_He
-            f_He = interp1d(b,[center_He,surface_He],fill_value="extrapolate")
+            f_He = interp1d(b,[center_He,surface_He],
+                            fill_value=(center_He,surface_He),
+                            bounds_error=False)
             # use f to construct the profile points in the shell burning region
             He[int(b[0]*200):int(b[1]*200)] = f_He(np.linspace(0,1,200)[int(b[0]*200):int(b[1]*200)])
             
-        if star_state in ["H-rich_non_burning","None"]: # these states have flat H and He profiles
+        elif star_state in ["H-rich_non_burning","None"]: # these states have flat H and He profiles
             H = np.ones(200)*surface_H
             He = np.ones(200)*surface_He
             
-        if star_state in ["WD","NS","BH"]: # profiles for compact objects are arbitrary -- return nans
+        elif star_state in ["WD","NS","BH"]: # profiles for compact objects are arbitrary -- return nans
             H = np.ones(200)*np.nan
             He = np.ones(200)*np.nan
         
         # construct step-shaped profile - H and He profiles have symmetrical shapes
-        if star_state in ["H-rich_Central_He_depleted",
+        elif star_state in ["H-rich_Central_He_depleted",
                   "H-rich_Central_C_depletion"]:
             # predicting profile shape parameters 
             b = self.bounds_models[star_state](tf.convert_to_tensor([initial])).numpy()[0]            
             H = np.ones(200)*center_H
             H[int(b[0]*200):] = surface_H
-            He = np.ones(200) * center_He
-            He[int(b[1]*200):] = b[2]
-            He[int(b[0]*200):] = surface_He
+            # construct "H+He" profile
+            plus = np.ones(200) * (center_H + center_He)
+            plus[int(b[2]*200):] = (surface_H + surface_He)
+            f_plus = interp1d(b[1:],[center_H + center_He, surface_H + surface_He],
+                              fill_value=(center_H + center_He, surface_H + surface_He),
+                              bounds_error=False)
+            plus[int(b[1]*200):int(b[2]*200)] = f_plus(np.linspace(0,1,200)[int(b[1]*200):int(b[2]*200)])
+            He = plus - H
         
         # construct shell-shaped profile - H and He profiles have symmetrical shapes
-        if star_state in ["H-rich_Shell_H_burning",
-                  "H-rich_Core_H_burning",
-                  "H-rich_Core_He_burning",
+        elif star_state in ["H-rich_Shell_H_burning",
+                  "H-rich_Core_H_burning"]:
+            # predicting profile shape parameters 
+            b = self.bounds_models[star_state](tf.convert_to_tensor([initial])).numpy()[0]   
+            H = np.ones(200) * center_H
+            H[int(b[1]*200):] = surface_H
+            f_H = interp1d(b,[center_H,surface_H],fill_value=(center_H,surface_H),bounds_error=False)
+            # use f to construct the profile points in the shell burning region
+            H[int(b[0]*200):int(b[1]*200)] = f_H(np.linspace(0,1,200)[int(b[0]*200):int(b[1]*200)])
+            # "H+He" profile is flat:
+            plus = np.ones(200) * (surface_H + surface_He)
+            He = plus - H
+        
+        elif star_state in ["H-rich_Core_He_burning",
                   "H-rich_Core_C_burning"]:
             # predicting profile shape parameters 
-            b = self.bounds_models[star_state](tf.convert_to_tensor([initial])).numpy()[0]                        
-            new = np.ones([2,200]) * np.array([center_H,center_He])[:,np.newaxis]
-            new[:,int(b[1]*200):] = np.array([surface_H,surface_He])[:,np.newaxis]
-            f_H = interp1d(b,[center_H,surface_H],fill_value="extrapolate")
-            f_He = interp1d(b,[center_He,surface_He],fill_value="extrapolate")
+            b = self.bounds_models[star_state](tf.convert_to_tensor([initial])).numpy()[0]   
+            H = np.ones(200) * center_H
+            H[int(b[1]*200):] = surface_H
+            f_H = interp1d(b[:2],[center_H,surface_H],fill_value=(center_H,surface_H),bounds_error=False)
             # use f to construct the profile points in the shell burning region
-            new[0][int(b[0]*200):int(b[1]*200)] = f_H(np.linspace(0,1,200)[int(b[0]*200):int(b[1]*200)])
-            new[1][int(b[0]*200):int(b[1]*200)] = f_He(np.linspace(0,1,200)[int(b[0]*200):int(b[1]*200)])
-            H = new[0]
-            He = new[1]
+            H[int(b[0]*200):int(b[1]*200)] = f_H(np.linspace(0,1,200)[int(b[0]*200):int(b[1]*200)])
+            # "H+He" profile is beveled as well:
+            plus = np.ones(200) * (center_H+center_He)
+            plus[int(b[3]*200):] = surface_H+surface_He
+            f_plus = interp1d(b[2:],[center_H+center_He,surface_H+surface_He],
+                              fill_value=(center_H+center_He,surface_H+surface_He),bounds_error=False)
+            plus[int(b[2]*200):int(b[3]*200)] = f_plus(np.linspace(0,1,200)[int(b[2]*200):int(b[3]*200)])
+            He = plus - H
         
-        # if there is no training data in the state, return nans
-        if star_state in self.empty:
-            H = np.ones(200)*np.nan
-            He = np.ones(200)*np.nan
-            
         return H, He
         
     def predict(self,inputs):
