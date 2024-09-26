@@ -1418,7 +1418,7 @@ class KNNClassifier(Classifier):
             n_opt = 2
         else:
             acc = np.zeros(nmax)
-            for n in range(1, nmax + 1):
+            for n in range(3, nmax + 1):
 
                 for i in range(nfolds):
                     iTrain, itest = xval_indices(
