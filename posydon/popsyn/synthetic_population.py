@@ -1049,19 +1049,20 @@ class Population(PopulationIO):
         """
         
         if 'underlying_mass' in self.mass_per_metallicity.columns:
-            Pwarn("underlying_mass already exists in the mass_per_metallicity table.")
+            warn_text="underlying_mass already exists in the mass_per_metallicity table."
             if overwrite:
-                Pwarn("Overwriting the underlying_mass values.")
+                Pwarn(warn_text+" Overwriting the underlying_mass values.", "OverwriteWarning")
             else:
-                Pwarn("Not overwriting the underlying_mass values.")
+                Pwarn(warn_text+" Not overwriting the underlying_mass values, skipping it.", "IncompletenessWarning")
                 return
+    
         
         underlying_mass = np.zeros(len(self.mass_per_metallicity))
         for i in range(len(self.mass_per_metallicity)):
             underlying_mass[i] = initial_total_underlying_mass(
-                df=self.mass_per_metallicity['simulated_mass'].iloc[i],
-                df1=self.mass_per_metallicity['simulated_mass_single'].iloc[i],
-                df2=self.mass_per_metallicity['simulated_mass_binaries'].iloc[i],
+                simulated_mass=self.mass_per_metallicity['simulated_mass'].iloc[i],
+                simulated_mass_single=self.mass_per_metallicity['simulated_mass_single'].iloc[i],
+                simulated_mass_binaries=self.mass_per_metallicity['simulated_mass_binaries'].iloc[i],
                 f_bin=f_bin, 
                 **self.ini_params)[0]
         
