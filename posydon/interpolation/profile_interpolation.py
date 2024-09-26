@@ -208,12 +208,14 @@ class ProfileInterpolator:
         self.initial = np.log10(linear_initial)[binaries[split:]]
         self.scalars = self.scalars.iloc[binaries[split:]]
 
-    def train(self,IF_interpolator,density_epochs=1000,density_patience=200,
+    def train(self,IF_interpolator,density=True,comp=True,density_epochs=1000,density_patience=200,
              comp_bounds_epochs=500,comp_bounds_patience=50,loss_history=False,hms_s2=False,
              depth=12,width=256,depthn=12,widthn=256,lr=0.0001):
         """Trains models for density, H mass fraction, and He mass fraction profile models. 
         Args:
             IF_interpolator (str) : path to '.pkl' file for IF interpolator.
+            density (Boolean) : option to train Density model
+            comp (Boolean) : option to train Composition model
             density_epochs (int) : number of epochs used to train density profile model
             density_patience (int) : patience parameter for NN callback in density profile model
             comp_bounds_epochs (int) : number of epochs used to train composition profiles model
@@ -230,48 +232,62 @@ class ProfileInterpolator:
             self.dens.loss_history (array-like) : training and validation loss history for density profiles
             
         """        
-        # instantiate and train composition (H and He mass fraction) profiles model
-        self.comp = Composition(self.initial, 
-                                self.profiles[:,self.names.index("x_mass_fraction_H")], 
-                                self.profiles[:,self.names.index("y_mass_fraction_He")], 
-                                self.scalars["star_state"], 
-                                self.valid_initial, 
-                                self.valid_profiles[:,self.names.index("x_mass_fraction_H")], 
-                                self.valid_profiles[:,self.names.index("y_mass_fraction_He")], 
-                                self.valid_scalars["star_state"], 
-                                IF_interpolator,
-                                comp_bounds_epochs,comp_bounds_patience,hms_s2)
-
-        # instantiate and train density profile model
-        self.dens = Density(self.initial,
-                            self.profiles[:,self.names.index("logRho")],
-                            self.scalars["MT_class"],
-                            self.valid_initial,
-                            self.valid_profiles[:,self.names.index("logRho")],
-                            self.valid_scalars["MT_class"],
-                            IF_interpolator,hms_s2=hms_s2,
-                            depth=depth, width=width,
-                            depthn=depthn, widthn=widthn)
-        self.dens.train(prof_epochs=density_epochs,prof_patience=density_patience,lr=lr)
+        if comp==True:
+            # instantiate and train composition (H and He mass fraction) profiles model
+            self.comp = Composition(self.initial, 
+                                    self.profiles[:,self.names.index("x_mass_fraction_H")], 
+                                    self.profiles[:,self.names.index("y_mass_fraction_He")], 
+                                    self.scalars["star_state"], 
+                                    self.valid_initial, 
+                                    self.valid_profiles[:,self.names.index("x_mass_fraction_H")], 
+                                    self.valid_profiles[:,self.names.index("y_mass_fraction_He")], 
+                                    self.valid_scalars["star_state"], 
+                                    IF_interpolator,
+                                    comp_bounds_epochs,comp_bounds_patience,hms_s2)
+        if density==True:
+            # instantiate and train density profile model
+            self.dens = Density(self.initial,
+                                self.profiles[:,self.names.index("logRho")],
+                                self.scalars["MT_class"],
+                                self.valid_initial,
+                                self.valid_profiles[:,self.names.index("logRho")],
+                                self.valid_scalars["MT_class"],
+                                IF_interpolator,hms_s2=hms_s2,
+                                depth=depth, width=width,
+                                depthn=depthn, widthn=widthn)
+            self.dens.train(prof_epochs=density_epochs,prof_patience=density_patience,lr=lr)
         
         if loss_history==True:
-            return self.comp.loss_history, self.dens.loss_history
-
-    def predict(self,inputs):
+            if comp==True and density==True:
+                return self.dens.loss_history, self.comp.loss_history
+            elif comp!=True and density==True:
+                return self.dens.loss_history
+            elif comp==True and density!=True:
+                return self.comp.loss_history
+    
+    def predict(self,inputs,density=True,comp=True):
         """Predict density, H mass fraction, and He mass fraction profiles from inputs.
         Args:
             inputs (array-like) : linear-space initial conditions of N binaries to predict, shape (N,3).
+            density (Boolean) : option to train Density model
+            comp (Boolean) : option to train Composition model
         Returns:
             mass_coords (array-like) : linear-scale mass enclosed profile coordinates.
             density_profiles (array-like) : log-scale density profile coordinates.
             h_profiles (array-like) : H mass fraction profile coordinates
             he_profiles (array-like) : He mass fraction profile coordinates
         """
-        mass_coords, density_profiles = self.dens.predict(inputs)
-        mass_coords, h_profiles, he_profiles = self.comp.predict(inputs)
-        
-        return mass_coords, density_profiles, h_profiles, he_profiles
-        
+        if density==True:
+            mass_coords, density_profiles = self.dens.predict(inputs)
+        if comp==True:
+            mass_coords, h_profiles, he_profiles = self.comp.predict(inputs)
+            
+        if comp==True and density==True:
+            return mass_coords, density_profiles, h_profiles, he_profiles
+        elif comp!=True and density==True:
+            return mass_coords, density_profiles
+        elif comp==True and density!=True:
+            return mass_coords, h_profiles, he_profiles
                     
     def save(self, filename):
         """Save complete profiles interpolation model.
@@ -431,8 +447,8 @@ class Density:
         pca_weights_pred = regress_prof(np.log10(inputs)).numpy()
                 
         # predict surface density
-        regress_rho = lambda x: self.model_rho(x)
-        min_rho = regress_rho(np.log10(inputs)).numpy()[:,0]
+        regress_norm = lambda x: self.model_norm(x)
+        min_rho = regress_norm(np.log10(inputs)).numpy()[:,0]
         
         # IF interpolate final mass, center density 
         if self.hms_s2==False:
@@ -782,8 +798,12 @@ class Composition:
         # generate predicted profiles
         pred_profiles = []
         for i in range(len(inputs)):
-            pred_H,pred_He = self.predict_single(np.log10(inputs[i]),center_h_vals[i],surface_h_vals[i],
-                                                 center_he_vals[i],surface_he_vals[i],star_state_vals[i])
+            pred_H,pred_He = self.predict_single(np.log10(inputs[i]),
+                                                 center_h_vals[i],
+                                                 surface_h_vals[i],
+                                                 center_he_vals[i],
+                                                 surface_he_vals[i],
+                                                 star_state_vals[i])
             pred_profiles.append([pred_H,pred_He])
 
         # generate mass enclosed profile coordinates
