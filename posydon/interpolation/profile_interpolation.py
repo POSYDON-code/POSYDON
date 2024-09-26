@@ -336,6 +336,11 @@ class Density:
             IF_interpolator (string) : path to .pkl file for IF interpolator for central density, final mass values
             n_comp (int) : number of PCA components. 
             hms_s2 (Boolean) : option to do profiles of star 2 in HMS-HMS grid
+            depth (int) : depth of neural network for principal component weights
+            width (int) : width of neural network for principal component weights
+            depthn (int) : depth of neural network for normalizing value
+            widthn (int) : width of neural network for normalizing value
+            lr (float) : learning rate for neural network training
         """
         self.n_comp = n_comp
         self.hms_s2 = hms_s2
@@ -454,7 +459,8 @@ class Composition:
     
     def __init__(self,initial,h_profiles,he_profiles,star_state,
                  valid_initial,valid_h_profiles,valid_he_profiles,valid_star_state,
-                 IF_interpolator,training_epochs=500, training_patience=50,hms_s2=False):
+                 IF_interpolator, training_epochs=500, training_patience=50,hms_s2=False,
+                 depth=12, width=256, lr=0.0001):
         """Creates and trains H mass fraction and He mass fraction profiles model.
         Args:
             initial (array-like) : log-space initial conditions for training data.
@@ -469,6 +475,9 @@ class Composition:
             training_epochs (int) : number of epochs used to train neural networks
             training_patience (int) : patience parameter for callback in neural networks
             hms_s2 (Boolean) : option to do profiles of star 2 in HMS-HMS grid
+            depth (int) : depth of neural network
+            width (int) : width of neural network
+            lr (float) : learning rate for neural network training
         """
         self.hms_s2 = hms_s2
         
@@ -520,19 +529,41 @@ class Composition:
             self.valid_sort_ind[name] = np.where(self.valid_star_state==name)[0]
         
         # create and train models for profile boundaries
-        self.bounds_models, self.loss_history = self.learn_bounds(training_epochs,training_patience)
+        self.bounds_models, self.loss_history = self.learn_bounds(training_epochs,
+                                                                  training_patience,
+                                                                  depth=depth,
+                                                                  width=width,
+                                                                  lr=lr)
         
-    def learn_bounds(self,training_epochs,training_patience):
+    def learn_bounds(self,training_epochs,training_patience,depth,width,lr):
         """Creates and trains NNs to predict boundary points for each star 1 state.
         Args:
             training_epochs (int) : number of epochs used to train neural networks
             training_patience (int) : patience parameter for callback in neural networks
+            depth (int) : depth of neural network
+            width (int) : width of neural network
+            lr (float) : learning rate for neural network training
         Returns:
             b_models (array-like) : dictionary containing boundary models.
             loss_history (array-like) : training and validation loss histories
         """
         b_models = {}
         loss_history = {}
+        
+        def calc_bevel_bounds(profs): 
+            # calculate first and last points in each profile with large increases
+            # i.e. boundaries of 'bevel' shape
+            nonflat=[] # ensures that training data only has the correct "non-flat" shape
+            bounds = []   # collect information on parameters for given H and He profile shapes
+            for i in range(len(profs)):
+                diff = np.where(profs[i][1:]-profs[i][:-1]>0.002)[0]
+                if len(diff>=2):
+                    bounds.append(np.array([diff[0]+1,diff[-1]+1])/200)
+                    nonflat.append(i)
+                else:
+                    bounds.append([np.nan,np.nan])
+            return np.array(bounds), nonflat
+        
         self.empty = [] # keep track of which star states have no data
         for state in ['stripped_He_Core_He_burning',
                       'stripped_He_Core_C_burning',
