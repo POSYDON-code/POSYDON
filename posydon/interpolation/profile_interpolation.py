@@ -260,7 +260,7 @@ class ProfileInterpolator:
     def predict(self,inputs):
         """Predict density, H mass fraction, and He mass fraction profiles from inputs.
         Args:
-            inputs (array-like) : log-space initial conditions of N binaries to predict, shape (N,3).
+            inputs (array-like) : linear-space initial conditions of N binaries to predict, shape (N,3).
         Returns:
             mass_coords (array-like) : linear-scale mass enclosed profile coordinates.
             density_profiles (array-like) : log-scale density profile coordinates.
@@ -416,18 +416,18 @@ class Density:
     def predict(self,inputs):
         """Predicts profile for n sets of given inputs, in array of shape (n,3).
         Args: 
-            inputs (array-like) : log-space initial conditions of N binaries to predict, shape (N,3).
+            inputs (array-like) : linear-space initial conditions of N binaries to predict, shape (N,3).
         Returns:
             mass_coords (array-like) : linear-scale mass enclosed profile coordinates.
             density_profiles (array_like) : log-scale density profile coordinates.
         """
         # predict PCA weights
         regress_prof = lambda x: self.model_prof(x)
-        pca_weights_pred = regress_prof(inputs).numpy()
+        pca_weights_pred = regress_prof(np.log10(inputs)).numpy()
                 
         # predict surface density
         regress_rho = lambda x: self.model_rho(x)
-        min_rho = regress_rho(inputs).numpy()[:,0]
+        min_rho = regress_rho(np.log10(inputs)).numpy()[:,0]
         
         # IF interpolate final mass, center density 
         if self.hms_s2==False:
@@ -436,8 +436,8 @@ class Density:
         else:
             m_ind = self.model_IF.interpolators[0].out_keys.index("star_2_mass")
             center_ind = self.model_IF.interpolators[0].out_keys.index('S2_log_center_Rho')
-        max_rho = self.model_IF.interpolators[0].test_interpolator(10**inputs)[:,center_ind]                    
-        pred_mass = self.model_IF.interpolators[0].test_interpolator(10**inputs)[:,m_ind]
+        max_rho = self.model_IF.interpolators[0].test_interpolator(inputs)[:,center_ind]                    
+        pred_mass = self.model_IF.interpolators[0].test_interpolator(inputs)[:,m_ind]
             
         # reconstruct profile
         norm_prof = self.pca.inverse_transform(pca_weights_pred*self.scaling)
@@ -739,31 +739,31 @@ class Composition:
     def predict(self,inputs):
         """Predict H mass fraction profiles from inputs.
         Args:
-            inputs (array-like) : log-space initial conditions of N binaries to predict, shape (N,3).
+            inputs (array-like) : linear-space initial conditions of N binaries to predict, shape (N,3).
         Returns:
             mass_coords (array-like) : linear-scale mass enclosed profile coordinates.
             h_profiles (array_like) : H mass fraction profile coordinates.
             he_profiles (array_like) : He mass fraction profile coordinates.
         """
         # IF interpolate H mass fraction values at center, surface; final star state
-        center_h_vals = self.interp.test_interpolator(10**inputs)[:,self.c_h_ind]
-        surface_h_vals = self.interp.test_interpolator(10**inputs)[:,self.s_h_ind]
-        center_he_vals = self.interp.test_interpolator(10**inputs)[:,self.c_he_ind]
-        surface_he_vals = self.interp.test_interpolator(10**inputs)[:,self.s_he_ind]
+        center_h_vals = self.interp.test_interpolator(inputs)[:,self.c_h_ind]
+        surface_h_vals = self.interp.test_interpolator(inputs)[:,self.s_h_ind]
+        center_he_vals = self.interp.test_interpolator(inputs)[:,self.c_he_ind]
+        surface_he_vals = self.interp.test_interpolator(inputs)[:,self.s_he_ind]
         
         # IF interpolate final masses, final star states 
         if self.hms_s2==False:
             m_ind = self.model_IF.interpolators[0].out_keys.index("star_1_mass")
-            star_state_vals = self.interp.test_classifiers(10**inputs)['S1_state']   
+            star_state_vals = self.interp.test_classifiers(inputs)['S1_state']   
         else:
             m_ind = self.model_IF.interpolators[0].out_keys.index("star_2_mass")
-            star_state_vals = self.interp.test_classifiers(10**inputs)['S2_state']   
-        pred_mass = self.interp.test_interpolator(10**inputs)[:,m_ind]
+            star_state_vals = self.interp.test_classifiers(inputs)['S2_state']   
+        pred_mass = self.interp.test_interpolator(inputs)[:,m_ind]
         
         # generate predicted profiles
         pred_profiles = []
         for i in range(len(inputs)):
-            pred_H,pred_He = self.predict_single(inputs[i],center_h_vals[i],surface_h_vals[i],
+            pred_H,pred_He = self.predict_single(np.log10(inputs[i]),center_h_vals[i],surface_h_vals[i],
                                                  center_he_vals[i],surface_he_vals[i],star_state_vals[i])
             pred_profiles.append([pred_H,pred_He])
 
