@@ -40,13 +40,22 @@ def initial_total_underlying_mass(simulated_mass=None, simulated_mass_single=Non
     """
     # ENHANCEMENT: the code should assume default values of the POSYDON sampler
     # if not provided in kwargs.
+    
+    
+    f_bin_nature = f_bin #This parameter represents the preferred fraction of binary systems within your population, allowing users to input any value ranging from 0.1 to 1.                               
+    f_bin_simulated = kwargs['binary_fraction_const']
+
+    m_min = 0.01
+    m_max = 200.0
+    m_a = kwargs['primary_mass_min']
+    m_b = kwargs['primary_mass_max']
 
     if simulated_mass is None:
         initial_ZAMS_mass = independent_sample.generate_independent_samples(
             **kwargs)
         initial_ZAMS_mass_1 = initial_ZAMS_mass[2]
         initial_ZAMS_mass_2 = initial_ZAMS_mass[3]
-        n_binaries = int(f_bin * len(initial_ZAMS_mass_1))
+        n_binaries = int(f_bin_simulated * len(initial_ZAMS_mass_1))
         initial_ZAMS_TOTAL_binaries = (sum(initial_ZAMS_mass_1[:n_binaries]) +  sum(initial_ZAMS_mass_2[:n_binaries]))
         initial_ZAMS_TOTAL_single = sum(initial_ZAMS_mass_1[n_binaries:len(initial_ZAMS_mass_1)])
         initial_ZAMS_TOTAL_mass = initial_ZAMS_TOTAL_binaries + initial_ZAMS_TOTAL_single
@@ -113,13 +122,7 @@ def initial_total_underlying_mass(simulated_mass=None, simulated_mass_single=Non
               f"={kwargs['secondary_mass_scheme']}", "UnsupportedModelWarning")
         return np.nan, np.nan, np.nan
 
-    f_bin_nature = f_bin #This parameter represents the preferred fraction of binary systems within your population, allowing users to input any value ranging from 0.1 to 1.
-    f_bin_simulated = kwargs['binary_fraction_const']
     
-    m_min = 0.01
-    m_max = 200.0
-    m_a = kwargs['primary_mass_min']
-    m_b = kwargs['primary_mass_max']
 
     f0 = 1/(quad(imf_part_1, m_min, m_1, args=(m_min, alpha1))[0]
                 + quad(imf_part_2, m_1, m_2, args=(m_1, m_min, alpha1, alpha2))[0]
