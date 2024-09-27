@@ -416,14 +416,18 @@ def create_star_formation(mass, work_dir, star_inlist_project, initial_z=None, n
         Pwarn('Replace '+filename, "OverwriteWarning")
     with open(filename, 'w') as inlist_grid_points:
         inlist_grid_points.write("&controls\n")
-        inlist_grid_points.write("initial_mass = {0:.10f}d0\n".format(mass))
+        inlist_grid_points.write("initial_mass = {0:.10e}\n"\
+                                 .format(mass).replace('e','d'))
         if initial_z is not None:
-            inlist_grid_points.write("initial_z = {0:.10f}d0\n".format(initial_z))
-            inlist_grid_points.write("Zbase = {0:.10f}d0\n".format(initial_z))
+            inlist_grid_points.write("initial_z = {0:.10e}\n"\
+                                     .format(initial_z).replace('e','d'))
+            inlist_grid_points.write("Zbase = {0:.10e}\n"\
+                                     .format(initial_z).replace('e','d'))
         inlist_grid_points.write("/ ! end of star_controls namelist\n")
         inlist_grid_points.write("&star_job\n")
         if new_Z:
-            inlist_grid_points.write("new_Z = {0:.10f}d0\n".format(initial_z))
+            inlist_grid_points.write("new_Z = {0:.10e}\n"\
+                                     .format(initial_z).replace('e','d'))
         inlist_grid_points.write("/ ! end of star_job namelist\n")
         inlist_grid_points.close()
 
