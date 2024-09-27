@@ -1430,7 +1430,10 @@ class KNNClassifier(Classifier):
                     acc[n - 1] += balanced_accuracy_score(
                         yT[itest], ki.predict(XT[itest, :])) / nfolds
 
-            n_opt = np.argmax(acc) + 3 # k has to be at least 3
+            n_opt = np.argmax(acc)
+
+            if n_opt < 3: # k must be at least 3
+              n_opt = 3
 
         self.train(XT, yT, K=n_opt)
 
