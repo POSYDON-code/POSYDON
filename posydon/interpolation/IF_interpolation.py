@@ -1418,7 +1418,7 @@ class KNNClassifier(Classifier):
             n_opt = 2
         else:
             acc = np.zeros(nmax)
-            for n in range(3, nmax + 1):
+            for n in range(1, nmax + 1):
 
                 for i in range(nfolds):
                     iTrain, itest = xval_indices(
@@ -1430,7 +1430,7 @@ class KNNClassifier(Classifier):
                     acc[n - 1] += balanced_accuracy_score(
                         yT[itest], ki.predict(XT[itest, :])) / nfolds
 
-            n_opt = np.argmax(acc) + 1
+            n_opt = np.argmax(acc) + 3 # k has to be at least 3
 
         self.train(XT, yT, K=n_opt)
 
