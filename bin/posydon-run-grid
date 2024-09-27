@@ -262,7 +262,8 @@ def create_binary_inlists(binary_controls, binary_job,
             inlist_grid_points.write("&binary_controls\n")
             for k, v in binary_controls.items():
                 if (type(v) == float) and (not v.is_integer()):
-                    inlist_grid_points.write("\t{0} = {1:.10f}d0\n".format(k, v))
+                    inlist_grid_points.write("\t{0} = ".format(k)+"{0:.10e}\n"\
+                                             .format(v).replace('e','d'))
                 elif (type(v) == float) and (v.is_integer()):
                     inlist_grid_points.write("\t{0} = {1}\n".format(k, int(v)))
                 elif type(v) == bool:
@@ -279,7 +280,8 @@ def create_binary_inlists(binary_controls, binary_job,
             inlist_grid_points.write("&binary_job\n")
             for k, v in binary_job.items():
                 if (type(v) == float) and (not v.is_integer()):
-                    inlist_grid_points.write("\t{0} = {1:.10f}d0\n".format(k, v))
+                    inlist_grid_points.write("\t{0} = ".format(k)+"{0:.10e}\n"\
+                                             .format(v).replace('e','d'))
                 elif (type(v) == float) and (v.is_integer()):
                     inlist_grid_points.write("\t{0} = {1}\n".format(k, int(v)))
                 elif type(v) == bool:
@@ -300,7 +302,8 @@ def create_binary_inlists(binary_controls, binary_job,
             inlist_grid_points.write("&controls\n")
             for k, v in star1_binary_controls.items():
                 if (type(v) == float) and (not v.is_integer()):
-                    inlist_grid_points.write("\t{0} = {1:.10f}d0\n".format(k, v))
+                    inlist_grid_points.write("\t{0} = ".format(k)+"{0:.10e}\n"\
+                                             .format(v).replace('e','d'))
                 elif (type(v) == float) and (v.is_integer()):
                     inlist_grid_points.write("\t{0} = {1}\n".format(k, int(v)))
                 elif type(v) == bool:
@@ -321,7 +324,8 @@ def create_binary_inlists(binary_controls, binary_job,
             inlist_grid_points.write("&controls\n")
             for k, v in star2_binary_controls.items():
                 if (type(v) == float) and (not v.is_integer()):
-                    inlist_grid_points.write("\t{0} = {1:.10f}d0\n".format(k, v))
+                    inlist_grid_points.write("\t{0} = ".format(k)+"{0:.10e}\n"\
+                                             .format(v).replace('e','d'))
                 elif (type(v) == float) and (v.is_integer()):
                     inlist_grid_points.write("\t{0} = {1}\n".format(k, int(v)))
                 elif type(v) == bool:
@@ -342,7 +346,8 @@ def create_binary_inlists(binary_controls, binary_job,
             inlist_grid_points.write("&star_job\n")
             for k, v in star1_binary_job.items():
                 if (type(v) == float) and (not v.is_integer()):
-                    inlist_grid_points.write("\t{0} = {1:.10f}d0\n".format(k, v))
+                    inlist_grid_points.write("\t{0} = ".format(k)+"{0:.10e}\n"\
+                                             .format(v).replace('e','d'))
                 elif (type(v) == float) and (v.is_integer()):
                     inlist_grid_points.write("\t{0} = {1}\n".format(k, int(v)))
                 elif type(v) == bool:
@@ -363,7 +368,8 @@ def create_binary_inlists(binary_controls, binary_job,
             inlist_grid_points.write("&star_job\n")
             for k, v in star2_binary_job.items():
                 if (type(v) == float) and (not v.is_integer()):
-                    inlist_grid_points.write("\t{0} = {1:.10f}d0\n".format(k, v))
+                    inlist_grid_points.write("\t{0} = ".format(k)+"{0:.10e}\n"\
+                                             .format(v).replace('e','d'))
                 elif (type(v) == float) and (v.is_integer()):
                     inlist_grid_points.write("\t{0} = {1}\n".format(k, int(v)))
                 elif type(v) == bool:
@@ -416,17 +422,17 @@ def create_star_formation(mass, work_dir, star_inlist_project, initial_z=None, n
         Pwarn('Replace '+filename, "OverwriteWarning")
     with open(filename, 'w') as inlist_grid_points:
         inlist_grid_points.write("&controls\n")
-        inlist_grid_points.write("initial_mass = {0:.10e}\n"\
+        inlist_grid_points.write("initial_mass = "+"{0:.10e}\n"\
                                  .format(mass).replace('e','d'))
         if initial_z is not None:
-            inlist_grid_points.write("initial_z = {0:.10e}\n"\
+            inlist_grid_points.write("initial_z = "+"{0:.10e}\n"\
                                      .format(initial_z).replace('e','d'))
-            inlist_grid_points.write("Zbase = {0:.10e}\n"\
+            inlist_grid_points.write("Zbase = "+"{0:.10e}\n"\
                                      .format(initial_z).replace('e','d'))
         inlist_grid_points.write("/ ! end of star_controls namelist\n")
         inlist_grid_points.write("&star_job\n")
         if new_Z:
-            inlist_grid_points.write("new_Z = {0:.10e}\n"\
+            inlist_grid_points.write("new_Z = "+"{0:.10e}\n"\
                                      .format(initial_z).replace('e','d'))
         inlist_grid_points.write("/ ! end of star_job namelist\n")
         inlist_grid_points.close()
