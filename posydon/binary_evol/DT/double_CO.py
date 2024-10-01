@@ -104,8 +104,9 @@ class DoubleCO:
             t_final = [t_inspiral]
 
         if s.status == -1:
-            binary.state += ' (Integration failure)'
-            raise NumericalError("Integrations failed: " + s.message)
+            failed_state = binary.state
+            set_binary_to_failed(binary)
+            raise NumericalError(f"Integration failed for {failed_state} DCO ({self.state1}, {self.state2}): ", s.message)
 
         elif s.status == 1:
 
