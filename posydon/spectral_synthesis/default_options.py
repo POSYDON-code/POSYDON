@@ -19,7 +19,7 @@ default_grid_kwargs = {
     'ostar_grid': "sg-OSTAR2002-ufl.h5",
     'WR_grid' : "sg-PoWR-WNL-H20-new.h5",
     'WNL_grid' :"sg-PoWR-MW-WNL.h5",
-    'WNE_grid' : "sg-PoWR-WNE.h5",
+    'WNE_grid' : "sg-PoWR-MW-WNE.h5",
 
     # Setting the wavelengths range:
     'lam_min': 110.,
