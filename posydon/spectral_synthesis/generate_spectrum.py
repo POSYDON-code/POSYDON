@@ -281,6 +281,7 @@ def rename_star_state(star,i):
         if xH_surf < 0.1: 
             star[f'{i}_state'] = 'WNE_star'
         else:
+            star[f'{i}_surface_h1'] = min(xH_surf,0.2)
             star[f'{i}_state'] = 'WNL_star' 
         
 
@@ -315,7 +316,7 @@ def rescale_log_g(grids,label,**x):
 
     for axis_label in grid.axis_labels:
         dx[axis_label] = 0.0
-    if label == 'WR_grid':
+    if label in ['WR_grid','WNE_grid','WNL_grid']:
         dx['R_t'] =  grid.axis_x_max['R_t']
         new_x = grid.adjust_x(old_x, dx)
         x['R_t'] = new_x['R_t']
