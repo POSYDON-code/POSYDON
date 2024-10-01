@@ -27,7 +27,8 @@ GRID_KEYS = [
     'stripped_grid',
     'WR_grid',
     'WNL_grid',
-    'WNE_grid' 
+    'WNE_grid' ,
+    'WC_grid'
 ]
 
 
@@ -130,7 +131,7 @@ class spectral_grids():
         if name == "stripped_grid":
             distance_factor = (kpc)**2
             return Flux*distance_factor
-        if name in ['WR_grid','WNE_grid','WNL_grid']:
+        if name in ['WR_grid','WNE_grid','WNL_grid','WC_grid']:
             distance_factor = (kpc/100)**2
             return (Flux)*distance_factor
         #if 'log' in self.kwargs.get(name):

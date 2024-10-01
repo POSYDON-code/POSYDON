@@ -24,7 +24,10 @@ grid_keys = [
     'secondary_grid',
     'ostar_grid',
     'stripped_grid',
-    'WR_grid'
+    'WR_grid',
+    'WNL_grid',
+    'WNE_grid',
+    'WC_grid' 
 ]
 state_list = [
     'disrupted',
@@ -46,7 +49,8 @@ spectral_types = [
     'WR_grid',
     'ostar_grid',
     'WNL_grid',
-    'WNE_grid' ]
+    'WNE_grid',
+    'WC_grid'  ]
 
 class population_spectra():
     """Creates and saves the output flux of a POSYDON population"""

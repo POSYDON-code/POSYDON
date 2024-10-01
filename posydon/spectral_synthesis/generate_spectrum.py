@@ -94,6 +94,11 @@ def point_the_grid(grids,x,label,**kwargs):
         if label is None or label == 'failed_attempt_1':
             new_label,x = check_boundaries(grids,'WNE_grid',**x)
             if new_label == 'failed_grid':
+                if x['R_t'] < grids.spectral_grids['WNE_grid'].axis_x_min['R_t']:
+                    x['R_t'] = grids.spectral_grids['WNE_grid'].axis_x_min['R_t']
+                    new_label,x = check_boundaries(grids,'WNE_grid',**x)
+                    if new_label != 'failed_grid':
+                        return new_label,x
                 new_label,x =  check_boundaries(grids,'stripped_grid',**x)
                 if new_label == 'failed_grid':
                     if x['Teff'] > ostar_temp_cut_off:
@@ -110,6 +115,23 @@ def point_the_grid(grids,x,label,**kwargs):
     if x['state'] == "WNL_star":
         if label is None or label == 'failed_attempt_1':
             new_label,x = check_boundaries(grids,'WNL_grid',**x)
+            if new_label == 'failed_grid':
+                new_label,x =  check_boundaries(grids,'stripped_grid',**x)
+                if new_label == 'failed_grid':
+                    if x['Teff'] > ostar_temp_cut_off:
+                        return check_boundaries(grids,'ostar_grid',**x)
+                    elif x['Teff'] > bstar_temp_cut_off:
+                        return check_boundaries(grids,'bstar_grid',**x)
+                    else:
+                        return new_label,x
+                else:
+                    return new_label,x
+            else:
+                return new_label,x
+    
+    if x['state'] == "WC_star":
+        if label is None or label == 'failed_attempt_1':
+            new_label,x = check_boundaries(grids,'WC_grid',**x)
             if new_label == 'failed_grid':
                 new_label,x =  check_boundaries(grids,'stripped_grid',**x)
                 if new_label == 'failed_grid':
@@ -188,7 +210,7 @@ def generate_spectrum(grids,star,i,**kwargs):
          'state':state,
          'surface_h1' : surface_h1,
          '[alpha/Fe]':0.0}
-    if state in ['WR_star','WNE_star','WNL_star']:
+    if state in ['WR_star','WNE_star','WNL_star','WC_star']:
         x['R_t'] = star[f'{i}_Rt']
     label = None
     label,x = point_the_grid(grids,x,label,**kwargs)
@@ -200,7 +222,7 @@ def generate_spectrum(grids,star,i,**kwargs):
             try:
                 if label == "stripped_grid":
                     Flux = grids.grid_flux(label,**x)*4*np.pi*1e4/Lo
-                elif label in ['WR_grid','WNE_grid','WNL_grid']:
+                elif label in ['WR_grid','WNE_grid','WNL_grid','WC_grid']:
                     Flux = grids.grid_flux(label,**x)*4*np.pi*1e4/Lo *(L/10**5.3)
                     #Replace the negative values for WR
                     Flux.value[Flux.value < 0] = 1e-99
@@ -214,6 +236,7 @@ def generate_spectrum(grids,star,i,**kwargs):
                 try:
                     x = rescale_log_g(grids,label,**x)
                 except Exception as e:
+                    print(x)
                     print('Under the exception',e)
                 label = f'failed_attempt_{count}'
         label,x = point_the_grid(grids,x,label,**kwargs)
@@ -269,6 +292,7 @@ def rename_star_state(star,i):
 
     """
     xH_surf = copy(star[f'{i}_surface_h1'])
+    xHe_surf = copy(star[f'{i}_surface_he4'])
     T = copy(star[f'{i}_Teff'])
     lg_M_dot = copy(star[f'{i}_lg_mdot'])
     k_e = 0.2*(1 + xH_surf)
@@ -278,10 +302,13 @@ def rename_star_state(star,i):
         star[f'{i}_state'] = 'stripped_He_star'
     else:
         star[f'{i}_Rt'] = calculated_Rt(star,i)
-        if xH_surf < 0.1: 
-            star[f'{i}_state'] = 'WNE_star'
+        if xH_surf < 0.1:
+            if xHe_surf < 0.7 :
+                star[f'{i}_state'] = 'WC_star'
+            else:
+                star[f'{i}_state'] = 'WNE_star'
         else:
-            star[f'{i}_surface_h1'] = min(xH_surf,0.2)
+            star[f'{i}_surface_h1'] = max(xH_surf,0.2)
             star[f'{i}_state'] = 'WNL_star' 
         
 
@@ -316,13 +343,21 @@ def rescale_log_g(grids,label,**x):
 
     for axis_label in grid.axis_labels:
         dx[axis_label] = 0.0
-    if label in ['WR_grid','WNE_grid','WNL_grid']:
+    if label in ['WR_grid','WNE_grid','WNL_grid','WC_grid']:
         dx['R_t'] =  grid.axis_x_max['R_t']
-        new_x = grid.adjust_x(old_x, dx)
+        try:
+            new_x = grid.adjust_x(old_x, dx)
+        except ValueError:
+            dx['R_t'] = - grid.axis_x_max['R_t']
+            new_x = grid.adjust_x(old_x, dx)
         x['R_t'] = new_x['R_t']
     else:
         dx['log(g)'] = grid.axis_x_max['log(g)']
-        new_x = grid.adjust_x(old_x, dx)
+        try:
+            new_x = grid.adjust_x(old_x, dx)
+        except ValueError:
+            dx['log(g)'] = - grid.axis_x_max['log(g)']
+            new_x = grid.adjust_x(old_x, dx)
         x['log(g)'] = new_x['log(g)']
     return x 
 
