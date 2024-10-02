@@ -29,6 +29,7 @@ STAR_STATES_ALL = [
     'H-rich_Core_C_burning',
     'H-rich_Central_C_depletion',
     'H-rich_non_burning',
+    'stripped_He_Core_H_burning',
     'stripped_He_Core_He_burning',
     'stripped_He_Central_He_depleted',
     'stripped_He_Central_C_depletion',
