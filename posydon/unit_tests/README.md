@@ -60,18 +60,34 @@ Beside the existence and the type of a variable, we should verify the integrity 
 
 Function in the module need checks according to their functionality. This should coincide with the doc-string of each function. *I suggest to have one class with all the function tests and a test function for each function in the module, which gets tested.* If the functions need variables, you may [use fixtures](#using-fixtures).
 
-Functions may include prints statements. In such cases it is useful to redirect the data stream going there into a variable to be able to validate the output (there is a similar context manager to redirect `stderr`). Here an example code:
+Functions may include prints statements. To capture outputs to `stdout` and `stderr` pytest has global defined fixtures `capsys` (and `capsysbinary` for bytes data instead of usual text; addtionally, there are `capfd` and `capfdbinary` to capture the file descriptors `1` and `2`).
 
-    from io import StringIO
-    from contextlib import redirect_stdout
-    ...
-    with redirect_stdout(StringIO()) as print_out:
-        totest.function_with_print_statements()
-    self.assertEqual("Text of first print statement.\nText of second print statement.\n", print_out.getvalue())
+To access the captured content you simply call the `readouterr` function of the fixture. It will return a `(out, err)` namedtuple. Here an example how to get the stdout content, captured so far:
+
+    capsys.readouterr().out
+
+It should be noted, that the call of `readouterr` will clear the buffer, hence if you like to get both `out` and `err` at the same time, you need to store the namedtuple and access the components from the stored version, e.g.
+
+    captured_output = capsys.readouterr()
+    captured_output.out
+    captured_output.err
+
+In case you like to access what is captured to far but keep it in the buffer, you'd need to reprint the part you read, e.g.
+
+    captured_output = capsys.readouterr()
+    captured_output.out
+    print(captured_output.out)
+
+Using those fixtures as arguments to a function will capture all outputs of that function. To exclude some parts from getting its output captured you need to put that into the `disabled` context of the used fixture. It should be noted, that only the capturing is disabled, but the fixture object is still available, e.g.
+
+    with capsys.disabled():
+        print(capsys.readouterr().out)
+
+will print the collected prints to stdout, at this moment all together (and clears the buffer).
 
 ##### Check classes
 
-Each class inside a module should be get its components checked like a module itself. *I suggest to have a test class for each class in the tested module and the test of each class function should get an own test function.* Again, `setUp` and/or `tearDown` functions should be used to ensure that all tests run under the same conditions.
+Each class inside a module should be get its components checked like a module itself. *I suggest to have a test class for each class in the tested module and the test of each class function should get an own test function.* Again, [use fixtures](#using-fixtures) can be used to ensure that all tests run under the same conditions.
 
 #### Using fixtures
 
@@ -79,9 +95,17 @@ You can define [fixtures](https://docs.pytest.org/en/stable/how-to/fixtures.html
 
     @pytest.fixture
 
+Fixtures replace the `setUp` and `tearDown`. To use a fixture to prepare something before a test, you can simply write it as a function and the variable will contain the returned value.
+
+To do with cleaning things up after a test, instead of having a final return, you separate setUp and tearDown with a yield statement, which ensure that all before is executed when the fixture is requested and the stuff after when it get deleted. For chains of fixtures it should be noted, that the clean up happens in the reverse order to the creation, because the innermost fixture will get deleted first.
+
 #### Catching raised errors
 
 Pytest has the [context manager `pytest.raises`](https://docs.pytest.org/en/stable/reference/reference.html#pytest-raises) to catch raised errors. You use it like other context managers via a `with` statement. Beside the expected exception, you can specify a `match`, which will be checked against the error message. The context object can be used to check for more details of the raised error.
+
+#### Catching warnings
+
+Usually, pytest will catch all warnings and print them at the end of all tests. If your test will cause a warning which you don't like to have displayed, you can filter the warnings caught by pytest. To filter all warnings in a function or class you can decorate it with a filter, e.g. `@pytest.mark.filterwarnings("ignore:WARNINGTEXT")`. There are more things you can do on [warnings in pytest](https://docs.pytest.org/en/stable/how-to/capture-warnings.html), but you should use that only were needed. But you should be careful with the pytest warning catching, because it overwrites some parts of the python warnings, which even interferes badly with our POSYDON warnings (especially the filter changes).
 
 ### Check that it can fail
 

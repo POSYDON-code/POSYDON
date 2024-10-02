@@ -5,17 +5,16 @@ __authors__ = [
     "Matthias Kruckow <Matthias.Kruckow@unige.ch>"
 ]
 
-# import the unittest module and the module which will be tested
-import unittest
+# import the module which will be tested
 import posydon.utils.posydonwarning as totest
 
-# import other needed code for the tests
+# import other needed code for the tests, which is not already imported in the
+# module you like to test
+from pytest import fixture, raises, warns, mark
 from inspect import isclass, isroutine
-from io import StringIO
-from contextlib import redirect_stdout, redirect_stderr
 
-# define test classes
-class TestElements(unittest.TestCase):
+# define test classes collecting several test functions
+class TestElements:
     # check for objects, which should be an element of the tested module
     def test_dir(self):
         elements = ['AllPOSYDONWarnings', 'ApproximationWarning',
@@ -33,444 +32,466 @@ class TestElements(unittest.TestCase):
                     '_apply_POSYDON_filter', '_get_POSYDONWarning_class',
                     '_issue_warn', 'copy', 'get_stats', 'print_stats', 'sys',
                     'warnings']
-        self.assertListEqual(dir(totest), elements,
-                             msg="There might be added or removed objects "
-                                 "without an update on the unit test.")
+        assert dir(totest) == elements, "There might be added or removed "+\
+               "objects without an update on the unit test."
 
     def test_instance_POSYDONWarning(self):
-        self.assertTrue(isclass(totest.POSYDONWarning))
-        self.assertTrue(issubclass(totest.POSYDONWarning, Warning))
+        assert isclass(totest.POSYDONWarning)
+        assert issubclass(totest.POSYDONWarning, Warning)
 
     def test_instance_ApproximationWarning(self):
-        self.assertTrue(isclass(totest.ApproximationWarning))
-        self.assertTrue(issubclass(totest.ApproximationWarning,
-                                   totest.POSYDONWarning))
+        assert isclass(totest.ApproximationWarning)
+        assert issubclass(totest.ApproximationWarning, totest.POSYDONWarning)
 
     def test_instance_BinaryParsingWarning(self):
-        self.assertTrue(isclass(totest.BinaryParsingWarning))
-        self.assertTrue(issubclass(totest.BinaryParsingWarning,
-                                   totest.POSYDONWarning))
+        assert isclass(totest.BinaryParsingWarning)
+        assert issubclass(totest.BinaryParsingWarning, totest.POSYDONWarning)
 
     def test_instance_ClassificationWarning(self):
-        self.assertTrue(isclass(totest.ClassificationWarning))
-        self.assertTrue(issubclass(totest.ClassificationWarning,
-                                   totest.POSYDONWarning))
+        assert isclass(totest.ClassificationWarning)
+        assert issubclass(totest.ClassificationWarning, totest.POSYDONWarning)
 
     def test_instance_EvolutionWarning(self):
-        self.assertTrue(isclass(totest.EvolutionWarning))
-        self.assertTrue(issubclass(totest.EvolutionWarning,
-                                   totest.POSYDONWarning))
+        assert isclass(totest.EvolutionWarning)
+        assert issubclass(totest.EvolutionWarning, totest.POSYDONWarning)
 
     def test_instance_InappropriateValueWarning(self):
-        self.assertTrue(isclass(totest.InappropriateValueWarning))
-        self.assertTrue(issubclass(totest.InappropriateValueWarning,
-                                   totest.POSYDONWarning))
+        assert isclass(totest.InappropriateValueWarning)
+        assert issubclass(totest.InappropriateValueWarning,
+                          totest.POSYDONWarning)
 
     def test_instance_IncompletenessWarning(self):
-        self.assertTrue(isclass(totest.IncompletenessWarning))
-        self.assertTrue(issubclass(totest.IncompletenessWarning,
-                                   totest.POSYDONWarning))
+        assert isclass(totest.IncompletenessWarning)
+        assert issubclass(totest.IncompletenessWarning, totest.POSYDONWarning)
 
     def test_instance_InterpolationWarning(self):
-        self.assertTrue(isclass(totest.InterpolationWarning))
-        self.assertTrue(issubclass(totest.InterpolationWarning,
-                                   totest.POSYDONWarning))
+        assert isclass(totest.InterpolationWarning)
+        assert issubclass(totest.InterpolationWarning, totest.POSYDONWarning)
 
     def test_instance_MissingFilesWarning(self):
-        self.assertTrue(isclass(totest.MissingFilesWarning))
-        self.assertTrue(issubclass(totest.MissingFilesWarning,
-                                   totest.POSYDONWarning))
+        assert isclass(totest.MissingFilesWarning)
+        assert issubclass(totest.MissingFilesWarning, totest.POSYDONWarning)
 
     def test_instance_OverwriteWarning(self):
-        self.assertTrue(isclass(totest.OverwriteWarning))
-        self.assertTrue(issubclass(totest.OverwriteWarning,
-                                   totest.POSYDONWarning))
+        assert isclass(totest.OverwriteWarning)
+        assert issubclass(totest.OverwriteWarning, totest.POSYDONWarning)
 
     def test_instance_ReplaceValueWarning(self):
-        self.assertTrue(isclass(totest.ReplaceValueWarning))
-        self.assertTrue(issubclass(totest.ReplaceValueWarning,
-                                   totest.POSYDONWarning))
+        assert isclass(totest.ReplaceValueWarning)
+        assert issubclass(totest.ReplaceValueWarning, totest.POSYDONWarning)
 
     def test_instance_UnsupportedModelWarning(self):
-        self.assertTrue(isclass(totest.UnsupportedModelWarning))
-        self.assertTrue(issubclass(totest.UnsupportedModelWarning,
-                                   totest.POSYDONWarning))
+        assert isclass(totest.UnsupportedModelWarning)
+        assert issubclass(totest.UnsupportedModelWarning,
+                          totest.POSYDONWarning)
 
     def test_instance_POSYDONWarning_subclasses(self):
-        self.assertIsInstance(totest._POSYDONWarning_subclasses, (dict))
+        assert isinstance(totest._POSYDONWarning_subclasses, (dict))
 
     def test_instance_get_POSYDONWarning_class(self):
-        self.assertTrue(isroutine(totest._get_POSYDONWarning_class))
+        assert isroutine(totest._get_POSYDONWarning_class)
 
     def test_instance_POSYDON_WARNINGS_REGISTRY(self):
-        self.assertIsInstance(totest._POSYDON_WARNINGS_REGISTRY, (dict))
+        assert isinstance(totest._POSYDON_WARNINGS_REGISTRY, (dict))
 
     def test_instance_get_stats(self):
-        self.assertTrue(isroutine(totest.get_stats))
+        assert isroutine(totest.get_stats)
 
     def test_instance_print_stats(self):
-        self.assertTrue(isroutine(totest.print_stats))
+        assert isroutine(totest.print_stats)
 
     def test_instance_apply_POSYDON_filter(self):
-        self.assertTrue(isroutine(totest._apply_POSYDON_filter))
+        assert isroutine(totest._apply_POSYDON_filter)
 
     def test_instance_issue_warn(self):
-        self.assertTrue(isroutine(totest._issue_warn))
+        assert isroutine(totest._issue_warn)
 
     def test_instance_Caught_POSYDON_Warnings(self):
-        self.assertTrue(isclass(totest._Caught_POSYDON_Warnings))
+        assert isclass(totest._Caught_POSYDON_Warnings)
 
     def test_instance_CAUGHT_POSYDON_WARNINGS(self):
-        self.assertIsInstance(totest._CAUGHT_POSYDON_WARNINGS,
-                              totest._Caught_POSYDON_Warnings)
+        assert isinstance(totest._CAUGHT_POSYDON_WARNINGS,
+                          totest._Caught_POSYDON_Warnings)
 
     def test_instance_Catch_POSYDON_Warnings(self):
-        self.assertTrue(isclass(totest.Catch_POSYDON_Warnings))
+        assert isclass(totest.Catch_POSYDON_Warnings)
 
     def test_instance_Pwarn(self):
-        self.assertTrue(isroutine(totest.Pwarn))
+        assert isroutine(totest.Pwarn)
 
     def test_instance_SetPOSYDONWarnings(self):
-        self.assertTrue(isroutine(totest.SetPOSYDONWarnings))
+        assert isroutine(totest.SetPOSYDONWarnings)
 
     def test_instance_NoPOSYDONWarnings(self):
-        self.assertTrue(isroutine(totest.NoPOSYDONWarnings))
+        assert isroutine(totest.NoPOSYDONWarnings)
 
     def test_instance_AllPOSYDONWarnings(self):
-        self.assertTrue(isroutine(totest.AllPOSYDONWarnings))
+        assert isroutine(totest.AllPOSYDONWarnings)
 
 
-class TestValues(unittest.TestCase):
+class TestValues:
     # check that the values fit
     def test_value_POSYDONWarning_subclasses(self):
-        self.assertIn('ApproximationWarning',
-                      totest._POSYDONWarning_subclasses)
+        assert 'ApproximationWarning' in totest._POSYDONWarning_subclasses
 
     def test_value_POSYDON_WARNINGS_REGISTRY(self):
-        self.assertDictEqual({}, totest._POSYDON_WARNINGS_REGISTRY)
+        assert totest._POSYDON_WARNINGS_REGISTRY == {}
 
     def test_value_CAUGHT_POSYDON_WARNINGS(self):
-        self.assertFalse(totest._CAUGHT_POSYDON_WARNINGS.catch_warnings)
-        self.assertTrue(totest._CAUGHT_POSYDON_WARNINGS.record)
-        self.assertTrue(totest._CAUGHT_POSYDON_WARNINGS.filter_first)
-        self.assertListEqual(totest._CAUGHT_POSYDON_WARNINGS.caught_warnings,
-                             [])
-        self.assertEqual(totest._CAUGHT_POSYDON_WARNINGS.registry,
-                         totest._POSYDON_WARNINGS_REGISTRY)
+        assert totest._CAUGHT_POSYDON_WARNINGS.catch_warnings == False
+        assert totest._CAUGHT_POSYDON_WARNINGS.record
+        assert totest._CAUGHT_POSYDON_WARNINGS.filter_first
+        assert totest._CAUGHT_POSYDON_WARNINGS.caught_warnings == []
+        assert totest._CAUGHT_POSYDON_WARNINGS.registry is\
+               totest._POSYDON_WARNINGS_REGISTRY
 
 
-class TestFunctions(unittest.TestCase):
-    def tearDown(self):
+class TestFunctions:
+    @fixture
+    def clear_registry(self):
+        yield
         # empyt the global POSYDON warnings registry after each test
         keys = []
         for k in totest._POSYDON_WARNINGS_REGISTRY:
             keys.append(k)
         for k in keys:
             del totest._POSYDON_WARNINGS_REGISTRY[k]
+
+    @fixture
+    def reset_filter(self):
+        yield
         # set POSYDON warnings back to default
-        totest.SetPOSYDONWarnings()
+        totest.warnings.filterwarnings(action='ignore',\
+                                       category=ResourceWarning)
+        totest.warnings.filterwarnings(action='default',\
+                                       category=totest.POSYDONWarning)
 
     # test functions
     def test_get_POSYDONWarning_class(self):
         # missing argument
-        with self.assertRaises(TypeError):
+        with raises(TypeError, match="missing 1 required positional argument"):
             totest._get_POSYDONWarning_class()
         # default to POSYDONWarning
-        self.assertEqual(totest._get_POSYDONWarning_class(""),
-                         totest.POSYDONWarning)
-        self.assertEqual(totest._get_POSYDONWarning_class(
-            totest.POSYDONWarning), totest.POSYDONWarning)
+        assert totest._get_POSYDONWarning_class("") == totest.POSYDONWarning
+        assert totest._get_POSYDONWarning_class(totest.POSYDONWarning) ==\
+               totest.POSYDONWarning
         # check subclasses of POSYDONWarning
         for k,v in totest._POSYDONWarning_subclasses.items():
-            self.assertEqual(totest._get_POSYDONWarning_class(k), v)
-            self.assertEqual(totest._get_POSYDONWarning_class(v), v)
+            assert totest._get_POSYDONWarning_class(k) == v
+            assert totest._get_POSYDONWarning_class(v) == v
         # bad input
-        self.assertIsNone(totest._get_POSYDONWarning_class(1))
+        assert totest._get_POSYDONWarning_class(1) is None
 
     def test_get_stats(self):
-        self.assertEqual(totest.get_stats(), totest._POSYDON_WARNINGS_REGISTRY)
+        assert totest.get_stats() == totest._POSYDON_WARNINGS_REGISTRY
 
-    def test_print_stats(self):
+    def test_print_stats(self, capsys, clear_registry):
         # no warnings to print
-        with redirect_stdout(StringIO()) as print_out:
-            totest.print_stats()
-        self.assertEqual("No POSYDON warnings occured.\n",
-                         print_out.getvalue())
+        totest.print_stats()
+        assert "No POSYDON warnings occured.\n" == capsys.readouterr().out
         # add an artifical entry in the warnings registry and get the printout
         totest._POSYDON_WARNINGS_REGISTRY = {'Unit': 'Test'}
-        with redirect_stdout(StringIO()) as print_out:
-            totest.print_stats()
-        self.assertEqual("There have been POSYDON warnings in the global "+
-                         "registry:\n "+str(totest._POSYDON_WARNINGS_REGISTRY)+
-                         "\n", print_out.getvalue())
+        totest.print_stats()
+        assert "There have been POSYDON warnings in the global registry:\n "+\
+               str(totest._POSYDON_WARNINGS_REGISTRY)+"\n" ==\
+               capsys.readouterr().out
 
-    def test_apply_POSYDON_filter(self):
+    def test_apply_POSYDON_filter(self, capsys, clear_registry, reset_filter):
         # wrong arguments
-        with self.assertRaises(TypeError):
+        with raises(TypeError, match="warning must be a dictionary"):
             totest._apply_POSYDON_filter(warning="Test")
-        with self.assertRaises(TypeError):
+        with raises(TypeError, match="message must be a string"):
             totest._apply_POSYDON_filter(warning={'message': 1})
-        with self.assertRaises(TypeError):
+        with raises(TypeError, match="stacklevel must be an integer"):
             totest._apply_POSYDON_filter(warning={'stacklevel': "Test"})
-        with redirect_stdout(StringIO()) as print_out:
+        with raises(TypeError, match="registry must be a dictionary or None"):
             totest._apply_POSYDON_filter(registry="Test")
-        self.assertEqual("Reset registry, old was: Test\n",
-                         print_out.getvalue())
         # check default warning
-        self.assertDictEqual(dict(message="No warning"),
-                             totest._apply_POSYDON_filter())
+        assert totest._apply_POSYDON_filter() == dict(message="No warning")
         # check that further default warnings are filtered out but added to the
         # registry
         for i in range(10):
             for k,v in totest._POSYDON_WARNINGS_REGISTRY.items():
-                self.assertEqual(i+1, v)
-            self.assertIsNone(totest._apply_POSYDON_filter())
+                assert i+1 == v
+            assert totest._apply_POSYDON_filter() is None
+        # check usage of python filter with a python warning
+        totest.warnings.filterwarnings(action='ignore',\
+                                       category=ResourceWarning)
+        assert totest._apply_POSYDON_filter(warning={'message': "Test",\
+               'category': ResourceWarning}) is None
+        # check the route of an always filter
+        totest.warnings.filterwarnings(action='always',\
+                                       category=ResourceWarning)
+        for i in range(10):
+            assert totest._apply_POSYDON_filter(warning={'message': "Test"+\
+                   str(i), 'category': ResourceWarning}) == {'message': \
+                   "Test"+str(i), 'category': ResourceWarning}
+            for k,v in totest._POSYDON_WARNINGS_REGISTRY.items():
+                if "ResourceWarning" in k:
+                    assert i == v
+        # check the route of an error filter
+        totest.warnings.filterwarnings(action='error',\
+                                       category=ResourceWarning)
+        assert totest._apply_POSYDON_filter(warning={'message': "Test"+str(i),\
+               'category': ResourceWarning}) == {'message': "Test"+str(i),\
+               'category': ResourceWarning}
 
-    def test_issue_warn(self):
+    def test_issue_warn(self, capsys, monkeypatch, recwarn, clear_registry):
+        def mock_apply_POSYDON_filter(warning=dict(message="No warning"), registry=None):
+            return None
+
         # wrong arguments
-        with self.assertRaises(TypeError):
+        with raises(TypeError, match="warning must be a dictionary"):
             totest._issue_warn(warning="Test")
-        with self.assertRaises(TypeError):
+        with raises(TypeError, match="message must be a string"):
             totest._issue_warn(warning={'message': 1})
-        with self.assertRaises(TypeError):
+        with raises(TypeError, match="stacklevel must be an integer"):
             totest._issue_warn(warning={'stacklevel': "Test"})
-        with redirect_stdout(StringIO()) as print_out:
-            # it will issue a default warning on the reset registry
-            with redirect_stderr(StringIO()) as print_err:
-                totest._issue_warn(registry="Test")
-        self.assertEqual("Reset registry, old was: Test\n",
-                         print_out.getvalue())
+        with raises(TypeError, match="registry must be a dictionary or None"):
+            totest._issue_warn(registry="Test")
         # check default warning
-        self.assertIn("UserWarning: No warning", print_err.getvalue())
+        with warns(UserWarning, match="No warning") as warn1:
+            totest._issue_warn()
+        assert len(warn1) == 1
         # check filtered warning
-        self.assertIsNone(totest._issue_warn())
+        monkeypatch.setattr(totest, "_apply_POSYDON_filter", mock_apply_POSYDON_filter)
+        totest._issue_warn()
+        assert len(recwarn) == 0
 
     def test_Pwarn(self):
-        # wrong arguments
-        with self.assertRaises(TypeError):
+        # missing argument
+        with raises(TypeError, match="missing 1 required positional argument"):
             totest.Pwarn()
-        with self.assertRaises(TypeError):
+        # wrong arguments
+        with raises(TypeError, match="message must be a string"):
             totest.Pwarn(1)
-        with self.assertRaises(TypeError):
+        with raises(TypeError, match="stacklevel must be an integer"):
             totest.Pwarn("Unit", stacklevel="Test")
-        # check output of POSYDONwarning and UserWarning
-        with redirect_stderr(StringIO()) as print_err:
+        # check output of POSYDONwarning
+        with warns(totest.POSYDONWarning, match="Unit test") as warn1:
             totest.Pwarn("Unit test", "POSYDONWarning")
-        self.assertIn("POSYDONWarning: 'Unit test'", print_err.getvalue())
-        with redirect_stderr(StringIO()) as print_err:
+        assert len(warn1) == 1
+        # check output of FutureWarning
+        with warns(FutureWarning, match="Unit test") as warn2:
+            totest.Pwarn("Unit test", FutureWarning)
+        assert len(warn2) == 1
+        # check output of UserWarning (default if unspecified)
+        with warns(UserWarning, match="Unit test") as warn3:
             totest.Pwarn("Unit test")
-        self.assertIn("UserWarning: Unit test", print_err.getvalue())
+        assert len(warn3) == 1
 
     def test_SetPOSYDONWarnings(self):
+        totest.SetPOSYDONWarnings(action="once")
+        assert str(totest.warnings.filters[0]) == "('once', None, <class "+\
+               "'posydon.utils.posydonwarning.POSYDONWarning'>, None, 0)"
         totest.SetPOSYDONWarnings()
-        self.assertEqual("('default', None, <class "
-                         "'posydon.utils.posydonwarning.POSYDONWarning'>, "
-                         "None, 0)", str(totest.warnings.filters[0]))
+        assert str(totest.warnings.filters[0]) == "('default', None, <class "+\
+               "'posydon.utils.posydonwarning.POSYDONWarning'>, None, 0)"
+        # non POSYDON warnings have no effect
+        totest.SetPOSYDONWarnings(category=UserWarning)
+        assert str(totest.warnings.filters[0]) == "('default', None, <class "+\
+               "'posydon.utils.posydonwarning.POSYDONWarning'>, None, 0)"
 
-    def test_NoPOSYDONWarnings(self):
+    def test_NoPOSYDONWarnings(self, reset_filter):
         totest.NoPOSYDONWarnings()
-        self.assertEqual("('ignore', None, <class "
-                         "'posydon.utils.posydonwarning.POSYDONWarning'>, "
-                         "None, 0)", str(totest.warnings.filters[0]))
+        assert str(totest.warnings.filters[0]) == "('ignore', None, <class "+\
+               "'posydon.utils.posydonwarning.POSYDONWarning'>, None, 0)"
 
-    def test_AllPOSYDONWarnings(self):
+    def test_AllPOSYDONWarnings(self, reset_filter):
         totest.AllPOSYDONWarnings()
-        self.assertEqual("('always', None, <class "
-                         "'posydon.utils.posydonwarning.POSYDONWarning'>, "
-                         "None, 0)", str(totest.warnings.filters[0]))
+        assert str(totest.warnings.filters[0]) == "('always', None, <class "+\
+               "'posydon.utils.posydonwarning.POSYDONWarning'>, None, 0)"
 
 
-class TestPOSYDONWarning(unittest.TestCase):
+class TestPOSYDONWarning:
+    @fixture
+    def POSYDONWarning(self):
+        # initialize an instance of the class with defaults
+        return totest.POSYDONWarning()
+
     # test the POSYDONWarning class
-    def setUp(self):
-        # initialize an instance of the class for each test
-        self.POSYDONWarning = totest.POSYDONWarning()
-
-    def test_init(self):
-        self.assertTrue(isroutine(self.POSYDONWarning.__init__))
+    def test_init(self, POSYDONWarning):
+        assert isroutine(POSYDONWarning.__init__)
         # check that the instance is of correct type and all code in the
         # __init__ got executed: the elements are created and initialized
-        self.assertIsInstance(self.POSYDONWarning, totest.POSYDONWarning)
-        self.assertEqual('', self.POSYDONWarning.message)
+        assert isinstance(POSYDONWarning, totest.POSYDONWarning)
+        assert POSYDONWarning.message == ''
 
-    def test_str(self):
-        self.assertTrue(isroutine(self.POSYDONWarning.__str__))
-        self.assertEqual("''", str(self.POSYDONWarning))
+    def test_str(self, POSYDONWarning):
+        assert isroutine(POSYDONWarning.__str__)
+        assert str(POSYDONWarning) == "''"
 
 
-class TestApproximationWarning(unittest.TestCase):
+class TestApproximationWarning:
+    @fixture
+    def ApproximationWarning(self):
+        # initialize an instance of the class with defaults
+        return totest.ApproximationWarning()
+
     # test the ApproximationWarning class
-    def setUp(self):
-        # initialize an instance of the class for each test
-        self.ApproximationWarning = totest.ApproximationWarning()
-
-    def test_init(self):
-        self.assertTrue(isroutine(self.ApproximationWarning.__init__))
+    def test_init(self, ApproximationWarning):
+        assert isroutine(ApproximationWarning.__init__)
         # check that the instance is of correct type and all code in the
         # __init__ got executed: the elements are created and initialized
-        self.assertIsInstance(self.ApproximationWarning,
-                              totest.ApproximationWarning)
-        self.assertEqual('', self.ApproximationWarning.message)
+        assert isinstance(ApproximationWarning, totest.ApproximationWarning)
+        assert ApproximationWarning.message == ''
 
 
-class TestBinaryParsingWarning(unittest.TestCase):
+class TestBinaryParsingWarning:
+    @fixture
+    def BinaryParsingWarning(self):
+        # initialize an instance of the class with defaults
+        return totest.BinaryParsingWarning()
+
     # test the BinaryParsingWarning class
-    def setUp(self):
-        # initialize an instance of the class for each test
-        self.BinaryParsingWarning = totest.BinaryParsingWarning()
-
-    def test_init(self):
-        self.assertTrue(isroutine(self.BinaryParsingWarning.__init__))
+    def test_init(self, BinaryParsingWarning):
+        assert isroutine(BinaryParsingWarning.__init__)
         # check that the instance is of correct type and all code in the
         # __init__ got executed: the elements are created and initialized
-        self.assertIsInstance(self.BinaryParsingWarning,
-                              totest.BinaryParsingWarning)
-        self.assertEqual('', self.BinaryParsingWarning.message)
+        assert isinstance(BinaryParsingWarning, totest.BinaryParsingWarning)
+        assert BinaryParsingWarning.message == ''
 
 
-class TestClassificationWarning(unittest.TestCase):
+class TestClassificationWarning:
+    @fixture
+    def ClassificationWarning(self):
+        # initialize an instance of the class with defaults
+        return totest.ClassificationWarning()
+
     # test the ClassificationWarning class
-    def setUp(self):
-        # initialize an instance of the class for each test
-        self.ClassificationWarning = totest.ClassificationWarning()
-
-    def test_init(self):
-        self.assertTrue(isroutine(self.ClassificationWarning.__init__))
+    def test_init(self, ClassificationWarning):
+        assert isroutine(ClassificationWarning.__init__)
         # check that the instance is of correct type and all code in the
         # __init__ got executed: the elements are created and initialized
-        self.assertIsInstance(self.ClassificationWarning,
-                              totest.ClassificationWarning)
-        self.assertEqual('', self.ClassificationWarning.message)
+        assert isinstance(ClassificationWarning, totest.ClassificationWarning)
+        assert ClassificationWarning.message == ''
 
 
-class TestEvolutionWarning(unittest.TestCase):
+class TestEvolutionWarning:
+    @fixture
+    def EvolutionWarning(self):
+        # initialize an instance of the class with defaults
+        return totest.EvolutionWarning()
+
     # test the EvolutionWarning class
-    def setUp(self):
-        # initialize an instance of the class for each test
-        self.EvolutionWarning = totest.EvolutionWarning()
-
-    def test_init(self):
-        self.assertTrue(isroutine(self.EvolutionWarning.__init__))
+    def test_init(self, EvolutionWarning):
+        assert isroutine(EvolutionWarning.__init__)
         # check that the instance is of correct type and all code in the
         # __init__ got executed: the elements are created and initialized
-        self.assertIsInstance(self.EvolutionWarning, totest.EvolutionWarning)
-        self.assertEqual('', self.EvolutionWarning.message)
+        assert isinstance(EvolutionWarning, totest.EvolutionWarning)
+        assert EvolutionWarning.message == ''
 
 
-class TestInappropriateValueWarning(unittest.TestCase):
+class TestInappropriateValueWarning:
+    @fixture
+    def InappropriateValueWarning(self):
+        # initialize an instance of the class with defaults
+        return totest.InappropriateValueWarning()
+
     # test the InappropriateValueWarning class
-    def setUp(self):
-        # initialize an instance of the class for each test
-        self.InappropriateValueWarning = totest.InappropriateValueWarning()
-
-    def test_init(self):
-        self.assertTrue(isroutine(self.InappropriateValueWarning.__init__))
+    def test_init(self, InappropriateValueWarning):
+        assert isroutine(InappropriateValueWarning.__init__)
         # check that the instance is of correct type and all code in the
         # __init__ got executed: the elements are created and initialized
-        self.assertIsInstance(self.InappropriateValueWarning,
-                              totest.InappropriateValueWarning)
-        self.assertEqual('', self.InappropriateValueWarning.message)
+        assert isinstance(InappropriateValueWarning, totest.InappropriateValueWarning)
+        assert InappropriateValueWarning.message == ''
 
 
-class TestIncompletenessWarning(unittest.TestCase):
+class TestIncompletenessWarning:
+    @fixture
+    def IncompletenessWarning(self):
+        # initialize an instance of the class with defaults
+        return totest.IncompletenessWarning()
+
     # test the IncompletenessWarning class
-    def setUp(self):
-        # initialize an instance of the class for each test
-        self.IncompletenessWarning = totest.IncompletenessWarning()
-
-    def test_init(self):
-        self.assertTrue(isroutine(self.IncompletenessWarning.__init__))
+    def test_init(self, IncompletenessWarning):
+        assert isroutine(IncompletenessWarning.__init__)
         # check that the instance is of correct type and all code in the
         # __init__ got executed: the elements are created and initialized
-        self.assertIsInstance(self.IncompletenessWarning,
-                              totest.IncompletenessWarning)
-        self.assertEqual('', self.IncompletenessWarning.message)
+        assert isinstance(IncompletenessWarning, totest.IncompletenessWarning)
+        assert IncompletenessWarning.message == ''
 
 
-class TestInterpolationWarning(unittest.TestCase):
+class TestInterpolationWarning:
+    @fixture
+    def InterpolationWarning(self):
+        # initialize an instance of the class with defaults
+        return totest.InterpolationWarning()
+
     # test the InterpolationWarning class
-    def setUp(self):
-        # initialize an instance of the class for each test
-        self.InterpolationWarning = totest.InterpolationWarning()
-
-    def test_init(self):
-        self.assertTrue(isroutine(self.InterpolationWarning.__init__))
+    def test_init(self, InterpolationWarning):
+        assert isroutine(InterpolationWarning.__init__)
         # check that the instance is of correct type and all code in the
         # __init__ got executed: the elements are created and initialized
-        self.assertIsInstance(self.InterpolationWarning,
-                              totest.InterpolationWarning)
-        self.assertEqual('', self.InterpolationWarning.message)
+        assert isinstance(InterpolationWarning, totest.InterpolationWarning)
+        assert InterpolationWarning.message == ''
 
 
-class TestMissingFilesWarning(unittest.TestCase):
+class TestMissingFilesWarning:
+    @fixture
+    def MissingFilesWarning(self):
+        # initialize an instance of the class with defaults
+        return totest.MissingFilesWarning()
+
     # test the MissingFilesWarning class
-    def setUp(self):
-        # initialize an instance of the class for each test
-        self.MissingFilesWarning = totest.MissingFilesWarning()
-
-    def test_init(self):
-        self.assertTrue(isroutine(self.MissingFilesWarning.__init__))
+    def test_init(self, MissingFilesWarning):
+        assert isroutine(MissingFilesWarning.__init__)
         # check that the instance is of correct type and all code in the
         # __init__ got executed: the elements are created and initialized
-        self.assertIsInstance(self.MissingFilesWarning,
-                              totest.MissingFilesWarning)
-        self.assertEqual('', self.MissingFilesWarning.message)
+        assert isinstance(MissingFilesWarning, totest.MissingFilesWarning)
+        assert MissingFilesWarning.message == ''
 
 
-class TestOverwriteWarning(unittest.TestCase):
+class TestOverwriteWarning:
+    @fixture
+    def OverwriteWarning(self):
+        # initialize an instance of the class with defaults
+        return totest.OverwriteWarning()
+
     # test the OverwriteWarning class
-    def setUp(self):
-        # initialize an instance of the class for each test
-        self.OverwriteWarning = totest.OverwriteWarning()
-
-    def test_init(self):
-        self.assertTrue(isroutine(self.OverwriteWarning.__init__))
+    def test_init(self, OverwriteWarning):
+        assert isroutine(OverwriteWarning.__init__)
         # check that the instance is of correct type and all code in the
         # __init__ got executed: the elements are created and initialized
-        self.assertIsInstance(self.OverwriteWarning,
-                              totest.OverwriteWarning)
-        self.assertEqual('', self.OverwriteWarning.message)
+        assert isinstance(OverwriteWarning, totest.OverwriteWarning)
+        assert OverwriteWarning.message == ''
 
 
-class TestReplaceValueWarning(unittest.TestCase):
+class TestReplaceValueWarning:
+    @fixture
+    def ReplaceValueWarning(self):
+        # initialize an instance of the class with defaults
+        return totest.ReplaceValueWarning()
+
     # test the ReplaceValueWarning class
-    def setUp(self):
-        # initialize an instance of the class for each test
-        self.ReplaceValueWarning = totest.ReplaceValueWarning()
-
-    def test_init(self):
-        self.assertTrue(isroutine(self.ReplaceValueWarning.__init__))
+    def test_init(self, ReplaceValueWarning):
+        assert isroutine(ReplaceValueWarning.__init__)
         # check that the instance is of correct type and all code in the
         # __init__ got executed: the elements are created and initialized
-        self.assertIsInstance(self.ReplaceValueWarning,
-                              totest.ReplaceValueWarning)
-        self.assertEqual('', self.ReplaceValueWarning.message)
+        assert isinstance(ReplaceValueWarning, totest.ReplaceValueWarning)
+        assert ReplaceValueWarning.message == ''
 
 
-class TestUnsupportedModelWarning(unittest.TestCase):
+class TestUnsupportedModelWarning:
+    @fixture
+    def UnsupportedModelWarning(self):
+        # initialize an instance of the class with defaults
+        return totest.UnsupportedModelWarning()
+
     # test the UnsupportedModelWarning class
-    def setUp(self):
-        # initialize an instance of the class for each test
-        self.UnsupportedModelWarning = totest.UnsupportedModelWarning()
-
-    def test_init(self):
-        self.assertTrue(isroutine(self.UnsupportedModelWarning.__init__))
+    def test_init(self, UnsupportedModelWarning):
+        assert isroutine(UnsupportedModelWarning.__init__)
         # check that the instance is of correct type and all code in the
         # __init__ got executed: the elements are created and initialized
-        self.assertIsInstance(self.UnsupportedModelWarning,
-                              totest.UnsupportedModelWarning)
-        self.assertEqual('', self.UnsupportedModelWarning.message)
+        assert isinstance(UnsupportedModelWarning,\
+               totest.UnsupportedModelWarning)
+        assert UnsupportedModelWarning.message == ''
 
 
-class Test_Caught_POSYDON_Warnings(unittest.TestCase):
-    # test the _Caught_POSYDON_Warnings class
-    def setUp(self):
-        # initialize an instance of the class for each test
-        self._Caught_POSYDON_Warnings = totest._Caught_POSYDON_Warnings()
-
-    def tearDown(self):
-        # empty the cache to not print remaining records
-        self._Caught_POSYDON_Warnings(empty_cache=True)
+class Test_Caught_POSYDON_Warnings:
+    @fixture
+    def clear_registry(self):
+        yield
         # empyt the global POSYDON warnings registry after each test
         keys = []
         for k in totest._POSYDON_WARNINGS_REGISTRY:
@@ -478,115 +499,193 @@ class Test_Caught_POSYDON_Warnings(unittest.TestCase):
         for k in keys:
             del totest._POSYDON_WARNINGS_REGISTRY[k]
 
-    def test_init(self):
-        self.assertTrue(isroutine(self._Caught_POSYDON_Warnings.__init__))
+    @fixture
+    def _Caught_POSYDON_Warnings(self, clear_registry):
+        # initialize an instance of the class with defaults
+        _Caught_POSYDON_Warnings = totest._Caught_POSYDON_Warnings()
+        yield _Caught_POSYDON_Warnings
+        # empty the cache to not print remaining records
+        _Caught_POSYDON_Warnings.caught_warnings = []
+
+    @fixture
+    def test_dict(self):
+        # a dictionary as a registry for testing 
+        return {'Unit': "Test"}
+
+    # test the _Caught_POSYDON_Warnings class
+    def test_init(self, _Caught_POSYDON_Warnings):
+        assert isroutine(_Caught_POSYDON_Warnings.__init__)
         # check that the instance is of correct type and all code in the
         # __init__ got executed: the elements are created and initialized
-        self.assertIsInstance(self._Caught_POSYDON_Warnings,
-                              totest._Caught_POSYDON_Warnings)
-        self.assertFalse(self._Caught_POSYDON_Warnings.catch_warnings)
-        self.assertListEqual([], self._Caught_POSYDON_Warnings.caught_warnings)
-        self.assertTrue(self._Caught_POSYDON_Warnings.record)
-        self.assertTrue(self._Caught_POSYDON_Warnings.filter_first)
-        self.assertFalse(self._Caught_POSYDON_Warnings._got_called)
-        self.assertDictEqual(totest._POSYDON_WARNINGS_REGISTRY,
-                             self._Caught_POSYDON_Warnings.registry)
+        assert isinstance(_Caught_POSYDON_Warnings,\
+               totest._Caught_POSYDON_Warnings)
+        assert _Caught_POSYDON_Warnings.catch_warnings == False
+        assert _Caught_POSYDON_Warnings.caught_warnings == []
+        assert _Caught_POSYDON_Warnings.record
+        assert _Caught_POSYDON_Warnings.filter_first
+        assert _Caught_POSYDON_Warnings._got_called == False
+        assert _Caught_POSYDON_Warnings.registry is\
+               totest._POSYDON_WARNINGS_REGISTRY
         # bad input
-        with self.assertRaises(TypeError):
+        with raises(TypeError, match="catch_warnings must be a boolean"):
             totest._Caught_POSYDON_Warnings(catch_warnings="Test")
-        with self.assertRaises(TypeError):
+        with raises(TypeError, match="record must be a boolean"):
             totest._Caught_POSYDON_Warnings(record="Test")
-        with self.assertRaises(TypeError):
+        with raises(TypeError, match="filter_first must be a boolean"):
             totest._Caught_POSYDON_Warnings(filter_first="Test")
-        with self.assertRaises(TypeError):
+        with raises(TypeError, match="registry must be a dictionary"):
             totest._Caught_POSYDON_Warnings(registry="Test")
 
-    def test_str(self):
-        self.assertTrue(isroutine(self._Caught_POSYDON_Warnings.__str__))
-        self.assertEqual("POSYDON warnings are shown.",
-                         str(self._Caught_POSYDON_Warnings))
-        # check with catching
-        caught_object = totest._Caught_POSYDON_Warnings(catch_warnings=True)
-        self.assertEqual("POSYDON warnings will be caught and recorded. "
-                         "Filters are applied before recording.",
-                         str(caught_object))
-        # check without recording and own registry
-        test_registry = {'Unit': "Test"}
-        caught_object = totest._Caught_POSYDON_Warnings(catch_warnings=True,
-                                                        record=False,
-                                                        registry=test_registry)
-        self.assertEqual("POSYDON warnings will be caught and discarded. "
-                         "Currently a private registry is used, it contains:\n"
-                         "{'Unit': 'Test'}", str(caught_object))
+    def test_str(self, _Caught_POSYDON_Warnings, test_dict):
+        assert isroutine(_Caught_POSYDON_Warnings.__str__)
+        assert str(_Caught_POSYDON_Warnings) == "POSYDON warnings are shown."
+        # check with different setups
+        test_cases = [{'catch_warnings': True, 'record': True,\
+                       'filter_first': True, 'registry': None,\
+                       'str': "POSYDON warnings will be caught and recorded."+\
+                              " Filters are applied before recording."\
+                    },{'catch_warnings': True, 'record': True,\
+                       'filter_first': False, 'registry': None,\
+                       'str': "POSYDON warnings will be caught and recorded."\
+                    },{'catch_warnings': True, 'record': False,\
+                       'filter_first': True, 'registry': None,\
+                       'str': "POSYDON warnings will be caught and discarded."\
+                    },{'catch_warnings': True, 'record': False,\
+                       'filter_first': False, 'registry': None,\
+                       'str': "POSYDON warnings will be caught and discarded."\
+                    },{'catch_warnings': False, 'record': True,\
+                       'filter_first': True, 'registry': test_dict,\
+                       'str': "Currently a private registry is used, it "+\
+                              "contains:\n{'Unit': 'Test'}"\
+                    }]
+        for tc in test_cases:
+            caught_object = totest._Caught_POSYDON_Warnings(catch_warnings=\
+                                tc['catch_warnings'], record=tc['record'],\
+                                filter_first=tc['filter_first'],\
+                                registry=tc['registry'])
+            assert tc['str'] in str(caught_object)
+        # check artifical caught_warnings
+        for i in range(4):
+            _Caught_POSYDON_Warnings.caught_warnings = i*[test_dict]
+            if i==1:
+                assert "There is 1 warning recorded." in\
+                       str(_Caught_POSYDON_Warnings)
+            elif i>1:
+                assert "There are "+str(i)+" warnings recorded.".format(i) in\
+                       str(_Caught_POSYDON_Warnings)
+            else:
+                assert "recorded" not in str(_Caught_POSYDON_Warnings)
 
-    def test_call(self):
-        self.assertTrue(isroutine(self._Caught_POSYDON_Warnings.__call__))
+    def test_call(self, _Caught_POSYDON_Warnings, test_dict):
+        assert isroutine(_Caught_POSYDON_Warnings.__call__)
+        assert _Caught_POSYDON_Warnings._got_called == False
         # bad input
-        with self.assertRaises(ValueError):
-            self._Caught_POSYDON_Warnings()
-        self.assertTrue(self._Caught_POSYDON_Warnings._got_called)
-        with self.assertRaises(TypeError):
-            self._Caught_POSYDON_Warnings(change_settings="Test")
-        with self.assertRaises(TypeError):
-            self._Caught_POSYDON_Warnings(change_settings={'catch_warnings':
-                                                           "Test"})
-        with self.assertRaises(AttributeError):
-            self._Caught_POSYDON_Warnings(change_settings={'Unit': "Test"})
+        with raises(ValueError, match="Nothing to do: either empty_cache has"+\
+                                      " to be True or new_warning/"+\
+                                      "change_settings needs to be set."):
+            _Caught_POSYDON_Warnings()
+        assert _Caught_POSYDON_Warnings._got_called
+        _Caught_POSYDON_Warnings.caught_warnings = [test_dict]
+        _Caught_POSYDON_Warnings(empty_cache=True)
+        assert _Caught_POSYDON_Warnings.caught_warnings == []
+        # change_settings
+        with raises(TypeError, match="change_settings has to be a dict"):
+            _Caught_POSYDON_Warnings(change_settings="Test")
+        for s in _Caught_POSYDON_Warnings.__dict__:
+            if s == 'caught_warnings':
+                _Caught_POSYDON_Warnings(change_settings={s: "Test"})
+            elif s == 'registry':
+                _Caught_POSYDON_Warnings(change_settings={s: "Test"})
+                _Caught_POSYDON_Warnings(change_settings={s: None})
+            else:
+                with raises(TypeError, match="has to be a"):
+                    _Caught_POSYDON_Warnings(change_settings={s: "Test"})
+        with raises(AttributeError, match=\
+                    "unknown to _Caught_POSYDON_Warnings"):
+            _Caught_POSYDON_Warnings(change_settings=test_dict)
         # change setting to catch warnings and add a new one to the record list
-        self._Caught_POSYDON_Warnings(change_settings={'catch_warnings': True},
-                                      new_warning={'message': "Test"})
-        self.assertTrue(self._Caught_POSYDON_Warnings.catch_warnings)
-        self.assertListEqual([{'message': "Test"}],
-                             self._Caught_POSYDON_Warnings.caught_warnings)
+        _Caught_POSYDON_Warnings(change_settings={'catch_warnings': True},\
+                                 new_warning={'message': "Test"})
+        assert _Caught_POSYDON_Warnings.catch_warnings
+        assert _Caught_POSYDON_Warnings.caught_warnings ==\
+               [{'message': "Test"}]
+        # unset catching: recorded warnings are issued and list is emptied
+        with warns(UserWarning, match="Test"):
+            _Caught_POSYDON_Warnings(change_settings={'catch_warnings': False})
+        assert _Caught_POSYDON_Warnings.caught_warnings == []
+        # change setting to catch warnings and add a new one to the record list
+        _Caught_POSYDON_Warnings(change_settings={'catch_warnings': True,\
+                                                  'filter_first': False},\
+                                 new_warning={'message': "Test",\
+                                              'stacklevel': -1})
+        assert _Caught_POSYDON_Warnings.catch_warnings
+        assert _Caught_POSYDON_Warnings.filter_first == False
+        assert _Caught_POSYDON_Warnings.caught_warnings ==\
+               [{'message': "Test", 'stacklevel': -1}]
+        # change setting to record warnings and try to add a new one
+        _Caught_POSYDON_Warnings(change_settings={'record': False},\
+                                 new_warning={'message': "no record"})
+        assert _Caught_POSYDON_Warnings.record == False
+        assert _Caught_POSYDON_Warnings.caught_warnings ==\
+               [{'message': "Test", 'stacklevel': -1}] # still has old record
+        # unset catching: recorded warnings are issued and list is emptied
+        with warns(UserWarning, match="Test") as winfo:
+            _Caught_POSYDON_Warnings(change_settings={'catch_warnings': False})
+        assert "posydonwarning.py" in winfo._list[0].filename
+        assert _Caught_POSYDON_Warnings.caught_warnings == []
 
-    def test_del(self):
-        self.assertTrue(isroutine(self._Caught_POSYDON_Warnings.__del__))
+    def test_del(self, capsys, _Caught_POSYDON_Warnings):
+        assert isroutine(_Caught_POSYDON_Warnings.__del__)
         # create an object with a catched warning, call the destructor and
         # empty it while recording the stdout and stderr
-        with redirect_stderr(StringIO()) as print_err:
-            caught_object = totest._Caught_POSYDON_Warnings(
-                                catch_warnings=True)
-            caught_object(new_warning={'message': "Unit Test"})
+        caught_object = totest._Caught_POSYDON_Warnings(catch_warnings=True)
+        caught_object(new_warning={'message': "Unit Test"})
+        with warns(UserWarning, match="Unit Test"):
             caught_object.__del__()
-            caught_object(empty_cache=True)
-        self.assertIn("There are still recorded warnings:",
-                      print_err.getvalue())
-        self.assertIn("UserWarning: Unit Test", print_err.getvalue())
+        assert capsys.readouterr().err ==\
+               "There are still recorded warnings:\n"
+        assert caught_object.catch_warnings == False
+        caught_object.caught_warnings[0]['message'] += "Test"
+        caught_object.filter_first = False
+        with warns(UserWarning, match="Unit TestTest"):
+            caught_object.__del__()
+        assert capsys.readouterr().err ==\
+               "There are still recorded warnings:\n"
+        caught_object.caught_warnings = []
 
-    def test_got_called(self):
-        self.assertTrue(isroutine(self._Caught_POSYDON_Warnings.got_called))
-        self.assertFalse(self._Caught_POSYDON_Warnings.got_called())
-        self._Caught_POSYDON_Warnings(empty_cache=True)
-        self.assertTrue(self._Caught_POSYDON_Warnings.got_called())
+    def test_got_called(self, _Caught_POSYDON_Warnings):
+        assert isroutine(_Caught_POSYDON_Warnings.got_called)
+        assert _Caught_POSYDON_Warnings.got_called() == False
+        _Caught_POSYDON_Warnings._got_called = True
+        assert _Caught_POSYDON_Warnings.got_called()
 
-    def test_has_records(self):
-        self.assertTrue(isroutine(self._Caught_POSYDON_Warnings.has_records))
-        self.assertFalse(self._Caught_POSYDON_Warnings.has_records())
-        self._Caught_POSYDON_Warnings(change_settings={'catch_warnings': True},
-                                      new_warning={'message': "Unit Test"})
-        self.assertTrue(self._Caught_POSYDON_Warnings.has_records())
+    def test_has_records(self, _Caught_POSYDON_Warnings, test_dict):
+        assert isroutine(_Caught_POSYDON_Warnings.has_records)
+        assert _Caught_POSYDON_Warnings.has_records() == False
+        _Caught_POSYDON_Warnings.caught_warnings = [test_dict]
+        assert _Caught_POSYDON_Warnings.has_records()
 
-    def test_get_cache(self):
-        self.assertTrue(isroutine(self._Caught_POSYDON_Warnings.get_cache))
-        self.assertListEqual([], self._Caught_POSYDON_Warnings.get_cache())
+    def test_get_cache(self, _Caught_POSYDON_Warnings, test_dict):
+        assert isroutine(_Caught_POSYDON_Warnings.get_cache)
+        assert _Caught_POSYDON_Warnings.get_cache() == []
+        _Caught_POSYDON_Warnings.caught_warnings = [test_dict]
+        assert _Caught_POSYDON_Warnings.get_cache() == [test_dict]
+        # clear the cache
+        assert _Caught_POSYDON_Warnings.get_cache(empty_cache=True) ==\
+               [test_dict]
+        assert _Caught_POSYDON_Warnings.get_cache() == []
 
-    def test_reset_cache(self):
-        self.assertTrue(isroutine(self._Caught_POSYDON_Warnings.reset_cache))
-        self._Caught_POSYDON_Warnings(change_settings={'catch_warnings': True},
-                                      new_warning={'message': "Unit Test"})
-        self.assertListEqual([{'message': "Unit Test"}],
-                             self._Caught_POSYDON_Warnings.caught_warnings)
-        self._Caught_POSYDON_Warnings.reset_cache()
-        self.assertListEqual([], self._Caught_POSYDON_Warnings.caught_warnings)
+    def test_reset_cache(self, _Caught_POSYDON_Warnings, test_dict):
+        assert isroutine(_Caught_POSYDON_Warnings.reset_cache)
+        _Caught_POSYDON_Warnings.caught_warnings = [test_dict]
+        _Caught_POSYDON_Warnings.reset_cache()
+        assert _Caught_POSYDON_Warnings.caught_warnings == []
 
 
-class TestCatch_POSYDON_Warnings(unittest.TestCase):
-    # test the Catch_POSYDON_Warnings class
-    def setUp(self):
-        # initialize an instance of the class for each test
-        self.Catch_POSYDON_Warnings = totest.Catch_POSYDON_Warnings()
-
-    def tearDown(self):
+class TestCatch_POSYDON_Warnings:
+    @fixture
+    def clear_registry(self):
+        yield
         # empyt the global POSYDON warnings registry after each test
         keys = []
         for k in totest._POSYDON_WARNINGS_REGISTRY:
@@ -594,32 +693,44 @@ class TestCatch_POSYDON_Warnings(unittest.TestCase):
         for k in keys:
             del totest._POSYDON_WARNINGS_REGISTRY[k]
 
-    def test_init(self):
-        self.assertTrue(isroutine(self.Catch_POSYDON_Warnings.__init__))
+    @fixture
+    def Catch_POSYDON_Warnings(self, clear_registry):
+        # initialize an instance of the class with defaults
+        return totest.Catch_POSYDON_Warnings()
+
+    # test the Catch_POSYDON_Warnings class
+    def test_init(self, Catch_POSYDON_Warnings):
+        assert isroutine(Catch_POSYDON_Warnings.__init__)
         # check that the instance is of correct type and all code in the
         # __init__ got executed: the elements are created and initialized
-        self.assertTrue(self.Catch_POSYDON_Warnings.catch_warnings)
-        self.assertTrue(self.Catch_POSYDON_Warnings.record)
-        self.assertTrue(self.Catch_POSYDON_Warnings.filter_first)
-        self.assertIsNone(self.Catch_POSYDON_Warnings.context_registry)
-        self.assertIsNone(self.Catch_POSYDON_Warnings.python_catch)
+        assert Catch_POSYDON_Warnings.catch_warnings
+        assert Catch_POSYDON_Warnings.record
+        assert Catch_POSYDON_Warnings.filter_first
+        assert Catch_POSYDON_Warnings.context_registry is None
+        assert Catch_POSYDON_Warnings.python_catch is None
         # check other inputs
-        catch_object = totest.Catch_POSYDON_Warnings(own_registry=True,
+        catch_object = totest.Catch_POSYDON_Warnings(own_registry=True,\
                                                      use_python_catch=True)
-        self.assertDictEqual({}, catch_object.context_registry)
-        self.assertIsInstance(catch_object.python_catch,
-                            totest.warnings.catch_warnings)
+        assert catch_object.context_registry == {}
+        assert isinstance(catch_object.python_catch,\
+                          totest.warnings.catch_warnings)
 
-    def test_enter_exit(self):
-        self.assertTrue(isroutine(self.Catch_POSYDON_Warnings.__enter__))
+    def test_enter_exit(self, Catch_POSYDON_Warnings):
+        assert isroutine(Catch_POSYDON_Warnings.__enter__)
 
-    def test_exit(self):
-        self.assertTrue(isroutine(self.Catch_POSYDON_Warnings.__exit__))
+    def test_exit(self, Catch_POSYDON_Warnings):
+        assert isroutine(Catch_POSYDON_Warnings.__exit__)
 
-    def test_context(self):
+    def test_context(self, capsys):
         with totest.Catch_POSYDON_Warnings() as cpw:
-            self.assertEqual(totest._CAUGHT_POSYDON_WARNINGS, cpw)
-
-
-if __name__ == "__main__":
-    unittest.main()
+            assert cpw is totest._CAUGHT_POSYDON_WARNINGS
+            assert cpw.catch_warnings
+            assert cpw.record
+            assert cpw.filter_first
+            assert cpw.registry is totest._POSYDON_WARNINGS_REGISTRY
+        with totest.Catch_POSYDON_Warnings(use_python_catch=True) as cpw:
+            assert cpw is totest._CAUGHT_POSYDON_WARNINGS
+            assert cpw.catch_warnings
+            assert cpw.record
+            assert cpw.filter_first
+            assert cpw.registry is totest._POSYDON_WARNINGS_REGISTRY

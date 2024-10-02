@@ -6,7 +6,6 @@ __authors__ = [
 ]
 
 # import the module which will be tested
-import unittest
 import posydon.utils.posydonerror as totest
 
 # import other needed code for the tests, which is not already imported in the
@@ -101,7 +100,6 @@ class TestFunctions:
 
 
 class TestPOSYDONError:
-    # test the POSYDONError class
     @fixture
     def POSYDONError(self):
         # initialize an instance of the class with defaults
@@ -139,6 +137,7 @@ class TestPOSYDONError:
         return totest.POSYDONError(objects=[artificial_object, SingleStar,\
                                             BinaryStar])
 
+    # test the POSYDONError class
     def test_init(self, POSYDONError, POSYDONError_position, POSYDONError_key,\
                   POSYDONError_object, artificial_object):
         assert isroutine(POSYDONError.__init__)

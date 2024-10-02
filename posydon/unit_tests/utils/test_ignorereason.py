@@ -51,12 +51,12 @@ class TestValues:
 
 
 class TestIgnoreReason:
-    # test the IgnoreReason class
     @fixture
     def NewInstance(self):
         # initialize an instance of the class for each test
         return totest.IgnoreReason()
 
+    # test the IgnoreReason class
     def test_init(self, NewInstance):
         assert isroutine(NewInstance.__init__)
         # check that the instance is of correct type and all code in the
@@ -96,5 +96,5 @@ class TestIgnoreReason:
         assert NewInstance.order is None
         # try error on non existing reason
         assert '' not in totest.IGNORE_REASONS_PRIORITY
-        with raises(ValueError):
+        with raises(ValueError, match="Ignore reason `` not recognized"):
             NewInstance.reason = ''
