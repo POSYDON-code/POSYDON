@@ -179,12 +179,12 @@ def BBH_selection_function(history_chunk, oneline_chunk, formation_channels_chun
     df_transients['S2_mass'] = history_chunk[mask]['S2_mass']
     df_transients['S1_spin'] = history_chunk[mask]['S1_spin']
     df_transients['S2_spin'] = history_chunk[mask]['S2_spin']
-    df_transients['S1_spin_orbit_tilt'] = oneline_chunk['S1_spin_orbit_tilt']
-    df_transients['S2_spin_orbit_tilt'] = oneline_chunk['S2_spin_orbit_tilt']
+    df_transients['S1_spin_orbit_tilt'] = oneline_chunk['S1_spin_orbit_tilt_second_SN']
+    df_transients['S2_spin_orbit_tilt'] = oneline_chunk['S2_spin_orbit_tilt_second_SN']
     df_transients['orbital_period'] = history_chunk[mask]['orbital_period']
     df_transients['chirp_mass'] = m_chirp(history_chunk[mask]['S1_mass'], history_chunk[mask]['S2_mass'])
     df_transients['mass_ratio'] = mass_ratio(history_chunk[mask]['S1_mass'], history_chunk[mask]['S2_mass'])
-    df_transients['chi_eff'] = chi_eff(history_chunk[mask]['S1_mass'], history_chunk[mask]['S2_mass'], history_chunk[mask]['S1_spin'], history_chunk[mask]['S2_spin'], oneline_chunk['S1_spin_orbit_tilt'], oneline_chunk['S2_spin_orbit_tilt'])
+    df_transients['chi_eff'] = chi_eff(history_chunk[mask]['S1_mass'], history_chunk[mask]['S2_mass'], history_chunk[mask]['S1_spin'], history_chunk[mask]['S2_spin'], oneline_chunk['S1_spin_orbit_tilt_second_SN'], oneline_chunk['S2_spin_orbit_tilt_second_SN'])
     df_transients['eccentricity'] = history_chunk[mask]['eccentricity']
 
     if formation_channels_chunk is not None:
