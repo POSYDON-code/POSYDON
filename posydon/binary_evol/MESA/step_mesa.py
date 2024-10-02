@@ -15,7 +15,6 @@ __authors__ = [
 
 
 import os
-import warnings
 import numpy as np
 
 from posydon.interpolation.interpolation import psyTrackInterp
@@ -31,7 +30,7 @@ from posydon.utils.common_functions import (flip_stars,
 from posydon.utils.data_download import data_download, PATH_TO_POSYDON_DATA
 from posydon.grids.MODELS import MODELS
 from posydon.utils.posydonerror import FlowError, GridError
-
+from posydon.utils.posydonwarning import Pwarn
 
 # left POSYDON, right MESA
 POSYDON_TO_MESA = {
@@ -252,7 +251,7 @@ class MesaGridStep:
         """Load the interpolator that has been trained on the grid."""
         if self.verbose:
             print("loading Interp: {}".format(filename))
-        
+
         # Check if interpolation files exist
         if not os.path.exists(filename):
             data_download()
@@ -335,7 +334,7 @@ class MesaGridStep:
             self.step(binary, interp_method=self.interpolation_method)
         if (self.stop_method == 'stop_at_max_time'
                 and binary.time >= binary.properties.max_simulation_time):
-            
+
             # self.flush_history = True # needed???
 
             # stop_at_condition looks through the MESA output appended to the
@@ -441,10 +440,10 @@ class MesaGridStep:
         setattr(binary, 'state', binary_state)
         setattr(binary, 'event', binary_event)
         setattr(binary, 'mass_transfer_case', MT_case)
-        
+
         if binary.state == 'initial_RLOF':
             return
-        
+
         if track_interpolation or self.save_initial_conditions:
             len_binary_hist = len(getattr(binary, "time_history"))
             length_binary_hist = len(cb_bh['age']) - 1
@@ -454,14 +453,14 @@ class MesaGridStep:
             MESA_history_bug_fix = False
             if length_binary_hist != length_star_hist:
                 MESA_history_bug_fix = True
-                warnings.warn(
-                    'The MESA star_history and binary_history do not match '
+                Pwarn(
+                    'The MESA star_history and binary_history do not match: '
                     'lenght %i != %i. This will cause errors, e.g. '
                     'get_binary_state_and_event_and_mt_case take '
-                    'star.mdot_history - star.lg_wind_mdot, to '
-                    'avoid the code to break we happened np.nan '
-                    'to the missing values!' %
-                    (length_binary_hist, length_star_hist))
+                    'star.mdot_history - star.lg_wind_mdot. To '
+                    'avoid the code breaking, we append np.nan '
+                    'to the missing values.' %
+                    (length_binary_hist, length_star_hist), "ReplaceValueWarning")
 
         # update properties
         for key in BINARYPROPERTIES:
@@ -672,7 +671,7 @@ class MesaGridStep:
         setattr(binary, 'state', binary_state)
         setattr(binary, 'event', binary_event)
         setattr(binary, 'mass_transfer_case', MT_case)
-        
+
         culmulative_mt_case = self.termination_flags[1]
         setattr(self.binary, f'culmulative_mt_case_{self.grid_type}', culmulative_mt_case)
         setattr(self.binary, f'interp_class_{self.grid_type}', interpolation_class)
@@ -760,7 +759,7 @@ class MesaGridStep:
                 history_of_attribute = (np.log10(
                     10**cb_bh[key_bh][0] + cf.bondi_hoyle(
                         binary, accretor, donor, idx=len_binary_hist,
-                        wind_disk_criteria=True, scheme='Kudritzki+2000')))                
+                        wind_disk_criteria=True, scheme='Kudritzki+2000')))
                 if 10**history_of_attribute > edd:
                     history_of_attribute = np.log10(edd)
                 accretor.lg_mdot_history.append(history_of_attribute)
@@ -805,7 +804,8 @@ class MesaGridStep:
                         cb.final_values[f'S{i+1}_{MODEL_NAME}_CO_type'] != 'None'):
                         values = {}
                         for key in ['state', 'SN_type', 'f_fb', 'mass', 'spin',
-                                    'm_disk_accreted', 'm_disk_radiated']:
+                                    'm_disk_accreted', 'm_disk_radiated', 'M4', 'mu4',
+                                    'h1_mass_ej', 'he4_mass_ej']:
                             if key == "state":
                                 state = cb.final_values[f'S{i+1}_{MODEL_NAME}_CO_type']
                                 values[key] = state
@@ -896,7 +896,7 @@ class MesaGridStep:
         setattr(self.binary, f'interp_class_{self.grid_type}', interpolation_class)
         mt_history = self.classes['mt_history'] # mass transfer history (TF12 plot label)
         setattr(self.binary, f'mt_history_{self.grid_type}', mt_history)
-        
+
         #TODO: add classifier for tf2
         #setattr(self.binary, f'culmulative_mt_case', self.classes['termination_flags_2'])
         S1_state_inferred = cf.check_state_of_star(self.binary.star_1,
@@ -933,7 +933,7 @@ class MesaGridStep:
                 10**fv[key_bh] + cf.bondi_hoyle(
                     binary, accretor, donor, idx=-1,
                     wind_disk_criteria=True, scheme='Kudritzki+2000'))
-                    
+
             mdot_edd = cf.eddington_limit(binary, idx=-1)[0]
             if 10**tmp_lg_mdot > mdot_edd:
                 tmp_lg_mdot = np.log10(mdot_edd)
@@ -969,7 +969,8 @@ class MesaGridStep:
                         self.classes[f'S{i+1}_{MODEL_NAME}_CO_type'] != 'None'):
                         values = {}
                         for key in ['state', 'SN_type', 'f_fb', 'mass', 'spin',
-                                    'm_disk_accreted', 'm_disk_radiated']:
+                                    'm_disk_accreted', 'm_disk_radiated', 'M4', 'mu4',
+                                    'h1_mass_ej', 'he4_mass_ej']:
                             if key == "state":
                                 state = self.classes[f'S{i+1}_{MODEL_NAME}_CO_type']
                                 values[key] = state
@@ -1019,7 +1020,7 @@ class MesaGridStep:
                 raise ValueError(
                     'Star can only be "star_1" or "star_2", you passed {0}'.
                     format(star))
-            
+
             i = np.where(np.array(property_history) <= value)[0][-1]
 
         elif property in BINARYPROPERTIES:
@@ -1067,7 +1068,7 @@ class MesaGridStep:
                             continue
                         interpolated_quanties[star][key] = self.interpolate_at_t(
                                 t, t_before, t_after, v_before, v_after)
-                        
+
             for key in BINARYPROPERTIES:
                 if key in ['state', 'event', 'mass_transfer_case']:
                     interpolated_quanties['binary'][key] = getattr(
@@ -1258,7 +1259,7 @@ class MS_MS_step(MesaGridStep):
               self.p_min <= p <= self.p_max):
             self.flip_stars_before_step = True
             super().__call__(self.binary)
-            
+
         # redirect if outside grid for period
         elif (state_1 == 'H-rich_Core_H_burning' and
               state_2 == 'H-rich_Core_H_burning' and
@@ -1394,7 +1395,7 @@ class CO_HMS_RLO_step(MesaGridStep):
             ecc == 0.)):
             super().__call__(self.binary)
 
-            
+
         # period inside the grid, but m1 outside the grid
         elif ((not self.flip_stars_before_step and
                self.p_min <= p <= self.p_max and
@@ -1418,7 +1419,7 @@ class CO_HMS_RLO_step(MesaGridStep):
             set_binary_to_failed(self.binary)
             raise GridError(f'The mass of m1 ({m2}) is outside the grid,'
                                 ' while the period is inside the grid.')
-        
+
         # period inside the grid, but m2 outside the grid (flipped stars)
         elif ((self.flip_stars_before_step and
                 self.p_min <= p <= self.p_max and
@@ -1426,7 +1427,7 @@ class CO_HMS_RLO_step(MesaGridStep):
             set_binary_to_failed(self.binary)
             raise GridError(f'The mass of m2 ({m1}) is outside the grid,'
                             ' while the period is inside the grid.')
-        
+
         else:
             self.binary.state = "detached"
             self.binary.event = "redirect_from_CO_HMS_RLO"
@@ -1507,7 +1508,7 @@ class CO_HeMS_RLO_step(MesaGridStep):
                 'The star_1.state = %s, star_2.state = %s, binary.state = %s, '
                 'binary.event = %s and not CO - HeMS - oRLO1/oRLO2!'
                 % (state_1, state_2, state, event))
-            
+
         # redirect if outside grids
         if ((not self.flip_stars_before_step and
             self.m1_min <= m1 <= self.m1_max and
@@ -1519,7 +1520,7 @@ class CO_HeMS_RLO_step(MesaGridStep):
             self.p_min <= p <= self.p_max and
             ecc == 0.)):
             super().__call__(self.binary)
-            
+
         # period inside the grid, but m1 outside the grid
         elif ((not self.flip_stars_before_step and
                self.p_min <= p <= self.p_max and
@@ -1527,7 +1528,7 @@ class CO_HeMS_RLO_step(MesaGridStep):
             set_binary_to_failed(self.binary)
             raise GridError(f'The mass of m1 ({m1}) is outside the grid,'
                                 ' while the period is inside the grid.')
-        
+
         # period inside the grid, but m2 outside the grid
         elif ((not self.flip_stars_before_step and
                self.p_min <= p <= self.p_max and
@@ -1535,9 +1536,9 @@ class CO_HeMS_RLO_step(MesaGridStep):
             set_binary_to_failed(self.binary)
             raise GridError(f'The mass of m2 ({m2}) is outside the grid,'
                                 ' while the period is inside the grid.')
-        
+
         # period inside the grid, but m1 outside the grid with flipped stars
-        elif ((self.flip_stars_before_step and 
+        elif ((self.flip_stars_before_step and
                self.p_min <= p <= self.p_max and
                m1 < self.m2_min or m1 > self.m2_max)):
             set_binary_to_failed(self.binary)
@@ -1647,7 +1648,7 @@ class CO_HeMS_step(MesaGridStep):
             set_binary_to_failed(self.binary)
             raise GridError(f'The mass of m1 ({m1}) is outside the grid,'
                              ' while the period is inside the grid.')
-        
+
         # period inside the grid, but m2 outside the grid
         elif (self.p_min <= p <= self.p_max) and (m2 < self.m2_min or m2 > self.m2_max):
             set_binary_to_failed(self.binary)
@@ -1657,4 +1658,153 @@ class CO_HeMS_step(MesaGridStep):
         else:
             self.binary.state = 'detached'
             self.binary.event = 'redirect_from_CO_HeMS'
+            return
+
+
+class HMS_HMS_RLO_step(MesaGridStep):
+    """Class for performing the MESA step for a HMS-HMS RLO binary.
+    For binaries with an initial eccentricity at ZAMS,
+    we evolve them first with step detached and map to the HMS-HMS RLO grid
+    using `initial_eccentricity_flow_chart`."""
+
+    def __init__(self, metallicity=1., grid_name=None, *args, **kwargs):
+        """Initialize a HMS_HMS_RLO_step instance."""
+        self.grid_type = 'HMS_HMS_RLO'
+        self.interp_in_q = True
+        if grid_name is None:
+            metallicity = convert_metallicity_to_string(metallicity)
+            grid_name = 'HMS-HMS_RLO/' + metallicity + '_Zsun.h5'
+        super().__init__(metallicity=metallicity,
+                         grid_name=grid_name,
+                         *args, **kwargs)
+        # special stuff for my step goes here
+        # If nothing to do, no init necessary
+
+        # load grid boundaries
+        m1_initial_values = self._psyTrackInterp.grid.initial_values['star_1_mass']
+        m2_initial_values = self._psyTrackInterp.grid.initial_values['star_2_mass']
+        self.m1_min = np.min(m1_initial_values)
+        self.m1_max = np.max(m1_initial_values)
+        self.m2_min = np.min(m2_initial_values)
+        self.m2_max = np.max(m2_initial_values)
+        self.p_min = np.min(self._psyTrackInterp.grid.initial_values['period_days'])
+        self.p_max = np.max(self._psyTrackInterp.grid.initial_values['period_days'])
+        self.q_min = np.min(m2_initial_values/m1_initial_values)
+        self.q_max = np.max(m2_initial_values/m1_initial_values)
+        self.minimum_star_mass = self.m2_min # 0.5 (M_sun)
+
+    def __call__(self, binary):
+        """Evolve a binary using the MESA step."""
+        # grid set up assume no star is CO
+        self.star_1_CO = False
+        self.star_2_CO = False
+        # check binary is ready before calling the step
+        self.binary = binary
+        event = binary.event
+        state = binary.state
+        state_1 = binary.star_1.state
+        state_2 = binary.star_2.state
+        m1 = binary.star_1.mass
+        m2 = binary.star_2.mass
+        p = binary.orbital_period
+        ecc = binary.eccentricity
+        mass_ratio = m2/m1
+
+        # TODO: import states from flow_chart.py
+        FOR_RLO_STATES = ["H-rich_Core_H_burning",
+                          "H-rich_Shell_H_burning",
+                          "H-rich_Core_He_burning",
+                          "H-rich_Central_He_depleted",
+                          "H-rich_Core_C_burning",
+                          "stripped_He_Core_H_burning",
+                          "H-rich_Central_C_depletion",  # filtered out below
+                          "H-rich_non_burning"]
+
+        # check the star states
+        # TODO: import states from flow_chart.py
+        if (state_2 in FOR_RLO_STATES and (state_1 in FOR_RLO_STATES) 
+                and event == "oRLO1"):
+            self.flip_stars_before_step = False
+            # catch and redirect double core collapse, this happens if q=1:
+            if state_1 == 'H-rich_Central_C_depletion':
+                self.binary.event = 'CC1'
+                return
+        # TODO: import states from flow_chart.py
+        elif (state_1 in FOR_RLO_STATES and (state_2 in FOR_RLO_STATES)
+                and event == "oRLO2"):
+            self.flip_stars_before_step = False
+            # catch and redirect double core collapse, this happens if q=1:
+            if state_2 == 'H-rich_Central_C_depletion':
+                self.binary.event = 'CC2'
+                return
+        else:
+            set_binary_to_failed(self.binary)
+            raise FlowError(
+                'The star_1.state = %s, star_2.state = %s, binary.state = %s, '
+                'binary.event = %s and not HMS - HMS - oRLO1/oRLO2!'
+                % (state_1, state_2, state, event))
+        # redirect if outside grids
+        # HMS-HMS grid is sampled in q so check explicity vs m1 and m2
+        if ((not self.flip_stars_before_step and
+            self.m1_min <= m1 <= self.m1_max and            
+            np.max([self.q_min, self.minimum_star_mass/m1]) <= mass_ratio <= self.q_max and
+            self.p_min <= p <= self.p_max and
+            ecc == 0.) or (self.flip_stars_before_step and
+            self.m1_min <= m2 <= self.m1_max and
+            np.max([self.q_min, self.minimum_star_mass/m2]) <= 1/mass_ratio <= self.q_max and
+            self.p_min <= p <= self.p_max and
+            ecc == 0.)):
+            super().__call__(self.binary)
+
+        # period inside the grid, but m1 outside the grid
+        elif ((not self.flip_stars_before_step and
+               self.p_min <= p <= self.p_max and
+               (m1 < self.m1_min or m1 > self.m1_max))):
+            set_binary_to_failed(self.binary)
+            raise GridError(f'The mass of m1 ({m1}) is outside the grid,'
+                                ' while the period is inside the grid.')
+
+        # period inside the grid, but m2 outside the grid
+        elif ((not self.flip_stars_before_step and
+               self.p_min <= p <= self.p_max and
+               (m2 < self.m2_min or m2 > self.m2_max))):
+            set_binary_to_failed(self.binary)
+            raise GridError(f'The mass of m2 ({m2}) is outside the grid,'
+                                ' while the period is inside the grid.')
+
+        # period inside the grid, but q outside the grid
+        elif (not self.flip_stars_before_step and
+               self.p_min <= p <= self.p_max and
+               (np.max([self.q_min, self.minimum_star_mass/m1]) > mass_ratio or mass_ratio > self.q_max) ):
+            set_binary_to_failed(self.binary)
+            raise GridError(f'The mass ratio ({mass_ratio}) is outside the grid,'
+                                ' while the period is inside the grid.')
+
+
+        # period inside the grid, but m1 outside the grid (flipped stars)
+        elif ((self.flip_stars_before_step and
+                self.p_min <= p <= self.p_max and
+                (m2 < self.m1_min or m2 > self.m1_max))):
+            set_binary_to_failed(self.binary)
+            raise GridError(f'The mass of m1 ({m2}) is outside the grid,'
+                                ' while the period is inside the grid.')
+        
+        # period inside the grid, but m2 outside the grid (flipped stars)
+        elif ((self.flip_stars_before_step and
+                self.p_min <= p <= self.p_max and
+                (m1 < self.m2_min or m1 > self.m2_max))):
+            set_binary_to_failed(self.binary)
+            raise GridError(f'The mass of m2 ({m1}) is outside the grid,'
+                            ' while the period is inside the grid.')
+        
+        # period inside the grid, but q outside the grid (flipped stars)
+        elif (self.flip_stars_before_step and
+               self.p_min <= p <= self.p_max and
+               (np.max([self.q_min, self.minimum_star_mass/m2]) > 1/mass_ratio or 1/mass_ratio > self.q_max) ):
+            set_binary_to_failed(self.binary)
+            raise GridError(f'The mass ratio ({1/mass_ratio}) is outside the grid,'
+                                ' while the period is inside the grid.')
+        else:
+            self.binary.state = "detached"
+            self.binary.event = "redirect_from_HMS_HMS_RLO"
             return

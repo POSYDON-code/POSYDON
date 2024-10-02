@@ -234,9 +234,7 @@ for s1 in STAR_STATES_CO:
 
 
 # catch states to be ended
-for b in ['initial_RLOF',
-          'detached (Integration failure)',
-          'detached (GridMatchingFailed)', 'RLO2 (OutsideGrid)']:
+for b in ['initial_RLOF']:    
     for s1 in STAR_STATES_ALL:
         for s2 in STAR_STATES_ALL:
             for e in BINARY_EVENTS_ALL:
@@ -307,7 +305,7 @@ for b in BINARY_STATES_ALL:
 
 
 
-def flow_chart(FLOW_CHART=POSYDON_FLOW_CHART, CHANGE_FLOW_CHART=None):
+def flow_chart(FLOW_CHART=None, CHANGE_FLOW_CHART=None):
     """Generate the flow chart.
 
     Default step nomenclature:
@@ -337,6 +335,9 @@ def flow_chart(FLOW_CHART=POSYDON_FLOW_CHART, CHANGE_FLOW_CHART=None):
         Flow chart.
 
     """
+    if FLOW_CHART is None:
+        FLOW_CHART = POSYDON_FLOW_CHART.copy()
+    
     if CHANGE_FLOW_CHART is not None:
         for key in CHANGE_FLOW_CHART.keys():
             if key in FLOW_CHART.keys():
@@ -344,3 +345,49 @@ def flow_chart(FLOW_CHART=POSYDON_FLOW_CHART, CHANGE_FLOW_CHART=None):
                 FLOW_CHART[key] = CHANGE_FLOW_CHART[key]
 
     return FLOW_CHART
+
+
+def initial_eccentricity_flow_chart(FLOW_CHART=None, CHANGE_FLOW_CHART=None):
+    """Modify POSYDON's default flow to:
+        ZAMS binaries -> detached
+        oRLO1/oRLO2 -> HMS-HMS RLO grid
+
+    Parameters
+    ----------
+    FLOW_CHART : dict or None
+    CHANGE_FLOW_CHART : dict or None
+
+    Returns
+    -------
+    dict
+        Modified flow chart.
+    """
+
+    # get POSYDON's default flow chart
+    if FLOW_CHART is None:
+        if CHANGE_FLOW_CHART is None:
+            MY_FLOW_CHART = flow_chart()
+        else:
+            MY_FLOW_CHART = flow_chart(CHANGE_FLOW_CHART=CHANGE_FLOW_CHART)
+    else:
+        if CHANGE_FLOW_CHART is None:
+            MY_FLOW_CHART = flow_chart(FLOW_CHART=FLOW_CHART)
+        else:
+            MY_FLOW_CHART = flow_chart(FLOW_CHART=FLOW_CHART,
+                                       CHANGE_FLOW_CHART=CHANGE_FLOW_CHART)
+    
+    # modify the default flow chart
+    for key in MY_FLOW_CHART.keys():
+        s1_state, s2_state, state, event = key
+        # always take ZAMS binaries to step_detached
+        if event == 'ZAMS' and state in BINARY_STATES_ZAMS: # check for event
+            MY_FLOW_CHART[key] = 'step_detached'
+
+    # Add two stars initating RLO (now coming from detached) into flow chart
+    # Add stripped stars (from winds) initating RLO
+    for s1 in STAR_STATES_H_RICH_EVOLVABLE + STAR_STATES_HE_RICH_EVOLVABLE:
+        for s2 in STAR_STATES_H_RICH_EVOLVABLE + STAR_STATES_HE_RICH_EVOLVABLE:
+            MY_FLOW_CHART[(s1, s2, 'RLO1', 'oRLO1')] = 'step_HMS_HMS_RLO'
+            MY_FLOW_CHART[(s1, s2, 'RLO2', 'oRLO2')] = 'step_HMS_HMS_RLO'
+    
+    return MY_FLOW_CHART

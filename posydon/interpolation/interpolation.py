@@ -465,12 +465,13 @@ class GRIDInterpolator():
             'S1_r_core_CE_30cent',
             'S1_r_core_CE_pure_He_star_10cent'
         )
-        
+
         # core collapse keys
         keys = []
         for MODEL_NAME in MODELS.keys():
             for key in ['CO_type', 'SN_type', 'f_fb', 'mass', 'spin',
-                        'm_disk_accreted', 'm_disk_radiated']:
+                        'm_disk_accreted', 'm_disk_radiated','M4', 'mu4',
+                        'h1_mass_ej', 'he4_mass_ej']:
                 keys.append('S1_' + MODEL_NAME + '_' + key )
         self.final_keys += tuple(keys)
 
@@ -602,6 +603,9 @@ class GRIDInterpolator():
                 kvalue_low = self.grid_final_values[mass_low][key]
 
             while (kvalue_low is None or np.isnan(kvalue_low)):
+                # escape if no lower mass is available
+                if np.sum(mass_low > self.grid_mass) == 0:
+                    break
                 mass_low = np.max(self.grid_mass[mass_low > self.grid_mass])
                 try:
                     kvalue_low = self.grid_final_values[mass_low][key]
@@ -616,6 +620,9 @@ class GRIDInterpolator():
                 kvalue_high = self.grid_final_values[mass_high][key]
 
             while (kvalue_high is None or np.isnan(kvalue_high)):
+                # escape if no higher mass is available
+                if np.sum(mass_high < self.grid_mass) == 0:
+                    break
                 mass_high = np.min(self.grid_mass[mass_high < self.grid_mass])
                 try:
                     kvalue_high = self.grid_final_values[mass_high][key]

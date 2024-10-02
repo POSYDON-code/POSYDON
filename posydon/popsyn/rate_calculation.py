@@ -10,7 +10,7 @@ from astropy import constants as const
 import numpy as np
 import scipy as sp
 from astropy.cosmology import z_at_value
-from scipy.interpolate import interp1d
+from scipy.interpolate import CubicSpline
 from astropy import units as u
 
 
@@ -111,32 +111,34 @@ def redshift_from_cosmic_time_interpolator():
 
     Returns
     -------
-    object
-        Returns the trained interpolator object.
+    CubicSpline object
+        Returns the trained SciPy CubicSpline interpolator object.
 
     """
-    # astropy z_at_value method is too slow to compute z_mergers efficinty
-    # we must implement interpolation
+    # astropy z_at_value method is too slow to compute z_mergers efficiently
+    # for arrays of values, so we must implement interpolation
+    ## the interpolation object covers all possible values of t, z
+
     t = np.linspace(1e-2, cosmology.age(1e-08).value * 0.9999999, 1000)
     z = np.zeros(1000)
     for i in range(1000):
         z[i] = z_at_value(cosmology.age, t[i] * u.Gyr)
-    f_z_m = interp1d(t, z, kind="cubic")
+    f_z_m = CubicSpline(t, z)
     return f_z_m
 
 
 def get_redshift_from_cosmic_time(t_cosm):
-    """Compute the cosmological redshift given the cosmic time..
+    """Compute the cosmological redshift given the cosmic time.
 
     Parameters
     ----------
-    t_cosm : array doubles
-        Cosmic time to which you want to know the redhisft.
+    t_cosm : float, ndarray of floats
+        Cosmic time(s) for which you want to know the redhisft.
 
     Returns
     -------
-    array doubles
-        Cosmolgocial redshift corresponding to the cosmic time.
+    ndarray of floats
+        Cosmolgocial redshift(s) corresponding to t_cosm.
 
     Note
     ----
@@ -144,7 +146,9 @@ def get_redshift_from_cosmic_time(t_cosm):
     which is created each time the function is called. `z_at_value` from astropy
     can be used for single values, but it is too slow for arrays.
     """
-    return redshift_from_cosmic_time_interpolator(t_cosm)
+    trained_tz_interp = redshift_from_cosmic_time_interpolator()
+    return trained_tz_interp(t_cosm)
+
 
 
 def get_redshift_bin_edges(delta_t):
