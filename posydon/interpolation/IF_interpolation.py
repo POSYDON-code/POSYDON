@@ -1432,6 +1432,9 @@ class KNNClassifier(Classifier):
 
             n_opt = np.argmax(acc) + 1
 
+            if n_opt < 3: # k must be at least 3
+                n_opt = 3
+
         self.train(XT, yT, K=n_opt)
 
 
