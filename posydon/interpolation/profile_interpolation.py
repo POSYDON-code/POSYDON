@@ -274,6 +274,7 @@ class ProfileInterpolator:
                 return self.comp.loss_history
             else:
                 PWarn("No models selected for training","IncompletenessWarning")
+                return
     
     def predict(self,inputs):
         """Predict density, H mass fraction, and He mass fraction profiles from inputs.
