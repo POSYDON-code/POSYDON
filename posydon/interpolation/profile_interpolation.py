@@ -211,7 +211,7 @@ class ProfileInterpolator:
 
     def train(self,IF_interpolator,density=True,comp=True,density_epochs=1000,density_patience=200,
              comp_bounds_epochs=500,comp_bounds_patience=50,loss_history=False,hms_s2=False,
-             depth=12,width=256,depthn=12,widthn=256,lr=0.0001):
+             depth=12,width=256,depthn=12,widthn=256,learning_rate=0.0001):
         """Trains models for density, H mass fraction, and He mass fraction profile models. 
         Args:
             IF_interpolator (str) : path to '.pkl' file for IF interpolator.
@@ -227,7 +227,7 @@ class ProfileInterpolator:
             width (int) : width of neural network for principal component weights
             depthn (int) : depth of neural network for normalizing value
             widthn (int) : width of neural network for normalizing value
-            lr (float) : learning rate for neural network training
+            learning_rate (float) : learning rate for neural network training
         Returns:
             self.comp.loss_history (array-like) : training and validation loss history for composition profiles
             self.dens.loss_history (array-like) : training and validation loss history for density profiles
@@ -256,7 +256,9 @@ class ProfileInterpolator:
                                 IF_interpolator,hms_s2=hms_s2,
                                 depth=depth, width=width,
                                 depthn=depthn, widthn=widthn)
-            self.dens.train(prof_epochs=density_epochs,prof_patience=density_patience,lr=lr)
+            self.dens.train(prof_epochs=density_epochs,
+                            prof_patience=density_patience,
+                            learning_rate=learning_rate)
         
         if loss_history==True:
             if comp==True and density==True:
@@ -357,7 +359,6 @@ class Density:
             width (int) : width of neural network for principal component weights
             depthn (int) : depth of neural network for normalizing value
             widthn (int) : width of neural network for normalizing value
-            lr (float) : learning rate for neural network training
         """
         self.n_comp = n_comp
         self.hms_s2 = hms_s2
@@ -403,12 +404,13 @@ class Density:
         self.model_IF = IFInterpolator()  # instantiate POSYDON initial-final interpolator object
         self.model_IF.load(filename=IF_interpolator)
 
-    def train(self,loss=losses.MeanSquaredError(),prof_epochs=1000,prof_patience=200):
+    def train(self,loss=losses.MeanSquaredError(),prof_epochs=1000,prof_patience=200,learning_rate=0.0001):
         """Trains NN models. 
         Args: 
             loss (object) : loss function for training.
             prof_epochs (int) : number of epochs used to train neural network
             prof_patience (int) : patience parameter for callback in neural network
+            learning_rate (float) : learning rate for neural network training
         """
         print("training on PCA weights...")
         
@@ -420,7 +422,7 @@ class Density:
                 print(mt)
                 inds = np.where(self.mt==mt)[0]
                 valid_inds = np.where(self.valid_mt==mt)[0]
-                self.prof_models[mt].compile(optimizers.Adam(clipnorm=1,learning_rate=lr),loss=loss)
+                self.prof_models[mt].compile(optimizers.Adam(clipnorm=1,learning_rate=learning_rate),loss=loss)
                 callback = tf.keras.callbacks.EarlyStopping(monitor="loss",patience=prof_patience)
                 history = self.prof_models[mt].fit(self.initial[inds],self.pca_weights[inds],
                                               epochs=prof_epochs,callbacks=[callback],verbose=0,
@@ -428,7 +430,7 @@ class Density:
                                                                self.valid_pca_weights[valid_inds]))
                 self.loss_history[mt] = np.array([history.history['loss'],history.history['val_loss']])
         
-        self.model_norm.compile(optimizers.Adam(clipnorm=1,learning_rate=lr),loss=loss)
+        self.model_norm.compile(optimizers.Adam(clipnorm=1,learning_rate=learning_rate),loss=loss)
         callback = tf.keras.callbacks.EarlyStopping(monitor="loss",patience=40)
         self.model_norm.fit(self.initial,self.surf_val,epochs=300,callbacks=[callback],
                             validation_data = (self.valid_initial,self.valid_surf_val))
@@ -477,7 +479,7 @@ class Composition:
     def __init__(self,initial,h_profiles,he_profiles,star_state,
                  valid_initial,valid_h_profiles,valid_he_profiles,valid_star_state,
                  IF_interpolator, training_epochs=500, training_patience=50,hms_s2=False,
-                 depth=12, width=256, lr=0.0001):
+                 depth=12, width=256, learning_rate=0.0001):
         """Creates and trains H mass fraction and He mass fraction profiles model.
         Args:
             initial (array-like) : log-space initial conditions for training data.
@@ -494,7 +496,7 @@ class Composition:
             hms_s2 (Boolean) : option to do profiles of star 2 in HMS-HMS grid
             depth (int) : depth of neural network
             width (int) : width of neural network
-            lr (float) : learning rate for neural network training
+            learning_rate (float) : learning rate for neural network training
         """
         self.hms_s2 = hms_s2
         
@@ -550,16 +552,16 @@ class Composition:
                                                                   training_patience,
                                                                   depth=depth,
                                                                   width=width,
-                                                                  lr=lr)
+                                                                  learning_rate=learning_rate)
         
-    def learn_bounds(self,training_epochs,training_patience,depth,width,lr):
+    def learn_bounds(self,training_epochs,training_patience,depth,width,learning_rate):
         """Creates and trains NNs to predict boundary points for each star 1 state.
         Args:
             training_epochs (int) : number of epochs used to train neural networks
             training_patience (int) : patience parameter for callback in neural networks
             depth (int) : depth of neural network
             width (int) : width of neural network
-            lr (float) : learning rate for neural network training
+            learning_rate (float) : learning rate for neural network training
         Returns:
             b_models (array-like) : dictionary containing boundary models.
             loss_history (array-like) : training and validation loss histories
@@ -667,7 +669,7 @@ class Composition:
                     model.add(layers.Dense(width,input_dim=width,activation="relu"))
                 model.add(layers.Dense(outs,input_dim=10,activation="sigmoid"))
 
-                model.compile(optimizers.Adam(clipnorm=1),loss=losses.MeanSquaredError())
+                model.compile(optimizers.Adam(clipnorm=1,learning_rate=learning_rate),loss=losses.MeanSquaredError())
                 callback = tf.keras.callbacks.EarlyStopping(monitor='loss', patience=training_patience)
                         
                 history = model.fit(inputs[nonflat],bounds[nonflat],
