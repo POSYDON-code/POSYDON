@@ -161,10 +161,11 @@ class CompileData:
             
 class ProfileInterpolator:
     
-    def __init__(self,seed_value):
+    def __init__(self,seed_value=None):
         """Interfaces with other classes, trains models and predicts profiles.
         Args:
-            seed_value (int) : random seed to ensure consistent results
+            seed_value (None or int) : random seed to ensure consistent results
+                                       default value for Teng+24 is 1234
         """
         if seed_value is not None:
             os.environ['PYTHONHASHSEED']=str(seed_value)
