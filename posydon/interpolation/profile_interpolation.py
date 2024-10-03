@@ -140,7 +140,7 @@ class CompileData:
                           (grid.final_values['S1_surf_avg_omega'][ind]/ \
                            grid.final_values['S1_surf_avg_omega_div_omega_crit'][ind])
         
-        if not np.isnan(grid.final_values['S1_surf_avg_omega_div_omega_crit'][ind]):
+        if not pd.isna(grid.final_values['S1_surf_avg_omega_div_omega_crit'][ind]):
             return scalars, profiles
         else:
             Pwarn("nan in final values, binary will not be"
