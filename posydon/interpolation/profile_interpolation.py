@@ -279,7 +279,7 @@ class ProfileInterpolator:
     def predict(self,inputs):
         """Predict density, H mass fraction, and He mass fraction profiles from inputs.
         Args:
-            inputs (array-like) : linear-space initial conditions of N binaries to predict, shape (N,3).
+            inputs (array-like) : positive linear-space initial conditions of N binaries to predict, shape (N,3).
             density (Boolean) : option to train Density model
             comp (Boolean) : option to train Composition model
         Returns:
@@ -457,7 +457,7 @@ class Density:
     def predict(self,inputs):
         """Predicts profile for n sets of given inputs, in array of shape (n,3).
         Args: 
-            inputs (array-like) : linear-space initial conditions of N binaries to predict, shape (N,3).
+            inputs (array-like) : positive linear-space initial conditions of N binaries to predict, shape (N,3).
         Returns:
             mass_coords (array-like) : linear-scale mass enclosed profile coordinates.
             density_profiles (array_like) : log-scale density profile coordinates.
@@ -597,7 +597,7 @@ class Composition:
                     bounds.append(np.array([diff[0]+1,diff[-1]+1])/200)
                     nonflat.append(i)
                 else:
-                    bounds.append([np.nan,np.nan])
+                    bounds.append(np.array([np.nan,np.nan]))
             return np.array(bounds), nonflat
         
         for state in ['stripped_He_Core_He_burning',
@@ -801,7 +801,7 @@ class Composition:
     def predict(self,inputs):
         """Predict H mass fraction profiles from inputs.
         Args:
-            inputs (array-like) : linear-space initial conditions of N binaries to predict, shape (N,3).
+            inputs (array-like) : positive linear-space initial conditions of N binaries to predict, shape (N,3).
         Returns:
             mass_coords (array-like) : linear-scale mass enclosed profile coordinates.
             h_profiles (array_like) : H mass fraction profile coordinates.
