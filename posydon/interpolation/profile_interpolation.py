@@ -705,14 +705,13 @@ class Composition:
             He = np.ones(200)*np.nan
             
         elif star_state == "stripped_He_non_burning":
-            if surface_He == center_He:
-                He = np.ones(200)*surface_He # non-burning stars have a flat He profile
-            else:
-                Pwarn(f"Non-burning helium star unexpectedly does not have a flat profile. "
-                      "The average of the surface and center helium fraction values "
+            if surface_He != center_He:
+                Pwarn("Non-burning helium star unexpectedly does not have a flat profile. "
+                      "The difference in value between the surface and center helium "
+                      f"fraction values is {center_He-surface_He}. Their average "
                       "will be used to create a flat profile.",
                       "InappropriateValueWarning")
-                He = np.ones(200)*np.mean([surface_He,center_He])
+            He = np.ones(200)*np.mean([surface_He,center_He]) # non-burning stars have a flat He profile
             
         elif 'stripped_He_C' in star_state:
             # predicting profile shape parameters 
