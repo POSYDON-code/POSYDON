@@ -350,8 +350,10 @@ class Density:
         Args:
             initial (array-like) : log-space initial conditions for training data.
             profiles (array-like) : final density profiles for training data. 
+            mt (array-like) : mass transfer classes corresponding to training set binaries. 
             valid_initial (array-like) : log-space initial conditions for validation data.
             valid_profiles (array-like) : final density profiles for validation data.
+            valid_mt (array-like): mass transfer classes corresponding to validation set binaries. 
             IF_interpolator (string) : path to .pkl file for IF interpolator for central density, final mass values
             n_comp (int) : number of PCA components. 
             hms_s2 (Boolean) : option to do profiles of star 2 in HMS-HMS grid
