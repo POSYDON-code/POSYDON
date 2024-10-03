@@ -669,7 +669,8 @@ class Composition:
                     model.add(layers.Dense(width,input_dim=width,activation="relu"))
                 model.add(layers.Dense(outs,input_dim=10,activation="sigmoid"))
 
-                model.compile(optimizers.Adam(clipnorm=1,learning_rate=learning_rate),loss=losses.MeanSquaredError())
+                model.compile(optimizers.Adam(clipnorm=1,learning_rate=learning_rate),
+                              loss=losses.MeanSquaredError())
                 callback = tf.keras.callbacks.EarlyStopping(monitor='loss', patience=training_patience)
                         
                 history = model.fit(inputs[nonflat],bounds[nonflat],
@@ -704,8 +705,15 @@ class Composition:
             He = np.ones(200)*np.nan
             
         elif star_state == "stripped_He_non_burning":
-            He = np.ones(200)*surface_He # non-burning stars have a flat He profile
-        
+            if surface_He == center_He:
+                He = np.ones(200)*surface_He # non-burning stars have a flat He profile
+            else:
+                Pwarn(f"Non-burning helium star unexpectedly does not have a flat profile. "
+                      "The average of the surface and center helium fraction values "
+                      "will be used to create a flat profile.",
+                      "InappropriateValueWarning")
+                He = np.ones(200)*np.mean([surface_He,center_He])
+            
         elif 'stripped_He_C' in star_state:
             # predicting profile shape parameters 
             b = self.bounds_models[star_state](tf.convert_to_tensor([initial])).numpy()[0]
