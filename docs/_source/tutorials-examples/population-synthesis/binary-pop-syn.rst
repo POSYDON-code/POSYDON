@@ -32,10 +32,6 @@ II. Large-Scale Population Synthesis on HPC Facilities 🚀
 
 In this tutorial, you'll learn to run massive simulations of 1 million binaries across 8 different metallicities.
 
-.. note:: 
-    
-    Ensure you've installed `mpi4py` to use this tutorial. If not, follow our :ref:`installation guide <installation-guide>`.
-
 .. toctree::
 
     pop_syn
