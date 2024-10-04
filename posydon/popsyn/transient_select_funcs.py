@@ -179,8 +179,8 @@ def BBH_selection_function(history_chunk, oneline_chunk, formation_channels_chun
     df_transients['S2_mass'] = history_chunk[mask]['S2_mass']
     df_transients['S1_spin'] = history_chunk[mask]['S1_spin']
     df_transients['S2_spin'] = history_chunk[mask]['S2_spin']
-    df_transients['S1_spin_orbit_tilt'] = oneline_chunk['S1_spin_orbit_tilt_second_SN']
-    df_transients['S2_spin_orbit_tilt'] = oneline_chunk['S2_spin_orbit_tilt_second_SN']
+    df_transients['S1_spin_orbit_tilt_at_merger'] = oneline_chunk['S1_spin_orbit_tilt_second_SN']
+    df_transients['S2_spin_orbit_tilt_at_merger'] = oneline_chunk['S2_spin_orbit_tilt_second_SN']
     df_transients['orbital_period'] = history_chunk[mask]['orbital_period']
     df_transients['chirp_mass'] = m_chirp(history_chunk[mask]['S1_mass'], history_chunk[mask]['S2_mass'])
     df_transients['mass_ratio'] = mass_ratio(history_chunk[mask]['S1_mass'], history_chunk[mask]['S2_mass'])
@@ -233,8 +233,8 @@ def DCO_detactability(sensitivity, transient_pop_chunk, z_events_chunk, z_weight
                                         transient_pop_chunk['S2_mass'],
                                         transient_pop_chunk['S1_spin'],
                                         transient_pop_chunk['S2_spin'],
-                                        transient_pop_chunk['S1_spin_orbit_tilt'],
-                                        transient_pop_chunk['S2_spin_orbit_tilt'])
+                                        transient_pop_chunk['S1_spin_orbit_tilt_at_merger'],
+                                        transient_pop_chunk['S2_spin_orbit_tilt_at_merger'])
     
     detectable_weights = z_weights_chunk.to_numpy()
     for i in tqdm(range(z_events_chunk.shape[1]), total=z_events_chunk.shape[1], disable= not verbose):
