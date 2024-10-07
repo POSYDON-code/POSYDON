@@ -11,6 +11,26 @@ Frequently Asked Questions
 1. **How do I start a basic population synthesis simulation with POSYDON?**
     - Answer: Start with the :ref:`binary population synthesis guide <binary-pop-syn>` to learn how to run POSYDON.
 
+2. **I'm getting an error when using the** ``where`` **parameter in the** ``select`` **function**
+
+    If you're trying to select based on values in an unsupported column, you'll receive an error message like below.
+    Only specific columns are supported for selection. These are limited to string columns, the indices, and the column names.
+    Please perform the selection in-memory instead.
+
+    .. code-block:: python
+
+        population.history.select('S1_mass > 10')
+
+    The above code will produce the following error:
+    .. code-block:: python
+        
+        ValueError: The passed where expression: S1_mass > 10
+            contains an invalid variable reference
+            all of the variable references must be a reference to
+            an axis (e.g. 'index' or 'columns'), or a data_column
+            The currently defined references are: index,columns,state,event,step_names,S1_state,S2_state
+
+
 2. **Which parameters can I customize for my simulations?**
     - Answer: POSYDON allows customization of ... (TODO list or briefly describe customizable parameters).
 
