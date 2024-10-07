@@ -115,12 +115,12 @@ class CompileData:
         # grab input values, final star 1 state, final star 1 mass
         total_mass = df["mass"].iloc[-1]
         
-        scalars = {"m1":grid.initial_values["star_1_mass"][ind],
-                   "m2":grid.initial_values["star_2_mass"][ind],
-                   "p":grid.initial_values["period_days"][ind],
-                   "MT_class":grid.final_values["interpolation_class"][ind],
-                   "star_state":grid.final_values[state_key][ind],
-                   "total_mass":total_mass}
+        scalars = {"m1":[grid.initial_values["star_1_mass"][ind]],
+                   "m2":[grid.initial_values["star_2_mass"][ind]],
+                   "p":[grid.initial_values["period_days"][ind]],
+                   "MT_class":[grid.final_values["interpolation_class"][ind]],
+                   "star_state":[grid.final_values[state_key][ind]],
+                   "total_mass":[total_mass]}
 
         # grab output vectors, interpolate to normalize
         profiles=np.zeros([1+len(self.names),200])
