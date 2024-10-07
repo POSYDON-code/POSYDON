@@ -1351,7 +1351,7 @@ class CO_HMS_RLO_step(MesaGridStep):
                           "H-rich_Core_He_burning",
                           "H-rich_Central_He_depleted",
                           "H-rich_Core_C_burning",
-                          "stripped_He_Core_H_burning",
+                          "accreted_He_Core_H_burning",
                           "H-rich_Central_C_depletion",  # filtered out below
                           "H-rich_non_burning"]
 
@@ -1711,7 +1711,7 @@ class HMS_HMS_RLO_step(MesaGridStep):
                           "H-rich_Core_He_burning",
                           "H-rich_Central_He_depleted",
                           "H-rich_Core_C_burning",
-                          "stripped_He_Core_H_burning",
+                          "accreted_He_Core_H_burning",
                           "H-rich_Central_C_depletion",  # filtered out below
                           "H-rich_non_burning"]
 
