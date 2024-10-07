@@ -237,8 +237,8 @@ class ProfileInterpolator:
                                                   Returned second if both models are trained. 
             
         """      
-        self.train_comp==train_comp
-        self.train_density==train_density
+        self.train_comp=train_comp
+        self.train_density=train_density
         
         if train_comp==True:
             # instantiate and train composition (H and He mass fraction) profiles model
