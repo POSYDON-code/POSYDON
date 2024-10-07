@@ -20,7 +20,7 @@ __authors__ = [
     "Konstantinos Kovlakas <Konstantinos.Kovlakas@unige.ch>",
     "Devina Misra <devina.misra@unige.ch>",
     "Simone Bavera <Simone.Bavera@unige.ch>",
-    "Max Briel <max.briel@gmail.com>",
+    "Max Briel <max.briel@unige.ch>",
     "Matthias Kruckow <Matthias.Kruckow@unige.ch>",
 ]
 
@@ -30,7 +30,6 @@ __credits__ = ["Nam Tran <tranhn03@gmail.com>"]
 
 import pandas as pd
 import numpy as np
-import warnings
 import traceback
 import atexit
 import os
@@ -56,6 +55,7 @@ from posydon.popsyn.defaults import default_kwargs
 from posydon.popsyn.io import binarypop_kwargs_from_ini
 from posydon.utils.constants import Zsun
 from posydon.utils.posydonerror import POSYDONError,initial_condition_message
+from posydon.utils.posydonwarning import (Pwarn, Catch_POSYDON_Warnings)
 from posydon.utils.common_functions import set_binary_to_failed
 
 saved_ini_parameters = ['metallicity',
@@ -77,7 +77,6 @@ saved_ini_parameters = ['metallicity',
                    'eccentricity_scheme']
 
 
-# 'event' usually 10 but 'detached (Integration failure)' can occur
 HISTORY_MIN_ITEMSIZE = {'state': 30, 'event': 25, 'step_names': 21,
                         'S1_state': 31, 'S2_state': 31,
                         'mass_transfer_case': 16,
@@ -317,7 +316,11 @@ class BinaryPopulation:
                 binary = self.manager.generate(index=index, **self.kwargs)
             binary.properties = self.population_properties
 
-            with warnings.catch_warnings(record=True) as w:
+            # catch POSYDON warnings: record them to be possibly printed at
+            # then and of the "with" context; use a new registry for this
+            # context instead of the global one
+            with Catch_POSYDON_Warnings(record=True, own_registry=True) as cpw:
+                       
                 try:
                     binary.evolve()
                 except POSYDONError as posydon_error:
@@ -335,10 +338,22 @@ class BinaryPopulation:
                     e.add_note(initial_condition_message(binary))
                     traceback.print_exception(e)
 
-                if len(w) > 0:
-                    warnings.simplefilter("always")
-                    binary.warning_message = [x.message for x in w]
+                # record if there were warnings caught during the binary
+                # evolution, this is needed to update the WARNINGS column in
+                # the oneline dataframe; this will only be updated if POSYDON
+                # warnings occur, NOT general python warnings      
+                if cpw.got_called():
+                    binary.warnings = True
+                
+                # if the user wants to print all POSYDON warnings to stderr
+                # (warnings_verbose=True), no action is needed, because it will
+                # be printed at the end of the "with" context; to avoid the
+                # printing clear the warnings cache before the end of the
+                # context
+                if not self.kwargs.get("warnings_verbose", False):
+                    cpw.reset_cache()
 
+        
             if breakdown_to_df:
                 self.manager.breakdown_to_df(binary, **self.kwargs)
 
@@ -452,8 +467,8 @@ class BinaryPopulation:
             if os.path.isdir(absolute_filepath):
                 file_name = 'backup_save_pop_data.h5'
                 file_path = os.path.join(dir_name, file_name)
-                warnings.warn('The provided path is a directory - saving '
-                              'to {0} instead.'.format(file_path), Warning)
+                Pwarn('The provided path is a directory - saving '
+                              'to {0} instead.'.format(file_path), "ReplaceValueWarning")
 
             self.combine_saved_files(absolute_filepath, tmp_files, **kwargs)
 

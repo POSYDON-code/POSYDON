@@ -27,7 +27,6 @@ __authors__ = [
 
 
 import signal
-import warnings
 import copy
 import numpy as np
 import pandas as pd
@@ -191,6 +190,7 @@ class BinaryStar:
 
     def evolve(self):
         """Evolve a binary from start to finish."""
+
         self.properties.pre_evolve(self)
 
         # Code to make sure start time is less than max_simulation_time
@@ -204,8 +204,8 @@ class BinaryStar:
         n_steps = 0
         try:
             while (self.event != 'END' and self.event != 'FAILED'
-                   and self.event not in self.properties.end_events
-                   and self.state not in self.properties.end_states):
+                and self.event not in self.properties.end_events
+                and self.state not in self.properties.end_states):
                 signal.alarm(MAXIMUM_STEP_TIME)
                 self.run_step()
 
@@ -225,10 +225,8 @@ class BinaryStar:
                            self.event)
             next_step_name = self.properties.flow.get(total_state)
             if next_step_name is None:
-                warnings.warn("Undefined next step given stars/binary states "
-                              "{}.".format(total_state))
+                raise ValueError("Undefined next step given stars/binary states {}.".format(total_state))
                 self.event = 'END'
-                return
 
             next_step = getattr(self.properties, next_step_name, None)
             if next_step is None:
@@ -333,7 +331,7 @@ class BinaryStar:
             Can be used in combination with `extra_columns`.
         null_value : float
             Replace all None values with something else (for saving).
-            Default is np.NAN.
+            Default is np.nan.
         include_S1, include_S2 : bool
             Choose to include star 1 or 2 data to the DataFrame.
             The default is to include both.
@@ -388,9 +386,9 @@ class BinaryStar:
                 str(err) + "\n\nAvailable attributes in BinaryStar: \n{}".
                 format(self.__dict__.keys()))
 
-        # Convert None to np.NAN by default
+        # Convert None to np.nan by default
         bin_data = np.array(data_to_save, dtype=object)
-        bin_data[where_none] = kwargs.get('null_value', np.NAN)
+        bin_data[where_none] = kwargs.get('null_value', np.nan)
 
         bin_data = np.transpose(bin_data)
 
@@ -419,11 +417,11 @@ class BinaryStar:
         if kwargs.get('include_S1', True):
             # we are hard coding the prefix
             frames.append(self.star_1.to_df(
-                prefix='S1_', null_value=kwargs.get('null_value', np.NAN),
+                prefix='S1_', null_value=kwargs.get('null_value', np.nan),
                 **kwargs.get('S1_kwargs', {})))
         if kwargs.get('include_S2', True):
             frames.append(self.star_2.to_df(
-                prefix='S2_', null_value=kwargs.get('null_value', np.NAN),
+                prefix='S2_', null_value=kwargs.get('null_value', np.nan),
                 **kwargs.get('S2_kwargs', {})))
         binary_df = pd.concat(frames, axis=1)
 
@@ -602,7 +600,7 @@ class BinaryStar:
             oneline_df['FAILED'] = [1]
         else:
             oneline_df['FAILED'] = [0]
-        if hasattr(self, 'warning_message'):
+        if hasattr(self, 'warnings'):
             oneline_df['WARNING'] = [1]
         else:
             oneline_df['WARNING'] = [0]

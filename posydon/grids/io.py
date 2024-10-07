@@ -47,18 +47,19 @@ __authors__ = [
 import os
 import glob
 import gzip
-import warnings
 
 from posydon.utils.gridutils import read_MESA_data_file
+from posydon.utils.posydonwarning import Pwarn
 
 
 POSYDON_FORMAT_OPTIONS = {
     # subfolders in the grid parent folder that are unnecessary
     "ignored folders": ["make", "star1", "star2", "binary", "data",
-                        "new_data", "template", ".ipynb_checkpoints"],
+                        "column_lists", "new_data", "template",
+                        ".ipynb_checkpoints"],
     # which files contain useful metadata concerning the grid
-    "grid metadata": ["grid_test.csv",
-                      "grid_test.csv.gz"],
+    "grid metadata": ["grid_test.csv", "grid_test.csv.gz",
+                      "grid.csv", "grid.csv.gz"],
     # which files contain useful metadata concerning individual grids
     "run metadata": ["inlist_grid_points", "summary.txt", "out.txt",
                      "inlist_grid_point.gz", "summary.txt.gz", "out.txt.gz"]
@@ -144,12 +145,12 @@ class RunReader:
             elif file in ["final_star1.mod", "final_star1.mod.gz"]:
                 self.final_star1_path = fullpath
             elif file in ["final_star2.mod", "final_star2.mod.gz"]:
-                self.final_star1_path = fullpath
-            elif file in ["out.txt", "out.txt.gz"] and self.binary:
+                self.final_star2_path = fullpath
+            elif ((file in [BINARY_OUTPUT_FILE, BINARY_OUTPUT_FILE+".gz"]) and
+                  (self.binary)):
                 self.out_txt_path = fullpath
-            elif ((file in ["out_star1_formation_step0.txt",
-                            "out_star1_formation_step0.txt.gz"])
-                  and not self.binary):
+            elif ((file in [SINGLE_OUTPUT_FILE, SINGLE_OUTPUT_FILE+".gz"]) and
+                  not self.binary):
                 self.out_txt_path = fullpath
             elif file in POSYDON_FORMAT_OPTIONS["run metadata"]:
                 self.metadata_files.append(fullpath)
@@ -172,6 +173,17 @@ class RunReader:
                 self.initial_profile2_path = joined_exists(
                     self.path, 'LOGS2/initial_profile.data', allow_gzip=True)
 
+        if ((self.history1_path is None) and (self.history2_path is None) and
+            (self.binary_history_path is None) and
+            (self.final_profile1_path is None) and
+            (self.final_profile2_path is None) and
+            (self.initial_profile1_path is None) and
+            (self.initial_profile2_path is None) and
+            (self.final_star1_path is None) and (self.final_star2_path is None)
+            and (self.out_txt_path is None) and (len(self.metadata_files)==0)):
+            Pwarn("No relevant files found in {}".format(self.path),
+                  "MissingFilesWarning")
+
         if self.verbose:
             self.report()
 
@@ -183,11 +195,16 @@ class RunReader:
         print("-" * 80)
         print("DATA FOUND")
         print("-" * 80)
+        print("MESA screen output       :", isfound(self.out_txt_path))
         print("History of Star 1        :", isfound(self.history1_path))
         print("History of Star 2        :", isfound(self.history2_path))
         print("Binary history           :", isfound(self.binary_history_path))
         print("Final profile of Star 1  :", isfound(self.final_profile1_path))
         print("Final profile of Star 2  :", isfound(self.final_profile2_path))
+        print("Initial profile of Star 1:",
+              isfound(self.initial_profile1_path))
+        print("Initial profile of Star 2:",
+              isfound(self.initial_profile2_path))
         print("Final model of Star 1    :", isfound(self.final_star1_path))
         print("Final model of Star 2    :", isfound(self.final_star2_path))
         print("-" * 80)
@@ -260,8 +277,8 @@ class GridReader:
                 fullpath = os.path.dirname(os.path.abspath(out_file))
                 params_part = initial_values_from_dirname(fullpath)
                 if params_part in folders:
-                    warnings.warn("Run in {} substitutes run in {}".
-                                  format(fullpath, folders[params_part]))
+                    Pwarn("Run in {} substitutes run in {}".format(fullpath,
+                              folders[params_part]), "ReplaceValueWarning")
                 folders[params_part] = fullpath
 
             # discover metadata files
@@ -291,7 +308,8 @@ class GridReader:
                 new_run = RunReader(fullpath, fmt=self.fmt,
                                     binary=self.binary, verbose=False)
                 if new_run.out_txt_path is None:
-                    warnings.warn("Folder "+fullpath+" has no stdout file.")
+                    Pwarn("Folder "+fullpath+" has no stdout file.",
+                          "MissingFilesWarning")
                 self.runs.append(new_run)
 
     def infer_history_columns(self, BH_cols, H1_cols, H2_cols):
@@ -304,7 +322,7 @@ class GridReader:
         H1_cols : array-like
             Which columns to consider from `history1`.
         H2_cols : array-like
-            Which columns to consider from `history1`.
+            Which columns to consider from `history2`.
 
         Returns
         -------
@@ -390,7 +408,9 @@ def read_initial_values(mesa_dir):
             continue
         fields = line.strip().split("=")
         if len(fields) != 2:
-            return None
+            Pwarn("Multiple `=`, skipping line in {}.".format(path),
+                  "InappropriateValueWarning")
+            continue
         varname = fields[0].strip()
         valueparts = fields[1].split("d")
         value = float(valueparts[0].strip())
