@@ -140,11 +140,13 @@ class CompileData:
                           (grid.final_values['S1_surf_avg_omega'][ind]/ \
                            grid.final_values['S1_surf_avg_omega_div_omega_crit'][ind])
         
-        if not pd.isna(grid.final_values['S1_surf_avg_omega_div_omega_crit'][ind]):
-            return scalars, profiles
+            if not pd.isna(grid.final_values['S1_surf_avg_omega_div_omega_crit'][ind]):
+                return scalars, profiles
+            else:
+                Pwarn("nan in final values, binary will not be"
+                      "included in file","IncompletenessWarning")
         else:
-            Pwarn("nan in final values, binary will not be"
-                  "included in file","IncompletenessWarning")
+            return scalars, profiles
 
     def save(self, filename):
         """Save extracted profile data.
