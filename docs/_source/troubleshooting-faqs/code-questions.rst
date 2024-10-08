@@ -31,6 +31,37 @@ Frequently Asked Questions
             The currently defined references are: index,columns,state,event,step_names,S1_state,S2_state
 
 
+3. **How should I tune my memory usage for a population synthesis run?**
+
+    A population run requires at a bare minimum of 4GB of memory per CPU.
+    However, this restricts the number of binaries you can keep in memory and requires a :code:`dump_rate < 1000` to keep the memory usage low, which slows down the simulation.
+    
+    As such, 5GB per CPU is a better starting point. This allows you to keep more binaries in memory and increases the speed of the population synthesis run.
+    The figure below can be used to fine-tune your memory usage.
+    It shows the memory usage of two large population synthesis runs with a 7GB and a 8GB limit with a :code:`dump_rate` of 8000 and 10.000 binaries respectively.
+
+    .. image:: ./large_pop_runs_memory.png
+        :alt: Memory usage of two large population synthesis runs.
+        :width: 700px
+    
+    The memory usage of the 8000 :code:`dump_rate` run is stable at around 6GB, while the 10.000 :code:`dump_rate` run is stable at around 6.8GB.
+
+
+4. **What should the walltime and job array size be for my population synthesis run?**
+
+    The :code:`walltime`` and job array size are dependent on the number of binaries you want to simulate and the memory usage of the simulation.
+    The job array size should be set such that the number of binaries per job is at least 1000, since there's a minimum overhead per job due to loading the grids.
+    
+    The :code:`walltime` depends on the number of binaries per job, where each binary takes about 1-2 seconds to run.
+    For example, with 100.000 binaries split over 100 jobs (per metallicity), means that every job runs 1.000 binaries. This will take around 33 minutes per job. So a :code:`walltime` of `00:45:00` is reasonable.
+
+    The balance between :code:`walltime` and the size of the job array is important.
+    If the :code:`walltime` is too long, it might be worth increasing the job array size to decrease the time per job and allowing the population synthesis to finish faster. 
+    But if the :code:`walltime` is too short, the job array size should be decreased, since each job has an initial overhead that is not dependent on the number of binaries in the job.
+
+    .. note::
+        The processing time increases if you make the `dump_rate` too low due to many I/O operations.
+
 2. **Which parameters can I customize for my simulations?**
     - Answer: POSYDON allows customization of ... (TODO list or briefly describe customizable parameters).
 
