@@ -495,8 +495,7 @@ class Density:
         pred_mass = self.interp.test_interpolator(inputs)[:,m_ind]
             
         # reconstruct profile
-        norm_prof = self.pca.inverse_transform(pca_weights_pred*self.scaling)
-        density_profiles = norm_prof*(max_rho[:,np.newaxis]-min_rho[:,np.newaxis]) \
+        density_profiles = pred_profiles*(max_rho[:,np.newaxis]-min_rho[:,np.newaxis]) \
                            + min_rho[:,np.newaxis]
         
         # construct mass enclosed profile coordinates
