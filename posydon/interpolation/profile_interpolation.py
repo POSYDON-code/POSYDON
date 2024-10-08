@@ -662,7 +662,6 @@ class Composition:
                     hbounds,nonflat_a = calc_bevel_bounds(h_prof)
                     valid_hbounds,valid_nonflat_a = calc_bevel_bounds(valid_h_prof)
                     pbounds,nonflat_p = calc_bevel_bounds(plus_prof)
-                    print(pbounds)
                     valid_pbounds,valid_nonflat_p = calc_bevel_bounds(valid_plus_prof)
                     nonflat = np.intersect1d(nonflat_a,nonflat_p)
                     valid_nonflat = np.intersect1d(valid_nonflat_a,valid_nonflat_p)
