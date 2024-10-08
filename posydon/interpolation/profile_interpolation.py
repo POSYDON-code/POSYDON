@@ -422,6 +422,7 @@ class Density:
         
         self.model_IF = IFInterpolator()  # instantiate POSYDON initial-final interpolator object
         self.model_IF.load(filename=IF_interpolator)
+        self.interp = self.model_IF.interpolators[0]
 
     def train(self,loss=losses.MeanSquaredError(),prof_epochs=1000,prof_patience=200,learning_rate=0.0001):
         """Trains NN models. 
@@ -464,9 +465,18 @@ class Density:
             mass_coords (array-like) : linear-scale mass enclosed profile coordinates.
             density_profiles (array_like) : log-scale density profile coordinates.
         """
-        # predict PCA weights
-        regress_prof = lambda x: self.model_prof(x)
-        pca_weights_pred = regress_prof(np.log10(inputs)).numpy()
+        # predict MT class
+        pred_mt = self.interp.test_classifiers(inputs)['interpolation_class']
+        for mt in self.mt.unique():
+            inds = np.where(pred_mt==mt)[0]
+            if mt=="not_converged" or mt=="initial_MT":
+                pred_profiles[inds] = np.ones([len(inds),200])*np.nan
+            else:
+                # predict PCA weights
+                regress_prof = lambda x: self.prof_models[mt](x)
+                pca_weights_pred = regress_prof(np.log10(inputs[inds])).numpy()
+                pca_pred = self.pca.inverse_transform(pca_weights_pred)
+                pred_profiles[inds] = pca_pred
                 
         # predict surface density
         regress_norm = lambda x: self.model_norm(x)
@@ -474,13 +484,13 @@ class Density:
         
         # IF interpolate final mass, center density 
         if self.hms_s2==False:
-            m_ind = self.model_IF.interpolators[0].out_keys.index("star_1_mass")
-            center_ind = self.model_IF.interpolators[0].out_keys.index('S1_log_center_Rho')
+            m_ind = self.interp.out_keys.index("star_1_mass")
+            center_ind = self.interp.out_keys.index('S1_log_center_Rho')
         else:
-            m_ind = self.model_IF.interpolators[0].out_keys.index("star_2_mass")
-            center_ind = self.model_IF.interpolators[0].out_keys.index('S2_log_center_Rho')
-        max_rho = self.model_IF.interpolators[0].test_interpolator(inputs)[:,center_ind]                    
-        pred_mass = self.model_IF.interpolators[0].test_interpolator(inputs)[:,m_ind]
+            m_ind = self.interp.out_keys.index("star_2_mass")
+            center_ind = self.interp.out_keys.index('S2_log_center_Rho')
+        max_rho = self.interp.test_interpolator(inputs)[:,center_ind]                    
+        pred_mass = self.interp.test_interpolator(inputs)[:,m_ind]
             
         # reconstruct profile
         norm_prof = self.pca.inverse_transform(pca_weights_pred*self.scaling)
