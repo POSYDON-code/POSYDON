@@ -465,6 +465,8 @@ class Density:
             mass_coords (array-like) : linear-scale mass enclosed profile coordinates.
             density_profiles (array_like) : log-scale density profile coordinates.
         """
+        pred_profiles = np.zeros([len(inputs),200])
+        
         # predict MT class
         pred_mt = self.interp.test_classifiers(inputs)['interpolation_class']
         for mt in self.mt.unique():
