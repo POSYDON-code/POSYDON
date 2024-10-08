@@ -62,26 +62,36 @@ Frequently Asked Questions
     .. note::
         The processing time increases if you make the `dump_rate` too low due to many I/O operations.
 
-2. **Which parameters can I customize for my simulations?**
-    - Answer: POSYDON allows customization of ... (TODO list or briefly describe customizable parameters).
-
-3. **I'm getting an error message when trying to run a simulation. What does it mean?**
-    - Answer: Error messages typically indicate ... (TODO provide guidance on interpreting common error messages or point to a troubleshooting guide).
-
-4. **How can I visualize the results from my simulation?**
-    - Answer: You can utilize the experimental visualization libraries by ... (TODO provide a brief overview or link to visualization documentation).
-
-5. **How do I use the new machine learning features in POSYDON?**
-    - Answer: To leverage the ML features, ensure you've installed the necessary dependencies. Then, you can ... (TODO brief overview or link to ML features documentation).
+5. **I am unable to open HDF5 files created by POSYDON. What should I do?**
+    
+    If you're on a Mac, there might be an issue with the HDF5 installation.
+    Make sure you have the `hdf5` and `pytables` packages installed through conda in your environment with `conda install hdf5 pytables` before running POSYDON!
+    Although they are dependencies of POSYDON, sometimes they're not installed correctly on Mac.
 
 6. **Are there any examples or tutorials available?**
     - Answer: Yes, you can check our :ref:`roadmap <roadmap>` for tutorials related to different POSYDON components, including population synthesis, creating core datasets, and running your own MESA grids with POSYDON.
 
 7. **Can I run POSYDON on an HPC facility?**
-    - Answer: Absolutely! Ensure you've installed ``mpi4py`` as outlined in :ref:`our installation guide <installation-guide>`. Refer to `our HPC guide <../tutorials-examples/population-synthesis/pop_syn.ipynb>`_ for detailed instructions on running POSYDON in an HPC environment.
+    - Answer: Absolutely! Refer to `our HPC guide <../tutorials-examples/population-synthesis/pop_syn.ipynb>`_ for detailed instructions on running POSYDON in an HPC environment.
 
 8. **How can I stay updated with the latest features and updates?**
     - Answer: You can regularly visit our `official website <https://posydon.org>`_ for news and updates. Also, consider subscribing to our mailing list.
+
+9. **I've come across a FAILED binary. What does this mean?**
+    - Answer: A FAILED binary is one that has encountered an error during the simulation due to the default flow and steps of POSYDON being unable to evolve them.
+    This can be due to a variety of reasons:
+    
+    - The evolutionary state of the binary does not have appropriate grids. 
+    For example, we do not have a grid for Roche lobe overflow between two helium stars.
+    - The binary has masses outside the grid range. For example, the HMS-HMS grid does not contain binaries with a secondary mass below 0.5.
+    - The binary could not be matched to single star or a binary due to a too large matching error.
+
+10. **What approximations does POSYDON make?**
+    This is a complex question and the best location to look at would be the POSYDON paper(s).
+    However, some of the approximations are:
+
+    - The evolution of a merger product is approximated by a non-rotating single star.
+
 
 Additional Resources
 ~~~~~~~~~~~~~~~~~~~~
