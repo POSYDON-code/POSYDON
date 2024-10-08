@@ -1353,7 +1353,8 @@ class CO_HMS_RLO_step(MesaGridStep):
                           "H-rich_Core_C_burning",
                           "accreted_He_Core_H_burning",
                           "H-rich_Central_C_depletion",  # filtered out below
-                          "H-rich_non_burning"]
+                          "H-rich_non_burning",
+                          "accreted_He_non_burning"]
 
         # check the star states
         # TODO: import states from flow_chart.py
@@ -1713,7 +1714,8 @@ class HMS_HMS_RLO_step(MesaGridStep):
                           "H-rich_Core_C_burning",
                           "accreted_He_Core_H_burning",
                           "H-rich_Central_C_depletion",  # filtered out below
-                          "H-rich_non_burning"]
+                          "H-rich_non_burning",
+                          "accreted_He_non_burning"]
 
         # check the star states
         # TODO: import states from flow_chart.py

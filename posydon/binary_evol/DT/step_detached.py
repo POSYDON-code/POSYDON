@@ -48,7 +48,8 @@ LIST_ACCEPTABLE_STATES_FOR_postMS = [
     "H-rich_Central_He_depleted",
     "H-rich_Core_C_burning",
     "H-rich_Central_C_depletion",
-    "H-rich_non_burning"]
+    "H-rich_non_burning",
+    "accreted_He_non_burning"]
 
 LIST_ACCEPTABLE_STATES_FOR_HeStar = [
     'stripped_He_Core_He_burning',
@@ -67,7 +68,8 @@ STAR_STATES_H_RICH = [
     'H-rich_Core_C_burning',
     'H-rich_Central_C_depletion',
     'H-rich_non_burning',
-    'accreted_He_Core_H_burning'
+    'accreted_He_Core_H_burning',
+    'accreted_He_non_burning'
 ]
 
 '''

@@ -30,6 +30,7 @@ STAR_STATES_ALL = [
     'H-rich_Central_C_depletion',
     'H-rich_non_burning',
     'accreted_He_Core_H_burning',
+    'accreted_He_non_burning',
     'stripped_He_Core_He_burning',
     'stripped_He_Central_He_depleted',
     'stripped_He_Central_C_depletion',
@@ -74,7 +75,7 @@ STAR_STATES_HE_RICH_EVOLVABLE = list(set(STAR_STATES_HE_RICH)
 # we infer the state, if core_definition_H_fraction=0.1 then surface_h1=0.1
 # and the state is H-rich_non_burning which we stil want to evolve thorugh
 # the step_CO_HeMS
-STAR_STATES_HE_RICH_EVOLVABLE.append('H-rich_non_burning')
+STAR_STATES_HE_RICH_EVOLVABLE.extend(['H-rich_non_burning', 'accreted_He_non_burning'])
 
 BINARY_STATES_ALL = [
     'initially_single_star',
@@ -209,6 +210,7 @@ STAR_STATES_CC = [
     'stripped_He_non_burning',
     'H-rich_non_burning',
     'H-rich_Shell_H_burning',
+    'accreted_He_non_burning'
     ]
 
 

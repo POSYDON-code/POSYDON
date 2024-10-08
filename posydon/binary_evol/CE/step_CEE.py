@@ -90,7 +90,8 @@ STAR_STATE_POST_MS = [
     "H-rich_Core_He_burning",
     "H-rich_Central_He_depleted",
     "H-rich_Central_C_depletion",
-    "H-rich_non_burning"
+    "H-rich_non_burning",
+    "accreted_He_non_burning"
 ]
 
 

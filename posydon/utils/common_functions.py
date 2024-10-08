@@ -1902,6 +1902,8 @@ def calculate_core_boundary(donor_mass,
         "H-rich_Core_C_burning",
         "H-rich_Central_C_depletion",
         "H-rich_non_burning",
+        "accreted_He_Core_H_burning",
+        "accreted_He_non_burning"
     ]
     # ENHANCEMENT: this list needs to be imported from e.g. flow_chart.py
     STAR_STATE_He = [
