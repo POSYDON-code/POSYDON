@@ -64,7 +64,7 @@ else:
 # the correct way to do this is to make sure that they are available on
 # conda and pip for all platforms we support (see prerequisites doc page).
 install_requires = [
-    'numpy >= 1.24.2',
+    'numpy >= 1.24.2,<2.0.0',
     'scipy >= 1.10.1',
     'iminuit >= 2.21.3',
     'configparser >= 5.3.0',
