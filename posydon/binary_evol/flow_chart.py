@@ -71,8 +71,9 @@ STAR_STATES_H_RICH_EVOLVABLE = list(set(STAR_STATES_H_RICH)
 
 STAR_STATES_HE_RICH_EVOLVABLE = list(set(STAR_STATES_HE_RICH)
                                      - set(STAR_STATES_C_DEPLETION))
-# CE ejcetion happens istantanously, the star does not readjust before
-# we infer the state, if core_definition_H_fraction=0.1 then surface_h1=0.1
+
+# CE ejection happens instantanously, so the star does not readjust before
+# we infer the state. If core_definition_H_fraction=0.1, then surface_h1=0.1,
 # and the state is H-rich_non_burning which we stil want to evolve thorugh
 # the step_CO_HeMS
 STAR_STATES_HE_RICH_EVOLVABLE.extend(['H-rich_non_burning', 'accreted_He_non_burning'])
@@ -215,8 +216,6 @@ STAR_STATES_CC = [
 
 
 BINARY_STATES_CC = BINARY_STATES_ALL.copy()
-#BINARY_STATES_CC = BINARY_STATES_ALL.copy()
-#BINARY_STATES_CC.remove('disrupted')
 
 for b in BINARY_STATES_CC:
     for s1 in STAR_STATES_CC:

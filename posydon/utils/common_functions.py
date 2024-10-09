@@ -1369,7 +1369,7 @@ def infer_star_state(star_mass=None, surface_h1=None,
             burning = "Shell_H_burning"
         else:
             burning = "non_burning"
-
+        
     return "{}_{}".format(rich_in, burning)
 
 

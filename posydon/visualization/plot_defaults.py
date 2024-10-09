@@ -406,6 +406,8 @@ DEFAULT_MARKERS_COLORS_LEGENDS = {
             ['o', 2, 'tab:brown', 'stripped He-star C depletion'],
         'stripped_He_non_burning':
             ['o', 2, 'gray', 'stripped He-star non burning'],
+        'stripped_He_Core_H_burning':
+            ['x', 1, 'black', 'unknown'],
         'stripped_He_Shell_H_burning':
             ['x', 1, 'black', 'unknown'],
         'undetermined_evolutionary_state':
@@ -448,6 +450,8 @@ DEFAULT_MARKERS_COLORS_LEGENDS = {
             ['o', 2, 'tab:brown', 'stripped He-star C depletion'],
         'stripped_He_non_burning':
             ['o', 2, 'gray', 'stripped He-star non burning'],
+        'stripped_He_Core_H_burning':
+            ['x', 1, 'black', 'unknown'],
         'stripped_He_Shell_H_burning':
             ['x', 1, 'black', 'unknown'],
         'undetermined_evolutionary_state':
