@@ -1083,13 +1083,12 @@ def get_binary_state_and_event_and_mt_case(binary, interpolation_class=None,
     elif rlof1 and not rlof2:                       # only in star 1
         result = ['RLO1', None, mt_flag_1_str]
         if interpolation_class == 'unstable_MT':
-            return ['RLO1', 'oCE1', mt_flag_1_str]
-        # if prev_state not in ALL_RLO_CASES:
-        #    return ['RLO1', 'oRLO1', mt_flag_1_str]
+            result = ['RLO1', 'oCE1', mt_flag_1_str]
+            #if mt_flag_1 == MT_CASE_NONBURNING: print (result)         ## debugging
     elif rlof2 and not rlof1:                       # only in star 2
         result = ['RLO2', None, mt_flag_2_str]
         if interpolation_class == 'unstable_MT':
-            return ['RLO2', 'oCE2', mt_flag_2_str]
+            result = ['RLO2', 'oCE2', mt_flag_2_str]
     else:                                           # undetermined in any star
         result = ["undefined", None, 'None']
 
@@ -1523,9 +1522,10 @@ def cumulative_mass_transfer_string(cumulative_integers):
             else:
                 result += "/"
             if integer in MT_CASE_TO_STR:
-                result += MT_CASE_TO_STR[integer] + '1' # from star 1
+                result += MT_CASE_TO_STR[integer] #+ '1' # from star 1
             else:
-                result += MT_CASE_TO_STR[integer-10] + '2' # from star 2
+                #result += MT_CASE_TO_STR[integer-10] + '2' # from star 2
+                raise Exception("mass transfer case does not exist!")         ## debugging
     return result
 
 
