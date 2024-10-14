@@ -466,50 +466,50 @@ DEFAULT_MARKERS_COLORS_LEGENDS = {
         'Stable contact':
             ['s', 2, list_of_colors[3], 'Stable contact phase'],
         'Stable case A':
-            ['s', 2, list_of_colors[2], 'Stable RLOF during MS'],
+            ['s', 2, list_of_colors[2], 'Last stable RLOF during MS'],
         'Stable case B':
-            ['s', 2, list_of_colors[1], 'Stable RLOF during postMS'],
+            ['s', 2, list_of_colors[1], 'Last stable RLOF during postMS'],
         'Stable case C':
-            ['s', 2, list_of_colors[1], 'Stable RLOF during postMS'],
+            ['s', 2, list_of_colors[1], 'Last stable RLOF during postMS'],
         'Stable case BA':
-            ['s', 2, list_of_colors[0], 'Stable RLOF during stripped He star'],
+            ['s', 2, list_of_colors[0], 'Last stable RLOF during stripped He star'],
         'Stable case BB':
-            ['s', 2, list_of_colors[0], 'Stable RLOF during stripped He star'],
+            ['s', 2, list_of_colors[0], 'Last stable RLOF during stripped He star'],
         # hot fix for case AA should be removed later:
         'Stable case AA':
-            ['s', 2, list_of_colors[2], 'Stable RLOF during MS'],
+            ['s', 2, list_of_colors[2], 'Last stable RLOF during MS'],
         'Stable case AB':
-            ['s', 2, list_of_colors[1], 'Stable RLOF during postMS'],
+            ['s', 2, list_of_colors[1], 'Last stable RLOF during postMS'],
         'Stable case AC':
-            ['s', 2, list_of_colors[1], 'Stable RLOF during postMS'],
+            ['s', 2, list_of_colors[1], 'Last stable RLOF during postMS'],
         'Stable case An':
-            ['s', 2, list_of_colors[1], 'Stable RLOF during postMS'],
+            ['s', 2, list_of_colors[1], 'Last stable RLOF during postMS'],
         'Stable case ABA':
-            ['s', 2, list_of_colors[0], 'Stable RLOF during stripped He star'],
+            ['s', 2, list_of_colors[0], 'Last stable RLOF during stripped He star'],
         'Stable case ABB':
-            ['s', 2, list_of_colors[0], 'Stable RLOF during stripped He star'],
+            ['s', 2, list_of_colors[0], 'Last stable RLOF during stripped He star'],
         'Stable case BC':
-            ['s', 2, list_of_colors[1], 'Stable RLOF during postMS'],
+            ['s', 2, list_of_colors[1], 'Last stable RLOF during postMS'],
         'Stable case Bn':
-            ['s', 2, list_of_colors[1], 'Stable RLOF during postMS'],
+            ['s', 2, list_of_colors[1], 'Last stable RLOF during postMS'],
         'Stable case BBA':
-            ['s', 2, list_of_colors[0], 'Stable RLOF during stripped He star'],
+            ['s', 2, list_of_colors[0], 'Last stable RLOF during stripped He star'],
         'Stable case BBB':
-            ['s', 2, list_of_colors[0], 'Stable RLOF during stripped He star'],
+            ['s', 2, list_of_colors[0], 'Last stable RLOF during stripped He star'],
         'Stable case Cn':
-            ['s', 2, list_of_colors[1], 'Stable RLOF during postMS'],
+            ['s', 2, list_of_colors[1], 'Last stable RLOF during postMS'],
         'Stable case CBA':
-            ['s', 2, list_of_colors[0], 'Stable RLOF during stripped He star'],
+            ['s', 2, list_of_colors[0], 'Last stable RLOF during stripped He star'],
         'Stable case CBB':
-            ['s', 2, list_of_colors[0], 'Stable RLOF during stripped He star'],
+            ['s', 2, list_of_colors[0], 'Last stable RLOF during stripped He star'],
         'Stable case BABB':
-            ['s', 2, list_of_colors[0], 'Stable RLOF during stripped He star'],
+            ['s', 2, list_of_colors[0], 'Last stable RLOF during stripped He star'],
         'Stable case BAn':
-            ['s', 2, list_of_colors[0], 'Stable RLOF during stripped He star'],
+            ['s', 2, list_of_colors[0], 'Last stable RLOF during stripped He star'],
         'Stable case BBn':
-            ['s', 2, list_of_colors[0], 'Stable RLOF during stripped He star'],
+            ['s', 2, list_of_colors[0], 'Last stable RLOF during stripped He star'],
         'Stable case n':
-            ['s', 2, list_of_colors[1], 'Stable RLOF while non burning'],
+            ['s', 2, list_of_colors[1], 'Last stable RLOF while non burning'],
         'Unstable contact':
             ['D', 1, list_of_colors[3], 'Unstable contact phase'],
         'Unstable case A':
