@@ -10,7 +10,7 @@ import posydon.utils.posydonwarning as totest
 
 # import other needed code for the tests, which is not already imported in the
 # module you like to test
-from pytest import fixture, raises, warns, mark
+from pytest import fixture, raises, warns
 from inspect import isclass, isroutine
 
 # define test classes collecting several test functions
@@ -509,7 +509,7 @@ class Test_Caught_POSYDON_Warnings:
 
     @fixture
     def test_dict(self):
-        # a dictionary as a registry for testing 
+        # a dictionary as a registry for testing
         return {'Unit': "Test"}
 
     # test the _Caught_POSYDON_Warnings class
