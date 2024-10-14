@@ -96,6 +96,7 @@ STAR_STATE_POST_MS = [
 
 
 STAR_STATE_POST_HeMS = [
+    'accreted_He_Core_He_burning',
     'stripped_He_Core_He_burning',
     'stripped_He_Central_He_depleted',
     'stripped_He_Central_C_depletion',
@@ -213,7 +214,7 @@ class StepCEE(object):
 
         # Check to make sure binary can go through a CE
         mergeable_donor = (donor_star.state in [
-            'H-rich_Core_H_burning', 'stripped_He_Core_He_burning'])
+            'H-rich_Core_H_burning', 'stripped_He_Core_He_burning', 'accreted_He_Core_He_burning'])
         mergeable_HG_donor = (
             self.common_envelope_option_for_HG_star == "pessimistic"
             and donor_star.state in ['H-rich_Shell_H_burning'])

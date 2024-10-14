@@ -309,7 +309,6 @@ class MesaGridStep:
             if self.flip_stars_before_step:
                 flip_stars(binary)
             binary.state = 'initial_RLOF'
-            # binary.event = 'END'
             return
 
         binary_start_time = binary.time
@@ -911,6 +910,7 @@ class MesaGridStep:
         setattr(self.binary, 'event', binary_event)
         setattr(self.binary, 'mass_transfer_case', MT_case)
 
+        
         if binary.state == 'initial_RLOF':
             return
 
@@ -1471,6 +1471,7 @@ class CO_HeMS_RLO_step(MesaGridStep):
 
         # TODO: import states from flow_chart.py
         CO_He_STATES = [
+            'accreted_He_Core_He_burning',
             'stripped_He_Core_He_burning',
             'stripped_He_Shell_He_burning',
             'stripped_He_Central_He_depleted',
@@ -1478,7 +1479,8 @@ class CO_HeMS_RLO_step(MesaGridStep):
             # include systems that are on the brink of He exhaustion
             'stripped_He_non_burning',
             # include systems post CE with core_definition_H_fraction=0.1
-            'H-rich_non_burning'
+            'H-rich_non_burning',
+            'accreted_He_non_burning'
                         ]
 
         # check the star states
@@ -1595,6 +1597,7 @@ class CO_HeMS_step(MesaGridStep):
 
         # TODO: import states from flow_chart.py
         CO_He_STATES = [
+            'accreted_He_Core_He_burning',
             'stripped_He_Core_He_burning',
             'stripped_He_Shell_He_burning',
             'stripped_He_Central_He_depleted',
@@ -1602,7 +1605,8 @@ class CO_HeMS_step(MesaGridStep):
             # include systems that are on the brink of He exhaustion
             'stripped_He_non_burning',
             # include systems post CE with core_definition_H_fraction=0.1
-            'H-rich_non_burning'
+            'H-rich_non_burning',
+            'accreted_He_non_burning'
                         ]
         # TODO: import states from flow_chart.py
         if (state_2 in ['WD', 'NS', 'BH']

@@ -52,11 +52,12 @@ LIST_ACCEPTABLE_STATES_FOR_postMS = [
     "accreted_He_non_burning"]
 
 LIST_ACCEPTABLE_STATES_FOR_HeStar = [
+    'accreted_He_Core_He_burning',
     'stripped_He_Core_He_burning',
     'stripped_He_Shell_He_burning',     # includes stars burning C in core
     'stripped_He_Central_He_depleted',  # includes stars burning C in core
     'stripped_He_Central_C_depletion',
-    'stripped_He_non_burning'           # includes stars burning C in core
+    'stripped_He_non_burning'
     ]
 
 STAR_STATES_H_RICH = [
@@ -1394,6 +1395,7 @@ class detached_step:
 
         if (ev_rlo1(binary.time, [binary.separation, binary.eccentricity]) >= 0
                 or ev_rlo2(binary.time, [binary.separation, binary.eccentricity]) >= 0):
+            print("setting initial_RLOF 5")
             binary.state = "initial_RLOF"
             return
             

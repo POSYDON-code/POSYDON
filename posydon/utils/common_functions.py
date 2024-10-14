@@ -42,20 +42,13 @@ STATE_UNDETERMINED = "undetermined_evolutionary_state"
 BURNING_STATES = ["Core_H_burning", "Core_He_burning",
                   "Shell_H_burning", "Central_He_depleted",
                   "Central_C_depletion"]
-RICHNESS_STATES = ["H-rich", "stripped_He"]
+RICHNESS_STATES = ["H-rich", "stripped_He", "accreted_He"]
 COMPACT_OBJECTS = ["WD", "NS", "BH","massless_remnant"]
 
 ALL_STAR_STATES = COMPACT_OBJECTS + [STATE_UNDETERMINED]
 ALL_STAR_STATES.extend(["{}_{}".format(rich_in, burning)
                         for rich_in in RICHNESS_STATES
                         for burning in BURNING_STATES])
-
-# `ALL_STAR_STATES` includes the following strings:
-# 'WD', 'NS', 'BH', 'undetermined_evolutionary_state',
-# 'H-rich_Core_H_burning', 'H-rich_Core_He_burning',
-# 'H-rich_Shell_H_burning', 'H-rich_Central_He_depleted',
-# 'stripped_He_Core_He_burning', 'stripped_Central_He_depleted',
-# 'H-rich_Central_C_depletion', 'stripped_He_Central_C_depletion'
 
 # Mass-transfer cases in form of integer flags
 MT_CASE_NO_RLO = 0
@@ -1907,6 +1900,7 @@ def calculate_core_boundary(donor_mass,
     ]
     # ENHANCEMENT: this list needs to be imported from e.g. flow_chart.py
     STAR_STATE_He = [
+        'accreted_He_Core_He_burning',
         'stripped_He_Core_He_burning',
         'stripped_He_Central_He_depleted',
         'stripped_He_Central_C_depletion',
