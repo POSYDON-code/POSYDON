@@ -1395,7 +1395,6 @@ class detached_step:
 
         if (ev_rlo1(binary.time, [binary.separation, binary.eccentricity]) >= 0
                 or ev_rlo2(binary.time, [binary.separation, binary.eccentricity]) >= 0):
-            print("setting initial_RLOF 5")
             binary.state = "initial_RLOF"
             return
             
