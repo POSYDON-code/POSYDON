@@ -182,6 +182,12 @@ for s1 in STAR_STATES_HE_RICH:
         POSYDON_FLOW_CHART[(s1, s2, 'detached', "redirect_from_CO_HeMS_RLO")] = 'step_detached'
         POSYDON_FLOW_CHART[(s2, s1, 'detached', "redirect_from_CO_HeMS_RLO")] = 'step_detached'
 
+## He-rich star roche-lobe overflow onto another He-rich star
+## assume these systems always merge 
+for s1 in STAR_STATES_HE_RICH:
+    for s2 in STAR_STATES_HE_RICH:
+        POSYDON_FLOW_CHART[(s1, s2, 'RLO1', "oRLO1")] = 'step_merged'
+        POSYDON_FLOW_CHART[(s2, s1, 'RLO2', "oRLO2")] = 'step_merged'
 
 # Binaries that go to common envelope
 
