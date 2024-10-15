@@ -10,12 +10,9 @@ import posydon.utils.configfile as totest
 
 # import other needed code for the tests, which is not already imported in the
 # module you like to test
-from pytest import fixture, raises, warns
+from pytest import fixture, raises
 from inspect import isclass, isroutine
 from ast import AST, parse
-
-# to check and remove
-import unittest
 
 # define test classes collecting several test functions
 class TestElements:
