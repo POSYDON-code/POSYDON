@@ -85,22 +85,36 @@ class MergedStep(IsolatedStep):
 
 
     def __call__(self,binary):
+
         merged_star_properties = self.merged_star_properties
+
         if self.verbose:
             print("Before Merger", binary.star_1.state,binary.star_2.state,binary.state, binary.event)
             print("M1 , M2, he_core_mass1, he_core_mass2: ", binary.star_1.mass,binary.star_2.mass, binary.star_1.he_core_mass, binary.star_2.he_core_mass)
             print("star_1.center_he4, star_2.center_he4, star_1.surface_he4, star_2.surface_he4: ",  binary.star_1.center_he4,binary.star_2.center_he4, binary.star_1.surface_he4,binary.star_2.surface_he4)
+        
         if binary.state == "merged":
             if binary.event == 'oMerging1':
-                binary.star_1,binary.star_2 = merged_star_properties(binary.star_1,binary.star_2)
+                binary.star_1, binary.star_2 = merged_star_properties(binary.star_1, binary.star_2)
             elif binary.event == 'oMerging2':
-                binary.star_2,binary.star_1 = merged_star_properties(binary.star_2,binary.star_1)
+                binary.star_2, binary.star_1 = merged_star_properties(binary.star_2, binary.star_1)
             else:
-                raise FlowError("binary.state='merged' but binary.event != 'oMerging1/2'")
+                raise ValueError("binary.state='merged' but binary.event != 'oMerging1/2'")
+
+        ## assume that binaries in RLO with two He-rich stars always merge   
+        elif binary.star_1.state in STAR_STATES_HE_RICH and binary.star_2.state in STAR_STATES_HE_RICH:
+            binary.state = "merged"
+            if binary.event == 'oRLO1':
+                binary.star_1, binary.star_2 = merged_star_properties(binary.star_1, binary.star_2)
+            elif binary.event == 'oRLO2':
+                binary.star_2, binary.star_1 = merged_star_properties(binary.star_2, binary.star_1)
+            else:
+                raise ValueError("step_merged initiated for He stars but RLO not initiated")
         else:
-            raise FlowError("step_merging initiated but binary.state != 'merged'")
+            raise ValueError("step_merged initiated but binary is not in valid merging state!")
 
         binary.event = None
+
         if self.verbose:
             print("After Merger", binary.star_1.state,binary.star_2.state,binary.state, binary.event)
             print("M_merged , he_core_mass merged: ", binary.star_1.mass, binary.star_1.he_core_mass)
