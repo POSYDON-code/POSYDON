@@ -1,16 +1,17 @@
 .. _synthetic-population:
 
+.. py:currentmodule:: posydon.popsyn.synthetic_population
 
 
 The Population Object 
 ===============================
 
-The :class:`~posydon.popsyn.synthetic_population.Population` object is an interface for the population data, which is stored in a HDF5 file.
+The :class:`~Population` object is an interface for the population data, which is stored in a HDF5 file.
 You can find more information about the file structure here: :ref:`population-file-structure`.
 
 The population file is created by a population synthesis run, and contains the history of each system in the population, and an oneline description of each system and its evolution.
 
-The :class:`~posydon.popsyn.synthetic_population.Population` object is created by passing the path to the population file to the constructor.
+The :class:`~Population` object is created by passing the path to the population file to the constructor.
 It will not load in the data immediately, but only when requested.
 
 .. code-block:: python
@@ -21,17 +22,17 @@ It will not load in the data immediately, but only when requested.
 
 
 
-There are three main components of the :class:`~posydon.popsyn.synthetic_population.Population` object:
+There are three main components of the :class:`~Population` object:
 
-- :class:`~posydon.popsyn.synthetic_population.Population.history`: the history of the population
-- :class:`~posydon.popsyn.synthetic_population.Population.oneline`: the oneline data of the population
-- :class:`~posydon.popsyn.synthetic_population.Population.formation_channels`: the formation channels of the population
+- :class:`~Population.history`: the history of the population
+- :class:`~Population.oneline`: the oneline data of the population
+- :class:`~Population.formation_channels`: the formation channels of the population
 
 The :code:`formation_channels` is not immediately available, but can be created using the
-:func:`~posydon.popsyn.synthetic_population.Population.calculate_formation_channels` function of the :class:`~posydon.popsyn.synthetic_population.Population` object.
+:func:`~Population.calculate_formation_channels` function of the :class:`~Population` object.
 
 
-Additionally, :meth:`Population.mass_per_metallicity<posydon.popsyn.synthetic_population.Population.mass_per_metallicity>` contains some essential metadata calculated from the populaiton synthesis run.
+Additionally, :meth:`Population.mass_per_metallicity<Population.mass_per_metallicity>` contains some essential metadata calculated from the populaiton synthesis run.
 It is a pandas.DataFrame with the metallicity (in solar units) as the index and 3 columns:
 
 1. :code:`count`, the number of systems at that metallicity in the file.
@@ -43,7 +44,7 @@ It is a pandas.DataFrame with the metallicity (in solar units) as the index and 
 history
 --------
 
-:class:`~posydon.popsyn.synthetic_population.Population.history`contains the full history of each system in the population.
+:class:`~Population.history` contains the full history of each system in the population.
 The history is stored in a pandas DataFrame, where each row is a timestep in the evolution of a system.
 The columns of the DataFrame are the parameters of the system at each timestep.
 
@@ -67,10 +68,10 @@ If you want to access a specific column, you can do so by using the column name.
     mass_1 = pop.history['S1_mass']
 
 
-A more powerful feature is the :func:`posydon.popsyn.synthetic_population.History.select` function, which allows you to select specific rows or columns from the history table. Here's an example:
+A more powerful feature is the :func:`History.select` function, which allows you to select specific rows or columns from the history table. Here's an example:
 
 .. note::
-    The :func:`posydon.popsyn.synthetic_population.History.select` function only allows the use of :code:`where=`
+    The :func:`History.select` function only allows the use of :code:`where=`
     for specific columns and the index. The columns are limited to those containing strings.
 
 .. code-block:: python
@@ -81,7 +82,7 @@ A more powerful feature is the :func:`posydon.popsyn.synthetic_population.Histor
     # using where with a string column
     mass_ZAMS = pop.history.select(columns=['S1_mass'], where='event == "ZAMS"')
     
-If you want to have a peak, you can use the :meth:`~posydon.popsyn.synthetic_population.Population.head` or :meth:`~posydon.popsyn.synthetic_population.Population.tail` functions.
+If you want to have a peak, you can use the :meth:`~Population.head` or :meth:`~Population.tail` functions.
 
 .. code-block:: python
     pop.history.head(10)
@@ -90,23 +91,23 @@ If you want to have a peak, you can use the :meth:`~posydon.popsyn.synthetic_pop
 
 Additional functions are made available for easy of use.
 
-If you want to check the length of the history of a system, you can use :attr:`Population.history.lengths<posydon.popsyn.synthetic_population.History.lengths>` or :attr:`Population.history_lengths<posydon.popsyn.synthetic_population.Population.history_lengths>`.
+If you want to check the length of the history of a system, you can use :attr:`Population.history.lengths<History.lengths>` or :attr:`Population.history_lengths<Population.history_lengths>`.
 
 .. code-block:: python
 
     print(pop.history.lengths)
     print(pop.history_lengths)
 
-The total number of systems in the population can be found with :attr:`~posydon.popsyn.synthetic_population.Population.History.number_of_systems`.
+The total number of systems in the population can be found with :attr:`~Population.History.number_of_systems`.
 
 .. code-block:: python
 
     print(pop.history.number_of_systems)
 
-Similarly, if you would like to check the indices in the file, you can use :attr:`Population.indices<posydon.popsyn.synthetic_population.Population.indices>` or :attr:`Population.history.indices<posydon.popsyn.synthetic_population.History.indices>`.
+Similarly, if you would like to check the indices in the file, you can use :attr:`Population.indices<Population.indices>` or :attr:`Population.history.indices<History.indices>`.
 The indices are useful in selecting systems from the population.
 
-It's also possible to check the columns in the history table with :attr:`Population.columns<posydon.popsyn.synthetic_population.Population.columns>` or :attr:`Population.history.columns<posydon.popsyn.synthetic_population.History.columns>`.
+It's also possible to check the columns in the history table with :attr:`Population.columns<Population.columns>` or :attr:`Population.history.columns<History.columns>`.
 
 .. code-block:: python
 
@@ -120,7 +121,7 @@ It's also possible to check the columns in the history table with :attr:`Populat
 oneline
 --------
 
-:meth:`~posydon.popsyn.synthetic_population.Population.oneline` contains a single line description of each system in the population.
+:meth:`~Population.oneline` contains a single line description of each system in the population.
 This is useful for a quick inspection of the population.
 The oneline data is stored in a pandas DataFrame, where each row is a system in the population.
 
@@ -130,14 +131,14 @@ Besides the initial and final properties of the system, this table also contains
 The initial-final properties are those in the history table, but with the postfix :code:`_i` and :code:`_f` depending on the initial or final value.
 The additional values are the scalar values from the individual stars and the binary properties (See :ref:`Single Star<single-star>` and :ref:`Binary Star<binary-star>`).
 
-Additionally, WARNING, FAILED, and metallicity columns are available in the oneline table.
+Additionally, ``WARNING``, ``FAILED``, and metallicity columns are available in the oneline table.
 
 .. csv-table:: Additional columns
   :header: "Properties", "Descriptions"
   :widths: 50, 150
-  `FAILED`, Indicates if the system failed during the population synthesis run.
-  `WARNING`, Indicates if there were any warnings for the system during the population synthesis run.
-  `metallicity`, The metallicity of the system.
+  ``FAILED``, Indicates if the system failed during the population synthesis run.
+  ``WARNING``, Indicates if there were any warnings for the system during the population synthesis run.
+  ``metallicity``, The metallicity of the system.
 
 
 Like the :code:`history` access, you can access the oneline data by using the index of the system or the columns.
@@ -148,15 +149,15 @@ Like the :code:`history` access, you can access the oneline data by using the in
     mass = pop.oneline['S1_mass_i']
     selection = pop.oneline.select(columns=['S1_mass_i'], where='index==10')
 
-You can check the columns and indices of the oneline table with :attr:`Population.oneline.columns<posydon.popsyn.synthetic_population.Oneline.columns>` and :attr:`Population.columns['oneline']<posydon.popsyn.synthetic_population.Population.columns`.
+You can check the columns and indices of the oneline table with :attr:`Population.oneline.columns<Oneline.columns>` and :attr:`Population.columns['oneline']<Population.columns>`.
 
 .. code-block:: python
 
     print(pop.oneline.columns)
     print(pop.columns['oneline'])
 
-The number of systems in the population can be found with :attr:`Population.oneline.number_of_systems<posydon.popsyn.synthetic_population.Oneline.number_of_systems>`.
-The length and indices of the oneline table can be found with :attr:`Population.oneline.lengths<posydon.popsyn.synthetic_population.Oneline.lengths>`, and :attr:`Population.oneline.indices<posydon.popsyn.synthetic_population.Oneline.indices>`, respectively.
+The number of systems in the population can be found with :attr:`Population.oneline.number_of_systems<Oneline.number_of_systems>`.
+The length and indices of the oneline table can be found with :attr:`Population.oneline.lengths<Oneline.lengths>`, and :attr:`Population.oneline.indices<Oneline.indices>`, respectively.
 
 
 .. code-block:: python
@@ -169,10 +170,10 @@ The length and indices of the oneline table can be found with :attr:`Population.
 formation_channels
 ------------------
 
-:class:`~posydon.popsyn.synthetic_population.Population.formation_channels` contains the formation channels of each system in the population.
+:class:`~Population.formation_channels` contains the formation channels of each system in the population.
 The formation channels are stored in a pandas DataFrame, where each row is a system in the population.
 
-The formation channels are calculated by combining the `event` column in the history table into a single string using the :func:`~posydon.popsyn.synthetic_population.Population.calculate_formation_channels` function of the :class:`~posydon.popsyn.synthetic_population.Population` object.
+The formation channels are calculated by combining the `event` column in the history table into a single string using the :func:`~Population.calculate_formation_channels` function of the :class:`~Population` object.
 
 Two columns are available in the formation channels table:
 
@@ -185,21 +186,21 @@ Additional Attributes
 ---------------------
 
 
-- :attr:`~posydon.popsyn.synthetic_population.Population.ini_parameters`: The parameters for the initial sampling conditions of the population synthesis run.
+- :attr:`~Population.ini_parameters`: The parameters for the initial sampling conditions of the population synthesis run.
 
 
-- :attr:`~posydon.popsyn.synthetic_population.Population.mass_per_metallicity`: The mass per metallicity bin for the population synthesis run. 
+- :attr:`~Population.mass_per_metallicity`: The mass per metallicity bin for the population synthesis run. 
   The `underlying_mass` is calculated with the assumption that binary fraction == 1.
 
-- :attr:`~posydon.popsyn.synthetic_population.Population.history_lengths`: The length of the history of each system in the population. 
-        This is created the first time the file is opened with the :class:`~posydon.popsyn.synthetic_population.Population` object.
+- :attr:`~Population.history_lengths`: The length of the history of each system in the population. 
+        This is created the first time the file is opened with the :class:`~Population` object.
 
 
 
 Exporting part of the population
 --------------------------------
 
-The class function :func:`Population.export_selection<posydon.popsyn.synthetic_population.Population.export_selection>` allows you to export part of the population to a new HDF5 file.
+The class function :func:`Population.export_selection<Population.export_selection>` allows you to export part of the population to a new HDF5 file.
 It takes a list of indices of the systems you want to export, and the path to the new file.
 This will copy the systems with the given indices to the new file, which includes their history, oneline data, and formation channels (if presen).
 
@@ -219,12 +220,12 @@ If the file already exists, the function will raise an error. If you want to ove
 TransientPopulation
 ===================
 
-The :class:`~posydon.popsyn.synthetic_population.TransientPopulation` object is an interface for the transient data of the population.
-It inherits from the :class:`~posydon.popsyn.synthetic_population.Population` object, but also allows access to the transient populations in the population file.
+The :class:`~TransientPopulation` object is an interface for the transient data of the population.
+It inherits from the :class:`~Population` object, but also allows access to the transient populations in the population file.
 
 A transient population consists of instantaneous events in the population, such as supernovae, kilonovae, or gamma-ray bursts.
 These have a single "moment" in time, and are not part of the evolution of the system.
-The :class:`~posydon.popsyn.synthetic_population.TransientPopulation` class has been designed to handle these events, but future versions of the code may include more complex populations.
+The :class:`~TransientPopulation` class has been designed to handle these events, but future versions of the code may include more complex populations.
 
 .. code-block:: python
 
@@ -238,15 +239,15 @@ Creating a TransientPopulation
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
-The transient population is created using the :func:`posydon.popsyn.synthetic_population.Population.create_transient_population` function of the :class:`~posydon.popsyn.synthetic_population.Population` object.
+The transient population is created using the :func:`Population.create_transient_population` function of the :class:`~Population` object.
 This function creates a separate table with each transient in the population file.
 It loops over all the systems in the population in chunks and applies the given function to them.
 
-The :func:`posydon.popsyn.synthetic_population.Population.create_transient_population` function takes a function as an argument: :code:`selection_function`.
+The :func:`Population.create_transient_population` function takes a function as an argument: :code:`selection_function`.
 
 The :code:`selection_function` takes 3 arguments: :code:`history_chunk`, :code:`oneline_chunk`, and :code:`formation_channels_chunk` (optional).
 These chunks are cut based on a given chunksize, which is set to 1000000 by default, and are cut on system. 
-This means that always a complete history of a system is passed to the function by :func:`posydon.popsyn.synthetic_population.Population.create_transient_population`.
+This means that always a complete history of a system is passed to the function by :func:`Population.create_transient_population`.
 
 :code:`selection_function` is a function you can adapt to your own needs, and examples of building one are given in the :ref:`tutorial-examples.population-synthesis.bbh-analysis` or :ref:`tutorial-examples.population-synthesis.lgrb_pop_syn`.
 
@@ -264,7 +265,7 @@ Accessing TransientPopulation
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 After loading a transient population, you keep access to the history and oneline data of the population.
-Now, you can access the transient data of the population using :attr:`TrannsientPopulation.population<posydon.popsyn.synthetic_population.TransientPopulation>`.
+Now, you can access the transient data of the population using :attr:`TrannsientPopulation.population<TransientPopulation>`.
 
 
 .. code-block:: python
@@ -286,7 +287,7 @@ With this population, you can calculate additional information, such as the effi
 Plotting
 ~~~~~~~~~~
 
-The :class:`~posydon.popsyn.synthetic_population.TransientPopulation` contains a few plotting functions for ease.
+The :class:`~TransientPopulation` contains a few plotting functions for ease.
     
 .. code-block:: python
     # plots the efficiency over metallicity per channel
@@ -299,7 +300,7 @@ The :class:`~posydon.popsyn.synthetic_population.TransientPopulation` contains a
     trans_pop.plot_delay_time_distribution(metallicity=0.1, bins=log_bins)
 
 
-The most useful function is :func:`plot_popsyn_over_grid_slice<posydon.popsyn.synthetic_population.TransientPopulation.plot_popsyn_over_grid_slice>`.
+The most useful function is :func:`plot_popsyn_over_grid_slice<TransientPopulation.plot_popsyn_over_grid_slice>`.
 It allows you to overplot properties of your TransienPopulation onto the grids.
 
 .. note::
@@ -319,7 +320,7 @@ If you like to write to a folder, you can use :code:`plot_dir='path/to/dir'` and
 Rates
 =====
 
-The :class:`~posydon.popsyn.synthetic_population.Rates` object inherits from the :class:`~posydon.popsyn.synthetic_population.TransientPopulation` object 
+The :class:`~Rates` object inherits from the :class:`~TransientPopulation` object 
 and is used to access the cosmic rate data of the transient population.
 
 It also allows the user to calculate the intrinsic rate density of the events in the population, and apply observational effects to the population.
@@ -334,7 +335,7 @@ It also allows the user to calculate the intrinsic rate density of the events in
 Creating a Rates object
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-Cosmic weights are added to the population file using the :func:`~posydon.popsyn.synthetic_population.TransientPopulation.calculate_cosmic_weights` function.
+Cosmic weights are added to the population file using the :func:`~TransientPopulation.calculate_cosmic_weights` function.
 This function calculates the cosmic weights of the events in the population based on the birth redshifts and the population weight.
 The function takes an ``SFH_identifier``, which is where the cosmic weights are stored in the population file.
 The ``MODEL_in`` argument is used to specify the model parameters for the rate calculation.
@@ -364,7 +365,7 @@ The cosmic rate data is stored in 3 different tables in the population file:
 3. :code:`weights` : The weights of each event based on their birth redshifts and their population weight.
 
 
-You can calculate the intrinsic rate density of the events in the population using :func:`posydon.popsyn.synthetic_population.Rates.calculate_intrinsic_rate_density`.
+You can calculate the intrinsic rate density of the events in the population using :func:`Rates.calculate_intrinsic_rate_density`.
 This populates the :code:`intrinsic_rate_density` table in the population file.
 
 .. code-block:: python
@@ -374,7 +375,7 @@ This populates the :code:`intrinsic_rate_density` table in the population file.
 
     rates.plot_intrinsic_rate_density()
 
-The :class:`~posydon.popsyn.synthetic_population.Rates` object also contains information about the metallicity and redshift bins and edges.
+The :class:`~Rates` object also contains information about the metallicity and redshift bins and edges.
 
 .. code-block:: python
 
@@ -400,7 +401,7 @@ Applying observational effects
 Although the intrinsic rate density is a useful quantity, it is not directly observable, especially for binary black holes.
 
 As such, we also include the possibility to apply observational effects to the population.
-This is done using the :func:`posydon.popsyn.synthetic_population.Rates.calculate_observable_population` function.
+This is done using the :func:`Rates.calculate_observable_population` function.
 It reweights the event weights based on the detection efficiency of the event.
 The function takes a function as an argument: :code:`observable_func` and a ``observable_identifier``.
 
@@ -428,8 +429,8 @@ However, since that function requires a detection argument, it requires a wrappe
 Accessing Observable Population data
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The observable population is accesed through the :code:`observable_population` attribute of the :class:`~posydon.popsyn.synthetic_population.Rates` object.
-You require to know the observable_identifier to access the data, which can be accessed with :attr:`Rates.observable_population_names<posydon.popsyn.synthetic_population.Rates.observable_population_names>`
+The observable population is accesed through the :code:`observable_population` attribute of the :class:`~Rates` object.
+You require to know the observable_identifier to access the data, which can be accessed with :attr:`Rates.observable_population_names<Rates.observable_population_names>`
 
 .. code-block:: python
 
@@ -473,7 +474,7 @@ other elements are optional and can be added by the user.
 
 The tables describe the location of the data inside the population file.
 This is only necessary if you want to access the data directly from the file.
-If you use the :meth:`~posydon.popsyn.synthetic_population.Population` object, you can access the data directly from the object.
+If you use the :meth:`~Population` object, you can access the data directly from the object.
 
 .. list-table:: Standard Components of a Population file
     :widths: 50 150
@@ -501,15 +502,15 @@ Based on the components and the user given identifiers, the data is stored in th
     * - Path
       - Description
     * - `history_lengths`
-      - The length of the history of each system in the population. This is created the first time the file is opened with the :class:`~posydon.popsyn.synthetic_population.Population` object.
+      - The length of the history of each system in the population. This is created the first time the file is opened with the :class:`~Population` object.
     * - `formation_channels`
-      -  The formation channels of each system in the population. This combines the `event` column in the history table into a single string. :func:`~posydon.popsyn.synthetic_population.Population.calculate_formation_channels` is used to create this component.
+      -  The formation channels of each system in the population. This combines the `event` column in the history table into a single string. :func:`~Population.calculate_formation_channels` is used to create this component.
     * - `transiens/{transient_name}`
-      - The transient data of each system in the population. The transient data is stored in a separate table for each transient. This is created by :func:`~posydon.popsyn.synthetic_population.Population.create_transient_population`.
+      - The transient data of each system in the population. The transient data is stored in a separate table for each transient. This is created by :func:`~Population.create_transient_population`.
     * - `transiens/{transient_name}/efficiencies`
-      - The transient efficiencies over metallicity. This is calculated with :func:`~posydon.popsyn.synthetic_population.TransientPopulation.get_efficiency_over_metallicity`.
+      - The transient efficiencies over metallicity. This is calculated with :func:`~TransientPopulation.get_efficiency_over_metallicity`.
     * - `transiens/{transient_name}/rates/{SFH_identifier}/MODEL`
-      - The MODEL parameters for the specific transient rate calculations done with :func:`~posydon.popsyn.synthetic_population.TransientPopulation.calculate_cosmic_weights`.
+      - The MODEL parameters for the specific transient rate calculations done with :func:`~TransientPopulation.calculate_cosmic_weights`.
     * - `transiens/{transient_name}/rates/{SFH_identifier}/birth`
       - A table containing the birth redshifts and lookback times used in the rate calculation.
     * - `transiens/{transient_name}/rates/{SFH_identifier}/z_events`
@@ -517,7 +518,7 @@ Based on the components and the user given identifiers, the data is stored in th
     * - `transiens/{transient_name}/rates/{SFH_identifier}/weights`
       - The weights of each event based on their birth redshifts and their population weight.
     * - `transiens/{transient_name}/rates/{SFH_identifier}/intrinsic_rate_density`
-      - The intrinsic rate density of the events in the population, calculated with :func:`~posydon.popsyn.synthetic_population.Rates.calculate_intrinsic_rate_density`.
+      - The intrinsic rate density of the events in the population, calculated with :func:`~Rates.calculate_intrinsic_rate_density`.
     
 
 
