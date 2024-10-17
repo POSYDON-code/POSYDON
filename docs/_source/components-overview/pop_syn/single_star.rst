@@ -131,7 +131,7 @@ State options
 ~~~~~~~~~~~~~
 
 Star states are defined by their burning and surface properties.
-These two are mostly independent and can be combined to describe the star.
+These states are combined to describe the stellar state.
 We also have additional extra states for object that are not stars.
 
 .. list-table:: Surface state
