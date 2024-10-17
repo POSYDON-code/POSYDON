@@ -381,11 +381,13 @@ DEFAULT_MARKERS_COLORS_LEGENDS = {
 
     'termination_flag_3': {
         'H-rich_non_burning':
-            ['v', 2, 'tab:orange', 'H-rich H non-buring'],
+            ['v', 2, 'tab:orange', 'H-rich H non-burning'],
+        'accreted_He_Core_H_burning':
+            ['v', 2, 'black', 'accreted He core H burning'],
         'H-rich_Core_H_burning':
-            ['s', 2, 'tab:olive', 'H-rich core H buring'],
+            ['s', 2, 'tab:olive', 'H-rich core H burning'],
         'H-rich_Shell_H_burning':
-            ['s', 2, 'tab:red', 'H-rich shell H buring'],
+            ['s', 2, 'tab:red', 'H-rich shell H burning'],
         'H-rich_Core_C_burning':
             ['s', 2, 'tab:pink', 'H-rich core C burning'],
         'H-rich_Central_C_depletion':
@@ -415,17 +417,19 @@ DEFAULT_MARKERS_COLORS_LEGENDS = {
         'NS':
             ['*', 1, 'tab:gray', 'NS'],
         'ignored_no_binary_history':
-            ['s', 2, 'tab:olive', 'H-rich core H buring'],
+            ['s', 2, 'tab:olive', 'H-rich core H burning'],
         'ignored_no_RLO':
-            ['s', 2, 'tab:olive', 'H-rich core H buring'],
+            ['s', 2, 'tab:olive', 'H-rich core H burning'],
     },
     'termination_flag_4': {
         'H-rich_non_burning':
-            ['v', 2, 'tab:orange', 'H-rich H non-buring'],
+            ['v', 2, 'tab:orange', 'H-rich H non-burning'],
+        'accreted_He_Core_H_burning':
+            ['v', 2, 'black', 'accreted He core H burning'],
         'H-rich_Core_H_burning':
-            ['s', 2, 'tab:olive', 'H-rich core H buring'],
+            ['s', 2, 'tab:olive', 'H-rich core H burning'],
         'H-rich_Shell_H_burning':
-            ['s', 2, 'tab:red', 'H-rich shell H buring'],
+            ['s', 2, 'tab:red', 'H-rich shell H burning'],
         'H-rich_Core_C_burning':
             ['s', 2, 'tab:pink', 'H-rich core C burning'],
         'H-rich_Central_C_depletion':
