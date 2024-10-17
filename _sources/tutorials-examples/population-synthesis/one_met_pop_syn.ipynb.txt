@@ -1,0 +1,336 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "# Explore the assumption of star-formation history and DCO compute rates at one single metallicity 📖"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "If you haven't done so yet, export the path POSYDON environment variables. For example:"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "%env PATH_TO_POSYDON=/Users/simone/Google Drive/github/POSYDON-public/\n",
+    "%env PATH_TO_POSYDON_DATA=/Volumes/T7/"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Creating the Synthetic Poupulation DataFrame"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "We will use the same BBH population as in the `Analyzing Merging BBH Populations: Rates & Observations` tutorial. Instead of computing the distributions and rates at all metallicities, we will just focus on one metallicity, $Z_\\odot$, and integrate the star formation history around solar metallicity, say $[0.5Z_\\odot,2Z_\\odot]$. Let's extract the merging BBH population from the $Z_\\odot$ population synthesis model. In this sample there are only a few systems, to increase the statistics we suggest you run a population containing x50 more binaries."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import os\n",
+    "from posydon.popsyn.synthetic_population import Population\n",
+    "from posydon.config import PATH_TO_POSYDON_DATA\n",
+    "\n",
+    "PATH_TO_POSYDON_DATA = '/Users/max/Documents/POSYDON_data/240305/POSYDON_data/tutorials/population-synthesis/example/'\n",
+    "\n",
+    "pop = Population(PATH_TO_POSYDON_DATA+'1e+00_Zsun_population.h5')\n",
+    "\n",
+    "pop.history.head(10)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "POSYDON supports different assumptions for the star formation history, e.g. instead of using the IllustrisTNG SFH, we can use the star formation rate from Madau & Fragos (2018) (see Andrews et al. in prep.) and assume a log-normal metallicity distribution around the empirically measured mean metallicity at each redshift from Madau & Fragos (2018), taking a dispersion of 0.5 dex (see Bavera et al. 2020). The IllustrisTNG star formation rate and metallicity evolution (solid line) is compared to the Madau & Fragos (2018) metallicity evolution (dashed line) in Fig. X of (see Andrews et al. in prep.), which figure is reproduced below. The dotted line corresponds to the metallicity distribution of Neijssel et al. (2019).\n",
+    "\n",
+    "![Star Fromation Rate](./pictures/SFR.png \"Star Formation Rate\")\n",
+    "\n",
+    "![Metallicity Distribution](./pictures/met_dist.png \"Metallicity Distribution\")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "# Single metallicity population\n",
+    "\n",
+    "Similar to in the multi-metallicity tutorial, we will setup a BBH selection from our $Z_\\odot$ population and then calculate the transient population."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# read the relevant data in one go\n",
+    "# (faster than reading it in chunks, but requires more memory)\n",
+    "tmp_data = pop.history.select(columns=['S1_state', 'S2_state', 'event'])\n",
+    "# Selection of S1 being a BH\n",
+    "S1_state = tmp_data['S1_state'] == 'BH'\n",
+    "# Selection of S2 being a BH\n",
+    "S2_state = tmp_data['S2_state'] == 'BH'\n",
+    "# Selection of the binary system being in contact during the double CO phase.\n",
+    "state = tmp_data['event'] == 'CO_contact'\n",
+    "indices = tmp_data.index\n",
+    "del tmp_data\n",
+    "mask = S1_state & S2_state & state\n",
+    "selected_indices = indices[mask].to_list()\n",
+    "print(f'Number of systems: {len(selected_indices)}')\n",
+    "\n",
+    "# set overwrite to False to add to the file\n",
+    "pop.export_selection(selected_indices, 'Zsun_BBH_contact.h5')"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": []
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "from posydon.popsyn.synthetic_population import Population\n",
+    "pop = Population('Zsun_BBH_contact.h5')"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "pop.calculate_formation_channels(mt_history=True)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "pop.history"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "pop.formation_channels"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Transient Population"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "from posydon.popsyn.transient_select_funcs import BBH_selection_function\n",
+    "BBH_mergers = pop.create_transient_population(BBH_selection_function, 'BBH')"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Even though we have a single metallicity, we can still calculate the efficiency per $M_\\odot$ for it. "
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "from posydon.popsyn.synthetic_population import TransientPopulation\n",
+    "\n",
+    "BBH_mergers = TransientPopulation('Zsun_BBH_contact.h5', 'BBH')\n",
+    "BBH_mergers.get_efficiency_over_metallicity()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Compute the BBH Merger Rates for $Z\\in [0.5Z_\\odot,2Z_\\odot]$"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Similar to the `Analyzing Merging BBH Populations: Rates & Observations` we compute the BBH merger rate density to obtain the BBH intrinsic population.\n",
+    "\n",
+    "However, because we are only working with a single metallicity, we have to set the metallicity limits we would like to work with!\n",
+    "\n",
+    "The `MODEL_in` parameter gives us the option to select only one metallicity and select only the star formation within a specific range. \n",
+    "This dictionary does not require a full model to be defined, and will use the default values if required.\n",
+    "\n",
+    "The `dlogZ` has to be given in log-space in units of solar metallicity.\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import numpy as np\n",
+    "MODEL_in = {\n",
+    "    'select_one_met' : True,\n",
+    "    'dlogZ' : [np.log10(0.0142/2),np.log10(0.0142*2)],\n",
+    "}\n",
+    "\n",
+    "rates = BBH_mergers.calculate_cosmic_weights('IllustrisTNG', MODEL_in=MODEL_in)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "rates.calculate_intrinsic_rate_density(mt_channels=True)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import matplotlib.pyplot as plt\n",
+    "\n",
+    "rates.plot_intrinsic_rate(channels=True, show=False)\n",
+    "plt.xlim(0,10)\n",
+    "plt.show()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "from posydon.popsyn.transient_select_funcs import DCO_detactability\n",
+    "from posydon.popsyn.synthetic_population import Rates\n",
+    "\n",
+    "rates = Rates('Zsun_BBH_contact.h5', 'BBH', 'IllustrisTNG',)\n",
+    "\n",
+    "def DCO_wrapper(transient_chunk, z_events_chunk, weights_chunk):\n",
+    "    sensitivity = 'design_H1L1V1'\n",
+    "    return DCO_detactability(sensitivity, transient_chunk, z_events_chunk, weights_chunk, verbose=False)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# We also give it a name, which is used as an identifier in the file\n",
+    "rates.calculate_observable_population(DCO_wrapper, 'design_H1L1V1')"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# We can now access this observable population\n",
+    "rates.observable_population('design_H1L1V1')"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Visualize the BBH Population Properties\n",
+    "\n",
+    "Similar to the multi-metallicity tutorial, we are able to plot the properties of the intrinsic and observed populations.\n",
+    "In this case, we normalise both distributions using the `normalise=True` option."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import numpy as np\n",
+    "import matplotlib.pyplot as plt\n",
+    "\n",
+    "bins = np.linspace(0,100,101)\n",
+    "fig, ax = plt.subplots(1,1)\n",
+    "\n",
+    "rates.plot_hist_properties('S1_mass', intrinsice=True, observable='design_H1L1V1', normalise=True, bins=bins, ax = ax, label='S1', show=False)\n",
+    "ax.set_ylabel('PDF')\n",
+    "ax.set_xlabel('Mass [Msun]') \n",
+    "ax.legend()\n",
+    "plt.show()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": []
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "posydon_env",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.11.5"
+  },
+  "orig_nbformat": 4
+ },
+ "nbformat": 4,
+ "nbformat_minor": 2
+}
