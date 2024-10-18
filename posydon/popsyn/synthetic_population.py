@@ -1068,6 +1068,9 @@ class Population(PopulationIO):
         
         self.mass_per_metallicity['underlying_mass'] = underlying_mass
         
+        # save it to the file
+        self._save_mass_per_metallicity(self.filename)
+        
         return underlying_mass
 
     def export_selection(self, selection, filename, overwrite=False, append=False, history_chunksize=1000000):
