@@ -12,17 +12,20 @@ Common Installation Issues
     - **Description**: Sometimes, certain dependencies might fail to install or conflict with pre-existing ones.
     - **Solution**: Try installing the failed dependencies separately using ``pip`` or ``conda`` before installing POSYDON. If using ``conda``, consider creating a fresh environment specifically for POSYDON.
 
-2. **Insufficient Storage Space**:
+    We try our best to keep the dependencies updated and compatible. However, if you encounter issues, please let us know!
+
+2. **Failed to Set Environment Variables**:
+    - **Description**: After installation, you might forget to set the ``PATH_TO_POSYDON`` and ``PATH_TO_POSYDON_DATA`` environment variables.
+    - **Solution**: Refer back to the [installation guide](installation-guide) to ensure all post-installation steps are followed.
+
+3. **Insufficient Storage Space**:
     - **Description**: POSYDON requires around 40GB of free storage space for the lite MESA simulation library and related files.
     - **Solution**: Ensure you have enough space on your installation drive. Delete unnecessary files or consider using a larger storage solution.
 
-3. **Proxy or Network Issues**:
+4. **Proxy or Network Issues**:
     - **Description**: Installation might fail if you're behind a strict network proxy or firewall.
     - **Solution**: If you're using ``conda``, you can set proxy settings using the ``--proxy`` flag. For pip, you can use the ``--proxy`` flag as well.
 
-4. **Failed to Set Environment Variables**:
-    - **Description**: After installation, you might forget to set the ``PATH_TO_POSYDON`` and ``PATH_TO_POSYDON_DATA`` environment variables.
-    - **Solution**: Refer back to the [installation guide](link-to-installation-guide) to ensure all post-installation steps are followed.
 
 5. **Error with Experimental Visualization Libraries**:
     - **Description**: Issues after installing the experimental visualization libraries with ``pip install ".[vis]"``.

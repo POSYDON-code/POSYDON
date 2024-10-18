@@ -12,10 +12,16 @@
   background-color: black;
 }
 
-p {
+/* p {
  text-align: justify;
-}
+} */
+
 
 .wy-table-responsive table td {
   white-space: normal;
+}
+
+
+.population-params-table td {
+  white-space: nowrap !important;
 }
