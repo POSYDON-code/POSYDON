@@ -1169,16 +1169,16 @@ class detached_step:
             interp1d_pri = get_star_data(
                 binary, primary, secondary, primary.htrack, False)[0]
         else:
-            raise MatchingError("During matching, the primary should either be normal or not normal."
-                                "`non_existent_companion` should be zero.")
+            raise ValueError("During matching, the primary should either be normal (stellar object) or ",
+                             "not normal (CO, nonexistent companion).")
 
 
         if interp1d_sec is None or interp1d_pri is None:
-            # binary.event = "END"
-            binary.state += " (GridMatchingFailed)"
-            if self.verbose or self.verbose == 1:
-                print("Failed matching")
-            return
+            failed_state = binary.state
+            set_binary_to_failed(binary)
+            raise MatchingError(f"Grid matching failed for {failed_state} binary.")    
+                  
+                   
         t0_sec = interp1d_sec["t0"]
         t0_pri = interp1d_pri["t0"]
         m01 = interp1d_sec["m0"]
@@ -1501,12 +1501,11 @@ class detached_step:
                 print("ODE solver duration: "
                       f"{t_after_ODEsolution-t_before_ODEsolution:.6g}")
                 print("solution of ODE", s)
+
             if s.status == -1:
-                print("Integration failed", s.message)
-                binary.state += ' (Integration failure)'
-                # binary.event = "END"
-                return
-                # raise RuntimeError("Integration failed", s.message)
+                failed_state = binary.state
+                set_binary_to_failed(binary)
+                raise NumericalError(f"Integration failed for {failed_state} binary.")               
 
             if self.dt is not None and self.dt > 0:
                 t = np.arange(binary.time, s.t[-1] + self.dt/2.0, self.dt)[1:]
@@ -1686,9 +1685,17 @@ class detached_step:
                                     const.msol * const.rsol ** 2)
                             
                     elif (key in ["log_total_angular_momentum"] and obj == secondary):
+
+                        current_omega = interp1d_sec["omega"][-1]
+
+                        ## add a warning catch if the current omega has an invalid value
+                        ## (otherwise python will throw an insuppressible warning when taking the log)
+                        if interp1d_sec["omega"][-1] <=0:
+                            Pwarn("Trying to compute log angular momentum for object with no spin", "InappropriateValueWarning")
+                            current_omega = np.nan
                                                
                         current = np.log10(
-                            (interp1d_sec["omega"][-1] / const.secyer)
+                            (current_omega / const.secyer)
                                 * (interp1d_sec[
                                     self.translate["total_moment_of_inertia"]](t[-1] - t_offset_sec).item() * 
                                     (const.msol * const.rsol ** 2)))                     
