@@ -42,20 +42,13 @@ STATE_UNDETERMINED = "undetermined_evolutionary_state"
 BURNING_STATES = ["Core_H_burning", "Core_He_burning",
                   "Shell_H_burning", "Central_He_depleted",
                   "Central_C_depletion"]
-RICHNESS_STATES = ["H-rich", "stripped_He"]
+RICHNESS_STATES = ["H-rich", "stripped_He", "accreted_He"]
 COMPACT_OBJECTS = ["WD", "NS", "BH","massless_remnant"]
 
 ALL_STAR_STATES = COMPACT_OBJECTS + [STATE_UNDETERMINED]
 ALL_STAR_STATES.extend(["{}_{}".format(rich_in, burning)
                         for rich_in in RICHNESS_STATES
                         for burning in BURNING_STATES])
-
-# `ALL_STAR_STATES` includes the following strings:
-# 'WD', 'NS', 'BH', 'undetermined_evolutionary_state',
-# 'H-rich_Core_H_burning', 'H-rich_Core_He_burning',
-# 'H-rich_Shell_H_burning', 'H-rich_Central_He_depleted',
-# 'stripped_He_Core_He_burning', 'stripped_Central_He_depleted',
-# 'H-rich_Central_C_depletion', 'stripped_He_Central_C_depletion'
 
 # Mass-transfer cases in form of integer flags
 MT_CASE_NO_RLO = 0
@@ -1340,7 +1333,7 @@ def infer_star_state(star_mass=None, surface_h1=None,
         return STATE_UNDETERMINED
 
     rich_in = ("H-rich" if surface_h1 > THRESHOLD_HE_NAKED_ABUNDANCE
-               else "stripped_He")
+               else ("accreted_He" if round(surface_h1, 10)<round(center_h1,10) else "stripped_He"))
     burning_H = (log_LH > LOG10_BURNING_THRESHOLD
                  and log_LH - log_Lnuc > REL_LOG10_BURNING_THRESHOLD)
     burning_He = (log_LHe > LOG10_BURNING_THRESHOLD
@@ -1368,7 +1361,7 @@ def infer_star_state(star_mass=None, surface_h1=None,
             burning = "Shell_H_burning"
         else:
             burning = "non_burning"
-
+        
     return "{}_{}".format(rich_in, burning)
 
 
@@ -1902,9 +1895,12 @@ def calculate_core_boundary(donor_mass,
         "H-rich_Core_C_burning",
         "H-rich_Central_C_depletion",
         "H-rich_non_burning",
+        "accreted_He_Core_H_burning",
+        "accreted_He_non_burning"
     ]
     # ENHANCEMENT: this list needs to be imported from e.g. flow_chart.py
     STAR_STATE_He = [
+        'accreted_He_Core_He_burning',
         'stripped_He_Core_He_burning',
         'stripped_He_Central_He_depleted',
         'stripped_He_Central_C_depletion',
