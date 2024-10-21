@@ -425,24 +425,24 @@ class BinaryPopulation:
             if self.JOB_ID is None and self.comm is None:
                 self.combine_saved_files(os.path.join(temp_directory,
                                                       "evolution.combined"),
-                                         filenames, mode = "w")
+                                         filenames, mode = "a")
             else:
                 self.combine_saved_files(
                     os.path.join(temp_directory,
                                  f"evolution.combined.{self.rank}"),
-                    filenames, mode = "w")
+                    filenames, mode = "a")
 
         else:
             if self.JOB_ID is None and self.comm is None:
                 self.manager.save(os.path.join(temp_directory,
                                                "evolution.combined"),
-                                  mode='w',
+                                  mode='a',
                                   **kwargs)
             else:
                 self.manager.save(
                     os.path.join(temp_directory,
                                  f"evolution.combined.{self.rank}"),
-                    mode='w', **kwargs)
+                    mode='a', **kwargs)
 
     def save(self, save_path, **kwargs):
         """Save BinaryPopulation to hdf file."""
@@ -657,6 +657,9 @@ class PopulationManager:
         except Exception as err:
             print("Error during breakdown of {0}:\n{1}".
                   format(str(binary), err))
+            #binary.properties = None will hopefully prevent large pickle file
+            #pickle the binary --> pickle.dump(name=binaryindex)
+            #print initial binary m1, m2, p
 
     def to_df(self, selection_function=None, **kwargs):
         """Convert all binaries to dataframe."""
