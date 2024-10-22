@@ -101,7 +101,8 @@ def x_ray_luminosity(binary, idx=-1):
     if don_rel_RL is None:
         return 0.0, 1.0
 
-    mdot_edd = eddington_limit(binary, idx=-1)[0]
+    # Mdot_edd converted from solar to cgs units
+    mdot_edd = eddington_limit(binary, idx=-1)[0] * (const.msol / const.secyer)
     eta = eddington_limit(binary, idx=-1)[1]
     # Donor Roche-lobe radius don_RL
     don_RL = 10**donor.log_R / (don_rel_RL + 1)
