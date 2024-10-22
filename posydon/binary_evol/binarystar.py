@@ -243,6 +243,12 @@ class BinaryStar:
 
     def append_state(self):
         """Update the history of the binaries' properties."""
+
+        ## do not append redirect steps to the binary history
+        if getattr(self, "event") is not None:
+            if "redirect" in getattr(self, "event"):
+                return
+        
         # Append to the binary history lists
         for item in BINARYPROPERTIES:
             getattr(self, item + '_history').append(getattr(self, item))
@@ -346,7 +352,6 @@ class BinaryStar:
         """
         extra_binary_cols_dict = kwargs.get('extra_columns', {})
         extra_columns = list(extra_binary_cols_dict.keys())
-        extra_columns_dtypes_user = list(extra_binary_cols_dict.values())
 
         all_keys = (["binary_index"]
                     + [key+'_history' for key in BINARYPROPERTIES]
