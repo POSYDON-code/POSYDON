@@ -2,10 +2,11 @@ __authors__ = [
     "Simone Bavera <Simone.Bavera@unige.ch>",
     "Max Briel <max.briel@unige.ch>",
     ]
-    
+
 import os
 import numpy as np
-import matplotlib.pyplot as plt
+import matplotlib as mpl
+import pandas as pd
 from posydon.utils.common_functions import PATH_TO_POSYDON
 from posydon.visualization.plot_defaults import DEFAULT_LABELS
 from posydon.utils.constants import Zsun
@@ -19,10 +20,10 @@ PATH_TO_POSYDON_DATA = os.environ.get("PATH_TO_POSYDON_DATA",'./')
 
 plt.style.use(os.path.join(PATH_TO_POSYDON, "posydon/visualization/posydon.mplstyle"))
 
-cm = plt.cm.get_cmap('tab20')
+cm = mpl.colormaps.get_cmap('tab20')
 COLORS = [cm.colors[i] for i in range(len(cm.colors)) if i%2==0] + [cm.colors[i] for i in range(len(cm.colors)) if i%2==1]
 
-def plot_merger_rate_density(z, rate_density, zmax=10., channels=False, 
+def plot_merger_rate_density(z, rate_density, zmax=10., channels=False,
                              GWTC3=False, label='DCO', **kwargs):
 
     plt.plot(z[z<zmax], rate_density['total'][z<zmax], label=f'{label} total', color='black')
@@ -30,13 +31,13 @@ def plot_merger_rate_density(z, rate_density, zmax=10., channels=False,
         for i, ch in enumerate([key for key in rate_density.keys() if key != 'total']):
             if ch != 'total':
                 plt.plot(z[z<zmax], rate_density[ch][z<zmax], label=ch, color=COLORS[i])
-    
+
     if GWTC3:
         plt.errorbar(0.2,17.9, yerr=[[0],[26.1]], fmt='',color='black', label='$\mathcal{R}_\mathrm{BBH}$ GWTC-3')
-        
+
 def plot_grb_rate_density(z, rate_density, zmax=10., channels=False,
                           grb_components=False, Perley16=False, **kwargs):
-    
+
     plt.plot(z[z<zmax], rate_density['total'][z<zmax], label='GRB total', color='black', linestyle='--')
     if grb_components:
         plt.plot(z[z<zmax], rate_density['total_GRB1'][z<zmax], label='total_GRB1', color='black', linestyle=':')
@@ -71,14 +72,14 @@ def plot_grb_rate_density(z, rate_density, zmax=10., channels=False,
         rate_P16_left = z_P16-np.array([0.1,0.5,1,1.5,2.,2.6,3.5,4.5,6])
         rate_P16_right = np.array([0.5,1,1.5,2.,2.6,3.5,4.5,6,8])-z_P16
         rate_P16_error_x =np.array([rate_P16_left.tolist(),rate_P16_right.tolist()])
-        plt.errorbar(z_P16,rate_P16,xerr=rate_P16_error_x,yerr=rate_P16_error_y, fmt='.', color='black', 
-                    label=r'$\mathcal{R}_\mathrm{LGRB}(E_\mathrm{iso}^{45-450\,\mathrm{keV}} > 10^{51} \, \mathrm{erg})$ SHOALS survey') 
-        
+        plt.errorbar(z_P16,rate_P16,xerr=rate_P16_error_x,yerr=rate_P16_error_y, fmt='.', color='black',
+                    label=r'$\mathcal{R}_\mathrm{LGRB}(E_\mathrm{iso}^{45-450\,\mathrm{keV}} > 10^{51} \, \mathrm{erg})$ SHOALS survey')
+
 def plot_rate_density(intrinsic_rates, channels=False, **kwargs):
-    plt.figure()   
-    
+    plt.figure()
+
     plt.plot(intrinsic_rates.index, intrinsic_rates['total'], label='total', color='black')
-    
+
     if channels:
         for i, ch in enumerate([key for key in intrinsic_rates.keys() if key != 'total']):
             if ch != 'total':
@@ -118,14 +119,14 @@ def plot_merger_efficiency(met, merger_efficiency, show=True, path=None, channel
     if show:
         plt.show()
 
-        
+
 def plot_hist_properties(df, ax=None, df_intrinsic=None, df_observable=None,
                         channel=None,
                         show=True, path=None, alpha=0.5,
                         range=None, bins=20, normalise=False,color=COLORS[0], label='', **kwargs):
     if ax is None:
         fig, ax = plt.subplots(1,1, figsize=(5,5))
-        
+
     df_columns = df.columns
     if 'intrinsic' in df_columns and 'observable' in df_columns:
         title = r'Intrinsic vs. observable (dashed) population'
@@ -141,7 +142,7 @@ def plot_hist_properties(df, ax=None, df_intrinsic=None, df_observable=None,
         values =  df['intrinsic']
         if normalise:
             values /= sum(values)
-            
+
         ax.hist(df['property'],
                  weights=values,
                  color=color,
@@ -149,12 +150,12 @@ def plot_hist_properties(df, ax=None, df_intrinsic=None, df_observable=None,
                  range=range,
                  bins=bins,
                  label=label+' intrinsic')
-            
+
     if 'observable' in df_columns:
         values = df['observable']
         if normalise:
             values /= sum(values)
-        
+
         ax.hist(df['property'],
                  weights=values,
                  color=color,
@@ -164,35 +165,35 @@ def plot_hist_properties(df, ax=None, df_intrinsic=None, df_observable=None,
                  linestyle='--',
                  bins=bins,
                  label=label+' observable')
-        
+
     ax.set_title(title)
-    
+
     if 'xlabel' in kwargs:
         ax.set_xlabel(kwargs['xlabel'])
     if normalise:
         ax.set_ylabel(r'PDF')
     else:
         ax.set_ylabel(r'\#events in bin')
-    
+
     if 'yscale' in kwargs:
         ax.set_yscale(kwargs['yscale'])
     if 'xscale' in kwargs:
         ax.set_xscale(kwargs['xscale'])
-    
+
     if path:
         plt.savefig(path)
     if show:
         plt.show()
-        
-        
-        
-        
-def plot_popsyn_over_grid_slice(pop, grid_type, met_Zsun, slices=None, channel=None, 
-                                plot_dir='./', prop=None, prop_range=None, 
-                                log_prop=False, alpha=0.3, s=5., 
+
+
+
+
+def plot_popsyn_over_grid_slice(pop, grid_type, met_Zsun, slices=None, channel=None,
+                                plot_dir='./', prop=None, prop_range=None,
+                                log_prop=False, alpha=0.3, s=5.,
                                 show_fig=True, save_fig=True, close_fig=True,
                                 plot_extension='png', verbose=False):
-    
+
     # Check if step_names in pop.history data
     if 'step_names' not in pop.history.columns:
         raise ValueError('Formation channel information not available in popsynth data.')
@@ -206,7 +207,7 @@ def plot_popsyn_over_grid_slice(pop, grid_type, met_Zsun, slices=None, channel=N
     # check if formation channel information is avaialbe
     if channel is not None and 'channel' not in pop.columns:
         raise ValueError('Formation channel information not available in popsynth data.')
-        
+
     if 'CO' in grid_path:
         # compact object mass slices
         # TODO: THIS SELECTION DOES NOT WORK!
@@ -230,25 +231,27 @@ def plot_popsyn_over_grid_slice(pop, grid_type, met_Zsun, slices=None, channel=N
     else:
         raise ValueError('Grid type not supported!')
 
-    
+
     if channel is not None:
-        channel_sel = 'channel == '+str(channel)
+        channel_sel = 'channel == "'+str(channel)+'"'
     else:
         channel_sel = ''
-        
+
     for i, var in enumerate(vars):
         if slices is not None and round(var,2) not in np.around(slices,2):
             if verbose:
                 print(f'Skipping {round(var,2)}')
             continue
-        
+
         met_indices = np.where(pop.select(where=channel_sel, columns=['metallicity']) == met_Zsun)[0].tolist()
         if 'HMS-HMS' in grid_path:
             slice_3D_var_range = (dq_edges[i],dq_edges[i+1])
-            
-            sel = 'index in '+str(met_indices)+' & event == "ZAMS"'
-            data = pop.history.select(where=sel, columns=['S1_mass','S2_mass' ,'orbital_period'])
-            
+            if len(met_indices) == 0:
+                data = pd.DataFrame(columns=['S1_mass','S2_mass', 'orbital_period'])
+            else:
+                sel = 'index in '+str(met_indices)+' & event == "ZAMS"'
+                data = pop.history.select(where=sel, columns=['S1_mass','S2_mass', 'orbital_period'])
+
             q = data['S2_mass'].values/data['S1_mass'].values
             q[q>1] = 1./q[q>1]
             mask = (q>=slice_3D_var_range[0]) & (q<=slice_3D_var_range[1])
@@ -259,15 +262,22 @@ def plot_popsyn_over_grid_slice(pop, grid_type, met_Zsun, slices=None, channel=N
             # select popsynth binaries in the given compact object mass
             # TODO: implement the case of reversal mass ratio
             if 'CO-HMS_RLO' in grid_path:
+                if len(met_indices) == 0:
+                    data = pd.DataFrame(columns=['S1_mass','S2_mass', 'orbital_period'])
+                else:
+                    sel = 'index in '+str(met_indices)+' & event == "oRLO2"'
+                    data = pop.history.select(where=sel, columns=['S1_mass','S2_mass', 'orbital_period'])
                 
-                sel = 'index in '+str(met_indices)+' & event == "oRLO2"'
-                data = pop.history.select(where=sel, columns=['S1_mass','S2_mass' ,'orbital_period'])
                 m_CO = data['S1_mass'].values
                 mask = (m_CO>=slice_3D_var_range[0]) & (m_CO<=slice_3D_var_range[1])
-                
+
             elif 'CO-HeMS' in grid_path:
-                sel = 'index in '+str(met_indices)+' & step_names == "step_CE"'
-                data = pop.history.select(where=sel, columns=['S1_mass','S2_mass' ,'orbital_period'])
+                if len(met_indices) == 0:
+                    data = pd.DataFrame(columns=['S1_mass','S2_mass', 'orbital_period'])
+                else:
+                    sel = 'index in '+str(met_indices)+' & step_names == "step_CE"'
+                    data = pop.history.select(where=sel, columns=['S1_mass','S2_mass', 'orbital_period'])
+                    
                 m_CO = data['S1_mass'].values
                 mask = (m_CO>=slice_3D_var_range[0]) & (m_CO<=slice_3D_var_range[1])
             else:
@@ -291,14 +301,14 @@ def plot_popsyn_over_grid_slice(pop, grid_type, met_Zsun, slices=None, channel=N
                             grid_3D=True, slice_3D_var_str=slice_3D_var_str,
                             slice_3D_var_range=slice_3D_var_range,
                             verbose=False, **PLOT_PROPERTIES)
-            
+
             log10_m1 = np.log10(data.loc[mask,'S1_mass'].values)
             log10_p = np.log10(data.loc[mask,'orbital_period'].values)
             # plot color map of a given DCO variable
             if prop is not None:
                 if prop not in pop.columns:
                     raise ValueError(f'Property {prop} not available in popsynth data.')
-                
+
                 # basically only for DCO systems
                 met_indices = np.array(met_indices)[mask].tolist()
                 prop_sel = 'index in '+str(met_indices) + ' & event == "CO_contact"'
@@ -323,7 +333,7 @@ def plot_popsyn_over_grid_slice(pop, grid_type, met_Zsun, slices=None, channel=N
                 plt.colorbar(label=label, orientation='horizontal')
             else:
                 plt.scatter(log10_m1, log10_p, s=s, marker='v', color='black', alpha=alpha, zorder=0.5)
-            
+
             if save_fig:
                 plt.savefig(os.path.join(plot_dir, fname%var), bbox_inches='tight')
             if show_fig:

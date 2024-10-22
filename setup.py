@@ -64,14 +64,14 @@ else:
 # the correct way to do this is to make sure that they are available on
 # conda and pip for all platforms we support (see prerequisites doc page).
 install_requires = [
-    'numpy >= 1.24.2',
+    'numpy >= 1.24.2,<2.0.0',
     'scipy >= 1.10.1',
     'iminuit >= 2.21.3',
     'configparser >= 5.3.0',
     'astropy >= 5.2.2',
     'pandas >= 2.0.0',
     'scikit-learn < 1.3.0', # 1.2.2
-    'matplotlib >=  3.7.1, <= 3.8.0',
+    'matplotlib >=  3.9.0',
     'matplotlib-label-lines >= 0.5.2',
     'h5py >= 3.8.0',
     'psutil >= 5.9.4',
@@ -103,7 +103,7 @@ extras_require = {
     # for experimental visualization features, e.g. VDH diagrams
     "vis": ["PyQt5 >= 5.15.9"],
     # for profile macjhine learning features, e.g. profile interpolation
-    "ml": ["tensorflow >= 2.13.0"], 
+    "ml": ["tensorflow >= 2.13.0"],
     # for running population synthesis on HPC facilities
     "hpc": ["mpi4py >= 3.0.3"],
 }
