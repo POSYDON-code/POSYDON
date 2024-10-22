@@ -255,13 +255,21 @@ class TimingHooks(EvolveHooks):
 
     def post_step(self, binary, step_name):
         """Record the duration of the step."""
+
+        ## do not record redirect step times
+        if binary.event is not None:
+            if "redirect" in binary.event:
+                return binary
+            
         binary.step_times.append(time.time() - self.step_start_time)
+
         if len(binary.event_history) > len(binary.step_times):
             diff = len(binary.event_history) - len(binary.step_times)
             binary.step_times += [None] * (diff)
         elif len(binary.event_history) < len(binary.step_times):
             last_items = len(binary.event_history)
             binary.step_times = binary.step_times[-(last_items - 1):]
+
         return binary
 
     def post_evolve(self, binary):
@@ -294,14 +302,22 @@ class StepNamesHooks(EvolveHooks):
 
     def post_step(self, binary, step_name):
         """Record the step name."""
+
+        ## do not record redirect step names
+        if binary.event is not None:
+            if "redirect" in binary.event:
+                return binary
+            
         binary.step_names.append(step_name)
         len_binary_hist = len(binary.event_history)
         len_step_names = len(binary.step_names)
         diff = len_binary_hist - len_step_names
+
         if len_binary_hist > len_step_names:
             binary.step_names += [None] * (diff)
         elif len_binary_hist < len_step_names:
             binary.step_names = binary.step_names[-(len_binary_hist - 1):]
+
         return binary
 
     def post_evolve(self, binary):
