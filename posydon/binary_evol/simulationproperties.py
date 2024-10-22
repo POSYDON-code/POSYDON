@@ -342,7 +342,7 @@ class XrbLuminositiesHooks(EvolveHooks):
 
     def post_step(self, binary, step_name):
         """Perform acctions after every evolution step."""
-        print("in hooks added xrb Lx and beaming = ", x_ray_luminosity(binary))
+        print("in extra hooks, added XRB Lx and beaming = ", x_ray_luminosity(binary))
         binary.xrb_luminosity.append(x_ray_luminosity(binary)[0])
         binary.xrb_beaming.append(x_ray_luminosity(binary)[1])
 

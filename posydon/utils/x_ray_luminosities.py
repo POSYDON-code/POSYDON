@@ -103,6 +103,7 @@ def x_ray_luminosity(binary, idx=-1):
 
     mdot_edd = eddington_limit(binary, idx=-1)[0]
     eta = eddington_limit(binary, idx=-1)[1]
+    # Donor Roche-lobe radius don_RL
     don_RL = 10**donor.log_R / (don_rel_RL + 1)
 
     if ( (donor.state == 'H-rich_Core_H_burning') & (donor.mass >= 3.0) &
