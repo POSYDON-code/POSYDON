@@ -327,7 +327,7 @@ class PrintStepInfoHooks(EvolveHooks):
         return binary
 
 
-class xrb_luminosities(EvolveHooks):
+class XrbLuminositiesHooks(EvolveHooks):
     """Idetifies the X-ray binaries and calculates their X-ray luminosities
     """
     def pre_evolve(self, binary):

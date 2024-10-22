@@ -16,7 +16,7 @@ from posydon.utils import constants as const
 import copy
 import warnings
 from scipy.interpolate import PchipInterpolator
-from common_functions import eddington_limit
+from posydon.utils.common_functions import eddington_limit
 
 
 PATH_TO_POSYDON = os.environ.get("PATH_TO_POSYDON")
@@ -57,7 +57,7 @@ PATH_TO_POSYDON = os.environ.get("PATH_TO_POSYDON")
 #     return xrb_type
 
 
-def x_ray_luminosity(binary, xrb_type, idx=-1):
+def x_ray_luminosity(binary, idx=-1):
     """ Calculate the geometrical beaming of a super-Eddington accreting source.
     Compute the super-Eddington isotropic-equivalent accretion rate and the
     beaming factor of a star. This does not change the intrinsic accretion onto
@@ -103,6 +103,7 @@ def x_ray_luminosity(binary, xrb_type, idx=-1):
 
     mdot_edd = eddington_limit(binary, idx=-1)[0]
     eta = eddington_limit(binary, idx=-1)[1]
+    don_RL = 10**donor.log_R / (don_rel_RL + 1)
 
     if ( (donor.state == 'H-rich_Core_H_burning') & (donor.mass >= 3.0) &
         (binary.state == 'detached') & (don_RL <= (100.0 * 10 ** donor.log_R) ) & 
