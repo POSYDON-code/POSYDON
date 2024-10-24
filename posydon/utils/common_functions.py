@@ -374,53 +374,6 @@ def eddington_limit(binary, idx=-1):
     return mdot_edd / (const.msol / const.secyer), eta
 
 
-def beaming(binary):
-    """Calculate the geometrical beaming of a super-Eddington accreting source
-    [1]_, [2]_.
-
-    Compute the super-Eddington isotropic-equivalent accretion rate and the
-    beaming factor of a star. This does not change the intrinsic accretion onto
-    the accretor and is an observational effect due to the inflated structure
-    of the accretion disc that beams the outgoing X-ray emission. This is
-    important for observing super-Eddington X-ray sources
-    (e.g. ultraluminous X-ray sources). In case of a BH we are assuming that it
-    has zero spin which is not a good approximation for high accretion rates.
-
-    Parameters
-    ----------
-    binary : BinaryStar
-        The binary object.
-
-    Returns
-    -------
-    list
-        The super-Eddington isotropic-equivalent accretion rate and beaming
-        factor respcetively in solar units.
-
-    References
-    ----------
-    .. [1] Shakura, N. I. & Sunyaev, R. A. 1973, A&A, 24, 337
-    .. [2] King A. R., 2008, MNRAS, 385, L113
-
-    """
-    mdot_edd = eddington_limit(binary, idx=-1)[0]
-
-    rlo_mdot = 10**binary.lg_mtransfer_rate
-
-    if rlo_mdot >= mdot_edd:
-        if rlo_mdot > 8.5 * mdot_edd:
-            # eq. 8 in King A. R., 2009, MNRAS, 393, L41-L44
-            b = 73 / (rlo_mdot / mdot_edd)**2
-        else:
-            b = 1
-        # Shakura, N. I. & Sunyaev, R. A. 1973, A&A, 24, 337
-        mdot_beam = mdot_edd * (1 + np.log(rlo_mdot / mdot_edd)) / b
-    else:
-        b = 1
-        mdot_beam = 10**binary.lg_mtransfer_rate
-
-    return mdot_beam, b
-
 
 def bondi_hoyle(binary, accretor, donor, idx=-1, wind_disk_criteria=True,
                 scheme='Hurley+2002'):
