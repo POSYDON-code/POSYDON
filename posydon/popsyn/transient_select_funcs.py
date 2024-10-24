@@ -179,12 +179,12 @@ def BBH_selection_function(history_chunk, oneline_chunk, formation_channels_chun
     df_transients['S2_mass'] = history_chunk[mask]['S2_mass']
     df_transients['S1_spin'] = history_chunk[mask]['S1_spin']
     df_transients['S2_spin'] = history_chunk[mask]['S2_spin']
-    df_transients['S1_spin_orbit_tilt'] = oneline_chunk['S1_spin_orbit_tilt']
-    df_transients['S2_spin_orbit_tilt'] = oneline_chunk['S2_spin_orbit_tilt']
+    df_transients['S1_spin_orbit_tilt_at_merger'] = oneline_chunk['S1_spin_orbit_tilt_second_SN']
+    df_transients['S2_spin_orbit_tilt_at_merger'] = oneline_chunk['S2_spin_orbit_tilt_second_SN']
     df_transients['orbital_period'] = history_chunk[mask]['orbital_period']
     df_transients['chirp_mass'] = m_chirp(history_chunk[mask]['S1_mass'], history_chunk[mask]['S2_mass'])
     df_transients['mass_ratio'] = mass_ratio(history_chunk[mask]['S1_mass'], history_chunk[mask]['S2_mass'])
-    df_transients['chi_eff'] = chi_eff(history_chunk[mask]['S1_mass'], history_chunk[mask]['S2_mass'], history_chunk[mask]['S1_spin'], history_chunk[mask]['S2_spin'], oneline_chunk['S1_spin_orbit_tilt'], oneline_chunk['S2_spin_orbit_tilt'])
+    df_transients['chi_eff'] = chi_eff(history_chunk[mask]['S1_mass'], history_chunk[mask]['S2_mass'], history_chunk[mask]['S1_spin'], history_chunk[mask]['S2_spin'], oneline_chunk['S1_spin_orbit_tilt_second_SN'], oneline_chunk['S2_spin_orbit_tilt_second_SN'])
     df_transients['eccentricity'] = history_chunk[mask]['eccentricity']
 
     if formation_channels_chunk is not None:
@@ -193,7 +193,7 @@ def BBH_selection_function(history_chunk, oneline_chunk, formation_channels_chun
     return df_transients
     
 
-def DCO_detactability(sensitivity, transient_pop_chunk, z_events_chunk, z_weights_chunk, verbose=False):
+def DCO_detectability(sensitivity, transient_pop_chunk, z_events_chunk, z_weights_chunk, verbose=False):
     '''Calculate the observability of a DCO population.
     
     Parameters
@@ -208,6 +208,18 @@ def DCO_detactability(sensitivity, transient_pop_chunk, z_events_chunk, z_weight
         
         GW detector sensitivity and network configuration you want to use, see arXiv:1304.0670v3
         detector sensitivities are taken from: https://dcc.ligo.org/LIGO-T2000012-v2/public
+        
+    Note: The population must have the following columns:
+    - S1_mass : the mass of the first BH
+    
+    For the following columns, the function will try to calculate them if they are not present:
+    - q : the mass ratio
+    - chi_eff : the effective spin of the BHs
+    
+    For q, S2_mass must be present.
+    For chi_eff, S1_Mass, S2_mass, S1_spin, S2_spin, S1_spin_orbit_tilt_at_merger, S2_spin_orbit_tilt_at_merger must be present.
+
+    These have to be present and a valid value. If not, the function will raise an error!        
     
     '''
     available_sensitiveies = ['O3actual_H1L1V1', 'O4low_H1L1V1', 'O4high_H1L1V1', 'design_H1L1V1']
@@ -233,8 +245,8 @@ def DCO_detactability(sensitivity, transient_pop_chunk, z_events_chunk, z_weight
                                         transient_pop_chunk['S2_mass'],
                                         transient_pop_chunk['S1_spin'],
                                         transient_pop_chunk['S2_spin'],
-                                        transient_pop_chunk['S1_spin_orbit_tilt'],
-                                        transient_pop_chunk['S2_spin_orbit_tilt'])
+                                        transient_pop_chunk['S1_spin_orbit_tilt_at_merger'],
+                                        transient_pop_chunk['S2_spin_orbit_tilt_at_merger'])
     
     detectable_weights = z_weights_chunk.to_numpy()
     for i in tqdm(range(z_events_chunk.shape[1]), total=z_events_chunk.shape[1], disable= not verbose):
