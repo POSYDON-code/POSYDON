@@ -342,9 +342,9 @@ class XrbLuminositiesHooks(EvolveHooks):
 
     def post_step(self, binary, step_name):
         """Perform acctions after every evolution step."""
-        # print("in extra hooks, added XRB Lx and beaming = ", x_ray_luminosity(binary))
-        binary.xrb_luminosity.append(x_ray_luminosity(binary)[0])
-        binary.xrb_beaming.append(x_ray_luminosity(binary)[1])
+        #print("in extra hooks, added XRB Lx and beaming = ", x_ray_luminosity(binary,observe_wind_XRB=False))
+        binary.xrb_luminosity.append(x_ray_luminosity(binary,observe_wind_XRB=False)[0])
+        binary.xrb_beaming.append(x_ray_luminosity(binary,observe_wind_XRB=False)[1])
 
         return binary
 
@@ -352,8 +352,8 @@ class XrbLuminositiesHooks(EvolveHooks):
         """Ensure None's are append to match rows in history."""
 
         if binary.event == 'END' or binary.event == 'FAILED':
-             binary.xrb_luminosity.append(x_ray_luminosity(binary)[0])
-             binary.xrb_beaming.append(x_ray_luminosity(binary)[1])
+             binary.xrb_luminosity.append(x_ray_luminosity(binary,observe_wind_XRB=False)[0])
+             binary.xrb_beaming.append(x_ray_luminosity(binary,observe_wind_XRB=False)[1])
 #            diff = int(len(binary.event_history) - len(binary.Lx))
 #            binary.xrb_luminosities += [0.0]*diff
 #            binary.xrb_beaming += [1.0]*diff

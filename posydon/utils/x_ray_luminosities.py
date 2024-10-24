@@ -57,7 +57,7 @@ PATH_TO_POSYDON = os.environ.get("PATH_TO_POSYDON")
 #     return xrb_type
 
 
-def x_ray_luminosity(binary, idx=-1):
+def x_ray_luminosity(binary, observe_wind_XRB=False, idx=-1):
     """ Calculate the geometrical beaming of a super-Eddington accreting source.
     Compute the super-Eddington isotropic-equivalent accretion rate and the
     beaming factor of a star. This does not change the intrinsic accretion onto
@@ -109,10 +109,12 @@ def x_ray_luminosity(binary, idx=-1):
 
     if ( (donor.state == 'H-rich_Core_H_burning') & (donor.mass >= 3.0) &
         (binary.state == 'detached') & (don_RL <= (100.0 * 10 ** donor.log_R) ) & 
-        (donor.surf_avg_omega_div_omega_crit >= 0.7) & (binary.orbital_period >= 10.0) & (binary.orbital_period <= 300.0) ): # Be-XRBs
+        (donor.surf_avg_omega_div_omega_crit >= 0.7) & (binary.orbital_period >= 10.0) & (binary.orbital_period <= 300.0) ): 
+        # Be-XRBs
         Lx = 10.0**35 * 10.0**(4.53 - (1.50 * np.log10(binary.orbital_period)) )
-        b = 1.0
-    else: # RLO and wind
+        b = 0.1 # assuming 10% duty cycle
+    else: 
+        # RLO and wind
         if mdot >= mdot_edd:
             if (mdot > 150.0 * mdot_edd):
                 b = 3.2e-3
@@ -124,7 +126,19 @@ def x_ray_luminosity(binary, idx=-1):
         else:
             b = 1.
             Lx = 10**accretor.lg_mdot*eta*const.clight**2
+
+    # If observe_wind_XRB == True, check if wind accretion rate is high enough to make accretion disc
+    # bychecking the donor is filling 80% of its Roche lobe.
+    # Hirai & Mandel (2021)
+    if (observe_wind_XRB == True) & ((state == 'detached') & (acc_state == 'BH')):
+        if (( don_rel_RL + 1 ) < 0.8):
+            Lx = 10**-54
+            b = 1.0
+        
     return Lx, b
+
+    
+    
 
 
 # def beaming(binary):
