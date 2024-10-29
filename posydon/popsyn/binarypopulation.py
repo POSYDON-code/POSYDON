@@ -137,6 +137,8 @@ class BinaryPopulation:
 
         self.population_properties.max_simulation_time = self.kwargs.get(
             'max_simulation_time')  # years
+        
+        self.history_verbose = self.kwargs.get("history_verbose", False)
 
         self.entropy = self.kwargs.get('entropy', None)
         seq = np.random.SeedSequence(entropy=self.entropy)
@@ -987,6 +989,7 @@ class BinaryGenerator:
                 separation=separation,
                 orbital_period=orbital_period,
                 eccentricity=eccentricity,
+                history_verbose=self.kwargs.get("history_verbose", False)
             )
             star1_params = dict(
                 mass=m1,
@@ -1018,6 +1021,7 @@ class BinaryGenerator:
                 separation=separation,
                 orbital_period=orbital_period,
                 eccentricity=eccentricity,
+                history_verbose=self.kwargs.get("history_verbose", False)
             )
             star1_params = dict(
                 mass=m1,

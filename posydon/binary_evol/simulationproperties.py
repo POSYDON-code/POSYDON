@@ -67,9 +67,7 @@ class SimulationProperties:
         # for debugging purposes
         if not hasattr(self, 'max_n_steps_per_binary'):
             self.max_n_steps_per_binary = 100
-        #if not hasattr(self, "verbose_binary_errors"):
-        #    self.verbose_binary_errors = False
-
+        
         # Set functions for evolution
         for key, val in kwargs.items():
             if "step" not in key:   # skip loading steps
@@ -256,8 +254,8 @@ class TimingHooks(EvolveHooks):
     def post_step(self, binary, step_name):
         """Record the duration of the step."""
 
-        ## do not record redirect step times
-        if binary.event is not None:
+        ## do not record redirect step times if history_verbose=False
+        if not binary.history_verbose and binary.event is not None:
             if "redirect" in binary.event:
                 return binary
             
@@ -303,8 +301,8 @@ class StepNamesHooks(EvolveHooks):
     def post_step(self, binary, step_name):
         """Record the step name."""
 
-        ## do not record redirect step names
-        if binary.event is not None:
+        ## do not record redirect step names if history_verbose=False
+        if not binary.history_verbose and binary.event is not None:
             if "redirect" in binary.event:
                 return binary
             

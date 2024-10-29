@@ -169,8 +169,9 @@ class BinaryStar:
             self.true_anomaly_SN2 = None
         if not hasattr(self, 'first_SN_already_occurred'):
             self.first_SN_already_occurred = False
-        # if not hasattr(self, 'V_sys'):
-        #     self.V_sys = [0, 0, 0]
+
+        if not hasattr(self, 'history_verbose'):
+            self.history_verbose = False
 
         # store interpolation_class and mt_history for each step_MESA
         for grid_type in ['HMS_HMS','CO_HMS_RLO','CO_HeMS','CO_HeMS_RLO']:
@@ -244,8 +245,8 @@ class BinaryStar:
     def append_state(self):
         """Update the history of the binaries' properties."""
 
-        ## do not append redirect steps to the binary history
-        if getattr(self, "event") is not None:
+        ## do not append redirect steps to the binary history if history_verbose=False
+        if not self.history_verbose and getattr(self, "event") is not None:
             if "redirect" in getattr(self, "event"):
                 return
         
