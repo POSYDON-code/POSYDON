@@ -31,5 +31,5 @@ jobs:
 
     - name: Run installation test
       run: |
-        pytest unit_tests/test_installation.py   
+        pytest posydon/unit_tests/test_installation.py   
     # can remove ref to specific test to run all tests in unit_tests
