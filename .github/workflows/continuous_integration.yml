@@ -26,10 +26,11 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
 
-    - name: Install pytest
-      run: python -m pip install --upgrade pip && pip install pytest
-
-    - name: Run installation test
+    - name: Install POSYDON with extras
       run: |
-        pytest posydon/unit_tests/test_installation.py   
-    # can remove ref to specific test to run all tests in unit_tests
+        python -m pip install --upgrade pip
+        pip install ".[doc,vis,ml,hpc]" 
+
+    # - name: Run all tests
+    #   run: |
+    #     pytest posydon/unit_tests/
