@@ -10,7 +10,7 @@ jobs:
 
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
+        os: [macos-latest, ubuntu-latest, windows-latest]
         python-version: ['3.11']  # can add more if we want to support
 
     steps:
