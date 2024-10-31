@@ -363,7 +363,7 @@ def eddington_limit(binary, idx=-1):
             eta = 1 - np.sqrt(1 - (min(m_acc[i],
                                        np.sqrt(6) * m_ini) / (3 * m_ini))**2)
         else:
-            # 1.25 * 10**6 cm
+            # For NSs = 1.25 * 10**6 cm. For WDs = 2.9e8*(M)**(-1./3.)/const.Rsun
             acc_radius = CO_radius(m_acc[i], state_acc[i]) * const.Rsun
             eta = const.standard_cgrav*m_acc[i]/(acc_radius*const.clight**2)
 
