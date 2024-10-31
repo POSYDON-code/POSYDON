@@ -375,8 +375,7 @@ def eddington_limit(binary, idx=-1):
 
 
 
-def bondi_hoyle(binary, accretor, donor, idx=-1, wind_disk_criteria=True,
-                scheme='Hurley+2002'):
+def bondi_hoyle(binary, accretor, donor, idx=-1, scheme='Hurley+2002'):
     """Calculate the Bondi-Hoyle accretion rate of a binary [1]_.
 
     Parameters
@@ -389,8 +388,6 @@ def bondi_hoyle(binary, accretor, donor, idx=-1, wind_disk_criteria=True,
         The donor in the binary.
     idx : int
         default: -1
-    wind_disk_criteria : bool
-        default: True, see [5]_
     scheme : str
         There are different options:
 
@@ -414,10 +411,8 @@ def bondi_hoyle(binary, accretor, donor, idx=-1, wind_disk_criteria=True,
     .. [3] Hurley, J. R., Tout, C. A., & Pols, O. R. 2002, MNRAS, 329, 897
     .. [4] Belczynski, K., Kalogera, V., Rasio, F. A., et al. 2008, ApJS, 174,
         223
-    .. [5] Sen, K. ,Xu, X. -T., Langer, N., El Mellah, I. , Schurmann, C., &
-        Quast, M., 2021, A&A
-    .. [6] Sander A. A. C., Vink J. S., 2020, MNRAS, 499, 873
-    .. [7] Kudritzki, R.-P., & Puls, J. 2000, ARA&A, 38, 613
+    .. [5] Sander A. A. C., Vink J. S., 2020, MNRAS, 499, 873
+    .. [6] Kudritzki, R.-P., & Puls, J. 2000, ARA&A, 38, 613
 
     """
     alpha = 1.5
@@ -515,20 +510,6 @@ def bondi_hoyle(binary, accretor, donor, idx=-1, wind_disk_criteria=True,
     # Bondi, H., & Hoyle, F. 1944, MNRAS, 104, 273
     mdot_acc = alpha * ((G * m_acc * Msun)**2
                         / (2 * v_rel**3 * v_wind * r**2)) * 10**lg_mdot
-
-    # eq. 10 in Sen, K. ,Xu, X. -T., Langer, N., El Mellah, I. , Schurmann, C.,
-    # Quast, M., 2021, A&A
-    if wind_disk_criteria:      # check if accretion disk will form
-        eta = 1.0/3.0           # wind accretion efficiency between 1 and 1/3
-        gamma = 1.0             # for non-spinning BH
-        q = m / m_acc
-        rdisk_div_risco = (
-            (2/3) * (eta / (1 + q)) ** 2
-            * (v / (const.clight * 0.01)) ** (-2)
-            * (1 + (v_wind / v) ** 2) ** (-4) * gamma ** (-1))
-        for i in range(len(rdisk_div_risco)):
-            if rdisk_div_risco[i] <= 1:         # No disk formed
-                mdot_acc[i] = 10**-99.0
 
     # make it Eddington-limited
     mdot_edd = eddington_limit(binary, idx=idx)[0]
