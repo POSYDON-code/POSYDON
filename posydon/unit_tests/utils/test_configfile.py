@@ -18,11 +18,11 @@ from ast import AST, parse
 class TestElements:
     # check for objects, which should be an element of the tested module
     def test_dir(self):
-        elements = ['ConfigFile', 'VariableKey', '__authors__', '__builtins__',
-                    '__cached__', '__doc__', '__file__', '__loader__',
-                    '__name__', '__package__', '__spec__', 'ast',
-                    'configparser', 'copy', 'json', 'np', 'operator', 'os',
-                    'parse_inifile']
+        elements = ['ConfigFile', 'VariableKey', '__authors__',\
+                    '__builtins__', '__cached__', '__doc__', '__file__',\
+                    '__loader__', '__name__', '__package__', '__spec__',\
+                    'ast', 'configparser', 'copy', 'json', 'np', 'operator',\
+                    'os', 'parse_inifile']
         assert dir(totest) == elements, "There might be added or removed "+\
                "objects without an update on the unit test."
 
@@ -44,7 +44,7 @@ class TestFunctions:
 
     @fixture
     def test_ini(self, test_path):
-        # a temporary ini file for testing"
+        # a temporary ini file for testing
         with open(test_path, "w") as test_file:
             test_file.write("[run_parameters]\n")
             test_file.write("test_bool1 = True\n")
@@ -118,7 +118,7 @@ class TestConfigFile:
 
     @fixture
     def test_json(self, test_path):
-        # a temporary ini file for testing"
+        # a temporary json file for testing
         with open(test_path, "w") as test_file:
             test_file.write('{\n    "Unit": "Test"\n}\n')
         return

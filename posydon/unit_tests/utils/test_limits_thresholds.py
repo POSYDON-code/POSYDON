@@ -16,16 +16,16 @@ import posydon.utils.limits_thresholds as totest
 class TestElements:
     # check for objects, which should be an element of the tested module
     def test_dir(self):
-        elements = ['LG_MTRANSFER_RATE_THRESHOLD', 'LOG10_BURNING_THRESHOLD',
-                    'NEUTRINO_MASS_LOSS_UPPER_LIMIT',
-                    'REL_LOG10_BURNING_THRESHOLD',
-                    'RL_RELATIVE_OVERFLOW_THRESHOLD',
-                    'STATE_NS_STARMASS_UPPER_LIMIT',
-                    'THRESHOLD_CENTRAL_ABUNDANCE',
-                    'THRESHOLD_CENTRAL_ABUNDANCE_LOOSE_C',
-                    'THRESHOLD_HE_NAKED_ABUNDANCE',
-                    'THRESHOLD_NUCLEAR_LUMINOSITY', '__authors__',
-                    '__builtins__', '__cached__', '__doc__', '__file__',
+        elements = ['LG_MTRANSFER_RATE_THRESHOLD', 'LOG10_BURNING_THRESHOLD',\
+                    'NEUTRINO_MASS_LOSS_UPPER_LIMIT',\
+                    'REL_LOG10_BURNING_THRESHOLD',\
+                    'RL_RELATIVE_OVERFLOW_THRESHOLD',\
+                    'STATE_NS_STARMASS_UPPER_LIMIT',\
+                    'THRESHOLD_CENTRAL_ABUNDANCE',\
+                    'THRESHOLD_CENTRAL_ABUNDANCE_LOOSE_C',\
+                    'THRESHOLD_HE_NAKED_ABUNDANCE',\
+                    'THRESHOLD_NUCLEAR_LUMINOSITY', '__authors__',\
+                    '__builtins__', '__cached__', '__doc__', '__file__',\
                     '__loader__', '__name__', '__package__', '__spec__', 'np']
         assert dir(totest) == elements, "There might be added or removed "+\
                "objects without an update on the unit test."

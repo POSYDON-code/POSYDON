@@ -17,8 +17,8 @@ from inspect import isclass, isroutine
 class TestElements:
     # check for objects, which should be an element of the tested module
     def test_dir(self):
-        elements = ['IGNORE_REASONS_PRIORITY', 'IgnoreReason', '__authors__',
-                    '__builtins__', '__cached__', '__doc__', '__file__',
+        elements = ['IGNORE_REASONS_PRIORITY', 'IgnoreReason', '__authors__',\
+                    '__builtins__', '__cached__', '__doc__', '__file__',\
                     '__loader__', '__name__', '__package__', '__spec__']
         assert dir(totest) == elements, "There might be added or removed "+\
                "objects without an update on the unit test."

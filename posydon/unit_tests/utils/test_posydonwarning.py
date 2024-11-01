@@ -17,20 +17,20 @@ from inspect import isclass, isroutine
 class TestElements:
     # check for objects, which should be an element of the tested module
     def test_dir(self):
-        elements = ['AllPOSYDONWarnings', 'ApproximationWarning',
-                    'BinaryParsingWarning', 'Catch_POSYDON_Warnings',
-                    'ClassificationWarning', 'EvolutionWarning',
-                    'InappropriateValueWarning', 'IncompletenessWarning',
-                    'InterpolationWarning', 'MissingFilesWarning',
-                    'NoPOSYDONWarnings', 'OverwriteWarning', 'POSYDONWarning',
-                    'Pwarn', 'ReplaceValueWarning', 'SetPOSYDONWarnings',
-                    'UnsupportedModelWarning', '_CAUGHT_POSYDON_WARNINGS',
-                    '_Caught_POSYDON_Warnings', '_POSYDONWarning_subclasses',
-                    '_POSYDON_WARNINGS_REGISTRY', '__authors__',
-                    '__builtins__', '__cached__', '__doc__', '__file__',
-                    '__loader__', '__name__', '__package__', '__spec__',
-                    '_apply_POSYDON_filter', '_get_POSYDONWarning_class',
-                    '_issue_warn', 'copy', 'get_stats', 'print_stats', 'sys',
+        elements = ['AllPOSYDONWarnings', 'ApproximationWarning',\
+                    'BinaryParsingWarning', 'Catch_POSYDON_Warnings',\
+                    'ClassificationWarning', 'EvolutionWarning',\
+                    'InappropriateValueWarning', 'IncompletenessWarning',\
+                    'InterpolationWarning', 'MissingFilesWarning',\
+                    'NoPOSYDONWarnings', 'OverwriteWarning', 'POSYDONWarning',\
+                    'Pwarn', 'ReplaceValueWarning', 'SetPOSYDONWarnings',\
+                    'UnsupportedModelWarning', '_CAUGHT_POSYDON_WARNINGS',\
+                    '_Caught_POSYDON_Warnings', '_POSYDONWarning_subclasses',\
+                    '_POSYDON_WARNINGS_REGISTRY', '__authors__',\
+                    '__builtins__', '__cached__', '__doc__', '__file__',\
+                    '__loader__', '__name__', '__package__', '__spec__',\
+                    '_apply_POSYDON_filter', '_get_POSYDONWarning_class',\
+                    '_issue_warn', 'copy', 'get_stats', 'print_stats', 'sys',\
                     'warnings']
         assert dir(totest) == elements, "There might be added or removed "+\
                "objects without an update on the unit test."

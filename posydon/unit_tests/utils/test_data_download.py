@@ -20,11 +20,11 @@ from unittest.mock import patch
 class TestElements:
     # check for objects, which should be an element of the tested module
     def test_dir(self):
-        elements = ['PATH_TO_POSYDON_DATA', 'ProgressBar', '__authors__',
-                    '__builtins__', '__cached__', '__doc__', '__file__',
-                    '__loader__', '__name__', '__package__', '__spec__',
-                    'data_download', 'data_url', 'file', 'hashlib',
-                    'original_md5', 'os', 'progressbar', 'tarfile', 'tqdm',
+        elements = ['PATH_TO_POSYDON_DATA', 'ProgressBar', '__authors__',\
+                    '__builtins__', '__cached__', '__doc__', '__file__',\
+                    '__loader__', '__name__', '__package__', '__spec__',\
+                    'data_download', 'data_url', 'file', 'hashlib',\
+                    'original_md5', 'os', 'progressbar', 'tarfile', 'tqdm',\
                     'urllib']
         assert dir(totest) == elements, "There might be added or removed "+\
                "objects without an update on the unit test."

@@ -16,20 +16,21 @@ from pytest import approx
 class TestElements:
     # check for objects, which should be an element of the tested module
     def test_dir(self):
-        elements = ['H_weight', 'He_weight', 'Lsun', 'Lsun33', 'Msun',
-                    'Msun33', 'Qconv', 'Rsun', 'Rsun11', 'SNcheck_ERR',
-                    'Teffsol', 'Zsun', '__authors__', '__builtins__',
-                    '__cached__', '__doc__', '__file__', '__loader__',
-                    '__name__', '__package__', '__spec__', 'a2rad',
-                    'age_of_universe', 'agesol', 'amu', 'asol', 'au', 'aursun',
-                    'avo', 'boltz_sigma', 'boltzm', 'cgas', 'clight', 'crad',
-                    'day2sec', 'dayyer', 'ev2erg', 'fine', 'hbar', 'hion',
-                    'inversecm2erg', 'kerg', 'kev', 'km2cm', 'loggsol', 'lsol',
-                    'ly', 'm_earth', 'm_jupiter', 'mbolsol', 'mbolsun', 'me',
-                    'mev_amu', 'mev_to_ergs', 'mn', 'mp', 'msol', 'pc', 'pi',
-                    'planck_h', 'qe', 'r_earth', 'r_jupiter', 'rad2a', 'rbohr',
-                    'rhonuc', 'rsol', 'secyer', 'semimajor_axis_jupiter',
-                    'ssol', 'standard_cgrav', 'weinfre', 'weinlam']
+        elements = ['H_weight', 'He_weight', 'Lsun', 'Lsun33', 'Msun',\
+                    'Msun33', 'Qconv', 'Rsun', 'Rsun11', 'SNcheck_ERR',\
+                    'Teffsol', 'Zsun', '__authors__', '__builtins__',\
+                    '__cached__', '__doc__', '__file__', '__loader__',\
+                    '__name__', '__package__', '__spec__', 'a2rad',\
+                    'age_of_universe', 'agesol', 'amu', 'asol', 'au',\
+                    'aursun', 'avo', 'boltz_sigma', 'boltzm', 'cgas',\
+                    'clight', 'crad', 'day2sec', 'dayyer', 'ev2erg', 'fine',\
+                    'hbar', 'hion', 'inversecm2erg', 'kerg', 'kev', 'km2cm',\
+                    'loggsol', 'lsol', 'ly', 'm_earth', 'm_jupiter',\
+                    'mbolsol', 'mbolsun', 'me', 'mev_amu', 'mev_to_ergs',\
+                    'mn', 'mp', 'msol', 'pc', 'pi', 'planck_h', 'qe',\
+                    'r_earth', 'r_jupiter', 'rad2a', 'rbohr', 'rhonuc',\
+                    'rsol', 'secyer', 'semimajor_axis_jupiter', 'ssol',\
+                    'standard_cgrav', 'weinfre', 'weinlam']
         assert dir(totest) == elements, "There might be added or removed "+\
                "objects without an update on the unit test."
 
