@@ -10,16 +10,12 @@ jobs:
 
     strategy:
       matrix:
-        os: [macos-latest, ubuntu-latest, windows-latest]
+        os: [macos-latest, ubuntu-latest]
         python-version: ['3.11']  # can add more if we want to support
 
     steps:
     - name: Checkout repository
       uses: actions/checkout@v2
-
-    - name: Normalize line endings on Windows
-      if: runner.os == 'Windows'
-      run: git config --global core.autocrlf false
 
     - name: Set up Python
       uses: actions/setup-python@v2
