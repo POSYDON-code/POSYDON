@@ -147,6 +147,11 @@ class SimulationProperties:
         binary : instance of <class, BinaryStar>
 
         """
+        ## do not call extra step hooks if history_verbose=False
+        if not binary.history_verbose and binary.event is not None:
+            if "redirect" in binary.event:
+                return binary
+    
         for hooks in self.all_hooks_classes:
             hooks.pre_step(binary, step_name)
         if hasattr(self, 'extra_pre_step'):
@@ -171,6 +176,11 @@ class SimulationProperties:
         binary : instance of <class, BinaryStar>
 
         """
+        ## do not call extra step hooks if history_verbose=False
+        if not binary.history_verbose and binary.event is not None:
+            if "redirect" in binary.event:
+                return binary
+            
         for hooks in self.all_hooks_classes:
             hooks.post_step(binary, step_name)
         if hasattr(self, 'extra_post_step'):
@@ -253,11 +263,6 @@ class TimingHooks(EvolveHooks):
 
     def post_step(self, binary, step_name):
         """Record the duration of the step."""
-
-        ## do not record redirect step times if history_verbose=False
-        if not binary.history_verbose and binary.event is not None:
-            if "redirect" in binary.event:
-                return binary
             
         binary.step_times.append(time.time() - self.step_start_time)
 
@@ -300,11 +305,6 @@ class StepNamesHooks(EvolveHooks):
 
     def post_step(self, binary, step_name):
         """Record the step name."""
-
-        ## do not record redirect step names if history_verbose=False
-        if not binary.history_verbose and binary.event is not None:
-            if "redirect" in binary.event:
-                return binary
             
         binary.step_names.append(step_name)
         len_binary_hist = len(binary.event_history)
