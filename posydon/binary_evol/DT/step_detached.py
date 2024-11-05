@@ -37,7 +37,7 @@ from posydon.utils.common_functions import (
 )
 from posydon.binary_evol.flow_chart import (STAR_STATES_CC, STAR_STATES_CO)
 import posydon.utils.constants as const
-from posydon.utils.posydonerror import NumericalError, MatchingError, POSYDONError, ModelError
+from posydon.utils.posydonerror import NumericalError, MatchingError, POSYDONError, FlowError
 from posydon.utils.posydonwarning import Pwarn
 
 LIST_ACCEPTABLE_STATES_FOR_HMS = ["H-rich_Core_H_burning", "accreted_He_Core_H_burning"]
@@ -1927,17 +1927,17 @@ class detached_step:
                         binary.state = "RLO1"
                         binary.event = "oRLO1"
                 
-                if (binary.star_1.state in LIST_ACCEPTABLE_STATES_FOR_HeStar 
-                    and binary.star_2.state in STAR_STATES_H_RICH 
-                    and binary.state == "RLO1"):
+                if (binary.state == "RLO1" 
+                    and binary.star_1.state in LIST_ACCEPTABLE_STATES_FOR_HeStar 
+                    and binary.star_2.state in STAR_STATES_H_RICH):
                         set_binary_to_failed(binary)
-                        raise ModelError("Evolution of He-rich stars in RLO onto H-rich stars after HMS-HMS not yet supported.") 
+                        raise FlowError("Evolution of He-rich stars in RLO onto H-rich stars after HMS-HMS not yet supported.") 
                 
-                elif (binary.star_2.state in LIST_ACCEPTABLE_STATES_FOR_HeStar 
-                    and binary.star_1.state in STAR_STATES_H_RICH 
-                    and binary.state == "RLO2"):
+                elif (binary.state == "RLO2" 
+                      and binary.star_2.state in LIST_ACCEPTABLE_STATES_FOR_HeStar 
+                      and binary.star_1.state in STAR_STATES_H_RICH):
                         set_binary_to_failed(binary)
-                        raise ModelError("Evolution of He-rich stars in RLO onto H-rich stars after HMS-HMS not yet supported.") 
+                        raise FlowError("Evolution of He-rich stars in RLO onto H-rich stars after HMS-HMS not yet supported.") 
 
 
             elif s.t_events[2]:
