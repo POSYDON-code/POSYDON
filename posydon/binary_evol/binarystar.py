@@ -159,12 +159,13 @@ class BinaryStar:
         for key, val in binary_kwargs.items():
             setattr(self, key, val)
 
-        if getattr(self, "separation") is None and getattr(self, "orbital_period") is not None:
-            setattr(self, "separation", 
-                    orbital_separation_from_period(self.orbital_period, self.star_1.mass, self.star_2.mass))
-        elif getattr(self, "orbital_period") is None and getattr(self, "separation") is not None:
-            setattr(self, "orbital_period", 
-                    orbital_period_from_separation(self.separation, self.star_1.mass, self.star_2.mass))
+        if getattr(self.star_1, "mass") is not None and getattr(self.star_2, "mass") is not None:
+            if getattr(self, "separation") is None and getattr(self, "orbital_period") is not None:
+                setattr(self, "separation", 
+                        orbital_separation_from_period(self.orbital_period, self.star_1.mass, self.star_2.mass))
+            elif getattr(self, "orbital_period") is None and getattr(self, "separation") is not None:
+                setattr(self, "orbital_period", 
+                        orbital_period_from_separation(self.separation, self.star_1.mass, self.star_2.mass))
 
         if not hasattr(self, 'inspiral_time'):
             self.inspiral_time = None
