@@ -11,14 +11,11 @@ jobs:
     strategy:
       matrix:
         os: [macos-latest, ubuntu-latest]
-        python-version: ['3.11']  # can add more if we want to support
-        include:
-          - os: macos-latest
-            architecture: x64  # Intel architecture
-          - os: macos-latest
-            architecture: arm64  # Apple Silicon architecture
-          - os: ubuntu-latest
-            architecture: x64  # Default for Ubuntu
+        architecture: [x64, arm64]  # Test both architectures
+        python-version: ['3.11']
+      exclude:
+        - os: ubuntu-latest
+          architecture: arm64  # Exclude arm64 for Ubuntu as it’s unnecessary
 
     steps:
     - name: Checkout repository
