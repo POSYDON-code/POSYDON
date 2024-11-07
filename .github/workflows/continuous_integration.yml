@@ -12,6 +12,13 @@ jobs:
       matrix:
         os: [macos-latest, ubuntu-latest]
         python-version: ['3.11']  # can add more if we want to support
+        include:
+          - os: macos-latest
+            architecture: x64  # Intel architecture
+          - os: macos-latest
+            architecture: arm64  # Apple Silicon architecture
+          - os: ubuntu-latest
+            architecture: x64  # Default for Ubuntu
 
     steps:
     - name: Checkout repository
