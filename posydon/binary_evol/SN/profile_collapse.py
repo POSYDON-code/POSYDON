@@ -452,7 +452,8 @@ def do_core_collapse_BH(star,
     j_shell_array = [j_shells[0]]  # shell's specific angular momentum
     a_star_array = [a_BH]  # star's spin parameter
     J_disk_shell_array = [0.]  # angular momentum of the shell's disk
-
+    BZ_jet_power_array = [0.]
+    BZ_jet_power_total = 0.
     # compute BH properties as each shell collapses
     for i, value in enumerate(dm):
 
@@ -573,6 +574,15 @@ def do_core_collapse_BH(star,
             raise ValueError(
                 "We got a={:.5g} from shell {} containing {:.5g} M_sun".format(
                     a_BH, i, dm_shell / Mo))
+               
+        # calculate the potential BZ jet power at this moment of the collapse
+        # We assume full efficiency for the magnetic flux and a BH spin
+        # dependence of a^2 for the BH spin efficiency.
+        BZ_power = BZ_jet_power(M_dot=dm_disk,
+                     eta_phi=1,
+                     eta_a=a_BH**2)
+        BZ_jet_power_array.append(BZ_power)
+        BZ_jet_power_total += BZ_power
 
         # Append all quantities to the arrays
         J_accreted_array.append(J_BH)
@@ -617,25 +627,60 @@ def do_core_collapse_BH(star,
               'was formed around the BH.')
         print('')
 
-    return [
-        M_BH_total,
-        a_BH_total,
-        m_disk_accreted,
-        m_disk_radiated,
-        # np.array(M_BH_array),
-        # np.array(a_BH_array),
-        # np.array(J_accreted_array),
-        # np.array(J_total_array),
-        # np.array(J_disk_shell_array),
-        # np.array(radiation_eff_array),
-        # np.array(r_isco_array),
-        # np.array(j_isco_array),
-        # np.array(M_direct_collapse_array),
-        # np.array(M_disk_array),
-        # np.array(dm_direct_array),
-        # np.array(dm_disk_array),
-        # np.array(j_shell_array),
-        # np.array(M_total_array),
-        # np.array(a_star_array),
-        # max_he_mass_ejected,
-    ]
+    return {
+        'M_BH_total' : M_BH_total,
+        'a_BH_total' : a_BH_total,
+        'm_disk_accreted' : m_disk_accreted,
+        'm_disk_radiated' : m_disk_radiated,
+        'BZ_jet_power_total' : BZ_jet_power_total,
+        # 'BZ_jet_power_array' : np.array(BZ_jet_power_array),
+        # 'M_BH_array' : np.array(M_BH_array),
+        # 'a_BH_array': np.array(a_BH_array),  # Dimensionless spin evolution
+        # 'J_accreted_array': np.array(J_accreted_array),  # Angular momentum accreted by BH
+        # 'J_total_array': np.array(J_total_array),  # Total angular momentum in accreted shells + BH's initial J
+        # 'J_disk_shell_array': np.array(J_disk_shell_array),  # Angular momentum of the shell's disk
+        # 'radiation_eff_array': np.array(radiation_eff_array),  # Fraction of accretion disk radiated away
+        # 'r_isco_array': np.array(r_isco_array),  # Radius of ISCO
+        # 'j_isco_array': np.array(j_isco_array),  # Specific angular momentum at ISCO (prograde orbits)
+        # 'M_direct_collapse_array': np.array(M_direct_collapse_array),  # Integrated mass accreted through direct collapse
+        # 'M_disk_array': np.array(M_disk_array),  # Integrated mass accreted through disk
+        # 'dm_direct_array': np.array(dm_direct_array),  # Mass in shell with j < j_isco (direct collapse)
+        # 'dm_disk_array': np.array(dm_disk_array),  # Mass in shell with j > j_isco (forms a disk)
+        # 'j_shell_array': np.array(j_shell_array),  # Shell's specific angular momentum
+        # 'M_total_array': np.array(M_total_array),  # Integrated mass (shells + initial BH)
+        # 'a_star_array': np.array(a_star_array),  # Star's spin parameter
+        # 'max_he_mass_ejected': max_he_mass_ejected,  # Max He mass that can be ejected during the disk formation
+    }
+
+
+def BZ_jet_power(M_dot, eta_phi, eta_a):
+    """Compute the Blandford-Znajek jet power.
+
+    This function computes the Blandford-Znajek jet power given the mass
+    accretion rate, the efficiency factor for the magnetic flux, and the
+    efficiency factor for the BH spin.
+    This is based on the decomposition of the jet power in terms of the
+    magnetic flux and the BH spin, see Gottlieb et al. (2023, 2024).
+    We do not assume any disk state in this calculation, i.e. 
+    magnetically arrested disk (MAD), Neutrino dominated accretion flow (NDAF),
+    or advection dominated accretion flow (ADAF).
+    However, the functions for eta_phi and eta_a can be dependent on the disk 
+    type. Moreover, the efficiency factors are not constant and 
+    can change with the magnetic field and BH spin.
+
+    Parameters
+    ----------
+    M_dot : float
+        Mass accretion rate in g/s.
+    eta_phi : float
+        Efficiency factor for the magnetic flux.
+    eta_a : float
+        Efficiency factor for the BH spin.
+    
+    Returns
+    -------
+    P_jet : float
+        Blandford-Znajek jet power in erg/s.
+    """
+    P_jet = M_dot * const.clight**2 * eta_phi * eta_a # erg/s
+    return P_jet

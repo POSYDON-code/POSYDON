@@ -665,10 +665,15 @@ class StepSN(object):
                             max_neutrino_mass_loss=self.max_neutrino_mass_loss,
                             verbose=self.verbose
                         )
-                        star.mass = final_BH[0]
-                        star.spin = final_BH[1]
-                        star.m_disk_accreted = final_BH[2]
-                        star.m_disk_radiated = final_BH[3]
+                        # set post-collapse properties/information to store
+                        for i in final_BH.keys():
+                            setattr(star, i, final_BH[i])
+                        
+                        # set specific properties manually
+                        star.mass = final_BH['M_BH_total']
+                        star.spin = final_BH['a_BH_total']
+                        star.m_disk_accreted = final_BH['m_disk_accreted']
+                        star.m_disk_radiated = final_BH['m_disk_radiated']
                         star.state = "BH"
                     else:
                         star.mass = m_grav
@@ -791,14 +796,22 @@ class StepSN(object):
                             max_neutrino_mass_loss=self.max_neutrino_mass_loss,
                             verbose=self.verbose
                         )
-                        star.mass = final_BH[0]
+                        # set post-collapse properties/information to store
+                        for i in final_BH.keys():
+                            setattr(star, i, final_BH[i])
+                            
                         if m_grav != star.mass and self.verbose:
                             print("The star formed a disk during the collapse "
                                   "and lost", round(final_BH[0] - m_rembar, 2),
                                   "M_sun.")
-                        star.spin = final_BH[1]
-                        star.m_disk_accreted = final_BH[2]
-                        star.m_disk_radiated = final_BH[3]
+                        
+                        # set specific properties manually
+                        star.mass = final_BH['M_BH_total']
+                        star.spin = final_BH['a_BH_total']
+                        star.m_disk_accreted = final_BH['m_disk_accreted']
+                        star.m_disk_radiated = final_BH['m_disk_radiated']
+                        star.state = "BH"
+                    
                     elif star.state == "NS":
                         star.mass = m_grav
                         star.m_disk_accreted = 0.0
