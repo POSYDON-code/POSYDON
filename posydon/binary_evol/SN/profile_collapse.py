@@ -578,6 +578,7 @@ def do_core_collapse_BH(star,
         # calculate the potential BZ jet power at this moment of the collapse
         # We assume full efficiency for the magnetic flux and a BH spin
         # dependence of a^2 for the BH spin efficiency.
+        # just an energy total per collapse step.
         BZ_power = BZ_jet_power(M_dot=dm_disk,
                      eta_phi=1,
                      eta_a=a_BH**2)
@@ -657,7 +658,7 @@ def BZ_jet_power(M_dot, eta_phi, eta_a):
     """Compute the Blandford-Znajek jet power.
 
     This function computes the Blandford-Znajek jet power given the mass
-    accretion rate, the efficiency factor for the magnetic flux, and the
+    accretion, the efficiency factor for the magnetic flux, and the
     efficiency factor for the BH spin.
     This is based on the decomposition of the jet power in terms of the
     magnetic flux and the BH spin, see Gottlieb et al. (2023, 2024).
@@ -671,7 +672,7 @@ def BZ_jet_power(M_dot, eta_phi, eta_a):
     Parameters
     ----------
     M_dot : float
-        Mass accretion rate in g/s.
+        Mass accretion rate in g.
     eta_phi : float
         Efficiency factor for the magnetic flux.
     eta_a : float
@@ -680,7 +681,7 @@ def BZ_jet_power(M_dot, eta_phi, eta_a):
     Returns
     -------
     P_jet : float
-        Blandford-Znajek jet power in erg/s.
+        Blandford-Znajek jet power in erg.
     """
-    P_jet = M_dot * const.clight**2 * eta_phi * eta_a # erg/s
+    P_jet = M_dot * const.clight**2 * eta_phi * eta_a # erg
     return P_jet
