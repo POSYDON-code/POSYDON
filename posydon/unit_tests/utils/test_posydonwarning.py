@@ -5,6 +5,11 @@ __authors__ = [
     "Matthias Kruckow <Matthias.Kruckow@unige.ch>"
 ]
 
+# ensure that python forgets about previous imports of posydonwarning, e.g. in
+# other tests, before importing it here
+from sys import modules as sys_modules
+sys_modules.pop('posydon.utils.posydonwarning')
+
 # import the module which will be tested
 import posydon.utils.posydonwarning as totest
 
@@ -186,6 +191,12 @@ class TestFunctions:
         assert totest.get_stats() == totest._POSYDON_WARNINGS_REGISTRY
 
     def test_print_stats(self, capsys, clear_registry):
+        # empyt the global POSYDON warnings registry before this test
+        keys = []
+        for k in totest._POSYDON_WARNINGS_REGISTRY:
+            keys.append(k)
+        for k in keys:
+            del totest._POSYDON_WARNINGS_REGISTRY[k]
         # no warnings to print
         totest.print_stats()
         assert "No POSYDON warnings occured.\n" == capsys.readouterr().out

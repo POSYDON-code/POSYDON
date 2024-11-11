@@ -36,9 +36,9 @@ class TestValues:
     # check that the values fit
     def test_value_IGNORE_REASONS_PRIORITY(self):
         v_last = None
-        for v in ['ignored_no_history1', 'ignored_no_binary_history',
-                  'corrupted_history1', 'corrupted_binary_history',
-                  'corrupted_history2', 'ignored_scrubbed_history',
+        for v in ['ignored_no_history1', 'ignored_no_binary_history',\
+                  'corrupted_history1', 'corrupted_binary_history',\
+                  'corrupted_history2', 'ignored_scrubbed_history',\
                   'ignored_no_final_profile', 'ignored_no_RLO']:
             # check required values
             assert v in totest.IGNORE_REASONS_PRIORITY, "missing entry"
