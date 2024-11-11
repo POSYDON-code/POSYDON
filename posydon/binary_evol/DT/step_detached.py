@@ -642,6 +642,39 @@ class detached_step:
             the properties of the secondary.
 
         """
+        def posydon_attribute(list_for_matching, star):
+            list_of_attributes = []
+            for attr in list_for_matching:
+                list_of_attributes.append(getattr(star, attr))
+            return list_of_attributes
+        
+        def sq_diff_function(x):
+            return self.square_difference(
+                x, htrack=htrack, mesa_labels=MESA_labels,
+                posydon_attributes=posydon_attributes,
+                colscalers=colscalers, scales=scales)
+        
+        def get_MESA_labels(list_for_matching):
+
+            MESA_labels = list_for_matching[0]
+            
+            rs = list_for_matching[1]
+            colscalers = list_for_matching[2]
+            bnds = []
+            for i in range(3, len(list_for_matching)):
+                bnds.append(list_for_matching[i])
+
+            if self.verbose:
+                print("Matching parameters and their normalizations:\n", MESA_labels, rs)
+            
+            scales = []
+            for MESA_label, colscaler in zip(MESA_labels, colscalers):
+                scale_of_attribute = scale(MESA_label, htrack, colscaler)
+                scales.append(scale_of_attribute)
+            
+            return MESA_labels, rs, colscalers, bnds, scales
+
+            
         if htrack:
             self.grid = self.grid_Hrich
         else:
@@ -653,106 +686,86 @@ class detached_step:
         scale = self.scale
 
         initials = None
-        # tolerance 1e-8
+        
         tolerance_matching_integration = 1e-2
         tolerance_matching_integration_hard = 1e-1
+
         if self.verbose:
-            print(matching_method)
+            print(f"\nMatching process started in detached step for {star.state} star "
+                  f"with matching method = {matching_method}")
+
         if matching_method == "root":
+
             if star.state in LIST_ACCEPTABLE_STATES_FOR_HMS:
                 x0 = get_root0(["center_h1", "mass"],
                                [star.center_h1, star.mass],
                                htrack, rs=[0.7, 300])
                 sol = root(
                     lambda x: [
-                        get_track_val("center_h1", htrack, *x)
-                        - star.center_h1,
-                        get_track_val("mass", htrack, *x) - star.mass,
-                    ],
-                    x0,
-                    method="hybr",
-                )
+                        get_track_val("center_h1", htrack, *x) - star.center_h1,
+                        get_track_val("mass", htrack, *x) - star.mass],
+                    x0, method="hybr")
             else:
                 x0 = get_root0(
                     ["he_core_mass", "mass"],
                     [star.he_core_mass, star.mass],
                     htrack,
-                    rs=[11, 300],
-                )
+                    rs=[11, 300])
+                
                 sol = root(
                     lambda x: [
-                        get_track_val("he_core_mass", htrack, *x)
-                        - star.he_core_mass,
-                        get_track_val("mass", htrack, *x) - star.mass,
-                    ],
-                    x0,
-                    method="hybr",
-                )
+                        get_track_val("he_core_mass", htrack, *x) - star.he_core_mass,
+                        get_track_val("mass", htrack, *x) - star.mass],
+                    x0, method="hybr")
+                
             if not sol.success or sol.x[1] < 0:
                 initials = (np.nan, np.nan)
             else:
                 initials = sol.x
+
         elif matching_method == "minimize":
-
-            def posydon_attribute(list_for_matching, star):
-                list_of_attributes = []
-                for attr in list_for_matching:
-                    list_of_attributes.append(getattr(star, attr))
-                return list_of_attributes
-
+            
             if star.state in LIST_ACCEPTABLE_STATES_FOR_HMS:
                 list_for_matching = self.list_for_matching_HMS
             elif star.state in LIST_ACCEPTABLE_STATES_FOR_postMS:
                 list_for_matching = self.list_for_matching_postMS
-
             elif star.state in LIST_ACCEPTABLE_STATES_FOR_HeStar:
                 list_for_matching = self.list_for_matching_HeStar
-
-            MESA_labels = list_for_matching[0]
-            posydon_attributes = posydon_attribute(MESA_labels, star)
-            rs = list_for_matching[1]
-            colscalers = list_for_matching[2]
-            bnds = []
-            for i in range(3, len(list_for_matching)):
-                bnds.append(list_for_matching[i])
-
-            if self.verbose or self.verbose == 1:
-                print("Matching attributes and their normalizations :",
-                      MESA_labels, rs)
+            
+            MESA_labels, rs, colscalers, bnds, scales = get_MESA_labels(list_for_matching)
+            
             for i in MESA_labels:
                 if i not in self.root_keys:
-                    raise AttributeError("Expected matching parameter not "
-                                    "added in the single star grid options.")
-
-            scales = []
-            for MESA_label, colscaler in zip(MESA_labels, colscalers):
-                scale_of_attribute = scale(MESA_label, htrack, colscaler)
-                scales.append(scale_of_attribute)
-
+                    raise AttributeError(f"Expected matching parameter {i} not added in the single star grid options.")
+                
+            posydon_attributes = posydon_attribute(MESA_labels, star)
             x0 = get_root0(MESA_labels, posydon_attributes, htrack, rs=rs)
-
-            def sq_diff_function(x):
-                return self.square_difference(
-                    x, htrack=htrack, mesa_labels=MESA_labels,
-                    posydon_attributes=posydon_attributes,
-                    colscalers=colscalers, scales=scales)
 
             sol = minimize(sq_diff_function, x0, method="TNC", bounds=bnds)
 
-            # alternative matching
-            # 1st, different minimization method
-            if (np.abs(sol.fun) > tolerance_matching_integration
-                    or not sol.success):
-                if self.verbose or self.verbose == 1:
-                    print("Alternative matching in detached step, 1st step "
-                          "because either", np.abs(sol.fun), ">",
-                          tolerance_matching_integration,
-                          "or sol.success = ", sol.success)
+            ## Alternative matching attempts if default matching fails!
+            # 1st attempt: use a different minimization method
+            if (np.abs(sol.fun) > tolerance_matching_integration or not sol.success):
+                
+                if self.verbose:
+                    print("\nAlternative matching started (1st attempt) "
+                          "because previous attempt was unsuccessful:\n",
+                          f"tolerance {np.abs(sol.fun)} > {tolerance_matching_integration}",
+                          f"or sol.success = {sol.success}")
+                    print("(Now trying an alternative minimization method)")
+                    
                 sol = minimize(sq_diff_function, x0, method="Powell")
 
-            # 2nd, alternative matching parameters
-            if (np.abs(sol.fun) > tolerance_matching_integration
-                    or not sol.success):
+            # 2nd attempt: use alternative matching parameters
+            if (np.abs(sol.fun) > tolerance_matching_integration or not sol.success):    
+                   
+                if self.verbose:
+                    print("\nAlternative matching started (2nd attempt) "
+                          "because previous attempt was unsuccessful:\n",
+                          f"tolerance {np.abs(sol.fun)} > {tolerance_matching_integration}",
+                          f"or sol.success = {sol.success}")
+                    print("(Now trying to match with alternative parameters)")     
+                      
                 if star.state in LIST_ACCEPTABLE_STATES_FOR_HMS:
                     list_for_matching = self.list_for_matching_HMS_alternative
                 elif star.state in LIST_ACCEPTABLE_STATES_FOR_postMS:
@@ -760,50 +773,30 @@ class detached_step:
                         self.list_for_matching_postMS_alternative)
                 elif star.state in LIST_ACCEPTABLE_STATES_FOR_HeStar:
                     list_for_matching = (
-                        self.list_for_matching_HeStar_alternative)
-
-                MESA_labels = list_for_matching[0]
-                posydon_attributes = posydon_attribute(MESA_labels, star)
-                rs = list_for_matching[1]
-                colscalers = list_for_matching[2]
-                bnds = []
-                for i in range(3, len(list_for_matching)):
-                    bnds.append(list_for_matching[i])
-
-                if self.verbose or self.verbose == 1:
-                    print("Alternative matching in detached step, 2nd step "
-                          "because", np.abs(sol.fun), ">",
-                          tolerance_matching_integration,
-                          "or sol.success = ", sol.success)
-                    print("Matching alternative attributes and their "
-                          "normalizations :", MESA_labels, rs)
-
-                scales = []
-                for MESA_label, colscaler in zip(MESA_labels, colscalers):
-                    scale_of_attribute = scale(MESA_label, htrack, colscaler)
-                    scales.append(scale_of_attribute)
-
-                def sq_diff_function(x):
-                    return self.square_difference(
-                        x, htrack=htrack, mesa_labels=MESA_labels,
-                        posydon_attributes=posydon_attributes,
-                        colscalers=colscalers, scales=scales)
+                        self.list_for_matching_HeStar_alternative)                
+                    
+                MESA_labels, rs, colscalers, bnds, scales = get_MESA_labels(list_for_matching)
 
                 x0 = get_root0(MESA_labels, posydon_attributes, htrack, rs=rs)
 
                 sol = minimize(sq_diff_function, x0, method="TNC", bounds=bnds)
 
-            # 3rd Alternative matching with a H-rich grid for He-star and vice verse (not for HMS stars)
-            if (np.abs(sol.fun) > tolerance_matching_integration
-                    or not sol.success):
+            # 3rd attempt: match an He-star with an H-rich grid, or vice versa (not applicable for HMS stars)
+            if (np.abs(sol.fun) > tolerance_matching_integration or not sol.success):
+                
                 if (star.state in LIST_ACCEPTABLE_STATES_FOR_HeStar
                     or star.state in LIST_ACCEPTABLE_STATES_FOR_postMS):
 
-                    if self.verbose:
-                        print("Alternative matching in detached step, 3rd step because ",
-                                np.abs(sol.fun), ">", tolerance_matching_integration  ,
-                                " or sol.success = ", sol.success)
+                    Pwarn("Attempting to match an He-star with an H-rich grid or post-MS star with a"
+                          " stripped-He grid", "EvolutionWarning")
 
+                    if self.verbose:
+                        print("\nAlternative matching started (3rd attempt) "
+                          "because previous attempt was unsuccessful:\n", 
+                          f"tolerance {np.abs(sol.fun)} > {tolerance_matching_integration}",
+                          f"or sol.success = {sol.success}")
+                        print("(Now trying to match star to a different grid)")
+                        
                     if star.state in LIST_ACCEPTABLE_STATES_FOR_HeStar:
                         htrack = True
                         list_for_matching = self.list_for_matching_HeStar
@@ -811,116 +804,71 @@ class detached_step:
                         htrack = False
                         list_for_matching = self.list_for_matching_postMS
 
-                    MESA_labels = list_for_matching[0]
-                    posydon_attributes = posydon_attribute(MESA_labels, star)
-                    rs = list_for_matching[1]
-                    colscalers = list_for_matching[2]
-                    bnds = []
-                    for i in range(3, len(list_for_matching)):
-                        bnds.append(list_for_matching[i])
+                    MESA_labels, rs, colscalers, bnds, scales = get_MESA_labels(list_for_matching)
 
-                    if self.verbose or self.verbose == 1:
-                        print("Matching attributes and their normalizations :",
-                              MESA_labels, rs)
                     for i in MESA_labels:
                         if i not in self.root_keys:
-                            raise AttributeError("Expected matching parameter not "
-                                            "added in the single star grid options.")
+                            raise AttributeError(f"Expected matching parameter {i} not added "
+                                                 "in the single star grid options.")
+                    
+                    x0 = get_root0(MESA_labels, posydon_attributes, htrack, rs=rs)
 
-                    scales = []
-                    for MESA_label, colscaler in zip(MESA_labels, colscalers):
-                        scale_of_attribute = scale(MESA_label, htrack, colscaler)
-                        scales.append(scale_of_attribute)
-
-                    def sq_diff_function(x):
-                        return self.square_difference(
-                            x, htrack=htrack, mesa_labels=MESA_labels,
-                            posydon_attributes=posydon_attributes,
-                            colscalers=colscalers, scales=scales)
-
-                    x0 = get_root0(
-                        MESA_labels, posydon_attributes, htrack, rs=rs)
-
-                    # bnds = ([m_min_H, m_max_H], [0, None])
                     try:
-                        sol = minimize(sq_diff_function, x0,
-                                   method="TNC", bounds=bnds)
+                        sol = minimize(sq_diff_function, x0, method="TNC", bounds=bnds)
                     except:
                         raise NumericalError("SciPy numerical differentiation occured outside boundary "
                                              "while matching to single star track")
 
-            # if still not acceptable matching, we fail the system:
-            if (np.abs(sol.fun) > tolerance_matching_integration_hard
-                    or not sol.success):
-                '''
-                if ((self.get_track_val("mass", star.htrack, *sol.x)
-                        - self.get_track_val(
-                            "he_core_mass", star.htrack, *sol.x))
-                        / self.get_track_val(
-                            "mass", star.htrack, *sol.x) >= 0.05):
-                '''
-                if self.verbose or self.verbose == 1:
-                    print("minimization in matching not successful, with",
-                          np.abs(sol.fun), ">", tolerance_matching_integration,
-                          "tolerance")
+            # if matching is still not successful, set result to NaN:
+            if (np.abs(sol.fun) > tolerance_matching_integration_hard or not sol.success):
+                if self.verbose:
+                    print("\nMatching result is NOT successful, with ",
+                          np.abs(sol.fun), ">", tolerance_matching_integration, "tolerance")
                 initials = (np.nan, np.nan)
-                '''
-                star.fun = np.nan
-                star.stiching_rel_mass_difference = np.nan
-                star.stiching_rel_radius_difference = np.nan
-                star.stiching_rel_inertia_difference = np.nan
-                '''
+                
             elif np.abs(sol.fun) < tolerance_matching_integration_hard:
-                if self.verbose or self.verbose == 1:
-                    print("minimization in matching considered acceptable,"
-                          " with", f'{np.abs(sol.fun):.8f}', "<",
-                          tolerance_matching_integration, "tolerance")
+                if self.verbose:
+                    print("\nMatching result is considered successful, with "
+                        f'{np.abs(sol.fun):.8f}', "<", tolerance_matching_integration, "tolerance")
                 initials = sol.x
-                '''
-                star.fun = sol.fun
-                star.stiching_rel_mass_difference = (
-                    self.get_track_val("mass", htrack, *sol.x) - star.mass
-                ) / star.mass
-                if star.log_R in MESA_label:
-                    star.stiching_rel_logRadius_difference = (
-                        self.get_track_val("log_R", htrack, *sol.x)
-                        - star.log_R) / star.log_R
-                else:
-                    star.stiching_rel_logRadius_difference = np.nan
-                if (star.total_moment_of_inertia is not None
-                        and not np.isnan(star.total_moment_of_inertia)):
-                    star.stiching_rel_inertia_difference = (
-                        self.get_track_val("inertia", htrack, *sol.x)
-                        - star.total_moment_of_inertia
-                    ) / star.total_moment_of_inertia
-                '''
 
+        if self.verbose:
+            if not np.isnan(initials[0]):
+                print(
+                    "Matching completed for", star.state, "star!\n"
+                    f"Matched to track with intial mass m0 = {initials[0]:.3f} [Msun]"
+                    f" at time t0 = {initials[1]/1e6:.3f} [Myrs] \n",
+                    "and m(t0), log10(R(t0), center_he(t0), surface_he4(t0), "
+                    "surface_h1(t0), he_core_mass(t0), center_c12(t0) = \n",
+                    f'{self.get_track_val("mass", htrack, *sol.x):.3f}',
+                    f'{self.get_track_val("log_R", htrack, *sol.x):.3f}',
+                    f'{self.get_track_val("center_he4", htrack, *sol.x):.4f}',
+                    f'{self.get_track_val("surface_he4", htrack, *sol.x):.4f}',
+                    f'{self.get_track_val("surface_h1", htrack, *sol.x):.4f}',
+                    f'{self.get_track_val("he_core_mass", htrack, *sol.x):.3f}',
+                    f'{self.get_track_val("center_c12", htrack, *sol.x):.4f}\n',
+                    "The same values of the original star at the end of the previous "
+                    "step were: \n",
+                    f'{star.mass:.3f}',
+                    f'{star.log_R:.3f}',
+                    f'{star.center_he4:.4f}',
+                    f'{star.surface_he4:.4f}',
+                    f'{star.surface_h1:.4f}',
+                    f'{star.he_core_mass:.3f}',
+                    f'{star.center_c12:.4f}'
+                )
+            else:
+                print(
+                    "Matching completed unsuccessfully for star with properties: \n"
+                    f'mass = {star.mass:.3f}',
+                    f'log_R = {star.log_R:.3f}',
+                    f'center_he4 = {star.center_he4:.4f}',
+                    f'surface_he4 = {star.surface_he4:.4f}',
+                    f'surface_h1 = {star.surface_h1:.4f}',
+                    f'he_core_mass = {star.he_core_mass:.3f}',
+                    f'center_c12 = {star.center_c12:.4f}'
+                )
 
-        if self.verbose or self.verbose == 1:
-            print(
-                "matching ", star.state,
-                " star with track of intial mass m0, at time t0:",
-                f'{initials[0]:.3f}  [Msun],',
-                f'{initials[1]/1e6:.3f} [Myrs]', "\n",
-                "with m(t0), log10(R(t0), center_he(t0), surface_he4(t0), "
-                "surface_h1(t0), he_core_mass(t0), center_c12(t0) = \n",
-                f'{self.get_track_val("mass", htrack, *sol.x):.3f}',
-                f'{self.get_track_val("log_R", htrack, *sol.x):.3f}',
-                f'{self.get_track_val("center_he4", htrack, *sol.x):.4f}',
-                f'{self.get_track_val("surface_he4", htrack, *sol.x):.4f}',
-                f'{self.get_track_val("surface_h1", htrack, *sol.x):.4f}',
-                f'{self.get_track_val("he_core_mass", htrack, *sol.x):.3f}',
-                f'{self.get_track_val("center_c12", htrack, *sol.x):.4f}\n',
-                "The same values of the secondary at the end of the previous "
-                "step was = \n",
-                f'{star.mass:.3f}',
-                f'{star.log_R:.3f}',
-                f'{star.center_he4:.4f}',
-                f'{star.surface_he4:.4f}',
-                f'{star.surface_h1:.4f}',
-                f'{star.he_core_mass:.3f}',
-                f'{star.center_c12:.4f}'
-            )
         return initials[0], initials[1], htrack
 
     def __repr__(self):
@@ -1083,9 +1031,9 @@ class detached_step:
                     t_before_matching = time.time()
                     m0, t0, htrack = self.match_to_single_star(star1, htrack)
                     t_after_matching = time.time()
-                    if self.verbose or self.verbose == 1:
-                        print("Matching duration: "
-                              f"{t_after_matching-t_before_matching:.6g}")
+                    
+                    if self.verbose:
+                        print(f"Matching duration: {t_after_matching-t_before_matching:.6g} sec")
             
             if pd.isna(m0) or pd.isna(t0):
                 return None, None, None
