@@ -203,8 +203,8 @@ class plot2D(object):
         if (hasattr(self, "legend2D") and
             (("title" not in self.legend2D.keys()) or
              (self.legend2D["title"]==PLOT_PROPERTIES["legend2D"]["title"]))
-            and (self.termination_flag in DEFAULT_LABELS.keys())):
-            self.legend2D["title"] = DEFAULT_LABELS[self.termination_flag][0]
+            and (termination_flag in DEFAULT_LABELS.keys())):
+            self.legend2D["title"] = DEFAULT_LABELS[termination_flag][0]
 
         # plotting fonts
         plt.rcParams.update(self.rcParams)
