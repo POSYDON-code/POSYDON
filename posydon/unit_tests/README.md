@@ -42,7 +42,7 @@ There might be additional modules/functions needed to do the testing. *I recomme
 
 #### Test functions
 
-For small single test you can simply define a single test function. The name should start with the prefix `test`. *I recommend to use the prefix `test_`.* The actual test is usually done by an assert statement. Usually, there will be several tests collected in a [class](#test-classes), thus single functions will be rare.
+For a small single test you can simply define a single test function. The name should start with the prefix `test`. *I recommend to use the prefix `test_`.* The actual test is usually done by an assert statement. Usually, there will be several tests collected in a [class](#test-classes), thus single functions will be rare.
 
 #### Test classes
 
@@ -58,7 +58,7 @@ Beside the existence and the type of a variable, we should verify the integrity 
 
 ##### Check functions
 
-Function in the module need checks according to their functionality. This should coincide with the doc-string of each function. *I suggest to have one class with all the function tests and a test function for each function in the module, which gets tested.* If the functions need variables, you may [use fixtures](#using-fixtures).
+Functions in the module need checks according to their functionality. This should coincide with the doc-string of each function. *I suggest to have one class with all the function tests and a test function for each function in the module, which gets tested.* If the functions need variables, you may [use fixtures](#using-fixtures).
 
 Functions may include prints statements. To capture outputs to `stdout` and `stderr` pytest has global defined fixtures `capsys` (and `capsysbinary` for bytes data instead of usual text; addtionally, there are `capfd` and `capfdbinary` to capture the file descriptors `1` and `2`).
 
@@ -87,7 +87,7 @@ will print the collected prints to stdout, at this moment all together (and clea
 
 ##### Check classes
 
-Each class inside a module should be get its components checked like a module itself. *I suggest to have a test class for each class in the tested module and the test of each class function should get an own test function.* Again, [use fixtures](#using-fixtures) can be used to ensure that all tests run under the same conditions.
+Each class inside a module should be get its components checked like a module itself. *I suggest to have a test class for each class in the tested module and the test of each class function should get an own test function.* Again, [fixtures](#using-fixtures) can be used to ensure that all tests run under the same conditions. A commonly useful fixture for a class test is an object of this class initialized with the defaults.
 
 #### Using fixtures
 
@@ -95,17 +95,30 @@ You can define [fixtures](https://docs.pytest.org/en/stable/how-to/fixtures.html
 
     @pytest.fixture
 
+*I suggest to import the function via `from pytest import fixture` and than call it via `@fixture`.*
+
 Fixtures replace the `setUp` and `tearDown`. To use a fixture to prepare something before a test, you can simply write it as a function and the variable will contain the returned value.
 
-To do with cleaning things up after a test, instead of having a final return, you separate setUp and tearDown with a yield statement, which ensure that all before is executed when the fixture is requested and the stuff after when it get deleted. For chains of fixtures it should be noted, that the clean up happens in the reverse order to the creation, because the innermost fixture will get deleted first.
+For cleaning things up after a test, instead of having a final return, you separate setUp and tearDown with a `yield` statement, which ensure that all before is executed when the fixture is requested and the stuff after when it get deleted (usually at the end of the test function). For chains of fixtures it should be noted, that the clean up happens in the reverse order to the creation, because the innermost fixture will get deleted first.
 
 #### Catching raised errors
 
-Pytest has the [context manager `pytest.raises`](https://docs.pytest.org/en/stable/reference/reference.html#pytest-raises) to catch raised errors. You use it like other context managers via a `with` statement. Beside the expected exception, you can specify a `match`, which will be checked against the error message. The context object can be used to check for more details of the raised error.
+Pytest has the [context manager `pytest.raises`](https://docs.pytest.org/en/stable/reference/reference.html#pytest-raises) to catch raised errors. You use it like other context managers via a `with` statement. Beside the expected exception, you can specify a `match`, which will be checked against the error message as a regular expression, e.g.:
+
+    with pytest.raises(TypeError, match="Error message"):
+        raise TypeError("Error message")
+
+The context object can be used to check for more details of the raised error (this is useful to overcome some limitations of escape characters in regular expressions). Here an example how to check the error message from the context object:
+
+    with pytest.raises(TypeError) as error_info:
+        raise TypeError("Error message")
+    assert error_info.value.args[0] == "Error message"
+
+It should be noted that the error type is will match subclasses successfully.
 
 #### Catching warnings
 
-Usually, pytest will catch all warnings and print them at the end of all tests. If your test will cause a warning which you don't like to have displayed, you can filter the warnings caught by pytest. To filter all warnings in a function or class you can decorate it with a filter, e.g. `@pytest.mark.filterwarnings("ignore:WARNINGTEXT")`. There are more things you can do on [warnings in pytest](https://docs.pytest.org/en/stable/how-to/capture-warnings.html), but you should use that only were needed. But you should be careful with the pytest warning catching, because it overwrites some parts of the python warnings, which even interferes badly with our POSYDON warnings (especially the filter changes).
+Usually, pytest will catch all warnings and print them at the end of all tests. If your test will cause a warning which you don't like to have displayed, you can filter the warnings caught by pytest. To filter all warnings in a function or class you can decorate it with a filter, e.g. `@pytest.mark.filterwarnings("ignore:WARNINGTEXT")`. There are more things you can do on [warnings in pytest](https://docs.pytest.org/en/stable/how-to/capture-warnings.html), but you should use that only were needed. But you should be careful with the pytest warning catching, because it overwrites some parts of the python warnings, which even interferes badly with our POSYDON warnings (especially the filter changes). By using the `pytest.warns` context you can capture and check for warnings the same way as for [errors](#catching-raised-errors).
 
 ### Check that it can fail
 
@@ -129,7 +142,7 @@ Strictly speaking it runs the `pytest` inside of [coverage](https://coverage.rea
 
     coverage run -m pytest TESTFILE
 
-*I suggest to use the `--branch` option, which is `--cov-branch` in pytest.* The latter version to run the test has the advantage that you can make use of all the option provided by `coverage`, while running it through the plug-in will give you only access to the options implemented in there. On the other hand, running it with the plug-in will exclude the test code from coverage and give you the coverage report together with the report of the tests, while running it via `coverage` the report in the file `.coverage` needs to readout via
+*I suggest to use the `--branch` option, which is `--cov-branch` in pytest.* The latter version to run the test has the advantage that you can make use of all the options provided by `coverage`, while running it through the plug-in will give you only access to the options implemented in there. On the other hand, running it with the plug-in will exclude the test code from coverage and give you the coverage report together with the report of the tests, while running it via `coverage` the report in the file `.coverage` needs to readout via
 
     coverage report
 

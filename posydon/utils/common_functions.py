@@ -1934,7 +1934,6 @@ def calculate_core_boundary(donor_mass,
         both_conditions = (
             element <= core_element_fraction_definition).__and__(
                 element_core >= core_element_high_fraction_definition)
-        print(both_conditions)
         if not np.any(both_conditions):
             # the whole star is an envelope, from surface towards the core
             # the "both_conditions" never becomes True
