@@ -37,10 +37,10 @@ from posydon.utils.common_functions import (
 )
 from posydon.binary_evol.flow_chart import (STAR_STATES_CC, STAR_STATES_CO)
 import posydon.utils.constants as const
-from posydon.utils.posydonerror import NumericalError, MatchingError, POSYDONError
+from posydon.utils.posydonerror import NumericalError, MatchingError, POSYDONError, FlowError
 from posydon.utils.posydonwarning import Pwarn
 
-LIST_ACCEPTABLE_STATES_FOR_HMS = ["H-rich_Core_H_burning"]
+LIST_ACCEPTABLE_STATES_FOR_HMS = ["H-rich_Core_H_burning", "accreted_He_Core_H_burning"]
 
 LIST_ACCEPTABLE_STATES_FOR_postMS = [
     "H-rich_Shell_H_burning",
@@ -48,14 +48,16 @@ LIST_ACCEPTABLE_STATES_FOR_postMS = [
     "H-rich_Central_He_depleted",
     "H-rich_Core_C_burning",
     "H-rich_Central_C_depletion",
-    "H-rich_non_burning"]
+    "H-rich_non_burning",
+    "accreted_He_non_burning"]
 
 LIST_ACCEPTABLE_STATES_FOR_HeStar = [
+    'accreted_He_Core_He_burning',
     'stripped_He_Core_He_burning',
     'stripped_He_Shell_He_burning',     # includes stars burning C in core
     'stripped_He_Central_He_depleted',  # includes stars burning C in core
     'stripped_He_Central_C_depletion',
-    'stripped_He_non_burning'           # includes stars burning C in core
+    'stripped_He_non_burning'
     ]
 
 STAR_STATES_H_RICH = [
@@ -66,7 +68,9 @@ STAR_STATES_H_RICH = [
     'H-rich_Shell_He_burning',
     'H-rich_Core_C_burning',
     'H-rich_Central_C_depletion',
-    'H-rich_non_burning'
+    'H-rich_non_burning',
+    'accreted_He_Core_H_burning',
+    'accreted_He_non_burning'
 ]
 
 '''
@@ -1169,16 +1173,16 @@ class detached_step:
             interp1d_pri = get_star_data(
                 binary, primary, secondary, primary.htrack, False)[0]
         else:
-            raise MatchingError("During matching, the primary should either be normal or not normal."
-                                "`non_existent_companion` should be zero.")
+            raise ValueError("During matching, the primary should either be normal (stellar object) or ",
+                             "not normal (CO, nonexistent companion).")
 
 
         if interp1d_sec is None or interp1d_pri is None:
-            # binary.event = "END"
-            binary.state += " (GridMatchingFailed)"
-            if self.verbose or self.verbose == 1:
-                print("Failed matching")
-            return
+            failed_state = binary.state
+            set_binary_to_failed(binary)
+            raise MatchingError(f"Grid matching failed for {failed_state} binary.")    
+                  
+                   
         t0_sec = interp1d_sec["t0"]
         t0_pri = interp1d_pri["t0"]
         m01 = interp1d_sec["m0"]
@@ -1211,12 +1215,13 @@ class detached_step:
                 solar radii.
 
             """
+            pri_mass = interp1d_pri["mass"](t - t_offset_pri)
+            sec_mass = interp1d_sec["mass"](t - t_offset_sec)
+
             sep = y[0]
             ecc = y[1]
            
-            RL = roche_lobe_radius(interp1d_sec["mass"](t - t_offset_sec)
-                            / interp1d_pri["mass"](t - t_offset_pri),
-                            (1 - ecc) * sep)
+            RL = roche_lobe_radius(sec_mass, pri_mass, (1 - ecc) * sep)
             
             # 95% filling of the RL is enough to assume beginning of RLO,
             # as we do in CO-HMS_RLO grid
@@ -1244,13 +1249,14 @@ class detached_step:
                 solar radii.
 
             """
+            pri_mass = interp1d_pri["mass"](t - t_offset_pri)
+            sec_mass = interp1d_sec["mass"](t - t_offset_sec)
+            
             sep = y[0]
             ecc = y[1]
+           
+            RL = roche_lobe_radius(pri_mass, sec_mass, (1 - ecc) * sep)
             
-            RL = roche_lobe_radius(interp1d_pri["mass"](t - t_offset_pri)
-                                / interp1d_sec["mass"](t - t_offset_sec),
-                                (1 - ecc) * sep)
-
             return interp1d_pri["R"](t - t_offset_pri) - 0.95*RL
 
         @event(True, 1)
@@ -1275,12 +1281,13 @@ class detached_step:
                 radius.
 
             """
+            pri_mass = interp1d_pri["mass"](t - t_offset_pri)
+            sec_mass = interp1d_sec["mass"](t - t_offset_sec)
+            
             sep = y[0]
             ecc = y[1]
-        
-            RL = roche_lobe_radius(interp1d_sec["mass"](t - t_offset_sec)
-                                / interp1d_pri["mass"](t - t_offset_pri),
-                                (1 - ecc) * sep)
+           
+            RL = roche_lobe_radius(sec_mass, pri_mass, (1 - ecc) * sep)
 
             return (interp1d_sec["R"](t - t_offset_sec) - RL) / RL
 
@@ -1306,12 +1313,13 @@ class detached_step:
                 radius.
 
             """
+            pri_mass = interp1d_pri["mass"](t - t_offset_pri)
+            sec_mass = interp1d_sec["mass"](t - t_offset_sec)
+
             sep = y[0]
             ecc = y[1]
-            
-            RL = roche_lobe_radius(interp1d_pri["mass"](t - t_offset_pri)
-                                / interp1d_sec["mass"](t - t_offset_sec),
-                                (1 - ecc) * sep)
+           
+            RL = roche_lobe_radius(pri_mass, sec_mass, (1 - ecc) * sep)
 
             return (interp1d_pri["R"](t - t_offset_pri) - RL) / RL
 
@@ -1497,12 +1505,11 @@ class detached_step:
                 print("ODE solver duration: "
                       f"{t_after_ODEsolution-t_before_ODEsolution:.6g}")
                 print("solution of ODE", s)
+
             if s.status == -1:
-                print("Integration failed", s.message)
-                binary.state += ' (Integration failure)'
-                # binary.event = "END"
-                return
-                # raise RuntimeError("Integration failed", s.message)
+                failed_state = binary.state
+                set_binary_to_failed(binary)
+                raise NumericalError(f"Integration failed for {failed_state} binary.")               
 
             if self.dt is not None and self.dt > 0:
                 t = np.arange(binary.time, s.t[-1] + self.dt/2.0, self.dt)[1:]
@@ -1682,9 +1689,17 @@ class detached_step:
                                     const.msol * const.rsol ** 2)
                             
                     elif (key in ["log_total_angular_momentum"] and obj == secondary):
+
+                        current_omega = interp1d_sec["omega"][-1]
+
+                        ## add a warning catch if the current omega has an invalid value
+                        ## (otherwise python will throw an insuppressible warning when taking the log)
+                        if interp1d_sec["omega"][-1] <=0:
+                            Pwarn("Trying to compute log angular momentum for object with no spin", "InappropriateValueWarning")
+                            current_omega = np.nan
                                                
                         current = np.log10(
-                            (interp1d_sec["omega"][-1] / const.secyer)
+                            (current_omega / const.secyer)
                                 * (interp1d_sec[
                                     self.translate["total_moment_of_inertia"]](t[-1] - t_offset_sec).item() * 
                                     (const.msol * const.rsol ** 2)))                     
@@ -1911,6 +1926,19 @@ class detached_step:
                     else:
                         binary.state = "RLO1"
                         binary.event = "oRLO1"
+                
+                if (binary.state == "RLO1" 
+                    and binary.star_1.state in LIST_ACCEPTABLE_STATES_FOR_HeStar 
+                    and binary.star_2.state in STAR_STATES_H_RICH):
+                        set_binary_to_failed(binary)
+                        raise FlowError("Evolution of He-rich stars in RLO onto H-rich stars after HMS-HMS not yet supported.") 
+                
+                elif (binary.state == "RLO2" 
+                      and binary.star_2.state in LIST_ACCEPTABLE_STATES_FOR_HeStar 
+                      and binary.star_1.state in STAR_STATES_H_RICH):
+                        set_binary_to_failed(binary)
+                        raise FlowError("Evolution of He-rich stars in RLO onto H-rich stars after HMS-HMS not yet supported.") 
+
 
             elif s.t_events[2]:
                 # reached t_max of track. End of life (possible collapse) of

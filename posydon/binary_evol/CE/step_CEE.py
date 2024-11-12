@@ -90,11 +90,13 @@ STAR_STATE_POST_MS = [
     "H-rich_Core_He_burning",
     "H-rich_Central_He_depleted",
     "H-rich_Central_C_depletion",
-    "H-rich_non_burning"
+    "H-rich_non_burning",
+    "accreted_He_non_burning"
 ]
 
 
 STAR_STATE_POST_HeMS = [
+    'accreted_He_Core_He_burning',
     'stripped_He_Core_He_burning',
     'stripped_He_Central_He_depleted',
     'stripped_He_Central_C_depletion',
@@ -212,7 +214,7 @@ class StepCEE(object):
 
         # Check to make sure binary can go through a CE
         mergeable_donor = (donor_star.state in [
-            'H-rich_Core_H_burning', 'stripped_He_Core_He_burning'])
+            'H-rich_Core_H_burning', 'stripped_He_Core_He_burning', 'accreted_He_Core_He_burning'])
         mergeable_HG_donor = (
             self.common_envelope_option_for_HG_star == "pessimistic"
             and donor_star.state in ['H-rich_Shell_H_burning'])
@@ -540,8 +542,8 @@ class StepCEE(object):
 
         # now we check if the roche Lobe of any of the cores that spiralled-in
         # will be filled if reached this final separation
-        RL1 = cf.roche_lobe_radius(mc1_i/mc2_i, separation_postCEE/const.Rsun)
-        RL2 = cf.roche_lobe_radius(mc2_i/mc1_i, separation_postCEE/const.Rsun)
+        RL1 = cf.roche_lobe_radius(mc1_i, mc2_i, separation_postCEE/const.Rsun)
+        RL2 = cf.roche_lobe_radius(mc2_i, mc1_i, separation_postCEE/const.Rsun)
 
         if verbose:
             print("donor radius / core radius / RL1:", radius1, rc1_i, RL1)
@@ -836,8 +838,8 @@ class StepCEE(object):
 
                 else:
 
-                    separation_for_inner_RLO1 = rc1_i / cf.roche_lobe_radius(mc1_i/mc2_i, a_orb=1)
-                    separation_for_inner_RLO2 = rc2_i / cf.roche_lobe_radius(mc2_i/mc1_i, a_orb=1)
+                    separation_for_inner_RLO1 = rc1_i / cf.roche_lobe_radius(mc1_i, mc2_i, a_orb=1)
+                    separation_for_inner_RLO2 = rc2_i / cf.roche_lobe_radius(mc2_i, mc1_i, a_orb=1)
 
                     separation_before_merger = max( separation_for_inner_RLO1, separation_for_inner_RLO2 ) * const.Rsun
 

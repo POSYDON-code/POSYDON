@@ -309,7 +309,6 @@ class MesaGridStep:
             if self.flip_stars_before_step:
                 flip_stars(binary)
             binary.state = 'initial_RLOF'
-            # binary.event = 'END'
             return
 
         binary_start_time = binary.time
@@ -422,21 +421,16 @@ class MesaGridStep:
         cb_bh = cb.binary_history
         cb_hs = [cb.history1, cb.history2]
         cb_fps = [cb.final_profile1, cb.final_profile2]
-
-        # TOOD: I removed this which is now done in get_final_MESA_step_time
-        # find the nearest_neighbour and the distance
-        # self.closest_binary, self.nearest_neighbour_distance, \
-        # self.termination_flags = self._psyTrackInterp.evaluate(self.binary)
+        
         if (cb_bh['age'].size <= 1 or cb_bh['star_1_mass'].size <= 1):
             setattr(binary, "state", "initial_RLOF")
-            # setattr(binary, "event", "END")
             return
 
         # check if the first interpolation gives 'initial_RLOF'
         interpolation_class = self.termination_flags[0]
         binary_state, binary_event, MT_case = (
             cf.get_binary_state_and_event_and_mt_case(
-                binary, interpolation_class, verbose=self.verbose))
+                binary, interpolation_class, verbose=self.verbose))       
         setattr(binary, 'state', binary_state)
         setattr(binary, 'event', binary_event)
         setattr(binary, 'mass_transfer_case', MT_case)
@@ -706,7 +700,7 @@ class MesaGridStep:
                 getattr(stars[1], "state_history").extend(state2_hist)
                 binary_state, binary_event, MT_case = (
                     cf.get_binary_state_and_event_and_mt_case_array(
-                        binary, N=length_hist, verbose=self.verbose))
+                        binary, N=length_hist, verbose=self.verbose))               
                 getattr(binary, "state_history").extend(binary_state)
                 getattr(binary, "event_history").extend(binary_event)
                 getattr(binary, "mass_transfer_case_history").extend(MT_case)
@@ -916,6 +910,7 @@ class MesaGridStep:
         setattr(self.binary, 'event', binary_event)
         setattr(self.binary, 'mass_transfer_case', MT_case)
 
+        
         if binary.state == 'initial_RLOF':
             return
 
@@ -1356,9 +1351,10 @@ class CO_HMS_RLO_step(MesaGridStep):
                           "H-rich_Core_He_burning",
                           "H-rich_Central_He_depleted",
                           "H-rich_Core_C_burning",
-                          "stripped_He_Core_H_burning",
+                          "accreted_He_Core_H_burning",
                           "H-rich_Central_C_depletion",  # filtered out below
-                          "H-rich_non_burning"]
+                          "H-rich_non_burning",
+                          "accreted_He_non_burning"]
 
         # check the star states
         # TODO: import states from flow_chart.py
@@ -1475,6 +1471,7 @@ class CO_HeMS_RLO_step(MesaGridStep):
 
         # TODO: import states from flow_chart.py
         CO_He_STATES = [
+            'accreted_He_Core_He_burning',
             'stripped_He_Core_He_burning',
             'stripped_He_Shell_He_burning',
             'stripped_He_Central_He_depleted',
@@ -1482,7 +1479,8 @@ class CO_HeMS_RLO_step(MesaGridStep):
             # include systems that are on the brink of He exhaustion
             'stripped_He_non_burning',
             # include systems post CE with core_definition_H_fraction=0.1
-            'H-rich_non_burning'
+            'H-rich_non_burning',
+            'accreted_He_non_burning'
                         ]
 
         # check the star states
@@ -1599,6 +1597,7 @@ class CO_HeMS_step(MesaGridStep):
 
         # TODO: import states from flow_chart.py
         CO_He_STATES = [
+            'accreted_He_Core_He_burning',
             'stripped_He_Core_He_burning',
             'stripped_He_Shell_He_burning',
             'stripped_He_Central_He_depleted',
@@ -1606,7 +1605,8 @@ class CO_HeMS_step(MesaGridStep):
             # include systems that are on the brink of He exhaustion
             'stripped_He_non_burning',
             # include systems post CE with core_definition_H_fraction=0.1
-            'H-rich_non_burning'
+            'H-rich_non_burning',
+            'accreted_He_non_burning'
                         ]
         # TODO: import states from flow_chart.py
         if (state_2 in ['WD', 'NS', 'BH']
@@ -1658,4 +1658,154 @@ class CO_HeMS_step(MesaGridStep):
         else:
             self.binary.state = 'detached'
             self.binary.event = 'redirect_from_CO_HeMS'
+            return
+
+
+class HMS_HMS_RLO_step(MesaGridStep):
+    """Class for performing the MESA step for a HMS-HMS RLO binary.
+    For binaries with an initial eccentricity at ZAMS,
+    we evolve them first with step detached and map to the HMS-HMS RLO grid
+    using `initial_eccentricity_flow_chart`."""
+
+    def __init__(self, metallicity=1., grid_name=None, *args, **kwargs):
+        """Initialize a HMS_HMS_RLO_step instance."""
+        self.grid_type = 'HMS_HMS_RLO'
+        self.interp_in_q = True
+        if grid_name is None:
+            metallicity = convert_metallicity_to_string(metallicity)
+            grid_name = 'HMS-HMS_RLO/' + metallicity + '_Zsun.h5'
+        super().__init__(metallicity=metallicity,
+                         grid_name=grid_name,
+                         *args, **kwargs)
+        # special stuff for my step goes here
+        # If nothing to do, no init necessary
+
+        # load grid boundaries
+        m1_initial_values = self._psyTrackInterp.grid.initial_values['star_1_mass']
+        m2_initial_values = self._psyTrackInterp.grid.initial_values['star_2_mass']
+        self.m1_min = np.min(m1_initial_values)
+        self.m1_max = np.max(m1_initial_values)
+        self.m2_min = np.min(m2_initial_values)
+        self.m2_max = np.max(m2_initial_values)
+        self.p_min = np.min(self._psyTrackInterp.grid.initial_values['period_days'])
+        self.p_max = np.max(self._psyTrackInterp.grid.initial_values['period_days'])
+        self.q_min = np.min(m2_initial_values/m1_initial_values)
+        self.q_max = np.max(m2_initial_values/m1_initial_values)
+        self.minimum_star_mass = self.m2_min # 0.5 (M_sun)
+
+    def __call__(self, binary):
+        """Evolve a binary using the MESA step."""
+        # grid set up assume no star is CO
+        self.star_1_CO = False
+        self.star_2_CO = False
+        # check binary is ready before calling the step
+        self.binary = binary
+        event = binary.event
+        state = binary.state
+        state_1 = binary.star_1.state
+        state_2 = binary.star_2.state
+        m1 = binary.star_1.mass
+        m2 = binary.star_2.mass
+        p = binary.orbital_period
+        ecc = binary.eccentricity
+        mass_ratio = m2/m1
+
+        # TODO: import states from flow_chart.py
+        FOR_RLO_STATES = ["H-rich_Core_H_burning",
+                          "H-rich_Shell_H_burning",
+                          "H-rich_Core_He_burning",
+                          "H-rich_Central_He_depleted",
+                          "H-rich_Core_C_burning",
+                          "accreted_He_Core_H_burning",
+                          "H-rich_Central_C_depletion",  # filtered out below
+                          "H-rich_non_burning",
+                          "accreted_He_non_burning"]
+
+        # check the star states
+        # TODO: import states from flow_chart.py
+        if (state_2 in FOR_RLO_STATES and (state_1 in FOR_RLO_STATES) 
+                and event == "oRLO1"):
+            self.flip_stars_before_step = False
+            # catch and redirect double core collapse, this happens if q=1:
+            if state_1 == 'H-rich_Central_C_depletion':
+                self.binary.event = 'CC1'
+                return
+        # TODO: import states from flow_chart.py
+        elif (state_1 in FOR_RLO_STATES and (state_2 in FOR_RLO_STATES)
+                and event == "oRLO2"):
+            self.flip_stars_before_step = False
+            # catch and redirect double core collapse, this happens if q=1:
+            if state_2 == 'H-rich_Central_C_depletion':
+                self.binary.event = 'CC2'
+                return
+        else:
+            set_binary_to_failed(self.binary)
+            raise FlowError(
+                'The star_1.state = %s, star_2.state = %s, binary.state = %s, '
+                'binary.event = %s and not HMS - HMS - oRLO1/oRLO2!'
+                % (state_1, state_2, state, event))
+        # redirect if outside grids
+        # HMS-HMS grid is sampled in q so check explicity vs m1 and m2
+        if ((not self.flip_stars_before_step and
+            self.m1_min <= m1 <= self.m1_max and            
+            np.max([self.q_min, self.minimum_star_mass/m1]) <= mass_ratio <= self.q_max and
+            self.p_min <= p <= self.p_max and
+            ecc == 0.) or (self.flip_stars_before_step and
+            self.m1_min <= m2 <= self.m1_max and
+            np.max([self.q_min, self.minimum_star_mass/m2]) <= 1/mass_ratio <= self.q_max and
+            self.p_min <= p <= self.p_max and
+            ecc == 0.)):
+            super().__call__(self.binary)
+
+        # period inside the grid, but m1 outside the grid
+        elif ((not self.flip_stars_before_step and
+               self.p_min <= p <= self.p_max and
+               (m1 < self.m1_min or m1 > self.m1_max))):
+            set_binary_to_failed(self.binary)
+            raise GridError(f'The mass of m1 ({m1}) is outside the grid,'
+                                ' while the period is inside the grid.')
+
+        # period inside the grid, but m2 outside the grid
+        elif ((not self.flip_stars_before_step and
+               self.p_min <= p <= self.p_max and
+               (m2 < self.m2_min or m2 > self.m2_max))):
+            set_binary_to_failed(self.binary)
+            raise GridError(f'The mass of m2 ({m2}) is outside the grid,'
+                                ' while the period is inside the grid.')
+
+        # period inside the grid, but q outside the grid
+        elif (not self.flip_stars_before_step and
+               self.p_min <= p <= self.p_max and
+               (np.max([self.q_min, self.minimum_star_mass/m1]) > mass_ratio or mass_ratio > self.q_max) ):
+            set_binary_to_failed(self.binary)
+            raise GridError(f'The mass ratio ({mass_ratio}) is outside the grid,'
+                                ' while the period is inside the grid.')
+
+
+        # period inside the grid, but m1 outside the grid (flipped stars)
+        elif ((self.flip_stars_before_step and
+                self.p_min <= p <= self.p_max and
+                (m2 < self.m1_min or m2 > self.m1_max))):
+            set_binary_to_failed(self.binary)
+            raise GridError(f'The mass of m1 ({m2}) is outside the grid,'
+                                ' while the period is inside the grid.')
+        
+        # period inside the grid, but m2 outside the grid (flipped stars)
+        elif ((self.flip_stars_before_step and
+                self.p_min <= p <= self.p_max and
+                (m1 < self.m2_min or m1 > self.m2_max))):
+            set_binary_to_failed(self.binary)
+            raise GridError(f'The mass of m2 ({m1}) is outside the grid,'
+                            ' while the period is inside the grid.')
+        
+        # period inside the grid, but q outside the grid (flipped stars)
+        elif (self.flip_stars_before_step and
+               self.p_min <= p <= self.p_max and
+               (np.max([self.q_min, self.minimum_star_mass/m2]) > 1/mass_ratio or 1/mass_ratio > self.q_max) ):
+            set_binary_to_failed(self.binary)
+            raise GridError(f'The mass ratio ({1/mass_ratio}) is outside the grid,'
+                                ' while the period is inside the grid.')
+        else:
+            self.binary.state = "detached"
+            self.binary.event = "redirect_from_HMS_HMS_RLO"
             return

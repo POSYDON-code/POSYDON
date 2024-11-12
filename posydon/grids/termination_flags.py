@@ -29,12 +29,14 @@ from posydon.utils.common_functions import (
     infer_star_state, cumulative_mass_transfer_flag, infer_mass_transfer_case
 )
 from posydon.utils.limits_thresholds import (
-    RL_RELATIVE_OVERFLOW_THRESHOLD, LG_MTRANSFER_RATE_THRESHOLD
+    RL_RELATIVE_OVERFLOW_THRESHOLD, LG_MTRANSFER_RATE_THRESHOLD,
+    MIN_COUNT_INITIAL_RLO_BOUNDARY
 )
 from posydon.visualization.combine_TF import (
     TF1_POOL_STABLE, TF1_POOL_UNSTABLE, TF1_POOL_INITIAL_RLO, TF1_POOL_ERROR,
     TF2_POOL_NO_RLO, TF2_POOL_INITIAL_RLO
 )
+from posydon.utils.posydonwarning import Pwarn
 
 
 # variables needed for inferring star states
@@ -324,12 +326,33 @@ def get_detected_initial_RLO(grid):
 
 
 def get_nearest_known_initial_RLO(mass1, mass2, known_initial_RLO):
+    """Find the nearest system of initial RLO in the known ones
+    
+    Parameters
+    ----------
+    mass1 : float
+        star_1_mass of the run to check.
+    mass2 : float
+        star_2_mass of the run to check.
+    known_initial_RLO : list of dict
+        Boundary to apply.
+    
+    Retruns
+    -------
+    dict
+        Containing the key parameters (e.g. initial masses, period) of the
+        nearest initial RLO run.
+    """
     #default values
     d2min = 1.0e+99
     nearest = {"star_1_mass": 0.0,
                "star_2_mass": 0.0,
                "period_days": 0.0,
               }
+    if len(known_initial_RLO)<MIN_COUNT_INITIAL_RLO_BOUNDARY:
+        Pwarn("Don't apply initial RLO boundary because of too few data points"
+              " in there.","InappropriateValueWarning")
+        return nearest
     for sys in known_initial_RLO:
         #search for a known system with closest mass combination
         #use distance^2=(delta mass1)^2+(delta mass2)^2
