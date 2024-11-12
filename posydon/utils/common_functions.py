@@ -211,43 +211,54 @@ def roche_lobe_radius(m1, m2, a_orb=1):
     .. [1] Eggleton, P. P. 1983, ApJ, 268, 368
 
     """
-    ## catching if a_orb is an empty array or is an array with invalid separation values
+    ## catching if a_orb is an empty array or is an array with invalid
+    ## separation values
     if isinstance(a_orb, np.ndarray):
         ## if array is empty, fill with NaN values
         if a_orb.size == 0:
-            Pwarn("Trying to compute RL radius for binary with invalid separation", "EvolutionWarning")
-            a_orb = np.full([1 if s==0 else s for s in a_orb.shape], np.nan, dtype=np.float64)
+            Pwarn("Trying to compute RL radius for binary with invalid"
+                  " separation", "EvolutionWarning")
+            a_orb = np.full([1 if s==0 else s for s in a_orb.shape], np.nan,
+                            dtype=np.float64)
         ## if array contains invalid values, replace with NaN 
         elif np.any(a_orb < 0):
-            Pwarn("Trying to compute RL radius for binary with invalid separation", "EvolutionWarning")
+            Pwarn("Trying to compute RL radius for binary with invalid"
+                  " separation", "EvolutionWarning")
             a_orb[a_orb < 0] = np.nan
     ## catching if a_orb is a float with invalid separation value
     elif a_orb < 0: 
-        Pwarn("Trying to compute RL radius for binary with invalid separation", "EvolutionWarning")
+        Pwarn("Trying to compute RL radius for binary with invalid separation",
+              "EvolutionWarning")
         a_orb = np.nan
-
 
     if isinstance(m1, np.ndarray):
         if m1.size == 0:                  
-            Pwarn("Trying to compute RL radius for nonexistent object", "EvolutionWarning")
-            m1 = np.full([1 if s==0 else s for s in m1.shape], np.nan, dtype=np.float64)
+            Pwarn("Trying to compute RL radius for nonexistent object",
+                  "EvolutionWarning")
+            m1 = np.full([1 if s==0 else s for s in m1.shape], np.nan,
+                         dtype=np.float64)
         elif np.any(m1 <= 0):
-            Pwarn("Trying to compute RL radius for nonexistent object", "EvolutionWarning")
+            Pwarn("Trying to compute RL radius for nonexistent object",
+                  "EvolutionWarning")
             m1[m1 <= 0] = np.nan
-    elif m1 <=0:
-        Pwarn("Trying to compute RL radius for nonexistent object", "EvolutionWarning")
+    elif m1 <= 0:
+        Pwarn("Trying to compute RL radius for nonexistent object",
+              "EvolutionWarning")
         m1 = np.nan
     
-
     if isinstance(m2, np.ndarray):
         if m2.size == 0:                  
-            Pwarn("Trying to compute RL radius for nonexistent companion", "EvolutionWarning")
-            m2 = np.full([1 if s==0 else s for s in m2.shape], np.nan, dtype=np.float64)
+            Pwarn("Trying to compute RL radius for nonexistent companion",
+                  "EvolutionWarning")
+            m2 = np.full([1 if s==0 else s for s in m2.shape], np.nan,
+                         dtype=np.float64)
         elif np.any(m2 <= 0):
-            Pwarn("Trying to compute RL radius for nonexistent companion", "EvolutionWarning")
+            Pwarn("Trying to compute RL radius for nonexistent companion",
+                  "EvolutionWarning")
             m2[m2 <= 0] = np.nan
-    elif m2 <=0:
-        Pwarn("Trying to compute RL radius for nonexistent companion", "EvolutionWarning")
+    elif m2 <= 0:
+        Pwarn("Trying to compute RL radius for nonexistent companion",
+              "EvolutionWarning")
         m2 = np.nan
    
     q = m1/m2
@@ -1344,7 +1355,8 @@ def infer_star_state(star_mass=None, surface_h1=None,
         return STATE_UNDETERMINED
 
     rich_in = ("H-rich" if surface_h1 > THRESHOLD_HE_NAKED_ABUNDANCE
-               else ("accreted_He" if round(surface_h1, 10)<round(center_h1,10) else "stripped_He"))
+               else ("accreted_He" if round(surface_h1, 10)<round(center_h1,10)
+               else "stripped_He"))
     burning_H = (log_LH > LOG10_BURNING_THRESHOLD
                  and log_LH - log_Lnuc > REL_LOG10_BURNING_THRESHOLD)
     burning_He = (log_LHe > LOG10_BURNING_THRESHOLD

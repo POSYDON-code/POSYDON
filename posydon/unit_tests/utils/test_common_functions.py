@@ -334,7 +334,7 @@ class TestValues:
             assert v in totest.BURNING_STATES, "missing entry"
 
     def test_value_RICHNESS_STATES(self):
-        for v in ["H-rich", "stripped_He"]: #TODO: check add "accreted_He"
+        for v in ["H-rich", "stripped_He", "accreted_He"]:
             # check required values
             assert v in totest.RICHNESS_STATES, "missing entry"
 
@@ -476,22 +476,39 @@ class TestFunctions:
         assert totest.rzams(1.0, Zsun=1.0) ==\
                approx(0.84963691291, abs=6e-12)
 
-    def test_roche_lobe_radius(self):
+    def test_roche_lobe_radius(self, capsys):
         # missing argument
-        with raises(TypeError, match="missing 1 required positional"+\
-                    " argument: 'q'"):
+        with raises(TypeError, match="missing 2 required positional"+\
+                    " arguments: 'm1' and 'm2'"):
             totest.roche_lobe_radius()
+        # bad input
+        for a in [-1.0, totest.np.array([]), totest.np.array([-1.0])]:
+            with warns(EvolutionWarning, match="Trying to compute RL radius"+\
+                       " for binary with invalid separation"):
+                assert totest.np.isnan(totest.roche_lobe_radius(1.0, 1.0,\
+                       a_orb=a))
+        for m in [0.0, totest.np.array([]), totest.np.array([0.0])]:
+            with warns(EvolutionWarning, match="Trying to compute RL radius"+\
+                       " for nonexistent object"):
+                assert totest.np.isnan(totest.roche_lobe_radius(m, 1.0))
+        for m in [0.0, totest.np.array([]), totest.np.array([0.0])]:
+            with warns(EvolutionWarning, match="Trying to compute RL radius"+\
+                       " for nonexistent companion"):
+                assert totest.np.isnan(totest.roche_lobe_radius(1.0, m))
         # examples
-        assert totest.roche_lobe_radius(1.0) ==\
+        assert totest.roche_lobe_radius(1.0, 1.0) ==\
                approx(0.37892051838, abs=6e-12)
-        assert totest.roche_lobe_radius(2.0) ==\
+        assert totest.roche_lobe_radius(2.0, 1.0) ==\
                approx(0.44000423753, abs=6e-12)
-        assert totest.roche_lobe_radius(1.0, a_orb=2.0) ==\
+        assert totest.roche_lobe_radius(1.0, 2.0) ==\
+               approx(0.32078812033, abs=6e-12)
+        assert totest.roche_lobe_radius(1.0, 1.0, a_orb=2.0) ==\
                approx(0.75784103676, abs=6e-12)
+        assert totest.np.allclose(totest.roche_lobe_radius(totest.np.array([1.0, 2.0, 1.0, 1.0]), totest.np.array([1.0, 1.0, 2.0, 1.0]), a_orb=totest.np.array([1.0, 1.0, 1.0, 2.0])), totest.np.array([0.37892051838, 0.44000423753, 0.32078812033, 0.75784103676]))
         # check that roche lobe sum never exceeds orbital separation
-        for q in [1.0e+1, 1.0e+2, 1.0e+3, 1.0e+4, 1.0e+5, 1.0e+6, 1.0e+7]:
-            assert totest.roche_lobe_radius(q)+totest.roche_lobe_radius(1.0/q)\
-                   < 1.0
+        for m in [1.0e+1, 1.0e+2, 1.0e+3, 1.0e+4, 1.0e+5, 1.0e+6, 1.0e+7]:
+            assert totest.roche_lobe_radius(m, 1.0)+\
+                   totest.roche_lobe_radius(1.0, m) < 1.0
 
     def test_orbital_separation_from_period(self):
         # missing argument
@@ -1169,6 +1186,8 @@ class TestFunctions:
                             for lgLHe in [2.0*LBT, LBT, 0.5*LBT]:
                                 if sH1>THNA:
                                     rich = "H-rich"
+                                elif sH1<cH1:
+                                    rich = "accreted_He"
                                 else:
                                     rich = "stripped_He"
                                 if cH1<=TCA and cHe4<=TCA and cC12<=TCA:

@@ -17,6 +17,7 @@ class TestElements:
     # check for objects, which should be an element of the tested module
     def test_dir(self):
         elements = ['LG_MTRANSFER_RATE_THRESHOLD', 'LOG10_BURNING_THRESHOLD',\
+                    'MIN_COUNT_INITIAL_RLO_BOUNDARY',\
                     'NEUTRINO_MASS_LOSS_UPPER_LIMIT',\
                     'REL_LOG10_BURNING_THRESHOLD',\
                     'RL_RELATIVE_OVERFLOW_THRESHOLD',\
@@ -39,6 +40,11 @@ class TestElements:
         assert isinstance(totest.LG_MTRANSFER_RATE_THRESHOLD, (float,int)),\
                "LG_MTRANSFER_RATE_THRESHOLD is of type: "+\
                str(type(totest.LG_MTRANSFER_RATE_THRESHOLD))
+
+    def test_instance_MIN_COUNT_INITIAL_RLO_BOUNDARY(self):
+        assert isinstance(totest.MIN_COUNT_INITIAL_RLO_BOUNDARY, (int)),\
+               "MIN_COUNT_INITIAL_RLO_BOUNDARY is of type: "+\
+               str(type(totest.MIN_COUNT_INITIAL_RLO_BOUNDARY))
 
     def test_instance_THRESHOLD_CENTRAL_ABUNDANCE(self):
         assert isinstance(totest.THRESHOLD_CENTRAL_ABUNDANCE, (float,int)),\
@@ -88,6 +94,11 @@ class TestLimits:
 
 #    def test_limits_LG_MTRANSFER_RATE_THRESHOLD(self):
         # has no limits
+
+    def test_limits_MIN_COUNT_INITIAL_RLO_BOUNDARY(self):
+        # an count shouldn't be negative
+        assert totest.MIN_COUNT_INITIAL_RLO_BOUNDARY >= 0,\
+               "MIN_COUNT_INITIAL_RLO_BOUNDARY should be 0 or larger"
 
     def test_limits_THRESHOLD_CENTRAL_ABUNDANCE(self):
         # an abundance should be in [0,1]

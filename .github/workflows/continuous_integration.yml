@@ -27,6 +27,6 @@ jobs:
         python -m pip install --upgrade pip
         pip install . 
 
-    # - name: Run all tests
-    #   run: |
-    #     pytest posydon/unit_tests/
+    - name: Run all tests
+      run: |
+        pytest posydon/unit_tests/ --cov=posydon.utils --cov-branch --cov-report term-missing
