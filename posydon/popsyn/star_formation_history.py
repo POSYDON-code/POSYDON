@@ -21,7 +21,6 @@ from posydon.utils.common_functions import (
     read_histogram_from_file,
 )
 from posydon.utils.constants import Zsun
-from scipy.interpolate import interp1d
 from astropy.cosmology import Planck15 as cosmology
 
 
@@ -140,8 +139,8 @@ def star_formation_rate(SFR, z):
         illustris_data = get_illustrisTNG_data()
         SFR = illustris_data["SFR"]  # M_sun yr^-1 Mpc^-3
         redshifts = illustris_data["redshifts"]
-        SFR_interp = interp1d(redshifts, SFR)
-        return SFR_interp(z)
+        SFR_interp = np.interp(z, redshifts, SFR)
+        return SFR_interp
     else:
         raise ValueError("Invalid SFR!")
 
@@ -284,20 +283,20 @@ def SFR_Z_fraction_at_given_redshift(
                 Z_dist_cdf = np.cumsum(Z_dist[i]) / Z_dist[i].sum()
                 Z_dist_cdf = np.append(Z_dist_cdf, 1)
                 Z_x_values = np.append(np.log10(Z[Z_max_mask]), 0)
-                Z_dist_cdf_interp = interp1d(Z_x_values, Z_dist_cdf)
 
-                fSFR[i, :] = (Z_dist_cdf_interp(np.log10(metallicity_bins[1:])) 
-                                - Z_dist_cdf_interp(np.log10(metallicity_bins[:-1])))
+                Z_dist_cdf_interp_hi = np.interp(np.log10(metallicity_bins[1:]), Z_x_values, Z_dist_cdf)
+                Z_dist_cdf_interp_lo = np.interp(np.log10(metallicity_bins[:-1]), Z_x_values, Z_dist_cdf)
+
+                fSFR[i, :] = (Z_dist_cdf_interp_hi - Z_dist_cdf_interp_lo)
 
                 if not select_one_met:
                     # add the fraction of the SFR in the first and last bin
                     # or the only bin without selecting one metallicity
                     if len(metallicity_bins) == 2:
                         fSFR[i, 0] = 1
-                    else:
-                        
-                        fSFR[i, 0] = Z_dist_cdf_interp(np.log10(metallicity_bins[1]))
-                        fSFR[i, -1] = 1 - Z_dist_cdf_interp(np.log10(metallicity_bins[-1]))
+                    else:                        
+                        fSFR[i, 0] = np.interp(np.log10(metallicity_bins[1]), Z_x_values, Z_dist_cdf)
+                        fSFR[i, -1] = 1 - np.interp(np.log10(metallicity_bins[-1]), Z_x_values, Z_dist_cdf)
     else:
         raise ValueError("Invalid SFR!")
 

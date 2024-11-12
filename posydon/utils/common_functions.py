@@ -19,7 +19,7 @@ __authors__ = [
 
 import os
 import numpy as np
-from scipy.interpolate import interp1d
+from scipy.interpolate import PchipInterpolator
 from scipy.optimize import newton
 from scipy.integrate import quad
 from posydon.utils import constants as const
@@ -609,10 +609,10 @@ def rejection_sampler(x=None, y=None, size=1, x_lim=None, pdf=None):
     if pdf is None:
         assert np.all(y >= 0.0)
         try:
-            pdf = interp1d(x, y)
+            pdf = PchipInterpolator(x, y)
         except ValueError:
             idxs = np.argsort(x)
-            pdf = interp1d(x.take(idxs), y.take(idxs))
+            pdf = PchipInterpolator(x.take(idxs), y.take(idxs))
 
         x_rand = np.random.uniform(x.min(), x.max(), size)
         y_rand = np.random.uniform(0, y.max(), size)

@@ -59,7 +59,7 @@ from posydon.utils.common_functions import set_binary_to_failed
 
 from pandas import read_csv
 from sklearn import neighbors
-from scipy.interpolate import interp1d
+from scipy.interpolate import PchipInterpolator
 
 import json
 
@@ -2167,7 +2167,7 @@ class Sukhbold16_corecollapse(object):
             NS_He_prog = np.array(
                 Engine_data[Engine_data["stellar_state"] == 13]["He_c_mass"]
             )
-            self.mass_NS_interpolator = interp1d(NS_He_prog, NS_rem_mass)
+            self.mass_NS_interpolator = PchipInterpolator(NS_He_prog, NS_rem_mass)
 
             BH_rem_mass = np.array(
                 Engine_data[Engine_data["stellar_state"] == 14]["Rem_mass"]
@@ -2175,7 +2175,7 @@ class Sukhbold16_corecollapse(object):
             BH_He_prog = np.array(
                 Engine_data[Engine_data["stellar_state"] == 14]["He_c_mass"]
             )
-            self.mass_BH_interpolator = interp1d(BH_He_prog, BH_rem_mass)
+            self.mass_BH_interpolator = PchipInterpolator(BH_He_prog, BH_rem_mass)
 
             if verbose:
                 print("Done ...\n")
@@ -2315,34 +2315,20 @@ class Couch20_corecollapse(object):
                     + " ..."
                 )
 
-
             # Check if interpolation files exist
-            filename = os.path.join(path_to_Couch_datasets,
-                                    'explDatsSTIR2.json')
+            filename = os.path.join(path_to_Couch_datasets, 'explDatsSTIR2.json')
             if not os.path.exists(filename):
                 data_download()
 
             Couch_data_file = open(filename)
-            # Couch_data = json.loads(Couch_data_file)
             Couch_data = json.load(Couch_data_file)
             Couch_data_file.close()
             Couch_data = Couch_data[turbulence_strength]
-            # breakpoint()
-            # #names = ['MZAMS',['rmax','texp','Eexp']]
-            # my_names = ['MZAMS','Eexp']
-            # my_formats = ['f8','f8']
-            # dtype = dict(names = my_names, formats= my_formats)
-            # #dt = np.dtype()
-            # #Couch_data_ar = np.array(list(Couch_data.items()), dtype=dtype)
-            #
-            # #Couch_data_ar = np.array(Couch_data[turbulence_strength])
-            # #Couch_data_ar = [np.array(Couch_data[MZAMS])
-            #                   for MZAMS in Couch_data]
-            # #Couch_data_ar = np.array([(MZAMS,rest["Eexp"]) for (MZAMS,rest)
-            #                            in Couch_data.items()], dtype=dtype)
+            
             Couch_MZAMS = []
             Couch_Eexp = []
             Couch_state = []
+
             for MZAMS, rest in Couch_data.items():
                 Couch_MZAMS.append(float(MZAMS))
                 Couch_Eexp.append(rest["Eexp"])
@@ -2350,49 +2336,14 @@ class Couch20_corecollapse(object):
                     Couch_state.append(int(14))     # BH
                 else:
                     Couch_state.append(int(13))     # NS
-            # Couch_MZAMS = np.array(Couch_MZAMS, dtype=dict(
-            #     names=my_names[0], formats=my_formats[0]))
-            # Couch_Eexp = np.array(Couch_Eexp,dtype=dict(
-            #     names=my_names[1], formats= my_formats[1]))
-            # Couch_data_ar = np.array()
-            # breakpoint()
-            # print(Couch_data)
 
-            # we need Sukhbold data for  their cores
-            Sukhbold_data = read_csv(
-                # path_to_Sukhbold_datasets + "results_N20_table.csv"
-                path_to_Couch_datasets + "Sukhbold_Mzams_He_c_core.csv",
-                usecols=[0, 1])
+            # we need Sukhbold data for their cores
+            Sukhbold_data = read_csv(path_to_Couch_datasets + "Sukhbold_Mzams_He_c_core.csv",
+                                    usecols=[0, 1])
 
             MZAMS = Sukhbold_data["Mzams"]
             He_core_mass = Sukhbold_data["He_c_mass"]
-            self.MZAMS_He_core_mass_Sukhbold_interpolator = interp1d(
-                MZAMS, He_core_mass)
-            # def MZAMS_He_core_mass_Sukhbold_interpolator(MZams):
-            #     return Sukhbold_data[Sukhbold_data["Mzams"]==MZams][
-            #         "He_c_mass"]
-
-            # # Classifier to assign the He core mass of Sukhbold
-            # # as a function of the MZAMS
-            # # taking the first nearest neighbor
-            # n_neighbors = 1
-            # self.stellar_ZAMS_classifier = neighbors.KNeighborsClassifier(
-            #     n_neighbors, weights="distance"
-            # )
-            # self.stellar_ZAMS_classifier.fit(
-            #     np.array(Sukhbold_data["Mzams"]).reshape(
-            #         (len(Sukhbold_data["Mzams"]), 1)
-            #     ),
-            #     Sukhbold_data["He_c_mass"],
-            # )
-            # MZAMS = np.array(
-            #     Sukhbold_data["Mzams"]
-            # )
-            # He_c_mass = np.array(
-            #     Sukhbold_data["He_c_mass"]
-            # )
-            # self.MZAMS_He_core_mass_Sukhbold_interpolator = interp1d(MZAMS,
-            #       He_c_mass)
+            self.MZAMS_He_core_mass_Sukhbold_interpolator = PchipInterpolator(MZAMS, He_core_mass)
 
             Couch_He_c_mass = self.MZAMS_He_core_mass_Sukhbold_interpolator(
                 Couch_MZAMS)
@@ -2408,70 +2359,9 @@ class Couch20_corecollapse(object):
                 n_neighbors, weights="distance"
             )
             self.stellar_type_classifier.fit(
-                np.array(Couch_He_c_mass).reshape(
-                    (len(Couch_He_c_mass), 1)
-                ),
+                np.array(Couch_He_c_mass).reshape((len(Couch_He_c_mass), 1)),
                 np.array(Couch_state),
             )
-
-            '''
-            breakpoint()
-
-            print("Training the remnant mass interpolator ...")
-
-            # Interpolator to compute the remnant mass
-            # as a function of the He core mass pre-supernova
-            # and the stellar type of the remnant.
-            NS_rem_mass = np.array(
-                Engine_data[Engine_data["stellar_state"] == 13]["Rem_mass"]
-            )
-            NS_He_prog = np.array(
-                Engine_data[Engine_data["stellar_state"] == 13]["He_c_mass"]
-            )
-            self.mass_NS_interpolator = interp1d(NS_He_prog, NS_rem_mass)
-
-            BH_rem_mass = np.array(
-                Engine_data[Engine_data["stellar_state"] == 14]["Rem_mass"]
-            )
-            BH_He_prog = np.array(
-                Engine_data[Engine_data["stellar_state"] == 14]["He_c_mass"]
-            )
-            self.mass_BH_interpolator = interp1d(BH_He_prog, BH_rem_mass)
-
-            if verbose:
-                print("Done ...\n")
-
-            # Gets the neutron-star mass in terms of the He core mass
-            # if a succesful explotion is predicted
-            def extrapolate1d_NS(value, interpolator):
-                x = interpolator.x
-
-                if (value >= np.min(x)) and (value <= np.max(x)):
-                    result = interpolator(value)
-                elif value < np.min(x):
-                    result = interpolator(np.min(x))
-                elif value > np.max(x):
-                    result = interpolator(np.max(x))
-
-                return result
-
-            # Gets the black-hole mass in terms of the He core mass
-            # if a unsuccesful explotion is predicted
-            def extrapolate1d_BH(value, interpolator):
-                x = interpolator.x
-
-                if (value >= np.min(x)) and (value <= np.max(x)):
-                    result = interpolator(value)
-                elif value < np.min(x):
-                    result = interpolator(np.min(x))
-                elif value > np.max(x):
-                    result = value
-
-                return result
-
-            self.extrapolate_NS = extrapolate1d_NS
-            self.extrapolate_BH = extrapolate1d_BH
-            '''
 
         else:
             raise ValueError(
