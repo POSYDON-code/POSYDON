@@ -119,7 +119,7 @@ def initial_total_underlying_mass(
     def fraction_simulated( m_1, m_2, m_min, m_max,
                            alpha1, alpha2, alpha3):
         a1, a2, a3 = alpha1, alpha2, alpha3
-        f_model =  f0 * f0 * (1/(1-a3)) * (m_1/m_min)**(-a1) * (m_2/m_1)**(
+        f_model =   f0 * (1/(1-a3)) * (m_1/m_min)**(-a1) * (m_2/m_1)**(
             -a2) * ((m_b**(1-a3)-m_a**(1-a3)) / (m_2**-a3)) 
         return f_model
 
