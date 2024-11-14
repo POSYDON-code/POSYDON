@@ -17,13 +17,13 @@ from scipy.stats import truncnorm
 from posydon.utils.common_functions import rejection_sampler
 
 
-def generate_independent_samples(orbital_scheme, **kwargs):
+def generate_independent_samples(orbital_scheme='period', **kwargs):
     """Randomly generate a population of binaries at ZAMS.
 
     Parameters
     ----------
-    number_of_binaries : int
-        Number of binaries that require randomly sampled orbital separations
+    orbital_scheme : str (default: 'period')
+        The scheme to use to get either orbital periods or separations
     **kwargs : dictionary
         kwargs from BinaryPopulation class
 
