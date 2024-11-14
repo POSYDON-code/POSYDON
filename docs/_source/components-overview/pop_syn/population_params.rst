@@ -6,7 +6,13 @@ POSDYON Population Synthesis Configuration Guide
 
 This documentation provides a detailed overview of the configuration options available in the Posydon software package.
 
-TODO: fill each table cell with a description of the parameter and the options
+
+.. warning::
+    The default values in the population_params.ini file included in POSYDON 
+    have not been calibrated, validated, or are used by the POSYDON team. They are
+    often an ad-hoc choice, and the user should carefully consider the values
+    of each parameter for their science case.
+
 
 Environment Variables
 ---------------------
