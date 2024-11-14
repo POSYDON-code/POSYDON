@@ -70,7 +70,7 @@ install_requires = [
     'configparser >= 5.3.0, <= 7.1.0',
     'astropy >= 5.2.2, <= 6.1.6',
     'pandas >= 2.0.0, <= 2.2.3',
-    'scikit-learn < 1.3.0', # 1.2.2
+    'scikit-learn == 1.2.2',
     'matplotlib >=  3.9.0, <= 3.9.2',
     'matplotlib-label-lines >= 0.5.2, <= 0.7.0',
     'h5py >= 3.8.0, <= 3.12.1',
@@ -118,7 +118,7 @@ scripts = glob.glob(os.path.join("bin", "*"))
 PACKAGENAME = "posydon"
 DISTNAME = "posydon"
 AUTHOR = "POSYDON Collaboration"
-AUTHOR_EMAIL = "jeffrey.andrews@ufl.edu"
+AUTHOR_EMAIL = ""
 LICENSE = "GPLv3+"
 DESCRIPTION = "POSYDON the Next Generation of Population Synthesis"
 GITHUBURL = "https://github.com/POSYDON-code/POSYDON"
@@ -143,14 +143,12 @@ setup(
     install_requires=install_requires,
     tests_require=tests_require,
     extras_require=extras_require,
-    python_requires=">3.5, <4",
+    python_requires=">3.10, <3.12",
     use_2to3=False,
     classifiers=[
         "Development Status :: 4 - Beta",
         "Programming Language :: Python",
-        "Programming Language :: Python :: 3.6",
-        "Programming Language :: Python :: 3.7",
-        "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.11",
         "Intended Audience :: Science/Research",
         "Intended Audience :: End Users/Desktop",
         "Intended Audience :: Science/Research",
