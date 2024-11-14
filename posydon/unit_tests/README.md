@@ -148,4 +148,4 @@ Strictly speaking it runs the `pytest` inside of [coverage](https://coverage.rea
 
 *I suggest to use the `-m` option to show uncovered lines, which is `--cov-report term-missing` in pytest.*
 
-We should aim for a 100% coverage. If there is code which should be excluded from the coverage, please mark it with `# pragma: no cover`. The main usage is for code, which under normal conditions should never run, e.g. in POSYDONwarnings is a part to act, when the python `sys` module fails.
+We should aim for 100% coverage. If there is code which should be excluded from the coverage, please mark it with `# pragma: no cover`. The main usage is for code, which under normal conditions should never run, e.g. in POSYDONwarnings is a part to act, when the python `sys` module fails.
