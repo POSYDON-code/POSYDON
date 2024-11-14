@@ -122,7 +122,7 @@ Usually, pytest will catch all warnings and print them at the end of all tests. 
 
 ### Check that it can fail
 
-Whenever you write a test, it should succeed on the existing code. On the other hand, you should also make a test where you expect it to fail, otherwise, the test won't do its job.
+Whenever you write a test, it should succeed on the existing code. On the other hand, you should also try out introducing a temporary change that you expect to lead to a failure to ensure the test is doing its job.
 
 ## How to update a unit test
 
