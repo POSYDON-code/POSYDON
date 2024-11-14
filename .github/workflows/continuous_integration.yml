@@ -36,4 +36,4 @@ jobs:
         export PATH_TO_POSYDON=./
         export PATH_TO_POSYDON_DATA=./
         export MESA_DIR=./
-        python -m pytest posydon/unit_tests/ --cov=posydon.utils --cov-branch --cov-report term-missing
+        python -m pytest posydon/unit_tests/ --cov=posydon.utils --cov-branch --cov-report term-missing --cov-fail-under=100 
