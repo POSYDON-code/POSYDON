@@ -16,7 +16,7 @@ If you like to run all unit tests you can use
 
 ## File structure
 
-As already visible from the commands how to run all unit tests we have a the `unit_tests` directory. In there are individual directories to combine several tests into one suite. It is a natural choice to reuse the topics used in the code itself. For example all the unit tests for files inside `$PATH_TO_POSYDON/posydon/utils` are put in `$PATH_TO_POSYDON/posydon/unit_tests/utils`. In those suits, there should be a file for each code file, which is simply extended by the prefix `test_`, e.g. `test_posydonerror.py` contains the unit tests of `posydonerror.py`. If the code file is in a subdirectory, may add this to the prefix. *I'd discourage to create deep directory structures inside the `unit_tests`.*
+As already visible from the commands how to run all unit tests we have a the `unit_tests` directory. In there are individual directories to combine several tests into one suite. It is a natural choice to reuse the topics used in the code itself. For example all the unit tests for files inside `$PATH_TO_POSYDON/posydon/utils` are put in `$PATH_TO_POSYDON/posydon/unit_tests/utils`. In those suites, there should be a file for each code file, which is simply extended by the prefix `test_`, e.g. `test_posydonerror.py` contains the unit tests of `posydonerror.py`. If the code file is in a subdirectory, may add this to the prefix. *I'd discourage to create deep directory structures inside the `unit_tests`.*
 
 ## How to add a new unit test
 
