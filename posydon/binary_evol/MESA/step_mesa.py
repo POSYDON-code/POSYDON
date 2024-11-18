@@ -276,31 +276,29 @@ class MesaGridStep:
         """
         if self.interpolation_method == 'nearest_neighbour':
             self.closest_binary, self.nearest_neighbour_distance, \
-                self.termination_flags = self._psyTrackInterp.evaluate(
-                    self.binary)
+                self.termination_flags = self._psyTrackInterp.evaluate(self.binary)
             if self.closest_binary.binary_history is None:
                 return
             key = POSYDON_TO_MESA['binary']['time']
             max_MESA_sim_time = self.closest_binary.binary_history[key][-1]
 
         elif self.interpolation_method in self.supported_interp_methods:
-            self.final_values, self.classes = self._Interp.evaluate(
-                self.binary)
+            self.final_values, self.classes = self._Interp.evaluate(self.binary)
 
-            max_MESA_sim_time = self.final_values[
-                                        POSYDON_TO_MESA['binary']['time']]
+            max_MESA_sim_time = self.final_values[POSYDON_TO_MESA['binary']['time']]
         else:
-            raise ValueError("unknown interpolation method: {}".
-                             format(self.interpolation_method))
+            raise ValueError("unknown interpolation method: {}".format(self.interpolation_method))
+        
         return max_MESA_sim_time
 
     def __call__(self, binary):
         """Evolve a binary using the MESA step."""
+
         if not isinstance(binary, BinaryStar):
             raise ValueError("Must be an instance of BinaryStar")
         if not hasattr(self, 'step'):
-            raise ValueError("No step defined for {}".format(
-                self.__name__))
+            raise ValueError("No step defined for {}".format(self.__name__))
+        
         if self.flip_stars_before_step:
             flip_stars(binary)
         max_MESA_sim_time = self.get_final_MESA_step_time()
@@ -311,16 +309,14 @@ class MesaGridStep:
             binary.state = 'initial_RLOF'
             return
 
-        binary_start_time = binary.time
         step_will_exceed_max_time = (binary.time+max_MESA_sim_time
-                                     > binary.properties.max_simulation_time)
+                                    > binary.properties.max_simulation_time)
         if (step_will_exceed_max_time
                 and self.stop_method == 'stop_at_max_time'):
-            # self.step(binary, interp_method='nearest_neighbour')
+            
             if self.interpolation_method != 'nearest_neighbour':
                 self.closest_binary, self.nearest_neighbour_distance, \
-                    self.termination_flags = self._psyTrackInterp.evaluate(
-                                 self.binary)
+                    self.termination_flags = self._psyTrackInterp.evaluate(self.binary)
 
             if self.track_interpolation:
                 self.flush_history = False
@@ -331,6 +327,7 @@ class MesaGridStep:
                                       track_interpolation=True)
         else:
             self.step(binary, interp_method=self.interpolation_method)
+
         if (self.stop_method == 'stop_at_max_time'
                 and binary.time >= binary.properties.max_simulation_time):
 
@@ -362,12 +359,14 @@ class MesaGridStep:
                              interpolate=self.stop_interpolate,
                              star_1_CO=self.star_1_CO,
                              star_2_CO=self.star_2_CO)
+            
         if self.flip_stars_before_step:
             flip_stars(binary)
         if binary.time > binary.properties.max_simulation_time:
             binary.event = 'MaxTime_exceeded'
         elif binary.time == binary.properties.max_simulation_time:
             binary.event = 'maxtime'
+
         return
 
     def step(self, binary, interp_method=None):

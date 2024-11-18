@@ -358,7 +358,7 @@ class detached_step:
         # DataScaler instance, created the first time it is requested
         self.stored_scalers = {}
 
-        if verbose:
+        if self.verbose:
             print(
                 dt,
                 n_o_steps_history,
@@ -413,15 +413,12 @@ class detached_step:
         self.profile_keys = DEFAULT_PROFILE_KEYS
 
         if grid_name_Hrich is None:
-            grid_name_Hrich = os.path.join(
-                'single_HMS', self.metallicity+'_Zsun.h5')
+            grid_name_Hrich = os.path.join('single_HMS', self.metallicity+'_Zsun.h5')
         self.grid_Hrich = GRIDInterpolator(os.path.join(path, grid_name_Hrich))
 
         if grid_name_strippedHe is None:
-            grid_name_strippedHe = os.path.join(
-                'single_HeMS', self.metallicity+'_Zsun.h5')
-        self.grid_strippedHe = GRIDInterpolator(
-            os.path.join(path, grid_name_strippedHe))
+            grid_name_strippedHe = os.path.join('single_HeMS', self.metallicity+'_Zsun.h5')
+        self.grid_strippedHe = GRIDInterpolator(os.path.join(path, grid_name_strippedHe))
 
         # Initialize the matching lists:
         m_min_H = np.min(self.grid_Hrich.grid_mass)
@@ -877,127 +874,8 @@ class detached_step:
 
     def __call__(self, binary):
         """Evolve the binary until RLO or compact object formation."""
-        KEYS = self.KEYS
-        KEYS_POSITIVE = self.KEYS_POSITIVE
 
-        companion_1_exists = (binary.star_1 is not None
-                              and binary.star_1.state != "massless_remnant")
-        companion_2_exists = (binary.star_2 is not None
-                              and binary.star_2.state != "massless_remnant")
-
-        if companion_1_exists:
-            if companion_2_exists:                  # to evolve a binary star
-                self.non_existent_companion = 0
-            else:                                   # star1 is a single star
-                self.non_existent_companion = 2
-        else:
-            if companion_2_exists:                  # star2 is a single star
-                self.non_existent_companion = 1
-            else:                                   # no star in the system
-                raise POSYDONError("There is no star to evolve. Who summoned me?")
-
-        if self.non_existent_companion == 0: #no isolated evolution, detached step of an actual binary
-            # the primary in a real binary is potential compact object, or the more evolved star
-            if (binary.star_1.state in STAR_STATES_CO
-                    and binary.star_2.state in STAR_STATES_H_RICH):
-                primary = binary.star_1
-                secondary = binary.star_2
-                secondary.htrack = True
-                primary.htrack = secondary.htrack
-                primary.co = True
-
-            elif (binary.star_1.state in STAR_STATES_CO
-                    and binary.star_2.state in LIST_ACCEPTABLE_STATES_FOR_HeStar):
-                primary = binary.star_1
-                secondary = binary.star_2
-                secondary.htrack = False
-                primary.htrack = secondary.htrack
-                primary.co = True
-
-            elif (binary.star_2.state in STAR_STATES_CO
-                    and binary.star_1.state in STAR_STATES_H_RICH):
-                primary = binary.star_2
-                secondary = binary.star_1
-                secondary.htrack = True
-                primary.htrack = secondary.htrack
-                primary.co = True
-
-            elif (binary.star_2.state in STAR_STATES_CO
-                    and binary.star_1.state in LIST_ACCEPTABLE_STATES_FOR_HeStar):
-                primary = binary.star_2
-                secondary = binary.star_1
-                secondary.htrack = False
-                primary.htrack = secondary.htrack
-                primary.co = True
-            elif (binary.star_1.state in STAR_STATES_H_RICH
-                    and binary.star_2.state in STAR_STATES_H_RICH):
-                primary = binary.star_1
-                secondary = binary.star_2
-                secondary.htrack = True
-                primary.htrack = True
-                primary.co = False
-            elif (binary.star_1.state in LIST_ACCEPTABLE_STATES_FOR_HeStar
-                    and binary.star_2.state in STAR_STATES_H_RICH):
-                primary = binary.star_1
-                secondary = binary.star_2
-                secondary.htrack = True
-                primary.htrack = False
-                primary.co = False
-            elif (binary.star_2.state in LIST_ACCEPTABLE_STATES_FOR_HeStar
-                    and binary.star_1.state in STAR_STATES_H_RICH):
-                primary = binary.star_2
-                secondary = binary.star_1
-                secondary.htrack = True
-                primary.htrack = False
-                primary.co = False
-            elif (binary.star_1.state in LIST_ACCEPTABLE_STATES_FOR_HeStar
-                    and binary.star_2.state
-                    in LIST_ACCEPTABLE_STATES_FOR_HeStar):
-                primary = binary.star_1
-                secondary = binary.star_2
-                secondary.htrack = False
-                primary.htrack = False
-                primary.co = False
-            else:
-                raise ValueError("States not recognized!")
-
-        # star 1 is a massless remnant, only star 2 exists
-        elif self.non_existent_companion == 1:
-            # we force primary.co=True for all isolated evolution,
-            # where the secondary is the one evolving one
-            primary = binary.star_1
-            primary.co = True
-            primary.htrack = False
-            secondary = binary.star_2
-            if (binary.star_2.state in STAR_STATES_H_RICH):
-                secondary.htrack = True
-            elif (binary.star_2.state in LIST_ACCEPTABLE_STATES_FOR_HeStar):
-                secondary.htrack = False
-            elif (binary.star_2.state in STAR_STATES_CO):
-                # only a compact object left
-                return
-            else:
-                raise ValueError("State not recognized!")
-
-        # star 2 is a massless remnant, only star 1 exists
-        elif self.non_existent_companion == 2:
-            primary = binary.star_2
-            primary.co = True
-            primary.htrack = False
-            secondary = binary.star_1
-            if (binary.star_1.state in STAR_STATES_H_RICH):
-                secondary.htrack = True
-            elif (binary.star_1.state in LIST_ACCEPTABLE_STATES_FOR_HeStar):
-                secondary.htrack = False
-            elif (binary.star_1.state in STAR_STATES_CO):
-                return
-            else:
-                raise ValueError("State not recognized!")
-        else:
-            raise POSYDONError("Non existent companion has not a recognized value!")
-
-        def get_star_data(binary, star1, star2, htrack,
-                          co, copy_prev_m0=None, copy_prev_t0=None):
+        def get_star_data(binary, star1, star2, htrack, co, copy_prev_m0=None, copy_prev_t0=None):
             """Get and interpolate the properties of stars.
 
             The data of a compact object can be stored as a copy of its
@@ -1033,7 +911,7 @@ class detached_step:
                     t_after_matching = time.time()
                     
                     if self.verbose:
-                        print(f"Matching duration: {t_after_matching-t_before_matching:.6g} sec")
+                        print(f"Matching duration: {t_after_matching-t_before_matching:.6g} sec\n")
             
             if pd.isna(m0) or pd.isna(t0):
                 return None, None, None
@@ -1046,7 +924,8 @@ class detached_step:
             # check if m0 is in the grid
             if m0 < self.grid.grid_mass.min() or m0 > self.grid.grid_mass.max():
                 set_binary_to_failed(binary)
-                raise MatchingError(f"The mass {m0} is out of the single star grid range and cannot be matched to a track.")
+                raise MatchingError(f"The mass {m0} is out of the single star grid range and "
+                                    "cannot be matched to a track.")
 
             get_track = self.grid.get
 
@@ -1074,13 +953,14 @@ class detached_step:
                     age = np.delete(age, i_bad)
                     for key in KEYS[1:]:
                         kvalue[key] = np.delete(kvalue[key], i_bad)
+
                 for key in KEYS[1:]:
                     if key in KEYS_POSITIVE:
                         positive = True
-                        interp1d[key] = PchipInterpolator2(age, kvalue[key],
-                                                           positive=positive)
+                        interp1d[key] = PchipInterpolator2(age, kvalue[key], positive=positive)
                     else:
                         interp1d[key] = PchipInterpolator2(age, kvalue[key])
+
             interp1d["inertia"] = PchipInterpolator(
                 age, kvalue["inertia"] / (const.msol * const.rsol**2))
             interp1d["Idot"] = interp1d["inertia"].derivative()
@@ -1094,6 +974,7 @@ class detached_step:
             interp1d["max_time"] = max_time
             interp1d["t0"] = t0
             interp1d["m0"] = m0
+
             if co:
                 kvalue["mass"] = np.zeros_like(kvalue["mass"]) + star2.mass
                 kvalue["R"] = np.zeros_like(kvalue["log_R"])
@@ -1102,45 +983,9 @@ class detached_step:
                 interp1d["R"] = PchipInterpolator(age, kvalue["R"])
                 interp1d["mdot"] = PchipInterpolator(age, kvalue["mdot"])
                 interp1d["Idot"] = PchipInterpolator(age, kvalue["mdot"])
+
             return interp1d, m0, t0
-
-        # get the matched data of two stars, respectively
-        interp1d_sec, m0, t0 = get_star_data(
-            binary, secondary, primary, secondary.htrack, co=False)
-
-        primary_not_normal = (primary.co) or (self.non_existent_companion in [1,2])
-        primary_normal = (not primary.co) and self.non_existent_companion == 0
-
-        if primary_not_normal:
-            # copy the secondary star except mass which is of the primary,
-            # and radius, mdot, Idot = 0
-            interp1d_pri = get_star_data(
-                binary, secondary, primary, secondary.htrack, co=True,
-                copy_prev_m0=m0, copy_prev_t0=t0)[0]
-        elif primary_normal:
-            interp1d_pri = get_star_data(
-                binary, primary, secondary, primary.htrack, False)[0]
-        else:
-            raise ValueError("During matching, the primary should either be normal (stellar object) or ",
-                             "not normal (CO, nonexistent companion).")
-
-
-        if interp1d_sec is None or interp1d_pri is None:
-            failed_state = binary.state
-            set_binary_to_failed(binary)
-            raise MatchingError(f"Grid matching failed for {failed_state} binary.")    
-                  
-                   
-        t0_sec = interp1d_sec["t0"]
-        t0_pri = interp1d_pri["t0"]
-        m01 = interp1d_sec["m0"]
-        m02 = interp1d_pri["m0"]
-        t_max_sec = interp1d_sec["t_max"]
-        t_max_pri = interp1d_pri["t_max"]
-        t_offset_sec = binary.time - t0_sec
-        t_offset_pri = binary.time - t0_pri
-        max_time = interp1d_sec["max_time"]
-
+        
         @event(True, 1)
         def ev_rlo1(t, y):
             """Difference between radius and Roche lobe at a given time.
@@ -1278,43 +1123,53 @@ class detached_step:
         @event(True, -1)
         def ev_max_time2(t, y):
             return t_max_pri + t_offset_pri - t
+        
+        def get_omega(star, is_secondary=True):
+            """Calculate the spin of a star.
 
-        # make a function to get the spin of two stars
-        def get_omega(star, is_secondary = True):
+            Parameters
+            ----------
+            star : SingleStar object
+
+            Returns
+            -------
+            float
+                spin of the star in radians per year
+            """
+
             if (star.log_total_angular_momentum is not None
                     and star.total_moment_of_inertia is not None
                     and not np.isnan(star.log_total_angular_momentum)
                     and not np.isnan(star.total_moment_of_inertia)):
+                
+                # the last factor converts rad/s to rad/yr
                 omega_in_rad_per_year = (
                         10.0 ** star.log_total_angular_momentum
-                        / star.total_moment_of_inertia * const.secyer
-                )  # the last factor transforms it from rad/s to rad/yr
-                if self.verbose and self.verbose != 1:
-                    print("calculating initial omega from angular momentum and"
-                          " moment of inertia", omega_in_rad_per_year)
+                        / star.total_moment_of_inertia * const.secyer)  
+                
+                if self.verbose:
+                    print("calculating initial omega using angular momentum and moment of inertia")
             else:
-                # we equate secondary's initial omega to surf_avg_omega
+                # we equate the secondary's initial omega to surf_avg_omega
                 # (although the critical rotation should be improved to
-                # take into accoun radiation pressure)
-                if (star.surf_avg_omega is not None
-                        and not np.isnan(star.surf_avg_omega)):
-                    omega_in_rad_per_year = star.surf_avg_omega * const.secyer
-                    # the last factor transforms it from rad/s to rad/yr.
-                    if self.verbose and self.verbose != 1:
-                        print("calculating initial omega from surf_avg_omega",
-                              omega_in_rad_per_year)
+                # take into account radiation pressure)
+
+                if (star.surf_avg_omega is not None and not np.isnan(star.surf_avg_omega)):
+
+                    if self.verbose:
+                        print("calculating initial omega using surf_avg_omega")
+
+                    omega_in_rad_per_year = star.surf_avg_omega * const.secyer                    
+                        
                 elif (star.surf_avg_omega_div_omega_crit is not None
                         and not np.isnan(star.surf_avg_omega_div_omega_crit)):
-                    if (star.log_R is not None
-                            and not np.isnan(star.log_R)):
+                    
+                    if (star.log_R is not None and not np.isnan(star.log_R)):
                         omega_in_rad_per_year = (
                             star.surf_avg_omega_div_omega_crit * np.sqrt(
                                 const.standard_cgrav * star.mass * const.msol
-                                / ((10.0 ** (star.log_R) * const.rsol) ** 3))
-                            * const.secyer)
-                        # the last factor transforms it from rad/s to rad/yr
-                        # EDIT: We assume POSYDON surf_avg_omega is provided in
-                        # rad/yr already.
+                                / ((10.0 ** (star.log_R) * const.rsol) ** 3)) * const.secyer)
+                        
                     else:
                         if is_secondary:
                             radius_to_be_used = interp1d_sec["R"](interp1d_sec["t0"])
@@ -1322,24 +1177,201 @@ class detached_step:
                         else:
                             radius_to_be_used = interp1d_pri["R"](interp1d_pri["t0"])
                             mass_to_be_used = interp1d_pri["mass"](interp1d_pri["t0"])
+                        
+                        if self.verbose:
+                            print("calculating initial omega using surf_avg_omega_div_omega_crit")
+
                         omega_in_rad_per_year = (
                             star.surf_avg_omega_div_omega_crit * np.sqrt(
                                 const.standard_cgrav * mass_to_be_used * const.msol
-                                / ((radius_to_be_used * const.rsol) ** 3))
-                            * const.secyer)
-
-                    if self.verbose and self.verbose != 1:
-                        print("calculating initial omega from "
-                              "surf_avg_omega_div_omega_crit",
-                              omega_in_rad_per_year)
+                                / ((radius_to_be_used * const.rsol) ** 3)) * const.secyer)
+                   
                 else:
                     omega_in_rad_per_year = 0.0
-                    if self.verbose and self.verbose != 1:
-                        print("could calculate initial omega",
-                              omega_in_rad_per_year)
-            if self.verbose and self.verbose != 1:
-                print("initial omega_in_rad_per_year", omega_in_rad_per_year)
+                    if self.verbose:
+                        print("could not calculate initial omega, setting to zero")
+                        
+            if self.verbose:
+                print("calculated omega_in_rad_per_year: ", omega_in_rad_per_year)
+
             return omega_in_rad_per_year
+        
+        def get_star_final_values(star, htrack, m0):  
+
+            grid = self.grid_Hrich if htrack else self.grid_strippedHe
+            get_final_values = grid.get_final_values
+        
+            for key in self.final_keys:
+                setattr(star, key, get_final_values('S1_%s' % (key), m0))
+
+        def get_star_profile(star, htrack, m0):
+
+            grid = self.grid_Hrich if htrack else self.grid_strippedHe
+            get_profile = grid.get_profile
+            profile_new = np.array(get_profile('mass', m0)[1])
+
+            for i in self.profile_keys:
+                profile_new[i] = get_profile(i, m0)[0]
+            profile_new['omega'] = star.surf_avg_omega
+
+            star.profile = profile_new
+            
+
+        KEYS = self.KEYS
+        KEYS_POSITIVE = self.KEYS_POSITIVE
+
+        companion_1_exists = (binary.star_1 is not None
+                              and binary.star_1.state != "massless_remnant")
+        companion_2_exists = (binary.star_2 is not None
+                              and binary.star_2.state != "massless_remnant")
+
+        if companion_1_exists:
+            if companion_2_exists:                  # to evolve a binary star
+                self.non_existent_companion = 0
+            else:                                   # star1 is a single star
+                self.non_existent_companion = 2
+        else:
+            if companion_2_exists:                  # star2 is a single star
+                self.non_existent_companion = 1
+            else:                                   # no star in the system
+                raise POSYDONError("There is no star to evolve. Who summoned me?")
+
+        if self.non_existent_companion == 0: #no isolated evolution, detached step of an actual binary
+            # the primary in a real binary is potential compact object, or the more evolved star
+            if (binary.star_1.state in STAR_STATES_CO
+                    and binary.star_2.state in STAR_STATES_H_RICH):
+                primary = binary.star_1
+                secondary = binary.star_2
+                secondary.htrack = True
+                primary.htrack = secondary.htrack
+                primary.co = True
+
+            elif (binary.star_1.state in STAR_STATES_CO
+                    and binary.star_2.state in LIST_ACCEPTABLE_STATES_FOR_HeStar):
+                primary = binary.star_1
+                secondary = binary.star_2
+                secondary.htrack = False
+                primary.htrack = secondary.htrack
+                primary.co = True
+
+            elif (binary.star_2.state in STAR_STATES_CO
+                    and binary.star_1.state in STAR_STATES_H_RICH):
+                primary = binary.star_2
+                secondary = binary.star_1
+                secondary.htrack = True
+                primary.htrack = secondary.htrack
+                primary.co = True
+
+            elif (binary.star_2.state in STAR_STATES_CO
+                    and binary.star_1.state in LIST_ACCEPTABLE_STATES_FOR_HeStar):
+                primary = binary.star_2
+                secondary = binary.star_1
+                secondary.htrack = False
+                primary.htrack = secondary.htrack
+                primary.co = True
+            elif (binary.star_1.state in STAR_STATES_H_RICH
+                    and binary.star_2.state in STAR_STATES_H_RICH):
+                primary = binary.star_1
+                secondary = binary.star_2
+                secondary.htrack = True
+                primary.htrack = True
+                primary.co = False
+            elif (binary.star_1.state in LIST_ACCEPTABLE_STATES_FOR_HeStar
+                    and binary.star_2.state in STAR_STATES_H_RICH):
+                primary = binary.star_1
+                secondary = binary.star_2
+                secondary.htrack = True
+                primary.htrack = False
+                primary.co = False
+            elif (binary.star_2.state in LIST_ACCEPTABLE_STATES_FOR_HeStar
+                    and binary.star_1.state in STAR_STATES_H_RICH):
+                primary = binary.star_2
+                secondary = binary.star_1
+                secondary.htrack = True
+                primary.htrack = False
+                primary.co = False
+            elif (binary.star_1.state in LIST_ACCEPTABLE_STATES_FOR_HeStar
+                    and binary.star_2.state
+                    in LIST_ACCEPTABLE_STATES_FOR_HeStar):
+                primary = binary.star_1
+                secondary = binary.star_2
+                secondary.htrack = False
+                primary.htrack = False
+                primary.co = False
+            else:
+                raise ValueError("States not recognized!")
+
+        # star 1 is a massless remnant, only star 2 exists
+        elif self.non_existent_companion == 1:
+            # we force primary.co=True for all isolated evolution,
+            # where the secondary is the one evolving one
+            primary = binary.star_1
+            primary.co = True
+            primary.htrack = False
+            secondary = binary.star_2
+            if (binary.star_2.state in STAR_STATES_H_RICH):
+                secondary.htrack = True
+            elif (binary.star_2.state in LIST_ACCEPTABLE_STATES_FOR_HeStar):
+                secondary.htrack = False
+            elif (binary.star_2.state in STAR_STATES_CO):
+                # only a compact object left
+                return
+            else:
+                raise ValueError("State not recognized!")
+
+        # star 2 is a massless remnant, only star 1 exists
+        elif self.non_existent_companion == 2:
+            primary = binary.star_2
+            primary.co = True
+            primary.htrack = False
+            secondary = binary.star_1
+            if (binary.star_1.state in STAR_STATES_H_RICH):
+                secondary.htrack = True
+            elif (binary.star_1.state in LIST_ACCEPTABLE_STATES_FOR_HeStar):
+                secondary.htrack = False
+            elif (binary.star_1.state in STAR_STATES_CO):
+                return
+            else:
+                raise ValueError("State not recognized!")
+        else:
+            raise POSYDONError("Non existent companion has not a recognized value!")
+
+        # get the matched data of two stars, respectively
+        interp1d_sec, m0, t0 = get_star_data(binary, secondary, primary, secondary.htrack, co=False)
+
+        primary_not_normal = (primary.co) or (self.non_existent_companion in [1,2])
+        primary_normal = (not primary.co) and self.non_existent_companion == 0
+
+        if primary_not_normal:
+            # copy the secondary star except mass which is of the primary,
+            # and radius, mdot, Idot = 0
+            interp1d_pri = get_star_data(
+                binary, secondary, primary, secondary.htrack, co=True,
+                copy_prev_m0=m0, copy_prev_t0=t0)[0]
+        elif primary_normal:
+            interp1d_pri = get_star_data(
+                binary, primary, secondary, primary.htrack, False)[0]
+        else:
+            raise ValueError("During matching, the primary should either be normal (stellar object) or ",
+                             "not normal (CO, nonexistent companion).")
+
+
+        if interp1d_sec is None or interp1d_pri is None:
+            failed_state = binary.state
+            set_binary_to_failed(binary)
+            raise MatchingError(f"Grid matching failed for {failed_state} binary.")    
+                  
+                   
+        t0_sec = interp1d_sec["t0"]
+        t0_pri = interp1d_pri["t0"]
+        m01 = interp1d_sec["m0"]
+        m02 = interp1d_pri["m0"]
+        t_max_sec = interp1d_sec["t_max"]
+        t_max_pri = interp1d_pri["t_max"]
+        t_offset_sec = binary.time - t0_sec
+        t_offset_pri = binary.time - t0_pri
+        max_time = interp1d_sec["max_time"]
+
 
         if (ev_rlo1(binary.time, [binary.separation, binary.eccentricity]) >= 0
                 or ev_rlo2(binary.time, [binary.separation, binary.eccentricity]) >= 0):
@@ -1449,9 +1481,8 @@ class detached_step:
 
             t_after_ODEsolution = time.time()
 
-            if self.verbose and self.verbose != 1:
-                print("ODE solver duration: "
-                      f"{t_after_ODEsolution-t_before_ODEsolution:.6g}")
+            if self.verbose:
+                print(f"\nODE solver duration: {t_after_ODEsolution-t_before_ODEsolution:.6g}")
                 print("solution of ODE", s)
 
             if s.status == -1:
@@ -1489,12 +1520,9 @@ class detached_step:
                 mass_interp_sec(t - t_offset_sec))
 
             interp1d_sec["time"] = t
-            # time_interp = binary.time + t - t0
 
-            for obj, prop in zip(
-                    [secondary, primary, binary],
-                    [STARPROPERTIES, STARPROPERTIES, BINARYPROPERTIES],
-            ):
+            for obj, prop in zip([secondary, primary, binary], [STARPROPERTIES, STARPROPERTIES, BINARYPROPERTIES]):
+                
                 for key in prop:
                     if key in ["event",
                                "mass_transfer_case",
@@ -1505,8 +1533,7 @@ class detached_step:
                         # further below
                         history = [current] * len(t[:-1])
 
-                    elif (key in ["surf_avg_omega_div_omega_crit"]
-                            and obj == secondary):
+                    elif (key in ["surf_avg_omega_div_omega_crit"] and obj == secondary):
                         # replace the actual surf_avg_w with the effective
                         # omega, which takes into account the whole star
                         # key  = 'effective_omega' # in rad/sec
@@ -1532,8 +1559,7 @@ class detached_step:
                         history = (interp1d_sec["omega"][:-1] / const.secyer
                                    / omega_crit_hist_sec)
                         
-                    elif (key in ["surf_avg_omega_div_omega_crit"]
-                            and obj == primary):
+                    elif (key in ["surf_avg_omega_div_omega_crit"] and obj == primary):
                         if primary.co:
                             current = None
                             history = [current] * len(t[:-1])
@@ -1560,7 +1586,6 @@ class detached_step:
                                        / const.secyer / omega_crit_hist_pri)
                             
                     elif key in ["surf_avg_omega"] and obj == secondary:
-                        # current = interp1d["omega"](t[-1]) / const.secyer
                         current = interp1d_sec["omega"][-1] / const.secyer
                         history = interp1d_sec["omega"][:-1] / const.secyer
 
@@ -1643,7 +1668,8 @@ class detached_step:
                         ## add a warning catch if the current omega has an invalid value
                         ## (otherwise python will throw an insuppressible warning when taking the log)
                         if interp1d_sec["omega"][-1] <=0:
-                            Pwarn("Trying to compute log angular momentum for object with no spin", "InappropriateValueWarning")
+                            Pwarn("Trying to compute log angular momentum for object with no spin", 
+                                  "InappropriateValueWarning")
                             current_omega = np.nan
                                                
                         current = np.log10(
@@ -1824,25 +1850,8 @@ class detached_step:
                     primary.state_history[timestep] = check_state_of_star(
                         primary, i=timestep, star_CO=False)
 
-            def get_star_final_values(star, htrack, m0):
-                grid = self.grid_Hrich if htrack else self.grid_strippedHe
-                get_final_values = grid.get_final_values
-        
-                for key in self.final_keys:
-                    setattr(star, key, get_final_values('S1_%s' % (key), m0))
-
-            def get_star_profile(star, htrack, m0):
-                grid = self.grid_Hrich if htrack else self.grid_strippedHe
-                get_profile = grid.get_profile
-                profile_new = np.array(get_profile('mass', m0)[1])
-
-                for i in self.profile_keys:
-                    profile_new[i] = get_profile(i, m0)[0]
-                profile_new['omega'] = star.surf_avg_omega
-
-                star.profile = profile_new
-
             if s.t_events[0] or s.t_events[1]:  # reached RLOF
+
                 if self.RLO_orbit_at_orbit_with_same_am:
                     # final circular orbit conserves angular momentum
                     # compared to the eccentric orbit
@@ -1860,6 +1869,7 @@ class detached_step:
                     )
                 ) / binary.orbital_period < 10 ** (-2)
                 binary.eccentricity = 0
+
                 if s.t_events[0]:
                     if secondary == binary.star_1:
                         binary.state = "RLO1"
@@ -1867,6 +1877,7 @@ class detached_step:
                     else:
                         binary.state = "RLO2"
                         binary.event = "oRLO2"
+
                 elif s.t_events[1]:
                     if secondary == binary.star_1:
                         binary.state = "RLO2"
@@ -1879,53 +1890,59 @@ class detached_step:
                     and binary.star_1.state in LIST_ACCEPTABLE_STATES_FOR_HeStar 
                     and binary.star_2.state in STAR_STATES_H_RICH):
                         set_binary_to_failed(binary)
-                        raise FlowError("Evolution of He-rich stars in RLO onto H-rich stars after HMS-HMS not yet supported.") 
+                        raise FlowError("Evolution of He-rich stars in RLO onto H-rich stars after " 
+                                        "HMS-HMS not yet supported.") 
                 
                 elif (binary.state == "RLO2" 
                       and binary.star_2.state in LIST_ACCEPTABLE_STATES_FOR_HeStar 
                       and binary.star_1.state in STAR_STATES_H_RICH):
                         set_binary_to_failed(binary)
-                        raise FlowError("Evolution of He-rich stars in RLO onto H-rich stars after HMS-HMS not yet supported.") 
+                        raise FlowError("Evolution of He-rich stars in RLO onto H-rich stars after " 
+                                        "HMS-HMS not yet supported.") 
 
 
             elif s.t_events[2]:
-                # reached t_max of track. End of life (possible collapse) of
-                # secondary
+                # reached t_max of track. End of life (possible collapse) of secondary
                 if secondary == binary.star_1:
                     binary.event = "CC1"
                 else:
                     binary.event = "CC2"
+
                 get_star_final_values(secondary, secondary.htrack, m01)
                 get_star_profile(secondary, secondary.htrack, m01)
+
                 if not primary.co and primary.state in STAR_STATES_CC:
                     # simultaneous core-collapse of the other star as well
                     primary_time = t_max_pri + t_offset_pri - t[-1]
                     secondary_time = t_max_sec + t_offset_sec - t[-1]
+
                     if primary_time == secondary_time:
                         # we manually check if s.t_events[3] should also
                         # be happening simultaneously
                         get_star_final_values(primary, primary.htrack, m02)
                         get_star_profile(primary, primary.htrack, m02)
+
                     if primary.mass != secondary.mass:
                         raise POSYDONError(
                             "Both stars are found to be ready for collapse "
                             "(i.e. end of their life) during the detached "
                             "step, but do not have the same mass")
+                    
             elif s.t_events[3]:
-                # reached t_max of track. End of life (possible collapse) of
-                # primary
+                # reached t_max of track. End of life (possible collapse) of primary
                 if secondary == binary.star_1:
                     binary.event = "CC2"
                 else:
                     binary.event = "CC1"
+
                 get_star_final_values(primary, primary.htrack, m02)
                 get_star_profile(primary, primary.htrack, m02)
+                
             else:  # Reached max_time asked.
                 if binary.properties.max_simulation_time - binary.time < 0.0:
                     binary.event = "MaxTime_exceeded"
                 else:
                     binary.event = "maxtime"
-                # binary.event = "MaxTime_exceeded"
 
 
 def event(terminal, direction=0):
