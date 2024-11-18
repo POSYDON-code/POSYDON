@@ -41,6 +41,7 @@ __authors__ = [
     "Scott Coughlin <scottcoughlin2014@u.northwestern.edu>",
     "Emmanouil Zapartas <ezapartas@gmail.com>",
     "Tassos Fragos <Anastasios.Fragkos@unige.ch>",
+    "Matthias Kruckow <Matthias.Kruckow@unige.ch>",
 ]
 
 
@@ -385,7 +386,7 @@ def print_meta_contents(path, max_lines=None, max_chars_per_line=80):
         if max_lines is not None and i >= max_lines:
             break
         line = line.rstrip("\n")
-        if max_chars_per_line != "warp":
+        if max_chars_per_line != "wrap":
             line = line[:max_chars_per_line]
         print(line)
     f.close()
@@ -396,7 +397,10 @@ def read_initial_values(mesa_dir):
     """Read grid point values given the MESA run directory."""
     path = os.path.join(mesa_dir, "inlist_grid_points")
     if not os.path.exists(path):
-        return None
+        if os.path.exists(path+".gz"):
+            path +=".gz"
+        else:
+            return None
 
     initial_values = {}
     if path.endswith(".gz"):
@@ -431,12 +435,12 @@ def initial_values_from_dirname(mesa_dir):
     """Use the name of the directory for inferring the main initial values."""
     dirname = str(os.path.basename(os.path.normpath(mesa_dir)))
     if "initial_mass" in dirname:                           # single-star grid
-        if "v1/" in dirname: # version 1 dirnames don't contain initial_z
+        if "v1/" in mesa_dir: # version 1 dirnames don't contain initial_z
             variable_names = ["initial_mass"]
         else:
             variable_names = ["initial_mass", "initial_z"]
     else:                                                   # binary-star grid
-        if "v1/" in dirname: # version 1 dirnames don't contain initial_z
+        if "v1/" in mesa_dir: # version 1 dirnames don't contain initial_z
             variable_names = ["m1", "m2", "initial_period_in_days"]
         else:
             variable_names = ["m1", "m2", "initial_period_in_days", "initial_z"]

@@ -28,9 +28,9 @@ class TestElements:
                str(type(totest.MODELS))
 
 
-class TestContent:
+class TestValues:
     # check that the values fit
-    def test_content_MODELS(self):
+    def test_value_MODELS(self):
         assert len(totest.MODELS)>0
         for m in totest.MODELS:
             assert isinstance(totest.MODELS[m], dict)
