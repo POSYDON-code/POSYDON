@@ -36,4 +36,4 @@ jobs:
         export PATH_TO_POSYDON=./
         export PATH_TO_POSYDON_DATA=./
         export MESA_DIR=./
-        python -m pytest posydon/unit_tests/ --cov=posydon.utils --cov=posydon.grids.termination_flags --cov-branch --cov-report term-missing
+        python -m pytest posydon/unit_tests/ --cov=posydon.utils --cov=posydon.grids.termination_flags --cov=posydon.grids.scrubbing --cov=posydon.grids.MODELS --cov=posydon.grids.io --cov-branch --cov-report term-missing

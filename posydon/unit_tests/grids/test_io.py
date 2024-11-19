@@ -357,7 +357,10 @@ class TestGridReader:
         assert GridReader.metadata_files == []
         assert isinstance(GridReader.runs, list)
         assert GridReader.binary == True
-        assert Run_path in GridReader.input_folders
+        # it depend on the system, which of the two directories will get read
+        # first and therefore overwritten by the other
+        assert (Run_path in GridReader.input_folders) or\
+               (Run_path+"_index_0" in GridReader.input_folders)
         # missing argument
         with raises(TypeError, match="missing 1 required positional"+\
                     " argument: 'path'"):
