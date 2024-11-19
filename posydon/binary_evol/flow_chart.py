@@ -80,6 +80,19 @@ STAR_STATES_HE_RICH_EVOLVABLE = list(set(STAR_STATES_HE_RICH)
 # the step_CO_HeMS
 STAR_STATES_HE_RICH_EVOLVABLE.extend(['H-rich_non_burning'])
 
+# core collapse
+STAR_STATES_CC = [
+    'H-rich_Central_C_depletion',
+    'H-rich_Central_He_depleted',
+    'stripped_He_Central_He_depleted',
+    'stripped_He_Central_C_depletion',
+    # catch runs with gamma center limit which map to WD
+    'stripped_He_non_burning',
+    'H-rich_non_burning',
+    'H-rich_Shell_H_burning',
+    'accreted_He_non_burning'
+    ]
+
 BINARY_STATES_ALL = [
     'initially_single_star',
     'detached',
@@ -90,6 +103,8 @@ BINARY_STATES_ALL = [
     'merged',
     'initial_RLOF'
 ]
+
+BINARY_STATES_CC = BINARY_STATES_ALL.copy()
 
 BINARY_EVENTS_ALL = [
     None,
@@ -111,6 +126,24 @@ BINARY_EVENTS_ALL = [
     'maxtime',
     'oMerging1',
     'oMerging2'
+]
+
+BINARY_EVENTS_OF_SN_OR_AFTER_DETACHED = BINARY_EVENTS_ALL.copy()
+[BINARY_EVENTS_OF_SN_OR_AFTER_DETACHED.remove(x) for x in ['CC1','CC2','MaxTime_exceeded','maxtime']]
+
+BINARY_STEPS_ALL = [
+    'step_HMS_HMS',
+    'step_detached',
+    'step_CO_HMS_RLO',
+    'step_CO_HeMS',
+    'step_CO_HeMS_RLO',
+    'step_merged',
+    'step_CE',
+    'step_SN',
+    'step_dco',
+    'step_end',
+    'step_initially_single',
+    'step_disrupted'
 ]
 
 
@@ -209,22 +242,6 @@ for s1 in STAR_STATES_NORMALSTAR:
         POSYDON_FLOW_CHART[(s2, s1, 'contact', 'oDoubleCE2')] = 'step_CE'
 
 
-# core collapse
-STAR_STATES_CC = [
-    'H-rich_Central_C_depletion',
-    'H-rich_Central_He_depleted',
-    'stripped_He_Central_He_depleted',
-    'stripped_He_Central_C_depletion',
-    # catch runs with gamma center limit which map to WD
-    'stripped_He_non_burning',
-    'H-rich_non_burning',
-    'H-rich_Shell_H_burning',
-    'accreted_He_non_burning'
-    ]
-
-
-BINARY_STATES_CC = BINARY_STATES_ALL.copy()
-
 for b in BINARY_STATES_CC:
     for s1 in STAR_STATES_CC:
         for s2 in STAR_STATES_ALL:
@@ -255,9 +272,6 @@ for b in ['initially_single_star']:
                 POSYDON_FLOW_CHART[(s1, s2, b, e)] = 'step_initially_single'
                 POSYDON_FLOW_CHART[(s2, s1, b, e)] = 'step_initially_single'
 
-
-BINARY_EVENTS_OF_SN_OR_AFTER_DETACHED = BINARY_EVENTS_ALL.copy()
-[BINARY_EVENTS_OF_SN_OR_AFTER_DETACHED.remove(x) for x in ['CC1','CC2','MaxTime_exceeded','maxtime']]
 
 for b in ['disrupted']:
     for s1 in STAR_STATES_ALL:
@@ -388,6 +402,9 @@ def initial_eccentricity_flow_chart(FLOW_CHART=None, CHANGE_FLOW_CHART=None):
         # always take ZAMS binaries to step_detached
         if event == 'ZAMS' and state in BINARY_STATES_ZAMS: # check for event
             MY_FLOW_CHART[key] = 'step_detached'
+    
+    ## Add new step to binary step list
+    BINARY_STEPS_ALL.append('step_HMS_HMS_RLO')
 
     # Add two stars initating RLO (now coming from detached) into flow chart
     # Add stripped stars (from winds) initating RLO
