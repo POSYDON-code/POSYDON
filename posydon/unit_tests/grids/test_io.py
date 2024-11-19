@@ -131,8 +131,8 @@ class TestFunctions:
                     " argument: 'path'"):
             totest.print_meta_contents()
         # bad input
-        with raises(AttributeError, match="'NoneType' object has no attribute"+\
-                    " 'endswith'"):
+        with raises(AttributeError, match="'NoneType' object has no"+\
+                    " attribute 'endswith'"):
             totest.print_meta_contents(None)
         # examples
         totest.print_meta_contents(grid_csv_path)

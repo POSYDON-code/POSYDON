@@ -52,7 +52,7 @@ sys.setrecursionlimit(100000)
 def rescale_from_0_to_1(array, return_minmax=False):
     """Rescale a matrix so that all dimensions span from 0 to 1."""
     arr = np.array(array)
-    if len(array.shape) != 2:
+    if len(arr.shape) != 2:
         raise ValueError("Scaler works for matrices only.")
 
     minima, maxima = np.min(arr, axis=0), np.max(arr, axis=0)
@@ -123,13 +123,14 @@ class TrackDownsampler:
         """Find the rows of the data that constitute the "down-sample".
 
         Note: if `max_interval` is negative, it's value is the relative ratio
-              between maximum allowed dm and total star mass.
+              between maximum allowed dm and initial-final change.
         """
         t, X = self.t, self.X
         N = len(t)
 
         if max_err is None or N < 3:
-            return np.ones_like(t, dtype=bool)
+            self.keep = np.ones_like(t, dtype=bool)
+            return
         if max_err < 0.0 or not np.isfinite(max_err):
             raise ValueError("`max_err` must be a non-negative finite number.")
         if max_err >= 1.0:
