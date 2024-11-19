@@ -17,7 +17,7 @@ figure.dpi 		: 300
 xtick.minor.visible     : True
 ytick.minor.visible     : True
 
-savefig.bbox		:  standard  # tight
+savefig.bbox		: standard  # tight
 savefig.pad_inches	: 0.1 # Padding when bbox is tight.
 savefig.dpi		: 300
 savefig.format		: pdf
