@@ -99,6 +99,7 @@ def is_number(s):
 
 def stefan_boltzmann_law(L, R):
     """Compute the effective temperature give the luminosity and radius."""
+    #TODO: check for invalid or negative inputs
     return (L * const.Lsun / (4.0 * np.pi * (R*const.Rsun) ** 2.0)
             / const.boltz_sigma) ** (1.0 / 4.0)
 
@@ -125,6 +126,7 @@ def rzams(m, z=0.02, Zsun=0.02):
 
 
     """
+    #TODO: check for invalid or negative inputs
     m = np.asanyarray(m)
     xz = [
         0.0, 3.970417e-01, -3.2913574e-01, 3.4776688e-01, 3.7470851e-01,
@@ -286,6 +288,7 @@ def orbital_separation_from_period(period_days, m1_solar, m2_solar):
         The separation of the binary in solar radii.
 
     """
+    #TODO: check for invalid or negative inputs
     # cast to float64 to avoid overflow
     m1_solar = np.asarray(m1_solar, dtype="float64")
     m2_solar = np.asarray(m2_solar, dtype="float64")
@@ -317,6 +320,7 @@ def orbital_period_from_separation(separation, m1, m2):
         The orbital period in days.
 
     """
+    #TODO: check for invalid or negative inputs
     return const.dayyer * ((separation / const.aursun)**3.0 / (m1 + m2)) ** 0.5
 
 
@@ -596,6 +600,7 @@ def bondi_hoyle(binary, accretor, donor, idx=-1, wind_disk_criteria=True,
 
     # make it Eddington-limited
     mdot_edd = eddington_limit(binary, idx=idx)[0]
+    print(mdot_acc, mdot_edd)
     mdot_acc = np.minimum(mdot_acc, mdot_edd)
 
     return np.squeeze(mdot_acc)

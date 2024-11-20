@@ -7,52 +7,53 @@ __authors__ = [
 
 # import the module which will be tested
 import posydon.utils.common_functions as totest
+np = totest.np
 
 # import other needed code for the tests, which is not already imported in the
 # module you like to test
 from pytest import fixture, raises, warns, approx
 from inspect import isroutine, isclass
 from scipy.interpolate import interp1d
-from posydon.binary_evol.binarystar import BinaryStar as BinaryStar_class
-from posydon.binary_evol.singlestar import SingleStar as SingleStar_class
+from posydon.binary_evol.binarystar import BinaryStar
+from posydon.binary_evol.singlestar import SingleStar
 from posydon.utils.posydonwarning import (EvolutionWarning,\
     InappropriateValueWarning, ApproximationWarning, InterpolationWarning,\
     ReplaceValueWarning, ClassificationWarning)
 
 @fixture
-def BinaryStar():
+def binary():
     # initialize a BinaryStar instance, which is a required argument
-    return BinaryStar_class()
+    return BinaryStar()
 
 @fixture
-def SingleStar():
+def star():
     # initialize a SingleStar instance, which is a required argument
-    return SingleStar_class()
+    return SingleStar()
 
 @fixture
 def star_profile():
     # generate a profile of a test star
-    profile = totest.np.empty((4,), dtype=[(f, 'f8') for f in ['mass', 'dm',\
+    profile = np.empty((4,), dtype=[(f, 'f8') for f in ['mass', 'dm',\
               'radius', 'log_R', 'energy', 'x_mass_fraction_H',\
               'y_mass_fraction_He', 'z_mass_fraction_metals',\
               'neutral_fraction_H', 'neutral_fraction_He', 'avg_charge_He']])
-    profile['mass'] = totest.np.array([1.0, 0.5, 0.1, 0.001])
+    profile['mass'] = np.array([1.0, 0.5, 0.1, 0.001])
     # get dm as differences from mass and the last mass entry (like next would
     # be 0)
-    profile['dm'][:-1] = profile['mass'][:-1] - profile['mass'][1:]
+    profile['dm'][:-1] = profile['mass'][:-1]-profile['mass'][1:]
     profile['dm'][-1] = profile['mass'][-1]
-    profile['radius'] = totest.np.array([1.0, 0.5, 0.1, 0.001])
+    profile['radius'] = np.array([1.0, 0.5, 0.1, 0.001])
     # get log10 of radius
-    profile['log_R'] = totest.np.log10(profile['radius'])
-    profile['energy'] = totest.np.array([1.0, 0.5, 0.1, 0.001])*1.0e+16
-    profile['x_mass_fraction_H'] = totest.np.array([0.7, 0.5, 0.1, 0.001])
-    profile['y_mass_fraction_He'] = totest.np.array([0.2, 0.5, 0.8, 0.2])
+    profile['log_R'] = np.log10(profile['radius'])
+    profile['energy'] = np.array([1.0, 0.5, 0.1, 0.001])*1.0e+16
+    profile['x_mass_fraction_H'] = np.array([0.7, 0.5, 0.1, 0.001])
+    profile['y_mass_fraction_He'] = np.array([0.2, 0.5, 0.8, 0.2])
     # get Z=1-X-Y
     profile['z_mass_fraction_metals'] = 1.0-profile['x_mass_fraction_H']\
                                            -profile['y_mass_fraction_He']
-    profile['neutral_fraction_H'] = totest.np.array([1.0, 0.5, 0.1, 0.0])
-    profile['neutral_fraction_He'] = totest.np.array([1.0, 0.5, 0.1, 0.0])
-    profile['avg_charge_He'] = totest.np.array([0.0, 0.5, 1.1, 1.8])
+    profile['neutral_fraction_H'] = np.array([1.0, 0.5, 0.1, 0.0])
+    profile['neutral_fraction_He'] = np.array([1.0, 0.5, 0.1, 0.0])
+    profile['avg_charge_He'] = np.array([0.0, 0.5, 1.1, 1.8])
     return profile
 
 # define test classes collecting several test functions
@@ -339,7 +340,7 @@ class TestValues:
             assert v in totest.RICHNESS_STATES, "missing entry"
 
     def test_value_COMPACT_OBJECTS(self):
-        for v in ["WD", "NS", "BH","massless_remnant"]:
+        for v in ["WD", "NS", "BH", "massless_remnant"]:
             # check required values
             assert v in totest.COMPACT_OBJECTS, "missing entry"
 
@@ -398,6 +399,8 @@ class TestValues:
                   totest.MT_CASE_UNDETERMINED]:
             # check required values
             assert v in totest.MT_CASE_TO_STR.keys(), "missing entry"
+        for k,v in totest.MT_CASE_TO_STR.items():
+            assert isinstance(v, str)
 
     def test_value_MT_STR_TO_CASE(self):
         for k,v in totest.MT_STR_TO_CASE.items():
@@ -482,19 +485,19 @@ class TestFunctions:
                     " arguments: 'm1' and 'm2'"):
             totest.roche_lobe_radius()
         # bad input
-        for a in [-1.0, totest.np.array([]), totest.np.array([-1.0])]:
+        for a in [-1.0, np.array([]), np.array([-1.0])]:
             with warns(EvolutionWarning, match="Trying to compute RL radius"+\
                        " for binary with invalid separation"):
-                assert totest.np.isnan(totest.roche_lobe_radius(1.0, 1.0,\
+                assert np.isnan(totest.roche_lobe_radius(1.0, 1.0,\
                        a_orb=a))
-        for m in [0.0, totest.np.array([]), totest.np.array([0.0])]:
+        for m in [0.0, np.array([]), np.array([0.0])]:
             with warns(EvolutionWarning, match="Trying to compute RL radius"+\
                        " for nonexistent object"):
-                assert totest.np.isnan(totest.roche_lobe_radius(m, 1.0))
-        for m in [0.0, totest.np.array([]), totest.np.array([0.0])]:
+                assert np.isnan(totest.roche_lobe_radius(m, 1.0))
+        for m in [0.0, np.array([]), np.array([0.0])]:
             with warns(EvolutionWarning, match="Trying to compute RL radius"+\
                        " for nonexistent companion"):
-                assert totest.np.isnan(totest.roche_lobe_radius(1.0, m))
+                assert np.isnan(totest.roche_lobe_radius(1.0, m))
         # examples
         assert totest.roche_lobe_radius(1.0, 1.0) ==\
                approx(0.37892051838, abs=6e-12)
@@ -504,7 +507,7 @@ class TestFunctions:
                approx(0.32078812033, abs=6e-12)
         assert totest.roche_lobe_radius(1.0, 1.0, a_orb=2.0) ==\
                approx(0.75784103676, abs=6e-12)
-        assert totest.np.allclose(totest.roche_lobe_radius(totest.np.array([1.0, 2.0, 1.0, 1.0]), totest.np.array([1.0, 1.0, 2.0, 1.0]), a_orb=totest.np.array([1.0, 1.0, 1.0, 2.0])), totest.np.array([0.37892051838, 0.44000423753, 0.32078812033, 0.75784103676]))
+        assert np.allclose(totest.roche_lobe_radius(np.array([1.0, 2.0, 1.0, 1.0]), np.array([1.0, 1.0, 2.0, 1.0]), a_orb=np.array([1.0, 1.0, 1.0, 2.0])), np.array([0.37892051838, 0.44000423753, 0.32078812033, 0.75784103676]))
         # check that roche lobe sum never exceeds orbital separation
         for m in [1.0e+1, 1.0e+2, 1.0e+3, 1.0e+4, 1.0e+5, 1.0e+6, 1.0e+7]:
             assert totest.roche_lobe_radius(m, 1.0)+\
@@ -540,7 +543,7 @@ class TestFunctions:
         assert totest.orbital_period_from_separation(1.0, 15.0, 60.0) ==\
                approx(1.33829981748e-2, abs=6e-14)
 
-    def test_eddington_limit(self, BinaryStar):
+    def test_eddington_limit(self, binary):
         # missing argument
         with raises(TypeError, match="missing 1 required positional"+\
                     " argument: 'binary'"):
@@ -548,12 +551,12 @@ class TestFunctions:
         # bad input
         with raises(ValueError, match="Eddington limit is being calculated"+\
                     " for a non-CO"):
-            totest.eddington_limit(BinaryStar)
+            totest.eddington_limit(binary)
         with raises(IndexError, match="index 2 is out of bounds"):
-            BinaryStar.star_1.state = 'WD'
-            totest.eddington_limit(BinaryStar, idx=2)
+            binary.star_1.state = 'WD'
+            totest.eddington_limit(binary, idx=2)
         # examples: 1Msun accretor is star1
-        BinaryStar.star_1.mass = 1.0
+        binary.star_1.mass = 1.0
         for CO, r in zip(['WD', 'NS', 'BH'],\
             [(approx(4.01681147088e-17, abs=6e-29),\
               approx(6.40623627946e+7, abs=6e-5)),\
@@ -561,11 +564,11 @@ class TestFunctions:
               approx(0.11817658993, abs=6e-12)),\
              (approx(4.49942509871e-8, abs=6e-20),\
               approx(5.71909584179e-2, abs=6e-14))]):
-            BinaryStar.star_1.state = CO
-            assert totest.eddington_limit(BinaryStar) == r
-        BinaryStar.star_1.state = None
+            binary.star_1.state = CO
+            assert totest.eddington_limit(binary) == r
+        binary.star_1.state = None
         # examples: 1.2Msun accretor is star2, while donor has X_surf=0.1
-        BinaryStar.star_2.mass = 1.2
+        binary.star_2.mass = 1.2
         for CO, r in zip(['WD', 'NS', 'BH'],\
             [(approx(5.89502616630e-17, abs=6e-29),\
               approx(8.16917025429e+7, abs=6e-5)),\
@@ -573,15 +576,15 @@ class TestFunctions:
               approx(0.14181190792, abs=6e-12)),\
              (approx(8.42046955292e-8, abs=6e-20),\
               approx(5.71909584179e-2, abs=6e-14))]):
-            BinaryStar.star_2.state = CO
-            BinaryStar.star_1.surface_h1 = 0.1
-            assert totest.eddington_limit(BinaryStar) == r
+            binary.star_2.state = CO
+            binary.star_1.surface_h1 = 0.1
+            assert totest.eddington_limit(binary) == r
         # examples: 1.3Msun accretor is star1 with history
-        BinaryStar.star_1.state = 'BH'
-        BinaryStar.star_1.mass_history = totest.np.array([1.3, 1.3])
-        BinaryStar.star_1.state_history = totest.np.array([None, None])
+        binary.star_1.state = 'BH'
+        binary.star_1.mass_history = np.array([1.3, 1.3])
+        binary.star_1.state_history = np.array([None, None])
         with raises(ValueError, match='COtype must be "BH", "NS", or "WD"'):
-            totest.eddington_limit(BinaryStar, idx=0)
+            totest.eddington_limit(binary, idx=0)
         for CO, r in zip(['WD', 'NS', 'BH'],\
             [(approx(3.68044499210e-17, abs=6e-29),\
               approx(9.08923688740e+7, abs=6e-5)),\
@@ -589,10 +592,10 @@ class TestFunctions:
               approx(0.15362956691, abs=6e-12)),\
              (approx(5.84925262833e-8, abs=6e-20),\
               approx(5.71909584179e-2, abs=6e-14))]):
-            BinaryStar.star_1.state_history = totest.np.array([None, CO])
-            assert totest.eddington_limit(BinaryStar, idx=0) == r
+            binary.star_1.state_history = np.array([None, CO])
+            assert totest.eddington_limit(binary, idx=0) == r
 
-    def test_beaming(self, BinaryStar):
+    def test_beaming(self, binary):
         # missing argument
         with raises(TypeError, match="missing 1 required positional"+\
                     " argument: 'binary'"):
@@ -600,29 +603,31 @@ class TestFunctions:
         # bad input
         with raises(ValueError, match="Eddington limit is being calculated"+\
                     " for a non-CO"):
-            totest.beaming(BinaryStar)
+            totest.beaming(binary)
         # examples: 1Msun accretor is star1 with no mass-transfer rate
-        BinaryStar.star_1.mass = 1.0
+        binary.star_1.mass = 1.0
         for CO, r in zip(['WD', 'NS', 'BH'],\
-            [(totest.np.nan, 1),\
-             (totest.np.nan, 1),\
-             (totest.np.nan, 1)]):
-            BinaryStar.star_1.state = CO
-            assert totest.beaming(BinaryStar) == r
+            [(np.nan, 1),\
+             (np.nan, 1),\
+             (np.nan, 1)]):
+            binary.star_1.state = CO
+            assert totest.beaming(binary) == r
         # examples: 1.2Msun accretor is star1
-        BinaryStar.star_1.mass = 1.2
-        BinaryStar.lg_mtransfer_rate = -7.5
+        binary.star_1.mass = 1.2
+        binary.lg_mtransfer_rate = -7.5
         for CO, r in zip(['WD', 'NS', 'BH'],\
             [(approx(7.80787388850, abs=6e-12),\
               approx(1.04303350643e-16, abs=6e-28)),\
              (approx(2.98994840792e-8, abs=6e-20), 1),\
              (approx(3.16227766017e-8, abs=6e-20), 1)]):
-            BinaryStar.star_1.state = CO
-            assert totest.beaming(BinaryStar) == r
+            binary.star_1.state = CO
+            assert totest.beaming(binary) == r
 
-    def test_bondi_hoyle(self, BinaryStar, monkeypatch):
+    def test_bondi_hoyle(self, binary, monkeypatch, capsys):
         def mock_rand(shape):
-            return totest.np.zeros(shape)
+            return np.zeros(shape)
+        def mock_rand2(shape):
+            return np.full(shape, 0.1)
         # missing argument
         with raises(TypeError, match="missing 3 required positional"+\
                     " arguments: 'binary', 'accretor', and 'donor'"):
@@ -630,76 +635,103 @@ class TestFunctions:
         # bad input
         with raises(RuntimeError, match="Failed to converge after 100"+\
                     " iterations"):
-            totest.bondi_hoyle(BinaryStar, BinaryStar.star_1,\
-                               BinaryStar.star_2)
+            totest.bondi_hoyle(binary, binary.star_1,\
+                               binary.star_2)
         # examples:
-        BinaryStar.separation = 1.0            #a semi-major axis of 1Rsun
-        BinaryStar.eccentricity = 0.1          #a small eccentricity
-        BinaryStar.star_1.mass = 1.1           #accretor's mass is 1.1Msun
-        BinaryStar.star_1.state = 'WD'         #accretor is WD
-        BinaryStar.star_2.mass = 1.2           #donor's mass is 1.2Msun
-        BinaryStar.star_2.lg_wind_mdot = -10.0 #donor's wind is 10^{-10}Msun/yr
-        BinaryStar.star_2.he_core_radius = 0.2 #donor's he-core rad. is 0.2Rsun
-        BinaryStar.star_2.log_R = -0.5         #donor's radius is 10^{-0.5}Rsun
-        BinaryStar.star_2.surface_h1 = 0.7     #donor's X_surf=0.7
-        BinaryStar.star_2.log_L = 0.3          #donor's lum. is 10^{0.3}Lsun
+        binary.separation = 1.0            #a semi-major axis of 1Rsun
+        binary.eccentricity = 0.1          #a small eccentricity
+        binary.star_1.mass = 1.1           #accretor's mass is 1.1Msun
+        binary.star_1.state = 'WD'         #accretor is WD
+        binary.star_2.mass = 1.2           #donor's mass is 1.2Msun
+        binary.star_2.lg_wind_mdot = -10.0 #donor's wind is 10^{-10}Msun/yr
+        binary.star_2.he_core_radius = 0.2 #donor's he-core rad. is 0.2Rsun
+        binary.star_2.log_R = -0.5         #donor's radius is 10^{-0.5}Rsun
+        binary.star_2.surface_h1 = 0.7     #donor's X_surf=0.7
+        binary.star_2.log_L = 0.3          #donor's lum. is 10^{0.3}Lsun
         with raises(UnboundLocalError, match="cannot access local variable"+\
                     " 'f_m' where it is not associated with a value"):
             # undefined scheme
-            totest.bondi_hoyle(BinaryStar, BinaryStar.star_1,\
-                               BinaryStar.star_2, scheme='')
-        monkeypatch.setattr(totest.np.random, "rand", mock_rand)
-        assert totest.bondi_hoyle(BinaryStar, BinaryStar.star_1,\
-               BinaryStar.star_2) == approx(3.92668160462e-17, abs=6e-29)
-        assert totest.bondi_hoyle(BinaryStar, BinaryStar.star_1,\
-               BinaryStar.star_2, scheme='Kudritzki+2000') ==\
+            totest.bondi_hoyle(binary, binary.star_1,\
+                               binary.star_2, scheme='')
+        monkeypatch.setattr(np.random, "rand", mock_rand)
+        assert totest.bondi_hoyle(binary, binary.star_1,\
+               binary.star_2) == approx(3.92668160462e-17, abs=6e-29)
+        assert totest.bondi_hoyle(binary, binary.star_1,\
+               binary.star_2, scheme='Kudritzki+2000') ==\
                approx(3.92668160462e-17, abs=6e-29)
-        BinaryStar.star_2.log_R = 1.5          #donor's radius is 10^{1.5}Rsun
-        assert totest.bondi_hoyle(BinaryStar, BinaryStar.star_1,\
-               BinaryStar.star_2, scheme='Kudritzki+2000') ==\
+        binary.star_2.log_R = 1.5          #donor's radius is 10^{1.5}Rsun
+        assert totest.bondi_hoyle(binary, binary.star_1,\
+               binary.star_2, scheme='Kudritzki+2000') ==\
                approx(3.92668160462e-17, abs=6e-29)
-        BinaryStar.star_2.log_R = -1.5         #donor's radius is 10^{-1.5}Rsun
-        assert totest.bondi_hoyle(BinaryStar, BinaryStar.star_1,\
-               BinaryStar.star_2, scheme='Kudritzki+2000') == 1e-99
-        BinaryStar.star_2.surface_h1 = 0.25    #donor's X_surf=0.25
-        assert totest.bondi_hoyle(BinaryStar, BinaryStar.star_1,\
-               BinaryStar.star_2) == 1e-99
-        BinaryStar.star_2.lg_wind_mdot = -4.0 #donor's wind is 10^{-4}Msun/yr
-        assert totest.bondi_hoyle(BinaryStar, BinaryStar.star_1,\
-               BinaryStar.star_2) == 1e-99
-        assert totest.bondi_hoyle(BinaryStar, BinaryStar.star_1,\
-               BinaryStar.star_2, wind_disk_criteria=False) ==\
+        binary.star_2.log_R = -1.5         #donor's radius is 10^{-1.5}Rsun
+        assert totest.bondi_hoyle(binary, binary.star_1,\
+               binary.star_2, scheme='Kudritzki+2000') == 1e-99
+        binary.star_2.surface_h1 = 0.25    #donor's X_surf=0.25
+        assert totest.bondi_hoyle(binary, binary.star_1,\
+               binary.star_2) == 1e-99
+        binary.star_2.lg_wind_mdot = -4.0 #donor's wind is 10^{-4}Msun/yr
+        assert totest.bondi_hoyle(binary, binary.star_1,\
+               binary.star_2) == 1e-99
+        assert totest.bondi_hoyle(binary, binary.star_1,\
+               binary.star_2, wind_disk_criteria=False) ==\
                approx(5.34028698228e-17, abs=6e-29) # form always a disk
+        monkeypatch.setattr(np.random, "rand", mock_rand2) # other angle
+        binary.star_1.state = 'BH'         #accretor is BH
+        with capsys.disabled():
+            assert totest.bondi_hoyle(binary, binary.star_1,\
+               binary.star_2, wind_disk_criteria=False) ==\
+               approx(5.13970075150e-8, abs=6e-20)
 
     def test_rejection_sampler(self, monkeypatch):
         def mock_uniform(low=0.0, high=1.0, size=1):
-            return totest.np.linspace(low, high, num=size)
+            return np.linspace(low, high, num=size)
         def mock_interp1d(x, y):
             if x[0]>x[-1]:
                 raise ValueError
             return interp1d(x, y)
         def mock_pdf(x):
-            return 1.0-totest.np.sqrt(x)
+            return 1.0-np.sqrt(x)
         # bad input
         with raises(TypeError, match="'>=' not supported between instances"+\
                     " of 'NoneType' and 'float'"):
             totest.rejection_sampler()
+        with raises(TypeError, match="'>=' not supported between instances"+\
+                    " of 'NoneType' and 'float'"):
+            totest.rejection_sampler(x=np.array([0.0, 1.0]))
+        with raises(IndexError, match="too many indices for array: array is"+\
+                    " 0-dimensional, but 1 were indexed"):
+            totest.rejection_sampler(y=np.array([0.0, 1.0]))
+        with raises(AssertionError):
+            totest.rejection_sampler(x=np.array([0.0, 1.0]),\
+                                     y=np.array([-0.4, 0.6]))
+        with raises(TypeError, match="'>=' not supported between instances"+\
+                    " of 'NoneType' and 'float'"):
+            totest.rejection_sampler(x_lim=np.array([0.0, 1.0]))
+        with raises(TypeError, match="'NoneType' object is not subscriptable"):
+            totest.rejection_sampler(pdf=mock_pdf)
         # examples:
-        monkeypatch.setattr(totest.np.random, "uniform", mock_uniform)
+        monkeypatch.setattr(np.random, "uniform", mock_uniform)
         monkeypatch.setattr(totest, "interp1d", mock_interp1d)
-        assert totest.np.array_equal(totest.rejection_sampler(\
-               x=totest.np.array([0.0, 1.0]), y=totest.np.array([0.4, 0.6]),\
-               size=5), totest.np.array([0.0, 0.25, 0.5, 0.75, 1.0]))
-        assert totest.np.array_equal(totest.rejection_sampler(\
-               x=totest.np.array([1.0, 0.0]), y=totest.np.array([0.2, 0.8]),\
-               size=5), totest.np.array([0.0, 0.25, 0.5, 0.0, 0.0]))
-        assert totest.np.array_equal(totest.rejection_sampler(\
-               x_lim=totest.np.array([0.0, 1.0]), pdf=mock_pdf,\
-               size=5), totest.np.array([0.0, 0.25, 0.0, 0.0, 0.0]))
+        assert np.array_equal(totest.rejection_sampler(\
+               x=np.array([0.0, 1.0]), y=np.array([0.4, 0.6]),\
+               size=5), np.array([0.0, 0.25, 0.5, 0.75, 1.0]))
+        assert np.array_equal(totest.rejection_sampler(\
+               x=np.array([1.0, 0.0]), y=np.array([0.2, 0.8]),\
+               size=5), np.array([0.0, 0.25, 0.5, 0.0, 0.0]))
+        assert np.array_equal(totest.rejection_sampler(\
+               x=np.array([1.0, 0.0]), y=np.array([0.2, 0.8]),\
+               size=6), np.array([0.0, 0.2, 0.4, 0.0, 0.5, 0.0]))
+        assert np.array_equal(totest.rejection_sampler(\
+               x_lim=np.array([0.0, 1.0]), pdf=mock_pdf,\
+               size=5), np.array([0.0, 0.25, 0.0, 0.0, 0.0]))
+        assert np.array_equal(totest.rejection_sampler(\
+               x=np.array([1.0, 0.0]), y=np.array([0.2, 0.8]),\
+               x_lim=np.array([0.0, 1.0]), pdf=mock_pdf,\
+               size=5), np.array([0.0, 0.25, 0.0, 0.0, 0.0]))
 
     def test_inverse_sampler(self, monkeypatch):
         def mock_uniform(low=0.0, high=1.0, size=1):
-            return totest.np.linspace(low, high, num=size)
+            return np.linspace(low, high, num=size)
         # missing argument
         with raises(TypeError, match="missing 2 required positional"+\
                     " arguments: 'x' and 'y'"):
@@ -708,31 +740,40 @@ class TestFunctions:
         with raises(ValueError, match="diff requires input that is at least"+\
                     " one dimensional"):
             totest.inverse_sampler(x=None, y=None)
+        with raises(AssertionError):
+            totest.inverse_sampler(x=np.array([1.0, 0.0]),\
+                                   y=np.array([0.4, 0.6]))
+        with raises(AssertionError):
+            totest.inverse_sampler(x=np.array([0.0, 1.0]),\
+                                   y=np.array([-0.4, 0.6]))
         # examples:
-        monkeypatch.setattr(totest.np.random, "uniform", mock_uniform)
-        assert totest.np.allclose(totest.inverse_sampler(\
-               x=totest.np.array([0.0, 1.0]), y=totest.np.array([0.4, 0.6]),\
-               size=5), totest.np.array([0.0, 0.29128785, 0.54950976,\
+        monkeypatch.setattr(np.random, "uniform", mock_uniform)
+        assert np.allclose(totest.inverse_sampler(\
+               x=np.array([0.0, 1.0]), y=np.array([0.4, 0.6]),\
+               size=5), np.array([0.0, 0.29128785, 0.54950976,\
                0.78388218, 1.0]))
+        assert np.allclose(totest.inverse_sampler(\
+               x=np.array([0.0, 1.0]), y=np.array([0.6, 0.4]),\
+               size=4), np.array([0.0, 0.2919872 , 0.61952386, 1.0]))
         with warns(RuntimeWarning,\
                    match="invalid value encountered in divide"):
-            assert totest.np.allclose(totest.inverse_sampler(\
-                   x=totest.np.array([0.0, 1.0]),\
-                   y=totest.np.array([0.5, 0.5]), size=5),\
-                   totest.np.array([0.0, 0.25, 0.5, 0.75, 1.0]))
+            assert np.allclose(totest.inverse_sampler(\
+                   x=np.array([0.0, 1.0]),\
+                   y=np.array([0.5, 0.5]), size=5),\
+                   np.array([0.0, 0.25, 0.5, 0.75, 1.0]))
 
     def test_histogram_sampler(self, monkeypatch):
         def mock_uniform(low=0.0, high=1.0, size=1):
-            return totest.np.linspace(low, high, num=size)
+            return np.linspace(low, high, num=size)
         def mock_choice(a, size=None, replace=True, p=None):
             if isinstance(a, int):
-                a=totest.np.arange(a)
+                a=np.arange(a)
             sample = []
             for v,q in zip(a,p):
                 sample += round(size*q) * [v]
             if len(sample)<size:
                 sample += (size-len(sample)) * [a[-1]]
-            return totest.np.array(sample[:size])
+            return np.array(sample[:size])
         # missing argument
         with raises(TypeError, match="missing 2 required positional"+\
                     " arguments: 'x_edges' and 'y'"):
@@ -741,13 +782,23 @@ class TestFunctions:
         with raises(TypeError, match="'>=' not supported between instances"+\
                     " of 'NoneType' and 'float'"):
             totest.histogram_sampler(x_edges=None, y=None)
+        with raises(AssertionError):
+            totest.histogram_sampler(x_edges=np.array([0.0, 0.5, 1.0]),\
+                                     y=np.array([-0.4, 0.6]))
+        with raises(AssertionError):
+            totest.histogram_sampler(x_edges=np.array([0.0, 1.0]),\
+                                     y=np.array([0.4, 0.6]))
         # examples:
-        monkeypatch.setattr(totest.np.random, "uniform", mock_uniform)
-        monkeypatch.setattr(totest.np.random, "choice", mock_choice)
-        assert totest.np.allclose(totest.histogram_sampler(\
-               x_edges=totest.np.array([0.0, 0.5, 1.0]),\
-               y=totest.np.array([0.2, 0.8]), size=5),\
-               totest.np.array([0.0, 0.5, 0.66666667, 0.83333333, 1.0]))
+        monkeypatch.setattr(np.random, "uniform", mock_uniform)
+        monkeypatch.setattr(np.random, "choice", mock_choice)
+        assert np.allclose(totest.histogram_sampler(\
+               x_edges=np.array([0.0, 0.5, 1.0]),\
+               y=np.array([0.2, 0.8]), size=5),\
+               np.array([0.0, 0.5, 0.66666667, 0.83333333, 1.0]))
+        assert np.array_equal(totest.histogram_sampler(\
+               x_edges=np.array([0.0, 0.5, 1.0]),\
+               y=np.array([0.2, 0.8]), size=4),\
+               np.array([0.0, 0.5, 0.75, 1.0]))
 
     def test_read_histogram_from_file(self, csv_path, csv_file, csv_path2,\
                                       csv_file2):
@@ -763,10 +814,10 @@ class TestFunctions:
         with raises(RuntimeError, match="More than two lines found in the"+\
                     " histogram document."):
             totest.read_histogram_from_file(path=csv_path)
-        assert totest.np.array_equal(totest.read_histogram_from_file(\
-               path=csv_path2)[0],totest.np.array([0.0, 1.0, 2.0]))
-        assert totest.np.array_equal(totest.read_histogram_from_file(\
-               path=csv_path2)[1],totest.np.array([1.0, 1.0, 1.0]))
+        assert np.array_equal(totest.read_histogram_from_file(\
+               path=csv_path2)[0],np.array([0.0, 1.0, 2.0]))
+        assert np.array_equal(totest.read_histogram_from_file(\
+               path=csv_path2)[1],np.array([1.0, 1.0, 1.0]))
 
     def test_inspiral_timescale_from_separation(self):
         # missing argument
@@ -868,10 +919,10 @@ class TestFunctions:
         assert totest.spin_stable_mass_transfer(1.0, 1.0, None) is None
         assert totest.spin_stable_mass_transfer(0.5, 0.9, 1.0) ==\
                approx(0.69217452285, abs=6e-12)
-        assert totest.np.isnan(totest.spin_stable_mass_transfer(1.0, 1.0, 0.1))
+        assert np.isnan(totest.spin_stable_mass_transfer(1.0, 1.0, 0.1))
         assert totest.spin_stable_mass_transfer(1.0, 0.1, 1.0) == 1.0
 
-    def test_check_state_of_star(self, SingleStar):
+    def test_check_state_of_star(self, star):
         # missing argument
         with raises(TypeError, match="missing 1 required positional"+\
                     " argument: 'star'"):
@@ -881,17 +932,17 @@ class TestFunctions:
                     " attribute 'mass'"):
             totest.check_state_of_star(None, None, None)
         # examples:
-        assert totest.check_state_of_star(SingleStar) ==\
+        assert totest.check_state_of_star(star) ==\
                "undetermined_evolutionary_state"
-        assert totest.check_state_of_star(SingleStar, i=0) ==\
+        assert totest.check_state_of_star(star, i=0) ==\
                "undetermined_evolutionary_state"
         for CO,m in zip(['WD', 'NS', 'BH'], [1.0, 1.5, 9.0]):
-            SingleStar.mass = m
-            SingleStar.state = CO
-            assert totest.check_state_of_star(SingleStar, star_CO=True) ==\
-                   SingleStar.state
+            star.mass = m
+            star.state = CO
+            assert totest.check_state_of_star(star, star_CO=True) ==\
+                   star.state
 
-    def test_check_state_of_star_history_array(self, SingleStar):
+    def test_check_state_of_star_history_array(self, star):
         # missing argument
         with raises(TypeError, match="missing 1 required positional"+\
                     " argument: 'star'"):
@@ -901,29 +952,29 @@ class TestFunctions:
                     " 'NoneType'"):
             totest.check_state_of_star_history_array(None, None, None)
         with raises(IndexError, match="list index out of range"):
-            totest.check_state_of_star_history_array(SingleStar, N=10)
+            totest.check_state_of_star_history_array(star, N=10)
         # examples:
-        assert totest.check_state_of_star_history_array(SingleStar) ==\
+        assert totest.check_state_of_star_history_array(star) ==\
                ["undetermined_evolutionary_state"]
         n = 3
-        SingleStar.mass_history = n*SingleStar.mass_history
-        SingleStar.surface_h1_history = n*SingleStar.surface_h1_history
-        SingleStar.center_h1_history = n*SingleStar.center_h1_history
-        SingleStar.center_he4_history = n*SingleStar.center_he4_history
-        SingleStar.center_c12_history = n*SingleStar.center_c12_history
-        SingleStar.log_LH_history = n*SingleStar.log_LH_history
-        SingleStar.log_LHe_history = n*SingleStar.log_LHe_history
-        SingleStar.log_Lnuc_history = n*SingleStar.log_Lnuc_history
+        star.mass_history = n*star.mass_history
+        star.surface_h1_history = n*star.surface_h1_history
+        star.center_h1_history = n*star.center_h1_history
+        star.center_he4_history = n*star.center_he4_history
+        star.center_c12_history = n*star.center_c12_history
+        star.log_LH_history = n*star.log_LH_history
+        star.log_LHe_history = n*star.log_LHe_history
+        star.log_Lnuc_history = n*star.log_Lnuc_history
         for i in range(n):
-            assert totest.check_state_of_star_history_array(SingleStar, N=i+1)\
+            assert totest.check_state_of_star_history_array(star, N=i+1)\
                    == (i+1)*["undetermined_evolutionary_state"]
         for CO,m in zip(['WD', 'NS', 'BH'], [1.0, 1.5, 9.0]):
-            SingleStar.mass_history[-1] = m
-            SingleStar.state = CO
-            assert totest.check_state_of_star_history_array(SingleStar,\
-                   star_CO=True) == [SingleStar.state]
+            star.mass_history[-1] = m
+            star.state = CO
+            assert totest.check_state_of_star_history_array(star,\
+                   star_CO=True) == [star.state]
 
-    def test_get_binary_state_and_event_and_mt_case(self, BinaryStar,\
+    def test_get_binary_state_and_event_and_mt_case(self, binary,\
                                                     monkeypatch):
         def mock_infer_mass_transfer_case(rl_relative_overflow,\
                                           lg_mtransfer_rate, donor_state,\
@@ -942,78 +993,78 @@ class TestFunctions:
         # bad input
         with raises(TypeError, match="argument of type 'NoneType' is not"+\
                     " iterable"):
-            totest.get_binary_state_and_event_and_mt_case(BinaryStar)
+            totest.get_binary_state_and_event_and_mt_case(binary)
         # examples: no binary
         assert totest.get_binary_state_and_event_and_mt_case(None) ==\
                [None, None, 'None']
         # examples: not converged
-        assert totest.get_binary_state_and_event_and_mt_case(BinaryStar,\
+        assert totest.get_binary_state_and_event_and_mt_case(binary,\
                interpolation_class='not_converged') == [None, None, 'None']
         # examples: initial MT
-        assert totest.get_binary_state_and_event_and_mt_case(BinaryStar,\
+        assert totest.get_binary_state_and_event_and_mt_case(binary,\
                interpolation_class='initial_MT') ==\
                ['initial_RLOF', None, 'None']
         # examples: detached
-        BinaryStar.star_1.state = "test_state"
-        BinaryStar.star_2.state = "test_state"
-        assert totest.get_binary_state_and_event_and_mt_case(BinaryStar) ==\
+        binary.star_1.state = "test_state"
+        binary.star_2.state = "test_state"
+        assert totest.get_binary_state_and_event_and_mt_case(binary) ==\
                ['detached', None, 'None']
-        BinaryStar.star_1.state_history[0] = "test_state"
-        BinaryStar.star_2.state_history[0] = "test_state"
-        assert totest.get_binary_state_and_event_and_mt_case(BinaryStar, i=0)\
+        binary.star_1.state_history[0] = "test_state"
+        binary.star_2.state_history[0] = "test_state"
+        assert totest.get_binary_state_and_event_and_mt_case(binary, i=0)\
                == ['detached', None, 'None']
         # examples: mass transfer
         monkeypatch.setattr(totest, "infer_mass_transfer_case",\
                             mock_infer_mass_transfer_case)
         ## donor is star 1
-        BinaryStar.rl_relative_overflow_1 = 1.0
+        binary.rl_relative_overflow_1 = 1.0
         for IC,e in zip([None, 'unstable_MT'], [None, 'oCE1']):
-            assert totest.get_binary_state_and_event_and_mt_case(BinaryStar,\
+            assert totest.get_binary_state_and_event_and_mt_case(binary,\
                    interpolation_class=IC) == ['RLO1', e, 'case_A1']
         ## both stars overfill RL leading to double CE initiated by star 1
-        BinaryStar.rl_relative_overflow_2 = 1.0
+        binary.rl_relative_overflow_2 = 1.0
         for IC,e in zip([None, 'unstable_MT'], [None, 'oDoubleCE1']):
-            assert totest.get_binary_state_and_event_and_mt_case(BinaryStar,\
+            assert totest.get_binary_state_and_event_and_mt_case(binary,\
                    interpolation_class=IC) == ['contact', e, 'None']
         ## classical CE initiated by star 1
-        BinaryStar.star_2.state = "BH"
-        assert totest.get_binary_state_and_event_and_mt_case(BinaryStar,\
+        binary.star_2.state = "BH"
+        assert totest.get_binary_state_and_event_and_mt_case(binary,\
                interpolation_class='unstable_MT') == ['contact', 'oCE1', 'None']
-        BinaryStar.star_2.state = "test_state"
+        binary.star_2.state = "test_state"
         ## both stars overfill RL leading to double CE initiated by star 2
-        BinaryStar.rl_relative_overflow_2 = 2.0
+        binary.rl_relative_overflow_2 = 2.0
         for IC,e in zip([None, 'unstable_MT'], [None, 'oDoubleCE2']):
-            assert totest.get_binary_state_and_event_and_mt_case(BinaryStar,\
+            assert totest.get_binary_state_and_event_and_mt_case(binary,\
                    interpolation_class=IC) == ['contact', e, 'None']
         ## classical CE initiated by star 2
-        BinaryStar.star_1.state = "BH"
-        assert totest.get_binary_state_and_event_and_mt_case(BinaryStar,\
+        binary.star_1.state = "BH"
+        assert totest.get_binary_state_and_event_and_mt_case(binary,\
                interpolation_class='unstable_MT') == ['contact', 'oCE2', 'None']
-        BinaryStar.star_1.state = "test_state"
+        binary.star_1.state = "test_state"
         ## donor is star 2
-        BinaryStar.rl_relative_overflow_1 = None
+        binary.rl_relative_overflow_1 = None
         for IC,e in zip([None, 'unstable_MT'], [None, 'oCE2']):
-            assert totest.get_binary_state_and_event_and_mt_case(BinaryStar,\
+            assert totest.get_binary_state_and_event_and_mt_case(binary,\
                    interpolation_class=IC) == ['RLO2', e, 'case_A2']
         # examples: undefined
-        BinaryStar.rl_relative_overflow_2 = -1.0
-        assert totest.get_binary_state_and_event_and_mt_case(BinaryStar) ==\
+        binary.rl_relative_overflow_2 = -1.0
+        assert totest.get_binary_state_and_event_and_mt_case(binary) ==\
                ['undefined', None, 'None']
         # examples: star 2 becomes WD
-        BinaryStar.star_2.center_gamma = 10.0
-        assert totest.get_binary_state_and_event_and_mt_case(BinaryStar) ==\
+        binary.star_2.center_gamma = 10.0
+        assert totest.get_binary_state_and_event_and_mt_case(binary) ==\
                ['undefined', 'CC2', 'None']
         # examples: star 1 becomes WD
-        BinaryStar.star_1.center_gamma = 10.0
-        assert totest.get_binary_state_and_event_and_mt_case(BinaryStar) ==\
+        binary.star_1.center_gamma = 10.0
+        assert totest.get_binary_state_and_event_and_mt_case(binary) ==\
                ['undefined', 'CC1', 'None']
         # examples: no center_gamma_history
-        BinaryStar.star_1.center_gamma_history=[]
-        BinaryStar.star_2.center_gamma_history=[]
-        assert totest.get_binary_state_and_event_and_mt_case(BinaryStar, i=0)\
+        binary.star_1.center_gamma_history=[]
+        binary.star_2.center_gamma_history=[]
+        assert totest.get_binary_state_and_event_and_mt_case(binary, i=0)\
                == ['detached', None, 'None']
 
-    def test_get_binary_state_and_event_and_mt_case_array(self, BinaryStar,\
+    def test_get_binary_state_and_event_and_mt_case_array(self, binary,\
                                                           monkeypatch):
         def mock_get_binary_state_and_event_and_mt_case(binary,\
             interpolation_class=None, i=None, verbose=False):
@@ -1025,25 +1076,25 @@ class TestFunctions:
         # bad input
         with raises(TypeError, match="argument of type 'NoneType' is not"+\
                     " iterable"):
-            totest.get_binary_state_and_event_and_mt_case_array(BinaryStar)
+            totest.get_binary_state_and_event_and_mt_case_array(binary)
         with raises(IndexError, match="list index out of range"):
-            totest.get_binary_state_and_event_and_mt_case_array(BinaryStar,\
+            totest.get_binary_state_and_event_and_mt_case_array(binary,\
             N=10)
         # examples: no binary
         assert totest.get_binary_state_and_event_and_mt_case_array(None) ==\
                (None, None, 'None')
         # examples: detached
-        BinaryStar.star_1.state = "test_state"
-        BinaryStar.star_2.state = "test_state"
-        assert totest.get_binary_state_and_event_and_mt_case_array(BinaryStar)\
+        binary.star_1.state = "test_state"
+        binary.star_2.state = "test_state"
+        assert totest.get_binary_state_and_event_and_mt_case_array(binary)\
                == ('detached', None, 'None')
         # examples: several mocked entries
         monkeypatch.setattr(totest, "get_binary_state_and_event_and_mt_case",\
                             mock_get_binary_state_and_event_and_mt_case)
-        mock_return = mock_get_binary_state_and_event_and_mt_case(BinaryStar)
+        mock_return = mock_get_binary_state_and_event_and_mt_case(binary)
         for i in range(3):
             assert totest.get_binary_state_and_event_and_mt_case_array(\
-                   BinaryStar, N=i+1) == ((i+1)*[mock_return[0]],\
+                   binary, N=i+1) == ((i+1)*[mock_return[0]],\
                    (i+1)*[mock_return[1]], (i+1)*[mock_return[2]])
 
     def test_CO_radius(self):
@@ -1100,7 +1151,7 @@ class TestFunctions:
                         approx(2.97147953078e-4, abs=6e-16)]):
             assert totest.Schwarzschild_Radius(m) == r
 
-    def test_flip_stars(self, BinaryStar):
+    def test_flip_stars(self, binary):
         # missing argument
         with raises(TypeError, match="missing 1 required positional"+\
                     " argument: 'binary'"):
@@ -1110,44 +1161,44 @@ class TestFunctions:
                     " attribute 'star_1'"):
             totest.flip_stars(None)
         # examples: set stars and check swap
-        for attr in BinaryStar.star_1.__dict__:
-            setattr(BinaryStar.star_1, attr, 1)
-        for attr in BinaryStar.star_2.__dict__:
-            setattr(BinaryStar.star_2, attr, 2)
-        totest.flip_stars(BinaryStar)
-        for attr in BinaryStar.star_1.__dict__:
-            assert getattr(BinaryStar.star_1, attr) == 2
-        for attr in BinaryStar.star_2.__dict__:
-            assert getattr(BinaryStar.star_2, attr) == 1
+        for attr in binary.star_1.__dict__:
+            setattr(binary.star_1, attr, 1)
+        for attr in binary.star_2.__dict__:
+            setattr(binary.star_2, attr, 2)
+        totest.flip_stars(binary)
+        for attr in binary.star_1.__dict__:
+            assert getattr(binary.star_1, attr) == 2
+        for attr in binary.star_2.__dict__:
+            assert getattr(binary.star_2, attr) == 1
         # examples: binary states
         for s,n in zip(['RLO1', 'RLO2'], ['RLO2', 'RLO1']):
-            BinaryStar.state = s
-            BinaryStar.state_history[0] = s
-            totest.flip_stars(BinaryStar)
-            assert BinaryStar.state == n
-            assert BinaryStar.state_history[0] == n
+            binary.state = s
+            binary.state_history[0] = s
+            totest.flip_stars(binary)
+            assert binary.state == n
+            assert binary.state_history[0] == n
         # examples: binary events
         for e,n in zip(['oRLO1', 'oRLO2', 'oCE1', 'oCE2', 'CC1', 'CC2'],\
                        ['oRLO2', 'oRLO1', 'oCE2', 'oCE1', 'CC2', 'CC1']):
-            BinaryStar.event = e
-            BinaryStar.event_history[0] = e
-            totest.flip_stars(BinaryStar)
-            assert BinaryStar.event == n
-            assert BinaryStar.event_history[0] == n
+            binary.event = e
+            binary.event_history[0] = e
+            totest.flip_stars(binary)
+            assert binary.event == n
+            assert binary.event_history[0] == n
         # examples: set binary values and check swap
-        for v in BinaryStar.__dict__:
+        for v in binary.__dict__:
             if v[-1]==1:
-                setattr(BinaryStar, v, 1)
+                setattr(binary, v, 1)
             elif v[-1]==2:
-                setattr(BinaryStar, v, 2)
-        totest.flip_stars(BinaryStar)
-        for v in BinaryStar.__dict__:
+                setattr(binary, v, 2)
+        totest.flip_stars(binary)
+        for v in binary.__dict__:
             if v[-1]==1:
-                assert getattr(BinaryStar, v) == 2
+                assert getattr(binary, v) == 2
             elif v[-1]==2:
-                assert getattr(BinaryStar, v) == 1
+                assert getattr(binary, v) == 1
 
-    def test_set_binary_to_failed(self, BinaryStar):
+    def test_set_binary_to_failed(self, binary):
         # missing argument
         with raises(TypeError, match="missing 1 required positional"+\
                     " argument: 'binary'"):
@@ -1157,9 +1208,9 @@ class TestFunctions:
                     " attribute 'state'"):
             totest.set_binary_to_failed(None)
         # examples:
-        totest.set_binary_to_failed(BinaryStar)
-        assert BinaryStar.state == "ERR"
-        assert BinaryStar.event == "FAILED"
+        totest.set_binary_to_failed(binary)
+        assert binary.state == "ERR"
+        assert binary.event == "FAILED"
 
     def test_infer_star_state(self):
         # bad input
@@ -1334,26 +1385,26 @@ class TestFunctions:
             totest.get_i_He_depl(None)
         with raises(TypeError, match="argument of type 'NoneType' is not"+\
                     " iterable"):
-            totest.get_i_He_depl(totest.np.array([]))
+            totest.get_i_He_depl(np.array([]))
         # examples: incomplete history to search through
-        assert totest.get_i_He_depl(totest.np.array([[]],\
+        assert totest.get_i_He_depl(np.array([[]],\
                dtype=([('surface_h1', 'f8')]))) == -1
         # examples: no he depletion
-        assert totest.get_i_He_depl(totest.np.array([(1.0, 0.0, 1.0, 0.0, 0.0,\
+        assert totest.get_i_He_depl(np.array([(1.0, 0.0, 1.0, 0.0, 0.0,\
                1.0, 1.0), (1.0, 0.0, 0.5, 0.5, 0.0, 1.0, 1.0), (1.0, 0.0, 0.2,\
                0.2, 0.0, 1.0, 1.0)], dtype=([('surface_h1', 'f8'),\
                ('center_h1', 'f8'), ('center_he4', 'f8'),\
                ('center_c12', 'f8'), ('log_LH', 'f8'), ('log_LHe', 'f8'),\
                ('log_Lnuc', 'f8')]))) == -1
         # examples: he depletion at 1
-        assert totest.get_i_He_depl(totest.np.array([(1.0, 0.0, 1.0, 0.0, 0.0,\
+        assert totest.get_i_He_depl(np.array([(1.0, 0.0, 1.0, 0.0, 0.0,\
                1.0, 1.0), (1.0, 0.0, 0.0, 0.5, 0.0, 1.0, 1.0), (1.0, 0.0, 0.0,\
                0.0, 0.0, 1.0, 1.0)], dtype=([('surface_h1', 'f8'),\
                ('center_h1', 'f8'), ('center_he4', 'f8'),\
                ('center_c12', 'f8'), ('log_LH', 'f8'), ('log_LHe', 'f8'),\
                ('log_Lnuc', 'f8')]))) == 1
 
-    def test_calculate_Patton20_values_at_He_depl(self, SingleStar):
+    def test_calculate_Patton20_values_at_He_depl(self, star):
         # missing argument
         with raises(TypeError, match="missing 1 required positional"+\
                     " argument: 'star'"):
@@ -1363,37 +1414,37 @@ class TestFunctions:
                     " attribute 'state_history'"):
             totest.calculate_Patton20_values_at_He_depl(None)
         # examples: no history
-        SingleStar.co_core_mass_at_He_depletion = 0.5
-        SingleStar.avg_c_in_c_core_at_He_depletion = 0.5
-        SingleStar.state_history = None
-        totest.calculate_Patton20_values_at_He_depl(SingleStar)
-        assert SingleStar.co_core_mass_at_He_depletion is None
-        assert SingleStar.avg_c_in_c_core_at_He_depletion is None
+        star.co_core_mass_at_He_depletion = 0.5
+        star.avg_c_in_c_core_at_He_depletion = 0.5
+        star.state_history = None
+        totest.calculate_Patton20_values_at_He_depl(star)
+        assert star.co_core_mass_at_He_depletion is None
+        assert star.avg_c_in_c_core_at_He_depletion is None
         # examples: no He_depleted in history
-        SingleStar.co_core_mass_at_He_depletion = 0.5
-        SingleStar.avg_c_in_c_core_at_He_depletion = 0.5
-        SingleStar.state_history = ["test"]
-        totest.calculate_Patton20_values_at_He_depl(SingleStar)
-        assert SingleStar.co_core_mass_at_He_depletion is None
-        assert SingleStar.avg_c_in_c_core_at_He_depletion is None
+        star.co_core_mass_at_He_depletion = 0.5
+        star.avg_c_in_c_core_at_He_depletion = 0.5
+        star.state_history = ["test"]
+        totest.calculate_Patton20_values_at_He_depl(star)
+        assert star.co_core_mass_at_He_depletion is None
+        assert star.avg_c_in_c_core_at_He_depletion is None
         # examples: loop through star types with He depletion
         for s,v in zip(["H-rich_Central_He_depleted",\
                         "stripped_He_Central_He_depleted"], [0.1, 0.2]):
-            SingleStar.state_history = ["test", s, s]
-            SingleStar.co_core_mass_history = [0.0, v, 1.0]
-            SingleStar.avg_c_in_c_core_history = [0.0, v, 1.0]
-            totest.calculate_Patton20_values_at_He_depl(SingleStar)
-            assert SingleStar.co_core_mass_at_He_depletion == v
-            assert SingleStar.avg_c_in_c_core_at_He_depletion == v
+            star.state_history = ["test", s, s]
+            star.co_core_mass_history = [0.0, v, 1.0]
+            star.avg_c_in_c_core_history = [0.0, v, 1.0]
+            totest.calculate_Patton20_values_at_He_depl(star)
+            assert star.co_core_mass_at_He_depletion == v
+            assert star.avg_c_in_c_core_at_He_depletion == v
 
     def test_CEE_parameters_from_core_abundance_thresholds(self, monkeypatch,\
-                                                           capsys, SingleStar):
+                                                           capsys, star):
         def mock_calculate_core_boundary(donor_mass, donor_star_state,\
             profile, mc1_i=None, core_element_fraction_definition=None,\
             CO_core_in_Hrich_star=False):
             return core_element_fraction_definition
         def mock_calculate_lambda_from_profile(profile, donor_star_state,\
-            m1_i=totest.np.nan, radius1=totest.np.nan,\
+            m1_i=np.nan, radius1=np.nan,\
             common_envelope_option_for_lambda=\
             totest.DEFAULT_CE_OPTION_FOR_LAMBDA,\
             core_element_fraction_definition=0.1, ind_core=None,\
@@ -1411,18 +1462,18 @@ class TestFunctions:
                     " attribute 'mass'"):
             totest.CEE_parameters_from_core_abundance_thresholds(None)
         with raises(TypeError) as error_info:
-            totest.CEE_parameters_from_core_abundance_thresholds(SingleStar)
+            totest.CEE_parameters_from_core_abundance_thresholds(star)
         assert error_info.value.args[0] == "unsupported operand type(s) for"+\
                " ** or pow(): 'float' and 'NoneType'"
-        SingleStar.log_R = 0.0
-        SingleStar.profile = totest.np.array([(1.0), (1.0), (1.0)],\
+        star.log_R = 0.0
+        star.profile = np.array([(1.0), (1.0), (1.0)],\
                                              dtype=([('mass', 'f8')]))
         with raises(TypeError, match="argument of type 'NoneType' is not"+\
                     " iterable"):
-            totest.CEE_parameters_from_core_abundance_thresholds(SingleStar)
+            totest.CEE_parameters_from_core_abundance_thresholds(star)
         # examples: missing state with profile and verbose
-        SingleStar.state = "test_state"
-        totest.CEE_parameters_from_core_abundance_thresholds(SingleStar,\
+        star.state = "test_state"
+        totest.CEE_parameters_from_core_abundance_thresholds(star,\
                                                              verbose=True)
         captured_out = capsys.readouterr().out
         for out in ["is not what expected during the "+\
@@ -1440,14 +1491,14 @@ class TestFunctions:
                      'r_core_CE_30cent', 'r_core_CE_pure_He_star_10cent',\
                      'lambda_CE_1cent', 'lambda_CE_10cent',\
                      'lambda_CE_30cent', 'lambda_CE_pure_He_star_10cent']:
-            assert totest.np.isnan(getattr(SingleStar, attr))
+            assert np.isnan(getattr(star, attr))
         monkeypatch.setattr(totest, "calculate_core_boundary",\
                             mock_calculate_core_boundary)
         monkeypatch.setattr(totest, "calculate_lambda_from_profile",\
                             mock_calculate_lambda_from_profile)
         for s in ["test_state", "H-rich_test", "stripped_He_test"]:
-            SingleStar.state = s
-            totest.CEE_parameters_from_core_abundance_thresholds(SingleStar)
+            star.state = s
+            totest.CEE_parameters_from_core_abundance_thresholds(star)
             assert capsys.readouterr().out == ""
             for attr in ['m_core_CE_1cent', 'm_core_CE_10cent',\
                          'm_core_CE_30cent', 'm_core_CE_pure_He_star_10cent',\
@@ -1456,34 +1507,34 @@ class TestFunctions:
                          'lambda_CE_1cent', 'lambda_CE_10cent',\
                          'lambda_CE_30cent', 'lambda_CE_pure_He_star_10cent']:
                 if s == "test_state":
-                    assert totest.np.isnan(getattr(SingleStar, attr))
+                    assert np.isnan(getattr(star, attr))
                 elif (("stripped_He" in s) and ("pure_He" not in attr) and\
                       ("m_core" in attr)):
-                    assert getattr(SingleStar, attr) == SingleStar.mass
+                    assert getattr(star, attr) == star.mass
                 elif (("stripped_He" in s) and ("pure_He" not in attr) and\
                       ("r_core" in attr)):
-                    assert getattr(SingleStar, attr) == 10**SingleStar.log_R
+                    assert getattr(star, attr) == 10**star.log_R
                 elif (("stripped_He" in s) and ("pure_He" not in attr) and\
                       ("lambda" in attr)):
-                    assert totest.np.isnan(getattr(SingleStar, attr))
+                    assert np.isnan(getattr(star, attr))
                 elif "1cent" in attr:
-                    assert getattr(SingleStar, attr) == 0.01
+                    assert getattr(star, attr) == 0.01
                 elif "10cent" in attr:
-                    assert getattr(SingleStar, attr) == 0.1
+                    assert getattr(star, attr) == 0.1
                 elif "30cent" in attr:
-                    assert getattr(SingleStar, attr) == 0.3
+                    assert getattr(star, attr) == 0.3
                 else:
-                    assert totest.np.isnan(getattr(SingleStar, attr))
+                    assert np.isnan(getattr(star, attr))
         # examples: no profile
-        SingleStar.profile = None
-        totest.CEE_parameters_from_core_abundance_thresholds(SingleStar)
+        star.profile = None
+        totest.CEE_parameters_from_core_abundance_thresholds(star)
         for attr in ['m_core_CE_1cent', 'm_core_CE_10cent',\
                      'm_core_CE_30cent', 'm_core_CE_pure_He_star_10cent',\
                      'r_core_CE_1cent', 'r_core_CE_10cent',\
                      'r_core_CE_30cent', 'r_core_CE_pure_He_star_10cent',\
                      'lambda_CE_1cent', 'lambda_CE_10cent',\
                      'lambda_CE_30cent', 'lambda_CE_pure_He_star_10cent']:
-            assert totest.np.isnan(getattr(SingleStar, attr))
+            assert np.isnan(getattr(star, attr))
 
     def test_initialize_empty_array(self):
         # missing argument
@@ -1495,11 +1546,11 @@ class TestFunctions:
                     " attribute 'copy'"):
             totest.initialize_empty_array(None)
         # examples:
-        test_array = totest.np.array([(1.0, "test"), (1.0, "test")],\
+        test_array = np.array([(1.0, "test"), (1.0, "test")],\
                                      dtype=([('mass', 'f8'), ('state', 'U8')]))
         empty_array = totest.initialize_empty_array(test_array)
         for i in range(len(empty_array)):
-            assert totest.np.isnan(empty_array['mass'][i]) # nan float
+            assert np.isnan(empty_array['mass'][i]) # nan float
             assert empty_array['state'][i] == 'nan'        # nan str
 
     def test_calculate_core_boundary(self, star_profile):
@@ -1533,7 +1584,7 @@ class TestFunctions:
                "stripped_He_Core_He_burning", star_profile,\
                core_element_fraction_definition=0.1) == -1
         # examples: given core mass
-        test_mass = totest.np.array([1.0, 0.7, 0.4, 0.1, 0.0])
+        test_mass = np.array([1.0, 0.7, 0.4, 0.1, 0.0])
         assert totest.calculate_core_boundary(test_mass, None, None,\
                mc1_i=0.1) == 4
 
@@ -1619,8 +1670,8 @@ class TestFunctions:
                     " of 'NoneType' and 'NoneType'"):
             totest.linear_interpolation_between_two_cells(None, None, None)
         # examples: automatic interpolation
-        test_array_x = totest.np.array([0.0, 0.2, 1.0])
-        test_array_y = totest.np.array([1.0, 0.4, 0.0])
+        test_array_x = np.array([0.0, 0.2, 1.0])
+        test_array_y = np.array([1.0, 0.4, 0.0])
         assert totest.linear_interpolation_between_two_cells(test_array_y,\
                test_array_x, 0.1) == 0.7
         # examples: interpolation over multiple cells with verbose
@@ -1653,7 +1704,7 @@ class TestFunctions:
         with warns(InterpolationWarning, match="array_x too short, use y at"+\
                    " top=3"):
             assert totest.linear_interpolation_between_two_cells(\
-                   totest.np.array([1.0, 0.4, 0.0, -1.0]), test_array_x, 0.1,\
+                   np.array([1.0, 0.4, 0.0, -1.0]), test_array_x, 0.1,\
                    top=3) == -1.0
 
     def test_calculate_lambda_from_profile(self, star_profile, capsys):
@@ -1682,7 +1733,7 @@ class TestFunctions:
         lambda_CE, Mc, Rc = totest.calculate_lambda_from_profile(star_profile,\
                             "test", ind_core=0,\
                             common_envelope_alpha_thermal=0.1)
-        assert totest.np.isnan(lambda_CE)
+        assert np.isnan(lambda_CE)
         assert Mc == star_profile['mass'][0]
         assert Rc == star_profile['radius'][0]
         # examples: He core in H rich star
@@ -1735,9 +1786,9 @@ class TestFunctions:
                 d_mass, d_radius, d_dm =\
                  totest.get_mass_radius_dm_from_profile(star_profile[['mass',\
                  'radius']])
-                assert totest.np.array_equal(d_mass, star_profile['mass'])
-                assert totest.np.array_equal(d_radius, star_profile['radius'])
-                assert totest.np.array_equal(d_dm, star_profile['dm'])
+                assert np.array_equal(d_mass, star_profile['mass'])
+                assert np.array_equal(d_radius, star_profile['radius'])
+                assert np.array_equal(d_dm, star_profile['dm'])
         # get total mass and radius
         M = star_profile['mass'].max()
         R = star_profile['radius'].max()
@@ -1745,24 +1796,24 @@ class TestFunctions:
         d_mass, d_radius, d_dm = totest.get_mass_radius_dm_from_profile(\
                                  star_profile[['mass', 'log_R']], m1_i = M,\
                                  radius1 = R)
-        assert totest.np.array_equal(d_mass, star_profile['mass'])
-        assert totest.np.array_equal(d_radius, star_profile['radius'])
-        assert totest.np.array_equal(d_dm, star_profile['dm'])
+        assert np.array_equal(d_mass, star_profile['mass'])
+        assert np.array_equal(d_radius, star_profile['radius'])
+        assert np.array_equal(d_dm, star_profile['dm'])
         # examples: profile with radius and dm (in grams)
         d_mass, d_radius, d_dm = totest.get_mass_radius_dm_from_profile(\
                                  star_profile[['mass', 'dm', 'radius']],\
                                  m1_i = M, radius1 = R)
-        assert totest.np.array_equal(d_mass, star_profile['mass'])
-        assert totest.np.array_equal(d_radius, star_profile['radius'])
+        assert np.array_equal(d_mass, star_profile['mass'])
+        assert np.array_equal(d_radius, star_profile['radius'])
         # convert Msun to grams
         d_dm = d_dm * totest.const.Msun
-        assert totest.np.array_equal(d_dm, star_profile['dm'])
+        assert np.array_equal(d_dm, star_profile['dm'])
 
     def test_get_internal_energy_from_profile(self, star_profile, monkeypatch):
         def mock_calculate_H2recombination_energy(profile, tolerance=0.001):
-            return totest.np.array(len(profile)*[1.0e+99])
+            return np.array(len(profile)*[1.0e+99])
         def mock_calculate_recombination_energy(profile, tolerance=0.001):
-            return totest.np.array(len(profile)*[1.0e+99])
+            return np.array(len(profile)*[1.0e+99])
         # missing argument
         with raises(TypeError, match="missing 2 required positional"+\
                     " arguments: 'common_envelope_option_for_lambda' and"+\
@@ -1776,18 +1827,18 @@ class TestFunctions:
                     " common_envelope_option_for_lambda = test"):
             totest.get_internal_energy_from_profile("test",\
             star_profile[['energy']])
-        bad_profile = totest.np.array([-1.0, -1.0, -1.0, -1.0],\
+        bad_profile = np.array([-1.0, -1.0, -1.0, -1.0],\
                       dtype=([('energy', 'f8')]))
-        bad_profile2 = totest.np.empty((2,), dtype=[(f, 'f8') for f in [\
+        bad_profile2 = np.empty((2,), dtype=[(f, 'f8') for f in [\
                        'x_mass_fraction_H', 'y_mass_fraction_He',\
                        'neutral_fraction_H', 'neutral_fraction_He',\
                        'avg_charge_He', 'energy']])
-        bad_profile2['x_mass_fraction_H'] = totest.np.array([-1.0, -1.0])
-        bad_profile2['y_mass_fraction_He'] = totest.np.array([-1.0, -1.0])
-        bad_profile2['neutral_fraction_H'] = totest.np.array([0.5, 0.5])
-        bad_profile2['neutral_fraction_He'] = totest.np.array([0.5, 0.5])
-        bad_profile2['avg_charge_He'] = totest.np.array([0.5, 0.5])
-        bad_profile2['energy'] = totest.np.array([0.5, 0.5])
+        bad_profile2['x_mass_fraction_H'] = np.array([-1.0, -1.0])
+        bad_profile2['y_mass_fraction_He'] = np.array([-1.0, -1.0])
+        bad_profile2['neutral_fraction_H'] = np.array([0.5, 0.5])
+        bad_profile2['neutral_fraction_He'] = np.array([0.5, 0.5])
+        bad_profile2['avg_charge_He'] = np.array([0.5, 0.5])
+        bad_profile2['energy'] = np.array([0.5, 0.5])
         for CEOFL in ["lambda_from_profile_gravitational_plus_internal",\
                       "lambda_from_profile_gravitational_plus_internal_minus"+\
                       "_recombination"]:
@@ -1806,19 +1857,19 @@ class TestFunctions:
                        " recombination (and H2 recombination) energy,"+\
                        " remaining internal energy giving negative values."
         # examples: no internal energy
-        assert totest.np.array_equal(totest.np.array([0, 0, 0, 0]),\
+        assert np.array_equal(np.array([0, 0, 0, 0]),\
                totest.get_internal_energy_from_profile(\
                "lambda_from_profile_gravitational", star_profile[['radius']]))
         with warns(ApproximationWarning, match="Profile does not include"+\
                    " internal energy -- proceeding with "+\
                    "'lambda_from_profile_gravitational'"):
-            assert totest.np.array_equal(totest.np.array([0, 0, 0, 0]),\
+            assert np.array_equal(np.array([0, 0, 0, 0]),\
                    totest.get_internal_energy_from_profile("test",\
                    star_profile[['radius']]))
         # examples: with internal energy
-        assert totest.np.allclose(totest.get_internal_energy_from_profile(\
+        assert np.allclose(totest.get_internal_energy_from_profile(\
                "lambda_from_profile_gravitational_plus_internal",\
-               star_profile), totest.np.array([9.99850443e+15, 4.99893173e+15,\
+               star_profile), np.array([9.99850443e+15, 4.99893173e+15,\
                9.99786347e+14, 9.99786347e+12]))
 
     def test_calculate_H2recombination_energy(self, star_profile):
@@ -1832,11 +1883,11 @@ class TestFunctions:
             totest.calculate_H2recombination_energy(None)
         with raises(ValueError, match="CEE problem calculating H2"+\
                     " recombination energy, giving negative values"):
-            bad_profile = totest.np.array([-1.0, -1.0, -1.0, -1.0],\
+            bad_profile = np.array([-1.0, -1.0, -1.0, -1.0],\
                           dtype=([('x_mass_fraction_H', 'f8')]))
             totest.calculate_H2recombination_energy(bad_profile)
         # examples: profile with Hydrogen mass fraction
-        assert totest.np.allclose(totest.np.array([1.49557421e+12,\
+        assert np.allclose(np.array([1.49557421e+12,\
                1.06826729e+12, 2.13653458e+11, 2.13653458e+09]),\
                totest.calculate_H2recombination_energy(\
                star_profile[['x_mass_fraction_H']]))
@@ -1844,7 +1895,7 @@ class TestFunctions:
         with warns(ApproximationWarning, match="Profile does not include"+\
                    " Hydrogen mass fraction calculate H2 recombination"+\
                    " energy -- H2 recombination energy is assumed 0"):
-            assert totest.np.array_equal(totest.np.array([0, 0, 0, 0]),\
+            assert np.array_equal(np.array([0, 0, 0, 0]),\
                    totest.calculate_H2recombination_energy(\
                    star_profile[['radius']]))
 
@@ -1859,18 +1910,18 @@ class TestFunctions:
             totest.calculate_recombination_energy(None)
         with raises(ValueError, match="CEE problem calculating"+\
                     " recombination energy, giving negative values"):
-            bad_profile = totest.np.empty((2,), dtype=[(f, 'f8') for f in [\
+            bad_profile = np.empty((2,), dtype=[(f, 'f8') for f in [\
                           'x_mass_fraction_H', 'y_mass_fraction_He',\
                           'neutral_fraction_H', 'neutral_fraction_He',\
                           'avg_charge_He']])
-            bad_profile['x_mass_fraction_H'] = totest.np.array([-1.0, -1.0])
-            bad_profile['y_mass_fraction_He'] = totest.np.array([-1.0, -1.0])
-            bad_profile['neutral_fraction_H'] = totest.np.array([0.5, 0.5])
-            bad_profile['neutral_fraction_He'] = totest.np.array([0.5, 0.5])
-            bad_profile['avg_charge_He'] = totest.np.array([0.5, 0.5])
+            bad_profile['x_mass_fraction_H'] = np.array([-1.0, -1.0])
+            bad_profile['y_mass_fraction_He'] = np.array([-1.0, -1.0])
+            bad_profile['neutral_fraction_H'] = np.array([0.5, 0.5])
+            bad_profile['neutral_fraction_He'] = np.array([0.5, 0.5])
+            bad_profile['avg_charge_He'] = np.array([0.5, 0.5])
             totest.calculate_recombination_energy(bad_profile)
         # examples: profile with mass fraction and ionization information
-        assert totest.np.allclose(totest.np.array([0.00000000e+00,\
+        assert np.allclose(np.array([0.00000000e+00,\
                4.73639308e+12, 7.53791976e+12, 3.29724895e+12]),\
                totest.calculate_recombination_energy(\
                star_profile[['x_mass_fraction_H', 'y_mass_fraction_He', 'neutral_fraction_H', 'neutral_fraction_He', 'avg_charge_He']]))
@@ -1879,7 +1930,7 @@ class TestFunctions:
                    " mass fractions and ionizations of elements to calculate"+\
                    " recombination energy -- recombination energy is assumed"+\
                    " 0"):
-            assert totest.np.array_equal(totest.np.array([0, 0, 0, 0]),\
+            assert np.array_equal(np.array([0, 0, 0, 0]),\
                    totest.calculate_recombination_energy(\
                    star_profile[['radius']]))
 
@@ -1995,42 +2046,42 @@ class TestFunctions:
         with raises(TypeError, match="object of type 'NoneType' has no len()"):
             totest.rotate(None, None)
         with raises(ValueError, match="axis should be of dimension 3"):
-            totest.rotate(totest.np.array([0]), 0.0)
+            totest.rotate(np.array([0]), 0.0)
         with raises(ValueError, match="axis is a point"):
-            totest.rotate(totest.np.array([0, 0, 0]), 0.0)
+            totest.rotate(np.array([0, 0, 0]), 0.0)
         # examples:
         for x in range(3):
             for y in range(3):
                 for z in range(3):
                     if x!=0 or y!=0 or z!=0:
                         # angle=0 -> no rotation
-                        assert totest.np.array_equal(totest.rotate(\
-                               totest.np.array([x, y, z]), 0.0),\
-                               totest.np.array([[1, 0, 0], [0, 1, 0],\
+                        assert np.array_equal(totest.rotate(\
+                               np.array([x, y, z]), 0.0),\
+                               np.array([[1, 0, 0], [0, 1, 0],\
                                                 [0, 0, 1]]))
                         # inverse rotation around inverted axis
-                        assert totest.np.array_equal(totest.rotate(\
-                               totest.np.array([-x, -y, -z]), -1.0),\
-                               totest.rotate(totest.np.array([x, y, z]), 1.0))
+                        assert np.array_equal(totest.rotate(\
+                               np.array([-x, -y, -z]), -1.0),\
+                               totest.rotate(np.array([x, y, z]), 1.0))
         # examples: angle=1.0
-        s = totest.np.sin(1.0)
-        c = totest.np.cos(1.0)
-        assert totest.np.array_equal(totest.rotate(totest.np.array([1, 0, 0]),\
-               1.0), totest.np.array([[1, 0, 0], [0, c, -s], [0, s, c]]))
-        assert totest.np.array_equal(totest.rotate(totest.np.array([0, 1, 0]),\
-               1.0), totest.np.array([[c, 0, s], [0, 1, 0], [-s, 0, c]]))
-        assert totest.np.array_equal(totest.rotate(totest.np.array([0, 0, 1]),\
-               1.0), totest.np.array([[c, -s, 0], [s, c, 0], [0, 0, 1]]))
-        assert totest.np.allclose(totest.rotate(totest.np.array([1, 1, 0]),\
-               1.0), totest.np.array([[0.77015115, 0.22984885, 0.59500984],\
+        s = np.sin(1.0)
+        c = np.cos(1.0)
+        assert np.array_equal(totest.rotate(np.array([1, 0, 0]),\
+               1.0), np.array([[1, 0, 0], [0, c, -s], [0, s, c]]))
+        assert np.array_equal(totest.rotate(np.array([0, 1, 0]),\
+               1.0), np.array([[c, 0, s], [0, 1, 0], [-s, 0, c]]))
+        assert np.array_equal(totest.rotate(np.array([0, 0, 1]),\
+               1.0), np.array([[c, -s, 0], [s, c, 0], [0, 0, 1]]))
+        assert np.allclose(totest.rotate(np.array([1, 1, 0]),\
+               1.0), np.array([[0.77015115, 0.22984885, 0.59500984],\
                [0.22984885, 0.77015115, -0.59500984], [-0.59500984,\
                 0.59500984, 0.54030231]]))
-        assert totest.np.allclose(totest.rotate(totest.np.array([1, 0, 1]),\
-               1.0), totest.np.array([[0.77015115,-0.59500984, 0.22984885],\
+        assert np.allclose(totest.rotate(np.array([1, 0, 1]),\
+               1.0), np.array([[0.77015115,-0.59500984, 0.22984885],\
                [0.59500984, 0.54030231, -0.59500984], [0.22984885,\
                 0.59500984, 0.77015115]]))
-        assert totest.np.allclose(totest.rotate(totest.np.array([0, 1, 1]),\
-               1.0), totest.np.array([[0.54030231,-0.59500984, 0.59500984],\
+        assert np.allclose(totest.rotate(np.array([0, 1, 1]),\
+               1.0), np.array([[0.54030231,-0.59500984, 0.59500984],\
                [0.59500984, 0.77015115, 0.22984885], [-0.59500984,\
                 0.22984885, 0.77015115]]))
 
