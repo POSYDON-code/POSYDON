@@ -101,6 +101,8 @@ Fixtures replace the `setUp` and `tearDown`. To use a fixture to prepare somethi
 
 For cleaning things up after a test, instead of having a final return, you separate setUp and tearDown with a `yield` statement, which ensure that all before is executed when the fixture is requested and the stuff after when it get deleted (usually at the end of the test function). For chains of fixtures it should be noted, that the clean up happens in the reverse order to the creation, because the innermost fixture will get deleted first.
 
+There are some useful [predefined fixtures](https://docs.pytest.org/en/stable/reference/fixtures.html). One was already introduced earlier, `capsys` can be used to interact with captured output. Another very useful one is `tmp_path`, which is a path object to a directory, which is created for each test function and will be subject to removal afterwards. Hence, whenever you need to read/write files for the test, it should be done in there. In most cases, `tmp_path` will not be used in your test function, but you use it in a self-defined fixture, which e.g. creates a file for the function. A third predefined fixture of interest is `monkeypatch`. This can be used to replace the objects inside the tested code just for the test. More [predefined fixtures can be found online](https://docs.pytest.org/en/stable/reference/fixtures.html).
+
 #### Catching raised errors
 
 Pytest has the [context manager `pytest.raises`](https://docs.pytest.org/en/stable/reference/reference.html#pytest-raises) to catch raised errors. You use it like other context managers via a `with` statement. Beside the expected exception, you can specify a `match`, which will be checked against the error message as a regular expression, e.g.:
