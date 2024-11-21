@@ -1545,7 +1545,7 @@ class PSyGrid:
         if not np.issubdtype(type(idx), int):
             raise TypeError("Index {} is not of type int".format(idx))
         if idx not in self:
-            raise KeyError("Index {} out of bounds.".format(idx))
+            raise IndexError("Index {} out of bounds.".format(idx))
         return PSyRunView(self, idx)
 
     def get_pandas_initial_final(self):
