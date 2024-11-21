@@ -1239,7 +1239,9 @@ def He_MS_lifetime(mass):
         He MS time duration in yr.
 
     """
-    if mass < 2.0:
+    if mass <=0.0:
+        raise ValueError(f"Too low mass: {mass}")
+    elif mass < 2.0:
         he_t_ms = 10 ** 8
     elif mass >= 2.0 and mass < 10.0:
         he_t_ms = 10**(-2.6094 * np.log10(mass) + 8.7855)
@@ -1459,7 +1461,8 @@ def cumulative_mass_transfer_numeric(MT_cases):
     Parameters
     ----------
     MT_cases : array-like
-        A list of the integer MT flags at sequential history steps.
+        A list of the integer MT flags at sequential history steps. If the
+        cases are instead given in string format they are converted first.
 
     Returns
     -------
@@ -1538,7 +1541,8 @@ def cumulative_mass_transfer_string(cumulative_integers):
         caseA/B/A   : case A, then B, and A again (although unphysical).
 
     """
-    assert len(cumulative_integers) > 0
+    if len(cumulative_integers) == 0:
+        return "?"
     result = ""
     added_case_word = False
     for integer in cumulative_integers:

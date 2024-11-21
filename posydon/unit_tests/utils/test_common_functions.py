@@ -1071,6 +1071,9 @@ class TestFunctions:
         binary.star_2.state_history[0] = "test_state"
         assert totest.get_binary_state_and_event_and_mt_case(binary, i=0)\
                == ['detached', None, 'None']
+        # bad input
+        with raises(IndexError, match="list index out of range"):
+            totest.get_binary_state_and_event_and_mt_case(binary, i=1)
         # examples: mass transfer
         monkeypatch.setattr(totest, "infer_mass_transfer_case",\
                             mock_infer_mass_transfer_case)
@@ -1189,9 +1192,11 @@ class TestFunctions:
                     " argument: 'mass'"):
             totest.He_MS_lifetime()
         # bad input
-        with raises(TypeError, match="'<' not supported between instances"+\
+        with raises(TypeError, match="'<=' not supported between instances"+\
                     " of 'NoneType' and 'float'"):
             totest.He_MS_lifetime(None)
+        with raises(ValueError, match="Too low mass: 0.0"):
+            totest.He_MS_lifetime(0.0)
         # examples:
         tests = [(1.0  , 1.0e+8),\
                  (3.0  , approx(3.47136114375e+7, abs=6e-5)),\
@@ -1383,12 +1388,42 @@ class TestFunctions:
         assert totest.cumulative_mass_transfer_numeric(\
                [totest.MT_CASE_NO_RLO]) == [totest.MT_CASE_NO_RLO]
         # examples: cut out undetermined
-        assert totest.cumulative_mass_transfer_numeric([totest.MT_CASE_A,\
-               totest.MT_CASE_UNDETERMINED, totest.MT_CASE_A,\
-               totest.MT_CASE_B, totest.MT_CASE_A, totest.MT_CASE_A]) ==\
-               [totest.MT_CASE_UNDETERMINED, totest.MT_CASE_A,\
-                totest.MT_CASE_B, totest.MT_CASE_A]
-        # examples: cut out no RLO from strings
+        tests = [[], [totest.MT_CASE_UNDETERMINED],\
+                 [totest.MT_CASE_UNDETERMINED, totest.MT_CASE_UNDETERMINED]]
+        for preA in tests:
+            for preB in tests:
+                for postB in tests:
+                    if preA+preB+postB==[]: # at least one undetermined
+                        continue
+                    mt = preA + [totest.MT_CASE_A] + preB + [totest.MT_CASE_B]\
+                       + postB
+                    assert totest.cumulative_mass_transfer_numeric(mt) ==\
+                           [totest.MT_CASE_UNDETERMINED, totest.MT_CASE_A,\
+                           totest.MT_CASE_B]
+        # examples: cut out no RLO
+        tests = [[], [totest.MT_CASE_NO_RLO], [totest.MT_CASE_NO_RLO,\
+                  totest.MT_CASE_NO_RLO]]
+        for preA in tests:
+            for preB in tests:
+                for postB in tests:
+                    mt = preA + [totest.MT_CASE_A] + preB + [totest.MT_CASE_B]\
+                       + postB
+                    assert totest.cumulative_mass_transfer_numeric(mt) ==\
+                           [totest.MT_CASE_A, totest.MT_CASE_B]
+        # examples: undetermined and no RLO
+        assert totest.cumulative_mass_transfer_numeric(\
+               [totest.MT_CASE_UNDETERMINED, totest.MT_CASE_NO_RLO]) ==\
+               [totest.MT_CASE_UNDETERMINED, totest.MT_CASE_NO_RLO]
+        assert totest.cumulative_mass_transfer_numeric(\
+               [totest.MT_CASE_NO_RLO, totest.MT_CASE_UNDETERMINED]) ==\
+               [totest.MT_CASE_UNDETERMINED, totest.MT_CASE_NO_RLO]
+        # examples: cut out dublicates
+        for i in range(1,4):
+            mt = i*[totest.MT_CASE_A] + 2*i*[totest.MT_CASE_B] +\
+                 3*i*[totest.MT_CASE_A]
+            assert totest.cumulative_mass_transfer_numeric(mt) ==\
+                   [totest.MT_CASE_A, totest.MT_CASE_B, totest.MT_CASE_A]
+        # examples: from strings
         assert totest.cumulative_mass_transfer_numeric(["A", "no_RLO", "A",\
                "B", "A", "A"]) == [totest.MT_CASE_A, totest.MT_CASE_B,\
                totest.MT_CASE_A]
@@ -1401,11 +1436,11 @@ class TestFunctions:
         # bad input
         with raises(TypeError, match="object of type 'NoneType' has no len()"):
             totest.cumulative_mass_transfer_string(None)
-        with raises(AssertionError): # missing case information
-            totest.cumulative_mass_transfer_string([])
         with warns(InappropriateValueWarning, match="Unknown MT case:"):
             # unknown case
             totest.cumulative_mass_transfer_string([-1])
+        # examples: no cases
+        assert totest.cumulative_mass_transfer_string([]) == "?"
         # examples: undetermined
         assert totest.cumulative_mass_transfer_string(\
                [totest.MT_CASE_UNDETERMINED]) == "?"
@@ -1489,10 +1524,15 @@ class TestFunctions:
         # examples: no He_depleted in history
         star.co_core_mass_at_He_depletion = 0.5
         star.avg_c_in_c_core_at_He_depletion = 0.5
-        star.state_history = ["test"]
-        totest.calculate_Patton20_values_at_He_depl(star)
-        assert star.co_core_mass_at_He_depletion is None
-        assert star.avg_c_in_c_core_at_He_depletion is None
+        for s in ["test", "H-rich_Core_H_burning", "H-rich_Core_He_burning",\
+                  "H-rich_Shell_H_burning", "H-rich_Central_C_depletion",\
+                  "H-rich_undetermined", "stripped_He_Core_He_burning",\
+                  "stripped_He_Central_C_depletion",\
+                  "stripped_He_undetermined"]:
+            star.state_history = [s]
+            totest.calculate_Patton20_values_at_He_depl(star)
+            assert star.co_core_mass_at_He_depletion is None
+            assert star.avg_c_in_c_core_at_He_depletion is None
         # examples: loop through star types with He depletion
         tests = [("H-rich_Central_He_depleted"     , 0.1),\
                  ("stripped_He_Central_He_depleted", 0.2)]
