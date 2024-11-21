@@ -1542,10 +1542,10 @@ class PSyGrid:
 
     def __getitem__(self, idx):
         """Return a PSyRunView instance for the run with index `idx`."""
-        if idx not in self:
-            raise KeyError("Index {} out of bounds.".format(idx))
         if not np.issubdtype(type(idx), int):
             raise TypeError("Index {} is not of type int".format(idx))
+        if idx not in self:
+            raise KeyError("Index {} out of bounds.".format(idx))
         return PSyRunView(self, idx)
 
     def get_pandas_initial_final(self):
@@ -1566,6 +1566,8 @@ class PSyGrid:
 
     def __contains__(self, index):
         """Return True if run with index `index` is in the grid."""
+        if not np.issubdtype(type(idx), int):
+            raise TypeError("Index {} is not of type int".format(idx))
         return 0 <= index < self.n_runs
 
     def __iter__(self):
