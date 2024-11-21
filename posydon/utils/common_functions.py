@@ -790,7 +790,15 @@ def read_histogram_from_file(path):
                 continue
             arrays.append(np.fromstring(line.strip(), dtype=float, sep=","))
             if len(arrays) > 2:
-                raise RuntimeError("More than two lines found in the histogram document.")
+                raise IndexError("More than two lines found in the histogram"
+                                 " document.")
+    if len(arrays) < 2:
+        raise IndexError("Less than two lines found in the histogram"
+                         " document.")
+    if len(arrays[0]) - 1 != len(arrays[1]):
+        raise IndexError("The number of elements in the second data line is"
+                         " not one less then the number in the first data"
+                         " line.")
 
     return arrays
 

@@ -414,32 +414,60 @@ class TestValues:
 
 class TestFunctions:
     @fixture
-    def csv_path(self, tmp_path):
-        # a temporary csv path for testing
-        return totest.os.path.join(tmp_path, "hist.csv")
-
-    @fixture
-    def csv_file(self, csv_path):
-        # a temporary csv file for testing
-        with open(csv_path, "w") as test_file:
+    def failing_csv_path(self, tmp_path):
+        # a temporary path to csv file for testing
+        path = totest.os.path.join(tmp_path, "hist_fail.csv")
+        with open(path, "w") as test_file:
             test_file.write("0.0,1.0\n")
             test_file.write("1.0,1.0\n\n")
             test_file.write("2.0,1.0\n")
-        return
+        return path
 
     @fixture
-    def csv_path2(self, tmp_path):
-        # a temporary csv path for testing
-        return totest.os.path.join(tmp_path, "hist2.csv")
+    def failing_csv_path2(self, tmp_path):
+        # a temporary path to csv file for testing
+        path = totest.os.path.join(tmp_path, "hist_fail2.csv")
+        with open(path, "w") as test_file:
+            test_file.write("")
+        return path
 
     @fixture
-    def csv_file2(self, csv_path2):
-        # a temporary csv file for testing
-        with open(csv_path2, "w") as test_file:
+    def failing_csv_path3(self, tmp_path):
+        # a temporary path to csv file for testing
+        path = totest.os.path.join(tmp_path, "hist_fail3.csv")
+        with open(path, "w") as test_file:
             test_file.write("#0.0,1.0\n")
             test_file.write("0.0,1.0,2.0\n")
             test_file.write("1.0,1.0,1.0\n")
-        return
+        return path
+
+    @fixture
+    def failing_csv_path4(self, tmp_path):
+        # a temporary path to csv file for testing
+        path = totest.os.path.join(tmp_path, "hist_fail4.csv")
+        with open(path, "w") as test_file:
+            test_file.write("0.0,1.0,2.0\n")
+            test_file.write("Unit,Test\n")
+        return path
+
+    @fixture
+    def csv_path(self, tmp_path):
+        # a temporary path to csv file for testing
+        path = totest.os.path.join(tmp_path, "hist.csv")
+        with open(path, "w") as test_file:
+            test_file.write("#0.1,1.1\n")
+            test_file.write("0.1,1.1,2.1\n")
+            test_file.write("1.0,1.0\n")
+        return path
+
+    @fixture
+    def csv_path2(self, tmp_path):
+        # a temporary path to csv file for testing
+        path = totest.os.path.join(tmp_path, "hist2.csv")
+        with open(path, "w") as test_file:
+            test_file.write("0.2,1.2,2.2\n\n")
+            test_file.write("2.0,2.0\n")
+        return path
 
     # test functions
     def test_is_number(self):
@@ -800,8 +828,9 @@ class TestFunctions:
                y=np.array([0.2, 0.8]), size=4),\
                np.array([0.0, 0.5, 0.75, 1.0]))
 
-    def test_read_histogram_from_file(self, csv_path, csv_file, csv_path2,\
-                                      csv_file2):
+    def test_read_histogram_from_file(self, failing_csv_path,\
+                                      failing_csv_path2, failing_csv_path3,\
+                                      failing_csv_path4, csv_path, csv_path2):
         # missing argument
         with raises(TypeError, match="missing 1 required positional"+\
                     " argument: 'path'"):
@@ -810,14 +839,27 @@ class TestFunctions:
         with raises(TypeError, match="expected str, bytes or os.PathLike"+\
                     " object, not NoneType"):
             totest.read_histogram_from_file(path=None)
-        # examples:
-        with raises(RuntimeError, match="More than two lines found in the"+\
+        with raises(IndexError, match="More than two lines found in the"+\
                     " histogram document."):
-            totest.read_histogram_from_file(path=csv_path)
-        assert np.array_equal(totest.read_histogram_from_file(\
-               path=csv_path2)[0],np.array([0.0, 1.0, 2.0]))
-        assert np.array_equal(totest.read_histogram_from_file(\
-               path=csv_path2)[1],np.array([1.0, 1.0, 1.0]))
+            totest.read_histogram_from_file(path=failing_csv_path)
+        with raises(IndexError, match="Less than two lines found in the"+\
+                    " histogram document."):
+            totest.read_histogram_from_file(path=failing_csv_path2)
+        with raises(IndexError, match="The number of elements in the second"+\
+                    " data line is not one less then the number in the first"+\
+                    " data line."):
+            totest.read_histogram_from_file(path=failing_csv_path3)
+        with raises(IndexError, match="The number of elements in the second"+\
+                    " data line is not one less then the number in the first"+\
+                    " data line."):
+            totest.read_histogram_from_file(path=failing_csv_path4)
+        # examples:
+        arrays = totest.read_histogram_from_file(path=csv_path)
+        assert np.array_equal(arrays[0], np.array([0.1, 1.1, 2.1]))
+        assert np.array_equal(arrays[1], np.array([1.0, 1.0]))
+        arrays = totest.read_histogram_from_file(path=csv_path2)
+        assert np.array_equal(arrays[0], np.array([0.2, 1.2, 2.2]))
+        assert np.array_equal(arrays[1], np.array([2.0, 2.0]))
 
     def test_inspiral_timescale_from_separation(self):
         # missing argument
