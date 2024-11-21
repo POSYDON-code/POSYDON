@@ -924,7 +924,9 @@ def spin_stable_mass_transfer(spin_i, star_mass_preMT, star_mass_postMT):
     Based on Thorne 1974 eq. 2a.
 
     """
-    if star_mass_preMT is None or star_mass_postMT is None:
+    if ((star_mass_preMT is None) or (star_mass_preMT<=0.0) or
+        (star_mass_postMT is None) or (star_mass_postMT<=0.0) or
+        (spin_i is None) or (spin_i<0.0)):
         return None
     z1 = 1+(1-spin_i**2)**(1/3)*((1+spin_i)**(1/3)+(1-spin_i)**(1/3))
     z2 = (3*spin_i**2+z1**2)**0.5

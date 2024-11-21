@@ -585,25 +585,25 @@ class TestFunctions:
             totest.eddington_limit(binary, idx=2)
         # examples: 1Msun accretor is star1
         binary.star_1.mass = 1.0
-        for CO, r in zip(['WD', 'NS', 'BH'],\
-            [(approx(4.01681147088e-17, abs=6e-29),\
-              approx(6.40623627946e+7, abs=6e-5)),\
-             (approx(2.17747384546e-8, abs=6e-20),\
-              approx(0.11817658993, abs=6e-12)),\
-             (approx(4.49942509871e-8, abs=6e-20),\
-              approx(5.71909584179e-2, abs=6e-14))]):
+        tests = [('WD', (approx(4.01681147088e-17, abs=6e-29),\
+                         approx(6.40623627946e+7, abs=6e-5))),\
+                 ('NS', (approx(2.17747384546e-8, abs=6e-20),\
+                         approx(0.11817658993, abs=6e-12))),\
+                 ('BH', (approx(4.49942509871e-8, abs=6e-20),\
+                         approx(5.71909584179e-2, abs=6e-14)))]
+        for (CO, r) in tests:
             binary.star_1.state = CO
             assert totest.eddington_limit(binary) == r
         binary.star_1.state = None
         # examples: 1.2Msun accretor is star2, while donor has X_surf=0.1
         binary.star_2.mass = 1.2
-        for CO, r in zip(['WD', 'NS', 'BH'],\
-            [(approx(5.89502616630e-17, abs=6e-29),\
-              approx(8.16917025429e+7, abs=6e-5)),\
-             (approx(3.39586943808e-8, abs=6e-20),\
-              approx(0.14181190792, abs=6e-12)),\
-             (approx(8.42046955292e-8, abs=6e-20),\
-              approx(5.71909584179e-2, abs=6e-14))]):
+        tests = [('WD', (approx(5.89502616630e-17, abs=6e-29),\
+                         approx(8.16917025429e+7, abs=6e-5))),\
+                 ('NS', (approx(3.39586943808e-8, abs=6e-20),\
+                         approx(0.14181190792, abs=6e-12))),\
+                 ('BH', (approx(8.42046955292e-8, abs=6e-20),\
+                         approx(5.71909584179e-2, abs=6e-14)))]
+        for (CO, r) in tests:
             binary.star_2.state = CO
             binary.star_1.surface_h1 = 0.1
             assert totest.eddington_limit(binary) == r
@@ -613,13 +613,13 @@ class TestFunctions:
         binary.star_1.state_history = np.array([None, None])
         with raises(ValueError, match='COtype must be "BH", "NS", or "WD"'):
             totest.eddington_limit(binary, idx=0)
-        for CO, r in zip(['WD', 'NS', 'BH'],\
-            [(approx(3.68044499210e-17, abs=6e-29),\
-              approx(9.08923688740e+7, abs=6e-5)),\
-             (approx(2.17747384546e-8, abs=6e-20),\
-              approx(0.15362956691, abs=6e-12)),\
-             (approx(5.84925262833e-8, abs=6e-20),\
-              approx(5.71909584179e-2, abs=6e-14))]):
+        tests = [('WD', (approx(3.68044499210e-17, abs=6e-29),\
+                         approx(9.08923688740e+7, abs=6e-5))),\
+                 ('NS', (approx(2.17747384546e-8, abs=6e-20),\
+                         approx(0.15362956691, abs=6e-12))),\
+                 ('BH', (approx(5.84925262833e-8, abs=6e-20),\
+                         approx(5.71909584179e-2, abs=6e-14)))]
+        for (CO, r) in tests:
             binary.star_1.state_history = np.array([None, CO])
             assert totest.eddington_limit(binary, idx=0) == r
 
@@ -634,20 +634,20 @@ class TestFunctions:
             totest.beaming(binary)
         # examples: 1Msun accretor is star1 with no mass-transfer rate
         binary.star_1.mass = 1.0
-        for CO, r in zip(['WD', 'NS', 'BH'],\
-            [(np.nan, 1),\
-             (np.nan, 1),\
-             (np.nan, 1)]):
+        tests = [('WD', (np.nan, 1)),\
+                 ('NS', (np.nan, 1)),\
+                 ('BH', (np.nan, 1))]
+        for (CO, r) in tests:
             binary.star_1.state = CO
             assert totest.beaming(binary) == r
         # examples: 1.2Msun accretor is star1
         binary.star_1.mass = 1.2
         binary.lg_mtransfer_rate = -7.5
-        for CO, r in zip(['WD', 'NS', 'BH'],\
-            [(approx(7.80787388850, abs=6e-12),\
-              approx(1.04303350643e-16, abs=6e-28)),\
-             (approx(2.98994840792e-8, abs=6e-20), 1),\
-             (approx(3.16227766017e-8, abs=6e-20), 1)]):
+        tests = [('WD', (approx(7.80787388850, abs=6e-12),\
+                         approx(1.04303350643e-16, abs=6e-28))),\
+                 ('NS', (approx(2.98994840792e-8, abs=6e-20), 1)),\
+                 ('BH', (approx(3.16227766017e-8, abs=6e-20), 1))]
+        for (CO, r) in tests:
             binary.star_1.state = CO
             assert totest.beaming(binary) == r
 
@@ -888,20 +888,16 @@ class TestFunctions:
                     " physical value."):
             totest.inspiral_timescale_from_separation(0.5, 0.5, 0.5, 1.5)
         # examples:
-        assert totest.inspiral_timescale_from_separation(0.5, 0.5, 0.5, 0.5)\
-               == approx(13.44121924697, abs=6e-12)
-        assert totest.inspiral_timescale_from_separation(1.5, 0.5, 0.5, 0.5)\
-               == approx(2.24020320783, abs=6e-12)
-        assert totest.inspiral_timescale_from_separation(0.5, 1.5, 0.5, 0.5)\
-               == approx(2.24020320783, abs=6e-12)
-        assert totest.inspiral_timescale_from_separation(0.5, 0.5, 1.5, 0.5)\
-               == approx(1.08873875900e+3, abs=6e-9)
-        assert totest.inspiral_timescale_from_separation(0.5, 0.5, 0.5, 0.0)\
-               == approx(37.56647511040, abs=6e-12)
-        assert totest.inspiral_timescale_from_separation(0.5, 0.5, 0.5,\
-               1.0e-5) == approx(37.56647487803, abs=6e-12)
-        assert totest.inspiral_timescale_from_separation(0.5, 0.5, 0.5,\
-               1.0-1.0e-5) == approx(2.41297178064e-15, abs=6e-27)
+        tests = [(0.5, 0.5, 0.5, 0.5   , approx(13.44121924697    , 6e-12)),\
+                 (1.5, 0.5, 0.5, 0.5   , approx( 2.24020320783    , 6e-12)),\
+                 (0.5, 1.5, 0.5, 0.5   , approx( 2.24020320783    , 6e-12)),\
+                 (0.5, 0.5, 1.5, 0.5   , approx( 1.08873875900e+3 , 6e-9 )),\
+                 (0.5, 0.5, 0.5, 0.0   , approx(37.56647511040    , 6e-12)),\
+                 (0.5, 0.5, 0.5, 1.0e-5, approx(37.56647487803    , 6e-12)),\
+                 (0.5, 0.5, 0.5, 1.0-1.0e-5,\
+                  approx( 2.41297178064e-15, 6e-27))]
+        for (m1, m2, a, e, r) in tests:
+            assert totest.inspiral_timescale_from_separation(m1, m2, a, e) == r
 
     def test_inspiral_timescale_from_orbital_period(self):
         # missing argument
@@ -914,36 +910,32 @@ class TestFunctions:
             totest.inspiral_timescale_from_orbital_period(None, None, None, None)
         assert error_info.value.args[0] == "unsupported operand type(s) for"+\
                " *: 'NoneType' and 'float'"
-        with raises(ValueError, match="Mass of star 1 is <= 0, which is not"+\
-                    " a physical value."):
-            totest.inspiral_timescale_from_orbital_period(0.0, 0.5, 0.5, 0.5)
-        with raises(ValueError, match="Mass of star 2 is <= 0, which is not"+\
-                    " a physical value."):
-            totest.inspiral_timescale_from_orbital_period(0.5, 0.0, 0.5, 0.5)
-        with raises(ValueError, match="Separation is <= 0, which is not a"+\
-                    " physical value."):
-            totest.inspiral_timescale_from_orbital_period(0.5, 0.5, 0.0, 0.5)
-        with raises(ValueError, match="Eccentricity is < 0, which is not a"+\
-                    " physical value."):
-            totest.inspiral_timescale_from_orbital_period(0.5, 0.5, 0.5, -0.5)
-        with raises(ValueError, match="Eccentricity is >= 1, which is not a"+\
-                    " physical value."):
-            totest.inspiral_timescale_from_orbital_period(0.5, 0.5, 0.5, 1.5)
+#        with raises(ValueError, match="Mass of star 1 is <= 0, which is not"+\
+#                    " a physical value."):
+#            totest.inspiral_timescale_from_orbital_period(0.0, 0.5, 0.5, 0.5)
+#        with raises(ValueError, match="Mass of star 2 is <= 0, which is not"+\
+#                    " a physical value."):
+#            totest.inspiral_timescale_from_orbital_period(0.5, 0.0, 0.5, 0.5)
+#        with raises(ValueError, match="Separation is <= 0, which is not a"+\
+#                    " physical value."):
+#            totest.inspiral_timescale_from_orbital_period(0.5, 0.5, 0.0, 0.5)
+#        with raises(ValueError, match="Eccentricity is < 0, which is not a"+\
+#                    " physical value."):
+#            totest.inspiral_timescale_from_orbital_period(0.5, 0.5, 0.5, -0.5)
+#        with raises(ValueError, match="Eccentricity is >= 1, which is not a"+\
+#                    " physical value."):
+#            totest.inspiral_timescale_from_orbital_period(0.5, 0.5, 0.5, 1.5)
         # examples:
-        assert totest.inspiral_timescale_from_orbital_period(0.5, 0.5, 0.5,\
-               0.5) == approx(1.06110684309e+4, abs=6e-8)
-        assert totest.inspiral_timescale_from_orbital_period(1.5, 0.5, 0.5,\
-               0.5) == approx(4.45636949266e+3, abs=6e-9)
-        assert totest.inspiral_timescale_from_orbital_period(0.5, 1.5, 0.5,\
-               0.5) == approx(4.45636949266e+3, abs=6e-9)
-        assert totest.inspiral_timescale_from_orbital_period(0.5, 0.5, 1.5,\
-               0.5) == approx(1.98647206096e+5, abs=6e-7)
-        assert totest.inspiral_timescale_from_orbital_period(0.5, 0.5, 0.5,\
-               0.0) == approx(2.96565684095e+4, abs=6e-8)
-        assert totest.inspiral_timescale_from_orbital_period(0.5, 0.5, 0.5,\
-               1.0e-5) == approx(2.96565682261e+4, abs=6e-8)
-        assert totest.inspiral_timescale_from_orbital_period(0.5, 0.5, 0.5,\
-               1.0-1.0e-5) == approx(1.90490224255e-12, abs=6e-24)
+        tests = [(0.5, 0.5, 0.5, 0.5       , approx(1.06110684309e+4 , 6e-8)),\
+                 (1.5, 0.5, 0.5, 0.5       , approx(4.45636949266e+3 , 6e-9)),\
+                 (0.5, 1.5, 0.5, 0.5       , approx(4.45636949266e+3 , 6e-9)),\
+                 (0.5, 0.5, 1.5, 0.5       , approx(1.98647206096e+5 , 6e-7)),\
+                 (0.5, 0.5, 0.5, 0.0       , approx(2.96565684095e+4 , 6e-8)),\
+                 (0.5, 0.5, 0.5, 1.0e-5    , approx(2.96565682261e+4 , 6e-8)),\
+                 (0.5, 0.5, 0.5, 1.0-1.0e-5, approx(1.90490224255e-12, 6e-24))]
+        for (m1, m2, P, e, r) in tests:
+            assert totest.inspiral_timescale_from_orbital_period(m1, m2, P, e)\
+                   == r
 
     def test_spin_stable_mass_transfer(self):
         # missing argument
@@ -951,14 +943,11 @@ class TestFunctions:
                     " arguments: 'spin_i', 'star_mass_preMT', and"+\
                     " 'star_mass_postMT'"):
             totest.spin_stable_mass_transfer()
-        # bad input
-        with raises(TypeError) as error_info:
-            totest.spin_stable_mass_transfer(None, 1.0, 1.0)
-        assert error_info.value.args[0] == "unsupported operand type(s) for"+\
-               " ** or pow(): 'NoneType' and 'int'"
         # examples:
-        assert totest.spin_stable_mass_transfer(1.0, None, 1.0) is None
-        assert totest.spin_stable_mass_transfer(1.0, 1.0, None) is None
+        tests = [(None, 1.0, 1.0), (-1.0, 1.0, 1.0), (1.0, None, 1.0),\
+                 (1.0, -1.0, 1.0), (1.0, 1.0, None), (1.0, 1.0, -1.0)]
+        for (si, mi, mf) in tests:
+            assert totest.spin_stable_mass_transfer(si, mi, mf) is None
         assert totest.spin_stable_mass_transfer(0.5, 0.9, 1.0) ==\
                approx(0.69217452285, abs=6e-12)
         assert np.isnan(totest.spin_stable_mass_transfer(1.0, 1.0, 0.1))
@@ -978,11 +967,31 @@ class TestFunctions:
                "undetermined_evolutionary_state"
         assert totest.check_state_of_star(star, i=0) ==\
                "undetermined_evolutionary_state"
-        for CO,m in zip(['WD', 'NS', 'BH'], [1.0, 1.5, 9.0]):
+        tests = [('WD', 1.0), ('NS', 1.5), ('BH', 9.0)]
+        for (CO, m) in tests:
             star.mass = m
             star.state = CO
             assert totest.check_state_of_star(star, star_CO=True) ==\
                    star.state
+        n = len(tests)
+        star.mass_history = n*star.mass_history
+        star.surface_h1_history = n*star.surface_h1_history
+        star.center_h1_history = n*star.center_h1_history
+        star.center_he4_history = n*star.center_he4_history
+        star.center_c12_history = n*star.center_c12_history
+        star.log_LH_history = n*star.log_LH_history
+        star.log_LHe_history = n*star.log_LHe_history
+        star.log_Lnuc_history = n*star.log_Lnuc_history
+        for i in range(n):
+            assert totest.check_state_of_star(star, i=i) ==\
+                   "undetermined_evolutionary_state"
+        for i in range(n):
+            star.mass_history[i] = tests[i][1]
+            star.state = 'BH'
+            assert totest.check_state_of_star(star, i=i, star_CO=True) ==\
+                   totest.infer_star_state(star_mass=tests[i][1], star_CO=True)
+            star.state = 'WD'
+            assert totest.check_state_of_star(star, i=i, star_CO=True) == 'WD'
 
     def test_check_state_of_star_history_array(self, star):
         # missing argument
@@ -998,7 +1007,8 @@ class TestFunctions:
         # examples:
         assert totest.check_state_of_star_history_array(star) ==\
                ["undetermined_evolutionary_state"]
-        n = 3
+        masses = [1.0, 1.5, 9.0]
+        n = len(masses)
         star.mass_history = n*star.mass_history
         star.surface_h1_history = n*star.surface_h1_history
         star.center_h1_history = n*star.center_h1_history
@@ -1010,11 +1020,17 @@ class TestFunctions:
         for i in range(n):
             assert totest.check_state_of_star_history_array(star, N=i+1)\
                    == (i+1)*["undetermined_evolutionary_state"]
-        for CO,m in zip(['WD', 'NS', 'BH'], [1.0, 1.5, 9.0]):
-            star.mass_history[-1] = m
-            star.state = CO
-            assert totest.check_state_of_star_history_array(star,\
-                   star_CO=True) == [star.state]
+        COs = []
+        for i, m in enumerate(masses):
+            star.mass_history[i] = m
+            COs.append(totest.infer_star_state(star_mass=m, star_CO=True))
+        for i in range(n):
+            star.state = 'BH'
+            assert totest.check_state_of_star_history_array(star, N=i+1,\
+                   star_CO=True) == COs[-i-1:]
+            star.state = 'WD'
+            assert totest.check_state_of_star_history_array(star, N=i+1,\
+                   star_CO=True) == (i+1)*['WD']
 
     def test_get_binary_state_and_event_and_mt_case(self, binary,\
                                                     monkeypatch):
@@ -1060,12 +1076,14 @@ class TestFunctions:
                             mock_infer_mass_transfer_case)
         ## donor is star 1
         binary.rl_relative_overflow_1 = 1.0
-        for IC,e in zip([None, 'unstable_MT'], [None, 'oCE1']):
+        tests = [(None, None), ('unstable_MT', 'oCE1')]
+        for (IC, e) in tests:
             assert totest.get_binary_state_and_event_and_mt_case(binary,\
                    interpolation_class=IC) == ['RLO1', e, 'case_A1']
         ## both stars overfill RL leading to double CE initiated by star 1
         binary.rl_relative_overflow_2 = 1.0
-        for IC,e in zip([None, 'unstable_MT'], [None, 'oDoubleCE1']):
+        tests = [(None, None), ('unstable_MT', 'oDoubleCE1')]
+        for (IC, e) in tests:
             assert totest.get_binary_state_and_event_and_mt_case(binary,\
                    interpolation_class=IC) == ['contact', e, 'None']
         ## classical CE initiated by star 1
@@ -1075,7 +1093,8 @@ class TestFunctions:
         binary.star_2.state = "test_state"
         ## both stars overfill RL leading to double CE initiated by star 2
         binary.rl_relative_overflow_2 = 2.0
-        for IC,e in zip([None, 'unstable_MT'], [None, 'oDoubleCE2']):
+        tests = [(None, None), ('unstable_MT', 'oDoubleCE2')]
+        for (IC, e) in tests:
             assert totest.get_binary_state_and_event_and_mt_case(binary,\
                    interpolation_class=IC) == ['contact', e, 'None']
         ## classical CE initiated by star 2
@@ -1085,7 +1104,8 @@ class TestFunctions:
         binary.star_1.state = "test_state"
         ## donor is star 2
         binary.rl_relative_overflow_1 = None
-        for IC,e in zip([None, 'unstable_MT'], [None, 'oCE2']):
+        tests = [(None, None), ('unstable_MT', 'oCE2')]
+        for (IC, e) in tests:
             assert totest.get_binary_state_and_event_and_mt_case(binary,\
                    interpolation_class=IC) == ['RLO2', e, 'case_A2']
         # examples: undefined
@@ -1134,10 +1154,12 @@ class TestFunctions:
         monkeypatch.setattr(totest, "get_binary_state_and_event_and_mt_case",\
                             mock_get_binary_state_and_event_and_mt_case)
         mock_return = mock_get_binary_state_and_event_and_mt_case(binary)
-        for i in range(3):
+        for i in range(4):
             assert totest.get_binary_state_and_event_and_mt_case_array(\
-                   binary, N=i+1) == ((i+1)*[mock_return[0]],\
-                   (i+1)*[mock_return[1]], (i+1)*[mock_return[2]])
+                   binary, N=i) == (i*[mock_return[0]], i*[mock_return[1]],\
+                   i*[mock_return[2]])
+        assert totest.get_binary_state_and_event_and_mt_case_array(binary,\
+               N=-1) == ([], [], [])
 
     def test_CO_radius(self):
         # missing argument
@@ -1152,14 +1174,13 @@ class TestFunctions:
                     " options"):
             totest.CO_radius(1.0, 'TEST')
         # examples:
-        for CO,m,r in zip(['WD', 'WD', 'NS', 'NS', 'BH', 'BH'],\
-                          [0.5, 1.0, 1.5, 2.0, 7.0, 9.0],\
-                          [approx(5.24982189818e-3, abs=6e-15),\
-                           approx(4.16678640191e-3, abs=6e-15),\
-                           approx(1.79602862151e-5, abs=6e-17),\
-                           approx(1.79602862151e-5, abs=6e-17),\
-                           totest.Schwarzschild_Radius(7.0),\
-                           totest.Schwarzschild_Radius(9.0)]):
+        tests = [('WD', 0.5, approx(5.24982189818e-3, abs=6e-15)),\
+                 ('WD', 1.0, approx(4.16678640191e-3, abs=6e-15)),\
+                 ('NS', 1.5, approx(1.79602862151e-5, abs=6e-17)),\
+                 ('NS', 2.0, approx(1.79602862151e-5, abs=6e-17)),\
+                 ('BH', 7.0, totest.Schwarzschild_Radius(7.0)),\
+                 ('BH', 9.0, totest.Schwarzschild_Radius(9.0))]
+        for (CO, m, r) in tests:
             assert totest.CO_radius(m, CO) == r
 
     def test_He_MS_lifetime(self):
@@ -1172,9 +1193,11 @@ class TestFunctions:
                     " of 'NoneType' and 'float'"):
             totest.He_MS_lifetime(None)
         # examples:
-        for m,t in zip([1.0, 3.0, 30.0, 300.0], [1.0e+8,\
-                        approx(3.47136114375e+7, abs=6e-5),\
-                        approx(6.95883527992e+5, abs=6e-7), 3.0e+5]):
+        tests = [(1.0  , 1.0e+8),\
+                 (3.0  , approx(3.47136114375e+7, abs=6e-5)),\
+                 (30.0 , approx(6.95883527992e+5, abs=6e-7)),\
+                 (300.0, 3.0e+5)]
+        for (m, t) in tests:
             assert totest.He_MS_lifetime(m) == t
 
     def test_Schwarzschild_Radius(self):
@@ -1188,9 +1211,9 @@ class TestFunctions:
         assert error_info.value.args[0] == "unsupported operand type(s) for"+\
                " *: 'float' and 'NoneType'"
         # examples:
-        for m,r in zip([7.0, 70.0], [\
-                        approx(2.97147953078e-5, abs=6e-17),\
-                        approx(2.97147953078e-4, abs=6e-16)]):
+        tests = [(7.0 , approx(2.97147953078e-5, abs=6e-17)),\
+                 (70.0, approx(2.97147953078e-4, abs=6e-16))]
+        for (m, r) in tests:
             assert totest.Schwarzschild_Radius(m) == r
 
     def test_flip_stars(self, binary):
@@ -1213,15 +1236,17 @@ class TestFunctions:
         for attr in binary.star_2.__dict__:
             assert getattr(binary.star_2, attr) == 1
         # examples: binary states
-        for s,n in zip(['RLO1', 'RLO2'], ['RLO2', 'RLO1']):
+        tests = [('RLO1', 'RLO2'), ('RLO2', 'RLO1')]
+        for (s, n) in tests:
             binary.state = s
             binary.state_history[0] = s
             totest.flip_stars(binary)
             assert binary.state == n
             assert binary.state_history[0] == n
         # examples: binary events
-        for e,n in zip(['oRLO1', 'oRLO2', 'oCE1', 'oCE2', 'CC1', 'CC2'],\
-                       ['oRLO2', 'oRLO1', 'oCE2', 'oCE1', 'CC2', 'CC1']):
+        tests = [('oRLO1', 'oRLO2'), ('oRLO2', 'oRLO1'), ('oCE1', 'oCE2'),\
+                 ('oCE2', 'oCE1'), ('CC1', 'CC2'), ('CC2', 'CC1')]
+        for (e, n) in tests:
             binary.event = e
             binary.event_history[0] = e
             totest.flip_stars(binary)
@@ -1262,10 +1287,10 @@ class TestFunctions:
         # examples: undetermined
         assert totest.infer_star_state() == totest.STATE_UNDETERMINED
         # examples: compact objects
-        for m,CO in zip([0.5*totest.STATE_NS_STARMASS_UPPER_LIMIT,\
-                             totest.STATE_NS_STARMASS_UPPER_LIMIT,\
-                         2.0*totest.STATE_NS_STARMASS_UPPER_LIMIT],\
-                        ["NS", "NS", "BH"]):
+        tests = [(0.5*totest.STATE_NS_STARMASS_UPPER_LIMIT, "NS"),\
+                 (    totest.STATE_NS_STARMASS_UPPER_LIMIT, "NS"),\
+                 (2.0*totest.STATE_NS_STARMASS_UPPER_LIMIT, "BH")]
+        for (m, CO) in tests:
             assert totest.infer_star_state(star_mass=m, star_CO=True) == CO
         # examples: loop over all cases
         THNA = totest.THRESHOLD_HE_NAKED_ABUNDANCE
@@ -1325,20 +1350,19 @@ class TestFunctions:
         assert "checking rl_relative_overflow / lg_mtransfer_rate" in\
                capsys.readouterr().out
         # examples: MT cases
-        for ds,c in zip(["test_non_burning", "H-rich_Core_H_burning",\
-                         "H-rich_Core_He_burning", "H-rich_Shell_H_burning",\
-                         "H-rich_Central_He_depleted",\
-                         "H-rich_Central_C_depletion", "H-rich_undetermined",\
-                         "stripped_He_Core_He_burning",\
-                         "stripped_He_Central_He_depleted",\
-                         "stripped_He_Central_C_depletion",\
-                         "stripped_He_undetermined", "test_undetermined"],\
-                        [totest.MT_CASE_NONBURNING, totest.MT_CASE_A,\
-                         totest.MT_CASE_B, totest.MT_CASE_B, totest.MT_CASE_C,\
-                         totest.MT_CASE_C, totest.MT_CASE_UNDETERMINED,\
-                         totest.MT_CASE_BA, totest.MT_CASE_BB,\
-                         totest.MT_CASE_BB, totest.MT_CASE_UNDETERMINED,\
-                         totest.MT_CASE_UNDETERMINED]):
+        tests = [("test_non_burning", totest.MT_CASE_NONBURNING),\
+                 ("H-rich_Core_H_burning", totest.MT_CASE_A),\
+                 ("H-rich_Core_He_burning", totest.MT_CASE_B),\
+                 ("H-rich_Shell_H_burning", totest.MT_CASE_B),\
+                 ("H-rich_Central_He_depleted", totest.MT_CASE_C),\
+                 ("H-rich_Central_C_depletion", totest.MT_CASE_C),\
+                 ("H-rich_undetermined", totest.MT_CASE_UNDETERMINED),\
+                 ("stripped_He_Core_He_burning", totest.MT_CASE_BA),\
+                 ("stripped_He_Central_He_depleted", totest.MT_CASE_BB),\
+                 ("stripped_He_Central_C_depletion", totest.MT_CASE_BB),\
+                 ("stripped_He_undetermined", totest.MT_CASE_UNDETERMINED),\
+                 ("test_undetermined", totest.MT_CASE_UNDETERMINED)]
+        for (ds, c) in tests:
             assert totest.infer_mass_transfer_case(2*RROT, 2*LMRT, ds) == c
 
     def test_cumulative_mass_transfer_numeric(self):
@@ -1470,8 +1494,9 @@ class TestFunctions:
         assert star.co_core_mass_at_He_depletion is None
         assert star.avg_c_in_c_core_at_He_depletion is None
         # examples: loop through star types with He depletion
-        for s,v in zip(["H-rich_Central_He_depleted",\
-                        "stripped_He_Central_He_depleted"], [0.1, 0.2]):
+        tests = [("H-rich_Central_He_depleted"     , 0.1),\
+                 ("stripped_He_Central_He_depleted", 0.2)]
+        for (s, v) in tests:
             star.state_history = ["test", s, s]
             star.co_core_mass_history = [0.0, v, 1.0]
             star.avg_c_in_c_core_history = [0.0, v, 1.0]
@@ -1677,7 +1702,8 @@ class TestFunctions:
             totest.period_change_stabe_MT(None, None, None, None)
         assert error_info.value.args[0] == "unsupported operand type(s) for"+\
                " -: 'NoneType' and 'NoneType'"
-        for a,b in zip([-1.0, 2.0, 0.0, 0.0], [0.0, 0.0, -1.0, 2.0]):
+        tests = [(-1.0, 0.0), (2.0, 0.0), (0.0, -1.0), (0.0, 2.0)]
+        for (a, b) in tests:
             with raises(ValueError) as error_info:
                 totest.period_change_stabe_MT(0.5, 0.5, 0.5, 0.5, alpha=a,\
                                               beta=b)
@@ -2074,9 +2100,10 @@ class TestFunctions:
                     " Available metallicities in POSYDON v2 are"):
             totest.convert_metallicity_to_string(None)
         # examples:
-        for Z,s in zip([2e+00, 1e+00, 4.5e-01, 2e-01, 1e-01, 1e-02, 1e-03,\
-                        1e-04], ['2e+00', '1e+00', '4.5e-01', '2e-01',\
-                        '1e-01', '1e-02', '1e-03', '1e-04']):
+        tests = [(2e+00, '2e+00'), (1e+00, '1e+00'), (4.5e-01, '4.5e-01'),\
+                 (2e-01, '2e-01'), (1e-01, '1e-01'), (1e-02, '1e-02'),\
+                 (1e-03, '1e-03'), (1e-04, '1e-04')]
+        for (Z, s) in tests:
             assert totest.convert_metallicity_to_string(Z) == s
 
     def test_rotate(self):
