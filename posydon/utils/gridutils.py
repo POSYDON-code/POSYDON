@@ -25,7 +25,8 @@ __authors__ = [
 
 
 def join_lists(A, B):
-    """Make a joint list of A and B without repetitions and keeping the order.
+    """Make a joint list of A and B without elements already in A and keeping
+    the order.
 
     Parameters
     ----------

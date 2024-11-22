@@ -63,7 +63,7 @@ class TestValues:
                "POSYDON_data.tar.gz"
 
     def test_value_original_md5(self):
-        assert "8873544d9a568ebb85bccffbf1bdcd99" in totest.original_md5
+        assert totest.original_md5 == "8873544d9a568ebb85bccffbf1bdcd99"
 
 
 class TestFunctions:
@@ -195,8 +195,7 @@ class TestProgressBar:
     @fixture
     def ProgressBar(self):
         # initialize an instance of the class with defaults
-        ProgressBar = totest.ProgressBar()
-        return ProgressBar
+        return totest.ProgressBar()
 
     # test the ProgressBar class
     def test_init(self, ProgressBar):
@@ -217,16 +216,20 @@ class TestProgressBar:
         with raises(TypeError, match="'<' not supported between instances of"+\
                     " 'str' and 'int'"):
             ProgressBar("Test", 1, 1)
-            # the progressbar starts before the error, hence tearDown
+            # the progressbar starts before the error
+        # hence, tearDown for pbar needed
         ProgressBar.pbar = None
         with raises(TypeError, match="'<' not supported between instances of"+\
                     " 'str' and 'int'"):
             ProgressBar(1, "Test", 1)
-            # the progressbar starts before the error, hence tearDown
+            # the progressbar starts before the error
+        # hence, tearDown for pbar needed
         ProgressBar.pbar = None
         with raises(TypeError, match="'>' not supported between instances of"+\
                     " 'int' and 'str'"):
             ProgressBar(1, 1, "Test")
+            # the progressbar starts before the error
+        # hence, tearDown for pbar needed
         ProgressBar.pbar = None
         for i in range(9):
             ProgressBar(i, 1, 8)

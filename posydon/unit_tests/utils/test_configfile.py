@@ -38,14 +38,10 @@ class TestElements:
 
 class TestFunctions:
     @fixture
-    def test_path(self, tmp_path):
-        # a temporary path for testing
-        return totest.os.path.join(tmp_path, "test.ini")
-
-    @fixture
-    def test_ini(self, test_path):
-        # a temporary ini file for testing
-        with open(test_path, "w") as test_file:
+    def ini_path(self, tmp_path):
+        # a temporary path to ini file for testing
+        path = totest.os.path.join(tmp_path, "test.ini")
+        with open(path, "w") as test_file:
             test_file.write("[run_parameters]\n")
             test_file.write("test_bool1 = True\n")
             test_file.write("test_bool2 = False\n")
@@ -61,10 +57,10 @@ class TestFunctions:
             test_file.write("test_else = print('1')\n")
             test_file.write("\n[slurm]\n")
             test_file.write("test_exception = ast.parse('X=1', mode='eval')\n")
-        return
+        return path
 
     # test functions
-    def test_parse_inifile(self, test_path, test_ini, monkeypatch):
+    def test_parse_inifile(self, ini_path, monkeypatch):
         def mock_parse(source, filename='<unknown>', mode='exec', *,\
                        type_comments=False, feature_version=None, optimize=-1):
             mock_node = AST()
@@ -78,7 +74,7 @@ class TestFunctions:
         with raises(TypeError, match="'int' object is not iterable"):
             totest.parse_inifile(1)
         # read test ini
-        rp, s, mi, me = totest.parse_inifile(test_path)
+        rp, s, mi, me = totest.parse_inifile(ini_path)
         assert rp == {'MESA_DIR'.lower(): totest.os.environ['MESA_DIR'],\
                       'test_bool1'.lower(): True, 'test_bool2'.lower(): False,\
                       'test_None'.lower(): None}
@@ -94,34 +90,29 @@ class TestFunctions:
         assert me == {'MESA_DIR'.lower(): totest.os.environ['MESA_DIR'],\
                       'test_else'.lower(): "print('1')"}
         with monkeypatch.context() as mp:
-            # replace parse to check iteration
+            # replace parse to check recursion of _eval
             mp.setattr(totest.ast, "parse", mock_parse)
             # replace content of test.ini to check Error
-            with open(test_path, "w") as test_file:
+            with open(ini_path, "w") as test_file:
                 test_file.write("[Unit Test]\n")
                 test_file.write("test_value = 'Test'\n")
             with raises(KeyError, match="'run_parameters'"):
-                totest.parse_inifile(test_path)
+                totest.parse_inifile(ini_path)
 
 
 class TestConfigFile:
     @fixture
     def ConfigFile(self):
         # initialize an instance of the class with defaults
-        ConfigFile = totest.ConfigFile()
-        return ConfigFile
+        return totest.ConfigFile()
 
     @fixture
-    def test_path(self, tmp_path):
-        # a temporary path for testing
-        return totest.os.path.join(tmp_path, "test.json")
-
-    @fixture
-    def test_json(self, test_path):
-        # a temporary json file for testing
-        with open(test_path, "w") as test_file:
+    def json_path(self, tmp_path):
+        # a temporary path to json file for testing
+        path = totest.os.path.join(tmp_path, "test.json")
+        with open(path, "w") as test_file:
             test_file.write('{\n    "Unit": "Test"\n}\n')
-        return
+        return path
 
     @fixture
     def test_entries(self):
@@ -136,7 +127,7 @@ class TestConfigFile:
         return ConfigFile
 
     # test the ConfigFile class
-    def test_init(self, ConfigFile, tmp_path):
+    def test_init(self, ConfigFile, tmp_path, json_path):
         assert isroutine(ConfigFile.__init__)
         # check that the instance is of correct type and all code in the
         # __init__ got executed: the elements are created and initialized
@@ -151,10 +142,13 @@ class TestConfigFile:
         test_path = totest.os.path.join(tmp_path, "does_not_exist.test")
         test_ConfigFile = totest.ConfigFile(test_path)
         assert test_ConfigFile.path == test_path
+        test_ConfigFile = totest.ConfigFile(json_path)
+        assert test_ConfigFile.path == json_path
 
     def test_deepcopy(self, ConfigFile):
         assert isroutine(ConfigFile.deepcopy)
         ConfigFile.entries['Unit'] = "Test"
+        ConfigFile.entries['second'] = "test"
         ConfigFile.path = "Test_path"
         test_ConfigFile = ConfigFile.deepcopy()
         # not same object
@@ -165,9 +159,11 @@ class TestConfigFile:
 
     def test_serialize(self, ConfigFile):
         assert isroutine(ConfigFile._serialize)
-        # serialize numpy array
+        # serialize any numpy array
         np_array = totest.np.array([2, 1, 0])
         assert ConfigFile._serialize(data=np_array) == [2, 1, 0]
+        np_array = totest.np.array(["2", "1", "0"])
+        assert ConfigFile._serialize(data=np_array) == ["2", "1", "0"]
         # other data don't give a return
         assert ConfigFile._serialize(data="Test") is None
 
@@ -184,17 +180,29 @@ class TestConfigFile:
         ConfigFile.entries['Unit'] = "Test"
         ConfigFile.save()
         assert totest.os.path.isfile(test_path)
+        # overwrite file
+        ConfigFile.entries['second'] = "test"
+        ConfigFile.save(overwrite=True)
+        assert totest.os.path.isfile(test_path)
+        with open(test_path, "r") as test_file:
+            assert test_file.read() == '{\n    "Unit": "Test",\n'+\
+                                          '    "second": "test"\n}'
+        # ignore ConfigFile.path
+        test_path2 = totest.os.path.join(tmp_path, "save2.test")
+        ConfigFile.path = test_path2
+        ConfigFile.save(path=test_path)
+        assert totest.os.path.isfile(test_path2) == False
 
-    def test_load(self, ConfigFile, test_path, test_json):
+    def test_load(self, ConfigFile, json_path):
         assert isroutine(ConfigFile.load)
         # bad input
         with raises(ValueError, match="No path passed."):
             ConfigFile.load()
         # load mock file with path as keyword
-        ConfigFile.load(path=test_path)
+        ConfigFile.load(path=json_path)
         assert ConfigFile.entries == {'Unit': "Test"}
         # set path and entries
-        ConfigFile.path = test_path
+        ConfigFile.path = json_path
         ConfigFile.entries['Unit'] = "ToReplace"
         # try to load mock file without permission to overwrite
         with raises(PermissionError,\

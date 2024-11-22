@@ -155,7 +155,7 @@ class TestFunctions:
     @fixture
     def clear_registry(self):
         yield
-        # empyt the global POSYDON warnings registry after each test
+        # empty the global POSYDON warnings registry after each test
         keys = []
         for k in totest._POSYDON_WARNINGS_REGISTRY:
             keys.append(k)
@@ -191,7 +191,7 @@ class TestFunctions:
         assert totest.get_stats() == totest._POSYDON_WARNINGS_REGISTRY
 
     def test_print_stats(self, capsys, clear_registry):
-        # empyt the global POSYDON warnings registry before this test
+        # empty the global POSYDON warnings registry before this test
         keys = []
         for k in totest._POSYDON_WARNINGS_REGISTRY:
             keys.append(k)
@@ -503,7 +503,7 @@ class Test_Caught_POSYDON_Warnings:
     @fixture
     def clear_registry(self):
         yield
-        # empyt the global POSYDON warnings registry after each test
+        # empty the global POSYDON warnings registry after each test
         keys = []
         for k in totest._POSYDON_WARNINGS_REGISTRY:
             keys.append(k)
@@ -697,7 +697,7 @@ class TestCatch_POSYDON_Warnings:
     @fixture
     def clear_registry(self):
         yield
-        # empyt the global POSYDON warnings registry after each test
+        # empty the global POSYDON warnings registry after each test
         keys = []
         for k in totest._POSYDON_WARNINGS_REGISTRY:
             keys.append(k)

@@ -35,6 +35,8 @@ class TestElements:
 class TestValues:
     # check that the values fit
     def test_value_IGNORE_REASONS_PRIORITY(self):
+        for v in totest.IGNORE_REASONS_PRIORITY:
+            assert isinstance(v, str)
         v_last = None
         for v in ['ignored_no_history1', 'ignored_no_binary_history',\
                   'corrupted_history1', 'corrupted_binary_history',\

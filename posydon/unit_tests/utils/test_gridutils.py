@@ -142,14 +142,10 @@ class TestFunctions:
                       ('star_2_mass', '<f8'), ('lg_mtransfer_rate', '<f8')])
 
     @fixture
-    def BH_path(self, tmp_path):
-        # a temporary binary history path for testing
-        return totest.os.path.join(tmp_path, "binary_history.data")
-
-    @fixture
-    def BH_file(self, BH_path, MESA_BH_data):
-        # a temporary binary history file for testing
-        with open(BH_path, "w") as test_file:
+    def BH_path(self, tmp_path, MESA_BH_data):
+        # a temporary path of binary history file for testing
+        path = totest.os.path.join(tmp_path, "binary_history.data")
+        with open(path, "w") as test_file:
             for i in range(5):
                 test_file.write("Test HEADER{}\n".format(i+1))
             for k in MESA_BH_data.dtype.names:
@@ -162,7 +158,7 @@ class TestFunctions:
                         test_file.write("\n{:>17}".format(v))
                     else:
                         test_file.write(" {:>17}".format(v))
-        return
+        return path
 
     @fixture
     def MESA_BH_data2(self):
@@ -173,14 +169,10 @@ class TestFunctions:
                       ('star_2_mass', '<f8'), ('lg_mtransfer_rate', '<f8')])
 
     @fixture
-    def BH_path2(self, tmp_path):
-        # a temporary binary history path for testing
-        return totest.os.path.join(tmp_path, "binary_history2.data")
-
-    @fixture
-    def BH_file2(self, BH_path2, MESA_BH_data2):
-        # a temporary binary history file for testing
-        with open(BH_path2, "w") as test_file:
+    def BH_path2(self, tmp_path, MESA_BH_data2):
+        # a temporary path of binary history file for testing
+        path = totest.os.path.join(tmp_path, "binary_history2.data")
+        with open(path, "w") as test_file:
             for i in range(5):
                 test_file.write("Test HEADER{}\n".format(i+1))
             for k in MESA_BH_data2.dtype.names:
@@ -193,7 +185,7 @@ class TestFunctions:
                         test_file.write("\n{:>17}".format(v))
                     else:
                         test_file.write(" {:>17}".format(v))
-        return
+        return path
 
     @fixture
     def MESA_SH_data(self):
@@ -203,14 +195,10 @@ class TestFunctions:
                       ('he_core_mass', '<f8'), ('c_core_mass', '<f8')])
 
     @fixture
-    def H1_path(self, tmp_path):
-        # a temporary star1 history path for testing
-        return totest.os.path.join(tmp_path, "history1.data")
-
-    @fixture
-    def H1_file(self, H1_path, MESA_SH_data):
-        # a temporary star1 history file for testing
-        with open(H1_path, "w") as test_file:
+    def H1_path(self, tmp_path, MESA_SH_data):
+        # a temporary path of star1 history file for testing
+        path = totest.os.path.join(tmp_path, "history1.data")
+        with open(path, "w") as test_file:
             for i in range(5):
                 test_file.write("Test HEADER{}\n".format(i+1))
             for k in MESA_SH_data.dtype.names:
@@ -223,17 +211,13 @@ class TestFunctions:
                         test_file.write("\n{:>12}".format(v))
                     else:
                         test_file.write(" {:>12}".format(v))
-        return
+        return path
 
     @fixture
-    def H2_path(self, tmp_path):
-        # a temporary star2 history path for testing
-        return totest.os.path.join(tmp_path, "history2.data")
-
-    @fixture
-    def H2_file(self, H2_path, MESA_SH_data):
-        # a temporary star2 history file for testing
-        with open(H2_path, "w") as test_file:
+    def H2_path(self, tmp_path, MESA_SH_data):
+        # a temporary path of star2 history file for testing
+        path = totest.os.path.join(tmp_path, "history2.data")
+        with open(path, "w") as test_file:
             for i in range(5):
                 test_file.write("Test HEADER{}\n".format(i+1))
             for k in MESA_SH_data.dtype.names:
@@ -246,139 +230,103 @@ class TestFunctions:
                         test_file.write("\n{:>12}".format(v))
                     else:
                         test_file.write(" {:>12}".format(v))
-        return
+        return path
 
     @fixture
     def out_path(self, tmp_path):
-        # a temporary out path for testing
-        return totest.os.path.join(tmp_path, "out.txt")
-
-    @fixture
-    def out_file(self, out_path):
-        # a temporary out file for testing
-        with open(out_path, "w") as test_file:
+        # a temporary path of out file for testing
+        path = totest.os.path.join(tmp_path, "out.txt")
+        with open(path, "w") as test_file:
             for i in range(5):
                 test_file.write("Test HEADER{}\n".format(i+1))
-        return
+        return path
 
     @fixture
     def out_gz_path(self, tmp_path):
-        # a temporary out path for testing
-        return totest.os.path.join(tmp_path, "out_gz.txt")
-
-    @fixture
-    def out_gz_file(self, out_gz_path):
-        # a temporary out file for testing
-        with open(out_gz_path, "w") as test_file:
+        # a temporary path of out file for testing
+        path = totest.os.path.join(tmp_path, "out_gz.txt")
+        with open(path, "w") as test_file:
             for i in range(5):
                 test_file.write("Test HEADER{}\n".format(i+1))
             test_file.write("model is overflowing at ZAMS\n")
-        totest.os.system(f"gzip -1 {out_gz_path}")
-        return
+        totest.os.system(f"gzip -1 {path}")
+        return path
 
     @fixture
     def out_path2(self, tmp_path):
-        # a temporary out path for testing
-        return totest.os.path.join(tmp_path, "out2.txt")
-
-    @fixture
-    def out_file2(self, out_path2):
-        # a temporary out file for testing
-        with open(out_path2, "w") as test_file:
+        # a temporary path of out file for testing
+        path = totest.os.path.join(tmp_path, "out2.txt")
+        with open(path, "w") as test_file:
             for i in range(5):
                 test_file.write("Test HEADER{}\n".format(i+1))
             test_file.write("TURNING ON CE\n")
-        return
+        return path
 
     @fixture
     def out_path3(self, tmp_path):
-        # a temporary out path for testing
-        return totest.os.path.join(tmp_path, "out3.txt")
-
-    @fixture
-    def out_file3(self, out_path3):
-        # a temporary out file for testing
-        with open(out_path3, "w") as test_file:
+        # a temporary path of out file for testing
+        path = totest.os.path.join(tmp_path, "out3.txt")
+        with open(path, "w") as test_file:
             for i in range(5):
                 test_file.write("Test HEADER{}\n".format(i+1))
             test_file.write("Terminate because accretor (r-rl)/rl > "+\
                             "accretor_overflow_terminate\n")
-        return
+        return path
 
     @fixture
     def out_path4(self, tmp_path):
-        # a temporary out path for testing
-        return totest.os.path.join(tmp_path, "out4.txt")
-
-    @fixture
-    def out_file4(self, out_path4):
-        # a temporary out file for testing
-        with open(out_path4, "w") as test_file:
+        # a temporary path of out file for testing
+        path = totest.os.path.join(tmp_path, "out4.txt")
+        with open(path, "w") as test_file:
             for i in range(5):
                 test_file.write("Test HEADER{}\n".format(i+1))
             test_file.write("TURNING ON CE\n")
             test_file.write("Terminate because accretor (r-rl)/rl > "+\
                             "accretor_overflow_terminate\n")
-        return
+        return path
 
     @fixture
     def out_path5(self, tmp_path):
-        # a temporary out path for testing
-        return totest.os.path.join(tmp_path, "out5.txt")
-
-    @fixture
-    def out_file5(self, out_path5):
-        # a temporary out file for testing
-        with open(out_path5, "w") as test_file:
+        # a temporary path of out file for testing
+        path = totest.os.path.join(tmp_path, "out5.txt")
+        with open(path, "w") as test_file:
             for i in range(5):
                 test_file.write("Test HEADER{}\n".format(i+1))
             test_file.write("Terminate due to primary depleting carbon\n")
-        return
+        return path
 
     @fixture
     def out_path6(self, tmp_path):
-        # a temporary out path for testing
-        return totest.os.path.join(tmp_path, "out6.txt")
-
-    @fixture
-    def out_file6(self, out_path6):
-        # a temporary out file for testing
-        with open(out_path6, "w") as test_file:
+        # a temporary path of out file for testing
+        path = totest.os.path.join(tmp_path, "out6.txt")
+        with open(path, "w") as test_file:
             for i in range(5):
                 test_file.write("Test HEADER{}\n".format(i+1))
             test_file.write("TURNING ON CE\n")
             test_file.write("Terminate due to primary depleting carbon\n")
-        return
+        return path
 
     @fixture
     def ini_path(self, tmp_path):
-        # a temporary ini path for testing
-        return totest.os.path.join(tmp_path, "test.ini")
-
-    @fixture
-    def ini_file(self, ini_path):
-        # a temporary ini file for testing
-        with open(ini_path, "w") as test_file:
+        # a temporary path of ini file for testing
+        path = totest.os.path.join(tmp_path, "test.ini")
+        with open(path, "w") as test_file:
             test_file.write("[TEST INI SECTION]\n")
             test_file.write("test_float = 1.0\n")
             test_file.write("test_string = 'unit'\n")
             test_file.write("!test_comment = 0\n")
-        return
+        return path
 
     @fixture
     def ini_path2(self, tmp_path):
-        # a temporary ini path for testing
-        return totest.os.path.join(tmp_path, "test2.ini")
-
-    @fixture
-    def ini_file2(self, ini_path2):
-        # a temporary ini file for testing
-        with open(ini_path2, "w") as test_file:
+        # a temporary path of ini file for testing
+        path = totest.os.path.join(tmp_path, "test2.ini")
+        with open(path, "w") as test_file:
             test_file.write("TEST INI SECTION 1&\n")
             test_file.write("test_int = 1\n")
             test_file.write("TEST INI SECTION 2&\n")
             test_file.write("test_empty = ''\n")
-        return
+        return path
 
     # test functions
     def test_join_lists(self):
@@ -392,9 +340,11 @@ class TestFunctions:
         with raises(TypeError, match="'int' object is not iterable"):
             totest.join_lists([], 1)
         # test cases
-        assert totest.join_lists([1, 2, 3], [4, 5]) == [1, 2, 3, 4, 5]
-        assert totest.join_lists([1, 2, 3], [4, 1]) == [1, 2, 3, 4]
-        assert totest.join_lists([1, 2, 1], [4, 1]) == [1, 2, 1, 4]
+        tests = [([1, 2, 3], [4, 5], [1, 2, 3, 4, 5]),\
+                 ([1, 2, 3], [4, 1], [1, 2, 3, 4]),\
+                 ([1, 2, 1], [4, 1], [1, 2, 1, 4])]
+        for (A, B, r) in tests:
+            assert totest.join_lists(A, B) == r
 
     def test_read_MESA_data_file(self, no_path, data_path,\
                                  MESA_data_file, MESA_data):
@@ -604,15 +554,11 @@ class TestFunctions:
         assert totest.T_merger_a(1.0, 15.0, 60.0) ==\
                approx(2.22616148802e-06, abs=6e-18)
 
-    def test_convert_output_to_table(self, no_path, out_path, out_file,\
-                                     MESA_SH_data, MESA_BH_data,\
-                                     MESA_BH_data2, BH_path, BH_file,\
-                                     BH_path2, BH_file2, H1_path, H1_file,\
-                                     H2_path, H2_file, out_gz_path,\
-                                     out_gz_file, out_path2, out_file2,\
-                                     out_path3, out_file3, out_path4,\
-                                     out_file4, out_path5, out_file5,\
-                                     out_path6, out_file6):
+    def test_convert_output_to_table(self, no_path, out_path, MESA_SH_data,\
+                                     MESA_BH_data, MESA_BH_data2, BH_path,\
+                                     BH_path2, H1_path, H2_path, out_gz_path,\
+                                     out_path2, out_path3, out_path4,\
+                                     out_path5, out_path6):
         # missing argument
         with raises(TypeError, match="missing 1 required positional"+\
                     " argument: 'output_file'"):
@@ -725,7 +671,7 @@ class TestFunctions:
         assert test_table.at[0,'Porb_f(d)']==MESA_BH_data2['period_days'][-1]
         assert 'tmerge(Gyr)' in test_table.columns
 
-    def test_clean_inlist_file(self, ini_path, ini_file, ini_path2, ini_file2):
+    def test_clean_inlist_file(self, ini_path, ini_path2):
         # missing argument
         with raises(TypeError, match="missing 1 required positional"+\
                     " argument: 'inlist'"):
