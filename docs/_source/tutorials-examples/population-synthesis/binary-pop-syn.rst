@@ -78,7 +78,7 @@ TODO: bring v1 tutorial to v2 leveraging the SyntheticPopulation class
 Evolving Single Binaries 🐞
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-This notebook shows you how to evolve a single binary using using POSYDON.
+This notebook shows you how to evolve a single binary using POSYDON.
 It allows you to test and to quickly understand the evolution of a single binary in detail.
 Moreover, it shows you how re-evolve binaries and change their properties, such as the natal kicks.
 
