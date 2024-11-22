@@ -1686,6 +1686,10 @@ class TestFunctions:
         assert totest.calculate_core_boundary(None, "H-rich_Core_H_burning",\
                star_profile, core_element_fraction_definition=0.3,\
                CO_core_in_Hrich_star=True) == 3
+        # examples: get CO core in H rich star without CO core
+        assert totest.calculate_core_boundary(None, "H-rich_Core_H_burning",\
+               star_profile, core_element_fraction_definition=0.1,\
+               CO_core_in_Hrich_star=True) == -1
         # examples: get CO core in He star without a match
         assert totest.calculate_core_boundary(None,\
                "stripped_He_Core_He_burning", star_profile,\
@@ -1694,6 +1698,10 @@ class TestFunctions:
         test_mass = np.array([1.0, 0.7, 0.4, 0.1, 0.0])
         assert totest.calculate_core_boundary(test_mass, None, None,\
                mc1_i=0.1) == 4
+        # examples: both given: ignores core mass
+        assert totest.calculate_core_boundary(test_mass,\
+               "stripped_He_Core_He_burning", star_profile,\
+               core_element_fraction_definition=0.1, mc1_i=0.1) == -1
 
     def test_period_evol_wind_loss(self):
         # missing argument
@@ -1707,11 +1715,11 @@ class TestFunctions:
         assert error_info.value.args[0] == "unsupported operand type(s) for"+\
                " +: 'NoneType' and 'NoneType'"
         # examples:
-        assert totest.period_evol_wind_loss(0.5, 0.5, 0.5, 0.5) == 0.5
-        assert totest.period_evol_wind_loss(1.5, 0.5, 0.5, 0.5) == 0.5/4
-        assert totest.period_evol_wind_loss(0.5, 1.5, 0.5, 0.5) == 0.5*4
-        assert totest.period_evol_wind_loss(0.5, 0.5, 1.5, 0.5) == 0.5
-        assert totest.period_evol_wind_loss(0.5, 0.5, 0.5, 1.5) == 1.5
+        tests = [(0.5, 0.5, 0.5, 0.5, 0.5), (1.5, 0.5, 0.5, 0.5, 0.5/4),\
+                 (0.5, 1.5, 0.5, 0.5, 0.5*4), (0.5, 0.5, 1.5, 0.5, 0.5),\
+                 (0.5, 0.5, 0.5, 1.5, 1.5)]
+        for (M1, Mi, M2, Pi, r) in tests:
+            assert totest.period_evol_wind_loss(M1, Mi, M2, Pi) == r
 
     def test_separation_evol_wind_loss(self):
         # missing argument
@@ -1725,11 +1733,11 @@ class TestFunctions:
         assert error_info.value.args[0] == "unsupported operand type(s) for"+\
                " +: 'NoneType' and 'NoneType'"
         # examples:
-        assert totest.separation_evol_wind_loss(0.5, 0.5, 0.5, 0.5) == 0.5
-        assert totest.separation_evol_wind_loss(1.5, 0.5, 0.5, 0.5) == 0.5/2
-        assert totest.separation_evol_wind_loss(0.5, 1.5, 0.5, 0.5) == 0.5*2
-        assert totest.separation_evol_wind_loss(0.5, 0.5, 1.5, 0.5) == 0.5
-        assert totest.separation_evol_wind_loss(0.5, 0.5, 0.5, 1.5) == 1.5
+        tests = [(0.5, 0.5, 0.5, 0.5, 0.5), (1.5, 0.5, 0.5, 0.5, 0.5/2),\
+                 (0.5, 1.5, 0.5, 0.5, 0.5*2), (0.5, 0.5, 1.5, 0.5, 0.5),\
+                 (0.5, 0.5, 0.5, 1.5, 1.5)]
+        for (M1, Mi, M2, ai, r) in tests:
+            assert totest.separation_evol_wind_loss(M1, Mi, M2, ai) == r
 
     def test_period_change_stabe_MT(self):
         # missing argument
@@ -1753,20 +1761,42 @@ class TestFunctions:
         with raises(ValueError, match="Donor gains mass from 0.5 to 1.5"):
             totest.period_change_stabe_MT(0.5, 0.5, 1.5, 0.5)
         # examples:
-        assert totest.period_change_stabe_MT(0.5, 0.5, 0.5, 0.5) == 0.5
-        assert totest.period_change_stabe_MT(1.5, 0.5, 0.5, 0.5) == 1.5
-        assert totest.period_change_stabe_MT(0.5, 1.5, 0.5, 0.5) == 0.5
-        assert totest.period_change_stabe_MT(0.5, 0.5, 0.5, 1.5) == 0.5
-        assert totest.period_change_stabe_MT(0.5, 1.0, 0.5, 1.0) ==\
-               approx(1.18518518519, abs=6e-12)
-        assert totest.period_change_stabe_MT(0.5, 0.5, 0.5, 0.5, beta=1.0) ==\
-               0.5
-        assert totest.period_change_stabe_MT(1.5, 0.5, 0.5, 0.5, beta=1.0) ==\
-               1.5
-        assert totest.period_change_stabe_MT(0.5, 1.5, 0.5, 0.5, beta=1.0) ==\
-               approx(0.13385261754, abs=6e-12)
-        assert totest.period_change_stabe_MT(0.5, 0.5, 0.5, 1.5, beta=1.0) ==\
-               0.5
+        tests = [(0.5, 0.5, 0.5, 0.5, 0.0, 0.0, 0.5),\
+                 (1.5, 0.5, 0.5, 0.5, 0.0, 0.0, 1.5),\
+                 (0.5, 1.5, 0.5, 0.5, 0.0, 0.0, 0.5),\
+                 (0.5, 0.5, 0.5, 1.5, 0.0, 0.0, 0.5),\
+                 (0.5, 1.0, 0.5, 1.0, 0.0, 0.0,\
+                  approx(1.18518518519, abs=6e-12)),\
+                 (0.5, 0.5, 0.5, 0.5, 0.5, 0.0, 0.5),\
+                 (1.5, 0.5, 0.5, 0.5, 0.5, 0.0, 1.5),\
+                 (0.5, 1.5, 0.5, 0.5, 0.5, 0.0,\
+                  approx(0.57735026919, abs=6e-12)),\
+                 (0.5, 0.5, 0.5, 1.5, 0.5, 0.0, 0.5),\
+                 (0.5, 1.0, 0.5, 1.0, 0.5, 0.0,\
+                  approx(0.94573367371, abs=6e-12)),\
+                 (0.5, 0.5, 0.5, 0.5, 0.0, 0.5, 0.5),\
+                 (1.5, 0.5, 0.5, 0.5, 0.0, 0.5, 1.5),\
+                 (0.5, 1.5, 0.5, 0.5, 0.0, 0.5, approx(0.375, abs=6e-12)),\
+                 (0.5, 0.5, 0.5, 1.5, 0.0, 0.5, 0.5),\
+                 (0.5, 1.0, 0.5, 1.0, 0.0, 0.5,\
+                  approx(1.36956865306, abs=6e-12)),\
+                 (0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5),\
+                 (1.5, 0.5, 0.5, 0.5, 0.5, 0.5, 1.5),\
+                 (0.5, 1.5, 0.5, 0.5, 0.5, 0.5,\
+                  approx(0.58390782780, abs=6e-12)),\
+                 (0.5, 0.5, 0.5, 1.5, 0.5, 0.5, 0.5),\
+                 (0.5, 1.0, 0.5, 1.0, 0.5, 0.5,\
+                  approx(1.05670344636, abs=6e-12)),\
+                 (0.5, 0.5, 0.5, 0.5, 0.0, 1.0, 0.5),\
+                 (1.5, 0.5, 0.5, 0.5, 0.0, 1.0, 1.5),\
+                 (0.5, 1.5, 0.5, 0.5, 0.0, 1.0,\
+                  approx(0.13385261754, abs=6e-12)),\
+                 (0.5, 0.5, 0.5, 1.5, 0.0, 1.0, 0.5),\
+                 (0.5, 1.0, 0.5, 1.0, 0.0, 1.0,\
+                  approx(1.58670336106, abs=6e-12))]
+        for (Pi, Mdi, Mdf, Mai, a, b, r) in tests:
+            assert totest.period_change_stabe_MT(Pi, Mdi, Mdf, Mai, alpha=a,\
+                   beta=b) == r
 
     def test_linear_interpolation_between_two_cells(self, capsys):
         # missing argument
@@ -1864,7 +1894,7 @@ class TestFunctions:
         assert lambda_CE == approx(4.25658010995e+32, abs=6e+20)
         assert Mc == approx(1.03333333333, abs=6e-12)
         assert Rc == approx(1.03333333333, abs=6e-12)
-        # examples: CO core in He rich star
+        # examples: CO core in He rich star should be the same
         assert totest.calculate_lambda_from_profile(star_profile,\
                "H-rich_test", ind_core=2, common_envelope_alpha_thermal=0.1,\
                CO_core_in_Hrich_star=True) ==\
@@ -2054,18 +2084,20 @@ class TestFunctions:
         assert error_info.value.args[0] == "unsupported operand type(s) for"+\
                " *: 'float' and 'NoneType'"
         # examples:
-        assert totest.profile_recomb_energy(0.5, 0.5, 0.5, 0.5, 0.5) ==\
-               approx(9.49756867371e+12, abs=6e+0)
-        assert totest.profile_recomb_energy(0.1, 0.5, 0.5, 0.5, 0.5) ==\
-               approx(6.89384394360e+12, abs=6e+0)
-        assert totest.profile_recomb_energy(0.5, 0.1, 0.5, 0.5, 0.5) ==\
-               approx(4.50323846485e+12, abs=6e+0)
-        assert totest.profile_recomb_energy(0.5, 0.5, 0.1, 0.5, 0.5) ==\
-               approx(6.89384394360e+12, abs=6e+0)
-        assert totest.profile_recomb_energy(0.5, 0.5, 0.5, 0.1, 0.5) ==\
-               approx(8.31217893947e+12, abs=6e+0)
-        assert totest.profile_recomb_energy(0.5, 0.5, 0.5, 0.5, 0.1) ==\
-               approx(5.68862819909e+12, abs=6e+0)
+        tests = [(0.5, 0.5, 0.5, 0.5, 0.5,\
+                  approx(9.49756867371e+12, abs=6e+0)),\
+                 (0.1, 0.5, 0.5, 0.5, 0.5,\
+                  approx(6.89384394360e+12, abs=6e+0)),\
+                 (0.5, 0.1, 0.5, 0.5, 0.5,\
+                  approx(4.50323846485e+12, abs=6e+0)),\
+                 (0.5, 0.5, 0.1, 0.5, 0.5,\
+                  approx(6.89384394360e+12, abs=6e+0)),\
+                 (0.5, 0.5, 0.5, 0.1, 0.5,\
+                  approx(8.31217893947e+12, abs=6e+0)),\
+                 (0.5, 0.5, 0.5, 0.5, 0.1,\
+                  approx(5.68862819909e+12, abs=6e+0))]
+        for (X, Y, fHII, fHeII, fHeIII, r) in tests:
+            assert totest.profile_recomb_energy(X, Y, fHII, fHeII, fHeIII) == r
 
     def test_calculate_binding_energy(self, star_profile, capsys):
         # missing argument
@@ -2204,11 +2236,18 @@ class TestPchipInterpolator2:
     @fixture
     def PchipInterpolator2_True(self):
         # initialize an instance of the class with defaults
-        return totest.PchipInterpolator2([0.0, 1.0], [-1.0, 0.0],\
+        return totest.PchipInterpolator2([0.0, 1.0], [-0.5, 0.5],\
                                          positive=True)
 
+    @fixture
+    def PchipInterpolator2_False(self):
+        # initialize an instance of the class with defaults
+        return totest.PchipInterpolator2([0.0, 1.0], [-0.5, 0.5],\
+                                         positive=False)
+
     # test the PchipInterpolator2 class
-    def test_init(self, PchipInterpolator2, PchipInterpolator2_True):
+    def test_init(self, PchipInterpolator2, PchipInterpolator2_True,\
+                  PchipInterpolator2_False):
         assert isroutine(PchipInterpolator2.__init__)
         # check that the instance is of correct type and all code in the
         # __init__ got executed: the elements are created and initialized
@@ -2216,10 +2255,19 @@ class TestPchipInterpolator2:
         assert isinstance(PchipInterpolator2.interpolator,\
                           totest.PchipInterpolator)
         assert PchipInterpolator2.positive == False
-        assert PchipInterpolator2_True.positive
+        assert PchipInterpolator2_True.positive == True
+        assert PchipInterpolator2_False.positive == False
 
-    def test_call(self, PchipInterpolator2, PchipInterpolator2_True):
+    def test_call(self, PchipInterpolator2, PchipInterpolator2_True,\
+                  PchipInterpolator2_False):
         assert isroutine(PchipInterpolator2.__call__)
         assert PchipInterpolator2(0.1) == 0.9
         assert PchipInterpolator2_True(0.1) == 0.0
+        assert PchipInterpolator2_False(0.1) == -0.4
+        assert np.allclose(PchipInterpolator2([0.1, 0.8]),\
+               np.array([0.9, 0.2]))
+        assert np.allclose(PchipInterpolator2_True([0.1, 0.8]),\
+               np.array([0.0, 0.3]))
+        assert np.allclose(PchipInterpolator2_False([0.1, 0.8]),\
+               np.array([-0.4, 0.3]))
 
