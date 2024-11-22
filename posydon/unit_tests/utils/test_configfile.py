@@ -7,6 +7,8 @@ __authors__ = [
 
 # import the module which will be tested
 import posydon.utils.configfile as totest
+# aliases
+np = totest.np
 
 # import other needed code for the tests, which is not already imported in the
 # module you like to test
@@ -160,9 +162,9 @@ class TestConfigFile:
     def test_serialize(self, ConfigFile):
         assert isroutine(ConfigFile._serialize)
         # serialize any numpy array
-        np_array = totest.np.array([2, 1, 0])
+        np_array = np.array([2, 1, 0])
         assert ConfigFile._serialize(data=np_array) == [2, 1, 0]
-        np_array = totest.np.array(["2", "1", "0"])
+        np_array = np.array(["2", "1", "0"])
         assert ConfigFile._serialize(data=np_array) == ["2", "1", "0"]
         # other data don't give a return
         assert ConfigFile._serialize(data="Test") is None

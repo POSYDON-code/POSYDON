@@ -7,6 +7,8 @@ __authors__ = [
 
 # import the module which will be tested
 import posydon.utils.gridutils as totest
+# aliases
+np = totest.np
 
 # import other needed code for the tests, which is not already imported in the
 # module you like to test
@@ -94,7 +96,7 @@ class TestFunctions:
     @fixture
     def MESA_data(self):
         # mock data
-        return totest.np.array([(1, 2, 3.3), (1, -2, -3.3)],\
+        return np.array([(1, 2, 3.3), (1, -2, -3.3)],\
                dtype=[('COL1', '<f8'), ('COL2', '<f8'), ('COL3', '<f8')])
 
     @fixture
@@ -136,8 +138,7 @@ class TestFunctions:
     @fixture
     def MESA_BH_data(self):
         # mock data
-        return totest.np.array([(1.0, 15.0, 30.0, -5.0),\
-                                (1.0, 15.0, 30.0, -4.0)],\
+        return np.array([(1.0, 15.0, 30.0, -5.0), (1.0, 15.0, 30.0, -4.0)],\
                dtype=[('period_days', '<f8'), ('star_1_mass', '<f8'),\
                       ('star_2_mass', '<f8'), ('lg_mtransfer_rate', '<f8')])
 
@@ -163,8 +164,8 @@ class TestFunctions:
     @fixture
     def MESA_BH_data2(self):
         # mock data
-        return totest.np.array([(100.0, 15.0, 30.0, -5.0),\
-                                (100.0, 15.0, 30.0, -4.0)],\
+        return np.array([(100.0, 15.0, 30.0, -5.0),\
+                         (100.0, 15.0, 30.0, -4.0)],\
                dtype=[('period_days', '<f8'), ('star_1_mass', '<f8'),\
                       ('star_2_mass', '<f8'), ('lg_mtransfer_rate', '<f8')])
 
@@ -190,7 +191,7 @@ class TestFunctions:
     @fixture
     def MESA_SH_data(self):
         # mock data
-        return totest.np.array([(1.0, 4.0, 0.0, 0.0), (2.0, 4.0, 5.0, 4.0)],\
+        return np.array([(1.0, 4.0, 0.0, 0.0), (2.0, 4.0, 5.0, 4.0)],\
                dtype=[('log_L', '<f8'), ('log_Teff', '<f8'),\
                       ('he_core_mass', '<f8'), ('c_core_mass', '<f8')])
 
@@ -356,17 +357,17 @@ class TestFunctions:
         assert totest.read_MESA_data_file(None, ['Test']) is None
         assert totest.read_MESA_data_file(no_path, ['Test']) is None
         # read full test file
-        assert totest.np.array_equal(MESA_data,\
+        assert np.array_equal(MESA_data,\
                totest.read_MESA_data_file(data_path, MESA_data.dtype.names))
         # read columns individually from test file
         for k in MESA_data.dtype.names:
-            assert totest.np.array_equal(MESA_data[[k]],\
+            assert np.array_equal(MESA_data[[k]],\
                    totest.read_MESA_data_file(data_path, [k]))
         # read column pairs from test file
         k0 = MESA_data.dtype.names[0]
         for k in MESA_data.dtype.names:
             if k!=k0:
-                assert totest.np.array_equal(MESA_data[[k0, k]],\
+                assert np.array_equal(MESA_data[[k0, k]],\
                        totest.read_MESA_data_file(data_path, [k0, k]))
         # warning for non readable data
         with open(data_path, "w") as test_file:
@@ -388,17 +389,17 @@ class TestFunctions:
                    no_path):
             assert totest.read_EEP_data_file(no_path, ['Test']) is None
         # read full test file
-        assert totest.np.array_equal(MESA_data,\
+        assert np.array_equal(MESA_data,\
                totest.read_EEP_data_file(data_path, MESA_data.dtype.names))
         # read columns individually from test file
         for k in MESA_data.dtype.names:
-            assert totest.np.array_equal(MESA_data[[k]],\
+            assert np.array_equal(MESA_data[[k]],\
                    totest.read_EEP_data_file(data_path, [k]))
         # read column pairs from test file
         k0 = MESA_data.dtype.names[0]
         for k in MESA_data.dtype.names:
             if k!=k0:
-                assert totest.np.array_equal(MESA_data[[k0, k]],\
+                assert np.array_equal(MESA_data[[k0, k]],\
                        totest.read_EEP_data_file(data_path, [k0, k]))
         # warning for non readable data
         with open(data_path, "w") as test_file:
@@ -415,22 +416,21 @@ class TestFunctions:
         # history is None
         assert totest.fix_He_core(None) is None
         # history is ndarray without the required columns
-        assert totest.np.array_equal(MESA_data, totest.fix_He_core(MESA_data))
+        assert np.array_equal(MESA_data, totest.fix_He_core(MESA_data))
         # history is ndarray with the required columns and corrects them
-        test_history = totest.np.array([(1, 2, 3, 4), (1, 2, 4, 3),\
-                                        (2, 1, 3, 4), (2, 1, 4, 3)],\
-                                       dtype=[('he_core_mass', '<f8'),\
-                                              ('co_core_mass', '<f8'),\
-                                              ('he_core_radius', '<f8'),\
-                                              ('co_core_radius', '<f8')])
-        fixed_history = totest.np.array([(2, 2, 4, 4), (2, 2, 4, 3),\
-                                         (2, 1, 4, 4), (2, 1, 4, 3)],\
-                                        dtype=[('he_core_mass', '<f8'),\
-                                               ('co_core_mass', '<f8'),\
-                                               ('he_core_radius', '<f8'),\
-                                               ('co_core_radius', '<f8')])
-        assert totest.np.array_equal(fixed_history,\
-               totest.fix_He_core(test_history))
+        test_history = np.array([(1, 2, 3, 4), (1, 2, 4, 3), (2, 1, 3, 4),\
+                                 (2, 1, 4, 3)],\
+                                dtype=[('he_core_mass', '<f8'),\
+                                       ('co_core_mass', '<f8'),\
+                                       ('he_core_radius', '<f8'),\
+                                       ('co_core_radius', '<f8')])
+        fixed_history = np.array([(2, 2, 4, 4), (2, 2, 4, 3), (2, 1, 4, 4),\
+                                  (2, 1, 4, 3)],\
+                                 dtype=[('he_core_mass', '<f8'),\
+                                        ('co_core_mass', '<f8'),\
+                                        ('he_core_radius', '<f8'),\
+                                        ('co_core_radius', '<f8')])
+        assert np.array_equal(fixed_history, totest.fix_He_core(test_history))
 
     def test_add_field(self, MESA_data):
         # missing argument
@@ -439,12 +439,12 @@ class TestFunctions:
             totest.add_field()
         # add to empty ndarray
         with raises(ValueError, match="'a' must be a structured numpy array"):
-            totest.add_field(totest.np.array([]), [('new', '<f8')])
+            totest.add_field(np.array([]), [('new', '<f8')])
         # add to test data
         extended_ndarray = totest.add_field(MESA_data, [('new', '<f8')])
         assert MESA_data.dtype.descr+[('new', '<f8')] ==\
                extended_ndarray.dtype.descr
-        assert totest.np.array_equal(MESA_data,\
+        assert np.array_equal(MESA_data,\
                extended_ndarray[[k for k in MESA_data.dtype.names]])
 
     def test_get_cell_edges(self):
@@ -453,11 +453,10 @@ class TestFunctions:
                     " arguments: 'grid_x' and 'grid_y'"):
             totest.get_cell_edges()
         # example for x = [0.1, 0.3, 0.5, 0.7, 0.9] and y = [0.1, 0.3, 0.5]
-        assert totest.np.allclose(\
-               totest.get_cell_edges(totest.np.linspace(0.1, 0.9, 5),\
-                                     totest.np.linspace(0.1, 0.5, 3)),\
-               totest.np.meshgrid(totest.np.linspace(0.0, 1.0, 6),\
-                                  totest.np.linspace(0.0, 0.6, 4)))
+        assert np.allclose(totest.get_cell_edges(np.linspace(0.1, 0.9, 5),\
+                                                 np.linspace(0.1, 0.5, 3)),\
+                           np.meshgrid(np.linspace(0.0, 1.0, 6),\
+                                       np.linspace(0.0, 0.6, 4)))
 
     def test_find_nearest(self):
         # missing argument
@@ -465,7 +464,7 @@ class TestFunctions:
                     " arguments: 'val' and 'array'"):
             totest.find_nearest()
         # example for [0.1, 0.3, 0.5, 0.7, 0.9]
-        test_data = totest.np.linspace(0.1, 0.9, 5)
+        test_data = np.linspace(0.1, 0.9, 5)
         for v in test_data:
             assert totest.find_nearest(v+0.1, test_data) == v
 
@@ -475,7 +474,7 @@ class TestFunctions:
                     " arguments: 'array' and 'value'"):
             totest.find_index_nearest_neighbour()
         # example for [0.1, 0.3, 0.5, 0.7, 0.9]
-        test_data = totest.np.linspace(0.1, 0.9, 5)
+        test_data = np.linspace(0.1, 0.9, 5)
         for i,v in enumerate(test_data):
             assert totest.find_index_nearest_neighbour(test_data, v+0.1) == i
 
@@ -488,13 +487,12 @@ class TestFunctions:
         # example for grid_x = [0.1, 0.3, 0.5], grid_y = [0.1, 0.3, 0.5],
         # proposed_x = [0.19, 0.29, 0.39, 0.49, 0.59], and
         # proposed_y = [0.21, 0.31, 0.41, 0.51, 0.61]
-        mx,my = totest.get_final_proposed_points(\
-                 totest.np.linspace(0.19, 0.59, 5),\
-                 totest.np.linspace(0.1, 0.5, 3),\
-                 totest.np.linspace(0.21, 0.61, 5),\
-                 totest.np.linspace(0.1, 0.5, 3))
-        assert totest.np.allclose(mx, totest.np.array([0.1, 0.3, 0.3, 0.5]))
-        assert totest.np.allclose(my, totest.np.array([0.3, 0.3, 0.5, 0.5]))
+        mx,my = totest.get_final_proposed_points(np.linspace(0.19, 0.59, 5),\
+                                                 np.linspace(0.1, 0.5, 3),\
+                                                 np.linspace(0.21, 0.61, 5),\
+                                                 np.linspace(0.1, 0.5, 3))
+        assert np.allclose(mx, np.array([0.1, 0.3, 0.3, 0.5]))
+        assert np.allclose(my, np.array([0.3, 0.3, 0.5, 0.5]))
 
     def test_T_merger_P(self):
         # missing argument

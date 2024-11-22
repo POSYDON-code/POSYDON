@@ -7,6 +7,7 @@ __authors__ = [
 
 # import the module which will be tested
 import posydon.utils.common_functions as totest
+# aliases
 np = totest.np
 
 # import other needed code for the tests, which is not already imported in the
@@ -535,7 +536,10 @@ class TestFunctions:
                approx(0.32078812033, abs=6e-12)
         assert totest.roche_lobe_radius(1.0, 1.0, a_orb=2.0) ==\
                approx(0.75784103676, abs=6e-12)
-        assert np.allclose(totest.roche_lobe_radius(np.array([1.0, 2.0, 1.0, 1.0]), np.array([1.0, 1.0, 2.0, 1.0]), a_orb=np.array([1.0, 1.0, 1.0, 2.0])), np.array([0.37892051838, 0.44000423753, 0.32078812033, 0.75784103676]))
+        assert np.allclose(totest.roche_lobe_radius(\
+               np.array([1.0, 2.0, 1.0, 1.0]), np.array([1.0, 1.0, 2.0, 1.0]),\
+               a_orb=np.array([1.0, 1.0, 1.0, 2.0])), np.array([0.37892051838,\
+               0.44000423753, 0.32078812033, 0.75784103676]))
         # check that roche lobe sum never exceeds orbital separation
         for m in [1.0e+1, 1.0e+2, 1.0e+3, 1.0e+4, 1.0e+5, 1.0e+6, 1.0e+7]:
             assert totest.roche_lobe_radius(m, 1.0)+\
@@ -634,9 +638,7 @@ class TestFunctions:
             totest.beaming(binary)
         # examples: 1Msun accretor is star1 with no mass-transfer rate
         binary.star_1.mass = 1.0
-        tests = [('WD', (np.nan, 1)),\
-                 ('NS', (np.nan, 1)),\
-                 ('BH', (np.nan, 1))]
+        tests = [('WD', (np.nan, 1)), ('NS', (np.nan, 1)), ('BH', (np.nan, 1))]
         for (CO, r) in tests:
             binary.star_1.state = CO
             assert totest.beaming(binary) == r
@@ -740,22 +742,21 @@ class TestFunctions:
         # examples:
         monkeypatch.setattr(np.random, "uniform", mock_uniform)
         monkeypatch.setattr(totest, "interp1d", mock_interp1d)
-        assert np.array_equal(totest.rejection_sampler(\
-               x=np.array([0.0, 1.0]), y=np.array([0.4, 0.6]),\
-               size=5), np.array([0.0, 0.25, 0.5, 0.75, 1.0]))
-        assert np.array_equal(totest.rejection_sampler(\
-               x=np.array([1.0, 0.0]), y=np.array([0.2, 0.8]),\
-               size=5), np.array([0.0, 0.25, 0.5, 0.0, 0.0]))
-        assert np.array_equal(totest.rejection_sampler(\
-               x=np.array([1.0, 0.0]), y=np.array([0.2, 0.8]),\
-               size=6), np.array([0.0, 0.2, 0.4, 0.0, 0.5, 0.0]))
+        assert np.array_equal(totest.rejection_sampler(x=np.array([0.0, 1.0]),\
+               y=np.array([0.4, 0.6]), size=5),\
+               np.array([0.0, 0.25, 0.5, 0.75, 1.0]))
+        assert np.array_equal(totest.rejection_sampler(x=np.array([1.0, 0.0]),\
+               y=np.array([0.2, 0.8]), size=5),\
+               np.array([0.0, 0.25, 0.5, 0.0, 0.0]))
+        assert np.array_equal(totest.rejection_sampler(x=np.array([1.0, 0.0]),\
+               y=np.array([0.2, 0.8]), size=6),\
+               np.array([0.0, 0.2, 0.4, 0.0, 0.5, 0.0]))
         assert np.array_equal(totest.rejection_sampler(\
                x_lim=np.array([0.0, 1.0]), pdf=mock_pdf,\
                size=5), np.array([0.0, 0.25, 0.0, 0.0, 0.0]))
-        assert np.array_equal(totest.rejection_sampler(\
-               x=np.array([1.0, 0.0]), y=np.array([0.2, 0.8]),\
-               x_lim=np.array([0.0, 1.0]), pdf=mock_pdf,\
-               size=5), np.array([0.0, 0.25, 0.0, 0.0, 0.0]))
+        assert np.array_equal(totest.rejection_sampler(x=np.array([1.0, 0.0]),\
+               y=np.array([0.2, 0.8]), x_lim=np.array([0.0, 1.0]),\
+               pdf=mock_pdf, size=5), np.array([0.0, 0.25, 0.0, 0.0, 0.0]))
 
     def test_inverse_sampler(self, monkeypatch):
         def mock_uniform(low=0.0, high=1.0, size=1):
@@ -776,17 +777,15 @@ class TestFunctions:
                                    y=np.array([-0.4, 0.6]))
         # examples:
         monkeypatch.setattr(np.random, "uniform", mock_uniform)
-        assert np.allclose(totest.inverse_sampler(\
-               x=np.array([0.0, 1.0]), y=np.array([0.4, 0.6]),\
-               size=5), np.array([0.0, 0.29128785, 0.54950976,\
-               0.78388218, 1.0]))
-        assert np.allclose(totest.inverse_sampler(\
-               x=np.array([0.0, 1.0]), y=np.array([0.6, 0.4]),\
-               size=4), np.array([0.0, 0.2919872 , 0.61952386, 1.0]))
+        assert np.allclose(totest.inverse_sampler(x=np.array([0.0, 1.0]),\
+               y=np.array([0.4, 0.6]), size=5),\
+               np.array([0.0, 0.29128785, 0.54950976, 0.78388218, 1.0]))
+        assert np.allclose(totest.inverse_sampler(x=np.array([0.0, 1.0]),\
+               y=np.array([0.6, 0.4]), size=4),\
+               np.array([0.0, 0.2919872, 0.61952386, 1.0]))
         with warns(RuntimeWarning,\
                    match="invalid value encountered in divide"):
-            assert np.allclose(totest.inverse_sampler(\
-                   x=np.array([0.0, 1.0]),\
+            assert np.allclose(totest.inverse_sampler(x=np.array([0.0, 1.0]),\
                    y=np.array([0.5, 0.5]), size=5),\
                    np.array([0.0, 0.25, 0.5, 0.75, 1.0]))
 
@@ -1551,8 +1550,7 @@ class TestFunctions:
             CO_core_in_Hrich_star=False):
             return core_element_fraction_definition
         def mock_calculate_lambda_from_profile(profile, donor_star_state,\
-            m1_i=np.nan, radius1=np.nan,\
-            common_envelope_option_for_lambda=\
+            m1_i=np.nan, radius1=np.nan, common_envelope_option_for_lambda=\
             totest.DEFAULT_CE_OPTION_FOR_LAMBDA,\
             core_element_fraction_definition=0.1, ind_core=None,\
             common_envelope_alpha_thermal=1.0, tolerance=0.001,\
@@ -1574,7 +1572,7 @@ class TestFunctions:
                " ** or pow(): 'float' and 'NoneType'"
         star.log_R = 0.0
         star.profile = np.array([(1.0), (1.0), (1.0)],\
-                                             dtype=([('mass', 'f8')]))
+                                dtype=([('mass', 'f8')]))
         with raises(TypeError, match="argument of type 'NoneType' is not"+\
                     " iterable"):
             totest.CEE_parameters_from_core_abundance_thresholds(star)
@@ -1657,7 +1655,7 @@ class TestFunctions:
                                      dtype=([('mass', 'f8'), ('state', 'U8')]))
         empty_array = totest.initialize_empty_array(test_array)
         for i in range(len(empty_array)):
-            assert np.isnan(empty_array['mass'][i]) # nan float
+            assert np.isnan(empty_array['mass'][i])        # nan float
             assert empty_array['state'][i] == 'nan'        # nan str
 
     def test_calculate_core_boundary(self, star_profile):
@@ -2025,8 +2023,8 @@ class TestFunctions:
                           dtype=([('x_mass_fraction_H', 'f8')]))
             totest.calculate_H2recombination_energy(bad_profile)
         # examples: profile with Hydrogen mass fraction
-        assert np.allclose(np.array([1.49557421e+12,\
-               1.06826729e+12, 2.13653458e+11, 2.13653458e+09]),\
+        assert np.allclose(np.array([1.49557421e+12, 1.06826729e+12,\
+               2.13653458e+11, 2.13653458e+09]),\
                totest.calculate_H2recombination_energy(\
                star_profile[['x_mass_fraction_H']]))
         # examples: profile without Hydrogen mass fraction
@@ -2059,10 +2057,11 @@ class TestFunctions:
             bad_profile['avg_charge_He'] = np.array([0.5, 0.5])
             totest.calculate_recombination_energy(bad_profile)
         # examples: profile with mass fraction and ionization information
-        assert np.allclose(np.array([0.00000000e+00,\
-               4.73639308e+12, 7.53791976e+12, 3.29724895e+12]),\
+        assert np.allclose(np.array([0.00000000e+00, 4.73639308e+12,\
+               7.53791976e+12, 3.29724895e+12]),\
                totest.calculate_recombination_energy(\
-               star_profile[['x_mass_fraction_H', 'y_mass_fraction_He', 'neutral_fraction_H', 'neutral_fraction_He', 'avg_charge_He']]))
+               star_profile[['x_mass_fraction_H', 'y_mass_fraction_He',\
+               'neutral_fraction_H', 'neutral_fraction_He', 'avg_charge_He']]))
         # examples: profile without mass fraction and ionization information
         with warns(ApproximationWarning, match="Profile does not include"+\
                    " mass fractions and ionizations of elements to calculate"+\
@@ -2198,8 +2197,7 @@ class TestFunctions:
                         # angle=0 -> no rotation
                         assert np.array_equal(totest.rotate(\
                                np.array([x, y, z]), 0.0),\
-                               np.array([[1, 0, 0], [0, 1, 0],\
-                                                [0, 0, 1]]))
+                               np.array([[1, 0, 0], [0, 1, 0], [0, 0, 1]]))
                         # inverse rotation around inverted axis
                         assert np.array_equal(totest.rotate(\
                                np.array([-x, -y, -z]), -1.0),\
@@ -2207,24 +2205,24 @@ class TestFunctions:
         # examples: angle=1.0
         s = np.sin(1.0)
         c = np.cos(1.0)
-        assert np.array_equal(totest.rotate(np.array([1, 0, 0]),\
-               1.0), np.array([[1, 0, 0], [0, c, -s], [0, s, c]]))
-        assert np.array_equal(totest.rotate(np.array([0, 1, 0]),\
-               1.0), np.array([[c, 0, s], [0, 1, 0], [-s, 0, c]]))
-        assert np.array_equal(totest.rotate(np.array([0, 0, 1]),\
-               1.0), np.array([[c, -s, 0], [s, c, 0], [0, 0, 1]]))
-        assert np.allclose(totest.rotate(np.array([1, 1, 0]),\
-               1.0), np.array([[0.77015115, 0.22984885, 0.59500984],\
-               [0.22984885, 0.77015115, -0.59500984], [-0.59500984,\
-                0.59500984, 0.54030231]]))
-        assert np.allclose(totest.rotate(np.array([1, 0, 1]),\
-               1.0), np.array([[0.77015115,-0.59500984, 0.22984885],\
-               [0.59500984, 0.54030231, -0.59500984], [0.22984885,\
-                0.59500984, 0.77015115]]))
-        assert np.allclose(totest.rotate(np.array([0, 1, 1]),\
-               1.0), np.array([[0.54030231,-0.59500984, 0.59500984],\
-               [0.59500984, 0.77015115, 0.22984885], [-0.59500984,\
-                0.22984885, 0.77015115]]))
+        assert np.array_equal(totest.rotate(np.array([1, 0, 0]), 1.0),\
+               np.array([[1, 0, 0], [0, c, -s], [0, s, c]]))
+        assert np.array_equal(totest.rotate(np.array([0, 1, 0]), 1.0),\
+               np.array([[c, 0, s], [0, 1, 0], [-s, 0, c]]))
+        assert np.array_equal(totest.rotate(np.array([0, 0, 1]), 1.0),\
+               np.array([[c, -s, 0], [s, c, 0], [0, 0, 1]]))
+        assert np.allclose(totest.rotate(np.array([1, 1, 0]), 1.0),\
+               np.array([[0.77015115, 0.22984885, 0.59500984], [0.22984885,\
+               0.77015115, -0.59500984], [-0.59500984, 0.59500984,\
+               0.54030231]]))
+        assert np.allclose(totest.rotate(np.array([1, 0, 1]), 1.0),\
+               np.array([[0.77015115,-0.59500984, 0.22984885], [0.59500984,\
+               0.54030231, -0.59500984], [0.22984885, 0.59500984,\
+               0.77015115]]))
+        assert np.allclose(totest.rotate(np.array([0, 1, 1]), 1.0),\
+               np.array([[0.54030231,-0.59500984, 0.59500984], [0.59500984,\
+               0.77015115, 0.22984885], [-0.59500984, 0.22984885,\
+               0.77015115]]))
 
 
 class TestPchipInterpolator2:
