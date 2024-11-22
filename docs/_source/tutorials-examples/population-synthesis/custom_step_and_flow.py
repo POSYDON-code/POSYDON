@@ -10,7 +10,9 @@ def end_flow_chart(FLOW_CHART=None):
 
 
 class my_CE_step(object):
-    """Compute a fake CE event."""
+    """Compute a fake CE event.
+    Requires the input star to be an H-rich and evolved star.
+    Otherwise, it will fail."""
 
     def __init__(self, verbose=False):
         self.verbose = verbose
@@ -29,9 +31,14 @@ class my_CE_step(object):
             comp_star = binary.star_1
         else:
             raise ValueError("CEE does not apply if `event` is not "
-                            "`oCE1`, 'oDoubleCE1' or `oCE2`, 'oDoubleCE1'")
+                            "`oCE1`, 'oDoubleCE1', `oCE2`, or `oDoubleCE1`")
 
         binary.orbital_period /= 2.
+        if donor_star.he_core_mass is None:
+            raise ValueError("The donor star must be an evolved star with a He core mass")
+        if donor_star.state != 'H-rich':
+            raise ValueError("The donor star must be an H-rich star")
+        
         donor_star.mass = donor_star.he_core_mass # lose envelope
         donor_star.state = donor_star.state.replace('H-rich', 'stripped_He')
         binary.state = 'detached'

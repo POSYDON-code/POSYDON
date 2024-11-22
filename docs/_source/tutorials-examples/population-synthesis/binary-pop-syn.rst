@@ -90,7 +90,7 @@ Moreover, it shows you how re-evolve binaries and change their properties, such 
 Creating custom steps and flow chart for the evolution of a binary 📊
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-In this tutorial, we show you have to import your own custom steps and flow chart for a population and in a notebook.
+In this tutorial, we show you how to import your own custom steps and flow chart for a population and in a Jupyter notebook.
 
 .. toctree::
 

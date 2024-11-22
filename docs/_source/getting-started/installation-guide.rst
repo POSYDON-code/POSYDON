@@ -107,7 +107,8 @@ For users interested in the latest features and developments, you can install PO
 Running grids using POSYDON on HPC Facilities
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-If you are planning to create MESA grids using POSYDON, it's essential to have `mpi4py` installed to enable parallel computations.
+If you are planning to create MESA grids using POSYDON on HPC facilities, it's essential to have ``mpi4py`` installed to take advantage of parallel computations.
+You do not need to have ``mpi4py`` installed if you are only running population synthesis simulations.
 
 1. **Install mpi4py via Anaconda (Recommended)**:
 

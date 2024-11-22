@@ -384,20 +384,23 @@ If the energy budget is less than the binding energy, the system is merged.
     - | Enables verbose mode.
     - ``False``
 
-Step Supernova
-~~~~~~~~~~~~~~
-
-This steps performs the core-collapse supernova evolution of the star.
-Multiple prescriptions are implemented and can be selected.
-If a standard prescription is used, interpolators are available to speed up the calculation and predict additional properties of the collapse, such as the spin.
-
 
 Step Supernova
 ~~~~~~~~~~~~~~
 
 This step performs the core-collapse supernova evolution of the star.
 Multiple prescriptions are implemented and can be selected.
-If a standard prescription is used, interpolators are available to speed up the calculation and predict additional properties of the collapse, such as the spin.
+If a pretrained prescription is used (``use_interp_values=True``), interpolators are available to speed up the calculation and predict additional properties of the collapse, such as the spin.
+The collection of trained prescriptions can be found in the ``MODELS.py`` file at ``posydon/grids/MODELS.py``.
+
+.. warning::
+  If you want to use a combination that does not have a trained model, please turn off ``use_interp_values``,
+  otherwise your population runs will fail! Depending on ``use_core_masses``, 
+  the core masses or stellar profiles are used to determine the supernova properties.
+
+
+
+
 
 .. list-table::
   :widths: 10 80 10
@@ -560,6 +563,7 @@ Extra Hooks
 
 It's possible to add custom hooks to the simulation steps.
 A few example hooks are provides: ``TimingHooks`` and ``StepNamesHooks`` (See :ref:`Custom Hooks <custom-hooks>` for more details)
+Each new hook has a unique import number, starting from 1.
 
 .. list-table::
   :widths: 10 80 10
@@ -570,7 +574,7 @@ A few example hooks are provides: ``TimingHooks`` and ``StepNamesHooks`` (See :r
     - Description
     - Default Value
 
-  * - ``import``
+  * - ``import_1``
     - | The import path for the hook and the name of the hook class.
     - ``['posydon.binary_evol.simulationproperties', 'TimingHooks']``
 
@@ -582,7 +586,7 @@ A few example hooks are provides: ``TimingHooks`` and ``StepNamesHooks`` (See :r
     - | Additional keyword arguments for the hook.
     - ``{}``
 
-  * - ``import``
+  * - ``import_2``
     - | The import path for the hook and the name of the hook class.
     - ``['posydon.binary_evol.simulationproperties', 'StepNamesHooks']``
 
@@ -667,8 +671,8 @@ It also contains which sampling distributions to use for the initial conditions 
     - ``True``
 
   * - ``metallicity``
-    - | In units of solar metallicity.
-    - ``[2., 1., 0.45, 0.2, 0.1, 0.01, 0.001, 0.0001]``
+    - | In units of solar metallicity. Supported values ``[2., 1., 0.45, 0.2, 0.1, 0.01, 0.001, 0.0001]``
+    - ``[1.]``
 
   * - ``entropy``
     - | Random Number Generation: uses system entropy.
@@ -676,7 +680,7 @@ It also contains which sampling distributions to use for the initial conditions 
 
   * - ``number_of_binaries``
     - | Number of binaries to evolve.
-    - ``1000000``
+    - ``10``
 
   * - ``star_formation``
     - | What star formation is used to sample the binaries.
@@ -696,7 +700,7 @@ It also contains which sampling distributions to use for the initial conditions 
 
   * - ``binary_fraction``
     - | Fraction of binaries (0 < fraction <= 1).
-    - ``1``
+    - ``1.0``
 
   * - ``primary_mass_scheme``
     - | Options:
@@ -709,10 +713,11 @@ It also contains which sampling distributions to use for the initial conditions 
   * - ``primary_mass_min``
     - | Minimum primary mass (in solar masses)
       | limits: 0-300
-    - ``7``
+    - ``7.0``
 
   * - ``primary_mass_max``
     - | Maximum primary mass (in solar masses).
+      | Needs to be larger than ``secondary_mass_min``.
       | limits: 0-300
     - ``150.0``
 
@@ -720,11 +725,12 @@ It also contains which sampling distributions to use for the initial conditions 
     - | Options:
     
       * ``'flat_mass_ratio'``: flat mass ratio distribution
-      * ``'q=1'``: mass ratio of 1
+      * ``'q=1'``: mass ratio of 1. Ignores ``secondary_mass_min/max`` and sets the secondary mass to the primary mass. 
     - ``'flat_mass_ratio'``
 
   * - ``secondary_mass_min``
     - | Minimum secondary mass (in solar masses).
+      | Is required to be smaller than the minimum primary mass.
       | limits: 0-270
     - ``0.35``
 
@@ -806,6 +812,7 @@ BinaryStar Output
 
 The :class:`~posydon.binary_evol.binarystar` class contains the binary systems and
 the parameters here determine what output of that class will be outputted into the final population file.
+`scalar_names` will only be stored in the oneline table.
 
 .. list-table::
   :widths: 10 80 10
@@ -818,9 +825,10 @@ the parameters here determine what output of that class will be outputted into t
 
   * - ``extra_columns``
     - | Additional columns to include in the output.
-      | Example: ``{'step_names':'string', 'step_times':'float64'}``
       | Note: ``'step_times'`` requires ``TimingHooks`` from ``posydon.binary_evol.simulationproperties``.
-    - See default ``population_params.ini``.
+    - .. code:: python
+      
+        {'step_names':'string', 'step_times':'float64'}
 
   * - ``only_select_columns``
     - | Columns to include in the output.
@@ -845,7 +853,39 @@ the parameters here determine what output of that class will be outputted into t
       * ``'t_sync_rad_2'``: The synchronization timescale for radiative zones star 2.
       * ``'t_sync_conv_2'``: The synchronization timescale for convective zones star 2.
       * ``'nearest_neighbour_distance'``: The distance to the nearest neighbour.
-    - See default ``population_params.ini``.
+    - .. code:: python
+      
+        ['state',
+        'event',
+        'time',
+        'orbital_period',
+        'eccentricity',
+        'lg_mtransfer_rate']
+
+  * - ``scalar_names``
+    - | Scalars of the binary to include in the output.
+      | Options:
+      
+      * ``'interp_class_HMS_HMS'``: interpolation class for HMS-HMS
+      * ``'interp_class_CO_HMS_RLO'``: interpolation class for CO-HMS-RLO
+      * ``'interp_class_CO_HeMS'``: interpolation class for CO-HeMS
+      * ``'interp_class_CO_HeMS_RLO'``: interpolation class for CO-HeMS-RLO
+      * ``'mt_history_HMS_HMS'``: mass transfer history for HMS-HMS
+      * ``'mt_history_CO_HMS_RLO'``: mass transfer history for CO-HMS-RLO
+      * ``'mt_history_CO_HeMS'``: mass transfer history for CO-HeMS
+      * ``'mt_history_CO_HeMS_RLO'``: mass transfer history for CO-HeMS-RLO
+
+    - .. code:: python
+
+        ['interp_class_HMS_HMS',
+        'interp_class_CO_HMS_RLO',
+        'interp_class_CO_HeMS',
+        'interp_class_CO_HeMS_RLO',
+        'mt_history_HMS_HMS',
+        'mt_history_CO_HMS_RLO',
+        'mt_history_CO_HeMS',
+        'mt_history_CO_HeMS_RLO']
+    
               
 SingleStar 1 and 2 Output
 ~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -926,7 +966,24 @@ This dictionary contains the parameters that will be saved in the output of the 
       * ``'lambda_CE_30cent'``: The lambda parameter for common envelope evolution (30%).
       * ``'lambda_CE_pure_He_star_10cent'``: The lambda parameter for common envelope evolution for pure helium stars (10%).
       * ``'profile [not currently supported]'``: The profile (not currently supported).
-    - See default ``population_params.ini``.
+    - .. code:: python
+
+        ['state',
+        'mass',
+        'log_R',
+        'log_L',
+        'lg_mdot',
+        'he_core_mass',
+        'he_core_radius',
+        'co_core_mass',
+        'co_core_radius',
+        'center_h1',
+        'center_he4',
+        'surface_h1',
+        'surface_he4',
+        'surf_avg_omega_div_omega_crit',
+        'spin',]
+
 
   * - ``scalar_names``
     - | Scalars to include in the output for SingleStar 1.
@@ -940,7 +997,13 @@ This dictionary contains the parameters that will be saved in the output of the 
       * ``'spin_orbit_tilt_second_SN'``: The spin-orbit tilt after the second supernova.
       * ``'m_disk_accreted'``: The mass accreted onto the disk.
       * ``'m_disk_radiated'``: The mass radiated from the disk.
-    - See default ``population_params.ini``.
+    - .. code:: python
+
+        ['natal_kick_array',
+        'SN_type',
+        'f_fb',
+        'spin_orbit_tilt_first_SN',
+        'spin_orbit_tilt_second_SN',]
 
 
 

@@ -94,7 +94,7 @@ The star properties are defined as follows
   * - ``spin``
     - Angular momentum of the star in g*cm^2*s^-1 or dimensionless BH spin.
   * - ``profile``
-    - Stellar profile from MESA. [not current supported for the initial-final interpolator]
+    - Stellar profile from MESA. [not currently supported for the initial-final interpolator]
 
 Additional scalar properties are added during the evolution depending on which steps the star has undergone. These properties are not stored in the history.
 
@@ -111,7 +111,7 @@ Additional scalar properties are added during the evolution depending on which s
       * velocity
       * theta
       * phi
-      * ?
+      * mean anomaly
 
   * - ``SN_type``
     - The supernova type of the star.
@@ -132,7 +132,7 @@ State options
 
 Star states are defined by their burning and surface properties.
 These states are combined to describe the stellar state.
-We also have additional extra states for object that are not stars.
+We also have additional extra states for objects that are not stars.
 
 .. list-table:: Surface state
   :header-rows: 1
@@ -145,7 +145,7 @@ We also have additional extra states for object that are not stars.
   * - ``stripped_He``
     - The star has a stripped helium surface.
   * - ``accreted_He``
-    - The star has an accreted helium rich material on its surface.
+    - The star has accreted a helium rich layer on its surface.
   
 .. list-table:: Burning state
   :header-rows: 1
@@ -158,17 +158,17 @@ We also have additional extra states for object that are not stars.
   * - ``Core_H_burning``
     - The star is burning hydrogen in its core.
   * - ``Shell_H_burning``
-    - The star is burning hydrogen in its shell.
+    - The star is burning hydrogen in a shell.
   * - ``Core_He_burning``
     - The star is burning helium in its core.
   * - ``Central_He_depleted``
-    - The star has depleted helium in its core.
+    - The star has a helium depleted core.
   * - ``Shell_He_burning``
-    - The star is burning helium in its shell.
+    - The star is burning helium in a shell.
   * - ``Core_C_burning``
     - The star is burning carbon in its core.
   * - ``Central_C_depletion``
-    - The star has depleted carbon in its core.
+    - The star has a carbon depleted core.
 
 .. list-table:: Additional States
   :header-rows: 1
@@ -183,7 +183,7 @@ We also have additional extra states for object that are not stars.
   * - ``BH``
     - The star is a Black Hole.
   * - ``massless_remnant``
-    - The star exploded or merged and only a single star is left. 
+    - The star exploded or merged. Only its companion is left as a single star.
 
 Basic example
 ~~~~~~~~~~~~~

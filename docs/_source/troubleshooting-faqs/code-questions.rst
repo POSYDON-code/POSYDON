@@ -53,10 +53,10 @@ Frequently Asked Questions
     The job array size should be set such that the number of binaries per job is at least 1000, since there's a minimum overhead per job due to loading the grids.
     
     The :code:`walltime` depends on the number of binaries per job, where each binary takes about 1-2 seconds to run.
-    For example, with 100.000 binaries split over 100 jobs (per metallicity), means that every job runs 1.000 binaries. This will take around 33 minutes per job. So a :code:`walltime` of `00:45:00` is reasonable.
+    For example, with 100.000 binaries split over 100 jobs (per metallicity), which means that every job runs 1.000 binaries. This will take around 33 minutes per job. So a :code:`walltime` of `00:45:00` is reasonable.
 
     The balance between :code:`walltime` and the size of the job array is important.
-    If the :code:`walltime` is too long, it might be worth increasing the job array size to decrease the time per job and allowing the population synthesis to finish faster. 
+    If the :code:`walltime` is too long, it might be worth increasing the job array size to decrease the time per job and allow the population synthesis to finish faster. 
     But if the :code:`walltime` is too short, the job array size should be decreased, since each job has an initial overhead that is not dependent on the number of binaries in the job.
 
     .. note::
@@ -74,14 +74,18 @@ Frequently Asked Questions
 7. **Can I run POSYDON on an HPC facility?**
     - Answer: Absolutely! Refer to `our HPC guide <../tutorials-examples/population-synthesis/pop_syn.ipynb>`_ for detailed instructions on running POSYDON in an HPC environment.
 
-8. **How can I stay updated with the latest features and updates?**
-    - Answer: You can regularly visit our `official website <https://posydon.org>`_ for news and updates. Also, consider subscribing to our mailing list.
+8. **Help, I'm stuck! Where can I get support?**
+    - Please check `our email group <https://groups.google.com/g/posydon-users>`_ if your question hasn't been answered yet.
+    Otherwise, please email us at posydon-users [at] googlegroups.com 
 
-9. **I've come across a FAILED binary. What does this mean?**
+9. **How can I stay updated with the latest features and updates?**
+    - Answer: You can regularly visit our `official website <https://posydon.org>`_ for news and updates. 
+
+10. **I've come across a FAILED binary. What does this mean?**
     - Answer: A FAILED binary is one that has encountered an error during the simulation due to the default flow and steps of POSYDON being unable to evolve them.
     This can be due to a variety of reasons:
     
-    - The evolutionary state of the binary does not have appropriate grids. 
+    - The evolutionary state of the binary is not represented in the currently supported stellar evolution grids. 
     For example, we do not have a grid for Roche lobe overflow between two helium stars.
     - The binary has masses outside the grid range. For example, the HMS-HMS grid does not contain binaries with a secondary mass below 0.5.
     - The binary could not be matched to single star or a binary due to a too large matching error.
@@ -90,7 +94,7 @@ Frequently Asked Questions
     This is a complex question and the best location to look at would be the POSYDON paper(s).
     However, some of the approximations are:
 
-    - The evolution of a merger product is approximated by a non-rotating single star.
+    - The evolution of a merger product is approximated by a non-rotating single star, although we record the spin of the merger product.
 
 
 Additional Resources
