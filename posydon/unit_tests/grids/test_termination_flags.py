@@ -7,6 +7,8 @@ __authors__ = [
 
 # import the module which will be tested
 import posydon.grids.termination_flags as totest
+# aliases
+np = totest.np
 
 # import other needed code for the tests, which is not already imported in the
 # module you like to test
@@ -74,129 +76,99 @@ class TestValues:
 
 class TestFunctions:
     @fixture
-    def test_out_path(self, tmp_path):
-        # a temporary path for testing
-        return totest.os.path.join(tmp_path, "out.txt")
-
-    @fixture
-    def test_out_file(self, test_out_path):
-        # a temporary out file for testing
-        with open(test_out_path, "w") as test_file:
+    def out_path(self, tmp_path):
+        # a temporary path to out file for testing
+        path = totest.os.path.join(tmp_path, "out.txt")
+        with open(path, "w") as test_file:
             test_file.write("min_timestep_limit Reached TPAGB\n")
-        return
+        return path
 
     @fixture
-    def test_out_path2(self, tmp_path):
-        # a temporary path for testing
-        return totest.os.path.join(tmp_path, "out2.txt")
-
-    @fixture
-    def test_out_file2(self, test_out_path2):
-        # a temporary out file for testing
-        with open(test_out_path2, "w") as test_file:
+    def out_path2(self, tmp_path):
+        # a temporary path to out file for testing
+        path = totest.os.path.join(tmp_path, "out2.txt")
+        with open(path, "w") as test_file:
             test_file.write("Terminate: Unit test 2\n")
-        return
+        return path
 
     @fixture
-    def test_out_path3(self, tmp_path):
-        # a temporary path for testing
-        return totest.os.path.join(tmp_path, "out3.txt")
-
-    @fixture
-    def test_out_file3(self, test_out_path3):
-        # a temporary out file for testing
-        with open(test_out_path3, "w") as test_file:
+    def out_path3(self, tmp_path):
+        # a temporary path to out file for testing
+        path = totest.os.path.join(tmp_path, "out3.txt")
+        with open(path, "w") as test_file:
             test_file.write("termination code: Unit test 3\n")
             test_file.write("termination code: min_timestep_limit\n")
-        return
+        return path
 
     @fixture
-    def test_out_path4(self, tmp_path):
-        # a temporary path for testing
-        return totest.os.path.join(tmp_path, "out4.txt")
-
-    @fixture
-    def test_out_file4(self, test_out_path4):
-        # a temporary out file for testing
-        with open(test_out_path4, "w") as test_file:
+    def out_path4(self, tmp_path):
+        # a temporary path to out file for testing
+        path = totest.os.path.join(tmp_path, "out4.txt")
+        with open(path, "w") as test_file:
             test_file.write("Unit test 4\n")
-        return
+        return path
 
     @fixture
-    def test_out_path5(self, tmp_path):
-        # a temporary path for testing
-        return totest.os.path.join(tmp_path, "out5.txt")
-
-    @fixture
-    def test_out_file5(self, test_out_path5):
-        # a temporary out file for testing
-        with open(test_out_path5, "w") as test_file:
+    def out_path5(self, tmp_path):
+        # a temporary path to out file for testing
+        path = totest.os.path.join(tmp_path, "out5.txt")
+        with open(path, "w") as test_file:
             test_file.write("")
-        return
+        return path
 
     @fixture
-    def test_out_path6(self, tmp_path):
-        # a temporary path for testing
-        return totest.os.path.join(tmp_path, "out6.txt")
-
-    @fixture
-    def test_out_file6(self, test_out_path6):
-        # a temporary out file for testing
-        with open(test_out_path6, "w") as test_file:
+    def out_path6(self, tmp_path):
+        # a temporary path to out file for testing
+        path = totest.os.path.join(tmp_path, "out6.txt")
+        with open(path, "w") as test_file:
             test_file.write("termination code: min_timestep_limit\n")
-        totest.os.system(f"gzip -1 {test_out_path6}")
-        return
+        totest.os.system(f"gzip -1 {path}")
+        return path
 
     @fixture
     def star_history(self):
         # a temporary star history for testing
-        return totest.np.array([(0.5, 0.1, 0.4, 0.5, 1.0, 1.0, 1.4),\
-                                (0.5, 0.1, 0.4, 0.5, 1.0, 1.0, 1.4)],\
-                               dtype=[('surface_h1', '<f8'),\
-                                      ('center_h1', '<f8'),\
-                                      ('center_he4', '<f8'),\
-                                      ('center_c12', '<f8'),\
-                                      ('log_LH', '<f8'), ('log_LHe', '<f8'),\
-                                      ('log_Lnuc', '<f8')])
+        return np.array([(0.5, 0.1, 0.4, 0.5, 1.0, 1.0, 1.4),\
+                         (0.5, 0.1, 0.4, 0.5, 1.0, 1.0, 1.4)],\
+                        dtype=[('surface_h1', '<f8'), ('center_h1', '<f8'),\
+                               ('center_he4', '<f8'), ('center_c12', '<f8'),\
+                               ('log_LH', '<f8'), ('log_LHe', '<f8'),\
+                               ('log_Lnuc', '<f8')])
 
     @fixture
     def binary_history(self):
         # a temporary binary history for testing
-        return totest.np.array([(totest.RL_RELATIVE_OVERFLOW_THRESHOLD,\
-                                 totest.RL_RELATIVE_OVERFLOW_THRESHOLD,\
-                                 totest.LG_MTRANSFER_RATE_THRESHOLD, 100.0,\
-                                 0.2),\
-                                (totest.RL_RELATIVE_OVERFLOW_THRESHOLD,\
-                                 totest.RL_RELATIVE_OVERFLOW_THRESHOLD,\
-                                 totest.LG_MTRANSFER_RATE_THRESHOLD, 1.0,\
-                                 20.0)],\
-                               dtype=[('rl_relative_overflow_1', '<f8'),\
-                                      ('rl_relative_overflow_2', '<f8'),\
-                                      ('lg_mtransfer_rate', '<f8'),\
-                                      ('star_1_mass', '<f8'),\
-                                      ('star_2_mass', '<f8')])
+        return np.array([(totest.RL_RELATIVE_OVERFLOW_THRESHOLD,\
+                          totest.RL_RELATIVE_OVERFLOW_THRESHOLD,\
+                          totest.LG_MTRANSFER_RATE_THRESHOLD, 100.0, 0.2),\
+                         (totest.RL_RELATIVE_OVERFLOW_THRESHOLD,\
+                          totest.RL_RELATIVE_OVERFLOW_THRESHOLD,\
+                          totest.LG_MTRANSFER_RATE_THRESHOLD, 1.0, 20.0)],\
+                        dtype=[('rl_relative_overflow_1', '<f8'),\
+                               ('rl_relative_overflow_2', '<f8'),\
+                               ('lg_mtransfer_rate', '<f8'),\
+                               ('star_1_mass', '<f8'), ('star_2_mass', '<f8')])
 
     @fixture
     def grid(self):
         # a temporary grid for testing
         g = PSyGrid()
         # 5x5x5 gird + late small period "00-"
-        iv = totest.np.array([(m1, m2, porb) for m1 in range(5) for m2 in\
-                              range(5) for porb in range(5)] + [(0, 0, -1)],\
-                             dtype=[('star_1_mass', '<f8'), ('star_2_mass',\
-                                     '<f8'), ('period_days', '<f8')])
+        iv = np.array([(m1, m2, porb) for m1 in range(5) for m2 in range(5)\
+                       for porb in range(5)] + [(0, 0, -1)],\
+                      dtype=[('star_1_mass', '<f8'), ('star_2_mass', '<f8'),\
+                             ('period_days', '<f8')])
         setattr(g, "initial_values", iv)
         # initial RLO on diagonal plane + on the additional point
-        fv = totest.np.array([("Terminate because of overflowing initial"+\
-                               " model" if 0<m1+m2+porb<3 else "Test",\
-                               str(m1)+str(m2)+str(porb),\
-                               str(m1)+str(m2)+str(porb)) for m1 in range(5)\
-                              for m2 in range(5) for porb in range(5)] +\
-                             [("Terminate because of overflowing initial"+\
-                               " model", "00-", "00-")],\
-                             dtype=[('termination_flag_1', '<U50'),\
-                                    ('termination_flag_3', '<U50'),\
-                                    ('termination_flag_4', '<U50')])
+        fv = np.array([("Terminate because of overflowing initial model"\
+                        if 0<m1+m2+porb<3 else "Test",\
+                        str(m1)+str(m2)+str(porb), str(m1)+str(m2)+str(porb))\
+                        for m1 in range(5) for m2 in range(5) for porb in\
+                        range(5)] + [("Terminate because of overflowing"+\
+                                      " initial model", "00-", "00-")],\
+                      dtype=[('termination_flag_1', '<U50'),\
+                             ('termination_flag_3', '<U50'),\
+                             ('termination_flag_4', '<U50')])
         setattr(g, "final_values", fv)
         return g
 
@@ -217,12 +189,8 @@ class TestFunctions:
                  'termination_flag_3': '200', 'termination_flag_4': '200'}]
 
     # test functions
-    def test_get_flag_from_MESA_output(self, test_out_path, test_out_file,\
-                                       test_out_path2, test_out_file2,\
-                                       test_out_path3, test_out_file3,\
-                                       test_out_path4, test_out_file4,\
-                                       test_out_path5, test_out_file5,\
-                                       test_out_path6, test_out_file6):
+    def test_get_flag_from_MESA_output(self, out_path, out_path2, out_path3,\
+                                       out_path4, out_path5, out_path6):
         # missing argument
         with raises(TypeError, match="missing 1 required positional"+\
                     " argument: 'MESA_log_path'"):
@@ -230,17 +198,17 @@ class TestFunctions:
         # examples
         assert totest.get_flag_from_MESA_output(None) ==\
                "reach cluster timelimit"
-        assert totest.get_flag_from_MESA_output(test_out_path) ==\
+        assert totest.get_flag_from_MESA_output(out_path) ==\
                "Reached TPAGB"
-        assert totest.get_flag_from_MESA_output(test_out_path2) ==\
+        assert totest.get_flag_from_MESA_output(out_path2) ==\
                "Unit test 2"
-        assert totest.get_flag_from_MESA_output(test_out_path3) ==\
+        assert totest.get_flag_from_MESA_output(out_path3) ==\
                "Unit test 3"
-        assert totest.get_flag_from_MESA_output(test_out_path4) ==\
+        assert totest.get_flag_from_MESA_output(out_path4) ==\
                "reach cluster timelimit"
-        assert totest.get_flag_from_MESA_output(test_out_path5) ==\
+        assert totest.get_flag_from_MESA_output(out_path5) ==\
                "reach cluster timelimit"
-        assert totest.get_flag_from_MESA_output(test_out_path6+".gz") ==\
+        assert totest.get_flag_from_MESA_output(out_path6+".gz") ==\
                "min_timestep_limit"
 
     def test_get_mass_transfer_flag(self, star_history, binary_history):

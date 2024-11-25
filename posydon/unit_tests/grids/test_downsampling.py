@@ -7,6 +7,8 @@ __authors__ = [
 
 # import the module which will be tested
 import posydon.grids.downsampling as totest
+# aliases
+np = totest.np
 
 # import other needed code for the tests, which is not already imported in the
 # module you like to test
@@ -48,24 +50,23 @@ class TestFunctions:
                        [0.8, 0.5, 0.0, 1.0]]
         min_values = [0.0, 1.0, 3.0, -2.0]
         max_values = [0.5, 2.0, 3.0, -1.0]
-        assert totest.np.array_equal(totest.rescale_from_0_to_1(test_values),\
-               totest.np.array(norm_values))
+        assert np.array_equal(totest.rescale_from_0_to_1(test_values),\
+               np.array(norm_values))
         arr, minima, maxima = totest.rescale_from_0_to_1(test_values,\
                                                          return_minmax=True)
-        assert totest.np.array_equal(arr, totest.np.array(norm_values))
-        assert totest.np.array_equal(minima, totest.np.array(min_values))
-        assert totest.np.array_equal(maxima, totest.np.array(max_values))
+        assert np.array_equal(arr, np.array(norm_values))
+        assert np.array_equal(minima, np.array(min_values))
+        assert np.array_equal(maxima, np.array(max_values))
 
 
 class TestTrackDownsampler:
     @fixture
     def independent_sample(self):
-        return totest.np.array([0.0, 0.1, 1.0, 1.2])
+        return np.array([0.0, 0.1, 1.0, 1.2])
 
     @fixture
     def dependent_sample(self):
-        return totest.np.array([[1.1, 0.0], [1.0, 0.1], [0.7, 0.5],\
-                                [0.1, 0.1]])
+        return np.array([[1.1, 0.0], [1.0, 0.1], [0.7, 0.5], [0.1, 0.1]])
 
     @fixture
     def norm_dependent_sample(self, dependent_sample):
@@ -84,14 +85,13 @@ class TestTrackDownsampler:
         # __init__ got executed: the elements are created and initialized
         assert TrackDownsampler.verbose == False
         assert TrackDownsampler.keep == None
-        assert totest.np.array_equal(TrackDownsampler.t, independent_sample)
-        assert totest.np.array_equal(TrackDownsampler.X, norm_dependent_sample)
+        assert np.array_equal(TrackDownsampler.t, independent_sample)
+        assert np.array_equal(TrackDownsampler.X, norm_dependent_sample)
         # examples: dependend is 1D
         test_TrackDownsampler = totest.TrackDownsampler([0.0, 0.1], [1.0, 2.0])
-        assert totest.np.array_equal(test_TrackDownsampler.t,\
-               totest.np.array([0.0, 0.1]))
-        assert totest.np.array_equal(test_TrackDownsampler.X,\
-               totest.np.array([[0.0], [1.0]]))
+        assert np.array_equal(test_TrackDownsampler.t, np.array([0.0, 0.1]))
+        assert np.array_equal(test_TrackDownsampler.X, np.array([[0.0],\
+                                                                 [1.0]]))
         # bad input
         with raises(ValueError, match="`independent` is not iterable."):
             test_TrackDownsampler = totest.TrackDownsampler(None, None)
@@ -133,9 +133,9 @@ class TestTrackDownsampler:
         arr, minima, maxima = totest.rescale_from_0_to_1(dependent_sample,\
                                                          return_minmax=True)
         TrackDownsampler.rescale()
-        assert totest.np.array_equal(arr, TrackDownsampler.X)
-        assert totest.np.array_equal(minima, TrackDownsampler.minima)
-        assert totest.np.array_equal(maxima, TrackDownsampler.maxima)
+        assert np.array_equal(arr, TrackDownsampler.X)
+        assert np.array_equal(minima, TrackDownsampler.minima)
+        assert np.array_equal(maxima, TrackDownsampler.maxima)
 
     def test_extract_downsample(self, independent_sample, dependent_sample,\
                                 norm_dependent_sample, TrackDownsampler):
@@ -144,11 +144,11 @@ class TestTrackDownsampler:
         for k in [None, independent_sample<1.0]:
             TrackDownsampler.keep = k
             t, X = TrackDownsampler.extract_downsample()
-            assert totest.np.array_equal(t, independent_sample[k])
-            assert totest.np.array_equal(X, dependent_sample[k, :])
+            assert np.array_equal(t, independent_sample[k])
+            assert np.array_equal(X, dependent_sample[k, :])
             t, X = TrackDownsampler.extract_downsample(scale_back=False)
-            assert totest.np.array_equal(t, independent_sample[k])
-            assert totest.np.array_equal(X, norm_dependent_sample[k, :])
+            assert np.array_equal(t, independent_sample[k])
+            assert np.array_equal(X, norm_dependent_sample[k, :])
 
     def test_find_downsample(self, TrackDownsampler, capsys):
         assert isroutine(TrackDownsampler.find_downsample)
@@ -179,11 +179,11 @@ class TestTrackDownsampler:
             TrackDownsampler.find_downsample(max_err=-1.0)
         with raises(ValueError, match="`max_err` must be a non-negative"+\
                     " finite number."):
-            TrackDownsampler.find_downsample(max_err=totest.np.inf)
+            TrackDownsampler.find_downsample(max_err=np.inf)
 
     def test_downsample(self, independent_sample, dependent_sample, TrackDownsampler):
         assert isroutine(TrackDownsampler.downsample)
         # examples
         t, X = TrackDownsampler.downsample()
-        assert totest.np.array_equal(t, independent_sample)
-        assert totest.np.array_equal(X, dependent_sample)
+        assert np.array_equal(t, independent_sample)
+        assert np.array_equal(X, dependent_sample)

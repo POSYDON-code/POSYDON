@@ -7,6 +7,8 @@ __authors__ = [
 
 # import the module which will be tested
 import posydon.grids.psygrid as totest
+# aliases
+np = totest.np
 
 # import other needed code for the tests, which is not already imported in the
 # module you like to test
@@ -59,7 +61,7 @@ class TestElements:
                str(type(totest.HDF5_MEMBER_SIZE))
 
     def test_instance_H5_UNICODE_DTYPE(self):
-        assert isinstance(totest.H5_UNICODE_DTYPE, totest.np.dtype),\
+        assert isinstance(totest.H5_UNICODE_DTYPE, np.dtype),\
                "H5_UNICODE_DTYPE is of type: "+\
                str(type(totest.H5_UNICODE_DTYPE))
 
