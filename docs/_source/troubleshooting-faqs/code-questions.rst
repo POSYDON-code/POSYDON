@@ -83,7 +83,7 @@ Frequently Asked Questions
 
 10. **I've come across a FAILED binary. What does this mean?**
     - Answer: A FAILED binary is one that has encountered an error during the simulation due to the default flow and steps of POSYDON being unable to evolve them.
-    This can be due to a variety of reasons:
+    This can be due to a variety of reasons, for example:
     
     - The evolutionary state of the binary is not represented in the currently supported stellar evolution grids. 
     For example, we do not have a grid for Roche lobe overflow between two helium stars.
@@ -91,10 +91,7 @@ Frequently Asked Questions
     - The binary could not be matched to single star or a binary due to a too large matching error.
 
 10. **What approximations does POSYDON make?**
-    This is a complex question and the best location to look at would be the POSYDON paper(s).
-    However, some of the approximations are:
-
-    - The evolution of a merger product is approximated by a non-rotating single star, although we record the spin of the merger product.
+    This is a complex question and the best location to look at would be the POSYDON papers: `Fragos et al. (2022) <https://ui.adsabs.harvard.edu/abs/2023ApJS..264...45F/abstract>`_ and `Andrews et al. (submitted) <https://ui.adsabs.harvard.edu/abs/2024arXiv241102376A/abstract>`_.
 
 
 Additional Resources
