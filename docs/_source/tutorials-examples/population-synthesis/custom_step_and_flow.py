@@ -31,7 +31,7 @@ class my_CE_step(object):
             comp_star = binary.star_1
         else:
             raise ValueError("CEE does not apply if `event` is not "
-                            "`oCE1`, 'oDoubleCE1', `oCE2`, or `oDoubleCE1`")
+                            "`oCE1`, `oDoubleCE1`, `oCE2`, or `oDoubleCE1`")
 
         binary.orbital_period /= 2.
         if donor_star.he_core_mass is None:
