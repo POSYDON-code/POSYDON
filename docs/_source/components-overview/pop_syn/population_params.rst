@@ -674,6 +674,14 @@ It also contains which sampling distributions to use for the initial conditions 
     - | In units of solar metallicity. Supported values ``[2., 1., 0.45, 0.2, 0.1, 0.01, 0.001, 0.0001]``
     - ``[1.]``
 
+  * - ``error_checking_verbose``
+    - | If True, write all POSYDON errors to stderr at runtime
+    - ``False``
+
+  * - ``warnings_verbose``
+    - | If True, write all POSYDON warnings to stderr at runtime
+    - ``False``
+
   * - ``entropy``
     - | Random Number Generation: uses system entropy.
     - ``None``
