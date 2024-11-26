@@ -4,6 +4,15 @@
 Installation
 ############
 
+.. warning::
+
+    **POSYDON v1**
+
+    You are currently viewing the documentation for POSYDON v1.0.4. If you are
+    looking for the documentation of the latest version of POSYDON, please
+    visit the `latest documentation <https://posydon.org/POSYDON/>`_.
+
+
 The easiest way to start with POSYDON is to install it from Anaconda
 (Recommended way), and call an executable script that downloads the grid
 data automatically.
@@ -13,7 +22,7 @@ POSYDON manually through `github` (Manual Installation). Below we describe both
 ways.
 
 =========================================================
-Installing POSYDON v1.0.0 from Anaconda (Recommended way)
+Installing POSYDON v1.0.4 from Anaconda (Recommended way)
 =========================================================
 
 Installation
@@ -22,25 +31,25 @@ Installation
 We recommend using Anaconda and to install POSYDON in a virtual environment.
 We have created a package which can be accessed through conda-forge. On Linux,
 the new conda environment can be created (we have named our environment
-posydon-example, but you can choose any name), the conda-forge channel added,
+posydon_conda, but you can choose any name), the conda-forge channel added,
 and the required library installation can all be completed in one line using
 the terminal or command line:
 
 .. code-block::
 
-    conda create --name posydon-example -c posydon -c conda-forge posydon
+    conda create --name posydon_conda -c posydon -c conda-forge posydon=1.0.4
 
 On Mac (or if you have problems with the above command on Linux), these steps
 likely need to be separately run:
 
 .. code-block::
 
-    conda create -n posydon-conda python=3.7
-    conda activate posydon-conda
+    conda create -n posydon_conda python=3.7
+    conda activate posydon_conda
     conda config --add channels conda-forge
     conda config --add channels posydon
     conda config --set channel_priority false
-    conda install posydon
+    conda install posydon=1.0.4
 
 In case of OSX-ARM architectures, where many packages of Python 3.7 are not
 available, please use the following commands:
@@ -53,20 +62,20 @@ available, please use the following commands:
     conda config --add channels conda-forge
     conda config --add channels posydon
     conda install python=3.7
-    conda install posydon
+    conda install posydon=1.0.4
 
 Now, you can activate the environment with
 
 .. code-block::
 
-    conda activate posydon
+    conda activate posydon_conda
 
 
 Downloading the POSYDON data
 ----------------------------
 Because the data is large, ~10 GB, it must be downloaded
 with an explicit command. Export the path to where you want
-to clone the data, e.g. `/home/`, and download the data from
+to clone the data, e.g. ``/home/``, and download the data from
 ZENODO with the following commands
 
 .. code-block::
@@ -79,7 +88,7 @@ ZENODO with the following commands
 
 
 ==========================================================
-Installing POSYDON v.1.0 from GitHub (Manual Installation)
+Installing POSYDON v.1.0.4 from GitHub (Manual Installation)
 ==========================================================
 
 Creating a conda environment
@@ -87,7 +96,7 @@ Creating a conda environment
 
 As above, we recommend using Anaconda to install POSYDON in a virtual
 environment. After creating the environment (you can choose any name, e.g.,
-`posydon`, or `posydon_env`) like this:
+``posydon``, or ``posydon_env``) like this:
 
 .. code-block::
 
@@ -102,11 +111,11 @@ proceed with the installation, you will need to activate the environment:
 
 Cloning POSYDON
 ---------------
-Clone the repository in a local directory, e.g. `/home/POSYDON/`, with
+Clone the repository in a local directory, e.g. ``/home/POSYDON/``, with
 
 .. code-block::
 
-    git clone https://github.com/POSYDON-code/POSYDON.git
+    git clone https://github.com/POSYDON-code/POSYDON.git --branch v1.0.4
 
 
 The directory will contain the following structure:
@@ -132,11 +141,13 @@ Export the path to the cloned POSYDON code (you can add this line to your
 Installing the package
 ~~~~~~~~~~~~~~~~~~~~~~
 From the cloned POSYDON directory execute the commands to install POSYDON and
-the `mpi4py` dependency (first make sure you are on the main branch!)
+the ``mpi4py`` dependency. 
+With the git cloning command above, you should have downloaded the v1.0.4 version of
+POSYDON.
 
 .. code-block::
 
-    git checkout main
+    cd $PATH_TO_POSYDON    
     pip install -e .
     conda install mpi4py
 
