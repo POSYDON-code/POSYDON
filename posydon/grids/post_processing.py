@@ -89,6 +89,8 @@ def post_process_grid(grid, index=None, star_2_CO=True, MODELS=MODELS,
 
     This function post processes any supported grid and computes:
     - Core collapse quantities for 5 prescriptions given the fiducial POSYDON
+    This function post processes any supported grid and computes:
+    - Core collapse quantities for 5 prescriptions given the fiducial POSYDON
     assumption given in MODEL plus:
       A: direct collapse
       B: Fryer+12-rapid
@@ -100,10 +102,13 @@ def post_process_grid(grid, index=None, star_2_CO=True, MODELS=MODELS,
       compact object mass and spin.
     - Core masses at he-depletion (used in Patton core collapse)
     - Mass envelopes for common envelope step.
+    - Core masses at he-depletion (used in Patton core collapse)
+    - Mass envelopes for common envelope step.
 
     Parameters
     ----------
     grid : PSyGrid
+        MESA grid in PSyGrid format.
         MESA grid in PSyGrid format.
     index : None, touple or int
         If None, loop over all indicies otherwise provide a range, e.g. [10,20]
@@ -116,6 +121,7 @@ def post_process_grid(grid, index=None, star_2_CO=True, MODELS=MODELS,
         If `True` the PSyGrid contains single stars.
     verbose : bool
         If `True` print the results of each core collapse on screen.
+        If `True` print the results of each core collapse on screen.
 
     Returns
     -------
@@ -124,6 +130,7 @@ def post_process_grid(grid, index=None, star_2_CO=True, MODELS=MODELS,
         processed values. This is used to ensure one to one mapping when
         appending the extra columns back to a grid.
     EXTRA_COLUMNS: dict
+        Dictionary containing all post processed quantities.
         Dictionary containing all post processed quantities.
 
     """
@@ -436,6 +443,7 @@ def add_post_processed_quantities(grid, MESA_dirs_EXTRA_COLUMNS, EXTRA_COLUMNS,
 
     This function appends the quantities computed in post_process_grid to any
     grid. Note that this function ensures you can append the quantities only if
+    grid. Note that this function ensures you can append the quantities only if
     the grid follows the order of MESA_dirs_EXTRA_COLUMNS.
 
     Parameters
@@ -448,7 +456,9 @@ def add_post_processed_quantities(grid, MESA_dirs_EXTRA_COLUMNS, EXTRA_COLUMNS,
         appending the extra columns back to a grid.
     EXTRA_COLUMNS: dict
         Dictionary containing all post processed quantities.
+        Dictionary containing all post processed quantities.
     verbose : bool
+        If `True` print the results of each core collapse on screen.
         If `True` print the results of each core collapse on screen.
 
     """
