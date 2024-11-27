@@ -1429,7 +1429,7 @@ class Population(PopulationIO):
 
         return self._formation_channels
 
-    def calculate_formation_channels(self, mt_history=False):
+    def calculate_formation_channels(self, mt_history=True):
         """Calculate the formation channels of the population.
 
         mt_history is a boolean that determines if the detailed mass-transfer history
@@ -2478,7 +2478,7 @@ class Rates(TransientPopulation):
         with pd.HDFStore(self.filename, mode="r") as store:
             return store.select(self.base_path + key, start=start, stop=stop)
 
-    def calculate_intrinsic_rate_density(self, mt_channels=False):
+    def calculate_intrinsic_rate_density(self, channels=False):
         """
         Compute the intrinsic rate density over redshift of the transient population.
 
@@ -2487,7 +2487,7 @@ class Rates(TransientPopulation):
 
         Parameters
         ----------
-        mt_channels : bool, optional
+        channels : bool, optional
             Flag indicating whether to calculate the intrinsic rate density for each channel separately. Default is False.
 
         Returns
@@ -2500,7 +2500,7 @@ class Rates(TransientPopulation):
         z_horizon = self.edges_redshift_bins
         n = len(z_horizon)
 
-        if mt_channels:
+        if channels:
             channels = self.select(columns=["channel"])
             unique_channels = np.unique(channels)
         else:
