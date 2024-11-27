@@ -201,7 +201,7 @@ class StepCEE(object):
             star_to_merge = "2"
         else:
             raise ValueError("CEE does not apply if `event` is not "
-                             "`oCE1`, 'oDoubleCE1' or `oCE2`, 'oDoubleCE1'")
+                             "`oCE1`, `oDoubleCE1`, `oCE2`,or `oDoubleCE1`")
         # Check for double CE
         double_CE = binary.event in ["oDoubleCE1", "oDoubleCE2"]
 
