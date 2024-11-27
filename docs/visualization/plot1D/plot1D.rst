@@ -1,7 +1,7 @@
 .. _plot1D:
 
 ##############################################
-1D plotting functionalities for POSYON GRIDS
+1D plotting functionalities for POSYDON GRIDS
 ##############################################
 
 

@@ -6,7 +6,7 @@ Licence
 
 BSD 3-Clause License
 
-Copyright (c) 2022, Tassos Fragos
+Copyright (c) 2024, Tassos Fragos
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without

@@ -105,7 +105,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'posydon'
-copyright = u'2022, Tassos Fragos'
+copyright = u'2024, Tassos Fragos'
 author = u'POSYDON Collaboration'
 
 # The version info for the project you're documenting, acts as replacement for

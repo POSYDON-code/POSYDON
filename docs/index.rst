@@ -73,7 +73,7 @@ Table of Contents
 License & Attribution
 ---------------------
 
-Copyright (c) 2022, Tassos Fragos
+Copyright (c) 2024, Tassos Fragos
 
 If you make use of POSYDON in your work, please cite our paper
 (`arXiv <https://arxiv.org/abs/2202.05892>`_,
