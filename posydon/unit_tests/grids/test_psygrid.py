@@ -375,27 +375,201 @@ class TestValues:
 
 
 class TestFunctions:
+    @fixture
+    def ConfigFile(self):
+        # a ConfigFile object for testing
+        configfile = totest.ConfigFile()
+        configfile.entries["binary"] = False
+        configfile.entries["history_DS_error"] = None
+        configfile.entries["history_DS_exclude"] = None
+        configfile.entries["profile_DS_error"] = None
+        configfile.entries["profile_DS_exclude"] = None
+        configfile.entries["profile_DS_interval"] = None
+        return configfile
+
+    @fixture
+    def star_history(self):
+        # a temporary star history for testing
+        return np.array([(1.0, 0.2), (1.0e+2, 0.9), (1.0e+3, 0.2)],\
+                        dtype=[('star_age', '<f8'), ('center_he4', '<f8')])
+
+    @fixture
+    def binary_history(self):
+        # a temporary binary history for testing
+        return np.array([(1.0, 1.0), (1.1, 1.0e+2), (1.2, 1.0e+3)],\
+                        dtype=[('period_days', '<f8'), ('age', '<f8')])
+
+    @fixture
+    def profile(self):
+        # a temporary profile for testing
+        return np.array([(2.0, 1.0e+3), (1.1, 1.0e+2), (0.1, 1.0)],\
+                        dtype=[('mass', '<f8'), ('radius', '<f8')])
+
+    @fixture
+    def no_path(self, tmp_path):
+        # a path which does not exist for testing
+        return totest.os.path.join(tmp_path, "does_not_exist.test")
+
+    @fixture
+    def h5_out_path(self, tmp_path):
+        # a path to write to
+        return totest.os.path.join(tmp_path, "out.h5")
+
+    @fixture
+    def grid_path(self, tmp_path, binary_history, star_history, profile):
+        # a path to a psygrid file for testing
+        path = totest.os.path.join(tmp_path, "grid1.h5")
+        PSyGrid = totest.PSyGrid()
+        PSyGrid.filepath = path
+        PSyGrid.generate_config()
+        mesa_dir1 = totest.os.path.join(tmp_path, "m1_1.0_m2_1.0"+\
+                    "_initial_period_in_days_0.0_initial_z_0.01")
+        mesa_dir2 = totest.os.path.join(tmp_path, "m1_1.0_m2_1.0"+\
+                    "_initial_period_in_days_{}_initial_z_0.01".format(\
+                     binary_history['period_days'][0]))
+        with totest.h5py.File(path, "w") as hdf5_file:
+            hdf5_file.create_group("/grid/run0/")
+            hdf5_file.create_dataset("/grid/run1/binary_history", data=binary_history)
+            hdf5_file.create_dataset("/grid/run1/history1", data=star_history)
+            hdf5_file.create_dataset("/grid/run1/history2", data=star_history)
+            hdf5_file.create_dataset("/grid/run1/final_profile1", data=profile)
+            hdf5_file.create_dataset("/grid/run1/final_profile2", data=profile)
+            hdf5_file.create_dataset("/grid/initial_values", data=np.array([(np.nan), (binary_history['period_days'][0])], dtype=[('period_days', '<f8')]))
+            hdf5_file.create_dataset("/grid/final_values", data=np.array([(np.nan, "TF1"), (binary_history['period_days'][-1], "TF1")], dtype=[('period_days', '<f8'), ('termination_flag_1', totest.H5_UNICODE_DTYPE)]))
+            hdf5_file.attrs["config"] = totest.json.dumps(str(dict(PSyGrid.config)))
+            hdf5_file.create_dataset("relative_file_paths", data=np.array([(mesa_dir1), (mesa_dir2)], dtype=totest.H5_UNICODE_DTYPE))
+        return path
+
     # test functions
-    def test_downsample_history(self):
+    def test_downsample_history(self, ConfigFile, star_history,\
+                                binary_history):
         # missing argument
         with raises(TypeError, match="missing 4 required positional"+\
                     " arguments: 'bh', 'h1', 'h2', and 'params'"):
             totest.downsample_history()
-        pass
+        # bad input
+        with raises(TypeError, match="'NoneType' object is not subscriptable"):
+            totest.downsample_history(None, None, None, None)
+        # examples: failed
+        for bh in [None, binary_history]:
+            for h1 in [None, star_history]:
+                for h2 in [None, star_history]:
+                    assert totest.downsample_history(bh, h1, h2, ConfigFile)\
+                           == (bh, h1, h2)
+        ConfigFile.entries["history_DS_error"] = 0.1
+        assert totest.downsample_history(None, None, None, ConfigFile) ==\
+               (None, None, None)
+        # bad input
+        tests = [(bh, h1, h2) for bh in [None,\
+                                         binary_history[['period_days']]]\
+                              for h1 in [None, star_history[['center_he4']]]\
+                              for h2 in [None, star_history]]
+        tests.remove((None, None, None))
+        for (bh, h1, h2) in tests:
+            with raises(TypeError, match="argument of type 'NoneType' is not"+\
+                        " iterable"):
+                totest.downsample_history(bh, h1, h2, ConfigFile)
+        ConfigFile.entries["history_DS_exclude"] = ['star_age']
+        for (bh, h1, h2) in tests:
+            if h1 is None:
+                with raises(TypeError, match="'NoneType' object is not"+\
+                            " subscriptable"):
+                    totest.downsample_history(bh, h1, h2, ConfigFile)
+            else:
+                with raises(ValueError, match="no field of name star_age"):
+                    totest.downsample_history(bh, h1, h2, ConfigFile)
+        ConfigFile.entries["binary"] = True
+        for (bh, h1, h2) in tests:
+            if bh is None:
+                with raises(TypeError, match="'NoneType' object is not"+\
+                            " subscriptable"):
+                    totest.downsample_history(bh, h1, h2, ConfigFile)
+            else:
+                with raises(ValueError, match="no field of name age"):
+                    totest.downsample_history(bh, h1, h2, ConfigFile)
+        with raises(IndexError, match="Unequal numbers of rows in histories."):
+            totest.downsample_history(binary_history, star_history,\
+                                      star_history[1:], ConfigFile)
+        # examples:
+        bh, h1, h2 = totest.downsample_history(binary_history, star_history,\
+                                               star_history, ConfigFile)
+        assert np.array_equal(bh, binary_history)
+        assert np.array_equal(h1, star_history)
+        assert np.array_equal(h2, star_history)
 
-    def test_downsample_profile(self):
+    def test_downsample_profile(self, ConfigFile, profile):
         # missing argument
         with raises(TypeError, match="missing 2 required positional"+\
                     " arguments: 'profile' and 'params'"):
             totest.downsample_profile()
-        pass
+        # bad input
+        with raises(TypeError, match="'NoneType' object is not subscriptable"):
+            totest.downsample_profile(None, None)
+        # examples: failed
+        assert np.array_equal(totest.downsample_profile(profile, ConfigFile),\
+                              profile)
+        ConfigFile.entries["profile_DS_error"] = 0.1
+        assert totest.downsample_profile(None, ConfigFile) is None
+        # bad input
+        with raises(TypeError, match="argument of type 'NoneType' is not"+\
+                    " iterable"):
+            totest.downsample_profile(profile, ConfigFile)
+        # examples
+        ConfigFile.entries["profile_DS_exclude"] = ['mass']
+        assert np.array_equal(totest.downsample_profile(profile, ConfigFile),\
+                              profile)
 
-    def test_join_grids(self):
+    def test_join_grids(self, no_path, h5_out_path, grid_path, capsys):
+        def check_h5_content(path, required_data={}, required_attrs={}):
+            """Function to check an hdf5 file
+
+            Parameters
+            ----------
+            path : str
+                Location of the hdf5 file
+            required_data : dict (optional)
+                A dictionary where the keys are references to objects/datasets
+                in the hdf5 file and the items are the ndarrays to be checked
+                against (if the item is None, only the existence of the object
+                is checked)
+            required_attrs : dict (optional)
+                A dictionary where the keys are references to attributes in the
+                hdf5 file and the items are lists of strings to be part of this
+                attribute
+            """
+            # test that file exists
+            assert totest.os.path.isfile(path)
+            with totest.h5py.File(path, "r") as hdf5_file:
+                # test attribute content
+                for s, vs in required_attrs.items():
+                    for v in vs:
+                        assert v in hdf5_file.attrs[s]
+                # test data content
+                for s, v in required_data.items():
+                    if v is None:
+                        assert s in hdf5_file.keys()
+                    else:
+                        assert np.array_equal(hdf5_file[s][()], v)
         # missing argument
         with raises(TypeError, match="missing 2 required positional"+\
                     " arguments: 'input_paths' and 'output_path'"):
             totest.join_grids()
-        pass
+        # bad input
+        with raises(FileNotFoundError):
+            totest.join_grids([no_path], h5_out_path)
+        # examples
+        totest.join_grids([grid_path], h5_out_path, verbose=False)
+        rd = {}
+        for group in ['/', '/grid/', '/grid/run0/', '/grid/run1/']:
+            for key in totest.h5py.File(grid_path, "r")[group].keys():
+                rd[group+key] = None
+        ra = {"config": ["'description': 'joined'", "'compression': 'gzip9'"]+\
+                        [f"'{p}': None" for p in totest.PROPERTIES_TO_BE_NONE]}
+        check_h5_content(h5_out_path, required_data=rd, required_attrs=ra)
+#        with raises(AssertionError):
+#            with capsys.disabled():
+#                totest.join_grids([grid_path], h5_out_path, verbose=False)
+#                totest.join_grids(["/home/mkruckow/test_POSYDON_data/grid_combined_v1.h5"], h5_out_path, verbose=False)
 
 
 class TestPSyGrid:

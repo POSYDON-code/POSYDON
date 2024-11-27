@@ -499,7 +499,8 @@ class PSyGrid:
 
         # if already exists, am I allowed to overwrite?
         if not overwrite and os.path.exists(self.filepath):
-            raise Exception("File {} already exists.".format(self.filepath))
+            raise FileExistsError("File {} already exists.".format(
+                                  self.filepath))
 
         # open the HDF5 file and transcribe the grid
         driver_args = {} if "%d" not in self.filepath else {
@@ -2070,7 +2071,7 @@ def downsample_history(bh, h1, h2, params):
                 number_of_rows = len(history_table)
             else:
                 if len(history_table) != number_of_rows:
-                    raise Exception("Unequal numbers of rows in histories.")
+                    raise IndexError("Unequal numbers of rows in histories.")
 
             for column_name in history_table.dtype.names:
                 if column_name not in exclude:
@@ -2177,6 +2178,7 @@ def join_grids(input_paths, output_path,
         curconfig = grid.config
 
         # check we did not forget about a property, and their consistency
+        print(curconfig.keys(), ALL_PROPERTIES)
         assert len(ALL_PROPERTIES) == len(curconfig.keys())
         for key in curconfig.keys():
             assert key in ALL_PROPERTIES
