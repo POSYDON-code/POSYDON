@@ -47,8 +47,8 @@ def post_process_grid(grid, index=None, star_2_CO=True, MODEL=MODEL,
                       single_star=False, verbose=False):
     """Compute post processed quantitiy of any grid.
 
-    This function post process any supported grid and computes:
-    - Core collpase quantities for 5 prescritions given the fiducial POSYDON
+    This function post processes any supported grid and computes:
+    - Core collapse quantities for 5 prescriptions given the fiducial POSYDON
     assumption given in MODEL plus:
       A: direct collapse
       B: Fryer+12-rapid
@@ -58,13 +58,13 @@ def post_process_grid(grid, index=None, star_2_CO=True, MODEL=MODEL,
       for each prescrition we store the compact object state (WD/NS/BH),
       SN type (WD, ECSN, CCSN, PISN, PPISN), fallback mass fraction f_gb,
       compact object mass and spin.
-    - Core masses at he-depletion (used in Patton core collpase)
-    - Mass envelopes for common ennvelope step.
+    - Core masses at he-depletion (used in Patton core collapse)
+    - Mass envelopes for common envelope step.
 
     Parameters
     ----------
     grid : PSyGrid
-        MESA gri in PSyGrid format.
+        MESA grid in PSyGrid format.
     index : None, touple or int
         If None, loop over all indicies otherwise provide a range, e.g. [10,20]
         or a index, e.g. 42.
@@ -75,7 +75,7 @@ def post_process_grid(grid, index=None, star_2_CO=True, MODEL=MODEL,
     single_star : bool
         If `True` the PSyGrid contains single stars.
     verbose : bool
-        If `True` print on screen the results of each core collpase.
+        If `True` print the results of each core collapse on screen.
 
     Returns
     -------
@@ -84,7 +84,7 @@ def post_process_grid(grid, index=None, star_2_CO=True, MODEL=MODEL,
         processed values. This is used to ensure one to one mapping when
         appending the extra columns back to a grid.
     EXTRA_COLUMNS: dict
-        Dictionary containing all post processe quantities.
+        Dictionary containing all post processed quantities.
 
     """
     CORE_COLLAPSES = [['direct', ''], ['Fryer+12-rapid', ''],
@@ -227,7 +227,7 @@ def post_process_grid(grid, index=None, star_2_CO=True, MODEL=MODEL,
                 EXTRA_COLUMNS['S%s_center_other' % (j+1)].append(None)
 
         if not single_star:
-            # core collpase quantities
+            # core collapse quantities
             if interpolation_class in ['no_MT', 'stable_MT']:
                 if star_2_CO or TF1 == 'Primary has depleted central carbon':
                     star = binary.star_1
@@ -364,7 +364,7 @@ def add_post_processed_quantities(grid, MESA_dirs_EXTRA_COLUMNS, EXTRA_COLUMNS,
     """Append post processed quantity to a grid.
 
     This function appends the quantities computed in post_process_grid to any
-    grid. Note that this function ensure you can append the quantities only if
+    grid. Note that this function ensures you can append the quantities only if
     the grid follows the order of MESA_dirs_EXTRA_COLUMNS.
 
     Parameters
@@ -376,9 +376,9 @@ def add_post_processed_quantities(grid, MESA_dirs_EXTRA_COLUMNS, EXTRA_COLUMNS,
         processed values. This is used to ensure one to one mapping when
         appending the extra columns back to a grid.
     EXTRA_COLUMNS: dict
-        Dictionary containing all post processe quantities.
+        Dictionary containing all post processed quantities.
     verbose : bool
-        If `True` print on screen the results of each core collpase.
+        If `True` print the results of each core collapse on screen.
 
     """
     # check correspondance of EXTRA_COLUMNS with grid
