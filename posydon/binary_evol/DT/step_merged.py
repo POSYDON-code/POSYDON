@@ -549,7 +549,7 @@ class MergedStep(IsolatedStep):
                 ## in this case, want CO companion object to stay the same, and base star to be assigned massless remnant
                 return massless_remnant, merged_star
         else:
-            print("Combination of merging star states not expected: ", s1, s2)
+            raise ModelError(f"Combination of merging star states not expected: {s1} {s2}")
 
         # ad hoc spin of merged star to be used in the detached step
         merged_star.surf_avg_omega_div_omega_crit = self.merger_critical_rot
