@@ -1416,7 +1416,7 @@ class TestFunctions:
         assert totest.cumulative_mass_transfer_numeric(\
                [totest.MT_CASE_NO_RLO, totest.MT_CASE_UNDETERMINED]) ==\
                [totest.MT_CASE_UNDETERMINED, totest.MT_CASE_NO_RLO]
-        # examples: cut out dublicates
+        # examples: cut out duplicates
         for i in range(1,4):
             mt = i*[totest.MT_CASE_A] + 2*i*[totest.MT_CASE_B] +\
                  3*i*[totest.MT_CASE_A]
