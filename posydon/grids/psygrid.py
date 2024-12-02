@@ -1541,7 +1541,7 @@ class PSyGrid:
         return ret
 
     def __getitem__(self, index):
-        """Return a PSyRunView instance for the run with index `idx`."""
+        """Return a PSyRunView instance for the run with index `index`."""
         if not np.issubdtype(type(index), int):
             raise TypeError("Index {} is not of type int".format(index))
         if index not in self:
