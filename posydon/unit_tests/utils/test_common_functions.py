@@ -845,11 +845,11 @@ class TestFunctions:
                     " histogram document."):
             totest.read_histogram_from_file(path=failing_csv_path2)
         with raises(IndexError, match="The number of elements in the second"+\
-                    " data line is not one less then the number in the first"+\
+                    " data line is not one less than the number in the first"+\
                     " data line."):
             totest.read_histogram_from_file(path=failing_csv_path3)
         with raises(IndexError, match="The number of elements in the second"+\
-                    " data line is not one less then the number in the first"+\
+                    " data line is not one less than the number in the first"+\
                     " data line."):
             totest.read_histogram_from_file(path=failing_csv_path4)
         # examples:
