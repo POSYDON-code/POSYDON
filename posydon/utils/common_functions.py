@@ -2071,7 +2071,7 @@ def separation_evol_wind_loss(M_current, M_init, Mcomp, A_init):
 
 def period_change_stabe_MT(period_i, Mdon_i, Mdon_f, Macc_i,
                            alpha=0.0, beta=0.0):
-    """Change the binary period after a semi-detahed stable MT phase.
+    """Change the binary period after a semi-detached stable MT phase.
 
     Calculated in Sorensen, Fragos et al.  2017A&A...597A..12S.
     Note that MT efficiencies are assumed constant (i.e., not time-dependent)
