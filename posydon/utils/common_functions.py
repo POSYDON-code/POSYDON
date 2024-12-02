@@ -797,7 +797,7 @@ def read_histogram_from_file(path):
                          " document.")
     if len(arrays[0]) - 1 != len(arrays[1]):
         raise IndexError("The number of elements in the second data line is"
-                         " not one less then the number in the first data"
+                         " not one less than the number in the first data"
                          " line.")
 
     return arrays
