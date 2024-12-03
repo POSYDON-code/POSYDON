@@ -398,6 +398,10 @@ It also contains which sampling distributions to use for the initial conditions 
      - True ( if True evolve with MPI, equivalent to the following: from mpi4py import MPI, comm = MPI.COMM_WORLD)
    * - `metallicity`
      - [2., 1., 0.45, 0.2, 0.1, 0.01, 0.001, 0.0001] (In units of solar metallicity)
+   * - `history_verbose`
+    - | If True, record extra functional steps in the output DataFrames
+    - | (These extra steps represent internal workings of POSYDON rather than physical phases of evolution)
+    - ``False``
    * - `entropy`
      - `None` (Random Number Generation: uses system entropy (recommended))
    * - `number_of_binaries`
