@@ -1041,6 +1041,19 @@ DEFAULT_LABELS = {
     'S2_f_beaming': [r'$f_\mathrm{beaming}$', r'$\log_{10}(f_\mathrm{beaming})$'],
     'S1_eta' : [r'$\eta$', r'$\log_{10}(\eta)$'],
     'S2_eta' : [r'$\eta$', r'$\log_{10}(\eta)$'],
+
+    # Termination flags (one entry for each key in DEFAULT_MARKERS_COLORS_LEGENDS)
+    'termination_flag_1' : [r'MESA termination\_code', r'MESA termination\_code'],
+    'termination_flag_2' : [r'Mass transfer history', r'Mass transfer history'],
+    'termination_flag_3' : [r'Final stellar state of star 1', r'Final stellar state of star 1'],
+    'termination_flag_4' : [r'Final stellar state of star 2', r'Final stellar state of star 2'],
+    'combined_TF12' : [r'Final mass transfer state', r'Final mass transfer state'],
+    'debug' : [r'Final binary state', r'Final binary state'],
+    'interpolation_class' : [r'Interpolation class', r'Interpolation class'],
+    'interpolation_class_errors' : [r'Interpolation class', r'Interpolation class'],
+    'SN_type' : [r'Supernova type', r'Supernova type'],
+    'CO_type' : [r'Compact object type', r'Compact object type'],
+    'state' : [r'Remnant state', r'Remnant state'],
 }
 
 # add core collapse MODEL variables
