@@ -328,9 +328,9 @@ class Presenter:
         "S2_profile": "",
     }
 
-    def __init__(self, filename, path="./", binary=False):
+    def __init__(self, filename, path="./"):
         """Initialize a Presenter instance."""
-        self._model = SimulationModel(filename=filename, path=path, binary=binary)
+        self._model = SimulationModel(filename=filename, path=path)
         self._model.load_csv()
 
         self._main_window = MainWindow()
