@@ -681,6 +681,11 @@ It also contains which sampling distributions to use for the initial conditions 
   * - ``warnings_verbose``
     - | If True, write all POSYDON warnings to stderr at runtime
     - ``False``
+    
+  * - ``history_verbose``
+    - | If True, record extra functional steps in the output DataFrames
+    - | (These extra steps represent internal workings of POSYDON rather than physical phases of evolution)
+    - ``False``
 
   * - ``entropy``
     - | Random Number Generation: uses system entropy.
