@@ -828,9 +828,9 @@ class TestFunctions:
                np.array([0.0, 0.5, 0.75, 1.0]))
 
     def test_read_histogram_from_file(self, failing_csv_path_3lines,\
-                                      failing_csv_path_1line,\ 
+                                      failing_csv_path_1line,\
                                       failing_csv_path_manyelements,\
-                                      failing_csv_path_wrongelements,\ 
+                                      failing_csv_path_wrongelements,\
                                       csv_path_ex1, csv_path_ex2):
         # missing argument
         with raises(TypeError, match="missing 1 required positional"+\
