@@ -175,12 +175,16 @@ Binary events are defined according to the following table:
     - The binary reached contact in the compact object phase.
   * - ``redirect_from_ZAMS``
     - The binary was redirected from ZAMS for a variety of reasons.
+    - Only recorded if history_verbose = True
   * - ``redirect_from_CO_HMS_RLO``
     - The binary was redirected from CO_HMS_RLO for a variety of reasons.
+    - Only recorded if history_verbose = True
   * - ``redirect_from_CO_HeMS``
     - The binary was redirected from CO_HeMS for a variety of reasons.
+    - Only recorded if history_verbose = True
   * - ``redirect_from_CO_HeMS_RLO``
     - The binary was redirected from CO_HeMS_RLO for a variety of reasons.
+    - Only recorded if history_verbose = True
   * - ``MaxTime_exceeded``
     - The maximum time of the evolution was exceeded.
   * - ``maxtime``
