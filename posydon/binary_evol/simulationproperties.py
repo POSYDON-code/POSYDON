@@ -15,6 +15,7 @@ __authors__ = [
 
 import time
 from posydon.utils.constants import age_of_universe
+from posydon.utils.x_ray_luminosities import x_ray_luminosity
 
 class SimulationProperties:
     """Class describing the properties of a population synthesis simulation."""
@@ -333,3 +334,38 @@ class PrintStepInfoHooks(EvolveHooks):
         """Report at the end of the evolution of each binary."""
         print("End evol for binary {}".format(binary.index), end='\n'*2)
         return binary
+
+
+class XrbLuminositiesHooks(EvolveHooks):
+    """Idetifies the X-ray binaries and calculates their X-ray luminosities
+    """
+    def pre_evolve(self, binary):
+        """Perform actions before a binary evolves."""
+        binary.xrb_luminosity = []
+        binary.xrb_beaming=[]
+        return binary
+
+    def pre_step(self, binary, step_name):
+        """Perform actions before every evolution step."""
+        return binary
+
+    def post_step(self, binary, step_name):
+        """Perform acctions after every evolution step."""
+        #print("in extra hooks, added XRB Lx and beaming = ", x_ray_luminosity(binary,observe_wind_XRB=False))
+        binary.xrb_luminosity.append(x_ray_luminosity(binary,observe_wind_XRB=False)[0])
+        binary.xrb_beaming.append(x_ray_luminosity(binary,observe_wind_XRB=False)[1])
+
+        return binary
+
+    def post_evolve(self, binary):
+        """Ensure None's are append to match rows in history."""
+
+        if binary.event == 'END' or binary.event == 'FAILED':
+             binary.xrb_luminosity.append(x_ray_luminosity(binary,observe_wind_XRB=False)[0])
+             binary.xrb_beaming.append(x_ray_luminosity(binary,observe_wind_XRB=False)[1])
+#            diff = int(len(binary.event_history) - len(binary.Lx))
+#            binary.xrb_luminosities += [0.0]*diff
+#            binary.xrb_beaming += [1.0]*diff
+
+        return binary
+

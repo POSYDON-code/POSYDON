@@ -363,7 +363,7 @@ def eddington_limit(binary, idx=-1):
             eta = 1 - np.sqrt(1 - (min(m_acc[i],
                                        np.sqrt(6) * m_ini) / (3 * m_ini))**2)
         else:
-            # 1.25 * 10**6 cm
+            # For NSs = 1.25 * 10**6 cm. For WDs = 2.9e8*(M)**(-1./3.)/const.Rsun
             acc_radius = CO_radius(m_acc[i], state_acc[i]) * const.Rsun
             eta = const.standard_cgrav*m_acc[i]/(acc_radius*const.clight**2)
 
@@ -374,56 +374,8 @@ def eddington_limit(binary, idx=-1):
     return mdot_edd / (const.msol / const.secyer), eta
 
 
-def beaming(binary):
-    """Calculate the geometrical beaming of a super-Eddington accreting source
-    [1]_, [2]_.
 
-    Compute the super-Eddington isotropic-equivalent accretion rate and the
-    beaming factor of a star. This does not change the intrinsic accretion onto
-    the accretor and is an observational effect due to the inflated structure
-    of the accretion disc that beams the outgoing X-ray emission. This is
-    important for observing super-Eddington X-ray sources
-    (e.g. ultraluminous X-ray sources). In case of a BH we are assuming that it
-    has zero spin which is not a good approximation for high accretion rates.
-
-    Parameters
-    ----------
-    binary : BinaryStar
-        The binary object.
-
-    Returns
-    -------
-    list
-        The super-Eddington isotropic-equivalent accretion rate and beaming
-        factor respcetively in solar units.
-
-    References
-    ----------
-    .. [1] Shakura, N. I. & Sunyaev, R. A. 1973, A&A, 24, 337
-    .. [2] King A. R., 2008, MNRAS, 385, L113
-
-    """
-    mdot_edd = eddington_limit(binary, idx=-1)[0]
-
-    rlo_mdot = 10**binary.lg_mtransfer_rate
-
-    if rlo_mdot >= mdot_edd:
-        if rlo_mdot > 8.5 * mdot_edd:
-            # eq. 8 in King A. R., 2009, MNRAS, 393, L41-L44
-            b = 73 / (rlo_mdot / mdot_edd)**2
-        else:
-            b = 1
-        # Shakura, N. I. & Sunyaev, R. A. 1973, A&A, 24, 337
-        mdot_beam = mdot_edd * (1 + np.log(rlo_mdot / mdot_edd)) / b
-    else:
-        b = 1
-        mdot_beam = 10**binary.lg_mtransfer_rate
-
-    return mdot_beam, b
-
-
-def bondi_hoyle(binary, accretor, donor, idx=-1, wind_disk_criteria=True,
-                scheme='Hurley+2002'):
+def bondi_hoyle(binary, accretor, donor, idx=-1, scheme='Hurley+2002'):
     """Calculate the Bondi-Hoyle accretion rate of a binary [1]_.
 
     Parameters
@@ -436,8 +388,6 @@ def bondi_hoyle(binary, accretor, donor, idx=-1, wind_disk_criteria=True,
         The donor in the binary.
     idx : int
         default: -1
-    wind_disk_criteria : bool
-        default: True, see [5]_
     scheme : str
         There are different options:
 
@@ -461,10 +411,8 @@ def bondi_hoyle(binary, accretor, donor, idx=-1, wind_disk_criteria=True,
     .. [3] Hurley, J. R., Tout, C. A., & Pols, O. R. 2002, MNRAS, 329, 897
     .. [4] Belczynski, K., Kalogera, V., Rasio, F. A., et al. 2008, ApJS, 174,
         223
-    .. [5] Sen, K. ,Xu, X. -T., Langer, N., El Mellah, I. , Schurmann, C., &
-        Quast, M., 2021, A&A
-    .. [6] Sander A. A. C., Vink J. S., 2020, MNRAS, 499, 873
-    .. [7] Kudritzki, R.-P., & Puls, J. 2000, ARA&A, 38, 613
+    .. [5] Sander A. A. C., Vink J. S., 2020, MNRAS, 499, 873
+    .. [6] Kudritzki, R.-P., & Puls, J. 2000, ARA&A, 38, 613
 
     """
     alpha = 1.5
@@ -562,20 +510,6 @@ def bondi_hoyle(binary, accretor, donor, idx=-1, wind_disk_criteria=True,
     # Bondi, H., & Hoyle, F. 1944, MNRAS, 104, 273
     mdot_acc = alpha * ((G * m_acc * Msun)**2
                         / (2 * v_rel**3 * v_wind * r**2)) * 10**lg_mdot
-
-    # eq. 10 in Sen, K. ,Xu, X. -T., Langer, N., El Mellah, I. , Schurmann, C.,
-    # Quast, M., 2021, A&A
-    if wind_disk_criteria:      # check if accretion disk will form
-        eta = 1.0/3.0           # wind accretion efficiency between 1 and 1/3
-        gamma = 1.0             # for non-spinning BH
-        q = m / m_acc
-        rdisk_div_risco = (
-            (2/3) * (eta / (1 + q)) ** 2
-            * (v / (const.clight * 0.01)) ** (-2)
-            * (1 + (v_wind / v) ** 2) ** (-4) * gamma ** (-1))
-        for i in range(len(rdisk_div_risco)):
-            if rdisk_div_risco[i] <= 1:         # No disk formed
-                mdot_acc[i] = 10**-99.0
 
     # make it Eddington-limited
     mdot_edd = eddington_limit(binary, idx=idx)[0]
