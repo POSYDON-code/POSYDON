@@ -415,7 +415,7 @@ class TestValues:
 
 class TestFunctions:
     @fixture
-    def failing_csv_path(self, tmp_path):
+    def failing_csv_path_3lines(self, tmp_path):
         # a temporary path to csv file for testing
         path = totest.os.path.join(tmp_path, "hist_fail.csv")
         with open(path, "w") as test_file:
@@ -425,7 +425,7 @@ class TestFunctions:
         return path
 
     @fixture
-    def failing_csv_path2(self, tmp_path):
+    def failing_csv_path_1line(self, tmp_path):
         # a temporary path to csv file for testing
         path = totest.os.path.join(tmp_path, "hist_fail2.csv")
         with open(path, "w") as test_file:
@@ -433,7 +433,7 @@ class TestFunctions:
         return path
 
     @fixture
-    def failing_csv_path3(self, tmp_path):
+    def failing_csv_path_manyelements(self, tmp_path):
         # a temporary path to csv file for testing
         path = totest.os.path.join(tmp_path, "hist_fail3.csv")
         with open(path, "w") as test_file:
@@ -443,7 +443,7 @@ class TestFunctions:
         return path
 
     @fixture
-    def failing_csv_path4(self, tmp_path):
+    def failing_csv_path_wrongelements(self, tmp_path):
         # a temporary path to csv file for testing
         path = totest.os.path.join(tmp_path, "hist_fail4.csv")
         with open(path, "w") as test_file:
@@ -452,7 +452,7 @@ class TestFunctions:
         return path
 
     @fixture
-    def csv_path(self, tmp_path):
+    def csv_path_ex1(self, tmp_path):
         # a temporary path to csv file for testing
         path = totest.os.path.join(tmp_path, "hist.csv")
         with open(path, "w") as test_file:
@@ -462,7 +462,7 @@ class TestFunctions:
         return path
 
     @fixture
-    def csv_path2(self, tmp_path):
+    def csv_path_ex2(self, tmp_path):
         # a temporary path to csv file for testing
         path = totest.os.path.join(tmp_path, "hist2.csv")
         with open(path, "w") as test_file:
@@ -827,9 +827,11 @@ class TestFunctions:
                y=np.array([0.2, 0.8]), size=4),\
                np.array([0.0, 0.5, 0.75, 1.0]))
 
-    def test_read_histogram_from_file(self, failing_csv_path,\
-                                      failing_csv_path2, failing_csv_path3,\
-                                      failing_csv_path4, csv_path, csv_path2):
+    def test_read_histogram_from_file(self, failing_csv_path_3lines,\
+                                      failing_csv_path_1line,\ 
+                                      failing_csv_path_manyelements,\
+                                      failing_csv_path_wrongelements,\ 
+                                      csv_path_ex1, csv_path_ex2):
         # missing argument
         with raises(TypeError, match="missing 1 required positional"+\
                     " argument: 'path'"):
@@ -840,23 +842,23 @@ class TestFunctions:
             totest.read_histogram_from_file(path=None)
         with raises(IndexError, match="More than two lines found in the"+\
                     " histogram document."):
-            totest.read_histogram_from_file(path=failing_csv_path)
+            totest.read_histogram_from_file(path=failing_csv_path_3lines)
         with raises(IndexError, match="Less than two lines found in the"+\
                     " histogram document."):
-            totest.read_histogram_from_file(path=failing_csv_path2)
+            totest.read_histogram_from_file(path=failing_csv_path_1line)
         with raises(IndexError, match="The number of elements in the second"+\
                     " data line is not one less than the number in the first"+\
                     " data line."):
-            totest.read_histogram_from_file(path=failing_csv_path3)
+            totest.read_histogram_from_file(path=failing_csv_path_manyelements)
         with raises(IndexError, match="The number of elements in the second"+\
                     " data line is not one less than the number in the first"+\
                     " data line."):
-            totest.read_histogram_from_file(path=failing_csv_path4)
+            totest.read_histogram_from_file(path=failing_csv_path_wrongelements)
         # examples:
-        arrays = totest.read_histogram_from_file(path=csv_path)
+        arrays = totest.read_histogram_from_file(path=csv_path_ex1)
         assert np.array_equal(arrays[0], np.array([0.1, 1.1, 2.1]))
         assert np.array_equal(arrays[1], np.array([1.0, 1.0]))
-        arrays = totest.read_histogram_from_file(path=csv_path2)
+        arrays = totest.read_histogram_from_file(path=csv_path_ex2)
         assert np.array_equal(arrays[0], np.array([0.2, 1.2, 2.2]))
         assert np.array_equal(arrays[1], np.array([2.0, 2.0]))
 
