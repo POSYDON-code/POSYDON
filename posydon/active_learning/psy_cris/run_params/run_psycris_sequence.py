@@ -13,6 +13,17 @@ from posydon.active_learning.psy_cris.utils import do_dynamic_sampling
 from posydon.active_learning.psy_cris.utils import calc_performance
 
 def main():
+    """Run a psy-cris sequence on synthetic data from the command line.
+
+    Parameters
+    ----------
+        N/A
+    
+    Notes
+    -----
+        This code is used in the work of:
+        Rocha et al. 2022, ApJ, 938, 64. doi:10.3847/1538-4357/ac8b05
+    """
     parser = argparse.ArgumentParser()
     parser.add_argument( "-ini", dest='inifile_path', type=str, help="Path to psy-cris inifile.")
     parser.add_argument( "-dir", dest='save_data_dir', type=str, help="Path to directory to save data.")
