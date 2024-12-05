@@ -1976,16 +1976,6 @@ class TestFunctions:
             star_profile[['energy']])
         bad_profile = np.array([-1.0, -1.0, -1.0, -1.0],\
                       dtype=([('energy', 'f8')]))
-        bad_profile2 = np.empty((2,), dtype=[(f, 'f8') for f in [\
-                       'x_mass_fraction_H', 'y_mass_fraction_He',\
-                       'neutral_fraction_H', 'neutral_fraction_He',\
-                       'avg_charge_He', 'energy']])
-        bad_profile2['x_mass_fraction_H'] = np.array([-1.0, -1.0])
-        bad_profile2['y_mass_fraction_He'] = np.array([-1.0, -1.0])
-        bad_profile2['neutral_fraction_H'] = np.array([0.5, 0.5])
-        bad_profile2['neutral_fraction_He'] = np.array([0.5, 0.5])
-        bad_profile2['avg_charge_He'] = np.array([0.5, 0.5])
-        bad_profile2['energy'] = np.array([0.5, 0.5])
         for CEOFL in ["lambda_from_profile_gravitational_plus_internal",\
                       "lambda_from_profile_gravitational_plus_internal_minus"+\
                       "_recombination"]:
