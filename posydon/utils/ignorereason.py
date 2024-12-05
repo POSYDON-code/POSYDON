@@ -1,6 +1,12 @@
 """Class for handling ignore reasons when creating new grids."""
 
 
+__authors__ = [
+    "Konstantinos Kovlakas <Konstantinos.Kovlakas@unige.ch>",
+    "Matthias Kruckow <Matthias.Kruckow@unige.ch>",
+]
+
+
 IGNORE_REASONS_PRIORITY = [
     # missing data files
     'ignored_no_history1',              # history1 is always needed

@@ -33,7 +33,7 @@ class ProgressBar():
     def __call__(self, block_num, block_size, total_size):
         if not self.pbar:
             self.pbar=progressbar.ProgressBar(widgets=self.widgets,
-                                              maxval=total_size)
+                                              max_value=total_size)
             self.pbar.start()
 
         downloaded = block_num * block_size
