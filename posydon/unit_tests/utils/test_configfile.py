@@ -9,6 +9,7 @@ __authors__ = [
 import posydon.utils.configfile as totest
 # aliases
 np = totest.np
+os = totest.os
 
 # import other needed code for the tests, which is not already imported in the
 # module you like to test
@@ -42,7 +43,7 @@ class TestFunctions:
     @fixture
     def ini_path(self, tmp_path):
         # a temporary path to ini file for testing
-        path = totest.os.path.join(tmp_path, "test.ini")
+        path = os.path.join(tmp_path, "test.ini")
         with open(path, "w") as test_file:
             test_file.write("[run_parameters]\n")
             test_file.write("test_bool1 = True\n")
@@ -77,19 +78,19 @@ class TestFunctions:
             totest.parse_inifile(1)
         # read test ini
         rp, s, mi, me = totest.parse_inifile(ini_path)
-        assert rp == {'MESA_DIR'.lower(): totest.os.environ['MESA_DIR'],\
+        assert rp == {'MESA_DIR'.lower(): os.environ['MESA_DIR'],\
                       'test_bool1'.lower(): True, 'test_bool2'.lower(): False,\
                       'test_None'.lower(): None}
-        assert s == {'MESA_DIR'.lower(): totest.os.environ['MESA_DIR'],\
+        assert s == {'MESA_DIR'.lower(): os.environ['MESA_DIR'],\
                      'test_exception'.lower():\
                      ["ast.parse('X=1'", "mode='eval')"]}
-        assert mi == {'MESA_DIR'.lower(): totest.os.environ['MESA_DIR'],\
+        assert mi == {'MESA_DIR'.lower(): os.environ['MESA_DIR'],\
                       'test_float'.lower(): 0.1, 'test_int'.lower(): 10,\
                       'test_list'.lower(): ['Unit Test1', 'Unit Test2'],\
                       'test_str1'.lower(): 'Unit Test',\
                       'test_str2'.lower(): ['Unit', 'Test'],\
                       'test_BinOp'.lower(): 11}
-        assert me == {'MESA_DIR'.lower(): totest.os.environ['MESA_DIR'],\
+        assert me == {'MESA_DIR'.lower(): os.environ['MESA_DIR'],\
                       'test_else'.lower(): "print('1')"}
         with monkeypatch.context() as mp:
             # replace parse to check recursion of _eval
@@ -111,7 +112,7 @@ class TestConfigFile:
     @fixture
     def json_path(self, tmp_path):
         # a temporary path to json file for testing
-        path = totest.os.path.join(tmp_path, "test.json")
+        path = os.path.join(tmp_path, "test.json")
         with open(path, "w") as test_file:
             test_file.write('{\n    "Unit": "Test"\n}\n')
         return path
@@ -141,7 +142,7 @@ class TestConfigFile:
                                              str(tmp_path)+"'"):
             totest.ConfigFile(path=tmp_path)
         # non-existing path
-        test_path = totest.os.path.join(tmp_path, "does_not_exist.test")
+        test_path = os.path.join(tmp_path, "does_not_exist.test")
         test_ConfigFile = totest.ConfigFile(test_path)
         assert test_ConfigFile.path == test_path
         test_ConfigFile = totest.ConfigFile(json_path)
@@ -177,23 +178,23 @@ class TestConfigFile:
         with raises(PermissionError, match="JSON file not saved: overwrite "+\
                                            "not permitted."):
             ConfigFile.save(path=tmp_path, overwrite=False)
-        test_path = totest.os.path.join(tmp_path, "save.test")
+        test_path = os.path.join(tmp_path, "save.test")
         ConfigFile.path = test_path
         ConfigFile.entries['Unit'] = "Test"
         ConfigFile.save()
-        assert totest.os.path.isfile(test_path)
+        assert os.path.isfile(test_path)
         # overwrite file
         ConfigFile.entries['second'] = "test"
         ConfigFile.save(overwrite=True)
-        assert totest.os.path.isfile(test_path)
+        assert os.path.isfile(test_path)
         with open(test_path, "r") as test_file:
             assert test_file.read() == '{\n    "Unit": "Test",\n'+\
                                           '    "second": "test"\n}'
         # ignore ConfigFile.path
-        test_path2 = totest.os.path.join(tmp_path, "save2.test")
+        test_path2 = os.path.join(tmp_path, "save2.test")
         ConfigFile.path = test_path2
         ConfigFile.save(path=test_path)
-        assert totest.os.path.isfile(test_path2) == False
+        assert os.path.isfile(test_path2) == False
 
     def test_load(self, ConfigFile, json_path):
         assert isroutine(ConfigFile.load)

@@ -9,6 +9,7 @@ __authors__ = [
 import posydon.utils.common_functions as totest
 # aliases
 np = totest.np
+os = totest.os
 
 # import other needed code for the tests, which is not already imported in the
 # module you like to test
@@ -418,7 +419,7 @@ class TestFunctions:
     def csv_path_failing_3_data_lines(self, tmp_path):
         # a temporary path to csv file for testing
         # it contains 4 lines, where three having data in there
-        path = totest.os.path.join(tmp_path, "hist_fail.csv")
+        path = os.path.join(tmp_path, "hist_fail.csv")
         with open(path, "w") as test_file:
             test_file.write("0.0,1.0\n")
             test_file.write("1.0,1.0\n\n")
@@ -429,7 +430,7 @@ class TestFunctions:
     def csv_path_failing_empty_line(self, tmp_path):
         # a temporary path to csv file for testing
         # it only contains an empty line
-        path = totest.os.path.join(tmp_path, "hist_fail2.csv")
+        path = os.path.join(tmp_path, "hist_fail2.csv")
         with open(path, "w") as test_file:
             test_file.write("")
         return path
@@ -439,7 +440,7 @@ class TestFunctions:
         # a temporary path to csv file for testing
         # it contains an commented line and two data lines with the same number
         # of elements
-        path = totest.os.path.join(tmp_path, "hist_fail3.csv")
+        path = os.path.join(tmp_path, "hist_fail3.csv")
         with open(path, "w") as test_file:
             test_file.write("#0.0,1.0\n")
             test_file.write("0.0,1.0,2.0\n")
@@ -451,7 +452,7 @@ class TestFunctions:
         # a temporary path to csv file for testing
         # it contains 2 data lines, where the elements of the second one are
         # not interpretable as floats
-        path = totest.os.path.join(tmp_path, "hist_fail4.csv")
+        path = os.path.join(tmp_path, "hist_fail4.csv")
         with open(path, "w") as test_file:
             test_file.write("0.0,1.0,2.0\n")
             test_file.write("Unit,Test\n")
@@ -461,7 +462,7 @@ class TestFunctions:
     def csv_path_ex1(self, tmp_path):
         # a temporary path to csv file for testing
         # correct data with a comment line
-        path = totest.os.path.join(tmp_path, "hist.csv")
+        path = os.path.join(tmp_path, "hist.csv")
         with open(path, "w") as test_file:
             test_file.write("#0.1,1.1\n")
             test_file.write("0.1,1.1,2.1\n")
@@ -472,7 +473,7 @@ class TestFunctions:
     def csv_path_ex2(self, tmp_path):
         # a temporary path to csv file for testing
         # correct data with an empty line
-        path = totest.os.path.join(tmp_path, "hist2.csv")
+        path = os.path.join(tmp_path, "hist2.csv")
         with open(path, "w") as test_file:
             test_file.write("0.2,1.2,2.2\n\n")
             test_file.write("2.0,2.0\n")
@@ -494,12 +495,11 @@ class TestFunctions:
                     " arguments: 'L' and 'R'"):
             totest.stefan_boltzmann_law()
         # examples
-        assert totest.stefan_boltzmann_law(1.0, 1.0) ==\
-               approx(5.77603658298e+3, abs=6e-9)
-        assert totest.stefan_boltzmann_law(2.0, 1.0) ==\
-               approx(6.86890380099e+3, abs=6e-9)
-        assert totest.stefan_boltzmann_law(1.0, 2.0) ==\
-               approx(4.08427463621e+3, abs=6e-9)
+        tests = [(1.0, 1.0, approx(5.77603658298e+3, abs=6e-9)),\
+                 (2.0, 1.0, approx(6.86890380099e+3, abs=6e-9)),\
+                 (1.0, 2.0, approx(4.08427463621e+3, abs=6e-9))]
+        for (L, R, T) in tests:
+            assert totest.stefan_boltzmann_law(L, R) == T
 
     def test_rzams(self):
         # missing argument
@@ -507,10 +507,10 @@ class TestFunctions:
                     " argument: 'm'"):
             totest.rzams()
         # examples
-        assert totest.rzams(1.0) ==\
-               approx(0.88824945030, abs=6e-12)
-        assert totest.rzams(2.0) ==\
-               approx(1.61021038543, abs=6e-12)
+        tests = [(1.0, approx(0.88824945030, abs=6e-12)),\
+                 (2.0, approx(1.61021038543, abs=6e-12))]
+        for (m, r) in tests:
+            assert totest.rzams(m) == r
         assert totest.rzams(1.0, z=1.0) ==\
                approx(0.85822941705, abs=6e-12)
         assert totest.rzams(1.0, Zsun=1.0) ==\
@@ -536,18 +536,20 @@ class TestFunctions:
                        " for nonexistent companion"):
                 assert np.isnan(totest.roche_lobe_radius(1.0, m))
         # examples
-        assert totest.roche_lobe_radius(1.0, 1.0) ==\
-               approx(0.37892051838, abs=6e-12)
-        assert totest.roche_lobe_radius(2.0, 1.0) ==\
-               approx(0.44000423753, abs=6e-12)
-        assert totest.roche_lobe_radius(1.0, 2.0) ==\
-               approx(0.32078812033, abs=6e-12)
-        assert totest.roche_lobe_radius(1.0, 1.0, a_orb=2.0) ==\
-               approx(0.75784103676, abs=6e-12)
+        tests = [(1.0, 1.0, 1.0, approx(0.37892051838, abs=6e-12)),\
+                 (2.0, 1.0, 1.0, approx(0.44000423753, abs=6e-12)),\
+                 (1.0, 2.0, 1.0, approx(0.32078812033, abs=6e-12)),\
+                 (1.0, 1.0, 2.0, approx(0.75784103676, abs=6e-12))]
+        for (m1, m2, a, r) in tests:
+            if a==1.0:
+                assert totest.roche_lobe_radius(m1, m2) == r
+            else:
+                assert totest.roche_lobe_radius(m1, m2, a_orb=a) == r
         assert np.allclose(totest.roche_lobe_radius(\
-               np.array([1.0, 2.0, 1.0, 1.0]), np.array([1.0, 1.0, 2.0, 1.0]),\
-               a_orb=np.array([1.0, 1.0, 1.0, 2.0])), np.array([0.37892051838,\
-               0.44000423753, 0.32078812033, 0.75784103676]))
+               np.array([m1 for (m1, m2, a, r) in tests]),\
+               np.array([m2 for (m1, m2, a, r) in tests]),\
+               a_orb=np.array([a for (m1, m2, a, r) in tests])),\
+               np.array([r.expected for (m1, m2, a, r) in tests]))
         # check that roche lobe sum never exceeds orbital separation
         for m in [1.0e+1, 1.0e+2, 1.0e+3, 1.0e+4, 1.0e+5, 1.0e+6, 1.0e+7]:
             assert totest.roche_lobe_radius(m, 1.0)+\
@@ -559,14 +561,12 @@ class TestFunctions:
                     " arguments: 'period_days', 'm1_solar', and 'm2_solar'"):
             totest.orbital_separation_from_period()
         # examples
-        assert totest.orbital_separation_from_period(1.0, 15.0, 30.0) ==\
-               approx(14.9643417735, abs=6e-11)
-        assert totest.orbital_separation_from_period(2.0, 15.0, 30.0) ==\
-               approx(23.7544118733, abs=6e-11)
-        assert totest.orbital_separation_from_period(1.0, 30.0, 30.0) ==\
-               approx(16.4703892879, abs=6e-11)
-        assert totest.orbital_separation_from_period(1.0, 15.0, 60.0) ==\
-               approx(17.7421890201, abs=6e-11)
+        tests = [(1.0, 15.0, 30.0, approx(14.9643417735, abs=6e-11)),\
+                 (2.0, 15.0, 30.0, approx(23.7544118733, abs=6e-11)),\
+                 (1.0, 30.0, 30.0, approx(16.4703892879, abs=6e-11)),\
+                 (1.0, 15.0, 60.0, approx(17.7421890201, abs=6e-11))]
+        for (P, m1, m2, r) in tests:
+            assert totest.orbital_separation_from_period(P, m1, m2) == r
 
     def test_orbital_period_from_separation(self):
         # missing argument
@@ -574,14 +574,12 @@ class TestFunctions:
                     " arguments: 'separation', 'm1', and 'm2'"):
             totest.orbital_period_from_separation()
         # examples
-        assert totest.orbital_period_from_separation(1.0, 15.0, 30.0) ==\
-               approx(1.72773763511e-2, abs=6e-14)
-        assert totest.orbital_period_from_separation(2.0, 15.0, 30.0) ==\
-               approx(4.88677999159e-2, abs=6e-14)
-        assert totest.orbital_period_from_separation(1.0, 30.0, 30.0) ==\
-               approx(1.49626468308e-2, abs=6e-14)
-        assert totest.orbital_period_from_separation(1.0, 15.0, 60.0) ==\
-               approx(1.33829981748e-2, abs=6e-14)
+        tests = [(1.0, 15.0, 30.0, approx(1.72773763511e-2, abs=6e-14)),\
+                 (2.0, 15.0, 30.0, approx(4.88677999159e-2, abs=6e-14)),\
+                 (1.0, 30.0, 30.0, approx(1.49626468308e-2, abs=6e-14)),\
+                 (1.0, 15.0, 60.0, approx(1.33829981748e-2, abs=6e-14))]
+        for (a, m1, m2, r) in tests:
+            assert totest.orbital_period_from_separation(a, m1, m2) == r
 
     def test_eddington_limit(self, binary):
         # missing argument
@@ -707,7 +705,7 @@ class TestFunctions:
         binary.star_2.surface_h1 = 0.25    #donor's X_surf=0.25
         assert totest.bondi_hoyle(binary, binary.star_1,\
                binary.star_2) == 1e-99
-        binary.star_2.lg_wind_mdot = -4.0 #donor's wind is 10^{-4}Msun/yr
+        binary.star_2.lg_wind_mdot = -4.0  #donor's wind is 10^{-4}Msun/yr
         assert totest.bondi_hoyle(binary, binary.star_1,\
                binary.star_2) == 1e-99
         assert totest.bondi_hoyle(binary, binary.star_1,\
@@ -715,8 +713,7 @@ class TestFunctions:
                approx(5.34028698228e-17, abs=6e-29) # form always a disk
         monkeypatch.setattr(np.random, "rand", mock_rand2) # other angle
         binary.star_1.state = 'BH'         #accretor is BH
-        with capsys.disabled():
-            assert totest.bondi_hoyle(binary, binary.star_1,\
+        assert totest.bondi_hoyle(binary, binary.star_1,\
                binary.star_2, wind_disk_criteria=False) ==\
                approx(5.13970075150e-8, abs=6e-20)
 

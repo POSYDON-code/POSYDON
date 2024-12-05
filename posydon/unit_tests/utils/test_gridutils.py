@@ -9,6 +9,8 @@ __authors__ = [
 import posydon.utils.gridutils as totest
 # aliases
 np = totest.np
+os = totest.os
+pd = totest.pd
 
 # import other needed code for the tests, which is not already imported in the
 # module you like to test
@@ -86,12 +88,12 @@ class TestFunctions:
     @fixture
     def data_path(self, tmp_path):
         # a temporary data path for testing
-        return totest.os.path.join(tmp_path, "history.data")
+        return os.path.join(tmp_path, "history.data")
 
     @fixture
     def no_path(self, tmp_path):
         # a path which does not exist for testing
-        return totest.os.path.join(tmp_path, "does_not_exist.test")
+        return os.path.join(tmp_path, "does_not_exist.test")
 
     @fixture
     def MESA_data(self):
@@ -152,7 +154,7 @@ class TestFunctions:
         # a temporary path of binary history file for testing
         # it contains 5 header lines, a line with the column headers and the
         # table data given in MESA_BH_data_tight_orbit
-        path = totest.os.path.join(tmp_path, "binary_history.data")
+        path = os.path.join(tmp_path, "binary_history.data")
         with open(path, "w") as test_file:
             for i in range(5):
                 test_file.write("Test HEADER{}\n".format(i+1))
@@ -181,7 +183,7 @@ class TestFunctions:
         # a temporary path of binary history file for testing
         # it contains 5 header lines, a line with the column headers and the
         # table data given in MESA_BH_data_wide_orbit
-        path = totest.os.path.join(tmp_path, "binary_history2.data")
+        path = os.path.join(tmp_path, "binary_history2.data")
         with open(path, "w") as test_file:
             for i in range(5):
                 test_file.write("Test HEADER{}\n".format(i+1))
@@ -209,7 +211,7 @@ class TestFunctions:
         # a temporary path of star1 history file for testing
         # it contains 5 header lines, a line with the column headers and the
         # table data given in MESA_SH_data
-        path = totest.os.path.join(tmp_path, "history1.data")
+        path = os.path.join(tmp_path, "history1.data")
         with open(path, "w") as test_file:
             for i in range(5):
                 test_file.write("Test HEADER{}\n".format(i+1))
@@ -230,7 +232,7 @@ class TestFunctions:
         # a temporary path of star2 history file for testing
         # it contains 5 header lines, a line with the column headers and the
         # table data given in MESA_SH_data
-        path = totest.os.path.join(tmp_path, "history2.data")
+        path = os.path.join(tmp_path, "history2.data")
         with open(path, "w") as test_file:
             for i in range(5):
                 test_file.write("Test HEADER{}\n".format(i+1))
@@ -250,7 +252,7 @@ class TestFunctions:
     def out_path(self, tmp_path):
         # a temporary path of out file for testing
         # it contains 5 header lines
-        path = totest.os.path.join(tmp_path, "out.txt")
+        path = os.path.join(tmp_path, "out.txt")
         with open(path, "w") as test_file:
             for i in range(5):
                 test_file.write("Test HEADER{}\n".format(i+1))
@@ -260,19 +262,19 @@ class TestFunctions:
     def out_gz_path(self, tmp_path):
         # a temporary path of zipped out file for testing
         # it contains 5 header lines and the statement of initial RLO
-        path = totest.os.path.join(tmp_path, "out_gz.txt")
+        path = os.path.join(tmp_path, "out_gz.txt")
         with open(path, "w") as test_file:
             for i in range(5):
                 test_file.write("Test HEADER{}\n".format(i+1))
             test_file.write("model is overflowing at ZAMS\n")
-        totest.os.system(f"gzip -1 {path}")
+        os.system(f"gzip -1 {path}")
         return path
 
     @fixture
     def out_path_CE(self, tmp_path):
         # a temporary path of out file for testing
         # it contains 5 header lines and the statement of entering CE
-        path = totest.os.path.join(tmp_path, "out2.txt")
+        path = os.path.join(tmp_path, "out2.txt")
         with open(path, "w") as test_file:
             for i in range(5):
                 test_file.write("Test HEADER{}\n".format(i+1))
@@ -283,7 +285,7 @@ class TestFunctions:
     def out_path_strong_RLO(self, tmp_path):
         # a temporary path of out file for testing
         # it contains 5 header lines and the statement of too strong RLO
-        path = totest.os.path.join(tmp_path, "out3.txt")
+        path = os.path.join(tmp_path, "out3.txt")
         with open(path, "w") as test_file:
             for i in range(5):
                 test_file.write("Test HEADER{}\n".format(i+1))
@@ -296,7 +298,7 @@ class TestFunctions:
         # a temporary path of out file for testing
         # it contains 5 header lines and the statement of entering CE and too
         # strong RLO
-        path = totest.os.path.join(tmp_path, "out4.txt")
+        path = os.path.join(tmp_path, "out4.txt")
         with open(path, "w") as test_file:
             for i in range(5):
                 test_file.write("Test HEADER{}\n".format(i+1))
@@ -309,7 +311,7 @@ class TestFunctions:
     def out_path_C_depletion(self, tmp_path):
         # a temporary path of out file for testing
         # it contains 5 header lines and the statement of carbon depletion
-        path = totest.os.path.join(tmp_path, "out5.txt")
+        path = os.path.join(tmp_path, "out5.txt")
         with open(path, "w") as test_file:
             for i in range(5):
                 test_file.write("Test HEADER{}\n".format(i+1))
@@ -321,7 +323,7 @@ class TestFunctions:
         # a temporary path of out file for testing
         # it contains 5 header lines and the statement of entering CE and
         # carbon depletion
-        path = totest.os.path.join(tmp_path, "out6.txt")
+        path = os.path.join(tmp_path, "out6.txt")
         with open(path, "w") as test_file:
             for i in range(5):
                 test_file.write("Test HEADER{}\n".format(i+1))
@@ -333,7 +335,7 @@ class TestFunctions:
     def ini_path(self, tmp_path):
         # a temporary path of ini file for testing
         # it contains a section tag, 2 varibales (float, str), and a comment
-        path = totest.os.path.join(tmp_path, "test.ini")
+        path = os.path.join(tmp_path, "test.ini")
         with open(path, "w") as test_file:
             test_file.write("[TEST INI SECTION]\n")
             test_file.write("test_float = 1.0\n")
@@ -345,7 +347,7 @@ class TestFunctions:
     def ini_path2(self, tmp_path):
         # a temporary path of ini file for testing
         # it contains a 2 lines with &, 2 variables (int, empty str)
-        path = totest.os.path.join(tmp_path, "test2.ini")
+        path = os.path.join(tmp_path, "test2.ini")
         with open(path, "w") as test_file:
             test_file.write("TEST INI SECTION 1&\n")
             test_file.write("test_int = 1\n")
@@ -585,7 +587,7 @@ class TestFunctions:
         # bad input
         with raises(ValueError, match="File "+no_path+" does not exist"):
             totest.convert_output_to_table(no_path)
-        totest.os.system("touch "+out_path+"0")
+        os.system("touch "+out_path+"0")
         with raises(ValueError, match="The output file does not have any "+\
                     "data."):
             totest.convert_output_to_table(out_path+"0")
@@ -601,34 +603,34 @@ class TestFunctions:
                            "all star2 history columns to be dashes."):
                     assert totest.convert_output_to_table(out_path,\
                            column_names=["Test"]).equals(\
-                           totest.pd.DataFrame({'CE_flag': [0],\
+                           pd.DataFrame({'CE_flag': [0],\
                            'result': ["error"], 'Test': ["-"]}))
         # check zipped out file + initial RLO
         assert totest.convert_output_to_table(out_gz_path+".gz",\
                binary_history_file=BH_path_tight_orbit,
                star1_history_file=H1_path, star2_history_file=H2_path,\
                column_names=["Test"]).equals(\
-                totest.pd.DataFrame({'result': ["ZAMS_RLOF"], 'Test': ["-"]}))
+                pd.DataFrame({'result': ["ZAMS_RLOF"], 'Test': ["-"]}))
         # check CE + existing column
         assert totest.convert_output_to_table(out_path_CE,\
                binary_history_file=BH_path_tight_orbit,\
                star1_history_file=H1_path, star2_history_file=H2_path,\
                column_names=["Test", "result"]).equals(\
-                totest.pd.DataFrame({'CE_flag': [1], 'result': ["error"],\
+                pd.DataFrame({'CE_flag': [1], 'result': ["error"],\
                                      'Test': ["-"]}))
         # check contact
         assert totest.convert_output_to_table(out_path_strong_RLO,\
                binary_history_file=BH_path_tight_orbit,\
                star1_history_file=H1_path, star2_history_file=H2_path,\
                column_names=["Test"]).equals(\
-                totest.pd.DataFrame({'CE_flag': [0], 'result': ["contact"],\
+                pd.DataFrame({'CE_flag': [0], 'result': ["contact"],\
                                      'Test': ["-"]}))
         # check CE merger
         assert totest.convert_output_to_table(out_path_CE_strong_RLO,\
                binary_history_file=BH_path_tight_orbit,\
                star1_history_file=H1_path, star2_history_file=H2_path,\
                column_names=["Test"]).equals(\
-                totest.pd.DataFrame({'CE_flag': [1], 'result': ["CE_merger"],\
+                pd.DataFrame({'CE_flag': [1], 'result': ["CE_merger"],\
                                      'Test': ["-"]}))
         # check carbon depletion: stable_MT_to_merger
         test_table = totest.convert_output_to_table(out_path_C_depletion,\
@@ -728,18 +730,18 @@ class TestFunctions:
                     " arguments: 'path' and 'compression'"):
             totest.get_new_grid_name()
         # get name without check for existence of compression directory
-        grid_dir = totest.os.path.join(tmp_path, "test_grid")
-        compression_dir = totest.os.path.join(tmp_path, "TEST_COMPRESSION")
+        grid_dir = os.path.join(tmp_path, "test_grid")
+        compression_dir = os.path.join(tmp_path, "TEST_COMPRESSION")
         assert totest.get_new_grid_name(grid_dir, "TEST_COMPRESSION")==\
-               totest.os.path.join(compression_dir, "test_grid.h5")
+               os.path.join(compression_dir, "test_grid.h5")
         # create compression directory
         assert totest.get_new_grid_name(grid_dir, "TEST_COMPRESSION",\
                                         create_missing_directories=True)==\
-               totest.os.path.join(compression_dir, "test_grid.h5")
-        assert totest.os.path.isdir(compression_dir)
+               os.path.join(compression_dir, "test_grid.h5")
+        assert os.path.isdir(compression_dir)
         # compression directory already exists, while it would be created
         # otherwise
         assert totest.get_new_grid_name(grid_dir, "TEST_COMPRESSION",\
                                         create_missing_directories=True)==\
-               totest.os.path.join(compression_dir, "test_grid.h5")
+               os.path.join(compression_dir, "test_grid.h5")
 

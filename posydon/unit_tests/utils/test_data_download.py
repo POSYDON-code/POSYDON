@@ -7,6 +7,7 @@ __authors__ = [
 
 # import the module which will be tested
 import posydon.utils.data_download as totest
+os = totest.os
 
 # import other needed code for the tests, which is not already imported in the
 # module you like to test
@@ -31,17 +32,16 @@ class TestElements:
 
     def test_instance_PATH_TO_POSYDON_DATA(self):
         assert isinstance(totest.PATH_TO_POSYDON_DATA, (str, bytes,\
-                                                        totest.os.PathLike))
+                                                        os.PathLike))
 
     def test_instance_file(self):
-        assert isinstance(totest.file, (str, bytes, totest.os.PathLike))
+        assert isinstance(totest.file, (str, bytes, os.PathLike))
 
     def test_instance_data_url(self):
-        assert isinstance(totest.data_url, (str, bytes, totest.os.PathLike))
+        assert isinstance(totest.data_url, (str, bytes, os.PathLike))
 
     def test_instance_original_md5(self):
-        assert isinstance(totest.original_md5, (str, bytes,\
-                                                totest.os.PathLike))
+        assert isinstance(totest.original_md5, (str, bytes, os.PathLike))
 
     def test_instance_ProgressBar(self):
         assert isclass(totest.ProgressBar)
@@ -70,7 +70,7 @@ class TestFunctions:
     @fixture
     def test_path(self, tmp_path):
         # a temporary path to POSYDON_data for testing
-        return totest.os.path.join(tmp_path, "POSYDON_data")
+        return os.path.join(tmp_path, "POSYDON_data")
 
     @fixture
     def download_statement(self):
@@ -113,16 +113,16 @@ class TestFunctions:
             def __exit__(self, exc_type, exc_value, exc_traceback):
                 return False
         def mock_urlretrieve2(url, filename=None, reporthook=None, data=None):
-            totest.os.mkdir(test_path)
+            os.mkdir(test_path)
             if (isinstance(filename, str) and (len(filename)>=8)):
                 test_ID = filename[-8]
             else:
                 test_ID = ""
-            with open(totest.os.path.join(test_path, "test"+test_ID+".txt"),\
-                                          "w") as test_file:
+            with open(os.path.join(test_path, "test"+test_ID+".txt"), "w")\
+                 as test_file:
                 test_file.write("Unit Test\n")
-            with chdir(totest.os.path.join(test_path,"..")):
-                totest.os.system("tar -czf POSYDON_data"+test_ID+\
+            with chdir(os.path.join(test_path,"..")):
+                os.system("tar -czf POSYDON_data"+test_ID+\
                                  ".tar.gz POSYDON_data")
             rmtree(test_path)
             return None
@@ -174,9 +174,8 @@ class TestFunctions:
                 assert failed_MD5_statement not in captured_output.out
                 assert extraction_statement in captured_output.out
                 assert removal_statement not in captured_output.out
-                assert totest.os.path.exists(test_path)
-                assert totest.os.path.exists(totest.os.path.join(test_path,\
-                                                                 "test1.txt"))
+                assert os.path.exists(test_path)
+                assert os.path.exists(os.path.join(test_path, "test1.txt"))
                 rmtree(test_path) # removed extracted data
                 # with verification output
                 totest.data_download(file=test_path+"2.tar.gz", verbose=True)
@@ -185,9 +184,8 @@ class TestFunctions:
                 assert "MD5 verified" in captured_output.out
                 assert extraction_statement in captured_output.out
                 assert removal_statement in captured_output.out
-                assert totest.os.path.exists(test_path)
-                assert totest.os.path.exists(totest.os.path.join(test_path,\
-                                                                 "test2.txt"))
+                assert os.path.exists(test_path)
+                assert os.path.exists(os.path.join(test_path, "test2.txt"))
                 rmtree(test_path) # removed extracted data
 
 
