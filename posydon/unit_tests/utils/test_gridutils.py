@@ -95,19 +95,22 @@ class TestFunctions:
 
     @fixture
     def MESA_data(self):
-        # mock data
+        # mock data: 3 columns and 2 rows; it contains different
+        # types(int, float) and different signs(positive, negative)
         return np.array([(1, 2, 3.3), (1, -2, -3.3)],\
                dtype=[('COL1', '<f8'), ('COL2', '<f8'), ('COL3', '<f8')])
 
     @fixture
-    def MESA_data_file(self, data_path, MESA_data):
+    def MESA_data_path(self, data_path, MESA_data):
         # a temporary data file for testing
+        # it contains 5 header lines, a line with the column headers and the
+        # table data given in MESA_data
         with open(data_path, "w") as test_file:
             for i in range(5):
                 test_file.write("Test HEADER{}\n".format(i+1))
             for k in MESA_data.dtype.names:
                 test_file.write("{:<5}".format(k))
-            for j in range(2):
+            for j in range(len(MESA_data)):
                 for i,v in enumerate(MESA_data[j]):
                     if v==int(v):
                         v = int(v)
@@ -115,17 +118,19 @@ class TestFunctions:
                         test_file.write("\n{:>4}".format(v))
                     else:
                         test_file.write(" {:>4}".format(v))
-        return
+        return data_path
 
     @fixture
-    def EEP_data_file(self, data_path, MESA_data):
+    def EEP_data_path(self, data_path, MESA_data):
         # a temporary data file for testing
+        # it contains 11 header lines, a line with the column headers and the
+        # table data given in MESA_data
         with open(data_path, "w") as test_file:
             for i in range(11):
                 test_file.write("Test HEADER{}\n".format(i+1))
             for k in MESA_data.dtype.names:
                 test_file.write("{:<5}".format(k))
-            for j in range(2):
+            for j in range(len(MESA_data)):
                 for i,v in enumerate(MESA_data[j]):
                     if v==int(v):
                         v = int(v)
@@ -133,26 +138,28 @@ class TestFunctions:
                         test_file.write("\n{:>4}".format(v))
                     else:
                         test_file.write(" {:>4}".format(v))
-        return
+        return data_path
 
     @fixture
-    def MESA_BH_data(self):
-        # mock data
+    def MESA_BH_data_tight_orbit(self):
+        # mock data: 4 columns(physical quanties the code looks for) and 2 rows
         return np.array([(1.0, 15.0, 30.0, -5.0), (1.0, 15.0, 30.0, -4.0)],\
                dtype=[('period_days', '<f8'), ('star_1_mass', '<f8'),\
                       ('star_2_mass', '<f8'), ('lg_mtransfer_rate', '<f8')])
 
     @fixture
-    def BH_path(self, tmp_path, MESA_BH_data):
+    def BH_path_tight_orbit(self, tmp_path, MESA_BH_data_tight_orbit):
         # a temporary path of binary history file for testing
+        # it contains 5 header lines, a line with the column headers and the
+        # table data given in MESA_BH_data_tight_orbit
         path = totest.os.path.join(tmp_path, "binary_history.data")
         with open(path, "w") as test_file:
             for i in range(5):
                 test_file.write("Test HEADER{}\n".format(i+1))
-            for k in MESA_BH_data.dtype.names:
+            for k in MESA_BH_data_tight_orbit.dtype.names:
                 test_file.write("{:<18}".format(k))
-            for j in range(2):
-                for i,v in enumerate(MESA_BH_data[j]):
+            for j in range(len(MESA_BH_data_tight_orbit)):
+                for i,v in enumerate(MESA_BH_data_tight_orbit[j]):
                     if v==int(v):
                         v = int(v)
                     if i==0:
@@ -162,24 +169,26 @@ class TestFunctions:
         return path
 
     @fixture
-    def MESA_BH_data2(self):
-        # mock data
+    def MESA_BH_data_wide_orbit(self):
+        # mock data: 4 columns(physical quanties the code looks for) and 2 rows
         return np.array([(100.0, 15.0, 30.0, -5.0),\
                          (100.0, 15.0, 30.0, -4.0)],\
                dtype=[('period_days', '<f8'), ('star_1_mass', '<f8'),\
                       ('star_2_mass', '<f8'), ('lg_mtransfer_rate', '<f8')])
 
     @fixture
-    def BH_path2(self, tmp_path, MESA_BH_data2):
+    def BH_path_wide_orbit(self, tmp_path, MESA_BH_data_wide_orbit):
         # a temporary path of binary history file for testing
+        # it contains 5 header lines, a line with the column headers and the
+        # table data given in MESA_BH_data_wide_orbit
         path = totest.os.path.join(tmp_path, "binary_history2.data")
         with open(path, "w") as test_file:
             for i in range(5):
                 test_file.write("Test HEADER{}\n".format(i+1))
-            for k in MESA_BH_data2.dtype.names:
+            for k in MESA_BH_data_wide_orbit.dtype.names:
                 test_file.write("{:<18}".format(k))
-            for j in range(2):
-                for i,v in enumerate(MESA_BH_data2[j]):
+            for j in range(len(MESA_BH_data_wide_orbit)):
+                for i,v in enumerate(MESA_BH_data_wide_orbit[j]):
                     if v==int(v):
                         v = int(v)
                     if i==0:
@@ -198,13 +207,15 @@ class TestFunctions:
     @fixture
     def H1_path(self, tmp_path, MESA_SH_data):
         # a temporary path of star1 history file for testing
+        # it contains 5 header lines, a line with the column headers and the
+        # table data given in MESA_SH_data
         path = totest.os.path.join(tmp_path, "history1.data")
         with open(path, "w") as test_file:
             for i in range(5):
                 test_file.write("Test HEADER{}\n".format(i+1))
             for k in MESA_SH_data.dtype.names:
                 test_file.write("{:<13}".format(k))
-            for j in range(2):
+            for j in range(len(MESA_SH_data)):
                 for i,v in enumerate(MESA_SH_data[j]):
                     if v==int(v):
                         v = int(v)
@@ -217,13 +228,15 @@ class TestFunctions:
     @fixture
     def H2_path(self, tmp_path, MESA_SH_data):
         # a temporary path of star2 history file for testing
+        # it contains 5 header lines, a line with the column headers and the
+        # table data given in MESA_SH_data
         path = totest.os.path.join(tmp_path, "history2.data")
         with open(path, "w") as test_file:
             for i in range(5):
                 test_file.write("Test HEADER{}\n".format(i+1))
             for k in MESA_SH_data.dtype.names:
                 test_file.write("{:<13}".format(k))
-            for j in range(2):
+            for j in range(len(MESA_SH_data)):
                 for i,v in enumerate(MESA_SH_data[j]):
                     if v==int(v):
                         v = int(v)
@@ -236,6 +249,7 @@ class TestFunctions:
     @fixture
     def out_path(self, tmp_path):
         # a temporary path of out file for testing
+        # it contains 5 header lines
         path = totest.os.path.join(tmp_path, "out.txt")
         with open(path, "w") as test_file:
             for i in range(5):
@@ -244,7 +258,8 @@ class TestFunctions:
 
     @fixture
     def out_gz_path(self, tmp_path):
-        # a temporary path of out file for testing
+        # a temporary path of zipped out file for testing
+        # it contains 5 header lines and the statement of initial RLO
         path = totest.os.path.join(tmp_path, "out_gz.txt")
         with open(path, "w") as test_file:
             for i in range(5):
@@ -254,8 +269,9 @@ class TestFunctions:
         return path
 
     @fixture
-    def out_path2(self, tmp_path):
+    def out_path_CE(self, tmp_path):
         # a temporary path of out file for testing
+        # it contains 5 header lines and the statement of entering CE
         path = totest.os.path.join(tmp_path, "out2.txt")
         with open(path, "w") as test_file:
             for i in range(5):
@@ -264,8 +280,9 @@ class TestFunctions:
         return path
 
     @fixture
-    def out_path3(self, tmp_path):
+    def out_path_strong_RLO(self, tmp_path):
         # a temporary path of out file for testing
+        # it contains 5 header lines and the statement of too strong RLO
         path = totest.os.path.join(tmp_path, "out3.txt")
         with open(path, "w") as test_file:
             for i in range(5):
@@ -275,8 +292,10 @@ class TestFunctions:
         return path
 
     @fixture
-    def out_path4(self, tmp_path):
+    def out_path_CE_strong_RLO(self, tmp_path):
         # a temporary path of out file for testing
+        # it contains 5 header lines and the statement of entering CE and too
+        # strong RLO
         path = totest.os.path.join(tmp_path, "out4.txt")
         with open(path, "w") as test_file:
             for i in range(5):
@@ -287,8 +306,9 @@ class TestFunctions:
         return path
 
     @fixture
-    def out_path5(self, tmp_path):
+    def out_path_C_depletion(self, tmp_path):
         # a temporary path of out file for testing
+        # it contains 5 header lines and the statement of carbon depletion
         path = totest.os.path.join(tmp_path, "out5.txt")
         with open(path, "w") as test_file:
             for i in range(5):
@@ -297,8 +317,10 @@ class TestFunctions:
         return path
 
     @fixture
-    def out_path6(self, tmp_path):
+    def out_path_CE_C_depletion(self, tmp_path):
         # a temporary path of out file for testing
+        # it contains 5 header lines and the statement of entering CE and
+        # carbon depletion
         path = totest.os.path.join(tmp_path, "out6.txt")
         with open(path, "w") as test_file:
             for i in range(5):
@@ -310,6 +332,7 @@ class TestFunctions:
     @fixture
     def ini_path(self, tmp_path):
         # a temporary path of ini file for testing
+        # it contains a section tag, 2 varibales (float, str), and a comment
         path = totest.os.path.join(tmp_path, "test.ini")
         with open(path, "w") as test_file:
             test_file.write("[TEST INI SECTION]\n")
@@ -321,6 +344,7 @@ class TestFunctions:
     @fixture
     def ini_path2(self, tmp_path):
         # a temporary path of ini file for testing
+        # it contains a 2 lines with &, 2 variables (int, empty str)
         path = totest.os.path.join(tmp_path, "test2.ini")
         with open(path, "w") as test_file:
             test_file.write("TEST INI SECTION 1&\n")
@@ -347,8 +371,7 @@ class TestFunctions:
         for (A, B, r) in tests:
             assert totest.join_lists(A, B) == r
 
-    def test_read_MESA_data_file(self, no_path, data_path,\
-                                 MESA_data_file, MESA_data):
+    def test_read_MESA_data_file(self, no_path, MESA_data_path, MESA_data):
         # missing argument
         with raises(TypeError, match="missing 2 required positional"+\
                     " arguments: 'path' and 'columns'"):
@@ -358,27 +381,27 @@ class TestFunctions:
         assert totest.read_MESA_data_file(no_path, ['Test']) is None
         # read full test file
         assert np.array_equal(MESA_data,\
-               totest.read_MESA_data_file(data_path, MESA_data.dtype.names))
+               totest.read_MESA_data_file(MESA_data_path,\
+                                          MESA_data.dtype.names))
         # read columns individually from test file
         for k in MESA_data.dtype.names:
             assert np.array_equal(MESA_data[[k]],\
-                   totest.read_MESA_data_file(data_path, [k]))
+                   totest.read_MESA_data_file(MESA_data_path, [k]))
         # read column pairs from test file
         k0 = MESA_data.dtype.names[0]
         for k in MESA_data.dtype.names:
             if k!=k0:
                 assert np.array_equal(MESA_data[[k0, k]],\
-                       totest.read_MESA_data_file(data_path, [k0, k]))
+                       totest.read_MESA_data_file(MESA_data_path, [k0, k]))
         # warning for non readable data
-        with open(data_path, "w") as test_file:
+        with open(MESA_data_path, "w") as test_file:
             test_file.write(10*"Test\n")
         with warns(MissingFilesWarning, match="Problems with reading file "+\
-                   data_path):
-            assert totest.read_MESA_data_file(data_path,\
+                   MESA_data_path):
+            assert totest.read_MESA_data_file(MESA_data_path,\
                    MESA_data.dtype.names) is None
 
-    def test_read_EEP_data_file(self, no_path, data_path,\
-                                EEP_data_file, MESA_data):
+    def test_read_EEP_data_file(self, no_path, EEP_data_path, MESA_data):
         # missing argument
         with raises(TypeError, match="missing 2 required positional"+\
                     " arguments: 'path' and 'columns'"):
@@ -390,22 +413,22 @@ class TestFunctions:
             assert totest.read_EEP_data_file(no_path, ['Test']) is None
         # read full test file
         assert np.array_equal(MESA_data,\
-               totest.read_EEP_data_file(data_path, MESA_data.dtype.names))
+               totest.read_EEP_data_file(EEP_data_path, MESA_data.dtype.names))
         # read columns individually from test file
         for k in MESA_data.dtype.names:
             assert np.array_equal(MESA_data[[k]],\
-                   totest.read_EEP_data_file(data_path, [k]))
+                   totest.read_EEP_data_file(EEP_data_path, [k]))
         # read column pairs from test file
         k0 = MESA_data.dtype.names[0]
         for k in MESA_data.dtype.names:
             if k!=k0:
                 assert np.array_equal(MESA_data[[k0, k]],\
-                       totest.read_EEP_data_file(data_path, [k0, k]))
+                       totest.read_EEP_data_file(EEP_data_path, [k0, k]))
         # warning for non readable data
-        with open(data_path, "w") as test_file:
+        with open(EEP_data_path, "w") as test_file:
             test_file.write(15*"Test\n")
-        with warns(match="Problems with reading file "+data_path):
-            assert totest.read_EEP_data_file(data_path,\
+        with warns(match="Problems with reading file "+EEP_data_path):
+            assert totest.read_EEP_data_file(EEP_data_path,\
                    MESA_data.dtype.names) is None
 
     def test_fix_He_core(self, MESA_data):
@@ -500,14 +523,12 @@ class TestFunctions:
                     " arguments: 'P', 'm1', and 'm2'"):
             totest.T_merger_P()
         # examples
-        assert totest.T_merger_P(1.0, 15.0, 30.0) ==\
-               approx(0.37210532488, abs=6e-12)
-        assert totest.T_merger_P(2.0, 15.0, 30.0) ==\
-               approx(2.36272153666, abs=6e-12)
-        assert totest.T_merger_P(1.0, 30.0, 30.0) ==\
-               approx(0.20477745195, abs=6e-12)
-        assert totest.T_merger_P(1.0, 15.0, 60.0) ==\
-               approx(0.22058982311, abs=6e-12)
+        tests = [(1.0, 15.0, 30.0, approx(0.37210532488, abs=6e-12)),\
+                 (2.0, 15.0, 30.0, approx(2.36272153666, abs=6e-12)),\
+                 (1.0, 30.0, 30.0, approx(0.20477745195, abs=6e-12)),\
+                 (1.0, 15.0, 60.0, approx(0.22058982311, abs=6e-12))]
+        for (P, m1, m2, r) in tests:
+            assert totest.T_merger_P(P, m1, m2) == r
 
     def test_beta_gw(self):
         # missing argument
@@ -515,12 +536,11 @@ class TestFunctions:
                     " arguments: 'm1' and 'm2'"):
             totest.beta_gw()
         # examples
-        assert totest.beta_gw(15.0, 30.0) ==\
-               approx(3.18232660295e-69, abs=6e-81)
-        assert totest.beta_gw(30.0, 30.0) ==\
-               approx(8.48620427454e-69, abs=6e-81)
-        assert totest.beta_gw(30.0, 60.0) ==\
-               approx(2.54586128236e-68, abs=6e-80)
+        tests = [(15.0, 30.0, approx(3.18232660295e-69, abs=6e-81)),\
+                 (30.0, 30.0, approx(8.48620427454e-69, abs=6e-81)),\
+                 (30.0, 60.0, approx(2.54586128236e-68, abs=6e-80))]
+        for (m1, m2, r) in tests:
+            assert totest.beta_gw(m1, m2) == r
 
     def test_kepler3_a(self):
         # missing argument
@@ -528,14 +548,12 @@ class TestFunctions:
                     " arguments: 'P', 'm1', and 'm2'"):
             totest.kepler3_a()
         # examples
-        assert totest.kepler3_a(1.0, 15.0, 30.0) ==\
-               approx(14.9643417735, abs=6e-11)
-        assert totest.kepler3_a(2.0, 15.0, 30.0) ==\
-               approx(23.7544118733, abs=6e-11)
-        assert totest.kepler3_a(1.0, 30.0, 30.0) ==\
-               approx(16.4703892879, abs=6e-11)
-        assert totest.kepler3_a(1.0, 15.0, 60.0) ==\
-               approx(17.7421890201, abs=6e-11)
+        tests = [(1.0, 15.0, 30.0, approx(14.9643417735, abs=6e-11)),\
+                 (2.0, 15.0, 30.0, approx(23.7544118733, abs=6e-11)),\
+                 (1.0, 30.0, 30.0, approx(16.4703892879, abs=6e-11)),\
+                 (1.0, 15.0, 60.0, approx(17.7421890201, abs=6e-11))]
+        for (P, m1, m2, r) in tests:
+            assert totest.kepler3_a(P, m1, m2) == r
 
     def test_T_merger_a(self):
         # missing argument
@@ -543,20 +561,23 @@ class TestFunctions:
                     " arguments: 'a', 'm1', and 'm2'"):
             totest.T_merger_a()
         # examples
-        assert totest.T_merger_a(1.0, 15.0, 30.0) ==\
-               approx(7.42053829341e-06, abs=6e-18)
-        assert totest.T_merger_a(2.0, 15.0, 30.0) ==\
-               approx(1.18728612695e-04, abs=6e-16)
-        assert totest.T_merger_a(1.0, 30.0, 30.0) ==\
-               approx(2.78270186003e-06, abs=6e-18)
-        assert totest.T_merger_a(1.0, 15.0, 60.0) ==\
-               approx(2.22616148802e-06, abs=6e-18)
+        tests = [(1.0, 15.0, 30.0, approx(7.42053829341e-06, abs=6e-18)),\
+                 (2.0, 15.0, 30.0, approx(1.18728612695e-04, abs=6e-16)),\
+                 (1.0, 30.0, 30.0, approx(2.78270186003e-06, abs=6e-18)),\
+                 (1.0, 15.0, 60.0, approx(2.22616148802e-06, abs=6e-18))]
+        for (a, m1, m2, r) in tests:
+            assert totest.T_merger_a(a, m1, m2) == r
 
-    def test_convert_output_to_table(self, no_path, out_path, MESA_SH_data,\
-                                     MESA_BH_data, MESA_BH_data2, BH_path,\
-                                     BH_path2, H1_path, H2_path, out_gz_path,\
-                                     out_path2, out_path3, out_path4,\
-                                     out_path5, out_path6):
+    def test_convert_output_to_table(self, no_path, out_path,\
+                                     MESA_BH_data_tight_orbit,\
+                                     MESA_BH_data_wide_orbit,\
+                                     BH_path_tight_orbit, BH_path_wide_orbit,\
+                                     MESA_SH_data, H1_path, H2_path,\
+                                     out_gz_path, out_path_CE,\
+                                     out_path_strong_RLO,\
+                                     out_path_CE_strong_RLO,\
+                                     out_path_C_depletion,\
+                                     out_path_CE_C_depletion):
         # missing argument
         with raises(TypeError, match="missing 1 required positional"+\
                     " argument: 'output_file'"):
@@ -584,31 +605,36 @@ class TestFunctions:
                            'result': ["error"], 'Test': ["-"]}))
         # check zipped out file + initial RLO
         assert totest.convert_output_to_table(out_gz_path+".gz",\
-               binary_history_file=BH_path, star1_history_file=H1_path,\
-               star2_history_file=H2_path, column_names=["Test"]).equals(\
+               binary_history_file=BH_path_tight_orbit,
+               star1_history_file=H1_path, star2_history_file=H2_path,\
+               column_names=["Test"]).equals(\
                 totest.pd.DataFrame({'result': ["ZAMS_RLOF"], 'Test': ["-"]}))
         # check CE + existing column
-        assert totest.convert_output_to_table(out_path2,\
-               binary_history_file=BH_path, star1_history_file=H1_path,\
-               star2_history_file=H2_path, column_names=["Test",\
-               "result"]).equals(totest.pd.DataFrame({'CE_flag': [1],\
-                                 'result': ["error"], 'Test': ["-"]}))
+        assert totest.convert_output_to_table(out_path_CE,\
+               binary_history_file=BH_path_tight_orbit,\
+               star1_history_file=H1_path, star2_history_file=H2_path,\
+               column_names=["Test", "result"]).equals(\
+                totest.pd.DataFrame({'CE_flag': [1], 'result': ["error"],\
+                                     'Test': ["-"]}))
         # check contact
-        assert totest.convert_output_to_table(out_path3,\
-               binary_history_file=BH_path, star1_history_file=H1_path,\
-               star2_history_file=H2_path, column_names=["Test"]).equals(\
+        assert totest.convert_output_to_table(out_path_strong_RLO,\
+               binary_history_file=BH_path_tight_orbit,\
+               star1_history_file=H1_path, star2_history_file=H2_path,\
+               column_names=["Test"]).equals(\
                 totest.pd.DataFrame({'CE_flag': [0], 'result': ["contact"],\
                                      'Test': ["-"]}))
         # check CE merger
-        assert totest.convert_output_to_table(out_path4,\
-               binary_history_file=BH_path, star1_history_file=H1_path,\
-               star2_history_file=H2_path, column_names=["Test"]).equals(\
+        assert totest.convert_output_to_table(out_path_CE_strong_RLO,\
+               binary_history_file=BH_path_tight_orbit,\
+               star1_history_file=H1_path, star2_history_file=H2_path,\
+               column_names=["Test"]).equals(\
                 totest.pd.DataFrame({'CE_flag': [1], 'result': ["CE_merger"],\
                                      'Test': ["-"]}))
         # check carbon depletion: stable_MT_to_merger
-        test_table = totest.convert_output_to_table(out_path5,\
-                     binary_history_file=BH_path, star1_history_file=H1_path,\
-                     star2_history_file=H2_path, column_names=["Test"])
+        test_table = totest.convert_output_to_table(out_path_C_depletion,\
+                     binary_history_file=BH_path_tight_orbit,\
+                     star1_history_file=H1_path, star2_history_file=H2_path,\
+                     column_names=["Test"])
         assert test_table.at[0,'CE_flag']==0
         assert test_table.at[0,'result']=="stable_MT_to_merger"
         assert test_table.at[0,'Test']=="-"
@@ -619,12 +645,15 @@ class TestFunctions:
                    MESA_SH_data['he_core_mass'][-1]
             assert test_table.at[0,f'C_core_{i}(Msun)']==\
                    MESA_SH_data['c_core_mass'][-1]
-        assert test_table.at[0,'M_1f(Msun)']==MESA_BH_data['star_1_mass'][-1]
-        assert test_table.at[0,'M_2f(Msun)']==MESA_BH_data['star_2_mass'][-1]
-        assert test_table.at[0,'Porb_f(d)']==MESA_BH_data['period_days'][-1]
+        assert test_table.at[0,'M_1f(Msun)']==\
+               MESA_BH_data_tight_orbit['star_1_mass'][-1]
+        assert test_table.at[0,'M_2f(Msun)']==\
+               MESA_BH_data_tight_orbit['star_2_mass'][-1]
+        assert test_table.at[0,'Porb_f(d)']==\
+               MESA_BH_data_tight_orbit['period_days'][-1]
         assert 'tmerge(Gyr)' in test_table.columns
         # check carbon depletion: no_interaction
-        test_table = totest.convert_output_to_table(out_path6,\
+        test_table = totest.convert_output_to_table(out_path_CE_C_depletion,\
                      column_names=["Test"])
         assert test_table.at[0,'CE_flag']==1
         assert test_table.at[0,'result']=="no_interaction"
@@ -639,34 +668,46 @@ class TestFunctions:
         assert 'Porb_f(d)' not in test_table.columns
         assert 'tmerge(Gyr)' not in test_table.columns
         # check carbon depletion: CE_ejection_m
-        test_table = totest.convert_output_to_table(out_path6,\
-                     binary_history_file=BH_path, column_names=["Test"])
+        test_table = totest.convert_output_to_table(out_path_CE_C_depletion,\
+                     binary_history_file=BH_path_tight_orbit,\
+                     column_names=["Test"])
         assert test_table.at[0,'CE_flag']==1
         assert test_table.at[0,'result']=="CE_ejection_m"
         assert test_table.at[0,'Test']=="-"
-        assert test_table.at[0,'M_1f(Msun)']==MESA_BH_data['star_1_mass'][-1]
-        assert test_table.at[0,'M_2f(Msun)']==MESA_BH_data['star_2_mass'][-1]
-        assert test_table.at[0,'Porb_f(d)']==MESA_BH_data['period_days'][-1]
+        assert test_table.at[0,'M_1f(Msun)']==\
+               MESA_BH_data_tight_orbit['star_1_mass'][-1]
+        assert test_table.at[0,'M_2f(Msun)']==\
+               MESA_BH_data_tight_orbit['star_2_mass'][-1]
+        assert test_table.at[0,'Porb_f(d)']==\
+               MESA_BH_data_tight_orbit['period_days'][-1]
         assert 'tmerge(Gyr)' in test_table.columns
         # check carbon depletion: stable_MT_to_wide_binary
-        test_table = totest.convert_output_to_table(out_path5,\
-                     binary_history_file=BH_path2, column_names=["Test"])
+        test_table = totest.convert_output_to_table(out_path_C_depletion,\
+                     binary_history_file=BH_path_wide_orbit,\
+                     column_names=["Test"])
         assert test_table.at[0,'CE_flag']==0
         assert test_table.at[0,'result']=="stable_MT_to_wide_binary"
         assert test_table.at[0,'Test']=="-"
-        assert test_table.at[0,'M_1f(Msun)']==MESA_BH_data2['star_1_mass'][-1]
-        assert test_table.at[0,'M_2f(Msun)']==MESA_BH_data2['star_2_mass'][-1]
-        assert test_table.at[0,'Porb_f(d)']==MESA_BH_data2['period_days'][-1]
+        assert test_table.at[0,'M_1f(Msun)']==\
+               MESA_BH_data_wide_orbit['star_1_mass'][-1]
+        assert test_table.at[0,'M_2f(Msun)']==\
+               MESA_BH_data_wide_orbit['star_2_mass'][-1]
+        assert test_table.at[0,'Porb_f(d)']==\
+               MESA_BH_data_wide_orbit['period_days'][-1]
         assert 'tmerge(Gyr)' in test_table.columns
         # check carbon depletion: CE_ejection
-        test_table = totest.convert_output_to_table(out_path6,\
-                     binary_history_file=BH_path2, column_names=["Test"])
+        test_table = totest.convert_output_to_table(out_path_CE_C_depletion,\
+                     binary_history_file=BH_path_wide_orbit,\
+                     column_names=["Test"])
         assert test_table.at[0,'CE_flag']==1
         assert test_table.at[0,'result']=="CE_ejection"
         assert test_table.at[0,'Test']=="-"
-        assert test_table.at[0,'M_1f(Msun)']==MESA_BH_data2['star_1_mass'][-1]
-        assert test_table.at[0,'M_2f(Msun)']==MESA_BH_data2['star_2_mass'][-1]
-        assert test_table.at[0,'Porb_f(d)']==MESA_BH_data2['period_days'][-1]
+        assert test_table.at[0,'M_1f(Msun)']==\
+               MESA_BH_data_wide_orbit['star_1_mass'][-1]
+        assert test_table.at[0,'M_2f(Msun)']==\
+               MESA_BH_data_wide_orbit['star_2_mass'][-1]
+        assert test_table.at[0,'Porb_f(d)']==\
+               MESA_BH_data_wide_orbit['period_days'][-1]
         assert 'tmerge(Gyr)' in test_table.columns
 
     def test_clean_inlist_file(self, ini_path, ini_path2):

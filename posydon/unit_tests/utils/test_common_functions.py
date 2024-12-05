@@ -415,8 +415,9 @@ class TestValues:
 
 class TestFunctions:
     @fixture
-    def failing_csv_path_3lines(self, tmp_path):
+    def csv_path_failing_3_data_lines(self, tmp_path):
         # a temporary path to csv file for testing
+        # it contains 4 lines, where three having data in there
         path = totest.os.path.join(tmp_path, "hist_fail.csv")
         with open(path, "w") as test_file:
             test_file.write("0.0,1.0\n")
@@ -425,16 +426,19 @@ class TestFunctions:
         return path
 
     @fixture
-    def failing_csv_path_1line(self, tmp_path):
+    def csv_path_failing_empty_line(self, tmp_path):
         # a temporary path to csv file for testing
+        # it only contains an empty line
         path = totest.os.path.join(tmp_path, "hist_fail2.csv")
         with open(path, "w") as test_file:
             test_file.write("")
         return path
 
     @fixture
-    def failing_csv_path_manyelements(self, tmp_path):
+    def csv_path_failing_element_counts(self, tmp_path):
         # a temporary path to csv file for testing
+        # it contains an commented line and two data lines with the same number
+        # of elements
         path = totest.os.path.join(tmp_path, "hist_fail3.csv")
         with open(path, "w") as test_file:
             test_file.write("#0.0,1.0\n")
@@ -443,8 +447,10 @@ class TestFunctions:
         return path
 
     @fixture
-    def failing_csv_path_wrongelements(self, tmp_path):
+    def csv_path_failing_element_types(self, tmp_path):
         # a temporary path to csv file for testing
+        # it contains 2 data lines, where the elements of the second one are
+        # not interpretable as floats
         path = totest.os.path.join(tmp_path, "hist_fail4.csv")
         with open(path, "w") as test_file:
             test_file.write("0.0,1.0,2.0\n")
@@ -454,6 +460,7 @@ class TestFunctions:
     @fixture
     def csv_path_ex1(self, tmp_path):
         # a temporary path to csv file for testing
+        # correct data with a comment line
         path = totest.os.path.join(tmp_path, "hist.csv")
         with open(path, "w") as test_file:
             test_file.write("#0.1,1.1\n")
@@ -464,6 +471,7 @@ class TestFunctions:
     @fixture
     def csv_path_ex2(self, tmp_path):
         # a temporary path to csv file for testing
+        # correct data with an empty line
         path = totest.os.path.join(tmp_path, "hist2.csv")
         with open(path, "w") as test_file:
             test_file.write("0.2,1.2,2.2\n\n")
@@ -827,10 +835,10 @@ class TestFunctions:
                y=np.array([0.2, 0.8]), size=4),\
                np.array([0.0, 0.5, 0.75, 1.0]))
 
-    def test_read_histogram_from_file(self, failing_csv_path_3lines,\
-                                      failing_csv_path_1line,\
-                                      failing_csv_path_manyelements,\
-                                      failing_csv_path_wrongelements,\
+    def test_read_histogram_from_file(self, csv_path_failing_3_data_lines,\
+                                      csv_path_failing_empty_line,\
+                                      csv_path_failing_element_counts,\
+                                      csv_path_failing_element_types,\
                                       csv_path_ex1, csv_path_ex2):
         # missing argument
         with raises(TypeError, match="missing 1 required positional"+\
@@ -842,18 +850,19 @@ class TestFunctions:
             totest.read_histogram_from_file(path=None)
         with raises(IndexError, match="More than two lines found in the"+\
                     " histogram document."):
-            totest.read_histogram_from_file(path=failing_csv_path_3lines)
+            totest.read_histogram_from_file(path=csv_path_failing_3_data_lines)
         with raises(IndexError, match="Less than two lines found in the"+\
                     " histogram document."):
-            totest.read_histogram_from_file(path=failing_csv_path_1line)
+            totest.read_histogram_from_file(path=csv_path_failing_empty_line)
         with raises(IndexError, match="The number of elements in the second"+\
                     " data line is not one less than the number in the first"+\
                     " data line."):
-            totest.read_histogram_from_file(path=failing_csv_path_manyelements)
+            totest.read_histogram_from_file(path=\
+                                            csv_path_failing_element_counts)
         with raises(IndexError, match="The number of elements in the second"+\
                     " data line is not one less than the number in the first"+\
                     " data line."):
-            totest.read_histogram_from_file(path=failing_csv_path_wrongelements)
+            totest.read_histogram_from_file(path=csv_path_failing_element_types)
         # examples:
         arrays = totest.read_histogram_from_file(path=csv_path_ex1)
         assert np.array_equal(arrays[0], np.array([0.1, 1.1, 2.1]))
