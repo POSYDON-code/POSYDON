@@ -33,7 +33,7 @@ class ProgressBar():
     def __call__(self, block_num, block_size, total_size):
         if not self.pbar:
             self.pbar=progressbar.ProgressBar(widgets=self.widgets,
-                                              maxval=total_size)
+                                              max_value=total_size)
             self.pbar.start()
 
         downloaded = block_num * block_size
@@ -50,7 +50,7 @@ def data_download(file=file, MD5_check=True, verbose=False):
        file : string
             - Filename of the data file to be downloaded
         MD5_check : boolean
-            - Use the MD5 checksum to make sure data is not corrupted
+            - Use the MD5 check to make sure data is not corrupted
         verbose : boolean
             - verbose output
 
