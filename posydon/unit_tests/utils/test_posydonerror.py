@@ -38,8 +38,9 @@ class TestElements:
                     '__doc__', '__file__', '__loader__', '__name__',\
                     '__package__', '__spec__', 'copy',\
                     'initial_condition_message']
-        assert dir(totest) == elements, "There might be added or removed "+\
-               "objects without an update on the unit test."
+        assert dir(totest) == elements, "There might be added or removed "\
+                                        + "objects without an update on the "\
+                                        + "unit test."
 
     def test_instance_POSYDONError(self):
         assert isclass(totest.POSYDONError)
@@ -90,13 +91,14 @@ class TestFunctions:
         assert "Failed Binary Initial Conditions" in\
                totest.initial_condition_message(binary=BinaryStar)
         with raises(TypeError, match="is not iterable"):
-            message = totest.initial_condition_message(binary=BinaryStar,
+            message = totest.initial_condition_message(binary=BinaryStar,\
                                                        ini_params=1)
         with raises(TypeError, match="can only concatenate str"):
-            message = totest.initial_condition_message(binary=BinaryStar,
+            message = totest.initial_condition_message(binary=BinaryStar,\
                                                        ini_params=[1,2])
-        assert "a: 1\nb: 2\n" == totest.initial_condition_message(\
-               binary=BinaryStar, ini_params=["a: 1\n", "b: 2\n"])
+        assert totest.initial_condition_message(binary=BinaryStar, ini_params=\
+                                                ["a: 1\n", "b: 2\n"]) ==\
+               "a: 1\nb: 2\n"
 
 
 class TestPOSYDONError:
@@ -160,12 +162,15 @@ class TestPOSYDONError:
         # test requests on input parameters
         with raises(TypeError, match="message must be a string"):
             error_object = totest.POSYDONError(message=artificial_object)
-        with raises(TypeError, match="objects must be None, a list, a "+\
-                    "SingleStar object, or a BinaryStar object"):
+        with raises(TypeError, match="objects must be None, a list, a "\
+                                     +"SingleStar object, or a BinaryStar "\
+                                     +"object"):
             error_object = totest.POSYDONError(objects=artificial_object)
 
 
-    def test_str(self, POSYDONError_position, POSYDONError_object, POSYDONError_SingleStar, POSYDONError_BinaryStar, POSYDONError_List):
+    def test_str(self, POSYDONError_position, POSYDONError_object,\
+                 POSYDONError_SingleStar, POSYDONError_BinaryStar,\
+                 POSYDONError_List):
         assert isroutine(POSYDONError_position.__str__)
         assert str(POSYDONError_position) == "\ntest message on position"
         # test passed objects
@@ -175,7 +180,7 @@ class TestPOSYDONError:
         assert "OBJECT #(<class 'posydon.binary_evol.binarystar.BinaryStar'>)"\
                in str(POSYDONError_BinaryStar)
         assert "OBJECT #1" not in str(POSYDONError_List)
-        assert "OBJECT #2 (<class 'posydon.binary_evol.singlestar.SingleStar"+\
-               "'>)" in str(POSYDONError_List)
-        assert "OBJECT #3 (<class 'posydon.binary_evol.binarystar.BinaryStar"+\
-               "'>)" in str(POSYDONError_List)
+        assert "OBJECT #2 (<class 'posydon.binary_evol.singlestar.SingleStar"\
+               + "'>)" in str(POSYDONError_List)
+        assert "OBJECT #3 (<class 'posydon.binary_evol.binarystar.BinaryStar"\
+               + "'>)" in str(POSYDONError_List)

@@ -35,10 +35,10 @@ def star():
 @fixture
 def star_profile():
     # generate a profile of a test star
-    profile = np.empty((4,), dtype=[(f, 'f8') for f in ['mass', 'dm',\
-              'radius', 'log_R', 'energy', 'x_mass_fraction_H',\
-              'y_mass_fraction_He', 'z_mass_fraction_metals',\
-              'neutral_fraction_H', 'neutral_fraction_He', 'avg_charge_He']])
+    cols = ['mass', 'dm', 'radius', 'log_R', 'energy', 'x_mass_fraction_H',\
+            'y_mass_fraction_He', 'z_mass_fraction_metals',\
+            'neutral_fraction_H', 'neutral_fraction_He', 'avg_charge_He']
+    profile = np.empty((4,), dtype=[(f, 'f8') for f in cols])
     profile['mass'] = np.array([1.0, 0.5, 0.1, 0.001])
     # get dm as differences from mass and the last mass entry (like next would
     # be 0)
@@ -47,12 +47,12 @@ def star_profile():
     profile['radius'] = np.array([1.0, 0.5, 0.1, 0.001])
     # get log10 of radius
     profile['log_R'] = np.log10(profile['radius'])
-    profile['energy'] = np.array([1.0, 0.5, 0.1, 0.001])*1.0e+16
+    profile['energy'] = np.array([1.0, 0.5, 0.1, 0.001]) * 1.0e+16
     profile['x_mass_fraction_H'] = np.array([0.7, 0.5, 0.1, 0.001])
     profile['y_mass_fraction_He'] = np.array([0.2, 0.5, 0.8, 0.2])
     # get Z=1-X-Y
-    profile['z_mass_fraction_metals'] = 1.0-profile['x_mass_fraction_H']\
-                                           -profile['y_mass_fraction_He']
+    profile['z_mass_fraction_metals'] = 1.0 - profile['x_mass_fraction_H']\
+                                        - profile['y_mass_fraction_He']
     profile['neutral_fraction_H'] = np.array([1.0, 0.5, 0.1, 0.0])
     profile['neutral_fraction_He'] = np.array([1.0, 0.5, 0.1, 0.0])
     profile['avg_charge_He'] = np.array([0.0, 0.5, 1.1, 1.8])
@@ -110,8 +110,9 @@ class TestElements:
                     'roche_lobe_radius', 'rotate', 'rzams',\
                     'separation_evol_wind_loss', 'set_binary_to_failed',\
                     'spin_stable_mass_transfer', 'stefan_boltzmann_law']
-        assert dir(totest) == elements, "There might be added or removed "+\
-               "objects without an update on the unit test."
+        assert dir(totest) == elements, "There might be added or removed "\
+                                        + "objects without an update on the "\
+                                        + "unit test."
 
     def test_instance_PATH_TO_POSYDON(self):
         assert isinstance(totest.PATH_TO_POSYDON, str)
@@ -410,8 +411,8 @@ class TestValues:
             assert v in totest.MT_CASE_TO_STR.keys()
 
     def test_value_DEFAULT_CE_OPTION_FOR_LAMBDA(self):
-        assert totest.DEFAULT_CE_OPTION_FOR_LAMBDA == "lambda_from_profile_"+\
-               "gravitational_plus_internal_minus_recombination"
+        assert totest.DEFAULT_CE_OPTION_FOR_LAMBDA == "lambda_from_profile_"\
+               + "gravitational_plus_internal_minus_recombination"
 
 
 class TestFunctions:
@@ -487,12 +488,12 @@ class TestFunctions:
         # try a string of a float
         assert totest.is_number("1.2e-3")
         # try a non-float string
-        assert totest.is_number("test")==False
+        assert totest.is_number("test") == False
 
     def test_stefan_boltzmann_law(self):
         # missing argument
-        with raises(TypeError, match="missing 2 required positional"+\
-                    " arguments: 'L' and 'R'"):
+        with raises(TypeError, match="missing 2 required positional "\
+                                     +"arguments: 'L' and 'R'"):
             totest.stefan_boltzmann_law()
         # examples
         tests = [(1.0, 1.0, approx(5.77603658298e+3, abs=6e-9)),\
@@ -503,37 +504,35 @@ class TestFunctions:
 
     def test_rzams(self):
         # missing argument
-        with raises(TypeError, match="missing 1 required positional"+\
-                    " argument: 'm'"):
+        with raises(TypeError, match="missing 1 required positional "\
+                                     +"argument: 'm'"):
             totest.rzams()
         # examples
         tests = [(1.0, approx(0.88824945030, abs=6e-12)),\
                  (2.0, approx(1.61021038543, abs=6e-12))]
         for (m, r) in tests:
             assert totest.rzams(m) == r
-        assert totest.rzams(1.0, z=1.0) ==\
-               approx(0.85822941705, abs=6e-12)
-        assert totest.rzams(1.0, Zsun=1.0) ==\
-               approx(0.84963691291, abs=6e-12)
+        assert totest.rzams(1.0, z=1.0) == approx(0.85822941705, abs=6e-12)
+        assert totest.rzams(1.0, Zsun=1.0) == approx(0.84963691291, abs=6e-12)
 
     def test_roche_lobe_radius(self, capsys):
         # missing argument
-        with raises(TypeError, match="missing 2 required positional"+\
-                    " arguments: 'm1' and 'm2'"):
+        with raises(TypeError, match="missing 2 required positional "\
+                                     +"arguments: 'm1' and 'm2'"):
             totest.roche_lobe_radius()
         # bad input
         for a in [-1.0, np.array([]), np.array([-1.0])]:
-            with warns(EvolutionWarning, match="Trying to compute RL radius"+\
-                       " for binary with invalid separation"):
-                assert np.isnan(totest.roche_lobe_radius(1.0, 1.0,\
-                       a_orb=a))
+            with warns(EvolutionWarning, match="Trying to compute RL radius "\
+                                               +"for binary with invalid "\
+                                               +"separation"):
+                assert np.isnan(totest.roche_lobe_radius(1.0, 1.0, a_orb=a))
         for m in [0.0, np.array([]), np.array([0.0])]:
-            with warns(EvolutionWarning, match="Trying to compute RL radius"+\
-                       " for nonexistent object"):
+            with warns(EvolutionWarning, match="Trying to compute RL radius "\
+                                               +"for nonexistent object"):
                 assert np.isnan(totest.roche_lobe_radius(m, 1.0))
         for m in [0.0, np.array([]), np.array([0.0])]:
-            with warns(EvolutionWarning, match="Trying to compute RL radius"+\
-                       " for nonexistent companion"):
+            with warns(EvolutionWarning, match="Trying to compute RL radius "\
+                                               +"for nonexistent companion"):
                 assert np.isnan(totest.roche_lobe_radius(1.0, m))
         # examples
         tests = [(1.0, 1.0, 1.0, approx(0.37892051838, abs=6e-12)),\
@@ -541,24 +540,25 @@ class TestFunctions:
                  (1.0, 2.0, 1.0, approx(0.32078812033, abs=6e-12)),\
                  (1.0, 1.0, 2.0, approx(0.75784103676, abs=6e-12))]
         for (m1, m2, a, r) in tests:
-            if a==1.0:
+            if a == 1.0:
                 assert totest.roche_lobe_radius(m1, m2) == r
             else:
                 assert totest.roche_lobe_radius(m1, m2, a_orb=a) == r
-        assert np.allclose(totest.roche_lobe_radius(\
-               np.array([m1 for (m1, m2, a, r) in tests]),\
-               np.array([m2 for (m1, m2, a, r) in tests]),\
-               a_orb=np.array([a for (m1, m2, a, r) in tests])),\
-               np.array([r.expected for (m1, m2, a, r) in tests]))
+        m1s = np.array([m1 for (m1, m2, a, r) in tests])
+        m2s = np.array([m2 for (m1, m2, a, r) in tests])
+        a_orbs = np.array([a for (m1, m2, a, r) in tests])
+        assert np.allclose(totest.roche_lobe_radius(m1s, m2s, a_orb=a_orbs),\
+                           np.array([r.expected for (m1, m2, a, r) in tests]))
         # check that roche lobe sum never exceeds orbital separation
         for m in [1.0e+1, 1.0e+2, 1.0e+3, 1.0e+4, 1.0e+5, 1.0e+6, 1.0e+7]:
-            assert totest.roche_lobe_radius(m, 1.0)+\
-                   totest.roche_lobe_radius(1.0, m) < 1.0
+            assert totest.roche_lobe_radius(m, 1.0)\
+                   + totest.roche_lobe_radius(1.0, m) < 1.0
 
     def test_orbital_separation_from_period(self):
         # missing argument
-        with raises(TypeError, match="missing 3 required positional"+\
-                    " arguments: 'period_days', 'm1_solar', and 'm2_solar'"):
+        with raises(TypeError, match="missing 3 required positional "\
+                                     +"arguments: 'period_days', 'm1_solar', "\
+                                     +"and 'm2_solar'"):
             totest.orbital_separation_from_period()
         # examples
         tests = [(1.0, 15.0, 30.0, approx(14.9643417735, abs=6e-11)),\
@@ -570,8 +570,9 @@ class TestFunctions:
 
     def test_orbital_period_from_separation(self):
         # missing argument
-        with raises(TypeError, match="missing 3 required positional"+\
-                    " arguments: 'separation', 'm1', and 'm2'"):
+        with raises(TypeError, match="missing 3 required positional "\
+                                     +"arguments: 'separation', 'm1', and "\
+                                     +"'m2'"):
             totest.orbital_period_from_separation()
         # examples
         tests = [(1.0, 15.0, 30.0, approx(1.72773763511e-2, abs=6e-14)),\
@@ -583,12 +584,12 @@ class TestFunctions:
 
     def test_eddington_limit(self, binary):
         # missing argument
-        with raises(TypeError, match="missing 1 required positional"+\
-                    " argument: 'binary'"):
+        with raises(TypeError, match="missing 1 required positional "\
+                                     +"argument: 'binary'"):
             totest.eddington_limit()
         # bad input
-        with raises(ValueError, match="Eddington limit is being calculated"+\
-                    " for a non-CO"):
+        with raises(ValueError, match="Eddington limit is being calculated "\
+                                      +"for a non-CO"):
             totest.eddington_limit(binary)
         with raises(IndexError, match="index 2 is out of bounds"):
             binary.star_1.state = 'WD'
@@ -635,12 +636,12 @@ class TestFunctions:
 
     def test_beaming(self, binary):
         # missing argument
-        with raises(TypeError, match="missing 1 required positional"+\
-                    " argument: 'binary'"):
+        with raises(TypeError, match="missing 1 required positional "\
+                                     +"argument: 'binary'"):
             totest.beaming()
         # bad input
-        with raises(ValueError, match="Eddington limit is being calculated"+\
-                    " for a non-CO"):
+        with raises(ValueError, match="Eddington limit is being calculated "\
+                                      +"for a non-CO"):
             totest.beaming(binary)
         # examples: 1Msun accretor is star1 with no mass-transfer rate
         binary.star_1.mass = 1.0
@@ -659,20 +660,20 @@ class TestFunctions:
             binary.star_1.state = CO
             assert totest.beaming(binary) == r
 
-    def test_bondi_hoyle(self, binary, monkeypatch, capsys):
+    def test_bondi_hoyle(self, binary, monkeypatch):
         def mock_rand(shape):
             return np.zeros(shape)
         def mock_rand2(shape):
             return np.full(shape, 0.1)
         # missing argument
-        with raises(TypeError, match="missing 3 required positional"+\
-                    " arguments: 'binary', 'accretor', and 'donor'"):
+        with raises(TypeError, match="missing 3 required positional "\
+                                     +"arguments: 'binary', 'accretor', and "\
+                                     +"'donor'"):
             totest.bondi_hoyle()
         # bad input
-        with raises(RuntimeError, match="Failed to converge after 100"+\
-                    " iterations"):
-            totest.bondi_hoyle(binary, binary.star_1,\
-                               binary.star_2)
+        with raises(RuntimeError, match="Failed to converge after 100 "\
+                                        +"iterations"):
+            totest.bondi_hoyle(binary, binary.star_1, binary.star_2)
         # examples:
         binary.separation = 1.0            #a semi-major axis of 1Rsun
         binary.eccentricity = 0.1          #a small eccentricity
@@ -684,95 +685,99 @@ class TestFunctions:
         binary.star_2.log_R = -0.5         #donor's radius is 10^{-0.5}Rsun
         binary.star_2.surface_h1 = 0.7     #donor's X_surf=0.7
         binary.star_2.log_L = 0.3          #donor's lum. is 10^{0.3}Lsun
-        with raises(UnboundLocalError, match="cannot access local variable"+\
-                    " 'f_m' where it is not associated with a value"):
+        with raises(UnboundLocalError, match="cannot access local variable "\
+                                             +"'f_m' where it is not "\
+                                             +"associated with a value"):
             # undefined scheme
-            totest.bondi_hoyle(binary, binary.star_1,\
-                               binary.star_2, scheme='')
+            totest.bondi_hoyle(binary, binary.star_1, binary.star_2, scheme='')
         monkeypatch.setattr(np.random, "rand", mock_rand)
-        assert totest.bondi_hoyle(binary, binary.star_1,\
-               binary.star_2) == approx(3.92668160462e-17, abs=6e-29)
-        assert totest.bondi_hoyle(binary, binary.star_1,\
-               binary.star_2, scheme='Kudritzki+2000') ==\
+        assert totest.bondi_hoyle(binary, binary.star_1, binary.star_2) ==\
+               approx(3.92668160462e-17, abs=6e-29)
+        assert totest.bondi_hoyle(binary, binary.star_1, binary.star_2,\
+                                  scheme='Kudritzki+2000') ==\
                approx(3.92668160462e-17, abs=6e-29)
         binary.star_2.log_R = 1.5          #donor's radius is 10^{1.5}Rsun
-        assert totest.bondi_hoyle(binary, binary.star_1,\
-               binary.star_2, scheme='Kudritzki+2000') ==\
+        assert totest.bondi_hoyle(binary, binary.star_1, binary.star_2,\
+                                  scheme='Kudritzki+2000') ==\
                approx(3.92668160462e-17, abs=6e-29)
         binary.star_2.log_R = -1.5         #donor's radius is 10^{-1.5}Rsun
-        assert totest.bondi_hoyle(binary, binary.star_1,\
-               binary.star_2, scheme='Kudritzki+2000') == 1e-99
+        assert totest.bondi_hoyle(binary, binary.star_1, binary.star_2,\
+                                  scheme='Kudritzki+2000') == 1e-99
         binary.star_2.surface_h1 = 0.25    #donor's X_surf=0.25
-        assert totest.bondi_hoyle(binary, binary.star_1,\
-               binary.star_2) == 1e-99
+        assert totest.bondi_hoyle(binary, binary.star_1, binary.star_2) ==\
+               1e-99
         binary.star_2.lg_wind_mdot = -4.0  #donor's wind is 10^{-4}Msun/yr
-        assert totest.bondi_hoyle(binary, binary.star_1,\
-               binary.star_2) == 1e-99
-        assert totest.bondi_hoyle(binary, binary.star_1,\
-               binary.star_2, wind_disk_criteria=False) ==\
+        assert totest.bondi_hoyle(binary, binary.star_1, binary.star_2) ==\
+               1e-99
+        assert totest.bondi_hoyle(binary, binary.star_1, binary.star_2,\
+                                  wind_disk_criteria=False) ==\
                approx(5.34028698228e-17, abs=6e-29) # form always a disk
         monkeypatch.setattr(np.random, "rand", mock_rand2) # other angle
         binary.star_1.state = 'BH'         #accretor is BH
-        assert totest.bondi_hoyle(binary, binary.star_1,\
-               binary.star_2, wind_disk_criteria=False) ==\
+        assert totest.bondi_hoyle(binary, binary.star_1, binary.star_2,\
+                                  wind_disk_criteria=False) ==\
                approx(5.13970075150e-8, abs=6e-20)
 
     def test_rejection_sampler(self, monkeypatch):
         def mock_uniform(low=0.0, high=1.0, size=1):
             return np.linspace(low, high, num=size)
         def mock_interp1d(x, y):
-            if x[0]>x[-1]:
+            if x[0] > x[-1]:
                 raise ValueError
             return interp1d(x, y)
         def mock_pdf(x):
-            return 1.0-np.sqrt(x)
+            return 1.0 - np.sqrt(x)
         # bad input
-        with raises(TypeError, match="'>=' not supported between instances"+\
-                    " of 'NoneType' and 'float'"):
+        with raises(TypeError, match="'>=' not supported between instances "\
+                                     +"of 'NoneType' and 'float'"):
             totest.rejection_sampler()
-        with raises(TypeError, match="'>=' not supported between instances"+\
-                    " of 'NoneType' and 'float'"):
+        with raises(TypeError, match="'>=' not supported between instances "\
+                                     +"of 'NoneType' and 'float'"):
             totest.rejection_sampler(x=np.array([0.0, 1.0]))
-        with raises(IndexError, match="too many indices for array: array is"+\
-                    " 0-dimensional, but 1 were indexed"):
+        with raises(IndexError, match="too many indices for array: array is "\
+                                      +"0-dimensional, but 1 were indexed"):
             totest.rejection_sampler(y=np.array([0.0, 1.0]))
         with raises(AssertionError):
             totest.rejection_sampler(x=np.array([0.0, 1.0]),\
                                      y=np.array([-0.4, 0.6]))
-        with raises(TypeError, match="'>=' not supported between instances"+\
-                    " of 'NoneType' and 'float'"):
+        with raises(TypeError, match="'>=' not supported between instances "\
+                                     +"of 'NoneType' and 'float'"):
             totest.rejection_sampler(x_lim=np.array([0.0, 1.0]))
         with raises(TypeError, match="'NoneType' object is not subscriptable"):
             totest.rejection_sampler(pdf=mock_pdf)
         # examples:
         monkeypatch.setattr(np.random, "uniform", mock_uniform)
         monkeypatch.setattr(totest, "interp1d", mock_interp1d)
-        assert np.array_equal(totest.rejection_sampler(x=np.array([0.0, 1.0]),\
-               y=np.array([0.4, 0.6]), size=5),\
-               np.array([0.0, 0.25, 0.5, 0.75, 1.0]))
+        tests = [(np.array([0.0, 1.0]), np.array([0.4, 0.6]), 5,\
+                  np.array([0.0, 0.25, 0.5, 0.75, 1.0])),\
+                 (np.array([1.0, 0.0]), np.array([0.2, 0.8]), 5,\
+                  np.array([0.0, 0.25, 0.5, 0.0, 0.0])),\
+                 (np.array([1.0, 0.0]), np.array([0.2, 0.8]), 6,\
+                  np.array([0.0, 0.2, 0.4, 0.0, 0.5, 0.0]))]
+        for (x, y, s, r) in tests:
+            assert np.array_equal(totest.rejection_sampler(x=x, y=y, size=s),\
+                                  r)
+        assert np.array_equal(totest.rejection_sampler(x_lim=np.array([0.0,\
+                                                                       1.0]),\
+                                                       pdf=mock_pdf, size=5),\
+                              np.array([0.0, 0.25, 0.0, 0.0, 0.0]))
         assert np.array_equal(totest.rejection_sampler(x=np.array([1.0, 0.0]),\
-               y=np.array([0.2, 0.8]), size=5),\
-               np.array([0.0, 0.25, 0.5, 0.0, 0.0]))
-        assert np.array_equal(totest.rejection_sampler(x=np.array([1.0, 0.0]),\
-               y=np.array([0.2, 0.8]), size=6),\
-               np.array([0.0, 0.2, 0.4, 0.0, 0.5, 0.0]))
-        assert np.array_equal(totest.rejection_sampler(\
-               x_lim=np.array([0.0, 1.0]), pdf=mock_pdf,\
-               size=5), np.array([0.0, 0.25, 0.0, 0.0, 0.0]))
-        assert np.array_equal(totest.rejection_sampler(x=np.array([1.0, 0.0]),\
-               y=np.array([0.2, 0.8]), x_lim=np.array([0.0, 1.0]),\
-               pdf=mock_pdf, size=5), np.array([0.0, 0.25, 0.0, 0.0, 0.0]))
+                                                       y=np.array([0.2, 0.8]),\
+                                                       x_lim=np.array([0.0,\
+                                                                       1.0]),\
+                                                       pdf=mock_pdf, size=5),\
+                              np.array([0.0, 0.25, 0.0, 0.0, 0.0]))
 
     def test_inverse_sampler(self, monkeypatch):
         def mock_uniform(low=0.0, high=1.0, size=1):
             return np.linspace(low, high, num=size)
         # missing argument
-        with raises(TypeError, match="missing 2 required positional"+\
-                    " arguments: 'x' and 'y'"):
+        with raises(TypeError, match="missing 2 required positional "\
+                                     +"arguments: 'x' and 'y'"):
             totest.inverse_sampler()
         # bad input
-        with raises(ValueError, match="diff requires input that is at least"+\
-                    " one dimensional"):
+        with raises(ValueError, match="diff requires input that is at least "\
+                                      +"one dimensional"):
             totest.inverse_sampler(x=None, y=None)
         with raises(AssertionError):
             totest.inverse_sampler(x=np.array([1.0, 0.0]),\
@@ -783,16 +788,20 @@ class TestFunctions:
         # examples:
         monkeypatch.setattr(np.random, "uniform", mock_uniform)
         assert np.allclose(totest.inverse_sampler(x=np.array([0.0, 1.0]),\
-               y=np.array([0.4, 0.6]), size=5),\
-               np.array([0.0, 0.29128785, 0.54950976, 0.78388218, 1.0]))
+                                                  y=np.array([0.4, 0.6]),\
+                                                  size=5),\
+                           np.array([0.0, 0.29128785, 0.54950976, 0.78388218,\
+                                     1.0]))
         assert np.allclose(totest.inverse_sampler(x=np.array([0.0, 1.0]),\
-               y=np.array([0.6, 0.4]), size=4),\
-               np.array([0.0, 0.2919872, 0.61952386, 1.0]))
-        with warns(RuntimeWarning,\
-                   match="invalid value encountered in divide"):
+                                                  y=np.array([0.6, 0.4]),\
+                                                  size=4),\
+                           np.array([0.0, 0.2919872, 0.61952386, 1.0]))
+        with warns(RuntimeWarning, match="invalid value encountered in "\
+                                         +"divide"):
             assert np.allclose(totest.inverse_sampler(x=np.array([0.0, 1.0]),\
-                   y=np.array([0.5, 0.5]), size=5),\
-                   np.array([0.0, 0.25, 0.5, 0.75, 1.0]))
+                                                      y=np.array([0.5, 0.5]),\
+                                                      size=5),\
+                               np.array([0.0, 0.25, 0.5, 0.75, 1.0]))
 
     def test_histogram_sampler(self, monkeypatch):
         def mock_uniform(low=0.0, high=1.0, size=1):
@@ -801,18 +810,18 @@ class TestFunctions:
             if isinstance(a, int):
                 a=np.arange(a)
             sample = []
-            for v,q in zip(a,p):
+            for (v, q) in zip(a, p):
                 sample += round(size*q) * [v]
-            if len(sample)<size:
+            if len(sample) < size:
                 sample += (size-len(sample)) * [a[-1]]
             return np.array(sample[:size])
         # missing argument
-        with raises(TypeError, match="missing 2 required positional"+\
-                    " arguments: 'x_edges' and 'y'"):
+        with raises(TypeError, match="missing 2 required positional "\
+                                     +"arguments: 'x_edges' and 'y'"):
             totest.histogram_sampler()
         # bad input
-        with raises(TypeError, match="'>=' not supported between instances"+\
-                    " of 'NoneType' and 'float'"):
+        with raises(TypeError, match="'>=' not supported between instances "\
+                                     +"of 'NoneType' and 'float'"):
             totest.histogram_sampler(x_edges=None, y=None)
         with raises(AssertionError):
             totest.histogram_sampler(x_edges=np.array([0.0, 0.5, 1.0]),\
@@ -823,14 +832,19 @@ class TestFunctions:
         # examples:
         monkeypatch.setattr(np.random, "uniform", mock_uniform)
         monkeypatch.setattr(np.random, "choice", mock_choice)
-        assert np.allclose(totest.histogram_sampler(\
-               x_edges=np.array([0.0, 0.5, 1.0]),\
-               y=np.array([0.2, 0.8]), size=5),\
-               np.array([0.0, 0.5, 0.66666667, 0.83333333, 1.0]))
-        assert np.array_equal(totest.histogram_sampler(\
-               x_edges=np.array([0.0, 0.5, 1.0]),\
-               y=np.array([0.2, 0.8]), size=4),\
-               np.array([0.0, 0.5, 0.75, 1.0]))
+        assert np.allclose(totest.histogram_sampler(x_edges=np.array([0.0,\
+                                                                      0.5,\
+                                                                      1.0]),\
+                                                    y=np.array([0.2, 0.8]),\
+                                                    size=5),\
+                           np.array([0.0, 0.5, 0.66666667, 0.83333333, 1.0]))
+        assert np.array_equal(totest.histogram_sampler(x_edges=np.array([0.0,\
+                                                                         0.5,\
+                                                                         1.0]\
+                                                       ), y=np.array([0.2,\
+                                                                      0.8]),\
+                                                       size=4),\
+                              np.array([0.0, 0.5, 0.75, 1.0]))
 
     def test_read_histogram_from_file(self, csv_path_failing_3_data_lines,\
                                       csv_path_failing_empty_line,\
@@ -838,27 +852,27 @@ class TestFunctions:
                                       csv_path_failing_element_types,\
                                       csv_path_ex1, csv_path_ex2):
         # missing argument
-        with raises(TypeError, match="missing 1 required positional"+\
-                    " argument: 'path'"):
+        with raises(TypeError, match="missing 1 required positional "\
+                                     +"argument: 'path'"):
             totest.read_histogram_from_file()
         # bad input
-        with raises(TypeError, match="expected str, bytes or os.PathLike"+\
-                    " object, not NoneType"):
+        with raises(TypeError, match="expected str, bytes or os.PathLike "\
+                                     +"object, not NoneType"):
             totest.read_histogram_from_file(path=None)
-        with raises(IndexError, match="More than two lines found in the"+\
-                    " histogram document."):
+        with raises(IndexError, match="More than two lines found in the "\
+                                      +"histogram document."):
             totest.read_histogram_from_file(path=csv_path_failing_3_data_lines)
-        with raises(IndexError, match="Less than two lines found in the"+\
-                    " histogram document."):
+        with raises(IndexError, match="Less than two lines found in the "\
+                                      +"histogram document."):
             totest.read_histogram_from_file(path=csv_path_failing_empty_line)
-        with raises(IndexError, match="The number of elements in the second"+\
-                    " data line is not one less than the number in the first"+\
-                    " data line."):
+        with raises(IndexError, match="The number of elements in the second "\
+                                      +"data line is not one less than the "\
+                                      +"number in the first data line."):
             totest.read_histogram_from_file(path=\
                                             csv_path_failing_element_counts)
-        with raises(IndexError, match="The number of elements in the second"+\
-                    " data line is not one less than the number in the first"+\
-                    " data line."):
+        with raises(IndexError, match="The number of elements in the second "\
+                                      +"data line is not one less than the "\
+                                      +"number in the first data line."):
             totest.read_histogram_from_file(path=csv_path_failing_element_types)
         # examples:
         arrays = totest.read_histogram_from_file(path=csv_path_ex1)
@@ -870,85 +884,87 @@ class TestFunctions:
 
     def test_inspiral_timescale_from_separation(self):
         # missing argument
-        with raises(TypeError, match="missing 4 required positional"+\
-                    " arguments: 'star1_mass', 'star2_mass', 'separation',"+\
-                    " and 'eccentricity'"):
+        with raises(TypeError, match="missing 4 required positional "\
+                                     +"arguments: 'star1_mass', 'star2_mass',"\
+                                     +" 'separation', and 'eccentricity'"):
             totest.inspiral_timescale_from_separation()
         # bad input
         with raises(TypeError) as error_info:
             totest.inspiral_timescale_from_separation(None, None, None, None)
-        assert error_info.value.args[0] == "unsupported operand type(s) for"+\
-               " *: 'NoneType' and 'float'"
-        with raises(ValueError, match="Mass of star 1 is <= 0, which is not"+\
-                    " a physical value."):
+        assert error_info.value.args[0] == "unsupported operand type(s) for "\
+                                           + "*: 'NoneType' and 'float'"
+        with raises(ValueError, match="Mass of star 1 is <= 0, which is not "\
+                                      +"a physical value."):
             totest.inspiral_timescale_from_separation(0.0, 0.5, 0.5, 0.5)
-        with raises(ValueError, match="Mass of star 2 is <= 0, which is not"+\
-                    " a physical value."):
+        with raises(ValueError, match="Mass of star 2 is <= 0, which is not "\
+                                      +"a physical value."):
             totest.inspiral_timescale_from_separation(0.5, 0.0, 0.5, 0.5)
-        with raises(ValueError, match="Separation is <= 0, which is not a"+\
-                    " physical value."):
+        with raises(ValueError, match="Separation is <= 0, which is not a "\
+                                      +"physical value."):
             totest.inspiral_timescale_from_separation(0.5, 0.5, 0.0, 0.5)
-        with raises(ValueError, match="Eccentricity is < 0, which is not a"+\
-                    " physical value."):
+        with raises(ValueError, match="Eccentricity is < 0, which is not a "\
+                                      +"physical value."):
             totest.inspiral_timescale_from_separation(0.5, 0.5, 0.5, -0.5)
-        with raises(ValueError, match="Eccentricity is >= 1, which is not a"+\
-                    " physical value."):
+        with raises(ValueError, match="Eccentricity is >= 1, which is not a "\
+                                      +"physical value."):
             totest.inspiral_timescale_from_separation(0.5, 0.5, 0.5, 1.5)
         # examples:
-        tests = [(0.5, 0.5, 0.5, 0.5   , approx(13.44121924697    , 6e-12)),\
-                 (1.5, 0.5, 0.5, 0.5   , approx( 2.24020320783    , 6e-12)),\
-                 (0.5, 1.5, 0.5, 0.5   , approx( 2.24020320783    , 6e-12)),\
-                 (0.5, 0.5, 1.5, 0.5   , approx( 1.08873875900e+3 , 6e-9 )),\
-                 (0.5, 0.5, 0.5, 0.0   , approx(37.56647511040    , 6e-12)),\
-                 (0.5, 0.5, 0.5, 1.0e-5, approx(37.56647487803    , 6e-12)),\
-                 (0.5, 0.5, 0.5, 1.0-1.0e-5,\
-                  approx( 2.41297178064e-15, 6e-27))]
+        tests = [(0.5, 0.5, 0.5, 0.5, approx(13.44121924697, abs=6e-12)),\
+                 (1.5, 0.5, 0.5, 0.5, approx( 2.24020320783, abs=6e-12)),\
+                 (0.5, 1.5, 0.5, 0.5, approx( 2.24020320783, abs=6e-12)),\
+                 (0.5, 0.5, 1.5, 0.5, approx( 1.08873875900e+3, abs=6e-9)),\
+                 (0.5, 0.5, 0.5, 0.0, approx(37.56647511040, abs=6e-12)),\
+                 (0.5, 0.5, 0.5, 1.0e-5, approx(37.56647487803, abs=6e-12)),\
+                 (0.5, 0.5, 0.5, 1.0-1.0e-5, approx(2.41297178064e-15,\
+                                                    abs=6e-27))]
         for (m1, m2, a, e, r) in tests:
             assert totest.inspiral_timescale_from_separation(m1, m2, a, e) == r
 
     def test_inspiral_timescale_from_orbital_period(self):
         # missing argument
-        with raises(TypeError, match="missing 4 required positional"+\
-                    " arguments: 'star1_mass', 'star2_mass',"+\
-                    " 'orbital_period', and 'eccentricity'"):
+        with raises(TypeError, match="missing 4 required positional "\
+                                     +"arguments: 'star1_mass', 'star2_mass',"\
+                                     +" 'orbital_period', and 'eccentricity'"):
             totest.inspiral_timescale_from_orbital_period()
         # bad input
         with raises(TypeError) as error_info:
             totest.inspiral_timescale_from_orbital_period(None, None, None, None)
-        assert error_info.value.args[0] == "unsupported operand type(s) for"+\
-               " *: 'NoneType' and 'float'"
-#        with raises(ValueError, match="Mass of star 1 is <= 0, which is not"+\
-#                    " a physical value."):
+        assert error_info.value.args[0] == "unsupported operand type(s) for "\
+                                           + "*: 'NoneType' and 'float'"
+#        with raises(ValueError, match="Mass of star 1 is <= 0, which is not "\
+#                                      +"a physical value."):
 #            totest.inspiral_timescale_from_orbital_period(0.0, 0.5, 0.5, 0.5)
-#        with raises(ValueError, match="Mass of star 2 is <= 0, which is not"+\
-#                    " a physical value."):
+#        with raises(ValueError, match="Mass of star 2 is <= 0, which is not "\
+#                                      +"a physical value."):
 #            totest.inspiral_timescale_from_orbital_period(0.5, 0.0, 0.5, 0.5)
-#        with raises(ValueError, match="Separation is <= 0, which is not a"+\
-#                    " physical value."):
+#        with raises(ValueError, match="Separation is <= 0, which is not a "\
+#                                      +"physical value."):
 #            totest.inspiral_timescale_from_orbital_period(0.5, 0.5, 0.0, 0.5)
-#        with raises(ValueError, match="Eccentricity is < 0, which is not a"+\
-#                    " physical value."):
+#        with raises(ValueError, match="Eccentricity is < 0, which is not a "\
+#                                      +"physical value."):
 #            totest.inspiral_timescale_from_orbital_period(0.5, 0.5, 0.5, -0.5)
-#        with raises(ValueError, match="Eccentricity is >= 1, which is not a"+\
-#                    " physical value."):
+#        with raises(ValueError, match="Eccentricity is >= 1, which is not a "\
+#                                      +"physical value."):
 #            totest.inspiral_timescale_from_orbital_period(0.5, 0.5, 0.5, 1.5)
         # examples:
-        tests = [(0.5, 0.5, 0.5, 0.5       , approx(1.06110684309e+4 , 6e-8)),\
-                 (1.5, 0.5, 0.5, 0.5       , approx(4.45636949266e+3 , 6e-9)),\
-                 (0.5, 1.5, 0.5, 0.5       , approx(4.45636949266e+3 , 6e-9)),\
-                 (0.5, 0.5, 1.5, 0.5       , approx(1.98647206096e+5 , 6e-7)),\
-                 (0.5, 0.5, 0.5, 0.0       , approx(2.96565684095e+4 , 6e-8)),\
-                 (0.5, 0.5, 0.5, 1.0e-5    , approx(2.96565682261e+4 , 6e-8)),\
-                 (0.5, 0.5, 0.5, 1.0-1.0e-5, approx(1.90490224255e-12, 6e-24))]
+        tests = [(0.5, 0.5, 0.5, 0.5, approx(1.06110684309e+4, abs=6e-8)),\
+                 (1.5, 0.5, 0.5, 0.5, approx(4.45636949266e+3, abs=6e-9)),\
+                 (0.5, 1.5, 0.5, 0.5, approx(4.45636949266e+3, abs=6e-9)),\
+                 (0.5, 0.5, 1.5, 0.5, approx(1.98647206096e+5, abs=6e-7)),\
+                 (0.5, 0.5, 0.5, 0.0, approx(2.96565684095e+4, abs=6e-8)),\
+                 (0.5, 0.5, 0.5, 1.0e-5, approx(2.96565682261e+4, abs=6e-8)),\
+                 (0.5, 0.5, 0.5, 1.0-1.0e-5, approx(1.90490224255e-12,\
+                                                    abs=6e-24))]
         for (m1, m2, P, e, r) in tests:
             assert totest.inspiral_timescale_from_orbital_period(m1, m2, P, e)\
                    == r
 
     def test_spin_stable_mass_transfer(self):
         # missing argument
-        with raises(TypeError, match="missing 3 required positional"+\
-                    " arguments: 'spin_i', 'star_mass_preMT', and"+\
-                    " 'star_mass_postMT'"):
+        with raises(TypeError, match="missing 3 required positional "\
+                                     +"arguments: 'spin_i', "\
+                                     +"'star_mass_preMT', and "\
+                                     +"'star_mass_postMT'"):
             totest.spin_stable_mass_transfer()
         # examples:
         tests = [(None, 1.0, 1.0), (-1.0, 1.0, 1.0), (1.0, None, 1.0),\
@@ -962,12 +978,12 @@ class TestFunctions:
 
     def test_check_state_of_star(self, star):
         # missing argument
-        with raises(TypeError, match="missing 1 required positional"+\
-                    " argument: 'star'"):
+        with raises(TypeError, match="missing 1 required positional "\
+                                     +"argument: 'star'"):
             totest.check_state_of_star()
         # bad input
-        with raises(AttributeError, match="'NoneType' object has no"+\
-                    " attribute 'mass'"):
+        with raises(AttributeError, match="'NoneType' object has no "\
+                                          +"attribute 'mass'"):
             totest.check_state_of_star(None, None, None)
         # examples:
         assert totest.check_state_of_star(star) ==\
@@ -978,17 +994,16 @@ class TestFunctions:
         for (CO, m) in tests:
             star.mass = m
             star.state = CO
-            assert totest.check_state_of_star(star, star_CO=True) ==\
-                   star.state
+            assert totest.check_state_of_star(star, star_CO=True) == star.state
         n = len(tests)
-        star.mass_history = n*star.mass_history
-        star.surface_h1_history = n*star.surface_h1_history
-        star.center_h1_history = n*star.center_h1_history
-        star.center_he4_history = n*star.center_he4_history
-        star.center_c12_history = n*star.center_c12_history
-        star.log_LH_history = n*star.log_LH_history
-        star.log_LHe_history = n*star.log_LHe_history
-        star.log_Lnuc_history = n*star.log_Lnuc_history
+        star.mass_history = n * star.mass_history
+        star.surface_h1_history = n * star.surface_h1_history
+        star.center_h1_history = n * star.center_h1_history
+        star.center_he4_history = n * star.center_he4_history
+        star.center_c12_history = n * star.center_c12_history
+        star.log_LH_history = n * star.log_LH_history
+        star.log_LHe_history = n * star.log_LHe_history
+        star.log_Lnuc_history = n * star.log_Lnuc_history
         for i in range(n):
             assert totest.check_state_of_star(star, i=i) ==\
                    "undetermined_evolutionary_state"
@@ -1002,12 +1017,12 @@ class TestFunctions:
 
     def test_check_state_of_star_history_array(self, star):
         # missing argument
-        with raises(TypeError, match="missing 1 required positional"+\
-                    " argument: 'star'"):
+        with raises(TypeError, match="missing 1 required positional "\
+                                     +"argument: 'star'"):
             totest.check_state_of_star_history_array()
         # bad input
-        with raises(TypeError, match="bad operand type for unary -:"+\
-                    " 'NoneType'"):
+        with raises(TypeError, match="bad operand type for unary -: "\
+                                     +"'NoneType'"):
             totest.check_state_of_star_history_array(None, None, None)
         with raises(IndexError, match="list index out of range"):
             totest.check_state_of_star_history_array(star, N=10)
@@ -1016,17 +1031,17 @@ class TestFunctions:
                ["undetermined_evolutionary_state"]
         masses = [1.0, 1.5, 9.0]
         n = len(masses)
-        star.mass_history = n*star.mass_history
-        star.surface_h1_history = n*star.surface_h1_history
-        star.center_h1_history = n*star.center_h1_history
-        star.center_he4_history = n*star.center_he4_history
-        star.center_c12_history = n*star.center_c12_history
-        star.log_LH_history = n*star.log_LH_history
-        star.log_LHe_history = n*star.log_LHe_history
-        star.log_Lnuc_history = n*star.log_Lnuc_history
+        star.mass_history = n * star.mass_history
+        star.surface_h1_history = n * star.surface_h1_history
+        star.center_h1_history = n * star.center_h1_history
+        star.center_he4_history = n * star.center_he4_history
+        star.center_c12_history = n * star.center_c12_history
+        star.log_LH_history = n * star.log_LH_history
+        star.log_LHe_history = n * star.log_LHe_history
+        star.log_Lnuc_history = n * star.log_Lnuc_history
         for i in range(n):
-            assert totest.check_state_of_star_history_array(star, N=i+1)\
-                   == (i+1)*["undetermined_evolutionary_state"]
+            assert totest.check_state_of_star_history_array(star, N=i+1) ==\
+                   (i+1) * ["undetermined_evolutionary_state"]
         COs = []
         for i, m in enumerate(masses):
             star.mass_history[i] = m
@@ -1037,27 +1052,26 @@ class TestFunctions:
                    star_CO=True) == COs[-i-1:]
             star.state = 'WD'
             assert totest.check_state_of_star_history_array(star, N=i+1,\
-                   star_CO=True) == (i+1)*['WD']
+                   star_CO=True) == (i+1) * ['WD']
 
-    def test_get_binary_state_and_event_and_mt_case(self, binary,\
-                                                    monkeypatch):
+    def test_get_binary_state_and_event_and_mt_case(self, binary, monkeypatch):
         def mock_infer_mass_transfer_case(rl_relative_overflow,\
                                           lg_mtransfer_rate, donor_state,\
                                           verbose=False):
             if rl_relative_overflow is not None:
-                if rl_relative_overflow>0:
+                if rl_relative_overflow > 0:
                     return totest.MT_CASE_A
                 else:
                     return totest.MT_CASE_UNDETERMINED
             else:
                 return totest.MT_CASE_NO_RLO
         # missing argument
-        with raises(TypeError, match="missing 1 required positional"+\
-                    " argument: 'binary'"):
+        with raises(TypeError, match="missing 1 required positional "\
+                                     +"argument: 'binary'"):
             totest.get_binary_state_and_event_and_mt_case()
         # bad input
-        with raises(TypeError, match="argument of type 'NoneType' is not"+\
-                    " iterable"):
+        with raises(TypeError, match="argument of type 'NoneType' is not "\
+                                     +"iterable"):
             totest.get_binary_state_and_event_and_mt_case(binary)
         # examples: no binary
         assert totest.get_binary_state_and_event_and_mt_case(None) ==\
@@ -1076,8 +1090,8 @@ class TestFunctions:
                ['detached', None, 'None']
         binary.star_1.state_history[0] = "test_state"
         binary.star_2.state_history[0] = "test_state"
-        assert totest.get_binary_state_and_event_and_mt_case(binary, i=0)\
-               == ['detached', None, 'None']
+        assert totest.get_binary_state_and_event_and_mt_case(binary, i=0) ==\
+               ['detached', None, 'None']
         # bad input
         with raises(IndexError, match="list index out of range"):
             totest.get_binary_state_and_event_and_mt_case(binary, i=1)
@@ -1099,7 +1113,8 @@ class TestFunctions:
         ## classical CE initiated by star 1
         binary.star_2.state = "BH"
         assert totest.get_binary_state_and_event_and_mt_case(binary,\
-               interpolation_class='unstable_MT') == ['contact', 'oCE1', 'None']
+               interpolation_class='unstable_MT') == ['contact', 'oCE1',\
+                                                      'None']
         binary.star_2.state = "test_state"
         ## both stars overfill RL leading to double CE initiated by star 2
         binary.rl_relative_overflow_2 = 2.0
@@ -1110,7 +1125,8 @@ class TestFunctions:
         ## classical CE initiated by star 2
         binary.star_1.state = "BH"
         assert totest.get_binary_state_and_event_and_mt_case(binary,\
-               interpolation_class='unstable_MT') == ['contact', 'oCE2', 'None']
+               interpolation_class='unstable_MT') == ['contact', 'oCE2',\
+                                                      'None']
         binary.star_1.state = "test_state"
         ## donor is star 2
         binary.rl_relative_overflow_1 = None
@@ -1133,8 +1149,8 @@ class TestFunctions:
         # examples: no center_gamma_history
         binary.star_1.center_gamma_history=[]
         binary.star_2.center_gamma_history=[]
-        assert totest.get_binary_state_and_event_and_mt_case(binary, i=0)\
-               == ['detached', None, 'None']
+        assert totest.get_binary_state_and_event_and_mt_case(binary, i=0) ==\
+               ['detached', None, 'None']
 
     def test_get_binary_state_and_event_and_mt_case_array(self, binary,\
                                                           monkeypatch):
@@ -1142,46 +1158,46 @@ class TestFunctions:
             interpolation_class=None, i=None, verbose=False):
             return ['Unit', 'Test', 'None']
         # missing argument
-        with raises(TypeError, match="missing 1 required positional"+\
-                    " argument: 'binary'"):
+        with raises(TypeError, match="missing 1 required positional "\
+                                     +"argument: 'binary'"):
             totest.get_binary_state_and_event_and_mt_case_array()
         # bad input
-        with raises(TypeError, match="argument of type 'NoneType' is not"+\
-                    " iterable"):
+        with raises(TypeError, match="argument of type 'NoneType' is not "\
+                                     +"iterable"):
             totest.get_binary_state_and_event_and_mt_case_array(binary)
         with raises(IndexError, match="list index out of range"):
-            totest.get_binary_state_and_event_and_mt_case_array(binary,\
-            N=10)
+            totest.get_binary_state_and_event_and_mt_case_array(binary, N=10)
         # examples: no binary
         assert totest.get_binary_state_and_event_and_mt_case_array(None) ==\
                (None, None, 'None')
         # examples: detached
         binary.star_1.state = "test_state"
         binary.star_2.state = "test_state"
-        assert totest.get_binary_state_and_event_and_mt_case_array(binary)\
-               == ('detached', None, 'None')
+        assert totest.get_binary_state_and_event_and_mt_case_array(binary) ==\
+               ('detached', None, 'None')
         # examples: several mocked entries
         monkeypatch.setattr(totest, "get_binary_state_and_event_and_mt_case",\
                             mock_get_binary_state_and_event_and_mt_case)
         mock_return = mock_get_binary_state_and_event_and_mt_case(binary)
         for i in range(4):
-            assert totest.get_binary_state_and_event_and_mt_case_array(\
-                   binary, N=i) == (i*[mock_return[0]], i*[mock_return[1]],\
-                   i*[mock_return[2]])
+            assert totest.get_binary_state_and_event_and_mt_case_array(binary,\
+                                                                       N=i) ==\
+                   (i*[mock_return[0]], i*[mock_return[1]], i*[mock_return[2]])
         assert totest.get_binary_state_and_event_and_mt_case_array(binary,\
-               N=-1) == ([], [], [])
+                                                                   N=-1) ==\
+               ([], [], [])
 
     def test_CO_radius(self):
         # missing argument
-        with raises(TypeError, match="missing 2 required positional"+\
-                    " arguments: 'M' and 'COtype'"):
+        with raises(TypeError, match="missing 2 required positional "\
+                                     +"arguments: 'M' and 'COtype'"):
             totest.CO_radius()
         # bad input
-        with raises(ValueError, match="Compact object mass must be a"+\
-                    " positive value"):
+        with raises(ValueError, match="Compact object mass must be a "\
+                                      +"positive value"):
             totest.CO_radius(0.0, 'BH')
-        with raises(ValueError, match="COtype not in the list of valid"+\
-                    " options"):
+        with raises(ValueError, match="COtype not in the list of valid "\
+                                      +"options"):
             totest.CO_radius(1.0, 'TEST')
         # examples:
         tests = [('WD', 0.5, approx(5.24982189818e-3, abs=6e-15)),\
@@ -1195,47 +1211,45 @@ class TestFunctions:
 
     def test_He_MS_lifetime(self):
         # missing argument
-        with raises(TypeError, match="missing 1 required positional"+\
-                    " argument: 'mass'"):
+        with raises(TypeError, match="missing 1 required positional "\
+                                     +"argument: 'mass'"):
             totest.He_MS_lifetime()
         # bad input
-        with raises(TypeError, match="'<=' not supported between instances"+\
-                    " of 'NoneType' and 'float'"):
+        with raises(TypeError, match="'<=' not supported between instances "\
+                                     +"of 'NoneType' and 'float'"):
             totest.He_MS_lifetime(None)
         with raises(ValueError, match="Too low mass: 0.0"):
             totest.He_MS_lifetime(0.0)
         # examples:
-        tests = [(1.0  , 1.0e+8),\
-                 (3.0  , approx(3.47136114375e+7, abs=6e-5)),\
-                 (30.0 , approx(6.95883527992e+5, abs=6e-7)),\
-                 (300.0, 3.0e+5)]
+        tests = [(1.0, 1.0e+8), (3.0, approx(3.47136114375e+7, abs=6e-5)),\
+                 (30.0, approx(6.95883527992e+5, abs=6e-7)), (300.0, 3.0e+5)]
         for (m, t) in tests:
             assert totest.He_MS_lifetime(m) == t
 
     def test_Schwarzschild_Radius(self):
         # missing argument
-        with raises(TypeError, match="missing 1 required positional"+\
-                    " argument: 'M'"):
+        with raises(TypeError, match="missing 1 required positional "\
+                                     +"argument: 'M'"):
             totest.Schwarzschild_Radius()
         # bad input
         with raises(TypeError) as error_info:
             totest.Schwarzschild_Radius(None)
-        assert error_info.value.args[0] == "unsupported operand type(s) for"+\
-               " *: 'float' and 'NoneType'"
+        assert error_info.value.args[0] == "unsupported operand type(s) for "\
+                                           + "*: 'float' and 'NoneType'"
         # examples:
-        tests = [(7.0 , approx(2.97147953078e-5, abs=6e-17)),\
+        tests = [(7.0, approx(2.97147953078e-5, abs=6e-17)),\
                  (70.0, approx(2.97147953078e-4, abs=6e-16))]
         for (m, r) in tests:
             assert totest.Schwarzschild_Radius(m) == r
 
     def test_flip_stars(self, binary):
         # missing argument
-        with raises(TypeError, match="missing 1 required positional"+\
-                    " argument: 'binary'"):
+        with raises(TypeError, match="missing 1 required positional "\
+                                     +"argument: 'binary'"):
             totest.flip_stars()
         # bad input
-        with raises(AttributeError, match="'NoneType' object has no"+\
-                    " attribute 'star_1'"):
+        with raises(AttributeError, match="'NoneType' object has no "\
+                                          +"attribute 'star_1'"):
             totest.flip_stars(None)
         # examples: set stars and check swap
         for attr in binary.star_1.__dict__:
@@ -1266,25 +1280,25 @@ class TestFunctions:
             assert binary.event_history[0] == n
         # examples: set binary values and check swap
         for v in binary.__dict__:
-            if v[-1]==1:
+            if v[-1] == 1:
                 setattr(binary, v, 1)
-            elif v[-1]==2:
+            elif v[-1] == 2:
                 setattr(binary, v, 2)
         totest.flip_stars(binary)
         for v in binary.__dict__:
-            if v[-1]==1:
+            if v[-1] == 1:
                 assert getattr(binary, v) == 2
-            elif v[-1]==2:
+            elif v[-1] == 2:
                 assert getattr(binary, v) == 1
 
     def test_set_binary_to_failed(self, binary):
         # missing argument
-        with raises(TypeError, match="missing 1 required positional"+\
-                    " argument: 'binary'"):
+        with raises(TypeError, match="missing 1 required positional "\
+                                     +"argument: 'binary'"):
             totest.set_binary_to_failed()
         # bad input
-        with raises(AttributeError, match="'NoneType' object has no"+\
-                    " attribute 'state'"):
+        with raises(AttributeError, match="'NoneType' object has no "\
+                                          +"attribute 'state'"):
             totest.set_binary_to_failed(None)
         # examples:
         totest.set_binary_to_failed(binary)
@@ -1293,14 +1307,14 @@ class TestFunctions:
 
     def test_infer_star_state(self):
         # bad input
-        with raises(TypeError, match="'<=' not supported between instances"+\
-                    " of 'NoneType' and 'float'"):
+        with raises(TypeError, match="'<=' not supported between instances "\
+                                     +"of 'NoneType' and 'float'"):
             totest.infer_star_state(star_CO=True)
         # examples: undetermined
         assert totest.infer_star_state() == totest.STATE_UNDETERMINED
         # examples: compact objects
         tests = [(0.5*totest.STATE_NS_STARMASS_UPPER_LIMIT, "NS"),\
-                 (    totest.STATE_NS_STARMASS_UPPER_LIMIT, "NS"),\
+                 (totest.STATE_NS_STARMASS_UPPER_LIMIT, "NS"),\
                  (2.0*totest.STATE_NS_STARMASS_UPPER_LIMIT, "BH")]
         for (m, CO) in tests:
             assert totest.infer_star_state(star_mass=m, star_CO=True) == CO
@@ -1314,37 +1328,47 @@ class TestFunctions:
                     for cC12 in [2.0*TCA, TCA, 0.5*TCA]:
                         for lgLH in [2.0*LBT, LBT, 0.5*LBT]:
                             for lgLHe in [2.0*LBT, LBT, 0.5*LBT]:
-                                if sH1>THNA:
+                                if sH1 > THNA:
                                     rich = "H-rich"
-                                elif sH1<cH1:
+                                elif sH1 < cH1:
                                     rich = "accreted_He"
                                 else:
                                     rich = "stripped_He"
-                                if cH1<=TCA and cHe4<=TCA and cC12<=TCA:
+                                if ((cH1<=TCA) and (cHe4<=TCA) and\
+                                    (cC12<=TCA)):
                                     burn = "Central_C_depletion"
-                                elif cH1<=TCA and cHe4<=TCA and cC12>TCA:
+                                elif ((cH1<=TCA) and (cHe4<=TCA) and\
+                                      (cC12>TCA)):
                                     burn = "Central_He_depleted"
-                                elif cH1>TCA and lgLH>LBT:
+                                elif ((cH1>TCA) and (lgLH>LBT)):
                                     burn = "Core_H_burning"
-                                elif cH1>TCA and lgLH<=LBT:
+                                elif ((cH1>TCA) and (lgLH<=LBT)):
                                     burn = "non_burning"
-                                elif lgLHe>LBT:
+                                elif lgLHe > LBT:
                                     burn = "Core_He_burning"
-                                elif lgLH>LBT:
+                                elif lgLH > LBT:
                                     burn = "Shell_H_burning"
                                 else:
                                     burn = "non_burning"
                                 assert totest.infer_star_state(surface_h1=sH1,\
-                                       center_h1=cH1, center_he4=cHe4,\
-                                       center_c12=cC12, log_LH=lgLH,\
-                                       log_LHe=lgLHe, log_Lnuc=lgLH+lgLHe) ==\
-                                       rich+"_"+burn
+                                                               center_h1=cH1,\
+                                                               center_he4=\
+                                                               cHe4,\
+                                                               center_c12=\
+                                                               cC12,\
+                                                               log_LH=lgLH,\
+                                                               log_LHe=lgLHe,\
+                                                               log_Lnuc=lgLH\
+                                                                        +lgLHe\
+                                                              ) == rich + "_"\
+                                                                   + burn
 
     def test_infer_mass_transfer_case(self, capsys):
         # missing argument
-        with raises(TypeError, match="missing 3 required positional"+\
-                    " arguments: 'rl_relative_overflow',"+\
-                    " 'lg_mtransfer_rate', and 'donor_state'"):
+        with raises(TypeError, match="missing 3 required positional "\
+                                     +"arguments: 'rl_relative_overflow', "\
+                                     +"'lg_mtransfer_rate', and "\
+                                     +"'donor_state'"):
             totest.infer_mass_transfer_case()
         # examples: no RLO
         assert totest.infer_mass_transfer_case(None, None, None) ==\
@@ -1379,31 +1403,29 @@ class TestFunctions:
 
     def test_cumulative_mass_transfer_numeric(self):
         # missing argument
-        with raises(TypeError, match="missing 1 required positional"+\
-                    " argument: 'MT_cases'"):
+        with raises(TypeError, match="missing 1 required positional "\
+                                     +"argument: 'MT_cases'"):
             totest.cumulative_mass_transfer_numeric()
         # bad input
         with raises(TypeError, match="object of type 'NoneType' has no len()"):
             totest.cumulative_mass_transfer_numeric(None)
-        # examples: no cases
-        assert totest.cumulative_mass_transfer_numeric([]) ==\
-               [totest.MT_CASE_UNDETERMINED]
-        # examples: undetermined
-        assert totest.cumulative_mass_transfer_numeric(\
-               [totest.MT_CASE_UNDETERMINED]) == [totest.MT_CASE_UNDETERMINED]
-        # examples: no RLO
-        assert totest.cumulative_mass_transfer_numeric(\
-               [totest.MT_CASE_NO_RLO]) == [totest.MT_CASE_NO_RLO]
+        # examples: no cases, undetermined, and no RLO
+        tests = [([], [totest.MT_CASE_UNDETERMINED]),\
+                 ([totest.MT_CASE_UNDETERMINED],\
+                  [totest.MT_CASE_UNDETERMINED]),\
+                 ([totest.MT_CASE_NO_RLO], [totest.MT_CASE_NO_RLO])]
+        for (MT, r) in tests:
+            assert totest.cumulative_mass_transfer_numeric(MT) == r
         # examples: cut out undetermined
         tests = [[], [totest.MT_CASE_UNDETERMINED],\
                  [totest.MT_CASE_UNDETERMINED, totest.MT_CASE_UNDETERMINED]]
         for preA in tests:
             for preB in tests:
                 for postB in tests:
-                    if preA+preB+postB==[]: # at least one undetermined
+                    if preA + preB + postB == []: # at least one undetermined
                         continue
                     mt = preA + [totest.MT_CASE_A] + preB + [totest.MT_CASE_B]\
-                       + postB
+                         + postB
                     assert totest.cumulative_mass_transfer_numeric(mt) ==\
                            [totest.MT_CASE_UNDETERMINED, totest.MT_CASE_A,\
                            totest.MT_CASE_B]
@@ -1414,7 +1436,7 @@ class TestFunctions:
             for preB in tests:
                 for postB in tests:
                     mt = preA + [totest.MT_CASE_A] + preB + [totest.MT_CASE_B]\
-                       + postB
+                         + postB
                     assert totest.cumulative_mass_transfer_numeric(mt) ==\
                            [totest.MT_CASE_A, totest.MT_CASE_B]
         # examples: undetermined and no RLO
@@ -1426,19 +1448,19 @@ class TestFunctions:
                [totest.MT_CASE_UNDETERMINED, totest.MT_CASE_NO_RLO]
         # examples: cut out duplicates
         for i in range(1,4):
-            mt = i*[totest.MT_CASE_A] + 2*i*[totest.MT_CASE_B] +\
-                 3*i*[totest.MT_CASE_A]
+            mt = i*[totest.MT_CASE_A] + 2*i*[totest.MT_CASE_B]\
+                 + 3*i*[totest.MT_CASE_A]
             assert totest.cumulative_mass_transfer_numeric(mt) ==\
                    [totest.MT_CASE_A, totest.MT_CASE_B, totest.MT_CASE_A]
         # examples: from strings
         assert totest.cumulative_mass_transfer_numeric(["A", "no_RLO", "A",\
-               "B", "A", "A"]) == [totest.MT_CASE_A, totest.MT_CASE_B,\
-               totest.MT_CASE_A]
+                                                        "B", "A", "A"]) ==\
+               [totest.MT_CASE_A, totest.MT_CASE_B, totest.MT_CASE_A]
 
     def test_cumulative_mass_transfer_string(self):
         # missing argument
-        with raises(TypeError, match="missing 1 required positional"+\
-                    " argument: 'cumulative_integers'"):
+        with raises(TypeError, match="missing 1 required positional "\
+                                     +"argument: 'cumulative_integers'"):
             totest.cumulative_mass_transfer_string()
         # bad input
         with raises(TypeError, match="object of type 'NoneType' has no len()"):
@@ -1457,69 +1479,84 @@ class TestFunctions:
         # examples: cases for both stars
         for c in totest.ALL_RLO_CASES:
             assert totest.cumulative_mass_transfer_string([c, 10+c]) ==\
-                   "case_"+totest.MT_CASE_TO_STR[c]+"1/"+\
-                   totest.MT_CASE_TO_STR[c]+"2"
+                   "case_" + totest.MT_CASE_TO_STR[c] + "1/"\
+                   + totest.MT_CASE_TO_STR[c] + "2"
 
     def test_cumulative_mass_transfer_flag(self):
         # missing argument
-        with raises(TypeError, match="missing 1 required positional"+\
-                    " argument: 'MT_cases'"):
+        with raises(TypeError, match="missing 1 required positional "\
+                                     +"argument: 'MT_cases'"):
             totest.cumulative_mass_transfer_flag()
         # bad input
-        with raises(AttributeError, match="'NoneType' object has no"+\
-                    " attribute 'copy'"):
+        with raises(AttributeError, match="'NoneType' object has no "\
+                                          +"attribute 'copy'"):
             totest.cumulative_mass_transfer_flag(None)
         with warns(EvolutionWarning, match="MT case with unknown donor:"):
             with warns(InappropriateValueWarning):
                 totest.cumulative_mass_transfer_flag([30], shift_cases=True)
         # examples:
         assert totest.cumulative_mass_transfer_flag([totest.MT_CASE_A,\
-               totest.MT_CASE_B, 10+totest.MT_CASE_A, totest.MT_CASE_A,\
-               10+totest.MT_CASE_B, 10+totest.MT_CASE_A]) ==\
+                                                     totest.MT_CASE_B,\
+                                                     10+totest.MT_CASE_A,\
+                                                     totest.MT_CASE_A,\
+                                                     10+totest.MT_CASE_B,\
+                                                     10+totest.MT_CASE_A]) ==\
                'case_A1/B1/A2/A1/B2/A2'
         assert totest.cumulative_mass_transfer_flag([totest.MT_CASE_A,\
-               totest.MT_CASE_B, 10+totest.MT_CASE_A, totest.MT_CASE_A,\
-               10+totest.MT_CASE_B, 10+totest.MT_CASE_A],\
-               shift_cases=True) == 'case_A1/B1/A2/B1/B2'
+                                                     totest.MT_CASE_B,\
+                                                     10+totest.MT_CASE_A,\
+                                                     totest.MT_CASE_A,\
+                                                     10+totest.MT_CASE_B,\
+                                                     10+totest.MT_CASE_A],\
+                                                    shift_cases=True) ==\
+               'case_A1/B1/A2/B1/B2'
 
     def test_get_i_He_depl(self):
         # missing argument
-        with raises(TypeError, match="missing 1 required positional"+\
-                    " argument: 'history'"):
+        with raises(TypeError, match="missing 1 required positional "\
+                                     +"argument: 'history'"):
             totest.get_i_He_depl()
         # bad input
-        with raises(AttributeError, match="'NoneType' object has no"+\
-                    " attribute 'dtype'"):
+        with raises(AttributeError, match="'NoneType' object has no "\
+                                          +"attribute 'dtype'"):
             totest.get_i_He_depl(None)
-        with raises(TypeError, match="argument of type 'NoneType' is not"+\
-                    " iterable"):
+        with raises(TypeError, match="argument of type 'NoneType' is not "\
+                                     +"iterable"):
             totest.get_i_He_depl(np.array([]))
         # examples: incomplete history to search through
-        assert totest.get_i_He_depl(np.array([[]],\
-               dtype=([('surface_h1', 'f8')]))) == -1
+        assert totest.get_i_He_depl(np.array([[]], dtype=([('surface_h1',\
+                                                            'f8')]))) == -1
         # examples: no he depletion
-        assert totest.get_i_He_depl(np.array([(1.0, 0.0, 1.0, 0.0, 0.0,\
-               1.0, 1.0), (1.0, 0.0, 0.5, 0.5, 0.0, 1.0, 1.0), (1.0, 0.0, 0.2,\
-               0.2, 0.0, 1.0, 1.0)], dtype=([('surface_h1', 'f8'),\
-               ('center_h1', 'f8'), ('center_he4', 'f8'),\
-               ('center_c12', 'f8'), ('log_LH', 'f8'), ('log_LHe', 'f8'),\
-               ('log_Lnuc', 'f8')]))) == -1
+        test_history = np.array([(1.0, 0.0, 1.0, 0.0, 0.0, 1.0, 1.0),\
+                                 (1.0, 0.0, 0.5, 0.5, 0.0, 1.0, 1.0),\
+                                 (1.0, 0.0, 0.2, 0.2, 0.0, 1.0, 1.0)],\
+                                dtype=([('surface_h1', 'f8'),\
+                                        ('center_h1', 'f8'),\
+                                        ('center_he4', 'f8'),\
+                                        ('center_c12', 'f8'),\
+                                        ('log_LH', 'f8'), ('log_LHe', 'f8'),\
+                                        ('log_Lnuc', 'f8')]))
+        assert totest.get_i_He_depl(test_history) == -1
         # examples: he depletion at 1
-        assert totest.get_i_He_depl(np.array([(1.0, 0.0, 1.0, 0.0, 0.0,\
-               1.0, 1.0), (1.0, 0.0, 0.0, 0.5, 0.0, 1.0, 1.0), (1.0, 0.0, 0.0,\
-               0.0, 0.0, 1.0, 1.0)], dtype=([('surface_h1', 'f8'),\
-               ('center_h1', 'f8'), ('center_he4', 'f8'),\
-               ('center_c12', 'f8'), ('log_LH', 'f8'), ('log_LHe', 'f8'),\
-               ('log_Lnuc', 'f8')]))) == 1
+        test_history = np.array([(1.0, 0.0, 1.0, 0.0, 0.0, 1.0, 1.0),\
+                                 (1.0, 0.0, 0.0, 0.5, 0.0, 1.0, 1.0),\
+                                 (1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0)],\
+                                dtype=([('surface_h1', 'f8'),\
+                                        ('center_h1', 'f8'),\
+                                        ('center_he4', 'f8'),\
+                                        ('center_c12', 'f8'),\
+                                        ('log_LH', 'f8'), ('log_LHe', 'f8'),\
+                                        ('log_Lnuc', 'f8')]))
+        assert totest.get_i_He_depl(test_history) == 1
 
     def test_calculate_Patton20_values_at_He_depl(self, star):
         # missing argument
-        with raises(TypeError, match="missing 1 required positional"+\
-                    " argument: 'star'"):
+        with raises(TypeError, match="missing 1 required positional "\
+                                     +"argument: 'star'"):
             totest.calculate_Patton20_values_at_He_depl()
         # bad input
-        with raises(AttributeError, match="'NoneType' object has no"+\
-                    " attribute 'state_history'"):
+        with raises(AttributeError, match="'NoneType' object has no "\
+                                          +"attribute 'state_history'"):
             totest.calculate_Patton20_values_at_He_depl(None)
         # examples: no history
         star.co_core_mass_at_He_depletion = 0.5
@@ -1541,7 +1578,7 @@ class TestFunctions:
             assert star.co_core_mass_at_He_depletion is None
             assert star.avg_c_in_c_core_at_He_depletion is None
         # examples: loop through star types with He depletion
-        tests = [("H-rich_Central_He_depleted"     , 0.1),\
+        tests = [("H-rich_Central_He_depleted", 0.1),\
                  ("stripped_He_Central_He_depleted", 0.2)]
         for (s, v) in tests:
             star.state_history = ["test", s, s]
@@ -1554,49 +1591,56 @@ class TestFunctions:
     def test_CEE_parameters_from_core_abundance_thresholds(self, monkeypatch,\
                                                            capsys, star):
         def mock_calculate_core_boundary(donor_mass, donor_star_state,\
-            profile, mc1_i=None, core_element_fraction_definition=None,\
-            CO_core_in_Hrich_star=False):
+                                         profile, mc1_i=None,\
+                                         core_element_fraction_definition=\
+                                         None, CO_core_in_Hrich_star=False):
             return core_element_fraction_definition
         def mock_calculate_lambda_from_profile(profile, donor_star_state,\
-            m1_i=np.nan, radius1=np.nan, common_envelope_option_for_lambda=\
-            totest.DEFAULT_CE_OPTION_FOR_LAMBDA,\
-            core_element_fraction_definition=0.1, ind_core=None,\
-            common_envelope_alpha_thermal=1.0, tolerance=0.001,\
-            CO_core_in_Hrich_star=False, verbose=False):
+                                               m1_i=np.nan, radius1=np.nan,\
+                                               common_envelope_option_for_lambda\
+                                               =totest.\
+                                               DEFAULT_CE_OPTION_FOR_LAMBDA,\
+                                               core_element_fraction_definition\
+                                               =0.1, ind_core=None,\
+                                               common_envelope_alpha_thermal=\
+                                               1.0, tolerance=0.001,\
+                                               CO_core_in_Hrich_star=False,\
+                                               verbose=False):
             return core_element_fraction_definition,\
                    core_element_fraction_definition,\
                    core_element_fraction_definition
         # missing argument
-        with raises(TypeError, match="missing 1 required positional"+\
-                    " argument: 'star'"):
+        with raises(TypeError, match="missing 1 required positional "\
+                                     +"argument: 'star'"):
             totest.CEE_parameters_from_core_abundance_thresholds()
         # bad input
-        with raises(AttributeError, match="'NoneType' object has no"+\
-                    " attribute 'mass'"):
+        with raises(AttributeError, match="'NoneType' object has no "\
+                                          +"attribute 'mass'"):
             totest.CEE_parameters_from_core_abundance_thresholds(None)
         with raises(TypeError) as error_info:
             totest.CEE_parameters_from_core_abundance_thresholds(star)
-        assert error_info.value.args[0] == "unsupported operand type(s) for"+\
-               " ** or pow(): 'float' and 'NoneType'"
+        assert error_info.value.args[0] == "unsupported operand type(s) for "\
+                                           + "** or pow(): 'float' and "\
+                                           + "'NoneType'"
         star.log_R = 0.0
         star.profile = np.array([(1.0), (1.0), (1.0)],\
                                 dtype=([('mass', 'f8')]))
-        with raises(TypeError, match="argument of type 'NoneType' is not"+\
-                    " iterable"):
+        with raises(TypeError, match="argument of type 'NoneType' is not "\
+                                     +"iterable"):
             totest.CEE_parameters_from_core_abundance_thresholds(star)
         # examples: missing state with profile and verbose
         star.state = "test_state"
         totest.CEE_parameters_from_core_abundance_thresholds(star,\
                                                              verbose=True)
         captured_out = capsys.readouterr().out
-        for out in ["is not what expected during the "+\
-                    "CEE_parameters_from_core_abundance_thresholds.",\
-                    "star_state", "m_core_CE_1cent,m_core_CE_10cent,"+\
-                    "m_core_CE_30cent,m_core_CE_pure_He_star_10cent",\
-                    "r_core_CE_1cent,r_core_CE_10cent,r_core_CE_30cent,"+\
-                    "r_core_CE_pure_He_star_10cent", "lambda_CE_1cent,"+\
-                    "lambda_CE_10cent,lambda_CE_30cent,"+\
-                    "lambda_CE_pure_He_star_10cent"]:
+        for out in ["is not what expected during the "\
+                    +"CEE_parameters_from_core_abundance_thresholds.",\
+                    "star_state", "m_core_CE_1cent,m_core_CE_10cent,"\
+                    +"m_core_CE_30cent,m_core_CE_pure_He_star_10cent",\
+                    "r_core_CE_1cent,r_core_CE_10cent,r_core_CE_30cent,"\
+                    +"r_core_CE_pure_He_star_10cent",\
+                    "lambda_CE_1cent,lambda_CE_10cent,lambda_CE_30cent,"\
+                    +"lambda_CE_pure_He_star_10cent"]:
             assert out in captured_out
         for attr in ['m_core_CE_1cent', 'm_core_CE_10cent',\
                      'm_core_CE_30cent', 'm_core_CE_pure_He_star_10cent',\
@@ -1626,7 +1670,7 @@ class TestFunctions:
                     assert getattr(star, attr) == star.mass
                 elif (("stripped_He" in s) and ("pure_He" not in attr) and\
                       ("r_core" in attr)):
-                    assert getattr(star, attr) == 10**star.log_R
+                    assert getattr(star, attr) == 10 ** star.log_R
                 elif (("stripped_He" in s) and ("pure_He" not in attr) and\
                       ("lambda" in attr)):
                     assert np.isnan(getattr(star, attr))
@@ -1638,6 +1682,8 @@ class TestFunctions:
                     assert getattr(star, attr) == 0.3
                 else:
                     assert np.isnan(getattr(star, attr))
+                # reset attributes set by the tested function
+                setattr(star, attr, -1.0)
         # examples: no profile
         star.profile = None
         totest.CEE_parameters_from_core_abundance_thresholds(star)
@@ -1651,16 +1697,16 @@ class TestFunctions:
 
     def test_initialize_empty_array(self):
         # missing argument
-        with raises(TypeError, match="missing 1 required positional"+\
-                    " argument: 'arr'"):
+        with raises(TypeError, match="missing 1 required positional "\
+                                     +"argument: 'arr'"):
             totest.initialize_empty_array()
         # bad input
-        with raises(AttributeError, match="'NoneType' object has no"+\
-                    " attribute 'copy'"):
+        with raises(AttributeError, match="'NoneType' object has no "\
+                                          +"attribute 'copy'"):
             totest.initialize_empty_array(None)
         # examples:
         test_array = np.array([(1.0, "test"), (1.0, "test")],\
-                                     dtype=([('mass', 'f8'), ('state', 'U8')]))
+                              dtype=([('mass', 'f8'), ('state', 'U8')]))
         empty_array = totest.initialize_empty_array(test_array)
         for i in range(len(empty_array)):
             assert np.isnan(empty_array['mass'][i])        # nan float
@@ -1668,58 +1714,73 @@ class TestFunctions:
 
     def test_calculate_core_boundary(self, star_profile):
         # missing argument
-        with raises(TypeError, match="missing 3 required positional"+\
-                    " arguments: 'donor_mass', 'donor_star_state', and"+\
-                    " 'profile'"):
+        with raises(TypeError, match="missing 3 required positional "\
+                                     +"arguments: 'donor_mass', "\
+                                     +"'donor_star_state', and 'profile'"):
             totest.calculate_core_boundary()
         # bad input
-        with raises(ValueError, match="Not possible to calculate the core"+\
-                    " boundary of the donor in CE"):
+        with raises(ValueError, match="Not possible to calculate the core "\
+                                      +"boundary of the donor in CE"):
             totest.calculate_core_boundary(None, None, None)
-        with warns(ApproximationWarning, match="Stellar profile columns were"+\
-                   " not enough to calculate the core-envelope boundaries"+\
-                   " for CE, entire star is now considered an envelope"):
+        with warns(ApproximationWarning, match="Stellar profile columns were "\
+                                               +"not enough to calculate the "\
+                                               +"core-envelope boundaries for"\
+                                               +" CE, entire star is now "\
+                                               +"considered an envelope"):
             assert totest.calculate_core_boundary(None, None, None,\
-                   core_element_fraction_definition=0.1) == -1
-        with raises(AttributeError, match="'NoneType' object has no"+\
-                    " attribute 'dtype'"):
+                                                  core_element_fraction_definition\
+                                                  =0.1) == -1
+        with raises(AttributeError, match="'NoneType' object has no "\
+                                          +"attribute 'dtype'"):
             totest.calculate_core_boundary(None, "H-rich_Core_H_burning",\
-             None, core_element_fraction_definition=0.1)
+                                           None,\
+                                           core_element_fraction_definition=\
+                                           0.1)
         # examples: get He core in H rich star
         assert totest.calculate_core_boundary(None, "H-rich_Core_H_burning",\
-               star_profile, core_element_fraction_definition=0.1) == 2
+                                              star_profile,\
+                                              core_element_fraction_definition\
+                                              =0.1) == 2
         # examples: get CO core in H rich star
         assert totest.calculate_core_boundary(None, "H-rich_Core_H_burning",\
-               star_profile, core_element_fraction_definition=0.3,\
-               CO_core_in_Hrich_star=True) == 3
+                                              star_profile,\
+                                              core_element_fraction_definition\
+                                              =0.3, CO_core_in_Hrich_star=True\
+               ) == 3
         # examples: get CO core in H rich star without CO core
         assert totest.calculate_core_boundary(None, "H-rich_Core_H_burning",\
-               star_profile, core_element_fraction_definition=0.1,\
-               CO_core_in_Hrich_star=True) == -1
+                                              star_profile,\
+                                              core_element_fraction_definition\
+                                              =0.1, CO_core_in_Hrich_star=True\
+               ) == -1
         # examples: get CO core in He star without a match
         assert totest.calculate_core_boundary(None,\
-               "stripped_He_Core_He_burning", star_profile,\
-               core_element_fraction_definition=0.1) == -1
+                                              "stripped_He_Core_He_burning",\
+                                              star_profile,\
+                                              core_element_fraction_definition\
+                                              =0.1) == -1
         # examples: given core mass
         test_mass = np.array([1.0, 0.7, 0.4, 0.1, 0.0])
         assert totest.calculate_core_boundary(test_mass, None, None,\
-               mc1_i=0.1) == 4
+                                              mc1_i=0.1) == 4
         # examples: both given: ignores core mass
         assert totest.calculate_core_boundary(test_mass,\
-               "stripped_He_Core_He_burning", star_profile,\
-               core_element_fraction_definition=0.1, mc1_i=0.1) == -1
+                                              "stripped_He_Core_He_burning",\
+                                              star_profile,\
+                                              core_element_fraction_definition\
+                                              =0.1, mc1_i=0.1) == -1
 
     def test_period_evol_wind_loss(self):
         # missing argument
-        with raises(TypeError, match="missing 4 required positional"+\
-                    " arguments: 'M_current', 'M_init', 'Mcomp', and"+\
-                    " 'P_init'"):
+        with raises(TypeError, match="missing 4 required positional "\
+                                     +"arguments: 'M_current', 'M_init', "\
+                                     +"'Mcomp', and 'P_init'"):
             totest.period_evol_wind_loss()
         # bad input
         with raises(TypeError) as error_info:
             totest.period_evol_wind_loss(None, None, None, None)
-        assert error_info.value.args[0] == "unsupported operand type(s) for"+\
-               " +: 'NoneType' and 'NoneType'"
+        assert error_info.value.args[0] == "unsupported operand type(s) for "\
+                                           + "+: 'NoneType' and 'NoneType'"
         # examples:
         tests = [(0.5, 0.5, 0.5, 0.5, 0.5), (1.5, 0.5, 0.5, 0.5, 0.5/4),\
                  (0.5, 1.5, 0.5, 0.5, 0.5*4), (0.5, 0.5, 1.5, 0.5, 0.5),\
@@ -1729,15 +1790,15 @@ class TestFunctions:
 
     def test_separation_evol_wind_loss(self):
         # missing argument
-        with raises(TypeError, match="missing 4 required positional"+\
-                    " arguments: 'M_current', 'M_init', 'Mcomp', and"+\
-                    " 'A_init'"):
+        with raises(TypeError, match="missing 4 required positional "\
+                                     +"arguments: 'M_current', 'M_init', "\
+                                     +"'Mcomp', and 'A_init'"):
             totest.separation_evol_wind_loss()
         # bad input
         with raises(TypeError) as error_info:
             totest.separation_evol_wind_loss(None, None, None, None)
-        assert error_info.value.args[0] == "unsupported operand type(s) for"+\
-               " +: 'NoneType' and 'NoneType'"
+        assert error_info.value.args[0] == "unsupported operand type(s) for "\
+                                           + "+: 'NoneType' and 'NoneType'"
         # examples:
         tests = [(0.5, 0.5, 0.5, 0.5, 0.5), (1.5, 0.5, 0.5, 0.5, 0.5/2),\
                  (0.5, 1.5, 0.5, 0.5, 0.5*2), (0.5, 0.5, 1.5, 0.5, 0.5),\
@@ -1747,23 +1808,24 @@ class TestFunctions:
 
     def test_period_change_stabe_MT(self):
         # missing argument
-        with raises(TypeError, match="missing 4 required positional"+\
-                    " arguments: 'period_i', 'Mdon_i', 'Mdon_f', and"+\
-                    " 'Macc_i'"):
+        with raises(TypeError, match="missing 4 required positional "\
+                                     +"arguments: 'period_i', 'Mdon_i', "\
+                                     +"'Mdon_f', and 'Macc_i'"):
             totest.period_change_stabe_MT()
         # bad input
         with raises(TypeError) as error_info:
             totest.period_change_stabe_MT(None, None, None, None)
-        assert error_info.value.args[0] == "unsupported operand type(s) for"+\
-               " -: 'NoneType' and 'NoneType'"
+        assert error_info.value.args[0] == "unsupported operand type(s) for "\
+                                           + "-: 'NoneType' and 'NoneType'"
         tests = [(-1.0, 0.0), (2.0, 0.0), (0.0, -1.0), (0.0, 2.0)]
         for (a, b) in tests:
             with raises(ValueError) as error_info:
                 totest.period_change_stabe_MT(0.5, 0.5, 0.5, 0.5, alpha=a,\
                                               beta=b)
-            assert error_info.value.args[0] == "In period_change_stabe_MT,"+\
-                   f" mass transfer efficiencies, alpha, beta: {a}, {b} are"+\
-                   " not in the [0-1] range."
+            assert error_info.value.args[0] == "In period_change_stabe_MT, "\
+                                               + "mass transfer efficiencies,"\
+                                               + f" alpha, beta: {a}, {b} "\
+                                               + "are not in the [0-1] range."
         with raises(ValueError, match="Donor gains mass from 0.5 to 1.5"):
             totest.period_change_stabe_MT(0.5, 0.5, 1.5, 0.5)
         # examples:
@@ -1802,25 +1864,31 @@ class TestFunctions:
                   approx(1.58670336106, abs=6e-12))]
         for (Pi, Mdi, Mdf, Mai, a, b, r) in tests:
             assert totest.period_change_stabe_MT(Pi, Mdi, Mdf, Mai, alpha=a,\
-                   beta=b) == r
+                                                 beta=b) == r
 
     def test_linear_interpolation_between_two_cells(self, capsys):
         # missing argument
-        with raises(TypeError, match="missing 3 required positional"+\
-                    " arguments: 'array_y', 'array_x', and 'x_target'"):
+        with raises(TypeError, match="missing 3 required positional "\
+                                     +"arguments: 'array_y', 'array_x', and "\
+                                     +"'x_target'"):
             totest.linear_interpolation_between_two_cells()
         # bad input
-        with raises(TypeError, match="'>=' not supported between instances"+\
-                    " of 'NoneType' and 'NoneType'"):
+        with raises(TypeError, match="'>=' not supported between instances "\
+                                     +"of 'NoneType' and 'NoneType'"):
             totest.linear_interpolation_between_two_cells(None, None, None)
         # examples: automatic interpolation
         test_array_x = np.array([0.0, 0.2, 1.0])
         test_array_y = np.array([1.0, 0.4, 0.0])
         assert totest.linear_interpolation_between_two_cells(test_array_y,\
-               test_array_x, 0.1) == 0.7
+                                                             test_array_x,\
+                                                             0.1) == 0.7
         # examples: interpolation over multiple cells with verbose
         assert totest.linear_interpolation_between_two_cells(test_array_y,\
-               test_array_x, 0.1, top=2, bot=0, verbose=True) == 0.9
+                                                             test_array_x,\
+                                                             0.1, top=2,\
+                                                             bot=0,\
+                                                             verbose=True) ==\
+               0.9
         captured_out = capsys.readouterr().out
         for out in ["linear interpolation",\
                     "x_target, top, bot, len(array_x)",\
@@ -1828,62 +1896,77 @@ class TestFunctions:
             assert out in captured_out
         # examples: extrapolation
         assert totest.linear_interpolation_between_two_cells(test_array_y,\
-               test_array_x, 0.1, top=2) == 0.45
+                                                             test_array_x,\
+                                                             0.1, top=2) ==\
+               0.45
         assert totest.linear_interpolation_between_two_cells(test_array_y,\
-               test_array_x, 0.1, bot=1) == 0.45
-        with warns(ReplaceValueWarning, match="top=3 is too large, use last"+\
-                   " element in array_y"):
+                                                             test_array_x,\
+                                                             0.1, bot=1) ==\
+               0.45
+        with warns(ReplaceValueWarning, match="top=3 is too large, use last "\
+                                              +"element in array_y"):
             with warns(InterpolationWarning):
                 assert totest.linear_interpolation_between_two_cells(\
                        test_array_y, test_array_x, 0.1, top=3) == 0.0
-        with warns(ReplaceValueWarning, match="bot=-1 is too small, use"+\
-                   " first element"):
+        with warns(ReplaceValueWarning, match="bot=-1 is too small, use "\
+                                              +"first element"):
             with warns(InterpolationWarning):
                 assert totest.linear_interpolation_between_two_cells(\
                        test_array_y, test_array_x, 0.1, top=0) == 1.0
-        with warns(InterpolationWarning, match="bot=2 is too large: use y at"+\
-                   " top=1"):
-            assert totest.linear_interpolation_between_two_cells(\
-                   test_array_y, test_array_x, 0.1, top=1, bot=2) == 0.4
-        with warns(InterpolationWarning, match="array_x too short, use y at"+\
-                   " top=3"):
-            assert totest.linear_interpolation_between_two_cells(\
-                   np.array([1.0, 0.4, 0.0, -1.0]), test_array_x, 0.1,\
-                   top=3) == -1.0
+        with warns(InterpolationWarning, match="bot=2 is too large: use y at "\
+                                               +"top=1"):
+            assert totest.linear_interpolation_between_two_cells(test_array_y,\
+                                                                 test_array_x,\
+                                                                 0.1, top=1,\
+                                                                 bot=2) == 0.4
+        test_array_y = np.array([1.0, 0.4, 0.0, -1.0])
+        with warns(InterpolationWarning, match="array_x too short, use y at "\
+                                               +"top=3"):
+            assert totest.linear_interpolation_between_two_cells(test_array_y,\
+                                                                 test_array_x,\
+                                                                 0.1, top=3)\
+                   == -1.0
 
     def test_calculate_lambda_from_profile(self, star_profile, capsys):
         # missing argument
-        with raises(TypeError, match="missing 2 required positional"+\
-                    " arguments: 'profile' and 'donor_star_state'"):
+        with raises(TypeError, match="missing 2 required positional "\
+                                     +"arguments: 'profile' and "\
+                                     +"'donor_star_state'"):
             totest.calculate_lambda_from_profile()
         # bad input
-        with raises(AttributeError, match="'NoneType' object has no"+\
-                    " attribute 'dtype'"):
+        with raises(AttributeError, match="'NoneType' object has no "\
+                                          +"attribute 'dtype'"):
             totest.calculate_lambda_from_profile(None, None)
         with raises(ValueError, match="state test not supported in CEE"):
             totest.calculate_lambda_from_profile(star_profile, "test",\
                                                  ind_core=1)
         with raises(ValueError, match="lambda_CE has a negative value"):
-            with warns(EvolutionWarning, match="Ebind_i of the envelope is"+\
-                        " positive"):
+            with warns(EvolutionWarning, match="Ebind_i of the envelope is "\
+                                               +"positive"):
                 totest.calculate_lambda_from_profile(star_profile,\
                                                      "H-rich_test", ind_core=1)
         # examples: get He core in H rich star
-        lambda_CE, Mc, Rc = totest.calculate_lambda_from_profile(star_profile,\
-                            "test", common_envelope_alpha_thermal=0.1)
+        lambda_CE, Mc, Rc =\
+            totest.calculate_lambda_from_profile(star_profile, "test",\
+                                                 common_envelope_alpha_thermal\
+                                                 =0.1)
         assert lambda_CE == approx(3.16722966582e+33, abs=6e+21)
         assert Mc == approx(0.0, abs=6e-12)
         assert Rc == approx(0.0, abs=6e-12)
-        lambda_CE, Mc, Rc = totest.calculate_lambda_from_profile(star_profile,\
-                            "test", ind_core=0,\
-                            common_envelope_alpha_thermal=0.1)
+        lambda_CE, Mc, Rc =\
+            totest.calculate_lambda_from_profile(star_profile, "test",\
+                                                 ind_core=0,\
+                                                 common_envelope_alpha_thermal\
+                                                 =0.1)
         assert np.isnan(lambda_CE)
         assert Mc == star_profile['mass'][0]
         assert Rc == star_profile['radius'][0]
         # examples: He core in H rich star
-        lambda_CE, Mc, Rc = totest.calculate_lambda_from_profile(star_profile,\
-                            "H-rich_test", ind_core=2,\
-                            common_envelope_alpha_thermal=0.1, verbose=True)
+        lambda_CE, Mc, Rc =\
+            totest.calculate_lambda_from_profile(star_profile, "H-rich_test",\
+                                                 ind_core=2,\
+                                                 common_envelope_alpha_thermal\
+                                                 =0.1, verbose=True)
         assert lambda_CE == approx(3.35757244514e+33, abs=6e+21)
         assert Mc == 0.1
         assert Rc == 0.1
@@ -1893,43 +1976,53 @@ class TestFunctions:
                     "Ebind_i from profile ", "lambda_CE "]:
             assert out in captured_out
         # examples: CO core in H rich star
-        lambda_CE, Mc, Rc = totest.calculate_lambda_from_profile(star_profile,\
-                            "H-rich_test", ind_core=2,\
-                            common_envelope_alpha_thermal=0.1,\
-                            CO_core_in_Hrich_star=True)
+        lambda_CE, Mc, Rc =\
+            totest.calculate_lambda_from_profile(star_profile, "H-rich_test",\
+                                                 ind_core=2,\
+                                                 common_envelope_alpha_thermal\
+                                                 =0.1,\
+                                                 CO_core_in_Hrich_star=True)
         assert lambda_CE == approx(4.25658010995e+32, abs=6e+20)
         assert Mc == approx(1.03333333333, abs=6e-12)
         assert Rc == approx(1.03333333333, abs=6e-12)
         # examples: CO core in He rich star should be the same
         assert totest.calculate_lambda_from_profile(star_profile,\
-               "H-rich_test", ind_core=2, common_envelope_alpha_thermal=0.1,\
-               CO_core_in_Hrich_star=True) ==\
-               totest.calculate_lambda_from_profile(star_profile,\
-               "stripped_He_test", ind_core=2,\
-               common_envelope_alpha_thermal=0.1)
+                                                    "H-rich_test", ind_core=2,\
+                                                    common_envelope_alpha_thermal\
+                                                    =0.1,\
+                                                    CO_core_in_Hrich_star=True\
+               ) == totest.calculate_lambda_from_profile(star_profile,\
+                                                         "stripped_He_test",\
+                                                         ind_core=2,\
+                                                         common_envelope_alpha_thermal\
+                                                         =0.1)
 
     def test_get_mass_radius_dm_from_profile(self, star_profile):
         # missing argument
-        with raises(TypeError, match="missing 1 required positional"+\
-                    " argument: 'profile'"):
+        with raises(TypeError, match="missing 1 required positional "\
+                                     +"argument: 'profile'"):
             totest.get_mass_radius_dm_from_profile()
         # bad input
-        with raises(AttributeError, match="'NoneType' object has no"+\
-                    " attribute 'dtype'"):
+        with raises(AttributeError, match="'NoneType' object has no "\
+                                          +"attribute 'dtype'"):
             totest.get_mass_radius_dm_from_profile(None)
         for f in star_profile.dtype.names:
-            with raises(ValueError, match="One or many of the mass and/or"+\
-                        " radius needed columns in the profile is not"+\
-                        " provided for the CEE"):
+            with raises(ValueError, match="One or many of the mass and/or "\
+                                          +"radius needed columns in the "\
+                                          +"profile is not provided for the "\
+                                          +"CEE"):
                 totest.get_mass_radius_dm_from_profile(star_profile[[f]])
         # examples: profile with radius
-        with warns(ClassificationWarning, match="Donor mass from the binary"+\
-                   " class object and the profile do not agree"):
-            with warns(ClassificationWarning, match="Donor radius from the"+\
-                       " binary class object and the profile do not agree"):
+        with warns(ClassificationWarning, match="Donor mass from the binary "\
+                                                +"class object and the "\
+                                                +"profile do not agree"):
+            with warns(ClassificationWarning, match="Donor radius from the "\
+                                                    +"binary class object "\
+                                                    +"and the profile do not "\
+                                                    +"agree"):
+                test_profile = star_profile[['mass', 'radius']]
                 d_mass, d_radius, d_dm =\
-                 totest.get_mass_radius_dm_from_profile(star_profile[['mass',\
-                 'radius']])
+                    totest.get_mass_radius_dm_from_profile(test_profile)
                 assert np.array_equal(d_mass, star_profile['mass'])
                 assert np.array_equal(d_radius, star_profile['radius'])
                 assert np.array_equal(d_dm, star_profile['dm'])
@@ -1937,16 +2030,18 @@ class TestFunctions:
         M = star_profile['mass'].max()
         R = star_profile['radius'].max()
         # examples: profile with log_R
-        d_mass, d_radius, d_dm = totest.get_mass_radius_dm_from_profile(\
-                                 star_profile[['mass', 'log_R']], m1_i = M,\
-                                 radius1 = R)
+        d_mass, d_radius, d_dm =\
+            totest.get_mass_radius_dm_from_profile(star_profile[['mass',\
+                                                                 'log_R']],\
+                                                   m1_i = M, radius1 = R)
         assert np.array_equal(d_mass, star_profile['mass'])
         assert np.array_equal(d_radius, star_profile['radius'])
         assert np.array_equal(d_dm, star_profile['dm'])
         # examples: profile with radius and dm (in grams)
-        d_mass, d_radius, d_dm = totest.get_mass_radius_dm_from_profile(\
-                                 star_profile[['mass', 'dm', 'radius']],\
-                                 m1_i = M, radius1 = R)
+        d_mass, d_radius, d_dm =\
+            totest.get_mass_radius_dm_from_profile(star_profile[['mass', 'dm',\
+                                                                 'radius']],\
+                                                   m1_i = M, radius1 = R)
         assert np.array_equal(d_mass, star_profile['mass'])
         assert np.array_equal(d_radius, star_profile['radius'])
         # convert Msun to grams
@@ -1959,25 +2054,25 @@ class TestFunctions:
         def mock_calculate_recombination_energy(profile, tolerance=0.001):
             return np.array(len(profile)*[1.0e+99])
         # missing argument
-        with raises(TypeError, match="missing 2 required positional"+\
-                    " arguments: 'common_envelope_option_for_lambda' and"+\
-                    " 'profile'"):
+        with raises(TypeError, match="missing 2 required positional "\
+                                     +"arguments: 'common_envelope_option_for"\
+                                     +"_lambda' and 'profile'"):
             totest.get_internal_energy_from_profile()
         # bad input
-        with raises(AttributeError, match="'NoneType' object has no"+\
-                    " attribute 'dtype'"):
+        with raises(AttributeError, match="'NoneType' object has no "\
+                                          +"attribute 'dtype'"):
             totest.get_internal_energy_from_profile(None, None)
-        with raises(ValueError, match="unsupported:"+\
-                    " common_envelope_option_for_lambda = test"):
+        with raises(ValueError, match="unsupported: common_envelope_option"\
+                                      +"_for_lambda = test"):
             totest.get_internal_energy_from_profile("test",\
-            star_profile[['energy']])
+                                                    star_profile[['energy']])
         bad_profile = np.array([-1.0, -1.0, -1.0, -1.0],\
-                      dtype=([('energy', 'f8')]))
+                               dtype=([('energy', 'f8')]))
         for CEOFL in ["lambda_from_profile_gravitational_plus_internal",\
-                      "lambda_from_profile_gravitational_plus_internal_minus"+\
-                      "_recombination"]:
-            with raises(ValueError, match="CEE problem calculating internal"+\
-                        " energy, giving negative values."):
+                      "lambda_from_profile_gravitational_plus_internal_minus"\
+                      +"_recombination"]:
+            with raises(ValueError, match="CEE problem calculating internal "\
+                                          +"energy, giving negative values."):
                 totest.get_internal_energy_from_profile(CEOFL, bad_profile)
             with monkeypatch.context() as m:
                 m.setattr(totest, "calculate_H2recombination_energy",\
@@ -1986,68 +2081,81 @@ class TestFunctions:
                           mock_calculate_recombination_energy)
                 with raises(ValueError) as error_info:
                     totest.get_internal_energy_from_profile(CEOFL,\
-                    star_profile[['energy']])
-                assert error_info.value.args[0] == "CEE problem calculating"+\
-                       " recombination (and H2 recombination) energy,"+\
-                       " remaining internal energy giving negative values."
+                                                            star_profile[[\
+                                                            'energy']])
+                assert error_info.value.args[0] == "CEE problem calculating "\
+                                                   + "recombination (and H2 "\
+                                                   + "recombination) energy, "\
+                                                   + "remaining internal "\
+                                                   + "energy giving negative "\
+                                                   + "values."
         # examples: no internal energy
         assert np.array_equal(np.array([0, 0, 0, 0]),\
-               totest.get_internal_energy_from_profile(\
-               "lambda_from_profile_gravitational", star_profile[['radius']]))
-        with warns(ApproximationWarning, match="Profile does not include"+\
-                   " internal energy -- proceeding with "+\
-                   "'lambda_from_profile_gravitational'"):
+                              totest.get_internal_energy_from_profile(\
+                              "lambda_from_profile_gravitational",\
+                              star_profile[['radius']]))
+        with warns(ApproximationWarning, match="Profile does not include "\
+                                               +"internal energy -- "\
+                                               +"proceeding with 'lambda_from"\
+                                               +"_profile_gravitational'"):
             assert np.array_equal(np.array([0, 0, 0, 0]),\
                    totest.get_internal_energy_from_profile("test",\
-                   star_profile[['radius']]))
+                                                           star_profile[[\
+                                                           'radius']]))
         # examples: with internal energy
         assert np.allclose(totest.get_internal_energy_from_profile(\
-               "lambda_from_profile_gravitational_plus_internal",\
-               star_profile), np.array([9.99850443e+15, 4.99893173e+15,\
-               9.99786347e+14, 9.99786347e+12]))
+                           "lambda_from_profile_gravitational_plus_internal",\
+                           star_profile), np.array([9.99850443e+15,\
+                                                    4.99893173e+15,\
+                                                    9.99786347e+14,\
+                                                    9.99786347e+12]))
 
     def test_calculate_H2recombination_energy(self, star_profile):
         # missing argument
-        with raises(TypeError, match="missing 1 required positional"+\
-                    " argument: 'profile'"):
+        with raises(TypeError, match="missing 1 required positional "\
+                                     +"argument: 'profile'"):
             totest.calculate_H2recombination_energy()
         # bad input
-        with raises(AttributeError, match="'NoneType' object has no"+\
-                    " attribute 'dtype'"):
+        with raises(AttributeError, match="'NoneType' object has no "\
+                                          +"attribute 'dtype'"):
             totest.calculate_H2recombination_energy(None)
-        with raises(ValueError, match="CEE problem calculating H2"+\
-                    " recombination energy, giving negative values"):
+        with raises(ValueError, match="CEE problem calculating H2 "\
+                                      +"recombination energy, giving "\
+                                      +"negative values"):
             bad_profile = np.array([-1.0, -1.0, -1.0, -1.0],\
-                          dtype=([('x_mass_fraction_H', 'f8')]))
+                                   dtype=([('x_mass_fraction_H', 'f8')]))
             totest.calculate_H2recombination_energy(bad_profile)
         # examples: profile with Hydrogen mass fraction
         assert np.allclose(np.array([1.49557421e+12, 1.06826729e+12,\
-               2.13653458e+11, 2.13653458e+09]),\
-               totest.calculate_H2recombination_energy(\
-               star_profile[['x_mass_fraction_H']]))
+                                     2.13653458e+11, 2.13653458e+09]),\
+                           totest.calculate_H2recombination_energy(\
+                           star_profile[['x_mass_fraction_H']]))
         # examples: profile without Hydrogen mass fraction
-        with warns(ApproximationWarning, match="Profile does not include"+\
-                   " Hydrogen mass fraction calculate H2 recombination"+\
-                   " energy -- H2 recombination energy is assumed 0"):
+        with warns(ApproximationWarning, match="Profile does not include "\
+                                               +"Hydrogen mass fraction "\
+                                               +"calculate H2 recombination "\
+                                               +"energy -- H2 recombination "\
+                                               +"energy is assumed 0"):
             assert np.array_equal(np.array([0, 0, 0, 0]),\
-                   totest.calculate_H2recombination_energy(\
-                   star_profile[['radius']]))
+                                  totest.calculate_H2recombination_energy(\
+                                  star_profile[['radius']]))
 
     def test_calculate_recombination_energy(self, star_profile):
         # missing argument
-        with raises(TypeError, match="missing 1 required positional"+\
-                    " argument: 'profile'"):
+        with raises(TypeError, match="missing 1 required positional "\
+                                     +"argument: 'profile'"):
             totest.calculate_recombination_energy()
         # bad input
-        with raises(AttributeError, match="'NoneType' object has no"+\
-                    " attribute 'dtype'"):
+        with raises(AttributeError, match="'NoneType' object has no "\
+                                          +"attribute 'dtype'"):
             totest.calculate_recombination_energy(None)
-        with raises(ValueError, match="CEE problem calculating"+\
-                    " recombination energy, giving negative values"):
-            bad_profile = np.empty((2,), dtype=[(f, 'f8') for f in [\
-                          'x_mass_fraction_H', 'y_mass_fraction_He',\
-                          'neutral_fraction_H', 'neutral_fraction_He',\
-                          'avg_charge_He']])
+        with raises(ValueError, match="CEE problem calculating "\
+                                      +"recombination energy, giving "\
+                                      +"negative values"):
+            cols = ['x_mass_fraction_H', 'y_mass_fraction_He',\
+                    'neutral_fraction_H', 'neutral_fraction_He',\
+                    'avg_charge_He']
+            bad_profile = np.empty((2,), dtype=[(f, 'f8') for f in cols])
             bad_profile['x_mass_fraction_H'] = np.array([-1.0, -1.0])
             bad_profile['y_mass_fraction_He'] = np.array([-1.0, -1.0])
             bad_profile['neutral_fraction_H'] = np.array([0.5, 0.5])
@@ -2056,30 +2164,32 @@ class TestFunctions:
             totest.calculate_recombination_energy(bad_profile)
         # examples: profile with mass fraction and ionization information
         assert np.allclose(np.array([0.00000000e+00, 4.73639308e+12,\
-               7.53791976e+12, 3.29724895e+12]),\
-               totest.calculate_recombination_energy(\
-               star_profile[['x_mass_fraction_H', 'y_mass_fraction_He',\
-               'neutral_fraction_H', 'neutral_fraction_He', 'avg_charge_He']]))
+                                     7.53791976e+12, 3.29724895e+12]),\
+                           totest.calculate_recombination_energy(\
+                           star_profile[cols]))
         # examples: profile without mass fraction and ionization information
-        with warns(ApproximationWarning, match="Profile does not include"+\
-                   " mass fractions and ionizations of elements to calculate"+\
-                   " recombination energy -- recombination energy is assumed"+\
-                   " 0"):
+        with warns(ApproximationWarning, match="Profile does not include "\
+                                               +"mass fractions and "\
+                                               +"ionizations of elements to "\
+                                               +"calculate recombination "\
+                                               +"energy -- recombination "\
+                                               +"energy is assumed 0"):
             assert np.array_equal(np.array([0, 0, 0, 0]),\
-                   totest.calculate_recombination_energy(\
-                   star_profile[['radius']]))
+                                  totest.calculate_recombination_energy(\
+                                  star_profile[['radius']]))
 
     def test_profile_recomb_energy(self):
         # missing argument
-        with raises(TypeError, match="missing 5 required positional"+\
-                    " arguments: 'x_mass_fraction_H', 'y_mass_fraction_He',"+\
-                    " 'frac_HII', 'frac_HeII', and 'frac_HeIII'"):
+        with raises(TypeError, match="missing 5 required positional "\
+                                     +"arguments: 'x_mass_fraction_H', "\
+                                     +"'y_mass_fraction_He', 'frac_HII', "\
+                                     +"'frac_HeII', and 'frac_HeIII'"):
             totest.profile_recomb_energy()
         # bad input
         with raises(TypeError) as error_info:
             totest.profile_recomb_energy(None, None, None, None, None)
-        assert error_info.value.args[0] == "unsupported operand type(s) for"+\
-               " *: 'float' and 'NoneType'"
+        assert error_info.value.args[0] == "unsupported operand type(s) for "\
+                                           + "*: 'float' and 'NoneType'"
         # examples:
         tests = [(0.5, 0.5, 0.5, 0.5, 0.5,\
                   approx(9.49756867371e+12, abs=6e+0)),\
@@ -2098,75 +2208,90 @@ class TestFunctions:
 
     def test_calculate_binding_energy(self, star_profile, capsys):
         # missing argument
-        with raises(TypeError, match="missing 7 required positional"+\
-                    " arguments: 'donor_mass', 'donor_radius', 'donor_dm',"+\
-                    " 'specific_internal_energy', 'ind_core',"+\
-                    " 'factor_internal_energy', and 'verbose'"):
+        with raises(TypeError, match="missing 7 required positional "\
+                                     +"arguments: 'donor_mass', "\
+                                     +"'donor_radius', 'donor_dm', "\
+                                     +"'specific_internal_energy', "\
+                                     +"'ind_core', "\
+                                     +"'factor_internal_energy', and "\
+                                     +"'verbose'"):
             totest.calculate_binding_energy()
         # bad input
-        with raises(TypeError, match="'NoneType' object cannot be"+\
-                    " interpreted as an integer"):
+        with raises(TypeError, match="'NoneType' object cannot be "\
+                                     +"interpreted as an integer"):
             totest.calculate_binding_energy(None, None, None, None, None,\
                                             None, None)
-        with raises(ValueError, match="CEE problem calculating"+\
-                    " gravitational energy, giving positive values"):
+        with raises(ValueError, match="CEE problem calculating "\
+                                      +"gravitational energy, giving "\
+                                      +"positive values"):
             totest.calculate_binding_energy(-1.0*star_profile['mass'],\
                                             star_profile['radius'],\
                                             star_profile['dm'],\
                                             star_profile['energy'], 1, 0.1,\
                                             False)
         # examples:
-        with warns(EvolutionWarning, match="Ebind_i of the envelope is"+\
-                   " positive"):
+        with warns(EvolutionWarning, match="Ebind_i of the envelope is "\
+                                           +"positive"):
             assert totest.calculate_binding_energy(star_profile['mass'],\
-                   -1.0e+60*star_profile['radius'], star_profile['dm'],\
-                   star_profile['energy'], 1, 0.5, False) == 4.973e+48
+                                                   -1.0e+60\
+                                                   *star_profile['radius'],\
+                                                   star_profile['dm'],\
+                                                   star_profile['energy'], 1,\
+                                                   0.5, False) == 4.973e+48
             assert totest.calculate_binding_energy(star_profile['mass'],\
-                   star_profile['radius'], star_profile['dm'],\
-                   star_profile['energy'], 2, 0.5, False) ==\
+                                                   star_profile['radius'],\
+                                                   star_profile['dm'],\
+                                                   star_profile['energy'], 2,\
+                                                   0.5, False) ==\
                    approx(3.547071313426e+48, abs=6e+36)
         assert totest.calculate_binding_energy(star_profile['mass'],\
-               star_profile['radius'], star_profile['dm'],\
-               star_profile['energy'], 1, 0.1, True) ==\
+                                               star_profile['radius'],\
+                                               star_profile['dm'],\
+                                               star_profile['energy'], 1, 0.1,\
+                                               True) ==\
                approx(-9.02693714763e+47, abs=6e+35)
         captured_out = capsys.readouterr().out
-        for out in ["integration of gravitational energy surface to core"+\
-                    " [Grav_energy], integration of internal energy surface"+\
-                    " to core [U_i] (0 if not taken into account)",\
+        for out in ["integration of gravitational energy surface to core "\
+                    +"[Grav_energy], integration of internal energy surface "\
+                    +"to core [U_i] (0 if not taken into account)",\
                     "Ebind = Grav_energy + factor_internal_energy*U_i  :  "]:
             assert out in captured_out
 
     def test_calculate_Mejected_for_integrated_binding_energy(self,\
-        star_profile):
+                                                              star_profile):
         # missing argument
-        with raises(TypeError, match="missing 4 required positional"+\
-                    " arguments: 'profile', 'Ebind_threshold', 'mc1_i', and"+\
-                    " 'rc1_i'"):
+        with raises(TypeError, match="missing 4 required positional "\
+                                     +"arguments: 'profile', "\
+                                     +"'Ebind_threshold', 'mc1_i', and "\
+                                     +"'rc1_i'"):
             totest.calculate_Mejected_for_integrated_binding_energy()
         # bad input
-        with raises(AttributeError, match="'NoneType' object has no"+\
-                    " attribute 'dtype'"):
+        with raises(AttributeError, match="'NoneType' object has no "\
+                                          +"attribute 'dtype'"):
             totest.calculate_Mejected_for_integrated_binding_energy(None,\
-             None, None, None)
+                                                                    None,\
+                                                                    None,\
+                                                                    None)
         # examples:
         # get total mass and radius
         M = star_profile['mass'].max()
         R = star_profile['radius'].max()
         assert totest.calculate_Mejected_for_integrated_binding_energy(\
                star_profile, 1.0, 1.0, 1.0, m1_i=M, radius1=R) == 0.0
-        with warns(EvolutionWarning, match="partial mass ejected is greater"+\
-                   " than the envelope mass"):
+        with warns(EvolutionWarning, match="partial mass ejected is greater "\
+                                           +"than the envelope mass"):
             assert totest.calculate_Mejected_for_integrated_binding_energy(\
                    star_profile, 1.0e+50, 1.0, 1.0, m1_i=M, radius1=R) == 0.0
 
     def test_convert_metallicity_to_string(self):
         # missing argument
-        with raises(TypeError, match="missing 1 required positional"+\
-                    " argument: 'Z'"):
+        with raises(TypeError, match="missing 1 required positional "\
+                                     +"argument: 'Z'"):
             totest.convert_metallicity_to_string()
         # bad input
-        with raises(ValueError, match="Metallicity None not supported!"+\
-                    " Available metallicities in POSYDON v2 are"):
+        with raises(ValueError, match="Metallicity None not supported! "\
+                                      +"Available metallicities in POSYDON "\
+                                      +"v2 are"):
             totest.convert_metallicity_to_string(None)
         # examples:
         tests = [(2e+00, '2e+00'), (1e+00, '1e+00'), (4.5e-01, '4.5e-01'),\
@@ -2177,8 +2302,8 @@ class TestFunctions:
 
     def test_rotate(self):
         # missing argument
-        with raises(TypeError, match="missing 2 required positional"+\
-                    " arguments: 'axis' and 'angle'"):
+        with raises(TypeError, match="missing 2 required positional "\
+                                     +"arguments: 'axis' and 'angle'"):
             totest.rotate()
         # bad input
         with raises(TypeError, match="object of type 'NoneType' has no len()"):
@@ -2191,7 +2316,7 @@ class TestFunctions:
         for x in range(3):
             for y in range(3):
                 for z in range(3):
-                    if x!=0 or y!=0 or z!=0:
+                    if ((x!=0) or (y!=0) or (z!=0)):
                         # angle=0 -> no rotation
                         assert np.array_equal(totest.rotate(\
                                np.array([x, y, z]), 0.0),\
@@ -2204,23 +2329,23 @@ class TestFunctions:
         s = np.sin(1.0)
         c = np.cos(1.0)
         assert np.array_equal(totest.rotate(np.array([1, 0, 0]), 1.0),\
-               np.array([[1, 0, 0], [0, c, -s], [0, s, c]]))
+                              np.array([[1, 0, 0], [0, c, -s], [0, s, c]]))
         assert np.array_equal(totest.rotate(np.array([0, 1, 0]), 1.0),\
-               np.array([[c, 0, s], [0, 1, 0], [-s, 0, c]]))
+                              np.array([[c, 0, s], [0, 1, 0], [-s, 0, c]]))
         assert np.array_equal(totest.rotate(np.array([0, 0, 1]), 1.0),\
-               np.array([[c, -s, 0], [s, c, 0], [0, 0, 1]]))
+                              np.array([[c, -s, 0], [s, c, 0], [0, 0, 1]]))
         assert np.allclose(totest.rotate(np.array([1, 1, 0]), 1.0),\
-               np.array([[0.77015115, 0.22984885, 0.59500984], [0.22984885,\
-               0.77015115, -0.59500984], [-0.59500984, 0.59500984,\
-               0.54030231]]))
+                           np.array([[0.77015115, 0.22984885, 0.59500984],\
+                                     [0.22984885, 0.77015115, -0.59500984],\
+                                     [-0.59500984, 0.59500984, 0.54030231]]))
         assert np.allclose(totest.rotate(np.array([1, 0, 1]), 1.0),\
-               np.array([[0.77015115,-0.59500984, 0.22984885], [0.59500984,\
-               0.54030231, -0.59500984], [0.22984885, 0.59500984,\
-               0.77015115]]))
+                           np.array([[0.77015115, -0.59500984, 0.22984885],\
+                                     [0.59500984, 0.54030231, -0.59500984],\
+                                     [0.22984885, 0.59500984, 0.77015115]]))
         assert np.allclose(totest.rotate(np.array([0, 1, 1]), 1.0),\
-               np.array([[0.54030231,-0.59500984, 0.59500984], [0.59500984,\
-               0.77015115, 0.22984885], [-0.59500984, 0.22984885,\
-               0.77015115]]))
+                           np.array([[0.54030231,-0.59500984, 0.59500984],\
+                                     [0.59500984, 0.77015115, 0.22984885],\
+                                     [-0.59500984, 0.22984885, 0.77015115]]))
 
 
 class TestPchipInterpolator2:
@@ -2261,9 +2386,9 @@ class TestPchipInterpolator2:
         assert PchipInterpolator2_True(0.1) == 0.0
         assert PchipInterpolator2_False(0.1) == -0.4
         assert np.allclose(PchipInterpolator2([0.1, 0.8]),\
-               np.array([0.9, 0.2]))
+                           np.array([0.9, 0.2]))
         assert np.allclose(PchipInterpolator2_True([0.1, 0.8]),\
-               np.array([0.0, 0.3]))
+                           np.array([0.0, 0.3]))
         assert np.allclose(PchipInterpolator2_False([0.1, 0.8]),\
-               np.array([-0.4, 0.3]))
+                           np.array([-0.4, 0.3]))
 

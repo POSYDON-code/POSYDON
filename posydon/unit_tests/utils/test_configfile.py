@@ -26,8 +26,9 @@ class TestElements:
                     '__loader__', '__name__', '__package__', '__spec__',\
                     'ast', 'configparser', 'copy', 'json', 'np', 'operator',\
                     'os', 'parse_inifile']
-        assert dir(totest) == elements, "There might be added or removed "+\
-               "objects without an update on the unit test."
+        assert dir(totest) == elements, "There might be added or removed "\
+                                        + "objects without an update on the "\
+                                        + "unit test."
 
     def test_instance_ConfigFile(self):
         assert isclass(totest.ConfigFile)
@@ -70,8 +71,8 @@ class TestFunctions:
             mock_node.body = parse(source, mode='eval')
             return mock_node
         # missing argument
-        with raises(TypeError, match="missing 1 required positional"+\
-                    " argument: 'inifile'"):
+        with raises(TypeError, match="missing 1 required positional "\
+                                     +"argument: 'inifile'"):
             totest.parse_inifile()
         # bad input
         with raises(TypeError, match="'int' object is not iterable"):
@@ -82,8 +83,8 @@ class TestFunctions:
                       'test_bool1'.lower(): True, 'test_bool2'.lower(): False,\
                       'test_None'.lower(): None}
         assert s == {'MESA_DIR'.lower(): os.environ['MESA_DIR'],\
-                     'test_exception'.lower():\
-                     ["ast.parse('X=1'", "mode='eval')"]}
+                     'test_exception'.lower(): ["ast.parse('X=1'",\
+                                                "mode='eval')"]}
         assert mi == {'MESA_DIR'.lower(): os.environ['MESA_DIR'],\
                       'test_float'.lower(): 0.1, 'test_int'.lower(): 10,\
                       'test_list'.lower(): ['Unit Test1', 'Unit Test2'],\
@@ -138,8 +139,8 @@ class TestConfigFile:
         assert ConfigFile.entries == {}
         assert ConfigFile.path is None
         # error on directory
-        with raises(IsADirectoryError, match="Is a directory: '"+\
-                                             str(tmp_path)+"'"):
+        with raises(IsADirectoryError, match="Is a directory: '"\
+                                             +str(tmp_path)+"'"):
             totest.ConfigFile(path=tmp_path)
         # non-existing path
         test_path = os.path.join(tmp_path, "does_not_exist.test")
@@ -175,8 +176,8 @@ class TestConfigFile:
         # bad input
         with raises(ValueError, match="No path passed."):
             ConfigFile.save()
-        with raises(PermissionError, match="JSON file not saved: overwrite "+\
-                                           "not permitted."):
+        with raises(PermissionError, match="JSON file not saved: overwrite "\
+                                           +"not permitted."):
             ConfigFile.save(path=tmp_path, overwrite=False)
         test_path = os.path.join(tmp_path, "save.test")
         ConfigFile.path = test_path
@@ -188,8 +189,8 @@ class TestConfigFile:
         ConfigFile.save(overwrite=True)
         assert os.path.isfile(test_path)
         with open(test_path, "r") as test_file:
-            assert test_file.read() == '{\n    "Unit": "Test",\n'+\
-                                          '    "second": "test"\n}'
+            assert test_file.read() == '{\n    "Unit": "Test",\n'\
+                                       + '    "second": "test"\n}'
         # ignore ConfigFile.path
         test_path2 = os.path.join(tmp_path, "save2.test")
         ConfigFile.path = test_path2

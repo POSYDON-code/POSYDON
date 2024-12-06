@@ -37,8 +37,9 @@ class TestElements:
                     '_apply_POSYDON_filter', '_get_POSYDONWarning_class',\
                     '_issue_warn', 'copy', 'get_stats', 'print_stats', 'sys',\
                     'warnings']
-        assert dir(totest) == elements, "There might be added or removed "+\
-               "objects without an update on the unit test."
+        assert dir(totest) == elements, "There might be added or removed "\
+                                        + "objects without an update on the "\
+                                        + "unit test."
 
     def test_instance_POSYDONWarning(self):
         assert isclass(totest.POSYDONWarning)
@@ -62,7 +63,7 @@ class TestElements:
 
     def test_instance_InappropriateValueWarning(self):
         assert isclass(totest.InappropriateValueWarning)
-        assert issubclass(totest.InappropriateValueWarning,
+        assert issubclass(totest.InappropriateValueWarning,\
                           totest.POSYDONWarning)
 
     def test_instance_IncompletenessWarning(self):
@@ -87,7 +88,7 @@ class TestElements:
 
     def test_instance_UnsupportedModelWarning(self):
         assert isclass(totest.UnsupportedModelWarning)
-        assert issubclass(totest.UnsupportedModelWarning,
+        assert issubclass(totest.UnsupportedModelWarning,\
                           totest.POSYDONWarning)
 
     def test_instance_POSYDONWarning_subclasses(self):
@@ -115,7 +116,7 @@ class TestElements:
         assert isclass(totest._Caught_POSYDON_Warnings)
 
     def test_instance_CAUGHT_POSYDON_WARNINGS(self):
-        assert isinstance(totest._CAUGHT_POSYDON_WARNINGS,
+        assert isinstance(totest._CAUGHT_POSYDON_WARNINGS,\
                           totest._Caught_POSYDON_Warnings)
 
     def test_instance_Catch_POSYDON_Warnings(self):
@@ -181,7 +182,7 @@ class TestFunctions:
         assert totest._get_POSYDONWarning_class(totest.POSYDONWarning) ==\
                totest.POSYDONWarning
         # check subclasses of POSYDONWarning
-        for k,v in totest._POSYDONWarning_subclasses.items():
+        for (k, v) in totest._POSYDONWarning_subclasses.items():
             assert totest._get_POSYDONWarning_class(k) == v
             assert totest._get_POSYDONWarning_class(v) == v
         # bad input
@@ -203,8 +204,8 @@ class TestFunctions:
         # add an artifical entry in the warnings registry and get the printout
         totest._POSYDON_WARNINGS_REGISTRY = {'Unit': 'Test'}
         totest.print_stats()
-        assert "There have been POSYDON warnings in the global registry:\n "+\
-               str(totest._POSYDON_WARNINGS_REGISTRY)+"\n" ==\
+        assert "There have been POSYDON warnings in the global registry:\n "\
+               + str(totest._POSYDON_WARNINGS_REGISTRY) + "\n" ==\
                capsys.readouterr().out
 
     def test_apply_POSYDON_filter(self, capsys, clear_registry, reset_filter):
@@ -222,33 +223,38 @@ class TestFunctions:
         # check that further default warnings are filtered out but added to the
         # registry
         for i in range(10):
-            for k,v in totest._POSYDON_WARNINGS_REGISTRY.items():
-                assert i+1 == v
+            for (k, v) in totest._POSYDON_WARNINGS_REGISTRY.items():
+                assert v == i + 1
             assert totest._apply_POSYDON_filter() is None
         # check usage of python filter with a python warning
         totest.warnings.filterwarnings(action='ignore',\
                                        category=ResourceWarning)
         assert totest._apply_POSYDON_filter(warning={'message': "Test",\
-               'category': ResourceWarning}) is None
+                                                     'category':\
+                                                     ResourceWarning}) is None
         # check the route of an always filter
         totest.warnings.filterwarnings(action='always',\
                                        category=ResourceWarning)
         for i in range(10):
-            assert totest._apply_POSYDON_filter(warning={'message': "Test"+\
-                   str(i), 'category': ResourceWarning}) == {'message': \
-                   "Test"+str(i), 'category': ResourceWarning}
-            for k,v in totest._POSYDON_WARNINGS_REGISTRY.items():
+            assert totest._apply_POSYDON_filter(warning={'message': "Test"\
+                                                                    +str(i),\
+                                                         'category':\
+                                                         ResourceWarning}) ==\
+                   {'message': "Test"+str(i), 'category': ResourceWarning}
+            for (k, v) in totest._POSYDON_WARNINGS_REGISTRY.items():
                 if "ResourceWarning" in k:
-                    assert i == v
+                    assert v == i
         # check the route of an error filter
         totest.warnings.filterwarnings(action='error',\
                                        category=ResourceWarning)
         assert totest._apply_POSYDON_filter(warning={'message': "Test"+str(i),\
-               'category': ResourceWarning}) == {'message': "Test"+str(i),\
-               'category': ResourceWarning}
+                                                     'category':\
+                                                     ResourceWarning}) ==\
+               {'message': "Test"+str(i), 'category': ResourceWarning}
 
     def test_issue_warn(self, capsys, monkeypatch, recwarn, clear_registry):
-        def mock_apply_POSYDON_filter(warning=dict(message="No warning"), registry=None):
+        def mock_apply_POSYDON_filter(warning=dict(message="No warning"),\
+                                      registry=None):
             return None
 
         # wrong arguments
@@ -293,25 +299,25 @@ class TestFunctions:
 
     def test_SetPOSYDONWarnings(self):
         totest.SetPOSYDONWarnings(action="once")
-        assert str(totest.warnings.filters[0]) == "('once', None, <class "+\
-               "'posydon.utils.posydonwarning.POSYDONWarning'>, None, 0)"
+        assert str(totest.warnings.filters[0]) == "('once', None, <class "\
+               + "'posydon.utils.posydonwarning.POSYDONWarning'>, None, 0)"
         totest.SetPOSYDONWarnings()
-        assert str(totest.warnings.filters[0]) == "('default', None, <class "+\
-               "'posydon.utils.posydonwarning.POSYDONWarning'>, None, 0)"
+        assert str(totest.warnings.filters[0]) == "('default', None, <class "\
+               + "'posydon.utils.posydonwarning.POSYDONWarning'>, None, 0)"
         # non POSYDON warnings have no effect
         totest.SetPOSYDONWarnings(category=UserWarning)
-        assert str(totest.warnings.filters[0]) == "('default', None, <class "+\
-               "'posydon.utils.posydonwarning.POSYDONWarning'>, None, 0)"
+        assert str(totest.warnings.filters[0]) == "('default', None, <class "\
+               + "'posydon.utils.posydonwarning.POSYDONWarning'>, None, 0)"
 
     def test_NoPOSYDONWarnings(self, reset_filter):
         totest.NoPOSYDONWarnings()
-        assert str(totest.warnings.filters[0]) == "('ignore', None, <class "+\
-               "'posydon.utils.posydonwarning.POSYDONWarning'>, None, 0)"
+        assert str(totest.warnings.filters[0]) == "('ignore', None, <class "\
+               + "'posydon.utils.posydonwarning.POSYDONWarning'>, None, 0)"
 
     def test_AllPOSYDONWarnings(self, reset_filter):
         totest.AllPOSYDONWarnings()
-        assert str(totest.warnings.filters[0]) == "('always', None, <class "+\
-               "'posydon.utils.posydonwarning.POSYDONWarning'>, None, 0)"
+        assert str(totest.warnings.filters[0]) == "('always', None, <class "\
+               + "'posydon.utils.posydonwarning.POSYDONWarning'>, None, 0)"
 
 
 class TestPOSYDONWarning:
@@ -495,7 +501,7 @@ class TestUnsupportedModelWarning:
         # check that the instance is of correct type and all code in the
         # __init__ got executed: the elements are created and initialized
         assert isinstance(UnsupportedModelWarning,\
-               totest.UnsupportedModelWarning)
+                          totest.UnsupportedModelWarning)
         assert UnsupportedModelWarning.message == ''
 
 
@@ -529,7 +535,7 @@ class Test_Caught_POSYDON_Warnings:
         # check that the instance is of correct type and all code in the
         # __init__ got executed: the elements are created and initialized
         assert isinstance(_Caught_POSYDON_Warnings,\
-               totest._Caught_POSYDON_Warnings)
+                          totest._Caught_POSYDON_Warnings)
         assert _Caught_POSYDON_Warnings.catch_warnings == False
         assert _Caught_POSYDON_Warnings.caught_warnings == []
         assert _Caught_POSYDON_Warnings.record
@@ -553,31 +559,35 @@ class Test_Caught_POSYDON_Warnings:
         # check with different setups
         test_cases = [{'catch_warnings': True, 'record': True,\
                        'filter_first': True, 'registry': None,\
-                       'str': "POSYDON warnings will be caught and recorded."+\
-                              " Filters are applied before recording."\
-                    },{'catch_warnings': True, 'record': True,\
+                       'str': "POSYDON warnings will be caught and recorded. "\
+                              +"Filters are applied before recording."},\
+                      {'catch_warnings': True, 'record': True,\
                        'filter_first': False, 'registry': None,\
                        'str': "POSYDON warnings will be caught and recorded."\
-                    },{'catch_warnings': True, 'record': False,\
+                      },\
+                      {'catch_warnings': True, 'record': False,\
                        'filter_first': True, 'registry': None,\
                        'str': "POSYDON warnings will be caught and discarded."\
-                    },{'catch_warnings': True, 'record': False,\
+                      },\
+                      {'catch_warnings': True, 'record': False,\
                        'filter_first': False, 'registry': None,\
                        'str': "POSYDON warnings will be caught and discarded."\
-                    },{'catch_warnings': False, 'record': True,\
+                      },
+                      {'catch_warnings': False, 'record': True,\
                        'filter_first': True, 'registry': test_dict,\
-                       'str': "Currently a private registry is used, it "+\
-                              "contains:\n{'Unit': 'Test'}"\
-                    }]
+                       'str': "Currently a private registry is used, it "\
+                              +"contains:\n{'Unit': 'Test'}"}]
         for tc in test_cases:
-            caught_object = totest._Caught_POSYDON_Warnings(catch_warnings=\
-                                tc['catch_warnings'], record=tc['record'],\
-                                filter_first=tc['filter_first'],\
-                                registry=tc['registry'])
-            assert tc['str'] in str(caught_object)
+            caught = totest._Caught_POSYDON_Warnings(catch_warnings=\
+                                                     tc['catch_warnings'],\
+                                                     record=tc['record'],\
+                                                     filter_first=\
+                                                     tc['filter_first'],\
+                                                     registry=tc['registry'])
+            assert tc['str'] in str(caught)
         # check artifical caught_warnings
         for i in range(4):
-            _Caught_POSYDON_Warnings.caught_warnings = i*[test_dict]
+            _Caught_POSYDON_Warnings.caught_warnings = i * [test_dict]
             if i==1:
                 assert "There is 1 warning recorded." in\
                        str(_Caught_POSYDON_Warnings)
@@ -591,9 +601,9 @@ class Test_Caught_POSYDON_Warnings:
         assert isroutine(_Caught_POSYDON_Warnings.__call__)
         assert _Caught_POSYDON_Warnings._got_called == False
         # bad input
-        with raises(ValueError, match="Nothing to do: either empty_cache has"+\
-                                      " to be True or new_warning/"+\
-                                      "change_settings needs to be set."):
+        with raises(ValueError, match="Nothing to do: either empty_cache has "\
+                                      +"to be True or new_warning/"\
+                                      +"change_settings needs to be set."):
             _Caught_POSYDON_Warnings()
         assert _Caught_POSYDON_Warnings._got_called
         _Caught_POSYDON_Warnings.caught_warnings = [test_dict]
@@ -611,8 +621,8 @@ class Test_Caught_POSYDON_Warnings:
             else:
                 with raises(TypeError, match="has to be a"):
                     _Caught_POSYDON_Warnings(change_settings={s: "Test"})
-        with raises(AttributeError, match=\
-                    "unknown to _Caught_POSYDON_Warnings"):
+        with raises(AttributeError, match="unknown to "\
+                                          +"_Caught_POSYDON_Warnings"):
             _Caught_POSYDON_Warnings(change_settings=test_dict)
         # change setting to catch warnings and add a new one to the record list
         _Caught_POSYDON_Warnings(change_settings={'catch_warnings': True},\
@@ -649,20 +659,20 @@ class Test_Caught_POSYDON_Warnings:
         assert isroutine(_Caught_POSYDON_Warnings.__del__)
         # create an object with a catched warning, call the destructor and
         # empty it while recording the stdout and stderr
-        caught_object = totest._Caught_POSYDON_Warnings(catch_warnings=True)
-        caught_object(new_warning={'message': "Unit Test"})
+        cpw = totest._Caught_POSYDON_Warnings(catch_warnings=True)
+        cpw(new_warning={'message': "Unit Test"})
         with warns(UserWarning, match="Unit Test"):
-            caught_object.__del__()
+            cpw.__del__()
         assert capsys.readouterr().err ==\
                "There are still recorded warnings:\n"
-        assert caught_object.catch_warnings == False
-        caught_object.caught_warnings[0]['message'] += "Test"
-        caught_object.filter_first = False
+        assert cpw.catch_warnings == False
+        cpw.caught_warnings[0]['message'] += "Test"
+        cpw.filter_first = False
         with warns(UserWarning, match="Unit TestTest"):
-            caught_object.__del__()
+            cpw.__del__()
         assert capsys.readouterr().err ==\
                "There are still recorded warnings:\n"
-        caught_object.caught_warnings = []
+        cpw.caught_warnings = []
 
     def test_got_called(self, _Caught_POSYDON_Warnings):
         assert isroutine(_Caught_POSYDON_Warnings.got_called)
@@ -720,11 +730,10 @@ class TestCatch_POSYDON_Warnings:
         assert Catch_POSYDON_Warnings.context_registry is None
         assert Catch_POSYDON_Warnings.python_catch is None
         # check other inputs
-        catch_object = totest.Catch_POSYDON_Warnings(own_registry=True,\
-                                                     use_python_catch=True)
-        assert catch_object.context_registry == {}
-        assert isinstance(catch_object.python_catch,\
-                          totest.warnings.catch_warnings)
+        cpw = totest.Catch_POSYDON_Warnings(own_registry=True,\
+                                            use_python_catch=True)
+        assert cpw.context_registry == {}
+        assert isinstance(cpw.python_catch, totest.warnings.catch_warnings)
 
     def test_enter_exit(self, Catch_POSYDON_Warnings):
         assert isroutine(Catch_POSYDON_Warnings.__enter__)

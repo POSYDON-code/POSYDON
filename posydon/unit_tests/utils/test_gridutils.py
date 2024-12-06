@@ -32,8 +32,9 @@ class TestElements:
                     'get_final_proposed_points', 'get_new_grid_name', 'gzip',\
                     'join_lists', 'kepler3_a', 'np', 'os', 'pd',\
                     'read_EEP_data_file', 'read_MESA_data_file', 'secyear']
-        assert dir(totest) == elements, "There might be added or removed "+\
-               "objects without an update on the unit test."
+        assert dir(totest) == elements, "There might be added or removed "\
+                                        + "objects without an update on the "\
+                                        + "unit test."
 
     def test_instance_join_lists(self):
         assert isroutine(totest.join_lists)
@@ -100,7 +101,8 @@ class TestFunctions:
         # mock data: 3 columns and 2 rows; it contains different
         # types(int, float) and different signs(positive, negative)
         return np.array([(1, 2, 3.3), (1, -2, -3.3)],\
-               dtype=[('COL1', '<f8'), ('COL2', '<f8'), ('COL3', '<f8')])
+                        dtype=[('COL1', '<f8'), ('COL2', '<f8'),\
+                               ('COL3', '<f8')])
 
     @fixture
     def MESA_data_path(self, data_path, MESA_data):
@@ -113,10 +115,10 @@ class TestFunctions:
             for k in MESA_data.dtype.names:
                 test_file.write("{:<5}".format(k))
             for j in range(len(MESA_data)):
-                for i,v in enumerate(MESA_data[j]):
-                    if v==int(v):
+                for (i, v) in enumerate(MESA_data[j]):
+                    if v == int(v):
                         v = int(v)
-                    if i==0:
+                    if i == 0:
                         test_file.write("\n{:>4}".format(v))
                     else:
                         test_file.write(" {:>4}".format(v))
@@ -133,10 +135,10 @@ class TestFunctions:
             for k in MESA_data.dtype.names:
                 test_file.write("{:<5}".format(k))
             for j in range(len(MESA_data)):
-                for i,v in enumerate(MESA_data[j]):
-                    if v==int(v):
+                for (i, v) in enumerate(MESA_data[j]):
+                    if v == int(v):
                         v = int(v)
-                    if i==0:
+                    if i == 0:
                         test_file.write("\n{:>4}".format(v))
                     else:
                         test_file.write(" {:>4}".format(v))
@@ -146,8 +148,9 @@ class TestFunctions:
     def MESA_BH_data_tight_orbit(self):
         # mock data: 4 columns(physical quanties the code looks for) and 2 rows
         return np.array([(1.0, 15.0, 30.0, -5.0), (1.0, 15.0, 30.0, -4.0)],\
-               dtype=[('period_days', '<f8'), ('star_1_mass', '<f8'),\
-                      ('star_2_mass', '<f8'), ('lg_mtransfer_rate', '<f8')])
+                        dtype=[('period_days', '<f8'), ('star_1_mass', '<f8'),\
+                               ('star_2_mass', '<f8'),\
+                               ('lg_mtransfer_rate', '<f8')])
 
     @fixture
     def BH_path_tight_orbit(self, tmp_path, MESA_BH_data_tight_orbit):
@@ -161,10 +164,10 @@ class TestFunctions:
             for k in MESA_BH_data_tight_orbit.dtype.names:
                 test_file.write("{:<18}".format(k))
             for j in range(len(MESA_BH_data_tight_orbit)):
-                for i,v in enumerate(MESA_BH_data_tight_orbit[j]):
-                    if v==int(v):
+                for (i, v) in enumerate(MESA_BH_data_tight_orbit[j]):
+                    if v == int(v):
                         v = int(v)
-                    if i==0:
+                    if i == 0:
                         test_file.write("\n{:>17}".format(v))
                     else:
                         test_file.write(" {:>17}".format(v))
@@ -175,8 +178,9 @@ class TestFunctions:
         # mock data: 4 columns(physical quanties the code looks for) and 2 rows
         return np.array([(100.0, 15.0, 30.0, -5.0),\
                          (100.0, 15.0, 30.0, -4.0)],\
-               dtype=[('period_days', '<f8'), ('star_1_mass', '<f8'),\
-                      ('star_2_mass', '<f8'), ('lg_mtransfer_rate', '<f8')])
+                        dtype=[('period_days', '<f8'), ('star_1_mass', '<f8'),\
+                               ('star_2_mass', '<f8'),\
+                               ('lg_mtransfer_rate', '<f8')])
 
     @fixture
     def BH_path_wide_orbit(self, tmp_path, MESA_BH_data_wide_orbit):
@@ -190,10 +194,10 @@ class TestFunctions:
             for k in MESA_BH_data_wide_orbit.dtype.names:
                 test_file.write("{:<18}".format(k))
             for j in range(len(MESA_BH_data_wide_orbit)):
-                for i,v in enumerate(MESA_BH_data_wide_orbit[j]):
-                    if v==int(v):
+                for (i, v) in enumerate(MESA_BH_data_wide_orbit[j]):
+                    if v == int(v):
                         v = int(v)
-                    if i==0:
+                    if i == 0:
                         test_file.write("\n{:>17}".format(v))
                     else:
                         test_file.write(" {:>17}".format(v))
@@ -203,8 +207,9 @@ class TestFunctions:
     def MESA_SH_data(self):
         # mock data
         return np.array([(1.0, 4.0, 0.0, 0.0), (2.0, 4.0, 5.0, 4.0)],\
-               dtype=[('log_L', '<f8'), ('log_Teff', '<f8'),\
-                      ('he_core_mass', '<f8'), ('c_core_mass', '<f8')])
+                        dtype=[('log_L', '<f8'), ('log_Teff', '<f8'),\
+                               ('he_core_mass', '<f8'),\
+                               ('c_core_mass', '<f8')])
 
     @fixture
     def H1_path(self, tmp_path, MESA_SH_data):
@@ -218,10 +223,10 @@ class TestFunctions:
             for k in MESA_SH_data.dtype.names:
                 test_file.write("{:<13}".format(k))
             for j in range(len(MESA_SH_data)):
-                for i,v in enumerate(MESA_SH_data[j]):
-                    if v==int(v):
+                for (i, v) in enumerate(MESA_SH_data[j]):
+                    if v == int(v):
                         v = int(v)
-                    if i==0:
+                    if i == 0:
                         test_file.write("\n{:>12}".format(v))
                     else:
                         test_file.write(" {:>12}".format(v))
@@ -239,10 +244,10 @@ class TestFunctions:
             for k in MESA_SH_data.dtype.names:
                 test_file.write("{:<13}".format(k))
             for j in range(len(MESA_SH_data)):
-                for i,v in enumerate(MESA_SH_data[j]):
-                    if v==int(v):
+                for (i, v) in enumerate(MESA_SH_data[j]):
+                    if v == int(v):
                         v = int(v)
-                    if i==0:
+                    if i == 0:
                         test_file.write("\n{:>12}".format(v))
                     else:
                         test_file.write(" {:>12}".format(v))
@@ -289,8 +294,8 @@ class TestFunctions:
         with open(path, "w") as test_file:
             for i in range(5):
                 test_file.write("Test HEADER{}\n".format(i+1))
-            test_file.write("Terminate because accretor (r-rl)/rl > "+\
-                            "accretor_overflow_terminate\n")
+            test_file.write("Terminate because accretor (r-rl)/rl > "\
+                            +"accretor_overflow_terminate\n")
         return path
 
     @fixture
@@ -303,8 +308,8 @@ class TestFunctions:
             for i in range(5):
                 test_file.write("Test HEADER{}\n".format(i+1))
             test_file.write("TURNING ON CE\n")
-            test_file.write("Terminate because accretor (r-rl)/rl > "+\
-                            "accretor_overflow_terminate\n")
+            test_file.write("Terminate because accretor (r-rl)/rl > "\
+                            +"accretor_overflow_terminate\n")
         return path
 
     @fixture
@@ -358,8 +363,8 @@ class TestFunctions:
     # test functions
     def test_join_lists(self):
         # missing argument
-        with raises(TypeError, match="missing 2 required positional"+\
-                    " arguments: 'A' and 'B'"):
+        with raises(TypeError, match="missing 2 required positional "\
+                                     +"arguments: 'A' and 'B'"):
             totest.join_lists()
         # bad input
         with raises(TypeError, match="'int' object is not iterable"):
@@ -375,68 +380,74 @@ class TestFunctions:
 
     def test_read_MESA_data_file(self, no_path, MESA_data_path, MESA_data):
         # missing argument
-        with raises(TypeError, match="missing 2 required positional"+\
-                    " arguments: 'path' and 'columns'"):
+        with raises(TypeError, match="missing 2 required positional "\
+                                     +"arguments: 'path' and 'columns'"):
             totest.read_MESA_data_file()
         # path is None or non-existing
         assert totest.read_MESA_data_file(None, ['Test']) is None
         assert totest.read_MESA_data_file(no_path, ['Test']) is None
         # read full test file
         assert np.array_equal(MESA_data,\
-               totest.read_MESA_data_file(MESA_data_path,\
-                                          MESA_data.dtype.names))
+                              totest.read_MESA_data_file(MESA_data_path,\
+                                                         MESA_data.dtype.names\
+                              ))
         # read columns individually from test file
         for k in MESA_data.dtype.names:
             assert np.array_equal(MESA_data[[k]],\
-                   totest.read_MESA_data_file(MESA_data_path, [k]))
+                                  totest.read_MESA_data_file(MESA_data_path,\
+                                                             [k]))
         # read column pairs from test file
         k0 = MESA_data.dtype.names[0]
         for k in MESA_data.dtype.names:
-            if k!=k0:
+            if k != k0:
                 assert np.array_equal(MESA_data[[k0, k]],\
-                       totest.read_MESA_data_file(MESA_data_path, [k0, k]))
+                                      totest.read_MESA_data_file(\
+                                      MESA_data_path, [k0, k]))
         # warning for non readable data
         with open(MESA_data_path, "w") as test_file:
             test_file.write(10*"Test\n")
-        with warns(MissingFilesWarning, match="Problems with reading file "+\
-                   MESA_data_path):
+        with warns(MissingFilesWarning, match="Problems with reading file "\
+                                              +MESA_data_path):
             assert totest.read_MESA_data_file(MESA_data_path,\
-                   MESA_data.dtype.names) is None
+                                              MESA_data.dtype.names) is None
 
     def test_read_EEP_data_file(self, no_path, EEP_data_path, MESA_data):
         # missing argument
-        with raises(TypeError, match="missing 2 required positional"+\
-                    " arguments: 'path' and 'columns'"):
+        with raises(TypeError, match="missing 2 required positional "\
+                                     +"arguments: 'path' and 'columns'"):
             totest.read_EEP_data_file()
         # path is None or non-existing
         assert totest.read_EEP_data_file(None, ['Test']) is None
-        with warns(MissingFilesWarning, match="Problems with reading file "+\
-                   no_path):
+        with warns(MissingFilesWarning, match="Problems with reading file "\
+                                              +no_path):
             assert totest.read_EEP_data_file(no_path, ['Test']) is None
         # read full test file
         assert np.array_equal(MESA_data,\
-               totest.read_EEP_data_file(EEP_data_path, MESA_data.dtype.names))
+                              totest.read_EEP_data_file(EEP_data_path,\
+                                                        MESA_data.dtype.names))
         # read columns individually from test file
         for k in MESA_data.dtype.names:
             assert np.array_equal(MESA_data[[k]],\
-                   totest.read_EEP_data_file(EEP_data_path, [k]))
+                                  totest.read_EEP_data_file(EEP_data_path,\
+                                                            [k]))
         # read column pairs from test file
         k0 = MESA_data.dtype.names[0]
         for k in MESA_data.dtype.names:
-            if k!=k0:
+            if k != k0:
                 assert np.array_equal(MESA_data[[k0, k]],\
-                       totest.read_EEP_data_file(EEP_data_path, [k0, k]))
+                                      totest.read_EEP_data_file(EEP_data_path,\
+                                                                [k0, k]))
         # warning for non readable data
         with open(EEP_data_path, "w") as test_file:
             test_file.write(15*"Test\n")
         with warns(match="Problems with reading file "+EEP_data_path):
             assert totest.read_EEP_data_file(EEP_data_path,\
-                   MESA_data.dtype.names) is None
+                                             MESA_data.dtype.names) is None
 
     def test_fix_He_core(self, MESA_data):
         # missing argument
-        with raises(TypeError, match="missing 1 required positional"+\
-                    " argument: 'history'"):
+        with raises(TypeError, match="missing 1 required positional "\
+                                     +"argument: 'history'"):
             totest.fix_He_core()
         # history is None
         assert totest.fix_He_core(None) is None
@@ -459,8 +470,8 @@ class TestFunctions:
 
     def test_add_field(self, MESA_data):
         # missing argument
-        with raises(TypeError, match="missing 2 required positional"+\
-                    " arguments: 'a' and 'descr'"):
+        with raises(TypeError, match="missing 2 required positional "\
+                                     +"arguments: 'a' and 'descr'"):
             totest.add_field()
         # add to empty ndarray
         with raises(ValueError, match="'a' must be a structured numpy array"):
@@ -470,12 +481,13 @@ class TestFunctions:
         assert MESA_data.dtype.descr+[('new', '<f8')] ==\
                extended_ndarray.dtype.descr
         assert np.array_equal(MESA_data,\
-               extended_ndarray[[k for k in MESA_data.dtype.names]])
+                              extended_ndarray[[k for k in\
+                                                MESA_data.dtype.names]])
 
     def test_get_cell_edges(self):
         # missing argument
-        with raises(TypeError, match="missing 2 required positional"+\
-                    " arguments: 'grid_x' and 'grid_y'"):
+        with raises(TypeError, match="missing 2 required positional "\
+                                     +"arguments: 'grid_x' and 'grid_y'"):
             totest.get_cell_edges()
         # example for x = [0.1, 0.3, 0.5, 0.7, 0.9] and y = [0.1, 0.3, 0.5]
         assert np.allclose(totest.get_cell_edges(np.linspace(0.1, 0.9, 5),\
@@ -485,8 +497,8 @@ class TestFunctions:
 
     def test_find_nearest(self):
         # missing argument
-        with raises(TypeError, match="missing 2 required positional"+\
-                    " arguments: 'val' and 'array'"):
+        with raises(TypeError, match="missing 2 required positional "\
+                                     +"arguments: 'val' and 'array'"):
             totest.find_nearest()
         # example for [0.1, 0.3, 0.5, 0.7, 0.9]
         test_data = np.linspace(0.1, 0.9, 5)
@@ -495,19 +507,19 @@ class TestFunctions:
 
     def test_find_index_nearest_neighbour(self):
         # missing argument
-        with raises(TypeError, match="missing 2 required positional"+\
-                    " arguments: 'array' and 'value'"):
+        with raises(TypeError, match="missing 2 required positional "\
+                                     +"arguments: 'array' and 'value'"):
             totest.find_index_nearest_neighbour()
         # example for [0.1, 0.3, 0.5, 0.7, 0.9]
         test_data = np.linspace(0.1, 0.9, 5)
-        for i,v in enumerate(test_data):
+        for (i, v) in enumerate(test_data):
             assert totest.find_index_nearest_neighbour(test_data, v+0.1) == i
 
     def test_get_final_proposed_points(self, capsys):
         # missing argument
-        with raises(TypeError, match="missing 4 required positional"+\
-                    " arguments: 'proposed_x', 'grid_x', 'proposed_y', and"+\
-                    " 'grid_y'"):
+        with raises(TypeError, match="missing 4 required positional "\
+                                     +"arguments: 'proposed_x', 'grid_x', "\
+                                     +"'proposed_y', and 'grid_y'"):
             totest.get_final_proposed_points()
         # example for grid_x = [0.1, 0.3, 0.5], grid_y = [0.1, 0.3, 0.5],
         # proposed_x = [0.19, 0.29, 0.39, 0.49, 0.59], and
@@ -521,8 +533,8 @@ class TestFunctions:
 
     def test_T_merger_P(self):
         # missing argument
-        with raises(TypeError, match="missing 3 required positional"+\
-                    " arguments: 'P', 'm1', and 'm2'"):
+        with raises(TypeError, match="missing 3 required positional "\
+                                     +"arguments: 'P', 'm1', and 'm2'"):
             totest.T_merger_P()
         # examples
         tests = [(1.0, 15.0, 30.0, approx(0.37210532488, abs=6e-12)),\
@@ -534,8 +546,8 @@ class TestFunctions:
 
     def test_beta_gw(self):
         # missing argument
-        with raises(TypeError, match="missing 2 required positional"+\
-                    " arguments: 'm1' and 'm2'"):
+        with raises(TypeError, match="missing 2 required positional "\
+                                     +"arguments: 'm1' and 'm2'"):
             totest.beta_gw()
         # examples
         tests = [(15.0, 30.0, approx(3.18232660295e-69, abs=6e-81)),\
@@ -546,8 +558,8 @@ class TestFunctions:
 
     def test_kepler3_a(self):
         # missing argument
-        with raises(TypeError, match="missing 3 required positional"+\
-                    " arguments: 'P', 'm1', and 'm2'"):
+        with raises(TypeError, match="missing 3 required positional "\
+                                     +"arguments: 'P', 'm1', and 'm2'"):
             totest.kepler3_a()
         # examples
         tests = [(1.0, 15.0, 30.0, approx(14.9643417735, abs=6e-11)),\
@@ -559,8 +571,8 @@ class TestFunctions:
 
     def test_T_merger_a(self):
         # missing argument
-        with raises(TypeError, match="missing 3 required positional"+\
-                    " arguments: 'a', 'm1', and 'm2'"):
+        with raises(TypeError, match="missing 3 required positional "\
+                                     +"arguments: 'a', 'm1', and 'm2'"):
             totest.T_merger_a()
         # examples
         tests = [(1.0, 15.0, 30.0, approx(7.42053829341e-06, abs=6e-18)),\
@@ -581,167 +593,189 @@ class TestFunctions:
                                      out_path_C_depletion,\
                                      out_path_CE_C_depletion):
         # missing argument
-        with raises(TypeError, match="missing 1 required positional"+\
-                    " argument: 'output_file'"):
+        with raises(TypeError, match="missing 1 required positional "\
+                                     +"argument: 'output_file'"):
             totest.convert_output_to_table()
         # bad input
         with raises(ValueError, match="File "+no_path+" does not exist"):
             totest.convert_output_to_table(no_path)
         os.system("touch "+out_path+"0")
-        with raises(ValueError, match="The output file does not have any "+\
-                    "data."):
+        with raises(ValueError, match="The output file does not have any "\
+                                      +"data."):
             totest.convert_output_to_table(out_path+"0")
         # check warnings for non specified files
-        with warns(MissingFilesWarning, match="You have not supplied a "+\
-                   "binary history file to parse. This will cause all "+\
-                   "binary history columns to be dashes."):
-            with warns(MissingFilesWarning, match="You have not supplied a "+\
-                       "star1 history file to parse. This will cause all "+\
-                       "star1 history columns to be dashes."):
-                with warns(MissingFilesWarning, match="You have not supplied"+\
-                           " a star2 history file to parse. This will cause "+\
-                           "all star2 history columns to be dashes."):
+        with warns(MissingFilesWarning, match="You have not supplied a "\
+                                              +"binary history file to parse."\
+                                              +" This will cause all binary "\
+                                              +"history columns to be dashes."\
+             ):
+            with warns(MissingFilesWarning, match="You have not supplied a "\
+                                                  +"star1 history file to "\
+                                                  +"parse. This will cause "\
+                                                  +"all star1 history columns"\
+                                                  +" to be dashes."):
+                with warns(MissingFilesWarning, match="You have not supplied "\
+                                                      +"a star2 history file "\
+                                                      +"to parse. This will "\
+                                                      +"cause all star2 "\
+                                                      +"history columns to "\
+                                                      +"be dashes."):
                     assert totest.convert_output_to_table(out_path,\
-                           column_names=["Test"]).equals(\
-                           pd.DataFrame({'CE_flag': [0],\
-                           'result': ["error"], 'Test': ["-"]}))
+                                                          column_names=["Test"]\
+                           ).equals(pd.DataFrame({'CE_flag': [0],\
+                                                  'result': ["error"],\
+                                                  'Test': ["-"]}))
         # check zipped out file + initial RLO
         assert totest.convert_output_to_table(out_gz_path+".gz",\
-               binary_history_file=BH_path_tight_orbit,
-               star1_history_file=H1_path, star2_history_file=H2_path,\
-               column_names=["Test"]).equals(\
-                pd.DataFrame({'result': ["ZAMS_RLOF"], 'Test': ["-"]}))
+                                              binary_history_file=\
+                                              BH_path_tight_orbit,\
+                                              star1_history_file=H1_path,\
+                                              star2_history_file=H2_path,\
+                                              column_names=["Test"]).equals(\
+               pd.DataFrame({'result': ["ZAMS_RLOF"], 'Test': ["-"]}))
         # check CE + existing column
-        assert totest.convert_output_to_table(out_path_CE,\
-               binary_history_file=BH_path_tight_orbit,\
-               star1_history_file=H1_path, star2_history_file=H2_path,\
-               column_names=["Test", "result"]).equals(\
-                pd.DataFrame({'CE_flag': [1], 'result': ["error"],\
-                                     'Test': ["-"]}))
+        assert totest.convert_output_to_table(out_path_CE, binary_history_file\
+                                              =BH_path_tight_orbit,\
+                                              star1_history_file=H1_path,\
+                                              star2_history_file=H2_path,\
+                                              column_names=["Test", "result"]\
+               ).equals(pd.DataFrame({'CE_flag': [1], 'result': ["error"],\
+                                      'Test': ["-"]}))
         # check contact
         assert totest.convert_output_to_table(out_path_strong_RLO,\
-               binary_history_file=BH_path_tight_orbit,\
-               star1_history_file=H1_path, star2_history_file=H2_path,\
-               column_names=["Test"]).equals(\
-                pd.DataFrame({'CE_flag': [0], 'result': ["contact"],\
-                                     'Test': ["-"]}))
+                                              binary_history_file=\
+                                              BH_path_tight_orbit,\
+                                              star1_history_file=H1_path,\
+                                              star2_history_file=H2_path,\
+                                              column_names=["Test"]).equals(\
+               pd.DataFrame({'CE_flag': [0], 'result': ["contact"],\
+                             'Test': ["-"]}))
         # check CE merger
         assert totest.convert_output_to_table(out_path_CE_strong_RLO,\
-               binary_history_file=BH_path_tight_orbit,\
-               star1_history_file=H1_path, star2_history_file=H2_path,\
-               column_names=["Test"]).equals(\
-                pd.DataFrame({'CE_flag': [1], 'result': ["CE_merger"],\
-                                     'Test': ["-"]}))
+                                              binary_history_file=\
+                                              BH_path_tight_orbit,\
+                                              star1_history_file=H1_path,\
+                                              star2_history_file=H2_path,\
+                                              column_names=["Test"]).equals(\
+               pd.DataFrame({'CE_flag': [1], 'result': ["CE_merger"],\
+                             'Test': ["-"]}))
         # check carbon depletion: stable_MT_to_merger
-        test_table = totest.convert_output_to_table(out_path_C_depletion,\
-                     binary_history_file=BH_path_tight_orbit,\
-                     star1_history_file=H1_path, star2_history_file=H2_path,\
-                     column_names=["Test"])
-        assert test_table.at[0,'CE_flag']==0
-        assert test_table.at[0,'result']=="stable_MT_to_merger"
-        assert test_table.at[0,'Test']=="-"
-        for i in [1,2]:
-            assert test_table.at[0,f'log_L_{i}']==MESA_SH_data['log_L'][-1]
-            assert test_table.at[0,f'log_T_{i}']==MESA_SH_data['log_Teff'][-1]
-            assert test_table.at[0,f'He_core_{i}(Msun)']==\
+        out_table = totest.convert_output_to_table(out_path_C_depletion,\
+                                                   binary_history_file=\
+                                                   BH_path_tight_orbit,\
+                                                   star1_history_file=H1_path,\
+                                                   star2_history_file=H2_path,\
+                                                   column_names=["Test"])
+        assert out_table.at[0, 'CE_flag'] == 0
+        assert out_table.at[0, 'result'] == "stable_MT_to_merger"
+        assert out_table.at[0, 'Test'] == "-"
+        for i in [1, 2]:
+            assert out_table.at[0, f'log_L_{i}'] == MESA_SH_data['log_L'][-1]
+            assert out_table.at[0, f'log_T_{i}'] ==\
+                   MESA_SH_data['log_Teff'][-1]
+            assert out_table.at[0, f'He_core_{i}(Msun)'] ==\
                    MESA_SH_data['he_core_mass'][-1]
-            assert test_table.at[0,f'C_core_{i}(Msun)']==\
+            assert out_table.at[0, f'C_core_{i}(Msun)'] ==\
                    MESA_SH_data['c_core_mass'][-1]
-        assert test_table.at[0,'M_1f(Msun)']==\
+        assert out_table.at[0, 'M_1f(Msun)'] ==\
                MESA_BH_data_tight_orbit['star_1_mass'][-1]
-        assert test_table.at[0,'M_2f(Msun)']==\
+        assert out_table.at[0, 'M_2f(Msun)'] ==\
                MESA_BH_data_tight_orbit['star_2_mass'][-1]
-        assert test_table.at[0,'Porb_f(d)']==\
+        assert out_table.at[0, 'Porb_f(d)'] ==\
                MESA_BH_data_tight_orbit['period_days'][-1]
-        assert 'tmerge(Gyr)' in test_table.columns
+        assert 'tmerge(Gyr)' in out_table.columns
         # check carbon depletion: no_interaction
-        test_table = totest.convert_output_to_table(out_path_CE_C_depletion,\
-                     column_names=["Test"])
-        assert test_table.at[0,'CE_flag']==1
-        assert test_table.at[0,'result']=="no_interaction"
-        assert test_table.at[0,'Test']=="-"
-        for i in [1,2]:
-            assert f'log_L_{i}' not in test_table.columns
-            assert f'log_T_{i}' not in test_table.columns
-            assert f'He_core_{i}(Msun)' not in test_table.columns
-            assert f'C_core_{i}(Msun)' not in test_table.columns
-        assert 'M_1f(Msun)' not in test_table.columns
-        assert 'M_2f(Msun)' not in test_table.columns
-        assert 'Porb_f(d)' not in test_table.columns
-        assert 'tmerge(Gyr)' not in test_table.columns
+        out_table = totest.convert_output_to_table(out_path_CE_C_depletion,\
+                                                   column_names=["Test"])
+        assert out_table.at[0, 'CE_flag'] == 1
+        assert out_table.at[0, 'result'] == "no_interaction"
+        assert out_table.at[0, 'Test'] == "-"
+        for i in [1, 2]:
+            assert f'log_L_{i}' not in out_table.columns
+            assert f'log_T_{i}' not in out_table.columns
+            assert f'He_core_{i}(Msun)' not in out_table.columns
+            assert f'C_core_{i}(Msun)' not in out_table.columns
+        assert 'M_1f(Msun)' not in out_table.columns
+        assert 'M_2f(Msun)' not in out_table.columns
+        assert 'Porb_f(d)' not in out_table.columns
+        assert 'tmerge(Gyr)' not in out_table.columns
         # check carbon depletion: CE_ejection_m
-        test_table = totest.convert_output_to_table(out_path_CE_C_depletion,\
-                     binary_history_file=BH_path_tight_orbit,\
-                     column_names=["Test"])
-        assert test_table.at[0,'CE_flag']==1
-        assert test_table.at[0,'result']=="CE_ejection_m"
-        assert test_table.at[0,'Test']=="-"
-        assert test_table.at[0,'M_1f(Msun)']==\
+        out_table = totest.convert_output_to_table(out_path_CE_C_depletion,\
+                                                   binary_history_file=\
+                                                   BH_path_tight_orbit,\
+                                                   column_names=["Test"])
+        assert out_table.at[0, 'CE_flag'] == 1
+        assert out_table.at[0, 'result'] == "CE_ejection_m"
+        assert out_table.at[0, 'Test'] == "-"
+        assert out_table.at[0, 'M_1f(Msun)'] ==\
                MESA_BH_data_tight_orbit['star_1_mass'][-1]
-        assert test_table.at[0,'M_2f(Msun)']==\
+        assert out_table.at[0, 'M_2f(Msun)'] ==\
                MESA_BH_data_tight_orbit['star_2_mass'][-1]
-        assert test_table.at[0,'Porb_f(d)']==\
+        assert out_table.at[0, 'Porb_f(d)'] ==\
                MESA_BH_data_tight_orbit['period_days'][-1]
-        assert 'tmerge(Gyr)' in test_table.columns
+        assert 'tmerge(Gyr)' in out_table.columns
         # check carbon depletion: stable_MT_to_wide_binary
-        test_table = totest.convert_output_to_table(out_path_C_depletion,\
-                     binary_history_file=BH_path_wide_orbit,\
-                     column_names=["Test"])
-        assert test_table.at[0,'CE_flag']==0
-        assert test_table.at[0,'result']=="stable_MT_to_wide_binary"
-        assert test_table.at[0,'Test']=="-"
-        assert test_table.at[0,'M_1f(Msun)']==\
+        out_table = totest.convert_output_to_table(out_path_C_depletion,\
+                                                   binary_history_file=\
+                                                   BH_path_wide_orbit,\
+                                                   column_names=["Test"])
+        assert out_table.at[0, 'CE_flag'] == 0
+        assert out_table.at[0, 'result'] == "stable_MT_to_wide_binary"
+        assert out_table.at[0, 'Test'] == "-"
+        assert out_table.at[0, 'M_1f(Msun)'] ==\
                MESA_BH_data_wide_orbit['star_1_mass'][-1]
-        assert test_table.at[0,'M_2f(Msun)']==\
+        assert out_table.at[0, 'M_2f(Msun)'] ==\
                MESA_BH_data_wide_orbit['star_2_mass'][-1]
-        assert test_table.at[0,'Porb_f(d)']==\
+        assert out_table.at[0, 'Porb_f(d)'] ==\
                MESA_BH_data_wide_orbit['period_days'][-1]
-        assert 'tmerge(Gyr)' in test_table.columns
+        assert 'tmerge(Gyr)' in out_table.columns
         # check carbon depletion: CE_ejection
-        test_table = totest.convert_output_to_table(out_path_CE_C_depletion,\
-                     binary_history_file=BH_path_wide_orbit,\
-                     column_names=["Test"])
-        assert test_table.at[0,'CE_flag']==1
-        assert test_table.at[0,'result']=="CE_ejection"
-        assert test_table.at[0,'Test']=="-"
-        assert test_table.at[0,'M_1f(Msun)']==\
+        out_table = totest.convert_output_to_table(out_path_CE_C_depletion,\
+                                                   binary_history_file=\
+                                                   BH_path_wide_orbit,\
+                                                   column_names=["Test"])
+        assert out_table.at[0, 'CE_flag'] == 1
+        assert out_table.at[0, 'result'] == "CE_ejection"
+        assert out_table.at[0, 'Test'] == "-"
+        assert out_table.at[0, 'M_1f(Msun)'] ==\
                MESA_BH_data_wide_orbit['star_1_mass'][-1]
-        assert test_table.at[0,'M_2f(Msun)']==\
+        assert out_table.at[0, 'M_2f(Msun)'] ==\
                MESA_BH_data_wide_orbit['star_2_mass'][-1]
-        assert test_table.at[0,'Porb_f(d)']==\
+        assert out_table.at[0, 'Porb_f(d)'] ==\
                MESA_BH_data_wide_orbit['period_days'][-1]
-        assert 'tmerge(Gyr)' in test_table.columns
+        assert 'tmerge(Gyr)' in out_table.columns
 
     def test_clean_inlist_file(self, ini_path, ini_path2):
         # missing argument
-        with raises(TypeError, match="missing 1 required positional"+\
-                    " argument: 'inlist'"):
+        with raises(TypeError, match="missing 1 required positional "\
+                                     +"argument: 'inlist'"):
             totest.clean_inlist_file()
-        assert totest.clean_inlist_file(ini_path)==\
+        assert totest.clean_inlist_file(ini_path) ==\
                {None: {'test_float': '1.0', 'test_string': "'unit'"}}
-        assert totest.clean_inlist_file(ini_path, section="test_section")==\
+        assert totest.clean_inlist_file(ini_path, section="test_section") ==\
                {'test_section': {'test_float': '1.0', 'test_string': "'unit'"}}
-        assert totest.clean_inlist_file(ini_path2)==\
-               {'TEST INI SECTION 1&': {'test_int': '1'}, 'TEST INI SECTION 2&': {}}
+        assert totest.clean_inlist_file(ini_path2) ==\
+               {'TEST INI SECTION 1&': {'test_int': '1'},\
+                'TEST INI SECTION 2&': {}}
 
     def test_get_new_grid_name(self, tmp_path):
         # missing argument
-        with raises(TypeError, match="missing 2 required positional"+\
-                    " arguments: 'path' and 'compression'"):
+        with raises(TypeError, match="missing 2 required positional "\
+                                     +"arguments: 'path' and 'compression'"):
             totest.get_new_grid_name()
         # get name without check for existence of compression directory
         grid_dir = os.path.join(tmp_path, "test_grid")
         compression_dir = os.path.join(tmp_path, "TEST_COMPRESSION")
-        assert totest.get_new_grid_name(grid_dir, "TEST_COMPRESSION")==\
+        assert totest.get_new_grid_name(grid_dir, "TEST_COMPRESSION") ==\
                os.path.join(compression_dir, "test_grid.h5")
         # create compression directory
         assert totest.get_new_grid_name(grid_dir, "TEST_COMPRESSION",\
-                                        create_missing_directories=True)==\
+                                        create_missing_directories=True) ==\
                os.path.join(compression_dir, "test_grid.h5")
         assert os.path.isdir(compression_dir)
         # compression directory already exists, while it would be created
         # otherwise
         assert totest.get_new_grid_name(grid_dir, "TEST_COMPRESSION",\
-                                        create_missing_directories=True)==\
+                                        create_missing_directories=True) ==\
                os.path.join(compression_dir, "test_grid.h5")
 
