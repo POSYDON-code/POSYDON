@@ -4,7 +4,7 @@ import numpy as np
 import os
 
 from posydon.popsyn.binarypopulation import BinaryPopulation
-from posydon.binary_evol import SimulationProperties
+from posydon.binary_evol.simulationproperties import SimulationProperties
 from posydon.binary_evol.flow_chart import flow_chart
 from posydon.binary_evol.step_end import step_end
 

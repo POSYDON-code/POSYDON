@@ -328,9 +328,9 @@ class Presenter:
         "S2_profile": "",
     }
 
-    def __init__(self, filename, path="./", binary=False):
+    def __init__(self, filename, path="./"):
         """Initialize a Presenter instance."""
-        self._model = SimulationModel(filename=filename, path=path, binary=binary)
+        self._model = SimulationModel(filename=filename, path=path)
         self._model.load_csv()
 
         self._main_window = MainWindow()
@@ -349,6 +349,7 @@ class Presenter:
             self._set_visualisation_diagram)
         self._visualizer.distance_representation_required().connect(
             self._set_distance_representation)
+        breakpoint()
         self._visualizer.save_required().connect(self.screen)
 
         self._present_mode = PresenterMode.DETAILED
@@ -828,7 +829,7 @@ class Presenter:
 
         for index, row in data.iterrows():
 
-            if row["event"] == "END" or row["event"] == "redirect":
+            if row["event"] == "END" or "redirect" in row["event"]:
                 continue
 
             new_data = to_simplified_data(row)
@@ -958,6 +959,7 @@ class Presenter:
             or simplified_data[-1]["state"].state_after == "merged"
         ):
             aditional_info = CaseInfos(self._state_id)
+            aditional_info.border_width = 2
             aditional_info.centered_text = simplified_data[-1][
                 "state"].state_after
             aditional_info.connected = False

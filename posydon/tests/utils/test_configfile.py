@@ -57,7 +57,7 @@ class TestConfigFile(unittest.TestCase):
 
         # check `print` and `str` methods
         print(str(self))
-        print(len(str(self).split("\m")))
+        print(len(str(self).split("\m")))   # TODO: Should this be r"\m"?
 
     def test_getters(self):
         """Test the two ways to get entries."""

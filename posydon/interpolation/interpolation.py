@@ -2,7 +2,7 @@
 
 __authors__ = [
     "Juanga Serra Perez <jgserra@northwestern.edu>",
-    "Philipp Moura Srivastava <philipp.msrivastava@northwestern.edu>",
+    "Philipp Moura Srivastava <philipp.msrivastava@northwestern.edu>"
 ]
 
 
@@ -12,6 +12,7 @@ from scipy import interpolate
 from sklearn.neighbors import NearestNeighbors
 from .data_scaling import DataScaler
 from posydon.grids.psygrid import PSyGrid
+from posydon.grids.MODELS import MODELS
 
 
 class psyTrackInterp:
@@ -121,7 +122,9 @@ class psyTrackInterp:
             distance, index = self.model.kneighbors(Xtn)
             closest_run = self.grid[self.valid_ind[index[0, 0]]]
             tflags = [closest_run.final_values['interpolation_class'],
-                      closest_run.final_values['termination_flag_2']]
+                      closest_run.final_values['termination_flag_2'],
+                      closest_run.final_values['mt_history'],
+                      ]
             dist = np.array([binary.star_1.mass
                              - closest_run.initial_values['star_1_mass'],
                              binary.star_2.mass
@@ -194,8 +197,7 @@ class psyTrackInterp:
 
         """
         if not (X.shape[1] == self.n_in) or not (len(norms) == self.n_in):
-            raise ValueError(
-                "The number of columns in X must match the length of norms.")
+            raise ValueError("The number of columns in X must match the length of norms.")
 
         self.scalers = []
         Xn = np.empty_like(X)
@@ -450,32 +452,8 @@ class GRIDInterpolator():
             'surface_he3': 'surface_he3',
             }
 
+        # processed keys
         self.final_keys = (
-            'S1_direct_state',
-            'S1_direct_SN_type',
-            'S1_direct_f_fb',
-            'S1_direct_mass',
-            'S1_direct_spin',
-            'S1_Fryer+12-rapid_state',
-            'S1_Fryer+12-rapid_SN_type',
-            'S1_Fryer+12-rapid_f_fb',
-            'S1_Fryer+12-rapid_mass',
-            'S1_Fryer+12-rapid_spin',
-            'S1_Fryer+12-delayed_state',
-            'S1_Fryer+12-delayed_SN_type',
-            'S1_Fryer+12-delayed_f_fb',
-            'S1_Fryer+12-delayed_mass',
-            'S1_Fryer+12-delayed_spin',
-            'S1_Sukhbold+16-engineN20_state',
-            'S1_Sukhbold+16-engineN20_SN_type',
-            'S1_Sukhbold+16-engineN20_f_fb',
-            'S1_Sukhbold+16-engineN20_mass',
-            'S1_Sukhbold+16-engineN20_spin',
-            'S1_Patton&Sukhbold20-engineN20_state',
-            'S1_Patton&Sukhbold20-engineN20_SN_type',
-            'S1_Patton&Sukhbold20-engineN20_f_fb',
-            'S1_Patton&Sukhbold20-engineN20_mass',
-            'S1_Patton&Sukhbold20-engineN20_spin',
             'S1_avg_c_in_c_core_at_He_depletion',
             'S1_co_core_mass_at_He_depletion',
             'S1_m_core_CE_1cent',
@@ -487,6 +465,15 @@ class GRIDInterpolator():
             'S1_r_core_CE_30cent',
             'S1_r_core_CE_pure_He_star_10cent'
         )
+
+        # core collapse keys
+        keys = []
+        for MODEL_NAME in MODELS.keys():
+            for key in ['CO_type', 'SN_type', 'f_fb', 'mass', 'spin',
+                        'm_disk_accreted', 'm_disk_radiated','M4', 'mu4',
+                        'h1_mass_ej', 'he4_mass_ej']:
+                keys.append('S1_' + MODEL_NAME + '_' + key )
+        self.final_keys += tuple(keys)
 
         self.profile_keys = (
             'radius',
@@ -616,6 +603,9 @@ class GRIDInterpolator():
                 kvalue_low = self.grid_final_values[mass_low][key]
 
             while (kvalue_low is None or np.isnan(kvalue_low)):
+                # escape if no lower mass is available
+                if np.sum(mass_low > self.grid_mass) == 0:
+                    break
                 mass_low = np.max(self.grid_mass[mass_low > self.grid_mass])
                 try:
                     kvalue_low = self.grid_final_values[mass_low][key]
@@ -630,6 +620,9 @@ class GRIDInterpolator():
                 kvalue_high = self.grid_final_values[mass_high][key]
 
             while (kvalue_high is None or np.isnan(kvalue_high)):
+                # escape if no higher mass is available
+                if np.sum(mass_high < self.grid_mass) == 0:
+                    break
                 mass_high = np.min(self.grid_mass[mass_high < self.grid_mass])
                 try:
                     kvalue_high = self.grid_final_values[mass_high][key]

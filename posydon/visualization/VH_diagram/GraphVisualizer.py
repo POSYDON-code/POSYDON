@@ -5,11 +5,13 @@ __authors__ = [
     "Maxime Rambosson <Maxime.Rambosson@etu.unige.ch>",
 ]
 
-
-from PyQt5.QtWidgets import (QWidget, QFrame, QHBoxLayout, QVBoxLayout,
-                             QLabel, QGridLayout)
-from PyQt5.QtCore import Qt, QPoint, QSize
-from PyQt5.QtGui import QPainter, QPixmap
+try:
+    from PyQt5.QtWidgets import (QWidget, QFrame, QHBoxLayout, QVBoxLayout,
+                                QLabel, QGridLayout)
+    from PyQt5.QtCore import Qt, QPoint, QSize
+    from PyQt5.QtGui import QPainter, QPixmap, QFont
+except ImportError:
+    raise ImportError('PyQt5 is not installed. Please run `pip install .[vis]` in the POSYDON base directory')
 
 from .MathTextLabel import MathTextLabel
 
@@ -194,13 +196,13 @@ class GraphVisualizerCase(GraphVisualizerItem):
         """Get coordinate to connect this widget with the previous one."""
         return self._center_widget.mapToGlobal(
             self._center_widget.rect().topLeft()
-        ) + QPoint(self._center_widget.width() / 2, 0)
+        ) + QPoint(int(self._center_widget.width() / 2), 0)
 
     def get_attach_point_bot(self):
         """Get coordinate to connect this widget with the next one."""
         return self._center_widget.mapToGlobal(
             self._center_widget.rect().bottomLeft()
-        ) + QPoint(self._center_widget.width() / 2, 0)
+        ) + QPoint(int(self._center_widget.width() / 2), 0)
 
 
 def prepare_case(infos: CaseInfos):
@@ -308,6 +310,7 @@ class StateInfos(Infos):
 
     S1_filename: str
     S2_filename: str
+    event_filename : str
     distance: int
     top_texts: list
     bot_texts: list
@@ -348,7 +351,7 @@ class GraphVisualizerState(GraphVisualizerItem):
         self.done = False
 
         layout = QGridLayout()
-        layout.setContentsMargins(0, 0, 0, 0)
+        layout.setContentsMargins(0, 10, 0, 10)
         self.setLayout(layout)
 
         self._bg_container = QLabel()
@@ -461,20 +464,20 @@ class GraphVisualizerState(GraphVisualizerItem):
         if index >= len(self._bot_labels):
             print(f"Can't set text to bot label {index}")
             return
-
+        
         self._bot_labels[index].setText(text)
 
     def get_attach_point_top(self):
         """Get coordinate to connect this widget with the previous one."""
         return self._bg_container.mapToGlobal(
             self._bg_container.rect().topLeft()
-        ) + QPoint(self._bg_container.width() / 2, 0)
+        ) + QPoint(int(self._bg_container.width() / 2), 0)
 
     def get_attach_point_bot(self):
         """Get coordinate to connect this widget with the next one."""
         return self._bg_container.mapToGlobal(
             self._bg_container.rect().bottomLeft()
-        ) + QPoint(self._bg_container.width() / 2, 0)
+        ) + QPoint(int(self._bg_container.width() / 2), 0)
 
     def resizeEvent(self, event):
         """Resize the event."""
@@ -495,7 +498,7 @@ class GraphVisualizerState(GraphVisualizerItem):
                 * (1 - self._distance))
         y_S1 = self._bg.height() / 2 - self._S1_pixmap.height() / 2
 
-        painter.drawPixmap(x_S1, y_S1, self._S1_pixmap)
+        painter.drawPixmap(int(x_S1), int(y_S1), self._S1_pixmap)
 
         x_S2 = (
             self._bg.width() / 2
@@ -503,12 +506,12 @@ class GraphVisualizerState(GraphVisualizerItem):
         )
         y_S2 = self._bg.height() / 2 - self._S2_pixmap.height() / 2
 
-        painter.drawPixmap(x_S2, y_S2, self._S2_pixmap)
+        painter.drawPixmap(int(x_S2), int(y_S2), self._S2_pixmap)
 
         if not self._event_pixmap.isNull():
             x_event = self._bg.width() / 2 - self._event_pixmap.width() / 2
 
-            painter.drawPixmap(x_event, 0, self._event_pixmap)
+            painter.drawPixmap(int(x_event), 0, self._event_pixmap)
 
         self._bg_container.setPixmap(self._bg)
 
@@ -609,6 +612,9 @@ class GraphVisualizercolumn:
 
     def set_title(self, title):
         """Set the title."""
+        font = QFont()
+        font.setPointSize(25)
+        self._title_label.setFont(font)
         self._title_label.setText(title)
 
     def add_item(self, item):
@@ -708,12 +714,14 @@ class GraphVisualizerConnectedcolumn(GraphVisualizercolumn):
             end = surface.mapFromGlobal(
                 connection.to_item.get_attach_point_top())
 
-            painter.drawLine(start, end)
+            painter.drawLine(start + QPoint(0, 36)
+                             ,end + QPoint(0, -8))
 
             left = end + QPoint(-4, -8)
             rigth = end + QPoint(4, -8)
 
             painter.setBrush(Qt.black)
+            painter.drawEllipse(start + QPoint(0, 36), 2, 2)
             painter.drawPolygon(end, left, rigth)
 
 
@@ -748,6 +756,7 @@ class GraphVisualizer(QWidget):
         super(GraphVisualizer, self).__init__()
 
         self._layout = QGridLayout()
+        self._layout.setContentsMargins(0, 0, 0, 0)
         self.setLayout(self._layout)
 
         self._next_column = 0

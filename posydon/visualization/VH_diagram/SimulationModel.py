@@ -14,19 +14,19 @@ import os
 class SimulationModel:
     """Model containing the dataset of simulations."""
 
-    def __init__(self, filename, path="./", binary=False):
+    def __init__(self, filename, path="./"):
         """Initialize a SimulationModel instance."""
         self._df = None
         self.path = path
         self.filename = filename
-        self.binary = binary
 
     def load_csv(self):
         """Load dataframe as CSV with .gz compression."""
-        self._df = pd.read_hdf(
+        """self._df = pd.read_hdf(
             os.path.join(self.path, self.filename), compression="gzip",
             key='history', low_memory=False
-        )
+        )"""
+        return None
 
     def get_by_binary_index(self, index):
         """Return a copy of dataframe's slice with binary_index == index.
@@ -42,8 +42,10 @@ class SimulationModel:
             Copy of a sub-dataframe with binary_index == index
 
         """
-
-        if self.binary:
-            return self._df.copy()
-        else:
-            return self._df.loc[index].copy()
+        #return self._df.loc[index].copy()
+        return pd.read_hdf(
+                    os.path.join(self.path, self.filename),
+                    where=f"index == {index}",
+                    compression="gzip",
+                    key='history', low_memory=False
+                )

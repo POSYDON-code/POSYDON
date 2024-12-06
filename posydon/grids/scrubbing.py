@@ -3,11 +3,16 @@
 
 __authors__ = [
     "Konstantinos Kovlakas <Konstantinos.Kovlakas@unige.ch>",
+    "Matthias Kruckow <Matthias.Kruckow@unige.ch>",
 ]
 
 
 import numpy as np
-import warnings
+from posydon.utils.limits_thresholds import (
+    RL_RELATIVE_OVERFLOW_THRESHOLD, LG_MTRANSFER_RATE_THRESHOLD,
+    THRESHOLD_CENTRAL_ABUNDANCE, THRESHOLD_CENTRAL_ABUNDANCE_LOOSE_C
+)
+from posydon.utils.posydonwarning import Pwarn
 
 
 def scrub(tables, models, ages):
@@ -33,7 +38,7 @@ def scrub(tables, models, ages):
     scr_tables = []
     scr_models = []
     for table, model, age in zip(tables, models, ages):
-        if table is None:
+        if (table is None) or (model is None) or (age is None):
             scr_tables.append(None)
             scr_models.append(None)
         else:
@@ -97,14 +102,14 @@ def keep_after_RLO(bh, h1, h2):
     bh_colnames = bh.dtype.names
 
     if "lg_mtransfer_rate" in bh_colnames:
-        rate = bh["lg_mtransfer_rate"] >= -12
+        rate = bh["lg_mtransfer_rate"] >= LG_MTRANSFER_RATE_THRESHOLD
     else:
         raise ValueError("No `lg_mtransfer_rate` in binary history.")
 
-    rlo1 = (bh["rl_relative_overflow_1"] >= -0.05
+    rlo1 = (bh["rl_relative_overflow_1"] >= RL_RELATIVE_OVERFLOW_THRESHOLD
             if "rl_relative_overflow_1" in bh_colnames else None)
 
-    rlo2 = (bh["rl_relative_overflow_2"] >= -0.05
+    rlo2 = (bh["rl_relative_overflow_2"] >= RL_RELATIVE_OVERFLOW_THRESHOLD
             if "rl_relative_overflow_2" in bh_colnames else None)
 
     if rlo1 is None:
@@ -117,11 +122,11 @@ def keep_after_RLO(bh, h1, h2):
     if rlo_1_or_2 is None:
         raise ValueError("No `rl_relative_overflow` in any star history.")
 
-    conditions_met = rlo_1_or_2 & rate
+    # This needs to be aligned with run_binary_extras.f
+    conditions_met = rlo_1_or_2 | rate
     where_conditions_met = np.where(conditions_met)[0]
 
     if len(where_conditions_met) == 0:
-        warnings.warn("No RLO overflow for this binary.")
         return None
 
     first_index = where_conditions_met[0]
@@ -137,6 +142,8 @@ def keep_after_RLO(bh, h1, h2):
     if len(new_ages) > 1 and min(np.diff(new_ages)) == 0.0:
         min_dt = min(np.diff(new_bh["age"]))
         new_age_to_remove = (age_to_remove // min_dt) * min_dt
+        if new_age_to_remove==age_to_remove:
+            new_age_to_remove -= min_dt
         relative_error = abs(new_age_to_remove - age_to_remove) / age_to_remove
         if relative_error > 0.01:
             raise Exception("Numerical precision fix too aggressive.")
@@ -152,3 +159,114 @@ def keep_after_RLO(bh, h1, h2):
         new_h2["star_age"] -= age_to_remove
 
     return new_bh, new_h1, new_h2
+
+
+def keep_till_central_abundance_He_C(bh, h1, h2,
+    Ystop=THRESHOLD_CENTRAL_ABUNDANCE,
+    XCstop=THRESHOLD_CENTRAL_ABUNDANCE_LOOSE_C):
+    """Scrub histories to stop when central helium and carbon abundance are
+    below the stopping criteria.
+
+    Parameters
+    ----------
+    bh : array
+        The `binary_history` array.
+    h1 : array
+        The `history1` array.
+    h2 : array
+        The `history2` array.
+    Ystop : float
+        The He abundance threshold for stopping
+    XCstop : float
+        The C abundance threshold for stopping
+
+    Returns
+    -------
+    tuple
+        The binary, history1 and history2 arrays after removing the final
+        steps after He depletion. If the stopping criteria are not reached
+        the histories will be returned unchanged.
+
+    """
+    if (bh is None) or (h1 is None) or (h2 is None):
+        #at least one histroy is missing
+        return bh, h1, h2, ''
+    elif (not ("age" in bh.dtype.names)):
+        #at least one histroy doesn't contain an age column
+        return bh, h1, h2, ''
+    
+    h1_colnames = h1.dtype.names
+    if ("center_he4" in h1_colnames) and ("center_c12" in h1_colnames):
+        if (len(h1["center_he4"])>0) and (len(h1["center_c12"])>0):
+            depleted1 = ((h1["center_he4"][-1]<Ystop) and (h1["center_c12"][-1]<XCstop))
+        else:
+            depleted1 = False
+    else:
+        depleted1 = False
+    h2_colnames = h2.dtype.names
+    if ("center_he4" in h2_colnames) and ("center_c12" in h2_colnames):
+        if (len(h2["center_he4"])>0) and (len(h2["center_c12"])>0):
+            depleted2 = ((h2["center_he4"][-1]<Ystop) and (h2["center_c12"][-1]<XCstop))
+        else:
+            depleted2 = False
+    else:
+        depleted2 = False
+
+    if (not depleted1) and (not depleted2):
+        #none of the stars reached He depletion
+        return bh, h1, h2, ''
+    
+    if depleted1:
+#        where_conditions_met1 = np.where((h1["center_he4"]<Ystop) and (h1["center_c12"]<XCstop))[0]
+        where_conditions_met1 = []
+        for i in range(len(h1["center_he4"])):
+            if (h1["center_he4"][i]<Ystop) and (h1["center_c12"][i]<XCstop):
+                where_conditions_met1 += [i]
+        if len(where_conditions_met1) == 0:
+            Pwarn("No He depletion found in h1, while expected.",
+                  "InappropriateValueWarning")
+            return bh, h1, h2, ''
+        last_index = where_conditions_met1[0]
+        newTF1 = 'Primary got stopped before central carbon depletion'
+    if depleted2:
+#        where_conditions_met2 = np.where((h2["center_he4"]<Ystop) and (h2["center_c12"]<XCstop))[0]
+        where_conditions_met2 = []
+        for i in range(len(h2["center_he4"])):
+            if (h2["center_he4"][i]<Ystop) and (h2["center_c12"][i]<XCstop):
+                where_conditions_met2 += [i]
+        if len(where_conditions_met2) == 0:
+            Pwarn("No He depletion found in h2, while expected.",
+                  "InappropriateValueWarning")
+            return bh, h1, h2, ''
+        if depleted1:
+            #both stars went beyond He depletion
+            last_index2 = where_conditions_met2[0]
+            if ("star_age" in h1.dtype.names):
+                age_He_depletion1 = h1["star_age"][last_index]
+            else:
+                age_He_depletion1 = bh["age"][last_index]
+            if ("star_age" in h1.dtype.names):
+                age_He_depletion2 = h2["star_age"][last_index2]
+            else:
+                age_He_depletion2 = bh["age"][last_index2]
+            if age_He_depletion1>age_He_depletion2:
+                #take star which reached He depletion first
+                last_index = last_index2
+                newTF1 = 'Secondary got stopped before central carbon depletion'
+        else:
+            last_index = where_conditions_met2[0]
+            newTF1 = 'Secondary got stopped before central carbon depletion'
+    
+    # include the point above the stopping criteria so that the last inferred
+    # stellar state will be XXX_Central_He_depleted. This is essential to find
+    # the core mass at He depletion with the calculate_Patton20_values_at_He_depl
+    # method used to calculate the core collapse properties with the 
+    # Patton&Sukhbold mechanism.
+    if len(bh) >= last_index+2:
+        last_index += 1
+        
+    new_bh = bh[:last_index]
+    new_h1 = h1[:last_index]
+    new_h2 = h2[:last_index]
+
+    return new_bh, new_h1, new_h2, newTF1

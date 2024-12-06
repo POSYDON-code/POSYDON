@@ -1,6 +1,6 @@
 """Plotting class for 1D (MESA) psygrids.
 
-The 2D visualization plotting class allows to plot 1D tracks of PsyGrid
+The 1D visualization plotting class allows to plot 1D tracks of PsyGrid
 objects. The PsyGrid object is composed of nD MESA grid run with POSYDON
 and post processed with the psygrid object into an h5 file.
 """
@@ -8,6 +8,7 @@ and post processed with the psygrid object into an h5 file.
 
 __authors__ = [
     "Simone Bavera <Simone.Bavera@unige.ch>",
+    "Matthias Kruckow <Matthias.Kruckow@unige.ch>",
 ]
 
 
@@ -110,7 +111,11 @@ class plot1D(object):
         else:
             self.history = [self.run[history]]
         self.n_runs = len(self.history)
-        self.history_str = self.history[0].dtype.names
+        self.history_str = ()
+        for i in range(self.n_runs):
+            if self.history[i] is not None:
+                self.history_str = self.history[i].dtype.names
+                break
 
         # x, y and z variables must exist
         if isinstance(x_var_str, str):
@@ -201,7 +206,10 @@ class plot1D(object):
             self.set_title(fig)
 
             # save figure
-            if self.fname is not None:
+            if self.PdfPages is not None:
+                self.PdfPages.savefig(figure=fig, dpi=self.dpi,
+                                      bbox_inches=self.bbox_inches)
+            elif self.fname is not None:
                 fig.savefig(self.path_to_file + self.fname,
                             dpi=self.dpi, bbox_inches=self.bbox_inches)
 
@@ -566,7 +574,8 @@ class plot1D(object):
                     custom_lines = []
                     custom_legend = []
                     key_skip = ['undetermined_evolutionary_state',
-                                'BH', 'NS', 'ignored_no_BH', 'ignored_no_RLO',
+                                'BH', 'NS',
+                                'ignored_no_binary_history', 'ignored_no_RLO',
                                 'H-rich_non_burning',
                                 'stripped_He_non_burning']
                     for key in convention.keys():
@@ -590,7 +599,8 @@ class plot1D(object):
                               ncol=self.legend1D["ncol"],
                               bbox_to_anchor=self.legend1D["bbox_to_anchor"])
 
-            if "star_mass" in self.history[j].dtype.names:
+            if (self.history[j] is not None and
+                "star_mass" in self.history[j].dtype.names):
                 plt.text(
                     self.history[j]["log_Teff"][0] * 1.1,
                     self.history[j]["log_L"][0],
@@ -627,7 +637,10 @@ class plot1D(object):
         self.set_ylim()
         self.set_legend(ax, lines)
         # save figure
-        if self.fname is not None:
+        if self.PdfPages is not None:
+            self.PdfPages.savefig(figure=fig, dpi=self.dpi,
+                                  bbox_inches=self.bbox_inches)
+        elif self.fname is not None:
             fig.savefig(self.path_to_file + self.fname,
                         dpi=self.dpi, bbox_inches=self.bbox_inches)
 

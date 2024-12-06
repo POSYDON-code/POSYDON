@@ -15,7 +15,8 @@ from posydon.binary_evol.binarystar import BINARYPROPERTIES
 from posydon.binary_evol.singlestar import STARPROPERTIES
 from posydon.utils.common_functions import orbital_period_from_separation
 from posydon.utils.common_functions import CO_radius
-
+from posydon.utils.common_functions import set_binary_to_failed
+from posydon.utils.posydonerror import NumericalError
 
 class DoubleCO:
     """The double compact-object step class."""
@@ -44,7 +45,7 @@ class DoubleCO:
         max_time = binary.properties.max_simulation_time
         assert (
                 max_time - binary.time > 0.0
-        ), "max_time is lower than the current time."
+        ), "max_time is loXer than the current time."
         r1 = CO_radius(self.m1, self.state1) * constants.Rsun / 100000  # in km
         r2 = CO_radius(self.m2, self.state2) * constants.Rsun / 100000  # in km
 
@@ -59,26 +60,19 @@ class DoubleCO:
         e = self.eccentricity
         # solve the equations at most 6 times
         while(status == -1 and n < 6):
-            s = solve_ivp(
-                lambda t, y: gr(
-                    t,
-                    y,
-                    self.m1,
-                    self.m2,
-
-                ),
+            try: 
+                s = solve_ivp(
+                lambda t, y: gr(t, y, self.m1, self.m2,),
                 t_span=[0, max_time - t_inspiral],
-                y0=[
-                    a,
-                    e
-                ],
+                y0=[a, e],
                 method='BDF',
                 events=ev_contact,
                 rtol=1e-10,
                 atol=1e-10,
-                dense_output=True
-            )
-
+                dense_output=True)
+            except:
+                set_binary_to_failed(binary)
+                raise NumericalError("SciPy encountered termination edge case while solving GR equations")
             t_inspiral += s.t[-1]
             status = s.status
             n += 1
@@ -110,8 +104,9 @@ class DoubleCO:
             t_final = [t_inspiral]
 
         if s.status == -1:
-            binary.state += ' (Integration failure)'
-            raise RuntimeError("Integrations failed", s.message)
+            failed_state = binary.state
+            set_binary_to_failed(binary)
+            raise NumericalError(f"Integration failed for {failed_state} DCO ({self.state1}, {self.state2}): ", s.message)
 
         elif s.status == 1:
 
@@ -226,12 +221,11 @@ def gr(t, y, M_acc, M):
     """TODO: add description and reference for the equations."""
     g = constants.standard_cgrav
     c = constants.clight
+
     y[0] = np.max(y[0], 0)
     a = y[0]
     y[1] = np.max(y[1], 0)
     e = y[1]
-    # if 0 < e < 10.0 ** (-3):
-    #     e = 0.0
 
     da = 0
     de = 0

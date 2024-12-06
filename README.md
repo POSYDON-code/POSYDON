@@ -4,7 +4,7 @@ POSYDON is a next-generation single- and binary-star population synthesis framew
 
 POSYDON is being developed by a collaborative team of astrophysicists and computer scientists led by Principal Investigators Tassos Fragos (Université de Genève) and Vicky Kalogera (Northwestern University).  
 
-In [Fragos et al. (2023)](https://ui.adsabs.harvard.edu/abs/2023ApJS..264...45F/abstract),  we describe the detailed methodology and implementation of POSYDON, including the assumed physics of stellar and binary evolution, the extensive grids of detailed single- and binary-star models, the postprocessing, classification, and interpolation methods we developed for use with the grids, and the treatment of evolutionary phases that are not based on precalculated grids.
+In [Fragos et al. (2023)](https://ui.adsabs.harvard.edu/abs/2023ApJS..264...45F/abstract) and [Andrews et al. (2024)](https://ui.adsabs.harvard.edu/abs/2024arXiv241102376A/abstract),  we describe the detailed methodology and implementation of POSYDON, including the assumed physics of stellar and binary evolution, the extensive grids of detailed single- and binary-star models, the postprocessing, classification, and interpolation methods we developed for use with the grids, and the treatment of evolutionary phases that are not based on precalculated grids.
 
 
 ### For instruction on how to install and use POSYDON [see here](https://posydon.org/docs/index.html).

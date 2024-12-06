@@ -4,7 +4,6 @@ from posydon.utils.common_functions import PATH_TO_POSYDON
 from posydon.binary_evol.SN.step_SN import StepSN
 from posydon.binary_evol.binarystar import BinaryStar
 from posydon.binary_evol.singlestar import SingleStar
-from posydon.binary_evol import SimulationProperties
 
 import numpy as np
 import os

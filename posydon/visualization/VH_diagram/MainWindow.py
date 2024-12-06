@@ -5,9 +5,11 @@ __authors__ = [
     "Maxime Rambosson <Maxime.Rambosson@etu.unige.ch>",
 ]
 
-
-from PyQt5.QtWidgets import QMainWindow, QScrollArea, QApplication
-from PyQt5.QtCore import pyqtSignal
+try:
+    from PyQt5.QtWidgets import QMainWindow, QScrollArea, QApplication
+    from PyQt5.QtCore import pyqtSignal
+except ImportError:
+    raise ImportError('PyQt5 is not installed. Please run `pip install .[vis]` in the POSYDON base directory')
 
 from .GraphVisualizer import GraphVisualizer
 from .OptionsWindow import OptionsWindow
@@ -73,8 +75,8 @@ class MainWindow(QMainWindow):
         self.setWindowTitle("Simulation visualisation")
 
         screen_geometry = QApplication.desktop().screenGeometry()
-        self.resize(screen_geometry.width() * 0.66,
-                    screen_geometry.height() * 0.66)
+        self.resize(int(screen_geometry.width() * 0.66),
+                    int(screen_geometry.height() * 0.66))
 
         self._visualizer = GraphVisualizer()
         self._option_window = OptionsWindow()

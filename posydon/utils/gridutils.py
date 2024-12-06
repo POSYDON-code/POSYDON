@@ -1,13 +1,16 @@
 """Various utility functions used for the manipulating grid data."""
 
-import numpy as np
 import os
+import gzip
+
+import numpy as np
 import pandas as pd
-import warnings
 
 from posydon.utils.constants import clight, Msun, Rsun
 from posydon.utils.constants import standard_cgrav as cgrav
 from posydon.utils.constants import secyer as secyear
+from posydon.utils.limits_thresholds import LG_MTRANSFER_RATE_THRESHOLD
+from posydon.utils.posydonwarning import Pwarn
 
 
 __authors__ = [
@@ -17,6 +20,7 @@ __authors__ = [
     "Emmanouil Zapartas <ezapartas@gmail.com>",
     "Kyle Akira Rocha <kylerocha2024@u.northwestern.edu>",
     "Jeffrey Andrews <jeffrey.andrews@northwestern.edu>",
+    "Matthias Kruckow <Matthias.Kruckow@unige.ch>",
 ]
 
 
@@ -49,6 +53,8 @@ def join_lists(A, B):
 def read_MESA_data_file(path, columns):
     """Read specific columns from a MESA output file to an array.
 
+    Note that this function also works with `.gz` files.
+
     Parameters
     ----------
     path : str
@@ -65,17 +71,25 @@ def read_MESA_data_file(path, columns):
     if path is None:
         return None
     elif os.path.exists(path):
-        return np.atleast_1d(np.genfromtxt(path, skip_header=5, names=True,
-                                           usecols=columns,
-                                           invalid_raise=False))
+        try:
+            return np.atleast_1d(np.genfromtxt(path, skip_header=5, names=True,
+                                               usecols=columns,
+                                               invalid_raise=False))
+        except:
+            Pwarn("Problems with reading file "+path, "MissingFilesWarning")
+            return None
     else:
         return None
 
 
 def read_EEP_data_file(path, columns):
-    """Read an EEP file - similar to `read_MESA_data_file()`."""
-    return np.atleast_1d(np.genfromtxt(path, skip_header=11, names=True,
-                                       usecols=columns, invalid_raise=False))
+    """Read an EEP file (can be `.gz`) - similar to `read_MESA_data_file()`."""
+    try:
+        return np.atleast_1d(np.genfromtxt(path, skip_header=11, names=True,
+                                           usecols=columns, invalid_raise=False))
+    except:
+        Pwarn("Problems with reading file "+path, "MissingFilesWarning")
+        return None
 
 
 def fix_He_core(history):
@@ -319,6 +333,8 @@ def convert_output_to_table(
         "log_L_2", "log_T_2", "He_core_2(Msun)", "C_core_2(Msun)"]):
     """Convert output of a run, to a pandas dataframe.
 
+    Note that this function also works with `.gz` files.
+
     Parameters
     ----------
     output_file : str
@@ -350,26 +366,34 @@ def convert_output_to_table(
         binary_history = pd.DataFrame(np.genfromtxt(binary_history_file,
                                                     skip_header=5, names=True))
     else:
-        warnings.warn(
-            "You have not supplied a binary history file to parse. "
-            "This will cause all binary history columns to be dashes.")
+        Pwarn("You have not supplied a binary history file to parse. "
+              "This will cause all binary history columns to be dashes.",
+              "MissingFilesWarning")
 
     if star1_history_file is not None:
         star1_history = pd.DataFrame(np.genfromtxt(star1_history_file,
                                                    skip_header=5, names=True))
     else:
-        warnings.warn(
-            "You have not supplied a star1 history file to parse. "
-            "This will cause all star1 history columns to be dashes.")
+        Pwarn("You have not supplied a star1 history file to parse. "
+              "This will cause all star1 history columns to be dashes.",
+              "MissingFilesWarning")
 
     if star2_history_file is not None:
         star2_history = pd.DataFrame(np.genfromtxt(star2_history_file,
                                                    skip_header=5, names=True))
     else:
-        warnings.warn("You have not supplied a star2 history file to parse. "
-                      "This will cause all star2 history columns to be dashes")
+        Pwarn("You have not supplied a star2 history file to parse. "
+              "This will cause all star2 history columns to be dashes.",
+              "MissingFilesWarning")
 
-    outdata = os.popen('cat ' + output_file).read()
+    # TODO: is this necessary to be done with `popen`?
+    # outdata = os.popen('cat ' + output_file).read()
+    if output_file.endswith(".gz"):
+        with gzip.open(output_file, "rt") as f:
+            outdata = f.read()
+    else:
+        with open(output_file, "r") as f:
+            outdata = f.read()
 
     # Checking for individual terminating conditions
 
@@ -429,7 +453,7 @@ def convert_output_to_table(
                 values["Porb_f(d)"] = binary_history["period_days"].iloc[-1]
                 values["tmerge(Gyr)"] = tmerge
 
-            if max_lg_mtransfer_rate < -5:
+            if max_lg_mtransfer_rate < LG_MTRANSFER_RATE_THRESHOLD:
                 values["result"] = "no_interaction"
             elif CE_flag != -1:
                 if tmerge > 13.8:
@@ -503,3 +527,32 @@ def clean_inlist_file(inlist, **kwargs):
                     i.split('=', 1)[1].strip()
 
     return dict_of_parameters
+
+def get_new_grid_name(path, compression, create_missing_directories=False):
+    """Get the name of a new grid slice based on the path and the compression.
+
+    Parameters
+    ----------
+    path : str
+        Path to grid slice data.
+    compression : str
+        Compression value. (Directory to put the new grid slice in.)
+    create_missing_directories : bool
+        Flag to create missing directories.
+
+    Returns
+    -------
+    grid_output
+        File name for the new grid slice.
+
+    """
+    grid_path, grid_name = os.path.split(os.path.normpath(path))
+    output_path = os.path.join(grid_path, compression)
+    grid_output = os.path.join(output_path, grid_name+'.h5')
+    if create_missing_directories:
+        # check that LITE/ or ORIGINAL/ directory exists
+        if not os.path.isdir(output_path):
+            os.makedirs(output_path)
+    return grid_output
+
+

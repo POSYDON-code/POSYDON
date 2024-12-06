@@ -5,10 +5,12 @@ __authors__ = [
     "Maxime Rambosson <Maxime.Rambosson@etu.unige.ch>",
 ]
 
-
-from PyQt5 import QtGui, QtWidgets
-from PyQt5.QtWidgets import QVBoxLayout
-from PyQt5.QtCore import Qt
+try:
+    from PyQt5 import QtGui, QtWidgets
+    from PyQt5.QtWidgets import QVBoxLayout
+    from PyQt5.QtCore import Qt
+except ImportError:
+    raise ImportError('PyQt5 is not installed. Please run `pip install .[vis]` in the POSYDON base directory')
 
 import matplotlib as mpl
 from matplotlib.backends.backend_agg import FigureCanvasAgg

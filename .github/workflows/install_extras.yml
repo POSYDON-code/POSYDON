@@ -1,0 +1,28 @@
+name: Testing installation of extras in setup.py
+
+on:
+  schedule:
+    - cron: "0 0 * * 0"  # Runs at 00:00 (UTC) every Sunday
+
+jobs:
+  test:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [macos-latest, ubuntu-latest]
+        python-version: ['3.11']  # can add more if we want to support
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Install POSYDON with extras
+      run: |
+        python -m pip install --upgrade pip
+        pip install ".[doc,vis,ml,hpc]" 
