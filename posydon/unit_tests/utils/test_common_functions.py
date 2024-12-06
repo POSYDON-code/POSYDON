@@ -15,12 +15,12 @@ os = totest.os
 # module you like to test
 from pytest import fixture, raises, warns, approx
 from inspect import isroutine, isclass
+from scipy.interpolate import interp1d
 from posydon.binary_evol.binarystar import BinaryStar
 from posydon.binary_evol.singlestar import SingleStar
 from posydon.utils.posydonwarning import (EvolutionWarning,\
     InappropriateValueWarning, ApproximationWarning, InterpolationWarning,\
     ReplaceValueWarning, ClassificationWarning)
-from posydon.utils.interpolators import interp1d
 
 @fixture
 def binary():
@@ -62,7 +62,7 @@ def star_profile():
 class TestElements:
     # check for objects, which should be an element of the tested module
     def test_dir(self):
-        elements = {'ALL_RLO_CASES', 'ALL_STAR_STATES', 'BURNING_STATES',\
+        elements = ['ALL_RLO_CASES', 'ALL_STAR_STATES', 'BURNING_STATES',\
                     'CEE_parameters_from_core_abundance_thresholds',\
                     'COMPACT_OBJECTS', 'CO_radius',\
                     'DEFAULT_CE_OPTION_FOR_LAMBDA', 'He_MS_lifetime',\
@@ -71,11 +71,11 @@ class TestElements:
                     'MT_CASE_BC', 'MT_CASE_C', 'MT_CASE_NONBURNING',\
                     'MT_CASE_NO_RLO', 'MT_CASE_TO_STR',\
                     'MT_CASE_UNDETERMINED', 'MT_STR_TO_CASE',\
-                    'Pwarn', 'REL_LOG10_BURNING_THRESHOLD',\
-                    'RICHNESS_STATES', 'RL_RELATIVE_OVERFLOW_THRESHOLD',\
-                    'STATE_NS_STARMASS_LOWER_LIMIT',\
+                    'PATH_TO_POSYDON', 'PchipInterpolator',\
+                    'PchipInterpolator2', 'Pwarn',\
+                    'REL_LOG10_BURNING_THRESHOLD', 'RICHNESS_STATES',\
+                    'RL_RELATIVE_OVERFLOW_THRESHOLD',\
                     'STATE_NS_STARMASS_UPPER_LIMIT', 'STATE_UNDETERMINED',\
-                    'STATE_WD_STARMASS_UPPER_LIMIT',\
                     'Schwarzschild_Radius', 'THRESHOLD_CENTRAL_ABUNDANCE',\
                     'THRESHOLD_HE_NAKED_ABUNDANCE', '__authors__',\
                     '__builtins__', '__cached__', '__doc__', '__file__',\
@@ -104,27 +104,18 @@ class TestElements:
                     'linear_interpolation_between_two_cells', 'newton', 'np',\
                     'orbital_period_from_separation',\
                     'orbital_separation_from_period', 'os', 'pd',\
-                    'period_change_stable_MT', 'period_evol_wind_loss',\
+                    'period_change_stabe_MT', 'period_evol_wind_loss',\
                     'profile_recomb_energy', 'quad',\
                     'read_histogram_from_file', 'rejection_sampler',\
-                    'roche_lobe_radius', 'check_for_RLO', 'rotate',\
-                    'rzams', 'separation_evol_wind_loss',\
-                    'set_binary_to_failed', 'spin_stable_mass_transfer',\
-                    'stefan_boltzmann_law'}
-        totest_elements = set(dir(totest))
-        missing_in_test = elements - totest_elements
-        assert len(missing_in_test) == 0, "There are missing objects in "\
-                                          +f"{totest.__name__}: "\
-                                          +f"{missing_in_test}. Please "\
-                                          +"check, whether they have been "\
-                                          +"removed on purpose and update "\
-                                          +"this unit test."
-        new_in_test = totest_elements - elements
-        assert len(new_in_test) == 0, "There are new objects in "\
-                                      +f"{totest.__name__}: {new_in_test}. "\
-                                      +"Please check, whether they have been "\
-                                      +"added on purpose and update this "\
-                                      +"unit test."
+                    'roche_lobe_radius', 'rotate', 'rzams',\
+                    'separation_evol_wind_loss', 'set_binary_to_failed',\
+                    'spin_stable_mass_transfer', 'stefan_boltzmann_law']
+        assert dir(totest) == elements, "There might be added or removed "\
+                                        + "objects without an update on the "\
+                                        + "unit test."
+
+    def test_instance_PATH_TO_POSYDON(self):
+        assert isinstance(totest.PATH_TO_POSYDON, str)
 
     def test_instance_STATE_UNDETERMINED(self):
         assert isinstance(totest.STATE_UNDETERMINED, str)
@@ -191,9 +182,6 @@ class TestElements:
 
     def test_instance_roche_lobe_radius(self):
         assert isroutine(totest.roche_lobe_radius)
-
-    def test_instance_check_for_RLO(self):
-        assert isroutine(totest.check_for_RLO)
 
     def test_instance_orbital_separation_from_period(self):
         assert isroutine(totest.orbital_separation_from_period)
@@ -294,8 +282,8 @@ class TestElements:
     def test_instance_separation_evol_wind_loss(self):
         assert isroutine(totest.separation_evol_wind_loss)
 
-    def test_instance_period_change_stable_MT(self):
-        assert isroutine(totest.period_change_stable_MT)
+    def test_instance_period_change_stabe_MT(self):
+        assert isroutine(totest.period_change_stabe_MT)
 
     def test_instance_linear_interpolation_between_two_cells(self):
         assert isroutine(totest.linear_interpolation_between_two_cells)
@@ -325,6 +313,9 @@ class TestElements:
         assert isroutine(totest.\
                          calculate_Mejected_for_integrated_binding_energy)
 
+    def test_instance_PchipInterpolator2(self):
+        assert isclass(totest.PchipInterpolator2)
+
     def test_instance_convert_metallicity_to_string(self):
         assert isroutine(totest.convert_metallicity_to_string)
 
@@ -334,6 +325,9 @@ class TestElements:
 
 class TestValues:
     # check that the values fit
+    def test_value_PATH_TO_POSYDON(self):
+        assert '/' in totest.PATH_TO_POSYDON
+
     def test_value_STATE_UNDETERMINED(self):
         assert totest.STATE_UNDETERMINED == "undetermined_evolutionary_state"
 
@@ -560,24 +554,6 @@ class TestFunctions:
             assert totest.roche_lobe_radius(m, 1.0)\
                    + totest.roche_lobe_radius(1.0, m) < 1.0
 
-    def test_check_for_RLO(self):
-        # missing argument
-        with raises(TypeError, match="missing 5 required positional "\
-                                     +"arguments: 'm1', 'r1', 'm2', 'r2', "\
-                                     +"and 'separation'"):
-            totest.check_for_RLO()
-
-        # examples
-        tests = [(1.0, 1.0, 1.0, 1.0, 1.0, 1e-3, True),
-                 (2.0, 1.0, 1.0, 1.0, 2.5, 1e-3, True),
-                 (1.0, 1.0, 2.0, 1.0, 2.5, 1e-3, True),
-                 (1.0, 1.0, 1.0, 1.0, 4.0, 1e-3, False)]
-
-        for (m1, r1, m2, r2, separation, tolerance, RLO) in tests:
-            assert totest.check_for_RLO(m1, r1, m2, r2, separation) == RLO
-            assert totest.check_for_RLO(m1, r1, m2, r2, separation, tolerance)\
-                   == RLO
-
     def test_orbital_separation_from_period(self):
         # missing argument
         with raises(TypeError, match="missing 3 required positional "\
@@ -752,27 +728,22 @@ class TestFunctions:
         def mock_pdf(x):
             return 1.0 - np.sqrt(x)
         # bad input
-        with raises(ValueError, match="x and y PDF values must be specified"\
-                                      +" if no PDF function is provided for"\
-                                      +" rejection sampling"):
+        with raises(TypeError, match="'>=' not supported between instances "\
+                                     +"of 'NoneType' and 'float'"):
             totest.rejection_sampler()
-        with raises(ValueError, match="x and y PDF values must be specified"\
-                                      +" if no PDF function is provided for"\
-                                      +" rejection sampling"):
+        with raises(TypeError, match="'>=' not supported between instances "\
+                                     +"of 'NoneType' and 'float'"):
             totest.rejection_sampler(x=np.array([0.0, 1.0]))
-        with raises(ValueError, match="x and y PDF values must be specified"\
-                                      +" if no PDF function is provided for"\
-                                      +" rejection sampling"):
+        with raises(IndexError, match="too many indices for array: array is "\
+                                      +"0-dimensional, but 1 were indexed"):
             totest.rejection_sampler(y=np.array([0.0, 1.0]))
         with raises(AssertionError):
             totest.rejection_sampler(x=np.array([0.0, 1.0]),\
                                      y=np.array([-0.4, 0.6]))
-        with raises(ValueError, match="x and y PDF values must be specified"\
-                                      +" if no PDF function is provided for"\
-                                      +" rejection sampling"):
+        with raises(TypeError, match="'>=' not supported between instances "\
+                                     +"of 'NoneType' and 'float'"):
             totest.rejection_sampler(x_lim=np.array([0.0, 1.0]))
-        with raises(ValueError, match="x_lim must be specified for passed PDF"\
-                                      +" function in rejection sampling"):
+        with raises(TypeError, match="'NoneType' object is not subscriptable"):
             totest.rejection_sampler(pdf=mock_pdf)
         # examples:
         monkeypatch.setattr(np.random, "uniform", mock_uniform)
@@ -1086,7 +1057,7 @@ class TestFunctions:
     def test_get_binary_state_and_event_and_mt_case(self, binary, monkeypatch):
         def mock_infer_mass_transfer_case(rl_relative_overflow,\
                                           lg_mtransfer_rate, donor_state,\
-                                          dominating_star=True, verbose=False):
+                                          verbose=False):
             if rl_relative_overflow is not None:
                 if rl_relative_overflow > 0:
                     return totest.MT_CASE_A
@@ -1180,17 +1151,6 @@ class TestFunctions:
         binary.star_2.center_gamma_history=[]
         assert totest.get_binary_state_and_event_and_mt_case(binary, i=0) ==\
                ['detached', None, 'None']
-        # both stars overfill RL leading to double CE while WD condition is
-        # fulfilled as well
-        tests = [(2.0, 1.0, 'oDoubleCE1'), (1.0, 2.0, 'oDoubleCE2')]
-        for (ro1, ro2, e) in tests:
-            binary.rl_relative_overflow_1 = ro1
-            binary.rl_relative_overflow_2 = ro2
-            assert totest.get_binary_state_and_event_and_mt_case(binary,\
-                   interpolation_class='unstable_MT') == ['contact', e, 'None']
-        # stable contact leading to WD formation
-        assert totest.get_binary_state_and_event_and_mt_case(binary,\
-               interpolation_class=None) == ['contact', 'CC1', 'None']
 
     def test_get_binary_state_and_event_and_mt_case_array(self, binary,\
                                                           monkeypatch):
@@ -1346,39 +1306,18 @@ class TestFunctions:
         assert binary.event == "FAILED"
 
     def test_infer_star_state(self):
+        # bad input
+        with raises(TypeError, match="'<=' not supported between instances "\
+                                     +"of 'NoneType' and 'float'"):
+            totest.infer_star_state(star_CO=True)
         # examples: undetermined
         assert totest.infer_star_state() == totest.STATE_UNDETERMINED
         # examples: compact objects
-        tests = [(None, "massless_remnant"), (-1.0, "massless_remnant"),\
-                 (0.0, "massless_remnant"),\
-                 (0.5*min(totest.STATE_NS_STARMASS_LOWER_LIMIT,\
-                          totest.STATE_WD_STARMASS_UPPER_LIMIT), "WD"),\
-                 (totest.STATE_NS_STARMASS_LOWER_LIMIT, "NS"),\
-                 (0.5*(totest.STATE_NS_STARMASS_LOWER_LIMIT
-                       +totest.STATE_NS_STARMASS_UPPER_LIMIT), "NS"),\
+        tests = [(0.5*totest.STATE_NS_STARMASS_UPPER_LIMIT, "NS"),\
                  (totest.STATE_NS_STARMASS_UPPER_LIMIT, "NS"),\
                  (2.0*totest.STATE_NS_STARMASS_UPPER_LIMIT, "BH")]
         for (m, CO) in tests:
             assert totest.infer_star_state(star_mass=m, star_CO=True) == CO
-        # examples: WDs
-        m = totest.STATE_WD_STARMASS_UPPER_LIMIT
-        for sH1 in [None, 0.0, 0.1]:
-            for cH1 in [None, 0.0, 0.1]:
-                for cHe4 in [None, 0.0, 0.1]:
-                    for cC12 in [None, 0.0, 0.1]:
-                        if (((sH1 is None) or (sH1<=0)) and\
-                            ((cH1 is None) or (cH1<=0)) and
-                            ((cHe4 is None) or (cHe4<=0)) and
-                            ((cC12 is None) or (cC12<=0))):
-                            CO = "NS"
-                        else:
-                            CO = "WD"
-                        assert totest.infer_star_state(star_mass=m,\
-                                                       surface_h1=sH1,\
-                                                       center_h1=cH1,\
-                                                       center_he4=cHe4,\
-                                                       center_c12=cC12,\
-                                                       star_CO=True) == CO
         # examples: loop over all cases
         THNA = totest.THRESHOLD_HE_NAKED_ABUNDANCE
         TCA = totest.THRESHOLD_CENTRAL_ABUNDANCE
@@ -1460,21 +1399,7 @@ class TestFunctions:
                  ("stripped_He_undetermined", totest.MT_CASE_UNDETERMINED),\
                  ("test_undetermined", totest.MT_CASE_UNDETERMINED)]
         for (ds, c) in tests:
-            assert totest.infer_mass_transfer_case(RROT+1.0, LMRT+1.0, ds) == c
-            assert totest.infer_mass_transfer_case(RROT+1.0, LMRT-1.0, ds) == c
-            assert totest.infer_mass_transfer_case(RROT+1.0, LMRT+1.0, ds,\
-                                                   dominating_star=False) == c
-            assert totest.infer_mass_transfer_case(RROT+1.0, LMRT-1.0, ds,\
-                                                   dominating_star=False) == c
-            assert totest.infer_mass_transfer_case(RROT-1.0, LMRT+1.0, ds) == c
-            assert totest.infer_mass_transfer_case(RROT-1.0, LMRT-1.0, ds)\
-                   == totest.MT_CASE_NO_RLO
-            assert totest.infer_mass_transfer_case(RROT-1.0, LMRT+1.0, ds,\
-                                                   dominating_star=False)\
-                   == totest.MT_CASE_NO_RLO
-            assert totest.infer_mass_transfer_case(RROT-1.0, LMRT-1.0, ds,\
-                                                   dominating_star=False)\
-                   == totest.MT_CASE_NO_RLO
+            assert totest.infer_mass_transfer_case(2*RROT, 2*LMRT, ds) == c
 
     def test_cumulative_mass_transfer_numeric(self):
         # missing argument
@@ -1881,28 +1806,28 @@ class TestFunctions:
         for (M1, Mi, M2, ai, r) in tests:
             assert totest.separation_evol_wind_loss(M1, Mi, M2, ai) == r
 
-    def test_period_change_stable_MT(self):
+    def test_period_change_stabe_MT(self):
         # missing argument
         with raises(TypeError, match="missing 4 required positional "\
                                      +"arguments: 'period_i', 'Mdon_i', "\
                                      +"'Mdon_f', and 'Macc_i'"):
-            totest.period_change_stable_MT()
+            totest.period_change_stabe_MT()
         # bad input
         with raises(TypeError) as error_info:
-            totest.period_change_stable_MT(None, None, None, None)
+            totest.period_change_stabe_MT(None, None, None, None)
         assert error_info.value.args[0] == "unsupported operand type(s) for "\
                                            + "-: 'NoneType' and 'NoneType'"
         tests = [(-1.0, 0.0), (2.0, 0.0), (0.0, -1.0), (0.0, 2.0)]
         for (a, b) in tests:
             with raises(ValueError) as error_info:
-                totest.period_change_stable_MT(0.5, 0.5, 0.5, 0.5, alpha=a,\
+                totest.period_change_stabe_MT(0.5, 0.5, 0.5, 0.5, alpha=a,\
                                               beta=b)
-            assert error_info.value.args[0] == "In period_change_stable_MT, "\
+            assert error_info.value.args[0] == "In period_change_stabe_MT, "\
                                                + "mass transfer efficiencies,"\
                                                + f" alpha, beta: {a}, {b} "\
                                                + "are not in the [0-1] range."
         with raises(ValueError, match="Donor gains mass from 0.5 to 1.5"):
-            totest.period_change_stable_MT(0.5, 0.5, 1.5, 0.5)
+            totest.period_change_stabe_MT(0.5, 0.5, 1.5, 0.5)
         # examples:
         tests = [(0.5, 0.5, 0.5, 0.5, 0.0, 0.0, 0.5),\
                  (1.5, 0.5, 0.5, 0.5, 0.0, 0.0, 1.5),\
@@ -1938,7 +1863,7 @@ class TestFunctions:
                  (0.5, 1.0, 0.5, 1.0, 0.0, 1.0,\
                   approx(1.58670336106, abs=6e-12))]
         for (Pi, Mdi, Mdf, Mai, a, b, r) in tests:
-            assert totest.period_change_stable_MT(Pi, Mdi, Mdf, Mai, alpha=a,\
+            assert totest.period_change_stabe_MT(Pi, Mdi, Mdf, Mai, alpha=a,\
                                                  beta=b) == r
 
     def test_linear_interpolation_between_two_cells(self, capsys):
@@ -2421,4 +2346,49 @@ class TestFunctions:
                            np.array([[0.54030231,-0.59500984, 0.59500984],\
                                      [0.59500984, 0.77015115, 0.22984885],\
                                      [-0.59500984, 0.22984885, 0.77015115]]))
+
+
+class TestPchipInterpolator2:
+    @fixture
+    def PchipInterpolator2(self):
+        # initialize an instance of the class with defaults
+        return totest.PchipInterpolator2([0.0, 1.0], [1.0, 0.0])
+
+    @fixture
+    def PchipInterpolator2_True(self):
+        # initialize an instance of the class with defaults
+        return totest.PchipInterpolator2([0.0, 1.0], [-0.5, 0.5],\
+                                         positive=True)
+
+    @fixture
+    def PchipInterpolator2_False(self):
+        # initialize an instance of the class with defaults
+        return totest.PchipInterpolator2([0.0, 1.0], [-0.5, 0.5],\
+                                         positive=False)
+
+    # test the PchipInterpolator2 class
+    def test_init(self, PchipInterpolator2, PchipInterpolator2_True,\
+                  PchipInterpolator2_False):
+        assert isroutine(PchipInterpolator2.__init__)
+        # check that the instance is of correct type and all code in the
+        # __init__ got executed: the elements are created and initialized
+        assert isinstance(PchipInterpolator2, totest.PchipInterpolator2)
+        assert isinstance(PchipInterpolator2.interpolator,\
+                          totest.PchipInterpolator)
+        assert PchipInterpolator2.positive == False
+        assert PchipInterpolator2_True.positive == True
+        assert PchipInterpolator2_False.positive == False
+
+    def test_call(self, PchipInterpolator2, PchipInterpolator2_True,\
+                  PchipInterpolator2_False):
+        assert isroutine(PchipInterpolator2.__call__)
+        assert PchipInterpolator2(0.1) == 0.9
+        assert PchipInterpolator2_True(0.1) == 0.0
+        assert PchipInterpolator2_False(0.1) == -0.4
+        assert np.allclose(PchipInterpolator2([0.1, 0.8]),\
+                           np.array([0.9, 0.2]))
+        assert np.allclose(PchipInterpolator2_True([0.1, 0.8]),\
+                           np.array([0.0, 0.3]))
+        assert np.allclose(PchipInterpolator2_False([0.1, 0.8]),\
+                           np.array([-0.4, 0.3]))
 
