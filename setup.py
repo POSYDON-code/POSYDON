@@ -64,22 +64,22 @@ else:
 # the correct way to do this is to make sure that they are available on
 # conda and pip for all platforms we support (see prerequisites doc page).
 install_requires = [
-    'numpy >= 1.24.2,<2.0.0',
-    'scipy >= 1.10.1',
-    'iminuit >= 2.21.3',
-    'configparser >= 5.3.0',
-    'astropy >= 5.2.2',
-    'pandas >= 2.0.0',
-    'scikit-learn < 1.3.0', # 1.2.2
-    'matplotlib >=  3.9.0',
-    'matplotlib-label-lines >= 0.5.2',
-    'h5py >= 3.8.0',
-    'psutil >= 5.9.4',
-    'tqdm >= 4.65.0',
-    'tables >= 3.8.0',
-    'progressbar2 >= 4.2.0', # for downloading data
-    'hurry.filesize >= 0.9',
-    'python-dotenv >= 1.0.0',
+    'numpy >= 1.24.2, < 2.0.0',
+    'scipy >= 1.10.1, <= 1.14.1',
+    'iminuit >= 2.21.3, <= 2.30.1',
+    'configparser >= 5.3.0, <= 7.1.0',
+    'astropy >= 5.2.2, <= 6.1.6',
+    'pandas >= 2.0.0, <= 2.2.3',
+    'scikit-learn == 1.2.2',
+    'matplotlib >=  3.9.0, <= 3.9.2',
+    'matplotlib-label-lines >= 0.5.2, <= 0.7.0',
+    'h5py >= 3.8.0, <= 3.12.1',
+    'psutil >= 5.9.4, <= 6.1.0',
+    'tqdm >= 4.65.0, <= 4.67.0',
+    'tables >= 3.8.0, <= 3.10.1',
+    'progressbar2 >= 4.2.0, <= 4.5.0', # for downloading data
+    'hurry.filesize >= 0.9, <= 0.9',
+    'python-dotenv >= 1.0.0, <= 1.0.1',
 ]
 
 tests_require = [
@@ -101,7 +101,7 @@ extras_require = {
         "pandoc",
     ],
     # for experimental visualization features, e.g. VDH diagrams
-    "vis": ["PyQt5 >= 5.15.9"],
+    "vis": ["PyQt5 >= 5.15.9, <= 5.15.11"],
     # for profile macjhine learning features, e.g. profile interpolation
     "ml": ["tensorflow >= 2.13.0"],
     # for running population synthesis on HPC facilities
@@ -118,7 +118,7 @@ scripts = glob.glob(os.path.join("bin", "*"))
 PACKAGENAME = "posydon"
 DISTNAME = "posydon"
 AUTHOR = "POSYDON Collaboration"
-AUTHOR_EMAIL = "scottcoughlin2014@u.northwestern.edu"
+AUTHOR_EMAIL = "posydon.team@gmail.com"
 LICENSE = "GPLv3+"
 DESCRIPTION = "POSYDON the Next Generation of Population Synthesis"
 GITHUBURL = "https://github.com/POSYDON-code/POSYDON"
@@ -143,14 +143,12 @@ setup(
     install_requires=install_requires,
     tests_require=tests_require,
     extras_require=extras_require,
-    python_requires=">3.5, <4",
+    python_requires=">3.10, <3.12",
     use_2to3=False,
     classifiers=[
         "Development Status :: 4 - Beta",
         "Programming Language :: Python",
-        "Programming Language :: Python :: 3.6",
-        "Programming Language :: Python :: 3.7",
-        "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.11",
         "Intended Audience :: Science/Research",
         "Intended Audience :: End Users/Desktop",
         "Intended Audience :: Science/Research",
