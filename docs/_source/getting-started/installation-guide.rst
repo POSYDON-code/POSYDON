@@ -53,7 +53,7 @@ Using Anaconda (Recommended)
 
         get-posydon-data
 
-    Alternatively, you can manually download the dataset from Zenodo using the provided `link <https://zenodo.org/record/6384235>`_. (TODO: update link to v2)
+    Alternatively, you can manually download the dataset from Zenodo using the provided `link <https://zenodo.org/communities/posydon/>`_. (TODO: update link to v2)
 
 5. **Set Environment Variables**
 
