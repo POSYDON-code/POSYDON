@@ -104,7 +104,7 @@ class TestElements:
                     'linear_interpolation_between_two_cells', 'newton', 'np',\
                     'orbital_period_from_separation',\
                     'orbital_separation_from_period', 'os', 'pd',\
-                    'period_change_stabe_MT', 'period_evol_wind_loss',\
+                    'period_change_stable_MT', 'period_evol_wind_loss',\
                     'profile_recomb_energy', 'quad',\
                     'read_histogram_from_file', 'rejection_sampler',\
                     'roche_lobe_radius', 'rotate', 'rzams',\
@@ -282,8 +282,8 @@ class TestElements:
     def test_instance_separation_evol_wind_loss(self):
         assert isroutine(totest.separation_evol_wind_loss)
 
-    def test_instance_period_change_stabe_MT(self):
-        assert isroutine(totest.period_change_stabe_MT)
+    def test_instance_period_change_stable_MT(self):
+        assert isroutine(totest.period_change_stable_MT)
 
     def test_instance_linear_interpolation_between_two_cells(self):
         assert isroutine(totest.linear_interpolation_between_two_cells)
@@ -1806,28 +1806,28 @@ class TestFunctions:
         for (M1, Mi, M2, ai, r) in tests:
             assert totest.separation_evol_wind_loss(M1, Mi, M2, ai) == r
 
-    def test_period_change_stabe_MT(self):
+    def test_period_change_stable_MT(self):
         # missing argument
         with raises(TypeError, match="missing 4 required positional "\
                                      +"arguments: 'period_i', 'Mdon_i', "\
                                      +"'Mdon_f', and 'Macc_i'"):
-            totest.period_change_stabe_MT()
+            totest.period_change_stable_MT()
         # bad input
         with raises(TypeError) as error_info:
-            totest.period_change_stabe_MT(None, None, None, None)
+            totest.period_change_stable_MT(None, None, None, None)
         assert error_info.value.args[0] == "unsupported operand type(s) for "\
                                            + "-: 'NoneType' and 'NoneType'"
         tests = [(-1.0, 0.0), (2.0, 0.0), (0.0, -1.0), (0.0, 2.0)]
         for (a, b) in tests:
             with raises(ValueError) as error_info:
-                totest.period_change_stabe_MT(0.5, 0.5, 0.5, 0.5, alpha=a,\
+                totest.period_change_stable_MT(0.5, 0.5, 0.5, 0.5, alpha=a,\
                                               beta=b)
-            assert error_info.value.args[0] == "In period_change_stabe_MT, "\
+            assert error_info.value.args[0] == "In period_change_stable_MT, "\
                                                + "mass transfer efficiencies,"\
                                                + f" alpha, beta: {a}, {b} "\
                                                + "are not in the [0-1] range."
         with raises(ValueError, match="Donor gains mass from 0.5 to 1.5"):
-            totest.period_change_stabe_MT(0.5, 0.5, 1.5, 0.5)
+            totest.period_change_stable_MT(0.5, 0.5, 1.5, 0.5)
         # examples:
         tests = [(0.5, 0.5, 0.5, 0.5, 0.0, 0.0, 0.5),\
                  (1.5, 0.5, 0.5, 0.5, 0.0, 0.0, 1.5),\
@@ -1863,7 +1863,7 @@ class TestFunctions:
                  (0.5, 1.0, 0.5, 1.0, 0.0, 1.0,\
                   approx(1.58670336106, abs=6e-12))]
         for (Pi, Mdi, Mdf, Mai, a, b, r) in tests:
-            assert totest.period_change_stabe_MT(Pi, Mdi, Mdf, Mai, alpha=a,\
+            assert totest.period_change_stable_MT(Pi, Mdi, Mdf, Mai, alpha=a,\
                                                  beta=b) == r
 
     def test_linear_interpolation_between_two_cells(self, capsys):
