@@ -2069,8 +2069,8 @@ def separation_evol_wind_loss(M_current, M_init, Mcomp, A_init):
     return 10.0**log10A
 
 
-def period_change_stabe_MT(period_i, Mdon_i, Mdon_f, Macc_i,
-                           alpha=0.0, beta=0.0):
+def period_change_stable_MT(period_i, Mdon_i, Mdon_f, Macc_i,
+                            alpha=0.0, beta=0.0):
     """Change the binary period after a semi-detached stable MT phase.
 
     Calculated in Sorensen, Fragos et al.  2017A&A...597A..12S.
@@ -2107,7 +2107,7 @@ def period_change_stabe_MT(period_i, Mdon_i, Mdon_f, Macc_i,
                                                                  Mdon_f))
     Macc_f = Macc_i + (1.-beta)*(1.-alpha)*DM_don
     if alpha < 0.0 or beta < 0.0 or alpha > 1.0 or beta > 1.0:
-        raise ValueError("In period_change_stabe_MT, mass transfer "
+        raise ValueError("In period_change_stable_MT, mass transfer "
                          "efficiencies, alpha, beta: {}, {} are not in the "
                          "[0-1] range.".format(alpha, beta))
     if beta != 1.0:      # Eq. 7 of Sorensen+Fragos et al. 2017
