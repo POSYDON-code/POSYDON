@@ -1,4 +1,4 @@
-"""Module for performing initial-final inteprolation.
+"""Module for performing initial-final interpolation.
 
 We showcase the initial-final interpolator which plays a critical role in the
 evolving binary populations. To use the initial-final interpolator we first
