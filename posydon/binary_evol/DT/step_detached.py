@@ -43,7 +43,7 @@ from posydon.binary_evol.flow_chart import (
     STAR_STATES_HE_RICH_EVOLVABLE,
     )
 import posydon.utils.constants as const
-from posydon.utils.posydonerror import NumericalError, MatchingError, POSYDONError, FlowError
+from posydon.utils.posydonerror import NumericalError, MatchingError, POSYDONError, FlowError, ClassificationError
 from posydon.utils.posydonwarning import Pwarn
 
 LIST_ACCEPTABLE_STATES_FOR_HMS = ["H-rich_Core_H_burning", "accreted_He_Core_H_burning"]
@@ -860,7 +860,7 @@ class detached_step:
                     f'log_R = {star.log_R:.3f}, ',
                     f'center_he4 = {star.center_he4:.4f}, ',
                     f'surface_he4 = {star.surface_he4:.4f}, ',
-                    f'\nsurface_h1 = {star.surface_h1:.4f}, ',
+                    f'surface_h1 = {star.surface_h1:.4f}, ',
                     f'he_core_mass = {star.he_core_mass:.3f}, ',
                     f'center_c12 = {star.center_c12:.4f}'
                 )
@@ -1808,16 +1808,21 @@ class detached_step:
                         binary.state = "RLO1"
                         binary.event = "oRLO1"
                 
-                if ('step_HMS_HMS_RLO' not in all_step_names
-                    and ((binary.star_1.state in STAR_STATES_HE_RICH_EVOLVABLE 
+                if ('step_HMS_HMS_RLO' not in all_step_names):
+                    if ((binary.star_1.state in STAR_STATES_HE_RICH_EVOLVABLE 
                          and binary.star_2.state in STAR_STATES_H_RICH_EVOLVABLE)
                     or (binary.star_1.state in STAR_STATES_H_RICH_EVOLVABLE
-                         and binary.star_2.state in STAR_STATES_HE_RICH_EVOLVABLE)
-                    or (binary.star_1.state in STAR_STATES_H_RICH_EVOLVABLE
-                         and binary.star_2.state in STAR_STATES_H_RICH_EVOLVABLE))):
+                         and binary.star_2.state in STAR_STATES_HE_RICH_EVOLVABLE)):
                         set_binary_to_failed(binary)
                         raise FlowError("Evolution of H-rich/He-rich stars in RLO onto H-rich/He-rich stars after " 
-                                        "HMS-HMS not yet supported.") 
+                                    "HMS-HMS not yet supported.") 
+                
+                    elif (binary.star_1.state in STAR_STATES_H_RICH_EVOLVABLE
+                         and binary.star_2.state in STAR_STATES_H_RICH_EVOLVABLE):
+                        set_binary_to_failed(binary)
+                        raise ClassificationError("Binary is in the detached step but has stable RLO with two HMS stars - "
+                                              "should it have undergone CE (was its HMS-HMS interpolation class unstable MT?)") 
+                    
 
             ## CHECK IF STARS WILL UNDERGO CC
             elif s.t_events[2]:
