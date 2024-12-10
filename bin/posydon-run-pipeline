@@ -709,6 +709,8 @@ def copy_ini_file(grid_type, rerun_metallicity, rerun_type, destination,
         replace_text = "matthias_no_age_limit-a119ea9548cca9b6b7ddfe31309ced1ae40c271e"
     elif rerun_type == 'no_age_limit+dedt_energy_eqn':
         replace_text = "matthias_lbv_thermo_dedt_noAgeLimit-dcc42e1d6d89fc267826970643e7f4f1bf463171"
+    elif rerun_type == 'hepulse_for_v1':
+        replace_text = "seth_dedt_hepulse_for_v1-b699493691a3b20209a7716045b1abfb91555295"
     elif rerun_type == 'other': # e.g. 'envelope_mass_limit', 'fe_core_infall_limit'
         # this rerun uses the default inlist commit
         return
@@ -885,7 +887,8 @@ def logic_rerun(grid, rerun_type):
           (rerun_type == 'no_age_limit+dedt_energy_eqn')):
         termination_flags = TF1_POOL_ERROR    
     elif ((rerun_type == 'dedt_hepulse')
-          or (rerun_type == 'LBV_wind+dedt_hepulse')):
+          or (rerun_type == 'LBV_wind+dedt_hepulse') 
+          or (rerun_type == 'hepulse_for_v1')):
         termination_flags = TF1_POOL_ERROR
     elif rerun_type == 'LBV_wind':
         N_runs = len(grid)
