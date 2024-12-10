@@ -131,22 +131,6 @@ BINARY_EVENTS_ALL = [
 BINARY_EVENTS_OF_SN_OR_AFTER_DETACHED = BINARY_EVENTS_ALL.copy()
 [BINARY_EVENTS_OF_SN_OR_AFTER_DETACHED.remove(x) for x in ['CC1','CC2','MaxTime_exceeded','maxtime']]
 
-BINARY_STEPS_ALL = [
-    'step_HMS_HMS',
-    'step_detached',
-    'step_CO_HMS_RLO',
-    'step_CO_HeMS',
-    'step_CO_HeMS_RLO',
-    'step_merged',
-    'step_CE',
-    'step_SN',
-    'step_dco',
-    'step_end',
-    'step_initially_single',
-    'step_disrupted'
-]
-
-
 # dynamically construct the flow chart
 POSYDON_FLOW_CHART = {}
 
@@ -402,9 +386,6 @@ def initial_eccentricity_flow_chart(FLOW_CHART=None, CHANGE_FLOW_CHART=None):
         # always take ZAMS binaries to step_detached
         if event == 'ZAMS' and state in BINARY_STATES_ZAMS: # check for event
             MY_FLOW_CHART[key] = 'step_detached'
-    
-    ## Add new step to binary step list
-    BINARY_STEPS_ALL.append('step_HMS_HMS_RLO')
 
     # Add two stars initating RLO (now coming from detached) into flow chart
     # Add stripped stars (from winds) initating RLO

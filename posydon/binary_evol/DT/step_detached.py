@@ -41,7 +41,7 @@ from posydon.binary_evol.flow_chart import (
     STAR_STATES_CO, 
     STAR_STATES_H_RICH_EVOLVABLE,
     STAR_STATES_HE_RICH_EVOLVABLE,
-    BINARY_STEPS_ALL)
+    )
 import posydon.utils.constants as const
 from posydon.utils.posydonerror import NumericalError, MatchingError, POSYDONError, FlowError
 from posydon.utils.posydonwarning import Pwarn
@@ -1218,6 +1218,9 @@ class detached_step:
         KEYS = self.KEYS
         KEYS_POSITIVE = self.KEYS_POSITIVE
 
+        binary_sim_prop = getattr(binary, "properties")   ## simulation properties of the binary
+        all_step_names = getattr(binary_sim_prop, "all_step_names")
+
         companion_1_exists = (binary.star_1 is not None
                               and binary.star_1.state != "massless_remnant")
         companion_2_exists = (binary.star_2 is not None
@@ -1805,7 +1808,7 @@ class detached_step:
                         binary.state = "RLO1"
                         binary.event = "oRLO1"
                 
-                if ('step_HMS_HMS_RLO' not in BINARY_STEPS_ALL
+                if ('step_HMS_HMS_RLO' not in all_step_names
                     and ((binary.star_1.state in STAR_STATES_HE_RICH_EVOLVABLE 
                          and binary.star_2.state in STAR_STATES_H_RICH_EVOLVABLE)
                     or (binary.star_1.state in STAR_STATES_H_RICH_EVOLVABLE

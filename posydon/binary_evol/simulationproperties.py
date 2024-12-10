@@ -71,9 +71,12 @@ class SimulationProperties:
         #    self.verbose_binary_errors = False
 
         # Set functions for evolution
+        self.all_step_names = []  ## list of strings of all evolutionary steps
         for key, val in kwargs.items():
             if "step" not in key:   # skip loading steps
                 setattr(self, key, val)
+            elif "step" in key:
+                self.all_step_names.append(key)
         self.steps_loaded = False
 
     def load_steps(self, verbose=False):
