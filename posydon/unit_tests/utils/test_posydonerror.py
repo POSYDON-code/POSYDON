@@ -26,7 +26,7 @@ class TestElements:
                     'ModelError', 'NumericalError', 'POSYDONError',\
                     '__authors__', '__builtins__', '__cached__',\
                     '__doc__', '__file__', '__loader__', '__name__',\
-                    '__package__', '__spec__', 'copy']
+                    '__package__', '__spec__']
         assert dir(totest) == elements, "There might be added or removed "\
                                         + "objects without an update on the "\
                                         + "unit test."
@@ -102,5 +102,5 @@ class TestPOSYDONError:
 
     def test_str(self, POSYDONError_position):
         assert isroutine(POSYDONError_position.__str__)
-        assert str(POSYDONError_position) == "\ntest message on position"
+        assert str(POSYDONError_position) == "test message on position"
         
