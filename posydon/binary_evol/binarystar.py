@@ -929,3 +929,39 @@ class BinaryStar:
             binary.star_2.profile = run.final_profile2
             
         return binary
+    
+    def initial_condition_message(self, ini_params=None):
+        """Generate a message with the initial conditions.
+
+        Parameters
+        ----------
+       
+        ini_params : None or iterable of str
+            If None take the initial conditions from the binary, otherwise add
+            each item of it to the message.
+
+        Returns
+        -------
+        string
+            The message with the binary initial conditions.
+        """
+    
+        if ini_params is None:
+            ini_params = ["\nFailed Binary Initial Conditions:\n",
+                    f"S1 mass: {self.star_1.mass_history[0]} \n",
+                    f"S2 mass: {self.star_2.mass_history[0]} \n",
+                    f"S1 state: {self.star_1.state_history[0]} \n",
+                    f"S2 state: {self.star_2.state_history[0]}\n",
+                    f"orbital period: {self.orbital_period_history[0] } \n",
+                    f"eccentricity: {self.eccentricity_history[0]} \n",
+                    f"binary state: {self.state_history[0] }\n",
+                    f"binary event: {self.state_history[0] }\n",
+                    f"S1 natal kick array: {self.star_1.natal_kick_array }\n",
+                    f"S2 natal kick array: {self.star_2.natal_kick_array}\n"]
+            
+        message = ""
+        for i in ini_params:
+            message += i 
+
+        return message
+
