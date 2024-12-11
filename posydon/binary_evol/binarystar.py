@@ -36,7 +36,8 @@ from posydon.utils.common_functions import (
     check_state_of_star, orbital_period_from_separation,
     orbital_separation_from_period, get_binary_state_and_event_and_mt_case)
 from posydon.popsyn.io import (clean_binary_history_df, clean_binary_oneline_df)
-
+from posydon.binary_evol.flow_chart import UNDEFINED_STATES
+from posydon.utils.posydonerror import FlowError 
 
 # star property: column names in binary history for star 1 and star 2
 STAR_ATTRIBUTES_FROM_BINARY_HISTORY = {
