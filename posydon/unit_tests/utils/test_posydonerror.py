@@ -32,9 +32,9 @@ def SingleStar():
 class TestElements:
     # check for objects, which should be an element of the tested module
     def test_dir(self):
-        elements = ['BinaryStar', 'FlowError', 'GridError', 'MatchingError',\
+        elements = ['bstar', 'FlowError', 'GridError', 'MatchingError',\
                     'ModelError', 'NumericalError', 'POSYDONError',\
-                    'SingleStar', '__authors__', '__builtins__', '__cached__',\
+                    'sstar', '__authors__', '__builtins__', '__cached__',\
                     '__doc__', '__file__', '__loader__', '__name__',\
                     '__package__', '__spec__', 'copy',\
                     'initial_condition_message']
