@@ -18,16 +18,6 @@ def artificial_object():
     # create a dict as test object
     return {'Test': 'object'}
 
-@fixture
-def BinaryStar():
-    # initialize a BinaryStar instance, which is a required argument
-    return totest.BinaryStar()
-
-@fixture
-def SingleStar():
-    # initialize a SingleStar instance, which is a required argument
-    return totest.SingleStar()
-
 # define test classes collecting several test functions
 class TestElements:
     # check for objects, which should be an element of the tested module
