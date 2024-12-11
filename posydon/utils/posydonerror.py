@@ -10,8 +10,10 @@ __authors__ = [
 
 
 import copy
-from posydon.binary_evol.binarystar import BinaryStar
-from posydon.binary_evol.singlestar import SingleStar
+
+## BinaryStar and SingleStar must be imported this way to avoid circular imports
+import posydon.binary_evol.binarystar as bstar
+import posydon.binary_evol.singlestar as sstar
 
 
 class POSYDONError(Exception):
@@ -33,7 +35,7 @@ class POSYDONError(Exception):
         if not isinstance(message, str):
             raise TypeError("The error message must be a string.")
         if ((objects is not None) and
-            (not isinstance(objects, (list, SingleStar, BinaryStar)))):
+            (not isinstance(objects, (list, sstar.SingleStar, bstar.BinaryStar)))):
             raise TypeError("The error objects must be None, a list, a "
                             "SingleStar object, or a BinaryStar object.")
         self.message = message
@@ -47,9 +49,9 @@ class POSYDONError(Exception):
         if self.objects is not None:
             if isinstance(self.objects, list):
                 for i, obj in enumerate(self.objects):
-                    if isinstance(obj, (BinaryStar, SingleStar)):
+                    if isinstance(obj, (bstar.BinaryStar, sstar.SingleStar)):
                         result += f"\n\nOBJECT #{i+1} ({type(obj)}):\n{str(obj)}"
-            elif isinstance(self.objects, (BinaryStar, SingleStar)):
+            elif isinstance(self.objects, (bstar.BinaryStar, sstar.SingleStar)):
                 result += f"\n\nOBJECT #({type(self.objects)}):\n{str(self.objects)}"
             else: # pragma: no cover
                 pass
@@ -91,7 +93,7 @@ def initial_condition_message(binary, ini_params=None):
             The message with the initial conditions.
 
     """
-    if not isinstance(binary, BinaryStar):
+    if not isinstance(binary, bstar.BinaryStar):
         raise TypeError("The binary must be a BinaryStar object.")
     if ini_params is None:
         ini_params = ["\nFailed Binary Initial Conditions:\n",

@@ -36,6 +36,8 @@ from posydon.utils.common_functions import (
     check_state_of_star, orbital_period_from_separation,
     orbital_separation_from_period, get_binary_state_and_event_and_mt_case)
 from posydon.popsyn.io import (clean_binary_history_df, clean_binary_oneline_df)
+from posydon.binary_evol.flow_chart import UNDEFINED_STATES
+from posydon.utils.posydonerror import FlowError 
 
 
 # star property: column names in binary history for star 1 and star 2
@@ -196,7 +198,6 @@ class BinaryStar:
             self.properties = properties
         else:
             self.properties = SimulationProperties()
-        
 
     def evolve(self):
         """Evolve a binary from start to finish."""
@@ -212,44 +213,43 @@ class BinaryStar:
 
         max_n_steps = self.properties.max_n_steps_per_binary
         n_steps = 0
-        try:
-            while (self.event != 'END' and self.event != 'FAILED'
+    
+        while (self.event != 'END' and self.event != 'FAILED'
                 and self.event not in self.properties.end_events
                 and self.state not in self.properties.end_states):
-                signal.alarm(MAXIMUM_STEP_TIME)
-                self.run_step()
+            
+            signal.alarm(MAXIMUM_STEP_TIME)
+            self.run_step()
 
-                n_steps += 1
-                if max_n_steps is not None:
-                    if n_steps > max_n_steps:
-                        raise RuntimeError("Exceeded maximum number of steps ({})"
-                                        .format(max_n_steps))
-        finally:
-            signal.alarm(0)     # turning off alarm
-            self.properties.post_evolve(self)
+            n_steps += 1
+            if max_n_steps is not None:
+                if n_steps > max_n_steps:
+                    raise RuntimeError("Exceeded maximum number of steps ({})".format(max_n_steps))
+        
+        signal.alarm(0)     # turning off alarm
+        self.properties.post_evolve(self)
 
     def run_step(self):
         """Evolve the binary through one evolutionary step."""
-        try:
-            total_state = (self.star_1.state, self.star_2.state, self.state,
-                           self.event)
-            next_step_name = self.properties.flow.get(total_state)
+        
+        total_state = (self.star_1.state, self.star_2.state, self.state, self.event)
+        if total_state in UNDEFINED_STATES:
+            raise FlowError(f"Binary failed with a known undefined state in the flow:\n{total_state}")
 
-            if next_step_name is None:
-                raise ValueError("Undefined next step given stars/binary states {}.".format(total_state))
-                self.event = 'END'
+        next_step_name = self.properties.flow.get(total_state)
+        if next_step_name is None:
+            raise ValueError("Undefined next step given stars/binary states {}.".format(total_state))
 
-            next_step = getattr(self.properties, next_step_name, None)
-            if next_step is None:
-                raise ValueError(
-                    "Next step name '{}' does not correspond to a function in "
-                    "SimulationProperties.".format(next_step_name))
+        next_step = getattr(self.properties, next_step_name, None)
+        if next_step is None:
+            raise ValueError("Next step name '{}' does not correspond to a function in "
+                             "SimulationProperties.".format(next_step_name))
 
-            self.properties.pre_step(self, next_step_name)
-            next_step(self)
-        finally:
-            self.append_state()
-            self.properties.post_step(self, next_step_name)
+        self.properties.pre_step(self, next_step_name)
+        next_step(self)
+        
+        self.append_state()
+        self.properties.post_step(self, next_step_name)
 
     def append_state(self):
         """Update the history of the binaries' properties."""
