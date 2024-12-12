@@ -60,11 +60,11 @@ class TestValues:
         assert "POSYDON_data.tar.gz" in totest.file
 
     def test_value_data_url(self):
-        assert totest.data_url == "https://zenodo.org/record/6655751/files/"\
+        assert totest.data_url == "https://zenodo.org/record/14205146/files/"\
                                   + "POSYDON_data.tar.gz"
 
     def test_value_original_md5(self):
-        assert totest.original_md5 == "8873544d9a568ebb85bccffbf1bdcd99"
+        assert totest.original_md5 == "cf645a45b9b92c2ad01e759eb1950beb"
 
 
 class TestFunctions:
