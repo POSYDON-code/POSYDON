@@ -1,0 +1,1497 @@
+#!/usr/bin/env python
+'''
+MESA low_res_grids were run. This includes random grids and reruns.
+
+This is an EXAMPLE of the pipeline for a grid_type=HMS-HMS,
+metallicity=1e-01_Zsun, compression=LITE/ORIGINAL
+
+STEP 1: grid slices creation
+['grid_low_res_0','grid_low_res_1','grid_low_res_2','grid_low_res_3',
+'grid_low_res_4','grid_low_res_5','grid_random_1',
+'grid_low_res_rerun_opacity_max'] --> output *.h5
+
+STEP 2: grid slices concatenation
+[['grid_low_res_0','grid_low_res_1','grid_low_res_2','grid_low_res_3',
+'grid_low_res_4','grid_low_res_5'],['grid_low_res_0','grid_low_res_1',
+'grid_low_res_2','grid_low_res_3','grid_low_res_4','grid_low_res_5',
+'grid_low_res_rerun_opacity_max']] -->
+grid_low_res_combined.h5, grid_low_res_combined_rerun1.h5
+
+STEP 2.1: plot grid slices
+['grid_low_res_combined','grid_random_1','grid_low_res_combined_rerun1']
+--> loop over all plot types
+
+STEP 2.2: check failure rate
+['grid_low_res_combined','grid_random_1','grid_low_res_combined_rerun1']
+--> check failure rate
+
+STEP 3: calculate extra values
+['grid_low_res_combined','grid_random_1','grid_low_res_combined_rerun1']
+--> do post processing on the ORIGINAL grid and append back on the LITE gird
+the post processed quantities
+
+STEP 3.1: plot extra values
+['grid_low_res_combined','grid_random_1','grid_low_res_combined_rerun1']
+--> loop over all plot types
+
+STEP 3.2: check rates of compact object types
+['grid_low_res_combined','grid_random_1','grid_low_res_combined_rerun1']
+--> check rates of compact object types
+
+STEP 4: train interpolators
+['grid_low_res_combined_rerun1'] --> train the interpolators
+
+STEP 4.1: plot interpolator accuracy and confusion matricies
+['grid_random_1']
+--> loop over all plot types
+
+STEP 5: train profile interpolators
+uses gird and initial-final interpolators to train the profile interpolators
+
+STEP 9: export dataset
+
+STEP RERUN: rerun grid with a fix
+grid_low_res_combined.rerun(index=logic) --> grid_low_res_rerun_1/grid.csv
+                                         --> grid_random_1_rerun_1/grid.csv
+-- run gird fix and do next post processing
+'''
+
+__authors__ = [
+    "Simone Bavera <Simone.Bavera@unige.ch>",
+    "Matthias Kruckow <Matthias.Kruckow@unige.ch>",
+]
+
+import os
+import sys
+import ast
+import time
+import shutil
+import pickle
+import random
+import numpy as np
+import pandas as pd
+from collections import Counter
+from matplotlib.backends.backend_pdf import PdfPages
+from posydon.grids.psygrid import (PSyGrid,
+                                   join_grids,
+                                   DEFAULT_HISTORY_DS_EXCLUDE,
+                                   DEFAULT_PROFILE_DS_EXCLUDE,
+                                   EXTRA_COLS_DS_EXCLUDE)
+from posydon.grids.post_processing import (post_process_grid,
+                                           add_post_processed_quantities)
+from posydon.grids.MODELS import MODELS
+from posydon.utils.common_functions import PATH_TO_POSYDON
+from posydon.utils.gridutils import get_new_grid_name
+from posydon.utils.posydonwarning import (Pwarn,print_stats)
+from posydon.interpolation.IF_interpolation import IFInterpolator
+from posydon.visualization.plot_defaults import PRE_SET_PLOTS
+from posydon.visualization.interpolation import EvaluateIFInterpolator
+from posydon.visualization.combine_TF import TF1_POOL_ERROR
+
+
+# pre defined compressions
+COMPRESSIONS = {
+    'ORIGINAL' : {
+        'history_DS_error'    : None,
+        'profile_DS_error'    : None,
+        'profile_DS_interval' : None,
+        'history_DS_exclude'  : DEFAULT_HISTORY_DS_EXCLUDE,
+        'profile_DS_exclude'  : DEFAULT_PROFILE_DS_EXCLUDE
+    },
+    'LITE' : {
+        'history_DS_error'    : 0.1,
+        'profile_DS_error'    : 0.1,
+        'profile_DS_interval' : -0.005,
+        'history_DS_exclude'  : EXTRA_COLS_DS_EXCLUDE,
+        'profile_DS_exclude'  : EXTRA_COLS_DS_EXCLUDE
+    }
+}
+
+
+def create_grid_slice(i, path_to_csv_file, verbose=False, overwrite_psygrid=True):
+    """Creates a new PSyGrid slice.
+
+    Parameters
+    ----------
+    i : int
+        Index in csv file.
+    path_to_csv_file : str
+        Path to csv file.
+    verbose : bool
+        Enable/Disable additional output.
+    overwrite_psygrid : bool
+        Whether existing file(s) should be overwritten.
+    """
+    
+    # read csv file
+    if os.path.exists(path_to_csv_file):
+        df = pd.read_csv(path_to_csv_file)
+    else:
+        raise FileNotFoundError(f'{path_to_csv_file} not found!')
+    if i not in df.index:
+        raise KeyError(f'Index={i} not available in {path_to_csv_file}.')
+    # get values from csv file
+    if 'path_to_grid' in df.keys():
+        grid_path = df.loc[i,'path_to_grid']
+        if not os.path.isdir(grid_path):
+            raise NotADirectoryError(f'{grid_path} not found!')
+    else:
+        raise KeyError(f'No path_to_grid in {path_to_csv_file}')
+    if 'compression' in df.keys():
+        compression = df.loc[i,'compression']
+    else:
+        raise KeyError(f'No compression in {path_to_csv_file}')
+    if 'grid_type' in df.keys():
+        grid_type = df.loc[i,'grid_type']
+    else:
+        raise KeyError(f'No grid_type in {path_to_csv_file}')
+    if 'stop_before_carbon_depletion' in df.keys():
+        stop_before_carbon_depletion = df.loc[i,'stop_before_carbon_depletion']
+        if 'HMS' not in grid_type:
+            stop_before_carbon_depletion = False
+            Pwarn('stop_before_carbon_depletion set to False for non HMS'+\
+                  f' grid: {grid_type} in {grid_path}', "ReplaceValueWarning")
+    else:
+        stop_before_carbon_depletion = False
+    
+    grid_output = get_new_grid_name(grid_path, compression,
+                                    create_missing_directories=True)
+    
+    # get compression dependent attributes
+    pure_compression = compression.split('_')[0]
+    if pure_compression in COMPRESSIONS.keys():
+        history_DS_error = COMPRESSIONS[pure_compression]['history_DS_error']
+        profile_DS_error = COMPRESSIONS[pure_compression]['profile_DS_error']
+        profile_DS_interval = COMPRESSIONS[pure_compression]['profile_DS_interval']
+        history_DS_exclude = COMPRESSIONS[pure_compression]['history_DS_exclude']
+        profile_DS_exclude = COMPRESSIONS[pure_compression]['profile_DS_exclude']
+    else:
+        raise ValueError(f'pure_compression = {pure_compression} not '
+                         f'supported! (compression={compression})')
+    
+    if ('CO' in grid_type) and ('RLO' in compression):
+        start_at_RLO = True
+    else:
+        start_at_RLO = False
+    
+    if verbose:
+        print(f'processing: {grid_path} with compression: {compression}')
+        if os.path.isfile(grid_output):
+            if overwrite_psygrid:
+                Pwarn(f'replacing file: {grid_output}', "OverwriteWarning")
+            else:
+                raise FileExistsError(f'file {grid_output} already exists!')
+        else:
+            print(f'saving to file: {grid_output}')
+    
+    # create the new PSyGrid
+    grid = PSyGrid(verbose=verbose)
+    grid.create(grid_path,
+                grid_output,
+                overwrite=overwrite_psygrid,
+                history_DS_error=history_DS_error,
+                profile_DS_error=profile_DS_error,
+                history_DS_exclude=history_DS_exclude,
+                profile_DS_exclude=profile_DS_exclude,
+                profile_DS_interval=profile_DS_interval,
+                compression="gzip9",
+                start_at_RLO=start_at_RLO,
+                stop_before_carbon_depletion=stop_before_carbon_depletion,
+                initial_RLO_fix=True)
+    grid.close()
+
+
+def combine_grid_slices(i, path_to_csv_file, verbose=False):
+    """Combining grid slices to one grid.
+
+    Parameters
+    ----------
+    i : int
+        Index in csv file.
+    path_to_csv_file : str
+        Path to csv file.
+    verbose : bool
+        Enable/Disable additional output.
+    """
+    
+    # read csv file
+    if os.path.exists(path_to_csv_file):
+        df = pd.read_csv(path_to_csv_file)
+    else:
+        raise FileNotFoundError(f'{path_to_csv_file} not found!')
+    if i >= len(df.keys()):
+        raise KeyError(f'Not enought keys in {path_to_csv_file}: '
+                       f'{i}>{len(df.keys())-1}.')
+    # get values from csv file
+    grid_combined_key = df.keys()[i]
+    gird_names = df[grid_combined_key].dropna().to_list()
+    if verbose:
+        print(f'Combinining: {gird_names}')
+        print(f'into: {grid_combined_key}')
+    join_grids(gird_names, grid_combined_key, verbose=verbose)
+
+
+def calculate_extra_values(i, path_to_csv_file, verbose=False):
+    """Calculating extra values, e.g. values derived from the final profile.
+
+    Parameters
+    ----------
+    i : int
+        Index in csv file.
+    path_to_csv_file : str
+        Path to csv file.
+    verbose : bool
+        Enable/Disable additional output.
+    """
+    
+    # read csv file
+    if os.path.exists(path_to_csv_file):
+        df = pd.read_csv(path_to_csv_file)
+    else:
+        raise FileNotFoundError(f'{path_to_csv_file} not found!')
+    if i not in df.index:
+        raise KeyError(f'Index={i} not available in {path_to_csv_file}.')
+    # get values from csv file
+    if 'path_to_grid' in df.keys():
+        grid_path = df.loc[i,'path_to_grid']
+        if not os.path.isfile(grid_path):
+            raise FileNotFoundError(f'{grid_path} not found!')
+    else:
+        raise KeyError(f'No path_to_grid in {path_to_csv_file}')
+    if 'grid_type' in df.keys():
+        grid_type = df.loc[i,'grid_type']
+    else:
+        raise KeyError(f'No grid_type in {path_to_csv_file}')
+    if 'path_to_processed_grid' in df.keys():
+        processed_grid_path = df.loc[i,'path_to_processed_grid']
+    else:
+        raise KeyError(f'No path_to_processed_grid in {path_to_csv_file}')
+    if 'path_to_grid_ORIGINAL' in df.keys():
+        grid_ORIGINAL_path = df.loc[i,'path_to_grid_ORIGINAL']
+        if not os.path.isfile(grid_ORIGINAL_path):
+            raise FileNotFoundError(f'{grid_ORIGINAL_path} not found!')
+    else:
+        raise KeyError(f'No path_to_grid_ORIGINAL in {path_to_csv_file}')
+    
+    if verbose:
+        print(f'Compute processed quantities for {grid_path} ...')
+    if 'CO' in grid_type:
+        star_2_CO = True
+    else:
+        star_2_CO = False
+    
+    # load grid with ORIGINAL compression and get extra colums
+    grid_ORIGINAL = PSyGrid(grid_ORIGINAL_path)
+    MESA_dirs_EXTRA_COLUMNS, EXTRA_COLUMNS = post_process_grid(grid_ORIGINAL,
+                                              index=None, star_2_CO=star_2_CO,
+                                              verbose=verbose)
+    
+    # post processed quantities are appended to the grid object, hence
+    # we create a copy of it and append back to it
+    if os.path.exists(processed_grid_path):
+        Pwarn('Post processed grid file already exists, removing it.',
+              "OverwriteWarning")
+        os.remove(processed_grid_path)
+    shutil.copyfile(grid_path, processed_grid_path)
+    
+    # load processed grid and append values
+    grid = PSyGrid(processed_grid_path)
+    add_post_processed_quantities(grid, MESA_dirs_EXTRA_COLUMNS,
+                                  EXTRA_COLUMNS, verbose=verbose)
+    if verbose:
+        print(f'Added processed quantities to grid: {processed_grid_path}')
+    grid.close()
+
+
+def train_interpolators(i, path_to_csv_file, verbose=False):
+    """Train an interpolator on a grid.
+
+    Parameters
+    ----------
+    i : int
+        Index in csv file.
+    path_to_csv_file : str
+        Path to csv file.
+    verbose : bool
+        Enable/Disable additional output.
+    """
+    
+    # read csv file
+    if os.path.exists(path_to_csv_file):
+        df = pd.read_csv(path_to_csv_file)
+    else:
+        raise FileNotFoundError(f'{path_to_csv_file} not found!')
+    if i not in df.index:
+        raise KeyError(f'Index={i} not available in {path_to_csv_file}.')
+    # get values from csv file
+    if 'path_to_grid' in df.keys():
+        grid_path = df.loc[i,'path_to_grid']
+        if not os.path.isfile(grid_path):
+            raise FileNotFoundError(f'{grid_path} not found!')
+    else:
+        raise KeyError(f'No path_to_grid in {path_to_csv_file}')
+    if 'grid_type' in df.keys():
+        grid_type = df.loc[i,'grid_type']
+    else:
+        raise KeyError(f'No grid_type in {path_to_csv_file}')
+    if 'interpolation_method' in df.keys():
+        interpolation_method = df.loc[i,'interpolation_method']
+    else:
+        raise KeyError(f'No interpolation_method in {path_to_csv_file}')
+    if 'path_to_interpolator' in df.keys():
+        interpolator_path = df.loc[i,'path_to_interpolator']
+    else:
+        raise KeyError(f'No path_to_interpolator in {path_to_csv_file}')
+    
+    method = interpolation_method
+    if '_RLO' in method:
+        method = method.split('_RLO')[0]
+    
+    if verbose:
+        print(f'Train interpolators on {grid_path} with method {method}')
+    
+    # check interpolation_objects directory exists
+    interp_path = os.path.dirname(interpolator_path)
+    if not os.path.isdir(interp_path):
+        os.makedirs(interp_path)
+    
+    # load grid
+    grid = PSyGrid(verbose=verbose)
+    grid.load(grid_path)
+    
+    interp_method = [method, method]
+    interp_classes = ["stable_MT", "unstable_MT"]
+    if '_RLO' not in interpolation_method:
+        interp_method += [method]
+        interp_classes += ["no_MT"]
+    if 'CO' not in grid_type:
+        interp_method += [method]
+        interp_classes += ["stable_reverse_MT"]
+    
+    # all magnitues that are not model numbers, supernova properites or strings
+    # are interpolated with respect to interpolation_class
+    out_keys = [key for key in grid.final_values.dtype.names if (
+                                   key != "model_number" and
+                                   (type(grid.final_values[key][0]) != np.str_)
+                                   and any(~np.isnan(grid.final_values[key]))
+                                   and "MODEL" not in key)]
+    
+
+    out_nan_keys = [key for key in grid.final_values.dtype.names if (
+                             key != "model_number" and
+                            (type(grid.final_values[key][0]) != np.str_)
+                            and all(np.isnan(grid.final_values[key]))
+                            and "MODEL" not in key)]
+    
+    # define all string keys in final values
+    c_keys = ['interpolation_class', 'S1_state', 'S2_state', 'mt_history']
+    for MODEL_NAME in MODELS.keys():
+        for i in range(1,3):
+            c_keys.append(f'S{i}_{MODEL_NAME}_SN_type')
+            c_keys.append(f'S{i}_{MODEL_NAME}_CO_type')
+    
+    # specify the interpolation methods
+    interpolators = [
+        {
+            "interp_method": interp_method,
+            "interp_classes": interp_classes,
+            "out_keys": out_keys,
+            "out_nan_keys": out_nan_keys,
+            "class_method": "kNN",
+            "c_keys": c_keys,
+            "c_key": "interpolation_class"
+        },
+    ]
+    
+    # core collapse quantities are interpolated with respect to the
+    # compact object type
+    # TODO: we need to train core collapse for secondary star as well
+    # to catch reverse mass transfer cases where the secondary undergoes
+    # core collapse first
+    for MODEL_NAME in MODELS.keys():
+        for i in range(1,2): #TODO: range(1,3):
+            out_keys = [key for key in grid.final_values.dtype.names if (
+                                   key != "model_number" and
+                                   (type(grid.final_values[key][0]) != np.str_)
+                                   and any(~np.isnan(grid.final_values[key]))
+                                   and f"S{i}_{MODEL_NAME}" in key)]
+            
+            out_nan_keys = [key for key in grid.final_values.dtype.names if (
+                                key != "model_number" 
+                                and (type(grid.final_values[key][0]) != np.str_)
+                                and all(np.isnan(grid.final_values[key]))
+                                and f"S{i}_{MODEL_NAME}" in key)]
+            
+            # get interpolations classes dynamically
+            interp_method = []
+            interp_classes = []
+            for CO_interpolation_class in ["BH", "NS", "WD", "BH_reverse_MT"]:
+                if CO_interpolation_class in grid.final_values[f'S{i}_{MODEL_NAME}_CO_interpolation_class']:
+                    interp_method.append(method)
+                    interp_classes.append(CO_interpolation_class)
+
+            interpolators.append(
+                {
+                    "interp_method": interp_method,
+                    "interp_classes": interp_classes,
+                    "out_keys": out_keys,
+                    "out_nan_keys": out_nan_keys,
+                    "class_method": "kNN",
+                    "c_keys": [f'S{i}_{MODEL_NAME}_CO_interpolation_class', 
+                               f'S{i}_{MODEL_NAME}_CO_type',
+                               f'S{i}_{MODEL_NAME}_SN_type'],
+                    "c_key": f'S{i}_{MODEL_NAME}_CO_interpolation_class'
+                },   
+            )
+    
+    # initialize initial to final interpolator
+    interp = IFInterpolator(grid=grid, interpolators=interpolators)
+
+    # training and saving
+    interp.train()
+    interp.save(interpolator_path)
+
+
+def train_profile_interpolators(i, path_to_csv_file, verbose=False):
+    """Train a profile interpolator on a grid.
+
+    Parameters
+    ----------
+    i : int
+        Index in csv file.
+    path_to_csv_file : str
+        Path to csv file.
+    verbose : bool
+        Enable/Disable additional output.
+    """
+
+    # load module only if needed
+    from posydon.interpolation.profile_interpolation import CompileData, ProfileInterpolator
+
+    # read csv file
+    if os.path.exists(path_to_csv_file):
+        df = pd.read_csv(path_to_csv_file)
+    else:
+        raise FileNotFoundError(f'{path_to_csv_file} not found!')
+    if i not in df.index:
+        raise KeyError(f'Index={i} not available in {path_to_csv_file}.')
+    # get values from csv file
+    if 'path_to_grid' in df.keys():
+        grid_path = df.loc[i,'path_to_grid']
+        if not os.path.isfile(grid_path):
+            raise FileNotFoundError(f'{grid_path} not found!')
+    else:
+        raise KeyError(f'No path_to_grid in {path_to_csv_file}')
+    if 'grid_type' in df.keys():
+        grid_type = df.loc[i,'grid_type']
+    else:
+        raise KeyError(f'No grid_type in {path_to_csv_file}')
+    if 'profile_names' in df.keys():
+        profile_names = ast.literal_eval(df.loc[i,'profile_names'])
+        if not isinstance(profile_names, list):
+            raise TypeError(f'profile_names is not a list in line {i} '
+                            f'in {path_to_csv_file}')
+    else:
+        raise KeyError(f'No profile_names in {path_to_csv_file}')
+    if 'path_to_IF_interpolator' in df.keys():
+        IF_interpolator_path = df.loc[i,'path_to_IF_interpolator']
+        if not os.path.isfile(IF_interpolator_path):
+            raise FileNotFoundError(f'{IF_interpolator_path} not found!')
+    else:
+        raise KeyError(f'No path_to_IF_interpolator in {path_to_csv_file}')
+    if 'path_to_profile_interpolator' in df.keys():
+        profile_interpolator_path = df.loc[i,'path_to_profile_interpolator']
+    else:
+        raise KeyError(f'No path_to_profile_interpolator in {path_to_csv_file}')
+    
+    if verbose:
+        print(f'Train profile interpolators on {grid_path} with the '
+              f'initial-final interpolator {IF_interpolator_path} to get '
+              f'profiles of {profile_names}')
+    
+    # check interpolation_objects directory exists
+    interp_path = os.path.dirname(profile_interpolator_path)
+    if not os.path.isdir(interp_path):
+        os.makedirs(interp_path)
+
+    train_second_star = 'CO' not in grid_type
+    # load grid profiles
+    grid_profiles = CompileData(grid_path, grid_path,
+                                hms_s2=train_second_star,
+                                profile_names=profile_names)
+    # save the profiles in a temporary pickle
+    tmp_profile_interpolator_path = profile_interpolator_path+".tmp"
+    grid_profiles.save(tmp_profile_interpolator_path)
+
+    # create interpolator
+    interp = ProfileInterpolator()
+    # load profile pickle
+    interp.load_profiles(tmp_profile_interpolator_path)
+    # training
+    interp.train(IF_interpolator_path)
+    # saving
+    interp.save(profile_interpolator_path)
+    
+    # TODO: consider to remove the temporary pickle with the grid profiles
+    # os.remove(tmp_profile_interpolator_path)
+
+
+def export_dataset(i, path_to_csv_file, verbose=False):
+    """Moving the data set to a place containing all, what is needed to run a
+    population synthesis with POSYDON.
+
+    Parameters
+    ----------
+    i : int
+        Index in csv file.
+    path_to_csv_file : str
+        Path to csv file.
+    verbose : bool
+        Enable/Disable additional output.
+    """
+    
+    # read csv file
+    if os.path.exists(path_to_csv_file):
+        df = pd.read_csv(path_to_csv_file)
+    else:
+        raise FileNotFoundError(f'{path_to_csv_file} not found!')
+    if i not in df.index:
+        raise KeyError(f'Index={i} not available in {path_to_csv_file}.')
+    # get values from csv file
+    if 'path_to_grid' in df.keys():
+        grid_path = df.loc[i,'path_to_grid']
+        if not os.path.isfile(grid_path):
+            raise FileNotFoundError(f'{grid_path} not found!')
+    else:
+        raise KeyError(f'No path_to_grid in {path_to_csv_file}')
+    if 'export_path' in df.keys():
+        export_path = df.loc[i,'export_path']
+    else:
+        raise KeyError(f'No export_path in {path_to_csv_file}')
+    
+    if os.path.exists(export_path):
+        Pwarn(f'Replace {export_path}', "OverwriteWarning")
+    if verbose:
+        print(f'copying {grid_path} to {export_path}')
+    # copy the file
+    shutil.copyfile(grid_path, export_path)
+
+
+def zams_file_name(metallicity):
+    """Gives the name of the ZAMS file depending on the metallicity.
+
+    Parameters
+    ----------
+    metallicity : str
+        String representation of the metallicity (e.g. 1e+00_Zsun).
+
+    Returns
+    -------
+    str
+        Name of ZAMS file.
+    """
+    
+    if '2e+00_Zsun' in metallicity:
+        zams_filename = 'zams_z2.84m2_y0.2915.data'
+    elif (('1e+00_Zsun' in metallicity)or(pd.isna(metallicity))):
+        # in v1 there is no metallicity, hence an empty string
+        zams_filename = 'zams_z1.42m2_y0.2703.data'
+    elif '4.5e-01_Zsun' in metallicity:
+        zams_filename = 'zams_z6.39m3_y0.2586.data'
+    elif '2e-01_Zsun' in metallicity:
+        zams_filename = 'zams_z2.84m3_y0.2533.data'
+    elif '1e-01_Zsun' in metallicity:
+        zams_filename = 'zams_z1.42m3_y0.2511.data'
+    elif '1e-02_Zsun' in metallicity:
+        zams_filename = 'zams_z1.42m4_y0.2492.data'
+    elif '1e-03_Zsun' in metallicity:
+        zams_filename = 'zams_z1.42m5_y0.2490.data'
+    elif '1e-04_Zsun' in metallicity:
+        zams_filename = 'zams_z1.42m6_y0.2490.data'
+    else:
+        raise ValueError(f'Metallicity unknown: {metallicity}')
+    return zams_filename
+
+
+def copy_ini_file(grid_type, rerun_metallicity, rerun_type, destination,
+    cluster):
+    """Copies the ini file and make replacements according to the rerun.
+
+    Parameters
+    ----------
+    grid_type : str
+        Type of the grid.
+    rerun_metallicity : str
+        String representation of the metallicity (e.g. 1e+00_Zsun).
+    rerun_type : str
+        Type of rerun (e.g. PISN).
+    destination : str
+        Path to the directory for the new runs.
+    cluster : str
+        Cluster name (e.g. yggdrasil or quest).
+    """
+
+    # check that the 'destination' exists
+    if not os.path.exists(destination):
+        os.makedirs(destination)
+    # copy the default ini file to directory
+    if cluster in ['quest','yggdrasil']:
+        if os.path.isdir(PATH_TO_POSYDON):
+            ini_dir_path = os.path.join(PATH_TO_POSYDON,
+                'grid_params/POSYDON-MESA-INLISTS/r11701/running_scripts')
+            if not os.path.isdir(PATH_TO_POSYDON):
+                raise NotADirectoryError(f'{ini_dir_path} not found!')
+        else:
+            raise NotADirectoryError(f'PATH_TO_POSYDON={PATH_TO_POSYDON} not '
+                                     'found!')
+        if "single_HMS" in grid_type:
+            ini_file_path = os.path.join(ini_dir_path, f'single_HMS_{cluster}.ini')
+            ini_file_dest = os.path.join(destination, f'single_HMS_{cluster}.ini')
+        elif "single_HeMS" in grid_type:
+            ini_file_path = os.path.join(ini_dir_path, f'single_HeMS_{cluster}.ini')
+            ini_file_dest = os.path.join(destination, f'single_HeMS_{cluster}.ini')
+        elif "HMS-HMS" in grid_type:
+            ini_file_path = os.path.join(ini_dir_path, f'HMS-HMS_{cluster}.ini')
+            ini_file_dest = os.path.join(destination, f'HMS-HMS_{cluster}.ini')
+        elif "CO-HMS" in grid_type:
+            ini_file_path = os.path.join(ini_dir_path, f'CO-HMS_RLO_{cluster}.ini')
+            ini_file_dest = os.path.join(destination, f'CO-HMS_RLO_{cluster}.ini')
+        elif "CO-HeMS" in grid_type:
+            ini_file_path = os.path.join(ini_dir_path, f'CO-HeMS_{cluster}.ini')
+            ini_file_dest = os.path.join(destination, f'CO-HeMS_{cluster}.ini')
+        else:
+            raise ValueError(f'Unsupported grid type: {grid_type}!')
+        if not os.path.isfile(ini_file_path):
+            raise FileNotFoundError(f'{ini_file_path} not found!')
+        shutil.copyfile(ini_file_path, ini_file_dest)
+    else:
+        raise ValueError(f'Unsupported cluster {cluster}!')
+
+    # substitue the inlist sceario with the one for the rerun
+    if rerun_type == 'PISN':
+        replace_text = "matthias_PISN-d68228338b91fd487ef5d55c9b6ebb8cc5f0e668"
+    elif rerun_type == 'reverse_MT':
+        replace_text = "zepei_fix_implicit-afa1860ddf9894aa1d82742ee2a73e8e92acd4a9"
+    elif rerun_type == 'opacity_max':
+        replace_text = "matthias_PISN-d68228338b91fd487ef5d55c9b6ebb8cc5f0e668"
+    elif rerun_type == 'opacity_max_hms-hms':
+        replace_text = "zepei_fix_implicit-afa1860ddf9894aa1d82742ee2a73e8e92acd4a9"
+    elif rerun_type == 'TPAGBwind':
+        replace_text = "development-22c1bb9e730343558c3e70984a99b3fc1f3c346e"
+    elif rerun_type == 'thermohaline_mixing':
+        replace_text = "development-22c1bb9e730343558c3e70984a99b3fc1f3c346e"
+    elif rerun_type == 'HeMB_MLTp_mesh':
+        replace_text = "development-435d16c9158e4608530f21b8169ce6f31160e23e"
+    elif rerun_type == 'more_mesh':
+        replace_text = "development-435d16c9158e4608530f21b8169ce6f31160e23e"
+    elif rerun_type == 'conv_bdy_weight':
+        replace_text = "development-435d16c9158e4608530f21b8169ce6f31160e23e"
+    elif rerun_type == 'initial_He':
+        replace_text = "fix_iniHe_pre_rerun5-0e736a853c3c2e522b76299a54aea8f5eea15d08"
+    elif rerun_type == "dedt_energy_eqn":
+        replace_text = "seth_dedt_energy_eqn-f1803afe400ed16a4fad47b0bad6abbf0965cae1"
+    elif rerun_type == "dedt_hepulse":
+        replace_text = "seth_dedt_hepulse-0274be9895480cae3aa2a4d14b056a2447d5921b"
+    elif rerun_type == 'LBV_wind':
+        replace_text = "matthias_LBV_wind-051343856f50dc5518abdf28904d62df4caacaff"
+    elif rerun_type == 'LBV_wind+thermohaline_mixing':
+        replace_text = "matthias_LBV_wind-051343856f50dc5518abdf28904d62df4caacaff"
+#    elif rerun_type == 'LBV_wind+HeMB_MLTp_mesh':
+#        raise ValueError(f'Not yet supported rerun type {rerun_type}!')
+#        replace_text = "matthias_LBV_wind-051343856f50dc5518abdf28904d62df4caacaff" #TODO: update to new MESA-INLIST branch/commit
+    elif rerun_type == 'LBV_wind+dedt_energy_eqn':
+        replace_text = "seth_lbv_thermo_dedt-936f76f82d44b16139ff89e41e5b0f2232fd9b30"
+    elif rerun_type == 'LBV_wind+dedt_hepulse':
+        replace_text = "seth_lbv_thermo_dedt_hepulse-2737b3bce69066751477c802a6e515183e13d303"
+    elif rerun_type == 'no_age_limit':
+        replace_text = "matthias_no_age_limit-a119ea9548cca9b6b7ddfe31309ced1ae40c271e"
+    elif rerun_type == 'no_age_limit+thermohaline_mixing':
+        replace_text = "matthias_no_age_limit-a119ea9548cca9b6b7ddfe31309ced1ae40c271e"
+    elif rerun_type == 'no_age_limit+dedt_energy_eqn':
+        replace_text = "matthias_lbv_thermo_dedt_noAgeLimit-dcc42e1d6d89fc267826970643e7f4f1bf463171"
+    elif rerun_type == 'other': # e.g. 'envelope_mass_limit', 'fe_core_infall_limit'
+        # this rerun uses the default inlist commit
+        return
+    else:
+        raise ValueError(f'Unsupported rerun type {rerun_type}!')
+    
+    # make replacements in ini file
+    search_text1 = "main-18710e943edd926a5653c4cdb7d6e18e5bdb35a2"
+    search_text2 = "main-a060b7bf1a4d94d693f77be9a1b0b3a522c1eadf"
+    search_text3 = 'zams_z1.42m3_y0.2511.data'
+    replace_zams_filename = zams_file_name(rerun_metallicity)
+    with open(ini_file_dest, 'r') as file:
+        data = file.read()
+        data = data.replace(search_text1, replace_text)
+        data = data.replace(search_text2, replace_text)
+        data = data.replace(search_text3, replace_zams_filename)
+        data = data.replace('grid_test.csv', 'grid.csv')
+    with open(ini_file_dest, 'w') as file:
+        file.write(data)
+
+
+def logic_rerun(grid, rerun_type):
+    """Get the runs, which need a rerun.
+
+    Parameters
+    ----------
+    grid : PSyGrid
+        PSyGrid to select runs from.
+    rerun_type : str
+        Type of rerun (e.g. PISN).
+
+    Returns
+    -------
+    runs_to_rerun : list
+        Indecies of runs to be rerun.
+    termination_flags : list
+        Termination flags to select reruns by.
+    new_mesa_flag : dict
+        Name and value of MESA inlist parameters to change to for this rerun.
+    """
+
+    if not isinstance(grid, PSyGrid):
+        raise TypeError(f'grid must be a PSyGrid, but it is {type(grid)}.')
+
+    runs_to_rerun=None
+    termination_flags=None
+    new_mesa_flag = None
+    
+    # handle different rerun types
+    if rerun_type == 'opacity_max' or rerun_type == 'opacity_max_hms-hms':
+        # TODO: consider using TF1_POOL_ERROR
+        termination_flags=['reach cluster timelimit', 'min_timestep_limit']
+        new_mesa_flag={'opacity_max' : 0.5}
+    elif rerun_type == 'PISN':
+        N_runs = len(grid)
+        runs_to_rerun = []
+        for i in range(N_runs):
+            dirname = grid.MESA_dirs[i].decode('utf-8')
+            if not os.path.isdir(dirname):
+                # TODO: handle the case when grids were moved location
+                raise NotADirectoryError('Grid directory not found at '
+                                         f'{dirname}')
+            if "single_HMS" in dirname:
+                out_txt_path = os.path.join(dirname,
+                                            "out_star1_formation_step0.txt")
+            elif "single_HeMS" in dirname:
+                out_txt_path = os.path.join(dirname,
+                                            "out_star1_formation_step2.txt")
+            else:
+                out_txt_path = os.path.join(dirname, "out.txt")
+            if (out_txt_path is not None) and os.path.isfile(out_txt_path):
+                with open(out_txt_path, "r") as log_file:
+                    log_lines = log_file.readlines()
+                for line in log_lines:
+                    if "have reached gamma1 integral limit" in line:
+                        runs_to_rerun += [i]
+        runs_to_rerun = np.array(runs_to_rerun)
+    elif rerun_type == 'reverse_MT':
+        N_runs = len(grid)
+        runs_to_rerun = []
+        for i in range(N_runs):
+            if ((grid[i].binary_history is not None) and
+                (grid[i].history1 is not None)):
+                rl1 = grid[i].binary_history['rl_relative_overflow_1']
+                rl2 = grid[i].binary_history['rl_relative_overflow_2']
+                w_wcrit = grid[i].history1['surf_avg_omega_div_omega_crit']
+                reverse = np.logical_and(rl1<-0.05, rl2>-0.05)
+                transfer = np.logical_and(reverse, w_wcrit>0.9)
+                if np.max(transfer) == True:
+                    runs_to_rerun += [i]
+        runs_to_rerun = np.array(runs_to_rerun)
+    elif rerun_type == 'TPAGBwind':
+        N_runs = len(grid)
+        runs_to_rerun = []
+        hot_wind_full_on_T = 1.2e4 # inlist value
+        for i in range(N_runs):
+            if grid[i].history1 is not None:
+                s1_Teff = 10**grid[i].history1['log_Teff']
+                s1_Yc = grid[i].history1['center_he4']
+                s1_he_shell_mass = grid[i].history1['he_core_mass'] -\
+                                   grid[i].history1['co_core_mass']
+                tpagb_1 = np.logical_and(s1_Teff <= hot_wind_full_on_T,\
+                                         s1_Yc <= 1e-6)
+                tpagb_1 = np.logical_and(tpagb_1, s1_he_shell_mass <= 1e-1)
+            else:
+                tpagb_1 = np.array([False])
+            if grid[i].history2 is not None:
+                s2_Teff = 10**grid[i].history2['log_Teff']
+                s2_Yc = grid[i].history2['center_he4']
+                s2_he_shell_mass = grid[i].history2['he_core_mass'] -\
+                                   grid[i].history2['co_core_mass']
+                tpagb_2 = np.logical_and(s2_Teff <= hot_wind_full_on_T,\
+                                         s2_Yc <= 1e-6)
+                tpagb_2 = np.logical_and(tpagb_2, s2_he_shell_mass <= 1e-1)
+            else:
+                tpagb_2 = np.array([False])
+            if np.max(np.logical_or(tpagb_1, tpagb_2)) == True:
+                runs_to_rerun += [i]
+        runs_to_rerun = np.array(runs_to_rerun)
+    elif ((rerun_type == 'thermohaline_mixing') or
+          (rerun_type == 'LBV_wind+thermohaline_mixing') or
+          (rerun_type == 'no_age_limit+thermohaline_mixing')):
+        termination_flags = TF1_POOL_ERROR
+        new_mesa_flag = {'thermohaline_coeff' : 17.5}
+    elif ((rerun_type == 'HeMB_MLTp_mesh')
+#          or (rerun_type == 'LBV_wind+HeMB_MLTp_mesh')
+         ):
+        termination_flags = TF1_POOL_ERROR
+    elif rerun_type == 'more_mesh':
+        termination_flags = TF1_POOL_ERROR
+        # may put this in a MESA-inlist PR
+        new_mesa_flag = {'mesh_Pgas_div_P_exponent' : 2,\
+                         'max_allowed_nz' : 50000}
+    elif rerun_type == 'conv_bdy_weight':
+        N_runs = len(grid)
+        runs_to_rerun = []
+        for i in range(N_runs):
+            dirname = grid.MESA_dirs[i].decode('utf-8')
+            if not os.path.isdir(dirname):
+                # TODO: handle the case when grids were moved location
+                raise NotADirectoryError('Grid directory not found at '
+                                         f'{dirname}')
+            if "single_HMS" in dirname:
+                out_txt_path = os.path.join(dirname,
+                                            "out_star1_formation_step0.txt")
+            elif "single_HeMS" in dirname:
+                out_txt_path = os.path.join(dirname,
+                                            "out_star1_formation_step2.txt")
+            else:
+                out_txt_path = os.path.join(dirname, "out.txt")
+            if (out_txt_path is not None) and os.path.isfile(out_txt_path):
+                with open(out_txt_path, "r") as log_file:
+                    log_lines = log_file.readlines()
+                for line in log_lines:
+                    if (("STOP prepare_for_new_try: bad num omega" in line) or
+                        ("Segmentation fault" in line)):
+                        runs_to_rerun += [i]
+        runs_to_rerun = np.array(runs_to_rerun)
+        new_mesa_flag = {'convective_bdy_weight' : 0}
+    elif rerun_type == 'initial_He':
+        N_runs = len(grid)
+        runs_to_rerun = []
+        for i in range(N_runs):
+            iniY = -1
+            if 'S1_center_he4' in grid.initial_values.dtype.names:
+                iniY = grid[i].initial_values['S1_center_he4']
+            elif 'Y' in grid.initial_values.dtype.names:
+                iniY = grid[i].initial_values['Y']
+            if np.isnan(iniY) or iniY<0.96:
+                runs_to_rerun += [i]
+        runs_to_rerun = np.array(runs_to_rerun)
+    elif ((rerun_type == 'dedt_energy_eqn') or
+          (rerun_type == 'LBV_wind+dedt_energy_eqn') or
+          (rerun_type == 'no_age_limit+dedt_energy_eqn')):
+        termination_flags = TF1_POOL_ERROR    
+    elif ((rerun_type == 'dedt_hepulse')
+          or (rerun_type == 'LBV_wind+dedt_hepulse')):
+        termination_flags = TF1_POOL_ERROR
+    elif rerun_type == 'LBV_wind':
+        N_runs = len(grid)
+        runs_to_rerun = []
+        hot_wind_full_on_T = 1.2e4 # inlist value
+        for i in range(N_runs):
+            if grid[i].history1 is not None:
+                s1_L = 10**grid[i].history1['log_L']
+                s1_R = 10**grid[i].history1['log_R']
+                s1_HD_limit = (1.0e-5 * s1_R * np.sqrt(s1_L))
+                lbv_1 = np.logical_and(s1_L > 6.0e5, s1_HD_limit > 1.0)
+                # exclude (stripped) He stars
+                s1_X_surf = grid[i].history1['surface_h1']
+                lbv_1 = np.logical_and(lbv_1, s1_X_surf >= 0.1)
+                # exclude stars going through TPAGB
+                s1_Teff = 10**grid[i].history1['log_Teff']
+                s1_Yc = grid[i].history1['center_he4']
+                s1_he_shell_mass = grid[i].history1['he_core_mass'] -\
+                                   grid[i].history1['co_core_mass']
+                tpagb_1 = np.logical_and(s1_Teff <= hot_wind_full_on_T,\
+                                         s1_Yc <= 1e-6)
+                tpagb_1 = np.logical_and(tpagb_1, s1_he_shell_mass <= 1e-1)
+            else:
+                lbv_1 = np.array([False])
+                tpagb_1 = np.array([False])
+            if grid[i].history2 is not None:
+                s2_L = 10**grid[i].history2['log_L']
+                s2_R = 10**grid[i].history2['log_R']
+                s2_HD_limit = (1.0e-5 * s2_R * np.sqrt(s2_L))
+                lbv_2 = np.logical_and(s2_L > 6.0e5, s2_HD_limit > 1.0)
+                # exclude (stripped) He stars
+                s2_X_surf = grid[i].history2['surface_h1']
+                lbv_2 = np.logical_and(lbv_2, s2_X_surf >= 0.1)
+                # exclude stars going through TPAGB
+                s2_Teff = 10**grid[i].history2['log_Teff']
+                s2_Yc = grid[i].history2['center_he4']
+                s2_he_shell_mass = grid[i].history2['he_core_mass'] -\
+                                   grid[i].history2['co_core_mass']
+                tpagb_2 = np.logical_and(s2_Teff <= hot_wind_full_on_T,\
+                                         s2_Yc <= 1e-6)
+                tpagb_2 = np.logical_and(tpagb_2, s2_he_shell_mass <= 1e-1)
+            else:
+                lbv_2 = np.array([False])
+                tpagb_2 = np.array([False])
+            if np.max(np.logical_or(lbv_1, lbv_2)) == True:
+                if np.max(np.logical_or(tpagb_1, tpagb_2)) == False:
+                    runs_to_rerun += [i]
+        runs_to_rerun = np.array(runs_to_rerun)
+    elif rerun_type == 'no_age_limit':
+        termination_flags = ['max_age']
+    elif rerun_type == 'envelope_mass_limit': # maybe 'fe_core_infall_limit' as well?
+        runs_to_rerun = None # implement logic
+    else:
+        raise ValueError(f'Unsupported rerun type {rerun_type}!')
+    
+    if (runs_to_rerun is None) and (termination_flags is None):
+        raise ValueError('Undefined rerun!')
+    
+    return runs_to_rerun, termination_flags, new_mesa_flag
+
+
+def rerun(i, path_to_csv_file, verbose=False):
+    """Generate files to start a rerun.
+
+    Parameters
+    ----------
+    i : int
+        Index in csv file.
+    path_to_csv_file : str
+        Path to csv file.
+    verbose : bool
+        Enable/Disable additional output.
+    """
+    
+    # read csv file
+    if os.path.exists(path_to_csv_file):
+        df = pd.read_csv(path_to_csv_file)
+    else:
+        raise FileNotFoundError(f'{path_to_csv_file} not found!')
+    if i not in df.index:
+        raise KeyError(f'Index={i} not available in {path_to_csv_file}.')
+    # get values from csv file
+    if 'path_to_grid' in df.keys():
+        grid_path = df.loc[i,'path_to_grid']
+        if not os.path.isfile(grid_path):
+            raise FileNotFoundError(f'{grid_path} not found!')
+    else:
+        raise KeyError(f'No path_to_grid in {path_to_csv_file}')
+    if 'rerun_path' in df.keys():
+        rerun_path = df.loc[i,'rerun_path']
+    else:
+        raise KeyError(f'No rerun_path in {path_to_csv_file}')
+    if 'grid_type' in df.keys():
+        grid_type = df.loc[i,'grid_type']
+    else:
+        raise KeyError(f'No grid_type in {path_to_csv_file}')
+    if 'rerun_metallicity' in df.keys():
+        rerun_metallicity = df.loc[i,'rerun_metallicity']
+    else:
+        raise KeyError(f'No rerun_metallicity in {path_to_csv_file}')
+    if 'rerun_type' in df.keys():
+        rerun_type = df.loc[i,'rerun_type']
+    else:
+        raise KeyError(f'No rerun_type in {path_to_csv_file}')
+    if 'cluster' in df.keys():
+        cluster = df.loc[i,'cluster']
+    else:
+        Pwarn('Cluster not specified, use quest as cluster',
+              "ReplaceValueWarning")
+        cluster = 'quest'
+    
+    # load grid
+    grid = PSyGrid(verbose=verbose)
+    grid.load(grid_path)
+    
+    # export point to rerun
+    if verbose:
+        print(f'rerun {grid_path} in {rerun_path}')
+    # get reruns
+    runs_to_rerun, termination_flags, new_mesa_flag = logic_rerun(grid,
+                                                                  rerun_type)
+    # get csv file for reruns
+    grid.rerun(path_to_file=rerun_path, runs_to_rerun=runs_to_rerun,
+               termination_flags=termination_flags,
+               new_mesa_flag=new_mesa_flag)
+    
+    # copy ini file and set the new inlist commit
+    copy_ini_file(grid_type, rerun_metallicity, rerun_type,
+                  destination=rerun_path, cluster=cluster)
+
+
+def plot_grid(i, path_to_csv_file, verbose=False):
+    """Creates plots of a grid.
+
+    Parameters
+    ----------
+    i : int
+        Index in csv file.
+    path_to_csv_file : str
+        Path to csv file.
+    verbose : bool
+        Enable/Disable additional output.
+    """
+    # grid mass ranges:
+    # min and max values might get updated, than the step is used to update the
+    # nbin (in case of log==True the step is in log space)
+    grid_sample = {
+        'HMS-HMS' : {
+            'log' : False,
+            'nbin' : 20,
+            'qmin' : 0.05,
+            'qmax' : 1.,
+            'step' : 0.05,
+        },
+        'CO-HeMS' : {
+            'log' : True,
+            'nbin' : 23,
+            'mmin' : 1.0,
+            'mmax' : 51.32759630397827,
+            'step' : 0.0777432239326138,
+        },
+        'CO-HMS' : {
+            'log' : True,
+            'nbin' : 23,
+            'mmin' : 1.0,
+            'mmax' : 51.32759630397827,
+            'step' : 0.0777432239326138,
+        }
+    }
+    
+    def _nbin(x_min, x_max, step, log=False):
+        if log:
+            nbin = (np.log10(x_max)-np.log10(x_min))/step
+        else:
+            nbin = (x_max-x_min)/step
+        return int(nbin)+1
+    
+    def _range(x_min, x_max, x_n, log=False):
+        if log:
+            vars = 10**np.linspace(np.log10(x_min),np.log10(x_max), x_n)
+            vars_edges = 10**((np.log10(vars[1:])+np.log10(vars)[:-1])*0.5)
+        else:
+            vars = np.linspace(x_min,x_max,x_n)
+            vars_edges = (vars[1:]+vars[:-1])*0.5
+        vars_edges = [0.]+vars_edges.tolist()+[float("inf")]
+        return vars.tolist(), vars_edges
+    
+    # read csv file
+    if os.path.exists(path_to_csv_file):
+        df = pd.read_csv(path_to_csv_file)
+    else:
+        raise FileNotFoundError(f'{path_to_csv_file} not found!')
+    if i not in df.index:
+        raise KeyError(f'Index={i} not available in {path_to_csv_file}.')
+    
+    check_dirs = []
+    # get values from csv file
+    if 'path_to_grid' in df.keys():
+        grid_path = df.loc[i,'path_to_grid']
+        if not os.path.isfile(grid_path):
+            raise FileNotFoundError(f'{grid_path} not found!')
+    else:
+        raise KeyError(f'No path_to_grid in {path_to_csv_file}')
+    if 'grid_type' in df.keys():
+        grid_type = df.loc[i,'grid_type']
+    else:
+        raise KeyError(f'No grid_type in {path_to_csv_file}')
+    if 'path_to_plot' in df.keys():
+        plot_dir = df.loc[i,'path_to_plot']
+        plot_path = os.path.dirname(os.path.normpath(plot_dir))
+        check_dirs.extend([plot_path, plot_dir])
+    else:
+        raise KeyError(f'No path_to_plot in {path_to_csv_file}')
+    if 'quantities_to_plot' in df.keys():
+        quantities_to_plot = ast.literal_eval(df.loc[i,'quantities_to_plot'])
+        if not isinstance(quantities_to_plot, list):
+            raise TypeError(f'quantities_to_plot is not a list in line {i} '
+                            f'in {path_to_csv_file}')
+    else:
+        raise KeyError(f'No quantities_to_plot in {path_to_csv_file}')
+    multipage = False
+    if 'plot_extension' in df.keys():
+        plot_extension = df.loc[i,'plot_extension']
+        if plot_extension=='multipage-pdf':
+            multipage = True
+            plot_extension = 'pdf'
+    else:
+        Pwarn('No plot extension, use pdf', "ReplaceValueWarning")
+        plot_extension = 'pdf'
+    if 'path_to_interpolator' in df.keys():
+        path_to_interpolator = df.loc[i,'path_to_interpolator']
+    else:
+        path_to_interpolator = ''
+    
+    # check that plots/ directories exist
+    for dir_ in check_dirs:
+        if not os.path.isdir(dir_):
+            os.makedirs(dir_)
+        
+    # load grid
+    grid = PSyGrid(verbose=verbose)
+    grid.load(grid_path)
+    
+    for quantity_to_plot in quantities_to_plot:
+        if verbose:
+            print(f'plotting: {quantity_to_plot} from {grid_path} to '
+                  f'{plot_dir}')
+        
+        # load interpolator and evaluate interp errors
+        if ('INTERP_ERROR' in quantity_to_plot 
+            and path_to_interpolator != ''):
+            model = IFInterpolator()
+            model.load(path_to_interpolator)
+            evalIFerr = EvaluateIFInterpolator(model, grid)
+            interp_error = True
+        else:
+            interp_error = False
+        
+        # get attributes for plotting
+        plot_attributes = {
+            'plot_dir_name' : 'default',
+            'zvar' : None,
+            'term_flag' : 'termination_flag_1',
+            'zlog' : False,
+            'zmin' : None,
+            'zmax' : None
+        }
+        if quantity_to_plot in PRE_SET_PLOTS:
+            for attr in PRE_SET_PLOTS[quantity_to_plot].keys():
+                plot_attributes[attr] = PRE_SET_PLOTS[quantity_to_plot][attr]
+        elif isinstance(quantity_to_plot, str):
+            #TODO: check if quantity_to_plot is plotable as Z value
+            if 'INTERP_ERROR_' in quantity_to_plot:
+                short_quantity = quantity_to_plot.split('INTERP_ERROR_')[-1]
+                set_name = 'INTERP_ERROR_DEFAULT'
+                if set_name in PRE_SET_PLOTS:
+                    plot_attributes['plot_dir_name'] = os.path.join(\
+                                                        'INTERP_ERROR',
+                                                        short_quantity)
+                    plot_attributes['zvar'] = short_quantity
+                    for attr in PRE_SET_PLOTS[set_name].keys():
+                        plot_attributes[attr] = PRE_SET_PLOTS[set_name][attr]
+                else:
+                    Pwarn(f'{set_name} not in PRE_SET_PLOTS',
+                          "UnsupportedModelWarning")
+            elif '_MODEL' in quantity_to_plot:
+                short_quantity = quantity_to_plot.split('_MODEL')[-1]
+                short_quantity = short_quantity[short_quantity.find('_')+1:]
+                model_name = quantity_to_plot.split('_'+short_quantity)[0]
+                set_name = quantity_to_plot.split('_MODEL')[0] +\
+                           '_MODEL_DEFAULT_' + short_quantity
+                if set_name in PRE_SET_PLOTS:
+                    plot_attributes['plot_dir_name'] = os.path.join(model_name,
+                                                                short_quantity)
+                    plot_attributes['zvar'] = quantity_to_plot
+                    for attr in PRE_SET_PLOTS[set_name].keys():
+                        plot_attributes[attr] = PRE_SET_PLOTS[set_name][attr]
+                else:
+                    Pwarn(f'{set_name} not in PRE_SET_PLOTS',
+                          "UnsupportedModelWarning")
+            elif quantity_to_plot[:6]=='LOG10_':
+                short_quantity = quantity_to_plot[6:]
+                plot_attributes['plot_dir_name'] = short_quantity
+                plot_attributes['zvar'] = short_quantity
+                plot_attributes['zlog'] = True
+            else:
+                plot_attributes['plot_dir_name'] = quantity_to_plot
+                plot_attributes['zvar'] = quantity_to_plot
+        else:
+            raise TypeError(f'{quantity_to_plot} should be a string!')
+        
+        # check that plots/ directories exist
+        name = plot_attributes['plot_dir_name']
+        dir_ = os.path.join(plot_dir, name)
+        if multipage:
+            # multipage plots don't need the lowest directory level
+            dir_ = os.path.dirname(dir_)
+        if not os.path.isdir(dir_):
+            os.makedirs(dir_)
+        
+        if ('CO' in grid_type):
+            # skip plotting CO properties
+            if 'S2_' in quantity_to_plot:
+                continue
+            # both grids are sampled in the same way with respect to the
+            # compact object mass
+            if 'CO-HeMS' in grid_type:
+                smpl = grid_sample['CO-HeMS']
+            else:
+                smpl = grid_sample['CO-HMS']
+            slice_3D_var_str = 'star_2_mass'
+            min_3D_var = np.min(grid.initial_values[slice_3D_var_str])
+            max_3D_var = np.max(grid.initial_values[slice_3D_var_str])
+            if smpl['mmin']>min_3D_var:
+                smpl['mmin'] = min_3D_var
+                smpl['nbin'] = _nbin(smpl['mmin'], smpl['mmax'], smpl['step'],
+                                     log=smpl['log'])
+            if smpl['mmax']<max_3D_var:
+                smpl['mmax'] = max_3D_var
+                smpl['nbin'] = _nbin(smpl['mmin'], smpl['mmax'], smpl['step'],
+                                     log=smpl['log'])
+            vars, vars_edges = _range(smpl['mmin'], smpl['mmax'], smpl['nbin'],
+                                      log=smpl['log'])
+            fname = 'grid_m_%1.2f.' + plot_extension
+            title = '$m_\mathrm{CO}=%1.2f\,M_\odot$'
+        elif 'HMS-HMS' in grid_type:        
+            # mass ratio slices
+            smpl = grid_sample['HMS-HMS']
+            slice_3D_var_str = 'mass_ratio' 
+            vars, vars_edges = _range(smpl['qmin'], smpl['qmax'], smpl['nbin'],
+                                      log=smpl['log'])
+            if vars[-1]==1.0:
+                vars[-1] = 0.99 # we replaced q=1 with q=0.99 in mesa runs
+            fname = 'grid_q_%1.2f.' + plot_extension
+            title = '$q=%1.2f$'
+        else:
+            raise ValueError('Grid type not supported!')
+        
+        if multipage:
+            pdf_handler = PdfPages(os.path.join(plot_dir, name) +\
+                                   '_all_slices.' + plot_extension,
+                                   metadata={'Author': 'POSYDON'})
+        # loop over all grid slices
+        for k, var in enumerate(vars):
+            slice_3D_var_range = (vars_edges[k],vars_edges[k+1])
+            # TODO: skip plotting slice if there are no data
+            try:
+                # default plot properties
+                PLOT_PROPERTIES_DEFAULT = {
+                    'figsize' : (4,3.5),
+                    'path_to_file' : os.path.join(plot_dir, name)+'/',
+                    'show_fig' : False,
+                    'fname' : fname%var,
+                    'title' : title%var,
+                    'log10_x' : True,
+                    'log10_y' : True,
+                    'legend2D' : {'bbox_to_anchor' : (1.03, 0.5)}
+                }
+            
+                PLOT_PROPERTIES = PLOT_PROPERTIES_DEFAULT.copy()
+                if plot_attributes['zvar'] is not None:
+                    # default plot properties with colorbar
+                    PLOT_PROPERTIES['figsize'] = (4,5)
+                    PLOT_PROPERTIES['colorbar'] = {'pad': 0.12}
+                    PLOT_PROPERTIES['log10_z'] = plot_attributes['zlog']
+                    PLOT_PROPERTIES['zmin'] = plot_attributes['zmin']
+                    PLOT_PROPERTIES['zmax'] = plot_attributes['zmax']
+                    if 'INTERP_ERROR' in quantity_to_plot:
+                        PLOT_PROPERTIES['colorbar']['label'] = quantity_to_plot
+                if multipage:
+                    PLOT_PROPERTIES['PdfPages'] = pdf_handler
+                
+                if 'INTERP_ERROR' in quantity_to_plot:
+                    # initial/final error all points in one plot
+                    if k == 0:
+                        PLOT_PROPERTIES_ALL = PLOT_PROPERTIES.copy()
+                        PLOT_PROPERTIES_ALL['title'] = title.split('=')[0] +\
+                                                       '$ all'
+                        PLOT_PROPERTIES_ALL['fname'] = fname.replace('%1.2f',\
+                                                                     'all')
+                        if multipage:
+                            PLOT_PROPERTIES_ALL['path_to_file'] = plot_dir+'/'
+                            PLOT_PROPERTIES_ALL['fname'] = name + '_all.' +\
+                                                           plot_extension
+                            PLOT_PROPERTIES_ALL['PdfPages'] = None
+                        evalIFerr.plot2D(plot_attributes['zvar'], 
+                                         slice_3D_var_str, 
+                                         (vars_edges[0], vars_edges[-1]), 
+                                         PLOT_PROPERTIES_ALL)
+                    # initial/final error slices
+                    evalIFerr.plot2D(plot_attributes['zvar'], slice_3D_var_str,
+                                     slice_3D_var_range, PLOT_PROPERTIES)
+                elif 'CLASS_ERROR' in quantity_to_plot:
+                    # TODO: add class error plots
+                    if k == 0:
+                        evalIFerr.confusion_matrix(plot_attributes['zvar'],
+                                                   close_fig=True)
+                elif 'VIOLIN' in quantity_to_plot:
+                    # TODO: add violin plots
+                    if k == 0:
+                        evalIFerr.violin_plots("relative",
+                                               keys=[plot_attributes['zvar']],
+                                               close_fig=True)
+                else:
+                    grid.plot2D('star_1_mass', 'period_days',
+                                plot_attributes['zvar'],
+                                termination_flag=plot_attributes['term_flag'],
+                                grid_3D=True,
+                                slice_3D_var_str=slice_3D_var_str,
+                                slice_3D_var_range=slice_3D_var_range,
+                                verbose=False, **PLOT_PROPERTIES)
+            
+            except Exception as e:
+                print('FAILED TO PLOT '+title%var+' to '+fname%var)
+                print('')
+                print(e)
+                if multipage:
+                    # close and reopen handler
+                    # (WARNING: this will overwrite the pdf file)
+                    Pwarn('delete and reopen: '+\
+                          f'{os.path.join(plot_dir, name)}'+\
+                          f'_all.{plot_extension}', "OverwriteWarning")
+                    del pdf_handler
+                    pdf_handler = PdfPages(os.path.join(plot_dir, name) +\
+                                           '_all_slices.' +plot_extension,
+                                           metadata={'Author': 'POSYDON'})
+                continue
+        if multipage:
+            pdf_handler.close()
+
+
+def do_check(i, path_to_csv_file, verbose=False):
+    """Perform a check on a grid.
+
+    Parameters
+    ----------
+    i : int
+        Index in csv file.
+    path_to_csv_file : str
+        Path to csv file.
+    verbose : bool
+        Enable/Disable additional output.
+    """
+    
+    # read csv file
+    if os.path.exists(path_to_csv_file):
+        df = pd.read_csv(path_to_csv_file)
+    else:
+        raise FileNotFoundError(f'{path_to_csv_file} not found!')
+    if i not in df.index:
+        raise KeyError(f'Index={i} not available in {path_to_csv_file}.')
+    
+    # get values from csv file
+    if 'path_to_grid' in df.keys():
+        grid_path = df.loc[i,'path_to_grid']
+        if not os.path.isfile(grid_path):
+            raise FileNotFoundError(f'{grid_path} not found!')
+    else:
+        raise KeyError(f'No path_to_grid in {path_to_csv_file}')
+    if 'checks_to_do' in df.keys():
+        checks_to_do = ast.literal_eval(df.loc[i,'checks_to_do'])
+        if not isinstance(checks_to_do, list):
+            raise TypeError(f'checks_to_do is not a list in line {i} '
+                            f'in {path_to_csv_file}')
+    else:
+        raise KeyError(f'No checks_to_do in {path_to_csv_file}')
+    if 'path_to_interpolator' in df.keys():
+        path_to_interpolator = df.loc[i,'path_to_interpolator']
+    else:
+        path_to_interpolator = ''
+    
+    # load grid
+    grid = PSyGrid(verbose=verbose)
+    grid.load(grid_path)
+    
+    # do the checks
+    for check_to_do in checks_to_do:
+        if check_to_do=='failure_rate':
+            count = Counter(grid.final_values['interpolation_class'])
+            n = 0.
+            for key in count.keys():
+                n += count[key]
+            if 'not_converged' in count.keys():
+                failure_rate_in_percent = round(count['not_converged']/n*100,2)
+            else:
+                failure_rate_in_percent = 0.
+            print(f'Failure rate: {failure_rate_in_percent}% in {grid_path}')
+        elif check_to_do=='CO_type':
+            for quantity in grid.final_values.dtype.names:
+                if (('S1_MODEL' in quantity) and ('CO_type' in quantity)):
+                    count = Counter(grid.final_values[quantity])
+                    print(f'{quantity}: {count} in {grid_path}')
+        elif check_to_do=='SN_type':
+            for quantity in grid.final_values.dtype.names:
+                if (('S1_MODEL' in quantity) and ('SN_type' in quantity)):
+                    count = Counter(grid.final_values[quantity])
+                    print(f'{quantity}: {count} in {grid_path}')
+            #TODO: add more checks
+        else:
+            Pwarn(f'Do not know how to do {check_to_do} for'+\
+                  f' {grid_path}!', "UnsupportedModelWarning")
+
+
+if __name__ == '__main__':
+
+    # read commond line arguments
+    n_args = len(sys.argv)
+    
+    if n_args > 1: # path to girds
+        if str(sys.argv[1])=='--help':
+            print('Programm to run a pipeline step')
+            print('syntax: posydon-run-pipeline PATH_TO_GRIDS PATH_TO_CSV_FILE'
+                  ' [SLURM_I] [VERBOSE]')
+            print('PATH_TO_GRIDS: path to the root directory with the grids')
+            print('PATH_TO_CSV_FILE: path to the csv file containing the step'
+                  ' data')
+            print('SLURM_I (optional): slurm array index, used to grep a'
+                  ' certain data set (usually line index) from the csv file;'
+                  ' if not given the first non header line is used')
+            print('VERBOSE (optional): flag for additional output')
+            sys.exit(0)
+        PATH_TO_GRIDS = str(sys.argv[1])
+        if not os.path.isdir(PATH_TO_GRIDS): # check given path
+            raise NotADirectoryError('Grids were not found! Check your '
+                                     f'PATH_TO_GRIDS={PATH_TO_GRIDS}')
+    else:
+        raise KeyError('No path to the grids given. It should be specified '
+                       'as first commandline argument.')
+    
+    if n_args > 2: # path to csv file
+        PATH_TO_CSV_FILE = str(sys.argv[2])
+        if not os.path.isfile(PATH_TO_CSV_FILE): # check given path
+            raise FileNotFoundError('Csv file not found! Check your '
+                                    f'PATH_TO_CSV_FILE={PATH_TO_CSV_FILE}')
+    else:
+        raise KeyError('No csv file given. It should be specified as '
+                       'second commandline argument.')
+    
+    if n_args > 3: # slurm index
+        SLURM_I = int(sys.argv[3])
+        if SLURM_I<0: # check value
+            raise ValueError(f'The slurm index cannot be negative: {SLURM_I}')
+    else:
+        Pwarn('No slurm index given, use 0', "ReplaceValueWarning")
+        SLURM_I = 0
+    
+    if n_args > 4: # verbose flag
+        VERBOSE = bool(int(sys.argv[4]))
+    else:
+        Pwarn('No verbose flag given, use True', "ReplaceValueWarning")
+        VERBOSE = True
+
+    # chose grid slice given the slurm jobarray index
+
+    # offset the start of each job
+    # NOTE: this prevents job arrays starting at the same time to read
+    # the same files at the same time (e.g. when creatign LITE/ORIGINAL grid,
+    # or when creating a directory that does not exist yet)
+    time.sleep(SLURM_I)
+
+    STEP = os.path.splitext(os.path.basename(PATH_TO_CSV_FILE))[0]
+    if STEP=='step_1': # grid slices creation
+        create_grid_slice(SLURM_I, PATH_TO_CSV_FILE, verbose=VERBOSE)
+
+    if STEP=='step_2': # grid slices concatenation
+        combine_grid_slices(SLURM_I, PATH_TO_CSV_FILE, verbose=VERBOSE)
+
+    if STEP=='step_3': # calculate extra values
+        calculate_extra_values(SLURM_I, PATH_TO_CSV_FILE, verbose=VERBOSE)
+
+    if STEP=='step_4': # train interpolators
+        train_interpolators(SLURM_I, PATH_TO_CSV_FILE, verbose=VERBOSE)
+
+    if STEP=='step_5': # train profile interpolators
+        train_profile_interpolators(SLURM_I, PATH_TO_CSV_FILE, verbose=VERBOSE)
+
+    if STEP=='step_9': # export dataset
+        export_dataset(SLURM_I, PATH_TO_CSV_FILE, verbose=VERBOSE)
+
+    if STEP=='rerun': # export rerun
+        rerun(SLURM_I, PATH_TO_CSV_FILE, verbose=VERBOSE)
+    
+    if 'plot' in STEP: # plot grid slices
+        plot_grid(SLURM_I, PATH_TO_CSV_FILE, verbose=VERBOSE)
+
+    if 'check' in STEP: # do checks, e.g. failure rate
+        do_check(SLURM_I, PATH_TO_CSV_FILE, verbose=VERBOSE)
+
+    print_stats()

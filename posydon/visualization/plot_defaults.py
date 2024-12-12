@@ -14,11 +14,12 @@ __authors__ = [
     "Devina Misra <devina.misra@unige.ch>",
     "Scott Coughlin <scottcoughlin2014@u.northwestern.edu>",
     "Emmanouil Zapartas <ezapartas@gmail.com>",
+    "Matthias Kruckow <Matthias.Kruckow@unige.ch>",
 ]
 
 
-from matplotlib import checkdep_usetex
-
+from matplotlib import rcParams
+import shutil
 
 PLOT_PROPERTIES = {
     'show_fig': False,
@@ -38,7 +39,7 @@ PLOT_PROPERTIES = {
     'zmin': None,
     'zmax': None,
     'title': None,
-    'rcParams': {"text.usetex": checkdep_usetex(True),
+    'rcParams': {"text.usetex": True if shutil.which('latex') else False,
                  "font.family": "serif",
                  "font.sans-serif": ["Computer Modern Roman"]},
     'title_font_dict': {'fontsize': 10},
@@ -65,7 +66,8 @@ PLOT_PROPERTIES = {
         'aspect': 20,
         'anchor': (0.0, 0.5),
         'panchor': (1.0, 0.5),
-        'extend': 'neither'
+        'extend': 'neither',
+        'bounds': [0.03, 0.7, 0.94, 0.05]
     },
     'legend1D': {
         'title': None,
@@ -95,7 +97,15 @@ PLOT_PROPERTIES = {
         },
         'shrink_box': 0.85,
         'bbox_to_anchor': (1, 0.5)
-    }
+    },
+    'slice_text_kwargs': {
+        'bbox': {'facecolor': 'white', 'alpha': 0.8, 'pad': 2},
+        'ha': 'right',
+        'va': 'bottom',
+        'x': 0.95,
+        'y': 0.05
+    },
+    'PdfPages': None
 }
 
 list_of_colors = ['#a6611a',
@@ -115,6 +125,18 @@ DEFAULT_MARKERS_COLORS_LEGENDS = {
         'Primary has depleted central carbon':
             ['s', 2, None, TF1_label_stable],
         'Secondary has depleted central carbon':
+            ['o', 2, None, TF1_label_stable],
+        'Primary got stopped before central carbon depletion':
+            ['s', 2, None, TF1_label_stable],
+        'Secondary got stopped before central carbon depletion':
+            ['o', 2, None, TF1_label_stable],
+        'Primary enters pair-instability regime':
+            ['s', 2, None, TF1_label_stable],
+        'Secondary enters pair-instability regime':
+            ['o', 2, None, TF1_label_stable],
+        'Primary enters pulsational pair-instability regime':
+            ['s', 2, None, TF1_label_stable],
+        'Secondary enters pulsational pair-instability regime':
             ['o', 2, None, TF1_label_stable],
         'offcenter neon ignition for primary':
             ['s', 2, None, TF1_label_stable],
@@ -148,6 +170,8 @@ DEFAULT_MARKERS_COLORS_LEGENDS = {
             ['D', 1, color_unstable, TF1_label_unstable],
         'overflow from L2 (R_L2) surface for q(=Macc/Mdon)<1, donor is star 2':
             ['D', 1, color_unstable, TF1_label_unstable],
+        'overflow from L2 (R_L2) surface for q(=Macc/Mdon)>1, donor is star 2':
+            ['D', 1, color_unstable, TF1_label_unstable],
         'reached maximum mass transfer rate: 10.0d0':
             ['D', 1, color_unstable, TF1_label_unstable],
         'Reached maximum mass transfer rate: 1d-1':
@@ -158,18 +182,28 @@ DEFAULT_MARKERS_COLORS_LEGENDS = {
             ['s', 2, None, TF1_label_initial],
         'Both stars fill their Roche Lobe and at least one of them is off MS':
             ['D', 1, color_unstable, TF1_label_unstable],
+        'Both stars fill their Roche Lobe and t_kh > t_acc':
+            ['D', 1, color_unstable, TF1_label_unstable],
+        'overflow from L2, t_kh > t_acc and w > w_crit_lim, donor is star 1':
+            ['D', 1, color_unstable, TF1_label_unstable],
+        'overflow from L2, t_kh > t_acc and w > w_crit_lim, donor is star 2':
+            ['D', 1, color_unstable, TF1_label_unstable],
         'Terminate due to L2 overflow during case A':
             ['D', 1, color_unstable, TF1_label_unstable],
         'Reached maximum mass transfer rate: Exceeded photon trapping radius':
             ['D', 1, color_unstable, TF1_label_unstable],
+        'Terminate because accretor (r-rl)/rl > accretor_overflow_terminate':
+            ['D', 1, color_unstable, TF1_label_unstable],
         'logQ_limit':
-            ['x', 0, 'red', 'logQ_limit'],
+            ['x', 1, 'red', 'logQ_limit'],
+        'logQ_min_limit':
+            ['x', 1, 'red', 'logQ_limit'],
         'min_timestep_limit':
-            ['x', 0, 'red', 'Not converged'],
+            ['x', 1, 'red', 'Not converged'],
         'reach cluster timelimit':
-            ['x', 0, 'red', 'Not converged'],
+            ['x', 1, 'red', 'Not converged'],
         'no termination code':
-            ['x', 0, 'red', 'no termination code'],
+            ['x', 1, 'red', 'no termination code'],
         'envelope_mass_limit':
             ['s', 2, None, TF1_label_stable],
         'gamma_center_limit':
@@ -179,26 +213,28 @@ DEFAULT_MARKERS_COLORS_LEGENDS = {
         'Initial RLOF':
             ['.', 1, 'black', TF1_label_initial],
         'Not converged':
-            ['x', 0, 'red', 'Not converged'],
-        'ignored_no_BH':
+            ['x', 1, 'red', 'Not converged'],
+        'fe_core_infall_limit':
+            ['x', 1, 'tab:purple', 'fe_core_infall_limit'],
+        'ignored_no_binary_history':
             ['.', 1, color_unstable, TF1_label_initial],
         'ignored_no_RLO':
             ['.', 1, color_unstable, TF1_label_initial],
         'unknown':
-            ['+', 0, 'red', 'unknown'],
+            ['+', 1, 'red', 'unknown'],
 
     },
 
     'termination_flag_2': {
 
         'initial_RLOF':
-            ['+', 0, 'black', 'initial RLOF'],
+            ['+', 1, 'black', 'initial RLOF'],
         'forced_initial_RLO':
-            ['+', 0, 'black', 'initial RLOF'],
-        'ignored_no_BH':
-            ['+', 0, 'black', 'initial RLOF'],
+            ['+', 1, 'black', 'initial RLOF'],
+        'ignored_no_binary_history':
+            ['+', 1, 'black', 'initial RLOF'],
         'ignored_no_RLO':
-            ['+', 0, 'black', 'initial RLOF'],
+            ['+', 1, 'black', 'initial RLOF'],
         'no_RLOF':
             ['.', 1, 'black', 'no RLOF'],
         'contact_during_MS':
@@ -206,81 +242,152 @@ DEFAULT_MARKERS_COLORS_LEGENDS = {
         'L2_RLOF':
             ['^', 1, 'black', 'L2 RLOF'],
 
-        'caseA_from_star1':
-            ['s', 2, 'tab:blue', 'case A from star1'],
-        'caseA/B_from_star1':
-            ['s', 2, 'tab:green', 'case A/B from star1'],
-        'caseA/B/A_from_star1':
-            ['s', 2, 'lightgrey', 'case A/B/A from star1'],
-        'caseA/B/C_from_star1':
-            ['s', 2, 'yellow', 'case A/B/C from star1'],
-        'caseA/B/BB_from_star1':
-            ['s', 2, 'tab:red', 'case A/B/BB from star1'],
-        'caseA/B/C/BB_from_star1':
-            ['s', 2, 'tab:cyan', 'case A/B/C/BB from star1'],
-        'caseB_from_star1':
-            ['s', 2, 'tab:purple', 'case B from star1'],
-        'caseB/A_from_star1':
-            ['s', 2, 'tab:olive', 'case B/A from star1'],
-        'caseB/BB_from_star1':
-            ['s', 2, 'tab:pink', 'case B/BB from star1'],
-        'caseB/C/BB_from_star1':
-            ['s', 2, 'tab:gray', 'case B/C/BB from star1'],
-        'caseB/C_from_star1':
-            ['s', 2, 'tab:orange', 'case B/C from star1'],
-        'caseC_from_star1':
-            ['s', 2, 'black', 'case C from star1'],
-        'caseC/BB_from_star1':
-            ['s', 2, 'brown', 'case C/BB from star1'],
+        'case_A1':
+            ['s', 2, 'tab:blue', 'case A1'],
+        'case_A1/B1':
+            ['s', 2, 'tab:green', 'case A1/B1'],
+        'case_A1/B1/A1':
+            ['s', 2, 'lightgrey', 'case A1/B1/A1'],
+        'case_A1/B1/C1':
+            ['s', 2, 'yellow', 'case A1/B1/C1'],
+        'case_A1/C1':
+            ['s', 2, 'yellow', 'case A1/C1'],
+        'case_A1/B1/BB1':
+            ['s', 2, 'tab:red', 'case A1/B1/BB1'],
+        'case_A1/B1/C1/BB1':
+            ['s', 2, 'tab:cyan', 'case A1/B1/C1/BB1'],
+        'case_B1':
+            ['s', 2, 'tab:purple', 'case B1'],
+        'case_B1/BB1':
+            ['s', 2, 'tab:pink', 'case B1/BB1'],
+        'case_B1/C1/BB1':
+            ['s', 2, 'tab:gray', 'case B1/C1/BB1'],
+        'case_B1/C1':
+            ['s', 2, 'tab:orange', 'case B1/C1'],
+        'case_C1':
+            ['s', 2, 'black', 'case C1'],
+        'case_C1/BB1':
+            ['s', 2, 'brown', 'case C1/BB1'],
+        'case_BA1':
+            ['s', 2, 'tab:blue', 'case BA1'],
+        'case_BB1':
+            ['s', 2, 'tab:green', 'case BB1'],
+        'case_BA1/BB1':
+            ['s', 2, 'tab:red', 'case BA1/BB1'],
 
-        'caseA_from_star2':
-            ['o', 2, 'tab:blue', 'case A from star2'],
-        'caseA/B_from_star2':
-            ['o', 2, 'tab:green', 'case A/B from star2'],
-        'caseA/B/A_from_star2':
-            ['s', 2, 'lightgrey', 'case A/B/A from star2'],
-        'caseA/B/C_from_star2':
-            ['s', 2, 'yellow', 'case A/B/C from star2'],
-        'caseA/B/BB_from_star2':
-            ['o', 2, 'tab:red', 'case A/B/BB from star2'],
-        'caseA/B/C/BB_from_star2':
-            ['o', 2, 'tab:cyan', 'case A/B/C/BB from star2'],
-        'caseB_from_star2':
-            ['o', 2, 'tab:purple', 'case B from star2'],
-        'caseB/A_from_star2':
-            ['o', 2, 'tab:olive', 'case B/A from star2'],
-        'caseB/BB_from_star2':
-            ['o', 2, 'tab:pink', 'case B/BB from star2'],
-        'caseB/C/BB_from_star2':
-            ['o', 2, 'tab:gray', 'case B/C/BB from star2'],
-        'caseB/C_from_star2':
-            ['o', 2, 'tab:orange', 'case B/C from star2'],
-        'caseC_from_star2':
-            ['o', 2, 'black', 'case C from star2'],
-        'caseC/BB_from_star2':
-            ['s', 2, 'brown', 'case C/BB from star2'],
+        'case_A2':
+            ['o', 2, 'tab:blue', 'case A2'],
+        'case_A2/B2':
+            ['o', 2, 'tab:green', 'case A2/B2'],
+        'case_A2/B2/A2':
+            ['o', 2, 'lightgrey', 'case A2/B2/A2'],
+        'case_A2/B2/C2':
+            ['o', 2, 'yellow', 'case A2/B2/C2'],
+        'case_A2/C2':
+            ['o', 2, 'yellow', 'case A2/C2'],
+        'case_A2/B2/BB2':
+            ['o', 2, 'tab:red', 'case A2/B2/BB2'],
+        'case_A2/B2/C2/BB2':
+            ['o', 2, 'tab:cyan', 'case A2/B2/C2/BB2'],
+        'case_B2':
+            ['o', 2, 'tab:purple', 'case B2'],
+        'case_B2/BB2':
+            ['o', 2, 'tab:pink', 'case B2/BB2'],
+        'case_B2/C2/BB2':
+            ['o', 2, 'tab:gray', 'case B2/C2/BB2'],
+        'case_B2/C2':
+            ['o', 2, 'tab:orange', 'case B2/C2'],
+        'case_C2':
+            ['o', 2, 'black', 'case C2'],
+        'case_C2/BB2':
+            ['o', 2, 'brown', 'case C2/BB2'],
+        'case_BA2':
+            ['o', 2, 'tab:blue', 'case BA2'],
+        'case_BB2':
+            ['o', 2, 'tab:green', 'case BB2'],
+        'case_BA2/BB2':
+            ['o', 2, 'tab:red', 'case BA1/BB2'],
 
-        'caseBA_from_star1':
-            ['s', 2, 'tab:blue', 'case BA from star1'],
-        'caseBB_from_star1':
-            ['s', 2, 'tab:green', 'case BB from star1'],
-        'caseBA/BB_from_star1':
-            ['s', 2, 'tab:red', 'case BA/BB from star1'],
+        'case_A1/A2':
+            ['>', 2, 'tab:blue', 'case A1/A2'],
+        'case_A1/A2/A1':
+            ['>', 2, 'tab:green', 'case A1/A2/A1'],
+        'case_A1/A2/B1':
+            ['>', 2, 'tab:gray', 'case A1/A2/B1'],
+        'case_A1/A2/B1/B2':
+            ['>', 2, 'tab:orange', 'case A1/A2/B1/B2'],
+        'case_A1/B1/BB1':
+            ['>', 2, 'tab:purple', 'case A1/B1/BB1'],
+        'case_A1/A2/B2':
+            ['>', 2, 'tab:red', 'case A1/A2/B2'],
+        'case_A1/B1/A2':
+            ['>', 2, 'tab:pink', 'case A1/B1/B2'],
+        'case_A1/B1/A2/B2':
+            ['>', 2, 'tab:olive', 'case A1/B1/A2/B2'],
+        'case_A1/B1/A2/B1/B2':
+            ['>', 2, 'yellow', 'case A1/B1/A2/B1/B2'],
+        'case_A1/B1/B2':
+            ['>', 2, 'brown', 'case A1/B1/B2'],
+        'case_A1/B1/B2/B1':
+            ['>', 2, 'black', 'case A1/B1/B2/B1'],
+        'case_A1/B2':
+            ['>', 2, 'tab:cyan', 'case A1/B1/C1/BB1'],
+        'case_B1/A2':
+            ['<', 2, 'tab:blue', 'case B1/A2'],
+        'case_B1/A2/B2':
+            ['<', 2, 'tab:green', 'case B1/A2/B2'],
+        'case_B1/B2':
+            ['<', 2, 'tab:gray', 'case B1/B2'],
+        'case_B1/B2/B1':
+            ['<', 2, 'tab:red', 'case B1/B2/B1'],
+        'case_B1/B2/BB1':
+            ['<', 2, 'brown', 'case B1/B2/BB1'],
+        'case_B1/B2/B1/B2/B1/B2/B1/B2/B1':
+            ['<', 2, 'tab:pink', 'case B1/B2/B1/B2/B1/B2/B1/B2/B1'],
+        'case_B1/B2/B1/C1':
+            ['<', 2, 'tab:olive', 'case B1/B2/B1/C1'],
+        'case_B1/B2/C1':
+            ['<', 2, 'tab:purple', 'case B1/B2/C1'],
+        'case_B1/B2/C1/BB1':
+            ['<', 2, 'black', 'case B1/B2/C1/BB1'],
+        'case_B1/C2':
+            ['<', 2, 'tab:cyan', 'case B1/C1'],
+        'case_B2/B1':
+            ['v', 2, 'tab:blue', 'case B2/B1'],
+        'case_B2/B1/C1':
+            ['v', 2, 'tab:green', 'case B2/B1/C1'],
+        'case_B2/C1':
+            ['v', 2, 'tab:orange', 'case B2/C1'],
+        'case_B1/A2/B2/C1':
+            ['v', 2, 'tab:red', 'case B1/A2/B2/C1'],
+        'case_A2/B1/B2':
+            ['v', 2, 'tab:pink', 'case A2/B1/B2'],
+        'case_A1/B1/B2/C1':
+            ['v', 2, 'tab:purple', 'case A1/B1/B2/C1'],
+        'case_A1/B1/B2/B1/C1':
+            ['v', 2, 'tab:olive', 'case A1/B1/B2/B1/C1'],
+        'case_A1/B1/A2/B2/C1':
+            ['v', 2, 'brown', 'case A1/B1/A2/B2/C1'],
+        'case_A1/B2/C1':
+            ['v', 2, 'yellow', 'case A1/B2/C1'],
+        'case_A1/A2/B2/C1':
+            ['v', 2, 'black', 'case A1/A2/B2/C1'],
+        'case_A2/A1':
+            ['v', 2, 'tab:gray', 'case A2/A1'],
 
-        '_from_star1':
-            ['x', 0, 'black', 'unknown'],
-        '_from_star2':
-            ['x', 0, 'black', 'unknown'],
-
+        'None':
+            ['x', 1, 'tab:red', 'failed'],
     },
 
     'termination_flag_3': {
         'H-rich_non_burning':
-            ['v', 2, 'tab:orange', 'H-rich H non-buring'],
+            ['v', 2, 'tab:orange', 'H-rich H non-burning'],
+        'accreted_He_Core_H_burning':
+            ['v', 2, 'black', 'accreted He core H burning'],
         'H-rich_Core_H_burning':
-            ['s', 2, 'tab:olive', 'H-rich core H buring'],
+            ['s', 2, 'tab:olive', 'H-rich core H burning'],
         'H-rich_Shell_H_burning':
-            ['s', 2, 'tab:red', 'H-rich shell H buring'],
+            ['s', 2, 'tab:red', 'H-rich shell H burning'],
         'H-rich_Core_C_burning':
             ['s', 2, 'tab:pink', 'H-rich core C burning'],
         'H-rich_Central_C_depletion':
@@ -299,24 +406,30 @@ DEFAULT_MARKERS_COLORS_LEGENDS = {
             ['o', 2, 'tab:brown', 'stripped He-star C depletion'],
         'stripped_He_non_burning':
             ['o', 2, 'gray', 'stripped He-star non burning'],
+        'stripped_He_Core_H_burning':
+            ['x', 1, 'black', 'unknown'],
+        'stripped_He_Shell_H_burning':
+            ['x', 1, 'black', 'unknown'],
         'undetermined_evolutionary_state':
-            ['x', 0, 'black', 'unknown'],
+            ['x', 1, 'black', 'unknown'],
         'BH':
             ['*', 1, 'black', 'BH'],
         'NS':
             ['*', 1, 'tab:gray', 'NS'],
-        'ignored_no_BH':
-            ['s', 2, 'tab:olive', 'H-rich core H buring'],
+        'ignored_no_binary_history':
+            ['s', 2, 'tab:olive', 'H-rich core H burning'],
         'ignored_no_RLO':
-            ['s', 2, 'tab:olive', 'H-rich core H buring'],
+            ['s', 2, 'tab:olive', 'H-rich core H burning'],
     },
     'termination_flag_4': {
         'H-rich_non_burning':
-            ['v', 2, 'tab:orange', 'H-rich H non-buring'],
+            ['v', 2, 'tab:orange', 'H-rich H non-burning'],
+        'accreted_He_Core_H_burning':
+            ['v', 2, 'black', 'accreted He core H burning'],
         'H-rich_Core_H_burning':
-            ['s', 2, 'tab:olive', 'H-rich core H buring'],
+            ['s', 2, 'tab:olive', 'H-rich core H burning'],
         'H-rich_Shell_H_burning':
-            ['s', 2, 'tab:red', 'H-rich shell H buring'],
+            ['s', 2, 'tab:red', 'H-rich shell H burning'],
         'H-rich_Core_C_burning':
             ['s', 2, 'tab:pink', 'H-rich core C burning'],
         'H-rich_Central_C_depletion':
@@ -337,13 +450,17 @@ DEFAULT_MARKERS_COLORS_LEGENDS = {
             ['o', 2, 'tab:brown', 'stripped He-star C depletion'],
         'stripped_He_non_burning':
             ['o', 2, 'gray', 'stripped He-star non burning'],
+        'stripped_He_Core_H_burning':
+            ['x', 1, 'black', 'unknown'],
+        'stripped_He_Shell_H_burning':
+            ['x', 1, 'black', 'unknown'],
         'undetermined_evolutionary_state':
-            ['x', 0, 'black', 'unknown'],
+            ['x', 1, 'black', 'unknown'],
         'BH':
             ['*', 1, 'black', 'BH'],
         'NS':
             ['*', 1, 'tab:gray', 'NS'],
-        'ignored_no_BH':
+        'ignored_no_binary_history':
             ['s', 2, 'tab:olive', 'H-rich core H buring'],
         'ignored_no_RLO':
             ['s', 2, 'tab:olive', 'H-rich core H buring'],
@@ -353,30 +470,54 @@ DEFAULT_MARKERS_COLORS_LEGENDS = {
         'Stable contact':
             ['s', 2, list_of_colors[3], 'Stable contact phase'],
         'Stable case A':
-            ['s', 2, list_of_colors[2], 'Stable RLOF during MS'],
-        'Stable case AB':
-            ['s', 2, list_of_colors[1], 'Stable RLOF during postMS'],
-        'Stable case ABB':
-            ['s', 2, list_of_colors[0], 'Stable RLOF during stripped He star'],
+            ['s', 2, list_of_colors[2], 'Last stable RLOF during MS'],
         'Stable case B':
-            ['s', 2, list_of_colors[1], 'Stable RLOF during postMS'],
+            ['s', 2, list_of_colors[1], 'Last stable RLOF during postMS'],
         'Stable case C':
-            ['s', 2, list_of_colors[1], 'Stable RLOF during postMS'],
+            ['s', 2, list_of_colors[1], 'Last stable RLOF during postMS'],
         'Stable case BA':
-            ['s', 2, list_of_colors[0], 'Stable RLOF during stripped He star'],
+            ['s', 2, list_of_colors[0], 'Last stable RLOF during stripped He star'],
         'Stable case BB':
-            ['s', 2, list_of_colors[0], 'Stable RLOF during stripped He star'],
+            ['s', 2, list_of_colors[0], 'Last stable RLOF during stripped He star'],
+        # hot fix for case AA should be removed later:
+        'Stable case AA':
+            ['s', 2, list_of_colors[2], 'Last stable RLOF during MS'],
+        'Stable case AB':
+            ['s', 2, list_of_colors[1], 'Last stable RLOF during postMS'],
+        'Stable case AC':
+            ['s', 2, list_of_colors[1], 'Last stable RLOF during postMS'],
+        'Stable case An':
+            ['s', 2, list_of_colors[1], 'Last stable RLOF during postMS'],
+        'Stable case ABA':
+            ['s', 2, list_of_colors[0], 'Last stable RLOF during stripped He star'],
+        'Stable case ABB':
+            ['s', 2, list_of_colors[0], 'Last stable RLOF during stripped He star'],
         'Stable case BC':
-            ['s', 2, list_of_colors[1], 'Stable RLOF during postMS'],
+            ['s', 2, list_of_colors[1], 'Last stable RLOF during postMS'],
+        'Stable case Bn':
+            ['s', 2, list_of_colors[1], 'Last stable RLOF during postMS'],
+        'Stable case BBA':
+            ['s', 2, list_of_colors[0], 'Last stable RLOF during stripped He star'],
+        'Stable case BBB':
+            ['s', 2, list_of_colors[0], 'Last stable RLOF during stripped He star'],
+        'Stable case Cn':
+            ['s', 2, list_of_colors[1], 'Last stable RLOF during postMS'],
+        'Stable case CBA':
+            ['s', 2, list_of_colors[0], 'Last stable RLOF during stripped He star'],
+        'Stable case CBB':
+            ['s', 2, list_of_colors[0], 'Last stable RLOF during stripped He star'],
+        'Stable case BABB':
+            ['s', 2, list_of_colors[0], 'Last stable RLOF during stripped He star'],
+        'Stable case BAn':
+            ['s', 2, list_of_colors[0], 'Last stable RLOF during stripped He star'],
+        'Stable case BBn':
+            ['s', 2, list_of_colors[0], 'Last stable RLOF during stripped He star'],
+        'Stable case n':
+            ['s', 2, list_of_colors[1], 'Last stable RLOF while non burning'],
         'Unstable contact':
             ['D', 1, list_of_colors[3], 'Unstable contact phase'],
         'Unstable case A':
             ['D', 1, list_of_colors[2], 'Unstable RLOF during MS'],
-        'Unstable case AB':
-            ['D', 1, list_of_colors[1], 'Unstable RLOF during postMS'],
-        'Unstable case ABB':
-            ['D', 1, list_of_colors[0],
-             'Unstable RLOF during stripped He star'],
         'Unstable case B':
             ['D', 1, list_of_colors[1], 'Unstable RLOF during postMS'],
         'Unstable case C':
@@ -387,8 +528,48 @@ DEFAULT_MARKERS_COLORS_LEGENDS = {
         'Unstable case BB':
             ['D', 1, list_of_colors[0],
              'Unstable RLOF during stripped He star'],
+        'Unstable case AB':
+            ['D', 1, list_of_colors[1], 'Unstable RLOF during postMS'],
+        'Unstable case AC':
+            ['D', 1, list_of_colors[1], 'Unstable RLOF during postMS'],
+        'Unstable case An':
+            ['D', 1, list_of_colors[1], 'Unstable RLOF during postMS'],
+        'Unstable case ABA':
+            ['D', 1, list_of_colors[0],
+             'Unstable RLOF during stripped He star'],
+        'Unstable case ABB':
+            ['D', 1, list_of_colors[0],
+             'Unstable RLOF during stripped He star'],
         'Unstable case BC':
             ['D', 1, list_of_colors[1], 'Unstable RLOF during postMS'],
+        'Unstable case Bn':
+            ['D', 1, list_of_colors[1], 'Unstable RLOF during postMS'],
+        'Unstable case BBA':
+            ['D', 2, list_of_colors[0],
+             'Unstable RLOF during stripped He star'],
+        'Unstable case BBB':
+            ['D', 2, list_of_colors[0],
+             'Unstable RLOF during stripped He star'],
+        'Unstable case Cn':
+            ['D', 1, list_of_colors[1], 'Unstable RLOF during postMS'],
+        'Unstable case CBA':
+            ['D', 2, list_of_colors[0],
+             'Unstable RLOF during stripped He star'],
+        'Unstable case CBB':
+            ['D', 2, list_of_colors[0],
+             'Unstable RLOF during stripped He star'],
+        'Unstable case BABB':
+            ['D', 2, list_of_colors[0],
+             'Unstable RLOF during stripped He star'],
+        'Unstable case BAn':
+            ['D', 2, list_of_colors[0],
+             'Unstable RLOF during stripped He star'],
+        'Unstable case BBn':
+            ['D', 2, list_of_colors[0],
+             'Unstable RLOF during stripped He star'],
+        'Unstable case n':
+            ['D', 2, list_of_colors[1],
+             'Unstable RLOF while non burning'],
         'Unstable L2 RLOF':
             ['D', 1, list_of_colors[0],
              'Unstable RLOF during stripped He star'],
@@ -397,9 +578,13 @@ DEFAULT_MARKERS_COLORS_LEGENDS = {
         'no_RLOF':
             ['s', 2, 'lightgrey', 'no RLOF'],
         'Not converged':
-            ['x', 0, 'red', 'Not converged'],
+            ['x', 1, 'red', 'Not converged'],
         'unknown':
-            ['+', 0, 'green', 'unknown'],
+            ['+', 1, 'green', 'unknown'],
+        'Reverse stable MT':
+            ['s', 2, 'tab:olive', 'Stable reverse mass-transfer phase'],
+        'Reverse unstable MT':
+            ['D', 1, 'tab:olive', 'Unstable reverse mass-transfer phase'],
         },
     'debug': {
         'terminate due to primary depleting carbon (inverse sn?)':
@@ -408,20 +593,32 @@ DEFAULT_MARKERS_COLORS_LEGENDS = {
             ['s', 2, None, TF1_label_stable],
         'Secondary has depleted central carbon':
             ['o', 2, None, TF1_label_stable],
+        'Primary got stopped before central carbon depletion':
+            ['s', 2, None, TF1_label_stable],
+        'Secondary got stopped before central carbon depletion':
+            ['o', 2, None, TF1_label_stable],
+        'Primary enters pair-instability regime':
+            ['s', 2, None, TF1_label_stable],
+        'Secondary enters pair-instability regime':
+            ['o', 2, None, TF1_label_stable],
+        'Primary enters pulsational pair-instability regime':
+            ['s', 2, None, TF1_label_stable],
+        'Secondary enters pulsational pair-instability regime':
+            ['o', 2, None, TF1_label_stable],
         'offcenter neon ignition for primary':
             ['s', 2, None, TF1_label_stable],
         'offcenter neon ignition for secondary':
             ['o', 2, None, TF1_label_stable],
         'overflow from L1 at ZAMS':
-            ['.', 1, None, TF1_label_initial],
+            ['.', 1.5, None, TF1_label_initial],
         'Terminate because of overflowing initial model':
-            ['.', 1, None, TF1_label_initial],
+            ['.', 1.5, None, TF1_label_initial],
         'overflow from L2 point for q>1 at ZAMS':
-            ['.', 1, None, TF1_label_initial],
+            ['.', 1.5, None, TF1_label_initial],
         'overflow from L2 surface for q<1 at ZAMS':
-            ['.', 1, None, TF1_label_initial],
+            ['.', 1.5, None, TF1_label_initial],
         'overflow from L2 surface for q>1 at ZAMS':
-            ['.', 1, None, TF1_label_initial],
+            ['.', 1.5, None, TF1_label_initial],
         'overflow from L2 surface for q<1':
             ['D', 1, None, TF1_label_unstable],
         r'overflow from L2 (D_L2) distance for q(=Macc/Mdon)>1, '
@@ -439,6 +636,9 @@ DEFAULT_MARKERS_COLORS_LEGENDS = {
         'overflow from L2 (R_L2) surface for q(=Macc/Mdon)<1, '
         'donor is star 2':
             ['D', 1, None, TF1_label_unstable],
+        'overflow from L2 (R_L2) surface for q(=Macc/Mdon)>1, '
+        'donor is star 2':
+            ['D', 1, None, TF1_label_unstable],
         'reached maximum mass transfer rate: 10.0d0':
             ['D', 1, None, TF1_label_unstable],
         'Reached maximum mass transfer rate: 1d-1':
@@ -446,41 +646,55 @@ DEFAULT_MARKERS_COLORS_LEGENDS = {
         'Reached the critical mt rate':
             ['D', 1, None, TF1_label_unstable],
         'Reached TPAGB':
-            ['s', 3, None, TF1_label_initial],
+            ['s', 2, None, TF1_label_initial],
         'Both stars fill their Roche Lobe and at least one of them is off MS':
+            ['D', 1, None, TF1_label_unstable],
+        'Both stars fill their Roche Lobe and t_kh > t_acc':
+            ['D', 1, None, TF1_label_unstable],
+        'overflow from L2, t_kh > t_acc and w > w_crit_lim, donor is star 1':
+            ['D', 1, None, TF1_label_unstable],
+        'overflow from L2, t_kh > t_acc and w > w_crit_lim, donor is star 2':
             ['D', 1, None, TF1_label_unstable],
         'Terminate due to L2 overflow during case A':
             ['D', 1, None, TF1_label_unstable],
         'Reached maximum mass transfer rate: Exceeded photon trapping radius':
             ['D', 1, None, TF1_label_unstable],
+        'Terminate because accretor (r-rl)/rl > accretor_overflow_terminate':
+            ['D', 1, None, TF1_label_unstable],
         'logQ_limit':
-            ['s', 3, None, 'logQ_limit'],
+            ['x', 1, None, 'logQ_limit'],
+        'logQ_min_limit':
+            ['x', 1, None, 'logQ_limit'],
         'min_timestep_limit':
-            ['s', 3, None, 'Not converged'],
+            ['x', 1, None, 'Not converged'],
         'reach cluster timelimit':
-            ['s', 3, None, 'Not converged'],
+            ['x', 1, None, 'Not converged'],
         'no termination code':
-            ['s', 3, None, 'no termination code'],
+            ['x', 1, None, 'no termination code'],
         'envelope_mass_limit':
-            ['s', 3, None, TF1_label_stable],
+            ['s', 2, None, TF1_label_stable],
         'gamma_center_limit':
-            ['s', 3, None, TF1_label_stable],
+            ['s', 2, None, TF1_label_stable],
         'max_age':
-            ['s', 3, None, TF1_label_stable],
+            ['s', 2, None, TF1_label_stable],
         'Initial RLOF':
-            ['.', 1, 'black', TF1_label_initial],
+            ['.', 1.5, 'black', TF1_label_initial],
         'Not converged':
-            ['s', 3, None, 'Not converged'],
-        'ignored_no_BH':
-            ['.', 1, color_unstable, TF1_label_initial],
+            ['x', 1, None, 'Not converged'],
+        'ignored_no_binary_history':
+            ['.', 1.5, color_unstable, TF1_label_initial],
         'ignored_no_RLO':
-            ['.', 1, color_unstable, TF1_label_initial],
+            ['.', 1.5, color_unstable, TF1_label_initial],
+        'forced_initial_RLO':
+            ['.', 1.5, 'black', TF1_label_initial],
         'unknown':
-            ['+', 0, 'green', 'unknown'],
+            ['+', 1, 'green', 'unknown'],
+        'fe_core_infall_limit':
+            ['x', 1, None, 'fe_core_infall_limit'],
     },
     'interpolation_class': {
         'initial_MT':
-            ['o', 2, 'tab:blue', 'initial_MT'],
+            ['.', 2, 'black', 'initial_MT'],
         'no_MT':
             ['o', 2, 'tab:pink', 'no_MT'],
         'not_converged':
@@ -490,13 +704,27 @@ DEFAULT_MARKERS_COLORS_LEGENDS = {
         'unstable_MT':
             ['o', 2, 'tab:purple', 'unstable_MT']
     },
+    'interpolation_class_errors': {
+        'initial_MT':
+            ['.', 1, 'black', 'initial_MT'],
+        'no_MT':
+            ['o', 2, None, 'no_MT'],
+        'not_converged':
+            ['x', 1, 'tab:red', 'not_converged'],
+        'stable_MT':
+            ['s', 2, None, 'stable_MT'],
+        'unstable_MT':
+            ['D', 1, None, 'unstable_MT']
+    },
     'SN_type': {
         'CCSN':
             ['o', 2, 'tab:blue', 'CCSN'],
         'ECSN':
             ['o', 2, 'tab:orange', 'ECSN'],
         'PPISN':
-            ['o', 2, 'tab:red', 'PPISN'],
+            ['o', 2, 'tab:pink', 'PPISN'],
+        'PISN':
+            ['o', 2, 'tab:red', 'PISN'],
         'WD':
             ['o', 2, 'tab:purple', 'WD'],
         'None':
@@ -509,16 +737,74 @@ DEFAULT_MARKERS_COLORS_LEGENDS = {
             ['o', 2, 'tab:orange', 'NS'],
         'WD':
             ['o', 2, 'tab:purple', 'WD'],
+        'PISN':
+            ['o', 2, 'tab:red', 'PISN'],
         'None':
             ['o', 2, 'black', 'intial MT / unstable MT / not converged'],
     }
 }
 
+def add_flag_to_MARKERS_COLORS_LEGENDS(MARKERS_COLORS_LEGENDS, flag):
+    """Add not pre defined stuff to DEFAULT_MARKERS_COLORS_LEGENDS.
+
+    Parameters
+    ----------
+    MARKERS_COLORS_LEGENDS : dict of lists
+        Dictionary with flags as keys given a list with marker, size, color,
+        and legend text for each flag.
+    flag : str
+        The flag itself.
+
+    """
+    if flag not in MARKERS_COLORS_LEGENDS.keys():
+        if ('case_' in flag): # unknown MT flag
+            if '1' not in flag: # only star 1 is donor
+                s = 'o'
+            elif '2' not in flag: # only star 2 is donor
+                s = 's'
+            elif flag[-1]=='1': # star 1 is last donor
+                s = '>'
+            elif flag[-1]=='2': # star 2 is last donor
+                s = '<'
+            else:
+                s = 'v'
+            if '/' in flag: # multiple mass transfers
+                if (('case_A' in flag) or ('case_BA' in flag)):
+                    # first MT is case A or case BA
+                    c = 'tab:cyan'
+                elif (('case_C' in flag) or ('case_BC' in flag)):
+                    # first MT is case C or case BC
+                    c = 'tab:orange'
+                elif (('case_B' in flag) or ('case_BB' in flag)):
+                    # first MT is case B or case BB
+                    # (needs to be behind case BA and BC)
+                    c = 'tab:pink'
+                else:
+                    c = 'lightgrey'
+            elif 'BA' in flag: # only case BA
+                c = 'tab:red'
+            elif 'BB' in flag: # only case BB
+                c = 'brown'
+            elif 'BC' in flag: # only case BC
+                c = 'tab:gray'
+            elif 'A' in flag: # only case A
+                c = 'tab:blue'
+            elif 'B' in flag: # only case B
+                c = 'tab:green'
+            elif 'C' in flag: # only case C
+                c = 'tab:purple'
+            else:
+                c = 'black'
+            MARKERS_COLORS_LEGENDS[flag] = [s, 2, c, flag.replace('_',' ')]
+        else:
+            MARKERS_COLORS_LEGENDS[flag] = ['+', 1, 'black', flag.replace('_',' ')]
 
 DEFAULT_LABELS = {
     # extra
     'mass_ratio':
         [r'$q$', r'$\log_{10}(q)$'],
+    'Z_Zsun':
+        [r'$Z \, [Z_\odot]$', r'$\log_{10}(Z / Z_\odot)$'],
 
     # history1/history2
     'star_age':
@@ -723,4 +1009,160 @@ DEFAULT_LABELS = {
     't_sync_conv_2':
         [r'$t^2_\mathrm{conv}\,[\mathrm{s}]$',
          r'$\log_{10}(t^2_\mathrm{conv}/\mathrm{s})$'],
+
+    # POSYDON population synthesis
+    'z_formation': [r'$z_\mathrm{formation}$', r'$\log_{10}(z_\mathrm{formation})$'],
+    'z_merger': [r'$z_\mathrm{merger}$', r'$\log_{10}(z_\mathrm{merger})$'],
+    'm_tot': [r'$m_\mathrm{tot}\,[M_\odot]$',
+              r'$\log_{10}(m_\mathrm{tot}/M_\odot)$'],
+    'm_chirp': [r'$m_\mathrm{chirp}\,[M_\odot]$',
+                r'$\log_{10}(m_\mathrm{chirp}/M_\odot)$',],
+    'q': [r'$q$', r'$\log_{10}(q)$'],
+    'chi_eff': [r'$\chi_\mathrm{eff}$', r'$\log_{10}(\chi_\mathrm{eff})$'],
+    'S1_mass': [r'$m_\mathrm{CO}\,[M_\odot]$',
+                r'$\log_{10}(m_\mathrm{CO}/M_\odot)$'],
+    'S2_mass': [r'$m_\mathrm{CO}\,[M_\odot]$'
+                r'$\log_{10}(m_\mathrm{CO}/M_\odot)$'],
+    'S1_spin': [r'$\chi_\mathrm{CO}$', r'$\log_{10}(\chi_\mathrm{CO}$)'],
+    'S2_spin': [r'$\chi_\mathrm{CO}$', r'$\log_{10}(\chi_\mathrm{CO}$)'],
+    'S1_E_GRB': [r'$E_\mathrm{GRB}\,[\mathrm{erg}]$',
+                r'$\log_{10}(E_\mathrm{GRB}/\mathrm{erg})$'],
+    'S2_E_GRB': [r'$E_\mathrm{GRB}\,[\mathrm{erg}]$',
+                r'$\log_{10}(E_\mathrm{GRB}/\mathrm{erg})$'],
+    'S1_E_GRB_iso': [r'$E^\mathrm{iso}_\mathrm{GRB}\,[\mathrm{erg}]$',
+                r'$\log_{10}(E^\mathrm{iso}_\mathrm{GRB}/\mathrm{erg})$'],
+    'S2_E_GRB_iso': [r'$E^\mathrm{iso}_\mathrm{GRB}\,[\mathrm{erg}]$',
+                r'$\log_{10}(E^\mathrm{iso}_\mathrm{GRB}/\mathrm{erg})$'],
+    'S1_L_GRB_iso': [r'$L^\mathrm{iso}_\mathrm{GRB}\,[\mathrm{erg}\,\mathrm{s}^{-1}]$',
+                r'$\log_{10}(L^\mathrm{iso}_\mathrm{GRB}/\mathrm{erg}\,\mathrm{s}^{-1})$'],
+    'S2_L_GRB_iso': [r'$L^\mathrm{iso}_\mathrm{GRB}\,[\mathrm{erg}\,\mathrm{s}^{-1}]$',
+                r'$\log_{10}(L^\mathrm{iso}_\mathrm{GRB}/\mathrm{erg}\,\mathrm{s}^{-1})$'],
+    'S1_f_beaming': [r'$f_\mathrm{beaming}$', r'$\log_{10}(f_\mathrm{beaming})$'],
+    'S2_f_beaming': [r'$f_\mathrm{beaming}$', r'$\log_{10}(f_\mathrm{beaming})$'],
+    'S1_eta' : [r'$\eta$', r'$\log_{10}(\eta)$'],
+    'S2_eta' : [r'$\eta$', r'$\log_{10}(\eta)$'],
+
+    # Termination flags (one entry for each key in DEFAULT_MARKERS_COLORS_LEGENDS)
+    'termination_flag_1' : [r'MESA termination\_code', r'MESA termination\_code'],
+    'termination_flag_2' : [r'Mass transfer history', r'Mass transfer history'],
+    'termination_flag_3' : [r'Final stellar state of star 1', r'Final stellar state of star 1'],
+    'termination_flag_4' : [r'Final stellar state of star 2', r'Final stellar state of star 2'],
+    'combined_TF12' : [r'Final mass transfer state', r'Final mass transfer state'],
+    'debug' : [r'Final binary state', r'Final binary state'],
+    'interpolation_class' : [r'Interpolation class', r'Interpolation class'],
+    'interpolation_class_errors' : [r'Interpolation class', r'Interpolation class'],
+    'SN_type' : [r'Supernova type', r'Supernova type'],
+    'CO_type' : [r'Compact object type', r'Compact object type'],
+    'state' : [r'Remnant state', r'Remnant state'],
+}
+
+# add core collapse MODEL variables
+for i in range(1, 11):
+    DEFAULT_LABELS[f'MODEL{i:02d}_mass'] = [r'$M_\mathrm{CO} \, [M_\odot]$',
+                                              r'$\log_{10}(M_\mathrm{CO} / M_\odot)$']
+    DEFAULT_LABELS[f'MODEL{i:02d}_spin'] = [r'$\chi_\mathrm{CO}$', r'$\log_{10}(\chi_\mathrm{CO})$']
+    DEFAULT_LABELS[f'MODEL{i:02d}_m_disk_accreted'] = [r'$M_\mathrm{disk, acc} \, [M_\odot]$',
+                                              r'$\log_{10}(M_\mathrm{disk, acc} / M_\odot)$']
+    DEFAULT_LABELS[f'MODEL{i:02d}_m_disk_radiated'] = [r'$M_\mathrm{disk, rad} \, [M_\odot]$',
+                                              r'$\log_{10}(M_\mathrm{disk, rad} / M_\odot)$']
+    DEFAULT_LABELS[f'MODEL{i:02d}_M4'] = [r'$M_4 [= m/M_\odot]_{s=4}$',
+                                              r'$\log_{10}(M_4)$']
+    DEFAULT_LABELS[f'MODEL{i:02d}_mu4'] = [r'$\mu_4 \, [(dm/M_\odot)/(dr/1000\mathrm{km/s})]_{s=4}$',
+                                              r'$\log_{10}(\mu_4)$']
+    DEFAULT_LABELS[f'MODEL{i:02d}_h1_mass_ej'] = [r'$M_\mathrm{H,ej} \, [M_\odot]$',
+                                              r'$\log_{10}(M_\mathrm{H,ej} / M_\odot)$']
+    DEFAULT_LABELS[f'MODEL{i:02d}_he4_mass_ej'] = [r'$M_\mathrm{He,ej} \, [M_\odot]$',
+                                              r'$\log_{10}(M_\mathrm{He,ej} / M_\odot)$']
+
+
+
+# pre defined plottings
+PRE_SET_PLOTS = {
+    'combined_TF12' : {
+        'plot_dir_name' : 'TF12',
+        'term_flag' : 'combined_TF12'
+    },
+    'termination_flag_1' : {
+        'plot_dir_name' : 'TF1',
+        'zvar' : 'lg_mtransfer_rate',
+        'zmin' : -8,
+        'zmax' : -1
+    },
+    'termination_flag_2' : {
+        'plot_dir_name' : 'TF2',
+        'term_flag' : 'termination_flag_2'
+    },
+    'termination_flag_3' : {
+        'plot_dir_name' : 'TF3',
+        'term_flag' : 'termination_flag_3'
+    },
+    'termination_flag_4' : {
+        'plot_dir_name' : 'TF4',
+        'term_flag' : 'termination_flag_4'
+    },
+    'rl_relative_overflow_1' : {
+        'plot_dir_name' : 'debug_rl_1',
+        'zvar' : 'rl_relative_overflow_1',
+        'term_flag' : 'debug',
+        'zmin' : -0.5,
+        'zmax' : 0.5
+    },
+    'rl_relative_overflow_2' : {
+        'plot_dir_name' : 'debug_rl_2',
+        'zvar' : 'rl_relative_overflow_2',
+        'term_flag' : 'debug',
+        'zmin' : -0.5,
+        'zmax' : 0.5
+    },
+    'lg_mtransfer_rate' : {
+        'plot_dir_name' : 'debug_mt',
+        'zvar' : 'lg_mtransfer_rate',
+        'term_flag' : 'debug',
+        'zmin' : -8,
+        'zmax' : -1
+    },
+    # SN stuff
+    'S1_MODEL_DEFAULT_CO_type' : {
+        'zvar' : None,
+        'term_flag' : 'S1_MODEL01_CO_type'
+    },
+    'S1_MODEL_DEFAULT_SN_type' : {
+        'zvar' : None,
+        'term_flag' : 'S1_MODEL01_SN_type'
+    },
+    'S1_MODEL_DEFAULT_mass' : {
+        'zlog' : True,
+        'zmin' : 0.,
+        'zmax' : 2.
+    },
+    'S1_MODEL_DEFAULT_spin' : {
+        'zmin' : 0.,
+        'zmax' : 1.
+    },
+    'S1_MODEL_DEFAULT_m_disk_radiated' : {
+        'zmin' : 0.,
+        'zmax' : 3.
+    },
+    'S1_MODEL_DEFAULT_M4' : {
+        'zmin' : 1.,
+        'zmax' : 4.
+    },
+    'S1_MODEL_DEFAULT_mu4' : {
+        'zmin' : 0.0,
+        'zmax' : .5
+    },
+    'S1_MODEL_DEFAULT_h1_mass_ej' : {
+        'zmin' : 0.,
+        'zmax' : 20
+    },
+    'S1_MODEL_DEFAULT_he4_mass_ej' : {
+        'zmin' : 0.,
+        'zmax' : 20
+    },
+    # interpolator stuff
+    'INTERP_ERROR_DEFAULT' : {
+        'term_flag' : None,
+        'zmin' : 0.,
+        'zmax' : 0.1
+    },
 }

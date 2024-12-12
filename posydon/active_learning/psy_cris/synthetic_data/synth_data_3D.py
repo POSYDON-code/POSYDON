@@ -177,7 +177,7 @@ if (__name__ == "main"):
 
 
     # 3D Plots
-    from matplotlib.cm import get_cmap
+    from matplotlib.colormaps import get_cmap
 
     fig = plt.figure()
     ax = fig.add_subplot(111, projection='3d')

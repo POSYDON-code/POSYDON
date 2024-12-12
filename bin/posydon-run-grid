@@ -2,7 +2,6 @@
 ##############################################################################
 #  IMPORT ALL NECESSARY PYTHON PACKAGES
 ##############################################################################
-import warnings
 import argparse
 import os
 import shutil
@@ -11,11 +10,13 @@ import random
 import string
 import itertools
 import stat
+import time
 
 import numpy as np
 import pandas
 
 from posydon.utils import gridutils as utils
+from posydon.utils.posydonwarning import Pwarn
 from posydon.grids.psygrid import PSyGrid
 from posydon.active_learning.psy_cris.utils import parse_inifile
 from collections import ChainMap
@@ -117,10 +118,23 @@ def parse_commandline():
     parser.add_argument("--verbose", action="store_true", default=False,
                         help="Run in Verbose Mode")
 
+    parser.add_argument("--keep_profiles", action="store_true", default=False,
+                        help="Do not delete profiles at run completion")
+
+    parser.add_argument("--keep_photos", action="store_true", default=False,
+                        help="Do not delete photos at run completion")
+
+    now = int(time.time())
+    parser.add_argument("--job_end", type=int, default=now+60*60*24*365,
+                        help="End time of the job (in seconds)")
+
+    parser.add_argument("--job_before_end", type=int, default=300,
+                        help="Time span till end of job (in seconds)")
+
     args = parser.parse_args()
 
     if args.grid_type not in ['fixed', 'dynamic']:
-        raise parser.error("--run-type must be either grid or sample")
+        raise parser.error("--run-type must be either fixed or dynamic")
 
     # if we are running a dynamic grid then these arguments are required otherwise
     # they are not
@@ -172,6 +186,9 @@ def create_working_directory(grid_param_dict, args):
     # first name directories which we do not need to log
     directory_name_from_dict_no_log =  '_'.join(['{0}_{1:.4f}'.format(k, v) for k, v in grid_param_dict.items() if k not in variable_names_to_log])
     directory_name_from_dict_log = '_'.join(['{0}_{1:.4e}'.format(k, v) for k, v in grid_param_dict.items() if k in variable_names_to_log])
+    # drop parenthesis
+    directory_name_from_dict_no_log = directory_name_from_dict_no_log.replace('(','')
+    directory_name_from_dict_no_log = directory_name_from_dict_no_log.replace(')','')
 
     # combine and add on what grid number we are running if exists
     directory_name_from_dict = '{0}_{1}'.format(directory_name_from_dict_no_log, directory_name_from_dict_log)
@@ -189,8 +206,8 @@ def create_working_directory(grid_param_dict, args):
 
     ############# check for existance of precomputed model
     if os.path.isdir(work_dir):
-        print ("folder "+ work_dir +" exists, removing and rerunning")
-        sys.stdout.flush()
+        Pwarn("Directory {} exists, removing and rerunning".format(work_dir),
+              "OverwriteWarning")
         shutil.rmtree(work_dir)
 
     ############# create work directory and change into it
@@ -228,20 +245,32 @@ def create_binary_inlists(binary_controls, binary_job,
 / ! end of job namelist
                         """.format(binary_inlist_project)
 
-    with open(os.path.join(work_dir, 'inlist'), 'w') as f:
+    filename = os.path.join(work_dir, 'inlist')
+    if os.path.exists(filename):
+        Pwarn('Replace '+filename, "OverwriteWarning")
+    with open(filename, 'w') as f:
         f.write(binary_controls_str)
         f.write('\n')
         f.write(binary_job_str)
 
-    with open(os.path.join(work_dir, 'inlist_grid_points'), 'w') as inlist_grid_points:
+    filename = os.path.join(work_dir, 'inlist_grid_points')
+    if os.path.exists(filename):
+        Pwarn('Replace '+filename, "OverwriteWarning")
+    with open(filename, 'w') as inlist_grid_points:
         if binary_controls:
             # Write the binary controls for this grid point
             inlist_grid_points.write("&binary_controls\n")
             for k, v in binary_controls.items():
                 if (type(v) == float) and (not v.is_integer()):
-                    inlist_grid_points.write("\t{0} = {1}d0\n".format(k, v))
+                    inlist_grid_points.write("\t{0} = ".format(k)+"{0:.10e}\n"\
+                                             .format(v).replace('e','d'))
                 elif (type(v) == float) and (v.is_integer()):
                     inlist_grid_points.write("\t{0} = {1}\n".format(k, int(v)))
+                elif type(v) == bool:
+                    if v:
+                        inlist_grid_points.write("\t{0} = .true.\n".format(k))
+                    else:
+                        inlist_grid_points.write("\t{0} = .false.\n".format(k))
                 else:
                     inlist_grid_points.write("{0} = {1}\n".format(k, v))
             inlist_grid_points.write("/ ! end of binary_controls namelist\n")
@@ -251,68 +280,110 @@ def create_binary_inlists(binary_controls, binary_job,
             inlist_grid_points.write("&binary_job\n")
             for k, v in binary_job.items():
                 if (type(v) == float) and (not v.is_integer()):
-                    inlist_grid_points.write("\t{0} = {1}d0\n".format(k, v))
+                    inlist_grid_points.write("\t{0} = ".format(k)+"{0:.10e}\n"\
+                                             .format(v).replace('e','d'))
                 elif (type(v) == float) and (v.is_integer()):
                     inlist_grid_points.write("\t{0} = {1}\n".format(k, int(v)))
+                elif type(v) == bool:
+                    if v:
+                        inlist_grid_points.write("\t{0} = .true.\n".format(k))
+                    else:
+                        inlist_grid_points.write("\t{0} = .false.\n".format(k))
                 else:
                     inlist_grid_points.write("{0} = {1}\n".format(k, v))
             inlist_grid_points.write("/ ! end of binary_job namelist\n")
 
     if star1_binary_controls:
-        with open(os.path.join(work_dir, 'inlist_grid_star1_binary_controls'), 'w') as inlist_grid_points:
+        filename = os.path.join(work_dir, 'inlist_grid_star1_binary_controls')
+        if os.path.exists(filename):
+            Pwarn('Replace '+filename, "OverwriteWarning")
+        with open(filename, 'w') as inlist_grid_points:
             # Write the star1 controls for this grid point
             inlist_grid_points.write("&controls\n")
             for k, v in star1_binary_controls.items():
                 if (type(v) == float) and (not v.is_integer()):
-                    inlist_grid_points.write("\t{0} = {1}d0\n".format(k, v))
+                    inlist_grid_points.write("\t{0} = ".format(k)+"{0:.10e}\n"\
+                                             .format(v).replace('e','d'))
                 elif (type(v) == float) and (v.is_integer()):
                     inlist_grid_points.write("\t{0} = {1}\n".format(k, int(v)))
+                elif type(v) == bool:
+                    if v:
+                        inlist_grid_points.write("\t{0} = .true.\n".format(k))
+                    else:
+                        inlist_grid_points.write("\t{0} = .false.\n".format(k))
                 else:
                     inlist_grid_points.write("{0} = {1}\n".format(k, v))
             inlist_grid_points.write("/ ! end of controls namelist\n")
 
     if star2_binary_controls:
-        with open(os.path.join(work_dir, 'inlist_grid_star2_binary_controls'), 'w') as inlist_grid_points:
+        filename = os.path.join(work_dir, 'inlist_grid_star2_binary_controls')
+        if os.path.exists(filename):
+            Pwarn('Replace '+filename, "OverwriteWarning")
+        with open(filename, 'w') as inlist_grid_points:
             # Write the star2 controls for this grid point
             inlist_grid_points.write("&controls\n")
             for k, v in star2_binary_controls.items():
                 if (type(v) == float) and (not v.is_integer()):
-                    inlist_grid_points.write("\t{0} = {1}d0\n".format(k, v))
+                    inlist_grid_points.write("\t{0} = ".format(k)+"{0:.10e}\n"\
+                                             .format(v).replace('e','d'))
                 elif (type(v) == float) and (v.is_integer()):
                     inlist_grid_points.write("\t{0} = {1}\n".format(k, int(v)))
+                elif type(v) == bool:
+                    if v:
+                        inlist_grid_points.write("\t{0} = .true.\n".format(k))
+                    else:
+                        inlist_grid_points.write("\t{0} = .false.\n".format(k))
                 else:
                     inlist_grid_points.write("{0} = {1}\n".format(k, v))
             inlist_grid_points.write("/ ! end of controls namelist\n")
 
     if star1_binary_job:
-        with open(os.path.join(work_dir, 'inlist_grid_star1_binary_job'), 'w') as inlist_grid_points:
+        filename = os.path.join(work_dir, 'inlist_grid_star1_binary_job')
+        if os.path.exists(filename):
+            Pwarn('Replace '+filename, "OverwriteWarning")
+        with open(filename, 'w') as inlist_grid_points:
             # Write the star1 job for this grid point
             inlist_grid_points.write("&star_job\n")
             for k, v in star1_binary_job.items():
                 if (type(v) == float) and (not v.is_integer()):
-                    inlist_grid_points.write("\t{0} = {1}d0\n".format(k, v))
+                    inlist_grid_points.write("\t{0} = ".format(k)+"{0:.10e}\n"\
+                                             .format(v).replace('e','d'))
                 elif (type(v) == float) and (v.is_integer()):
                     inlist_grid_points.write("\t{0} = {1}\n".format(k, int(v)))
+                elif type(v) == bool:
+                    if v:
+                        inlist_grid_points.write("\t{0} = .true.\n".format(k))
+                    else:
+                        inlist_grid_points.write("\t{0} = .false.\n".format(k))
                 else:
                     inlist_grid_points.write("{0} = {1}\n".format(k, v))
             inlist_grid_points.write("/ ! end of star_job namelist\n")
 
     if star2_binary_job:
-        with open(os.path.join(work_dir, 'inlist_grid_star2_binary_job'), 'w') as inlist_grid_points:
+        filename = os.path.join(work_dir, 'inlist_grid_star2_binary_job')
+        if os.path.exists(filename):
+            Pwarn('Replace '+filename, "OverwriteWarning")
+        with open(filename, 'w') as inlist_grid_points:
             # Write the star2 job for this grid point
             inlist_grid_points.write("&star_job\n")
             for k, v in star2_binary_job.items():
                 if (type(v) == float) and (not v.is_integer()):
-                    inlist_grid_points.write("\t{0} = {1}d0\n".format(k, v))
+                    inlist_grid_points.write("\t{0} = ".format(k)+"{0:.10e}\n"\
+                                             .format(v).replace('e','d'))
                 elif (type(v) == float) and (v.is_integer()):
                     inlist_grid_points.write("\t{0} = {1}\n".format(k, int(v)))
+                elif type(v) == bool:
+                    if v:
+                        inlist_grid_points.write("\t{0} = .true.\n".format(k))
+                    else:
+                        inlist_grid_points.write("\t{0} = .false.\n".format(k))
                 else:
                     inlist_grid_points.write("{0} = {1}\n".format(k, v))
             inlist_grid_points.write("/ ! end of star_job namelist\n")
 
     return
 
-def create_star_formation(mass, work_dir, star_inlist_project, initial_z=None):
+def create_star_formation(mass, work_dir, star_inlist_project, initial_z=None, new_Z=False):
     """Create the inlist and inlist grid points needed to run this part of grid
     """
 
@@ -332,22 +403,64 @@ def create_star_formation(mass, work_dir, star_inlist_project, initial_z=None):
 
       read_extra_star_job_inlist1 = .true.
       extra_star_job_inlist1_name = '{0}'
+      read_extra_star_job_inlist2 = .true.
+      extra_star_job_inlist2_name = 'inlist_grid_points'
 
 / ! end of job namelist
                         """.format(star_inlist_project)
 
-    with open(os.path.join(work_dir, 'inlist'), 'w') as f:
+    filename = os.path.join(work_dir, 'inlist')
+    if os.path.exists(filename):
+        Pwarn('Replace '+filename, "OverwriteWarning")
+    with open(filename, 'w') as f:
         f.write(binary_controls_str)
         f.write('\n')
         f.write(binary_job_str)
 
-    with open(os.path.join(work_dir, 'inlist_grid_points'), 'w') as inlist_grid_points:
+    filename = os.path.join(work_dir, 'inlist_grid_points')
+    if os.path.exists(filename):
+        Pwarn('Replace '+filename, "OverwriteWarning")
+    with open(filename, 'w') as inlist_grid_points:
         inlist_grid_points.write("&controls\n")
-        inlist_grid_points.write("initial_mass = {0}d0\n".format(mass))
+        inlist_grid_points.write("initial_mass = "+"{0:.10e}\n"\
+                                 .format(mass).replace('e','d'))
         if initial_z is not None:
-            inlist_grid_points.write("initial_z = {0}d0\n".format(initial_z))
-        inlist_grid_points.write("/ ! end of binary_controls namelist\n")
+            inlist_grid_points.write("initial_z = "+"{0:.10e}\n"\
+                                     .format(initial_z).replace('e','d'))
+            inlist_grid_points.write("Zbase = "+"{0:.10e}\n"\
+                                     .format(initial_z).replace('e','d'))
+        inlist_grid_points.write("/ ! end of star_controls namelist\n")
+        inlist_grid_points.write("&star_job\n")
+        if new_Z:
+            inlist_grid_points.write("new_Z = "+"{0:.10e}\n"\
+                                     .format(initial_z).replace('e','d'))
+        inlist_grid_points.write("/ ! end of star_job namelist\n")
         inlist_grid_points.close()
+
+    return
+
+def move_mesa_output(work_dir, final_dir, copyinstead=False):
+    """Moves the data from the working directory to the final directory.
+    Parameters:
+        work_dir:
+            Working directory (i.e. where the mesa exectuable should run)
+        final_dir:
+            When completed where would you like the output to go
+        copyinstead:
+            Indicates that the files should be copied instead of moved
+    """
+    if not work_dir == final_dir:
+        if os.path.isdir(final_dir):
+            Pwarn("Directory {} exists,".format(work_dir) +\
+                  " replacing with new data", "OverwriteWarning")
+            shutil.rmtree(final_dir)
+        if copyinstead:
+            print ("copy data from " + work_dir+ " to "+ final_dir)
+            shutil.copytree(work_dir, final_dir)
+        else:
+            print ("move data from " + work_dir+ " to "+ final_dir)
+            shutil.move(work_dir, final_dir)
+        sys.stdout.flush()
 
     return
 
@@ -361,29 +474,53 @@ def run_mesa(mesa_executable, work_dir, final_dir, **kwargs):
         final_dir:
             When completed where would you like the output to go
     """
+
     outfile_name = kwargs.pop('outfile_name', 'out.txt')
+    keep_profiles = kwargs.pop('keep_profiles', False)
+    keep_photos = kwargs.pop('keep_photos', False)
+    keep_work_dir = kwargs.pop('keep_work_dir', False)
+
     os.chdir(work_dir)
-    os.system("{0} &> {1}".format(mesa_executable, os.path.join(work_dir, outfile_name)))
-
-    if os.path.exists(os.path.join(work_dir, 'LOGS')):
-        os.chmod(os.path.join(work_dir, 'LOGS'), stat.S_IRWXU  | stat.S_IRGRP | stat.S_IXGRP | stat.S_IROTH | stat.S_IXOTH )
-        os.system("rm LOGS/profile*")
-    if os.path.exists(os.path.join(work_dir, 'LOGS1')):
-        os.chmod(os.path.join(work_dir, 'LOGS1'), stat.S_IRWXU  | stat.S_IRGRP | stat.S_IXGRP | stat.S_IROTH | stat.S_IXOTH )
-        os.system("rm LOGS1/profile*")
-    if os.path.exists(os.path.join(work_dir, 'LOGS2')):
-        os.chmod(os.path.join(work_dir, 'LOGS2'), stat.S_IRWXU  | stat.S_IRGRP | stat.S_IXGRP | stat.S_IROTH | stat.S_IXOTH )
-        os.system("rm LOGS2/profile*")
-    if os.path.exists(os.path.join(work_dir, '.mesa_temp_cache')): os.system("rm -rf .mesa_temp_cache")
-    os.system("rm -rf photos*")
-
     if not work_dir == final_dir:
-        if os.path.isdir(final_dir):
-            print ("folder "+ final_dir +" exists, replacing with new data")
-            sys.stdout.flush()
-            shutil.rmtree(final_dir)
+        child_ID = os.fork()
+    else:
+        child_ID = 0.1
+    if child_ID>0:
+        #parent process: run MESA and do the clean up in the working directory
+        os.system("{0} &> {1}".format(mesa_executable, os.path.join(work_dir, outfile_name)))
 
-        shutil.move(work_dir, final_dir)
+        if not keep_profiles:
+            if os.path.exists(os.path.join(work_dir, 'LOGS')):
+                os.chmod(os.path.join(work_dir, 'LOGS'), stat.S_IRWXU  | stat.S_IRGRP | stat.S_IXGRP | stat.S_IROTH | stat.S_IXOTH )
+                os.system("rm LOGS/profile*")
+            if os.path.exists(os.path.join(work_dir, 'LOGS1')):
+                os.chmod(os.path.join(work_dir, 'LOGS1'), stat.S_IRWXU  | stat.S_IRGRP | stat.S_IXGRP | stat.S_IROTH | stat.S_IXOTH )
+                os.system("rm LOGS1/profile*")
+            if os.path.exists(os.path.join(work_dir, 'LOGS2')):
+                os.chmod(os.path.join(work_dir, 'LOGS2'), stat.S_IRWXU  | stat.S_IRGRP | stat.S_IXGRP | stat.S_IROTH | stat.S_IXOTH )
+                os.system("rm LOGS2/profile*")
+        if os.path.exists(os.path.join(work_dir, '.mesa_temp_cache')): os.system("rm -rf .mesa_temp_cache")
+
+        if not keep_photos:
+            os.system("rm -rf photos*")
+
+        if child_ID>=1:
+            #kill child process, because it is no longer needed
+            os.kill(child_ID, 9)
+        move_mesa_output(work_dir, final_dir, keep_work_dir)
+    elif child_ID==0:
+        now = int(time.time())
+        child_end = kwargs.pop('job_end', now+60*60*24*365) - kwargs.pop('job_before_end', 300)
+        #child process: waits till short before the job will get killed by slurm to copy the data beforehand and exit this process after the copy finished
+        if child_end>now:
+            #if the child job still needs to wait, get time to wait
+            wait_time = child_end - now
+        else:
+            #otherwise wait 1 minute
+            wait_time = 60
+        time.sleep(wait_time)
+        move_mesa_output(work_dir, final_dir, copyinstead=True)
+        sys.exit(0)
 
     os.chdir(final_dir)
     print("Done")
@@ -528,7 +665,10 @@ def do_root_process_logic(comm, grid, args, grid_params_binary_controls, grid_pa
         print('Process number {0} finished their run'.format(child))
         print('Saving grid data and sampling a new grid point...')
         sys.stdout.flush()
-        with open(os.path.join(args.output_directory, 'grid_results.csv'), 'w') as f:
+        filename = os.path.join(args.output_directory, 'grid_results.csv')
+        if os.path.exists(filename):
+            Pwarn('Replace '+filename, "OverwriteWarning")
+        with open(filename, 'w') as f:
             grid.to_csv(f, index=False,)
 
         print('Sampling next grid point for process {0}'.format(child))
@@ -604,8 +744,13 @@ def run_grid_point(grid, star1_formation, star2_formation,
         # if yes then create inlists specific to this grid points
         # moreover we should loop over all the star1 formation steps
         for index, inlist_step in enumerate(args.mesa_star1_inlist_project):
-            create_star_formation(grid_param_dict['m1'], work_dir, inlist_step)
-            run_mesa(args.mesa_star1_executable, work_dir, final_dir,
+            # this is only called to create single HeMS stars, only second step1
+            # requires metallicity
+            if index == 0:
+                create_star_formation(grid_param_dict['m1'], work_dir, inlist_step)
+            elif index == 1:
+                create_star_formation(grid_param_dict['m1'], work_dir, inlist_step, grid_param_dict['initial_z'], True)
+            run_mesa(args.mesa_star1_executable, work_dir, final_dir, keep_work_dir=True,
                      outfile_name='out_star1_formation_step{0}.txt'.format(index))
 
     # are we first generating a model before running binary for the second star?
@@ -613,8 +758,13 @@ def run_grid_point(grid, star1_formation, star2_formation,
         # if yes then create inlists specific to this grid points
         # moreover we should loop over all the star1 formation steps
         for index, inlist_step in enumerate(args.mesa_star2_inlist_project):
-            create_star_formation(grid_param_dict['m2'], work_dir, inlist_step)
-            run_mesa(args.mesa_star2_executable, work_dir, final_dir,
+            # this is only called to create single HeMS stars, only second step1
+            # requires metallicity
+            if index == 0:
+                create_star_formation(grid_param_dict['m2'], work_dir, inlist_step)
+            elif index == 1:
+                create_star_formation(grid_param_dict['m2'], work_dir, inlist_step, grid_param_dict['initial_z'], True)
+            run_mesa(args.mesa_star2_executable, work_dir, final_dir, keep_work_dir=True,
                      outfile_name='out_star2_formation_step{0}.txt'.format(index))
 
     # now we can create the grid specific binary inlists and run the binary executable
@@ -624,7 +774,9 @@ def run_grid_point(grid, star1_formation, star2_formation,
                           work_dir, args.mesa_binary_inlist_project)
 
     # run the binary exectuable
-    run_mesa(args.mesa_binary_executable, work_dir, final_dir)
+    run_mesa(args.mesa_binary_executable, work_dir, final_dir,
+             keep_profiles=args.keep_profiles, keep_photos=args.keep_photos,
+             job_end=args.job_end, job_before_end=args.job_before_end)
 
     # find out what happened
     mesa_result = extract_mesa_results(final_dir)
@@ -747,10 +899,22 @@ if __name__ == '__main__':
         work_dir, final_dir = create_working_directory(grid_param_dict, args)
 
         # run the single star grid
+        last_step = len(args.mesa_star1_inlist_project) - 1
         for index, inlist_step in enumerate(args.mesa_star1_inlist_project):
-            create_star_formation(grid_param_dict['initial_mass'], work_dir, inlist_step)
+            # single_HMS star has only step0, metallicity is required but not new_Z
+            # single_HeMS star has step0, step1, step2, last two steps require metallicity
+            # but only step1 requires new_Z
+            if index == last_step:
+                create_star_formation(grid_param_dict['initial_mass'], work_dir, inlist_step, grid_param_dict['initial_z'], False)
+            elif index == 1:
+                create_star_formation(grid_param_dict['initial_mass'], work_dir, inlist_step, grid_param_dict['initial_z'], True)
+            else :
+                create_star_formation(grid_param_dict['initial_mass'], work_dir, inlist_step)
             run_mesa(args.mesa_star1_executable, work_dir, final_dir,
-                     outfile_name='out_star1_formation_step{0}.txt'.format(index))
+                     outfile_name='out_star1_formation_step{0}.txt'.format(index),
+                     keep_profiles=args.keep_profiles, keep_photos=args.keep_photos,
+                     job_end=args.job_end, job_before_end=args.job_before_end,
+                     keep_work_dir=index<last_step)
 
         sys.exit(0)
 

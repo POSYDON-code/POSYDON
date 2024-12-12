@@ -15,7 +15,7 @@ for the donor star, else we use the default values
 
 Parameters
 ----------
-binary : BinaryStar (An objets of class BinaryStar defined in POSYDON)
+binary : BinaryStar (An object of class BinaryStar defined in POSYDON)
 verbose : Boolean
     In case we want information about the CEE  (the default is False).
 
@@ -30,22 +30,20 @@ __authors__ = [
     "Konstantinos Kovlakas <Konstantinos.Kovlakas@unige.ch>",
     "Jeffrey Andrews <jeffrey.andrews@northwestern.edu>",
     "Tassos Fragos <Anastasios.Fragkos@unige.ch>",
+    "Matthias Kruckow <Matthias.Kruckow@unige.ch>",
 ]
 
 
 import numpy as np
+import pandas as pd
 from posydon.utils import common_functions as cf
 from posydon.utils import constants as const
-import warnings
-
 from posydon.binary_evol.binarystar import BINARYPROPERTIES
 from posydon.binary_evol.singlestar import STARPROPERTIES
 from posydon.utils.common_functions import PATH_TO_POSYDON
 from posydon.utils.common_functions import check_state_of_star
-from posydon.utils.common_functions import calculate_lambda_from_profile
-
-
-warnings.simplefilter('always', UserWarning)
+from posydon.utils.common_functions import calculate_lambda_from_profile, calculate_Mejected_for_integrated_binding_energy
+from posydon.utils.posydonwarning import Pwarn
 
 
 MODEL = {"prescription": 'alpha-lambda',
@@ -59,7 +57,11 @@ MODEL = {"prescription": 'alpha-lambda',
          "CEE_tolerance_err": 0.001,
          "verbose": False,
          "common_envelope_option_after_succ_CEE": 'core_not_replaced_noMT',
+         "mass_loss_during_CEE_merged": False # If False, then no mass loss from this step for a merged star
+                                              # If True, then we remove mass according to the alpha-lambda prescription
+                                              # assuming a final separation where the inner core RLOF starts.
          # "core_replaced_noMT" for core_definition_H_fraction=0.01
+
          }
 
 
@@ -88,11 +90,13 @@ STAR_STATE_POST_MS = [
     "H-rich_Core_He_burning",
     "H-rich_Central_He_depleted",
     "H-rich_Central_C_depletion",
-    "H-rich_non_burning"
+    "H-rich_non_burning",
+    "accreted_He_non_burning"
 ]
 
 
 STAR_STATE_POST_HeMS = [
+    'accreted_He_Core_He_burning',
     'stripped_He_Core_He_burning',
     'stripped_He_Central_He_depleted',
     'stripped_He_Central_C_depletion',
@@ -113,26 +117,25 @@ class StepCEE(object):
     verbose : bool
         If True, the messages will be prited in the console.
 
-
     Keyword Arguments
-    ----------
+    -----------------
     prescription : str
         Prescription to use for computing the prediction of common enevelope
         evolution. Available options are:
 
         * 'alpha-lambda' : Considers the the alpha-lambda prescription
-        described in [1] and [2] to predict the outcome of the common envelope
-        evolution. If the profile of the donor star is available then it is
-        used to compute the value of lambda.
+          described in [1]_ and [2]_ to predict the outcome of the common
+          envelope evolution. If the profile of the donor star is available
+          then it is used to compute the value of lambda.
 
     References
     ----------
     .. [1] Webbink, R. F. (1984). Double white dwarfs as progenitors of R
-    Coronae Borealis stars and Type I supernovae. The Astrophysical Journal,
-    277, 355-360.
+        Coronae Borealis stars and Type I supernovae. The Astrophysical
+        Journal, 277, 355-360.
 
     .. [2] De Kool, M. (1990). Common envelope evolution and double cores of
-    planetary nebulae. The Astrophysical Journal, 358, 189-195.
+        planetary nebulae. The Astrophysical Journal, 358, 189-195.
     """
 
     def __init__(
@@ -153,6 +156,7 @@ class StepCEE(object):
             core_definition_He_fraction=MODEL[
                 'core_definition_He_fraction'],
             CEE_tolerance_err=MODEL['CEE_tolerance_err'],
+            mass_loss_during_CEE_merged=MODEL['mass_loss_during_CEE_merged'],
             verbose=MODEL['verbose'],
             **kwargs):
         """Initialize a StepCEE instance."""
@@ -179,6 +183,7 @@ class StepCEE(object):
             self.CEE_tolerance_err = CEE_tolerance_err
             self.common_envelope_option_after_succ_CEE = \
                 common_envelope_option_after_succ_CEE
+            self.mass_loss_during_CEE_merged = mass_loss_during_CEE_merged
 
         self.verbose = verbose
         self.path_to_posydon = PATH_TO_POSYDON
@@ -189,18 +194,16 @@ class StepCEE(object):
         if binary.event in ["oCE1", "oDoubleCE1"]:
             donor_star = binary.star_1
             comp_star = binary.star_2
+            star_to_merge = "1"
         elif binary.event in ["oCE2", "oDoubleCE2"]:
             donor_star = binary.star_2
             comp_star = binary.star_1
+            star_to_merge = "2"
         else:
             raise ValueError("CEE does not apply if `event` is not "
-                             "`oCE1`, 'oDoubleCE1' or `oCE2`, 'oDoubleCE1'")
-
+                             "`oCE1`, `oDoubleCE1`, `oCE2`,or `oDoubleCE1`")
         # Check for double CE
-        if binary.event in ["oDoubleCE1", "oDoubleCE2"]:
-            double_CE = True
-        else:
-            double_CE = False
+        double_CE = binary.event in ["oDoubleCE1", "oDoubleCE2"]
 
         if self.verbose:
             print("binary.event : ", binary.event)
@@ -210,59 +213,16 @@ class StepCEE(object):
                   self.common_envelope_option_for_lambda)
 
         # Check to make sure binary can go through a CE
-        if donor_star.state in ['H-rich_Core_H_burning',
-                                'stripped_He_Core_He_burning']:
+        mergeable_donor = (donor_star.state in [
+            'H-rich_Core_H_burning', 'stripped_He_Core_He_burning', 'accreted_He_Core_He_burning'])
+        mergeable_HG_donor = (
+            self.common_envelope_option_for_HG_star == "pessimistic"
+            and donor_star.state in ['H-rich_Shell_H_burning'])
+        if mergeable_donor or mergeable_HG_donor:
             # system merges
             binary.state = 'merged'
-            binary.event = None
-
-            for key in BINARYPROPERTIES:
-                # the binary attributes that are changed in the CE step
-                if key not in ["state", "event", 'V_sys', 'mass_transfer_case',
-                               'nearest_neighbour_distance']:
-                    setattr(binary, key, np.nan)    # the rest become np.nan
-                if key == 'mass_transfer_case':
-                    setattr(binary, key, 'None')
-            stars = [donor_star, comp_star]
-            # for now we just add all initial mass to the (merger) star_1
-            masses = [donor_star.mass + comp_star.mass, np.nan]
-            star_states = [donor_star.state, comp_star.state]
-            for star, star_state, mass in zip(stars, star_states, masses):
-                star.mass = mass
-                star.state = star_state
-                for key in STARPROPERTIES:
-                    # the binary attributes that are changed in the CE step
-                    if key not in ["mass", "state"]:
-                        setattr(star, key, np.nan)
+            binary.event = "oMerging" + star_to_merge
             return
-
-        if self.common_envelope_option_for_HG_star == "pessimistic":
-            # Merging if HG donor
-            if donor_star.state in ['H-rich_Shell_H_burning']:
-                # system merges
-                binary.state = 'merged'
-                binary.event = None
-
-                for key in BINARYPROPERTIES:
-                    # the binary attributes that are changed in the CE step
-                    if key not in ["state", "event", 'V_sys',
-                                   'mass_transfer_case',
-                                   'nearest_neighbour_distance']:
-                        setattr(binary, key, np.nan)   # the rest become np.nan
-                    if key == 'mass_transfer_case':
-                        setattr(binary, key, 'None')
-                stars = [donor_star, comp_star]
-                # for now we just add all initial mass to the (merger) star_1
-                masses = [donor_star.mass + comp_star.mass, np.nan]
-                star_states = [donor_star.state, comp_star.state]
-                for star, star_state, mass in zip(stars, star_states, masses):
-                    star.mass = mass
-                    star.state = star_state
-                    for key in STARPROPERTIES:
-                        # the binary attributes that are changed in the CE step
-                        if key not in ["mass", "state"]:
-                            setattr(star, key, np.nan)
-                return
 
         # Calculate binary's evolution
         if self.prescription == 'alpha-lambda':
@@ -275,7 +235,7 @@ class StepCEE(object):
                 lambda2_CE, mc2_i, rc2_i, comp_type = self.calculate_lambda_CE(
                     comp_star, verbose=self.verbose)
             else:
-                lambda2_CE = None
+                lambda2_CE = np.nan
                 mc2_i = comp_star.mass
                 rc2_i = 10**comp_star.log_R
                 comp_type = "not_giant_companion"
@@ -288,7 +248,8 @@ class StepCEE(object):
                 common_envelope_option_after_succ_CEE=(
                     self.common_envelope_option_after_succ_CEE),
                 core_definition_H_fraction=self.core_definition_H_fraction,
-                core_definition_He_fraction=self.core_definition_He_fraction)
+                core_definition_He_fraction=self.core_definition_He_fraction,
+                mass_loss_during_CEE_merged=self.mass_loss_during_CEE_merged)
         else:
             raise ValueError("Invalid common envelope prescription given.")
 
@@ -394,8 +355,8 @@ class StepCEE(object):
                       donor.he_core_mass, donor.co_core_mass)
 
         elif donor.profile is None:
-            warnings.warn("Profile does not exist -- Proceeding with "
-                          "default_lambda alpha-CE prescription")
+            Pwarn("Donor profile does not exist -- proceeding with "
+                          "default_lambda alpha-CE prescription", "ApproximationWarning")
             # like in the "default_lambda" option
             lambda_CE = self.common_envelope_lambda_default
             if donor_type == 'He_core':
@@ -442,7 +403,8 @@ class StepCEE(object):
             verbose=False, common_envelope_option_after_succ_CEE=MODEL[
                 'common_envelope_option_after_succ_CEE'],
             core_definition_H_fraction=MODEL['core_definition_H_fraction'],
-            core_definition_He_fraction=MODEL['core_definition_He_fraction']):
+            core_definition_He_fraction=MODEL['core_definition_He_fraction'],
+            mass_loss_during_CEE_merged=MODEL['mass_loss_during_CEE_merged']):
         """Apply the alpha-lambda common-envelope prescription.
 
         It uses energetics to calculate the shrinakge of the orbit
@@ -482,6 +444,7 @@ class StepCEE(object):
             In case we want information about the CEE.
         common_envelope_option_after_succ_CEE: str
             Options are:
+
             1) "core_replaced_noMT"
                 he_core_mass/radius (or co_core_mass/radius for CEE of
                 stripped_He*) are replaced according to the new core boundary
@@ -515,6 +478,10 @@ class StepCEE(object):
         core_definition_He_fraction: float
             The value of the He abundance to define the envelope-core boundary
             in CO_cores.
+        mass_loss_during_CEE_merged: Boolean
+             If False, then no mass loss from this step for a merged CEE
+             If True, then we remove mass according to the alpha-lambda prescription
+              assuming a final separation where the inner core(s) RLOF starts, and the same lambda(s)
 
         """
         # Get star properties
@@ -538,10 +505,13 @@ class StepCEE(object):
         alpha_CE = self.common_envelope_efficiency
 
         # calculate evolution of the orbit
-        ebind_i = (-const.standard_cgrav / lambda1_CE
-                   * (m1_i * const.Msun * (m1_i - mc1_i) * const.Msun)
-                   / (radius1 * const.Rsun))
-        if double_CE:
+        if pd.isna(lambda1_CE):
+            ebind_i = 0.0
+        else:
+            ebind_i = (-const.standard_cgrav / lambda1_CE
+                       * (m1_i * const.Msun * (m1_i - mc1_i) * const.Msun)
+                       / (radius1 * const.Rsun))
+        if (double_CE and (not pd.isna(lambda2_CE))):
             ebind_i += (-const.standard_cgrav / lambda2_CE
                         * (m2_i * const.Msun * (m2_i - mc2_i) * const.Msun)
                         / (radius2 * const.Rsun))
@@ -559,7 +529,7 @@ class StepCEE(object):
 
         # Check to make sure final orbital separation is positive
         if not (separation_postCEE > -self.CEE_tolerance_err):
-            raise Exception("CEE problem, negative postCEE separation")
+            raise ValueError("CEE problem, negative postCEE separation")
 
         if verbose:
             print("CEE alpha-lambda prescription")
@@ -572,8 +542,8 @@ class StepCEE(object):
 
         # now we check if the roche Lobe of any of the cores that spiralled-in
         # will be filled if reached this final separation
-        RL1 = cf.roche_lobe_radius(mc1_i/mc2_i, separation_postCEE/const.Rsun)
-        RL2 = cf.roche_lobe_radius(mc2_i/mc1_i, separation_postCEE/const.Rsun)
+        RL1 = cf.roche_lobe_radius(mc1_i, mc2_i, separation_postCEE/const.Rsun)
+        RL2 = cf.roche_lobe_radius(mc2_i, mc1_i, separation_postCEE/const.Rsun)
 
         if verbose:
             print("donor radius / core radius / RL1:", radius1, rc1_i, RL1)
@@ -617,10 +587,10 @@ class StepCEE(object):
                     rc1_f = donor.co_core_radius
                 if mc1_f > mc1_i:
                     mc1_f = mc1_i
-                    warnings.warn(
-                        "donor core mass final (after even stable, postCEE MT)"
-                        " assumed higher than postCEE core mass. Equalized to "
-                        "postCEE mass")
+                    Pwarn(
+                        "The final donor core mass (even after stable, postCEE MT)"
+                        " is higher than the postCEE core mass. Now equalizing to "
+                        "postCEE mass", "ApproximationWarning")
                 if not double_CE:
                     mc2_f = mc2_i
                     rc2_f = rc2_i
@@ -636,10 +606,10 @@ class StepCEE(object):
                         rc2_f = 10.**(comp_star.log_R)
                     if mc2_f > mc2_i:
                         mc2_f = mc2_i
-                        warnings.warn("accretor's core mass final (after even "
-                                      "non-conservative stable, postCEE MT) "
-                                      "assumed higher that postCEE core mass. "
-                                      "Equialized to postCEE mass")
+                        Pwarn("The accretor's final core mass (even after "
+                                      "non-conservative stable, postCEE MT) is "
+                                      "higher that postCEE core mass. "
+                                      "Now equalizing to postCEE mass", "ApproximationWarning")
                 if verbose:
                     print("difference between m1 core mass defined by CEE step"
                           " / to the final one as pre CEE : ", mc1_f, mc1_i)
@@ -834,32 +804,98 @@ class StepCEE(object):
         else:
             # system merges
             binary.state = 'merged'
-            binary.event = None
-
-            for key in BINARYPROPERTIES:
-                # the binary attributes that are changed in the CE step
-                if key not in ["state", "event", 'V_sys', 'mass_transfer_case',
-                               'nearest_neighbour_distance']:
-                    setattr(binary, key, np.nan)    # the rest become np.nan
-                if key == 'mass_transfer_case':
-                    setattr(binary, key, 'None')
-            # binary.event = 'END'
-            stars = [donor, comp_star]
-            # for now we just add all initial mass to the (merger) star_1
-            masses = [m1_i+m2_i, np.nan]
-            star_states = [donor.state, comp_star.state]
-            for star, star_state, mass in zip(stars, star_states, masses):
-                star.mass = mass
-                star.state = star_state
-                for key in STARPROPERTIES:
-                    # the binary attributes that are changed in the CE step
-                    if key not in ["mass", "state"]:
-                        setattr(star, key, np.nan)
+            if binary.event in ["oCE1", "oDoubleCE1"]:
+                binary.event = "oMerging1"
+            if binary.event in ["oCE2", "oDoubleCE2"]:
+                binary.event = "oMerging2"
 
             if verbose:
                 print("system merges due to one of the two star's core filling"
                       "its RL")
                 print("Rdonor core vs RLdonor core = ", rc1_i, RL1)
                 print("Rcompanion vs RLcompanion= ", rc2_i, RL2)
+
+            Mejected_donor = 0.0
+            Mejected_comp = 0.0
+
+            if mass_loss_during_CEE_merged:
+                # we calculate the ejected mass from part of the commone envelope, using
+                # a_f = separation_postCEE so that one of the cores (or MS star) is filling its inner Roche lobe,
+                # and assuming that lambda(Menvelope) ~ lamda(Mejected) although
+                # Mejected < Menvelope (e.g. see Fig1 of Dewi+Tauris2000)
+
+                if not double_CE and donor.profile is None:
+                    Mejected_donor = 0.0
+                    Mejected_comp = 0.0
+                    Pwarn("mass_loss_during_CEE_merged == True, but no profile found "
+                                  "for the donor star. Proceeding with no partial mass ejection.", "ApproximationWarning")
+                elif double_CE and (donor.profile is None or comp_star.profile is None):
+                    Mejected_comp = 0.0
+                    Mejected_comp = 0.0
+                    Pwarn("mass_loss_during_CEE_merged == True, but not profile found "
+                                  "for the donor or companion star in double_CE. Proceeding with no partial mass ejection.", 
+                                  "ApproximationWarning")
+
+                else:
+
+                    separation_for_inner_RLO1 = rc1_i / cf.roche_lobe_radius(mc1_i, mc2_i, a_orb=1)
+                    separation_for_inner_RLO2 = rc2_i / cf.roche_lobe_radius(mc2_i, mc1_i, a_orb=1)
+
+                    separation_before_merger = max( separation_for_inner_RLO1, separation_for_inner_RLO2 ) * const.Rsun
+
+                    if verbose:
+                        print("separation_before_merger (for the calculation of Mejected for the merger): ",separation_before_merger/ const.Rsun , "in Rsun")
+                        print("which is the max of RLO1 or RLO2 of the inner cores: ", separation_for_inner_RLO1 ,  separation_for_inner_RLO2, "in Rsun")
+
+                    E_orb_used_up_to_inner_RLOF = alpha_CE * ( - const.standard_cgrav * m1_i * const.Msun * m2_i * const.Msun/(2. * separation_i) + \
+                             const.standard_cgrav * mc1_i  * const.Msun * mc2_i  * const.Msun/(2. * separation_before_merger) )
+
+                    # We assume "lambda_from_profile_gravitational_plus_internal_minus_recombination"
+                    if not double_CE:
+                        Mejected_donor = calculate_Mejected_for_integrated_binding_energy(donor.profile, E_orb_used_up_to_inner_RLOF, mc1_i, rc1_i, m1_i, radius1)
+
+                    else: # in double_CE
+
+                        # Assuming that the ratio of orbital energy used for the partial ejection of each (common) envelope
+                        # is the same as the ratio of the initial envelope masses:
+
+                        WF = (m1_i  - mc1_i)/ (m2_i - mc2_i  +  m1_i  - mc1_i) # weight factor for 1:
+                                                            # = Mdonor,envelope / Mcomp,envelope
+                        Eorb_for_partial_ej_1 = E_orb_used_up_to_inner_RLOF * WF
+                        Mejected_donor = calculate_Mejected_for_integrated_binding_energy(donor.profile, Eorb_for_partial_ej_1, mc1_i, rc1_i, m1_i, radius1)
+
+                        Eorb_for_partial_ej_2 = E_orb_used_up_to_inner_RLOF * (1. - WF)
+                        Mejected_comp = calculate_Mejected_for_integrated_binding_energy(comp_star.profile, Eorb_for_partial_ej_2, mc2_i, rc2_i, m2_i, radius2)
+
+                if verbose:
+                    print("Mejecta_donor = ", Mejected_donor, "in Msun compared to its initial envelope =",  m1_i  - mc1_i)
+                    print("Mejecta_comp = ", Mejected_comp, "in Msun compared to its initial envelope =",  m2_i  - mc2_i)
+                '''
+                if not ( (Mejected_donor <= m1_i  - mc1_i) and (Mejected_comp <= m2_i  - mc2_i) ):
+                    raise Exception("Mejected_donor in double CEE with mass_loss_during_CEE_merged is found more than Menvelope")
+                if not (Mejected_donor >= 0.):
+                    raise Exception("The root of the equation in double CEE with mass_loss_during_CEE_merged is found negative")
+                '''
+
+                if (Mejected_donor > m1_i  - mc1_i) or (Mejected_comp > m2_i  - mc2_i):
+                    Mejected_donor = (m1_i  - mc1_i) -0.01 # at least this value of envelope is left.
+                    Mejected_comp = (m2_i  - mc2_i) -0.01
+                    Pwarn("M_ejected of at least one star in double CEE is found to be more than the initial envelope. "
+                                  "Reducing both to their initial_envelope - 0.01 Msun", "ApproximationWarning")
+
+            donor.mass = m1_i - Mejected_donor
+            donor.log_R = np.nan
+            comp_star.mass = m2_i - Mejected_comp
+            comp_star.log_R = np.nan
+            if donor_type == 'CO_core':
+                donor.he_core_mass = m1_i - Mejected_donor
+                donor.he_core_radius = np.nan
+                comp_star.he_core_mass = m2_i - Mejected_comp
+                comp_star.he_core_radius = np.nan
+
+            if verbose:
+                print("The mass loss during merging_CEE is: ", mass_loss_during_CEE_merged)
+                print("so m1_i , m1_f = ", m1_i, donor.mass)
+                print("so m2_i , m2_f = ", m2_i, comp_star.mass)
 
         return
