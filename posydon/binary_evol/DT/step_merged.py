@@ -14,7 +14,6 @@ from posydon.utils.data_download import PATH_TO_POSYDON_DATA
 from posydon.binary_evol.singlestar import STARPROPERTIES, convert_star_to_massless_remnant
 from posydon.utils.common_functions import check_state_of_star
 from posydon.binary_evol.DT.step_isolated import IsolatedStep
-from posydon.utils.posydonerror import FlowError
 
 from posydon.utils.posydonwarning import Pwarn
 

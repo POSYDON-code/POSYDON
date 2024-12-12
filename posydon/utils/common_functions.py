@@ -426,7 +426,6 @@ def beaming(binary):
     else:
         rlo_mdot = 10**binary.lg_mtransfer_rate
 
-    print(rlo_mdot, mdot_edd)
     if rlo_mdot >= mdot_edd:
         if rlo_mdot > 8.5 * mdot_edd:
             # eq. 8 in King A. R., 2009, MNRAS, 393, L41-L44
@@ -600,7 +599,6 @@ def bondi_hoyle(binary, accretor, donor, idx=-1, wind_disk_criteria=True,
 
     # make it Eddington-limited
     mdot_edd = eddington_limit(binary, idx=idx)[0]
-    print(mdot_acc, mdot_edd)
     mdot_acc = np.minimum(mdot_acc, mdot_edd)
 
     return np.squeeze(mdot_acc)
@@ -2372,12 +2370,11 @@ def get_mass_radius_dm_from_profile(profile, m1_i=0.0,
         if np.abs(donor_mass[0] - m1_i) > tolerance:
             Pwarn("Donor mass from the binary class object "
                           "and the profile do not agree", "ClassificationWarning")
-            #print("mass profile/object:", (donor_mass[0]), (m1_i))
+            
         # checking if radius of profile agrees with the radius of the binary
         if np.abs(donor_radius[0] - radius1) > tolerance:
             Pwarn("Donor radius from the binary class object "
                           "and the profile do not agree", "ClassificationWarning")
-            #print("radius profile/object:", (donor_radius[0]), (radius1))
 
         # MANOS: if dm exists as a column, else calculate it from mass column
         if "dm" in profile.dtype.names:
@@ -2650,12 +2647,14 @@ def calculate_binding_energy(donor_mass, donor_radius, donor_dm,
     """
     # Sum of gravitational energy from surface to core boundary
     Grav_energy = 0.0
+
     # Sum of internal energy from surface to core boundary. This is 0 if
     # 'lambda_from_profile_gravitational' or (thermal+radiation+recombination)
     # for "lambda_from_profile_gravitational_plus_internal" or
     # (thermal+radiation) for
     # "lambda_from_profile_gravitational_plus_internal_minus_recombination"
     U_i = 0.0
+    
     # sum from surface to the core. Your core boundary is in element [ind_core]
     # in a normal MESA (and POSYDON) profile
     for i in range(ind_core):
@@ -2665,12 +2664,12 @@ def calculate_binding_energy(donor_mass, donor_radius, donor_dm,
         # integral of gravitational energy as we go deeper into the star
         Grav_energy = Grav_energy + Grav_energy_of_cell
         U_i = U_i + specific_internal_energy[i]*donor_dm[i]*const.Msun
+
     if Grav_energy > 0.0:
-        #print("Grav_energy, donor_mass, donor_dm, donor_radius",
-        #      Grav_energy, donor_mass, donor_dm, donor_radius)
         if not (Grav_energy < tolerance):
             raise ValueError("CEE problem calculating gravitational energy, "
                             "giving positive values.")
+        
     # binding energy of the enevelope equals its gravitational energy +
     # an a_th fraction of its internal energy
     Ebind_i = Grav_energy + factor_internal_energy * U_i
@@ -2738,7 +2737,6 @@ def calculate_Mejected_for_integrated_binding_energy(profile, Ebind_threshold,
 
     if donor_mass[ind_threshold]< mc1_i or  donor_radius[ind_threshold]<rc1_i:
         Pwarn("partial mass ejected is greater than the envelope mass", "EvolutionWarning")   
-        #print("M_ejected, M_envelope = ", donor_mass[0] - donor_mass[ind_threshold], donor_mass[0] - mc1_i)
         mass_threshold = mc1_i
     else:
         mass_threshold = donor_mass[ind_threshold]

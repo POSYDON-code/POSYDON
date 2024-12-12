@@ -54,7 +54,7 @@ from posydon.popsyn.normalized_pop_mass import initial_total_underlying_mass
 from posydon.popsyn.defaults import default_kwargs
 from posydon.popsyn.io import binarypop_kwargs_from_ini
 from posydon.utils.constants import Zsun
-from posydon.utils.posydonerror import POSYDONError,initial_condition_message
+from posydon.utils.posydonerror import POSYDONError
 from posydon.utils.posydonwarning import (Pwarn, Catch_POSYDON_Warnings)
 from posydon.utils.common_functions import set_binary_to_failed
 
@@ -331,14 +331,14 @@ class BinaryPopulation:
                     binary.traceback = traceback.format_exc()
 
                     if self.kwargs.get("error_checking_verbose", False):
-                        posydon_error.add_note(initial_condition_message(binary))
+                        posydon_error.add_note(binary.initial_condition_message())
                         traceback.print_exception(posydon_error)
 
                 except Exception as e:
                     set_binary_to_failed(binary)
                     binary.traceback = traceback.format_exc()
 
-                    e.add_note(initial_condition_message(binary))
+                    e.add_note(binary.initial_condition_message())
                     traceback.print_exception(e)
 
                 # record if there were warnings caught during the binary
