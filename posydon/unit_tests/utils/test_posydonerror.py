@@ -32,7 +32,7 @@ def SingleStar():
 class TestElements:
     # check for objects, which should be an element of the tested module
     def test_dir(self):
-        elements = ['BinaryStar', 'FlowError', 'GridError', 'MatchingError',\
+        elements = ['BinaryStar', 'ClassificationError', 'FlowError', 'GridError', 'MatchingError',\
                     'ModelError', 'NumericalError', 'POSYDONError',\
                     'SingleStar', '__authors__', '__builtins__', '__cached__',\
                     '__doc__', '__file__', '__loader__', '__name__',\
@@ -47,6 +47,12 @@ class TestElements:
         assert issubclass(totest.POSYDONError, Exception)
         with raises(totest.POSYDONError, match="Test"):
             raise totest.POSYDONError("Test")
+            
+    def test_instance_ClassificationError(self):
+        assert isclass(totest.ClassificationError)
+        assert issubclass(totest.ClassificationError, totest.POSYDONError)
+        with raises(totest.ClassificationError, match="Test"):
+            raise totest.ClassificationError("Test")
 
     def test_instance_FlowError(self):
         assert isclass(totest.FlowError)
