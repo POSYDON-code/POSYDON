@@ -58,9 +58,6 @@ How is this Documentation Structured?
    :caption: User Guides
 
    user-guides/user-roadmap
-   user-guides/web-application
-   user-guides/database-query-system
-
 
 .. toctree::
    :maxdepth: 1
@@ -118,10 +115,10 @@ How is this Documentation Structured?
 
 .. toctree::
    :maxdepth: 1
-   :caption: Release Notes and Changelog
+   :caption: Releases and Datasets
 
-   release-notes/version-history
-   release-notes/major-updates
+   Releases <https://github.com/POSYDON-code/POSYDON/releases>
+   Datasets <https://zenodo.org/communities/posydon/>
    
 
 .. toctree::
@@ -129,6 +126,9 @@ How is this Documentation Structured?
    :caption: Contact and Support
 
    contact-support/contact-information
+
+
+
 
 
 Acknowledgments

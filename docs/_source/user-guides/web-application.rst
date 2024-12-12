@@ -45,7 +45,3 @@ Feedback & Support
 
 We're always looking to improve the web application. If you encounter any issues or have suggestions for new features, please refer to the [contact-information.rst](contact-information.rst) page to get in touch with us.
 
-Updates & Changelog
--------------------
-
-For information about updates, improvements, and fixes in the web application, refer to the [version-history.rst](version-history.rst) page.

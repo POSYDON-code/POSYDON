@@ -55,7 +55,7 @@ Best Practices
 
 - Always double-check your query parameters to ensure accuracy.
 - For large data retrievals, consider off-peak hours to minimize server load.
-- Regularly update yourself with database schema changes from the [version-history.rst](version-history.rst) page.
+
 
 Support & Feedback
 ------------------
