@@ -186,9 +186,9 @@ def plot_hist_properties(df, ax=None, df_intrinsic=None, df_observable=None,
         plt.show()
 
 
-
-
-def plot_popsyn_over_grid_slice(pop, grid_type, met_Zsun, slices=None, channel=None,
+def plot_popsyn_over_grid_slice(pop, grid_type, met_Zsun,
+                                termination_flag='combined_TF12',
+                                slices=None, channel=None,
                                 plot_dir='./', prop=None, prop_range=None,
                                 log_prop=False, alpha=0.3, s=5.,
                                 show_fig=True, save_fig=True, close_fig=True,
@@ -197,148 +197,260 @@ def plot_popsyn_over_grid_slice(pop, grid_type, met_Zsun, slices=None, channel=N
     # Check if step_names in pop.history data
     if 'step_names' not in pop.history.columns:
         raise ValueError('Formation channel information not available in popsynth data.')
+    # check if formation channel information is avaialbe
 
-    # load grid
+    if channel is not None and 'channel' not in pop.population.columns:
+        raise ValueError('Formation channel information not available in popsynth data.')
+
+    # get population data from the popsyn for the given metallicity
+    data = get_population_data(pop          = pop,
+                               metallicity  = met_Zsun,
+                               grid_type    = grid_type,
+                               channel      = channel,
+                               prop         = prop)
+    # Setup the grid 
     met = convert_metallicity_to_string(met_Zsun)
     grid_path = os.path.join(PATH_TO_POSYDON_DATA, f'POSYDON_data/{grid_type}/{met}_Zsun.h5')
     grid = PSyGrid(verbose=False)
     grid.load(grid_path)
+    bin_centers,bin_edges, PLOT_PROPERTIES, tmp_fname, slice_3D_var_str = \
+                            setup_grid_slice_plotting(grid, grid_type, plot_extension)
 
-    # check if formation channel information is avaialbe
-    if channel is not None and 'channel' not in pop.columns:
-        raise ValueError('Formation channel information not available in popsynth data.')
+    for i, bin_center in enumerate(bin_centers):
+        # skip slices not in the list
+        if slices is not None and round(bin_center,2) not in np.around(slices,2):
+            if verbose:
+                print(f'Skipping {round(bin_center,2)}')
+            continue
+        
+        slice_3D_var_range = (bin_edges[i], bin_edges[i+1])
+        
+        # add additional information to the title
+        if slice_3D_var_str == 'mass_ratio':
+            PLOT_PROPERTIES['title'] = f'q = {bin_center:.2f}'
+        elif slice_3D_var_str == 'star_2_mass':
+            PLOT_PROPERTIES['title'] = '$M_\mathrm{CO}'+f' = {bin_center:.2f} M_{{\odot}}$'
+        # Check for channel
+        if channel is not None:
+            PLOT_PROPERTIES['title'] += f'\n {channel}'
+        
+        # change the file name for the plot
+        PLOT_PROPERTIES['fname'] = tmp_fname % bin_center
+        
+        # change size of the figure for properties
+        if prop is not None:
+            PLOT_PROPERTIES['figsize'] = (4,5.5)
+        
+        plot_grid_slice(grid,
+                        slice_3D_var_str,
+                        slice_3D_var_range,
+                        termination_flag=termination_flag, 
+                        PLOT_PROPERTIES=PLOT_PROPERTIES)
+        plot_population_data(data, slice_3D_var_str, slice_3D_var_range, 
+                             prop, prop_range, log_prop, alpha, s)
 
-    if 'CO' in grid_path:
-        # compact object mass slices
-        # TODO: THIS SELECTION DOES NOT WORK!
+
+        if save_fig:
+            plt.savefig(os.path.join(plot_dir, PLOT_PROPERTIES['fname']), bbox_inches='tight')
+        if show_fig:
+            plt.show()
+        if close_fig:
+            plt.close()
+
+def get_population_data(pop, metallicity, grid_type, channel=None, prop=None):
+    '''get the population data of a given metallicity for plotting
+    
+    Parameters
+    ----------
+    pop : Population
+        Population object
+    metallicity : float
+        Metallicity of the population in solar units
+    grid_type : str
+        Grid type to get data for.
+        Options are 'HMS-HMS', 'CO-HMS_RLO', 'CO-HeMS', 'CO-HeMS_RLO'.
+    channel : str
+        Formation channel to be plotted
+        
+    Returns
+    -------
+    data : DataFrame
+        Population data of the given metallicity and channel and grid type
+    '''
+    
+    # 1. mask channel
+    if channel is not None:
+        channel_mask = pop.population['channel'] == channel
+    else:
+        channel_mask = True
+    
+    # 2. mask metallicity
+    metallicity_mask = pop.population['metallicity'] == metallicity
+    
+    # 3. Get the history data for the selected population based on the grid/step names
+    selected_indices = pop.population.index[channel_mask & metallicity_mask].tolist()
+    
+    where_string = "(index in "+str(selected_indices)+")"
+    
+    data = pop.history.select(where=where_string,
+                              columns=['S1_mass',
+                                       'S2_mass',
+                                       'orbital_period',
+                                       'event',
+                                       'step_names']).copy()
+    
+    # select the right data based on the grid type
+    if grid_type == 'HMS-HMS':
+        data = data[data['event'] == 'ZAMS']
+    elif grid_type == 'CO-HMS_RLO':
+        data = data[data['event'] == 'oRLO2']
+    elif grid_type == 'CO-HeMS':
+        data = data[data['event'] == 'step_CE']
+    else:
+        print('grid type not recognized')
+
+    data['q'] = data['S2_mass']/data['S1_mass']
+
+    # only relevant for Compact Object (CO) grids
+    data.loc[data['q']>1, 'q'] = 1./data['q'][data['q']>1]
+    
+    # add prop of DCO merger to the data
+    if prop is not None:
+        if prop not in pop.population.columns:
+            raise ValueError(f'Property {prop} not available in pop.population.')
+        data[prop] = pop.population[prop][channel_mask & metallicity_mask].values
+    
+    # remove unnecessary columns
+    data.drop(columns=['event', 'step_names'], inplace=True)
+    return data
+
+
+def setup_grid_slice_plotting(grid, grid_type, plot_extension):
+    '''Setup the values for plotting the grid slice
+    
+    Parameters
+    ----------
+    grid : PSyGrid
+        PSyGrid object
+    grid_type : str
+        Grid type to get data for.
+        Options are 'HMS-HMS', 'CO-HMS_RLO', 'CO-HeMS', 'CO-HeMS_RLO'.
+    plot_extension : str
+        File extension for saving the plot
+    
+    Returns
+    -------
+    bin_centers : list
+        List of bin centers
+    bin_edges : list
+        List of bin edges
+    PLOT_PROPERTIES : dict
+        Dictionary of plot properties
+    slice_3D_var_str : str
+        String of the 3D variable to slice the grid
+    '''
+    
+    if grid_type == "HMS-HMS":
+        grid_q_unique = np.unique(np.around(grid.initial_values['star_2_mass']/grid.initial_values['star_1_mass'],2))
+        delta_q = (grid_q_unique[1:]-grid_q_unique[:-1])*0.5
+        q_edges = (grid_q_unique[:-1]+delta_q).tolist()
+        
+        # set output variables
+        bin_edges = [0.]+q_edges+[1.]
+        bin_centers = grid_q_unique.tolist()
+        tmp_fname = 'grid_q_%1.2f.' + plot_extension
+        slice_3D_var_str='mass_ratio'
+        
+    elif 'CO' in grid_type:
         m_COs = np.unique(np.around(grid.initial_values['star_2_mass'],1))
         m_COs_edges = 10**((np.log10(np.array(m_COs)[1:])+np.log10(np.array(m_COs)[:-1]))*0.5)
         m2 = [0.]+m_COs_edges.tolist()+[2*m_COs_edges[-1]]
-        vars = m_COs
-        fname = 'grid_m_%1.2f.' + plot_extension
-        title = '$m_\mathrm{CO}=%1.2f\,M_\odot$'
+        
+        bin_edges = m2
+        bin_centers = m_COs
+        tmp_fname = 'grid_m_%1.2f.' + plot_extension
         slice_3D_var_str='star_2_mass'
-    elif 'HMS-HMS' in grid_path:
-        # mass ratio slices
-        qs = np.unique(np.around(grid.initial_values['star_2_mass']/grid.initial_values['star_1_mass'],2))
-        dq = (qs[1:]-qs[:-1])*0.5
-        dq_edges = (qs[:-1]+dq).tolist()
-        dq_edges = [0.]+dq_edges+[1.]
-        vars = qs.tolist()
-        fname = 'grid_q_%1.2f.' + plot_extension
-        title = '$q=%1.2f$'
-        slice_3D_var_str='mass_ratio'
     else:
-        raise ValueError('Grid type not supported!')
+        print('grid type not recognized')
+        
+    PLOT_PROPERTIES = {
+        'show_fig' : False,
+        'close_fig' : False,
+        'log10_x' : True,
+        'log10_y' : True,
+        'legend2D' : {'bbox_to_anchor' : (1.03, 0.5)},
+    }
+
+    return bin_centers, bin_edges, PLOT_PROPERTIES, tmp_fname, slice_3D_var_str
 
 
-    if channel is not None:
-        channel_sel = 'channel == "'+str(channel)+'"'
+def plot_population_data(data,
+                         slice_3D_var_str,
+                         slice_3D_var_range,
+                         prop=None,
+                         prop_range=None,
+                         log_prop=False,
+                         alpha=0.3,
+                         s=5):
+    '''Plot the population data based on the grid slice'''
+
+    # get only slice data
+    if slice_3D_var_str == 'mass_ratio':
+        var = 'q'
+    elif slice_3D_var_str == 'star_2_mass':
+        var = 'S2_mass'
+    
+    # make it exclusive for the upper limit
+    mask = (data[var] >= slice_3D_var_range[0]) & (data[var] < slice_3D_var_range[1])
+    
+    if prop is not None:
+        if prop not in data.columns:
+            raise ValueError(f'Property {prop} not available in popsynth data.')
+        if prop_range is None:
+            prop_range = [data[prop].min(), data[prop].max()]
+        
+        vmin = prop_range[0]
+        vmax = prop_range[1]
+        prop_values = data[prop][mask].values
+        
+        if log_prop:
+            prop_values = np.log10(prop_values)
+            vmin = np.log10(vmin)
+            vmax = np.log10(vmax)
+            
+        plt.scatter(np.log10(data['S1_mass'][mask]),
+                    np.log10(data['orbital_period'][mask]),
+                    c=prop_values,
+                    s=s,
+                    vmin=vmin,
+                    vmax=vmax,
+                    marker='v',
+                    cmap='viridis',
+                    alpha=alpha,
+                    zorder=0.5)
+        if prop in DEFAULT_LABELS:
+            if log_prop:
+                label = DEFAULT_LABELS[prop][1]
+            else:
+                label = DEFAULT_LABELS[prop][0]
+        else:
+            label = prop
+            if log_prop:
+                label = 'log10_'+label
+        plt.colorbar(label=label, orientation='horizontal')
     else:
-        channel_sel = ''
-
-    for i, var in enumerate(vars):
-        if slices is not None and round(var,2) not in np.around(slices,2):
-            if verbose:
-                print(f'Skipping {round(var,2)}')
-            continue
-
-        met_indices = np.where(pop.select(where=channel_sel, columns=['metallicity']) == met_Zsun)[0].tolist()
-        if 'HMS-HMS' in grid_path:
-            slice_3D_var_range = (dq_edges[i],dq_edges[i+1])
-            if len(met_indices) == 0:
-                data = pd.DataFrame(columns=['S1_mass','S2_mass', 'orbital_period'])
-            else:
-                sel = 'index in '+str(met_indices)+' & event == "ZAMS"'
-                data = pop.history.select(where=sel, columns=['S1_mass','S2_mass', 'orbital_period'])
-
-            q = data['S2_mass'].values/data['S1_mass'].values
-            q[q>1] = 1./q[q>1]
-            mask = (q>=slice_3D_var_range[0]) & (q<=slice_3D_var_range[1])
-        elif 'CO' in grid_path:
-            if i == len(m2):
-                continue
-            slice_3D_var_range = (m2[i],m2[i+1])
-            # select popsynth binaries in the given compact object mass
-            # TODO: implement the case of reversal mass ratio
-            if 'CO-HMS_RLO' in grid_path:
-                if len(met_indices) == 0:
-                    data = pd.DataFrame(columns=['S1_mass','S2_mass', 'orbital_period'])
-                else:
-                    sel = 'index in '+str(met_indices)+' & event == "oRLO2"'
-                    data = pop.history.select(where=sel, columns=['S1_mass','S2_mass', 'orbital_period'])
-                
-                m_CO = data['S1_mass'].values
-                mask = (m_CO>=slice_3D_var_range[0]) & (m_CO<=slice_3D_var_range[1])
-
-            elif 'CO-HeMS' in grid_path:
-                if len(met_indices) == 0:
-                    data = pd.DataFrame(columns=['S1_mass','S2_mass', 'orbital_period'])
-                else:
-                    sel = 'index in '+str(met_indices)+' & step_names == "step_CE"'
-                    data = pop.history.select(where=sel, columns=['S1_mass','S2_mass', 'orbital_period'])
-                    
-                m_CO = data['S1_mass'].values
-                mask = (m_CO>=slice_3D_var_range[0]) & (m_CO<=slice_3D_var_range[1])
-            else:
-                raise ValueError('Grid type not supported!')
-        # TODO: skip plotting slice if there are no data
-        try:
-            PLOT_PROPERTIES = {
-                'figsize' : (4,3.5) if prop is None else (4,5.5),
-                'path_to_file' : plot_dir,
-                'show_fig' : False,
-                'close_fig' : False,
-                #'fname' : fname%var,
-                'title' : title%var if channel is None else title%var + '\n' + channel,
-                'log10_x' : True,
-                'log10_y' : True,
-                'legend2D' : {'bbox_to_anchor' : (1.03, 0.5)},
-            }
-            # grid
-            grid.plot2D('star_1_mass', 'period_days', None,
-                            termination_flag='combined_TF12',
-                            grid_3D=True, slice_3D_var_str=slice_3D_var_str,
-                            slice_3D_var_range=slice_3D_var_range,
-                            verbose=False, **PLOT_PROPERTIES)
-
-            log10_m1 = np.log10(data.loc[mask,'S1_mass'].values)
-            log10_p = np.log10(data.loc[mask,'orbital_period'].values)
-            # plot color map of a given DCO variable
-            if prop is not None:
-                if prop not in pop.columns:
-                    raise ValueError(f'Property {prop} not available in popsynth data.')
-
-                # basically only for DCO systems
-                met_indices = np.array(met_indices)[mask].tolist()
-                prop_sel = 'index in '+str(met_indices) + ' & event == "CO_contact"'
-                prop_data = pop.history.select(where=prop_sel, columns=[prop])
-                prop_values = prop_data[prop].values
-                vmin = prop_range[0]
-                vmax = prop_range[1]
-                if log_prop:
-                    prop_values = np.log10(prop_values)
-                    vmin = np.log10(vmin)
-                    vmax = np.log10(vmax)
-                plt.scatter(log10_m1, log10_p, c=prop_values, s=s, vmin=vmin, vmax=vmax, marker='v', cmap='viridis', alpha=alpha, zorder=0.5)
-                if prop in DEFAULT_LABELS:
-                    if log_prop:
-                        label = DEFAULT_LABELS[prop][1]
-                    else:
-                        label = DEFAULT_LABELS[prop][0]
-                else:
-                    label = prop
-                    if log_prop:
-                        label = 'log10_'+label
-                plt.colorbar(label=label, orientation='horizontal')
-            else:
-                plt.scatter(log10_m1, log10_p, s=s, marker='v', color='black', alpha=alpha, zorder=0.5)
-
-            if save_fig:
-                plt.savefig(os.path.join(plot_dir, fname%var), bbox_inches='tight')
-            if show_fig:
-                plt.show()
-            if close_fig:
-                plt.close()
-        except:
-            raise ValueError(f'Failed to plot slice %1.2f'%var)
+        plt.scatter(np.log10(data['S1_mass'][mask]),
+                    np.log10(data['orbital_period'][mask]),
+                    s=s,
+                    marker='v',
+                    color='black',
+                    alpha=alpha,
+                    zorder=0.5)
+    
+    
+def plot_grid_slice(grid, slice_3D_var_str, slice_3D_var_range, termination_flag='combined_TF12', PLOT_PROPERTIES=None):
+    grid.plot2D('star_1_mass', 'period_days', None,
+                termination_flag=termination_flag,
+                grid_3D=True, slice_3D_var_str=slice_3D_var_str,
+                slice_3D_var_range=slice_3D_var_range,
+                verbose=False, **PLOT_PROPERTIES)
