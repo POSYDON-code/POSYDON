@@ -220,7 +220,7 @@ def plot_popsyn_over_grid_slice(pop,
     plot_dir : str
         Directory where to save the plots.
     prop : str
-        Property to plot on the grid. If None, no property is plotted.
+        Property to plot on the grid. If None, no property colour is plotted.
     prop_range : list of floats
         Range of the property to plot.
     log_prop : bool
@@ -236,7 +236,7 @@ def plot_popsyn_over_grid_slice(pop,
     close_fig : bool
         If True, the plot is closed.
     plot_extension : str
-        Extension of the plot.
+        File extension of the plot.
     verbose : bool
         If True, print information about the slices being plotted.
     '''
