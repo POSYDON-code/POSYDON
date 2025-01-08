@@ -625,8 +625,14 @@ def rejection_sampler(x=None, y=None, size=1, x_lim=None, pdf=None):
         An array with `size` random numbers generated from the PDF.
 
     """
+    
     if pdf is None:
+
         assert np.all(y >= 0.0)
+        if x is None or y is None:
+            raise ValueError("x and y PDF values must be specified if no PDF function" 
+                             "is provided for rejection sampling")
+        
         try:
             pdf = PchipInterpolator(x, y)
         except ValueError:
@@ -641,7 +647,13 @@ def rejection_sampler(x=None, y=None, size=1, x_lim=None, pdf=None):
             x_rand = np.random.uniform(x.min(), x.max(), n)
             y_rand = np.random.uniform(0, y.max(), n)
             values = np.hstack([values, x_rand[y_rand <= pdf(x_rand)]])
+
     else:
+
+        if x_lim is None:
+            raise ValueError("x_lim must be specified for passed PDF function in"
+                             "rejection sampling")
+        
         x_rand = np.random.uniform(x_lim[0], x_lim[1], size)
         pdf_max = max(pdf(np.random.uniform(x_lim[0], x_lim[1], 50000)))
         y_rand = np.random.uniform(0, pdf_max, size)
