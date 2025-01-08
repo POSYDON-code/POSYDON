@@ -15,7 +15,7 @@ os = totest.os
 # module you like to test
 from pytest import fixture, raises, warns, approx
 from inspect import isroutine, isclass
-from scipy.interpolate import interp1d
+from scipy.interpolate import PchipInterpolator
 from posydon.binary_evol.binarystar import BinaryStar
 from posydon.binary_evol.singlestar import SingleStar
 from posydon.utils.posydonwarning import (EvolutionWarning,\
@@ -99,7 +99,7 @@ class TestElements:
                     'infer_mass_transfer_case', 'infer_star_state',\
                     'initialize_empty_array',\
                     'inspiral_timescale_from_orbital_period',\
-                    'inspiral_timescale_from_separation', 'interp1d',\
+                    'inspiral_timescale_from_separation',\
                     'inverse_sampler', 'is_number',\
                     'linear_interpolation_between_two_cells', 'newton', 'np',\
                     'orbital_period_from_separation',\
@@ -721,10 +721,10 @@ class TestFunctions:
     def test_rejection_sampler(self, monkeypatch):
         def mock_uniform(low=0.0, high=1.0, size=1):
             return np.linspace(low, high, num=size)
-        def mock_interp1d(x, y):
+        def mock_pchipinterp(x, y):
             if x[0] > x[-1]:
                 raise ValueError
-            return interp1d(x, y)
+            return PchipInterpolator(x, y)
         def mock_pdf(x):
             return 1.0 - np.sqrt(x)
         # bad input
@@ -747,7 +747,7 @@ class TestFunctions:
             totest.rejection_sampler(pdf=mock_pdf)
         # examples:
         monkeypatch.setattr(np.random, "uniform", mock_uniform)
-        monkeypatch.setattr(totest, "interp1d", mock_interp1d)
+        monkeypatch.setattr(totest, "pchipinterp", mock_pchipinterp)
         tests = [(np.array([0.0, 1.0]), np.array([0.4, 0.6]), 5,\
                   np.array([0.0, 0.25, 0.5, 0.75, 1.0])),\
                  (np.array([1.0, 0.0]), np.array([0.2, 0.8]), 5,\
