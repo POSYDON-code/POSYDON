@@ -627,11 +627,11 @@ def rejection_sampler(x=None, y=None, size=1, x_lim=None, pdf=None):
     """
     
     if pdf is None:
-
-        assert np.all(y >= 0.0)
+        
         if x is None or y is None:
             raise ValueError("x and y PDF values must be specified if no PDF function" 
-                             " is provided for rejection sampling")
+                             " is provided for rejection sampling")       
+        assert np.all(y >= 0.0)
         
         try:
             pdf = PchipInterpolator(x, y)
