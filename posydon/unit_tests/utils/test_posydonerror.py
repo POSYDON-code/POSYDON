@@ -36,12 +36,6 @@ class TestElements:
         assert issubclass(totest.POSYDONError, Exception)
         with raises(totest.POSYDONError, match="Test"):
             raise totest.POSYDONError("Test")
-            
-    def test_instance_ClassificationError(self):
-        assert isclass(totest.ClassificationError)
-        assert issubclass(totest.ClassificationError, totest.POSYDONError)
-        with raises(totest.ClassificationError, match="Test"):
-            raise totest.ClassificationError("Test")
 
     def test_instance_FlowError(self):
         assert isclass(totest.FlowError)
