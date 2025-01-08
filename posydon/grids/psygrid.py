@@ -26,7 +26,7 @@ d) Various options (see definition of `create` and `GRIDPROPERTIES` for more):
 
     NOTE: you can use a family of HDF5 files in case of file size restrictions.
     For example, using `mygrid.h5.%d` for the path when creating/loading grids,
-    implied that split files will be `mygrid.h5.0`, `mygrid.h5.1`, and so on.
+    implies that split files will be `mygrid.h5.0`, `mygrid.h5.1`, and so on.
     When overwriting the file, all the family is overwritten (effectively, the
     files are emptied to avoid remainder split files from previous operations.)
 
@@ -90,8 +90,8 @@ h) To include specific columns from MESA data files, set the grid properties of
    to select the exact set of columns, provide them in a tuple instead of list.
 
 
-II. READING DATA FROM GRID
---------------------------
+II. READING DATA FROM A GRID
+----------------------------
 mygrid = PSyGrid("thegrid.h5")  # opens a stored grid
 
 # Indexing...
@@ -125,7 +125,7 @@ b) In `for` loop (`iter` and `next` are supported too):
     for run in mygrid:
         print(run)
 
-c) Getting number of runs:
+c) Getting the number of runs:
 
     n_runs = len(psygrid)
 
@@ -159,8 +159,8 @@ the table is loaded from the HDF5 file temporarily. This means that:
 
     myrun.history1.star_mass + myrun.history1.star_mass
 
-loads the table two times! To reduce reading times, store in local variables
-all the tables that are going to be needed more than once:
+loads the table two times! To reduce reading times, store all the tables
+that are going to be needed more than once in local variables:
 
     myhistory1 = myrun.history1
     myhistory1.star_mass + myhistory1.star_mass
@@ -1541,11 +1541,13 @@ class PSyGrid:
 
         return ret
 
-    def __getitem__(self, idx):
-        """Return a PSyRunView instance for the run with index `idx`."""
-        if idx not in self:
-            raise KeyError("Index {} out of bounds.".format(idx))
-        return PSyRunView(self, idx)
+    def __getitem__(self, index):
+        """Return a PSyRunView instance for the run with index `index`."""
+        if not np.issubdtype(type(index), int):
+            raise TypeError("Index {} is not of type int".format(index))
+        if index not in self:
+            raise IndexError("Index {} out of bounds.".format(index))
+        return PSyRunView(self, index)
 
     def get_pandas_initial_final(self):
         """Convert the initial/final values into a single Pandas dataframe."""
@@ -1565,6 +1567,8 @@ class PSyGrid:
 
     def __contains__(self, index):
         """Return True if run with index `index` is in the grid."""
+        if not np.issubdtype(type(index), int):
+            raise TypeError("Index {} is not of type int".format(index))
         return 0 <= index < self.n_runs
 
     def __iter__(self):

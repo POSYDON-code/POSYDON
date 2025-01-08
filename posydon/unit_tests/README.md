@@ -16,7 +16,7 @@ If you like to run all unit tests you can use
 
 ## File structure
 
-As already visible from the commands how to run all unit tests we have a the `unit_tests` directory. In there are individual directories to combine several tests into one suite. It is a natural choice to reuse the topics used in the code itself. For example all the unit tests for files inside `$PATH_TO_POSYDON/posydon/utils` are put in `$PATH_TO_POSYDON/posydon/unit_tests/utils`. In those suits, there should be a file for each code file, which is simply extended by the prefix `test_`, e.g. `test_posydonerror.py` contains the unit tests of `posydonerror.py`. If the code file is in a subdirectory, may add this to the prefix. *I'd discourage to create deep directory structures inside the `unit_tests`.*
+As already visible from the commands how to run all unit tests we have a the `unit_tests` directory. In there are individual directories to combine several tests into one suite. It is a natural choice to reuse the topics used in the code itself. For example all the unit tests for files inside `$PATH_TO_POSYDON/posydon/utils` are put in `$PATH_TO_POSYDON/posydon/unit_tests/utils`. In those suites, there should be a file for each code file, which is simply extended by the prefix `test_`, e.g. `test_posydonerror.py` contains the unit tests of `posydonerror.py`. If the code file is in a subdirectory, may add this to the prefix. *I'd discourage to create deep directory structures inside the `unit_tests`.*
 
 ## How to add a new unit test
 
@@ -101,6 +101,8 @@ Fixtures replace the `setUp` and `tearDown`. To use a fixture to prepare somethi
 
 For cleaning things up after a test, instead of having a final return, you separate setUp and tearDown with a `yield` statement, which ensure that all before is executed when the fixture is requested and the stuff after when it get deleted (usually at the end of the test function). For chains of fixtures it should be noted, that the clean up happens in the reverse order to the creation, because the innermost fixture will get deleted first.
 
+There are some useful [predefined fixtures](https://docs.pytest.org/en/stable/reference/fixtures.html). One was already introduced earlier, `capsys` can be used to interact with captured output. Another very useful one is `tmp_path`, which is a path object to a directory, which is created for each test function and will be subject to removal afterwards. Hence, whenever you need to read/write files for the test, it should be done in there. In most cases, `tmp_path` will not be used in your test function, but you use it in a self-defined fixture, which e.g. creates a file for the function. A third predefined fixture of interest is `monkeypatch`. This can be used to replace the objects inside the tested code just for the test. More [predefined fixtures can be found online](https://docs.pytest.org/en/stable/reference/fixtures.html).
+
 #### Catching raised errors
 
 Pytest has the [context manager `pytest.raises`](https://docs.pytest.org/en/stable/reference/reference.html#pytest-raises) to catch raised errors. You use it like other context managers via a `with` statement. Beside the expected exception, you can specify a `match`, which will be checked against the error message as a regular expression, e.g.:
@@ -122,7 +124,7 @@ Usually, pytest will catch all warnings and print them at the end of all tests. 
 
 ### Check that it can fail
 
-Whenever you write a test, it should succeed on the existing code. On the other hand, you should also make a test where you expect it to fail, otherwise, the test won't do its job.
+Whenever you write a test, it should succeed on the existing code. On the other hand, you should also try out introducing a temporary change that you expect to lead to a failure to ensure the test is doing its job.
 
 ## How to update a unit test
 
@@ -148,4 +150,11 @@ Strictly speaking it runs the `pytest` inside of [coverage](https://coverage.rea
 
 *I suggest to use the `-m` option to show uncovered lines, which is `--cov-report term-missing` in pytest.*
 
-We should aim for a 100% coverage. If there is code which should be excluded from the coverage, please mark it with `# pragma: no cover`. The main usage is for code, which under normal conditions should never run, e.g. in POSYDONwarnings is a part to act, when the python `sys` module fails.
+We should aim for 100% coverage. If there is code which should be excluded from the coverage, please mark it with `# pragma: no cover`. The main usage is for code, which under normal conditions should never run, e.g. in POSYDONwarnings is a part to act, when the python `sys` module fails.
+
+You can also enforce 100% coverage in the Github action performing the tests by adding `--cov-fail-under=100` to the pytest command, for example:
+
+    python -m pytest posydon/unit_tests/ --cov=posydon.utils --cov-branch --cov-report term-missing --cov-fail-under=100 
+
+This particular line ensures that the tests in `posydon/unit_tests/` run 100% of the code in `posydon.utils`, and that the check will otherwise fail. 
+

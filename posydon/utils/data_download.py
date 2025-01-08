@@ -17,8 +17,8 @@ PATH_TO_POSYDON_DATA = os.environ.get("PATH_TO_POSYDON_DATA",'./')
 file = os.path.join(PATH_TO_POSYDON_DATA, "POSYDON_data.tar.gz")
 PATH_TO_POSYDON_DATA = os.path.join(PATH_TO_POSYDON_DATA, 'POSYDON_data/')
 
-data_url = "https://zenodo.org/record/6655751/files/POSYDON_data.tar.gz"
-original_md5 = "8873544d9a568ebb85bccffbf1bdcd99"
+data_url = "https://zenodo.org/record/14205146/files/POSYDON_data.tar.gz"
+original_md5 = "cf645a45b9b92c2ad01e759eb1950beb"
 
 class ProgressBar():
     def __init__(self):
@@ -50,7 +50,7 @@ def data_download(file=file, MD5_check=True, verbose=False):
        file : string
             - Filename of the data file to be downloaded
         MD5_check : boolean
-            - Use the MD5 checksum to make sure data is not corrupted
+            - Use the MD5 check to make sure data is not corrupted
         verbose : boolean
             - verbose output
 

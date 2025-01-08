@@ -7,6 +7,8 @@ __authors__ = [
 
 # import the module which will be tested
 import posydon.utils.data_download as totest
+# aliases
+os = totest.os
 
 # import other needed code for the tests, which is not already imported in the
 # module you like to test
@@ -26,22 +28,22 @@ class TestElements:
                     'data_download', 'data_url', 'file', 'hashlib',\
                     'original_md5', 'os', 'progressbar', 'tarfile', 'tqdm',\
                     'urllib']
-        assert dir(totest) == elements, "There might be added or removed "+\
-               "objects without an update on the unit test."
+        assert dir(totest) == elements, "There might be added or removed "\
+                                        + "objects without an update on the "\
+                                        + "unit test."
 
     def test_instance_PATH_TO_POSYDON_DATA(self):
         assert isinstance(totest.PATH_TO_POSYDON_DATA, (str, bytes,\
-                                                        totest.os.PathLike))
+                                                        os.PathLike))
 
     def test_instance_file(self):
-        assert isinstance(totest.file, (str, bytes, totest.os.PathLike))
+        assert isinstance(totest.file, (str, bytes, os.PathLike))
 
     def test_instance_data_url(self):
-        assert isinstance(totest.data_url, (str, bytes, totest.os.PathLike))
+        assert isinstance(totest.data_url, (str, bytes, os.PathLike))
 
     def test_instance_original_md5(self):
-        assert isinstance(totest.original_md5, (str, bytes,\
-                                                totest.os.PathLike))
+        assert isinstance(totest.original_md5, (str, bytes, os.PathLike))
 
     def test_instance_ProgressBar(self):
         assert isclass(totest.ProgressBar)
@@ -59,18 +61,18 @@ class TestValues:
         assert "POSYDON_data.tar.gz" in totest.file
 
     def test_value_data_url(self):
-        assert totest.data_url == "https://zenodo.org/record/6655751/files/"+\
-               "POSYDON_data.tar.gz"
+        assert totest.data_url == "https://zenodo.org/record/14205146/files/"\
+                                  + "POSYDON_data.tar.gz"
 
     def test_value_original_md5(self):
-        assert "8873544d9a568ebb85bccffbf1bdcd99" in totest.original_md5
+        assert totest.original_md5 == "cf645a45b9b92c2ad01e759eb1950beb"
 
 
 class TestFunctions:
     @fixture
     def test_path(self, tmp_path):
         # a temporary path to POSYDON_data for testing
-        return totest.os.path.join(tmp_path, "POSYDON_data")
+        return os.path.join(tmp_path, "POSYDON_data")
 
     @fixture
     def download_statement(self):
@@ -113,23 +115,23 @@ class TestFunctions:
             def __exit__(self, exc_type, exc_value, exc_traceback):
                 return False
         def mock_urlretrieve2(url, filename=None, reporthook=None, data=None):
-            totest.os.mkdir(test_path)
+            os.mkdir(test_path)
             if (isinstance(filename, str) and (len(filename)>=8)):
                 test_ID = filename[-8]
             else:
                 test_ID = ""
-            with open(totest.os.path.join(test_path, "test"+test_ID+".txt"),\
-                                          "w") as test_file:
+            with open(os.path.join(test_path, "test"+test_ID+".txt"), "w")\
+                 as test_file:
                 test_file.write("Unit Test\n")
-            with chdir(totest.os.path.join(test_path,"..")):
-                totest.os.system("tar -czf POSYDON_data"+test_ID+\
-                                 ".tar.gz POSYDON_data")
+            with chdir(os.path.join(test_path,"..")):
+                os.system("tar -czf POSYDON_data"+test_ID\
+                          +".tar.gz POSYDON_data")
             rmtree(test_path)
             return None
 
         # bad input
-        with raises(TypeError, match="path should be string, bytes, "+\
-                                     "os.PathLike or integer"):
+        with raises(TypeError, match="path should be string, bytes, "\
+                                     +"os.PathLike or integer"):
             totest.data_download(file={})
         totest.data_download(file="./")
         assert capsys.readouterr().out == ""
@@ -174,10 +176,9 @@ class TestFunctions:
                 assert failed_MD5_statement not in captured_output.out
                 assert extraction_statement in captured_output.out
                 assert removal_statement not in captured_output.out
-                assert totest.os.path.exists(test_path)
-                assert totest.os.path.exists(totest.os.path.join(test_path,\
-                                                                 "test1.txt"))
-                rmtree(test_path) # removed extracted data
+                assert os.path.exists(test_path)
+                assert os.path.exists(os.path.join(test_path, "test1.txt"))
+                rmtree(test_path) # removed extracted data for next test
                 # with verification output
                 totest.data_download(file=test_path+"2.tar.gz", verbose=True)
                 captured_output = capsys.readouterr()
@@ -185,18 +186,16 @@ class TestFunctions:
                 assert "MD5 verified" in captured_output.out
                 assert extraction_statement in captured_output.out
                 assert removal_statement in captured_output.out
-                assert totest.os.path.exists(test_path)
-                assert totest.os.path.exists(totest.os.path.join(test_path,\
-                                                                 "test2.txt"))
-                rmtree(test_path) # removed extracted data
+                assert os.path.exists(test_path)
+                assert os.path.exists(os.path.join(test_path, "test2.txt"))
+#                rmtree(test_path) # removed extracted data for next test
 
 
 class TestProgressBar:
     @fixture
     def ProgressBar(self):
         # initialize an instance of the class with defaults
-        ProgressBar = totest.ProgressBar()
-        return ProgressBar
+        return totest.ProgressBar()
 
     # test the ProgressBar class
     def test_init(self, ProgressBar):
@@ -210,26 +209,31 @@ class TestProgressBar:
     def test_call(self, ProgressBar):
         assert isroutine(ProgressBar.__call__)
         # missing argument
-        with raises(TypeError, match="missing 3 required positional "+\
-                    "arguments: 'block_num', 'block_size', and 'total_size'"):
+        with raises(TypeError, match="missing 3 required positional "\
+                                     +"arguments: 'block_num', 'block_size', "\
+                                     +"and 'total_size'"):
             ProgressBar()
         # bad input
-        with raises(TypeError, match="'<' not supported between instances of"+\
-                    " 'str' and 'int'"):
+        with raises(TypeError, match="'<' not supported between instances of "\
+                                     +"'str' and 'int'"):
             ProgressBar("Test", 1, 1)
-            # the progressbar starts before the error, hence tearDown
+            # the progressbar starts before the error
+        # hence, tearDown for pbar needed
         ProgressBar.pbar = None
-        with raises(TypeError, match="'<' not supported between instances of"+\
-                    " 'str' and 'int'"):
+        with raises(TypeError, match="'<' not supported between instances of "\
+                                     +"'str' and 'int'"):
             ProgressBar(1, "Test", 1)
-            # the progressbar starts before the error, hence tearDown
+            # the progressbar starts before the error
+        # hence, tearDown for pbar needed
         ProgressBar.pbar = None
-        with raises(TypeError, match="'>' not supported between instances of"+\
-                    " 'int' and 'str'"):
+        with raises(TypeError, match="'>' not supported between instances of "\
+                                     +"'int' and 'str'"):
             ProgressBar(1, 1, "Test")
+            # the progressbar starts before the error
+        # hence, tearDown for pbar needed
         ProgressBar.pbar = None
         for i in range(9):
             ProgressBar(i, 1, 8)
-            assert ProgressBar.pbar.percentage==approx(i*12.5)
+            assert ProgressBar.pbar.percentage == approx(i*12.5)
         ProgressBar(9, 1, 8)
-        assert ProgressBar.pbar.percentage==approx(100.0)
+        assert ProgressBar.pbar.percentage == approx(100.0)

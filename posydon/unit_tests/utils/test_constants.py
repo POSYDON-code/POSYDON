@@ -31,266 +31,268 @@ class TestElements:
                     'r_earth', 'r_jupiter', 'rad2a', 'rbohr', 'rhonuc',\
                     'rsol', 'secyer', 'semimajor_axis_jupiter', 'ssol',\
                     'standard_cgrav', 'weinfre', 'weinlam']
-        assert dir(totest) == elements, "There might be added or removed "+\
-               "objects without an update on the unit test."
+        assert dir(totest) == elements, "There might be added or removed "\
+                                        + "objects without an update on the "\
+                                        + "unit test."
 
     def test_instance_pi(self):
         assert isinstance(totest.pi, (float,int)),\
-               "pi is of type: "+str(type(totest.pi))
+               "pi is of type: " + str(type(totest.pi))
 
     def test_instance_a2rad(self):
         assert isinstance(totest.a2rad, (float,int)),\
-               "a2rad is of type: "+str(type(totest.a2rad))
+               "a2rad is of type: " + str(type(totest.a2rad))
 
     def test_instance_rad2a(self):
         assert isinstance(totest.rad2a, (float,int)),\
-               "rad2a is of type: "+str(type(totest.rad2a))
+               "rad2a is of type: " + str(type(totest.rad2a))
 
     def test_instance_standard_cgrav(self):
         assert isinstance(totest.standard_cgrav, (float,int)),\
-               "standard_cgrav is of type: "+\
-               str(type(totest.standard_cgrav))
+               "standard_cgrav is of type: "\
+               + str(type(totest.standard_cgrav))
 
     def test_instance_planck_h(self):
         assert isinstance(totest.planck_h, (float,int)),\
-               "planck_h is of type: "+str(type(totest.planck_h))
+               "planck_h is of type: " + str(type(totest.planck_h))
 
     def test_instance_hbar(self):
         assert isinstance(totest.hbar, (float,int)),\
-               "hbar is of type: "+str(type(totest.hbar))
+               "hbar is of type: " + str(type(totest.hbar))
 
     def test_instance_qe(self):
         assert isinstance(totest.qe, (float,int)),\
-               "qe is of type: "+str(type(totest.qe))
+               "qe is of type: " + str(type(totest.qe))
 
     def test_instance_avo(self):
         assert isinstance(totest.avo, (float,int)),\
-               "avo is of type: "+str(type(totest.avo))
+               "avo is of type: " + str(type(totest.avo))
 
     def test_instance_clight(self):
         assert isinstance(totest.clight, (float,int)),\
-               "clight is of type: "+str(type(totest.clight))
+               "clight is of type: " + str(type(totest.clight))
 
     def test_instance_kerg(self):
         assert isinstance(totest.kerg, (float,int)),\
-               "kerg is of type: "+str(type(totest.kerg))
+               "kerg is of type: " + str(type(totest.kerg))
 
     def test_instance_boltzm(self):
         assert isinstance(totest.boltzm, (float,int)),\
-               "boltzm is of type: "+str(type(totest.boltzm))
+               "boltzm is of type: " + str(type(totest.boltzm))
 
     def test_instance_cgas(self):
         assert isinstance(totest.cgas, (float,int)),\
-               "cgas is of type: "+str(type(totest.cgas))
+               "cgas is of type: " + str(type(totest.cgas))
 
     def test_instance_kev(self):
         assert isinstance(totest.kev, (float,int)),\
-               "kev is of type: "+str(type(totest.kev))
+               "kev is of type: " + str(type(totest.kev))
 
     def test_instance_amu(self):
         assert isinstance(totest.amu, (float,int)),\
-               "amu is of type: "+str(type(totest.amu))
+               "amu is of type: " + str(type(totest.amu))
 
     def test_instance_mn(self):
         assert isinstance(totest.mn, (float,int)),\
-               "mn is of type: "+str(type(totest.mn))
+               "mn is of type: " + str(type(totest.mn))
 
     def test_instance_mp(self):
         assert isinstance(totest.mp, (float,int)),\
-               "mp is of type: "+str(type(totest.mp))
+               "mp is of type: " + str(type(totest.mp))
 
     def test_instance_me(self):
         assert isinstance(totest.me, (float,int)),\
-               "me is of type: "+str(type(totest.me))
+               "me is of type: " + str(type(totest.me))
 
     def test_instance_rbohr(self):
         assert isinstance(totest.rbohr, (float,int)),\
-               "rbohr is of type: "+str(type(totest.rbohr))
+               "rbohr is of type: " + str(type(totest.rbohr))
 
     def test_instance_fine(self):
         assert isinstance(totest.fine, (float,int)),\
-               "fine is of type: "+str(type(totest.fine))
+               "fine is of type: " + str(type(totest.fine))
 
     def test_instance_hion(self):
         assert isinstance(totest.hion, (float,int)),\
-               "hion is of type: "+str(type(totest.hion))
+               "hion is of type: " + str(type(totest.hion))
 
     def test_instance_ev2erg(self):
         assert isinstance(totest.ev2erg, (float,int)),\
-               "ev2erg is of type: "+str(type(totest.ev2erg))
+               "ev2erg is of type: " + str(type(totest.ev2erg))
 
     def test_instance_inversecm2erg(self):
         assert isinstance(totest.inversecm2erg, (float,int)),\
-               "inversecm2erg is of type: "+str(type(totest.inversecm2erg))
+               "inversecm2erg is of type: " + str(type(totest.inversecm2erg))
 
     def test_instance_mev_to_ergs(self):
         assert isinstance(totest.mev_to_ergs, (float,int)),\
-               "mev_to_ergs is of type: "+str(type(totest.mev_to_ergs))
+               "mev_to_ergs is of type: " + str(type(totest.mev_to_ergs))
 
     def test_instance_mev_amu(self):
         assert isinstance(totest.mev_amu, (float,int)),\
-               "mev_amu is of type: "+str(type(totest.mev_amu))
+               "mev_amu is of type: " + str(type(totest.mev_amu))
 
     def test_instance_Qconv(self):
         assert isinstance(totest.Qconv, (float,int)),\
-               "Qconv is of type: "+str(type(totest.Qconv))
+               "Qconv is of type: " + str(type(totest.Qconv))
 
     def test_instance_boltz_sigma(self):
         assert isinstance(totest.boltz_sigma, (float,int)),\
-               "boltz_sigma is of type: "+str(type(totest.boltz_sigma))
+               "boltz_sigma is of type: " + str(type(totest.boltz_sigma))
 
     def test_instance_crad(self):
         assert isinstance(totest.crad, (float,int)),\
-               "crad is of type: "+str(type(totest.crad))
+               "crad is of type: " + str(type(totest.crad))
 
     def test_instance_ssol(self):
         assert isinstance(totest.ssol, (float,int)),\
-               "ssol is of type: "+str(type(totest.ssol))
+               "ssol is of type: " + str(type(totest.ssol))
 
     def test_instance_asol(self):
         assert isinstance(totest.asol, (float,int)),\
-               "asol is of type: "+str(type(totest.asol))
+               "asol is of type: " + str(type(totest.asol))
 
     def test_instance_weinlam(self):
         assert isinstance(totest.weinlam, (float,int)),\
-               "weinlam is of type: "+str(type(totest.weinlam))
+               "weinlam is of type: " + str(type(totest.weinlam))
 
     def test_instance_weinfre(self):
         assert isinstance(totest.weinfre, (float,int)),\
-               "weinfre is of type: "+str(type(totest.weinfre))
+               "weinfre is of type: " + str(type(totest.weinfre))
 
     def test_instance_rhonuc(self):
         assert isinstance(totest.rhonuc, (float,int)),\
-               "rhonuc is of type: "+str(type(totest.rhonuc))
+               "rhonuc is of type: " + str(type(totest.rhonuc))
 
     def test_instance_Zsun(self):
         assert isinstance(totest.Zsun, (float,int)),\
-               "Zsun is of type: "+str(type(totest.Zsun))
+               "Zsun is of type: " + str(type(totest.Zsun))
 
     def test_instance_msol(self):
         assert isinstance(totest.msol, (float,int)),\
-               "msol is of type: "+str(type(totest.msol))
+               "msol is of type: " + str(type(totest.msol))
 
     def test_instance_rsol(self):
         assert isinstance(totest.rsol, (float,int)),\
-               "rsol is of type: "+str(type(totest.rsol))
+               "rsol is of type: " + str(type(totest.rsol))
 
     def test_instance_lsol(self):
         assert isinstance(totest.lsol, (float,int)),\
-               "lsol is of type: "+str(type(totest.lsol))
+               "lsol is of type: " + str(type(totest.lsol))
 
     def test_instance_agesol(self):
         assert isinstance(totest.agesol, (float,int)),\
-               "agesol is of type: "+str(type(totest.agesol))
+               "agesol is of type: " + str(type(totest.agesol))
 
     def test_instance_Msun(self):
         assert isinstance(totest.Msun, (float,int)),\
-               "Msun is of type: "+str(type(totest.Msun))
+               "Msun is of type: " + str(type(totest.Msun))
 
     def test_instance_Rsun(self):
         assert isinstance(totest.Rsun, (float,int)),\
-               "Rsun is of type: "+str(type(totest.Rsun))
+               "Rsun is of type: " + str(type(totest.Rsun))
 
     def test_instance_Lsun(self):
         assert isinstance(totest.Lsun, (float,int)),\
-               "Lsun is of type: "+str(type(totest.Lsun))
+               "Lsun is of type: " + str(type(totest.Lsun))
 
     def test_instance_Msun33(self):
         assert isinstance(totest.Msun33, (float,int)),\
-               "Msun33 is of type: "+str(type(totest.Msun33))
+               "Msun33 is of type: " + str(type(totest.Msun33))
 
     def test_instance_Rsun11(self):
         assert isinstance(totest.Rsun11, (float,int)),\
-               "Rsun11 is of type: "+str(type(totest.Rsun11))
+               "Rsun11 is of type: " + str(type(totest.Rsun11))
 
     def test_instance_Lsun33(self):
         assert isinstance(totest.Lsun33, (float,int)),\
-               "Lsun33 is of type: "+str(type(totest.Lsun33))
+               "Lsun33 is of type: " + str(type(totest.Lsun33))
 
     def test_instance_ly(self):
         assert isinstance(totest.ly, (float,int)),\
-               "ly is of type: "+str(type(totest.ly))
+               "ly is of type: " + str(type(totest.ly))
 
     def test_instance_pc(self):
         assert isinstance(totest.pc, (float,int)),\
-               "pc is of type: "+str(type(totest.pc))
+               "pc is of type: " + str(type(totest.pc))
 
     def test_instance_secyer(self):
         assert isinstance(totest.secyer, (float,int)),\
-               "secyer is of type: "+str(type(totest.secyer))
+               "secyer is of type: " + str(type(totest.secyer))
 
     def test_instance_dayyer(self):
         assert isinstance(totest.dayyer, (float,int)),\
-               "dayyer is of type: "+str(type(totest.dayyer))
+               "dayyer is of type: " + str(type(totest.dayyer))
 
     def test_instance_age_of_universe(self):
         assert isinstance(totest.age_of_universe, (float,int)),\
-               "age_of_universe is of type: "+str(type(totest.age_of_universe))
+               "age_of_universe is of type: "\
+               + str(type(totest.age_of_universe))
 
     def test_instance_Teffsol(self):
         assert isinstance(totest.Teffsol, (float,int)),\
-               "Teffsol is of type: "+str(type(totest.Teffsol))
+               "Teffsol is of type: " + str(type(totest.Teffsol))
 
     def test_instance_loggsol(self):
         assert isinstance(totest.loggsol, (float,int)),\
-               "loggsol is of type: "+str(type(totest.loggsol))
+               "loggsol is of type: " + str(type(totest.loggsol))
 
     def test_instance_mbolsun(self):
         assert isinstance(totest.mbolsun, (float,int)),\
-               "mbolsun is of type: "+str(type(totest.mbolsun))
+               "mbolsun is of type: " + str(type(totest.mbolsun))
 
     def test_instance_mbolsol(self):
         assert isinstance(totest.mbolsol, (float,int)),\
-               "mbolsol is of type: "+str(type(totest.mbolsol))
+               "mbolsol is of type: " + str(type(totest.mbolsol))
 
     def test_instance_m_earth(self):
         assert isinstance(totest.m_earth, (float,int)),\
-               "m_earth is of type: "+str(type(totest.m_earth))
+               "m_earth is of type: " + str(type(totest.m_earth))
 
     def test_instance_r_earth(self):
         assert isinstance(totest.r_earth, (float,int)),\
-               "r_earth is of type: "+str(type(totest.r_earth))
+               "r_earth is of type: " + str(type(totest.r_earth))
 
     def test_instance_au(self):
         assert isinstance(totest.au, (float,int)),\
-               "au is of type: "+str(type(totest.au))
+               "au is of type: " + str(type(totest.au))
 
     def test_instance_aursun(self):
         assert isinstance(totest.aursun, (float,int)),\
-               "aursun is of type: "+str(type(totest.aursun))
+               "aursun is of type: " + str(type(totest.aursun))
 
     def test_instance_m_jupiter(self):
         assert isinstance(totest.m_jupiter, (float,int)),\
-               "m_jupiter is of type: "+str(type(totest.m_jupiter))
+               "m_jupiter is of type: " + str(type(totest.m_jupiter))
 
     def test_instance_r_jupiter(self):
         assert isinstance(totest.r_jupiter, (float,int)),\
-               "r_jupiter is of type: "+str(type(totest.r_jupiter))
+               "r_jupiter is of type: " + str(type(totest.r_jupiter))
 
     def test_instance_semimajor_axis_jupiter(self):
         assert isinstance(totest.semimajor_axis_jupiter, (float,int)),\
-               "semimajor_axis_jupiter is of type: "+\
-               str(type(totest.semimajor_axis_jupiter))
+               "semimajor_axis_jupiter is of type: "\
+               + str(type(totest.semimajor_axis_jupiter))
 
     def test_instance_km2cm(self):
         assert isinstance(totest.km2cm, (float,int)),\
-               "km2cm is of type: "+str(type(totest.km2cm))
+               "km2cm is of type: " + str(type(totest.km2cm))
 
     def test_instance_day2sec(self):
         assert isinstance(totest.day2sec, (float,int)),\
-               "day2sec is of type: "+str(type(totest.day2sec))
+               "day2sec is of type: " + str(type(totest.day2sec))
 
     def test_instance_H_weight(self):
         assert isinstance(totest.H_weight, (float,int)),\
-               "H_weight is of type: "+str(type(totest.H_weight))
+               "H_weight is of type: " + str(type(totest.H_weight))
 
     def test_instance_He_weight(self):
         assert isinstance(totest.He_weight, (float,int)),\
-               "He_weight is of type: "+str(type(totest.He_weight))
+               "He_weight is of type: " + str(type(totest.He_weight))
 
     def test_instance_SNcheck_ERR(self):
         assert isinstance(totest.SNcheck_ERR, (float,int)),\
-               "SNcheck_ERR is of type: "+str(type(totest.SNcheck_ERR))
+               "SNcheck_ERR is of type: " + str(type(totest.SNcheck_ERR))
 
 
 class TestValues:

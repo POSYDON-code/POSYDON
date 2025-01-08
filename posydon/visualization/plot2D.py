@@ -199,6 +199,21 @@ class plot2D(object):
                         sub_varname, default_value
                     )
                 setattr(self, varname, temp_var)
+        # for the default 2D legend infer it from the termination_flag
+        if (hasattr(self, "legend2D") and
+            (("title" not in self.legend2D.keys()) or
+             (self.legend2D["title"]==PLOT_PROPERTIES["legend2D"]["title"]))):
+            if (termination_flag in DEFAULT_LABELS.keys()):
+                self.legend2D["title"] = DEFAULT_LABELS[termination_flag][0]
+            elif (('SN_type' in termination_flag) and
+                  ('SN_type' in DEFAULT_LABELS.keys())):
+                self.legend2D["title"] = DEFAULT_LABELS['SN_type'][0]
+            elif (('CO_type' in termination_flag) and
+                  ('CO_type' in DEFAULT_LABELS.keys())):
+                self.legend2D["title"] = DEFAULT_LABELS['CO_type'][0]
+            elif (('state' in termination_flag) and
+                  ('state' in DEFAULT_LABELS.keys())):
+                self.legend2D["title"] = DEFAULT_LABELS['state'][0]
 
         # plotting fonts
         plt.rcParams.update(self.rcParams)

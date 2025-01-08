@@ -20,13 +20,14 @@ class TestElements:
         elements = ['IGNORE_REASONS_PRIORITY', 'IgnoreReason', '__authors__',\
                     '__builtins__', '__cached__', '__doc__', '__file__',\
                     '__loader__', '__name__', '__package__', '__spec__']
-        assert dir(totest) == elements, "There might be added or removed "+\
-               "objects without an update on the unit test."
+        assert dir(totest) == elements, "There might be added or removed "\
+                                        + "objects without an update on the "\
+                                        + "unit test."
 
     def test_instance_IGNORE_REASONS_PRIORITY(self):
         assert isinstance(totest.IGNORE_REASONS_PRIORITY, (list)),\
-               "IGNORE_REASONS_PRIORITY is of type: "+\
-               str(type(totest.IGNORE_REASONS_PRIORITY))
+               "IGNORE_REASONS_PRIORITY is of type: "\
+               + str(type(totest.IGNORE_REASONS_PRIORITY))
 
     def test_instance_IgnoreReason(self):
         assert isclass(totest.IgnoreReason)
@@ -35,6 +36,8 @@ class TestElements:
 class TestValues:
     # check that the values fit
     def test_value_IGNORE_REASONS_PRIORITY(self):
+        for v in totest.IGNORE_REASONS_PRIORITY:
+            assert isinstance(v, str)
         v_last = None
         for v in ['ignored_no_history1', 'ignored_no_binary_history',\
                   'corrupted_history1', 'corrupted_binary_history',\

@@ -99,6 +99,7 @@ def is_number(s):
 
 def stefan_boltzmann_law(L, R):
     """Compute the effective temperature give the luminosity and radius."""
+    #TODO: check for invalid or negative inputs
     return (L * const.Lsun / (4.0 * np.pi * (R*const.Rsun) ** 2.0)
             / const.boltz_sigma) ** (1.0 / 4.0)
 
@@ -125,6 +126,7 @@ def rzams(m, z=0.02, Zsun=0.02):
 
 
     """
+    #TODO: check for invalid or negative inputs
     m = np.asanyarray(m)
     xz = [
         0.0, 3.970417e-01, -3.2913574e-01, 3.4776688e-01, 3.7470851e-01,
@@ -286,6 +288,7 @@ def orbital_separation_from_period(period_days, m1_solar, m2_solar):
         The separation of the binary in solar radii.
 
     """
+    #TODO: check for invalid or negative inputs
     # cast to float64 to avoid overflow
     m1_solar = np.asarray(m1_solar, dtype="float64")
     m2_solar = np.asarray(m2_solar, dtype="float64")
@@ -317,6 +320,7 @@ def orbital_period_from_separation(separation, m1, m2):
         The orbital period in days.
 
     """
+    #TODO: check for invalid or negative inputs
     return const.dayyer * ((separation / const.aursun)**3.0 / (m1 + m2)) ** 0.5
 
 
@@ -785,7 +789,15 @@ def read_histogram_from_file(path):
                 continue
             arrays.append(np.fromstring(line.strip(), dtype=float, sep=","))
             if len(arrays) > 2:
-                raise RuntimeError("More than two lines found in the histogram document.")
+                raise IndexError("More than two lines found in the histogram"
+                                 " document.")
+    if len(arrays) < 2:
+        raise IndexError("Less than two lines found in the histogram"
+                         " document.")
+    if len(arrays[0]) - 1 != len(arrays[1]):
+        raise IndexError("The number of elements in the second data line is"
+                         " not one less than the number in the first data"
+                         " line.")
 
     return arrays
 
@@ -911,7 +923,9 @@ def spin_stable_mass_transfer(spin_i, star_mass_preMT, star_mass_postMT):
     Based on Thorne 1974 eq. 2a.
 
     """
-    if star_mass_preMT is None or star_mass_postMT is None:
+    if ((star_mass_preMT is None) or (star_mass_preMT<=0.0) or
+        (star_mass_postMT is None) or (star_mass_postMT<=0.0) or
+        (spin_i is None) or (spin_i<0.0)):
         return None
     z1 = 1+(1-spin_i**2)**(1/3)*((1+spin_i)**(1/3)+(1-spin_i)**(1/3))
     z2 = (3*spin_i**2+z1**2)**0.5
@@ -1224,7 +1238,9 @@ def He_MS_lifetime(mass):
         He MS time duration in yr.
 
     """
-    if mass < 2.0:
+    if mass <=0.0:
+        raise ValueError(f"Too low mass: {mass}")
+    elif mass < 2.0:
         he_t_ms = 10 ** 8
     elif mass >= 2.0 and mass < 10.0:
         he_t_ms = 10**(-2.6094 * np.log10(mass) + 8.7855)
@@ -1444,7 +1460,8 @@ def cumulative_mass_transfer_numeric(MT_cases):
     Parameters
     ----------
     MT_cases : array-like
-        A list of the integer MT flags at sequential history steps.
+        A list of the integer MT flags at sequential history steps. If the
+        cases are instead given in string format they are converted first.
 
     Returns
     -------
@@ -1523,7 +1540,8 @@ def cumulative_mass_transfer_string(cumulative_integers):
         caseA/B/A   : case A, then B, and A again (although unphysical).
 
     """
-    assert len(cumulative_integers) > 0
+    if len(cumulative_integers) == 0:
+        return "?"
     result = ""
     added_case_word = False
     for integer in cumulative_integers:
@@ -2050,9 +2068,9 @@ def separation_evol_wind_loss(M_current, M_init, Mcomp, A_init):
     return 10.0**log10A
 
 
-def period_change_stabe_MT(period_i, Mdon_i, Mdon_f, Macc_i,
-                           alpha=0.0, beta=0.0):
-    """Change the binary period after a semi-detahed stable MT phase.
+def period_change_stable_MT(period_i, Mdon_i, Mdon_f, Macc_i,
+                            alpha=0.0, beta=0.0):
+    """Change the binary period after a semi-detached stable MT phase.
 
     Calculated in Sorensen, Fragos et al.  2017A&A...597A..12S.
     Note that MT efficiencies are assumed constant (i.e., not time-dependent)
@@ -2088,7 +2106,7 @@ def period_change_stabe_MT(period_i, Mdon_i, Mdon_f, Macc_i,
                                                                  Mdon_f))
     Macc_f = Macc_i + (1.-beta)*(1.-alpha)*DM_don
     if alpha < 0.0 or beta < 0.0 or alpha > 1.0 or beta > 1.0:
-        raise ValueError("In period_change_stabe_MT, mass transfer "
+        raise ValueError("In period_change_stable_MT, mass transfer "
                          "efficiencies, alpha, beta: {}, {} are not in the "
                          "[0-1] range.".format(alpha, beta))
     if beta != 1.0:      # Eq. 7 of Sorensen+Fragos et al. 2017
@@ -2353,12 +2371,11 @@ def get_mass_radius_dm_from_profile(profile, m1_i=0.0,
         if np.abs(donor_mass[0] - m1_i) > tolerance:
             Pwarn("Donor mass from the binary class object "
                           "and the profile do not agree", "ClassificationWarning")
-            #print("mass profile/object:", (donor_mass[0]), (m1_i))
+            
         # checking if radius of profile agrees with the radius of the binary
         if np.abs(donor_radius[0] - radius1) > tolerance:
             Pwarn("Donor radius from the binary class object "
                           "and the profile do not agree", "ClassificationWarning")
-            #print("radius profile/object:", (donor_radius[0]), (radius1))
 
         # MANOS: if dm exists as a column, else calculate it from mass column
         if "dm" in profile.dtype.names:
@@ -2631,12 +2648,14 @@ def calculate_binding_energy(donor_mass, donor_radius, donor_dm,
     """
     # Sum of gravitational energy from surface to core boundary
     Grav_energy = 0.0
+
     # Sum of internal energy from surface to core boundary. This is 0 if
     # 'lambda_from_profile_gravitational' or (thermal+radiation+recombination)
     # for "lambda_from_profile_gravitational_plus_internal" or
     # (thermal+radiation) for
     # "lambda_from_profile_gravitational_plus_internal_minus_recombination"
     U_i = 0.0
+    
     # sum from surface to the core. Your core boundary is in element [ind_core]
     # in a normal MESA (and POSYDON) profile
     for i in range(ind_core):
@@ -2646,12 +2665,12 @@ def calculate_binding_energy(donor_mass, donor_radius, donor_dm,
         # integral of gravitational energy as we go deeper into the star
         Grav_energy = Grav_energy + Grav_energy_of_cell
         U_i = U_i + specific_internal_energy[i]*donor_dm[i]*const.Msun
+
     if Grav_energy > 0.0:
-        #print("Grav_energy, donor_mass, donor_dm, donor_radius",
-        #      Grav_energy, donor_mass, donor_dm, donor_radius)
         if not (Grav_energy < tolerance):
             raise ValueError("CEE problem calculating gravitational energy, "
                             "giving positive values.")
+        
     # binding energy of the enevelope equals its gravitational energy +
     # an a_th fraction of its internal energy
     Ebind_i = Grav_energy + factor_internal_energy * U_i
@@ -2719,7 +2738,6 @@ def calculate_Mejected_for_integrated_binding_energy(profile, Ebind_threshold,
 
     if donor_mass[ind_threshold]< mc1_i or  donor_radius[ind_threshold]<rc1_i:
         Pwarn("partial mass ejected is greater than the envelope mass", "EvolutionWarning")   
-        #print("M_ejected, M_envelope = ", donor_mass[0] - donor_mass[ind_threshold], donor_mass[0] - mc1_i)
         mass_threshold = mc1_i
     else:
         mass_threshold = donor_mass[ind_threshold]
