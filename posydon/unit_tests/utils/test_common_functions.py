@@ -728,22 +728,23 @@ class TestFunctions:
         def mock_pdf(x):
             return 1.0 - np.sqrt(x)
         # bad input
-        with raises(TypeError, match="'>=' not supported between instances "\
-                                     +"of 'NoneType' and 'float'"):
+        with raises(ValueError, match="x and y PDF values must be specified if no PDF function"\
+                                    +" is provided for rejection sampling"):
             totest.rejection_sampler()
-        with raises(TypeError, match="'>=' not supported between instances "\
-                                     +"of 'NoneType' and 'float'"):
+        with raises(ValueError, match="x and y PDF values must be specified if no PDF function"\
+                                    +" is provided for rejection sampling"):
             totest.rejection_sampler(x=np.array([0.0, 1.0]))
-        with raises(IndexError, match="too many indices for array: array is "\
-                                      +"0-dimensional, but 1 were indexed"):
+        with raises(ValueError, match="x and y PDF values must be specified if no PDF function"\
+                                    +" is provided for rejection sampling"):
             totest.rejection_sampler(y=np.array([0.0, 1.0]))
         with raises(AssertionError):
             totest.rejection_sampler(x=np.array([0.0, 1.0]),\
                                      y=np.array([-0.4, 0.6]))
-        with raises(TypeError, match="'>=' not supported between instances "\
-                                     +"of 'NoneType' and 'float'"):
+        with raises(ValueError, match="x and y PDF values must be specified if no PDF function"\
+                                    +" is provided for rejection sampling"):
             totest.rejection_sampler(x_lim=np.array([0.0, 1.0]))
-        with raises(TypeError, match="'NoneType' object is not subscriptable"):
+        with raises(ValueError, match="x_lim must be specified for passed PDF function in"\
+                                    +" rejection sampling"):
             totest.rejection_sampler(pdf=mock_pdf)
         # examples:
         monkeypatch.setattr(np.random, "uniform", mock_uniform)
