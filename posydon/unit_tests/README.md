@@ -156,5 +156,5 @@ You can also enforce 100% coverage in the Github action performing the tests by 
 
     python -m pytest posydon/unit_tests/ --cov=posydon.utils --cov-branch --cov-report term-missing --cov-fail-under=100 
 
-This particular line ensures that the tests in `posydon/unit_tests/` run 100% of the code in `posydon.utils`, and that the check will otherwise fail. 
+This particular line ensures that the tests in `posydon/unit_tests/` run 100% of the code in `posydon.utils`, and that the check will otherwise fail.
 

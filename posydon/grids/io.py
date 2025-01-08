@@ -397,8 +397,8 @@ def read_initial_values(mesa_dir):
     """Read grid point values given the MESA run directory."""
     path = os.path.join(mesa_dir, "inlist_grid_points")
     if not os.path.exists(path):
-        if os.path.exists(path+".gz"):
-            path +=".gz"
+        if os.path.exists(path + ".gz"):
+            path += ".gz"
         else:
             return None
 

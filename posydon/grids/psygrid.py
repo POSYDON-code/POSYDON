@@ -2182,7 +2182,6 @@ def join_grids(input_paths, output_path,
         curconfig = grid.config
 
         # check we did not forget about a property, and their consistency
-        print(curconfig.keys(), ALL_PROPERTIES)
         assert len(ALL_PROPERTIES) == len(curconfig.keys())
         for key in curconfig.keys():
             assert key in ALL_PROPERTIES

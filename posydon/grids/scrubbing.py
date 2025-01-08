@@ -144,7 +144,7 @@ def keep_after_RLO(bh, h1, h2):
     #       math.ulp() to shift entries in the new_ages
     if len(new_ages) > 1 and min(np.diff(new_ages)) == 0.0:
         min_dt = min(np.diff(new_bh["age"]))
-        if min_dt!=0.0:
+        if min_dt != 0.0:
             new_age_to_remove = (age_to_remove // min_dt) * min_dt
         else:
             new_age_to_remove = age_to_remove

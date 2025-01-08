@@ -426,7 +426,6 @@ def beaming(binary):
     else:
         rlo_mdot = 10**binary.lg_mtransfer_rate
 
-    print(rlo_mdot, mdot_edd)
     if rlo_mdot >= mdot_edd:
         if rlo_mdot > 8.5 * mdot_edd:
             # eq. 8 in King A. R., 2009, MNRAS, 393, L41-L44
