@@ -29,8 +29,9 @@ class TestElements:
                     '__loader__', '__name__', '__package__', '__spec__',\
                     'keep_after_RLO', 'keep_till_central_abundance_He_C',\
                     'np', 'scrub']
-        assert dir(totest) == elements, "There might be added or removed "+\
-               "objects without an update on the unit test."
+        assert dir(totest) == elements, "There might be added or removed "\
+                                        +"objects without an update on the "\
+                                        +"unit test."
 
     def test_instance_scrub(self):
         assert isroutine(totest.scrub)
@@ -90,8 +91,9 @@ class TestFunctions:
     # test functions
     def test_scrub(self, tables, models, ages):
         # missing argument
-        with raises(TypeError, match="missing 3 required positional"+\
-                    " arguments: 'tables', 'models', and 'ages'"):
+        with raises(TypeError, match="missing 3 required positional "\
+                                     +"arguments: 'tables', 'models', and "\
+                                     +"'ages'"):
             totest.scrub()
         # bad input
         with raises(TypeError, match="'NoneType' object is not iterable"):
@@ -102,10 +104,10 @@ class TestFunctions:
         assert totest.scrub([tables], [None], [ages]) == [None]
         assert totest.scrub([tables], [models], [None]) == [None]
         # examples: no scrubbing for two tables and a None type object
-        for t,r in zip(totest.scrub([tables, tables, None],\
-                                    [models, models, None],\
-                                    [ages, ages, None]),\
-                                    [tables, tables, None]):
+        for (t, r) in zip(totest.scrub([tables, tables, None],\
+                                       [models, models, None],\
+                                       [ages, ages, None]),\
+                                       [tables, tables, None]):
             if (isinstance(t, np.ndarray) and isinstance(r, np.ndarray)):
                 assert np.array_equal(t, r)
             else:
@@ -121,16 +123,16 @@ class TestFunctions:
 
     def test_keep_after_RLO(self, star_history, binary_history):
         # missing argument
-        with raises(TypeError, match="missing 3 required positional"+\
-                    " arguments: 'bh', 'h1', and 'h2'"):
+        with raises(TypeError, match="missing 3 required positional "\
+                                     +"arguments: 'bh', 'h1', and 'h2'"):
             totest.keep_after_RLO()
         # bad input
-        with raises(ValueError, match="No `lg_mtransfer_rate` in binary"+\
-                    " history."):
+        with raises(ValueError, match="No `lg_mtransfer_rate` in binary "\
+                                      +"history."):
             totest.keep_after_RLO(binary_history[['rl_relative_overflow_1']],\
                                   None, None)
-        with raises(ValueError, match="No `rl_relative_overflow` of any star"+\
-                    " in binary history."):
+        with raises(ValueError, match="No `rl_relative_overflow` of any star "\
+                                      +"in binary history."):
             totest.keep_after_RLO(binary_history[['lg_mtransfer_rate']], None,\
                                   None)
         # examples: nothing
@@ -144,7 +146,8 @@ class TestFunctions:
          'rl_relative_overflow_1', 'lg_mtransfer_rate', 'age']], star_history,\
          None)
         assert np.array_equal(binary_history[['rl_relative_overflow_1',\
-               'lg_mtransfer_rate', 'age']][1:], bh)
+                                              'lg_mtransfer_rate',\
+                                              'age']][1:], bh)
         assert np.array_equal(star_history[1:], h1)
         assert h2 is None
         # examples: cut out element 0 and history of star 2; test numerical
@@ -154,34 +157,35 @@ class TestFunctions:
         with raises(Exception, match="Numerical precision fix failed."):
             binary_history['age'] = np.array([0.3, 1.0, 1.0])
             totest.keep_after_RLO(binary_history[['rl_relative_overflow_1',\
-             'lg_mtransfer_rate', 'age']], None, star_history)
+                                                  'lg_mtransfer_rate',\
+                                                  'age']], None, star_history)
         binary_history['age'] = np.array([0.3, 0.99999999999999994, 1.0])
         bh, h1, h2 = totest.keep_after_RLO(binary_history[[\
          'rl_relative_overflow_1', 'lg_mtransfer_rate', 'age']], None,\
          star_history)
         assert np.array_equal(binary_history[['rl_relative_overflow_1',\
-               'lg_mtransfer_rate', 'age']], bh)
+                                              'lg_mtransfer_rate', 'age']], bh)
         assert h1 is None
         assert np.array_equal(star_history, h2)
         # examples: no RLO
         for i in range(len(binary_history)):
             binary_history['rl_relative_overflow_1'][i] =\
-             totest.RL_RELATIVE_OVERFLOW_THRESHOLD-1.0
+             totest.RL_RELATIVE_OVERFLOW_THRESHOLD - 1.0
             binary_history['rl_relative_overflow_2'][i] =\
-             totest.RL_RELATIVE_OVERFLOW_THRESHOLD-1.0
+             totest.RL_RELATIVE_OVERFLOW_THRESHOLD - 1.0
             binary_history['lg_mtransfer_rate'][i] =\
-             totest.LG_MTRANSFER_RATE_THRESHOLD-1.0
+             totest.LG_MTRANSFER_RATE_THRESHOLD - 1.0
         assert totest.keep_after_RLO(binary_history, None, None) == None
 
     def test_keep_till_central_abundance_He_C(self, star_history,\
                                               star_history2, binary_history):
         # missing argument
-        with raises(TypeError, match="missing 3 required positional"+\
-                    " arguments: 'bh', 'h1', and 'h2'"):
+        with raises(TypeError, match="missing 3 required positional "\
+                                     +"arguments: 'bh', 'h1', and 'h2'"):
             totest.keep_till_central_abundance_He_C()
         # bad input
-        with raises(AttributeError, match="'list' object has no attribute"+\
-                    " 'dtype'"):
+        with raises(AttributeError, match="'list' object has no attribute "\
+                                          +"'dtype'"):
             totest.keep_till_central_abundance_He_C([], [], [])
         # examples: nothing
         for args in [(None, star_history, star_history),\
@@ -205,31 +209,31 @@ class TestFunctions:
             assert tf == ""
         for cols in [['star_age'], ['star_age', 'center_he4', 'center_c12']]:
             bh, h1, h2, tf = totest.keep_till_central_abundance_He_C(\
-                             binary_history[['age']], star_history[cols],\
-                             star_history[cols])
+                              binary_history[['age']], star_history[cols],\
+                              star_history[cols])
             assert np.array_equal(binary_history[['age']], bh)
             assert np.array_equal(star_history[cols], h1)
             assert np.array_equal(star_history[cols], h2)
             assert tf == ""
         # examples: one star is depleted
         bh, h1, h2, tf = totest.keep_till_central_abundance_He_C(\
-                         binary_history[['age']], star_history2,\
-                         star_history)
+                          binary_history[['age']], star_history2,\
+                          star_history)
         assert np.array_equal(binary_history[['age']][:2], bh)
         assert np.array_equal(star_history2[:2], h1)
         assert np.array_equal(star_history[:2], h2)
         assert tf == "Primary got stopped before central carbon depletion"
         bh, h1, h2, tf = totest.keep_till_central_abundance_He_C(\
-                         binary_history[['age']], star_history,\
-                         star_history2)
+                          binary_history[['age']], star_history,\
+                          star_history2)
         assert np.array_equal(binary_history[['age']][:2], bh)
         assert np.array_equal(star_history[:2], h1)
         assert np.array_equal(star_history2[:2], h2)
         assert tf == "Secondary got stopped before central carbon depletion"
         # examples: both stars are depleted
         bh, h1, h2, tf = totest.keep_till_central_abundance_He_C(\
-                         binary_history[['age']], star_history2,\
-                         star_history2)
+                          binary_history[['age']], star_history2,\
+                          star_history2)
         assert np.array_equal(binary_history[['age']][:2], bh)
         assert np.array_equal(star_history2[:2], h1)
         assert np.array_equal(star_history2[:2], h2)
@@ -238,16 +242,16 @@ class TestFunctions:
         star_history['center_c12'][-1] = 0.0
         cols = ['center_he4', 'center_c12']
         bh, h1, h2, tf = totest.keep_till_central_abundance_He_C(\
-                         binary_history[['age']], star_history[cols],\
-                         star_history2[cols], XCstop=0.5)
+                          binary_history[['age']], star_history[cols],\
+                          star_history2[cols], XCstop=0.5)
         assert np.array_equal(binary_history[['age']][:2], bh)
         assert np.array_equal(star_history[cols][:2], h1)
         assert np.array_equal(star_history2[cols][:2], h2)
         assert tf == "Secondary got stopped before central carbon depletion"
         # examples: stars have history of length 0
         bh, h1, h2, tf = totest.keep_till_central_abundance_He_C(\
-                         binary_history[['age']], star_history[0:0],\
-                         star_history[0:0])
+                          binary_history[['age']], star_history[0:0],\
+                          star_history[0:0])
         assert np.array_equal(binary_history[['age']], bh)
         assert np.array_equal(star_history[0:0], h1)
         assert np.array_equal(star_history[0:0], h2)

@@ -24,8 +24,9 @@ class TestElements:
                     '__builtins__', '__cached__', '__doc__', '__file__',\
                     '__loader__', '__name__', '__package__', '__spec__', 'np',\
                     'rescale_from_0_to_1', 'sys']
-        assert dir(totest) == elements, "There might be added or removed "+\
-               "objects without an update on the unit test."
+        assert dir(totest) == elements, "There might be added or removed "\
+                                        + "objects without an update on the "\
+                                        + "unit test."
 
     def test_instance_rescale_from_0_to_1(self):
         assert isroutine(totest.rescale_from_0_to_1)
@@ -38,8 +39,8 @@ class TestFunctions:
     # test functions
     def test_rescale_from_0_to_1(self):
         # missing argument
-        with raises(TypeError, match="missing 1 required positional"+\
-                    " argument: 'array'"):
+        with raises(TypeError, match="missing 1 required positional "\
+                                     +"argument: 'array'"):
             totest.rescale_from_0_to_1()
         # bad input
         with raises(ValueError, match="Scaler works for matrices only."):
@@ -51,7 +52,7 @@ class TestFunctions:
         min_values = [0.0, 1.0, 3.0, -2.0]
         max_values = [0.5, 2.0, 3.0, -1.0]
         assert np.array_equal(totest.rescale_from_0_to_1(test_values),\
-               np.array(norm_values))
+                              np.array(norm_values))
         arr, minima, maxima = totest.rescale_from_0_to_1(test_values,\
                                                          return_minmax=True)
         assert np.array_equal(arr, np.array(norm_values))
@@ -95,27 +96,27 @@ class TestTrackDownsampler:
         # bad input
         with raises(ValueError, match="`independent` is not iterable."):
             test_TrackDownsampler = totest.TrackDownsampler(None, None)
-        with raises(ValueError, match="`independent` should be"+\
-                    " one-dimensional."):
+        with raises(ValueError, match="`independent` should be "\
+                                      +"one-dimensional."):
             test_TrackDownsampler = totest.TrackDownsampler([[], []], None)
         with raises(IndexError, match="list index out of range"):
             test_TrackDownsampler = totest.TrackDownsampler([], None)
         with raises(ValueError, match="`dependent` is not iterable."):
             test_TrackDownsampler = totest.TrackDownsampler([0.0], None)
-        with raises(ValueError, match="Number of dimensions in `dependent`"+\
-                    " > 2."):
+        with raises(ValueError, match="Number of dimensions in `dependent` "\
+                                      +"> 2."):
             test_TrackDownsampler = totest.TrackDownsampler([0.0], [[[], []],\
                                                                     [[], []]])
-        with raises(ValueError, match="`independent` should be strictly"+\
-                    " increasing."):
+        with raises(ValueError, match="`independent` should be strictly "\
+                                      +"increasing."):
             test_TrackDownsampler = totest.TrackDownsampler([0.0, 0.0],\
                                                             [1.0, 2.0])
 
     def test_say(self, TrackDownsampler, capsys):
         assert isroutine(TrackDownsampler.say)
         # missing argument
-        with raises(TypeError, match="missing 1 required positional"+\
-                    " argument: 'message'"):
+        with raises(TypeError, match="missing 1 required positional "\
+                                     +"argument: 'message'"):
             TrackDownsampler.say()
         # examples
         TrackDownsampler.say("Test")
@@ -157,10 +158,11 @@ class TestTrackDownsampler:
         for k in TrackDownsampler.keep:
             assert k
         # examples: keep only edges
-        with warns(InappropriateValueWarning, match="`max_err` >= 1.0 is"+\
-                   " like disabling downsampling."):
+        with warns(InappropriateValueWarning, match="`max_err` >= 1.0 is "\
+                                                    +"like disabling "\
+                                                    +"downsampling."):
             TrackDownsampler.find_downsample(max_err=1.0)
-            for i,k in enumerate(TrackDownsampler.keep):
+            for (i, k) in enumerate(TrackDownsampler.keep):
                 if ((i==0) or (i+1==len(TrackDownsampler.keep))):
                     assert k == True
                 else:
@@ -168,17 +170,17 @@ class TestTrackDownsampler:
         # examples: max_err can skip element 1; max_interval may keeps it
         for mi in [None, 1.0, 0.99, -0.85, -0.8]:
             TrackDownsampler.find_downsample(max_err=0.12, max_interval=mi)
-            for i,k in enumerate(TrackDownsampler.keep):
+            for (i, k) in enumerate(TrackDownsampler.keep):
                 if ((i==1) and ((mi is None) or (mi>=1.0) or (mi<=-1.0/1.2))):
                     assert k == False
                 else:
                     assert k == True
         # bad input
-        with raises(ValueError, match="`max_err` must be a non-negative"+\
-                    " finite number."):
+        with raises(ValueError, match="`max_err` must be a non-negative "\
+                                      +"finite number."):
             TrackDownsampler.find_downsample(max_err=-1.0)
-        with raises(ValueError, match="`max_err` must be a non-negative"+\
-                    " finite number."):
+        with raises(ValueError, match="`max_err` must be a non-negative "\
+                                      +"finite number."):
             TrackDownsampler.find_downsample(max_err=np.inf)
 
     def test_downsample(self, independent_sample, dependent_sample, TrackDownsampler):

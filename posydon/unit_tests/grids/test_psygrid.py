@@ -9,6 +9,7 @@ __authors__ = [
 import posydon.grids.psygrid as totest
 # aliases
 np = totest.np
+os = totest.os
 
 # import other needed code for the tests, which is not already imported in the
 # module you like to test
@@ -52,98 +53,99 @@ class TestElements:
                     'orbital_separation_from_period', 'os', 'pd', 'plot1D',\
                     'plot2D', 'read_EEP_data_file', 'read_MESA_data_file',\
                     'read_initial_values', 'scrub', 'tqdm']
-        assert dir(totest) == elements, "There might be added or removed "+\
-               "objects without an update on the unit test."
+        assert dir(totest) == elements, "There might be added or removed "\
+                                        + "objects without an update on the "\
+                                        + "unit test."
 
     def test_instance_HDF5_MEMBER_SIZE(self):
         assert isinstance(totest.HDF5_MEMBER_SIZE, (int, float)),\
-               "HDF5_MEMBER_SIZE is of type: "+\
-               str(type(totest.HDF5_MEMBER_SIZE))
+               "HDF5_MEMBER_SIZE is of type: "\
+               + str(type(totest.HDF5_MEMBER_SIZE))
 
     def test_instance_H5_UNICODE_DTYPE(self):
         assert isinstance(totest.H5_UNICODE_DTYPE, np.dtype),\
-               "H5_UNICODE_DTYPE is of type: "+\
-               str(type(totest.H5_UNICODE_DTYPE))
+               "H5_UNICODE_DTYPE is of type: "\
+               + str(type(totest.H5_UNICODE_DTYPE))
 
     def test_instance_H5_REC_STR_DTYPE(self):
         assert isinstance(totest.H5_REC_STR_DTYPE, str),\
-               "H5_REC_STR_DTYPE is of type: "+\
-               str(type(totest.H5_REC_STR_DTYPE))
+               "H5_REC_STR_DTYPE is of type: "\
+               + str(type(totest.H5_REC_STR_DTYPE))
 
     def test_instance_VALID_KEYS(self):
         assert isinstance(totest.VALID_KEYS, list),\
-               "VALID_KEYS is of type: "+str(type(totest.VALID_KEYS))
+               "VALID_KEYS is of type: " + str(type(totest.VALID_KEYS))
 
     def test_instance_WARN_VALUES(self):
         assert isinstance(totest.WARN_VALUES, list),\
-               "WARN_VALUES is of type: "+str(type(totest.WARN_VALUES))
+               "WARN_VALUES is of type: " + str(type(totest.WARN_VALUES))
 
     def test_instance_N_FLAGS(self):
         assert isinstance(totest.N_FLAGS, int),\
-               "N_FLAGS is of type: "+str(type(totest.N_FLAGS))
+               "N_FLAGS is of type: " + str(type(totest.N_FLAGS))
 
     def test_instance_N_FLAGS_SINGLE(self):
         assert isinstance(totest.N_FLAGS_SINGLE, int),\
-               "N_FLAGS_SINGLE is of type: "+str(type(totest.N_FLAGS_SINGLE))
+               "N_FLAGS_SINGLE is of type: " + str(type(totest.N_FLAGS_SINGLE))
 
     def test_instance_TERMINATION_FLAG_COLUMNS(self):
         assert isinstance(totest.TERMINATION_FLAG_COLUMNS, list),\
-               "TERMINATION_FLAG_COLUMNS is of type: "+\
-               str(type(totest.TERMINATION_FLAG_COLUMNS))
+               "TERMINATION_FLAG_COLUMNS is of type: "\
+               + str(type(totest.TERMINATION_FLAG_COLUMNS))
 
     def test_instance_TERMINATION_FLAG_COLUMNS_SINGLE(self):
         assert isinstance(totest.TERMINATION_FLAG_COLUMNS_SINGLE, list),\
-               "TERMINATION_FLAG_COLUMNS_SINGLE is of type: "+\
-               str(type(totest.TERMINATION_FLAG_COLUMNS_SINGLE))
+               "TERMINATION_FLAG_COLUMNS_SINGLE is of type: "\
+               + str(type(totest.TERMINATION_FLAG_COLUMNS_SINGLE))
 
     def test_instance_DEFAULT_BINARY_HISTORY_COLS(self):
         assert isinstance(totest.DEFAULT_BINARY_HISTORY_COLS, list),\
-               "DEFAULT_BINARY_HISTORY_COLS is of type: "+\
-               str(type(totest.DEFAULT_BINARY_HISTORY_COLS))
+               "DEFAULT_BINARY_HISTORY_COLS is of type: "\
+               + str(type(totest.DEFAULT_BINARY_HISTORY_COLS))
 
     def test_instance_DEFAULT_STAR_HISTORY_COLS(self):
         assert isinstance(totest.DEFAULT_STAR_HISTORY_COLS, list),\
-               "DEFAULT_STAR_HISTORY_COLS is of type: "+\
-               str(type(totest.DEFAULT_STAR_HISTORY_COLS))
+               "DEFAULT_STAR_HISTORY_COLS is of type: "\
+               + str(type(totest.DEFAULT_STAR_HISTORY_COLS))
 
     def test_instance_DEFAULT_SINGLE_HISTORY_COLS(self):
         assert isinstance(totest.DEFAULT_SINGLE_HISTORY_COLS, list),\
-               "DEFAULT_SINGLE_HISTORY_COLS is of type: "+\
-               str(type(totest.DEFAULT_SINGLE_HISTORY_COLS))
+               "DEFAULT_SINGLE_HISTORY_COLS is of type: "\
+               + str(type(totest.DEFAULT_SINGLE_HISTORY_COLS))
 
     def test_instance_DEFAULT_EEP_HISTORY_COLS(self):
         assert isinstance(totest.DEFAULT_EEP_HISTORY_COLS, list),\
-               "DEFAULT_EEP_HISTORY_COLS is of type: "+\
-               str(type(totest.DEFAULT_EEP_HISTORY_COLS))
+               "DEFAULT_EEP_HISTORY_COLS is of type: "\
+               + str(type(totest.DEFAULT_EEP_HISTORY_COLS))
 
     def test_instance_DEFAULT_PROFILE_COLS(self):
         assert isinstance(totest.DEFAULT_PROFILE_COLS, list),\
-               "DEFAULT_PROFILE_COLS is of type: "+\
-               str(type(totest.DEFAULT_PROFILE_COLS))
+               "DEFAULT_PROFILE_COLS is of type: "\
+               + str(type(totest.DEFAULT_PROFILE_COLS))
 
     def test_instance_EXTRA_STAR_COLS_AT_HE_DEPLETION(self):
         assert isinstance(totest.EXTRA_STAR_COLS_AT_HE_DEPLETION, list),\
-               "EXTRA_STAR_COLS_AT_HE_DEPLETION is of type: "+\
-               str(type(totest.EXTRA_STAR_COLS_AT_HE_DEPLETION))
+               "EXTRA_STAR_COLS_AT_HE_DEPLETION is of type: "\
+               + str(type(totest.EXTRA_STAR_COLS_AT_HE_DEPLETION))
 
     def test_instance_DEFAULT_HISTORY_DS_EXCLUDE(self):
         assert isinstance(totest.DEFAULT_HISTORY_DS_EXCLUDE, list),\
-               "DEFAULT_HISTORY_DS_EXCLUDE is of type: "+\
-               str(type(totest.DEFAULT_HISTORY_DS_EXCLUDE))
+               "DEFAULT_HISTORY_DS_EXCLUDE is of type: "\
+               + str(type(totest.DEFAULT_HISTORY_DS_EXCLUDE))
 
     def test_instance_DEFAULT_PROFILE_DS_EXCLUDE(self):
         assert isinstance(totest.DEFAULT_PROFILE_DS_EXCLUDE, list),\
-               "DEFAULT_PROFILE_DS_EXCLUDE is of type: "+\
-               str(type(totest.DEFAULT_PROFILE_DS_EXCLUDE))
+               "DEFAULT_PROFILE_DS_EXCLUDE is of type: "\
+               + str(type(totest.DEFAULT_PROFILE_DS_EXCLUDE))
 
     def test_instance_EXTRA_COLS_DS_EXCLUDE(self):
         assert isinstance(totest.EXTRA_COLS_DS_EXCLUDE, list),\
-               "EXTRA_COLS_DS_EXCLUDE is of type: "+\
-               str(type(totest.EXTRA_COLS_DS_EXCLUDE))
+               "EXTRA_COLS_DS_EXCLUDE is of type: "\
+               + str(type(totest.EXTRA_COLS_DS_EXCLUDE))
 
     def test_instance_GRIDPROPERTIES(self):
         assert isinstance(totest.GRIDPROPERTIES, dict),\
-               "GRIDPROPERTIES is of type: "+str(type(totest.GRIDPROPERTIES))
+               "GRIDPROPERTIES is of type: " + str(type(totest.GRIDPROPERTIES))
 
     def test_instance_PSyGrid(self):
         assert isclass(totest.PSyGrid)
@@ -162,27 +164,27 @@ class TestElements:
 
     def test_instance_PROPERTIES_ALLOWED(self):
         assert isinstance(totest.PROPERTIES_ALLOWED, dict),\
-               "PROPERTIES_ALLOWED is of type: "+\
-               str(type(totest.PROPERTIES_ALLOWED))
+               "PROPERTIES_ALLOWED is of type: "\
+               + str(type(totest.PROPERTIES_ALLOWED))
 
     def test_instance_PROPERTIES_TO_BE_SET(self):
         assert isinstance(totest.PROPERTIES_TO_BE_SET, list),\
-               "PROPERTIES_TO_BE_SET is of type: "+\
-               str(type(totest.PROPERTIES_TO_BE_SET))
+               "PROPERTIES_TO_BE_SET is of type: "\
+               + str(type(totest.PROPERTIES_TO_BE_SET))
 
     def test_instance_PROPERTIES_TO_BE_NONE(self):
         assert isinstance(totest.PROPERTIES_TO_BE_NONE, dict),\
-               "PROPERTIES_TO_BE_NONE is of type: "+\
-               str(type(totest.PROPERTIES_TO_BE_NONE))
+               "PROPERTIES_TO_BE_NONE is of type: "\
+               + str(type(totest.PROPERTIES_TO_BE_NONE))
 
     def test_instance_PROPERTIES_TO_BE_CONSISTENT(self):
         assert isinstance(totest.PROPERTIES_TO_BE_CONSISTENT, list),\
-               "PROPERTIES_TO_BE_CONSISTENT is of type: "+\
-               str(type(totest.PROPERTIES_TO_BE_CONSISTENT))
+               "PROPERTIES_TO_BE_CONSISTENT is of type: "\
+               + str(type(totest.PROPERTIES_TO_BE_CONSISTENT))
 
     def test_instance_ALL_PROPERTIES(self):
         assert isinstance(totest.ALL_PROPERTIES, list),\
-               "ALL_PROPERTIES is of type: "+str(type(totest.ALL_PROPERTIES))
+               "ALL_PROPERTIES is of type: " + str(type(totest.ALL_PROPERTIES))
 
     def test_instance_join_grids(self):
         assert isroutine(totest.join_grids)
@@ -408,44 +410,56 @@ class TestFunctions:
     @fixture
     def no_path(self, tmp_path):
         # a path which does not exist for testing
-        return totest.os.path.join(tmp_path, "does_not_exist.test")
+        return os.path.join(tmp_path, "does_not_exist.test")
 
     @fixture
     def h5_out_path(self, tmp_path):
         # a path to write to
-        return totest.os.path.join(tmp_path, "out.h5")
+        return os.path.join(tmp_path, "out.h5")
 
     @fixture
     def grid_path(self, tmp_path, binary_history, star_history, profile):
         # a path to a psygrid file for testing
-        path = totest.os.path.join(tmp_path, "grid1.h5")
+        path = os.path.join(tmp_path, "grid1.h5")
         PSyGrid = totest.PSyGrid()
         PSyGrid.filepath = path
         PSyGrid.generate_config()
-        mesa_dir1 = totest.os.path.join(tmp_path, "m1_1.0_m2_1.0"+\
-                    "_initial_period_in_days_0.0_initial_z_0.01")
-        mesa_dir2 = totest.os.path.join(tmp_path, "m1_1.0_m2_1.0"+\
-                    "_initial_period_in_days_{}_initial_z_0.01".format(\
-                     binary_history['period_days'][0]))
+        mesa_dir1 = os.path.join(tmp_path, "m1_1.0_m2_1.0_initial_period_in"\
+                                           +"_days_0.0_initial_z_0.01")
+        mesa_dir2 = os.path.join(tmp_path, "m1_1.0_m2_1.0_initial_period_in"\
+                                           +"_days_{}_initial_z_0.01".format(\
+                                            binary_history['period_days'][0]))
         with totest.h5py.File(path, "w") as hdf5_file:
             hdf5_file.create_group("/grid/run0/")
-            hdf5_file.create_dataset("/grid/run1/binary_history", data=binary_history)
+            hdf5_file.create_dataset("/grid/run1/binary_history",\
+                                     data=binary_history)
             hdf5_file.create_dataset("/grid/run1/history1", data=star_history)
             hdf5_file.create_dataset("/grid/run1/history2", data=star_history)
             hdf5_file.create_dataset("/grid/run1/final_profile1", data=profile)
             hdf5_file.create_dataset("/grid/run1/final_profile2", data=profile)
-            hdf5_file.create_dataset("/grid/initial_values", data=np.array([(np.nan), (binary_history['period_days'][0])], dtype=[('period_days', '<f8')]))
-            hdf5_file.create_dataset("/grid/final_values", data=np.array([(np.nan, "TF1"), (binary_history['period_days'][-1], "TF1")], dtype=[('period_days', '<f8'), ('termination_flag_1', totest.H5_UNICODE_DTYPE)]))
-            hdf5_file.attrs["config"] = totest.json.dumps(str(dict(PSyGrid.config)))
-            hdf5_file.create_dataset("relative_file_paths", data=np.array([(mesa_dir1), (mesa_dir2)], dtype=totest.H5_UNICODE_DTYPE))
+            ini_val = np.array([(np.nan), (binary_history['period_days'][0])],\
+                               dtype=[('period_days', '<f8')])
+            hdf5_file.create_dataset("/grid/initial_values", data=ini_val)
+            fin_val = np.array([(np.nan, "TF1"),\
+                                (binary_history['period_days'][-1], "TF1")],\
+                               dtype=[('period_days', '<f8'),\
+                                      ('termination_flag_1',\
+                                       totest.H5_UNICODE_DTYPE)])
+            hdf5_file.create_dataset("/grid/final_values", data=fin_val)
+            hdf5_file.attrs["config"] =\
+             totest.json.dumps(str(dict(PSyGrid.config)))
+            rel_paths = np.array([(mesa_dir1), (mesa_dir2)],\
+                                 dtype=totest.H5_UNICODE_DTYPE)
+            hdf5_file.create_dataset("relative_file_paths", data=rel_paths)
         return path
 
     # test functions
     def test_downsample_history(self, ConfigFile, star_history,\
                                 binary_history):
         # missing argument
-        with raises(TypeError, match="missing 4 required positional"+\
-                    " arguments: 'bh', 'h1', 'h2', and 'params'"):
+        with raises(TypeError, match="missing 4 required positional "\
+                                     +"arguments: 'bh', 'h1', 'h2', and "\
+                                     +"'params'"):
             totest.downsample_history()
         # bad input
         with raises(TypeError, match="'NoneType' object is not subscriptable"):
@@ -466,14 +480,14 @@ class TestFunctions:
                               for h2 in [None, star_history]]
         tests.remove((None, None, None))
         for (bh, h1, h2) in tests:
-            with raises(TypeError, match="argument of type 'NoneType' is not"+\
-                        " iterable"):
+            with raises(TypeError, match="argument of type 'NoneType' is not "\
+                                         +"iterable"):
                 totest.downsample_history(bh, h1, h2, ConfigFile)
         ConfigFile.entries["history_DS_exclude"] = ['star_age']
         for (bh, h1, h2) in tests:
             if h1 is None:
-                with raises(TypeError, match="'NoneType' object is not"+\
-                            " subscriptable"):
+                with raises(TypeError, match="'NoneType' object is not "\
+                                             +"subscriptable"):
                     totest.downsample_history(bh, h1, h2, ConfigFile)
             else:
                 with raises(ValueError, match="no field of name star_age"):
@@ -481,8 +495,8 @@ class TestFunctions:
         ConfigFile.entries["binary"] = True
         for (bh, h1, h2) in tests:
             if bh is None:
-                with raises(TypeError, match="'NoneType' object is not"+\
-                            " subscriptable"):
+                with raises(TypeError, match="'NoneType' object is not "\
+                                             +"subscriptable"):
                     totest.downsample_history(bh, h1, h2, ConfigFile)
             else:
                 with raises(ValueError, match="no field of name age"):
@@ -499,8 +513,8 @@ class TestFunctions:
 
     def test_downsample_profile(self, ConfigFile, profile):
         # missing argument
-        with raises(TypeError, match="missing 2 required positional"+\
-                    " arguments: 'profile' and 'params'"):
+        with raises(TypeError, match="missing 2 required positional "\
+                                     +"arguments: 'profile' and 'params'"):
             totest.downsample_profile()
         # bad input
         with raises(TypeError, match="'NoneType' object is not subscriptable"):
@@ -511,8 +525,8 @@ class TestFunctions:
         ConfigFile.entries["profile_DS_error"] = 0.1
         assert totest.downsample_profile(None, ConfigFile) is None
         # bad input
-        with raises(TypeError, match="argument of type 'NoneType' is not"+\
-                    " iterable"):
+        with raises(TypeError, match="argument of type 'NoneType' is not "\
+                                     +"iterable"):
             totest.downsample_profile(profile, ConfigFile)
         # examples
         ConfigFile.entries["profile_DS_exclude"] = ['mass']
@@ -538,7 +552,7 @@ class TestFunctions:
                 attribute
             """
             # test that file exists
-            assert totest.os.path.isfile(path)
+            assert os.path.isfile(path)
             with totest.h5py.File(path, "r") as hdf5_file:
                 # test attribute content
                 for s, vs in required_attrs.items():
@@ -551,8 +565,9 @@ class TestFunctions:
                     else:
                         assert np.array_equal(hdf5_file[s][()], v)
         # missing argument
-        with raises(TypeError, match="missing 2 required positional"+\
-                    " arguments: 'input_paths' and 'output_path'"):
+        with raises(TypeError, match="missing 2 required positional "\
+                                     +"arguments: 'input_paths' and "\
+                                     +"'output_path'"):
             totest.join_grids()
         # bad input
         with raises(FileNotFoundError):
@@ -563,8 +578,9 @@ class TestFunctions:
         for group in ['/', '/grid/', '/grid/run0/', '/grid/run1/']:
             for key in totest.h5py.File(grid_path, "r")[group].keys():
                 rd[group+key] = None
-        ra = {"config": ["'description': 'joined'", "'compression': 'gzip9'"]+\
-                        [f"'{p}': None" for p in totest.PROPERTIES_TO_BE_NONE]}
+        ra = {"config": ["'description': 'joined'", "'compression': 'gzip9'"]\
+                        +[f"'{p}': None" for p in\
+                          totest.PROPERTIES_TO_BE_NONE]}
         check_h5_content(h5_out_path, required_data=rd, required_attrs=ra)
 #        with raises(AssertionError):
 #            with capsys.disabled():

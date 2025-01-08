@@ -9,6 +9,7 @@ __authors__ = [
 import posydon.grids.termination_flags as totest
 # aliases
 np = totest.np
+os = totest.os
 
 # import other needed code for the tests, which is not already imported in the
 # module you like to test
@@ -37,8 +38,9 @@ class TestElements:
                     'get_nearest_known_initial_RLO', 'gzip',\
                     'infer_interpolation_class', 'infer_mass_transfer_case',\
                     'infer_star_state', 'np', 'os']
-        assert dir(totest) == elements, "There might be added or removed "+\
-               "objects without an update on the unit test."
+        assert dir(totest) == elements, "There might be added or removed "\
+                                        +"objects without an update on the "\
+                                        +"unit test."
 
     def test_instance_STAR_HISTORY_VARIABLES(self):
         assert isinstance(totest.STAR_HISTORY_VARIABLES, list)
@@ -78,7 +80,7 @@ class TestFunctions:
     @fixture
     def out_path(self, tmp_path):
         # a temporary path to out file for testing
-        path = totest.os.path.join(tmp_path, "out.txt")
+        path = os.path.join(tmp_path, "out.txt")
         with open(path, "w") as test_file:
             test_file.write("min_timestep_limit Reached TPAGB\n")
         return path
@@ -86,7 +88,7 @@ class TestFunctions:
     @fixture
     def out_path2(self, tmp_path):
         # a temporary path to out file for testing
-        path = totest.os.path.join(tmp_path, "out2.txt")
+        path = os.path.join(tmp_path, "out2.txt")
         with open(path, "w") as test_file:
             test_file.write("Terminate: Unit test 2\n")
         return path
@@ -94,7 +96,7 @@ class TestFunctions:
     @fixture
     def out_path3(self, tmp_path):
         # a temporary path to out file for testing
-        path = totest.os.path.join(tmp_path, "out3.txt")
+        path = os.path.join(tmp_path, "out3.txt")
         with open(path, "w") as test_file:
             test_file.write("termination code: Unit test 3\n")
             test_file.write("termination code: min_timestep_limit\n")
@@ -103,7 +105,7 @@ class TestFunctions:
     @fixture
     def out_path4(self, tmp_path):
         # a temporary path to out file for testing
-        path = totest.os.path.join(tmp_path, "out4.txt")
+        path = os.path.join(tmp_path, "out4.txt")
         with open(path, "w") as test_file:
             test_file.write("Unit test 4\n")
         return path
@@ -111,7 +113,7 @@ class TestFunctions:
     @fixture
     def out_path5(self, tmp_path):
         # a temporary path to out file for testing
-        path = totest.os.path.join(tmp_path, "out5.txt")
+        path = os.path.join(tmp_path, "out5.txt")
         with open(path, "w") as test_file:
             test_file.write("")
         return path
@@ -119,10 +121,10 @@ class TestFunctions:
     @fixture
     def out_path6(self, tmp_path):
         # a temporary path to out file for testing
-        path = totest.os.path.join(tmp_path, "out6.txt")
+        path = os.path.join(tmp_path, "out6.txt")
         with open(path, "w") as test_file:
             test_file.write("termination code: min_timestep_limit\n")
-        totest.os.system(f"gzip -1 {path}")
+        os.system(f"gzip -1 {path}")
         return path
 
     @fixture
@@ -192,8 +194,8 @@ class TestFunctions:
     def test_get_flag_from_MESA_output(self, out_path, out_path2, out_path3,\
                                        out_path4, out_path5, out_path6):
         # missing argument
-        with raises(TypeError, match="missing 1 required positional"+\
-                    " argument: 'MESA_log_path'"):
+        with raises(TypeError, match="missing 1 required positional "\
+                                     +"argument: 'MESA_log_path'"):
             totest.get_flag_from_MESA_output()
         # examples
         assert totest.get_flag_from_MESA_output(None) ==\
@@ -213,85 +215,87 @@ class TestFunctions:
 
     def test_get_mass_transfer_flag(self, star_history, binary_history):
         # missing argument
-        with raises(TypeError, match="missing 3 required positional"+\
-                    " arguments: 'binary_history', 'history1', and"+\
-                    " 'history2'"):
+        with raises(TypeError, match="missing 3 required positional "\
+                                     +"arguments: 'binary_history', "\
+                                     +"'history1', and 'history2'"):
             totest.get_mass_transfer_flag()
         # bad input
         with raises(TypeError, match="'NoneType' object is not subscriptable"):
             totest.get_mass_transfer_flag(None, None, None)
         # examples: failed run
         assert totest.get_mass_transfer_flag(None, None, None,\
-               mesa_flag=totest.TF1_POOL_ERROR[0]) == "None"
+                mesa_flag=totest.TF1_POOL_ERROR[0]) == "None"
         # examples: initial_RLOF from flag
         assert totest.get_mass_transfer_flag(None, None, None,\
-               mesa_flag=totest.TF1_POOL_INITIAL_RLO[0]) == "initial_RLOF"
+                mesa_flag=totest.TF1_POOL_INITIAL_RLO[0]) == "initial_RLOF"
         # examples: no RLO
         assert totest.get_mass_transfer_flag(binary_history, None, None) ==\
                "no_RLOF"
         # examples: case A1
-        binary_history["rl_relative_overflow_1"][0] = 1+\
-                                          totest.RL_RELATIVE_OVERFLOW_THRESHOLD
+        binary_history["rl_relative_overflow_1"][0] = 1\
+         + totest.RL_RELATIVE_OVERFLOW_THRESHOLD
         assert totest.get_mass_transfer_flag(binary_history, star_history,\
-               star_history) == "initial_RLOF"
+                                             star_history) == "initial_RLOF"
         assert totest.get_mass_transfer_flag(binary_history, star_history,\
-               star_history, start_at_RLO=True) == "case_A1"
+                                             star_history, start_at_RLO=True)\
+               == "case_A1"
         # examples: contact
-        binary_history["rl_relative_overflow_2"][0] = 1+\
-                                          totest.RL_RELATIVE_OVERFLOW_THRESHOLD
+        binary_history["rl_relative_overflow_2"][0] = 1\
+         + totest.RL_RELATIVE_OVERFLOW_THRESHOLD
         assert totest.get_mass_transfer_flag(binary_history, None, None) ==\
                "contact_during_MS"
         # examples: case A2
         binary_history["rl_relative_overflow_1"][0] = \
-                                          totest.RL_RELATIVE_OVERFLOW_THRESHOLD
+         totest.RL_RELATIVE_OVERFLOW_THRESHOLD
         assert totest.get_mass_transfer_flag(binary_history, star_history,\
-               star_history) == "initial_RLOF"
+                                             star_history) == "initial_RLOF"
         assert totest.get_mass_transfer_flag(binary_history, star_history,\
-               star_history, start_at_RLO=True) == "case_A2"
+                                             star_history, start_at_RLO=True)\
+               == "case_A2"
 
     def test_check_state_from_history(self, star_history, binary_history):
         # missing argument
-        with raises(TypeError, match="missing 2 required positional"+\
-                    " arguments: 'history' and 'mass'"):
+        with raises(TypeError, match="missing 2 required positional "\
+                                     +"arguments: 'history' and 'mass'"):
             totest.check_state_from_history()
         # bad input
         with raises(TypeError, match="'NoneType' object is not subscriptable"):
             totest.check_state_from_history(None, None)
         for k in totest.STAR_HISTORY_VARIABLES:
-            with raises(KeyError, match=f"The data column {k} is not in the"+\
-                        " history file. It is needed for the determination"+\
-                        " of the star state."):
+            with raises(KeyError, match=f"The data column {k} is not in the "\
+                                        +"history file. It is needed for the "\
+                                        +"determination of the star state."):
                 totest.check_state_from_history(star_history[[col for col in\
                  totest.STAR_HISTORY_VARIABLES if col!=k]], None)
         # examples: compact object
         assert totest.check_state_from_history(None,\
-               binary_history['star_1_mass']) == "NS"
+                binary_history['star_1_mass']) == "NS"
         assert totest.check_state_from_history(None,\
-               binary_history['star_1_mass'], model_index=0) == "BH"
+                binary_history['star_1_mass'], model_index=0) == "BH"
         # examples: star
         assert totest.check_state_from_history(star_history, None) ==\
                "H-rich_Core_H_burning"
 
     def test_get_flags_from_MESA_run(self, star_history, binary_history):
         # missing argument
-        with raises(TypeError, match="missing 1 required positional"+\
-                    " argument: 'MESA_log_path'"):
+        with raises(TypeError, match="missing 1 required positional "\
+                                     +"argument: 'MESA_log_path'"):
             totest.get_flags_from_MESA_run()
         # bad input
         with raises(TypeError, match="'NoneType' object is not subscriptable"):
             totest.get_flags_from_MESA_run(None)
         # examples
         fo, fmt, fs1, fs2 = totest.get_flags_from_MESA_run(None,\
-                            binary_history=binary_history,\
-                            history1=star_history, history2=star_history)
+                             binary_history=binary_history,\
+                             history1=star_history, history2=star_history)
         assert fo == "reach cluster timelimit"
         assert fmt == "None"
         assert fs1 == "H-rich_Core_H_burning"
         assert fs2 == "H-rich_Core_H_burning"
         fo, fmt, fs1, fs2 = totest.get_flags_from_MESA_run(None,\
-                            binary_history=binary_history,\
-                            history1=star_history, history2=star_history,\
-                            newTF1="Test")
+                             binary_history=binary_history,\
+                             history1=star_history, history2=star_history,\
+                             newTF1="Test")
         assert fo == "Test"
         assert fmt == "no_RLOF"
         assert fs1 == "H-rich_Core_H_burning"
@@ -299,14 +303,13 @@ class TestFunctions:
 
     def test_infer_interpolation_class(self):
         # missing argument
-        with raises(TypeError, match="missing 2 required positional"+\
-                    " arguments: 'tf1' and 'tf2'"):
+        with raises(TypeError, match="missing 2 required positional "\
+                                     +"arguments: 'tf1' and 'tf2'"):
             totest.infer_interpolation_class()
         # bad input
-        with raises(TypeError, match="argument of type 'NoneType' is not"+\
-                    " iterable"):
-            totest.infer_interpolation_class(totest.TF1_POOL_STABLE[0],\
-               None)
+        with raises(TypeError, match="argument of type 'NoneType' is not "\
+                                     +"iterable"):
+            totest.infer_interpolation_class(totest.TF1_POOL_STABLE[0], None)
         # examples
         assert totest.infer_interpolation_class(None, None) == "unknown"
         for tf1 in totest.TF1_POOL_INITIAL_RLO:
@@ -327,38 +330,44 @@ class TestFunctions:
 
     def test_get_detected_initial_RLO(self, grid, iniRLO_boundary):
         # missing argument
-        with raises(TypeError, match="missing 1 required positional"+\
-                    " argument: 'grid'"):
+        with raises(TypeError, match="missing 1 required positional "\
+                                     +"argument: 'grid'"):
             totest.get_detected_initial_RLO()
         # bad input
-        with raises(AttributeError, match="'NoneType' object has no"+\
-                    " attribute 'initial_values'"):
+        with raises(AttributeError, match="'NoneType' object has no "\
+                                          +"attribute 'initial_values'"):
             totest.get_detected_initial_RLO(None)
         # examples: boundary at higher values of diagonal plane
         assert totest.get_detected_initial_RLO(grid) == iniRLO_boundary
 
     def test_get_nearest_known_initial_RLO(self, iniRLO_boundary, monkeypatch):
         # missing argument
-        with raises(TypeError, match="missing 3 required positional"+\
-                    " arguments: 'mass1', 'mass2', and 'known_initial_RLO'"):
+        with raises(TypeError, match="missing 3 required positional "\
+                                     +"arguments: 'mass1', 'mass2', and "\
+                                     +"'known_initial_RLO'"):
             totest.get_nearest_known_initial_RLO()
         # bad input
         with raises(TypeError, match="object of type 'NoneType' has no len()"):
             totest.get_nearest_known_initial_RLO(None, None, None)
         # examples: don't apply the boundary
-        with warns(InappropriateValueWarning, match="Don't apply initial RLO"+\
-                   " boundary because of too few data points in there."):
+        with warns(InappropriateValueWarning, match="Don't apply initial RLO "\
+                                                    +"boundary because of "\
+                                                    +"too few data points in "\
+                                                    +"there."):
             assert totest.get_nearest_known_initial_RLO(0.0, 0.0,\
-                   iniRLO_boundary) == {"star_1_mass": 0.0, "star_2_mass":\
-                   0.0, "period_days": 0.0,}
+                    iniRLO_boundary) == {"star_1_mass": 0.0,\
+                                         "star_2_mass": 0.0,\
+                                         "period_days": 0.0,}
         # examples: apply the boundary
         monkeypatch.setattr(totest, "MIN_COUNT_INITIAL_RLO_BOUNDARY", 0)
         for m1 in range(5):
             for m2 in range(5):
-                porb = 2-m1-m2
-                tf = str(m1)+str(m2)+str(porb)
+                porb = 2 - m1 - m2
+                tf = str(m1) + str(m2) + str(porb)
                 if porb>=0:
                     assert totest.get_nearest_known_initial_RLO(m1, m2,\
-                           iniRLO_boundary) == {'star_1_mass': m1,\
-                           'star_2_mass': m2, 'period_days': porb,\
-                           'termination_flag_3': tf, 'termination_flag_4': tf}
+                            iniRLO_boundary) == {'star_1_mass': m1,\
+                                                 'star_2_mass': m2,\
+                                                 'period_days': porb,\
+                                                 'termination_flag_3': tf,\
+                                                 'termination_flag_4': tf}

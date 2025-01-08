@@ -7,6 +7,8 @@ __authors__ = [
 
 # import the module which will be tested
 import posydon.grids.io as totest
+# aliases
+os = totest.os
 
 # import other needed code for the tests, which is not already imported in the
 # module you like to test
@@ -28,28 +30,29 @@ class TestElements:
                     'initial_values_from_dirname', 'os',\
                     'print_meta_contents', 'read_MESA_data_file',\
                     'read_initial_values']
-        assert dir(totest) == elements, "There might be added or removed "+\
-               "objects without an update on the unit test."
+        assert dir(totest) == elements, "There might be added or removed "\
+                                        + "objects without an update on the "\
+                                        + "unit test."
 
     def test_instance_POSYDON_FORMAT_OPTIONS(self):
         assert isinstance(totest.POSYDON_FORMAT_OPTIONS, dict),\
-               "POSYDON_FORMAT_OPTIONS is of type: "+\
-               str(type(totest.POSYDON_FORMAT_OPTIONS))
+               "POSYDON_FORMAT_OPTIONS is of type: "\
+               + str(type(totest.POSYDON_FORMAT_OPTIONS))
 
     def test_instance_BINARY_OUTPUT_FILE(self):
         assert isinstance(totest.BINARY_OUTPUT_FILE, str),\
-               "BINARY_OUTPUT_FILE is of type: "+\
-               str(type(totest.BINARY_OUTPUT_FILE))
+               "BINARY_OUTPUT_FILE is of type: "\
+               + str(type(totest.BINARY_OUTPUT_FILE))
 
     def test_instance_SINGLE_OUTPUT_FILE(self):
         assert isinstance(totest.SINGLE_OUTPUT_FILE, str),\
-               "SINGLE_OUTPUT_FILE is of type: "+\
-               str(type(totest.SINGLE_OUTPUT_FILE))
+               "SINGLE_OUTPUT_FILE is of type: "\
+               + str(type(totest.SINGLE_OUTPUT_FILE))
 
     def test_instance_EEP_FILE_EXTENSIONS(self):
         assert isinstance(totest.EEP_FILE_EXTENSIONS, list),\
-               "EEP_FILE_EXTENSIONS is of type: "+\
-               str(type(totest.EEP_FILE_EXTENSIONS))
+               "EEP_FILE_EXTENSIONS is of type: "\
+               + str(type(totest.EEP_FILE_EXTENSIONS))
 
     def test_instance_RunReader(self):
         assert isclass(totest.RunReader)
@@ -82,72 +85,68 @@ class TestValues:
         assert totest.SINGLE_OUTPUT_FILE == "out_star1_formation_step0.txt"
 
     def test_value_EEP_FILE_EXTENSIONS(self):
-        assert len(totest.EEP_FILE_EXTENSIONS)>0
+        assert len(totest.EEP_FILE_EXTENSIONS) > 0
         assert ".data.eep" in totest.EEP_FILE_EXTENSIONS
 
 
 class TestFunctions:
     @fixture
-    def grid_csv_path(self, tmp_path):
-        # a temporary grid.csv path for testing
-        return totest.os.path.join(tmp_path, "grid.csv")
-
-    @fixture
-    def grid_csv_files(self, grid_csv_path):
+    def grid_csv_files(self, tmp_path):
         # a temporary grid.csv file for testing
-        with open(grid_csv_path, "w") as test_file:
+        path = os.path.join(tmp_path, "grid.csv")
+        with open(path, "w") as test_file:
             test_file.write("unit,test\n")
-            test_file.write("1.2345678901234567890123456789012345678901234"+\
-                            "5678901234567890123456789,77777777.88888888\n")
+            test_file.write("1.2345678901234567890123456789012345678901234"\
+                            +"5678901234567890123456789,77777777.88888888\n")
             for i in range(3,6):
                 test_file.write(f"{i}.0,{i}.0\n")
-        totest.os.system(f"gzip -1 -k {grid_csv_path}")
-        return
+        # additionally create a zipped file
+        os.system(f"gzip -1 -k {path}")
+        return path
 
     @fixture
-    def inlist_grid_points_path(self, tmp_path):
-        # a temporary inlist_grid_points path for testing
-        return totest.os.path.join(tmp_path, "inlist_grid_points")
-
-    @fixture
-    def inlist_grid_points_files(self, inlist_grid_points_path):
+    def inlist_grid_points_files(self, tmp_path):
         # a temporary inlist_grid_points file for testing
-        with open(inlist_grid_points_path, "w") as test_file:
+        path = os.path.join(tmp_path, "inlist_grid_points")
+        with open(path, "w") as test_file:
             test_file.write("Unit = TEST\n")
-        totest.os.system(f"gzip -1 {inlist_grid_points_path}")
-        with open(inlist_grid_points_path, "w") as test_file:
+        os.system(f"gzip -1 {path}")
+        # second, non-zipped file
+        with open(path, "w") as test_file:
             test_file.write("Unittest\n")
             test_file.write("Test = TEST = test\n")
             test_file.write("m1 = 1.0\n")
             test_file.write("m2 = 0.2\n")
             test_file.write("initial_period_in_days = 1.0d+3\n")
             test_file.write("initial_z = 0.01\n")
-        return
+        return path
 
     # test functions
-    def test_print_meta_contents(self, grid_csv_path, grid_csv_files, capsys):
+    def test_print_meta_contents(self, grid_csv_files, capsys):
         # missing argument
-        with raises(TypeError, match="missing 1 required positional"+\
-                    " argument: 'path'"):
+        with raises(TypeError, match="missing 1 required positional "\
+                                     +"argument: 'path'"):
             totest.print_meta_contents()
         # bad input
-        with raises(AttributeError, match="'NoneType' object has no"+\
-                    " attribute 'endswith'"):
+        with raises(AttributeError, match="'NoneType' object has no "\
+                                          +"attribute 'endswith'"):
             totest.print_meta_contents(None)
         # examples
-        totest.print_meta_contents(grid_csv_path)
+        totest.print_meta_contents(grid_csv_files)
         captured_output = capsys.readouterr()
         assert "CONTENTS OF METADATA FILE:" in captured_output.out
-        assert 80*"-" in captured_output.out
+        assert 80 * "-" in captured_output.out
         assert "unit,test" in captured_output.out
-        assert "1.23456789"+6*"0123456789"+",77777777." in captured_output.out
+        assert "1.23456789" + 6 * "0123456789" + ",77777777." in\
+               captured_output.out
         assert ".8" not in captured_output.out
         for i in range(3,6):
             assert f"{i}.0,{i}.0" in captured_output.out
-        totest.print_meta_contents(grid_csv_path+".gz", max_lines=0)
+        totest.print_meta_contents(grid_csv_files+".gz", max_lines=0)
         captured_output = capsys.readouterr()
         assert captured_output.out == ""
-        totest.print_meta_contents(grid_csv_path+".gz", max_lines=2, max_chars_per_line="wrap")
+        totest.print_meta_contents(grid_csv_files+".gz", max_lines=2,\
+                                   max_chars_per_line="wrap")
         captured_output = capsys.readouterr()
         assert "unit,test" in captured_output.out
         assert "77777777.88888888" in captured_output.out
@@ -155,35 +154,35 @@ class TestFunctions:
 
     def test_read_initial_values(self, tmp_path, inlist_grid_points_files):
         # missing argument
-        with raises(TypeError, match="missing 1 required positional"+\
-                    " argument: 'mesa_dir'"):
+        with raises(TypeError, match="missing 1 required positional "\
+                                     +"argument: 'mesa_dir'"):
             totest.read_initial_values()
         # bad input
-        with raises(TypeError, match="expected str, bytes or os.PathLike"+\
-                    " object, not NoneType"):
+        with raises(TypeError, match="expected str, bytes or os.PathLike "\
+                                     +"object, not NoneType"):
             totest.read_initial_values(None)
         # examples
         assert totest.read_initial_values("./") is None
-        with warns(InappropriateValueWarning, match="Multiple `=`, skipping"+\
-                   " line in"):
+        with warns(InappropriateValueWarning, match="Multiple `=`, skipping "\
+                                                    +"line in"):
             iv = totest.read_initial_values(tmp_path)
             assert iv['star_1_mass'] == 1.0
             assert iv['star_2_mass'] == 0.2
             assert iv['period_days'] == 1.0e+3
             assert iv['initial_z'] == 0.01
-        totest.os.remove(totest.os.path.join(tmp_path, "inlist_grid_points"))
-        with raises(ValueError, match="could not convert string to float:"+\
-                    " 'TEST'"):
+        os.remove(inlist_grid_points_files)
+        with raises(ValueError, match="could not convert string to float: "\
+                                      +"'TEST'"):
             totest.read_initial_values(tmp_path)
 
     def test_initial_values_from_dirname(self):
         # missing argument
-        with raises(TypeError, match="missing 1 required positional"+\
-                    " argument: 'mesa_dir'"):
+        with raises(TypeError, match="missing 1 required positional "\
+                                     +"argument: 'mesa_dir'"):
             totest.initial_values_from_dirname()
         # bad input
-        with raises(TypeError, match="expected str, bytes or os.PathLike"+\
-                    " object, not NoneType"):
+        with raises(TypeError, match="expected str, bytes or os.PathLike "\
+                                     +"object, not NoneType"):
             totest.initial_values_from_dirname(None)
         with raises(AssertionError):
             totest.initial_values_from_dirname("./UnitTest")
@@ -200,8 +199,8 @@ class TestFunctions:
                "./v1/m1_1.1_m2_1.2_initial_period_in_days_1.0") ==\
                ('1.1', '1.2', '1.0')
         # examples: binary v2
-        assert totest.initial_values_from_dirname("./v2/"+\
-               "initial_z_1.0_m1_2.1_m2_2.2_initial_period_in_days_2.0") ==\
+        assert totest.initial_values_from_dirname("./v2/"\
+               +"initial_z_1.0_m1_2.1_m2_2.2_initial_period_in_days_2.0") ==\
                ('2.1', '2.2', '2.0', '1.0')
 
 
@@ -219,21 +218,21 @@ class TestRunReader:
                    "final_star2.mod", totest.BINARY_OUTPUT_FILE,\
                    totest.SINGLE_OUTPUT_FILE+".gz",\
                    totest.POSYDON_FORMAT_OPTIONS["run metadata"][0]]:
-            file_path = totest.os.path.join(tmp_path, fn)
+            file_path = os.path.join(tmp_path, fn)
             with open(file_path, "w") as test_file:
                 test_file.write(f"Test: {file_path}\n")
         for d in ["LOGS1", "LOGS2"]:
-            dir_path = totest.os.path.join(tmp_path, d)
-            totest.os.mkdir(dir_path)
+            dir_path = os.path.join(tmp_path, d)
+            os.mkdir(dir_path)
             for fn in ["history.data.gz", "final_profile.data",\
                        "initial_profile.data"]:
-                file_path = totest.os.path.join(dir_path, fn)
+                file_path = os.path.join(dir_path, fn)
                 with open(file_path, "w") as test_file:
                     test_file.write(f"Test: {file_path}\n")
-        dir_path = totest.os.path.join(tmp_path, "LOGS_files")
-        totest.os.mkdir(dir_path)
+        dir_path = os.path.join(tmp_path, "LOGS_files")
+        os.mkdir(dir_path)
         for fn in ["LOGS1", "LOGS2"]:
-            file_path = totest.os.path.join(dir_path, fn)
+            file_path = os.path.join(dir_path, fn)
             with open(file_path, "w") as test_file:
                 test_file.write(f"Test: {file_path}\n")
         return
@@ -261,8 +260,8 @@ class TestRunReader:
         assert RunReader.out_txt_path is None
         assert RunReader.metadata_files == []
         # missing argument
-        with raises(TypeError, match="missing 1 required positional"+\
-                    " argument: 'path'"):
+        with raises(TypeError, match="missing 1 required positional "\
+                                     +"argument: 'path'"):
             test_RunReader = totest.RunReader()
         # bad input
         with raises(ValueError, match="Format test not supported."):
@@ -270,7 +269,8 @@ class TestRunReader:
         # examples
         assert capsys.readouterr().out == ""
         test_RunReader = totest.RunReader("./", fmt="posydon_single",\
-                         binary=False, verbose=True, verbose_maxlines=1)
+                                          binary=False, verbose=True,\
+                                          verbose_maxlines=1)
         assert test_RunReader.fmt == "posydon_single"
         assert test_RunReader.path == "./"
         assert test_RunReader.verbose == True
@@ -283,31 +283,31 @@ class TestRunReader:
         RunReader.read_posydon_format()
         assert capsys.readouterr().out == ""
         # examples: single
-        RunReader.metadata_files=[]
-        RunReader.binary=False
-        RunReader.verbose=True
+        RunReader.metadata_files = []
+        RunReader.binary = False
+        RunReader.verbose = True
         RunReader.read_posydon_format()
         captured_output = capsys.readouterr()
         assert "Reading run in {}".format(RunReader.path) in captured_output.out
         assert captured_output.out.count(": Yes") == 10
         assert "METADATA FILES: 2" in captured_output.out
         # examples: LOGS? are files instead of directories
-        RunReader.path = totest.os.path.join(RunReader.path, "LOGS_files")
-        RunReader.verbose=False
+        RunReader.path = os.path.join(RunReader.path, "LOGS_files")
+        RunReader.verbose = False
         RunReader.read_posydon_format()
 
     def test_report(self, RunReader, capsys):
         assert isroutine(RunReader.report)
         RunReader.report()
         captured_output = capsys.readouterr()
-        assert 80*"-" in captured_output.out
+        assert 80 * "-" in captured_output.out
         assert "DATA FOUND" in captured_output.out
         for l in ["MESA screen output", "History of Star 1",\
                   "History of Star 2", "Binary history",\
                   "Final profile of Star 1", "Final profile of Star 2",\
                   "Initial profile of Star 1", "Initial profile of Star 2",\
                   "Final model of Star 1", "Final model of Star 2"]:
-            assert l+(25-len(l))*" "+": No" in captured_output.out
+            assert l + (25-len(l)) * " " + ": No" in captured_output.out
         assert "METADATA FILES:" in captured_output.out
         RunReader.metadata_files.append("./Test.csv")
         with raises(FileNotFoundError):
@@ -318,23 +318,25 @@ class TestGridReader:
     @fixture
     def Run_path(self, tmp_path):
         # a temporary path for testing
-        return totest.os.path.join(tmp_path, "test_run_initial_z_0.01_m1_1.0"+\
-                                   "_m2_0.2_initial_period_in_days_0.1")
+        return os.path.join(tmp_path, "test_run_initial_z_0.01_m1_1.0"\
+                                      +"_m2_0.2_initial_period_in_days_0.1")
 
     @fixture
     def Grid_files(self, Run_path):
         # a temporary files for testing
-        totest.os.mkdir(Run_path)
+        path = Run_path
+        os.mkdir(path)
         for fn in [totest.BINARY_OUTPUT_FILE]:
-            file_path = totest.os.path.join(Run_path, fn)
+            file_path = os.path.join(path, fn)
             with open(file_path, "w") as test_file:
                 test_file.write(f"Test: {file_path}\n")
-        Run_path += "_index_0"
-        totest.os.mkdir(Run_path)
+        path += "_index_0"
+        os.mkdir(path)
         for fn in [totest.BINARY_OUTPUT_FILE]:
-            file_path = totest.os.path.join(Run_path, fn)
+            file_path = os.path.join(path, fn)
             with open(file_path, "w") as test_file:
                 test_file.write(f"Test: {file_path}\n")
+        return path
 
     @fixture
     def GridReader(self, tmp_path, Grid_files):
@@ -344,8 +346,8 @@ class TestGridReader:
 
     @fixture
     def Empty_dir(self, tmp_path):
-        dir_path = totest.os.path.join(tmp_path, "empty")
-        totest.os.mkdir(dir_path)
+        dir_path = os.path.join(tmp_path, "empty")
+        os.mkdir(dir_path)
         return dir_path
 
     # test the GridReader class
@@ -362,8 +364,8 @@ class TestGridReader:
         assert (Run_path in GridReader.input_folders) or\
                (Run_path+"_index_0" in GridReader.input_folders)
         # missing argument
-        with raises(TypeError, match="missing 1 required positional"+\
-                    " argument: 'path'"):
+        with raises(TypeError, match="missing 1 required positional "\
+                                     +"argument: 'path'"):
             test_GridReader = totest.GridReader()
         # bad input
         with raises(ValueError, match="Format test not supported."):
@@ -384,8 +386,8 @@ class TestGridReader:
         GridReader.verbose = False
         # bad input
         GridReader.path = Empty_dir
-        with raises(ValueError, match="No folders found in "+\
-                    "{}".format(Empty_dir)):
+        with raises(ValueError, match="No folders found in "\
+                                      +"{}".format(Empty_dir)):
             GridReader._get_input_folders()
         GridReader.path = None
         with raises(ValueError, match="MESA path must be a string or list"):
@@ -409,8 +411,9 @@ class TestGridReader:
     def test_infer_history_columns(self, GridReader):
         assert isroutine(GridReader.infer_history_columns)
         # missing argument
-        with raises(TypeError, match="missing 3 required positional"+\
-                    " arguments: 'BH_cols', 'H1_cols', and 'H2_cols'"):
+        with raises(TypeError, match="missing 3 required positional "\
+                                     +"arguments: 'BH_cols', 'H1_cols', and "\
+                                     +"'H2_cols'"):
             GridReader.infer_history_columns()
         # examples
         assert GridReader.infer_history_columns([], [], []) == []
