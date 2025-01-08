@@ -241,7 +241,7 @@ def SFR_Z_fraction_at_given_redshift(
         )
         if not select_one_met:
             fSFR[:, 0] = stats.norm.cdf(np.log10(metallicity_bins[1]), mu, sigma) / norm
-            fSFR[:,-1] = norm - stats.norm.cdf(np.log(metallicity_bins[-1]), mu, sigma)/norm
+            fSFR[:,-1] = norm - stats.norm.cdf(np.log10(metallicity_bins[-1]), mu, sigma)/norm
 
     elif SFR == "Neijssel+19":
         # assume a truncated ln-normal distribution of metallicities

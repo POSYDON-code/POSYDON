@@ -53,7 +53,7 @@ Using Anaconda (Recommended)
 
         get-posydon-data
 
-    Alternatively, you can manually download the dataset from Zenodo using the provided `link <https://zenodo.org/record/6384235>`_. (TODO: update link to v2)
+    Alternatively, you can manually download the dataset from Zenodo using the provided `link <https://zenodo.org/communities/posydon/>`_. (TODO: update link to v2)
 
 5. **Set Environment Variables**
 
@@ -104,11 +104,11 @@ For users interested in the latest features and developments, you can install PO
     Refer back to the recommended installation steps, starting from :ref:`point 4 <posydon-env>`, to download the required dataset and set the necessary environment variables.
 
 
-Using POSYDON on HPC Facilities
+Running grids using POSYDON on HPC Facilities
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-(TODO: check whether it is still needed)
-If you are planning to run POSYDON's population synthesis on a High-Performance Computing (HPC) facility, it's essential to have `mpi4py` installed to enable parallel computations. 
+If you are planning to create MESA grids using POSYDON on HPC facilities, it's essential to have ``mpi4py`` installed to take advantage of parallel computations.
+You do not need to have ``mpi4py`` installed if you are only running population synthesis simulations.
 
 1. **Install mpi4py via Anaconda (Recommended)**:
 
@@ -122,8 +122,9 @@ If you are planning to run POSYDON's population synthesis on a High-Performance 
 
         pip install ".[hpc]"
 
-    .. warning::
-        Users have reported issues when trying to install `mpi4py` via pip. If you encounter any issues, try installing `mpi4py` through Anaconda. If you cannot solve the issue, please refer to the :ref:`Troubleshooting Guide <installation-issues>` or seek support from the community or developers, see the :ref:`contact us <contact_info>` page.
+
+.. warning::
+    Users have reported issues when trying to install `mpi4py` via pip. If you encounter any issues, try installing `mpi4py` through Anaconda. If you cannot solve the issue, please refer to the :ref:`Troubleshooting Guide <installation-issues>` or seek support from the community or developers, see the :ref:`contact us <contact_info>` page.
 
 Machine Learning Modules Installation
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
