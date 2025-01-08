@@ -748,7 +748,7 @@ class TestFunctions:
             totest.rejection_sampler(pdf=mock_pdf)
         # examples:
         monkeypatch.setattr(np.random, "uniform", mock_uniform)
-        monkeypatch.setattr(totest, "pchipinterp", mock_pchipinterp)
+        monkeypatch.setattr(totest, "PchipInterpolator", mock_pchipinterp)
         tests = [(np.array([0.0, 1.0]), np.array([0.4, 0.6]), 5,\
                   np.array([0.0, 0.25, 0.5, 0.75, 1.0])),\
                  (np.array([1.0, 0.0]), np.array([0.2, 0.8]), 5,\
