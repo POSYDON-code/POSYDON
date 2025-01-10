@@ -10,11 +10,13 @@ import posydon.grids.psygrid as totest
 # aliases
 np = totest.np
 os = totest.os
+h5py = totest.h5py
 
 # import other needed code for the tests, which is not already imported in the
 # module you like to test
 from pytest import fixture, raises, warns
 from inspect import isclass, isroutine
+from posydon.utils.posydonwarning import InappropriateValueWarning
 
 # define test classes collecting several test functions
 class TestElements:
@@ -196,7 +198,7 @@ class TestValues:
         assert totest.HDF5_MEMBER_SIZE == 2147483647
 
     def test_value_H5_UNICODE_DTYPE(self):
-        assert totest.H5_UNICODE_DTYPE == totest.h5py.string_dtype()
+        assert totest.H5_UNICODE_DTYPE == h5py.string_dtype()
 
     def test_value_H5_REC_STR_DTYPE(self):
         assert "S" in totest.H5_REC_STR_DTYPE
@@ -418,18 +420,56 @@ class TestFunctions:
         return os.path.join(tmp_path, "out.h5")
 
     @fixture
-    def grid_path(self, tmp_path, binary_history, star_history, profile):
+    def grid1_path(self, tmp_path, binary_history, star_history, profile):
         # a path to a psygrid file for testing
         path = os.path.join(tmp_path, "grid1.h5")
         PSyGrid = totest.PSyGrid()
         PSyGrid.filepath = path
         PSyGrid.generate_config()
         mesa_dir1 = os.path.join(tmp_path, "m1_1.0_m2_1.0_initial_period_in"\
-                                           +"_days_0.0_initial_z_0.01")
+                                           +"_days_0.0_initial_z_0.01_idx_0")
         mesa_dir2 = os.path.join(tmp_path, "m1_1.0_m2_1.0_initial_period_in"\
-                                           +"_days_{}_initial_z_0.01".format(\
+                                           +"_days_{}_initial_z_0.01_idx_1".\
+                                           format(\
                                             binary_history['period_days'][0]))
-        with totest.h5py.File(path, "w") as hdf5_file:
+        with h5py.File(path, "w") as hdf5_file:
+            hdf5_file.create_group("/grid/run0/")
+            hdf5_file.create_dataset("/grid/run1/binary_history",\
+                                     data=binary_history)
+            hdf5_file.create_dataset("/grid/run1/history1", data=star_history)
+            hdf5_file.create_dataset("/grid/run1/history2", data=star_history)
+            hdf5_file.create_dataset("/grid/run1/final_profile1", data=profile)
+            hdf5_file.create_dataset("/grid/run1/final_profile2", data=profile)
+            ini_val = np.array([(np.nan), (binary_history['period_days'][0])],\
+                               dtype=[('period_days', '<f8')])
+            hdf5_file.create_dataset("/grid/initial_values", data=ini_val)
+            fin_val = np.array([(np.nan, "TF1"),\
+                                (binary_history['period_days'][-1], "ignored_no_RLO")],\
+                               dtype=[('period_days', '<f8'),\
+                                      ('termination_flag_1',\
+                                       totest.H5_UNICODE_DTYPE)])
+            hdf5_file.create_dataset("/grid/final_values", data=fin_val)
+            hdf5_file.attrs["config"] =\
+             totest.json.dumps(str(dict(PSyGrid.config)))
+            rel_paths = np.array([(mesa_dir1), (mesa_dir2)],\
+                                 dtype=totest.H5_UNICODE_DTYPE)
+            hdf5_file.create_dataset("relative_file_paths", data=rel_paths)
+        return path
+
+    @fixture
+    def grid2_path(self, tmp_path, binary_history, star_history, profile):
+        # a path to a psygrid file for testing
+        path = os.path.join(tmp_path, "grid2.h5")
+        PSyGrid = totest.PSyGrid()
+        PSyGrid.filepath = path
+        PSyGrid.generate_config()
+        mesa_dir1 = os.path.join(tmp_path, "m1_1.0_m2_1.0_initial_period_in"\
+                                           +"_days_0.0_initial_z_0.01_idx_0")
+        mesa_dir2 = os.path.join(tmp_path, "m1_1.0_m2_1.0_initial_period_in"\
+                                           +"_days_{}_initial_z_0.01_idx_1".\
+                                           format(\
+                                            binary_history['period_days'][0]))
+        with h5py.File(path, "w") as hdf5_file:
             hdf5_file.create_group("/grid/run0/")
             hdf5_file.create_dataset("/grid/run1/binary_history",\
                                      data=binary_history)
@@ -449,6 +489,193 @@ class TestFunctions:
             hdf5_file.attrs["config"] =\
              totest.json.dumps(str(dict(PSyGrid.config)))
             rel_paths = np.array([(mesa_dir1), (mesa_dir2)],\
+                                 dtype=totest.H5_UNICODE_DTYPE)
+            hdf5_file.create_dataset("relative_file_paths", data=rel_paths)
+        return path
+
+    @fixture
+    def grid_path_bad_ini(self, tmp_path, binary_history, star_history,\
+                          profile):
+        # a path to a psygrid file for testing
+        path = os.path.join(tmp_path, "grid_bad_ini.h5")
+        PSyGrid = totest.PSyGrid()
+        PSyGrid.filepath = path
+        PSyGrid.generate_config()
+        mesa_dir1 = os.path.join(tmp_path, "m1_1.0_m2_1.0_initial_period_in"\
+                                           +"_days_0.0_initial_z_0.01")
+        mesa_dir2 = os.path.join(tmp_path, "m1_1.0_m2_1.0_initial_period_in"\
+                                           +"_days_{}_initial_z_0.01".format(\
+                                            binary_history['period_days'][0]))
+        with h5py.File(path, "w") as hdf5_file:
+            hdf5_file.create_group("/grid/run0/")
+            hdf5_file.create_dataset("/grid/run1/binary_history",\
+                                     data=binary_history)
+            hdf5_file.create_dataset("/grid/run1/history1", data=star_history)
+            hdf5_file.create_dataset("/grid/run1/history2", data=star_history)
+            hdf5_file.create_dataset("/grid/run1/final_profile1", data=profile)
+            hdf5_file.create_dataset("/grid/run1/final_profile2", data=profile)
+            ini_val = np.array([(np.nan), (binary_history['period_days'][0])],\
+                               dtype=[('bad', '<f8')])
+            hdf5_file.create_dataset("/grid/initial_values", data=ini_val)
+            fin_val = np.array([(np.nan, "TF1"),\
+                                (binary_history['period_days'][-1], "TF1")],\
+                               dtype=[('period_days', '<f8'),\
+                                      ('termination_flag_1',\
+                                       totest.H5_UNICODE_DTYPE)])
+            hdf5_file.create_dataset("/grid/final_values", data=fin_val)
+            hdf5_file.attrs["config"] =\
+             totest.json.dumps(str(dict(PSyGrid.config)))
+            rel_paths = np.array([(mesa_dir1), (mesa_dir2)],\
+                                 dtype=totest.H5_UNICODE_DTYPE)
+            hdf5_file.create_dataset("relative_file_paths", data=rel_paths)
+        return path
+
+    @fixture
+    def grid_path_bad_fin(self, tmp_path, binary_history, star_history,\
+                          profile):
+        # a path to a psygrid file for testing
+        path = os.path.join(tmp_path, "grid_bad_fin.h5")
+        PSyGrid = totest.PSyGrid()
+        PSyGrid.filepath = path
+        PSyGrid.generate_config()
+        mesa_dir1 = os.path.join(tmp_path, "m1_1.0_m2_1.0_initial_period_in"\
+                                           +"_days_0.0_initial_z_0.01")
+        mesa_dir2 = os.path.join(tmp_path, "m1_1.0_m2_1.0_initial_period_in"\
+                                           +"_days_{}_initial_z_0.01".format(\
+                                            binary_history['period_days'][0]))
+        with h5py.File(path, "w") as hdf5_file:
+            hdf5_file.create_group("/grid/run0/")
+            hdf5_file.create_dataset("/grid/run1/binary_history",\
+                                     data=binary_history)
+            hdf5_file.create_dataset("/grid/run1/history1", data=star_history)
+            hdf5_file.create_dataset("/grid/run1/history2", data=star_history)
+            hdf5_file.create_dataset("/grid/run1/final_profile1", data=profile)
+            hdf5_file.create_dataset("/grid/run1/final_profile2", data=profile)
+            ini_val = np.array([(np.nan), (binary_history['period_days'][0])],\
+                               dtype=[('period_days', '<f8')])
+            hdf5_file.create_dataset("/grid/initial_values", data=ini_val)
+            fin_val = np.array([(np.nan, "TF1"),\
+                                (binary_history['period_days'][-1], "TF1")],\
+                               dtype=[('period_days', '<f8'),\
+                                      ('termination_flag_bad',\
+                                       totest.H5_UNICODE_DTYPE)])
+            hdf5_file.create_dataset("/grid/final_values", data=fin_val)
+            hdf5_file.attrs["config"] =\
+             totest.json.dumps(str(dict(PSyGrid.config)))
+            rel_paths = np.array([(mesa_dir1), (mesa_dir2)],\
+                                 dtype=totest.H5_UNICODE_DTYPE)
+            hdf5_file.create_dataset("relative_file_paths", data=rel_paths)
+        return path
+
+    @fixture
+    def grid_path_start_RLO(self, tmp_path, binary_history, star_history,\
+                            profile):
+        # a path to a psygrid file for testing
+        path = os.path.join(tmp_path, "grid_start_RLO.h5")
+        PSyGrid = totest.PSyGrid()
+        PSyGrid.filepath = path
+        PSyGrid.generate_config()
+        PSyGrid.config["start_at_RLO"] = True
+        mesa_dir1 = os.path.join(tmp_path, "m1_1.0_m2_1.0_initial_period_in"\
+                                           +"_days_0.0_initial_z_0.01_idx_0")
+        mesa_dir2 = os.path.join(tmp_path, "m1_1.0_m2_1.0_initial_period_in"\
+                                           +"_days_{}_initial_z_0.01_idx_1".\
+                                           format(\
+                                            binary_history['period_days'][0]))
+        with h5py.File(path, "w") as hdf5_file:
+            hdf5_file.create_group("/grid/run0/")
+            hdf5_file.create_dataset("/grid/run1/binary_history",\
+                                     data=binary_history)
+            hdf5_file.create_dataset("/grid/run1/history1", data=star_history)
+            hdf5_file.create_dataset("/grid/run1/history2", data=star_history)
+            hdf5_file.create_dataset("/grid/run1/final_profile1", data=profile)
+            hdf5_file.create_dataset("/grid/run1/final_profile2", data=profile)
+            ini_val = np.array([(np.nan), (binary_history['period_days'][0])],\
+                               dtype=[('period_days', '<f8')])
+            hdf5_file.create_dataset("/grid/initial_values", data=ini_val)
+            fin_val = np.array([(np.nan, "TF1"),\
+                                (binary_history['period_days'][-1], "TF1")],\
+                               dtype=[('period_days', '<f8'),\
+                                      ('termination_flag_1',\
+                                       totest.H5_UNICODE_DTYPE)])
+            hdf5_file.create_dataset("/grid/final_values", data=fin_val)
+            hdf5_file.attrs["config"] =\
+             totest.json.dumps(str(dict(PSyGrid.config)))
+            rel_paths = np.array([(mesa_dir1), (mesa_dir2)],\
+                                 dtype=totest.H5_UNICODE_DTYPE)
+            hdf5_file.create_dataset("relative_file_paths", data=rel_paths)
+        return path
+
+    @fixture
+    def grid_path_initial_RLO(self, tmp_path, binary_history, star_history,\
+                              profile):
+        # a path to a psygrid file for testing
+        path = os.path.join(tmp_path, "grid_initial_RLO.h5")
+        PSyGrid = totest.PSyGrid()
+        PSyGrid.filepath = path
+        PSyGrid.generate_config()
+        PSyGrid.config["description"] = "UnitTest1"
+        PSyGrid.config["initial_RLO_fix"] = True
+        ini_val = np.array([(np.nan, np.nan, np.nan),\
+                            (1.0, 1.0, binary_history['period_days'][0]),\
+                            (1.0, 1.0, 0.5), (1.0, 1.0, 0.1),\
+                            (3.0, 1.0, 0.1), (4.0, 1.0, 0.1)],\
+                           dtype=[('star_1_mass', '<f8'),\
+                                  ('star_2_mass', '<f8'),\
+                                  ('period_days', '<f8')])
+        mesa_dir = [os.path.join(tmp_path, "m1_1.0_m2_1.0_initial_period_in_"\
+                                           +"days_0.0_initial_z_0.01_idx_0")]
+        for i in range(1,6):
+            m1 = ini_val['star_1_mass'][i]
+            m2 = ini_val['star_2_mass'][i]
+            p = ini_val['period_days'][i]
+            mesa_dir += [os.path.join(tmp_path, f"m1_{m1}_m2_{m2}_initial_"\
+                                                +f"period_in_days_{p}_"\
+                                                +f"initial_z_0.01_idx_{i}")]
+        with h5py.File(path, "w") as hdf5_file:
+            hdf5_file.create_group("/grid/run0/")
+            for r in range(1,6):
+                hdf5_file.create_dataset(f"/grid/run{r}/binary_history",\
+                                         data=binary_history)
+                hdf5_file.create_dataset(f"/grid/run{r}/history1",\
+                                         data=star_history)
+                hdf5_file.create_dataset(f"/grid/run{r}/history2",\
+                                         data=star_history)
+                hdf5_file.create_dataset(f"/grid/run{r}/final_profile1",\
+                                         data=profile)
+                hdf5_file.create_dataset(f"/grid/run{r}/final_profile2",\
+                                         data=profile)
+            hdf5_file.create_dataset("/grid/initial_values", data=ini_val)
+            fin_val = np.array([(np.nan, np.nan, np.nan, "TF1", "TF2", "TF3",\
+                                 "TF4", "IC"),\
+                                (0.9, 0.9, binary_history['period_days'][-1],\
+                                 "TF1", "TF2", "TF3", "TF4", "IC"),\
+                                (1.0, 1.0, 0.5, "Terminate because of "\
+                                                +"overflowing initial model",\
+                                 "iRLOTF2", "iRLOTF3", "iRLOTF4", "IC"),\
+                                (1.0, 1.0, 0.1, "forced_initial_RLO",\
+                                 "fRLOTF2", "fRLOTF3", "fRLOTF4", "IC"),\
+                                (3.0, 1.0, 0.1, "TF1", "TF2", "TF3", "TF4",\
+                                 "IC"),\
+                                (4.0, 1.0, 0.1, "TF1", "TF2", "TF3", "TF4",\
+                                 "IC")],\
+                               dtype=[('star_1_mass', '<f8'),\
+                                      ('star_2_mass', '<f8'),\
+                                      ('period_days', '<f8'),\
+                                      ('termination_flag_1',\
+                                       totest.H5_UNICODE_DTYPE),\
+                                      ('termination_flag_2',\
+                                       totest.H5_UNICODE_DTYPE),\
+                                      ('termination_flag_3',\
+                                       totest.H5_UNICODE_DTYPE),\
+                                      ('termination_flag_4',\
+                                       totest.H5_UNICODE_DTYPE),\
+                                      ('interpolation_class',\
+                                       totest.H5_UNICODE_DTYPE)])
+            hdf5_file.create_dataset("/grid/final_values", data=fin_val)
+            hdf5_file.attrs["config"] =\
+             totest.json.dumps(str(dict(PSyGrid.config)))
+            rel_paths = np.array([(d) for d in mesa_dir],\
                                  dtype=totest.H5_UNICODE_DTYPE)
             hdf5_file.create_dataset("relative_file_paths", data=rel_paths)
         return path
@@ -533,7 +760,9 @@ class TestFunctions:
         assert np.array_equal(totest.downsample_profile(profile, ConfigFile),\
                               profile)
 
-    def test_join_grids(self, no_path, h5_out_path, grid_path, capsys):
+    def test_join_grids(self, monkeypatch, no_path, h5_out_path, grid1_path,\
+                        grid2_path, grid_path_bad_ini, grid_path_bad_fin,\
+                        grid_path_start_RLO, grid_path_initial_RLO, capsys):
         def check_h5_content(path, required_data={}, required_attrs={}):
             """Function to check an hdf5 file
 
@@ -553,7 +782,7 @@ class TestFunctions:
             """
             # test that file exists
             assert os.path.isfile(path)
-            with totest.h5py.File(path, "r") as hdf5_file:
+            with h5py.File(path, "r") as hdf5_file:
                 # test attribute content
                 for s, vs in required_attrs.items():
                     for v in vs:
@@ -564,6 +793,38 @@ class TestFunctions:
                         assert s in hdf5_file.keys()
                     else:
                         assert np.array_equal(hdf5_file[s][()], v)
+        def mock_get_detected_initial_RLO(grid):
+            # mocked list of initial RLO systems
+            if (hasattr(grid, "config") and ("description" in grid.config)):
+                if grid.config["description"] == "UnitTest1":
+                    return [{"star_1_mass": 1.0, "star_2_mass": 1.0,\
+                             "period_days": 1.0, "termination_flag_3": "rTF3",\
+                             "termination_flag_4": "rTF4"},\
+                            {"star_1_mass": 1.0, "star_2_mass": 1.0,\
+                             "period_days": 0.1, "termination_flag_3": "rTF3",\
+                             "termination_flag_4": "rTF4"},\
+                            {"star_1_mass": 1.0, "star_2_mass": 1.0,\
+                             "period_days": 2.0, "termination_flag_3": "rTF3",\
+                             "termination_flag_4": "rTF4"},\
+                            {"star_1_mass": 2.0, "star_2_mass": 1.0,\
+                             "period_days": 1.0, "termination_flag_3": "rTF3",\
+                             "termination_flag_4": "rTF4"}]
+                else:
+                    return []
+            else:
+                return []
+        def mock_get_nearest_known_initial_RLO(mass1, mass2,\
+                                               known_initial_RLO):
+            # mocked nearest initial RLO system
+            if mass1 == 3.0:
+                return {"star_1_mass": mass1, "star_2_mass": mass2,\
+                        "period_days": 2.0, "termination_flag_3": "rTF3"}
+            elif mass1 == 4.0:
+                return {"star_1_mass": mass1, "star_2_mass": mass2,\
+                        "period_days": 2.0, "termination_flag_4": "rTF4"}
+            else:
+                return {"star_1_mass": mass1, "star_2_mass": mass2,\
+                        "period_days": 2.0}
         # missing argument
         with raises(TypeError, match="missing 2 required positional "\
                                      +"arguments: 'input_paths' and "\
@@ -572,20 +833,130 @@ class TestFunctions:
         # bad input
         with raises(FileNotFoundError):
             totest.join_grids([no_path], h5_out_path)
-        # examples
-        totest.join_grids([grid_path], h5_out_path, verbose=False)
+        # examples: one grid
+        totest.join_grids([grid2_path], h5_out_path, verbose=False)
         rd = {}
         for group in ['/', '/grid/', '/grid/run0/', '/grid/run1/']:
-            for key in totest.h5py.File(grid_path, "r")[group].keys():
+            for key in h5py.File(grid2_path, "r")[group].keys():
                 rd[group+key] = None
         ra = {"config": ["'description': 'joined'", "'compression': 'gzip9'"]\
                         +[f"'{p}': None" for p in\
                           totest.PROPERTIES_TO_BE_NONE]}
         check_h5_content(h5_out_path, required_data=rd, required_attrs=ra)
-#        with raises(AssertionError):
-#            with capsys.disabled():
-#                totest.join_grids([grid_path], h5_out_path, verbose=False)
-#                totest.join_grids(["/home/mkruckow/test_POSYDON_data/grid_combined_v1.h5"], h5_out_path, verbose=False)
+        # examples: two grids
+        totest.join_grids([grid1_path, grid2_path], h5_out_path, verbose=False)
+        check_h5_content(h5_out_path, required_data=rd, required_attrs=ra)
+        # examples: three grids
+        totest.join_grids([grid2_path, grid1_path, grid2_path], h5_out_path, verbose=False)
+        check_h5_content(h5_out_path, required_data=rd, required_attrs=ra)
+        # bad input: consistent values do not match
+        with h5py.File(grid2_path, "r") as hdf5_file:
+            config2 = hdf5_file.attrs["config"]
+        for p in totest.PROPERTIES_TO_BE_CONSISTENT:
+            sep = f"'{p}': "
+            parts = config2.split(sep, maxsplit=1)
+            if parts[1][0] == "[": # check for lists
+                parts = [parts[0]+sep] + parts[1].split("],", maxsplit=1)
+            elif parts[1][0] == "{": # check for dicts
+                parts = [parts[0]+sep] + parts[1].split("},", maxsplit=1)
+            else:
+                parts = [parts[0]+sep] + parts[1].split(",", maxsplit=1)
+            if len(parts) > 2:
+                newconfig = parts[0] + "'test'," + parts[2]
+            else: # the last entry
+                newconfig = parts[0] + "'test'" + parts[1][-2:]
+            with h5py.File(grid2_path, "a") as hdf5_file:
+                hdf5_file.attrs["config"] = newconfig
+            with raises(ValueError, match=f"Inconsistent value for `{p}`: "\
+                                          +"test !="):
+                totest.join_grids([grid1_path, grid2_path], h5_out_path,\
+                                  verbose=False)
+        with h5py.File(grid2_path, "a") as hdf5_file: # restore config
+            hdf5_file.attrs["config"] = config2
+        # bad input: initial values have different type
+        with raises(TypeError, match="Initial values dtype's do not match."):
+            totest.join_grids([grid1_path, grid_path_bad_ini], h5_out_path,\
+                              verbose=False)
+        # bad input: final values have different type
+        with raises(TypeError, match="Final values dtype's do not match."):
+            totest.join_grids([grid1_path, grid_path_bad_fin], h5_out_path,\
+                              verbose=False)
+        # bad input: disallowed value (reuse config2)
+        for p,v in totest.PROPERTIES_ALLOWED.items():
+            sep = f"'{p}': "
+            parts = config2.split(sep, maxsplit=1)
+            if parts[1][0] == "[": # check for lists
+                parts = [parts[0]+sep] + parts[1].split("],", maxsplit=1)
+            elif parts[1][0] == "{": # check for dicts
+                parts = [parts[0]+sep] + parts[1].split("},", maxsplit=1)
+            else:
+                parts = [parts[0]+sep] + parts[1].split(",", maxsplit=1)
+            if len(parts) > 2:
+                newconfig = parts[0] + "'test'," + parts[2]
+            else: # the last entry
+                newconfig = parts[0] + "'test'" + parts[1][-2:]
+            with h5py.File(grid2_path, "a") as hdf5_file:
+                hdf5_file.attrs["config"] = newconfig
+            with raises(ValueError, match=f"Only grid with `{p}`={v} can be "\
+                                          +"joined."):
+                totest.join_grids([grid2_path], h5_out_path, verbose=False)
+        with h5py.File(grid2_path, "a") as hdf5_file: # restore config
+            hdf5_file.attrs["config"] = config2
+        # examples: RLO grid
+        totest.join_grids([grid_path_start_RLO], h5_out_path, verbose=False)
+        check_h5_content(h5_out_path, required_data=rd, required_attrs=ra)
+        # examples: initial RLO
+        monkeypatch.setattr(totest, "get_detected_initial_RLO",\
+                            mock_get_detected_initial_RLO)
+        monkeypatch.setattr(totest, "get_nearest_known_initial_RLO",\
+                            mock_get_nearest_known_initial_RLO)
+        totest.join_grids([grid_path_initial_RLO], h5_out_path, verbose=False)
+        check_h5_content(h5_out_path, required_data=rd, required_attrs=ra)
+        with h5py.File(grid_path_initial_RLO, "r") as hdf5_file:
+            ini_val = hdf5_file['/grid/initial_values'][()]
+            fin_val = hdf5_file['/grid/final_values'][()]
+        with h5py.File(h5_out_path, "r") as hdf5_file:
+            new_ini_val = hdf5_file['/grid/initial_values'][()]
+            new_fin_val = hdf5_file['/grid/final_values'][()]
+        with capsys.disabled():
+            print("")
+            print(ini_val, ini_val.dtype)
+            print(fin_val, fin_val.dtype)
+            print(new_ini_val)
+            print(new_fin_val)
+        for col in ['star_1_mass', 'star_2_mass', 'period_days']:
+            assert np.array_equal(ini_val[col], new_ini_val[col],\
+                                  equal_nan=True)
+            assert np.array_equal(fin_val[col], new_fin_val[col],\
+                                  equal_nan=True)
+        for r in [1, 4, 5]: # done initial RLO replacements
+            fin_val['termination_flag_1'][r] = b'forced_initial_RLO'
+            fin_val['termination_flag_2'][r] = b'forced_initial_RLO'
+            fin_val['interpolation_class'][r] = b'initial_MT'
+        fin_val['termination_flag_3'][4] = b'rTF3'
+        fin_val['termination_flag_4'][5] = b'rTF4'
+        for col in ['termination_flag_1', 'termination_flag_2',\
+                    'termination_flag_3', 'termination_flag_4',\
+                    'interpolation_class']:
+            assert np.array_equal(fin_val[col], new_fin_val[col])
+        # examples: compressions
+        for c in [None, "lzf", "gzip", "gzip9"]:
+            totest.join_grids([grid2_path], h5_out_path, compression=c,\
+                              verbose=False)
+            if c is None:
+                ra["config"][1] = "'compression': None"
+            else:
+                ra["config"][1] = "'compression': '" + c + "'"
+            check_h5_content(h5_out_path, required_data=rd, required_attrs=ra)
+        for c in ["gzipT", "gzip10"]:
+            with raises(ValueError, match="GZIP compression level must be "\
+                                          +"0-9."):
+                totest.join_grids([grid2_path], h5_out_path, compression=c,\
+                                  verbose=False)
+        for c in ["zip"]:
+            with raises(ValueError, match=f"Unknown compression `{c}`."):
+                totest.join_grids([grid2_path], h5_out_path, compression=c,\
+                                  verbose=False)
 
 
 class TestPSyGrid:

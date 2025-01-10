@@ -2195,12 +2195,12 @@ def join_grids(input_paths, output_path,
             for prop in PROPERTIES_TO_BE_CONSISTENT:
                 newvalue, curvalue = newconfig[prop], curconfig[prop]
                 if newvalue != curvalue:
-                    raise Exception("Inconsistent value for `{}`: {} != {}".
-                                    format(prop, curvalue, newvalue))
+                    raise ValueError("Inconsistent value for `{}`: {} != {}".
+                                     format(prop, curvalue, newvalue))
             if initial_dtype != grid.initial_values.dtype:
-                raise Exception("Initial values dtype's do not match.")
+                raise TypeError("Initial values dtype's do not match.")
             if final_dtype != grid.final_values.dtype:
-                raise Exception("Final values dtype's do not match.")
+                raise TypeError("Final values dtype's do not match.")
         grids.append(grid)
 
     say("Finalizing grid properties...")
@@ -2230,13 +2230,13 @@ def join_grids(input_paths, output_path,
             if params_from_path in initial_params:
                 n_substitutions += 1
 
-            initial_params[params_from_path] = (grid_index, run_index)
-
             if (grid[run_index].final_values["termination_flag_1"]
                     == "ignored_no_RLO"):
                 if params_from_path in initial_params:
                     del initial_params[params_from_path]
                 n_ignored_noRLO += 1
+            else:
+                initial_params[params_from_path] = (grid_index, run_index)
 
     say("    {} substitutions detected.".format(n_substitutions))
     if newconfig["start_at_RLO"]:
