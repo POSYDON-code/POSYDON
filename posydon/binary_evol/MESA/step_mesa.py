@@ -809,7 +809,7 @@ class MesaGridStep:
                                 values[key] = cb.final_values[f'S{i+1}_{MODEL_NAME}_{key}']
                         setattr(star, MODEL_NAME, values)
                     else:
-                        setattr(star, key, None)
+                        setattr(star, MODEL_NAME, None)
 
     def initial_final_interpolation(self, star_1_CO=False, star_2_CO=False):
         """Update the binary through initial-final interpolation."""
@@ -961,7 +961,8 @@ class MesaGridStep:
             for MODEL_NAME in MODELS.keys():
                 for i, star in enumerate(stars):
                     if (not stars_CO[i] and
-                        self.classes[f'S{i+1}_{MODEL_NAME}_CO_type'] != 'None'):
+                        self.classes[f'S{i+1}_{MODEL_NAME}_CO_type'] != 'None' and
+                        fv[f'S{i+1}_{MODEL_NAME}_CO_type'] != 'None'):
                         values = {}
                         for key in ['state', 'SN_type', 'f_fb', 'mass', 'spin',
                                     'm_disk_accreted', 'm_disk_radiated', 'M4', 'mu4',
@@ -975,7 +976,7 @@ class MesaGridStep:
                                 values[key] = fv[f'S{i+1}_{MODEL_NAME}_{key}']
                         setattr(star, MODEL_NAME, values)
                     else:
-                        setattr(star, key, None)
+                        setattr(star, MODEL_NAME, None)
 
     # STOPPING METHODS
 
