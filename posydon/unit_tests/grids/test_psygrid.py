@@ -16,7 +16,7 @@ h5py = totest.h5py
 # module you like to test
 from pytest import fixture, raises, warns
 from inspect import isclass, isroutine
-from posydon.utils.posydonwarning import InappropriateValueWarning
+from posydon.utils.posydonwarning import ReplaceValueWarning
 
 # define test classes collecting several test functions
 class TestElements:
@@ -762,7 +762,7 @@ class TestFunctions:
 
     def test_join_grids(self, monkeypatch, no_path, h5_out_path, grid1_path,\
                         grid2_path, grid_path_bad_ini, grid_path_bad_fin,\
-                        grid_path_start_RLO, grid_path_initial_RLO, capsys):
+                        grid_path_start_RLO, grid_path_initial_RLO):
         def check_h5_content(path, required_data={}, required_attrs={}):
             """Function to check an hdf5 file
 
@@ -918,12 +918,6 @@ class TestFunctions:
         with h5py.File(h5_out_path, "r") as hdf5_file:
             new_ini_val = hdf5_file['/grid/initial_values'][()]
             new_fin_val = hdf5_file['/grid/final_values'][()]
-        with capsys.disabled():
-            print("")
-            print(ini_val, ini_val.dtype)
-            print(fin_val, fin_val.dtype)
-            print(new_ini_val)
-            print(new_fin_val)
         for col in ['star_1_mass', 'star_2_mass', 'period_days']:
             assert np.array_equal(ini_val[col], new_ini_val[col],\
                                   equal_nan=True)
@@ -965,39 +959,211 @@ class TestPSyGrid:
         # initialize an instance of the class with defaults
         return totest.PSyGrid()
 
+    @fixture
+    def PSyGrid_with_config(self):
+        # initialize an instance of the class with default config
+        PSyGrid = totest.PSyGrid()
+        PSyGrid.generate_config()
+        return PSyGrid
+
+    @fixture
+    def Empty_dir(self, tmp_path):
+        dir_path = os.path.join(tmp_path, "empty")
+        os.mkdir(dir_path)
+        return dir_path
+
+    @fixture
+    def eep_files(self, tmp_path):
+        # create eep files and empty directory
+        path = os.path.join(tmp_path, "eeps_OK")
+        os.mkdir(path)
+        for i,ext in enumerate(totest.EEP_FILE_EXTENSIONS):
+            with open(os.path.join(path, f"file{i}"+ext), "w") as eep_file:
+                eep_file.write(f"Test{i}")
+        return path
+
+    @fixture
+    def same_eep_files(self, tmp_path):
+        # create eep files and empty directory
+        path = os.path.join(tmp_path, "eeps_same_name")
+        os.mkdir(path)
+        for i,ext in enumerate(totest.EEP_FILE_EXTENSIONS):
+            with open(os.path.join(path, "file"+ext), "w") as eep_file:
+                eep_file.write(f"Test{i}")
+        return path
+
     # test the PSyGrid class
-    def test_init(self, PSyGrid):
+    def test_init(self, PSyGrid, monkeypatch):
+        def mock_load(self, filepath=None):
+            return filepath
         assert isroutine(PSyGrid.__init__)
         # check that the instance is of correct type and all code in the
         # __init__ got executed: the elements are created and initialized
-        pass
+        assert isinstance(PSyGrid, totest.PSyGrid)
+        assert PSyGrid.filepath is None
+        assert PSyGrid.verbose == False
+        monkeypatch.setattr(totest.PSyGrid, "load", mock_load)
+        test_PSyGrid = totest.PSyGrid(filepath="./test", verbose=True)
+        assert test_PSyGrid.filepath == "./test"
+        assert test_PSyGrid.verbose == True
 
     def test_reset(self, PSyGrid):
         assert isroutine(PSyGrid._reset)
-        pass
+        # this function gets called during __init__
+        for i in range(2):
+            assert PSyGrid.hdf5 is None
+            assert PSyGrid.MESA_dirs == []
+            assert PSyGrid.initial_values is None
+            assert PSyGrid.final_values is None
+            assert isinstance(PSyGrid.config, totest.ConfigFile)
+            assert PSyGrid.n_runs == 0
+            assert PSyGrid.eeps is None
+            PSyGrid.hdf5 = "Test"
+            PSyGrid.MESA_dirs = "Test"
+            PSyGrid.initial_values = "Test"
+            PSyGrid.final_values = "Test"
+            PSyGrid.config = "Test"
+            PSyGrid.n_runs = "Test"
+            PSyGrid.eeps = "Test"
+            PSyGrid._reset()
 
     def test_make_compression_args(self, PSyGrid):
         assert isroutine(PSyGrid._make_compression_args)
-        pass
+        # this function gets called during _reset (hence, during __init__)
+        # examples no compression information yet
+        del PSyGrid.compression_args
+        assert hasattr(PSyGrid, "compression_args") == False
+        PSyGrid._make_compression_args()
+        assert hasattr(PSyGrid, "compression_args")
+        assert PSyGrid.compression_args == {}
+        # examples: simple compressions
+        for c in [None, "lzf", "gzip"]:
+            PSyGrid.config["compression"] = c
+            PSyGrid._make_compression_args()
+            if c is None:
+                assert PSyGrid.compression_args == {}
+            else:
+                assert PSyGrid.compression_args["compression"] == c
+        # examples: gzip with optional level
+        for l in range(10):
+            PSyGrid.config["compression"] = f"gzip{l}"
+            PSyGrid._make_compression_args()
+            assert PSyGrid.compression_args["compression"] == "gzip"
+            assert PSyGrid.compression_args["compression_opts"] == l
+        # bad input
+        for c in ["gzipt", "gzip10", "test"]:
+            PSyGrid.config["compression"] = c
+            if "gzip" in c:
+                m = "GZIP compression level must be 0-9."
+            else:
+                m = f"Unknown compression `{c}`."
+            with raises(ValueError, match=m):
+                PSyGrid._make_compression_args()
 
-    def test_discover_eeps(self, PSyGrid):
+    def test_discover_eeps(self, PSyGrid, Empty_dir, eep_files,\
+                           same_eep_files):
         assert isroutine(PSyGrid._discover_eeps)
-        pass
+        # examples: no eeps found
+        PSyGrid.eeps = "Test"
+        PSyGrid._discover_eeps(Empty_dir)
+        assert PSyGrid.eeps is None
+        # examples: eeps with each file extension found
+        PSyGrid._discover_eeps(eep_files)
+        for i in range(len(totest.EEP_FILE_EXTENSIONS)):
+            eep_id = f"file{i}"
+            assert eep_id in PSyGrid.eeps
+            assert totest.EEP_FILE_EXTENSIONS[i] ==\
+                   PSyGrid.eeps[eep_id][-len(totest.EEP_FILE_EXTENSIONS[i]):]
+        # bad input: eep files with same identifier
+        with raises(AssertionError):
+            PSyGrid._discover_eeps(same_eep_files)
 
-    def test_say(self, PSyGrid):
+    def test_say(self, PSyGrid, capsys):
         assert isroutine(PSyGrid._say)
-        pass
+        for v in [True, False]:
+            PSyGrid.verbose = v
+            PSyGrid._say("Test")
+            if v:
+                assert capsys.readouterr().out == "Test\n"
 
     def test_generate_config(self, PSyGrid):
         assert isroutine(PSyGrid.generate_config)
-        pass
+        # bad input
+        with raises(KeyError, match="`UnitTest` is not a valid parameter "\
+                                    +"name."):
+            PSyGrid.generate_config(UnitTest="Test")
+        # examples: set each grid property
+        for c in totest.GRIDPROPERTIES:
+            # compression is special, because it is checked for allowed values
+            if c == "compression":
+                args = {c: ""}
+            else:
+                args = {c: "UnitTest"}
+            PSyGrid.generate_config(**args)
+            for cc in totest.GRIDPROPERTIES:
+                if c == cc: # the set value
+                    assert PSyGrid.config[cc] == args[c]
+                else: # the default value
+                    assert PSyGrid.config[cc] == totest.GRIDPROPERTIES[cc]
+        # examples: set all grid properties
+        args = {}
+        for c in totest.GRIDPROPERTIES:
+            # compression is special, because it is checked for allowed values
+            if c == "compression":
+                args[c] = ""
+            else:
+                args[c] = "UnitTest"
+        PSyGrid.generate_config(**args)
+        for cc in totest.GRIDPROPERTIES:
+            # all have the set value
+            assert PSyGrid.config[cc] == args[cc]
 
-    def test_create(self, PSyGrid):
+    def test_create(self, PSyGrid, Empty_dir, capsys):
         assert isroutine(PSyGrid.create)
+        # missing argument
+        with raises(TypeError, match="missing 1 required positional "\
+                                     +"argument: 'MESA_grid_path'"):
+            PSyGrid.create()
+        # bad input
+        with raises(ValueError, match="`warn` must be in: "):
+            PSyGrid.create("./", warn="UnitTest")
+        # bad input
+        PSyGrid.filepath = None
+        with raises(ValueError, match="The path of the HDF5 file was not "\
+                                      +"defined."):
+            PSyGrid.create("./")
+        # examples
+        MESA_PATH = str(Empty_dir)
+        with raises(ValueError, match=f"No folders found in {MESA_PATH}"):
+            PSyGrid.create(MESA_PATH, psygrid_path=os.path.join(MESA_PATH,\
+                                                                "TestGrid.h5"))
         pass
 
-    def test_create_psygrid(self, PSyGrid):
+    def test_create_psygrid(self, PSyGrid_with_config, Empty_dir, capsys):
+        PSyGrid = PSyGrid_with_config
         assert isroutine(PSyGrid._create_psygrid)
+        # missing argument
+        with raises(TypeError, match="missing 2 required positional "\
+                                     +"arguments: 'MESA_path' and 'hdf5'"):
+            PSyGrid._create_psygrid()
+        # bad input
+        PSyGrid.filepath = None
+        with raises(AssertionError):
+            PSyGrid._create_psygrid("./", None)
+        # examples
+        PSyGrid.filepath = os.path.join(Empty_dir, "TestPSyGrid.h5")
+        MESA_PATH = str(Empty_dir)
+        with raises(ValueError, match=f"No folders found in {MESA_PATH}"):
+            PSyGrid._create_psygrid(MESA_PATH, None)
+        # examples: EEPs
+        PSyGrid.config["eep"] = Empty_dir
+        with raises(ValueError, match=f"No folders found in {MESA_PATH}"):
+            with warns(ReplaceValueWarning, match="Selected EEPs, switching "\
+                                                  +"to single-star grid."):
+                PSyGrid._create_psygrid(MESA_PATH, None)
+        PSyGrid.config["binary"] = False
+        with raises(ValueError, match=f"No folders found in {MESA_PATH}"):
+            PSyGrid._create_psygrid(MESA_PATH, None)
         pass
 
     def test_add_column(self, PSyGrid):
@@ -1122,6 +1288,8 @@ class TestPSyRunView:
         assert isroutine(PSyRunView.__getattr__)
         pass
 
-    def test_str(self, PSyRunView):
+    def test_str(self, PSyRunView, capsys):
         assert isroutine(PSyRunView.__str__)
+#        with capsys.disabled():
+#            print("Test")
         pass

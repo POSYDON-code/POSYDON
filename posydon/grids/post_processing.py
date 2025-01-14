@@ -35,7 +35,18 @@ CC_quantities = ['state', 'SN_type', 'f_fb', 'mass', 'spin',
                  'h1_mass_ej', 'he4_mass_ej']
 
 def assign_core_collapse_quantities_none(EXTRA_COLUMNS, star_i, MODEL_NAME=None):
-    """"Assign None values to all core collapse properties."""
+    """Assign None values to all core collapse properties.
+
+        Parameters
+        ----------
+        EXTRA_COLUMNS : tbw
+            TBW.
+        star_i : tbw
+            TBW.
+        MODEL_NAME : tbw or None (default: None)
+            TBW.
+
+    """
     if MODEL_NAME is None:
         for MODEL_NAME, MODEL in MODELS.items():
             for quantity in CC_quantities:
@@ -45,6 +56,18 @@ def assign_core_collapse_quantities_none(EXTRA_COLUMNS, star_i, MODEL_NAME=None)
             EXTRA_COLUMNS[f'S{star_i}_{MODEL_NAME}_{quantity}'].append(None)
 
 def print_CC_quantities(EXTRA_COLUMNS, star, MODEL_NAME=None):
+    """Print quantities at core collapse.
+
+        Parameters
+        ----------
+        EXTRA_COLUMNS : tbw
+            TBW.
+        star : tbw
+            TBW.
+        MODEL_NAME : tbw or None (default: None)
+            TBW.
+
+    """
     format_string = "{:<50} {:<33} {:12} {:10} {:15} {:10} {:25} {:25} {:25} {:25} {:25} {:25}"
     format_val_preSN = "{:<50} {:<33} {:12} {:10} {:7.2f} {:12.2f} {:25} {:25} {:25} {:25} {:25} {:25}"
     format_val = "{:<50} {:<33} {:12} {:1.2f} {:13.2f} {:12.2f} {:20.2f} {:20.2f} {:20.2f} {:20.2f} {:20.2f} {:20.2f}"
@@ -105,16 +128,16 @@ def post_process_grid(grid, index=None, star_2_CO=True, MODELS=MODELS,
     ----------
     grid : PSyGrid
         MESA grid in PSyGrid format.
-    index : None, touple or int
+    index : None, touple or int (default: None)
         If None, loop over all indicies otherwise provide a range, e.g. [10,20]
         or a index, e.g. 42.
-    star_2_CO : bool
+    star_2_CO : bool (default: True)
         If 'False' star 2 is not a compact object.
-    MODELS : list of dict
+    MODELS : list of dict (default are the models defined in MODELS.py)
         List of supported core collapse model assumptions.
-    single_star : bool
+    single_star : bool (default: False)
         If `True` the PSyGrid contains single stars.
-    verbose : bool
+    verbose : bool (default: False)
         If `True` print the results of each core collapse on screen.
 
     Returns
@@ -442,13 +465,13 @@ def add_post_processed_quantities(grid, MESA_dirs_EXTRA_COLUMNS, EXTRA_COLUMNS,
     ----------
     grid : PSyGrid
         MESA grid in PSyGrid format.
-    MESA_dirs: list
+    MESA_dirs_EXTRA_COLUMNS: list
         List containing the path to each run corresponding to the post
         processed values. This is used to ensure one to one mapping when
         appending the extra columns back to a grid.
     EXTRA_COLUMNS: dict
         Dictionary containing all post processed quantities.
-    verbose : bool
+    verbose : bool (default: False)
         If `True` print the results of each core collapse on screen.
 
     """

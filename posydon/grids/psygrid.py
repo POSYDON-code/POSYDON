@@ -372,9 +372,9 @@ class PSyGrid:
 
         Parameters
         ----------
-        verbose : bool
+        verbose : bool (default: False)
             If `True`, the objects reports by printing to standard output.
-        path : str or None
+        path : str or None (default: None)
             If not None, it is the path of the HDF5 file to be loaded.
 
         """
@@ -397,6 +397,7 @@ class PSyGrid:
         self.eeps = None
 
     def _make_compression_args(self):
+        """Convert compression information from the config."""
         if "compression" not in self.config:
             self.compression_args = {}
             return
@@ -421,6 +422,15 @@ class PSyGrid:
         self.compression_args = compression_args
 
     def _discover_eeps(self, path):
+        """Search for EEP files and remember found ones.
+
+        Parameters
+        ----------
+        path : str
+            It is the path of the base directory to start the search for EEP
+            files.
+
+        """
         self.eeps = {}
         for extension in EEP_FILE_EXTENSIONS:
             searchfor = os.path.join(path, "*" + extension)
@@ -433,17 +443,32 @@ class PSyGrid:
             self.eeps = None
 
     def _say(self, something):
+        """Print text if verbose is True.
+
+        Parameters
+        ----------
+        something : str
+            The printed text.
+
+        """
         if self.verbose:
             print(something, flush=True)
 
     def generate_config(self, **grid_kwargs):
-        """Store the grid's configuration in a ConfigFile object."""
+        """Store the grid's configuration in a ConfigFile object.
+
+        Parameters
+        ----------
+        **grid_kwargs : dict
+            Keyword arguments to overwrite default GRIDPROPERTIES.
+
+        """
         self.config = ConfigFile()
 
         for key in grid_kwargs:
             if key not in GRIDPROPERTIES:
-                raise ValueError("`{}` is not a valid parameter name.".
-                                 format(key))
+                raise KeyError("`{}` is not a valid parameter name.".
+                               format(key))
 
         new_dict = {}
         for varname in GRIDPROPERTIES:
@@ -461,19 +486,22 @@ class PSyGrid:
         ----------
         MESA_grid_path : str
             The path of the top directory where the input grid is located.
-        psygrid_path : str
+        psygrid_path : str or None (default: None)
             The path of the HDF5 file to be created (or overwritten). If not
             provided, it is assumed that it was defined during initialization.
-        overwrite : bool
+        overwrite : bool (default: False)
             Whether to overwrite the HDF5 file if it already exists.
-        slim : bool
+        slim : bool (default: False)
             If `True`, only the metadata and initial/final values are stored.
-        warn : str
+        warn : str (default: 'end')
             How warnings are handled. If "normal", then warnings are shown when
             they occur. If "end", they are collected and shown at the end. If
             "suppress", then warnings are not shown at all.
+        fmt : str (default: 'posydon')
+            Format specifier. Linked to data-types, filename conventions, etc.
+            passed to GridReader
         **grid_kwargs : dict
-            Configuration of the new grid, passed as ddditional arguments.
+            Configuration of the new grid, passed as additional arguments.
 
         """
         self._reset()
@@ -485,7 +513,7 @@ class PSyGrid:
             self.filepath = psygrid_path
 
         if self.filepath is None:
-            ValueError("The path of the HDF5 file was not defined.")
+            raise ValueError("The path of the HDF5 file was not defined.")
 
         # Create the output directory if it doesn't exist
         dirpath = os.path.dirname(self.filepath)
@@ -519,7 +547,6 @@ class PSyGrid:
                     else:
                         # for consistency
                         assert warn == "end"
-                    
 
         self.load()
 
@@ -530,10 +557,13 @@ class PSyGrid:
         ----------
         MESA_path : str
             The path of the directory with the MESA runs.
-        overwrite : bool
-            Whether existing HDF5 file can be overwritten.
-        slim : bool
+        hdf5 : h5py.File object
+            Object containing an open hdf5 file.
+        slim : bool (default: False)
             Whether to include runs' history/profile data in the HDF5 file.
+        fmt : str (default: 'posydon')
+            Format specifier. Linked to data-types, filename conventions, etc.
+            passed to GridReader
 
         """
         outpath = self.filepath
@@ -549,8 +579,8 @@ class PSyGrid:
             if binary_grid:
                 Pwarn("Selected EEPs, switching to single-star grid.",
                       "ReplaceValueWarning")
-                self.config["binary"] = True
-                binary_grid = True
+                self.config["binary"] = False
+                binary_grid = False
             self._discover_eeps(eep)
 
         # prepare for loss-less compression
@@ -1311,7 +1341,20 @@ class PSyGrid:
             **compression_args)
 
     def add_column(self, colname, array, where="final_values", overwrite=True):
-        """Add a new numerical column in the final values array."""
+        """Add a new numerical column in the final values array.
+
+        Parameters
+        ----------
+        colname : tbw
+            TBW.
+        array : tbw
+            TBW.
+        where : str (default: 'final_values')
+            TBW.
+        overwrite : bool (default: True)
+            TBW.
+
+        """
         if not isinstance(array, np.ndarray):
             arr = np.asarray(array)
         else:
@@ -1356,6 +1399,14 @@ class PSyGrid:
         self._reload_hdf5_file(writeable=False)
 
     def _reload_hdf5_file(self, writeable=False):
+        """Close and reopen the hdf5 file.
+
+        Parameters
+        ----------
+        writeable : bool (default: False)
+            TBW.
+
+        """
         driver_args = {} if "%d" not in self.filepath else {
             "driver": "family", "memb_size": HDF5_MEMBER_SIZE}
         self.close()
@@ -1367,7 +1418,7 @@ class PSyGrid:
 
         Parameters
         ----------
-        filepath : str
+        filepath : str or None (default: None)
             Location of the HDF5 file to be loaded. If not provided, assume
             it was defined during the initialization (argument: `filepath`).
 
@@ -1442,11 +1493,19 @@ class PSyGrid:
     def close(self):
         """Close the HDF5 file if open."""
         if hasattr(self, "hdf5") and self.hdf5 is not None:
-            self.hdf5.close()
+            if isinstance(self.hdf5, h5py.File):
+                self.hdf5.close()
             self.hdf5 = None
 
     def __str__(self):
-        """Return the status of the PSyGrid."""
+        """Return the status of the PSyGrid.
+
+        Returns
+        -------
+        str
+            Representation of the PSyGrid.
+
+        """
         ret = "PSyGrid instance:\n"
 
         if self.filepath is None:
@@ -1542,7 +1601,19 @@ class PSyGrid:
         return ret
 
     def __getitem__(self, index):
-        """Return a PSyRunView instance for the run with index `index`."""
+        """Return a PSyRunView instance for the run with index `index`.
+
+        Parameters
+        ----------
+        index: int
+            Index of a run in the PSyGrid.
+
+        Returns
+        -------
+        PSyRunView object
+            Representation of the requested run.
+
+        """
         if not np.issubdtype(type(index), int):
             raise TypeError("Index {} is not of type int".format(index))
         if index not in self:
@@ -1550,7 +1621,14 @@ class PSyGrid:
         return PSyRunView(self, index)
 
     def get_pandas_initial_final(self):
-        """Convert the initial/final values into a single Pandas dataframe."""
+        """Convert the initial/final values into a single Pandas dataframe.
+
+        Returns
+        -------
+        Pandas data frame
+            Containing the initial and final values.
+
+        """
         df = pd.DataFrame()
         for key in self.initial_values.dtype.names:
             new_col_name = "initial_" + key
@@ -1562,17 +1640,38 @@ class PSyGrid:
         return df
 
     def __len__(self):
-        """Return the number of runs in the grid."""
+        """Return the number of runs in the grid.
+
+        Returns
+        -------
+        int
+            Number of runs.
+
+        """
         return self.n_runs
 
     def __contains__(self, index):
-        """Return True if run with index `index` is in the grid."""
+        """Return True if run with index `index` is in the grid.
+
+        Returns
+        -------
+        bool
+            True if a run with the index is part of the PSyGrid otherwise False.
+
+        """
         if not np.issubdtype(type(index), int):
             raise TypeError("Index {} is not of type int".format(index))
         return 0 <= index < self.n_runs
 
     def __iter__(self):
-        """Allow iteration of runs (`for` loops, lists, sets)."""
+        """Allow iteration of runs (`for` loops, lists, sets).
+
+        Returns
+        -------
+        PSyGridIterator
+            Iterator object of the PSyGrid.
+
+        """
         return PSyGridIterator(self)
 
     def __del__(self):
@@ -1581,8 +1680,7 @@ class PSyGrid:
         self.close()
 
     def rerun(self, path_to_file='./', runs_to_rerun=None,
-                         termination_flags=None, new_mesa_flag=None,
-                         flags_to_check=None):
+              termination_flags=None, new_mesa_flag=None, flags_to_check=None):
         """Create a CSV file with the PSyGrid initial values to rerun.
 
         This methods allows you to create a CSV file with the psygrid initial
@@ -1590,20 +1688,20 @@ class PSyGrid:
 
         Parameters
         ----------
-        path_to_file : str
+        path_to_file : str (default: './')
             The path to the directory where the new `grid.csv` file will be
             saved. If the directory does not exist it will be created.
-        runs_to_rerun : list of integers
+        runs_to_rerun : list of integers or None (default: None)
             Array containing the indecies of the psygrid runs you want to rerun
             e.g., runs_to_rerun = [2,3]
-        termination_flags : str or list of str
+        termination_flags : str or list of str or None (default: None)
             The runs with this termination flag will be rerun.
             e.g. termination_flags='max_number_retries'
-        new_mesa_flag : dict
+        new_mesa_flag : dict or None (default: None)
             Dictionary of flags with their value to add as extra columns to the
             `grid.csv`. The user can specify any arbitrary amount of flags.
             e.g. new_mesa_flag = {'varcontrol_target': 0.01}
-        flags_to_check : str or list of str
+        flags_to_check : str or list of str or None (default: None)
             The key(s) of flags to check the termination_flags against.
             e.g. check_flags = 'termination_flag_1'
 
@@ -1723,49 +1821,49 @@ class PSyGrid:
         y_var_str : str
             String of the initial value to plot on the y axis. Allowed strings
             are `psygrid.initial_values.dtype.names`.
-        z_var_str : str
+        z_var_str : str or None (default: None)
             String of the initial value to plot on the z axis (displayed as
             a color). Allowed strings are
             `psygrid.final_values.dtype.names`, `psygrid.history1.dtype.names`,
             `psygrid.binary_history.dtype.names`.
-        termination_flag : str
+        termination_flag : str (default: 'termination_flag_1')
             Termination flag to display, allowed values are:
             "termination_flag_1", "termination_flag_2", "termination_flag_3",
             "termination_flag_4", "all".
-        grid_3D : bool
+        grid_3D : bool or None (default: None)
             If `True`, the psygrid object is a 3D grid and needs to be sliced.
-        slice_3D_var_str : str
+        slice_3D_var_str : str or None (default: None)
             Variable along which the 3D space will be sliced. Allowed values
             are `psygrid.initial_values.dtype.names`.
-        slice_3D_var_range : tuple or a list of tuples
+        slice_3D_var_range : tuple or a list of tuples or None (default: None)
             Range between which you want to slice the variable slice_3D_var_str
             e.g., `(2.5,3.)`. In case of a list of tuples, one will get a large
             plot with one subplot for each tuple in the list.
-        grid_4D : bool
+        grid_4D : bool or None (default: None)
             If `True`, the psygrid object is a 4D grid and needs to be sliced.
-        slice_4D_var_str : str
+        slice_4D_var_str : str or None (default: None)
             Variable along which the 4D space will be sliced. Allowed values
             are `psygrid.initial_values.dtype.names`.
-        slice_4D_var_range : tuple or a list of tuples
+        slice_4D_var_range : tuple or a list of tuples or None (default: None)
             Range between which you want to slice the variable slice_4D_var_str
             e.g., `(2.5,3.)`. In case of a list of tuples, one will get a large
             plot with one subplot for each tuple in the list.
-        extra_grid : object or array of objects
+        extra_grid : object or array of objects or None (default: None)
             If subset of the grid was rerun a or an extention was added, one
             can overlay the new psygrid by passing it here.
-        slice_at_RLO : bool
+        slice_at_RLO : bool (default: False)
             If `True`, the object plots the tracks until onset of Roche Lobe
             overflow.
-        MARKERS_COLORS_LEGENDS : dict
+        MARKERS_COLORS_LEGENDS : dict or None (default: None)
             Each termination flag is associated with a marker shape, size,
             color and label (cf. `MARKERS_COLORS_LEGENDS` in
             `plot_defaults.py`).
-        max_cols : int
+        max_cols : int (default: 3)
             Defines the maximum number of columns of subplots. Default: 3
-        legend_pos : SubplotSpec (int or tuple)
+        legend_pos : SubplotSpec: int or tuple (default: (3,3))
             Defines which subplots won't contain an axis but are used to
             display the legend there. Default: (3, 3)
-        verbose : bool
+        verbose : bool (default: False)
             If `True`, the object reports by printing to standard output.
         **kwargs : dict
             Dictionary containing extra visualisation options (cf.
@@ -1808,14 +1906,14 @@ class PSyGrid:
             String or list of stringvalues to plot on the y axis. Allowed
             strings are the one in `psygrid.history.dtype.names` where
             "history" needs to be chosen accordingly.
-        z_var_str : str
+        z_var_str : str or None (default: None)
             String of values to plot on the z axis (displayed with a color).
             Allowed strings are the one in `psygrid.history.dtype.names` where
             "history" needs to be chosen accordingly.
-        history : str
+        history : str (default: 'binary_history')
             The x, y, z variables are read from either: "binary_history",
             "history1", "history2".
-        verbose : bool
+        verbose : bool (default: False)
             If `True`, the object reports by printing to standard output.
         **kwargs : dict
             Dictionary containing extra visualisation options
@@ -1849,12 +1947,12 @@ class PSyGrid:
         ----------
         idx : int or list of int
             Index or indices of runs to plot.
-        history : str
+        history : str (default: 'history1')
             Which history is going to be used. The options are:
             "binary_history", "history1", or "history2".
-        states : bool
+        states : bool (default: False)
             If true the HR diagram shows the stellar state with a color map.
-        verbose : bool
+        verbose : bool (default: False)
             If `True`, the object reports by printing to standard output.
         **kwargs : dict
             Dictionary containing extra visualisation options
@@ -1891,7 +1989,21 @@ class PSyGrid:
         plot()
 
     def __eq__(self, other, verbose=True):
-        """Check the equality (in terms of the data) of two PSyGrid objects."""
+        """Check the equality (in terms of the data) of two PSyGrid objects.
+
+        Parameters
+        ----------
+        other : PSyGrid
+            PSyGrid to compare to.
+        verbose : bool (default: False)
+            If `True`, the object reports by printing to standard output.
+
+        Returns
+        -------
+        bool
+            True if all checks passed otherwise False.
+
+        """
         def say(msg):
             if verbose:
                 print("COMPARISON:", msg)
@@ -1970,12 +2082,25 @@ class PSyGridIterator:
     """Class for iterating runs (i.e., PSyRunView instances) in a PSyGrid."""
 
     def __init__(self, grid):
-        """Initialize by pointing to the PSyGrid object."""
+        """Initialize by pointing to the PSyGrid object.
+
+        Parameters
+        ----------
+        grid : PSyGrid
+            PSyGrid to iterate over.
+
+        """
         self._grid = grid
         self._index = 0
 
     def __next__(self):
-        """Return current run and move to the next."""
+        """Return current run and move to the next.
+
+        Returns
+        -------
+            Current run.
+
+        """
         if self._index >= len(self._grid):
             raise StopIteration
         item = self._grid[self._index]
@@ -2001,15 +2126,43 @@ class PSyRunView:
     """
 
     def __init__(self, psygrid, run_index):
-        """Initialize by linking to a PSyGrid object and setting run index."""
+        """Initialize by linking to a PSyGrid object and setting run index.
+
+        Parameters
+        ----------
+        psygrid : PSyGrid
+            PSyGrid to iterate over.
+        run_index : int
+            Index of the viewed run.
+
+        """
         self.psygrid = psygrid
         self.index = run_index
 
     def _hdf5_key(self):
+        """Return the name of the group in the hdf5 file.
+
+        Returns
+        -------
+        str
+            The name of the hdf5 group.
+
+        """
         return "/grid/run{}".format(self.index)
 
     def __getitem__(self, key):
-        """Get a table for a specific run using its name as in ["name"]."""
+        """Get a table for a specific run using its name as in ["name"].
+
+        Parameters
+        ----------
+        key : str
+            Name of the dataset inside the hdf5 group.
+
+        Returns
+        -------
+            Content of the dataset.
+
+        """
         if key not in VALID_KEYS:
             raise KeyError("Key {} not in list of valid keys.".format(key))
 
@@ -2031,11 +2184,29 @@ class PSyRunView:
                            format(fullkey, self.psygrid.filepath))
 
     def __getattr__(self, key):
-        """Enable the ability of using `.table1` instead of ["table1"]."""
+        """Enable the ability of using `.table1` instead of ["table1"].
+
+        Parameters
+        ----------
+        key : str
+            Name of the dataset inside the hdf5 group.
+
+        Returns
+        -------
+            Content of the dataset.
+
+        """
         return self[key]
 
     def __str__(self):
-        """Return a summary of the PSyRunView in a string."""
+        """Return a summary of the PSyRunView in a string.
+
+        Returns
+        -------
+        str
+            Representation of the Runview.
+
+        """
         return "View of the run {} in the file '{}' at key '{}'".format(
             self.index, self.psygrid.filepath, self._hdf5_key())
 
@@ -2165,7 +2336,22 @@ ALL_PROPERTIES = (list(PROPERTIES_ALLOWED.keys()) + PROPERTIES_TO_BE_CONSISTENT
 
 def join_grids(input_paths, output_path,
                compression="gzip9", description="joined", verbose=True):
-    """Join two or more PSyGrid HDF5 files into one."""
+    """Join two or more PSyGrid HDF5 files into one.
+
+    Parameters
+    ----------
+    input_paths : str or list of str
+        The path to the grid files to be joined.
+    output_path : str
+        Path of the new grid file with the joined gird.
+    compression : str (default: 'gzip9')
+        Compression details.
+    description : str (default: 'joined')
+        Desciption of the new joined gird.
+    verbose : bool (default: True)
+        If `True`, the objects reports by printing to standard output.
+
+    """
     def say(something):
         if verbose:
             print(something)

@@ -81,16 +81,16 @@ def keep_after_RLO(bh, h1, h2):
 
     Parameters
     ----------
-    bh : array
+    bh : np.array
         The `binary_history` array.
-    h1 : array
+    h1 : np.array
         The `history1` array.
-    h2 : array
+    h2 : np.array
         The `history2` array.
 
     Returns
     -------
-    tuple or arrays, or None
+    tuple or ndarrays, or None
         The binary, history1 and history2 arrays after removing the leading
         steps without RLO overflow mass transfer from star1 or star2. If an
         RLO phase is not detected, a warning is raised, and returns `None`.
@@ -175,15 +175,15 @@ def keep_till_central_abundance_He_C(bh, h1, h2,
 
     Parameters
     ----------
-    bh : array
+    bh : np.array
         The `binary_history` array.
-    h1 : array
+    h1 : np.array
         The `history1` array.
-    h2 : array
+    h2 : np.array
         The `history2` array.
-    Ystop : float
+    Ystop : float (default: THRESHOLD_CENTRAL_ABUNDANCE)
         The He abundance threshold for stopping
-    XCstop : float
+    XCstop : float (default: THRESHOLD_CENTRAL_ABUNDANCE_LOOSE_C)
         The C abundance threshold for stopping
 
     Returns
@@ -191,7 +191,8 @@ def keep_till_central_abundance_He_C(bh, h1, h2,
     tuple
         The binary, history1 and history2 arrays after removing the final
         steps after He depletion. If the stopping criteria are not reached
-        the histories will be returned unchanged.
+        the histories will be returned unchanged. Finally, the new termination
+        flag 1 is returned.
 
     """
     if (bh is None) or (h1 is None) or (h2 is None):
