@@ -17,6 +17,7 @@ h5py = totest.h5py
 from pytest import fixture, raises, warns
 from inspect import isclass, isroutine
 from posydon.utils.posydonwarning import ReplaceValueWarning
+from posydon.grids.io import BINARY_OUTPUT_FILE
 
 # define test classes collecting several test functions
 class TestElements:
@@ -968,13 +969,14 @@ class TestPSyGrid:
 
     @fixture
     def Empty_dir(self, tmp_path):
+        # create an empty directory
         dir_path = os.path.join(tmp_path, "empty")
         os.mkdir(dir_path)
         return dir_path
 
     @fixture
     def eep_files(self, tmp_path):
-        # create eep files and empty directory
+        # create eep files
         path = os.path.join(tmp_path, "eeps_OK")
         os.mkdir(path)
         for i,ext in enumerate(totest.EEP_FILE_EXTENSIONS):
@@ -984,12 +986,119 @@ class TestPSyGrid:
 
     @fixture
     def same_eep_files(self, tmp_path):
-        # create eep files and empty directory
+        # create eep files
         path = os.path.join(tmp_path, "eeps_same_name")
         os.mkdir(path)
         for i,ext in enumerate(totest.EEP_FILE_EXTENSIONS):
             with open(os.path.join(path, "file"+ext), "w") as eep_file:
                 eep_file.write(f"Test{i}")
+        return path
+
+    @fixture
+    def MESA_files(self, tmp_path):
+        # create files expected from a MESA run
+        path = os.path.join(tmp_path, "MESA_runs")
+        os.mkdir(path)
+        for i in range(3):
+            # get run directory
+            run_name = f"Zbase_0.0142_m1_1.{i}000_m2_0.9000_initial_z_"\
+                       +f"1.4200e-02_initial_period_in_days_1.{i}000e-01_"\
+                       +f"grid_index_{i}"
+            run_path = os.path.join(path, run_name)
+            os.mkdir(run_path)
+            # get MESA output file
+            with open(os.path.join(run_path, BINARY_OUTPUT_FILE), "w") as\
+                 out_file:
+                out_file.write(f"Test{i}")
+            # get inlist_grid_points file: containing masses and period
+            with open(os.path.join(run_path, "inlist_grid_points"), "w") as\
+                 inlist_file:
+                inlist_file.write("&binary_controls\n")
+                inlist_file.write(f"\tm1 = 1.{i}d0\n")
+                inlist_file.write("\tm2 = 0.9d0\n")
+                inlist_file.write(f"\tinitial_period_in_days = 1.{i}d-1\n")
+                inlist_file.write("/ ! end of binary_controls namelist")
+            # get binary_history.data
+            with open(os.path.join(run_path, "binary_history.data"), "w") as\
+                 binary_history_file:
+                for j in range(5):
+                    # initial values are read from header, rest does not matter
+                    if j==1:
+                        names = "initial_don_mass initial_acc_mass "\
+                                +"initial_period_days\n"
+                        binary_history_file.write(names)
+                    elif j==2:
+                        vals = f"             1.{i}              0.9 "\
+                               +f"            1.{i}E-01\n"
+                        binary_history_file.write(vals)
+                    else:
+                        binary_history_file.write("Test HEADER{}\n".format(j))
+                # table with column headers and two rows of all the required
+                # columns
+                row1 = "\n"
+                row2 = "\n"
+                for j,c in enumerate(totest.DEFAULT_BINARY_HISTORY_COLS):
+                    l = len(c)
+                    fmt = " {:"+f"{l}"+"}"
+                    binary_history_file.write(fmt.format(c))
+                    fmt = " {:>"+f"{l}"+"}"
+                    row1 += fmt.format(j)
+                    row2 += fmt.format(j+1)
+                binary_history_file.write(row1)
+                binary_history_file.write(row2)
+            # get LOGS directories (non, one, two)
+            for k in range(1,i%3+1):
+                logs_path = os.path.join(run_path, f"LOGS{k}")
+                os.mkdir(logs_path)
+                # get history.data
+                with open(os.path.join(logs_path, "history.data"), "w") as\
+                     history_file:
+                    for j in range(5):
+                        # initial values are read from header, rest does not
+                        # matter
+                        if j==1:
+                            names = "initial_Z initial_Y initial_m\n"
+                            history_file.write(names)
+                        elif j==2:
+                            vals = f"   0.0142      0.25       1.{i}\n"
+                            history_file.write(vals)
+                        else:
+                            history_file.write("Test HEADER{}\n".format(j))
+                    # table with column headers and two rows of all the
+                    # required columns (model_number and star_age need to align
+                    # with the binary_history.data where they are the first two
+                    # columns)
+                    row1 = "\n"
+                    row2 = "\n"
+                    for j,c in enumerate(["model_number", "star_age"]\
+                                         +totest.DEFAULT_STAR_HISTORY_COLS):
+                        l = len(c)
+                        fmt = " {:"+f"{l}"+"}"
+                        history_file.write(fmt.format(c))
+                        fmt = " {:>"+f"{l}"+"}"
+                        row1 += fmt.format(j)
+                        row2 += fmt.format(j+1)
+                    history_file.write(row1)
+                    history_file.write(row2)
+                # get final_profile.data
+                with open(os.path.join(logs_path, "final_profile.data"), "w")\
+                     as final_profile_file:
+                    for j in range(5):
+                        # the first 5 lines are skipped
+                        final_profile_file.write("Test HEADER{}\n".format(j))
+                    # table with column headers and two rows of all the
+                    # required columns
+                    row1 = "\n"
+                    row2 = "\n"
+                    for j,c in enumerate(totest.DEFAULT_PROFILE_COLS):
+                        l = len(c)
+                        fmt = " {:"+f"{l}"+"}"
+                        final_profile_file.write(fmt.format(c))
+                        fmt = " {:>"+f"{l}"+"}"
+                        row1 += fmt.format(j)
+                        row2 += fmt.format(j+1)
+                    final_profile_file.write(row1)
+                    final_profile_file.write(row2)
         return path
 
     # test the PSyGrid class
@@ -1139,7 +1248,7 @@ class TestPSyGrid:
                                                                 "TestGrid.h5"))
         pass
 
-    def test_create_psygrid(self, PSyGrid_with_config, Empty_dir, capsys):
+    def test_create_psygrid(self, PSyGrid_with_config, Empty_dir, MESA_files, capsys):
         PSyGrid = PSyGrid_with_config
         assert isroutine(PSyGrid._create_psygrid)
         # missing argument
@@ -1151,7 +1260,7 @@ class TestPSyGrid:
         with raises(AssertionError):
             PSyGrid._create_psygrid("./", None)
         # examples
-        PSyGrid.filepath = os.path.join(Empty_dir, "TestPSyGrid.h5")
+        PSyGrid.filepath = os.path.join(Empty_dir, "../TestPSyGrid.h5")
         MESA_PATH = str(Empty_dir)
         with raises(ValueError, match=f"No folders found in {MESA_PATH}"):
             PSyGrid._create_psygrid(MESA_PATH, None)
@@ -1164,6 +1273,30 @@ class TestPSyGrid:
         PSyGrid.config["binary"] = False
         with raises(ValueError, match=f"No folders found in {MESA_PATH}"):
             PSyGrid._create_psygrid(MESA_PATH, None)
+        # examples: binary grid
+        PSyGrid.config["eep"] = None
+        PSyGrid.config["binary"] = True
+        with capsys.disabled(): # TODO: remove
+            PSyGrid._create_psygrid(MESA_files, totest.h5py.File(PSyGrid.filepath, "w"))
+#            print(PSyGrid.initial_values.dtype.names)
+#            print(PSyGrid.final_values.dtype.names)
+#            print(len(PSyGrid))
+        N_MESA_runs = 3
+        assert len(PSyGrid.initial_values) == N_MESA_runs
+        for c in totest.DEFAULT_BINARY_HISTORY_COLS + ["X", "Y", "Z"]:
+            assert c in PSyGrid.initial_values.dtype.names
+        for c in totest.DEFAULT_STAR_HISTORY_COLS:
+            assert "S1_"+c in PSyGrid.initial_values.dtype.names
+            assert "S2_"+c in PSyGrid.initial_values.dtype.names
+        assert len(PSyGrid.final_values) == N_MESA_runs
+        for c in totest.DEFAULT_BINARY_HISTORY_COLS\
+                 + [f"termination_flag_{i}" for i in range(1,5)]\
+                 + ["interpolation_class"]:
+            assert c in PSyGrid.final_values.dtype.names
+        for c in totest.DEFAULT_STAR_HISTORY_COLS:
+            assert "S1_"+c in PSyGrid.final_values.dtype.names
+            assert "S2_"+c in PSyGrid.final_values.dtype.names
+        assert len(PSyGrid.MESA_dirs) == N_MESA_runs
         pass
 
     def test_add_column(self, PSyGrid):
