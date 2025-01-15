@@ -963,31 +963,31 @@ class StepSN(object):
                     delta_M_PPI = 0.0
                     
                 if delta_M_PPI <= 0.0:
-                    if self.conserve_hydrogen_envelope:
+                    if self.conserve_hydrogen_PPI:
                         m_PISN = m_star
                     else:
                         m_PISN = m_He_core
                 else:
-                    if self.conserve_hydrogen_envelope:
+                    if self.conserve_hydrogen_PPI:
                         m_PISN = m_star - delta_M_PPI
                     else:
                         m_PISN = m_He_core - delta_M_PPI
                     
                     if m_PISN < 0.0:
                         m_PISN = np.nan
-                        
-                    PISN_star = copy.deepcopy(star)
-                    PISN_star.mass = m_PISN
-                    if PISN_star.he_core_mass > m_PISN:
-                        PISN_star.he_core_mass = m_PISN
-                    if PISN_star.co_core_mass > m_PISN:
-                        PISN_star.co_core_mass = m_PISN
-                    m_rembar, _, _ = self.compute_m_rembar(PISN_star, m_PISN)
-                    
-                    if m_rembar < 10:
-                        m_PISN = np.nan
                     else:
-                        m_PISN = m_rembar
+                        PISN_star = copy.deepcopy(star)
+                        PISN_star.mass = m_PISN
+                        if PISN_star.he_core_mass > m_PISN:
+                            PISN_star.he_core_mass = m_PISN
+                        if PISN_star.co_core_mass > m_PISN:
+                            PISN_star.co_core_mass = m_PISN
+                        m_rembar, _, _ = self.compute_m_rembar(PISN_star, m_PISN)
+                    
+                        if m_rembar < 10:
+                            m_PISN = np.nan
+                        else:
+                            m_PISN = m_rembar
 
             elif is_number(self.PISN) and m_He_core > self.PISN:
                 m_PISN = self.PISN
