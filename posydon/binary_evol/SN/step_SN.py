@@ -81,6 +81,7 @@ MODEL = {
     "PPI_extra_mass_loss": 0.0,
     "ECSN": "Podsiadlowski+04",
     "conserve_hydrogen_envelope" : False,
+    "conserve_hydrogen_PPI" : False,
     "max_neutrino_mass_loss": NEUTRINO_MASS_LOSS_UPPER_LIMIT,
     "max_NS_mass": STATE_NS_STARMASS_UPPER_LIMIT,
     "use_interp_values": True,
