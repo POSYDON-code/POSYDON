@@ -942,8 +942,17 @@ class StepSN(object):
                 if ((m_CO_core >= 38 + delta_M_CO_shift) 
                     and m_CO_core <= 114 + delta_M_CO_shift):
 
+                    # delta_PPI -> -inf if Z -> 0
+                    # limit mass loss to Z = 1e-4 for Z below it.
+                    # 1e-4 is the lowest metallicity in the Hendriks et al. 2023
+                    if star.metallicity < 1e-4:
+                        Z = 1e-4
+                    else:
+                        Z = star.metallicity
+                    # Hendriks et al. 2023 Equation 6
+                    # 10.1093/mnras/stad2857
                     delta_M_PPI = (
-                        (0.0006 * np.log10(star.metallicity * const.Zsun) + 0.0054)
+                        (0.0006 * np.log10(Z * const.Zsun) + 0.0054)
                         * (m_CO_core - delta_M_CO_shift - 34.8)**3
                         - 0.0013 * (m_CO_core - delta_M_CO_shift - 34.8)**2
                         + delta_M_PPI_extra_ML
