@@ -304,8 +304,17 @@ def get_population_data(pop, metallicity, grid_type, channel=None, prop=None):
         data = data[data['event'] == 'ZAMS']
     elif grid_type == 'CO-HMS_RLO':
         data = data[data['event'] == 'oRLO2']
+        # swap the masses since data has CO as the primary
+        tmp_S1 = data['S2_mass'].copy()
+        data['S2_mass'] = data['S1_mass'].copy()
+        data['S1_mass'] = tmp_S1
+        
     elif grid_type == 'CO-HeMS':
         data = data[data['event'] == 'step_CE']
+        # swap the masses since data has CO as the primary
+        tmp_S1 = data['S2_mass'].copy()
+        data['S2_mass'] = data['S1_mass'].copy()
+        data['S1_mass'] = tmp_S1
     else:
         print('grid type not recognized')
 
