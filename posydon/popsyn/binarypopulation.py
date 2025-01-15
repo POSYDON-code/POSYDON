@@ -54,7 +54,7 @@ from posydon.popsyn.normalized_pop_mass import initial_total_underlying_mass
 from posydon.popsyn.defaults import default_kwargs
 from posydon.popsyn.io import binarypop_kwargs_from_ini
 from posydon.utils.constants import Zsun
-from posydon.utils.posydonerror import POSYDONError,initial_condition_message
+from posydon.utils.posydonerror import POSYDONError
 from posydon.utils.posydonwarning import (Pwarn, Catch_POSYDON_Warnings)
 from posydon.utils.common_functions import set_binary_to_failed
 
@@ -137,6 +137,8 @@ class BinaryPopulation:
 
         self.population_properties.max_simulation_time = self.kwargs.get(
             'max_simulation_time')  # years
+        
+        self.history_verbose = self.kwargs.get("history_verbose", False)
 
         self.entropy = self.kwargs.get('entropy', None)
         seq = np.random.SeedSequence(entropy=self.entropy)
@@ -329,14 +331,14 @@ class BinaryPopulation:
                     binary.traceback = traceback.format_exc()
 
                     if self.kwargs.get("error_checking_verbose", False):
-                        posydon_error.add_note(initial_condition_message(binary))
+                        posydon_error.add_note(binary.initial_condition_message())
                         traceback.print_exception(posydon_error)
 
                 except Exception as e:
                     set_binary_to_failed(binary)
                     binary.traceback = traceback.format_exc()
 
-                    e.add_note(initial_condition_message(binary))
+                    e.add_note(binary.initial_condition_message())
                     traceback.print_exception(e)
 
                 # record if there were warnings caught during the binary
@@ -509,8 +511,11 @@ class BinaryPopulation:
         
         
         with pd.HDFStore(absolute_filepath, mode=mode, complevel=complevel, complib=complib) as store:
-            simulated_mass = 0
-            number_of_systems = 0
+            simulated_mass = 0.0
+            simulated_mass_single = 0.0
+            simulated_mass_binaries = 0.0
+            number_of_systems=0
+            
             for f in file_names:
                 # strings itemsize set by first append max value,
                 # which may not be largest string
@@ -519,7 +524,16 @@ class BinaryPopulation:
                                  min_itemsize=history_min_itemsize)
                     
                     oneline = pd.read_hdf(f, key='oneline')
-                    simulated_mass += oneline['S1_mass_i'].sum() + oneline['S2_mass_i'].sum()
+                    
+                    # split weight between single and binary stars
+                    mask = oneline["state_i"] == "initially_single_star"
+                    filtered_data_single = oneline[mask]
+                    filtered_data_binaries = oneline[~mask]
+                    
+                    simulated_mass_binaries += np.nansum(filtered_data_binaries[["S1_mass_i", "S2_mass_i"]].to_numpy())
+                    simulated_mass_single += np.nansum(filtered_data_single[["S1_mass_i"]].to_numpy())
+                    simulated_mass = simulated_mass_single + simulated_mass_binaries
+                       
                     if 'metallicity' not in oneline.columns:
                         met_df = pd.DataFrame(data={'metallicity': [self.metallicity] * len(oneline)}, index=oneline.index)
                         oneline = pd.concat([oneline, met_df], axis=1)
@@ -541,7 +555,8 @@ class BinaryPopulation:
             tmp_df = pd.DataFrame(
                 index=[self.metallicity],
                 data={'simulated_mass': simulated_mass,
-                      'underlying_mass': initial_total_underlying_mass(df=simulated_mass, **self.kwargs)[0], 
+                      'simulated_mass_single': simulated_mass_single,
+                      'simulated_mass_binaries': simulated_mass_binaries,
                       'number_of_systems': number_of_systems})
             tmp_df.index.name = 'metallicity'
             store.append('mass_per_metallicity', tmp_df)
@@ -987,6 +1002,7 @@ class BinaryGenerator:
                 separation=separation,
                 orbital_period=orbital_period,
                 eccentricity=eccentricity,
+                history_verbose=self.kwargs.get("history_verbose", False)
             )
             star1_params = dict(
                 mass=m1,
@@ -1018,6 +1034,7 @@ class BinaryGenerator:
                 separation=separation,
                 orbital_period=orbital_period,
                 eccentricity=eccentricity,
+                history_verbose=self.kwargs.get("history_verbose", False)
             )
             star1_params = dict(
                 mass=m1,
