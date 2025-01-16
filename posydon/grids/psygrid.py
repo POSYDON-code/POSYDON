@@ -607,7 +607,7 @@ class PSyGrid:
                 if isinstance(inconfig, tuple):
                     return list(inconfig)
                 return join_lists(defaults, inconfig)
-            raise Exception("{} setting not recognized.".format(key_in_config))
+            raise ValueError("{} setting not recognized.".format(key_in_config))
 
         if binary_grid:
             H1_DEFAULTS = DEFAULT_STAR_HISTORY_COLS
@@ -751,7 +751,7 @@ class PSyGrid:
                 # read the model numbers and ages from the histories
                 colname = "model_number"
                 if history1 is not None:
-                    if colname in H1_columns:
+                    if ((H1_columns is not None) and (colname in H1_columns)):
                         history1_mod = np.int_(history1[colname].copy())
                     else:
                         history1_mod = read_MESA_data_file(run.history1_path,
@@ -771,7 +771,8 @@ class PSyGrid:
                                   "ReplaceValueWarning")
                     else:
                         ignore.reason = "corrupted_history1"
-                    if "star_age" in H1_columns:
+                    if ((H1_columns is not None) and
+                        ("star_age" in H1_columns)):
                         history1_age = history1["star_age"].copy()
                     else:
                         history1_age = read_MESA_data_file(run.history1_path,
@@ -796,7 +797,7 @@ class PSyGrid:
                     history1_age = None
 
                 if history2 is not None:
-                    if colname in H2_columns:
+                    if ((H2_columns is not None) and (colname in H2_columns)):
                         history2_mod = np.int_(history2[colname].copy())
                     else:
                         history2_mod = read_MESA_data_file(run.history2_path,
@@ -816,7 +817,8 @@ class PSyGrid:
                                   "ReplaceValueWarning")
                     else:
                         ignore.reason = "corrupted_history2"
-                    if "star_age" in H2_columns:
+                    if ((H2_columns is not None) and
+                        ("star_age" in H2_columns)):
                         history2_age = history2["star_age"].copy()
                     else:
                         history2_age = read_MESA_data_file(run.history2_path,
@@ -841,7 +843,7 @@ class PSyGrid:
                     history2_age = None
 
                 if binary_history is not None:
-                    if colname in BH_columns:
+                    if ((BH_columns is not None) and (colname in BH_columns)):
                         binary_history_mod = np.int_(binary_history[colname].copy())
                     else:
                         binary_history_mod = read_MESA_data_file(
@@ -861,7 +863,7 @@ class PSyGrid:
                                   "ReplaceValueWarning")
                     else:
                         ignore.reason = "corrupted_binary_history"
-                    if "age" in BH_columns:
+                    if ((BH_columns is not None) and ("age" in BH_columns)):
                         binary_history_age = binary_history["age"].copy()
                     else:
                         binary_history_age = read_MESA_data_file(

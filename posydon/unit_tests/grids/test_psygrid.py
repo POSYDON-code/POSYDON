@@ -960,12 +960,10 @@ class TestPSyGrid:
         # initialize an instance of the class with defaults
         return totest.PSyGrid()
 
-    @fixture
-    def PSyGrid_with_config(self):
-        # initialize an instance of the class with default config
-        PSyGrid = totest.PSyGrid()
-        PSyGrid.generate_config()
-        return PSyGrid
+    def reset_grid(self, TestGrid):
+        # function to reset a test grid and have the default config
+        TestGrid._reset() # reset
+        TestGrid.generate_config() # set default config
 
     @fixture
     def Empty_dir(self, tmp_path):
@@ -1248,8 +1246,8 @@ class TestPSyGrid:
                                                                 "TestGrid.h5"))
         pass
 
-    def test_create_psygrid(self, PSyGrid_with_config, Empty_dir, MESA_files, capsys):
-        PSyGrid = PSyGrid_with_config
+    def test_create_psygrid(self, PSyGrid, Empty_dir, MESA_files, capsys):
+        self.reset_grid(PSyGrid)
         assert isroutine(PSyGrid._create_psygrid)
         # missing argument
         with raises(TypeError, match="missing 2 required positional "\
@@ -1274,14 +1272,10 @@ class TestPSyGrid:
         with raises(ValueError, match=f"No folders found in {MESA_PATH}"):
             PSyGrid._create_psygrid(MESA_PATH, None)
         # examples: binary grid
-        PSyGrid.config["eep"] = None
-        PSyGrid.config["binary"] = True
-        with capsys.disabled(): # TODO: remove
-            PSyGrid._create_psygrid(MESA_files, totest.h5py.File(PSyGrid.filepath, "w"))
-#            print(PSyGrid.initial_values.dtype.names)
-#            print(PSyGrid.final_values.dtype.names)
-#            print(len(PSyGrid))
+        self.reset_grid(PSyGrid)
         N_MESA_runs = 3
+        PSyGrid._create_psygrid(MESA_files, totest.h5py.File(PSyGrid.filepath,\
+                                                             "w"))
         assert len(PSyGrid.initial_values) == N_MESA_runs
         for c in totest.DEFAULT_BINARY_HISTORY_COLS + ["X", "Y", "Z"]:
             assert c in PSyGrid.initial_values.dtype.names
@@ -1297,6 +1291,88 @@ class TestPSyGrid:
             assert "S1_"+c in PSyGrid.final_values.dtype.names
             assert "S2_"+c in PSyGrid.final_values.dtype.names
         assert len(PSyGrid.MESA_dirs) == N_MESA_runs
+        # examples: max_number_of_runs
+        self.reset_grid(PSyGrid)
+        N_MESA_runs = 1
+        PSyGrid.config["max_number_of_runs"] = N_MESA_runs
+        PSyGrid._create_psygrid(MESA_files, totest.h5py.File(PSyGrid.filepath,\
+                                                             "w"))
+        assert len(PSyGrid.initial_values) == N_MESA_runs
+        assert len(PSyGrid.final_values) == N_MESA_runs
+        assert len(PSyGrid.MESA_dirs) == N_MESA_runs
+        # examples: decide_columns
+        N_MESA_runs = 3
+        BH_cols = ("star_1_mass", "star_2_mass")
+        # extra column: "model_number", others are required ones
+        SH_cols = ("model_number", "surface_h1", "center_h1", "center_he4",\
+                   "center_c12", "log_LH", "log_LHe", "log_Lnuc")
+        tests = [("binary_history_saved_columns", BH_cols),\
+                 ("star1_history_saved_columns", SH_cols),\
+                 ("star2_history_saved_columns", SH_cols),\
+                 ("star1_profile_saved_columns", ("mass",)),\
+                 ("star2_profile_saved_columns", ("mass",))]
+        for (key, cols) in tests:
+            if "binary" in key:
+                k = "model_number"
+            else:
+                k = "S" + key[4] + "_model_number"
+            self.reset_grid(PSyGrid)
+            PSyGrid.config[key] = cols
+            PSyGrid._create_psygrid(MESA_files,\
+                                    totest.h5py.File(PSyGrid.filepath, "w"))
+            assert len(PSyGrid.initial_values) == N_MESA_runs
+            assert len(PSyGrid.final_values) == N_MESA_runs
+            assert len(PSyGrid.MESA_dirs) == N_MESA_runs
+            assert (k in PSyGrid.initial_values.dtype.names) ==\
+                   ("model_number" in cols)
+            assert (k in PSyGrid.final_values.dtype.names) ==\
+                   ("model_number" in cols)
+            self.reset_grid(PSyGrid)
+            PSyGrid.config[key] = list(cols)
+            PSyGrid._create_psygrid(MESA_files,\
+                                    totest.h5py.File(PSyGrid.filepath, "w"))
+            assert len(PSyGrid.initial_values) == N_MESA_runs
+            assert len(PSyGrid.final_values) == N_MESA_runs
+            assert len(PSyGrid.MESA_dirs) == N_MESA_runs
+            assert (k in PSyGrid.initial_values.dtype.names) ==\
+                   (("model_number" in cols) or ("binary" in key))
+            assert (k in PSyGrid.final_values.dtype.names) ==\
+                   (("model_number" in cols) or ("binary" in key))
+            for c in ["S1_star_age", "S2_star_age"]:
+                assert (c in PSyGrid.initial_values.dtype.names) ==\
+                       (c in totest.DEFAULT_STAR_HISTORY_COLS)
+                assert (c in PSyGrid.final_values.dtype.names) ==\
+                       (c in totest.DEFAULT_STAR_HISTORY_COLS)
+            self.reset_grid(PSyGrid)
+            PSyGrid.config[key] = "all"
+            PSyGrid._create_psygrid(MESA_files,\
+                                    totest.h5py.File(PSyGrid.filepath, "w"))
+            assert len(PSyGrid.initial_values) == N_MESA_runs
+            assert len(PSyGrid.final_values) == N_MESA_runs
+            assert len(PSyGrid.MESA_dirs) == N_MESA_runs
+            assert (k in PSyGrid.initial_values.dtype.names) ==\
+                   (("model_number" in cols) or ("binary" in key))
+            assert (k in PSyGrid.final_values.dtype.names) ==\
+                   (("model_number" in cols) or ("binary" in key))
+            if key == "star1_history_saved_columns":
+                assert "S1_star_age" in PSyGrid.initial_values.dtype.names
+                assert "S1_star_age" in PSyGrid.final_values.dtype.names
+            if key == "star2_history_saved_columns":
+                assert "S2_star_age" in PSyGrid.initial_values.dtype.names
+                assert "S2_star_age" in PSyGrid.final_values.dtype.names
+            self.reset_grid(PSyGrid)
+            PSyGrid.config[key] = None
+            with raises(ValueError, match=f"{key} setting not recognized."):
+                PSyGrid._create_psygrid(MESA_files,\
+                                        totest.h5py.File(PSyGrid.filepath,\
+                                                         "w"))
+        # examples: 
+        self.reset_grid(PSyGrid)
+        with capsys.disabled(): # TODO: remove
+            PSyGrid._create_psygrid(MESA_files, totest.h5py.File(PSyGrid.filepath, "w"))
+#            print(PSyGrid.initial_values.dtype.names)
+#            print(PSyGrid.final_values.dtype.names)
+#            print(len(PSyGrid))
         pass
 
     def test_add_column(self, PSyGrid):
