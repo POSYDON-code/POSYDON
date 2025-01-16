@@ -964,11 +964,13 @@ class StepSN(object):
                     delta_M_PPI = 0.0
                     
                 if delta_M_PPI <= 0.0:
-                    if self.conserve_hydrogen_PPI:
+                    # no PPI -> use CCSN prescription
+                    if self.conserve_hydrogen_envelope:
                         m_PISN = m_star
                     else:
                         m_PISN = m_He_core
                 else:
+                    # PPI occurs 
                     if self.conserve_hydrogen_PPI:
                         m_PISN = m_star - delta_M_PPI
                     else:
