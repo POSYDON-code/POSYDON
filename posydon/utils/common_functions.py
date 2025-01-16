@@ -1103,8 +1103,21 @@ def get_binary_state_and_event_and_mt_case(binary, interpolation_class=None,
         if interpolation_class == 'unstable_MT':
             if rl_overflow1>=rl_overflow2:           # star 1 initiated CE
                 result = ['contact', 'oCE1', 'None']
+                # Check for double CE
+                comp_star = binary.star_2
+                if comp_star.state not in ["H-rich_Core_H_burning",
+                                           "stripped_He_Core_He_burning", "WD",
+                                           "NS", "BH"]:
+                    result[1] = "oDoubleCE1"
             else:                                   # star 2 initiated CE
                 result = ['contact', 'oCE2', 'None']
+                # Check for double CE
+                comp_star = binary.star_1
+                if comp_star.state not in ["H-rich_Core_H_burning",
+                                           "stripped_He_Core_He_burning", "WD",
+                                           "NS", "BH"]:
+                    result[1] = "oDoubleCE2"
+            return result
     elif no_rlof:                                   # no MT in any star
         result = ['detached', None, 'None']
     elif rlof1 and not rlof2:                       # only in star 1
@@ -1119,21 +1132,6 @@ def get_binary_state_and_event_and_mt_case(binary, interpolation_class=None,
             return ['RLO2', 'oCE2', mt_flag_2_str]
     else:                                           # undetermined in any star
         result = ["undefined", None, 'None']
-
-    if result[1] == "oCE1":
-        # Check for double CE
-        comp_star = binary.star_2
-        if comp_star.state not in [
-                "H-rich_Core_H_burning",
-                "stripped_He_Core_He_burning", "WD", "NS", "BH"]:
-            result[1] = "oDoubleCE1"
-    elif result[1] == "oCE2":
-        # Check for double CE
-        comp_star = binary.star_1
-        if comp_star.state not in [
-                "H-rich_Core_H_burning",
-                "stripped_He_Core_He_burning", "WD", "NS", "BH"]:
-            result[1] = "oDoubleCE2"
 
     if ("Central_C_depletion" in state1
             or "Central_He_depleted" in state1
