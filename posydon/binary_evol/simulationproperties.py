@@ -427,6 +427,9 @@ class PulsarHooks(EvolveHooks):
                         elif self.acc_decay_prescription == "COMPAS":
 
                             ## get Eddington-limited accretion rate onto NS at this timestep
+                            ## improvement: get the delta_M from the MESA steps directly, it will 
+                            ##              eliminate any errors in the NS mass due to matching
+                            ##            --> theoretically, Mdot_acc should never exceed Mdot_edd
                             Mdot_acc = delta_M/delta_t
                             if Mdot_acc > pulsar.Mdot_edd: Mdot_acc = pulsar.Mdot_edd
 

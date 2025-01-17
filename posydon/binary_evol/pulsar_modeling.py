@@ -293,12 +293,16 @@ class Pulsar:
         ## evolve the NS spin
         J_i = I*self.spin   ## spin angular momentum (J) of the NS before accretion
        
-        omega_k = np.sqrt(G*M_i/R_mag**3)
-        delta_J = 2/5*delta_M*R_mag**2*omega_k    ## change in J due to accretion
+        ## do we need to subtract the spin from the co-rotation radius here? probably?
+        ## last we discussed with Vicky, we decided to leave this out until track interpolation
+        ## add an ODE solver using the dM/dt we have in the meantime?
+        omega_k = np.sqrt(G*M_i/R_mag**3) 
+        delta_J = 2/5*delta_M*R_mag**2*omega_k  ##(omega_k - omega_co)  ## change in J due to accretion
         J_f = J_i + delta_J
 
         R_mag = self.calc_magnetosphere_radius(Mdot_acc)   ## calculate magnetic radius AFTER B-field decay and mass accretion
         
+        ## double check if this should be R_mag or R_NS
         I_mag = 2/5*M_f*R_mag**2   ## use moment of inertia for sphere w/ magnetic radius during accretion
         omega_f = J_f/I_mag
         self.spin = omega_f
