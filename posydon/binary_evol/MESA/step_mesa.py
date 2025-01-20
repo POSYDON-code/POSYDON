@@ -961,19 +961,22 @@ class MesaGridStep:
             for MODEL_NAME in MODELS.keys():
                 for i, star in enumerate(stars):
                     if (not stars_CO[i] and
-                        self.classes[f'S{i+1}_{MODEL_NAME}_CO_type'] != 'None' and
-                        fv[f'S{i+1}_{MODEL_NAME}_CO_type'] != 'None'):
+                        self.classes[f'S{i+1}_{MODEL_NAME}_CO_type'] != 'None'):
                         values = {}
                         for key in ['state', 'SN_type', 'f_fb', 'mass', 'spin',
-                                    'm_disk_accreted', 'm_disk_radiated', 'M4', 'mu4',
-                                    'h1_mass_ej', 'he4_mass_ej']:
+                                    'm_disk_accreted', 'm_disk_radiated', 'M4',
+                                    'mu4', 'h1_mass_ej', 'he4_mass_ej']:
                             if key == "state":
                                 state = self.classes[f'S{i+1}_{MODEL_NAME}_CO_type']
                                 values[key] = state
                             elif key == "SN_type":
                                 values[key] = self.classes[f'S{i+1}_{MODEL_NAME}_{key}']
-                            else:
+                            elif f'S{i+1}_{MODEL_NAME}_{key}' in fv:
                                 values[key] = fv[f'S{i+1}_{MODEL_NAME}_{key}']
+                            else:
+                                Pwarn(f"S{i+1}_{MODEL_NAME}_{key} not found in fv",
+                                      "UnsupportedModelWarning")
+                                values[key] = None
                         setattr(star, MODEL_NAME, values)
                     else:
                         setattr(star, MODEL_NAME, None)
