@@ -16,8 +16,181 @@ h5py = totest.h5py
 # module you like to test
 from pytest import fixture, raises, warns
 from inspect import isclass, isroutine
-from posydon.utils.posydonwarning import ReplaceValueWarning
-from posydon.grids.io import BINARY_OUTPUT_FILE
+from posydon.utils.posydonwarning import (InappropriateValueWarning,\
+                                          MissingFilesWarning,\
+                                          ReplaceValueWarning)
+from posydon.grids.io import SINGLE_OUTPUT_FILE, BINARY_OUTPUT_FILE
+
+# helper functions
+def add_MESA_run_files(path, idx, binary_run=True, with_histories=True,\
+                       with_profiles=True):
+    """Create files of one MESA run
+
+    Parameters
+    ----------
+    path : str
+        The path to the directory containing all the runs.
+    idx : int
+        Run index.
+    binary_run : bool (default: True)
+        If `True` files of a binary run are created, otherwise run of a single
+        star.
+    with_histories : bool (default: True)
+        If `True` creates history files.
+    with_profiles : bool (default: True)
+        If `True` creates final profile files.
+
+    """
+    if not os.path.exists(path):
+        raise NotADirectoryError(f"Wrong path: {path}")
+    if not isinstance(idx, int):
+        raise TypeError("idx must be an integer")
+    elif idx < 0:
+        raise ValueError("idx cannot be negative")
+    if not isinstance(binary_run, bool):
+        raise TypeError("binary_run must be a boolean")
+    if not isinstance(with_histories, bool):
+        raise TypeError("with_histories must be a boolean")
+    # create files expected from a MESA run
+    # get run directory
+    if binary_run:
+        run_name = f"Zbase_0.0142_m1_1.{idx}000_m2_0.9000_initial_z_"\
+                   +f"1.4200e-02_initial_period_in_days_1.{idx}000e-01_"\
+                   +f"grid_index_{idx}"
+    else:
+        run_name = f"Zbase_0.0142_initial_mass_1.{idx}000_initial_z_"\
+                   +f"1.4200e-02_grid_index_{idx}"
+    run_path = os.path.join(path, run_name)
+    os.mkdir(run_path)
+    # get MESA output file
+    if binary_run:
+        OUTPUT_FILE = BINARY_OUTPUT_FILE
+    else:
+        OUTPUT_FILE = SINGLE_OUTPUT_FILE
+    with open(os.path.join(run_path, OUTPUT_FILE), "w") as out_file:
+        out_file.write(f"Test{idx}")
+    # get inlist_grid_points file: containing masses and period
+    with open(os.path.join(run_path, "inlist_grid_points"), "w") as\
+         inlist_file:
+        if binary_run:
+            inlist_file.write("&binary_controls\n")
+            inlist_file.write(f"\tm1 = 1.{idx}d0\n")
+            inlist_file.write("\tm2 = 0.9d0\n")
+            inlist_file.write(f"\tinitial_period_in_days = 1.{idx}d-1\n")
+            inlist_file.write("/ ! end of binary_controls namelist")
+        else:
+            inlist_file.write("&controls\n")
+            inlist_file.write(f"\tinitial_mass = 1.{idx}d0\n")
+            inlist_file.write("\tinitial_z = 0.0142d0\n")
+            inlist_file.write(f"\tZbase = 0.0142d0\n")
+            inlist_file.write("/ ! end of star_controls namelist")
+    if binary_run and with_histories and (idx != 3):
+        # get binary_history.data
+        with open(os.path.join(run_path, "binary_history.data"), "w")\
+             as binary_history_file:
+            for j in range(5):
+                # initial values are read from header, rest does not matter
+                if j==1:
+                    names = "initial_don_mass initial_acc_mass "\
+                            +"initial_period_days\n"
+                    binary_history_file.write(names)
+                elif j==2:
+                    vals = f"             1.{idx}              0.9 "\
+                           +f"            1.{idx}E-01\n"
+                    binary_history_file.write(vals)
+                else:
+                    binary_history_file.write(f"Test HEADER{j}\n")
+            # table with column headers and two rows of all the required
+            # columns
+            row1 = "\n"
+            row2 = "\n"
+            for j,c in enumerate(totest.DEFAULT_BINARY_HISTORY_COLS):
+#                if ((idx == 5) and
+#                    (c in ["model_number", "age"])):
+#                    continue
+                l = len(c)
+                fmt = " {:" + f"{l}" + "}"
+                binary_history_file.write(fmt.format(c))
+                fmt = " {:>" + f"{l}" + "}"
+                row1 += fmt.format(j)
+                row2 += fmt.format(j+1)
+            binary_history_file.write(row1)
+            binary_history_file.write(row2)
+            if idx == 8:
+                fmt = " {:>" + f"{l}" + "}"
+                binary_history_file.write("\n"+fmt.format(2)+fmt.format(3))
+    # get LOGS directories
+    if binary_run: # (non, one, two, non, one, two, ...)
+        limit_log_dir = 3
+    else: # (non, one, non, one, ...)
+        limit_log_dir = 2
+    for k in range(1, idx%limit_log_dir+1):
+        logs_path = os.path.join(run_path, f"LOGS{k}")
+        os.mkdir(logs_path)
+        if with_histories:
+            # get history.data
+            with open(os.path.join(logs_path, "history.data"), "w") as\
+                 history_file:
+                for j in range(5):
+                    # initial values are read from header, rest does not matter
+                    if j==1:
+                        names = "initial_Z initial_Y initial_m\n"
+                        history_file.write(names)
+                    elif j==2:
+                        vals = f"   0.0142      0.25       1.{idx}\n"
+                        history_file.write(vals)
+                    else:
+                        history_file.write(f"Test HEADER{j}\n")
+                # table with column headers and two rows of all the required
+                # columns (model_number and star_age need to align with the
+                # binary_history.data where they are the first two columns)
+                row1 = "\n"
+                row2 = "\n"
+                if binary_run:
+                    cols = ["model_number", "star_age"]\
+                           + totest.DEFAULT_STAR_HISTORY_COLS
+                else:
+                    cols = totest.DEFAULT_SINGLE_HISTORY_COLS
+                for j,c in enumerate(cols):
+                    if ((idx == 5) and
+                        (c not in totest.DEFAULT_STAR_HISTORY_COLS)):
+                        continue
+                    l = len(c)
+                    fmt = " {:" + f"{l}" + "}"
+                    history_file.write(fmt.format(c))
+                    fmt = " {:>" + f"{l}" + "}"
+                    row1 += fmt.format(j)
+                    if "center_h" in c:
+                        # creates he depletion
+                        row2 += fmt.format(0)
+                    else:
+                        row2 += fmt.format(j+1)
+                history_file.write(row1)
+                history_file.write(row2)
+                if idx == 8:
+                    fmt = " {:>" + f"{l}" + "}"
+                    history_file.write("\n"+fmt.format(2)+fmt.format(3))
+        if with_profiles:
+            # get final_profile.data
+            with open(os.path.join(logs_path, "final_profile.data"), "w")\
+                 as final_profile_file:
+                for j in range(5):
+                    # the first 5 lines are skipped
+                    final_profile_file.write(f"Test HEADER{j}\n")
+                # table with column headers and two rows of all the required
+                # columns
+                row1 = "\n"
+                row2 = "\n"
+                for j,c in enumerate(totest.DEFAULT_PROFILE_COLS):
+                    l = len(c)
+                    fmt = " {:" + f"{l}" + "}"
+                    final_profile_file.write(fmt.format(c))
+                    fmt = " {:>" + f"{l}" + "}"
+                    row1 += fmt.format(j)
+                    row2 += fmt.format(j+1)
+                final_profile_file.write(row1)
+                final_profile_file.write(row2)
+
 
 # define test classes collecting several test functions
 class TestElements:
@@ -993,110 +1166,36 @@ class TestPSyGrid:
         return path
 
     @fixture
-    def MESA_files(self, tmp_path):
-        # create files expected from a MESA run
-        path = os.path.join(tmp_path, "MESA_runs")
+    def MESA_no_histories(self, tmp_path):
+        # create files expected from a MESA run, but no histories
+        path = os.path.join(tmp_path, "MESA_no_histories")
         os.mkdir(path)
         for i in range(3):
             # get run directory
-            run_name = f"Zbase_0.0142_m1_1.{i}000_m2_0.9000_initial_z_"\
-                       +f"1.4200e-02_initial_period_in_days_1.{i}000e-01_"\
-                       +f"grid_index_{i}"
-            run_path = os.path.join(path, run_name)
-            os.mkdir(run_path)
-            # get MESA output file
-            with open(os.path.join(run_path, BINARY_OUTPUT_FILE), "w") as\
-                 out_file:
-                out_file.write(f"Test{i}")
-            # get inlist_grid_points file: containing masses and period
-            with open(os.path.join(run_path, "inlist_grid_points"), "w") as\
-                 inlist_file:
-                inlist_file.write("&binary_controls\n")
-                inlist_file.write(f"\tm1 = 1.{i}d0\n")
-                inlist_file.write("\tm2 = 0.9d0\n")
-                inlist_file.write(f"\tinitial_period_in_days = 1.{i}d-1\n")
-                inlist_file.write("/ ! end of binary_controls namelist")
-            # get binary_history.data
-            with open(os.path.join(run_path, "binary_history.data"), "w") as\
-                 binary_history_file:
-                for j in range(5):
-                    # initial values are read from header, rest does not matter
-                    if j==1:
-                        names = "initial_don_mass initial_acc_mass "\
-                                +"initial_period_days\n"
-                        binary_history_file.write(names)
-                    elif j==2:
-                        vals = f"             1.{i}              0.9 "\
-                               +f"            1.{i}E-01\n"
-                        binary_history_file.write(vals)
-                    else:
-                        binary_history_file.write("Test HEADER{}\n".format(j))
-                # table with column headers and two rows of all the required
-                # columns
-                row1 = "\n"
-                row2 = "\n"
-                for j,c in enumerate(totest.DEFAULT_BINARY_HISTORY_COLS):
-                    l = len(c)
-                    fmt = " {:"+f"{l}"+"}"
-                    binary_history_file.write(fmt.format(c))
-                    fmt = " {:>"+f"{l}"+"}"
-                    row1 += fmt.format(j)
-                    row2 += fmt.format(j+1)
-                binary_history_file.write(row1)
-                binary_history_file.write(row2)
-            # get LOGS directories (non, one, two)
-            for k in range(1,i%3+1):
-                logs_path = os.path.join(run_path, f"LOGS{k}")
-                os.mkdir(logs_path)
-                # get history.data
-                with open(os.path.join(logs_path, "history.data"), "w") as\
-                     history_file:
-                    for j in range(5):
-                        # initial values are read from header, rest does not
-                        # matter
-                        if j==1:
-                            names = "initial_Z initial_Y initial_m\n"
-                            history_file.write(names)
-                        elif j==2:
-                            vals = f"   0.0142      0.25       1.{i}\n"
-                            history_file.write(vals)
-                        else:
-                            history_file.write("Test HEADER{}\n".format(j))
-                    # table with column headers and two rows of all the
-                    # required columns (model_number and star_age need to align
-                    # with the binary_history.data where they are the first two
-                    # columns)
-                    row1 = "\n"
-                    row2 = "\n"
-                    for j,c in enumerate(["model_number", "star_age"]\
-                                         +totest.DEFAULT_STAR_HISTORY_COLS):
-                        l = len(c)
-                        fmt = " {:"+f"{l}"+"}"
-                        history_file.write(fmt.format(c))
-                        fmt = " {:>"+f"{l}"+"}"
-                        row1 += fmt.format(j)
-                        row2 += fmt.format(j+1)
-                    history_file.write(row1)
-                    history_file.write(row2)
-                # get final_profile.data
-                with open(os.path.join(logs_path, "final_profile.data"), "w")\
-                     as final_profile_file:
-                    for j in range(5):
-                        # the first 5 lines are skipped
-                        final_profile_file.write("Test HEADER{}\n".format(j))
-                    # table with column headers and two rows of all the
-                    # required columns
-                    row1 = "\n"
-                    row2 = "\n"
-                    for j,c in enumerate(totest.DEFAULT_PROFILE_COLS):
-                        l = len(c)
-                        fmt = " {:"+f"{l}"+"}"
-                        final_profile_file.write(fmt.format(c))
-                        fmt = " {:>"+f"{l}"+"}"
-                        row1 += fmt.format(j)
-                        row2 += fmt.format(j+1)
-                    final_profile_file.write(row1)
-                    final_profile_file.write(row2)
+            add_MESA_run_files(path, i, binary_run=True, with_histories=False,\
+                               with_profiles=True)
+        return path
+
+    @fixture
+    def MESA_files_single(self, tmp_path):
+        # create files expected from a MESA run of a single star
+        path = os.path.join(tmp_path, "MESA_single_runs")
+        os.mkdir(path)
+        for i in range(2):
+            # get run directory
+            add_MESA_run_files(path, i, binary_run=False, with_histories=True,\
+                               with_profiles=True)
+        return path
+
+    @fixture
+    def MESA_files(self, tmp_path):
+        # create files expected from a MESA run of a binary
+        path = os.path.join(tmp_path, "MESA_runs")
+        os.mkdir(path)
+        for i in range(4):
+            # get run directory
+            add_MESA_run_files(path, i, binary_run=True, with_histories=True,\
+                               with_profiles=True)
         return path
 
     # test the PSyGrid class
@@ -1246,7 +1345,15 @@ class TestPSyGrid:
                                                                 "TestGrid.h5"))
         pass
 
-    def test_create_psygrid(self, PSyGrid, Empty_dir, MESA_files, capsys):
+    def test_create_psygrid(self, PSyGrid, Empty_dir, MESA_no_histories,\
+                            MESA_files_single, eep_files, MESA_files,\
+                            monkeypatch, capsys):
+        def mock_get_nearest_known_initial_RLO(mass1, mass2,\
+                                               known_initial_RLO):
+            # mocked nearest initial RLO system
+            return {"star_1_mass": mass1, "star_2_mass": mass2,\
+                    "period_days": 2.0, "termination_flag_3": "rTF3",\
+                    "termination_flag_4": "rTF4"}
         self.reset_grid(PSyGrid)
         assert isroutine(PSyGrid._create_psygrid)
         # missing argument
@@ -1262,20 +1369,35 @@ class TestPSyGrid:
         MESA_PATH = str(Empty_dir)
         with raises(ValueError, match=f"No folders found in {MESA_PATH}"):
             PSyGrid._create_psygrid(MESA_PATH, None)
+        with raises(FileNotFoundError, match="PSyGrid object cannot be "\
+                                             +"created: No history data in "\
+                                             +"all runs."):
+            PSyGrid._create_psygrid(MESA_no_histories, None)
+        # examples: single
+        PSyGrid.config["binary"] = False
+        with warns(MissingFilesWarning, match="Ignored MESA run because of "\
+                                              +"missing history in:"):
+            PSyGrid._create_psygrid(MESA_files_single,\
+                                    totest.h5py.File(PSyGrid.filepath,"w"))
         # examples: EEPs
+        self.reset_grid(PSyGrid)
         PSyGrid.config["eep"] = Empty_dir
         with raises(ValueError, match=f"No folders found in {MESA_PATH}"):
             with warns(ReplaceValueWarning, match="Selected EEPs, switching "\
                                                   +"to single-star grid."):
                 PSyGrid._create_psygrid(MESA_PATH, None)
+        PSyGrid.config["eep"] = eep_files
         PSyGrid.config["binary"] = False
-        with raises(ValueError, match=f"No folders found in {MESA_PATH}"):
-            PSyGrid._create_psygrid(MESA_PATH, None)
+        with warns(MissingFilesWarning, match="No matching EEP file for"):
+            PSyGrid._create_psygrid(MESA_files_single,\
+                                    totest.h5py.File(PSyGrid.filepath,"w"))
         # examples: binary grid
         self.reset_grid(PSyGrid)
         N_MESA_runs = 3
-        PSyGrid._create_psygrid(MESA_files, totest.h5py.File(PSyGrid.filepath,\
-                                                             "w"))
+        with warns(MissingFilesWarning, match="Ignored MESA run because of "\
+                                              +"missing binary history in:"):
+            PSyGrid._create_psygrid(MESA_files,\
+                                    totest.h5py.File(PSyGrid.filepath, "w"))
         assert len(PSyGrid.initial_values) == N_MESA_runs
         for c in totest.DEFAULT_BINARY_HISTORY_COLS + ["X", "Y", "Z"]:
             assert c in PSyGrid.initial_values.dtype.names
@@ -1295,8 +1417,8 @@ class TestPSyGrid:
         self.reset_grid(PSyGrid)
         N_MESA_runs = 1
         PSyGrid.config["max_number_of_runs"] = N_MESA_runs
-        PSyGrid._create_psygrid(MESA_files, totest.h5py.File(PSyGrid.filepath,\
-                                                             "w"))
+        PSyGrid._create_psygrid(MESA_files,\
+                                totest.h5py.File(PSyGrid.filepath, "w"))
         assert len(PSyGrid.initial_values) == N_MESA_runs
         assert len(PSyGrid.final_values) == N_MESA_runs
         assert len(PSyGrid.MESA_dirs) == N_MESA_runs
@@ -1366,6 +1488,18 @@ class TestPSyGrid:
                 PSyGrid._create_psygrid(MESA_files,\
                                         totest.h5py.File(PSyGrid.filepath,\
                                                          "w"))
+        # examples: no He_core_fix
+        self.reset_grid(PSyGrid)
+        PSyGrid.config["He_core_fix"] = False
+        PSyGrid._create_psygrid(MESA_files,\
+                                totest.h5py.File(PSyGrid.filepath, "w"))
+        # examples: initial_RLO_fix
+        self.reset_grid(PSyGrid)
+        PSyGrid.config["initial_RLO_fix"] = True
+        monkeypatch.setattr(totest, "get_nearest_known_initial_RLO",\
+                            mock_get_nearest_known_initial_RLO)
+        PSyGrid._create_psygrid(MESA_files,\
+                                totest.h5py.File(PSyGrid.filepath, "w"))
         # examples: 
         self.reset_grid(PSyGrid)
         with capsys.disabled(): # TODO: remove
@@ -1373,6 +1507,33 @@ class TestPSyGrid:
 #            print(PSyGrid.initial_values.dtype.names)
 #            print(PSyGrid.final_values.dtype.names)
 #            print(len(PSyGrid))
+        # examples: no model_number and star_age columns in star history
+        add_MESA_run_files(MESA_files, 5, binary_run=True,\
+                           with_histories=True, with_profiles=True)
+        self.reset_grid(PSyGrid)
+        with warns(MissingFilesWarning, match="Ignored MESA run because of "\
+                                              +"missing binary history in:"):
+            with warns(MissingFilesWarning, match="Problems with reading "\
+                                                  +"file"):
+                PSyGrid._create_psygrid(MESA_files,\
+                                        totest.h5py.File(PSyGrid.filepath,\
+                                                         "w"))
+        # examples: incomplete lines in star history
+        add_MESA_run_files(MESA_files, 8, binary_run=True,\
+                           with_histories=True, with_profiles=True)
+        self.reset_grid(PSyGrid)
+        with warns(MissingFilesWarning, match="Ignored MESA run because of "\
+                                              +"missing binary history in:"):
+            with warns(MissingFilesWarning, match="Problems with reading "\
+                                                  +"file"):
+                with warns(UserWarning, match="Some errors were detected !"):
+                    # actually, it is a ConversionWarning (numpy internal),
+                    # which is a child from UserWarning
+                    with warns(ReplaceValueWarning, match="Reduce mod in"):
+                        with warns(ReplaceValueWarning, match="Reduce age in"):
+                            PSyGrid._create_psygrid(MESA_files,\
+                                                    totest.h5py.File(\
+                                                     PSyGrid.filepath,"w"))
         pass
 
     def test_add_column(self, PSyGrid):
