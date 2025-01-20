@@ -135,7 +135,9 @@ BINARY_EVENTS_OF_SN_OR_AFTER_DETACHED = BINARY_EVENTS_ALL.copy()
 ## but are not in the flow chart and will not be added to POSYDON
 UNDEFINED_STATES = [
     ('NS', 'H-rich_Core_H_burning', 'disrupted', 'CC2'),
-    ('NS', 'H-rich_Core_H_burning', 'detached', 'CC2')
+    ('NS', 'H-rich_Core_H_burning', 'detached', 'CC2'),
+    ('BH', 'H-rich_Core_H_burning', 'disrupted', 'CC2'),
+    ('BH', 'H-rich_Core_H_burning', 'detached', 'CC2')
 ]
 
 # dynamically construct the flow chart
