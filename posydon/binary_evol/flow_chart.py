@@ -137,7 +137,9 @@ UNDEFINED_STATES = [
     ('NS', 'H-rich_Core_H_burning', 'disrupted', 'CC2'),
     ('NS', 'H-rich_Core_H_burning', 'detached', 'CC2'),
     ('BH', 'H-rich_Core_H_burning', 'disrupted', 'CC2'),
-    ('BH', 'H-rich_Core_H_burning', 'detached', 'CC2')
+    ('BH', 'H-rich_Core_H_burning', 'detached', 'CC2'),
+    ('WD', 'H-rich_Core_H_burning', 'disrupted', 'CC2'),
+    ('WD', 'H-rich_Core_H_burning', 'detached', 'CC2')
 ]
 
 # dynamically construct the flow chart
