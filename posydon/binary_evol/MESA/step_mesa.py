@@ -976,7 +976,8 @@ class MesaGridStep:
                             else:
                                 Pwarn(f"S{i+1}_{MODEL_NAME}_{key} not found in fv",
                                       "UnsupportedModelWarning")
-                                values[key] = None
+                                values[key] = np.nan
+                                #TODO: non float types many need a different value.
                         setattr(star, MODEL_NAME, values)
                     else:
                         setattr(star, MODEL_NAME, None)
