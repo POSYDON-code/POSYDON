@@ -1,0 +1,54 @@
+name: Github Projects
+
+on:
+  issues:
+    types: [opened]
+
+jobs:
+  add-issue-to-project:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Add Issue to GitHub Project
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const projectNumber = 4  # Replace with your Project number
+            const columnName = "Backlog"  # Replace with your target column name
+
+            // Get the project by number
+            const projects = await github.rest.projects.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+            });
+
+            const project = projects.data.find(proj => proj.number === projectNumber);
+            if (!project) {
+              throw new Error(`Project number ${projectNumber} not found.`);
+            }
+
+            // Get columns of the project
+            const columns = await github.rest.projects.listColumns({
+              project_id: project.id,
+            });
+
+            const column = columns.data.find(col => col.name === columnName);
+            if (!column) {
+              throw new Error(`Column "${columnName}" not found in project.`);
+            }
+
+            // Add the issue to the column as a card
+            await github.rest.projects.createCard({
+              column_id: column.id,
+              content_id: context.issue.number,
+              content_type: 'Issue',
+            });
+
+            // Add a comment with the current date as the starting date
+            const currentDate = new Date().toISOString().split('T')[0];
+            await github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `**Start Date:** ${currentDate}`,
+            });
