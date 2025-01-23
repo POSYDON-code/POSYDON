@@ -802,7 +802,7 @@ class StepSN(object):
                             
                         if m_grav != star.mass and self.verbose:
                             print("The star formed a disk during the collapse "
-                                  "and lost", round(final_BH[0] - m_rembar, 2),
+                                  "and lost", round(final_BH['M_BH_total'] - m_rembar, 2),
                                   "M_sun.")
                         
                         # set specific properties manually
