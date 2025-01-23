@@ -133,10 +133,10 @@ BINARY_EVENTS_OF_SN_OR_AFTER_DETACHED = BINARY_EVENTS_ALL.copy()
 
 ## a list of known total binary states that can occur, 
 ## but are not in the flow chart and will not be added to POSYDON
-UNDEFINED_STATES = [
-    ('NS', 'H-rich_Core_H_burning', 'disrupted', 'CC2'),
-    ('NS', 'H-rich_Core_H_burning', 'detached', 'CC2')
-]
+UNDEFINED_STATES = []
+for s1 in STAR_STATES_CO:
+    for b in ['disrupted', 'detached']:
+        UNDEFINED_STATES.append((s1, 'H-rich_Core_H_burning', b, 'CC2'))
 
 # dynamically construct the flow chart
 POSYDON_FLOW_CHART = {}
