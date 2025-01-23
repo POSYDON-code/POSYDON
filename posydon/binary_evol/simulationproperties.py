@@ -67,13 +67,14 @@ class SimulationProperties:
         # for debugging purposes
         if not hasattr(self, 'max_n_steps_per_binary'):
             self.max_n_steps_per_binary = 100
-        #if not hasattr(self, "verbose_binary_errors"):
-        #    self.verbose_binary_errors = False
-
+        
         # Set functions for evolution
+        self.all_step_names = []  ## list of strings of all evolutionary steps
         for key, val in kwargs.items():
             if "step" not in key:   # skip loading steps
                 setattr(self, key, val)
+            elif "step" in key:
+                self.all_step_names.append(key)
         self.steps_loaded = False
 
     def load_steps(self, verbose=False):
@@ -148,7 +149,7 @@ class SimulationProperties:
         -------
         binary : instance of <class, BinaryStar>
 
-        """
+        """   
         for hooks in self.all_hooks_classes:
             hooks.pre_step(binary, step_name)
         if hasattr(self, 'extra_pre_step'):
@@ -173,6 +174,11 @@ class SimulationProperties:
         binary : instance of <class, BinaryStar>
 
         """
+        ## do not call extra step hooks if history_verbose=False
+        if not binary.history_verbose and binary.event is not None:
+            if "redirect" in binary.event:
+                return binary
+            
         for hooks in self.all_hooks_classes:
             hooks.post_step(binary, step_name)
         if hasattr(self, 'extra_post_step'):
@@ -255,13 +261,16 @@ class TimingHooks(EvolveHooks):
 
     def post_step(self, binary, step_name):
         """Record the duration of the step."""
+            
         binary.step_times.append(time.time() - self.step_start_time)
+
         if len(binary.event_history) > len(binary.step_times):
             diff = len(binary.event_history) - len(binary.step_times)
             binary.step_times += [None] * (diff)
         elif len(binary.event_history) < len(binary.step_times):
             last_items = len(binary.event_history)
             binary.step_times = binary.step_times[-(last_items - 1):]
+
         return binary
 
     def post_evolve(self, binary):
@@ -294,14 +303,17 @@ class StepNamesHooks(EvolveHooks):
 
     def post_step(self, binary, step_name):
         """Record the step name."""
+            
         binary.step_names.append(step_name)
         len_binary_hist = len(binary.event_history)
         len_step_names = len(binary.step_names)
         diff = len_binary_hist - len_step_names
+
         if len_binary_hist > len_step_names:
             binary.step_names += [None] * (diff)
         elif len_binary_hist < len_step_names:
             binary.step_names = binary.step_names[-(len_binary_hist - 1):]
+
         return binary
 
     def post_evolve(self, binary):

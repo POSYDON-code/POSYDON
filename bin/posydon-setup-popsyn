@@ -128,7 +128,7 @@ if __name__ == '__main__':
     parser.add_argument('--partition', help='what cluster partition you want to run the script on', default=None)
     parser.add_argument('--walltime', help='the walltime you would like to use in SLURM format', default='23:00:00')
     parser.add_argument('--merge_walltime', help='the walltime you would like to use for the merge script in SLURM format', default='12:00:00')
-    parser.add_argument('--mem_per_cpu', help='the memory per cpu you would like to use in SLURM format', default='4G')
+    parser.add_argument('--mem_per_cpu', help='the memory per cpu you would like to use in SLURM format', default='7G')
     parser.add_argument('--account', help='the account you would like to use', default=None)
     args = parser.parse_args()
 

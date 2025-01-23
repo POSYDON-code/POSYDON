@@ -201,7 +201,7 @@ class StepCEE(object):
             star_to_merge = "2"
         else:
             raise ValueError("CEE does not apply if `event` is not "
-                             "`oCE1`, 'oDoubleCE1' or `oCE2`, 'oDoubleCE1'")
+                             "`oCE1`, `oDoubleCE1`, `oCE2`,or `oDoubleCE1`")
         # Check for double CE
         double_CE = binary.event in ["oDoubleCE1", "oDoubleCE2"]
 
@@ -636,13 +636,13 @@ class StepCEE(object):
                 # An assumed stable mass transfer case after postCEE with
                 # fully non-conservative MT and mass lost from the vicinity
                 # of the accretor:
-                orbital_period_f = cf.period_change_stabe_MT(
+                orbital_period_f = cf.period_change_stable_MT(
                     orbital_period_postCEE, Mdon_i=mc1_i, Mdon_f=mc1_f,
                     Macc_i=mc2_i, alpha=0.0, beta=1.0)
                 if double_CE:
                     # a reverse stable MT assumed to be happening
                     # at the same time
-                    orbital_period_f = cf.period_change_stabe_MT(
+                    orbital_period_f = cf.period_change_stable_MT(
                         orbital_period_f, Mdon_i=mc2_i, Mdon_f=mc2_f,
                         Macc_i=mc1_i, alpha=0.0, beta=1.0)
                 if verbose:
@@ -656,13 +656,13 @@ class StepCEE(object):
                     "core_not_replaced_windloss"]:
                 # An assumed wind loss after postCEE with mass lost
                 # from the vicinity of the donor
-                orbital_period_f = cf.period_change_stabe_MT(
+                orbital_period_f = cf.period_change_stable_MT(
                     orbital_period_postCEE, Mdon_i=mc1_i, Mdon_f=mc1_f,
                     Macc_i=mc2_i, alpha=1.0, beta=0.0)
                 if double_CE:
                     # a wind mass loss from the 2nd star assumed to be
                     # happening at the same time
-                    orbital_period_f = cf.period_change_stabe_MT(
+                    orbital_period_f = cf.period_change_stable_MT(
                         orbital_period_f, Mdon_i=mc2_i, Mdon_f=mc2_f,
                         Macc_i=mc1_i, alpha=1.0, beta=0.0)
                 if verbose:
