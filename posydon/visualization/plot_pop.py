@@ -23,56 +23,37 @@ plt.style.use(os.path.join(PATH_TO_POSYDON, "posydon/visualization/posydon.mplst
 cm = mpl.colormaps.get_cmap('tab20')
 COLORS = [cm.colors[i] for i in range(len(cm.colors)) if i%2==0] + [cm.colors[i] for i in range(len(cm.colors)) if i%2==1]
 
-def plot_merger_rate_density(z, rate_density, zmax=10., channels=False,
-                             GWTC3=False, label='DCO', **kwargs):
 
-    plt.plot(z[z<zmax], rate_density['total'][z<zmax], label=f'{label} total', color='black')
-    if channels:
-        for i, ch in enumerate([key for key in rate_density.keys() if key != 'total']):
-            if ch != 'total':
-                plt.plot(z[z<zmax], rate_density[ch][z<zmax], label=ch, color=COLORS[i])
-
-    if GWTC3:
-        plt.errorbar(0.2,17.9, yerr=[[0],[26.1]], fmt='',color='black', label='$\mathcal{R}_\mathrm{BBH}$ GWTC-3')
-
-def plot_grb_rate_density(z, rate_density, zmax=10., channels=False,
-                          grb_components=False, Perley16=False, **kwargs):
-
-    plt.plot(z[z<zmax], rate_density['total'][z<zmax], label='GRB total', color='black', linestyle='--')
-    if grb_components:
-        plt.plot(z[z<zmax], rate_density['total_GRB1'][z<zmax], label='total_GRB1', color='black', linestyle=':')
-        plt.plot(z[z<zmax], rate_density['total_GRB2'][z<zmax], label='total_GRB2', color='black', linestyle='-.')
-    if channels:
-        for i, ch in enumerate([key for key in rate_density.keys() if (key != 'total' and 'GRB' not in key)]):
-            if 'total' not in ch and 'GRB' not in ch:
-                if sum(rate_density[ch][z<zmax]) == 0.:
-                    continue
-                if 'label_channels' in kwargs and kwargs['label_channels']:
-                    label = ch
-                else:
-                    label = None
-                plt.plot(z[z<zmax], rate_density[ch][z<zmax], label=label, color=COLORS[i], linestyle='--')
-                if grb_components:
-                    if 'label_channels' in kwargs and kwargs['label_channels']:
-                        label1 = ch+'_GRB1'
-                        label2 = ch+'_GRB2'
-                    else:
-                        label1 = None
-                        label2 = None
-                    plt.plot(z[z<zmax], rate_density[ch+'_GRB1'][z<zmax], label=label1, color=COLORS[i], linestyle=':')
-                    plt.plot(z[z<zmax], rate_density[ch+'_GRB2'][z<zmax], label=label2, color=COLORS[i], linestyle='-.')
-
+def plot_perley16_rate_density(ax=None):
+    '''Plot the GRB rate density from Perley et al. (2016)
+    
+    plot the long gamma-ray burst rate density from Perley et al. (2016)
+    if ax is None, it plotted on the latest axis, otherwise it is added to the given axis
+    
+    Parameters
+    ----------
+    ax : matplotlib.axes.Axes (optional)
+        Axes object to plot the data on
+    
+    Returns
+    -------
+    None
+    '''
     # Perley et al. (2016)
-    if Perley16:
-        z_P16 = np.array([0.3,0.75,1.35,1.75,2.3,3.1,4,5.2,7.])
-        rate_P16 = np.array([2.07e-10,1.46e-9,1.816e-9,3.93e-9,8.27e-9,6.90e-9,4.20e-9,3.74e-9,1.11e-9])*1e9
-        rate_P16_lower = rate_P16-np.array([1.12e-10,1.08e-9,1.30e-9,3.02e-9,6.78e-9,5.29e-9,2.82e-9,2.397e-9,5.96e-10])*1e9
-        rate_P16_upper = np.array([5.40e-10,2.03e-9,2.60e-9,5.29e-9,1.03e-8,9.13e-9,6.78e-9,6.78e-9,4.27e-9])*1e9-rate_P16
-        rate_P16_error_y =np.array([rate_P16_lower.tolist(),rate_P16_upper.tolist()])
-        rate_P16_left = z_P16-np.array([0.1,0.5,1,1.5,2.,2.6,3.5,4.5,6])
-        rate_P16_right = np.array([0.5,1,1.5,2.,2.6,3.5,4.5,6,8])-z_P16
-        rate_P16_error_x =np.array([rate_P16_left.tolist(),rate_P16_right.tolist()])
+    
+    z_P16 = np.array([0.3,0.75,1.35,1.75,2.3,3.1,4,5.2,7.])
+    rate_P16 = np.array([2.07e-10,1.46e-9,1.816e-9,3.93e-9,8.27e-9,6.90e-9,4.20e-9,3.74e-9,1.11e-9])*1e9
+    rate_P16_lower = rate_P16-np.array([1.12e-10,1.08e-9,1.30e-9,3.02e-9,6.78e-9,5.29e-9,2.82e-9,2.397e-9,5.96e-10])*1e9
+    rate_P16_upper = np.array([5.40e-10,2.03e-9,2.60e-9,5.29e-9,1.03e-8,9.13e-9,6.78e-9,6.78e-9,4.27e-9])*1e9-rate_P16
+    rate_P16_error_y =np.array([rate_P16_lower.tolist(),rate_P16_upper.tolist()])
+    rate_P16_left = z_P16-np.array([0.1,0.5,1,1.5,2.,2.6,3.5,4.5,6])
+    rate_P16_right = np.array([0.5,1,1.5,2.,2.6,3.5,4.5,6,8])-z_P16
+    rate_P16_error_x =np.array([rate_P16_left.tolist(),rate_P16_right.tolist()])
+    if ax is None:
         plt.errorbar(z_P16,rate_P16,xerr=rate_P16_error_x,yerr=rate_P16_error_y, fmt='.', color='black',
+                    label=r'$\mathcal{R}_\mathrm{LGRB}(E_\mathrm{iso}^{45-450\,\mathrm{keV}} > 10^{51} \, \mathrm{erg})$ SHOALS survey')
+    else:
+        ax.errorbar(z_P16,rate_P16,xerr=rate_P16_error_x,yerr=rate_P16_error_y, fmt='.', color='black',
                     label=r'$\mathcal{R}_\mathrm{LGRB}(E_\mathrm{iso}^{45-450\,\mathrm{keV}} > 10^{51} \, \mathrm{erg})$ SHOALS survey')
 
 def plot_rate_density(intrinsic_rates, channels=False, **kwargs):
@@ -193,6 +174,53 @@ def plot_popsyn_over_grid_slice(pop, grid_type, met_Zsun,
                                 log_prop=False, alpha=0.3, s=5.,
                                 show_fig=True, save_fig=True, close_fig=True,
                                 plot_extension='png', verbose=False):
+    '''Plot the population synthesis data over a grid slice
+    
+    Outputs one or multiple plots of the population synthesis data over a grid slice.
+    Either stores the plots in a directory or shows them.
+    
+    Parameters
+    ----------
+    pop : Population
+        Population object
+    grid_type : str
+        Grid type to get data for.
+        Options are 'HMS-HMS', 'CO-HMS_RLO', 'CO-HeMS', 'CO-HeMS_RLO'.
+    met_Zsun : float
+        Metallicity of the population in solar units
+    termination_flag : str
+        Termination flag for the grid
+    slices : list (optional)
+        List of slices to plot
+    channel : str (optional)
+        Formation channel to be plotted
+    plot_dir : str (optional)
+        Directory to save the plots
+    prop : str (optional)
+        Property to plot on top of the grid slice
+    prop_range : list (optional)
+        Range of the property to plot
+    log_prop : bool (optional)
+        Logarithmic scale for the property
+    alpha : float (optional)
+        Transparency of the data points
+    s : float (optional)
+        Size of the data points
+    show_fig : bool (optional)
+        Show the figure
+    save_fig : bool (optional)
+        Save the figure
+    close_fig : bool (optional)
+        Close the figure
+    plot_extension : str (optional)
+        File extension for saving the plot
+    verbose : bool (optional)
+        Print information
+    
+    Returns
+    -------
+    None
+    '''
 
     # Check if step_names in pop.history data
     if 'step_names' not in pop.history.columns:
@@ -225,7 +253,7 @@ def plot_popsyn_over_grid_slice(pop, grid_type, met_Zsun,
         
         slice_3D_var_range = (bin_edges[i], bin_edges[i+1])
         
-        # add additional information to the title
+        # add additional information about the plot_slice to the title
         if slice_3D_var_str == 'mass_ratio':
             PLOT_PROPERTIES['title'] = f'q = {bin_center:.2f}'
         elif slice_3D_var_str == 'star_2_mass':
@@ -241,14 +269,16 @@ def plot_popsyn_over_grid_slice(pop, grid_type, met_Zsun,
         if prop is not None:
             PLOT_PROPERTIES['figsize'] = (4,5.5)
         
+        # plot the grid slice
         plot_grid_slice(grid,
                         slice_3D_var_str,
                         slice_3D_var_range,
                         termination_flag=termination_flag, 
                         PLOT_PROPERTIES=PLOT_PROPERTIES)
+        
+        # plot data on top of the grid slice
         plot_population_data(data, slice_3D_var_str, slice_3D_var_range, 
                              prop, prop_range, log_prop, alpha, s)
-
 
         if save_fig:
             plt.savefig(os.path.join(plot_dir, PLOT_PROPERTIES['fname']), bbox_inches='tight')
@@ -333,7 +363,6 @@ def get_population_data(pop, metallicity, grid_type, channel=None, prop=None):
     data.drop(columns=['event', 'step_names'], inplace=True)
     return data
 
-
 def setup_grid_slice_plotting(grid, grid_type, plot_extension):
     '''Setup the values for plotting the grid slice
     
@@ -391,7 +420,6 @@ def setup_grid_slice_plotting(grid, grid_type, plot_extension):
     }
 
     return bin_centers, bin_edges, PLOT_PROPERTIES, tmp_fname, slice_3D_var_str
-
 
 def plot_population_data(data,
                          slice_3D_var_str,
@@ -454,8 +482,7 @@ def plot_population_data(data,
                     marker='v',
                     color='black',
                     alpha=alpha,
-                    zorder=0.5)
-    
+                    zorder=0.5) 
     
 def plot_grid_slice(grid, slice_3D_var_str, slice_3D_var_range, termination_flag='combined_TF12', PLOT_PROPERTIES=None):
     grid.plot2D('star_1_mass', 'period_days', None,
