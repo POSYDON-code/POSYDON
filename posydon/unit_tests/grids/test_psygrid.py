@@ -1171,7 +1171,7 @@ class TestPSyGrid:
         path = os.path.join(tmp_path, "MESA_no_histories")
         os.mkdir(path)
         for i in range(3):
-            # get run directory
+            # get run directories for index 0 to 2
             add_MESA_run_files(path, i, binary_run=True, with_histories=False,\
                                with_profiles=True)
         return path
@@ -1182,7 +1182,7 @@ class TestPSyGrid:
         path = os.path.join(tmp_path, "MESA_single_runs")
         os.mkdir(path)
         for i in range(2):
-            # get run directory
+            # get run directories for index 0 to 1
             add_MESA_run_files(path, i, binary_run=False, with_histories=True,\
                                with_profiles=True)
         return path
@@ -1193,7 +1193,7 @@ class TestPSyGrid:
         path = os.path.join(tmp_path, "MESA_runs")
         os.mkdir(path)
         for i in range(4):
-            # get run directory
+            # get run directories for index 0 to 3
             add_MESA_run_files(path, i, binary_run=True, with_histories=True,\
                                with_profiles=True)
         return path
@@ -1488,6 +1488,16 @@ class TestPSyGrid:
                 PSyGrid._create_psygrid(MESA_files,\
                                         totest.h5py.File(PSyGrid.filepath,\
                                                          "w"))
+        # examples: read star_age from stellar histories
+        print("check")
+        self.reset_grid(PSyGrid)
+        PSyGrid.config["star1_history_saved_columns"] = ["star_age"]
+        PSyGrid.config["star2_history_saved_columns"] = ["star_age"]
+        PSyGrid._create_psygrid(MESA_files,\
+                                totest.h5py.File(PSyGrid.filepath, "w"))
+        assert len(PSyGrid.initial_values) == N_MESA_runs
+        assert len(PSyGrid.final_values) == N_MESA_runs
+        assert len(PSyGrid.MESA_dirs) == N_MESA_runs
         # examples: no He_core_fix
         self.reset_grid(PSyGrid)
         PSyGrid.config["He_core_fix"] = False
