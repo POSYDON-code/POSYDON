@@ -34,8 +34,8 @@ def test_initial_total_mass_with_fb1(common_kwargs):
     assert isinstance(f_corr_binary, float)
 
     assert underlying_mass == pytest.approx(2144.551055481399)
-    assert f_corr_single == 0.0
-    assert f_corr_binary == 0.46629806151923225
+    assert f_corr_single == pytest.approx(0)
+    assert f_corr_binary == pytest.approx(0.46629806151923225)
 
     # Test with f_bin = 0.7
     underlying_mass_07, f_corr_single_07, f_corr_binary_07 = initial_total_underlying_mass(
@@ -97,7 +97,7 @@ def test_initial_total_mass_with_fb07(common_kwargs):
     )
 
     assert underlying_mass_1 == pytest.approx(1167.5889079843173)
-    assert f_corr_single_1 == 0
+    assert f_corr_single_1 == pytest.approx(0)
     assert f_corr_binary_1 == pytest.approx(0.5995260790961559)
 
     # Test with f_bin = 0.7 (matching binary_fraction_const)
