@@ -112,3 +112,94 @@ class TestSalpeterIMF:
         integral, _ = quad(custom_imf.pdf, custom_imf.m_min, custom_imf.m_max)
         assert integral == pytest.approx(1.0, rel=1e-4)
 
+    def test_repr(self, default_imf):
+        rep_str = default_imf.__repr__()
+        assert "Salpeter(" in rep_str
+        assert "alpha=" in rep_str
+
+    def test_repr_html(self, default_imf):
+        html_str = default_imf._repr_html_()
+        assert "<h3>Salpeter IMF</h3>" in html_str
+
+class TestKroupa2001IMF:
+    @pytest.fixture
+    def default_kroupa(self):
+        return IMFs.Kroupa2001()
+
+    @pytest.fixture
+    def custom_kroupa(self):
+        return IMFs.Kroupa2001(alpha1=0.5, alpha2=1.7, alpha3=2.7, m1break=0.09, m2break=0.6)
+
+    def test_initialization_default(self, default_kroupa):
+        assert default_kroupa.alpha1 == 0.3
+        assert default_kroupa.alpha2 == 1.3
+        assert default_kroupa.alpha3 == 2.3
+        assert default_kroupa.m_min == 0.01
+        assert default_kroupa.m_max == 200.0
+        integral, _ = quad(default_kroupa.pdf, default_kroupa.m_min, default_kroupa.m_max)
+        assert integral == pytest.approx(1.0, rel=1e-4)
+
+    def test_initialization_custom(self, custom_kroupa):
+        assert custom_kroupa.alpha1 == 0.5
+        assert custom_kroupa.alpha2 == 1.7
+        assert custom_kroupa.alpha3 == 2.7
+        assert custom_kroupa.m1break == 0.09
+        assert custom_kroupa.m2break == 0.6
+        integral, _ = quad(custom_kroupa.pdf, custom_kroupa.m_min, custom_kroupa.m_max)
+        assert integral == pytest.approx(1.0, rel=1e-4)
+
+    def test_pdf_within_range(self, default_kroupa):
+        m = np.linspace(default_kroupa.m_min, default_kroupa.m_max, 100)
+        pdf_values = default_kroupa.pdf(m)
+        expected_pdf = default_kroupa.kroupa_IMF(m) * default_kroupa.norm
+        assert np.all(pdf_values == expected_pdf)
+
+    def test_pdf_outside_range(self, default_kroupa):
+        m = np.array([default_kroupa.m_min - 0.1, default_kroupa.m_max + 0.1])
+        pdf_values = default_kroupa.pdf(m)
+        assert np.all(pdf_values == 0.0)
+
+    def test_pdf_scalar(self, default_kroupa):
+        m = 1.0
+        pdf_value = default_kroupa.pdf(m)
+        expected = default_kroupa.kroupa_IMF(m) * default_kroupa.norm
+        assert pdf_value == expected
+
+    def test_pdf_scalar_outside(self, default_kroupa):
+        m = default_kroupa.m_max + 10.0
+        pdf_value = default_kroupa.pdf(m)
+        assert pdf_value == 0.0
+
+    def test_normalization(self, default_kroupa):
+        integral, _ = quad(default_kroupa.pdf, default_kroupa.m_min, default_kroupa.m_max)
+        assert integral == pytest.approx(1.0, rel=1e-4)
+
+    def test_invalid_initialization(self):
+        with pytest.raises(ValueError, match="Normalization integral is zero"):
+            IMFs.Kroupa2001(alpha1=1.0, alpha2=1.0, alpha3=1.0, m_min=1e-10, m_max=1e-10)
+
+    def test_vectorization(self, default_kroupa):
+        m_array = np.array([0.01, 0.1, 1.0, 10.0, 100.0, 200.0])
+        pdf_values = default_kroupa.pdf(m_array)
+        expected = default_kroupa.kroupa_IMF(m_array) * default_kroupa.norm
+        assert np.all(pdf_values == expected)
+
+    def test_pdf_integral_custom(self, custom_kroupa):
+        integral, _ = quad(custom_kroupa.pdf, custom_kroupa.m_min, custom_kroupa.m_max)
+        assert integral == pytest.approx(1.0, rel=1e-4)
+        
+    def test_negative_mass(self, default_kroupa):
+        with pytest.raises(ValueError, match="Mass must be positive."):
+            default_kroupa.kroupa_IMF(-1.0)
+        with pytest.raises(ValueError, match="Mass must be positive."):
+            default_kroupa.kroupa_IMF(0.0)
+
+    def test_repr(self, default_kroupa):
+        rep_str = default_kroupa.__repr__()
+        assert "Kroupa2001(" in rep_str
+        assert "alpha1=" in rep_str
+
+    def test_repr_html(self, default_kroupa):
+        html_str = default_kroupa._repr_html_()
+        assert "<h3>Kroupa (2001) IMF</h3>" in html_str
+

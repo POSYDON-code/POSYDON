@@ -20,7 +20,13 @@ class Salpeter:
         self.m_min = m_min
         self.m_max = m_max
         self.norm = self._calculate_normalization()
-
+        
+    def __repr__(self):
+        return f"Salpeter(alpha={self.alpha}, m_min={self.m_min}, m_max={self.m_max})"
+    
+    def _repr_html_(self):
+        return f"<h3>Salpeter IMF</h3><p>alpha = {self.alpha}</p><p>m_min = {self.m_min}</p><p>m_max = {self.m_max}</p>"
+    
     def _calculate_normalization(self):
         """Calculate the normalization constant for the IMF.
 
@@ -106,6 +112,15 @@ class Kroupa2001:
         self.m2break = m2break
         self.norm = self._calculate_normalization()
         
+    def __repr__(self):
+        return (f"Kroupa2001(alpha1={self.alpha1}, alpha2={self.alpha2}, alpha3={self.alpha3}, "
+                f"m1break={self.m1break}, m2break={self.m2break}, m_min={self.m_min}, m_max={self.m_max})")
+        
+    def _repr_html_(self):
+        return (f"<h3>Kroupa (2001) IMF</h3><p>alpha1 = {self.alpha1}</p><p>alpha2 = {self.alpha2}</p>"
+                f"<p>alpha3 = {self.alpha3}</p><p>m1break = {self.m1break}</p><p>m2break = {self.m2break}</p>"
+                f"<p>m_min = {self.m_min}</p><p>m_max = {self.m_max}</p>")
+        
     def _calculate_normalization(self):
         """Calculate the normalization constant for the IMF.
 
@@ -167,6 +182,3 @@ class Kroupa2001:
         pdf_values = np.zeros_like(m, dtype=float)
         pdf_values[valid] = self.kroupa_IMF(m[valid]) * self.norm
         return pdf_values
-    
-    
-    
