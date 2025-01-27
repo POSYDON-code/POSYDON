@@ -288,7 +288,7 @@ def SFR_Z_fraction_at_given_redshift(
 
                 fSFR[i, :] = (Z_dist_cdf_interp(np.log10(metallicity_bins[1:]))
                               - Z_dist_cdf_interp(np.log10(metallicity_bins[:-1])))
-                
+
                 if not select_one_met:
                     # add the fraction of the SFR in the first and last bin
                     # or the only bin without selecting one metallicity
