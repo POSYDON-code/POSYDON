@@ -106,6 +106,7 @@ def data_download(file=file, MD5_check=True, verbose=False):
         for member in tqdm(iterable=tar.getmembers(), total=len(tar.getmembers())):
             tar.extract(member=member, path=directory)
 
+    # remove tar files after extracted
     if os.path.exists(file):
         if verbose:
             print('Removed downloaded tar file.')
