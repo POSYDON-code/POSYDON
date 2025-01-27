@@ -135,7 +135,7 @@ class TestFunctions:
         totest.data_download(file="./")
         assert capsys.readouterr().out == ""
         totest.data_download(file="./", verbose=True)
-        assert capsys.readouterr().out == "POSYDON data alraedy exists at ./\n"
+        assert capsys.readouterr().out == "POSYDON data already exists at ./\n"
         # skip real download: do nothing instead
         with monkeypatch.context() as mp:
             mp.setattr(totest.urllib.request, "urlretrieve", mock_urlretrieve)
