@@ -760,11 +760,13 @@ class PSyGrid:
                             history1_mod = np.int_(history1_mod[colname])
                     if history1_mod is not None:
                         len_diff = len(history1)-len(history1_mod)
-                        if len_diff<0: #shorten history1_mod
+                        if len_diff<0:
+                            #shorten history1_mod
                             history1_mod = history1_mod[:len_diff]
                             Pwarn("Reduce mod in {}\n".format(run.history1_path),
                                   "ReplaceValueWarning")
-                        elif len_diff>0: #entend history1_mod # pragma: no cover
+                        elif len_diff>0:
+                            #entend history1_mod
                             add_mod = np.full(len_diff,history1_mod[-1])
                             history1_mod = np.concatenate((history1_mod, add_mod))
                             Pwarn("Expand mod in {}\n".format(run.history1_path),
@@ -781,11 +783,13 @@ class PSyGrid:
                             history1_age = history1_age["star_age"]
                     if history1_age is not None:
                         len_diff = len(history1)-len(history1_age)
-                        if len_diff<0: #shorten history1_age
+                        if len_diff<0:
+                            #shorten history1_age
                             history1_age = history1_age[:len_diff]
                             Pwarn("Reduce age in {}\n".format(run.history1_path),
                                   "ReplaceValueWarning")
-                        elif len_diff>0: #entend history1_age # pragma: no cover
+                        elif len_diff>0:
+                            #entend history1_age
                             add_age = np.full(len_diff,history1_age[-1])
                             history1_age = np.concatenate((history1_age, add_age))
                             Pwarn("Expand age in {}\n".format(run.history1_path),
@@ -806,11 +810,13 @@ class PSyGrid:
                             history2_mod = np.int_(history2_mod[colname])
                     if history2_mod is not None:
                         len_diff = len(history2)-len(history2_mod)
-                        if len_diff<0: #shorten history2_mod
+                        if len_diff<0:
+                            #shorten history2_mod
                             history2_mod = history2_mod[:len_diff]
                             Pwarn("Reduce mod in {}\n".format(run.history2_path),
                                   "ReplaceValueWarning")
-                        elif len_diff>0: #entend history2_mod # pragma: no cover
+                        elif len_diff>0:
+                            #entend history2_mod
                             add_mod = np.full(len_diff,history2_mod[-1])
                             history2_mod = np.concatenate((history2_mod, add_mod))
                             Pwarn("Expand mod in {}\n".format(run.history2_path),
@@ -827,11 +833,13 @@ class PSyGrid:
                             history2_age = history2_age["star_age"]
                     if history2_age is not None:
                         len_diff = len(history2)-len(history2_age)
-                        if len_diff<0: #shorten history2_age
+                        if len_diff<0:
+                            #shorten history2_age
                             history2_age = history2_age[:len_diff]
                             Pwarn("Reduce age in {}\n".format(run.history2_path),
                                   "ReplaceValueWarning")
-                        elif len_diff>0: #entend history2_age # pragma: no cover
+                        elif len_diff>0:
+                            #entend history2_age
                             add_age = np.full(len_diff,history2_age[-1])
                             history2_age = np.concatenate((history2_age, add_age))
                             Pwarn("Expand age in {}\n".format(run.history2_path),
@@ -852,11 +860,13 @@ class PSyGrid:
                             binary_history_mod = np.int_(binary_history_mod[colname])
                     if binary_history_mod is not None:
                         len_diff = len(binary_history)-len(binary_history_mod)
-                        if len_diff<0: #shorten binary_history_mod
+                        if len_diff<0:
+                            #shorten binary_history_mod
                             binary_history_mod = binary_history_mod[:len_diff]
                             Pwarn("Reduce mod in {}\n".format(run.binary_history_path),
                                   "ReplaceValueWarning")
-                        elif len_diff>0: #entend binary_history_mod # pragma: no cover
+                        elif len_diff>0:
+                            #entend binary_history_mod
                             add_mod = np.full(len_diff,binary_history_mod[-1])
                             binary_history_mod = np.concatenate((binary_history_mod, add_mod))
                             Pwarn("Expand mod in {}\n".format(run.binary_history_path),
@@ -872,11 +882,13 @@ class PSyGrid:
                             binary_history_age = binary_history_age["age"]
                     if binary_history_age is not None:
                         len_diff = len(binary_history)-len(binary_history_age)
-                        if len_diff<0: #shorten binary_history_age
+                        if len_diff<0:
+                            #shorten binary_history_age
                             binary_history_age = binary_history_age[:len_diff]
                             Pwarn("Reduce age in {}\n".format(run.binary_history_path),
                                   "ReplaceValueWarning")
-                        elif len_diff>0: #entend binary_history_age
+                        elif len_diff>0:
+                            #entend binary_history_age
                             add_age = np.full(len_diff,binary_history_age[-1])
                             binary_history_age = np.concatenate((binary_history_age, add_age))
                             Pwarn("Expand age in {}\n".format(run.binary_history_path),
@@ -942,9 +954,8 @@ class PSyGrid:
                     kept = keep_after_RLO(binary_history, history1, history2)
                     if kept is None:
                         ignore.reason = "ignored_no_RLO"
-                        if self.verbose:
-                            self._say("Ignored MESA run because of no RLO"
-                                      " in: {}\n".format(run.path))
+                        self._say("Ignored MESA run because of no RLO in:"
+                                  " {}\n".format(run.path))
                         if not initial_RLO_fix:
                             # TODO: we may want to keep these systems for
                             # allowing rerun grids to inform the old grids that
