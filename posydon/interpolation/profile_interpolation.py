@@ -11,6 +11,7 @@ import pickle
 from posydon.grids.psygrid import PSyGrid
 from posydon.interpolation.IF_interpolation import IFInterpolator
 from posydon.utils.posydonwarning import Pwarn
+from posydon.utils.interpolators import interp1d
 
 # Math and ML
 import os
@@ -24,7 +25,6 @@ except ImportError:
 tf.get_logger().setLevel('ERROR')
 from tensorflow.keras import layers, losses, models, optimizers, backend, utils
 from sklearn.decomposition import PCA
-from scipy.interpolate import interp1d
 
 class CompileData:
 
