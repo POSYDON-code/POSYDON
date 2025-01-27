@@ -81,7 +81,7 @@ class TestFunctions:
     @fixture
     def failed_MD5_statement(self):
         # statement that MD5 verfication failed
-        return "Failed to read the tar.gz file for MD5 verificaton"
+        return "Failed to read the tar.gz file for MD5 verification"
 
     @fixture
     def extraction_statement(self):
