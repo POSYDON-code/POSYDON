@@ -58,7 +58,14 @@ def data_download(file=file, MD5_check=True, verbose=False):
     # First, make sure the path does not exist
     if os.path.exists(file):
         if verbose:
-            print('POSYDON data alraedy exists at', file)
+            print('POSYDON data already exists at', file)
+        return
+
+    # Second, check to make sure PATH_TO_POSYDON_DATA is defined
+    if "PATH_TO_POSYDON_DATA" not in os.environ:
+        if verbose:
+            print('You must define the PATH_TO_POSYDON_DATA environment '
+                  'variable before downloading POSYDON datasets')
         return
 
     # Split the file into its directory and filename
@@ -89,7 +96,7 @@ def data_download(file=file, MD5_check=True, verbose=False):
                 # Raise value error
                 raise ValueError("MD5 verification failed!.")
         except:
-            print('Failed to read the tar.gz file for MD5 verificaton, '
+            print('Failed to read the tar.gz file for MD5 verification, '
                   'cannot guarantee file integrity (this error seems to '
                   'happen only on macOS).')
 
