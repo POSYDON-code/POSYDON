@@ -1151,6 +1151,17 @@ class TestFunctions:
         binary.star_2.center_gamma_history=[]
         assert totest.get_binary_state_and_event_and_mt_case(binary, i=0) ==\
                ['detached', None, 'None']
+        # both stars overfill RL leading to double CE while WD condition is
+        # fulfilled as well
+        tests = [(2.0, 1.0, 'oDoubleCE1'), (1.0, 2.0, 'oDoubleCE2')]
+        for (ro1, ro2, e) in tests:
+            binary.rl_relative_overflow_1 = ro1
+            binary.rl_relative_overflow_2 = ro2
+            assert totest.get_binary_state_and_event_and_mt_case(binary,\
+                   interpolation_class='unstable_MT') == ['contact', e, 'None']
+        # stable contact leading to WD formation
+        assert totest.get_binary_state_and_event_and_mt_case(binary,\
+               interpolation_class=None) == ['contact', 'CC1', 'None']
 
     def test_get_binary_state_and_event_and_mt_case_array(self, binary,\
                                                           monkeypatch):
