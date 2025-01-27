@@ -22,7 +22,6 @@ import numpy as np
 import pandas as pd
 from scipy.optimize import newton
 from scipy.integrate import quad
-from scipy.interpolate import PchipInterpolator
 from posydon.utils import constants as const
 from posydon.utils.posydonwarning import Pwarn
 import copy
@@ -31,6 +30,7 @@ from posydon.utils.limits_thresholds import (THRESHOLD_CENTRAL_ABUNDANCE,
     LOG10_BURNING_THRESHOLD, STATE_NS_STARMASS_UPPER_LIMIT,
     RL_RELATIVE_OVERFLOW_THRESHOLD, LG_MTRANSFER_RATE_THRESHOLD
 )
+from posydon.utils.interpolators import interp1d
 
 PATH_TO_POSYDON = os.environ.get("PATH_TO_POSYDON")
 
@@ -625,19 +625,17 @@ def rejection_sampler(x=None, y=None, size=1, x_lim=None, pdf=None):
         An array with `size` random numbers generated from the PDF.
 
     """
-    
     if pdf is None:
-        
-        if x is None or y is None:
-            raise ValueError("x and y PDF values must be specified if no PDF function" 
-                             " is provided for rejection sampling")       
+        if ((x is None) or (y is None)):
+            raise ValueError("x and y PDF values must be specified if no PDF"
+                             " function is provided for rejection sampling")
         assert np.all(y >= 0.0)
         
         try:
-            pdf = PchipInterpolator(x, y)
+            pdf = interp1d(x, y)
         except ValueError:
             idxs = np.argsort(x)
-            pdf = PchipInterpolator(x.take(idxs), y.take(idxs))
+            pdf = interp1d(x.take(idxs), y.take(idxs))
 
         x_rand = np.random.uniform(x.min(), x.max(), size)
         y_rand = np.random.uniform(0, y.max(), size)
@@ -649,11 +647,9 @@ def rejection_sampler(x=None, y=None, size=1, x_lim=None, pdf=None):
             values = np.hstack([values, x_rand[y_rand <= pdf(x_rand)]])
 
     else:
-
         if x_lim is None:
-            raise ValueError("x_lim must be specified for passed PDF function in"
-                             " rejection sampling")
-        
+            raise ValueError("x_lim must be specified for passed PDF function"
+                             " in rejection sampling")
         x_rand = np.random.uniform(x_lim[0], x_lim[1], size)
         pdf_max = max(pdf(np.random.uniform(x_lim[0], x_lim[1], 50000)))
         y_rand = np.random.uniform(0, pdf_max, size)
@@ -2755,22 +2751,6 @@ def calculate_Mejected_for_integrated_binding_energy(profile, Ebind_threshold,
     M_ejected = donor_mass[0] - mass_threshold
 
     return M_ejected
-
-
-class PchipInterpolator2:
-    """Interpolation class."""
-
-    def __init__(self, *args, positive=False, **kwargs):
-        """Initialize the interpolator."""
-        self.interpolator = PchipInterpolator(*args, **kwargs)
-        self.positive = positive
-
-    def __call__(self, *args, **kwargs):
-        """Use the interpolator."""
-        result = self.interpolator(*args, **kwargs)
-        if self.positive:
-            result = np.maximum(result, 0.0)
-        return result
 
 def convert_metallicity_to_string(Z):
     """Check if metallicity is supported by POSYDON v2."""

@@ -26,18 +26,17 @@ from posydon.binary_evol.binarystar import BINARYPROPERTIES
 from posydon.binary_evol.singlestar import STARPROPERTIES
 from posydon.interpolation.interpolation import GRIDInterpolator
 from posydon.interpolation.data_scaling import DataScaler
-from posydon.utils.common_functions import (
-    bondi_hoyle,
-    orbital_period_from_separation,
-    roche_lobe_radius,
-    check_state_of_star,
-    PchipInterpolator2,
-    convert_metallicity_to_string,
-    set_binary_to_failed,
-)
+from posydon.utils.common_functions import (bondi_hoyle,
+                                            orbital_period_from_separation,
+                                            roche_lobe_radius,
+                                            check_state_of_star,
+                                            convert_metallicity_to_string,
+                                            set_binary_to_failed)
+from posydon.utils.interpolators import PchipInterpolator2
 from posydon.binary_evol.flow_chart import (STAR_STATES_CC, STAR_STATES_CO)
 import posydon.utils.constants as const
-from posydon.utils.posydonerror import NumericalError, MatchingError, POSYDONError, FlowError
+from posydon.utils.posydonerror import (NumericalError, MatchingError,
+                                        POSYDONError, FlowError)
 from posydon.utils.posydonwarning import Pwarn
 
 LIST_ACCEPTABLE_STATES_FOR_HMS = ["H-rich_Core_H_burning", "accreted_He_Core_H_burning"]

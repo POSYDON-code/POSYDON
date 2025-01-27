@@ -59,7 +59,7 @@ from posydon.utils.common_functions import set_binary_to_failed
 
 from pandas import read_csv
 from sklearn import neighbors
-from scipy.interpolate import PchipInterpolator
+from posydon.utils.interpolators import interp1d
 
 import json
 
@@ -2167,7 +2167,7 @@ class Sukhbold16_corecollapse(object):
             NS_He_prog = np.array(
                 Engine_data[Engine_data["stellar_state"] == 13]["He_c_mass"]
             )
-            self.mass_NS_interpolator = PchipInterpolator(NS_He_prog, NS_rem_mass)
+            self.mass_NS_interpolator = interp1d(NS_He_prog, NS_rem_mass)
 
             BH_rem_mass = np.array(
                 Engine_data[Engine_data["stellar_state"] == 14]["Rem_mass"]
@@ -2175,7 +2175,7 @@ class Sukhbold16_corecollapse(object):
             BH_He_prog = np.array(
                 Engine_data[Engine_data["stellar_state"] == 14]["He_c_mass"]
             )
-            self.mass_BH_interpolator = PchipInterpolator(BH_He_prog, BH_rem_mass)
+            self.mass_BH_interpolator = interp1d(BH_He_prog, BH_rem_mass)
 
             if verbose:
                 print("Done ...\n")
@@ -2343,7 +2343,7 @@ class Couch20_corecollapse(object):
 
             MZAMS = Sukhbold_data["Mzams"]
             He_core_mass = Sukhbold_data["He_c_mass"]
-            self.MZAMS_He_core_mass_Sukhbold_interpolator = PchipInterpolator(MZAMS, He_core_mass)
+            self.MZAMS_He_core_mass_Sukhbold_interpolator = interp1d(MZAMS, He_core_mass)
 
             Couch_He_c_mass = self.MZAMS_He_core_mass_Sukhbold_interpolator(
                 Couch_MZAMS)

@@ -13,6 +13,7 @@ from sklearn.neighbors import NearestNeighbors
 from .data_scaling import DataScaler
 from posydon.grids.psygrid import PSyGrid
 from posydon.grids.MODELS import MODELS
+from posydon.utils.interpolators import interp1d
 
 
 class psyTrackInterp:
@@ -707,12 +708,14 @@ class GRIDInterpolator():
                 m_cor = m_cor_high
                 idx = np.argmax(mass_high == self.grid_mass)
                 profile_old = grid[idx].final_profile1
-                kvalue_low = np.interp(m_cor, m_cor_low, kvalue_low)
+                f = interp1d(m_cor_low, kvalue_low)
+                kvalue_low = f(m_cor)
             else:
                 m_cor = m_cor_low
                 idx = np.argmax(mass_low == self.grid_mass)
                 profile_old = grid[idx].final_profile1
-                kvalue_high = np.interp(m_cor, m_cor_high, kvalue_high)
+                f = interp1d(m_cor_high, kvalue_high)
+                kvalue_high = f(m_cor)
 
             weight = (M_new - mass_low) / (mass_high - mass_low)
             kvalue = kvalue_low + weight * (kvalue_high - kvalue_low)
