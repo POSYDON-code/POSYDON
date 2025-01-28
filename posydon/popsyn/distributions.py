@@ -41,7 +41,7 @@ class flat_mass_ratio():
         float
 
         """
-        if np.any(q <= 0) or np.any(q > 1):
+        if np.any(q < 0) or np.any(q > 1):
             raise ValueError("Mass ratio must be between 0 and 1. Check mass ratio parameters.")
         return 1.0
     

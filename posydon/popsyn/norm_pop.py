@@ -11,7 +11,7 @@ __authors__ = [
 
 import numpy as np
 from posydon.popsyn import independent_sample
-from scipy.integrate import quad
+from scipy.integrate import quad, nquad
 from posydon.utils.posydonwarning import Pwarn
 from posydon.popsyn.distributions import flat_mass_ratio
 import posydon.popsyn.IMFs as IMFs
@@ -86,7 +86,8 @@ def binary_fraction_resample(ZAMS_primary, simulation_parameters, requested_para
     f_bin_requested = np.ones(len(ZAMS_primary))*requested_parameters['binary_fraction_const']
     
     f_bin = f_bin_requested/f_bin_simulated
-    return f_bin
+    f_sin = (1-f_bin_requested)/(1-f_bin_simulated)
+    return f_bin, f_sin
     
 def mass_correction(simulation_parameters, requested_parameters):
     
@@ -96,16 +97,26 @@ def mass_correction(simulation_parameters, requested_parameters):
         IMF_sim = IMFs.Kroupa2001(m_min=simulation_parameters['primary_mass_min'],
                               m_max=simulation_parameters['primary_mass_max'])
         
-
     # Setup for requested weights
     if requested_parameters['primary_mass_scheme'] == 'Kroupa2001':
         IMF_req = IMFs.Kroupa2001(m_min=requested_parameters['primary_mass_min'],
                                   m_max=requested_parameters['primary_mass_max'])
     
+    if requested_parameters['secondary_mass_scheme'] == 'flat_mass_ratio':
+        q_req = flat_mass_ratio(0, 1)
     
+    f_b_req = requested_parameters['binary_fraction_const']
+    factor = ((1-f_b_req)*quad(lambda m : m*IMF_req.pdf(m), IMF_req.m_min, IMF_req.m_max)[0]
+            + f_b_req*nquad(lambda m, q : (m+m*q)*IMF_req.pdf(m)*q_req.pdf(q),
+                            ranges=[(IMF_req.m_min, IMF_req.m_max),
+                                    (q_req.q_min, q_req.q_max)])[0])
     
-    factor = quad(lambda m : m*IMF_req.pdf(m), IMF_req.m_min, IMF_req.m_max)[0]
-    factor2 = quad(lambda m : m*IMF_sim.pdf(m), IMF_sim.m_min, IMF_sim.m_max)[0]
+    f_b_sim = simulation_parameters['binary_fraction_const']
+    factor2 =  ((1-f_b_sim) * quad(lambda m : IMF_sim.pdf(m), IMF_sim.m_min, IMF_sim.m_max)[0]
+                + f_b_sim * nquad(lambda m, q : (m+m*q)*IMF_sim.pdf(m)*1,
+                    ranges=[(IMF_sim.m_min, IMF_sim.m_max),
+                            (0.0, 1)])[0])
+    
     mass_correction = factor/factor2
     return mass_correction
     
@@ -120,28 +131,33 @@ def underlying_mass(population, simulation_parameters, requested_parameters):
     binaries = population[~mask]
     
     # correction f_b
-    f_bin = binary_fraction_resample(ZAMS_primary, simulation_parameters, requested_parameters)
+    f_bin, f_sin = binary_fraction_resample(ZAMS_primary, simulation_parameters, requested_parameters)
 
     # correction binaries
     # Only need to input the binary models here (should speed up the calculation!)
-    f_IMF = primary_mass_resample(binaries['primary_ZAMS'],
+    f_IMF_bin = primary_mass_resample(binaries['primary_ZAMS'],
                                   simulation_parameters,
                                   requested_parameters)
+    
+    # I need to sample the single stars as well
+    f_IMF_sin = primary_mass_resample(single_stars['primary_ZAMS'],
+                                    simulation_parameters,
+                                    requested_parameters)
     
     f_q = mass_ratio_resample(binaries['primary_ZAMS'],
                               binaries['secondary_ZAMS'],
                               simulation_parameters,
                               requested_parameters)
-    f_corr = f_IMF
+    f_corr_bin = f_IMF_bin
+    f_corr_sin = f_IMF_sin
+    
+    sample_space_correction = 1/mass_correction(simulation_parameters, requested_parameters)
+    underlying_mass_single = single_stars['primary_ZAMS']/(f_corr_sin*(f_sin[mask]))
+    underlying_mass_binary = (binaries['primary_ZAMS']+binaries['secondary_ZAMS'])/(f_corr_bin*f_bin[~mask]) 
 
-    underlying_mass_single = single_stars['primary_ZAMS']/(f_corr[mask] * (1-f_bin[mask]))
-    underlying_mass_binary = (binaries['primary_ZAMS']+binaries['secondary_ZAMS'])/(f_corr[~mask] * f_bin[~mask])
+    underlying_mass = np.sum(underlying_mass_single)/sample_space_correction + np.sum(underlying_mass_binary)/sample_space_correction
     
-    underlying_mass = np.sum(underlying_mass_single) + np.sum(underlying_mass_binary)
-    
-    sample_space_correction = mass_correction(simulation_parameters, requested_parameters)
-    
-    return sample_space_correction*underlying_mass
+    return underlying_mass
 
 
 def prob_q(q_list, ZAMS_primary, m2_min, m2_max):
