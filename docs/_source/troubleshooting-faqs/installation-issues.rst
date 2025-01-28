@@ -10,7 +10,7 @@ Common Installation Issues
 
 1. **Failed Dependencies**:
     - **Description**: Sometimes, certain dependencies might fail to install or conflict with pre-existing ones.
-    - **Solution**: Try installing the failed dependencies separately using ``pip`` or ``conda`` before installing POSYDON. If using ``conda``, consider creating a fresh environment specifically for POSYDON.
+    - **Solution**: Try installing the failed dependencies separately using ``pip`` or ``conda`` before installing POSYDON. If using ``conda``, consider creating a fresh environment specifically for POSYDON. Additionally, some of the package versions are only available on ``conda-forge``. Please ensure that ``conda-forge`` has been added to conda as a channel using the command ``conda config --add channels conda-forge``.
 
     We try our best to keep the dependencies updated and compatible. However, if you encounter issues, please let us know!
 
