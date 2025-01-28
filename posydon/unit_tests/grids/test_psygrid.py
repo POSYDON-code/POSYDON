@@ -179,7 +179,7 @@ def add_MESA_run_files(path, idx, binary_run=True, with_histories=True,\
                     cols = totest.DEFAULT_SINGLE_HISTORY_COLS
                 for j,c in enumerate(cols):
                     if (((idx == 5) or (idx == 11)) and
-                        (c not in totest.DEFAULT_STAR_HISTORY_COLS)):
+                        (c in ["model_number", "star_age"])):
                         # skip extra columns
                         continue
                     l = len(c)
@@ -1536,7 +1536,6 @@ class TestPSyGrid:
                                         totest.h5py.File(PSyGrid.filepath,\
                                                          "w"))
         # examples: read star_age from stellar histories
-        print("check")
         self.reset_grid(PSyGrid)
         PSyGrid.config["star1_history_saved_columns"] = ["star_age"]
         PSyGrid.config["star2_history_saved_columns"] = ["star_age"]
@@ -1608,6 +1607,24 @@ class TestPSyGrid:
                 PSyGrid._create_psygrid(MESA_files,\
                                         totest.h5py.File(PSyGrid.filepath,\
                                                          "w"))
+        # examples: no model_number and star_age columns in history (single)
+        rmtree(run_path)
+        run_path = add_MESA_run_files(MESA_files_single, 5, binary_run=False,\
+                                      with_histories=True, with_profiles=True)
+        self.reset_grid(PSyGrid)
+        PSyGrid.config["binary"] = False
+        PSyGrid.config["star1_history_saved_columns"] = tuple(["star_mass"]\
+         + totest.DEFAULT_STAR_HISTORY_COLS)
+        with warns(MissingFilesWarning, match="Ignored MESA run because of "\
+                                              +"missing history in:"):
+            with warns(MissingFilesWarning, match="Problems with reading "\
+                                                  +"file"):
+                with warns(InappropriateValueWarning,\
+                           match="Ignored MESA run because of scrubbed "\
+                                 +"history in:"):
+                    PSyGrid._create_psygrid(MESA_files_single,\
+                                            totest.h5py.File(PSyGrid.filepath,\
+                                                             "w"))
         # examples: incomplete lines in star and binary history (additional
         # model and age)
         rmtree(run_path)
@@ -1641,6 +1658,22 @@ class TestPSyGrid:
                     with warns(ReplaceValueWarning, match="Expand age in"):
                         PSyGrid._create_psygrid(MESA_files, totest.h5py.File(\
                                                              PSyGrid.filepath,\
+                                                             "w"))
+        # examples: no final profile (single)
+        rmtree(run_path)
+        run_path = add_MESA_run_files(MESA_files_single, 7, binary_run=False,\
+                                      with_histories=True, with_profiles=False)
+        tests = [(True, "Including MESA run despite the missing profile in:"),\
+                 (False, "Ignored MESA run because of missing profile in:")]
+        for (flag, message) in tests:
+            self.reset_grid(PSyGrid)
+            PSyGrid.config["binary"] = False
+            PSyGrid.config["accept_missing_profile"] = flag
+            with warns(MissingFilesWarning, match="Ignored MESA run because "\
+                                                  +"of missing history in:"):
+                with warns(MissingFilesWarning, match=message):
+                    PSyGrid._create_psygrid(MESA_files_single,\
+                                            totest.h5py.File(PSyGrid.filepath,\
                                                              "w"))
         pass
 
