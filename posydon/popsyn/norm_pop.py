@@ -110,13 +110,15 @@ def mass_correction(simulation_parameters, requested_parameters):
             + f_b_req*nquad(lambda m, q : (m+m*q)*IMF_req.pdf(m)*q_req.pdf(q),
                             ranges=[(IMF_req.m_min, IMF_req.m_max),
                                     (q_req.q_min, q_req.q_max)])[0])
+    print('f1:', (1-f_b_req)*quad(lambda m : m*IMF_req.pdf(m), IMF_req.m_min, IMF_req.m_max)[0])
     
     f_b_sim = simulation_parameters['binary_fraction_const']
-    factor2 =  ((1-f_b_sim) * quad(lambda m : IMF_sim.pdf(m), IMF_sim.m_min, IMF_sim.m_max)[0]
+    factor2 =  ((1-f_b_sim) * quad(lambda m : m*IMF_sim.pdf(m), IMF_sim.m_min, IMF_sim.m_max)[0]
                 + f_b_sim * nquad(lambda m, q : (m+m*q)*IMF_sim.pdf(m)*1,
                     ranges=[(IMF_sim.m_min, IMF_sim.m_max),
                             (0.0, 1)])[0])
-    
+    print('f2:',(1-f_b_sim) * quad(lambda m : m*IMF_sim.pdf(m), IMF_sim.m_min, IMF_sim.m_max)[0])
+
     mass_correction = factor/factor2
     return mass_correction
     
@@ -150,8 +152,10 @@ def underlying_mass(population, simulation_parameters, requested_parameters):
                               requested_parameters)
     f_corr_bin = f_IMF_bin
     f_corr_sin = f_IMF_sin
-    
+    print(f_corr_sin)
+    print(f_sin[mask])
     sample_space_correction = 1/mass_correction(simulation_parameters, requested_parameters)
+
     underlying_mass_single = single_stars['primary_ZAMS']/(f_corr_sin*(f_sin[mask]))
     underlying_mass_binary = (binaries['primary_ZAMS']+binaries['secondary_ZAMS'])/(f_corr_bin*f_bin[~mask]) 
 
