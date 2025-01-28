@@ -29,6 +29,12 @@ Using Anaconda (Recommended)
 
         conda activate posydon_env
 
+    As many of the required versions of packages are available on ``conda-forge`` you may need to add this channel to conda if you have not already:
+
+    .. code-block:: bash
+
+        conda config --add channels conda-forge
+
 3. **Install POSYDON**
 
     .. warning::
