@@ -46,7 +46,7 @@ class Testinterp1d:
         return totest.interp1d(data[0], data[1])
 
     # test the interp1d class
-    def test_init(self, data, interp1d, capsys):
+    def test_init(self, data, interp1d):
         assert isroutine(interp1d.__init__)
         # check that the instance is of correct type and all code in the
         # __init__ got executed: the elements are created and initialized
