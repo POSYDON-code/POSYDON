@@ -8,7 +8,6 @@ __authors__ = [
 
 import pickle
 import numpy as np
-from scipy import interpolate
 from sklearn.neighbors import NearestNeighbors
 from .data_scaling import DataScaler
 from posydon.grids.psygrid import PSyGrid
