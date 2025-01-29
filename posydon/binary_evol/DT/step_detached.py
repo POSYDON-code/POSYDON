@@ -40,10 +40,12 @@ from posydon.binary_evol.flow_chart import (STAR_STATES_CC,
                                             STAR_STATES_HE_RICH_EVOLVABLE)
 import posydon.utils.constants as const
 from posydon.utils.posydonerror import (NumericalError, MatchingError,
-                                        POSYDONError, FlowError)
+                                        POSYDONError, FlowError,
+                                        ClassificationError)
 from posydon.utils.posydonwarning import Pwarn
 
-LIST_ACCEPTABLE_STATES_FOR_HMS = ["H-rich_Core_H_burning", "accreted_He_Core_H_burning"]
+LIST_ACCEPTABLE_STATES_FOR_HMS = ["H-rich_Core_H_burning",
+                                  "accreted_He_Core_H_burning"]
 
 LIST_ACCEPTABLE_STATES_FOR_postMS = [
     "H-rich_Shell_H_burning",
