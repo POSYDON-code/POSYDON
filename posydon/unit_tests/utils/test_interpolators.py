@@ -46,7 +46,7 @@ class Testinterp1d:
         return totest.interp1d(data[0], data[1])
 
     # test the interp1d class
-    def test_init(self, data, interp1d):
+    def test_init(self, data, interp1d, capsys):
         assert isroutine(interp1d.__init__)
         # check that the instance is of correct type and all code in the
         # __init__ got executed: the elements are created and initialized
@@ -54,6 +54,8 @@ class Testinterp1d:
         assert interp1d.x == data[0]
         assert interp1d.y == data[1]
         assert interp1d.kind == 'linear'
+        assert interp1d.below is None
+        assert interp1d.above is None
         # bad input
         with raises(TypeError, match="missing 2 required positional "\
                                      +"arguments: 'x' and 'y'"):
@@ -64,11 +66,38 @@ class Testinterp1d:
             totest.interp1d(None, None)
         with raises(ValueError):
             totest.interp1d('test', 'test')
+        with raises(NotImplementedError, match="fill_value has to be a tuple "\
+                                               +"with 1 or 2 elements"):
+            totest.interp1d(x=data[0], y=data[1], fill_value='test')
+        with raises(TypeError):
+            totest.interp1d(x=data[0], y=data[1], fill_value=('test', 'test'))
+        with raises(TypeError):
+            totest.interp1d(x=data[0], y=data[1], left='test')
+        with raises(TypeError):
+            totest.interp1d(x=data[0], y=data[1], right='test')
         # examples
         kinds = ['linear']
         for k in kinds:
             test_interp1d = totest.interp1d(x=data[0], y=data[1], kind=k)
             assert test_interp1d.kind == k
+        # examples
+        tests = [({'fill_value': (2.0,)}, 2.0, 2.0),\
+                 ({'fill_value': (2.0, 3.0)}, 2.0, 3.0),\
+                 ({'left': 2.0}, 2.0, None),\
+                 ({'right': 3.0}, None, 3.0),\
+                 ({'left': 2.0, 'right': 3.0}, 2.0, 3.0),\
+                 ({'fill_value': (1.2, 1.3), 'left': 2.0, 'right': 3.0},\
+                  2.0, 3.0)]
+        for (kwargs, b, a) in tests:
+            test_interp1d = totest.interp1d(x=data[0], y=data[1], **kwargs)
+            if b is None:
+                assert test_interp1d.below is None
+            else:
+                assert test_interp1d.below == b
+            if a is None:
+                assert test_interp1d.above is None
+            else:
+                assert test_interp1d.above == a
 
     def test_call(self, data, interp1d):
         assert isroutine(interp1d.__call__)

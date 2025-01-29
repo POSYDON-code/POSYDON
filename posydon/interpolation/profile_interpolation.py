@@ -748,8 +748,7 @@ class Composition:
             He = np.ones(200) * center_He
             He[int(b[1]*200):] = surface_He
             f_He = interp1d(b,[center_He,surface_He],
-                            fill_value=(center_He,surface_He),
-                            bounds_error=False)
+                            fill_value=(center_He,surface_He))
             # use f to construct the profile points in the shell burning region
             He[int(b[0]*200):int(b[1]*200)] = f_He(np.linspace(0,1,200)[int(b[0]*200):int(b[1]*200)])
             
@@ -772,8 +771,7 @@ class Composition:
             plus = np.ones(200) * (center_H + center_He)
             plus[int(b[2]*200):] = (surface_H + surface_He)
             f_plus = interp1d(b[1:],[center_H + center_He, surface_H + surface_He],
-                              fill_value=(center_H + center_He, surface_H + surface_He),
-                              bounds_error=False)
+                              fill_value=(center_H + center_He, surface_H + surface_He))
             plus[int(b[1]*200):int(b[2]*200)] = f_plus(np.linspace(0,1,200)[int(b[1]*200):int(b[2]*200)])
             He = plus - H
         
@@ -784,7 +782,7 @@ class Composition:
             b = self.bounds_models[star_state](tf.convert_to_tensor([initial])).numpy()[0]   
             H = np.ones(200) * center_H
             H[int(b[1]*200):] = surface_H
-            f_H = interp1d(b,[center_H,surface_H],fill_value=(center_H,surface_H),bounds_error=False)
+            f_H = interp1d(b,[center_H,surface_H],fill_value=(center_H,surface_H))
             # use f to construct the profile points in the shell burning region
             H[int(b[0]*200):int(b[1]*200)] = f_H(np.linspace(0,1,200)[int(b[0]*200):int(b[1]*200)])
             # "H+He" profile is flat:
@@ -797,14 +795,14 @@ class Composition:
             b = self.bounds_models[star_state](tf.convert_to_tensor([initial])).numpy()[0]   
             H = np.ones(200) * center_H
             H[int(b[1]*200):] = surface_H
-            f_H = interp1d(b[:2],[center_H,surface_H],fill_value=(center_H,surface_H),bounds_error=False)
+            f_H = interp1d(b[:2],[center_H,surface_H],fill_value=(center_H,surface_H))
             # use f to construct the profile points in the shell burning region
             H[int(b[0]*200):int(b[1]*200)] = f_H(np.linspace(0,1,200)[int(b[0]*200):int(b[1]*200)])
             # "H+He" profile is beveled as well:
             plus = np.ones(200) * (center_H+center_He)
             plus[int(b[3]*200):] = surface_H+surface_He
             f_plus = interp1d(b[2:],[center_H+center_He,surface_H+surface_He],
-                              fill_value=(center_H+center_He,surface_H+surface_He),bounds_error=False)
+                              fill_value=(center_H+center_He,surface_H+surface_He))
             plus[int(b[2]*200):int(b[3]*200)] = f_plus(np.linspace(0,1,200)[int(b[2]*200):int(b[3]*200)])
             He = plus - H
         
