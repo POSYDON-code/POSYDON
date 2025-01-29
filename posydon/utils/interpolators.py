@@ -57,8 +57,8 @@ class interp1d:
                 self.below = kwargs['fill_value'][0]
                 self.above = kwargs['fill_value'][1]
             else:
-                raise NotImplementedError("fill_value has to be a tuple with "
-                                          "1 or 2 elements")
+                raise NotImplementedError("fill_value has to be \"extrapolate\" or "
+                                          "a tuple with 1 or 2 elements")
         if 'left' in kwargs:
             self.below = kwargs['left']
         if 'right' in kwargs:
