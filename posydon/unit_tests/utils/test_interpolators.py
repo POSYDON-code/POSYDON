@@ -56,6 +56,7 @@ class Testinterp1d:
         assert interp1d.kind == 'linear'
         assert interp1d.below is None
         assert interp1d.above is None
+        assert interp1d.extrapolate == False
         # bad input
         with raises(TypeError, match="missing 2 required positional "\
                                      +"arguments: 'x' and 'y'"):
@@ -66,8 +67,8 @@ class Testinterp1d:
             totest.interp1d(None, None)
         with raises(ValueError):
             totest.interp1d('test', 'test')
-        with raises(NotImplementedError, match="fill_value has to be a tuple "\
-                                               +"with 1 or 2 elements"):
+        with raises(NotImplementedError, match="fill_value has to be \"extrapolate\" or "\
+                                                +"a tuple with 1 or 2 elements"):
             totest.interp1d(x=data[0], y=data[1], fill_value='test')
         with raises(TypeError):
             totest.interp1d(x=data[0], y=data[1], fill_value=('test', 'test'))
@@ -81,7 +82,8 @@ class Testinterp1d:
             test_interp1d = totest.interp1d(x=data[0], y=data[1], kind=k)
             assert test_interp1d.kind == k
         # examples
-        tests = [({'fill_value': (2.0,)}, 2.0, 2.0),\
+        tests = [({'fill_value': "extrapolate"}, None, None),\
+                 ({'fill_value': (2.0,)}, 2.0, 2.0),\
                  ({'fill_value': (2.0, 3.0)}, 2.0, 3.0),\
                  ({'left': 2.0}, 2.0, None),\
                  ({'right': 3.0}, None, 3.0),\
