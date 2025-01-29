@@ -103,6 +103,8 @@ class TestFunctions:
         assert totest.scrub([None], [models], [ages]) == [None]
         assert totest.scrub([tables], [None], [ages]) == [None]
         assert totest.scrub([tables], [models], [None]) == [None]
+        assert np.array_equal(totest.scrub([np.array([])], [np.array([])],\
+                                           [np.array([])]), [np.array([])])
         # examples: no scrubbing for two tables and a None type object
         for (t, r) in zip(totest.scrub([tables, tables, None],\
                                        [models, models, None],\
@@ -112,11 +114,11 @@ class TestFunctions:
                 assert np.array_equal(t, r)
             else:
                 assert t == r
-        # examples: scrubb element 1 on age
+        # examples: scrub element 1 on age
         ages[2] = ages[1]
         assert np.array_equal(totest.scrub([tables], [models], [ages])[0],\
                tables[np.array([True, False, True, True, True])])
-        # examples: additionally scrubb element 3 on model
+        # examples: additionally scrub element 3 on model
         models[4] = models[3]
         assert np.array_equal(totest.scrub([tables], [models], [ages])[0],\
                tables[np.array([True, False, True, False, True])])

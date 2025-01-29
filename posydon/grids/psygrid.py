@@ -984,38 +984,26 @@ class PSyGrid:
                         ignore.reason = "ignored_no_final_profile"
                         continue
 
-            if binary_history is not None:
-                if binary_history.shape == ():  # if history is only one line
-                    initial_BH = binary_history.copy()
-                    final_BH = binary_history.copy()
-                else:
-                    # disentagle arrays with `copy` because the LHSs may change
-                    initial_BH = binary_history[0].copy()
-                    final_BH = binary_history[-1].copy()
+            if ((binary_history is not None) and (binary_history.shape != ())):
+                # disentagle arrays with `copy` because the LHSs may change
+                initial_BH = binary_history[0].copy()
+                final_BH = binary_history[-1].copy()
             else:
                 initial_BH = None
                 final_BH = None
 
-            if history1 is not None:
-                if history1.shape == ():  # if history is only one line
-                    initial_H1 = history1.copy()
-                    final_H1 = history1.copy()
-                else:
-                    # disentagle arrays with `copy` because the LHSs may change
-                    initial_H1 = history1[0].copy()
-                    final_H1 = history1[-1].copy()
+            if ((history1 is not None) and (history1.shape != ())):
+                # disentagle arrays with `copy` because the LHSs may change
+                initial_H1 = history1[0].copy()
+                final_H1 = history1[-1].copy()
             else:
                 initial_H1 = None
                 final_H1 = None
 
-            if history2 is not None:
-                if history2.shape == ():  # if history is only one line
-                    initial_H2 = history2.copy()
-                    final_H2 = history2.copy()
-                else:
-                    # disentagle arrays with `copy` because the LHSs may change
-                    initial_H2 = history2[0].copy()
-                    final_H2 = history2[-1].copy()
+            if ((history2 is not None) and (history2.shape != ())):
+                # disentagle arrays with `copy` because the LHSs may change
+                initial_H2 = history2[0].copy()
+                final_H2 = history2[-1].copy()
             else:
                 initial_H2 = None
                 final_H2 = None
@@ -1035,12 +1023,14 @@ class PSyGrid:
                     initial_BH["star_1_mass"] = init_mass_1
                 else:
                     can_compute_new_separation = False
+                    ignore.reason = "corrupted_binary_history"
 
                 if "star_2_mass" in dtype_initial_values.names:
                     init_mass_2 = bh_header["initial_acc_mass"]
                     initial_BH["star_2_mass"] = init_mass_2
                 else:
                     can_compute_new_separation = False
+                    ignore.reason = "corrupted_binary_history"
 
                 if "period_days" in dtype_initial_values.names:
                     init_period = bh_header["initial_period_days"]
@@ -1062,6 +1052,8 @@ class PSyGrid:
                 if "S1_star_mass" in dtype_initial_values.names:
                     init_mass_1 = h1_header["initial_m"]
                     initial_H1["star_mass"] = init_mass_1
+                else:
+                    ignore.reason = "corrupted_history1"
 
             # get some initial values from the `LOGS1/history.data` header
             addX = "X" in dtype_initial_values.names

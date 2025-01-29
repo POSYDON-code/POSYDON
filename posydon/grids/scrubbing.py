@@ -44,8 +44,9 @@ def scrub(tables, models, ages):
         else:
             n = len(model)
             userow = np.zeros(n, dtype=bool)
-            userow[-1] = True
-            last_m, last_t = model[-1], age[-1]
+            if n>0:
+                userow[-1] = True
+                last_m, last_t = model[-1], age[-1]
             for i in range(n-2, -1, -1):
                 t_i, m_i = age[i], model[i]
                 if t_i < last_t and m_i < last_m:
