@@ -31,21 +31,24 @@ class interp1d:
                     Y-value to return for evaluations below the data `x`.
                 - 'right' : float
                     Y-value to return for evaluations above the data `x`.
-                - 'fill_value' : tuple of size 1 or 2
-                    Superseeded by 'left' or 'right'
+                - 'fill_value' : 'extrapolate' or tuple of size 1 or 2
+                    Superseded by 'left' or 'right'
                     - size 1 : use y-value for above and below
                     - size 2 : use first y-value for above and second for below
 
         """
-        self.x = x
-        self.y = y
+        self.x = np.array(x)
+        self.y = np.array(y)
         if kind not in ['linear']:
             raise NotImplementedError(f"kind = {kind} is not supported")
         self.kind = kind
         self.below = None
         self.above = None
+        self.extrapolate = False
         if 'fill_value' in kwargs:
-            if (isinstance(kwargs['fill_value'], tuple) and
+            if kwargs['fill_value']=="extrapolate":
+                self.extrapolate = True
+            elif (isinstance(kwargs['fill_value'], tuple) and
                 (len(kwargs['fill_value']) == 1)):
                 self.below = kwargs['fill_value'][0]
                 self.above = kwargs['fill_value'][0]
@@ -78,8 +81,24 @@ class interp1d:
 
         """
         if self.kind == 'linear':
-            return np.interp(x=x_new, xp=self.x, fp=self.y, left=self.below,
+            
+            y_interp = np.interp(x=x_new, xp=self.x, fp=self.y, left=self.below,
                              right=self.above)
+
+            if self.extrapolate:
+                below_mask = x_new < self.x[0]
+                above_mask = x_new > self.x[-1]
+
+                if np.any(below_mask):
+                    slope_below = (self.y[1] - self.y[0]) / (self.x[1] - self.x[0])
+                    y_interp[below_mask] = self.y[0] + slope_below * (x_new[below_mask] - self.x[0])
+
+                if np.any(above_mask):
+                    slope_above = (self.y[-1] - self.y[-2]) / (self.x[-1] - self.x[-2])
+                    y_interp[above_mask] = self.y[-1] + slope_above * (x_new[above_mask] - self.x[-1])
+
+            return y_interp
+
         else:
             raise NotImplementedError(f"kind = {self.kind} is not supported")
 
