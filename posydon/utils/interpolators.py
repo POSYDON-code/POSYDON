@@ -33,6 +33,9 @@ class interp1d:
                     Y-value to return for evaluations above the data `x`.
                 - 'fill_value' : 'extrapolate' or tuple of size 1 or 2
                     Superseded by 'left' or 'right'
+                    - 'extrapolate' : use the first and last elements in the
+                         data to determine the extrapolation below and above,
+                         respectively; ignores fixed values for above and below
                     - size 1 : use y-value for above and below
                     - size 2 : use first y-value for above and second for below
 
@@ -46,7 +49,7 @@ class interp1d:
         self.above = None
         self.extrapolate = False
         if 'fill_value' in kwargs:
-            if kwargs['fill_value']=="extrapolate":
+            if kwargs['fill_value'] == 'extrapolate':
                 self.extrapolate = True
             elif (isinstance(kwargs['fill_value'], tuple) and
                 (len(kwargs['fill_value']) == 1)):
@@ -57,8 +60,8 @@ class interp1d:
                 self.below = kwargs['fill_value'][0]
                 self.above = kwargs['fill_value'][1]
             else:
-                raise NotImplementedError("fill_value has to be \"extrapolate\" or "
-                                          "a tuple with 1 or 2 elements")
+                raise NotImplementedError("fill_value has to be 'extrapolate' "
+                                          "or a tuple with 1 or 2 elements")
         if 'left' in kwargs:
             self.below = kwargs['left']
         if 'right' in kwargs:
@@ -71,34 +74,33 @@ class interp1d:
 
         Parameters
         ----------
-        x_new : ndarray-like
-            X-coordinates to get interpolated y-values for.
+        x_new : float or ndarray
+            X-coordinate(s) to get interpolated y-value(s) for.
 
         Returns
         -------
-        ndarray-like
+        ndarray
             Interpolated y-values.
 
         """
+        x_n = np.array(x_new)
         if self.kind == 'linear':
-            
-            y_interp = np.interp(x=x_new, xp=self.x, fp=self.y, left=self.below,
-                             right=self.above)
-
-            if self.extrapolate:
-                below_mask = x_new < self.x[0]
-                above_mask = x_new > self.x[-1]
-
+            y_interp = np.array(np.interp(x=x_n, xp=self.x, fp=self.y,
+                                          left=self.below, right=self.above))
+            if (self.extrapolate and (len(self.x)>1)):
+                below_mask = x_n < self.x[0]
+                above_mask = x_n > self.x[-1]
                 if np.any(below_mask):
-                    slope_below = (self.y[1] - self.y[0]) / (self.x[1] - self.x[0])
-                    y_interp[below_mask] = self.y[0] + slope_below * (x_new[below_mask] - self.x[0])
-
+                    slope_below = ((self.y[1]-self.y[0])
+                                   / (self.x[1]-self.x[0]))
+                    y_interp[below_mask] = self.y[0] + slope_below * (
+                                            x_n[below_mask]-self.x[0])
                 if np.any(above_mask):
-                    slope_above = (self.y[-1] - self.y[-2]) / (self.x[-1] - self.x[-2])
-                    y_interp[above_mask] = self.y[-1] + slope_above * (x_new[above_mask] - self.x[-1])
-
+                    slope_above = ((self.y[-1]-self.y[-2])
+                                   / (self.x[-1]-self.x[-2]))
+                    y_interp[above_mask] = self.y[-1] + slope_above * (
+                                            x_n[above_mask]-self.x[-1])
             return y_interp
-
         else:
             raise NotImplementedError(f"kind = {self.kind} is not supported")
 

@@ -51,8 +51,8 @@ class Testinterp1d:
         # check that the instance is of correct type and all code in the
         # __init__ got executed: the elements are created and initialized
         assert isinstance(interp1d, totest.interp1d)
-        assert interp1d.x == data[0]
-        assert interp1d.y == data[1]
+        assert np.array_equal(interp1d.x, np.array(data[0]))
+        assert np.array_equal(interp1d.y, np.array(data[1]))
         assert interp1d.kind == 'linear'
         assert interp1d.below is None
         assert interp1d.above is None
@@ -67,8 +67,9 @@ class Testinterp1d:
             totest.interp1d(None, None)
         with raises(ValueError):
             totest.interp1d('test', 'test')
-        with raises(NotImplementedError, match="fill_value has to be \"extrapolate\" or "\
-                                                +"a tuple with 1 or 2 elements"):
+        with raises(NotImplementedError, match="fill_value has to be "\
+                                                +"'extrapolate' or a tuple "\
+                                                +"with 1 or 2 elements"):
             totest.interp1d(x=data[0], y=data[1], fill_value='test')
         with raises(TypeError):
             totest.interp1d(x=data[0], y=data[1], fill_value=('test', 'test'))
@@ -82,8 +83,11 @@ class Testinterp1d:
             test_interp1d = totest.interp1d(x=data[0], y=data[1], kind=k)
             assert test_interp1d.kind == k
         # examples
-        tests = [({'fill_value': "extrapolate"}, None, None),\
-                 ({'fill_value': (2.0,)}, 2.0, 2.0),\
+        test_interp1d = totest.interp1d(x=data[0], y=data[1],\
+                                        fill_value='extrapolate')
+        assert test_interp1d.extrapolate == True
+        # examples
+        tests = [({'fill_value': (2.0,)}, 2.0, 2.0),\
                  ({'fill_value': (2.0, 3.0)}, 2.0, 3.0),\
                  ({'left': 2.0}, 2.0, None),\
                  ({'right': 3.0}, None, 3.0),\
@@ -106,10 +110,18 @@ class Testinterp1d:
         # examples
         for x,y in zip(data[0], data[1]):
             assert interp1d(x) == y
-        tests = [(0.2, approx(0.8, abs=6e-12)), (0.5, approx(0.5, abs=6e-12)),\
-                 (0.9, approx(0.1, abs=6e-12))]
+        tests = [(0.0, 1.0), (0.2, approx(0.8, abs=6e-12)),\
+                 (0.5, approx(0.5, abs=6e-12)), (0.9, approx(0.1, abs=6e-12)),\
+                 (1.4, 0.0), (-0.1, 1.0)]
         for (x,y) in tests:
             assert interp1d(x) == y
+        # examples: extrapolate
+        test_interp1d = totest.interp1d(x=data[0], y=data[1],\
+                                        fill_value='extrapolate')
+        tests[-1] = (-0.1, approx(1.1, abs=6e-12))
+        tests[-2] = (1.4, approx(-0.4, abs=6e-12))
+        for (x,y) in tests:
+            assert test_interp1d(x) == y
         # bad value
         interp1d.kind = 'test'
         with raises(NotImplementedError, match="kind = test is not supported"):
