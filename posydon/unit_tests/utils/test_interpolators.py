@@ -1,4 +1,4 @@
-"""Unit tests of posydon/utils/common_functions.py
+"""Unit tests of posydon/utils/interpolators.py
 """
 
 __authors__ = [
