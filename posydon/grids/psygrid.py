@@ -1226,9 +1226,9 @@ class PSyGrid:
             # check that new MESA path is added at run_index
             lenMESA_dirs = len(self.MESA_dirs)
             if lenMESA_dirs!=run_index:
-                Pwarn("Non synchronous indexing: " +\
-                      "run_index={} != ".format(run_index) +\
-                      "length(MESA_dirs)={}".format(lenMESA_dirs),
+                Pwarn("Non synchronous indexing: "\
+                      +"run_index={} != ".format(run_index)\
+                      +"length(MESA_dirs)={}".format(lenMESA_dirs),
                       "InappropriateValueWarning")
 
         #general fix for termination_flag in case of initial RLO in binaries
