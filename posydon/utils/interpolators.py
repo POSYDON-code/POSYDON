@@ -35,9 +35,9 @@ class interp1d:
                     Superseded by 'left' or 'right'
                     - 'extrapolate' : use the first and last elements in the
                          data to determine the extrapolation below and above,
-                         respectively; ignores fixed values for above and below
-                    - size 1 : use y-value for above and below
-                    - size 2 : use first y-value for above and second for below
+                         respectively; ignores fixed values for below and above
+                    - size 1 : use y-value for below and above
+                    - size 2 : use first y-value for below and second for above
 
         """
         self.x = np.array(x)
