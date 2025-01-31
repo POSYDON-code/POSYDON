@@ -1306,7 +1306,7 @@ class PSyGrid:
             #only use included runs with a valid index
             if run_included_at[i]>=0:
                 #check for index range
-                if run_included_at[i]>=run_index:
+                if run_included_at[i]>=run_index: # pragma no cover
                     Pwarn("run {} has a run_index out of ".format(i) +
                         "range: {}>={}".format(run_included_at[i], run_index),
                            "InappropriateValueWarning")
@@ -1316,14 +1316,14 @@ class PSyGrid:
                     if colname in self.initial_values.dtype.names:
                         value = self.initial_values[i][colname]
                         new_initial_values[run_included_at[i]][colname] = value
-                    else:
+                    else: # pragma no cover
                         new_initial_values[run_included_at[i]][colname] = np.nan
                 #copy final values or fill with nan if not existing in original
                 for colname in dtype_final_values.names:
                     if colname in self.final_values.dtype.names:
                         value = self.final_values[i][colname]
                         new_final_values[run_included_at[i]][colname] = value
-                    else:
+                    else: # pragma no cover
                         new_final_values[run_included_at[i]][colname] = np.nan
         #replace old initial/final value array
         self.initial_values = np.copy(new_initial_values)

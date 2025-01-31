@@ -1268,6 +1268,28 @@ class TestPSyGrid:
                                with_profiles=True)
         return path
 
+    @fixture
+    def MESA_EEPs_single(self, MESA_files_single):
+        # create files expected from a MESA run of a single star
+        if os.path.exists(MESA_files_single):
+            path = os.path.join(MESA_files_single, "eeps")
+            os.mkdir(path)
+            searchfor = os.path.join(MESA_files_single, "Zbase*")
+            for dirname in totest.glob.glob(searchfor):
+                # copy history file to become an EEP file
+                history_filename = os.path.join(dirname, "LOGS1",\
+                                                "history.data")
+                eep_filename = os.path.join(path, os.path.basename(dirname)\
+                                                  +".data.eep")
+                if os.path.exists(history_filename):
+                    with open(eep_filename, "w") as test_file:
+                        for i in range(6): # add additional header lines
+                            test_file.write("Test EEP_HEADER{}\n".format(i+1))
+                        with open(history_filename, "r") as data_file:
+                            for line in data_file: # copy data
+                                test_file.write(line)
+            return path
+
     # test the PSyGrid class
     def test_init(self, PSyGrid, monkeypatch):
         def mock_load(self, filepath=None):
@@ -1416,8 +1438,8 @@ class TestPSyGrid:
         pass
 
     def test_create_psygrid(self, PSyGrid, Empty_dir, MESA_no_histories,\
-                            MESA_files_single, eep_files, MESA_files,\
-                            MESA_v1_files, monkeypatch, capsys):
+                            MESA_files_single, eep_files, MESA_EEPs_single,\
+                            MESA_files, MESA_v1_files, monkeypatch):
         def check_len(Grid, N):
             assert len(Grid.initial_values) == N
             assert len(Grid.final_values) == N
@@ -1486,6 +1508,11 @@ class TestPSyGrid:
                                                   +"to single-star grid."):
                 PSyGrid._create_psygrid(MESA_PATH, None)
         PSyGrid.config["eep"] = eep_files
+        PSyGrid.config["binary"] = False
+        with warns(MissingFilesWarning, match="No matching EEP file for"):
+            PSyGrid._create_psygrid(MESA_files_single,\
+                                    totest.h5py.File(PSyGrid.filepath,"w"))
+        PSyGrid.config["eep"] = MESA_EEPs_single
         PSyGrid.config["binary"] = False
         with warns(MissingFilesWarning, match="No matching EEP file for"):
             PSyGrid._create_psygrid(MESA_files_single,\
@@ -1679,12 +1706,18 @@ class TestPSyGrid:
                                     totest.h5py.File(PSyGrid.filepath, "w"))
         check_len(PSyGrid, N_MESA_runs+1)
         # examples: slim
-        self.reset_grid(PSyGrid)
-        PSyGrid._create_psygrid(MESA_files,\
+        for RLO_fix in [True, False]:
+            self.reset_grid(PSyGrid)
+            PSyGrid.config["initial_RLO_fix"] = RLO_fix
+            PSyGrid._create_psygrid(MESA_files,\
                                 totest.h5py.File(PSyGrid.filepath, "w"),\
                                 slim=True)
-        check_len(PSyGrid, N_MESA_runs)
+            if RLO_fix: # all runs are kept in initial_RLO_fix
+                check_len(PSyGrid, N_MESA_runs+1)
+            else:
+                check_len(PSyGrid, N_MESA_runs)
         # examples: add runs twice (missing reset)
+        PSyGrid.config["initial_RLO_fix"] = True # twice warned
         with warns(InappropriateValueWarning, match="Non synchronous "\
                                                     +"indexing:"):
             with warns(MissingFilesWarning, match="Ignored MESA run because "\
@@ -1692,9 +1725,9 @@ class TestPSyGrid:
                                                   +"history in:"):
                 PSyGrid._create_psygrid(MESA_files, totest.h5py.File(\
                                          PSyGrid.filepath, "w"))
-        assert len(PSyGrid.initial_values) == N_MESA_runs
-        assert len(PSyGrid.final_values) == N_MESA_runs
-        assert len(PSyGrid.MESA_dirs) == 2*N_MESA_runs
+        assert len(PSyGrid.initial_values) == N_MESA_runs+1
+        assert len(PSyGrid.final_values) == N_MESA_runs+1
+        assert len(PSyGrid.MESA_dirs) == 2*N_MESA_runs+1
         # examples: initial_RLO_fix mock returns other period and only TF4
         self.reset_grid(PSyGrid)
         PSyGrid.config["initial_RLO_fix"] = True
@@ -1703,14 +1736,6 @@ class TestPSyGrid:
                        mock_get_nearest_known_initial_RLO2)
             PSyGrid._create_psygrid(MESA_files,\
                                     totest.h5py.File(PSyGrid.filepath, "w"))
-        check_len(PSyGrid, N_MESA_runs)
-        # examples: 
-        self.reset_grid(PSyGrid)
-        with capsys.disabled(): # TODO: remove
-            PSyGrid._create_psygrid(MESA_files, totest.h5py.File(PSyGrid.filepath, "w"))
-#            print(PSyGrid.initial_values.dtype.names)
-#            print(PSyGrid.final_values.dtype.names)
-#            print(len(PSyGrid))
         check_len(PSyGrid, N_MESA_runs)
         # examples: no model_number and star_age columns in binary history
         run_path = add_MESA_run_files(MESA_files, 4, binary_run=True,\
