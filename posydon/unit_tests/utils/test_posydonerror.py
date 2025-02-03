@@ -22,11 +22,11 @@ def artificial_object():
 class TestElements:
     # check for objects, which should be an element of the tested module
     def test_dir(self):
-        elements = ['FlowError', 'GridError', 'MatchingError',\
-                    'ModelError', 'NumericalError', 'POSYDONError',\
-                    '__authors__', '__builtins__', '__cached__',\
-                    '__doc__', '__file__', '__loader__', '__name__',\
-                    '__package__', '__spec__']
+        elements = ['ClassificationError', 'FlowError', 'GridError',\
+                    'MatchingError', 'ModelError', 'NumericalError',\
+                    'POSYDONError', '__authors__', '__builtins__',\
+                    '__cached__', '__doc__', '__file__', '__loader__',\
+                    '__name__', '__package__', '__spec__']
         assert dir(totest) == elements, "There might be added or removed "\
                                         + "objects without an update on the "\
                                         + "unit test."
@@ -36,6 +36,12 @@ class TestElements:
         assert issubclass(totest.POSYDONError, Exception)
         with raises(totest.POSYDONError, match="Test"):
             raise totest.POSYDONError("Test")
+    
+    def test_instance_ClassificationError(self):
+        assert isclass(totest.ClassificationError)
+        assert issubclass(totest.ClassificationError, totest.POSYDONError)
+        with raises(totest.ClassificationError, match="Test"):
+            raise totest.ClassificationError("Test")
 
     def test_instance_FlowError(self):
         assert isclass(totest.FlowError)
@@ -103,4 +109,3 @@ class TestPOSYDONError:
     def test_str(self, POSYDONError_position):
         assert isroutine(POSYDONError_position.__str__)
         assert str(POSYDONError_position) == "test message on position"
-
