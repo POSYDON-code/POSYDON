@@ -213,6 +213,7 @@ from posydon.grids.downsampling import TrackDownsampler
 from posydon.grids.scrubbing import scrub, keep_after_RLO, keep_till_central_abundance_He_C
 from posydon.utils.ignorereason import IgnoreReason
 from posydon.utils.posydonwarning import (Pwarn, Catch_POSYDON_Warnings)
+from posydon.utils.posydonerror import POSYDONError
 
 
 HDF5_MEMBER_SIZE = 2**31 - 1            # maximum HDF5 file size when splitting
@@ -1350,14 +1351,16 @@ class PSyGrid:
 
         Parameters
         ----------
-        colname : tbw
-            TBW.
-        array : tbw
-            TBW.
+        colname : str
+            Name of the new column.
+        array : ndarray like
+            Data of the new column.
         where : str (default: 'final_values')
-            TBW.
+            Name of the element to add the column to. Currently only
+            'final_values' allowed.
         overwrite : bool (default: True)
-            TBW.
+            Flag, whether an existing column should be replaced or an error
+            should be raised.
 
         """
         if not isinstance(array, np.ndarray):
@@ -1371,12 +1374,16 @@ class PSyGrid:
         if len(self) != len(arr):
             raise ValueError("`array` has {} elements but the grid has {} runs"
                              .format(len(arr), len(self)))
+
+        if not isinstance(self.final_values, np.ndarray):
+            raise TypeError("The final values have to be a ndarray.")
+
         if colname in self.final_values.dtype.names:
             if overwrite:
                 self.final_values[colname] = arr
             else:
-                raise Exception("Column `{}` already exists in final values.".
-                                format(colname))
+                raise POSYDONError("Column `{}` already exists in final "
+                                   "values.".format(colname))
         else:
             self.final_values = add_field(self.final_values,
                                           [(colname, arr.dtype.descr[0][1])])
@@ -1386,6 +1393,9 @@ class PSyGrid:
 
     def update_final_values(self):
         """Update the final values in the HDF5 file."""
+        if not isinstance(self.final_values, np.ndarray):
+            raise TypeError("The final values have to be a ndarray.")
+
         self._reload_hdf5_file(writeable=True)
         new_dtype = []
         for dtype in self.final_values.dtype.descr:
@@ -1394,13 +1404,11 @@ class PSyGrid:
                 ("_state" in dtype[0]) or ("_class" in dtype[0])):
                 dtype = (dtype[0], H5_REC_STR_DTYPE.replace("U", "S"))
             new_dtype.append(dtype)
-            if dtype[1] == np.dtype('O'):
-                print(dtype[0])
         final_values = self.final_values.astype(new_dtype)
-        del self.hdf5["/grid/final_values"]
+        if "/grid/final_values" in self.hdf5: # may delete old dataset
+            del self.hdf5["/grid/final_values"]
         self.hdf5.create_dataset("/grid/final_values", data=final_values,
                                  **self.compression_args)
-        # self.hdf5["/grid/final_values"] = final_values
         self._reload_hdf5_file(writeable=False)
 
     def _reload_hdf5_file(self, writeable=False):
@@ -1409,9 +1417,12 @@ class PSyGrid:
         Parameters
         ----------
         writeable : bool (default: False)
-            TBW.
+            Flag, whether to open the hdf5 file in write mode or read only.
 
         """
+        if self.filepath is None:
+            raise ValueError("The path of the HDF5 file was not defined.")
+
         driver_args = {} if "%d" not in self.filepath else {
             "driver": "family", "memb_size": HDF5_MEMBER_SIZE}
         self.close()
@@ -1482,7 +1493,7 @@ class PSyGrid:
                                    format(index))
                 if index >= n_expected:
                     raise KeyError("More runs than MESA dirs? Gaps?")
-                if included[index]:
+                if included[index]: # pragma: no cover
                     raise KeyError("Duplicate key {}?".format(key))
                 included[index] = True
 
