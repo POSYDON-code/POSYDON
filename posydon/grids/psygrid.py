@@ -767,7 +767,7 @@ class PSyGrid:
                             Pwarn("Reduce mod in {}\n".format(run.history1_path),
                                   "ReplaceValueWarning")
                         elif len_diff>0:
-                            #entend history1_mod
+                            #extend history1_mod
                             add_mod = np.full(len_diff,history1_mod[-1])
                             history1_mod = np.concatenate((history1_mod, add_mod))
                             Pwarn("Expand mod in {}\n".format(run.history1_path),
@@ -790,7 +790,7 @@ class PSyGrid:
                             Pwarn("Reduce age in {}\n".format(run.history1_path),
                                   "ReplaceValueWarning")
                         elif len_diff>0:
-                            #entend history1_age
+                            #extend history1_age
                             add_age = np.full(len_diff,history1_age[-1])
                             history1_age = np.concatenate((history1_age, add_age))
                             Pwarn("Expand age in {}\n".format(run.history1_path),
@@ -817,7 +817,7 @@ class PSyGrid:
                             Pwarn("Reduce mod in {}\n".format(run.history2_path),
                                   "ReplaceValueWarning")
                         elif len_diff>0:
-                            #entend history2_mod
+                            #extend history2_mod
                             add_mod = np.full(len_diff,history2_mod[-1])
                             history2_mod = np.concatenate((history2_mod, add_mod))
                             Pwarn("Expand mod in {}\n".format(run.history2_path),
@@ -840,7 +840,7 @@ class PSyGrid:
                             Pwarn("Reduce age in {}\n".format(run.history2_path),
                                   "ReplaceValueWarning")
                         elif len_diff>0:
-                            #entend history2_age
+                            #extend history2_age
                             add_age = np.full(len_diff,history2_age[-1])
                             history2_age = np.concatenate((history2_age, add_age))
                             Pwarn("Expand age in {}\n".format(run.history2_path),
@@ -867,7 +867,7 @@ class PSyGrid:
                             Pwarn("Reduce mod in {}\n".format(run.binary_history_path),
                                   "ReplaceValueWarning")
                         elif len_diff>0:
-                            #entend binary_history_mod
+                            #extend binary_history_mod
                             add_mod = np.full(len_diff,binary_history_mod[-1])
                             binary_history_mod = np.concatenate((binary_history_mod, add_mod))
                             Pwarn("Expand mod in {}\n".format(run.binary_history_path),
@@ -889,7 +889,7 @@ class PSyGrid:
                             Pwarn("Reduce age in {}\n".format(run.binary_history_path),
                                   "ReplaceValueWarning")
                         elif len_diff>0:
-                            #entend binary_history_age
+                            #extend binary_history_age
                             add_age = np.full(len_diff,binary_history_age[-1])
                             binary_history_age = np.concatenate((binary_history_age, add_age))
                             Pwarn("Expand age in {}\n".format(run.binary_history_path),
