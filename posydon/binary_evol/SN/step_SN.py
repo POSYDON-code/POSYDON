@@ -802,8 +802,7 @@ class StepSN(object):
                         # set specific properties manually
                         star.mass = final_BH['M_BH_total']
                         star.spin = final_BH['a_BH_total']
-                        star.m_disk_accreted = final_BH['m_disk_accreted']
-                        star.m_disk_radiated = final_BH['m_disk_radiated']
+
                         if m_grav != star.mass and self.verbose:
                             print("The star formed a disk during the collapse "
                                   "and lost", round(final_BH['M_BH_total'] - m_rembar, 2),
