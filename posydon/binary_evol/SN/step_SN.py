@@ -810,7 +810,6 @@ class StepSN(object):
                         star.spin = final_BH['a_BH_total']
                         star.m_disk_accreted = final_BH['m_disk_accreted']
                         star.m_disk_radiated = final_BH['m_disk_radiated']
-                        star.state = "BH"
                     
                     elif star.state == "NS":
                         star.mass = m_grav
