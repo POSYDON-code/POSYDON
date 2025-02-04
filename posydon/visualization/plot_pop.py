@@ -420,7 +420,27 @@ def plot_population_data(data,
                          log_prop=False,
                          alpha=0.3,
                          s=5):
-    '''Plot the population data based on the grid slice'''
+    '''Plot the population data based on the grid slice parameters
+    
+    Parameters
+    ----------
+    data : DataFrame
+        Population data
+    slice_3D_var_str : str
+        String of the 3D variable to slice the grid
+    slice_3D_var_range : list
+        Range of the 3D variable to slice the grid
+    prop : str (optional)
+        Property to plot on top of the grid slice
+    prop_range : list (optional)
+        Range of the property to plot
+    log_prop : bool (optional)
+        Logarithmic scale for the property
+    alpha : float (optional)
+        Transparency of the data points
+    s : float (optional)
+        Size of the data points
+    '''
 
     # get only slice data
     if slice_3D_var_str == 'mass_ratio':
