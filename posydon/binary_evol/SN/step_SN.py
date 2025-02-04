@@ -934,14 +934,19 @@ class StepSN(object):
             
             elif self.PISN == 'Hendriks+23':
                 # Hendriks et al. 2023 PISN prescription
+                # 10.1093/mnras/stad2857
                 # Shifting PPI and PISN gap
                 # works by removing delta_M_PPI from the star
                 # and then applying any remnant mass prescription
                 
                 delta_M_CO_shift = self.PISN_CO_shift if self.PISN_CO_shift is not None else 0.0
                 delta_M_PPI_extra_ML = self.PPI_extra_mass_loss if self.PPI_extra_mass_loss is not None else 0.0
-                if ((m_CO_core >= 38 + delta_M_CO_shift) 
-                    and m_CO_core <= 114 + delta_M_CO_shift):
+                
+                m_CO_core_PISN_min = 38 + delta_M_CO_shift
+                m_CO_core_PISN_max = 114 + delta_M_CO_shift
+                
+                if ((m_CO_core >= m_CO_core_PISN_min) 
+                    and m_CO_core <= m_CO_core_PISN_max):
 
                     # delta_PPI -> -inf if Z -> 0
                     # limit mass loss to Z = 1e-4 for Z below it.
