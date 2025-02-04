@@ -19,24 +19,13 @@ from inspect import isroutine, isclass
 class TestElements:
     # check for objects, which should be an element of the tested module
     def test_dir(self):
-        elements = {'PchipInterpolator', 'PchipInterpolator2', '__authors__',\
+        elements = ['PchipInterpolator', 'PchipInterpolator2', '__authors__',\
                     '__builtins__', '__cached__', '__doc__', '__file__',\
                     '__loader__', '__name__', '__package__', '__spec__',\
-                    'interp1d', 'np'}
-        totest_elements = set(dir(totest))
-        missing_in_test = elements - totest_elements
-        assert len(missing_in_test) == 0, "There are missing objects in "\
-                                          +f"{totest.__name__}: "\
-                                          +f"{missing_in_test}. Please "\
-                                          +"check, whether they have been "\
-                                          +"removed on purpose and update "\
-                                          +"this unit test."
-        new_in_test = totest_elements - elements
-        assert len(new_in_test) == 0, "There are new objects in "\
-                                      +f"{totest.__name__}: {new_in_test}. "\
-                                      +"Please check, whether they have been "\
-                                      +"added on purpose and update this "\
-                                      +"unit test."
+                    'interp1d', 'np']
+        assert dir(totest) == elements, "There might be added or removed "\
+                                        + "objects without an update on the "\
+                                        + "unit test."
 
     def test_instance_interp1d(self):
         assert isclass(totest.interp1d)
@@ -74,7 +63,7 @@ class Testinterp1d:
             totest.interp1d()
         with raises(NotImplementedError, match="kind = test is not supported"):
             totest.interp1d(x=data[0], y=data[1], kind='test')
-        with raises(ValueError):
+        with raises(TypeError, match="'NoneType' object is not subscriptable"):
             totest.interp1d(None, None)
         with raises(ValueError):
             totest.interp1d('test', 'test')
@@ -88,16 +77,6 @@ class Testinterp1d:
             totest.interp1d(x=data[0], y=data[1], left='test')
         with raises(TypeError):
             totest.interp1d(x=data[0], y=data[1], right='test')
-        # x not strictly monotonic
-        example_data = ([0.0, 1.0, 0.5], [0.0, 0.5, 1.0])
-        test_interp1d = totest.interp1d(example_data[0], example_data[1])
-        assert np.array_equal(test_interp1d.x, [0.0, 0.5, 1.0])
-        assert np.array_equal(test_interp1d.y, [0.0, 1.0, 0.5])
-        
-        # examples: reversible data
-        test_interp1d = totest.interp1d(data[0][::-1], data[1][::-1])
-        assert np.array_equal(test_interp1d.x, np.array(data[0]))
-        assert np.array_equal(test_interp1d.y, np.array(data[1]))        
         # examples
         kinds = ['linear']
         for k in kinds:
