@@ -15,12 +15,12 @@ os = totest.os
 # module you like to test
 from pytest import fixture, raises, warns, approx
 from inspect import isroutine, isclass
-from scipy.interpolate import interp1d
 from posydon.binary_evol.binarystar import BinaryStar
 from posydon.binary_evol.singlestar import SingleStar
 from posydon.utils.posydonwarning import (EvolutionWarning,\
     InappropriateValueWarning, ApproximationWarning, InterpolationWarning,\
     ReplaceValueWarning, ClassificationWarning)
+from posydon.utils.interpolators import interp1d
 
 @fixture
 def binary():
@@ -71,10 +71,8 @@ class TestElements:
                     'MT_CASE_BC', 'MT_CASE_C', 'MT_CASE_NONBURNING',\
                     'MT_CASE_NO_RLO', 'MT_CASE_TO_STR',\
                     'MT_CASE_UNDETERMINED', 'MT_STR_TO_CASE',\
-                    'PATH_TO_POSYDON', 'PchipInterpolator',\
-                    'PchipInterpolator2', 'Pwarn',\
-                    'REL_LOG10_BURNING_THRESHOLD', 'RICHNESS_STATES',\
-                    'RL_RELATIVE_OVERFLOW_THRESHOLD',\
+                    'PATH_TO_POSYDON', 'Pwarn', 'REL_LOG10_BURNING_THRESHOLD',\
+                    'RICHNESS_STATES', 'RL_RELATIVE_OVERFLOW_THRESHOLD',\
                     'STATE_NS_STARMASS_UPPER_LIMIT', 'STATE_UNDETERMINED',\
                     'Schwarzschild_Radius', 'THRESHOLD_CENTRAL_ABUNDANCE',\
                     'THRESHOLD_HE_NAKED_ABUNDANCE', '__authors__',\
@@ -312,9 +310,6 @@ class TestElements:
     def test_instance_calculate_Mejected_for_integrated_binding_energy(self):
         assert isroutine(totest.\
                          calculate_Mejected_for_integrated_binding_energy)
-
-    def test_instance_PchipInterpolator2(self):
-        assert isclass(totest.PchipInterpolator2)
 
     def test_instance_convert_metallicity_to_string(self):
         assert isroutine(totest.convert_metallicity_to_string)
@@ -728,22 +723,27 @@ class TestFunctions:
         def mock_pdf(x):
             return 1.0 - np.sqrt(x)
         # bad input
-        with raises(TypeError, match="'>=' not supported between instances "\
-                                     +"of 'NoneType' and 'float'"):
+        with raises(ValueError, match="x and y PDF values must be specified"\
+                                      +" if no PDF function is provided for"\
+                                      +" rejection sampling"):
             totest.rejection_sampler()
-        with raises(TypeError, match="'>=' not supported between instances "\
-                                     +"of 'NoneType' and 'float'"):
+        with raises(ValueError, match="x and y PDF values must be specified"\
+                                      +" if no PDF function is provided for"\
+                                      +" rejection sampling"):
             totest.rejection_sampler(x=np.array([0.0, 1.0]))
-        with raises(IndexError, match="too many indices for array: array is "\
-                                      +"0-dimensional, but 1 were indexed"):
+        with raises(ValueError, match="x and y PDF values must be specified"\
+                                      +" if no PDF function is provided for"\
+                                      +" rejection sampling"):
             totest.rejection_sampler(y=np.array([0.0, 1.0]))
         with raises(AssertionError):
             totest.rejection_sampler(x=np.array([0.0, 1.0]),\
                                      y=np.array([-0.4, 0.6]))
-        with raises(TypeError, match="'>=' not supported between instances "\
-                                     +"of 'NoneType' and 'float'"):
+        with raises(ValueError, match="x and y PDF values must be specified"\
+                                      +" if no PDF function is provided for"\
+                                      +" rejection sampling"):
             totest.rejection_sampler(x_lim=np.array([0.0, 1.0]))
-        with raises(TypeError, match="'NoneType' object is not subscriptable"):
+        with raises(ValueError, match="x_lim must be specified for passed PDF"\
+                                      +" function in rejection sampling"):
             totest.rejection_sampler(pdf=mock_pdf)
         # examples:
         monkeypatch.setattr(np.random, "uniform", mock_uniform)
@@ -2357,49 +2357,4 @@ class TestFunctions:
                            np.array([[0.54030231,-0.59500984, 0.59500984],\
                                      [0.59500984, 0.77015115, 0.22984885],\
                                      [-0.59500984, 0.22984885, 0.77015115]]))
-
-
-class TestPchipInterpolator2:
-    @fixture
-    def PchipInterpolator2(self):
-        # initialize an instance of the class with defaults
-        return totest.PchipInterpolator2([0.0, 1.0], [1.0, 0.0])
-
-    @fixture
-    def PchipInterpolator2_True(self):
-        # initialize an instance of the class with defaults
-        return totest.PchipInterpolator2([0.0, 1.0], [-0.5, 0.5],\
-                                         positive=True)
-
-    @fixture
-    def PchipInterpolator2_False(self):
-        # initialize an instance of the class with defaults
-        return totest.PchipInterpolator2([0.0, 1.0], [-0.5, 0.5],\
-                                         positive=False)
-
-    # test the PchipInterpolator2 class
-    def test_init(self, PchipInterpolator2, PchipInterpolator2_True,\
-                  PchipInterpolator2_False):
-        assert isroutine(PchipInterpolator2.__init__)
-        # check that the instance is of correct type and all code in the
-        # __init__ got executed: the elements are created and initialized
-        assert isinstance(PchipInterpolator2, totest.PchipInterpolator2)
-        assert isinstance(PchipInterpolator2.interpolator,\
-                          totest.PchipInterpolator)
-        assert PchipInterpolator2.positive == False
-        assert PchipInterpolator2_True.positive == True
-        assert PchipInterpolator2_False.positive == False
-
-    def test_call(self, PchipInterpolator2, PchipInterpolator2_True,\
-                  PchipInterpolator2_False):
-        assert isroutine(PchipInterpolator2.__call__)
-        assert PchipInterpolator2(0.1) == 0.9
-        assert PchipInterpolator2_True(0.1) == 0.0
-        assert PchipInterpolator2_False(0.1) == -0.4
-        assert np.allclose(PchipInterpolator2([0.1, 0.8]),\
-                           np.array([0.9, 0.2]))
-        assert np.allclose(PchipInterpolator2_True([0.1, 0.8]),\
-                           np.array([0.0, 0.3]))
-        assert np.allclose(PchipInterpolator2_False([0.1, 0.8]),\
-                           np.array([-0.4, 0.3]))
 

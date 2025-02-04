@@ -21,7 +21,7 @@ from posydon.utils.common_functions import (
     read_histogram_from_file,
 )
 from posydon.utils.constants import Zsun
-from scipy.interpolate import interp1d
+from posydon.utils.interpolators import interp1d
 from astropy.cosmology import Planck15 as cosmology
 
 
@@ -286,8 +286,8 @@ def SFR_Z_fraction_at_given_redshift(
                 Z_x_values = np.append(np.log10(Z[Z_max_mask]), 0)
                 Z_dist_cdf_interp = interp1d(Z_x_values, Z_dist_cdf)
 
-                fSFR[i, :] = (Z_dist_cdf_interp(np.log10(metallicity_bins[1:])) 
-                                - Z_dist_cdf_interp(np.log10(metallicity_bins[:-1])))
+                fSFR[i, :] = (Z_dist_cdf_interp(np.log10(metallicity_bins[1:]))
+                              - Z_dist_cdf_interp(np.log10(metallicity_bins[:-1])))
 
                 if not select_one_met:
                     # add the fraction of the SFR in the first and last bin
@@ -295,7 +295,6 @@ def SFR_Z_fraction_at_given_redshift(
                     if len(metallicity_bins) == 2:
                         fSFR[i, 0] = 1
                     else:
-                        
                         fSFR[i, 0] = Z_dist_cdf_interp(np.log10(metallicity_bins[1]))
                         fSFR[i, -1] = 1 - Z_dist_cdf_interp(np.log10(metallicity_bins[-1]))
     else:
