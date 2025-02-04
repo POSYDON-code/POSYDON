@@ -158,7 +158,7 @@ def chi_eff(m_1, m_2, a_1, a_2, tilt_1, tilt_2):
     if np.isnan(tilt_2).any():
         Pwarn("tilt_2 contains NaN, replacing with 0.0", 'ReplaceValueWarning')
         tilt_2 = np.nan_to_num(tilt_2, nan=0.0)
-    return np.ndarray((m_1*a_1*np.cos(tilt_1)+m_2*a_2*np.cos(tilt_2))/(m_1+m_2))
+    return (m_1*a_1*np.cos(tilt_1)+m_2*a_2*np.cos(tilt_2))/(m_1+m_2)
 
 def m_chirp(m_1, m_2):
     '''Calculate the chirp mass of two masses.'''
