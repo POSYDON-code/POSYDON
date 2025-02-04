@@ -32,7 +32,6 @@ def primary_mass_resample(ZAMS_primary, simulation_parameters, requested_paramet
         IMF_req = IMFs.Kroupa2001(m_min=requested_parameters['primary_mass_min'],
                                   m_max=requested_parameters['primary_mass_max'])
     
-    
     # Calculate the weights    
     P_IMF_sim = IMF_sim.pdf(ZAMS_primary)
     P_IMF_req = IMF_req.pdf(ZAMS_primary)
@@ -95,34 +94,47 @@ def mass_correction(simulation_parameters, requested_parameters):
     # primary mass
     if simulation_parameters['primary_mass_scheme'] == 'Kroupa2001':
         IMF_sim = IMFs.Kroupa2001(m_min=simulation_parameters['primary_mass_min'],
-                              m_max=simulation_parameters['primary_mass_max'])
+                                  m_max=simulation_parameters['primary_mass_max'])
+        
+    # Force to use 0.05, 1 range. But this does not have to be true!
+    # Technically this function is dependent on m1
+    if simulation_parameters['secondary_mass_scheme'] == 'flat_mass_ratio':
+        q_sim = flat_mass_ratio(0.05, 1)
         
     # Setup for requested weights
     if requested_parameters['primary_mass_scheme'] == 'Kroupa2001':
         IMF_req = IMFs.Kroupa2001(m_min=requested_parameters['primary_mass_min'],
                                   m_max=requested_parameters['primary_mass_max'])
-    
+
     if requested_parameters['secondary_mass_scheme'] == 'flat_mass_ratio':
         q_req = flat_mass_ratio(0, 1)
     
     f_b_req = requested_parameters['binary_fraction_const']
+    # requested population parameter space
+    # single star component
     factor = ((1-f_b_req)*quad(lambda m : m*IMF_req.pdf(m), IMF_req.m_min, IMF_req.m_max)[0]
+            # binary component
             + f_b_req*nquad(lambda m, q : (m+m*q)*IMF_req.pdf(m)*q_req.pdf(q),
                             ranges=[(IMF_req.m_min, IMF_req.m_max),
                                     (q_req.q_min, q_req.q_max)])[0])
-    print('f1:', (1-f_b_req)*quad(lambda m : m*IMF_req.pdf(m), IMF_req.m_min, IMF_req.m_max)[0])
+    
+    # If the P(q|m1), the calculation gets much more complex.
+    # So does P(f_b | m1, q, P),
+    # which requires the (1-f_b) and f_b factors to be moved inside the integration. 
     
     f_b_sim = simulation_parameters['binary_fraction_const']
-    factor2 =  ((1-f_b_sim) * quad(lambda m : m*IMF_sim.pdf(m), IMF_sim.m_min, IMF_sim.m_max)[0]
-                + f_b_sim * nquad(lambda m, q : (m+m*q)*IMF_sim.pdf(m)*1,
+    # simulation sampled parameter space
+    
+                # Single star component
+    factor2 =  ((1-f_b_sim) * quad(lambda m   : m*IMF_sim.pdf(m), IMF_sim.m_min, IMF_sim.m_max)[0]
+                # binary component
+                + f_b_sim * nquad(lambda m, q : (m+m*q)*IMF_sim.pdf(m)*q_sim.pdf(q),
                     ranges=[(IMF_sim.m_min, IMF_sim.m_max),
-                            (0.0, 1)])[0])
-    print('f2:',(1-f_b_sim) * quad(lambda m : m*IMF_sim.pdf(m), IMF_sim.m_min, IMF_sim.m_max)[0])
+                            (q_sim.q_min, q_sim.q_max)])[0])
 
     mass_correction = factor/factor2
     return mass_correction
     
-
 def underlying_mass(population, simulation_parameters, requested_parameters):
     
     ZAMS_primary = population['primary_ZAMS']   
@@ -136,21 +148,23 @@ def underlying_mass(population, simulation_parameters, requested_parameters):
     f_bin, f_sin = binary_fraction_resample(ZAMS_primary, simulation_parameters, requested_parameters)
 
     # correction binaries
-    # Only need to input the binary models here (should speed up the calculation!)
     f_IMF_bin = primary_mass_resample(binaries['primary_ZAMS'],
                                   simulation_parameters,
                                   requested_parameters)
     
-    # I need to sample the single stars as well
+    
+    # correction single stars
+    # technicallt the same as the binaries?
     f_IMF_sin = primary_mass_resample(single_stars['primary_ZAMS'],
                                     simulation_parameters,
                                     requested_parameters)
     
+    # resampling the mass ratio
     f_q = mass_ratio_resample(binaries['primary_ZAMS'],
                               binaries['secondary_ZAMS'],
                               simulation_parameters,
                               requested_parameters)
-    f_corr_bin = f_IMF_bin
+    f_corr_bin = f_IMF_bin*f_q
     f_corr_sin = f_IMF_sin
     print(f_corr_sin)
     print(f_sin[mask])

@@ -19,7 +19,6 @@ def initial_total_underlying_mass(
     simulated_mass=None, simulated_mass_single=None, 
     simulated_mass_binaries=None, f_bin=0.7, **kwargs
 ):
-
     """Compute the initial total mass of the population.
 
 
@@ -168,8 +167,6 @@ def initial_total_underlying_mass(
 
             f_corr_binaries = f_corr_binaries*f_bin_nature
             f_corr_single_stars=0
-
-
             underlying_total_mass=initial_ZAMS_TOTAL_binaries/f_corr_binaries
 
             
@@ -182,8 +179,6 @@ def initial_total_underlying_mass(
     if (f_bin_simulated != 1): #when you have modeled both binary and single stars
         if (f_bin_nature == 0): #but you want the underlying mass for a population
                                 # consisting of only single stars
-
-            
 
             f_corr_single_stars= (f_corr_single_stars*(1-f_bin_nature))/(1-f_bin_simulated)
             f_corr_binaries=0
