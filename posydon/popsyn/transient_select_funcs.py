@@ -123,7 +123,29 @@ def GRB_selection(history_chunk, oneline_chunk, formation_channels_chunk=None, S
 
 
 def chi_eff(m_1, m_2, a_1, a_2, tilt_1, tilt_2):
-    '''Calculate the effective spin of two masses.'''
+    '''Calculate the effective spin of two masses.
+    
+    Parameters
+    ----------
+    m_1 : np.ndarray
+        The mass of the first BH.
+    m_2 : np.ndarray
+        The mass of the second BH.
+    a_1 : np.ndarray
+        The spin of the first BH.
+    a_2 : np.ndarray
+        The spin of the second BH.
+    tilt_1 : np.ndarray
+        The tilt of the first BH.
+    tilt_2 : np.ndarray
+        The tilt of the second BH.
+    
+    Returns
+    -------
+    np.ndarray
+        The effective spin of the BHs.
+        
+    '''
     if np.isnan(a_1).any():
         Pwarn("a_1 contains NaN, replacing with 0.0", 'ReplaceValueWarning')
         a_1 = np.nan_to_num(a_1, nan=0.0)
@@ -136,7 +158,7 @@ def chi_eff(m_1, m_2, a_1, a_2, tilt_1, tilt_2):
     if np.isnan(tilt_2).any():
         Pwarn("tilt_2 contains NaN, replacing with 0.0", 'ReplaceValueWarning')
         tilt_2 = np.nan_to_num(tilt_2, nan=0.0)
-    return (m_1*a_1*np.cos(tilt_1)+m_2*a_2*np.cos(tilt_2))/(m_1+m_2)
+    return np.ndarray((m_1*a_1*np.cos(tilt_1)+m_2*a_2*np.cos(tilt_2))/(m_1+m_2))
 
 def m_chirp(m_1, m_2):
     '''Calculate the chirp mass of two masses.'''
