@@ -4,9 +4,9 @@ import posydon.popsyn.selection_effects as selection_effects
 from posydon.config import PATH_TO_POSYDON_DATA
 import os
 from tqdm import tqdm
-
-
 import warnings
+from posydon.utils.posydonwarning import Pwarn
+
 # This is to suppress the performance warnings from pandas
 # These warnings are not important for the user
 # We should alter the code to remove these warnings, but for now we suppress them
@@ -124,6 +124,18 @@ def GRB_selection(history_chunk, oneline_chunk, formation_channels_chunk=None, S
 
 def chi_eff(m_1, m_2, a_1, a_2, tilt_1, tilt_2):
     '''Calculate the effective spin of two masses.'''
+    if np.isnan(a_1).any():
+        Pwarn("a_1 contains NaN, replacing with 0.0", 'ReplaceValueWarning')
+        a_1 = np.nan_to_num(a_1, nan=0.0)
+    if np.isnan(a_2).any():
+        Pwarn("a_2 contains NaN, replacing with 0.0", 'ReplaceValueWarning')
+        a_2 = np.nan_to_num(a_2, nan=0.0)
+    if np.isnan(tilt_1).any():
+        Pwarn("tilt_1 contains NaN, replacing with 0.0", 'ReplaceValueWarning')
+        tilt_1 = np.nan_to_num(tilt_1, nan=0.0)
+    if np.isnan(tilt_2).any():
+        Pwarn("tilt_2 contains NaN, replacing with 0.0", 'ReplaceValueWarning')
+        tilt_2 = np.nan_to_num(tilt_2, nan=0.0)
     return (m_1*a_1*np.cos(tilt_1)+m_2*a_2*np.cos(tilt_2))/(m_1+m_2)
 
 def m_chirp(m_1, m_2):
