@@ -8,7 +8,7 @@ __authors__ = [
 # ensure that python forgets about previous imports of posydonwarning, e.g. in
 # other tests, before importing it here
 from sys import modules as sys_modules
-sys_modules.pop('posydon.utils.posydonwarning')
+sys_modules.pop('posydon.utils.posydonwarning', None)
 
 # import the module which will be tested
 import posydon.utils.posydonwarning as totest

@@ -22,6 +22,11 @@ from posydon.utils.posydonwarning import MissingFilesWarning
 class TestElements:
     # check for objects, which should be an element of the tested module
     def test_dir(self):
+        # ensure that python forgets about previous unclean warnings
+        ## for some unknown reason test_psygrid.TestPSyGrid.test_create_psygrid
+        ## does not clear the warning registy correctly.
+        if hasattr(totest, '__warningregistry__'):
+            del totest.__warningregistry__
         elements = ['LG_MTRANSFER_RATE_THRESHOLD', 'Msun', 'Pwarn', 'Rsun',\
                     'T_merger_P', 'T_merger_a', '__authors__', '__builtins__',\
                     '__cached__', '__doc__', '__file__', '__loader__',\

@@ -1535,8 +1535,10 @@ class TestPSyGrid:
             assert "S2_"+c in PSyGrid.final_values.dtype.names
         # examples: v1 run
         self.reset_grid(PSyGrid)
-        PSyGrid._create_psygrid(MESA_v1_files,\
-                                totest.h5py.File(PSyGrid.filepath,"w"))
+        with warns(MissingFilesWarning, match="Ignored MESA run because of "\
+                                              +"missing binary history in:"):
+            PSyGrid._create_psygrid(MESA_v1_files,\
+                                    totest.h5py.File(PSyGrid.filepath,"w"))
         check_len(PSyGrid, N_MESA_runs)
         # examples: max_number_of_runs
         self.reset_grid(PSyGrid)
@@ -1562,8 +1564,11 @@ class TestPSyGrid:
                 k = "S" + key[4] + "_model_number"
             self.reset_grid(PSyGrid)
             PSyGrid.config[key] = cols
-            PSyGrid._create_psygrid(MESA_files,\
-                                    totest.h5py.File(PSyGrid.filepath, "w"))
+            with warns(MissingFilesWarning, match="Ignored MESA run because "\
+                                                  +"of missing binary "\
+                                                  +"history in:"):
+                PSyGrid._create_psygrid(MESA_files, totest.h5py.File(\
+                                         PSyGrid.filepath, "w"))
             check_len(PSyGrid, N_MESA_runs)
             assert (k in PSyGrid.initial_values.dtype.names) ==\
                    ("model_number" in cols)
@@ -1571,8 +1576,11 @@ class TestPSyGrid:
                    ("model_number" in cols)
             self.reset_grid(PSyGrid)
             PSyGrid.config[key] = list(cols)
-            PSyGrid._create_psygrid(MESA_files,\
-                                    totest.h5py.File(PSyGrid.filepath, "w"))
+            with warns(MissingFilesWarning, match="Ignored MESA run because "\
+                                                  +"of missing binary "\
+                                                  +"history in:"):
+                PSyGrid._create_psygrid(MESA_files, totest.h5py.File(\
+                                         PSyGrid.filepath, "w"))
             check_len(PSyGrid, N_MESA_runs)
             assert (k in PSyGrid.initial_values.dtype.names) ==\
                    (("model_number" in cols) or ("binary" in key))
@@ -1585,8 +1593,11 @@ class TestPSyGrid:
                        (c in totest.DEFAULT_STAR_HISTORY_COLS)
             self.reset_grid(PSyGrid)
             PSyGrid.config[key] = "all"
-            PSyGrid._create_psygrid(MESA_files,\
-                                    totest.h5py.File(PSyGrid.filepath, "w"))
+            with warns(MissingFilesWarning, match="Ignored MESA run because "\
+                                                  +"of missing binary "\
+                                                  +"history in:"):
+                PSyGrid._create_psygrid(MESA_files, totest.h5py.File(\
+                                         PSyGrid.filepath, "w"))
             check_len(PSyGrid, N_MESA_runs)
             assert (k in PSyGrid.initial_values.dtype.names) ==\
                    (("model_number" in cols) or ("binary" in key))
@@ -1608,34 +1619,44 @@ class TestPSyGrid:
         self.reset_grid(PSyGrid)
         PSyGrid.config["star1_history_saved_columns"] = ["star_age"]
         PSyGrid.config["star2_history_saved_columns"] = ["star_age"]
-        PSyGrid._create_psygrid(MESA_files,\
-                                totest.h5py.File(PSyGrid.filepath, "w"))
+        with warns(MissingFilesWarning, match="Ignored MESA run because of "\
+                                              +"missing binary history in:"):
+            PSyGrid._create_psygrid(MESA_files,\
+                                    totest.h5py.File(PSyGrid.filepath, "w"))
         check_len(PSyGrid, N_MESA_runs)
         # examples: no He_core_fix
         self.reset_grid(PSyGrid)
         PSyGrid.config["He_core_fix"] = False
-        PSyGrid._create_psygrid(MESA_files,\
-                                totest.h5py.File(PSyGrid.filepath, "w"))
+        with warns(MissingFilesWarning, match="Ignored MESA run because of "\
+                                              +"missing binary history in:"):
+            PSyGrid._create_psygrid(MESA_files,\
+                                    totest.h5py.File(PSyGrid.filepath, "w"))
         check_len(PSyGrid, N_MESA_runs)
         # examples: initial_RLO_fix
         self.reset_grid(PSyGrid)
         PSyGrid.config["initial_RLO_fix"] = True
         monkeypatch.setattr(totest, "get_nearest_known_initial_RLO",\
                             mock_get_nearest_known_initial_RLO)
-        PSyGrid._create_psygrid(MESA_files,\
-                                totest.h5py.File(PSyGrid.filepath, "w"))
+        with warns(MissingFilesWarning, match="Ignored MESA run because of "\
+                                              +"missing binary history in:"):
+            PSyGrid._create_psygrid(MESA_files,\
+                                    totest.h5py.File(PSyGrid.filepath, "w"))
         check_len(PSyGrid, N_MESA_runs+1) # all runs in initial_RLO_fix
         # examples: initial_RLO_fix and v1 run
         self.reset_grid(PSyGrid)
         PSyGrid.config["initial_RLO_fix"] = True
-        PSyGrid._create_psygrid(MESA_v1_files,\
-                                totest.h5py.File(PSyGrid.filepath,"w"))
+        with warns(MissingFilesWarning, match="Ignored MESA run because of "\
+                                              +"missing binary history in:"):
+            PSyGrid._create_psygrid(MESA_v1_files,\
+                                    totest.h5py.File(PSyGrid.filepath,"w"))
         check_len(PSyGrid, N_MESA_runs+1)
         # examples: stop_before_carbon_depletion
         self.reset_grid(PSyGrid)
         PSyGrid.config["stop_before_carbon_depletion"] = True
-        PSyGrid._create_psygrid(MESA_files,\
-                                totest.h5py.File(PSyGrid.filepath, "w"))
+        with warns(MissingFilesWarning, match="Ignored MESA run because of "\
+                                              +"missing binary history in:"):
+            PSyGrid._create_psygrid(MESA_files,\
+                                    totest.h5py.File(PSyGrid.filepath, "w"))
         check_len(PSyGrid, N_MESA_runs)
         # examples: start_at_RLO
         monkeypatch.setattr(totest, "keep_after_RLO", mock_keep_after_RLO)
@@ -1643,8 +1664,11 @@ class TestPSyGrid:
             self.reset_grid(PSyGrid)
             PSyGrid.config["start_at_RLO"] = True
             PSyGrid.config["initial_RLO_fix"] = RLO_fix
-            PSyGrid._create_psygrid(MESA_files,\
-                                    totest.h5py.File(PSyGrid.filepath, "w"))
+            with warns(MissingFilesWarning, match="Ignored MESA run because "\
+                                                  +"of missing binary "\
+                                                  +"history in:"):
+                PSyGrid._create_psygrid(MESA_files, totest.h5py.File(\
+                                         PSyGrid.filepath, "w"))
             if RLO_fix: # all runs are kept in initial_RLO_fix
                 check_len(PSyGrid, N_MESA_runs+1)
             else: # only one RLO system
@@ -1654,8 +1678,10 @@ class TestPSyGrid:
                       if "mass" not in c])
         self.reset_grid(PSyGrid)
         PSyGrid.config["binary_history_saved_columns"] = cols
-        PSyGrid._create_psygrid(MESA_files, totest.h5py.File(PSyGrid.filepath,\
-                                                             "w"))
+        with warns(MissingFilesWarning, match="Ignored MESA run because of "\
+                                              +"missing binary history in:"):
+            PSyGrid._create_psygrid(MESA_files,\
+                                    totest.h5py.File(PSyGrid.filepath, "w"))
         check_len(PSyGrid, 0)
         # examples: missing mass columns -> ignore all runs (single)
         cols = tuple([c for c in totest.DEFAULT_SINGLE_HISTORY_COLS\
@@ -1673,24 +1699,33 @@ class TestPSyGrid:
         with monkeypatch.context() as mp:
             mp.setattr(totest, "initialize_empty_array",\
                        mock_initialize_empty_array_noX)
-            PSyGrid._create_psygrid(MESA_files,\
-                                    totest.h5py.File(PSyGrid.filepath, "w"))
+            with warns(MissingFilesWarning, match="Ignored MESA run because "\
+                                                  +"of missing binary "\
+                                                  +"history in:"):
+                PSyGrid._create_psygrid(MESA_files, totest.h5py.File(\
+                                         PSyGrid.filepath, "w"))
         check_len(PSyGrid, N_MESA_runs)
         # examples: initial values without Y
         self.reset_grid(PSyGrid)
         with monkeypatch.context() as mp:
             mp.setattr(totest, "initialize_empty_array",\
                        mock_initialize_empty_array_noY)
-            PSyGrid._create_psygrid(MESA_files,\
-                                    totest.h5py.File(PSyGrid.filepath, "w"))
+            with warns(MissingFilesWarning, match="Ignored MESA run because "\
+                                                  +"of missing binary "\
+                                                  +"history in:"):
+                PSyGrid._create_psygrid(MESA_files, totest.h5py.File(\
+                                         PSyGrid.filepath, "w"))
         check_len(PSyGrid, N_MESA_runs)
         # examples: initial values without Z
         self.reset_grid(PSyGrid)
         with monkeypatch.context() as mp:
             mp.setattr(totest, "initialize_empty_array",\
                        mock_initialize_empty_array_noZ)
-            PSyGrid._create_psygrid(MESA_files,\
-                                    totest.h5py.File(PSyGrid.filepath, "w"))
+            with warns(MissingFilesWarning, match="Ignored MESA run because "\
+                                                  +"of missing binary "\
+                                                  +"history in:"):
+                PSyGrid._create_psygrid(MESA_files, totest.h5py.File(\
+                                         PSyGrid.filepath, "w"))
         check_len(PSyGrid, N_MESA_runs)
         # examples: initial_RLO_fix and termination flags: initial RLO and None
         self.reset_grid(PSyGrid)
@@ -1698,16 +1733,21 @@ class TestPSyGrid:
         with monkeypatch.context() as mp:
             mp.setattr(totest, "get_flags_from_MESA_run",\
                        mock_get_flags_from_MESA_run)
-            PSyGrid._create_psygrid(MESA_files,\
-                                    totest.h5py.File(PSyGrid.filepath, "w"))
+            with warns(MissingFilesWarning, match="Ignored MESA run because "\
+                                                  +"of missing binary "\
+                                                  +"history in:"):
+                PSyGrid._create_psygrid(MESA_files, totest.h5py.File(\
+                                         PSyGrid.filepath, "w"))
         check_len(PSyGrid, N_MESA_runs+1)
         # examples: slim
         for RLO_fix in [True, False]:
             self.reset_grid(PSyGrid)
             PSyGrid.config["initial_RLO_fix"] = RLO_fix
-            PSyGrid._create_psygrid(MESA_files,\
-                                totest.h5py.File(PSyGrid.filepath, "w"),\
-                                slim=True)
+            with warns(MissingFilesWarning, match="Ignored MESA run because "\
+                                                  +"of missing binary "\
+                                                  +"history in:"):
+                PSyGrid._create_psygrid(MESA_files, totest.h5py.File(\
+                                         PSyGrid.filepath, "w"), slim=True)
             if RLO_fix: # all runs are kept in initial_RLO_fix
                 check_len(PSyGrid, N_MESA_runs+1)
             else:
@@ -1730,8 +1770,11 @@ class TestPSyGrid:
         with monkeypatch.context() as mp:
             mp.setattr(totest, "get_nearest_known_initial_RLO",\
                        mock_get_nearest_known_initial_RLO2)
-            PSyGrid._create_psygrid(MESA_files,\
-                                    totest.h5py.File(PSyGrid.filepath, "w"))
+            with warns(MissingFilesWarning, match="Ignored MESA run because "\
+                                                  +"of missing binary "\
+                                                  +"history in:"):
+                PSyGrid._create_psygrid(MESA_files, totest.h5py.File(\
+                                         PSyGrid.filepath, "w"))
         check_len(PSyGrid, N_MESA_runs)
         # examples: no model_number and star_age columns in binary history
         run_path = add_MESA_run_files(MESA_files, 4, binary_run=True,\
@@ -1750,8 +1793,7 @@ class TestPSyGrid:
                                match="Ignored MESA run because of scrubbed "\
                                      +"binary history in:"):
                         PSyGrid._create_psygrid(MESA_files, totest.h5py.File(\
-                                                             PSyGrid.filepath,\
-                                                             "w"))
+                                                 PSyGrid.filepath, "w"))
             if RLO_fix: # all runs are kept in initial_RLO_fix
                 check_len(PSyGrid, N_MESA_runs+1+1)
             else:
@@ -1765,9 +1807,8 @@ class TestPSyGrid:
                                               +"missing binary history in:"):
             with warns(MissingFilesWarning, match="Problems with reading "\
                                                   +"file"):
-                PSyGrid._create_psygrid(MESA_files,\
-                                        totest.h5py.File(PSyGrid.filepath,\
-                                                         "w"))
+                PSyGrid._create_psygrid(MESA_files, totest.h5py.File(\
+                                         PSyGrid.filepath, "w"))
         check_len(PSyGrid, N_MESA_runs)
         # examples: no model_number and star_age columns in history (single)
         rmtree(run_path)
@@ -1803,8 +1844,7 @@ class TestPSyGrid:
                 with warns(ReplaceValueWarning, match="Reduce mod in"):
                     with warns(ReplaceValueWarning, match="Reduce age in"):
                         PSyGrid._create_psygrid(MESA_files, totest.h5py.File(\
-                                                             PSyGrid.filepath,\
-                                                             "w"))
+                                                 PSyGrid.filepath, "w"))
         check_len(PSyGrid, N_MESA_runs+1)
         # examples: incomplete lines in star and binary history (missing
         # model and age)
@@ -1821,16 +1861,20 @@ class TestPSyGrid:
                 with warns(ReplaceValueWarning, match="Expand mod in"):
                     with warns(ReplaceValueWarning, match="Expand age in"):
                         PSyGrid._create_psygrid(MESA_files, totest.h5py.File(\
-                                                             PSyGrid.filepath,\
-                                                             "w"))
+                                                 PSyGrid.filepath, "w"))
         check_len(PSyGrid, N_MESA_runs+1)
         # examples: no data lines in star and binary history
         rmtree(run_path)
         run_path = add_MESA_run_files(MESA_files, 14, binary_run=True,\
                                       with_histories=True, with_profiles=True)
         self.reset_grid(PSyGrid)
-        PSyGrid._create_psygrid(MESA_files, totest.h5py.File(PSyGrid.filepath,\
-                                                             "w"))
+        with warns(MissingFilesWarning, match="Ignored MESA run because of "\
+                                              +"missing binary history in:"):
+            with warns(InappropriateValueWarning,
+                       match="Ignored MESA run because of scrubbed binary "\
+                             +"history in:"):
+                PSyGrid._create_psygrid(MESA_files, totest.h5py.File(\
+                                         PSyGrid.filepath, "w"))
         check_len(PSyGrid, N_MESA_runs)
         # examples: no final profile (single)
         rmtree(run_path)
@@ -1854,8 +1898,10 @@ class TestPSyGrid:
         run_path = add_MESA_run_files(MESA_files, 17, binary_run=True,\
                                       with_histories=True, with_profiles=True)
         self.reset_grid(PSyGrid)
-        PSyGrid._create_psygrid(MESA_files, totest.h5py.File(PSyGrid.filepath,\
-                                                             "w"))
+        with warns(MissingFilesWarning, match="Ignored MESA run because of "\
+                                              +"missing binary history in:"):
+            PSyGrid._create_psygrid(MESA_files,\
+                                    totest.h5py.File(PSyGrid.filepath, "w"))
         check_len(PSyGrid, N_MESA_runs+1)
         # examples: no star1 history, but star2 history
         rmtree(run_path)
@@ -1909,7 +1955,6 @@ class TestPSyGrid:
                                                +"in final values."):
             PSyGrid.add_column("test", new_values3, overwrite=False)
         assert np.array_equal(PSyGrid.final_values["test"], new_values2)
-        pass
 
     def test_update_final_values(self, PSyGrid, tmp_path):
         assert isroutine(PSyGrid.update_final_values)
