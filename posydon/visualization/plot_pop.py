@@ -34,10 +34,6 @@ def plot_perley16_rate_density(ax=None):
     ----------
     ax : matplotlib.axes.Axes (optional)
         Axes object to plot the data on
-    
-    Returns
-    -------
-    None
     '''
     # Perley et al. (2016)
     
@@ -216,10 +212,6 @@ def plot_popsyn_over_grid_slice(pop, grid_type, met_Zsun,
         File extension for saving the plot
     verbose : bool (optional)
         Print information
-    
-    Returns
-    -------
-    None
     '''
 
     # Check if step_names in pop.history data
@@ -231,11 +223,8 @@ def plot_popsyn_over_grid_slice(pop, grid_type, met_Zsun,
         raise ValueError('Formation channel information not available in popsynth data.')
 
     # get population data from the popsyn for the given metallicity
-    data = get_population_data(pop          = pop,
-                               metallicity  = met_Zsun,
-                               grid_type    = grid_type,
-                               channel      = channel,
-                               prop         = prop)
+    data = get_population_data(pop=pop, metallicity=met_Zsun,
+                               grid_type=grid_type, channel=channel, prop=prop)
     # Setup the grid 
     met = convert_metallicity_to_string(met_Zsun)
     grid_path = os.path.join(PATH_TO_POSYDON_DATA, f'POSYDON_data/{grid_type}/{met}_Zsun.h5')
@@ -386,6 +375,8 @@ def setup_grid_slice_plotting(grid, grid_type, plot_extension):
         Dictionary of plot properties
     slice_3D_var_str : str
         String of the 3D variable to slice the grid
+    tmp_fname : str
+        Template file name for saving the plot
     '''
     
     if grid_type == "HMS-HMS":
@@ -482,7 +473,7 @@ def plot_population_data(data,
                     marker='v',
                     color='black',
                     alpha=alpha,
-                    zorder=0.5) 
+                    zorder=0.5)
     
 def plot_grid_slice(grid, slice_3D_var_str, slice_3D_var_range, termination_flag='combined_TF12', PLOT_PROPERTIES=None):
     grid.plot2D('star_1_mass', 'period_days', None,
