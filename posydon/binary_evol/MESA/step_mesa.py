@@ -976,7 +976,7 @@ class MesaGridStep:
                             else:
                                 Pwarn(f"S{i+1}_{MODEL_NAME}_{key} not found in fv",
                                       "UnsupportedModelWarning")
-                                setattr(star, MODEL_NAME, None)
+                                values = None
                                 break
                         setattr(star, MODEL_NAME, values)
                     else:
