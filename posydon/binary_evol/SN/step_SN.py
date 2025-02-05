@@ -661,7 +661,7 @@ class StepSN(object):
                     return
 
                 # check if the star was disrupted by the PISN
-                if np.isnan(m_rembar):
+                if pd.isna(m_rembar):
                     convert_star_to_massless_remnant(star=star)
                     return
 
@@ -787,7 +787,7 @@ class StepSN(object):
                     return
 
                 # check if the star was disrupted by the PISN
-                if np.isnan(m_rembar):
+                if pd.isna(m_rembar):
                     convert_star_to_massless_remnant(star=star)
                     return
 
@@ -964,7 +964,7 @@ class StepSN(object):
                 print("")
                 print("The star did NOT lose any mass because of "
                       "PPIN or PISN.")
-            elif not np.isnan(m_PISN):
+            elif not pd.isna(m_PISN):
                 print("")
                 print(
                     "The star with initial mass {:2.2f}".format(m_He_core),
@@ -1142,7 +1142,7 @@ class StepSN(object):
                 "There is no information in the evolutionary history"
                 "about STAR_STATES_CC."
             )
-        if m_core is None or np.isnan(m_core):
+        if m_core is None or pd.isna(m_core):
             # This should not happen
             raise ValueError("The CO core mass is not correct! CO core = {}".
                              format(m_core))
@@ -1752,7 +1752,7 @@ class StepSN(object):
                            and (err > tmp2 - rpre / Apost))
 
                 # SNflag3: check that epost does not exeed 1 or is nan
-                if epost >= 1.0 or np.isnan(epost):
+                if epost >= 1.0 or pd.isna(epost):
                     SNflag3 = False
                 else:
                     SNflag3 = True
