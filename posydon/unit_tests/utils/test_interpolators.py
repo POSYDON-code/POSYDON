@@ -77,6 +77,18 @@ class Testinterp1d:
             totest.interp1d(x=data[0], y=data[1], left='test')
         with raises(TypeError):
             totest.interp1d(x=data[0], y=data[1], right='test')
+        
+        # incorrect input arrays
+        x_data = [0.0, 1.0, 2.0, 1.5]
+        y_data = [0.0, 1.0, 0.0, 0.5]
+        with raises(ValueError, match="x values must be strictly increasing or strictly decreasing."):
+            interpolator = totest.interp1d(x_data, y_data)
+        
+        # invertible data
+        interpolator = totest.interp1d(data[0][::-1], data[1][::-1])
+        assert np.allclose(interpolator.x, data[0])
+        assert np.allclose(interpolator.y, data[1])
+        
         # examples
         kinds = ['linear']
         for k in kinds:
@@ -126,18 +138,7 @@ class Testinterp1d:
         interp1d.kind = 'test'
         with raises(NotImplementedError, match="kind = test is not supported"):
             interp1d(0.2)
-            
-    def test_invertable_data(self, data):
-        interpolator = totest.interp1d(data[0][::-1], data[1][::-1])
-        assert np.allclose(interpolator.x, data[0])
-        assert np.allclose(interpolator.y, data[1])
-        
-    def test_non_invertable_data(self):
-        x_data = [0.0, 1.0, 2.0, 1.5]
-        y_data = [0.0, 1.0, 0.0, 0.5]
-        with raises(ValueError, match="x values must be strictly increasing or strictly decreasing."):
-            interpolator = totest.interp1d(x_data, y_data)
-        
+
 
 
 class TestPchipInterpolator2:
