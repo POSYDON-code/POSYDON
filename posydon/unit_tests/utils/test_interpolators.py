@@ -77,18 +77,14 @@ class Testinterp1d:
             totest.interp1d(x=data[0], y=data[1], left='test')
         with raises(TypeError):
             totest.interp1d(x=data[0], y=data[1], right='test')
-        
-        # incorrect input arrays
-        x_data = [0.0, 1.0, 2.0, 1.5]
-        y_data = [0.0, 1.0, 0.0, 0.5]
-        with raises(ValueError, match="x values must be strictly increasing or strictly decreasing."):
-            interpolator = totest.interp1d(x_data, y_data)
-        
-        # invertible data
-        interpolator = totest.interp1d(data[0][::-1], data[1][::-1])
-        assert np.allclose(interpolator.x, data[0])
-        assert np.allclose(interpolator.y, data[1])
-        
+        # x not strictly monotonic
+        with raises(ValueError, match="x values must be strictly increasing "\
+                                      +"or strictly decreasing."):
+            totest.interp1d([0.0, 1.0, 0.5], [0.0, 0.5, 1.0])
+        # examples: reversible data
+        test_interp1d = totest.interp1d(data[0][::-1], data[1][::-1])
+        assert np.array_equal(test_interp1d.x, np.array(data[0]))
+        assert np.array_equal(test_interp1d.y, np.array(data[1]))
         # examples
         kinds = ['linear']
         for k in kinds:
@@ -144,7 +140,7 @@ class Testinterp1d:
 class TestPchipInterpolator2:
     @fixture
     def PchipInterpolator2(self):
-        # initialize an instance of the class with defaults
+
         return totest.PchipInterpolator2([0.0, 1.0], [1.0, 0.0])
 
     @fixture
