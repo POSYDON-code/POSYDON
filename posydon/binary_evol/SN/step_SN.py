@@ -545,20 +545,38 @@ class StepSN(object):
                 else:
                     MODEL_properties = getattr(star, MODEL_NAME_SEL)
 
-                    if check_SN_type(m_core=star.co_core_mass,
-                                     m_He_core=star.he_core_mass,
-                                     m_star=star.mass)[3] == "ECSN":
+                    SN_type = check_SN_type(m_core=star.co_core_mass,
+                                            m_He_core=star.he_core_mass,
+                                            m_star=star.mass)[3]
+                    if self.use_profiles and profile is not None:
+                        alternative = "Instead use profiles."
+                    elif self.use_core_masses:
+                        alternative = "Instead use core masses."
+                    elif self.allow_spin_None:
+                        alternative = "Instead use core mass without spin."
+                    else:
+                        alternative = ""
+
+                    if SN_type == "ECSN":
                         # do not use interpolated values for ECSN range
                         pass
-
-                    ## Check if SN_type mismatches the CO_type in MODEL or if
-                    ## interpolated MODEL properties are NaN
-                    ## If either are true, interpolated values cannot be used
-                    ## for this SN
-                    elif (check_SN_CO_match(MODEL_properties['SN_type'], MODEL_properties['state']) and
-                        ~np.isnan(MODEL_properties['mass'])):
-
-
+                    ## star's SN_type mismatches one from the MODEL
+                    elif SN_type != MODEL_properties['SN_type']:
+                        Pwarn(f"The SN_type does not match the star: {SN_type}"
+                              f"!={MODEL_properties['SN_type']}."+alternative,
+                              "ApproximationWarning")
+                    ## Check if SN_type mismatches the CO_type in MODEL
+                    elif not check_SN_CO_match(MODEL_properties['SN_type'],
+                                               MODEL_properties['state'])
+                        Pwarn(f"{MODEL_NAME_SEL}: The SN_type does not match "
+                              "the predicted CO."+alternative,
+                              "ApproximationWarning")
+                    ## Check if there is no interpolated remnant mass
+                    elif pd.isna(MODEL_properties['mass']):
+                        Pwarn(f"There is no interpolated remnant mass."
+                              +alternative, "ApproximationWarning")
+                    ## Otherwise interpolated values can be used for this SN
+                    else:
                         for key, value in MODEL_properties.items():
                             setattr(star, key, value)
 
@@ -597,13 +615,6 @@ class StepSN(object):
                         if getattr(star, 'SN_type') != 'PISN':
                             star.log_R = np.log10(CO_radius(star.mass, star.state))
                         return
-
-                    else:
-                        Pwarn(f'{MODEL_NAME_SEL}: The SN_type does not match '
-                              'the predicted CO, or the interpolated values '
-                              'for the SN remnant are NaN. If use_profiles or '
-                              'use_core_masses is set to True, continue with '
-                              'the collapse.', "ApproximationWarning")
                         
             # Verifies the selection of core-collapse mechnism to perform
             # the collapse
