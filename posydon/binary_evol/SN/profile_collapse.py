@@ -410,11 +410,30 @@ def do_core_collapse_BH(star,
 
     # check that there is matter falling onto the BH
     if len(enclosed_mass) == 0:
+        arr = np.array([np.nan])
         return {
-            'M_BH_total': M_BH / Mo,
-            'a_BH_total': a_BH,
-            'm_disk_accreted': np.nan,
-            'm_disk_radiated': np.nan,
+            'M_BH_total' : M_BH / Mo,
+            'a_BH_total' : a_BH,
+            'm_disk_accreted' : np.nan,
+            'm_disk_radiated' : np.nan,
+            `BZ_jet_power_total` : np.nan,
+          # 'BZ_jet_power_array' : arr,
+          # 'M_BH_array' : arr,
+          # 'a_BH_array' : arr,
+          # 'J_accreted_array' : arr,
+          # 'J_total_array' : arr,
+          # 'J_disk_shell_array' : arr,
+          # 'radiation_eff_array' : arr,
+          # 'r_isco_array' : arr,
+          # 'j_isco_array' : arr,
+          # 'M_direct_collapse_array' : arr,
+          # 'M_disk_array' : arr,
+          # 'dm_direct_array' : arr,
+          # 'dm_disk_array' : arr,
+          # 'j_shell_array' : arr,
+          # 'M_total_array' : arr,
+          # 'a_star_array' : arr
+          # 'max_he_mass_ejected' : arr,
         }
 
     # shell's specific angular momentum at equator
