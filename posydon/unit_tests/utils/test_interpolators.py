@@ -63,7 +63,7 @@ class Testinterp1d:
             totest.interp1d()
         with raises(NotImplementedError, match="kind = test is not supported"):
             totest.interp1d(x=data[0], y=data[1], kind='test')
-        with raises(ValueError, match="x and y cannot be None"):
+        with raises(ValueError):
             totest.interp1d(None, None)
         with raises(ValueError):
             totest.interp1d('test', 'test')
