@@ -50,8 +50,8 @@ class interp1d:
         # if not, check if it's strictly decreasing and flip arrays accordingly
         if not np.all(np.diff(self.x) > 0):
             if np.all(np.diff(self.x) < 0):
-                self.x = self.x[::-1]
-                self.y = self.y[::-1]
+                self.x = np.flip(self.x)
+                self.y = np.flip(self.y)
             else:
                 raise ValueError("x values must be strictly increasing or strictly decreasing.")
         
