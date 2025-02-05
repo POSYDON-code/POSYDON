@@ -52,7 +52,7 @@ class interp1d:
                 self.x = np.flip(self.x)
                 self.y = np.flip(self.y)
             else:
-                # make them scritly increasing if neither
+                # make them strictly increasing if neither
                 indices = np.argsort(self.x)
                 self.x = self.x[indices]
                 self.y = self.y[indices]
