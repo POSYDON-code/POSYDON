@@ -447,6 +447,8 @@ def plot_population_data(data,
         var = 'q'
     elif slice_3D_var_str == 'star_2_mass':
         var = 'S2_mass'
+    else:
+        raise ValueError(f"Unknown slice_3D_var_str: {slice_3D_var_str}")
     
     # make it exclusive for the upper limit
     mask = (data[var] >= slice_3D_var_range[0]) & (data[var] < slice_3D_var_range[1])
