@@ -514,7 +514,8 @@ class StepSN(object):
                 for MODEL_NAME, MODEL in MODELS.items():
                     tmp = MODEL_NAME
                     for key, val in MODEL.items():
-                        if "use_" in key:
+                        if "use_" in key or key=="ECSN":
+                            # escape values, which are allowed to differ
                             continue
                         if getattr(self, key) != val:
                             if self.verbose:
