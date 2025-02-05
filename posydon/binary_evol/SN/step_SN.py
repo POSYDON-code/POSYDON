@@ -506,6 +506,7 @@ class StepSN(object):
         # explode
         if state in STAR_STATES_CC:
 
+            SN_type == ""
             # if no profile is avaiable but interpolation quantities are,
             # use those, else continue with or without profile.
             if self.use_interp_values:
@@ -557,8 +558,13 @@ class StepSN(object):
                     else:
                         alternative = ""
 
+                    if MODEL_properties['SN_type'] == "ECSN":
+                        # overwrite ECSN in SN MODEL
+                        MODEL_properties['SN_type'] = SN_type
+
                     if SN_type == "ECSN":
-                        # do not use interpolated values for ECSN range
+                        # do not use interpolated values for ECSN range instead
+                        # behave like use_core_masses=True
                         pass
                     ## star's SN_type mismatches one from the MODEL
                     elif SN_type != MODEL_properties['SN_type']:
@@ -701,7 +707,7 @@ class StepSN(object):
                     star.h1_mass_ej, star.he4_mass_ej = \
                         get_ejecta_element_mass_at_collapse(star,star.mass,verbose=self.verbose)
 
-                elif self.use_core_masses:
+                elif self.use_core_masses or SN_type == "ECSN":
                     # If the profile is not available the star spin
                     # is used to get the compact object spin
                     star.mass = m_grav
@@ -834,7 +840,7 @@ class StepSN(object):
                     star.h1_mass_ej, star.he4_mass_ej = \
                         get_ejecta_element_mass_at_collapse(star,star.mass,verbose=self.verbose)
 
-                elif self.use_core_masses:
+                elif self.use_core_masses or SN_type == "ECSN":
                     star.mass = m_grav
                     if m_grav >= self.max_NS_mass:
                         # see Eq. 14, Fryer, C. L., Belczynski, K., Wiktorowicz,
