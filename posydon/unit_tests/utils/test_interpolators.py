@@ -138,11 +138,10 @@ class Testinterp1d:
             interp1d(0.2)
 
 
-
 class TestPchipInterpolator2:
     @fixture
     def PchipInterpolator2(self):
-
+        # initialize an instance of the class with defaults
         return totest.PchipInterpolator2([0.0, 1.0], [1.0, 0.0])
 
     @fixture
