@@ -78,13 +78,15 @@ class Testinterp1d:
         with raises(TypeError):
             totest.interp1d(x=data[0], y=data[1], right='test')
         # x not strictly monotonic
-        with raises(ValueError, match="x values must be strictly increasing "\
-                                      +"or strictly decreasing."):
-            totest.interp1d([0.0, 1.0, 0.5], [0.0, 0.5, 1.0])
+        example_data = ([0.0, 1.0, 0.5], [0.0, 0.5, 1.0])
+        test_interp1d = totest.interp1d(example_data[0], example_data[1])
+        assert np.array_equal(test_interp1d.x, [0.0, 0.5, 1.0])
+        assert np.array_equal(test_interp1d.y, [0.0, 1.0, 0.5])
+        
         # examples: reversible data
         test_interp1d = totest.interp1d(data[0][::-1], data[1][::-1])
         assert np.array_equal(test_interp1d.x, np.array(data[0]))
-        assert np.array_equal(test_interp1d.y, np.array(data[1]))
+        assert np.array_equal(test_interp1d.y, np.array(data[1]))        
         # examples
         kinds = ['linear']
         for k in kinds:

@@ -52,8 +52,11 @@ class interp1d:
                 self.x = np.flip(self.x)
                 self.y = np.flip(self.y)
             else:
-                raise ValueError("x values must be strictly increasing or "
-                                 "strictly decreasing.")
+                # make them scritly increasing if neither
+                indices = np.argsort(self.x)
+                self.x = self.x[indices]
+                self.y = self.y[indices]
+                
         self.below = None
         self.above = None
         self.extrapolate = False
