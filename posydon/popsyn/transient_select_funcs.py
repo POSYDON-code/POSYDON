@@ -146,18 +146,19 @@ def chi_eff(m_1, m_2, a_1, a_2, tilt_1, tilt_2):
         The effective spin of the BHs.
         
     '''
-    if np.isnan(a_1).any():
+    if pd.isna(a_1).any():
         Pwarn("a_1 contains NaN, replacing with 0.0", 'ReplaceValueWarning')
-        a_1 = np.nan_to_num(a_1, nan=0.0)
+        a_1[pd.isna(a_1)] = 0.0
     if np.isnan(a_2).any():
         Pwarn("a_2 contains NaN, replacing with 0.0", 'ReplaceValueWarning')
-        a_2 = np.nan_to_num(a_2, nan=0.0)
+        a_2[pd.isna(a_2)] = 0.0
     if np.isnan(tilt_1).any():
         Pwarn("tilt_1 contains NaN, replacing with 0.0", 'ReplaceValueWarning')
-        tilt_1 = np.nan_to_num(tilt_1, nan=0.0)
+        
+        tilt_1[pd.isna(tilt_1)] = 0.0
     if np.isnan(tilt_2).any():
         Pwarn("tilt_2 contains NaN, replacing with 0.0", 'ReplaceValueWarning')
-        tilt_2 = np.nan_to_num(tilt_2, nan=0.0)
+        tilt_2[pd.isna(tilt_2)] = 0.
     return (m_1*a_1*np.cos(tilt_1)+m_2*a_2*np.cos(tilt_2))/(m_1+m_2)
 
 def m_chirp(m_1, m_2):
