@@ -40,6 +40,9 @@ class interp1d:
                     - size 2 : use first y-value for below and second for above
 
         """
+        if x is None or y is None:
+            raise ValueError("x and y cannot be None")
+            
         self.x = np.array(x)
         self.y = np.array(y)
         if kind not in ['linear']:
