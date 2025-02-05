@@ -519,7 +519,8 @@ class StepSN(object):
                             continue
                         if getattr(self, key) != val:
                             if self.verbose:
-                                print(tmp, 'mismatch:', key, getattr(self, key), val)
+                                print(tmp, 'mismatch:', key,
+                                      getattr(self, key), val)
                             tmp = None
                             break
                     if tmp is not None:
@@ -537,16 +538,24 @@ class StepSN(object):
                     # step_disrupted.
                     # allow to continue with the collapse with profile
                     # or core masses
-                    Pwarn(f'{MODEL_NAME_SEL}: The collapsed star '
-                                     'was not interpolated! If use_profiles '
-                                     'or use_core_masses is set to True, '
-                                     'continue with the collapse.', "InterpolationWarning")
+                    Pwarn(f'{MODEL_NAME_SEL}: The collapsed star was not '
+                          'interpolated! If use_profiles or use_core_masses '
+                          'is set to True, continue with the collapse.',
+                          "InterpolationWarning")
                 else:
                     MODEL_properties = getattr(star, MODEL_NAME_SEL)
 
-                    ## Check if SN_type mismatches the CO_type in MODEL or if interpolated MODEL properties are NaN
-                    ## If either are true, interpolated values cannot be used for this SN
-                    if (check_SN_CO_match(MODEL_properties['SN_type'], MODEL_properties['state']) and
+                    if check_SN_type(m_core=star.co_core_mass,
+                                     m_He_core=star.he_core_mass,
+                                     m_star=star.mass)[3] == "ECSN":
+                        # do not use interpolated values for ECSN range
+                        pass
+
+                    ## Check if SN_type mismatches the CO_type in MODEL or if
+                    ## interpolated MODEL properties are NaN
+                    ## If either are true, interpolated values cannot be used
+                    ## for this SN
+                    elif (check_SN_CO_match(MODEL_properties['SN_type'], MODEL_properties['state']) and
                         ~np.isnan(MODEL_properties['mass'])):
 
 
@@ -581,7 +590,8 @@ class StepSN(object):
                             convert_star_to_massless_remnant(star=star)
                             # the mass is set to None
                             # but an orbital kick is still applied.
-                            # Since the mass is set to None, this will lead to a disruption
+                            # Since the mass is set to None, this will lead to
+                            # a disruption
                             # TODO: make it skip the kick caluclation
 
                         if getattr(star, 'SN_type') != 'PISN':
@@ -589,11 +599,11 @@ class StepSN(object):
                         return
 
                     else:
-                        Pwarn(f'{MODEL_NAME_SEL}: The SN_type '
-                                      'does not match the predicted CO, or the interpolated '
-                                      'values for the SN remnant are NaN. '
-                                      'If use_profiles or use_core_masses is set to True, '
-                                      'continue with the collapse.', "ApproximationWarning")
+                        Pwarn(f'{MODEL_NAME_SEL}: The SN_type does not match '
+                              'the predicted CO, or the interpolated values '
+                              'for the SN remnant are NaN. If use_profiles or '
+                              'use_core_masses is set to True, continue with '
+                              'the collapse.', "ApproximationWarning")
                         
             # Verifies the selection of core-collapse mechnism to perform
             # the collapse
