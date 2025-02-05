@@ -44,6 +44,15 @@ class interp1d:
         self.y = np.array(y)
         if kind not in ['linear']:
             raise NotImplementedError(f"kind = {kind} is not supported")
+        # check that the data is sorted;
+        # if not, check if it's strictly decreasing and flip arrays accordingly
+        if not np.all(np.diff(self.x) > 0):
+            if np.all(np.diff(self.x) < 0):
+                self.x = self.x[::-1]
+                self.y = self.y[::-1]
+            else:
+                raise ValueError("x values must be strictly increasing or strictly decreasing.")
+        
         self.kind = kind
         self.below = None
         self.above = None
