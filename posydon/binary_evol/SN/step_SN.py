@@ -561,6 +561,8 @@ class StepSN(object):
                     if MODEL_properties['SN_type'] == "ECSN":
                         # overwrite ECSN in SN MODEL
                         MODEL_properties['SN_type'] = SN_type
+                        Pwarn(f"ECSN in SN_MODEL replaced by {SN_type}",
+                              "ReplaceValueWarning")
 
                     if SN_type == "ECSN":
                         # do not use interpolated values for ECSN range instead
