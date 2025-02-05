@@ -378,7 +378,7 @@ def do_core_collapse_BH(star,
         # 'M_direct_collapse_array': np.array(M_direct_collapse_array)
         #       Cumulative mass accreted through direct collapse in g.
         # 'M_disk_array': np.array(M_disk_array)
-        #       Cumulative mass accreted thorugh the disk in g.
+        #       Cumulative mass accreted through the disk in g.
         # 'dm_direct_array': np.array(dm_direct_array)
         #       Mass in shell with j < j_isco (direct collapse) in g
         # 'dm_disk_array': np.array(dm_disk_array)
