@@ -2276,6 +2276,11 @@ class TestPSyGrid:
                                      +"a list of strings."):
             PSyGrid.rerun(path_to_file=tmp_path, termination_flags="test",\
                           flags_to_check=1.0)
+        # bad input
+        with raises(TypeError, match="'new_mesa_flag' should be a dictionary "\
+                                     +"or None"):
+            PSyGrid.rerun(path_to_file=tmp_path, runs_to_rerun=[1],\
+                          new_mesa_flag="test")
         # examples: list of runs
         PSyGrid.rerun(path_to_file=tmp_path, runs_to_rerun=[1])
         check_grid_csv(os.path.join(tmp_path, "grid.csv"), runs=1)
@@ -2307,8 +2312,14 @@ class TestPSyGrid:
         PSyGrid.rerun(path_to_file=new_path, runs_to_rerun=[1],\
                       termination_flags="TF1")
         check_grid_csv(os.path.join(new_path, "grid.csv"), runs=2)
-        # examples: list of runs and termination_flags, other initial values
+        # examples: list of runs and termination_flags, no initial values
         new_path = os.path.join(tmp_path, "termination_flags_test6")
+        PSyGrid.initial_values = np.array([(np.nan)], dtype=[('test', '<f8')])
+        PSyGrid.rerun(path_to_file=new_path, runs_to_rerun=[1],\
+                      termination_flags="TF1")
+        check_grid_csv(os.path.join(new_path, "grid.csv"), runs=0)
+        # examples: list of runs and termination_flags, other initial values
+        new_path = os.path.join(tmp_path, "termination_flags_test7")
         PSyGrid.initial_values = np.array([(np.nan, np.nan, np.nan),\
                                            (1.0, 1.0, 0.01)],\
                                           dtype=[('star_1_mass', '<f8'),\
@@ -2325,7 +2336,7 @@ class TestPSyGrid:
                     assert line == "1.0,1.0,0.01\n"
         # examples: list of runs and termination_flags, other initial values,
         # other Z values
-        new_path = os.path.join(tmp_path, "termination_flags_test7")
+        new_path = os.path.join(tmp_path, "termination_flags_test8")
         PSyGrid.MESA_dirs[0] = os.path.join(os.path.dirname(\
                                 PSyGrid.MESA_dirs[0]), b"m1_1.0_m2_1.0_"\
                                 +b"initial_period_in_days_0.0_Zbase_0.01_"\
@@ -2339,6 +2350,17 @@ class TestPSyGrid:
                     assert line == "m1,m2,Zbase,new_Z\n"
                 else: # check data
                     assert line == "1.0,1.0,0.01,0.01\n"
+        # examples: list of runs and new mesa flags
+        new_path = os.path.join(tmp_path, "termination_flags_test9")
+        PSyGrid.rerun(path_to_file=new_path, runs_to_rerun=[1],\
+                      new_mesa_flag={"test2": 2.0, "test3": 3.0})
+        check_grid_csv(os.path.join(new_path, "grid.csv"), runs=1)
+        with open(os.path.join(new_path, "grid.csv")) as f:
+            for i,line in enumerate(f):
+                if i==0: # check header
+                    assert line == "m1,m2,Zbase,new_Z,test2,test3\n"
+                else: # check data
+                    assert line == "1.0,1.0,0.01,0.01,2.0,3.0\n"
         # bad input
         PSyGrid.MESA_dirs = []
         with raises(totest.GridError, match="No MESA dirs of previous runs "\

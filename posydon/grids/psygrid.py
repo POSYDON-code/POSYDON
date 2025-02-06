@@ -1814,6 +1814,9 @@ class PSyGrid:
             n_runs = 0
         # add new_mesa_flag
         if new_mesa_flag is not None:
+            if not isinstance(new_mesa_flag, dict):
+                raise TypeError("'new_mesa_flag' should be a dictionary or "
+                                "None")
             for key in new_mesa_flag.keys():
                 runs_data[key] = [new_mesa_flag[key]]*n_runs
         runs_data_frame = pd.DataFrame(runs_data)
