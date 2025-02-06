@@ -147,17 +147,20 @@ def chi_eff(m_1, m_2, a_1, a_2, tilt_1, tilt_2):
         
     '''
     if pd.isna(a_1).any():
-        Pwarn("a_1 contains NaN, replacing with 0.0", 'ReplaceValueWarning')
+        Pwarn("a_1 contains undefined values, replacing them with 0.0",
+              'ReplaceValueWarning')
         a_1[pd.isna(a_1)] = 0.0
     if np.isnan(a_2).any():
-        Pwarn("a_2 contains NaN, replacing with 0.0", 'ReplaceValueWarning')
+        Pwarn("a_2 contains undefined values, replacing them with 0.0",
+              'ReplaceValueWarning')
         a_2[pd.isna(a_2)] = 0.0
     if np.isnan(tilt_1).any():
-        Pwarn("tilt_1 contains NaN, replacing with 0.0", 'ReplaceValueWarning')
-        
+        Pwarn("tilt_1 contains undefined values, replacing them with 0.0",
+              'ReplaceValueWarning')
         tilt_1[pd.isna(tilt_1)] = 0.0
     if np.isnan(tilt_2).any():
-        Pwarn("tilt_2 contains NaN, replacing with 0.0", 'ReplaceValueWarning')
+        Pwarn("tilt_2 contains undefined values, replacing them with 0.0",
+              'ReplaceValueWarning')
         tilt_2[pd.isna(tilt_2)] = 0.
     return (m_1*a_1*np.cos(tilt_1)+m_2*a_2*np.cos(tilt_2))/(m_1+m_2)
 
