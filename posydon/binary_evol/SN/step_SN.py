@@ -714,6 +714,10 @@ class StepSN(object):
                     # is used to get the compact object spin
                     star.mass = m_grav
                     if m_grav >= self.max_NS_mass:
+                        if SN_type == "ECSN":
+                            Pwarn("An ECSN should not form a black hole: "
+                                  f"m_grav={m_grav}.",
+                                  "InappropriateValueWarning")
                         # see Eq. 14, Fryer, C. L., Belczynski, K., Wiktorowicz,
                         # G., Dominik, M., Kalogera, V., & Holz, D. E. (2012), ApJ, 749(1), 91.
 
@@ -845,6 +849,10 @@ class StepSN(object):
                 elif self.use_core_masses or SN_type == "ECSN":
                     star.mass = m_grav
                     if m_grav >= self.max_NS_mass:
+                        if SN_type == "ECSN":
+                            Pwarn("An ECSN should not form a black hole: "
+                                  f"m_grav={m_grav}.",
+                                  "InappropriateValueWarning")
                         # see Eq. 14, Fryer, C. L., Belczynski, K., Wiktorowicz,
                         # G., Dominik, M., Kalogera, V., & Holz, D. E. (2012), ApJ, 749(1), 91.
 
