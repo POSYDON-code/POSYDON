@@ -336,12 +336,13 @@ class TestElements:
                     'DEFAULT_STAR_HISTORY_COLS', 'EEP_FILE_EXTENSIONS',\
                     'EXTRA_COLS_DS_EXCLUDE',\
                     'EXTRA_STAR_COLS_AT_HE_DEPLETION', 'GRIDPROPERTIES',\
-                    'GridReader', 'H5_REC_STR_DTYPE', 'H5_UNICODE_DTYPE',\
-                    'HDF5_MEMBER_SIZE', 'IgnoreReason', 'N_FLAGS',\
-                    'N_FLAGS_SINGLE', 'POSYDONError', 'PROPERTIES_ALLOWED',\
-                    'PROPERTIES_TO_BE_CONSISTENT', 'PROPERTIES_TO_BE_NONE',\
-                    'PROPERTIES_TO_BE_SET', 'PSyGrid', 'PSyGridIterator',\
-                    'PSyRunView', 'Pwarn', 'TERMINATION_FLAG_COLUMNS',\
+                    'GridError', 'GridReader', 'H5_REC_STR_DTYPE',\
+                    'H5_UNICODE_DTYPE', 'HDF5_MEMBER_SIZE', 'IgnoreReason',\
+                    'N_FLAGS', 'N_FLAGS_SINGLE', 'POSYDONError',\
+                    'PROPERTIES_ALLOWED', 'PROPERTIES_TO_BE_CONSISTENT',\
+                    'PROPERTIES_TO_BE_NONE', 'PROPERTIES_TO_BE_SET',\
+                    'PSyGrid', 'PSyGridIterator', 'PSyRunView', 'Pwarn',\
+                    'TERMINATION_FLAG_COLUMNS',\
                     'TERMINATION_FLAG_COLUMNS_SINGLE',\
                     'THRESHOLD_CENTRAL_ABUNDANCE',\
                     'THRESHOLD_CENTRAL_ABUNDANCE_LOOSE_C', 'TrackDownsampler',\
@@ -1917,6 +1918,7 @@ class TestPSyGrid:
                         PSyGrid._create_psygrid(MESA_files, totest.h5py.File(\
                                                  PSyGrid.filepath,"w"))
         check_len(PSyGrid, N_MESA_runs+1+1)
+        #TODO: add more asserts
 
     def test_add_column(self, PSyGrid, tmp_path):
         assert isroutine(PSyGrid.add_column)
@@ -2056,36 +2058,293 @@ class TestPSyGrid:
         test_file = totest.h5py.File(test_path, "w")
         test_file.close()
 
-    def test_str(self, PSyGrid):
+    def test_str(self, PSyGrid, grid_path):
         assert isroutine(PSyGrid.__str__)
-        pass
+        # examples: no grid
+        PSyGrid_str = PSyGrid.__str__()
+        assert "PSyGrid instance:" in PSyGrid_str
+        assert "No HDF5 file path. PSyGrid instance is likely empty."\
+               in PSyGrid_str
+        # examples: test grid
+        try:
+            PSyGrid.load(grid_path)
+        except:
+            return
+        PSyGrid_str = PSyGrid.__str__()
+        assert f"{PSyGrid.n_runs} runs found. They include:" in PSyGrid_str
+        assert "1 binary_history files." in PSyGrid_str
+        assert "1 history1 files." in PSyGrid_str
+        assert "1 history2 files." in PSyGrid_str
+        assert "1 final_profile1 files." in PSyGrid_str
+        assert "1 final_profile2 files." in PSyGrid_str
+        assert "Columns in binary_history: (" in PSyGrid_str
+        assert "Columns in history1: (" in PSyGrid_str
+        assert "Columns in history2: (" in PSyGrid_str
+        assert "Columns in final_profile1: (" in PSyGrid_str
+        assert "Columns in final_profile2: (" in PSyGrid_str
+        assert "Columns in initial values:" in PSyGrid_str
+        assert "Columns in final values:" in PSyGrid_str
+        assert "Configuration:" in PSyGrid_str
+        assert "Relative paths to MESA run directories:" in PSyGrid_str
+        # examples: no runs
+        PSyGrid.n_runs = 0
+        assert "No runs found in the grid (empty or 'slim' version)."\
+               in PSyGrid.__str__()
+        # examples: runs without histories and profiles
+        try:
+            PSyGrid.load(grid_path)
+        except:
+            return
+        PSyGrid.n_runs = 1 # the first run has no histories and profiles
+        PSyGrid_str = PSyGrid.__str__()
+        assert "0 binary_history files." in PSyGrid_str
+        assert "0 history1 files." in PSyGrid_str
+        assert "0 history2 files." in PSyGrid_str
+        assert "0 final_profile1 files." in PSyGrid_str
+        assert "0 final_profile2 files." in PSyGrid_str
+        assert "Columns in binary_history: (" not in PSyGrid_str
+        assert "Columns in history1: (" not in PSyGrid_str
+        assert "Columns in history2: (" not in PSyGrid_str
+        assert "Columns in final_profile1: (" not in PSyGrid_str
+        assert "Columns in final_profile2: (" not in PSyGrid_str
+        # examples: no initial values
+        try:
+            PSyGrid.load(grid_path)
+        except:
+            return
+        PSyGrid.initial_values = None
+        assert "Initial values array is not loaded." in PSyGrid.__str__()
+        # examples: no final values
+        try:
+            PSyGrid.load(grid_path)
+        except:
+            return
+        PSyGrid.final_values = None
+        assert "Final values array is not loaded." in PSyGrid.__str__()
+        # examples: no configuration
+        try:
+            PSyGrid.load(grid_path)
+        except:
+            return
+        PSyGrid.config = ""
+        assert "Configuration:\n\t(empty)" in PSyGrid.__str__()
+        # examples: MESA_dirs
+        try:
+            PSyGrid.load(grid_path)
+        except:
+            return
+        PSyGrid.MESA_dirs = []
+        assert "No MESA directory found." in PSyGrid.__str__()
+        PSyGrid.MESA_dirs = ["dir1"]
+        assert "Relative paths to MESA run directories:\n\tdir1\n"\
+               == PSyGrid.__str__()[-46:]
+        PSyGrid.MESA_dirs = ["dir1", "dir2"]
+        assert "Relative paths to MESA run directories:\n\tdir1\n\tdir2\n"\
+               == PSyGrid.__str__()[-52:]
+        for i in range(5):
+            PSyGrid.MESA_dirs = [f"dir{j+1}" for j in range(i+3)]
+            assert "Relative paths to MESA run directories:\n\tdir1\n"\
+                   + f"\t...({i+1} other directories)\n\tdir{i+3}\n"\
+                   in PSyGrid.__str__()
+        # examples: neither runs nor MESA_dirs
+        PSyGrid.n_runs = 0
+        PSyGrid.MESA_dirs = []
+        assert "Relative paths to MESA run directories:"\
+               not in PSyGrid.__str__()
 
-    def test_getitem(self, PSyGrid):
+    def test_getitem(self, PSyGrid, grid_path):
         assert isroutine(PSyGrid.__getitem__)
-        pass
+        # missing argument
+        with raises(TypeError, match="missing 1 required positional "\
+                                     +"argument: 'index'"):
+            PSyGrid.__getitem__()
+        # bad input
+        with raises(TypeError, match="Index None is not of type int"):
+            PSyGrid.__getitem__(None)
+        # bad input
+        with raises(IndexError, match=f"Index {PSyGrid.n_runs+1} out of "\
+                                     +"bounds."):
+            PSyGrid.__getitem__(PSyGrid.n_runs+1)
+        # examples
+        try:
+            PSyGrid.load(grid_path)
+        except:
+            return
+        for i in range(PSyGrid.n_runs):
+            test_run = PSyGrid.__getitem__(i)
+            assert isinstance(test_run, totest.PSyRunView)
+            assert test_run.psygrid == PSyGrid
+            assert test_run.index == i
 
-    def test_get_pandas_initial_final(self, PSyGrid):
+    def test_get_pandas_initial_final(self, PSyGrid, grid_path):
         assert isroutine(PSyGrid.get_pandas_initial_final)
-        pass
+        with raises(AttributeError, match="'NoneType' object has no "\
+                                          +"attribute 'dtype'"):
+            PSyGrid.get_pandas_initial_final()
+        # examples
+        try:
+            PSyGrid.load(grid_path)
+        except:
+            return
+        test_df = PSyGrid.get_pandas_initial_final()
+        for key in PSyGrid.initial_values.dtype.names:
+            assert "initial_" + key in test_df
+            # for float types allow nans, but others e.g. strings would fail on
+            # allowing nans
+            allow_nan = 'f' in PSyGrid.initial_values[key].dtype.descr[0][1]
+            assert np.array_equal(PSyGrid.initial_values[key],\
+                                  np.array(test_df["initial_"+key]),\
+                                  equal_nan=allow_nan)
+        for key in PSyGrid.final_values.dtype.names:
+            assert "final_" + key in test_df
+            # for float types allow nans, but others e.g. strings would fail on
+            # allowing nans
+            allow_nan = 'f' in PSyGrid.final_values[key].dtype.descr[0][1]
+            assert np.array_equal(PSyGrid.final_values[key],\
+                                  np.array(test_df["final_"+key]),\
+                                  equal_nan=allow_nan)
 
     def test_len(self, PSyGrid):
         assert isroutine(PSyGrid.__len__)
-        pass
+        for i in range(5):
+            PSyGrid.n_runs = i
+            assert PSyGrid.__len__() == i
 
     def test_contains(self, PSyGrid):
         assert isroutine(PSyGrid.__contains__)
-        pass
+        # missing argument
+        with raises(TypeError, match="missing 1 required positional "\
+                                     +"argument: 'index'"):
+            PSyGrid.__contains__()
+        # bad input
+        with raises(TypeError, match="Index None is not of type int"):
+            PSyGrid.__contains__(None)
+        # examples
+        for i in range(5):
+            PSyGrid.n_runs = i
+            for j in range(5):
+                assert PSyGrid.__contains__(j) == (j<i)
 
-    def test_iter(self, PSyGrid):
+    def test_iter(self, PSyGrid, grid_path):
         assert isroutine(PSyGrid.__iter__)
-        pass
+        # examples
+        try:
+            PSyGrid.load(grid_path)
+        except:
+            return
+        test_iterator = PSyGrid.__iter__()
+        assert isinstance(test_iterator, totest.PSyGridIterator)
+        assert test_iterator._grid == PSyGrid
+        assert test_iterator._index == 0
 
     def test_del(self, PSyGrid):
         assert isroutine(PSyGrid.__del__)
-        pass
+        # examples: one test case from close
+        PSyGrid.hdf5 = "test"
+        PSyGrid.__del__()
+        assert PSyGrid.hdf5 is None
 
-    def test_rerun(self, PSyGrid):
+    def test_rerun(self, PSyGrid, grid_path, tmp_path):
+        def check_grid_csv(path, runs=0):
+            assert os.path.exists(path)
+            with open(path) as f:
+                assert sum(1 for _ in f) == runs+1
         assert isroutine(PSyGrid.rerun)
+        try:
+            PSyGrid.load(grid_path)
+        except:
+            return
+        # bad input
+        with raises(ValueError, match="Either 'runs_to_rerun' or "\
+                                      +"'termination_flags' has to be "\
+                                      +"specified and therefore different "\
+                                      +"from None."):
+            PSyGrid.rerun(path_to_file=tmp_path)
+        # bad input
+        with raises(TypeError, match="'runs_to_rerun' should be a list or "\
+                                     +"None."):
+            PSyGrid.rerun(path_to_file=tmp_path, runs_to_rerun=1.0)
+        # bad input
+        with raises(IndexError):
+            PSyGrid.rerun(path_to_file=tmp_path, runs_to_rerun="test")
+        # bad input
+        with raises(TypeError, match="'termination_flags' should be a string "\
+                                     +"or a list of strings."):
+            PSyGrid.rerun(path_to_file=tmp_path, termination_flags=1.0)
+        # bad input
+        with raises(TypeError, match="'flags_to_check' should be a string or "\
+                                     +"a list of strings."):
+            PSyGrid.rerun(path_to_file=tmp_path, termination_flags="test",\
+                          flags_to_check=1.0)
+        # examples: list of runs
+        PSyGrid.rerun(path_to_file=tmp_path, runs_to_rerun=[1])
+        check_grid_csv(os.path.join(tmp_path, "grid.csv"), runs=1)
+        # examples: termination_flags
+        new_path = os.path.join(tmp_path, "termination_flags_test1")
+        PSyGrid.rerun(path_to_file=new_path, termination_flags="test")
+        check_grid_csv(os.path.join(new_path, "grid.csv"))
+        # examples: termination_flags, specify flag (single string)
+        new_path = os.path.join(tmp_path, "termination_flags_test2")
+        PSyGrid.rerun(path_to_file=new_path, termination_flags="test",\
+                      flags_to_check='termination_flag_1')
+        check_grid_csv(os.path.join(new_path, "grid.csv"))
+        # examples: termination_flags, specify flag(s) (list)
+        new_path = os.path.join(tmp_path, "termination_flags_test3")
+        PSyGrid.rerun(path_to_file=new_path, termination_flags=["test",\
+                                                                "test"],\
+                      flags_to_check=['termination_flag_1',\
+                                      'termination_flag_2'])
+        check_grid_csv(os.path.join(new_path, "grid.csv"))
+        # examples: termination_flags, specify flag(s) (tuple)
+        new_path = os.path.join(tmp_path, "termination_flags_test4")
+        PSyGrid.rerun(path_to_file=new_path, termination_flags=("test",\
+                                                                "TF1"),\
+                      flags_to_check=('termination_flag_1',\
+                                      'termination_flag_2'))
+        check_grid_csv(os.path.join(new_path, "grid.csv"), runs=2)
+        # examples: list of runs and termination_flags
+        new_path = os.path.join(tmp_path, "termination_flags_test5")
+        PSyGrid.rerun(path_to_file=new_path, runs_to_rerun=[1],\
+                      termination_flags="TF1")
+        check_grid_csv(os.path.join(new_path, "grid.csv"), runs=2)
+        # examples: list of runs and termination_flags, other initial values
+        new_path = os.path.join(tmp_path, "termination_flags_test6")
+        PSyGrid.initial_values = np.array([(np.nan, np.nan, np.nan),\
+                                           (1.0, 1.0, 0.01)],\
+                                          dtype=[('star_1_mass', '<f8'),\
+                                                 ('star_2_mass', '<f8'),\
+                                                 ('Z', '<f8')])
+        PSyGrid.rerun(path_to_file=new_path, runs_to_rerun=[1],\
+                      termination_flags="test")
+        check_grid_csv(os.path.join(new_path, "grid.csv"), runs=1)
+        with open(os.path.join(new_path, "grid.csv")) as f:
+            for i,line in enumerate(f):
+                if i==0: # check header
+                    assert line == "m1,m2,initial_z\n"
+                else: # check data
+                    assert line == "1.0,1.0,0.01\n"
+        # examples: list of runs and termination_flags, other initial values,
+        # other Z values
+        new_path = os.path.join(tmp_path, "termination_flags_test7")
+        PSyGrid.MESA_dirs[0] = os.path.join(os.path.dirname(\
+                                PSyGrid.MESA_dirs[0]), b"m1_1.0_m2_1.0_"\
+                                +b"initial_period_in_days_0.0_Zbase_0.01_"\
+                                +b"new_Z_0.01_idx_0")
+        PSyGrid.rerun(path_to_file=new_path, runs_to_rerun=[1],\
+                      termination_flags="test")
+        check_grid_csv(os.path.join(new_path, "grid.csv"), runs=1)
+        with open(os.path.join(new_path, "grid.csv")) as f:
+            for i,line in enumerate(f):
+                if i==0: # check header
+                    assert line == "m1,m2,Zbase,new_Z\n"
+                else: # check data
+                    assert line == "1.0,1.0,0.01,0.01\n"
+        # bad input
+        PSyGrid.MESA_dirs = []
+        with raises(totest.GridError, match="No MESA dirs of previous runs "\
+                                            +"in the grid."):
+            PSyGrid.rerun(path_to_file=new_path, runs_to_rerun=[1],\
+                          termination_flags="test")
         pass
 
     def test_plot2D(self, PSyGrid):

@@ -213,7 +213,7 @@ from posydon.grids.downsampling import TrackDownsampler
 from posydon.grids.scrubbing import scrub, keep_after_RLO, keep_till_central_abundance_He_C
 from posydon.utils.ignorereason import IgnoreReason
 from posydon.utils.posydonwarning import (Pwarn, Catch_POSYDON_Warnings)
-from posydon.utils.posydonerror import POSYDONError
+from posydon.utils.posydonerror import POSYDONError, GridError
 
 
 HDF5_MEMBER_SIZE = 2**31 - 1            # maximum HDF5 file size when splitting
@@ -1799,7 +1799,7 @@ class PSyGrid:
                 if 'new_Z' in MESA_dir_name:
                     column_names['new_Z'] = 'Z'
             else:
-                raise Exception("No MESA dirs of previous runs in the grid.")
+                raise GridError("No MESA dirs of previous runs in the grid.")
         # getting the initial data set
         NDIG = 10 # rounding matches initial point rounding
         runs_data = {}
