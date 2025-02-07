@@ -506,7 +506,7 @@ class StepSN(object):
         # explode
         if state in STAR_STATES_CC:
 
-            SN_type == ""
+            SN_type = ""
             # if no profile is avaiable but interpolation quantities are,
             # use those, else continue with or without profile.
             if self.use_interp_values:
