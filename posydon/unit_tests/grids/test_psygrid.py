@@ -2367,7 +2367,6 @@ class TestPSyGrid:
                                             +"in the grid."):
             PSyGrid.rerun(path_to_file=new_path, runs_to_rerun=[1],\
                           termination_flags="test")
-        pass
 
     def test_plot2D(self, PSyGrid):
         assert isroutine(PSyGrid.plot2D)
