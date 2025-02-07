@@ -57,9 +57,12 @@ def data_download(file=file, MD5_check=True, verbose=False):
     """
     # First, make sure the path does not exist
     if os.path.exists(file):
-        if verbose:
-            print('POSYDON data alraedy exists at', file)
-        return
+        raise FileExistsError(f'POSYDON data already exists at {file}')
+
+    # Second, check to make sure PATH_TO_POSYDON_DATA is defined
+    if "PATH_TO_POSYDON_DATA" not in os.environ:
+        raise NameError('You must define the PATH_TO_POSYDON_DATA environment '
+                        'variable before downloading POSYDON datasets')
 
     # Split the file into its directory and filename
     directory, filename = os.path.split(file)
@@ -89,7 +92,7 @@ def data_download(file=file, MD5_check=True, verbose=False):
                 # Raise value error
                 raise ValueError("MD5 verification failed!.")
         except:
-            print('Failed to read the tar.gz file for MD5 verificaton, '
+            print('Failed to read the tar.gz file for MD5 verification, '
                   'cannot guarantee file integrity (this error seems to '
                   'happen only on macOS).')
 
@@ -99,6 +102,7 @@ def data_download(file=file, MD5_check=True, verbose=False):
         for member in tqdm(iterable=tar.getmembers(), total=len(tar.getmembers())):
             tar.extract(member=member, path=directory)
 
+    # remove tar files after extracted
     if os.path.exists(file):
         if verbose:
             print('Removed downloaded tar file.')

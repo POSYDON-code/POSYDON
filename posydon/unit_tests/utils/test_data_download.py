@@ -81,7 +81,7 @@ class TestFunctions:
     @fixture
     def failed_MD5_statement(self):
         # statement that MD5 verfication failed
-        return "Failed to read the tar.gz file for MD5 verificaton"
+        return "Failed to read the tar.gz file for MD5 verification"
 
     @fixture
     def extraction_statement(self):
@@ -132,10 +132,20 @@ class TestFunctions:
         with raises(TypeError, match="path should be string, bytes, "\
                                      +"os.PathLike or integer"):
             totest.data_download(file={})
-        totest.data_download(file="./")
-        assert capsys.readouterr().out == ""
-        totest.data_download(file="./", verbose=True)
-        assert capsys.readouterr().out == "POSYDON data alraedy exists at ./\n"
+        # bad input
+        with monkeypatch.context() as mp:
+            mock_environ = totest.os.environ.copy()
+            mock_environ.pop("PATH_TO_POSYDON_DATA")
+            mp.setattr(totest.os, "environ", mock_environ)
+            with raises(NameError, match="You must define the "\
+                                         +"PATH_TO_POSYDON_DATA environment "\
+                                         +"variable before downloading "\
+                                         +"POSYDON datasets"):
+                totest.data_download(file=test_path+".tar.gz")
+        # bad input
+        with raises(FileExistsError, match="POSYDON data already exists at "\
+                                           +"./"):
+            totest.data_download(file="./")
         # skip real download: do nothing instead
         with monkeypatch.context() as mp:
             mp.setattr(totest.urllib.request, "urlretrieve", mock_urlretrieve)
