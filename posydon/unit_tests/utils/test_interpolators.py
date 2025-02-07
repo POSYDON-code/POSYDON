@@ -63,7 +63,7 @@ class Testinterp1d:
             totest.interp1d()
         with raises(NotImplementedError, match="kind = test is not supported"):
             totest.interp1d(x=data[0], y=data[1], kind='test')
-        with raises(TypeError, match="'NoneType' object is not subscriptable"):
+        with raises(ValueError):
             totest.interp1d(None, None)
         with raises(ValueError):
             totest.interp1d('test', 'test')
@@ -77,6 +77,16 @@ class Testinterp1d:
             totest.interp1d(x=data[0], y=data[1], left='test')
         with raises(TypeError):
             totest.interp1d(x=data[0], y=data[1], right='test')
+        # x not strictly monotonic
+        example_data = ([0.0, 1.0, 0.5], [0.0, 0.5, 1.0])
+        test_interp1d = totest.interp1d(example_data[0], example_data[1])
+        assert np.array_equal(test_interp1d.x, [0.0, 0.5, 1.0])
+        assert np.array_equal(test_interp1d.y, [0.0, 1.0, 0.5])
+        
+        # examples: reversible data
+        test_interp1d = totest.interp1d(data[0][::-1], data[1][::-1])
+        assert np.array_equal(test_interp1d.x, np.array(data[0]))
+        assert np.array_equal(test_interp1d.y, np.array(data[1]))        
         # examples
         kinds = ['linear']
         for k in kinds:

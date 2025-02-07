@@ -39,12 +39,24 @@ class interp1d:
                     - size 1 : use y-value for below and above
                     - size 2 : use first y-value for below and second for above
 
-        """
-        self.x = np.array(x)
-        self.y = np.array(y)
+        """ 
         if kind not in ['linear']:
             raise NotImplementedError(f"kind = {kind} is not supported")
         self.kind = kind
+        self.x = np.array(x)
+        self.y = np.array(y)
+        # check that x is increasing
+        if not np.all(np.diff(self.x) > 0):
+            # if instead being strictly decreasing, flip data
+            if np.all(np.diff(self.x) < 0):
+                self.x = np.flip(self.x)
+                self.y = np.flip(self.y)
+            else:
+                # make them strictly increasing if neither
+                indices = np.argsort(self.x)
+                self.x = self.x[indices]
+                self.y = self.y[indices]
+                
         self.below = None
         self.above = None
         self.extrapolate = False
