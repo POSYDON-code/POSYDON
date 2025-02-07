@@ -549,7 +549,7 @@ class StepSN(object):
                     SN_type = self.check_SN_type(m_core=star.co_core_mass,
                                                  m_He_core=star.he_core_mass,
                                                  m_star=star.mass)[3]
-                    if self.use_profiles and profile is not None:
+                    if self.use_profiles and star.profile is not None:
                         alternative = "Instead use profiles."
                     elif self.use_core_masses:
                         alternative = "Instead use core masses."
