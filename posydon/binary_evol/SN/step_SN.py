@@ -575,7 +575,7 @@ class StepSN(object):
                               "ApproximationWarning")
                     ## Check if SN_type mismatches the CO_type in MODEL
                     elif not check_SN_CO_match(MODEL_properties['SN_type'],
-                                               MODEL_properties['state'])
+                                               MODEL_properties['state']):
                         Pwarn(f"{MODEL_NAME_SEL}: The SN_type does not match "
                               "the predicted CO."+alternative,
                               "ApproximationWarning")
