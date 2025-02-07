@@ -2,8 +2,7 @@
 """
 
 __authors__ = [
-    "Matthias Kruckow <Matthias.Kruckow@unige.ch>",
-    "Jeff Andrews <jeffrey.andrews@ufl.edu>"
+    "Matthias Kruckow <Matthias.Kruckow@unige.ch>"
 ]
 
 # import the module which will be tested
@@ -23,11 +22,11 @@ def artificial_object():
 class TestElements:
     # check for objects, which should be an element of the tested module
     def test_dir(self):
-        elements = ['ClassificationError', 'FlowError', 'DataError',\
-                    'GridError', 'MatchingError', 'ModelError',\
-                    'NumericalError', 'POSYDONError', '__authors__',\
-                    '__builtins__', '__cached__', '__doc__', '__file__',\
-                    '__loader__', '__name__', '__package__', '__spec__']
+        elements = ['ClassificationError', 'FlowError', 'GridError',\
+                    'MatchingError', 'ModelError', 'NumericalError',\
+                    'POSYDONError', '__authors__', '__builtins__',\
+                    '__cached__', '__doc__', '__file__', '__loader__',\
+                    '__name__', '__package__', '__spec__']
         assert dir(totest) == elements, "There might be added or removed "\
                                         + "objects without an update on the "\
                                         + "unit test."
@@ -43,12 +42,6 @@ class TestElements:
         assert issubclass(totest.ClassificationError, totest.POSYDONError)
         with raises(totest.ClassificationError, match="Test"):
             raise totest.ClassificationError("Test")
-
-    def test_instance_DataError(self):
-        assert isclass(totest.DataError)
-        assert issubclass(totest.DataError, totest.POSYDONError)
-        with raises(totest.DataError, match="Test"):
-            raise totest.DataError("Test")
 
     def test_instance_FlowError(self):
         assert isclass(totest.FlowError)

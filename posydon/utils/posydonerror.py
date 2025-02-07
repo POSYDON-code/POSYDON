@@ -4,7 +4,6 @@
 __authors__ = [
     "Camille Liotine <cliotine@u.northwestern.edu>",
     "Eirini Kasdagli <kasdaglie@ufl.edu>",
-    "Jeff Andrews <jeffrey.andrews@ufl.edu>",
     "Konstantinos Kovlakas <Konstantinos.Kovlakas@unige.ch>",
     "Matthias Kruckow <Matthias.Kruckow@unige.ch>",
 ]
@@ -36,9 +35,6 @@ class POSYDONError(Exception):
     
 class ClassificationError(POSYDONError):
     """POSYDON error specific for binary classification errors."""
-
-class DataError(POSYDONError):
-    """POSYDON error specific for data errors."""
 
 class FlowError(POSYDONError):
     """POSYDON error specific for binary evolution flow errors."""

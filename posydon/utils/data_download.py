@@ -11,7 +11,6 @@ import hashlib
 import progressbar
 import tarfile
 from tqdm import tqdm
-from posydon.utils.posydonerror import DataError
 
 # get path to data, if not provided use the working directory
 PATH_TO_POSYDON_DATA = os.environ.get("PATH_TO_POSYDON_DATA",'./')
@@ -64,8 +63,8 @@ def data_download(file=file, MD5_check=True, verbose=False):
 
     # Second, check to make sure PATH_TO_POSYDON_DATA is defined
     if "PATH_TO_POSYDON_DATA" not in os.environ:
-        raise DataError('You must define the PATH_TO_POSYDON_DATA environment'
-                        ' variable before downloading POSYDON datasets')
+        raise NameError('You must define the PATH_TO_POSYDON_DATA environment '
+                        'variable before downloading POSYDON datasets')
 
     # Split the file into its directory and filename
     directory, filename = os.path.split(file)

@@ -132,6 +132,16 @@ class TestFunctions:
         with raises(TypeError, match="path should be string, bytes, "\
                                      +"os.PathLike or integer"):
             totest.data_download(file={})
+        # bad input
+        with monkeypatch.context() as mp:
+            mock_environ = totest.os.environ.copy()
+            mock_environ.pop("PATH_TO_POSYDON_DATA")
+            mp.setattr(totest.os, "environ", mock_environ)
+            with raises(NameError, match="You must define the "\
+                                         +"PATH_TO_POSYDON_DATA environment "\
+                                         +"variable before downloading "\
+                                         +"POSYDON datasets"):
+                totest.data_download(file=test_path+".tar.gz")
         totest.data_download(file="./")
         assert capsys.readouterr().out == ""
         totest.data_download(file="./", verbose=True)
