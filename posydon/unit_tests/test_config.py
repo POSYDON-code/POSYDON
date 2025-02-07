@@ -46,6 +46,7 @@ class TestValues:
 
     def test_value_PATH_TO_POSYDON_DATA(self):
         assert totest.PATH_TO_POSYDON_DATA is not None
+        assert "POSYDON_data" in totest.PATH_TO_POSYDON_DATA
 
 
 class TestFunctions:

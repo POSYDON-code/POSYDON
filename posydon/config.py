@@ -30,4 +30,5 @@ def ensure_path(name):
 
 # POSYDON environment variables
 PATH_TO_POSYDON = ensure_path("PATH_TO_POSYDON")
-PATH_TO_POSYDON_DATA = ensure_path("PATH_TO_POSYDON_DATA")
+PATH_TO_POSYDON_DATA = os.path.join(ensure_path("PATH_TO_POSYDON_DATA"),
+                                    "POSYDON_data")

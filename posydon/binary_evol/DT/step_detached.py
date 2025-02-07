@@ -22,7 +22,7 @@ from scipy.interpolate import PchipInterpolator
 from scipy.optimize import minimize
 from scipy.optimize import root
 
-from posydon.utils.data_download import PATH_TO_POSYDON_DATA
+from posydon.config import PATH_TO_POSYDON_DATA
 from posydon.binary_evol.binarystar import BINARYPROPERTIES
 from posydon.binary_evol.singlestar import STARPROPERTIES
 from posydon.interpolation.interpolation import GRIDInterpolator

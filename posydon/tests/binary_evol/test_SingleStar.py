@@ -1,7 +1,7 @@
 import unittest
 import os
 import numpy as np
-from posydon.utils.common_functions import PATH_TO_POSYDON
+from posydon.config import PATH_TO_POSYDON
 from posydon.binary_evol.singlestar import SingleStar
 from posydon.grids.psygrid import PSyGrid
 
