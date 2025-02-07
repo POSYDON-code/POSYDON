@@ -57,9 +57,7 @@ def data_download(file=file, MD5_check=True, verbose=False):
     """
     # First, make sure the path does not exist
     if os.path.exists(file):
-        if verbose:
-            print('POSYDON data already exists at', file)
-        return
+        raise FileExistsError(f'POSYDON data already exists at {file}')
 
     # Second, check to make sure PATH_TO_POSYDON_DATA is defined
     if "PATH_TO_POSYDON_DATA" not in os.environ:

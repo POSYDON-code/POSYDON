@@ -142,10 +142,10 @@ class TestFunctions:
                                          +"variable before downloading "\
                                          +"POSYDON datasets"):
                 totest.data_download(file=test_path+".tar.gz")
-        totest.data_download(file="./")
-        assert capsys.readouterr().out == ""
-        totest.data_download(file="./", verbose=True)
-        assert capsys.readouterr().out == "POSYDON data already exists at ./\n"
+        # bad input
+        with raises(FileExistsError, match="POSYDON data already exists at "\
+                                           +"./"):
+            totest.data_download(file="./")
         # skip real download: do nothing instead
         with monkeypatch.context() as mp:
             mp.setattr(totest.urllib.request, "urlretrieve", mock_urlretrieve)
