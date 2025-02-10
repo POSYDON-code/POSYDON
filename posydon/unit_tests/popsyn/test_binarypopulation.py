@@ -6,7 +6,7 @@ __authors__ = [
 ]
 
 # import the module which will be tested
-import posydon.popsyn.analysis as totest
+import posydon.popsyn.binarypopulation as totest
 # aliases
 pd = totest.pd
 np = totest.np
