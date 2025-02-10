@@ -2256,7 +2256,7 @@ class TestPSyGrid:
         PSyGrid.close_check = False
         monkeypatch.setattr(totest.PSyGrid, "close", mock_close)
         PSyGrid.__del__()
-        assert PSyGrid.close_check
+        assert PSyGrid.close_check == True
 
     def test_rerun(self, PSyGrid, grid_path, tmp_path):
         def check_grid_csv(path, runs=0):
@@ -2663,9 +2663,20 @@ class TestPSyGrid:
 
 class TestPSyGridIterator:
     @fixture
-    def PSyGrid(self):
+    def grid_path(self, tmp_path, binary_history, star_history, profile):
+        # a path to a psygrid file for testing
+        return get_PSyGrid(tmp_path, 1, binary_history, star_history, profile)
+
+    @fixture
+    def PSyGrid(self, grid_path):
         # initialize an PSyGrid for testing
-        return totest.PSyGrid()
+        test_PSyGrid = totest.PSyGrid()
+        try:
+            test_PSyGrid.load(grid_path)
+        except: # skip test as test on load should fail
+            assert "/" in grid_path
+            return
+        return test_PSyGrid
 
     @fixture
     def PSyGridIterator(self, PSyGrid):
@@ -2673,22 +2684,43 @@ class TestPSyGridIterator:
         return totest.PSyGridIterator(PSyGrid)
 
     # test the PSyGridIterator class
-    def test_init(self, PSyGridIterator):
+    def test_init(self, PSyGridIterator, PSyGrid):
         assert isroutine(PSyGridIterator.__init__)
         # check that the instance is of correct type and all code in the
         # __init__ got executed: the elements are created and initialized
-        pass
+        assert PSyGridIterator._grid == PSyGrid
+        assert PSyGridIterator._index == 0
 
     def test_next(self, PSyGridIterator):
         assert isroutine(PSyGridIterator.__next__)
-        pass
+        # iterate throught the grid
+        assert PSyGridIterator._index == 0
+        for i in range(PSyGridIterator._grid.n_runs):
+            test_run = PSyGridIterator.__next__()
+            assert test_run.psygrid == PSyGridIterator._grid
+            assert test_run.index == i
+            assert PSyGridIterator._index == i + 1
+        # end of iteration
+        with raises(StopIteration):
+            PSyGridIterator.__next__()
 
 
 class TestPSyRunView:
     @fixture
-    def PSyGrid(self):
+    def grid_path(self, tmp_path, binary_history, star_history, profile):
+        # a path to a psygrid file for testing
+        return get_PSyGrid(tmp_path, 1, binary_history, star_history, profile)
+
+    @fixture
+    def PSyGrid(self, grid_path):
         # initialize an PSyGrid for testing
-        return totest.PSyGrid()
+        test_PSyGrid = totest.PSyGrid()
+        try:
+            test_PSyGrid.load(grid_path)
+        except: # skip test as test on load should fail
+            assert "/" in grid_path
+            return
+        return test_PSyGrid
 
     @fixture
     def PSyRunView(self, PSyGrid):
@@ -2696,26 +2728,72 @@ class TestPSyRunView:
         return totest.PSyRunView(PSyGrid, 0)
 
     # test the PSyRunView class
-    def test_init(self, PSyRunView):
+    def test_init(self, PSyRunView, PSyGrid):
         assert isroutine(PSyRunView.__init__)
         # check that the instance is of correct type and all code in the
         # __init__ got executed: the elements are created and initialized
-        pass
+        assert PSyRunView.psygrid == PSyGrid
+        assert PSyRunView.index == 0
 
     def test_hdf5_key(self, PSyRunView):
         assert isroutine(PSyRunView._hdf5_key)
-        pass
+        # examples
+        for i in range(5):
+            PSyRunView.index = i
+            assert f"/grid/run{i}" == PSyRunView._hdf5_key()
 
     def test_getitem(self, PSyRunView):
         assert isroutine(PSyRunView.__getitem__)
-        pass
+        # missing argument
+        with raises(TypeError, match="missing 1 required positional "\
+                                     +"argument: 'key'"):
+            PSyRunView.__getitem__()
+        # bad input
+        with raises(KeyError, match="Key Test not in list of valid keys."):
+            PSyRunView.__getitem__("Test")
+        # examples
+        PSyRunView.index = 0
+        for k in totest.VALID_KEYS:
+            if k not in ["initial_values", "final_values"]:
+                assert PSyRunView.__getitem__(k) is None
+        # examples
+        PSyRunView.index = 1
+        for k in totest.VALID_KEYS:
+            if k in ["initial_values", "final_values"]:
+                assert getattr(PSyRunView.psygrid[PSyRunView.index], k)\
+                       == PSyRunView.__getitem__(k)
+            else:
+                assert np.array_equal(PSyRunView.__getitem__(k),\
+                        getattr(PSyRunView.psygrid[PSyRunView.index], k))
+        # bad input
+        with raises(IOError, match="The HDF5 file is not open."):
+            try:
+                PSyRunView.psygrid.close()
+            except: # skip test as test on close should fail
+                raise IOError("The HDF5 file is not open.")
+            PSyRunView.__getitem__(totest.VALID_KEYS[0])
 
-    def test_getattr(self, PSyRunView):
+    def test_getattr(self, PSyRunView, monkeypatch):
+        def mock_getitem(self, key):
+            if self.getitem_check:
+                raise ValueError("'getitem_check' is already set.")
+            self.getitem_check = True
         assert isroutine(PSyRunView.__getattr__)
-        pass
+        # missing argument
+        with raises(TypeError, match="missing 1 required positional "\
+                                     +"argument: 'key'"):
+            PSyRunView.__getattr__()
+        # examples
+        PSyRunView.getitem_check = False
+        monkeypatch.setattr(totest.PSyRunView, "__getitem__", mock_getitem)
+        PSyRunView.__getattr__("Test")
+        assert PSyRunView.getitem_check == True
 
-    def test_str(self, PSyRunView, capsys):
+    def test_str(self, PSyRunView):
         assert isroutine(PSyRunView.__str__)
-#        with capsys.disabled():
-#            print("Test")
-        pass
+        # examples
+        for i in range(PSyRunView.psygrid.n_runs):
+            PSyRunView.index = i
+            assert f"View of the run {i} in the file "\
+                   +f"'{PSyRunView.psygrid.filepath}' at key "\
+                   +f"'{PSyRunView._hdf5_key()}'" == PSyRunView.__str__()

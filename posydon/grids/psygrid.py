@@ -2193,15 +2193,16 @@ class PSyRunView:
 
         hdf5 = self.psygrid.hdf5
         if hdf5 is None:
-            raise Exception("The HDF5 file is not open.")
+            raise IOError("The HDF5 file is not open.")
         fullkey = self._hdf5_key() + "/" + key
         try:
             return hdf5[fullkey][()]
         except KeyError:
             if key in VALID_KEYS:  # key is valid, so the data is just missing
                 return None
-            raise KeyError("There is no key '{}' in '{}'".
-                           format(fullkey, self.psygrid.filepath))
+            else: # pragma: no cover
+                raise KeyError("There is no key '{}' in '{}'".
+                               format(fullkey, self.psygrid.filepath))
 
     def __getattr__(self, key):
         """Enable the ability of using `.table1` instead of ["table1"].
