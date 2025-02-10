@@ -31,4 +31,3 @@ class TestElements:
 
     def test_instance_KNNmodel(self):
         assert isclass(totest.KNNmodel)
-        
