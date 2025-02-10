@@ -43,25 +43,25 @@ class TestElements:
                                         + "unit test."
 
     def test_instance_get_formation_times(self):
-        assert isroutine(totest.GRB_selection)
+        assert isroutine(totest.get_formation_times)
 
     def test_instance_get_illustrisTNG_data(self):
-        assert isroutine(totest.chi_eff)
+        assert isroutine(totest.get_illustrisTNG_data)
 
     def test_instance_star_formation_rate(self):
-        assert isroutine(totest.m_chirp)
+        assert isroutine(totest.star_formation_rate)
 
     def test_instance_mean_metallicity(self):
-        assert isroutine(totest.mass_ratio)
+        assert isroutine(totest.mean_metallicity)
 
     def test_instance_std_log_metallicity_dist(self):
-        assert isroutine(totest.BBH_selection_function)
+        assert isroutine(totest.std_log_metallicity_dist)
 
     def test_instance_SFR_Z_fraction_at_given_redshift(self):
-        assert isroutine(totest.DCO_detectability)
+        assert isroutine(totest.SFR_Z_fraction_at_given_redshift)
 
     def test_instance_integrated_SFRH_over_redshift(self):
-        assert isroutine(totest.DCO_detectability)
+        assert isroutine(totest.integrated_SFRH_over_redshift)
 
 class TestFunctions:
     
