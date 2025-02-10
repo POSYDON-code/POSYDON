@@ -18,6 +18,14 @@ class TestElements:
     # check for objects, which should be an element of the tested module
 
     def test_dir(self):
+        elements = ['default_kwargs', '__authors__',\
+                    '__builtins__', '__cached__', '__doc__', '__file__',\
+                    '__loader__', '__name__', '__package__', '__spec__']
+        assert dir(totest) == elements, "There might be added or removed "\
+                                        + "objects without an update on the "\
+                                        + "unit test."
+    
+    def test_kwargs(self):
         elements = [
             'entropy',
             'number_of_binaries',
@@ -45,6 +53,11 @@ class TestElements:
         ]
         assert set(totest.default_kwargs.keys()) == elements, \
             "The default_kwargs dictionary keys have changed. Please update the test."
+    
+    def test_instance_default_kwargs(self):
+        assert isinstance(totest.default_kwargs, (dir)),\
+                "default_kwargs is of type: "\
+                + str(type(totest.default_kwargs))
 
     def test_instance_entropy(self):
         assert isinstance(totest.default_kwargs['entropy'], (type(None), float)), \
