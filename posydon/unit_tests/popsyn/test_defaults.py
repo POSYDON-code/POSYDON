@@ -6,7 +6,7 @@ __authors__ = [
 ]
 
 # import the module which will be tested
-import posydon.popsyn.analysis as totest
+import posydon.popsyn.defaults as totest
 from posydon.utils.constants import age_of_universe
 
 # import other needed code for the tests, which is not already imported in the
