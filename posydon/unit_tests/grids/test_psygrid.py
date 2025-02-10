@@ -760,7 +760,7 @@ class TestFunctions:
 
     @fixture
     def grid_path_start_RLO(self, tmp_path, binary_history, star_history,\
-                            profile, capsys):
+                            profile):
         # a path to a psygrid file for testing
         path = get_PSyGrid(tmp_path, 5, binary_history, star_history, profile)
         # modify hdf5 file: replace 'start_at_RLO' in config
@@ -2068,7 +2068,8 @@ class TestPSyGrid:
         # examples: test grid
         try:
             PSyGrid.load(grid_path)
-        except:
+        except: # skip test as test on load should fail
+            assert "/" in grid_path
             return
         PSyGrid_str = PSyGrid.__str__()
         assert f"{PSyGrid.n_runs} runs found. They include:" in PSyGrid_str
@@ -2093,7 +2094,8 @@ class TestPSyGrid:
         # examples: runs without histories and profiles
         try:
             PSyGrid.load(grid_path)
-        except:
+        except: # skip test as test on load should fail
+            assert "/" in grid_path
             return
         PSyGrid.n_runs = 1 # the first run has no histories and profiles
         PSyGrid_str = PSyGrid.__str__()
@@ -2110,28 +2112,32 @@ class TestPSyGrid:
         # examples: no initial values
         try:
             PSyGrid.load(grid_path)
-        except:
+        except: # skip test as test on load should fail
+            assert "/" in grid_path
             return
         PSyGrid.initial_values = None
         assert "Initial values array is not loaded." in PSyGrid.__str__()
         # examples: no final values
         try:
             PSyGrid.load(grid_path)
-        except:
+        except: # skip test as test on load should fail
+            assert "/" in grid_path
             return
         PSyGrid.final_values = None
         assert "Final values array is not loaded." in PSyGrid.__str__()
         # examples: no configuration
         try:
             PSyGrid.load(grid_path)
-        except:
+        except: # skip test as test on load should fail
+            assert "/" in grid_path
             return
         PSyGrid.config = ""
         assert "Configuration:\n\t(empty)" in PSyGrid.__str__()
         # examples: MESA_dirs
         try:
             PSyGrid.load(grid_path)
-        except:
+        except: # skip test as test on load should fail
+            assert "/" in grid_path
             return
         PSyGrid.MESA_dirs = []
         assert "No MESA directory found." in PSyGrid.__str__()
@@ -2168,7 +2174,8 @@ class TestPSyGrid:
         # examples
         try:
             PSyGrid.load(grid_path)
-        except:
+        except: # skip test as test on load should fail
+            assert "/" in grid_path
             return
         for i in range(PSyGrid.n_runs):
             test_run = PSyGrid.__getitem__(i)
@@ -2184,7 +2191,8 @@ class TestPSyGrid:
         # examples
         try:
             PSyGrid.load(grid_path)
-        except:
+        except: # skip test as test on load should fail
+            assert "/" in grid_path
             return
         test_df = PSyGrid.get_pandas_initial_final()
         for key in PSyGrid.initial_values.dtype.names:
@@ -2230,19 +2238,25 @@ class TestPSyGrid:
         # examples
         try:
             PSyGrid.load(grid_path)
-        except:
+        except: # skip test as test on load should fail
+            assert "/" in grid_path
             return
         test_iterator = PSyGrid.__iter__()
         assert isinstance(test_iterator, totest.PSyGridIterator)
         assert test_iterator._grid == PSyGrid
         assert test_iterator._index == 0
 
-    def test_del(self, PSyGrid):
+    def test_del(self, PSyGrid, monkeypatch):
+        def mock_close(self):
+            if self.close_check:
+                raise ValueError("'close_check' is already set.")
+            self.close_check = True
         assert isroutine(PSyGrid.__del__)
-        # examples: one test case from close
-        PSyGrid.hdf5 = "test"
+        # examples
+        PSyGrid.close_check = False
+        monkeypatch.setattr(totest.PSyGrid, "close", mock_close)
         PSyGrid.__del__()
-        assert PSyGrid.hdf5 is None
+        assert PSyGrid.close_check
 
     def test_rerun(self, PSyGrid, grid_path, tmp_path):
         def check_grid_csv(path, runs=0):
@@ -2252,7 +2266,8 @@ class TestPSyGrid:
         assert isroutine(PSyGrid.rerun)
         try:
             PSyGrid.load(grid_path)
-        except:
+        except: # skip test as test on load should fail
+            assert "/" in grid_path
             return
         # bad input
         with raises(ValueError, match="Either 'runs_to_rerun' or "\
@@ -2368,21 +2383,282 @@ class TestPSyGrid:
             PSyGrid.rerun(path_to_file=new_path, runs_to_rerun=[1],\
                           termination_flags="test")
 
-    def test_plot2D(self, PSyGrid):
+    def test_plot2D(self, PSyGrid, monkeypatch):
+        class mock_plot2D_class:
+            def __init__(self, psygrid, **kwargs):
+                psygrid.kwargs = kwargs
+            def __call__(self):
+                return
         assert isroutine(PSyGrid.plot2D)
-        pass
+        # missing argument
+        with raises(TypeError, match="missing 2 required positional "\
+                                     +"arguments: 'x_var_str' and "\
+                                     +"'y_var_str'"):
+            PSyGrid.plot2D()
+        # examples: check defaults
+        monkeypatch.setattr(totest, "plot2D", mock_plot2D_class)
+        PSyGrid.kwargs = None
+        PSyGrid.plot2D("test_x_str", "test_y_str")
+        assert PSyGrid.kwargs['x_var_str'] == "test_x_str"
+        assert PSyGrid.kwargs['y_var_str'] == "test_y_str"
+        assert PSyGrid.kwargs['z_var_str'] is None
+        assert PSyGrid.kwargs['termination_flag'] == 'termination_flag_1'
+        assert PSyGrid.kwargs['grid_3D'] is None
+        assert PSyGrid.kwargs['slice_3D_var_str'] is None
+        assert PSyGrid.kwargs['slice_3D_var_range'] is None
+        assert PSyGrid.kwargs['grid_4D'] is None
+        assert PSyGrid.kwargs['slice_4D_var_str'] is None
+        assert PSyGrid.kwargs['slice_4D_var_range'] is None
+        assert PSyGrid.kwargs['extra_grid'] is None
+        assert PSyGrid.kwargs['slice_at_RLO'] == False
+        assert PSyGrid.kwargs['MARKERS_COLORS_LEGENDS'] is None
+        assert PSyGrid.kwargs['max_cols'] == 3
+        assert PSyGrid.kwargs['legend_pos'] == (3, 3)
+        assert PSyGrid.kwargs['verbose'] == False
+        # examples: test all the arguments
+        tests = [{'z_var_str': "Test"}, {'termination_flag': "Test"},\
+                 {'grid_3D': True}, {'slice_3D_var_str': "Test"},\
+                 {'slice_3D_var_range': (0, 1)}, {'grid_4D': True},\
+                 {'slice_4D_var_str': "Test"}, {'slice_4D_var_range': (0, 1)},\
+                 {'extra_grid': "Test"}, {'slice_at_RLO': True},\
+                 {'MARKERS_COLORS_LEGENDS': {"Unit": "Test"}},\
+                 {'max_cols': 1}, {'legend_pos': 1}, {'verbose': True},\
+                 {'test_keyword': "Test"}]
+        for i,kwargs in enumerate(tests):
+            PSyGrid.kwargs = None
+            PSyGrid.plot2D(f"test_x_str_{i}", f"test_y_str_{i}", **kwargs)
+            assert PSyGrid.kwargs['x_var_str'] == f"test_x_str_{i}"
+            assert PSyGrid.kwargs['y_var_str'] == f"test_y_str_{i}"
+            for k,v in kwargs.items():
+                assert PSyGrid.kwargs[k] == v
 
-    def test_plot(self, PSyGrid):
+    def test_plot(self, PSyGrid, grid_path, monkeypatch):
+        class mock_plot1D_class:
+            def __init__(self, run, **kwargs):
+                if len(run) < 1:
+                    raise ValueError("No runs to plot.")
+                elif len(run) == 1:
+                    kwargs['idx'] = run[0].index
+                else:
+                    idx_list = []
+                    for r in run:
+                        idx_list.append(r.index)
+                    kwargs['idx'] = idx_list
+                run[0].psygrid.kwargs = kwargs
+            def __call__(self):
+                return
         assert isroutine(PSyGrid.plot)
-        pass
+        # missing argument
+        with raises(TypeError, match="missing 3 required positional "\
+                                     +"arguments: 'idx', 'x_var_str', and "\
+                                     +"'y_var_str'"):
+            PSyGrid.plot()
+        # bad input
+        with raises(TypeError, match="Invalid idx = None!"):
+            PSyGrid.plot(None, "test_x_str", "test_y_str")
+        # examples: check defaults, use index list
+        try:
+            PSyGrid.load(grid_path)
+        except: # skip test as test on load should fail
+            assert "/" in grid_path
+            return
+        monkeypatch.setattr(totest, "plot1D", mock_plot1D_class)
+        PSyGrid.kwargs = None
+        PSyGrid.plot([0, 1], "test_x_str", "test_y_str")
+        assert PSyGrid.kwargs['idx'] == [0, 1]
+        assert PSyGrid.kwargs['x_var_str'] == "test_x_str"
+        assert PSyGrid.kwargs['y_var_str'] == "test_y_str"
+        assert PSyGrid.kwargs['z_var_str'] is None
+        assert PSyGrid.kwargs['history'] == 'binary_history'
+        assert PSyGrid.kwargs['HR'] == False
+        assert PSyGrid.kwargs['verbose'] == False
+        # examples: test all the arguments
+        tests = [{'z_var_str': "Test"}, {'history': "Test"},\
+                 {'verbose': True}, {'test_keyword': "Test"}]
+        for i,kwargs in enumerate(tests):
+            PSyGrid.kwargs = None
+            PSyGrid.plot(i%PSyGrid.n_runs, f"test_x_str_{i}",\
+                         f"test_y_str_{i}", **kwargs)
+            assert PSyGrid.kwargs['idx'] == i%PSyGrid.n_runs
+            assert PSyGrid.kwargs['x_var_str'] == f"test_x_str_{i}"
+            assert PSyGrid.kwargs['y_var_str'] == f"test_y_str_{i}"
+            for k,v in kwargs.items():
+                assert PSyGrid.kwargs[k] == v
 
-    def test_HR(self, PSyGrid):
+    def test_HR(self, PSyGrid, grid_path, monkeypatch):
+        class mock_plot1D_class:
+            def __init__(self, run, **kwargs):
+                if len(run) < 1:
+                    raise ValueError("No runs to plot.")
+                elif len(run) == 1:
+                    kwargs['idx'] = run[0].index
+                else:
+                    idx_list = []
+                    for r in run:
+                        idx_list.append(r.index)
+                    kwargs['idx'] = idx_list
+                run[0].psygrid.kwargs = kwargs
+            def __call__(self):
+                return
         assert isroutine(PSyGrid.HR)
-        pass
+        # missing argument
+        with raises(TypeError, match="missing 1 required positional "\
+                                     +"argument: 'idx'"):
+            PSyGrid.HR()
+        # bad input
+        with raises(TypeError, match="Invalid idx = None!"):
+            PSyGrid.HR(None)
+        # examples: check defaults
+        try:
+            PSyGrid.load(grid_path)
+        except: # skip test as test on load should fail
+            assert "/" in grid_path
+            return
+        monkeypatch.setattr(totest, "plot1D", mock_plot1D_class)
+        PSyGrid.kwargs = None
+        PSyGrid.HR([0, 1])
+        assert PSyGrid.kwargs['idx'] == [0, 1]
+        assert PSyGrid.kwargs['x_var_str'] is None
+        assert PSyGrid.kwargs['y_var_str'] is None
+        assert PSyGrid.kwargs['history'] == 'history1'
+        assert PSyGrid.kwargs['star_states'] is None
+        assert PSyGrid.kwargs['HR'] == True
+        assert PSyGrid.kwargs['verbose'] == False
+        # examples: test all the arguments beside states
+        tests = [{'history': "Test"}, {'verbose': True},\
+                 {'test_keyword': "Test"}]
+        for i,kwargs in enumerate(tests):
+            PSyGrid.kwargs = None
+            PSyGrid.HR(i%PSyGrid.n_runs, **kwargs)
+            assert PSyGrid.kwargs['idx'] == i%PSyGrid.n_runs
+            assert PSyGrid.kwargs['HR'] == True
+            for k,v in kwargs.items():
+                assert PSyGrid.kwargs[k] == v
+        # examples: test states (works only for run 0)
+        PSyGrid.kwargs = None
+        PSyGrid.HR(0, states=True)
+        assert PSyGrid.kwargs['idx'] == 0
+        assert PSyGrid.kwargs['HR'] == True
+        assert 'star_states' in PSyGrid.kwargs
+        assert PSyGrid.kwargs['star_states'] is not None
 
-    def test_eq(self, PSyGrid):
+    def test_eq(self, PSyGrid, grid_path, capsys, monkeypatch):
+        def mock_getitem(self, index):
+            if (("description" in self.config) and (self.config["description"]\
+                                                    == "missing run")):
+                return totest.PSyRunView(self, 0)
+            else:
+                return totest.PSyRunView(self, index)
+        def mock_getattr(self, key):
+            if ((self.index == 1) and (key == "binary_history") and ("description" in self.psygrid.config) and\
+                (self.psygrid.config["description"] == "missing run")):
+                return np.array([(1.0, 2.0), (1.1, 1.0e+2), (1.2, 1.0e+3)],\
+                                dtype=[('period_days', '<f8'), ('age', '<f8')])
+            else:
+                return self[key]
         assert isroutine(PSyGrid.__eq__)
-        pass
+        # missing argument
+        with raises(TypeError, match="missing 1 required positional "\
+                                     +"argument: 'other'"):
+            PSyGrid.__eq__()
+        # bad input
+        assert PSyGrid.__eq__(None, True) == False
+        assert "COMPARISON: Only PSyGrid instances should be compared."\
+               in capsys.readouterr().out
+        # examples: same grids
+        try:
+            PSyGrid.load(grid_path)
+        except: # skip test as test on load should fail
+            assert "/" in grid_path
+            return
+        test_PSyGrid = totest.PSyGrid()
+        try:
+            test_PSyGrid.load(grid_path)
+        except: # skip test as test on load should fail
+            assert "/" in grid_path
+            return
+        assert PSyGrid.__eq__(test_PSyGrid) == True
+        # examples: different length, with and without verbose
+        test_PSyGrid.n_runs -= 1
+        for v in [True, False]:
+            assert PSyGrid.__eq__(test_PSyGrid, v) == False
+            if v:
+                assert "COMPARISON: The grids do not contain the same number "\
+                       +f"of runs ({PSyGrid.n_runs} != {test_PSyGrid.n_runs})"\
+                       in capsys.readouterr().out
+            else:
+                assert capsys.readouterr().out == ""
+        # examples: different config
+        for p in totest.PROPERTIES_TO_BE_CONSISTENT + ["compression",\
+                                                       "description"]:
+            try:
+                test_PSyGrid.load(grid_path)
+            except: # skip test as test on load should fail
+                assert "/" in grid_path
+                return
+            test_PSyGrid.config[p] = "Test"
+            assert PSyGrid.__eq__(test_PSyGrid, True)\
+                   == (p not in totest.PROPERTIES_TO_BE_CONSISTENT)
+            assert f"COMPARISON: Property `{p}` is not the same "\
+                   + f"({PSyGrid.config[p]} != Test)"\
+                   in capsys.readouterr().out
+        # examples: different initial/final values
+        tests = [("initial_values", "COMPARISON: Columns in `initial_values` "\
+                                    +"do not match:\nperiod_days\n!=\nTest"),\
+                 ("final_values", "Number of columns in `final_values` do "\
+                                  +"not match (2 != 1)")]
+        for (t,m) in tests:
+            try:
+                test_PSyGrid.load(grid_path)
+            except: # skip test as test on load should fail
+                assert "/" in grid_path
+                return
+            setattr(test_PSyGrid, t, np.array([1.0], dtype=[('Test', '<f8')]))
+            assert PSyGrid.__eq__(test_PSyGrid, True) == False
+            assert m in capsys.readouterr().out
+        for t in ["initial_values", "final_values"]:
+            try:
+                test_PSyGrid.load(grid_path)
+            except: # skip test as test on load should fail
+                assert "/" in grid_path
+                return
+            setattr(test_PSyGrid, t, np.concatenate((getattr(PSyGrid, t),\
+                                                     getattr(PSyGrid, t))))
+            assert PSyGrid.__eq__(test_PSyGrid, True) == False
+            assert f" in `{t}` not of same length." in capsys.readouterr().out
+        for t in ["initial_values", "final_values"]:
+            try:
+                test_PSyGrid.load(grid_path)
+            except: # skip test as test on load should fail
+                assert "/" in grid_path
+                return
+            getattr(test_PSyGrid, t)[:] = 2
+            assert PSyGrid.__eq__(test_PSyGrid, True) == False
+            assert f" in `{t}` is not the same" in capsys.readouterr().out
+        # examples: different runs
+        try:
+            test_PSyGrid.load(grid_path)
+        except: # skip test as test on load should fail
+            assert "/" in grid_path
+            return
+        test_PSyGrid.config["description"] = "missing run"
+        with monkeypatch.context() as mp:
+            mp.setattr(totest.PSyGrid, "__getitem__", mock_getitem)
+            assert PSyGrid.__eq__(test_PSyGrid, True) == False
+            assert "COMPARISON: Table `binary_history` for run `1` missing "\
+                   + "in 2nd grid." in capsys.readouterr().out
+        # examples: different runs
+        try:
+            test_PSyGrid.load(grid_path)
+        except: # skip test as test on load should fail
+            assert "/" in grid_path
+            return
+        test_PSyGrid.config["description"] = "missing run"
+        with monkeypatch.context() as mp:
+            mp.setattr(totest.PSyRunView, "__getattr__", mock_getattr)
+            assert PSyGrid.__eq__(test_PSyGrid, True) == False
+            assert "COMPARISON: Table `binary_history` for run `1` is not "\
+                   +"the same." in capsys.readouterr().out
 
 
 class TestPSyGridIterator:

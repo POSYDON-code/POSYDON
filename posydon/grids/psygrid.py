@@ -1946,7 +1946,7 @@ class PSyGrid:
         elif isinstance(idx, int):
             runs = [self[idx]]
         else:
-            raise ValueError('Invalid idx = {}!'.format(idx))
+            raise TypeError('Invalid idx = {}!'.format(idx))
 
         plot = plot1D(run=runs,
                       x_var_str=x_var_str,
@@ -1985,7 +1985,7 @@ class PSyGrid:
         elif isinstance(idx, int):
             runs = [self[idx]]
         else:
-            raise ValueError('Invalid idx = {}!'.format(idx))
+            raise TypeError('Invalid idx = {}!'.format(idx))
 
         if states:
             from posydon.binary_evol.singlestar import SingleStar
@@ -2034,6 +2034,7 @@ class PSyGrid:
         if len(self) != len(other):
             say("The grids do not contain the same number of runs ({} != {})".
                 format(len(self), len(other)))
+            return False
 
         for prop in PROPERTIES_TO_BE_CONSISTENT:
             val1, val2 = self.config[prop], other.config[prop]
@@ -2053,8 +2054,6 @@ class PSyGrid:
             arr1, arr2 = getattr(self, tablename), getattr(other, tablename)
             columns1, columns2 = arr1.dtype.names, arr2.dtype.names
 
-            if np.all(arr1 == arr2):
-                continue
             if len(columns1) != len(columns2):
                 say("Number of columns in `{}` do not match ({} != {})".
                     format(tablename, len(columns1), len(columns2)))
@@ -2070,6 +2069,7 @@ class PSyGrid:
                 if len(data1) != len(data2):
                     say("Column `{}` in `{}` not of same length.".
                         format(colname, tablename))
+                    return False
                 if np.any(data1 != data2):
                     for val1, val2 in zip(data1, data2):
                         if ((val1 == val2) or (val1 is None and val2 is None)
@@ -2090,9 +2090,10 @@ class PSyGrid:
                     say("Table `{}` for run `{}` missing in {} grid.".
                         format(tablename, i, which))
                     return False
-                if np.all(arr1 != arr2):
+                if np.any(arr1 != arr2):
                     say("Table `{}` for run `{}` is not the same.".
                         format(tablename, i))
+                    return False
 
         return True
 
