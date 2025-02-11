@@ -13,7 +13,7 @@ import tarfile
 from tqdm import tqdm
 from posydon.config import PATH_TO_POSYDON_DATA
 
-file = os.path.join(PATH_TO_POSYDON_DATA, "POSYDON_data.tar.gz")
+file = os.path.join(PATH_TO_POSYDON_DATA, "../POSYDON_data.tar.gz")
 data_url = "https://zenodo.org/record/14205146/files/POSYDON_data.tar.gz"
 original_md5 = "cf645a45b9b92c2ad01e759eb1950beb"
 
