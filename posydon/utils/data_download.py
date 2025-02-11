@@ -53,7 +53,6 @@ def data_download(file=file, MD5_check=True, verbose=False):
             - verbose output
 
     """
-    raise FileExistsError("debugging")
     # First, make sure the path does not exist
     if os.path.exists(file):
         raise FileExistsError(f'POSYDON data already exists at {file}')
