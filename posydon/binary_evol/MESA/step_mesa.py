@@ -237,6 +237,7 @@ class MesaGridStep:
         """Load the interpolator that has been trained on the grid."""
         # Check if interpolation files exist
         filename = os.path.join(self.path,grid_name)
+        print("looking for", filename) # debugging
         if not (os.path.exists(filename.replace('%d','0')) or
                 os.path.exists(filename.replace('_%d',''))):
             data_download()
