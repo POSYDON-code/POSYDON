@@ -30,82 +30,94 @@ __credits__ = [
 
 
 CC_quantities = ['state', 'SN_type', 'f_fb', 'mass', 'spin',
-                 'm_disk_accreted', 'm_disk_radiated', 'CO_interpolation_class',
-                 'M4', 'mu4',
+                 'm_disk_accreted', 'm_disk_radiated',
+                 'CO_interpolation_class', 'M4', 'mu4',
                  'h1_mass_ej', 'he4_mass_ej']
 
-def assign_core_collapse_quantities_none(EXTRA_COLUMNS, star_i, MODEL_NAME=None):
+def assign_core_collapse_quantities_none(EXTRA_COLUMNS, star_i,
+                                         MODEL_NAME=None):
     """Assign None values to all core collapse properties.
 
         Parameters
         ----------
-        EXTRA_COLUMNS : tbw
-            TBW.
-        star_i : tbw
-            TBW.
-        MODEL_NAME : tbw or None (default: None)
-            TBW.
+        EXTRA_COLUMNS : dict of lists
+            Each new column should be a list in this dictionary. This
+            dictionary will get modified by this function.
+        star_i : int (1 or 2)
+            Index of the star.
+        MODEL_NAME : str or None (default: None)
+            Model key like the ones given in MODELS.py.
 
     """
+    if (not isinstance(star_i, int) or (star_i<1) or (star_i>2)):
+        raise ValueError("'star_i' should be 1 or 2.")
     if MODEL_NAME is None:
         for MODEL_NAME, MODEL in MODELS.items():
             for quantity in CC_quantities:
-                EXTRA_COLUMNS[f'S{star_i}_{MODEL_NAME}_{quantity}'].append(None)
-    else:
+                EXTRA_COLUMNS[f'S{star_i}_{MODEL_NAME}_{quantity}'
+                              ].append(None)
+    elif isinstance(MODEL_NAME, str):
         for quantity in CC_quantities:
             EXTRA_COLUMNS[f'S{star_i}_{MODEL_NAME}_{quantity}'].append(None)
+    else:
+        raise TypeError("'MODEL_NAME' should be a string or None.")
 
-def print_CC_quantities(EXTRA_COLUMNS, star, MODEL_NAME=None):
+def print_CC_quantities(star, MODEL_NAME=None):
     """Print quantities at core collapse.
 
         Parameters
         ----------
-        EXTRA_COLUMNS : tbw
-            TBW.
-        star : tbw
-            TBW.
-        MODEL_NAME : tbw or None (default: None)
-            TBW.
+        star : SingleStar object
+            The star whose quantities to print.
+        MODEL_NAME : str or None (default: None)
+            Name of the model. If None, print pre SN values.
 
     """
-    format_string = "{:<50} {:<33} {:12} {:10} {:15} {:10} {:25} {:25} {:25} {:25} {:25} {:25}"
-    format_val_preSN = "{:<50} {:<33} {:12} {:10} {:7.2f} {:12.2f} {:25} {:25} {:25} {:25} {:25} {:25}"
-    format_val = "{:<50} {:<33} {:12} {:1.2f} {:13.2f} {:12.2f} {:20.2f} {:20.2f} {:20.2f} {:20.2f} {:20.2f} {:20.2f}"
+    format_string = "{:<50} {:<33} {:12} {:10} {:15} {:10} {:25} {:25} {:25} "\
+                    + "{:25} {:25} {:25}"
+    format_val_preSN = "{:<50} {:<33} {:12} {:10} {:7.2f} {:12.2f} {:25} "\
+                       + "{:25} {:25} {:25} {:25} {:25}"
+    format_val = "{:<50} {:<33} {:12} {:1.2f} {:13.2f} {:12.2f} {:20.2f} "\
+                 + "{:20.2f} {:20.2f} {:20.2f} {:20.2f} {:20.2f}"
     if MODEL_NAME is None:
         print('')
-        print(format_string.format(
-            "mechanism", "state", "SN type", "f_fb",
-            "mass [Msun]", "spin", "m_disk_accreted [Msun]",
-            "m_disk_radiated [Msun]", "M4 [m/Msun]", "mu4 [(dm/Msun)/(dr/1000km)]",
-            "h1_mass_ej [Msun]", "he4_mass_ej [Msun]"))
+        print(format_string.format("mechanism", "state", "SN type", "f_fb",
+                                   "mass [Msun]", "spin",
+                                   "m_disk_accreted [Msun]",
+                                   "m_disk_radiated [Msun]", "M4 [m/Msun]",
+                                   "mu4 [(dm/Msun)/(dr/1000km)]",
+                                   "h1_mass_ej [Msun]", "he4_mass_ej [Msun]"))
         print('')
         try:
-            print(format_val_preSN.format(
-                'PRE SN STAR', star.state, '',
-                '', star.mass, star.spin, '', '', '', '', '', ''))
+            print(format_val_preSN.format('PRE SN STAR', star.state, '', '',
+                                          star.mass, star.spin, '', '', '', '',
+                                          '', ''))
         except Exception as e:
-            Pwarn("Failed to print star values!\nWarning in preSN: "+\
+            Pwarn("Failed to print star values!\nWarning in preSN: "
                   "{}".format(e), "InappropriateValueWarning")
         print('')
     else:
         try:
             checked_quantities_for_None = {}
             for quantity in ["spin", "M4", "mu4", "h1_mass_ej", "he4_mass_ej"]:
-                if getattr(star, quantity)==None:
-                    checked_quantities_for_None[quantity] =  np.nan
+                if getattr(star, quantity) is None:
+                    checked_quantities_for_None[quantity] = np.nan
                 else:
-                    checked_quantities_for_None[quantity] =  getattr(star, quantity)
-            print(format_val.format(MODEL_NAME,
-                    star.state, star.SN_type, star.f_fb,
-                    star.mass, checked_quantities_for_None["spin"], star.m_disk_accreted,
-                    star.m_disk_radiated, checked_quantities_for_None["M4"], checked_quantities_for_None["mu4"],
-                    checked_quantities_for_None["h1_mass_ej"], checked_quantities_for_None["he4_mass_ej"]))
+                    checked_quantities_for_None[quantity] = getattr(star,
+                                                                    quantity)
+            print(format_val.format(MODEL_NAME, star.state, star.SN_type,
+                                    star.f_fb, star.mass,
+                                    checked_quantities_for_None["spin"],
+                                    star.m_disk_accreted, star.m_disk_radiated,
+                                    checked_quantities_for_None["M4"],
+                                    checked_quantities_for_None["mu4"],
+                                    checked_quantities_for_None["h1_mass_ej"],
+                                    checked_quantities_for_None["he4_mass_ej"])
+                  )
         except Exception as e:
-            Pwarn("Failed to print star values!\nWarning in "+\
+            Pwarn("Failed to print star values!\nWarning in "
                   "{}: {}".format(MODEL_NAME, e), "InappropriateValueWarning")
-        
-    
-                    
+
 def post_process_grid(grid, index=None, star_2_CO=True, MODELS=MODELS,
                       single_star=False, verbose=False):
     """Compute post processed quantity of any grid.
@@ -312,7 +324,7 @@ def post_process_grid(grid, index=None, star_2_CO=True, MODELS=MODELS,
 
                 if star.state in STAR_STATES_CC:
                     if verbose:
-                        print_CC_quantities(EXTRA_COLUMNS, star)
+                        print_CC_quantities(star)
 
                     for MODEL_NAME, MODEL in MODELS.items():
                         mechanism = MODEL['mechanism']+MODEL['engine']
@@ -360,7 +372,7 @@ def post_process_grid(grid, index=None, star_2_CO=True, MODELS=MODELS,
                                         EXTRA_COLUMNS[f'S{star_i}_{MODEL_NAME}_{quantity}'].append(
                                         getattr(star_copy, 'state'))
                             if verbose:
-                                print_CC_quantities(EXTRA_COLUMNS, star_copy, f'{MODEL_NAME}_{mechanism}')
+                                print_CC_quantities(star_copy, f'{MODEL_NAME}_{mechanism}')
                 else:
                     # star not explodable
                     assign_core_collapse_quantities_none(EXTRA_COLUMNS, star_i)
@@ -373,7 +385,7 @@ def post_process_grid(grid, index=None, star_2_CO=True, MODELS=MODELS,
         else:
             if star.state in STAR_STATES_CC:
                 if verbose:
-                    print_CC_quantities(EXTRA_COLUMNS, star)
+                    print_CC_quantities(star)
 
                 for MODEL_NAME, MODEL in MODELS.items():
                     mechanism = MODEL['mechanism']+MODEL['engine']
@@ -421,7 +433,7 @@ def post_process_grid(grid, index=None, star_2_CO=True, MODELS=MODELS,
                                     EXTRA_COLUMNS[f'S1_{MODEL_NAME}_{quantity}'].append(
                                     getattr(star_copy, 'state'))
                         if verbose:
-                            print_CC_quantities(EXTRA_COLUMNS, star_copy, f'{MODEL_NAME}_{mechanism}')
+                            print_CC_quantities(star_copy, f'{MODEL_NAME}_{mechanism}')
             else:
                 assign_core_collapse_quantities_none(EXTRA_COLUMNS, 1)
 
@@ -451,7 +463,6 @@ def post_process_grid(grid, index=None, star_2_CO=True, MODELS=MODELS,
                 f'S2_{MODEL_NAME}_state')
 
     return MESA_dirs, EXTRA_COLUMNS
-
 
 def add_post_processed_quantities(grid, MESA_dirs_EXTRA_COLUMNS, EXTRA_COLUMNS,
                                   verbose=False):
