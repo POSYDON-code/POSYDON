@@ -14,178 +14,151 @@ from posydon.popsyn import independent_sample
 from scipy.integrate import quad, nquad
 from posydon.utils.posydonwarning import Pwarn
 from posydon.popsyn.distributions import flat_mass_ratio
+from functools import lru_cache
 import posydon.popsyn.IMFs as IMFs
 
-def primary_mass_resample(ZAMS_primary, simulation_parameters, requested_parameters):
-    '''Renormalise the population to the requested parameters'''
+def get_IMF_pdf(kwargs):
+    '''get the IMF pdf function'''
     
-    # TODO: add check if the simulated range is within the requested range!!
-    
-    # Setup for current simulation weights
-    if simulation_parameters['primary_mass_scheme'] == 'Kroupa2001':
-        IMF_sim = IMFs.Kroupa2001(m_min=simulation_parameters['primary_mass_min'],
-                              m_max=simulation_parameters['primary_mass_max'])
-    
-    
-    # Setup for requested weights
-    if requested_parameters['primary_mass_scheme'] == 'Kroupa2001':
-        IMF_req = IMFs.Kroupa2001(m_min=requested_parameters['primary_mass_min'],
-                                  m_max=requested_parameters['primary_mass_max'])
-    
-    # Calculate the weights    
-    P_IMF_sim = IMF_sim.pdf(ZAMS_primary)
-    P_IMF_req = IMF_req.pdf(ZAMS_primary)
-    
-    # New weight of each model in the total population
-    f_IMF = P_IMF_req/P_IMF_sim
-    
-    return f_IMF
+    if kwargs['primary_mass_scheme'] == 'Kroupa2001':
+        imf = IMFs.Kroupa2001(m_min=kwargs['primary_mass_min'],
+                              m_max=kwargs['primary_mass_max'])
+        IMF_pdf = lambda m1: imf.pdf(m1)
+    elif kwargs['primary_mass_scheme'] == 'Salpeter':
+        imf = IMFs.Salpeter(alpha=1,
+                            m_min=kwargs['primary_mass_min'],
+                            m_max=kwargs['primary_mass_max'])
+        IMF_pdf = lambda m1: imf.pdf(m1)
+    else:
+        IMF_pdf = lambda m1: 1
+        
+    return IMF_pdf
 
-def mass_ratio_resample(ZAMS_primary,
-                        ZAMS_secondary,
-                        simulation_parameters,
-                        requested_parameters):
-    '''Renormalise the population to the requested parameters'''
+def get_mass_ratio_pdf(kwargs, simulation=False):
+    """Function that returns the mass ratio PDF function with caching for optimization."""
+    if kwargs['secondary_mass_scheme'] == 'flat_mass_ratio' and simulation==True:
+        # flat mass ratio, where bounds are dependent on m1 and min/max m2
+        # and q_min = 0.05, q_max = 1
+        def get_pdf_for_m1(m1):
+            m1 = np.atleast_1d(m1)
+            minimum = np.max([kwargs['secondary_mass_min'] / m1, np.ones(len(m1))*0.05], axis=0)
+            maximum = np.min([kwargs['secondary_mass_max'] / m1, np.ones(len(m1))], axis=0)
+            q_dist = lambda q: np.where((q >= minimum) & (q <= maximum), 1/(maximum - minimum), 0)
+            return q_dist
+        q_pdf = lambda q, m1: get_pdf_for_m1(m1)(q)
+    else:
+        q_pdf = lambda q, m1=None: np.where((q > 0.0) & (q<=1.0), 1, 0)
+    return q_pdf
+
+def get_pdf(kwargs, simulation=False):
+    """Function that build a PDF function given the simulation parameters"""
     
-    q_list = ZAMS_secondary/ZAMS_primary
+    IMF_pdf = get_IMF_pdf(kwargs)
+    q_pdf = get_mass_ratio_pdf(kwargs, simulation=simulation)
     
-    # Setup for current simulation weights
-    if simulation_parameters['secondary_mass_scheme'] == 'flat_mass_ratio':
-        m2_min = simulation_parameters['secondary_mass_min']
-        m2_max = simulation_parameters['secondary_mass_max']
-        mass_ratios_min = np.max([m2_min/ZAMS_primary,
-                             np.ones(len(ZAMS_primary))*0.05],
-                             axis=0)
-        mass_ratios_max = np.min([m2_max/ZAMS_primary,
-                              np.ones(len(ZAMS_primary))],
-                             axis=0)
-        q_dists = [flat_mass_ratio(i,j) for i, j in zip(mass_ratios_min, mass_ratios_max)]
-        P_q_sim = np.array([i.pdf(q) for i,q in zip(q_dists, q_list)])
+    pdf_function = lambda m1, q=0, binary=False: np.where(
+        np.asarray(binary),
+        IMF_pdf(np.asarray(m1)) * q_pdf(np.asarray(q), np.asarray(m1)),
+        IMF_pdf(np.asarray(m1))
+    )
+
+    return pdf_function
+
+
+
+def get_mean_mass(PDF, params, simulation=False):
+    '''Calculate the mean mass of the population'''
     
-    if requested_parameters['secondary_mass_scheme'] == 'flat_mass_ratio':
-        # Add check that a q min/max is provided and add that here.
+    m1_min = params['primary_mass_min']
+    m1_max = params['primary_mass_max']
+    # This is not necesary, but integrating outside the PDF is very slow.
+    # this reduces it from 30s to 1s
+    if simulation == True:
+        q_min = 0.05
+    else:
         q_min = 0
-        q_max = 1
-        q_dist = flat_mass_ratio(q_min, q_max)
-        P_q_req = np.array([q_dist.pdf(q) for i,q in zip(q_dists, q_list)])
+    q_min = np.min([params['secondary_mass_min']/params['primary_mass_min'], q_min])
+    q_max = np.min([params['secondary_mass_max']/params['primary_mass_max'], 1])
     
-    # Calculate the weights
-    f_q = P_q_req/P_q_sim
+    # binary fraction function
+    f_b = params['binary_fraction_const']
     
-    return f_q
+    # binary integration
+    I_bin = nquad(lambda q, m: (m + m * q) * PDF(m, q, True),
+                  ranges=[(q_min, q_max),
+                          (m1_min, m1_max)])[0]
+
+    # single star integration
+    I_single = nquad(lambda m: m * PDF(m,False),
+                     ranges=[(m1_min, m1_max)])[0]
+    
+    mean_mass = f_b*I_bin + (1-f_b)*I_single
+    return mean_mass
 
 
-def binary_fraction_resample(ZAMS_primary, simulation_parameters, requested_parameters):
-    '''Get the binary fraction correction for the requested parameters'''
+def calculate_underlying_mass(population, simulation_parameters, requested_parameters):
+    """Calculate the underlying mass of the population"""
     
-    # Current the binary fraction is independent of the binary parameters
-    # I request ZAMS_primary to get the length of the population
-    # this can be used to create a dependent binary fraction
-    f_bin_simulated = np.ones(len(ZAMS_primary))*simulation_parameters['binary_fraction_const']
-    f_bin_requested = np.ones(len(ZAMS_primary))*requested_parameters['binary_fraction_const']
+    # build the pdf functions
+    PDF_sim = get_pdf(simulation_parameters, simulation=True)
+    PDF_pop = get_pdf(requested_parameters)
     
-    f_bin = f_bin_requested/f_bin_simulated
-    f_sin = (1-f_bin_requested)/(1-f_bin_simulated)
-    return f_bin, f_sin
-    
-def mass_correction(simulation_parameters, requested_parameters):
-    
-    # Setup for current simulation weights
-    # primary mass
-    if simulation_parameters['primary_mass_scheme'] == 'Kroupa2001':
-        IMF_sim = IMFs.Kroupa2001(m_min=simulation_parameters['primary_mass_min'],
-                                  m_max=simulation_parameters['primary_mass_max'])
-        
-    # Force to use 0.05, 1 range. But this does not have to be true!
-    # Technically this function is dependent on m1
-    if simulation_parameters['secondary_mass_scheme'] == 'flat_mass_ratio':
-        q_sim = flat_mass_ratio(0.05, 1)
-        
-    # Setup for requested weights
-    if requested_parameters['primary_mass_scheme'] == 'Kroupa2001':
-        IMF_req = IMFs.Kroupa2001(m_min=requested_parameters['primary_mass_min'],
-                                  m_max=requested_parameters['primary_mass_max'])
+    # initial properties
+    single_mask = population['state_i'] == 'initially_single_star'
+    single_stars = population[single_mask].copy()
 
-    if requested_parameters['secondary_mass_scheme'] == 'flat_mass_ratio':
-        q_req = flat_mass_ratio(0, 1)
+    binary_stars = population[~single_mask].copy()
+    binary_stars['mass_ratio_ZAMS'] = binary_stars['secondary_ZAMS']/binary_stars['primary_ZAMS']
     
-    f_b_req = requested_parameters['binary_fraction_const']
-    # requested population parameter space
-    # single star component
-    factor = ((1-f_b_req)*quad(lambda m : m*IMF_req.pdf(m), IMF_req.m_min, IMF_req.m_max)[0]
-            # binary component
-            + f_b_req*nquad(lambda m, q : (m+m*q)*IMF_req.pdf(m)*q_req.pdf(q),
-                            ranges=[(IMF_req.m_min, IMF_req.m_max),
-                                    (q_req.q_min, q_req.q_max)])[0])
-    
-    # If the P(q|m1), the calculation gets much more complex.
-    # So does P(f_b | m1, q, P),
-    # which requires the (1-f_b) and f_b factors to be moved inside the integration. 
+    simulated_mass = np.sum(population['primary_ZAMS']) + np.sum(population['secondary_ZAMS'])
     
     f_b_sim = simulation_parameters['binary_fraction_const']
-    # simulation sampled parameter space
+    f_b_pop = requested_parameters['binary_fraction_const']
     
-                # Single star component
-    factor2 =  ((1-f_b_sim) * quad(lambda m   : m*IMF_sim.pdf(m), IMF_sim.m_min, IMF_sim.m_max)[0]
-                # binary component
-                + f_b_sim * nquad(lambda m, q : (m+m*q)*IMF_sim.pdf(m)*q_sim.pdf(q),
-                    ranges=[(IMF_sim.m_min, IMF_sim.m_max),
-                            (q_sim.q_min, q_sim.q_max)])[0])
+    if (f_b_sim == 1) and (f_b_pop == 0):
+        raise ValueError("No single stars simulated, but requested")
+    if (f_b_sim == 0) and (f_b_pop == 1):
+        raise ValueError("No binaries simulated, but requested")
+        
+    # counts
+    N_sim = len(population)
+    
+    # binaries
+    if f_b_pop == 0:
+        binary_weights = np.zeros(len(binary_stars))
+    elif f_b_sim == 0:
+        binary_weights = np.zeros(len(binary_stars))
+    else:
+        binary_weights = f_b_sim/f_b_pop * (PDF_sim(m1=binary_stars['primary_ZAMS'],
+                           q=binary_stars['mass_ratio_ZAMS'],
+                           binary=True)
+                   / PDF_pop(m1=binary_stars['primary_ZAMS'],
+                             q=binary_stars['mass_ratio_ZAMS'],
+                             binary=True))
+    # single stars
+    if f_b_pop == 1: # no single stars requested
+        single_weights = np.zeros(len(single_stars))
+    elif f_b_sim == 1: # no single stars simulated
+        single_weights = np.zeros(len(single_stars))
+    else:
+        single_weights = (1-f_b_sim)/(1-f_b_pop) * (PDF_sim(m1=single_stars['primary_ZAMS'],
+                                                            binary=False)
+                                             / PDF_pop(m1=single_stars['primary_ZAMS'],
+                                                         binary=False))
+    N_pop = np.nansum(binary_weights) + np.nansum(single_weights)
 
-    mass_correction = factor/factor2
-    return mass_correction
     
-def underlying_mass(population, simulation_parameters, requested_parameters):
+    print('N_sim', N_sim)
+    print('N_pop', N_pop)
     
-    ZAMS_primary = population['primary_ZAMS']   
-    ZAMS_secondary = population['secondary_ZAMS']
+    # mean masses
+    mean_mass_sim = get_mean_mass(PDF_sim, simulation_parameters, simulation=True)
+    mean_mass_pop = get_mean_mass(PDF_pop, requested_parameters)
+    print('sim mass:', mean_mass_sim)
+    print('pop mass:', mean_mass_pop)
     
-    mask = population["state_i"] == "initially_single_star"
-    single_stars = population[mask]
-    binaries = population[~mask]
+    M_pop = simulated_mass * (N_pop * mean_mass_pop)/ (mean_mass_sim * N_sim)
     
-    # correction f_b
-    f_bin, f_sin = binary_fraction_resample(ZAMS_primary, simulation_parameters, requested_parameters)
+    return M_pop
+    
 
-    # correction binaries
-    f_IMF_bin = primary_mass_resample(binaries['primary_ZAMS'],
-                                  simulation_parameters,
-                                  requested_parameters)
-    
-    
-    # correction single stars
-    # technicallt the same as the binaries?
-    f_IMF_sin = primary_mass_resample(single_stars['primary_ZAMS'],
-                                    simulation_parameters,
-                                    requested_parameters)
-    
-    # resampling the mass ratio
-    f_q = mass_ratio_resample(binaries['primary_ZAMS'],
-                              binaries['secondary_ZAMS'],
-                              simulation_parameters,
-                              requested_parameters)
-    f_corr_bin = f_IMF_bin*f_q
-    f_corr_sin = f_IMF_sin
-    print(f_corr_sin)
-    print(f_sin[mask])
-    sample_space_correction = 1/mass_correction(simulation_parameters, requested_parameters)
-
-    underlying_mass_single = single_stars['primary_ZAMS']/(f_corr_sin*(f_sin[mask]))
-    underlying_mass_binary = (binaries['primary_ZAMS']+binaries['secondary_ZAMS'])/(f_corr_bin*f_bin[~mask]) 
-
-    underlying_mass = np.sum(underlying_mass_single)/sample_space_correction + np.sum(underlying_mass_binary)/sample_space_correction
-    
-    return underlying_mass
-
-
-def prob_q(q_list, ZAMS_primary, m2_min, m2_max):
-    
-    mass_ratios_min = np.max([m2_min/ZAMS_primary,
-                             np.ones(len(ZAMS_primary))*0.05],
-                             axis=0)
-    mass_ratios_max = np.min([m2_max/ZAMS_primary,
-                              np.ones(len(ZAMS_primary))],
-                             axis=0)
-    q_dists = [flat_mass_ratio(i,j) for i, j in zip(mass_ratios_min, mass_ratios_max)]
-    q_prop = [i.pdf(q) for i,q in zip(q_dists, q_list)]
-    return np.array(q_prop)
