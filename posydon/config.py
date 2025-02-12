@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 def ensure_path(name):
-    """Get the PATH set in the environment
+    """Get the 'PATH_*' variable set in the environment
     
     Parameters
     ----------
