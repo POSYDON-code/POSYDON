@@ -1441,6 +1441,20 @@ class TestPSyGrid:
             assert len(Grid.initial_values) == N
             assert len(Grid.final_values) == N
             assert len(Grid.MESA_dirs) == N
+        def check_keys(Grid, keys_initial_values, keys_final_values):
+            for k in keys_initial_values:
+                assert k in Grid.initial_values.dtype.names
+            for k in keys_final_values:
+                assert k in Grid.final_values.dtype.names
+        SINGLE_KEYS = ["S1_"+k for k in totest.DEFAULT_SINGLE_HISTORY_COLS]
+        BINARY_KEYS = totest.DEFAULT_BINARY_HISTORY_COLS\
+                      + ["S1_"+k for k in totest.DEFAULT_STAR_HISTORY_COLS]\
+                      + ["S2_"+k for k in totest.DEFAULT_STAR_HISTORY_COLS]
+        SINGLE_INITIAL_KEYS = SINGLE_KEYS + ["X", "Y", "Z"]
+        BINARY_INITIAL_KEYS = BINARY_KEYS + ["X", "Y", "Z"]
+        SINGLE_FINAL_KEYS = SINGLE_KEYS\
+                            + totest.TERMINATION_FLAG_COLUMNS_SINGLE
+        BINARY_FINAL_KEYS = BINARY_KEYS + totest.TERMINATION_FLAG_COLUMNS
         def mock_get_nearest_known_initial_RLO(mass1, mass2,\
                                                known_initial_RLO):
             # mocked nearest initial RLO system
@@ -1482,7 +1496,7 @@ class TestPSyGrid:
         PSyGrid.filepath = None
         with raises(AssertionError):
             PSyGrid._create_psygrid("./", None)
-        # examples
+        # examples: no data
         PSyGrid.filepath = os.path.join(Empty_dir, "../TestPSyGrid.h5")
         MESA_PATH = str(Empty_dir)
         with raises(ValueError, match=f"No folders found in {MESA_PATH}"):
@@ -1497,6 +1511,8 @@ class TestPSyGrid:
                                               +"missing history in:"):
             PSyGrid._create_psygrid(MESA_files_single,\
                                     totest.h5py.File(PSyGrid.filepath,"w"))
+        check_len(PSyGrid, 1)
+        check_keys(PSyGrid, SINGLE_INITIAL_KEYS, SINGLE_FINAL_KEYS)
         # examples: EEPs
         self.reset_grid(PSyGrid)
         PSyGrid.config["eep"] = Empty_dir
@@ -1522,18 +1538,7 @@ class TestPSyGrid:
             PSyGrid._create_psygrid(MESA_files,\
                                     totest.h5py.File(PSyGrid.filepath, "w"))
         check_len(PSyGrid, N_MESA_runs)
-        for c in totest.DEFAULT_BINARY_HISTORY_COLS + ["X", "Y", "Z"]:
-            assert c in PSyGrid.initial_values.dtype.names
-        for c in totest.DEFAULT_STAR_HISTORY_COLS:
-            assert "S1_"+c in PSyGrid.initial_values.dtype.names
-            assert "S2_"+c in PSyGrid.initial_values.dtype.names
-        for c in totest.DEFAULT_BINARY_HISTORY_COLS\
-                 + [f"termination_flag_{i}" for i in range(1,5)]\
-                 + ["interpolation_class"]:
-            assert c in PSyGrid.final_values.dtype.names
-        for c in totest.DEFAULT_STAR_HISTORY_COLS:
-            assert "S1_"+c in PSyGrid.final_values.dtype.names
-            assert "S2_"+c in PSyGrid.final_values.dtype.names
+        check_keys(PSyGrid, BINARY_INITIAL_KEYS, BINARY_FINAL_KEYS)
         # examples: v1 run
         self.reset_grid(PSyGrid)
         with warns(MissingFilesWarning, match="Ignored MESA run because of "\
@@ -1541,6 +1546,7 @@ class TestPSyGrid:
             PSyGrid._create_psygrid(MESA_v1_files,\
                                     totest.h5py.File(PSyGrid.filepath,"w"))
         check_len(PSyGrid, N_MESA_runs)
+        check_keys(PSyGrid, BINARY_INITIAL_KEYS, BINARY_FINAL_KEYS)
         # examples: max_number_of_runs
         self.reset_grid(PSyGrid)
         N_MESA_runs_limited = 1
@@ -1548,6 +1554,7 @@ class TestPSyGrid:
         PSyGrid._create_psygrid(MESA_files,\
                                 totest.h5py.File(PSyGrid.filepath, "w"))
         check_len(PSyGrid, N_MESA_runs_limited)
+        check_keys(PSyGrid, BINARY_INITIAL_KEYS, BINARY_FINAL_KEYS)
         # examples: decide_columns
         BH_cols = ("star_1_mass", "star_2_mass")
         ## extra column: "model_number", others are required ones
@@ -1625,6 +1632,9 @@ class TestPSyGrid:
             PSyGrid._create_psygrid(MESA_files,\
                                     totest.h5py.File(PSyGrid.filepath, "w"))
         check_len(PSyGrid, N_MESA_runs)
+        ADDITIONAL_KEYS = ["S1_star_age", "S2_star_age"] # more keys then usual
+        check_keys(PSyGrid, BINARY_INITIAL_KEYS + ADDITIONAL_KEYS,\
+                   BINARY_FINAL_KEYS + ADDITIONAL_KEYS)
         # examples: no He_core_fix
         self.reset_grid(PSyGrid)
         PSyGrid.config["He_core_fix"] = False
@@ -1633,6 +1643,7 @@ class TestPSyGrid:
             PSyGrid._create_psygrid(MESA_files,\
                                     totest.h5py.File(PSyGrid.filepath, "w"))
         check_len(PSyGrid, N_MESA_runs)
+        check_keys(PSyGrid, BINARY_INITIAL_KEYS, BINARY_FINAL_KEYS)
         # examples: initial_RLO_fix
         self.reset_grid(PSyGrid)
         PSyGrid.config["initial_RLO_fix"] = True
@@ -1643,6 +1654,7 @@ class TestPSyGrid:
             PSyGrid._create_psygrid(MESA_files,\
                                     totest.h5py.File(PSyGrid.filepath, "w"))
         check_len(PSyGrid, N_MESA_runs+1) # all runs in initial_RLO_fix
+        check_keys(PSyGrid, BINARY_INITIAL_KEYS, BINARY_FINAL_KEYS)
         # examples: initial_RLO_fix and v1 run
         self.reset_grid(PSyGrid)
         PSyGrid.config["initial_RLO_fix"] = True
@@ -1651,6 +1663,7 @@ class TestPSyGrid:
             PSyGrid._create_psygrid(MESA_v1_files,\
                                     totest.h5py.File(PSyGrid.filepath,"w"))
         check_len(PSyGrid, N_MESA_runs+1)
+        check_keys(PSyGrid, BINARY_INITIAL_KEYS, BINARY_FINAL_KEYS)
         # examples: stop_before_carbon_depletion
         self.reset_grid(PSyGrid)
         PSyGrid.config["stop_before_carbon_depletion"] = True
@@ -1659,6 +1672,7 @@ class TestPSyGrid:
             PSyGrid._create_psygrid(MESA_files,\
                                     totest.h5py.File(PSyGrid.filepath, "w"))
         check_len(PSyGrid, N_MESA_runs)
+        check_keys(PSyGrid, BINARY_INITIAL_KEYS, BINARY_FINAL_KEYS)
         # examples: start_at_RLO
         monkeypatch.setattr(totest, "keep_after_RLO", mock_keep_after_RLO)
         for RLO_fix in [True, False]:
@@ -1674,6 +1688,7 @@ class TestPSyGrid:
                 check_len(PSyGrid, N_MESA_runs+1)
             else: # only one RLO system
                 check_len(PSyGrid, 1)
+            check_keys(PSyGrid, BINARY_INITIAL_KEYS, BINARY_FINAL_KEYS)
         # examples: missing mass columns -> ignore all runs
         cols = tuple([c for c in totest.DEFAULT_BINARY_HISTORY_COLS\
                       if "mass" not in c])
@@ -1684,6 +1699,9 @@ class TestPSyGrid:
             PSyGrid._create_psygrid(MESA_files,\
                                     totest.h5py.File(PSyGrid.filepath, "w"))
         check_len(PSyGrid, 0)
+        check_keys(PSyGrid,\
+                   [k for k in BINARY_INITIAL_KEYS if "mass" not in k],\
+                   [k for k in BINARY_FINAL_KEYS if "mass" not in k])
         # examples: missing mass columns -> ignore all runs (single)
         cols = tuple([c for c in totest.DEFAULT_SINGLE_HISTORY_COLS\
                       if "mass" not in c])
@@ -1695,6 +1713,9 @@ class TestPSyGrid:
             PSyGrid._create_psygrid(MESA_files_single,\
                                     totest.h5py.File(PSyGrid.filepath,"w"))
         check_len(PSyGrid, 0)
+        check_keys(PSyGrid,\
+                   [k for k in SINGLE_INITIAL_KEYS if "mass" not in k],\
+                   [k for k in SINGLE_FINAL_KEYS if "mass" not in k])
         # examples: initial values without X
         self.reset_grid(PSyGrid)
         with monkeypatch.context() as mp:
@@ -1706,6 +1727,8 @@ class TestPSyGrid:
                 PSyGrid._create_psygrid(MESA_files, totest.h5py.File(\
                                          PSyGrid.filepath, "w"))
         check_len(PSyGrid, N_MESA_runs)
+        check_keys(PSyGrid, [k for k in BINARY_INITIAL_KEYS if k!="X"],\
+                   BINARY_FINAL_KEYS)
         # examples: initial values without Y
         self.reset_grid(PSyGrid)
         with monkeypatch.context() as mp:
@@ -1717,6 +1740,8 @@ class TestPSyGrid:
                 PSyGrid._create_psygrid(MESA_files, totest.h5py.File(\
                                          PSyGrid.filepath, "w"))
         check_len(PSyGrid, N_MESA_runs)
+        check_keys(PSyGrid, [k for k in BINARY_INITIAL_KEYS if k!="Y"],\
+                   BINARY_FINAL_KEYS)
         # examples: initial values without Z
         self.reset_grid(PSyGrid)
         with monkeypatch.context() as mp:
@@ -1728,6 +1753,8 @@ class TestPSyGrid:
                 PSyGrid._create_psygrid(MESA_files, totest.h5py.File(\
                                          PSyGrid.filepath, "w"))
         check_len(PSyGrid, N_MESA_runs)
+        check_keys(PSyGrid, [k for k in BINARY_INITIAL_KEYS if k!="Z"],\
+                   BINARY_FINAL_KEYS)
         # examples: initial_RLO_fix and termination flags: initial RLO and None
         self.reset_grid(PSyGrid)
         PSyGrid.config["initial_RLO_fix"] = True
@@ -1740,6 +1767,7 @@ class TestPSyGrid:
                 PSyGrid._create_psygrid(MESA_files, totest.h5py.File(\
                                          PSyGrid.filepath, "w"))
         check_len(PSyGrid, N_MESA_runs+1)
+        check_keys(PSyGrid, BINARY_INITIAL_KEYS, BINARY_FINAL_KEYS)
         # examples: slim
         for RLO_fix in [True, False]:
             self.reset_grid(PSyGrid)
@@ -1753,6 +1781,7 @@ class TestPSyGrid:
                 check_len(PSyGrid, N_MESA_runs+1)
             else:
                 check_len(PSyGrid, N_MESA_runs)
+            check_keys(PSyGrid, BINARY_INITIAL_KEYS, BINARY_FINAL_KEYS)
         # examples: add runs twice (missing reset)
         PSyGrid.config["initial_RLO_fix"] = True # twice warned
         with warns(InappropriateValueWarning, match="Non synchronous "\
@@ -1765,6 +1794,7 @@ class TestPSyGrid:
         assert len(PSyGrid.initial_values) == N_MESA_runs+1
         assert len(PSyGrid.final_values) == N_MESA_runs+1
         assert len(PSyGrid.MESA_dirs) == 2*N_MESA_runs+1
+        check_keys(PSyGrid, BINARY_INITIAL_KEYS, BINARY_FINAL_KEYS)
         # examples: initial_RLO_fix mock returns other period and only TF4
         self.reset_grid(PSyGrid)
         PSyGrid.config["initial_RLO_fix"] = True
@@ -1777,6 +1807,7 @@ class TestPSyGrid:
                 PSyGrid._create_psygrid(MESA_files, totest.h5py.File(\
                                          PSyGrid.filepath, "w"))
         check_len(PSyGrid, N_MESA_runs)
+        check_keys(PSyGrid, BINARY_INITIAL_KEYS, BINARY_FINAL_KEYS)
         # examples: no model_number and star_age columns in binary history
         run_path = add_MESA_run_files(MESA_files, 4, binary_run=True,\
                                       with_histories=True, with_profiles=True)
@@ -1799,6 +1830,13 @@ class TestPSyGrid:
                 check_len(PSyGrid, N_MESA_runs+1+1)
             else:
                 check_len(PSyGrid, N_MESA_runs)
+            check_keys(PSyGrid,\
+                       [k for k in BINARY_INITIAL_KEYS\
+                        if ((k!=totest.DEFAULT_BINARY_HISTORY_COLS[0]) and\
+                            (k!=totest.DEFAULT_BINARY_HISTORY_COLS[1]))],\
+                       [k for k in BINARY_FINAL_KEYS\
+                        if ((k!=totest.DEFAULT_BINARY_HISTORY_COLS[0]) and\
+                            (k!=totest.DEFAULT_BINARY_HISTORY_COLS[1]))])
         # examples: no model_number and star_age columns in star history
         rmtree(run_path)
         run_path = add_MESA_run_files(MESA_files, 5, binary_run=True,\
@@ -1811,6 +1849,7 @@ class TestPSyGrid:
                 PSyGrid._create_psygrid(MESA_files, totest.h5py.File(\
                                          PSyGrid.filepath, "w"))
         check_len(PSyGrid, N_MESA_runs)
+        check_keys(PSyGrid, BINARY_INITIAL_KEYS, BINARY_FINAL_KEYS)
         # examples: no model_number and star_age columns in history (single)
         rmtree(run_path)
         run_path = add_MESA_run_files(MESA_files_single, 5, binary_run=False,\
@@ -1830,6 +1869,11 @@ class TestPSyGrid:
                                             totest.h5py.File(PSyGrid.filepath,\
                                                              "w"))
         check_len(PSyGrid, 1)
+        check_keys(PSyGrid,\
+                   [k for k in SINGLE_INITIAL_KEYS\
+                    if (("model_number" not in k) and ("star_age" not in k))],\
+                   [k for k in SINGLE_FINAL_KEYS\
+                    if (("model_number" not in k) and ("star_age" not in k))])
         # examples: incomplete lines in star and binary history (additional
         # model and age)
         rmtree(run_path)
@@ -1847,6 +1891,11 @@ class TestPSyGrid:
                         PSyGrid._create_psygrid(MESA_files, totest.h5py.File(\
                                                  PSyGrid.filepath, "w"))
         check_len(PSyGrid, N_MESA_runs+1)
+        check_keys(PSyGrid,\
+                   [k for k in BINARY_INITIAL_KEYS\
+                    if (("model_number" not in k) and ("age" not in k))],\
+                   [k for k in BINARY_FINAL_KEYS\
+                    if (("model_number" not in k) and ("age" not in k))])
         # examples: incomplete lines in star and binary history (missing
         # model and age)
         rmtree(run_path)
@@ -1864,6 +1913,11 @@ class TestPSyGrid:
                         PSyGrid._create_psygrid(MESA_files, totest.h5py.File(\
                                                  PSyGrid.filepath, "w"))
         check_len(PSyGrid, N_MESA_runs+1)
+        check_keys(PSyGrid,\
+                   [k for k in BINARY_INITIAL_KEYS\
+                    if (("model_number" not in k) and ("age" not in k))],\
+                   [k for k in BINARY_FINAL_KEYS\
+                    if (("model_number" not in k) and ("age" not in k))])
         # examples: no data lines in star and binary history
         rmtree(run_path)
         run_path = add_MESA_run_files(MESA_files, 14, binary_run=True,\
@@ -1877,6 +1931,7 @@ class TestPSyGrid:
                 PSyGrid._create_psygrid(MESA_files, totest.h5py.File(\
                                          PSyGrid.filepath, "w"))
         check_len(PSyGrid, N_MESA_runs)
+        check_keys(PSyGrid, BINARY_INITIAL_KEYS, BINARY_FINAL_KEYS)
         # examples: no final profile (single)
         rmtree(run_path)
         run_path = add_MESA_run_files(MESA_files_single, 7, binary_run=False,\
@@ -1894,6 +1949,7 @@ class TestPSyGrid:
                                             totest.h5py.File(PSyGrid.filepath,\
                                                              "w"))
         check_len(PSyGrid, 1)
+        check_keys(PSyGrid, SINGLE_INITIAL_KEYS, SINGLE_FINAL_KEYS)
         # examples: no star1 history, but star2 history
         rmtree(run_path)
         run_path = add_MESA_run_files(MESA_files, 17, binary_run=True,\
@@ -1904,6 +1960,7 @@ class TestPSyGrid:
             PSyGrid._create_psygrid(MESA_files,\
                                     totest.h5py.File(PSyGrid.filepath, "w"))
         check_len(PSyGrid, N_MESA_runs+1)
+        check_keys(PSyGrid, BINARY_INITIAL_KEYS, BINARY_FINAL_KEYS)
         # examples: no star1 history, but star2 history
         rmtree(run_path)
         run_path = add_MESA_run_files(MESA_files, 20, binary_run=True,\
@@ -1918,7 +1975,7 @@ class TestPSyGrid:
                         PSyGrid._create_psygrid(MESA_files, totest.h5py.File(\
                                                  PSyGrid.filepath,"w"))
         check_len(PSyGrid, N_MESA_runs+1+1)
-        #TODO: add more asserts
+        check_keys(PSyGrid, BINARY_INITIAL_KEYS, BINARY_FINAL_KEYS)
 
     def test_add_column(self, PSyGrid, tmp_path):
         assert isroutine(PSyGrid.add_column)
