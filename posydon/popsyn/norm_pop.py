@@ -25,6 +25,7 @@ def get_IMF_pdf(kwargs):
                               m_max=kwargs['primary_mass_max'])
         IMF_pdf = lambda m1: imf.pdf(m1)
     elif kwargs['primary_mass_scheme'] == 'Salpeter':
+        # TODO: change alpha=1!!!!!!!!
         imf = IMFs.Salpeter(alpha=1,
                             m_min=kwargs['primary_mass_min'],
                             m_max=kwargs['primary_mass_max'])
