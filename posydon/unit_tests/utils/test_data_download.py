@@ -7,6 +7,7 @@ __authors__ = [
 
 # import the module which will be tested
 import posydon.utils.data_download as totest
+# aliases
 os = totest.os
 
 # import other needed code for the tests, which is not already imported in the

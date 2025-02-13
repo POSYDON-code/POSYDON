@@ -32,8 +32,6 @@ from posydon.utils.limits_thresholds import (THRESHOLD_CENTRAL_ABUNDANCE,
 )
 from posydon.utils.interpolators import interp1d
 
-PATH_TO_POSYDON = os.environ.get("PATH_TO_POSYDON")
-
 
 # Constants related to inferring star states
 STATE_UNDETERMINED = "undetermined_evolutionary_state"

@@ -11,12 +11,10 @@ import hashlib
 import progressbar
 import tarfile
 from tqdm import tqdm
+from posydon.config import PATH_TO_POSYDON_DATA
 
-# get path to data, if not provided use the working directory
-PATH_TO_POSYDON_DATA = os.environ.get("PATH_TO_POSYDON_DATA",'./')
-file = os.path.join(PATH_TO_POSYDON_DATA, "POSYDON_data.tar.gz")
-PATH_TO_POSYDON_DATA = os.path.join(PATH_TO_POSYDON_DATA, 'POSYDON_data/')
-
+file = os.path.join(os.path.dirname(PATH_TO_POSYDON_DATA),
+                    "POSYDON_data.tar.gz")
 data_url = "https://zenodo.org/record/14205146/files/POSYDON_data.tar.gz"
 original_md5 = "cf645a45b9b92c2ad01e759eb1950beb"
 
@@ -99,7 +97,8 @@ def data_download(file=file, MD5_check=True, verbose=False):
     # extract each file
     print('Extracting POSYDON data from tar file...')
     with tarfile.open(file) as tar:
-        for member in tqdm(iterable=tar.getmembers(), total=len(tar.getmembers())):
+        for member in tqdm(iterable=tar.getmembers(),
+                           total=len(tar.getmembers())):
             tar.extract(member=member, path=directory)
 
     # remove tar files after extracted
