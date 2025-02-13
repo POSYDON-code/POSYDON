@@ -75,7 +75,7 @@ ZENODO_COLLECTION['v2_2Zsun'] = {
                    + "Additionally, it includes data on supernova "\
                    + "prescriptions (Sukhbold+2016, Couch+2020, "\
                    + "Patton+Sukhbold2020), star formation history "\
-                   + "(IllustrisTNG), and detector sesitivity (of O3, O4low, "\
+                   + "(IllustrisTNG), and detector sensitivity (of O3, O4low, "\
                    + "O4high, design of three gravitational wave detectors "\
                    + "H1, L1, V1).", #TODO
     'md5': None, #TODO
@@ -90,7 +90,7 @@ ZENODO_COLLECTION['v2_1Zsun'] = {
                    + "Additionally, it includes data on supernova "\
                    + "prescriptions (Sukhbold+2016, Couch+2020, "\
                    + "Patton+Sukhbold2020), star formation history "\
-                   + "(IllustrisTNG), and detector sesitivity (of O3, O4low, "\
+                   + "(IllustrisTNG), and detector sensitivity (of O3, O4low, "\
                    + "O4high, design of three gravitational wave detectors "\
                    + "H1, L1, V1).", #TODO
     'md5': None, #TODO
@@ -105,7 +105,7 @@ ZENODO_COLLECTION['v2_0.45Zsun'] = {
                    + "Additionally, it includes data on supernova "\
                    + "prescriptions (Sukhbold+2016, Couch+2020, "\
                    + "Patton+Sukhbold2020), star formation history "\
-                   + "(IllustrisTNG), and detector sesitivity (of O3, O4low, "\
+                   + "(IllustrisTNG), and detector sensitivity (of O3, O4low, "\
                    + "O4high, design of three gravitational wave detectors "\
                    + "H1, L1, V1).", #TODO
     'md5': None, #TODO
@@ -120,7 +120,7 @@ ZENODO_COLLECTION['v2_0.2Zsun'] = {
                    + "Additionally, it includes data on supernova "\
                    + "prescriptions (Sukhbold+2016, Couch+2020, "\
                    + "Patton+Sukhbold2020), star formation history "\
-                   + "(IllustrisTNG), and detector sesitivity (of O3, O4low, "\
+                   + "(IllustrisTNG), and detector sensitivity (of O3, O4low, "\
                    + "O4high, design of three gravitational wave detectors "\
                    + "H1, L1, V1).", #TODO
     'md5': None, #TODO
@@ -135,7 +135,7 @@ ZENODO_COLLECTION['v2_0.1Zsun'] = {
                    + "Additionally, it includes data on supernova "\
                    + "prescriptions (Sukhbold+2016, Couch+2020, "\
                    + "Patton+Sukhbold2020), star formation history "\
-                   + "(IllustrisTNG), and detector sesitivity (of O3, O4low, "\
+                   + "(IllustrisTNG), and detector sensitivity (of O3, O4low, "\
                    + "O4high, design of three gravitational wave detectors "\
                    + "H1, L1, V1).", #TODO
     'md5': None, #TODO
@@ -150,7 +150,7 @@ ZENODO_COLLECTION['v2_0.01Zsun'] = {
                    + "Additionally, it includes data on supernova "\
                    + "prescriptions (Sukhbold+2016, Couch+2020, "\
                    + "Patton+Sukhbold2020), star formation history "\
-                   + "(IllustrisTNG), and detector sesitivity (of O3, O4low, "\
+                   + "(IllustrisTNG), and detector sensitivity (of O3, O4low, "\
                    + "O4high, design of three gravitational wave detectors "\
                    + "H1, L1, V1).", #TODO
     'md5': None, #TODO
@@ -165,7 +165,7 @@ ZENODO_COLLECTION['v2_1e-3Zsun'] = {
                    + "Additionally, it includes data on supernova "\
                    + "prescriptions (Sukhbold+2016, Couch+2020, "\
                    + "Patton+Sukhbold2020), star formation history "\
-                   + "(IllustrisTNG), and detector sesitivity (of O3, O4low, "\
+                   + "(IllustrisTNG), and detector sensitivity (of O3, O4low, "\
                    + "O4high, design of three gravitational wave detectors "\
                    + "H1, L1, V1).", #TODO
     'md5': None, #TODO
@@ -180,7 +180,7 @@ ZENODO_COLLECTION['v2_1e-4Zsun'] = {
                    + "Additionally, it includes data on supernova "\
                    + "prescriptions (Sukhbold+2016, Couch+2020, "\
                    + "Patton+Sukhbold2020), star formation history "\
-                   + "(IllustrisTNG), and detector sesitivity (of O3, O4low, "\
+                   + "(IllustrisTNG), and detector sensitivity (of O3, O4low, "\
                    + "O4high, design of three gravitational wave detectors "\
                    + "H1, L1, V1).", #TODO
     'md5': None, #TODO
