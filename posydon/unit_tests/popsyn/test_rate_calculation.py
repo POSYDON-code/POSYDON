@@ -122,19 +122,19 @@ class TestFunctions:
         # missing argument
         with raises(TypeError, match="missing 1 required positional argument: 'delta_t'"):
             totest.test_get_redshift_bin_edges()
-        # examples TODO
-#         tests = [(1.0e-2, approx(12.453793290949799, abs=6e-12)),\
-#                  (2.0e-1, approx(5.862549255024051, abs=6e-12))]
-#         for (t,arr) in tests:
-#             assert totest.test_get_redshift_bin_edges(t) == arr
+        # examples
+        tests = [(100., approx(0.006963184181145605, abs=6e-12)),\
+                 (1000., approx(0.07301543666184201, abs=6e-12))]
+        for (t,arr) in tests:
+            assert totest.test_get_redshift_bin_edges(t)[1] == arr
         
     def test_get_redshift_bin_centers(self):
         # missing argument
         with raises(TypeError, match="missing 1 required positional argument: 'delta_t'"):
             totest.test_get_redshift_bin_centers()
-        # examples TODO
-#         tests = [(0.1, approx(12.453793290949799, abs=6e-12)),\
-#                  (1.0, approx(5.862549255024051, abs=6e-12))]
-#         for (t,arr) in tests:
-#             assert totest.test_get_redshift_bin_centers(t) == arr
+        # examples
+        tests = [(100., approx(49.33542627789386, abs=6e-12)),\
+                 (1000., approx(13.957133275502315, abs=6e-12))]
+        for (t,arr) in tests:
+            assert totest.test_get_redshift_bin_centers(t)[-1] == arr
         
