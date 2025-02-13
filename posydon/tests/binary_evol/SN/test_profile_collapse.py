@@ -1,6 +1,6 @@
 import unittest
 import os
-from posydon.utils.common_functions import PATH_TO_POSYDON
+from posydon.config import PATH_TO_POSYDON
 from posydon.grids.psygrid import PSyGrid
 import posydon.utils.constants as const
 from posydon.binary_evol.singlestar import SingleStar

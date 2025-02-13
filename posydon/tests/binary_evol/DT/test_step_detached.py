@@ -1,7 +1,7 @@
 import os
 import unittest
 
-from posydon.utils.common_functions import PATH_TO_POSYDON
+from posydon.config import PATH_TO_POSYDON
 
 from posydon.binary_evol.DT.step_detached import detached_step
 from posydon.binary_evol.DT.step_detached import diffeq

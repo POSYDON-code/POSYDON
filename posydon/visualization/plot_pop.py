@@ -7,7 +7,7 @@ import os
 import numpy as np
 import matplotlib as mpl
 import pandas as pd
-from posydon.utils.common_functions import PATH_TO_POSYDON
+from posydon.config import PATH_TO_POSYDON, PATH_TO_POSYDON_DATA
 from posydon.visualization.plot_defaults import DEFAULT_LABELS
 from posydon.utils.constants import Zsun
 from posydon.grids.psygrid import PSyGrid
@@ -15,8 +15,6 @@ from posydon.utils.common_functions import convert_metallicity_to_string
 from posydon.utils.constants import Zsun
 import matplotlib.pyplot as plt
 from posydon.visualization.plot_defaults import DEFAULT_LABELS
-
-PATH_TO_POSYDON_DATA = os.environ.get("PATH_TO_POSYDON_DATA",'./')
 
 plt.style.use(os.path.join(PATH_TO_POSYDON, "posydon/visualization/posydon.mplstyle"))
 
@@ -250,7 +248,7 @@ def plot_popsyn_over_grid_slice(pop,
 
     # load grid
     met = convert_metallicity_to_string(met_Zsun)
-    grid_path = os.path.join(PATH_TO_POSYDON_DATA, f'POSYDON_data/{grid_type}/{met}_Zsun.h5')
+    grid_path = os.path.join(PATH_TO_POSYDON_DATA, f'{grid_type}/{met}_Zsun.h5')
     grid = PSyGrid(verbose=False)
     grid.load(grid_path)
 

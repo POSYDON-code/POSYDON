@@ -16,7 +16,7 @@ import pandas as pd
 import numpy as np
 from pprint import pformat
 from posydon.popsyn.io import parse_inifile
-from posydon.utils.common_functions import PATH_TO_POSYDON
+from posydon.config import PATH_TO_POSYDON
 from posydon.utils.gridutils import get_new_grid_name
 from posydon.utils.posydonwarning import Pwarn
 
