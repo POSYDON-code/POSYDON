@@ -1,18 +1,18 @@
-"""Collection of all POSYDON data sets on Zenodo
+"""Collection of all POSYDON datasets on Zenodo
 
 Each publication on Zenodo should have and entry in 'ZENODO_COLLECTION' with
     - 'data' : str or None
         The url to the data (archive) to download.
     - 'description' : str
-        A informative help text to tell about the data set.
+        A informative help text to tell about the dataset.
     - 'md5' : str or None
         The md5 checksum corresponding to the file given in 'data'.
     - 'title' : str
-        The title of the data set.
+        The title of the dataset.
     - 'url' : str
-        The url to the Zenodo page of the data set.
+        The url to the Zenodo page of the dataset.
 
-Individual data sets can be combined to a complete set as input for the POSYDON
+Individual datasets can be combined to a complete set as input for the POSYDON
 code. The complete sets are collected as lists of individual sets, which get
 layered in definition order.
 
@@ -35,7 +35,7 @@ COMPLETE_SETS = {}
 # v1
 ZENODO_COLLECTION['v1_for_v2.0.0-pre1'] = {
     'data': "https://zenodo.org/record/14205146/files/POSYDON_data.tar.gz",
-    'description': "The POSYDON v1 data set post-processed to work with the "\
+    'description': "The POSYDON v1 dataset post-processed to work with the "\
                    + "v2.0.0-pre1 version of the code. It contains "\
                    + "single-HMS, single-HeMS, HMS-HMS, CO-HMS_RLO, CO-HeMS, "\
                    + "CO-HeMS_RLO all at solar metallicity. Additionally, it "\
@@ -69,7 +69,7 @@ COMPLETE_SETS['super-Eddington_v1'] = ['v1_for_v2.0.0-pre1',
 # v2
 ZENODO_COLLECTION['v2_2Zsun'] = {
     'data': None, #TODO
-    'description': "The POSYDON v2 data set at twice solar metallicity. It "\
+    'description': "The POSYDON v2 dataset at twice solar metallicity. It "\
                    + "contains single-HMS, single-HeMS, HMS-HMS, CO-HMS_RLO, "\
                    + "CO-HeMS, CO-HeMS_RLO all at twice solar metallicity. "\
                    + "Additionally, it includes data on supernova "\
@@ -84,7 +84,7 @@ ZENODO_COLLECTION['v2_2Zsun'] = {
 }
 ZENODO_COLLECTION['v2_1Zsun'] = {
     'data': None, #TODO
-    'description': "The POSYDON v2 data set at solar metallicity. It "\
+    'description': "The POSYDON v2 dataset at solar metallicity. It "\
                    + "contains single-HMS, single-HeMS, HMS-HMS, CO-HMS_RLO, "\
                    + "CO-HeMS, CO-HeMS_RLO all at solar metallicity. "\
                    + "Additionally, it includes data on supernova "\
@@ -99,7 +99,7 @@ ZENODO_COLLECTION['v2_1Zsun'] = {
 }
 ZENODO_COLLECTION['v2_0.45Zsun'] = {
     'data': None, #TODO
-    'description': "The POSYDON v2 data set at 0.45 solar metallicity. It "\
+    'description': "The POSYDON v2 dataset at 0.45 solar metallicity. It "\
                    + "contains single-HMS, single-HeMS, HMS-HMS, CO-HMS_RLO, "\
                    + "CO-HeMS, CO-HeMS_RLO all at 0.45 solar metallicity. "\
                    + "Additionally, it includes data on supernova "\
@@ -114,7 +114,7 @@ ZENODO_COLLECTION['v2_0.45Zsun'] = {
 }
 ZENODO_COLLECTION['v2_0.2Zsun'] = {
     'data': None, #TODO
-    'description': "The POSYDON v2 data set at 0.2 solar metallicity. It "\
+    'description': "The POSYDON v2 dataset at 0.2 solar metallicity. It "\
                    + "contains single-HMS, single-HeMS, HMS-HMS, CO-HMS_RLO, "\
                    + "CO-HeMS, CO-HeMS_RLO all at 0.2 solar metallicity. "\
                    + "Additionally, it includes data on supernova "\
@@ -129,7 +129,7 @@ ZENODO_COLLECTION['v2_0.2Zsun'] = {
 }
 ZENODO_COLLECTION['v2_0.1Zsun'] = {
     'data': None, #TODO
-    'description': "The POSYDON v2 data set at 0.1 solar metallicity. It "\
+    'description': "The POSYDON v2 dataset at 0.1 solar metallicity. It "\
                    + "contains single-HMS, single-HeMS, HMS-HMS, CO-HMS_RLO, "\
                    + "CO-HeMS, CO-HeMS_RLO all at 0.1 solar metallicity. "\
                    + "Additionally, it includes data on supernova "\
@@ -144,7 +144,7 @@ ZENODO_COLLECTION['v2_0.1Zsun'] = {
 }
 ZENODO_COLLECTION['v2_0.01Zsun'] = {
     'data': None, #TODO
-    'description': "The POSYDON v2 data set at 0.01 solar metallicity. It "\
+    'description': "The POSYDON v2 dataset at 0.01 solar metallicity. It "\
                    + "contains single-HMS, single-HeMS, HMS-HMS, CO-HMS_RLO, "\
                    + "CO-HeMS, CO-HeMS_RLO all at 0.01 solar metallicity. "\
                    + "Additionally, it includes data on supernova "\
@@ -159,7 +159,7 @@ ZENODO_COLLECTION['v2_0.01Zsun'] = {
 }
 ZENODO_COLLECTION['v2_1e-3Zsun'] = {
     'data': None, #TODO
-    'description': "The POSYDON v2 data set at 10^{-3} solar metallicity. It "\
+    'description': "The POSYDON v2 dataset at 10^{-3} solar metallicity. It "\
                    + "contains single-HMS, single-HeMS, HMS-HMS, CO-HMS_RLO, "\
                    + "CO-HeMS, CO-HeMS_RLO all at 10^{-3} solar metallicity. "\
                    + "Additionally, it includes data on supernova "\
@@ -174,7 +174,7 @@ ZENODO_COLLECTION['v2_1e-3Zsun'] = {
 }
 ZENODO_COLLECTION['v2_1e-4Zsun'] = {
     'data': None, #TODO
-    'description': "The POSYDON v2 data set at 10^{-4} solar metallicity. It "\
+    'description': "The POSYDON v2 dataset at 10^{-4} solar metallicity. It "\
                    + "contains single-HMS, single-HeMS, HMS-HMS, CO-HMS_RLO, "\
                    + "CO-HeMS, CO-HeMS_RLO all at 10^{-4} solar metallicity. "\
                    + "Additionally, it includes data on supernova "\

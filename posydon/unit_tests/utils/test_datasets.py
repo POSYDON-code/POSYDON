@@ -1,4 +1,5 @@
-"""Unit tests of posydon/utils/data_sets.py
+"""Unit tests of posydon/utils/datasets.py
+
 """
 
 __authors__ = [
@@ -6,7 +7,7 @@ __authors__ = [
 ]
 
 # import the module which will be tested
-import posydon.utils.data_sets as totest
+import posydon.utils.datasets as totest
 
 # import other needed code for the tests, which is not already imported in the
 # module you like to test
