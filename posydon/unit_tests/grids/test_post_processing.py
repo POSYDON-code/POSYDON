@@ -166,8 +166,6 @@ class TestFunctions:
         # examples: SN MODEL
         totest.print_CC_quantities(star, "TESTMODEL")
         output = capsys.readouterr().out.split("\n")
-        with capsys.disabled():
-            print(output)
         assert len(output) == 1+1
         fmt = "{:1.2f} {:13.2f} {:12.2f} {:20.2f} {:20.2f} {:20.2f} {:20.2f} "\
               +"{:20.2f} {:20.2f}"
