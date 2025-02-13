@@ -13,7 +13,7 @@ import os
 import numpy as np
 import scipy as sp
 from scipy import stats
-from posydon.utils.data_download import PATH_TO_POSYDON_DATA
+from posydon.config import PATH_TO_POSYDON_DATA
 from posydon.utils.constants import age_of_universe
 from posydon.utils.common_functions import (
     rejection_sampler,

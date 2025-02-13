@@ -71,7 +71,7 @@ class TestElements:
                     'MT_CASE_BC', 'MT_CASE_C', 'MT_CASE_NONBURNING',\
                     'MT_CASE_NO_RLO', 'MT_CASE_TO_STR',\
                     'MT_CASE_UNDETERMINED', 'MT_STR_TO_CASE',\
-                    'PATH_TO_POSYDON', 'Pwarn', 'REL_LOG10_BURNING_THRESHOLD',\
+                    'Pwarn', 'REL_LOG10_BURNING_THRESHOLD',\
                     'RICHNESS_STATES', 'RL_RELATIVE_OVERFLOW_THRESHOLD',\
                     'STATE_NS_STARMASS_UPPER_LIMIT', 'STATE_UNDETERMINED',\
                     'Schwarzschild_Radius', 'THRESHOLD_CENTRAL_ABUNDANCE',\
@@ -111,9 +111,6 @@ class TestElements:
         assert dir(totest) == elements, "There might be added or removed "\
                                         + "objects without an update on the "\
                                         + "unit test."
-
-    def test_instance_PATH_TO_POSYDON(self):
-        assert isinstance(totest.PATH_TO_POSYDON, str)
 
     def test_instance_STATE_UNDETERMINED(self):
         assert isinstance(totest.STATE_UNDETERMINED, str)
@@ -320,9 +317,6 @@ class TestElements:
 
 class TestValues:
     # check that the values fit
-    def test_value_PATH_TO_POSYDON(self):
-        assert '/' in totest.PATH_TO_POSYDON
-
     def test_value_STATE_UNDETERMINED(self):
         assert totest.STATE_UNDETERMINED == "undetermined_evolutionary_state"
 

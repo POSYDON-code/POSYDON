@@ -8,7 +8,7 @@ __authors__ = [
 ]
 
 
-from posydon.utils.data_download import PATH_TO_POSYDON_DATA
+from posydon.config import PATH_TO_POSYDON_DATA
 from posydon.binary_evol.DT.step_isolated import IsolatedStep
 
 from posydon.binary_evol.flow_chart import (
