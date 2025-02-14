@@ -32,6 +32,20 @@ ZENODO_COLLECTION = {'POSYDON':
                          }}
 COMPLETE_SETS = {}
 
+# auxiliary data
+ZENODO_COLLECTION['auxiliary'] = {
+    'data': None, #TODO
+    'description': "Auxiliary data for POSYDON. It contains data on "\
+                   + "supernova prescriptions (Sukhbold+2016, Couch+2020, "\
+                   + "Patton+Sukhbold2020), star formation history "\
+                   + "(IllustrisTNG), and detector sensitivity (of O3, O4low, "\
+                   + "O4high, design of three gravitational wave detectors "\
+                   + "H1, L1, V1).", #TODO
+    'md5': None, #TODO
+    'title': "Auxiliary POSYDON data", #TODO
+    'url': "https://zenodo.org/communities/posydon" #TODO
+}
+
 # v1
 ZENODO_COLLECTION['v1_for_v2.0.0-pre1'] = {
     'data': "https://zenodo.org/record/14205146/files/POSYDON_data.tar.gz",
@@ -42,7 +56,7 @@ ZENODO_COLLECTION['v1_for_v2.0.0-pre1'] = {
                    + "includes data on supernova prescriptions "\
                    + "(Sukhbold+2016, Couch+2020, Patton+Sukhbold2020), star "\
                    + "formation history (IllustrisTNG), and detector "\
-                   + "sesitivity (of O3, O4low, O4high, design of three "\
+                   + "sensitivity (of O3, O4low, O4high, design of three "\
                    + "gravitational wave detectors H1, L1, V1).",
     'md5': "cf645a45b9b92c2ad01e759eb1950beb",
     'title': "Re-postprocessed POSYDON v1.0 dataset compatible with code "\
@@ -67,126 +81,87 @@ COMPLETE_SETS['super-Eddington_v1'] = ['v1_for_v2.0.0-pre1',
                                        'super-Eddington_v1']
 
 # v2
-ZENODO_COLLECTION['v2_2Zsun'] = {
+ZENODO_COLLECTION['v2_girds_2Zsun'] = {
     'data': None, #TODO
     'description': "The POSYDON v2 dataset at twice solar metallicity. It "\
                    + "contains single-HMS, single-HeMS, HMS-HMS, CO-HMS_RLO, "\
-                   + "CO-HeMS, CO-HeMS_RLO all at twice solar metallicity. "\
-                   + "Additionally, it includes data on supernova "\
-                   + "prescriptions (Sukhbold+2016, Couch+2020, "\
-                   + "Patton+Sukhbold2020), star formation history "\
-                   + "(IllustrisTNG), and detector sensitivity (of O3, O4low, "\
-                   + "O4high, design of three gravitational wave detectors "\
-                   + "H1, L1, V1).", #TODO
+                   + "CO-HeMS, CO-HeMS_RLO all at twice solar metallicity.", #TODO
     'md5': None, #TODO
     'title': "POSYDON v2.0 dataset at 2 Zsun", #TODO
     'url': "https://zenodo.org/communities/posydon" #TODO
 }
-ZENODO_COLLECTION['v2_1Zsun'] = {
+ZENODO_COLLECTION['v2_girds_1Zsun'] = {
     'data': None, #TODO
     'description': "The POSYDON v2 dataset at solar metallicity. It "\
                    + "contains single-HMS, single-HeMS, HMS-HMS, CO-HMS_RLO, "\
-                   + "CO-HeMS, CO-HeMS_RLO all at solar metallicity. "\
-                   + "Additionally, it includes data on supernova "\
-                   + "prescriptions (Sukhbold+2016, Couch+2020, "\
-                   + "Patton+Sukhbold2020), star formation history "\
-                   + "(IllustrisTNG), and detector sensitivity (of O3, O4low, "\
-                   + "O4high, design of three gravitational wave detectors "\
-                   + "H1, L1, V1).", #TODO
+                   + "CO-HeMS, CO-HeMS_RLO all at solar metallicity.", #TODO
     'md5': None, #TODO
     'title': "POSYDON v2.0 dataset at Zsun", #TODO
     'url': "https://zenodo.org/communities/posydon" #TODO
 }
-ZENODO_COLLECTION['v2_0.45Zsun'] = {
+ZENODO_COLLECTION['v2_girds_0.45Zsun'] = {
     'data': None, #TODO
     'description': "The POSYDON v2 dataset at 0.45 solar metallicity. It "\
                    + "contains single-HMS, single-HeMS, HMS-HMS, CO-HMS_RLO, "\
-                   + "CO-HeMS, CO-HeMS_RLO all at 0.45 solar metallicity. "\
-                   + "Additionally, it includes data on supernova "\
-                   + "prescriptions (Sukhbold+2016, Couch+2020, "\
-                   + "Patton+Sukhbold2020), star formation history "\
-                   + "(IllustrisTNG), and detector sensitivity (of O3, O4low, "\
-                   + "O4high, design of three gravitational wave detectors "\
-                   + "H1, L1, V1).", #TODO
+                   + "CO-HeMS, CO-HeMS_RLO all at 0.45 solar metallicity.", #TODO
     'md5': None, #TODO
     'title': "POSYDON v2.0 dataset at 0.45 Zsun", #TODO
     'url': "https://zenodo.org/communities/posydon" #TODO
 }
-ZENODO_COLLECTION['v2_0.2Zsun'] = {
+ZENODO_COLLECTION['v2_girds_0.2Zsun'] = {
     'data': None, #TODO
     'description': "The POSYDON v2 dataset at 0.2 solar metallicity. It "\
                    + "contains single-HMS, single-HeMS, HMS-HMS, CO-HMS_RLO, "\
-                   + "CO-HeMS, CO-HeMS_RLO all at 0.2 solar metallicity. "\
-                   + "Additionally, it includes data on supernova "\
-                   + "prescriptions (Sukhbold+2016, Couch+2020, "\
-                   + "Patton+Sukhbold2020), star formation history "\
-                   + "(IllustrisTNG), and detector sensitivity (of O3, O4low, "\
-                   + "O4high, design of three gravitational wave detectors "\
-                   + "H1, L1, V1).", #TODO
+                   + "CO-HeMS, CO-HeMS_RLO all at 0.2 solar metallicity.", #TODO
     'md5': None, #TODO
     'title': "POSYDON v2.0 dataset at 0.2 Zsun", #TODO
     'url': "https://zenodo.org/communities/posydon" #TODO
 }
-ZENODO_COLLECTION['v2_0.1Zsun'] = {
+ZENODO_COLLECTION['v2_girds_0.1Zsun'] = {
     'data': None, #TODO
     'description': "The POSYDON v2 dataset at 0.1 solar metallicity. It "\
                    + "contains single-HMS, single-HeMS, HMS-HMS, CO-HMS_RLO, "\
-                   + "CO-HeMS, CO-HeMS_RLO all at 0.1 solar metallicity. "\
-                   + "Additionally, it includes data on supernova "\
-                   + "prescriptions (Sukhbold+2016, Couch+2020, "\
-                   + "Patton+Sukhbold2020), star formation history "\
-                   + "(IllustrisTNG), and detector sensitivity (of O3, O4low, "\
-                   + "O4high, design of three gravitational wave detectors "\
-                   + "H1, L1, V1).", #TODO
+                   + "CO-HeMS, CO-HeMS_RLO all at 0.1 solar metallicity.", #TODO
     'md5': None, #TODO
     'title': "POSYDON v2.0 dataset at 0.1 Zsun", #TODO
     'url': "https://zenodo.org/communities/posydon" #TODO
 }
-ZENODO_COLLECTION['v2_0.01Zsun'] = {
+ZENODO_COLLECTION['v2_girds_0.01Zsun'] = {
     'data': None, #TODO
     'description': "The POSYDON v2 dataset at 0.01 solar metallicity. It "\
                    + "contains single-HMS, single-HeMS, HMS-HMS, CO-HMS_RLO, "\
-                   + "CO-HeMS, CO-HeMS_RLO all at 0.01 solar metallicity. "\
-                   + "Additionally, it includes data on supernova "\
-                   + "prescriptions (Sukhbold+2016, Couch+2020, "\
-                   + "Patton+Sukhbold2020), star formation history "\
-                   + "(IllustrisTNG), and detector sensitivity (of O3, O4low, "\
-                   + "O4high, design of three gravitational wave detectors "\
-                   + "H1, L1, V1).", #TODO
+                   + "CO-HeMS, CO-HeMS_RLO all at 0.01 solar metallicity.", #TODO
     'md5': None, #TODO
     'title': "POSYDON v2.0 dataset at 0.01 Zsun", #TODO
     'url': "https://zenodo.org/communities/posydon" #TODO
 }
-ZENODO_COLLECTION['v2_1e-3Zsun'] = {
+ZENODO_COLLECTION['v2_girds_1e-3Zsun'] = {
     'data': None, #TODO
     'description': "The POSYDON v2 dataset at 10^{-3} solar metallicity. It "\
                    + "contains single-HMS, single-HeMS, HMS-HMS, CO-HMS_RLO, "\
-                   + "CO-HeMS, CO-HeMS_RLO all at 10^{-3} solar metallicity. "\
-                   + "Additionally, it includes data on supernova "\
-                   + "prescriptions (Sukhbold+2016, Couch+2020, "\
-                   + "Patton+Sukhbold2020), star formation history "\
-                   + "(IllustrisTNG), and detector sensitivity (of O3, O4low, "\
-                   + "O4high, design of three gravitational wave detectors "\
-                   + "H1, L1, V1).", #TODO
+                   + "CO-HeMS, CO-HeMS_RLO all at 10^{-3} solar metallicity.", #TODO
     'md5': None, #TODO
     'title': "POSYDON v2.0 dataset at 10^{-3} Zsun", #TODO
     'url': "https://zenodo.org/communities/posydon" #TODO
 }
-ZENODO_COLLECTION['v2_1e-4Zsun'] = {
+ZENODO_COLLECTION['v2_girds_1e-4Zsun'] = {
     'data': None, #TODO
     'description': "The POSYDON v2 dataset at 10^{-4} solar metallicity. It "\
                    + "contains single-HMS, single-HeMS, HMS-HMS, CO-HMS_RLO, "\
-                   + "CO-HeMS, CO-HeMS_RLO all at 10^{-4} solar metallicity. "\
-                   + "Additionally, it includes data on supernova "\
-                   + "prescriptions (Sukhbold+2016, Couch+2020, "\
-                   + "Patton+Sukhbold2020), star formation history "\
-                   + "(IllustrisTNG), and detector sensitivity (of O3, O4low, "\
-                   + "O4high, design of three gravitational wave detectors "\
-                   + "H1, L1, V1).", #TODO
+                   + "CO-HeMS, CO-HeMS_RLO all at 10^{-4} solar metallicity.", #TODO
     'md5': None, #TODO
     'title': "POSYDON v2.0 dataset at 10^{-4} Zsun", #TODO
     'url': "https://zenodo.org/communities/posydon" #TODO
 }
-COMPLETE_SETS['v2'] = ['v2_2Zsun', 'v2_1Zsun', 'v2_0.45Zsun', 'v2_0.2Zsun',
-                       'v2_0.1Zsun', 'v2_0.01Zsun', 'v2_1e-3Zsun',
-                       'v2_1e-4Zsun']
+COMPLETE_SETS['v2'] = ['auxiliary', 'v2_girds_2Zsun', 'v2_girds_1Zsun',
+                       'v2_girds_0.45Zsun', 'v2_girds_0.2Zsun',
+                       'v2_girds_0.1Zsun', 'v2_girds_0.01Zsun',
+                       'v2_girds_1e-3Zsun', 'v2_girds_1e-4Zsun']
+COMPLETE_SETS['v2_2Zsun'] = ['auxiliary', 'v2_girds_2Zsun']
+COMPLETE_SETS['v2_1Zsun'] = ['auxiliary', 'v2_girds_1Zsun']
+COMPLETE_SETS['v2_0.45Zsun'] = ['auxiliary', 'v2_girds_0.45Zsun']
+COMPLETE_SETS['v2_0.2Zsun'] = ['auxiliary', 'v2_girds_0.2Zsun']
+COMPLETE_SETS['v2_0.1Zsun'] = ['auxiliary', 'v2_girds_0.1Zsun']
+COMPLETE_SETS['v2_0.01Zsun'] = ['auxiliary', 'v2_girds_0.01Zsun']
+COMPLETE_SETS['v2_1e-3Zsun'] = ['auxiliary', 'v2_girds_1e-3Zsun']
+COMPLETE_SETS['v2_1e-4Zsun'] = ['auxiliary', 'v2_girds_1e-4Zsun']

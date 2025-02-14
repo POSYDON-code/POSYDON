@@ -26,21 +26,32 @@ class TestElements:
         elements = ['COMPLETE_SETS', 'PATH_TO_POSYDON_DATA', 'ProgressBar',\
                     'ZENODO_COLLECTION', '__authors__', '__builtins__',\
                     '__cached__', '__doc__', '__file__', '__loader__',\
-                    '__name__', '__package__', '__spec__', 'data_download',\
-                    'download_one_dataset', 'hashlib', 'os', 'progressbar',\
-                    'tarfile', 'tqdm', 'urllib']
+                    '__name__', '__package__', '__spec__',\
+                    '_get_posydon_data', '_parse_commandline', 'argparse',\
+                    'data_download', 'download_one_dataset', 'hashlib',\
+                    'list_datasets', 'os', 'progressbar', 'tarfile',\
+                    'textwrap', 'tqdm', 'urllib']
         assert dir(totest) == elements, "There might be added or removed "\
                                         + "objects without an update on the "\
                                         + "unit test."
 
+    def test_instance_parse_commandline(self):
+        assert isroutine(totest._parse_commandline)
+
     def test_instance_ProgressBar(self):
         assert isclass(totest.ProgressBar)
+
+    def test_instance_list_datasets(self):
+        assert isroutine(totest.list_datasets)
 
     def test_instance_download_one_dataset(self):
         assert isroutine(totest.download_one_dataset)
 
     def test_instance_data_download(self):
         assert isroutine(totest.data_download)
+
+    def test_instance_get_posydon_data(self):
+        assert isroutine(totest._get_posydon_data)
 
 
 class TestFunctions:
@@ -70,6 +81,41 @@ class TestFunctions:
         return "Removed downloaded tar file."
 
     # test functions
+    def test_parse_commandline(self, monkeypatch):
+        def mock_parse_args(parser):
+            return self.commandline_args
+        def mock_error(parser, message):
+            raise totest.argparse.ArgumentError(None, message)
+        with monkeypatch.context() as mp:
+            mp.setattr(totest.argparse.ArgumentParser, "parse_args",
+                       mock_parse_args)
+            mp.setattr(totest.argparse.ArgumentParser, "error", mock_error)
+            # bad input
+            self.commandline_args = totest.argparse.Namespace(dataset='Test',\
+             listedsets=None, nomd5check=False, verbose=False)
+            with raises(totest.argparse.ArgumentError,\
+                        match="unknown dataset, use -l to show defined sets"):
+                totest._parse_commandline()
+            # example
+            self.commandline_args = totest.argparse.Namespace(dataset='v1',\
+             listedsets=None, nomd5check=False, verbose=False)
+            assert totest._parse_commandline() == self.commandline_args
+
+    def test_list_datasets(self, capsys):
+        for v in [True, False]:
+            # individual sets
+            totest.list_datasets(individual_sets=True, verbose=v)
+            captured_output = capsys.readouterr()
+            assert "Defined individual sets are:" in captured_output.out
+            if v:
+                assert "more information at" in captured_output.out
+            # complete sets
+            totest.list_datasets(individual_sets=False, verbose=v)
+            captured_output = capsys.readouterr()
+            assert "Defined complete sets are:" in captured_output.out
+            if v:
+                assert "more information at" in captured_output.out
+
     def test_download_one_dataset(self, capsys, monkeypatch, test_path,\
                                   download_statement, failed_MD5_statement,\
                                   extraction_statement, removal_statement):
@@ -226,6 +272,39 @@ class TestFunctions:
             assert self.kwargs['dataset'] == 'Test2'
             assert self.kwargs['MD5_check'] == True
             assert self.kwargs['verbose'] == False
+
+    def test_get_posydon_data(self, monkeypatch):
+        def mock_parse_commandline():
+            return self.commandline_args
+        def mock_list_datasets(**kwargs):
+            self.list_printed = kwargs
+        def mock_data_download(**kwargs):
+            self.downloaded = kwargs
+        with monkeypatch.context() as mp:
+            mp.setattr(totest, "_parse_commandline", mock_parse_commandline)
+            mp.setattr(totest, "list_datasets", mock_list_datasets)
+            mp.setattr(totest, "data_download", mock_data_download)
+            # examples
+            for l in ['complete', 'individual']:
+                for v in [True, False]:
+                    self.list_printed = None
+                    self.commandline_args = totest.argparse.Namespace(\
+                     dataset='v1', listedsets=l, nomd5check=False, verbose=v)
+                    totest._get_posydon_data()
+                    assert self.list_printed['individual_sets']\
+                           == (l == 'individual')
+                    assert self.list_printed['verbose'] == v
+            # examples
+            for n in [True, False]:
+                for v in [True, False]:
+                    for d in ['v1', 'v2']:
+                        self.downloaded = None
+                        self.commandline_args = totest.argparse.Namespace(\
+                         dataset=d, listedsets=None, nomd5check=n, verbose=v)
+                        totest._get_posydon_data()
+                        assert self.downloaded['set_name'] == d
+                        assert self.downloaded['MD5_check'] == (not n)
+                        assert self.downloaded['verbose'] == v
         pass
 
 

@@ -34,16 +34,20 @@ class TestElements:
 class TestValues:
     # check that the values fit
     def test_value_ZENODO_COLLECTION(self):
+        # check datasets
         for k,s in totest.ZENODO_COLLECTION.items():
             assert isinstance(s, dict), f"ZENODO_COLLECTION['{k}'] should be "\
                                         + f"a dictionary, but is {type(s)}"
+            # check required entries for each dataset
             for e in ['data', 'md5']:
+                # entry is string or None (for not yet published datasets)
                 assert e in s, f"The '{e}' entry is missing for "\
                                + f"ZENODO_COLLECTION['{k}']."
                 assert isinstance(s[e], (str, type(None))),\
                        f"ZENODO_COLLECTION['{k}']['{e}'] should be a string "\
                        + f"or None, but is {type(s[e])}"
             for e in ['description', 'title', 'url']:
+                # entry is string
                 assert e in s, f"The '{e}' entry is missing for "\
                                + f"ZENODO_COLLECTION[{k}]."
                 assert isinstance(s[e], str),\
@@ -51,9 +55,14 @@ class TestValues:
                        + f"but is {type(s[e])}"
 
     def test_value_COMPLETE_SETS(self):
+        # check base versions
+        for k in ['v1', 'v2']:
+            assert k in totest.COMPLETE_SETS
+        # check complete datasets
         for k,s in totest.COMPLETE_SETS.items():
             assert isinstance(s, list), f"COMPLETE_SETS['{k}'] should be a "\
                                         + f"list, but is {type(s)}"
+            # check that individual datasets are defined
             for v in s:
                 assert v in totest.ZENODO_COLLECTION.keys(),\
                        f"'{v}' is an unknown dataset."

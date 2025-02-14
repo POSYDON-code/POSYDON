@@ -1,4 +1,4 @@
-"""Functions handling the download of data from Zenodo.
+"""Functions for bin/get-posydon-data to handle the download from Zenodo
 
 """
 
@@ -8,14 +8,50 @@ __authors__ = [
     "Matthias Kruckow <Matthias.Kruckow@unige.ch>",
 ]
 
-import os
-import urllib.request
+import argparse
 import hashlib
+import os
 import progressbar
 import tarfile
+import textwrap
+import urllib.request
 from tqdm import tqdm
 from posydon.config import PATH_TO_POSYDON_DATA
 from posydon.utils.datasets import COMPLETE_SETS, ZENODO_COLLECTION
+
+def _parse_commandline():
+    """Parse the arguments given on the command-line
+
+        Returns
+        -------
+        Namespace
+            All the passed arguments from the commoand line or their defaults.
+
+    """
+    defined_sets = list(COMPLETE_SETS.keys()) + list(ZENODO_COLLECTION.keys())
+    parser = argparse.ArgumentParser(description="Downloading POSYDON data "
+                                                 "from Zenodo")
+    parser.add_argument('dataset',
+                        help="Name of the dataset to download (default: v1)",
+                        nargs='?',
+                        default='v1')
+    parser.add_argument('-l', '--listedsets',
+                        help="list the datasets: (default: complete)",
+                        nargs='?',
+                        const='complete',
+                        choices=['complete', 'individual'])
+    parser.add_argument('-n', '--nomd5check',
+                        help="do not confirm md5 checksum (default: False)",
+                        default=False,
+                        action='store_true')
+    parser.add_argument('-v', '--verbose',
+                        help="run in Verbose Mode (default: False)",
+                        default=False,
+                        action='store_true')
+    args = parser.parse_args()
+    if args.dataset not in defined_sets:
+        raise parser.error("unknown dataset, use -l to show defined sets")
+    return args
 
 class ProgressBar():
     def __init__(self):
@@ -38,6 +74,48 @@ class ProgressBar():
             self.pbar.update(downloaded)
         else:
             self.pbar.finish()
+
+def list_datasets(individual_sets=False, verbose=False):
+    """Print a list of available datasets
+    
+        Parameters
+        ----------
+        individual_sets : boolean (default: False)
+            Show the individual sets or only the complete sets.
+        verbose : boolean (default: False)
+            Enables verbose output.
+
+    """
+    if individual_sets:
+        print("Defined individual sets are:")
+        for dataset in ZENODO_COLLECTION:
+            prefix = f"  - '{dataset}': "
+            indent = " "*len(prefix)
+            wrapper = textwrap.TextWrapper(initial_indent=prefix, width=80,
+                                           subsequent_indent=indent)
+            print(wrapper.fill(ZENODO_COLLECTION[dataset]['title']))
+            if verbose:
+                wrapper = textwrap.TextWrapper(initial_indent=indent, width=80,
+                                               subsequent_indent=indent)
+                print(wrapper.fill(ZENODO_COLLECTION[dataset]['description']))
+                print(wrapper.fill("more information at "
+                                   +ZENODO_COLLECTION[dataset]['url']))
+    else:
+        print("Defined complete sets are:")
+        for set_name,complete_set in COMPLETE_SETS.items():
+            print(f"  - '{set_name}' consisting of:")
+            for dataset in complete_set:
+                prefix = f"    - '{dataset}': "
+                indent = " "*len(prefix)
+                wrapper = textwrap.TextWrapper(initial_indent=prefix, width=80,
+                                               subsequent_indent=indent)
+                print(wrapper.fill(ZENODO_COLLECTION[dataset]['title']))
+                if verbose:
+                    wrapper = textwrap.TextWrapper(initial_indent=indent, width=80,
+                                                   subsequent_indent=indent)
+                    print(wrapper.fill(ZENODO_COLLECTION[dataset]['description']))
+                    print(wrapper.fill("more information at "
+                                       +ZENODO_COLLECTION[dataset]['url']))
 
 def download_one_dataset(dataset='v1_for_v2.0.0-pre1', MD5_check=True,
                          verbose=False):
@@ -110,9 +188,6 @@ def download_one_dataset(dataset='v1_for_v2.0.0-pre1', MD5_check=True,
         if verbose:
             print('Removed downloaded tar file.')
         os.remove(filepath)
-        return
-
-    return
 
 def data_download(set_name='v1', MD5_check=True, verbose=False):
     """Download data files from Zenodo if they do not exist.
@@ -142,3 +217,16 @@ def data_download(set_name='v1', MD5_check=True, verbose=False):
                              verbose=verbose)
     else:
         raise KeyError(f"The dataset '{set_name}' is not defined.")
+
+def _get_posydon_data():
+    """Run the data download or list the datasets
+    
+    """
+    args = _parse_commandline()
+    if args.listedsets == 'complete':
+        list_datasets(individual_sets=False, verbose=args.verbose)
+    elif args.listedsets == 'individual':
+        list_datasets(individual_sets=True, verbose=args.verbose)
+    else:
+        data_download(set_name=args.dataset, MD5_check=not args.nomd5check,
+                      verbose=args.verbose)
