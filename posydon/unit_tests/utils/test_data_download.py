@@ -64,7 +64,7 @@ class TestFunctions:
     @fixture
     def download_statement(self):
         # statement that the download started
-        return "Downloading POSYDON data from Zenodo to directory="
+        return "Downloading POSYDON data '{}' from Zenodo to "
 
     @fixture
     def failed_MD5_statement(self):
@@ -74,7 +74,7 @@ class TestFunctions:
     @fixture
     def extraction_statement(self):
         # statement that the tar extraction started
-        return "Extracting POSYDON data from tar file..."
+        return "Extracting POSYDON data '{}' from tar file..."
 
     @fixture
     def removal_statement(self):
@@ -191,16 +191,16 @@ class TestFunctions:
             # mocked download: fails MD5check, no tar file to remove
             totest.download_one_dataset(dataset='Test', verbose=True)
             captured_output = capsys.readouterr()
-            assert download_statement in captured_output.out
+            assert download_statement.format('Test') in captured_output.out
             assert failed_MD5_statement in captured_output.out
-            assert extraction_statement in captured_output.out
+            assert extraction_statement.format('Test') in captured_output.out
             assert removal_statement not in captured_output.out
             # without MD5 check
             totest.download_one_dataset(dataset='Test', MD5_check=False)
             captured_output = capsys.readouterr()
-            assert download_statement in captured_output.out
+            assert download_statement.format('Test') in captured_output.out
             assert failed_MD5_statement not in captured_output.out
-            assert extraction_statement in captured_output.out
+            assert extraction_statement.format('Test') in captured_output.out
             assert removal_statement not in captured_output.out
             # without MD5 check
             mock_ZENODO_COLLECTION['Test']['md5'] = None
@@ -208,9 +208,9 @@ class TestFunctions:
                                                   +"check."):
                 totest.download_one_dataset(dataset='Test')
             captured_output = capsys.readouterr()
-            assert download_statement in captured_output.out
+            assert download_statement.format('Test') in captured_output.out
             assert failed_MD5_statement not in captured_output.out
-            assert extraction_statement in captured_output.out
+            assert extraction_statement.format('Test') in captured_output.out
             assert removal_statement not in captured_output.out
         # skip real download: create mock file instead
         with monkeypatch.context() as mp:
@@ -228,9 +228,9 @@ class TestFunctions:
             with raises(FileNotFoundError, match="No such file or directory:"):
                 totest.download_one_dataset(dataset='Test0', verbose=True)
             captured_output = capsys.readouterr()
-            assert download_statement in captured_output.out
+            assert download_statement.format('Test0') in captured_output.out
             assert failed_MD5_statement in captured_output.out
-            assert extraction_statement in captured_output.out
+            assert extraction_statement.format('Test0') in captured_output.out
             assert removal_statement not in captured_output.out
             # return expected hash for testfile
             with patch("hashlib.md5") as p_md5:
@@ -238,9 +238,11 @@ class TestFunctions:
                  = mock_ZENODO_COLLECTION['Test1']['md5']
                 totest.download_one_dataset(dataset='Test1')
                 captured_output = capsys.readouterr()
-                assert download_statement in captured_output.out
+                assert download_statement.format('Test1')\
+                       in captured_output.out
                 assert failed_MD5_statement not in captured_output.out
-                assert extraction_statement in captured_output.out
+                assert extraction_statement.format('Test1')\
+                       in captured_output.out
                 assert removal_statement not in captured_output.out
                 assert os.path.exists(test_path)
                 assert os.path.exists(os.path.join(test_path, "test1.txt"))
@@ -248,9 +250,11 @@ class TestFunctions:
                 # with verification output
                 totest.download_one_dataset(dataset='Test2', verbose=True)
                 captured_output = capsys.readouterr()
-                assert download_statement in captured_output.out
+                assert download_statement.format('Test2')\
+                       in captured_output.out
                 assert "MD5 verified" in captured_output.out
-                assert extraction_statement in captured_output.out
+                assert extraction_statement.format('Test2')\
+                       in captured_output.out
                 assert removal_statement in captured_output.out
                 assert os.path.exists(test_path)
                 assert os.path.exists(os.path.join(test_path, "test2.txt"))

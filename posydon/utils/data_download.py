@@ -155,7 +155,7 @@ def download_one_dataset(dataset='v1_for_v2.0.0-pre1', MD5_check=True,
         raise FileExistsError(f"POSYDON data already exists at {filename}.")
 
     # Download the data
-    print(f"Downloading POSYDON data from Zenodo to directory={directory}")
+    print(f"Downloading POSYDON data '{dataset}' from Zenodo to {directory}")
     urllib.request.urlretrieve(data_url, filepath, ProgressBar())
 
     # Compare original MD5 with freshly calculated
@@ -183,7 +183,7 @@ def download_one_dataset(dataset='v1_for_v2.0.0-pre1', MD5_check=True,
                   'happen only on macOS).')
 
     # extract each file
-    print('Extracting POSYDON data from tar file...')
+    print(f"Extracting POSYDON data '{dataset}' from tar file...")
     with tarfile.open(filepath) as tar:
         for member in tqdm(iterable=tar.getmembers(),
                            total=len(tar.getmembers())):
