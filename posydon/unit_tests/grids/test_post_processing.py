@@ -15,7 +15,7 @@ np = totest.np
 from pytest import fixture, raises, warns
 from inspect import isclass, isroutine
 from posydon.utils.posydonwarning import InappropriateValueWarning
-
+from posydon.grids.psygrid import PSyGrid
 
 # define test classes collecting several test functions
 class TestElements:
@@ -82,6 +82,13 @@ class TestFunctions:
         test_star.h1_mass_ej = np.nan
         test_star.he4_mass_ej = None
         return test_star
+
+    @fixture
+    def grid(self):
+    # initialize a PSyGrid instance, which is a required argument
+        test_grid = PSyGrid()
+        test_grid.MESA_dirs = ["Test"]
+        return test_grid
 
     # test functions
     def test_assign_core_collapse_quantities_none(self):
@@ -184,10 +191,13 @@ class TestFunctions:
         with raises(AttributeError, match="'NoneType' object has no "\
                                           +"attribute 'MESA_dirs'"):
             totest.post_process_grid(None)
+        # bad input
+        with raises(ValueError, match="Index range should have dim=2!"):
+            totest.post_process_grid(None, index=[])
         # examples
         pass
 
-    def test_add_post_processed_quantities(self):
+    def test_add_post_processed_quantities(self, grid):
         # missing argument
         with raises(TypeError, match="missing 3 required positional "\
                                      +"arguments: 'grid', "\
@@ -198,5 +208,9 @@ class TestFunctions:
         with raises(AttributeError, match="'NoneType' object has no "\
                                           +"attribute 'MESA_dirs'"):
             totest.add_post_processed_quantities(None, None, None)
+        # bad input
+        with raises(ValueError, match="EXTRA_COLUMNS do not follow the "\
+                                      +"correct order of grid!"):
+            totest.add_post_processed_quantities(grid, ["Unit"], None)
         # examples
         pass
