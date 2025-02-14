@@ -48,20 +48,7 @@ Using Anaconda (Recommended)
 
 .. _posydon-env:
 
-4. **Download the Dataset**
-
-    .. warning::
-        The POSYDON v2.0.0 dataset is not yet available on Zenodo. The above instructions currently point to the POSYDON v1.0.0 dataset release. Please refer to the development version of the dataset available on Northwestern and UNIGE HPC facilities for now. To have access to latest pre-release dataset (230914) you must be a POSYDON core developer, please refer to the #developers Slack channel.
-
-    You can use POSYDON's built-in API command (by default the downloaded data will be saved in the current directory, hence please navigate to your desired location first):
-
-    .. code-block:: bash
-
-        get-posydon-data
-
-    Alternatively, you can manually download the dataset from Zenodo using the provided `link <https://zenodo.org/communities/posydon/>`_. (TODO: update link to v2)
-
-5. **Set Environment Variables**
+4. **Set Environment Variables**
 
     Export the required paths (please change the location names accordingly to your installation):
 
@@ -72,6 +59,21 @@ Using Anaconda (Recommended)
 
     .. note:: 
         You can add these lines to your ``~/.bashrc`` or ``~/.bash_profile`` or your shell equivalent to ensure the environment variables are set every time you open a new terminal.
+
+5. **Download the Dataset**
+
+    .. warning::
+        The POSYDON v2.0.0 dataset is not yet available on Zenodo. The instructions currently point to the POSYDON v1.0.0 dataset release. Please refer to the development version of the dataset available on Northwestern and UNIGE HPC facilities for now. To have access to latest pre-release dataset (241028) you must be a POSYDON core developer, please refer to the #developers Slack channel.
+
+    You can use POSYDON's built-in API command (the downloaded data will be saved in the directory specified by :code:`PATH_TO_POSYDON_DATA`):
+
+    .. code-block:: bash
+
+        get-posydon-data
+
+    May use :code:`get-posydon-data -h` to see all the options for this command, which allows to list all the datasets and download the one of your choice.
+
+    Alternatively, you can manually download the datasets from Zenodo. You can find the POSYDON datasets on the `POSYDON community <https://zenodo.org/communities/posydon/>`_ on Zenodo.
 
 .. _dev-version:
 
