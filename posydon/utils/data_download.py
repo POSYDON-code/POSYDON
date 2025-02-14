@@ -18,6 +18,7 @@ import urllib.request
 from tqdm import tqdm
 from posydon.config import PATH_TO_POSYDON_DATA
 from posydon.utils.datasets import COMPLETE_SETS, ZENODO_COLLECTION
+from posydon.utils.posydonwarning import Pwarn
 
 def _parse_commandline():
     """Parse the arguments given on the command-line
@@ -138,7 +139,12 @@ def download_one_dataset(dataset='v1_for_v2.0.0-pre1', MD5_check=True,
 
     # First, generate filename and make sure the path does not exist
     data_url = ZENODO_COLLECTION[dataset]['data']
+    if data_url is None:
+        raise ValueError(f"The dataset '{dataset}' has no publication yet.")
     original_md5 = ZENODO_COLLECTION[dataset]['md5']
+    if original_md5 is None:
+        MD5_check = False
+        Pwarn("MD5 undefined, skip MD5 check.", "ReplaceValueWarning")
     filename = os.path.basename(data_url)
     directory = os.path.dirname(PATH_TO_POSYDON_DATA)
     filepath = os.path.join(directory, filename)

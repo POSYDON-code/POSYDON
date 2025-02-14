@@ -13,20 +13,21 @@ os = totest.os
 
 # import other needed code for the tests, which is not already imported in the
 # module you like to test
-from pytest import fixture, raises, approx
+from pytest import fixture, raises, warns, approx
 from inspect import isclass, isroutine
 from shutil import rmtree
 from contextlib import chdir
 from unittest.mock import patch
+from posydon.utils.posydonwarning import ReplaceValueWarning
 
 # define test classes collecting several test functions
 class TestElements:
     # check for objects, which should be an element of the tested module
     def test_dir(self):
         elements = ['COMPLETE_SETS', 'PATH_TO_POSYDON_DATA', 'ProgressBar',\
-                    'ZENODO_COLLECTION', '__authors__', '__builtins__',\
-                    '__cached__', '__doc__', '__file__', '__loader__',\
-                    '__name__', '__package__', '__spec__',\
+                    'Pwarn', 'ZENODO_COLLECTION', '__authors__',\
+                    '__builtins__', '__cached__', '__doc__', '__file__',\
+                    '__loader__', '__name__', '__package__', '__spec__',\
                     '_get_posydon_data', '_parse_commandline', 'argparse',\
                     'data_download', 'download_one_dataset', 'hashlib',\
                     'list_datasets', 'os', 'progressbar', 'tarfile',\
@@ -158,6 +159,13 @@ class TestFunctions:
             totest.download_one_dataset(dataset='Test')
         # bad input
         with monkeypatch.context() as mp:
+            mock_ZENODO_COLLECTION = {'Test': {'data' : None, 'md5': None}}
+            mp.setattr(totest, "ZENODO_COLLECTION", mock_ZENODO_COLLECTION)
+            with raises(ValueError, match="The dataset 'Test' has no "\
+                                          +"publication yet."):
+                totest.download_one_dataset(dataset='Test')
+        # bad input
+        with monkeypatch.context() as mp:
             mock_PATH_TO_POSYDON_DATA = "./DOES_NOT_EXIST/POSYDON_data"
             mp.setattr(totest, "PATH_TO_POSYDON_DATA",\
                        mock_PATH_TO_POSYDON_DATA)
@@ -189,6 +197,16 @@ class TestFunctions:
             assert removal_statement not in captured_output.out
             # without MD5 check
             totest.download_one_dataset(dataset='Test', MD5_check=False)
+            captured_output = capsys.readouterr()
+            assert download_statement in captured_output.out
+            assert failed_MD5_statement not in captured_output.out
+            assert extraction_statement in captured_output.out
+            assert removal_statement not in captured_output.out
+            # without MD5 check
+            mock_ZENODO_COLLECTION['Test']['md5'] = None
+            with warns(ReplaceValueWarning, match="MD5 undefined, skip MD5 "\
+                                                  +"check."):
+                totest.download_one_dataset(dataset='Test')
             captured_output = capsys.readouterr()
             assert download_statement in captured_output.out
             assert failed_MD5_statement not in captured_output.out
@@ -305,7 +323,6 @@ class TestFunctions:
                         assert self.downloaded['set_name'] == d
                         assert self.downloaded['MD5_check'] == (not n)
                         assert self.downloaded['verbose'] == v
-        pass
 
 
 class TestProgressBar:
