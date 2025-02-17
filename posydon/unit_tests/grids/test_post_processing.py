@@ -14,8 +14,146 @@ np = totest.np
 # module you like to test
 from pytest import fixture, raises, warns
 from inspect import isclass, isroutine
+import h5py
+import json
+import os
 from posydon.utils.posydonwarning import InappropriateValueWarning
 from posydon.grids.psygrid import PSyGrid
+
+# helper functions
+def get_PSyGrid(dir_path, idx, binary_history, star_history, profile):
+    """Create a PSyGrid file with two runs
+
+    Parameters
+    ----------
+    dir_path : str
+        The path to the directory where to create the PSyGrid.
+    idx : int
+        Grid index.
+    binary_history : ndarray
+        Binary history data.
+    star_history : ndarray
+        Star history data.
+    profile : ndarray
+        Final profile data.
+
+    Returns
+    -------
+    str
+        Path to the PSyGrid file.
+
+    """
+    path = os.path.join(dir_path, f"grid{idx}.h5")
+    Grid = PSyGrid()
+    Grid.filepath = path
+    Grid.generate_config()
+    n_runs=6
+    MESA_paths = []
+    H5_STRING = h5py.string_dtype()
+    with h5py.File(path, "w") as hdf5_file:
+        for r in range(n_runs+1):
+            if r == 0:
+                MESA_paths.append(os.path.join(dir_path, "m1_1.0_m2_1.0"\
+                 +"_initial_period_in_days_0.0_initial_z_0.01_idx_0"))
+                hdf5_file.create_group("/grid/run0/")
+                continue
+            MESA_paths.append(os.path.join(dir_path, "m1_1.0_m2_1.0"\
+             +"_initial_period_in_days_{}_initial_z_0.01_idx_{}".format(\
+             binary_history['period_days'][0], r)))
+            hdf5_file.create_dataset(f"/grid/run{r}/binary_history",\
+                                     data=binary_history)
+            hdf5_file.create_dataset(f"/grid/run{r}/history1", data=star_history)
+            hdf5_file.create_dataset(f"/grid/run{r}/history2", data=star_history)
+            hdf5_file.create_dataset(f"/grid/run{r}/final_profile1", data=profile)
+            hdf5_file.create_dataset(f"/grid/run{r}/final_profile2", data=profile)
+        BH_types = binary_history.dtype.names
+        SH_types = star_history.dtype.names
+        ini_dtypes = [('Z', '<f8'), ('period_days', '<f8')]
+        ini_val = np.array([tuple([np.nan]*len(ini_dtypes))]\
+                           +n_runs*[tuple([binary_history[k][0]\
+                                        if k in BH_types else 1.0\
+                                        for (k, t) in ini_dtypes])],\
+                           dtype=ini_dtypes)
+        hdf5_file.create_dataset("/grid/initial_values", data=ini_val)
+        # either required by post_process_grid or BinaryStar.from_run
+        fin_dtypes = [('star_1_mass', '<f8'), ('star_2_mass', '<f8'),\
+                      ('period_days', '<f8'), ('age', '<f8'),\
+                      ('lg_mstar_dot_1', '<f8'), ('lg_mstar_dot_2', '<f8'),\
+                      ('lg_system_mdot_1', '<f8'),\
+                      ('lg_system_mdot_2', '<f8'),\
+                      ('lg_wind_mdot_1', '<f8'), ('lg_wind_mdot_2', '<f8'),\
+                      ('S1_center_h1', '<f8'), ('S2_center_h1', '<f8'),\
+                      ('S1_center_he4', '<f8'), ('S2_center_he4', '<f8'),\
+                      ('S1_center_c12', '<f8'), ('S2_center_c12', '<f8'),\
+                      ('S1_center_n14', '<f8'), ('S2_center_n14', '<f8'),\
+                      ('S1_center_o16', '<f8'), ('S2_center_o16', '<f8'),\
+                      ('S1_surface_h1', '<f8'), ('S2_surface_h1', '<f8'),\
+                      ('S1_surface_he4', '<f8'), ('S2_surface_he4', '<f8'),\
+                      ('S1_surface_c12', '<f8'), ('S2_surface_c12', '<f8'),\
+                      ('S1_surface_n14', '<f8'), ('S2_surface_n14', '<f8'),\
+                      ('S1_surface_o16', '<f8'), ('S2_surface_o16', '<f8'),\
+                      ('S1_log_LH', '<f8'), ('S2_log_LH', '<f8'),\
+                      ('S1_log_LHe', '<f8'), ('S2_log_LHe', '<f8'),\
+                      ('S1_log_Lnuc', '<f8'), ('S2_log_Lnuc', '<f8'),\
+                      ('S1_center_gamma', '<f8'), ('S2_center_gamma', '<f8'),\
+                      ('S1_avg_c_in_c_core_at_He_depletion', '<f8'),\
+                      ('S1_co_core_mass_at_He_depletion', '<f8'),\
+                      ('termination_flag_1', H5_STRING),\
+                      ('termination_flag_2', H5_STRING),\
+                      ('interpolation_class', H5_STRING)]
+        # run0: initial MT
+        fin_vals = [tuple([np.nan]*(len(fin_dtypes)-5) + [None, None]\
+                          + ["Terminate because of overflowing initial model",\
+                             "initial_RLOF", "initial_MT"])]
+        # run1: no MT, WD
+        fin_vals += [tuple([binary_history[k][-1]\
+                            for (k, t) in fin_dtypes if k in BH_types]\
+                           + [star_history[k[3:]][-1]\
+                              for (k, t) in fin_dtypes if k[3:] in SH_types]\
+                           + [None, None]\
+                           + ["gamma_center_limit", "no_RLOF", "no_MT"])]
+        # run2: stable MT, WD error
+        fin_vals += [tuple([np.nan]*(len(fin_dtypes)-5)\
+                           + [None, None]\
+                           + ["gamma_center_limit", "case_A1", "stable_MT"])]
+        # run3: stable reverse MT, star 2 becomes WD
+        fin_vals += [tuple([binary_history[k][-1]\
+                            for (k, t) in fin_dtypes if k in BH_types]\
+                           + [0.1 if k=='S1_center_gamma'\
+                                  else star_history[k[3:]][-1]\
+                              for (k, t) in fin_dtypes if k[3:] in SH_types]\
+                           + [None, None]\
+                           + ["gamma_center_limit", "case_A1/A2",\
+                              "stable_reverse_MT"])]
+        # run4: stable MT, max age
+        fin_vals += [tuple([binary_history[k][-1]\
+                            for (k, t) in fin_dtypes if k in BH_types]\
+                           + [star_history[k[3:]][-1]\
+                              for (k, t) in fin_dtypes if k[3:] in SH_types]\
+                           + [None, None]\
+                           + ["max_age", "case_B1", "stable_MT"])]
+        # run5: stable reverse MT, CC of star 2 with values at He depletion
+        fin_vals += [tuple([binary_history[k][-1]\
+                            for (k, t) in fin_dtypes if k in BH_types]\
+                           + [star_history[k[3:]][-1]\
+                              for (k, t) in fin_dtypes if k[3:] in SH_types]\
+                           + [0.4, 1.0]\
+                           + ["Secondary enters pulsational pair-instability "\
+                              +"regime", "case_B1/B2", "stable_reverse_MT"])]
+        # run6: unstable MT
+        fin_vals += [tuple([binary_history[k][-1]\
+                            for (k, t) in fin_dtypes if k in BH_types]\
+                           + [star_history[k[3:]][-1]\
+                              for (k, t) in fin_dtypes if k[3:] in SH_types]\
+                           + [None, None]\
+                           + ["Reached maximum mass transfer rate: 1d-1",\
+                              "case_C1", "unstable_MT"])]
+        fin_val = np.array(fin_vals, dtype=fin_dtypes)
+        hdf5_file.create_dataset("/grid/final_values", data=fin_val)
+        hdf5_file.attrs["config"] = json.dumps(str(dict(Grid.config)))
+        rel_paths = np.array(MESA_paths, dtype=H5_STRING)
+        hdf5_file.create_dataset("relative_file_paths", data=rel_paths)
+    return path
 
 # define test classes collecting several test functions
 class TestElements:
@@ -84,8 +222,31 @@ class TestFunctions:
         return test_star
 
     @fixture
+    def star_history(self):
+        # a temporary star history for testing
+        return np.array([(1.0, 0.79, 0.2, 0.0, 0.0, 0.0, 0.79, 0.2, 0.0, 0.0, 0.0, -1.0, -10.0, -1.0, 0.1), (1.0e+2, 0.09, 0.9, 0.0, 0.0, 0.0, 0.79, 0.2, 0.0, 0.0, 0.0, -1.0, -10.0, -1.0, 0.1), (1.0e+3, 0.0, 0.2, 0.4, 0.09, 0.3, 0.79, 0.2, 0.0, 0.0, 0.0, -10.0, -2.0, -2.0, 11.0)],\
+                        dtype=[('star_age', '<f8'), ('center_h1', '<f8'), ('center_he4', '<f8'), ('center_c12', '<f8'), ('center_n14', '<f8'), ('center_o16', '<f8'), ('surface_h1', '<f8'), ('surface_he4', '<f8'), ('surface_c12', '<f8'), ('surface_n14', '<f8'), ('surface_o16', '<f8'), ('log_LH', '<f8'), ('log_LHe', '<f8'), ('log_Lnuc', '<f8'), ('center_gamma', '<f8')])
+
+    @fixture
+    def binary_history(self):
+        # a temporary binary history for testing
+        return np.array([(9.1, 5.2, 1.0, 1.0, -99.1, -99.2, -98.1, -98.2, -97.1, -97.2), (8.1, 5.2, 1.1, 1.0e+2, -99.1, -99.2, -98.1, -98.2, -97.1, -97.2), (5.1, 5.2, 1.2, 1.0e+3, -99.1, -99.2, -98.1, -98.2, -97.1, -97.2)],\
+                        dtype=[('star_1_mass', '<f8'), ('star_2_mass', '<f8'), ('period_days', '<f8'), ('age', '<f8'), ('lg_mstar_dot_1', '<f8'), ('lg_mstar_dot_2', '<f8'), ('lg_system_mdot_1', '<f8'), ('lg_system_mdot_2', '<f8'), ('lg_wind_mdot_1', '<f8'), ('lg_wind_mdot_2', '<f8')])
+
+    @fixture
+    def profile(self):
+        # a temporary profile for testing
+        return np.array([(2.0, 1.0e+3), (1.1, 1.0e+2), (0.1, 1.0)],\
+                        dtype=[('mass', '<f8'), ('radius', '<f8')])
+
+    @fixture
+    def grid_path(self, tmp_path, binary_history, star_history, profile):
+        # a path to a psygrid file for testing
+        return get_PSyGrid(tmp_path, 1, binary_history, star_history, profile)
+
+    @fixture
     def grid(self):
-    # initialize a PSyGrid instance, which is a required argument
+        # initialize a PSyGrid instance, which is a required argument
         test_grid = PSyGrid()
         test_grid.MESA_dirs = ["Test"]
         return test_grid
@@ -105,8 +266,8 @@ class TestFunctions:
         with raises(ValueError, match="'star_i' should be 1 or 2."):
             totest.assign_core_collapse_quantities_none(test_EXTRA_COLUMNS, 0)
         # bad input
-        with raises(TypeError, match="'MODEL_NAME' should be a string or "\
-                                     +"None."):
+        with raises(TypeError, match="'MODEL_NAME' should be a string, a "\
+                                     +"list of strings, or None."):
             totest.assign_core_collapse_quantities_none(test_EXTRA_COLUMNS, 1,\
                                                         1)
         # bad input
@@ -182,7 +343,12 @@ class TestFunctions:
                    np.nan)]:
             assert v in output[0]
 
-    def test_post_process_grid(self):
+    def test_post_process_grid(self, grid_path, capsys, monkeypatch):
+        def mock_check_state_of_star(star, i=None, star_CO=False):
+            if star_CO:
+                raise TypeError("Testing exception.")
+            else:
+                return 'WD'
         # missing argument
         with raises(TypeError, match="missing 1 required positional "\
                                      +"argument: 'grid'"):
@@ -194,7 +360,90 @@ class TestFunctions:
         # bad input
         with raises(ValueError, match="Index range should have dim=2!"):
             totest.post_process_grid(None, index=[])
-        # examples
+        # bad input
+        with raises(TypeError, match="Index should be None, and integer or a "\
+                                     +"list."):
+            totest.post_process_grid(None, index="Test")
+        # helper
+        try:
+            test_PSyGrid = PSyGrid()
+            test_PSyGrid.load(grid_path)
+        except: # skip test as test on load should fail
+            assert "/" in grid_path
+            return
+        keys = ['mt_history']
+        for s in [1,2]:
+            for q in ['avg_c_in_c_core_at_He_depletion',\
+                      'co_core_mass_at_He_depletion', 'state',\
+                      'surface_other', 'center_other']:
+                keys += [f'S{s}_{q}']
+            for q in ['lambda_CE', 'm_core_CE', 'r_core_CE']:
+                for v in [1, 10, 30, 'pure_He_star_10']:
+                    keys += [f'S{s}_{q}_{v}cent']
+            for m in totest.MODELS:
+                for q in totest.CC_quantities:
+                    if q == 'state':
+                        q = 'CO_type'
+                    keys += [f'S{s}_{m}_{q}']
+        # examples: all
+        MESA_dirs, EXTRA_COLUMNS = totest.post_process_grid(test_PSyGrid)
+        assert MESA_dirs == test_PSyGrid.MESA_dirs
+        for k in keys:
+            assert k in EXTRA_COLUMNS
+            assert len(EXTRA_COLUMNS[k]) == 7
+        # examples: run 2 only
+        MESA_dirs, EXTRA_COLUMNS = totest.post_process_grid(test_PSyGrid,\
+                                                            index=2)
+        assert MESA_dirs == test_PSyGrid.MESA_dirs[2:3]
+        for k in keys:
+            assert k in EXTRA_COLUMNS
+            assert len(EXTRA_COLUMNS[k]) == 1
+        # examples: 1 and 2
+        MESA_dirs, EXTRA_COLUMNS = totest.post_process_grid(test_PSyGrid,\
+                                                            index=[1,3])
+        assert MESA_dirs == test_PSyGrid.MESA_dirs[1:3]
+        for k in keys:
+            assert k in EXTRA_COLUMNS
+            assert len(EXTRA_COLUMNS[k]) == 2
+        # examples: HMS-HMS
+        MESA_dirs, EXTRA_COLUMNS = totest.post_process_grid(test_PSyGrid,\
+                                                            star_2_CO=False)
+        assert MESA_dirs == test_PSyGrid.MESA_dirs
+        for k in keys:
+            assert k in EXTRA_COLUMNS
+            assert len(EXTRA_COLUMNS[k]) == 7
+        # examples: less SN MODELS
+        TEST_MODELS = {}
+        for m,v in totest.MODELS.items():
+            if m != 'MODEL01':
+                TEST_MODELS[m] = v
+        MESA_dirs, EXTRA_COLUMNS = totest.post_process_grid(test_PSyGrid,\
+                                                            MODELS=TEST_MODELS)
+        assert MESA_dirs == test_PSyGrid.MESA_dirs
+        for k in keys:
+            if 'MODEL01' in k:
+                assert k not in EXTRA_COLUMNS
+            else:
+                assert k in EXTRA_COLUMNS
+                assert len(EXTRA_COLUMNS[k]) == 7
+        # examples: single
+        MESA_dirs, EXTRA_COLUMNS = totest.post_process_grid(test_PSyGrid,\
+                                                            single_star=True)
+        assert MESA_dirs == test_PSyGrid.MESA_dirs
+        for k in keys:
+            if (('S2' in k) or (k == 'mt_history')):
+                assert k not in EXTRA_COLUMNS
+            else:
+                assert k in EXTRA_COLUMNS
+                assert len(EXTRA_COLUMNS[k]) == 7
+        # examples: failing check_state_of_star
+        with monkeypatch.context() as mp:
+            mp.setattr(totest, "check_state_of_star", mock_check_state_of_star)
+            MESA_dirs, EXTRA_COLUMNS = totest.post_process_grid(test_PSyGrid)
+        assert MESA_dirs == test_PSyGrid.MESA_dirs
+        for k in keys:
+            assert k in EXTRA_COLUMNS
+            assert len(EXTRA_COLUMNS[k]) == 7
         pass
 
     def test_add_post_processed_quantities(self, grid):
