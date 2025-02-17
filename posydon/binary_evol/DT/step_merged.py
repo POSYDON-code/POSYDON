@@ -91,7 +91,7 @@ class MergedStep(IsolatedStep):
             print("Before Merger", binary.star_1.state,binary.star_2.state,binary.state, binary.event)
             print("M1 , M2, he_core_mass1, he_core_mass2: ", binary.star_1.mass,binary.star_2.mass, binary.star_1.he_core_mass, binary.star_2.he_core_mass)
             print("star_1.center_he4, star_2.center_he4, star_1.surface_he4, star_2.surface_he4: ",  binary.star_1.center_he4,binary.star_2.center_he4, binary.star_1.surface_he4,binary.star_2.surface_he4)
-        
+
         if binary.state == "merged":
             if binary.event == 'oMerging1':
                 binary.star_1, binary.star_2 = merged_star_properties(binary.star_1, binary.star_2)
@@ -100,7 +100,7 @@ class MergedStep(IsolatedStep):
             else:
                 raise ValueError("binary.state='merged' but binary.event != 'oMerging1/2'")
 
-        ## assume that binaries in RLO with two He-rich stars always merge   
+        ## assume that binaries in RLO with two He-rich stars always merge
         elif binary.star_1.state in STAR_STATES_HE_RICH and binary.star_2.state in STAR_STATES_HE_RICH:
             binary.state = "merged"
             if binary.event == 'oRLO1':
@@ -158,6 +158,27 @@ class MergedStep(IsolatedStep):
                 M2 = getattr(star2, mass_weight2)
             return (A1*M1 + A2*M2 ) / (M1+M2)
 
+        def mass_weighted_avg_HMS_HMS_mergers(star1=star_base,star2=comp, rel_mass_lost_HMS_HMS = 0.1):
+            #From Schneider+2016
+            try :
+                A1 = getattr(star1, "avg_h1")
+            except:
+                A1 = getattr(star1, "center_h1")
+
+            try :
+                A2 = getattr(star2, "avg_h1")
+            except:
+                A2 = getattr(star2, "center_h1")
+
+            M1 = getattr(star1, "mass")
+            M2 = getattr(star2, "mass")
+            h1_of_lost = getattr(star1, "surface_h1") # assuming that the lost mass has surface abundance of the star triggering the merger
+
+            avg_h1_merged = (A1*M1 + A2*M2 ) / (1.-rel_mass_lost_HMS_HMS)*(M1+M2)   - rel_mass_lost_HMS_HMS / (1.-rel_mass_lost_HMS_HMS) * h1_of_lost
+
+
+            return avg_h1_merged
+
         # MS + MS
         if ( s1 in LIST_ACCEPTABLE_STATES_FOR_HMS
             and s2 in LIST_ACCEPTABLE_STATES_FOR_HMS):
@@ -165,7 +186,7 @@ class MergedStep(IsolatedStep):
                 merged_star.mass = (star_base.mass + comp.mass) * (1.-self.rel_mass_lost_HMS_HMS)
 
                 #TODO for key in ["center_h1", "center_he4", "center_c12", "center_n14","center_o16"]:
-                merged_star.center_h1 = mass_weighted_avg()
+                merged_star.center_h1 = mass_weighted_avg_HMS_HMS_mergers(star1=star_base,star2=comp, rel_mass_lost_HMS_HMS=self.rel_mass_lost_HMS_HMS)
                 merged_star.center_he4 = mass_weighted_avg(abundance_name = "center_he4")
                 merged_star.center_c12 = mass_weighted_avg(abundance_name = "center_c12")
                 merged_star.center_n14 = mass_weighted_avg(abundance_name = "center_n14")
@@ -173,7 +194,7 @@ class MergedStep(IsolatedStep):
                 #TODO: should I check if the abundaces above end up in ~1 (?)
 
                 # weigheted mixing on the surface abundances
-                merged_star.surface_h1 = mass_weighted_avg(abundance_name = "surface_h1")
+                merged_star.surface_h1 = mass_weighted_avg_HMS_HMS_mergers(star1=star_base,star2=comp, rel_mass_lost_HMS_HMS=self.rel_mass_lost_HMS_HMS)
                 merged_star.surface_he4 = mass_weighted_avg(abundance_name = "surface_he4")
                 merged_star.surface_c12 = mass_weighted_avg(abundance_name = "surface_c12")
                 merged_star.surface_n14 = mass_weighted_avg(abundance_name = "surface_n14")
