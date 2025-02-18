@@ -19,11 +19,6 @@ import json
 import os
 from posydon.utils.posydonwarning import InappropriateValueWarning
 from posydon.grids.psygrid import PSyGrid
-# to remove
-#import warnings
-#warnings.filterwarnings(action="error", category=Warning)
-#from posydon.utils.posydonwarning import SetPOSYDONWarnings, Pwarn
-#SetPOSYDONWarnings("error")
 
 # helper functions
 def get_PSyGrid(dir_path, idx, binary_history, star_history, profile):
@@ -650,4 +645,3 @@ class TestFunctions:
             for k,v in EXTRA_COLUMNS.items():
                 for i in range(len(v)):
                     assert self.newcolumns[k][i] == v[i]
-        pass
