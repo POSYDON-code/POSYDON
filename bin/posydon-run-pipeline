@@ -296,8 +296,7 @@ def calculate_extra_values(i, path_to_csv_file, verbose=False):
     
     # load processed grid and append values
     grid = PSyGrid(processed_grid_path)
-    add_post_processed_quantities(grid, MESA_dirs_EXTRA_COLUMNS,
-                                  EXTRA_COLUMNS, verbose=verbose)
+    add_post_processed_quantities(grid, MESA_dirs_EXTRA_COLUMNS, EXTRA_COLUMNS)
     if verbose:
         print(f'Added processed quantities to grid: {processed_grid_path}')
     grid.close()

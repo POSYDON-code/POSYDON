@@ -36,5 +36,4 @@ jobs:
         export PATH_TO_POSYDON=./
         export PATH_TO_POSYDON_DATA=./
         export MESA_DIR=./
-        # python -m pytest posydon/unit_tests/ --cov=posydon.config --cov=posydon.utils --cov=posydon.grids --cov-branch --cov-report term-missing --cov-fail-under=100
-        python -m pytest posydon/unit_tests/ --cov=posydon.config --cov=posydon.utils --cov=posydon.grids.downsampling --cov=posydon.grids.io --cov=posydon.grids.MODELS --cov=posydon.grids.psygrid --cov=posydon.grids.scrubbing --cov=posydon.grids.termination_flags --cov-branch --cov-report term-missing --cov-fail-under=100
+        python -m pytest posydon/unit_tests/ --cov=posydon.config --cov=posydon.utils --cov=posydon.grids --cov-branch --cov-report term-missing --cov-fail-under=100

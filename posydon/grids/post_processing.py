@@ -435,7 +435,6 @@ def post_process_grid(grid, index=None, star_2_CO=True, MODELS=MODELS,
                             print(f'Error during {MODEL_NAME} {mechanism} core collapse prescrition!')
                             print(e)
                             print('TF1:', TF1)
-                            print('interpolation class:',  interpolation_class)
                             print('run directory:', grid.MESA_dirs[i])
                             print('')
                     if flush:
@@ -445,14 +444,10 @@ def post_process_grid(grid, index=None, star_2_CO=True, MODELS=MODELS,
                         for quantity in CC_quantities:
                             if quantity != 'CO_interpolation_class':
                                 EXTRA_COLUMNS[f'S1_{MODEL_NAME}_{quantity}'].append(
-                                getattr(star_copy, quantity))
+                                 getattr(star_copy, quantity))
                             else:
-                                if getattr(star_copy, 'state') == 'BH' and 'case' in TF2 and '1' in TF2 and '2' in TF2:
-                                    EXTRA_COLUMNS[f'S1_{MODEL_NAME}_{quantity}'].append(
-                                    getattr(star_copy, 'state')+'_reverse_MT')
-                                else:
-                                    EXTRA_COLUMNS[f'S1_{MODEL_NAME}_{quantity}'].append(
-                                    getattr(star_copy, 'state'))
+                                EXTRA_COLUMNS[f'S1_{MODEL_NAME}_{quantity}'].append(
+                                 getattr(star_copy, 'state'))
                         if verbose:
                             print_CC_quantities(star_copy, f'{MODEL_NAME}_{mechanism}')
             else:
@@ -468,7 +463,7 @@ def post_process_grid(grid, index=None, star_2_CO=True, MODELS=MODELS,
         # check dataset completeness
         n_control = len(EXTRA_COLUMNS['S1_state'])
         for key in EXTRA_COLUMNS.keys():
-            if n_control != len(EXTRA_COLUMNS[key]):
+            if n_control != len(EXTRA_COLUMNS[key]): # pragma: no cover
                 raise ValueError(
                     '%s has not the correct dimension! Error occoured after '
                     'collapsing binary index=%s' % (key, i))
@@ -484,8 +479,8 @@ def post_process_grid(grid, index=None, star_2_CO=True, MODELS=MODELS,
 
     return MESA_dirs, EXTRA_COLUMNS
 
-def add_post_processed_quantities(grid, MESA_dirs_EXTRA_COLUMNS, EXTRA_COLUMNS,
-                                  verbose=False):
+def add_post_processed_quantities(grid, MESA_dirs_EXTRA_COLUMNS,
+                                  EXTRA_COLUMNS):
     """Append post processed quantity to a grid.
 
     This function appends the quantities computed in post_process_grid to any
@@ -502,8 +497,6 @@ def add_post_processed_quantities(grid, MESA_dirs_EXTRA_COLUMNS, EXTRA_COLUMNS,
         appending the extra columns back to a grid.
     EXTRA_COLUMNS: dict
         Dictionary containing all post processed quantities.
-    verbose : bool (default: False)
-        If `True` print the results of each core collapse on screen.
 
     """
     # check correspondance of EXTRA_COLUMNS with grid
