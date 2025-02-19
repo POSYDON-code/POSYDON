@@ -152,7 +152,7 @@ def download_one_dataset(dataset='v1_for_v2.0.0-pre1', MD5_check=True,
         raise NotADirectoryError("PATH_TO_POSYDON_DATA does not refer to a "
                                  "valid directory.")
     if os.path.exists(filepath):
-        raise FileExistsError(f"POSYDON data already exists at {filename}.")
+        raise FileExistsError(f"POSYDON data already exists at {filepath}.")
 
     # Download the data
     print(f"Downloading POSYDON data '{dataset}' from Zenodo to {directory}")
