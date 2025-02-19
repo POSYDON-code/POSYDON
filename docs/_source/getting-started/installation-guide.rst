@@ -46,19 +46,24 @@ Using Anaconda (Recommended)
 
         conda install -c posydon posydon
 
+    .. note:: 
+        Please remember the current path (get it via :code:`pwd`) or the one you specified for the next step.
+
 .. _posydon-env:
 
 4. **Set Environment Variables**
 
-    Export the required paths (please change the location names accordingly to your installation):
+    Export the required paths (please change the location names accordingly to your installation from the previous step):
 
     .. code-block:: bash
 
         export PATH_TO_POSYDON=/path/to/your/posydon/installation
         export PATH_TO_POSYDON_DATA=/path/where/you/want/to/store/data
 
+    The path for the data location is up to your choice but we recommend :code:`PATH_TO_POSYDON_DATA=$PATH_TO_POSYDON/data`.
+
     .. note:: 
-        You can add these lines to your ``~/.bashrc`` or ``~/.bash_profile`` or your shell equivalent to ensure the environment variables are set every time you open a new terminal.
+        You can add these lines to your :code:`~/.bashrc` or :code:`~/.bash_profile` or your shell equivalent to ensure the environment variables are set every time you open a new terminal.
 
 5. **Download the Dataset**
 
