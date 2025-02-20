@@ -42,10 +42,10 @@ class TestElements:
                                         + "unit test."
 
     def test_instance_get_shell_comoving_volume(self):
-        assert isroutine(totest.GRB_selection)
+        assert isroutine(totest.get_shell_comoving_volume)
 
     def test_instance_get_comoving_distance_from_redshift(self):
-        assert isroutine(totest.chi_eff)
+        assert isroutine(totest.get_comoving_distance_from_redshift)
 
     def test_instance_get_cosmic_time_from_redshift(self):
         assert isroutine(totest.get_cosmic_time_from_redshift)
