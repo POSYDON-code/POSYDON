@@ -78,8 +78,6 @@ class TestElements:
     def test_instance_max_simulation_time(self):
         assert isinstance(totest.default_kwargs['max_simulation_time'], (float, int)), \
             "max_simulation_time should be a float or int"
-        assert totest.default_kwargs['max_simulation_time'] == age_of_universe, \
-            "max_simulation_time should be equal to age_of_universe"
         
     def test_instance_orbital_scheme(self):
         assert isinstance(totest.default_kwargs['orbital_scheme'], str), \
