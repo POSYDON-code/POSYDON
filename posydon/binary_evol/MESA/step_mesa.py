@@ -27,7 +27,8 @@ from posydon.utils.common_functions import (flip_stars,
                                             convert_metallicity_to_string,
                                             CO_radius, infer_star_state,
                                             set_binary_to_failed,)
-from posydon.utils.data_download import data_download, PATH_TO_POSYDON_DATA
+from posydon.config import PATH_TO_POSYDON_DATA
+from posydon.utils.data_download import data_download
 from posydon.grids.MODELS import MODELS
 from posydon.utils.posydonerror import FlowError, GridError
 from posydon.utils.posydonwarning import Pwarn
@@ -200,18 +201,17 @@ class MesaGridStep:
 
             # Set the interpolation path
             if interpolation_path is None:
-                interpolation_path = (
-                    self.path + os.path.split(grid_name)[0]
-                    + '/interpolators/%s/' % self.interpolation_method)
+                interpolation_path = os.path.join(self.path,
+                    os.path.split(grid_name)[0],
+                    'interpolators/%s' % self.interpolation_method)
 
             # Set the interpolation filename
             if interpolation_filename is None:
-                interpolation_filename = (
-                    interpolation_path
-                    + os.path.split(grid_name)[1].replace('h5', 'pkl'))
+                interpolation_filename = os.path.join(interpolation_path,
+                    os.path.split(grid_name)[1].replace('h5', 'pkl'))
             else:
-                interpolation_filename = (interpolation_path
-                                          + interpolation_filename)
+                interpolation_filename = os.path.join(interpolation_path,
+                                                      interpolation_filename)
 
             self.load_Interp(interpolation_filename)
 

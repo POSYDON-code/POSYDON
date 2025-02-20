@@ -46,6 +46,9 @@ Frequently Asked Questions
     
     The memory usage of the 8000 :code:`dump_rate` run is stable at around 6GB, while the 10.000 :code:`dump_rate` run is stable at around 6.8GB.
 
+    In general, the :code:`dump_rate` should be at least 500 for populations of 100.000 binaries or more.
+    Setting a very low :code:`dump_rate` for larger populations can potentially introduce I/O issues during the reading, writing, and merging of output files.
+
 
 4. **What should the walltime and job array size be for my population synthesis run?**
 
