@@ -16,11 +16,6 @@ sp = totest.sp
 from pytest import fixture, raises, warns, approx
 from inspect import isroutine, isclass
 from posydon.utils.constants import Zsun
-from astropy.cosmology import Planck15 as cosmology
-from astropy import constants as const
-from astropy.cosmology import z_at_value
-from scipy.interpolate import CubicSpline
-from astropy import units as u
 
 
 # define test classes collecting several test functions
@@ -38,7 +33,8 @@ class TestElements:
             "The DEFAULT_MODEL dictionary keys have changed. Please update the test."    
     # check for objects, which should be an element of the tested module
     def test_dir(self):
-        elements = ['get_shell_comoving_volume', 'get_comoving_distance_from_redshift', 'get_cosmic_time_from_redshift', 'redshift_from_cosmic_time_interpolator',\
+        elements = ['get_shell_comoving_volume', 'get_comoving_distance_from_redshift', \
+                    'get_cosmic_time_from_redshift', 'redshift_from_cosmic_time_interpolator',\
                     'get_redshift_from_cosmic_time','get_redshift_bin_edges',\
                     'get_redshift_bin_centers','__authors__',\
                     '__builtins__', '__cached__', '__doc__', '__file__',\
