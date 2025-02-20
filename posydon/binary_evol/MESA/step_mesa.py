@@ -367,8 +367,8 @@ class MesaGridStep:
         elif binary.time == binary.properties.max_simulation_time:
             binary.event = 'maxtime'
 
-        if verbose:
-            print(f"End of step MESA (grid={self.grid_type}):", binary)
+        if self.verbose:
+            print(f"End of step MESA (grid={self.grid_type}):\n", binary)
 
         return
 
