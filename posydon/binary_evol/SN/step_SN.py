@@ -550,7 +550,7 @@ class StepSN(object):
                     ## Check if SN_type mismatches the CO_type in MODEL or if interpolated MODEL properties are NaN
                     ## If either are true, interpolated values cannot be used for this SN
                     if (check_SN_CO_match(MODEL_properties['SN_type'], MODEL_properties['state']) and
-                        ~pd.isna(MODEL_properties['mass'])):
+                        pd.notna(MODEL_properties['mass'])):
 
 
                         for key, value in MODEL_properties.items():
