@@ -40,7 +40,7 @@ from posydon.utils import common_functions as cf
 from posydon.utils import constants as const
 from posydon.binary_evol.binarystar import BINARYPROPERTIES
 from posydon.binary_evol.singlestar import STARPROPERTIES
-from posydon.utils.common_functions import PATH_TO_POSYDON
+from posydon.config import PATH_TO_POSYDON
 from posydon.utils.common_functions import check_state_of_star
 from posydon.utils.common_functions import calculate_lambda_from_profile, calculate_Mejected_for_integrated_binding_energy
 from posydon.utils.posydonwarning import Pwarn

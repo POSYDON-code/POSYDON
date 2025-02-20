@@ -80,7 +80,7 @@ from posydon.grids.psygrid import (PSyGrid,
 from posydon.grids.post_processing import (post_process_grid,
                                            add_post_processed_quantities)
 from posydon.grids.MODELS import MODELS
-from posydon.utils.common_functions import PATH_TO_POSYDON
+from posydon.config import PATH_TO_POSYDON
 from posydon.utils.gridutils import get_new_grid_name
 from posydon.utils.posydonwarning import (Pwarn,print_stats)
 from posydon.interpolation.IF_interpolation import IFInterpolator
