@@ -452,6 +452,9 @@ class StepSN(object):
         elif state1 in STAR_STATES_C_DEPLETION and state2 in STAR_STATES_CO:
             binary.event = "CC1"
 
+        if verbose:
+            print(f"End of step SN:", binary)
+
     def check(self):
         """Check the internal integrity and the values of the parameters."""
         if self.kick_distribution is None:
