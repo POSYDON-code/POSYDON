@@ -7,7 +7,7 @@ import os
 import numpy as np
 import matplotlib as mpl
 import pandas as pd
-from posydon.utils.common_functions import PATH_TO_POSYDON
+from posydon.config import PATH_TO_POSYDON, PATH_TO_POSYDON_DATA
 from posydon.visualization.plot_defaults import DEFAULT_LABELS
 from posydon.utils.constants import Zsun
 from posydon.grids.psygrid import PSyGrid
@@ -15,8 +15,6 @@ from posydon.utils.common_functions import convert_metallicity_to_string
 from posydon.utils.constants import Zsun
 import matplotlib.pyplot as plt
 from posydon.visualization.plot_defaults import DEFAULT_LABELS
-
-PATH_TO_POSYDON_DATA = os.environ.get("PATH_TO_POSYDON_DATA",'./')
 
 plt.style.use(os.path.join(PATH_TO_POSYDON, "posydon/visualization/posydon.mplstyle"))
 
@@ -187,26 +185,72 @@ def plot_hist_properties(df, ax=None, df_intrinsic=None, df_observable=None,
 
 
 
-
-def plot_popsyn_over_grid_slice(pop, grid_type, met_Zsun, slices=None, channel=None,
-                                plot_dir='./', prop=None, prop_range=None,
-                                log_prop=False, alpha=0.3, s=5.,
-                                show_fig=True, save_fig=True, close_fig=True,
-                                plot_extension='png', verbose=False):
+def plot_popsyn_over_grid_slice(pop,
+                                grid_type,
+                                met_Zsun,
+                                slices=None,
+                                channel=None,
+                                plot_dir='./',
+                                prop=None,
+                                prop_range=None,
+                                log_prop=False,
+                                alpha=0.3,
+                                s=5.,
+                                show_fig=True,
+                                save_fig=True,
+                                close_fig=True,
+                                plot_extension='png',
+                                verbose=False):
+    '''Plot the population across a specific slice of the grid.
+    
+    Parameters
+    ----------
+    pop : Population
+        Population object.
+    grid_type : str
+        Type of grid to be plotted. Options: 'HMS-HMS', 'CO-HMS_RLO', 'CO-HeMS', 'CO_HeMS_RLO'.
+    met_Zsun : float
+        Metallicity of the grid.
+    slices : list of floats
+        List of slices to plot. If None, all slices are plotted.
+    channel : str
+        Formation channel to plot. If None, all channels are plotted.    
+    plot_dir : str
+        Directory where to save the plots.
+    prop : str
+        Property to plot on the grid. If None, no property colour is plotted.
+    prop_range : list of floats
+        Range of the property to plot.
+    log_prop : bool
+        If True, the property is plotted in log scale.
+    alpha : float
+        Transparency of the points.
+    s : float
+        Size of the points.
+    show_fig : bool
+        If True, the plot is shown.
+    save_fig : bool
+        If True, the plot is saved.
+    close_fig : bool
+        If True, the plot is closed.
+    plot_extension : str
+        File extension of the plot.
+    verbose : bool
+        If True, print information about the slices being plotted.
+    '''
 
     # Check if step_names in pop.history data
     if 'step_names' not in pop.history.columns:
         raise ValueError('Formation channel information not available in popsynth data.')
+    # check if formation channel information is available
+    if channel is not None and 'channel' not in pop.columns:
+        raise ValueError('Formation channel information not available in popsynth data.')
 
     # load grid
     met = convert_metallicity_to_string(met_Zsun)
-    grid_path = os.path.join(PATH_TO_POSYDON_DATA, f'POSYDON_data/{grid_type}/{met}_Zsun.h5')
+    grid_path = os.path.join(PATH_TO_POSYDON_DATA, f'{grid_type}/{met}_Zsun.h5')
     grid = PSyGrid(verbose=False)
     grid.load(grid_path)
-
-    # check if formation channel information is avaialbe
-    if channel is not None and 'channel' not in pop.columns:
-        raise ValueError('Formation channel information not available in popsynth data.')
 
     if 'CO' in grid_path:
         # compact object mass slices
@@ -243,7 +287,9 @@ def plot_popsyn_over_grid_slice(pop, grid_type, met_Zsun, slices=None, channel=N
                 print(f'Skipping {round(var,2)}')
             continue
 
-        met_indices = np.where(pop.select(where=channel_sel, columns=['metallicity']) == met_Zsun)[0].tolist()
+        met_sel = pop.select(where=channel_sel, columns=['metallicity'])
+        met_indices = met_sel[met_sel['metallicity'] == met_Zsun].index.tolist()
+        
         if 'HMS-HMS' in grid_path:
             slice_3D_var_range = (dq_edges[i],dq_edges[i+1])
             if len(met_indices) == 0:

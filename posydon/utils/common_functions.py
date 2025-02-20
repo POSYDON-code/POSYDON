@@ -20,20 +20,17 @@ __authors__ = [
 import os
 import numpy as np
 import pandas as pd
-from scipy.interpolate import interp1d
 from scipy.optimize import newton
 from scipy.integrate import quad
 from posydon.utils import constants as const
 from posydon.utils.posydonwarning import Pwarn
 import copy
-from scipy.interpolate import PchipInterpolator
 from posydon.utils.limits_thresholds import (THRESHOLD_CENTRAL_ABUNDANCE,
     THRESHOLD_HE_NAKED_ABUNDANCE, REL_LOG10_BURNING_THRESHOLD,
     LOG10_BURNING_THRESHOLD, STATE_NS_STARMASS_UPPER_LIMIT,
     RL_RELATIVE_OVERFLOW_THRESHOLD, LG_MTRANSFER_RATE_THRESHOLD
 )
-
-PATH_TO_POSYDON = os.environ.get("PATH_TO_POSYDON")
+from posydon.utils.interpolators import interp1d
 
 
 # Constants related to inferring star states
@@ -627,6 +624,9 @@ def rejection_sampler(x=None, y=None, size=1, x_lim=None, pdf=None):
 
     """
     if pdf is None:
+        if ((x is None) or (y is None)):
+            raise ValueError("x and y PDF values must be specified if no PDF"
+                             " function is provided for rejection sampling")
         assert np.all(y >= 0.0)
         try:
             pdf = interp1d(x, y)
@@ -643,6 +643,9 @@ def rejection_sampler(x=None, y=None, size=1, x_lim=None, pdf=None):
             y_rand = np.random.uniform(0, y.max(), n)
             values = np.hstack([values, x_rand[y_rand <= pdf(x_rand)]])
     else:
+        if x_lim is None:
+            raise ValueError("x_lim must be specified for passed PDF function"
+                             " in rejection sampling")
         x_rand = np.random.uniform(x_lim[0], x_lim[1], size)
         pdf_max = max(pdf(np.random.uniform(x_lim[0], x_lim[1], 50000)))
         y_rand = np.random.uniform(0, pdf_max, size)
@@ -1103,8 +1106,21 @@ def get_binary_state_and_event_and_mt_case(binary, interpolation_class=None,
         if interpolation_class == 'unstable_MT':
             if rl_overflow1>=rl_overflow2:           # star 1 initiated CE
                 result = ['contact', 'oCE1', 'None']
+                # Check for double CE
+                comp_star = binary.star_2
+                if comp_star.state not in ["H-rich_Core_H_burning",
+                                           "stripped_He_Core_He_burning", "WD",
+                                           "NS", "BH"]:
+                    result[1] = "oDoubleCE1"
             else:                                   # star 2 initiated CE
                 result = ['contact', 'oCE2', 'None']
+                # Check for double CE
+                comp_star = binary.star_1
+                if comp_star.state not in ["H-rich_Core_H_burning",
+                                           "stripped_He_Core_He_burning", "WD",
+                                           "NS", "BH"]:
+                    result[1] = "oDoubleCE2"
+            return result
     elif no_rlof:                                   # no MT in any star
         result = ['detached', None, 'None']
     elif rlof1 and not rlof2:                       # only in star 1
@@ -1119,21 +1135,6 @@ def get_binary_state_and_event_and_mt_case(binary, interpolation_class=None,
             return ['RLO2', 'oCE2', mt_flag_2_str]
     else:                                           # undetermined in any star
         result = ["undefined", None, 'None']
-
-    if result[1] == "oCE1":
-        # Check for double CE
-        comp_star = binary.star_2
-        if comp_star.state not in [
-                "H-rich_Core_H_burning",
-                "stripped_He_Core_He_burning", "WD", "NS", "BH"]:
-            result[1] = "oDoubleCE1"
-    elif result[1] == "oCE2":
-        # Check for double CE
-        comp_star = binary.star_1
-        if comp_star.state not in [
-                "H-rich_Core_H_burning",
-                "stripped_He_Core_He_burning", "WD", "NS", "BH"]:
-            result[1] = "oDoubleCE2"
 
     if ("Central_C_depletion" in state1
             or "Central_He_depleted" in state1
@@ -2744,22 +2745,6 @@ def calculate_Mejected_for_integrated_binding_energy(profile, Ebind_threshold,
     M_ejected = donor_mass[0] - mass_threshold
 
     return M_ejected
-
-
-class PchipInterpolator2:
-    """Interpolation class."""
-
-    def __init__(self, *args, positive=False, **kwargs):
-        """Initialize the interpolator."""
-        self.interpolator = PchipInterpolator(*args, **kwargs)
-        self.positive = positive
-
-    def __call__(self, *args, **kwargs):
-        """Use the interpolator."""
-        result = self.interpolator(*args, **kwargs)
-        if self.positive:
-            result = np.maximum(result, 0.0)
-        return result
 
 def convert_metallicity_to_string(Z):
     """Check if metallicity is supported by POSYDON v2."""
