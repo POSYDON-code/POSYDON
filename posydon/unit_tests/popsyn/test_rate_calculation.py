@@ -73,6 +73,9 @@ class TestFunctions:
         # 1 missing argument
         with raises(TypeError, match="missing 1 required positional argument: 'z_hor_f'"):
             totest.get_shell_comoving_volume(0.1)
+        # bad input
+        with raises(ValueError, match="Sensitivity not supported!"):
+            totest.get_shell_comoving_volume(0.1,1.0,"finite")
         # examples
         tests = [(0.1, 1.0, approx(97.7972132977263, abs=6e-12)),\
                  (0.3, 2.0, approx(277.8780499884267, abs=6e-12))]
