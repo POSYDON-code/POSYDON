@@ -81,7 +81,7 @@ COMPLETE_SETS['super-Eddington_v1'] = ['v1_for_v2.0.0-pre1',
                                        'super-Eddington_v1']
 
 # v2
-ZENODO_COLLECTION['v2_girds_2Zsun'] = {
+ZENODO_COLLECTION['v2_grids_2Zsun'] = {
     'data': None, #TODO
     'description': "The POSYDON v2 dataset at twice solar metallicity. It "\
                    + "contains single-HMS, single-HeMS, HMS-HMS, CO-HMS_RLO, "\
@@ -90,7 +90,7 @@ ZENODO_COLLECTION['v2_girds_2Zsun'] = {
     'title': "POSYDON v2.0 dataset at 2 Zsun", #TODO
     'url': "https://zenodo.org/communities/posydon" #TODO
 }
-ZENODO_COLLECTION['v2_girds_1Zsun'] = {
+ZENODO_COLLECTION['v2_grids_1Zsun'] = {
     'data': None, #TODO
     'description': "The POSYDON v2 dataset at solar metallicity. It "\
                    + "contains single-HMS, single-HeMS, HMS-HMS, CO-HMS_RLO, "\
@@ -99,7 +99,7 @@ ZENODO_COLLECTION['v2_girds_1Zsun'] = {
     'title': "POSYDON v2.0 dataset at Zsun", #TODO
     'url': "https://zenodo.org/communities/posydon" #TODO
 }
-ZENODO_COLLECTION['v2_girds_0.45Zsun'] = {
+ZENODO_COLLECTION['v2_grids_0.45Zsun'] = {
     'data': None, #TODO
     'description': "The POSYDON v2 dataset at 0.45 solar metallicity. It "\
                    + "contains single-HMS, single-HeMS, HMS-HMS, CO-HMS_RLO, "\
@@ -108,7 +108,7 @@ ZENODO_COLLECTION['v2_girds_0.45Zsun'] = {
     'title': "POSYDON v2.0 dataset at 0.45 Zsun", #TODO
     'url': "https://zenodo.org/communities/posydon" #TODO
 }
-ZENODO_COLLECTION['v2_girds_0.2Zsun'] = {
+ZENODO_COLLECTION['v2_grids_0.2Zsun'] = {
     'data': None, #TODO
     'description': "The POSYDON v2 dataset at 0.2 solar metallicity. It "\
                    + "contains single-HMS, single-HeMS, HMS-HMS, CO-HMS_RLO, "\
@@ -117,7 +117,7 @@ ZENODO_COLLECTION['v2_girds_0.2Zsun'] = {
     'title': "POSYDON v2.0 dataset at 0.2 Zsun", #TODO
     'url': "https://zenodo.org/communities/posydon" #TODO
 }
-ZENODO_COLLECTION['v2_girds_0.1Zsun'] = {
+ZENODO_COLLECTION['v2_grids_0.1Zsun'] = {
     'data': None, #TODO
     'description': "The POSYDON v2 dataset at 0.1 solar metallicity. It "\
                    + "contains single-HMS, single-HeMS, HMS-HMS, CO-HMS_RLO, "\
@@ -126,7 +126,7 @@ ZENODO_COLLECTION['v2_girds_0.1Zsun'] = {
     'title': "POSYDON v2.0 dataset at 0.1 Zsun", #TODO
     'url': "https://zenodo.org/communities/posydon" #TODO
 }
-ZENODO_COLLECTION['v2_girds_0.01Zsun'] = {
+ZENODO_COLLECTION['v2_grids_0.01Zsun'] = {
     'data': None, #TODO
     'description': "The POSYDON v2 dataset at 0.01 solar metallicity. It "\
                    + "contains single-HMS, single-HeMS, HMS-HMS, CO-HMS_RLO, "\
@@ -135,7 +135,7 @@ ZENODO_COLLECTION['v2_girds_0.01Zsun'] = {
     'title': "POSYDON v2.0 dataset at 0.01 Zsun", #TODO
     'url': "https://zenodo.org/communities/posydon" #TODO
 }
-ZENODO_COLLECTION['v2_girds_1e-3Zsun'] = {
+ZENODO_COLLECTION['v2_grids_1e-3Zsun'] = {
     'data': None, #TODO
     'description': "The POSYDON v2 dataset at 10^{-3} solar metallicity. It "\
                    + "contains single-HMS, single-HeMS, HMS-HMS, CO-HMS_RLO, "\
@@ -144,7 +144,7 @@ ZENODO_COLLECTION['v2_girds_1e-3Zsun'] = {
     'title': "POSYDON v2.0 dataset at 10^{-3} Zsun", #TODO
     'url': "https://zenodo.org/communities/posydon" #TODO
 }
-ZENODO_COLLECTION['v2_girds_1e-4Zsun'] = {
+ZENODO_COLLECTION['v2_grids_1e-4Zsun'] = {
     'data': None, #TODO
     'description': "The POSYDON v2 dataset at 10^{-4} solar metallicity. It "\
                    + "contains single-HMS, single-HeMS, HMS-HMS, CO-HMS_RLO, "\
@@ -153,15 +153,15 @@ ZENODO_COLLECTION['v2_girds_1e-4Zsun'] = {
     'title': "POSYDON v2.0 dataset at 10^{-4} Zsun", #TODO
     'url': "https://zenodo.org/communities/posydon" #TODO
 }
-COMPLETE_SETS['v2'] = ['auxiliary', 'v2_girds_2Zsun', 'v2_girds_1Zsun',
-                       'v2_girds_0.45Zsun', 'v2_girds_0.2Zsun',
-                       'v2_girds_0.1Zsun', 'v2_girds_0.01Zsun',
-                       'v2_girds_1e-3Zsun', 'v2_girds_1e-4Zsun']
-COMPLETE_SETS['v2_2Zsun'] = ['auxiliary', 'v2_girds_2Zsun']
-COMPLETE_SETS['v2_1Zsun'] = ['auxiliary', 'v2_girds_1Zsun']
-COMPLETE_SETS['v2_0.45Zsun'] = ['auxiliary', 'v2_girds_0.45Zsun']
-COMPLETE_SETS['v2_0.2Zsun'] = ['auxiliary', 'v2_girds_0.2Zsun']
-COMPLETE_SETS['v2_0.1Zsun'] = ['auxiliary', 'v2_girds_0.1Zsun']
-COMPLETE_SETS['v2_0.01Zsun'] = ['auxiliary', 'v2_girds_0.01Zsun']
-COMPLETE_SETS['v2_1e-3Zsun'] = ['auxiliary', 'v2_girds_1e-3Zsun']
-COMPLETE_SETS['v2_1e-4Zsun'] = ['auxiliary', 'v2_girds_1e-4Zsun']
+COMPLETE_SETS['v2'] = ['auxiliary', 'v2_grids_2Zsun', 'v2_grids_1Zsun',
+                       'v2_grids_0.45Zsun', 'v2_grids_0.2Zsun',
+                       'v2_grids_0.1Zsun', 'v2_grids_0.01Zsun',
+                       'v2_grids_1e-3Zsun', 'v2_grids_1e-4Zsun']
+COMPLETE_SETS['v2_2Zsun'] = ['auxiliary', 'v2_grids_2Zsun']
+COMPLETE_SETS['v2_1Zsun'] = ['auxiliary', 'v2_grids_1Zsun']
+COMPLETE_SETS['v2_0.45Zsun'] = ['auxiliary', 'v2_grids_0.45Zsun']
+COMPLETE_SETS['v2_0.2Zsun'] = ['auxiliary', 'v2_grids_0.2Zsun']
+COMPLETE_SETS['v2_0.1Zsun'] = ['auxiliary', 'v2_grids_0.1Zsun']
+COMPLETE_SETS['v2_0.01Zsun'] = ['auxiliary', 'v2_grids_0.01Zsun']
+COMPLETE_SETS['v2_1e-3Zsun'] = ['auxiliary', 'v2_grids_1e-3Zsun']
+COMPLETE_SETS['v2_1e-4Zsun'] = ['auxiliary', 'v2_grids_1e-4Zsun']
