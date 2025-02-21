@@ -32,13 +32,15 @@ class TestElements:
             "The DEFAULT_MODEL dictionary keys have changed. Please update the test."    
     # check for objects, which should be an element of the tested module
     def test_dir(self):
-        elements = ['get_shell_comoving_volume', 'get_comoving_distance_from_redshift', \
+        elements = ['DEFAULT_MODEL','np','sp','CubicSpline','Zsun','cosmology',\
+                    'const','z_at_value','u',\
+                    'get_shell_comoving_volume', 'get_comoving_distance_from_redshift', \
                     'get_cosmic_time_from_redshift', 'redshift_from_cosmic_time_interpolator',\
                     'get_redshift_from_cosmic_time','get_redshift_bin_edges',\
                     'get_redshift_bin_centers','__authors__',\
                     '__builtins__', '__cached__', '__doc__', '__file__',\
                     '__loader__', '__name__', '__package__', '__spec__']
-        assert dir(totest) == elements, "There might be added or removed "\
+        assert set(dir(totest)) == set(elements), "There might be added or removed "\
                                         + "objects without an update on the "\
                                         + "unit test."
 
@@ -111,8 +113,8 @@ class TestFunctions:
         with raises(TypeError, match="missing 1 required positional argument: 't_cosm'"):
             totest.get_redshift_from_cosmic_time()
         # examples
-        tests = [(0.1, approx(29.8325299, abs=6e-12)),\
-                 (1.0, approx(5.67584779, abs=6e-12))]
+        tests = [(0.1, approx(29.832529897287746, abs=6e-12)),\
+                 (1.0, approx(5.675847792368566, abs=6e-12))]
         for (t, z) in tests:
             assert totest.get_redshift_from_cosmic_time(t) == z        
         
