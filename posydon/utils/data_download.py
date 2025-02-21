@@ -37,7 +37,10 @@ def _parse_commandline():
                         nargs='?',
                         default='v1')
     parser.add_argument('-l', '--listedsets',
-                        help="list the datasets: 'complete' shows the full dataset able to run POSYDON, 'individual' lists the datasets on zenodo, which might need others to run population synthesis (default: complete)",
+                        help="list the datasets: 'complete' shows the full "
+                             "dataset able to run POSYDON, 'individual' lists "
+                             "the datasets on zenodo, which might need others "
+                             "to run population synthesis (default: complete)",
                         nargs='?',
                         const='complete',
                         choices=['complete', 'individual'])
