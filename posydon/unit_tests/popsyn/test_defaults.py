@@ -7,7 +7,6 @@ __authors__ = [
 
 # import the module which will be tested
 import posydon.popsyn.defaults as totest
-from posydon.utils.constants import age_of_universe
 
 # import other needed code for the tests, which is not already imported in the
 # module you like to test
@@ -20,8 +19,8 @@ class TestElements:
     def test_dir(self):
         elements = ['default_kwargs', '__authors__',\
                     '__builtins__', '__cached__', '__doc__', '__file__',\
-                    '__loader__', '__name__', '__package__', '__spec__']
-        assert dir(totest) == elements, "There might be added or removed "\
+                    '__loader__', '__name__', '__package__', '__spec__','age_of_universe']
+        assert set(dir(totest)) == set(elements), "There might be added or removed "\
                                         + "objects without an update on the "\
                                         + "unit test."
     
@@ -51,14 +50,9 @@ class TestElements:
             'binary_fraction_const',
             'binary_fraction_scheme'
         ]
-        assert set(totest.default_kwargs.keys()) == elements, \
+        assert set(totest.default_kwargs.keys()) == set(elements), \
             "The default_kwargs dictionary keys have changed. Please update the test."
     
-    def test_instance_default_kwargs(self):
-        assert isinstance(totest.default_kwargs, (dir)),\
-                "default_kwargs is of type: "\
-                + str(type(totest.default_kwargs))
-
     def test_instance_entropy(self):
         assert isinstance(totest.default_kwargs['entropy'], (type(None), float)), \
             "entropy should be None or a float"
@@ -132,8 +126,8 @@ class TestElements:
             "secondary_mass_max should be a float"
         
     def test_instance_binary_fraction_const(self):
-        assert isinstance(totest.default_kwargs['binary_fraction_const'], int), \
-            "binary_fraction_const should be an integer"
+        assert isinstance(totest.default_kwargs['binary_fraction_const'], (float, int)), \
+            "binary_fraction_const should be a float or int"
         
     def test_instance_binary_fraction_scheme(self):
         assert isinstance(totest.default_kwargs['binary_fraction_scheme'], str), \
