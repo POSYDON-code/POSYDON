@@ -21,7 +21,9 @@ class TestElements:
                     'NEUTRINO_MASS_LOSS_UPPER_LIMIT',\
                     'REL_LOG10_BURNING_THRESHOLD',\
                     'RL_RELATIVE_OVERFLOW_THRESHOLD',\
+                    'STATE_NS_STARMASS_LOWER_LIMIT',\
                     'STATE_NS_STARMASS_UPPER_LIMIT',\
+                    'STATE_WD_STARMASS_UPPER_LIMIT',\
                     'THRESHOLD_CENTRAL_ABUNDANCE',\
                     'THRESHOLD_CENTRAL_ABUNDANCE_LOOSE_C',\
                     'THRESHOLD_HE_NAKED_ABUNDANCE',\
@@ -78,6 +80,16 @@ class TestElements:
         assert isinstance(totest.LOG10_BURNING_THRESHOLD, (float, int)),\
                "LOG10_BURNING_THRESHOLD is of type: "\
                + str(type(totest.LOG10_BURNING_THRESHOLD))
+
+    def test_instance_STATE_WD_STARMASS_UPPER_LIMIT(self):
+        assert isinstance(totest.STATE_WD_STARMASS_UPPER_LIMIT, (float, int)),\
+               "STATE_WD_STARMASS_UPPER_LIMIT is of type: "\
+               + str(type(totest.STATE_WD_STARMASS_UPPER_LIMIT))
+
+    def test_instance_STATE_NS_STARMASS_LOWER_LIMIT(self):
+        assert isinstance(totest.STATE_NS_STARMASS_LOWER_LIMIT, (float, int)),\
+               "STATE_NS_STARMASS_LOWER_LIMIT is of type: "\
+               + str(type(totest.STATE_NS_STARMASS_LOWER_LIMIT))
 
     def test_instance_STATE_NS_STARMASS_UPPER_LIMIT(self):
         assert isinstance(totest.STATE_NS_STARMASS_UPPER_LIMIT, (float, int)),\
@@ -151,6 +163,16 @@ class TestLimits:
 
 #    def test_limits_LOG10_BURNING_THRESHOLD(self):
         # has no limits
+
+    def test_limits_STATE_WD_STARMASS_UPPER_LIMIT(self):
+        # a mass should be >0
+        assert totest.STATE_WD_STARMASS_UPPER_LIMIT > 0.0,\
+               "a mass has to be positve"
+
+    def test_limits_STATE_NS_STARMASS_LOWER_LIMIT(self):
+        # a mass should be >0
+        assert totest.STATE_NS_STARMASS_LOWER_LIMIT > 0.0,\
+               "a mass has to be positve"
 
     def test_limits_STATE_NS_STARMASS_UPPER_LIMIT(self):
         # a mass should be >0

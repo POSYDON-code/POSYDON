@@ -36,7 +36,14 @@ LOG10_BURNING_THRESHOLD = -10.0      # burning luminosity threshold (in Lsol)
 
 # COMPACT OBJECT LIMITS
 
-STATE_NS_STARMASS_UPPER_LIMIT = 2.5   # maximum mass of a neutron star (in Msol)
-NEUTRINO_MASS_LOSS_UPPER_LIMIT = 0.5  # maximum loss in neutrinos (in Msol)
+# Roting WDs can have a mass above the classical Chandrasekhar limit of 1.37 to
+# 1.4 Msol depending on the composition
+STATE_WD_STARMASS_UPPER_LIMIT = 1.48 # maximum mass of a white dwarf (in Msol)
+# The limits for neutron stars depend on the underlying equation of state
+STATE_NS_STARMASS_LOWER_LIMIT = 1.0  # minimum mass of a neutron star (in Msol)
+STATE_NS_STARMASS_UPPER_LIMIT = 2.5  # maximum mass of a neutron star (in Msol)
+# During a collapse escaping neutrinos reduce the mass ending up in the compact
+# object
+NEUTRINO_MASS_LOSS_UPPER_LIMIT = 0.5 # maximum loss in neutrinos (in Msol)
 
 
