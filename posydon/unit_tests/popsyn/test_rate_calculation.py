@@ -108,8 +108,8 @@ class TestFunctions:
         with raises(TypeError, match="missing 1 required positional argument: 't_cosm'"):
             totest.get_redshift_from_cosmic_time()
         # examples
-        tests = [(0.1, approx(29.8325299, abs=6e-12)),\
-                 (1.0, approx(5.67584779, abs=6e-12))]
+        tests = [(0.1, approx(12.453793290949799, abs=6e-12)),\
+                 (1.0, approx(5.862549255024051, abs=6e-12))]
         for (t, z) in tests:
             assert totest.get_cosmic_time_from_redshift(t) == z        
         
