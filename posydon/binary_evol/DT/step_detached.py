@@ -24,7 +24,7 @@ from posydon.config import PATH_TO_POSYDON_DATA
 from posydon.binary_evol.binarystar import BINARYPROPERTIES
 from posydon.binary_evol.singlestar import STARPROPERTIES
 from posydon.interpolation.interpolation import GRIDInterpolator
-from posydon.interpolation.data_scaling import DataScaler
+#from posydon.interpolation.data_scaling import DataScaler
 from posydon.utils.common_functions import (bondi_hoyle,
                                             orbital_period_from_separation,
                                             roche_lobe_radius,
@@ -403,86 +403,6 @@ class detached_step:
             grid_name_strippedHe = os.path.join('single_HeMS', self.metallicity+'_Zsun.h5')
         self.grid_strippedHe = GRIDInterpolator(os.path.join(path, grid_name_strippedHe))
 
-    def get_track_val(self, key, htrack, m0, t):
-        """Return a single value from the interpolated time-series.
-
-        Parameters
-        ----------
-        key : str
-            Keyword of the required quantity.
-        m0 : float
-            The associated initial mass of the required quantity.
-        t  : float
-            The required time in the time-series.
-
-        Returns
-        -------
-        float
-            The value of the quantity `key` from a MIST-like track of
-            initial mass `m0` at the time `t0`.
-
-        """
-        # htrack as a boolean determines whether H or He grid is used
-        if htrack:
-            grid = self.grid_Hrich
-        else:
-            grid = self.grid_strippedHe
-        try:
-            x = grid.get("age", m0)
-            y = grid.get(key, m0)
-        except ValueError:
-            return np.array(t) * np.nan
-        try:
-            val = np.interp(t, x, y, left=1e99, right=1e99)
-        except ValueError:
-            i_bad = [None]
-            while len(i_bad):
-                i_bad = np.where(np.diff(x) <= 0)[0]
-                x = np.delete(x, i_bad)
-                y = np.delete(y, i_bad)
-            val = np.interp(t, x, y)
-        return val
-
-    def scale(self, key, htrack, method):
-        """Nomarlize quantities in the single star grids to (0,1).
-
-        Parameters
-        ----------
-        key : str
-            Keyword of the required quantity.
-        method : str
-            Scalling method in the data normalization class
-
-        Returns
-        -------
-        class
-            Data normalization class
-
-        """
-        # TODO: why this self.grid? Why not local variable. Should this affect
-        # the whole detached_step instance?
-
-        # collect all options for the scaler
-        scaler_options = (key, htrack, method)
-
-        # find if the scaler has already been fitted and return it if so...
-        scaler = self.stored_scalers.get(scaler_options, None)
-        if scaler is not None:
-            return scaler
-
-        # ... if not, fit a new scaler, and store it for later use
-        grid = self.grid_Hrich if htrack else self.grid_strippedHe
-        self.initial_mass = grid.grid_mass
-        all_attributes = []
-        for mass in self.initial_mass:
-            for i in grid.get(key, mass):
-                all_attributes.append(i)
-        all_attributes = np.array(all_attributes)
-        scaler = DataScaler()
-        scaler.fit(all_attributes, method=method, lower=0.0, upper=1.0)
-        self.stored_scalers[scaler_options] = scaler
-        return scaler
-
     def __repr__(self):
         """Return the type of evolution type."""
         return "Detached Step."
@@ -522,6 +442,7 @@ class detached_step:
                     m0, t0 = copy_prev_m0, copy_prev_t0
                 else:
                     t_before_matching = time.time()
+                    # matching to single star grids
                     m0, t0, htrack = self.match_to_single_star(star1, htrack)
                     t_after_matching = time.time()
                     
