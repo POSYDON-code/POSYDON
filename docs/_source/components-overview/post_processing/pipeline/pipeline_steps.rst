@@ -25,7 +25,7 @@ The script to run the pipeline takes four arguments:
 
 .. _pipeline_step1:
 
-Step1: creating a `PSyGrid` object
+Step 1: creating a `PSyGrid` object
 ----------------------------------
 
 First, we need to create the :samp:`PSygrid` object. To do so, the pipeline
@@ -56,7 +56,7 @@ The currently supported compression types are:
 
 .. _pipeline_step2:
 
-Step2: combining `PSyGrid` objects
+Step 2: combining `PSyGrid` objects
 ----------------------------------
 
 Usually, the grids are split into batches or reruns are done. In those cases,
@@ -81,7 +81,7 @@ the column number (starting with 0). Here an example:
 
 .. _pipeline_step3:
 
-Step3: calculating extra values from detailed data
+Step 3: calculating extra values from detailed data
 --------------------------------------------------
 
 In this step we calculate extra quantities from the histories and profiles.
@@ -120,7 +120,7 @@ type:
 
 .. _pipeline_step4:
 
-Step4: training of the interpolators
+Step 4: training of the interpolators
 ------------------------------------
 
 To get interpolated data from our grids, we train in this step an interpolator
@@ -151,7 +151,7 @@ starts at RLO), and finally, the name of the interpolator object.
 
 .. _pipeline_step9:
 
-Step9: exporting the data set
+Step 9: exporting the data set
 -----------------------------
 
 After we have a complete data set, we would like to export it to be used for
@@ -168,7 +168,7 @@ addressed by this step.
 
 .. _pipeline_stepR:
 
-StepR: exporting a rerun
+Step R: exporting a rerun
 ------------------------
 
 Usually, a grid will not run well everywhere on the first go. So, there is a
