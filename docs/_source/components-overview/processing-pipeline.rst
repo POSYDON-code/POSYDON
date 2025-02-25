@@ -6,7 +6,7 @@ Processing Pipeline
 Post-process Grids
 ------------------
 
-After the MESA girds have finished, the important data needs to be extracted from them.
+After the MESA grids have finished, the important data needs to be extracted from them.
 
 `PSyGrid` object
 ~~~~~~~~~~~~~~~~
