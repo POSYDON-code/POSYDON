@@ -28,7 +28,7 @@ The script to run the pipeline takes four arguments:
 Step1: creating a `PSyGrid` object
 ----------------------------------
 
-First, we need to create the :samp:`PSyGird` object. To do so, the pipeline
+First, we need to create the :samp:`PSygrid` object. To do so, the pipeline
 needs to now the directory which contains the MESA runs, the compression, the
 grid type, and whether to crop the history for some certain runs. Hence, the
 :samp:`step_1.csv` file should have those columns:
@@ -60,7 +60,7 @@ Step2: combining `PSyGrid` objects
 ----------------------------------
 
 Usually, the grids are split into batches or reruns are done. In those cases,
-there will be several :samp:`PSyGrid` objects created for one gird. This step
+there will be several :samp:`PSyGrid` objects created for one grid. This step
 will join them into one. The :samp:`step_2.csv` file should have a matrix
 structure. The columns contain the grids which should be combined to the one
 specified in the header (first) row. The :samp:`DATA_ID` corresponds here to
@@ -91,7 +91,7 @@ envelope evolution, and at core collapse.
 Because some of the values may require a high precision in the data, we
 recommend to use the data from the ORIGINAL compression to calculate them. But
 the new values can be added to any :samp:`PSyGrid` object. Hence this step
-requests three paths to be specified in :samp:`step_3.csv` beside the gird
+requests three paths to be specified in :samp:`step_3.csv` beside the grid
 type:
 
 .. code-block::
@@ -103,7 +103,7 @@ type:
     ======================  ===========
     Path                    Description
     ======================  ===========
-    path_to_grid            path of the gird, which get the values appended to it
+    path_to_grid            path of the grid, which get the values appended to it
     grid_type               type of the grid
     path_to_grid_ORIGINAL   path of the grid, where the values are calculated from
     path_to_processed_grid  path of the new grid (a copy of the one specified as :samp:`path_to_grid` with the appended values)
