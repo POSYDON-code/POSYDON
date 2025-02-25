@@ -48,7 +48,20 @@ Using Anaconda (Recommended)
 
 .. _posydon-env:
 
-4. **Download the Dataset**
+4. **Set Environment Variables**
+
+    Export the required paths (please change the location names accordingly to your installation):
+
+    .. code-block:: bash
+
+        export PATH_TO_POSYDON=/path/to/your/posydon/installation
+        export PATH_TO_POSYDON_DATA=/path/where/you/want/to/store/data
+
+    .. note:: 
+        You can add these lines to your ``~/.bashrc`` or ``~/.bash_profile`` or your shell equivalent to ensure the environment variables are set every time you open a new terminal.
+
+
+5. **Download the Dataset**
 
     .. warning::
         The POSYDON v2.0.0 dataset is not yet available on Zenodo. The above instructions currently point to the POSYDON v1.0.0 dataset release. Please refer to the development version of the dataset available on Northwestern and UNIGE HPC facilities for now. To have access to latest pre-release dataset (230914) you must be a POSYDON core developer, please refer to the #developers Slack channel.
@@ -60,18 +73,6 @@ Using Anaconda (Recommended)
         get-posydon-data
 
     Alternatively, you can manually download the dataset from Zenodo using the provided `link <https://zenodo.org/communities/posydon/>`_. (TODO: update link to v2)
-
-5. **Set Environment Variables**
-
-    Export the required paths (please change the location names accordingly to your installation):
-
-    .. code-block:: bash
-
-        export PATH_TO_POSYDON=/path/to/your/posydon/installation
-        export PATH_TO_POSYDON_DATA=/path/where/you/want/to/store/data
-
-    .. note:: 
-        You can add these lines to your ``~/.bashrc`` or ``~/.bash_profile`` or your shell equivalent to ensure the environment variables are set every time you open a new terminal.
 
 .. _dev-version:
 
@@ -91,7 +92,7 @@ For users interested in the latest features and developments, you can install PO
 2. **Install the Development Version**
 
     .. warning::
-        If you are installing POSYDON on a Mac with Apple M1 or M2 chips, you should first install `hdf5` and `pytables` through conda with `conda install hdf5 pytables`, before following the instractions below.
+        If you are installing POSYDON on a Mac with Apple M1 or M2 chips, you should first install `hdf5` and `pytables` through conda with `conda install hdf5 pytables`, before following the instructions below.
 
     Navigate to the cloned repository's directory:
 
