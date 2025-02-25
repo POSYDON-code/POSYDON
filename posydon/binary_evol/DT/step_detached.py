@@ -626,6 +626,9 @@ class detached_step:
         KEYS = self.KEYS
         KEYS_POSITIVE = self.KEYS_POSITIVE
 
+        # creating a track matching object
+        self.track_matcher = track_matcher(KEYS, KEYS_POSITIVE)
+
         binary_sim_prop = getattr(binary, "properties")   ## simulation properties of the binary
         all_step_names = getattr(binary_sim_prop, "all_step_names")
 
