@@ -1411,7 +1411,7 @@ def do_check(i, path_to_csv_file, verbose=False):
 
 if __name__ == '__main__':
 
-    # read commond line arguments
+    # read command line arguments
     n_args = len(sys.argv)
     
     if n_args > 1: # path to grids
