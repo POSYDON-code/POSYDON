@@ -7,7 +7,7 @@
 The :samp:`PSyGrid` object contains the data coming from detailed MESA
 simulations.
 
-Import a :samp:`PSyGrid` object by using:
+Import the :samp:`PSyGrid` module with:
 
 .. code-block:: python
 
@@ -17,7 +17,7 @@ Import a :samp:`PSyGrid` object by using:
 Initializing a `PSyGrid` object
 -------------------------------
 
-One can simply get a new :samp:`PSyGrid` object via
+You can instantiate a new :samp:`PSyGrid` object with
 
 .. code-block:: python
 
@@ -90,7 +90,7 @@ is the path to the directory, where the MESA runs are in.
     'final_value_columns'           None          history columns to store final values from (currently not in use, instead all specified history columns are used and additionally termination flags and for binaries the interpolation class)
     'start_at_RLO'                  False         specifies whether to crop the history to start at RLO
     'stop_before_carbon_depletion'  False         specifies whether to crop the history of massive stars (>100 Msun) to stop at 10% central carbon and after helium is depleted
-    'binary'                        True          specifies whether a gird evolved binaries; put :samp:`False` for single stars
+    'binary'                        True          specifies whether a grid evolved binaries; put :samp:`False` for single stars
     'eep'                           None          path to directory with EEP files (for single stars only)
     'initial_RLO_fix'               False         specifies whether the boundary of initial RLO should be determined to flag all systems below as initial RLO independent of the MESA output
     'He_core_fix'                   True          specifies to ensure that the He core is always larger or equal to the carbon-oxygen core
