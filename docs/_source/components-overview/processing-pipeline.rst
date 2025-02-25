@@ -20,7 +20,7 @@ We have a dedicated object to deal with the MESA data outcome. Learn what you ca
 Our post-processing pipeline
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-We use a pipeline to post-process the data in a more automatized way. Learn to what you can do with this tool.
+We use a pipeline to post-process the data in a more automated way. Learn to what you can do with this tool.
 
 .. toctree::
 
