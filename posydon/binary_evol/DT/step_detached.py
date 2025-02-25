@@ -42,6 +42,8 @@ from posydon.utils.posydonerror import (NumericalError, MatchingError,
                                         ClassificationError)
 from posydon.utils.posydonwarning import Pwarn
 
+from posydon.grids.track_match import track_matcher
+
 LIST_ACCEPTABLE_STATES_FOR_HMS = ["H-rich_Core_H_burning",
                                   "accreted_He_Core_H_burning"] # REMOVE
 
@@ -409,117 +411,6 @@ class detached_step:
 
     def __call__(self, binary):
         """Evolve the binary until RLO or compact object formation."""
-
-        def get_star_data(binary, star1, star2, htrack, co, copy_prev_m0=None, copy_prev_t0=None):
-            """Get and interpolate the properties of stars.
-
-            The data of a compact object can be stored as a copy of its
-            companion for convenience except its mass, radius, mdot, and Idot
-            are set to be zero.
-
-            Parameters
-            ----------
-            htrack : bool
-                htrack of star1
-            co: bool
-                co of star2
-            Return
-            -------
-            interp1d
-                Contains the properties of star1 if co is false,
-                if co is true, star2 is a compact object,
-                return the properties of star2
-
-            """
-
-            with np.errstate(all="ignore"):
-                # get the initial m0, t0 track
-                if binary.event == 'ZAMS' or binary.event == 'redirect_from_ZAMS':
-                    # ZAMS stars in wide (non-mass exchaging binaries) that are
-                    # directed to detached step at birth
-                    m0, t0 = star1.mass, 0
-                elif co:
-                    m0, t0 = copy_prev_m0, copy_prev_t0
-                else:
-                    t_before_matching = time.time()
-                    # matching to single star grids
-                    m0, t0, htrack = self.match_to_single_star(star1, htrack)
-                    t_after_matching = time.time()
-                    
-                    if self.verbose:
-                        print(f"Matching duration: {t_after_matching-t_before_matching:.6g} sec\n")
-            
-            if pd.isna(m0) or pd.isna(t0):
-                return None, None, None
-            
-            if htrack:
-                self.grid = self.grid_Hrich
-            else:
-                self.grid = self.grid_strippedHe
-            
-            # check if m0 is in the grid
-            if m0 < self.grid.grid_mass.min() or m0 > self.grid.grid_mass.max():
-                set_binary_to_failed(binary)
-                raise MatchingError(f"The mass {m0} is out of the single star grid range and "
-                                    "cannot be matched to a track.")
-
-            get_track = self.grid.get
-
-            max_time = binary.properties.max_simulation_time
-            assert max_time > 0.0, "max_time is non-positive"
-
-            age = get_track("age", m0)
-            t_max = age.max()  # max timelength of the track
-            interp1d = dict()
-            kvalue = dict()
-            for key in KEYS[1:]:
-                kvalue[key] = get_track(key, m0)
-            try:
-                for key in KEYS[1:]:
-                    if key in KEYS_POSITIVE:
-                        positive = True
-                        interp1d[key] = PchipInterpolator2(age, kvalue[key], positive=positive)
-                    else:
-                        interp1d[key] = PchipInterpolator2(age, kvalue[key])
-            except ValueError:
-                i_bad = [None]
-                while len(i_bad) != 0:
-                    i_bad = np.where(np.diff(age) <= 0)[0]
-                    age = np.delete(age, i_bad)
-                    for key in KEYS[1:]:
-                        kvalue[key] = np.delete(kvalue[key], i_bad)
-
-                for key in KEYS[1:]:
-                    if key in KEYS_POSITIVE:
-                        positive = True
-                        interp1d[key] = PchipInterpolator2(age, kvalue[key], positive=positive)
-                    else:
-                        interp1d[key] = PchipInterpolator2(age, kvalue[key])
-
-            interp1d["inertia"] = PchipInterpolator(
-                age, kvalue["inertia"] / (const.msol * const.rsol**2))
-            interp1d["Idot"] = interp1d["inertia"].derivative()
-
-            interp1d["conv_env_turnover_time_l_b"] = PchipInterpolator2(
-                age, kvalue['conv_env_turnover_time_l_b'] / const.secyer)
-
-            interp1d["L"] = PchipInterpolator(age, 10 ** kvalue["log_L"])
-            interp1d["R"] = PchipInterpolator(age, 10 ** kvalue["log_R"])
-            interp1d["t_max"] = t_max
-            interp1d["max_time"] = max_time
-            interp1d["t0"] = t0
-            interp1d["m0"] = m0
-
-            if co:
-                kvalue["mass"] = np.zeros_like(kvalue["mass"]) + star2.mass
-                kvalue["R"] = np.zeros_like(kvalue["log_R"])
-                kvalue["mdot"] = np.zeros_like(kvalue["mdot"])
-                interp1d["mass"] = PchipInterpolator(age, kvalue["mass"])
-                interp1d["R"] = PchipInterpolator(age, kvalue["R"])
-                interp1d["mdot"] = PchipInterpolator(age, kvalue["mdot"])
-                interp1d["Idot"] = PchipInterpolator(age, kvalue["mdot"])
-
-            return interp1d, m0, t0
         
         @event(True, 1)
         def ev_rlo1(t, y):
@@ -730,26 +621,6 @@ class detached_step:
                 print("calculated omega_in_rad_per_year: ", omega_in_rad_per_year)
 
             return omega_in_rad_per_year
-        
-        def get_star_final_values(star, htrack, m0):  
-
-            grid = self.grid_Hrich if htrack else self.grid_strippedHe
-            get_final_values = grid.get_final_values
-        
-            for key in self.final_keys:
-                setattr(star, key, get_final_values('S1_%s' % (key), m0))
-
-        def get_star_profile(star, htrack, m0):
-
-            grid = self.grid_Hrich if htrack else self.grid_strippedHe
-            get_profile = grid.get_profile
-            profile_new = np.array(get_profile('mass', m0)[1])
-
-            for i in self.profile_keys:
-                profile_new[i] = get_profile(i, m0)[0]
-            profile_new['omega'] = star.surf_avg_omega
-
-            star.profile = profile_new
             
 
         KEYS = self.KEYS
@@ -875,7 +746,7 @@ class detached_step:
             raise POSYDONError("Non existent companion has not a recognized value!")
 
         # get the matched data of two stars, respectively
-        interp1d_sec, m0, t0 = get_star_data(binary, secondary, primary, secondary.htrack, co=False)
+        interp1d_sec, m0, t0 = track_matcher.get_star_data(binary, secondary, primary, secondary.htrack, co=False)
 
         primary_not_normal = (primary.co) or (self.non_existent_companion in [1,2])
         primary_normal = (not primary.co) and self.non_existent_companion == 0
@@ -883,11 +754,11 @@ class detached_step:
         if primary_not_normal:
             # copy the secondary star except mass which is of the primary,
             # and radius, mdot, Idot = 0
-            interp1d_pri = get_star_data(
+            interp1d_pri = track_matcher.get_star_data(
                 binary, secondary, primary, secondary.htrack, co=True,
                 copy_prev_m0=m0, copy_prev_t0=t0)[0]
         elif primary_normal:
-            interp1d_pri = get_star_data(
+            interp1d_pri = track_matcher.get_star_data(
                 binary, primary, secondary, primary.htrack, False)[0]
         else:
             raise ValueError("During matching, the primary should either be normal (stellar object) or ",
@@ -1369,8 +1240,8 @@ class detached_step:
                 else:
                     binary.event = "CC2"
 
-                get_star_final_values(secondary, secondary.htrack, m01)
-                get_star_profile(secondary, secondary.htrack, m01)
+                track_matcher.get_star_final_values(secondary, secondary.htrack, m01)
+                track_matcher.get_star_profile(secondary, secondary.htrack, m01)
 
                 if not primary.co and primary.state in STAR_STATES_CC:
                     # simultaneous core-collapse of the other star as well
@@ -1379,8 +1250,8 @@ class detached_step:
 
                     if primary_time == secondary_time:
                         # we manually check if s.t_events[3] should also be happening simultaneously
-                        get_star_final_values(primary, primary.htrack, m02)
-                        get_star_profile(primary, primary.htrack, m02)
+                        track_matcher.get_star_final_values(primary, primary.htrack, m02)
+                        track_matcher.get_star_profile(primary, primary.htrack, m02)
 
                     if primary.mass != secondary.mass:
                         raise POSYDONError(
@@ -1395,8 +1266,8 @@ class detached_step:
                 else:
                     binary.event = "CC1"
 
-                get_star_final_values(primary, primary.htrack, m02)
-                get_star_profile(primary, primary.htrack, m02)
+                track_matcher.get_star_final_values(primary, primary.htrack, m02)
+                track_matcher.get_star_profile(primary, primary.htrack, m02)
                 
             else:  # Reached max_time asked.
                 if binary.properties.max_simulation_time - binary.time < 0.0:

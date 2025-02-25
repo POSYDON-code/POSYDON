@@ -1,10 +1,20 @@
+import os
+import time
 import numpy as np
+import pandas as pd
 from scipy.optimize import root
 from scipy.optimize import minimize
+from scipy.interpolate import PchipInterpolator
 
+import posydon.utils.constants as const
+from posydon.config import PATH_TO_POSYDON_DATA
 from posydon.utils.posydonwarning import Pwarn
 from posydon.interpolation.data_scaling import DataScaler
-from posydon.utils.posydonerror import (NumericalError)
+from posydon.interpolation.interpolation import GRIDInterpolator
+from posydon.utils.interpolators import PchipInterpolator2
+from posydon.utils.posydonerror import (NumericalError, MatchingError)
+from posydon.utils.common_functions import (convert_metallicity_to_string,
+                                            set_binary_to_failed)
 
 LIST_ACCEPTABLE_STATES_FOR_HMS = ["H-rich_Core_H_burning",
                                   "accreted_He_Core_H_burning"]
@@ -29,13 +39,142 @@ LIST_ACCEPTABLE_STATES_FOR_HeStar = [
 
 MATCHING_WITH_RELATIVE_DIFFERENCE = ["center_he4"]
 
-class dummy:
+DEFAULT_TRANSLATION = {
+    "time": "time",
+    "orbital_period": "porb",
+    "eccentricity": "ecc",
+    "separation": "sep",
+    "state": None,
+    "event": None,
+    "rl_relative_overflow_1": "rl_relative_overflow_1",
+    "rl_relative_overflow_2": "rl_relative_overflow_2",
+    "lg_mtransfer_rate": "lg_mtransfer_rate",
+    "V_sys": None,
+    "mass": "mass",
+    "log_R": "log_R",
+    "R": "R",
+    "lg_mdot": "mdot",
+    "log_L": "log_L",
+    "lg_wind_mdot": "mdot",
+    "lg_system_mdot": "lg_mdot",
+    "he_core_mass": "he_core_mass",
+    "he_core_radius": "he_core_radius",
+    "c_core_mass": "c_core_mass",
+    "c_core_radius": "c_core_radius",
+    "o_core_mass": "o_core_mass",
+    "o_core_radius": "o_core_radius",
+    "center_h1": "center_h1",
+    "center_he4": "center_he4",
+    "center_c12": "center_c12",
+    "center_o16": "center_o16",
+    "center_n14": "center_n14",
+    "surface_h1": "surface_h1",
+    "surface_he4": "surface_he4",
+    "surface_c12": "surface_c12",
+    "surface_n14": "surface_n14",
+    "surface_o16": "surface_o16",
+    "center_gamma": "center_gamma",
+    "log_LH": "log_LH",
+    "log_LHe": "log_LHe",
+    "log_LZ": "log_LZ",
+    "log_Lnuc": "log_Lnuc",
+    "c12_c12": "c12_c12",
+    "avg_c_in_c_core": "avg_c_in_c_core",
+    "surf_avg_omega_div_omega_crit": "surf_avg_omega_div_omega_crit",
+    "surf_avg_omega": "omega",
+    "total_moment_of_inertia": "inertia",
+    "log_total_angular_momentum": "log_total_angular_momentum",
+    "profile": None,
+    "metallicity": None,
+    "spin": "spin_parameter",
+    "conv_env_top_mass": "conv_env_top_mass",
+    "conv_env_bot_mass": "conv_env_bot_mass",
+    "conv_env_top_radius": "conv_env_top_radius",
+    "conv_env_bot_radius": "conv_env_bot_radius",
+    "conv_env_turnover_time_g": "conv_env_turnover_time_g",
+    "conv_env_turnover_time_l_b": "conv_env_turnover_time_l_b",
+    "conv_env_turnover_time_l_t": "conv_env_turnover_time_l_t",
+    "envelope_binding_energy": "envelope_binding_energy",
+    "mass_conv_reg_fortides": "mass_conv_reg_fortides",
+    "thickness_conv_reg_fortides": "thickness_conv_reg_fortides",
+    "radius_conv_reg_fortides": "radius_conv_reg_fortides",
+    "lambda_CE_1cent": "lambda_CE_1cent",
+    "lambda_CE_10cent": "lambda_CE_10cent",
+    "lambda_CE_30cent": "lambda_CE_30cent",
+    "co_core_mass": "co_core_mass",
+    "co_core_radius": "co_core_radius",
+    "lambda_CE_pure_He_star_10cent": "lambda_CE_pure_He_star_10cent",
+    "trap_radius": "trap_radius",
+    "acc_radius": "acc_radius",
+    "t_sync_rad_1": "t_sync_rad_1",
+    "t_sync_conv_1": "t_sync_conv_1",
+    "t_sync_rad_2": "t_sync_rad_2",
+    "t_sync_conv_2": "t_sync_conv_2",
+    "mass_transfer_case": None,
+    "nearest_neighbour_distance": None,
+}
+
+DEFAULT_TRANSLATED_KEYS = (
+    'age',
+    'mass',
+    'mdot',
+    'inertia',
+    'conv_mx1_top_r',
+    'conv_mx1_bot_r',
+    'surface_h1',
+    'center_h1',
+    'mass_conv_reg_fortides',
+    'thickness_conv_reg_fortides',
+    'radius_conv_reg_fortides',
+    'log_Teff',
+    'surface_he3',
+    'surface_he4',
+    'center_he4',
+    'avg_c_in_c_core',
+    'log_LH',
+    'log_LHe',
+    'log_LZ',
+    'log_Lnuc',
+    'c12_c12',
+    'center_c12',
+    'he_core_mass',
+    'log_L',
+    'log_R',
+    'c_core_mass',
+    'o_core_mass',
+    'co_core_mass',
+    'c_core_radius',
+    'o_core_radius',
+    'co_core_radius',
+    'spin_parameter',
+    'log_total_angular_momentum',
+    'center_n14',
+    'center_o16',
+    'surface_n14',
+    'surface_o16',
+    'conv_env_top_mass',
+    'conv_env_bot_mass',
+    'conv_env_top_radius',
+    'conv_env_bot_radius',
+    'conv_env_turnover_time_g',
+    'conv_env_turnover_time_l_b',
+    'conv_env_turnover_time_l_t',
+    'envelope_binding_energy',
+    'lambda_CE_1cent',
+    'lambda_CE_10cent',
+    'lambda_CE_30cent',
+    'lambda_CE_pure_He_star_10cent',
+    'center_gamma'
+)
+
+class track_matcher:
 
 
     def __init__(
             self,
-            grid_Hrich,
-            grid_strippedHe,
+            KEYS,
+            KEYS_POSITIVE,
+            path=PATH_TO_POSYDON_DATA,
             metallicity=None,
             matching_method="minimize",
             initial_mass=None,
@@ -43,7 +182,7 @@ class dummy:
             verbose=False,
             list_for_matching_HMS=None,
             list_for_matching_postMS=None,
-            list_for_matching_HeStar=None
+            list_for_matching_HeStar=None,
     ):
 
         # MESA history column names used as matching metrics
@@ -63,7 +202,7 @@ class dummy:
 
         # ==================================================================================
 
-        #self.metallicity = convert_metallicity_to_string(metallicity)
+        self.metallicity = convert_metallicity_to_string(metallicity)
         #self.dt = dt
         #self.n_o_steps_history = n_o_steps_history
         self.matching_method = matching_method
@@ -105,40 +244,40 @@ class dummy:
 
         # these are the KEYS read from POSYDON h5 grid files (after translating
         # them to the appropriate columns)
-        #self.KEYS = DEFAULT_TRANSLATED_KEYS
-        #self.KEYS_POSITIVE = (
-        #    'mass_conv_reg_fortides',
-        #    'thickness_conv_reg_fortides',
-        #    'radius_conv_reg_fortides'
+        self.KEYS = KEYS #DEFAULT_TRANSLATED_KEYS
+        self.KEYS_POSITIVE = KEYS_POSITIVE #(
+            #'mass_conv_reg_fortides',
+            #'thickness_conv_reg_fortides',
+            #'radius_conv_reg_fortides'
         #)
 
         # keys for the final value interpolation
-        #self.final_keys = (
-        #    'avg_c_in_c_core_at_He_depletion',
-        #    'co_core_mass_at_He_depletion',
-        #    'm_core_CE_1cent',
-        #    'm_core_CE_10cent',
-        #    'm_core_CE_30cent',
-        #    'm_core_CE_pure_He_star_10cent',
-        #    'r_core_CE_1cent',
-        #    'r_core_CE_10cent',
-        #    'r_core_CE_30cent',
-        #    'r_core_CE_pure_He_star_10cent'
-        #)
+        self.final_keys = (
+            'avg_c_in_c_core_at_He_depletion',
+            'co_core_mass_at_He_depletion',
+            'm_core_CE_1cent',
+            'm_core_CE_10cent',
+            'm_core_CE_30cent',
+            'm_core_CE_pure_He_star_10cent',
+            'r_core_CE_1cent',
+            'r_core_CE_10cent',
+            'r_core_CE_30cent',
+            'r_core_CE_pure_He_star_10cent'
+        )
 
         # keys for the star profile interpolation
         #self.profile_keys = DEFAULT_PROFILE_KEYS
 
         # should grids just get passed to this?
-        #? if grid_name_Hrich is None:
-        #?     grid_name_Hrich = os.path.join('single_HMS', self.metallicity+'_Zsun.h5')
-        #? self.grid_Hrich = GRIDInterpolator(os.path.join(path, grid_name_Hrich))
-        self.grid_Hrich = grid_Hrich
+        if grid_name_Hrich is None:
+            grid_name_Hrich = os.path.join('single_HMS', self.metallicity+'_Zsun.h5')
+        self.grid_Hrich = GRIDInterpolator(os.path.join(path, grid_name_Hrich))
+        #self.grid_Hrich = grid_Hrich
 
-        #? if grid_name_strippedHe is None:
-        #?    grid_name_strippedHe = os.path.join('single_HeMS', self.metallicity+'_Zsun.h5')
-        #? self.grid_strippedHe = GRIDInterpolator(os.path.join(path, grid_name_strippedHe))
-        self.grid_strippedHe = grid_strippedHe
+        if grid_name_strippedHe is None:
+            grid_name_strippedHe = os.path.join('single_HeMS', self.metallicity+'_Zsun.h5')
+        self.grid_strippedHe = GRIDInterpolator(os.path.join(path, grid_name_strippedHe))
+        #self.grid_strippedHe = grid_strippedHe
 
         # ==================================================================================
 
@@ -677,3 +816,138 @@ class dummy:
                 )
 
         return initials[0], initials[1], htrack
+    
+
+    def get_star_data(self, binary, star1, star2, htrack, co, copy_prev_m0=None, copy_prev_t0=None):
+                """Get and interpolate the properties of stars.
+
+                The data of a compact object can be stored as a copy of its
+                companion for convenience except its mass, radius, mdot, and Idot
+                are set to be zero.
+
+                Parameters
+                ----------
+                htrack : bool
+                    htrack of star1. Whether star 1 is a stripped He star
+                co: bool
+                    co of star2. Whether star 2 is a compact object
+                Return
+                -------
+                interp1d
+                    Contains the properties of star1 if co is false,
+                    if co is true, star2 is a compact object,
+                    return the properties of star2
+
+                """
+
+                KEYS = self.KEYS
+                KEYS_POSITIVE = self.KEYS_POSITIVE
+
+                with np.errstate(all="ignore"):
+                    # get the initial m0, t0 track
+                    if binary.event == 'ZAMS' or binary.event == 'redirect_from_ZAMS':
+                        # ZAMS stars in wide (non-mass exchaging binaries) that are
+                        # directed to detached step at birth
+                        m0, t0 = star1.mass, 0
+                    elif co:
+                        m0, t0 = copy_prev_m0, copy_prev_t0
+                    else:
+                        t_before_matching = time.time()
+                        # matching to single star grids
+                        m0, t0, htrack = self.match_to_single_star(star1, htrack)
+                        t_after_matching = time.time()
+                        
+                        if self.verbose:
+                            print(f"Matching duration: {t_after_matching-t_before_matching:.6g} sec\n")
+                
+                if pd.isna(m0) or pd.isna(t0):
+                    return None, None, None
+                
+                if htrack:
+                    self.grid = self.grid_Hrich
+                else:
+                    self.grid = self.grid_strippedHe
+                
+                # check if m0 is in the grid
+                if m0 < self.grid.grid_mass.min() or m0 > self.grid.grid_mass.max():
+                    set_binary_to_failed(binary)
+                    raise MatchingError(f"The mass {m0} is out of the single star grid range and "
+                                        "cannot be matched to a track.")
+
+                get_track = self.grid.get
+
+                max_time = binary.properties.max_simulation_time
+                assert max_time > 0.0, "max_time is non-positive"
+
+                age = get_track("age", m0)
+                t_max = age.max()  # max timelength of the track
+                interp1d = dict()
+                kvalue = dict()
+                for key in KEYS[1:]:
+                    kvalue[key] = get_track(key, m0)
+                try:
+                    for key in KEYS[1:]:
+                        if key in KEYS_POSITIVE:
+                            positive = True
+                            interp1d[key] = PchipInterpolator2(age, kvalue[key], positive=positive)
+                        else:
+                            interp1d[key] = PchipInterpolator2(age, kvalue[key])
+                except ValueError:
+                    i_bad = [None]
+                    while len(i_bad) != 0:
+                        i_bad = np.where(np.diff(age) <= 0)[0]
+                        age = np.delete(age, i_bad)
+                        for key in KEYS[1:]:
+                            kvalue[key] = np.delete(kvalue[key], i_bad)
+
+                    for key in KEYS[1:]:
+                        if key in KEYS_POSITIVE:
+                            positive = True
+                            interp1d[key] = PchipInterpolator2(age, kvalue[key], positive=positive)
+                        else:
+                            interp1d[key] = PchipInterpolator2(age, kvalue[key])
+
+                interp1d["inertia"] = PchipInterpolator(
+                    age, kvalue["inertia"] / (const.msol * const.rsol**2))
+                interp1d["Idot"] = interp1d["inertia"].derivative()
+
+                interp1d["conv_env_turnover_time_l_b"] = PchipInterpolator2(
+                    age, kvalue['conv_env_turnover_time_l_b'] / const.secyer)
+
+                interp1d["L"] = PchipInterpolator(age, 10 ** kvalue["log_L"])
+                interp1d["R"] = PchipInterpolator(age, 10 ** kvalue["log_R"])
+                interp1d["t_max"] = t_max
+                interp1d["max_time"] = max_time
+                interp1d["t0"] = t0
+                interp1d["m0"] = m0
+
+                if co:
+                    kvalue["mass"] = np.zeros_like(kvalue["mass"]) + star2.mass
+                    kvalue["R"] = np.zeros_like(kvalue["log_R"])
+                    kvalue["mdot"] = np.zeros_like(kvalue["mdot"])
+                    interp1d["mass"] = PchipInterpolator(age, kvalue["mass"])
+                    interp1d["R"] = PchipInterpolator(age, kvalue["R"])
+                    interp1d["mdot"] = PchipInterpolator(age, kvalue["mdot"])
+                    interp1d["Idot"] = PchipInterpolator(age, kvalue["mdot"])
+
+                return interp1d, m0, t0
+
+    def get_star_final_values(self, star, htrack, m0):  
+
+        grid = self.grid_Hrich if htrack else self.grid_strippedHe
+        get_final_values = grid.get_final_values
+
+        for key in self.final_keys:
+            setattr(star, key, get_final_values('S1_%s' % (key), m0))
+
+    def get_star_profile(self, star, htrack, m0):
+
+        grid = self.grid_Hrich if htrack else self.grid_strippedHe
+        get_profile = grid.get_profile
+        profile_new = np.array(get_profile('mass', m0)[1])
+
+        for i in self.profile_keys:
+            profile_new[i] = get_profile(i, m0)[0]
+        profile_new['omega'] = star.surf_avg_omega
+
+        star.profile = profile_new
