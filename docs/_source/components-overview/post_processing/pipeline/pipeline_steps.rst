@@ -14,7 +14,7 @@ The script to run the pipeline takes four arguments:
 
     posydon-run-pipeline PATH_TO_GRIDS PATH_TO_CSV_FILE DATA_ID VERBOSE
 
-1. [path] The path to the girds main directory (currently not used)
+1. [path] The path to the grids main directory (currently not used)
 2. [path] The path to the csv file
 3. [int] An index indicating the data entry to read from the csv file
 4. [int] Whether one wants verbose output (1) or not (0)
@@ -59,10 +59,10 @@ The currently supported compression types are:
 Step2: combining `PSyGrid` objects
 ----------------------------------
 
-Usually, the girds are split into batches or reruns are done. In those cases,
+Usually, the grids are split into batches or reruns are done. In those cases,
 there will be several :samp:`PSyGrid` objects created for one gird. This step
 will join them into one. The :samp:`step_2.csv` file should have a matrix
-structure. The columns contain the girds which should be combined to the one
+structure. The columns contain the grids which should be combined to the one
 specified in the header (first) row. The :samp:`DATA_ID` corresponds here to
 the column number (starting with 0). Here an example:
 
@@ -137,7 +137,7 @@ starts at RLO), and finally, the name of the interpolator object.
     The type of interpolator will be recognized from the name of the
     interpolator object. The syntax is :code:`IF_METHOD{_RLO}.pkl`. The
     :samp:`IF` stands for initial-final interpolator, the :samp:`METHOD` refers
-    to the interpolator type. The girds starting at Roche-lobe overflow may be
+    to the interpolator type. The grids starting at Roche-lobe overflow may be
     indicated in the name as well, but is not required.
 
 .. table:: Currently supported interpolator types
