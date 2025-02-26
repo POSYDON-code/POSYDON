@@ -355,6 +355,19 @@ The :samp:`join_grids` function will check whether the grids are compatible
 and join them if possible. Additionally, you can optionally specify the 
 arguments :samp:`compression`, :samp:`description`, and :samp:`verbose`.
 
+.. table:: Arguments of the :samp:`join_grids` function
+
+    =================  =======  ===========
+    Argument           Default  Description
+    =================  =======  ===========
+    input_paths        None     list of the paths to the grid files to be joined
+    output_path        None     path for the new grid file containing the joined grid.
+    compression        'gzip9'  compression details
+    description        'joined' description of the new joined grid 
+    verbose          :samp:`True`   whether the function reports by printing to standard output.
+)
+    =================  =======  ===========
+
 .. note::
     If there are common systems in two or more grids, this routine will only
     put the last run with same initial conditions in the newly combined
