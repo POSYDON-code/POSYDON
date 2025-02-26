@@ -8,16 +8,16 @@ How to write a configuration file
 ==================================
 
 The `posydon-setup-grid` command-line executable cannot run without a
-configuration file. This inifile is meant to specify all aspects of the MESA
-simulation that is static, i.e. those parts that are shared amongst every MESA
-simulation in your grid. The design of the inifile file is such that it will
+configuration file. This ini file needs to specify all aspects of the MESA
+simulation that are static, i.e. those parts that are shared amongst every MESA
+simulation in your grid. The design of the ini file file is such that it will
 start with the MESA defaults for every possible MESA parameter, stack on top of
 that the POSYDON suggested defaults, and then finally, if supplied, stack user
 specific parameters on top of both the MESA defaults and the POSYDON defaults.
 This scheme requires a high-performance computing environment with SLURM
 installed.
 
-Below we describe each section of the inifile and what each value corresponds
+Below we describe each section of the ini file and what each value corresponds
 to. In general, lines with capitalized quantities surrounded by {} are
 quantities that need to be adjusted for your specific case.
 
