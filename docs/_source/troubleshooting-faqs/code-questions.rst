@@ -56,7 +56,7 @@ Frequently Asked Questions
     The job array size should be set such that the number of binaries per job is at least 1000, since there's a minimum overhead per job due to loading the grids.
     
     The :code:`walltime` depends on the number of binaries per job, where each binary takes about 1-2 seconds to run.
-    For example, 100,000 binaries split over 100 jobs (per metallicity) means that every job runs 1000 binaries. This will take around 33 minutes per job. So a :code:`walltime` of :code:`00:45:00` is reasonable.
+    For example, 100,000 binaries split over 100 jobs (per metallicity) means that every job runs 1,000 binaries. This will take around 33 minutes per job. So a :code:`walltime` of :code:`00:45:00` is reasonable.
 
     The balance between :code:`walltime` and the size of the job array is important.
     If the :code:`walltime` is too long, it might be worth increasing the job array size to decrease the time per job and allow the population synthesis to finish faster. 
