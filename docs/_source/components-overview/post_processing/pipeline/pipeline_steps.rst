@@ -4,9 +4,9 @@
 Pipeline steps
 ##############
 
-The pipeline is divided into several steps, which build up on each other. Each
-step will take a csv file as input. The name of this file is used to tell the
-pipeline, which step should be performed.
+The post-processing pipeline is divided into several steps which build 
+on each other. Each step will take a csv file as input. The name of this 
+file is used to tell the pipeline which step should be performed.
 
 The script to run the pipeline takes four arguments:
 
