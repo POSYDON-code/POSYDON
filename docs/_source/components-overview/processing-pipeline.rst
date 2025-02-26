@@ -29,7 +29,7 @@ We use a pipeline to post-process the data in a more automated way. Learn to wha
 Ini file documentation
 ~~~~~~~~~~~~~~~~~~~~~~
 
-Learn how to use an .ini file to setup the post-processing pipeline.
+Learn how to use an *.ini file to setup the post-processing pipeline.
 
 .. toctree::
 
