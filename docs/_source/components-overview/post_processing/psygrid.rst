@@ -146,7 +146,7 @@ You can check the contents of the :samp:`PSyGrid` object with a print command:
 This will provide a summary, which tell you:
 
 - to which hdf5 file it is connected
-- how many runs are in the grid and have
+- how many runs are in the grid and how many have
  
   - a binary history
   - a history of star 1
@@ -154,9 +154,9 @@ This will provide a summary, which tell you:
   - a final profile of star 1
   - a final profile of star 2
    
-- the fields in each of the histories/profiles of the last run
-- the fields of the initial and final values
-- information on the configuration
+- which histories/profile fields are included in the last run
+- which initial and final value are stored in the grid
+- information about the grid configuration
 - a shorthand list of the MESA directories (the locations of the data the runs
   where extracted from)
 
@@ -182,7 +182,7 @@ properties available for your :samp:`PSyGrid` object with
 
     mygrid.config.keys()
 
-You can access the value of any property "PROP" with :samp:`mygrid.config[{PROP}]`.
+You can access the value of any grid configuration property "PROP" with :samp:`mygrid.config[{PROP}]`.
 
 Next, you can look at the initial and final values of the runs. All the values
 are available at :samp:`mygrid.initial_values` and :samp:`mygrid.final_values`,
@@ -193,27 +193,27 @@ respectively. To get a tuple of all the available values use
     mygrid.initial_values.dtype.names
     mygrid.final_values.dtype.names
 
-Each value you then get for example via :samp:`mygrid.initial_values[{VALUE}]`.
-It will return a numpy array with the this value for all the runs. So you get
-the initial mass of star 1 in the third run with
+You can access the initial value of any individual grid property "PROP" with :samp:`mygrid.initial_values[{PROP}]`.
+It will return a numpy array with the values of this property for all the runs. 
+Then, you can find the initial mass of star 1 in the third MESA run with
 
 .. code-block:: python
 
     mygrid.initial_values['star_1_mass'][2]
 
 .. note::
-    Remember, that the first run has the index :samp:`0` and the last one
+    Remember that the first run has the index :samp:`0` and the last one
     :samp:`len(mygrid)-1`.
 
-The each initial and final value will have the same number and order of run
-entries. This holds for the number of list entries of MESA directories, too.
+Each grid property will have the same number and order of MESA run entries in the initial and final values.
+This holds for the list of MESA directories from which the runs are extracted, too.
 
 .. code-block:: python
 
     mygrid.MESA_dirs
 
-You can get the individual runs via its index. :samp:`mygrid[{IDX}]` is a
-:samp:`PSyRunView` object, which contains the data of the run specified with
+You can retrieve individual runs by index. :samp:`mygrid[{IDX}]` is a
+:samp:`PSyRunView` object, which contains the data of the run of index 
 :samp:`IDX`. The :samp:`PSyRunView` object contains seven components:
 
 .. table:: :samp:`PSyRunView` object components
@@ -230,7 +230,7 @@ You can get the individual runs via its index. :samp:`mygrid[{IDX}]` is a
     'final_profile2'  the final profile of star 2
     ================  ===========
 
-Again you can check for the contents of the components with
+Again, you can check for the contents of the individual runs with
 :samp:`dtype.names`, e.g.
 
 .. code-block:: python
@@ -238,29 +238,30 @@ Again you can check for the contents of the components with
     myrun = mygrid[0]
     myrun['binary_history'].dtype.names
 
-Now you know a second way to get the initial mass of star 1 in the third run
-with a one-liner
+The example above finds the initial mass of star 1 in the third MESA run by 
+indexing the list :samp:`mygrid.initial_values`. 
+You can get the same value from the list of initial values associated with a single MESA run: 
 
 .. code-block :: python
 
     mygrid[2]['initial_values']['star_1_mass']
 
-You would may think of a third way being
+You can get something close to the initial value with:
 
 .. code-block :: python
 
     mygrid[2]['binary_history']['star_1_mass'][0]
 
-But this will not give the initial value, while it is close to it. The reason
-for this not being the same is in MESA having a slightly different value in the
+But this will not give the initial value, while it is close to it. 
+This is because MESA has a slightly different value in the
 first line of the history files compared to the given initial value. The final
 values and the derived initial values instead are the same as the last or first
 values in the corresponding history.
 
 .. note::
     For efficiency reasons not all the :samp:`PSyGrid` object is loaded into
-    RAM. Instead parts are reads from the associated hdf5 file if needed. This
-    has the consequence, that it is discouraged to refer to the same values
+    RAM. Instead parts are reads from the associated hdf5 file if needed. 
+    For this reason, it is discouraged to refer to the same values
     more than once in a code. If you need the same value more often, you should
     store it in a local variable.
 
