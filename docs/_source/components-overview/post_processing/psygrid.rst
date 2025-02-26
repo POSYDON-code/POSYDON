@@ -54,14 +54,14 @@ arguments as well:
                               
                                 if :samp:`suppress`, no warnings are printed
     fmt              "posydon"  grid format; only :samp:`posydon` is currently supported
-    \*\*grid_kwargs             further grid properties can be specified in a dictionary
+    \*\*grid_kwargs             further grid configuration properties can be specified in a dictionary
     ===============  =========  ===========
 
-The :samp:`PSyGrid` object has the following grid properties: 
+The :samp:`PSyGrid` object has the following grid configuration properties: 
 
 .. _tab_grid_properties:
 
-.. table:: Grid properties
+.. table:: Grid configuration properties
 
     ==============================  ============  ===========
     Property                        Default       Description
@@ -175,14 +175,14 @@ Accessing data in a `PSyGrid` object
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The first data you may want to check are the
-:ref:`grid properties <tab_grid_properties>`. You can get a list of the
+:ref:`grid configuration properties <tab_grid_properties>`. You can get a list of the
 properties available for your :samp:`PSyGrid` object with
 
 .. code-block:: python
 
     mygrid.config.keys()
 
-You can access the value of any grid configuration property "PROP" with :samp:`mygrid.config[{PROP}]`.
+You can access the value of any grid configuration property "PROPERTY" with :samp:`mygrid.config[{PROPERTY}]`.
 
 Next, you can look at the initial and final values of the runs. All the values
 are available at :samp:`mygrid.initial_values` and :samp:`mygrid.final_values`,
@@ -193,8 +193,10 @@ respectively. To get a tuple of all the available values use
     mygrid.initial_values.dtype.names
     mygrid.final_values.dtype.names
 
-You can access the initial value of any individual grid property "PROP" with :samp:`mygrid.initial_values[{PROP}]`.
+You can access the initial value of any physical grid property "PHYS" with :samp:`mygrid.initial_values[{PHYS}]`.
 It will return a numpy array with the values of this property for all the runs. 
+Note that these physical properties of the binaries in the grid are different 
+from the grid configuration properties listed above. 
 Then, you can find the initial mass of star 1 in the third MESA run with
 
 .. code-block:: python
