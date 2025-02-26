@@ -5,7 +5,7 @@ Machine Learning Components
 
 
 
-Intial Final Classification & Interpolation
+Initial Final Classification & Interpolation
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
