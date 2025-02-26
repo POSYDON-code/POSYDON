@@ -155,7 +155,7 @@ This will provide a summary, which tell you:
   - a final profile of star 2
    
 - which histories/profile fields are included in the last run
-- which initial and final value are stored in the grid
+- which initial and final values are stored in the grid
 - information about the grid configuration
 - a shorthand list of the MESA directories (the locations of the data the runs
   where extracted from)
