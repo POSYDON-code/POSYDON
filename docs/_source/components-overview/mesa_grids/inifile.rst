@@ -21,7 +21,7 @@ Below we describe each section of the ini file and what each value corresponds
 to. In general, lines with capitalized quantities surrounded by {} are
 quantities that need to be adjusted for your specific case.
 
-Here is a link to the most recent stable release version of the default inifile
+Here is a link to the most recent stable release version of the default ini file
 for POSYDON:
 `Stable Version INIFILE <https://github.com/POSYDON-code/POSYDON/blob/main/grid_params/grid_params.ini>`_
 
