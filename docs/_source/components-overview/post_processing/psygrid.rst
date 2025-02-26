@@ -66,16 +66,16 @@ The :samp:`PSyGrid` object has the following grid properties:
     ==============================  ============  ===========
     Property                        Default       Description
     ==============================  ============  ===========
-    description                   ""            description text
-    max_number_of_runs            None          the maximum number of runs
-    format                        "hdf5"        file format; only :samp:`hdf5` is currently supported
-    compression                   "gzip9"       the compression (of the hdf5 file)
-    history_DS_error              None          the maximum error allowed when downsampling the history
-    history_DS_exclude            default list  the history columns to exclude from downsampling (default list = ["model_number", "age", "star_age"])
-    profile_DS_error              None          the maximum error allowed when downsampling the final profile
-    profile_DS_interval           None          the maximum change in an downsampled interval relative to the change from initial to final
-    profile_DS_exclude            default list  the profile columns to exclude from downsampling (default list = ["mass", "star_mass"])
-    star1_history_saved_columns   "minimum"     specifies which history columns of star 1 should be read
+    'description'                   ""            description text
+    'max_number_of_runs'            None          the maximum number of runs
+    'format'                        "hdf5"        file format; only :samp:`hdf5` is currently supported
+    'compression'                   "gzip9"       the compression (of the hdf5 file)
+    'history_DS_error'              None          the maximum error allowed when downsampling the history
+    'history_DS_exclude'            default list  the history columns to exclude from downsampling (default list = ["model_number", "age", "star_age"])
+    'profile_DS_error'              None          the maximum error allowed when downsampling the final profile
+    'profile_DS_interval'           None          the maximum change in an downsampled interval relative to the change from initial to final
+    'profile_DS_exclude'            default list  the profile columns to exclude from downsampling (default list = ["mass", "star_mass"])
+    'star1_history_saved_columns'   "minimum"     specifies which history columns of star 1 should be read
                                                   
                                                   if :samp:`all`, read all the columns in the MESA output
                                                   
@@ -84,19 +84,19 @@ The :samp:`PSyGrid` object has the following grid properties:
                                                   if a tuple of column names, read only those columns
                                                   
                                                   if a list of column names, read the default and those columns
-    star2_history_saved_columns   "minimum"     specifies which history columns of star 2 should be read (same options as star1_history_saved_columns)
-    binary_history_saved_columns  "minimum"     specifies which binary history columns should be read (same options as star1_history_saved_columns)
-    star1_profile_saved_columns   "minimum"     specifies which profile columns of star 1 should be read (same options as star1_history_saved_columns)
-    star2_profile_saved_columns   "minimum"     specifies which profile columns of star 2 should be read (same options as star1_history_saved_columns)
-    initial_value_columns         None          history columns from which to store initial values (currently not in use, instead all specified history columns are used as well as the abundances X, Y, and Z)
-    final_value_columns           None          history columns from which to store final values (currently not in use, instead all specified history columns are used as well as termination flags and for binaries the interpolation class)
-    start_at_RLO                  False         specifies whether to crop the history to start at RLO
-    stop_before_carbon_depletion  False         specifies whether to crop the history of massive stars (>100 Msun) to stop at 10% central carbon and after helium is depleted
-    binary                        True          specifies whether a grid evolved binaries; put :samp:`False` for single stars
-    eep                           None          path to directory with EEP files (for single stars only)
-    initial_RLO_fix               False         specifies whether the boundary of initial RLO should be determined to flag all systems below as initial RLO independent of the MESA output
-    He_core_fix                   True          specifies to ensure that the helium core is always larger or equal to the carbon-oxygen core
-    accept_missing_profile        False         specifies whether try to include all data from MESA runs without final profiles
+    'star2_history_saved_columns'   "minimum"     specifies which history columns of star 2 should be read (same options as star1_history_saved_columns)
+    'binary_history_saved_columns'  "minimum"     specifies which binary history columns should be read (same options as star1_history_saved_columns)
+    'star1_profile_saved_columns'   "minimum"     specifies which profile columns of star 1 should be read (same options as star1_history_saved_columns)
+    'star2_profile_saved_columns'   "minimum"     specifies which profile columns of star 2 should be read (same options as star1_history_saved_columns)
+    'initial_value_columns'         None          history columns from which to store initial values (currently not in use, instead all specified history columns are used as well as the abundances X, Y, and Z)
+    'final_value_columns'           None          history columns from which to store final values (currently not in use, instead all specified history columns are used as well as termination flags and for binaries the interpolation class)
+    'start_at_RLO'                  False         specifies whether to crop the history to start at RLO
+    'stop_before_carbon_depletion'  False         specifies whether to crop the history of massive stars (>100 Msun) to stop at 10% central carbon and after helium is depleted
+    'binary'                        True          specifies whether a grid evolved binaries; put :samp:`False` for single stars
+    'eep'                           None          path to directory with EEP files (for single stars only)
+    'initial_RLO_fix'               False         specifies whether the boundary of initial RLO should be determined to flag all systems below as initial RLO independent of the MESA output
+    'He_core_fix'                   True          specifies to ensure that the helium core is always larger or equal to the carbon-oxygen core
+    'accept_missing_profile'        False         specifies whether try to include all data from MESA runs without final profiles
     ==============================  ============  ===========
 
 You can read the MESA data into an existing :samp:`PSyGrid` object, which may
@@ -137,16 +137,16 @@ Contents of a `PSyGrid` object
 Print a `PSyGrid` object
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
-To check the content of the :samp:`PSyGrid` object you can simply print it:
+You can check the contents of the :samp:`PSyGrid` object with a print command:
 
 .. code-block:: python
 
     print(mygrid)
 
-This will provide a summary, which tell you
+This will provide a summary, which tell you:
 
 - to which hdf5 file it is connected
-- how many runs are in there and have
+- how many runs are in the grid and have
  
   - a binary history
   - a history of star 1
@@ -154,21 +154,20 @@ This will provide a summary, which tell you
   - a final profile of star 1
   - a final profile of star 2
    
-- the fields in the each of the histories/profiles of the last run
+- the fields in each of the histories/profiles of the last run
 - the fields of the initial and final values
 - information on the configuration
 - a shorthand list of the MESA directories (the locations of the data the runs
   where extracted from)
 
-To access single runs, it is important to know how many are there to avoid to
-call for a non existing one. Hence, you can simply get the number of runs via:
+To access single runs, it is important to know how many are there to avoid calling a nonexisting run. You can find the number of runs with:
 
 .. code-block:: python
 
     len(mygrid)
 
 .. note::
-    Alternatively you can request the length from the internal number stored in
+    Alternatively, you can request the length internally with
     :samp:`mygrid.n_runs`.
 
 
@@ -177,14 +176,13 @@ Accessing data in a `PSyGrid` object
 
 The first data you may want to check are the
 :ref:`grid properties <tab_grid_properties>`. You can get a list of the
-properties available for your :samp:`PSyGrid` object simply with
+properties available for your :samp:`PSyGrid` object with
 
 .. code-block:: python
 
     mygrid.config.keys()
 
-By providing one of the properties to :samp:`mygrid.config[{PROPERTY}]` you can
-access its value.
+You can access the value of any property "PROP" with :samp:`mygrid.config[{PROP}]`.
 
 Next, you can look at the initial and final values of the runs. All the values
 are available at :samp:`mygrid.initial_values` and :samp:`mygrid.final_values`,
