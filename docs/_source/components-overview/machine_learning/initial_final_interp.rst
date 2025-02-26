@@ -70,7 +70,7 @@ are optimized through Monte Carlo Cross Validation.
 9. ``c_key``: A string specifying by which class the interpolator should interpolate
 binaries. Only to be specified in the MCInterpolator case.
 
-For most applications specifying only the first four parameters is recommended.
+For most applications specifying only the first four parameters is recommended. Provided below is an example instantiation of the ``IFInterpolator`` class. Note that there are a total of six dictionaries corresponding to the six instances of the ``BaseIFInterpolator``.
 
 .. code-block:: python
 
