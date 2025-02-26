@@ -59,7 +59,7 @@ example to show the supported key words:
         GROUP = 'GL_S_Astro_POSYDON'
 
 The last one :samp:`GROUP` is a bit special. If it is set, ownership of all the files
-created by the pipeline will be assigned to :sampl:`GROUP`. This is especially helpful if more than one
+created by the pipeline will be assigned to :samp:`GROUP`. This is especially helpful if more than one
 user is making changes to the data set.
 
 General pipeline settings
