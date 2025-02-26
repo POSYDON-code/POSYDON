@@ -692,6 +692,8 @@ def copy_ini_file(grid_type, rerun_metallicity, rerun_type, destination,
         replace_text = "seth_dedt_energy_eqn-f1803afe400ed16a4fad47b0bad6abbf0965cae1"
     elif rerun_type == "dedt_hepulse":
         replace_text = "seth_dedt_hepulse-0274be9895480cae3aa2a4d14b056a2447d5921b"
+    elif rerun_type == "dedt_hepulse_for_v1":
+        replace_text = "seth_dedt_hepulse_for_v1-e778deae399075775e1afab7f3336d387b415f18"
     elif rerun_type == 'LBV_wind':
         replace_text = "matthias_LBV_wind-051343856f50dc5518abdf28904d62df4caacaff"
     elif rerun_type == 'LBV_wind+thermohaline_mixing':
@@ -885,7 +887,8 @@ def logic_rerun(grid, rerun_type):
           (rerun_type == 'no_age_limit+dedt_energy_eqn')):
         termination_flags = TF1_POOL_ERROR    
     elif ((rerun_type == 'dedt_hepulse')
-          or (rerun_type == 'LBV_wind+dedt_hepulse')):
+          or (rerun_type == 'LBV_wind+dedt_hepulse')
+          or (rerun_type == 'dedt_hepulse_for_v1')):
         termination_flags = TF1_POOL_ERROR
     elif rerun_type == 'LBV_wind':
         N_runs = len(grid)
