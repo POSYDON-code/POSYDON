@@ -92,7 +92,7 @@ Finally, we are ready to submit our jobs with:
 
 This shell script will submit the two slurm jobs
 :samp:`slurm_job_array_grid_submit.sh` and :samp:`cleanup.sh`. The first one
-will run the MESA simulations, where several runs will go in paralell. The
+will run the MESA simulations, where several runs will go in parallel. The
 second job, will run after all MESA runs are completed. It is doing some
 cleanup:
 
