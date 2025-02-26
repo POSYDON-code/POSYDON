@@ -83,7 +83,7 @@ For users interested in the latest features and developments, you can install PO
 
 1. **Clone the Repository**
 
-    In your terminal or command prompt (by default the repository will be placed in the current directory, hence please navigate to your desired location first):
+    In your terminal or command prompt (by default, the repository will be placed in the current directory, so navigate to your desired location before proceeding):
 
     .. code-block:: bash
 
