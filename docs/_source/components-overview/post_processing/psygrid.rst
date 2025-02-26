@@ -357,15 +357,15 @@ arguments :samp:`compression`, :samp:`description`, and :samp:`verbose`.
 
 .. table:: Arguments of the :samp:`join_grids` function
 
-    =================  =======  ===========
-    Argument           Default  Description
-    =================  =======  ===========
-    input_paths        None     list of the paths to the grid files to be joined
-    output_path        None     path for the new grid file containing the joined grid.
-    compression        'gzip9'  compression details
-    description        'joined' description of the new joined grid 
-    verbose            True     whether the function reports by printing to standard output.
-    =================  =======  ===========
+    =================  ========  ===========
+    Argument           Default   Description
+    =================  ========  ===========
+    input_paths        None      list of the paths to the grid files to be joined
+    output_path        None      path for the new grid file containing the joined grid.
+    compression        'gzip9'   compression details
+    description        'joined'  description of the new joined grid 
+    verbose            True      whether the function reports by printing to standard output.
+    =================  ========  ===========
 
 .. note::
     If there are common systems in two or more grids, this routine will only
