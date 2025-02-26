@@ -6,7 +6,7 @@ Pipeline steps
 
 The post-processing pipeline is divided into several steps which build 
 on each other. Each step will take a csv file as input. The name of this 
-file is used to tell the pipeline which step should be performed.
+file determines which pipeline step should be performed.
 
 The script to run the pipeline takes four arguments:
 
@@ -20,16 +20,16 @@ The script to run the pipeline takes four arguments:
 4. [int] Whether one wants verbose output (1) or not (0)
 
 .. note::
-    The current directory will be used as working directory, hence navigate to
-    your work directory first.
+    The current directory will be used as working directory, so navigate to
+    the correct location first.
 
 .. _pipeline_step1:
 
-Step 1: creating a `PSyGrid` object
+Step 1: Creating a `PSyGrid` object
 ----------------------------------
 
 First, we need to create the :samp:`PSygrid` object. To do so, the pipeline
-needs to now the directory which contains the MESA runs, the compression, the
+needs to know the directory which contains the MESA runs, the compression, the
 grid type, and whether to crop the history for some certain runs. Hence, the
 :samp:`step_1.csv` file should have those columns:
 
@@ -56,7 +56,7 @@ The currently supported compression types are:
 
 .. _pipeline_step2:
 
-Step 2: combining `PSyGrid` objects
+Step 2: Combining `PSyGrid` objects
 ----------------------------------
 
 Usually, the grids are split into batches or reruns are done. In those cases,
@@ -81,7 +81,7 @@ the column number (starting with 0). Here an example:
 
 .. _pipeline_step3:
 
-Step 3: calculating extra values from detailed data
+Step 3: Calculating extra values from detailed data
 --------------------------------------------------
 
 In this step we calculate extra quantities from the histories and profiles.
@@ -120,7 +120,7 @@ type:
 
 .. _pipeline_step4:
 
-Step 4: training of the interpolators
+Step 4: Training the interpolators
 ------------------------------------
 
 To get interpolated data from our grids, we train in this step an interpolator
@@ -151,7 +151,7 @@ starts at RLO), and finally, the name of the interpolator object.
 
 .. _pipeline_step9:
 
-Step 9: exporting the data set
+Step 9: Exporting the data set
 -----------------------------
 
 After we have a complete data set, we would like to export it to be used for
@@ -168,7 +168,7 @@ addressed by this step.
 
 .. _pipeline_stepR:
 
-Step R: exporting a rerun
+Step R: Exporting a rerun
 ------------------------
 
 Usually, a grid will not run well everywhere on the first go. So, there is a
