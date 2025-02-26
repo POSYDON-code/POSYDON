@@ -9,7 +9,7 @@ Frequently Asked Questions
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 1. **How do I start a basic population synthesis simulation with POSYDON?**
-    - Answer: Start with the :ref:`binary population synthesis guide <binary-pop-syn>` to learn how to run POSYDON.
+    Start with the :ref:`binary population synthesis guide <binary-pop-syn>` to learn how to run POSYDON.
 
 2. **I'm getting an error when using the** ``where`` **parameter in the** ``select`` **function**
 
@@ -25,10 +25,10 @@ Frequently Asked Questions
 
     .. code-block:: python
         
-        ValueError: f"The passed where expression S1_mass > 10 
+        ValueError: The passed where expression S1_mass > 10 
         contains an invalid variable reference. All of the variable references 
         must be a reference to an axis (e.g. ‘index’ or ‘columns’), or a data_column.
-        The currently defined references are: index, columns, state, event, step_names, S1_state, S2_state"
+        The currently defined references are: index, columns, state, event, step_names, S1_state, S2_state
 
 
 3. **How should I tune my memory usage for a population synthesis run?**
@@ -65,36 +65,33 @@ Frequently Asked Questions
     .. note::
         The processing time increases if you make the :code:`dump_rate` too low due to many I/O operations.
 
-5. **I am unable to open HDF5 files created by POSYDON. What should I do?**
-    
+5. **I am unable to open HDF5 files created by POSYDON. What should I do?**    
     If you're on a Mac, there might be an issue with the HDF5 installation.
     Make sure you have the :code:`hdf5` and :code:`pytables` packages installed through conda in your environment with :code:`conda install hdf5 pytables` before running POSYDON!
     Although they are dependencies of POSYDON, sometimes they're not installed correctly on Mac.
 
 6. **Are there any examples or tutorials available?**
-    - Answer: Yes, you can check our :ref:`roadmap <roadmap>` for tutorials related to different POSYDON components, including population synthesis, creating core datasets, and running your own MESA grids with POSYDON.
+    Yes, you can check our :ref:`roadmap <roadmap>` for tutorials related to different POSYDON components, including population synthesis, creating core datasets, and running your own MESA grids with POSYDON.
 
 7. **Can I run POSYDON on an HPC facility?**
-    - Answer: Absolutely! Refer to `our HPC guide <../tutorials-examples/population-synthesis/pop_syn.ipynb>`_ for detailed instructions on running POSYDON in an HPC environment.
+    Absolutely! Refer to `our HPC guide <../tutorials-examples/population-synthesis/pop_syn.ipynb>`_ for detailed instructions on running POSYDON in an HPC environment.
 
 8. **Help, I'm stuck! Where can I get support?**
-    - Please check `our email group <https://groups.google.com/g/posydon-users>`_ if your question hasn't been answered yet.
-    Otherwise, please email us at posydon-users [at] googlegroups.com 
+    Please check `our email group <https://groups.google.com/g/posydon-users>`_ if your question hasn't been answered yet.
+    Otherwise, please email us at posydon-users@googlegroups.com 
 
 9. **How can I stay updated with the latest features and updates?**
-    - Answer: You can regularly visit our `official website <https://posydon.org>`_ for news and updates. 
+    You can regularly visit our `official website <https://posydon.org>`_ for news and updates. 
 
 10. **I've come across a FAILED binary. What does this mean?**
-    - Answer: A FAILED binary is one that has encountered an error during the simulation due to the default flow and steps of POSYDON being unable to evolve them.
-    This can be due to a variety of reasons, for example:
+     A :code:`FAILED` binary has encountered an error during the simulation due to POSYDON being unable to evolve it. This can be due to a variety of reasons:
     
-    - The evolutionary state of the binary is not represented in the currently supported stellar evolution grids. 
-    For example, we do not have a grid for Roche lobe overflow between two helium stars.
-    - The binary has masses outside the grid range. For example, the HMS-HMS grid does not contain binaries with a secondary mass below 0.5.
-    - The binary could not be matched to single star or a binary due to a too large matching error.
+        -  The evolutionary state of the binary is not represented in the currently-supported stellar evolution grids. For example, we do not have a grid for Roche lobe overflow between two helium stars.
+        -  The binary has masses outside the grid range. For example, the HMS-HMS grid does not contain binaries with a secondary mass below 0.5.
+        -  The binary could not be matched to single star or a binary due to a too large matching error.
 
-10. **What approximations does POSYDON make?**
-    This is a complex question and the best location to look at would be the POSYDON papers: `Fragos et al. (2022) <https://ui.adsabs.harvard.edu/abs/2023ApJS..264...45F/abstract>`_ and `Andrews et al. (submitted) <https://ui.adsabs.harvard.edu/abs/2024arXiv241102376A/abstract>`_.
+11. **What approximations does POSYDON make?**
+     This is a complex question and the best answer is provided in the POSYDON papers: `Fragos et al. (2023) <https://ui.adsabs.harvard.edu/abs/2023ApJS..264...45F/abstract>`_ and `Andrews et al. (submitted) <https://ui.adsabs.harvard.edu/abs/2024arXiv241102376A/abstract>`_.
 
 
 Additional Resources
@@ -109,6 +106,6 @@ Additional Resources
 Still Have Questions?
 ~~~~~~~~~~~~~~~~~~~~~
 
-If your query remains unanswered, we're here to help! Reach out to our community through the :ref:`support channels <contact_info>` or consider checking our :ref:`general installation FAQ <installation-issues>` for non-usage related questions.
+If your question remains unanswered, we're here to help! Reach out to our community through the :ref:`support channels <contact_info>` or consider checking our :ref:`general installation FAQ <installation-issues>` for non-usage related questions.
 
-Your feedback helps us improve. If you think a common question should be added here, don't hesitate to suggest it!
+Your feedback helps us improve the code and documentation. If you think a common question should be added here, don't hesitate to suggest it!
