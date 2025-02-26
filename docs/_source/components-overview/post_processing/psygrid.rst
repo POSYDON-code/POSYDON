@@ -25,9 +25,9 @@ You can instantiate a new :samp:`PSyGrid` object with
 
 This calls the initializer, which can take two optional arguments
 
-- :samp:`filepath`: it is the path to the associated h5 file; if the file
-  exists the `PSyGrid` object in there will be loaded
-- :samp:`verbose`: it is a boolean indicating whether detailed output should be
+- :samp:`filepath`: this is the path to the associated h5 file; if the file
+  exists, the initializer will load the contained `PSyGrid` object
+- :samp:`verbose`: this is a boolean indicating whether detailed output should be
   given when calling functions of the :samp:`PSyGrid` object
 
 
@@ -35,9 +35,9 @@ Creating a `PSyGrid` object
 ---------------------------
 
 The :samp:`create` function of a :samp:`PSyGrid` object will read MESA output
-data into the :samp:`PSyGrid` object. Thus it has a required argument and
-several optional arguments. The required one is :samp:`MESA_grid_path`, which
-is the path to the directory, where the MESA runs are in.
+data into the :samp:`PSyGrid` object. It has a required argument, :samp:`MESA_grid_path`, 
+which is the path to the directory containing the MESA runs. There are several optional 
+arguments as well:
 
 .. table:: Optional arguments of the :samp:`PSyGrid` creation
     :widths: 18,10,72
@@ -45,17 +45,19 @@ is the path to the directory, where the MESA runs are in.
     ===============  =========  ===========
     Argument         Default    Description
     ===============  =========  ===========
-    psygrid_path     None       the path to the associated h5 file (it needs to be given if none was specified during initialization)
-    overwrite        False      if :samp:`True` overwrite a potentially already existing file
-    slim             False      if :samp:`True` only initial and final values as well as the meta data will be stored
-    warn             "end"      if "normal" warnings are printed, when they arise
+    psygrid_path     None       the path to the associated h5 file (required if none was specified during initialization)
+    overwrite        False      if :samp:`True`, overwrite any file that exists
+    slim             False      if :samp:`True`, only store initial/final values and metadata
+    warn             "end"      if :samp:`normal`, warnings are printed, when they arise
                               
-                                if "end" all warnings are printed at the end
+                                if :samp:`end`, all warnings are printed at the end
                               
-                                if "suppress" no warnings are printed
-    fmt              "posydon"  grid format; only "posydon" is currently supported
+                                if :samp:`suppress`, no warnings are printed
+    fmt              "posydon"  grid format; only :samp:`posydon` is currently supported
     \*\*grid_kwargs             further grid properties can be specified in a dictionary
     ===============  =========  ===========
+
+The :samp:`PSyGrid` object has the following grid properties: 
 
 .. _tab_grid_properties:
 
@@ -64,47 +66,47 @@ is the path to the directory, where the MESA runs are in.
     ==============================  ============  ===========
     Property                        Default       Description
     ==============================  ============  ===========
-    'description'                   ""            a description text
-    'max_number_of_runs'            None          the maximum number of runs
-    'format'                        "hdf5"        file format; only "hdf5" is currently supported
-    'compression'                   "gzip9"       the compression (of the hdf5 file)
-    'history_DS_error'              None          the maximum error allowed when downsampling the history
-    'history_DS_exclude'            default list  the history columns to exclude from downsampling (default list: ["model_number", "age", "star_age"])
-    'profile_DS_error'              None          the maximum error allowed when downsampling the final profile
-    'profile_DS_interval'           None          the maximum change in an downsampled interval relative to the change from initial to final
-    'profile_DS_exclude'            default list  the profile columns to exclude from downsampling (default list: ["mass", "star_mass"])
-    'star1_history_saved_columns'   "minimum"     specifies which history columns of star 1 should be read
+    description                   ""            description text
+    max_number_of_runs            None          the maximum number of runs
+    format                        "hdf5"        file format; only :samp:`hdf5` is currently supported
+    compression                   "gzip9"       the compression (of the hdf5 file)
+    history_DS_error              None          the maximum error allowed when downsampling the history
+    history_DS_exclude            default list  the history columns to exclude from downsampling (default list = ["model_number", "age", "star_age"])
+    profile_DS_error              None          the maximum error allowed when downsampling the final profile
+    profile_DS_interval           None          the maximum change in an downsampled interval relative to the change from initial to final
+    profile_DS_exclude            default list  the profile columns to exclude from downsampling (default list = ["mass", "star_mass"])
+    star1_history_saved_columns   "minimum"     specifies which history columns of star 1 should be read
                                                   
-                                                  if "all" read all the columns in the MESA output
+                                                  if :samp:`all`, read all the columns in the MESA output
                                                   
-                                                  if "minimum" use the default
+                                                  if :samp:`minimum`, use the default
                                                   
-                                                  if a tuple of column names read only those columns
+                                                  if a tuple of column names, read only those columns
                                                   
-                                                  if a list of column names read the default and those columns
-    'star2_history_saved_columns'   "minimum"     specifies which history columns of star 2 should be read having the same options as 'star1_history_saved_columns'
-    'binary_history_saved_columns'  "minimum"     specifies which binary history columns should be read having the same options as 'star1_history_saved_columns'
-    'star1_profile_saved_columns'   "minimum"     specifies which profile columns of star 1 should be read having the same options as 'star1_history_saved_columns'
-    'star2_profile_saved_columns'   "minimum"     specifies which profile columns of star 2 should be read having the same options as 'star1_history_saved_columns'
-    'initial_value_columns'         None          history columns to store initial values from (currently not in use, instead all specified history columns are used and additionally the abundances X, Y, and Z)
-    'final_value_columns'           None          history columns to store final values from (currently not in use, instead all specified history columns are used and additionally termination flags and for binaries the interpolation class)
-    'start_at_RLO'                  False         specifies whether to crop the history to start at RLO
-    'stop_before_carbon_depletion'  False         specifies whether to crop the history of massive stars (>100 Msun) to stop at 10% central carbon and after helium is depleted
-    'binary'                        True          specifies whether a grid evolved binaries; put :samp:`False` for single stars
-    'eep'                           None          path to directory with EEP files (for single stars only)
-    'initial_RLO_fix'               False         specifies whether the boundary of initial RLO should be determined to flag all systems below as initial RLO independent of the MESA output
-    'He_core_fix'                   True          specifies to ensure that the He core is always larger or equal to the carbon-oxygen core
-    'accept_missing_profile'        False         specifies whether try to include all data from MESA runs without final profiles
+                                                  if a list of column names, read the default and those columns
+    star2_history_saved_columns   "minimum"     specifies which history columns of star 2 should be read (same options as star1_history_saved_columns)
+    binary_history_saved_columns  "minimum"     specifies which binary history columns should be read (same options as star1_history_saved_columns)
+    star1_profile_saved_columns   "minimum"     specifies which profile columns of star 1 should be read (same options as star1_history_saved_columns)
+    star2_profile_saved_columns   "minimum"     specifies which profile columns of star 2 should be read (same options as star1_history_saved_columns)
+    initial_value_columns         None          history columns from which to store initial values (currently not in use, instead all specified history columns are used as well as the abundances X, Y, and Z)
+    final_value_columns           None          history columns from which to store final values (currently not in use, instead all specified history columns are used as well as termination flags and for binaries the interpolation class)
+    start_at_RLO                  False         specifies whether to crop the history to start at RLO
+    stop_before_carbon_depletion  False         specifies whether to crop the history of massive stars (>100 Msun) to stop at 10% central carbon and after helium is depleted
+    binary                        True          specifies whether a grid evolved binaries; put :samp:`False` for single stars
+    eep                           None          path to directory with EEP files (for single stars only)
+    initial_RLO_fix               False         specifies whether the boundary of initial RLO should be determined to flag all systems below as initial RLO independent of the MESA output
+    He_core_fix                   True          specifies to ensure that the helium core is always larger or equal to the carbon-oxygen core
+    accept_missing_profile        False         specifies whether try to include all data from MESA runs without final profiles
     ==============================  ============  ===========
 
 You can read the MESA data into an existing :samp:`PSyGrid` object, which may
-overwrites data:
+overwrite data:
 
 .. code-block:: python
 
     mygrid.create(MESA_grid_path=".")
 
-or combine the initialization with the creation:
+Alternatively, you can combine the initialization with creation of the grid based on MESA data:
 
 .. code-block:: python
 
@@ -115,13 +117,13 @@ Loading a `PSyGrid` object
 --------------------------
 
 You can load an existing h5 file (e.g. "myPSyGrid.h5") into a :samp:`PSyGrid`
-object by
+object:
 
 .. code-block:: python
 
     mygrid.load(filepath="myPSyGrid.h5")
 
-It is more convenient to load the file directly when initializing the
+It may be more convenient to load the file directly when initializing the
 :samp:`PSyGrid` object
 
 .. code-block:: python
