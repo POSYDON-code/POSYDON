@@ -78,7 +78,7 @@ Frequently Asked Questions
 
 8. **Help, I'm stuck! Where can I get support?**
     Please check `our email group <https://groups.google.com/g/posydon-users>`_ if your question hasn't been answered yet.
-    Otherwise, please email us at posydon-users@googlegroups.com 
+    Otherwise, please email us at posydon-users [at] googlegroups.com 
 
 9. **How can I stay updated with the latest features and updates?**
     You can regularly visit our `official website <https://posydon.org>`_ for news and updates. 
