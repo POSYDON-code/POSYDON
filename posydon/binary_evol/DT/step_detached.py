@@ -846,17 +846,18 @@ class detached_step:
 
         if self.verbose:
             if not np.isnan(initials[0]):
-                val_names = ["  ", "mass", "log_R", "he_core_mass", "center_he4", "surface_he4", 
-                             "surface_h1", "center_c12"]
+                val_names = ["  ", "mass", "log_R", "center_h1", "surface_h1", "he_core_mass", "center_he4", "surface_he4", 
+                             "center_c12"]
 
                 initial_vals = [
                     "initial values",
                     f'{star.mass:.3f}', 
                     f'{star.log_R:.3f}', 
+                    f'{star.center_h1:.3f}', 
+                    f'{star.surface_h1:.4f}',
                     f'{star.he_core_mass:.3f}',
                     f'{star.center_he4:.4f}', 
-                    f'{star.surface_he4:.4f}', 
-                    f'{star.surface_h1:.4f}', 
+                    f'{star.surface_he4:.4f}',  
                     f'{star.center_c12:.4f}'
                     ]
 
@@ -864,10 +865,11 @@ class detached_step:
                     "matched values",
                     f'{self.get_track_val("mass", htrack, *best_sol.x):.3f}', 
                     f'{self.get_track_val("log_R", htrack, *best_sol.x):.3f}',
+                    f'{self.get_track_val("center_h1", htrack, *best_sol.x):.3f}',
+                    f'{self.get_track_val("surface_h1", htrack, *best_sol.x):.4f}',
                     f'{self.get_track_val("he_core_mass", htrack, *best_sol.x):.3f}',
                     f'{self.get_track_val("center_he4", htrack, *best_sol.x):.4f}',
-                    f'{self.get_track_val("surface_he4", htrack, *best_sol.x):.4f}',
-                    f'{self.get_track_val("surface_h1", htrack, *best_sol.x):.4f}',
+                    f'{self.get_track_val("surface_he4", htrack, *best_sol.x):.4f}',    
                     f'{self.get_track_val("center_c12", htrack, *best_sol.x):.4f}'
                     ]
                 
@@ -875,7 +877,7 @@ class detached_step:
 
                 print("\nMatching completed for", star.state, "star!\n")
                 for row in output_table:
-                    print("{:>14}  {:>5}  {:>5}  {:>12}  {:>10}  {:>12}  {:>10}  {:>10}".format(*row))
+                    print("{:>14}  {:>5}  {:>5}  {:>9}  {:>10}  {:>12}  {:>10}  {:>11}  {:>10}".format(*row))
             
             else:
                 print(
