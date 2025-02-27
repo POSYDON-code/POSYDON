@@ -755,7 +755,7 @@ class detached_step:
                 sol = minimize(sq_diff_function, x0, method="Powell")
 
                 ## if alternative matching has a better solution, make it the new best solution
-                if np.abs(sol.fun) < np.abs(best_sol.fun):
+                if (np.abs(sol.fun) < np.abs(best_sol.fun) and sol.success):
                     best_sol = sol
 
             # 2nd attempt: use alternative matching parameters
@@ -781,7 +781,7 @@ class detached_step:
                 x0 = get_root0(MESA_labels, posydon_attributes, htrack, rs=rs)
                 sol = minimize(sq_diff_function, x0, method="TNC", bounds=bnds)
 
-                if np.abs(sol.fun) < np.abs(best_sol.fun):
+                if (np.abs(sol.fun) < np.abs(best_sol.fun) and sol.success):
                     best_sol = sol
 
             # 3rd attempt: match an He-star with an H-rich grid, or vice versa (not applicable for HMS stars)
@@ -820,7 +820,7 @@ class detached_step:
 
                     try:
                         sol = minimize(sq_diff_function, x0, method="TNC", bounds=bnds)
-                        if np.abs(sol.fun) < np.abs(best_sol.fun):
+                        if (np.abs(sol.fun) < np.abs(best_sol.fun) and sol.success):
                             best_sol = sol
 
                         if self.verbose:
@@ -838,7 +838,7 @@ class detached_step:
                           np.abs(best_sol.fun), ">", tolerance_matching_integration_hard)
                 initials = (np.nan, np.nan)
                 
-            elif np.abs(best_sol.fun) < tolerance_matching_integration_hard:
+            else:
                 if self.verbose:
                     print("\nFinal matching result is considered successful with best tolerance "
                         f'{np.abs(best_sol.fun):.8f}', "<", tolerance_matching_integration_hard)
