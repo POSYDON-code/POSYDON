@@ -16,7 +16,7 @@ Common Installation Issues
 
 2. **Failed to Set Environment Variables**:
     - **Description**: After installation, you might forget to set the ``PATH_TO_POSYDON`` and ``PATH_TO_POSYDON_DATA`` environment variables.
-    - **Solution**: Refer back to the [installation guide](installation-guide) to ensure all post-installation steps are followed.
+    - **Solution**: Refer back to the :ref:`installation guide <installation-guide>` to ensure all post-installation steps are followed.
 
 3. **Insufficient Storage Space**:
     - **Description**: POSYDON requires around 40GB of free storage space for the lite MESA simulation library and related files.
