@@ -33,18 +33,18 @@ To follow the next step of the tutorial, you will need to have MESA installed on
 I. Running your first MESA simulation using POSYDON
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Immerse yourself in our Jupyter Notebook which guides you through our dedicated MESA submission API, showcasing how to simulate a HMS-HMS binary systems.
+The following Jupyter Notebook guides you through our dedicated MESA submission API, showcasing how to simulate a HMS-HMS binary systems.
 
-The first version of this tutorial showcases how to run the simulation using SLURM on HPC. 
+The first version of this tutorial showcases how to run the simulation using SLURM on HPC.
 
 .. toctree::
-    
+
     1_hms_hms
 
 In case you want to run the simulation locally, you can follow the second version of this tutorial.
 
 .. toctree::
-   
+
     laptop
 
 To gather more information about the MESA simulation submission API ini file, please refer to the :ref:`MESA Grids API <mesa-grids-api>` section of the documentation.
@@ -55,7 +55,7 @@ II. Running your first MESA grid simulation using POSYDON
 The following tutorial will show you how to run a grid of MESA simulations using POSYDON. The grid will consist of 100 simulations of HMS-HMS binary systems at 0.1Zsun metallicity in the mass ratio slice 0.7 each with different primary masses and orbital periods. The simulations will be run on a HPC using SLURM.
 
 .. toctree::
-    
+
     running_a_grid
 
 Now that you have run your first grid, you can process, visualize and explore the results using the POSYDON post-processing pipeline API. TODO: link
@@ -66,7 +66,7 @@ III. Running single stars with POSYDON
 This tutorials shows how to run a grid of single star simulations using POSYDON.
 
 .. toctree::
-   
+
    running_single_hms
 
 We show how to export EEPs and make a PSyGrid object in this tutorial TODO: link the advanced tutorial of step 2.
@@ -82,7 +82,7 @@ Step-by-step guide on how to leverage our MESA simulation submission API for cre
 Dive deeper into advanced techniques for grid creation, by layering MESA and POSYDON default inlist parameters and customizing your inlists variables on top to your needs.
 
 .. toctree::
-    
+
     notebook: Creating and Customizing MESA Grids layer by layer
 
 Running a dynamically sampled grid of MESA simulations
@@ -95,7 +95,7 @@ Running a dynamically sampled grid of MESA simulations
 Provided a sparsed, rectilinearly sampled MESA grid, POSYDON allows to dynamically sample the parameter space to henence the coverage of the paramter space to imporve classification and interpolation accuracy.
 
 .. toctree::
-   
+
    dynamic
 
 
@@ -103,4 +103,3 @@ Support & Feedback
 ------------------
 
 Encountered obstacles or have questions? Ensure you consult our [FAQ](link-to-FAQ) or drop by the [contact-information.rst](contact-information.rst) page.
-
