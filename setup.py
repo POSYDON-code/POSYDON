@@ -123,6 +123,8 @@ LICENSE = "GPLv3+"
 DESCRIPTION = "POSYDON the Next Generation of Population Synthesis"
 GITHUBURL = "https://github.com/POSYDON-code/POSYDON"
 
+# Additional included files via include_package_data are defined in MANIFEST.in
+
 setup(
     name=DISTNAME,
     provides=[PACKAGENAME],
