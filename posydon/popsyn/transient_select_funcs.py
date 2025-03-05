@@ -12,7 +12,7 @@ from posydon.utils.posydonwarning import Pwarn
 # We should alter the code to remove these warnings, but for now we suppress them
 warnings.simplefilter(action='ignore', category=pd.errors.PerformanceWarning)
 
-PATH_TO_PDET_GRID = os.path.join(PATH_TO_POSYDON_DATA, 'POSYDON_data/selection_effects/pdet_grid.hdf5')
+PATH_TO_PDET_GRID = os.path.join(PATH_TO_POSYDON_DATA, 'selection_effects/pdet_grid.hdf5')
 
 def GRB_selection(history_chunk, oneline_chunk, formation_channels_chunk=None, S1_S2='S1'):
     """A GRB selection function to create a transient population of LGRBs.

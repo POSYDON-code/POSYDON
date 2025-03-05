@@ -35,7 +35,8 @@ import scipy as sp
 import copy
 import pandas as pd
 
-from posydon.utils.data_download import PATH_TO_POSYDON_DATA, data_download
+from posydon.config import PATH_TO_POSYDON_DATA
+from posydon.utils.data_download import data_download
 import posydon.utils.constants as const
 from posydon.utils.common_functions import (is_number, CO_radius,
     orbital_period_from_separation, inspiral_timescale_from_separation,
@@ -450,6 +451,9 @@ class StepSN(object):
             binary.event = "CC2"
         elif state1 in STAR_STATES_C_DEPLETION and state2 in STAR_STATES_CO:
             binary.event = "CC1"
+
+        if self.verbose:
+            print(f"End of step SN:\n", binary)
 
     def check(self):
         """Check the internal integrity and the values of the parameters."""
