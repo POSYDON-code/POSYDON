@@ -980,6 +980,8 @@ This dictionary contains the parameters that will be saved in the output of the 
       * ``'lambda_CE_30cent'``: The lambda parameter for common envelope evolution (30%).
       * ``'lambda_CE_pure_He_star_10cent'``: The lambda parameter for common envelope evolution for pure helium stars (10%).
       * ``'profile [not currently supported]'``: The profile (not currently supported).
+      * ``'total_mass_h1'``: The total Hydrogen mass.
+      * ``'total_mass_he4'``: The total Helium mass.
     - .. code:: python
 
         ['state',
