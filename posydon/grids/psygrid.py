@@ -266,7 +266,7 @@ DEFAULT_STAR_HISTORY_COLS = [
     "radius_conv_reg_fortides",
     "lambda_CE_1cent", "lambda_CE_10cent", "lambda_CE_30cent",
     "co_core_mass", "co_core_radius", "lambda_CE_pure_He_star_10cent",
-    "log_L_div_Ledd"
+    "log_L_div_Ledd", "total_mass_h1", "total_mass_he4"
 ]
 
 DEFAULT_SINGLE_HISTORY_COLS = (["model_number", "star_age", "star_mass"]
@@ -326,7 +326,7 @@ EXTRA_COLS_DS_EXCLUDE = [
     't_sync_conv_1', 't_sync_conv_2', 't_sync_rad_1', 't_sync_rad_2',
     'thickness_conv_reg_fortides', 'trap_radius', 'x_mass_fraction_H',
     'xfer_fraction', 'y_mass_fraction_He', 'z_mass_fraction_metals',
-    'log_L_div_Ledd'
+    'log_L_div_Ledd', 'total_mass_h1', 'total_mass_he4'
 ]
 
 

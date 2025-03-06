@@ -154,6 +154,8 @@ DEFAULT_TRANSLATION = {
     "t_sync_conv_2": "t_sync_conv_2",
     "mass_transfer_case": None,
     "nearest_neighbour_distance": None,
+    "total_mass_h1": "total_mass_h1",
+    "total_mass_he4": "total_mass_he4",
 }
 
 
@@ -207,7 +209,9 @@ DEFAULT_TRANSLATED_KEYS = (
     'lambda_CE_10cent',
     'lambda_CE_30cent',
     'lambda_CE_pure_He_star_10cent',
-    'center_gamma'
+    'center_gamma',
+    'total_mass_h1',
+    'total_mass_he4'
 )
 
 
