@@ -58,8 +58,8 @@ orbital period and masses.
 As for the .ini file, you can copy over the `example
 <https://github.com/POSYDON-code/POSYDON/blob/development/grid_params/grid_params.ini>`_
 from the :ref:`inifile` page, which provides a more detailed description of all
-the entries. **Make sure to carefully go through each of the separate entries and
-adjust them for your particular needs** . Place that .ini file (which we have
+the entries. Make sure to carefully go through each of the separate entries and
+adjust them for your particular needs. Place that .ini file (which we have
 named `example_grid.ini`) in the example_grid directory.
 
 Now, with our `grid.csv` and `example_grid.ini` files ready to go, we use a
