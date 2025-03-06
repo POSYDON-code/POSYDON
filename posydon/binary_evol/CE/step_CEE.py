@@ -511,7 +511,7 @@ class StepCEE(object):
             ebind_i = (-const.standard_cgrav / lambda1_CE
                        * (m1_i * const.Msun * (m1_i - mc1_i) * const.Msun)
                        / (radius1 * const.Rsun))
-        if (double_CE and (not pd.isna(lambda2_CE))):
+        if (double_CE and pd.notna(lambda2_CE)):
             ebind_i += (-const.standard_cgrav / lambda2_CE
                         * (m2_i * const.Msun * (m2_i - mc2_i) * const.Msun)
                         / (radius2 * const.Rsun))

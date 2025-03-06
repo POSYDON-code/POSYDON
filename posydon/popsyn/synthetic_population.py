@@ -1517,7 +1517,7 @@ class Population(PopulationIO):
             )
             events = self.history.select(start=previous, stop=end, columns=["event"])
 
-            mask = ~pd.isna(interp_class_HMS_HMS["interp_class_HMS_HMS"].values)
+            mask = pd.notna(interp_class_HMS_HMS["interp_class_HMS_HMS"].values)
             interp_class_HMS_HMS.loc[mask, "interp_class_HMS_HMS"] = (
                 interp_class_HMS_HMS[mask]
                 .apply(lambda x: HMS_HMS_event_dict[x["interp_class_HMS_HMS"]], axis=1)

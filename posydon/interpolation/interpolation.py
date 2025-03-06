@@ -8,6 +8,7 @@ __authors__ = [
 
 import pickle
 import numpy as np
+import pandas as pd
 from sklearn.neighbors import NearestNeighbors
 from .data_scaling import DataScaler
 from posydon.grids.psygrid import PSyGrid
@@ -100,9 +101,9 @@ class psyTrackInterp:
         # mask out binaries with any nan value
         # mask = np.logical_and(self.grid.final_values['interpolation_class']
         #                       != 'not_converged',
-        # np.invert([np.isnan(XTn)[x,:].any() for x in range(XTn.shape[0])]))
+        # np.invert([pd.isna(XTn)[x,:].any() for x in range(XTn.shape[0])]))
         mask = (self.grid.final_values['interpolation_class']
-                != 'not_converged') & ~np.isnan(np.sum(XT, axis=1))
+                != 'not_converged') & pd.notna(np.sum(XT, axis=1))
         self.valid_ind = np.arange(XT.shape[0])[mask]
 
         if self.method == 'NearestNeighbor':
@@ -602,7 +603,7 @@ class GRIDInterpolator():
                 self.load_grid(mass_low)
                 kvalue_low = self.grid_final_values[mass_low][key]
 
-            while (kvalue_low is None or np.isnan(kvalue_low)):
+            while pd.isna(kvalue_low):
                 # escape if no lower mass is available
                 if np.sum(mass_low > self.grid_mass) == 0:
                     break
@@ -619,7 +620,7 @@ class GRIDInterpolator():
                 self.load_grid(mass_high)
                 kvalue_high = self.grid_final_values[mass_high][key]
 
-            while (kvalue_high is None or np.isnan(kvalue_high)):
+            while pd.isna(kvalue_high):
                 # escape if no higher mass is available
                 if np.sum(mass_high < self.grid_mass) == 0:
                     break

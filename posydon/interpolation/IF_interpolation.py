@@ -180,6 +180,7 @@ from posydon.interpolation.data_scaling import DataScaler
 from posydon.utils.posydonwarning import Pwarn
 # Maths
 import numpy as np
+import pandas as pd
 # Machine Learning
 from scipy.interpolate import LinearNDInterpolator
 from sklearn.neighbors import KNeighborsRegressor
@@ -458,13 +459,13 @@ class BaseIFInterpolator:
                     key for key in grid.final_values.dtype.names
                     if key != "model_number"
                     and (type(grid.final_values[key][0]) != np.str_)
-                    and any(~np.isnan(grid.final_values[key]))
+                    and any(pd.notna(grid.final_values[key]))
                 ]
             if self.out_nan_keys is None:
                 self.out_nan_keys = [
                     key for key in grid.final_values.dtype.names
                     if type(grid.final_values[key][0]) != np.str_
-                    and all(np.isnan(grid.final_values[key]))
+                    and all(pd.isna(grid.final_values[key]))
                 ]
 
             self.constraints = find_constraints_to_apply(self.out_keys)
@@ -489,7 +490,7 @@ class BaseIFInterpolator:
                 print("\nFilling missing values (nans) with 1NN")
                 self._fillNans(grid.final_values[self.c_key])
             elif self.interp_method == '1NN':
-                self.YT[np.isnan(self.YT)] = -100
+                self.YT[pd.isna(self.YT)] = -100
 
             if (self.in_scaling is None) or (self.out_scaling is None):
                 if self.interp_method == '1NN':
@@ -606,7 +607,7 @@ class BaseIFInterpolator:
             print(f"Discarded {np.sum(which)} binaries with "
                   f"interpolation_class = [{flag}]")
 
-        which = np.isnan(np.sum(X, axis=1))
+        which = pd.isna(np.sum(X, axis=1))
         valid[which] = -1
         print(f"Discarded {np.sum(which)} binaries with nans in input values.")
         for i, flag in enumerate(self.valid_classes):
@@ -861,7 +862,7 @@ class BaseIFInterpolator:
         m1 = grid.initial_values['star_1_mass'].copy()
         m2 = grid.initial_values['star_2_mass'].copy()
         # Make sure nans do not affect
-        wnan = np.isnan(m1) | np.isnan(m2)
+        wnan = pd.isna(m1) | pd.isna(m2)
         m1, m2 = m1[~wnan], m2[~wnan]
 
         tol = 1
@@ -982,7 +983,7 @@ class BaseIFInterpolator:
 
             out_scaling = []
             for i in range(self.n_out):
-                if where_min[i] < r or np.isnan(where_min[i]):
+                if where_min[i] < r or pd.isna(where_min[i]):
                     out_scaling.append(out_scalings[0][i])
                 else:
                     out_scaling.append(out_scalings[1][i])
@@ -1006,7 +1007,7 @@ class BaseIFInterpolator:
     def _fillNans(self, ic):
         """Fill nan values i numerical magnitudes with 1NN."""
         for i in range(self.n_out):
-            wnan = np.isnan(self.YT[:, i]) | np.isinf(self.YT[:, i])
+            wnan = pd.isna(self.YT[:, i]) | np.isinf(self.YT[:, i])
             if any(np.isinf(self.YT[:, i])):
                 print(f"inftys: {np.sum(np.isinf(self.YT[:, i]))}, "
                       f"{self.out_keys[i]}")
@@ -1155,7 +1156,7 @@ class LinInterpolator(Interpolator):
         super().predict(Xt)
 
         Ypred = self.interpolator[0](Xt)
-        wnan = np.isnan(Ypred[:, 0])
+        wnan = pd.isna(Ypred[:, 0])
         # 1NN interpolation for binaries out of hull
         if np.any(wnan):
             Ypred[wnan, :] = self.interpolator[1].predict(Xt[wnan, :])
@@ -1516,7 +1517,7 @@ class MatrixScaler:
         self.scalers = []
         for i in range(self.N):
             self.scalers.append(DataScaler())
-            which = ~np.isnan(XT[:, i])
+            which = pd.notna(XT[:, i])
             self.scalers[i].fit(XT[which, i], method=norms[i])
 
     def normalize(self, X):
@@ -1802,7 +1803,7 @@ def analize_nans(out_keys, YT, valid):
     for i, key in enumerate(out_keys):
         n = []
         for v in range(4):
-            n.append(np.sum(np.isnan(YT[valid == v, i])))
+            n.append(np.sum(pd.isna(YT[valid == v, i])))
         if np.sum(np.array(n)) > 0:
             print(f"[i_MT] = {n[0]:5d}, [no_MT] = {n[1]:5d}, "
                   f"[st_MT] = {n[2]:5d}, [u_MT] = {n[3]:5d} : {i:3d} {key}")
