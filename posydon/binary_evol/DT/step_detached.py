@@ -847,7 +847,7 @@ class detached_step:
                 initials = best_sol.x
 
         if self.verbose:
-            if not np.isnan(initials[0]):
+            if pd.notna(initials[0]):
                 val_names = ["  ", "mass", "log_R", "center_h1", "surface_h1", "he_core_mass", "center_he4", "surface_he4", 
                              "center_c12"]
 
@@ -1165,8 +1165,8 @@ class detached_step:
 
             if (star.log_total_angular_momentum is not None
                     and star.total_moment_of_inertia is not None
-                    and not np.isnan(star.log_total_angular_momentum)
-                    and not np.isnan(star.total_moment_of_inertia)):
+                    and pd.notna(star.log_total_angular_momentum)
+                    and pd.notna(star.total_moment_of_inertia)):
                 
                 # the last factor converts rad/s to rad/yr
                 omega_in_rad_per_year = (
@@ -1180,17 +1180,16 @@ class detached_step:
                 # (although the critical rotation should be improved to
                 # take into account radiation pressure)
 
-                if (star.surf_avg_omega is not None and not np.isnan(star.surf_avg_omega)):
+                if pd.notna(star.surf_avg_omega):
 
                     if self.verbose:
                         print("calculating initial omega using surf_avg_omega")
 
                     omega_in_rad_per_year = star.surf_avg_omega * const.secyer                    
                         
-                elif (star.surf_avg_omega_div_omega_crit is not None
-                        and not np.isnan(star.surf_avg_omega_div_omega_crit)):
+                elif pd.notna(star.surf_avg_omega_div_omega_crit):
                     
-                    if (star.log_R is not None and not np.isnan(star.log_R)):
+                    if pd.notna(star.log_R):
                         omega_in_rad_per_year = (
                             star.surf_avg_omega_div_omega_crit * np.sqrt(
                                 const.standard_cgrav * star.mass * const.msol
@@ -2120,9 +2119,9 @@ def diffeq(
         f5 = 1 + 3 * e ** 2 + (3 / 8) * e ** 4
 
         # equilibrium timecale
-        if ((M_env_sec != 0.0 and not np.isnan(M_env_sec))
-                and (DR_env_sec != 0.0 and not np.isnan(DR_env_sec)) and (
-                    Renv_middle_sec != 0.0 and not np.isnan(Renv_middle_sec))):
+        if ((pd.notna(M_env_sec) and M_env_sec != 0.0)
+                and (pd.notna(DR_env_sec) and DR_env_sec != 0.0)
+                and (pd.notna(Renv_middle_sec) and Renv_middle_sec != 0.0)):
             # eq. (31) of Hurley et al. 2002, generalized for convective layers
             # not on surface too
             tau_conv_sec = 0.431 * ((M_env_sec * DR_env_sec * Renv_middle_sec
@@ -2132,9 +2131,9 @@ def diffeq(
                 print("something wrong with M_env/DR_env/Renv_middle",
                       M_env_sec, DR_env_sec, Renv_middle_sec)
             tau_conv_sec = 1.0e99
-        if ((M_env_pri != 0.0 and not np.isnan(M_env_pri))
-                and (DR_env_pri != 0.0 and not np.isnan(DR_env_pri)) and (
-                    Renv_middle_pri != 0.0 and not np.isnan(Renv_middle_pri))):
+        if ((pd.notna(M_env_pri) and M_env_pri != 0.0)
+                and (pd.notna(DR_env_pri) and DR_env_pri != 0.0)
+                and (pd.notna(Renv_middle_pri) and Renv_middle_pri != 0.0)):
             # eq. (31) of Hurley et al. 2002, generalized for convective layers
             # not on surface too
             tau_conv_pri = 0.431 * ((M_env_pri * DR_env_pri * Renv_middle_pri

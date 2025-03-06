@@ -2126,12 +2126,12 @@ def period_change_stable_MT(period_i, Mdon_i, Mdon_f, Macc_i,
 def linear_interpolation_between_two_cells(array_y, array_x, x_target,
                                            top=None, bot=None, verbose=False):
     """Interpolate quantities between two star profile shells."""
-    if ((top is None or np.isnan(top)) and (bot is None or np.isnan(bot))):
+    if (pd.isna(top) and pd.isna(bot)):
         top = np.argmax(array_x >= x_target)
         bot = top - 1
-    elif bot is None or np.isnan(bot):
+    elif pd.isna(bot):
         bot = top - 1
-    elif top is None or np.isnan(top):
+    elif pd.isna(top):
         top = bot + 1
 
     if top >= len(array_y):
@@ -2252,7 +2252,7 @@ def calculate_lambda_from_profile(
     # get mass and radius and dm from profile
     donor_mass, donor_radius, donor_dm = get_mass_radius_dm_from_profile(
         profile, m1_i, radius1, tolerance)
-    # if np.isnan(m1_i) or m1_i is None or np.isnan(radius1) or radius1 is None
+    # if pd.isna(m1_i) or pd.isna(radius1)
     m1_i = donor_mass[0]
     radius1 = donor_radius[0]
     specific_internal_energy = get_internal_energy_from_profile(
@@ -2321,7 +2321,7 @@ def calculate_lambda_from_profile(
               m1_i, radius1, len(donor_mass), " vs ", ind_core, mc1_i, rc1_i)
         print("Ebind_i from profile ", Ebind_i)
         print("lambda_CE ", lambda_CE)
-    if not (lambda_CE > -tolerance) and not np.isnan(lambda_CE):
+    if not (lambda_CE > -tolerance) and pd.notna(lambda_CE):
         raise ValueError("lambda_CE has a negative value")
     return lambda_CE, mc1_i, rc1_i
 
