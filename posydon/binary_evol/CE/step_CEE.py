@@ -40,7 +40,7 @@ from posydon.utils import common_functions as cf
 from posydon.utils import constants as const
 from posydon.binary_evol.binarystar import BINARYPROPERTIES
 from posydon.binary_evol.singlestar import STARPROPERTIES
-from posydon.utils.common_functions import PATH_TO_POSYDON
+from posydon.config import PATH_TO_POSYDON
 from posydon.utils.common_functions import check_state_of_star
 from posydon.utils.common_functions import calculate_lambda_from_profile, calculate_Mejected_for_integrated_binding_energy
 from posydon.utils.posydonwarning import Pwarn
@@ -90,11 +90,13 @@ STAR_STATE_POST_MS = [
     "H-rich_Core_He_burning",
     "H-rich_Central_He_depleted",
     "H-rich_Central_C_depletion",
-    "H-rich_non_burning"
+    "H-rich_non_burning",
+    "accreted_He_non_burning"
 ]
 
 
 STAR_STATE_POST_HeMS = [
+    'accreted_He_Core_He_burning',
     'stripped_He_Core_He_burning',
     'stripped_He_Central_He_depleted',
     'stripped_He_Central_C_depletion',
@@ -199,7 +201,7 @@ class StepCEE(object):
             star_to_merge = "2"
         else:
             raise ValueError("CEE does not apply if `event` is not "
-                             "`oCE1`, 'oDoubleCE1' or `oCE2`, 'oDoubleCE1'")
+                             "`oCE1`, `oDoubleCE1`, `oCE2`,or `oDoubleCE1`")
         # Check for double CE
         double_CE = binary.event in ["oDoubleCE1", "oDoubleCE2"]
 
@@ -212,7 +214,7 @@ class StepCEE(object):
 
         # Check to make sure binary can go through a CE
         mergeable_donor = (donor_star.state in [
-            'H-rich_Core_H_burning', 'stripped_He_Core_He_burning'])
+            'H-rich_Core_H_burning', 'stripped_He_Core_He_burning', 'accreted_He_Core_He_burning'])
         mergeable_HG_donor = (
             self.common_envelope_option_for_HG_star == "pessimistic"
             and donor_star.state in ['H-rich_Shell_H_burning'])
@@ -509,7 +511,7 @@ class StepCEE(object):
             ebind_i = (-const.standard_cgrav / lambda1_CE
                        * (m1_i * const.Msun * (m1_i - mc1_i) * const.Msun)
                        / (radius1 * const.Rsun))
-        if (double_CE and (not pd.isna(lambda2_CE))):
+        if (double_CE and pd.notna(lambda2_CE)):
             ebind_i += (-const.standard_cgrav / lambda2_CE
                         * (m2_i * const.Msun * (m2_i - mc2_i) * const.Msun)
                         / (radius2 * const.Rsun))
@@ -634,13 +636,13 @@ class StepCEE(object):
                 # An assumed stable mass transfer case after postCEE with
                 # fully non-conservative MT and mass lost from the vicinity
                 # of the accretor:
-                orbital_period_f = cf.period_change_stabe_MT(
+                orbital_period_f = cf.period_change_stable_MT(
                     orbital_period_postCEE, Mdon_i=mc1_i, Mdon_f=mc1_f,
                     Macc_i=mc2_i, alpha=0.0, beta=1.0)
                 if double_CE:
                     # a reverse stable MT assumed to be happening
                     # at the same time
-                    orbital_period_f = cf.period_change_stabe_MT(
+                    orbital_period_f = cf.period_change_stable_MT(
                         orbital_period_f, Mdon_i=mc2_i, Mdon_f=mc2_f,
                         Macc_i=mc1_i, alpha=0.0, beta=1.0)
                 if verbose:
@@ -654,13 +656,13 @@ class StepCEE(object):
                     "core_not_replaced_windloss"]:
                 # An assumed wind loss after postCEE with mass lost
                 # from the vicinity of the donor
-                orbital_period_f = cf.period_change_stabe_MT(
+                orbital_period_f = cf.period_change_stable_MT(
                     orbital_period_postCEE, Mdon_i=mc1_i, Mdon_f=mc1_f,
                     Macc_i=mc2_i, alpha=1.0, beta=0.0)
                 if double_CE:
                     # a wind mass loss from the 2nd star assumed to be
                     # happening at the same time
-                    orbital_period_f = cf.period_change_stabe_MT(
+                    orbital_period_f = cf.period_change_stable_MT(
                         orbital_period_f, Mdon_i=mc2_i, Mdon_f=mc2_f,
                         Macc_i=mc1_i, alpha=1.0, beta=0.0)
                 if verbose:

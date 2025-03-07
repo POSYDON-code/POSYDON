@@ -1668,16 +1668,23 @@ class Population(PopulationIO):
                 Pwarn(f"{filename} already contains a mass_per_metallicity "
                       "table. Overwriting the table!", "OverwriteWarning")
 
-            simulated_mass = np.sum(self.oneline[["S1_mass_i", "S2_mass_i"]].to_numpy())
-            underlying_mass = initial_total_underlying_mass(
-                df=simulated_mass, **self.ini_params
-            )[0]
+            # only load in required columns
+            tmp_data = self.oneline[['state_i', 'S1_mass_i', 'S2_mass_i']]
+            mask = tmp_data["state_i"] == "initially_single_star"
+            filtered_data_single = tmp_data[mask]
+            filtered_data_binaries = tmp_data[~mask]
+            
+            simulated_mass_single = np.nansum(filtered_data_single[["S1_mass_i"]].to_numpy())
+            simulated_mass_binaries = np.nansum(filtered_data_binaries[["S1_mass_i", "S2_mass_i"]].to_numpy())
+            simulated_mass = simulated_mass_single + simulated_mass_binaries
+            del tmp_data, filtered_data_single, filtered_data_binaries
+            
             self.mass_per_metallicity = pd.DataFrame(
-                index=[metallicity],
-                data={
-                    "simulated_mass": simulated_mass,
-                    "underlying_mass": underlying_mass,
-                    "number_of_systems": len(self.oneline),
+                    index=[metallicity],
+                    data={"simulated_mass": simulated_mass,
+                          "simulated_mass_single": simulated_mass_single,
+                          "simulated_mass_binaries": simulated_mass_binaries,
+                          "number_of_systems": len(self.oneline),
                 },
             )
 
@@ -1694,6 +1701,53 @@ class Population(PopulationIO):
         self.history_lengths = self.history.lengths
         self.number_of_systems = self.oneline.number_of_systems
         self.indices = self.history.indices
+        
+    def calculate_underlying_mass(self, f_bin=0.7, overwrite=False):
+        """Calculate the underlying mass of the population.
+        
+        Adds the underlying mass of the population to the mass_per_metallicity table.
+        
+        This method calculates the underlying mass of the population based on the simulated mass
+        of the population and the boundaries of the sampled mass distribution.
+        You can specify the fraction of binaries in the population using the `f_bin` parameter.
+        
+        Parameters
+        ----------
+        f_bin : float, optional
+            The fraction of binaries in the population. Default is 0.7.
+        overwrite : bool, optional
+            If `True`, overwrite the underlying mass values if they already exist. Default is `False`.
+            
+        Returns
+        -------
+        np.ndarray
+            The underlying mass of the population.
+        """
+        
+        if 'underlying_mass' in self.mass_per_metallicity.columns:
+            warn_text="underlying_mass already exists in the mass_per_metallicity table."
+            if overwrite:
+                Pwarn(warn_text+" Overwriting the underlying_mass values.", "OverwriteWarning")
+            else:
+                Pwarn(warn_text+" Not overwriting the underlying_mass values, skipping it.", "IncompletenessWarning")
+                return
+    
+        
+        underlying_mass = np.zeros(len(self.mass_per_metallicity))
+        for i in range(len(self.mass_per_metallicity)):
+            underlying_mass[i] = initial_total_underlying_mass(
+                simulated_mass=self.mass_per_metallicity['simulated_mass'].iloc[i],
+                simulated_mass_single=self.mass_per_metallicity['simulated_mass_single'].iloc[i],
+                simulated_mass_binaries=self.mass_per_metallicity['simulated_mass_binaries'].iloc[i],
+                f_bin=f_bin, 
+                **self.ini_params)[0]
+        
+        self.mass_per_metallicity['underlying_mass'] = underlying_mass
+        
+        # save it to the file
+        self._save_mass_per_metallicity(self.filename)
+        
+        return underlying_mass
 
     def export_selection(self, selection, filename, overwrite=False, append=False, history_chunksize=1000000):
         """Export a selection of the population to a new file
@@ -1939,7 +1993,7 @@ class Population(PopulationIO):
 
         return self._formation_channels
 
-    def calculate_formation_channels(self, mt_history=False):
+    def calculate_formation_channels(self, mt_history=True):
         """Calculate the formation channels of the population.
 
         mt_history is a boolean that determines if the detailed mass-transfer history
@@ -2027,7 +2081,7 @@ class Population(PopulationIO):
             )
             events = self.history.select(start=previous, stop=end, columns=["event"])
 
-            mask = ~pd.isna(interp_class_HMS_HMS["interp_class_HMS_HMS"].values)
+            mask = pd.notna(interp_class_HMS_HMS["interp_class_HMS_HMS"].values)
             interp_class_HMS_HMS.loc[mask, "interp_class_HMS_HMS"] = (
                 interp_class_HMS_HMS[mask]
                 .apply(lambda x: HMS_HMS_event_dict[x["interp_class_HMS_HMS"]], axis=1)
@@ -2467,6 +2521,9 @@ class TransientPopulation(Population):
 
         metallicities = self.mass_per_metallicity.index.to_numpy()
         
+        if 'underlying_mass' not in self.mass_per_metallicity.columns:
+            raise ValueError("Underlying mass not calculated! Please calculate the underlying mass first!")
+        
         met_columns = self.select(columns=["metallicity"]).value_counts()
         
         met_columns.index = [i[0] for i in met_columns.index.to_numpy().flatten()]
@@ -2556,6 +2613,9 @@ class TransientPopulation(Population):
         path_in_file = (
             "/transients/" + self.transient_name + "/rates/" + SFH_identifier + "/"
         )
+        
+        if 'underlying_mass' not in self.mass_per_metallicity.columns:
+            raise ValueError("Underlying mass not calculated! Please calculate the underlying mass first!")
 
         with pd.HDFStore(self.filename, mode="a") as store:
             if path_in_file + "MODEL" in store.keys():
@@ -2731,6 +2791,9 @@ class TransientPopulation(Population):
         Otherwise, it is normalized by the mass of the population at the specified metallicity.
 
         """
+        if 'underlying_mass' not in self.mass_per_metallicity.columns:
+            raise ValueError("Underlying mass not calculated! Please calculate the underlying mass first!")
+        
         if ax is None:
             fig, ax = plt.subplots()
 
@@ -2979,7 +3042,7 @@ class Rates(TransientPopulation):
         with pd.HDFStore(self.filename, mode="r") as store:
             return store.select(self.base_path + key, start=start, stop=stop)
 
-    def calculate_intrinsic_rate_density(self, mt_channels=False):
+    def calculate_intrinsic_rate_density(self, channels=False):
         """
         Compute the intrinsic rate density over redshift of the transient population.
 
@@ -2988,7 +3051,7 @@ class Rates(TransientPopulation):
 
         Parameters
         ----------
-        mt_channels : bool, optional
+        channels : bool, optional
             Flag indicating whether to calculate the intrinsic rate density for each channel separately. Default is False.
 
         Returns
@@ -3001,7 +3064,7 @@ class Rates(TransientPopulation):
         z_horizon = self.edges_redshift_bins
         n = len(z_horizon)
 
-        if mt_channels:
+        if channels:
             channels = self.select(columns=["channel"])
             unique_channels = np.unique(channels)
         else:

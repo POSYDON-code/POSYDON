@@ -19,7 +19,7 @@ __authors__ = [
 
 pi = 3.1415926535897932384626433832795028841971693993751
 a2rad = pi / 180.0                  # angle to radians
-rae2a = 180.0 / pi                  # radians to angle
+rad2a = 180.0 / pi                  # radians to angle
 
 
 # PHYSICAL CONSTANTS
