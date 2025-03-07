@@ -678,29 +678,35 @@ class track_matcher:
             # Minimizing Euclidean distance
             sol = minimize(sq_diff_function, x0, method="TNC", bounds=bnds)
 
+            # save initial matching solution as best solution so far
+            best_sol = sol
 
             ## Alternative matching attempts if default matching fails!
             # 2nd attempt: use a different minimization method
-            if (np.abs(sol.fun) > tolerance_matching_integration or not sol.success):
-                
+            if (np.abs(best_sol.fun) > tolerance_matching_integration or not best_sol.success):
+
                 if self.verbose:
-                    print("\nAlternative matching started (1st retry) "
-                          "because previous attempt was unsuccessful:\n",
-                          f"tolerance {np.abs(sol.fun)} > {tolerance_matching_integration}",
-                          f"or sol.success = {sol.success}")
+                    print (f"Initial matching attempt was unsuccessful:"
+                           f"\n tolerance {np.abs(sol.fun)} > {tolerance_matching_integration}, sol.success = {sol.success}")
+
+                    print("\nAlternative matching started (1st attempt)")
                     print("(Now trying an alternative minimization method)")
                 
                 # minimize w/ modified Powell's method
                 sol = minimize(sq_diff_function, x0, method="Powell")
 
+                ## if alternative matching has a better solution, make it the new best solution
+                if (np.abs(sol.fun) < np.abs(best_sol.fun) and sol.success):
+                    best_sol = sol
+
             # if 2nd fails, 3rd attempt: use alternative matching parameters
-            if (np.abs(sol.fun) > tolerance_matching_integration or not sol.success):    
+            if (np.abs(best_sol.fun) > tolerance_matching_integration or not best_sol.success):      
                    
                 if self.verbose:
-                    print("\nAlternative matching started (2nd retry) "
-                          "because previous attempt was unsuccessful:\n",
-                          f"tolerance {np.abs(sol.fun)} > {tolerance_matching_integration}",
-                          f"or sol.success = {sol.success}")
+                    print (f"Alternative matching (1st attempt) was unsuccessful:"
+                           f"\n tolerance {np.abs(sol.fun)} > {tolerance_matching_integration}, sol.success = {sol.success}")
+
+                    print("\nAlternative matching started (2nd attempt)")
                     print("(Now trying to match with alternative parameters)")     
                       
                 # set alternative matching metrics based on star state
@@ -718,22 +724,26 @@ class track_matcher:
                 x0 = get_root0(MESA_labels, posydon_attributes, htrack, rs=rs)
                 sol = minimize(sq_diff_function, x0, method="TNC", bounds=bnds)
 
+                if (np.abs(sol.fun) < np.abs(best_sol.fun) and sol.success):
+                    best_sol = sol
+
             # 4th attempt: match an He-star with an H-rich grid, or vice versa (not applicable for HMS stars)
-            if (np.abs(sol.fun) > tolerance_matching_integration or not sol.success):
+            if (np.abs(best_sol.fun) > tolerance_matching_integration or not best_sol.success):
+
+                if self.verbose:
+                        print (f"Alternative matching (2nd attempt) was unsuccessful:"
+                               f"\n tolerance {np.abs(sol.fun)} > {tolerance_matching_integration}, sol.success = {sol.success}")    
                 
                 # if post-MS or stripped He star
                 if (star.state in LIST_ACCEPTABLE_STATES_FOR_HeStar
                     or star.state in LIST_ACCEPTABLE_STATES_FOR_postMS):
 
+                    if self.verbose:
+                        print("\nAlternative matching started (3rd attempt)")
+                        print("(Now trying to match He-star or post-MS star to a different grid)")
+
                     Pwarn("Attempting to match an He-star with an H-rich grid or post-MS star with a"
                           " stripped-He grid", "EvolutionWarning")
-
-                    if self.verbose:
-                        print("\nAlternative matching started (3rd retry) "
-                              "because previous attempt was unsuccessful:\n", 
-                              f"tolerance {np.abs(sol.fun)} > {tolerance_matching_integration}",
-                              f"or sol.success = {sol.success}")
-                        print("(Now trying to match star to a different grid)")
                         
                     if star.state in LIST_ACCEPTABLE_STATES_FOR_HeStar:
                         
@@ -758,50 +768,68 @@ class track_matcher:
                     try:
                         # minimize w/ Euclidean diff. and Newton's method
                         sol = minimize(sq_diff_function, x0, method="TNC", bounds=bnds)
+
+                        if (np.abs(sol.fun) < np.abs(best_sol.fun) and sol.success):
+                            best_sol = sol
+
+                        if self.verbose:
+                            print (f"Alternative matching (3rd attempt) completed:"
+                                   f"\n tolerance {np.abs(sol.fun)} > {tolerance_matching_integration}, "
+                                   f"sol.success = {sol.success}")
                     except:
                         raise NumericalError("SciPy numerical differentiation occured outside boundary "
                                              "while matching to single star track")
 
             # if matching is still not successful, set result to NaN:
-            if (np.abs(sol.fun) > tolerance_matching_integration_hard or not sol.success):
+            if (np.abs(best_sol.fun) > tolerance_matching_integration_hard or not best_sol.success):
                 if self.verbose:
-                    print("\nMatching result is NOT successful, with tolerance ",
-                          np.abs(sol.fun), ">", tolerance_matching_integration_hard)
+                    print("\nFinal matching result is NOT successful with best tolerance ",
+                          np.abs(best_sol.fun), ">", tolerance_matching_integration_hard)
                 initials = (np.nan, np.nan)
                 
             # or else we found a solution
-            elif np.abs(sol.fun) < tolerance_matching_integration_hard:
+            else:
                 if self.verbose:
-                    print("\nMatching result is considered successful, with tolerance "
-                        f'{np.abs(sol.fun):.8f}', "<", tolerance_matching_integration_hard)
-                initials = sol.x
+                    print("\nFinal matching result is considered successful with best tolerance "
+                        f'{np.abs(best_sol.fun):.8f}', "<", tolerance_matching_integration_hard)
+                initials = best_sol.x
 
         if self.verbose:
             # successful match
             if not np.isnan(initials[0]):
-                print(
-                    "Matching completed for", star.state, "star!\n"
-                    f"Matched to track with intial mass m0 = {initials[0]:.3f} [Msun]"
-                    f" at time t0 = {initials[1]/1e6:.3f} [Myrs] \n",
-                    "and m(t0), log10(R(t0), center_he(t0), surface_he4(t0), "
-                    "surface_h1(t0), he_core_mass(t0), center_c12(t0) = \n",
-                    f'{self.get_track_val("mass", htrack, *sol.x):.3f}',
-                    f'{self.get_track_val("log_R", htrack, *sol.x):.3f}',
-                    f'{self.get_track_val("center_he4", htrack, *sol.x):.4f}',
-                    f'{self.get_track_val("surface_he4", htrack, *sol.x):.4f}',
-                    f'{self.get_track_val("surface_h1", htrack, *sol.x):.4f}',
-                    f'{self.get_track_val("he_core_mass", htrack, *sol.x):.3f}',
-                    f'{self.get_track_val("center_c12", htrack, *sol.x):.4f}\n',
-                    "The same values of the original star at the end of the previous "
-                    "step were: \n",
-                    f'{star.mass:.3f}',
-                    f'{star.log_R:.3f}',
-                    f'{star.center_he4:.4f}',
-                    f'{star.surface_he4:.4f}',
-                    f'{star.surface_h1:.4f}',
-                    f'{star.he_core_mass:.3f}',
-                    f'{star.center_c12:.4f}'
-                )
+                val_names = ["  ", "mass", "log_R", "center_h1", "surface_h1", "he_core_mass", "center_he4", "surface_he4", 
+                             "center_c12"]
+
+                initial_vals = [
+                                "initial values",
+                                f'{star.mass:.3f}', 
+                                f'{star.log_R:.3f}', 
+                                f'{star.center_h1:.3f}', 
+                                f'{star.surface_h1:.4f}',
+                                f'{star.he_core_mass:.3f}',
+                                f'{star.center_he4:.4f}', 
+                                f'{star.surface_he4:.4f}',  
+                                f'{star.center_c12:.4f}'
+                               ]
+
+                matched_vals = [
+                                "matched values",
+                                f'{self.get_track_val("mass", htrack, *best_sol.x):.3f}', 
+                                f'{self.get_track_val("log_R", htrack, *best_sol.x):.3f}',
+                                f'{self.get_track_val("center_h1", htrack, *best_sol.x):.3f}',
+                                f'{self.get_track_val("surface_h1", htrack, *best_sol.x):.4f}',
+                                f'{self.get_track_val("he_core_mass", htrack, *best_sol.x):.3f}',
+                                f'{self.get_track_val("center_he4", htrack, *best_sol.x):.4f}',
+                                f'{self.get_track_val("surface_he4", htrack, *best_sol.x):.4f}',    
+                                f'{self.get_track_val("center_c12", htrack, *best_sol.x):.4f}'
+                               ]
+
+                output_table = [val_names, initial_vals, matched_vals]
+
+                print("\nMatching completed for", star.state, "star!\n")
+                for row in output_table:
+                    print("{:>14}  {:>5}  {:>5}  {:>9}  {:>10}  {:>12}  {:>10}  {:>11}  {:>10}".format(*row))                
+
             # failed match
             else:
                 print(
