@@ -417,9 +417,11 @@ def binary_fraction_value(binary_fraction_const=1,binary_fraction_scheme = 'cons
     elif binary_fraction_scheme == 'Moe_17':
         if m1 is None: 
             raise ValueError("There was not a primary mass provided in the inputs. Unable to return a binary fraction")
+        elif not isinstance(m1,np.ndarray):
+             m1 = np.asarray(m1)
         #elif m1 < 0.8:
          #   raise ValueError("The scheme doesn't support values of m1 less than 0.8")
-        elif m1 <= 2:#  and m1 >= 0.8:
+        """elif m1 <= 2:#  and m1 >= 0.8:
             binary_fraction = 0.4
         elif m1 <= 5 and m1 > 2:
             binary_fraction = 0.59
@@ -430,7 +432,13 @@ def binary_fraction_value(binary_fraction_const=1,binary_fraction_scheme = 'cons
         elif m1 > 16:
             binary_fraction = 0.94
         else: 
-            raise ValueError(f'There primary mass provided {m1} is not supported by the Moe_17 scheme.')
+            raise ValueError(f'There primary mass provided {m1} is not supported by the Moe_17 scheme.')"""
+        binary_fraction = np.zeros_like(m1, dtype=float)
+        binary_fraction[(m1 > 16)] = 0.94
+        binary_fraction[(m1 <= 16) & (m1 > 9)] = 0.84
+        binary_fraction[(m1 <= 9) & (m1 > 5)] = 0.76
+        binary_fraction[(m1 <= 5) & (m1 > 2)] = 0.59
+        binary_fraction[(m1 <= 2)] = 0.4
     else: 
         pass
     return binary_fraction
