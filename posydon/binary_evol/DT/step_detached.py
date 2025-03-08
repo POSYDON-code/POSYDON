@@ -395,15 +395,17 @@ class detached_step:
         )
 
         # keys for the star profile interpolation
-        self.profile_keys = DEFAULT_PROFILE_KEYS
+        #self.profile_keys = DEFAULT_PROFILE_KEYS
 
-        if grid_name_Hrich is None:
-            grid_name_Hrich = os.path.join('single_HMS', self.metallicity+'_Zsun.h5')
-        self.grid_Hrich = GRIDInterpolator(os.path.join(path, grid_name_Hrich))
+        self.grid_name_Hrich = grid_name_Hrich
+        #if grid_name_Hrich is None:
+        #    grid_name_Hrich = os.path.join('single_HMS', self.metallicity+'_Zsun.h5')
+        #self.grid_Hrich = GRIDInterpolator(os.path.join(path, grid_name_Hrich))
 
-        if grid_name_strippedHe is None:
-            grid_name_strippedHe = os.path.join('single_HeMS', self.metallicity+'_Zsun.h5')
-        self.grid_strippedHe = GRIDInterpolator(os.path.join(path, grid_name_strippedHe))
+        self.grid_name_strippedHe = grid_name_strippedHe
+        #if grid_name_strippedHe is None:
+        #    grid_name_strippedHe = os.path.join('single_HeMS', self.metallicity+'_Zsun.h5')
+        #self.grid_strippedHe = GRIDInterpolator(os.path.join(path, grid_name_strippedHe))
 
     def __repr__(self):
         """Return the type of evolution type."""
@@ -627,7 +629,15 @@ class detached_step:
         KEYS_POSITIVE = self.KEYS_POSITIVE
 
         # creating a track matching object
-        self.track_matcher = track_matcher(KEYS, KEYS_POSITIVE)
+        self.track_matcher = track_matcher(KEYS, KEYS_POSITIVE, DEFAULT_PROFILE_KEYS, 
+                                           grid_name_Hrich = self.grid_name_Hrich,
+                                           grid_name_strippedHe = self.grid_name_strippedHe, 
+                                           path=PATH_TO_POSYDON_DATA, metallicity=self.metallicity, 
+                                           matching_method=self.matching_method, initial_mass = self.initial_mass,
+                                           rootm=self.rootm, verbose=self.verbose, 
+                                           list_for_matching_HMS=self.list_for_matching_HMS,
+                                           list_for_matching_HeStar=self.list_for_matching_HeStar, 
+                                           list_for_matching_postMS=self.list_for_matching_postMS)
 
         binary_sim_prop = getattr(binary, "properties")   ## simulation properties of the binary
         all_step_names = getattr(binary_sim_prop, "all_step_names")
@@ -749,7 +759,7 @@ class detached_step:
             raise POSYDONError("Non existent companion has not a recognized value!")
 
         # get the matched data of two stars, respectively
-        interp1d_sec, m0, t0 = track_matcher.get_star_data(binary, secondary, primary, secondary.htrack, co=False)
+        interp1d_sec, m0, t0 = self.track_matcher.get_star_data(binary, secondary, primary, secondary.htrack, co=False)
 
         primary_not_normal = (primary.co) or (self.non_existent_companion in [1,2])
         primary_normal = (not primary.co) and self.non_existent_companion == 0
@@ -757,11 +767,11 @@ class detached_step:
         if primary_not_normal:
             # copy the secondary star except mass which is of the primary,
             # and radius, mdot, Idot = 0
-            interp1d_pri = track_matcher.get_star_data(
+            interp1d_pri = self.track_matcher.get_star_data(
                 binary, secondary, primary, secondary.htrack, co=True,
                 copy_prev_m0=m0, copy_prev_t0=t0)[0]
         elif primary_normal:
-            interp1d_pri = track_matcher.get_star_data(
+            interp1d_pri = self.track_matcher.get_star_data(
                 binary, primary, secondary, primary.htrack, False)[0]
         else:
             raise ValueError("During matching, the primary should either be normal (stellar object) or ",
@@ -1243,8 +1253,8 @@ class detached_step:
                 else:
                     binary.event = "CC2"
 
-                track_matcher.get_star_final_values(secondary, secondary.htrack, m01)
-                track_matcher.get_star_profile(secondary, secondary.htrack, m01)
+                self.track_matcher.get_star_final_values(secondary, secondary.htrack, m01)
+                self.track_matcher.get_star_profile(secondary, secondary.htrack, m01)
 
                 if not primary.co and primary.state in STAR_STATES_CC:
                     # simultaneous core-collapse of the other star as well
@@ -1253,8 +1263,8 @@ class detached_step:
 
                     if primary_time == secondary_time:
                         # we manually check if s.t_events[3] should also be happening simultaneously
-                        track_matcher.get_star_final_values(primary, primary.htrack, m02)
-                        track_matcher.get_star_profile(primary, primary.htrack, m02)
+                        self.track_matcher.get_star_final_values(primary, primary.htrack, m02)
+                        self.track_matcher.get_star_profile(primary, primary.htrack, m02)
 
                     if primary.mass != secondary.mass:
                         raise POSYDONError(
@@ -1269,8 +1279,8 @@ class detached_step:
                 else:
                     binary.event = "CC1"
 
-                track_matcher.get_star_final_values(primary, primary.htrack, m02)
-                track_matcher.get_star_profile(primary, primary.htrack, m02)
+                self.track_matcher.get_star_final_values(primary, primary.htrack, m02)
+                self.track_matcher.get_star_profile(primary, primary.htrack, m02)
                 
             else:  # Reached max_time asked.
                 if binary.properties.max_simulation_time - binary.time < 0.0:

@@ -174,6 +174,9 @@ class track_matcher:
             self,
             KEYS,
             KEYS_POSITIVE,
+            DEFAULT_PROFILE_KEYS,
+            grid_name_Hrich,
+            grid_name_strippedHe,
             path=PATH_TO_POSYDON_DATA,
             metallicity=None,
             matching_method="minimize",
@@ -202,7 +205,7 @@ class track_matcher:
 
         # ==================================================================================
 
-        self.metallicity = convert_metallicity_to_string(metallicity)
+        self.metallicity = metallicity #convert_metallicity_to_string(metallicity)
         #self.dt = dt
         #self.n_o_steps_history = n_o_steps_history
         self.matching_method = matching_method
@@ -251,6 +254,8 @@ class track_matcher:
             #'radius_conv_reg_fortides'
         #)
 
+        self.profile_keys = DEFAULT_PROFILE_KEYS
+
         # keys for the final value interpolation
         self.final_keys = (
             'avg_c_in_c_core_at_He_depletion',
@@ -266,7 +271,7 @@ class track_matcher:
         )
 
         # keys for the star profile interpolation
-        #self.profile_keys = DEFAULT_PROFILE_KEYS
+        self.profile_keys = DEFAULT_PROFILE_KEYS
 
         # should grids just get passed to this?
         if grid_name_Hrich is None:
