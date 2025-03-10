@@ -1,0 +1,54 @@
+#!/usr/bin/env python
+# script to rescue failed popsyn job arrays
+# #Author: Sylvia Biscoveanu
+import argparse 
+import glob
+import os
+
+def main(rundir):
+    submit_scripts = glob.glob(f'{rundir}*slurm_array.slurm')
+    rescue_number = len(glob.glob(f'{rundir}/slurm_submit_rescue*.sh')) + 1
+    complete_Zs = []
+    for script in submit_scripts:
+        base = script.split('slurm_array.slurm')[0]
+        outdir = base+'batches'
+        if os.path.exists(outdir):
+            sub_file = open(script, 'r')
+            new_sub_file = open(f'{script}.rescue{rescue_number}', 'w')
+            for line in sub_file:
+                if 'array' in line:
+                    numbers = line.split('=')[1]
+                    brange = ('-' in numbers)
+                    blist = (',' in numbers)
+                    if brange:
+                        minimum = int(numbers.split('-')[0])
+                        maximum = int(numbers.split('-')[-1])
+                        inds = range(minimum, maximum+1)
+                    elif blist:
+                        inds = [int(s) for s in numbers.split(',')]
+                    missing = []
+                    for run in inds:
+                        if not os.path.exists(f'{outdir}/evolution.combined.{run}'):
+                            missing.append(run)
+                    missing_str = ','.join(map(str, missing))
+                    new_sub_file.write(f'#SBATCH --array={missing_str}\n')
+                else:
+                    new_sub_file.write(line)
+        else:
+            complete_Zs.append(base.split('/')[-1].split('_')[0])
+    master_submit = open(f'{rundir}/slurm_submit.sh', 'r')
+    master_rescue_filename = f'slurm_submit_rescue{rescue_number}.sh'
+    master_rescue = open(f'{rundir}/{master_rescue_filename}', 'w')
+    for line in master_submit:
+        if any(Z in line for Z in complete_Zs):
+            continue
+        else:
+            new_line = line.replace('array.slurm', f'array.slurm.rescue{rescue_number}')
+            master_rescue.write(new_line)
+    print(f'Now run:\n\tcd {rundir}; bash {master_rescue_filename}')
+                
+if __name__=='__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--rundir', default='./', help='directory where the jobs originally ran')
+    args = parser.parse_args()
+    main(**vars(args))
