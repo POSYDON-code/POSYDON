@@ -440,7 +440,16 @@ The collection of trained prescriptions can be found in the ``MODELS.py`` file a
      
       * ``None``
       * ``'Marchant+19'``
+      * ``'Hendriks+23'``
     - ``'Marchant+19'``
+
+  * - ``PISN_CO_shift``
+    - | The shift in CO core mass for the start of the Hendriks+23 PPI prescription
+    - ``0.0``
+
+  * - ``PPI_extra_mass_loss``
+    - | Additional PPI mass loss for the Hendriks+23 prescription
+    - ``0.0``
 
   * - ``ECSN``
     - | The prescription used for electron-capture supernova.
@@ -452,6 +461,11 @@ The collection of trained prescriptions can be found in the ``MODELS.py`` file a
   * - ``conserve_hydrogen_envelope``
     - | Conserve the hydrogen envelope during the supernova.
     - ``True``
+
+  *  - ``conserve_hydrogen_PPI``
+     - | Include the hydrogen envelope during the calculation of the 
+       | PPI mass loss with the Hendriks+23 prescription
+     - ``False``
 
   * - ``max_neutrino_mass_loss``
     - | The maximum mass loss due to neutrinos.
