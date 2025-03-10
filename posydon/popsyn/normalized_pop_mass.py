@@ -190,7 +190,7 @@ def initial_total_underlying_mass(
             underlying_total_mass=initial_ZAMS_TOTAL_single/f_corr_single_stars
 
             
-        if (f_bin_nature == 1): #you want the underlying mass for a population
+        elif (f_bin_nature == 1): #you want the underlying mass for a population
                                 # consisting of only binary stars
             
             f_corr_binaries = f_corr_binaries*(f_bin_nature/f_bin_simulated)
