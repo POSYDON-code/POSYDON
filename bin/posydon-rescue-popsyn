@@ -5,7 +5,7 @@ import argparse
 import glob
 import os
 
-def rescue_runs(rundir):
+def rescue_runs(rundir, time, mem_per_cpu):
     submit_scripts = glob.glob(os.path.join(rundir, '*slurm_array.slurm'))
     rescue_number = len(glob.glob(os.path.join(rundir, 'slurm_submit_rescue*.sh'))) + 1
     complete_Zs = []
@@ -14,9 +14,10 @@ def rescue_runs(rundir):
         outdir = base+'batches'
         if os.path.exists(outdir):
             sub_file = open(script, 'r')
-            new_sub_file = open(f'{script}.rescue{rescue_number}', 'w')
+            new_file_name = f'{script}.rescue{rescue_number}' 
+            new_sub_file = open(new_file_name, 'w')
             for line in sub_file:
-                if 'array' in line:
+                if '--array' in line:
                     numbers = line.split('=')[1]
                     brange = ('-' in numbers)
                     blist = (',' in numbers)
@@ -32,6 +33,26 @@ def rescue_runs(rundir):
                             missing.append(run)
                     missing_str = ','.join(map(str, missing))
                     new_sub_file.write(f'#SBATCH --array={missing_str}\n')
+                elif ('--time' in line) and (time is not None):
+                    split_times = time.split(':')
+                    bad_time_format = False
+                    if len(split_times) != 3:
+                        bad_time_format = True
+                    elif not all([st.isdigit() for st in split_times]):
+                        bad_time_format = True
+                    if bad_time_format:
+                        os.remove(new_file_name)
+                        raise ValueError('--time must be in the format HH:MM:SS, ' 
+                                         f'instead {time} was passed!')
+                    else:
+                        new_sub_file.write(f'#SBATCH --time={time}\n')
+                elif ('--mem-per-cpu' in line) and (mem_per_cpu is not None):
+                    if not mem_per_cpu.split('G')[0].isdigit():
+                        os.remove(new_file_name)
+                        raise ValueError('--mem-per-cpu must be in the format XG, '
+                                         f'instead {mem_per_cpu} was passed!')
+                    else:
+                        new_sub_file.write(f'#SBATCH --mem-per-cpu={mem_per_cpu}\n')
                 else:
                     new_sub_file.write(line)
         else:
@@ -50,5 +71,7 @@ def rescue_runs(rundir):
 if __name__=='__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--rundir', default='./', help='directory where the jobs originally ran')
+    parser.add_argument('--time', default=None, help='overwrite time in the slurm_array.slurm files, in format HH:MM:SS')
+    parser.add_argument('--mem-per-cpu', default=None, help='overwrite mem-per-cpu in the slurm_array.slurm files, in format XG')
     args = parser.parse_args()
     rescue_runs(**vars(args))
