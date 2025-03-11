@@ -1102,10 +1102,6 @@ if __name__ == '__main__':
     elif args.submission_type == 'slurm':
         # if slurm will we submit as job array or MPI
         if slurm['job_array']:
-            if '.csv' in run_parameters['grid']:
-                grid = pandas.read_csv(run_parameters['grid'])
-            else:
-                raise ValueError('Grid format not recognized, please feed in an acceptable format: csv')
             grid_script = 'job_array_grid_submit.slurm'
             if os.path.exists(grid_script):
                 Pwarn('Replace '+grid_script, "OverwriteWarning")
@@ -1115,7 +1111,7 @@ if __name__ == '__main__':
                 f.write('#SBATCH --account={0}\n'.format(slurm['account']))
                 f.write('#SBATCH --partition={0}\n'.format(slurm['partition']))
                 f.write('#SBATCH -N 1\n')
-                f.write('#SBATCH --array=0-{0}\n'.format(len(grid)-1))
+                f.write('#SBATCH --array=0-{0}\n'.format(len(grid_df)-1))
                 f.write('#SBATCH --cpus-per-task {0}\n'.format(slurm['number_of_cpus_per_task']))
                 f.write('#SBATCH --ntasks-per-node 1\n')
                 f.write('#SBATCH --time={0}\n'.format(slurm['walltime']))
