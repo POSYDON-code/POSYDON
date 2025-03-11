@@ -452,12 +452,12 @@ def construct_static_inlist(mesa_inlists, grid_parameters, working_directory=os.
             final_star2_binary_controls['extra_controls_inlist1_name'] = "'inlist_grid_star2_binary_controls'"
 
         if grid_params_star1_binary_job:
-              final_star1_binary_job['read_extra_star_job_inlist1'] = '.true.'
-              final_star1_binary_job['extra_star_job_inlist1_name'] = "'inlist_grid_star1_binary_job'"
+            final_star1_binary_job['read_extra_star_job_inlist1'] = '.true.'
+            final_star1_binary_job['extra_star_job_inlist1_name'] = "'inlist_grid_star1_binary_job'"
 
         if grid_params_star2_binary_job:
-              final_star2_binary_job['read_extra_star_job_inlist1'] = '.true.'
-              final_star2_binary_job['extra_star_job_inlist1_name'] = "'inlist_grid_star2_binary_job'"
+            final_star2_binary_job['read_extra_star_job_inlist1'] = '.true.'
+            final_star2_binary_job['extra_star_job_inlist1_name'] = "'inlist_grid_star2_binary_job'"
 
         # We want to point the binary_job section to the star1 and star2 inlist we just made
         final_binary_job['inlist_names(1)'] = "'{0}'".format(inlist_star1_binary)
@@ -1081,7 +1081,16 @@ if __name__ == '__main__':
             f.write('export MESASDK_ROOT={0}\n'.format(os.environ['MESASDK_ROOT']))
             f.write('source $MESASDK_ROOT/bin/mesasdk_init.sh\n')
             f.write('export MESA_DIR={0}\n\n\n'.format(os.environ['MESA_DIR']))
+            if slurm['job_array']:
+                f.write('for SLURM_ARRAY_TASK_ID in ')
+                for i in range(len(grid_df)):
+                    f.write('{0} '.format(i))
+                f.write('; do ')
             f.write(command_line)
+            if slurm['job_array']:
+                f.write(' ; done')
+        # make the script executable
+        os.system("chmod 755 grid_command.sh")
 
     elif args.submission_type == 'slurm':
         # if slurm will we submit as job array or MPI
