@@ -742,7 +742,6 @@ class detached_step:
 
             ## save initial matching solution as best solution so far
             best_sol = sol
-
             ## Alternative matching attempts if default matching fails!
             # 1st attempt: use a different minimization method
             if (np.abs(best_sol.fun) > tolerance_matching_integration or not best_sol.success):
@@ -759,7 +758,8 @@ class detached_step:
                 ## if alternative matching has a better solution, make it the new best solution
                 if (np.abs(sol.fun) < np.abs(best_sol.fun) and sol.success):
                     best_sol = sol
-
+        
+            
             # 2nd attempt: use alternative matching parameters
             if (np.abs(best_sol.fun) > tolerance_matching_integration or not best_sol.success):    
                    
@@ -785,7 +785,7 @@ class detached_step:
 
                 if (np.abs(sol.fun) < np.abs(best_sol.fun) and sol.success):
                     best_sol = sol
-
+                    
             # 3rd attempt: match an He-star with an H-rich grid, or vice versa (not applicable for HMS stars)
             if (np.abs(best_sol.fun) > tolerance_matching_integration or not best_sol.success):
 
@@ -804,10 +804,10 @@ class detached_step:
                           " stripped-He grid", "EvolutionWarning")
                        
                     if star.state in LIST_ACCEPTABLE_STATES_FOR_HeStar:
-                        htrack = True
+                        new_htrack = True
                         list_for_matching = self.list_for_matching_HeStar
                     elif star.state in LIST_ACCEPTABLE_STATES_FOR_postMS:
-                        htrack = False
+                        new_htrack = False
                         list_for_matching = self.list_for_matching_postMS
 
                     MESA_labels, rs, colscalers, bnds, scales = get_MESA_labels(list_for_matching)
@@ -818,12 +818,13 @@ class detached_step:
                                                  "in the single star grid options.")
                         
                     posydon_attributes = get_posydon_attributes(MESA_labels, star)
-                    x0 = get_root0(MESA_labels, posydon_attributes, htrack, rs=rs)
+                    x0 = get_root0(MESA_labels, posydon_attributes, new_htrack, rs=rs)
 
                     try:
                         sol = minimize(sq_diff_function, x0, method="TNC", bounds=bnds)
                         if (np.abs(sol.fun) < np.abs(best_sol.fun) and sol.success):
                             best_sol = sol
+                            htrack = new_htrack
 
                         if self.verbose:
                             print (f"Alternative matching (3rd attempt) completed:"
