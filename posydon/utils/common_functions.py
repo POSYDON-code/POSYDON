@@ -1088,9 +1088,17 @@ def get_binary_state_and_event_and_mt_case(binary, interpolation_class=None,
             gamma2 = None
 
     # get numerical MT cases
+    if ((rl_overflow1 is not None) and (rl_overflow2 is not None)):
+        dominating_star1 = (rl_overflow1 >= rl_overflow2)
+    elif rl_overflow2 is not None:
+        dominating_star1 = False
+    else:
+        dominating_star1 = True
     mt_flag_1 = infer_mass_transfer_case(rl_overflow1, lg_mtransfer, state1,
+                                         dominating_star=dominating_star1,
                                          verbose=verbose)
     mt_flag_2 = infer_mass_transfer_case(rl_overflow2, lg_mtransfer, state2,
+                                         dominating_star=not dominating_star1,
                                          verbose=verbose)
     # convert to strings
     mt_flag_1_str = cumulative_mass_transfer_string([mt_flag_1])
@@ -1407,15 +1415,22 @@ def infer_star_state(star_mass=None, surface_h1=None,
 def infer_mass_transfer_case(rl_relative_overflow,
                              lg_mtransfer_rate,
                              donor_state,
+                             dominating_star=True,
                              verbose=False):
     """Infer the mass-transfer case of a given star.
 
     Parameters
     ----------
     rl_relative_overflow : float
+        Relative Roche lobe overflowing parameter.
     lg_mtransfer_rate : float
+        The mass transfer rate in log_10.
     donor_state : str
         Values of star parameters at a specific step.
+    dominating_star : bool (default: True)
+        Whether this star is the orgin of the mass transfer rate.
+    verbose : bool (default: False)
+        In case we want additional information printed to standard output.
 
     Returns
     -------
@@ -1427,8 +1442,8 @@ def infer_mass_transfer_case(rl_relative_overflow,
         return MT_CASE_NO_RLO
 
     if ((rl_relative_overflow <= RL_RELATIVE_OVERFLOW_THRESHOLD) and
-        ((lg_mtransfer_rate <= LG_MTRANSFER_RATE_THRESHOLD) and
-         (rl_relative_overflow < 0.0))):
+        ((lg_mtransfer_rate <= LG_MTRANSFER_RATE_THRESHOLD) or
+         (not dominating_star))):
         if verbose:
             print("checking rl_relative_overflow / lg_mtransfer_rate,",
                   rl_relative_overflow, lg_mtransfer_rate)
