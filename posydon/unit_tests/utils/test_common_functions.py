@@ -1051,7 +1051,7 @@ class TestFunctions:
     def test_get_binary_state_and_event_and_mt_case(self, binary, monkeypatch):
         def mock_infer_mass_transfer_case(rl_relative_overflow,\
                                           lg_mtransfer_rate, donor_state,\
-                                          verbose=False):
+                                          dominating_star=True, verbose=False):
             if rl_relative_overflow is not None:
                 if rl_relative_overflow > 0:
                     return totest.MT_CASE_A
@@ -1404,7 +1404,21 @@ class TestFunctions:
                  ("stripped_He_undetermined", totest.MT_CASE_UNDETERMINED),\
                  ("test_undetermined", totest.MT_CASE_UNDETERMINED)]
         for (ds, c) in tests:
-            assert totest.infer_mass_transfer_case(2*RROT, 2*LMRT, ds) == c
+            assert totest.infer_mass_transfer_case(RROT+1.0, LMRT+1.0, ds) == c
+            assert totest.infer_mass_transfer_case(RROT+1.0, LMRT-1.0, ds) == c
+            assert totest.infer_mass_transfer_case(RROT+1.0, LMRT+1.0, ds,\
+                                                   dominating_star=False) == c
+            assert totest.infer_mass_transfer_case(RROT+1.0, LMRT-1.0, ds,\
+                                                   dominating_star=False) == c
+            assert totest.infer_mass_transfer_case(RROT-1.0, LMRT+1.0, ds) == c
+            assert totest.infer_mass_transfer_case(RROT-1.0, LMRT-1.0, ds)\
+                   == totest.MT_CASE_NO_RLO
+            assert totest.infer_mass_transfer_case(RROT-1.0, LMRT+1.0, ds,\
+                                                   dominating_star=False)\
+                   == totest.MT_CASE_NO_RLO
+            assert totest.infer_mass_transfer_case(RROT-1.0, LMRT-1.0, ds,\
+                                                   dominating_star=False)\
+                   == totest.MT_CASE_NO_RLO
 
     def test_cumulative_mass_transfer_numeric(self):
         # missing argument
