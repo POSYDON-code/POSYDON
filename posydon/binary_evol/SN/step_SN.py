@@ -78,8 +78,11 @@ MODEL = {
     "mechanism": 'Patton&Sukhbold20-engine',
     "engine": 'N20',
     "PISN": "Marchant+19",
+    "PISN_CO_shift": 0.0,
+    "PPI_extra_mass_loss": 0.0,
     "ECSN": "Podsiadlowski+04",
     "conserve_hydrogen_envelope" : False,
+    "conserve_hydrogen_PPI" : False,
     "max_neutrino_mass_loss": NEUTRINO_MASS_LOSS_UPPER_LIMIT,
     "max_NS_mass": STATE_NS_STARMASS_UPPER_LIMIT,
     "use_interp_values": True,
@@ -672,10 +675,15 @@ class StepSN(object):
                             max_neutrino_mass_loss=self.max_neutrino_mass_loss,
                             verbose=self.verbose
                         )
-                        star.mass = final_BH[0]
-                        star.spin = final_BH[1]
-                        star.m_disk_accreted = final_BH[2]
-                        star.m_disk_radiated = final_BH[3]
+                        # set post-collapse properties/information to store
+                        for i in final_BH.keys():
+                            setattr(star, i, final_BH[i])
+                        
+                        # set specific properties manually
+                        star.mass = final_BH['M_BH_total']
+                        star.spin = final_BH['a_BH_total']
+                        star.m_disk_accreted = final_BH['m_disk_accreted']
+                        star.m_disk_radiated = final_BH['m_disk_radiated']
                         star.state = "BH"
                     else:
                         star.mass = m_grav
@@ -798,14 +806,18 @@ class StepSN(object):
                             max_neutrino_mass_loss=self.max_neutrino_mass_loss,
                             verbose=self.verbose
                         )
-                        star.mass = final_BH[0]
+                        # set post-collapse properties/information to store
+                        for i in final_BH.keys():
+                            setattr(star, i, final_BH[i])
+                        # set specific properties manually
+                        star.mass = final_BH['M_BH_total']
+                        star.spin = final_BH['a_BH_total']
+
                         if m_grav != star.mass and self.verbose:
                             print("The star formed a disk during the collapse "
-                                  "and lost", round(final_BH[0] - m_rembar, 2),
+                                  "and lost", round(final_BH['M_BH_total'] - m_rembar, 2),
                                   "M_sun.")
-                        star.spin = final_BH[1]
-                        star.m_disk_accreted = final_BH[2]
-                        star.m_disk_radiated = final_BH[3]
+                    
                     elif star.state == "NS":
                         star.mass = m_grav
                         star.m_disk_accreted = 0.0
@@ -902,6 +914,7 @@ class StepSN(object):
             # perform the PISN prescription in terms of the
             # He core mass at pre-supernova
             m_He_core = star.he_core_mass
+            m_CO_core = star.co_core_mass
             m_star = star.mass
             if self.PISN == "Marchant+19":
                 if m_He_core >= 31.99 and m_He_core <= 61.10:
@@ -934,6 +947,71 @@ class StepSN(object):
                         m_PISN = m_star
                     else:
                         m_PISN = m_He_core
+            
+            elif self.PISN == 'Hendriks+23':
+                # Hendriks et al. 2023 PISN prescription
+                # 10.1093/mnras/stad2857
+                # Shifting PPI and PISN gap
+                # works by removing delta_M_PPI from the star
+                # and then applying any remnant mass prescription
+                
+                delta_M_CO_shift = self.PISN_CO_shift if self.PISN_CO_shift is not None else 0.0
+                delta_M_PPI_extra_ML = self.PPI_extra_mass_loss if self.PPI_extra_mass_loss is not None else 0.0
+                
+                m_CO_core_PISN_min = 38 + delta_M_CO_shift
+                m_CO_core_PISN_max = 114 + delta_M_CO_shift
+                
+                if ((m_CO_core >= m_CO_core_PISN_min) 
+                    and m_CO_core <= m_CO_core_PISN_max):
+
+                    # delta_PPI -> -inf if Z -> 0
+                    # limit mass loss to Z = 1e-4 for Z below it.
+                    # 1e-4 is the lowest metallicity in the Hendriks et al. 2023
+                    if star.metallicity < 1e-4:
+                        Z = 1e-4
+                    else:
+                        Z = star.metallicity
+                    # Hendriks et al. 2023 Equation 6
+                    # 10.1093/mnras/stad2857
+                    delta_M_PPI = (
+                        (0.0006 * np.log10(Z * const.Zsun) + 0.0054)
+                        * (m_CO_core - delta_M_CO_shift - 34.8)**3
+                        - 0.0013 * (m_CO_core - delta_M_CO_shift - 34.8)**2
+                        + delta_M_PPI_extra_ML
+                    )
+                    if self.verbose:
+                        print(f"delta_M_PPI: {delta_M_PPI} Msun")
+                else:
+                    delta_M_PPI = 0.0
+                    
+                if delta_M_PPI <= 0.0:
+                    # no PPI -> use CCSN prescription
+                    if self.conserve_hydrogen_envelope:
+                        m_PISN = m_star
+                    else:
+                        m_PISN = m_He_core
+                else:
+                    # PPI occurs 
+                    if self.conserve_hydrogen_PPI:
+                        m_PISN = m_star - delta_M_PPI
+                    else:
+                        m_PISN = m_He_core - delta_M_PPI
+                    
+                    if m_PISN < 0.0:
+                        m_PISN = np.nan
+                    else:
+                        PISN_star = copy.deepcopy(star)
+                        PISN_star.mass = m_PISN
+                        if PISN_star.he_core_mass > m_PISN:
+                            PISN_star.he_core_mass = m_PISN
+                        if PISN_star.co_core_mass > m_PISN:
+                            PISN_star.co_core_mass = m_PISN
+                        m_rembar, _, _ = self.compute_m_rembar(PISN_star, m_PISN)
+                    
+                        if m_rembar < 10:
+                            m_PISN = np.nan
+                        else:
+                            m_PISN = m_rembar
 
             elif is_number(self.PISN) and m_He_core > self.PISN:
                 m_PISN = self.PISN
