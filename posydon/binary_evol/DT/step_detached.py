@@ -742,6 +742,7 @@ class detached_step:
 
             ## save initial matching solution as best solution so far
             best_sol = sol
+
             ## Alternative matching attempts if default matching fails!
             # 1st attempt: use a different minimization method
             if (np.abs(best_sol.fun) > tolerance_matching_integration or not best_sol.success):
@@ -758,7 +759,6 @@ class detached_step:
                 ## if alternative matching has a better solution, make it the new best solution
                 if (np.abs(sol.fun) < np.abs(best_sol.fun) and sol.success):
                     best_sol = sol
-        
             
             # 2nd attempt: use alternative matching parameters
             if (np.abs(best_sol.fun) > tolerance_matching_integration or not best_sol.success):    
@@ -785,7 +785,7 @@ class detached_step:
 
                 if (np.abs(sol.fun) < np.abs(best_sol.fun) and sol.success):
                     best_sol = sol
-                    
+
             # 3rd attempt: match an He-star with an H-rich grid, or vice versa (not applicable for HMS stars)
             if (np.abs(best_sol.fun) > tolerance_matching_integration or not best_sol.success):
 
