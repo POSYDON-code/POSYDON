@@ -226,15 +226,17 @@ The simplest method is to provide the two star objects and `kwargs` of the initi
 
 .. code-block:: python
 
-  kwargs1 = {'state' : 'MS',
+  from posydon.utils.constants import Zsun
+
+  kwargs1 = {'state' : 'H-rich_Core_H_burning',
              'mass' : 20.0,
-             'metallicity' : 0.014}
+             'metallicity' : Zsun}
 
   star_1 = SingleStar(**kwargs1)
 
-  kwargs2 = {'state' : 'MS',
+  kwargs2 = {'state' : 'H-rich_Core_H_burning',
              'mass' : 10.0,
-             'metallicity' : 0.014}
+             'metallicity' : Zsun}
 
   star_2 = SingleStar(**kwargs2)
 
@@ -244,6 +246,4 @@ The simplest method is to provide the two star objects and `kwargs` of the initi
              'orbital_period' : 3.,
              'eccentricity' : 0.}
 
-
   binary = BinaryStar(star_1, star_2, **kwargs3)
-
