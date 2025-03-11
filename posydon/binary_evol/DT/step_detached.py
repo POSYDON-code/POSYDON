@@ -759,7 +759,7 @@ class detached_step:
                 ## if alternative matching has a better solution, make it the new best solution
                 if (np.abs(sol.fun) < np.abs(best_sol.fun) and sol.success):
                     best_sol = sol
-            
+
             # 2nd attempt: use alternative matching parameters
             if (np.abs(best_sol.fun) > tolerance_matching_integration or not best_sol.success):    
                    
