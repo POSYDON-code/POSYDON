@@ -1077,10 +1077,9 @@ if __name__ == '__main__':
         with open('grid_command.sh', 'w') as f:
             f.write('#!/bin/bash\n\n')
             f.write('export OMP_NUM_THREADS={0}\n\n'.format(slurm['number_of_cpus_per_task']))
-
             f.write('export MESASDK_ROOT={0}\n'.format(os.environ['MESASDK_ROOT']))
             f.write('source $MESASDK_ROOT/bin/mesasdk_init.sh\n')
-            f.write('export MESA_DIR={0}\n\n\n'.format(os.environ['MESA_DIR']))
+            f.write('export MESA_DIR={0}\n\n'.format(os.environ['MESA_DIR']))
             if slurm['job_array']:
                 f.write('for SLURM_ARRAY_TASK_ID in ')
                 for i in range(len(grid_df)):
@@ -1088,7 +1087,15 @@ if __name__ == '__main__':
                 f.write('; do ')
             f.write(command_line)
             if slurm['job_array']:
-                f.write(' ; done')
+                f.write(' ; done\n\n')
+            # do cleanup
+            f.write('compress-mesa .\n')
+            if 'newgroup' in slurm.keys():
+                f.write('echo \"Change group to {0}\"\n'.format(slurm['newgroup']))
+                f.write('chgrp -fR {0} .\n'.format(slurm['newgroup']))
+                f.write('echo \"Change group permission to rwX at least\"\n')
+                f.write('chmod -fR g+rwX .\n')
+            f.write('\necho \"Done.\"')
         # make the script executable
         os.system("chmod 755 grid_command.sh")
 
