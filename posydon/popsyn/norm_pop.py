@@ -62,7 +62,6 @@ def get_pdf(kwargs, simulation=False):
         f_b * IMF_pdf(np.asarray(m1)) * q_pdf(np.asarray(q), np.asarray(m1)),
         (1-f_b) * IMF_pdf(np.asarray(m1))
     )
-
     return pdf_function
 
 
@@ -178,13 +177,10 @@ def calculate_model_weights(pop_data, M_sim, simulation_parameters, population_p
     mean_mass_pop = get_mean_mass(PDF_pop, population_parameters, simulation=False)
         
     factor = (1/M_sim) * (mean_mass_sim / mean_mass_pop)
-
+    
+    # we still need to distinguish between binary and single stars for the PDF
     binary_mask = pop_data['state_i'] != 'initially_single_star'
     weight_pop = PDF_pop(m1=pop_data['S1_mass_i'], q=pop_data['S2_mass_i']/pop_data['S1_mass_i'], binary=binary_mask)
-    weight_pop[binary_mask] = weight_pop[binary_mask]
-    weight_pop[~binary_mask] = weight_pop[~binary_mask]
     weight_sim = PDF_sim(m1=pop_data['S1_mass_i'], q=pop_data['S2_mass_i']/pop_data['S1_mass_i'], binary=binary_mask)
-    weight_sim[binary_mask] = weight_sim[binary_mask]
-    weight_sim[~binary_mask] = weight_sim[~binary_mask]
     
     return (weight_pop / weight_sim) * factor
