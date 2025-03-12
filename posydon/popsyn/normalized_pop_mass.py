@@ -176,6 +176,7 @@ def initial_total_underlying_mass(
                 "UnsupportedModelWarning")
             return np.nan, np.nan, np.nan
 
+
     if (f_bin_simulated != 1): #when you have modeled both binary and single stars
         if (f_bin_nature == 0): #but you want the underlying mass for a population
                                 # consisting of only single stars
@@ -185,7 +186,7 @@ def initial_total_underlying_mass(
             underlying_total_mass=initial_ZAMS_TOTAL_single/f_corr_single_stars
 
             
-        if (f_bin_nature == 1): #you want the underlying mass for a population
+        elif (f_bin_nature == 1): #you want the underlying mass for a population
                                 # consisting of only binary stars
             
             f_corr_binaries = f_corr_binaries*(f_bin_nature/f_bin_simulated)

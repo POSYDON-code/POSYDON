@@ -25,9 +25,7 @@ def get_IMF_pdf(kwargs):
                               m_max=kwargs['primary_mass_max'])
         IMF_pdf = lambda m1: imf.pdf(m1)
     elif kwargs['primary_mass_scheme'] == 'Salpeter':
-        # TODO: change alpha=1!!!!!!!!
-        imf = IMFs.Salpeter(alpha=1,
-                            m_min=kwargs['primary_mass_min'],
+        imf = IMFs.Salpeter(m_min=kwargs['primary_mass_min'],
                             m_max=kwargs['primary_mass_max'])
         IMF_pdf = lambda m1: imf.pdf(m1)
     else:
@@ -90,7 +88,7 @@ def get_mean_mass(PDF, params, simulation=False):
                           (m1_min, m1_max)])[0]
 
     # single star integration
-    I_single = nquad(lambda m: m * PDF(m,False),
+    I_single = nquad(lambda m: m * PDF(m, False),
                      ranges=[(m1_min, m1_max)])[0]
     
     mean_mass = f_b*I_bin + (1-f_b)*I_single
@@ -163,3 +161,26 @@ def calculate_underlying_mass(population, simulation_parameters, requested_param
     return M_pop
     
 
+def calculate_model_weights(pop_data, M_sim, simulation_parameters, population_parameters):
+    
+    f_bin_sim = simulation_parameters['binary_fraction_const']
+    f_bin_pop = population_parameters['binary_fraction_const']
+    # build the pdf functions
+    PDF_sim = get_pdf(simulation_parameters, simulation=False)
+    PDF_pop = get_pdf(population_parameters, simulation=False)
+    
+    # initial properties
+    mean_mass_sim = get_mean_mass(PDF_sim, simulation_parameters, simulation=False)
+    mean_mass_pop = get_mean_mass(PDF_pop, population_parameters, simulation=False)
+        
+    factor = (1/M_sim) * (mean_mass_sim / mean_mass_pop)
+
+    binary_mask = pop_data['state_i'] != 'initially_single_star'
+    weight_pop = PDF_pop(m1=pop_data['S1_mass_i'], q=pop_data['S2_mass_i']/pop_data['S1_mass_i'], binary=binary_mask)
+    weight_pop[binary_mask] = weight_pop[binary_mask] * f_bin_pop
+    weight_pop[~binary_mask] = weight_pop[~binary_mask] * (1-f_bin_pop)
+    weight_sim = PDF_sim(m1=pop_data['S1_mass_i'], q=pop_data['S2_mass_i']/pop_data['S1_mass_i'], binary=binary_mask)
+    weight_sim[binary_mask] = weight_sim[binary_mask] * f_bin_sim
+    weight_sim[~binary_mask] = weight_sim[~binary_mask] * (1-f_bin_sim)
+    
+    return (weight_pop / weight_sim) * factor
