@@ -1900,7 +1900,21 @@ class TransientPopulation(Population):
         
         """
         if population_parameters is None:
-            population_parameters = self.ini_params
+            population_parameters = {'number_of_binaries': 1000000,
+                                    'binary_fraction_scheme':'const',
+                                    'binary_fraction_const':0.7,
+                                    'star_formation': 'burst', 'max_simulation_time': 13800000000.0,
+                                    'primary_mass_scheme':'Kroupa2001',
+                                    'primary_mass_min':0.01,
+                                    'primary_mass_max': 200,
+                                    'secondary_mass_scheme':'flat_mass_ratio',
+                                    'secondary_mass_min':0.01*0.05,
+                                    'secondary_mass_max':200,
+                                    'orbital_scheme':'period',
+                                    'orbital_period_scheme':'Sana+12_period_extended',
+                                    'orbital_period_min':0.75,
+                                    'orbital_period_max':6e3,
+                                    'eccentricity_scheme':'zero',}
         
         simulation_parameters = self.ini_params
         
@@ -1920,16 +1934,6 @@ class TransientPopulation(Population):
                                                     M_sim=M_sim,
                                                     simulation_parameters=simulation_parameters,
                                                     population_parameters=population_parameters)
-                    
-        # for i in range(len(self.mass_per_metallicity)):
-        #     underlying_mass = initial_total_underlying_mass(
-        #         simulated_mass=self.mass_per_metallicity['simulated_mass'].iloc[i],
-        #         simulated_mass_single=self.mass_per_metallicity['simulated_mass_single'].iloc[i],
-        #         simulated_mass_binaries=self.mass_per_metallicity['simulated_mass_binaries'].iloc[i],
-        #         f_bin=0.7, 
-        #         **self.ini_params)[0]
-        #     mask = tmp_data == self.mass_per_metallicity.index[i]
-        #     model_weights[mask] = 1/underlying_mass
         
         df = pd.DataFrame(data={model_weights_identifier:model_weights}, index=self.population.index)
         with pd.HDFStore(self.filename, mode="a") as store:

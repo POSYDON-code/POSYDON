@@ -55,14 +55,15 @@ def get_pdf(kwargs, simulation=False):
     IMF_pdf = get_IMF_pdf(kwargs)
     q_pdf = get_mass_ratio_pdf(kwargs, simulation=simulation)
     
+    f_b = kwargs['binary_fraction_const']
+    
     pdf_function = lambda m1, q=0, binary=False: np.where(
         np.asarray(binary),
-        IMF_pdf(np.asarray(m1)) * q_pdf(np.asarray(q), np.asarray(m1)),
-        IMF_pdf(np.asarray(m1))
+        f_b * IMF_pdf(np.asarray(m1)) * q_pdf(np.asarray(q), np.asarray(m1)),
+        (1-f_b) * IMF_pdf(np.asarray(m1))
     )
 
     return pdf_function
-
 
 
 def get_mean_mass(PDF, params, simulation=False):
@@ -91,10 +92,12 @@ def get_mean_mass(PDF, params, simulation=False):
     I_single = nquad(lambda m: m * PDF(m, False),
                      ranges=[(m1_min, m1_max)])[0]
     
-    mean_mass = f_b*I_bin + (1-f_b)*I_single
+    # currently f_b is independent, but could be made dependent and added within the integration?
+    mean_mass = I_bin + I_single
     return mean_mass
 
 
+# not required anymore
 def calculate_underlying_mass(population, simulation_parameters, requested_parameters):
     """Calculate the underlying mass of the population"""
     
@@ -163,6 +166,7 @@ def calculate_underlying_mass(population, simulation_parameters, requested_param
 
 def calculate_model_weights(pop_data, M_sim, simulation_parameters, population_parameters):
     
+    # this could also be a function that depends on m1, q, P, etc.?
     f_bin_sim = simulation_parameters['binary_fraction_const']
     f_bin_pop = population_parameters['binary_fraction_const']
     # build the pdf functions
@@ -177,10 +181,10 @@ def calculate_model_weights(pop_data, M_sim, simulation_parameters, population_p
 
     binary_mask = pop_data['state_i'] != 'initially_single_star'
     weight_pop = PDF_pop(m1=pop_data['S1_mass_i'], q=pop_data['S2_mass_i']/pop_data['S1_mass_i'], binary=binary_mask)
-    weight_pop[binary_mask] = weight_pop[binary_mask] * f_bin_pop
-    weight_pop[~binary_mask] = weight_pop[~binary_mask] * (1-f_bin_pop)
+    weight_pop[binary_mask] = weight_pop[binary_mask]
+    weight_pop[~binary_mask] = weight_pop[~binary_mask]
     weight_sim = PDF_sim(m1=pop_data['S1_mass_i'], q=pop_data['S2_mass_i']/pop_data['S1_mass_i'], binary=binary_mask)
-    weight_sim[binary_mask] = weight_sim[binary_mask] * f_bin_sim
-    weight_sim[~binary_mask] = weight_sim[~binary_mask] * (1-f_bin_sim)
+    weight_sim[binary_mask] = weight_sim[binary_mask]
+    weight_sim[~binary_mask] = weight_sim[~binary_mask]
     
     return (weight_pop / weight_sim) * factor
