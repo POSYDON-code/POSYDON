@@ -92,7 +92,7 @@ extras_require = {
     # to build documentation
     "doc": [
         "ipython",
-        "sphinx >= 6.1.3",
+        "sphinx >= 8.2.2",
         "numpydoc",
         "sphinx_rtd_theme",
         "sphinxcontrib_programoutput",
