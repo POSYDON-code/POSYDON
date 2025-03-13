@@ -47,7 +47,7 @@ from posydon.utils.posydonwarning import Pwarn
 from astropy.cosmology import Planck15 as cosmology
 from astropy import constants as const
 import pandas as pd
-from posydon.popsyn.norm_pop import calculate_model_weights as norm_weights
+from posydon.popsyn.norm_pop import calculate_model_weights
 
 
 from posydon.popsyn.rate_calculation import (
@@ -1930,7 +1930,8 @@ class TransientPopulation(Population):
             
             M_sim = self.mass_per_metallicity['simulated_mass'].iloc[i]
             pop_data = self.oneline.select(where='index in '+str(met_indices.to_list()), columns=['S1_mass_i', 'S2_mass_i', 'orbital_period_i', 'eccentricity_i', 'state_i'])
-            model_weights[met_mask] = norm_weights(pop_data=pop_data,
+            model_weights[met_mask] = calculate_model_weights(
+                                                    pop_data=pop_data,
                                                     M_sim=M_sim,
                                                     simulation_parameters=simulation_parameters,
                                                     population_parameters=population_parameters)

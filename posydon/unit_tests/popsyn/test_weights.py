@@ -356,7 +356,6 @@ class TestReweighting():
         assert np.all(weights >= 0)
         np.isclose(base_population_data, weights)
         
-        
 
 class TestBinaryFractions():
     
