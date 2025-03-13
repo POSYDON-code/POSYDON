@@ -36,7 +36,7 @@ class Salpeter:
             The normalization constant ensuring the PDF integrates to 1.
         """
         integral, _ = quad(self.salpeter_IMF, self.m_min, self.m_max)
-        if integral == 0:
+        if not (integral > 0):
             raise ValueError("Normalization integral is zero. Check IMF parameters.")
         return 1.0 / integral
 
@@ -181,4 +181,99 @@ class Kroupa2001:
         valid = (m >= self.m_min) & (m <= self.m_max)
         pdf_values = np.zeros_like(m, dtype=float)
         pdf_values[valid] = self.kroupa_IMF(m[valid]) * self.norm
+        return pdf_values
+
+class Chabrier2003:
+    '''Chabrier, 2003 IMF
+    https://ui.adsabs.harvard.edu/abs/2003PASP..115..763C/abstract'''
+
+    def __init__(self, m_c=0.22, sigma=0.57, alpha=2.3, m_break=1.0, m_min=0.01, m_max=200.0):
+        """Initialize the Chabrier Initial Mass Function (IMF).
+
+        Parameters
+        ----------
+        m_c : float, optional
+            The characteristic mass of the log-normal part (default is 0.2).
+        sigma : float, optional
+            The width of the log-normal distribution (default is 0.69).
+        alpha : float, optional
+            The power-law index for masses above m_break (default is 2.3).
+        m_break : float, optional
+            The mass at which the IMF transitions from log-normal to power-law (default is 1.0).
+        m_min : float, optional
+            The minimum stellar mass (default is 0.01).
+        m_max : float, optional
+            The maximum stellar mass (default is 200.0).
+        """
+        self.m_c = m_c
+        self.sigma = sigma
+        self.alpha = alpha
+        self.m_break = m_break
+        self.m_min = m_min
+        self.m_max = m_max
+        self.norm = self._calculate_normalization()
+
+    def __repr__(self):
+        return (f"Chabrier(m_c={self.m_c}, sigma={self.sigma}, alpha={self.alpha}, "
+                f"m_break={self.m_break}, m_min={self.m_min}, m_max={self.m_max})")
+
+    def _repr_html_(self):
+        return (f"<h3>Chabrier IMF</h3><p>m_c = {self.m_c}</p><p>sigma = {self.sigma}</p>"
+                f"<p>alpha = {self.alpha}</p><p>m_break = {self.m_break}</p>"
+                f"<p>m_min = {self.m_min}</p><p>m_max = {self.m_max}</p>")
+
+    def _calculate_normalization(self):
+        """Calculate the normalization constant for the IMF.
+
+        Returns
+        -------
+        float
+            The normalization constant ensuring the PDF integrates to 1.
+        """
+        integral, _ = quad(self.chabrier_IMF, self.m_min, self.m_max)
+        if integral <= 0:
+            raise ValueError("Normalization integral is zero. Check IMF parameters.")
+        return 1.0 / integral
+
+    def chabrier_IMF(self, m):
+        """Compute the Chabrier IMF at a given mass.
+
+        Parameters
+        ----------
+        m : float
+            Stellar mass.
+
+        Returns
+        -------
+        float
+            The unnormalized IMF value at mass m.
+        """
+        m = np.asarray(m)
+        # For masses below m_break, use a log-normal distribution
+        lognormal = (1.0 / (m * np.sqrt(2 * np.pi) * self.sigma) *
+                        np.exp(- (np.log10(m) - np.log10(self.m_c))**2 / (2 * self.sigma**2)))
+        # For masses above or equal to m_break, use a power-law with continuity at m_break
+        C = (1.0 / (self.m_break * np.sqrt(2 * np.pi) * self.sigma) *
+                np.exp(- (np.log10(self.m_break) - np.log10(self.m_c))**2 / (2 * self.sigma**2)))
+        powerlaw = C * (m / self.m_break) ** (-self.alpha)
+        # Combine the two branches
+        return np.where(m < self.m_break, lognormal, powerlaw)
+
+    def pdf(self, m):
+        """Probability density function of the Chabrier IMF.
+
+        Parameters
+        ----------
+        m : float or array_like
+            Stellar mass(es).
+
+        Returns
+        -------
+        float or ndarray
+            Probability density at mass m.
+        """
+        m = np.asarray(m)
+        valid = (m >= self.m_min) & (m <= self.m_max)
+        pdf_values = np.zeros_like(m, dtype=float)
+        pdf_values[valid] = self.chabrier_IMF(m[valid]) * self.norm
         return pdf_values
