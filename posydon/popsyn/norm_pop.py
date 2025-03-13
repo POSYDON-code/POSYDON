@@ -20,15 +20,15 @@ import posydon.popsyn.IMFs as IMFs
 def get_IMF_pdf(kwargs):
     '''get the IMF pdf function'''
     
-    if kwargs['primary_mass_scheme'] == 'Kroupa2001':
-        imf = IMFs.Kroupa2001(m_min=kwargs['primary_mass_min'],
-                              m_max=kwargs['primary_mass_max'])
+    primary_mass_scheme = kwargs.get('primary_mass_scheme', '')
+    try:
+        # dynamically retrieve the IMF class from the IMFs module
+        imf_class = getattr(IMFs, primary_mass_scheme)
+        imf = imf_class(m_min=kwargs['primary_mass_min'],
+                        m_max=kwargs['primary_mass_max'])
         IMF_pdf = lambda m1: imf.pdf(m1)
-    elif kwargs['primary_mass_scheme'] == 'Salpeter':
-        imf = IMFs.Salpeter(m_min=kwargs['primary_mass_min'],
-                            m_max=kwargs['primary_mass_max'])
-        IMF_pdf = lambda m1: imf.pdf(m1)
-    else:
+    except AttributeError:
+        # if not found, default to a flat distribution
         IMF_pdf = lambda m1: 1
         
     return IMF_pdf
