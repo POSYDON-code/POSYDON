@@ -164,6 +164,14 @@ def calculate_underlying_mass(population, simulation_parameters, requested_param
 
 def calculate_model_weights(pop_data, M_sim, simulation_parameters, population_parameters):
     '''reweight each model in the simulation to the requested population'''
+    
+    f_b_sim = simulation_parameters['binary_fraction_const']
+    f_b_pop = population_parameters['binary_fraction_const']
+    if (f_b_sim == 1) and (f_b_pop == 0):
+        raise ValueError("No single stars simulated, but requested")
+    if (f_b_sim == 0) and (f_b_pop == 1):
+        raise ValueError("No binaries simulated, but requested")
+    
     # build the pdf functions
     PDF_sim = get_pdf(simulation_parameters)
     PDF_pop = get_pdf(population_parameters)
