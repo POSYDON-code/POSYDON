@@ -193,20 +193,23 @@ class Kroupa2001(IMFBase):
         m : float or array_like
             Stellar mass or array of stellar masses [Msun].
         '''
+        m = np.asarray(m)
         if np.any(m <= 0):
             raise ValueError("Mass must be positive.")
         
-        conditions = [
-            m < self.m1break,
-            (m >= self.m1break) & (m < self.m2break),
-            m >= self.m2break
-        ]
-        choices = [
-            lambda m: (m/self.m_min) ** (-self.alpha1),
-            lambda m: (m/self.m1break) ** (-self.alpha2) * (self.m1break/self.m_min) ** -self.alpha1, 
-            lambda m: (m/self.m2break) ** (-self.alpha3) * (self.m1break/self.m_min) ** -self.alpha1 * (self.m2break/self.m1break) ** -self.alpha2
-        ]
-        return np.select(conditions, [f(m) for f in choices], default=0.0)
+        mask1 = m < self.m1break
+        mask2 = (m >= self.m1break) & (m < self.m2break)
+        mask3 = m >= self.m2break
+
+        # Precompute constants to ensure continuity
+        const1 = (self.m1break / self.m_min) ** (-self.alpha1)
+        const2 = const1 * (self.m2break / self.m1break) ** (-self.alpha2)
+
+        out = np.empty_like(m, dtype=float)
+        out[mask1] = (m[mask1] / self.m_min) ** (-self.alpha1)
+        out[mask2] = const1 * (m[mask2] / self.m1break) ** (-self.alpha2)
+        out[mask3] = const2 * (m[mask3] / self.m2break) ** (-self.alpha3)
+        return out
 
 class Chabrier2003(IMFBase):
     """
