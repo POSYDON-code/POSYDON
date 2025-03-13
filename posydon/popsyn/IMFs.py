@@ -68,6 +68,8 @@ class Salpeter(IMFBase):
     
         dN/dM = m^-2.35
     
+    References
+    ----------
     Salpeter, 1955, ApJ, 121, 161
     https://ui.adsabs.harvard.edu/abs/1955ApJ...121..161S/abstract
     
@@ -124,6 +126,7 @@ class Kroupa2001(IMFBase):
     References
     ----------
     Kroupa, 2001, MNRAS, 322, 231
+    https://ui.adsabs.harvard.edu/abs/2001MNRAS.322..231K/abstract
 
     Parameters
     ----------
@@ -215,7 +218,7 @@ class Chabrier2003(IMFBase):
         
     Reference
     ----------
-    Chabrier, G. (2003). PASP, 115(809), 763-795.
+    Chabrier, (2003). PASP, 115(809), 763-795.
     https://ui.adsabs.harvard.edu/abs/2003PASP..115..763C/abstract
         
     Parameters
