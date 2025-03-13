@@ -27,7 +27,8 @@ from posydon.utils.posydonwarning import Pwarn
 import copy
 from posydon.utils.limits_thresholds import (THRESHOLD_CENTRAL_ABUNDANCE,
     THRESHOLD_HE_NAKED_ABUNDANCE, REL_LOG10_BURNING_THRESHOLD,
-    LOG10_BURNING_THRESHOLD, STATE_NS_STARMASS_UPPER_LIMIT,
+    LOG10_BURNING_THRESHOLD, STATE_WD_STARMASS_UPPER_LIMIT,
+    STATE_NS_STARMASS_LOWER_LIMIT, STATE_NS_STARMASS_UPPER_LIMIT,
     RL_RELATIVE_OVERFLOW_THRESHOLD, LG_MTRANSFER_RATE_THRESHOLD
 )
 from posydon.utils.interpolators import interp1d
@@ -1373,7 +1374,19 @@ def infer_star_state(star_mass=None, surface_h1=None,
                      log_LH=None, log_LHe=None, log_Lnuc=None, star_CO=False):
     """Infer the star state (corresponding to termination flags 2 and 3)."""
     if star_CO:
-        return "NS" if star_mass <= STATE_NS_STARMASS_UPPER_LIMIT else "BH"
+        if ((star_mass is None) or (star_mass<=0)):
+            return "massless_remnant"
+        elif ((((surface_h1 is not None) and (surface_h1>0)) or
+               ((center_h1 is not None) and (center_h1>0)) or
+               ((center_he4 is not None) and (center_he4>0)) or
+               ((center_c12 is not None) and (center_c12>0)) or
+               (star_mass < STATE_NS_STARMASS_LOWER_LIMIT)) and
+              (star_mass <= STATE_WD_STARMASS_UPPER_LIMIT)):
+            return "WD"
+        elif (star_mass <= STATE_NS_STARMASS_UPPER_LIMIT):
+            return "NS"
+        else:
+            return "BH"
 
     if surface_h1 is None:
         return STATE_UNDETERMINED
