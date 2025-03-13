@@ -238,7 +238,7 @@ class MesaGridStep:
         filename = os.path.join(self.path,grid_name)
         if not (os.path.exists(filename.replace('%d','0')) or
                 os.path.exists(filename.replace('_%d',''))):
-            data_download()
+            data_download() #TODO: specify dataset
 
         if self.verbose:
             print("loading psyTrackInterp: {}".format(filename))
@@ -254,7 +254,7 @@ class MesaGridStep:
 
         # Check if interpolation files exist
         if not os.path.exists(filename):
-            data_download()
+            data_download() #TODO: specify dataset
 
         # Load interpolator
         self._Interp = IFInterpolator()
