@@ -33,9 +33,9 @@ def get_IMF_pdf(kwargs):
         
     return IMF_pdf
 
-def get_mass_ratio_pdf(kwargs, simulation=False):
+def get_mass_ratio_pdf(kwargs):
     """Function that returns the mass ratio PDF function with caching for optimization."""
-    if kwargs['secondary_mass_scheme'] == 'flat_mass_ratio' and simulation==True:
+    if kwargs['secondary_mass_scheme'] == 'flat_mass_ratio' and ('q_min' not in kwargs and 'q_max' not in kwargs):
         # flat mass ratio, where bounds are dependent on m1 and min/max m2
         # and q_min = 0.05, q_max = 1
         def get_pdf_for_m1(m1):
@@ -49,11 +49,11 @@ def get_mass_ratio_pdf(kwargs, simulation=False):
         q_pdf = lambda q, m1=None: np.where((q > 0.0) & (q<=1.0), 1, 0)
     return q_pdf
 
-def get_pdf(kwargs, simulation=False):
+def get_pdf(kwargs):
     """Function that build a PDF function given the simulation parameters"""
     
     IMF_pdf = get_IMF_pdf(kwargs)
-    q_pdf = get_mass_ratio_pdf(kwargs, simulation=simulation)
+    q_pdf = get_mass_ratio_pdf(kwargs)
     
     f_b = kwargs['binary_fraction_const']
     
@@ -65,23 +65,23 @@ def get_pdf(kwargs, simulation=False):
     return pdf_function
 
 
-def get_mean_mass(PDF, params, simulation=False):
+def get_mean_mass(PDF, params):
     '''Calculate the mean mass of the population'''
     
+    # integration bounds
     m1_min = params['primary_mass_min']
     m1_max = params['primary_mass_max']
-    # This is not necesary, but integrating outside the PDF is very slow.
-    # this reduces it from 30s to 1s
-    if simulation == True:
-        q_min = 0.05
+    
+    if 'q_min' in params:
+        q_min = params['q_min']
     else:
-        q_min = 0
-    q_min = np.min([params['secondary_mass_min']/params['primary_mass_min'], q_min])
-    q_max = np.min([params['secondary_mass_max']/params['primary_mass_max'], 1])
-    
-    # binary fraction function
-    f_b = params['binary_fraction_const']
-    
+        q_min = np.max([params['secondary_mass_min']/params['primary_mass_min'], 0])
+        
+    if 'q_max' in params:
+        q_max = params['q_max']
+    else:
+        q_max = np.min([params['secondary_mass_max']/params['primary_mass_max'], 1])
+
     # binary integration
     I_bin = nquad(lambda q, m: (m + m * q) * PDF(m, q, True),
                   ranges=[(q_min, q_max),
@@ -91,7 +91,6 @@ def get_mean_mass(PDF, params, simulation=False):
     I_single = nquad(lambda m: m * PDF(m, False),
                      ranges=[(m1_min, m1_max)])[0]
     
-    # currently f_b is independent, but could be made dependent and added within the integration?
     mean_mass = I_bin + I_single
     return mean_mass
 
@@ -164,17 +163,14 @@ def calculate_underlying_mass(population, simulation_parameters, requested_param
     
 
 def calculate_model_weights(pop_data, M_sim, simulation_parameters, population_parameters):
-    
-    # this could also be a function that depends on m1, q, P, etc.?
-    f_bin_sim = simulation_parameters['binary_fraction_const']
-    f_bin_pop = population_parameters['binary_fraction_const']
+    '''reweight each model in the simulation to the requested population'''
     # build the pdf functions
-    PDF_sim = get_pdf(simulation_parameters, simulation=False)
-    PDF_pop = get_pdf(population_parameters, simulation=False)
+    PDF_sim = get_pdf(simulation_parameters)
+    PDF_pop = get_pdf(population_parameters)
     
     # initial properties
-    mean_mass_sim = get_mean_mass(PDF_sim, simulation_parameters, simulation=False)
-    mean_mass_pop = get_mean_mass(PDF_pop, population_parameters, simulation=False)
+    mean_mass_sim = get_mean_mass(PDF_sim, simulation_parameters)
+    mean_mass_pop = get_mean_mass(PDF_pop, population_parameters)
         
     factor = (1/M_sim) * (mean_mass_sim / mean_mass_pop)
     
