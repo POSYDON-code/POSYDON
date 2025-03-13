@@ -203,8 +203,8 @@ class Kroupa2001(IMFBase):
         ]
         choices = [
             lambda m: (m/self.m_min) ** (-self.alpha1),
-            lambda m: (m/self.m1break) ** (-self.alpha2) * (self.m_min/self.m1break) ** self.alpha1, 
-            lambda m: (m/self.m2break) ** (-self.alpha3) * (self.m_min/self.m1break) ** self.alpha1 * (self.m1break/self.m2break) ** self.alpha2
+            lambda m: (m/self.m1break) ** (-self.alpha2) * (self.m1break/self.m_min) ** -self.alpha1, 
+            lambda m: (m/self.m2break) ** (-self.alpha3) * (self.m1break/self.m_min) ** -self.alpha1 * (self.m2break/self.m1break) ** -self.alpha2
         ]
         return np.select(conditions, [f(m) for f in choices], default=0.0)
 
