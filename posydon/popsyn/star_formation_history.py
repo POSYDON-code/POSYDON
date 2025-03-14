@@ -123,7 +123,12 @@ def SFR_per_Z_at_z(z, met_bins, MODEL):
     """
     SFRD = star_formation_rate(MODEL["SFR"], z)
     fSFRD = SFR_Z_fraction_at_given_redshift(
-        z, MODEL["SFR"], MODEL["sigma"], met_bins, MODEL["Z_max"], select_one_met=False
+        z,
+        MODEL["SFR"],
+        MODEL["sigma"],
+        met_bins,
+        MODEL["Z_max"],
+        MODEL['select_one_met']
     )
     SFH = SFRD[:, np.newaxis] * fSFRD
     return SFH
