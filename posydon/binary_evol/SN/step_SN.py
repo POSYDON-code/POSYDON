@@ -78,8 +78,11 @@ MODEL = {
     "mechanism": 'Patton&Sukhbold20-engine',
     "engine": 'N20',
     "PISN": "Marchant+19",
+    "PISN_CO_shift": 0.0,
+    "PPI_extra_mass_loss": 0.0,
     "ECSN": "Podsiadlowski+04",
     "conserve_hydrogen_envelope" : False,
+    "conserve_hydrogen_PPI" : False,
     "max_neutrino_mass_loss": NEUTRINO_MASS_LOSS_UPPER_LIMIT,
     "max_NS_mass": STATE_NS_STARMASS_UPPER_LIMIT,
     "use_interp_values": True,
@@ -341,6 +344,7 @@ class StepSN(object):
                     filename = os.path.join(self.path_to_Patton_datasets,
                                             file_name)
                     if not os.path.exists(filename):
+                        #TODO: specify dataset, e.g. 'auxiliary' when it exists
                         data_download()
 
                     # Reading the dataset
@@ -510,6 +514,7 @@ class StepSN(object):
         # explode
         if state in STAR_STATES_CC:
 
+            SN_type = ""
             # if no profile is avaiable but interpolation quantities are,
             # use those, else continue with or without profile.
             if self.use_interp_values:
@@ -518,11 +523,13 @@ class StepSN(object):
                 for MODEL_NAME, MODEL in MODELS.items():
                     tmp = MODEL_NAME
                     for key, val in MODEL.items():
-                        if "use_" in key:
+                        if "use_" in key or key=="ECSN":
+                            # escape values, which are allowed to differ
                             continue
                         if getattr(self, key) != val:
                             if self.verbose:
-                                print(tmp, 'mismatch:', key, getattr(self, key), val)
+                                print(tmp, 'mismatch:', key,
+                                      getattr(self, key), val)
                             tmp = None
                             break
                     if tmp is not None:
@@ -540,19 +547,52 @@ class StepSN(object):
                     # step_disrupted.
                     # allow to continue with the collapse with profile
                     # or core masses
-                    Pwarn(f'{MODEL_NAME_SEL}: The collapsed star '
-                                     'was not interpolated! If use_profiles '
-                                     'or use_core_masses is set to True, '
-                                     'continue with the collapse.', "InterpolationWarning")
+                    Pwarn(f'{MODEL_NAME_SEL}: The collapsed star was not '
+                          'interpolated! If use_profiles or use_core_masses '
+                          'is set to True, continue with the collapse.',
+                          "InterpolationWarning")
                 else:
                     MODEL_properties = getattr(star, MODEL_NAME_SEL)
 
-                    ## Check if SN_type mismatches the CO_type in MODEL or if interpolated MODEL properties are NaN
-                    ## If either are true, interpolated values cannot be used for this SN
-                    if (check_SN_CO_match(MODEL_properties['SN_type'], MODEL_properties['state']) and
-                        pd.notna(MODEL_properties['mass'])):
+                    SN_type = self.check_SN_type(m_core=star.co_core_mass,
+                                                 m_He_core=star.he_core_mass,
+                                                 m_star=star.mass)[3]
+                    if self.use_profiles and star.profile is not None:
+                        alternative = "Instead use profiles."
+                    elif self.use_core_masses:
+                        alternative = "Instead use core masses."
+                    elif self.allow_spin_None:
+                        alternative = "Instead use core mass without spin."
+                    else:
+                        alternative = ""
 
+                    if MODEL_properties['SN_type'] == "ECSN":
+                        # overwrite ECSN in SN MODEL
+                        MODEL_properties['SN_type'] = SN_type
+                        Pwarn(f"ECSN in SN_MODEL replaced by {SN_type}",
+                              "ReplaceValueWarning")
 
+                    if SN_type == "ECSN":
+                        # do not use interpolated values for ECSN range instead
+                        # behave like use_core_masses=True
+                        pass
+                    ## star's SN_type mismatches one from the MODEL
+                    elif SN_type != MODEL_properties['SN_type']:
+                        Pwarn(f"The SN_type does not match the star: {SN_type}"
+                              f"!={MODEL_properties['SN_type']}."+alternative,
+                              "ApproximationWarning")
+                    ## Check if SN_type mismatches the CO_type in MODEL
+                    elif not check_SN_CO_match(MODEL_properties['SN_type'],
+                                               MODEL_properties['state']):
+                        Pwarn(f"{MODEL_NAME_SEL}: The SN_type does not match "
+                              "the predicted CO."+alternative,
+                              "ApproximationWarning")
+                    ## Check if there is no interpolated remnant mass
+                    elif pd.isna(MODEL_properties['mass']):
+                        Pwarn(f"There is no interpolated remnant mass."
+                              +alternative, "ApproximationWarning")
+                    ## Otherwise interpolated values can be used for this SN
+                    else:
                         for key, value in MODEL_properties.items():
                             setattr(star, key, value)
 
@@ -584,19 +624,13 @@ class StepSN(object):
                             convert_star_to_massless_remnant(star=star)
                             # the mass is set to None
                             # but an orbital kick is still applied.
-                            # Since the mass is set to None, this will lead to a disruption
+                            # Since the mass is set to None, this will lead to
+                            # a disruption
                             # TODO: make it skip the kick caluclation
 
                         if getattr(star, 'SN_type') != 'PISN':
                             star.log_R = np.log10(CO_radius(star.mass, star.state))
                         return
-
-                    else:
-                        Pwarn(f'{MODEL_NAME_SEL}: The SN_type '
-                                      'does not match the predicted CO, or the interpolated '
-                                      'values for the SN remnant are NaN. '
-                                      'If use_profiles or use_core_masses is set to True, '
-                                      'continue with the collapse.', "ApproximationWarning")
                         
             # Verifies the selection of core-collapse mechnism to perform
             # the collapse
@@ -669,10 +703,15 @@ class StepSN(object):
                             max_neutrino_mass_loss=self.max_neutrino_mass_loss,
                             verbose=self.verbose
                         )
-                        star.mass = final_BH[0]
-                        star.spin = final_BH[1]
-                        star.m_disk_accreted = final_BH[2]
-                        star.m_disk_radiated = final_BH[3]
+                        # set post-collapse properties/information to store
+                        for i in final_BH.keys():
+                            setattr(star, i, final_BH[i])
+                        
+                        # set specific properties manually
+                        star.mass = final_BH['M_BH_total']
+                        star.spin = final_BH['a_BH_total']
+                        star.m_disk_accreted = final_BH['m_disk_accreted']
+                        star.m_disk_radiated = final_BH['m_disk_radiated']
                         star.state = "BH"
                     else:
                         star.mass = m_grav
@@ -683,11 +722,15 @@ class StepSN(object):
                     star.h1_mass_ej, star.he4_mass_ej = \
                         get_ejecta_element_mass_at_collapse(star,star.mass,verbose=self.verbose)
 
-                elif self.use_core_masses:
+                elif self.use_core_masses or SN_type == "ECSN":
                     # If the profile is not available the star spin
                     # is used to get the compact object spin
                     star.mass = m_grav
                     if m_grav >= self.max_NS_mass:
+                        if SN_type == "ECSN":
+                            Pwarn("An ECSN should not form a black hole: "
+                                  f"m_grav={m_grav}.",
+                                  "InappropriateValueWarning")
                         # see Eq. 14, Fryer, C. L., Belczynski, K., Wiktorowicz,
                         # G., Dominik, M., Kalogera, V., & Holz, D. E. (2012), ApJ, 749(1), 91.
 
@@ -795,14 +838,18 @@ class StepSN(object):
                             max_neutrino_mass_loss=self.max_neutrino_mass_loss,
                             verbose=self.verbose
                         )
-                        star.mass = final_BH[0]
+                        # set post-collapse properties/information to store
+                        for i in final_BH.keys():
+                            setattr(star, i, final_BH[i])
+                        # set specific properties manually
+                        star.mass = final_BH['M_BH_total']
+                        star.spin = final_BH['a_BH_total']
+
                         if m_grav != star.mass and self.verbose:
                             print("The star formed a disk during the collapse "
-                                  "and lost", round(final_BH[0] - m_rembar, 2),
+                                  "and lost", round(final_BH['M_BH_total'] - m_rembar, 2),
                                   "M_sun.")
-                        star.spin = final_BH[1]
-                        star.m_disk_accreted = final_BH[2]
-                        star.m_disk_radiated = final_BH[3]
+                    
                     elif star.state == "NS":
                         star.mass = m_grav
                         star.m_disk_accreted = 0.0
@@ -816,9 +863,13 @@ class StepSN(object):
                     star.h1_mass_ej, star.he4_mass_ej = \
                         get_ejecta_element_mass_at_collapse(star,star.mass,verbose=self.verbose)
 
-                elif self.use_core_masses:
+                elif self.use_core_masses or SN_type == "ECSN":
                     star.mass = m_grav
                     if m_grav >= self.max_NS_mass:
+                        if SN_type == "ECSN":
+                            Pwarn("An ECSN should not form a black hole: "
+                                  f"m_grav={m_grav}.",
+                                  "InappropriateValueWarning")
                         # see Eq. 14, Fryer, C. L., Belczynski, K., Wiktorowicz,
                         # G., Dominik, M., Kalogera, V., & Holz, D. E. (2012), ApJ, 749(1), 91.
 
@@ -899,6 +950,7 @@ class StepSN(object):
             # perform the PISN prescription in terms of the
             # He core mass at pre-supernova
             m_He_core = star.he_core_mass
+            m_CO_core = star.co_core_mass
             m_star = star.mass
             if self.PISN == "Marchant+19":
                 if m_He_core >= 31.99 and m_He_core <= 61.10:
@@ -931,6 +983,71 @@ class StepSN(object):
                         m_PISN = m_star
                     else:
                         m_PISN = m_He_core
+            
+            elif self.PISN == 'Hendriks+23':
+                # Hendriks et al. 2023 PISN prescription
+                # 10.1093/mnras/stad2857
+                # Shifting PPI and PISN gap
+                # works by removing delta_M_PPI from the star
+                # and then applying any remnant mass prescription
+                
+                delta_M_CO_shift = self.PISN_CO_shift if self.PISN_CO_shift is not None else 0.0
+                delta_M_PPI_extra_ML = self.PPI_extra_mass_loss if self.PPI_extra_mass_loss is not None else 0.0
+                
+                m_CO_core_PISN_min = 38 + delta_M_CO_shift
+                m_CO_core_PISN_max = 114 + delta_M_CO_shift
+                
+                if ((m_CO_core >= m_CO_core_PISN_min) 
+                    and m_CO_core <= m_CO_core_PISN_max):
+
+                    # delta_PPI -> -inf if Z -> 0
+                    # limit mass loss to Z = 1e-4 for Z below it.
+                    # 1e-4 is the lowest metallicity in the Hendriks et al. 2023
+                    if star.metallicity < 1e-4:
+                        Z = 1e-4
+                    else:
+                        Z = star.metallicity
+                    # Hendriks et al. 2023 Equation 6
+                    # 10.1093/mnras/stad2857
+                    delta_M_PPI = (
+                        (0.0006 * np.log10(Z * const.Zsun) + 0.0054)
+                        * (m_CO_core - delta_M_CO_shift - 34.8)**3
+                        - 0.0013 * (m_CO_core - delta_M_CO_shift - 34.8)**2
+                        + delta_M_PPI_extra_ML
+                    )
+                    if self.verbose:
+                        print(f"delta_M_PPI: {delta_M_PPI} Msun")
+                else:
+                    delta_M_PPI = 0.0
+                    
+                if delta_M_PPI <= 0.0:
+                    # no PPI -> use CCSN prescription
+                    if self.conserve_hydrogen_envelope:
+                        m_PISN = m_star
+                    else:
+                        m_PISN = m_He_core
+                else:
+                    # PPI occurs 
+                    if self.conserve_hydrogen_PPI:
+                        m_PISN = m_star - delta_M_PPI
+                    else:
+                        m_PISN = m_He_core - delta_M_PPI
+                    
+                    if m_PISN < 0.0:
+                        m_PISN = np.nan
+                    else:
+                        PISN_star = copy.deepcopy(star)
+                        PISN_star.mass = m_PISN
+                        if PISN_star.he_core_mass > m_PISN:
+                            PISN_star.he_core_mass = m_PISN
+                        if PISN_star.co_core_mass > m_PISN:
+                            PISN_star.co_core_mass = m_PISN
+                        m_rembar, _, _ = self.compute_m_rembar(PISN_star, m_PISN)
+                    
+                        if m_rembar < 10:
+                            m_PISN = np.nan
+                        else:
+                            m_PISN = m_rembar
 
             elif is_number(self.PISN) and m_He_core > self.PISN:
                 m_PISN = self.PISN
@@ -2129,6 +2246,7 @@ class Sukhbold16_corecollapse(object):
             filename = os.path.join(path_engine_dataset,
                                     "results_" + self.engine + "_table.csv")
             if not os.path.exists(filename):
+                #TODO: specify dataset, e.g. 'auxiliary' when it exists
                 data_download()
 
             Engine_data = read_csv(filename)
@@ -2322,6 +2440,7 @@ class Couch20_corecollapse(object):
             # Check if interpolation files exist
             filename = os.path.join(path_to_Couch_datasets, 'explDatsSTIR2.json')
             if not os.path.exists(filename):
+                #TODO: specify dataset, e.g. 'auxiliary' when it exists
                 data_download()
 
             Couch_data_file = open(filename)
