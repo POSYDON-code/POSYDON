@@ -2085,7 +2085,7 @@ class TransientPopulation(Population):
         # only need to sample the SFH at each metallicity and z_birth
         # Not for every event!        
         SFR_per_Z_at_z_birth = SFR_per_Z_at_z(z_birth, met_edges, MODEL)
-
+        
         # simulated mass per given metallicity corrected for the unmodeled
         # single and binary stellar mass
         M_model = rates.mass_per_metallicity.loc[rates.centers_metallicity_bins / Zsun][

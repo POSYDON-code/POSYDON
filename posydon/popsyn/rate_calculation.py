@@ -150,7 +150,6 @@ def get_redshift_from_cosmic_time(t_cosm):
     return trained_tz_interp(t_cosm)
 
 
-
 def get_redshift_bin_edges(delta_t):
     """Compute the redshift bin edges.
 

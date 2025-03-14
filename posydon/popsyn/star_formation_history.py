@@ -23,7 +23,7 @@ from posydon.utils.common_functions import (
 from posydon.utils.constants import Zsun
 from posydon.utils.interpolators import interp1d
 from astropy.cosmology import Planck15 as cosmology
-
+from abc import ABC, abstractmethod
 
 SFH_SCENARIOS = [
     "burst",
@@ -33,6 +33,225 @@ SFH_SCENARIOS = [
     "custom_linear_histogram",
     "custom_log10_histogram",
 ]
+
+class SFHBase(ABC):
+    
+    def __init__(self, MODEL):
+        self.MODEL = MODEL
+        # Automatically attach all model parameters as attributes
+        for key, value in MODEL.items():
+            setattr(self, key, value)
+
+    @abstractmethod
+    def CSFRD(self, z):
+        """Compute the cosmic star formation rate density."""
+        pass
+
+    @abstractmethod
+    def mean_metallicity(self, z):
+        """Return the mean metallicity at redshift z."""
+        pass
+
+    def std_log_metallicity_dist(self):
+        sigma = self.sigma
+        if isinstance(sigma, str):
+            if sigma == "Bavera+20":
+                return 0.5
+            elif sigma == "Neijssel+19":
+                return 0.39
+            else:
+                raise ValueError("Unknown sigma choice!")
+        elif isinstance(sigma, float):
+            return sigma
+        else:
+            raise ValueError(f"Invalid sigma value {sigma}!")
+        
+    @abstractmethod
+    def fSFR(self, z, metallicity_bins):
+        """Return the fractional SFR as a function of redshift and metallicity bins."""
+        pass
+
+    def __call__(self, z, met_bins):
+        return self.CSFRD(z)[:, np.newaxis] * self.fSFR(z, met_bins)
+
+class MadauBase(SFHBase):
+    """
+    Base class for Madau-style star-formation history implementations.
+    This class implements common methods for CSFRD, mean metallicity,
+    and fractional SFR based on the chosen Madau parameterisation.
+    The specific parameters for CSFRD must be provided by subclasses.
+    """
+
+    def CSFRD(self, z):
+        p = self.CSFRD_params
+        return p["a"] * (1.0 + z) ** p["b"] / (1.0 + ((1.0 + z) / p["c"]) ** p["d"])
+
+    def mean_metallicity(self, z):
+        return 10 ** (0.153 - 0.074 * z ** 1.34) * Zsun
+
+    def fSFR(self, z, metallicity_bins):
+        sigma = self.std_log_metallicity_dist()
+        # Compute mu; if z is an array, mu will be an array.
+        mu = np.log10(self.mean_metallicity(z)) - sigma ** 2 * np.log(10) / 2.0
+        # Ensure mu is an array for consistency
+        mu_array = np.atleast_1d(mu)
+        # Use the first value of mu for normalisation
+        norm = stats.norm.cdf(np.log10(self.Z_max), mu_array[0], sigma)
+        fSFR = np.empty((len(mu_array), len(metallicity_bins) - 1))
+        fSFR[:, :] = np.array(
+            [
+                (
+                    stats.norm.cdf(np.log10(metallicity_bins[1:]), m, sigma) / norm
+                    - stats.norm.cdf(np.log10(metallicity_bins[:-1]), m, sigma) / norm
+                )
+                for m in mu_array
+            ]
+        )
+        if not self.select_one_met:
+            fSFR[:, 0] = stats.norm.cdf(np.log10(metallicity_bins[1]), mu_array, sigma) / norm
+            fSFR[:, -1] = norm - stats.norm.cdf(np.log10(metallicity_bins[-1]), mu_array, sigma) / norm
+        return fSFR
+
+class MadauDickinson14(MadauBase):
+
+    def __init__(self, MODEL):
+        super().__init__(MODEL)
+        self.SFR = MODEL["SFR"]
+        # Parameters for Madau+Dickinson14 CSFRD
+        self.CSFRD_params = {
+            "a": 0.015,
+            "b": 2.7,
+            "c": 2.9,
+            "d": 5.6,
+        }
+
+class MadauFragos17(MadauBase):
+
+    def __init__(self, MODEL):
+        super().__init__(MODEL)
+        self.SFR = MODEL["SFR"]
+        # Parameters for Madau+Fragos17 CSFRD
+        self.CSFRD_params = {
+            "a": 0.01,
+            "b": 2.6,
+            "c": 3.2,
+            "d": 6.2,
+        }
+  
+class Neijssel19(MadauBase):
+    
+    def __init__(self, MODEL):
+        super().__init__(MODEL)
+        self.SFR = MODEL["SFR"]
+        # Parameters for Neijssel+19 CSFRD
+        self.CSFRD_params = {
+            "a": 0.01,
+            "b": 2.77,
+            "c": 2.9,
+            "d": 4.7,
+        }
+    
+    # overwrite mean_metallicity method of MadauBase    
+    def mean_metallicity(self, z):
+        return 0.035 * 10 ** (-0.23 * z)
+    
+    # overwrite std_log_metallicity_dist method of MadauBase
+    # TODO: rewrite such that sigma is just changed for the Neijssel+19 case
+    def fSFR(self, z, metallicity_bins):
+        # assume a truncated ln-normal distribution of metallicities
+        sigma = self.std_log_metallicity_dist()
+        mu = np.log(self.mean_metallicity(z)) - sigma**2 / 2.0
+        # renormalisation constant
+        norm = stats.norm.cdf(np.log(self.Z_max), mu[0], sigma)
+        fSFR = np.empty((len(z), len(metallicity_bins) - 1))
+        fSFR[:, :] = np.array(
+            [
+                (
+                    stats.norm.cdf(np.log(metallicity_bins[1:]), m, sigma) / norm
+                    - stats.norm.cdf(np.log(metallicity_bins[:-1]), m, sigma) / norm
+                )
+                for m in mu
+            ]
+        )
+        if not self.select_one_met:
+            fSFR[:, 0] = stats.norm.cdf(np.log(metallicity_bins[1]), mu, sigma) / norm
+            fSFR[:,-1] = norm - stats.norm.cdf(np.log(metallicity_bins[-1]), mu, sigma)/norm
+        return fSFR
+    
+class IllustrisTNG(SFHBase):
+    
+    def __init__(self, MODEL):
+        super().__init__(MODEL)
+        # load the TNG data
+        illustris_data = self._get_illustrisTNG_data()
+        self.SFR = illustris_data["SFR"]
+        self.redshifts = illustris_data["redshifts"]
+        self.Z = illustris_data["mets"]
+        self.M = illustris_data["M"]  # Msun
+        
+    def _get_illustrisTNG_data(self, verbose=False):
+        """Load IllustrisTNG SFR dataset."""
+        if verbose:
+            print("Loading IllustrisTNG data...")
+        return np.load(os.path.join(PATH_TO_POSYDON_DATA, "SFR/IllustrisTNG.npz"))
+    
+        
+    def CSFRD(self, z):
+        SFR_interp = interp1d(self.redshifts, self.SFR)
+        return SFR_interp(z)
+        
+    def mean_metallicity(self, z):
+        out = np.zeros_like(self.redshifts)
+        for i in range(len(out)):
+            if np.sum(self.M[i, :]) == 0:
+                out[i] = 0
+            else:
+                out[i] = np.average(self.Z, weights=self.M[i, :])
+        Z_interp = interp1d(self.redshifts, out)
+        return Z_interp(z)
+                
+    def fSFR(self, z, metallicity_bins):
+        # only use data within the metallicity bounds (no lower bound)
+        Z_max_mask = self.Z <= self.Z_max
+        redshift_indices = np.array([np.where(self.redshifts <= i)[0][0] for i in z])
+        Z_dist = self.M[:, Z_max_mask][redshift_indices]
+        fSFR = np.zeros((len(z), len(metallicity_bins) - 1))
+        
+        for i in range(len(z)):
+            if Z_dist[i].sum() == 0.0:
+                continue
+            else:
+                # Add a final point to the CDF and metallicities to ensure normalisation to 1
+                Z_dist_cdf = np.cumsum(Z_dist[i]) / Z_dist[i].sum()
+                Z_dist_cdf = np.append(Z_dist_cdf, 1)
+                Z_x_values = np.append(np.log10(self.Z[Z_max_mask]), 0)
+                Z_dist_cdf_interp = interp1d(Z_x_values, Z_dist_cdf)
+
+                fSFR[i, :] = (Z_dist_cdf_interp(np.log10(metallicity_bins[1:])) -
+                              Z_dist_cdf_interp(np.log10(metallicity_bins[:-1])))
+
+                if not self.select_one_met:
+                    if len(metallicity_bins) == 2:
+                        fSFR[i, 0] = 1
+                    else:
+                        fSFR[i, 0] = Z_dist_cdf_interp(np.log10(metallicity_bins[1]))
+                        fSFR[i, -1] = 1 - Z_dist_cdf_interp(np.log10(metallicity_bins[-1]))
+                        
+        return fSFR
+    
+
+def get_SFH_model(MODEL):
+    
+    if MODEL["SFR"] == "Madau+Fragos17":
+        return MadauFragos17(MODEL)
+    elif MODEL['SFR'] == "Madau+Dickinson14":
+        return MadauDickinson14(MODEL)
+    elif MODEL['SFR'] == "Neijssel+19":
+        return Neijssel19(MODEL)
+    elif MODEL['SFR'] == "IllustrisTNG":
+        return IllustrisTNG(MODEL)
+    else:
+        raise ValueError("Invalid SFR!")
 
 
 def get_formation_times(N_binaries, star_formation="constant", **kwargs):
@@ -121,17 +340,8 @@ def SFR_per_Z_at_z(z, met_bins, MODEL):
         Star formation history per metallicity bin at the given redshift(s).
     
     """
-    SFRD = star_formation_rate(MODEL["SFR"], z)
-    fSFRD = SFR_Z_fraction_at_given_redshift(
-        z,
-        MODEL["SFR"],
-        MODEL["sigma"],
-        met_bins,
-        MODEL["Z_max"],
-        MODEL['select_one_met']
-    )
-    SFH = SFRD[:, np.newaxis] * fSFRD
-    return SFH
+    SFH = get_SFH_model(MODEL)
+    return SFH(z, met_bins)
 
 def star_formation_rate(SFR, z):
     """Star formation rate in M_sun yr^-1 Mpc^-3.
