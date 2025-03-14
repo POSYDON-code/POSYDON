@@ -103,6 +103,30 @@ def get_illustrisTNG_data(verbose=False):
         print("Loading IllustrisTNG data...")
     return np.load(os.path.join(PATH_TO_POSYDON_DATA, "SFR/IllustrisTNG.npz"))
 
+def SFR_per_Z_at_z(z, met_bins, MODEL):
+    """Calculate the SFR per metallicity bin at a given redshift(s)
+    
+    Parameters
+    ----------
+    z : float or array-like
+        Cosmological redshift.
+    met_bins : array
+        Metallicity bins edges in absolute metallicity.
+    MODEL : dict
+        Model parameters.
+    
+    Returns
+    -------
+    SFH : 2D array
+        Star formation history per metallicity bin at the given redshift(s).
+    
+    """
+    SFRD = star_formation_rate(MODEL["SFR"], z)
+    fSFRD = SFR_Z_fraction_at_given_redshift(
+        z, MODEL["SFR"], MODEL["sigma"], met_bins, MODEL["Z_max"], select_one_met=False
+    )
+    SFH = SFRD[:, np.newaxis] * fSFRD
+    return SFH
 
 def star_formation_rate(SFR, z):
     """Star formation rate in M_sun yr^-1 Mpc^-3.
