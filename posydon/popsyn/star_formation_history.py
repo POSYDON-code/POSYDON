@@ -88,6 +88,7 @@ class SFHBase(ABC):
             Star formation history per metallicity bin at the given redshift(s).
         '''
         return self.CSFRD(z)[:, np.newaxis] * self.fSFR(z, met_bins)
+    
 
 class MadauBase(SFHBase):
     """
@@ -152,21 +153,27 @@ class MadauBase(SFHBase):
         mu = np.log10(self.mean_metallicity(z)) - sigma ** 2 * np.log(10) / 2.0
         # Ensure mu is an array for consistency
         mu_array = np.atleast_1d(mu)
+        
+        
         # Use the first value of mu for normalisation
-        norm = stats.norm.cdf(np.log10(self.Z_max), mu_array[0], sigma)
+        norm = stats.norm.cdf(np.log10(self.Z_max), mu_array, sigma)
+        
         fSFR = np.empty((len(mu_array), len(metallicity_bins) - 1))
+        
         fSFR[:, :] = np.array(
             [
                 (
-                    stats.norm.cdf(np.log10(metallicity_bins[1:]), m, sigma) / norm
-                    - stats.norm.cdf(np.log10(metallicity_bins[:-1]), m, sigma) / norm
+                    stats.norm.cdf(np.log10(metallicity_bins[1:]), m, sigma)
+                    - stats.norm.cdf(np.log10(metallicity_bins[:-1]), m, sigma)
                 )
                 for m in mu_array
             ]
-        )
+        )  / norm[:, np.newaxis]
+        
         if not self.select_one_met:
-            fSFR[:, 0] = stats.norm.cdf(np.log10(metallicity_bins[1]), mu_array, sigma) / norm
-            fSFR[:, -1] = norm - stats.norm.cdf(np.log10(metallicity_bins[-2]), mu_array, sigma) / norm
+            fSFR[:, 0] = stats.norm.cdf(np.log10(metallicity_bins[1]), mu_array, sigma)/norm
+            fSFR[:, -1] = 1 - (stats.norm.cdf(np.log10(metallicity_bins[-2]), mu_array, sigma)/norm)
+            
         return fSFR
 
 class MadauDickinson14(MadauBase):
