@@ -7,6 +7,7 @@ from posydon.popsyn.star_formation_history import (
     Neijssel19,
     IllustrisTNG,
     Chruslinska21,
+    Zalava21,
     get_SFH_model
 )
 
@@ -187,3 +188,69 @@ class TestGetSFHModel:
         with pytest.raises(ValueError) as excinfo:
             get_SFH_model(base_args)
         assert "Invalid SFR!" in str(excinfo.value)
+
+# New tests for the Zalava21 (Zavala) class
+class DummyLoadZalava:
+    def __call__(self, verbose=False):
+        # Dummy load: set redshifts, SFR, Z and dFOH attributes.
+        self.redshifts = np.array([0.0, 1.0, 2.0])
+        # Create a dummy SFR array with 3 rows and 10 columns
+        self.SFR_data = np.ones((3, 10))
+        # Dummy metal abundance array (10 values) and dFOH value
+        self.Z = np.linspace(0.001, 0.03, 10)
+        self.dFOH = self.Z[1]-self.Z[0]
+
+class TestZalava21:
+    def dummy_load_zalava_data(self, verbose=False):
+        DummyLoadZalava().__call__(self)
+        
+    def test_get_model_zalava_min(self, monkeypatch):
+        base_args = {
+            "SFR": "Zalava+21",
+            "sigma": 0.5,
+            "Z_max": 0.03,
+            "select_one_met": False,
+            "sub_model": "min",
+        }
+        monkeypatch.setattr(Zalava21, "_load_zalava_data", self.dummy_load_zalava_data)
+        model = get_SFH_model(base_args)
+        assert np.array_equal(model.SFR_data, np.ones((3, 10)))
+        
+    def test_get_model_zalava_max(self, monkeypatch):
+        base_args = {
+            "SFR": "Zalava+21",
+            "sigma": 0.5,
+            "Z_max": 0.03,
+            "select_one_met": False,
+            "sub_model": "max",
+        }
+        monkeypatch.setattr(Zalava21, "_load_zalava_data", self.dummy_load_zalava_data)
+        model = get_SFH_model(base_args)
+        assert isinstance(model, Zalava21)
+        
+    def test_missing_sub_model_raises(self):
+        base_args = {
+            "SFR": "Zalava+21",
+            "sigma": 0.5,
+            "Z_max": 0.03,
+            "select_one_met": False,
+        }
+        with pytest.raises(ValueError) as excinfo:
+            Zalava21(base_args)
+        assert "Sub-model not given!" in str(excinfo.value)
+        
+    def test_fSFR_sum_is_one_zalava(self, monkeypatch):
+        base_args = {
+            "SFR": "Zalava+21",
+            "sigma": 0.5,
+            "Z_max": 0.03,
+            "select_one_met": False,
+            "sub_model": "min",
+        }
+        monkeypatch.setattr(Zalava21, "_load_zalava_data", self.dummy_load_zalava_data)
+        model = Zalava21(base_args)
+        # Use arbitrary redshift and metallicity bins
+        z = np.array([0.5, 1.0, 2.0])
+        met_bins = np.linspace(0.001, base_args["Z_max"], 50)
+        fSFR = model.fSFR(z, met_bins)
+        np.testing.assert_allclose(np.sum(fSFR, axis=1), np.ones(len(z)), atol=1e-6)

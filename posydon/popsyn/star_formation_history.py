@@ -12,6 +12,7 @@ __authors__ = [
 import os
 import numpy as np
 import scipy as sp
+import pandas as pd
 from scipy import stats
 from posydon.config import PATH_TO_POSYDON_DATA
 from posydon.utils.constants import age_of_universe
@@ -274,7 +275,7 @@ class IllustrisTNG(SFHBase):
         super().__init__(MODEL)
         # load the TNG data
         illustris_data = self._get_illustrisTNG_data()
-        self.SFR = illustris_data["SFR"]
+        self.SFR_data = illustris_data["SFR"]
         self.redshifts = illustris_data["redshifts"]
         self.Z = illustris_data["mets"]
         self.M = illustris_data["M"]  # Msun
@@ -286,7 +287,7 @@ class IllustrisTNG(SFHBase):
         return np.load(os.path.join(PATH_TO_POSYDON_DATA, "SFR/IllustrisTNG.npz"))
     
     def CSFRD(self, z):
-        SFR_interp = interp1d(self.redshifts, self.SFR)
+        SFR_interp = interp1d(self.redshifts, self.SFR_data)
         return SFR_interp(z)
         
     def mean_metallicity(self, z):
@@ -386,7 +387,7 @@ class Chruslinska21(SFHBase):
         self._data_folder = os.path.join(PATH_TO_POSYDON_DATA, "SFR/Chruslinska+21")
         _, self.redshifts, delta_T = self._load_redshift_data(verbose)
         M = self._load_raw_data()
-        self.SFR = np.array( [M[ii]/(1e6*delta_T[ii]) for ii in range(len(delta_T))])/self.dFOH
+        self.SFR_data = np.array( [M[ii]/(1e6*delta_T[ii]) for ii in range(len(delta_T))])/self.dFOH
 
     def _FOH_to_Z(self, FOH):
         # scalings from Chruslinksa+21
@@ -419,10 +420,10 @@ class Chruslinska21(SFHBase):
         ''' 
         mean_over_redshift = np.zeros_like(self.redshifts)
         for i in range(len(mean_over_redshift)):
-            if np.sum(self.SFR[i]) == 0:
+            if np.sum(self.SFR_data[i]) == 0:
                 mean_over_redshift[i] = 0
             else:
-                mean_over_redshift[i] = np.average(self.Z, weights=self.SFR[i,:]*self.dFOH)
+                mean_over_redshift[i] = np.average(self.Z, weights=self.SFR_data[i,:]*self.dFOH)
         
         Z_interp = interp1d(self.redshifts, mean_over_redshift)
         return Z_interp(z)
@@ -445,7 +446,7 @@ class Chruslinska21(SFHBase):
         # only use data within the metallicity bounds (no lower bound)
         Z_max_mask = self.Z <= self.Z_max
         redshift_indices = np.array([np.where(self.redshifts <= i)[0][0] for i in z])
-        Z_dist = self.SFR[:, Z_max_mask][redshift_indices]
+        Z_dist = self.SFR_data[:, Z_max_mask][redshift_indices]
         fSFR = np.zeros((len(z), len(metallicity_bins) - 1))
         
         for i in range(len(z)):
@@ -517,10 +518,62 @@ class Chruslinska21(SFHBase):
         float or array-like
             The cosmic star formation rate density at the given redshift(s).
         '''
-        SFR_interp = interp1d(self.redshifts, np.sum(self.SFR*self.dFOH, axis=1))
+        SFR_interp = interp1d(self.redshifts, np.sum(self.SFR_data*self.dFOH, axis=1))
         return SFR_interp(z)
     
+class Fujimoto24(MadauBase):
+    '''The Fujimoto et al. (2024) star formation history model.
+    mean metallicity evolution of Madau & Fragos (2017).
+    
+    Fujimoto et al. (2024), ApJ SS, 275, 2, 36, 59
+    https://ui.adsabs.harvard.edu/abs/2024ApJS..275...36F/abstract
+    '''
+    def __init__(self, MODEL):
+        super().__init__(MODEL)
+        # Parameters for Fujimoto+24 CSFRD
+        self.CSFRD_params = {
+            "a": 0.010,
+            "b": 2.8,
+            "c": 3.3,
+            "d": 6.6,
+        }   
+    
+class Zalava21(MadauBase):
+    
+    def __init__(self, MODEL):
+        '''Initialise the Zalava+21 model
         
+        Requires the following parameters:
+        - sub_model : str
+            Either min or max
+        '''
+        if 'sub_model' not in MODEL:
+            raise ValueError("Sub-model not given!")
+        
+        super().__init__(MODEL)
+        self._load_zalava_data()
+        
+    def _load_zalava_data(self):
+        '''Load the data from the Zalava+21 models
+        Transforms the data to the format used in the classes.
+        
+        '''  
+        data_file = os.path.join(PATH_TO_POSYDON_DATA, "SFR/Zalava+21.txt")
+        tmp_data = pd.read_csv(data_file, names=['redshift', 'SFRD_min', 'SFRD_max'], skiprows=1, sep='\s+')
+        self.redshifts = tmp_data['redshift'].values
+        if self.sub_model == 'min':
+            self.SFR_data = tmp_data['SFRD_min'].values
+        elif self.sub_model == 'max':
+            self.SFR_data = tmp_data['SFRD_max'].values
+        else:
+            raise ValueError("Invalid sub-model!")
+
+    # overwrite the CSFRD method of MadauBase        
+    def CSFRD(self, z):
+        SFR_interp = interp1d(self.redshifts, self.SFR_data)
+        return SFR_interp(z)
+        
+    
 def get_SFH_model(MODEL):
     '''Return the appropriate SFH model based on the given parameters
     
@@ -538,12 +591,16 @@ def get_SFH_model(MODEL):
         return MadauFragos17(MODEL)
     elif MODEL['SFR'] == "Madau+Dickinson14":
         return MadauDickinson14(MODEL)
+    elif MODEL['SFR'] == 'Fujimoto+24':
+        return Fujimoto24(MODEL)
     elif MODEL['SFR'] == "Neijssel+19":
         return Neijssel19(MODEL)
     elif MODEL['SFR'] == "IllustrisTNG":
         return IllustrisTNG(MODEL)
     elif MODEL['SFR'] == "Chruslinska+21":
         return Chruslinska21(MODEL)
+    elif MODEL['SFR'] == "Zalava+21":
+        return Zalava21(MODEL)
     else:
         raise ValueError("Invalid SFR!")
 
