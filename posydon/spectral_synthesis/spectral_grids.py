@@ -181,3 +181,4 @@ class spectral_grids():
             F[filter] = photgrid[filter].flux(x)*distance_factor
 
         return F
+    
