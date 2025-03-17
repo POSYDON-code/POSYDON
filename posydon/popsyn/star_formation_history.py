@@ -89,7 +89,6 @@ class SFHBase(ABC):
         '''
         return self.CSFRD(z)[:, np.newaxis] * self.fSFR(z, met_bins)
     
-
 class MadauBase(SFHBase):
     """
     Base class for Madau-style star-formation history implementations.
@@ -247,20 +246,20 @@ class Neijssel19(MadauBase):
         sigma = self.std_log_metallicity_dist()
         mu = np.log(self.mean_metallicity(z)) - sigma**2 / 2.0
         # renormalisation constant
-        norm = stats.norm.cdf(np.log(self.Z_max), mu[0], sigma)
+        norm = stats.norm.cdf(np.log(self.Z_max), mu, sigma)
         fSFR = np.empty((len(z), len(metallicity_bins) - 1))
         fSFR[:, :] = np.array(
             [
                 (
-                    stats.norm.cdf(np.log(metallicity_bins[1:]), m, sigma) / norm
-                    - stats.norm.cdf(np.log(metallicity_bins[:-1]), m, sigma) / norm
+                    stats.norm.cdf(np.log(metallicity_bins[1:]), m, sigma) 
+                    - stats.norm.cdf(np.log(metallicity_bins[:-1]), m, sigma)
                 )
                 for m in mu
             ]
-        )
+        ) / norm[:, np.newaxis]
         if not self.select_one_met:
             fSFR[:, 0] = stats.norm.cdf(np.log(metallicity_bins[1]), mu, sigma) / norm
-            fSFR[:,-1] = norm - stats.norm.cdf(np.log(metallicity_bins[-2]), mu, sigma)/norm
+            fSFR[:,-1] = 1 - stats.norm.cdf(np.log(metallicity_bins[-2]), mu, sigma)/norm
         return fSFR
     
 class IllustrisTNG(SFHBase):
