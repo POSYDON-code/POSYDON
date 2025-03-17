@@ -2035,10 +2035,6 @@ class TransientPopulation(Population):
         if MODEL_in is None:
             MODEL = DEFAULT_MODEL
         else:
-            for key in MODEL_in:
-                if key not in DEFAULT_MODEL:
-                    raise ValueError(key + " is not a valid parameter name!")
-
             # write the DEFAULT_MODEL with updates parameters to self.MODEL.
             MODEL = DEFAULT_MODEL
             MODEL.update(MODEL_in)
