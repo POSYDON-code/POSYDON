@@ -174,7 +174,6 @@ class Sana12Period():
         elif m1.shape != p.shape:
             raise ValueError("m1 must be a single value or an array of the same length as p.")
         
-        p = np.asarray(p)
         valid = (p >= self.p_min) & (p <= self.p_max)
         pdf_values = np.zeros_like(p, dtype=float)
         
