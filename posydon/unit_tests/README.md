@@ -122,7 +122,7 @@ It should be noted that the error type will match subclasses successfully.
 
 Usually, pytest will catch all warnings and print them at the end of all tests. If your test will cause a warning which you don't like to have displayed, you can filter the warnings caught by pytest. To filter all warnings in a function or class you can decorate it with a filter, e.g. `@pytest.mark.filterwarnings("ignore:WARNINGTEXT")`. There are more things you can do on [warnings in pytest](https://docs.pytest.org/en/stable/how-to/capture-warnings.html), but you should use that only were needed. But you should be careful with the pytest warning catching, because it overwrites some parts of the python warnings, which even interferes badly with our POSYDON warnings (especially the filter changes). By using the `pytest.warns` context you can capture and check for warnings the same way as for [errors](#catching-raised-errors).
 
-### Do not test functions called inside or need for a function
+### Do not test functions called inside or needed for a function
 
 In more complex cases, the function the test acts on will call other functions. Here it can be useful to replace inner functions with `monkeypatch`.
 
