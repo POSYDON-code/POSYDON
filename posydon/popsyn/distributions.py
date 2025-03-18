@@ -76,7 +76,7 @@ class Sana12Period():
         # mass boundary is at 15 Msun
         self.low_mass_norm = self._calculate_normalization(self.mbreak-1)
         self.high_mass_norm = self._calculate_normalization(self.mbreak+1)
-        self.norm = lambda m1: np.where(m1 <= 15, self.low_mass_norm, self.high_mass_norm)
+        self.norm = lambda m1: np.where(m1 <= self.mbreak, self.low_mass_norm, self.high_mass_norm)
         
         
     def __repr__(self):
