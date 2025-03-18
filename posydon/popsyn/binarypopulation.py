@@ -1002,7 +1002,7 @@ class BinaryGenerator:
                 center_he4=Y,
                 natal_kick_array=kick2,
             )
-            if m1 < 5.55: 
+            if m1 < 4.0: 
                 binary_params['state'] = 'low_mass_binary'
         #If binary_fraction not default a initially single star binary is created.
         else:

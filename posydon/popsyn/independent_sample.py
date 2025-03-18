@@ -393,8 +393,7 @@ def binary_fraction_value(binary_fraction_const=1,binary_fraction_scheme = 'cons
         binary_fraction = binary_fraction_const
     
     elif binary_fraction_scheme == 'Moe_17':
-        binary_fraction = 0.09 + 0.63*np.log10(m1)
-        """
+
         if m1 is None: 
             raise ValueError("There was not a primary mass provided in the inputs. Unable to return a binary fraction")
         #elif m1 < 0.8:
@@ -411,7 +410,6 @@ def binary_fraction_value(binary_fraction_const=1,binary_fraction_scheme = 'cons
             binary_fraction = 0.94
         else: 
             raise ValueError(f'There primary mass provided {m1} is not supported by the Moe_17 scheme.')
-            """
     else: 
         pass
     return binary_fraction
