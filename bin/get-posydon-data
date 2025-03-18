@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-from posydon.utils.data_download import data_download
+from posydon.utils.data_download import _get_posydon_data
 
 if __name__ == '__main__':
-    data_download(verbose=True)
+    _get_posydon_data()
