@@ -6,7 +6,7 @@ __authors__ = [
     "Konstantinos Kovlakas <Konstantinos.Kovlakas@unige.ch>",
     "Matthias Kruckow <Matthias.Kruckow@unige.ch>",
     "Dimitris Souropanis <dsouropanis@ia.forth.gr>",
-    "MMax Briel <max.briel@gmail.com>",
+    "Max Briel <max.briel@gmail.com>",
 ]
 
 import numpy as np
@@ -26,7 +26,7 @@ def get_IMF_pdf(kwargs):
         imf_class = getattr(IMFs, primary_mass_scheme)
         imf = imf_class(m_min=kwargs['primary_mass_min'],
                         m_max=kwargs['primary_mass_max'])
-        IMF_pdf = lambda m1: imf.pdf(m1)
+        IMF_pdf = imf.pdf
     except AttributeError:
         # if not found, default to a flat distribution
         IMF_pdf = lambda m1: 1
