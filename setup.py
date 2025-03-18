@@ -48,13 +48,13 @@ with open("README.md", "rb") as f:
 
 
 # DEPENDENCIES
+setup_requires = [
+    'setuptools >= 76.0.0',
+]
 if 'test' in sys.argv:
-    setup_requires = [
-        'setuptools',
+    setup_requires += [
         'pytest-runner',
     ]
-else:
-    setup_requires = []
 
 
 # These pretty common requirement are commented out. Various syntax types
@@ -149,18 +149,17 @@ setup(
     use_2to3=False,
     classifiers=[
         "Development Status :: 4 - Beta",
-        "Programming Language :: Python",
-        "Programming Language :: Python :: 3.11",
         "Intended Audience :: Science/Research",
         "Intended Audience :: End Users/Desktop",
-        "Intended Audience :: Science/Research",
-        "Natural Language :: English",
         "Topic :: Scientific/Engineering",
         "Topic :: Scientific/Engineering :: Astronomy",
         "Topic :: Scientific/Engineering :: Physics",
+        "Programming Language :: Python",
+        "Programming Language :: Python :: 3.11",
         "Operating System :: POSIX",
         "Operating System :: Unix",
         "Operating System :: MacOS",
+        "Natural Language :: English",
         "License :: OSI Approved :: GNU General Public License v3 (GPLv3+)",
     ],
 )
