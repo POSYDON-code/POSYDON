@@ -20,8 +20,7 @@ from posydon.utils.common_functions import (
     orbital_period_from_separation,
     orbital_separation_from_period,
     roche_lobe_radius,
-    check_state_of_star,
-    PchipInterpolator2
+    check_state_of_star
 )
 from posydon.binary_evol.flow_chart import (STAR_STATES_CC)
 import posydon.utils.constants as const

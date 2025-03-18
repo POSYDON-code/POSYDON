@@ -10,6 +10,7 @@ __authors__ = [
     "Konstantinos Kovlakas <Konstantinos.Kovlakas@unige.ch>",
     "Kyle Akira Rocha <kylerocha2024@u.northwestern.edu>",
     "Jeffrey Andrews <jeffrey.andrews@northwestern.edu>",
+    "Camille Liotine <cliotine@u.northwestern.edu>",
 ]
 
 import os
@@ -21,26 +22,30 @@ from scipy.interpolate import PchipInterpolator
 from scipy.optimize import minimize
 from scipy.optimize import root
 
-from posydon.utils.data_download import PATH_TO_POSYDON_DATA
+from posydon.config import PATH_TO_POSYDON_DATA
 from posydon.binary_evol.binarystar import BINARYPROPERTIES
 from posydon.binary_evol.singlestar import STARPROPERTIES
 from posydon.interpolation.interpolation import GRIDInterpolator
 from posydon.interpolation.data_scaling import DataScaler
-from posydon.utils.common_functions import (
-    bondi_hoyle,
-    orbital_period_from_separation,
-    roche_lobe_radius,
-    check_state_of_star,
-    PchipInterpolator2,
-    convert_metallicity_to_string,
-    set_binary_to_failed,
-)
-from posydon.binary_evol.flow_chart import (STAR_STATES_CC, STAR_STATES_CO)
+from posydon.utils.common_functions import (bondi_hoyle,
+                                            orbital_period_from_separation,
+                                            roche_lobe_radius,
+                                            check_state_of_star,
+                                            convert_metallicity_to_string,
+                                            set_binary_to_failed)
+from posydon.utils.interpolators import PchipInterpolator2
+from posydon.binary_evol.flow_chart import (STAR_STATES_CC, 
+                                            STAR_STATES_CO, 
+                                            STAR_STATES_H_RICH_EVOLVABLE,
+                                            STAR_STATES_HE_RICH_EVOLVABLE)
 import posydon.utils.constants as const
-from posydon.utils.posydonerror import NumericalError, MatchingError, POSYDONError
+from posydon.utils.posydonerror import (NumericalError, MatchingError,
+                                        POSYDONError, FlowError,
+                                        ClassificationError)
 from posydon.utils.posydonwarning import Pwarn
 
-LIST_ACCEPTABLE_STATES_FOR_HMS = ["H-rich_Core_H_burning"]
+LIST_ACCEPTABLE_STATES_FOR_HMS = ["H-rich_Core_H_burning",
+                                  "accreted_He_Core_H_burning"]
 
 LIST_ACCEPTABLE_STATES_FOR_postMS = [
     "H-rich_Shell_H_burning",
@@ -48,14 +53,17 @@ LIST_ACCEPTABLE_STATES_FOR_postMS = [
     "H-rich_Central_He_depleted",
     "H-rich_Core_C_burning",
     "H-rich_Central_C_depletion",
-    "H-rich_non_burning"]
+    "H-rich_non_burning",
+    "accreted_He_Shell_H_burning",
+    "accreted_He_non_burning"]
 
 LIST_ACCEPTABLE_STATES_FOR_HeStar = [
+    'accreted_He_Core_He_burning',
     'stripped_He_Core_He_burning',
     'stripped_He_Shell_He_burning',     # includes stars burning C in core
     'stripped_He_Central_He_depleted',  # includes stars burning C in core
     'stripped_He_Central_C_depletion',
-    'stripped_He_non_burning'           # includes stars burning C in core
+    'stripped_He_non_burning'
     ]
 
 STAR_STATES_H_RICH = [
@@ -66,15 +74,12 @@ STAR_STATES_H_RICH = [
     'H-rich_Shell_He_burning',
     'H-rich_Core_C_burning',
     'H-rich_Central_C_depletion',
-    'H-rich_non_burning'
+    'H-rich_non_burning',
+    'accreted_He_Core_H_burning',
+    'accreted_He_Shell_H_burning',
+    'accreted_He_non_burning'
 ]
 
-'''
-STAR_STATES_CO = ['BH',
-                  'NS',
-                  'WD',
-                  ]
-'''
 
 DEFAULT_TRANSLATION = {
     "time": "time",
@@ -354,7 +359,7 @@ class detached_step:
         # DataScaler instance, created the first time it is requested
         self.stored_scalers = {}
 
-        if verbose:
+        if self.verbose:
             print(
                 dt,
                 n_o_steps_history,
@@ -409,15 +414,12 @@ class detached_step:
         self.profile_keys = DEFAULT_PROFILE_KEYS
 
         if grid_name_Hrich is None:
-            grid_name_Hrich = os.path.join(
-                'single_HMS', self.metallicity+'_Zsun.h5')
+            grid_name_Hrich = os.path.join('single_HMS', self.metallicity+'_Zsun.h5')
         self.grid_Hrich = GRIDInterpolator(os.path.join(path, grid_name_Hrich))
 
         if grid_name_strippedHe is None:
-            grid_name_strippedHe = os.path.join(
-                'single_HeMS', self.metallicity+'_Zsun.h5')
-        self.grid_strippedHe = GRIDInterpolator(
-            os.path.join(path, grid_name_strippedHe))
+            grid_name_strippedHe = os.path.join('single_HeMS', self.metallicity+'_Zsun.h5')
+        self.grid_strippedHe = GRIDInterpolator(os.path.join(path, grid_name_strippedHe))
 
         # Initialize the matching lists:
         m_min_H = np.min(self.grid_Hrich.grid_mass)
@@ -470,8 +472,7 @@ class detached_step:
             [m_min_He, m_max_He], [0, None]
         ]
 
-    def square_difference(self, x, htrack,
-                          mesa_labels, posydon_attributes, colscalers, scales):
+    def square_difference(self, x, htrack, mesa_labels, posydon_attributes, colscalers, scales):
         """Compute the square distance used for scaling."""
         result = 0.0
         for mesa_label, posy_attr, colscaler, scale_of_mesa_label in zip(
@@ -638,6 +639,39 @@ class detached_step:
             the properties of the secondary.
 
         """
+        def get_posydon_attributes(list_for_matching, star):
+            list_of_attributes = []
+            for attr in list_for_matching:
+                list_of_attributes.append(getattr(star, attr))
+            return list_of_attributes
+        
+        def sq_diff_function(x):
+            return self.square_difference(
+                x, htrack=htrack, mesa_labels=MESA_labels,
+                posydon_attributes=posydon_attributes,
+                colscalers=colscalers, scales=scales)
+        
+        def get_MESA_labels(list_for_matching):
+
+            MESA_labels = list_for_matching[0]
+            
+            rs = list_for_matching[1]
+            colscalers = list_for_matching[2]
+            bnds = []
+            for i in range(3, len(list_for_matching)):
+                bnds.append(list_for_matching[i])
+
+            if self.verbose:
+                print("Matching parameters and their normalizations:\n", MESA_labels, rs)
+            
+            scales = []
+            for MESA_label, colscaler in zip(MESA_labels, colscalers):
+                scale_of_attribute = scale(MESA_label, htrack, colscaler)
+                scales.append(scale_of_attribute)
+            
+            return MESA_labels, rs, colscalers, bnds, scales
+
+            
         if htrack:
             self.grid = self.grid_Hrich
         else:
@@ -649,157 +683,126 @@ class detached_step:
         scale = self.scale
 
         initials = None
-        # tolerance 1e-8
+        
         tolerance_matching_integration = 1e-2
         tolerance_matching_integration_hard = 1e-1
+
         if self.verbose:
-            print(matching_method)
+            print(f"\nMatching process started in detached step for {star.state} star "
+                  f"with matching method = {matching_method}")
+
         if matching_method == "root":
+
             if star.state in LIST_ACCEPTABLE_STATES_FOR_HMS:
                 x0 = get_root0(["center_h1", "mass"],
                                [star.center_h1, star.mass],
                                htrack, rs=[0.7, 300])
                 sol = root(
                     lambda x: [
-                        get_track_val("center_h1", htrack, *x)
-                        - star.center_h1,
-                        get_track_val("mass", htrack, *x) - star.mass,
-                    ],
-                    x0,
-                    method="hybr",
-                )
+                        get_track_val("center_h1", htrack, *x) - star.center_h1,
+                        get_track_val("mass", htrack, *x) - star.mass],
+                    x0, method="hybr")
             else:
                 x0 = get_root0(
                     ["he_core_mass", "mass"],
                     [star.he_core_mass, star.mass],
                     htrack,
-                    rs=[11, 300],
-                )
+                    rs=[11, 300])
+                
                 sol = root(
                     lambda x: [
-                        get_track_val("he_core_mass", htrack, *x)
-                        - star.he_core_mass,
-                        get_track_val("mass", htrack, *x) - star.mass,
-                    ],
-                    x0,
-                    method="hybr",
-                )
+                        get_track_val("he_core_mass", htrack, *x) - star.he_core_mass,
+                        get_track_val("mass", htrack, *x) - star.mass],
+                    x0, method="hybr")
+                
             if not sol.success or sol.x[1] < 0:
                 initials = (np.nan, np.nan)
             else:
                 initials = sol.x
+
         elif matching_method == "minimize":
-
-            def posydon_attribute(list_for_matching, star):
-                list_of_attributes = []
-                for attr in list_for_matching:
-                    list_of_attributes.append(getattr(star, attr))
-                return list_of_attributes
-
+            
             if star.state in LIST_ACCEPTABLE_STATES_FOR_HMS:
                 list_for_matching = self.list_for_matching_HMS
             elif star.state in LIST_ACCEPTABLE_STATES_FOR_postMS:
                 list_for_matching = self.list_for_matching_postMS
-
             elif star.state in LIST_ACCEPTABLE_STATES_FOR_HeStar:
                 list_for_matching = self.list_for_matching_HeStar
-
-            MESA_labels = list_for_matching[0]
-            posydon_attributes = posydon_attribute(MESA_labels, star)
-            rs = list_for_matching[1]
-            colscalers = list_for_matching[2]
-            bnds = []
-            for i in range(3, len(list_for_matching)):
-                bnds.append(list_for_matching[i])
-
-            if self.verbose or self.verbose == 1:
-                print("Matching attributes and their normalizations :",
-                      MESA_labels, rs)
+            
+            MESA_labels, rs, colscalers, bnds, scales = get_MESA_labels(list_for_matching)
+            
             for i in MESA_labels:
                 if i not in self.root_keys:
-                    raise AttributeError("Expected matching parameter not "
-                                    "added in the single star grid options.")
-
-            scales = []
-            for MESA_label, colscaler in zip(MESA_labels, colscalers):
-                scale_of_attribute = scale(MESA_label, htrack, colscaler)
-                scales.append(scale_of_attribute)
+                    raise AttributeError(f"Expected matching parameter {i} not added in the single star grid options.")
+                
+            posydon_attributes = get_posydon_attributes(MESA_labels, star)
 
             x0 = get_root0(MESA_labels, posydon_attributes, htrack, rs=rs)
-
-            def sq_diff_function(x):
-                return self.square_difference(
-                    x, htrack=htrack, mesa_labels=MESA_labels,
-                    posydon_attributes=posydon_attributes,
-                    colscalers=colscalers, scales=scales)
-
             sol = minimize(sq_diff_function, x0, method="TNC", bounds=bnds)
 
-            # alternative matching
-            # 1st, different minimization method
-            if (np.abs(sol.fun) > tolerance_matching_integration
-                    or not sol.success):
-                if self.verbose or self.verbose == 1:
-                    print("Alternative matching in detached step, 1st step "
-                          "because either", np.abs(sol.fun), ">",
-                          tolerance_matching_integration,
-                          "or sol.success = ", sol.success)
+            ## save initial matching solution as best solution so far
+            best_sol = sol
+
+            ## Alternative matching attempts if default matching fails!
+            # 1st attempt: use a different minimization method
+            if (np.abs(best_sol.fun) > tolerance_matching_integration or not best_sol.success):
+               
+                if self.verbose:
+                    print (f"Initial matching attempt was unsuccessful:"
+                           f"\n tolerance {np.abs(sol.fun)} > {tolerance_matching_integration}, sol.success = {sol.success}")
+                    
+                    print("\nAlternative matching started (1st attempt)")
+                    print("(Now trying an alternative minimization method)")
+                    
                 sol = minimize(sq_diff_function, x0, method="Powell")
 
-            # 2nd, alternative matching parameters
-            if (np.abs(sol.fun) > tolerance_matching_integration
-                    or not sol.success):
+                ## if alternative matching has a better solution, make it the new best solution
+                if (np.abs(sol.fun) < np.abs(best_sol.fun) and sol.success):
+                    best_sol = sol
+
+            # 2nd attempt: use alternative matching parameters
+            if (np.abs(best_sol.fun) > tolerance_matching_integration or not best_sol.success):    
+                   
+                if self.verbose:
+                    print (f"Alternative matching (1st attempt) was unsuccessful:"
+                           f"\n tolerance {np.abs(sol.fun)} > {tolerance_matching_integration}, sol.success = {sol.success}")
+                    
+                    print("\nAlternative matching started (2nd attempt)")
+                    print("(Now trying to match with alternative parameters)")     
+                      
                 if star.state in LIST_ACCEPTABLE_STATES_FOR_HMS:
                     list_for_matching = self.list_for_matching_HMS_alternative
                 elif star.state in LIST_ACCEPTABLE_STATES_FOR_postMS:
-                    list_for_matching = (
-                        self.list_for_matching_postMS_alternative)
+                    list_for_matching = (self.list_for_matching_postMS_alternative)
                 elif star.state in LIST_ACCEPTABLE_STATES_FOR_HeStar:
-                    list_for_matching = (
-                        self.list_for_matching_HeStar_alternative)
-
-                MESA_labels = list_for_matching[0]
-                posydon_attributes = posydon_attribute(MESA_labels, star)
-                rs = list_for_matching[1]
-                colscalers = list_for_matching[2]
-                bnds = []
-                for i in range(3, len(list_for_matching)):
-                    bnds.append(list_for_matching[i])
-
-                if self.verbose or self.verbose == 1:
-                    print("Alternative matching in detached step, 2nd step "
-                          "because", np.abs(sol.fun), ">",
-                          tolerance_matching_integration,
-                          "or sol.success = ", sol.success)
-                    print("Matching alternative attributes and their "
-                          "normalizations :", MESA_labels, rs)
-
-                scales = []
-                for MESA_label, colscaler in zip(MESA_labels, colscalers):
-                    scale_of_attribute = scale(MESA_label, htrack, colscaler)
-                    scales.append(scale_of_attribute)
-
-                def sq_diff_function(x):
-                    return self.square_difference(
-                        x, htrack=htrack, mesa_labels=MESA_labels,
-                        posydon_attributes=posydon_attributes,
-                        colscalers=colscalers, scales=scales)
+                    list_for_matching = (self.list_for_matching_HeStar_alternative)                
+                    
+                MESA_labels, rs, colscalers, bnds, scales = get_MESA_labels(list_for_matching)
+                posydon_attributes = get_posydon_attributes(MESA_labels, star)
 
                 x0 = get_root0(MESA_labels, posydon_attributes, htrack, rs=rs)
-
                 sol = minimize(sq_diff_function, x0, method="TNC", bounds=bnds)
 
-            # 3rd Alternative matching with a H-rich grid for He-star and vice verse (not for HMS stars)
-            if (np.abs(sol.fun) > tolerance_matching_integration
-                    or not sol.success):
+                if (np.abs(sol.fun) < np.abs(best_sol.fun) and sol.success):
+                    best_sol = sol
+
+            # 3rd attempt: match an He-star with an H-rich grid, or vice versa (not applicable for HMS stars)
+            if (np.abs(best_sol.fun) > tolerance_matching_integration or not best_sol.success):
+
+                if self.verbose:
+                        print (f"Alternative matching (2nd attempt) was unsuccessful:"
+                               f"\n tolerance {np.abs(sol.fun)} > {tolerance_matching_integration}, sol.success = {sol.success}")                    
+                
                 if (star.state in LIST_ACCEPTABLE_STATES_FOR_HeStar
                     or star.state in LIST_ACCEPTABLE_STATES_FOR_postMS):
 
                     if self.verbose:
-                        print("Alternative matching in detached step, 3rd step because ",
-                                np.abs(sol.fun), ">", tolerance_matching_integration  ,
-                                " or sol.success = ", sol.success)
+                        print("\nAlternative matching started (3rd attempt)")
+                        print("(Now trying to match He-star or post-MS star to a different grid)")
 
+                    Pwarn("Attempting to match an He-star with an H-rich grid or post-MS star with a"
+                          " stripped-He grid", "EvolutionWarning")
+                       
                     if star.state in LIST_ACCEPTABLE_STATES_FOR_HeStar:
                         htrack = True
                         list_for_matching = self.list_for_matching_HeStar
@@ -807,116 +810,89 @@ class detached_step:
                         htrack = False
                         list_for_matching = self.list_for_matching_postMS
 
-                    MESA_labels = list_for_matching[0]
-                    posydon_attributes = posydon_attribute(MESA_labels, star)
-                    rs = list_for_matching[1]
-                    colscalers = list_for_matching[2]
-                    bnds = []
-                    for i in range(3, len(list_for_matching)):
-                        bnds.append(list_for_matching[i])
+                    MESA_labels, rs, colscalers, bnds, scales = get_MESA_labels(list_for_matching)
 
-                    if self.verbose or self.verbose == 1:
-                        print("Matching attributes and their normalizations :",
-                              MESA_labels, rs)
                     for i in MESA_labels:
                         if i not in self.root_keys:
-                            raise AttributeError("Expected matching parameter not "
-                                            "added in the single star grid options.")
+                            raise AttributeError(f"Expected matching parameter {i} not added "
+                                                 "in the single star grid options.")
+                        
+                    posydon_attributes = get_posydon_attributes(MESA_labels, star)
+                    x0 = get_root0(MESA_labels, posydon_attributes, htrack, rs=rs)
 
-                    scales = []
-                    for MESA_label, colscaler in zip(MESA_labels, colscalers):
-                        scale_of_attribute = scale(MESA_label, htrack, colscaler)
-                        scales.append(scale_of_attribute)
-
-                    def sq_diff_function(x):
-                        return self.square_difference(
-                            x, htrack=htrack, mesa_labels=MESA_labels,
-                            posydon_attributes=posydon_attributes,
-                            colscalers=colscalers, scales=scales)
-
-                    x0 = get_root0(
-                        MESA_labels, posydon_attributes, htrack, rs=rs)
-
-                    # bnds = ([m_min_H, m_max_H], [0, None])
                     try:
-                        sol = minimize(sq_diff_function, x0,
-                                   method="TNC", bounds=bnds)
+                        sol = minimize(sq_diff_function, x0, method="TNC", bounds=bnds)
+                        if (np.abs(sol.fun) < np.abs(best_sol.fun) and sol.success):
+                            best_sol = sol
+
+                        if self.verbose:
+                            print (f"Alternative matching (3rd attempt) completed:"
+                                   f"\n tolerance {np.abs(sol.fun)} > {tolerance_matching_integration}, "
+                                   f"sol.success = {sol.success}")
                     except:
                         raise NumericalError("SciPy numerical differentiation occured outside boundary "
                                              "while matching to single star track")
 
-            # if still not acceptable matching, we fail the system:
-            if (np.abs(sol.fun) > tolerance_matching_integration_hard
-                    or not sol.success):
-                '''
-                if ((self.get_track_val("mass", star.htrack, *sol.x)
-                        - self.get_track_val(
-                            "he_core_mass", star.htrack, *sol.x))
-                        / self.get_track_val(
-                            "mass", star.htrack, *sol.x) >= 0.05):
-                '''
-                if self.verbose or self.verbose == 1:
-                    print("minimization in matching not successful, with",
-                          np.abs(sol.fun), ">", tolerance_matching_integration,
-                          "tolerance")
+            # if matching is still not successful, set result to NaN:
+            if (np.abs(best_sol.fun) > tolerance_matching_integration_hard or not best_sol.success):
+                if self.verbose:
+                    print("\nFinal matching result is NOT successful with best tolerance ",
+                          np.abs(best_sol.fun), ">", tolerance_matching_integration_hard)
                 initials = (np.nan, np.nan)
-                '''
-                star.fun = np.nan
-                star.stiching_rel_mass_difference = np.nan
-                star.stiching_rel_radius_difference = np.nan
-                star.stiching_rel_inertia_difference = np.nan
-                '''
-            elif np.abs(sol.fun) < tolerance_matching_integration_hard:
-                if self.verbose or self.verbose == 1:
-                    print("minimization in matching considered acceptable,"
-                          " with", f'{np.abs(sol.fun):.8f}', "<",
-                          tolerance_matching_integration, "tolerance")
-                initials = sol.x
-                '''
-                star.fun = sol.fun
-                star.stiching_rel_mass_difference = (
-                    self.get_track_val("mass", htrack, *sol.x) - star.mass
-                ) / star.mass
-                if star.log_R in MESA_label:
-                    star.stiching_rel_logRadius_difference = (
-                        self.get_track_val("log_R", htrack, *sol.x)
-                        - star.log_R) / star.log_R
-                else:
-                    star.stiching_rel_logRadius_difference = np.nan
-                if (star.total_moment_of_inertia is not None
-                        and not np.isnan(star.total_moment_of_inertia)):
-                    star.stiching_rel_inertia_difference = (
-                        self.get_track_val("inertia", htrack, *sol.x)
-                        - star.total_moment_of_inertia
-                    ) / star.total_moment_of_inertia
-                '''
-        
+                
+            else:
+                if self.verbose:
+                    print("\nFinal matching result is considered successful with best tolerance "
+                        f'{np.abs(best_sol.fun):.8f}', "<", tolerance_matching_integration_hard)
+                initials = best_sol.x
 
-        if self.verbose or self.verbose == 1:
-            print(
-                "matching ", star.state,
-                " star with track of intial mass m0, at time t0:",
-                f'{initials[0]:.3f}  [Msun],',
-                f'{initials[1]/1e6:.3f} [Myrs]', "\n",
-                "with m(t0), log10(R(t0), center_he(t0), surface_he4(t0), "
-                "surface_h1(t0), he_core_mass(t0), center_c12(t0) = \n",
-                f'{self.get_track_val("mass", htrack, *sol.x):.3f}',
-                f'{self.get_track_val("log_R", htrack, *sol.x):.3f}',
-                f'{self.get_track_val("center_he4", htrack, *sol.x):.4f}',
-                f'{self.get_track_val("surface_he4", htrack, *sol.x):.4f}',
-                f'{self.get_track_val("surface_h1", htrack, *sol.x):.4f}',
-                f'{self.get_track_val("he_core_mass", htrack, *sol.x):.3f}',
-                f'{self.get_track_val("center_c12", htrack, *sol.x):.4f}\n',
-                "The same values of the secondary at the end of the previous "
-                "step was = \n",
-                f'{star.mass:.3f}',
-                f'{star.log_R:.3f}',
-                f'{star.center_he4:.4f}',
-                f'{star.surface_he4:.4f}',
-                f'{star.surface_h1:.4f}',
-                f'{star.he_core_mass:.3f}',
-                f'{star.center_c12:.4f}'
-            )
+        if self.verbose:
+            if pd.notna(initials[0]):
+                val_names = ["  ", "mass", "log_R", "center_h1", "surface_h1", "he_core_mass", "center_he4", "surface_he4", 
+                             "center_c12"]
+
+                initial_vals = [
+                    "initial values",
+                    f'{star.mass:.3f}', 
+                    f'{star.log_R:.3f}', 
+                    f'{star.center_h1:.3f}', 
+                    f'{star.surface_h1:.4f}',
+                    f'{star.he_core_mass:.3f}',
+                    f'{star.center_he4:.4f}', 
+                    f'{star.surface_he4:.4f}',  
+                    f'{star.center_c12:.4f}'
+                    ]
+
+                matched_vals = [
+                    "matched values",
+                    f'{self.get_track_val("mass", htrack, *best_sol.x):.3f}', 
+                    f'{self.get_track_val("log_R", htrack, *best_sol.x):.3f}',
+                    f'{self.get_track_val("center_h1", htrack, *best_sol.x):.3f}',
+                    f'{self.get_track_val("surface_h1", htrack, *best_sol.x):.4f}',
+                    f'{self.get_track_val("he_core_mass", htrack, *best_sol.x):.3f}',
+                    f'{self.get_track_val("center_he4", htrack, *best_sol.x):.4f}',
+                    f'{self.get_track_val("surface_he4", htrack, *best_sol.x):.4f}',    
+                    f'{self.get_track_val("center_c12", htrack, *best_sol.x):.4f}'
+                    ]
+                
+                output_table = [val_names, initial_vals, matched_vals]
+
+                print("\nMatching completed for", star.state, "star!\n")
+                for row in output_table:
+                    print("{:>14}  {:>5}  {:>5}  {:>9}  {:>10}  {:>12}  {:>10}  {:>11}  {:>10}".format(*row))
+            
+            else:
+                print(
+                    "Matching completed unsuccessfully for star with properties: \n"
+                    f'mass = {star.mass:.3f}, ',
+                    f'log_R = {star.log_R:.3f}, ',
+                    f'center_he4 = {star.center_he4:.4f}, ',
+                    f'surface_he4 = {star.surface_he4:.4f}, ',
+                    f'surface_h1 = {star.surface_h1:.4f}, ',
+                    f'he_core_mass = {star.he_core_mass:.3f}, ',
+                    f'center_c12 = {star.center_c12:.4f}'
+                )
+
         return initials[0], initials[1], htrack
 
     def __repr__(self):
@@ -925,127 +901,8 @@ class detached_step:
 
     def __call__(self, binary):
         """Evolve the binary until RLO or compact object formation."""
-        KEYS = self.KEYS
-        KEYS_POSITIVE = self.KEYS_POSITIVE
 
-        companion_1_exists = (binary.star_1 is not None
-                              and binary.star_1.state != "massless_remnant")
-        companion_2_exists = (binary.star_2 is not None
-                              and binary.star_2.state != "massless_remnant")
-
-        if companion_1_exists:
-            if companion_2_exists:                  # to evolve a binary star
-                self.non_existent_companion = 0
-            else:                                   # star1 is a single star
-                self.non_existent_companion = 2
-        else:
-            if companion_2_exists:                  # star2 is a single star
-                self.non_existent_companion = 1
-            else:                                   # no star in the system
-                raise POSYDONError("There is no star to evolve. Who summoned me?")
-
-        if self.non_existent_companion == 0: #no isolated evolution, detached step of an actual binary
-            # the primary in a real binary is potential compact object, or the more evolved star
-            if (binary.star_1.state in STAR_STATES_CO
-                    and binary.star_2.state in STAR_STATES_H_RICH):
-                primary = binary.star_1
-                secondary = binary.star_2
-                secondary.htrack = True
-                primary.htrack = secondary.htrack
-                primary.co = True
-
-            elif (binary.star_1.state in STAR_STATES_CO
-                    and binary.star_2.state in LIST_ACCEPTABLE_STATES_FOR_HeStar):
-                primary = binary.star_1
-                secondary = binary.star_2
-                secondary.htrack = False
-                primary.htrack = secondary.htrack
-                primary.co = True
-
-            elif (binary.star_2.state in STAR_STATES_CO
-                    and binary.star_1.state in STAR_STATES_H_RICH):
-                primary = binary.star_2
-                secondary = binary.star_1
-                secondary.htrack = True
-                primary.htrack = secondary.htrack
-                primary.co = True
-
-            elif (binary.star_2.state in STAR_STATES_CO
-                    and binary.star_1.state in LIST_ACCEPTABLE_STATES_FOR_HeStar):
-                primary = binary.star_2
-                secondary = binary.star_1
-                secondary.htrack = False
-                primary.htrack = secondary.htrack
-                primary.co = True
-            elif (binary.star_1.state in STAR_STATES_H_RICH
-                    and binary.star_2.state in STAR_STATES_H_RICH):
-                primary = binary.star_1
-                secondary = binary.star_2
-                secondary.htrack = True
-                primary.htrack = True
-                primary.co = False
-            elif (binary.star_1.state in LIST_ACCEPTABLE_STATES_FOR_HeStar
-                    and binary.star_2.state in STAR_STATES_H_RICH):
-                primary = binary.star_1
-                secondary = binary.star_2
-                secondary.htrack = True
-                primary.htrack = False
-                primary.co = False
-            elif (binary.star_2.state in LIST_ACCEPTABLE_STATES_FOR_HeStar
-                    and binary.star_1.state in STAR_STATES_H_RICH):
-                primary = binary.star_2
-                secondary = binary.star_1
-                secondary.htrack = True
-                primary.htrack = False
-                primary.co = False
-            elif (binary.star_1.state in LIST_ACCEPTABLE_STATES_FOR_HeStar
-                    and binary.star_2.state
-                    in LIST_ACCEPTABLE_STATES_FOR_HeStar):
-                primary = binary.star_1
-                secondary = binary.star_2
-                secondary.htrack = False
-                primary.htrack = False
-                primary.co = False
-            else:
-                raise ValueError("States not recognized!")
-                
-        # star 1 is a massless remnant, only star 2 exists
-        elif self.non_existent_companion == 1:
-            # we force primary.co=True for all isolated evolution,
-            # where the secondary is the one evolving one
-            primary = binary.star_1
-            primary.co = True
-            primary.htrack = False
-            secondary = binary.star_2
-            if (binary.star_2.state in STAR_STATES_H_RICH):
-                secondary.htrack = True
-            elif (binary.star_2.state in LIST_ACCEPTABLE_STATES_FOR_HeStar):
-                secondary.htrack = False
-            elif (binary.star_2.state in STAR_STATES_CO):
-                # only a compact object left
-                return
-            else:
-                raise ValueError("State not recognized!")
-
-        # star 2 is a massless remnant, only star 1 exists
-        elif self.non_existent_companion == 2:
-            primary = binary.star_2
-            primary.co = True
-            primary.htrack = False
-            secondary = binary.star_1
-            if (binary.star_1.state in STAR_STATES_H_RICH):
-                secondary.htrack = True
-            elif (binary.star_1.state in LIST_ACCEPTABLE_STATES_FOR_HeStar):
-                secondary.htrack = False
-            elif (binary.star_1.state in STAR_STATES_CO):
-                return
-            else:
-                raise ValueError("State not recognized!")
-        else:
-            raise POSYDONError("Non existent companion has not a recognized value!")
-
-        def get_star_data(binary, star1, star2, htrack,
-                          co, copy_prev_m0=None, copy_prev_t0=None):
+        def get_star_data(binary, star1, star2, htrack, co, copy_prev_m0=None, copy_prev_t0=None):
             """Get and interpolate the properties of stars.
 
             The data of a compact object can be stored as a copy of its
@@ -1079,9 +936,9 @@ class detached_step:
                     t_before_matching = time.time()
                     m0, t0, htrack = self.match_to_single_star(star1, htrack)
                     t_after_matching = time.time()
-                    if self.verbose or self.verbose == 1:
-                        print("Matching duration: "
-                              f"{t_after_matching-t_before_matching:.6g}")
+                    
+                    if self.verbose:
+                        print(f"Matching duration: {t_after_matching-t_before_matching:.6g} sec\n")
             
             if pd.isna(m0) or pd.isna(t0):
                 return None, None, None
@@ -1094,7 +951,8 @@ class detached_step:
             # check if m0 is in the grid
             if m0 < self.grid.grid_mass.min() or m0 > self.grid.grid_mass.max():
                 set_binary_to_failed(binary)
-                raise MatchingError(f"The mass {m0} is out of the single star grid range and cannot be matched to a track.")
+                raise MatchingError(f"The mass {m0} is out of the single star grid range and "
+                                    "cannot be matched to a track.")
 
             get_track = self.grid.get
 
@@ -1111,8 +969,7 @@ class detached_step:
                 for key in KEYS[1:]:
                     if key in KEYS_POSITIVE:
                         positive = True
-                        interp1d[key] = PchipInterpolator2(age, kvalue[key],
-                                                           positive=positive)
+                        interp1d[key] = PchipInterpolator2(age, kvalue[key], positive=positive)
                     else:
                         interp1d[key] = PchipInterpolator2(age, kvalue[key])
             except ValueError:
@@ -1122,13 +979,14 @@ class detached_step:
                     age = np.delete(age, i_bad)
                     for key in KEYS[1:]:
                         kvalue[key] = np.delete(kvalue[key], i_bad)
+
                 for key in KEYS[1:]:
                     if key in KEYS_POSITIVE:
                         positive = True
-                        interp1d[key] = PchipInterpolator2(age, kvalue[key],
-                                                           positive=positive)
+                        interp1d[key] = PchipInterpolator2(age, kvalue[key], positive=positive)
                     else:
                         interp1d[key] = PchipInterpolator2(age, kvalue[key])
+
             interp1d["inertia"] = PchipInterpolator(
                 age, kvalue["inertia"] / (const.msol * const.rsol**2))
             interp1d["Idot"] = interp1d["inertia"].derivative()
@@ -1142,6 +1000,7 @@ class detached_step:
             interp1d["max_time"] = max_time
             interp1d["t0"] = t0
             interp1d["m0"] = m0
+
             if co:
                 kvalue["mass"] = np.zeros_like(kvalue["mass"]) + star2.mass
                 kvalue["R"] = np.zeros_like(kvalue["log_R"])
@@ -1150,45 +1009,9 @@ class detached_step:
                 interp1d["R"] = PchipInterpolator(age, kvalue["R"])
                 interp1d["mdot"] = PchipInterpolator(age, kvalue["mdot"])
                 interp1d["Idot"] = PchipInterpolator(age, kvalue["mdot"])
+
             return interp1d, m0, t0
-
-        # get the matched data of two stars, respectively
-        interp1d_sec, m0, t0 = get_star_data(
-            binary, secondary, primary, secondary.htrack, co=False)
-
-        primary_not_normal = (primary.co) or (self.non_existent_companion in [1,2])
-        primary_normal = (not primary.co) and self.non_existent_companion == 0
-
-        if primary_not_normal:
-            # copy the secondary star except mass which is of the primary,
-            # and radius, mdot, Idot = 0
-            interp1d_pri = get_star_data(
-                binary, secondary, primary, secondary.htrack, co=True,
-                copy_prev_m0=m0, copy_prev_t0=t0)[0]
-        elif primary_normal:
-            interp1d_pri = get_star_data(
-                binary, primary, secondary, primary.htrack, False)[0]
-        else:
-            raise ValueError("During matching, the primary should either be normal (stellar object) or ",
-                             "not normal (CO, nonexistent companion).")
-
-
-        if interp1d_sec is None or interp1d_pri is None:
-            failed_state = binary.state
-            set_binary_to_failed(binary)
-            raise MatchingError(f"Grid matching failed for {failed_state} binary.")    
-                  
-                   
-        t0_sec = interp1d_sec["t0"]
-        t0_pri = interp1d_pri["t0"]
-        m01 = interp1d_sec["m0"]
-        m02 = interp1d_pri["m0"]
-        t_max_sec = interp1d_sec["t_max"]
-        t_max_pri = interp1d_pri["t_max"]
-        t_offset_sec = binary.time - t0_sec
-        t_offset_pri = binary.time - t0_pri
-        max_time = interp1d_sec["max_time"]
-
+        
         @event(True, 1)
         def ev_rlo1(t, y):
             """Difference between radius and Roche lobe at a given time.
@@ -1326,43 +1149,52 @@ class detached_step:
         @event(True, -1)
         def ev_max_time2(t, y):
             return t_max_pri + t_offset_pri - t
+        
+        def get_omega(star, is_secondary=True):
+            """Calculate the spin of a star.
 
-        # make a function to get the spin of two stars
-        def get_omega(star, is_secondary = True):
+            Parameters
+            ----------
+            star : SingleStar object
+
+            Returns
+            -------
+            float
+                spin of the star in radians per year
+            """
+
             if (star.log_total_angular_momentum is not None
                     and star.total_moment_of_inertia is not None
-                    and not np.isnan(star.log_total_angular_momentum)
-                    and not np.isnan(star.total_moment_of_inertia)):
+                    and pd.notna(star.log_total_angular_momentum)
+                    and pd.notna(star.total_moment_of_inertia)):
+                
+                # the last factor converts rad/s to rad/yr
                 omega_in_rad_per_year = (
                         10.0 ** star.log_total_angular_momentum
-                        / star.total_moment_of_inertia * const.secyer
-                )  # the last factor transforms it from rad/s to rad/yr
-                if self.verbose and self.verbose != 1:
-                    print("calculating initial omega from angular momentum and"
-                          " moment of inertia", omega_in_rad_per_year)
+                        / star.total_moment_of_inertia * const.secyer)  
+                
+                if self.verbose:
+                    print("calculating initial omega using angular momentum and moment of inertia")
             else:
-                # we equate secondary's initial omega to surf_avg_omega
+                # we equate the secondary's initial omega to surf_avg_omega
                 # (although the critical rotation should be improved to
-                # take into accoun radiation pressure)
-                if (star.surf_avg_omega is not None
-                        and not np.isnan(star.surf_avg_omega)):
-                    omega_in_rad_per_year = star.surf_avg_omega * const.secyer
-                    # the last factor transforms it from rad/s to rad/yr.
-                    if self.verbose and self.verbose != 1:
-                        print("calculating initial omega from surf_avg_omega",
-                              omega_in_rad_per_year)
-                elif (star.surf_avg_omega_div_omega_crit is not None
-                        and not np.isnan(star.surf_avg_omega_div_omega_crit)):
-                    if (star.log_R is not None
-                            and not np.isnan(star.log_R)):
+                # take into account radiation pressure)
+
+                if pd.notna(star.surf_avg_omega):
+
+                    if self.verbose:
+                        print("calculating initial omega using surf_avg_omega")
+
+                    omega_in_rad_per_year = star.surf_avg_omega * const.secyer                    
+                        
+                elif pd.notna(star.surf_avg_omega_div_omega_crit):
+                    
+                    if pd.notna(star.log_R):
                         omega_in_rad_per_year = (
                             star.surf_avg_omega_div_omega_crit * np.sqrt(
                                 const.standard_cgrav * star.mass * const.msol
-                                / ((10.0 ** (star.log_R) * const.rsol) ** 3))
-                            * const.secyer)
-                        # the last factor transforms it from rad/s to rad/yr
-                        # EDIT: We assume POSYDON surf_avg_omega is provided in
-                        # rad/yr already.
+                                / ((10.0 ** (star.log_R) * const.rsol) ** 3)) * const.secyer)
+                        
                     else:
                         if is_secondary:
                             radius_to_be_used = interp1d_sec["R"](interp1d_sec["t0"])
@@ -1370,24 +1202,204 @@ class detached_step:
                         else:
                             radius_to_be_used = interp1d_pri["R"](interp1d_pri["t0"])
                             mass_to_be_used = interp1d_pri["mass"](interp1d_pri["t0"])
+                        
+                        if self.verbose:
+                            print("calculating initial omega using surf_avg_omega_div_omega_crit")
+
                         omega_in_rad_per_year = (
                             star.surf_avg_omega_div_omega_crit * np.sqrt(
                                 const.standard_cgrav * mass_to_be_used * const.msol
-                                / ((radius_to_be_used * const.rsol) ** 3))
-                            * const.secyer)
-
-                    if self.verbose and self.verbose != 1:
-                        print("calculating initial omega from "
-                              "surf_avg_omega_div_omega_crit",
-                              omega_in_rad_per_year)
+                                / ((radius_to_be_used * const.rsol) ** 3)) * const.secyer)
+                   
                 else:
                     omega_in_rad_per_year = 0.0
-                    if self.verbose and self.verbose != 1:
-                        print("could calculate initial omega",
-                              omega_in_rad_per_year)
-            if self.verbose and self.verbose != 1:
-                print("initial omega_in_rad_per_year", omega_in_rad_per_year)
+                    if self.verbose:
+                        print("could not calculate initial omega, setting to zero")
+                        
+            if self.verbose:
+                print("calculated omega_in_rad_per_year: ", omega_in_rad_per_year)
+
             return omega_in_rad_per_year
+        
+        def get_star_final_values(star, htrack, m0):  
+
+            grid = self.grid_Hrich if htrack else self.grid_strippedHe
+            get_final_values = grid.get_final_values
+        
+            for key in self.final_keys:
+                setattr(star, key, get_final_values('S1_%s' % (key), m0))
+
+        def get_star_profile(star, htrack, m0):
+
+            grid = self.grid_Hrich if htrack else self.grid_strippedHe
+            get_profile = grid.get_profile
+            profile_new = np.array(get_profile('mass', m0)[1])
+
+            for i in self.profile_keys:
+                profile_new[i] = get_profile(i, m0)[0]
+            profile_new['omega'] = star.surf_avg_omega
+
+            star.profile = profile_new
+            
+
+        KEYS = self.KEYS
+        KEYS_POSITIVE = self.KEYS_POSITIVE
+
+        binary_sim_prop = getattr(binary, "properties")   ## simulation properties of the binary
+        all_step_names = getattr(binary_sim_prop, "all_step_names")
+
+        companion_1_exists = (binary.star_1 is not None
+                              and binary.star_1.state != "massless_remnant")
+        companion_2_exists = (binary.star_2 is not None
+                              and binary.star_2.state != "massless_remnant")
+
+        if companion_1_exists:
+            if companion_2_exists:                  # to evolve a binary star
+                self.non_existent_companion = 0
+            else:                                   # star1 is a single star
+                self.non_existent_companion = 2
+        else:
+            if companion_2_exists:                  # star2 is a single star
+                self.non_existent_companion = 1
+            else:                                   # no star in the system
+                raise POSYDONError("There is no star to evolve. Who summoned me?")
+
+        if self.non_existent_companion == 0: #no isolated evolution, detached step of an actual binary
+            # the primary in a real binary is potential compact object, or the more evolved star
+            if (binary.star_1.state in STAR_STATES_CO
+                    and binary.star_2.state in STAR_STATES_H_RICH):
+                primary = binary.star_1
+                secondary = binary.star_2
+                secondary.htrack = True
+                primary.htrack = secondary.htrack
+                primary.co = True
+
+            elif (binary.star_1.state in STAR_STATES_CO
+                    and binary.star_2.state in LIST_ACCEPTABLE_STATES_FOR_HeStar):
+                primary = binary.star_1
+                secondary = binary.star_2
+                secondary.htrack = False
+                primary.htrack = secondary.htrack
+                primary.co = True
+
+            elif (binary.star_2.state in STAR_STATES_CO
+                    and binary.star_1.state in STAR_STATES_H_RICH):
+                primary = binary.star_2
+                secondary = binary.star_1
+                secondary.htrack = True
+                primary.htrack = secondary.htrack
+                primary.co = True
+
+            elif (binary.star_2.state in STAR_STATES_CO
+                    and binary.star_1.state in LIST_ACCEPTABLE_STATES_FOR_HeStar):
+                primary = binary.star_2
+                secondary = binary.star_1
+                secondary.htrack = False
+                primary.htrack = secondary.htrack
+                primary.co = True
+            elif (binary.star_1.state in STAR_STATES_H_RICH
+                    and binary.star_2.state in STAR_STATES_H_RICH):
+                primary = binary.star_1
+                secondary = binary.star_2
+                secondary.htrack = True
+                primary.htrack = True
+                primary.co = False
+            elif (binary.star_1.state in LIST_ACCEPTABLE_STATES_FOR_HeStar
+                    and binary.star_2.state in STAR_STATES_H_RICH):
+                primary = binary.star_1
+                secondary = binary.star_2
+                secondary.htrack = True
+                primary.htrack = False
+                primary.co = False
+            elif (binary.star_2.state in LIST_ACCEPTABLE_STATES_FOR_HeStar
+                    and binary.star_1.state in STAR_STATES_H_RICH):
+                primary = binary.star_2
+                secondary = binary.star_1
+                secondary.htrack = True
+                primary.htrack = False
+                primary.co = False
+            elif (binary.star_1.state in LIST_ACCEPTABLE_STATES_FOR_HeStar
+                    and binary.star_2.state
+                    in LIST_ACCEPTABLE_STATES_FOR_HeStar):
+                primary = binary.star_1
+                secondary = binary.star_2
+                secondary.htrack = False
+                primary.htrack = False
+                primary.co = False
+            else:
+                raise ValueError("States not recognized!")
+
+        # star 1 is a massless remnant, only star 2 exists
+        elif self.non_existent_companion == 1:
+            # we force primary.co=True for all isolated evolution,
+            # where the secondary is the one evolving one
+            primary = binary.star_1
+            primary.co = True
+            primary.htrack = False
+            secondary = binary.star_2
+            if (binary.star_2.state in STAR_STATES_H_RICH):
+                secondary.htrack = True
+            elif (binary.star_2.state in LIST_ACCEPTABLE_STATES_FOR_HeStar):
+                secondary.htrack = False
+            elif (binary.star_2.state in STAR_STATES_CO):
+                # only a compact object left
+                return
+            else:
+                raise ValueError("State not recognized!")
+
+        # star 2 is a massless remnant, only star 1 exists
+        elif self.non_existent_companion == 2:
+            primary = binary.star_2
+            primary.co = True
+            primary.htrack = False
+            secondary = binary.star_1
+            if (binary.star_1.state in STAR_STATES_H_RICH):
+                secondary.htrack = True
+            elif (binary.star_1.state in LIST_ACCEPTABLE_STATES_FOR_HeStar):
+                secondary.htrack = False
+            elif (binary.star_1.state in STAR_STATES_CO):
+                return
+            else:
+                raise ValueError("State not recognized!")
+        else:
+            raise POSYDONError("Non existent companion has not a recognized value!")
+
+        # get the matched data of two stars, respectively
+        interp1d_sec, m0, t0 = get_star_data(binary, secondary, primary, secondary.htrack, co=False)
+
+        primary_not_normal = (primary.co) or (self.non_existent_companion in [1,2])
+        primary_normal = (not primary.co) and self.non_existent_companion == 0
+
+        if primary_not_normal:
+            # copy the secondary star except mass which is of the primary,
+            # and radius, mdot, Idot = 0
+            interp1d_pri = get_star_data(
+                binary, secondary, primary, secondary.htrack, co=True,
+                copy_prev_m0=m0, copy_prev_t0=t0)[0]
+        elif primary_normal:
+            interp1d_pri = get_star_data(
+                binary, primary, secondary, primary.htrack, False)[0]
+        else:
+            raise ValueError("During matching, the primary should either be normal (stellar object) or ",
+                             "not normal (CO, nonexistent companion).")
+
+
+        if interp1d_sec is None or interp1d_pri is None:
+            failed_state = binary.state
+            set_binary_to_failed(binary)
+            raise MatchingError(f"Grid matching failed for {failed_state} binary.")    
+                  
+                   
+        t0_sec = interp1d_sec["t0"]
+        t0_pri = interp1d_pri["t0"]
+        m01 = interp1d_sec["m0"]
+        m02 = interp1d_pri["m0"]
+        t_max_sec = interp1d_sec["t_max"]
+        t_max_pri = interp1d_pri["t_max"]
+        t_offset_sec = binary.time - t0_sec
+        t_offset_pri = binary.time - t0_pri
+        max_time = interp1d_sec["max_time"]
+
 
         if (ev_rlo1(binary.time, [binary.separation, binary.eccentricity]) >= 0
                 or ev_rlo2(binary.time, [binary.separation, binary.eccentricity]) >= 0):
@@ -1497,9 +1509,8 @@ class detached_step:
 
             t_after_ODEsolution = time.time()
 
-            if self.verbose and self.verbose != 1:
-                print("ODE solver duration: "
-                      f"{t_after_ODEsolution-t_before_ODEsolution:.6g}")
+            if self.verbose:
+                print(f"\nODE solver duration: {t_after_ODEsolution-t_before_ODEsolution:.6g}")
                 print("solution of ODE", s)
 
             if s.status == -1:
@@ -1537,82 +1548,59 @@ class detached_step:
                 mass_interp_sec(t - t_offset_sec))
 
             interp1d_sec["time"] = t
-            # time_interp = binary.time + t - t0
 
-            for obj, prop in zip(
-                    [secondary, primary, binary],
-                    [STARPROPERTIES, STARPROPERTIES, BINARYPROPERTIES],
-            ):
+            ## UPDATE STAR AND BINARY PROPERTIES WITH INTERPOLATED VALUES
+            for obj, prop in zip([secondary, primary, binary], 
+                                 [STARPROPERTIES, STARPROPERTIES, BINARYPROPERTIES]):
+                
                 for key in prop:
                     if key in ["event",
                                "mass_transfer_case",
                                "nearest_neighbour_distance",
                                "state", "metallicity", "V_sys"]:
                         current = getattr(obj, key)
-                        # For star objects, the state is calculated
-                        # further below
+                        # For star objects, the state is calculated further below
                         history = [current] * len(t[:-1])
 
-                    elif (key in ["surf_avg_omega_div_omega_crit"]
-                            and obj == secondary):
-                        # replace the actual surf_avg_w with the effective
-                        # omega, which takes into account the whole star
+                    elif (key in ["surf_avg_omega_div_omega_crit"] and obj == secondary):
+                        # replace the actual surf_avg_w with the effective omega,
+                        # which takes into account the whole star
                         # key  = 'effective_omega' # in rad/sec
                         # current = s.y[2][-1] / 3.1558149984e7
                         # history_of_attribute = s.y[2][:-1] / 3.1558149984e7
-                        omega_crit_current_sec = np.sqrt(
-                            const.standard_cgrav
-                            * interp1d_sec[self.translate["mass"]](
-                                t[-1] - t_offset_sec).item() * const.msol
-                            / (interp1d_sec[self.translate["R"]](
-                                t[-1] - t_offset_sec).item() * const.rsol) ** 3
-                        )
-                        omega_crit_hist_sec = np.sqrt(
-                            const.standard_cgrav
-                            * interp1d_sec[self.translate["mass"]](
-                                t[:-1] - t_offset_sec) * const.msol
-                            / (interp1d_sec[self.translate["R"]](
-                                t[:-1] - t_offset_sec) * const.rsol) ** 3
-                        )
-
-                        current = (interp1d_sec["omega"][-1] / const.secyer
-                                   / omega_crit_current_sec)
-                        history = (interp1d_sec["omega"][:-1] / const.secyer
-                                   / omega_crit_hist_sec)
+                        omega_crit_current_sec = np.sqrt(const.standard_cgrav
+                            * interp1d_sec[self.translate["mass"]](t[-1] - t_offset_sec).item() * const.msol
+                            / (interp1d_sec[self.translate["R"]](t[-1] - t_offset_sec).item() * const.rsol)**3)
                         
-                    elif (key in ["surf_avg_omega_div_omega_crit"]
-                            and obj == primary):
+                        omega_crit_hist_sec = np.sqrt(const.standard_cgrav
+                            * interp1d_sec[self.translate["mass"]](t[:-1] - t_offset_sec) * const.msol
+                            / (interp1d_sec[self.translate["R"]](t[:-1] - t_offset_sec) * const.rsol)**3)
+
+                        current = (interp1d_sec["omega"][-1] / const.secyer / omega_crit_current_sec)
+                        history = (interp1d_sec["omega"][:-1] / const.secyer / omega_crit_hist_sec)
+                        
+                    elif (key in ["surf_avg_omega_div_omega_crit"] and obj == primary):
                         if primary.co:
                             current = None
                             history = [current] * len(t[:-1])
                         elif not primary.co:
                             # TODO: change `item()` to 0
-                            omega_crit_current_pri = np.sqrt(
-                                const.standard_cgrav
-                                * interp1d_pri[self.translate["mass"]](
-                                    t[-1] - t_offset_pri).item() * const.msol
-                                / (interp1d_pri[self.translate["R"]](
-                                    t[-1] - t_offset_pri).item() * const.rsol)
-                                ** 3)
+                            omega_crit_current_pri = np.sqrt(const.standard_cgrav
+                                * interp1d_pri[self.translate["mass"]](t[-1] - t_offset_pri).item() * const.msol
+                                / (interp1d_pri[self.translate["R"]](t[-1] - t_offset_pri).item() * const.rsol)**3)
 
-                            omega_crit_hist_pri = np.sqrt(
-                                const.standard_cgrav
-                                * interp1d_pri[self.translate["mass"]](
-                                    t[:-1] - t_offset_pri) * const.msol
-                                / (interp1d_pri[self.translate["R"]](
-                                    t[:-1] - t_offset_pri) * const.rsol) ** 3)
+                            omega_crit_hist_pri = np.sqrt(const.standard_cgrav
+                                * interp1d_pri[self.translate["mass"]](t[:-1] - t_offset_pri) * const.msol
+                                / (interp1d_pri[self.translate["R"]](t[:-1] - t_offset_pri) * const.rsol)**3)
 
-                            current = (interp1d_pri["omega"][-1]
-                                       / const.secyer / omega_crit_current_pri)
-                            history = (interp1d_pri["omega"][:-1]
-                                       / const.secyer / omega_crit_hist_pri)
+                            current = (interp1d_pri["omega"][-1] / const.secyer / omega_crit_current_pri)
+                            history = (interp1d_pri["omega"][:-1] / const.secyer / omega_crit_hist_pri)
                             
-                    elif key in ["surf_avg_omega"] and obj == secondary:
-                        # current = interp1d["omega"](t[-1]) / const.secyer
+                    elif (key in ["surf_avg_omega"] and obj == secondary):
                         current = interp1d_sec["omega"][-1] / const.secyer
                         history = interp1d_sec["omega"][:-1] / const.secyer
 
-                    elif key in ["surf_avg_omega"] and obj == primary:
+                    elif (key in ["surf_avg_omega"] and obj == primary):
                         if primary.co:
                             current = None
                             history = [current] * len(t[:-1])
@@ -1620,69 +1608,51 @@ class detached_step:
                             current = interp1d_pri["omega"][-1] / const.secyer
                             history = interp1d_pri["omega"][:-1] / const.secyer
 
-                    elif key in ["rl_relative_overflow_1"] and obj == binary:
+                    elif (key in ["rl_relative_overflow_1"] and obj == binary):
                         if binary.star_1.state in ("BH", "NS", "WD","massless_remnant"):
                             current = None
                             history = [current] * len(t[:-1])
+
                         elif secondary == binary.star_1:
-                            current = ev_rel_rlo1(t[-1],
-                                                  [interp1d_sec["sep"][-1],
-                                                   interp1d_sec["ecc"][-1]])
-                            history = ev_rel_rlo1(t[:-1],
-                                                  [interp1d_sec["sep"][:-1],
-                                                   interp1d_sec["ecc"][:-1]])
+                            current = ev_rel_rlo1(t[-1], [interp1d_sec["sep"][-1], interp1d_sec["ecc"][-1]])
+                            history = ev_rel_rlo1(t[:-1], [interp1d_sec["sep"][:-1], interp1d_sec["ecc"][:-1]])
+
                         elif secondary == binary.star_2:
-                            current = ev_rel_rlo2(t[-1],
-                                                  [interp1d_sec["sep"][-1],
-                                                   interp1d_sec["ecc"][-1]])
-                            history = ev_rel_rlo2(t[:-1],
-                                                  [interp1d_sec["sep"][:-1],
-                                                   interp1d_sec["ecc"][:-1]])
+                            current = ev_rel_rlo2(t[-1], [interp1d_sec["sep"][-1], interp1d_sec["ecc"][-1]])
+                            history = ev_rel_rlo2(t[:-1], [interp1d_sec["sep"][:-1], interp1d_sec["ecc"][:-1]])
                             
-                    elif key in ["rl_relative_overflow_2"] and obj == binary:
+                    elif (key in ["rl_relative_overflow_2"] and obj == binary):
                         if binary.star_2.state in ("BH", "NS", "WD","massless_remnant"):
                             current = None
                             history = [current] * len(t[:-1])
+
                         elif secondary == binary.star_2:
-                            current = ev_rel_rlo1(t[-1],
-                                                  [interp1d_sec["sep"][-1],
-                                                   interp1d_sec["ecc"][-1]])
-                            history = ev_rel_rlo1(t[:-1],
-                                                  [interp1d_sec["sep"][:-1],
-                                                   interp1d_sec["ecc"][:-1]])
+                            current = ev_rel_rlo1(t[-1], [interp1d_sec["sep"][-1], interp1d_sec["ecc"][-1]])
+                            history = ev_rel_rlo1(t[:-1], [interp1d_sec["sep"][:-1], interp1d_sec["ecc"][:-1]])
+
                         elif secondary == binary.star_1:
-                            current = ev_rel_rlo2(t[-1],
-                                                  [interp1d_sec["sep"][-1],
-                                                   interp1d_sec["ecc"][-1]])
-                            history = ev_rel_rlo2(t[:-1],
-                                                  [interp1d_sec["sep"][:-1],
-                                                   interp1d_sec["ecc"][:-1]])
+                            current = ev_rel_rlo2(t[-1], [interp1d_sec["sep"][-1], interp1d_sec["ecc"][-1]])
+                            history = ev_rel_rlo2(t[:-1], [interp1d_sec["sep"][:-1], interp1d_sec["ecc"][:-1]])
                             
-                    elif key in ["separation", "orbital_period",
-                                 "eccentricity", "time"]:
+                    elif key in ["separation", "orbital_period", "eccentricity", "time"]:
                         current = interp1d_sec[self.translate[key]][-1].item()
                         history = interp1d_sec[self.translate[key]][:-1]
 
-                    elif (key in ["total_moment_of_inertia"]
-                            and obj == secondary):
+                    elif (key in ["total_moment_of_inertia"] and obj == secondary):
                         current = interp1d_sec[self.translate[key]](
-                            t[-1] - t_offset_sec).item() * (
-                                const.msol * const.rsol ** 2)
+                            t[-1] - t_offset_sec).item() * (const.msol * const.rsol**2)
                         history = interp1d_sec[self.translate[key]](
-                            t[:-1] - t_offset_sec) * (
-                                const.msol * const.rsol ** 2)
+                            t[:-1] - t_offset_sec) * (const.msol * const.rsol**2)
                         
-                    elif key in ["total_moment_of_inertia"] and obj == primary:
+                    elif (key in ["total_moment_of_inertia"] and obj == primary):
                         if primary.co:
                             current = getattr(obj, key)
                             history = [current] * len(t[:-1])
                         else:
                             current = interp1d_pri[self.translate[key]](
-                                t[-1] - t_offset_pri).item() * (
-                                    const.msol * const.rsol ** 2)
+                                t[-1] - t_offset_pri).item() * (const.msol * const.rsol**2)
                             history = interp1d_pri[self.translate[key]](
-                                t[:-1] - t_offset_pri) * (
-                                    const.msol * const.rsol ** 2)
+                                t[:-1] - t_offset_pri) * (const.msol * const.rsol**2)
                             
                     elif (key in ["log_total_angular_momentum"] and obj == secondary):
 
@@ -1691,151 +1661,112 @@ class detached_step:
                         ## add a warning catch if the current omega has an invalid value
                         ## (otherwise python will throw an insuppressible warning when taking the log)
                         if interp1d_sec["omega"][-1] <=0:
-                            Pwarn("Trying to compute log angular momentum for object with no spin", "InappropriateValueWarning")
+                            Pwarn("Trying to compute log angular momentum for object with no spin", 
+                                  "InappropriateValueWarning")
                             current_omega = np.nan
                                                
                         current = np.log10(
                             (current_omega / const.secyer)
                                 * (interp1d_sec[
                                     self.translate["total_moment_of_inertia"]](t[-1] - t_offset_sec).item() * 
-                                    (const.msol * const.rsol ** 2)))                     
-                        
+                                    (const.msol * const.rsol ** 2)))                                             
                         history = np.log10(
                             (interp1d_sec["omega"][:-1] / const.secyer)
-                            * (interp1d_sec[
-                                self.translate["total_moment_of_inertia"]](
-                                    t[:-1] - t_offset_sec) * (
-                                        const.msol * const.rsol ** 2)))
+                            * (interp1d_sec[self.translate["total_moment_of_inertia"]](
+                                    t[:-1] - t_offset_sec) * (const.msol * const.rsol**2)))
                         
-                    elif (key in ["log_total_angular_momentum"]
-                            and obj == primary):
+                    elif (key in ["log_total_angular_momentum"] and obj == primary):
                         if primary.co:
                             current = getattr(obj, key)
                             history = [current] * len(t[:-1])
                         else:
                             current = np.log10(
                                 (interp1d_pri["omega"][-1] / const.secyer)
-                                * (interp1d_pri[
-                                    self.translate["total_moment_of_inertia"]](
-                                        t[-1] - t_offset_pri).item() * (
-                                            const.msol * const.rsol ** 2)))
+                                * (interp1d_pri[self.translate["total_moment_of_inertia"]](
+                                        t[-1] - t_offset_pri).item() * (const.msol * const.rsol**2)))
                             history = np.log10(
                                 (interp1d_pri["omega"][:-1] / const.secyer)
-                                * (interp1d_pri[
-                                    self.translate["total_moment_of_inertia"]](
-                                        t[:-1] - t_offset_pri) * (
-                                            const.msol * const.rsol ** 2)))
+                                * (interp1d_pri[self.translate["total_moment_of_inertia"]](
+                                        t[:-1] - t_offset_pri) * (const.msol * const.rsol**2)))
                             
-                    elif key in ["spin"] and obj == secondary:
-                        current = (
-                            const.clight
+                    elif (key in ["spin"] and obj == secondary):
+                        current = (const.clight
                             * (interp1d_sec["omega"][-1] / const.secyer)
-                            * interp1d_sec[
-                                self.translate["total_moment_of_inertia"]](
-                                    t[-1] - t_offset_sec).item()
-                            * (const.msol * const.rsol ** 2)
-                            / (const.standard_cgrav * (
-                                interp1d_sec[self.translate["mass"]](
-                                    t[-1] - t_offset_sec).item()
-                                * const.msol) ** 2))
-                        history = (
-                            const.clight
+                            * interp1d_sec[self.translate["total_moment_of_inertia"]](
+                                t[-1] - t_offset_sec).item() * (const.msol * const.rsol**2)
+                            / (const.standard_cgrav * (interp1d_sec[self.translate["mass"]](
+                                    t[-1] - t_offset_sec).item() * const.msol)**2))
+                        history = (const.clight
                             * (interp1d_sec["omega"][:-1] / const.secyer)
-                            * interp1d_sec[
-                                self.translate["total_moment_of_inertia"]](
-                                    t[:-1] - t_offset_sec)
-                            * (const.msol * const.rsol ** 2)
-                            / (const.standard_cgrav * (
-                                interp1d_sec[self.translate["mass"]](
+                            * interp1d_sec[self.translate["total_moment_of_inertia"]](
+                                    t[:-1] - t_offset_sec)* (const.msol * const.rsol**2)
+                            / (const.standard_cgrav * (interp1d_sec[self.translate["mass"]](
                                     t[:-1] - t_offset_sec) * const.msol)**2))
                         
-                    elif key in ["spin"] and obj == primary:
+                    elif (key in ["spin"] and obj == primary):
                         if primary.co:
                             current = getattr(obj, key)
                             history = [current] * len(t[:-1])
                         else:
-                            current = (
-                                const.clight
+                            current = (const.clight
                                 * (interp1d_pri["omega"][-1] / const.secyer)
-                                * interp1d_pri[
-                                    self.translate["total_moment_of_inertia"]](
-                                        t[-1] - t_offset_pri).item()
-                                * (const.msol * const.rsol ** 2)
-                                / (const.standard_cgrav * (
-                                    interp1d_pri[self.translate["mass"]](
-                                        t[-1] - t_offset_pri).item()
-                                    * const.msol)**2))
-                            history = (
-                                const.clight * (interp1d_pri["omega"][:-1]
-                                                / const.secyer)
-                                * interp1d_pri[
-                                    self.translate["total_moment_of_inertia"]](
-                                        t[:-1] - t_offset_pri)
-                                * (const.msol * const.rsol ** 2)
-                                / (const.standard_cgrav * (interp1d_pri[
-                                    self.translate["mass"]](
-                                        t[:-1] - t_offset_pri)
-                                    * const.msol)**2))
+                                * interp1d_pri[self.translate["total_moment_of_inertia"]](
+                                        t[-1] - t_offset_pri).item() * (const.msol * const.rsol**2)
+                                / (const.standard_cgrav * (interp1d_pri[self.translate["mass"]](
+                                        t[-1] - t_offset_pri).item() * const.msol)**2))
+                            history = (const.clight 
+                                * (interp1d_pri["omega"][:-1] / const.secyer)
+                                * interp1d_pri[self.translate["total_moment_of_inertia"]](
+                                        t[:-1] - t_offset_pri) * (const.msol * const.rsol**2)
+                                / (const.standard_cgrav * (interp1d_pri[self.translate["mass"]](
+                                        t[:-1] - t_offset_pri) * const.msol)**2))
                             
-                    elif (key in ["lg_mdot", "lg_wind_mdot"]
-                            and obj == secondary):
+                    elif (key in ["lg_mdot", "lg_wind_mdot"] and obj == secondary):
                         # in detached step, lg_mdot = lg_wind_mdot
-                        if interp1d_sec[self.translate[key]](
-                                t[-1] - t_offset_sec) == 0:
+                        if interp1d_sec[self.translate[key]](t[-1] - t_offset_sec) == 0:
                             current = -98.99
                         else:
-                            current = np.log10(
-                                np.abs(interp1d_sec[self.translate[key]](
-                                    t[-1] - t_offset_sec))).item()
+                            current = np.log10(np.abs(interp1d_sec[self.translate[key]](
+                                t[-1] - t_offset_sec))).item()
+                            
                         history = np.ones_like(t[:-1])
+
                         for i in range(len(t)-1):
-                            if interp1d_sec[self.translate[key]](
-                                    t[i] - t_offset_sec) == 0:
+                            if interp1d_sec[self.translate[key]](t[i] - t_offset_sec) == 0:
                                 history[i] = -98.99
                             else:
-                                history[i] = np.log10(
-                                    np.abs(interp1d_sec[self.translate[key]](
+                                history[i] = np.log10(np.abs(interp1d_sec[self.translate[key]](
                                         t[i] - t_offset_sec)))
 
-                    elif key in ["lg_mdot", "lg_wind_mdot"] and obj == primary:
+                    elif (key in ["lg_mdot", "lg_wind_mdot"] and obj == primary):
                         if primary.co:
                             current = None
                             history = [current] * len(t[:-1])
                         else:
-                            if interp1d_sec[self.translate[key]](
-                                    t[-1] - t_offset_sec) == 0:
+                            if interp1d_sec[self.translate[key]](t[-1] - t_offset_sec) == 0:
                                 current = -98.99
                             else:
-                                current = np.log10(np.abs(
-                                    interp1d_sec[self.translate[key]](
+                                current = np.log10(np.abs(interp1d_sec[self.translate[key]](
                                         t[-1] - t_offset_sec))).item()
                             history = np.ones_like(t[:-1])
                             for i in range(len(t)-1):
-                                if (interp1d_sec[self.translate[key]](
-                                        t[i] - t_offset_sec) == 0):
+                                if (interp1d_sec[self.translate[key]](t[i] - t_offset_sec) == 0):
                                     history[i] = -98.99
                                 else:
-                                    history[i] = np.log10(np.abs(
-                                        interp1d_sec[self.translate[key]](
+                                    history[i] = np.log10(np.abs(interp1d_sec[self.translate[key]](
                                             t[i] - t_offset_sec)))
                                     
-                    elif (self.translate[key] in interp1d_sec
-                            and obj == secondary):
-                        current = interp1d_sec[self.translate[key]](
-                            t[-1] - t_offset_sec).item()
-                        history = interp1d_sec[self.translate[key]](
-                            t[:-1] - t_offset_sec)
+                    elif (self.translate[key] in interp1d_sec and obj == secondary):
+                        current = interp1d_sec[self.translate[key]](t[-1] - t_offset_sec).item()
+                        history = interp1d_sec[self.translate[key]](t[:-1] - t_offset_sec)
                         
-                    elif (self.translate[key] in interp1d_pri
-                            and obj == primary):
+                    elif (self.translate[key] in interp1d_pri and obj == primary):
                         if primary.co:
                             current = getattr(obj, key)
                             history = [current] * len(t[:-1])
                         else:
-                            current = interp1d_pri[self.translate[key]](
-                                t[-1] - t_offset_pri).item()
-                            history = interp1d_pri[self.translate[key]](
-                                t[:-1] - t_offset_pri)
+                            current = interp1d_pri[self.translate[key]](t[-1] - t_offset_pri).item()
+                            history = interp1d_pri[self.translate[key]](t[:-1] - t_offset_pri)
                             
                     elif key in ["profile"]:
                         current = None
@@ -1851,8 +1782,7 @@ class detached_step:
             secondary.state = check_state_of_star(secondary, star_CO=False)
 
             for timestep in range(-len(t[:-1]), 0):
-                secondary.state_history[timestep] = check_state_of_star(
-                    secondary, i=timestep, star_CO=False)
+                secondary.state_history[timestep] = check_state_of_star(secondary, i=timestep, star_CO=False)
 
 
             if primary.state == "massless_remnant":
@@ -1863,34 +1793,16 @@ class detached_step:
                     binary, primary, secondary, slice(-len(t), None),
                     wind_disk_criteria=True, scheme='Kudritzki+2000'))
                 primary.lg_mdot = np.log10(mdot_acc.item(-1))
-                primary.lg_mdot_history[len(primary.lg_mdot_history) - len(t)
-                                        + 1:] = np.log10(mdot_acc[:-1])
+                primary.lg_mdot_history[len(primary.lg_mdot_history) - len(t) + 1:] = np.log10(mdot_acc[:-1])
             else:
                 primary.state = check_state_of_star(primary, star_CO=False)
                 for timestep in range(-len(t[:-1]), 0):
 
-                    primary.state_history[timestep] = check_state_of_star(
-                        primary, i=timestep, star_CO=False)
+                    primary.state_history[timestep] = check_state_of_star(primary, i=timestep, star_CO=False)
 
-            def get_star_final_values(star, htrack, m0):
-                grid = self.grid_Hrich if htrack else self.grid_strippedHe
-                get_final_values = grid.get_final_values
-        
-                for key in self.final_keys:
-                    setattr(star, key, get_final_values('S1_%s' % (key), m0))
+            ## CHECK IF THE BINARY IS IN RLO
+            if s.t_events[0] or s.t_events[1]:  
 
-            def get_star_profile(star, htrack, m0):
-                grid = self.grid_Hrich if htrack else self.grid_strippedHe
-                get_profile = grid.get_profile
-                profile_new = np.array(get_profile('mass', m0)[1])
-
-                for i in self.profile_keys:
-                    profile_new[i] = get_profile(i, m0)[0]
-                profile_new['omega'] = star.surf_avg_omega
-
-                star.profile = profile_new
-
-            if s.t_events[0] or s.t_events[1]:  # reached RLOF
                 if self.RLO_orbit_at_orbit_with_same_am:
                     # final circular orbit conserves angular momentum
                     # compared to the eccentric orbit
@@ -1902,12 +1814,11 @@ class detached_step:
                     binary.orbital_period *= (1 - s.y[1][-1]) ** 1.5
 
                 assert np.abs(
-                    binary.orbital_period
-                    - orbital_period_from_separation(
-                        binary.separation, secondary.mass, primary.mass
-                    )
+                    binary.orbital_period - orbital_period_from_separation(
+                        binary.separation, secondary.mass, primary.mass)
                 ) / binary.orbital_period < 10 ** (-2)
                 binary.eccentricity = 0
+
                 if s.t_events[0]:
                     if secondary == binary.star_1:
                         binary.state = "RLO1"
@@ -1915,6 +1826,7 @@ class detached_step:
                     else:
                         binary.state = "RLO2"
                         binary.event = "oRLO2"
+
                 elif s.t_events[1]:
                     if secondary == binary.star_1:
                         binary.state = "RLO2"
@@ -1922,45 +1834,65 @@ class detached_step:
                     else:
                         binary.state = "RLO1"
                         binary.event = "oRLO1"
+                
+                if ('step_HMS_HMS_RLO' not in all_step_names):
+                    if ((binary.star_1.state in STAR_STATES_HE_RICH_EVOLVABLE 
+                         and binary.star_2.state in STAR_STATES_H_RICH_EVOLVABLE)
+                    or (binary.star_1.state in STAR_STATES_H_RICH_EVOLVABLE
+                         and binary.star_2.state in STAR_STATES_HE_RICH_EVOLVABLE)):
+                        set_binary_to_failed(binary)
+                        raise FlowError("Evolution of H-rich/He-rich stars in RLO onto H-rich/He-rich stars after " 
+                                    "HMS-HMS not yet supported.") 
+                
+                    elif (binary.star_1.state in STAR_STATES_H_RICH_EVOLVABLE
+                         and binary.star_2.state in STAR_STATES_H_RICH_EVOLVABLE):
+                        set_binary_to_failed(binary)
+                        raise ClassificationError("Binary is in the detached step but has stable RLO with two HMS stars - "
+                                              "should it have undergone CE (was its HMS-HMS interpolation class unstable MT?)") 
+                    
 
+            ## CHECK IF STARS WILL UNDERGO CC
             elif s.t_events[2]:
-                # reached t_max of track. End of life (possible collapse) of
-                # secondary
+                # reached t_max of track. End of life (possible collapse) of secondary
                 if secondary == binary.star_1:
                     binary.event = "CC1"
                 else:
                     binary.event = "CC2"
+
                 get_star_final_values(secondary, secondary.htrack, m01)
                 get_star_profile(secondary, secondary.htrack, m01)
+
                 if not primary.co and primary.state in STAR_STATES_CC:
                     # simultaneous core-collapse of the other star as well
                     primary_time = t_max_pri + t_offset_pri - t[-1]
                     secondary_time = t_max_sec + t_offset_sec - t[-1]
+
                     if primary_time == secondary_time:
-                        # we manually check if s.t_events[3] should also
-                        # be happening simultaneously
+                        # we manually check if s.t_events[3] should also be happening simultaneously
                         get_star_final_values(primary, primary.htrack, m02)
                         get_star_profile(primary, primary.htrack, m02)
+
                     if primary.mass != secondary.mass:
                         raise POSYDONError(
                             "Both stars are found to be ready for collapse "
                             "(i.e. end of their life) during the detached "
                             "step, but do not have the same mass")
+                    
             elif s.t_events[3]:
-                # reached t_max of track. End of life (possible collapse) of
-                # primary
+                # reached t_max of track. End of life (possible collapse) of primary
                 if secondary == binary.star_1:
                     binary.event = "CC2"
                 else:
                     binary.event = "CC1"
+
                 get_star_final_values(primary, primary.htrack, m02)
                 get_star_profile(primary, primary.htrack, m02)
+                
             else:  # Reached max_time asked.
                 if binary.properties.max_simulation_time - binary.time < 0.0:
                     binary.event = "MaxTime_exceeded"
                 else:
                     binary.event = "maxtime"
-                # binary.event = "MaxTime_exceeded"
 
 
 def event(terminal, direction=0):
@@ -2187,9 +2119,9 @@ def diffeq(
         f5 = 1 + 3 * e ** 2 + (3 / 8) * e ** 4
 
         # equilibrium timecale
-        if ((M_env_sec != 0.0 and not np.isnan(M_env_sec))
-                and (DR_env_sec != 0.0 and not np.isnan(DR_env_sec)) and (
-                    Renv_middle_sec != 0.0 and not np.isnan(Renv_middle_sec))):
+        if ((pd.notna(M_env_sec) and M_env_sec != 0.0)
+                and (pd.notna(DR_env_sec) and DR_env_sec != 0.0)
+                and (pd.notna(Renv_middle_sec) and Renv_middle_sec != 0.0)):
             # eq. (31) of Hurley et al. 2002, generalized for convective layers
             # not on surface too
             tau_conv_sec = 0.431 * ((M_env_sec * DR_env_sec * Renv_middle_sec
@@ -2199,9 +2131,9 @@ def diffeq(
                 print("something wrong with M_env/DR_env/Renv_middle",
                       M_env_sec, DR_env_sec, Renv_middle_sec)
             tau_conv_sec = 1.0e99
-        if ((M_env_pri != 0.0 and not np.isnan(M_env_pri))
-                and (DR_env_pri != 0.0 and not np.isnan(DR_env_pri)) and (
-                    Renv_middle_pri != 0.0 and not np.isnan(Renv_middle_pri))):
+        if ((pd.notna(M_env_pri) and M_env_pri != 0.0)
+                and (pd.notna(DR_env_pri) and DR_env_pri != 0.0)
+                and (pd.notna(Renv_middle_pri) and Renv_middle_pri != 0.0)):
             # eq. (31) of Hurley et al. 2002, generalized for convective layers
             # not on surface too
             tau_conv_pri = 0.431 * ((M_env_pri * DR_env_pri * Renv_middle_pri

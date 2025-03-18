@@ -1,6 +1,6 @@
 import unittest
 from unittest.mock import patch
-from posydon.utils.common_functions import PATH_TO_POSYDON
+from posydon.config import PATH_TO_POSYDON
 import os
 
 from posydon.visualization.VH_diagram.Presenter import Presenter, PresenterMode

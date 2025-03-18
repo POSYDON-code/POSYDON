@@ -272,7 +272,7 @@ def generate_primary_masses(number_of_binaries=1,
     """
     RNG = kwargs.get('RNG', np.random.default_rng())
 
-    primary_mass_scheme_options = ['Salpeter', 'Kroupa1993', 'Kroupa2001']
+    primary_mass_scheme_options = ['Salpeter', 'Kroupa1993', 'Kroupa2001','GPL_IMF']
 
     if primary_mass_scheme not in primary_mass_scheme_options:
         raise ValueError("You must provide an allowed primary mass scheme.")
@@ -303,9 +303,31 @@ def generate_primary_masses(number_of_binaries=1,
         random_variable = RNG.uniform(size=number_of_binaries)
         primary_masses = (random_variable*(1.0-alpha)/normalization_constant
                           + primary_mass_min**(1.0-alpha))**(1.0/(1.0-alpha))
+    
+    #General power-law IMF (GPL_IMF)
+    elif primary_mass_scheme == 'GPL_IMF':
+        alpha1 = kwargs.get('alpha1',2.35)
+        alpha2 = kwargs.get('alpha2',2.35)
+        m1 = kwargs.get('m1',primary_mass_min)
+
+        normalization_constant = (1.0/(alpha1 + 1.0) *(m1**(alpha1 + 1.0 ) - primary_mass_min**(alpha1 + 1.0 ) ) 
+                            + ((m1**(alpha1-alpha2))/(alpha2 +1.0 )) * (primary_mass_max**(alpha2+1.0 ) - m1**(alpha2 + 1.0 )))**(-1.0)
+
+        random_variable = RNG.uniform(size=number_of_binaries)
+        #The lower part of the imf 
+        def f1(x):
+            return ((alpha1 + 1.0)/normalization_constant * x + primary_mass_min**(alpha1 + 1.0 ) )**(1.0/(1.0+alpha1))
+        #The upper part of the imf
+        def f2(x):
+            return (((alpha2 + 1)/( m1**(alpha1-alpha2)))*((x/normalization_constant) - (m1**(alpha1 +1 ) 
+                                - primary_mass_min**(alpha1 +1 ))/(alpha1+ 1)) + m1**(alpha2+1))**(1/(alpha2 +1.0 ))
+
+        x1 = (normalization_constant/(alpha1 +1)* ( m1**(alpha1 +1 ) - primary_mass_min**(alpha1 +1 )))
+        
+        primary_masses = np.where(random_variable < x1, f1(random_variable), f2(random_variable))
+
     else:
         pass
-
     return primary_masses
 
 
@@ -393,12 +415,13 @@ def binary_fraction_value(binary_fraction_const=1,binary_fraction_scheme = 'cons
         binary_fraction = binary_fraction_const
     
     elif binary_fraction_scheme == 'Moe_17':
-
         if m1 is None: 
             raise ValueError("There was not a primary mass provided in the inputs. Unable to return a binary fraction")
+        elif not isinstance(m1,np.ndarray):
+             m1 = np.asarray(m1)
         #elif m1 < 0.8:
          #   raise ValueError("The scheme doesn't support values of m1 less than 0.8")
-        elif m1 <= 2:#  and m1 >= 0.8:
+        """elif m1 <= 2:#  and m1 >= 0.8:
             binary_fraction = 0.4
         elif m1 <= 5 and m1 > 2:
             binary_fraction = 0.59
@@ -409,7 +432,17 @@ def binary_fraction_value(binary_fraction_const=1,binary_fraction_scheme = 'cons
         elif m1 > 16:
             binary_fraction = 0.94
         else: 
+<<<<<<< HEAD
             raise ValueError(f'There primary mass provided {m1} is not supported by the Moe_17 scheme.')
+=======
+            raise ValueError(f'There primary mass provided {m1} is not supported by the Moe_17 scheme.')"""
+        binary_fraction = np.zeros_like(m1, dtype=float)
+        binary_fraction[(m1 > 16)] = 0.94
+        binary_fraction[(m1 <= 16) & (m1 > 9)] = 0.84
+        binary_fraction[(m1 <= 9) & (m1 > 5)] = 0.76
+        binary_fraction[(m1 <= 5) & (m1 > 2)] = 0.59
+        binary_fraction[(m1 <= 2)] = 0.4
+
     else: 
         pass
     return binary_fraction

@@ -27,7 +27,8 @@ from posydon.utils.common_functions import (flip_stars,
                                             convert_metallicity_to_string,
                                             CO_radius, infer_star_state,
                                             set_binary_to_failed,)
-from posydon.utils.data_download import data_download, PATH_TO_POSYDON_DATA
+from posydon.config import PATH_TO_POSYDON_DATA
+from posydon.utils.data_download import data_download
 from posydon.grids.MODELS import MODELS
 from posydon.utils.posydonerror import FlowError, GridError
 from posydon.utils.posydonwarning import Pwarn
@@ -200,18 +201,17 @@ class MesaGridStep:
 
             # Set the interpolation path
             if interpolation_path is None:
-                interpolation_path = (
-                    self.path + os.path.split(grid_name)[0]
-                    + '/interpolators/%s/' % self.interpolation_method)
+                interpolation_path = os.path.join(self.path,
+                    os.path.split(grid_name)[0],
+                    'interpolators/%s' % self.interpolation_method)
 
             # Set the interpolation filename
             if interpolation_filename is None:
-                interpolation_filename = (
-                    interpolation_path
-                    + os.path.split(grid_name)[1].replace('h5', 'pkl'))
+                interpolation_filename = os.path.join(interpolation_path,
+                    os.path.split(grid_name)[1].replace('h5', 'pkl'))
             else:
-                interpolation_filename = (interpolation_path
-                                          + interpolation_filename)
+                interpolation_filename = os.path.join(interpolation_path,
+                                                      interpolation_filename)
 
             self.load_Interp(interpolation_filename)
 
@@ -276,31 +276,29 @@ class MesaGridStep:
         """
         if self.interpolation_method == 'nearest_neighbour':
             self.closest_binary, self.nearest_neighbour_distance, \
-                self.termination_flags = self._psyTrackInterp.evaluate(
-                    self.binary)
+                self.termination_flags = self._psyTrackInterp.evaluate(self.binary)
             if self.closest_binary.binary_history is None:
                 return
             key = POSYDON_TO_MESA['binary']['time']
             max_MESA_sim_time = self.closest_binary.binary_history[key][-1]
 
         elif self.interpolation_method in self.supported_interp_methods:
-            self.final_values, self.classes = self._Interp.evaluate(
-                self.binary)
+            self.final_values, self.classes = self._Interp.evaluate(self.binary)
 
-            max_MESA_sim_time = self.final_values[
-                                        POSYDON_TO_MESA['binary']['time']]
+            max_MESA_sim_time = self.final_values[POSYDON_TO_MESA['binary']['time']]
         else:
-            raise ValueError("unknown interpolation method: {}".
-                             format(self.interpolation_method))
+            raise ValueError("unknown interpolation method: {}".format(self.interpolation_method))
+        
         return max_MESA_sim_time
 
     def __call__(self, binary):
         """Evolve a binary using the MESA step."""
+
         if not isinstance(binary, BinaryStar):
             raise ValueError("Must be an instance of BinaryStar")
         if not hasattr(self, 'step'):
-            raise ValueError("No step defined for {}".format(
-                self.__name__))
+            raise ValueError("No step defined for {}".format(self.__name__))
+        
         if self.flip_stars_before_step:
             flip_stars(binary)
         max_MESA_sim_time = self.get_final_MESA_step_time()
@@ -309,19 +307,16 @@ class MesaGridStep:
             if self.flip_stars_before_step:
                 flip_stars(binary)
             binary.state = 'initial_RLOF'
-            # binary.event = 'END'
             return
 
-        binary_start_time = binary.time
         step_will_exceed_max_time = (binary.time+max_MESA_sim_time
-                                     > binary.properties.max_simulation_time)
+                                    > binary.properties.max_simulation_time)
         if (step_will_exceed_max_time
                 and self.stop_method == 'stop_at_max_time'):
-            # self.step(binary, interp_method='nearest_neighbour')
+            
             if self.interpolation_method != 'nearest_neighbour':
                 self.closest_binary, self.nearest_neighbour_distance, \
-                    self.termination_flags = self._psyTrackInterp.evaluate(
-                                 self.binary)
+                    self.termination_flags = self._psyTrackInterp.evaluate(self.binary)
 
             if self.track_interpolation:
                 self.flush_history = False
@@ -332,6 +327,7 @@ class MesaGridStep:
                                       track_interpolation=True)
         else:
             self.step(binary, interp_method=self.interpolation_method)
+
         if (self.stop_method == 'stop_at_max_time'
                 and binary.time >= binary.properties.max_simulation_time):
 
@@ -363,12 +359,17 @@ class MesaGridStep:
                              interpolate=self.stop_interpolate,
                              star_1_CO=self.star_1_CO,
                              star_2_CO=self.star_2_CO)
+            
         if self.flip_stars_before_step:
             flip_stars(binary)
         if binary.time > binary.properties.max_simulation_time:
             binary.event = 'MaxTime_exceeded'
         elif binary.time == binary.properties.max_simulation_time:
             binary.event = 'maxtime'
+
+        if self.verbose:
+            print(f"End of step MESA (grid={self.grid_type}):\n", binary)
+
         return
 
     def step(self, binary, interp_method=None):
@@ -422,21 +423,16 @@ class MesaGridStep:
         cb_bh = cb.binary_history
         cb_hs = [cb.history1, cb.history2]
         cb_fps = [cb.final_profile1, cb.final_profile2]
-
-        # TOOD: I removed this which is now done in get_final_MESA_step_time
-        # find the nearest_neighbour and the distance
-        # self.closest_binary, self.nearest_neighbour_distance, \
-        # self.termination_flags = self._psyTrackInterp.evaluate(self.binary)
+        
         if (cb_bh['age'].size <= 1 or cb_bh['star_1_mass'].size <= 1):
             setattr(binary, "state", "initial_RLOF")
-            # setattr(binary, "event", "END")
             return
 
         # check if the first interpolation gives 'initial_RLOF'
         interpolation_class = self.termination_flags[0]
         binary_state, binary_event, MT_case = (
             cf.get_binary_state_and_event_and_mt_case(
-                binary, interpolation_class, verbose=self.verbose))
+                binary, interpolation_class, verbose=self.verbose))       
         setattr(binary, 'state', binary_state)
         setattr(binary, 'event', binary_event)
         setattr(binary, 'mass_transfer_case', MT_case)
@@ -706,7 +702,7 @@ class MesaGridStep:
                 getattr(stars[1], "state_history").extend(state2_hist)
                 binary_state, binary_event, MT_case = (
                     cf.get_binary_state_and_event_and_mt_case_array(
-                        binary, N=length_hist, verbose=self.verbose))
+                        binary, N=length_hist, verbose=self.verbose))               
                 getattr(binary, "state_history").extend(binary_state)
                 getattr(binary, "event_history").extend(binary_event)
                 getattr(binary, "mass_transfer_case_history").extend(MT_case)
@@ -815,7 +811,7 @@ class MesaGridStep:
                                 values[key] = cb.final_values[f'S{i+1}_{MODEL_NAME}_{key}']
                         setattr(star, MODEL_NAME, values)
                     else:
-                        setattr(star, key, None)
+                        setattr(star, MODEL_NAME, None)
 
     def initial_final_interpolation(self, star_1_CO=False, star_2_CO=False):
         """Update the binary through initial-final interpolation."""
@@ -916,6 +912,7 @@ class MesaGridStep:
         setattr(self.binary, 'event', binary_event)
         setattr(self.binary, 'mass_transfer_case', MT_case)
 
+        
         if binary.state == 'initial_RLOF':
             return
 
@@ -969,18 +966,23 @@ class MesaGridStep:
                         self.classes[f'S{i+1}_{MODEL_NAME}_CO_type'] != 'None'):
                         values = {}
                         for key in ['state', 'SN_type', 'f_fb', 'mass', 'spin',
-                                    'm_disk_accreted', 'm_disk_radiated', 'M4', 'mu4',
-                                    'h1_mass_ej', 'he4_mass_ej']:
+                                    'm_disk_accreted', 'm_disk_radiated', 'M4',
+                                    'mu4', 'h1_mass_ej', 'he4_mass_ej']:
                             if key == "state":
                                 state = self.classes[f'S{i+1}_{MODEL_NAME}_CO_type']
                                 values[key] = state
                             elif key == "SN_type":
                                 values[key] = self.classes[f'S{i+1}_{MODEL_NAME}_{key}']
-                            else:
+                            elif f'S{i+1}_{MODEL_NAME}_{key}' in fv:
                                 values[key] = fv[f'S{i+1}_{MODEL_NAME}_{key}']
+                            else:
+                                Pwarn(f"S{i+1}_{MODEL_NAME}_{key} not found in fv",
+                                      "UnsupportedModelWarning")
+                                values = None
+                                break
                         setattr(star, MODEL_NAME, values)
                     else:
-                        setattr(star, key, None)
+                        setattr(star, MODEL_NAME, None)
 
     # STOPPING METHODS
 
@@ -1356,9 +1358,10 @@ class CO_HMS_RLO_step(MesaGridStep):
                           "H-rich_Core_He_burning",
                           "H-rich_Central_He_depleted",
                           "H-rich_Core_C_burning",
-                          "stripped_He_Core_H_burning",
+                          "accreted_He_Core_H_burning",
                           "H-rich_Central_C_depletion",  # filtered out below
-                          "H-rich_non_burning"]
+                          "H-rich_non_burning",
+                          "accreted_He_non_burning"]
 
         # check the star states
         # TODO: import states from flow_chart.py
@@ -1475,6 +1478,7 @@ class CO_HeMS_RLO_step(MesaGridStep):
 
         # TODO: import states from flow_chart.py
         CO_He_STATES = [
+            'accreted_He_Core_He_burning',
             'stripped_He_Core_He_burning',
             'stripped_He_Shell_He_burning',
             'stripped_He_Central_He_depleted',
@@ -1482,7 +1486,8 @@ class CO_HeMS_RLO_step(MesaGridStep):
             # include systems that are on the brink of He exhaustion
             'stripped_He_non_burning',
             # include systems post CE with core_definition_H_fraction=0.1
-            'H-rich_non_burning'
+            'H-rich_non_burning',
+            'accreted_He_non_burning'
                         ]
 
         # check the star states
@@ -1599,6 +1604,7 @@ class CO_HeMS_step(MesaGridStep):
 
         # TODO: import states from flow_chart.py
         CO_He_STATES = [
+            'accreted_He_Core_He_burning',
             'stripped_He_Core_He_burning',
             'stripped_He_Shell_He_burning',
             'stripped_He_Central_He_depleted',
@@ -1606,7 +1612,8 @@ class CO_HeMS_step(MesaGridStep):
             # include systems that are on the brink of He exhaustion
             'stripped_He_non_burning',
             # include systems post CE with core_definition_H_fraction=0.1
-            'H-rich_non_burning'
+            'H-rich_non_burning',
+            'accreted_He_non_burning'
                         ]
         # TODO: import states from flow_chart.py
         if (state_2 in ['WD', 'NS', 'BH']
@@ -1716,9 +1723,10 @@ class HMS_HMS_RLO_step(MesaGridStep):
                           "H-rich_Core_He_burning",
                           "H-rich_Central_He_depleted",
                           "H-rich_Core_C_burning",
-                          "stripped_He_Core_H_burning",
+                          "accreted_He_Core_H_burning",
                           "H-rich_Central_C_depletion",  # filtered out below
-                          "H-rich_non_burning"]
+                          "H-rich_non_burning",
+                          "accreted_He_non_burning"]
 
         # check the star states
         # TODO: import states from flow_chart.py

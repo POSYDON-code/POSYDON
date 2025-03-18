@@ -13,11 +13,12 @@ from .MainWindow import MainWindow
 from .PresenterMode import PresenterMode
 
 from posydon.utils.common_functions import orbital_separation_from_period
-from posydon.utils.common_functions import PATH_TO_POSYDON
+from posydon.config import PATH_TO_POSYDON
 
 from datetime import datetime
 import os
 import numpy as np
+import pandas as pd
 
 
 def to_megayears(nb):
@@ -165,18 +166,18 @@ def get_max_distance(data):
 
     """
     if data["separation"].state_after is not None:
-        if np.isnan(data["separation"].state_after) or (
+        if pd.isna(data["separation"].state_after) or (
             data["separation"].state_before > data["separation"].state_after
         ):
             return (
                 data["separation"].state_before
-                if (not np.isnan(data["separation"].state_before))
+                if pd.notna(data["separation"].state_before)
                 else 0
             )
         else:
             return data["separation"].state_after
     else:
-        if np.isnan(data["separation"].state_before):
+        if pd.isna(data["separation"].state_before):
             return 0
         else:
             return data["separation"].state_before
@@ -638,9 +639,7 @@ class Presenter:
         if max_distance == 0:
             return 0
 
-        if simplified_distance.state_after is not None and not np.isnan(
-            simplified_distance.state_after
-        ):
+        if pd.notna(simplified_distance.state_after):
             if simplified_distance.state_after < 1:
                 simplified_distance.state_after = 1
             if max_distance < 1:
@@ -650,7 +649,7 @@ class Presenter:
                     / np.log(max_distance))
 
         else:
-            if np.isnan(simplified_distance.state_before):
+            if pd.isna(simplified_distance.state_before):
                 return 0
             elif simplified_distance.state_before < 1:
                 simplified_distance.state_before = 1

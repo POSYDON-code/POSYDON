@@ -243,9 +243,9 @@ class Regressor:
             Cleaned output data free of undefined values.
 
         """
-        if np.sum(np.isnan(training_y)) > 0:
-            where_undef = np.where(np.isnan(training_y))[0]
-            where_def = np.where(~np.isnan(training_y))[0]
+        if np.sum(pd.isna(training_y)) > 0:
+            where_undef = np.where(pd.isna(training_y))[0]
+            where_def = np.where(pd.notna(training_y))[0]
             need_to_clean = True
         elif self._undefined_p_change_val_ in training_y:
             where_undef = np.where(self._undefined_p_change_val_
@@ -770,7 +770,7 @@ class Regressor:
                 predicted_values_rbf = self._predict(
                     "RBF", class_key, col_key, cross_val_test_input
                 )
-                where_nan = np.where(np.isnan(predicted_values_linear))[0]
+                where_nan = np.where(pd.isna(predicted_values_linear))[0]
                 if len(where_nan) > 0:
                     print("{0}: {1} nan points out of {2}. Used rbf instead.".
                           format(regressor_key, len(where_nan),
@@ -886,7 +886,7 @@ class Regressor:
             p_diffs, diffs = self.cross_validate(
                 regressor_name, class_key, col_key, alpha, verbose=verbose
             )
-            where_not_nan = np.where(np.invert(np.isnan(p_diffs)))[0]
+            where_not_nan = np.where(pd.notna(p_diffs))[0]
 
             p_diffs_holder.append(p_diffs[where_not_nan])
 
