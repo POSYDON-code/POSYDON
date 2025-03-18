@@ -38,7 +38,7 @@ Like in code files we add an author list to those files to let others know whom 
 
 We always need to import the module we'd like to test. *I recommend to import it with the local name `totest`.*
 
-There might be additional modules/functions needed to do the testing. *I recommend to not import stuff, which is already imported in the module, you like to test, instead use the reference in the tested module, e.g. if the module to test imports X, access it via `totest.X` in the unit test, to ensure using the same code, which is not subject to this test. For convinience you might define some aliases for imported stuff, e.g. `np = totest.np`.*
+There might be additional modules/functions needed to do the testing. *I recommend to not import stuff, which is already imported in the module, you like to test, instead use the reference in the tested module, e.g. if the module to test imports X, access it via `totest.X` in the unit test, to ensure using the same code, which is not subject to this test. For convenience you might define some aliases for imported stuff, e.g. `np = totest.np`.*
 
 #### Test functions
 
