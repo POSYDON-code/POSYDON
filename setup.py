@@ -145,7 +145,7 @@ setup(
     install_requires=install_requires,
     tests_require=tests_require,
     extras_require=extras_require,
-    python_requires=">3.10, <3.12",
+    python_requires=">=3.11, <3.12",
     use_2to3=False,
     classifiers=[
         "Development Status :: 4 - Beta",
