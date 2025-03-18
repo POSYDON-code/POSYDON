@@ -110,6 +110,11 @@ class Salpeter(IMFBase):
         ----------
         m : float or array_like
             Stellar mass or array of stellar masses [Msun].
+            
+        Returns
+        -------
+        float or ndarray
+            The IMF value for the given mass or masses.
         '''
         if np.any(m <= 0):
             raise ValueError("Mass must be positive.")
@@ -192,6 +197,11 @@ class Kroupa2001(IMFBase):
         ----------
         m : float or array_like
             Stellar mass or array of stellar masses [Msun].
+            
+        Returns
+        -------
+        float or ndarray
+            The IMF value for the given mass or masses.
         '''
         m = np.asarray(m)
         if np.any(m <= 0):
@@ -264,6 +274,11 @@ class Chabrier2003(IMFBase):
         ----------
         m : float or array_like
             Stellar mass or array of stellar masses [Msun].
+            
+        Returns
+        -------
+        float or ndarray
+            The IMF value for the given mass or masses
         '''
         m = np.asarray(m)
         lognormal = (1.0 / (m * np.sqrt(2 * np.pi) * self.sigma) *
