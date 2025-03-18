@@ -33,7 +33,6 @@ class SimulationProperties:
         """
         self.kwargs = kwargs.copy()
         # Check if binary_properties is passed
-
         self.default_hooks = EvolveHooks()
         self.all_hooks_classes = [self.default_hooks]
         for item in kwargs.get('extra_hooks', []):

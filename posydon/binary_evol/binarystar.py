@@ -239,7 +239,7 @@ class BinaryStar:
         next_step_name = self.properties.flow.get(total_state)
         if next_step_name is None:
             raise ValueError("Undefined next step given stars/binary states {}.".format(total_state))
-
+        
         next_step = getattr(self.properties, next_step_name, None)
         if next_step is None:
             raise ValueError("Next step name '{}' does not correspond to a function in "
