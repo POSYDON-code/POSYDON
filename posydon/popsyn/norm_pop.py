@@ -13,7 +13,7 @@ import numpy as np
 from posydon.popsyn import independent_sample
 from scipy.integrate import quad, nquad
 from posydon.utils.posydonwarning import Pwarn
-from posydon.popsyn.distributions import flat_mass_ratio
+from posydon.popsyn.distributions import flat_mass_ratio, Sana12Period
 from functools import lru_cache
 import posydon.popsyn.IMFs as IMFs
 
@@ -34,7 +34,7 @@ def get_IMF_pdf(kwargs):
     return IMF_pdf
 
 def get_mass_ratio_pdf(kwargs):
-    """Function that returns the mass ratio PDF function with caching for optimization."""
+    """Function that returns the mass ratio PDF function"""
     if kwargs['secondary_mass_scheme'] == 'flat_mass_ratio' and ('q_min' not in kwargs and 'q_max' not in kwargs):
         # flat mass ratio, where bounds are dependent on m1 and min/max m2
         # and q_min = 0.05, q_max = 1
@@ -49,18 +49,40 @@ def get_mass_ratio_pdf(kwargs):
         q_pdf = lambda q, m1=None: np.where((q > 0.0) & (q<=1.0), 1, 0)
     return q_pdf
 
+def get_binary_fraction_pdf(kwargs):
+    '''get the binary fraction pdf function'''
+    
+    if kwargs['binary_fraction_scheme'] == 'const':
+        f_b = kwargs['binary_fraction_const']
+        binary_fraction_pdf = lambda binary: np.where(np.asarray(binary), f_b, 1-f_b)
+    else:
+        raise ValueError("Binary fraction scheme not recognized")
+    
+    return binary_fraction_pdf
+    
+    
+def get_period_pdf(kwargs):
+        
+    if kwargs['orbital_scheme'] == 'period' and kwargs['orbital_period_scheme'] == 'Sana+12_period_extended':
+        P_pdf_class = Sana12Period(p_min=kwargs['orbital_period_min'],
+                                   p_max=kwargs['orbital_period_max'])
+        pdf = P_pdf_class.pdf # pdf(P, m1)
+    else:
+        pdf = lambda P=0, m1=0: 1
+    return pdf
+    
+
 def get_pdf(kwargs):
     """Function that build a PDF function given the simulation parameters"""
     
     IMF_pdf = get_IMF_pdf(kwargs)
     q_pdf = get_mass_ratio_pdf(kwargs)
-    
-    f_b = kwargs['binary_fraction_const']
+    f_b_pdf = get_binary_fraction_pdf(kwargs)
     
     pdf_function = lambda m1, q=0, binary=False: np.where(
         np.asarray(binary),
-        f_b * IMF_pdf(np.asarray(m1)) * q_pdf(np.asarray(q), np.asarray(m1)),
-        (1-f_b) * IMF_pdf(np.asarray(m1))
+        f_b_pdf(np.asarray(binary)) * IMF_pdf(np.asarray(m1)) * q_pdf(np.asarray(q), np.asarray(m1)),
+        f_b_pdf(np.asarray(binary)) * IMF_pdf(np.asarray(m1))
     )
     return pdf_function
 
@@ -81,7 +103,7 @@ def get_mean_mass(PDF, params):
         q_max = params['q_max']
     else:
         q_max = np.min([params['secondary_mass_max']/params['primary_mass_max'], 1])
-
+    
     # binary integration
     I_bin = nquad(lambda q, m: (m + m * q) * PDF(m, q, True),
                   ranges=[(q_min, q_max),
@@ -176,6 +198,7 @@ def calculate_model_weights(pop_data, M_sim, simulation_parameters, population_p
     PDF_sim = get_pdf(simulation_parameters)
     PDF_pop = get_pdf(population_parameters)
     
+    
     # initial properties
     mean_mass_sim = get_mean_mass(PDF_sim, simulation_parameters)
     mean_mass_pop = get_mean_mass(PDF_pop, population_parameters)
@@ -184,7 +207,12 @@ def calculate_model_weights(pop_data, M_sim, simulation_parameters, population_p
     
     # we still need to distinguish between binary and single stars for the PDF
     binary_mask = pop_data['state_i'] != 'initially_single_star'
-    weight_pop = PDF_pop(m1=pop_data['S1_mass_i'], q=pop_data['S2_mass_i']/pop_data['S1_mass_i'], binary=binary_mask)
-    weight_sim = PDF_sim(m1=pop_data['S1_mass_i'], q=pop_data['S2_mass_i']/pop_data['S1_mass_i'], binary=binary_mask)
+    weight_pop = PDF_pop(m1=pop_data['S1_mass_i'],
+                         q=pop_data['S2_mass_i']/pop_data['S1_mass_i'],
+                         binary=binary_mask)
+
+    weight_sim = PDF_sim(m1=pop_data['S1_mass_i'],
+                         q=pop_data['S2_mass_i']/pop_data['S1_mass_i'],
+                         binary=binary_mask)
     
     return (weight_pop / weight_sim) * factor

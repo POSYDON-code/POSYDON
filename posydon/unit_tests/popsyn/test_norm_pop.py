@@ -85,6 +85,31 @@ class TestGetMassRatioPdf:
         result = q_pdf(0, None)
         assert np.all(result == 0)
 
+
+class TestGetBinaryFractionPdf:
+    
+    def test_const_binary_fraction_pdf(self):
+        kwargs = {
+            'binary_fraction_scheme': 'const',
+            'binary_fraction_const': 0.7
+        }
+        pdf_func = norm_pop.get_binary_fraction_pdf(kwargs)
+        # For binary stars, expected = 0.7
+        result = pdf_func(True)
+        assert np.allclose(result, np.asarray(0.7))
+        # For single stars, expected = 1 - 0.7 = 0.3
+        result = pdf_func(False)
+        assert np.allclose(result, np.asarray(0.3))
+        
+    def test_invalid_binary_fraction_scheme(self):
+        kwargs = {
+            'binary_fraction_scheme': 'invalid'
+        }
+        with pytest.raises(ValueError) as excinfo:
+            norm_pop.get_binary_fraction_pdf(kwargs)
+        
+        assert "Binary fraction scheme not recognized" in str(excinfo.value)
+
 class TestGetPdf:
     def test_single_star_pdf(self):
         # Using fallback IMF (non-existent) -> IMF_pdf returns 1.
@@ -95,7 +120,8 @@ class TestGetPdf:
             'secondary_mass_scheme': 'flat_mass_ratio',
             'secondary_mass_min': 1,
             'secondary_mass_max': 100,
-            'binary_fraction_const': 0.5
+            'binary_fraction_scheme': 'const',
+            'binary_fraction_const': 0.5,
         }
         pdf_func = norm_pop.get_pdf(kwargs)
         m1_val = 10
@@ -112,6 +138,7 @@ class TestGetPdf:
             'secondary_mass_scheme': 'flat_mass_ratio',
             'q_min': 0.2,
             'q_max': 0.8,
+            'binary_fraction_scheme': 'const',
             'binary_fraction_const': 0.3
         }
         pdf_func = norm_pop.get_pdf(kwargs)
@@ -133,6 +160,7 @@ class TestGetPdf:
             'secondary_mass_scheme': 'flat_mass_ratio',
             'secondary_mass_min': 1,
             'secondary_mass_max': 100,
+            'binary_fraction_scheme': 'const',
             'binary_fraction_const': 0.7
         }
         pdf_func = norm_pop.get_pdf(kwargs)
@@ -142,6 +170,7 @@ class TestGetPdf:
         assert np.allclose(result, 0.15)
         # cleanup monkey-patch
         del IMFs.DummyIMF
+        
 
 class TestGetMeanMass:
     def test_dummy_mean_mass(self):

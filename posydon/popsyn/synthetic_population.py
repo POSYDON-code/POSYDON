@@ -1912,7 +1912,7 @@ class TransientPopulation(Population):
                                     'secondary_mass_max':200,
                                     'orbital_scheme':'period',
                                     'orbital_period_scheme':'Sana+12_period_extended',
-                                    'orbital_period_min':0.75,
+                                    'orbital_period_min':0.35,
                                     'orbital_period_max':6e3,
                                     'eccentricity_scheme':'zero',}
         
@@ -1929,7 +1929,8 @@ class TransientPopulation(Population):
             met_indices = tmp_data.index[met_mask]
             
             M_sim = self.mass_per_metallicity['simulated_mass'].iloc[i]
-            pop_data = self.oneline.select(where='index in '+str(met_indices.to_list()), columns=['S1_mass_i', 'S2_mass_i', 'orbital_period_i', 'eccentricity_i', 'state_i'])
+            pop_data = self.oneline.select(where='index in '+str(met_indices.to_list()),
+                                           columns=['S1_mass_i', 'S2_mass_i', 'orbital_period_i', 'eccentricity_i', 'state_i'])
             model_weights[met_mask] = calculate_model_weights(
                                                     pop_data=pop_data,
                                                     M_sim=M_sim,

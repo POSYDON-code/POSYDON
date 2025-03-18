@@ -27,7 +27,6 @@ class flat_mass_ratio():
             raise ValueError("Normalization integral is zero. Check mass ratio parameters.")
         return 1.0 / integral
     
-    
     def flat_mass_ratio(self, q):
         """Compute the flat mass ratio distribution at a given mass.
 
@@ -68,7 +67,7 @@ class flat_mass_ratio():
 class Sana12Period():
     '''Sana H., et al., 2012, Science, 337, 444'''
     
-    def __init__(self, p_min=0.35, p_max=10**3.5):
+    def __init__(self, p_min=0.35, p_max=6e3):
         self.p_min = p_min
         self.p_max = p_max
         self.mbreak = 15
@@ -77,7 +76,6 @@ class Sana12Period():
         self.low_mass_norm = self._calculate_normalization(self.mbreak-1)
         self.high_mass_norm = self._calculate_normalization(self.mbreak+1)
         self.norm = lambda m1: np.where(m1 <= self.mbreak, self.low_mass_norm, self.high_mass_norm)
-        
         
     def __repr__(self):
         return f"Sana12Period(p_min={self.p_min}, p_max={self.p_max})"
