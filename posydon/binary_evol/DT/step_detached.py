@@ -19,14 +19,12 @@ import pandas as pd
 import time
 from scipy.integrate import solve_ivp
 from scipy.interpolate import PchipInterpolator
-from scipy.optimize import minimize
-from scipy.optimize import root
 
 from posydon.config import PATH_TO_POSYDON_DATA
 from posydon.binary_evol.binarystar import BINARYPROPERTIES
 from posydon.binary_evol.singlestar import STARPROPERTIES
 from posydon.interpolation.interpolation import GRIDInterpolator
-from posydon.interpolation.data_scaling import DataScaler
+#from posydon.interpolation.data_scaling import DataScaler
 from posydon.utils.common_functions import (bondi_hoyle,
                                             orbital_period_from_separation,
                                             roche_lobe_radius,
@@ -44,8 +42,10 @@ from posydon.utils.posydonerror import (NumericalError, MatchingError,
                                         ClassificationError)
 from posydon.utils.posydonwarning import Pwarn
 
+from posydon.grids.track_match import track_matcher
+
 LIST_ACCEPTABLE_STATES_FOR_HMS = ["H-rich_Core_H_burning",
-                                  "accreted_He_Core_H_burning"]
+                                  "accreted_He_Core_H_burning"] # REMOVE
 
 LIST_ACCEPTABLE_STATES_FOR_postMS = [
     "H-rich_Shell_H_burning",
@@ -382,20 +382,6 @@ class detached_step:
             'radius_conv_reg_fortides'
         )
 
-        self.root_keys = np.array(  # for the matching
-            [
-                "age",
-                "mass",
-                "he_core_mass",
-                "center_h1",
-                "center_he4",
-                "surface_he4",
-                "surface_h1",
-                "log_R",
-                "center_c12"
-            ]
-        )
-
         # keys for the final value interpolation
         self.final_keys = (
             'avg_c_in_c_core_at_He_depletion',
@@ -411,490 +397,19 @@ class detached_step:
         )
 
         # keys for the star profile interpolation
-        self.profile_keys = DEFAULT_PROFILE_KEYS
+        #self.profile_keys = DEFAULT_PROFILE_KEYS
 
-        if grid_name_Hrich is None:
-            grid_name_Hrich = os.path.join('single_HMS', self.metallicity+'_Zsun.h5')
-        self.grid_Hrich = GRIDInterpolator(os.path.join(path, grid_name_Hrich))
+        self.grid_name_Hrich = grid_name_Hrich
+        #if grid_name_Hrich is None:
+        #    grid_name_Hrich = os.path.join('single_HMS', self.metallicity+'_Zsun.h5')
+        #self.grid_Hrich = GRIDInterpolator(os.path.join(path, grid_name_Hrich))
 
-        if grid_name_strippedHe is None:
-            grid_name_strippedHe = os.path.join('single_HeMS', self.metallicity+'_Zsun.h5')
-        self.grid_strippedHe = GRIDInterpolator(os.path.join(path, grid_name_strippedHe))
-
-        # Initialize the matching lists:
-        m_min_H = np.min(self.grid_Hrich.grid_mass)
-        m_max_H = np.max(self.grid_Hrich.grid_mass)
-        m_min_He = np.min(self.grid_strippedHe.grid_mass)
-        m_max_He = np.max(self.grid_strippedHe.grid_mass)
-        if self.list_for_matching_HMS is None:
-            self.list_for_matching_HMS = [
-                ["mass", "center_h1", "log_R", "he_core_mass"],
-                [20.0, 1.0, 2.0, 10.0],
-                ["log_min_max", "min_max", "min_max", "min_max"],
-                [m_min_H, m_max_H], [0, None]
-            ]
-        if self.list_for_matching_postMS is None:
-            self.list_for_matching_postMS = [
-                ["mass", "center_he4", "log_R", "he_core_mass"],
-                [20.0, 1.0, 2.0, 10.0],
-                ["log_min_max", "min_max", "min_max", "min_max"],
-                [m_min_H, m_max_H], [0, None]
-            ]
-        if self.list_for_matching_HeStar is None:
-            self.list_for_matching_HeStar = [
-                ["he_core_mass", "center_he4", "log_R"],
-                [10.0, 1.0, 2.0],
-                ["min_max", "min_max", "min_max"],
-                [m_min_He, m_max_He], [0, None]
-            ]
-
-        # lists of alternative matching
-
-        # e.g., stars after mass transfer could swell up so that log_R
-        # is not appropriate for matching
-
-        self.list_for_matching_HMS_alternative = [
-            ["mass", "center_h1", "he_core_mass"],
-            [20.0, 1.0, 10.0],
-            ["log_min_max", "min_max", "min_max"],
-            [m_min_H, m_max_H], [0, None]
-        ]
-        self.list_for_matching_postMS_alternative = [
-            ["mass", "center_h1", "he_core_mass"],
-            [20.0, 1.0, 10.0],
-            ["log_min_max", "min_max", "min_max"],
-            [m_min_H, m_max_H], [0, None]
-        ]
-        self.list_for_matching_HeStar_alternative = [
-            ["he_core_mass", "center_he4", "log_R"],
-            [10.0, 1.0, 2.0],
-            ["min_max", "min_max", "min_max"],
-            [m_min_He, m_max_He], [0, None]
-        ]
-
-    def square_difference(self, x, htrack, mesa_labels, posydon_attributes, colscalers, scales):
-        """Compute the square distance used for scaling."""
-        result = 0.0
-        for mesa_label, posy_attr, colscaler, scale_of_mesa_label in zip(
-                 mesa_labels, posydon_attributes, colscalers, scales):
-            single_track_value = scale_of_mesa_label.transform(
-                self.get_track_val(mesa_label, htrack, *x))
-            posydon_value = scale_of_mesa_label.transform(posy_attr)
-            if mesa_label in MATCHING_WITH_RELATIVE_DIFFERENCE:
-                result += ((single_track_value - posydon_value)
-                           / posydon_value) ** 2
-            else:
-                result += (single_track_value - posydon_value) ** 2
-        return result
-
-    def get_track_val(self, key, htrack, m0, t):
-        """Return a single value from the interpolated time-series.
-
-        Parameters
-        ----------
-        key : str
-            Keyword of the required quantity.
-        m0 : float
-            The associated initial mass of the required quantity.
-        t  : float
-            The required time in the time-series.
-
-        Returns
-        -------
-        float
-            The value of the quantity `key` from a MIST-like track of
-            initial mass `m0` at the time `t0`.
-
-        """
-        # htrack as a boolean determines whether H or He grid is used
-        if htrack:
-            grid = self.grid_Hrich
-        else:
-            grid = self.grid_strippedHe
-        try:
-            x = grid.get("age", m0)
-            y = grid.get(key, m0)
-        except ValueError:
-            return np.array(t) * np.nan
-        try:
-            val = np.interp(t, x, y, left=1e99, right=1e99)
-        except ValueError:
-            i_bad = [None]
-            while len(i_bad):
-                i_bad = np.where(np.diff(x) <= 0)[0]
-                x = np.delete(x, i_bad)
-                y = np.delete(y, i_bad)
-            val = np.interp(t, x, y)
-        return val
-
-    def scale(self, key, htrack, method):
-        """Nomarlize quantities in the single star grids to (0,1).
-
-        Parameters
-        ----------
-        key : str
-            Keyword of the required quantity.
-        method : str
-            Scalling method in the data normalization class
-
-        Returns
-        -------
-        class
-            Data normalization class
-
-        """
-        # TODO: why this self.grid? Why not local variable. Should this affect
-        # the whole detached_step instance?
-
-        # collect all options for the scaler
-        scaler_options = (key, htrack, method)
-
-        # find if the scaler has already been fitted and return it if so...
-        scaler = self.stored_scalers.get(scaler_options, None)
-        if scaler is not None:
-            return scaler
-
-        # ... if not, fit a new scaler, and store it for later use
-        grid = self.grid_Hrich if htrack else self.grid_strippedHe
-        self.initial_mass = grid.grid_mass
-        all_attributes = []
-        for mass in self.initial_mass:
-            for i in grid.get(key, mass):
-                all_attributes.append(i)
-        all_attributes = np.array(all_attributes)
-        scaler = DataScaler()
-        scaler.fit(all_attributes, method=method, lower=0.0, upper=1.0)
-        self.stored_scalers[scaler_options] = scaler
-        return scaler
-
-    def get_root0(self, keys, x, htrack, rs=None):
-        """Get the track in the grid with values closest to the requested ones.
-
-        Parameters
-        ----------
-        keys : list of str
-            Contains the keys of the required specific quantities that will be
-            matched in the MIST-like track.
-        x : list of floats, of same length as "keys"
-            Contains the latest values (from a previous POSYDON step) of the
-            quantities of "keys" in the POSYDON SingleStar object.
-        rs : list of floats, same length as "keys"
-            Contains normalization factors to be divided for rescaling
-            x values.
-
-        Returns
-        -------
-        list of 2 float values
-            Contains the associated initial mass (in solar units) and the time
-            (in years) such that the time-series of the `keys` at that time has
-            the closest values to `x`. These will become m0, t0 for the later
-            integration during the detached binary evolution.
-            If there is no match then NaNs will be returned instead.
-
-        """
-        grid = self.grid_Hrich if htrack else self.grid_strippedHe
-        self.initial_mass = grid.grid_mass
-        n = 0
-        for mass in grid.grid_mass:
-            n = max(n, len(grid.get("age", mass)))
-        self.rootm = np.inf * np.ones((len(grid.grid_mass),
-                                       n, len(self.root_keys)))
-        for i, mass in enumerate(grid.grid_mass):
-            for j, key in enumerate(self.root_keys):
-                track = grid.get(key, mass)
-                self.rootm[i, : len(track), j] = track
-        if rs is None:
-            rs = np.ones_like(keys)
-        else:
-            rs = np.asanyarray(rs)
-        x = np.asanyarray(x)
-        idx = np.argmax(np.asanyarray(keys)[:, None] == self.root_keys, axis=1)
-        X = self.rootm[:, :, idx]
-        d = np.linalg.norm((X - x[None, None, :]) / rs[None, None, :], axis=-1)
-        idx = np.unravel_index(d.argmin(), X.shape[:-1])
-        t = self.rootm[idx][np.argmax("age" == self.root_keys)]
-        m0 = grid.grid_mass[idx[0]]
-        return m0, t
-
-    def match_to_single_star(self, star, htrack):
-        """Get the track in the grid that matches the time and mass of a star.
-
-        For "root" matching_method, the properties that are matched is always
-        the mass of the secondary star.
-        If the secondary has the state `MS` then
-        the center hydrogen abundance will also be matched
-        otherwise the mass of helium-core will be matched.
-
-        Parameters
-        ----------
-        star : SingleStar
-            The star which properties are required
-            to be matched with the single MIST-like grid.
-
-        Returns
-        -------
-        list of 2 float values
-            Contains the associated (in solar units) and the time (in years)
-            such that the time-series in the grid matches
-            the properties of the secondary.
-
-        """
-        def get_posydon_attributes(list_for_matching, star):
-            list_of_attributes = []
-            for attr in list_for_matching:
-                list_of_attributes.append(getattr(star, attr))
-            return list_of_attributes
+        self.grid_name_strippedHe = grid_name_strippedHe
+        #if grid_name_strippedHe is None:
+        #    grid_name_strippedHe = os.path.join('single_HeMS', self.metallicity+'_Zsun.h5')
+        #self.grid_strippedHe = GRIDInterpolator(os.path.join(path, grid_name_strippedHe))
         
-        def sq_diff_function(x):
-            return self.square_difference(
-                x, htrack=htrack, mesa_labels=MESA_labels,
-                posydon_attributes=posydon_attributes,
-                colscalers=colscalers, scales=scales)
-        
-        def get_MESA_labels(list_for_matching):
-
-            MESA_labels = list_for_matching[0]
-            
-            rs = list_for_matching[1]
-            colscalers = list_for_matching[2]
-            bnds = []
-            for i in range(3, len(list_for_matching)):
-                bnds.append(list_for_matching[i])
-
-            if self.verbose:
-                print("Matching parameters and their normalizations:\n", MESA_labels, rs)
-            
-            scales = []
-            for MESA_label, colscaler in zip(MESA_labels, colscalers):
-                scale_of_attribute = scale(MESA_label, htrack, colscaler)
-                scales.append(scale_of_attribute)
-            
-            return MESA_labels, rs, colscalers, bnds, scales
-
-            
-        if htrack:
-            self.grid = self.grid_Hrich
-        else:
-            self.grid = self.grid_strippedHe
-
-        get_root0 = self.get_root0
-        get_track_val = self.get_track_val
-        matching_method = self.matching_method
-        scale = self.scale
-
-        initials = None
-        
-        tolerance_matching_integration = 1e-2
-        tolerance_matching_integration_hard = 1e-1
-
-        if self.verbose:
-            print(f"\nMatching process started in detached step for {star.state} star "
-                  f"with matching method = {matching_method}")
-
-        if matching_method == "root":
-
-            if star.state in LIST_ACCEPTABLE_STATES_FOR_HMS:
-                x0 = get_root0(["center_h1", "mass"],
-                               [star.center_h1, star.mass],
-                               htrack, rs=[0.7, 300])
-                sol = root(
-                    lambda x: [
-                        get_track_val("center_h1", htrack, *x) - star.center_h1,
-                        get_track_val("mass", htrack, *x) - star.mass],
-                    x0, method="hybr")
-            else:
-                x0 = get_root0(
-                    ["he_core_mass", "mass"],
-                    [star.he_core_mass, star.mass],
-                    htrack,
-                    rs=[11, 300])
-                
-                sol = root(
-                    lambda x: [
-                        get_track_val("he_core_mass", htrack, *x) - star.he_core_mass,
-                        get_track_val("mass", htrack, *x) - star.mass],
-                    x0, method="hybr")
-                
-            if not sol.success or sol.x[1] < 0:
-                initials = (np.nan, np.nan)
-            else:
-                initials = sol.x
-
-        elif matching_method == "minimize":
-            
-            if star.state in LIST_ACCEPTABLE_STATES_FOR_HMS:
-                list_for_matching = self.list_for_matching_HMS
-            elif star.state in LIST_ACCEPTABLE_STATES_FOR_postMS:
-                list_for_matching = self.list_for_matching_postMS
-            elif star.state in LIST_ACCEPTABLE_STATES_FOR_HeStar:
-                list_for_matching = self.list_for_matching_HeStar
-            
-            MESA_labels, rs, colscalers, bnds, scales = get_MESA_labels(list_for_matching)
-            
-            for i in MESA_labels:
-                if i not in self.root_keys:
-                    raise AttributeError(f"Expected matching parameter {i} not added in the single star grid options.")
-                
-            posydon_attributes = get_posydon_attributes(MESA_labels, star)
-
-            x0 = get_root0(MESA_labels, posydon_attributes, htrack, rs=rs)
-            sol = minimize(sq_diff_function, x0, method="TNC", bounds=bnds)
-
-            ## save initial matching solution as best solution so far
-            best_sol = sol
-
-            ## Alternative matching attempts if default matching fails!
-            # 1st attempt: use a different minimization method
-            if (np.abs(best_sol.fun) > tolerance_matching_integration or not best_sol.success):
-               
-                if self.verbose:
-                    print (f"Initial matching attempt was unsuccessful:"
-                           f"\n tolerance {np.abs(sol.fun)} > {tolerance_matching_integration}, sol.success = {sol.success}")
-                    
-                    print("\nAlternative matching started (1st attempt)")
-                    print("(Now trying an alternative minimization method)")
-                    
-                sol = minimize(sq_diff_function, x0, method="Powell")
-
-                ## if alternative matching has a better solution, make it the new best solution
-                if (np.abs(sol.fun) < np.abs(best_sol.fun) and sol.success):
-                    best_sol = sol
-
-            # 2nd attempt: use alternative matching parameters
-            if (np.abs(best_sol.fun) > tolerance_matching_integration or not best_sol.success):    
-                   
-                if self.verbose:
-                    print (f"Alternative matching (1st attempt) was unsuccessful:"
-                           f"\n tolerance {np.abs(sol.fun)} > {tolerance_matching_integration}, sol.success = {sol.success}")
-                    
-                    print("\nAlternative matching started (2nd attempt)")
-                    print("(Now trying to match with alternative parameters)")     
-                      
-                if star.state in LIST_ACCEPTABLE_STATES_FOR_HMS:
-                    list_for_matching = self.list_for_matching_HMS_alternative
-                elif star.state in LIST_ACCEPTABLE_STATES_FOR_postMS:
-                    list_for_matching = (self.list_for_matching_postMS_alternative)
-                elif star.state in LIST_ACCEPTABLE_STATES_FOR_HeStar:
-                    list_for_matching = (self.list_for_matching_HeStar_alternative)                
-                    
-                MESA_labels, rs, colscalers, bnds, scales = get_MESA_labels(list_for_matching)
-                posydon_attributes = get_posydon_attributes(MESA_labels, star)
-
-                x0 = get_root0(MESA_labels, posydon_attributes, htrack, rs=rs)
-                sol = minimize(sq_diff_function, x0, method="TNC", bounds=bnds)
-
-                if (np.abs(sol.fun) < np.abs(best_sol.fun) and sol.success):
-                    best_sol = sol
-
-            # 3rd attempt: match an He-star with an H-rich grid, or vice versa (not applicable for HMS stars)
-            if (np.abs(best_sol.fun) > tolerance_matching_integration or not best_sol.success):
-
-                if self.verbose:
-                        print (f"Alternative matching (2nd attempt) was unsuccessful:"
-                               f"\n tolerance {np.abs(sol.fun)} > {tolerance_matching_integration}, sol.success = {sol.success}")                    
-                
-                if (star.state in LIST_ACCEPTABLE_STATES_FOR_HeStar
-                    or star.state in LIST_ACCEPTABLE_STATES_FOR_postMS):
-
-                    if self.verbose:
-                        print("\nAlternative matching started (3rd attempt)")
-                        print("(Now trying to match He-star or post-MS star to a different grid)")
-
-                    Pwarn("Attempting to match an He-star with an H-rich grid or post-MS star with a"
-                          " stripped-He grid", "EvolutionWarning")
-                       
-                    if star.state in LIST_ACCEPTABLE_STATES_FOR_HeStar:
-                        new_htrack = True
-                        list_for_matching = self.list_for_matching_HeStar
-                    elif star.state in LIST_ACCEPTABLE_STATES_FOR_postMS:
-                        new_htrack = False
-                        list_for_matching = self.list_for_matching_postMS
-
-                    MESA_labels, rs, colscalers, bnds, scales = get_MESA_labels(list_for_matching)
-
-                    for i in MESA_labels:
-                        if i not in self.root_keys:
-                            raise AttributeError(f"Expected matching parameter {i} not added "
-                                                 "in the single star grid options.")
-                        
-                    posydon_attributes = get_posydon_attributes(MESA_labels, star)
-                    x0 = get_root0(MESA_labels, posydon_attributes, new_htrack, rs=rs)
-
-                    try:
-                        sol = minimize(sq_diff_function, x0, method="TNC", bounds=bnds)
-                        if (np.abs(sol.fun) < np.abs(best_sol.fun) and sol.success):
-                            best_sol = sol
-                            htrack = new_htrack
-
-                        if self.verbose:
-                            print (f"Alternative matching (3rd attempt) completed:"
-                                   f"\n tolerance {np.abs(sol.fun)} > {tolerance_matching_integration}, "
-                                   f"sol.success = {sol.success}")
-                    except:
-                        raise NumericalError("SciPy numerical differentiation occured outside boundary "
-                                             "while matching to single star track")
-
-            # if matching is still not successful, set result to NaN:
-            if (np.abs(best_sol.fun) > tolerance_matching_integration_hard or not best_sol.success):
-                if self.verbose:
-                    print("\nFinal matching result is NOT successful with best tolerance ",
-                          np.abs(best_sol.fun), ">", tolerance_matching_integration_hard)
-                initials = (np.nan, np.nan)
-                
-            else:
-                if self.verbose:
-                    print("\nFinal matching result is considered successful with best tolerance "
-                        f'{np.abs(best_sol.fun):.8f}', "<", tolerance_matching_integration_hard)
-                initials = best_sol.x
-
-        if self.verbose:
-            if pd.notna(initials[0]):
-                val_names = ["  ", "mass", "log_R", "center_h1", "surface_h1", "he_core_mass", "center_he4", "surface_he4", 
-                             "center_c12"]
-
-                initial_vals = [
-                    "initial values",
-                    f'{star.mass:.3f}', 
-                    f'{star.log_R:.3f}', 
-                    f'{star.center_h1:.3f}', 
-                    f'{star.surface_h1:.4f}',
-                    f'{star.he_core_mass:.3f}',
-                    f'{star.center_he4:.4f}', 
-                    f'{star.surface_he4:.4f}',  
-                    f'{star.center_c12:.4f}'
-                    ]
-
-                matched_vals = [
-                    "matched values",
-                    f'{self.get_track_val("mass", htrack, *best_sol.x):.3f}', 
-                    f'{self.get_track_val("log_R", htrack, *best_sol.x):.3f}',
-                    f'{self.get_track_val("center_h1", htrack, *best_sol.x):.3f}',
-                    f'{self.get_track_val("surface_h1", htrack, *best_sol.x):.4f}',
-                    f'{self.get_track_val("he_core_mass", htrack, *best_sol.x):.3f}',
-                    f'{self.get_track_val("center_he4", htrack, *best_sol.x):.4f}',
-                    f'{self.get_track_val("surface_he4", htrack, *best_sol.x):.4f}',    
-                    f'{self.get_track_val("center_c12", htrack, *best_sol.x):.4f}'
-                    ]
-                
-                output_table = [val_names, initial_vals, matched_vals]
-
-                print("\nMatching completed for", star.state, "star!\n")
-                for row in output_table:
-                    print("{:>14}  {:>5}  {:>5}  {:>9}  {:>10}  {:>12}  {:>10}  {:>11}  {:>10}".format(*row))
-            
-            else:
-                print(
-                    "Matching completed unsuccessfully for star with properties: \n"
-                    f'mass = {star.mass:.3f}, ',
-                    f'log_R = {star.log_R:.3f}, ',
-                    f'center_he4 = {star.center_he4:.4f}, ',
-                    f'surface_he4 = {star.surface_he4:.4f}, ',
-                    f'surface_h1 = {star.surface_h1:.4f}, ',
-                    f'he_core_mass = {star.he_core_mass:.3f}, ',
-                    f'center_c12 = {star.center_c12:.4f}'
-                )
-
-        return initials[0], initials[1], htrack
+        return
 
     def __repr__(self):
         """Return the type of evolution type."""
@@ -902,116 +417,6 @@ class detached_step:
 
     def __call__(self, binary):
         """Evolve the binary until RLO or compact object formation."""
-
-        def get_star_data(binary, star1, star2, htrack, co, copy_prev_m0=None, copy_prev_t0=None):
-            """Get and interpolate the properties of stars.
-
-            The data of a compact object can be stored as a copy of its
-            companion for convenience except its mass, radius, mdot, and Idot
-            are set to be zero.
-
-            Parameters
-            ----------
-            htrack : bool
-                htrack of star1
-            co: bool
-                co of star2
-            Return
-            -------
-            interp1d
-                Contains the properties of star1 if co is false,
-                if co is true, star2 is a compact object,
-                return the properties of star2
-
-            """
-
-            with np.errstate(all="ignore"):
-                # get the initial m0, t0 track
-                if binary.event == 'ZAMS' or binary.event == 'redirect_from_ZAMS':
-                    # ZAMS stars in wide (non-mass exchaging binaries) that are
-                    # directed to detached step at birth
-                    m0, t0 = star1.mass, 0
-                elif co:
-                    m0, t0 = copy_prev_m0, copy_prev_t0
-                else:
-                    t_before_matching = time.time()
-                    m0, t0, htrack = self.match_to_single_star(star1, htrack)
-                    t_after_matching = time.time()
-                    
-                    if self.verbose:
-                        print(f"Matching duration: {t_after_matching-t_before_matching:.6g} sec\n")
-            
-            if pd.isna(m0) or pd.isna(t0):
-                return None, None, None
-            
-            if htrack:
-                self.grid = self.grid_Hrich
-            else:
-                self.grid = self.grid_strippedHe
-            
-            # check if m0 is in the grid
-            if m0 < self.grid.grid_mass.min() or m0 > self.grid.grid_mass.max():
-                set_binary_to_failed(binary)
-                raise MatchingError(f"The mass {m0} is out of the single star grid range and "
-                                    "cannot be matched to a track.")
-
-            get_track = self.grid.get
-
-            max_time = binary.properties.max_simulation_time
-            assert max_time > 0.0, "max_time is non-positive"
-
-            age = get_track("age", m0)
-            t_max = age.max()  # max timelength of the track
-            interp1d = dict()
-            kvalue = dict()
-            for key in KEYS[1:]:
-                kvalue[key] = get_track(key, m0)
-            try:
-                for key in KEYS[1:]:
-                    if key in KEYS_POSITIVE:
-                        positive = True
-                        interp1d[key] = PchipInterpolator2(age, kvalue[key], positive=positive)
-                    else:
-                        interp1d[key] = PchipInterpolator2(age, kvalue[key])
-            except ValueError:
-                i_bad = [None]
-                while len(i_bad) != 0:
-                    i_bad = np.where(np.diff(age) <= 0)[0]
-                    age = np.delete(age, i_bad)
-                    for key in KEYS[1:]:
-                        kvalue[key] = np.delete(kvalue[key], i_bad)
-
-                for key in KEYS[1:]:
-                    if key in KEYS_POSITIVE:
-                        positive = True
-                        interp1d[key] = PchipInterpolator2(age, kvalue[key], positive=positive)
-                    else:
-                        interp1d[key] = PchipInterpolator2(age, kvalue[key])
-
-            interp1d["inertia"] = PchipInterpolator(
-                age, kvalue["inertia"] / (const.msol * const.rsol**2))
-            interp1d["Idot"] = interp1d["inertia"].derivative()
-
-            interp1d["conv_env_turnover_time_l_b"] = PchipInterpolator2(
-                age, kvalue['conv_env_turnover_time_l_b'] / const.secyer)
-
-            interp1d["L"] = PchipInterpolator(age, 10 ** kvalue["log_L"])
-            interp1d["R"] = PchipInterpolator(age, 10 ** kvalue["log_R"])
-            interp1d["t_max"] = t_max
-            interp1d["max_time"] = max_time
-            interp1d["t0"] = t0
-            interp1d["m0"] = m0
-
-            if co:
-                kvalue["mass"] = np.zeros_like(kvalue["mass"]) + star2.mass
-                kvalue["R"] = np.zeros_like(kvalue["log_R"])
-                kvalue["mdot"] = np.zeros_like(kvalue["mdot"])
-                interp1d["mass"] = PchipInterpolator(age, kvalue["mass"])
-                interp1d["R"] = PchipInterpolator(age, kvalue["R"])
-                interp1d["mdot"] = PchipInterpolator(age, kvalue["mdot"])
-                interp1d["Idot"] = PchipInterpolator(age, kvalue["mdot"])
-
-            return interp1d, m0, t0
         
         @event(True, 1)
         def ev_rlo1(t, y):
@@ -1221,30 +626,21 @@ class detached_step:
                 print("calculated omega_in_rad_per_year: ", omega_in_rad_per_year)
 
             return omega_in_rad_per_year
-        
-        def get_star_final_values(star, htrack, m0):  
-
-            grid = self.grid_Hrich if htrack else self.grid_strippedHe
-            get_final_values = grid.get_final_values
-        
-            for key in self.final_keys:
-                setattr(star, key, get_final_values('S1_%s' % (key), m0))
-
-        def get_star_profile(star, htrack, m0):
-
-            grid = self.grid_Hrich if htrack else self.grid_strippedHe
-            get_profile = grid.get_profile
-            profile_new = np.array(get_profile('mass', m0)[1])
-
-            for i in self.profile_keys:
-                profile_new[i] = get_profile(i, m0)[0]
-            profile_new['omega'] = star.surf_avg_omega
-
-            star.profile = profile_new
             
 
         KEYS = self.KEYS
         KEYS_POSITIVE = self.KEYS_POSITIVE
+
+        # creating a track matching object
+        self.track_matcher = track_matcher(KEYS, KEYS_POSITIVE, DEFAULT_PROFILE_KEYS, 
+                                           grid_name_Hrich = self.grid_name_Hrich,
+                                           grid_name_strippedHe = self.grid_name_strippedHe, 
+                                           path=PATH_TO_POSYDON_DATA, metallicity=self.metallicity, 
+                                           matching_method=self.matching_method, initial_mass = self.initial_mass,
+                                           rootm=self.rootm, verbose=self.verbose, 
+                                           list_for_matching_HMS=self.list_for_matching_HMS,
+                                           list_for_matching_HeStar=self.list_for_matching_HeStar, 
+                                           list_for_matching_postMS=self.list_for_matching_postMS)
 
         binary_sim_prop = getattr(binary, "properties")   ## simulation properties of the binary
         all_step_names = getattr(binary_sim_prop, "all_step_names")
@@ -1366,7 +762,7 @@ class detached_step:
             raise POSYDONError("Non existent companion has not a recognized value!")
 
         # get the matched data of two stars, respectively
-        interp1d_sec, m0, t0 = get_star_data(binary, secondary, primary, secondary.htrack, co=False)
+        interp1d_sec, m0, t0 = self.track_matcher.get_star_data(binary, secondary, primary, secondary.htrack, co=False)
 
         primary_not_normal = (primary.co) or (self.non_existent_companion in [1,2])
         primary_normal = (not primary.co) and self.non_existent_companion == 0
@@ -1374,11 +770,11 @@ class detached_step:
         if primary_not_normal:
             # copy the secondary star except mass which is of the primary,
             # and radius, mdot, Idot = 0
-            interp1d_pri = get_star_data(
+            interp1d_pri = self.track_matcher.get_star_data(
                 binary, secondary, primary, secondary.htrack, co=True,
                 copy_prev_m0=m0, copy_prev_t0=t0)[0]
         elif primary_normal:
-            interp1d_pri = get_star_data(
+            interp1d_pri = self.track_matcher.get_star_data(
                 binary, primary, secondary, primary.htrack, False)[0]
         else:
             raise ValueError("During matching, the primary should either be normal (stellar object) or ",
@@ -1860,8 +1256,8 @@ class detached_step:
                 else:
                     binary.event = "CC2"
 
-                get_star_final_values(secondary, secondary.htrack, m01)
-                get_star_profile(secondary, secondary.htrack, m01)
+                self.track_matcher.get_star_final_values(secondary, secondary.htrack, m01)
+                self.track_matcher.get_star_profile(secondary, secondary.htrack, m01)
 
                 if not primary.co and primary.state in STAR_STATES_CC:
                     # simultaneous core-collapse of the other star as well
@@ -1870,8 +1266,8 @@ class detached_step:
 
                     if primary_time == secondary_time:
                         # we manually check if s.t_events[3] should also be happening simultaneously
-                        get_star_final_values(primary, primary.htrack, m02)
-                        get_star_profile(primary, primary.htrack, m02)
+                        self.track_matcher.get_star_final_values(primary, primary.htrack, m02)
+                        self.track_matcher.get_star_profile(primary, primary.htrack, m02)
 
                     if primary.mass != secondary.mass:
                         raise POSYDONError(
@@ -1886,8 +1282,8 @@ class detached_step:
                 else:
                     binary.event = "CC1"
 
-                get_star_final_values(primary, primary.htrack, m02)
-                get_star_profile(primary, primary.htrack, m02)
+                self.track_matcher.get_star_final_values(primary, primary.htrack, m02)
+                self.track_matcher.get_star_profile(primary, primary.htrack, m02)
                 
             else:  # Reached max_time asked.
                 if binary.properties.max_simulation_time - binary.time < 0.0:
