@@ -62,7 +62,7 @@ def star_profile():
 class TestElements:
     # check for objects, which should be an element of the tested module
     def test_dir(self):
-        elements = ['ALL_RLO_CASES', 'ALL_STAR_STATES', 'BURNING_STATES',\
+        elements = {'ALL_RLO_CASES', 'ALL_STAR_STATES', 'BURNING_STATES',\
                     'CEE_parameters_from_core_abundance_thresholds',\
                     'COMPACT_OBJECTS', 'CO_radius',\
                     'DEFAULT_CE_OPTION_FOR_LAMBDA', 'He_MS_lifetime',\
@@ -109,10 +109,21 @@ class TestElements:
                     'read_histogram_from_file', 'rejection_sampler',\
                     'roche_lobe_radius', 'rotate', 'rzams',\
                     'separation_evol_wind_loss', 'set_binary_to_failed',\
-                    'spin_stable_mass_transfer', 'stefan_boltzmann_law']
-        assert dir(totest) == elements, "There might be added or removed "\
-                                        + "objects without an update on the "\
-                                        + "unit test."
+                    'spin_stable_mass_transfer', 'stefan_boltzmann_law'}
+        totest_elements = set(dir(totest))
+        missing_in_test = elements - totest_elements
+        assert len(missing_in_test) == 0, "There are missing objects in "\
+                                          +f"{totest.__name__}: "\
+                                          +f"{missing_in_test}. Please "\
+                                          +"check, whether they have been "\
+                                          +"removed on purpose and update "\
+                                          +"this unit test."
+        new_in_test = totest_elements - elements
+        assert len(new_in_test) == 0, "There are new objects in "\
+                                      +f"{totest.__name__}: {new_in_test}. "\
+                                      +"Please check, whether they have been "\
+                                      +"added on purpose and update this "\
+                                      +"unit test."
 
     def test_instance_STATE_UNDETERMINED(self):
         assert isinstance(totest.STATE_UNDETERMINED, str)

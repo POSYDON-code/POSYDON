@@ -328,7 +328,7 @@ def profile():
 class TestElements:
     # check for objects, which should be an element of the tested module
     def test_dir(self):
-        elements = ['ALL_PROPERTIES', 'Catch_POSYDON_Warnings', 'ConfigFile',\
+        elements = {'ALL_PROPERTIES', 'Catch_POSYDON_Warnings', 'ConfigFile',\
                     'DEFAULT_BINARY_HISTORY_COLS', 'DEFAULT_EEP_HISTORY_COLS',\
                     'DEFAULT_HISTORY_DS_EXCLUDE', 'DEFAULT_PROFILE_COLS',\
                     'DEFAULT_PROFILE_DS_EXCLUDE',\
@@ -361,10 +361,21 @@ class TestElements:
                     'keep_till_central_abundance_He_C', 'np',\
                     'orbital_separation_from_period', 'os', 'pd', 'plot1D',\
                     'plot2D', 'read_EEP_data_file', 'read_MESA_data_file',\
-                    'read_initial_values', 'scrub', 'tqdm']
-        assert dir(totest) == elements, "There might be added or removed "\
-                                        + "objects without an update on the "\
-                                        + "unit test."
+                    'read_initial_values', 'scrub', 'tqdm'}
+        totest_elements = set(dir(totest))
+        missing_in_test = elements - totest_elements
+        assert len(missing_in_test) == 0, "There are missing objects in "\
+                                          +f"{totest.__name__}: "\
+                                          +f"{missing_in_test}. Please "\
+                                          +"check, whether they have been "\
+                                          +"removed on purpose and update "\
+                                          +"this unit test."
+        new_in_test = totest_elements - elements
+        assert len(new_in_test) == 0, "There are new objects in "\
+                                      +f"{totest.__name__}: {new_in_test}. "\
+                                      +"Please check, whether they have been "\
+                                      +"added on purpose and update this "\
+                                      +"unit test."
 
     def test_instance_HDF5_MEMBER_SIZE(self):
         assert isinstance(totest.HDF5_MEMBER_SIZE, (int, float)),\

@@ -22,17 +22,28 @@ from posydon.utils.posydonwarning import (InappropriateValueWarning,\
 class TestElements:
     # check for objects, which should be an element of the tested module
     def test_dir(self):
-        elements = ['BINARY_OUTPUT_FILE', 'EEP_FILE_EXTENSIONS', 'GridReader',\
+        elements = {'BINARY_OUTPUT_FILE', 'EEP_FILE_EXTENSIONS', 'GridReader',\
                     'POSYDON_FORMAT_OPTIONS', 'Pwarn', 'RunReader',\
                     'SINGLE_OUTPUT_FILE', '__authors__', '__builtins__',\
                     '__cached__', '__doc__', '__file__', '__loader__',\
                     '__name__', '__package__', '__spec__', 'glob', 'gzip',\
                     'initial_values_from_dirname', 'os',\
                     'print_meta_contents', 'read_MESA_data_file',\
-                    'read_initial_values']
-        assert dir(totest) == elements, "There might be added or removed "\
-                                        + "objects without an update on the "\
-                                        + "unit test."
+                    'read_initial_values'}
+        totest_elements = set(dir(totest))
+        missing_in_test = elements - totest_elements
+        assert len(missing_in_test) == 0, "There are missing objects in "\
+                                          +f"{totest.__name__}: "\
+                                          +f"{missing_in_test}. Please "\
+                                          +"check, whether they have been "\
+                                          +"removed on purpose and update "\
+                                          +"this unit test."
+        new_in_test = totest_elements - elements
+        assert len(new_in_test) == 0, "There are new objects in "\
+                                      +f"{totest.__name__}: {new_in_test}. "\
+                                      +"Please check, whether they have been "\
+                                      +"added on purpose and update this "\
+                                      +"unit test."
 
     def test_instance_POSYDON_FORMAT_OPTIONS(self):
         assert isinstance(totest.POSYDON_FORMAT_OPTIONS, dict),\

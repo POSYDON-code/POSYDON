@@ -22,7 +22,7 @@ from posydon.utils.posydonwarning import InappropriateValueWarning
 class TestElements:
     # check for objects, which should be an element of the tested module
     def test_dir(self):
-        elements = ['LG_MTRANSFER_RATE_THRESHOLD',\
+        elements = {'LG_MTRANSFER_RATE_THRESHOLD',\
                     'MIN_COUNT_INITIAL_RLO_BOUNDARY', 'Pwarn',\
                     'RL_RELATIVE_OVERFLOW_THRESHOLD',\
                     'STAR_HISTORY_VARIABLES', 'TF1_POOL_ERROR',\
@@ -37,10 +37,21 @@ class TestElements:
                     'get_flags_from_MESA_run', 'get_mass_transfer_flag',\
                     'get_nearest_known_initial_RLO', 'gzip',\
                     'infer_interpolation_class', 'infer_mass_transfer_case',\
-                    'infer_star_state', 'np', 'os']
-        assert dir(totest) == elements, "There might be added or removed "\
-                                        +"objects without an update on the "\
-                                        +"unit test."
+                    'infer_star_state', 'np', 'os'}
+        totest_elements = set(dir(totest))
+        missing_in_test = elements - totest_elements
+        assert len(missing_in_test) == 0, "There are missing objects in "\
+                                          +f"{totest.__name__}: "\
+                                          +f"{missing_in_test}. Please "\
+                                          +"check, whether they have been "\
+                                          +"removed on purpose and update "\
+                                          +"this unit test."
+        new_in_test = totest_elements - elements
+        assert len(new_in_test) == 0, "There are new objects in "\
+                                      +f"{totest.__name__}: {new_in_test}. "\
+                                      +"Please check, whether they have been "\
+                                      +"added on purpose and update this "\
+                                      +"unit test."
 
     def test_instance_STAR_HISTORY_VARIABLES(self):
         assert isinstance(totest.STAR_HISTORY_VARIABLES, list)

@@ -174,7 +174,7 @@ def get_PSyGrid(dir_path, idx, binary_history, star_history, profile):
 class TestElements:
     # check for objects, which should be an element of the tested module
     def test_dir(self):
-        elements = ['BinaryStar', 'CC_quantities',\
+        elements = {'BinaryStar', 'CC_quantities',\
                     'CEE_parameters_from_core_abundance_thresholds',\
                     'Catch_POSYDON_Warnings',\
                     'DEFAULT_MARKERS_COLORS_LEGENDS', 'MODELS', 'Pwarn',\
@@ -186,10 +186,21 @@ class TestElements:
                     'assign_core_collapse_quantities_none',\
                     'calculate_Patton20_values_at_He_depl',\
                     'check_state_of_star', 'combine_TF12', 'copy', 'np',\
-                    'post_process_grid', 'print_CC_quantities', 'tqdm']
-        assert dir(totest) == elements, "There might be added or removed "\
-                                        + "objects without an update on the "\
-                                        + "unit test."
+                    'post_process_grid', 'print_CC_quantities', 'tqdm'}
+        totest_elements = set(dir(totest))
+        missing_in_test = elements - totest_elements
+        assert len(missing_in_test) == 0, "There are missing objects in "\
+                                          +f"{totest.__name__}: "\
+                                          +f"{missing_in_test}. Please "\
+                                          +"check, whether they have been "\
+                                          +"removed on purpose and update "\
+                                          +"this unit test."
+        new_in_test = totest_elements - elements
+        assert len(new_in_test) == 0, "There are new objects in "\
+                                      +f"{totest.__name__}: {new_in_test}. "\
+                                      +"Please check, whether they have been "\
+                                      +"added on purpose and update this "\
+                                      +"unit test."
 
     def test_instance_CC_quantities(self):
         assert isinstance(totest.CC_quantities, (list)), "CC_quantities is "\

@@ -21,14 +21,25 @@ from ast import AST, parse
 class TestElements:
     # check for objects, which should be an element of the tested module
     def test_dir(self):
-        elements = ['ConfigFile', 'VariableKey', '__authors__',\
+        elements = {'ConfigFile', 'VariableKey', '__authors__',\
                     '__builtins__', '__cached__', '__doc__', '__file__',\
                     '__loader__', '__name__', '__package__', '__spec__',\
                     'ast', 'configparser', 'copy', 'json', 'np', 'operator',\
-                    'os', 'parse_inifile']
-        assert dir(totest) == elements, "There might be added or removed "\
-                                        + "objects without an update on the "\
-                                        + "unit test."
+                    'os', 'parse_inifile'}
+        totest_elements = set(dir(totest))
+        missing_in_test = elements - totest_elements
+        assert len(missing_in_test) == 0, "There are missing objects in "\
+                                          +f"{totest.__name__}: "\
+                                          +f"{missing_in_test}. Please "\
+                                          +"check, whether they have been "\
+                                          +"removed on purpose and update "\
+                                          +"this unit test."
+        new_in_test = totest_elements - elements
+        assert len(new_in_test) == 0, "There are new objects in "\
+                                      +f"{totest.__name__}: {new_in_test}. "\
+                                      +"Please check, whether they have been "\
+                                      +"added on purpose and update this "\
+                                      +"unit test."
 
     def test_instance_ConfigFile(self):
         assert isclass(totest.ConfigFile)

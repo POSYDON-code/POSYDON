@@ -24,17 +24,28 @@ from posydon.utils.posydonwarning import ReplaceValueWarning
 class TestElements:
     # check for objects, which should be an element of the tested module
     def test_dir(self):
-        elements = ['COMPLETE_SETS', 'PATH_TO_POSYDON_DATA', 'ProgressBar',\
+        elements = {'COMPLETE_SETS', 'PATH_TO_POSYDON_DATA', 'ProgressBar',\
                     'Pwarn', 'ZENODO_COLLECTION', '__authors__',\
                     '__builtins__', '__cached__', '__doc__', '__file__',\
                     '__loader__', '__name__', '__package__', '__spec__',\
                     '_get_posydon_data', '_parse_commandline', 'argparse',\
                     'data_download', 'download_one_dataset', 'hashlib',\
                     'list_datasets', 'os', 'progressbar', 'tarfile',\
-                    'textwrap', 'tqdm', 'urllib']
-        assert dir(totest) == elements, "There might be added or removed "\
-                                        + "objects without an update on the "\
-                                        + "unit test."
+                    'textwrap', 'tqdm', 'urllib'}
+        totest_elements = set(dir(totest))
+        missing_in_test = elements - totest_elements
+        assert len(missing_in_test) == 0, "There are missing objects in "\
+                                          +f"{totest.__name__}: "\
+                                          +f"{missing_in_test}. Please "\
+                                          +"check, whether they have been "\
+                                          +"removed on purpose and update "\
+                                          +"this unit test."
+        new_in_test = totest_elements - elements
+        assert len(new_in_test) == 0, "There are new objects in "\
+                                      +f"{totest.__name__}: {new_in_test}. "\
+                                      +"Please check, whether they have been "\
+                                      +"added on purpose and update this "\
+                                      +"unit test."
 
     def test_instance_parse_commandline(self):
         assert isroutine(totest._parse_commandline)

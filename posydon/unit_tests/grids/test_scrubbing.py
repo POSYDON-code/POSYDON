@@ -21,17 +21,28 @@ from posydon.utils.posydonwarning import InappropriateValueWarning
 class TestElements:
     # check for objects, which should be an element of the tested module
     def test_dir(self):
-        elements = ['LG_MTRANSFER_RATE_THRESHOLD', 'Pwarn',\
+        elements = {'LG_MTRANSFER_RATE_THRESHOLD', 'Pwarn',\
                     'RL_RELATIVE_OVERFLOW_THRESHOLD',\
                     'THRESHOLD_CENTRAL_ABUNDANCE',\
                     'THRESHOLD_CENTRAL_ABUNDANCE_LOOSE_C', '__authors__',\
                     '__builtins__', '__cached__', '__doc__', '__file__',\
                     '__loader__', '__name__', '__package__', '__spec__',\
                     'keep_after_RLO', 'keep_till_central_abundance_He_C',\
-                    'np', 'scrub']
-        assert dir(totest) == elements, "There might be added or removed "\
-                                        +"objects without an update on the "\
-                                        +"unit test."
+                    'np', 'scrub'}
+        totest_elements = set(dir(totest))
+        missing_in_test = elements - totest_elements
+        assert len(missing_in_test) == 0, "There are missing objects in "\
+                                          +f"{totest.__name__}: "\
+                                          +f"{missing_in_test}. Please "\
+                                          +"check, whether they have been "\
+                                          +"removed on purpose and update "\
+                                          +"this unit test."
+        new_in_test = totest_elements - elements
+        assert len(new_in_test) == 0, "There are new objects in "\
+                                      +f"{totest.__name__}: {new_in_test}. "\
+                                      +"Please check, whether they have been "\
+                                      +"added on purpose and update this "\
+                                      +"unit test."
 
     def test_instance_scrub(self):
         assert isroutine(totest.scrub)
