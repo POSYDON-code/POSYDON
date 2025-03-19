@@ -269,9 +269,12 @@ class TestFunctions:
                  totest.STAR_HISTORY_VARIABLES if col!=k]], None)
         # examples: compact object
         assert totest.check_state_from_history(None,\
-                binary_history['star_1_mass']) == "NS"
+                binary_history['star_1_mass']) == totest.infer_star_state(\
+                 star_mass=binary_history['star_1_mass'][-1], star_CO=True)
         assert totest.check_state_from_history(None,\
-                binary_history['star_1_mass'], model_index=0) == "BH"
+                binary_history['star_1_mass'], model_index=0)\
+               == totest.infer_star_state(\
+                star_mass=binary_history['star_1_mass'][0], star_CO=True)
         # examples: star
         assert totest.check_state_from_history(star_history, None) ==\
                "H-rich_Core_H_burning"
