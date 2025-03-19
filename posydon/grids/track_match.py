@@ -752,12 +752,12 @@ class track_matcher:
                         
                     if star.state in LIST_ACCEPTABLE_STATES_FOR_HeStar:
                         
-                        htrack = True
+                        new_htrack = True
                         list_for_matching = self.list_for_matching_HeStar
 
                     elif star.state in LIST_ACCEPTABLE_STATES_FOR_postMS:
                         
-                        htrack = False
+                        new_htrack = False
                         list_for_matching = self.list_for_matching_postMS
 
                     MESA_labels, rs, colscalers, bnds, scales = get_MESA_labels(list_for_matching)
@@ -768,7 +768,7 @@ class track_matcher:
                                                   "in the single star grid options.")
                         
                     posydon_attributes = get_posydon_attributes(MESA_labels, star)
-                    x0 = get_root0(MESA_labels, posydon_attributes, htrack, rs=rs)
+                    x0 = get_root0(MESA_labels, posydon_attributes, new_htrack, rs=rs)
 
                     try:
                         # minimize w/ Euclidean diff. and Newton's method
@@ -776,6 +776,7 @@ class track_matcher:
 
                         if (np.abs(sol.fun) < np.abs(best_sol.fun) and sol.success):
                             best_sol = sol
+                            htrack = new_htrack
 
                         if self.verbose:
                             print (f"Alternative matching (3rd attempt) completed:"
