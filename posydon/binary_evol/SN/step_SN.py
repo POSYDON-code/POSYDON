@@ -344,6 +344,7 @@ class StepSN(object):
                     filename = os.path.join(self.path_to_Patton_datasets,
                                             file_name)
                     if not os.path.exists(filename):
+                        #TODO: specify dataset, e.g. 'auxiliary' when it exists
                         data_download()
 
                     # Reading the dataset
@@ -513,6 +514,7 @@ class StepSN(object):
         # explode
         if state in STAR_STATES_CC:
 
+            SN_type = ""
             # if no profile is avaiable but interpolation quantities are,
             # use those, else continue with or without profile.
             if self.use_interp_values:
@@ -521,11 +523,13 @@ class StepSN(object):
                 for MODEL_NAME, MODEL in MODELS.items():
                     tmp = MODEL_NAME
                     for key, val in MODEL.items():
-                        if "use_" in key:
+                        if "use_" in key or key=="ECSN":
+                            # escape values, which are allowed to differ
                             continue
                         if getattr(self, key) != val:
                             if self.verbose:
-                                print(tmp, 'mismatch:', key, getattr(self, key), val)
+                                print(tmp, 'mismatch:', key,
+                                      getattr(self, key), val)
                             tmp = None
                             break
                     if tmp is not None:
@@ -543,19 +547,52 @@ class StepSN(object):
                     # step_disrupted.
                     # allow to continue with the collapse with profile
                     # or core masses
-                    Pwarn(f'{MODEL_NAME_SEL}: The collapsed star '
-                                     'was not interpolated! If use_profiles '
-                                     'or use_core_masses is set to True, '
-                                     'continue with the collapse.', "InterpolationWarning")
+                    Pwarn(f'{MODEL_NAME_SEL}: The collapsed star was not '
+                          'interpolated! If use_profiles or use_core_masses '
+                          'is set to True, continue with the collapse.',
+                          "InterpolationWarning")
                 else:
                     MODEL_properties = getattr(star, MODEL_NAME_SEL)
 
-                    ## Check if SN_type mismatches the CO_type in MODEL or if interpolated MODEL properties are NaN
-                    ## If either are true, interpolated values cannot be used for this SN
-                    if (check_SN_CO_match(MODEL_properties['SN_type'], MODEL_properties['state']) and
-                        pd.notna(MODEL_properties['mass'])):
+                    SN_type = self.check_SN_type(m_core=star.co_core_mass,
+                                                 m_He_core=star.he_core_mass,
+                                                 m_star=star.mass)[3]
+                    if self.use_profiles and star.profile is not None:
+                        alternative = "Instead use profiles."
+                    elif self.use_core_masses:
+                        alternative = "Instead use core masses."
+                    elif self.allow_spin_None:
+                        alternative = "Instead use core mass without spin."
+                    else:
+                        alternative = ""
 
+                    if MODEL_properties['SN_type'] == "ECSN":
+                        # overwrite ECSN in SN MODEL
+                        MODEL_properties['SN_type'] = SN_type
+                        Pwarn(f"ECSN in SN_MODEL replaced by {SN_type}",
+                              "ReplaceValueWarning")
 
+                    if SN_type == "ECSN":
+                        # do not use interpolated values for ECSN range instead
+                        # behave like use_core_masses=True
+                        pass
+                    ## star's SN_type mismatches one from the MODEL
+                    elif SN_type != MODEL_properties['SN_type']:
+                        Pwarn(f"The SN_type does not match the star: {SN_type}"
+                              f"!={MODEL_properties['SN_type']}."+alternative,
+                              "ApproximationWarning")
+                    ## Check if SN_type mismatches the CO_type in MODEL
+                    elif not check_SN_CO_match(MODEL_properties['SN_type'],
+                                               MODEL_properties['state']):
+                        Pwarn(f"{MODEL_NAME_SEL}: The SN_type does not match "
+                              "the predicted CO."+alternative,
+                              "ApproximationWarning")
+                    ## Check if there is no interpolated remnant mass
+                    elif pd.isna(MODEL_properties['mass']):
+                        Pwarn(f"There is no interpolated remnant mass."
+                              +alternative, "ApproximationWarning")
+                    ## Otherwise interpolated values can be used for this SN
+                    else:
                         for key, value in MODEL_properties.items():
                             setattr(star, key, value)
 
@@ -587,19 +624,13 @@ class StepSN(object):
                             convert_star_to_massless_remnant(star=star)
                             # the mass is set to None
                             # but an orbital kick is still applied.
-                            # Since the mass is set to None, this will lead to a disruption
+                            # Since the mass is set to None, this will lead to
+                            # a disruption
                             # TODO: make it skip the kick caluclation
 
                         if getattr(star, 'SN_type') != 'PISN':
                             star.log_R = np.log10(CO_radius(star.mass, star.state))
                         return
-
-                    else:
-                        Pwarn(f'{MODEL_NAME_SEL}: The SN_type '
-                                      'does not match the predicted CO, or the interpolated '
-                                      'values for the SN remnant are NaN. '
-                                      'If use_profiles or use_core_masses is set to True, '
-                                      'continue with the collapse.', "ApproximationWarning")
                         
             # Verifies the selection of core-collapse mechnism to perform
             # the collapse
@@ -691,11 +722,15 @@ class StepSN(object):
                     star.h1_mass_ej, star.he4_mass_ej = \
                         get_ejecta_element_mass_at_collapse(star,star.mass,verbose=self.verbose)
 
-                elif self.use_core_masses:
+                elif self.use_core_masses or SN_type == "ECSN":
                     # If the profile is not available the star spin
                     # is used to get the compact object spin
                     star.mass = m_grav
                     if m_grav >= self.max_NS_mass:
+                        if SN_type == "ECSN":
+                            Pwarn("An ECSN should not form a black hole: "
+                                  f"m_grav={m_grav}.",
+                                  "InappropriateValueWarning")
                         # see Eq. 14, Fryer, C. L., Belczynski, K., Wiktorowicz,
                         # G., Dominik, M., Kalogera, V., & Holz, D. E. (2012), ApJ, 749(1), 91.
 
@@ -828,9 +863,13 @@ class StepSN(object):
                     star.h1_mass_ej, star.he4_mass_ej = \
                         get_ejecta_element_mass_at_collapse(star,star.mass,verbose=self.verbose)
 
-                elif self.use_core_masses:
+                elif self.use_core_masses or SN_type == "ECSN":
                     star.mass = m_grav
                     if m_grav >= self.max_NS_mass:
+                        if SN_type == "ECSN":
+                            Pwarn("An ECSN should not form a black hole: "
+                                  f"m_grav={m_grav}.",
+                                  "InappropriateValueWarning")
                         # see Eq. 14, Fryer, C. L., Belczynski, K., Wiktorowicz,
                         # G., Dominik, M., Kalogera, V., & Holz, D. E. (2012), ApJ, 749(1), 91.
 
@@ -2207,6 +2246,7 @@ class Sukhbold16_corecollapse(object):
             filename = os.path.join(path_engine_dataset,
                                     "results_" + self.engine + "_table.csv")
             if not os.path.exists(filename):
+                #TODO: specify dataset, e.g. 'auxiliary' when it exists
                 data_download()
 
             Engine_data = read_csv(filename)
@@ -2400,6 +2440,7 @@ class Couch20_corecollapse(object):
             # Check if interpolation files exist
             filename = os.path.join(path_to_Couch_datasets, 'explDatsSTIR2.json')
             if not os.path.exists(filename):
+                #TODO: specify dataset, e.g. 'auxiliary' when it exists
                 data_download()
 
             Couch_data_file = open(filename)
