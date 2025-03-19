@@ -201,7 +201,8 @@ def post_process_grid(grid, index=None, star_2_CO=True, MODELS=MODELS,
         indicies = range(index[0], index[1])
         MESA_dirs = grid.MESA_dirs[index[0]:index[1]]
     else:
-        raise TypeError('Index should be None, and integer or a list.')
+        raise TypeError('The argument `index` should be None, an integer, or '
+                        'a list of two integers.')
 
     for i in tqdm(indicies):
 

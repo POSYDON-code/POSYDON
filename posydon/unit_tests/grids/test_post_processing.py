@@ -474,8 +474,9 @@ class TestFunctions:
         with raises(ValueError, match="Index range should have dim=2!"):
             totest.post_process_grid(None, index=[])
         # bad input
-        with raises(TypeError, match="Index should be None, and integer or a "\
-                                     +"list."):
+        with raises(TypeError, match="The argument `index` should be None, "\
+                                     +"an integer, or a list of two "\
+                                     +"integers."):
             totest.post_process_grid(None, index="Test")
         # helper
         try:
