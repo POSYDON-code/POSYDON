@@ -92,7 +92,7 @@ extras_require = {
     # to build documentation
     "doc": [
         "ipython",
-        "sphinx >= 6.1.3",
+        "sphinx >= 8.2.2",
         "numpydoc",
         "sphinx_rtd_theme",
         "sphinxcontrib_programoutput",
@@ -122,6 +122,8 @@ AUTHOR_EMAIL = "posydon.team@gmail.com"
 LICENSE = "GPLv3+"
 DESCRIPTION = "POSYDON the Next Generation of Population Synthesis"
 GITHUBURL = "https://github.com/POSYDON-code/POSYDON"
+
+# Additional included files via include_package_data are defined in MANIFEST.in
 
 setup(
     name=DISTNAME,

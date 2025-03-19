@@ -1160,7 +1160,7 @@ class PSyGrid:
                 for colname, value in grid_point.items():
                     if colname in self.initial_values.dtype.names:
                         self.initial_values[i][colname] = value
-                if np.isnan(self.initial_values[i]["Z"]):
+                if pd.isna(self.initial_values[i]["Z"]):
                     # try to get metallicity from directory name
                     params_from_path = initial_values_from_dirname(run.path)
                     if (len(params_from_path)==4) or\
@@ -2072,8 +2072,8 @@ class PSyGrid:
                     return False
                 if np.any(data1 != data2):
                     for val1, val2 in zip(data1, data2):
-                        if ((val1 == val2) or (val1 is None and val2 is None)
-                                or (np.isnan(val1) and np.isnan(val2))):
+                        if ((val1 == val2) or (pd.isna(val1)
+                                               and pd.isna(val2))):
                             continue
                         say("Column `{}` in `{}` is not the same ({} != {}).".
                             format(colname, tablename, val1, val2))

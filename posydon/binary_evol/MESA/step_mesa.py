@@ -238,7 +238,7 @@ class MesaGridStep:
         filename = os.path.join(self.path,grid_name)
         if not (os.path.exists(filename.replace('%d','0')) or
                 os.path.exists(filename.replace('_%d',''))):
-            data_download()
+            data_download() #TODO: specify dataset
 
         if self.verbose:
             print("loading psyTrackInterp: {}".format(filename))
@@ -254,7 +254,7 @@ class MesaGridStep:
 
         # Check if interpolation files exist
         if not os.path.exists(filename):
-            data_download()
+            data_download() #TODO: specify dataset
 
         # Load interpolator
         self._Interp = IFInterpolator()
@@ -366,6 +366,9 @@ class MesaGridStep:
             binary.event = 'MaxTime_exceeded'
         elif binary.time == binary.properties.max_simulation_time:
             binary.event = 'maxtime'
+
+        if self.verbose:
+            print(f"End of step MESA (grid={self.grid_type}):\n", binary)
 
         return
 
@@ -808,7 +811,7 @@ class MesaGridStep:
                                 values[key] = cb.final_values[f'S{i+1}_{MODEL_NAME}_{key}']
                         setattr(star, MODEL_NAME, values)
                     else:
-                        setattr(star, key, None)
+                        setattr(star, MODEL_NAME, None)
 
     def initial_final_interpolation(self, star_1_CO=False, star_2_CO=False):
         """Update the binary through initial-final interpolation."""
@@ -963,18 +966,23 @@ class MesaGridStep:
                         self.classes[f'S{i+1}_{MODEL_NAME}_CO_type'] != 'None'):
                         values = {}
                         for key in ['state', 'SN_type', 'f_fb', 'mass', 'spin',
-                                    'm_disk_accreted', 'm_disk_radiated', 'M4', 'mu4',
-                                    'h1_mass_ej', 'he4_mass_ej']:
+                                    'm_disk_accreted', 'm_disk_radiated', 'M4',
+                                    'mu4', 'h1_mass_ej', 'he4_mass_ej']:
                             if key == "state":
                                 state = self.classes[f'S{i+1}_{MODEL_NAME}_CO_type']
                                 values[key] = state
                             elif key == "SN_type":
                                 values[key] = self.classes[f'S{i+1}_{MODEL_NAME}_{key}']
-                            else:
+                            elif f'S{i+1}_{MODEL_NAME}_{key}' in fv:
                                 values[key] = fv[f'S{i+1}_{MODEL_NAME}_{key}']
+                            else:
+                                Pwarn(f"S{i+1}_{MODEL_NAME}_{key} not found in fv",
+                                      "UnsupportedModelWarning")
+                                values = None
+                                break
                         setattr(star, MODEL_NAME, values)
                     else:
-                        setattr(star, key, None)
+                        setattr(star, MODEL_NAME, None)
 
     # STOPPING METHODS
 
