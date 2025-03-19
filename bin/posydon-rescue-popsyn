@@ -53,6 +53,10 @@ def rescue_runs(rundir, time, mem_per_cpu):
                                          f'instead {mem_per_cpu} was passed!')
                     else:
                         new_sub_file.write(f'#SBATCH --mem-per-cpu={mem_per_cpu}\n')
+                elif 'PATH_TO_POSYDON_DATA' in line:
+                    new_sub_file.write(line)
+                    new_sub_file.write(f'export SLURM_ARRAY_TASK_COUNT={len(inds)}\n')
+                    new_sub_file.write(f'export SLURM_ARRAY_TASK_MIN={min(inds)}\n') 
                 else:
                     new_sub_file.write(line)
         else:
