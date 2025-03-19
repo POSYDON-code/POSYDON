@@ -262,6 +262,12 @@ class StepSN(object):
                     raise ValueError(key + " is not a valid parameter name!")
             for varname in MODEL:
                 default_value = MODEL[varname]
+
+                # Enforce that `engine` is an empty string if not properly set
+                if varname == "engine":
+                    if not isinstance(kwargs[varname], str):
+                        kwargs[varname] = ""
+                        
                 setattr(self, varname, kwargs.get(varname, default_value))
         else:
             for varname in MODEL:
