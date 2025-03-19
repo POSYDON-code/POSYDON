@@ -232,37 +232,39 @@ def SFR_Z_fraction_at_given_redshift(
     if SFR == "Madau+Fragos17" or SFR == "Madau+Dickinson14":
         sigma = std_log_metallicity_dist(sigma)
         mu = np.log10(mean_metallicity(SFR, z)) - sigma**2 * np.log(10) / 2.0
-        # renormalisation constant. We can use mu[0], since we integrate over the whole metallicity range
-        norm = stats.norm.cdf(np.log10(Z_max), mu[0], sigma)
+        mu = np.atleast1d(mu)
+        # renormalisation constants
+        norm = stats.norm.cdf(np.log10(Z_max), mu, sigma)
         fSFR = np.empty((len(z), len(metallicity_bins) - 1))
         fSFR[:, :] = np.array(
-            [(stats.norm.cdf(np.log10(metallicity_bins[1:]), m, sigma) / norm
-                    - stats.norm.cdf(np.log10(metallicity_bins[:-1]), m, sigma) / norm
+            [(stats.norm.cdf(np.log10(metallicity_bins[1:]), m, sigma)
+                    - stats.norm.cdf(np.log10(metallicity_bins[:-1]), m, sigma) 
              ) for m in mu ]
-        )
+        ) / norm[:, np.newaxis]
         if not select_one_met:
             fSFR[:, 0] = stats.norm.cdf(np.log10(metallicity_bins[1]), mu, sigma) / norm
-            fSFR[:,-1] = norm - stats.norm.cdf(np.log10(metallicity_bins[-1]), mu, sigma)/norm
+            fSFR[:,-1] = 1 - (stats.norm.cdf(np.log10(metallicity_bins[-2]), mu, sigma)/norm)
 
     elif SFR == "Neijssel+19":
         # assume a truncated ln-normal distribution of metallicities
         sigma = std_log_metallicity_dist(sigma)
         mu = np.log(mean_metallicity(SFR, z)) - sigma**2 / 2.0
+        mu = np.atleast1d(mu)
         # renormalisation constant
-        norm = stats.norm.cdf(np.log(Z_max), mu[0], sigma)
+        norm = stats.norm.cdf(np.log(Z_max), mu, sigma)
         fSFR = np.empty((len(z), len(metallicity_bins) - 1))
         fSFR[:, :] = np.array(
             [
                 (
-                    stats.norm.cdf(np.log(metallicity_bins[1:]), m, sigma) / norm
-                    - stats.norm.cdf(np.log(metallicity_bins[:-1]), m, sigma) / norm
+                    stats.norm.cdf(np.log(metallicity_bins[1:]), m, sigma)
+                    - stats.norm.cdf(np.log(metallicity_bins[:-1]), m, sigma)
                 )
                 for m in mu
             ]
-        )
+        ) / norm[:, np.newaxis]
         if not select_one_met:
             fSFR[:, 0] = stats.norm.cdf(np.log(metallicity_bins[1]), mu, sigma) / norm
-            fSFR[:,-1] = norm - stats.norm.cdf(np.log(metallicity_bins[-1]), mu, sigma)/norm
+            fSFR[:,-1] = 1 - stats.norm.cdf(np.log(metallicity_bins[-2]), mu, sigma)/norm
 
     elif SFR == "IllustrisTNG":
         # numerically itegrate the IlluystrisTNG SFR(z,Z)
@@ -296,7 +298,7 @@ def SFR_Z_fraction_at_given_redshift(
                         fSFR[i, 0] = 1
                     else:
                         fSFR[i, 0] = Z_dist_cdf_interp(np.log10(metallicity_bins[1]))
-                        fSFR[i, -1] = 1 - Z_dist_cdf_interp(np.log10(metallicity_bins[-1]))
+                        fSFR[i, -1] = 1 - Z_dist_cdf_interp(np.log10(metallicity_bins[-2]))
     else:
         raise ValueError("Invalid SFR!")
 
