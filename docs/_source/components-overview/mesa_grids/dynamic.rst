@@ -4,4 +4,4 @@
 Run a dynamic MESA grid
 #######################
 
-TODO
+This option is not currently supported.
