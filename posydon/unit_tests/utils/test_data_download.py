@@ -157,8 +157,12 @@ class TestFunctions:
                  as test_file:
                 test_file.write("Unit Test\n")
             with chdir(os.path.join(test_path,"..")):
-                os.system("tar -czf POSYDON_data"+test_ID\
-                          +".tar.gz POSYDON_data")
+                try:
+                    os.system("tar -czf POSYDON_data"+test_ID\
+                              +".tar.gz POSYDON_data")
+                except:
+                    raise RuntimeError("Please check that you have `tar` "\
+                                       +"installed and up to date.")
             rmtree(test_path)
             return None
 

@@ -288,7 +288,11 @@ class TestFunctions:
             for i in range(5):
                 test_file.write("Test HEADER{}\n".format(i+1))
             test_file.write("model is overflowing at ZAMS\n")
-        os.system(f"gzip -1 {path}")
+        try:
+            os.system(f"gzip -1 {path}")
+        except:
+            raise RuntimeError("Please check that you have `gzip` installed "\
+                               +"and up to date.")
         return path
 
     @fixture
@@ -615,7 +619,11 @@ class TestFunctions:
         # bad input
         with raises(ValueError, match="File "+no_path+" does not exist"):
             totest.convert_output_to_table(no_path)
-        os.system("touch "+out_path+"0")
+        try:
+            os.system("touch "+out_path+"0")
+        except:
+            raise RuntimeError("Please check that you have `touch` installed "\
+                               +"and up to date.")
         with raises(ValueError, match="The output file does not have any "\
                                       +"data."):
             totest.convert_output_to_table(out_path+"0")

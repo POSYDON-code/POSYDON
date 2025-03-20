@@ -135,7 +135,11 @@ class TestFunctions:
         path = os.path.join(tmp_path, "out6.txt")
         with open(path, "w") as test_file:
             test_file.write("termination code: min_timestep_limit\n")
-        os.system(f"gzip -1 {path}")
+        try:
+            os.system(f"gzip -1 {path}")
+        except:
+            raise RuntimeError("Please check that you have `gzip` installed "\
+                               +"and up to date.")
         return path
 
     @fixture

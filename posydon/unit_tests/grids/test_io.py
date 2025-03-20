@@ -112,7 +112,11 @@ class TestFunctions:
             for i in range(3,6):
                 test_file.write(f"{i}.0,{i}.0\n")
         # additionally create a zipped file
-        os.system(f"gzip -1 -k {path}")
+        try:
+            os.system(f"gzip -1 -k {path}")
+        except:
+            raise RuntimeError("Please check that you have `gzip` installed "\
+                               +"and up to date.")
         return path
 
     @fixture
@@ -121,7 +125,11 @@ class TestFunctions:
         path = os.path.join(tmp_path, "inlist_grid_points")
         with open(path, "w") as test_file:
             test_file.write("Unit = TEST\n")
-        os.system(f"gzip -1 {path}")
+        try:
+            os.system(f"gzip -1 {path}")
+        except:
+            raise RuntimeError("Please check that you have `gzip` installed "\
+                               +"and up to date.")
         # second, non-zipped file
         with open(path, "w") as test_file:
             test_file.write("Unittest\n")
