@@ -377,7 +377,8 @@ class Neijssel19(MadauBase):
         return 0.035 * 10 ** (-0.23 * z)
     
     # TODO: rewrite such that sigma is just changed for the Neijssel+19 case
-    def fSFR(self, z, metallicity_bins):
+        FOH_min = 5.3
+        FOH_max = 9.7
         '''Fraction of the SFR at a given redshift z in a given metallicity bin
         as described in Neijssel et al. (2019).
         
@@ -425,6 +426,17 @@ class IllustrisTNG(SFHBase):
     '''
     
     def __init__(self, MODEL):
+        '''Initialise the IllustrisTNG model
+        
+        Parameters
+        ----------
+        MODEL : dict
+            Model parameters. IllustrisTNG requires the following parameters:
+            - Z_max : float
+                The maximum metallicity in absolute units.
+            - select_one_met : bool
+                If True, the SFR is calculated for a single metallicity bin.
+        '''
         super().__init__(MODEL)
         # load the TNG data
         illustris_data = self._get_illustrisTNG_data()
@@ -434,16 +446,46 @@ class IllustrisTNG(SFHBase):
         self.M = illustris_data["M"]  # Msun
         
     def _get_illustrisTNG_data(self, verbose=False):
-        """Load IllustrisTNG SFR dataset."""
+        '''Load IllustrisTNG SFR dataset into the class.
+        
+        Parameters
+        ----------
+        verbose : bool, optional
+            Print information about the data loading.
+        '''
         if verbose:
             print("Loading IllustrisTNG data...")
         return np.load(os.path.join(PATH_TO_POSYDON_DATA, "SFR/IllustrisTNG.npz"))
     
     def CSFRD(self, z):
+        '''The cosmic star formation rate density at a given redshift.
+        
+        Parameters
+        ----------
+        z : float or np.array
+            Cosmological redshift.
+        
+        Returns
+        -------
+        float or array
+            The cosmic star formation rate density at the given redshift(s).
+        '''
         SFR_interp = interp1d(self.redshifts, self.CSFRD_data)
         return SFR_interp(z)
         
     def mean_metallicity(self, z):
+        '''Calculate the mean metallicity at a given redshift
+        
+        Parameters
+        ----------
+        z : float or array-like
+            Cosmological redshift.
+            
+        Returns
+        -------
+        float or array-like
+            The mean metallicity at the given redshift(s).
+        '''
         out = np.zeros_like(self.redshifts)
         for i in range(len(out)):
             if np.sum(self.M[i, :]) == 0:
@@ -454,6 +496,21 @@ class IllustrisTNG(SFHBase):
         return Z_interp(z)
                 
     def fSFR(self, z, metallicity_bins):
+        '''Calculate the fractional SFR as a function of redshift and 
+        metallicity bins.
+        
+        Parameters
+        ----------
+        z : float or array-like
+            Cosmological redshift.
+        metallicity_bins : array
+            Metallicity bins edges in absolute metallicity.
+        
+        Returns
+        -------
+        array
+            Fraction of the SFR in the given metallicity bin at the given redshift.
+        '''
         # only use data within the metallicity bounds (no lower bound)
         Z_max_mask = self.Z <= self.Z_max
         redshift_indices = np.array([np.where(self.redshifts <= i)[0][0] for i in z])
