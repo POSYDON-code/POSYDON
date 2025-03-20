@@ -59,19 +59,6 @@ class SFHBase(ABC):
         """Return the fractional SFR as a function of redshift and metallicity bins."""
         pass
 
-    def std_log_metallicity_dist(self):
-        sigma = self.sigma
-        if isinstance(sigma, str):
-            if sigma == "Bavera+20":
-                return 0.5
-            elif sigma == "Neijssel+19":
-                return 0.39
-            else:
-                raise ValueError("Unknown sigma choice!")
-        elif isinstance(sigma, float):
-            return sigma
-        else:
-            raise ValueError(f"Invalid sigma value {sigma}!")
 
     def __call__(self, z, met_bins):
         '''Return the star formation history at a given redshift and metallicity bins
@@ -115,6 +102,30 @@ class MadauBase(SFHBase):
         '''
         p = self.CSFRD_params
         return p["a"] * (1.0 + z) ** p["b"] / (1.0 + ((1.0 + z) / p["c"]) ** p["d"])
+    
+    def std_log_metallicity_dist(self):
+        '''return the standard deviation of the log-normal metallicity distribution
+        
+        Either recognised the strings "Bavera+20" (sigma=0.5) 
+        or "Neijssel+19" (sigma=0.39) or a float value.
+        
+        Returns
+        -------
+        float
+            The standard deviation of the log-normal metallicity distribution.
+        '''
+        sigma = self.sigma
+        if isinstance(sigma, str):
+            if sigma == "Bavera+20":
+                return 0.5
+            elif sigma == "Neijssel+19":
+                return 0.39
+            else:
+                raise ValueError("Unknown sigma choice!")
+        elif isinstance(sigma, float):
+            return sigma
+        else:
+            raise ValueError(f"Invalid sigma value {sigma}!")
 
     def mean_metallicity(self, z):
         '''The mean metallicity at a given redshift
