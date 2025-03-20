@@ -123,7 +123,8 @@ class SFHBase(ABC):
 
 
     def __call__(self, z, met_bins):
-        """Return the star formation history at a given redshift and metallicity bins
+        """Return the star formation history at a given redshift and metallicity
+        bins
         
         Parameters
         ----------
@@ -177,7 +178,8 @@ class MadauBase(SFHBase):
     def CSFRD(self, z):
         """The cosmic star formation rate density at a given redshift.
         
-        Follows the Madau & Dickinson (2014) cosmic star formation rate density formula.
+        Follows the Madau & Dickinson (2014) cosmic star formation rate 
+        density formula.
         
         Parameters
         ----------
@@ -193,7 +195,8 @@ class MadauBase(SFHBase):
         return p["a"] * (1.0 + z) ** p["b"] / (1.0 + ((1.0 + z) / p["c"]) ** p["d"])
     
     def std_log_metallicity_dist(self):
-        """Return the standard deviation of the log-normal metallicity distribution
+        """Return the standard deviation of the log-normal metallicity 
+        distribution
         
         Either recognised the strings "Bavera+20" (sigma=0.5) 
         or "Neijssel+19" (sigma=0.39) or a float value.
@@ -234,7 +237,8 @@ class MadauBase(SFHBase):
         return 10 ** (0.153 - 0.074 * z ** 1.34) * Zsun
 
     def fSFR(self, z, metallicity_bins):
-        """Fraction of the SFR at a given redshift z in a given metallicity bin as described in Bavera et al. (2020).
+        """Fraction of the SFR at a given redshift z in a given metallicity 
+        bin as described in Bavera et al. (2020).
         
         Parameters
         ----------
@@ -246,7 +250,8 @@ class MadauBase(SFHBase):
         Returns
         -------
         array
-            Fraction of the SFR in the given metallicity bin at the given redshift.
+            Fraction of the SFR in the given metallicity bin at the given 
+            redshift.
         """
         sigma = self.std_log_metallicity_dist()
         # Compute mu; if z is an array, mu will be an array.
@@ -270,8 +275,12 @@ class MadauBase(SFHBase):
         )  / norm[:, np.newaxis]
         
         if not self.select_one_met:
-            fSFR[:, 0] = stats.norm.cdf(np.log10(metallicity_bins[1]), mu_array, sigma)/norm
-            fSFR[:, -1] = 1 - (stats.norm.cdf(np.log10(metallicity_bins[-2]), mu_array, sigma)/norm)
+            fSFR[:, 0] = stats.norm.cdf(np.log10(metallicity_bins[1]),
+                                        mu_array,
+                                        sigma)/norm
+            fSFR[:, -1] = 1 - (stats.norm.cdf(np.log10(metallicity_bins[-2]),
+                                              mu_array,
+                                              sigma)/norm)
             
         return fSFR
 
@@ -292,7 +301,8 @@ class MadauDickinson14(MadauBase):
         MODEL : dict
             Model parameters. Madau+14 requires the following parameters:
             - sigma : float or str
-                The standard deviation of the log-normal metallicity distribution.
+                The standard deviation of the log-normal metallicity 
+                distribution.
                 Options are:
                 - Bavera+20
                 - Neijssel+19
@@ -438,8 +448,12 @@ class Neijssel19(MadauBase):
             ]
         ) / norm[:, np.newaxis]
         if not self.select_one_met:
-            fSFR[:, 0] = stats.norm.cdf(np.log(metallicity_bins[1]), mu, sigma) / norm
-            fSFR[:,-1] = 1 - stats.norm.cdf(np.log(metallicity_bins[-2]), mu, sigma)/norm
+            fSFR[:, 0] = stats.norm.cdf(np.log(metallicity_bins[1]),
+                                        mu,
+                                        sigma) / norm
+            fSFR[:,-1] = 1 - stats.norm.cdf(np.log(metallicity_bins[-2]),
+                                            mu,
+                                            sigma)/norm
         return fSFR
     
 class IllustrisTNG(SFHBase):
@@ -614,8 +628,9 @@ class Chruslinska21(SFHBase):
         FOH_max = 9.7
         self.FOH_bins = np.linspace(FOH_min, FOH_max, 200)
         self.dFOH = self.FOH_bins[1] - self.FOH_bins[0]
-        # I need to use the Z_solar_scaling parameter to convert the FOH bins to absolute metallicity
-        # I will use the solar metallicity as the reference point
+        # Need to use the Z_solar_scaling parameter to 
+        # convert the FOH bins to absolute metallicity.
+        # Use solar metallicity as the reference point
         self.Z = self._FOH_to_Z(self.FOH_bins)
         
         self._data_folder = os.path.join(PATH_TO_POSYDON_DATA, "SFR/Chruslinska+21")
@@ -827,7 +842,10 @@ class Zalava21(MadauBase):
         
         """  
         data_file = os.path.join(PATH_TO_POSYDON_DATA, "SFR/Zalava+21.txt")
-        tmp_data = pd.read_csv(data_file, names=["redshift", "SFRD_min", "SFRD_max"], skiprows=1, sep="\s+")
+        tmp_data = pd.read_csv(data_file,
+                               names=["redshift", "SFRD_min", "SFRD_max"],
+                               skiprows=1,
+                               sep="\s+")
         self.redshifts = tmp_data["redshift"].values
         if self.sub_model == "min":
             self.SFR_data = tmp_data["SFRD_min"].values

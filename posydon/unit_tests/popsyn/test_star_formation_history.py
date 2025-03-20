@@ -95,7 +95,9 @@ class TestfSFR:
         
         fSFR = sfh_instance.fSFR(z, met_bins)
         # The sum over metallicity bins (axis=1) should be approximately 1 for each redshift
-        np.testing.assert_allclose(np.sum(fSFR, axis=1), np.ones(len(z)), atol=1e-6)
+        np.testing.assert_allclose(np.sum(fSFR, axis=1),
+                                   np.ones(len(z)),
+                                   atol=1e-6)
     
     def test_fSFR_sum_is_one_illustris(self, monkeypatch):
         def dummy_get_illustrisTNG_data(self, verbose=False):
@@ -111,17 +113,24 @@ class TestfSFR:
             "Z_max": 0.03,
             "select_one_met": False,
         }
-        monkeypatch.setattr(IllustrisTNG, "_get_illustrisTNG_data", dummy_get_illustrisTNG_data)
+        monkeypatch.setattr(IllustrisTNG,
+                            "_get_illustrisTNG_data",
+                            dummy_get_illustrisTNG_data)
         sfh_instance = IllustrisTNG(base_args)
         z = np.array([0.5, 1.0, 2.0])
         met_bins = np.linspace(0.0001, base_args["Z_max"], 50)
         fSFR = sfh_instance.fSFR(z, met_bins)
-        np.testing.assert_allclose(np.sum(fSFR, axis=1), np.ones(len(z)), atol=1e-6)
+        np.testing.assert_allclose(np.sum(fSFR, axis=1),
+                                   np.ones(len(z)),
+                                   atol=1e-6)
 
 class TestCallMethod:
     def test_call_method_returns_product(self):
         # Use DummySFH in 'call' mode to test __call__
-        model = {"sigma": 0.5, "Z_max": 0.03, "select_one_met": False, "dummy_mode": "call"}
+        model = {"sigma": 0.5,
+                 "Z_max": 0.03,
+                 "select_one_met": False,
+                 "dummy_mode": "call"}
         dummy = DummySFH(model)
         z = np.array([0.5, 1.0, 2.0])
         met_bins = np.linspace(0.001, model["Z_max"], 10)
@@ -161,7 +170,9 @@ class TestGetSFHModel:
                 "mets": np.linspace(0.001, 0.03, 10),
                 "M": np.ones((1, 10)),
             }
-        monkeypatch.setattr(IllustrisTNG, "_get_illustrisTNG_data", dummy_get_illustrisTNG_data)
+        monkeypatch.setattr(IllustrisTNG,
+                            "_get_illustrisTNG_data",
+                            dummy_get_illustrisTNG_data)
         model = get_SFH_model(base_args)
         assert isinstance(model, IllustrisTNG)
 
@@ -175,7 +186,9 @@ class TestGetSFHModel:
             "Z_solar_scaling": "Asplund09",
         }
         # Override _load_chruslinska_data to avoid file I/O during tests
-        monkeypatch.setattr(Chruslinska21, "_load_chruslinska_data", lambda self, verbose=False: None)
+        monkeypatch.setattr(Chruslinska21,
+                            "_load_chruslinska_data",
+                            lambda self, verbose=False: None)
         model = get_SFH_model(base_args)
         assert isinstance(model, Chruslinska21)
         assert model.SFR == "Chruslinska+21"
@@ -190,7 +203,10 @@ class TestGetSFHModel:
             "Z_solar_scaling": "Asplund09",
         }
         # Override _load_zalava_data to avoid file I/O during tests
-        monkeypatch.setattr(Zalava21, "_load_zalava_data", lambda self, verbose=False: None)
+        monkeypatch.setattr(Zalava21,
+                            "_load_zalava_data",
+                            lambda self,
+                            verbose=False: None)
         model = get_SFH_model(base_args)
         assert isinstance(model, Zalava21)
         assert model.SFR == "Zalava+21"
