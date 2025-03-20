@@ -146,6 +146,16 @@ class MadauBase(SFHBase):
     and fractional SFR based on the chosen Madau parameterisation.
     The specific parameters for CSFRD must be provided by subclasses.
     """
+    def __init__(self, MODEL):
+        if "sigma" not in MODEL:
+            raise ValueError("sigma not given!")
+        if "Z_max" not in MODEL:
+            raise ValueError("Z_max not given!")
+        if "select_one_met" not in MODEL:
+            raise ValueError("select_one_met not given!")
+        super().__init__(MODEL)
+        self.CSFRD_params = None
+    
     def CSFRD(self, z):
         '''The cosmic star formation rate density at a given redshift.
         
@@ -578,7 +588,6 @@ class Chruslinska21(SFHBase):
         ----------
         verbose : bool, optional
             Print information about the data loading.
-        
         '''  
         # oxygen to hydrogen abundance ratio ( FOH == 12 + log(O/H) )
         # as used in the calculations - do not change
@@ -597,6 +606,18 @@ class Chruslinska21(SFHBase):
         self.SFR_data = np.array( [M[ii]/(1e6*delta_T[ii]) for ii in range(len(delta_T))])/self.dFOH
 
     def _FOH_to_Z(self, FOH):
+        '''Convert the oxygen to hydrogen abundance ratio to absolute metallicity
+        
+        Parameters
+        ----------
+        FOH : float or array-like
+            The oxygen to hydrogen abundance ratio.
+        
+        Returns
+        -------
+        float or array-like
+            The absolute metallicity.    
+        '''
         # scalings from Chruslinksa+21
         if self.Z_solar_scaling == 'Asplund09':
             Zsun = 0.0134
