@@ -428,7 +428,7 @@ class IllustrisTNG(SFHBase):
         super().__init__(MODEL)
         # load the TNG data
         illustris_data = self._get_illustrisTNG_data()
-        self.SFR_data = illustris_data["SFR"]
+        self.CSFRD_data = illustris_data["SFR"]
         self.redshifts = illustris_data["redshifts"]
         self.Z = illustris_data["mets"]
         self.M = illustris_data["M"]  # Msun
@@ -440,14 +440,14 @@ class IllustrisTNG(SFHBase):
         return np.load(os.path.join(PATH_TO_POSYDON_DATA, "SFR/IllustrisTNG.npz"))
     
     def CSFRD(self, z):
-        SFR_interp = interp1d(self.redshifts, self.SFR_data)
+        SFR_interp = interp1d(self.redshifts, self.CSFRD_data)
         return SFR_interp(z)
         
     def mean_metallicity(self, z):
         out = np.zeros_like(self.redshifts)
         for i in range(len(out)):
             if np.sum(self.M[i, :]) == 0:
-                out[i] = 0
+                out[i] = np.nan
             else:
                 out[i] = np.average(self.Z, weights=self.M[i, :])
         Z_interp = interp1d(self.redshifts, out)
