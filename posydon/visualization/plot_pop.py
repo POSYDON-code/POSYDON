@@ -73,7 +73,7 @@ def plot_rate_density(intrinsic_rates, channels=False, **kwargs):
         plt.show()
 
 def plot_merger_efficiency(met, merger_efficiency, show=True, path=None, channels=False):
-    title = r'Merger efficiency'
+    title = r'Event efficiency'
     plt.figure()
     plt.title(title)
     plt.plot(met/Zsun, merger_efficiency['total'], label='total', color='black')
