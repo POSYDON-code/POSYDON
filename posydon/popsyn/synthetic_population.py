@@ -57,7 +57,7 @@ from posydon.popsyn.rate_calculation import (
     get_redshift_bin_centers,
 )
 
-from posydon.popsyn.star_formation_history import SFR_per_Z_at_z
+from posydon.popsyn.star_formation_history import SFR_per_met_at_z
 
 from posydon.popsyn.binarypopulation import (
     BinaryPopulation,
@@ -2080,7 +2080,7 @@ class TransientPopulation(Population):
         # sample the SFH for only the events that are within the Hubble time
         # only need to sample the SFH at each metallicity and z_birth
         # Not for every event!        
-        SFR_per_Z_at_z_birth = SFR_per_Z_at_z(z_birth, met_edges, MODEL)
+        SFR_per_met_at_z_birth = SFR_per_met_at_z(z_birth, met_edges, self.MODEL)
         
         # simulated mass per given metallicity corrected for the unmodeled
         # single and binary stellar mass
@@ -2143,7 +2143,7 @@ class TransientPopulation(Population):
                     * c
                     * D_c[mask] ** 2
                     * deltaT
-                    * SFR_per_Z_at_z_birth[:, j]
+                    * SFR_per_met_at_z_birth[:, j]
                     / M_model[j]
                 )  # yr^-1
 

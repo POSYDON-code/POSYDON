@@ -852,7 +852,7 @@ def get_SFH_model(MODEL):
     
     Returns
     -------
-    SFHBase
+    a SFHBase instance or subclass
         The SFH model instance.
     '''
     if MODEL["SFR"] == "Madau+Fragos17":
@@ -872,7 +872,7 @@ def get_SFH_model(MODEL):
     else:
         raise ValueError("Invalid SFR!")
 
-def SFR_per_Z_at_z(z, met_bins, MODEL):
+def SFR_per_met_at_z(z, met_bins, MODEL):
     """Calculate the SFR per metallicity bin at a given redshift(s)
     
     Parameters
