@@ -176,3 +176,36 @@ MODELS = {
     #     "approx_at_he_depletion": False,
     # },
 }
+
+def get_MODEL_NAME(input_MODEL, verbose=False):
+    '''Find MODEL_NAME that matches input_MODEL.
+    
+    Parameters
+    ----------
+    input_MODEL : dict
+        Dictionary with the properties of the model.
+    
+    Returns
+    -------
+    MODEL_NAME_SEL : str
+        Name of the model in MODELS.py that matches input_MODEL.
+    '''
+    MODEL_NAME_SEL = None
+    for MODEL_NAME, MODEL in MODELS.items():
+        tmp = MODEL_NAME
+        for key, val in MODEL.items():
+            if "use_" in key or key=="ECSN":
+                # escape values, which are allowed to differ
+                continue
+            if input_MODEL[key] != val:
+                if verbose:
+                    print(tmp, 'mismatch:', key,
+                            input_MODEL[key], val)
+                tmp = None
+                break
+        if tmp is not None:
+            if verbose:
+                print('matched to model:', tmp)
+            MODEL_NAME_SEL = tmp
+            
+    return MODEL_NAME_SEL

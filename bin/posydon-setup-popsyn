@@ -18,7 +18,7 @@ from posydon.popsyn.binarypopulation import BinaryPopulation
 from posydon.popsyn.io import binarypop_kwargs_from_ini
 from posydon.utils.common_functions import convert_metallicity_to_string
 from posydon.utils.posydonwarning import Pwarn
-from posydon.grids.MODELS import MODELS
+from posydon.grids.MODELS import get_MODEL_NAME
 
 
 def create_run_script(ini_file):
@@ -136,18 +136,7 @@ def check_SN_MODEL_validity(ini_file):
     if step_SN_MODEL['use_interp_values'] == False:
         return True
     # step_SN MODEL check
-    MODEL_NAME_SEL = None
-    for MODEL_NAME, MODEL in MODELS.items():
-        tmp = MODEL_NAME
-        for key, val in MODEL.items():
-            if "use_" in key or key=="ECSN":
-                # escape values, which are allowed to differ
-                continue
-            if step_SN_MODEL[key] != val:
-                tmp = None
-                break
-        if tmp is not None:
-            MODEL_NAME_SEL = tmp
+    MODEL_NAME_SEL = get_MODEL_NAME(step_SN_MODEL)
 
     if MODEL_NAME_SEL is None:
         return False
