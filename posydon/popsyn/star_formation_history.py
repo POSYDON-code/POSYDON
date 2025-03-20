@@ -39,6 +39,15 @@ SFH_SCENARIOS = [
 class SFHBase(ABC):
     '''Abstract class for star formation history models'''    
     def __init__(self, MODEL):
+        '''Initialise the SFH model
+        
+        Adds the model parameters as attributes.
+        
+        Parameters
+        ----------
+        MODEL : dict
+            Model parameters.
+        '''
         self.MODEL = MODEL
         # Automatically attach all model parameters as attributes
         for key, value in MODEL.items():
@@ -46,17 +55,70 @@ class SFHBase(ABC):
 
     @abstractmethod
     def CSFRD(self, z):
-        """Compute the cosmic star formation rate density."""
+        """Compute the cosmic star formation rate density.
+        
+        This is an abstract method that must be implemented by subclasses.
+        The implementation should calculate and return the cosmic star formation
+        rate density at the given redshift(s).
+        
+        Parameters
+        ----------
+        z : float or array-like
+            Cosmological redshift.
+        
+        Returns
+        -------
+        float or array-like
+            The cosmic star formation rate density at the given redshift(s).
+        """
         pass
 
     @abstractmethod
     def mean_metallicity(self, z):
-        """Return the mean metallicity at redshift z."""
+        """Return the mean metallicity at redshift z.
+
+        This is an abstract method that must be implemented by subclasses.
+        The implementation should calculate and return the mean metallicity
+        at the given redshift(s).
+        
+        Parameters
+        ----------
+        z : float or array-like
+            Cosmological redshift.
+        
+        Returns
+        -------
+        float or array-like
+            The mean metallicity at the given redshift(s).        
+        """
         pass
         
     @abstractmethod
     def fSFR(self, z, metallicity_bins):
-        """Return the fractional SFR as a function of redshift and metallicity bins."""
+        """Compute the star formation rate fraction (fSFR) at a given redshift 
+        using the specified metallicity bins.
+
+        This is an abstract method that must be implemented by subclasses.
+        The implementation should calculate and return the fractional SFR per
+        metallicity bins at the provided redshift (z).
+
+        Parameters
+        ---------
+        z : float or array-like 
+            The redshift(s) at which to compute the star formation rate.
+        metallicity_bins : list or array-like
+            The metallicity bin boundaries or labels used in the computation to 
+            account for different metallicity contributions.
+
+        Returns
+        -------
+        float or array-like
+            The calculated star formation rate at the given redshift(s) and
+            metallicity bins in Msun/yr.
+
+        Raises:
+            NotImplementedError: If the subclass does not implement this method.
+        """
         pass
 
 
@@ -104,7 +166,7 @@ class MadauBase(SFHBase):
         return p["a"] * (1.0 + z) ** p["b"] / (1.0 + ((1.0 + z) / p["c"]) ** p["d"])
     
     def std_log_metallicity_dist(self):
-        '''return the standard deviation of the log-normal metallicity distribution
+        '''Return the standard deviation of the log-normal metallicity distribution
         
         Either recognised the strings "Bavera+20" (sigma=0.5) 
         or "Neijssel+19" (sigma=0.39) or a float value.
@@ -166,7 +228,7 @@ class MadauBase(SFHBase):
         mu_array = np.atleast_1d(mu)
         
         
-        # Use the first value of mu for normalisation
+        # Use mu for normalisation
         norm = stats.norm.cdf(np.log10(self.Z_max), mu_array, sigma)
         
         fSFR = np.empty((len(mu_array), len(metallicity_bins) - 1))
@@ -251,7 +313,6 @@ class Neijssel19(MadauBase):
     def mean_metallicity(self, z):
         return 0.035 * 10 ** (-0.23 * z)
     
-    # overwrite std_log_metallicity_dist method of MadauBase
     # TODO: rewrite such that sigma is just changed for the Neijssel+19 case
     def fSFR(self, z, metallicity_bins):
         # assume a truncated ln-normal distribution of metallicities
