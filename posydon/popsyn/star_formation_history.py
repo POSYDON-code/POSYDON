@@ -227,7 +227,6 @@ class MadauBase(SFHBase):
         # Ensure mu is an array for consistency
         mu_array = np.atleast_1d(mu)
         
-        
         # Use mu for normalisation
         norm = stats.norm.cdf(np.log10(self.Z_max), mu_array, sigma)
         
@@ -258,6 +257,24 @@ class MadauDickinson14(MadauBase):
     '''
 
     def __init__(self, MODEL):
+        '''Initialise the Madau & Dickinson (2014) SFH model with the
+        metallicity evolution of Madau & Fragos (2017).
+        
+        Parameters
+        ----------
+        MODEL : dict
+            Model parameters. Madau+14 requires the following parameters:
+            - sigma : float or str
+                The standard deviation of the log-normal metallicity distribution.
+                Options are:
+                - Bavera+20
+                - Neijssel+19
+                - float
+            - Z_max : float
+                The maximum metallicity in absolute units.
+            - select_one_met : bool
+                If True, the SFR is calculated for a single metallicity bin.
+        '''
         super().__init__(MODEL)
         # Parameters for Madau+Dickinson14 CSFRD
         self.CSFRD_params = {
@@ -269,13 +286,31 @@ class MadauDickinson14(MadauBase):
 
 class MadauFragos17(MadauBase):
     '''The Madau & Fragos (2017) star formation history model with the 
-    mean metallicity evolution of Madau & Fragos (2017).
+    metallicity evolution of Madau & Fragos (2017).
     
     Madau & Fragos (2017), ApJ, 840, 39
     http://adsabs.harvard.edu/abs/2017ApJ...840...39M
     '''
 
     def __init__(self, MODEL):
+        '''Initialise the Madau+17 model
+        
+        Parameters
+        ----------
+        MODEL : dict
+            Model parameters. Madau+17 requires the following parameters:
+            - sigma : float or str
+                The standard deviation of the log-normal metallicity distribution.
+                Options are:
+                - Bavera+20
+                - Neijssel+19
+                - float
+            - Z_max : float
+                The maximum metallicity in absolute units.
+            - select_one_met : bool
+                If True, the SFR is calculated for a single metallicity bin.
+            
+                '''
         super().__init__(MODEL)
         # Parameters for Madau+Fragos17 CSFRD
         self.CSFRD_params = {
@@ -296,10 +331,24 @@ class Neijssel19(MadauBase):
     Neijssel et al. (2019), MNRAS, 490, 3740
     http://adsabs.harvard.edu/abs/2019MNRAS.490.3740N
     '''
-    
-    
-    
     def __init__(self, MODEL):
+        '''Initialise the Neijssel+19 model
+        
+        Parameters
+        ----------
+        MODEL : dict
+            Model parameters. Neijssel+19 requires the following parameters:
+            - sigma : float or str
+                The standard deviation of the log-normal metallicity distribution.
+                Options are:
+                - Bavera+20
+                - Neijssel+19
+                - float
+            - Z_max : float
+                The maximum metallicity in absolute units.
+            - select_one_met : bool
+                If True, the SFR is calculated for a single metallicity bin.    
+        '''
         super().__init__(MODEL)
         # Parameters for Neijssel+19 CSFRD
         self.CSFRD_params = {
@@ -311,10 +360,42 @@ class Neijssel19(MadauBase):
     
     # overwrite mean_metallicity method of MadauBase    
     def mean_metallicity(self, z):
+        '''Calculate the mean metallicity at a given redshift
+        
+        Overwrites the mean_metallicity method of MadauBase class.
+        
+        Parameters
+        ----------
+        z : float or array-like
+            Cosmological redshift.
+            
+        Returns
+        -------
+        float or array-like
+            The mean metallicity at the given redshift(s).    
+        '''
         return 0.035 * 10 ** (-0.23 * z)
     
     # TODO: rewrite such that sigma is just changed for the Neijssel+19 case
     def fSFR(self, z, metallicity_bins):
+        '''Fraction of the SFR at a given redshift z in a given metallicity bin
+        as described in Neijssel et al. (2019).
+        
+        Overwrites the fSFR method of MadauBase class.
+        
+        Parameters
+        ----------
+        z : np.array
+            Cosmological redshift.
+        metallicity_bins : array
+            Metallicity bins edges in absolute metallicity.
+        
+        Returns
+        -------
+        array
+            Fraction of the SFR in the given metallicity bins at the 
+            given redshift.
+        '''
         # assume a truncated ln-normal distribution of metallicities
         sigma = self.std_log_metallicity_dist()
         mu = np.log(self.mean_metallicity(z)) - sigma**2 / 2.0
