@@ -476,6 +476,11 @@ class IllustrisTNG(SFHBase):
             - select_one_met : bool
                 If True, the SFR is calculated for a single metallicity bin.
         """
+        if "Z_max" not in MODEL:
+            raise ValueError("Z_max not given!")
+        if "select_one_met" not in MODEL:
+            raise ValueError("select_one_met not given!")
+        
         super().__init__(MODEL)
         # load the TNG data
         illustris_data = self._get_illustrisTNG_data()
@@ -603,11 +608,18 @@ class Chruslinska21(SFHBase):
                 - GrevesseSauval98
                 - Villante14
             - Z_max : float
+                The maximum metallicity in absolute units.
+            - select_one_met : bool
+                If True, the SFR is calculated for a single metallicity bin.
         """
         if "sub_model" not in MODEL:
             raise ValueError("Sub-model not given!")
         if "Z_solar_scaling" not in MODEL:
             raise ValueError("Z_solar_scaling not given!")
+        if "Z_max" not in MODEL:
+            raise ValueError("Z_max not given!")
+        if "select_one_met" not in MODEL:
+            raise ValueError("select_one_met not given!")
         
         super().__init__(MODEL)
         self._load_chruslinska_data()
@@ -829,6 +841,10 @@ class Zalava21(MadauBase):
         Requires the following parameters:
         - sub_model : str
             Either min or max
+        - Z_max : float
+            The maximum metallicity in absolute units.
+        - select_one_met : bool
+            If True, the SFR is calculated for a single metallicity bin.
         """
         if "sub_model" not in MODEL:
             raise ValueError("Sub-model not given!")
