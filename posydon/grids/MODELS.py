@@ -185,7 +185,9 @@ def get_MODEL_NAME(input_MODEL, verbose=False):
     ----------
     input_MODEL : dict
         Dictionary with the properties of the model.
-    
+    verbose : bool (default: False)
+        Enables additional output.
+          
     Returns
     -------
     MODEL_NAME_SEL : str
