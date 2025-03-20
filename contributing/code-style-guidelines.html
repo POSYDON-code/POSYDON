@@ -1,0 +1,237 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Code Style Guidelines &mdash; posydon v2.0.0-dev documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=d66fa8e6" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=f4b7fd8b"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Reporting issues" href="reporting-issues.html" />
+    <link rel="prev" title="How To Contribute" href="how-to-contribute.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html">
+            
+              <img src="../_static/posydon_logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../introduction-acknowledgements/intro.html">Introduction, Objectives, and Scope</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../introduction-acknowledgements/collaborative-team.html">Collaborative Team</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://posydon.org/papers.html">Publications</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../getting-started/prerequisites.html">Prerequisites</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting-started/installation-guide.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting-started/verification.html">Verification</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">User Guides</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../user-guides/user-roadmap.html">Roadmap to Becoming an Expert POSYDON User</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials and Examples</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials-examples/population-synthesis/binary-pop-syn.html">Binary-Star Population Synthesis with POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials-examples/generating-datasets/generating-datasets.html">Crafting the Core Datasets for POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials-examples/MESA-grids/running-grids.html">Architecting MESA Simulation Grids with POSYDON</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">In-Depth Components Overview</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../components-overview/mesa-grids.html">MESA Grids API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../components-overview/processing-pipeline.html">Processing Pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../components-overview/machine-learning-components.html">Machine Learning Components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../components-overview/stellar-binary-simulation.html">Stellar &amp; Binary-star Simulation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../api_reference/posydon.html">posydon</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api_reference/bin.html">executables</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Troubleshooting and FAQs</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../troubleshooting-faqs/installation-issues.html">Installation Issues</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../troubleshooting-faqs/code-questions.html">Code Usage Questions</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contributing to POSYDON</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="how-to-contribute.html">How To Contribute</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Code Style Guidelines</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#general-principles">General Principles</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#python-style-guide">Python Style Guide</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#naming-conventions">Naming Conventions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#docstrings">Docstrings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#testing">Testing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#commit-guidelines">Commit Guidelines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#final-thoughts">Final Thoughts</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="reporting-issues.html">Reporting issues</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Releases and Datasets</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/releases">Releases</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://zenodo.org/communities/posydon/">Datasets</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contact and Support</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../contact-support/contact-information.html">Contact Information</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">posydon</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Code Style Guidelines</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/contributing/code-style-guidelines.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="code-style-guidelines">
+<span id="code-style"></span><h1>Code Style Guidelines<a class="headerlink" href="#code-style-guidelines" title="Link to this heading"></a></h1>
+<p>Adhering to a consistent code style helps maintain readability and eases collaboration. Here are the guidelines you should follow when contributing to POSYDON.</p>
+<section id="general-principles">
+<h2>General Principles<a class="headerlink" href="#general-principles" title="Link to this heading"></a></h2>
+<ol class="arabic simple">
+<li><p><strong>Clarity and Readability</strong>: Code should be easy to understand. Opt for clarity over cleverness.</p></li>
+<li><p><strong>Consistency</strong>: Follow the style of the existing codebase. When in doubt, consistency with the existing code is more important than adhering to external style guides.</p></li>
+<li><p><strong>Comments</strong>: Write meaningful comments, especially for complex logic. Avoid obvious comments.</p></li>
+</ol>
+</section>
+<section id="python-style-guide">
+<h2>Python Style Guide<a class="headerlink" href="#python-style-guide" title="Link to this heading"></a></h2>
+<p>We follow the <a class="reference external" href="https://www.python.org/dev/peps/pep-0008/">PEP 8</a> style guide for Python code with some exceptions and additions as outlined below.</p>
+<ol class="arabic simple">
+<li><p><strong>Indentation</strong>: Use 4 spaces per indentation level.</p></li>
+<li><p><strong>Line Length</strong>: Limit lines to 79 characters.</p></li>
+<li><p><strong>Imports</strong>: Group imports in the following order: standard libraries, third-party libraries, and local application imports. Each group should be separated by a blank line.</p></li>
+<li><dl class="simple">
+<dt><strong>Whitespace</strong>: Avoid extraneous whitespace in the following situations:</dt><dd><ul class="simple">
+<li><p>Immediately inside parentheses, brackets, or braces.</p></li>
+<li><p>Immediately before a comma, colon, or semicolon.</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><p><strong>Comments</strong>: Comments should be complete sentences and should be used sparingly, i.e., only when necessary to explain complex pieces of logic or decisions that could seem non-obvious to other developers.</p></li>
+</ol>
+</section>
+<section id="naming-conventions">
+<h2>Naming Conventions<a class="headerlink" href="#naming-conventions" title="Link to this heading"></a></h2>
+<ol class="arabic simple">
+<li><p><strong>Functions and Variables</strong>: Use <cite>snake_case</cite>.</p></li>
+<li><p><strong>Classes and Exceptions</strong>: Use <cite>CamelCase</cite>.</p></li>
+<li><p><strong>Constants</strong>: Use <cite>UPPER_SNAKE_CASE</cite>.</p></li>
+<li><p><strong>Module-level globals</strong> (like loggers or constants): Prefix with an underscore <cite>_</cite>.</p></li>
+</ol>
+</section>
+<section id="docstrings">
+<h2>Docstrings<a class="headerlink" href="#docstrings" title="Link to this heading"></a></h2>
+<p>We adhere to the <a class="reference external" href="https://numpydoc.readthedocs.io/en/latest/format.html">NumPy docstring style guide</a>. Every function, class, and module should have a docstring that adheres to this style. This helps in generating consistent and readable documentation. Ensure:</p>
+<ol class="arabic simple">
+<li><p>Every module, class, and function/method has an accompanying docstring.</p></li>
+<li><p>Always describe parameters, return types, and raised exceptions.</p></li>
+<li><p>Include examples in function/method docstrings when possible.</p></li>
+</ol>
+</section>
+<section id="testing">
+<h2>Testing<a class="headerlink" href="#testing" title="Link to this heading"></a></h2>
+<p>Ensure that your code does not introduce new bugs:</p>
+<ol class="arabic simple">
+<li><p>Write unit tests for your new features.</p></li>
+<li><p>Run all the tests to make sure they pass.</p></li>
+<li><p>Follow the existing testing conventions in the codebase.</p></li>
+</ol>
+</section>
+<section id="commit-guidelines">
+<h2>Commit Guidelines<a class="headerlink" href="#commit-guidelines" title="Link to this heading"></a></h2>
+<ol class="arabic simple">
+<li><p>Commit messages should be concise and descriptive.</p></li>
+<li><p>Use the present tense (“Add feature” not “Added feature”).</p></li>
+<li><p>Use the imperative mood (“Move cursor to…” not “Moves cursor to…”).</p></li>
+<li><p>Limit the first line to 72 characters or less.</p></li>
+<li><p>Reference issues and pull requests liberally after the first line.</p></li>
+</ol>
+</section>
+<section id="final-thoughts">
+<h2>Final Thoughts<a class="headerlink" href="#final-thoughts" title="Link to this heading"></a></h2>
+<p>Before submitting your code, review these guidelines and check your code against them. Taking the time to ensure your code adheres to these standards will make the review process smoother and faster.</p>
+<p>Thank you for your contribution and for making POSYDON’s codebase clean and consistent!</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="how-to-contribute.html" class="btn btn-neutral float-left" title="How To Contribute" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="reporting-issues.html" class="btn btn-neutral float-right" title="Reporting issues" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Tassos Fragos.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

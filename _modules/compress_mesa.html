@@ -1,0 +1,381 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>compress_mesa &mdash; posydon v2.0.0-dev documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=d66fa8e6" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=f4b7fd8b"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html">
+            
+              <img src="../_static/posydon_logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../introduction-acknowledgements/intro.html">Introduction, Objectives, and Scope</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../introduction-acknowledgements/collaborative-team.html">Collaborative Team</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://posydon.org/papers.html">Publications</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../getting-started/prerequisites.html">Prerequisites</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting-started/installation-guide.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting-started/verification.html">Verification</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">User Guides</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../user-guides/user-roadmap.html">Roadmap to Becoming an Expert POSYDON User</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials and Examples</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials-examples/population-synthesis/binary-pop-syn.html">Binary-Star Population Synthesis with POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials-examples/generating-datasets/generating-datasets.html">Crafting the Core Datasets for POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials-examples/MESA-grids/running-grids.html">Architecting MESA Simulation Grids with POSYDON</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">In-Depth Components Overview</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../components-overview/mesa-grids.html">MESA Grids API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../components-overview/processing-pipeline.html">Processing Pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../components-overview/machine-learning-components.html">Machine Learning Components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../components-overview/stellar-binary-simulation.html">Stellar &amp; Binary-star Simulation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../api_reference/posydon.html">posydon</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api_reference/bin.html">executables</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Troubleshooting and FAQs</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../troubleshooting-faqs/installation-issues.html">Installation Issues</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../troubleshooting-faqs/code-questions.html">Code Usage Questions</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contributing to POSYDON</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../contributing/how-to-contribute.html">How To Contribute</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing/code-style-guidelines.html">Code Style Guidelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing/reporting-issues.html">Reporting issues</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Releases and Datasets</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/releases">Releases</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://zenodo.org/communities/posydon/">Datasets</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contact and Support</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../contact-support/contact-information.html">Contact Information</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">posydon</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">compress_mesa</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for compress_mesa</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">shutil</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">random</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">argparse</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">tqdm</span><span class="w"> </span><span class="kn">import</span> <span class="n">tqdm</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.utils.posydonwarning</span><span class="w"> </span><span class="kn">import</span> <span class="n">Pwarn</span>
+
+
+<div class="viewcode-block" id="textsize">
+<a class="viewcode-back" href="../api_reference/compress_mesa.html#compress_mesa.textsize">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">textsize</span><span class="p">(</span><span class="n">filesize</span><span class="p">,</span> <span class="n">floatfmt</span><span class="o">=</span><span class="s2">&quot;.3g&quot;</span><span class="p">,</span> <span class="n">base</span><span class="o">=</span><span class="mi">1024</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="mi">1000</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get a human-readable file size in string.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    filesize : int or float</span>
+<span class="sd">        The size of the file, or directory, ... (in bytes)</span>
+<span class="sd">    floatfmt : str</span>
+<span class="sd">        The format for the float before the size descriptor (e.g., 2.34K).</span>
+<span class="sd">    base : int</span>
+<span class="sd">        The base of the units. Typically 1024 but 1000 can be used as well.</span>
+<span class="sd">    threshold : int or float</span>
+<span class="sd">        The threshold for using the next unit. For example, if base is 1024</span>
+<span class="sd">        and threshold is 1000, then 1000 bytes will be returned as 0.98K.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    str</span>
+<span class="sd">        The filesize in string format using b, K, M, ...</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">base</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">1000</span><span class="p">,</span> <span class="mi">1024</span><span class="p">]:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;base=</span><span class="si">{</span><span class="n">base</span><span class="si">}</span><span class="s2"> should be 1000 or 1024&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">threshold</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;threshold=</span><span class="si">{</span><span class="n">threshold</span><span class="si">}</span><span class="s2"> should be larger than 0&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">base</span> <span class="o">&lt;</span> <span class="n">threshold</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;threshold=</span><span class="si">{</span><span class="n">threshold</span><span class="si">}</span><span class="s2"> should be smaller or equal &quot;</span>\
+                         <span class="sa">f</span><span class="s2">&quot;to base=</span><span class="si">{</span><span class="n">base</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">filesize</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;-&quot;</span> <span class="o">+</span> <span class="n">textsize</span><span class="p">(</span><span class="o">-</span><span class="n">filesize</span><span class="p">,</span> <span class="n">floatfmt</span><span class="o">=</span><span class="n">floatfmt</span><span class="p">,</span> <span class="n">base</span><span class="o">=</span><span class="n">base</span><span class="p">,</span>\
+                              <span class="n">threshold</span><span class="o">=</span><span class="n">threshold</span><span class="p">)</span>
+
+    <span class="n">units</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;b&quot;</span><span class="p">,</span> <span class="s2">&quot;K&quot;</span><span class="p">,</span> <span class="s2">&quot;M&quot;</span><span class="p">,</span> <span class="s2">&quot;G&quot;</span><span class="p">,</span> <span class="s2">&quot;T&quot;</span><span class="p">,</span> <span class="s2">&quot;P&quot;</span><span class="p">,</span> <span class="s2">&quot;E&quot;</span><span class="p">,</span> <span class="s2">&quot;Z&quot;</span><span class="p">,</span> <span class="s2">&quot;Y&quot;</span><span class="p">]</span>
+    <span class="n">unit_values</span> <span class="o">=</span> <span class="p">[</span><span class="n">base</span><span class="o">**</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">units</span><span class="p">))]</span>
+
+    <span class="k">for</span> <span class="n">unit</span><span class="p">,</span> <span class="n">unit_value</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">units</span><span class="p">,</span> <span class="n">unit_values</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">filesize</span> <span class="o">&lt;</span> <span class="n">unit_value</span> <span class="o">*</span> <span class="n">threshold</span><span class="p">:</span>
+            <span class="n">quantity</span> <span class="o">=</span> <span class="n">filesize</span> <span class="o">/</span> <span class="n">unit_value</span>
+            <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">quantity</span><span class="si">:{</span><span class="n">floatfmt</span><span class="si">}}{</span><span class="n">unit</span><span class="si">}</span><span class="s2">&quot;</span>
+
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">filesize</span><span class="si">:</span><span class="s2">.3g</span><span class="si">}</span><span class="s2"> bytes&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="set_up_test">
+<a class="viewcode-back" href="../api_reference/compress_mesa.html#compress_mesa.set_up_test">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">set_up_test</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Set up a testing directory in the requested directory.</span>
+
+<span class="sd">    Parameters (keys in `args`)</span>
+<span class="sd">    ---------------------------</span>
+<span class="sd">    mesa_dir : string</span>
+<span class="sd">        The directory where the MESA tracks are stored.</span>
+<span class="sd">    test_dir : string</span>
+<span class="sd">        The directory where the test directory is to be set up.</span>
+<span class="sd">    dsr : float</span>
+<span class="sd">        Downsampling rate when creating testing directory.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">test_dir</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">NameError</span><span class="p">(</span><span class="s2">&quot;--test_dir needs to be specified for set_up_test&quot;</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">test_dir</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotADirectoryError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Directory </span><span class="si">{</span><span class="n">args</span><span class="o">.</span><span class="n">test_dir</span><span class="si">}</span><span class="s2"> does not exist.&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">mesa_dir</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">NameError</span><span class="p">(</span><span class="s2">&quot;mesa_dir needs to be specified for set_up_test&quot;</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">mesa_dir</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotADirectoryError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Directory </span><span class="si">{</span><span class="n">args</span><span class="o">.</span><span class="n">mesa_dir</span><span class="si">}</span><span class="s2"> does not exist.&quot;</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">folder</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">mesa_dir</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">mesa_dir</span><span class="p">,</span> <span class="n">folder</span><span class="p">)):</span>
+            <span class="n">is_mesa_run</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="n">sub_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">mesa_dir</span><span class="p">,</span> <span class="n">folder</span><span class="p">))</span>
+            <span class="n">track_dirs</span> <span class="o">=</span> <span class="p">[]</span>
+
+            <span class="k">for</span> <span class="n">_f</span> <span class="ow">in</span> <span class="n">sub_dir</span><span class="p">:</span>
+                <span class="k">if</span> <span class="s2">&quot;_grid_index_&quot;</span> <span class="ow">in</span> <span class="n">_f</span><span class="p">:</span>
+                    <span class="n">is_mesa_run</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="n">track_dirs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">mesa_dir</span><span class="p">,</span> <span class="n">folder</span><span class="p">,</span> <span class="n">_f</span><span class="p">))</span>
+
+            <span class="k">if</span> <span class="n">is_mesa_run</span><span class="p">:</span>     <span class="c1"># checking if directory is a mesa run</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">test_dir</span><span class="p">,</span> <span class="n">folder</span><span class="p">))</span>
+                <span class="c1"># choosing which tracks to copy over</span>
+                <span class="n">inds</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">track_dirs</span><span class="p">))),</span>
+                                     <span class="nb">int</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">track_dirs</span><span class="p">)</span> <span class="o">*</span> <span class="n">args</span><span class="o">.</span><span class="n">dsr</span><span class="p">))</span>
+                <span class="k">for</span> <span class="n">ind</span> <span class="ow">in</span> <span class="n">inds</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">track_dirs</span><span class="p">[</span><span class="n">ind</span><span class="p">]):</span>
+                        <span class="n">shutil</span><span class="o">.</span><span class="n">copytree</span><span class="p">(</span><span class="n">track_dirs</span><span class="p">[</span><span class="n">ind</span><span class="p">],</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                            <span class="n">args</span><span class="o">.</span><span class="n">test_dir</span><span class="p">,</span>
+                            <span class="n">folder</span><span class="p">,</span>
+                            <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">track_dirs</span><span class="p">[</span><span class="n">ind</span><span class="p">])[</span><span class="mi">1</span><span class="p">]))</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">shutil</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">track_dirs</span><span class="p">[</span><span class="n">ind</span><span class="p">],</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                            <span class="n">args</span><span class="o">.</span><span class="n">test_dir</span><span class="p">,</span>
+                            <span class="n">folder</span><span class="p">,</span>
+                            <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">track_dirs</span><span class="p">[</span><span class="n">ind</span><span class="p">])[</span><span class="mi">1</span><span class="p">]))</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Created Test Directory at </span><span class="si">{</span><span class="n">args</span><span class="o">.</span><span class="n">test_dir</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="compress_dir">
+<a class="viewcode-back" href="../api_reference/compress_mesa.html#compress_mesa.compress_dir">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">compress_dir</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compresses a directory containing tracks evolved with MESA.</span>
+
+<span class="sd">    Parameters (keys in `args`)</span>
+<span class="sd">    ---------------------------</span>
+<span class="sd">    verbose : bool</span>
+<span class="sd">        Enable/Disable additional output.</span>
+<span class="sd">    mesa_dir : string</span>
+<span class="sd">        The directory where the MESA tracks are stored.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_size</span><span class="p">(</span><span class="n">start_path</span><span class="o">=</span><span class="s2">&quot;.&quot;</span><span class="p">):</span>
+        <span class="n">total_size</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">remove_files</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">compress_files</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">n_runs</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">n_remove_files</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">n_compress_files</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">dirpath</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">filenames</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="n">start_path</span><span class="p">):</span>
+            <span class="k">if</span> <span class="s2">&quot;_grid_index_&quot;</span> <span class="ow">in</span> <span class="n">dirpath</span><span class="p">:</span>   <span class="c1"># checking if directory is mesa run</span>
+                <span class="n">new_remove_files</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="n">new_compress_files</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="k">if</span> <span class="s2">&quot;_grid_index_&quot;</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">dirpath</span><span class="p">):</span>
+                    <span class="n">n_runs</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">new_remove_files</span> <span class="o">=</span> <span class="kc">None</span>
+                <span class="n">new_compress_files</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">for</span> <span class="n">filename</span> <span class="ow">in</span> <span class="n">filenames</span><span class="p">:</span>
+                <span class="n">filepath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dirpath</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
+                <span class="c1"># skip if it is symbolic link</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">islink</span><span class="p">(</span><span class="n">filepath</span><span class="p">):</span>
+                    <span class="n">total_size</span> <span class="o">+=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">getsize</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span>
+                <span class="c1"># check for files in mesa run, whether to remove or compress it</span>
+                <span class="k">if</span> <span class="n">new_remove_files</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">name</span><span class="p">,</span> <span class="n">ext</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;core&quot;</span><span class="p">:</span>
+                        <span class="c1"># remove core dump files</span>
+                        <span class="n">new_remove_files</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+                    <span class="k">elif</span> <span class="n">ext</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;.data&quot;</span><span class="p">,</span> <span class="s2">&quot;.mod&quot;</span><span class="p">,</span> <span class="s2">&quot;.txt&quot;</span><span class="p">]:</span>
+                        <span class="c1"># compress .data, .mod, .txt files</span>
+                        <span class="n">new_compress_files</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+            <span class="k">if</span> <span class="p">((</span><span class="n">new_remove_files</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">and</span>
+                <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">new_remove_files</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">)):</span>
+                <span class="n">remove_files</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">dirpath</span><span class="p">,</span> <span class="n">new_remove_files</span><span class="p">))</span>
+                <span class="n">n_remove_files</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="n">new_remove_files</span><span class="p">)</span>
+            <span class="k">if</span> <span class="p">((</span><span class="n">new_compress_files</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">and</span>
+                <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">new_compress_files</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">)):</span>
+                <span class="n">compress_files</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">dirpath</span><span class="p">,</span> <span class="n">new_compress_files</span><span class="p">))</span>
+                <span class="n">n_compress_files</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="n">new_compress_files</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">total_size</span><span class="p">,</span> <span class="n">remove_files</span><span class="p">,</span> <span class="n">compress_files</span><span class="p">,</span> <span class="n">n_runs</span><span class="p">,</span>\
+            <span class="n">n_remove_files</span><span class="p">,</span> <span class="n">n_compress_files</span>
+
+    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">mesa_dir</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">NameError</span><span class="p">(</span><span class="s2">&quot;mesa_dir needs to be specified for set_up_test&quot;</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">mesa_dir</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotADirectoryError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Directory </span><span class="si">{</span><span class="n">args</span><span class="o">.</span><span class="n">mesa_dir</span><span class="si">}</span><span class="s2"> does not exist.&quot;</span><span class="p">)</span>
+
+    <span class="n">og_size</span><span class="p">,</span> <span class="n">to_remove</span><span class="p">,</span> <span class="n">to_compress</span><span class="p">,</span> <span class="n">n_runs</span><span class="p">,</span> <span class="n">n_remove_files</span><span class="p">,</span> <span class="n">n_compress_files</span>\
+        <span class="o">=</span> <span class="n">get_size</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">mesa_dir</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;remove&quot;</span><span class="p">,</span> <span class="n">n_remove_files</span><span class="p">,</span> <span class="s2">&quot;core dump files in&quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">to_remove</span><span class="p">),</span>\
+              <span class="s2">&quot;directories of&quot;</span><span class="p">,</span> <span class="n">n_runs</span><span class="p">,</span> <span class="s2">&quot;MESA runs&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">folder</span><span class="p">,</span> <span class="n">files</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">to_remove</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">remove_file</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="n">remove_file</span><span class="p">)):</span>
+<span class="c1">#                print(&quot;remove:&quot;, os.path.join(folder, remove_file))</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="n">remove_file</span><span class="p">))</span>
+                <span class="k">except</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Could not remove:&quot;</span><span class="p">,</span> <span class="n">remove_file</span><span class="p">,</span> <span class="s2">&quot;in&quot;</span><span class="p">,</span> <span class="n">folder</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;compress&quot;</span><span class="p">,</span> <span class="n">n_compress_files</span><span class="p">,</span> <span class="s2">&quot;files in&quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">to_compress</span><span class="p">),</span>\
+              <span class="s2">&quot;directories of&quot;</span><span class="p">,</span> <span class="n">n_runs</span><span class="p">,</span> <span class="s2">&quot;MESA runs&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">folder</span><span class="p">,</span> <span class="n">files</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">to_compress</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">compress_file</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="n">compress_file</span><span class="p">)):</span>
+<span class="c1">#                print(f&quot;gzip -1 {os.path.join(folder, compress_file)}&quot;)</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;gzip -1 </span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span><span class="w"> </span><span class="n">compress_file</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="n">new_size</span><span class="p">,</span> <span class="n">to_remove</span><span class="p">,</span> <span class="n">to_compress</span><span class="p">,</span> <span class="n">n_runs</span><span class="p">,</span> <span class="n">n_remove_files</span><span class="p">,</span> <span class="n">n_compress_files</span>\
+        <span class="o">=</span> <span class="n">get_size</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">mesa_dir</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Compressed MESA tracks&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Original size </span><span class="si">{</span><span class="n">textsize</span><span class="p">(</span><span class="n">og_size</span><span class="p">)</span><span class="si">}</span><span class="s2"> | &quot;</span>\
+              <span class="sa">f</span><span class="s2">&quot;Compressed size </span><span class="si">{</span><span class="n">textsize</span><span class="p">(</span><span class="n">new_size</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">to_remove</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">:</span>
+    	<span class="n">Pwarn</span><span class="p">(</span><span class="s2">&quot;Still files to remove: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">to_remove</span><span class="p">),</span>
+    	      <span class="s2">&quot;IncompletenessWarning&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">to_compress</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">:</span>
+    	<span class="n">Pwarn</span><span class="p">(</span><span class="s2">&quot;Still files to compress: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">to_compress</span><span class="p">),</span>
+    	      <span class="s2">&quot;IncompletenessWarning&quot;</span><span class="p">)</span></div>
+
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">()</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;-f&quot;</span><span class="p">,</span> <span class="s2">&quot;--function&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;The name of the &quot;</span>\
+                        <span class="s2">&quot;function to be called, either set_up_test or &quot;</span>\
+                        <span class="s2">&quot;compress_dir.&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s1">&#39;compress_dir&#39;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;-td&quot;</span><span class="p">,</span> <span class="s2">&quot;--test_dir&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;The path to &quot;</span>\
+                        <span class="s2">&quot;where the testing directory should be set up.&quot;</span><span class="p">,</span>\
+                        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;-dsr&quot;</span><span class="p">,</span> <span class="s2">&quot;--dsr&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Downsampling rate &quot;</span>\
+                        <span class="s2">&quot;when creating testing directory&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mf">0.01</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;-v&quot;</span><span class="p">,</span> <span class="s2">&quot;--verbose&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">bool</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Enable/Disable &quot;</span>\
+                        <span class="s2">&quot;outputs&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;mesa_dir&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;The path to the &quot;</span>\
+                        <span class="s2">&quot;directory containing MESA-generated data&quot;</span><span class="p">,</span>\
+                        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+
+    <span class="n">functions</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;set_up_test&quot;</span><span class="p">:</span> <span class="n">set_up_test</span><span class="p">,</span> <span class="s2">&quot;compress_dir&quot;</span><span class="p">:</span> <span class="n">compress_dir</span><span class="p">}</span>
+    <span class="n">arguments</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
+    <span class="n">functions</span><span class="p">[</span><span class="n">arguments</span><span class="o">.</span><span class="n">function</span><span class="p">](</span><span class="n">arguments</span><span class="p">)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Tassos Fragos.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

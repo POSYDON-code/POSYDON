@@ -1,0 +1,7 @@
+posydon.unit\_tests.popsyn
+==========================
+
+.. automodule:: posydon.unit_tests.popsyn
+   :members:
+   :show-inheritance:
+   :undoc-members:
