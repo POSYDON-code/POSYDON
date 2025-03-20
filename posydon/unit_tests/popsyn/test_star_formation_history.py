@@ -37,28 +37,28 @@ class DummySFH(MadauBase):
 class TestStdLogMetallicityDist:
     def test_sigma_bavera(self):
         # Test with sigma as "Bavera+20" which should return 0.5
-        model = {"sigma": "Bavera+20", 'Z_max': 0.03, 'select_one_met': False}
+        model = {"sigma": "Bavera+20", "Z_max": 0.03, "select_one_met": False}
         dummy = DummySFH(model)
         assert dummy.std_log_metallicity_dist() == 0.5
 
     def test_sigma_neijssel(self):
         # Test with sigma as "Neijssel+19" which should return 0.39
-        model = {"sigma": "Neijssel+19", 'Z_max': 0.03, 'select_one_met': False}
+        model = {"sigma": "Neijssel+19", "Z_max": 0.03, "select_one_met": False}
         dummy = DummySFH(model)
         assert dummy.std_log_metallicity_dist() == 0.39
 
     def test_sigma_float(self):
         # Test with sigma as a float value
         sigma_value = 0.45
-        model = {"sigma": sigma_value, 'Z_max': 0.03, 'select_one_met': False}
+        model = {"sigma": sigma_value, "Z_max": 0.03, "select_one_met": False}
         dummy = DummySFH(model)
         assert dummy.std_log_metallicity_dist() == sigma_value
 
     def test_unknown_sigma_string(self):
         # Test with an invalid sigma string should raise a ValueError
         model = {"sigma": "invalid_sigma",
-                 'Z_max': 0.03,
-                 'select_one_met': False}
+                 "Z_max": 0.03,
+                 "select_one_met": False}
         dummy = DummySFH(model)
         with pytest.raises(ValueError) as excinfo:
             dummy.std_log_metallicity_dist()
@@ -66,7 +66,7 @@ class TestStdLogMetallicityDist:
         
     def test_invalid_sigma(self):
         # Test with an invalid sigma value should raise a ValueError
-        model = {"sigma": int(1), 'Z_max': 0.03, 'select_one_met': False}
+        model = {"sigma": int(1), "Z_max": 0.03, "select_one_met": False}
         dummy = DummySFH(model)
         with pytest.raises(ValueError) as excinfo:
             dummy.std_log_metallicity_dist()
