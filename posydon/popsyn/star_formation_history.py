@@ -146,7 +146,6 @@ class MadauBase(SFHBase):
     and fractional SFR based on the chosen Madau parameterisation.
     The specific parameters for CSFRD must be provided by subclasses.
     """
-
     def CSFRD(self, z):
         '''The cosmic star formation rate density at a given redshift.
         
@@ -377,8 +376,7 @@ class Neijssel19(MadauBase):
         return 0.035 * 10 ** (-0.23 * z)
     
     # TODO: rewrite such that sigma is just changed for the Neijssel+19 case
-        FOH_min = 5.3
-        FOH_max = 9.7
+    def fSFR(self, z, metallicity_bins):
         '''Fraction of the SFR at a given redshift z in a given metallicity bin
         as described in Neijssel et al. (2019).
         
@@ -587,9 +585,10 @@ class Chruslinska21(SFHBase):
         # oxygen to hydrogen abundance ratio ( FOH == 12 + log(O/H) )
         # as used in the calculations - do not change
         # This is the metallicity bin edges used in the Chruslinska+21 calculations
-        FOH_min, FOH_max = 5.3, 9.7
-        self.FOH_bins = np.linspace(FOH_min,FOH_max, 200)
-        self.dFOH=self.FOH_bins[1]-self.FOH_bins[0]
+        FOH_min = 5.3
+        FOH_max = 9.7
+        self.FOH_bins = np.linspace(FOH_min, FOH_max, 200)
+        self.dFOH = self.FOH_bins[1] - self.FOH_bins[0]
         # I need to use the Z_solar_scaling parameter to convert the FOH bins to absolute metallicity
         # I will use the solar metallicity as the reference point
         self.Z = self._FOH_to_Z(self.FOH_bins)
@@ -602,18 +601,23 @@ class Chruslinska21(SFHBase):
     def _FOH_to_Z(self, FOH):
         # scalings from Chruslinksa+21
         if self.Z_solar_scaling == 'Asplund09':
-            Zsun, FOHsun = [0.0134, 8.69]
+            Zsun = 0.0134
+            FOHsun = 8.69
         elif self.Z_solar_scaling == 'AndersGrevesse89':
-            Zsun,FOHsun = [0.017, 8.83]
+            Zsun = 0.017
+            FOHsun = 8.83
         elif self.Z_solar_scaling == 'GrevesseSauval98':
-            Zsun,FOHsun = [0.0201, 8.93]
+            Zsun = 0.0201
+            FOHsun = 8.93
         elif self.Z_solar_scaling == 'Villante14':
-            Zsun,FOHsun = [0.019, 8.85]
+            Zsun = 0.019
+            FOHsun = 8.85
         else:
-            raise ValueError("Invalid Z_solar_scaling!")
+            raise ValueError("Invalid Z_solar_scaling!"+
+                             "Options are: Asplund09, AndersGrevesse89,"+
+                             "GrevesseSauval98, Villante14")
         logZ = np.log10(Zsun) + FOH - FOHsun
-        ZZ=10**logZ
-        return ZZ
+        return 10**logZ
         
     def mean_metallicity(self, z):
         '''Calculate the mean metallicity at a given redshift
@@ -739,6 +743,23 @@ class Fujimoto24(MadauBase):
     https://ui.adsabs.harvard.edu/abs/2024ApJS..275...36F/abstract
     '''
     def __init__(self, MODEL):
+        '''Initialise the Fujimoto+24 model
+        
+        Parameters
+        ----------
+        MODEL : dict
+            Model parameters. Fujimoto+24 requires the following parameters:
+            - sigma : float or str
+                The standard deviation of the log-normal metallicity distribution.
+                Options are:
+                - Bavera+20
+                - Neijssel+19
+                - float
+            - Z_max : float
+                The maximum metallicity in absolute units.
+            - select_one_met : bool
+                If True, the SFR is calculated for a single metallicity bin.
+        '''
         super().__init__(MODEL)
         # Parameters for Fujimoto+24 CSFRD
         self.CSFRD_params = {
