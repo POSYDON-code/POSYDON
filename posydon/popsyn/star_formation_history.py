@@ -147,6 +147,24 @@ class MadauBase(SFHBase):
     The specific parameters for CSFRD must be provided by subclasses.
     """
     def __init__(self, MODEL):
+        '''Initialise the MadauBase class
+        
+        Parameters
+        ----------
+        MODEL : dict
+            Model parameters. MadauBase requires the following parameters:
+            - sigma : float or str
+                The standard deviation of the log-normal metallicity distribution.
+                Options are:
+                - Bavera+20
+                - Neijssel+19
+                - float
+            - Z_max : float
+                The maximum metallicity in absolute units.
+            - select_one_met : bool
+                If True, the SFR is calculated for a single metallicity bin.
+            
+        '''
         if "sigma" not in MODEL:
             raise ValueError("sigma not given!")
         if "Z_max" not in MODEL:
