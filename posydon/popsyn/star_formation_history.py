@@ -135,7 +135,7 @@ class SFHBase(ABC):
         
         Returns
         -------
-        array
+        ndarray
             Star formation history per metallicity bin at the given redshift(s).
         """
         return self.CSFRD(z)[:, np.newaxis] * self.fSFR(z, met_bins)
@@ -249,7 +249,7 @@ class MadauBase(SFHBase):
         
         Returns
         -------
-        array
+        ndarray
             Fraction of the SFR in the given metallicity bin at the given 
             redshift.
         """
@@ -428,7 +428,7 @@ class Neijssel19(MadauBase):
         
         Returns
         -------
-        array
+        ndarray
             Fraction of the SFR in the given metallicity bins at the 
             given redshift.
         """
@@ -547,7 +547,7 @@ class IllustrisTNG(SFHBase):
         
         Returns
         -------
-        array
+        ndarray
             Fraction of the SFR in the given metallicity bin at the given redshift.
         """
         # only use data within the metallicity bounds (no lower bound)
@@ -706,7 +706,7 @@ class Chruslinska21(SFHBase):
         
         Returns
         -------
-        array
+        ndarray
             Fraction of the SFR in the given metallicity bin at the given redshift.
         """
         # only use data within the metallicity bounds (no lower bound)
