@@ -307,9 +307,8 @@ class MadauFragos17(MadauBase):
             - Z_max : float
                 The maximum metallicity in absolute units.
             - select_one_met : bool
-                If True, the SFR is calculated for a single metallicity bin.
-            
-                '''
+                If True, the SFR is calculated for a single metallicity bin.    
+        '''
         super().__init__(MODEL)
         # Parameters for Madau+Fragos17 CSFRD
         self.CSFRD_params = {
@@ -545,8 +544,6 @@ class Chruslinska21(SFHBase):
     
     Data source: 
     https://ftp.science.ru.nl/astro/mchruslinska/Chruslinska_et_al_2021/
-    
-    
     '''
     def __init__(self, MODEL):
         '''Initialise the Chruslinska+21 model
@@ -563,6 +560,7 @@ class Chruslinska21(SFHBase):
                 - AndersGrevesse89
                 - GrevesseSauval98
                 - Villante14
+            - Z_max : float
         '''
         if "sub_model" not in MODEL:
             raise ValueError("Sub-model not given!")
@@ -573,7 +571,7 @@ class Chruslinska21(SFHBase):
         self._load_chruslinska_data()
         
     def _load_chruslinska_data(self, verbose=False):
-        '''load the data from the Chruslinska+21 models
+        '''Load the data from the Chruslinska+21 models.
         Transforms the data to the format used in the classes.
         
         Parameters
