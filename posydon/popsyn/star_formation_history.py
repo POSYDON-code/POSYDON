@@ -56,6 +56,11 @@ class SFHBase(ABC):
         # Automatically attach all model parameters as attributes
         for key, value in MODEL.items():
             setattr(self, key, value)
+        
+        # check if Z_max is not larger than 1
+        if self.Z_max is not None:
+            if self.Z_max > 1:
+                raise ValueError("Z_max must be in absolute units!")            
 
     @abstractmethod
     def CSFRD(self, z):
@@ -151,7 +156,7 @@ class SFHBase(ABC):
             fSFR[0] = cdf_func(metallicity_bins[1]) - cdf_func(self.Z_min)
             
         if self.normalise:
-            fSFR /= np.sum(fSFR, axis=1)[:, np.newaxis]
+            fSFR /= np.sum(fSFR)
             
         return fSFR
 
@@ -551,7 +556,6 @@ class IllustrisTNG(SFHBase):
         ndarray
             Fraction of the SFR in the given metallicity bin at the given redshift.
         """
-        # only use data within the metallicity bounds (no lower bound)
         redshift_indices = np.array([np.where(self.redshifts <= i)[0][-1] for i in z])
         Z_dist = self.M[redshift_indices]
         fSFR = np.zeros((len(z), len(metallicity_bins) - 1))
@@ -561,7 +565,6 @@ class IllustrisTNG(SFHBase):
             else:
                 # At a specific redshift, the SFR is distributed over the metallicities
                 # according to the mass distribution
-                
                 # Add a final point to the CDF and metallicities to ensure normalisation to 1
                 Z_dist_cdf = np.cumsum(Z_dist[i]) / Z_dist[i].sum()
                 Z_dist_cdf = np.append(Z_dist_cdf, 1)
