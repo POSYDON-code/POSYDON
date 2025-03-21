@@ -8,7 +8,7 @@ from posydon.popsyn.star_formation_history import (
     Fujimoto24,
     IllustrisTNG,
     Chruslinska21,
-    Zalava21,
+    Zavala21,
     get_SFH_model
 )
 
@@ -775,19 +775,19 @@ class TestChruslinska21:
             if np.sum(row) > 0:
                 np.testing.assert_allclose(np.sum(row), 1.0)
 
-class TestZalava21:
-    """Tests for the Zalava21 SFH model with mocked data loading."""
+class TestZavala21:
+    """Tests for the Zavala21 SFH model with mocked data loading."""
     
     @pytest.fixture
-    def mock_zalava_data(self, monkeypatch):
-        """Create mock data for the Zalava21 class."""
+    def mock_zavala_data(self, monkeypatch):
+        """Create mock data for the Zavala21 class."""
         # Create mock data - simple decreasing function with redshift
         redshifts = np.array([0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0])
         SFRD_min = 0.1 * np.exp(-redshifts / 3.0)  # Simple declining function
         SFRD_max = 0.2 * np.exp(-redshifts / 3.0)  # Double the min values
         
-        # Create a mock _load_zalava_data method
-        def mock_load_zalava(self):
+        # Create a mock _load_zavala_data method
+        def mock_load_zavala(self):
             self.redshifts = redshifts
             if self.sub_model == "min":
                 self.SFR_data = SFRD_min
@@ -797,7 +797,7 @@ class TestZalava21:
                 raise ValueError("Invalid sub-model!")
         
         # Patch the method
-        monkeypatch.setattr(Zalava21, "_load_zalava_data", mock_load_zalava)
+        monkeypatch.setattr(Zavala21, "_load_zavala_data", mock_load_zavala)
         
         return {
             "redshifts": redshifts,
@@ -805,74 +805,74 @@ class TestZalava21:
             "SFRD_max": SFRD_max
         }
     
-    def test_init_parameters(self, mock_zalava_data):
+    def test_init_parameters(self, mock_zavala_data):
         """Test that initialization validates and sets parameters correctly."""
         # Test missing sub_model
         with pytest.raises(ValueError) as excinfo:
-            Zalava21({"Z_max": 0.03, "sigma": 0.5})
+            Zavala21({"Z_max": 0.03, "sigma": 0.5})
         assert "Sub-model not given!" in str(excinfo.value)
         
         # Test valid initialization with min model
         model_dict = {"sub_model": "min", "Z_max": 0.03, "sigma": 0.5}
-        zalava_min = Zalava21(model_dict)
-        assert zalava_min.sub_model == "min"
-        assert zalava_min.Z_max == 0.03
-        assert zalava_min.sigma == 0.5
+        zavala_min = Zavala21(model_dict)
+        assert zavala_min.sub_model == "min"
+        assert zavala_min.Z_max == 0.03
+        assert zavala_min.sigma == 0.5
         
         # Test valid initialization with max model
         model_dict = {"sub_model": "max", "Z_max": 0.03, "sigma": 0.5}
-        zalava_max = Zalava21(model_dict)
-        assert zalava_max.sub_model == "max"
+        zavala_max = Zavala21(model_dict)
+        assert zavala_max.sub_model == "max"
         
         # Test invalid sub_model
         model_dict = {"sub_model": "invalid", "Z_max": 0.03, "sigma": 0.5}
         with pytest.raises(ValueError) as excinfo:
-            zalava_invalid = Zalava21(model_dict)
+            zavala_invalid = Zavala21(model_dict)
         assert "Invalid sub-model!" in str(excinfo.value)
     
-    def test_csfrd_min_model(self, mock_zalava_data):
+    def test_csfrd_min_model(self, mock_zavala_data):
         """Test the CSFRD method with min sub-model."""
         model_dict = {"sub_model": "min", "Z_max": 0.03, "sigma": 0.5}
-        zalava = Zalava21(model_dict)
+        zavala = Zavala21(model_dict)
         
         # Test at specific redshifts
         z_values = np.array([0.0, 2.0, 4.0, 6.0])
-        result = zalava.CSFRD(z_values)
+        result = zavala.CSFRD(z_values)
         
         # Expected values come from interpolating the mock data
         expected = 0.1 * np.exp(-z_values / 3.0)
         np.testing.assert_allclose(result, expected)
     
-    def test_csfrd_max_model(self, mock_zalava_data):
+    def test_csfrd_max_model(self, mock_zavala_data):
         """Test the CSFRD method with max sub-model."""
         model_dict = {"sub_model": "max", "Z_max": 0.03, "sigma": 0.5}
-        zalava = Zalava21(model_dict)
+        zavala = Zavala21(model_dict)
         
         # Test at specific redshifts
         z_values = np.array([0.0, 2.0, 4.0, 6.0])
-        result = zalava.CSFRD(z_values)
+        result = zavala.CSFRD(z_values)
         
         # Expected values come from interpolating the mock data
         expected = 0.2 * np.exp(-z_values / 3.0)
         np.testing.assert_allclose(result, expected)
     
-    def test_fsfr_calculation(self, mock_zalava_data):
+    def test_fsfr_calculation(self, mock_zavala_data):
         """Test the fSFR method which is inherited from MadauBase."""
         model_dict = {"sub_model": "min", "Z_max": 0.03, "sigma": 0.5}
-        zalava = Zalava21(model_dict)
+        zavala = Zavala21(model_dict)
         
         # Test with redshift array and metallicity bins
         z = np.array([0.0, 2.0])
         met_bins = np.array([0.001, 0.01, 0.02, 0.03])
         
-        result = zalava.fSFR(z, met_bins)
+        result = zavala.fSFR(z, met_bins)
         
         # Shape check - should be (len(z), len(met_bins)-1)
         assert result.shape == (2, 3)
         
         # Test normalization
-        zalava.normalise = True
-        result = zalava.fSFR(z, met_bins)
+        zavala.normalise = True
+        result = zavala.fSFR(z, met_bins)
         for row in result:
             np.testing.assert_allclose(np.sum(row), 1.0)
 

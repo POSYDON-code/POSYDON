@@ -829,10 +829,10 @@ class Fujimoto24(MadauBase):
             "d": 6.6,
         }   
     
-class Zalava21(MadauBase):
+class Zavala21(MadauBase):
     
     def __init__(self, MODEL):
-        """Initialise the Zalava+21 model
+        """Initialise the Zavala+21 model
         
         Requires the following parameters:
         - sub_model : str
@@ -846,14 +846,14 @@ class Zalava21(MadauBase):
             raise ValueError("Sub-model not given!")
         
         super().__init__(MODEL)
-        self._load_zalava_data()
+        self._load_zavala_data()
         
-    def _load_zalava_data(self):
-        """Load the data from the Zalava+21 models
+    def _load_zavala_data(self):
+        """Load the data from the Zavala+21 models
         Transforms the data to the format used in the classes.
         
         """  
-        data_file = os.path.join(PATH_TO_POSYDON_DATA, "SFR/Zalava+21.txt")
+        data_file = os.path.join(PATH_TO_POSYDON_DATA, "SFR/Zavala+21.txt")
         tmp_data = pd.read_csv(data_file,
                                names=["redshift", "SFRD_min", "SFRD_max"],
                                skiprows=1,
@@ -897,8 +897,8 @@ def get_SFH_model(MODEL):
         return IllustrisTNG(MODEL)
     elif MODEL["SFR"] == "Chruslinska+21":
         return Chruslinska21(MODEL)
-    elif MODEL["SFR"] == "Zalava+21":
-        return Zalava21(MODEL)
+    elif MODEL["SFR"] == "Zavala+21":
+        return Zavala21(MODEL)
     else:
         raise ValueError("Invalid SFR!")
 
