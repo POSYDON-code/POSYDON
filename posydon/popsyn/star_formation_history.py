@@ -48,6 +48,10 @@ class SFHBase(ABC):
         MODEL : dict
             Model parameters.
         """
+        self.Z_max = None
+        self.Z_min = None
+        self.normalise = False
+        
         self.MODEL = MODEL
         # Automatically attach all model parameters as attributes
         for key, value in MODEL.items():
@@ -120,6 +124,36 @@ class SFHBase(ABC):
             NotImplementedError: If the subclass does not implement this method.
         """
         pass
+          
+    def _distribute_cdf(self, cdf_func, metallicity_bins):
+        '''Distribute the SFR over the metallicity bins using the CDF
+        
+        Parameters
+        ----------
+        cdf_func : function
+            The cumulative density function to use.
+        metallicity_bins : array
+            Metallicity bins edges in absolute metallicity.
+        
+        Returns
+        -------
+        ndarray
+            Fraction of the SFR in the given metallicity bin at the given redshift.
+        '''
+        fSFR = (np.array(cdf_func(metallicity_bins[1:]))
+                    - np.array(cdf_func(metallicity_bins[:-1])))
+                
+        # include material outside the metallicity bounds if requested
+        if self.Z_max is not None:
+            fSFR[-1] = cdf_func(self.Z_max) - cdf_func(metallicity_bins[-2])
+
+        if self.Z_min is not None:
+            fSFR[0] = cdf_func(metallicity_bins[1]) - cdf_func(self.Z_min)
+            
+        if self.normalise:
+            fSFR /= np.sum(fSFR, axis=1)[:, np.newaxis]
+            
+        return fSFR
 
 
     def __call__(self, z, met_bins):
@@ -162,16 +196,9 @@ class MadauBase(SFHBase):
                 - float
             - Z_max : float
                 The maximum metallicity in absolute units.
-            - select_one_met : bool
-                If True, the SFR is calculated for a single metallicity bin.
-            
         """
         if "sigma" not in MODEL:
             raise ValueError("sigma not given!")
-        if "Z_max" not in MODEL:
-            raise ValueError("Z_max not given!")
-        if "select_one_met" not in MODEL:
-            raise ValueError("select_one_met not given!")
         super().__init__(MODEL)
         self.CSFRD_params = None
     
@@ -258,29 +285,11 @@ class MadauBase(SFHBase):
         mu = np.log10(self.mean_metallicity(z)) - sigma ** 2 * np.log(10) / 2.0
         # Ensure mu is an array for consistency
         mu_array = np.atleast_1d(mu)
-        
-        # Use mu for normalisation
-        norm = stats.norm.cdf(np.log10(self.Z_max), mu_array, sigma)
-        
-        fSFR = np.empty((len(mu_array), len(metallicity_bins) - 1))
-        
-        fSFR[:, :] = np.array(
-            [
-                (
-                    stats.norm.cdf(np.log10(metallicity_bins[1:]), m, sigma)
-                    - stats.norm.cdf(np.log10(metallicity_bins[:-1]), m, sigma)
-                )
-                for m in mu_array
-            ]
-        )  / norm[:, np.newaxis]
-        
-        if not self.select_one_met:
-            fSFR[:, 0] = stats.norm.cdf(np.log10(metallicity_bins[1]),
-                                        mu_array,
-                                        sigma)/norm
-            fSFR[:, -1] = 1 - (stats.norm.cdf(np.log10(metallicity_bins[-2]),
-                                              mu_array,
-                                              sigma)/norm)
+    
+        fSFR = np.zeros((len(z), len(metallicity_bins) - 1))
+        for i, mean in enumerate(mu_array):
+            cdf_func = lambda x: stats.norm.cdf(np.log10(x), mean, sigma)
+            fSFR[i, :] = self._distribute_cdf(cdf_func, metallicity_bins)
             
         return fSFR
 
@@ -412,7 +421,6 @@ class Neijssel19(MadauBase):
         """
         return 0.035 * 10 ** (-0.23 * z)
     
-    # TODO: rewrite such that sigma is just changed for the Neijssel+19 case
     def fSFR(self, z, metallicity_bins):
         """Fraction of the SFR at a given redshift z in a given metallicity bin
         as described in Neijssel et al. (2019).
@@ -435,25 +443,11 @@ class Neijssel19(MadauBase):
         # assume a truncated ln-normal distribution of metallicities
         sigma = self.std_log_metallicity_dist()
         mu = np.log(self.mean_metallicity(z)) - sigma**2 / 2.0
-        # renormalisation constant
-        norm = stats.norm.cdf(np.log(self.Z_max), mu, sigma)
-        fSFR = np.empty((len(z), len(metallicity_bins) - 1))
-        fSFR[:, :] = np.array(
-            [
-                (
-                    stats.norm.cdf(np.log(metallicity_bins[1:]), m, sigma) 
-                    - stats.norm.cdf(np.log(metallicity_bins[:-1]), m, sigma)
-                )
-                for m in mu
-            ]
-        ) / norm[:, np.newaxis]
-        if not self.select_one_met:
-            fSFR[:, 0] = stats.norm.cdf(np.log(metallicity_bins[1]),
-                                        mu,
-                                        sigma) / norm
-            fSFR[:,-1] = 1 - stats.norm.cdf(np.log(metallicity_bins[-2]),
-                                            mu,
-                                            sigma)/norm
+        mu_array = np.atleast_1d(mu)
+        fSFR = np.zeros((len(z), len(metallicity_bins) - 1))
+        for i, mean in enumerate(mu_array):
+            cdf_func = lambda x: stats.norm.cdf(np.log(x), mean, sigma)
+            fSFR[i,:] = self._distribute_cdf(cdf_func, metallicity_bins)
         return fSFR
     
 class IllustrisTNG(SFHBase):
@@ -476,18 +470,20 @@ class IllustrisTNG(SFHBase):
             - select_one_met : bool
                 If True, the SFR is calculated for a single metallicity bin.
         """
-        if "Z_max" not in MODEL:
-            raise ValueError("Z_max not given!")
-        if "select_one_met" not in MODEL:
-            raise ValueError("select_one_met not given!")
+        
+        self.Z_max = None
+        self.Z_min = None
+        self.normalise = False
         
         super().__init__(MODEL)
         # load the TNG data
         illustris_data = self._get_illustrisTNG_data()
-        self.CSFRD_data = illustris_data["SFR"]
-        self.redshifts = illustris_data["redshifts"]
+        # the data is stored in reverse order high to low redshift
+        self.CSFRD_data = np.flip(illustris_data["SFR"])
+        self.redshifts = np.flip(illustris_data["redshifts"])
+        
         self.Z = illustris_data["mets"]
-        self.M = illustris_data["M"]  # Msun
+        self.M = np.flip(illustris_data["M"], axis=0)  # Msun
         
     def _get_illustrisTNG_data(self, verbose=False):
         """Load IllustrisTNG SFR dataset into the class.
@@ -556,30 +552,24 @@ class IllustrisTNG(SFHBase):
             Fraction of the SFR in the given metallicity bin at the given redshift.
         """
         # only use data within the metallicity bounds (no lower bound)
-        Z_max_mask = self.Z <= self.Z_max
-        redshift_indices = np.array([np.where(self.redshifts <= i)[0][0] for i in z])
-        Z_dist = self.M[:, Z_max_mask][redshift_indices]
+        redshift_indices = np.array([np.where(self.redshifts <= i)[0][-1] for i in z])
+        Z_dist = self.M[redshift_indices]
         fSFR = np.zeros((len(z), len(metallicity_bins) - 1))
-        
         for i in range(len(z)):
             if Z_dist[i].sum() == 0.0:
                 continue
             else:
+                # At a specific redshift, the SFR is distributed over the metallicities
+                # according to the mass distribution
+                
                 # Add a final point to the CDF and metallicities to ensure normalisation to 1
                 Z_dist_cdf = np.cumsum(Z_dist[i]) / Z_dist[i].sum()
                 Z_dist_cdf = np.append(Z_dist_cdf, 1)
-                Z_x_values = np.append(np.log10(self.Z[Z_max_mask]), 0)
+                
+                Z_x_values = np.append(np.log10(self.Z), 0)
                 Z_dist_cdf_interp = interp1d(Z_x_values, Z_dist_cdf)
-
-                fSFR[i, :] = (Z_dist_cdf_interp(np.log10(metallicity_bins[1:])) -
-                              Z_dist_cdf_interp(np.log10(metallicity_bins[:-1])))
-
-                if not self.select_one_met:
-                    if len(metallicity_bins) == 2:
-                        fSFR[i, 0] = 1
-                    else:
-                        fSFR[i, 0] = Z_dist_cdf_interp(np.log10(metallicity_bins[1]))
-                        fSFR[i, -1] = 1 - Z_dist_cdf_interp(np.log10(metallicity_bins[-2]))
+                cdf_fun = lambda x: Z_dist_cdf_interp(np.log10(x))
+                fSFR[i, :] = self._distribute_cdf(cdf_fun, metallicity_bins)
                         
         return fSFR
     
@@ -731,22 +721,12 @@ class Chruslinska21(SFHBase):
             if Z_dist[i].sum() == 0.0:
                 continue
             else:
-                # Add a final point to the CDF and metallicities to ensure normalisation to 1
                 Z_dist_cdf = np.cumsum(Z_dist[i]) / Z_dist[i].sum()
                 Z_dist_cdf = np.append(Z_dist_cdf, 1)
-                Z_x_values = np.append(np.log10(self.Z[Z_max_mask]), 0)
+                Z_x_values = np.append(np.log10(self.Z), 0)
                 Z_dist_cdf_interp = interp1d(Z_x_values, Z_dist_cdf)
-
-                fSFR[i, :] = (Z_dist_cdf_interp(np.log10(metallicity_bins[1:])) -
-                              Z_dist_cdf_interp(np.log10(metallicity_bins[:-1])))
-
-                if not self.select_one_met:
-                    if len(metallicity_bins) == 2:
-                        fSFR[i, 0] = 1
-                    else:
-                        fSFR[i, 0] = Z_dist_cdf_interp(np.log10(metallicity_bins[1]))
-                        fSFR[i, -1] = 1 - Z_dist_cdf_interp(np.log10(metallicity_bins[-2]))
-                        
+                cdf_fun = lambda x: Z_dist_cdf_interp(np.log10(x))
+                fSFR[i, :] = self._distribute_cdf(cdf_fun, metallicity_bins)
         return fSFR
         
     def _load_redshift_data(self, verbose=False):
