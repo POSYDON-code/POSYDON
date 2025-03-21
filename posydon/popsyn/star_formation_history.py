@@ -61,6 +61,13 @@ class SFHBase(ABC):
         if self.Z_max is not None:
             if self.Z_max > 1:
                 raise ValueError("Z_max must be in absolute units!")            
+        if self.Z_min is not None:
+            if self.Z_min < 0:
+                raise ValueError("Z_min must be in absolute units!")
+        if self.Z_min is not None and self.Z_max is not None:
+            if self.Z_min >= self.Z_max:
+                raise ValueError("Z_min must be smaller than Z_max!")
+        
 
     @abstractmethod
     def CSFRD(self, z):
@@ -150,10 +157,18 @@ class SFHBase(ABC):
                 
         # include material outside the metallicity bounds if requested
         if self.Z_max is not None:
-            fSFR[-1] = cdf_func(self.Z_max) - cdf_func(metallicity_bins[-2])
+            if self.Z_max >= metallicity_bins[-1]:
+                fSFR[-1] = cdf_func(self.Z_max) - cdf_func(metallicity_bins[-2])
+            else:
+                print("Warning: Z_max is smaller than the highest metallicity bin.")
+                fSFR[-1] = 0.0
 
         if self.Z_min is not None:
-            fSFR[0] = cdf_func(metallicity_bins[1]) - cdf_func(self.Z_min)
+            if self.Z_min <= metallicity_bins[0]:
+                fSFR[0] = cdf_func(metallicity_bins[1]) - cdf_func(self.Z_min)
+            else:
+                print("Warning: Z_min is larger than the lowest metallicity bin.")
+                fSFR[0] = 0.0
             
         if self.normalise:
             fSFR /= np.sum(fSFR)
@@ -611,9 +626,6 @@ class Chruslinska21(SFHBase):
             raise ValueError("Z_solar_scaling not given!")
         if "Z_max" not in MODEL:
             raise ValueError("Z_max not given!")
-        if "select_one_met" not in MODEL:
-            raise ValueError("select_one_met not given!")
-        
         super().__init__(MODEL)
         self._load_chruslinska_data()
         
@@ -715,9 +727,8 @@ class Chruslinska21(SFHBase):
             Fraction of the SFR in the given metallicity bin at the given redshift.
         """
         # only use data within the metallicity bounds (no lower bound)
-        Z_max_mask = self.Z <= self.Z_max
         redshift_indices = np.array([np.where(self.redshifts <= i)[0][0] for i in z])
-        Z_dist = self.SFR_data[:, Z_max_mask][redshift_indices]
+        Z_dist = self.SFR_data[redshift_indices]
         fSFR = np.zeros((len(z), len(metallicity_bins) - 1))
         
         for i in range(len(z)):
@@ -727,6 +738,8 @@ class Chruslinska21(SFHBase):
                 Z_dist_cdf = np.cumsum(Z_dist[i]) / Z_dist[i].sum()
                 Z_dist_cdf = np.append(Z_dist_cdf, 1)
                 Z_x_values = np.append(np.log10(self.Z), 0)
+                print(Z_x_values.shape)
+                print(Z_dist_cdf.shape)
                 Z_dist_cdf_interp = interp1d(Z_x_values, Z_dist_cdf)
                 cdf_fun = lambda x: Z_dist_cdf_interp(np.log10(x))
                 fSFR[i, :] = self._distribute_cdf(cdf_fun, metallicity_bins)
@@ -909,7 +922,6 @@ def SFR_per_met_at_z(z, met_bins, MODEL):
     """
     SFH = get_SFH_model(MODEL)
     return SFH(z, met_bins)
-
 
 def get_formation_times(N_binaries, star_formation="constant", **kwargs):
     """Get formation times of binaries in a population based on a SFH scenario.
