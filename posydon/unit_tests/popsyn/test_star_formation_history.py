@@ -684,11 +684,6 @@ class TestChruslinska21:
             Chruslinska21({"sub_model": "test", "Z_max": 0.03, "select_one_met": False})
         assert "Z_solar_scaling not given!" in str(excinfo.value)
         
-        # Test missing Z_max
-        with pytest.raises(ValueError) as excinfo:
-            Chruslinska21({"sub_model": "test", "Z_solar_scaling": "Asplund09", "select_one_met": False})
-        assert "Z_max not given!" in str(excinfo.value)
-    
     def test_foh_to_z_conversion(self, chruslinska_model):
         """Test the _FOH_to_Z method for all scaling options."""
         # Test Asplund09 scaling

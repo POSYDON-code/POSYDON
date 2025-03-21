@@ -624,8 +624,6 @@ class Chruslinska21(SFHBase):
             raise ValueError("Sub-model not given!")
         if "Z_solar_scaling" not in MODEL:
             raise ValueError("Z_solar_scaling not given!")
-        if "Z_max" not in MODEL:
-            raise ValueError("Z_max not given!")
         super().__init__(MODEL)
         self._load_chruslinska_data()
         
