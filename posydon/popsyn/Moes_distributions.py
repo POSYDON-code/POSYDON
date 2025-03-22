@@ -91,7 +91,7 @@ class Moe2017PsandQs():
             ret += integrate_newton_cotes(x[idx:idx + p], f[idx:idx + p])
         return ret
 
-    def __init__(self, n_M1=2*101-1, n_logP=2*158-1, n_q=2*91-1, n_e=2*100-1):
+    def __init__(self, n_M1=101, n_logP=158, n_q=91, n_e=100):
         """Initializing the class.
 
         Parameters
@@ -111,10 +111,9 @@ class Moe2017PsandQs():
         self.nume = n_e
         # ranges where M+D17 has statistics corrected for selection effects:
         # 0.8 < M1/Msun < 40 with self.numM1 steps in log space
-        self.M1v = 10**(np.log10(0.8)+(np.log10(40.0)-np.log10(0.8))
-                                      *np.linspace(0.0, 1.0, self.numM1))
+        self.M1v = 10**(np.linspace(np.log10(0.8), np.log10(40.0), self.numM1))
         # 0.15 < log10(P/day) < 8.0 with self.numlogP steps
-        self.logPv = 0.15 + 0.05 * np.linspace(0.0, 157.0, self.numlogP)
+        self.logPv = np.linspace(0.15, 8.0, self.numlogP)
         # 0.10 < q < 1.00 with self.numq steps
         self.qv = np.linspace(0.1, 1.0, self.numq)
         # 0.0001 < e < 0.9901 with self.nume steps
@@ -140,14 +139,13 @@ class Moe2017PsandQs():
         alpha = 0.018
         DlogP = 0.7
         # Heaviside function for twins with 0.95 < q < 1.00
-        Heaviside = self.qv * 0.0
-        ind = np.flatnonzero(self.qv >= 0.95)
-        Heaviside[ind] = 1.0
+        Heaviside = np.zeros_like(self.qv)
+        Heaviside[self.qv >= 0.95] = 1.0
         # normalize so that integral is unity
         Heaviside = Heaviside / self._idl_tabulate(self.qv, Heaviside)
         # Relevant indices with respect to mass ratio
         indlq = np.flatnonzero(self.qv >= 0.3)
-        indsq = np.flatnonzero(self.qv < 0.3)
+        indsq = (self.qv < 0.3)
         indq0p3 = np.min(indlq)
 
         # Loop through primary mass
