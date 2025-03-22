@@ -38,7 +38,7 @@ Like in code files we add an author list to those files to let others know whom 
 
 We always need to import the module we'd like to test. *I recommend to import it with the local name `totest`.*
 
-There might be additional modules/functions needed to do the testing. *I recommend to not import stuff, which is already imported in the module, you like to test, instead use the reference in the tested module, e.g. if the module to test imports X, access it via `totest.X` in the unit test, to ensure using the same code, which is not subject to this test.*
+There might be additional modules/functions needed to do the testing. *I recommend to not import stuff, which is already imported in the module, you like to test, instead use the reference in the tested module, e.g. if the module to test imports X, access it via `totest.X` in the unit test, to ensure using the same code, which is not subject to this test. For convenience you might define some aliases for imported stuff, e.g. `np = totest.np`.*
 
 #### Test functions
 
@@ -116,11 +116,17 @@ The context object can be used to check for more details of the raised error (th
         raise TypeError("Error message")
     assert error_info.value.args[0] == "Error message"
 
-It should be noted that the error type is will match subclasses successfully.
+It should be noted that the error type will match subclasses successfully.
 
 #### Catching warnings
 
 Usually, pytest will catch all warnings and print them at the end of all tests. If your test will cause a warning which you don't like to have displayed, you can filter the warnings caught by pytest. To filter all warnings in a function or class you can decorate it with a filter, e.g. `@pytest.mark.filterwarnings("ignore:WARNINGTEXT")`. There are more things you can do on [warnings in pytest](https://docs.pytest.org/en/stable/how-to/capture-warnings.html), but you should use that only were needed. But you should be careful with the pytest warning catching, because it overwrites some parts of the python warnings, which even interferes badly with our POSYDON warnings (especially the filter changes). By using the `pytest.warns` context you can capture and check for warnings the same way as for [errors](#catching-raised-errors).
+
+### Do not test functions called inside or needed for a function
+
+In more complex cases, the function the test acts on will call other functions. Here it can be useful to replace inner functions with `monkeypatch`.
+
+Some functions may require input generated from other functions, here it can be useful to call the other function within a try and return in case it fails. In this way the test of the other function will fail only and not be hidden in a different test. *I recommened therefore to first write a unit test for the functions which do not need other functions.*
 
 ### Check that it can fail
 
@@ -156,4 +162,5 @@ You can also enforce 100% coverage in the Github action performing the tests by 
 
     python -m pytest posydon/unit_tests/ --cov=posydon.utils --cov-branch --cov-report term-missing --cov-fail-under=100 
 
-This particular line ensures that the tests in `posydon/unit_tests/` run 100% of the code in `posydon.utils`, and that the check will otherwise fail. 
+This particular line ensures that the tests in `posydon/unit_tests/` run 100% of the code in `posydon.utils`, and that the check will otherwise fail.
+
