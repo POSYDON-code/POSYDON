@@ -19,6 +19,7 @@ import json
 import os
 from posydon.utils.posydonwarning import InappropriateValueWarning
 from posydon.grids.psygrid import PSyGrid
+from posydon.config import PATH_TO_POSYDON, PATH_TO_POSYDON_DATA
 
 # helper functions
 def get_PSyGrid(dir_path, idx, binary_history, star_history, profile):
@@ -314,6 +315,32 @@ class TestFunctions:
         return get_PSyGrid(tmp_path, 1, binary_history, star_history, profile)
 
     @fixture
+    def link_SN_data(self):
+        # link SN data in unit tests in case it is not available otherwise
+        links = {}
+        # create "POSYDON_data" directory if not existing
+        if not os.path.exists(PATH_TO_POSYDON_DATA):
+            links[PATH_TO_POSYDON_DATA] = "remove later"
+            os.mkdir(PATH_TO_POSYDON_DATA)
+        # create links if needed
+        for SN_engine in ["Sukhbold+16", "Patton+Sukhbold20", "Couch+2020"]:
+            engine_path = os.path.join(PATH_TO_POSYDON_DATA, SN_engine)
+            if not os.path.exists(engine_path):
+                test_engine = os.path.join(PATH_TO_POSYDON, "posydon",\
+                                           "unit_tests", "_data",\
+                                           "POSYDON_data", SN_engine)
+                links[engine_path] = test_engine
+                os.symlink(test_engine, engine_path)
+        yield
+        # remove created links
+        for engine_path in links:
+            if engine_path != PATH_TO_POSYDON_DATA:
+                os.unlink(engine_path)
+        # remove created directory
+        if PATH_TO_POSYDON_DATA in links:
+            os.rmdir(PATH_TO_POSYDON_DATA)
+
+    @fixture
     def grid(self):
         # initialize a PSyGrid instance, which is a required argument
         test_grid = PSyGrid()
@@ -412,7 +439,8 @@ class TestFunctions:
                    np.nan)]:
             assert v in output[0]
 
-    def test_post_process_grid(self, grid_path, capsys, monkeypatch):
+    def test_post_process_grid(self, grid_path, link_SN_data, capsys,\
+                               monkeypatch):
         def check_EXTRA_COLUMNS(EXTRA_COLUMNS, n_runs, keys, run_range=None):
             """Function to check the EXTRA_COLUMNS
 
