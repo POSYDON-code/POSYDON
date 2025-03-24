@@ -13,13 +13,11 @@ from posydon.popsyn.io import (binarypop_kwargs_from_ini,
                                create_run_script_text,
                                create_merge_script_text)
 from posydon.config import PATH_TO_POSYDON, PATH_TO_POSYDON_DATA
-from posydon.popsyn.binarypopulation import BinaryPopulation
 from posydon.popsyn.synthetic_population import Population
 from posydon.popsyn.io import binarypop_kwargs_from_ini
 from posydon.utils.common_functions import convert_metallicity_to_string
 from posydon.utils.posydonwarning import Pwarn
 import glob
-import platform
 import numpy as np
 
 def create_run_script(ini_file):
