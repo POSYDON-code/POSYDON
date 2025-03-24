@@ -740,11 +740,6 @@ def rescue_popsyn_function(args):
             print("\n")
             print("sh resubmit_slurm.sh")
             print("\n")
- 
-    # 3. Request resubmit
-    # a. Ask user if they want to resubmit
-        
-    pass
 
 
 #################
