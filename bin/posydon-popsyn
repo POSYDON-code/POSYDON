@@ -703,6 +703,7 @@ def rescue_popsyn_function(args):
     
     if missing_files:
         print("\nChecking batch files for missing populations:")
+        rescue_scripts =[]
         for met in missing_files:
             print("-"*80)
             batch_status[met] = check_batches(args.run_folder, met, synpop_params.get('temp_directory', 'batches'))
@@ -712,20 +713,34 @@ def rescue_popsyn_function(args):
             print("GENERATING A RESCUE SCRIPT ....................")
             
             # Generate a rescue script
-            rescue_script = generate_rescue_script(args.run_folder, batch_status[met])
+            rescue_scripts.append(generate_rescue_script(args.run_folder, batch_status[met]))
         
             print("-"*80)
             
-        
-        
-    # 2. Build resubmit script
-    # a. Read the original submit script
-    # b. Get the current parameters from the slurm script
-    # c. Update the run parameters based on the args
-    # d. Add the required "constants".
-    # e. Write to file
-    # f. Create slurm_resubmit.sh
-    
+        # Generate a resubmit_slurm.sh script
+        print("GENERATING A RESUBMIT SCRIPT ....................")
+        print("")
+        resubmit_sh_file = os.path.join(args.run_folder, 'resubmit_slurm.sh')
+        with open(resubmit_sh_file, 'w') as f:
+            f.write("#!/bin/bash\n")
+            for script in rescue_scripts:
+                f.write(f'resubmit=$(sbatch --parsable {script})\n')
+                f.write(f"echo 'Rescue script submitted as '${{resubmit}}\n")
+                f.write(f'merge=$(sbatch --parsable --dependency=afterok:${{resubmit}} --kill-on-invalid-dep=yes '+f'{script}_merge_popsyn.slurm)\n')
+                f.write(f"echo 'Merge job submitted as '${{merge}}\n")
+
+        print(f"Rescue scripts generated in {resubmit_sh_file}")
+        print("Would you like to submit the rescue scripts?")
+        choice = input("Enter 'yes' or 'y' to submit the rescue scripts: ")
+        if choice.lower() == 'yes' or choice.lower() == 'y':
+            os.system(f'sh {resubmit_sh_file}')
+            print("Rescue scripts submitted.")
+        else:
+            print("Please submit the rescue scripts using the following command:")
+            print("\n")
+            print("sh resubmit_slurm.sh")
+            print("\n")
+ 
     # 3. Request resubmit
     # a. Ask user if they want to resubmit
         
