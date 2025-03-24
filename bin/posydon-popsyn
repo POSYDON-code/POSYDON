@@ -721,9 +721,11 @@ def rescue_popsyn_function(args):
         with open(resubmit_sh_file, 'w') as f:
             f.write("#!/bin/bash\n")
             for script in rescue_scripts:
+                script = os.path.basename(script)
+                met = script.split('_')[0]
                 f.write(f'resubmit=$(sbatch --parsable {script})\n')
                 f.write(f"echo 'Rescue script submitted as '${{resubmit}}\n")
-                f.write(f'merge=$(sbatch --parsable --dependency=afterok:${{resubmit}} --kill-on-invalid-dep=yes '+f'{script}_merge_popsyn.slurm)\n')
+                f.write(f'merge=$(sbatch --parsable --dependency=afterok:${{resubmit}} --kill-on-invalid-dep=yes '+f'{met}_Zsun_merge_popsyn.slurm)\n')
                 f.write(f"echo 'Merge job submitted as '${{merge}}\n")
 
         print(f"Rescue scripts generated in {resubmit_sh_file}")
