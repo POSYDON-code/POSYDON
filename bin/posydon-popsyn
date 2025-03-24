@@ -322,8 +322,8 @@ def check_batches(run_folder, metallicity, batch_folder_name):
     # Step 3: Count batch files
     batch_files = glob.glob(os.path.join(batch_folder, 'evolution.combined.*'))
     actual_count = len(batch_files)
-    
     # Step 4: Compare and report
+    missing_indices = []
     if expected_batch_count is None:
         print(f"{str_met}\t\t?\t{actual_count}\t\033[33mUNKNOWN\033[0m")
         status = "unknown_expected_count"
@@ -353,8 +353,8 @@ def check_batches(run_folder, metallicity, batch_folder_name):
         extra_count = actual_count - expected_batch_count
         print(f"{str_met}\t\t{expected_batch_count}\t{actual_count}\t\033[33m{extra_count} EXTRA\033[0m")
         status = "extra_files"
+        
     if len(missing_indices) > 0:
-
         # Get the jobID
         jobIDs = glob.glob(os.path.join(run_folder, f'{str_met}_logs/popsyn_*.out'))
         jobIDs = [int(os.path.basename(job).split('_')[-2].split('.')[0]) for job in jobIDs]
