@@ -523,7 +523,7 @@ export PATH_TO_POSYDON_DATA={path_to_posydon_data}
 export SLURM_ARRAY_TASK_COUNT={job_array_length}
 export SLURM_ARRAY_TASK_MIN=0
 
-srun python {batch_status['batch_folder']}/evolution.combined.$SLURM_ARRAY_TASK_ID
+srun python ./run_metallicity.py {batch_status['metallicity']}
 ''')
     
     print(f"Rescue script generated: {rescue_script}")
@@ -645,7 +645,8 @@ def check_popsyn_function(args):
             if choice.lower() == 'yes':
                 for met in missing_files:
                     str_met = convert_metallicity_to_string(met)
-                    os.system(f'sbatch {str_met}_Zsun_merge_popsyn.slurm')
+                    
+                    os.system(f'sbatch {args.run_folder}/{str_met}_Zsun_merge_popsyn.slurm')
                 print("Merge jobs resubmitted.")
             else:
                 print("Merge jobs not resubmitted.")
