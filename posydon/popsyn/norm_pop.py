@@ -14,7 +14,6 @@ from posydon.popsyn import independent_sample
 from scipy.integrate import quad, nquad
 from posydon.utils.posydonwarning import Pwarn
 from posydon.popsyn.distributions import flat_mass_ratio, Sana12Period
-from functools import lru_cache
 import posydon.popsyn.IMFs as IMFs
 
 def get_IMF_pdf(kwargs):
@@ -25,7 +24,8 @@ def get_IMF_pdf(kwargs):
         # dynamically retrieve the IMF class from the IMFs module
         imf_class = getattr(IMFs, primary_mass_scheme)
         imf = imf_class(m_min=kwargs['primary_mass_min'],
-                        m_max=kwargs['primary_mass_max'])
+                        m_max=kwargs['primary_mass_max'],
+                        **kwargs[primary_mass_scheme])
         IMF_pdf = imf.pdf
     except AttributeError:
         # if not found, default to a flat distribution
@@ -197,7 +197,6 @@ def calculate_model_weights(pop_data, M_sim, simulation_parameters, population_p
     # build the pdf functions
     PDF_sim = get_pdf(simulation_parameters)
     PDF_pop = get_pdf(population_parameters)
-    
     
     # initial properties
     mean_mass_sim = get_mean_mass(PDF_sim, simulation_parameters)
