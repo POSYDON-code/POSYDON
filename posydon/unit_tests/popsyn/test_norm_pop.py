@@ -30,7 +30,7 @@ class TestGetIMFPdf:
         pdf_func = norm_pop.get_IMF_pdf(kwargs)
         m_test = np.array([1, 10, 50])
         result = pdf_func(m_test)
-        assert np.all(result == 1)
+        assert np.all(result == 1)        
     
     def test_valid_imf_returns_dummy_pdf(self):
         # Monkey-patch: add DummyIMF to IMFs temporarily
@@ -48,6 +48,40 @@ class TestGetIMFPdf:
         assert np.allclose(result, expected)
         # cleanup monkey-patch
         del IMFs.DummyIMF
+
+    def test_imf_with_scheme_kwargs(self):
+        # Create a test IMF class that uses scheme kwargs
+        class SchemeKwargsIMF:
+            def __init__(self, m_min, m_max, custom_param=None):
+                self.m_min = m_min
+                self.m_max = m_max
+                self.custom_param = custom_param
+            def pdf(self, m1):
+                # Return custom_param if set, otherwise 1
+                return self.custom_param if self.custom_param is not None else 1
+        
+        # Monkey-patch the IMF class into IMFs module
+        IMFs.SchemeKwargsIMF = SchemeKwargsIMF
+        
+        # Create kwargs with scheme-specific parameters
+        kwargs = {
+            'primary_mass_scheme': 'SchemeKwargsIMF',
+            'primary_mass_min': 1,
+            'primary_mass_max': 100,
+            'SchemeKwargsIMF': {'custom_param': 3.5}  # Scheme-specific kwargs
+        }
+        
+        # Get the PDF function
+        pdf_func = norm_pop.get_IMF_pdf(kwargs)
+        
+        # Test that the custom parameter was used
+        m_test = np.array([1, 10, 50])
+        result = pdf_func(m_test)
+        expected = 3.5  # The value of custom_param
+        assert np.allclose(result, expected)
+        
+        # Cleanup monkey-patch
+        del IMFs.SchemeKwargsIMF
 
 
 class TestGetMassRatioPdf:
@@ -354,7 +388,7 @@ class TestReweighting():
         print(np.sum(small_weights))
         assert np.isclose(np.sum(selection), np.sum(small_weights), atol=1e-3)
         
-    def test_population_binary_fraction_change(self, base_simulation_kwargs):
+    def test_population_larger_sample_space_binary_fraction_change(self, base_simulation_kwargs):
         
         # no binaries
         base_simulation_kwargs['number_of_binaries'] =  100000
@@ -662,6 +696,6 @@ class TestBinaryFractions():
         
         mask2 = (small_sample['S1_mass_i'] <= 20) & (small_sample['state_i'] == 'initially_single_star')
         print(np.sum(small_weights[mask2]))
-        assert np.isclose(np.sum(selection), np.sum(small_weights[mask2]), atol=1e-3)    
-    
+        assert np.isclose(np.sum(selection), np.sum(small_weights[mask2]), atol=1e-3)
+
 

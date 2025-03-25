@@ -20,12 +20,13 @@ def get_IMF_pdf(kwargs):
     '''get the IMF pdf function'''
     
     primary_mass_scheme = kwargs.get('primary_mass_scheme', '')
+    scheme_kwargs = kwargs.get(primary_mass_scheme, {})
     try:
         # dynamically retrieve the IMF class from the IMFs module
         imf_class = getattr(IMFs, primary_mass_scheme)
         imf = imf_class(m_min=kwargs['primary_mass_min'],
                         m_max=kwargs['primary_mass_max'],
-                        **kwargs[primary_mass_scheme])
+                        **scheme_kwargs)
         IMF_pdf = imf.pdf
     except AttributeError:
         # if not found, default to a flat distribution
