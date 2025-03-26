@@ -14,7 +14,7 @@ Common Installation Issues
 It creates many small files, which can be difficult for HPC clusters to solve.
 One way to speed up the installation is to use the `mamba` package manager, which is a drop-in replacement for `conda` but is much faster.
 Please proceed at your own discretion, as this has not been fully vetted. Alternatively, you can install the `libmamba` solver to speed up the solving process for new installations in a `conda` environment.
-To install the `libmamba` solver, run the following command in your environment or `base` environment:
+To install the `libmamba` solver, run the following command in your `conda` environment of choice or `base` `conda` environment:
 
 ```bash
 conda install conda-libmamba-solver
