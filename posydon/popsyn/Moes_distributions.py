@@ -34,7 +34,8 @@ class Moe2017PsandQs():
     """
 
     def _idl_tabulate(self, x, f, p=5):
-        """Discrete integration in chunks.
+        """Discrete integration in chunks to avoid instabilities for
+        Newton-Cotes rule at high degree.
         This function is similar to the IDL function int_tabulated except, this
         function seems to be slightly more exact in its solution. Therefore,
         relative to the IDL code, there are small numerical differences.
@@ -46,7 +47,8 @@ class Moe2017PsandQs():
         f : ndarray of floats
             Function values at x, therefore need to have the same shape as x.
         p : int (default: 5)
-            Chunk size.
+            Chunk size. Too small and too high values may suffer from numerical
+            uncertainties.
 
         Returns
         -------
