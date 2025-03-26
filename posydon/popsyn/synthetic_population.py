@@ -2035,7 +2035,7 @@ class TransientPopulation(Population):
         if MODEL_in is None:
             MODEL = DEFAULT_MODEL
         else:
-            # write the DEFAULT_MODEL with updates parameters to self.MODEL.
+            # write the DEFAULT_MODEL with updates parameters to MODEL.
             MODEL = DEFAULT_MODEL
             MODEL.update(MODEL_in)
 
