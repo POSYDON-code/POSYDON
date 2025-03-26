@@ -300,7 +300,6 @@ def pop_data(kwargs):
 class TestReweighting():
     
     def test_population_larger_sample_space(self, base_simulation_kwargs):
-        
         # no binaries
         base_simulation_kwargs['number_of_binaries'] =  100000
         base_simulation_kwargs['binary_fraction_const'] = 0.
@@ -318,7 +317,6 @@ class TestReweighting():
         
         M_sim = small_sample['S1_mass_i'].sum() + small_sample['S2_mass_i'].sum()
         small_weights = norm_pop.calculate_model_weights(small_sample, M_sim, base_simulation_kwargs, expanded_kwargs)
-        
         M_sim = expanded_sample['S1_mass_i'].sum() + expanded_sample['S2_mass_i'].sum()
         expanded_weights = norm_pop.calculate_model_weights(expanded_sample, M_sim, expanded_kwargs, expanded_kwargs)
         
@@ -447,8 +445,6 @@ class TestReweighting():
         
         mask = (expanded_sample['S1_mass_i'] <= old_max) & (expanded_sample['state_i'] == 'initially_single_star')
         selection = expanded_weights[mask]
-        print(np.sum(selection))
-        print(np.sum(small_weights))
         assert np.isclose(np.sum(selection), np.sum(small_weights), atol=1e-3)    
         
     def test_Salpeter_IMF_single(self, base_simulation_kwargs):

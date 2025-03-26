@@ -182,8 +182,7 @@ def calculate_underlying_mass(population, simulation_parameters, requested_param
     
     M_pop = simulated_mass * (N_pop * mean_mass_pop)/ (mean_mass_sim * N_sim)
     
-    return M_pop
-    
+    return M_pop 
 
 def calculate_model_weights(pop_data, M_sim, simulation_parameters, population_parameters):
     '''reweight each model in the simulation to the requested population'''
