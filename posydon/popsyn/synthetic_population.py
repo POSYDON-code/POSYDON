@@ -1918,33 +1918,42 @@ class TransientPopulation(Population):
         
         simulation_parameters = self.ini_params
         
+        if self.verbose:
+            print("Simulation parameters:")
+            print(simulation_parameters)
+            print("Population parameters:")
+            print(population_parameters)
+        
         tmp_data = self.population[['metallicity']]
-        model_weights = np.zeros(len(tmp_data))
-
+        model_weights = pd.DataFrame(
+                    {model_weights_identifier: np.zeros(len(tmp_data))},
+                    index=tmp_data.index)
         # loop over each metallicity since we sample each metallicity indivivually
         # Looping per metallicity to reduce memory usage?
         for i in range(len(self.mass_per_metallicity)):
             # calculate weights 
             met_mask = tmp_data['metallicity'] == self.mass_per_metallicity.index[i]
             met_indices = tmp_data.index[met_mask]
-            
+            met_indices =np.unique(met_indices)
             M_sim = self.mass_per_metallicity['simulated_mass'].iloc[i]
-            pop_data = self.oneline.select(where='index in '+str(met_indices.to_list()),
+            pop_data = self.oneline.select(where='index in '+str(met_indices.tolist()),
                                            columns=['S1_mass_i', 'S2_mass_i', 'orbital_period_i', 'eccentricity_i', 'state_i'])
-            model_weights[met_mask] = calculate_model_weights(
+            
+            calculated_weights =  calculate_model_weights(
                                                     pop_data=pop_data,
                                                     M_sim=M_sim,
                                                     simulation_parameters=simulation_parameters,
                                                     population_parameters=population_parameters)
+            weight_mapping = dict(zip(met_indices, calculated_weights))
+            model_weights[model_weights_identifier] = model_weights.index.map(weight_mapping)
         
-        df = pd.DataFrame(data={model_weights_identifier:model_weights}, index=self.population.index)
         with pd.HDFStore(self.filename, mode="a") as store:
             if '/transients/' + self.transient_name + '/weights/' + model_weights_identifier in store.keys():
                 Pwarn("Model weights already exist! Overwriting them!", "OverwriteWarning")
                 del store['transients/' + self.transient_name + '/weights/' + model_weights_identifier]
                 
-            store.put('transients/' + self.transient_name + '/weights/' + model_weights_identifier, df)
-        return df
+            store.put('transients/' + self.transient_name + '/weights/' + model_weights_identifier, model_weights)
+        return model_weights
     
     def model_weights(self, model_weights_identifier=None):
         """Retrieve the model weights of the transient population.
