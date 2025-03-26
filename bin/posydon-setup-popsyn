@@ -10,6 +10,7 @@
 import os
 import argparse
 from posydon.popsyn.io import (binarypop_kwargs_from_ini, 
+                               simprop_kwargs_from_ini,
                                create_run_script_text,
                                create_merge_script_text)
 from posydon.config import PATH_TO_POSYDON, PATH_TO_POSYDON_DATA
@@ -17,6 +18,7 @@ from posydon.popsyn.binarypopulation import BinaryPopulation
 from posydon.popsyn.io import binarypop_kwargs_from_ini
 from posydon.utils.common_functions import convert_metallicity_to_string
 from posydon.utils.posydonwarning import Pwarn
+from posydon.grids.MODELS import get_MODEL_NAME
 
 
 def create_run_script(ini_file):
@@ -113,7 +115,34 @@ srun python ./merge_metallicity.py {metallicity}
         Pwarn('Replace '+filename, "OverwriteWarning")
     with open(filename, mode='w') as file:
         file.write(text)
+        
+def check_SN_MODEL_validity(ini_file):
+    '''checks if the step_SN MODEL is valid for this script
 
+    Parameters
+    ----------
+    ini_file : str
+        the path to the ini file
+    
+    Returns
+    -------
+    bool
+        True if the MODEL is valid or use_interp_values=False, False otherwise    
+    '''
+
+    simprop_kwargs = simprop_kwargs_from_ini(ini_file)
+    step_SN_MODEL = simprop_kwargs['step_SN'][1]
+    # always allow the use of non-interpolation values
+    if step_SN_MODEL['use_interp_values'] == False:
+        return True
+    # step_SN MODEL check
+    MODEL_NAME_SEL = get_MODEL_NAME(step_SN_MODEL)
+
+    if MODEL_NAME_SEL is None:
+        return False
+    else:
+        return True
+        
 
 #################
 # MAIN FUNCTION
@@ -132,6 +161,9 @@ if __name__ == '__main__':
     parser.add_argument('--account', help='the account you would like to use', default=None)
     args = parser.parse_args()
 
+    if not check_SN_MODEL_validity(args.ini_file):
+        raise ValueError("The step_SN MODEL is not valid for this script. Please check the MODEL in the ini file")
+
     synpop_params = binarypop_kwargs_from_ini(args.ini_file)    
     metallicities = synpop_params['metallicity']
     if synpop_params['number_of_binaries'] / args.job_array < 1:
@@ -149,9 +181,9 @@ if __name__ == '__main__':
             os.mkdir(f'{str_met}_logs')
         except:
             pass
-        create_slurm_submit(MET, args.job_array, args.partition, args.email, args.walltime, args.account, args.mem_per_cpu, PATH_TO_POSYDON, PATH_TO_POSYDON_DATA)
+        create_slurm_submit(MET, args.job_array, args.partition, args.email, args.walltime, args.account, args.mem_per_cpu, PATH_TO_POSYDON, os.path.dirname(PATH_TO_POSYDON_DATA))
         print("SLURM script created")
-        create_slurm_merge(MET, args.partition, args.email, args.merge_walltime, args.account, args.mem_per_cpu, PATH_TO_POSYDON, PATH_TO_POSYDON_DATA)
+        create_slurm_merge(MET, args.partition, args.email, args.merge_walltime, args.account, args.mem_per_cpu, PATH_TO_POSYDON, os.path.dirname(PATH_TO_POSYDON_DATA))
 
     # create submission script for all SLURM 
     filename = 'slurm_submit.sh'
