@@ -215,4 +215,7 @@ def calculate_model_weights(pop_data, M_sim, simulation_parameters, population_p
                          q=pop_data['S2_mass_i']/pop_data['S1_mass_i'],
                          binary=binary_mask)
     
+    # An error is thrown if a weight is NaN or zero.
+    # The simulated weight should never be 0, unless there's a mistake.
+    
     return (weight_pop / weight_sim) * factor
