@@ -1,0 +1,11 @@
+[run]
+source = 
+    posydon.utils
+    posydon.config
+    posydon.popsyn.IMFs
+    posydon.popsyn.norm_pop
+branch = True
+
+[report]
+show_missing = True
+fail_under = 100

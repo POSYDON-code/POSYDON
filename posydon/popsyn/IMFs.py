@@ -59,7 +59,13 @@ class IMFBase(ABC):
 
     # This forces that the method is implemented in a sub-class
     @abstractmethod
-    def imf(self, m):
+    def imf(self, m): # pragma: no cover
+        '''Computes the IMF value for a given mass or array of masses 'm'.
+        
+        Raises
+        -------
+        Raises a NotImplementedError if the method is not implemented in a subclass.
+        ''' 
         pass
 
 class Salpeter(IMFBase):
