@@ -17,7 +17,34 @@ from posydon.popsyn.distributions import flat_mass_ratio, Sana12Period
 import posydon.popsyn.IMFs as IMFs
 
 def get_IMF_pdf(kwargs):
-    '''get the IMF pdf function'''
+    '''get the IMF pdf function
+    
+    Supported schemes based on the IMF module:
+    Additional parameters can be passed to the scheme
+    by adding them to the kwargs dictionary with the scheme name as the key
+    Example:
+    
+    ```
+    kwargs = {
+        'primary_mass_scheme': 'Salpeter',
+        'primary_mass_min': 0.1,
+        'primary_mass_max': 100,
+        'Salpeter': {'alpha': 2.35}
+    }
+    ```
+    
+    Parameters
+    ----------
+    kwargs : dict
+        Dictionary containing the parameters.
+        `primary_mass_scheme`, `primary_mass_min`, `primary_mass_max` are required.
+        Additional parameters are required depending on the scheme.
+    
+    Returns
+    -------
+    IMF_pdf : function
+        Function that returns the IMF PDF
+    '''
     
     primary_mass_scheme = kwargs.get('primary_mass_scheme', '')
     scheme_kwargs = kwargs.get(primary_mass_scheme, {})
@@ -35,7 +62,24 @@ def get_IMF_pdf(kwargs):
     return IMF_pdf
 
 def get_mass_ratio_pdf(kwargs):
-    """Function that returns the mass ratio PDF function"""
+    """Function that returns the mass ratio PDF function
+    
+    Supported schemes:
+    - `flat_mass_ratio` for `secondary_mass_scheme`
+        Requires the following parameters:
+        - `secondary_mass_min`
+        - `secondary_mass_max`
+    
+    Parameters
+    ----------
+    kwargs : dict
+        Dictionary containing the simulation parameters
+        
+    Returns
+    -------
+    pdf : function
+        Function that returns the mass ratio PDF
+    """
     if kwargs['secondary_mass_scheme'] == 'flat_mass_ratio' and ('q_min' not in kwargs and 'q_max' not in kwargs):
         # flat mass ratio, where bounds are dependent on m1 and min/max m2
         # and q_min = 0.05, q_max = 1
@@ -51,8 +95,23 @@ def get_mass_ratio_pdf(kwargs):
     return q_pdf
 
 def get_binary_fraction_pdf(kwargs):
-    '''get the binary fraction pdf function'''
+    '''get the binary fraction pdf function
     
+    Supported schemes:
+    - `const` with `binary_fraction_const`
+        requires the following parameters to be present:
+        - `binary_fraction_const`
+    
+    Parameters
+    ----------
+    kwargs : dict
+        Dictionary containing the parameters
+    
+    Returns
+    -------
+    pdf : function
+        Function that returns the binary fraction PDF
+    '''
     if kwargs['binary_fraction_scheme'] == 'const':
         f_b = kwargs['binary_fraction_const']
         binary_fraction_pdf = lambda binary: np.where(np.asarray(binary), f_b, 1-f_b)
@@ -63,7 +122,24 @@ def get_binary_fraction_pdf(kwargs):
     
     
 def get_period_pdf(kwargs):
+    """Function that returns the period PDF function
+    
+    Supported schemes:
+    - `Sana+12_period_extended` with `orbital_schem` set to `period`
+        Requires the following parameters:
+        - `orbital_period_min`
+        - `orbital_period_max`
+    
+    Parameters
+    ----------
+    kwargs : dict
+        Dictionary containing the simulation parameters
         
+    Returns
+    -------
+    pdf : function
+        Function that returns the period PDF    
+    """
     if kwargs['orbital_scheme'] == 'period' and kwargs['orbital_period_scheme'] == 'Sana+12_period_extended':
         P_pdf_class = Sana12Period(p_min=kwargs['orbital_period_min'],
                                    p_max=kwargs['orbital_period_max'])
@@ -72,9 +148,19 @@ def get_period_pdf(kwargs):
         pdf = lambda P=0, m1=0: 1
     return pdf
     
-
 def get_pdf(kwargs):
-    """Function that build a PDF function given the simulation parameters"""
+    """Function that build a PDF function given the simulation parameters
+    
+    Parameters
+    ----------
+    kwargs : dict
+        Dictionary containing the simulation parameters
+        
+    Returns
+    -------
+    pdf_function : function
+        Function that returns a probability density function
+    """
     
     IMF_pdf = get_IMF_pdf(kwargs)
     q_pdf = get_mass_ratio_pdf(kwargs)
@@ -87,9 +173,23 @@ def get_pdf(kwargs):
     )
     return pdf_function
 
-
 def get_mean_mass(PDF, params):
-    '''Calculate the mean mass of the population'''
+    '''Calculate the mean mass of the population
+    
+    Integrates the mass distribution to calculate the mean mass of the population
+    
+    Parameters
+    ----------
+    PDF : function
+        Probability density function
+    params : dict
+        Dictionary containing the MODEL parameters
+    
+    Returns
+    -------
+    mean_mass : float
+        Mean mass of the population
+    '''
     
     # integration bounds
     m1_min = params['primary_mass_min']
