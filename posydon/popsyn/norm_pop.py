@@ -198,7 +198,6 @@ def calculate_model_weights(pop_data, M_sim, simulation_parameters, population_p
     PDF_sim = get_pdf(simulation_parameters)
     PDF_pop = get_pdf(population_parameters)
     
-    
     # initial properties
     mean_mass_sim = get_mean_mass(PDF_sim, simulation_parameters)
     mean_mass_pop = get_mean_mass(PDF_pop, population_parameters)
@@ -214,8 +213,5 @@ def calculate_model_weights(pop_data, M_sim, simulation_parameters, population_p
     weight_sim = PDF_sim(m1=pop_data['S1_mass_i'],
                          q=pop_data['S2_mass_i']/pop_data['S1_mass_i'],
                          binary=binary_mask)
-    
-    # An error is thrown if a weight is NaN or zero.
-    # The simulated weight should never be 0, unless there's a mistake.
     
     return (weight_pop / weight_sim) * factor

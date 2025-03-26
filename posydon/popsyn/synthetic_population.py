@@ -1934,6 +1934,13 @@ class TransientPopulation(Population):
             M_sim = self.mass_per_metallicity['simulated_mass'].iloc[i]
             pop_data = self.oneline.select(where='index in '+str(met_indices.tolist()),
                                            columns=['S1_mass_i', 'S2_mass_i', 'orbital_period_i', 'eccentricity_i', 'state_i'])
+            # For some reason some binaries might be flipped in the sampling
+            # S2_mass_i > S1_mass_i; I don't understand why
+            S1_tmp = pop_data['S1_mass_i'].copy()
+            S2_tmp = pop_data['S2_mass_i'].copy()
+            pop_data['S1_mass_i'] = np.maximum(S1_tmp, S2_tmp)
+            pop_data['S2_mass_i'] = np.minimum(S1_tmp, S2_tmp)
+            del S1_tmp, S2_tmp
             
             calculated_weights =  calculate_model_weights(
                                                     pop_data=pop_data,
@@ -1942,7 +1949,6 @@ class TransientPopulation(Population):
                                                     population_parameters=population_parameters)
             weight_mapping = dict(zip(met_indices, calculated_weights))
             model_weights[model_weights_identifier] = model_weights.index.map(weight_mapping)
-        
         with pd.HDFStore(self.filename, mode="a") as store:
             if '/transients/' + self.transient_name + '/weights/' + model_weights_identifier in store.keys():
                 Pwarn("Model weights already exist! Overwriting them!", "OverwriteWarning")
