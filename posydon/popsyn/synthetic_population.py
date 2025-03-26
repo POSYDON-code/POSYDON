@@ -1939,6 +1939,14 @@ class TransientPopulation(Population):
             pop_data = self.oneline.select(where='index in '+str(met_indices.tolist()),
                                            columns=['S1_mass_i', 'S2_mass_i', 'orbital_period_i', 'eccentricity_i', 'state_i'])
             
+            # For some reason some binaries might be flipped in the sampling
+            # S2_mass_i > S1_mass_i; Unclear why this happens
+            S1_tmp = pop_data['S1_mass_i'].copy()
+            S2_tmp = pop_data['S2_mass_i'].copy()
+            pop_data['S1_mass_i'] = np.maximum(S1_tmp, S2_tmp)
+            pop_data['S2_mass_i'] = np.minimum(S1_tmp, S2_tmp)
+            del S1_tmp, S2_tmp
+            
             calculated_weights =  calculate_model_weights(
                                                     pop_data=pop_data,
                                                     M_sim=M_sim,
