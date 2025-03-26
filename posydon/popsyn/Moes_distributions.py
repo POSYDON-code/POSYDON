@@ -417,10 +417,11 @@ class Moe2017PsandQs():
             mycumPbindist = (self.cumPbindist[:,indM1]).flatten
             # If M1 < 0.8 Msun, rescale to appropriate binary star fraction
             if(M1 <= 0.8):
-                mycumPbindist = mycumPbindist() * np.interp(np.log10(M1),
-                                                            np.log10([M_min,
-                                                                      0.8]),
-                                                            [0.0, 1.0])
+                mycumPbindist = (mycumPbindist() * np.interp(np.log10(M1),
+                                                             np.log10([M_min,
+                                                                       0.8]),
+                                                             [0.0, 1.0])
+                                                            ).flatten
             # Given M1, determine the binary star fraction
             if all_binaries:
                 mybinfrac = 1.0
