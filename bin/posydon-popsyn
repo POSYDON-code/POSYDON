@@ -9,13 +9,15 @@
 # Author: Max Briel
 import os
 import argparse
-from posydon.popsyn.io import (binarypop_kwargs_from_ini, 
+from posydon.popsyn.io import (binarypop_kwargs_from_ini,
+                               simprop_kwargs_from_ini,
                                create_run_script_text,
                                create_merge_script_text)
 from posydon.config import PATH_TO_POSYDON, PATH_TO_POSYDON_DATA
 from posydon.popsyn.synthetic_population import Population
 from posydon.utils.common_functions import convert_metallicity_to_string
 from posydon.utils.posydonwarning import Pwarn
+from posydon.grids.MODELS import get_MODEL_NAME
 import glob
 import numpy as np
 
@@ -114,6 +116,32 @@ srun python ./merge_metallicity.py {metallicity}
     with open(filename, mode='w') as file:
         file.write(text)
 
+def check_SN_MODEL_validity(ini_file):
+    '''checks if the step_SN MODEL is valid for this script
+
+    Parameters
+    ----------
+    ini_file : str
+        the path to the ini file
+    
+    Returns
+    -------
+    bool
+        True if the MODEL is valid or use_interp_values=False, False otherwise    
+    '''
+
+    simprop_kwargs = simprop_kwargs_from_ini(ini_file)
+    step_SN_MODEL = simprop_kwargs['step_SN'][1]
+    # always allow the use of non-interpolation values
+    if step_SN_MODEL['use_interp_values'] == False:
+        return True
+    # step_SN MODEL check
+    MODEL_NAME_SEL = get_MODEL_NAME(step_SN_MODEL)
+
+    if MODEL_NAME_SEL is None:
+        return False
+    else:
+        return True
 
 def setup_popsyn_function(args):
     '''function to setup the population synthesis run
@@ -126,6 +154,9 @@ def setup_popsyn_function(args):
     if not os.path.exists(args.ini_file):
         raise FileNotFoundError(f'File {args.ini_file} not found')
     
+    if not check_SN_MODEL_validity(args.ini_file):
+        raise ValueError("The step_SN MODEL is not valid for this script. Please check the MODEL in the ini file")
+
     synpop_params = binarypop_kwargs_from_ini(args.ini_file)
     metallicities = synpop_params['metallicity']
     if synpop_params['number_of_binaries'] / args.job_array < 1:
