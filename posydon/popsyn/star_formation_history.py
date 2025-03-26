@@ -25,6 +25,8 @@ from posydon.utils.constants import Zsun
 from posydon.utils.interpolators import interp1d
 from astropy.cosmology import Planck15 as cosmology
 from abc import ABC, abstractmethod
+from posydon.utils.posydonwarning import Pwarn
+
 
 SFH_SCENARIOS = [
     "burst",
@@ -86,6 +88,10 @@ class SFHBase(ABC):
         -------
         float or array-like
             The cosmic star formation rate density at the given redshift(s).
+            
+        Raises
+        -------
+            NotImplementedError: If the subclass does not implement this method.  
         """
         pass
 
@@ -105,7 +111,11 @@ class SFHBase(ABC):
         Returns
         -------
         float or array-like
-            The mean metallicity at the given redshift(s).        
+            The mean metallicity at the given redshift(s).      
+            
+        Raises
+        -------
+            NotImplementedError: If the subclass does not implement this method.  
         """
         pass
         
@@ -153,21 +163,21 @@ class SFHBase(ABC):
             Fraction of the SFR in the given metallicity bin at the given redshift.
         '''
         fSFR = (np.array(cdf_func(metallicity_bins[1:]))
-                    - np.array(cdf_func(metallicity_bins[:-1])))
+                - np.array(cdf_func(metallicity_bins[:-1])))
                 
         # include material outside the metallicity bounds if requested
         if self.Z_max is not None:
             if self.Z_max >= metallicity_bins[-1]:
                 fSFR[-1] = cdf_func(self.Z_max) - cdf_func(metallicity_bins[-2])
             else:
-                print("Warning: Z_max is smaller than the highest metallicity bin.")
+                Pwarn('Z_max is smaller than the highest metallicity bin.')
                 fSFR[-1] = 0.0
 
         if self.Z_min is not None:
             if self.Z_min <= metallicity_bins[0]:
                 fSFR[0] = cdf_func(metallicity_bins[1]) - cdf_func(self.Z_min)
             else:
-                print("Warning: Z_min is larger than the lowest metallicity bin.")
+                Pwarn('Z_min is larger than the lowest metallicity bin.')
                 fSFR[0] = 0.0
             
         if self.normalise:
@@ -857,6 +867,8 @@ class Zavala21(MadauBase):
                                skiprows=1,
                                sep="\s+")
         self.redshifts = tmp_data["redshift"].values
+        # The min / max values originally come from their obscured 
+        # and unobscured SFRD model.
         if self.sub_model == "min":
             self.SFR_data = tmp_data["SFRD_min"].values
         elif self.sub_model == "max":
