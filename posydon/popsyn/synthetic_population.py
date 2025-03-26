@@ -2080,7 +2080,7 @@ class TransientPopulation(Population):
         # sample the SFH for only the events that are within the Hubble time
         # only need to sample the SFH at each metallicity and z_birth
         # Not for every event!        
-        SFR_per_met_at_z_birth = SFR_per_met_at_z(z_birth, met_edges, self.MODEL)
+        SFR_per_met_at_z_birth = SFR_per_met_at_z(z_birth, met_edges, rates.MODEL)
         
         # simulated mass per given metallicity corrected for the unmodeled
         # single and binary stellar mass
