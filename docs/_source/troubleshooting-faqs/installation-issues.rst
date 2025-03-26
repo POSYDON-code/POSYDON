@@ -20,7 +20,7 @@ To install the `libmamba` solver, run the following command in your environment 
 conda install conda-libmamba-solver
 ```
 
-This will install the libmamba solver, which is a drop-in replacement for the default `conda` solver.
+This will install the `libmamba` solver, which is a drop-in replacement for the default `conda` solver.
 This should speed up solving the environment and installing packages, but is not guaranteed to work in all cases.
 
 2. **Failed Dependencies**:
