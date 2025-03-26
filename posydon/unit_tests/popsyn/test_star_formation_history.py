@@ -113,6 +113,12 @@ class TestSFHBase:
         result = sfh._distribute_cdf(cdf_func, met_edges)
         np.testing.assert_allclose(np.sum(result), 1.0)
         
+        # Test model dict warning
+        model_dict = {"Z_max": 0.02, "Z_min": 0.0}
+        sfh = ConcreteSFH(model_dict)
+        with pytest.warns(UserWarning):
+            result = sfh._distribute_cdf(cdf_func, met_edges)
+        
         # Test with different model dicts
         model_dict = {"Z_max": 1, "Z_min": 0.015}
         sfh = ConcreteSFH(model_dict)
@@ -138,7 +144,6 @@ class TestSFHBase:
         sfh.normalise = True
         result = sfh._distribute_cdf(cdf_func, met_edges)
         np.testing.assert_allclose(np.sum(result), 1.0)
-    
     
     def test_call_method(self):
         """Test the __call__ method."""
@@ -425,7 +430,6 @@ class TestIllustrisTNG:
         result = illustris_model.mean_metallicity(z_values)
         
         # Calculate expected values manually
-        expected = np.zeros(len(z_values))
         flipped_redshifts = np.flip(mock_illustris_data["redshifts"])
         flipped_masses = np.flip(mock_illustris_data["M"], axis=0)
         metallicities = mock_illustris_data["mets"]
@@ -440,6 +444,11 @@ class TestIllustrisTNG:
                 out[i] = np.average(metallicities, weights=weights)
         Z_interp = np.interp(z_values, flipped_redshifts, out)
         np.testing.assert_allclose(result, Z_interp)
+        
+        # Test empty mass array
+        flipped_masses[0] = np.zeros_like(flipped_masses[0])
+        with pytest.raises(AssertionError):
+            result = illustris_model.mean_metallicity(z_values)
     
     def test_fsfr_calculation(self, illustris_model):
         """Test the fSFR method."""
@@ -458,6 +467,12 @@ class TestIllustrisTNG:
         for row in result:
             if np.sum(row) > 0:
                 np.testing.assert_allclose(np.sum(row), 1.0)
+                
+        # Test for Z_dist[i].sum = 0
+        # Force the first mass array to be all zeros
+        illustris_model.M[0] = np.zeros_like(illustris_model.M[0])
+        result = illustris_model.fSFR(z, met_bins)
+        np.testing.assert_allclose(result[0], np.zeros_like(result[0]))
 
 class TestMadauDickinson14:
     """Tests for the MadauDickinson14 SFH model"""
@@ -740,6 +755,11 @@ class TestChruslinska21:
         assert np.isclose(result[0], result[1])
         assert np.isclose(result[0], result[2])
         assert np.isclose(result[0], 0.0014903210118641882)
+        
+        # Test with SFR_data == 0
+        chruslinska_model.SFR_data = np.zeros_like(chruslinska_model.SFR_data)
+        with pytest.raises(AssertionError):
+            result = chruslinska_model.mean_metallicity(z_values)
     
     def test_csfrd_calculation(self, chruslinska_model, mock_chruslinska_data):
         """Test the CSFRD method."""
@@ -769,6 +789,14 @@ class TestChruslinska21:
         for row in result:
             if np.sum(row) > 0:
                 np.testing.assert_allclose(np.sum(row), 1.0)
+        
+        # Test with Z_dist[i].sum = 0
+        # Force the first mass array to be all zeros
+        chruslinska_model.SFR_data[0] = np.zeros_like(chruslinska_model.SFR_data[0])
+        result = chruslinska_model.fSFR(z, met_bins)
+        np.testing.assert_allclose(result[0], np.zeros_like(result[0]))
+                
+                
 
 class TestZavala21:
     """Tests for the Zavala21 SFH model with mocked data loading."""
@@ -896,3 +924,141 @@ class TestGetSFHModel:
         model = get_SFH_model(model_dict)
         assert isinstance(model, Fujimoto24)
     
+    def test_illustris_tng_model(self, monkeypatch):
+        """Test that get_SFH_model returns IllustrisTNG instance."""
+        # Mock the data loading method
+        def mock_get_data(self, verbose=False):
+            # Return minimal mock data structure
+            return {
+                "SFR": np.array([0.1, 0.2, 0.3]),
+                "redshifts": np.array([0.0, 1.0, 2.0]),
+                "mets": np.array([0.001, 0.01, 0.02]),
+                "M": np.ones((3, 3))
+            }
+        
+        # Patch the data loading method
+        monkeypatch.setattr(IllustrisTNG, "_get_illustrisTNG_data", mock_get_data)
+        
+        # Test the model creation
+        model_dict = {"SFR": "IllustrisTNG", "Z_max": 0.03}
+        model = get_SFH_model(model_dict)
+        assert isinstance(model, IllustrisTNG)
+    
+    def test_chruslinska_model(self, monkeypatch):
+        """Test that get_SFH_model returns Chruslinska21 instance."""
+        # Mock the methods needed for initialization
+        def mock_load_data(self):
+            # Minimal setup to make initialization work
+            self.FOH_bins = np.linspace(5.3, 9.7, 10)
+            self.dFOH = self.FOH_bins[1] - self.FOH_bins[0]
+            self.Z = np.array([0.001, 0.01, 0.02])
+            self.redshifts = np.array([0.0, 1.0, 2.0])
+            self.SFR_data = np.ones((3, 10))
+            
+        def mock_load_redshift(self, verbose=False):
+            # Return mock time, redshift, deltaT
+            return (np.array([1e9, 2e9, 3e9]), 
+                   np.array([0.0, 1.0, 2.0]), 
+                   np.array([1e9, 1e9, 1e9]))
+            
+        def mock_load_raw(self):
+            # Return mock data matrix
+            return np.ones((3, 10)) * 1e6
+        
+        # Patch the methods
+        monkeypatch.setattr(Chruslinska21, "_load_chruslinska_data", mock_load_data)
+        monkeypatch.setattr(Chruslinska21, "_load_redshift_data", mock_load_redshift)
+        monkeypatch.setattr(Chruslinska21, "_load_raw_data", mock_load_raw)
+        
+        # Test the model creation
+        model_dict = {
+            "SFR": "Chruslinska+21",
+            "sub_model": "test",
+            "Z_solar_scaling": "Asplund09",
+            "Z_max": 0.03
+        }
+        model = get_SFH_model(model_dict)
+        assert isinstance(model, Chruslinska21)
+    
+    def test_zavala_model(self, monkeypatch):
+        """Test that get_SFH_model returns Zavala21 instance."""
+        # Mock the data loading method
+        def mock_load_data(self):
+            # Set required attributes directly
+            self.redshifts = np.array([0.0, 1.0, 2.0])
+            if self.sub_model == "min":
+                self.SFR_data = np.array([0.1, 0.08, 0.06])
+            else:
+                self.SFR_data = np.array([0.2, 0.16, 0.12])
+        
+        # Patch the data loading method
+        monkeypatch.setattr(Zavala21, "_load_zavala_data", mock_load_data)
+        
+        # Test for min model
+        model_dict = {
+            "SFR": "Zavala+21", 
+            "sub_model": "min",
+            "sigma": 0.5,
+            "Z_max": 0.03
+        }
+        model = get_SFH_model(model_dict)
+        assert isinstance(model, Zavala21)
+        assert model.sub_model == "min"
+        
+        # Test for max model
+        model_dict = {
+            "SFR": "Zavala+21", 
+            "sub_model": "max",
+            "sigma": 0.5,
+            "Z_max": 0.03
+        }
+        model = get_SFH_model(model_dict)
+        assert isinstance(model, Zavala21)
+        assert model.sub_model == "max"
+    
+    def test_invalid_model(self):
+        """Test that get_SFH_model raises an error for an invalid model."""
+        
+        model_dict = {"SFR": "InvalidModel", "sigma": 0.5, "Z_max": 0.03}
+        with pytest.raises(ValueError) as excinfo:
+            model = get_SFH_model(model_dict)
+        assert "Invalid SFR!" in str(excinfo.value)
+
+class TestSFHUtilityFunctions:
+    """Tests for utility functions in the star_formation_history module."""
+    
+    def test_SFR_per_met_at_z(self, monkeypatch):
+        """Test that SFR_per_met_at_z correctly calls the model."""
+        # Create a mock model result
+        expected_result = np.array([[0.1, 0.2], [0.3, 0.4]])
+        
+        # Mock SFH model class
+        class MockSFH:
+            def __call__(self, z, met_bins):
+                return expected_result
+        
+        mock_model = MockSFH()
+        
+        # Mock the get_SFH_model function to return our mock model
+        def mock_get_sfh_model(MODEL):
+            assert MODEL["SFR"] == "TestModel"  # Verify correct model is requested
+            assert MODEL["param"] == "value"    # Verify parameters are passed
+            return mock_model
+        
+        # Patch the function
+        monkeypatch.setattr(
+            "posydon.popsyn.star_formation_history.get_SFH_model",
+            mock_get_sfh_model
+        )
+        
+        # Test the function
+        from posydon.popsyn.star_formation_history import SFR_per_met_at_z
+        
+        z = np.array([0.0, 1.0])
+        met_bins = np.array([0.001, 0.01, 0.02])
+        model_dict = {"SFR": "TestModel", "param": "value"}
+        
+        result = SFR_per_met_at_z(z, met_bins, model_dict)
+        
+        # Verify the result
+        np.testing.assert_array_equal(result, expected_result)

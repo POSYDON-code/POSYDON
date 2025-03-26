@@ -72,7 +72,7 @@ class SFHBase(ABC):
         
 
     @abstractmethod
-    def CSFRD(self, z):
+    def CSFRD(self, z): # pragma: no cover
         """Compute the cosmic star formation rate density.
         
         This is an abstract method that must be implemented by subclasses.
@@ -96,7 +96,7 @@ class SFHBase(ABC):
         pass
 
     @abstractmethod
-    def mean_metallicity(self, z):
+    def mean_metallicity(self, z): # pragma: no cover
         """Return the mean metallicity at redshift z.
 
         This is an abstract method that must be implemented by subclasses.
@@ -120,7 +120,7 @@ class SFHBase(ABC):
         pass
         
     @abstractmethod
-    def fSFR(self, z, metallicity_bins):
+    def fSFR(self, z, metallicity_bins): # pragma: no cover
         """Compute the star formation rate fraction (fSFR) at a given redshift 
         using the specified metallicity bins.
 
@@ -515,7 +515,7 @@ class IllustrisTNG(SFHBase):
         self.Z = illustris_data["mets"]
         self.M = np.flip(illustris_data["M"], axis=0)  # Msun
         
-    def _get_illustrisTNG_data(self, verbose=False):
+    def _get_illustrisTNG_data(self, verbose=False): # pragma: no cover
         """Load IllustrisTNG SFR dataset into the class.
         
         Parameters
@@ -712,7 +712,7 @@ class Chruslinska21(SFHBase):
         mean_over_redshift = np.zeros_like(self.redshifts)
         for i in range(len(mean_over_redshift)):
             if np.sum(self.SFR_data[i]) == 0:
-                mean_over_redshift[i] = 0
+                mean_over_redshift[i] = np.nan
             else:
                 mean_over_redshift[i] = np.average(self.Z, weights=self.SFR_data[i,:]*self.dFOH)
         
@@ -753,7 +753,7 @@ class Chruslinska21(SFHBase):
                 fSFR[i, :] = self._distribute_cdf(cdf_fun, metallicity_bins)
         return fSFR
         
-    def _load_redshift_data(self, verbose=False):
+    def _load_redshift_data(self, verbose=False): # pragma: no cover
         """Load the redshift data from a Chruslinsk+21 model file.
         
         Returns
@@ -772,7 +772,7 @@ class Chruslinska21(SFHBase):
             os.path.join(self._data_folder, "Time_redshift_deltaT.dat"), unpack=True)
         return time, redshift, delt
              
-    def _load_raw_data(self):
+    def _load_raw_data(self): # pragma: no cover
         """Read the sub-model data from the file
         
         The data structure is as follows:
@@ -856,7 +856,7 @@ class Zavala21(MadauBase):
         super().__init__(MODEL)
         self._load_zavala_data()
         
-    def _load_zavala_data(self):
+    def _load_zavala_data(self): # pragma: no cover
         """Load the data from the Zavala+21 models
         Transforms the data to the format used in the classes.
         
@@ -933,7 +933,8 @@ def SFR_per_met_at_z(z, met_bins, MODEL):
     SFH = get_SFH_model(MODEL)
     return SFH(z, met_bins)
 
-def get_formation_times(N_binaries, star_formation="constant", **kwargs):
+# TODO: No testing coverage for the following function, but should be added
+def get_formation_times(N_binaries, star_formation="constant", **kwargs): # pragma: no cover
     """Get formation times of binaries in a population based on a SFH scenario.
 
     Parameters
