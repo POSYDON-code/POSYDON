@@ -1949,6 +1949,7 @@ class TransientPopulation(Population):
                                                     population_parameters=population_parameters)
             weight_mapping = dict(zip(met_indices, calculated_weights))
             model_weights[model_weights_identifier] = model_weights.index.map(weight_mapping)
+            
         with pd.HDFStore(self.filename, mode="a") as store:
             if '/transients/' + self.transient_name + '/weights/' + model_weights_identifier in store.keys():
                 Pwarn("Model weights already exist! Overwriting them!", "OverwriteWarning")
@@ -2033,7 +2034,7 @@ class TransientPopulation(Population):
         if MODEL_in is None:
             MODEL = DEFAULT_MODEL
         else:
-            # write the DEFAULT_MODEL with updates parameters to self.MODEL.
+            # write the DEFAULT_MODEL with updates parameters to MODEL.
             MODEL = DEFAULT_MODEL
             MODEL.update(MODEL_in)
 
@@ -2080,7 +2081,7 @@ class TransientPopulation(Population):
         # sample the SFH for only the events that are within the Hubble time
         # only need to sample the SFH at each metallicity and z_birth
         # Not for every event!        
-        SFR_per_met_at_z_birth = SFR_per_met_at_z(z_birth, met_edges, self.MODEL)
+        SFR_per_met_at_z_birth = SFR_per_met_at_z(z_birth, met_edges, rates.MODEL)
         
         # the weight per model
         M_model = self.model_weights(model_weights_identifier=model_weights)
