@@ -170,6 +170,7 @@ class SFHBase(ABC):
             if self.Z_max >= metallicity_bins[-1]:
                 fSFR[-1] = cdf_func(self.Z_max) - cdf_func(metallicity_bins[-2])
             else:
+                print(f"Z_max is smaller than the highest metallicity bin.")
                 Pwarn('Z_max is smaller than the highest metallicity bin.')
                 fSFR[-1] = 0.0
 

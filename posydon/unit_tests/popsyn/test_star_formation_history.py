@@ -66,7 +66,7 @@ class TestSFHBase:
         with pytest.raises(ValueError) as excinfo:
             sfh = ConcreteSFH(model_dict)
         assert "Z_min must be in absolute units!" in str(excinfo.value)
-    
+        
     def test_abstract_methods(self):
         """Test that abstract methods must be implemented."""
         # Create incomplete subclasses that don't implement all abstract methods
@@ -97,13 +97,13 @@ class TestSFHBase:
             def fSFR(self, z, metallicity_bins):
                 return np.ones((len(z), len(metallicity_bins)-1))
         
-        model_dict = {"Z_max": 1, "Z_min": 0.0}
-        sfh = ConcreteSFH(model_dict)
-        
         # Create a simple CDF functions
         cdf_func = lambda x: x
         met_edges = np.array([0.0, 0.01, 0.02, 0.03])
         
+        
+        model_dict = {"Z_max": 1, "Z_min": 0.0}
+        sfh = ConcreteSFH(model_dict)
         result = sfh._distribute_cdf(cdf_func, met_edges)
         expected = np.array([0.01, 0.01, 0.98])
         np.testing.assert_allclose(result, expected)
@@ -112,6 +112,12 @@ class TestSFHBase:
         sfh.normalise = True
         result = sfh._distribute_cdf(cdf_func, met_edges)
         np.testing.assert_allclose(np.sum(result), 1.0)
+
+        # test no Z_min/Z_max set
+        model_dict = {}
+        sfh = ConcreteSFH(model_dict)
+        result = sfh._distribute_cdf(cdf_func, met_edges)
+        np.testing.assert_allclose(result, 0.01 * np.ones(3))
         
         # Test model dict warning
         model_dict = {"Z_max": 0.02, "Z_min": 0.0}
@@ -144,7 +150,8 @@ class TestSFHBase:
         sfh.normalise = True
         result = sfh._distribute_cdf(cdf_func, met_edges)
         np.testing.assert_allclose(np.sum(result), 1.0)
-    
+        
+
     def test_call_method(self):
         """Test the __call__ method."""
         class ConcreteSFH(SFHBase):
