@@ -14,6 +14,8 @@ import astropy.units as unt
 import pymsg
 from posydon.spectral_synthesis.default_options import default_grid_kwargs
 from posydon.spectral_synthesis.spectral_tools import grid_global_limits
+from posydon.spectral_synthesis.libs.lib_tools import get_nearest_neighbor
+
 kpc = 3.08e19*unt.m
 MSG_DIR = os.environ['MSG_DIR']
 GRID_DIR = os.path.join(MSG_DIR, 'data', 'grids')
@@ -139,6 +141,17 @@ class spectral_grids():
             
         return Flux*distance_factor
 
+    def NN_grid_flux(self, name, **kwargs):
+        #We need to find the files_name:
+        file_name = self.kwargs[name]
+        if file_name is None:
+            raise AttributeError("This grid doesn't correspond to a file name")
+        x = copy.copy(kwargs)
+        new_x = get_nearest_neighbor(file_name,x)
+        Flux = self.grid_flux(name,**new_x)
+        #Normalizing the new flux to correspond to the correct star temperature
+        temp_norm_factor = (x['Teff']/new_x['Teff'])**4 
+        return temp_norm_factor*Flux
 
     def photgrid_constructor(self, **kwargs):
         """Construct a dictionary of photogrids."""
