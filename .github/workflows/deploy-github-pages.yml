@@ -50,7 +50,7 @@ jobs:
 
     - name: Make Documentation
       env:
-        PATH_TO_POSYDON: ../
+        PATH_TO_POSYDON: $GITHUB_WORKSPACE/POSYDON/
         PATH_TO_POSYDON_DATA: ../
         MESA_DIR: ../
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -60,7 +60,7 @@ jobs:
         echo "v1 filtered tags:"
         echo $TAGS
 
-        mkdir ../docs
+        mkdir $GITHUB_WORKSPACE/docs
 
         # build the documentation for each tag
         for tag in $TAGS
@@ -76,7 +76,7 @@ jobs:
 
           # move and copy docs out of the POSYDON folder
           cd ../
-          mv POSYDON/docs/_build/html/ docs/$tag_without_v
+          mv POSYDON/docs/_build/html/ $GITHUB_WORKSPACE/docs/$tag_without_v
 
           # cleanup for the next build
           cd POSYDON/docs
@@ -88,7 +88,7 @@ jobs:
       uses: crazy-max/ghaction-github-pages@v2
       with:
         target_branch: gh-pages
-        build_dir: docs/
+        build_dir: $GITHUB_WORKSPACE/docs/
         dry_run: true
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -169,7 +169,16 @@ jobs:
           make clean
           cd ../
         done
-        
+
+        # build the documentation for the development branch
+        git checkout development
+        python -m pip install .[doc]
+        cd docs
+        make html
+        cd ../
+        touch docs/_build/html/.nojekyll
+        mv POSYDON/docs/_build/html/ $GITHUB_WORKSPACE/docs/development
+
     - name: Deploy to GitHub Pages
       if: success()
       uses: crazy-max/ghaction-github-pages@v2
