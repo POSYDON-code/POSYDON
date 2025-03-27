@@ -34,7 +34,7 @@ by the individual MESA runs as well as the functionality for slurm to run the
 grid.
 
 Now that we have our directory, we need to create two separate files: a file
-containing the list of binaries we want to evolve and an .ini file that
+contang the list of binaries we want to evolve and an :samp:`ini` file that
 contains all the parameters associated with running the grid. Let's start with
 the list of binaries we want to evolve. For the case of this example, let's
 evolve a series of high-mass X-ray binaries with neutron star accretors at a
@@ -55,18 +55,18 @@ the same name as a variable in MESA. However, these three parameters ought to
 always be specified, otherwise you will be evolving a binary with a default
 orbital period and masses.
 
-As for the .ini file, you can copy over the `example
+As for the :samp:`ini` file, you can copy over the `example
 <https://github.com/POSYDON-code/POSYDON/blob/development/grid_params/grid_params.ini>`_
 from the :ref:`inifile` page, which provides a more detailed description of all
 the entries. Make sure to carefully go through each of the separate entries and
-adjust them for your particular needs. Place that .ini file (which we have
+adjust them for your particular needs. Place that :samp:`ini` file (which we have
 named `example_grid.ini`) in the example_grid directory.
 
 Now, with our `grid.csv` and `example_grid.ini` files ready to go, we use a
 POSYDON script `posydon-setup-grid` to generate all the necessary files to run
 the grid using slurm. Note the different arguments here. We are designating
 that: 1) we are using a fixed grid, 2) that our job scheduler is slurm, and 3)
-the name of the .ini file. We may expand compatibility for other job
+the name of the :samp:`ini` file. We may expand compatibility for other job
 schedulers in the future, but for now slurm is the only implemented option.
 
 .. code-block::
@@ -101,7 +101,7 @@ cleanup:
   compressed and will be kept in place, hence getting a file extension `.gz`
   added)
 - changing the owning group and permissions (this will only be done if a new
-  group was specified in the .ini file in the setup)
+  group was specified in the :samp:`ini` file in the setup)
 
 Once the grid of runs is completed, we recommend you use our provided PSyGrid
 functionality to examine and collate the individual binary runs
@@ -114,7 +114,7 @@ Non-default evolutionary parameters
 If you want to change the binary evolution parameters so you are using
 non-default options, we have constructed a hierarchy of MESA inlists. You can
 provide a non-default option in your own user-provided MESA inlist, which is
-explicitly linked in the inifile (make sure you uncomment the appropriate
+explicitly linked in the :samp:`ini` file (make sure you uncomment the appropriate
 lines). We additionally provide the capability to use your own
 `run_star_extras.f` and `run_binary_extras.f` as well as provide your own list
 of history and profile columns. See :ref:`inifile` for details.
