@@ -15,42 +15,74 @@ jobs:
         python-version: [3.11]
 
     steps:
-    - uses: actions/checkout@v4
-    - name: Set up Python ${{ matrix.python-version }}
+
+    - 
+      name: Checkout repository
+      uses: actions/checkout@v4
+    - 
+      name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v5
       with:
         python-version: ${{ matrix.python-version }}
-    - name: Get pip cache dir
+    - 
+      name: Get pip cache dir
       id: pip-cache
       run: |
         python -m pip install --upgrade pip
         echo "::set-output name=dir::$(pip cache dir)"
-    - name: pip cache
+    - 
+      name: pip cache
       uses: actions/cache@v4
       with:
         path: ${{ steps.pip-cache.outputs.dir }}
         key: ${{ runner.os }}-pip-${{ hashFiles('**/setup.py', '**/requirements.txt') }}
         restore-keys: |
           ${{ runner.os }}-pip-
-    - name: Install dependencies
+    - 
+      name: Install dependencies
       run: |
-        sudo apt-get update
-        sudo apt-get install gfortran swig libhdf5-serial-dev libmpich-dev
-        sudo apt-get install pandoc
         python -m pip install pandoc
         python -m pip install coverage cpp-coveralls flake8 pytest
         python -m pip install .[doc]
-    - name: Make dependencies
+    - 
+      name: Make Documentation
       env:
         PATH_TO_POSYDON: /home/runner/work/POSYDON/POSYDON/
-      run: |
-        cd docs && make html; cd ../
-        touch docs/_build/html/.nojekyll
-    - name: Deploy to GitHub Pages
-      if: success()
-      uses: crazy-max/ghaction-github-pages@v2
-      with:
-        target_branch: gh-pages
-        build_dir: docs/_build/html/
-      env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        # update the available tags
+        # git fetch --tags
+
+        TAGS=$(git tag -l | sort -V)
+        echo "Available tags: "
+        echo $TAGS
+
+        # build the documentation for each tag
+        for tag in $TAGS
+        do
+          echo "Checking out tag: $tag"
+          git checkout $tag
+          cd docs
+          make html
+          cd ../
+          touch docs/_build/html/.nojekyll
+          tag_without_v=${tag//v}
+          mv docs/_build/html/ docs/_build/$tag_without_v
+        done
+
+        # build the documentation for the development branch
+        git checkout development
+        cd docs
+        make html
+        cd ../
+        touch docs/_build/html/.nojekyll
+        mv docs/_build/html/ docs/_build/development
+    # - 
+      # name: Deploy to GitHub Pages
+      # if: success()
+      # uses: crazy-max/ghaction-github-pages@v2
+      # with:
+      #   target_branch: gh-pages
+      #   build_dir: docs/_build/
+      # env:
+      #   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

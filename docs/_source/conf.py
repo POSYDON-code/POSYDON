@@ -11,12 +11,13 @@ import sys
 import os
 import re
 import datetime
+import subprocess
 
 from PSphinxTheme import utils
 from posydon import __version__ as posydon_version
 
 # Rewrite posydon_version for docs developement
-posydon_version = 'v2.0.0-dev'
+#posydon_version = 'v2.0.0-dev'
 
 
 # -- Project information -----------------------------------------------------
@@ -25,11 +26,53 @@ project = u'POSYDON'
 copyright =f'{datetime.datetime.now().year}, Tassos Fragos'
 author = u'POSYDON Collaboration'
 
-# The short X.Y version.
-version = posydon_version
-# The full version, including alpha/beta/rc tags.
-release = posydon_version
+# -- Multi-version configuration -------------------------------------------
+# Get versions from github tags
 
+def get_github_tags():
+    '''Get the tags from the github repository
+    
+    Returnsimport su
+    -------
+    list of str
+        A list of tags sorted by version, without the 'v' prefix
+
+    '''
+    try:
+        # Get the tags from the github repository
+        # this looks
+        tags = subprocess.check_output(['git', 'tag'], universal_newlines=True).strip().split('\n')
+        
+        version_tags = []
+        for tag in tags:
+            # Skip tags that don't look like versions
+            if tag.startswith('v'):
+                tag_clean = tag[1:]
+                version_tags.append(tag_clean)
+            else:
+                continue
+        version_tags.sort()
+        return version_tags
+    
+    except Exception as e:
+        print(f"Error getting tags from github: {e}")
+        return []
+    
+github_tags = get_github_tags()
+
+# get latest tag version
+latest_version = github_tags[-1]
+
+url_list = [f'{tag}' for tag in github_tags]
+versions = [[tag, url] for tag, url in zip(github_tags, url_list)] 
+# add development version
+versions.append(['dev', 'development'])
+
+# Versions to be shown in the version dropdown
+html_context = {
+  'current_version' : latest_version,
+  'versions' : versions,
+}
 
 # -- Path setup ----------------------------------------------------------
 # Point towards the posydon source code directory
@@ -103,9 +146,6 @@ else:
     parts.extend(('fig.show()', 'plot.show()'))
     docscrape_sphinx.IMPORT_MATPLOTLIB_RE = r'\b({})\b'.format('|'.join(parts))
 
-# Add any paths that contain templates here, relative to this directory.
-templates_path = ['_templates']
-
 # The suffix(es) of source filenames.
 # You can specify multiple suffix as a list of string:
 # source_suffix = ['.rst', '.md']
@@ -122,7 +162,10 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'posydon'
-copyright = u'2024, Tassos Fragos'
+
+# Get the current year
+current_year = datetime.datetime.now().year
+copyright = u'{}, Tassos Fragos'.format(current_year)
 author = u'POSYDON Collaboration'
 
 # The version info for the project you're documenting, acts as replacement for

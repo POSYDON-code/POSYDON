@@ -1,0 +1,19 @@
+
+<!-- Followed from
+ https://www.codingwiththomas.com/blog/my-sphinx-best-practice-for-a-multiversion-documentation-in-different-languages -->
+<div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      Version: {{ current_version }}
+      <span class="fa fa-caret-down"></span>
+    </span>
+    <div class="rst-other-versions">
+        {% if version | length > 1 %}
+        <dl>
+            <dt> {{ _('Versions') }}</dt>
+            {% for the_version, url in versions %}
+            <dd><a href="{{ url }}/index.html">{{ the_version }}</a></dd>
+            {% endfor %}
+        </dL>
+        {% endif %}
+    </div>
+  </div>
