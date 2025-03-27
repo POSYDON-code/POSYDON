@@ -32,7 +32,7 @@ author = u'POSYDON Collaboration'
 def get_github_tags():
     '''Get the tags from the github repository
     
-    Returnsimport su
+    Returns
     -------
     list of str
         A list of tags sorted by version, without the 'v' prefix
