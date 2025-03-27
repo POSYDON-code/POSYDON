@@ -71,8 +71,6 @@ jobs:
         echo "v1 filtered tags:"
         echo $TAGS
 
-        mkdir $output_folder
-
         # build the documentation for each tag
         for tag in $TAGS
         do

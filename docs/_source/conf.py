@@ -60,8 +60,8 @@ def get_github_tags():
     
 github_tags = get_github_tags()
 
-# get latest tag version
-latest_version = github_tags[-1]
+# get current version
+current_version = posydon_version
 
 url_list = [f'{tag}' for tag in github_tags]
 versions = [[tag, url] for tag, url in zip(github_tags, url_list)] 
@@ -70,7 +70,7 @@ versions.append(['dev', 'development'])
 
 # Versions to be shown in the version dropdown
 html_context = {
-  'current_version' : latest_version,
+  'current_version' : current_version,
   'versions' : versions,
 }
 
