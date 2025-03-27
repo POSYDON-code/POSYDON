@@ -1765,7 +1765,7 @@ class TransientPopulation(Population):
 
     """
 
-    def __init__(self, filename, transient_name, verbose=False, chunksize=100000):
+    def __init__(self, filename, transient_name, verbose=False, chunksize=1000000):
         """Initialise the TransientPopulation object.
 
         This method initializes the TransientPopulation object by linking it to the population file.
