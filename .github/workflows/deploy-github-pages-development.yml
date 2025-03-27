@@ -1,0 +1,82 @@
+name: Website Deploy on Development
+
+on:
+  push:
+    branches:
+      - development
+
+jobs:
+  build_development:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+  
+    - name: Get pip cache dir
+      id: pip-cache
+      run: |
+        python -m pip install --upgrade pip
+        echo "::set-output name=dir::$(pip cache dir)"
+
+    - name: Load pip cache
+      uses: actions/cache@v4
+      with:
+        path: ${{ steps.pip-cache.outputs.dir }}
+        key: ${{ runner.os }}-pip-${{ hashFiles('**/setup.py', '**/requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+
+    - name: Install dependencies
+      run: |
+        # install pandoc for the documentation
+        sudo apt-get update -y
+        sudo apt-get install gfortran swig libhdf5-serial-dev libmpich-dev -y
+        sudo apt-get install pandoc -y
+
+        # install the dependencies in python
+        python -m pip install pandoc
+        python -m pip install coverage cpp-coveralls flake8 pytest
+
+    - name: Make Documentation
+      env:
+        PATH_TO_POSYDON: ./
+        PATH_TO_POSYDON_DATA: ./
+        MESA_DIR: ./
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        export PATH_TO_POSYDON=$GITHUB_WORKSPACE
+        
+        # build the documentation for the development branch
+        git checkout -f development
+
+        # clean the repo & install install
+        git clean -fdx
+        python -m pip install .[doc,vis]
+      
+        # build the documentation
+        cd docs && make html
+
+        # move and copy docs out of the POSYDON folder
+        touch _build/html/.nojekyll
+        cd ../
+        mv docs/_build/html/ _build/development
+
+    - name: Deploy to GitHub Pages
+      if: success()
+      uses: crazy-max/ghaction-github-pages@v4
+      with:
+        target_branch: gh-pages
+        build_dir: _build/
+        dry_run: true
+        history: true
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_WORKSPACE: ${{ github.workspace }}
