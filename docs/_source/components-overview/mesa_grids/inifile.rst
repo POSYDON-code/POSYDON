@@ -1,31 +1,31 @@
 .. _inifile:
 
 #########################################
-.ini file documentation for POSYDON GRIDS
+ini file documentation for POSYDON GRIDS
 #########################################
 
 How to write a configuration file
 ==================================
 
 The `posydon-setup-grid` command-line executable cannot run without a
-configuration file. This .ini file needs to specify all aspects of the MESA
+configuration file. This :samp:`ini` file needs to specify all aspects of the MESA
 simulation that are static, i.e. those parts that are shared amongst every MESA
-simulation in your grid. The design of the .ini file file is such that it will
+simulation in your grid. The design of the :samp:`ini` file file is such that it will
 start with the MESA defaults for every possible MESA parameter, stack on top of
 that the POSYDON suggested defaults, and then finally, if supplied, stack user
 specific parameters on top of both the MESA defaults and the POSYDON defaults.
 This scheme requires a high-performance computing environment with SLURM
 installed.
 
-Below we describe each section of the .ini file and what each value corresponds
+Below we describe each section of the :samp:`ini` file and what each value corresponds
 to. In general, lines with capitalized quantities surrounded by {} are
 quantities that need to be adjusted for your specific case.
 
-Here is a link to the most recent stable release version of the default .ini file
+Here is a link to the most recent stable release version of the default :samp:`ini` file
 for POSYDON:
 `Stable Version INIFILE <https://github.com/POSYDON-code/POSYDON/blob/main/grid_params/grid_params.ini>`_
 
-Here is a link to the unstable development version of the default .ini file for
+Here is a link to the unstable development version of the default :samp:`ini` file for
 POSYDON:
 `Development Version INIFILE <https://github.com/POSYDON-code/POSYDON/blob/development/grid_params/grid_params.ini>`_
 
