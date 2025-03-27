@@ -16,6 +16,7 @@ jobs:
       uses: actions/checkout@v4
       with:
         fetch-tags: true
+        path: 'POSYDON'
 
     - name: Set up Python
       uses: actions/setup-python@v5
@@ -46,20 +47,29 @@ jobs:
         # install the dependencies in python
         python -m pip install pandoc
         python -m pip install coverage cpp-coveralls flake8 pytest
+        # required for python 3.7
         python -m pip install wheel
 
     - name: Make Documentation
       env:
-        PATH_TO_POSYDON: $GITHUB_WORKSPACE/POSYDON/
-        PATH_TO_POSYDON_DATA: ../
-        MESA_DIR: ../
+        PATH_TO_POSYDON: ./
+        PATH_TO_POSYDON_DATA: ./
+        MESA_DIR: ./
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
+        # make the output folder
+        output_folder=$GITHUB_WORKSPACE/_build/
+        echo "Output folder: $output_folder"
+        mkdir $output_folder
+        
+        # move to the repository folder
+        export PATH_TO_POSYDON=$GITHUB_WORKSPACE/POSYDON
+        cd $PATH_TO_POSYDON
+
         # get the available tags
         TAGS=$(git tag -l | sort -V | grep "v1")
         echo "v1 filtered tags:"
         echo $TAGS
-        output_folder=~/docs/
 
         mkdir $output_folder
 
@@ -67,23 +77,24 @@ jobs:
         for tag in $TAGS
         do
           echo "Checking out tag: $tag"
-          git checkout $tag
-          python -m pip install .[doc]
+          git checkout -f $tag
+          git clean -fdx
+          python -m pip install .[doc,vis]
+
+          # build the documentation
           cd docs
           make html
-          cd ../
-          touch docs/_build/html/.nojekyll
-          tag_without_v=${tag//v}
-
+          touch _build/html/.nojekyll
+          
           # move and copy docs out of the POSYDON folder
-          cd ../
-          mv POSYDON/docs/_build/html/ $output_folder/$tag_without_v
+          tag_without_v=${tag//v}
+          mv _build/html/ $output_folder/$tag_without_v
 
           # cleanup for the next build
-          cd POSYDON/docs
           make clean
           cd ../
         done
+
     - name: Deploy to GitHub Pages
       if: success()
       uses: crazy-max/ghaction-github-pages@v2
@@ -104,6 +115,7 @@ jobs:
       uses: actions/checkout@v4
       with:
         fetch-tags: true
+        path: 'POSYDON'
 
     - name: Set up Python
       uses: actions/setup-python@v5
@@ -137,56 +149,69 @@ jobs:
 
     - name: Make Documentation
       env:
-        PATH_TO_POSYDON: ../
-        PATH_TO_POSYDON_DATA: ../
-        MESA_DIR: ../
+        PATH_TO_POSYDON: ./
+        PATH_TO_POSYDON_DATA: ./
+        MESA_DIR: ./
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
+        # make the output folder
+        output_folder=$GITHUB_WORKSPACE/_build/
+        echo "Output folder: $output_folder"
+        mkdir $output_folder
+
+        # move to the repository folder
+        export PATH_TO_POSYDON=$GITHUB_WORKSPACE/POSYDON
+        cd $PATH_TO_POSYDON
+
         # get the available tags
         TAGS=$(git tag -l | sort -V | grep "v2")
         echo "v2 filtered tags:"
         echo $TAGS
-        output_folder=~/docs/
-
-        mkdir $output_folder
 
         # build the documentation for each tag
-        # for tag in $TAGS
-        # do
-        #   echo "Checking out tag: $tag"
-        #   git checkout $tag
-        #   python -m pip install .[doc]
+        for tag in $TAGS
+        do
+          echo "Checking out tag: $tag"
+          git checkout -f $tag
+          git clean -fdx
+          python -m pip install .[doc,vis]
 
-        #   cd docs
-        #   make html
-        #   touch _build/html/.nojekyll
+          # build the documentation
+          cd docs
+          make html
+          touch _build/html/.nojekyll
           
-        #   # move and copy docs out of the POSYDON folder
-        #   tag_without_v=${tag//v}
-        #   mv _build/html/ $output_folder/$tag_without_v
+          # move and copy docs out of the POSYDON folder
+          tag_without_v=${tag//v}
+          mv _build/html/ $output_folder/$tag_without_v
 
-        #   # cleanup for the next build
-        #   make clean
-        #   cd ../
-        # done
+          # cleanup for the next build
+          make clean
+          cd ../
+        done
 
         # build the documentation for the development branch
-        git checkout -fdx development
-        python -m pip install .[doc]
-        
-        cd docs
-        make html
-        cd ../
+        git checkout -f development
 
-        touch docs/_build/html/.nojekyll
-        mv docs/_build/html/ $output_folder/development
+        # clean the repo & install install
+        git clean -fdx
+        python -m pip install .[doc,vis]
+      
+        # build the documentation
+        cd docs && make html
+
+        # move and copy docs out of the POSYDON folder
+        touch _build/html/.nojekyll
+        mv _build/html/ $output_folder/development
+        cd ../
 
     - name: Deploy to GitHub Pages
       if: success()
       uses: crazy-max/ghaction-github-pages@v2
       with:
         target_branch: gh-pages
-        build_dir: ~/docs/
+        build_dir: _build/
         dry_run: true
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_WORKSPACE: ${{ github.workspace }}
