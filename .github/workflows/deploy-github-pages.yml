@@ -59,6 +59,7 @@ jobs:
         TAGS=$(git tag -l | sort -V)
         echo "Available tags: "
         echo $TAGS
+        mkdir ../docs
 
         # build the documentation for each tag
         for tag in $TAGS
@@ -70,7 +71,15 @@ jobs:
           cd ../
           touch docs/_build/html/.nojekyll
           tag_without_v=${tag//v}
-          mv docs/_build/html/ docs/_build/$tag_without_v
+
+          # move and copy docs out of the POSYDON folder
+          cd ../
+          mv POSYDON/docs/_build/html/ docs/$tag_without_v
+
+          # cleanup for the next build
+          cd POSYDON/docs
+          make clean
+          cd ../
         done
 
         # build the documentation for the development branch
@@ -79,13 +88,18 @@ jobs:
         make html
         cd ../
         touch docs/_build/html/.nojekyll
-        mv docs/_build/html/ docs/_build/development
+        mv docs/_build/html/ ../docs/development
+
+        # cleanup
+        cd ../
+        make clean
+        cd ../
     # - 
       # name: Deploy to GitHub Pages
       # if: success()
       # uses: crazy-max/ghaction-github-pages@v2
       # with:
       #   target_branch: gh-pages
-      #   build_dir: docs/_build/
+      #   build_dir: docs/
       # env:
       #   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
