@@ -41,6 +41,11 @@ jobs:
     - 
       name: Install dependencies
       run: |
+        # install pandoc for the documentation
+        sudo apt-get update -y
+        sudo apt-get install gfortran swig libhdf5-serial-dev libmpich-dev -y
+        sudo apt-get install pandoc -y
+        # install the dependencies for python
         python -m pip install pandoc
         python -m pip install coverage cpp-coveralls flake8 pytest
         python -m pip install .[doc]
@@ -51,7 +56,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         # update the available tags
-        # git fetch --tags
+        git fetch --tags
 
         TAGS=$(git tag -l | sort -V)
         echo "Available tags: "
