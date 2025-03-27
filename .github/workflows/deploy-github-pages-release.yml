@@ -191,7 +191,7 @@ jobs:
         # build the documentation for the development branch
         git checkout -f development
 
-        # clean the repo & install install
+        # clean the repo & install
         git clean -fdx
         python -m pip install .[doc,vis]
       
