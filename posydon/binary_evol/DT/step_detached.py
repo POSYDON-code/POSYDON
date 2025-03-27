@@ -154,6 +154,8 @@ DEFAULT_TRANSLATION = {
     "t_sync_conv_2": "t_sync_conv_2",
     "mass_transfer_case": None,
     "nearest_neighbour_distance": None,
+    "total_mass_h1": "total_mass_h1",
+    "total_mass_he4": "total_mass_he4",
 }
 
 
@@ -207,7 +209,9 @@ DEFAULT_TRANSLATED_KEYS = (
     'lambda_CE_10cent',
     'lambda_CE_30cent',
     'lambda_CE_pure_He_star_10cent',
-    'center_gamma'
+    'center_gamma',
+    'total_mass_h1',
+    'total_mass_he4'
 )
 
 
@@ -804,10 +808,10 @@ class detached_step:
                           " stripped-He grid", "EvolutionWarning")
                        
                     if star.state in LIST_ACCEPTABLE_STATES_FOR_HeStar:
-                        htrack = True
+                        new_htrack = True
                         list_for_matching = self.list_for_matching_HeStar
                     elif star.state in LIST_ACCEPTABLE_STATES_FOR_postMS:
-                        htrack = False
+                        new_htrack = False
                         list_for_matching = self.list_for_matching_postMS
 
                     MESA_labels, rs, colscalers, bnds, scales = get_MESA_labels(list_for_matching)
@@ -818,12 +822,13 @@ class detached_step:
                                                  "in the single star grid options.")
                         
                     posydon_attributes = get_posydon_attributes(MESA_labels, star)
-                    x0 = get_root0(MESA_labels, posydon_attributes, htrack, rs=rs)
+                    x0 = get_root0(MESA_labels, posydon_attributes, new_htrack, rs=rs)
 
                     try:
                         sol = minimize(sq_diff_function, x0, method="TNC", bounds=bnds)
                         if (np.abs(sol.fun) < np.abs(best_sol.fun) and sol.success):
                             best_sol = sol
+                            htrack = new_htrack
 
                         if self.verbose:
                             print (f"Alternative matching (3rd attempt) completed:"

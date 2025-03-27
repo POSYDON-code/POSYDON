@@ -112,7 +112,9 @@ POSYDON_TO_MESA = {
         'lambda_CE_10cent': 'lambda_CE_10cent',
         'lambda_CE_30cent': 'lambda_CE_30cent',
         'lambda_CE_pure_He_star_10cent': 'lambda_CE_pure_He_star_10cent',
-        'profile': True
+        'profile': True,
+        'total_mass_h1': 'total_mass_h1',
+        'total_mass_he4': 'total_mass_he4'
     }
 }
 
@@ -238,7 +240,7 @@ class MesaGridStep:
         filename = os.path.join(self.path,grid_name)
         if not (os.path.exists(filename.replace('%d','0')) or
                 os.path.exists(filename.replace('_%d',''))):
-            data_download()
+            data_download() #TODO: specify dataset
 
         if self.verbose:
             print("loading psyTrackInterp: {}".format(filename))
@@ -254,7 +256,7 @@ class MesaGridStep:
 
         # Check if interpolation files exist
         if not os.path.exists(filename):
-            data_download()
+            data_download() #TODO: specify dataset
 
         # Load interpolator
         self._Interp = IFInterpolator()

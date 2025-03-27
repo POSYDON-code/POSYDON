@@ -749,6 +749,7 @@ class StepCEE(object):
                                             'he_core_mass',
                                             'he_core_radius'
                         ])
+                    #TODO: update 'total_mass_h1' and 'total_mass_he4'
                 elif star_type == 'CO_core':
                     star.he_core_mass = core_mass
                     star.he_core_radius = core_radius
@@ -773,6 +774,7 @@ class StepCEE(object):
                                             'co_core_radius'
 
                         ])
+                    #TODO: update 'total_mass_h1' and 'total_mass_he4'
                 elif star_type == "not_giant_companion":
                     continue
                 else:

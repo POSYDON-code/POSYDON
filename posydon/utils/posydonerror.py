@@ -21,7 +21,7 @@ class POSYDONError(Exception):
         """
         if not isinstance(message, str):
             raise TypeError("The error message must be a string.")
-        
+
         self.message = message
         super().__init__(self.message)
 
