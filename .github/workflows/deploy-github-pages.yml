@@ -59,8 +59,9 @@ jobs:
         TAGS=$(git tag -l | sort -V | grep "v1")
         echo "v1 filtered tags:"
         echo $TAGS
+        output_folder=$GITHUB_WORKSPACE/../docs/
 
-        mkdir $GITHUB_WORKSPACE/docs
+        mkdir $output_folder
 
         # build the documentation for each tag
         for tag in $TAGS
@@ -76,7 +77,7 @@ jobs:
 
           # move and copy docs out of the POSYDON folder
           cd ../
-          mv POSYDON/docs/_build/html/ $GITHUB_WORKSPACE/docs/$tag_without_v
+          mv POSYDON/docs/_build/html/ $output_folder/$tag_without_v
 
           # cleanup for the next build
           cd POSYDON/docs
@@ -88,7 +89,7 @@ jobs:
       uses: crazy-max/ghaction-github-pages@v2
       with:
         target_branch: gh-pages
-        build_dir: $GITHUB_WORKSPACE/docs/
+        build_dir: $output_folder
         dry_run: true
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -145,8 +146,9 @@ jobs:
         TAGS=$(git tag -l | sort -V | grep "v2")
         echo "v2 filtered tags:"
         echo $TAGS
+        output_folder=$GITHUB_WORKSPACE/../docs/
 
-        mkdir $GITHUB_WORKSPACE/docs
+        mkdir $output_folder
 
         # build the documentation for each tag
         for tag in $TAGS
@@ -162,7 +164,7 @@ jobs:
 
           # move and copy docs out of the POSYDON folder
           cd ../
-          mv POSYDON/docs/_build/html/ $GITHUB_WORKSPACE/docs/$tag_without_v
+          mv POSYDON/docs/_build/html/ $output_folder/$tag_without_v
 
           # cleanup for the next build
           cd POSYDON/docs
@@ -177,14 +179,14 @@ jobs:
         make html
         cd ../
         touch docs/_build/html/.nojekyll
-        mv POSYDON/docs/_build/html/ $GITHUB_WORKSPACE/docs/development
+        mv POSYDON/docs/_build/html/ $output_folder/development
 
     - name: Deploy to GitHub Pages
       if: success()
       uses: crazy-max/ghaction-github-pages@v2
       with:
         target_branch: gh-pages
-        build_dir: $GITHUB_WORKSPACE/docs/
+        build_dir: $output_folder
         dry_run: true
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
