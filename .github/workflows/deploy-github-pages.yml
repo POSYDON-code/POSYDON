@@ -48,7 +48,6 @@ jobs:
         # install the dependencies for python
         python -m pip install pandoc
         python -m pip install coverage cpp-coveralls flake8 pytest
-        python -m pip install .[doc]
     - 
       name: Make Documentation
       env:
@@ -68,6 +67,7 @@ jobs:
         do
           echo "Checking out tag: $tag"
           git checkout $tag
+          python -m pip install .[doc]
           cd docs
           make html
           cd ../
@@ -86,6 +86,7 @@ jobs:
 
         # build the documentation for the development branch
         git checkout development
+        python -m pip install .[doc]
         cd docs
         make html
         cd ../
