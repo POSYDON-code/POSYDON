@@ -2131,7 +2131,7 @@ class TransientPopulation(Population):
                 * Zsun
             )
             
-            tmp_model_weights = M_model.loc[selected_indices].to_numpy()
+            tmp_model_weights = M_model.iloc[i :i + self.chunksize].to_numpy()
             
             weights = np.zeros((len(met_events), nr_of_birth_bins))
             for j, met in enumerate(rates.centers_metallicity_bins):
