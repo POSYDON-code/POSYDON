@@ -141,8 +141,7 @@ class Moe2017PsandQs():
         alpha = 0.018
         DlogP = 0.7
         # Heaviside function for twins with 0.95 < q < 1.00
-        Heaviside = np.zeros_like(self.qv)
-        Heaviside[self.qv >= 0.95] = 1.0
+        Heaviside = np.where(self.qv >= 0.95, 1.0, 0.0)
         # normalize so that integral is unity
         Heaviside = Heaviside / self._idl_tabulate(self.qv, Heaviside)
         # Relevant indices with respect to mass ratio
@@ -151,8 +150,7 @@ class Moe2017PsandQs():
         indq0p3 = np.min(indlq)
 
         # Loop through primary mass
-        for i in range(0, self.numM1):
-            myM1 = self.M1v[i]
+        for i, myM1 in enumerate(self.M1v):
             # Twin fraction parameters that are dependent on M1 only;
             # section 9.1
             FtwinlogPle1 = 0.3 - 0.15 * np.log10(myM1) # Eqn. 6
@@ -169,8 +167,7 @@ class Moe2017PsandQs():
                           + 0.04 * (np.log10(myM1))**2.0) #; Eqn. 22
 
             # Loop through orbital period P
-            for j in range(0, self.numlogP):
-                mylogP = self.logPv[j]
+            for j, mylogP in enumerate(self.logPv):
                 # Given M1 and P, set excess twin fraction;
                 # section 9.1 and Eqn. 5
                 if(mylogP <= 1.0):
@@ -284,7 +281,7 @@ class Moe2017PsandQs():
                 if(myM1 <= 3.0):
                     eta = eta_3
                 if((myM1 > 3.0) and (myM1 <= 7.0)):
-                    eta = np.interp(np.log10(myM1), np.log10([3.,7.]),
+                    eta = np.interp(np.log10(myM1), np.log10([3.0,7.0]),
                                     [eta_3, eta_7])
                 if(myM1 > 7.0):
                     eta = eta_7
@@ -299,14 +296,14 @@ class Moe2017PsandQs():
                     fe = self.ev**eta
                     # maximum eccentricity for given P
                     e_max = 1.0 - (10**mylogP/2.0)**(-2.0/3.0)
-                    ind = np.where(self.ev >= e_max)
                     # set distribution = 0 for e > e_max
-                    fe[ind] = 0.0                         
+                    fe[self.ev >= e_max] = 0.0                         
                     # Assume e distribution has power-law slope eta for
                     # 0.0 < e / e_max < 0.8 and then linear turnover between
                     # 0.8 < e / e_max < 1.0 so that distribution is continuous
                     # at e / e_max = 0.8 and zero at e = e_max
-                    ind = np.where((self.ev >= 0.8*e_max)&(self.ev <= 1.0*e_max))
+                    ind = np.flatnonzero((self.ev >= 0.8*e_max)
+                                         & (self.ev <= 1.0*e_max))
                     ind_cont = np.min(ind) - 1
                     fe[ind] = np.interp(self.ev[ind], [0.8*e_max,1.0*e_max],
                                         [fe[ind_cont],0.0])
@@ -348,8 +345,8 @@ class Moe2017PsandQs():
                 else:
                     self.probbin[j,i] = (1.0 - 0.11 * (mylogP-1.5)**1.43
                                                     * (myM1/10.0)**0.56)
-                if(self.probbin[j,i] <= 0.):
-                    self.probbin[j,i] = 0.
+                if(self.probbin[j,i] <= 0.0):
+                    self.probbin[j,i] = 0.0
 
             # Given M1, calculate cumulative binary period distribution
             mycumPbindist = (np.cumsum(self.flogP_sq[:,i]*self.probbin[:,i])
@@ -411,7 +408,7 @@ class Moe2017PsandQs():
         # fraction of M1 = 0.08 Msun primaries is zero, and truncate the q
         # distribution so that q > q_min = M_min/M1
         for M1 in M1s:
-            indM1 = np.where(abs(M1-self.M1v) == min(abs(M1-self.M1v)))
+            indM1 = np.flatnonzero(abs(M1-self.M1v) == min(abs(M1-self.M1v)))
             indM1 = indM1[0]
             # Given M1, determine cumulative binary period distribution
             mycumPbindist = (self.cumPbindist[:,indM1]).flatten
@@ -421,7 +418,7 @@ class Moe2017PsandQs():
                                                              np.log10([M_min,
                                                                        0.8]),
                                                              [0.0, 1.0])
-                                                            ).flatten
+                                ).flatten
             # Given M1, determine the binary star fraction
             if all_binaries:
                 mybinfrac = 1.0
@@ -433,8 +430,8 @@ class Moe2017PsandQs():
             if(myrand < mybinfrac):
                 # Given myrand, select P and corresponding index in logPv
                 mylogP = np.interp(myrand, mycumPbindist(), self.logPv)
-                indlogP = np.where(abs(mylogP-self.logPv)
-                                   == min(abs(mylogP-self.logPv)))
+                indlogP = np.flatnonzero(abs(mylogP-self.logPv)
+                                         == min(abs(mylogP-self.logPv)))
                 indlogP = indlogP[0]
                 # Given M1 & P, select e from eccentricity distribution
                 mye = np.interp(np.random.rand(),
@@ -451,8 +448,7 @@ class Moe2017PsandQs():
                     mycumqdist = mycumqdist - cum_qmin
                     mycumqdist = mycumqdist / max(mycumqdist)
                     # Set probability = 0 where q < q_min
-                    indq = np.where(self.qv <= q_min)
-                    mycumqdist[indq] = 0.0
+                    mycumqdist[self.qv <= q_min] = 0.0
                 # Given M1 & P, select q from cumulative mass ratio distribution
                 myq = np.interp(np.random.rand(), mycumqdist, self.qv)
             else:
