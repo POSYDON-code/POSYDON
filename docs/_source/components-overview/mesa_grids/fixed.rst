@@ -34,7 +34,7 @@ by the individual MESA runs as well as the functionality for slurm to run the
 grid.
 
 Now that we have our directory, we need to create two separate files: a file
-contang the list of binaries we want to evolve and an :samp:`ini` file that
+containing the list of binaries we want to evolve and an :samp:`ini` file that
 contains all the parameters associated with running the grid. Let's start with
 the list of binaries we want to evolve. For the case of this example, let's
 evolve a series of high-mass X-ray binaries with neutron star accretors at a
