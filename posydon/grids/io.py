@@ -41,6 +41,7 @@ __authors__ = [
     "Scott Coughlin <scottcoughlin2014@u.northwestern.edu>",
     "Emmanouil Zapartas <ezapartas@gmail.com>",
     "Tassos Fragos <Anastasios.Fragkos@unige.ch>",
+    "Matthias Kruckow <Matthias.Kruckow@unige.ch>",
 ]
 
 
@@ -86,13 +87,13 @@ class RunReader:
         ----------
         path : str
             Path of the file or folder containing the MESA run output.
-        fmt : str
+        fmt : str (default: 'posydon')
             Format specifier. Linked to data-types, filename conventions, etc.
-        binary : bool
+        binary : bool (default: True)
             Whether the run belongs to a binary grid.
-        verbose : bool
+        verbose : bool (default: False)
             If True, it prints reports of performed actions.
-        verbose_maxlines : int
+        verbose_maxlines : int (default: 10)
             In case of `verbose=True`, it sets the maximum number of lines of
             metadata files to be printed. If None, all lines will be printed.
             If 0, nothing will be printed.
@@ -225,13 +226,13 @@ class GridReader:
         ----------
         path : str
             Path of the file or folder containing the MESA runs.
-        fmt : str
+        fmt : str (default: 'posydon')
             Format specifier. Linked to data-types, filename conventions, etc.
-        binary : bool
+        binary : bool (default: True)
             Whether the grid(s) are binary.
-        verbose : bool
+        verbose : bool (default: False)
             If True, it prints reports of performed actions.
-        verbose_maxlines : int
+        verbose_maxlines : int (default: 10)
             In case of `verbose=True`, it sets the maximum number of lines of
             metadata files to be printed. If None, all lines will be printed.
             If 0, nothing will be printed.
@@ -252,7 +253,14 @@ class GridReader:
             raise ValueError("Format {} not supported.".format(fmt))
 
     def _get_input_folders(self):
-        """Get a list of all the folders with MESA runs."""
+        """Get a list of all the folders with MESA runs.
+        
+        Returns
+        -------
+        dict view
+            Containing all the paths of MESA runs.
+
+        """
         if isinstance(self.path, (str, bytes)):
             folder_paths = [self.path]
         else:
@@ -364,9 +372,9 @@ def print_meta_contents(path, max_lines=None, max_chars_per_line=80):
     ----------
     path : str
         Path of file containing the metadata.
-    max_lines : int or None
-        Maximum number of lines to print. If None (default), print all of them.
-    max_chars_per_line: int or "warp"
+    max_lines : int or None (default: None)
+        Maximum number of lines to print. If None, print all of them.
+    max_chars_per_line: int or "warp" (default: 80)
         If integer, it is the maximum number of character to be printed
         (e.g., useful when printing MESA output). If "warp", no truncation.
 
@@ -385,7 +393,7 @@ def print_meta_contents(path, max_lines=None, max_chars_per_line=80):
         if max_lines is not None and i >= max_lines:
             break
         line = line.rstrip("\n")
-        if max_chars_per_line != "warp":
+        if max_chars_per_line != "wrap":
             line = line[:max_chars_per_line]
         print(line)
     f.close()
@@ -393,10 +401,25 @@ def print_meta_contents(path, max_lines=None, max_chars_per_line=80):
 
 
 def read_initial_values(mesa_dir):
-    """Read grid point values given the MESA run directory."""
+    """Read grid point values given the MESA run directory.
+
+    Parameters
+    ----------
+    mesa_dir : str
+        Path of MESA directory.
+
+    Returns
+    -------
+    dict
+        Initial values of all the variables in inlist_grid_points.
+
+    """
     path = os.path.join(mesa_dir, "inlist_grid_points")
     if not os.path.exists(path):
-        return None
+        if os.path.exists(path + ".gz"):
+            path += ".gz"
+        else:
+            return None
 
     initial_values = {}
     if path.endswith(".gz"):
@@ -428,7 +451,24 @@ def read_initial_values(mesa_dir):
 
 
 def initial_values_from_dirname(mesa_dir):
-    """Use the name of the directory for inferring the main initial values."""
+    """Use the name of the directory for inferring the main initial values.
+
+    Parameters
+    ----------
+    mesa_dir : str
+        Path of MESA directory.
+
+    Returns
+    -------
+    tuple
+        v1, single star (1 item): only initial mass
+        v2, single star (2 items): initial mass and metallicity
+        v1, binary (3 items): primary and secondary initial mass and initial
+            orbital period
+        v2, binary (4 items): primary and secondary initial mass, initial
+            orbital period, and metallicity
+
+    """
     dirname = str(os.path.basename(os.path.normpath(mesa_dir)))
     if "initial_mass" in dirname:                           # single-star grid
         if "v1/" in str(mesa_dir): # version 1 dirnames don't contain initial_z
