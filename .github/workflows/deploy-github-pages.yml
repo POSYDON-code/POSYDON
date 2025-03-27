@@ -151,24 +151,24 @@ jobs:
         mkdir $output_folder
 
         # build the documentation for each tag
-        for tag in $TAGS
-        do
-          echo "Checking out tag: $tag"
-          git checkout $tag
-          python -m pip install .[doc]
-          
-          cd docs
-          make html
-          touch _build/html/.nojekyll
-          
-          # move and copy docs out of the POSYDON folder
-          tag_without_v=${tag//v}
-          mv _build/html/ $output_folder/$tag_without_v
+        # for tag in $TAGS
+        # do
+        #   echo "Checking out tag: $tag"
+        #   git checkout $tag
+        #   python -m pip install .[doc]
 
-          # cleanup for the next build
-          make clean
-          cd ../
-        done
+        #   cd docs
+        #   make html
+        #   touch _build/html/.nojekyll
+          
+        #   # move and copy docs out of the POSYDON folder
+        #   tag_without_v=${tag//v}
+        #   mv _build/html/ $output_folder/$tag_without_v
+
+        #   # cleanup for the next build
+        #   make clean
+        #   cd ../
+        # done
 
         # build the documentation for the development branch
         git checkout development
