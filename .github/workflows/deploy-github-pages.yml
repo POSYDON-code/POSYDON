@@ -46,6 +46,7 @@ jobs:
         # install the dependencies in python
         python -m pip install pandoc
         python -m pip install coverage cpp-coveralls flake8 pytest
+        python -m pip install wheel
 
     - name: Make Documentation
       env:
@@ -132,7 +133,6 @@ jobs:
         # install the dependencies in python
         python -m pip install pandoc
         python -m pip install coverage cpp-coveralls flake8 pytest
-        python -m pip install wheel
 
     - name: Make Documentation
       env:
