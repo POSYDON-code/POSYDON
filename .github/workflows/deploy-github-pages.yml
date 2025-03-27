@@ -6,60 +6,59 @@ on:
       - development
 
 jobs:
-  build:
-
+  build_v1:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
-      matrix:
-        python-version: [3.11]
-
+    
     steps:
-
-    - 
-      name: Checkout repository
+    - name: Checkout repository
       uses: actions/checkout@v4
-    - 
-      name: Set up Python ${{ matrix.python-version }}
+      with:
+        fetch-tags: true
+
+    - name: Set up Python
       uses: actions/setup-python@v5
       with:
-        python-version: ${{ matrix.python-version }}
-    - 
-      name: Get pip cache dir
+        python-version: '3.7'
+  
+    - name: Get pip cache dir
       id: pip-cache
       run: |
         python -m pip install --upgrade pip
         echo "::set-output name=dir::$(pip cache dir)"
-    - 
-      name: pip cache
+
+    - name: Load pip cache
       uses: actions/cache@v4
       with:
         path: ${{ steps.pip-cache.outputs.dir }}
         key: ${{ runner.os }}-pip-${{ hashFiles('**/setup.py', '**/requirements.txt') }}
         restore-keys: |
           ${{ runner.os }}-pip-
-    - 
-      name: Install dependencies
+
+    - name: Install dependencies
       run: |
         # install pandoc for the documentation
         sudo apt-get update -y
         sudo apt-get install gfortran swig libhdf5-serial-dev libmpich-dev -y
         sudo apt-get install pandoc -y
-        # install the dependencies for python
+
+        # install the dependencies in python
         python -m pip install pandoc
         python -m pip install coverage cpp-coveralls flake8 pytest
-    - 
-      name: Make Documentation
+
+    - name: Make Documentation
       env:
-        PATH_TO_POSYDON: ./
-        PATH_TO_POSYDON_DATA: ./
-        MESA_DIR: ./
+        PATH_TO_POSYDON: ../
+        PATH_TO_POSYDON_DATA: ../
+        MESA_DIR: ../
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         # get the available tags
-        TAGS=$(git tag -l | sort -V)
-        echo "Available tags: "
+        TAGS=$(git tag -l | sort -V | grep -v "v2")
+        echo "v1 filtered tags:"
         echo $TAGS
+
         mkdir ../docs
 
         # build the documentation for each tag
@@ -83,26 +82,12 @@ jobs:
           make clean
           cd ../
         done
-
-        # build the documentation for the development branch
-        git checkout development
-        python -m pip install .[doc]
-        cd docs
-        make html
-        cd ../
-        touch docs/_build/html/.nojekyll
-        mv docs/_build/html/ ../docs/development
-
-        # cleanup
-        cd ../
-        make clean
-        cd ../
-    # - 
-      # name: Deploy to GitHub Pages
-      # if: success()
-      # uses: crazy-max/ghaction-github-pages@v2
-      # with:
-      #   target_branch: gh-pages
-      #   build_dir: docs/
-      # env:
-      #   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: Deploy to GitHub Pages
+      if: success()
+      uses: crazy-max/ghaction-github-pages@v2
+      with:
+        target_branch: gh-pages
+        build_dir: docs/
+        dry_run: true
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
