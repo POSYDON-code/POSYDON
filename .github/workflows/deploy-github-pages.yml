@@ -55,7 +55,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         # get the available tags
-        TAGS=$(git tag -l | sort -V | grep -v "v2")
+        TAGS=$(git tag -l | sort -V | grep "v1")
         echo "v1 filtered tags:"
         echo $TAGS
 
@@ -142,8 +142,8 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         # get the available tags
-        TAGS=$(git tag -l | sort -V | grep -v "v2")
-        echo "v1 filtered tags:"
+        TAGS=$(git tag -l | sort -V | grep "v2")
+        echo "v2 filtered tags:"
         echo $TAGS
 
         mkdir ../docs
