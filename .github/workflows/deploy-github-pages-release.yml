@@ -188,20 +188,6 @@ jobs:
           cd ../
         done
         
-        # build the documentation for the development branch
-        git checkout -f development
-
-        # clean the repo & install
-        git clean -fdx
-        python -m pip install .[doc,vis]
-      
-        # build the documentation
-        cd docs && make html
-
-        # move and copy docs out of the POSYDON folder
-        touch _build/html/.nojekyll
-        mv _build/html/ $output_folder/development
-        cd ../
     - name: Deploy to GitHub Pages
       if: success()
       uses: crazy-max/ghaction-github-pages@v2
