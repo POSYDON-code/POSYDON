@@ -89,7 +89,7 @@ jobs:
       uses: crazy-max/ghaction-github-pages@v2
       with:
         target_branch: gh-pages
-        build_dir: $output_folder
+        build_dir: $GITHUB_WORKSPACE/../docs/
         dry_run: true
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -156,18 +156,16 @@ jobs:
           echo "Checking out tag: $tag"
           git checkout $tag
           python -m pip install .[doc]
+          
           cd docs
           make html
-          cd ../
-          touch docs/_build/html/.nojekyll
-          tag_without_v=${tag//v}
-
+          touch _build/html/.nojekyll
+          
           # move and copy docs out of the POSYDON folder
-          cd ../
-          mv POSYDON/docs/_build/html/ $output_folder/$tag_without_v
+          tag_without_v=${tag//v}
+          mv _build/html/ $output_folder/$tag_without_v
 
           # cleanup for the next build
-          cd POSYDON/docs
           make clean
           cd ../
         done
@@ -175,9 +173,11 @@ jobs:
         # build the documentation for the development branch
         git checkout development
         python -m pip install .[doc]
+        
         cd docs
         make html
         cd ../
+
         touch docs/_build/html/.nojekyll
         mv POSYDON/docs/_build/html/ $output_folder/development
 
@@ -186,7 +186,7 @@ jobs:
       uses: crazy-max/ghaction-github-pages@v2
       with:
         target_branch: gh-pages
-        build_dir: $output_folder
+        build_dir: $GITHUB_WORKSPACE/../docs/
         dry_run: true
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
