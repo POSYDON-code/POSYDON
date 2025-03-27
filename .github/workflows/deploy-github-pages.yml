@@ -55,9 +55,7 @@ jobs:
         PATH_TO_POSYDON: /home/runner/work/POSYDON/POSYDON/
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
-        # update the available tags
-        git fetch --tags
-
+        # get the available tags
         TAGS=$(git tag -l | sort -V)
         echo "Available tags: "
         echo $TAGS
