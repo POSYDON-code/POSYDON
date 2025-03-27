@@ -52,7 +52,7 @@ jobs:
     - 
       name: Make Documentation
       env:
-        PATH_TO_POSYDON: /home/runner/work/POSYDON/POSYDON/
+        PATH_TO_POSYDON: ./
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         # get the available tags
