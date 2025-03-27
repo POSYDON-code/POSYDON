@@ -59,7 +59,7 @@ jobs:
         TAGS=$(git tag -l | sort -V | grep "v1")
         echo "v1 filtered tags:"
         echo $TAGS
-        output_folder=$GITHUB_WORKSPACE/../docs/
+        output_folder=~/docs/
 
         mkdir $output_folder
 
@@ -89,7 +89,7 @@ jobs:
       uses: crazy-max/ghaction-github-pages@v2
       with:
         target_branch: gh-pages
-        build_dir: $GITHUB_WORKSPACE/../docs/
+        build_dir: ~/docs/
         dry_run: true
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -146,7 +146,7 @@ jobs:
         TAGS=$(git tag -l | sort -V | grep "v2")
         echo "v2 filtered tags:"
         echo $TAGS
-        output_folder=$GITHUB_WORKSPACE/../docs/
+        output_folder=~/docs/
 
         mkdir $output_folder
 
@@ -186,7 +186,7 @@ jobs:
       uses: crazy-max/ghaction-github-pages@v2
       with:
         target_branch: gh-pages
-        build_dir: $GITHUB_WORKSPACE/../docs/
+        build_dir: ~/docs/
         dry_run: true
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
