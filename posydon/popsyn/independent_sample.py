@@ -9,12 +9,16 @@ __authors__ = [
     "Simone Bavera <Simone.Bavera@unige.ch>",
     "Emmanouil Zapartas <ezapartas@gmail.com>",
     "Scott Coughlin <scottcoughlin2014@u.northwestern.edu>",
+    "Matthias Kruckow <Matthias.Kruckow@unige.ch>",
 ]
 
 
 import numpy as np
 from scipy.stats import truncnorm
 from posydon.utils.common_functions import rejection_sampler
+from posydon.popsyn.Moes_distributions import Moe2017PsandQs
+
+_gen_Moe2017 = None
 
 
 def generate_independent_samples(orbital_scheme='period', **kwargs):
@@ -39,25 +43,54 @@ def generate_independent_samples(orbital_scheme='period', **kwargs):
         Randomly drawn secondary masses
 
     """
-    # Generate eccentricities
-    eccentricity_set = generate_eccentricities(**kwargs)
-
     # Generate primary masses
     m1_set = generate_primary_masses(**kwargs)
 
-    # Generate secondary masses
-    m2_set = generate_secondary_masses(m1_set, **kwargs)
-
-    if orbital_scheme == 'separation':
-        # Generate orbital separations
-        orbital_scheme_set = generate_orbital_separations(**kwargs)
-    elif orbital_scheme == 'period':
-        # Generate orbital periods
-        orbital_scheme_set = generate_orbital_periods(m1_set, **kwargs)
+    if use_Moe2017(orbital_scheme=orbital_scheme, **kwargs):
+        # initialize generator for Moe2017
+        if _gen_Moe2017 is None:
+            _gen_Moe2017 = Moe2017PsandQs()
+        # use same defaults as generate_primary_masses
+        M1_min = kwargs.get("primary_mass_min", 7)
+        M1_max = kwargs.get("primary_mass_max", 120)
+        # generate samples
+        m2_set, orbital_scheme_set, eccentricity_set, metallicity_set\
+         = _gen_Moe2017(m1_set, M_min=M1_min, M_max=M1_max, all_binaries=True)
     else:
-        raise ValueError("Allowed orbital schemes are separation or period.")
+        # Generate secondary masses
+        m2_set = generate_secondary_masses(m1_set, **kwargs)
+
+        if orbital_scheme == 'separation':
+            # Generate orbital separations
+            orbital_scheme_set = generate_orbital_separations(**kwargs)
+        elif orbital_scheme == 'period':
+            # Generate orbital periods
+            orbital_scheme_set = generate_orbital_periods(m1_set, **kwargs)
+        else:
+            raise ValueError("Allowed orbital schemes are separation or period.")
+
+        # Generate eccentricities
+        eccentricity_set = generate_eccentricities(**kwargs)
 
     return orbital_scheme_set, eccentricity_set, m1_set, m2_set
+
+
+def use_Moe2017(secondary_mass_scheme='', orbital_scheme='',
+                orbital_period_scheme='', eccentricity_scheme='', **kwargs):
+    """Check whether Moe & Di Stefano (2017) [1]_ should be used for the
+    initial sampling.
+    
+    References
+    ----------
+    .. [1] Moe, M. and Di Stefano, R., “Mind Your Ps and Qs: The Interrelation
+        between Period (P) and Mass-ratio (Q) Distributions of Binary Stars”,
+        <i>The Astrophysical Journal Supplement Series</i>, vol. 230, no. 2,
+        Art. no. 15, IOP, 2017. doi:10.3847/1538-4365/aa6fb6.
+    """
+    return ((secondary_mass_scheme=='Moe2017')
+            or ((orbital_scheme=='period')
+                and (orbital_period_scheme=='Moe2017'))
+            or (eccentricity_scheme=='Moe2017'))
 
 
 def generate_orbital_periods(primary_masses,
