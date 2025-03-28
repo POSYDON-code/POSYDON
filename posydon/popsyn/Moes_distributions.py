@@ -394,7 +394,6 @@ class Moe2017PsandQs():
                 - the eccentricity
                 - the metallicity
         """
-        np.random.seed(1234567890) #TODO: remove
         M1s = np.atleast_1d(M1)
         M2s = []
         logPs = []
