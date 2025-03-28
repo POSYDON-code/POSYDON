@@ -1,5 +1,6 @@
 """
 Generate initial parameters following Moe & Di Stefano (2017).
+https://ui.adsabs.harvard.edu/abs/2017ApJS..230...15M/abstract
 This module is an adoption of the translation of Moe's IDL code into python by
 Mads Sørensen (V. 0.1; 2017/02/03)
 
