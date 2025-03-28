@@ -986,6 +986,72 @@ class BinaryGenerator:
             raise KeyError(f"{Z_div_Zsun} is a not defined metallicity")
         X = 1. - Z - Y
         kick1 = output['S1_natal_kick_array'][0]
+
+        if (('read_samples_from_file' in kwargs) and (kwargs['read_samples_from_file'] != '')):
+            m2 = output['S2_mass'].item()
+            if m2 == 0:
+                separation = np.nan
+                orbital_period = np.nan
+                eccentricity = np.nan
+
+                binary_params = dict(
+                    index=kwargs.get('index', default_index),
+                    time=formation_time,
+                    state="initially_single_star",
+                    event="ZAMS",
+                    separation=separation,
+                    orbital_period=orbital_period,
+                    eccentricity=eccentricity,
+                    history_verbose=self.kwargs.get("history_verbose", False)
+                )
+                star1_params = dict(
+                    mass = m1,
+                    state="H-rich_Core_H_burning",
+                    metallicity=Z,
+                    center_h1=X,
+                    center_he4=Y,
+                    natal_kick_array=kick1,
+                )
+                star2_params = properties_massless_remnant()
+            else:
+                separation = output['separation'].item()
+                orbital_period = output['orbital_period'].item()
+                eccentricity = output['eccentricity'].item()
+                kick2 = output['S2_natal_kick_array'][0]
+
+                binary_params = dict(
+                    index=kwargs.get('index', default_index),
+                    time=formation_time,
+                    state="detached",
+                    event="ZAMS",
+                    separation=separation,
+                    orbital_period=orbital_period,
+                    eccentricity=eccentricity,
+                    history_verbose=self.kwargs.get("history_verbose", False)
+                )
+                star1_params = dict(
+                    mass=m1,
+                    state="H-rich_Core_H_burning",
+                    metallicity=Z,
+                    center_h1=X,
+                    center_he4=Y,
+                    natal_kick_array=kick1,
+                )
+                star2_params = dict(
+                    mass=m2,
+                    state="H-rich_Core_H_burning",
+                    metallicity=Z,
+                    center_h1=X,
+                    center_he4=Y,
+                    natal_kick_array=kick2,
+                )
+                if m1 < 4.0: 
+                    binary_params['state'] = 'low_mass_binary'
+            binary = BinaryStar(**binary_params,
+                            star_1=SingleStar(**star1_params),
+                            star_2=SingleStar(**star2_params))
+            return binary
+
         if self.RNG.uniform() < binary_fraction:
             separation = output['separation'].item()
             orbital_period = output['orbital_period'].item()
