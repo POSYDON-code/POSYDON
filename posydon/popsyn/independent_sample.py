@@ -432,6 +432,9 @@ def binary_fraction_value(binary_fraction_const=1,binary_fraction_scheme = 'cons
         elif m1 > 16:
             binary_fraction = 0.94
         else: 
+<<<<<<< HEAD
+            raise ValueError(f'There primary mass provided {m1} is not supported by the Moe_17 scheme.')
+=======
             raise ValueError(f'There primary mass provided {m1} is not supported by the Moe_17 scheme.')"""
         binary_fraction = np.zeros_like(m1, dtype=float)
         binary_fraction[(m1 > 16)] = 0.94
@@ -439,6 +442,7 @@ def binary_fraction_value(binary_fraction_const=1,binary_fraction_scheme = 'cons
         binary_fraction[(m1 <= 9) & (m1 > 5)] = 0.76
         binary_fraction[(m1 <= 5) & (m1 > 2)] = 0.59
         binary_fraction[(m1 <= 2)] = 0.4
+
     else: 
         pass
     return binary_fraction
