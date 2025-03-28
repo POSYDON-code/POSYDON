@@ -14,6 +14,7 @@ __authors__ = [
 from copy import copy
 import numpy as np
 from astropy import constants as con
+from astropy import units as u
 import pandas as pd
 from posydon.spectral_synthesis.spectral_tools import smooth_flux_negatives
 from posydon.spectral_synthesis.spectral_grids import GRID_KEYS 
@@ -220,18 +221,22 @@ def generate_spectrum(grids,star,i,**kwargs):
     while count <3:
         if 'failed_attempt' not in label:
             try:
+                F_l = grids.grid_flux(label,**x)
+                #Check if the flux has negative values if so then find the NN
+                if np.min(F_l) < 0: 
+                    #F_l = smooth_flux_negatives(grids.lam_c,F_l.value if isinstance(F_l, u.Quantity) else F_l)
+                    F_l = grids.NN_grid_flux(label,**x)
+                
                 if label == "stripped_grid":
-                    Flux = grids.grid_flux(label,**x)*4*np.pi*1e4/Lo
+                    Flux = F_l*4*np.pi*1e4/Lo
                 elif label in ['WR_grid','WNE_grid','WNL_grid','WC_grid']:
-                    Flux = grids.grid_flux(label,**x)*4*np.pi*1e4/Lo *(L/10**5.3)
+                    Flux = F_l*4*np.pi*1e4/Lo *(L/10**5.3)
                     #Replace the negative values for WR
-                    Flux.value[Flux.value < 0] = 1e-99
+                    #Flux.value[Flux.value < 0] = 1e-99
                 else:
-                    Flux = grids.grid_flux(label,**x)*R**2*4*np.pi*1e4/Lo
-                if np.min(Flux) < 0: 
-                    Flux = smooth_flux_negatives(grids.lam_c,Flux.value)
-                    return Flux,star['state'],label
-                return Flux.value,star['state'],label
+                    Flux = F_l*R**2*4*np.pi*1e4/Lo
+                return Flux.value if isinstance(Flux, u.Quantity) else Flux,star['state'],label
+
             except LookupError:
                 try:
                     x = rescale_log_g(grids,label,**x)
@@ -240,7 +245,6 @@ def generate_spectrum(grids,star,i,**kwargs):
                     print('Under the exception',e)
                 label = f'failed_attempt_{count}'
         label,x = point_the_grid(grids,x,label,**kwargs)
-        count += 1
         if label == 'failed_grid':
             return None,state,label
     raise ValueError(f'The label:{label} is not "failed_grid" after all the possible checks. The star is {x}')
