@@ -43,6 +43,8 @@ def generate_independent_samples(orbital_scheme='period', **kwargs):
         Randomly drawn secondary masses
 
     """
+    global _gen_Moe2017
+
     # Generate primary masses
     m1_set = generate_primary_masses(**kwargs)
 
