@@ -3,7 +3,6 @@
 ##############
 Pipeline steps
 ##############
-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 The post-processing pipeline is divided into several steps which build 
 on each other. Each step will take a csv file as input. The name of this 
 file determines which pipeline step should be performed.
