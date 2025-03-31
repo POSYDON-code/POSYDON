@@ -56,7 +56,7 @@ ACTION_TO_STEP_NUM = {
     'CALCULATE_EXTRA_VALUES'     : 'step_3',
     'TRAIN_INTERPOLATORS'        : 'step_4',
     'TRAIN_PROFILE_INTERPOLATORS': 'step_5',
-    'EXPORT_DATASET'             : 'step_9',
+    'EXPORT_DATASET'             : 'step_F',
     'RERUN'                      : 'rerun'
 }
 # pipeline substeps
@@ -633,7 +633,7 @@ def slurm_job(job_name,
             f.write(f"#SBATCH --mail-type={MAILTYPE}\n")
             f.write(f"#SBATCH --mail-user={EMAIL}\n")
         # extract array size
-        if ((job_name in ['step_1', 'step_3', 'step_4', 'step_5', 'step_9',\
+        if ((job_name in ['step_1', 'step_3', 'step_4', 'step_5', 'step_F',\
             'rerun']) or ('plot' in job_name) or ('check' in job_name)):
             df = pd.read_csv(path_to_csv_file)
             N = df.shape[0]-1
@@ -968,7 +968,7 @@ def create_csv(GRID_TYPES=[],
                                 if not os.path.isdir(interpolator_dir):
                                     newly_created_files.append(
                                         interpolator_dir)
-                    elif step_name == 'step_9': # EXPORT_DATASET
+                    elif step_name == 'step_F': # EXPORT_DATASET
                         if "RLO" in grid_type:
                             export_dir = grid_type
                         else:
@@ -1136,7 +1136,7 @@ def create_csv(GRID_TYPES=[],
             df['profile_names'] = profile_quantities
             df['path_to_IF_interpolator'] = interpolators
             df['path_to_profile_interpolator'] = profile_interpolators
-        elif step_name == 'step_9':
+        elif step_name == 'step_F':
             df['export_path'] = export_path
         elif step_name == 'rerun':
             df['rerun_path'] = rerun_path
@@ -1212,7 +1212,7 @@ def create_csv(GRID_TYPES=[],
         elif step_name == 'step_5':
             newly_created_files.extend(
                 df['path_to_profile_interpolator'].to_list())
-        elif step_name == 'step_9':
+        elif step_name == 'step_F':
             newly_created_files.extend(df['export_path'].to_list())
         elif step_name == 'rerun':
             newly_created_files.extend(df['rerun_path'].to_list())
@@ -1312,7 +1312,7 @@ def create_cleanup_slurm_job(job_name,
     kwargs : dict
         Other parameters (all being ignored).
     """
-    if ((job_name == 'step_2') or (job_name == 'step_9') or
+    if ((job_name == 'step_2') or (job_name == 'step_F') or
         (job_name == 'rerun') or ('plot' in job_name) or
         ('check' in job_name) or
         ((job_name == 'pipeline') and (GROUP is not None))):
@@ -1347,7 +1347,7 @@ def create_cleanup_slurm_job(job_name,
                 path_to_log_files = os.path.join(PATH, 'logs', step_name)
             else:
                 path_to_log_files = os.path.join(PATH, 'logs', job_name)
-            if ((job_name == 'step_2') or (job_name == 'step_9') or
+            if ((job_name == 'step_2') or (job_name == 'step_F') or
                 (job_name == 'rerun') or ('plot' in job_name) or
                 ('check' in job_name)):
                 # combine logs
@@ -1407,7 +1407,7 @@ def get_log_file_name(job_name, step_name):
         return "train_interpolator_%4a.out"
     if job_name == 'step_5': # TRAIN_PROFILE_INTERPOLATORS
         return "train_profile_interpolator_%4a.out"
-    if job_name == 'step_9': # EXPORT_DATASET
+    if job_name == 'step_F': # EXPORT_DATASET
         return "export_dataset_%4a.out"
     if job_name == 'rerun': # RERUN
         return "rerun_%4a.out"
