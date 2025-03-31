@@ -27,17 +27,17 @@ This calls the initializer, which can take two optional arguments
 
 - :samp:`filepath`: this is the path to the associated h5 file; if the file
   exists, the initializer will load the contained `PSyGrid` object
-- :samp:`verbose`: this is a boolean indicating whether detailed output should be
-  given when calling functions of the :samp:`PSyGrid` object
+- :samp:`verbose`: this is a boolean indicating whether detailed output should 
+  be, given when calling functions of the :samp:`PSyGrid` object
 
 
 Creating a `PSyGrid` object
 ---------------------------
 
 The :samp:`create` function of a :samp:`PSyGrid` object will read MESA output
-data into the :samp:`PSyGrid` object. It has a required argument, :samp:`MESA_grid_path`, 
-which is the path to the directory containing the MESA runs. There are several optional 
-arguments as well:
+data into the :samp:`PSyGrid` object. It has a required argument, 
+:samp:`MESA_grid_path`, which is the path to the directory containing the MESA 
+runs. There are several optional arguments as well:
 
 .. table:: Optional arguments of the :samp:`PSyGrid` creation
     :widths: 18,10,72
@@ -106,7 +106,8 @@ overwrite data:
 
     mygrid.create(MESA_grid_path=".")
 
-Alternatively, you can combine the initialization with creation of the grid based on MESA data:
+Alternatively, you can combine the initialization with creation of the grid 
+based on MESA data:
 
 .. code-block:: python
 
@@ -160,7 +161,8 @@ This will provide a summary, which tell you:
 - a shorthand list of the MESA directories (the locations of the data the runs
   where extracted from)
 
-To access single runs, it is important to know how many are there to avoid calling a nonexisting run. You can find the number of runs with:
+To access single runs, it is important to know how many are there to avoid 
+calling a nonexisting run. You can find the number of runs with:
 
 .. code-block:: python
 
@@ -175,14 +177,15 @@ Accessing data in a `PSyGrid` object
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The first data you may want to check are the
-:ref:`grid configuration properties <tab_grid_properties>`. You can get a list of the
-properties available for your :samp:`PSyGrid` object with
+:ref:`grid configuration properties <tab_grid_properties>`. You can get a list 
+of the properties available for your :samp:`PSyGrid` object with
 
 .. code-block:: python
 
     mygrid.config.keys()
 
-You can access the value of any grid configuration property "PROPERTY" with :samp:`mygrid.config[{PROPERTY}]`.
+You can access the value of any grid configuration property "PROPERTY" with 
+:samp:`mygrid.config[{PROPERTY}]`.
 
 Next, you can look at the initial and final values of the runs. All the values
 are available at :samp:`mygrid.initial_values` and :samp:`mygrid.final_values`,
@@ -193,8 +196,9 @@ respectively. To get a tuple of all the available values use
     mygrid.initial_values.dtype.names
     mygrid.final_values.dtype.names
 
-You can access the initial value of any physical grid property "PHYS" with :samp:`mygrid.initial_values[{PHYS}]`.
-It will return a numpy array with the values of this property for all the runs. 
+You can access the initial value of any physical grid property "PHYS" with 
+:samp:`mygrid.initial_values[{PHYS}]`. It will return a numpy array with the 
+values of this property for all the runs. 
 Note that these physical properties of the binaries in the grid are different 
 from the grid configuration properties listed above. 
 Then, you can find the initial mass of star 1 in the third MESA run with
@@ -207,8 +211,9 @@ Then, you can find the initial mass of star 1 in the third MESA run with
     Remember that the first run has the index :samp:`0` and the last one
     :samp:`len(mygrid)-1`.
 
-Each grid property will have the same number and order of MESA run entries in the initial and final values.
-This holds for the list of MESA directories from which the runs are extracted, too.
+Each grid property will have the same number and order of MESA run entries 
+in the initial and final values. This holds for the list of MESA directories 
+from which the runs are extracted, too.
 
 .. code-block:: python
 
@@ -242,7 +247,8 @@ Again, you can check for the contents of the individual runs with
 
 The example above finds the initial mass of star 1 in the third MESA run by 
 indexing the list :samp:`mygrid.initial_values`. 
-You can get the same value from the list of initial values associated with a single MESA run: 
+You can get the same value from the list of initial values associated with a 
+single MESA run: 
 
 .. code-block :: python
 
@@ -272,8 +278,8 @@ Plot a `PSyGrid` object
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 Beside getting the values itself there are plotting functionalities available
-to display the content of a :samp:`PSyGrid` object. There are three main plotting
-functionalities:
+to display the content of a :samp:`PSyGrid` object. There are three main 
+plotting functionalities:
 
 - :samp:`plot`: This creates a one dimensional plot from the :samp:`PSyGrid`.
   An example can be found in the :ref:`tutorials <plot_1d>`. The code details
@@ -297,8 +303,9 @@ Loop over a `PSyGrid` object
 
 Similarly to accessing a single value in the :samp:`PSyGrid` object, we can loop
 over a :samp:`PSyGrid` object, which will loop over the individual runs in the
-:samp:`PSyGrid` object. Hence the following two code snippets will produce the same
-output. The first one loops through the numpy array of the initial companion masses:
+:samp:`PSyGrid` object. Hence the following two code snippets will produce the 
+same output. The first one loops through the numpy array of the initial 
+companion masses:
 
 .. code-block:: python
 
@@ -330,8 +337,9 @@ years instead of days:
     mygrid.add_column('period_years', new_column_data, where='final_values', overwrite=False)
 
 The four arguments are a string with the name of the new field, the data to be
-stored in the column, the component of the :samp:`PSyGrid` object to which the column will be
-added, and a boolean indicating whether the column should overwrite any existing column with the same name.
+stored in the column, the component of the :samp:`PSyGrid` object to which the 
+column will be added, and a boolean indicating whether the column should 
+overwrite any existing column with the same name.
 
 .. warning::
     The new data has to have as many entries as the :samp:`PSyGrid` object has
@@ -374,8 +382,8 @@ arguments :samp:`compression`, :samp:`description`, and :samp:`verbose`.
     put the last run with same initial conditions in the newly combined
     :samp:`PSyGrid` object.
 
-We recommend that you use the :ref:`post-processing pipeline <pipeline>` to create
-and join grids.
+We recommend that you use the :ref:`post-processing pipeline <pipeline>` to 
+create and join grids.
 
 ..
     Extract the initial and final values as a pandas data frame
@@ -387,8 +395,9 @@ Get reruns from a `PSyGrid` object
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Usually, not all runs of a grid will be successfully run in MESA. You
-may want to rerun some of them with changed parameters. The function :samp:`rerun`
-exports runs from a :samp:`PSyGrid` object to be run again. There are two options:
+may want to rerun some of them with changed parameters. The function 
+:samp:`rerun` exports runs from a :samp:`PSyGrid` object to be run again. 
+There are two options:
 
 1. Write your own logic and create a numpy array with the indices of the systems that you would like to run again.
 2. Specify which termination flag(s) necessitate a rerun of the system.
@@ -419,9 +428,11 @@ exports runs from a :samp:`PSyGrid` object to be run again. There are two option
 
 .. note::
     If both :samp:`runs_to_rerun` and :samp:`termination_flags` are given, all
-    systems matching at least one of the two conditions will be selected for rerun.
+    systems matching at least one of the two conditions will be selected for 
+    rerun.
 
-The :ref:`post-processing pipeline <pipeline_stepR>` provides some pre-defined rerun options.
+The :ref:`post-processing pipeline <pipeline_stepR>` provides some pre-defined 
+rerun options.
 
 
 Close associated hdf5 file
