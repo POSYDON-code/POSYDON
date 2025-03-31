@@ -4,10 +4,14 @@
 The BinaryStar object
 ======================
 
-The ``BinaryStar`` object is composed of two ``SingleStar`` objects (see :ref:`single-star`) and contains the current and past states of the binary.
-Only parameters in the ``BINARYPROPERTIES`` list are stored in the history. 
-The current parameter value of the star object is accessed with, e.g. ``binary.orbital_period`` and the past history via ``binary.orbital_period_history``.
-The two stars are accessed with, e.g. (for star 1), ``binary.star_1.mass`` and the past history via ``binary.star_1.mass_history``.
+The ``BinaryStar`` object is composed of two ``SingleStar`` objects 
+(see :ref:`single-star`) and contains the current and past states of 
+the binary. Only parameters in the ``BINARYPROPERTIES`` list are stored in the 
+history. The current parameter value of the star object is accessed with, e.g. 
+``binary.orbital_period`` and the past history via 
+``binary.orbital_period_history``. The two stars are accessed with, e.g. 
+(for star 1), ``binary.star_1.mass`` and the past history via 
+``binary.star_1.mass_history``.
 
 To use BinaryStar object import it using:
 
@@ -76,7 +80,9 @@ The binary properties are defined as follows
 Additional scalar properties can be added during the evolution.
 
 Since they do not change over time, they are not stored in the history.
-These can be requested and will be stored in the output oneline (See the :ref:`Synthetic Population<synthetic-population>` and :ref:`Population Parameter Guide<pop-params-guide>` for more information).
+These can be requested and will be stored in the output oneline (See the 
+:ref:`Synthetic Population<synthetic-population>` and 
+:ref:`Population Parameter Guide<pop-params-guide>` for more information).
 
 Additional columns
 ~~~~~~~~~~~~~~~~~~
@@ -204,7 +210,8 @@ Binary events are defined according to the following table:
 Mass Transfer case
 ~~~~~~~~~~~~~~~~~~
 
-The mass transfer cases are stored in `mt_history_GRIDTYPE` and are defined according to the following table: TODO: add the table below
+The mass transfer cases are stored in `mt_history_GRIDTYPE` and are defined 
+according to the following table: TODO: add the table below
 
 .. list-table:: Mass transfer cases
   :header-rows: 1
@@ -222,7 +229,8 @@ TODO: update properties
 Basic example
 ~~~~~~~~~~~~~
 
-The simplest method is to provide the two star objects and `kwargs` of the initial binary parameters.
+The simplest method is to provide the two star objects and `kwargs` of the 
+initial binary parameters.
 
 .. code-block:: python
 
