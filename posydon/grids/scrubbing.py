@@ -44,8 +44,9 @@ def scrub(tables, models, ages):
         else:
             n = len(model)
             userow = np.zeros(n, dtype=bool)
-            userow[-1] = True
-            last_m, last_t = model[-1], age[-1]
+            if n>0:
+                userow[-1] = True
+                last_m, last_t = model[-1], age[-1]
             for i in range(n-2, -1, -1):
                 t_i, m_i = age[i], model[i]
                 if t_i < last_t and m_i < last_m:
@@ -81,16 +82,16 @@ def keep_after_RLO(bh, h1, h2):
 
     Parameters
     ----------
-    bh : array
+    bh : np.array
         The `binary_history` array.
-    h1 : array
+    h1 : np.array
         The `history1` array.
-    h2 : array
+    h2 : np.array
         The `history2` array.
 
     Returns
     -------
-    tuple or arrays, or None
+    tuple or ndarrays, or None
         The binary, history1 and history2 arrays after removing the leading
         steps without RLO overflow mass transfer from star1 or star2. If an
         RLO phase is not detected, a warning is raised, and returns `None`.
@@ -120,7 +121,8 @@ def keep_after_RLO(bh, h1, h2):
         rlo_1_or_2 = rlo1 | rlo2
 
     if rlo_1_or_2 is None:
-        raise ValueError("No `rl_relative_overflow` in any star history.")
+        raise ValueError("No `rl_relative_overflow` of any star in binary"
+                         " history.")
 
     # This needs to be aligned with run_binary_extras.f
     conditions_met = rlo_1_or_2 | rate
@@ -139,13 +141,18 @@ def keep_after_RLO(bh, h1, h2):
     new_ages = new_bh["age"] - age_to_remove
 
     # check if numerical precision was lost, and fix the issue
+    # TODO: we should rewrite this correction, e.g. with making use of
+    #       math.ulp() to shift entries in the new_ages
     if len(new_ages) > 1 and min(np.diff(new_ages)) == 0.0:
         min_dt = min(np.diff(new_bh["age"]))
-        new_age_to_remove = (age_to_remove // min_dt) * min_dt
+        if min_dt != 0.0:
+            new_age_to_remove = (age_to_remove // min_dt) * min_dt
+        else:
+            new_age_to_remove = age_to_remove
         if new_age_to_remove==age_to_remove:
             new_age_to_remove -= min_dt
         relative_error = abs(new_age_to_remove - age_to_remove) / age_to_remove
-        if relative_error > 0.01:
+        if relative_error > 0.01: # pragma: no cover
             raise Exception("Numerical precision fix too aggressive.")
         age_to_remove = new_age_to_remove
         new_ages = new_bh["age"] - age_to_remove
@@ -169,15 +176,15 @@ def keep_till_central_abundance_He_C(bh, h1, h2,
 
     Parameters
     ----------
-    bh : array
+    bh : np.array
         The `binary_history` array.
-    h1 : array
+    h1 : np.array
         The `history1` array.
-    h2 : array
+    h2 : np.array
         The `history2` array.
-    Ystop : float
+    Ystop : float (default: THRESHOLD_CENTRAL_ABUNDANCE)
         The He abundance threshold for stopping
-    XCstop : float
+    XCstop : float (default: THRESHOLD_CENTRAL_ABUNDANCE_LOOSE_C)
         The C abundance threshold for stopping
 
     Returns
@@ -185,13 +192,16 @@ def keep_till_central_abundance_He_C(bh, h1, h2,
     tuple
         The binary, history1 and history2 arrays after removing the final
         steps after He depletion. If the stopping criteria are not reached
-        the histories will be returned unchanged.
+        the histories will be returned unchanged. Finally, the new termination
+        flag 1 is returned.
 
     """
     if (bh is None) or (h1 is None) or (h2 is None):
         #at least one histroy is missing
         return bh, h1, h2, ''
-    elif (not ("age" in bh.dtype.names)):
+    elif (not (("age" in bh.dtype.names) or
+               (("star_age" in h1.dtype.names) and
+                ("star_age" in h2.dtype.names)))):
         #at least one histroy doesn't contain an age column
         return bh, h1, h2, ''
     
@@ -222,7 +232,7 @@ def keep_till_central_abundance_He_C(bh, h1, h2,
         for i in range(len(h1["center_he4"])):
             if (h1["center_he4"][i]<Ystop) and (h1["center_c12"][i]<XCstop):
                 where_conditions_met1 += [i]
-        if len(where_conditions_met1) == 0:
+        if len(where_conditions_met1) == 0: # pragma: no cover
             Pwarn("No He depletion found in h1, while expected.",
                   "InappropriateValueWarning")
             return bh, h1, h2, ''
@@ -234,7 +244,7 @@ def keep_till_central_abundance_He_C(bh, h1, h2,
         for i in range(len(h2["center_he4"])):
             if (h2["center_he4"][i]<Ystop) and (h2["center_c12"][i]<XCstop):
                 where_conditions_met2 += [i]
-        if len(where_conditions_met2) == 0:
+        if len(where_conditions_met2) == 0: # pragma: no cover
             Pwarn("No He depletion found in h2, while expected.",
                   "InappropriateValueWarning")
             return bh, h1, h2, ''

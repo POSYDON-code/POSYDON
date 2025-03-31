@@ -15,10 +15,10 @@ jobs:
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
 
     - name: Set up Python
-      uses: actions/setup-python@v2
+      uses: actions/setup-python@v5
       with:
         python-version: ${{ matrix.python-version }}
 
@@ -34,6 +34,6 @@ jobs:
         pip install pytest
         pip install pytest-cov
         export PATH_TO_POSYDON=./
-        export PATH_TO_POSYDON_DATA=./
+        export PATH_TO_POSYDON_DATA=./posydon/unit_tests/_data/
         export MESA_DIR=./
-        python -m pytest posydon/unit_tests/ --cov=posydon.utils --cov=posydon.config --cov-branch --cov-report term-missing --cov-fail-under=100
+        python -m pytest posydon/unit_tests/ --cov=posydon.config --cov=posydon.utils --cov=posydon.grids --cov-branch --cov-report term-missing --cov-fail-under=100

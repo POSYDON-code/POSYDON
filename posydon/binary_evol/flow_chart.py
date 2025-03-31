@@ -30,6 +30,7 @@ STAR_STATES_ALL = [
     'H-rich_Central_C_depletion',
     'H-rich_non_burning',
     'accreted_He_Core_H_burning',
+    'accreted_He_Shell_H_burning',
     'accreted_He_non_burning',
     'accreted_He_Core_He_burning',
     'stripped_He_Core_He_burning',
@@ -63,7 +64,8 @@ STAR_STATES_HE_RICH = STAR_STATES_NORMALSTAR.copy()
                                          'H-rich_Shell_He_burning',
                                          'H-rich_Core_C_burning',
                                          'H-rich_Central_C_depletion',
-                                         'accreted_He_Core_H_burning']]
+                                         'accreted_He_Core_H_burning',
+                                         'accreted_He_Shell_H_burning']]
 
 STAR_STATES_C_DEPLETION = [st for st in STAR_STATES_ALL if "C_depletion" in st]
 
@@ -90,6 +92,7 @@ STAR_STATES_CC = [
     'stripped_He_non_burning',
     'H-rich_non_burning',
     'H-rich_Shell_H_burning',
+    'accreted_He_Shell_H_burning',
     'accreted_He_non_burning'
     ]
 
