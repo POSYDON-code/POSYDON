@@ -31,7 +31,7 @@ def _parse_commandline():
                         type=str,
                         help="The name of the function to be called, either "
                              "set_up_test or compress_dir.",
-                        const='compress_dir',
+                        default='compress_dir',
                         choices=['set_up_test', 'compress_dir'])
     parser.add_argument("-td", "--test_dir",
                         type=str,
@@ -46,7 +46,6 @@ def _parse_commandline():
                         nargs='?',
                         default=0.01)
     parser.add_argument("-v", "--verbose",
-                        type=bool,
                         help="Enable/Disable outputs",
                         default=False,
                         action='store_true')
