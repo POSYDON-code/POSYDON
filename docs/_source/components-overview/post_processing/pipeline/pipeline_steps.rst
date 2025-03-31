@@ -3,7 +3,7 @@
 ##############
 Pipeline steps
 ##############
-
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 The post-processing pipeline is divided into several steps which build 
 on each other. Each step will take a csv file as input. The name of this 
 file determines which pipeline step should be performed.
@@ -125,9 +125,9 @@ Step 4: Training the interpolators
 
 To get interpolated data from our grids, in this step we train an interpolator
 on your :samp:`PSyGrid` object. The file :samp:`step_4.csv` therefore has to
-contain the following pieces of information: First, the grid containing the data, second,
-the grid type, third, the interpolation method (inlcuding whether the grid
-starts at RLO), and finally, the name of the interpolator object.
+contain the following pieces of information: First, the grid containing the 
+data, second, the grid type, third, the interpolation method (inlcuding whether 
+the grid starts at RLO), and finally, the name of the interpolator object.
 
 .. code-block::
 
@@ -172,17 +172,18 @@ Step R: Exporting a rerun
 ------------------------
 
 Often, a grid will not successfully converge every binary on the first go. So 
-there is a need to export reruns which use modified conditions to fix non-converged
-models. This step is therefore only needed during the build of a new grid.
-Usually, one would run the steps to the point where the need of a fix arises.
-Additionally, before exporting a rerun, the logic for how to select a system to be
-included in the rerun and what should be changed needs to be implemented first.
+there is a need to export reruns which use modified conditions to fix 
+non-converged models. This step is therefore only needed during the build of 
+a new grid. Usually, one would run the steps to the point where the need of a 
+fix arises. Additionally, before exporting a rerun, the logic for how to select 
+a system to be included in the rerun and what should be changed needs to be 
+implemented first.
 
 For this step the csv file is called :samp:`rerun.csv` to avoid too much
-confusion with other steps. It clearly has to run after a step, but it is not a usual
-step itself. It requires the path to a :samp:`PSyGrid` object to get the
-models from, the path to which the rerun should be stored (it creates the
-:samp:`grid.csv` and the ini file needed to
+confusion with other steps. It clearly has to run after a step, but it is 
+not a usual step itself. It requires the path to a :samp:`PSyGrid` object to 
+get the models from, the path to which the rerun should be stored (it creates 
+the :samp:`grid.csv` and the ini file needed to
 :ref:`setup a new run <mesa-grids-api>`), the grid type, the metallicity, the
 type of the rerun specifying the logic and changes, and the cluster name.
 
