@@ -301,7 +301,9 @@ class TestChabrierIMF:
         assert np.all(pdf_values == 0.0)
         
     def test_pdf_inside_and_outside(self, default_chabrier):
-        """Test that PDF returns correct values for a mix of inside and outside mass range."""
+        """Test that PDF returns correct values for a mix of inside and 
+        outside mass range.
+        """
         m = np.array([default_chabrier.m_min - 0.1,
                       default_chabrier.m_max + 0.1,
                       default_chabrier.m_min + 0.1])
@@ -356,7 +358,9 @@ class TestChabrierIMF:
         assert np.all(pdf_values == expected)
 
     def test_invalid_initialization(self):
-        """Test that initialization raises ValueError when normalization integral is zero."""
+        """Test that initialization raises ValueError when normalization 
+        integral is zero.
+        """
         with pytest.raises(ValueError, match='m_min must be less than m_max.'):
             IMFs.Chabrier2003(m_c=0.22, sigma=0.57, alpha=2.3, 
                               m_break=1.0, m_min=1e-10, m_max=1e-10)
