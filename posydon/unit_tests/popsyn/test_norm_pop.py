@@ -77,7 +77,7 @@ class TestGetIMFPdf:
         # Test that the custom parameter was used
         m_test = np.array([1, 10, 50])
         result = pdf_func(m_test)
-        expected = 3.5  # The value of custom_param
+        expected = kwargs['SchemeKwargsIMF']['custom_param']  # The value of custom_param
         assert np.allclose(result, expected)
 
 
