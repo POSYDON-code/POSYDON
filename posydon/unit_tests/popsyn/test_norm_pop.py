@@ -30,12 +30,12 @@ class TestGetIMFPdf:
         pdf_func = norm_pop.get_IMF_pdf(kwargs)
         m_test = np.array([1, 10, 50])
         result = pdf_func(m_test)
-        assert np.all(result, np.ones_like(m_test))        
+        assert np.all(result, np.ones(len(m_test)))
     
     
     def test_valid_imf_returns_dummy_pdf(self, monkeypatch):
         # Use monkeypatch to add DummyIMF to IMFs module
-        monkeypatch.setattr(IMFs, 'DummyIMF', DummyIMF)
+        monkeypatch.setattr(IMFs, 'DummyIMF', DummyIMF, raising=False)
         
         kwargs = {
             'primary_mass_scheme': 'DummyIMF',
@@ -61,7 +61,10 @@ class TestGetIMFPdf:
                 return self.custom_param if self.custom_param is not None else 1
         
         # Use monkeypatch to add SchemeKwargsIMF to IMFs module
-        monkeypatch.setattr(IMFs, 'SchemeKwargsIMF', SchemeKwargsIMF)
+        monkeypatch.setattr(IMFs,
+                            'SchemeKwargsIMF',
+                            SchemeKwargsIMF,
+                            raising=False)
         
         # Create kwargs with scheme-specific parameters
         kwargs = {
@@ -186,7 +189,7 @@ class TestGetPdf:
 
     def test_dummy_imf_pdf(self, monkeypatch):
         # Use monkeypatch fixture to add DummyIMF to IMFs module
-        monkeypatch.setattr(IMFs, 'DummyIMF', DummyIMF)
+        monkeypatch.setattr(IMFs, 'DummyIMF', DummyIMF, raising=False)
         
         kwargs = {
             'primary_mass_scheme': 'DummyIMF',

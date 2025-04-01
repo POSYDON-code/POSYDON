@@ -12,10 +12,13 @@ class flat_mass_ratio():
         return f"FlatMassRatio(q_min={self.q_min}, q_max={self.q_max})"
     
     def _repr_html_(self):
-        return f"<h3>Flat Mass Ratio Distribution</h3><p>q_min = {self.q_min}</p><p>q_max = {self.q_max}</p>"
+        return (f"<h3>Flat Mass Ratio Distribution</h3>"
+                f"<p>q_min = {self.q_min}</p>"
+                f"<p>q_max = {self.q_max}</p>")
     
     def _calculate_normalization(self):
-        """Calculate the normalization constant for the flat mass ratio distribution.
+        """Calculate the normalization constant for the flat mass ratio 
+        distribution.
 
         Returns
         -------
@@ -23,8 +26,9 @@ class flat_mass_ratio():
             The normalization constant ensuring the PDF integrates to 1.
         """
         integral, _ = quad(self.flat_mass_ratio, self.q_min, self.q_max)
-        if integral == 0:
-            raise ValueError("Normalization integral is zero. Check mass ratio parameters.")
+        if not (integral > 0):
+            raise ValueError("Normalization integral is zero. "
+                             "Check mass ratio parameters.")
         return 1.0 / integral
     
     def flat_mass_ratio(self, q):
@@ -41,7 +45,8 @@ class flat_mass_ratio():
 
         """
         if np.any(q < 0) or np.any(q > 1):
-            raise ValueError("Mass ratio must be between 0 and 1. Check mass ratio parameters.")
+            raise ValueError("Mass ratio must be between 0 and 1. "
+                             "Check mass ratio parameters.")
         return 1.0
     
     def pdf(self, q):
@@ -75,25 +80,34 @@ class Sana12Period():
         # mass boundary is at 15 Msun
         self.low_mass_norm = self._calculate_normalization(self.mbreak-1)
         self.high_mass_norm = self._calculate_normalization(self.mbreak+1)
-        self.norm = lambda m1: np.where(m1 <= self.mbreak, self.low_mass_norm, self.high_mass_norm)
+        self.norm = lambda m1: np.where(m1 <= self.mbreak,
+                                        self.low_mass_norm,
+                                        self.high_mass_norm)
         
     def __repr__(self):
         return f"Sana12Period(p_min={self.p_min}, p_max={self.p_max})"
     
     def _repr_html_(self):
-        return f"<h3>Sana12 Period Distribution</h3><p>p_min = {self.p_min}</p><p>p_max = {self.p_max}</p>"
+        return (f"<h3>Sana12 Period Distribution</h3>"
+                f"<p>p_min = {self.p_min}</p>"
+                f"<p>p_max = {self.p_max}</p>")
     
     def _calculate_normalization(self, m1):
-        """Calculate the normalization constant for the Sana12 period distribution.
+        """Calculate the normalization constant for the Sana12 period
+        distribution.
 
         Returns
         -------
         float
             The normalization constant ensuring the PDF integrates to 1.
         """
-        integral =  quad(self.sana12_period, np.log10(self.p_min), np.log10(self.p_max), args=(m1))[0]
+        integral =  quad(self.sana12_period,
+                         np.log10(self.p_min),
+                         np.log10(self.p_max),
+                         args=(m1))[0]
         if integral == 0:
-            raise ValueError("Normalization integral is zero. Check period parameters.")
+            raise ValueError("Normalization integral is zero. "
+                             "Check period parameters.")
         return 1.0 / integral
     
     def sana12_period(self, logp, m1):
@@ -101,10 +115,10 @@ class Sana12Period():
 
         Parameters
         ----------
-        logp : float or array_like
+        logp : float or array
             Period(s).
-        m1 : float or array_like
-            Mass value(s). Can be a single value or an array of the same length as p.
+        m1 : float or array
+            Mass value(s). Single value or an array of the same length as p.
 
         Returns
         -------
@@ -112,14 +126,16 @@ class Sana12Period():
             Distribution value(s).
         """
         if np.any(m1 <= 0):
-            raise ValueError("Period and mass must be positive. Check parameters.")
+            raise ValueError("Period and mass must be positive. "
+                             "Check parameters.")
 
         logp = np.asarray(logp)
         m1 = np.asarray(m1)
         if m1.size == 1:
             m1 = np.full_like(logp, m1)
         elif m1.shape != logp.shape:
-            raise ValueError("m1 must be a single value or an array of the same length as p.")
+            raise ValueError("m1 must be a single value or an array of "
+                             "the same length as p.")
         
         result = np.zeros_like(logp, dtype=float)        
 
@@ -157,7 +173,7 @@ class Sana12Period():
         p : float or array_like
             Period(s).
         m1 : float or array_like
-            Mass value(s). Can be a single value or an array of the same length as p.
+            Mass value(s). Single value or an array of the same length as p.
         
         Returns
         -------
@@ -170,13 +186,15 @@ class Sana12Period():
         if m1.size == 1:
             m1 = np.full_like(p, m1)
         elif m1.shape != p.shape:
-            raise ValueError("m1 must be a single value or an array of the same length as p.")
+            raise ValueError("m1 must be a single value or an array of "
+                             "the same length as p.")
         
         valid = (p >= self.p_min) & (p <= self.p_max)
         pdf_values = np.zeros_like(p, dtype=float)
         
         logp = np.log10(p)
-        pdf_values[valid] = self.sana12_period(logp[valid], m1[valid]) * self.norm(m1[valid])
+        pdf_values[valid] = (self.sana12_period(logp[valid], m1[valid]) 
+                             * self.norm(m1[valid]))
         return pdf_values
 
         
