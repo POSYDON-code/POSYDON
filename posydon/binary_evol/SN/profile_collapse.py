@@ -88,15 +88,17 @@ def get_ejecta_element_mass_at_collapse(star, compact_object_mass, verbose):
                 h1_mass_ej = np.sum(dm_ejected * XH_ejected)
                 he4_mass_ej = np.sum(dm_ejected * YHe_ejected)
             else:
-                Pwarn(f"Mismatch in array lengths({len(dm_ejected)}, "
-                      f"{len(XH_ejected)}, {len(YHe_ejected)}), cannot "
-                      "calculate ejected masses accurately.",
-                      'InappropriateValueWarning')
+                Pwarn("Mismatch in array lengths(len(dm_ejected) = "
+                      f"{len(dm_ejected)}, len(XH_ejected) = "
+                      f"{len(XH_ejected)}, len(YHe_ejected) = "
+                      f"{len(YHe_ejected)}), cannot calculate ejected masses "
+                      "accurately.", 'InappropriateValueWarning')
                 h1_mass_ej = 0.0
                 he4_mass_ej = 0.0
         else:
-            Pwarn(f"Index out of bounds ({i_rem} >= {len(dm_all)}), cannot "
-                  "calculate ejected masses.", 'InappropriateValueWarning')
+            Pwarn(f"Index out of bounds (i_rem = {i_rem} >= {len(dm_all)} = "
+                  "len(dm_all)), cannot calculate ejected masses.",
+                  'InappropriateValueWarning')
             h1_mass_ej = 0.0
             he4_mass_ej = 0.0
 
