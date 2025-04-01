@@ -48,7 +48,7 @@ STEP 4.1: plot interpolator accuracy and confusion matricies
 STEP 5: train profile interpolators
 uses gird and initial-final interpolators to train the profile interpolators
 
-STEP 9: export dataset
+STEP F: export dataset
 
 STEP RERUN: rerun grid with a fix
 grid_low_res_combined.rerun(index=logic) --> grid_low_res_rerun_1/grid.csv
@@ -296,8 +296,7 @@ def calculate_extra_values(i, path_to_csv_file, verbose=False):
     
     # load processed grid and append values
     grid = PSyGrid(processed_grid_path)
-    add_post_processed_quantities(grid, MESA_dirs_EXTRA_COLUMNS,
-                                  EXTRA_COLUMNS, verbose=verbose)
+    add_post_processed_quantities(grid, MESA_dirs_EXTRA_COLUMNS, EXTRA_COLUMNS)
     if verbose:
         print(f'Added processed quantities to grid: {processed_grid_path}')
     grid.close()
@@ -1482,7 +1481,7 @@ if __name__ == '__main__':
     if STEP=='step_5': # train profile interpolators
         train_profile_interpolators(SLURM_I, PATH_TO_CSV_FILE, verbose=VERBOSE)
 
-    if STEP=='step_9': # export dataset
+    if STEP=='step_F': # export dataset
         export_dataset(SLURM_I, PATH_TO_CSV_FILE, verbose=VERBOSE)
 
     if STEP=='rerun': # export rerun
