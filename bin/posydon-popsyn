@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # script to setup a population run with one or multiple metallicities
+#
 # 1. Reads the args input file
 # 2. Determine the number of metallicities
 # 3. Create a submit file for each metallicity
@@ -7,12 +8,15 @@
 # 5. Create a file to submit all the metallicities
 # 6. Including the dependencies
 # Author: Max Briel
+
 import os
 import argparse
-from posydon.popsyn.io import (binarypop_kwargs_from_ini,
-                               simprop_kwargs_from_ini,
-                               create_run_script_text,
-                               create_merge_script_text)
+from posydon.popsyn.io import (
+    binarypop_kwargs_from_ini,
+    simprop_kwargs_from_ini,
+    create_run_script_text,
+    create_merge_script_text
+)
 from posydon.config import PATH_TO_POSYDON, PATH_TO_POSYDON_DATA
 from posydon.popsyn.synthetic_population import Population
 from posydon.utils.common_functions import convert_metallicity_to_string
@@ -22,7 +26,13 @@ import glob
 import numpy as np
 
 def create_run_script(ini_file):
-    '''creates a run script for the population synthesis run'''
+    '''Creates a run script for the population synthesis run.
+    
+    Parameters
+    ----------
+    ini_file : str
+        Path to the .ini file containing population synthesis parameters.
+    '''
    
     filename =f'run_metallicity.py'
     if os.path.exists(filename):
@@ -31,7 +41,13 @@ def create_run_script(ini_file):
         file.write(create_run_script_text(ini_file))
 
 def create_merge_script(ini_file):
-    '''creates a merge script for the population synthesis run'''
+    '''Creates a merge script for the population synthesis run.
+    
+    Parameters
+    ----------
+    ini_file : str
+        Path to the .ini file containing population synthesis parameters.
+    '''
     
     filename='merge_metallicity.py'
     if os.path.exists(filename):
@@ -39,8 +55,42 @@ def create_merge_script(ini_file):
     with open(filename, mode='w') as file:
         file.write(create_merge_script_text(ini_file))
 
-def create_slurm_submit(metallicity, job_array_length, partition, email, walltime, account, mem_per_cpu, path_to_posydon, path_to_posydon_data):
-    '''creates the slurm submit script'''
+def create_slurm_submit(metallicity,
+                        job_array_length,
+                        partition,
+                        email,
+                        walltime,
+                        account,
+                        mem_per_cpu,
+                        path_to_posydon,
+                        path_to_posydon_data):
+    '''Creates the slurm submit script for population synthesis job arrays.
+    
+    Creates a SLURM submission script file named 
+    "{str_met}_Zsun_slurm_array.slurm" where str_met is the metallicity 
+    converted to string format.
+    
+    Parameters
+    ----------
+    metallicity : float
+        The metallicity in solar units (e.g., 0.02 for Z=0.02)
+    job_array_length : int
+        The length of the job array (number of jobs)
+    partition : str, optional
+        SLURM partition to submit the job to
+    email : str, optional
+        Email address for job notifications
+    walltime : str
+        Time limit for the job in SLURM format (e.g., "24:00:00")
+    account : str, optional
+        SLURM account to charge the job to
+    mem_per_cpu : str
+        Memory per CPU allocation (e.g., "4G")
+    path_to_posydon : str
+        Path to the POSYDON installation
+    path_to_posydon_data : str
+        Path to the POSYDON_DATA directory
+    '''
 
     str_met = convert_metallicity_to_string(metallicity)
     # 0 already included in job_array_length
@@ -75,7 +125,39 @@ srun python ./run_metallicity.py {metallicity}
     with open(filename, mode='w') as file:
         file.write(text)
 
-def create_slurm_merge(metallicity, partition, email, merge_walltime, account, mem_per_cpu, path_to_posydon, path_to_posydon_data):
+def create_slurm_merge(metallicity,
+                       partition,
+                       email,
+                       merge_walltime,
+                       account,
+                       mem_per_cpu,
+                       path_to_posydon,
+                       path_to_posydon_data):
+    '''Creates the slurm submit script for merging population synthesis results.
+    
+    Creates a SLURM submission script file named 
+    "{str_met}_Zsun_merge_popsyn.slurm" where str_met is the metallicity 
+    converted to string format.
+    
+    Parameters
+    ----------
+    metallicity : float
+        The metallicity in solar units (e.g., 0.02 for Z=0.02)
+    partition : str, optional
+        SLURM partition to submit the job to
+    email : str, optional
+        Email address for job notifications
+    merge_walltime : str
+        Time limit for the merge job in SLURM format (e.g., "12:00:00")
+    account : str, optional
+        SLURM account to charge the job to
+    mem_per_cpu : str
+        Memory per CPU allocation (e.g., "4G")
+    path_to_posydon : str
+        Path to the POSYDON installation
+    path_to_posydon_data : str
+        Path to the POSYDON_DATA directory
+    '''
 
     str_met = convert_metallicity_to_string(metallicity)
     
@@ -117,7 +199,7 @@ srun python ./merge_metallicity.py {metallicity}
         file.write(text)
 
 def check_SN_MODEL_validity(ini_file):
-    '''checks if the step_SN MODEL is valid for this script
+    '''Checks if the step_SN MODEL is valid for this script
 
     Parameters
     ----------
@@ -144,7 +226,7 @@ def check_SN_MODEL_validity(ini_file):
         return True
 
 def setup_popsyn_function(args):
-    '''function to setup the population synthesis run
+    '''Function to setup the population synthesis run
     
     Parameters
     ----------
@@ -155,7 +237,8 @@ def setup_popsyn_function(args):
         raise FileNotFoundError(f'File {args.ini_file} not found')
     
     if not check_SN_MODEL_validity(args.ini_file):
-        raise ValueError("The step_SN MODEL is not valid for this script. Please check the MODEL in the ini file")
+        raise ValueError("The step_SN MODEL is not valid for this script."
+                        "Please check the MODEL in the ini file")
 
     synpop_params = binarypop_kwargs_from_ini(args.ini_file)
     metallicities = synpop_params['metallicity']
@@ -174,9 +257,15 @@ def setup_popsyn_function(args):
             os.mkdir(f'{str_met}_logs')
         except:
             pass
-        create_slurm_submit(met, args.job_array, args.partition, args.email, args.walltime, args.account, args.mem_per_cpu, PATH_TO_POSYDON, os.path.dirname(PATH_TO_POSYDON_DATA))
+        create_slurm_submit(met, args.job_array, args.partition, args.email,
+                            args.walltime, args.account, args.mem_per_cpu,
+                            PATH_TO_POSYDON, 
+                            os.path.dirname(PATH_TO_POSYDON_DATA))
         print("SLURM script created")
-        create_slurm_merge(met, args.partition, args.email, args.merge_walltime, args.account, args.mem_per_cpu, PATH_TO_POSYDON, os.path.dirname(PATH_TO_POSYDON_DATA))
+        create_slurm_merge(met, args.partition, args.email,
+                           args.merge_walltime, args.account, args.mem_per_cpu,
+                           PATH_TO_POSYDON,
+                           os.path.dirname(PATH_TO_POSYDON_DATA))
 
     # create submission script for all SLURM 
     filename = 'slurm_submit.sh'
@@ -187,14 +276,23 @@ def setup_popsyn_function(args):
         file.write('#!/bin/bash\n')
         for met in metallicities:
             str_met = convert_metallicity_to_string(met)
-            file.write(f'array=$(sbatch --parsable {str_met}_Zsun_slurm_array.slurm)\n')
+            file.write("array=$(sbatch --parsable "
+                       f"{str_met}_Zsun_slurm_array.slurm)\n")
             file.write("echo '"+str_met+" job array submitted as '${array}\n")
-            file.write('merge=$(sbatch --parsable --dependency=afterok:${array} --kill-on-invalid-dep=yes '+f'{str_met}_Zsun_merge_popsyn.slurm)\n')
+            file.write("merge=$(sbatch --parsable --dependency=afterok:${array} "
+                       "--kill-on-invalid-dep=yes "
+                       f'{str_met}_Zsun_merge_popsyn.slurm)\n')
             file.write("echo '"+str_met+" merge job submitted as '${merge}\n")    
             
 
 def clear_previous_lines(num_lines):
-    """Clear the specified number of previous lines in the terminal."""
+    """Clear the specified number of previous lines in the terminal.
+    
+    Parameters
+    ----------
+    num_lines : int
+        Number of lines to clear
+    """
     # ANSI escape code to move cursor up one line
     UP = '\033[1A'
     # ANSI escape code to clear line
@@ -284,12 +382,15 @@ def check_binary_counts(run_folder, metallicities, expected_count):
             counts_dict[met] = num_binaries
             
             if num_binaries != expected_count:
-                print(f"{str_met}\t\t{expected_count}\t\t{num_binaries}\t\033[31mMISMATCH\033[0m")
+                print(f"{str_met}\t\t{expected_count}\t\t{num_binaries}"
+                      "\t\033[31mMISMATCH\033[0m")
                 all_match = False
             else:
-                print(f"{str_met}\t\t{expected_count}\t\t{num_binaries}\t\033[32mOK\033[0m")
+                print(f"{str_met}\t\t{expected_count}\t\t{num_binaries}"
+                      "\t\033[32mOK\033[0m")
         except Exception as e:
-            print(f"{str_met}\t\t{expected_count}\t\t-\t\033[31mERROR: {str(e)}\033[0m")
+            print(f"{str_met}\t\t{expected_count}\t\t-\t\033[31mERROR: "
+                  f"{str(e)}\033[0m")
             all_match = False
     
     
@@ -302,7 +403,8 @@ def check_binary_counts(run_folder, metallicities, expected_count):
     return all_match, counts_dict
 
 def check_batches(run_folder, metallicity, batch_folder_name):
-    """Check batch files for a specific metallicity when the population file is missing.
+    """Check batch files for a specific metallicity when the population file 
+    is missing.
     
     Parameters
     ----------
@@ -335,7 +437,8 @@ def check_batches(run_folder, metallicity, batch_folder_name):
                     break
     
     # Step 2: Check the batch folder
-    batch_folder = os.path.join(run_folder, f'{str_met}_Zsun_{batch_folder_name}')
+    batch_folder = os.path.join(run_folder,
+                                f'{str_met}_Zsun_{batch_folder_name}')
     
     if not os.path.exists(batch_folder):
         print(f"{str_met}\t\t-\t-\t\033[31mNO BATCH DIR\033[0m")
@@ -355,7 +458,8 @@ def check_batches(run_folder, metallicity, batch_folder_name):
         status = "unknown_expected_count"
     elif actual_count < expected_batch_count:
         missing_count = expected_batch_count - actual_count
-        print(f"{str_met}\t\t{expected_batch_count}\t{actual_count}\t\033[31m{missing_count} MISSING\033[0m")
+        print(f"{str_met}\t\t{expected_batch_count}\t{actual_count}"
+              + f"\t\033[31m{missing_count} MISSING\033[0m")
 
         # Attempt to find which specific batch files are missing
         found_indices = set()
@@ -370,20 +474,27 @@ def check_batches(run_folder, metallicity, batch_folder_name):
             print(f"  Missing batches: {sorted(missing_indices)}")
         else:
             sample = sorted(list(missing_indices))[:10]
-            print(f"  Missing batches include: {sample} and {len(missing_indices)-10} more")
+            print(f"  Missing batches include: {sample} and "
+                  f"{len(missing_indices)-10} more")
         status = "incomplete"
     elif actual_count == expected_batch_count:
-        print(f"{str_met}\t\t{expected_batch_count}\t{actual_count}\t\033[32mCOMPLETE\033[0m")
+        print(f"{str_met}\t\t{expected_batch_count}\t{actual_count}"
+              f"\t\033[32mCOMPLETE\033[0m")
         status = "complete"
     else:
         extra_count = actual_count - expected_batch_count
-        print(f"{str_met}\t\t{expected_batch_count}\t{actual_count}\t\033[33m{extra_count} EXTRA\033[0m")
+        print(f"{str_met}\t\t{expected_batch_count}\t{actual_count}"
+              f"\t\033[33m{extra_count} EXTRA\033[0m")
         status = "extra_files"
         
     if len(missing_indices) > 0:
         # Get the jobID
-        jobIDs = glob.glob(os.path.join(run_folder, f'{str_met}_logs/popsyn_*.out'))
-        jobIDs = [int(os.path.basename(job).split('_')[1].split('.')[0]) for job in jobIDs]
+        jobIDs = glob.glob(os.path.join(run_folder,
+                                        f'{str_met}_logs/popsyn_*.out'))
+        jobIDs = [
+            int(os.path.basename(job).split('_')[1].split('.')[0])
+            for job in jobIDs]
+        
         jobIDs = np.unique(jobIDs)
         if len(jobIDs) > 1:
             print("Please select a job ID to use: ")
@@ -408,7 +519,10 @@ def check_batches(run_folder, metallicity, batch_folder_name):
         print("Reasons for missing files:")
         
         for index in missing_indices:
-            with open(os.path.join(run_folder, f'{str_met}_logs/popsyn_{jobID}_{index}.out'), 'r') as f:
+            with open(
+                os.path.join(run_folder,
+                            f'{str_met}_logs/popsyn_{jobID}_{index}.out'), 
+                'r') as f:
                 lines = f.readlines()
                 if lines:
                     if len(lines) >= 3:
@@ -420,7 +534,8 @@ def check_batches(run_folder, metallicity, batch_folder_name):
                             for i, line in enumerate(last_3_lines):
                                 print(f"  {i+1}: {line}")
                     elif len(lines) > 0:
-                        print(f"Batch {index}: File contains {len(lines)} line(s):")
+                        print(f"Batch {index}: "
+                              "File contains {len(lines)} line(s):")
                         if "DUE TO TIME LIMIT" in lines[0]:
                             print("  Wall time exceeded")
                         else:
@@ -556,6 +671,24 @@ srun python ./run_metallicity.py {batch_status['metallicity']}
     return rescue_script
 
 def get_ini_file(args):
+    '''Find and select the INI file for the population synthesis run.
+    
+    Parameters
+    ----------
+    args : argparse.Namespace
+        Command line arguments that needs to containing the run_folder path.
+        
+    Returns
+    -------
+    str
+        Path to the selected INI file.
+        
+    Raises
+    ------
+    FileNotFoundError
+        If no INI file is found in the run folder.
+    '''
+    
     # Find and select the INI file
     ini_files = glob.glob(os.path.join(args.run_folder, '*.ini'))
     if not ini_files:
@@ -636,11 +769,14 @@ def check_popsyn_function(args):
     print("-"*80)
     
     # Check if all population files exist
-    files_exist, file_status = check_population_files(args.run_folder, metallicities)
+    files_exist, file_status = check_population_files(args.run_folder,
+                                                      metallicities)
     
     # Check binary counts for existing files
     if files_exist:
-        counts_match, binary_counts = check_binary_counts(args.run_folder, metallicities, number_of_binaries)
+        counts_match, binary_counts = check_binary_counts(args.run_folder,
+                                                          metallicities,
+                                                          number_of_binaries)
     
     if files_exist and counts_match:
         print("\n\033[32mAll checks passed successfully.\033[0m")
@@ -658,10 +794,17 @@ def check_popsyn_function(args):
         print("\nChecking batch files for missing populations:")
         for met in missing_files:
             print("-"*80)
-            batch_status[met] = check_batches(args.run_folder, met, synpop_params.get('temp_directory', 'batches'))
+            batch_status[met] = check_batches(
+                                args.run_folder,
+                                met,
+                                synpop_params.get('temp_directory', 'batches')
+                                )
             print("-"*80)
     
-        batch_error = any(status["status"] != "complete" for status in batch_status.values())
+        batch_error = any(
+            status["status"] != "complete"
+            for status in batch_status.values()
+        )
         # If no missing files, then we can resubmit the merge script
         if not batch_error:
             print("\nAll batch files are complete.")
@@ -672,7 +815,9 @@ def check_popsyn_function(args):
                 for met in missing_files:
                     str_met = convert_metallicity_to_string(met)
                     
-                    os.system(f'sbatch {args.run_folder}/{str_met}_Zsun_merge_popsyn.slurm')
+                    os.system(
+                        f'sbatch{args.run_folder}/{str_met}_Zsun_merge_popsyn.slurm'
+                    )
                 print("Merge jobs resubmitted.")
             else:
                 print("Merge jobs not resubmitted.")
@@ -680,10 +825,13 @@ def check_popsyn_function(args):
         else:
             print("\nOne or more batch files are incomplete.")
             print("We need to resubmit some of the batch jobs.")
-            print("Please use the following command to create and submit a rescue script:")
+            print("Please use the following command to create and"
+                  "submit a rescue script:")
             print("")
-            print("posydon-popsyn rescue {args.run_folder} {parameters}")
+            print(f"posydon-popsyn rescue {args.run_folder}")
             print("")
+            print("You can add additional arguments to the command, such as "
+                  + "--email, --partition, etc.")
             print("This will generate resubmission scripts that you can review "
                   + "and run to resubmit failed jobs.")
     
@@ -714,11 +862,14 @@ def rescue_popsyn_function(args):
     print("-"*80)
         
     # Check if all population files exist
-    files_exist, file_status = check_population_files(args.run_folder, metallicities)
+    files_exist, file_status = check_population_files(args.run_folder,
+                                                      metallicities)
     
     # Check binary counts for existing files
     if files_exist:
-        counts_match, binary_counts = check_binary_counts(args.run_folder, metallicities, number_of_binaries)
+        counts_match, binary_counts = check_binary_counts(args.run_folder,
+                                                          metallicities,
+                                                          number_of_binaries)
     
     if files_exist and counts_match:
         print("\n\033[32mAll checks passed successfully.\033[0m")
@@ -737,14 +888,20 @@ def rescue_popsyn_function(args):
         rescue_scripts =[]
         for met in missing_files:
             print("-"*80)
-            batch_status[met] = check_batches(args.run_folder, met, synpop_params.get('temp_directory', 'batches'))
+            batch_status[met] = check_batches(
+                                args.run_folder,
+                                met,
+                                synpop_params.get('temp_directory', 'batches')
+                                )
            
             print("#"*80)
             print("")
             print("GENERATING A RESCUE SCRIPT ....................")
             
             # Generate a rescue script
-            rescue_scripts.append(generate_rescue_script(args, batch_status[met]))
+            rescue_scripts.append(
+                generate_rescue_script(args, batch_status[met])
+            )
         
             print("-"*80)
             
@@ -758,8 +915,11 @@ def rescue_popsyn_function(args):
                 script = os.path.basename(script)
                 met = script.split('_')[0]
                 f.write(f'resubmit=$(sbatch --parsable {script})\n')
-                f.write(f"echo 'Rescue script submitted as '${{resubmit}}\n")
-                f.write(f'merge=$(sbatch --parsable --dependency=afterok:${{resubmit}} --kill-on-invalid-dep=yes '+f'{met}_Zsun_merge_popsyn.slurm)\n')
+                f.write(f"echo 'Rescue script submitted as '${{resubmit}}\n")                
+                f.write("merge=$(sbatch --parsable "
+                        "--dependency=afterok:${{resubmit}} "
+                        "--kill-on-invalid-dep=yes "
+                        f"{met}_Zsun_merge_popsyn.slurm)\n")
                 f.write(f"echo 'Merge job submitted as '${{merge}}\n")
 
         print(f"Rescue scripts ready to be resubmitted by {resubmit_sh_file}") 
@@ -781,40 +941,101 @@ def rescue_popsyn_function(args):
 
 if __name__ == '__main__':
 
-    parser = argparse.ArgumentParser(prog='posydon-popsyn', description='POSYDON population synthesis')
+    parser = argparse.ArgumentParser(
+        prog='posydon-popsyn', 
+        description='POSYDON population synthesis command line tool')
     subparsers = parser.add_subparsers(title='subcommands', dest='command')
     subparsers.required = True
     
     # setup a run subcommand
     setup_parser = subparsers.add_parser('setup', help='setup a population run')
-    setup_parser.add_argument('ini_file', help='a population ini file for which you want to setup a population run', type=str, required=True)
-    setup_parser.add_argument('-j','--job_array', help='the number of job in the job array you want to run', type=int, default=100)
-    setup_parser.add_argument('--email', help='an email for the slurm scripts', default=None)
-    setup_parser.add_argument('--partition', help='what cluster partition you want to run the script on', default=None)
-    setup_parser.add_argument('--walltime', help='the walltime you would like to use in SLURM format', default='23:00:00')
-    setup_parser.add_argument('--merge_walltime', help='the walltime you would like to use for the merge script in SLURM format', default='12:00:00')
-    setup_parser.add_argument('--mem_per_cpu', help='the memory per cpu you would like to use in SLURM format', default='7G')
-    setup_parser.add_argument('--account', help='the account you would like to use', default=None)
+    setup_parser.add_argument(
+        'ini_file', 
+        help='a population ini file for which you want to setup a population run',
+        type=str, 
+        required=True)
+    setup_parser.add_argument(
+        '-j', '--job_array',
+        help='the number of job in the job array you want to run',
+        type=int, 
+        default=100)
+    setup_parser.add_argument(
+        '--email',
+        help='an email for the slurm scripts',
+        default=None)
+    setup_parser.add_argument(
+        '--partition',
+        help='what cluster partition you want to run the script on',
+        default=None)
+    setup_parser.add_argument(
+        '--walltime',
+        help='the walltime for the population synthesis in SLURM format',
+        default='23:00:00')    
+    setup_parser.add_argument(
+        '--merge_walltime',
+        help='the walltime for the merge script in SLURM format',
+        default='12:00:00')
+    setup_parser.add_argument(
+        '--mem_per_cpu',
+        help='the memory per cpu per job array in SLURM format',
+        default='7G')
+    setup_parser.add_argument(
+        '--account',
+        help='the account you would like to use',
+        default=None)
     setup_parser.set_defaults(func=setup_popsyn_function)
     
     # Check the run subcommand
-    check_parser = subparsers.add_parser('check', help='check the status of a population run')
-    check_parser.add_argument('run_folder', help='the folder where the population run is located', type=str, required=True)
+    check_parser = subparsers.add_parser(
+        'check',
+        help='check the status of a population run')
+    check_parser.add_argument(
+        'run_folder',
+        help='the folder where the population run is located',
+        type=str,
+        required=True)
     check_parser.set_defaults(func=check_popsyn_function)
     
     # Rescue the run subcommand
-    rescue_parser = subparsers.add_parser('rescue', help='rescue a failed population run')
-    rescue_parser.add_argument('run_folder', help='the folder where the population run is located', type=str, required=True)
-    rescue_parser.add_argument('-j','--job_array', help='the number of job in the job array you want to run', type=int, default=None)
-    rescue_parser.add_argument('--email', help='an email for the slurm scripts', default=None)
-    rescue_parser.add_argument('--partition', help='what cluster partition you want to run the script on', default=None)
-    rescue_parser.add_argument('--walltime', help='the walltime you would like to use in SLURM format', default=None)
-    rescue_parser.add_argument('--merge_walltime', help='the walltime you would like to use for the merge script in SLURM format', default=None)
-    rescue_parser.add_argument('--mem_per_cpu', help='the memory per cpu you would like to use in SLURM format', default=None)
-    rescue_parser.add_argument('--account', help='the account you would like to use', default=None)
+    rescue_parser = subparsers.add_parser(
+        'rescue',
+        help='rescue a failed population run')
+    rescue_parser.add_argument(
+        'run_folder',
+        help='the folder where the population run is located',
+        type=str,
+        required=True)
+    rescue_parser.add_argument(
+        '-j', '--job_array',
+        help='the number of job in the job array you want to run',
+        type=int,
+        default=None)
+    rescue_parser.add_argument(
+        '--email',
+        help='an email for the slurm scripts',
+        default=None)
+    rescue_parser.add_argument(
+        '--partition',
+        help='what cluster partition you want to run the script on',
+        default=None)
+    rescue_parser.add_argument(
+        '--walltime',
+        help='the walltime you would like to use in SLURM format',
+        default=None)
+    rescue_parser.add_argument(
+        '--merge_walltime',
+        help='the walltime you would like to use for the merge script in SLURM format',
+        default=None)
+    rescue_parser.add_argument(
+        '--mem_per_cpu',
+        help='the memory per cpu you would like to use in SLURM format',
+        default=None)
+    rescue_parser.add_argument(
+        '--account',
+        help='the account you would like to use',
+        default=None)
     rescue_parser.set_defaults(func=rescue_popsyn_function)
     
     args = parser.parse_args()
     args.func(args)
-    
-    
+
