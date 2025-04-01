@@ -237,14 +237,14 @@ class MesaGridStep:
         """Infer the grid boundaries (min/max of masses and orbital period)."""
         def initial_values_min_max(parameter_name):
             # get the request column from the initial values
-            arr = self._psyTrackInterp.grid.initial_values[parameter_name]
+            initial = self._psyTrackInterp.grid.initial_values[parameter_name]
             # get the final values - NaN for ignored/failed runs
             final = self._psyTrackInterp.grid.final_values[parameter_name]
 
             # only use runs for which both initial and final value is defined
-            arr = arr[np.isfinite(arr + final)]
+            initial_values_to_use = initial[np.isfinite(initial + final)]
 
-            return np.min(arr), np.max(arr)
+            return np.min(initial_values_to_use), np.max(initial_values_to_use)
 
         self.m1_min, self.m1_max = initial_values_min_max('star_1_mass')
         self.m2_min, self.m2_max = initial_values_min_max('star_2_mass')
