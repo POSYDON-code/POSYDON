@@ -500,12 +500,7 @@ class IllustrisTNG(SFHBase):
                 The maximum metallicity in absolute units.
             - select_one_met : bool
                 If True, the SFR is calculated for a single metallicity bin.
-        """
-        
-        self.Z_max = None
-        self.Z_min = None
-        self.normalise = False
-        
+        """        
         super().__init__(MODEL)
         # load the TNG data
         illustris_data = self._get_illustrisTNG_data()
