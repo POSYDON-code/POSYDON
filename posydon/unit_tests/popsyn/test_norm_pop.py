@@ -7,6 +7,7 @@ from pytest import fixture, mark
 import posydon.popsyn.IMFs as IMFs
 from posydon.popsyn.independent_sample import generate_independent_samples
 from posydon.config import PATH_TO_POSYDON
+from posydon.utils.posydonwarning import UnsupportedModelWarning
 
 # file to test
 from posydon.popsyn import norm_pop
@@ -121,6 +122,18 @@ class TestGetMassRatioPdf:
         result = q_pdf(0, None)
         assert np.all(result == 0)
 
+    def test_invalid_mass_ratio_scheme(self):
+        kwargs = {
+            'secondary_mass_scheme': 'invalid'
+        }
+        
+        with pytest.warns(UnsupportedModelWarning) as warning_info:
+            q_pdf = norm_pop.get_mass_ratio_pdf(kwargs)
+        
+        assert ("The secondary_mass_scheme is not defined use a flat mass ratio"
+                " distribution in (0,1]." in str(warning_info[0].message))
+        results = q_pdf(0.4)
+        assert np.all(results == 1)
 
 class TestGetBinaryFractionPdf:
     
