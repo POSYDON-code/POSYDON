@@ -10,7 +10,7 @@ jobs:
 
     strategy:
       matrix:
-        os: [macos-latest, ubuntu-latest]
+        os: [macos-13, macos-latest, ubuntu-latest]
         python-version: ['3.11']  # can add more if we want to support
 
     steps:
@@ -24,5 +24,7 @@ jobs:
 
     - name: Install POSYDON with extras
       run: |
+        # mpi4py needs to be preinstalled for the hpc option on pip
+        conda install mpi4py
         python -m pip install --upgrade pip
         pip install ".[doc,vis,ml,hpc]" 
