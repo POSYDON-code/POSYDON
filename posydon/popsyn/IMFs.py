@@ -14,6 +14,9 @@ class IMFBase(ABC):
         m_max : float
             The maximum mass considered in the IMF [Msun].
         """
+        if m_min >= m_max:
+            raise ValueError("m_min must be less than m_max.")
+        
         self.m_min = m_min
         self.m_max = m_max
         self.norm = self._calculate_normalization()
@@ -312,7 +315,8 @@ class Chabrier2003(IMFBase):
                 f"m_min={self.m_min}, m_max={self.m_max})")
 
     def _repr_html_(self):
-        return (f"<h3>Chabrier IMF</h3><p>m_c = {self.m_c}</p>"
+        return (f"<h3>Chabrier IMF</h3>"
+                f"<p>m_c = {self.m_c}</p>"
                 f"<p>sigma = {self.sigma}</p>"
                 f"<p>alpha = {self.alpha}</p>"
                 f"<p>m_break = {self.m_break}</p>"
