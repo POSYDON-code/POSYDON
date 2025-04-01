@@ -57,7 +57,7 @@ def get_IMF_pdf(kwargs):
         IMF_pdf = imf.pdf
     except AttributeError:
         # if not found, default to a flat distribution
-        IMF_pdf = lambda m1: 1
+        IMF_pdf = lambda m1: np.ones_like(m1)
         
     return IMF_pdf
 
