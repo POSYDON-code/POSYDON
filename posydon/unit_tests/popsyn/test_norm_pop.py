@@ -30,11 +30,13 @@ class TestGetIMFPdf:
         pdf_func = norm_pop.get_IMF_pdf(kwargs)
         m_test = np.array([1, 10, 50])
         result = pdf_func(m_test)
-        assert np.all(result == 1)        
+        assert np.all(result, np.ones_like(m_test))        
     
-    def test_valid_imf_returns_dummy_pdf(self):
-        # Monkey-patch: add DummyIMF to IMFs temporarily
-        IMFs.DummyIMF = DummyIMF
+    
+    def test_valid_imf_returns_dummy_pdf(self, monkeypatch):
+        # Use monkeypatch to add DummyIMF to IMFs module
+        monkeypatch.setattr(IMFs, 'DummyIMF', DummyIMF)
+        
         kwargs = {
             'primary_mass_scheme': 'DummyIMF',
             'primary_mass_min': 1,
@@ -46,10 +48,8 @@ class TestGetIMFPdf:
         # Expect DummyIMF.pdf to return 0.5 regardless of m1
         expected = 0.5
         assert np.allclose(result, expected)
-        # cleanup monkey-patch
-        del IMFs.DummyIMF
 
-    def test_imf_with_scheme_kwargs(self):
+    def test_imf_with_scheme_kwargs(self, monkeypatch):
         # Create a test IMF class that uses scheme kwargs
         class SchemeKwargsIMF:
             def __init__(self, m_min, m_max, custom_param=None):
@@ -60,8 +60,8 @@ class TestGetIMFPdf:
                 # Return custom_param if set, otherwise 1
                 return self.custom_param if self.custom_param is not None else 1
         
-        # Monkey-patch the IMF class into IMFs module
-        IMFs.SchemeKwargsIMF = SchemeKwargsIMF
+        # Use monkeypatch to add SchemeKwargsIMF to IMFs module
+        monkeypatch.setattr(IMFs, 'SchemeKwargsIMF', SchemeKwargsIMF)
         
         # Create kwargs with scheme-specific parameters
         kwargs = {
@@ -79,9 +79,6 @@ class TestGetIMFPdf:
         result = pdf_func(m_test)
         expected = 3.5  # The value of custom_param
         assert np.allclose(result, expected)
-        
-        # Cleanup monkey-patch
-        del IMFs.SchemeKwargsIMF
 
 
 class TestGetMassRatioPdf:
@@ -184,9 +181,10 @@ class TestGetPdf:
         result_invalid = pdf_func(m1_val, q=0, binary=True)
         assert np.all(result_invalid == 0)
 
-    def test_dummy_imf_pdf(self):
-        # Monkey-patch: add DummyIMF to IMFs temporarily
-        IMFs.DummyIMF = DummyIMF
+    def test_dummy_imf_pdf(self, monkeypatch):
+        # Use monkeypatch fixture to add DummyIMF to IMFs module
+        monkeypatch.setattr(IMFs, 'DummyIMF', DummyIMF)
+        
         kwargs = {
             'primary_mass_scheme': 'DummyIMF',
             'primary_mass_min': 1,
@@ -201,10 +199,7 @@ class TestGetPdf:
         m1_val = 10
         # For non-binary stars: expected = (1 - f_b)*DummyIMF.pdf = 0.3*0.5 = 0.15
         result = pdf_func(m1_val, binary=False)
-        assert np.allclose(result, 0.15)
-        # cleanup monkey-patch
-        del IMFs.DummyIMF
-        
+        assert np.allclose(result, 0.15)        
 
 class TestGetMeanMass:
     def test_dummy_mean_mass(self):
