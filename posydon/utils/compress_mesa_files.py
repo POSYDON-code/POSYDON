@@ -27,33 +27,24 @@ def _parse_commandline():
 
     """
     parser = argparse.ArgumentParser(description="Compressing MESA files")
-    parser.add_argument("-f", "--function",
-                        type=str,
-                        help="The name of the function to be called, either "
-                             "set_up_test or compress_dir.",
-                        default='compress_dir',
-                        choices=['set_up_test', 'compress_dir'])
     parser.add_argument("-td", "--test_dir",
                         type=str,
-                        help="The path to where the testing directory should "
-                             "be set up.",
-                        nargs='?',
+                        help="the path to where the testing directory should "
+                             "be set up instead of compressing files",
                         default=None)
     parser.add_argument("-dsr", "--dsr",
                         type=float,
-                        help="Downsampling rate when creating testing "
+                        help="downsampling rate when creating testing "
                              "directory",
-                        nargs='?',
                         default=0.01)
     parser.add_argument("-v", "--verbose",
-                        help="Enable/Disable outputs",
+                        help="enable/disable outputs",
                         default=False,
                         action='store_true')
     parser.add_argument("mesa_dir",
                         type=str,
-                        help="The path to the directory containing "
+                        help="the path to the directory containing "
                              "MESA-generated data",
-                        nargs='?',
                         default=None)
     args = parser.parse_args()
     return args
@@ -256,7 +247,8 @@ def _compress_MESA():
     
     """
     args = _parse_commandline()
-    if args.function == 'set_up_test':
+    if args.test_dir is not None:
         set_up_test(args)
-    elif args.function == 'compress_dir':
+    else:
+        print(args)
         compress_dir(args)
