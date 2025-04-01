@@ -142,35 +142,6 @@ def get_binary_fraction_pdf(kwargs):
     return binary_fraction_pdf
     
     
-def get_period_pdf(kwargs):
-    """Function that returns the period PDF function
-    
-    Supported schemes:
-    - `Sana+12_period_extended` with `orbital_schem` set to `period`
-        Requires the following parameters:
-        - `orbital_period_min`
-        - `orbital_period_max`
-    
-    Parameters
-    ----------
-    kwargs : dict
-        Dictionary containing the simulation parameters
-        
-    Returns
-    -------
-    pdf : function
-        Function that returns the period PDF    
-    """
-    if (kwargs['orbital_scheme'] == 'period' 
-        and kwargs['orbital_period_scheme'] == 'Sana+12_period_extended'):
-        
-        P_pdf_class = Sana12Period(p_min=kwargs['orbital_period_min'],
-                                   p_max=kwargs['orbital_period_max'])
-        pdf = P_pdf_class.pdf # pdf(P, m1)
-    else:
-        pdf = lambda P=0, m1=0: 1
-    return pdf
-    
 def get_pdf(kwargs):
     """Function that build a PDF function given the simulation parameters
     
