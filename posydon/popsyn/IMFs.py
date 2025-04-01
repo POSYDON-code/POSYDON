@@ -339,6 +339,8 @@ class Chabrier2003(IMFBase):
             The IMF value for the given mass or masses
         '''
         m = np.asarray(m)
+        if np.any(m <= 0):
+            raise ValueError("Mass must be positive.")
         # Calculate common terms for the lognormal function
         sqrt_2pi_sigma = np.sqrt(2 * np.pi) * self.sigma
         
