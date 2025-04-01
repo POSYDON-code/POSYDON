@@ -30,7 +30,7 @@ class TestGetIMFPdf:
         pdf_func = norm_pop.get_IMF_pdf(kwargs)
         m_test = np.array([1, 10, 50])
         result = pdf_func(m_test)
-        assert np.all(result, np.ones(len(m_test)))
+        assert np.allclose(result, np.ones_like(m_test))
     
     
     def test_valid_imf_returns_dummy_pdf(self, monkeypatch):
@@ -117,7 +117,7 @@ class TestGetMassRatioPdf:
         q_pdf = norm_pop.get_mass_ratio_pdf(kwargs)
         # In alternative branch, pdf returns 1 for q in (0,1] 
         result = q_pdf(0.5, None)
-        assert np.all(result == 1)
+        assert np.all(result == 1/(kwargs['q_max']-kwargs['q_min']))
         result = q_pdf(0, None)
         assert np.all(result == 0)
 
@@ -172,8 +172,8 @@ class TestGetPdf:
             'primary_mass_min': 1,
             'primary_mass_max': 100,
             'secondary_mass_scheme': 'flat_mass_ratio',
-            'q_min': 0.2,
-            'q_max': 0.8,
+            'q_min': 0,
+            'q_max': 1,
             'binary_fraction_scheme': 'const',
             'binary_fraction_const': 0.3
         }

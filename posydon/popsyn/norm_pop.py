@@ -80,17 +80,36 @@ def get_mass_ratio_pdf(kwargs):
     pdf : function
         Function that returns the mass ratio PDF
     """
-    if kwargs['secondary_mass_scheme'] == 'flat_mass_ratio' and ('q_min' not in kwargs and 'q_max' not in kwargs):
+    if (kwargs['secondary_mass_scheme'] == 'flat_mass_ratio' 
+        and ('q_min' not in kwargs and 'q_max' not in kwargs)):
         # flat mass ratio, where bounds are dependent on m1 and min/max m2
         # and q_min = 0.05, q_max = 1
         def get_pdf_for_m1(m1):
             m1 = np.atleast_1d(m1)
-            minimum = np.max([kwargs['secondary_mass_min'] / m1, np.ones(len(m1))*0.05], axis=0)
-            maximum = np.min([kwargs['secondary_mass_max'] / m1, np.ones(len(m1))], axis=0)
-            q_dist = lambda q: np.where((q >= minimum) & (q <= maximum), 1/(maximum - minimum), 0)
+            minimum = np.max(
+                [kwargs['secondary_mass_min'] / m1, np.ones(len(m1))*0.05],
+                axis=0)
+            
+            maximum = np.min(
+                [kwargs['secondary_mass_max'] / m1, np.ones(len(m1))],
+                axis=0)
+            
+            q_dist = lambda q: np.where((q >= minimum) & (q <= maximum),
+                                        1/(maximum - minimum),
+                                        0)
             return q_dist
         q_pdf = lambda q, m1: get_pdf_for_m1(m1)(q)
+    elif kwargs['secondary_mass_scheme'] == 'flat_mass_ratio':
+        # flat mass ratio, where bounds are given
+        q_pdf = lambda q, m1=None: np.where(
+                                (q > kwargs['q_min']) & (q <= kwargs['q_max']),
+                                1/(kwargs['q_max'] - kwargs['q_min']),
+                                0)
+    
     else:
+        # default to a flat distribution
+        Pwarn("The secondary_mass_scheme is not defined use a flat mass ratio "
+              "distribution in (0,1].", "UnsupportedModelWarning")
         q_pdf = lambda q, m1=None: np.where((q > 0.0) & (q<=1.0), 1, 0)
     return q_pdf
 
@@ -114,7 +133,9 @@ def get_binary_fraction_pdf(kwargs):
     '''
     if kwargs['binary_fraction_scheme'] == 'const':
         f_b = kwargs['binary_fraction_const']
-        binary_fraction_pdf = lambda binary: np.where(np.asarray(binary), f_b, 1-f_b)
+        binary_fraction_pdf = lambda binary: np.where(np.asarray(binary),
+                                                      f_b,
+                                                      1-f_b)
     else:
         raise ValueError("Binary fraction scheme not recognized")
     
@@ -140,7 +161,9 @@ def get_period_pdf(kwargs):
     pdf : function
         Function that returns the period PDF    
     """
-    if kwargs['orbital_scheme'] == 'period' and kwargs['orbital_period_scheme'] == 'Sana+12_period_extended':
+    if (kwargs['orbital_scheme'] == 'period' 
+        and kwargs['orbital_period_scheme'] == 'Sana+12_period_extended'):
+        
         P_pdf_class = Sana12Period(p_min=kwargs['orbital_period_min'],
                                    p_max=kwargs['orbital_period_max'])
         pdf = P_pdf_class.pdf # pdf(P, m1)
@@ -168,15 +191,21 @@ def get_pdf(kwargs):
     
     pdf_function = lambda m1, q=0, binary=False: np.where(
         np.asarray(binary),
-        f_b_pdf(np.asarray(binary)) * IMF_pdf(np.asarray(m1)) * q_pdf(np.asarray(q), np.asarray(m1)),
-        f_b_pdf(np.asarray(binary)) * IMF_pdf(np.asarray(m1))
+        # binaries
+        (f_b_pdf(np.asarray(binary))
+         * IMF_pdf(np.asarray(m1)) 
+         * q_pdf(np.asarray(q), np.asarray(m1))),
+        # single stars
+        (f_b_pdf(np.asarray(binary))
+        * IMF_pdf(np.asarray(m1)))
     )
     return pdf_function
 
 def get_mean_mass(PDF, params):
     '''Calculate the mean mass of the population
     
-    Integrates the mass distribution to calculate the mean mass of the population
+    Integrates the mass distribution to calculate the mean mass of 
+    the population
     
     Parameters
     ----------
@@ -198,12 +227,14 @@ def get_mean_mass(PDF, params):
     if 'q_min' in params:
         q_min = params['q_min']
     else:
-        q_min = np.max([params['secondary_mass_min']/params['primary_mass_min'], 0])
+        q_min = np.max([params['secondary_mass_min']/params['primary_mass_min'],
+                        0])
         
     if 'q_max' in params:
         q_max = params['q_max']
     else:
-        q_max = np.min([params['secondary_mass_max']/params['primary_mass_max'], 1])
+        q_max = np.min([params['secondary_mass_max']/params['primary_mass_max'],
+                        1])
     
     # binary integration
     I_bin = nquad(lambda q, m: (m + m * q) * PDF(m, q, True),
@@ -217,7 +248,10 @@ def get_mean_mass(PDF, params):
     mean_mass = I_bin + I_single
     return mean_mass
 
-def calculate_model_weights(pop_data, M_sim, simulation_parameters, population_parameters):
+def calculate_model_weights(pop_data,
+                            M_sim,
+                            simulation_parameters,
+                            population_parameters):
     '''reweight each model in the simulation to the requested population'''
     
     f_b_sim = simulation_parameters['binary_fraction_const']
