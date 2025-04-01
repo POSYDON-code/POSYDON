@@ -1,0 +1,220 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Overview: module code &mdash; posydon v2.0.0-dev documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=d66fa8e6" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=f4b7fd8b"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html">
+            
+              <img src="../_static/posydon_logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../introduction-acknowledgements/intro.html">Introduction, Objectives, and Scope</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../introduction-acknowledgements/collaborative-team.html">Collaborative Team</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://posydon.org/papers.html">Publications</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../getting-started/prerequisites.html">Prerequisites</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting-started/installation-guide.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting-started/verification.html">Verification</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">User Guides</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../user-guides/user-roadmap.html">Roadmap to Becoming an Expert POSYDON User</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials and Examples</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials-examples/population-synthesis/binary-pop-syn.html">Binary-Star Population Synthesis with POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials-examples/generating-datasets/generating-datasets.html">Crafting the Core Datasets for POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials-examples/MESA-grids/running-grids.html">Architecting MESA Simulation Grids with POSYDON</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">In-Depth Components Overview</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../components-overview/mesa-grids.html">MESA Grids API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../components-overview/processing-pipeline.html">Processing Pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../components-overview/machine-learning-components.html">Machine Learning Components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../components-overview/stellar-binary-simulation.html">Stellar &amp; Binary-star Simulation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../api_reference/posydon.html">posydon</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api_reference/bin.html">executables</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Troubleshooting and FAQs</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../troubleshooting-faqs/installation-issues.html">Installation Issues</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../troubleshooting-faqs/code-questions.html">Code Usage Questions</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contributing to POSYDON</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../contributing/how-to-contribute.html">How To Contribute</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing/code-style-guidelines.html">Code Style Guidelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing/reporting-issues.html">Reporting issues</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Releases and Datasets</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/releases">Releases</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://zenodo.org/communities/posydon/">Datasets</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contact and Support</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../contact-support/contact-information.html">Contact Information</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">posydon</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Overview: module code</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>All modules for which code is available</h1>
+<ul><li><a href="compress_mesa.html">compress_mesa</a></li>
+<li><a href="posydon/active_learning/psy_cris/classify.html">posydon.active_learning.psy_cris.classify</a></li>
+<li><a href="posydon/active_learning/psy_cris/data.html">posydon.active_learning.psy_cris.data</a></li>
+<li><a href="posydon/active_learning/psy_cris/regress.html">posydon.active_learning.psy_cris.regress</a></li>
+<li><a href="posydon/active_learning/psy_cris/run_params/run_psycris_sequence.html">posydon.active_learning.psy_cris.run_params.run_psycris_sequence</a></li>
+<li><a href="posydon/active_learning/psy_cris/sample.html">posydon.active_learning.psy_cris.sample</a></li>
+<li><a href="posydon/active_learning/psy_cris/synthetic_data/synth_data_2D.html">posydon.active_learning.psy_cris.synthetic_data.synth_data_2D</a></li>
+<li><a href="posydon/active_learning/psy_cris/synthetic_data/synth_data_3D.html">posydon.active_learning.psy_cris.synthetic_data.synth_data_3D</a></li>
+<li><a href="posydon/active_learning/psy_cris/utils.html">posydon.active_learning.psy_cris.utils</a></li>
+<li><a href="posydon/binary_evol/DT/double_CO.html">posydon.binary_evol.DT.double_CO</a></li>
+<li><a href="posydon/binary_evol/SN/profile_collapse.html">posydon.binary_evol.SN.profile_collapse</a></li>
+<li><a href="posydon/binary_evol/binarystar.html">posydon.binary_evol.binarystar</a></li>
+<li><a href="posydon/binary_evol/flow_chart.html">posydon.binary_evol.flow_chart</a></li>
+<li><a href="posydon/binary_evol/simulationproperties.html">posydon.binary_evol.simulationproperties</a></li>
+<li><a href="posydon/binary_evol/singlestar.html">posydon.binary_evol.singlestar</a></li>
+<li><a href="posydon/binary_evol/step_end.html">posydon.binary_evol.step_end</a></li>
+<li><a href="posydon/grids/MODELS.html">posydon.grids.MODELS</a></li>
+<li><a href="posydon/grids/downsampling.html">posydon.grids.downsampling</a></li>
+<li><a href="posydon/grids/io.html">posydon.grids.io</a></li>
+<li><a href="posydon/grids/psygrid.html">posydon.grids.psygrid</a></li>
+<li><a href="posydon/grids/scrubbing.html">posydon.grids.scrubbing</a></li>
+<li><a href="posydon/grids/termination_flags.html">posydon.grids.termination_flags</a></li>
+<li><a href="posydon/interpolation/IF_interpolation.html">posydon.interpolation.IF_interpolation</a></li>
+<li><a href="posydon/interpolation/constraints.html">posydon.interpolation.constraints</a></li>
+<li><a href="posydon/interpolation/data_scaling.html">posydon.interpolation.data_scaling</a></li>
+<li><a href="posydon/interpolation/eep.html">posydon.interpolation.eep</a></li>
+<li><a href="posydon/interpolation/interpolation.html">posydon.interpolation.interpolation</a></li>
+<li><a href="posydon/popsyn/GRB.html">posydon.popsyn.GRB</a></li>
+<li><a href="posydon/popsyn/analysis.html">posydon.popsyn.analysis</a></li>
+<li><a href="posydon/popsyn/independent_sample.html">posydon.popsyn.independent_sample</a></li>
+<li><a href="posydon/popsyn/io.html">posydon.popsyn.io</a></li>
+<li><a href="posydon/popsyn/normalized_pop_mass.html">posydon.popsyn.normalized_pop_mass</a></li>
+<li><a href="posydon/popsyn/rate_calculation.html">posydon.popsyn.rate_calculation</a></li>
+<li><a href="posydon/popsyn/sample_from_file.html">posydon.popsyn.sample_from_file</a></li>
+<li><a href="posydon/popsyn/selection_effects.html">posydon.popsyn.selection_effects</a></li>
+<li><a href="posydon/unit_tests/grids/test_MODELS.html">posydon.unit_tests.grids.test_MODELS</a></li>
+<li><a href="posydon/unit_tests/grids/test_downsampling.html">posydon.unit_tests.grids.test_downsampling</a></li>
+<li><a href="posydon/unit_tests/grids/test_io.html">posydon.unit_tests.grids.test_io</a></li>
+<li><a href="posydon/unit_tests/grids/test_psygrid.html">posydon.unit_tests.grids.test_psygrid</a></li>
+<li><a href="posydon/unit_tests/grids/test_scrubbing.html">posydon.unit_tests.grids.test_scrubbing</a></li>
+<li><a href="posydon/unit_tests/grids/test_termination_flags.html">posydon.unit_tests.grids.test_termination_flags</a></li>
+<li><a href="posydon/unit_tests/test_template.html">posydon.unit_tests.test_template</a></li>
+<li><a href="posydon/unit_tests/utils/test_common_functions.html">posydon.unit_tests.utils.test_common_functions</a></li>
+<li><a href="posydon/unit_tests/utils/test_configfile.html">posydon.unit_tests.utils.test_configfile</a></li>
+<li><a href="posydon/unit_tests/utils/test_constants.html">posydon.unit_tests.utils.test_constants</a></li>
+<li><a href="posydon/unit_tests/utils/test_datasets.html">posydon.unit_tests.utils.test_datasets</a></li>
+<li><a href="posydon/unit_tests/utils/test_gridutils.html">posydon.unit_tests.utils.test_gridutils</a></li>
+<li><a href="posydon/unit_tests/utils/test_ignorereason.html">posydon.unit_tests.utils.test_ignorereason</a></li>
+<li><a href="posydon/unit_tests/utils/test_interpolators.html">posydon.unit_tests.utils.test_interpolators</a></li>
+<li><a href="posydon/unit_tests/utils/test_limits_thresholds.html">posydon.unit_tests.utils.test_limits_thresholds</a></li>
+<li><a href="posydon/unit_tests/utils/test_posydonerror.html">posydon.unit_tests.utils.test_posydonerror</a></li>
+<li><a href="posydon/unit_tests/utils/test_posydonwarning.html">posydon.unit_tests.utils.test_posydonwarning</a></li>
+<li><a href="posydon/user_modules/my_flow_chart_example.html">posydon.user_modules.my_flow_chart_example</a></li>
+<li><a href="posydon/utils/common_functions.html">posydon.utils.common_functions</a></li>
+<li><a href="posydon/utils/configfile.html">posydon.utils.configfile</a></li>
+<li><a href="posydon/utils/gridutils.html">posydon.utils.gridutils</a></li>
+<li><a href="posydon/utils/ignorereason.html">posydon.utils.ignorereason</a></li>
+<li><a href="posydon/utils/interpolators.html">posydon.utils.interpolators</a></li>
+<li><a href="posydon/utils/posydonerror.html">posydon.utils.posydonerror</a></li>
+<li><a href="posydon/utils/posydonwarning.html">posydon.utils.posydonwarning</a></li>
+<li><a href="posydon/visualization/VH_diagram/ParseDataFrame.html">posydon.visualization.VH_diagram.ParseDataFrame</a></li>
+<li><a href="posydon/visualization/VH_diagram/PresenterMode.html">posydon.visualization.VH_diagram.PresenterMode</a></li>
+<li><a href="posydon/visualization/VH_diagram/SimulationModel.html">posydon.visualization.VH_diagram.SimulationModel</a></li>
+<li><a href="posydon/visualization/combine_TF.html">posydon.visualization.combine_TF</a></li>
+<li><a href="posydon/visualization/interpolation.html">posydon.visualization.interpolation</a></li>
+<li><a href="posydon/visualization/plot1D.html">posydon.visualization.plot1D</a></li>
+<li><a href="posydon/visualization/plot2D.html">posydon.visualization.plot2D</a></li>
+<li><a href="posydon/visualization/plot_defaults.html">posydon.visualization.plot_defaults</a></li>
+<li><a href="posydon_run_grid.html">posydon_run_grid</a></li>
+<li><a href="posydon_setup_grid.html">posydon_setup_grid</a></li>
+</ul>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Tassos Fragos.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

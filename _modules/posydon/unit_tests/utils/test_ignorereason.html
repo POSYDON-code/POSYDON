@@ -1,0 +1,298 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>posydon.unit_tests.utils.test_ignorereason &mdash; posydon v2.0.0-dev documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=d66fa8e6" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=f4b7fd8b"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html">
+            
+              <img src="../../../../_static/posydon_logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../introduction-acknowledgements/intro.html">Introduction, Objectives, and Scope</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../introduction-acknowledgements/collaborative-team.html">Collaborative Team</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://posydon.org/papers.html">Publications</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../getting-started/prerequisites.html">Prerequisites</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../getting-started/installation-guide.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../getting-started/verification.html">Verification</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">User Guides</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../user-guides/user-roadmap.html">Roadmap to Becoming an Expert POSYDON User</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials and Examples</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorials-examples/population-synthesis/binary-pop-syn.html">Binary-Star Population Synthesis with POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorials-examples/generating-datasets/generating-datasets.html">Crafting the Core Datasets for POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorials-examples/MESA-grids/running-grids.html">Architecting MESA Simulation Grids with POSYDON</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">In-Depth Components Overview</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../components-overview/mesa-grids.html">MESA Grids API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../components-overview/processing-pipeline.html">Processing Pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../components-overview/machine-learning-components.html">Machine Learning Components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../components-overview/stellar-binary-simulation.html">Stellar &amp; Binary-star Simulation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api_reference/posydon.html">posydon</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api_reference/bin.html">executables</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Troubleshooting and FAQs</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../troubleshooting-faqs/installation-issues.html">Installation Issues</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../troubleshooting-faqs/code-questions.html">Code Usage Questions</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contributing to POSYDON</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../contributing/how-to-contribute.html">How To Contribute</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../contributing/code-style-guidelines.html">Code Style Guidelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../contributing/reporting-issues.html">Reporting issues</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Releases and Datasets</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/releases">Releases</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://zenodo.org/communities/posydon/">Datasets</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contact and Support</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../contact-support/contact-information.html">Contact Information</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">posydon</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">posydon.unit_tests.utils.test_ignorereason</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for posydon.unit_tests.utils.test_ignorereason</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Unit tests of posydon/utils/ignorereason.py</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="n">__authors__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;Matthias Kruckow &lt;Matthias.Kruckow@unige.ch&gt;&quot;</span>
+<span class="p">]</span>
+
+<span class="c1"># import the module which will be tested</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">posydon.utils.ignorereason</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">totest</span>
+
+<span class="c1"># import other needed code for the tests, which is not already imported in the</span>
+<span class="c1"># module you like to test</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pytest</span><span class="w"> </span><span class="kn">import</span> <span class="n">fixture</span><span class="p">,</span> <span class="n">raises</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">inspect</span><span class="w"> </span><span class="kn">import</span> <span class="n">isclass</span><span class="p">,</span> <span class="n">isroutine</span>
+
+<span class="c1"># define test classes collecting several test functions</span>
+<div class="viewcode-block" id="TestElements">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_ignorereason.TestElements">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TestElements</span><span class="p">:</span>
+    <span class="c1"># check for objects, which should be an element of the tested module</span>
+<div class="viewcode-block" id="TestElements.test_dir">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_ignorereason.TestElements.test_dir">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_dir</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">elements</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;IGNORE_REASONS_PRIORITY&#39;</span><span class="p">,</span> <span class="s1">&#39;IgnoreReason&#39;</span><span class="p">,</span> <span class="s1">&#39;__authors__&#39;</span><span class="p">,</span>\
+                    <span class="s1">&#39;__builtins__&#39;</span><span class="p">,</span> <span class="s1">&#39;__cached__&#39;</span><span class="p">,</span> <span class="s1">&#39;__doc__&#39;</span><span class="p">,</span> <span class="s1">&#39;__file__&#39;</span><span class="p">,</span>\
+                    <span class="s1">&#39;__loader__&#39;</span><span class="p">,</span> <span class="s1">&#39;__name__&#39;</span><span class="p">,</span> <span class="s1">&#39;__package__&#39;</span><span class="p">,</span> <span class="s1">&#39;__spec__&#39;</span><span class="p">}</span>
+        <span class="n">totest_elements</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="nb">dir</span><span class="p">(</span><span class="n">totest</span><span class="p">))</span>
+        <span class="n">missing_in_test</span> <span class="o">=</span> <span class="n">elements</span> <span class="o">-</span> <span class="n">totest_elements</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">missing_in_test</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;There are missing objects in &quot;</span>\
+                                          <span class="o">+</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">totest</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">: &quot;</span>\
+                                          <span class="o">+</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">missing_in_test</span><span class="si">}</span><span class="s2">. Please &quot;</span>\
+                                          <span class="o">+</span><span class="s2">&quot;check, whether they have been &quot;</span>\
+                                          <span class="o">+</span><span class="s2">&quot;removed on purpose and update &quot;</span>\
+                                          <span class="o">+</span><span class="s2">&quot;this unit test.&quot;</span>
+        <span class="n">new_in_test</span> <span class="o">=</span> <span class="n">totest_elements</span> <span class="o">-</span> <span class="n">elements</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">new_in_test</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;There are new objects in &quot;</span>\
+                                      <span class="o">+</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">totest</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">new_in_test</span><span class="si">}</span><span class="s2">. &quot;</span>\
+                                      <span class="o">+</span><span class="s2">&quot;Please check, whether they have been &quot;</span>\
+                                      <span class="o">+</span><span class="s2">&quot;added on purpose and update this &quot;</span>\
+                                      <span class="o">+</span><span class="s2">&quot;unit test.&quot;</span></div>
+
+
+<div class="viewcode-block" id="TestElements.test_instance_IGNORE_REASONS_PRIORITY">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_ignorereason.TestElements.test_instance_IGNORE_REASONS_PRIORITY">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_instance_IGNORE_REASONS_PRIORITY</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">IGNORE_REASONS_PRIORITY</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">)),</span>\
+               <span class="s2">&quot;IGNORE_REASONS_PRIORITY is of type: &quot;</span>\
+               <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">IGNORE_REASONS_PRIORITY</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="TestElements.test_instance_IgnoreReason">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_ignorereason.TestElements.test_instance_IgnoreReason">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_instance_IgnoreReason</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">isclass</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">IgnoreReason</span><span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="TestValues">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_ignorereason.TestValues">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TestValues</span><span class="p">:</span>
+    <span class="c1"># check that the values fit</span>
+<div class="viewcode-block" id="TestValues.test_value_IGNORE_REASONS_PRIORITY">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_ignorereason.TestValues.test_value_IGNORE_REASONS_PRIORITY">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_value_IGNORE_REASONS_PRIORITY</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">totest</span><span class="o">.</span><span class="n">IGNORE_REASONS_PRIORITY</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
+        <span class="n">v_last</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;ignored_no_history1&#39;</span><span class="p">,</span> <span class="s1">&#39;ignored_no_binary_history&#39;</span><span class="p">,</span>\
+                  <span class="s1">&#39;corrupted_history1&#39;</span><span class="p">,</span> <span class="s1">&#39;corrupted_binary_history&#39;</span><span class="p">,</span>\
+                  <span class="s1">&#39;corrupted_history2&#39;</span><span class="p">,</span> <span class="s1">&#39;ignored_scrubbed_history&#39;</span><span class="p">,</span>\
+                  <span class="s1">&#39;ignored_no_final_profile&#39;</span><span class="p">,</span> <span class="s1">&#39;ignored_no_RLO&#39;</span><span class="p">]:</span>
+            <span class="c1"># check required values</span>
+            <span class="k">assert</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">totest</span><span class="o">.</span><span class="n">IGNORE_REASONS_PRIORITY</span><span class="p">,</span> <span class="s2">&quot;missing entry&quot;</span>
+            <span class="c1"># check required order</span>
+            <span class="k">if</span> <span class="n">v_last</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">assert</span> <span class="n">totest</span><span class="o">.</span><span class="n">IGNORE_REASONS_PRIORITY</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">v_last</span><span class="p">)</span> <span class="o">&lt;</span>\
+                       <span class="n">totest</span><span class="o">.</span><span class="n">IGNORE_REASONS_PRIORITY</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">v</span><span class="p">),</span>\
+                       <span class="sa">f</span><span class="s2">&quot;the priority order has changed for: </span><span class="si">{</span><span class="n">v_last</span><span class="si">}</span><span class="s2"> or </span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="n">v_last</span> <span class="o">=</span> <span class="n">v</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="TestIgnoreReason">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_ignorereason.TestIgnoreReason">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TestIgnoreReason</span><span class="p">:</span>
+<div class="viewcode-block" id="TestIgnoreReason.NewInstance">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_ignorereason.TestIgnoreReason.NewInstance">[docs]</a>
+    <span class="nd">@fixture</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">NewInstance</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># initialize an instance of the class for each test</span>
+        <span class="k">return</span> <span class="n">totest</span><span class="o">.</span><span class="n">IgnoreReason</span><span class="p">()</span></div>
+
+
+    <span class="c1"># test the IgnoreReason class</span>
+<div class="viewcode-block" id="TestIgnoreReason.test_init">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_ignorereason.TestIgnoreReason.test_init">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">NewInstance</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">isroutine</span><span class="p">(</span><span class="n">NewInstance</span><span class="o">.</span><span class="fm">__init__</span><span class="p">)</span>
+        <span class="c1"># check that the instance is of correct type and all code in the</span>
+        <span class="c1"># __init__ got executed: the elements are created and initialized</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">NewInstance</span><span class="p">,</span> <span class="n">totest</span><span class="o">.</span><span class="n">IgnoreReason</span><span class="p">)</span>
+        <span class="c1"># strictly speaking, the following test does not test the variable</span>
+        <span class="c1"># asignments in the __init__, because they call the __setattr__</span>
+        <span class="k">assert</span> <span class="n">NewInstance</span><span class="o">.</span><span class="n">reason</span> <span class="ow">is</span> <span class="kc">None</span>
+        <span class="k">assert</span> <span class="n">NewInstance</span><span class="o">.</span><span class="n">order</span> <span class="ow">is</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="TestIgnoreReason.test_bool">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_ignorereason.TestIgnoreReason.test_bool">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_bool</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">NewInstance</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">isroutine</span><span class="p">(</span><span class="n">NewInstance</span><span class="o">.</span><span class="fm">__bool__</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">bool</span><span class="p">(</span><span class="n">NewInstance</span><span class="p">)</span> <span class="o">==</span> <span class="kc">False</span>
+        <span class="n">NewInstance</span><span class="o">.</span><span class="n">reason</span> <span class="o">=</span> <span class="n">totest</span><span class="o">.</span><span class="n">IGNORE_REASONS_PRIORITY</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="nb">bool</span><span class="p">(</span><span class="n">NewInstance</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestIgnoreReason.test_setattr">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_ignorereason.TestIgnoreReason.test_setattr">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">NewInstance</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">isroutine</span><span class="p">(</span><span class="n">NewInstance</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">)</span>
+        <span class="c1"># try to set order: shouldn&#39;t change anything</span>
+        <span class="n">NewInstance</span><span class="o">.</span><span class="n">order</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">assert</span> <span class="n">NewInstance</span><span class="o">.</span><span class="n">reason</span> <span class="ow">is</span> <span class="kc">None</span>
+        <span class="k">assert</span> <span class="n">NewInstance</span><span class="o">.</span><span class="n">order</span> <span class="ow">is</span> <span class="kc">None</span>
+        <span class="c1"># set all reasons in decreasing order and compare it</span>
+        <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">reversed</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">IGNORE_REASONS_PRIORITY</span><span class="p">):</span>
+            <span class="n">o</span> <span class="o">=</span> <span class="n">totest</span><span class="o">.</span><span class="n">IGNORE_REASONS_PRIORITY</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+            <span class="n">NewInstance</span><span class="o">.</span><span class="n">reason</span> <span class="o">=</span> <span class="n">r</span>
+            <span class="k">assert</span> <span class="n">NewInstance</span><span class="o">.</span><span class="n">order</span> <span class="o">==</span> <span class="n">o</span>
+            <span class="k">assert</span> <span class="n">NewInstance</span><span class="o">.</span><span class="n">reason</span> <span class="o">==</span> <span class="n">r</span>
+        <span class="c1"># try to set reason of lowest priority: reason of higher pririty will</span>
+        <span class="c1"># be kept</span>
+        <span class="n">NewInstance</span><span class="o">.</span><span class="n">reason</span> <span class="o">=</span> <span class="n">totest</span><span class="o">.</span><span class="n">IGNORE_REASONS_PRIORITY</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="n">NewInstance</span><span class="o">.</span><span class="n">order</span> <span class="o">==</span> <span class="n">o</span>
+        <span class="k">assert</span> <span class="n">NewInstance</span><span class="o">.</span><span class="n">reason</span> <span class="o">==</span> <span class="n">r</span>
+        <span class="c1"># unset the reason: set back to None</span>
+        <span class="n">NewInstance</span><span class="o">.</span><span class="n">reason</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">assert</span> <span class="n">NewInstance</span><span class="o">.</span><span class="n">reason</span> <span class="ow">is</span> <span class="kc">None</span>
+        <span class="k">assert</span> <span class="n">NewInstance</span><span class="o">.</span><span class="n">order</span> <span class="ow">is</span> <span class="kc">None</span>
+        <span class="c1"># try error on non existing reason</span>
+        <span class="k">assert</span> <span class="s1">&#39;&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">totest</span><span class="o">.</span><span class="n">IGNORE_REASONS_PRIORITY</span>
+        <span class="k">with</span> <span class="n">raises</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">&quot;Ignore reason `` not recognized&quot;</span><span class="p">):</span>
+            <span class="n">NewInstance</span><span class="o">.</span><span class="n">reason</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Tassos Fragos.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

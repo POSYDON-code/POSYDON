@@ -1,0 +1,646 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Your First Binary Simulations with POSYDON 🌠 &mdash; posydon v2.0.0-dev documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../_static/nbsphinx-code-cells.css?v=2aa19091" />
+      <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=d66fa8e6" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=f4b7fd8b"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+      <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Large-Scale Population Synthesis on HPC Facilities 🚀" href="pop_syn.html" />
+    <link rel="prev" title="Binary-Star Population Synthesis with POSYDON" href="binary-pop-syn.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html">
+            
+              <img src="../../_static/posydon_logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../introduction-acknowledgements/intro.html">Introduction, Objectives, and Scope</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../introduction-acknowledgements/collaborative-team.html">Collaborative Team</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://posydon.org/papers.html">Publications</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started/prerequisites.html">Prerequisites</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started/installation-guide.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started/verification.html">Verification</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">User Guides</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../user-guides/user-roadmap.html">Roadmap to Becoming an Expert POSYDON User</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials and Examples</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="binary-pop-syn.html">Binary-Star Population Synthesis with POSYDON</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Your First Binary Simulations with POSYDON 🌠</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pop_syn.html">Large-Scale Population Synthesis on HPC Facilities 🚀</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bbh_analysis.html">Stellar Transient Populations 🔍</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lgrb_pop_syn.html">Computing Long-Duration Gamma-Ray Bursts from Double Compact Object Populations 🌌</a></li>
+<li class="toctree-l2"><a class="reference internal" href="one_met_pop_syn.html">Explore the assumption of star-formation history and DCO compute rates at one single metallicity 📖</a></li>
+<li class="toctree-l2"><a class="reference internal" href="evolve_single_binaries.html">Evolve individual binaries 🐞</a></li>
+<li class="toctree-l2"><a class="reference internal" href="custom_step_and_flow.html">Custom POSYDON steps and flow chart</a></li>
+<li class="toctree-l2"><a class="reference internal" href="VHD.html">Van den Heuvel Diagrams</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../generating-datasets/generating-datasets.html">Crafting the Core Datasets for POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../MESA-grids/running-grids.html">Architecting MESA Simulation Grids with POSYDON</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">In-Depth Components Overview</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../components-overview/mesa-grids.html">MESA Grids API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../components-overview/processing-pipeline.html">Processing Pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../components-overview/machine-learning-components.html">Machine Learning Components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../components-overview/stellar-binary-simulation.html">Stellar &amp; Binary-star Simulation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../api_reference/posydon.html">posydon</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api_reference/bin.html">executables</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Troubleshooting and FAQs</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../troubleshooting-faqs/installation-issues.html">Installation Issues</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../troubleshooting-faqs/code-questions.html">Code Usage Questions</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contributing to POSYDON</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing/how-to-contribute.html">How To Contribute</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing/code-style-guidelines.html">Code Style Guidelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing/reporting-issues.html">Reporting issues</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Releases and Datasets</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/releases">Releases</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://zenodo.org/communities/posydon/">Datasets</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contact and Support</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../contact-support/contact-information.html">Contact Information</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">posydon</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="binary-pop-syn.html">Binary-Star Population Synthesis with POSYDON</a></li>
+      <li class="breadcrumb-item active">Your First Binary Simulations with POSYDON 🌠</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/tutorials-examples/population-synthesis/10_binaries_pop_syn.ipynb.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="Your-First-Binary-Simulations-with-POSYDON-🌠">
+<h1>Your First Binary Simulations with POSYDON 🌠<a class="headerlink" href="#Your-First-Binary-Simulations-with-POSYDON-🌠" title="Link to this heading"></a></h1>
+<p><strong>Tutorial goal:</strong> In this tutorial, we will run a small population of 10 binaries locally, and explore how to manipulate the output data from your population.</p>
+<p>If you haven’t done so yet, export the path POSYDON environment variables. Set these parameters in your <code class="docutils literal notranslate"><span class="pre">.bash_profile</span></code> or <code class="docutils literal notranslate"><span class="pre">.zshrc</span></code> if you use POSYDON regularly.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%</span><span class="k">env</span> PATH_TO_POSYDON=/YOUR/POSYDON/PATH/
+<span class="o">%</span><span class="k">env</span> PATH_TO_POSYDON_DATA=/YOUR/POSYDON_DATA/PATH/
+</pre></div>
+</div>
+</div>
+<hr class="docutils" />
+<section id="Initialisation-File">
+<h2>Initialisation File<a class="headerlink" href="#Initialisation-File" title="Link to this heading"></a></h2>
+<p>To run population synthesis with POSYDON, a <code class="docutils literal notranslate"><span class="pre">population_params.ini</span></code> file is required. This file described how the stellar population is created and what prescriptions and parameters are implemented in specific steps.</p>
+<p>POSYDON comes with a default <code class="docutils literal notranslate"><span class="pre">population_params_default.ini</span></code> file found at <code class="docutils literal notranslate"><span class="pre">PATH_TO_POSYDON/posydon/popsyn</span></code> or have a look <a class="reference external" href="../../../../../posydon/popsyn/population_params_default.ini">here</a>.</p>
+<div class="admonition warning">
+<p class="admonition-title fa fa-exclamation-circle"><strong>Default values</strong></p>
+<p>The default values in the population_params.ini file included in POSYDON have not been calibrated, validated, or are used by the POSYDON team. They are often an ad-hoc choice, and the user should carefully consider the values of each parameter for their science case.</p>
+</div>
+<p>The parameters in this file can be found <a class="reference external" href="../../components-overview/pop_syn/population_params.html">here</a>, and is split in three parts. You can find more details about their properties by clicking on their links.</p>
+<ol class="arabic simple">
+<li><p><a class="reference internal" href="../../components-overview/pop_syn/population_params.html#simulationproperties"><span class="std std-ref">SimulationProperties</span></a><strong>:</strong></p>
+<ul class="simple">
+<li><p>describe the properties and parameters of different steps in the evolution of a binary system.</p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="../../components-overview/pop_syn/population_params.html#binarypopulation"><span class="std std-ref">BinaryPopulation</span></a><strong>:</strong></p>
+<ul class="simple">
+<li><p>Parameters of the initial sampling of the binary population, such as initial mass function, period distribution, and metallicity.</p></li>
+<li><p>contains parameters on how the population is run, such as how many binaries are kept in memory.</p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="../../components-overview/pop_syn/population_params.html#saving-output"><span class="std std-ref">SavingOutput</span></a></p>
+<ul class="simple">
+<li><p>Describes what data from the binary and each individual star is written to the output file.</p></li>
+</ul>
+</li>
+</ol>
+<p>We will copy the default population run parameter file to the current folder.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">shutil</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">PATH_TO_POSYDON</span>
+
+<span class="n">path_to_params</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">PATH_TO_POSYDON</span><span class="p">,</span> <span class="s2">&quot;posydon/popsyn/population_params_default.ini&quot;</span><span class="p">)</span>
+<span class="n">shutil</span><span class="o">.</span><span class="n">copyfile</span><span class="p">(</span><span class="n">path_to_params</span><span class="p">,</span> <span class="s1">&#39;./population_params.ini&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</section>
+<hr class="docutils" />
+<section id="Running-a-BinaryPopulation-in-a-notebook">
+<h2>Running a BinaryPopulation in a notebook<a class="headerlink" href="#Running-a-BinaryPopulation-in-a-notebook" title="Link to this heading"></a></h2>
+<div class="admonition warning">
+<p class="admonition-title fa fa-exclamation-circle"><strong>Reprocessed POSYDON v1 data</strong></p>
+<p>If you’re using the reprocessed POSYDON v1 dataset, you will only have solar (<span class="math notranslate nohighlight">\(Z_\odot\)</span>) metallicity available! This means you will only be able to run populations with <code class="docutils literal notranslate"><span class="pre">metallicity</span> <span class="pre">=</span> <span class="pre">[1]</span></code>! You should be able to follow along with this tutorial and can follow along with the <a class="reference internal" href="one_met_pop_syn.html"><span class="doc">One metallicity notebook</span></a>, but the multi-metallicity component is not yet available.</p>
+</div>
+<p>The copied <code class="docutils literal notranslate"><span class="pre">population_params.ini</span></code> contains the parameters to run 10 binaries at the one of the metallicities currently supported by POSYDON. Open the <code class="docutils literal notranslate"><span class="pre">population_params.ini</span></code> file, and go down to the <strong>BinaryPopulation</strong> section. This is where the properties of the simulation are set. There you should find:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>metallicity = [1.] #[2., 1., 0.45, 0.2, 0.1, 0.01, 0.001, 0.0001]
+# In units of solar metallicity
+...
+number_of_binaries = 10
+# int
+</pre></div>
+</div>
+<p>Let’s leave the settings for now, but you can always change these if you would like a different metallicity or larger population. For the latter, also see the <a class="reference internal" href="pop_syn.html"><span class="doc">HPC tutorial</span></a>.</p>
+<p>If you like to run a small population in a notebook, you can use the <code class="docutils literal notranslate"><span class="pre">PopulationRunner</span></code> (documentation) to do this. If you want to run a specific binary instead, have a look at the <a class="reference internal" href="evolve_single_binaries.html"><span class="doc">Binary Tutorial</span></a> instead. The <code class="docutils literal notranslate"><span class="pre">PopulationRunner</span></code> class takes the <code class="docutils literal notranslate"><span class="pre">population_params.ini</span></code> file and sets-up a multi-metallicity population run for inside a notebook.</p>
+<p>It will create <code class="docutils literal notranslate"><span class="pre">BinaryPopulation</span></code>s (documentation) for each metallicity defined in the <code class="docutils literal notranslate"><span class="pre">population_params.ini</span></code> file. In our case, we can check and see that a single <code class="docutils literal notranslate"><span class="pre">BinaryPopulation</span></code> is created. We can check if the metallicity and number of binaries are correctly set before starting our simulation.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">posydon.popsyn.synthetic_population</span><span class="w"> </span><span class="kn">import</span> <span class="n">PopulationRunner</span>
+<span class="n">poprun</span> <span class="o">=</span> <span class="n">PopulationRunner</span><span class="p">(</span><span class="s1">&#39;./population_params.ini&#39;</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Number of binary populations:&#39;</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">poprun</span><span class="o">.</span><span class="n">binary_populations</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Metallicity:&#39;</span><span class="p">,</span> <span class="n">poprun</span><span class="o">.</span><span class="n">binary_populations</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">metallicity</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Number of binaries:&#39;</span><span class="p">,</span> <span class="n">poprun</span><span class="o">.</span><span class="n">binary_populations</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">number_of_binaries</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>If you changed the parameters in the <code class="docutils literal notranslate"><span class="pre">population_params.ini</span></code> file, you should have the following output:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>&gt; Number of binary populations: 1
+&gt; Metallicity: 1
+&gt; Number of binaries: 10
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">BinaryPopulation</span></code> class does the actual simulation setup and evolution of the binaries at a specific metallicity, but does not take of file cleanup after a succesfull population run. This is why <code class="docutils literal notranslate"><span class="pre">PopulationRunner</span></code> is used in a local environment. In a HPC facility, a setup script is available <code class="docutils literal notranslate"><span class="pre">posydon-setup-popsyn</span></code> that will create the required folders and scripts to run a large population. See the <a class="reference internal" href="pop_syn.html"><span class="doc">HPC tutorial</span></a> for more information.</p>
+<p>For this tutorial, we set <code class="docutils literal notranslate"><span class="pre">verbose=True</span></code>, which shows you the progress of the population run. This overwrites the population verbose set inside the <code class="docutils literal notranslate"><span class="pre">population_params.ini</span></code> file. Now we are ready to evolve the binary population. This should take about 30 seconds depending on your machine.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">poprun</span><span class="o">.</span><span class="n">evolve</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</section>
+<hr class="docutils" />
+<section id="Inspecting-the-population:-Population-class">
+<h2>Inspecting the population: Population class<a class="headerlink" href="#Inspecting-the-population:-Population-class" title="Link to this heading"></a></h2>
+<p>When you ran the population, you might have seen that a temporary folder with the name <code class="docutils literal notranslate"><span class="pre">1e+00_Zsun_batches</span></code> was created while the binaries were being evolved. This is a temporary folder in which populations are temporarly saved. After the binary evolution has finished, the binaries in the folder are moved to a single file named <code class="docutils literal notranslate"><span class="pre">1e+00_Zsun_popululation.h5</span></code>. This is done automatically when you run a population using the <code class="docutils literal notranslate"><span class="pre">PopulationRunner</span></code> class. When you run multiple metallicity a file will
+be created for each metallicity.</p>
+<p>The created file contains 3 main components:</p>
+<ol class="arabic simple">
+<li><p><strong>history:</strong> the evolution of an individual binary in a pandas DataFrame</p></li>
+<li><p><strong>oneline:</strong> a single line to describe the initial and final conditions and some one-of parameters, such as the metallicity.</p></li>
+<li><p><strong>mass_per_metallicity:</strong> some metadata on the population, such as the total simulated mass, the actual underlying mass of the population, and the number of binaries in the file.</p></li>
+</ol>
+<p>The <code class="docutils literal notranslate"><span class="pre">Population</span></code> class provides an interface to these components in the file, such that you’re able to share the populations runs and can work with large populations that do not fit in memory. We will now explore the population file using the <code class="docutils literal notranslate"><span class="pre">Population</span></code> class. You can find a more extensive description <a class="reference internal" href="../../components-overview/pop_syn/synthetic_population.html"><span class="doc">here</span></a> or look at the class
+documentation.</p>
+<div class="admonition warning">
+<p class="admonition-title fa fa-exclamation-circle"><strong>Older Population Files</strong></p>
+<p>If you’re using older population files from before the Population class rework, you can make them compatible with the <code class="docutils literal notranslate"><span class="pre">Population</span></code> class by calling <code class="docutils literal notranslate"><span class="pre">Population(pop_file,</span> <span class="pre">metallicity,ini_file)</span></code>, where the <code class="docutils literal notranslate"><span class="pre">metallicity</span></code> is in solar units. You will only need to do this once; afterwards you can initialise the class like normal.</p>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">posydon.popsyn.synthetic_population</span><span class="w"> </span><span class="kn">import</span> <span class="n">Population</span>
+<span class="n">pop</span> <span class="o">=</span> <span class="n">Population</span><span class="p">(</span><span class="s1">&#39;1e+00_Zsun_population.h5&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>Let’s start with the <code class="docutils literal notranslate"><span class="pre">pop.mass_per_metallicity</span></code>. It contains some basic information about the population you’ve just created.</p>
+<ol class="arabic simple">
+<li><p>The index (<code class="docutils literal notranslate"><span class="pre">metallicity</span></code>) is the metallicity of your population in solar units.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">simulated</span> <span class="pre">mass</span></code> the total ZAMS mass that has been evolved in the population.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">simulated_mass_single</span></code> the total ZAMS mass from initially single stars.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">simulated_mass_binaries</span></code> the total ZAMS mass from initially binaries.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">number_of_systems</span></code> shows the number of systems in the file.</p></li>
+</ol>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pop</span><span class="o">.</span><span class="n">mass_per_metallicity</span>
+</pre></div>
+</div>
+</div>
+<p>There are some additional metadata properties available, such as:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">metallicities</span></code> the metallicity in absolute metallicity</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">solar_metallicities</span></code> the metallicities in the file in solar metallicity</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">number_of_systems</span></code> the total number of systems in the Population file</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">indices</span></code> the indices of the binaries in the file</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">columns</span></code> the columns available in the <code class="docutils literal notranslate"><span class="pre">history</span></code> and <code class="docutils literal notranslate"><span class="pre">oneline</span></code> dataframes</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ini_params</span></code> the parameters from the <code class="docutils literal notranslate"><span class="pre">ini</span></code> file that describe the initial sampling of your population.</p></li>
+</ul>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># you can also access the total number of systems in the file with</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">pop</span><span class="o">.</span><span class="n">number_of_systems</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="Population.history">
+<h2>Population.history<a class="headerlink" href="#Population.history" title="Link to this heading"></a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">pop.history</span></code> contains the evolutionary histories of each binary, as it was evolved by POSYDON. You can find more information about this <a class="reference internal" href="../../components-overview/pop_syn/synthetic_population.html#history"><span class="std std-ref">here</span></a> (or look at the documentation of the class).</p>
+<p>It allows you to load specific information or binaries into memory without having to load them all at once.</p>
+<div class="admonition note">
+<p class="admonition-title fa fa-exclamation-circle"><strong>Note</strong></p>
+<p>Calling <code class="docutils literal notranslate"><span class="pre">pop.history</span></code> will load all binaries and all their columns into memory. This can take a while and can even cause the notebook to crash.</p>
+</div>
+<p>You can access individual or selections of the population using several methods:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>1. pop.history[5]
+2. pop.history[[0,4]]
+3. pop.history[&#39;time]
+4. pop.history.select()
+</pre></div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># select only binary_index 5</span>
+<span class="n">pop</span><span class="o">.</span><span class="n">history</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># select binary 0 and 4</span>
+<span class="n">pop</span><span class="o">.</span><span class="n">history</span><span class="p">[[</span><span class="mi">0</span><span class="p">,</span><span class="mi">4</span><span class="p">]]</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pop</span><span class="o">.</span><span class="n">history</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<p>You can also check what columns are available in the history file. This is possible in two ways:</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pop</span><span class="o">.</span><span class="n">history</span><span class="o">.</span><span class="n">columns</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pop</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="s1">&#39;history&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">select</span></code> function is the most powerful way to access the binaries, because it allows you to perform selections based on the specific columns available in the history dataframe. For example, below we can select on <code class="docutils literal notranslate"><span class="pre">state</span> <span class="pre">==</span> <span class="pre">'RLO1'</span></code>, which gives us all the rows with RLO1 occuring.</p>
+<p>The available identifiers are limited to string columns (<code class="docutils literal notranslate"><span class="pre">state</span></code>, <code class="docutils literal notranslate"><span class="pre">event</span></code>, <code class="docutils literal notranslate"><span class="pre">step_names</span></code>, <code class="docutils literal notranslate"><span class="pre">S1_state</span></code>, <code class="docutils literal notranslate"><span class="pre">S2_state</span></code>), index, and columns names.</p>
+<div class="admonition warning">
+<p class="admonition-title fa fa-exclamation-circle"><strong>Not all columns are available</strong></p>
+<p>It’s not currently possible to select on all columns in the population file. <strong>Only string columns, the indices and columns names are available!</strong></p>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># using the select function</span>
+<span class="n">pop</span><span class="o">.</span><span class="n">history</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">where</span><span class="o">=</span><span class="s1">&#39;index == 9&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># selecting all RLO1 states and only time and state columns</span>
+<span class="n">pop</span><span class="o">.</span><span class="n">history</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">where</span><span class="o">=</span><span class="s1">&#39;state == RLO2&#39;</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="s1">&#39;state&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># selecting rows 10 to 16</span>
+<span class="n">pop</span><span class="o">.</span><span class="n">history</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">start</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">stop</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>You might have notices while using the above functions that not all the binaries will have the same length in the history. You can access these with <code class="docutils literal notranslate"><span class="pre">pop.history_lengths</span></code> or <code class="docutils literal notranslate"><span class="pre">pop.history.lengths</span></code>. They provide the same information.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pop</span><span class="o">.</span><span class="n">history_lengths</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pop</span><span class="o">.</span><span class="n">history</span><span class="o">.</span><span class="n">lengths</span>
+</pre></div>
+</div>
+</div>
+</section>
+<hr class="docutils" />
+<section id="Population.oneline">
+<h2>Population.oneline<a class="headerlink" href="#Population.oneline" title="Link to this heading"></a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">Population.oneline</span></code> provides a similar interface to accessing the DataFrame in the population file as <code class="docutils literal notranslate"><span class="pre">Population.history</span></code>, with similar functionality being available.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">oneline</span></code> DataFrame contains, as the name suggests, a single line per binary. It contains initial and final conditions and some additional varibales, such as the <code class="docutils literal notranslate"><span class="pre">SN_type</span></code>. You can find more information about this <a class="reference internal" href="../../components-overview/pop_syn/synthetic_population.html#oneline"><span class="std std-ref">here</span></a> or look at the api reference of the class.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">select</span></code> function only has access to:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">index</span></code></p></li>
+<li><p>column names</p></li>
+<li><p>string columns: <code class="docutils literal notranslate"><span class="pre">state_i</span></code>, <code class="docutils literal notranslate"><span class="pre">state_f</span></code>, <code class="docutils literal notranslate"><span class="pre">event_i</span></code>, <code class="docutils literal notranslate"><span class="pre">event_f</span></code>, <code class="docutils literal notranslate"><span class="pre">step_names_i</span></code>, <code class="docutils literal notranslate"><span class="pre">step_names_f</span></code>, <code class="docutils literal notranslate"><span class="pre">S1_state_i</span></code>, <code class="docutils literal notranslate"><span class="pre">S1_state_f</span></code>, <code class="docutils literal notranslate"><span class="pre">S2_state_i</span></code>, <code class="docutils literal notranslate"><span class="pre">S2_state_f</span></code>, <code class="docutils literal notranslate"><span class="pre">S1_SN_type</span></code>, <code class="docutils literal notranslate"><span class="pre">S2_SN_type</span></code>, <code class="docutils literal notranslate"><span class="pre">interp_class_HMS_HMS</span></code>, <code class="docutils literal notranslate"><span class="pre">interp_class_CO_HeMS</span></code>, <code class="docutils literal notranslate"><span class="pre">interp_class_CO_HMS_RLO</span></code>, <code class="docutils literal notranslate"><span class="pre">interp_class_CO_HeMS_RLO</span></code>, <code class="docutils literal notranslate"><span class="pre">mt_history_HMS_HMS</span></code>, <code class="docutils literal notranslate"><span class="pre">mt_history_CO_HeMS</span></code>, <code class="docutils literal notranslate"><span class="pre">mt_history_CO_HMS_RLO</span></code>, <code class="docutils literal notranslate"><span class="pre">mt_history_CO_HeMS_RLO</span></code></p></li>
+</ul>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pop</span><span class="o">.</span><span class="n">oneline</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pop</span><span class="o">.</span><span class="n">oneline</span><span class="p">[[</span><span class="mi">0</span><span class="p">,</span><span class="mi">4</span><span class="p">]]</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pop</span><span class="o">.</span><span class="n">oneline</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">where</span><span class="o">=</span><span class="s1">&#39;index == 9&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pop</span><span class="o">.</span><span class="n">oneline</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">where</span><span class="o">=</span><span class="s1">&#39;index == [0,9]&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pop</span><span class="o">.</span><span class="n">oneline</span><span class="o">.</span><span class="n">columns</span>
+<span class="c1"># or</span>
+<span class="c1"># pop.columns[&#39;oneline&#39;]</span>
+</pre></div>
+</div>
+</div>
+</section>
+<hr class="docutils" />
+<section id="Population.formation_channels">
+<h2>Population.formation_channels<a class="headerlink" href="#Population.formation_channels" title="Link to this heading"></a></h2>
+<p>While you can see the all the main evolutionary steps in the evolution of a binary, it is useful to have a summary overview of a binary’s evolutionary pathway, also known as formation channel</p>
+<p>You might be interested in figuring out what sort of formation pathways/channels a binary has followed through its evolution.</p>
+<p>This is not a standard output of the population synthesis, but you can include it into the population file by calculating it. If you would like more detail on the initial mass transfer, you can set <code class="docutils literal notranslate"><span class="pre">mt_history=True</span></code>.</p>
+<p>This will write the formation channels to the Population file, which can be accessed by <code class="docutils literal notranslate"><span class="pre">Population.formation_channels</span></code>.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[23]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pop</span><span class="o">.</span><span class="n">calculate_formation_channels</span><span class="p">(</span><span class="n">mt_history</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># the formation channels are loaded in with pop.formation_channels</span>
+<span class="n">pop</span><span class="o">.</span><span class="n">formation_channels</span>
+</pre></div>
+</div>
+</div>
+<p>Next time you open this population file, the <code class="docutils literal notranslate"><span class="pre">formation_channels</span></code> will be available without having to be recalculated.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pop</span> <span class="o">=</span> <span class="n">Population</span><span class="p">(</span><span class="s1">&#39;1e+00_Zsun_population.h5&#39;</span><span class="p">)</span>
+<span class="n">pop</span><span class="o">.</span><span class="n">formation_channels</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="Selecting-a-sub-population">
+<h2>Selecting a sub-population<a class="headerlink" href="#Selecting-a-sub-population" title="Link to this heading"></a></h2>
+<p>You might just want a small sub-selection of the full population, especially if you’re working with large population and multi-metallicity runs.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">Population.export_selection()</span></code> function will export just the indices of the binaries you’re interested in into a new file. The simulated mass will remain the same, since they are dependent on the population run.</p>
+<p>If we select just 2 binaries and export them, we create a new population of just the binaries you’re interested in. In the <a class="reference internal" href="bbh_analysis.html"><span class="doc">BBH analysis</span></a> and <a class="reference internal" href="lgrb_pop_syn.html"><span class="doc">GRB analysis</span></a> tutorials, we show how to perform a selection with multiple criteria and across metallicities.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[27]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">indices</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">9</span><span class="p">]</span>
+<span class="n">pop</span><span class="o">.</span><span class="n">export_selection</span><span class="p">(</span><span class="n">indices</span><span class="p">,</span> <span class="s1">&#39;selected.h5&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">selected</span> <span class="o">=</span> <span class="n">Population</span><span class="p">(</span><span class="s1">&#39;selected.h5&#39;</span><span class="p">)</span>
+<span class="n">selected</span><span class="o">.</span><span class="n">mass_per_metallicity</span>
+</pre></div>
+</div>
+</div>
+<p>If you would like to know the simulated mass of just your population, you can calulate this using the online ZAMS values.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;selected simulated mass: &#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">selected</span><span class="o">.</span><span class="n">oneline</span><span class="p">[[</span><span class="s1">&#39;S1_mass_i&#39;</span><span class="p">,</span> <span class="s1">&#39;S2_mass_i&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()))</span>
+</pre></div>
+</div>
+</div>
+<p>By default this export-selection will not overwrite nor append if the output file is already present. You have to explicitly state what you would like to append to or overwrite the population file.</p>
+<p>With the <code class="docutils literal notranslate"><span class="pre">append=True</span></code> you are able to combine multiple stellar populations into a single file. This is especially useful when creating multi-metallicity populations.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># this will overwrite the existing file</span>
+<span class="n">pop</span><span class="o">.</span><span class="n">export_selection</span><span class="p">(</span><span class="n">indices</span><span class="p">,</span> <span class="s1">&#39;selected.h5&#39;</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="n">selected</span> <span class="o">=</span> <span class="n">Population</span><span class="p">(</span><span class="s1">&#39;selected.h5&#39;</span><span class="p">)</span>
+<span class="n">selected</span><span class="o">.</span><span class="n">mass_per_metallicity</span>
+<br/></pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># This will add to the file and add the extra simulated mass</span>
+<span class="n">pop</span><span class="o">.</span><span class="n">export_selection</span><span class="p">(</span><span class="n">indices</span><span class="p">,</span> <span class="s1">&#39;selected.h5&#39;</span><span class="p">,</span> <span class="n">append</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">selected</span> <span class="o">=</span> <span class="n">Population</span><span class="p">(</span><span class="s1">&#39;selected.h5&#39;</span><span class="p">)</span>
+<span class="n">selected</span><span class="o">.</span><span class="n">mass_per_metallicity</span>
+</pre></div>
+</div>
+</div>
+<p>Feel free to explore the small binary population you’ve just created!</p>
+<p>If you want to learn more about population synthesis and how to perform more complex selection and population, continue with <a class="reference internal" href="pop_syn.html"><span class="doc">Large scale population on a HPC setup</span></a> or with <a class="reference internal" href="bbh_analysis.html"><span class="doc">BBH analysis</span></a>.</p>
+<hr class="docutils" />
+<section id="Local-MPI-runs">
+<h3>Local MPI runs<a class="headerlink" href="#Local-MPI-runs" title="Link to this heading"></a></h3>
+<p>To speed up population synthesis runs, you can run on a computing cluster, as described in <a class="reference internal" href="pop_syn.html"><span class="doc">HPC Facilities</span></a>, or you can distribute the population synthesis across multiple cores on your local machine using MPI.</p>
+<p>To enable local MPI runs, go into the <code class="docutils literal notranslate"><span class="pre">population_params.ini</span></code> and change <code class="docutils literal notranslate"><span class="pre">use_MPI</span></code> to <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p>
+<p>It’s important to note that you cannot run have this option enabled for cluster runs!</p>
+<p>We create a binary population simulation script to run the population:</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%%writefile</span> script.py
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.popsyn.synthetic_population</span><span class="w"> </span><span class="kn">import</span> <span class="n">PopulationRunner</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">synth_pop</span> <span class="o">=</span> <span class="n">PopulationRunner</span><span class="p">(</span><span class="s2">&quot;./population_params.ini&quot;</span><span class="p">)</span>
+    <span class="n">synth_pop</span><span class="o">.</span><span class="n">evolve</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<p>This script can be initiated using a local where <code class="docutils literal notranslate"><span class="pre">NR_processors</span></code> is the number of processors you would like to us. <code class="docutils literal notranslate"><span class="pre">mpi4py</span></code> needs to be installed for this. Please see the <a class="reference internal" href="../../getting-started/installation-guide.html"><span class="doc">Installation guide</span></a> for more info.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">mpiexec</span> <span class="o">-</span><span class="n">n</span> <span class="err">$</span><span class="p">{</span><span class="n">NR_processors</span><span class="p">}</span> <span class="n">python</span> <span class="n">script</span><span class="o">.</span><span class="n">py</span>
+</pre></div>
+</div>
+</div>
+<p>This will create a folder for each metallicity in the population and store output of the parallel runs in it.</p>
+<p>You will have to concatenate these runs manually into a single population file per metallicity, which can be achieved using the following code:</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">posydon.popsyn.synthetic_population</span><span class="w"> </span><span class="kn">import</span> <span class="n">PopulationRunner</span>
+
+<span class="n">synth_pop</span> <span class="o">=</span> <span class="n">PopulationRunner</span><span class="p">(</span><span class="s2">&quot;./population_params.ini&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">pop</span> <span class="ow">in</span> <span class="n">synth_pop</span><span class="o">.</span><span class="n">binary_populations</span><span class="p">:</span>
+    <span class="n">synth_pop</span><span class="o">.</span><span class="n">merge_parallel_runs</span><span class="p">(</span><span class="n">pop</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="binary-pop-syn.html" class="btn btn-neutral float-left" title="Binary-Star Population Synthesis with POSYDON" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="pop_syn.html" class="btn btn-neutral float-right" title="Large-Scale Population Synthesis on HPC Facilities 🚀" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Tassos Fragos.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
