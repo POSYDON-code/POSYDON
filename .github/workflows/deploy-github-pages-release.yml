@@ -162,7 +162,8 @@ jobs:
         cd $PATH_TO_POSYDON
 
         # get the available tags
-        TAGS=$(git tag -l | sort -V | grep "v2")
+        TAGS=$(git tag -l | sort -V | grep "v2" | grep -v "v2.0.0-dev")
+
         echo "v2 filtered tags:"
         echo $TAGS
 
