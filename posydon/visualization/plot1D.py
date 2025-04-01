@@ -577,7 +577,8 @@ class plot1D(object):
                                 'BH', 'NS',
                                 'ignored_no_binary_history', 'ignored_no_RLO',
                                 'H-rich_non_burning',
-                                'stripped_He_non_burning']
+                                'stripped_He_non_burning',
+                                'accreted_He_Core_H_burning']
                     for key in convention.keys():
                         if key in key_skip:
                             continue

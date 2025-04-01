@@ -50,9 +50,28 @@ sys.setrecursionlimit(100000)
 
 
 def rescale_from_0_to_1(array, return_minmax=False):
-    """Rescale a matrix so that all dimensions span from 0 to 1."""
+    """Rescale a matrix so that all dimensions span from 0 to 1.
+
+        Parameters
+        ----------
+        array : array like
+            Data collection to be rescaled (along first axis).
+        return_minmax : bool (default: False)
+            It True, the minimum and maximum are returned as second and thrid
+            item.
+
+        Returns
+        -------
+        ndarray
+            The rescaled data.
+        (float)
+            Value of the minimum (only returned if return_minmax is True).
+        (float)
+            Value of the maximum (only returned if return_minmax is True).
+
+    """
     arr = np.array(array)
-    if len(array.shape) != 2:
+    if len(arr.shape) != 2:
         raise ValueError("Scaler works for matrices only.")
 
     minima, maxima = np.min(arr, axis=0), np.max(arr, axis=0)
@@ -72,7 +91,18 @@ class TrackDownsampler:
     """Class performing downsampling of multi-dimensional paths."""
 
     def __init__(self, independent, dependent, verbose=False):
-        """Get, reduce and rescale data."""
+        """Get, reduce and rescale data.
+
+        Parameters
+        ----------
+        independent : array like
+            Data of independent variable.
+        dependent : array like
+            Data of dependent variable(s).
+        verbose : bool (default: False)
+            If `True`, the objects reports by printing to standard output.
+
+        """
         self.verbose = verbose
         self.say("Initializing downsampler.")
         self.keep = None    # boolean array inidicating rows to keep
@@ -101,7 +131,14 @@ class TrackDownsampler:
         self.rescale()
 
     def say(self, message):
-        """Speak to the standard output, only if `.verbose` is True."""
+        """Speak to the standard output, only if `.verbose` is True.
+
+        Parameters
+        ----------
+        message : str
+            The printed text.
+
+        """
         if self.verbose:
             print(message)
 
@@ -113,7 +150,21 @@ class TrackDownsampler:
         self.say("    done.")
 
     def extract_downsample(self, scale_back=True):
-        """Extract the downsampled array."""
+        """Extract the downsampled array.
+
+        Parameters
+        ----------
+        scale_back : bool (default: True)
+            If true scale back to actual values otherwise use values scaled
+            to [0,1].
+
+        Returns
+        -------
+        t : ndarray
+            Independent data.
+        X : ndarray
+            Dependent data.
+        """
         t, X = self.t[self.keep], self.X[self.keep, :]
         if scale_back:
             t, X = t, (X * (self.maxima - self.minima)) + self.minima
@@ -122,14 +173,23 @@ class TrackDownsampler:
     def find_downsample(self, max_err=None, max_interval=None):
         """Find the rows of the data that constitute the "down-sample".
 
+        Parameters
+        ----------
+        max_err : float or None (default: None)
+            Maximum relative error to be allowed.
+        max_interval : float or None (default: None)
+            Maximum step in the independent variable.
+
         Note: if `max_interval` is negative, it's value is the relative ratio
-              between maximum allowed dm and total star mass.
+              between maximum allowed dm and initial-final change.
+
         """
         t, X = self.t, self.X
         N = len(t)
 
         if max_err is None or N < 3:
-            return np.ones_like(t, dtype=bool)
+            self.keep = np.ones_like(t, dtype=bool)
+            return
         if max_err < 0.0 or not np.isfinite(max_err):
             raise ValueError("`max_err` must be a non-negative finite number.")
         if max_err >= 1.0:
@@ -185,6 +245,25 @@ class TrackDownsampler:
         self.keep = keep
 
     def downsample(self, max_err=None, scale_back=True, max_interval=None):
-        """Perform the downsampling and return the result."""
+        """Perform the downsampling and return the result.
+
+        Parameters
+        ----------
+        max_err : float or None (default: None)
+            Maximum relative error to be allowed.
+        scale_back : bool (default: True)
+            If true scale back to actual values otherwise use values scaled
+            to [0,1].
+        max_interval : float or None (default: None)
+            Maximum step in the independent variable.
+
+        Returns
+        -------
+        t : ndarray
+            Independent data.
+        X : ndarray
+            Dependent data.
+
+        """
         self.find_downsample(max_err=max_err, max_interval=max_interval)
         return self.extract_downsample(scale_back=scale_back)
