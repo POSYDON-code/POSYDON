@@ -32,7 +32,7 @@ class IMFBase(ABC):
             The normalization constant for the IMF.
         """
         integral, _ = quad(self.imf, self.m_min, self.m_max)
-        if not (integral > 0):
+        if not (integral > 0): # pragma: no cover
             raise ValueError(
                 "Normalization integral is zero. Check IMF parameters.")
         return 1.0 / integral
@@ -155,6 +155,7 @@ class Salpeter(IMFBase):
         float or ndarray
             The IMF value for the given mass or masses.
         '''
+        m = np.asarray(m)
         if np.any(m <= 0):
             raise ValueError("Mass must be positive.")
         return m ** (-self.alpha)
