@@ -12,19 +12,25 @@ class IMFBase(ABC):
     def _calculate_normalization(self):
         integral, _ = quad(self.imf, self.m_min, self.m_max)
         if not (integral > 0):
-            raise ValueError("Normalization integral is zero. Check IMF parameters.")
+            raise ValueError(
+                "Normalization integral is zero. Check IMF parameters.")
         return 1.0 / integral
 
     def pdf(self, m):
-        """
-        Compute the probability density function (PDF) values for the input mass(es).
+        """Compute the probability density function (PDF) values 
+        for the input mass(es).
 
-        Parameters:
-            m (scalar or array-like): The mass or masses at which to evaluate the PDF [Msun].
+        Parameters
+        ----------
+        m  : (scalar or array-like): 
+            The mass or masses at which to evaluate the PDF [Msun].
 
-        Returns:
-            numpy.ndarray: An array of PDF values corresponding to each entry in m, with invalid
-            masses (outside [self.m_min, self.m_max]) assigned a value of zero.
+        Returns
+        -------
+        numpy.ndarray: 
+            An array of PDF values corresponding to each entry in m, 
+            with invalid masses (outside [self.m_min, self.m_max])
+            assigned a value of zero.
         """
         m = np.asarray(m)
         valid = (m >= self.m_min) & (m <= self.m_max)
@@ -64,7 +70,8 @@ class IMFBase(ABC):
         
         Raises
         -------
-        Raises a NotImplementedError if the method is not implemented in a subclass.
+        Raises a NotImplementedError if the method is not 
+        implemented in a subclass.
         ''' 
         pass
 
@@ -103,14 +110,19 @@ class Salpeter(IMFBase):
         super().__init__(m_min, m_max)
         
     def __repr__(self):
-        return f"Salpeter(alpha={self.alpha}, m_min={self.m_min}, m_max={self.m_max})"
+        return (f"Salpeter(alpha={self.alpha}, "
+                f"m_min={self.m_min}, "
+                f"m_max={self.m_max})")
     
     def _repr_html_(self):
-        return f"<h3>Salpeter IMF</h3><p>alpha = {self.alpha}</p><p>m_min = {self.m_min}</p><p>m_max = {self.m_max}</p>"
+        return (f"<h3>Salpeter IMF</h3>"
+                f"<p>alpha = {self.alpha}</p>"
+                f"<p>m_min = {self.m_min}</p>"
+                f"<p>m_max = {self.m_max}</p>")
     
     def imf(self, m):
-        '''Computes the IMF value for a given mass or array of masses 'm'. Raises a
-        ValueError if any value in 'm' is less than or equal to zero.
+        '''Computes the IMF value for a given mass or array of masses 'm'.
+        Raises a ValueError if any value in 'm' is less than or equal to zero.
         
         Parameters
         ----------
@@ -187,17 +199,24 @@ class Kroupa2001(IMFBase):
         super().__init__(m_min, m_max)
         
     def __repr__(self):
-        return (f"Kroupa2001(alpha1={self.alpha1}, alpha2={self.alpha2}, alpha3={self.alpha3}, "
-                f"m1break={self.m1break}, m2break={self.m2break}, m_min={self.m_min}, m_max={self.m_max})")
+        return (f"Kroupa2001(alpha1={self.alpha1}, "
+                f"alpha2={self.alpha2}, alpha3={self.alpha3}, "
+                f"m1break={self.m1break}, m2break={self.m2break}, "
+                f"m_min={self.m_min}, m_max={self.m_max})")
         
     def _repr_html_(self):
-        return (f"<h3>Kroupa (2001) IMF</h3><p>alpha1 = {self.alpha1}</p><p>alpha2 = {self.alpha2}</p>"
-                f"<p>alpha3 = {self.alpha3}</p><p>m1break = {self.m1break}</p><p>m2break = {self.m2break}</p>"
-                f"<p>m_min = {self.m_min}</p><p>m_max = {self.m_max}</p>")
+        return (f"<h3>Kroupa (2001) IMF</h3>"
+                f"<p>alpha1 = {self.alpha1}</p>"
+                f"<p>alpha2 = {self.alpha2}</p>"
+                f"<p>alpha3 = {self.alpha3}</p>"
+                f"<p>m1break = {self.m1break}</p>"
+                f"<p>m2break = {self.m2break}</p>"
+                f"<p>m_min = {self.m_min}</p>"
+                f"<p>m_max = {self.m_max}</p>")
         
     def imf(self, m):
-        '''Computes the IMF value for a given mass or array of masses 'm'. Raises a
-        ValueError if any value in 'm' is less than or equal to zero.
+        '''Computes the IMF value for a given mass or array of masses 'm'.
+        Raises a ValueError if any value in 'm' is less than or equal to zero.
         
         Parameters
         ----------
@@ -228,11 +247,12 @@ class Kroupa2001(IMFBase):
         return out
 
 class Chabrier2003(IMFBase):
-    """
-    Chabrier2003 Initial Mass Function (IMF), which is defined as a lognormal distribution
-    for low-mass stars and a power-law distribution for high-mass stars:
+    """Chabrier2003 Initial Mass Function (IMF), which is defined as 
+    a lognormal distribution for low-mass stars and a power-law distribution
+    for high-mass stars:
     
-        dN/dM = 1/(m * sqrt(2*pi) * sigma) * exp(- (log10(m) - log10(m_c))^2 / (2 * sigma^2)) for m < m_break
+        dN/dM = 1/(m * sqrt(2*pi) * sigma) 
+              * exp(- (log10(m) - log10(m_c))^2 / (2 * sigma^2)) for m < m_break
         dN/dM = C * (m / m_break)^(-alpha) for m >= m_break
         
     Reference
@@ -243,20 +263,24 @@ class Chabrier2003(IMFBase):
     Parameters
     ----------
     m_c : float, optional
-        The characteristic mass of the lognormal component (default is 0.22) [Msun].
+        Characteristic mass of the lognormal component (default: 0.22) [Msun]
     sigma : float, optional
-        The dispersion (standard deviation) of the lognormal component (default is 0.57).
+        The dispersion (standard deviation) of the lognormal component
+        (default: 0.57).
     alpha : float, optional
-        The power-law index governing the high-mass end of the IMF (default is 2.3).
+        The power-law index governing the high-mass end of the IMF
+        (default: 2.3).
     m_break : float, optional
-        The mass at which the IMF transitions from a lognormal to a power-law behavior (default is 1.0) [Msun].
+        The mass at which the IMF transitions from a lognormal 
+        to a power-law behavior (default: 1.0) [Msun].
     m_min : float, optional
-        The minimum mass considered in the IMF (default is 0.01) [Msun].
+        The minimum mass considered in the IMF (default: 0.01) [Msun].
     m_max : float, optional
-        The maximum mass considered in the IMF (default is 200.0) [Msun].
+        The maximum mass considered in the IMF (default: 200.0) [Msun].
     """
     
-    def __init__(self, m_c=0.22, sigma=0.57, alpha=2.3, m_break=1.0, m_min=0.01, m_max=200.0):
+    def __init__(self, m_c=0.22, sigma=0.57, alpha=2.3, 
+                 m_break=1.0, m_min=0.01, m_max=200.0):
         self.m_c = m_c
         self.sigma = sigma
         self.alpha = alpha
@@ -264,17 +288,22 @@ class Chabrier2003(IMFBase):
         super().__init__(m_min, m_max)
     
     def __repr__(self):
-        return (f"Chabrier(m_c={self.m_c}, sigma={self.sigma}, alpha={self.alpha}, "
-                f"m_break={self.m_break}, m_min={self.m_min}, m_max={self.m_max})")
+        return (f"Chabrier(m_c={self.m_c}, "
+                f"sigma={self.sigma}, alpha={self.alpha}, "
+                f"m_break={self.m_break}, "
+                f"m_min={self.m_min}, m_max={self.m_max})")
 
     def _repr_html_(self):
-        return (f"<h3>Chabrier IMF</h3><p>m_c = {self.m_c}</p><p>sigma = {self.sigma}</p>"
-                f"<p>alpha = {self.alpha}</p><p>m_break = {self.m_break}</p>"
-                f"<p>m_min = {self.m_min}</p><p>m_max = {self.m_max}</p>")
+        return (f"<h3>Chabrier IMF</h3><p>m_c = {self.m_c}</p>"
+                f"<p>sigma = {self.sigma}</p>"
+                f"<p>alpha = {self.alpha}</p>"
+                f"<p>m_break = {self.m_break}</p>"
+                f"<p>m_min = {self.m_min}</p>"
+                f"<p>m_max = {self.m_max}</p>")
 
     def imf(self, m):
-        '''Computes the IMF value for a given mass or array of masses 'm'. Raises a
-        ValueError if any value in 'm' is less than or equal to zero.
+        '''Computes the IMF value for a given mass or array of masses 'm'.
+        Raises a ValueError if any value in 'm' is less than or equal to zero.
         
         Parameters
         ----------
@@ -287,9 +316,16 @@ class Chabrier2003(IMFBase):
             The IMF value for the given mass or masses
         '''
         m = np.asarray(m)
-        lognormal = (1.0 / (m * np.sqrt(2 * np.pi) * self.sigma) *
-                     np.exp(- (np.log10(m) - np.log10(self.m_c))**2 / (2 * self.sigma**2)))
-        C = (1.0 / (self.m_break * np.sqrt(2 * np.pi) * self.sigma) *
-             np.exp(- (np.log10(self.m_break) - np.log10(self.m_c))**2 / (2 * self.sigma**2)))
+        # Calculate common terms for the lognormal function
+        sqrt_2pi_sigma = np.sqrt(2 * np.pi) * self.sigma
+        
+        # Calculate lognormal component for masses below the break point
+        log_term_m = (np.log10(m) - np.log10(self.m_c))**2 / (2 * self.sigma**2)
+        lognormal = (1.0 / (m * sqrt_2pi_sigma)) * np.exp(-log_term_m)
+        
+        # Calculate normalization constant for the power-law component
+        log_term_break = ((np.log10(self.m_break) - np.log10(self.m_c))**2 / 
+                  (2 * self.sigma**2))
+        C = (1.0 / (self.m_break * sqrt_2pi_sigma)) * np.exp(-log_term_break)
         powerlaw = C * (m / self.m_break) ** (-self.alpha)
         return np.where(m < self.m_break, lognormal, powerlaw)
