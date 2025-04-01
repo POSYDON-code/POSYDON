@@ -234,8 +234,10 @@ class TestGetMeanMass:
         # parameters without q_min and q_max, but with 
         #  secondary_mass_min and secondary_mass_max:
         # Let secondary_mass_min = 0.5, secondary_mass_max = 1.5.
-        # Default q_min = max(secondary_mass_min/primary_mass_min, 0) = max(0.5/1,0)=0.5
-        # Default q_max = min(secondary_mass_max/primary_mass_max, 1) = min(1.5/2,1)=0.75
+        # Default q_min = max(secondary_mass_min/primary_mass_min, 0) 
+        # = max(0.5/1,0)=0.5
+        # Default q_max = min(secondary_mass_max/primary_mass_max, 1)
+        # = min(1.5/2,1)=0.75
         # Binary integration:
         # Inner integration for each m: ∫[q=0.5 to 0.75] (1+q)dq
         # = [(q + 0.5*q^2)] from 0.5 to 0.75 = (0.75+0.28125) - (0.5+0.125) 
