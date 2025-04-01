@@ -149,15 +149,15 @@ starts at RLO), and finally, the name of the interpolator object.
     1NN             nearest neighbor
     ==============  ===========
 
-.. _pipeline_step9:
+.. _pipeline_stepF:
 
-Step9: exporting the data set
+StepF: exporting the data set
 -----------------------------
 
 After we have a complete data set, we would like to export it to be used for
-the population synthesis. We jump here to step 9, because this will always be
-the last step even more steps may get introduced in the future. In
-:samp:`step_9.csv`, there are again two paths required, a source and an export
+the population synthesis. We jump here to step F, because this will always be
+the final step even more steps may get introduced in the future. In
+:samp:`step_F.csv`, there are again two paths required, a source and an export
 path. The step will simply copy the source to the export location. Hence, here
 the final :samp:`PSyGrid` objects and all the interpolator files are usually
 addressed by this step.
