@@ -20,7 +20,9 @@ class TestSalpeterIMF:
         assert default_imf.m_min == 0.01
         assert default_imf.m_max == 200.0
         # Verify normalization
-        integral, _ = quad(default_imf.imf, default_imf.m_min, default_imf.m_max)
+        integral, _ = quad(default_imf.imf,
+                           default_imf.m_min,
+                           default_imf.m_max)
         assert integral*default_imf.norm == pytest.approx(1.0, rel=1e-5)
 
     def test_initialization_custom(self, custom_imf):
@@ -68,10 +70,15 @@ class TestSalpeterIMF:
         assert np.all(pdf_values == 0.0)
         
     def test_pdf_inside_and_outside(self, default_imf):
-        """Test that PDF returns correct values for a mix of inside and outside mass range."""
-        m = np.array([default_imf.m_min - 0.1, default_imf.m_max + 0.1, default_imf.m_min + 0.1])
+        """Test that PDF returns correct values for a mix of 
+        inside and outside mass range."""
+        m = np.array([default_imf.m_min - 0.1,
+                      default_imf.m_max + 0.1,
+                      default_imf.m_min + 0.1])
         pdf_values = default_imf.pdf(m)
-        expected_pdf = np.array([0.0, 0.0, default_imf.pdf(default_imf.m_min + 0.1)])
+        expected_pdf = np.array([0.0,
+                                 0.0,
+                                 default_imf.pdf(default_imf.m_min + 0.1)])
         assert np.all(pdf_values == expected_pdf)
 
     def test_pdf_scalar(self, default_imf):
@@ -93,7 +100,9 @@ class TestSalpeterIMF:
         assert pdf_value == 0.0
 
     def test_normalization(self, default_imf):
-        """Ensure that the integral of the PDF over the range is approximately 1."""
+        """Ensure that the integral of the PDF over the range is 
+        approximately 1.
+        """
         m_min = default_imf.m_min
         m_max = default_imf.m_max
         integral, error = quad(default_imf.pdf, m_min, m_max)
@@ -106,7 +115,9 @@ class TestSalpeterIMF:
             IMFs.Salpeter(alpha=1.0, m_min=1e-10, m_max=1e-10)
 
     def test_pdf_integral_custom(self, custom_imf):
-        """Ensure that the integral of the PDF for a custom IMF is approximately 1."""
+        """Ensure that the integral of the PDF for a custom IMF is
+        approximately 1.
+        """
         integral, _ = quad(custom_imf.pdf, custom_imf.m_min, custom_imf.m_max)
         assert integral == pytest.approx(1.0, rel=1e-4)
 
@@ -126,7 +137,9 @@ class TestKroupa2001IMF:
 
     @pytest.fixture
     def custom_kroupa(self):
-        return IMFs.Kroupa2001(alpha1=0.5, alpha2=1.7, alpha3=2.7, m1break=0.09, m2break=0.6, m_min=0.5, m_max=100.0)
+        return IMFs.Kroupa2001(alpha1=0.5, alpha2=1.7, alpha3=2.7,
+                               m1break=0.09, m2break=0.6,
+                               m_min=0.5, m_max=100.0)
 
     def test_initialization_default(self, default_kroupa):
         assert default_kroupa.alpha1 == 0.3
@@ -134,7 +147,9 @@ class TestKroupa2001IMF:
         assert default_kroupa.alpha3 == 2.3
         assert default_kroupa.m_min == 0.01
         assert default_kroupa.m_max == 200.0
-        integral, _ = quad(default_kroupa.imf, default_kroupa.m_min, default_kroupa.m_max)
+        integral, _ = quad(default_kroupa.imf,
+                           default_kroupa.m_min,
+                           default_kroupa.m_max)
         assert integral*default_kroupa.norm == pytest.approx(1.0, rel=1e-5)
 
     def test_initialization_custom(self, custom_kroupa):
@@ -145,7 +160,9 @@ class TestKroupa2001IMF:
         assert custom_kroupa.m2break == 0.6
         assert custom_kroupa.m_min == 0.5
         assert custom_kroupa.m_max == 100.0
-        integral, _ = quad(custom_kroupa.imf, custom_kroupa.m_min, custom_kroupa.m_max)
+        integral, _ = quad(custom_kroupa.imf,
+                           custom_kroupa.m_min,
+                           custom_kroupa.m_max)
         assert integral*custom_kroupa.norm == pytest.approx(1.0, rel=1e-5)
 
     def test_pdf_within_range(self, default_kroupa):
@@ -160,9 +177,13 @@ class TestKroupa2001IMF:
         assert np.all(pdf_values == 0.0)
         
     def test_pdf_inside_and_outside(self, default_kroupa):
-        m = np.array([default_kroupa.m_min - 0.1, default_kroupa.m_max + 0.1, default_kroupa.m_min + 0.1])
+        m = np.array([default_kroupa.m_min - 0.1,
+                      default_kroupa.m_max + 0.1,
+                      default_kroupa.m_min + 0.1])
         pdf_values = default_kroupa.pdf(m)
-        expected_pdf = np.array([0.0, 0.0, default_kroupa.pdf(default_kroupa.m_min + 0.1)])
+        expected_pdf = np.array([0.0,
+                                 0.0,
+                                 default_kroupa.pdf(default_kroupa.m_min + 0.1)])
         assert np.all(pdf_values == expected_pdf)
         
     def test_invalid_mass(self, default_kroupa):
@@ -191,12 +212,15 @@ class TestKroupa2001IMF:
         assert pdf_value == 0.0
 
     def test_normalization(self, default_kroupa):
-        integral, _ = quad(default_kroupa.pdf, default_kroupa.m_min, default_kroupa.m_max)
+        integral, _ = quad(default_kroupa.pdf,
+                           default_kroupa.m_min,
+                           default_kroupa.m_max)
         assert integral == pytest.approx(1.0, rel=1e-4)
 
     def test_invalid_initialization(self):
         with pytest.raises(ValueError, match='m_min must be less than m_max.'):
-            IMFs.Kroupa2001(alpha1=1.0, alpha2=1.0, alpha3=1.0, m_min=1e-10, m_max=1e-10)
+            IMFs.Kroupa2001(alpha1=1.0, alpha2=1.0, alpha3=1.0,
+                            m_min=1e-10, m_max=1e-10)
 
     def test_vectorization(self, default_kroupa):
         m_array = np.array([0.01, 0.1, 1.0, 10.0, 100.0, 200.0])
@@ -205,7 +229,9 @@ class TestKroupa2001IMF:
         assert np.all(pdf_values == expected)
 
     def test_pdf_integral_custom(self, custom_kroupa):
-        integral, _ = quad(custom_kroupa.pdf, custom_kroupa.m_min, custom_kroupa.m_max)
+        integral, _ = quad(custom_kroupa.pdf,
+                           custom_kroupa.m_min,
+                           custom_kroupa.m_max)
         assert integral == pytest.approx(1.0, rel=1e-4)
         
     def test_negative_mass(self, default_kroupa):
@@ -232,7 +258,8 @@ class TestChabrierIMF:
     @pytest.fixture
     def custom_chabrier(self):
         """Fixture for custom Chabrier2003 instance."""
-        return IMFs.Chabrier2003(m_c=0.3, sigma=0.6, alpha=2.5, m_break=1.2, m_min=0.05, m_max=150.0)
+        return IMFs.Chabrier2003(m_c=0.3, sigma=0.6, alpha=2.5, 
+                                 m_break=1.2, m_min=0.05, m_max=150.0)
 
     def test_initialization_default(self, default_chabrier):
         """Test default initialization of Chabrier2003 IMF."""
@@ -242,7 +269,9 @@ class TestChabrierIMF:
         assert default_chabrier.m_break == 1.0
         assert default_chabrier.m_min == 0.01
         assert default_chabrier.m_max == 200.0        
-        integral, _ = quad(default_chabrier.imf, default_chabrier.m_min, default_chabrier.m_max)
+        integral, _ = quad(default_chabrier.imf,
+                           default_chabrier.m_min,
+                           default_chabrier.m_max)
         assert integral*default_chabrier.norm == pytest.approx(1.0, rel=1e-5)
 
     def test_initialization_custom(self, custom_chabrier):
@@ -253,7 +282,9 @@ class TestChabrierIMF:
         assert custom_chabrier.m_break == 1.2
         assert custom_chabrier.m_min == 0.05
         assert custom_chabrier.m_max == 150.0
-        integral, _ = quad(custom_chabrier.imf, custom_chabrier.m_min, custom_chabrier.m_max)
+        integral, _ = quad(custom_chabrier.imf,
+                           custom_chabrier.m_min,
+                           custom_chabrier.m_max)
         assert integral*custom_chabrier.norm == pytest.approx(1.0, rel=1e-5)
 
     def test_pdf_within_range(self, default_chabrier):
@@ -271,9 +302,13 @@ class TestChabrierIMF:
         
     def test_pdf_inside_and_outside(self, default_chabrier):
         """Test that PDF returns correct values for a mix of inside and outside mass range."""
-        m = np.array([default_chabrier.m_min - 0.1, default_chabrier.m_max + 0.1, default_chabrier.m_min + 0.1])
+        m = np.array([default_chabrier.m_min - 0.1,
+                      default_chabrier.m_max + 0.1,
+                      default_chabrier.m_min + 0.1])
         pdf_values = default_chabrier.pdf(m)
-        expected_pdf = np.array([0.0, 0.0, default_chabrier.pdf(default_chabrier.m_min + 0.1)])
+        expected_pdf = np.array([0.0,
+                                 0.0,
+                                 default_chabrier.pdf(default_chabrier.m_min + 0.1)])
         assert np.all(pdf_values == expected_pdf)
         
     def test_invalid_mass(self, default_chabrier):
@@ -305,9 +340,13 @@ class TestChabrierIMF:
         
 
     def test_normalization(self, default_chabrier):
-        """Ensure that the integral of the PDF over the range is approximately 1."""
-        integral, _ = quad(default_chabrier.pdf, default_chabrier.m_min, default_chabrier.m_max)
-        assert integral == pytest.approx(1.0, rel=1e-4)
+        """Ensure that the integral of the PDF over the range is 
+        approximately 1.
+        """
+        integral, _ = quad(default_chabrier.pdf,
+                           default_chabrier.m_min,
+                           default_chabrier.m_max)
+        assert integral == pytest.approx(1.0, rel=1e-5)
 
     def test_vectorization(self, default_chabrier):
         """Test that the pdf method correctly handles array inputs."""
@@ -319,7 +358,8 @@ class TestChabrierIMF:
     def test_invalid_initialization(self):
         """Test that initialization raises ValueError when normalization integral is zero."""
         with pytest.raises(ValueError, match='m_min must be less than m_max.'):
-            IMFs.Chabrier2003(m_c=0.22, sigma=0.57, alpha=2.3, m_break=1.0, m_min=1e-10, m_max=1e-10)
+            IMFs.Chabrier2003(m_c=0.22, sigma=0.57, alpha=2.3, 
+                              m_break=1.0, m_min=1e-10, m_max=1e-10)
 
     def test_repr(self, default_chabrier):
         rep_str = default_chabrier.__repr__()
