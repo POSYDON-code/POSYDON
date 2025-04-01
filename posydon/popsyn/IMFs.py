@@ -5,11 +5,29 @@ from abc import ABC, abstractmethod
 class IMFBase(ABC):
     '''Base class for Initial Mass Functions (IMFs)'''
     def __init__(self, m_min, m_max):
+        """Initialize the IMF with minimum and maximum mass limits.
+        
+        Parameters
+        ----------
+        m_min : float
+            The minimum mass considered in the IMF [Msun].
+        m_max : float
+            The maximum mass considered in the IMF [Msun].
+        """
         self.m_min = m_min
         self.m_max = m_max
         self.norm = self._calculate_normalization()
 
     def _calculate_normalization(self):
+        """Calculate the normalization constant for the IMF.
+        This is done by integrating the IMF over the mass range
+        [m_min, m_max] and taking the inverse of the integral.
+        
+        Returns
+        -------
+        float:
+            The normalization constant for the IMF.
+        """
         integral, _ = quad(self.imf, self.m_min, self.m_max)
         if not (integral > 0):
             raise ValueError(
