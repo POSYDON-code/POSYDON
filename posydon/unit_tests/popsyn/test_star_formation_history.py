@@ -14,19 +14,24 @@ from posydon.popsyn.star_formation_history import (
 
 
 class TestSFHBase:
-    def test_init_attributes(self):
-        """Test that the initialization sets attributes correctly."""
-        # Create a concrete subclass for testing
+    
+    @pytest.fixture
+    def ConcreteSFH(self):
+        """Create a concrete subclass of SFHBase for testing."""
         class ConcreteSFH(SFHBase):
             def CSFRD(self, z):
                 return z
             
             def mean_metallicity(self, z):
                 return z
-                
+            
             def fSFR(self, z, metallicity_bins):
                 return np.ones((len(z), len(metallicity_bins)-1))
         
+        return ConcreteSFH
+    
+    def test_init_attributes(self, ConcreteSFH):
+        """Test that the initialization sets attributes correctly."""
         model_dict = {
             "test_param": 42, 
             "Z_max": 0.03,
@@ -40,16 +45,8 @@ class TestSFHBase:
         assert sfh.another_param == "test"
         assert sfh.MODEL == model_dict
     
-    def test_validation(self):
+    def test_validation(self, ConcreteSFH):
         """Test that Z_max > 1 raises a ValueError."""
-        class ConcreteSFH(SFHBase):
-            def CSFRD(self, z):
-                pass
-            def mean_metallicity(self, z):
-                pass
-            def fSFR(self, z, metallicity_bins):
-                pass
-                
         model_dict = {"Z_max": 1.5}
         with pytest.raises(ValueError) as excinfo:
             ConcreteSFH(model_dict)
@@ -87,20 +84,11 @@ class TestSFHBase:
         with pytest.raises(TypeError):
             IncompleteSFH2(model_dict)
     
-    def test_distribute_cdf(self):
+    def test_distribute_cdf(self, ConcreteSFH):
         """Test the _distribute_cdf method."""
-        class ConcreteSFH(SFHBase):
-            def CSFRD(self, z):
-                return z
-            def mean_metallicity(self, z):
-                return z
-            def fSFR(self, z, metallicity_bins):
-                return np.ones((len(z), len(metallicity_bins)-1))
-        
         # Create a simple CDF functions
         cdf_func = lambda x: x
         met_edges = np.array([0.0, 0.01, 0.02, 0.03])
-        
         
         model_dict = {"Z_max": 1, "Z_min": 0.0}
         sfh = ConcreteSFH(model_dict)
