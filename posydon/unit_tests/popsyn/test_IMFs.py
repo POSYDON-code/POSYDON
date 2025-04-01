@@ -29,8 +29,8 @@ class TestSalpeterIMF:
         assert custom_imf.m_min == 0.5
         assert custom_imf.m_max == 100.0
         # Verify normalization
-        integral, _ = quad(custom_imf.pdf, custom_imf.m_min, custom_imf.m_max)
-        assert integral == pytest.approx(1.0, rel=1e-4)
+        integral, _ = quad(custom_imf.imf, custom_imf.m_min, custom_imf.m_max)
+        assert integral*custom_imf.norm == pytest.approx(1.0, rel=1e-5)
 
     def test_salepeter_imf(self, default_imf):
         """Test the imf method for correct values."""
@@ -126,7 +126,7 @@ class TestKroupa2001IMF:
 
     @pytest.fixture
     def custom_kroupa(self):
-        return IMFs.Kroupa2001(alpha1=0.5, alpha2=1.7, alpha3=2.7, m1break=0.09, m2break=0.6)
+        return IMFs.Kroupa2001(alpha1=0.5, alpha2=1.7, alpha3=2.7, m1break=0.09, m2break=0.6, m_min=0.5, m_max=100.0)
 
     def test_initialization_default(self, default_kroupa):
         assert default_kroupa.alpha1 == 0.3
@@ -143,6 +143,8 @@ class TestKroupa2001IMF:
         assert custom_kroupa.alpha3 == 2.7
         assert custom_kroupa.m1break == 0.09
         assert custom_kroupa.m2break == 0.6
+        assert custom_kroupa.m_min == 0.5
+        assert custom_kroupa.m_max == 100.0
         integral, _ = quad(custom_kroupa.imf, custom_kroupa.m_min, custom_kroupa.m_max)
         assert integral*custom_kroupa.norm == pytest.approx(1.0, rel=1e-5)
 

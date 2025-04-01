@@ -79,6 +79,7 @@ class TestGetIMFPdf:
         result = pdf_func(m_test)
         expected = kwargs['SchemeKwargsIMF']['custom_param']  # The value of custom_param
         assert np.allclose(result, expected)
+        
 
 
 class TestGetMassRatioPdf:
