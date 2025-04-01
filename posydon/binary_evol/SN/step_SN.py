@@ -53,7 +53,7 @@ from posydon.binary_evol.SN.profile_collapse import (do_core_collapse_BH,
 from posydon.binary_evol.flow_chart import (STAR_STATES_CO, STAR_STATES_CC,
                                             STAR_STATES_C_DEPLETION)
 
-from posydon.grids.MODELS import MODELS
+from posydon.grids.MODELS import get_MODEL_NAME
 from posydon.utils.posydonerror import ModelError
 from posydon.utils.posydonwarning import Pwarn
 from posydon.utils.common_functions import set_binary_to_failed
@@ -519,23 +519,7 @@ class StepSN(object):
             # use those, else continue with or without profile.
             if self.use_interp_values:
                 # find MODEL_NAME corresponding to class variable
-                MODEL_NAME_SEL = None
-                for MODEL_NAME, MODEL in MODELS.items():
-                    tmp = MODEL_NAME
-                    for key, val in MODEL.items():
-                        if "use_" in key or key=="ECSN":
-                            # escape values, which are allowed to differ
-                            continue
-                        if getattr(self, key) != val:
-                            if self.verbose:
-                                print(tmp, 'mismatch:', key,
-                                      getattr(self, key), val)
-                            tmp = None
-                            break
-                    if tmp is not None:
-                        if self.verbose:
-                            print('matched to model:', tmp)
-                        MODEL_NAME_SEL = tmp
+                MODEL_NAME_SEL = get_MODEL_NAME(vars(self), verbose=self.verbose)
 
                 # check if selected MODEL is supported
                 if MODEL_NAME_SEL is None:
@@ -1654,6 +1638,27 @@ class StepSN(object):
             binary.orbital_period = np.nan
             binary.mass_transfer_case = 'None'
             binary.first_SN_already_occurred = True
+
+        elif ((binary.star_1.state == 'massless_remnant') or
+              (binary.star_2.state == 'massless_remnant')):
+            # the binary should be disrupted when a massless_remnant formed
+            # update the tilt
+            if not binary.first_SN_already_occurred:
+                binary.star_1.spin_orbit_tilt_first_SN = np.nan
+                binary.star_2.spin_orbit_tilt_first_SN = np.nan
+                binary.first_SN_already_occurred = True
+            else:
+                binary.star_1.spin_orbit_tilt_second_SN = np.nan
+                binary.star_2.spin_orbit_tilt_second_SN = np.nan
+
+            binary.state = "disrupted"
+            binary.event = None
+            binary.separation = np.nan
+            binary.eccentricity = np.nan
+            binary.V_sys = np.array([0, 0, 0])
+            binary.time = binary.time_history[-1]
+            binary.orbital_period = np.nan
+            binary.mass_transfer_case = 'None'
 
         else:
 
