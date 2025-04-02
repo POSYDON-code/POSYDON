@@ -56,21 +56,24 @@ be specified if ``interp_method`` is a list.
 4. ``in_keys``: the keys to be used as the input to the interpolator, by default
 these are ``star_1_mass``, ``star_2_mass``, and ``period_days``.
 
-5. ``out_keys``: the keys for which the interpolator is supposed to provide values,
-by default all keys are used.
+5. ``out_keys``: the keys for which the interpolator is supposed to provide 
+values, by default all keys are used.
 
-6. ``in_scaling``: The scalings for the input keys, by default these scalings are
-optimized through Monte Carlo Cross Validation.
+6. ``in_scaling``: The scalings for the input keys, by default these scalings 
+are optimized through Monte Carlo Cross Validation.
 
 7. ``out_scaling``: The scalings for the output keys, by default these scalings
 are optimized through Monte Carlo Cross Validation.
 
 8. ``c_keys``: A list of strings specifying which classifiers are to be trained
 
-9. ``c_key``: A string specifying by which class the interpolator should interpolate
-binaries. Only to be specified in the MCInterpolator case.
+9. ``c_key``: A string specifying by which class the interpolator should 
+interpolate binaries. Only to be specified in the MCInterpolator case.
 
-For most applications specifying only the first four parameters is recommended. Provided below is an example instantiation of the ``IFInterpolator`` class. Note that there are a total of six dictionaries corresponding to the six instances of the ``BaseIFInterpolator``.
+For most applications specifying only the first four parameters is recommended. 
+Provided below is an example instantiation of the ``IFInterpolator`` class. Note 
+that there are a total of six dictionaries corresponding to the six instances of 
+the ``BaseIFInterpolator``.
 
 .. code-block:: python
 
