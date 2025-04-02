@@ -65,6 +65,14 @@ jobs:
         export PATH_TO_POSYDON=$GITHUB_WORKSPACE/POSYDON
         cd $PATH_TO_POSYDON
 
+        # REQUIRED FOR OLDER VERSIONS OF POSYDON BEFORE THE INCLUSION OF 
+        # THe _template folder and versioning code.
+        # get the _template folder and move it out of the POSYDON folder
+        cp -r docs/_source/_template $GITHUB_WORKSPACE
+
+        # get the injection code from the release
+        injection_code=$(awk '/# INJECTION GRAB START/,/# INJECTION GRAB END/' "${PATH_TO_POSYDON}/docs/_source/conf.py")
+
         # get the available tags
         TAGS=$(git tag -l | sort -V | grep "v1")
         echo "v1 filtered tags:"
@@ -77,6 +85,11 @@ jobs:
           git checkout -f $tag
           git clean -fdx
           python -m pip install .[doc,vis]
+
+          # copy the _template folder to the docs folder
+          cp -r $GITHUB_WORKSPACE/_template $PATH_TO_POSYDON/docs
+          # remove the injection code from the conf.py file
+          echo "${injection_code}" >> "${PATH_TO_POSYDON}/docs/conf.py"
 
           # build the documentation
           cd docs
@@ -160,6 +173,14 @@ jobs:
         export PATH_TO_POSYDON=$GITHUB_WORKSPACE/POSYDON
         cd $PATH_TO_POSYDON
 
+        # REQUIRED FOR OLDER VERSIONS OF POSYDON BEFORE THE INCLUSION OF 
+        # THe _template folder and versioning code.
+        # get the _template folder and move it out of the POSYDON folder
+        cp -r docs/_source/_template $GITHUB_WORKSPACE
+
+        # get the injection code from the release
+        injection_code=$(awk '/# INJECTION GRAB START/,/# INJECTION GRAB END/' "${PATH_TO_POSYDON}/docs/_source/conf.py")
+
         # get the available tags
         TAGS=$(git tag -l | sort -V | grep "v2" | grep -v "v2.0.0-dev")
 
@@ -173,6 +194,15 @@ jobs:
           git checkout -f $tag
           git clean -fdx
           python -m pip install .[doc,vis]
+
+          
+            # copy the _template folder and inject code only for specific tags
+            if [[ "$tag" == "v2.0.0-pre1" || "$tag" == "v2.0.0-pre2" ]]; then
+              # copy the _template folder to the docs folder
+              cp -r $GITHUB_WORKSPACE/_template $PATH_TO_POSYDON/docs
+              # remove the injection code from the conf.py file
+              echo "${injection_code}" >> "${PATH_TO_POSYDON}/docs/conf.py"
+            fi
 
           # build the documentation
           cd docs
